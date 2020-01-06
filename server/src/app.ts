@@ -2,6 +2,8 @@ import path from 'path'
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
 
+import polyfill from './utils/Polyfill'
+
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
 
@@ -11,6 +13,9 @@ import PlayerLibrary from './libraries/players/PlayerLibrary'
 
 const app = express()
 expressWs(app)
+
+/* Polyfills */
+polyfill.injectPolyfills()
 
 /* Routers must be imported after express-ws is initialized, therefore 'require' syntax */
 const PlayRouter = require('./routers/PlayRouter')

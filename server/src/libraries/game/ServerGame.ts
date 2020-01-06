@@ -1,31 +1,39 @@
 import uuidv4 from 'uuid/v4'
-import Game from '../../../../common/Game'
-import ChatEntry from '../../models/ChatEntry'
+import Game from '../../shared/models/Game'
 import ServerGameBoard from './ServerGameBoard'
+import Player from '../../shared/models/Player'
 import ServerPlayer from '../players/ServerPlayer'
-import ServerDeck from '../../models/game/ServerDeck'
+import ServerChatEntry from '../../models/ServerChatEntry'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
+import PlayerInGame from '../../shared/models/PlayerInGame'
+import ServerCardDeck from '../../models/game/ServerCardDeck'
 
 export default class ServerGame extends Game {
-	id: string
-	name: string
 	owner: ServerPlayer
 	board: ServerGameBoard
 	players: ServerPlayerInGame[]
-	chatHistory: ChatEntry[]
+	chatHistory: ServerChatEntry[]
 
 	constructor(owner: ServerPlayer, name: string) {
 		super(uuidv4(), name)
 		this.owner = owner
 		this.board = new ServerGameBoard(this)
+		this.players = []
+		this.chatHistory = []
 	}
 
-	addPlayer(targetPlayer: ServerPlayer, deck: ServerDeck): void {
+	addPlayer(targetPlayer: ServerPlayer, deck: ServerCardDeck): ServerPlayerInGame {
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
 			OutgoingMessageHandlers.notifyAboutPlayerConnected(playerInGame.player, targetPlayer)
 		})
-		this.players.push(ServerPlayerInGame.newInstance(targetPlayer, deck))
+		const serverPlayerInGame = ServerPlayerInGame.newInstance(targetPlayer, deck)
+		this.players.push(serverPlayerInGame)
+		return serverPlayerInGame
+	}
+
+	getPlayerInGame(player: Player): PlayerInGame {
+		return this.players.find(playerInGame => playerInGame.player === player)
 	}
 
 	removePlayer(targetPlayer: ServerPlayer): void {
@@ -42,7 +50,7 @@ export default class ServerGame extends Game {
 	}
 
 	createChatEntry(sender: ServerPlayer, message: string): void {
-		const chatEntry = ChatEntry.newInstance(sender, message)
+		const chatEntry = ServerChatEntry.newInstance(sender, message)
 		this.chatHistory.push(chatEntry)
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
 			OutgoingMessageHandlers.notifyAboutChatEntry(playerInGame.player, chatEntry)

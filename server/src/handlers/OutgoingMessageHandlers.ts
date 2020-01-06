@@ -1,11 +1,14 @@
 import * as ws from 'ws'
-import ServerGame from '../libraries/game/ServerGame'
-import ChatEntry from '../models/ChatEntry'
 import ServerCard from '../models/game/ServerCard'
+import ServerGame from '../libraries/game/ServerGame'
 import ServerPlayer from '../libraries/players/ServerPlayer'
-import CardMessage from '../models/network/CardMessage'
-import ChatEntryMessage from '../models/network/ChatEntryMessage'
-import PublicPlayerMessage from '../models/network/PublicPlayerMessage'
+import CardMessage from '../shared/models/network/CardMessage'
+import ServerChatEntry from '../../../shared/src/models/ChatEntry'
+import ChatEntryMessage from '../shared/models/network/ChatEntryMessage'
+import PublicPlayerMessage from '../shared/models/network/PublicPlayerMessage'
+import PlayerInGameMessage from '../shared/models/network/PlayerInGameMessage'
+import CardDeckMessage from '../shared/models/network/CardDeckMessage'
+import CardHandMessage from '../shared/models/network/CardHandMessage'
 
 export default {
 	sendAllChatHistory: (player: ServerPlayer, game: ServerGame) => {
@@ -24,32 +27,67 @@ export default {
 		})
 	},
 
-	 sendBoardState: (player: ServerPlayer, game: ServerGame) => {
-		const cardMessages = game.board.getAllCards().map(card => CardMessage.fromCard(card, player))
+	sendHand: (player: ServerPlayer, game: ServerGame) => {
+		const cardDeck = game.getPlayerInGame(player).cardHand
+		player.sendMessage({
+			type: 'gameState/hand',
+			data: CardHandMessage.fromHand(cardDeck)
+		})
+	},
+
+	sendDeck: (player: ServerPlayer, game: ServerGame) => {
+		const cardDeck = game.getPlayerInGame(player).cardDeck
+		player.sendMessage({
+			type: 'gameState/deck',
+			data: CardDeckMessage.fromDeck(cardDeck)
+		})
+	},
+
+	sendOpponent: (player: ServerPlayer, game: ServerGame) => {
+		const opponentPlayerInGame = game.players.find(playerInGame => playerInGame.player !== player)
+		if (!opponentPlayerInGame) { return }
+
+		player.sendMessage({
+			type: 'gameState/opponent',
+			data: PlayerInGameMessage.fromPlayerInGame(opponentPlayerInGame)
+		})
+	},
+
+	sendBoardState: (player: ServerPlayer, game: ServerGame) => {
+		const cardMessages = game.board.getAllCards().map(card => CardMessage.fromCard(card))
 		player.sendMessage({
 			type: 'gameState/board',
 			data: cardMessages
 		})
 	},
 
-	notifyAboutChatEntry(player: ServerPlayer, chatEntry: ChatEntry) {
+	notifyAboutChatEntry(player: ServerPlayer, chatEntry: ServerChatEntry) {
 		player.sendMessage({
 			type: 'chat/message',
 			data: ChatEntryMessage.fromChatEntry(chatEntry)
 		})
 	},
 
+	notifyAboutCardsDrawn(player: ServerPlayer, cards: ServerCard[]) {
+		const cardMessages = cards.map((card: ServerCard) => CardMessage.fromCard(card))
+
+		player.sendMessage({
+			type: 'update/cardsDrawn',
+			data: cardMessages
+		})
+	},
+
 	notifyAboutCardPlayed(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
 			type: 'update/cardPlayed',
-			data: CardMessage.fromCard(card, player)
+			data: CardMessage.fromCard(card)
 		})
 	},
 
 	notifyAboutCardDestroyed(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
 			type: 'update/cardDestroyed',
-			data: CardMessage.fromCard(card, player)
+			data: CardMessage.fromCard(card)
 		})
 	},
 

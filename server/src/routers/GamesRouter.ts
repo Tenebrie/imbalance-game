@@ -1,7 +1,8 @@
 import express, { Response } from 'express'
 const router = express.Router()
 
-import GameMessage from '../models/network/GameMessage'
+import ServerPlayer from '../libraries/players/ServerPlayer'
+import ServerGameMessage from '../models/messages/ServerGameMessage'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequestMiddleware'
 
@@ -10,17 +11,18 @@ router.use(RequirePlayerTokenMiddleware)
 router.get('/', (req, res: Response, next) => {
 	const library = global.gameLibrary
 
-	const gameMessages = library.games.map(game => GameMessage.fromGame(game))
+	const gameMessages = library.games.map(game => ServerGameMessage.fromServerGame(game))
 	res.json({ data: gameMessages })
 })
 
 router.post('/', (req, res: Response, next) => {
-	const player = req['player']
+	const player = req['player'] as ServerPlayer
 	const gameName = req.body['name'] || ''
 	const gameLibrary = global.gameLibrary
 
 	const game = gameLibrary.createOwnedGame(player, gameName.trim())
-	res.json({ data: GameMessage.fromGame(game) })
+
+	res.json({ data: ServerGameMessage.fromServerGame(game) })
 })
 
 router.delete('/:gameId', (req, res: Response, next) => {

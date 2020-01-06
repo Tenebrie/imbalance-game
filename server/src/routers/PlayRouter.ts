@@ -1,7 +1,7 @@
 import express from 'express'
 import ServerGame from '../libraries/game/ServerGame'
+import ServerCardDeck from '../models/game/ServerCardDeck'
 import ServerPlayer from '../libraries/players/ServerPlayer'
-import ServerDeck from '../models/game/ServerDeck'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 
@@ -17,9 +17,14 @@ router.ws('/:gameId', async (ws, req) => {
 	}
 
 	currentPlayer.disconnect()
-
-	currentGame.addPlayer(currentPlayer, ServerDeck.defaultDeck())
 	currentPlayer.registerConnection(ws)
+
+	const serverPlayerInGame = currentGame.addPlayer(currentPlayer, ServerCardDeck.defaultDeck(currentPlayer))
+	OutgoingMessageHandlers.sendDeck(currentPlayer, currentGame)
+	setInterval(() => {
+		serverPlayerInGame.drawCards(currentGame, 1)
+	}, 500)
+	//serverPlayerInGame.drawCards(currentGame, 5)
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)
@@ -29,10 +34,7 @@ router.ws('/:gameId', async (ws, req) => {
 			return
 		}
 
-		const response = handler(msg.data, currentGame, currentPlayer)
-		if (response) {
-			ws.send(JSON.stringify(response))
-		}
+		handler(msg.data, currentGame, currentPlayer)
 	})
 
 	ws.on('close', () => {

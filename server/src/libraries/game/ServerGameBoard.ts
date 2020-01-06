@@ -1,7 +1,7 @@
 import ServerGame from './ServerGame'
-import { Card } from '../../../../common/Card'
-import Player from '../../../../common/Player'
-import GameBoard from '../../../../common/GameBoard'
+import Card from '../../shared/models/Card'
+import Player from '../../shared/models/Player'
+import GameBoard from '../../shared/models/GameBoard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
 

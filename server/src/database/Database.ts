@@ -38,7 +38,7 @@ export default class Database {
 		try {
 			await this.runQuery(query)
 		} catch (err) {
-			console.log(err)
+			console.error(err)
 			return false
 		}
 

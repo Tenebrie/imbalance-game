@@ -2,8 +2,8 @@ import express, { Response } from 'express'
 const router = express.Router()
 
 import AsyncHandler from '../utils/AsyncHandler'
-import PlayerMessage from '../models/network/PlayerMessage'
 import TokenManager from '../services/TokenService'
+import PlayerMessage from '../shared/models/network/PlayerMessage'
 import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequestMiddleware'
 
 router.post('/', AsyncHandler(async (req, res: Response, next) => {

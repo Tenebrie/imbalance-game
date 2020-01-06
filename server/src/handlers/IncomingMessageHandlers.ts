@@ -7,11 +7,19 @@ export default {
 		OutgoingMessageHandlers.sendAllChatHistory(player, game)
 	},
 
-	'get/players': (data: void, game: ServerGame, player: ServerPlayer) => {
-		OutgoingMessageHandlers.sendAllConnectedPlayers(player, game)
+	'get/hand': (data: void, game: ServerGame, player: ServerPlayer) => {
+		OutgoingMessageHandlers.sendHand(player, game)
 	},
 
-	'get/entities': (data: void, game: ServerGame, player: ServerPlayer) => {
+	'get/deck': (data: void, game: ServerGame, player: ServerPlayer) => {
+		OutgoingMessageHandlers.sendDeck(player, game)
+	},
+
+	'get/opponent': (data: void, game: ServerGame, player: ServerPlayer) => {
+		OutgoingMessageHandlers.sendOpponent(player, game)
+	},
+
+	'get/boardState': (data: void, game: ServerGame, player: ServerPlayer) => {
 		OutgoingMessageHandlers.sendBoardState(player, game)
 	},
 

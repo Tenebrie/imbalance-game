@@ -1,17 +1,39 @@
 import ServerPlayer from './ServerPlayer'
-import Deck from '../../../../common/Deck'
-import PlayerInGame from '../../../../common/PlayerInGame'
+import Card from '../../shared/models/Card'
+import ServerGame from '../game/ServerGame'
+import PlayerInGame from '../../shared/models/PlayerInGame'
+import ServerCardHand from '../../models/game/ServerCardHand'
+import ServerCardDeck from '../../models/game/ServerCardDeck'
+import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
 
 export default class ServerPlayerInGame extends PlayerInGame {
 	player: ServerPlayer
-	deck: Deck
-	rowsOwned: number
+	cardHand: ServerCardHand
+	cardDeck: ServerCardDeck
 
-	constructor(player: ServerPlayer, deck: Deck) {
-		super(player, deck)
+	constructor(player: ServerPlayer, cardDeck: ServerCardDeck) {
+		super(player)
+		this.player = player
+		this.cardHand = new ServerCardHand(this.player, [])
+		this.cardDeck = cardDeck
 	}
 
-	static newInstance(player: ServerPlayer, deck: Deck) {
-		return new ServerPlayerInGame(player, deck)
+	public drawCards(game: ServerGame, count: number): void {
+		const cards: Card[] = []
+		for (let i = 0; i < count; i++) {
+			const card = this.cardDeck.drawCard(game)
+			if (!card) {
+				// TODO: Fatigue damage?
+				continue
+			}
+
+			this.cardHand.drawCard(card, game)
+			cards.push(card)
+		}
+		OutgoingMessageHandlers.notifyAboutCardsDrawn(this.player, cards)
+	}
+
+	static newInstance(player: ServerPlayer, cardDeck: ServerCardDeck) {
+		return new ServerPlayerInGame(player, cardDeck)
 	}
 }
