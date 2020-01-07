@@ -2,8 +2,9 @@ import store from '@/Vue/store'
 import Input from '@/Pixi/Input'
 import Renderer from '@/Pixi/Renderer'
 import Player from '@/shared/models/Player'
+import MainHandler from '@/Pixi/MainHandler'
 import GameBoard from '@/shared/models/GameBoard'
-import PlayerInGame from '@/shared/models/PlayerInGame'
+import RenderedCard from '@/Pixi/models/RenderedCard'
 import IncomingMessageHandlers from '@/Pixi/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '@/Pixi/OutgoingMessageHandlers'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
@@ -11,6 +12,7 @@ import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 export default class Core {
 	public static input: Input
 	public static renderer: Renderer
+	public static mainHandler: MainHandler
 	public static socket: WebSocket
 	public static keepaliveTimer: number
 
@@ -36,6 +38,7 @@ export default class Core {
 		}, 30000)
 
 		Core.input = new Input()
+		Core.mainHandler = MainHandler.start()
 
 		OutgoingMessageHandlers.getChat()
 		OutgoingMessageHandlers.getOpponent()
@@ -78,7 +81,13 @@ export default class Core {
 		}))
 	}
 
+	public static registerCard(renderedCard: RenderedCard): void {
+		Core.renderer.registerCard(renderedCard)
+		Core.mainHandler.registerCard(renderedCard)
+	}
+
 	public static reset(): void {
+		if (!this.socket) { return }
 		this.socket.close()
 	}
 }

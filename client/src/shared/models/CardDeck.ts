@@ -12,7 +12,7 @@ export default class CardDeck {
 		this.cards.push(card)
 	}
 
-	drawCard(cardId: string): Card {
+	drawCardById(cardId: string): Card {
 		const card = this.cards.find(card => card.id === cardId)
 		if (!card) {
 			throw new Error(`Trying to draw card with invalid ID: ${cardId}`)

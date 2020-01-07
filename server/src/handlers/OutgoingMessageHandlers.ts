@@ -9,6 +9,9 @@ import PublicPlayerMessage from '../shared/models/network/PublicPlayerMessage'
 import PlayerInGameMessage from '../shared/models/network/PlayerInGameMessage'
 import CardDeckMessage from '../shared/models/network/CardDeckMessage'
 import CardHandMessage from '../shared/models/network/CardHandMessage'
+import ServerPlayerInGame from '../libraries/players/ServerPlayerInGame'
+import HiddenCardMessage from '../shared/models/network/HiddenCardMessage'
+import HiddenPlayerInGameMessage from '../shared/models/network/HiddenPlayerInGameMessage'
 
 export default {
 	sendAllChatHistory: (player: ServerPlayer, game: ServerGame) => {
@@ -43,13 +46,10 @@ export default {
 		})
 	},
 
-	sendOpponent: (player: ServerPlayer, game: ServerGame) => {
-		const opponentPlayerInGame = game.players.find(playerInGame => playerInGame.player !== player)
-		if (!opponentPlayerInGame) { return }
-
+	sendOpponent: (player: ServerPlayer, opponent: ServerPlayerInGame) => {
 		player.sendMessage({
 			type: 'gameState/opponent',
-			data: PlayerInGameMessage.fromPlayerInGame(opponentPlayerInGame)
+			data: HiddenPlayerInGameMessage.fromPlayerInGame(opponent)
 		})
 	},
 
@@ -73,6 +73,15 @@ export default {
 
 		player.sendMessage({
 			type: 'update/cardsDrawn',
+			data: cardMessages
+		})
+	},
+
+	notifyAboutOpponentCardsDrawn(player: ServerPlayer, cards: ServerCard[]) {
+		const cardMessages = cards.map((card: ServerCard) => HiddenCardMessage.fromCard(card))
+
+		player.sendMessage({
+			type: 'update/opponentCardsDrawn',
 			data: cardMessages
 		})
 	},

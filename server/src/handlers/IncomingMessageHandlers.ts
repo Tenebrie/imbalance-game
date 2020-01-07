@@ -16,7 +16,10 @@ export default {
 	},
 
 	'get/opponent': (data: void, game: ServerGame, player: ServerPlayer) => {
-		OutgoingMessageHandlers.sendOpponent(player, game)
+		const opponent = game.players.find(playerInGame => playerInGame.player !== player)
+		if (opponent) {
+			OutgoingMessageHandlers.sendOpponent(player, opponent)
+		}
 	},
 
 	'get/boardState': (data: void, game: ServerGame, player: ServerPlayer) => {

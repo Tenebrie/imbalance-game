@@ -12,8 +12,14 @@ export default class CardDeck {
 		this.cards.push(card)
 	}
 
-	removeCard(cardId: string) {
-		this.cards = this.cards.filter(card => card.id !== cardId)
+	drawCardById(cardId: string): Card {
+		const card = this.cards.find(card => card.id === cardId)
+		if (!card) {
+			throw new Error(`Trying to draw card with invalid ID: ${cardId}`)
+		}
+
+		this.cards.splice(this.cards.indexOf(card), 1)
+		return card
 	}
 
 	public static fromMessage(message: CardDeckMessage): CardDeck {

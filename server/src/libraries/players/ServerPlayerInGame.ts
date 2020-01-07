@@ -30,7 +30,12 @@ export default class ServerPlayerInGame extends PlayerInGame {
 			this.cardHand.drawCard(card, game)
 			cards.push(card)
 		}
+
 		OutgoingMessageHandlers.notifyAboutCardsDrawn(this.player, cards)
+		const opponent = game.players.find(playerInGame => playerInGame.player !== this.player)
+		if (opponent) {
+			OutgoingMessageHandlers.notifyAboutOpponentCardsDrawn(opponent.player, cards)
+		}
 	}
 
 	static newInstance(player: ServerPlayer, cardDeck: ServerCardDeck) {

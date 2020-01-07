@@ -23,8 +23,7 @@ router.ws('/:gameId', async (ws, req) => {
 	OutgoingMessageHandlers.sendDeck(currentPlayer, currentGame)
 	setInterval(() => {
 		serverPlayerInGame.drawCards(currentGame, 1)
-	}, 500)
-	//serverPlayerInGame.drawCards(currentGame, 5)
+	}, 1000)
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)

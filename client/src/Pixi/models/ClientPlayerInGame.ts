@@ -19,7 +19,6 @@ export default class ClientPlayerInGame extends PlayerInGame {
 	public static fromMessage(message: PlayerInGameMessage): ClientPlayerInGame {
 		const player = Player.fromPlayerMessage(message.player)
 		const clientPlayerInGame = new ClientPlayerInGame(player)
-		console.log(clientPlayerInGame)
 		message.cardHand.forEach(cardMessage => {
 			clientPlayerInGame.cardHand.addCard(Card.fromMessage(cardMessage))
 		})

@@ -7,6 +7,7 @@ import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import CardHandMessage from '@/shared/models/network/CardHandMessage'
 import CardDeckMessage from '@/shared/models/network/CardDeckMessage'
 import ChatEntryMessage from '@/shared/models/network/ChatEntryMessage'
+import HiddenCardMessage from '@/shared/models/network/HiddenCardMessage'
 import PlayerInGameMessage from '@/shared/models/network/PlayerInGameMessage'
 
 const handlers: {[ index: string ]: any } = {
@@ -37,8 +38,16 @@ const handlers: {[ index: string ]: any } = {
 	'update/cardsDrawn': (data: CardMessage[]) => {
 		data.forEach(cardMessage => {
 			console.log('Card drawn')
-			const card = Core.player.cardDeck.drawCard(cardMessage.id)
+			const card = Core.player.cardDeck.drawCardById(cardMessage.id)
 			Core.player.cardHand.addCard(card)
+		})
+	},
+
+	'update/opponentCardsDrawn': (data: HiddenCardMessage[]) => {
+		data.forEach(cardMessage => {
+			console.log('Opponent card drawn')
+			const card = Core.opponent.cardDeck.drawCardById(cardMessage.id)
+			Core.opponent.cardHand.addCard(card)
 		})
 	}
 }

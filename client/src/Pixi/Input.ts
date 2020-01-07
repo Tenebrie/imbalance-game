@@ -1,10 +1,13 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
+import RenderedCard from '@/Pixi/models/RenderedCard'
 import Point = PIXI.Point
 
 export default class Input {
 	mouseDown: boolean = false
 	mousePosition: Point = new Point()
+	hoveredCard: RenderedCard | null = null
+	grabbedCard: RenderedCard | null = null
 
 	constructor() {
 		const view = Core.renderer.pixi.view
@@ -24,12 +27,23 @@ export default class Input {
 
 	private onMouseDown(event: MouseEvent) {
 		this.mouseDown = true
-		Core.renderer.grabCard()
+		this.grabCard()
 	}
 
 	private onMouseUp(event: MouseEvent) {
 		this.mouseDown = false
-		Core.renderer.releaseCard()
+		this.releaseCard()
+	}
+
+	public grabCard(): void {
+		if (!this.hoveredCard) { return }
+
+		this.grabbedCard = this.hoveredCard
+	}
+
+	public releaseCard(): void {
+		this.hoveredCard = null
+		this.grabbedCard = null
 	}
 
 	private onMouseMove(event: MouseEvent) {
