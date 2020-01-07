@@ -1,6 +1,7 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import RenderedCard from '@/Pixi/models/RenderedCard'
+import OutgoingMessageHandlers from '@/Pixi/OutgoingMessageHandlers'
 import Point = PIXI.Point
 
 export default class Input {
@@ -42,6 +43,9 @@ export default class Input {
 	}
 
 	public releaseCard(): void {
+		if (!this.grabbedCard) { return }
+
+		OutgoingMessageHandlers.sendCardPlayed(this.grabbedCard)
 		this.hoveredCard = null
 		this.grabbedCard = null
 	}

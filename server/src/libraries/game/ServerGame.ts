@@ -25,8 +25,7 @@ export default class ServerGame extends Game {
 
 	addPlayer(targetPlayer: ServerPlayer, deck: ServerCardDeck): ServerPlayerInGame {
 		const serverPlayerInGame = ServerPlayerInGame.newInstance(targetPlayer, deck)
-
-		console.log(this.players.length)
+		
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
 			OutgoingMessageHandlers.sendOpponent(playerInGame.player, serverPlayerInGame)
 			OutgoingMessageHandlers.notifyAboutPlayerConnected(playerInGame.player, targetPlayer)

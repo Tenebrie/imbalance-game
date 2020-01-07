@@ -53,19 +53,16 @@ export default class Renderer {
 		return this.pixi.view.height
 	}
 
-	private getCardDistanceToCenter(handPosition: number, handSize: number): number {
-		return handPosition - ((handSize - 1) / 2)
-	}
-
 	public renderSpriteInHand(sprite: PIXI.Sprite, handPosition: number, handSize: number, isOpponent: boolean): void {
 		sprite.scale.set(CARD_SCALE)
 
 		const screenCenter = this.getScreenWidth() / 2
 		const cardWidth = sprite.width * Math.pow(0.95, handSize)
 		const cardHeight = sprite.height * 0.5
+		const distanceToCenter = handPosition - ((handSize - 1) / 2)
 
 		sprite.alpha = 1
-		sprite.position.x = this.getCardDistanceToCenter(handPosition, handSize) * cardWidth + screenCenter
+		sprite.position.x = distanceToCenter * cardWidth + screenCenter
 		sprite.position.y = cardHeight
 		sprite.rotation = 0
 		sprite.zIndex = (handPosition + 1) * 2
@@ -80,10 +77,11 @@ export default class Renderer {
 		const screenCenter = this.getScreenWidth() / 2
 		const cardWidth = sprite.width * Math.pow(0.95, handSize)
 		const cardHeight = (sprite.height / CARD_SCALE) * HOVERED_CARD_SCALE * 0.5
+		const distanceToCenter = handPosition - ((handSize - 1) / 2)
 
 		sprite.alpha = 1
 		sprite.scale.set(HOVERED_CARD_SCALE)
-		sprite.position.x = this.getCardDistanceToCenter(handPosition, handSize) * cardWidth + screenCenter
+		sprite.position.x = distanceToCenter * cardWidth + screenCenter
 		sprite.position.y = this.getScreenHeight() - cardHeight
 		sprite.rotation = 0
 		sprite.zIndex = 50

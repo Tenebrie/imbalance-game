@@ -1,6 +1,5 @@
 import Card from './Card'
 import CardHandMessage from './network/CardHandMessage'
-import CardMessage from './network/CardMessage'
 
 export default class CardHand {
 	cards: Card[] = []

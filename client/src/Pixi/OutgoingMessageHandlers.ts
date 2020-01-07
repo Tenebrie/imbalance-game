@@ -1,4 +1,6 @@
 import Core from '@/Pixi/Core'
+import Card from '@/shared/models/Card'
+import CardPlayedMessage from '@/shared/models/network/CardPlayedMessage'
 
 export default {
 	getChat: () => {
@@ -23,6 +25,10 @@ export default {
 
 	sendChatMessage: (message: string) => {
 		Core.sendMessage('post/chat', message)
+	},
+
+	sendCardPlayed: (card: Card) => {
+		Core.sendMessage('post/playCard', CardPlayedMessage.fromCard(card))
 	},
 
 	sendKeepalive: () => {

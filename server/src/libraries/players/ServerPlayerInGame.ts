@@ -1,6 +1,7 @@
 import ServerPlayer from './ServerPlayer'
 import Card from '../../shared/models/Card'
 import ServerGame from '../game/ServerGame'
+import ServerCard from '../../models/game/ServerCard'
 import PlayerInGame from '../../shared/models/PlayerInGame'
 import ServerCardHand from '../../models/game/ServerCardHand'
 import ServerCardDeck from '../../models/game/ServerCardDeck'
@@ -16,6 +17,10 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.player = player
 		this.cardHand = new ServerCardHand(this.player, [])
 		this.cardDeck = cardDeck
+	}
+
+	public playCard(game: ServerGame, card: ServerCard): void {
+		console.log(`Card ${card.cardClass} played!`)
 	}
 
 	public drawCards(game: ServerGame, count: number): void {

@@ -1,9 +1,8 @@
 import ServerCard from './ServerCard'
+import Card from '../../shared/models/Card'
 import CardHand from '../../shared/models/CardHand'
 import ServerGame from '../../libraries/game/ServerGame'
-import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
 import ServerPlayer from '../../libraries/players/ServerPlayer'
-import Card from '../../shared/models/Card'
 
 export default class ServerCardHand extends CardHand {
 	player: ServerPlayer
@@ -15,5 +14,9 @@ export default class ServerCardHand extends CardHand {
 
 	public drawCard(card: ServerCard, game: ServerGame): void {
 		this.addCard(card)
+	}
+
+	public findCardById(cardId: string): ServerCard | null {
+		return this.cards.find(card => card.id === cardId) || null
 	}
 }
