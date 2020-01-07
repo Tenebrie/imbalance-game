@@ -1,8 +1,7 @@
+import Player from './Player'
 import CardHand from './CardHand'
 import CardDeck from './CardDeck'
-import Player from './Player'
 import PlayerInGameMessage from './network/PlayerInGameMessage'
-import Card from './Card'
 
 export default class PlayerInGame {
 	player: Player
@@ -24,12 +23,8 @@ export default class PlayerInGame {
 	public static fromMessage(message: PlayerInGameMessage): PlayerInGame {
 		const player = Player.fromPlayerMessage(message.player)
 		const playerInGame = new PlayerInGame(player)
-		message.cardHand.forEach(cardMessage => {
-			playerInGame.cardHand.addCard(Card.fromMessage(cardMessage))
-		})
-		message.cardDeck.forEach(cardMessage => {
-			playerInGame.cardDeck.addCard(Card.fromMessage(cardMessage))
-		})
+		message.cardHand = CardHand.fromMessage(message.cardHand)
+		message.cardDeck = CardDeck.fromMessage(message.cardDeck)
 		return playerInGame
 	}
 }

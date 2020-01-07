@@ -8,6 +8,8 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
 import PlayerInGame from '../../shared/models/PlayerInGame'
 import ServerCardDeck from '../../models/game/ServerCardDeck'
+import VoidPlayer from '../../utils/VoidPlayer'
+import VoidPlayerInGame from '../../utils/VoidPlayerInGame'
 
 export default class ServerGame extends Game {
 	owner: ServerPlayer
@@ -25,7 +27,7 @@ export default class ServerGame extends Game {
 
 	addPlayer(targetPlayer: ServerPlayer, deck: ServerCardDeck): ServerPlayerInGame {
 		const serverPlayerInGame = ServerPlayerInGame.newInstance(targetPlayer, deck)
-		
+
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
 			OutgoingMessageHandlers.sendOpponent(playerInGame.player, serverPlayerInGame)
 			OutgoingMessageHandlers.notifyAboutPlayerConnected(playerInGame.player, targetPlayer)
@@ -35,8 +37,12 @@ export default class ServerGame extends Game {
 		return serverPlayerInGame
 	}
 
-	getPlayerInGame(player: Player): PlayerInGame {
+	getPlayerInGame(player: Player): ServerPlayerInGame {
 		return this.players.find(playerInGame => playerInGame.player === player)
+	}
+
+	getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
+		return this.players.find(otherPlayer => otherPlayer !== player) || VoidPlayerInGame.get()
 	}
 
 	removePlayer(targetPlayer: ServerPlayer): void {

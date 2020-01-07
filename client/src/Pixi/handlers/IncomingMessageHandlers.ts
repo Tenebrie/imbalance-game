@@ -1,6 +1,5 @@
 import Core from '@/Pixi/Core'
-import CardHand from '@/shared/models/CardHand'
-import CardDeck from '@/shared/models/CardDeck'
+import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import CardMessage from '@/shared/models/network/CardMessage'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
@@ -16,15 +15,11 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'gameState/hand': (data: CardHandMessage) => {
-		console.log('Hand loaded!')
-		console.log(CardHand.fromMessage(data))
 		Core.player.cardHand = RenderedCardHand.fromMessage(data)
 	},
 
 	'gameState/deck': (data: CardDeckMessage) => {
-		console.log('Deck loaded!')
-		console.log(CardDeck.fromMessage(data))
-		Core.player.cardDeck = CardDeck.fromMessage(data)
+		Core.player.cardDeck = ClientCardDeck.fromMessage(data)
 	},
 
 	'gameState/opponent': (data: PlayerInGameMessage) => {
@@ -37,18 +32,35 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/cardsDrawn': (data: CardMessage[]) => {
 		data.forEach(cardMessage => {
-			console.log('Card drawn')
 			const card = Core.player.cardDeck.drawCardById(cardMessage.id)
-			Core.player.cardHand.addCard(card)
+			if (card) {
+				Core.player.cardHand.addCard(card)
+			}
 		})
 	},
 
 	'update/opponentCardsDrawn': (data: HiddenCardMessage[]) => {
 		data.forEach(cardMessage => {
-			console.log('Opponent card drawn')
 			const card = Core.opponent.cardDeck.drawCardById(cardMessage.id)
-			Core.opponent.cardHand.addCard(card)
+			if (card) {
+				Core.opponent.cardHand.addCard(card)
+			}
 		})
+	},
+
+	'update/opponent/hand/cardRevealed': (data: CardMessage) => {
+		const card = Core.opponent.cardHand.getCardById(data.id)
+		if (card) {
+			card.reveal(data.cardClass)
+		}
+	},
+
+	'update/player/hand/cardDestroyed': (data: CardMessage) => {
+		Core.player.cardHand.removeCardById(data.id)
+	},
+
+	'update/opponent/hand/cardDestroyed': (data: CardMessage) => {
+		Core.opponent.cardHand.removeCardById(data.id)
 	}
 }
 

@@ -1,7 +1,7 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import RenderedCard from '@/Pixi/models/RenderedCard'
-import OutgoingMessageHandlers from '@/Pixi/OutgoingMessageHandlers'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import Point = PIXI.Point
 
 export default class Input {

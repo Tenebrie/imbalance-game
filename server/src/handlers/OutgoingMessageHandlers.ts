@@ -4,29 +4,20 @@ import ServerGame from '../libraries/game/ServerGame'
 import ServerPlayer from '../libraries/players/ServerPlayer'
 import CardMessage from '../shared/models/network/CardMessage'
 import ServerChatEntry from '../../../shared/src/models/ChatEntry'
-import ChatEntryMessage from '../shared/models/network/ChatEntryMessage'
-import PublicPlayerMessage from '../shared/models/network/PublicPlayerMessage'
-import PlayerInGameMessage from '../shared/models/network/PlayerInGameMessage'
 import CardDeckMessage from '../shared/models/network/CardDeckMessage'
 import CardHandMessage from '../shared/models/network/CardHandMessage'
+import ChatEntryMessage from '../shared/models/network/ChatEntryMessage'
 import ServerPlayerInGame from '../libraries/players/ServerPlayerInGame'
 import HiddenCardMessage from '../shared/models/network/HiddenCardMessage'
+import PublicPlayerMessage from '../shared/models/network/PublicPlayerMessage'
 import HiddenPlayerInGameMessage from '../shared/models/network/HiddenPlayerInGameMessage'
 
-export default {
+const gameStateMessages = {
 	sendAllChatHistory: (player: ServerPlayer, game: ServerGame) => {
 		const chatEntryMessages = game.chatHistory.map(chatEntry => ChatEntryMessage.fromChatEntry(chatEntry))
 		player.sendMessage({
 			type: 'gameState/chat',
 			data: chatEntryMessages
-		})
-	},
-
-	sendAllConnectedPlayers: (player: ServerPlayer, game: ServerGame) => {
-		const publicPlayerMessages = game.players.map(playerInGame => PublicPlayerMessage.fromPlayer(playerInGame.player))
-		player.sendMessage({
-			type: 'gameState/players',
-			data: publicPlayerMessages
 		})
 	},
 
@@ -54,13 +45,15 @@ export default {
 	},
 
 	sendBoardState: (player: ServerPlayer, game: ServerGame) => {
-		const cardMessages = game.board.getAllCards().map(card => CardMessage.fromCard(card))
+		/*const cardMessages = game.board.getAllCards().map(card => CardMessage.fromCard(card))
 		player.sendMessage({
 			type: 'gameState/board',
 			data: cardMessages
-		})
+		})*/
 	},
+}
 
+const updateMessages = {
 	notifyAboutChatEntry(player: ServerPlayer, chatEntry: ServerChatEntry) {
 		player.sendMessage({
 			type: 'chat/message',
@@ -70,7 +63,6 @@ export default {
 
 	notifyAboutCardsDrawn(player: ServerPlayer, cards: ServerCard[]) {
 		const cardMessages = cards.map((card: ServerCard) => CardMessage.fromCard(card))
-
 		player.sendMessage({
 			type: 'update/cardsDrawn',
 			data: cardMessages
@@ -78,11 +70,10 @@ export default {
 	},
 
 	notifyAboutOpponentCardsDrawn(player: ServerPlayer, cards: ServerCard[]) {
-		const cardMessages = cards.map((card: ServerCard) => HiddenCardMessage.fromCard(card))
-
+		const hiddenCardMessages = cards.map((card: ServerCard) => HiddenCardMessage.fromCard(card))
 		player.sendMessage({
 			type: 'update/opponentCardsDrawn',
-			data: cardMessages
+			data: hiddenCardMessages
 		})
 	},
 
@@ -93,10 +84,24 @@ export default {
 		})
 	},
 
-	notifyAboutCardDestroyed(player: ServerPlayer, card: ServerCard) {
+	notifyAboutOpponentCardRevealed(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
-			type: 'update/cardDestroyed',
+			type: 'update/opponent/hand/cardRevealed',
 			data: CardMessage.fromCard(card)
+		})
+	},
+
+	notifyAboutPlayerCardDestroyed(player: ServerPlayer, card: ServerCard) {
+		player.sendMessage({
+			type: 'update/player/hand/cardDestroyed',
+			data: CardMessage.fromCard(card)
+		})
+	},
+
+	notifyAboutOpponentCardDestroyed(player: ServerPlayer, card: ServerCard) {
+		player.sendMessage({
+			type: 'update/opponent/hand/cardDestroyed',
+			data: HiddenCardMessage.fromCard(card)
 		})
 	},
 
@@ -113,7 +118,9 @@ export default {
 			data: PublicPlayerMessage.fromPlayer(disconnectedPlayer)
 		})
 	},
+}
 
+const systemMessages = {
 	notifyAboutGameShutdown(player: ServerPlayer) {
 		player.sendMessage({
 			type: 'command/disconnect',
@@ -134,4 +141,10 @@ export default {
 			data: 'Invalid or missing message type'
 		}))
 	}
+}
+
+export default {
+	...gameStateMessages,
+	...updateMessages,
+	...systemMessages
 }

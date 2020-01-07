@@ -21,6 +21,10 @@ export default class MainHandler {
 		this.cards.push(renderedCard)
 	}
 
+	public unregisterCard(targetCard: RenderedCard): void {
+		this.cards = this.cards.filter(card => card !== targetCard)
+	}
+
 	public static start(): MainHandler {
 		return new MainHandler()
 	}

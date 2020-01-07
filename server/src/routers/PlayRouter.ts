@@ -19,7 +19,7 @@ router.ws('/:gameId', async (ws, req) => {
 	currentPlayer.disconnect()
 	currentPlayer.registerConnection(ws)
 
-	const playerInGame = currentGame.addPlayer(currentPlayer, ServerCardDeck.defaultDeck(currentPlayer))
+	const playerInGame = currentGame.addPlayer(currentPlayer, ServerCardDeck.defaultDeck())
 	OutgoingMessageHandlers.sendDeck(currentPlayer, currentGame)
 	playerInGame.drawCards(currentGame, 5)
 

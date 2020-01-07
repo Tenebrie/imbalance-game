@@ -1,15 +1,17 @@
-import Card from '@/shared/models/Card'
 import Player from '@/shared/models/Player'
 import PlayerInGame from '@/shared/models/PlayerInGame'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import PlayerInGameMessage from '@/shared/models/network/PlayerInGameMessage'
+import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 
 export default class ClientPlayerInGame extends PlayerInGame {
 	cardHand: RenderedCardHand
+	cardDeck: ClientCardDeck
 
 	constructor(player: Player) {
 		super(player)
 		this.cardHand = new RenderedCardHand([])
+		this.cardDeck = new ClientCardDeck([])
 	}
 
 	public static fromPlayer(player: Player): ClientPlayerInGame {
@@ -19,12 +21,8 @@ export default class ClientPlayerInGame extends PlayerInGame {
 	public static fromMessage(message: PlayerInGameMessage): ClientPlayerInGame {
 		const player = Player.fromPlayerMessage(message.player)
 		const clientPlayerInGame = new ClientPlayerInGame(player)
-		message.cardHand.forEach(cardMessage => {
-			clientPlayerInGame.cardHand.addCard(Card.fromMessage(cardMessage))
-		})
-		message.cardDeck.forEach(cardMessage => {
-			clientPlayerInGame.cardDeck.addCard(Card.fromMessage(cardMessage))
-		})
+		clientPlayerInGame.cardHand = RenderedCardHand.fromMessage(message.cardHand)
+		clientPlayerInGame.cardDeck = ClientCardDeck.fromMessage(message.cardDeck)
 		return clientPlayerInGame
 	}
 }

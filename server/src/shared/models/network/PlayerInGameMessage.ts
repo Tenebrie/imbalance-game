@@ -1,17 +1,17 @@
-import Card from '../Card'
-import CardMessage from './CardMessage'
 import PlayerInGame from '../PlayerInGame'
 import PlayerMessage from './PlayerMessage'
+import CardHandMessage from './CardHandMessage'
+import CardDeckMessage from './CardDeckMessage'
 
 export default class PlayerInGameMessage {
 	player: PlayerMessage
-	cardHand: CardMessage[]
-	cardDeck: CardMessage[]
+	cardHand: CardHandMessage
+	cardDeck: CardHandMessage
 
 	constructor(playerInGame: PlayerInGame) {
 		this.player = PlayerMessage.fromPlayer(playerInGame.player)
-		this.cardHand = playerInGame.cardHand.cards.map((card: Card) => CardMessage.fromCard(card))
-		this.cardDeck = playerInGame.cardDeck.cards.map((card: Card) => CardMessage.fromCard(card))
+		this.cardHand = CardHandMessage.fromHand(playerInGame.cardHand)
+		this.cardDeck = CardDeckMessage.fromDeck(playerInGame.cardDeck)
 	}
 
 	static fromPlayerInGame(playerInGame: PlayerInGame): PlayerInGameMessage {

@@ -45,6 +45,11 @@ export default class Renderer {
 		this.pixi.stage.addChild(renderedCard.hitboxSprite)
 	}
 
+	public unregisterCard(renderedCard: RenderedCard): void {
+		this.pixi.stage.removeChild(renderedCard.sprite)
+		this.pixi.stage.removeChild(renderedCard.hitboxSprite)
+	}
+
 	private getScreenWidth(): number {
 		return this.pixi.view.width
 	}

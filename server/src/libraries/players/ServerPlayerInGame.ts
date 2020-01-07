@@ -1,5 +1,4 @@
 import ServerPlayer from './ServerPlayer'
-import Card from '../../shared/models/Card'
 import ServerGame from '../game/ServerGame'
 import ServerCard from '../../models/game/ServerCard'
 import PlayerInGame from '../../shared/models/PlayerInGame'
@@ -11,20 +10,27 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	player: ServerPlayer
 	cardHand: ServerCardHand
 	cardDeck: ServerCardDeck
+	rowsOwned: number
 
 	constructor(player: ServerPlayer, cardDeck: ServerCardDeck) {
 		super(player)
 		this.player = player
 		this.cardHand = new ServerCardHand(this.player, [])
 		this.cardDeck = cardDeck
+		this.rowsOwned = 0
 	}
 
 	public playCard(game: ServerGame, card: ServerCard): void {
-		console.log(`Card ${card.cardClass} played!`)
+		card.onPlay(game, this)
+		this.cardHand.removeCard(card)
+
+		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
+		const opponent = game.players.find(playerInGame => playerInGame.player !== this.player)
+		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
 	}
 
 	public drawCards(game: ServerGame, count: number): void {
-		const cards: Card[] = []
+		const cards: ServerCard[] = []
 		for (let i = 0; i < count; i++) {
 			const card = this.cardDeck.drawCard(game)
 			if (!card) {

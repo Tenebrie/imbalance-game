@@ -5,8 +5,8 @@ import Player from '@/shared/models/Player'
 import MainHandler from '@/Pixi/MainHandler'
 import GameBoard from '@/shared/models/GameBoard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
-import IncomingMessageHandlers from '@/Pixi/IncomingMessageHandlers'
-import OutgoingMessageHandlers from '@/Pixi/OutgoingMessageHandlers'
+import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
 export default class Core {
@@ -84,6 +84,11 @@ export default class Core {
 	public static registerCard(renderedCard: RenderedCard): void {
 		Core.renderer.registerCard(renderedCard)
 		Core.mainHandler.registerCard(renderedCard)
+	}
+
+	public static unregisterCard(renderedCard: RenderedCard): void {
+		Core.renderer.unregisterCard(renderedCard)
+		Core.mainHandler.unregisterCard(renderedCard)
 	}
 
 	public static reset(): void {
