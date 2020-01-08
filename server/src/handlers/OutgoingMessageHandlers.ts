@@ -11,8 +11,18 @@ import ServerPlayerInGame from '../libraries/players/ServerPlayerInGame'
 import HiddenCardMessage from '../shared/models/network/HiddenCardMessage'
 import PublicPlayerMessage from '../shared/models/network/PublicPlayerMessage'
 import HiddenPlayerInGameMessage from '../shared/models/network/HiddenPlayerInGameMessage'
+import ServerCardOnBoard from '../libraries/game/ServerCardOnBoard'
+import CardOnBoardMessage from '../shared/models/CardOnBoardMessage'
+import GameStartMessage from '../shared/models/GameStartMessage'
 
 const gameStateMessages = {
+	notifyAboutGameStart(player: ServerPlayer, isBoardInverted: boolean) {
+		player.sendMessage({
+			type: 'gameState/start',
+			data: new GameStartMessage(isBoardInverted)
+		})
+	},
+
 	sendAllChatHistory: (player: ServerPlayer, game: ServerGame) => {
 		const chatEntryMessages = game.chatHistory.map(chatEntry => ChatEntryMessage.fromChatEntry(chatEntry))
 		player.sendMessage({
@@ -45,11 +55,20 @@ const gameStateMessages = {
 	},
 
 	sendBoardState: (player: ServerPlayer, game: ServerGame) => {
-		/*const cardMessages = game.board.getAllCards().map(card => CardMessage.fromCard(card))
+		const cardMessages = []
+		const rows = game.board.rows
+		for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+			const row = rows[rowIndex]
+			for (let unitIndex = 0; unitIndex < row.cards.length; unitIndex++) {
+				const cardOnBoard = row.cards[unitIndex]
+				cardMessages.push(CardOnBoardMessage.fromCardOnBoard(cardOnBoard, rowIndex, unitIndex))
+			}
+		}
+
 		player.sendMessage({
 			type: 'gameState/board',
 			data: cardMessages
-		})*/
+		})
 	},
 }
 
@@ -81,6 +100,13 @@ const updateMessages = {
 		player.sendMessage({
 			type: 'update/cardPlayed',
 			data: CardMessage.fromCard(card)
+		})
+	},
+
+	notifyAboutUnitCreated(player: ServerPlayer, card: ServerCardOnBoard, rowIndex: number, unitIndex: number) {
+		player.sendMessage({
+			type: 'update/board/cardCreated',
+			data: CardOnBoardMessage.fromCardOnBoard(card, rowIndex, unitIndex)
 		})
 	},
 

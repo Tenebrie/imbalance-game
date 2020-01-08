@@ -51,7 +51,6 @@ export default class ServerGame extends Game {
 			return
 		}
 
-		this.board.destroyAllCards(targetPlayer)
 		this.players.splice(this.players.indexOf(registeredPlayer), 1)
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
 			OutgoingMessageHandlers.notifyAboutPlayerDisconnected(playerInGame.player, targetPlayer)

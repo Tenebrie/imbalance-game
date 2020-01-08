@@ -1,5 +1,6 @@
 import Core from '@/Pixi/Core'
 import Card from '@/shared/models/Card'
+import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import CardPlayedMessage from '@/shared/models/network/CardPlayedMessage'
 
 export default {
@@ -27,7 +28,12 @@ export default {
 		Core.sendMessage('post/chat', message)
 	},
 
-	sendCardPlayed: (card: Card) => {
+	sendUnitCardPlayed: (card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number) => {
+		const rowIndex = Core.gameBoard.rows.indexOf(gameBoardRow)
+		Core.sendMessage('post/playCard', CardPlayedMessage.fromCardOnRow(card, rowIndex, unitIndex))
+	},
+
+	sendSpellCardPlayed: (card: Card) => {
 		Core.sendMessage('post/playCard', CardPlayedMessage.fromCard(card))
 	},
 

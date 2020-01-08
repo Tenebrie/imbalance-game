@@ -6,10 +6,10 @@ export default class MainHandler {
 	cards: RenderedCard[] = []
 
 	constructor() {
-		PIXI.Ticker.shared.add(() => this.tick())
+		PIXI.Ticker.shared.add(MainHandler.tick)
 	}
 
-	private tick(): void {
+	private static tick(): void {
 		const sortedCards = Core.player.cardHand.cards.slice().reverse()
 
 		if (!Core.input.grabbedCard) {
@@ -27,5 +27,9 @@ export default class MainHandler {
 
 	public static start(): MainHandler {
 		return new MainHandler()
+	}
+
+	public stop(): void {
+		PIXI.Ticker.shared.remove(MainHandler.tick)
 	}
 }

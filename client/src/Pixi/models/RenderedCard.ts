@@ -1,14 +1,16 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Card from '@/shared/models/Card'
+import CardType from '@/shared/enums/CardType'
+import CardMessage from '@/shared/models/network/CardMessage'
 import Point = PIXI.Point
 
 export default class RenderedCard extends Card {
 	sprite: PIXI.Sprite
 	hitboxSprite: PIXI.Sprite
 
-	constructor(id: string, cardClass: string) {
-		super(id, cardClass)
+	constructor(id: string, cardType: CardType, cardClass: string) {
+		super(id, cardType, cardClass)
 		this.sprite = this.createSprite()
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 		Core.registerCard(this)
@@ -18,8 +20,9 @@ export default class RenderedCard extends Card {
 		return this.hitboxSprite.containsPoint(mousePosition)
 	}
 
-	public reveal(cardClass: string): void {
+	public reveal(cardType: CardType, cardClass: string): void {
 		Core.unregisterCard(this)
+		this.cardType = cardType
 		this.cardClass = cardClass
 		this.sprite = this.createSprite()
 		Core.registerCard(this)
@@ -56,6 +59,10 @@ export default class RenderedCard extends Card {
 	}
 
 	public static fromCard(card: Card): RenderedCard {
-		return new RenderedCard(card.id, card.cardClass)
+		return new RenderedCard(card.id, card.cardType, card.cardClass)
+	}
+
+	public static fromMessage(message: CardMessage): RenderedCard {
+		return new RenderedCard(message.id, message.cardType, message.cardClass)
 	}
 }

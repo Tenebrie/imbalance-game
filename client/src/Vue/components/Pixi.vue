@@ -9,11 +9,15 @@ import Core from '../../Pixi/Core'
 
 export default Vue.extend({
 	watch: {
-		selectedGameId(gameId) {
-			if (!gameId) { return }
+		selectedGameId(newGameId, oldGameId) {
+			if (oldGameId) {
+				Core.reset()
+			}
+
+			if (!newGameId) { return }
 
 			const container = (this.$refs.game as Element)
-			Core.init(gameId, container)
+			Core.init(newGameId, container)
 		}
 	},
 

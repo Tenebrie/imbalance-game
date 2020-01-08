@@ -1,42 +1,37 @@
 import ServerGame from './ServerGame'
-import Card from '../../shared/models/Card'
-import Player from '../../shared/models/Player'
+import Constants from '../../shared/Constants'
 import GameBoard from '../../shared/models/GameBoard'
+import ServerGameBoardRow from './ServerGameBoardRow'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
 
 export default class ServerGameBoard extends GameBoard {
 	game: ServerGame
+	rows: ServerGameBoardRow[]
 
 	constructor(game: ServerGame) {
 		super()
 		this.game = game
+		this.rows = []
+		for (let i = 0; i < Constants.GAME_BOARD_ROW_COUNT; i++) {
+			this.rows.push(new ServerGameBoardRow())
+		}
 	}
 
-	public playCard(card: Card, row: number, ordinal: number): void {
-		/* Insert */
-		this.rows[row].insertCard(card, ordinal)
+	public getAllCards() {
+		return this.rows.map(row => row.cards).flat()
+	}
 
-		/* Notify */
-		this.game.players.forEach((playerInGame: ServerPlayerInGame) => {
-			OutgoingMessageHandlers.notifyAboutCardPlayed(playerInGame.player, card)
+	public advanceCardInitiative(game: ServerGame, targetPlayer: ServerPlayerInGame): void {
+		const cards = this.getAllCards().filter(cardOnBoard => cardOnBoard.owner === targetPlayer)
+		cards.forEach(cardOnBoard => {
+			const card = cardOnBoard.card
+			card.initiative -= 1
 		})
-	}
 
-	public destroyCard(card: Card): void {
-		/* Remove */
-		const cardRow = this.getCardRow(card)
-		cardRow.removeCard(card)
-
-		/* Notify */
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardDestroyed(playerInGame.player, card)
+		const attackingCards = cards.filter(cardOnBoard => cardOnBoard.card.initiative === 0)
+		attackingCards.forEach(cardOnBoard => {
+			console.log(`Card ${cardOnBoard.card.cardClass} is doing an attacc!`)
+			cardOnBoard.card.initiative = cardOnBoard.card.baseInitiative
 		})
-	}
-
-	public destroyAllCards(owner: Player): void {
-		const cardsOnBoard = this.rows.map(row => row.cards).flat()
-		const targetCards = cardsOnBoard.filter(cardOnBoard => cardOnBoard.owner === owner)
-		targetCards.forEach(cardOnBoard => cardOnBoard.gameBoardRow.removeCard(cardOnBoard.card))
 	}
 }

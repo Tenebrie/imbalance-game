@@ -20,12 +20,35 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.rowsOwned = 0
 	}
 
-	public playCard(game: ServerGame, card: ServerCard): void {
-		card.onPlay(game, this)
+	public playUnit(game: ServerGame, card: ServerCard, rowIndex: number, unitIndex: number): void {
+		const gameBoardRow = game.board.rows[rowIndex]
+		if (gameBoardRow.cards.length >= 10) { return }
+
+		game.board.advanceCardInitiative(game, this)
+
 		this.cardHand.removeCard(card)
 
+		const cardOnBoard = gameBoardRow.insertCard(card, this, unitIndex)
+
+		card.onPlayUnit(game, cardOnBoard)
+
+		const opponent = game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
-		const opponent = game.players.find(playerInGame => playerInGame.player !== this.player)
+		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
+
+		OutgoingMessageHandlers.notifyAboutUnitCreated(this.player, cardOnBoard, rowIndex, unitIndex)
+		OutgoingMessageHandlers.notifyAboutUnitCreated(opponent.player, cardOnBoard, rowIndex, unitIndex)
+	}
+
+	public playSpell(game: ServerGame, card: ServerCard): void {
+		game.board.advanceCardInitiative(game, this)
+
+		this.cardHand.removeCard(card)
+
+		card.onPlaySpell(game, this)
+
+		const opponent = game.getOpponent(this)
+		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
 	}
 

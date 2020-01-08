@@ -2,6 +2,7 @@ import ServerGame from '../libraries/game/ServerGame'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerPlayerInGame from '../libraries/players/ServerPlayerInGame'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
+import CardType from '../shared/enums/CardType'
 
 export default {
 	'get/chat': (data: void, game: ServerGame, playerInGame: ServerPlayerInGame) => {
@@ -35,7 +36,11 @@ export default {
 		const card = player.cardHand.findCardById(data.id)
 		if (!card) { return }
 
-		player.playCard(game, card)
+		if (card.cardType === CardType.SPELL) {
+			player.playSpell(game, card)
+		} else if (card.cardType === CardType.UNIT) {
+			player.playUnit(game, card, data.rowIndex, data.unitIndex)
+		}
 	},
 
 	'system/keepalive': (data: void, game: ServerGame, player: ServerPlayerInGame) => {

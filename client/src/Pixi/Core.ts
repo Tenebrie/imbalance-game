@@ -1,13 +1,12 @@
 import store from '@/Vue/store'
 import Input from '@/Pixi/Input'
 import Renderer from '@/Pixi/Renderer'
-import Player from '@/shared/models/Player'
 import MainHandler from '@/Pixi/MainHandler'
-import GameBoard from '@/shared/models/GameBoard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
+import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
+import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
 export default class Core {
 	public static input: Input
@@ -16,7 +15,7 @@ export default class Core {
 	public static socket: WebSocket
 	public static keepaliveTimer: number
 
-	public static gameBoard: GameBoard
+	public static gameBoard: RenderedGameBoard
 	public static player: ClientPlayerInGame
 	public static opponent: ClientPlayerInGame
 
@@ -39,10 +38,7 @@ export default class Core {
 
 		Core.input = new Input()
 		Core.mainHandler = MainHandler.start()
-
-		OutgoingMessageHandlers.getChat()
-		OutgoingMessageHandlers.getOpponent()
-		OutgoingMessageHandlers.getBoardState()
+		Core.gameBoard = new RenderedGameBoard()
 	}
 
 	private static onMessage(event: MessageEvent): void {
@@ -64,6 +60,9 @@ export default class Core {
 			console.error(`Connection closed. Reason: ${event.reason}`)
 		}
 		clearInterval(Core.keepaliveTimer)
+		Core.input.clear()
+		Core.mainHandler.stop()
+		Core.renderer.destroy()
 	}
 
 	private static onError(event: Event): void {
@@ -72,6 +71,15 @@ export default class Core {
 
 	public static registerOpponent(opponent: ClientPlayerInGame): void {
 		Core.opponent = opponent
+	}
+
+	public static getPlayer(playerId: string): ClientPlayerInGame {
+		if (this.player && this.player.player.id === playerId) {
+			return this.player
+		} else if (this.opponent && this.opponent.player.id === playerId) {
+			return this.opponent
+		}
+		throw new Error(`Player ${playerId} does not exist!`)
 	}
 
 	public static sendMessage(type: string, data: any): void {

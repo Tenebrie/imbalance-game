@@ -6,6 +6,7 @@
 
 <style lang="scss">
 body {
+	overflow-y: hidden;
 	height: 100vh;
 	padding: 0;
 	margin: 0;

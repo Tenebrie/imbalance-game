@@ -5,8 +5,5 @@ export default class GameBoard {
 
 	constructor() {
 		this.rows = []
-		for (let i = 0; i < 6; i++) {
-			this.rows.push(new GameBoardRow(this))
-		}
 	}
 }

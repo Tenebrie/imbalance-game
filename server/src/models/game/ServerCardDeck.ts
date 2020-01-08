@@ -1,8 +1,10 @@
 import ServerCard from './ServerCard'
+import CardType from '../../shared/enums/CardType'
 import CardDeck from '../../shared/models/CardDeck'
 import ServerGame from '../../libraries/game/ServerGame'
 import SpellCardDrawer from '../../cards/spells/SpellCardDrawer'
 import SpellCardRevealer from '../../cards/spells/SpellCardRevealer'
+import UnitPostalRaven from '../../cards/spells/UnitPostalRaven'
 
 export default class ServerCardDeck extends CardDeck {
 	cards: ServerCard[]
@@ -39,23 +41,11 @@ export default class ServerCardDeck extends CardDeck {
 	static defaultDeck(): ServerCardDeck {
 		const deck = new ServerCardDeck([])
 
-		for (let i = 0; i < 5; i++) {
-			deck.addCard(new SpellCardDrawer())
+		deck.addCard(new SpellCardDrawer())
+		deck.addCard(new SpellCardRevealer())
+		for (let i = 0; i < 10; i++) {
+			deck.addCard(new UnitPostalRaven())
 		}
-		for (let i = 0; i < 5; i++) {
-			deck.addCard(new SpellCardRevealer())
-		}
-
-		deck.addCard(ServerCard.newInstance('sw-аура'))
-		deck.addCard(ServerCard.newInstance('sw-вельТарьенна'))
-		deck.addCard(ServerCard.newInstance('sw-верныйсокол'))
-		/* deck.addCard(ServerCard.newInstance('sw-ветранна'))
-		deck.addCard(ServerCard.newInstance('sw-заклинательворонов'))
-		deck.addCard(ServerCard.newInstance('sw-игриваяпикси'))
-		deck.addCard(ServerCard.newInstance('sw-коргиссимус'))
-		deck.addCard(ServerCard.newInstance('sw-любопытныйволчонок'))
-		deck.addCard(ServerCard.newInstance('sw-неария'))
-		deck.addCard(ServerCard.newInstance('sw-облачныйстраж')) */
 
 		deck.shuffle()
 

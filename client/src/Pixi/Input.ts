@@ -1,5 +1,6 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
+import CardType from '@/shared/enums/CardType'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import Point = PIXI.Point
@@ -45,7 +46,16 @@ export default class Input {
 	public releaseCard(): void {
 		if (!this.grabbedCard) { return }
 
-		OutgoingMessageHandlers.sendCardPlayed(this.grabbedCard)
+		const hoveredRow = Core.gameBoard.rows.find(row => row.isHovered(this.mousePosition))
+		if (hoveredRow) {
+			const card = this.grabbedCard
+			if (card.cardType === CardType.SPELL) {
+				OutgoingMessageHandlers.sendSpellCardPlayed(this.grabbedCard)
+			} else if (card.cardType === CardType.UNIT) {
+				OutgoingMessageHandlers.sendUnitCardPlayed(this.grabbedCard, hoveredRow, hoveredRow.cards.length)
+			}
+		}
+
 		this.hoveredCard = null
 		this.grabbedCard = null
 	}
@@ -54,5 +64,9 @@ export default class Input {
 		const view = Core.renderer.pixi.view
 		const clientRect = view.getBoundingClientRect()
 		this.mousePosition = new Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
+	}
+
+	public clear() {
+
 	}
 }
