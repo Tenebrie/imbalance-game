@@ -4,6 +4,7 @@ import ServerCardDeck from '../models/game/ServerCardDeck'
 import ServerPlayer from '../libraries/players/ServerPlayer'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import ConnectionEstablishedHandler from '../handlers/ConnectionEstablishedHandler'
 
 const router = express.Router()
 
@@ -20,13 +21,8 @@ router.ws('/:gameId', async (ws, req) => {
 	currentPlayer.registerConnection(ws)
 
 	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerCardDeck.defaultDeck())
-	OutgoingMessageHandlers.sendDeck(currentPlayer, currentGame)
-	if (currentGame.players.length === 2) {
-		OutgoingMessageHandlers.sendOpponent(currentPlayer, currentGame.getOpponent(currentPlayerInGame))
-	}
-	OutgoingMessageHandlers.notifyAboutGameStart(currentPlayer, currentGame.players.length === 2)
-	OutgoingMessageHandlers.sendBoardState(currentPlayer, currentGame)
-	currentPlayerInGame.drawCards(currentGame, 5)
+
+	ConnectionEstablishedHandler.onPlayerConnected(currentGame, currentPlayerInGame)
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)

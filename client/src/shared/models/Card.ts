@@ -21,6 +21,13 @@ export default class Card {
 	}
 
 	public static fromMessage(message: CardMessage): Card {
-		return new Card(message.id, message.cardType, message.cardClass)
+		const card = new Card(message.id, message.cardType, message.cardClass)
+		card.attack = message.attack
+		card.health = message.health
+		card.initiative = message.initiative
+		card.baseAttack = message.attack
+		card.baseHealth = message.health
+		card.baseInitiative = message.initiative
+		return card
 	}
 }

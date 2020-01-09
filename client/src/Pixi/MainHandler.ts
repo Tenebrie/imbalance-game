@@ -1,5 +1,6 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
+import HoveredCard from '@/Pixi/models/HoveredCard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 
 export default class MainHandler {
@@ -10,11 +11,26 @@ export default class MainHandler {
 	}
 
 	private static tick(): void {
-		const sortedCards = Core.player.cardHand.cards.slice().reverse()
+		MainHandler.tickCardHover()
+	}
 
-		if (!Core.input.grabbedCard) {
-			Core.input.hoveredCard = sortedCards.find(card => card.isHovered(Core.input.mousePosition)) || null
+	private static tickCardHover(): void {
+		const gameBoardCards = Core.gameBoard.rows.map(row => row.cards).flat()
+		const playerHandCards = Core.player.cardHand.cards.slice().reverse()
+
+		let hoveredCard: HoveredCard | null = null
+
+		const hoveredCardOnBoard = gameBoardCards.find(cardOnBoard => cardOnBoard.card.isHovered(Core.input.mousePosition)) || null
+		if (hoveredCardOnBoard) {
+			hoveredCard = HoveredCard.fromCardOnBoard(hoveredCardOnBoard)
 		}
+
+		const hoveredCardInHand = playerHandCards.find(card => card.isHovered(Core.input.mousePosition)) || null
+		if (hoveredCardInHand) {
+			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInHand, Core.player)
+		}
+
+		Core.input.hoveredCard = hoveredCard
 	}
 
 	public registerCard(renderedCard: RenderedCard): void {

@@ -1,10 +1,9 @@
-import CardOnBoard from '../../shared/models/CardOnBoard'
+import ServerCardOnBoard from './ServerCardOnBoard'
 import ServerCard from '../../models/game/ServerCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import ServerCardOnBoard from './ServerCardOnBoard'
 
 export default class ServerGameBoardRow {
-	cards: CardOnBoard[]
+	cards: ServerCardOnBoard[]
 
 	constructor() {
 		this.cards = []

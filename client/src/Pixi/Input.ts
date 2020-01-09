@@ -1,15 +1,19 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import CardType from '@/shared/enums/CardType'
+import HoveredCard from '@/Pixi/models/HoveredCard'
+import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
+import { CardLocation } from '@/Pixi/enums/CardLocation'
+import { TargetingMode } from '@/Pixi/enums/TargetingMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import Point = PIXI.Point
 
 export default class Input {
 	mouseDown: boolean = false
-	mousePosition: Point = new Point()
-	hoveredCard: RenderedCard | null = null
-	grabbedCard: RenderedCard | null = null
+	mousePosition: Point = new Point(-1000, -10000)
+	hoveredCard: HoveredCard | null = null
+	grabbedCard: GrabbedCard | null = null
 
 	constructor() {
 		const view = Core.renderer.pixi.view
@@ -28,36 +32,65 @@ export default class Input {
 	}
 
 	private onMouseDown(event: MouseEvent) {
+		// if (event.button !== 0) { return }
+
 		this.mouseDown = true
 		this.grabCard()
 	}
 
 	private onMouseUp(event: MouseEvent) {
+		// if (event.button !== 0) { return }
+
 		this.mouseDown = false
 		this.releaseCard()
 	}
 
 	public grabCard(): void {
-		if (!this.hoveredCard) { return }
+		const hoveredCard = this.hoveredCard
+		if (!hoveredCard) { return }
 
-		this.grabbedCard = this.hoveredCard
+		let targeting: TargetingMode
+		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
+			targeting = TargetingMode.CARD_PLAY
+		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && hoveredCard.card.initiative === 0) {
+			targeting = TargetingMode.CARD_ATTACK
+		} else {
+			return
+		}
+		this.grabbedCard = new GrabbedCard(hoveredCard.card, targeting)
 	}
 
 	public releaseCard(): void {
 		if (!this.grabbedCard) { return }
 
-		const hoveredRow = Core.gameBoard.rows.find(row => row.isHovered(this.mousePosition))
-		if (hoveredRow) {
-			const card = this.grabbedCard
-			if (card.cardType === CardType.SPELL) {
-				OutgoingMessageHandlers.sendSpellCardPlayed(this.grabbedCard)
-			} else if (card.cardType === CardType.UNIT) {
-				OutgoingMessageHandlers.sendUnitCardPlayed(this.grabbedCard, hoveredRow, hoveredRow.cards.length)
-			}
+		if (this.grabbedCard.targeting === TargetingMode.CARD_PLAY) {
+			this.onCardPlay(this.grabbedCard.card)
+		} else if (this.grabbedCard.targeting === TargetingMode.CARD_ATTACK) {
+			this.onCardAttack(this.grabbedCard.card)
 		}
 
 		this.hoveredCard = null
 		this.grabbedCard = null
+	}
+
+	private onCardPlay(card: RenderedCard): void {
+		const hoveredRow = Core.gameBoard.rows.find(row => row.isHovered(this.mousePosition))
+		if (!hoveredRow) { return }
+
+		if (card.cardType === CardType.SPELL) {
+			OutgoingMessageHandlers.sendSpellCardPlayed(card)
+		} else if (card.cardType === CardType.UNIT) {
+			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, hoveredRow.cards.length)
+		}
+	}
+
+	private onCardAttack(card: RenderedCard): void {
+		const hoveredCard = this.hoveredCard
+		if (!hoveredCard || hoveredCard.owner === Core.player) {
+			return
+		}
+
+		OutgoingMessageHandlers.sendUnitAttackOrder(card, hoveredCard.card)
 	}
 
 	private onMouseMove(event: MouseEvent) {
@@ -67,6 +100,6 @@ export default class Input {
 	}
 
 	public clear() {
-
+		// TODO: Remove event listeners
 	}
 }

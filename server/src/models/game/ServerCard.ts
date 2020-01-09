@@ -13,17 +13,45 @@ export default class ServerCard extends Card {
 		super(uuidv4(), cardType, cardClass)
 	}
 
-	reveal(game: ServerGame, owner: ServerPlayerInGame): void {
+	dealDamage(game: ServerGame, owner: ServerPlayerInGame, damage: number): void {
+		this.onBeforeDamage(game, owner, damage)
+		this.health -= damage
+		this.onAfterDamage(game, owner, damage)
+		game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutCardHealthChange(playerInGame.player, this)
+		})
+	}
+
+	setInitiative(game: ServerGame, owner: ServerPlayerInGame, value: number): void {
+		if (this.initiative === value) { return }
+
+		this.initiative = value
+		game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutCardInitiativeChange(playerInGame.player, this)
+		})
+	}
+
+	reveal(game: ServerGame, owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
 		if (this.isRevealed) { return }
 
 		this.isRevealed = true
 		this.onReveal(game, owner)
-		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(owner.player, this)
+		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(opponent.player, this)
+	}
+
+	destroy(game: ServerGame, owner: ServerPlayerInGame): void {
+		this.onDestroy(game, owner)
+		game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutUnitDestroyed(playerInGame.player, this)
+		})
 	}
 
 	onPlayUnit(game: ServerGame, cardOnBoard: ServerCardOnBoard): void { return }
 	onPlaySpell(game: ServerGame, owner: ServerPlayerInGame): void { return }
+	onBeforeDamage(game: ServerGame, owner: ServerPlayerInGame, damage: number): void { return }
+	onAfterDamage(game: ServerGame, owner: ServerPlayerInGame, damage: number): void { return }
 	onReveal(game: ServerGame, owner: ServerPlayerInGame): void { return }
+	onDestroy(game: ServerGame, owner: ServerPlayerInGame): void { return }
 
 	static newInstance(cardType: CardType, cardClass: string): ServerCard {
 		return new ServerCard(cardType, cardClass)

@@ -1,33 +1,10 @@
+import CardType from '../shared/enums/CardType'
 import ServerGame from '../libraries/game/ServerGame'
-import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerPlayerInGame from '../libraries/players/ServerPlayerInGame'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
-import CardType from '../shared/enums/CardType'
+import CardAttackOrderMessage from '../shared/models/network/CardAttackOrderMessage'
 
 export default {
-	'get/chat': (data: void, game: ServerGame, playerInGame: ServerPlayerInGame) => {
-		OutgoingMessageHandlers.sendAllChatHistory(playerInGame.player, game)
-	},
-
-	'get/hand': (data: void, game: ServerGame, playerInGame: ServerPlayerInGame) => {
-		OutgoingMessageHandlers.sendHand(playerInGame.player, game)
-	},
-
-	'get/deck': (data: void, game: ServerGame, playerInGame: ServerPlayerInGame) => {
-		OutgoingMessageHandlers.sendDeck(playerInGame.player, game)
-	},
-
-	'get/opponent': (data: void, game: ServerGame, playerInGame: ServerPlayerInGame) => {
-		const opponent = game.players.find(otherPlayer => otherPlayer !== playerInGame)
-		if (opponent) {
-			OutgoingMessageHandlers.sendOpponent(playerInGame.player, opponent)
-		}
-	},
-
-	'get/boardState': (data: void, game: ServerGame, playerInGame: ServerPlayerInGame) => {
-		OutgoingMessageHandlers.sendBoardState(playerInGame.player, game)
-	},
-
 	'post/chat': (data: string, game: ServerGame, playerInGame: ServerPlayerInGame) => {
 		game.createChatEntry(playerInGame.player, data)
 	},
@@ -41,6 +18,16 @@ export default {
 		} else if (card.cardType === CardType.UNIT) {
 			player.playUnit(game, card, data.rowIndex, data.unitIndex)
 		}
+	},
+
+	'post/attackOrder': (data: CardAttackOrderMessage, game: ServerGame, player: ServerPlayerInGame) => {
+		const card = game.board.findCardById(data.cardId)
+		const target = game.board.findCardById(data.targetId)
+		if (!card || !target || card.owner !== player || card.owner === target.owner) {
+			return
+		}
+
+		game.board.performCardAttack(game, card, target)
 	},
 
 	'system/keepalive': (data: void, game: ServerGame, player: ServerPlayerInGame) => {

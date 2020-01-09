@@ -13,6 +13,6 @@ export default class SpellCardRevealer extends ServerCard {
 		if (opponent.cardHand.isEmpty()) {
 			return
 		}
-		opponent.cardHand.getRandomCard().reveal(game, opponent)
+		opponent.cardHand.getRandomCard().reveal(game, opponent, owner)
 	}
 }

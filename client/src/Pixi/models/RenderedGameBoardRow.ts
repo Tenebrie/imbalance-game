@@ -30,6 +30,18 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 		this.cards.splice(unitIndex, 0, card)
 	}
 
+	public findCardById(cardId: string): RenderedCardOnBoard | null {
+		return this.cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
+	}
+
+	public removeCardById(cardId: string): void {
+		const cardOnBoard = this.findCardById(cardId)
+		if (!cardOnBoard) { return }
+
+		this.cards.splice(this.cards.indexOf(cardOnBoard), 1)
+		cardOnBoard.card.unregister()
+	}
+
 	public isHovered(mousePosition: Point): boolean {
 		return this.sprite.containsPoint(mousePosition)
 	}

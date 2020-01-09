@@ -3,24 +3,32 @@ import * as PIXI from 'pixi.js'
 import Constants from '@/shared/Constants'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
-import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
+import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 
 export default class Renderer {
 	pixi: PIXI.Application
 	container: Element
+	timeLabel: PIXI.Text
 
-	CARD_SCALE = 0.3
-	CARD_ON_BOARD_SCALE = 0.196
-	HOVERED_CARD_SCALE = 0.7
-	GAME_BOARD_ROW_SCALE = 0.4
-	GAME_BOARD_ROW_HEIGHT = 292
+	GAME_BOARD_WINDOW_FRACTION = 0.6
+	PLAYER_HAND_WINDOW_FRACTION = 0.15
+	OPPONENT_HAND_WINDOW_FRACTION = 0.15
+	HOVERED_HAND_WINDOW_FRACTION = 0.3
+	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
 
 	constructor(container: Element) {
 		this.pixi = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight })
 		this.pixi.stage.sortableChildren = true
 		container.appendChild(this.pixi.view)
 		this.container = container
+		this.timeLabel = new PIXI.Text('Time of day: 12:00 (Not moving yet)', {
+			fontFamily: 'Arial',
+			fontSize: 24,
+			fill: 0xFFFFFF
+		})
+		this.timeLabel.position.set(10, 10)
+		this.pixi.stage.addChild(this.timeLabel)
 
 		PIXI.Ticker.shared.add(() => this.tick())
 	}
@@ -30,10 +38,10 @@ export default class Renderer {
 		const sortedPlayerCards = Core.player.cardHand.cards.slice().reverse()
 
 		sortedPlayerCards.forEach(renderedCard => {
-			if (renderedCard === Core.input.grabbedCard) {
+			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
 				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length)
 				this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
-			} else if (renderedCard === Core.input.hoveredCard) {
+			} else if (!Core.input.grabbedCard && Core.input.hoveredCard && renderedCard === Core.input.hoveredCard.card) {
 				this.renderHoveredCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length)
 			} else {
 				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length)
@@ -74,16 +82,17 @@ export default class Renderer {
 	}
 
 	public renderSpriteInHand(sprite: PIXI.Sprite, handPosition: number, handSize: number, isOpponent: boolean): void {
-		sprite.scale.set(this.CARD_SCALE)
+		const windowFraction = isOpponent ? this.OPPONENT_HAND_WINDOW_FRACTION : this.PLAYER_HAND_WINDOW_FRACTION
+		const cardHeight = this.getScreenHeight() * windowFraction
+		sprite.scale.set(cardHeight / sprite.texture.height)
 
 		const screenCenter = this.getScreenWidth() / 2
 		const cardWidth = sprite.width * Math.pow(0.95, handSize)
-		const cardHeight = sprite.height * 0.5
 		const distanceToCenter = handPosition - ((handSize - 1) / 2)
 
 		sprite.alpha = 1
 		sprite.position.x = distanceToCenter * cardWidth + screenCenter
-		sprite.position.y = cardHeight
+		sprite.position.y = cardHeight * 0.5
 		sprite.rotation = 0
 		sprite.zIndex = (handPosition + 1) * 2
 		if (!isOpponent) {
@@ -92,24 +101,27 @@ export default class Renderer {
 	}
 
 	public renderHoveredSpriteInHand(sprite: PIXI.Sprite, handPosition: number, handSize: number): void {
-		sprite.scale.set(this.CARD_SCALE)
+		const cardHeight = this.getScreenHeight() * this.HOVERED_HAND_WINDOW_FRACTION
+		sprite.scale.set(cardHeight / sprite.texture.height)
+
+		const spriteNormalWidth = (this.getScreenHeight() * this.PLAYER_HAND_WINDOW_FRACTION) * (sprite.texture.width / sprite.texture.height)
 
 		const screenCenter = this.getScreenWidth() / 2
-		const cardWidth = sprite.width * Math.pow(0.95, handSize)
-		const cardHeight = (sprite.height / this.CARD_SCALE) * this.HOVERED_CARD_SCALE * 0.5
+		const cardWidth = spriteNormalWidth * Math.pow(0.95, handSize)
 		const distanceToCenter = handPosition - ((handSize - 1) / 2)
 
 		sprite.alpha = 1
-		sprite.scale.set(this.HOVERED_CARD_SCALE)
 		sprite.position.x = distanceToCenter * cardWidth + screenCenter
-		sprite.position.y = this.getScreenHeight() - cardHeight
+		sprite.position.y = this.getScreenHeight() - cardHeight * 0.5
 		sprite.rotation = 0
 		sprite.zIndex = 50
 	}
 
 	public renderGrabbedSprite(sprite: PIXI.Sprite, mousePosition: Point): void {
+		const cardHeight = this.getScreenHeight() * this.PLAYER_HAND_WINDOW_FRACTION
+		sprite.scale.set(cardHeight / sprite.texture.height)
+
 		sprite.alpha = 1
-		sprite.scale.set(this.CARD_SCALE)
 		sprite.position.x = mousePosition.x
 		sprite.position.y = mousePosition.y
 		sprite.rotation = 0
@@ -159,9 +171,11 @@ export default class Renderer {
 
 	public renderGameBoardRow(gameBoardRow: RenderedGameBoardRow, rowIndex: number): void {
 		const sprite = gameBoardRow.sprite
+		const rowHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+		sprite.scale.set(rowHeight / sprite.texture.height)
+
 		const screenCenterX = this.getScreenWidth() / 2
 		const screenCenterY = this.getScreenHeight() / 2
-		const rowHeight = gameBoardRow.sprite.height
 		const verticalDistanceToCenter = rowIndex - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
 		const rowY = screenCenterY + verticalDistanceToCenter * rowHeight
 
@@ -179,14 +193,25 @@ export default class Renderer {
 		const hitboxSprite = cardOnBoard.card.hitboxSprite
 		const screenCenterX = this.getScreenWidth() / 2
 		const distanceToCenter = unitIndex - unitCount / 2 + 0.5
+		const rowHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
 
-		sprite.scale.set(this.CARD_ON_BOARD_SCALE)
+		sprite.scale.set(rowHeight / sprite.texture.height)
 		hitboxSprite.scale.copyFrom(sprite.scale)
 
 		sprite.alpha = 1
 		sprite.position.x = screenCenterX + distanceToCenter * hitboxSprite.width
 		sprite.position.y = rowY
 		sprite.zIndex = 1
+
+		sprite.tint = 0xFFFFFF
+		if (cardOnBoard.card.initiative === 0) {
+			sprite.tint = 0xBBFFBB
+			if (Core.input.grabbedCard && cardOnBoard.card === Core.input.grabbedCard.card) {
+				sprite.tint = 0x99BB99
+			} else if (Core.input.hoveredCard && cardOnBoard.card === Core.input.hoveredCard.card) {
+				sprite.tint = 0xBBEEBB
+			}
+		}
 
 		hitboxSprite.alpha = sprite.alpha
 		hitboxSprite.position.copyFrom(sprite.position)

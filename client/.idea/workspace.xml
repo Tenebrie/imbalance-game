@@ -2,71 +2,51 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="365a96b8-392e-41f9-8067-3f2c0c3e3250" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/public/assets/board/boardRow.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/cards/spellMegaCardDrawer.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/cards/unitPostalRaven.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedCardOnBoard.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoard.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoardRow.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/shared/Constants.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/shared/enums/CardType.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/shared/models/CardOnBoardMessage.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/shared/models/GameStartMessage.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/cards/spells/UnitPostalRaven.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/libraries/game/ServerCardOnBoard.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/libraries/game/ServerGameBoardRow.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/shared/Constants.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/shared/enums/CardType.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/shared/models/CardOnBoardMessage.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/shared/models/GameStartMessage.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/src/Constants.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/src/enums/CardType.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/src/models/CardOnBoardMessage.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/src/models/GameStartMessage.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/cards/cardBack.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Pixi/enums/CardLocation.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Pixi/enums/TargetingMode.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Pixi/models/GrabbedCard.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Pixi/models/HoveredCard.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/shared/models/network/CardAttackOrderMessage.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/handlers/ConnectionEstablishedHandler.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingBoardUpdateMessages.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingChatUpdateMessages.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingGameStateMessages.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingHandUpdateMessages.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingSystemMessages.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/shared/models/network/CardAttackOrderMessage.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/src/models/network/CardAttackOrderMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/assets/cards/testcard.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/Core.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Core.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Input.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/MainHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/MainHandler.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Renderer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/enums/RenderedCardState.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/enums/RenderedCardState.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/enums/RenderedCardState.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/handlers/OutgoingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/handlers/OutgoingMessageHandlers.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedCard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/components/Pixi.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/Pixi.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/views/Home.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedCardOnBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedCardOnBoard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoardRow.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/shared/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/models/Card.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shared/models/CardOnBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/models/CardOnBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shared/models/GameBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/models/GameBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shared/models/GameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/models/GameBoardRow.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/shared/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/models/network/CardMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shared/models/network/CardPlayedMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/models/network/CardPlayedMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/shared/models/network/HiddenCardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/models/network/HiddenCardMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardDrawer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardDrawer.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardRevealer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardRevealer.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/handlers/IncomingMessageHandlers.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/handlers/OutgoingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/handlers/OutgoingMessageHandlers.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/libraries/game/ServerGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/game/ServerGame.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/libraries/game/ServerGameBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/game/ServerGameBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/libraries/players/ServerPlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/players/ServerPlayerInGame.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/libraries/game/ServerGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/game/ServerGameBoardRow.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/models/game/ServerCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/models/game/ServerCard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/models/game/ServerCardDeck.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/models/game/ServerCardDeck.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/routers/PlayRouter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/routers/PlayRouter.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/shared/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/shared/models/Card.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/shared/models/CardOnBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/shared/models/CardOnBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/shared/models/GameBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/shared/models/GameBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/shared/models/GameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/shared/models/GameBoardRow.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/shared/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/shared/models/network/CardMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/shared/models/network/CardPlayedMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/shared/models/network/CardPlayedMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/shared/models/network/HiddenCardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/shared/models/network/HiddenCardMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/src/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/Card.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/src/models/CardOnBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/CardOnBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/src/models/GameBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/GameBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/src/models/GameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/GameBoardRow.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/src/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/network/CardMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/src/models/network/CardPlayedMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/network/CardPlayedMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/src/models/network/HiddenCardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/network/HiddenCardMessage.ts" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -106,19 +86,19 @@
     <property name="ts.external.directory.path" value="W:\Workspace\notgwent-game\client\node_modules\typescript\lib" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\models" />
-      <recent name="W:\Workspace\notgwent-game\client\public\assets\cards" />
-      <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
-      <recent name="W:\Workspace\notgwent-game\client\src\shared\models" />
-      <recent name="W:\Workspace\notgwent-game\client\src\Vue\components" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi\handlers" />
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi\models" />
       <recent name="W:\Workspace\notgwent-game\client\src" />
       <recent name="W:\Workspace\notgwent-game\client\src\Vue\components" />
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\models" />
+      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\enums" />
+      <recent name="W:\Workspace\notgwent-game\client\public\assets\cards" />
+      <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
+      <recent name="W:\Workspace\notgwent-game\client\src\shared\models" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -148,6 +128,7 @@
       <workItem from="1578319218809" duration="29667000" />
       <workItem from="1578419841028" duration="11233000" />
       <workItem from="1578479274137" duration="26980000" />
+      <workItem from="1578565819990" duration="22637000" />
     </task>
     <servers />
   </component>
@@ -175,8 +156,6 @@
         <option value="$PROJECT_DIR$/src/Vue/store/index.js" />
         <option value="$PROJECT_DIR$/src/main.js" />
         <option value="$PROJECT_DIR$/src/main.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/enums/RenderedCardState.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/enums/RenderedCardState.js.map" />
         <option value="$PROJECT_DIR$/src/Pixi/models/RenderedCardOnBoard.js" />
         <option value="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoard.js" />
         <option value="$PROJECT_DIR$/src/Pixi/models/RenderedCardHand.js" />

@@ -1,15 +1,13 @@
 import uuidv4 from 'uuid/v4'
 import Game from '../../shared/models/Game'
-import ServerGameBoard from './ServerGameBoard'
 import Player from '../../shared/models/Player'
+import ServerGameBoard from './ServerGameBoard'
 import ServerPlayer from '../players/ServerPlayer'
 import ServerChatEntry from '../../models/ServerChatEntry'
+import VoidPlayerInGame from '../../utils/VoidPlayerInGame'
+import ServerCardDeck from '../../models/game/ServerCardDeck'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
-import PlayerInGame from '../../shared/models/PlayerInGame'
-import ServerCardDeck from '../../models/game/ServerCardDeck'
-import VoidPlayer from '../../utils/VoidPlayer'
-import VoidPlayerInGame from '../../utils/VoidPlayerInGame'
 
 export default class ServerGame extends Game {
 	owner: ServerPlayer
@@ -20,7 +18,7 @@ export default class ServerGame extends Game {
 	constructor(owner: ServerPlayer, name: string) {
 		super(uuidv4(), name)
 		this.owner = owner
-		this.board = new ServerGameBoard(this)
+		this.board = new ServerGameBoard()
 		this.players = []
 		this.chatHistory = []
 	}
@@ -30,7 +28,6 @@ export default class ServerGame extends Game {
 
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
 			OutgoingMessageHandlers.sendOpponent(playerInGame.player, serverPlayerInGame)
-			OutgoingMessageHandlers.notifyAboutPlayerConnected(playerInGame.player, targetPlayer)
 		})
 
 		this.players.push(serverPlayerInGame)
@@ -53,7 +50,7 @@ export default class ServerGame extends Game {
 
 		this.players.splice(this.players.indexOf(registeredPlayer), 1)
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
-			OutgoingMessageHandlers.notifyAboutPlayerDisconnected(playerInGame.player, targetPlayer)
+			// OutgoingMessageHandlers.notifyAboutPlayerDisconnected(playerInGame.player, targetPlayer)
 		})
 	}
 

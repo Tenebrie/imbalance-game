@@ -9,8 +9,15 @@ export default class RenderedCard extends Card {
 	sprite: PIXI.Sprite
 	hitboxSprite: PIXI.Sprite
 
-	constructor(id: string, cardType: CardType, cardClass: string) {
-		super(id, cardType, cardClass)
+	constructor(card: Card) {
+		super(card.id, card.cardType, card.cardClass)
+		this.attack = card.attack
+		this.health = card.health
+		this.initiative = card.initiative
+		this.baseAttack = card.baseAttack
+		this.baseHealth = card.baseHealth
+		this.baseInitiative = card.baseInitiative
+
 		this.sprite = this.createSprite()
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 		Core.registerCard(this)
@@ -59,10 +66,6 @@ export default class RenderedCard extends Card {
 	}
 
 	public static fromCard(card: Card): RenderedCard {
-		return new RenderedCard(card.id, card.cardType, card.cardClass)
-	}
-
-	public static fromMessage(message: CardMessage): RenderedCard {
-		return new RenderedCard(message.id, message.cardType, message.cardClass)
+		return new RenderedCard(card)
 	}
 }

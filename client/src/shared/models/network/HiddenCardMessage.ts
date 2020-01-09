@@ -9,7 +9,7 @@ export default class HiddenCardMessage {
 	constructor(card: Card) {
 		this.id = card.id
 		this.cardType = CardType.HIDDEN
-		this.cardClass = 'sw-спойлераст'
+		this.cardClass = 'cardBack'
 	}
 
 	static fromCard(card: Card): HiddenCardMessage {

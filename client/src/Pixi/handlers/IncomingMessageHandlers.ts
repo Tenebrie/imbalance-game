@@ -47,7 +47,19 @@ const handlers: {[ index: string ]: any } = {
 		Core.gameBoard.insertCard(card, data.rowIndex, data.unitIndex)
 	},
 
-	'update/cardsDrawn': (data: CardMessage[]) => {
+	'update/board/cardDestroyed': (data: CardMessage) => {
+		console.info('Unit destroyed', data.id)
+		Core.gameBoard.removeCardById(data.id)
+	},
+
+	'update/board/card/initiative': (data: CardMessage) => {
+		const cardOnBoard = Core.gameBoard.findCardById(data.id)
+		if (!cardOnBoard) { return }
+
+		cardOnBoard.card.initiative = data.initiative
+	},
+
+	'update/player/hand/cardDrawn': (data: CardMessage[]) => {
 		console.info('Cards drawn', data)
 		data.forEach(cardMessage => {
 			const card = Core.player.cardDeck.drawCardById(cardMessage.id)
@@ -57,7 +69,7 @@ const handlers: {[ index: string ]: any } = {
 		})
 	},
 
-	'update/opponentCardsDrawn': (data: HiddenCardMessage[]) => {
+	'update/opponent/hand/cardDrawn': (data: HiddenCardMessage[]) => {
 		data.forEach(cardMessage => {
 			const card = Core.opponent.cardDeck.drawCardById(cardMessage.id)
 			if (card) {

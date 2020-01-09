@@ -1,4 +1,5 @@
 import Core from '@/Pixi/Core'
+import Card from '@/shared/models/Card'
 import CardOnBoard from '@/shared/models/CardOnBoard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
@@ -15,8 +16,9 @@ export default class RenderedCardOnBoard extends CardOnBoard {
 	}
 
 	public static fromMessage(message: CardOnBoardMessage): RenderedCardOnBoard {
-		const card = RenderedCard.fromMessage(message.card)
+		const card = Card.fromMessage(message.card)
+		const renderedCard = RenderedCard.fromCard(card)
 		const owner = Core.getPlayer(message.owner.id)
-		return new RenderedCardOnBoard(card, owner)
+		return new RenderedCardOnBoard(renderedCard, owner)
 	}
 }
