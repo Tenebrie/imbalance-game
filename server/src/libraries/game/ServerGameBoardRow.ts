@@ -18,4 +18,15 @@ export default class ServerGameBoardRow {
 	public removeCard(targetCard: ServerCardOnBoard): void {
 		this.cards = this.cards.filter(cardOnBoard => cardOnBoard !== targetCard)
 	}
+
+	public findCardById(cardId: string): ServerCardOnBoard | null {
+		return this.cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
+	}
+
+	public removeCardById(cardId: string): void {
+		const cardOnBoard = this.findCardById(cardId)
+		if (!cardOnBoard) { return }
+
+		this.cards.splice(this.cards.indexOf(cardOnBoard), 1)
+	}
 }

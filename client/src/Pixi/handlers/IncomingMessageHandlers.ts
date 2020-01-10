@@ -66,15 +66,15 @@ const handlers: {[ index: string ]: any } = {
 		cardOnBoard.card.initiative = data.initiative
 	},
 
-	'update/player/timeUnits': (data: PlayerInGameMessage) => {
-		const playerInGame = Core.getPlayer(data.player.id)
-		if (!playerInGame) {
-			return
-		}
-		playerInGame.timeUnits = data.timeUnits
+	'update/player/self/timeUnits': (data: PlayerInGameMessage) => {
+		Core.player.timeUnits = data.timeUnits
 	},
 
-	'update/player/hand/cardDrawn': (data: CardMessage[]) => {
+	'update/player/opponent/timeUnits': (data: PlayerInGameMessage) => {
+		Core.opponent.timeUnits = data.timeUnits
+	},
+
+	'update/player/self/hand/cardDrawn': (data: CardMessage[]) => {
 		console.info('Cards drawn', data)
 		data.forEach(cardMessage => {
 			const card = Core.player.cardDeck.drawCardById(cardMessage.id)
@@ -84,7 +84,7 @@ const handlers: {[ index: string ]: any } = {
 		})
 	},
 
-	'update/opponent/hand/cardDrawn': (data: HiddenCardMessage[]) => {
+	'update/player/opponent/hand/cardDrawn': (data: HiddenCardMessage[]) => {
 		data.forEach(cardMessage => {
 			const card = Core.opponent.cardDeck.drawCardById(cardMessage.id)
 			if (card) {
@@ -93,18 +93,18 @@ const handlers: {[ index: string ]: any } = {
 		})
 	},
 
-	'update/opponent/hand/cardRevealed': (data: CardMessage) => {
+	'update/player/opponent/hand/cardRevealed': (data: CardMessage) => {
 		const card = Core.opponent.cardHand.getCardById(data.id)
 		if (card) {
 			card.reveal(data.cardType, data.cardClass)
 		}
 	},
 
-	'update/player/hand/cardDestroyed': (data: CardMessage) => {
+	'update/player/self/hand/cardDestroyed': (data: CardMessage) => {
 		Core.player.cardHand.removeCardById(data.id)
 	},
 
-	'update/opponent/hand/cardDestroyed': (data: CardMessage) => {
+	'update/player/opponent/hand/cardDestroyed': (data: CardMessage) => {
 		Core.opponent.cardHand.removeCardById(data.id)
 	}
 }

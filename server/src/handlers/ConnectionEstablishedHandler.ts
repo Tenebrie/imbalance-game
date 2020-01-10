@@ -11,5 +11,8 @@ export default {
 		OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, game.players.length === 2)
 		OutgoingMessageHandlers.sendBoardState(playerInGame.player, game)
 		playerInGame.drawCards(game, 5)
+
+		const opponent = game.getOpponent(playerInGame)
+		OutgoingMessageHandlers.sendBoardState(opponent.player, game)
 	}
 }

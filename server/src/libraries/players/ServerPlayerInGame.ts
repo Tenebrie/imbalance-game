@@ -93,7 +93,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 
 	private setTimeUnits(timeUnits: number): void {
 		this.timeUnits = timeUnits
-		OutgoingMessageHandlers.notifyAboutTimeBankChange(this.player, this)
+		OutgoingMessageHandlers.notifyAboutPlayerTimeBankChange(this.player, this)
 	}
 
 	static newInstance(player: ServerPlayer, cardDeck: ServerCardDeck) {

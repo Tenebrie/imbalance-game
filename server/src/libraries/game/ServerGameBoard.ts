@@ -23,6 +23,16 @@ export default class ServerGameBoard extends GameBoard {
 		return cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
 	}
 
+	public removeCardById(cardId: string): void {
+		const rowWithCard = this.rows.find(row => !!row.cards.find(cardOnBoard => cardOnBoard.card.id === cardId))
+		if (!rowWithCard) {
+			console.error(`No row includes card ${cardId}`)
+			return
+		}
+
+		rowWithCard.removeCardById(cardId)
+	}
+
 	public getAllCards() {
 		return this.rows.map(row => row.cards).flat()
 	}
@@ -44,17 +54,24 @@ export default class ServerGameBoard extends GameBoard {
 
 	public releaseQueuedAttacks(game: ServerGame): void {
 		this.queuedAttacks.forEach(queuedAttack => {
+			queuedAttack.attacker.card.onBeforePerformingAttack(game, queuedAttack.attacker)
+			queuedAttack.target.card.onBeforeBeingAttacked(game, queuedAttack.target)
+		})
+		this.queuedAttacks.forEach(queuedAttack => {
 			this.performCardAttack(game, queuedAttack.attacker, queuedAttack.target)
 		})
+		const survivingAttackers = this.queuedAttacks.map(queuedAttack => queuedAttack.attacker).filter(cardOnBoard => cardOnBoard.card.health > 0)
+		const survivingTargets = this.queuedAttacks.map(queuedAttack => queuedAttack.target).filter(cardOnBoard => cardOnBoard.card.health > 0)
+		survivingAttackers.forEach(attacker => attacker.card.onAfterPerformingAttack(game, attacker))
+		survivingTargets.forEach(target => target.card.onAfterBeingAttacked(game, target))
 		this.queuedAttacks = []
 	}
 
 	public performCardAttack(game: ServerGame, cardOnBoard: ServerCardOnBoard, targetOnBoard: ServerCardOnBoard): void {
 		const damage = cardOnBoard.card.attack
-		targetOnBoard.card.dealDamage(game, targetOnBoard.owner, damage)
-		if (targetOnBoard.card.health <= 0) {
-			targetOnBoard.card.destroy(game, targetOnBoard.owner)
-		}
 		cardOnBoard.card.setInitiative(game, cardOnBoard.owner, cardOnBoard.card.baseInitiative)
+		targetOnBoard.card.dealDamage(game, targetOnBoard.owner, damage)
 	}
+
+
 }

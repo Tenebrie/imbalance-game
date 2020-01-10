@@ -14,12 +14,17 @@ export default class ServerCard extends Card {
 	}
 
 	dealDamage(game: ServerGame, owner: ServerPlayerInGame, damage: number): void {
-		this.onBeforeDamage(game, owner, damage)
+		this.onBeforeDamageTaken(game, owner, damage)
 		this.health -= damage
-		this.onAfterDamage(game, owner, damage)
+		this.onAfterDamageTaken(game, owner, damage)
 		game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutCardHealthChange(playerInGame.player, this)
 		})
+		if (this.health <= 0) {
+			this.destroy(game, owner)
+		} else {
+			this.onDamageSurvived(game, owner, damage)
+		}
 	}
 
 	setInitiative(game: ServerGame, owner: ServerPlayerInGame, value: number): void {
@@ -41,6 +46,7 @@ export default class ServerCard extends Card {
 
 	destroy(game: ServerGame, owner: ServerPlayerInGame): void {
 		this.onDestroy(game, owner)
+		game.board.removeCardById(this.id)
 		game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitDestroyed(playerInGame.player, this)
 		})
@@ -48,8 +54,13 @@ export default class ServerCard extends Card {
 
 	onPlayUnit(game: ServerGame, cardOnBoard: ServerCardOnBoard): void { return }
 	onPlaySpell(game: ServerGame, owner: ServerPlayerInGame): void { return }
-	onBeforeDamage(game: ServerGame, owner: ServerPlayerInGame, damage: number): void { return }
-	onAfterDamage(game: ServerGame, owner: ServerPlayerInGame, damage: number): void { return }
+	onBeforeDamageTaken(game: ServerGame, owner: ServerPlayerInGame, damage: number): void { return }
+	onAfterDamageTaken(game: ServerGame, owner: ServerPlayerInGame, damage: number): void { return }
+	onDamageSurvived(game: ServerGame, owner: ServerPlayerInGame, damage: number): void { return }
+	onBeforePerformingAttack(game: ServerGame, cardOnBoard: ServerCardOnBoard): void { return }
+	onAfterPerformingAttack(game: ServerGame, cardOnBoard: ServerCardOnBoard): void { return }
+	onBeforeBeingAttacked(game: ServerGame, cardOnBoard: ServerCardOnBoard): void { return }
+	onAfterBeingAttacked(game: ServerGame, cardOnBoard: ServerCardOnBoard): void { return }
 	onReveal(game: ServerGame, owner: ServerPlayerInGame): void { return }
 	onDestroy(game: ServerGame, owner: ServerPlayerInGame): void { return }
 
