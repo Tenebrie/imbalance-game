@@ -11,7 +11,7 @@ export default {
 	},
 
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number) {
-		const rowIndex = Core.gameBoard.rows.indexOf(gameBoardRow)
+		const rowIndex = Core.board.rows.indexOf(gameBoardRow)
 		Core.sendMessage('post/playCard', CardPlayedMessage.fromCardOnRow(card, rowIndex, unitIndex))
 	},
 

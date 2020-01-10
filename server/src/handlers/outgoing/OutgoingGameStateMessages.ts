@@ -5,6 +5,7 @@ import CardOnBoardMessage from '../../shared/models/CardOnBoardMessage'
 import CardDeckMessage from '../../shared/models/network/CardDeckMessage'
 import ServerPlayerInGame from '../../libraries/players/ServerPlayerInGame'
 import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
+import PlayerMessage from "../../shared/models/network/PlayerMessage";
 
 export default {
 	notifyAboutGameStart(player: ServerPlayer, isBoardInverted: boolean) {
@@ -44,5 +45,5 @@ export default {
 			type: 'gameState/board',
 			data: cardMessages
 		})
-	},
+	}
 }

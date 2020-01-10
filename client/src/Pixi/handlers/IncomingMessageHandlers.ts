@@ -8,13 +8,14 @@ import CardOnBoardMessage from '@/shared/models/CardOnBoardMessage'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import CardHandMessage from '@/shared/models/network/CardHandMessage'
 import CardDeckMessage from '@/shared/models/network/CardDeckMessage'
+import GameTimeMessage from '@/shared/models/network/GameTimeMessage'
 import ChatEntryMessage from '@/shared/models/network/ChatEntryMessage'
 import HiddenCardMessage from '@/shared/models/network/HiddenCardMessage'
 import PlayerInGameMessage from '@/shared/models/network/PlayerInGameMessage'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
-		Core.gameBoard.setInverted(data.isBoardInverted)
+		Core.board.setInverted(data.isBoardInverted)
 	},
 
 	'gameState/chat': (data: ChatEntryMessage) => {
@@ -37,26 +38,40 @@ const handlers: {[ index: string ]: any } = {
 	'gameState/board': (data: CardOnBoardMessage[]) => {
 		data.forEach(message => {
 			const card = RenderedCardOnBoard.fromMessage(message)
-			Core.gameBoard.insertCard(card, message.rowIndex, message.unitIndex)
+			Core.board.insertCard(card, message.rowIndex, message.unitIndex)
 		})
+	},
+
+	'update/game/time': (data: GameTimeMessage) => {
+		console.log(`Advancing time to ${data.currentTime}/${data.maximumTime}`)
+		Core.game.currentTime = data.currentTime
+		Core.game.maximumTime = data.maximumTime
 	},
 
 	'update/board/cardCreated': (data: CardOnBoardMessage) => {
 		console.info('Unit created', data)
 		const card = RenderedCardOnBoard.fromMessage(data)
-		Core.gameBoard.insertCard(card, data.rowIndex, data.unitIndex)
+		Core.board.insertCard(card, data.rowIndex, data.unitIndex)
 	},
 
 	'update/board/cardDestroyed': (data: CardMessage) => {
 		console.info('Unit destroyed', data.id)
-		Core.gameBoard.removeCardById(data.id)
+		Core.board.removeCardById(data.id)
 	},
 
 	'update/board/card/initiative': (data: CardMessage) => {
-		const cardOnBoard = Core.gameBoard.findCardById(data.id)
+		const cardOnBoard = Core.board.findCardById(data.id)
 		if (!cardOnBoard) { return }
 
 		cardOnBoard.card.initiative = data.initiative
+	},
+
+	'update/player/timeUnits': (data: PlayerInGameMessage) => {
+		const playerInGame = Core.getPlayer(data.player.id)
+		if (!playerInGame) {
+			return
+		}
+		playerInGame.timeUnits = data.timeUnits
 	},
 
 	'update/player/hand/cardDrawn': (data: CardMessage[]) => {

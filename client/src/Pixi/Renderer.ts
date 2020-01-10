@@ -22,7 +22,7 @@ export default class Renderer {
 		this.pixi.stage.sortableChildren = true
 		container.appendChild(this.pixi.view)
 		this.container = container
-		this.timeLabel = new PIXI.Text('Time of day: 12:00 (Not moving yet)', {
+		this.timeLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
 			fontSize: 24,
 			fill: 0xFFFFFF
@@ -56,7 +56,8 @@ export default class Renderer {
 			})
 		}
 
-		this.renderGameBoard(Core.gameBoard)
+		this.renderTimeOfDay()
+		this.renderGameBoard(Core.board)
 	}
 
 	public registerCard(card: RenderedCard): void {
@@ -157,6 +158,10 @@ export default class Renderer {
 		this.renderSpriteInHand(sprite, handPosition, handSize, true)
 		this.renderSpriteInHand(hitboxSprite, handPosition, handSize, true)
 		hitboxSprite.zIndex -= 1
+	}
+
+	public renderTimeOfDay(): void {
+		this.timeLabel.text = `Time of day: ${Core.game.currentTime}/${Core.game.maximumTime}`
 	}
 
 	public renderGameBoard(gameBoard: RenderedGameBoard): void {

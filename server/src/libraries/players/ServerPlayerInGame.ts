@@ -11,6 +11,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	cardHand: ServerCardHand
 	cardDeck: ServerCardDeck
 	rowsOwned: number
+	timeUnits: number
 
 	constructor(player: ServerPlayer, cardDeck: ServerCardDeck) {
 		super(player)
@@ -18,20 +19,30 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.cardHand = new ServerCardHand(this.player, [])
 		this.cardDeck = cardDeck
 		this.rowsOwned = 0
+		this.timeUnits = 0
+	}
+
+	public canPlayCard(card: ServerCard): boolean {
+		return this.timeUnits > 0
 	}
 
 	public playUnit(game: ServerGame, card: ServerCard, rowIndex: number, unitIndex: number): void {
 		const gameBoardRow = game.board.rows[rowIndex]
 		if (gameBoardRow.cards.length >= 10) { return }
 
-		game.board.advanceCardInitiative(game, this)
-
+		/* Remove card from hand */
 		this.cardHand.removeCard(card)
 
+		/* Insert the card into the board */
 		const cardOnBoard = gameBoardRow.insertCard(card, this, unitIndex)
 
+		/* Invoke the card onPlay effect */
 		card.onPlayUnit(game, cardOnBoard)
 
+		/* Advance the time */
+		this.setTimeUnits(this.timeUnits - 1)
+
+		/* Send notifications */
 		const opponent = game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
@@ -41,12 +52,16 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	}
 
 	public playSpell(game: ServerGame, card: ServerCard): void {
-		game.board.advanceCardInitiative(game, this)
-
+		/* Remove card from hand */
 		this.cardHand.removeCard(card)
 
+		/* Invoke the card onPlay effect */
 		card.onPlaySpell(game, this)
 
+		/* Advance the time */
+		this.setTimeUnits(this.timeUnits - 1)
+
+		/* Send notifications */
 		const opponent = game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
@@ -70,6 +85,15 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		if (opponent) {
 			OutgoingMessageHandlers.notifyAboutOpponentCardsDrawn(opponent.player, cards)
 		}
+	}
+
+	public advanceTime(): void {
+		this.setTimeUnits(this.timeUnits + 1)
+	}
+
+	private setTimeUnits(timeUnits: number): void {
+		this.timeUnits = timeUnits
+		OutgoingMessageHandlers.notifyAboutTimeBankChange(this.player, this)
 	}
 
 	static newInstance(player: ServerPlayer, cardDeck: ServerCardDeck) {

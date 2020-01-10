@@ -3,15 +3,16 @@ import Constants from '../../shared/Constants'
 import ServerCardOnBoard from './ServerCardOnBoard'
 import GameBoard from '../../shared/models/GameBoard'
 import ServerGameBoardRow from './ServerGameBoardRow'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
+import QueuedCardAttack from '../../models/game/QueuedCardAttack'
 
 export default class ServerGameBoard extends GameBoard {
-	rows: ServerGameBoardRow[]
+	public rows: ServerGameBoardRow[]
+	public queuedAttacks: QueuedCardAttack[]
 
 	constructor() {
 		super()
 		this.rows = []
+		this.queuedAttacks = []
 		for (let i = 0; i < Constants.GAME_BOARD_ROW_COUNT; i++) {
 			this.rows.push(new ServerGameBoardRow())
 		}
@@ -26,13 +27,26 @@ export default class ServerGameBoard extends GameBoard {
 		return this.rows.map(row => row.cards).flat()
 	}
 
-	public advanceCardInitiative(game: ServerGame, targetPlayer: ServerPlayerInGame): void {
-		const cards = this.getAllCards().filter(cardOnBoard => cardOnBoard.owner === targetPlayer).filter(cardOnBoard => cardOnBoard.card.initiative > 0)
+	public advanceCardInitiative(game: ServerGame): void {
+		const cards = this.getAllCards().filter(cardOnBoard => cardOnBoard.card.initiative > 0)
 		cards.forEach(cardOnBoard => {
 			const card = cardOnBoard.card
 			const owner = cardOnBoard.owner
 			card.setInitiative(game, owner, card.initiative - 1)
 		})
+	}
+
+	public queueCardAttack(attacker: ServerCardOnBoard, target: ServerCardOnBoard): void {
+		const queuedAttack = new QueuedCardAttack(attacker, target)
+		this.queuedAttacks = this.queuedAttacks.filter(queuedAttack => queuedAttack.attacker !== attacker)
+		this.queuedAttacks.push(queuedAttack)
+	}
+
+	public releaseQueuedAttacks(game: ServerGame): void {
+		this.queuedAttacks.forEach(queuedAttack => {
+			this.performCardAttack(game, queuedAttack.attacker, queuedAttack.target)
+		})
+		this.queuedAttacks = []
 	}
 
 	public performCardAttack(game: ServerGame, cardOnBoard: ServerCardOnBoard, targetOnBoard: ServerCardOnBoard): void {

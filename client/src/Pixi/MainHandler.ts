@@ -15,7 +15,7 @@ export default class MainHandler {
 	}
 
 	private static tickCardHover(): void {
-		const gameBoardCards = Core.gameBoard.rows.map(row => row.cards).flat()
+		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
 		const playerHandCards = Core.player.cardHand.cards.slice().reverse()
 
 		let hoveredCard: HoveredCard | null = null

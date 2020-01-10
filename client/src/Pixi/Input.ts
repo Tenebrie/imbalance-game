@@ -74,7 +74,7 @@ export default class Input {
 	}
 
 	private onCardPlay(card: RenderedCard): void {
-		const hoveredRow = Core.gameBoard.rows.find(row => row.isHovered(this.mousePosition))
+		const hoveredRow = Core.board.rows.find(row => row.isHovered(this.mousePosition))
 		if (!hoveredRow) { return }
 
 		if (card.cardType === CardType.SPELL) {

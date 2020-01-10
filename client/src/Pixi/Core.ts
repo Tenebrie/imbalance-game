@@ -2,6 +2,7 @@ import store from '@/Vue/store'
 import Input from '@/Pixi/Input'
 import Renderer from '@/Pixi/Renderer'
 import MainHandler from '@/Pixi/MainHandler'
+import ClientGame from '@/Pixi/models/ClientGame'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
@@ -10,12 +11,13 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 
 export default class Core {
 	public static input: Input
+	public static socket: WebSocket
 	public static renderer: Renderer
 	public static mainHandler: MainHandler
-	public static socket: WebSocket
 	public static keepaliveTimer: number
 
-	public static gameBoard: RenderedGameBoard
+	public static game: ClientGame
+	public static board: RenderedGameBoard
 	public static player: ClientPlayerInGame
 	public static opponent: ClientPlayerInGame
 
@@ -36,9 +38,10 @@ export default class Core {
 			OutgoingMessageHandlers.sendKeepalive()
 		}, 30000)
 
+		Core.game = new ClientGame()
 		Core.input = new Input()
 		Core.mainHandler = MainHandler.start()
-		Core.gameBoard = new RenderedGameBoard()
+		Core.board = new RenderedGameBoard()
 	}
 
 	private static onMessage(event: MessageEvent): void {
