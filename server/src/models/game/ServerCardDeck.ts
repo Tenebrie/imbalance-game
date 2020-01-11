@@ -1,16 +1,19 @@
 import ServerCard from './ServerCard'
-import CardType from '../../shared/enums/CardType'
 import CardDeck from '../../shared/models/CardDeck'
+import HeroSatia from '../../cards/heroes/HeroSatia'
+import UnitPostalRaven from '../../cards/units/UnitPostalRaven'
 import ServerGame from '../../libraries/game/ServerGame'
-import SpellCardDrawer from '../../cards/spells/SpellCardDrawer'
-import SpellCardRevealer from '../../cards/spells/SpellCardRevealer'
-import UnitPostalRaven from '../../cards/spells/UnitPostalRaven'
+import UnitBlackWolf from '../../cards/units/UnitBlackWolf'
+import UnitPossessedVulture from '../../cards/units/UnitPossessedVulture'
+import UnitRagingBear from '../../cards/units/UnitRagingBear'
 
 export default class ServerCardDeck extends CardDeck {
+	game: ServerGame
 	cards: ServerCard[]
 
-	constructor(cards: ServerCard[]) {
+	constructor(game: ServerGame, cards: ServerCard[]) {
 		super(cards)
+		this.game = game
 		this.cards = cards
 	}
 
@@ -18,7 +21,7 @@ export default class ServerCardDeck extends CardDeck {
 		this.cards.push(card)
 	}
 
-	public drawCard(game: ServerGame): ServerCard {
+	public drawCard(): ServerCard {
 		return this.cards.pop()
 	}
 
@@ -34,17 +37,25 @@ export default class ServerCardDeck extends CardDeck {
 		}
 	}
 
-	static emptyDeck(): ServerCardDeck {
-		return new ServerCardDeck([])
+	static emptyDeck(game: ServerGame): ServerCardDeck {
+		return new ServerCardDeck(game, [])
 	}
 
-	static defaultDeck(): ServerCardDeck {
-		const deck = new ServerCardDeck([])
+	static defaultDeck(game: ServerGame): ServerCardDeck {
+		const deck = new ServerCardDeck(game, [])
 
-		deck.addCard(new SpellCardDrawer())
-		deck.addCard(new SpellCardRevealer())
-		for (let i = 0; i < 10; i++) {
-			deck.addCard(new UnitPostalRaven())
+		deck.addCard(new HeroSatia(game))
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(new UnitPostalRaven(game))
+		}
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(new UnitBlackWolf(game))
+		}
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(new UnitPossessedVulture(game))
+		}
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(new UnitRagingBear(game))
 		}
 
 		deck.shuffle()

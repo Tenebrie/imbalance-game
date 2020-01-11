@@ -3,9 +3,9 @@ import Game from '../../shared/models/Game'
 import Player from '../../shared/models/Player'
 import ServerGameBoard from './ServerGameBoard'
 import ServerPlayer from '../players/ServerPlayer'
-import GameTurnPhase from '../../enums/GameTurnPhase'
 import ServerChatEntry from '../../models/ServerChatEntry'
 import VoidPlayerInGame from '../../utils/VoidPlayerInGame'
+import GameTurnPhase from '../../shared/enums/GameTurnPhase'
 import ServerCardDeck from '../../models/game/ServerCardDeck'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
@@ -25,13 +25,13 @@ export default class ServerGame extends Game {
 		this.currentTime = 0
 		this.turnPhase = GameTurnPhase.DEPLOY
 		this.owner = owner
-		this.board = new ServerGameBoard()
+		this.board = new ServerGameBoard(this)
 		this.players = []
 		this.chatHistory = []
 	}
 
 	public addPlayer(targetPlayer: ServerPlayer, deck: ServerCardDeck): ServerPlayerInGame {
-		const serverPlayerInGame = ServerPlayerInGame.newInstance(targetPlayer, deck)
+		const serverPlayerInGame = ServerPlayerInGame.newInstance(this, targetPlayer, deck)
 
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
 			OutgoingMessageHandlers.sendOpponent(playerInGame.player, serverPlayerInGame)
@@ -46,7 +46,7 @@ export default class ServerGame extends Game {
 	}
 
 	public getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
-		return this.players.find(otherPlayer => otherPlayer !== player) || VoidPlayerInGame.get()
+		return this.players.find(otherPlayer => otherPlayer !== player) || VoidPlayerInGame.for(this)
 	}
 
 	public removePlayer(targetPlayer: ServerPlayer): void {
@@ -84,14 +84,14 @@ export default class ServerGame extends Game {
 	public advanceToCombatPhase(): void {
 		this.setTurnPhase(GameTurnPhase.COMBAT)
 
-		this.board.advanceCardInitiative(this)
+		this.board.advanceCardInitiative()
 	}
 
 	public isUnitsFinishedAttacking(): boolean {
 		const allCards = this.board.getAllCards()
 		const attackingCards = this.board.queuedAttacks.map(queuedAttack => queuedAttack.attacker)
 		const cardsCanAttack = allCards
-			.filter(cardOnBoard => cardOnBoard.canAttackAnyTarget(this))
+			.filter(cardOnBoard => cardOnBoard.canAttackAnyTarget())
 			.filter(cardOnBoard => !attackingCards.includes(cardOnBoard))
 		return cardsCanAttack.length === 0
 	}
@@ -99,7 +99,7 @@ export default class ServerGame extends Game {
 	public advanceToDeployPhase(): void {
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
 
-		this.board.releaseQueuedAttacks(this)
+		this.board.releaseQueuedAttacks()
 
 		this.currentTime += 1
 

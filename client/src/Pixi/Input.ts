@@ -11,9 +11,10 @@ import Point = PIXI.Point
 
 export default class Input {
 	mouseDown: boolean = false
-	mousePosition: Point = new Point(-1000, -10000)
+	mousePosition: Point = new Point(-10000, -10000)
 	hoveredCard: HoveredCard | null = null
 	grabbedCard: GrabbedCard | null = null
+	inspectedCard: RenderedCard | null = null
 
 	constructor() {
 		const view = Core.renderer.pixi.view
@@ -29,20 +30,55 @@ export default class Input {
 		view.addEventListener('mousemove', (event: MouseEvent) => {
 			this.onMouseMove(event)
 		})
+
+		view.addEventListener('contextmenu', (event: MouseEvent) => {
+			event.preventDefault()
+			return false
+		})
+	}
+
+	public updateCardHoverStatus() {
+		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
+		const playerHandCards = Core.player.cardHand.cards.slice().reverse()
+
+		let hoveredCard: HoveredCard | null = null
+
+		const hoveredCardOnBoard = gameBoardCards.find(cardOnBoard => cardOnBoard.card.isHovered(this.mousePosition)) || null
+		if (hoveredCardOnBoard) {
+			hoveredCard = HoveredCard.fromCardOnBoard(hoveredCardOnBoard)
+		}
+
+		const hoveredCardInHand = playerHandCards.find(card => card.isHovered(this.mousePosition)) || null
+		if (hoveredCardInHand) {
+			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInHand, Core.player)
+		}
+
+		this.hoveredCard = hoveredCard
 	}
 
 	private onMouseDown(event: MouseEvent) {
-		// if (event.button !== 0) { return }
+		if (event.button !== 0) {
+			return
+		}
 
 		this.mouseDown = true
 		this.grabCard()
 	}
 
 	private onMouseUp(event: MouseEvent) {
-		// if (event.button !== 0) { return }
+		if (this.inspectedCard) {
+			this.inspectedCard = null
+			return
+		}
 
-		this.mouseDown = false
-		this.releaseCard()
+		if (event.button === 2 && this.hoveredCard) {
+			this.inspectedCard = this.hoveredCard.card
+		}
+
+		if (event.button === 0) {
+			this.mouseDown = false
+			this.useGrabbedCard()
+		}
 	}
 
 	public grabCard(): void {
@@ -57,18 +93,25 @@ export default class Input {
 		} else {
 			return
 		}
+
 		this.grabbedCard = new GrabbedCard(hoveredCard.card, targeting)
 	}
 
-	public releaseCard(): void {
+	public useGrabbedCard(): void {
 		if (!this.grabbedCard) { return }
 
-		if (this.grabbedCard.targeting === TargetingMode.CARD_PLAY) {
+		if (this.grabbedCard.targetingMode === TargetingMode.CARD_PLAY) {
 			this.onCardPlay(this.grabbedCard.card)
-		} else if (this.grabbedCard.targeting === TargetingMode.CARD_ATTACK) {
+		} else if (this.grabbedCard.targetingMode === TargetingMode.CARD_ATTACK) {
 			this.onCardAttack(this.grabbedCard.card)
 		}
 
+		this.releaseCard()
+	}
+
+	public releaseCard(): void {
+		const grabbedCard = this.grabbedCard!
+		grabbedCard.targetingArrow.destroy()
 		this.hoveredCard = null
 		this.grabbedCard = null
 	}
@@ -97,6 +140,11 @@ export default class Input {
 		const view = Core.renderer.pixi.view
 		const clientRect = view.getBoundingClientRect()
 		this.mousePosition = new Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
+
+		const windowHeight = Core.renderer.pixi.view.height
+		if (this.grabbedCard && this.grabbedCard.targetingMode === TargetingMode.CARD_PLAY && Core.player.timeUnits === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {
+			this.releaseCard()
+		}
 	}
 
 	public clear() {

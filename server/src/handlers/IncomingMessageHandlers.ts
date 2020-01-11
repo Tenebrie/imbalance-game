@@ -1,6 +1,6 @@
 import CardType from '../shared/enums/CardType'
-import GameTurnPhase from '../enums/GameTurnPhase'
 import ServerGame from '../libraries/game/ServerGame'
+import GameTurnPhase from '../shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../libraries/players/ServerPlayerInGame'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
 import CardAttackOrderMessage from '../shared/models/network/CardAttackOrderMessage'

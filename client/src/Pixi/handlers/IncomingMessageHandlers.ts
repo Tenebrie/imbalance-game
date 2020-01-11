@@ -12,6 +12,7 @@ import GameTimeMessage from '@/shared/models/network/GameTimeMessage'
 import ChatEntryMessage from '@/shared/models/network/ChatEntryMessage'
 import HiddenCardMessage from '@/shared/models/network/HiddenCardMessage'
 import PlayerInGameMessage from '@/shared/models/network/PlayerInGameMessage'
+import GameTurnPhase from '@/shared/enums/GameTurnPhase'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -36,10 +37,15 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'gameState/board': (data: CardOnBoardMessage[]) => {
+		Core.board.clearBoard()
 		data.forEach(message => {
 			const card = RenderedCardOnBoard.fromMessage(message)
 			Core.board.insertCard(card, message.rowIndex, message.unitIndex)
 		})
+	},
+
+	'update/game/phase': (data: GameTurnPhase) => {
+		Core.game.turnPhase = data
 	},
 
 	'update/game/time': (data: GameTimeMessage) => {

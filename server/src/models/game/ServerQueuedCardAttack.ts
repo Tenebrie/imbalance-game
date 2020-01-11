@@ -1,6 +1,6 @@
 import ServerCardOnBoard from '../../libraries/game/ServerCardOnBoard'
 
-export default class QueuedCardAttack {
+export default class ServerQueuedCardAttack {
 	attacker: ServerCardOnBoard
 	target: ServerCardOnBoard
 

@@ -39,6 +39,13 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 		cardOnBoard.card.unregister()
 	}
 
+	public clearRow(): void {
+		this.cards.forEach(cardOnBoard => {
+			Core.unregisterCard(cardOnBoard.card)
+		})
+		this.cards = []
+	}
+
 	public isHovered(mousePosition: Point): boolean {
 		return this.sprite.containsPoint(mousePosition)
 	}

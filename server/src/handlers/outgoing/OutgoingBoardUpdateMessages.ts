@@ -12,10 +12,10 @@ export default {
 		})
 	},
 
-	notifyAboutUnitDestroyed(player: ServerPlayer, card: ServerCard) {
+	notifyAboutUnitDestroyed(player: ServerPlayer, cardOnBoard: ServerCardOnBoard) {
 		player.sendMessage({
 			type: 'update/board/cardDestroyed',
-			data: CardMessage.fromCard(card)
+			data: CardMessage.fromCard(cardOnBoard.card)
 		})
 	},
 

@@ -5,16 +5,19 @@ import PlayerInGame from '../../shared/models/PlayerInGame'
 import ServerCardHand from '../../models/game/ServerCardHand'
 import ServerCardDeck from '../../models/game/ServerCardDeck'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
+import runCardEventHandler from '../../utils/runCardEventHandler'
 
 export default class ServerPlayerInGame extends PlayerInGame {
+	game: ServerGame
 	player: ServerPlayer
 	cardHand: ServerCardHand
 	cardDeck: ServerCardDeck
 	rowsOwned: number
 	timeUnits: number
 
-	constructor(player: ServerPlayer, cardDeck: ServerCardDeck) {
+	constructor(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
 		super(player)
+		this.game = game
 		this.player = player
 		this.cardHand = new ServerCardHand(this.player, [])
 		this.cardDeck = cardDeck
@@ -34,10 +37,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.cardHand.removeCard(card)
 
 		/* Insert the card into the board */
-		const cardOnBoard = gameBoardRow.insertCard(card, this, unitIndex)
-
-		/* Invoke the card onPlay effect */
-		card.onPlayUnit(game, cardOnBoard)
+		gameBoardRow.playCard(card, this, unitIndex)
 
 		/* Advance the time */
 		this.setTimeUnits(this.timeUnits - 1)
@@ -46,9 +46,6 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		const opponent = game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
-
-		OutgoingMessageHandlers.notifyAboutUnitCreated(this.player, cardOnBoard, rowIndex, unitIndex)
-		OutgoingMessageHandlers.notifyAboutUnitCreated(opponent.player, cardOnBoard, rowIndex, unitIndex)
 	}
 
 	public playSpell(game: ServerGame, card: ServerCard): void {
@@ -56,7 +53,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.cardHand.removeCard(card)
 
 		/* Invoke the card onPlay effect */
-		card.onPlaySpell(game, this)
+		runCardEventHandler(() => card.onPlaySpell(this))
 
 		/* Advance the time */
 		this.setTimeUnits(this.timeUnits - 1)
@@ -67,21 +64,21 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
 	}
 
-	public drawCards(game: ServerGame, count: number): void {
+	public drawCards(count: number): void {
 		const cards: ServerCard[] = []
 		for (let i = 0; i < count; i++) {
-			const card = this.cardDeck.drawCard(game)
+			const card = this.cardDeck.drawCard()
 			if (!card) {
 				// TODO: Fatigue damage?
 				continue
 			}
 
-			this.cardHand.drawCard(card, game)
+			this.cardHand.drawCard(card)
 			cards.push(card)
 		}
 
 		OutgoingMessageHandlers.notifyAboutCardsDrawn(this.player, cards)
-		const opponent = game.players.find(playerInGame => playerInGame.player !== this.player)
+		const opponent = this.game.players.find(playerInGame => playerInGame.player !== this.player)
 		if (opponent) {
 			OutgoingMessageHandlers.notifyAboutOpponentCardsDrawn(opponent.player, cards)
 		}
@@ -93,10 +90,12 @@ export default class ServerPlayerInGame extends PlayerInGame {
 
 	private setTimeUnits(timeUnits: number): void {
 		this.timeUnits = timeUnits
+		const opponent = this.game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerTimeBankChange(this.player, this)
+		OutgoingMessageHandlers.notifyAboutOpponentTimeBankChange(opponent.player, this)
 	}
 
-	static newInstance(player: ServerPlayer, cardDeck: ServerCardDeck) {
-		return new ServerPlayerInGame(player, cardDeck)
+	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
+		return new ServerPlayerInGame(game, player, cardDeck)
 	}
 }

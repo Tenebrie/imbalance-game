@@ -1,5 +1,4 @@
 import ServerCard from './ServerCard'
-import ServerGame from '../../libraries/game/ServerGame'
 import ServerPlayer from '../../libraries/players/ServerPlayer'
 
 export default class ServerCardHand {
@@ -15,7 +14,7 @@ export default class ServerCardHand {
 		this.cards.push(card)
 	}
 
-	public drawCard(card: ServerCard, game: ServerGame): void {
+	public drawCard(card: ServerCard): void {
 		this.addCard(card)
 	}
 

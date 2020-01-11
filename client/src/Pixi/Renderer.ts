@@ -2,14 +2,18 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@/shared/Constants'
 import RenderedCard from '@/Pixi/models/RenderedCard'
+import { TargetingMode } from '@/Pixi/enums/TargetingMode'
 import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
+import GameTurnPhase from '@/shared/enums/GameTurnPhase'
 
 export default class Renderer {
 	pixi: PIXI.Application
 	container: Element
 	timeLabel: PIXI.Text
+	playerNameLabel: PIXI.Text
+	opponentNameLabel: PIXI.Text
 
 	GAME_BOARD_WINDOW_FRACTION = 0.6
 	PLAYER_HAND_WINDOW_FRACTION = 0.15
@@ -18,18 +22,48 @@ export default class Renderer {
 	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
 
 	constructor(container: Element) {
-		this.pixi = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight })
+		this.pixi = new PIXI.Application({
+			width: window.innerWidth * window.devicePixelRatio,
+			height: window.innerHeight * window.devicePixelRatio,
+			antialias: true,
+			autoDensity: true,
+			resolution: 1
+		})
+
 		this.pixi.stage.sortableChildren = true
 		container.appendChild(this.pixi.view)
 		this.container = container
+
+		/* Player name label */
+		this.playerNameLabel = new PIXI.Text('', {
+			fontFamily: 'Arial',
+			fontSize: 24,
+			fill: 0xFFFFFF
+		})
+		this.playerNameLabel.anchor.set(0, 1)
+		this.playerNameLabel.position.set(10, this.getScreenHeight() - 10)
+		this.pixi.stage.addChild(this.playerNameLabel)
+
+		/* Opponent player name */
+		this.opponentNameLabel = new PIXI.Text('', {
+			fontFamily: 'Arial',
+			fontSize: 24,
+			fill: 0xFFFFFF
+		})
+		this.opponentNameLabel.position.set(10, 10)
+		this.pixi.stage.addChild(this.opponentNameLabel)
+
+		/* Time label */
 		this.timeLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
 			fontSize: 24,
 			fill: 0xFFFFFF
 		})
-		this.timeLabel.position.set(10, 10)
+		this.timeLabel.anchor.set(0, 0.5)
+		this.timeLabel.position.set(10, this.getScreenHeight() / 2)
 		this.pixi.stage.addChild(this.timeLabel)
 
+		/* Register the ticker */
 		PIXI.Ticker.shared.add(() => this.tick())
 	}
 
@@ -56,8 +90,10 @@ export default class Renderer {
 			})
 		}
 
-		this.renderTimeOfDay()
+		this.renderTextLabels()
 		this.renderGameBoard(Core.board)
+		this.renderTargetingArrow()
+		this.renderInspectedCard()
 	}
 
 	public registerCard(card: RenderedCard): void {
@@ -160,8 +196,14 @@ export default class Renderer {
 		hitboxSprite.zIndex -= 1
 	}
 
-	public renderTimeOfDay(): void {
-		this.timeLabel.text = `Time of day: ${Core.game.currentTime}/${Core.game.maximumTime}`
+	public renderTextLabels(): void {
+		const phase = Core.game.turnPhase === GameTurnPhase.DEPLOY ? 'Deploy' : 'Combat'
+		this.timeLabel.text = `Turn phase is ${phase}\nTime of day is ${Core.game.currentTime} out of ${Core.game.maximumTime}`
+
+		this.playerNameLabel.text = `${Core.player.player.username}\nTime units available: ${Core.player.timeUnits}`
+		if (Core.opponent) {
+			this.opponentNameLabel.text = `${Core.opponent.player.username}\nTime units available: ${Core.opponent.timeUnits}`
+		}
 	}
 
 	public renderGameBoard(gameBoard: RenderedGameBoard): void {
@@ -209,7 +251,7 @@ export default class Renderer {
 		sprite.zIndex = 1
 
 		sprite.tint = 0xFFFFFF
-		if (cardOnBoard.card.initiative === 0) {
+		if (cardOnBoard.card.initiative === 0 && cardOnBoard.owner === Core.player) {
 			sprite.tint = 0xBBFFBB
 			if (Core.input.grabbedCard && cardOnBoard.card === Core.input.grabbedCard.card) {
 				sprite.tint = 0x99BB99
@@ -221,6 +263,52 @@ export default class Renderer {
 		hitboxSprite.alpha = sprite.alpha
 		hitboxSprite.position.copyFrom(sprite.position)
 		hitboxSprite.zIndex = sprite.zIndex - 1
+	}
+
+	public renderTargetingArrow(): void {
+		const grabbedCard = Core.input.grabbedCard
+		if (!grabbedCard || grabbedCard.targetingMode !== TargetingMode.CARD_ATTACK) {
+			return
+		}
+
+		const targetingArrow = grabbedCard.targetingArrow
+		const startingPosition = grabbedCard.card.hitboxSprite.position
+		const targetPosition = Core.input.mousePosition
+
+		targetingArrow.startingPoint.position.copyFrom(startingPosition)
+		targetingArrow.startingPoint.clear()
+		targetingArrow.startingPoint.beginFill(0xFFFF00, 0.8)
+		targetingArrow.startingPoint.drawCircle(0, 0, 5)
+		targetingArrow.startingPoint.endFill()
+		targetingArrow.startingPoint.zIndex = 100
+
+		targetingArrow.arrowLine.position.copyFrom(startingPosition)
+		targetingArrow.arrowLine.clear()
+		targetingArrow.arrowLine.lineStyle(2, 0xFFFF00, 0.8)
+		targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
+		targetingArrow.arrowLine.zIndex = 100
+
+		targetingArrow.targetPoint.position.copyFrom(targetPosition)
+		targetingArrow.targetPoint.clear()
+		targetingArrow.targetPoint.beginFill(0xFFFF00, 0.8)
+		targetingArrow.targetPoint.drawCircle(0, 0, 5)
+		targetingArrow.targetPoint.endFill()
+		targetingArrow.targetPoint.zIndex = 100
+	}
+
+	public renderInspectedCard(): void {
+		const inspectedCard = Core.input.inspectedCard
+		if (!inspectedCard) {
+			return
+		}
+
+		const sprite = inspectedCard.sprite
+		sprite.tint = 0xFFFFFF
+		sprite.scale.set(1.0)
+		sprite.alpha = 1
+		sprite.position.x = this.getScreenWidth() / 2
+		sprite.position.y = this.getScreenHeight() / 2
+		sprite.zIndex = 100
 	}
 
 	public destroy(): void {

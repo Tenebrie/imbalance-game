@@ -4,15 +4,15 @@ import ServerGame from '../../libraries/game/ServerGame'
 import ServerPlayerInGame from '../../libraries/players/ServerPlayerInGame'
 
 export default class SpellCardRevealer extends ServerCard {
-	constructor() {
-		super(CardType.SPELL, 'spellCardRevealer')
+	constructor(game: ServerGame) {
+		super(game, CardType.SPELL, 'spellCardRevealer')
 	}
 
-	onPlaySpell(game: ServerGame, owner: ServerPlayerInGame): void {
-		const opponent = game.getOpponent(owner)
+	onPlaySpell(owner: ServerPlayerInGame): void {
+		const opponent = this.game.getOpponent(owner)
 		if (opponent.cardHand.isEmpty()) {
 			return
 		}
-		opponent.cardHand.getRandomCard().reveal(game, opponent, owner)
+		opponent.cardHand.getRandomCard().reveal(opponent, owner)
 	}
 }

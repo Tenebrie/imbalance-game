@@ -1,4 +1,4 @@
-import GameTurnPhase from '../../enums/GameTurnPhase'
+import GameTurnPhase from '../../shared/enums/GameTurnPhase'
 import ServerPlayer from '../../libraries/players/ServerPlayer'
 import GameTimeMessage from '../../shared/models/network/GameTimeMessage'
 
