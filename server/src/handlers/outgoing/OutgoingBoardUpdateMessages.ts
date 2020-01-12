@@ -3,6 +3,7 @@ import ServerPlayer from '../../libraries/players/ServerPlayer'
 import CardMessage from '../../shared/models/network/CardMessage'
 import ServerCardOnBoard from '../../libraries/game/ServerCardOnBoard'
 import CardOnBoardMessage from '../../shared/models/CardOnBoardMessage'
+import QueuedCardAttack from '../../shared/models/QueuedCardAttack'
 
 export default {
 	notifyAboutUnitCreated(player: ServerPlayer, card: ServerCardOnBoard, rowIndex: number, unitIndex: number) {
@@ -38,5 +39,5 @@ export default {
 			type: 'update/board/card/initiative',
 			data: CardMessage.fromCard(card)
 		})
-	},
+	}
 }

@@ -5,6 +5,8 @@ import CardOnBoardMessage from '../../shared/models/CardOnBoardMessage'
 import CardDeckMessage from '../../shared/models/network/CardDeckMessage'
 import ServerPlayerInGame from '../../libraries/players/ServerPlayerInGame'
 import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
+import QueuedCardAttack from '../../shared/models/QueuedCardAttack'
+import QueuedCardAttackMessage from '../../shared/models/network/QueuedCardAttackMessage'
 
 export default {
 	notifyAboutGameStart(player: ServerPlayer, isBoardInverted: boolean) {
@@ -43,6 +45,15 @@ export default {
 		player.sendMessage({
 			type: 'gameState/board',
 			data: cardMessages
+		})
+	},
+
+	sendQueuedAttacks(player: ServerPlayer, attacks: QueuedCardAttack[]) {
+		const attacksByPlayer = attacks.filter(attack => attack.attacker.owner.player === player)
+		const attackMessages = attacksByPlayer.map(attack => QueuedCardAttackMessage.fromQueuedCardAttack(attack))
+		player.sendMessage({
+			type: 'gameState/board/attacks',
+			data: attackMessages
 		})
 	}
 }

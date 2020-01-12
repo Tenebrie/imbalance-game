@@ -93,6 +93,7 @@ export default class Renderer {
 		this.renderTextLabels()
 		this.renderGameBoard(Core.board)
 		this.renderTargetingArrow()
+		this.renderQueuedAttacks()
 		this.renderInspectedCard()
 	}
 
@@ -294,6 +295,34 @@ export default class Renderer {
 		targetingArrow.targetPoint.drawCircle(0, 0, 5)
 		targetingArrow.targetPoint.endFill()
 		targetingArrow.targetPoint.zIndex = 100
+	}
+
+	public renderQueuedAttacks(): void {
+		Core.board.queuedAttacks.forEach(attack => {
+			const targetingArrow = attack.targetingArrow
+			const startingPosition = attack.attacker.card.getPosition()
+			const targetPosition = attack.target.card.getPosition()
+
+			targetingArrow.startingPoint.position.copyFrom(startingPosition)
+			targetingArrow.startingPoint.clear()
+			targetingArrow.startingPoint.beginFill(0x999999, 1.0)
+			targetingArrow.startingPoint.drawCircle(0, 0, 5)
+			targetingArrow.startingPoint.endFill()
+			targetingArrow.startingPoint.zIndex = 99
+
+			targetingArrow.arrowLine.position.copyFrom(startingPosition)
+			targetingArrow.arrowLine.clear()
+			targetingArrow.arrowLine.lineStyle(2, 0x999999, 1.0)
+			targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
+			targetingArrow.arrowLine.zIndex = 99
+
+			targetingArrow.targetPoint.position.copyFrom(targetPosition)
+			targetingArrow.targetPoint.clear()
+			targetingArrow.targetPoint.beginFill(0x999999, 1.0)
+			targetingArrow.targetPoint.drawCircle(0, 0, 5)
+			targetingArrow.targetPoint.endFill()
+			targetingArrow.targetPoint.zIndex = 99
+		})
 	}
 
 	public renderInspectedCard(): void {

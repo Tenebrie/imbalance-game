@@ -2,105 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7b4957f4-b43a-46ea-8e12-fccea030b7c4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/heroNightLady.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/heroSatia.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-аура.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-вельТарьенна.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-верныйсокол.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-ветранна.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-вечныйстражХолодногодворца.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-заклинательворонов.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-игриваяпикси.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-коргиссимус.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-любопытныйволчонок.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-неария.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-носительметкиВорона.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-облачныйстраж.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-пернатыйрыцарь.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-потревоженныйворон.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-проснувшийсяДракон.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-ревущийДракон.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-снежныйгигант.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-спойлераст.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-старыйсокольничий.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-стражЧащи.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/old/sw-хранительлесов.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/spellFireball.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/spellFlamingSpark.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/unitBlackWolf.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/unitPossessedVulture.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/cards/unitRagingBear.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Pixi/models/TargetingArrow.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/shared/models/QueuedCardAttack.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/shared/models/network/QueuedCardAttackMessage.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/cards/heroes/HeroNightLady.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/cards/heroes/HeroSatia.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/cards/units/UnitBlackWolf.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/cards/units/UnitPossessedVulture.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/cards/units/UnitRagingBear.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/shared/enums/GameTurnPhase.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/shared/models/QueuedCardAttack.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/shared/models/network/QueuedCardAttackMessage.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/utils/runCardEventHandler.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/enums/GameTurnPhase.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/models/QueuedCardAttack.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/models/network/QueuedCardAttackMessage.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedQueuedCardAttack.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/spellCardDrawer.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/spellMegaCardDrawer.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-аура.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-вельТарьенна.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-верныйсокол.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-ветранна.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-вечныйстражХолодногодворца.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-заклинательворонов.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-игриваяпикси.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-коргиссимус.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-любопытныйволчонок.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-неария.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-носительметкиВорона.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-облачныйстраж.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-пернатыйрыцарь.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-потревоженныйворон.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-проснувшийсяДракон.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-ревущийДракон.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-снежныйгигант.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-спойлераст.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-старыйсокольничий.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-стражЧащи.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/sw-хранительлесов.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/unitPostalRaven.png" beforeDir="false" afterPath="$PROJECT_DIR$/../client/public/assets/cards/unitPostalRaven.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/MainHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/MainHandler.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/handlers/IncomingMessageHandlers.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/ClientGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/ClientGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/GrabbedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/GrabbedCard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCard.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedGameBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedGameBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedGameBoardRow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/.eslintrc.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.eslintrc.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/.idea/dictionaries/Tianara.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/dictionaries/Tianara.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/shared/models/network/QueuedCardAttackMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/shared/models/network/QueuedCardAttackMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardDrawer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardDrawer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardRevealer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardRevealer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/cards/spells/UnitPostalRaven.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/units/UnitPostalRaven.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/enums/GameTurnPhase.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/shared/enums/GameTurnPhase.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/handlers/ConnectionEstablishedHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/handlers/ConnectionEstablishedHandler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/handlers/IncomingMessageHandlers.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingBoardUpdateMessages.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingBoardUpdateMessages.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingGameUpdateMessages.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingGameUpdateMessages.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/libraries/game/ServerCardOnBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/game/ServerCardOnBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/libraries/game/ServerGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/game/ServerGame.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingGameStateMessages.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/handlers/outgoing/OutgoingGameStateMessages.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/libraries/game/ServerGameBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/game/ServerGameBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/libraries/game/ServerGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/game/ServerGameBoardRow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/libraries/players/ServerPlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/players/ServerPlayerInGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/models/game/QueuedCardAttack.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/models/game/ServerQueuedCardAttack.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/models/game/ServerCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/models/game/ServerCard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/models/game/ServerCardDeck.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/models/game/ServerCardDeck.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/models/game/ServerCardHand.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/models/game/ServerCardHand.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/routers/PlayRouter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/routers/PlayRouter.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/utils/VoidPlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/utils/VoidPlayerInGame.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/shared/models/network/QueuedCardAttackMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/shared/models/network/QueuedCardAttackMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/network/QueuedCardAttackMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/network/QueuedCardAttackMessage.ts" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -171,7 +86,8 @@
       <workItem from="1578565820147" duration="5124000" />
       <workItem from="1578687087793" duration="1837000" />
       <workItem from="1578741067133" duration="34000" />
-      <workItem from="1578741137055" duration="2692000" />
+      <workItem from="1578741137055" duration="2954000" />
+      <workItem from="1578824456039" duration="1702000" />
     </task>
     <servers />
   </component>

@@ -5,6 +5,7 @@ import GameBoard from '../../shared/models/GameBoard'
 import ServerGameBoardRow from './ServerGameBoardRow'
 import ServerQueuedCardAttack from '../../models/game/ServerQueuedCardAttack'
 import runCardEventHandler from '../../utils/runCardEventHandler'
+import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
 
 export default class ServerGameBoard extends GameBoard {
 	game: ServerGame
@@ -55,6 +56,9 @@ export default class ServerGameBoard extends GameBoard {
 		const queuedAttack = new ServerQueuedCardAttack(attacker, target)
 		this.queuedAttacks = this.queuedAttacks.filter(queuedAttack => queuedAttack.attacker !== attacker)
 		this.queuedAttacks.push(queuedAttack)
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.sendQueuedAttacks(playerInGame.player, this.queuedAttacks)
+		})
 	}
 
 	public releaseQueuedAttacks(): void {
@@ -73,7 +77,11 @@ export default class ServerGameBoard extends GameBoard {
 		survivingTargets.forEach(target => {
 			runCardEventHandler(() => target.card.onAfterBeingAttacked(target))
 		})
+
 		this.queuedAttacks = []
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.sendQueuedAttacks(playerInGame.player, this.queuedAttacks)
+		})
 	}
 
 	public performCardAttack(cardOnBoard: ServerCardOnBoard, targetOnBoard: ServerCardOnBoard): void {

@@ -1,15 +1,16 @@
-import CardOnBoardMessage from '../CardOnBoardMessage'
+import QueuedCardAttack from '../QueuedCardAttack'
+import CardMessage from './CardMessage'
 
 export default class QueuedCardAttackMessage {
-	attacker: CardOnBoardMessage
-	target: CardOnBoardMessage
+	attacker: CardMessage
+	target: CardMessage
 
-	constructor(attacker: CardOnBoardMessage, target: CardOnBoardMessage) {
+	constructor(attacker: CardMessage, target: CardMessage) {
 		this.attacker = attacker
 		this.target = target
 	}
 
-	public static fromCardsOnBoard(attacker: CardOnBoardMessage, target: CardOnBoardMessage): QueuedCardAttackMessage {
-		return new QueuedCardAttackMessage(attacker, target)
+	public static fromQueuedCardAttack(attack: QueuedCardAttack): QueuedCardAttackMessage {
+		return new QueuedCardAttackMessage(CardMessage.fromCard(attack.attacker.card), CardMessage.fromCard(attack.target.card))
 	}
 }

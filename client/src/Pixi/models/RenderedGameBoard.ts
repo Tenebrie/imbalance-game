@@ -3,12 +3,12 @@ import GameBoard from '@/shared/models/GameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import QueuedCardAttack from '@/shared/models/QueuedCardAttack'
-import Point = PIXI.Point
+import RenderedQueuedCardAttack from '@/Pixi/models/RenderedQueuedCardAttack'
 
 export default class RenderedGameBoard extends GameBoard {
 	rows: RenderedGameBoardRow[]
 	isInverted: boolean = false
-	queuedAttacks: QueuedCardAttack[]
+	queuedAttacks: RenderedQueuedCardAttack[]
 
 	constructor() {
 		super()
@@ -46,8 +46,12 @@ export default class RenderedGameBoard extends GameBoard {
 		this.rows.forEach(row => row.clearRow())
 	}
 
-	public isHovered(mousePosition: Point): boolean {
-		return this.rows.some(row => row.isHovered(mousePosition))
+	public updateQueuedAttacks(newAttacks: RenderedQueuedCardAttack[], removedAttacks: RenderedQueuedCardAttack[]): void {
+		removedAttacks.forEach(queuedAttack => {
+			queuedAttack.destroy()
+		})
+		this.queuedAttacks = this.queuedAttacks.filter(queuedAttack => !removedAttacks.includes(queuedAttack))
+		this.queuedAttacks = this.queuedAttacks.concat(newAttacks)
 	}
 
 	public setInverted(isInverted: boolean): void {

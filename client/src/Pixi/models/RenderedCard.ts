@@ -2,8 +2,8 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Card from '@/shared/models/Card'
 import CardType from '@/shared/enums/CardType'
-import CardMessage from '@/shared/models/network/CardMessage'
 import Point = PIXI.Point
+import IPoint = PIXI.IPoint
 
 export default class RenderedCard extends Card {
 	sprite: PIXI.Sprite
@@ -21,6 +21,10 @@ export default class RenderedCard extends Card {
 		this.sprite = this.createSprite()
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 		Core.registerCard(this)
+	}
+
+	public getPosition(): IPoint {
+		return this.hitboxSprite.position
 	}
 
 	public isHovered(mousePosition: Point): boolean {

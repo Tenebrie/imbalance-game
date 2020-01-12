@@ -13,6 +13,8 @@ import ChatEntryMessage from '@/shared/models/network/ChatEntryMessage'
 import HiddenCardMessage from '@/shared/models/network/HiddenCardMessage'
 import PlayerInGameMessage from '@/shared/models/network/PlayerInGameMessage'
 import GameTurnPhase from '@/shared/enums/GameTurnPhase'
+import QueuedCardAttackMessage from '@/shared/models/network/QueuedCardAttackMessage'
+import RenderedQueuedCardAttack from '@/Pixi/models/RenderedQueuedCardAttack'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -42,6 +44,13 @@ const handlers: {[ index: string ]: any } = {
 			const card = RenderedCardOnBoard.fromMessage(message)
 			Core.board.insertCard(card, message.rowIndex, message.unitIndex)
 		})
+	},
+
+	'gameState/board/attacks': (data: QueuedCardAttackMessage[]) => {
+		const newAttackMessages = data.filter(message => !Core.board.queuedAttacks.find(attack => attack.attacker.card.id === message.attacker.id && attack.target.card.id === message.target.id))
+		const removedAttacks = Core.board.queuedAttacks.filter(attack => !data.find(message => attack.attacker.card.id === message.attacker.id && attack.target.card.id === message.target.id))
+		const newAttacks = newAttackMessages.map(message => RenderedQueuedCardAttack.fromMessage(message))
+		Core.board.updateQueuedAttacks(newAttacks, removedAttacks)
 	},
 
 	'update/game/phase': (data: GameTurnPhase) => {
