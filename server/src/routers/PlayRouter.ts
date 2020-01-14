@@ -21,8 +21,6 @@ router.ws('/:gameId', async (ws, req) => {
 	currentPlayer.registerConnection(ws)
 
 	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerCardDeck.defaultDeck(currentGame))
-	currentPlayerInGame.advanceTime()
-
 	ConnectionEstablishedHandler.onPlayerConnected(currentGame, currentPlayerInGame)
 
 	ws.on('message', (rawMsg: string) => {
@@ -38,6 +36,7 @@ router.ws('/:gameId', async (ws, req) => {
 
 	ws.on('close', () => {
 		currentGame.removePlayer(currentPlayer)
+		ConnectionEstablishedHandler.onPlayerDisconnected(currentGame, currentPlayer)
 	})
 })
 

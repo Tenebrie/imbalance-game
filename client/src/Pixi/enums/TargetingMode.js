@@ -1,6 +1,7 @@
 export var TargetingMode;
-(function (RenderedCardState) {
-    RenderedCardState[RenderedCardState["IN_HAND"] = 0] = "IN_HAND";
-    RenderedCardState[RenderedCardState["ON_BOARD"] = 1] = "ON_BOARD";
-})(RenderedCardState || (RenderedCardState = {}));
-//# sourceMappingURL=RenderedCardState.js.map
+(function (TargetingMode) {
+    TargetingMode[TargetingMode["NONE"] = 0] = "NONE";
+    TargetingMode[TargetingMode["CARD_PLAY"] = 1] = "CARD_PLAY";
+    TargetingMode[TargetingMode["CARD_ATTACK"] = 2] = "CARD_ATTACK";
+})(TargetingMode || (TargetingMode = {}));
+//# sourceMappingURL=TargetingMode.js.map

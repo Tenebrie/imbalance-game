@@ -2,13 +2,13 @@ import Constants from '@/shared/Constants'
 import GameBoard from '@/shared/models/GameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
-import QueuedCardAttack from '@/shared/models/QueuedCardAttack'
-import RenderedQueuedCardAttack from '@/Pixi/models/RenderedQueuedCardAttack'
+import RenderedAttackOrder from '@/Pixi/models/RenderedAttackOrder'
+import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
 export default class RenderedGameBoard extends GameBoard {
 	rows: RenderedGameBoardRow[]
 	isInverted: boolean = false
-	queuedAttacks: RenderedQueuedCardAttack[]
+	queuedAttacks: RenderedAttackOrder[]
 
 	constructor() {
 		super()
@@ -38,20 +38,27 @@ export default class RenderedGameBoard extends GameBoard {
 		rowWithCard.removeCardById(cardId)
 	}
 
-	public getAllCards() {
+	public getAllCards(): RenderedCardOnBoard[] {
 		return this.rows.map(row => row.cards).flat()
+	}
+
+	public getCardsOwnedByPlayer(owner: ClientPlayerInGame) {
+		return this.getAllCards().filter(unit => unit.owner === owner)
 	}
 
 	public clearBoard(): void {
 		this.rows.forEach(row => row.clearRow())
 	}
 
-	public updateQueuedAttacks(newAttacks: RenderedQueuedCardAttack[], removedAttacks: RenderedQueuedCardAttack[]): void {
+	public updateAttackOrders(newAttacks: RenderedAttackOrder[], removedAttacks: RenderedAttackOrder[]): void {
 		removedAttacks.forEach(queuedAttack => {
 			queuedAttack.destroy()
 		})
 		this.queuedAttacks = this.queuedAttacks.filter(queuedAttack => !removedAttacks.includes(queuedAttack))
 		this.queuedAttacks = this.queuedAttacks.concat(newAttacks)
+		newAttacks.forEach(newAttack => {
+			newAttack.attacker.preferredAttackTarget = newAttack.target
+		})
 	}
 
 	public setInverted(isInverted: boolean): void {

@@ -6,13 +6,11 @@ export default class Card {
 	cardType: CardType
 	cardClass: string
 
+	power = 0
 	attack = 0
-	health = 0
-	initiative = 0
 
+	basePower = 0
 	baseAttack = 0
-	baseHealth = 0
-	baseInitiative = 0
 
 	constructor(id: string, cardType: CardType, cardClass: string) {
 		this.id = id
@@ -22,12 +20,10 @@ export default class Card {
 
 	public static fromMessage(message: CardMessage): Card {
 		const card = new Card(message.id, message.cardType, message.cardClass)
+		card.power = message.power
 		card.attack = message.attack
-		card.health = message.health
-		card.initiative = message.initiative
-		card.baseAttack = message.attack
-		card.baseHealth = message.health
-		card.baseInitiative = message.initiative
+		card.basePower = message.basePower
+		card.baseAttack = message.baseAttack
 		return card
 	}
 }

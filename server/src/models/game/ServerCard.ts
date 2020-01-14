@@ -17,33 +17,25 @@ export default class ServerCard extends Card {
 		this.game = game
 	}
 
+	setPower(unit: ServerCardOnBoard, value: number): void {
+		if (this.power === value) { return }
+
+		this.onPowerChanged(unit, value, this.power)
+
+		this.power = value
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutCardPowerChange(playerInGame.player, this)
+		})
+	}
+
 	setAttack(unit: ServerCardOnBoard, value: number): void {
 		if (this.attack === value) { return }
+
+		this.onAttackChanged(unit, value, this.attack)
 
 		this.attack = value
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutCardAttackChange(playerInGame.player, this)
-		})
-	}
-
-	setHealth(unit: ServerCardOnBoard, value: number): void {
-		if (this.health === value) { return }
-
-		this.health = value
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardHealthChange(playerInGame.player, this)
-		})
-	}
-
-	setInitiative(unit: ServerCardOnBoard, value: number): void {
-		if (this.initiative === value) { return }
-
-		runCardEventHandler(() => this.onInitiativeChanged(unit, value, this.initiative))
-
-		this.initiative = value
-
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardInitiativeChange(playerInGame.player, this)
 		})
 	}
 
@@ -58,7 +50,8 @@ export default class ServerCard extends Card {
 	onPlayUnit(thisUnit: ServerCardOnBoard): void { return }
 	onPlaySpell(owner: ServerPlayerInGame): void { return }
 	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void { return }
-	onInitiativeChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
+	onPowerChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
+	onAttackChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
 	onBeforeDamageTaken(thisUnit: ServerCardOnBoard, damage: number): void { return }
 	onAfterDamageTaken(thisUnit: ServerCardOnBoard, damage: number): void { return }
 	onDamageSurvived(thisUnit: ServerCardOnBoard, damage: number): void { return }

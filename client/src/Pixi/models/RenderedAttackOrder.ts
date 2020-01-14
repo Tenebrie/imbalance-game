@@ -1,14 +1,16 @@
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import TargetingArrow from '@/Pixi/models/TargetingArrow'
-import QueuedCardAttackMessage from '@/shared/models/network/QueuedCardAttackMessage'
 import Core from '@/Pixi/Core'
+import AttackOrderMessage from '@/shared/models/network/AttackOrderMessage'
+import AttackOrder from '@/shared/models/AttackOrder'
 
-export default class RenderedQueuedCardAttack {
+export default class RenderedAttackOrder extends AttackOrder {
 	attacker: RenderedCardOnBoard
 	target: RenderedCardOnBoard
 	targetingArrow: TargetingArrow
 
 	constructor(attacker: RenderedCardOnBoard, target: RenderedCardOnBoard) {
+		super(attacker, target)
 		this.attacker = attacker
 		this.target = target
 		this.targetingArrow = new TargetingArrow()
@@ -18,12 +20,12 @@ export default class RenderedQueuedCardAttack {
 		this.targetingArrow.destroy()
 	}
 
-	public static fromMessage(message: QueuedCardAttackMessage): RenderedQueuedCardAttack {
-		const attacker = Core.board.findCardById(message.attacker.id)
-		const target = Core.board.findCardById(message.target.id)
+	public static fromMessage(message: AttackOrderMessage): RenderedAttackOrder {
+		const attacker = Core.board.findCardById(message.attackerId)
+		const target = Core.board.findCardById(message.targetId)
 		if (!attacker || !target) {
 			throw new Error('One of the cards does not exist!')
 		}
-		return new RenderedQueuedCardAttack(attacker, target)
+		return new RenderedAttackOrder(attacker, target)
 	}
 }

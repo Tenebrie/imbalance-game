@@ -7,6 +7,7 @@ import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import GameTurnPhase from '@/shared/enums/GameTurnPhase'
+import RenderedButton from '@/Pixi/models/RenderedButton'
 
 export default class Renderer {
 	pixi: PIXI.Application
@@ -95,6 +96,15 @@ export default class Renderer {
 		this.renderTargetingArrow()
 		this.renderQueuedAttacks()
 		this.renderInspectedCard()
+		this.renderUI()
+	}
+
+	public registerButton(button: RenderedButton): void {
+		this.pixi.stage.addChild(button.container)
+	}
+
+	public unregisterButton(button: RenderedButton): void {
+		this.pixi.stage.removeChild(button.container)
 	}
 
 	public registerCard(card: RenderedCard): void {
@@ -198,8 +208,23 @@ export default class Renderer {
 	}
 
 	public renderTextLabels(): void {
-		const phase = Core.game.turnPhase === GameTurnPhase.DEPLOY ? 'Deploy' : 'Combat'
-		this.timeLabel.text = `Turn phase is ${phase}\nTime of day is ${Core.game.currentTime} out of ${Core.game.maximumTime}`
+		let phaseLabel = ''
+		if (Core.game.turnPhase === GameTurnPhase.WAITING) {
+			phaseLabel = 'Waiting for the game to start'
+		} else if (Core.game.turnPhase === GameTurnPhase.FINISHED) {
+			phaseLabel = 'Game finished!'
+		} else {
+			let phase = 'Unknown'
+			if (Core.game.turnPhase === GameTurnPhase.DEPLOY) {
+				phase = 'Deploy'
+			} else if (Core.game.turnPhase === GameTurnPhase.SKIRMISH) {
+				phase = 'Skirmish'
+			} else if (Core.game.turnPhase === GameTurnPhase.COMBAT) {
+				phase = 'Combat'
+			}
+			phaseLabel = `Turn phase is ${phase}`
+		}
+		this.timeLabel.text = `${phaseLabel}\nTime of day is ${Core.game.currentTime} out of ${Core.game.maximumTime}`
 
 		this.playerNameLabel.text = `${Core.player.player.username}\nTime units available: ${Core.player.timeUnits}`
 		if (Core.opponent) {
@@ -249,15 +274,19 @@ export default class Renderer {
 		sprite.alpha = 1
 		sprite.position.x = screenCenterX + distanceToCenter * hitboxSprite.width
 		sprite.position.y = rowY
-		sprite.zIndex = 1
+		sprite.zIndex = 2
 
 		sprite.tint = 0xFFFFFF
-		if (cardOnBoard.card.initiative === 0 && cardOnBoard.owner === Core.player) {
+		if (Core.input.hoveredCard && cardOnBoard.card === Core.input.hoveredCard.card) {
+			sprite.tint = 0xBFBFBF
+		}
+
+		if (Core.game.turnPhase === GameTurnPhase.SKIRMISH && cardOnBoard.owner === Core.player) {
 			sprite.tint = 0xBBFFBB
 			if (Core.input.grabbedCard && cardOnBoard.card === Core.input.grabbedCard.card) {
 				sprite.tint = 0x99BB99
 			} else if (Core.input.hoveredCard && cardOnBoard.card === Core.input.hoveredCard.card) {
-				sprite.tint = 0xBBEEBB
+				sprite.tint = 0x4CFE4C
 			}
 		}
 
@@ -338,6 +367,11 @@ export default class Renderer {
 		sprite.position.x = this.getScreenWidth() / 2
 		sprite.position.y = this.getScreenHeight() / 2
 		sprite.zIndex = 100
+	}
+
+	public renderUI(): void {
+		/* const endTurnButton = this.endTurnButton
+		endTurnButton.container.position.set(this.getScreenWidth() - 100, this.getScreenHeight() / 2) */
 	}
 
 	public destroy(): void {

@@ -13,32 +13,27 @@ export default class ServerCardOnBoard {
 		this.card = card
 		this.owner = owner
 
+		card.power = card.basePower
 		card.attack = card.baseAttack
-		card.health = card.baseHealth
-		card.initiative = card.baseInitiative
 	}
 
 	dealDamage(damage: number): void {
 		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damage))
-		this.setHealth(this.card.health - damage)
+		this.setPower(this.card.power - damage)
 		runCardEventHandler(() => this.card.onAfterDamageTaken(this, damage))
-		if (this.card.health <= 0) {
+		if (this.card.power <= 0) {
 			this.destroy()
 		} else {
 			runCardEventHandler(() => this.card.onDamageSurvived(this, damage))
 		}
 	}
 
+	setPower(value: number): void {
+		this.card.setPower(this, value)
+	}
+
 	setAttack(value: number): void {
 		this.card.setAttack(this, value)
-	}
-
-	setHealth(value: number): void {
-		this.card.setHealth(this, value)
-	}
-
-	setInitiative(value: number): void {
-		this.card.setInitiative(this, value)
 	}
 
 	destroy(): void {
@@ -61,10 +56,6 @@ export default class ServerCardOnBoard {
 	}
 
 	canAttackAnyTarget(): boolean {
-		if (this.card.initiative > 0) {
-			return false
-		}
-
 		const opponent = this.game.getOpponent(this.owner)
 		if (!opponent) {
 			return false

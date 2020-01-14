@@ -5,8 +5,9 @@ import CardOnBoardMessage from '../../shared/models/CardOnBoardMessage'
 import CardDeckMessage from '../../shared/models/network/CardDeckMessage'
 import ServerPlayerInGame from '../../libraries/players/ServerPlayerInGame'
 import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
-import QueuedCardAttack from '../../shared/models/QueuedCardAttack'
-import QueuedCardAttackMessage from '../../shared/models/network/QueuedCardAttackMessage'
+import AttackOrder from '../../shared/models/AttackOrder'
+import AttackOrderMessage from '../../shared/models/network/AttackOrderMessage'
+import ServerAttackOrder from '../../models/game/ServerAttackOrder'
 
 export default {
 	notifyAboutGameStart(player: ServerPlayer, isBoardInverted: boolean) {
@@ -48,9 +49,9 @@ export default {
 		})
 	},
 
-	sendQueuedAttacks(player: ServerPlayer, attacks: QueuedCardAttack[]) {
-		const attacksByPlayer = attacks.filter(attack => attack.attacker.owner.player === player)
-		const attackMessages = attacksByPlayer.map(attack => QueuedCardAttackMessage.fromQueuedCardAttack(attack))
+	sendAttackOrders(player: ServerPlayer, attackOrders: ServerAttackOrder[]) {
+		const attacksByPlayer = attackOrders.filter(attackOrder => attackOrder.attacker.owner.player === player)
+		const attackMessages = attacksByPlayer.map(attackOrder => AttackOrderMessage.fromAttackOrder(attackOrder))
 		player.sendMessage({
 			type: 'gameState/board/attacks',
 			data: attackMessages

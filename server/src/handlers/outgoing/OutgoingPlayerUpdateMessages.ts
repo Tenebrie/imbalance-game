@@ -16,5 +16,33 @@ export default {
 			type: 'update/player/opponent/timeUnits',
 			data: HiddenPlayerInGameMessage.fromPlayerInGame(playerInGame)
 		})
+	},
+
+	notifyAboutTurnEnded: (player: ServerPlayer) => {
+		player.sendMessage({
+			type: 'update/player/self/turnEnded',
+			data: null
+		})
+	},
+
+	notifyAboutOpponentTurnEnded: (player: ServerPlayer) => {
+		player.sendMessage({
+			type: 'update/player/opponent/turnEnded',
+			data: null
+		})
+	},
+
+	notifyAboutVictory: (player: ServerPlayer) => {
+		player.sendMessage({
+			type: 'update/player/self/victory',
+			data: null
+		})
+	},
+
+	notifyAboutDefeat: (player: ServerPlayer) => {
+		player.sendMessage({
+			type: 'update/player/self/defeat',
+			data: null
+		})
 	}
 }

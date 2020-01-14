@@ -20,23 +20,16 @@ export default {
 		})
 	},
 
+	notifyAboutCardPowerChange(player: ServerPlayer, card: ServerCard) {
+		player.sendMessage({
+			type: 'update/board/card/power',
+			data: CardMessage.fromCard(card)
+		})
+	},
+
 	notifyAboutCardAttackChange(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
 			type: 'update/board/card/attack',
-			data: CardMessage.fromCard(card)
-		})
-	},
-
-	notifyAboutCardHealthChange(player: ServerPlayer, card: ServerCard) {
-		player.sendMessage({
-			type: 'update/board/card/health',
-			data: CardMessage.fromCard(card)
-		})
-	},
-
-	notifyAboutCardInitiativeChange(player: ServerPlayer, card: ServerCard) {
-		player.sendMessage({
-			type: 'update/board/card/initiative',
 			data: CardMessage.fromCard(card)
 		})
 	}

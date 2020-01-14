@@ -2,6 +2,7 @@ import store from '@/Vue/store';
 import Input from '@/Pixi/Input';
 import Renderer from '@/Pixi/Renderer';
 import MainHandler from '@/Pixi/MainHandler';
+import ClientGame from '@/Pixi/models/ClientGame';
 import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard';
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame';
 import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers';
@@ -21,9 +22,10 @@ export default class Core {
         Core.keepaliveTimer = setInterval(() => {
             OutgoingMessageHandlers.sendKeepalive();
         }, 30000);
+        Core.game = new ClientGame();
         Core.input = new Input();
         Core.mainHandler = MainHandler.start();
-        Core.gameBoard = new RenderedGameBoard();
+        Core.board = new RenderedGameBoard();
     }
     static onMessage(event) {
         const data = JSON.parse(event.data);
@@ -50,6 +52,15 @@ export default class Core {
     }
     static registerOpponent(opponent) {
         Core.opponent = opponent;
+    }
+    static getPlayer(playerId) {
+        if (this.player && this.player.player.id === playerId) {
+            return this.player;
+        }
+        else if (this.opponent && this.opponent.player.id === playerId) {
+            return this.opponent;
+        }
+        throw new Error(`Player ${playerId} does not exist!`);
     }
     static sendMessage(type, data) {
         Core.socket.send(JSON.stringify({

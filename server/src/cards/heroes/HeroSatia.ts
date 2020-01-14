@@ -7,9 +7,8 @@ import ServerCardOnBoard from '../../libraries/game/ServerCardOnBoard'
 export default class HeroSatia extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, 'heroSatia')
+		this.basePower = 10
 		this.baseAttack = 3
-		this.baseHealth = 7
-		this.baseInitiative = 3
 	}
 
 	onPlayUnit(thisUnit: ServerCardOnBoard): void {

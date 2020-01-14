@@ -3,7 +3,7 @@ import ServerGame from '../libraries/game/ServerGame'
 import GameTurnPhase from '../shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../libraries/players/ServerPlayerInGame'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
-import CardAttackOrderMessage from '../shared/models/network/CardAttackOrderMessage'
+import AttackOrderMessage from '../shared/models/network/AttackOrderMessage'
 
 export default {
 	'post/chat': (data: string, game: ServerGame, playerInGame: ServerPlayerInGame) => {
@@ -20,25 +20,33 @@ export default {
 			player.playUnit(game, card, data.rowIndex, data.unitIndex)
 		}
 
-		if (game.isPlayersFinishedTurn()) {
-			game.advanceToCombatPhase()
-			if (game.isUnitsFinishedAttacking()) {
-				game.advanceToDeployPhase()
+		if (game.isDeployPhaseFinished()) {
+			game.advancePhase()
+			if (game.isSkirmishPhaseFinished()) {
+				game.advancePhase()
 			}
 		}
 	},
 
-	'post/attackOrder': (data: CardAttackOrderMessage, game: ServerGame, player: ServerPlayerInGame) => {
-		const card = game.board.findCardById(data.cardId)
+	'post/attackOrder': (data: AttackOrderMessage, game: ServerGame, player: ServerPlayerInGame) => {
+		const card = game.board.findCardById(data.attackerId)
 		const target = game.board.findCardById(data.targetId)
-		if (game.turnPhase !== GameTurnPhase.COMBAT || !card || !target || card.owner !== player || card.owner === target.owner) {
+		if (game.turnPhase !== GameTurnPhase.SKIRMISH || !card || !target || card.owner !== player || card.owner === target.owner) {
 			return
 		}
 
 		game.board.queueCardAttack(card, target)
 
-		if (game.isUnitsFinishedAttacking()) {
-			game.advanceToDeployPhase()
+		if (game.isSkirmishPhaseFinished()) {
+			game.advancePhase()
+		}
+	},
+
+	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
+		player.endTurn()
+
+		if ((game.turnPhase === GameTurnPhase.DEPLOY && game.isDeployPhaseFinished()) || (game.turnPhase === GameTurnPhase.SKIRMISH && game.isSkirmishPhaseFinished())) {
+			game.advancePhase()
 		}
 	},
 

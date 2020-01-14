@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import Input from '@/Pixi/Input'
 import Renderer from '@/Pixi/Renderer'
@@ -8,12 +9,15 @@ import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import RenderedButton from '@/Pixi/models/RenderedButton'
+import UserInterface from '@/Pixi/UserInterface'
 
 export default class Core {
 	public static input: Input
 	public static socket: WebSocket
 	public static renderer: Renderer
 	public static mainHandler: MainHandler
+	public static userInterface: UserInterface
 	public static keepaliveTimer: number
 
 	public static game: ClientGame
@@ -40,8 +44,14 @@ export default class Core {
 
 		Core.game = new ClientGame()
 		Core.input = new Input()
-		Core.mainHandler = MainHandler.start()
 		Core.board = new RenderedGameBoard()
+		Core.mainHandler = MainHandler.start()
+		Core.userInterface = new UserInterface()
+
+		const endTurnButton = new RenderedButton(new PIXI.Point(this.renderer.pixi.view.width - 100, this.renderer.pixi.view.height / 2), () => {
+			OutgoingMessageHandlers.sendEndTurn()
+		})
+		this.registerButton(endTurnButton)
 	}
 
 	private static onMessage(event: MessageEvent): void {
@@ -90,6 +100,16 @@ export default class Core {
 			type: type,
 			data: data
 		}))
+	}
+
+	public static registerButton(renderedButton: RenderedButton): void {
+		Core.renderer.registerButton(renderedButton)
+		Core.userInterface.registerButton(renderedButton)
+	}
+
+	public static unregisterButton(renderedButton: RenderedButton): void {
+		Core.renderer.unregisterButton(renderedButton)
+		Core.userInterface.unregisterButton(renderedButton)
 	}
 
 	public static registerCard(renderedCard: RenderedCard): void {

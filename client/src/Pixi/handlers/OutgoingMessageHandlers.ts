@@ -3,7 +3,8 @@ import Card from '@/shared/models/Card'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import CardPlayedMessage from '@/shared/models/network/CardPlayedMessage'
-import CardAttackOrderMessage from '@/shared/models/network/CardAttackOrderMessage'
+import AttackOrderMessage from '@/shared/models/network/AttackOrderMessage'
+import AttackOrder from '@/shared/models/AttackOrder'
 
 export default {
 	sendChatMessage(message: string) {
@@ -19,8 +20,12 @@ export default {
 		Core.sendMessage('post/playCard', CardPlayedMessage.fromCard(card))
 	},
 
-	sendUnitAttackOrder(card: RenderedCard, target: RenderedCard) {
-		Core.sendMessage('post/attackOrder', CardAttackOrderMessage.fromCards(card, target))
+	sendUnitAttackOrders(order: AttackOrder) {
+		Core.sendMessage('post/attackOrder', AttackOrderMessage.fromAttackOrder(order))
+	},
+
+	sendEndTurn() {
+		Core.sendMessage('post/endTurn', null)
 	},
 
 	sendKeepalive() {

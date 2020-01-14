@@ -2,17 +2,25 @@ import Core from '@/Pixi/Core';
 import * as PIXI from 'pixi.js';
 import Card from '@/shared/models/Card';
 export default class RenderedCard extends Card {
-    constructor(id, cardType, cardClass) {
-        super(id, cardType, cardClass);
+    constructor(card) {
+        super(card.id, card.cardType, card.cardClass);
+        this.power = card.power;
+        this.attack = card.attack;
+        this.basePower = card.basePower;
+        this.baseAttack = card.baseAttack;
         this.sprite = this.createSprite();
         this.hitboxSprite = this.createHitboxSprite(this.sprite);
         Core.registerCard(this);
     }
+    getPosition() {
+        return this.hitboxSprite.position;
+    }
     isHovered(mousePosition) {
         return this.hitboxSprite.containsPoint(mousePosition);
     }
-    reveal(cardClass) {
+    reveal(cardType, cardClass) {
         Core.unregisterCard(this);
+        this.cardType = cardType;
         this.cardClass = cardClass;
         this.sprite = this.createSprite();
         Core.registerCard(this);
@@ -45,7 +53,7 @@ export default class RenderedCard extends Card {
         return hitboxSprite;
     }
     static fromCard(card) {
-        return new RenderedCard(card.id, card.cardType, card.cardClass);
+        return new RenderedCard(card);
     }
 }
 //# sourceMappingURL=RenderedCard.js.map

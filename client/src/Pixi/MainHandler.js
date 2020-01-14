@@ -6,10 +6,7 @@ export default class MainHandler {
         PIXI.Ticker.shared.add(MainHandler.tick);
     }
     static tick() {
-        const sortedCards = Core.player.cardHand.cards.slice().reverse();
-        if (!Core.input.grabbedCard) {
-            Core.input.hoveredCard = sortedCards.find(card => card.isHovered(Core.input.mousePosition)) || null;
-        }
+        Core.input.updateCardHoverStatus();
     }
     registerCard(renderedCard) {
         this.cards.push(renderedCard);

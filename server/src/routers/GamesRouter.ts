@@ -5,13 +5,14 @@ import ServerPlayer from '../libraries/players/ServerPlayer'
 import ServerGameMessage from '../models/messages/ServerGameMessage'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequestMiddleware'
+import ServerGame from '../libraries/game/ServerGame'
 
 router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req, res: Response, next) => {
-	const library = global.gameLibrary
-
-	const gameMessages = library.games.map(game => ServerGameMessage.fromServerGame(game))
+	const library: ServerGame[] = global.gameLibrary.games
+	const filteredLibrary = library.filter(game => game.visibleInBrowser)
+	const gameMessages = filteredLibrary.map(game => ServerGameMessage.fromServerGame(game))
 	res.json({ data: gameMessages })
 })
 

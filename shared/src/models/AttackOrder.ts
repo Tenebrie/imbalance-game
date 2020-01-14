@@ -1,6 +1,6 @@
 import CardOnBoard from './CardOnBoard'
 
-export default class QueuedCardAttack {
+export default class AttackOrder {
 	attacker: CardOnBoard
 	target: CardOnBoard
 

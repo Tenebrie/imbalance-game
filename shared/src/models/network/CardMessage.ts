@@ -6,17 +6,19 @@ export default class CardMessage {
 	cardType: CardType
 	cardClass: string
 
+	power: number
 	attack: number
-	health: number
-	initiative: number
+	basePower: number
+	baseAttack: number
 
 	constructor(card: Card) {
 		this.id = card.id
 		this.cardType = card.cardType
 		this.cardClass = card.cardClass
+		this.power = card.power
 		this.attack = card.attack
-		this.health = card.health
-		this.initiative = card.initiative
+		this.basePower = card.basePower
+		this.baseAttack = card.baseAttack
 	}
 
 	static fromCard(card: Card): CardMessage {

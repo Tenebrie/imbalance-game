@@ -11,13 +11,16 @@ export default class GameLibrary {
 
 	public createOwnedGame(owner: ServerPlayer, name: string): ServerGame {
 		const game = ServerGame.newOwnedInstance(owner, name)
+		console.info(`Creating owned game ${game.id}`)
+
 		this.games.push(game)
 		return game
 	}
 
-	private destroyGame(game: ServerGame): void {
-		game.players.forEach(playerInGame => OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player))
+	public destroyGame(game: ServerGame): void {
+		console.info(`Destroying game ${game.id}`)
 
+		game.players.forEach(playerInGame => OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player))
 		this.games.splice(this.games.indexOf(game), 1)
 	}
 

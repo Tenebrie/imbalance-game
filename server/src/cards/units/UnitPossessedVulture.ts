@@ -6,12 +6,11 @@ import ServerCardOnBoard from '../../libraries/game/ServerCardOnBoard'
 export default class UnitPossessedVulture extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, 'unitPossessedVulture')
+		this.basePower = 10
 		this.baseAttack = 4
-		this.baseHealth = 2
-		this.baseInitiative = 2
 	}
 
 	onAfterPerformingAttack(thisUnit: ServerCardOnBoard): void {
-		thisUnit.setHealth(this.health + 2)
+		thisUnit.setPower(this.power + 1)
 	}
 }

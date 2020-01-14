@@ -13,8 +13,8 @@ import ChatEntryMessage from '@/shared/models/network/ChatEntryMessage'
 import HiddenCardMessage from '@/shared/models/network/HiddenCardMessage'
 import PlayerInGameMessage from '@/shared/models/network/PlayerInGameMessage'
 import GameTurnPhase from '@/shared/enums/GameTurnPhase'
-import QueuedCardAttackMessage from '@/shared/models/network/QueuedCardAttackMessage'
-import RenderedQueuedCardAttack from '@/Pixi/models/RenderedQueuedCardAttack'
+import RenderedAttackOrder from '@/Pixi/models/RenderedAttackOrder'
+import AttackOrderMessage from '@/shared/models/network/AttackOrderMessage'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -46,25 +46,23 @@ const handlers: {[ index: string ]: any } = {
 		})
 	},
 
-	'gameState/board/attacks': (data: QueuedCardAttackMessage[]) => {
-		const newAttackMessages = data.filter(message => !Core.board.queuedAttacks.find(attack => attack.attacker.card.id === message.attacker.id && attack.target.card.id === message.target.id))
-		const removedAttacks = Core.board.queuedAttacks.filter(attack => !data.find(message => attack.attacker.card.id === message.attacker.id && attack.target.card.id === message.target.id))
-		const newAttacks = newAttackMessages.map(message => RenderedQueuedCardAttack.fromMessage(message))
-		Core.board.updateQueuedAttacks(newAttacks, removedAttacks)
+	'gameState/board/attacks': (data: AttackOrderMessage[]) => {
+		const newAttackMessages = data.filter(message => !Core.board.queuedAttacks.find(attack => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId))
+		const removedAttacks = Core.board.queuedAttacks.filter(attack => !data.find(message => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId))
+		const newAttacks = newAttackMessages.map(message => RenderedAttackOrder.fromMessage(message))
+		Core.board.updateAttackOrders(newAttacks, removedAttacks)
 	},
 
 	'update/game/phase': (data: GameTurnPhase) => {
-		Core.game.turnPhase = data
+		Core.game.setTurnPhase(data)
 	},
 
 	'update/game/time': (data: GameTimeMessage) => {
-		console.log(`Advancing time to ${data.currentTime}/${data.maximumTime}`)
 		Core.game.currentTime = data.currentTime
 		Core.game.maximumTime = data.maximumTime
 	},
 
 	'update/board/cardCreated': (data: CardOnBoardMessage) => {
-		console.info('Unit created', data)
 		const card = RenderedCardOnBoard.fromMessage(data)
 		Core.board.insertCard(card, data.rowIndex, data.unitIndex)
 	},
@@ -74,11 +72,18 @@ const handlers: {[ index: string ]: any } = {
 		Core.board.removeCardById(data.id)
 	},
 
-	'update/board/card/initiative': (data: CardMessage) => {
+	'update/board/card/power': (data: CardMessage) => {
 		const cardOnBoard = Core.board.findCardById(data.id)
 		if (!cardOnBoard) { return }
 
-		cardOnBoard.card.initiative = data.initiative
+		cardOnBoard.card.power = data.power
+	},
+
+	'update/board/card/attack': (data: CardMessage) => {
+		const cardOnBoard = Core.board.findCardById(data.id)
+		if (!cardOnBoard) { return }
+
+		cardOnBoard.card.attack = data.attack
 	},
 
 	'update/player/self/timeUnits': (data: PlayerInGameMessage) => {

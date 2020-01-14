@@ -14,6 +14,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	cardDeck: ServerCardDeck
 	rowsOwned: number
 	timeUnits: number
+	turnEnded: boolean
 
 	constructor(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
 		super(player)
@@ -23,6 +24,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.cardDeck = cardDeck
 		this.rowsOwned = 0
 		this.timeUnits = 0
+		this.turnEnded = false
 	}
 
 	public canPlayCard(card: ServerCard): boolean {
@@ -78,7 +80,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		}
 
 		OutgoingMessageHandlers.notifyAboutCardsDrawn(this.player, cards)
-		const opponent = this.game.players.find(playerInGame => playerInGame.player !== this.player)
+		const opponent = this.game.getOpponent(this)
 		if (opponent) {
 			OutgoingMessageHandlers.notifyAboutOpponentCardsDrawn(opponent.player, cards)
 		}
@@ -86,6 +88,21 @@ export default class ServerPlayerInGame extends PlayerInGame {
 
 	public advanceTime(): void {
 		this.setTimeUnits(this.timeUnits + 1)
+	}
+
+	public startTurn(): void {
+		this.turnEnded = false
+	}
+
+	public endTurn(): void {
+		this.turnEnded = true
+		this.setTimeUnits(0)
+
+		OutgoingMessageHandlers.notifyAboutTurnEnded(this.player)
+		const opponent = this.game.getOpponent(this)
+		if (opponent) {
+			OutgoingMessageHandlers.notifyAboutOpponentTurnEnded(opponent.player)
+		}
 	}
 
 	private setTimeUnits(timeUnits: number): void {

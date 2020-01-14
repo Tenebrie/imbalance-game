@@ -3,9 +3,7 @@ import CardDeck from '../../shared/models/CardDeck'
 import HeroSatia from '../../cards/heroes/HeroSatia'
 import UnitPostalRaven from '../../cards/units/UnitPostalRaven'
 import ServerGame from '../../libraries/game/ServerGame'
-import UnitBlackWolf from '../../cards/units/UnitBlackWolf'
 import UnitPossessedVulture from '../../cards/units/UnitPossessedVulture'
-import UnitRagingBear from '../../cards/units/UnitRagingBear'
 
 export default class ServerCardDeck extends CardDeck {
 	game: ServerGame
@@ -49,13 +47,7 @@ export default class ServerCardDeck extends CardDeck {
 			deck.addCard(new UnitPostalRaven(game))
 		}
 		for (let i = 0; i < 3; i++) {
-			deck.addCard(new UnitBlackWolf(game))
-		}
-		for (let i = 0; i < 3; i++) {
 			deck.addCard(new UnitPossessedVulture(game))
-		}
-		for (let i = 0; i < 3; i++) {
-			deck.addCard(new UnitRagingBear(game))
 		}
 
 		deck.shuffle()

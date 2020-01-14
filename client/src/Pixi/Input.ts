@@ -7,6 +7,8 @@ import RenderedCard from '@/Pixi/models/RenderedCard'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
 import { TargetingMode } from '@/Pixi/enums/TargetingMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import GameTurnPhase from '@/shared/enums/GameTurnPhase'
+import AttackOrder from '@/shared/models/AttackOrder'
 import Point = PIXI.Point
 
 export default class Input {
@@ -57,7 +59,24 @@ export default class Input {
 	}
 
 	private onMouseDown(event: MouseEvent) {
+		if (event.button === 2 && this.grabbedCard) {
+			this.releaseCard()
+			return
+		}
+
+		if (this.inspectedCard) {
+			this.inspectedCard = null
+			return
+		}
+
 		if (event.button !== 0) {
+			return
+		}
+
+		const buttons = Core.userInterface.buttons
+		const pressedButton = buttons.find(button => button.isHovered(this.mousePosition))
+		if (pressedButton) {
+			Core.userInterface.pressedButton = pressedButton
 			return
 		}
 
@@ -66,8 +85,12 @@ export default class Input {
 	}
 
 	private onMouseUp(event: MouseEvent) {
-		if (this.inspectedCard) {
-			this.inspectedCard = null
+		const pressedButton = Core.userInterface.pressedButton
+		if (pressedButton) {
+			if (pressedButton.isHovered(this.mousePosition)) {
+				pressedButton.onClick()
+			}
+			Core.userInterface.pressedButton = null
 			return
 		}
 
@@ -88,7 +111,7 @@ export default class Input {
 		let targeting: TargetingMode
 		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
 			targeting = TargetingMode.CARD_PLAY
-		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && hoveredCard.card.initiative === 0) {
+		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.SKIRMISH) {
 			targeting = TargetingMode.CARD_ATTACK
 		} else {
 			return
@@ -127,13 +150,14 @@ export default class Input {
 		}
 	}
 
-	private onCardAttack(card: RenderedCard): void {
+	private onCardAttack(attackingCard: RenderedCard): void {
 		const hoveredCard = this.hoveredCard
 		if (!hoveredCard || hoveredCard.owner === Core.player) {
 			return
 		}
 
-		OutgoingMessageHandlers.sendUnitAttackOrder(card, hoveredCard.card)
+		const attacker = Core.board.findCardById(attackingCard.id)!
+		OutgoingMessageHandlers.sendUnitAttackOrders(new AttackOrder(attacker, hoveredCard))
 	}
 
 	private onMouseMove(event: MouseEvent) {

@@ -11,16 +11,13 @@ export default class RenderedCard extends Card {
 
 	constructor(card: Card) {
 		super(card.id, card.cardType, card.cardClass)
+		this.power = card.power
 		this.attack = card.attack
-		this.health = card.health
-		this.initiative = card.initiative
+		this.basePower = card.basePower
 		this.baseAttack = card.baseAttack
-		this.baseHealth = card.baseHealth
-		this.baseInitiative = card.baseInitiative
 
 		this.sprite = this.createSprite()
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
-		Core.registerCard(this)
 	}
 
 	public getPosition(): IPoint {
@@ -37,10 +34,6 @@ export default class RenderedCard extends Card {
 		this.cardClass = cardClass
 		this.sprite = this.createSprite()
 		Core.registerCard(this)
-	}
-
-	public unregister(): void {
-		Core.unregisterCard(this)
 	}
 
 	public createSprite(): PIXI.Sprite {
@@ -69,7 +62,13 @@ export default class RenderedCard extends Card {
 		return hitboxSprite
 	}
 
+	public unregister(): void {
+		Core.unregisterCard(this)
+	}
+
 	public static fromCard(card: Card): RenderedCard {
-		return new RenderedCard(card)
+		const renderedCard = new RenderedCard(card)
+		Core.registerCard(renderedCard)
+		return renderedCard
 	}
 }

@@ -7,14 +7,13 @@ import ServerCardOnBoard from '../../libraries/game/ServerCardOnBoard'
 export default class HeroNightLady extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, 'heroNightLady')
+		this.basePower = 10
 		this.baseAttack = 20
-		this.baseHealth = 20
-		this.baseInitiative = 7
 	}
 
 	onAfterOtherUnitDestroyed(thisUnit: ServerCardOnBoard, destroyedUnit: ServerCardOnBoard): void {
 		if (destroyedUnit.card instanceof HeroSatia) {
-			thisUnit.setInitiative(0)
+			thisUnit.setAttack(thisUnit.card.power)
 		}
 	}
 }

@@ -8,11 +8,13 @@ import CardOnBoardMessage from '@/shared/models/CardOnBoardMessage'
 export default class RenderedCardOnBoard extends CardOnBoard {
 	card: RenderedCard
 	owner: ClientPlayerInGame
+	preferredAttackTarget: CardOnBoard | null
 
 	constructor(card: RenderedCard, owner: ClientPlayerInGame) {
 		super(card, owner)
 		this.card = card
 		this.owner = owner
+		this.preferredAttackTarget = null
 	}
 
 	public static fromMessage(message: CardOnBoardMessage): RenderedCardOnBoard {

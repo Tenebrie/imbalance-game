@@ -10,10 +10,29 @@ export default class RenderedGameBoardRow extends GameBoardRow {
         texture.baseTexture.on('loaded', () => {
             sprite.alpha = 0;
         });
-        sprite.scale.set(0.4);
         sprite.anchor.set(0.5, 0.5);
         this.sprite = sprite;
         Core.renderer.registerGameBoardRow(this);
+    }
+    insertCard(card, unitIndex) {
+        this.cards.splice(unitIndex, 0, card);
+    }
+    findCardById(cardId) {
+        return this.cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null;
+    }
+    removeCardById(cardId) {
+        const cardOnBoard = this.findCardById(cardId);
+        if (!cardOnBoard) {
+            return;
+        }
+        this.cards.splice(this.cards.indexOf(cardOnBoard), 1);
+        cardOnBoard.card.unregister();
+    }
+    clearRow() {
+        this.cards.forEach(cardOnBoard => {
+            Core.unregisterCard(cardOnBoard.card);
+        });
+        this.cards = [];
     }
     isHovered(mousePosition) {
         return this.sprite.containsPoint(mousePosition);

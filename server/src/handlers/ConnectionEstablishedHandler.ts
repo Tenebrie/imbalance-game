@@ -1,18 +1,30 @@
 import ServerGame from '../libraries/game/ServerGame'
-import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerPlayerInGame from '../libraries/players/ServerPlayerInGame'
+import OutgoingMessageHandlers from './OutgoingMessageHandlers'
+import GameLibrary from '../libraries/game/GameLibrary'
+import ServerPlayer from '../libraries/players/ServerPlayer'
+import GameTurnPhase from '../shared/enums/GameTurnPhase'
 
 export default {
 	onPlayerConnected(game: ServerGame, playerInGame: ServerPlayerInGame): void {
-		OutgoingMessageHandlers.sendDeck(playerInGame.player, game)
-		if (game.players.length === 2) {
-			OutgoingMessageHandlers.sendOpponent(playerInGame.player, game.getOpponent(playerInGame))
+		if (game.players.length < 2) {
+			return
 		}
-		OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, game.players.length === 2)
-		OutgoingMessageHandlers.sendBoardState(playerInGame.player, game)
-		playerInGame.drawCards(10)
 
-		const opponent = game.getOpponent(playerInGame)
-		OutgoingMessageHandlers.sendBoardState(opponent.player, game)
+		game.start()
+	},
+
+	onPlayerDisconnected(game: ServerGame, player: ServerPlayer): void {
+		if (game.players.length === 0 && game.turnPhase === GameTurnPhase.WAITING) {
+			const gameLibrary: GameLibrary = global.gameLibrary
+			gameLibrary.destroyGame(game)
+			return
+		}
+
+		if (game.players.length !== 1) {
+			return
+		}
+
+		game.finish('Opponent disconnected')
 	}
 }
