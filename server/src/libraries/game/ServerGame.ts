@@ -10,6 +10,7 @@ import ServerCardDeck from '../../models/game/ServerCardDeck'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
 import GameLibrary from './GameLibrary'
+import VoidPlayer from '../../utils/VoidPlayer'
 
 export default class ServerGame extends Game {
 	MAXIMUM_TIME = 12
@@ -47,7 +48,9 @@ export default class ServerGame extends Game {
 	public start(): void {
 		this.visibleInBrowser = false
 
-		console.info(`Starting game ${this.id}: ${this.players[0].player.username} vs ${this.players[1].player.username}`)
+		const playerOne = this.players[0]
+		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
+		console.info(`Starting game ${this.id}: ${playerOne.player.username} vs ${playerTwo.player.username}`)
 
 		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.sendDeck(playerInGame.player, this)

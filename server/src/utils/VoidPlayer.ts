@@ -4,7 +4,7 @@ let voidPlayer: VoidPlayer
 
 export default class VoidPlayer extends ServerPlayer {
 	constructor() {
-		super('void', 'Void player')
+		super('void', '/dev/null')
 	}
 
 	sendMessage(json: { type: string; data: any }): void {

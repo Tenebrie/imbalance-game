@@ -2,7 +2,7 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import GameBoardRow from '@/shared/models/GameBoardRow'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
-import Point = PIXI.Point
+import RenderedCard from '@/Pixi/models/RenderedCard'
 
 export default class RenderedGameBoardRow extends GameBoardRow {
 	sprite: PIXI.Sprite
@@ -27,6 +27,15 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 		this.cards.splice(unitIndex, 0, card)
 	}
 
+	public includesCard(card: RenderedCard): boolean {
+		return !!this.findCardById(card.id)
+	}
+
+	public getCardIndex(card: RenderedCard): number {
+		const cardOnBoard = this.findCardById(card.id)!
+		return this.cards.indexOf(cardOnBoard)
+	}
+
 	public findCardById(cardId: string): RenderedCardOnBoard | null {
 		return this.cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
 	}
@@ -46,7 +55,7 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 		this.cards = []
 	}
 
-	public isHovered(mousePosition: Point): boolean {
+	public isHovered(mousePosition: PIXI.Point): boolean {
 		return this.sprite.containsPoint(mousePosition)
 	}
 }

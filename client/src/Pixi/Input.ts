@@ -9,6 +9,7 @@ import { TargetingMode } from '@/Pixi/enums/TargetingMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@/shared/enums/GameTurnPhase'
 import AttackOrder from '@/shared/models/AttackOrder'
+import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import Point = PIXI.Point
 
 export default class Input {
@@ -139,6 +140,18 @@ export default class Input {
 		this.grabbedCard = null
 	}
 
+	private getCardInsertIndex(hoveredRow: RenderedGameBoardRow): number {
+		const hoveredUnit = this.hoveredCard
+		if (!hoveredUnit || !hoveredRow.includesCard(hoveredUnit.card)) {
+			return this.mousePosition.x > hoveredRow.sprite.position.x ? hoveredRow.cards.length : 0
+		}
+		let index = hoveredRow.getCardIndex(hoveredUnit.card)
+		if (this.mousePosition.x > hoveredUnit.card.hitboxSprite.position.x) {
+			index += 1
+		}
+		return index
+	}
+
 	private onCardPlay(card: RenderedCard): void {
 		const hoveredRow = Core.board.rows.find(row => row.isHovered(this.mousePosition))
 		if (!hoveredRow) { return }
@@ -146,7 +159,9 @@ export default class Input {
 		if (card.cardType === CardType.SPELL) {
 			OutgoingMessageHandlers.sendSpellCardPlayed(card)
 		} else if (card.cardType === CardType.UNIT) {
-			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, hoveredRow.cards.length)
+			const index = this.getCardInsertIndex(hoveredRow)
+			console.log(`Inserting at index ${index}`)
+			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, index)
 		}
 	}
 
