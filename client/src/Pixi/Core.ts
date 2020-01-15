@@ -11,6 +11,7 @@ import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import RenderedButton from '@/Pixi/models/RenderedButton'
 import UserInterface from '@/Pixi/UserInterface'
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 export default class Core {
 	public static input: Input
@@ -20,6 +21,7 @@ export default class Core {
 	public static userInterface: UserInterface
 	public static keepaliveTimer: number
 
+	public static isReady = false
 	public static game: ClientGame
 	public static board: RenderedGameBoard
 	public static player: ClientPlayerInGame
@@ -36,11 +38,14 @@ export default class Core {
 		Core.player = ClientPlayerInGame.fromPlayer(store.getters.player)
 	}
 
-	private static onConnect(container: Element): void {
-		Core.renderer = new Renderer(container)
+	private static async onConnect(container: Element): Promise<void> {
 		Core.keepaliveTimer = setInterval(() => {
 			OutgoingMessageHandlers.sendKeepalive()
 		}, 30000)
+
+		await TextureAtlas.prepare()
+
+		Core.renderer = new Renderer(container)
 
 		Core.game = new ClientGame()
 		Core.input = new Input()
@@ -52,6 +57,9 @@ export default class Core {
 			OutgoingMessageHandlers.sendEndTurn()
 		})
 		this.registerButton(endTurnButton)
+
+		console.info('Sending init signal to server')
+		OutgoingMessageHandlers.sendInit()
 	}
 
 	private static onMessage(event: MessageEvent): void {

@@ -4,6 +4,7 @@ import HeroSatia from '../../cards/heroes/HeroSatia'
 import UnitPostalRaven from '../../cards/units/UnitPostalRaven'
 import ServerGame from '../../libraries/game/ServerGame'
 import UnitPossessedVulture from '../../cards/units/UnitPossessedVulture'
+import CardLibrary from '../../libraries/card/CardLibrary'
 
 export default class ServerCardDeck extends CardDeck {
 	game: ServerGame
@@ -42,12 +43,12 @@ export default class ServerCardDeck extends CardDeck {
 	static defaultDeck(game: ServerGame): ServerCardDeck {
 		const deck = new ServerCardDeck(game, [])
 
-		deck.addCard(new HeroSatia(game))
+		deck.addCard(CardLibrary.createCard(new HeroSatia(game)))
 		for (let i = 0; i < 3; i++) {
-			deck.addCard(new UnitPostalRaven(game))
+			deck.addCard(CardLibrary.createCard(new UnitPostalRaven(game)))
 		}
 		for (let i = 0; i < 3; i++) {
-			deck.addCard(new UnitPossessedVulture(game))
+			deck.addCard(CardLibrary.createCard(new UnitPossessedVulture(game)))
 		}
 
 		deck.shuffle()

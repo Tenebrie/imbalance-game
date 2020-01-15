@@ -12,6 +12,9 @@ import AttackOrder from '@/shared/models/AttackOrder'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import Point = PIXI.Point
 
+const LEFT_MOUSE_BUTTON = 0
+const RIGHT_MOUSE_BUTTON = 2
+
 export default class Input {
 	mouseDown: boolean = false
 	mousePosition: Point = new Point(-10000, -10000)
@@ -60,7 +63,7 @@ export default class Input {
 	}
 
 	private onMouseDown(event: MouseEvent) {
-		if (event.button === 2 && this.grabbedCard) {
+		if (event.button === RIGHT_MOUSE_BUTTON && this.grabbedCard) {
 			this.releaseCard()
 			return
 		}
@@ -70,7 +73,7 @@ export default class Input {
 			return
 		}
 
-		if (event.button !== 0) {
+		if (event.button !== LEFT_MOUSE_BUTTON) {
 			return
 		}
 
@@ -95,11 +98,11 @@ export default class Input {
 			return
 		}
 
-		if (event.button === 2 && this.hoveredCard) {
+		if (event.button === RIGHT_MOUSE_BUTTON && this.hoveredCard) {
 			this.inspectedCard = this.hoveredCard.card
 		}
 
-		if (event.button === 0) {
+		if (event.button === LEFT_MOUSE_BUTTON) {
 			this.mouseDown = false
 			this.useGrabbedCard()
 		}
@@ -159,9 +162,7 @@ export default class Input {
 		if (card.cardType === CardType.SPELL) {
 			OutgoingMessageHandlers.sendSpellCardPlayed(card)
 		} else if (card.cardType === CardType.UNIT) {
-			const index = this.getCardInsertIndex(hoveredRow)
-			console.log(`Inserting at index ${index}`)
-			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, index)
+			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, this.getCardInsertIndex(hoveredRow))
 		}
 	}
 

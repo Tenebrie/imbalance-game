@@ -2,13 +2,57 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="365a96b8-392e-41f9-8067-3f2c0c3e3250" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-description.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-element-alteration.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-element-control.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-element-damage.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-element-generic.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-element-healing.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-element-sacrifice.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-element-summoning.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-name-modern.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-power-zoom.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-power.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-stats-left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-stats-middle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-stats-right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/bg-tribe-modern.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/stat-armor.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/stat-attack-claw.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/stat-attack-heal.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/components/stat-attack-range.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/fonts/brush-script-mt.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Pixi/enums/CardDisplayMode.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Pixi/render/TextureAtlas.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/libraries/card/CardLibrary.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/routers/CardsRouter.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/utils/VoidGame.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/assets/cards/unitPostalRaven.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/assets/cards/unitPostalRaven.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/Core.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Core.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Input.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoardRow.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Renderer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/handlers/OutgoingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/handlers/OutgoingMessageHandlers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedCard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedCardOnBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedCardOnBoard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/.idea/dictionaries/Tianara.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/dictionaries/Tianara.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/cards/heroes/HeroNightLady.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/heroes/HeroNightLady.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/cards/heroes/HeroSatia.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/heroes/HeroSatia.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardDrawer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardDrawer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardRevealer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/spells/SpellCardRevealer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/cards/units/UnitPossessedVulture.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/units/UnitPossessedVulture.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/cards/units/UnitPostalRaven.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/cards/units/UnitPostalRaven.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/handlers/ConnectionEstablishedHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/handlers/ConnectionEstablishedHandler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/libraries/game/ServerGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/game/ServerGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/utils/VoidPlayer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/utils/VoidPlayer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/handlers/IncomingMessageHandlers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/libraries/players/ServerPlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/libraries/players/ServerPlayerInGame.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/models/game/ServerCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/models/game/ServerCard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/models/game/ServerCardDeck.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/models/game/ServerCardDeck.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/routers/PlayRouter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/routers/PlayRouter.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/types/global.t.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/types/global.t.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -34,7 +78,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/Pixi/models" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../notgwent/editor" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -44,23 +88,23 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="prettierjs.PrettierConfiguration.Package" value="W:\Workspace\notgwent-game\client\node_modules\prettier" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
     <property name="ts.external.directory.path" value="W:\Workspace\notgwent-game\client\node_modules\typescript\lib" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\handlers" />
-      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\models" />
-      <recent name="W:\Workspace\notgwent-game\client\src" />
-      <recent name="W:\Workspace\notgwent-game\client\src\Vue\components" />
-      <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi\models" />
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi\enums" />
       <recent name="W:\Workspace\notgwent-game\client\public\assets\cards" />
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
       <recent name="W:\Workspace\notgwent-game\client\src\shared\models" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="W:\Workspace\notgwent-game\client\public\assets" />
+      <recent name="W:\Workspace\notgwent-game\client" />
+      <recent name="W:\Workspace\notgwent-game\client\public\assets\fonts" />
+      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\handlers" />
+      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\models" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -96,7 +140,7 @@
       <workItem from="1578741136932" duration="12199000" />
       <workItem from="1578824455931" duration="4100000" />
       <workItem from="1579020961209" duration="14229000" />
-      <workItem from="1579089050769" duration="1327000" />
+      <workItem from="1579089050769" duration="25464000" />
     </task>
     <servers />
   </component>

@@ -5,7 +5,7 @@ import ServerPlayerInGame from '../../libraries/players/ServerPlayerInGame'
 
 export default class SpellCardDrawer extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, 'spellCardDrawer')
+		super(game, CardType.SPELL)
 	}
 
 	onPlaySpell(owner: ServerPlayerInGame): void {

@@ -6,9 +6,9 @@ import ServerCardOnBoard from '../../libraries/game/ServerCardOnBoard'
 
 export default class HeroNightLady extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, 'heroNightLady')
+		super(game, CardType.UNIT)
 		this.basePower = 10
-		this.baseAttack = 20
+		this.baseAttack = 10
 	}
 
 	onAfterOtherUnitDestroyed(thisUnit: ServerCardOnBoard, destroyedUnit: ServerCardOnBoard): void {

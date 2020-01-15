@@ -2,12 +2,57 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="20d01716-7396-4160-bcea-0f09fcfb1464" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-description.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-element-alteration.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-element-control.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-element-damage.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-element-generic.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-element-healing.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-element-sacrifice.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-element-summoning.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-name-modern.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-power-zoom.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-power.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-stats-left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-stats-middle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-stats-right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-tribe-modern.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/stat-armor.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/stat-attack-claw.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/stat-attack-heal.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/stat-attack-range.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/brush-script-mt.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/src/Pixi/enums/CardDisplayMode.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/src/Pixi/render/TextureAtlas.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/libraries/card/CardLibrary.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routers/CardsRouter.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/VoidGame.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/public/assets/cards/unitPostalRaven.png" beforeDir="false" afterPath="$PROJECT_DIR$/../client/public/assets/cards/unitPostalRaven.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../client/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Core.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Core.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedGameBoardRow.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/handlers/IncomingMessageHandlers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/handlers/OutgoingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/handlers/OutgoingMessageHandlers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCardOnBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCardOnBoard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/Tianara.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/Tianara.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/libraries/game/ServerGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/libraries/game/ServerGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/VoidPlayer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/VoidPlayer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cards/heroes/HeroNightLady.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/cards/heroes/HeroNightLady.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cards/heroes/HeroSatia.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/cards/heroes/HeroSatia.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cards/spells/SpellCardDrawer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/cards/spells/SpellCardDrawer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cards/spells/SpellCardRevealer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/cards/spells/SpellCardRevealer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cards/units/UnitPossessedVulture.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/cards/units/UnitPossessedVulture.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cards/units/UnitPostalRaven.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/cards/units/UnitPostalRaven.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/ConnectionEstablishedHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/ConnectionEstablishedHandler.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/IncomingMessageHandlers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/libraries/players/ServerPlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/libraries/players/ServerPlayerInGame.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/game/ServerCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/game/ServerCard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/game/ServerCardDeck.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/game/ServerCardDeck.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routers/PlayRouter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routers/PlayRouter.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/global.t.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/global.t.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -39,7 +84,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/cards/units" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/routers" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -48,18 +93,18 @@
     <property name="ts.external.directory.path" value="W:\Workspace\notgwent-game\server\node_modules\typescript\lib" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="W:\Workspace\notgwent-game\server\src\cards\units" />
-      <recent name="W:\Workspace\notgwent-game\server\src\cards\heroes" />
-      <recent name="W:\Workspace\notgwent-game\server\src\cards\spells" />
-      <recent name="W:\Workspace\notgwent-game\server\src\libraries\game" />
-      <recent name="W:\Workspace\notgwent-game\server\src\utils" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="W:\Workspace\notgwent-game\server\src\cards\heroes" />
       <recent name="W:\Workspace\notgwent-game\server\src\cards\units" />
       <recent name="W:\Workspace\notgwent-game\server\src\handlers" />
       <recent name="W:\Workspace\notgwent-game\server\src\cards\spells" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="W:\Workspace\notgwent-game\server\src\routers" />
+      <recent name="W:\Workspace\notgwent-game\server\src\utils" />
+      <recent name="W:\Workspace\notgwent-game\server\src\libraries\card" />
+      <recent name="W:\Workspace\notgwent-game\server\src\cards\units" />
+      <recent name="W:\Workspace\notgwent-game\server\src\cards\heroes" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -96,7 +141,7 @@
       <workItem from="1578741136763" duration="15621000" />
       <workItem from="1578824455678" duration="3340000" />
       <workItem from="1579020960969" duration="15212000" />
-      <workItem from="1579089055921" duration="1358000" />
+      <workItem from="1579089055921" duration="12014000" />
     </task>
     <servers />
   </component>

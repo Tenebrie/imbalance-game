@@ -8,6 +8,7 @@ import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
 
 import Database from './database/Database'
+import CardLibrary from './libraries/card/CardLibrary'
 import GameLibrary from './libraries/game/GameLibrary'
 import PlayerLibrary from './libraries/players/PlayerLibrary'
 
@@ -21,6 +22,7 @@ polyfill.injectPolyfills()
 const PlayRouter = require('./routers/PlayRouter')
 const IndexRouter = require('./routers/IndexRouter')
 const LoginRouter = require('./routers/LoginRouter')
+const CardsRouter = require('./routers/CardsRouter')
 const GamesRouter = require('./routers/GamesRouter')
 const LogoutRouter = require('./routers/LogoutRouter')
 const ProfileRouter = require('./routers/ProfileRouter')
@@ -59,6 +61,7 @@ app.use((req: Request, res: Response, next) => {
 
 /* HTTP routers */
 app.use('/', IndexRouter)
+app.use('/cards', CardsRouter)
 app.use('/games', GamesRouter)
 app.use('/login', LoginRouter)
 app.use('/logout', LogoutRouter)
@@ -79,6 +82,7 @@ app.use((err, req, res, next) => {
 
 /* Global state */
 Database.init()
+global.cardLibrary = new CardLibrary()
 global.gameLibrary = new GameLibrary()
 global.playerLibrary = new PlayerLibrary()
 

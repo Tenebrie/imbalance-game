@@ -28,6 +28,10 @@ export default {
 		Core.sendMessage('post/endTurn', null)
 	},
 
+	sendInit() {
+		Core.sendMessage('system/init', null)
+	},
+
 	sendKeepalive() {
 		Core.sendMessage('system/keepalive', null)
 	}

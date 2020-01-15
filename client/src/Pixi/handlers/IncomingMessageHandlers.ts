@@ -64,6 +64,7 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/board/cardCreated': (data: CardOnBoardMessage) => {
 		const card = RenderedCardOnBoard.fromMessage(data)
+		console.log(card)
 		Core.board.insertCard(card, data.rowIndex, data.unitIndex)
 	},
 
@@ -76,14 +77,14 @@ const handlers: {[ index: string ]: any } = {
 		const cardOnBoard = Core.board.findCardById(data.id)
 		if (!cardOnBoard) { return }
 
-		cardOnBoard.card.power = data.power
+		cardOnBoard.setPower(data.power)
 	},
 
 	'update/board/card/attack': (data: CardMessage) => {
 		const cardOnBoard = Core.board.findCardById(data.id)
 		if (!cardOnBoard) { return }
 
-		cardOnBoard.card.attack = data.attack
+		cardOnBoard.setAttack(data.attack)
 	},
 
 	'update/player/self/timeUnits': (data: PlayerInGameMessage) => {

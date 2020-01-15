@@ -17,6 +17,14 @@ export default class RenderedCardOnBoard extends CardOnBoard {
 		this.preferredAttackTarget = null
 	}
 
+	public setPower(value: number): void {
+		this.card.setPower(value)
+	}
+
+	public setAttack(value: number): void {
+		this.card.setAttack(value)
+	}
+
 	public static fromMessage(message: CardOnBoardMessage): RenderedCardOnBoard {
 		const card = Card.fromMessage(message.card)
 		const renderedCard = RenderedCard.fromCard(card)

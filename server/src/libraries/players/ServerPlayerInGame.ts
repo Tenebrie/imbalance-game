@@ -8,6 +8,8 @@ import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
 import runCardEventHandler from '../../utils/runCardEventHandler'
 
 export default class ServerPlayerInGame extends PlayerInGame {
+	initialized = false
+
 	game: ServerGame
 	player: ServerPlayer
 	cardHand: ServerCardHand

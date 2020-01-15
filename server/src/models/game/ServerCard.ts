@@ -12,8 +12,8 @@ export default class ServerCard extends Card {
 	game: ServerGame
 	isRevealed = false
 
-	constructor(game: ServerGame, cardType: CardType, cardClass: string) {
-		super(uuidv4(), cardType, cardClass)
+	constructor(game: ServerGame, cardType: CardType) {
+		super(uuidv4(), cardType, 'missingno')
 		this.game = game
 	}
 

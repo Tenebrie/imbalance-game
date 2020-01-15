@@ -6,7 +6,8 @@ import GameTurnPhase from '../shared/enums/GameTurnPhase'
 
 export default {
 	onPlayerConnected(game: ServerGame, playerInGame: ServerPlayerInGame): void {
-		if (game.players.length < 2) {
+		const initializedPlayers = game.players.filter(playerInGame => playerInGame.initialized)
+		if (initializedPlayers.length < 1) {
 			return
 		}
 

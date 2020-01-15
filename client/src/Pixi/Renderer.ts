@@ -8,18 +8,23 @@ import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import GameTurnPhase from '@/shared/enums/GameTurnPhase'
 import RenderedButton from '@/Pixi/models/RenderedButton'
+import CardType from '@/shared/enums/CardType'
 
 export default class Renderer {
 	pixi: PIXI.Application
 	container: Element
+
 	timeLabel: PIXI.Text
+	actionLabel: PIXI.Text
 	playerNameLabel: PIXI.Text
 	opponentNameLabel: PIXI.Text
 
+	CARD_ASPECT_RATIO = 408 / 584
 	GAME_BOARD_WINDOW_FRACTION = 0.6
-	PLAYER_HAND_WINDOW_FRACTION = 0.15
-	OPPONENT_HAND_WINDOW_FRACTION = 0.15
+	PLAYER_HAND_WINDOW_FRACTION = 0.20
+	OPPONENT_HAND_WINDOW_FRACTION = 0.10
 	HOVERED_HAND_WINDOW_FRACTION = 0.3
+	GAME_BOARD_OFFSET_FRACTION = -0.05
 	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
 
 	constructor(container: Element) {
@@ -34,6 +39,26 @@ export default class Renderer {
 		this.pixi.stage.sortableChildren = true
 		container.appendChild(this.pixi.view)
 		this.container = container
+
+		/* Time label */
+		this.timeLabel = new PIXI.Text('', {
+			fontFamily: 'Arial',
+			fontSize: 24,
+			fill: 0xFFFFFF
+		})
+		this.timeLabel.anchor.set(0, 0.5)
+		this.timeLabel.position.set(10, this.getScreenHeight() / 2)
+		this.pixi.stage.addChild(this.timeLabel)
+
+		/* Action label */
+		this.actionLabel = new PIXI.Text('', {
+			fontFamily: 'Arial',
+			fontSize: 24,
+			fill: 0xFFFFFF
+		})
+		this.actionLabel.anchor.set(0.5, 1)
+		this.actionLabel.zIndex = 85
+		this.pixi.stage.addChild(this.actionLabel)
 
 		/* Player name label */
 		this.playerNameLabel = new PIXI.Text('', {
@@ -53,16 +78,6 @@ export default class Renderer {
 		})
 		this.opponentNameLabel.position.set(10, 10)
 		this.pixi.stage.addChild(this.opponentNameLabel)
-
-		/* Time label */
-		this.timeLabel = new PIXI.Text('', {
-			fontFamily: 'Arial',
-			fontSize: 24,
-			fill: 0xFFFFFF
-		})
-		this.timeLabel.anchor.set(0, 0.5)
-		this.timeLabel.position.set(10, this.getScreenHeight() / 2)
-		this.pixi.stage.addChild(this.timeLabel)
 
 		/* Register the ticker */
 		PIXI.Ticker.shared.add(() => this.tick())
@@ -129,30 +144,32 @@ export default class Renderer {
 		return this.pixi.view.height
 	}
 
-	public renderSpriteInHand(sprite: PIXI.Sprite, handPosition: number, handSize: number, isOpponent: boolean): void {
+	public renderContainerInHand(container: PIXI.Container, handPosition: number, handSize: number, isOpponent: boolean): void {
 		const windowFraction = isOpponent ? this.OPPONENT_HAND_WINDOW_FRACTION : this.PLAYER_HAND_WINDOW_FRACTION
 		const cardHeight = this.getScreenHeight() * windowFraction
-		sprite.scale.set(cardHeight / sprite.texture.height)
+		container.width = cardHeight * this.CARD_ASPECT_RATIO
+		container.height = cardHeight
 
 		const screenCenter = this.getScreenWidth() / 2
-		const cardWidth = sprite.width * Math.pow(0.95, handSize)
+		const cardWidth = container.width * Math.pow(0.95, handSize)
 		const distanceToCenter = handPosition - ((handSize - 1) / 2)
 
-		sprite.alpha = 1
-		sprite.position.x = distanceToCenter * cardWidth + screenCenter
-		sprite.position.y = cardHeight * 0.5
-		sprite.rotation = 0
-		sprite.zIndex = (handPosition + 1) * 2
+		container.alpha = 1
+		container.position.x = distanceToCenter * cardWidth + screenCenter
+		container.position.y = cardHeight * 0.5
+		container.rotation = 0
+		container.zIndex = (handPosition + 1) * 2
 		if (!isOpponent) {
-			sprite.position.y = this.getScreenHeight() - sprite.position.y
+			container.position.y = this.getScreenHeight() - container.position.y
 		}
 	}
 
-	public renderHoveredSpriteInHand(sprite: PIXI.Sprite, handPosition: number, handSize: number): void {
+	public renderHoveredContainerInHand(sprite: PIXI.Container, handPosition: number, handSize: number): void {
 		const cardHeight = this.getScreenHeight() * this.HOVERED_HAND_WINDOW_FRACTION
-		sprite.scale.set(cardHeight / sprite.texture.height)
+		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
+		sprite.height = cardHeight
 
-		const spriteNormalWidth = (this.getScreenHeight() * this.PLAYER_HAND_WINDOW_FRACTION) * (sprite.texture.width / sprite.texture.height)
+		const spriteNormalWidth = (this.getScreenHeight() * this.PLAYER_HAND_WINDOW_FRACTION) * this.CARD_ASPECT_RATIO
 
 		const screenCenter = this.getScreenWidth() / 2
 		const cardWidth = spriteNormalWidth * Math.pow(0.95, handSize)
@@ -165,45 +182,58 @@ export default class Renderer {
 		sprite.zIndex = 50
 	}
 
-	public renderGrabbedSprite(sprite: PIXI.Sprite, mousePosition: Point): void {
-		const cardHeight = this.getScreenHeight() * this.PLAYER_HAND_WINDOW_FRACTION
-		sprite.scale.set(cardHeight / sprite.texture.height)
+	public renderGrabbedSprite(container: PIXI.Container, mousePosition: Point): void {
+		const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+		container.width = cardHeight * this.CARD_ASPECT_RATIO
+		container.height = cardHeight
 
-		sprite.alpha = 1
-		sprite.position.x = mousePosition.x
-		sprite.position.y = mousePosition.y
-		sprite.rotation = 0
-		sprite.zIndex = 100
+		container.alpha = 1
+		container.position.x = mousePosition.x
+		container.position.y = mousePosition.y
+		container.rotation = 0
+		container.zIndex = 100
 	}
 
 	public renderCardInHand(renderedCard: RenderedCard, handPosition: number, handSize: number): void {
-		const sprite = renderedCard.sprite
+		const container = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
 
-		this.renderSpriteInHand(sprite, handPosition, handSize, false)
-		this.renderSpriteInHand(hitboxSprite, handPosition, handSize, false)
+		this.renderContainerInHand(container, handPosition, handSize, false)
+		this.renderContainerInHand(hitboxSprite, handPosition, handSize, false)
+		renderedCard.switchToCardMode()
+		renderedCard.fixFontScaling()
 		hitboxSprite.zIndex -= 1
 	}
 
 	public renderHoveredCardInHand(renderedCard: RenderedCard, handPosition: number, handSize: number): void {
-		const sprite = renderedCard.sprite
+		const container = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
 
-		this.renderHoveredSpriteInHand(sprite, handPosition, handSize)
-		this.renderSpriteInHand(hitboxSprite, handPosition, handSize, false)
+		this.renderHoveredContainerInHand(container, handPosition, handSize)
+		this.renderContainerInHand(hitboxSprite, handPosition, handSize, false)
+		renderedCard.switchToCardMode()
+		renderedCard.fixFontScaling()
 		hitboxSprite.zIndex -= 1
 	}
 
 	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): void {
 		this.renderGrabbedSprite(renderedCard.sprite, mousePosition)
+		if (renderedCard.cardType === CardType.UNIT) {
+			renderedCard.switchToUnitMode()
+		} else {
+			renderedCard.switchToCardMode()
+		}
+		renderedCard.fixFontScaling()
 	}
 
 	public renderCardInOpponentHand(renderedCard: RenderedCard, handPosition: number, handSize: number): void {
-		const sprite = renderedCard.sprite
+		const container = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
 
-		this.renderSpriteInHand(sprite, handPosition, handSize, true)
-		this.renderSpriteInHand(hitboxSprite, handPosition, handSize, true)
+		this.renderContainerInHand(container, handPosition, handSize, true)
+		this.renderContainerInHand(hitboxSprite, handPosition, handSize, true)
+		renderedCard.switchToCardMode()
+		renderedCard.fixFontScaling()
 		hitboxSprite.zIndex -= 1
 	}
 
@@ -226,10 +256,16 @@ export default class Renderer {
 		}
 		this.timeLabel.text = `${phaseLabel}\nTime of day is ${Core.game.currentTime} out of ${Core.game.maximumTime}`
 
+		/* Player name labels */
 		this.playerNameLabel.text = `${Core.player.player.username}\nTime units available: ${Core.player.timeUnits}`
 		if (Core.opponent) {
 			this.opponentNameLabel.text = `${Core.opponent.player.username}\nTime units available: ${Core.opponent.timeUnits}`
 		}
+
+		/* Action label */
+		const labelPosition = Core.input.mousePosition.clone()
+		labelPosition.y -= 16
+		this.actionLabel.position.copyFrom(labelPosition)
 	}
 
 	public renderGameBoard(gameBoard: RenderedGameBoard): void {
@@ -250,7 +286,7 @@ export default class Renderer {
 		const screenCenterX = this.getScreenWidth() / 2
 		const screenCenterY = this.getScreenHeight() / 2
 		const verticalDistanceToCenter = rowIndex - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
-		const rowY = screenCenterY + verticalDistanceToCenter * rowHeight
+		const rowY = screenCenterY + verticalDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 
 		sprite.alpha = 1
 		sprite.position.set(screenCenterX, rowY)
@@ -266,9 +302,11 @@ export default class Renderer {
 		const hitboxSprite = cardOnBoard.card.hitboxSprite
 		const screenCenterX = this.getScreenWidth() / 2
 		const distanceToCenter = unitIndex - unitCount / 2 + 0.5
-		const rowHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+		const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+		const cardWidth = cardHeight * this.CARD_ASPECT_RATIO
 
-		sprite.scale.set(rowHeight / sprite.texture.height)
+		sprite.width = cardWidth
+		sprite.height = cardHeight
 		hitboxSprite.scale.copyFrom(sprite.scale)
 
 		sprite.alpha = 1
@@ -293,11 +331,15 @@ export default class Renderer {
 		hitboxSprite.alpha = sprite.alpha
 		hitboxSprite.position.copyFrom(sprite.position)
 		hitboxSprite.zIndex = sprite.zIndex - 1
+
+		cardOnBoard.card.switchToUnitMode()
+		cardOnBoard.card.fixFontScaling()
 	}
 
 	public renderTargetingArrow(): void {
 		const grabbedCard = Core.input.grabbedCard
 		if (!grabbedCard || grabbedCard.targetingMode !== TargetingMode.CARD_ATTACK) {
+			this.actionLabel.text = ''
 			return
 		}
 
@@ -310,20 +352,26 @@ export default class Renderer {
 		targetingArrow.startingPoint.beginFill(0xFFFF00, 0.8)
 		targetingArrow.startingPoint.drawCircle(0, 0, 5)
 		targetingArrow.startingPoint.endFill()
-		targetingArrow.startingPoint.zIndex = 100
+		targetingArrow.startingPoint.zIndex = 80
 
 		targetingArrow.arrowLine.position.copyFrom(startingPosition)
 		targetingArrow.arrowLine.clear()
 		targetingArrow.arrowLine.lineStyle(2, 0xFFFF00, 0.8)
 		targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
-		targetingArrow.arrowLine.zIndex = 100
+		targetingArrow.arrowLine.zIndex = 80
 
 		targetingArrow.targetPoint.position.copyFrom(targetPosition)
 		targetingArrow.targetPoint.clear()
 		targetingArrow.targetPoint.beginFill(0xFFFF00, 0.8)
 		targetingArrow.targetPoint.drawCircle(0, 0, 5)
 		targetingArrow.targetPoint.endFill()
-		targetingArrow.targetPoint.zIndex = 100
+		targetingArrow.targetPoint.zIndex = 80
+
+		if (Core.input.hoveredCard && Core.input.hoveredCard.owner !== Core.player) {
+			this.actionLabel.text = 'Attack'
+		} else {
+			this.actionLabel.text = ''
+		}
 	}
 
 	public renderQueuedAttacks(): void {
@@ -337,20 +385,20 @@ export default class Renderer {
 			targetingArrow.startingPoint.beginFill(0x999999, 1.0)
 			targetingArrow.startingPoint.drawCircle(0, 0, 5)
 			targetingArrow.startingPoint.endFill()
-			targetingArrow.startingPoint.zIndex = 99
+			targetingArrow.startingPoint.zIndex = 75
 
 			targetingArrow.arrowLine.position.copyFrom(startingPosition)
 			targetingArrow.arrowLine.clear()
 			targetingArrow.arrowLine.lineStyle(2, 0x999999, 1.0)
 			targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
-			targetingArrow.arrowLine.zIndex = 99
+			targetingArrow.arrowLine.zIndex = 75
 
 			targetingArrow.targetPoint.position.copyFrom(targetPosition)
 			targetingArrow.targetPoint.clear()
 			targetingArrow.targetPoint.beginFill(0x999999, 1.0)
 			targetingArrow.targetPoint.drawCircle(0, 0, 5)
 			targetingArrow.targetPoint.endFill()
-			targetingArrow.targetPoint.zIndex = 99
+			targetingArrow.targetPoint.zIndex = 75
 		})
 	}
 
@@ -367,6 +415,9 @@ export default class Renderer {
 		sprite.position.x = this.getScreenWidth() / 2
 		sprite.position.y = this.getScreenHeight() / 2
 		sprite.zIndex = 100
+
+		inspectedCard.switchToCardMode()
+		inspectedCard.fixFontScaling()
 	}
 
 	public renderUI(): void {

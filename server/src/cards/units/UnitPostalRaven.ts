@@ -5,8 +5,8 @@ import ServerCardOnBoard from '../../libraries/game/ServerCardOnBoard'
 
 export default class UnitPostalRaven extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, 'unitPostalRaven')
-		this.basePower = 10
+		super(game, CardType.UNIT)
+		this.basePower = Math.ceil(Math.random() * 15)
 		this.baseAttack = 1
 	}
 

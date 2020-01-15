@@ -5,8 +5,8 @@ import ServerCardOnBoard from '../../libraries/game/ServerCardOnBoard'
 
 export default class UnitPossessedVulture extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, 'unitPossessedVulture')
-		this.basePower = 10
+		super(game, CardType.UNIT)
+		this.basePower = 57
 		this.baseAttack = 4
 	}
 

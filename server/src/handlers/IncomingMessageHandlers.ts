@@ -4,6 +4,7 @@ import GameTurnPhase from '../shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../libraries/players/ServerPlayerInGame'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
 import AttackOrderMessage from '../shared/models/network/AttackOrderMessage'
+import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
 
 export default {
 	'post/chat': (data: string, game: ServerGame, playerInGame: ServerPlayerInGame) => {
@@ -32,6 +33,7 @@ export default {
 		const card = game.board.findCardById(data.attackerId)
 		const target = game.board.findCardById(data.targetId)
 		if (game.turnPhase !== GameTurnPhase.SKIRMISH || !card || !target || card.owner !== player || card.owner === target.owner) {
+			console.log('Denying card attack order')
 			return
 		}
 
@@ -48,6 +50,11 @@ export default {
 		if ((game.turnPhase === GameTurnPhase.DEPLOY && game.isDeployPhaseFinished()) || (game.turnPhase === GameTurnPhase.SKIRMISH && game.isSkirmishPhaseFinished())) {
 			game.advancePhase()
 		}
+	},
+
+	'system/init': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
+		player.initialized = true
+		ConnectionEstablishedHandler.onPlayerConnected(game, player)
 	},
 
 	'system/keepalive': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
