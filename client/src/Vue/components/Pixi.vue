@@ -1,5 +1,5 @@
 <template>
-	<div ref="game"></div>
+	<div ref="game" class="game-container"></div>
 </template>
 
 <script lang="ts">

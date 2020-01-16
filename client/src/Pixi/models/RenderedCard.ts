@@ -33,7 +33,7 @@ export default class RenderedCard extends Card {
 
 		const container = new PIXI.Container()
 		container.position.x = -this.sprite.texture.width / 2
-		container.position.y = -this.sprite.texture.height / 2 - 1
+		container.position.y = -this.sprite.texture.height / 2
 		container.addChild(this.cardPowerSprite)
 		container.addChild(this.unitPowerSprite)
 		container.addChild(this.powerText)
@@ -129,7 +129,7 @@ export default class RenderedCard extends Card {
 		let powerTextFontSize = 70
 		let attackTextFontSize = 70
 		if (this.displayMode === CardDisplayMode.UNIT) {
-			powerTextFontSize = 150
+			powerTextFontSize = 130
 			attackTextFontSize = 96
 		}
 

@@ -180,6 +180,9 @@ export default class Input {
 		const view = Core.renderer.pixi.view
 		const clientRect = view.getBoundingClientRect()
 		this.mousePosition = new Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
+		this.mousePosition.x *= window.devicePixelRatio * Core.renderer.SSAA_FACTOR
+		this.mousePosition.y *= window.devicePixelRatio * Core.renderer.SSAA_FACTOR
+		console.log(this.mousePosition)
 
 		const windowHeight = Core.renderer.pixi.view.height
 		if (this.grabbedCard && this.grabbedCard.targetingMode === TargetingMode.CARD_PLAY && Core.player.timeUnits === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {

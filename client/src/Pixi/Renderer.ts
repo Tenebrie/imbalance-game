@@ -9,6 +9,7 @@ import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import GameTurnPhase from '@/shared/enums/GameTurnPhase'
 import RenderedButton from '@/Pixi/models/RenderedButton'
 import CardType from '@/shared/enums/CardType'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 
 export default class Renderer {
 	pixi: PIXI.Application
@@ -19,6 +20,7 @@ export default class Renderer {
 	playerNameLabel: PIXI.Text
 	opponentNameLabel: PIXI.Text
 
+	SSAA_FACTOR = 1
 	CARD_ASPECT_RATIO = 408 / 584
 	GAME_BOARD_WINDOW_FRACTION = 0.6
 	PLAYER_HAND_WINDOW_FRACTION = 0.20
@@ -29,21 +31,23 @@ export default class Renderer {
 
 	constructor(container: Element) {
 		this.pixi = new PIXI.Application({
-			width: window.innerWidth * window.devicePixelRatio,
-			height: window.innerHeight * window.devicePixelRatio,
+			width: window.innerWidth * window.devicePixelRatio * this.SSAA_FACTOR,
+			height: window.innerHeight * window.devicePixelRatio * this.SSAA_FACTOR,
 			antialias: true,
 			autoDensity: true,
 			resolution: 1
 		})
 
 		this.pixi.stage.sortableChildren = true
+		this.pixi.view.style.maxWidth = '100vw'
+		this.pixi.view.style.maxHeight = '100vh'
 		container.appendChild(this.pixi.view)
 		this.container = container
 
 		/* Time label */
 		this.timeLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24,
+			fontSize: 24 * this.SSAA_FACTOR,
 			fill: 0xFFFFFF
 		})
 		this.timeLabel.anchor.set(0, 0.5)
@@ -53,7 +57,7 @@ export default class Renderer {
 		/* Action label */
 		this.actionLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24,
+			fontSize: 24 * this.SSAA_FACTOR,
 			fill: 0xFFFFFF
 		})
 		this.actionLabel.anchor.set(0.5, 1)
@@ -63,7 +67,7 @@ export default class Renderer {
 		/* Player name label */
 		this.playerNameLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24,
+			fontSize: 24 * this.SSAA_FACTOR,
 			fill: 0xFFFFFF
 		})
 		this.playerNameLabel.anchor.set(0, 1)
@@ -73,7 +77,7 @@ export default class Renderer {
 		/* Opponent player name */
 		this.opponentNameLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24,
+			fontSize: 24 * this.SSAA_FACTOR,
 			fill: 0xFFFFFF
 		})
 		this.opponentNameLabel.position.set(10, 10)
@@ -182,8 +186,10 @@ export default class Renderer {
 		sprite.zIndex = 50
 	}
 
-	public renderGrabbedSprite(container: PIXI.Container, mousePosition: Point): void {
-		const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+	public renderGrabbedSprite(container: PIXI.Container, mousePosition: Point, displayMode: CardDisplayMode): void {
+		const fraction = displayMode === CardDisplayMode.CARD ? this.PLAYER_HAND_WINDOW_FRACTION : this.GAME_BOARD_ROW_WINDOW_FRACTION
+
+		const cardHeight = this.getScreenHeight() * fraction
 		container.width = cardHeight * this.CARD_ASPECT_RATIO
 		container.height = cardHeight
 
@@ -217,10 +223,12 @@ export default class Renderer {
 	}
 
 	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): void {
-		this.renderGrabbedSprite(renderedCard.sprite, mousePosition)
-		if (renderedCard.cardType === CardType.UNIT) {
+		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
+		if (renderedCard.cardType === CardType.UNIT && hoveredRow) {
+			this.renderGrabbedSprite(renderedCard.sprite, mousePosition, CardDisplayMode.UNIT)
 			renderedCard.switchToUnitMode()
 		} else {
+			this.renderGrabbedSprite(renderedCard.sprite, mousePosition, CardDisplayMode.CARD)
 			renderedCard.switchToCardMode()
 		}
 		renderedCard.fixFontScaling()
