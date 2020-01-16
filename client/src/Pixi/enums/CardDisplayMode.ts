@@ -1,5 +1,8 @@
 export enum CardDisplayMode {
 	UNDEFINED,
-	CARD,
-	UNIT
+	IN_HAND,
+	ON_BOARD,
+	IN_HAND_HOVERED,
+	IN_HAND_HIDDEN,
+	INSPECTED
 }

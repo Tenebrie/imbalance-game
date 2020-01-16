@@ -7,13 +7,17 @@ import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import Point = PIXI.Point
 import IPoint = PIXI.IPoint
 
+const FONT_RENDER_SCALE = 1.5
+
 export default class RenderedCard extends Card {
+	public coreContainer: PIXI.Container
 	public sprite: PIXI.Sprite
 	public hitboxSprite: PIXI.Sprite
 	public displayMode = CardDisplayMode.UNDEFINED
 
-	private readonly cardPowerSprite: PIXI.Sprite
-	private readonly unitPowerSprite: PIXI.Sprite
+	private readonly cardModeContainer: PIXI.Container
+	private readonly unitModeContainer: PIXI.Container
+
 	private readonly powerText: PIXI.Text
 	private readonly attackText: PIXI.Text
 
@@ -25,24 +29,36 @@ export default class RenderedCard extends Card {
 		this.baseAttack = card.baseAttack
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.cardClass}`))
-		this.cardPowerSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power'))
-		this.unitPowerSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power-zoom'))
 		this.powerText = this.createPowerText()
 		this.attackText = this.createAttackText()
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
-		const container = new PIXI.Container()
-		container.position.x = -this.sprite.texture.width / 2
-		container.position.y = -this.sprite.texture.height / 2
-		container.addChild(this.cardPowerSprite)
-		container.addChild(this.unitPowerSprite)
-		container.addChild(this.powerText)
-		container.addChild(this.attackText)
-
-		this.sprite.addChild(container)
-
-		this.sprite.alpha = 0
 		this.sprite.anchor.set(0.5)
+
+		/* Internal container */
+		const internalContainer = new PIXI.Container()
+		internalContainer.position.x = -this.sprite.texture.width / 2
+		internalContainer.position.y = -this.sprite.texture.height / 2
+		this.sprite.addChild(internalContainer)
+
+		/* Card mode container */
+		this.cardModeContainer = new PIXI.Container()
+		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power')))
+		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
+		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-description')))
+		internalContainer.addChild(this.cardModeContainer)
+
+		/* Unit mode container */
+		this.unitModeContainer = new PIXI.Container()
+		this.unitModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power-zoom')))
+		internalContainer.addChild(this.unitModeContainer)
+
+		/* Core container */
+		this.coreContainer = new PIXI.Container()
+		this.coreContainer.addChild(this.sprite)
+		this.coreContainer.addChild(this.powerText)
+		this.coreContainer.addChild(this.attackText)
+		this.coreContainer.position.set(-1000, -1000)
 	}
 
 	public getPosition(): IPoint {
@@ -100,43 +116,53 @@ export default class RenderedCard extends Card {
 		return textObject
 	}
 
-	public switchToCardMode(): void {
-		if (this.displayMode === CardDisplayMode.CARD) {
+	public setDisplayMode(displayMode: CardDisplayMode): void {
+		if (this.displayMode === displayMode) {
 			return
 		}
 
-		this.displayMode = CardDisplayMode.CARD
-		this.cardPowerSprite.alpha = 1
-		this.unitPowerSprite.alpha = 0
-		this.powerText.position.set(60, 42)
-		this.attackText.position.set(40, 550)
+		this.displayMode = displayMode
+		this.powerText.scale.set(1 / FONT_RENDER_SCALE)
+
+		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED) {
+			this.switchToCardMode()
+		} else if (displayMode === CardDisplayMode.ON_BOARD) {
+			this.switchToUnitMode()
+		} else if (displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
+			this.switchToHiddenMode()
+		}
+
+		this.powerText.position.x *= this.sprite.scale.x
+		this.powerText.position.y *= this.sprite.scale.y
+		this.powerText.position.x -= this.sprite.width / 2
+		this.powerText.position.y -= this.sprite.height / 2
+		this.powerText.style.fontSize *= this.sprite.scale.x
+		this.powerText.style.fontSize *= FONT_RENDER_SCALE
+	}
+
+	public switchToCardMode(): void {
+		this.cardModeContainer.alpha = 1
+		this.unitModeContainer.alpha = 0
+
+		this.powerText.position.set(60, 45)
+		this.powerText.style.fontSize = 71
+
+		this.attackText.position.set(0, 0)
 	}
 
 	public switchToUnitMode(): void {
-		if (this.displayMode === CardDisplayMode.UNIT) {
-			return
-		}
+		this.unitModeContainer.alpha = 1
+		this.cardModeContainer.alpha = 0
 
-		this.displayMode = CardDisplayMode.UNIT
-		this.unitPowerSprite.alpha = 1
-		this.cardPowerSprite.alpha = 0
+		this.powerText.position.set(97, 80)
+		this.powerText.style.fontSize = 135
 
-		this.powerText.position.set(100, 80)
-		this.attackText.position.set(40, 550)
+		this.attackText.position.set(0, 0)
 	}
 
-	public fixFontScaling(): void {
-		let powerTextFontSize = 70
-		let attackTextFontSize = 70
-		if (this.displayMode === CardDisplayMode.UNIT) {
-			powerTextFontSize = 130
-			attackTextFontSize = 96
-		}
-
-		this.powerText.scale.set(1 / this.sprite.scale.x)
-		this.powerText.style.fontSize = Math.round(powerTextFontSize * this.sprite.scale.x)
-		this.attackText.scale.set(1 / this.sprite.scale.x)
-		this.attackText.style.fontSize = Math.round(attackTextFontSize * this.sprite.scale.x)
+	public switchToHiddenMode(): void {
+		this.cardModeContainer.alpha = 0
+		this.unitModeContainer.alpha = 0
 	}
 
 	public unregister(): void {

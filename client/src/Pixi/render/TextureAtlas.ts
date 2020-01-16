@@ -20,6 +20,8 @@ export default class TextureAtlas {
 			const components = [
 				'components/bg-power',
 				'components/bg-power-zoom',
+				'components/bg-name',
+				'components/bg-description',
 				'cards/cardBack'
 			]
 

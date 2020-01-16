@@ -2,14 +2,19 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@/shared/Constants'
 import RenderedCard from '@/Pixi/models/RenderedCard'
-import { TargetingMode } from '@/Pixi/enums/TargetingMode'
+import {TargetingMode} from '@/Pixi/enums/TargetingMode'
 import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import GameTurnPhase from '@/shared/enums/GameTurnPhase'
 import RenderedButton from '@/Pixi/models/RenderedButton'
 import CardType from '@/shared/enums/CardType'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
+
+const UNIT_ZINDEX = 2
+const HOVERED_CARD_ZINDEX = 50
+const GRABBED_CARD_ZINDEX = 150
+const INSPECTED_CARD_ZINDEX = 200
 
 export default class Renderer {
 	pixi: PIXI.Application
@@ -33,7 +38,7 @@ export default class Renderer {
 		this.pixi = new PIXI.Application({
 			width: window.innerWidth * window.devicePixelRatio * this.SSAA_FACTOR,
 			height: window.innerHeight * window.devicePixelRatio * this.SSAA_FACTOR,
-			antialias: true,
+			antialias: false,
 			autoDensity: true,
 			resolution: 1
 		})
@@ -93,12 +98,13 @@ export default class Renderer {
 
 		sortedPlayerCards.forEach(renderedCard => {
 			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
-				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length)
+				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length, false)
 				this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
 			} else if (!Core.input.grabbedCard && Core.input.hoveredCard && renderedCard === Core.input.hoveredCard.card) {
-				this.renderHoveredCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length)
+				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length, false)
+				this.renderHoveredCardInHand(renderedCard)
 			} else {
-				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length)
+				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length, false)
 			}
 		})
 
@@ -106,7 +112,7 @@ export default class Renderer {
 			const opponentCards = Core.opponent.cardHand.cards
 			const sortedOpponentCards = Core.opponent.cardHand.cards.slice().reverse()
 			sortedOpponentCards.forEach(renderedCard => {
-				this.renderCardInOpponentHand(renderedCard, opponentCards.indexOf(renderedCard), opponentCards.length)
+				this.renderCardInHand(renderedCard, opponentCards.indexOf(renderedCard), opponentCards.length, true)
 			})
 		}
 
@@ -127,12 +133,12 @@ export default class Renderer {
 	}
 
 	public registerCard(card: RenderedCard): void {
-		this.pixi.stage.addChild(card.sprite)
+		this.pixi.stage.addChild(card.coreContainer)
 		this.pixi.stage.addChild(card.hitboxSprite)
 	}
 
 	public unregisterCard(card: RenderedCard): void {
-		this.pixi.stage.removeChild(card.sprite)
+		this.pixi.stage.removeChild(card.coreContainer)
 		this.pixi.stage.removeChild(card.hitboxSprite)
 	}
 
@@ -148,101 +154,69 @@ export default class Renderer {
 		return this.pixi.view.height
 	}
 
-	public renderContainerInHand(container: PIXI.Container, handPosition: number, handSize: number, isOpponent: boolean): void {
+	public renderCardInHand(renderedCard: RenderedCard, handPosition: number, handSize: number, isOpponent: boolean): void {
+		const container = renderedCard.coreContainer
+		const sprite = renderedCard.sprite
+		const hitboxSprite = renderedCard.hitboxSprite
+
 		const windowFraction = isOpponent ? this.OPPONENT_HAND_WINDOW_FRACTION : this.PLAYER_HAND_WINDOW_FRACTION
 		const cardHeight = this.getScreenHeight() * windowFraction
-		container.width = cardHeight * this.CARD_ASPECT_RATIO
-		container.height = cardHeight
+
+		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
+		sprite.height = cardHeight
 
 		const screenCenter = this.getScreenWidth() / 2
-		const cardWidth = container.width * Math.pow(0.95, handSize)
+		const cardWidth = cardHeight * this.CARD_ASPECT_RATIO * Math.pow(0.95, handSize)
 		const distanceToCenter = handPosition - ((handSize - 1) / 2)
 
-		container.alpha = 1
 		container.position.x = distanceToCenter * cardWidth + screenCenter
 		container.position.y = cardHeight * 0.5
-		container.rotation = 0
 		container.zIndex = (handPosition + 1) * 2
+
 		if (!isOpponent) {
 			container.position.y = this.getScreenHeight() - container.position.y
 		}
+
+		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
+		hitboxSprite.scale = sprite.scale
+		hitboxSprite.zIndex = container.zIndex - 1
+
+		const displayMode = isOpponent ? CardDisplayMode.IN_HAND_HIDDEN : CardDisplayMode.IN_HAND
+		renderedCard.setDisplayMode(displayMode)
 	}
 
-	public renderHoveredContainerInHand(sprite: PIXI.Container, handPosition: number, handSize: number): void {
+	public renderHoveredCardInHand(renderedCard: RenderedCard): void {
+		const container = renderedCard.coreContainer
+		const sprite = renderedCard.sprite
+
 		const cardHeight = this.getScreenHeight() * this.HOVERED_HAND_WINDOW_FRACTION
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		const spriteNormalWidth = (this.getScreenHeight() * this.PLAYER_HAND_WINDOW_FRACTION) * this.CARD_ASPECT_RATIO
+		container.position.y = cardHeight * 0.5
+		container.position.y = this.getScreenHeight() - container.position.y
+		container.zIndex = HOVERED_CARD_ZINDEX
 
-		const screenCenter = this.getScreenWidth() / 2
-		const cardWidth = spriteNormalWidth * Math.pow(0.95, handSize)
-		const distanceToCenter = handPosition - ((handSize - 1) / 2)
-
-		sprite.alpha = 1
-		sprite.position.x = distanceToCenter * cardWidth + screenCenter
-		sprite.position.y = this.getScreenHeight() - cardHeight * 0.5
-		sprite.rotation = 0
-		sprite.zIndex = 50
-	}
-
-	public renderGrabbedSprite(container: PIXI.Container, mousePosition: Point, displayMode: CardDisplayMode): void {
-		const fraction = displayMode === CardDisplayMode.CARD ? this.PLAYER_HAND_WINDOW_FRACTION : this.GAME_BOARD_ROW_WINDOW_FRACTION
-
-		const cardHeight = this.getScreenHeight() * fraction
-		container.width = cardHeight * this.CARD_ASPECT_RATIO
-		container.height = cardHeight
-
-		container.alpha = 1
-		container.position.x = mousePosition.x
-		container.position.y = mousePosition.y
-		container.rotation = 0
-		container.zIndex = 100
-	}
-
-	public renderCardInHand(renderedCard: RenderedCard, handPosition: number, handSize: number): void {
-		const container = renderedCard.sprite
-		const hitboxSprite = renderedCard.hitboxSprite
-
-		this.renderContainerInHand(container, handPosition, handSize, false)
-		this.renderContainerInHand(hitboxSprite, handPosition, handSize, false)
-		renderedCard.switchToCardMode()
-		renderedCard.fixFontScaling()
-		hitboxSprite.zIndex -= 1
-	}
-
-	public renderHoveredCardInHand(renderedCard: RenderedCard, handPosition: number, handSize: number): void {
-		const container = renderedCard.sprite
-		const hitboxSprite = renderedCard.hitboxSprite
-
-		this.renderHoveredContainerInHand(container, handPosition, handSize)
-		this.renderContainerInHand(hitboxSprite, handPosition, handSize, false)
-		renderedCard.switchToCardMode()
-		renderedCard.fixFontScaling()
-		hitboxSprite.zIndex -= 1
+		renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
 	}
 
 	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): void {
+		const container = renderedCard.coreContainer
+		const sprite = renderedCard.sprite
 		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
+
 		if (renderedCard.cardType === CardType.UNIT && hoveredRow) {
-			this.renderGrabbedSprite(renderedCard.sprite, mousePosition, CardDisplayMode.UNIT)
-			renderedCard.switchToUnitMode()
+			const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+			sprite.width = cardHeight * this.CARD_ASPECT_RATIO
+			sprite.height = cardHeight
+			renderedCard.setDisplayMode(CardDisplayMode.ON_BOARD)
 		} else {
-			this.renderGrabbedSprite(renderedCard.sprite, mousePosition, CardDisplayMode.CARD)
-			renderedCard.switchToCardMode()
+			renderedCard.setDisplayMode(CardDisplayMode.IN_HAND)
 		}
-		renderedCard.fixFontScaling()
-	}
 
-	public renderCardInOpponentHand(renderedCard: RenderedCard, handPosition: number, handSize: number): void {
-		const container = renderedCard.sprite
-		const hitboxSprite = renderedCard.hitboxSprite
-
-		this.renderContainerInHand(container, handPosition, handSize, true)
-		this.renderContainerInHand(hitboxSprite, handPosition, handSize, true)
-		renderedCard.switchToCardMode()
-		renderedCard.fixFontScaling()
-		hitboxSprite.zIndex -= 1
+		container.position.x = mousePosition.x
+		container.position.y = mousePosition.y
+		container.zIndex = GRABBED_CARD_ZINDEX
 	}
 
 	public renderTextLabels(): void {
@@ -306,21 +280,22 @@ export default class Renderer {
 	}
 
 	public renderCardOnBoard(cardOnBoard: RenderedCardOnBoard, rowY: number, unitIndex: number, unitCount: number): void {
+		const container = cardOnBoard.card.coreContainer
 		const sprite = cardOnBoard.card.sprite
 		const hitboxSprite = cardOnBoard.card.hitboxSprite
+
 		const screenCenterX = this.getScreenWidth() / 2
 		const distanceToCenter = unitIndex - unitCount / 2 + 0.5
+
 		const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
 		const cardWidth = cardHeight * this.CARD_ASPECT_RATIO
 
-		sprite.width = cardWidth
-		sprite.height = cardHeight
-		hitboxSprite.scale.copyFrom(sprite.scale)
+		container.position.x = screenCenterX + distanceToCenter * cardWidth
+		container.position.y = rowY
+		container.zIndex = UNIT_ZINDEX
 
-		sprite.alpha = 1
-		sprite.position.x = screenCenterX + distanceToCenter * hitboxSprite.width
-		sprite.position.y = rowY
-		sprite.zIndex = 2
+		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
+		sprite.height = cardHeight
 
 		sprite.tint = 0xFFFFFF
 		if (Core.input.hoveredCard && cardOnBoard.card === Core.input.hoveredCard.card) {
@@ -336,12 +311,11 @@ export default class Renderer {
 			}
 		}
 
-		hitboxSprite.alpha = sprite.alpha
-		hitboxSprite.position.copyFrom(sprite.position)
-		hitboxSprite.zIndex = sprite.zIndex - 1
+		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
+		hitboxSprite.scale = sprite.scale
+		hitboxSprite.zIndex = container.zIndex - 1
 
-		cardOnBoard.card.switchToUnitMode()
-		cardOnBoard.card.fixFontScaling()
+		cardOnBoard.card.setDisplayMode(CardDisplayMode.ON_BOARD)
 	}
 
 	public renderTargetingArrow(): void {
@@ -357,20 +331,26 @@ export default class Renderer {
 
 		targetingArrow.startingPoint.position.copyFrom(startingPosition)
 		targetingArrow.startingPoint.clear()
-		targetingArrow.startingPoint.beginFill(0xFFFF00, 0.8)
+		targetingArrow.startingPoint.beginFill(0xFFFF00, 1.0)
 		targetingArrow.startingPoint.drawCircle(0, 0, 5)
 		targetingArrow.startingPoint.endFill()
 		targetingArrow.startingPoint.zIndex = 80
 
 		targetingArrow.arrowLine.position.copyFrom(startingPosition)
 		targetingArrow.arrowLine.clear()
+		const iterations = 5
+		for (let i = 0; i < iterations; i++) {
+			targetingArrow.arrowLine.lineStyle(i + 1, 0xFFFF00, (iterations + 1 - i) / (iterations + 1))
+			targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
+			targetingArrow.arrowLine.moveTo(0, 0)
+		}
 		targetingArrow.arrowLine.lineStyle(2, 0xFFFF00, 0.8)
 		targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
 		targetingArrow.arrowLine.zIndex = 80
 
 		targetingArrow.targetPoint.position.copyFrom(targetPosition)
 		targetingArrow.targetPoint.clear()
-		targetingArrow.targetPoint.beginFill(0xFFFF00, 0.8)
+		targetingArrow.targetPoint.beginFill(0xFFFF00, 1.0)
 		targetingArrow.targetPoint.drawCircle(0, 0, 5)
 		targetingArrow.targetPoint.endFill()
 		targetingArrow.targetPoint.zIndex = 80
@@ -416,16 +396,15 @@ export default class Renderer {
 			return
 		}
 
+		const container = inspectedCard.coreContainer
 		const sprite = inspectedCard.sprite
 		sprite.tint = 0xFFFFFF
-		sprite.scale.set(1.0)
-		sprite.alpha = 1
-		sprite.position.x = this.getScreenWidth() / 2
-		sprite.position.y = this.getScreenHeight() / 2
-		sprite.zIndex = 100
+		sprite.scale.set(1)
+		container.position.x = this.getScreenWidth() / 2
+		container.position.y = this.getScreenHeight() / 2
+		container.zIndex = INSPECTED_CARD_ZINDEX
 
-		inspectedCard.switchToCardMode()
-		inspectedCard.fixFontScaling()
+		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
 	}
 
 	public renderUI(): void {
