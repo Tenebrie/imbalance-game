@@ -1,4 +1,5 @@
 export default class Settings {
-	static language = 'ru'
-	static fontRenderScale = 1.4
+	static language = 'en'
+	static generalFontRenderScale = 1.4
+	static descriptionFontRenderScale = 2
 }

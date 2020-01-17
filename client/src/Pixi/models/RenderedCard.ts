@@ -6,6 +6,8 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import Settings from '@/Pixi/Settings'
+import RichText from '@/Pixi/render/RichText'
+import Utils from '@/utils/Utils'
 import Point = PIXI.Point
 import IPoint = PIXI.IPoint
 
@@ -23,7 +25,7 @@ export default class RenderedCard extends Card {
 	private readonly attackText: PIXI.Text
 	private readonly cardNameText: PIXI.Text
 	private readonly cardTitleText: PIXI.Text
-	private readonly cardDescriptionText: PIXI.Text
+	private readonly cardDescriptionText: RichText
 
 	constructor(card: Card) {
 		super(card.id, card.cardType, card.cardClass)
@@ -42,7 +44,7 @@ export default class RenderedCard extends Card {
 		this.attackText = this.createStatText(this.attack ? this.attack.toString() : '')
 		this.cardNameText = this.createCardNameText(Localization.getString(this.cardName))
 		this.cardTitleText = this.createCardNameText(Localization.getString(this.cardTitle))
-		this.cardDescriptionText = this.createCardDescriptionText(Localization.getString(this.cardDescription))
+		this.cardDescriptionText = new RichText(Localization.getString(this.cardDescription), 350)
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.anchor.set(0.5)
@@ -126,23 +128,12 @@ export default class RenderedCard extends Card {
 
 	public createCardNameText(text: string): PIXI.Text {
 		const textObject = new PIXI.Text(text, {
-			fontFamily: 'Arial',
+			fontFamily: Utils.getFont(text),
 			fill: 0x000000,
 			padding: 16,
 			align: 'right'
 		})
 		textObject.anchor.set(1, 0.5)
-		return textObject
-	}
-
-	public createCardDescriptionText(text: string): PIXI.Text {
-		const textObject = new PIXI.Text(text, {
-			fontFamily: 'Arial',
-			fill: 0xCCCCCC,
-			padding: 16,
-			align: 'center'
-		})
-		textObject.anchor.set(0.5)
 		return textObject
 	}
 
@@ -161,7 +152,7 @@ export default class RenderedCard extends Card {
 			this.switchToHiddenMode()
 		}
 
-		const texts = [
+		const texts: (PIXI.Text | RichText)[] = [
 			this.powerText,
 			this.attackText,
 			this.cardNameText,
@@ -175,11 +166,16 @@ export default class RenderedCard extends Card {
 			text.position.x = Math.round(text.position.x)
 			text.position.y = Math.round(text.position.y)
 
-			text.scale.set(1 / Settings.fontRenderScale)
-			text.style.fontSize *= this.sprite.scale.x
-			text.style.lineHeight *= this.sprite.scale.x
-			text.style.fontSize *= Settings.fontRenderScale
-			text.style.lineHeight *= Settings.fontRenderScale
+			let renderScale = Settings.generalFontRenderScale
+			if (this === Core.input.inspectedCard) {
+				renderScale = 1.2
+			} else if (text === this.cardDescriptionText) {
+				renderScale = Settings.descriptionFontRenderScale
+			}
+
+			text.scale.set(1 / renderScale)
+			text.style.fontSize *= this.sprite.scale.x * renderScale
+			text.style.lineHeight *= this.sprite.scale.x * renderScale
 		})
 
 		this.powerText.position.x -= this.sprite.width / 2
@@ -188,6 +184,7 @@ export default class RenderedCard extends Card {
 		this.cardNameText.position.y -= this.sprite.height / 2
 		this.cardTitleText.position.x += this.sprite.width / 2
 		this.cardTitleText.position.y -= this.sprite.height / 2
+		// this.cardDescriptionText.position.x -= this.sprite.width / 2
 		this.cardDescriptionText.position.y += this.sprite.height / 2
 	}
 
@@ -202,13 +199,13 @@ export default class RenderedCard extends Card {
 		this.attackText.position.set(0, 0)
 		this.attackText.style.fontSize = 71
 
-		this.cardNameText.position.set(-10, 67)
+		this.cardNameText.position.set(-15, 67)
 		this.cardNameText.style.fontSize = 22
 
 		if (this.cardTitleText.text.length > 0) {
-			this.cardNameText.position.y -= 12
-			this.cardTitleText.position.set(-10, 82)
-			this.cardTitleText.style.fontSize = 20
+			this.cardNameText.position.y -= 11
+			this.cardTitleText.position.set(-15, 81)
+			this.cardTitleText.style.fontSize = 18
 		}
 
 		this.cardDescriptionText.position.set(0, -135)
@@ -226,15 +223,6 @@ export default class RenderedCard extends Card {
 
 		this.attackText.position.set(0, 0)
 		this.attackText.style.fontSize = 71
-
-		this.cardNameText.position.set(0, 0)
-		this.cardNameText.style.fontSize = 150
-
-		this.cardTitleText.position.set(-10, 67)
-		this.cardTitleText.style.fontSize = 22
-
-		this.cardDescriptionText.position.set(0, 100)
-		this.cardDescriptionText.style.fontSize = 50
 	}
 
 	public switchToHiddenMode(): void {

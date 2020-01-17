@@ -97,14 +97,21 @@ export default class Renderer {
 		const sortedPlayerCards = Core.player.cardHand.cards.slice().reverse()
 
 		sortedPlayerCards.forEach(renderedCard => {
+			if (renderedCard === Core.input.inspectedCard) {
+				return
+			}
+
 			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
 				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length, false)
-				this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
+				const displayMode = this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
+				renderedCard.setDisplayMode(displayMode)
 			} else if (!Core.input.grabbedCard && Core.input.hoveredCard && renderedCard === Core.input.hoveredCard.card) {
 				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length, false)
 				this.renderHoveredCardInHand(renderedCard)
+				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
 			} else {
 				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length, false)
+				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND)
 			}
 		})
 
@@ -112,7 +119,12 @@ export default class Renderer {
 			const opponentCards = Core.opponent.cardHand.cards
 			const sortedOpponentCards = Core.opponent.cardHand.cards.slice().reverse()
 			sortedOpponentCards.forEach(renderedCard => {
+				if (renderedCard === Core.input.inspectedCard) {
+					return
+				}
+
 				this.renderCardInHand(renderedCard, opponentCards.indexOf(renderedCard), opponentCards.length, true)
+				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HIDDEN)
 			})
 		}
 
@@ -121,7 +133,6 @@ export default class Renderer {
 		this.renderTargetingArrow()
 		this.renderQueuedAttacks()
 		this.renderInspectedCard()
-		this.renderUI()
 	}
 
 	public registerButton(button: RenderedButton): void {
@@ -180,9 +191,6 @@ export default class Renderer {
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
-
-		const displayMode = isOpponent ? CardDisplayMode.IN_HAND_HIDDEN : CardDisplayMode.IN_HAND
-		renderedCard.setDisplayMode(displayMode)
 	}
 
 	public renderHoveredCardInHand(renderedCard: RenderedCard): void {
@@ -196,27 +204,27 @@ export default class Renderer {
 		container.position.y = cardHeight * 0.5
 		container.position.y = this.getScreenHeight() - container.position.y
 		container.zIndex = HOVERED_CARD_ZINDEX
-
-		renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
 	}
 
-	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): void {
+	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): CardDisplayMode {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
 
+		let cardDisplayMode: CardDisplayMode
 		if (renderedCard.cardType === CardType.UNIT && hoveredRow) {
 			const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
 			sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 			sprite.height = cardHeight
-			renderedCard.setDisplayMode(CardDisplayMode.ON_BOARD)
+			cardDisplayMode = CardDisplayMode.ON_BOARD
 		} else {
-			renderedCard.setDisplayMode(CardDisplayMode.IN_HAND)
+			cardDisplayMode = CardDisplayMode.IN_HAND
 		}
 
 		container.position.x = mousePosition.x
 		container.position.y = mousePosition.y
 		container.zIndex = GRABBED_CARD_ZINDEX
+		return cardDisplayMode
 	}
 
 	public renderTextLabels(): void {
@@ -280,6 +288,10 @@ export default class Renderer {
 	}
 
 	public renderCardOnBoard(cardOnBoard: RenderedCardOnBoard, rowY: number, unitIndex: number, unitCount: number): void {
+		if (cardOnBoard.card === Core.input.inspectedCard) {
+			return
+		}
+
 		const container = cardOnBoard.card.coreContainer
 		const sprite = cardOnBoard.card.sprite
 		const hitboxSprite = cardOnBoard.card.hitboxSprite
@@ -405,11 +417,6 @@ export default class Renderer {
 		container.zIndex = INSPECTED_CARD_ZINDEX
 
 		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
-	}
-
-	public renderUI(): void {
-		/* const endTurnButton = this.endTurnButton
-		endTurnButton.container.position.set(this.getScreenWidth() - 100, this.getScreenHeight() / 2) */
 	}
 
 	public destroy(): void {

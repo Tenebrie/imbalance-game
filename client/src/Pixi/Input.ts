@@ -139,8 +139,8 @@ export default class Input {
 	public releaseCard(): void {
 		const grabbedCard = this.grabbedCard!
 		grabbedCard.targetingArrow.destroy()
-		this.hoveredCard = null
 		this.grabbedCard = null
+		this.updateCardHoverStatus()
 	}
 
 	private getCardInsertIndex(hoveredRow: RenderedGameBoardRow): number {

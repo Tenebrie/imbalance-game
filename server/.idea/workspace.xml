@@ -2,23 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="20d01716-7396-4160-bcea-0f09fcfb1464" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-name.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-tribe.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/brush-script-mt-hinted.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/brush-script-mt-hinted.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/K2D-Bold.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/K2D-Light.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/K2D-Medium.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/K2D-SemiBold.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/Roboto-Bold.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/Roboto-Light.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/Roboto-Medium.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/Roboto-Regular.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/src/utils/Utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/components/bg-name-modern.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/components/bg-tribe-modern.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/public/assets/fonts/brush-script-mt-hinted.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../client/public/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/enums/CardDisplayMode.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/enums/CardDisplayMode.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Settings.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Settings.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/locales/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/locales/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/locales/ru.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/locales/ru.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/render/TextureAtlas.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/render/TextureAtlas.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/render/RichText.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/render/RichText.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/.idea/workspace.xml" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -70,15 +76,15 @@
       <recent name="W:\Workspace\notgwent-game\server\src\cards\heroes" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
+  <component name="ServiceViewManager">
+    <option name="viewStates">
       <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
       </list>
     </option>
   </component>
@@ -105,7 +111,8 @@
       <workItem from="1578824455678" duration="3340000" />
       <workItem from="1579020960969" duration="15212000" />
       <workItem from="1579089055921" duration="12176000" />
-      <workItem from="1579193702415" duration="1819000" />
+      <workItem from="1579193702415" duration="2573000" />
+      <workItem from="1579280948060" duration="2482000" />
     </task>
     <servers />
   </component>
@@ -175,10 +182,11 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="549" y="187" key="FileChooserDialogImpl" timestamp="1578074229229">
-      <screen x="0" y="0" width="1536" height="864" />
+    <state x="915" y="303" key="FileChooserDialogImpl" timestamp="1579280950880">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="549" y="187" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1578074229229" />
+    <state x="915" y="303" key="FileChooserDialogImpl/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579280950880" />
     <state width="1515" height="223" key="GridCell.Tab.0.bottom" timestamp="1578074230362">
       <screen x="0" y="0" width="1536" height="864" />
     </state>

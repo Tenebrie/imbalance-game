@@ -2,23 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7b4957f4-b43a-46ea-8e12-fccea030b7c4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-name.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/components/bg-tribe.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/brush-script-mt-hinted.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/brush-script-mt-hinted.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/K2D-Bold.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/K2D-Light.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/K2D-Medium.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/K2D-SemiBold.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/Roboto-Bold.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/Roboto-Light.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/Roboto-Medium.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/fonts/Roboto-Regular.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/src/utils/Utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/components/bg-name-modern.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/assets/components/bg-tribe-modern.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/public/assets/fonts/brush-script-mt-hinted.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../client/public/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/enums/CardDisplayMode.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/enums/CardDisplayMode.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Settings.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Settings.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/locales/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/locales/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/locales/ru.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/locales/ru.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/render/TextureAtlas.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/render/TextureAtlas.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/render/RichText.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/render/RichText.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,6 +36,11 @@
   <component name="ProjectId" id="1VzcvApDV0TBT78LzsP0PznH57r" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
@@ -57,15 +68,15 @@
       <recent name="W:\Workspace\notgwent-game\shared" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
+  <component name="ServiceViewManager">
+    <option name="viewStates">
       <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
       </list>
     </option>
   </component>
@@ -94,6 +105,8 @@
       <workItem from="1579089062674" duration="1867000" />
       <workItem from="1579192530967" duration="638000" />
       <workItem from="1579193705796" duration="1846000" />
+      <workItem from="1579280763228" duration="9000" />
+      <workItem from="1579280953589" duration="1316000" />
     </task>
     <servers />
   </component>
