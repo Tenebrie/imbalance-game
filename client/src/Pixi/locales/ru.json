@@ -1,0 +1,15 @@
+{
+	"card.name.heroSatia": "Сатия",
+	"card.title.heroSatia": "Первая леди",
+	"card.description.heroSatia": "*Вход в игру:*\nПризывает *Ночную деву*",
+
+	"card.name.heroNightLady": "Ночная Дева",
+	"card.title.heroNightLady": "Любимица Сатии",
+	"card.description.heroNightLady": "",
+
+	"card.name.unitPostalRaven": "Почтовый ворон",
+	"card.description.unitPostalRaven": "*Вход в игру:*\nВытягивает карту",
+
+	"card.name.unitPossessedVulture": "Одержимый стервятник",
+	"card.description.unitPossessedVulture": "Получает *+2* Силы при совершении атаки"
+}

@@ -1,0 +1,15 @@
+{
+	"card.name.heroSatia": "Satia",
+	"card.title.heroSatia": "First mistress",
+	"card.description.heroSatia": "*On play:*\nSummon *Night Maiden*",
+
+	"card.name.heroNightLady": "Night Maiden",
+	"card.title.heroNightLady": "Satia's favorite",
+	"card.description.heroNightLady": "",
+
+	"card.name.unitPostalRaven": "Postal Raven",
+	"card.description.unitPostalRaven": "*On play:*\nDraw a card",
+
+	"card.name.unitPossessedVulture": "Possessed Vulture",
+	"card.description.unitPossessedVulture": "Whenever it attacks, gain *+2* Power"
+}

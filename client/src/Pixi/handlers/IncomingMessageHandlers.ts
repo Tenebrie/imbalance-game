@@ -64,7 +64,6 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/board/cardCreated': (data: CardOnBoardMessage) => {
 		const card = RenderedCardOnBoard.fromMessage(data)
-		console.log(card)
 		Core.board.insertCard(card, data.rowIndex, data.unitIndex)
 	},
 

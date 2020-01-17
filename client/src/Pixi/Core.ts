@@ -12,6 +12,7 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import RenderedButton from '@/Pixi/models/RenderedButton'
 import UserInterface from '@/Pixi/UserInterface'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import en from '@/Pixi/locales/en.json'
 
 export default class Core {
 	public static input: Input

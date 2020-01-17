@@ -1,8 +1,6 @@
 import ServerCard from '../../models/game/ServerCard'
 import HeroNightLady from '../../cards/heroes/HeroNightLady'
 import HeroSatia from '../../cards/heroes/HeroSatia'
-import SpellCardDrawer from '../../cards/spells/SpellCardDrawer'
-import SpellCardRevealer from '../../cards/spells/SpellCardRevealer'
 import UnitPossessedVulture from '../../cards/units/UnitPossessedVulture'
 import UnitPostalRaven from '../../cards/units/UnitPostalRaven'
 import ServerGame from '../game/ServerGame'
@@ -15,15 +13,13 @@ export default class GameLibrary {
 		const cards = [
 			HeroNightLady,
 			HeroSatia,
-			SpellCardDrawer,
-			SpellCardRevealer,
 			UnitPossessedVulture,
 			UnitPostalRaven
 		]
 
 		GameLibrary.cards = cards.map(prototype => {
 			const cardPrototype = new prototype(VoidGame.get())
-			cardPrototype.cardClass = prototype.name
+			cardPrototype.cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 			cardPrototype.power = cardPrototype.basePower
 			cardPrototype.attack = cardPrototype.baseAttack
 			return cardPrototype
@@ -31,19 +27,22 @@ export default class GameLibrary {
 	}
 
 	public static createCard(card: ServerCard): ServerCard {
-		return this.createCardById(card.game, card.constructor.name)
+		const cardClass = card.constructor.name.substr(0, 1).toLowerCase() + card.constructor.name.substr(1)
+		return this.createCardByClass(card.game, cardClass)
 	}
 
-	public static createCardById(game: ServerGame, cardClass: string): ServerCard {
-		const cardClassLowerCase = cardClass.toLowerCase()
+	public static createCardByClass(game: ServerGame, cardClass: string): ServerCard {
 		const original = GameLibrary.cards.find(card => {
-			return card.cardClass.toLowerCase() === cardClassLowerCase
+			return card.cardClass === cardClass
 		})
 		if (!original) {
 			throw new Error(`No registered card with class '${cardClass}'!`)
 		}
 		const clone: ServerCard = new original.constructor()
-		clone.cardClass = original.constructor.name
+		clone.cardClass = cardClass
+		clone.cardName = `card.name.${cardClass}`
+		clone.cardTitle = `card.title.${cardClass}`
+		clone.cardDescription = `card.description.${cardClass}`
 		clone.game = game
 		clone.power = clone.basePower
 		clone.attack = clone.baseAttack

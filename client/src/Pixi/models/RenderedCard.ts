@@ -4,10 +4,10 @@ import Card from '@/shared/models/Card'
 import CardType from '@/shared/enums/CardType'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import Localization from '@/Pixi/Localization'
+import Settings from '@/Pixi/Settings'
 import Point = PIXI.Point
 import IPoint = PIXI.IPoint
-
-const FONT_RENDER_SCALE = 1.5
 
 export default class RenderedCard extends Card {
 	public coreContainer: PIXI.Container
@@ -17,20 +17,32 @@ export default class RenderedCard extends Card {
 
 	private readonly cardModeContainer: PIXI.Container
 	private readonly unitModeContainer: PIXI.Container
+	private readonly cardModeTextContainer: PIXI.Container
 
 	private readonly powerText: PIXI.Text
 	private readonly attackText: PIXI.Text
+	private readonly cardNameText: PIXI.Text
+	private readonly cardTitleText: PIXI.Text
+	private readonly cardDescriptionText: PIXI.Text
 
 	constructor(card: Card) {
 		super(card.id, card.cardType, card.cardClass)
+
+		this.cardName = card.cardName
+		this.cardTitle = card.cardTitle
+		this.cardDescription = card.cardDescription
+
 		this.power = card.power
 		this.attack = card.attack
 		this.basePower = card.basePower
 		this.baseAttack = card.baseAttack
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.cardClass}`))
-		this.powerText = this.createPowerText()
-		this.attackText = this.createAttackText()
+		this.powerText = this.createStatText(this.power ? this.power.toString() : '')
+		this.attackText = this.createStatText(this.attack ? this.attack.toString() : '')
+		this.cardNameText = this.createCardNameText(Localization.getString(this.cardName))
+		this.cardTitleText = this.createCardNameText(Localization.getString(this.cardTitle))
+		this.cardDescriptionText = this.createCardDescriptionText(Localization.getString(this.cardDescription))
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.anchor.set(0.5)
@@ -59,6 +71,13 @@ export default class RenderedCard extends Card {
 		this.coreContainer.addChild(this.powerText)
 		this.coreContainer.addChild(this.attackText)
 		this.coreContainer.position.set(-1000, -1000)
+
+		/* Card mode text container */
+		this.cardModeTextContainer = new PIXI.Container()
+		this.cardModeTextContainer.addChild(this.cardNameText)
+		this.cardModeTextContainer.addChild(this.cardTitleText)
+		this.cardModeTextContainer.addChild(this.cardDescriptionText)
+		this.coreContainer.addChild(this.cardModeTextContainer)
 	}
 
 	public getPosition(): IPoint {
@@ -95,8 +114,7 @@ export default class RenderedCard extends Card {
 		return hitboxSprite
 	}
 
-	public createPowerText(): PIXI.Text {
-		const text = this.power ? this.power.toString() : ''
+	public createStatText(text: string): PIXI.Text {
 		const textObject = new PIXI.Text(text, {
 			fontFamily: 'BrushScript',
 			fill: 0x000000,
@@ -106,11 +124,23 @@ export default class RenderedCard extends Card {
 		return textObject
 	}
 
-	public createAttackText(): PIXI.Text {
-		const text = this.attack ? this.attack.toString() : ''
+	public createCardNameText(text: string): PIXI.Text {
 		const textObject = new PIXI.Text(text, {
-			fontFamily: 'BrushScript',
-			fill: 0xFF0000
+			fontFamily: 'Arial',
+			fill: 0x000000,
+			padding: 16,
+			align: 'right'
+		})
+		textObject.anchor.set(1, 0.5)
+		return textObject
+	}
+
+	public createCardDescriptionText(text: string): PIXI.Text {
+		const textObject = new PIXI.Text(text, {
+			fontFamily: 'Arial',
+			fill: 0xCCCCCC,
+			padding: 16,
+			align: 'center'
 		})
 		textObject.anchor.set(0.5)
 		return textObject
@@ -122,7 +152,6 @@ export default class RenderedCard extends Card {
 		}
 
 		this.displayMode = displayMode
-		this.powerText.scale.set(1 / FONT_RENDER_SCALE)
 
 		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED) {
 			this.switchToCardMode()
@@ -132,32 +161,80 @@ export default class RenderedCard extends Card {
 			this.switchToHiddenMode()
 		}
 
-		this.powerText.position.x *= this.sprite.scale.x
-		this.powerText.position.y *= this.sprite.scale.y
+		const texts = [
+			this.powerText,
+			this.attackText,
+			this.cardNameText,
+			this.cardTitleText,
+			this.cardDescriptionText
+		].filter(text => text.text.length > 0)
+
+		texts.forEach(text => {
+			text.position.x *= this.sprite.scale.x
+			text.position.y *= this.sprite.scale.y
+			text.position.x = Math.round(text.position.x)
+			text.position.y = Math.round(text.position.y)
+
+			text.scale.set(1 / Settings.fontRenderScale)
+			text.style.fontSize *= this.sprite.scale.x
+			text.style.lineHeight *= this.sprite.scale.x
+			text.style.fontSize *= Settings.fontRenderScale
+			text.style.lineHeight *= Settings.fontRenderScale
+		})
+
 		this.powerText.position.x -= this.sprite.width / 2
 		this.powerText.position.y -= this.sprite.height / 2
-		this.powerText.style.fontSize *= this.sprite.scale.x
-		this.powerText.style.fontSize *= FONT_RENDER_SCALE
+		this.cardNameText.position.x += this.sprite.width / 2
+		this.cardNameText.position.y -= this.sprite.height / 2
+		this.cardTitleText.position.x += this.sprite.width / 2
+		this.cardTitleText.position.y -= this.sprite.height / 2
+		this.cardDescriptionText.position.y += this.sprite.height / 2
 	}
 
 	public switchToCardMode(): void {
-		this.cardModeContainer.alpha = 1
 		this.unitModeContainer.alpha = 0
+		this.cardModeContainer.alpha = 1
+		this.cardModeTextContainer.alpha = 1
 
 		this.powerText.position.set(60, 45)
 		this.powerText.style.fontSize = 71
 
 		this.attackText.position.set(0, 0)
+		this.attackText.style.fontSize = 71
+
+		this.cardNameText.position.set(-10, 67)
+		this.cardNameText.style.fontSize = 22
+
+		if (this.cardTitleText.text.length > 0) {
+			this.cardNameText.position.y -= 12
+			this.cardTitleText.position.set(-10, 82)
+			this.cardTitleText.style.fontSize = 20
+		}
+
+		this.cardDescriptionText.position.set(0, -135)
+		this.cardDescriptionText.style.fontSize = 18
+		this.cardDescriptionText.style.lineHeight = 24
 	}
 
 	public switchToUnitMode(): void {
 		this.unitModeContainer.alpha = 1
 		this.cardModeContainer.alpha = 0
+		this.cardModeTextContainer.alpha = 0
 
 		this.powerText.position.set(97, 80)
 		this.powerText.style.fontSize = 135
 
 		this.attackText.position.set(0, 0)
+		this.attackText.style.fontSize = 71
+
+		this.cardNameText.position.set(0, 0)
+		this.cardNameText.style.fontSize = 150
+
+		this.cardTitleText.position.set(-10, 67)
+		this.cardTitleText.style.fontSize = 22
+
+		this.cardDescriptionText.position.set(0, 100)
+		this.cardDescriptionText.style.fontSize = 50
 	}
 
 	public switchToHiddenMode(): void {

@@ -33,7 +33,6 @@ export default {
 		const card = game.board.findCardById(data.attackerId)
 		const target = game.board.findCardById(data.targetId)
 		if (game.turnPhase !== GameTurnPhase.SKIRMISH || !card || !target || card.owner !== player || card.owner === target.owner) {
-			console.log('Denying card attack order')
 			return
 		}
 
