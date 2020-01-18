@@ -22,6 +22,11 @@ export default class TextureAtlas {
 				'components/bg-power-zoom',
 				'components/bg-name',
 				'components/bg-description',
+				'components/bg-stats-left',
+				'components/bg-stats-middle',
+				'components/bg-stats-right',
+				'components/bg-stats-right-zoom',
+				'components/stat-attack-claw',
 				'cards/cardBack'
 			]
 

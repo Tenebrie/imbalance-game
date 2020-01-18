@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js'
 import Utils from '@/utils/Utils'
+import RenderedCard from '@/Pixi/models/RenderedCard'
+import Localization from '@/Pixi/Localization'
 
 enum SegmentType {
 	TEXT = 'TEXT',
@@ -27,16 +29,20 @@ type Segment = {
 }
 
 export default class RichText extends PIXI.Container {
+	card: RenderedCard
 	source: string
 	fontSize: number
+	baseFontSize: number
 	lineHeight: number
 	maxWidth: number
 	segments: PIXI.Text[]
 
-	constructor(text: string, maxWidth: number) {
+	constructor(card: RenderedCard, text: string, maxWidth: number) {
 		super()
+		this.card = card
 		this.source = text
 		this.fontSize = 18
+		this.baseFontSize = 18
 		this.lineHeight = 24
 		this.maxWidth = maxWidth
 		this.segments = []
@@ -60,6 +66,13 @@ export default class RichText extends PIXI.Container {
 				parent.fontSize = value
 				parent.renderText()
 			},
+			set baseFontSize(value: number) {
+				if (value === parent.baseFontSize) {
+					return
+				}
+				parent.baseFontSize = value
+				parent.renderText()
+			},
 			get lineHeight() {
 				return parent.lineHeight
 			},
@@ -78,9 +91,10 @@ export default class RichText extends PIXI.Container {
 			this.removeChildAt(0)
 		}
 
-		const SCALE_MODIFIER = this.fontSize / 18
+		const SCALE_MODIFIER = this.fontSize / this.baseFontSize
 
-		const chars = Array.from(this.text)
+		const replacedText = (this.text || '').replace('{name}', `${Localization.getString(this.card.cardName)}`)
+		const chars = Array.from(replacedText)
 
 		const segments: Segment[] = []
 
@@ -123,7 +137,7 @@ export default class RichText extends PIXI.Container {
 
 		let contextPosition = new PIXI.Point(0, 0)
 		let contextHighlight = false
-		let contextColor = 0xBBBBBB
+		let contextColor = 0xCCCCCC
 		let contextColorStack: number[] = []
 		let currentLine: PIXI.Text[] = []
 

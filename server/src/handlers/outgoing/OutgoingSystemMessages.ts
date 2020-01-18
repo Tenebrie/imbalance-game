@@ -9,6 +9,13 @@ export default {
 		})
 	},
 
+	notifyAboutGameAlreadyStarted(ws: ws) {
+		ws.send(JSON.stringify({
+			type: 'error/generic',
+			data: 'Game has already started'
+		}))
+	},
+
 	notifyAboutInvalidGameID(ws: ws) {
 		ws.send(JSON.stringify({
 			type: 'error/generic',

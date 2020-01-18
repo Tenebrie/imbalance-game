@@ -24,18 +24,22 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.player = player
 		this.cardHand = new ServerCardHand(this.player, [])
 		this.cardDeck = cardDeck
-		this.rowsOwned = 0
+		this.rowsOwned = 3
 		this.timeUnits = 0
 		this.turnEnded = false
 	}
 
-	public canPlayCard(card: ServerCard): boolean {
+	public canPlayCard(card: ServerCard, rowIndex: number, unitIndex: number): boolean {
+		const gameBoardRow = this.game.board.rows[rowIndex]
+		if (gameBoardRow.cards.length >= 10 || !gameBoardRow.isOwnedByPlayer(this)) {
+			return false
+		}
+
 		return this.timeUnits > 0
 	}
 
-	public playUnit(game: ServerGame, card: ServerCard, rowIndex: number, unitIndex: number): void {
-		const gameBoardRow = game.board.rows[rowIndex]
-		if (gameBoardRow.cards.length >= 10) { return }
+	public playUnit(card: ServerCard, rowIndex: number, unitIndex: number): void {
+		const gameBoardRow = this.game.board.rows[rowIndex]
 
 		/* Remove card from hand */
 		this.cardHand.removeCard(card)
@@ -47,12 +51,12 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.setTimeUnits(this.timeUnits - 1)
 
 		/* Send notifications */
-		const opponent = game.getOpponent(this)
+		const opponent = this.game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
 	}
 
-	public playSpell(game: ServerGame, card: ServerCard): void {
+	public playSpell(card: ServerCard): void {
 		/* Remove card from hand */
 		this.cardHand.removeCard(card)
 
@@ -63,7 +67,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.setTimeUnits(this.timeUnits - 1)
 
 		/* Send notifications */
-		const opponent = game.getOpponent(this)
+		const opponent = this.game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
 	}
@@ -92,7 +96,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.setTimeUnits(this.timeUnits + 1)
 	}
 
-	public startTurn(): void {
+	public markTurnNotEnded(): void {
 		this.turnEnded = false
 	}
 

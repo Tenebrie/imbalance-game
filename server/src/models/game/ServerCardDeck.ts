@@ -1,10 +1,15 @@
 import ServerCard from './ServerCard'
 import CardDeck from '../../shared/models/CardDeck'
 import HeroSatia from '../../cards/heroes/HeroSatia'
-import UnitPostalRaven from '../../cards/units/UnitPostalRaven'
+import UnitRavenMessenger from '../../cards/units/UnitRavenMessenger'
 import ServerGame from '../../libraries/game/ServerGame'
 import UnitPossessedVulture from '../../cards/units/UnitPossessedVulture'
 import CardLibrary from '../../libraries/card/CardLibrary'
+import HeroNightMaiden from '../../cards/heroes/HeroNightMaiden'
+import UnitMadBerserker from '../../cards/units/UnitMadBerserker'
+import UnitForestScout from '../../cards/units/UnitForestScout'
+import UnitUnfeelingWarrior from '../../cards/units/UnitUnfeelingWarrior'
+import UnitTwinBowArcher from '../../cards/units/UnitTwinBowArcher'
 
 export default class ServerCardDeck extends CardDeck {
 	game: ServerGame
@@ -45,10 +50,22 @@ export default class ServerCardDeck extends CardDeck {
 
 		deck.addCard(CardLibrary.createCard(new HeroSatia(game)))
 		for (let i = 0; i < 3; i++) {
-			deck.addCard(CardLibrary.createCard(new UnitPostalRaven(game)))
+			deck.addCard(CardLibrary.createCard(new UnitRavenMessenger(game)))
 		}
 		for (let i = 0; i < 3; i++) {
 			deck.addCard(CardLibrary.createCard(new UnitPossessedVulture(game)))
+		}
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(CardLibrary.createCard(new UnitMadBerserker(game)))
+		}
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(CardLibrary.createCard(new UnitForestScout(game)))
+		}
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(CardLibrary.createCard(new UnitUnfeelingWarrior(game)))
+		}
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(CardLibrary.createCard(new UnitTwinBowArcher(game)))
 		}
 
 		deck.shuffle()

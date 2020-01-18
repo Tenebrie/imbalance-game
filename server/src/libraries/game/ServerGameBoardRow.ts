@@ -4,6 +4,7 @@ import ServerCard from '../../models/game/ServerCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../../utils/runCardEventHandler'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
+import Constants from '../../shared/Constants'
 
 export default class ServerGameBoardRow {
 	game: ServerGame
@@ -18,7 +19,7 @@ export default class ServerGameBoardRow {
 
 	public playCard(card: ServerCard, owner: ServerPlayerInGame, ordinal: number): ServerCardOnBoard {
 		const cardOnBoard = this.insertCard(card, owner, ordinal)
-		runCardEventHandler(() => card.onPlayUnit(cardOnBoard))
+		runCardEventHandler(() => card.onPlayUnit(cardOnBoard, this))
 		return cardOnBoard
 	}
 
@@ -36,5 +37,11 @@ export default class ServerGameBoardRow {
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitDestroyed(playerInGame.player, targetCard)
 		})
+	}
+
+	public isOwnedByPlayer(playerInGame: ServerPlayerInGame): boolean {
+		const invertedBoard = this.game.players.indexOf(playerInGame) === 1
+
+		return (invertedBoard && this.index < playerInGame.rowsOwned) || (!invertedBoard && this.index >= Constants.GAME_BOARD_ROW_COUNT - playerInGame.rowsOwned)
 	}
 }

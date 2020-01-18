@@ -7,6 +7,8 @@ import ServerCardOnBoard from '../../libraries/game/ServerCardOnBoard'
 import ServerPlayerInGame from '../../libraries/players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '../../shared/enums/GameTurnPhase'
+import ServerDamageInstance from '../ServerDamageSource'
+import ServerGameBoardRow from '../../libraries/game/ServerGameBoardRow'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -47,18 +49,18 @@ export default class ServerCard extends Card {
 		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(opponent.player, this)
 	}
 
-	onPlayUnit(thisUnit: ServerCardOnBoard): void { return }
+	onPlayUnit(thisUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void { return }
 	onPlaySpell(owner: ServerPlayerInGame): void { return }
 	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void { return }
 	onPowerChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
 	onAttackChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
-	onBeforeDamageTaken(thisUnit: ServerCardOnBoard, damage: number): void { return }
-	onAfterDamageTaken(thisUnit: ServerCardOnBoard, damage: number): void { return }
-	onDamageSurvived(thisUnit: ServerCardOnBoard, damage: number): void { return }
-	onBeforePerformingAttack(thisUnit: ServerCardOnBoard): void { return }
-	onAfterPerformingAttack(thisUnit: ServerCardOnBoard): void { return }
-	onBeforeBeingAttacked(thisUnit: ServerCardOnBoard): void { return }
-	onAfterBeingAttacked(thisUnit: ServerCardOnBoard): void { return }
+	onBeforeDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
+	onAfterDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
+	onDamageSurvived(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
+	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void { return }
+	onAfterPerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void { return }
+	onBeforeBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void { return }
+	onAfterBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void { return }
 	onBeforeOtherUnitDestroyed(thisUnit: ServerCardOnBoard, destroyedUnit: ServerCardOnBoard): void { return }
 	onAfterOtherUnitDestroyed(thisUnit: ServerCardOnBoard, destroyedUnit: ServerCardOnBoard): void { return }
 	onReveal(owner: ServerPlayerInGame): void { return }

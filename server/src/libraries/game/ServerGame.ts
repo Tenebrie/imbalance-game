@@ -10,12 +10,11 @@ import ServerCardDeck from '../../models/game/ServerCardDeck'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
 import GameLibrary from './GameLibrary'
-import VoidPlayer from '../../utils/VoidPlayer'
 
 export default class ServerGame extends Game {
 	MAXIMUM_TIME = 12
 
-	visibleInBrowser: boolean
+	isStarted: boolean
 	currentTime: number
 	turnPhase: GameTurnPhase
 	owner: ServerPlayer
@@ -25,9 +24,9 @@ export default class ServerGame extends Game {
 
 	constructor(owner: ServerPlayer, name: string) {
 		super(uuidv4(), name)
-		this.visibleInBrowser = true
+		this.isStarted = false
 		this.currentTime = 0
-		this.turnPhase = GameTurnPhase.WAITING
+		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.owner = owner
 		this.board = new ServerGameBoard(this)
 		this.players = []
@@ -46,7 +45,7 @@ export default class ServerGame extends Game {
 	}
 
 	public start(): void {
-		this.visibleInBrowser = false
+		this.isStarted = true
 
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
@@ -61,9 +60,8 @@ export default class ServerGame extends Game {
 
 		this.players.forEach(playerInGame => {
 			playerInGame.drawCards(10)
-			playerInGame.advanceTime()
 		})
-		this.setTurnPhase(GameTurnPhase.DEPLOY)
+		this.startNewTurnPhase()
 	}
 
 	public getPlayerInGame(player: Player): ServerPlayerInGame {
@@ -104,8 +102,11 @@ export default class ServerGame extends Game {
 
 	public setTurnPhase(turnPhase: GameTurnPhase): void {
 		this.turnPhase = turnPhase
+
+		this.board.getAllUnits().forEach(unit => unit.card.onTurnPhaseChanged(unit, this.turnPhase))
+
 		this.players.forEach(playerInGame => {
-			playerInGame.startTurn()
+			playerInGame.markTurnNotEnded()
 			OutgoingMessageHandlers.notifyAboutPhaseAdvance(playerInGame.player, this.turnPhase)
 		})
 	}
@@ -121,13 +122,24 @@ export default class ServerGame extends Game {
 	}
 
 	public advancePhase(): void {
-		if (this.currentTime === this.MAXIMUM_TIME && this.turnPhase === GameTurnPhase.SKIRMISH) {
-			this.startCombatPhase()
+		if (this.turnPhase === GameTurnPhase.TURN_START) {
+			this.startDeployPhase()
 		} else if (this.turnPhase === GameTurnPhase.DEPLOY) {
 			this.startSkirmishPhase()
-		} else if (this.turnPhase === GameTurnPhase.SKIRMISH) {
-			this.startDeployPhase()
+		} else if (this.turnPhase === GameTurnPhase.SKIRMISH && this.currentTime === this.MAXIMUM_TIME) {
+			this.startCombatPhase()
+		} else if (this.turnPhase === GameTurnPhase.SKIRMISH && this.currentTime < this.MAXIMUM_TIME) {
+			this.startEndTurnPhase()
+		} else if (this.turnPhase === GameTurnPhase.COMBAT) {
+			this.startEndTurnPhase()
+		} else if (this.turnPhase === GameTurnPhase.TURN_END) {
+			this.startNewTurnPhase()
 		}
+	}
+
+	public startNewTurnPhase(): void {
+		this.setTurnPhase(GameTurnPhase.TURN_START)
+		this.advancePhase()
 	}
 
 	public startDeployPhase(): void {
@@ -145,13 +157,18 @@ export default class ServerGame extends Game {
 
 	public startCombatPhase(): void {
 		this.setTurnPhase(GameTurnPhase.COMBAT)
-		this.board.getAllCards().forEach(cardOnBoard => this.board.removeCard(cardOnBoard))
+		this.board.getAllUnits().forEach(cardOnBoard => this.board.removeCard(cardOnBoard))
 		this.setTime(0)
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
 	}
 
+	public startEndTurnPhase(): void {
+		this.setTurnPhase(GameTurnPhase.TURN_END)
+		this.advancePhase()
+	}
+
 	public finish(reason: string): void {
-		this.setTurnPhase(GameTurnPhase.FINISHED)
+		this.setTurnPhase(GameTurnPhase.AFTER_GAME)
 
 		const remainingPlayerInGame = this.players[0]
 		OutgoingMessageHandlers.notifyAboutVictory(remainingPlayerInGame.player)

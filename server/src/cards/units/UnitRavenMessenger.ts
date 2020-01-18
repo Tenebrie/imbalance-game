@@ -2,20 +2,31 @@ import CardType from '../../shared/enums/CardType'
 import ServerCard from '../../models/game/ServerCard'
 import ServerGame from '../../libraries/game/ServerGame'
 import ServerCardOnBoard from '../../libraries/game/ServerCardOnBoard'
+import GameTurnPhase from '../../shared/enums/GameTurnPhase'
 import CardTribe from '../../shared/enums/CardTribe'
 
-export default class UnitPossessedVulture extends ServerCard {
+export default class UnitRavenMessenger extends ServerCard {
+	turnsLeft: number
+
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 10
+		this.basePower = 5
 		this.baseAttack = 4
 		this.baseAttackRange = 3
 		this.cardTribes = [CardTribe.BIRD]
+
+		this.turnsLeft = 3
 	}
 
-	onAfterPerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
-		if (target.isDead()) {
-			thisUnit.setPower(thisUnit.card.power + 4)
+	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void {
+		if (phase !== GameTurnPhase.TURN_START) {
+			return
+		}
+
+		this.turnsLeft -= 1
+		if (this.turnsLeft === 0) {
+			thisUnit.owner.drawCards(1)
+			this.turnsLeft = 3
 		}
 	}
 }

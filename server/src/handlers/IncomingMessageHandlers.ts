@@ -13,12 +13,14 @@ export default {
 
 	'post/playCard': (data: CardPlayedMessage, game: ServerGame, player: ServerPlayerInGame) => {
 		const card = player.cardHand.findCardById(data.id)
-		if (game.turnPhase !== GameTurnPhase.DEPLOY || !card || !player.canPlayCard(card)) { return }
+		if (game.turnPhase !== GameTurnPhase.DEPLOY || !card || !player.canPlayCard(card, data.rowIndex, data.unitIndex)) {
+			return
+		}
 
 		if (card.cardType === CardType.SPELL) {
-			player.playSpell(game, card)
+			player.playSpell(card)
 		} else if (card.cardType === CardType.UNIT) {
-			player.playUnit(game, card, data.rowIndex, data.unitIndex)
+			player.playUnit(card, data.rowIndex, data.unitIndex)
 		}
 
 		if (game.isDeployPhaseFinished()) {

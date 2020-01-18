@@ -3,13 +3,25 @@
 	"card.title.heroSatia": "First mistress",
 	"card.description.heroSatia": "*On play:*\nSummon *Night Maiden*",
 
-	"card.name.heroNightLady": "Night Maiden",
-	"card.title.heroNightLady": "Satia's favorite",
-	"card.description.heroNightLady": "",
+	"card.name.heroNightMaiden": "Night Maiden",
+	"card.title.heroNightMaiden": "Satia's favorite",
+	"card.description.heroNightMaiden": "If Satia dies, {name} leaves the battlefield",
 
-	"card.name.unitPostalRaven": "Postal Raven",
-	"card.description.unitPostalRaven": "*On play:*\nDraw a card",
+	"card.name.unitRavenMessenger": "Raven Messenger",
+	"card.description.unitRavenMessenger": "Every *3* turns {name} survives on the board, draw a card",
 
 	"card.name.unitPossessedVulture": "Possessed Vulture",
-	"card.description.unitPossessedVulture": "Whenever it attacks, gain *+2* Power"
+	"card.description.unitPossessedVulture": "*On attack:*\nIf {name} kills an enemy creature, gain *+4* power",
+
+	"card.name.unitUnfeelingWarrior": "Unfeeling Warrior",
+	"card.description.unitUnfeelingWarrior": "*On turn start:*\nUnfeeling Warrior restores *3* Power for each attack survived last turn",
+
+	"card.name.unitForestScout": "Forest Scout",
+	"card.description.unitForestScout": "*On attack:*\nIf {name} did not attack last turn, deal *7* extra damage",
+
+	"card.name.unitMadBerserker": "Mad Berserker",
+	"card.description.unitMadBerserker": "*On attack:*\nEvery consecutive attack on the same target deals *3* more damage",
+
+	"card.name.unitTwinBowArcher": "Twin Bow Archer",
+	"card.description.unitTwinBowArcher": "*On attack:*\nAlso deal damage to a creature to the left or to the right of the initial target at random"
 }

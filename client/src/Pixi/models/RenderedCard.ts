@@ -8,8 +8,7 @@ import Localization from '@/Pixi/Localization'
 import Settings from '@/Pixi/Settings'
 import RichText from '@/Pixi/render/RichText'
 import Utils from '@/utils/Utils'
-import Point = PIXI.Point
-import IPoint = PIXI.IPoint
+import CardAttributes from '@/Pixi/render/CardAttributes'
 
 export default class RenderedCard extends Card {
 	public coreContainer: PIXI.Container
@@ -18,8 +17,10 @@ export default class RenderedCard extends Card {
 	public displayMode = CardDisplayMode.UNDEFINED
 
 	private readonly cardModeContainer: PIXI.Container
-	private readonly unitModeContainer: PIXI.Container
 	private readonly cardModeTextContainer: PIXI.Container
+	private readonly cardModeAttributes: CardAttributes
+	private readonly unitModeContainer: PIXI.Container
+	private readonly unitModeAttributes: CardAttributes
 
 	private readonly powerText: PIXI.Text
 	private readonly attackText: PIXI.Text
@@ -40,11 +41,11 @@ export default class RenderedCard extends Card {
 		this.baseAttack = card.baseAttack
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.cardClass}`))
-		this.powerText = this.createStatText(this.power ? this.power.toString() : '')
-		this.attackText = this.createStatText(this.attack ? this.attack.toString() : '')
+		this.powerText = this.createPowerText(this.power ? this.power.toString() : '')
+		this.attackText = this.createAttackText(this.attack ? this.attack.toString() : '')
 		this.cardNameText = this.createCardNameText(Localization.getString(this.cardName))
 		this.cardTitleText = this.createCardNameText(Localization.getString(this.cardTitle))
-		this.cardDescriptionText = new RichText(Localization.getString(this.cardDescription), 350)
+		this.cardDescriptionText = new RichText(this, Localization.getString(this.cardDescription), 350)
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.anchor.set(0.5)
@@ -55,15 +56,25 @@ export default class RenderedCard extends Card {
 		internalContainer.position.y = -this.sprite.texture.height / 2
 		this.sprite.addChild(internalContainer)
 
+		/* Card attributes */
+		this.cardModeAttributes = new CardAttributes(this, CardDisplayMode.IN_HAND)
+		this.unitModeAttributes = new CardAttributes(this, CardDisplayMode.ON_BOARD)
+		this.cardModeAttributes.position.set(this.sprite.texture.width, this.sprite.texture.height)
+		this.cardModeAttributes.pivot.set(this.sprite.texture.width, this.sprite.texture.height)
+		this.unitModeAttributes.position.set(this.sprite.texture.width, this.sprite.texture.height)
+		this.unitModeAttributes.pivot.set(this.sprite.texture.width, this.sprite.texture.height)
+
 		/* Card mode container */
 		this.cardModeContainer = new PIXI.Container()
 		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power')))
 		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
 		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-description')))
+		this.cardModeContainer.addChild(this.cardModeAttributes)
 		internalContainer.addChild(this.cardModeContainer)
 
 		/* Unit mode container */
 		this.unitModeContainer = new PIXI.Container()
+		this.unitModeContainer.addChild(this.unitModeAttributes)
 		this.unitModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power-zoom')))
 		internalContainer.addChild(this.unitModeContainer)
 
@@ -82,11 +93,11 @@ export default class RenderedCard extends Card {
 		this.coreContainer.addChild(this.cardModeTextContainer)
 	}
 
-	public getPosition(): IPoint {
-		return this.hitboxSprite.position
+	public getPosition(): PIXI.Point {
+		return new PIXI.Point(this.hitboxSprite.position.x, this.hitboxSprite.position.y)
 	}
 
-	public isHovered(mousePosition: Point): boolean {
+	public isHovered(mousePosition: PIXI.Point): boolean {
 		return this.hitboxSprite.containsPoint(mousePosition)
 	}
 
@@ -116,13 +127,23 @@ export default class RenderedCard extends Card {
 		return hitboxSprite
 	}
 
-	public createStatText(text: string): PIXI.Text {
+	public createPowerText(text: string): PIXI.Text {
 		const textObject = new PIXI.Text(text, {
 			fontFamily: 'BrushScript',
 			fill: 0x000000,
 			padding: 16
 		})
 		textObject.anchor.set(0.5)
+		return textObject
+	}
+
+	public createAttackText(text: string): PIXI.Text {
+		const textObject = new PIXI.Text(text, {
+			fontFamily: 'BrushScript',
+			fill: 0x000000,
+			padding: 16
+		})
+		textObject.anchor.set(1.0, 0.5)
 		return textObject
 	}
 
@@ -180,11 +201,12 @@ export default class RenderedCard extends Card {
 
 		this.powerText.position.x -= this.sprite.width / 2
 		this.powerText.position.y -= this.sprite.height / 2
+		this.attackText.position.x += this.sprite.width / 2
+		this.attackText.position.y += this.sprite.height / 2
 		this.cardNameText.position.x += this.sprite.width / 2
 		this.cardNameText.position.y -= this.sprite.height / 2
 		this.cardTitleText.position.x += this.sprite.width / 2
 		this.cardTitleText.position.y -= this.sprite.height / 2
-		// this.cardDescriptionText.position.x -= this.sprite.width / 2
 		this.cardDescriptionText.position.y += this.sprite.height / 2
 	}
 
@@ -196,8 +218,8 @@ export default class RenderedCard extends Card {
 		this.powerText.position.set(60, 45)
 		this.powerText.style.fontSize = 71
 
-		this.attackText.position.set(0, 0)
-		this.attackText.style.fontSize = 71
+		this.attackText.position.copyFrom(this.cardModeAttributes.getAttackTextPosition())
+		this.attackText.style.fontSize = this.cardModeAttributes.getAttackTextFontSize()
 
 		this.cardNameText.position.set(-15, 67)
 		this.cardNameText.style.fontSize = 22
@@ -209,8 +231,17 @@ export default class RenderedCard extends Card {
 		}
 
 		this.cardDescriptionText.position.set(0, -135)
-		this.cardDescriptionText.style.fontSize = 18
-		this.cardDescriptionText.style.lineHeight = 24
+
+		const description = Localization.getString(this.cardDescription)
+		let fontSize = 24
+		if (description.length > 50) { fontSize = 22 }
+		if (description.length > 100) { fontSize = 20 }
+		if (description.length > 150) { fontSize = 18 }
+		if (description.length > 200) { fontSize = 16 }
+		if (description.length > 250) { fontSize = 14 }
+		this.cardDescriptionText.style.fontSize = fontSize
+		this.cardDescriptionText.style.baseFontSize = fontSize
+		this.cardDescriptionText.style.lineHeight = fontSize + 6
 	}
 
 	public switchToUnitMode(): void {
@@ -221,8 +252,8 @@ export default class RenderedCard extends Card {
 		this.powerText.position.set(97, 80)
 		this.powerText.style.fontSize = 135
 
-		this.attackText.position.set(0, 0)
-		this.attackText.style.fontSize = 71
+		this.attackText.position.copyFrom(this.unitModeAttributes.getAttackTextPosition())
+		this.attackText.style.fontSize = this.unitModeAttributes.getAttackTextFontSize()
 	}
 
 	public switchToHiddenMode(): void {

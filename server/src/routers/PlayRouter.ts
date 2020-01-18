@@ -5,7 +5,6 @@ import ServerPlayer from '../libraries/players/ServerPlayer'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ConnectionEstablishedHandler from '../handlers/ConnectionEstablishedHandler'
-import CardLibrary from '../libraries/card/CardLibrary'
 
 const router = express.Router()
 
@@ -14,6 +13,12 @@ router.ws('/:gameId', async (ws, req) => {
 	const currentPlayer: ServerPlayer = await global.playerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
 	if (!currentGame || !currentPlayer) {
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
+		ws.close()
+		return
+	}
+
+	if (currentGame.isStarted) {
+		OutgoingMessageHandlers.notifyAboutGameAlreadyStarted(ws)
 		ws.close()
 		return
 	}

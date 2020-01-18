@@ -6,9 +6,8 @@ import ServerGameBoardRow from './ServerGameBoardRow'
 import ServerAttackOrder from '../../models/game/ServerAttackOrder'
 import runCardEventHandler from '../../utils/runCardEventHandler'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
-import AttackOrder from '../../shared/models/AttackOrder'
-import ServerPlayer from '../players/ServerPlayer'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
+import ServerDamageInstance from '../../models/ServerDamageSource'
 
 export default class ServerGameBoard extends GameBoard {
 	game: ServerGame
@@ -44,12 +43,12 @@ export default class ServerGameBoard extends GameBoard {
 		rowWithCard.removeCard(cardOnBoard)
 	}
 
-	public getAllCards() {
+	public getAllUnits() {
 		return this.rows.map(row => row.cards).flat()
 	}
 
 	public getCardsOwnedByPlayer(owner: ServerPlayerInGame) {
-		return this.getAllCards().filter(unit => unit.owner === owner)
+		return this.getAllUnits().filter(unit => unit.owner === owner)
 	}
 
 	public queueCardAttack(attacker: ServerCardOnBoard, target: ServerCardOnBoard): void {
@@ -62,20 +61,31 @@ export default class ServerGameBoard extends GameBoard {
 	}
 
 	public releaseQueuedAttacks(): void {
+		/* Before attacks */
 		this.queuedAttacks.forEach(queuedAttack => {
-			runCardEventHandler(() => queuedAttack.attacker.card.onBeforePerformingAttack(queuedAttack.attacker))
-			runCardEventHandler(() => queuedAttack.target.card.onBeforeBeingAttacked(queuedAttack.target))
+			runCardEventHandler(() => queuedAttack.attacker.card.onBeforePerformingAttack(queuedAttack.attacker, queuedAttack.target))
+			runCardEventHandler(() => queuedAttack.target.card.onBeforeBeingAttacked(queuedAttack.target, queuedAttack.attacker))
 		})
+
+		/* Attacks */
 		this.queuedAttacks.forEach(queuedAttack => {
 			this.performCardAttack(queuedAttack.attacker, queuedAttack.target)
 		})
-		const survivingAttackers = this.queuedAttacks.map(queuedAttack => queuedAttack.attacker).filter(cardOnBoard => cardOnBoard.card.power > 0)
-		const survivingTargets = this.queuedAttacks.map(queuedAttack => queuedAttack.target).filter(cardOnBoard => cardOnBoard.card.power > 0)
-		survivingAttackers.forEach(attacker => {
-			runCardEventHandler(() => attacker.card.onAfterPerformingAttack(attacker))
+
+		/* Destroy killed units */
+		const killedUnits = this.getAllUnits().filter(unit => unit.card.power <= 0)
+		killedUnits.forEach(destroyedUnit => {
+			destroyedUnit.destroy()
 		})
-		survivingTargets.forEach(target => {
-			runCardEventHandler(() => target.card.onAfterBeingAttacked(target))
+
+		/* After attacks */
+		const survivingAttackers = this.queuedAttacks.filter(attack => attack.attacker.card.power > 0)
+		const survivingTargets = this.queuedAttacks.filter(attack => attack.target.card.power > 0)
+		survivingAttackers.forEach(attack => {
+			runCardEventHandler(() => attack.attacker.card.onAfterPerformingAttack(attack.attacker, attack.target))
+		})
+		survivingTargets.forEach(attack => {
+			runCardEventHandler(() => attack.target.card.onAfterBeingAttacked(attack.target, attack.attacker))
 		})
 
 		this.queuedAttacks = []
@@ -84,8 +94,8 @@ export default class ServerGameBoard extends GameBoard {
 		})
 	}
 
-	public performCardAttack(cardOnBoard: ServerCardOnBoard, targetOnBoard: ServerCardOnBoard): void {
-		const damage = cardOnBoard.card.attack
-		targetOnBoard.dealDamage(damage)
+	public performCardAttack(attackingUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {
+		const attack = attackingUnit.card.attack
+		targetUnit.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(attack, attackingUnit))
 	}
 }

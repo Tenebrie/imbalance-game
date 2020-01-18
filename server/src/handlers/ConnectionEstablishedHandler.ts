@@ -15,7 +15,7 @@ export default {
 	},
 
 	onPlayerDisconnected(game: ServerGame, player: ServerPlayer): void {
-		if (game.players.length === 0 && game.turnPhase === GameTurnPhase.WAITING) {
+		if (game.players.length === 0 && game.turnPhase === GameTurnPhase.BEFORE_GAME) {
 			const gameLibrary: GameLibrary = global.gameLibrary
 			gameLibrary.destroyGame(game)
 			return

@@ -11,7 +11,7 @@ router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req, res: Response, next) => {
 	const library: ServerGame[] = global.gameLibrary.games
-	const filteredLibrary = library.filter(game => game.visibleInBrowser)
+	const filteredLibrary = library.filter(game => !game.isStarted)
 	const gameMessages = filteredLibrary.map(game => ServerGameMessage.fromServerGame(game))
 	res.json({ data: gameMessages })
 })

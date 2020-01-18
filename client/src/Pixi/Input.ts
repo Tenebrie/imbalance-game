@@ -10,14 +10,13 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@/shared/enums/GameTurnPhase'
 import AttackOrder from '@/shared/models/AttackOrder'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
-import Point = PIXI.Point
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
 
 export default class Input {
 	mouseDown: boolean = false
-	mousePosition: Point = new Point(-10000, -10000)
+	mousePosition: PIXI.Point = new PIXI.Point(-10000, -10000)
 	hoveredCard: HoveredCard | null = null
 	grabbedCard: GrabbedCard | null = null
 	inspectedCard: RenderedCard | null = null
@@ -179,7 +178,7 @@ export default class Input {
 	private onMouseMove(event: MouseEvent) {
 		const view = Core.renderer.pixi.view
 		const clientRect = view.getBoundingClientRect()
-		this.mousePosition = new Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
+		this.mousePosition = new PIXI.Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
 		this.mousePosition.x *= window.devicePixelRatio * Core.renderer.SSAA_FACTOR
 		this.mousePosition.y *= window.devicePixelRatio * Core.renderer.SSAA_FACTOR
 

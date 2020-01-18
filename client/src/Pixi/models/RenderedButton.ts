@@ -1,6 +1,5 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import Point = PIXI.Point
 
 export default class RenderedButton {
 	container: PIXI.Container
@@ -19,7 +18,7 @@ export default class RenderedButton {
 		this.container.addChild(this.text)
 	}
 
-	public isHovered(mousePosition: Point): boolean {
+	public isHovered(mousePosition: PIXI.Point): boolean {
 		return this.textBackground.containsPoint(mousePosition)
 	}
 

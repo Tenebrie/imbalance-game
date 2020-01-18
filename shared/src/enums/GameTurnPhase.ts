@@ -1,9 +1,11 @@
 enum GameTurnPhase {
-	WAITING,
+	BEFORE_GAME,
+	TURN_START,
 	DEPLOY,
 	SKIRMISH,
 	COMBAT,
-	FINISHED
+	TURN_END,
+	AFTER_GAME
 }
 
 export default GameTurnPhase

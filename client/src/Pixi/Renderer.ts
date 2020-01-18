@@ -2,14 +2,14 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@/shared/Constants'
 import RenderedCard from '@/Pixi/models/RenderedCard'
-import {TargetingMode} from '@/Pixi/enums/TargetingMode'
+import { TargetingMode } from '@/Pixi/enums/TargetingMode'
 import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import GameTurnPhase from '@/shared/enums/GameTurnPhase'
 import RenderedButton from '@/Pixi/models/RenderedButton'
 import CardType from '@/shared/enums/CardType'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 
 const UNIT_ZINDEX = 2
 const HOVERED_CARD_ZINDEX = 50
@@ -229,13 +229,13 @@ export default class Renderer {
 
 	public renderTextLabels(): void {
 		let phaseLabel = ''
-		if (Core.game.turnPhase === GameTurnPhase.WAITING) {
+		if (Core.game.turnPhase === GameTurnPhase.BEFORE_GAME) {
 			phaseLabel = 'Waiting for the game to start'
-		} else if (Core.game.turnPhase === GameTurnPhase.FINISHED) {
+		} else if (Core.game.turnPhase === GameTurnPhase.AFTER_GAME) {
 			phaseLabel = 'Game finished!'
 		} else {
 			let phase = 'Unknown'
-			if (Core.game.turnPhase === GameTurnPhase.DEPLOY) {
+			if (Core.game.turnPhase === GameTurnPhase.TURN_START || Core.game.turnPhase === GameTurnPhase.DEPLOY || Core.game.turnPhase === GameTurnPhase.TURN_END) {
 				phase = 'Deploy'
 			} else if (Core.game.turnPhase === GameTurnPhase.SKIRMISH) {
 				phase = 'Skirmish'

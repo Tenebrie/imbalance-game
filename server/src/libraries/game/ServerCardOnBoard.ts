@@ -2,6 +2,7 @@ import ServerGame from './ServerGame'
 import ServerCard from '../../models/game/ServerCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../../utils/runCardEventHandler'
+import ServerDamageInstance from '../../models/ServerDamageSource'
 
 export default class ServerCardOnBoard {
 	game: ServerGame
@@ -17,15 +18,32 @@ export default class ServerCardOnBoard {
 		card.attack = card.baseAttack
 	}
 
-	dealDamage(damage: number): void {
-		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damage))
-		this.setPower(this.card.power - damage)
-		runCardEventHandler(() => this.card.onAfterDamageTaken(this, damage))
+	dealDamage(damage: ServerDamageInstance): void {
+		this.dealDamageWithoutDestroying(damage)
 		if (this.card.power <= 0) {
 			this.destroy()
-		} else {
+		}
+	}
+
+	dealDamageWithoutDestroying(damage: ServerDamageInstance): void {
+		if (damage.value <= 0) {
+			return
+		}
+
+		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damage))
+		this.setPower(this.card.power - damage.value)
+		runCardEventHandler(() => this.card.onAfterDamageTaken(this, damage))
+		if (this.card.power > 0) {
 			runCardEventHandler(() => this.card.onDamageSurvived(this, damage))
 		}
+	}
+
+	heal(damage: ServerDamageInstance): void {
+		if (damage.value <= 0) {
+			return
+		}
+
+		this.setPower(Math.min(this.card.basePower, this.card.power + damage.value))
 	}
 
 	setPower(value: number): void {
@@ -36,10 +54,18 @@ export default class ServerCardOnBoard {
 		this.card.setAttack(this, value)
 	}
 
+	isAlive(): boolean {
+		return this.card.power > 0
+	}
+
+	isDead(): boolean {
+		return this.card.power <= 0
+	}
+
 	destroy(): void {
 		runCardEventHandler(() => this.card.onDestroyUnit(this))
 
-		const otherCards = this.game.board.getAllCards().filter(cardOnBoard => cardOnBoard !== this)
+		const otherCards = this.game.board.getAllUnits().filter(cardOnBoard => cardOnBoard !== this)
 		otherCards.forEach(cardOnBoard => {
 			runCardEventHandler(() => cardOnBoard.card.onBeforeOtherUnitDestroyed(cardOnBoard, this))
 		})
@@ -50,7 +76,7 @@ export default class ServerCardOnBoard {
 	}
 
 	getValidAttackTargets(): ServerCardOnBoard[] {
-		const allCards = this.game.board.getAllCards()
+		const allCards = this.game.board.getAllUnits()
 		const opponent = this.game.getOpponent(this.owner)
 		return allCards.filter(unit => unit.owner === opponent)
 	}
@@ -61,7 +87,7 @@ export default class ServerCardOnBoard {
 			return false
 		}
 
-		const allUnits = this.game.board.getAllCards()
+		const allUnits = this.game.board.getAllUnits()
 		const opponentsUnits = allUnits.filter(cardOnBoard => cardOnBoard.owner === opponent)
 		if (opponentsUnits.length === 0) {
 			return false

@@ -1,20 +1,28 @@
 import ServerCard from '../../models/game/ServerCard'
-import HeroNightLady from '../../cards/heroes/HeroNightLady'
+import HeroNightMaiden from '../../cards/heroes/HeroNightMaiden'
 import HeroSatia from '../../cards/heroes/HeroSatia'
 import UnitPossessedVulture from '../../cards/units/UnitPossessedVulture'
-import UnitPostalRaven from '../../cards/units/UnitPostalRaven'
+import UnitRavenMessenger from '../../cards/units/UnitRavenMessenger'
 import ServerGame from '../game/ServerGame'
 import VoidGame from '../../utils/VoidGame'
+import UnitMadBerserker from '../../cards/units/UnitMadBerserker'
+import UnitForestScout from '../../cards/units/UnitForestScout'
+import UnitTwinBowArcher from '../../cards/units/UnitTwinBowArcher'
+import UnitUnfeelingWarrior from '../../cards/units/UnitUnfeelingWarrior'
 
 export default class GameLibrary {
 	static cards: any[]
 
 	constructor() {
 		const cards = [
-			HeroNightLady,
+			HeroNightMaiden,
 			HeroSatia,
 			UnitPossessedVulture,
-			UnitPostalRaven
+			UnitRavenMessenger,
+			UnitMadBerserker,
+			UnitForestScout,
+			UnitTwinBowArcher,
+			UnitUnfeelingWarrior
 		]
 
 		GameLibrary.cards = cards.map(prototype => {

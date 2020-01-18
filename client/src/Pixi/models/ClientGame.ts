@@ -11,7 +11,7 @@ export default class ClientGame {
 	constructor() {
 		this.currentTime = 0
 		this.maximumTime = 1
-		this.turnPhase = GameTurnPhase.WAITING
+		this.turnPhase = GameTurnPhase.BEFORE_GAME
 	}
 
 	public setTurnPhase(phase: GameTurnPhase): void {
