@@ -1,5 +1,5 @@
-import Constants from '@/shared/Constants'
-import GameBoard from '@/shared/models/GameBoard'
+import Constants from '@/Pixi/shared/Constants'
+import GameBoard from '@/Pixi/shared/models/GameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import RenderedAttackOrder from '@/Pixi/models/RenderedAttackOrder'

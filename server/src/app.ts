@@ -8,9 +8,9 @@ import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
 
 import Database from './database/Database'
-import CardLibrary from './libraries/card/CardLibrary'
-import GameLibrary from './libraries/game/GameLibrary'
-import PlayerLibrary from './libraries/players/PlayerLibrary'
+import CardLibrary from './game/libraries/CardLibrary'
+import GameLibrary from './game/libraries/GameLibrary'
+import PlayerLibrary from './game/players/PlayerLibrary'
 
 const app = express()
 expressWs(app)

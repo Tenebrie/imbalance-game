@@ -1,6 +1,6 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import GameBoardRow from '@/shared/models/GameBoardRow'
+import GameBoardRow from '@/Pixi/shared/models/GameBoardRow'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 

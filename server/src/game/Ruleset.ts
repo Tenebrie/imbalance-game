@@ -1,0 +1,5 @@
+export default {
+	PLAYERS_PER_GAME: 2,
+	MAXIMUM_TIME: 11,
+	STARTING_PLAYER_MORALE: 500
+}

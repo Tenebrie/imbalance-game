@@ -1,16 +1,16 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import Constants from '@/shared/Constants'
+import Constants from '@/Pixi/shared/Constants'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import { TargetingMode } from '@/Pixi/enums/TargetingMode'
 import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
-import GameTurnPhase from '@/shared/enums/GameTurnPhase'
+import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import RenderedButton from '@/Pixi/models/RenderedButton'
-import CardType from '@/shared/enums/CardType'
+import CardType from '@/Pixi/shared/enums/CardType'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
-import {CardLocation} from '@/Pixi/enums/CardLocation'
+import { CardLocation } from '@/Pixi/enums/CardLocation'
 
 const UNIT_ZINDEX = 2
 const HOVERED_CARD_ZINDEX = 50
@@ -248,9 +248,9 @@ export default class Renderer {
 		this.timeLabel.text = `${phaseLabel}\nTime of day is ${Core.game.currentTime} out of ${Core.game.maximumTime}`
 
 		/* Player name labels */
-		this.playerNameLabel.text = `${Core.player.player.username}\nTime units available: ${Core.player.timeUnits}`
+		this.playerNameLabel.text = `${Core.player.player.username} (${Core.player.timeUnits})\nMorale: ${Core.player.morale}`
 		if (Core.opponent) {
-			this.opponentNameLabel.text = `${Core.opponent.player.username}\nTime units available: ${Core.opponent.timeUnits}`
+			this.opponentNameLabel.text = `${Core.opponent.player.username} (${Core.opponent.timeUnits})\nMorale: ${Core.opponent.morale}`
 		}
 
 		/* Action label */
@@ -428,7 +428,7 @@ export default class Renderer {
 		const container = inspectedCard.coreContainer
 		const sprite = inspectedCard.sprite
 		sprite.tint = 0xFFFFFF
-		sprite.scale.set(1)
+		sprite.scale.set(this.SSAA_FACTOR)
 		container.position.x = this.getScreenWidth() / 2
 		container.position.y = this.getScreenHeight() / 2
 		container.zIndex = INSPECTED_CARD_ZINDEX

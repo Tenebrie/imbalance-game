@@ -1,8 +1,8 @@
 import Core from '@/Pixi/Core'
-import CardOnBoard from '@/shared/models/CardOnBoard'
+import CardOnBoard from '@/Pixi/shared/models/CardOnBoard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import CardOnBoardMessage from '@/shared/models/network/CardOnBoardMessage'
+import CardOnBoardMessage from '@/Pixi/shared/models/network/CardOnBoardMessage'
 
 export default class RenderedCardOnBoard extends CardOnBoard {
 	card: RenderedCard

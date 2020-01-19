@@ -1,10 +1,10 @@
 import Core from '@/Pixi/Core'
-import Card from '@/shared/models/Card'
+import Card from '@/Pixi/shared/models/Card'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
-import CardPlayedMessage from '@/shared/models/network/CardPlayedMessage'
-import AttackOrderMessage from '@/shared/models/network/AttackOrderMessage'
-import AttackOrder from '@/shared/models/AttackOrder'
+import CardPlayedMessage from '@/Pixi/shared/models/network/CardPlayedMessage'
+import AttackOrderMessage from '@/Pixi/shared/models/network/AttackOrderMessage'
+import AttackOrder from '@/Pixi/shared/models/AttackOrder'
 
 export default {
 	sendChatMessage(message: string) {

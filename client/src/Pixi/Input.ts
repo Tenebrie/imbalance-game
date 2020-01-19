@@ -1,14 +1,14 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import CardType from '@/shared/enums/CardType'
+import CardType from '@/Pixi/shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
 import { TargetingMode } from '@/Pixi/enums/TargetingMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-import GameTurnPhase from '@/shared/enums/GameTurnPhase'
-import AttackOrder from '@/shared/models/AttackOrder'
+import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
+import AttackOrder from '@/Pixi/shared/models/AttackOrder'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 
 const LEFT_MOUSE_BUTTON = 0

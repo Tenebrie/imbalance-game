@@ -22,7 +22,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import store from '@/Vue/store'
-import Player from '@/shared/models/Player'
+import Player from '@/Pixi/shared/models/Player'
 
 export default Vue.extend({
 	data: () => ({

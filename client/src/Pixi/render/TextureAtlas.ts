@@ -1,6 +1,6 @@
 import axios from 'axios'
 import * as PIXI from 'pixi.js'
-import CardMessage from '@/shared/models/network/CardMessage'
+import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 
 export default class TextureAtlas {
 	static texturesLoaded: number

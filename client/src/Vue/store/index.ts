@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import Player from '@/shared/models/Player'
+import Player from '@/Pixi/shared/models/Player'
 import { createDirectStore } from 'direct-vuex'
 
 Vue.use(Vuex)

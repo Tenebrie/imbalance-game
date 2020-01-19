@@ -1,7 +1,7 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import Card from '@/shared/models/Card'
-import CardType from '@/shared/enums/CardType'
+import Card from '@/Pixi/shared/models/Card'
+import CardType from '@/Pixi/shared/enums/CardType'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
@@ -9,7 +9,7 @@ import Settings from '@/Pixi/Settings'
 import RichText from '@/Pixi/render/RichText'
 import Utils from '@/utils/Utils'
 import CardAttributes from '@/Pixi/render/CardAttributes'
-import CardMessage from '@/shared/models/network/CardMessage'
+import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 
 export default class RenderedCard extends Card {
 	public coreContainer: PIXI.Container

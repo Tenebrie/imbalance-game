@@ -1,5 +1,5 @@
 import RenderedCard from '@/Pixi/models/RenderedCard'
-import CardHandMessage from '../../shared/models/network/CardHandMessage'
+import CardHandMessage from '../shared/models/network/CardHandMessage'
 
 export default class RenderedCardHand {
 	cards: RenderedCard[]

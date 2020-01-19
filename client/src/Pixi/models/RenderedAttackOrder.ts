@@ -1,8 +1,8 @@
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import TargetingArrow from '@/Pixi/models/TargetingArrow'
 import Core from '@/Pixi/Core'
-import AttackOrderMessage from '@/shared/models/network/AttackOrderMessage'
-import AttackOrder from '@/shared/models/AttackOrder'
+import AttackOrderMessage from '@/Pixi/shared/models/network/AttackOrderMessage'
+import AttackOrder from '@/Pixi/shared/models/AttackOrder'
 
 export default class RenderedAttackOrder extends AttackOrder {
 	attacker: RenderedCardOnBoard

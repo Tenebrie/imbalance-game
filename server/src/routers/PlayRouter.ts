@@ -1,10 +1,10 @@
 import express from 'express'
-import ServerGame from '../libraries/game/ServerGame'
-import ServerCardDeck from '../models/game/ServerCardDeck'
-import ServerPlayer from '../libraries/players/ServerPlayer'
-import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import ConnectionEstablishedHandler from '../handlers/ConnectionEstablishedHandler'
+import ServerGame from '../game/models/ServerGame'
+import ServerCardDeck from '../game/models/ServerCardDeck'
+import ServerPlayer from '../game/players/ServerPlayer'
+import IncomingMessageHandlers from '../game/handlers/IncomingMessageHandlers'
+import OutgoingMessageHandlers from '../game/handlers/OutgoingMessageHandlers'
+import ConnectionEstablishedHandler from '../game/handlers/ConnectionEstablishedHandler'
 
 const router = express.Router()
 

@@ -1,20 +1,20 @@
 import Core from '@/Pixi/Core'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
-import CardMessage from '@/shared/models/network/CardMessage'
+import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
-import GameStartMessage from '@/shared/models/GameStartMessage'
+import GameStartMessage from '@/Pixi/shared/models/GameStartMessage'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import CardOnBoardMessage from '@/shared/models/network/CardOnBoardMessage'
+import CardOnBoardMessage from '@/Pixi/shared/models/network/CardOnBoardMessage'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
-import CardHandMessage from '@/shared/models/network/CardHandMessage'
-import CardDeckMessage from '@/shared/models/network/CardDeckMessage'
-import GameTimeMessage from '@/shared/models/network/GameTimeMessage'
-import ChatEntryMessage from '@/shared/models/network/ChatEntryMessage'
-import HiddenCardMessage from '@/shared/models/network/HiddenCardMessage'
-import PlayerInGameMessage from '@/shared/models/network/PlayerInGameMessage'
-import GameTurnPhase from '@/shared/enums/GameTurnPhase'
+import CardHandMessage from '@/Pixi/shared/models/network/CardHandMessage'
+import CardDeckMessage from '@/Pixi/shared/models/network/CardDeckMessage'
+import GameTimeMessage from '@/Pixi/shared/models/network/GameTimeMessage'
+import ChatEntryMessage from '@/Pixi/shared/models/network/ChatEntryMessage'
+import HiddenCardMessage from '@/Pixi/shared/models/network/HiddenCardMessage'
+import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
+import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import RenderedAttackOrder from '@/Pixi/models/RenderedAttackOrder'
-import AttackOrderMessage from '@/shared/models/network/AttackOrderMessage'
+import AttackOrderMessage from '@/Pixi/shared/models/network/AttackOrderMessage'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -84,6 +84,14 @@ const handlers: {[ index: string ]: any } = {
 		if (!cardOnBoard) { return }
 
 		cardOnBoard.setAttack(data.attack)
+	},
+
+	'update/player/self/morale': (data: PlayerInGameMessage) => {
+		Core.player.morale = data.morale
+	},
+
+	'update/player/opponent/morale': (data: PlayerInGameMessage) => {
+		Core.opponent.morale = data.morale
 	},
 
 	'update/player/self/timeUnits': (data: PlayerInGameMessage) => {

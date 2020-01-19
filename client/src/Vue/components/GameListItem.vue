@@ -7,7 +7,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import GameMessage from '@/shared/models/network/GameMessage'
+import GameMessage from '@/Pixi/shared/models/network/GameMessage'
 
 export default Vue.extend({
 	props: {

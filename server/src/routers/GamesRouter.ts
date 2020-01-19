@@ -1,11 +1,11 @@
 import express, { Response } from 'express'
 const router = express.Router()
 
-import ServerPlayer from '../libraries/players/ServerPlayer'
-import ServerGameMessage from '../models/messages/ServerGameMessage'
+import ServerPlayer from '../game/players/ServerPlayer'
+import ServerGameMessage from '../game/models/messages/ServerGameMessage'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequestMiddleware'
-import ServerGame from '../libraries/game/ServerGame'
+import ServerGame from '../game/models/ServerGame'
 
 router.use(RequirePlayerTokenMiddleware)
 
