@@ -6,7 +6,7 @@ router.get('/', (req, res, next) => {
 
 	const params = {
 		activeGameCount: games.length,
-		activePlayerCount: games.reduce((acc, game) => acc += game.players.length, 0)
+		activePlayerCount: games.reduce((acc, game) => acc + game.players.length, 0)
 	}
 
 	res.render('index', params)

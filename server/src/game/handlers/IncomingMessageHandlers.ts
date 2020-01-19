@@ -5,6 +5,8 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
 import AttackOrderMessage from '../shared/models/network/AttackOrderMessage'
 import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
+import MoveOrderMessage from '../shared/models/network/MoveOrderMessage'
+import ServerUnitOrder from '../models/ServerUnitOrder'
 
 export default {
 	'post/chat': (data: string, game: ServerGame, playerInGame: ServerPlayerInGame) => {
@@ -38,11 +40,17 @@ export default {
 			return
 		}
 
-		game.board.queueCardAttack(card, target)
+		game.board.queueUnitOrder(ServerUnitOrder.attack(card, target))
+	},
 
-		if (game.isSkirmishPhaseFinished()) {
-			game.advancePhase()
+	'post/moveOrder': (data: MoveOrderMessage, game: ServerGame, player: ServerPlayerInGame) => {
+		const unit = game.board.findCardById(data.unitId)
+		const target = game.board.rows[data.targetRowIndex]
+		if (game.turnPhase !== GameTurnPhase.SKIRMISH || !unit || !target || unit.owner !== player || !unit.canMoveToRow(target)) {
+			return
 		}
+
+		game.board.queueUnitOrder(ServerUnitOrder.move(unit, target))
 	},
 
 	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame) => {

@@ -10,6 +10,7 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import AttackOrder from '@/Pixi/shared/models/AttackOrder'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
+import MoveOrder from './shared/models/MoveOrder'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
@@ -62,13 +63,12 @@ export default class Input {
 	}
 
 	private onMouseDown(event: MouseEvent) {
-		if (event.button === RIGHT_MOUSE_BUTTON && this.grabbedCard) {
-			this.releaseCard()
+		if (this.inspectedCard) {
 			return
 		}
 
-		if (this.inspectedCard) {
-			this.inspectedCard = null
+		if (event.button === RIGHT_MOUSE_BUTTON && this.grabbedCard) {
+			this.releaseCard()
 			return
 		}
 
@@ -88,6 +88,14 @@ export default class Input {
 	}
 
 	private onMouseUp(event: MouseEvent) {
+		if (this.inspectedCard) {
+			this.inspectedCard = null
+			if (event.button === RIGHT_MOUSE_BUTTON && this.hoveredCard) {
+				this.inspectedCard = this.hoveredCard.card
+			}
+			return
+		}
+
 		const pressedButton = Core.userInterface.pressedButton
 		if (pressedButton) {
 			if (pressedButton.isHovered(this.mousePosition)) {
@@ -115,7 +123,7 @@ export default class Input {
 		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
 			targeting = TargetingMode.CARD_PLAY
 		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.SKIRMISH) {
-			targeting = TargetingMode.CARD_ATTACK
+			targeting = TargetingMode.CARD_ORDER
 		} else {
 			return
 		}
@@ -124,12 +132,14 @@ export default class Input {
 	}
 
 	public useGrabbedCard(): void {
-		if (!this.grabbedCard) { return }
+		if (!this.grabbedCard) {
+			return
+		}
 
 		if (this.grabbedCard.targetingMode === TargetingMode.CARD_PLAY) {
 			this.onCardPlay(this.grabbedCard.card)
-		} else if (this.grabbedCard.targetingMode === TargetingMode.CARD_ATTACK) {
-			this.onCardAttack(this.grabbedCard.card)
+		} else if (this.grabbedCard.targetingMode === TargetingMode.CARD_ORDER) {
+			this.onCardOrder(this.grabbedCard.card)
 		}
 
 		this.releaseCard()
@@ -145,7 +155,7 @@ export default class Input {
 	private getCardInsertIndex(hoveredRow: RenderedGameBoardRow): number {
 		const hoveredUnit = this.hoveredCard
 		if (!hoveredUnit || !hoveredRow.includesCard(hoveredUnit.card)) {
-			return this.mousePosition.x > hoveredRow.sprite.position.x ? hoveredRow.cards.length : 0
+			return this.mousePosition.x > hoveredRow.container.position.x ? hoveredRow.cards.length : 0
 		}
 		let index = hoveredRow.getCardIndex(hoveredUnit.card)
 		if (this.mousePosition.x > hoveredUnit.card.hitboxSprite.position.x) {
@@ -156,7 +166,9 @@ export default class Input {
 
 	private onCardPlay(card: RenderedCard): void {
 		const hoveredRow = Core.board.rows.find(row => row.isHovered(this.mousePosition))
-		if (!hoveredRow) { return }
+		if (!hoveredRow) {
+			return
+		}
 
 		if (card.cardType === CardType.SPELL) {
 			OutgoingMessageHandlers.sendSpellCardPlayed(card)
@@ -165,14 +177,24 @@ export default class Input {
 		}
 	}
 
-	private onCardAttack(attackingCard: RenderedCard): void {
+	private onCardOrder(orderedCard: RenderedCard): void {
 		const hoveredCard = this.hoveredCard
-		if (!hoveredCard || hoveredCard.owner === Core.player) {
+		const orderedUnit = Core.board.findCardById(orderedCard.id)!
+		if (hoveredCard && hoveredCard.owner !== Core.player) {
+			OutgoingMessageHandlers.sendUnitAttackOrders(new AttackOrder(orderedUnit, hoveredCard))
 			return
 		}
 
-		const attacker = Core.board.findCardById(attackingCard.id)!
-		OutgoingMessageHandlers.sendUnitAttackOrders(new AttackOrder(attacker, hoveredCard))
+		const hoveredRow = Core.board.rows.find(row => row.isHovered(this.mousePosition))
+		if (hoveredRow && orderedUnit.rowIndex !== hoveredRow.index) {
+			const distance = Math.abs(orderedUnit.rowIndex - hoveredRow.index)
+			const maxMoveDistance = 1
+			if (distance <= maxMoveDistance) {
+				OutgoingMessageHandlers.sendUnitMoveOrders(new MoveOrder(orderedUnit, hoveredRow))
+			} else {
+				console.log(hoveredRow.index)
+			}
+		}
 	}
 
 	private onMouseMove(event: MouseEvent) {

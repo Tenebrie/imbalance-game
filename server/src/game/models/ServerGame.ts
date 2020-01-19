@@ -37,7 +37,7 @@ export default class ServerGame extends Game {
 		const serverPlayerInGame = ServerPlayerInGame.newInstance(this, targetPlayer, deck)
 
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
-			OutgoingMessageHandlers.sendOpponent(playerInGame.player, serverPlayerInGame)
+			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, serverPlayerInGame)
 		})
 
 		this.players.push(serverPlayerInGame)
@@ -52,10 +52,9 @@ export default class ServerGame extends Game {
 		console.info(`Starting game ${this.id}: ${playerOne.player.username} vs ${playerTwo.player.username}`)
 
 		this.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.sendDeck(playerInGame.player, this)
-			OutgoingMessageHandlers.sendOpponent(playerInGame.player, this.getOpponent(playerInGame))
-			OutgoingMessageHandlers.notifyAboutPlayerMoraleChange(playerInGame.player, playerInGame)
-			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Ruleset.MAXIMUM_TIME)
+			OutgoingMessageHandlers.sendPlayerSelf(playerInGame.player, playerInGame)
+			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, this.getOpponent(playerInGame))
+			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Ruleset.MAX_TIME_OF_DAY)
 			OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, this.players.indexOf(playerInGame) === 1)
 		})
 
@@ -97,7 +96,7 @@ export default class ServerGame extends Game {
 		this.currentTime = time
 
 		this.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Ruleset.MAXIMUM_TIME)
+			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Ruleset.MAX_TIME_OF_DAY)
 		})
 	}
 
@@ -127,9 +126,9 @@ export default class ServerGame extends Game {
 			this.startDeployPhase()
 		} else if (this.turnPhase === GameTurnPhase.DEPLOY) {
 			this.startSkirmishPhase()
-		} else if (this.turnPhase === GameTurnPhase.SKIRMISH && this.currentTime === Ruleset.MAXIMUM_TIME) {
+		} else if (this.turnPhase === GameTurnPhase.SKIRMISH && this.currentTime === Ruleset.MAX_TIME_OF_DAY) {
 			this.startCombatPhase()
-		} else if (this.turnPhase === GameTurnPhase.SKIRMISH && this.currentTime < Ruleset.MAXIMUM_TIME) {
+		} else if (this.turnPhase === GameTurnPhase.SKIRMISH && this.currentTime < Ruleset.MAX_TIME_OF_DAY) {
 			this.startEndTurnPhase()
 		} else if (this.turnPhase === GameTurnPhase.COMBAT) {
 			this.startEndTurnPhase()
@@ -145,7 +144,7 @@ export default class ServerGame extends Game {
 	}
 
 	public startDeployPhase(): void {
-		this.board.releaseQueuedAttacks()
+		this.board.releaseQueuedOrders()
 
 		this.players.forEach(playerInGame => playerInGame.advanceTime())
 

@@ -3,22 +3,25 @@ import Constants from '../shared/Constants'
 import ServerCardOnBoard from './ServerCardOnBoard'
 import GameBoard from '../shared/models/GameBoard'
 import ServerGameBoardRow from './ServerGameBoardRow'
-import ServerAttackOrder from './ServerAttackOrder'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerDamageInstance from './ServerDamageSource'
+import ServerUnitOrder from './ServerUnitOrder'
+import UnitOrderType from '../shared/enums/UnitOrderType'
+import VoidPlayer from '../utils/VoidPlayer'
+import VoidPlayerInGame from '../utils/VoidPlayerInGame'
 
 export default class ServerGameBoard extends GameBoard {
 	game: ServerGame
 	rows: ServerGameBoardRow[]
-	queuedAttacks: ServerAttackOrder[]
+	queuedOrders: ServerUnitOrder[]
 
 	constructor(game: ServerGame) {
 		super()
 		this.game = game
 		this.rows = []
-		this.queuedAttacks = []
+		this.queuedOrders = []
 		for (let i = 0; i < Constants.GAME_BOARD_ROW_COUNT; i++) {
 			this.rows.push(new ServerGameBoardRow(game, i))
 		}
@@ -29,18 +32,18 @@ export default class ServerGameBoard extends GameBoard {
 		return cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
 	}
 
-	public getRowWithCard(targetUnit: ServerCardOnBoard): ServerGameBoardRow | null {
+	public getRowWithUnit(targetUnit: ServerCardOnBoard): ServerGameBoardRow | null {
 		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id)) || null
 	}
 
 	public removeCard(cardOnBoard: ServerCardOnBoard): void {
-		const rowWithCard = this.getRowWithCard(cardOnBoard)
+		const rowWithCard = this.getRowWithUnit(cardOnBoard)
 		if (!rowWithCard) {
 			console.error(`No row includes card ${cardOnBoard.card.id}`)
 			return
 		}
 
-		rowWithCard.removeCard(cardOnBoard)
+		rowWithCard.removeUnit(cardOnBoard)
 	}
 
 	public getAllUnits() {
@@ -51,26 +54,53 @@ export default class ServerGameBoard extends GameBoard {
 		return this.getAllUnits().filter(unit => unit.owner === owner)
 	}
 
-	public queueCardAttack(attacker: ServerCardOnBoard, target: ServerCardOnBoard): void {
-		const queuedAttack = new ServerAttackOrder(attacker, target)
-		const isOrderClear = this.queuedAttacks.find(queuedAttack => queuedAttack.attacker === attacker && queuedAttack.target === target)
-		this.queuedAttacks = this.queuedAttacks.filter(queuedAttack => queuedAttack.attacker !== attacker)
+	public queueUnitOrder(order: ServerUnitOrder): void {
+		const isOrderClear = this.queuedOrders.find(queuedOrder => queuedOrder.isEqual(order))
+		this.queuedOrders = this.queuedOrders.filter(queuedOrder => !queuedOrder.isEqual(order))
 		if (!isOrderClear) {
-			this.queuedAttacks.push(queuedAttack)
+			this.queuedOrders.push(order)
 		}
-		OutgoingMessageHandlers.sendAttackOrders(attacker.owner.player, this.queuedAttacks)
+		OutgoingMessageHandlers.sendUnitOrders(order.orderedUnit.owner.player, this.queuedOrders)
 	}
 
-	public releaseQueuedAttacks(): void {
-		/* Before attacks */
-		this.queuedAttacks.forEach(queuedAttack => {
-			runCardEventHandler(() => queuedAttack.attacker.card.onBeforePerformingAttack(queuedAttack.attacker, queuedAttack.target))
-			runCardEventHandler(() => queuedAttack.target.card.onBeforeBeingAttacked(queuedAttack.target, queuedAttack.attacker))
+	public releaseQueuedOrders(): void {
+		/* Before orders */
+		const queuedAttacks = this.queuedOrders.filter(order => order.type === UnitOrderType.ATTACK)
+		let queuedMoves = this.queuedOrders.filter(order => order.type === UnitOrderType.MOVE)
+		queuedAttacks.forEach(queuedAttack => {
+			runCardEventHandler(() => queuedAttack.orderedUnit.card.onBeforePerformingAttack(queuedAttack.orderedUnit, queuedAttack.targetUnit))
+			runCardEventHandler(() => queuedAttack.orderedUnit.card.onBeforeBeingAttacked(queuedAttack.targetUnit, queuedAttack.orderedUnit))
+		})
+		queuedMoves.forEach(queuedMove => {
+			runCardEventHandler(() => queuedMove.orderedUnit.card.onBeforePerformingMove(queuedMove.orderedUnit, queuedMove.targetRow))
 		})
 
 		/* Attacks */
-		this.queuedAttacks.forEach(queuedAttack => {
-			this.performCardAttack(queuedAttack.attacker, queuedAttack.target)
+		queuedAttacks.forEach(queuedAttack => {
+			this.performUnitAttack(queuedAttack.orderedUnit, queuedAttack.targetUnit)
+		})
+
+		/* Moves */
+		console.log(queuedMoves)
+		const playerOne = this.game.players[0]
+		const playerTwo = this.game.players[1] || VoidPlayerInGame.for(this.game)
+		const playerOneMoves = queuedMoves.filter(queuedMove => queuedMove.orderedUnit.owner === playerOne)
+		const playerTwoMoves = queuedMoves.filter(queuedMove => queuedMove.orderedUnit.owner === playerTwo)
+		const playerOneTargetRows = playerOneMoves.map(queuedMove => queuedMove.targetRow)
+		const playerTwoTargetRows = playerTwoMoves.map(queuedMove => queuedMove.targetRow)
+		const contestedRows = playerOneTargetRows.filter(row => playerTwoTargetRows.includes(row))
+		contestedRows.forEach(contestedRow => {
+			const playerOnePower = playerOneMoves.filter(queuedMove => queuedMove.targetRow === contestedRow).map(move => move.orderedUnit.card.power).reduce((total, value) => total + value)
+			const playerTwoPower = playerTwoMoves.filter(queuedMove => queuedMove.targetRow === contestedRow).map(move => move.orderedUnit.card.power).reduce((total, value) => total + value)
+			if (playerOnePower >= playerTwoPower) {
+				queuedMoves = queuedMoves.filter(queuedMove => queuedMove.orderedUnit.owner !== playerTwo || queuedMove.targetRow !== contestedRow)
+			}
+			if (playerTwoPower >= playerOnePower) {
+				queuedMoves = queuedMoves.filter(queuedMove => queuedMove.orderedUnit.owner !== playerOne || queuedMove.targetRow !== contestedRow)
+			}
+		})
+		queuedMoves.forEach(queuedMove => {
+			this.performUnitMove(queuedMove.orderedUnit, queuedMove.targetRow)
 		})
 
 		/* Destroy killed units */
@@ -80,23 +110,36 @@ export default class ServerGameBoard extends GameBoard {
 		})
 
 		/* After attacks */
-		const survivingAttackers = this.queuedAttacks.filter(attack => attack.attacker.card.power > 0)
-		const survivingTargets = this.queuedAttacks.filter(attack => attack.target.card.power > 0)
-		survivingAttackers.forEach(attack => {
-			runCardEventHandler(() => attack.attacker.card.onAfterPerformingAttack(attack.attacker, attack.target))
+		const survivingAttackers = queuedAttacks.filter(attack => attack.orderedUnit.card.power > 0)
+		const survivingTargets = queuedAttacks.filter(attack => attack.targetUnit.card.power > 0)
+		const survivingMovers = queuedMoves.filter(move => move.orderedUnit.card.power > 0)
+		survivingAttackers.forEach(attackOrder => {
+			runCardEventHandler(() => attackOrder.orderedUnit.card.onAfterPerformingAttack(attackOrder.orderedUnit, attackOrder.targetUnit))
 		})
-		survivingTargets.forEach(attack => {
-			runCardEventHandler(() => attack.target.card.onAfterBeingAttacked(attack.target, attack.attacker))
+		survivingTargets.forEach(attackOrder => {
+			runCardEventHandler(() => attackOrder.targetUnit.card.onAfterBeingAttacked(attackOrder.targetUnit, attackOrder.orderedUnit))
+		})
+		survivingMovers.forEach(moveOrder => {
+			runCardEventHandler(() => moveOrder.targetUnit.card.onAfterPerformingMove(moveOrder.orderedUnit, moveOrder.targetRow))
 		})
 
-		this.queuedAttacks = []
+		this.queuedOrders = []
 		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.sendAttackOrders(playerInGame.player, this.queuedAttacks)
+			OutgoingMessageHandlers.sendUnitOrders(playerInGame.player, this.queuedOrders)
 		})
 	}
 
-	public performCardAttack(attackingUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {
-		const attack = attackingUnit.card.attack
-		targetUnit.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(attack, attackingUnit))
+	public performUnitAttack(orderedUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {
+		const attack = orderedUnit.card.attack
+		targetUnit.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(attack, orderedUnit))
+	}
+
+	public performUnitMove(orderedUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
+		const currentRow = this.game.board.getRowWithUnit(orderedUnit)
+		if (!currentRow) { return }
+
+		console.log('Performing user move!')
+		currentRow.removeUnit(orderedUnit)
+		targetRow.insertUnit(orderedUnit.card, orderedUnit.owner, targetRow.cards.length)
 	}
 }

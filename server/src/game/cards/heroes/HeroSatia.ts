@@ -13,7 +13,7 @@ export default class HeroSatia extends ServerCard {
 	}
 
 	onPlayUnit(thisUnit: ServerCardOnBoard): void {
-		const rowWithCard = this.game.board.getRowWithCard(thisUnit)!
+		const rowWithCard = this.game.board.getRowWithUnit(thisUnit)!
 		const cardUnitIndex = rowWithCard.cards.indexOf(thisUnit)
 
 		const nightMaiden = CardLibrary.createCard(new HeroNightMaiden(this.game))

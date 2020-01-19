@@ -4,11 +4,10 @@ import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import RenderedAttackOrder from '@/Pixi/models/RenderedAttackOrder'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import RenderedCard from '@/Pixi/models/RenderedCard'
 
 export default class RenderedGameBoard extends GameBoard {
 	rows: RenderedGameBoardRow[]
-	isInverted: boolean = false
+	isInverted = false
 	queuedAttacks: RenderedAttackOrder[]
 
 	constructor() {
@@ -16,7 +15,7 @@ export default class RenderedGameBoard extends GameBoard {
 		this.rows = []
 		this.queuedAttacks = []
 		for (let i = 0; i < Constants.GAME_BOARD_ROW_COUNT; i++) {
-			this.rows.push(new RenderedGameBoardRow())
+			this.rows.push(new RenderedGameBoardRow(i))
 		}
 	}
 
@@ -55,13 +54,13 @@ export default class RenderedGameBoard extends GameBoard {
 		this.rows.forEach(row => row.clearRow())
 	}
 
-	public updateAttackOrders(newAttacks: RenderedAttackOrder[], removedAttacks: RenderedAttackOrder[]): void {
-		removedAttacks.forEach(queuedAttack => {
+	public updateUnitOrders(newOrders: RenderedAttackOrder[], removedOrders: RenderedAttackOrder[]): void {
+		removedOrders.forEach(queuedAttack => {
 			queuedAttack.destroy()
 		})
-		this.queuedAttacks = this.queuedAttacks.filter(queuedAttack => !removedAttacks.includes(queuedAttack))
-		this.queuedAttacks = this.queuedAttacks.concat(newAttacks)
-		newAttacks.forEach(newAttack => {
+		this.queuedAttacks = this.queuedAttacks.filter(queuedAttack => !removedOrders.includes(queuedAttack))
+		this.queuedAttacks = this.queuedAttacks.concat(newOrders)
+		newOrders.forEach(newAttack => {
 			newAttack.attacker.preferredAttackTarget = newAttack.target
 		})
 	}

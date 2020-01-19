@@ -32,6 +32,20 @@ export default {
 		})
 	},
 
+	notifyAboutPlayerRowsOwnedChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
+		player.sendMessage({
+			type: 'update/player/self/rowsOwned',
+			data: PlayerInGameMessage.fromPlayerInGame(playerInGame)
+		})
+	},
+
+	notifyAboutOpponentRowsOwnedChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
+		player.sendMessage({
+			type: 'update/player/opponent/rowsOwned',
+			data: HiddenPlayerInGameMessage.fromPlayerInGame(playerInGame)
+		})
+	},
+
 	notifyAboutTurnEnded: (player: ServerPlayer) => {
 		player.sendMessage({
 			type: 'update/player/self/turnEnded',

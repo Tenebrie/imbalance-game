@@ -3,6 +3,7 @@ import ServerCard from './ServerCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
+import ServerGameBoardRow from './ServerGameBoardRow'
 
 export default class ServerCardOnBoard {
 	game: ServerGame
@@ -10,7 +11,7 @@ export default class ServerCardOnBoard {
 	owner: ServerPlayerInGame
 
 	get rowIndex(): number {
-		return this.game.board.rows.indexOf(this.game.board.getRowWithCard(this)!)
+		return this.game.board.rows.indexOf(this.game.board.getRowWithUnit(this)!)
 	}
 
 	get unitIndex(): number {
@@ -71,6 +72,14 @@ export default class ServerCardOnBoard {
 		const distance = Math.abs(this.rowIndex - target.rowIndex)
 
 		return this.owner !== target.owner && distance <= range
+	}
+
+	canMoveToRow(target: ServerGameBoardRow): boolean {
+		const range = 1
+		const distance = Math.abs(this.rowIndex - target.index)
+		const opponentsUnits = target.cards.filter(unit => unit.owner === this.game.getOpponent(this.owner))
+
+		return opponentsUnits.length === 0 && distance <= range
 	}
 
 	destroy(): void {

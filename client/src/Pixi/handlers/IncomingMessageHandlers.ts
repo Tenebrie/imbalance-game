@@ -15,6 +15,7 @@ import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessag
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import RenderedAttackOrder from '@/Pixi/models/RenderedAttackOrder'
 import AttackOrderMessage from '@/Pixi/shared/models/network/AttackOrderMessage'
+import UnitOrderMessage from '@/Pixi/shared/models/network/UnitOrderMessage'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -27,14 +28,21 @@ const handlers: {[ index: string ]: any } = {
 
 	'gameState/hand': (data: CardHandMessage) => {
 		Core.player.cardHand = RenderedCardHand.fromMessage(data)
-		console.info('Player hand', Core.player.cardHand)
 	},
 
 	'gameState/deck': (data: CardDeckMessage) => {
 		Core.player.cardDeck = ClientCardDeck.fromMessage(data)
 	},
 
-	'gameState/opponent': (data: PlayerInGameMessage) => {
+	'gameState/player/self': (data: PlayerInGameMessage) => {
+		Core.player.cardHand = RenderedCardHand.fromMessage(data.cardHand)
+		Core.player.cardDeck = ClientCardDeck.fromMessage(data.cardDeck)
+		Core.player.morale = data.morale
+		Core.player.timeUnits = data.timeUnits
+		Core.player.rowsOwned = data.rowsOwned
+	},
+
+	'gameState/player/opponent': (data: PlayerInGameMessage) => {
 		Core.registerOpponent(ClientPlayerInGame.fromMessage(data))
 	},
 
@@ -46,12 +54,13 @@ const handlers: {[ index: string ]: any } = {
 		})
 	},
 
-	'gameState/board/attacks': (data: AttackOrderMessage[]) => {
-		const newAttackMessages = data.filter(message => !Core.board.queuedAttacks.find(attack => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId))
-		const removedAttacks = Core.board.queuedAttacks.filter(attack => !data.find(message => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId))
-		const newAttacks = newAttackMessages.map(message => RenderedAttackOrder.fromMessage(message))
-		Core.board.updateAttackOrders(newAttacks, removedAttacks)
-	},
+	// TODO: Fix orders
+	// 'gameState/board/orders': (data: UnitOrderMessage[]) => {
+	// 	const newAttackMessages = data.filter(message => !Core.board.queuedAttacks.find(attack => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId))
+	// 	const removedAttacks = Core.board.queuedAttacks.filter(attack => !data.find(message => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId))
+	// 	const newAttacks = newAttackMessages.map(message => RenderedAttackOrder.fromMessage(message))
+	// 	Core.board.updateUnitOrders(newAttacks, removedAttacks)
+	// },
 
 	'update/game/phase': (data: GameTurnPhase) => {
 		Core.game.setTurnPhase(data)
@@ -100,6 +109,14 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/player/opponent/timeUnits': (data: PlayerInGameMessage) => {
 		Core.opponent.timeUnits = data.timeUnits
+	},
+
+	'update/player/self/rowsOwned': (data: PlayerInGameMessage) => {
+		Core.player.rowsOwned = data.rowsOwned
+	},
+
+	'update/player/opponent/rowsOwned': (data: PlayerInGameMessage) => {
+		Core.opponent.rowsOwned = data.rowsOwned
 	},
 
 	'update/player/self/hand/cardDrawn': (data: CardMessage[]) => {

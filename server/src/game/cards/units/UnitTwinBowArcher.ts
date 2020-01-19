@@ -16,7 +16,7 @@ export default class UnitTwinBowArcher extends ServerCard {
 	}
 
 	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
-		const rowWithCard = this.game.board.getRowWithCard(target)
+		const rowWithCard = this.game.board.getRowWithUnit(target)
 		const targetUnitIndex = rowWithCard.cards.indexOf(target)
 		const unitOnLeft = rowWithCard.cards[targetUnitIndex - 1]
 		const unitOnRight = rowWithCard.cards[targetUnitIndex + 1]

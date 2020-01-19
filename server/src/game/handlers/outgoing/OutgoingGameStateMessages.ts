@@ -5,8 +5,9 @@ import CardOnBoardMessage from '../../shared/models/network/CardOnBoardMessage'
 import CardDeckMessage from '../../shared/models/network/CardDeckMessage'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
-import AttackOrderMessage from '../../shared/models/network/AttackOrderMessage'
-import ServerAttackOrder from '../../models/ServerAttackOrder'
+import PlayerInGameMessage from '../../shared/models/network/PlayerInGameMessage'
+import ServerUnitOrder from '../../models/ServerUnitOrder'
+import UnitOrderMessage from '../../shared/models/network/UnitOrderMessage'
 
 export default {
 	notifyAboutGameStart(player: ServerPlayer, isBoardInverted: boolean) {
@@ -24,9 +25,16 @@ export default {
 		})
 	},
 
-	sendOpponent: (player: ServerPlayer, opponent: ServerPlayerInGame) => {
+	sendPlayerSelf: (player: ServerPlayer, self: ServerPlayerInGame) => {
 		player.sendMessage({
-			type: 'gameState/opponent',
+			type: 'gameState/player/self',
+			data: PlayerInGameMessage.fromPlayerInGame(self)
+		})
+	},
+
+	sendPlayerOpponent: (player: ServerPlayer, opponent: ServerPlayerInGame) => {
+		player.sendMessage({
+			type: 'gameState/player/opponent',
 			data: HiddenPlayerInGameMessage.fromPlayerInGame(opponent)
 		})
 	},
@@ -48,12 +56,12 @@ export default {
 		})
 	},
 
-	sendAttackOrders(player: ServerPlayer, attackOrders: ServerAttackOrder[]) {
-		const attacksByPlayer = attackOrders.filter(attackOrder => attackOrder.attacker.owner.player === player)
-		const attackMessages = attacksByPlayer.map(attackOrder => AttackOrderMessage.fromAttackOrder(attackOrder))
+	sendUnitOrders(player: ServerPlayer, orders: ServerUnitOrder[]) {
+		const ordersByPlayer = orders.filter(order => order.orderedUnit.owner.player === player)
+		const orderMessages = ordersByPlayer.map(order => new UnitOrderMessage(order))
 		player.sendMessage({
-			type: 'gameState/board/attacks',
-			data: attackMessages
+			type: 'gameState/board/orders',
+			data: orderMessages
 		})
 	}
 }

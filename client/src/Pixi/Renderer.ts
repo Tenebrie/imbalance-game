@@ -155,7 +155,7 @@ export default class Renderer {
 	}
 
 	public registerGameBoardRow(row: RenderedGameBoardRow): void {
-		this.pixi.stage.addChild(row.sprite)
+		this.pixi.stage.addChild(row.container)
 	}
 
 	private getScreenWidth(): number {
@@ -270,17 +270,18 @@ export default class Renderer {
 	}
 
 	public renderGameBoardRow(gameBoardRow: RenderedGameBoardRow, rowIndex: number): void {
-		const sprite = gameBoardRow.sprite
+		const container = gameBoardRow.container
 		const rowHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
-		sprite.scale.set(rowHeight / sprite.texture.height)
+		container.scale.set(rowHeight / gameBoardRow.getHeight())
 
 		const screenCenterX = this.getScreenWidth() / 2
 		const screenCenterY = this.getScreenHeight() / 2
 		const verticalDistanceToCenter = rowIndex - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
 		const rowY = screenCenterY + verticalDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 
-		sprite.alpha = 1
-		sprite.position.set(screenCenterX, rowY)
+		container.position.set(screenCenterX, rowY)
+
+		gameBoardRow.updateOwnership()
 
 		for (let i = 0; i < gameBoardRow.cards.length; i++) {
 			const cardOnBoard = gameBoardRow.cards[i]
@@ -333,8 +334,7 @@ export default class Renderer {
 
 	public renderTargetingArrow(): void {
 		const grabbedCard = Core.input.grabbedCard
-		const hoveredCard = Core.input.hoveredCard
-		if (!grabbedCard || grabbedCard.targetingMode !== TargetingMode.CARD_ATTACK) {
+		if (!grabbedCard || grabbedCard.targetingMode !== TargetingMode.CARD_ORDER) {
 			this.actionLabel.text = ''
 			return
 		}
@@ -369,26 +369,58 @@ export default class Renderer {
 		targetingArrow.targetPoint.endFill()
 		targetingArrow.targetPoint.zIndex = 80
 
-		if (!hoveredCard || hoveredCard.location !== CardLocation.BOARD || grabbedCard.card === hoveredCard.card) {
+		this.updateTargetingLabel(this.actionLabel)
+	}
+
+	private updateTargetingLabel(label: PIXI.Text): void {
+		const grabbedCard = Core.input.grabbedCard
+		if (!grabbedCard) {
 			this.actionLabel.text = ''
 			return
 		}
 
-		const sourceUnit = Core.board.findCardById(grabbedCard.card.id)!
-		const targetUnit = Core.board.findCardById(hoveredCard.card.id)!
-		if (sourceUnit.owner === targetUnit.owner) {
-			this.actionLabel.text = 'Can\'t attack allies!'
-			this.actionLabel.style.fill = 0xFF5555
-		} else if (!sourceUnit.isTargetInRange(targetUnit)) {
-			this.actionLabel.text = 'Out of range!'
-			this.actionLabel.style.fill = 0xFF5555
-		} else if (Core.board.queuedAttacks.find(attack => attack.attacker === sourceUnit && attack.target === targetUnit)) {
-			this.actionLabel.text = 'Cancel order'
-			this.actionLabel.style.fill = 0x55FF55
-		} else {
-			this.actionLabel.text = 'Attack'
-			this.actionLabel.style.fill = 0x55FF55
+		const sourceUnit = Core.board.findCardById(grabbedCard.card.id)
+		if (!sourceUnit) {
+			this.actionLabel.text = ''
+			return
 		}
+
+		const colorInfo = 0x55FF55
+		const colorError = 0xFF5555
+		const hoveredCard = Core.input.hoveredCard
+		if (hoveredCard && hoveredCard.location === CardLocation.BOARD && grabbedCard.card !== hoveredCard.card) {
+			const targetUnit = Core.board.findCardById(hoveredCard.card.id)!
+			if (sourceUnit.owner === targetUnit.owner) {
+				label.text = 'Can\'t attack allies!'
+				label.style.fill = colorError
+			} else if (!sourceUnit.isTargetInRange(targetUnit)) {
+				label.text = 'Out of range!'
+				label.style.fill = colorError
+			} else if (Core.board.queuedAttacks.find(attack => attack.attacker === sourceUnit && attack.target === targetUnit)) {
+				label.text = 'Cancel order'
+				label.style.fill = colorInfo
+			} else {
+				label.text = 'Attack'
+				label.style.fill = colorInfo
+			}
+			return
+		}
+
+		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
+		if (hoveredRow && sourceUnit.rowIndex !== hoveredRow.index) {
+			const distance = Math.abs(sourceUnit.rowIndex - hoveredRow.index)
+			const maxMoveDistance = 1
+			if (distance > maxMoveDistance) {
+				label.text = 'Out of range!'
+				label.style.fill = colorError
+			} else {
+				label.text = 'Move'
+				label.style.fill = colorInfo
+			}
+			return
+		}
+
+		this.actionLabel.text = ''
 	}
 
 	public renderQueuedAttacks(): void {

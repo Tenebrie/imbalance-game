@@ -5,25 +5,25 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import Constants from '../shared/Constants'
+import GameBoardRow from '../shared/models/GameBoardRow'
 
-export default class ServerGameBoardRow {
+export default class ServerGameBoardRow extends GameBoardRow {
 	game: ServerGame
-	index: number
 	cards: ServerCardOnBoard[]
 
 	constructor(game: ServerGame, index: number) {
+		super(index)
 		this.game = game
-		this.index = index
 		this.cards = []
 	}
 
 	public playCard(card: ServerCard, owner: ServerPlayerInGame, ordinal: number): ServerCardOnBoard {
-		const cardOnBoard = this.insertCard(card, owner, ordinal)
+		const cardOnBoard = this.insertUnit(card, owner, ordinal)
 		runCardEventHandler(() => card.onPlayUnit(cardOnBoard, this))
 		return cardOnBoard
 	}
 
-	public insertCard(card: ServerCard, owner: ServerPlayerInGame, ordinal: number): ServerCardOnBoard {
+	public insertUnit(card: ServerCard, owner: ServerPlayerInGame, ordinal: number): ServerCardOnBoard {
 		const cardOnBoard = new ServerCardOnBoard(this.game, card, owner)
 		this.cards.splice(ordinal, 0, cardOnBoard)
 		this.game.players.forEach(playerInGame => {
@@ -32,7 +32,7 @@ export default class ServerGameBoardRow {
 		return cardOnBoard
 	}
 
-	public removeCard(targetCard: ServerCardOnBoard): void {
+	public removeUnit(targetCard: ServerCardOnBoard): void {
 		this.cards = this.cards.filter(cardOnBoard => cardOnBoard !== targetCard)
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitDestroyed(playerInGame.player, targetCard)

@@ -28,7 +28,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.cardHand = new ServerCardHand(this.player, [])
 		this.cardDeck = cardDeck
 		this.morale = Ruleset.STARTING_PLAYER_MORALE
-		this.rowsOwned = 3
+		this.rowsOwned = 1
 		this.timeUnits = 0
 		this.turnEnded = false
 	}

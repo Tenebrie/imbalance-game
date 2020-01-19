@@ -21,11 +21,11 @@ export default class ClientPlayerInGame extends PlayerInGame {
 	public static fromMessage(message: PlayerInGameMessage): ClientPlayerInGame {
 		const player = Player.fromPlayerMessage(message.player)
 		const clientPlayerInGame = new ClientPlayerInGame(player)
-		clientPlayerInGame.morale = message.morale
-		clientPlayerInGame.rowsOwned = message.rowsOwned
-		clientPlayerInGame.timeUnits = message.timeUnits
 		clientPlayerInGame.cardHand = RenderedCardHand.fromMessage(message.cardHand)
 		clientPlayerInGame.cardDeck = ClientCardDeck.fromMessage(message.cardDeck)
+		clientPlayerInGame.morale = message.morale
+		clientPlayerInGame.timeUnits = message.timeUnits
+		clientPlayerInGame.rowsOwned = message.rowsOwned
 		return clientPlayerInGame
 	}
 }

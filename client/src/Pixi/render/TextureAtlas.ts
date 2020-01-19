@@ -18,6 +18,7 @@ export default class TextureAtlas {
 			TextureAtlas.textures = {}
 
 			const components = [
+				'cards/cardBack',
 				'components/bg-power',
 				'components/bg-power-zoom',
 				'components/bg-name',
@@ -27,7 +28,9 @@ export default class TextureAtlas {
 				'components/bg-stats-right',
 				'components/bg-stats-right-zoom',
 				'components/stat-attack-claw',
-				'cards/cardBack'
+				'board/boardRow_owned',
+				'board/boardRow_neutral',
+				'board/boardRow_opponent'
 			]
 
 			const response = await axios.get('/cards')
