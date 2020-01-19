@@ -1,6 +1,6 @@
-import CardOnBoard from './CardOnBoard'
-import CardMessage from './network/CardMessage'
-import PlayerMessage from './network/PlayerMessage'
+import CardOnBoard from '../CardOnBoard'
+import CardMessage from './CardMessage'
+import PlayerMessage from './PlayerMessage'
 
 export default class CardOnBoardMessage {
 	card: CardMessage
@@ -15,7 +15,13 @@ export default class CardOnBoardMessage {
 		this.unitIndex = unitIndex
 	}
 
-	static fromCardOnBoard(cardOnBoard: CardOnBoard, rowIndex: number, unitIndex: number) {
+	public static fromCardOnBoard(cardOnBoard: CardOnBoard): CardOnBoardMessage {
+		const cardMessage = CardMessage.fromCard(cardOnBoard.card)
+		const ownerMessage = PlayerMessage.fromPlayer(cardOnBoard.owner.player)
+		return new CardOnBoardMessage(cardMessage, ownerMessage, -1, -1)
+	}
+
+	public static fromCardOnBoardWithIndex(cardOnBoard: CardOnBoard, rowIndex: number, unitIndex: number): CardOnBoardMessage {
 		const cardMessage = CardMessage.fromCard(cardOnBoard.card)
 		const ownerMessage = PlayerMessage.fromPlayer(cardOnBoard.owner.player)
 		return new CardOnBoardMessage(cardMessage, ownerMessage, rowIndex, unitIndex)

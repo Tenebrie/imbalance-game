@@ -9,8 +9,4 @@ export default class CardOnBoard {
 		this.card = card
 		this.owner = owner
 	}
-
-	static newInstance(card: Card, owner: PlayerInGame) {
-		return new CardOnBoard(card, owner)
-	}
 }

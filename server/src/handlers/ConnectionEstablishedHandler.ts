@@ -4,10 +4,12 @@ import GameLibrary from '../libraries/game/GameLibrary'
 import ServerPlayer from '../libraries/players/ServerPlayer'
 import GameTurnPhase from '../shared/enums/GameTurnPhase'
 
+const PLAYERS_PER_GAME = 2
+
 export default {
 	onPlayerConnected(game: ServerGame, playerInGame: ServerPlayerInGame): void {
 		const initializedPlayers = game.players.filter(playerInGame => playerInGame.initialized)
-		if (initializedPlayers.length < 1) {
+		if (initializedPlayers.length < PLAYERS_PER_GAME) {
 			return
 		}
 

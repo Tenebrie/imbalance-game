@@ -9,6 +9,14 @@ export default class ServerCardOnBoard {
 	card: ServerCard
 	owner: ServerPlayerInGame
 
+	get rowIndex(): number {
+		return this.game.board.rows.indexOf(this.game.board.getRowWithCard(this)!)
+	}
+
+	get unitIndex(): number {
+		return this.game.board.rows[this.rowIndex].cards.indexOf(this)
+	}
+
 	constructor(game: ServerGame, card: ServerCard, owner: ServerPlayerInGame) {
 		this.game = game
 		this.card = card
@@ -16,6 +24,14 @@ export default class ServerCardOnBoard {
 
 		card.power = card.basePower
 		card.attack = card.baseAttack
+	}
+
+	setPower(value: number): void {
+		this.card.setPower(this, value)
+	}
+
+	setAttack(value: number): void {
+		this.card.setAttack(this, value)
 	}
 
 	dealDamage(damage: ServerDamageInstance): void {
@@ -46,20 +62,15 @@ export default class ServerCardOnBoard {
 		this.setPower(Math.min(this.card.basePower, this.card.power + damage.value))
 	}
 
-	setPower(value: number): void {
-		this.card.setPower(this, value)
-	}
-
-	setAttack(value: number): void {
-		this.card.setAttack(this, value)
-	}
-
-	isAlive(): boolean {
-		return this.card.power > 0
-	}
-
 	isDead(): boolean {
 		return this.card.power <= 0
+	}
+
+	canAttackTarget(target: ServerCardOnBoard): boolean {
+		const range = this.card.attackRange
+		const distance = Math.abs(this.rowIndex - target.rowIndex)
+
+		return this.owner !== target.owner && distance <= range
 	}
 
 	destroy(): void {
@@ -73,26 +84,5 @@ export default class ServerCardOnBoard {
 		otherCards.forEach(cardOnBoard => {
 			runCardEventHandler(() => cardOnBoard.card.onAfterOtherUnitDestroyed(cardOnBoard, this))
 		})
-	}
-
-	getValidAttackTargets(): ServerCardOnBoard[] {
-		const allCards = this.game.board.getAllUnits()
-		const opponent = this.game.getOpponent(this.owner)
-		return allCards.filter(unit => unit.owner === opponent)
-	}
-
-	canAttackAnyTarget(): boolean {
-		const opponent = this.game.getOpponent(this.owner)
-		if (!opponent) {
-			return false
-		}
-
-		const allUnits = this.game.board.getAllUnits()
-		const opponentsUnits = allUnits.filter(cardOnBoard => cardOnBoard.owner === opponent)
-		if (opponentsUnits.length === 0) {
-			return false
-		}
-
-		return true
 	}
 }

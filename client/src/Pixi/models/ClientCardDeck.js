@@ -1,4 +1,4 @@
-import Card from '@/shared/models/Card';
+import RenderedCard from '@/Pixi/models/RenderedCard';
 export default class ClientCardDeck {
     constructor(cards) {
         this.cards = cards;
@@ -12,7 +12,7 @@ export default class ClientCardDeck {
         return drawnCard;
     }
     static fromMessage(message) {
-        const cards = message.cards.map(cardMessage => Card.fromMessage(cardMessage));
+        const cards = message.cards.map(cardMessage => RenderedCard.fromMessage(cardMessage));
         return new ClientCardDeck(cards);
     }
 }

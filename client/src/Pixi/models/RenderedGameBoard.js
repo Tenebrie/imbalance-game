@@ -29,15 +29,21 @@ export default class RenderedGameBoard extends GameBoard {
     getAllCards() {
         return this.rows.map(row => row.cards).flat();
     }
+    getCardsOwnedByPlayer(owner) {
+        return this.getAllCards().filter(unit => unit.owner === owner);
+    }
     clearBoard() {
         this.rows.forEach(row => row.clearRow());
     }
-    updateQueuedAttacks(newAttacks, removedAttacks) {
+    updateAttackOrders(newAttacks, removedAttacks) {
         removedAttacks.forEach(queuedAttack => {
             queuedAttack.destroy();
         });
         this.queuedAttacks = this.queuedAttacks.filter(queuedAttack => !removedAttacks.includes(queuedAttack));
         this.queuedAttacks = this.queuedAttacks.concat(newAttacks);
+        newAttacks.forEach(newAttack => {
+            newAttack.attacker.preferredAttackTarget = newAttack.target;
+        });
     }
     setInverted(isInverted) {
         this.isInverted = isInverted;

@@ -17,6 +17,13 @@ export default class RenderedGameBoardRow extends GameBoardRow {
     insertCard(card, unitIndex) {
         this.cards.splice(unitIndex, 0, card);
     }
+    includesCard(card) {
+        return !!this.findCardById(card.id);
+    }
+    getCardIndex(card) {
+        const cardOnBoard = this.findCardById(card.id);
+        return this.cards.indexOf(cardOnBoard);
+    }
     findCardById(cardId) {
         return this.cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null;
     }

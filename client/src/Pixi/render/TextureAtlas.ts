@@ -38,7 +38,6 @@ export default class TextureAtlas {
 			})
 
 			const texturesToLoad = components.concat(cards)
-			console.log(texturesToLoad)
 
 			TextureAtlas.texturesToLoad = texturesToLoad.length
 

@@ -1,14 +1,21 @@
 import Core from '@/Pixi/Core'
-import Card from '@/shared/models/Card'
 import CardOnBoard from '@/shared/models/CardOnBoard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import CardOnBoardMessage from '@/shared/models/CardOnBoardMessage'
+import CardOnBoardMessage from '@/shared/models/network/CardOnBoardMessage'
 
 export default class RenderedCardOnBoard extends CardOnBoard {
 	card: RenderedCard
 	owner: ClientPlayerInGame
 	preferredAttackTarget: CardOnBoard | null
+
+	get rowIndex(): number {
+		return Core.board.rows.indexOf(Core.board.getRowWithCard(this)!)
+	}
+
+	get unitIndex(): number {
+		return Core.board.rows[this.rowIndex].cards.indexOf(this)
+	}
 
 	constructor(card: RenderedCard, owner: ClientPlayerInGame) {
 		super(card, owner)
@@ -25,9 +32,12 @@ export default class RenderedCardOnBoard extends CardOnBoard {
 		this.card.setAttack(value)
 	}
 
+	public isTargetInRange(target: RenderedCardOnBoard): boolean {
+		return Math.abs(this.rowIndex - target.rowIndex) <= this.card.attackRange
+	}
+
 	public static fromMessage(message: CardOnBoardMessage): RenderedCardOnBoard {
-		const card = Card.fromMessage(message.card)
-		const renderedCard = RenderedCard.fromCard(card)
+		const renderedCard = RenderedCard.fromMessage(message.card)
 		const owner = Core.getPlayer(message.owner.id)
 		return new RenderedCardOnBoard(renderedCard, owner)
 	}

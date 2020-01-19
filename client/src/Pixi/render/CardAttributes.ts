@@ -58,7 +58,8 @@ export default class CardAttributes extends PIXI.Container {
 	}
 
 	public getCardAttributesWidth(): number {
-		const attackTextWidth = PIXI.TextMetrics.measureText(this.card.attack.toString(), new PIXI.TextStyle({
+		const attack = this.card.attack || 0
+		const attackTextWidth = PIXI.TextMetrics.measureText(attack.toString(), new PIXI.TextStyle({
 			fontFamily: 'BrushScript',
 			fontSize: 60
 		})).width

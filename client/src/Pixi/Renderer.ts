@@ -10,6 +10,7 @@ import GameTurnPhase from '@/shared/enums/GameTurnPhase'
 import RenderedButton from '@/Pixi/models/RenderedButton'
 import CardType from '@/shared/enums/CardType'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import {CardLocation} from '@/Pixi/enums/CardLocation'
 
 const UNIT_ZINDEX = 2
 const HOVERED_CARD_ZINDEX = 50
@@ -332,6 +333,7 @@ export default class Renderer {
 
 	public renderTargetingArrow(): void {
 		const grabbedCard = Core.input.grabbedCard
+		const hoveredCard = Core.input.hoveredCard
 		if (!grabbedCard || grabbedCard.targetingMode !== TargetingMode.CARD_ATTACK) {
 			this.actionLabel.text = ''
 			return
@@ -367,10 +369,25 @@ export default class Renderer {
 		targetingArrow.targetPoint.endFill()
 		targetingArrow.targetPoint.zIndex = 80
 
-		if (Core.input.hoveredCard && Core.input.hoveredCard.owner !== Core.player) {
-			this.actionLabel.text = 'Attack'
-		} else {
+		if (!hoveredCard || hoveredCard.location !== CardLocation.BOARD || grabbedCard.card === hoveredCard.card) {
 			this.actionLabel.text = ''
+			return
+		}
+
+		const sourceUnit = Core.board.findCardById(grabbedCard.card.id)!
+		const targetUnit = Core.board.findCardById(hoveredCard.card.id)!
+		if (sourceUnit.owner === targetUnit.owner) {
+			this.actionLabel.text = 'Can\'t attack allies!'
+			this.actionLabel.style.fill = 0xFF5555
+		} else if (!sourceUnit.isTargetInRange(targetUnit)) {
+			this.actionLabel.text = 'Out of range!'
+			this.actionLabel.style.fill = 0xFF5555
+		} else if (Core.board.queuedAttacks.find(attack => attack.attacker === sourceUnit && attack.target === targetUnit)) {
+			this.actionLabel.text = 'Cancel order'
+			this.actionLabel.style.fill = 0x55FF55
+		} else {
+			this.actionLabel.text = 'Attack'
+			this.actionLabel.style.fill = 0x55FF55
 		}
 	}
 

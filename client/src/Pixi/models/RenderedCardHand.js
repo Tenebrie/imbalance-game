@@ -1,12 +1,10 @@
-import Card from '../../shared/models/Card';
 import RenderedCard from '@/Pixi/models/RenderedCard';
 export default class RenderedCardHand {
     constructor(cards) {
-        this.cards = cards.map(card => RenderedCard.fromCard(card));
+        this.cards = cards;
     }
     addCard(card) {
-        const renderedCard = RenderedCard.fromCard(card);
-        this.cards.push(renderedCard);
+        this.cards.push(card);
     }
     getCardById(cardId) {
         return this.cards.find(renderedCard => renderedCard.id === cardId) || null;
@@ -23,7 +21,7 @@ export default class RenderedCardHand {
         this.removeCard(card);
     }
     static fromMessage(message) {
-        const cards = message.cards.map(cardMessage => Card.fromMessage(cardMessage));
+        const cards = message.cards.map(cardMessage => RenderedCard.fromMessage(cardMessage));
         return new RenderedCardHand(cards);
     }
 }

@@ -3,7 +3,7 @@ import ClientCardDeck from '@/Pixi/models/ClientCardDeck';
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand';
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame';
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard';
-import RenderedQueuedCardAttack from '@/Pixi/models/RenderedQueuedCardAttack';
+import RenderedAttackOrder from '@/Pixi/models/RenderedAttackOrder';
 const handlers = {
     'gameState/start': (data) => {
         Core.board.setInverted(data.isBoardInverted);
@@ -28,21 +28,19 @@ const handlers = {
         });
     },
     'gameState/board/attacks': (data) => {
-        const newAttackMessages = data.filter(message => !Core.board.queuedAttacks.find(attack => attack.attacker.card.id === message.attacker.id && attack.target.card.id === message.target.id));
-        const removedAttacks = Core.board.queuedAttacks.filter(attack => !data.find(message => attack.attacker.card.id === message.attacker.id && attack.target.card.id === message.target.id));
-        const newAttacks = newAttackMessages.map(message => RenderedQueuedCardAttack.fromMessage(message));
-        Core.board.updateQueuedAttacks(newAttacks, removedAttacks);
+        const newAttackMessages = data.filter(message => !Core.board.queuedAttacks.find(attack => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId));
+        const removedAttacks = Core.board.queuedAttacks.filter(attack => !data.find(message => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId));
+        const newAttacks = newAttackMessages.map(message => RenderedAttackOrder.fromMessage(message));
+        Core.board.updateAttackOrders(newAttacks, removedAttacks);
     },
     'update/game/phase': (data) => {
-        Core.game.turnPhase = data;
+        Core.game.setTurnPhase(data);
     },
     'update/game/time': (data) => {
-        console.log(`Advancing time to ${data.currentTime}/${data.maximumTime}`);
         Core.game.currentTime = data.currentTime;
         Core.game.maximumTime = data.maximumTime;
     },
     'update/board/cardCreated': (data) => {
-        console.info('Unit created', data);
         const card = RenderedCardOnBoard.fromMessage(data);
         Core.board.insertCard(card, data.rowIndex, data.unitIndex);
     },
@@ -55,14 +53,14 @@ const handlers = {
         if (!cardOnBoard) {
             return;
         }
-        cardOnBoard.card.power = data.power;
+        cardOnBoard.setPower(data.power);
     },
     'update/board/card/attack': (data) => {
         const cardOnBoard = Core.board.findCardById(data.id);
         if (!cardOnBoard) {
             return;
         }
-        cardOnBoard.card.attack = data.attack;
+        cardOnBoard.setAttack(data.attack);
     },
     'update/player/self/timeUnits': (data) => {
         Core.player.timeUnits = data.timeUnits;

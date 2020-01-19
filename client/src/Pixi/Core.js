@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js';
 import store from '@/Vue/store';
 import Input from '@/Pixi/Input';
 import Renderer from '@/Pixi/Renderer';
@@ -7,6 +8,9 @@ import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard';
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame';
 import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers';
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers';
+import RenderedButton from '@/Pixi/models/RenderedButton';
+import UserInterface from '@/Pixi/UserInterface';
+import TextureAtlas from '@/Pixi/render/TextureAtlas';
 export default class Core {
     static init(gameId, container) {
         const socket = new WebSocket(`ws://${window.location.host}/game/${gameId}`);
@@ -17,15 +21,23 @@ export default class Core {
         Core.socket = socket;
         Core.player = ClientPlayerInGame.fromPlayer(store.getters.player);
     }
-    static onConnect(container) {
-        Core.renderer = new Renderer(container);
+    static async onConnect(container) {
         Core.keepaliveTimer = setInterval(() => {
             OutgoingMessageHandlers.sendKeepalive();
         }, 30000);
+        await TextureAtlas.prepare();
+        Core.renderer = new Renderer(container);
         Core.game = new ClientGame();
         Core.input = new Input();
-        Core.mainHandler = MainHandler.start();
         Core.board = new RenderedGameBoard();
+        Core.mainHandler = MainHandler.start();
+        Core.userInterface = new UserInterface();
+        const endTurnButton = new RenderedButton(new PIXI.Point(this.renderer.pixi.view.width - 100, this.renderer.pixi.view.height / 2), () => {
+            OutgoingMessageHandlers.sendEndTurn();
+        });
+        this.registerButton(endTurnButton);
+        console.info('Sending init signal to server');
+        OutgoingMessageHandlers.sendInit();
     }
     static onMessage(event) {
         const data = JSON.parse(event.data);
@@ -68,6 +80,14 @@ export default class Core {
             data: data
         }));
     }
+    static registerButton(renderedButton) {
+        Core.renderer.registerButton(renderedButton);
+        Core.userInterface.registerButton(renderedButton);
+    }
+    static unregisterButton(renderedButton) {
+        Core.renderer.unregisterButton(renderedButton);
+        Core.userInterface.unregisterButton(renderedButton);
+    }
     static registerCard(renderedCard) {
         Core.renderer.registerCard(renderedCard);
         Core.mainHandler.registerCard(renderedCard);
@@ -83,4 +103,5 @@ export default class Core {
         this.socket.close();
     }
 }
+Core.isReady = false;
 //# sourceMappingURL=Core.js.map

@@ -1,5 +1,4 @@
 import CardType from '../enums/CardType'
-import CardMessage from './network/CardMessage'
 import CardTribe from '../enums/CardTribe'
 
 export default class Card {
@@ -31,20 +30,5 @@ export default class Card {
 		this.cardTitle = ''
 		this.cardTribes = []
 		this.cardDescription = ''
-	}
-
-	public static fromMessage(message: CardMessage): Card {
-		const card = new Card(message.id, message.cardType, message.cardClass)
-
-		card.cardName = message.cardName
-		card.cardTitle = message.cardTitle
-		card.cardTribes = message.cardTribes.slice()
-		card.cardDescription = message.cardDescription
-
-		card.power = message.power
-		card.attack = message.attack
-		card.basePower = message.basePower
-		card.baseAttack = message.baseAttack
-		return card
 	}
 }

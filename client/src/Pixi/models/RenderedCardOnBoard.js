@@ -1,5 +1,4 @@
 import Core from '@/Pixi/Core';
-import Card from '@/shared/models/Card';
 import CardOnBoard from '@/shared/models/CardOnBoard';
 import RenderedCard from '@/Pixi/models/RenderedCard';
 export default class RenderedCardOnBoard extends CardOnBoard {
@@ -7,10 +6,16 @@ export default class RenderedCardOnBoard extends CardOnBoard {
         super(card, owner);
         this.card = card;
         this.owner = owner;
+        this.preferredAttackTarget = null;
+    }
+    setPower(value) {
+        this.card.setPower(value);
+    }
+    setAttack(value) {
+        this.card.setAttack(value);
     }
     static fromMessage(message) {
-        const card = Card.fromMessage(message.card);
-        const renderedCard = RenderedCard.fromCard(card);
+        const renderedCard = RenderedCard.fromMessage(message.card);
         const owner = Core.getPlayer(message.owner.id);
         return new RenderedCardOnBoard(renderedCard, owner);
     }

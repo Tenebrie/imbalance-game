@@ -14,8 +14,13 @@ export default class CardMessage {
 
 	power: number
 	attack: number
+	attackRange: number
+	healthArmor: number
+
 	basePower: number
 	baseAttack: number
+	baseAttackRange: number
+	baseHealthArmor: number
 
 	constructor(card: Card) {
 		this.id = card.id
@@ -29,8 +34,13 @@ export default class CardMessage {
 
 		this.power = card.power
 		this.attack = card.attack
+		this.attackRange = card.attackRange
+		this.healthArmor = card.healthArmor
+
 		this.basePower = card.basePower
 		this.baseAttack = card.baseAttack
+		this.baseAttackRange = card.baseAttackRange
+		this.baseHealthArmor = card.baseHealthArmor
 	}
 
 	static fromCard(card: Card): CardMessage {

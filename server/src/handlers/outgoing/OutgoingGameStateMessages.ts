@@ -1,11 +1,10 @@
 import ServerGame from '../../libraries/game/ServerGame'
 import ServerPlayer from '../../libraries/players/ServerPlayer'
 import GameStartMessage from '../../shared/models/GameStartMessage'
-import CardOnBoardMessage from '../../shared/models/CardOnBoardMessage'
+import CardOnBoardMessage from '../../shared/models/network/CardOnBoardMessage'
 import CardDeckMessage from '../../shared/models/network/CardDeckMessage'
 import ServerPlayerInGame from '../../libraries/players/ServerPlayerInGame'
 import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
-import AttackOrder from '../../shared/models/AttackOrder'
 import AttackOrderMessage from '../../shared/models/network/AttackOrderMessage'
 import ServerAttackOrder from '../../models/game/ServerAttackOrder'
 
@@ -39,7 +38,7 @@ export default {
 			const row = rows[rowIndex]
 			for (let unitIndex = 0; unitIndex < row.cards.length; unitIndex++) {
 				const cardOnBoard = row.cards[unitIndex]
-				cardMessages.push(CardOnBoardMessage.fromCardOnBoard(cardOnBoard, rowIndex, unitIndex))
+				cardMessages.push(CardOnBoardMessage.fromCardOnBoardWithIndex(cardOnBoard, rowIndex, unitIndex))
 			}
 		}
 

@@ -50,6 +50,7 @@ export default class GameLibrary {
 		clone.cardClass = cardClass
 		clone.cardName = `card.name.${cardClass}`
 		clone.cardTitle = `card.title.${cardClass}`
+		clone.cardTribes = (original.cardTribes || []).slice()
 		clone.cardDescription = `card.description.${cardClass}`
 		clone.game = game
 		clone.power = clone.basePower

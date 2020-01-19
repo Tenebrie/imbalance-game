@@ -1,14 +1,14 @@
-import Card from '@/shared/models/Card'
+import RenderedCard from '@/Pixi/models/RenderedCard'
 import CardDeckMessage from '@/shared/models/network/CardDeckMessage'
 
 export default class ClientCardDeck {
-	cards: Card[]
+	cards: RenderedCard[]
 
-	constructor(cards: Card[]) {
+	constructor(cards: RenderedCard[]) {
 		this.cards = cards
 	}
 
-	public drawCardById(cardId: string): Card | null {
+	public drawCardById(cardId: string): RenderedCard | null {
 		const drawnCard = this.cards.find(card => card.id === cardId)
 		if (!drawnCard) {
 			return null
@@ -18,7 +18,7 @@ export default class ClientCardDeck {
 	}
 
 	public static fromMessage(message: CardDeckMessage): ClientCardDeck {
-		const cards = message.cards.map(cardMessage => Card.fromMessage(cardMessage))
+		const cards = message.cards.map(cardMessage => RenderedCard.fromMessage(cardMessage))
 		return new ClientCardDeck(cards)
 	}
 }

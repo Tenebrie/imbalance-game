@@ -34,7 +34,7 @@ export default {
 	'post/attackOrder': (data: AttackOrderMessage, game: ServerGame, player: ServerPlayerInGame) => {
 		const card = game.board.findCardById(data.attackerId)
 		const target = game.board.findCardById(data.targetId)
-		if (game.turnPhase !== GameTurnPhase.SKIRMISH || !card || !target || card.owner !== player || card.owner === target.owner) {
+		if (game.turnPhase !== GameTurnPhase.SKIRMISH || !card || !target || card.owner !== player || !card.canAttackTarget(target)) {
 			return
 		}
 

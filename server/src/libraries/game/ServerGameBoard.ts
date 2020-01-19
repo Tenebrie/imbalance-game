@@ -30,7 +30,7 @@ export default class ServerGameBoard extends GameBoard {
 	}
 
 	public getRowWithCard(targetUnit: ServerCardOnBoard): ServerGameBoardRow | null {
-		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id))
+		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id)) || null
 	}
 
 	public removeCard(cardOnBoard: ServerCardOnBoard): void {
@@ -53,11 +53,12 @@ export default class ServerGameBoard extends GameBoard {
 
 	public queueCardAttack(attacker: ServerCardOnBoard, target: ServerCardOnBoard): void {
 		const queuedAttack = new ServerAttackOrder(attacker, target)
+		const isOrderClear = this.queuedAttacks.find(queuedAttack => queuedAttack.attacker === attacker && queuedAttack.target === target)
 		this.queuedAttacks = this.queuedAttacks.filter(queuedAttack => queuedAttack.attacker !== attacker)
-		this.queuedAttacks.push(queuedAttack)
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.sendAttackOrders(playerInGame.player, this.queuedAttacks)
-		})
+		if (!isOrderClear) {
+			this.queuedAttacks.push(queuedAttack)
+		}
+		OutgoingMessageHandlers.sendAttackOrders(attacker.owner.player, this.queuedAttacks)
 	}
 
 	public releaseQueuedAttacks(): void {

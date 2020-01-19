@@ -4,6 +4,7 @@ import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import RenderedAttackOrder from '@/Pixi/models/RenderedAttackOrder'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import RenderedCard from '@/Pixi/models/RenderedCard'
 
 export default class RenderedGameBoard extends GameBoard {
 	rows: RenderedGameBoardRow[]
@@ -36,6 +37,10 @@ export default class RenderedGameBoard extends GameBoard {
 		}
 
 		rowWithCard.removeCardById(cardId)
+	}
+
+	public getRowWithCard(targetUnit: RenderedCardOnBoard): RenderedGameBoardRow | null {
+		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id)) || null
 	}
 
 	public getAllCards(): RenderedCardOnBoard[] {

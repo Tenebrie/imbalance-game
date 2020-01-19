@@ -9,6 +9,7 @@ import Settings from '@/Pixi/Settings'
 import RichText from '@/Pixi/render/RichText'
 import Utils from '@/utils/Utils'
 import CardAttributes from '@/Pixi/render/CardAttributes'
+import CardMessage from '@/shared/models/network/CardMessage'
 
 export default class RenderedCard extends Card {
 	public coreContainer: PIXI.Container
@@ -28,17 +29,23 @@ export default class RenderedCard extends Card {
 	private readonly cardTitleText: PIXI.Text
 	private readonly cardDescriptionText: RichText
 
-	constructor(card: Card) {
-		super(card.id, card.cardType, card.cardClass)
+	constructor(message: CardMessage) {
+		super(message.id, message.cardType, message.cardClass)
 
-		this.cardName = card.cardName
-		this.cardTitle = card.cardTitle
-		this.cardDescription = card.cardDescription
+		this.cardName = message.cardName
+		this.cardTitle = message.cardTitle
+		this.cardTribes = message.cardTribes.slice()
+		this.cardDescription = message.cardDescription
 
-		this.power = card.power
-		this.attack = card.attack
-		this.basePower = card.basePower
-		this.baseAttack = card.baseAttack
+		this.power = message.power
+		this.attack = message.attack
+		this.attackRange = message.attackRange
+		this.healthArmor = message.healthArmor
+
+		this.basePower = message.basePower
+		this.baseAttack = message.baseAttack
+		this.baseAttackRange = message.baseAttackRange
+		this.baseHealthArmor = message.baseHealthArmor
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.cardClass}`))
 		this.powerText = this.createPowerText(this.power ? this.power.toString() : '')
@@ -265,9 +272,9 @@ export default class RenderedCard extends Card {
 		Core.unregisterCard(this)
 	}
 
-	public static fromCard(card: Card): RenderedCard {
-		const renderedCard = new RenderedCard(card)
-		Core.registerCard(renderedCard)
-		return renderedCard
+	public static fromMessage(message: CardMessage): RenderedCard {
+		const card = new RenderedCard(message)
+		Core.registerCard(card)
+		return card
 	}
 }
