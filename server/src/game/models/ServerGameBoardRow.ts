@@ -1,47 +1,59 @@
 import ServerGame from './ServerGame'
-import ServerCardOnBoard from './ServerCardOnBoard'
 import ServerCard from './ServerCard'
+import ServerCardOnBoard from './ServerCardOnBoard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import Constants from '../shared/Constants'
 import GameBoardRow from '../shared/models/GameBoardRow'
 
 export default class ServerGameBoardRow extends GameBoardRow {
 	game: ServerGame
+	owner: ServerPlayerInGame | null
 	cards: ServerCardOnBoard[]
 
 	constructor(game: ServerGame, index: number) {
 		super(index)
 		this.game = game
+		this.owner = null
 		this.cards = []
 	}
 
 	public playCard(card: ServerCard, owner: ServerPlayerInGame, ordinal: number): ServerCardOnBoard {
-		const cardOnBoard = this.insertUnit(card, owner, ordinal)
+		const cardOnBoard = this.createUnit(card, owner, ordinal)
 		runCardEventHandler(() => card.onPlayUnit(cardOnBoard, this))
 		return cardOnBoard
 	}
 
-	public insertUnit(card: ServerCard, owner: ServerPlayerInGame, ordinal: number): ServerCardOnBoard {
-		const cardOnBoard = new ServerCardOnBoard(this.game, card, owner)
-		this.cards.splice(ordinal, 0, cardOnBoard)
+	public createUnit(card: ServerCard, owner: ServerPlayerInGame, ordinal: number): ServerCardOnBoard {
+		const unit = new ServerCardOnBoard(this.game, card, owner)
+		this.insertUnit(unit, ordinal)
 		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutUnitCreated(playerInGame.player, cardOnBoard, this.index, ordinal)
+			OutgoingMessageHandlers.notifyAboutUnitCreated(playerInGame.player, unit, this.index, ordinal)
 		})
-		return cardOnBoard
+		return unit
+	}
+
+	public insertUnit(unit: ServerCardOnBoard, ordinal: number): void {
+		this.cards.splice(ordinal, 0, unit)
 	}
 
 	public removeUnit(targetCard: ServerCardOnBoard): void {
 		this.cards = this.cards.filter(cardOnBoard => cardOnBoard !== targetCard)
+	}
+
+	public destroyUnit(targetCard: ServerCardOnBoard): void {
+		this.removeUnit(targetCard)
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitDestroyed(playerInGame.player, targetCard)
 		})
 	}
 
-	public isOwnedByPlayer(playerInGame: ServerPlayerInGame): boolean {
-		const invertedBoard = this.game.players.indexOf(playerInGame) === 1
+	public setOwner(player: ServerPlayerInGame | null): void {
+		if (this.owner === player) { return }
 
-		return (invertedBoard && this.index < playerInGame.rowsOwned) || (!invertedBoard && this.index >= Constants.GAME_BOARD_ROW_COUNT - playerInGame.rowsOwned)
+		this.owner = player
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutRowOwnershipChanged(playerInGame.player, this)
+		})
 	}
 }

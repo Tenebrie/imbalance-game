@@ -17,7 +17,6 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	cardHand: ServerCardHand
 	cardDeck: ServerCardDeck
 	morale: number
-	rowsOwned: number
 	timeUnits: number
 	turnEnded: boolean
 
@@ -28,14 +27,13 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.cardHand = new ServerCardHand(this.player, [])
 		this.cardDeck = cardDeck
 		this.morale = Ruleset.STARTING_PLAYER_MORALE
-		this.rowsOwned = 1
 		this.timeUnits = 0
 		this.turnEnded = false
 	}
 
 	public canPlayCard(card: ServerCard, rowIndex: number, unitIndex: number): boolean {
 		const gameBoardRow = this.game.board.rows[rowIndex]
-		if (gameBoardRow.cards.length >= 10 || !gameBoardRow.isOwnedByPlayer(this)) {
+		if (gameBoardRow.cards.length >= 10 || gameBoardRow.owner !== this) {
 			return false
 		}
 

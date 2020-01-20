@@ -89,7 +89,7 @@ export default class ServerCardOnBoard {
 		otherCards.forEach(cardOnBoard => {
 			runCardEventHandler(() => cardOnBoard.card.onBeforeOtherUnitDestroyed(cardOnBoard, this))
 		})
-		this.game.board.removeCard(this)
+		this.game.board.destroyUnit(this)
 		otherCards.forEach(cardOnBoard => {
 			runCardEventHandler(() => cardOnBoard.card.onAfterOtherUnitDestroyed(cardOnBoard, this))
 		})

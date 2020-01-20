@@ -8,7 +8,6 @@ export default class HiddenPlayerInGameMessage {
 	cardHand: HiddenCardHandMessage
 	cardDeck: HiddenCardDeckMessage
 	morale: number
-	rowsOwned: number
 	timeUnits: number
 
 	constructor(playerInGame: PlayerInGame) {
@@ -16,7 +15,6 @@ export default class HiddenPlayerInGameMessage {
 		this.cardHand = HiddenCardHandMessage.fromHand(playerInGame.cardHand)
 		this.cardDeck = HiddenCardDeckMessage.fromDeck(playerInGame.cardDeck)
 		this.morale = playerInGame.morale
-		this.rowsOwned = playerInGame.rowsOwned
 		this.timeUnits = playerInGame.timeUnits
 	}
 

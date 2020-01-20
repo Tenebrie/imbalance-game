@@ -12,6 +12,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameLibrary from '../libraries/GameLibrary'
 import ServerDamageInstance from './ServerDamageSource'
 import Ruleset from '../Ruleset'
+import Constants from '../shared/Constants'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -57,6 +58,9 @@ export default class ServerGame extends Game {
 			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Ruleset.MAX_TIME_OF_DAY)
 			OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, this.players.indexOf(playerInGame) === 1)
 		})
+
+		this.board.rows[Constants.GAME_BOARD_ROW_COUNT - 1].setOwner(playerOne)
+		this.board.rows[0].setOwner(playerTwo)
 
 		this.players.forEach(playerInGame => {
 			playerInGame.drawCards(10)
@@ -168,7 +172,7 @@ export default class ServerGame extends Game {
 			playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(playerTwoPower - playerOnePower))
 		}
 
-		this.board.getAllUnits().forEach(cardOnBoard => this.board.removeCard(cardOnBoard))
+		this.board.getAllUnits().forEach(cardOnBoard => this.board.destroyUnit(cardOnBoard))
 		this.setTime(-1)
 		this.advancePhase()
 	}

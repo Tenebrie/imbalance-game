@@ -21,8 +21,8 @@ export default class RenderedAttackOrder extends AttackOrder {
 	}
 
 	public static fromMessage(message: AttackOrderMessage): RenderedAttackOrder {
-		const attacker = Core.board.findCardById(message.attackerId)
-		const target = Core.board.findCardById(message.targetId)
+		const attacker = Core.board.findUnitById(message.attackerId)
+		const target = Core.board.findUnitById(message.targetId)
 		if (!attacker || !target) {
 			throw new Error('One of the cards does not exist!')
 		}

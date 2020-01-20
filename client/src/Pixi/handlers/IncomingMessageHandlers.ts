@@ -16,6 +16,9 @@ import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import RenderedAttackOrder from '@/Pixi/models/RenderedAttackOrder'
 import AttackOrderMessage from '@/Pixi/shared/models/network/AttackOrderMessage'
 import UnitOrderMessage from '@/Pixi/shared/models/network/UnitOrderMessage'
+import PlayerMessage from '@/Pixi/shared/models/network/PlayerMessage'
+import GameBoardMessage from '@/Pixi/shared/models/network/GameBoardMessage'
+import GameBoardRowMessage from '@/Pixi/shared/models/network/GameBoardRowMessage'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -39,18 +42,23 @@ const handlers: {[ index: string ]: any } = {
 		Core.player.cardDeck = ClientCardDeck.fromMessage(data.cardDeck)
 		Core.player.morale = data.morale
 		Core.player.timeUnits = data.timeUnits
-		Core.player.rowsOwned = data.rowsOwned
 	},
 
 	'gameState/player/opponent': (data: PlayerInGameMessage) => {
 		Core.registerOpponent(ClientPlayerInGame.fromMessage(data))
 	},
 
-	'gameState/board': (data: CardOnBoardMessage[]) => {
+	'gameState/board': (data: GameBoardMessage) => {
+		data.rows.forEach(row => {
+			Core.board.rows[row.index].setOwner(Core.getPlayer(row.ownerId))
+		})
+	},
+
+	'gameState/units': (data: CardOnBoardMessage[]) => {
 		Core.board.clearBoard()
 		data.forEach(message => {
 			const card = RenderedCardOnBoard.fromMessage(message)
-			Core.board.insertCard(card, message.rowIndex, message.unitIndex)
+			Core.board.insertUnit(card, message.rowIndex, message.unitIndex)
 		})
 	},
 
@@ -71,25 +79,40 @@ const handlers: {[ index: string ]: any } = {
 		Core.game.maximumTime = data.maximumTime
 	},
 
-	'update/board/cardCreated': (data: CardOnBoardMessage) => {
+	'update/board/unitCreated': (data: CardOnBoardMessage) => {
 		const card = RenderedCardOnBoard.fromMessage(data)
-		Core.board.insertCard(card, data.rowIndex, data.unitIndex)
+		Core.board.insertUnit(card, data.rowIndex, data.unitIndex)
 	},
 
-	'update/board/cardDestroyed': (data: CardMessage) => {
-		console.info('Unit destroyed', data.id)
-		Core.board.removeCardById(data.id)
+	'update/board/unitMoved': (data: CardOnBoardMessage) => {
+		const unit = Core.board.findUnitById(data.card.id)
+		if (!unit) { return }
+
+		console.log(`${data.card.id} has moved from ${unit.rowIndex} to ${data.rowIndex}`)
+		Core.board.removeUnit(unit)
+		Core.board.insertUnit(unit, data.rowIndex, data.unitIndex)
+	},
+
+	'update/board/unitDestroyed': (data: CardMessage) => {
+		const unit = Core.board.findUnitById(data.id)
+		if (!unit) { return }
+
+		Core.board.destroyUnit(unit)
+	},
+
+	'update/board/row/owner': (data: GameBoardRowMessage) => {
+		Core.board.rows[data.index].setOwner(Core.getPlayer(data.ownerId))
 	},
 
 	'update/board/card/power': (data: CardMessage) => {
-		const cardOnBoard = Core.board.findCardById(data.id)
+		const cardOnBoard = Core.board.findUnitById(data.id)
 		if (!cardOnBoard) { return }
 
 		cardOnBoard.setPower(data.power)
 	},
 
 	'update/board/card/attack': (data: CardMessage) => {
-		const cardOnBoard = Core.board.findCardById(data.id)
+		const cardOnBoard = Core.board.findUnitById(data.id)
 		if (!cardOnBoard) { return }
 
 		cardOnBoard.setAttack(data.attack)
@@ -109,14 +132,6 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/player/opponent/timeUnits': (data: PlayerInGameMessage) => {
 		Core.opponent.timeUnits = data.timeUnits
-	},
-
-	'update/player/self/rowsOwned': (data: PlayerInGameMessage) => {
-		Core.player.rowsOwned = data.rowsOwned
-	},
-
-	'update/player/opponent/rowsOwned': (data: PlayerInGameMessage) => {
-		Core.opponent.rowsOwned = data.rowsOwned
 	},
 
 	'update/player/self/hand/cardDrawn': (data: CardMessage[]) => {

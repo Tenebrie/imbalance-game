@@ -7,13 +7,11 @@ export default class PlayerInGame {
 	cardHand: CardHand
 	cardDeck: CardDeck
 	morale: number
-	rowsOwned: number
 	timeUnits: number
 
 	constructor(player: Player) {
 		this.player = player
 		this.morale = 0
-		this.rowsOwned = 0
 		this.timeUnits = 0
 		this.cardHand = new CardHand([])
 		this.cardDeck = new CardDeck([])

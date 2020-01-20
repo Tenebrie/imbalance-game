@@ -25,7 +25,6 @@ export default class ClientPlayerInGame extends PlayerInGame {
 		clientPlayerInGame.cardDeck = ClientCardDeck.fromMessage(message.cardDeck)
 		clientPlayerInGame.morale = message.morale
 		clientPlayerInGame.timeUnits = message.timeUnits
-		clientPlayerInGame.rowsOwned = message.rowsOwned
 		return clientPlayerInGame
 	}
 }

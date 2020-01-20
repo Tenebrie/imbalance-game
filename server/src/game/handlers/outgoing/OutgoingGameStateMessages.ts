@@ -8,6 +8,8 @@ import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerI
 import PlayerInGameMessage from '../../shared/models/network/PlayerInGameMessage'
 import ServerUnitOrder from '../../models/ServerUnitOrder'
 import UnitOrderMessage from '../../shared/models/network/UnitOrderMessage'
+import ServerGameBoard from '../../models/ServerGameBoard'
+import GameBoardMessage from '../../shared/models/network/GameBoardMessage'
 
 export default {
 	notifyAboutGameStart(player: ServerPlayer, isBoardInverted: boolean) {
@@ -39,7 +41,14 @@ export default {
 		})
 	},
 
-	sendBoardState: (player: ServerPlayer, game: ServerGame) => {
+	sendBoard: (player: ServerPlayer, board: ServerGameBoard) => {
+		player.sendMessage({
+			type: 'gameState/board',
+			data: new GameBoardMessage(board)
+		})
+	},
+
+	sendUnits: (player: ServerPlayer, game: ServerGame) => {
 		const cardMessages = []
 		const rows = game.board.rows
 		for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
@@ -51,7 +60,7 @@ export default {
 		}
 
 		player.sendMessage({
-			type: 'gameState/board',
+			type: 'gameState/units',
 			data: cardMessages
 		})
 	},

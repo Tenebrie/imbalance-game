@@ -281,8 +281,6 @@ export default class Renderer {
 
 		container.position.set(screenCenterX, rowY)
 
-		gameBoardRow.updateOwnership()
-
 		for (let i = 0; i < gameBoardRow.cards.length; i++) {
 			const cardOnBoard = gameBoardRow.cards[i]
 			this.renderCardOnBoard(cardOnBoard, rowY, i, gameBoardRow.cards.length)
@@ -379,7 +377,7 @@ export default class Renderer {
 			return
 		}
 
-		const sourceUnit = Core.board.findCardById(grabbedCard.card.id)
+		const sourceUnit = Core.board.findUnitById(grabbedCard.card.id)
 		if (!sourceUnit) {
 			this.actionLabel.text = ''
 			return
@@ -389,7 +387,7 @@ export default class Renderer {
 		const colorError = 0xFF5555
 		const hoveredCard = Core.input.hoveredCard
 		if (hoveredCard && hoveredCard.location === CardLocation.BOARD && grabbedCard.card !== hoveredCard.card) {
-			const targetUnit = Core.board.findCardById(hoveredCard.card.id)!
+			const targetUnit = Core.board.findUnitById(hoveredCard.card.id)!
 			if (sourceUnit.owner === targetUnit.owner) {
 				label.text = 'Can\'t attack allies!'
 				label.style.fill = colorError

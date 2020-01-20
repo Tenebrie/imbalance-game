@@ -179,7 +179,7 @@ export default class Input {
 
 	private onCardOrder(orderedCard: RenderedCard): void {
 		const hoveredCard = this.hoveredCard
-		const orderedUnit = Core.board.findCardById(orderedCard.id)!
+		const orderedUnit = Core.board.findUnitById(orderedCard.id)!
 		if (hoveredCard && hoveredCard.owner !== Core.player) {
 			OutgoingMessageHandlers.sendUnitAttackOrders(new AttackOrder(orderedUnit, hoveredCard))
 			return

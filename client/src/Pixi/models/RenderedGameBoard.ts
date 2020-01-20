@@ -19,23 +19,24 @@ export default class RenderedGameBoard extends GameBoard {
 		}
 	}
 
-	public insertCard(card: RenderedCardOnBoard, rowIndex: number, unitIndex: number): void {
-		this.rows[rowIndex].insertCard(card, unitIndex)
+	public insertUnit(card: RenderedCardOnBoard, rowIndex: number, unitIndex: number): void {
+		this.rows[rowIndex].insertUnit(card, unitIndex)
 	}
 
-	public findCardById(cardId: string): RenderedCardOnBoard | null {
+	public removeUnit(unit: RenderedCardOnBoard): void {
+		this.rows[unit.rowIndex].removeUnit(unit)
+	}
+
+	public findUnitById(unitId: string): RenderedCardOnBoard | null {
 		const cards = this.rows.map(row => row.cards).flat()
-		return cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
+		return cards.find(cardOnBoard => cardOnBoard.card.id === unitId) || null
 	}
 
-	public removeCardById(cardId: string): void {
-		const rowWithCard = this.rows.find(row => !!row.cards.find(cardOnBoard => cardOnBoard.card.id === cardId))
-		if (!rowWithCard) {
-			console.error(`No row includes card ${cardId}`)
-			return
-		}
+	public destroyUnit(unit: RenderedCardOnBoard): void {
+		const currentRow = this.getRowWithCard(unit)
+		if (!currentRow) { return }
 
-		rowWithCard.removeCardById(cardId)
+		currentRow.destroyUnit(unit)
 	}
 
 	public getRowWithCard(targetUnit: RenderedCardOnBoard): RenderedGameBoardRow | null {

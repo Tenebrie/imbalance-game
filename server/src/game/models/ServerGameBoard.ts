@@ -9,7 +9,6 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerUnitOrder from './ServerUnitOrder'
 import UnitOrderType from '../shared/enums/UnitOrderType'
-import VoidPlayer from '../utils/VoidPlayer'
 import VoidPlayerInGame from '../utils/VoidPlayerInGame'
 
 export default class ServerGameBoard extends GameBoard {
@@ -36,14 +35,25 @@ export default class ServerGameBoard extends GameBoard {
 		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id)) || null
 	}
 
-	public removeCard(cardOnBoard: ServerCardOnBoard): void {
-		const rowWithCard = this.getRowWithUnit(cardOnBoard)
+	public moveUnit(unit: ServerCardOnBoard, rowIndex: number, unitIndex: number) {
+		const currentRow = this.rows[unit.rowIndex]
+		const targetRow = this.rows[rowIndex]
+		currentRow.removeUnit(unit)
+		targetRow.insertUnit(unit, unitIndex)
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutUnitMoved(playerInGame.player, unit, rowIndex, unitIndex)
+		})
+		targetRow.setOwner(unit.owner)
+	}
+
+	public destroyUnit(unit: ServerCardOnBoard): void {
+		const rowWithCard = this.getRowWithUnit(unit)
 		if (!rowWithCard) {
-			console.error(`No row includes card ${cardOnBoard.card.id}`)
+			console.error(`No row includes unit ${unit.card.id}`)
 			return
 		}
 
-		rowWithCard.removeUnit(cardOnBoard)
+		rowWithCard.destroyUnit(unit)
 	}
 
 	public getAllUnits() {
@@ -81,7 +91,6 @@ export default class ServerGameBoard extends GameBoard {
 		})
 
 		/* Moves */
-		console.log(queuedMoves)
 		const playerOne = this.game.players[0]
 		const playerTwo = this.game.players[1] || VoidPlayerInGame.for(this.game)
 		const playerOneMoves = queuedMoves.filter(queuedMove => queuedMove.orderedUnit.owner === playerOne)
@@ -99,6 +108,7 @@ export default class ServerGameBoard extends GameBoard {
 				queuedMoves = queuedMoves.filter(queuedMove => queuedMove.orderedUnit.owner !== playerOne || queuedMove.targetRow !== contestedRow)
 			}
 		})
+		queuedMoves.sort((a: ServerUnitOrder, b: ServerUnitOrder) => a.orderedUnit.unitIndex - b.orderedUnit.unitIndex)
 		queuedMoves.forEach(queuedMove => {
 			this.performUnitMove(queuedMove.orderedUnit, queuedMove.targetRow)
 		})
@@ -138,8 +148,6 @@ export default class ServerGameBoard extends GameBoard {
 		const currentRow = this.game.board.getRowWithUnit(orderedUnit)
 		if (!currentRow) { return }
 
-		console.log('Performing user move!')
-		currentRow.removeUnit(orderedUnit)
-		targetRow.insertUnit(orderedUnit.card, orderedUnit.owner, targetRow.cards.length)
+		this.moveUnit(orderedUnit, targetRow.index, targetRow.cards.length)
 	}
 }
