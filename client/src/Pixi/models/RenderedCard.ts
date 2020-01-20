@@ -28,6 +28,7 @@ export default class RenderedCard extends Card {
 	private readonly attackText: ScalingText
 	private readonly cardNameText: ScalingText
 	private readonly cardTitleText: ScalingText
+	private readonly cardTribeTexts: ScalingText[]
 	private readonly cardDescriptionText: RichText
 
 	constructor(message: CardMessage) {
@@ -53,6 +54,7 @@ export default class RenderedCard extends Card {
 		this.attackText = this.createAttackText(this.attack ? this.attack.toString() : '')
 		this.cardNameText = this.createCardNameText(Localization.getString(this.cardName))
 		this.cardTitleText = this.createCardNameText(Localization.getString(this.cardTitle))
+		this.cardTribeTexts = this.cardTribes.map(tribe => this.createCardNameText(Localization.getString(`card.tribe.${tribe}`)))
 		this.cardDescriptionText = new RichText(this, Localization.getString(this.cardDescription), 350)
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
@@ -77,6 +79,11 @@ export default class RenderedCard extends Card {
 		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power')))
 		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
 		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-description')))
+		for (let i = 0; i < this.cardTribes.length; i++) {
+			const tribeBackgroundSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-tribe'))
+			tribeBackgroundSprite.position.y += i * 40
+			this.cardModeContainer.addChild(tribeBackgroundSprite)
+		}
 		this.cardModeContainer.addChild(this.cardModeAttributes)
 		internalContainer.addChild(this.cardModeContainer)
 
@@ -97,6 +104,7 @@ export default class RenderedCard extends Card {
 		this.cardModeTextContainer = new PIXI.Container()
 		this.cardModeTextContainer.addChild(this.cardNameText)
 		this.cardModeTextContainer.addChild(this.cardTitleText)
+		this.cardTribeTexts.forEach(cardTribeText => { this.cardModeTextContainer.addChild(cardTribeText) })
 		this.cardModeTextContainer.addChild(this.cardDescriptionText)
 		this.coreContainer.addChild(this.cardModeTextContainer)
 	}
@@ -177,7 +185,7 @@ export default class RenderedCard extends Card {
 
 		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED) {
 			this.switchToCardMode()
-			texts = [this.powerText, this.attackText, this.cardNameText, this.cardTitleText, this.cardDescriptionText]
+			texts = [this.powerText, this.attackText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {
 			this.switchToUnitMode()
 			texts = [this.powerText, this.attackText]
@@ -212,6 +220,10 @@ export default class RenderedCard extends Card {
 		this.cardNameText.position.y -= this.sprite.height / 2
 		this.cardTitleText.position.x += this.sprite.width / 2
 		this.cardTitleText.position.y -= this.sprite.height / 2
+		this.cardTribeTexts.forEach(cardTribeText => {
+			cardTribeText.position.x += this.sprite.width / 2
+			cardTribeText.position.y -= this.sprite.height / 2
+		})
 		this.cardDescriptionText.position.y += this.sprite.height / 2
 	}
 
@@ -233,6 +245,13 @@ export default class RenderedCard extends Card {
 			this.cardNameText.position.y -= 11
 			this.cardTitleText.position.set(-15, 81)
 			this.cardTitleText.style.fontSize = 18
+		}
+
+		for (let i = 0; i < this.cardTribeTexts.length; i++) {
+			const cardTribeText = this.cardTribeTexts[i]
+			cardTribeText.position.set(-15, 122)
+			cardTribeText.position.y += i * 40
+			cardTribeText.style.fontSize = 20
 		}
 
 		this.cardDescriptionText.position.set(0, -135)

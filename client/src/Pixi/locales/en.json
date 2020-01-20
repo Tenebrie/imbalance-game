@@ -1,4 +1,8 @@
 {
+	"card.tribe.bird": "Bird",
+	"card.tribe.beast": "Beast",
+	"card.tribe.dragon": "Dragon",
+
 	"card.name.heroSatia": "Satia",
 	"card.title.heroSatia": "First mistress",
 	"card.description.heroSatia": "*On play:*\nSummon *Night Maiden*",

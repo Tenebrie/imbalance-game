@@ -1,1 +1,0 @@
-{"version":3,"file":"GameBoardMessage.js","sourceRoot":"","sources":["GameBoardMessage.ts"],"names":[],"mappings":"AAAA,OAAO,mBAAmB,MAAM,uBAAuB,CAAA;AAGvD,MAAM,CAAC,OAAO,OAAO,gBAAgB;IAGpC,YAAY,KAAgB;QAC3B,IAAI,CAAC,IAAI,GAAG,KAAK,CAAC,IAAI,CAAC,GAAG,CAAC,GAAG,CAAC,EAAE,CAAC,IAAI,mBAAmB,CAAC,GAAG,CAAC,CAAC,CAAA;IAChE,CAAC;CACD"}

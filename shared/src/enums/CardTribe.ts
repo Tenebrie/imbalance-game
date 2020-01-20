@@ -1,7 +1,7 @@
 enum CardTribe {
-	BIRD,
-	BEAST,
-	DRAGON
+	BIRD = 'bird',
+	BEAST = 'beast',
+	DRAGON = 'dragon'
 }
 
 export default CardTribe

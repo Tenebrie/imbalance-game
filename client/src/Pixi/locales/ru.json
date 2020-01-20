@@ -1,10 +1,14 @@
 {
+	"card.tribe.bird": "Птица",
+	"card.tribe.beast": "Зверь",
+	"card.tribe.dragon": "Дракон",
+
 	"card.name.heroSatia": "Сатия",
 	"card.title.heroSatia": "Первая леди",
 	"card.description.heroSatia": "*Вход в игру:*\nПризывает *Ночную деву*",
 
-	"card.name.heroNightLady": "Ночная Дева",
-	"card.title.heroNightLady": "Любимица Сатии",
+	"card.name.heroNightMaiden": "Ночная Дева",
+	"card.title.heroNightMaiden": "Любимица Сатии",
 	"card.description.heroNightLady": "",
 
 	"card.name.unitRavenMessenger": "Почтовый ворон",

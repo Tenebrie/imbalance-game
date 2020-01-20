@@ -22,6 +22,7 @@ export default class TextureAtlas {
 				'components/bg-power',
 				'components/bg-power-zoom',
 				'components/bg-name',
+				'components/bg-tribe',
 				'components/bg-description',
 				'components/bg-stats-left',
 				'components/bg-stats-middle',
