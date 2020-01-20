@@ -7,6 +7,6 @@ export default class UnitForestScout extends ServerCard {
 		super(game, CardType.UNIT)
 		this.basePower = 55
 		this.baseAttack = 1
-		this.attackRange = 3
+		this.baseAttackRange = 3
 	}
 }

@@ -11,6 +11,7 @@ export default class HeroNightMaiden extends ServerCard {
 		this.basePower = 28
 		this.baseAttack = 7
 		this.baseAttackRange = 3
+		this.baseHealthArmor = 1
 		this.cardTribes = [CardTribe.DRAGON]
 	}
 

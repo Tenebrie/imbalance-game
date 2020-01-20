@@ -29,6 +29,8 @@ export default class TextureAtlas {
 				'components/bg-stats-right',
 				'components/bg-stats-right-zoom',
 				'components/stat-attack-claw',
+				'components/stat-attack-range',
+				'components/stat-health-armor',
 				'board/boardRow_owned',
 				'board/boardRow_neutral',
 				'board/boardRow_opponent'

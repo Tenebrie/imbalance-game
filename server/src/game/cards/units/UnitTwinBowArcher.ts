@@ -11,8 +11,8 @@ export default class UnitTwinBowArcher extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
 		this.basePower = 4
-		this.baseAttack = 6
-		this.attackRange = 3
+		this.baseAttack = 60
+		this.baseAttackRange = 3
 	}
 
 	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {

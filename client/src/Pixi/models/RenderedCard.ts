@@ -26,6 +26,8 @@ export default class RenderedCard extends Card {
 
 	private readonly powerText: ScalingText
 	private readonly attackText: ScalingText
+	private readonly attackRangeText: ScalingText
+	private readonly healthArmorText: ScalingText
 	private readonly cardNameText: ScalingText
 	private readonly cardTitleText: ScalingText
 	private readonly cardTribeTexts: ScalingText[]
@@ -50,8 +52,10 @@ export default class RenderedCard extends Card {
 		this.baseHealthArmor = message.baseHealthArmor
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.cardClass}`))
-		this.powerText = this.createPowerText(this.power ? this.power.toString() : '')
-		this.attackText = this.createAttackText(this.attack ? this.attack.toString() : '')
+		this.powerText = this.createPowerText(this.power.toString())
+		this.attackText = this.createAttackText(this.attack.toString())
+		this.attackRangeText = this.createAttributeText(this.attackRange.toString())
+		this.healthArmorText = this.createAttributeText(this.healthArmor.toString())
 		this.cardNameText = this.createCardNameText(Localization.getString(this.cardName))
 		this.cardTitleText = this.createCardNameText(Localization.getString(this.cardTitle))
 		this.cardTribeTexts = this.cardTribes.map(tribe => this.createCardNameText(Localization.getString(`card.tribe.${tribe}`)))
@@ -98,6 +102,8 @@ export default class RenderedCard extends Card {
 		this.coreContainer.addChild(this.sprite)
 		this.coreContainer.addChild(this.powerText)
 		this.coreContainer.addChild(this.attackText)
+		this.coreContainer.addChild(this.attackRangeText)
+		this.coreContainer.addChild(this.healthArmorText)
 		this.coreContainer.position.set(-1000, -1000)
 
 		/* Card mode text container */
@@ -159,7 +165,17 @@ export default class RenderedCard extends Card {
 			fill: 0x000000,
 			padding: 16
 		}))
-		textObject.anchor.set(1.0, 0.5)
+		textObject.anchor.set(0, 0.5)
+		return textObject
+	}
+
+	public createAttributeText(text: string): ScalingText {
+		const textObject = new ScalingText(text, new PIXI.TextStyle({
+			fontFamily: 'BrushScript',
+			fill: 0xFFFFFF,
+			padding: 16
+		}))
+		textObject.anchor.set(0.5, 0.5)
 		return textObject
 	}
 
@@ -185,7 +201,7 @@ export default class RenderedCard extends Card {
 
 		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED) {
 			this.switchToCardMode()
-			texts = [this.powerText, this.attackText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
+			texts = [this.powerText, this.attackText, this.attackRangeText, this.healthArmorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {
 			this.switchToUnitMode()
 			texts = [this.powerText, this.attackText]
@@ -216,6 +232,10 @@ export default class RenderedCard extends Card {
 		this.powerText.position.y -= this.sprite.height / 2
 		this.attackText.position.x += this.sprite.width / 2
 		this.attackText.position.y += this.sprite.height / 2
+		this.attackRangeText.position.x += this.sprite.width / 2
+		this.attackRangeText.position.y += this.sprite.height / 2
+		this.healthArmorText.position.x += this.sprite.width / 2
+		this.healthArmorText.position.y += this.sprite.height / 2
 		this.cardNameText.position.x += this.sprite.width / 2
 		this.cardNameText.position.y -= this.sprite.height / 2
 		this.cardTitleText.position.x += this.sprite.width / 2
@@ -237,6 +257,20 @@ export default class RenderedCard extends Card {
 
 		this.attackText.position.copyFrom(this.cardModeAttributes.getAttackTextPosition())
 		this.attackText.style.fontSize = this.cardModeAttributes.getAttackTextFontSize()
+
+		this.attackRangeText.visible = false
+		if (this.attackRange !== 1) {
+			this.attackRangeText.visible = true
+			this.attackRangeText.position.copyFrom(this.cardModeAttributes.getAttackRangeTextPosition())
+			this.attackRangeText.style.fontSize = this.cardModeAttributes.getAttackRangeTextFontSize()
+		}
+
+		this.healthArmorText.visible = false
+		if (this.healthArmor > 0) {
+			this.healthArmorText.visible = true
+			this.healthArmorText.position.copyFrom(this.cardModeAttributes.getHealthArmorTextPosition())
+			this.healthArmorText.style.fontSize = this.cardModeAttributes.getHealthArmorTextFontSize()
+		}
 
 		this.cardNameText.position.set(-15, 67)
 		this.cardNameText.style.fontSize = 22
@@ -277,6 +311,9 @@ export default class RenderedCard extends Card {
 
 		this.attackText.position.copyFrom(this.unitModeAttributes.getAttackTextPosition())
 		this.attackText.style.fontSize = this.unitModeAttributes.getAttackTextFontSize()
+
+		this.attackRangeText.visible = false
+		this.healthArmorText.visible = false
 	}
 
 	public switchToHiddenMode(): void {
