@@ -2,39 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="365a96b8-392e-41f9-8067-3f2c0c3e3250" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../shared/src/models/network/GameBoardMessage.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/src/models/network/GameBoardRowMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Input.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Renderer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/models/ClientPlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/ClientPlayerInGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedAttackOrder.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedAttackOrder.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoardRow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/shared/models/GameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/shared/models/GameBoardRow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/shared/models/PlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/shared/models/PlayerInGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/shared/models/network/HiddenPlayerInGameMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/shared/models/network/HiddenPlayerInGameMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/shared/models/network/PlayerInGameMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/shared/models/network/PlayerInGameMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/Ruleset.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/Ruleset.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/handlers/outgoing/OutgoingBoardUpdateMessages.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/handlers/outgoing/OutgoingBoardUpdateMessages.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/handlers/outgoing/OutgoingGameStateMessages.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/handlers/outgoing/OutgoingGameStateMessages.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/handlers/outgoing/OutgoingPlayerUpdateMessages.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/handlers/outgoing/OutgoingPlayerUpdateMessages.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/models/ServerCardOnBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/models/ServerCardOnBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/models/ServerGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/models/ServerGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/models/ServerGameBoard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/models/ServerGameBoard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/models/ServerGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/models/ServerGameBoardRow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/players/ServerPlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/players/ServerPlayerInGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/shared/models/GameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/shared/models/GameBoardRow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/shared/models/PlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/shared/models/PlayerInGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/shared/models/network/HiddenPlayerInGameMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/shared/models/network/HiddenPlayerInGameMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/shared/models/network/PlayerInGameMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/shared/models/network/PlayerInGameMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/src/models/GameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/GameBoardRow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/src/models/PlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/PlayerInGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/src/models/network/HiddenPlayerInGameMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/network/HiddenPlayerInGameMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/src/models/network/PlayerInGameMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/network/PlayerInGameMessage.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedCard.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +30,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/Pixi/enums" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/Vue/components" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -80,19 +48,19 @@
     <property name="ts.external.directory.path" value="W:\Workspace\notgwent-game\client\node_modules\typescript\lib" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="W:\Workspace\notgwent-game\client\src\Vue\components" />
+      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\enums" />
+      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\models" />
+      <recent name="W:\Workspace\notgwent-game\client\public\assets\cards" />
+      <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
       <recent name="W:\Workspace\notgwent-game\client\public\assets" />
       <recent name="W:\Workspace\notgwent-game\client" />
       <recent name="W:\Workspace\notgwent-game\client\public\assets\fonts" />
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi\handlers" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\enums" />
-      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\models" />
-      <recent name="W:\Workspace\notgwent-game\client\public\assets\cards" />
-      <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
-      <recent name="W:\Workspace\notgwent-game\client\src\shared\models" />
     </key>
   </component>
   <component name="ServiceViewManager">
@@ -135,7 +103,7 @@
       <workItem from="1579351857987" duration="16567000" />
       <workItem from="1579429859239" duration="10793000" />
       <workItem from="1579453229059" duration="11632000" />
-      <workItem from="1579521787502" duration="5596000" />
+      <workItem from="1579521787502" duration="18432000" />
     </task>
     <servers />
   </component>
@@ -205,6 +173,90 @@
         <option value="$PROJECT_DIR$/src/Pixi/Settings.js.map" />
         <option value="$PROJECT_DIR$/src/utils/Utils.js" />
         <option value="$PROJECT_DIR$/src/utils/Utils.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/render/ScalingText.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/render/ScalingText.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/enums/GameTurnPhase.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/enums/UnitOrderType.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/enums/GameTurnPhase.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/enums/CardType.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/enums/CardTribe.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/enums/CardType.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/enums/CardTribe.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/enums/DamageSource.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/enums/DamageSource.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/enums/UnitOrderType.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/enums/TargetingMode.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/enums/TargetingMode.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/UnitOrderMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/GameMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/CardHandMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/HiddenCardDeckMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/GameTimeMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/HiddenPlayerInGameMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/CardMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/ChatEntryMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/MoveOrderMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/CardOnBoardMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/PlayerMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/HiddenCardMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/AttackOrderMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/CardHandMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/AttackOrderMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/HiddenCardMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/HiddenCardDeckMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/GameBoardRowMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/PlayerMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/CardMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/ChatEntryMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/UnitOrderMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/PlayerInGameMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/HiddenCardHandMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/MoveOrderMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/CardPlayedMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/CardOnBoardMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/HiddenCardHandMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/PlayerInGameMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/GameBoardRowMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/CardDeckMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/GameMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/HiddenPlayerInGameMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/GameBoardMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/CardDeckMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/GameBoardMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/CardPlayedMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/network/GameTimeMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/UnitOrder.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/Game.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/MoveOrder.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/CardOnBoard.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/MoveOrder.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/PlayerInGame.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/Card.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/GameBoard.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/UnitOrder.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/Card.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/GameStartMessage.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/GameBoard.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/ChatEntry.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/DamageInstance.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/GameBoardRow.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/AttackOrder.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/CardDeck.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/DamageInstance.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/GameStartMessage.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/PlayerInGame.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/ChatEntry.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/AttackOrder.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/CardHand.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/CardHand.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/Game.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/Player.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/Player.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/CardOnBoard.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/GameBoardRow.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/models/CardDeck.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/Constants.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/shared/Constants.js" />
       </list>
     </option>
   </component>
@@ -241,14 +293,14 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="781" y="343" key="SettingsEditor/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579449225410" />
-    <state x="976" y="432" width="607" height="536" key="find.popup" timestamp="1579531869003">
+    <state x="976" y="432" width="737" height="606" key="find.popup" timestamp="1579543870242">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="976" y="432" width="607" height="536" key="find.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579531869003" />
-    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1579472534107">
+    <state x="976" y="432" width="737" height="606" key="find.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579543870242" />
+    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1579543075126">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579472534107" />
+    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579543075126" />
     <state x="1002" y="613" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1579465548009">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>

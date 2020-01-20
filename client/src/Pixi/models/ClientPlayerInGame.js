@@ -1,5 +1,5 @@
-import Player from '@/shared/models/Player';
-import PlayerInGame from '@/shared/models/PlayerInGame';
+import Player from '@/Pixi/shared/models/Player';
+import PlayerInGame from '@/Pixi/shared/models/PlayerInGame';
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand';
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck';
 export default class ClientPlayerInGame extends PlayerInGame {
@@ -16,6 +16,8 @@ export default class ClientPlayerInGame extends PlayerInGame {
         const clientPlayerInGame = new ClientPlayerInGame(player);
         clientPlayerInGame.cardHand = RenderedCardHand.fromMessage(message.cardHand);
         clientPlayerInGame.cardDeck = ClientCardDeck.fromMessage(message.cardDeck);
+        clientPlayerInGame.morale = message.morale;
+        clientPlayerInGame.timeUnits = message.timeUnits;
         return clientPlayerInGame;
     }
 }

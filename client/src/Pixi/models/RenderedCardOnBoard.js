@@ -1,7 +1,13 @@
 import Core from '@/Pixi/Core';
-import CardOnBoard from '@/shared/models/CardOnBoard';
+import CardOnBoard from '@/Pixi/shared/models/CardOnBoard';
 import RenderedCard from '@/Pixi/models/RenderedCard';
 export default class RenderedCardOnBoard extends CardOnBoard {
+    get rowIndex() {
+        return Core.board.rows.indexOf(Core.board.getRowWithCard(this));
+    }
+    get unitIndex() {
+        return Core.board.rows[this.rowIndex].cards.indexOf(this);
+    }
     constructor(card, owner) {
         super(card, owner);
         this.card = card;
@@ -13,6 +19,9 @@ export default class RenderedCardOnBoard extends CardOnBoard {
     }
     setAttack(value) {
         this.card.setAttack(value);
+    }
+    isTargetInRange(target) {
+        return Math.abs(this.rowIndex - target.rowIndex) <= this.card.attackRange;
     }
     static fromMessage(message) {
         const renderedCard = RenderedCard.fromMessage(message.card);

@@ -26,7 +26,6 @@ export default {
 	},
 
 	sendUnitMoveOrders(order: MoveOrder) {
-		console.log('Sending order')
 		Core.sendMessage('post/moveOrder', MoveOrderMessage.fromUnitAndIndex(order.unit, order.targetRow.index))
 	},
 

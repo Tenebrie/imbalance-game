@@ -10,6 +10,7 @@ import RichText from '@/Pixi/render/RichText'
 import Utils from '@/utils/Utils'
 import CardAttributes from '@/Pixi/render/CardAttributes'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
+import ScalingText from '@/Pixi/render/ScalingText'
 
 export default class RenderedCard extends Card {
 	public coreContainer: PIXI.Container
@@ -23,10 +24,10 @@ export default class RenderedCard extends Card {
 	private readonly unitModeContainer: PIXI.Container
 	private readonly unitModeAttributes: CardAttributes
 
-	private readonly powerText: PIXI.Text
-	private readonly attackText: PIXI.Text
-	private readonly cardNameText: PIXI.Text
-	private readonly cardTitleText: PIXI.Text
+	private readonly powerText: ScalingText
+	private readonly attackText: ScalingText
+	private readonly cardNameText: ScalingText
+	private readonly cardTitleText: ScalingText
 	private readonly cardDescriptionText: RichText
 
 	constructor(message: CardMessage) {
@@ -134,33 +135,33 @@ export default class RenderedCard extends Card {
 		return hitboxSprite
 	}
 
-	public createPowerText(text: string): PIXI.Text {
-		const textObject = new PIXI.Text(text, {
+	public createPowerText(text: string): ScalingText {
+		const textObject = new ScalingText(text, new PIXI.TextStyle({
 			fontFamily: 'BrushScript',
 			fill: 0x000000,
 			padding: 16
-		})
+		}))
 		textObject.anchor.set(0.5)
 		return textObject
 	}
 
-	public createAttackText(text: string): PIXI.Text {
-		const textObject = new PIXI.Text(text, {
+	public createAttackText(text: string): ScalingText {
+		const textObject = new ScalingText(text, new PIXI.TextStyle({
 			fontFamily: 'BrushScript',
 			fill: 0x000000,
 			padding: 16
-		})
+		}))
 		textObject.anchor.set(1.0, 0.5)
 		return textObject
 	}
 
-	public createCardNameText(text: string): PIXI.Text {
-		const textObject = new PIXI.Text(text, {
+	public createCardNameText(text: string): ScalingText {
+		const textObject = new ScalingText(text, new PIXI.TextStyle({
 			fontFamily: Utils.getFont(text),
 			fill: 0x000000,
 			padding: 16,
 			align: 'right'
-		})
+		}))
 		textObject.anchor.set(1, 0.5)
 		return textObject
 	}
@@ -172,21 +173,19 @@ export default class RenderedCard extends Card {
 
 		this.displayMode = displayMode
 
+		let texts: (ScalingText | RichText)[] = []
+
 		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED) {
 			this.switchToCardMode()
+			texts = [this.powerText, this.attackText, this.cardNameText, this.cardTitleText, this.cardDescriptionText]
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {
 			this.switchToUnitMode()
+			texts = [this.powerText, this.attackText]
 		} else if (displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
 			this.switchToHiddenMode()
 		}
 
-		const texts: (PIXI.Text | RichText)[] = [
-			this.powerText,
-			this.attackText,
-			this.cardNameText,
-			this.cardTitleText,
-			this.cardDescriptionText
-		].filter(text => text.text.length > 0)
+		texts = texts.filter(text => text.text.length > 0)
 
 		texts.forEach(text => {
 			text.position.x *= this.sprite.scale.x
@@ -202,8 +201,7 @@ export default class RenderedCard extends Card {
 			}
 
 			text.scale.set(1 / renderScale)
-			text.style.fontSize *= this.sprite.scale.x * renderScale
-			text.style.lineHeight *= this.sprite.scale.x * renderScale
+			text.scaleFont(this.sprite.scale.x * renderScale)
 		})
 
 		this.powerText.position.x -= this.sprite.width / 2
@@ -218,9 +216,9 @@ export default class RenderedCard extends Card {
 	}
 
 	public switchToCardMode(): void {
-		this.unitModeContainer.alpha = 0
-		this.cardModeContainer.alpha = 1
-		this.cardModeTextContainer.alpha = 1
+		this.unitModeContainer.visible = false
+		this.cardModeContainer.visible = true
+		this.cardModeTextContainer.visible = true
 
 		this.powerText.position.set(60, 45)
 		this.powerText.style.fontSize = 71
@@ -246,15 +244,14 @@ export default class RenderedCard extends Card {
 		if (description.length > 150) { fontSize = 18 }
 		if (description.length > 200) { fontSize = 16 }
 		if (description.length > 250) { fontSize = 14 }
-		this.cardDescriptionText.style.fontSize = fontSize
 		this.cardDescriptionText.style.baseFontSize = fontSize
-		this.cardDescriptionText.style.lineHeight = fontSize + 6
+		this.cardDescriptionText.setFont(fontSize, fontSize + 6)
 	}
 
 	public switchToUnitMode(): void {
-		this.unitModeContainer.alpha = 1
-		this.cardModeContainer.alpha = 0
-		this.cardModeTextContainer.alpha = 0
+		this.unitModeContainer.visible = true
+		this.cardModeContainer.visible = false
+		this.cardModeTextContainer.visible = false
 
 		this.powerText.position.set(97, 80)
 		this.powerText.style.fontSize = 135
@@ -264,8 +261,8 @@ export default class RenderedCard extends Card {
 	}
 
 	public switchToHiddenMode(): void {
-		this.cardModeContainer.alpha = 0
-		this.unitModeContainer.alpha = 0
+		this.cardModeContainer.visible = false
+		this.unitModeContainer.visible = false
 	}
 
 	public unregister(): void {

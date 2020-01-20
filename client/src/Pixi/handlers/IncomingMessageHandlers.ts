@@ -88,7 +88,6 @@ const handlers: {[ index: string ]: any } = {
 		const unit = Core.board.findUnitById(data.card.id)
 		if (!unit) { return }
 
-		console.log(`${data.card.id} has moved from ${unit.rowIndex} to ${data.rowIndex}`)
 		Core.board.removeUnit(unit)
 		Core.board.insertUnit(unit, data.rowIndex, data.unitIndex)
 	},

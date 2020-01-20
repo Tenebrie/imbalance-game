@@ -1,7 +1,7 @@
-import GameTurnPhase from '@/shared/enums/GameTurnPhase';
+import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase';
 import Core from '@/Pixi/Core';
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers';
-import AttackOrder from '@/shared/models/AttackOrder';
+import AttackOrder from '@/Pixi/shared/models/AttackOrder';
 export default class ClientGame {
     constructor() {
         this.currentTime = 0;

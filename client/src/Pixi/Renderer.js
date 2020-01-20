@@ -1,10 +1,11 @@
 import Core from '@/Pixi/Core';
 import * as PIXI from 'pixi.js';
-import Constants from '@/shared/Constants';
+import Constants from '@/Pixi/shared/Constants';
 import { TargetingMode } from '@/Pixi/enums/TargetingMode';
-import GameTurnPhase from '@/shared/enums/GameTurnPhase';
-import CardType from '@/shared/enums/CardType';
+import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase';
+import CardType from '@/Pixi/shared/enums/CardType';
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode';
+import { CardLocation } from '@/Pixi/enums/CardLocation';
 const UNIT_ZINDEX = 2;
 const HOVERED_CARD_ZINDEX = 50;
 const GRABBED_CARD_ZINDEX = 150;
@@ -123,7 +124,7 @@ export default class Renderer {
         this.pixi.stage.removeChild(card.hitboxSprite);
     }
     registerGameBoardRow(row) {
-        this.pixi.stage.addChild(row.sprite);
+        this.pixi.stage.addChild(row.container);
     }
     getScreenWidth() {
         return this.pixi.view.width;
@@ -204,9 +205,9 @@ export default class Renderer {
         }
         this.timeLabel.text = `${phaseLabel}\nTime of day is ${Core.game.currentTime} out of ${Core.game.maximumTime}`;
         /* Player name labels */
-        this.playerNameLabel.text = `${Core.player.player.username}\nTime units available: ${Core.player.timeUnits}`;
+        this.playerNameLabel.text = `${Core.player.player.username} (${Core.player.timeUnits})\nMorale: ${Core.player.morale}`;
         if (Core.opponent) {
-            this.opponentNameLabel.text = `${Core.opponent.player.username}\nTime units available: ${Core.opponent.timeUnits}`;
+            this.opponentNameLabel.text = `${Core.opponent.player.username} (${Core.opponent.timeUnits})\nMorale: ${Core.opponent.morale}`;
         }
         /* Action label */
         const labelPosition = Core.input.mousePosition.clone();
@@ -223,15 +224,14 @@ export default class Renderer {
         }
     }
     renderGameBoardRow(gameBoardRow, rowIndex) {
-        const sprite = gameBoardRow.sprite;
+        const container = gameBoardRow.container;
         const rowHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION;
-        sprite.scale.set(rowHeight / sprite.texture.height);
+        container.scale.set(rowHeight / gameBoardRow.getHeight());
         const screenCenterX = this.getScreenWidth() / 2;
         const screenCenterY = this.getScreenHeight() / 2;
         const verticalDistanceToCenter = rowIndex - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5;
         const rowY = screenCenterY + verticalDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION;
-        sprite.alpha = 1;
-        sprite.position.set(screenCenterX, rowY);
+        container.position.set(screenCenterX, rowY);
         for (let i = 0; i < gameBoardRow.cards.length; i++) {
             const cardOnBoard = gameBoardRow.cards[i];
             this.renderCardOnBoard(cardOnBoard, rowY, i, gameBoardRow.cards.length);
@@ -273,7 +273,7 @@ export default class Renderer {
     }
     renderTargetingArrow() {
         const grabbedCard = Core.input.grabbedCard;
-        if (!grabbedCard || grabbedCard.targetingMode !== TargetingMode.CARD_ATTACK) {
+        if (!grabbedCard || grabbedCard.targetingMode !== TargetingMode.CARD_ORDER) {
             this.actionLabel.text = '';
             return;
         }
@@ -303,12 +303,57 @@ export default class Renderer {
         targetingArrow.targetPoint.drawCircle(0, 0, 5);
         targetingArrow.targetPoint.endFill();
         targetingArrow.targetPoint.zIndex = 80;
-        if (Core.input.hoveredCard && Core.input.hoveredCard.owner !== Core.player) {
-            this.actionLabel.text = 'Attack';
-        }
-        else {
+        this.updateTargetingLabel(this.actionLabel);
+    }
+    updateTargetingLabel(label) {
+        const grabbedCard = Core.input.grabbedCard;
+        if (!grabbedCard) {
             this.actionLabel.text = '';
+            return;
         }
+        const sourceUnit = Core.board.findUnitById(grabbedCard.card.id);
+        if (!sourceUnit) {
+            this.actionLabel.text = '';
+            return;
+        }
+        const colorInfo = 0x55FF55;
+        const colorError = 0xFF5555;
+        const hoveredCard = Core.input.hoveredCard;
+        if (hoveredCard && hoveredCard.location === CardLocation.BOARD && grabbedCard.card !== hoveredCard.card) {
+            const targetUnit = Core.board.findUnitById(hoveredCard.card.id);
+            if (sourceUnit.owner === targetUnit.owner) {
+                label.text = 'Can\'t attack allies!';
+                label.style.fill = colorError;
+            }
+            else if (!sourceUnit.isTargetInRange(targetUnit)) {
+                label.text = 'Out of range!';
+                label.style.fill = colorError;
+            }
+            else if (Core.board.queuedAttacks.find(attack => attack.attacker === sourceUnit && attack.target === targetUnit)) {
+                label.text = 'Cancel order';
+                label.style.fill = colorInfo;
+            }
+            else {
+                label.text = 'Attack';
+                label.style.fill = colorInfo;
+            }
+            return;
+        }
+        const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition));
+        if (hoveredRow && sourceUnit.rowIndex !== hoveredRow.index) {
+            const distance = Math.abs(sourceUnit.rowIndex - hoveredRow.index);
+            const maxMoveDistance = 1;
+            if (distance > maxMoveDistance) {
+                label.text = 'Out of range!';
+                label.style.fill = colorError;
+            }
+            else {
+                label.text = 'Move';
+                label.style.fill = colorInfo;
+            }
+            return;
+        }
+        this.actionLabel.text = '';
     }
     renderQueuedAttacks() {
         Core.board.queuedAttacks.forEach(attack => {
@@ -342,7 +387,7 @@ export default class Renderer {
         const container = inspectedCard.coreContainer;
         const sprite = inspectedCard.sprite;
         sprite.tint = 0xFFFFFF;
-        sprite.scale.set(1);
+        sprite.scale.set(this.SSAA_FACTOR);
         container.position.x = this.getScreenWidth() / 2;
         container.position.y = this.getScreenHeight() / 2;
         container.zIndex = INSPECTED_CARD_ZINDEX;

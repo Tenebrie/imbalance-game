@@ -5,9 +5,12 @@ import RenderedCard from '@/Pixi/models/RenderedCard'
 export default class MainHandler {
 	cards: RenderedCard[] = []
 
-	constructor() {
-		PIXI.Ticker.shared.add(MainHandler.tick)
-	}
+	// constructor() {
+	// PIXI.Ticker.shared.add(MainHandler.tick)
+	// setInterval(() => {
+	// 	MainHandler.tick()
+	// }, 4)
+	// }
 
 	private static tick(): void {
 		Core.input.updateCardHoverStatus()

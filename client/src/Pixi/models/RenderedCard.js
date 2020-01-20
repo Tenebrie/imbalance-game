@@ -1,6 +1,6 @@
 import Core from '@/Pixi/Core';
 import * as PIXI from 'pixi.js';
-import Card from '@/shared/models/Card';
+import Card from '@/Pixi/shared/models/Card';
 import TextureAtlas from '@/Pixi/render/TextureAtlas';
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode';
 import Localization from '@/Pixi/Localization';
@@ -8,10 +8,23 @@ import Settings from '@/Pixi/Settings';
 import RichText from '@/Pixi/render/RichText';
 import Utils from '@/utils/Utils';
 import CardAttributes from '@/Pixi/render/CardAttributes';
+import ScalingText from '@/Pixi/render/ScalingText';
 export default class RenderedCard extends Card {
-    constructor(id, cardType, cardClass) {
-        super(id, cardType, cardClass);
+    constructor(message) {
+        super(message.id, message.cardType, message.cardClass);
         this.displayMode = CardDisplayMode.UNDEFINED;
+        this.cardName = message.cardName;
+        this.cardTitle = message.cardTitle;
+        this.cardTribes = message.cardTribes.slice();
+        this.cardDescription = message.cardDescription;
+        this.power = message.power;
+        this.attack = message.attack;
+        this.attackRange = message.attackRange;
+        this.healthArmor = message.healthArmor;
+        this.basePower = message.basePower;
+        this.baseAttack = message.baseAttack;
+        this.baseAttackRange = message.baseAttackRange;
+        this.baseHealthArmor = message.baseHealthArmor;
         this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.cardClass}`));
         this.powerText = this.createPowerText(this.power ? this.power.toString() : '');
         this.attackText = this.createAttackText(this.attack ? this.attack.toString() : '');
@@ -79,37 +92,37 @@ export default class RenderedCard extends Card {
     }
     createHitboxSprite(sprite) {
         const hitboxSprite = new PIXI.Sprite(sprite.texture);
-        hitboxSprite.alpha = 0;
+        hitboxSprite.visible = false;
         hitboxSprite.anchor.set(0.5);
         hitboxSprite.tint = 0xAA5555;
         hitboxSprite.zIndex = -1;
         return hitboxSprite;
     }
     createPowerText(text) {
-        const textObject = new PIXI.Text(text, {
+        const textObject = new ScalingText(text, new PIXI.TextStyle({
             fontFamily: 'BrushScript',
             fill: 0x000000,
             padding: 16
-        });
+        }));
         textObject.anchor.set(0.5);
         return textObject;
     }
     createAttackText(text) {
-        const textObject = new PIXI.Text(text, {
+        const textObject = new ScalingText(text, new PIXI.TextStyle({
             fontFamily: 'BrushScript',
             fill: 0x000000,
             padding: 16
-        });
+        }));
         textObject.anchor.set(1.0, 0.5);
         return textObject;
     }
     createCardNameText(text) {
-        const textObject = new PIXI.Text(text, {
+        const textObject = new ScalingText(text, new PIXI.TextStyle({
             fontFamily: Utils.getFont(text),
             fill: 0x000000,
             padding: 16,
             align: 'right'
-        });
+        }));
         textObject.anchor.set(1, 0.5);
         return textObject;
     }
@@ -161,9 +174,9 @@ export default class RenderedCard extends Card {
         this.cardDescriptionText.position.y += this.sprite.height / 2;
     }
     switchToCardMode() {
-        this.unitModeContainer.alpha = 0;
-        this.cardModeContainer.alpha = 1;
-        this.cardModeTextContainer.alpha = 1;
+        this.unitModeContainer.visible = false;
+        this.cardModeContainer.visible = true;
+        this.cardModeTextContainer.visible = true;
         this.powerText.position.set(60, 45);
         this.powerText.style.fontSize = 71;
         this.attackText.position.copyFrom(this.cardModeAttributes.getAttackTextPosition());
@@ -198,35 +211,24 @@ export default class RenderedCard extends Card {
         this.cardDescriptionText.style.lineHeight = fontSize + 6;
     }
     switchToUnitMode() {
-        this.unitModeContainer.alpha = 1;
-        this.cardModeContainer.alpha = 0;
-        this.cardModeTextContainer.alpha = 0;
+        this.unitModeContainer.visible = true;
+        this.cardModeContainer.visible = false;
+        this.cardModeTextContainer.visible = false;
         this.powerText.position.set(97, 80);
         this.powerText.style.fontSize = 135;
         this.attackText.position.copyFrom(this.unitModeAttributes.getAttackTextPosition());
         this.attackText.style.fontSize = this.unitModeAttributes.getAttackTextFontSize();
     }
     switchToHiddenMode() {
-        this.cardModeContainer.alpha = 0;
-        this.unitModeContainer.alpha = 0;
+        this.cardModeContainer.visible = false;
+        this.unitModeContainer.visible = false;
     }
     unregister() {
         Core.unregisterCard(this);
     }
     static fromMessage(message) {
-        const card = new RenderedCard(message.id, message.cardType, message.cardClass);
-        card.cardName = message.cardName;
-        card.cardTitle = message.cardTitle;
-        card.cardTribes = message.cardTribes.slice();
-        card.cardDescription = message.cardDescription;
-        card.power = message.power;
-        card.attack = message.attack;
-        card.attackRange = message.attackRange;
-        card.healthArmor = message.healthArmor;
-        card.basePower = message.basePower;
-        card.baseAttack = message.baseAttack;
-        card.baseAttackRange = message.baseAttackRange;
-        card.baseHealthArmor = message.baseHealthArmor;
+        const card = new RenderedCard(message);
+        Core.registerCard(card);
         return card;
     }
 }

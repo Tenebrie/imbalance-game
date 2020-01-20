@@ -10,6 +10,7 @@ export default class TextureAtlas {
             TextureAtlas.texturesLoaded = 0;
             TextureAtlas.textures = {};
             const components = [
+                'cards/cardBack',
                 'components/bg-power',
                 'components/bg-power-zoom',
                 'components/bg-name',
@@ -19,7 +20,9 @@ export default class TextureAtlas {
                 'components/bg-stats-right',
                 'components/bg-stats-right-zoom',
                 'components/stat-attack-claw',
-                'cards/cardBack'
+                'board/boardRow_owned',
+                'board/boardRow_neutral',
+                'board/boardRow_opponent'
             ];
             const response = await axios.get('/cards');
             const cardMessages = response.data;
@@ -28,7 +31,6 @@ export default class TextureAtlas {
                 return `cards/${name}`;
             });
             const texturesToLoad = components.concat(cards);
-            console.log(texturesToLoad);
             TextureAtlas.texturesToLoad = texturesToLoad.length;
             texturesToLoad.forEach(fileName => {
                 const texture = PIXI.Texture.from(`assets/${fileName}.png`);

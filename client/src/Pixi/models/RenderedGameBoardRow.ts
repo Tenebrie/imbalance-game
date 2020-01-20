@@ -27,8 +27,8 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 		this.spriteOwned.anchor.set(0.5, 0.5)
 		this.spriteNeutral.anchor.set(0.5, 0.5)
 		this.spriteOpponent.anchor.set(0.5, 0.5)
-		this.spriteOwned.alpha = 0
-		this.spriteOpponent.alpha = 0
+		this.spriteOwned.visible = false
+		this.spriteOpponent.visible = false
 
 		this.container = new PIXI.Container()
 		this.container.addChild(this.spriteOwned)
@@ -78,19 +78,19 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 	public setOwner(owner: ClientPlayerInGame | null): void {
 		this.owner = owner
 
-		this.spriteOwned.alpha = 0
-		this.spriteNeutral.alpha = 0
-		this.spriteOpponent.alpha = 0
+		this.spriteOwned.visible = false
+		this.spriteNeutral.visible = false
+		this.spriteOpponent.visible = false
 		if (this.owner === Core.player) {
-			this.spriteOwned.alpha = 1
+			this.spriteOwned.visible = true
 		} else if (this.owner === Core.opponent) {
-			this.spriteOpponent.alpha = 1
+			this.spriteOpponent.visible = true
 		} else {
-			this.spriteNeutral.alpha = 1
+			this.spriteNeutral.visible = true
 		}
 	}
 
 	public isHovered(mousePosition: PIXI.Point): boolean {
-		return this.spriteNeutral.containsPoint(mousePosition)
+		return (this.owner === Core.player && this.spriteOwned.containsPoint(mousePosition)) || (this.owner === null && this.spriteNeutral.containsPoint(mousePosition)) || (this.owner === Core.opponent && this.spriteOpponent.containsPoint(mousePosition))
 	}
 }

@@ -1,39 +1,48 @@
 import Core from '@/Pixi/Core';
 import * as PIXI from 'pixi.js';
-import GameBoardRow from '@/shared/models/GameBoardRow';
+import GameBoardRow from '@/Pixi/shared/models/GameBoardRow';
+import TextureAtlas from '@/Pixi/render/TextureAtlas';
 export default class RenderedGameBoardRow extends GameBoardRow {
-    constructor() {
-        super();
+    constructor(index) {
+        super(index);
         this.cards = [];
-        const texture = PIXI.Texture.from('assets/board/boardRow.png');
-        const sprite = new PIXI.Sprite(texture);
-        texture.baseTexture.on('loaded', () => {
-            sprite.alpha = 0;
-        });
-        sprite.anchor.set(0.5, 0.5);
-        this.sprite = sprite;
+        this.owner = null;
+        this.spriteOwned = new PIXI.Sprite(TextureAtlas.getTexture('board/boardRow_owned'));
+        this.spriteNeutral = new PIXI.Sprite(TextureAtlas.getTexture('board/boardRow_neutral'));
+        this.spriteOpponent = new PIXI.Sprite(TextureAtlas.getTexture('board/boardRow_opponent'));
+        this.spriteOwned.anchor.set(0.5, 0.5);
+        this.spriteNeutral.anchor.set(0.5, 0.5);
+        this.spriteOpponent.anchor.set(0.5, 0.5);
+        this.spriteOwned.visible = false;
+        this.spriteOpponent.visible = false;
+        this.container = new PIXI.Container();
+        this.container.addChild(this.spriteOwned);
+        this.container.addChild(this.spriteNeutral);
+        this.container.addChild(this.spriteOpponent);
         Core.renderer.registerGameBoardRow(this);
     }
-    insertCard(card, unitIndex) {
+    getHeight() {
+        return this.spriteNeutral.texture.height;
+    }
+    insertUnit(card, unitIndex) {
         this.cards.splice(unitIndex, 0, card);
     }
     includesCard(card) {
-        return !!this.findCardById(card.id);
+        return !!this.findUnitById(card.id);
     }
     getCardIndex(card) {
-        const cardOnBoard = this.findCardById(card.id);
+        const cardOnBoard = this.findUnitById(card.id);
         return this.cards.indexOf(cardOnBoard);
     }
-    findCardById(cardId) {
+    findUnitById(cardId) {
         return this.cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null;
     }
-    removeCardById(cardId) {
-        const cardOnBoard = this.findCardById(cardId);
-        if (!cardOnBoard) {
-            return;
-        }
-        this.cards.splice(this.cards.indexOf(cardOnBoard), 1);
-        cardOnBoard.card.unregister();
+    removeUnit(targetUnit) {
+        this.cards = this.cards.filter(unit => unit !== targetUnit);
+    }
+    destroyUnit(targetUnit) {
+        this.removeUnit(targetUnit);
+        targetUnit.card.unregister();
     }
     clearRow() {
         this.cards.forEach(cardOnBoard => {
@@ -41,8 +50,23 @@ export default class RenderedGameBoardRow extends GameBoardRow {
         });
         this.cards = [];
     }
+    setOwner(owner) {
+        this.owner = owner;
+        this.spriteOwned.visible = false;
+        this.spriteNeutral.visible = false;
+        this.spriteOpponent.visible = false;
+        if (this.owner === Core.player) {
+            this.spriteOwned.visible = true;
+        }
+        else if (this.owner === Core.opponent) {
+            this.spriteOpponent.visible = true;
+        }
+        else {
+            this.spriteNeutral.visible = true;
+        }
+    }
     isHovered(mousePosition) {
-        return this.sprite.containsPoint(mousePosition);
+        return this.spriteNeutral.containsPoint(mousePosition);
     }
 }
 //# sourceMappingURL=RenderedGameBoardRow.js.map

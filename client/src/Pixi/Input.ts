@@ -35,6 +35,7 @@ export default class Input {
 
 		view.addEventListener('mousemove', (event: MouseEvent) => {
 			this.onMouseMove(event)
+			this.updateCardHoverStatus()
 		})
 
 		view.addEventListener('contextmenu', (event: MouseEvent) => {
@@ -191,8 +192,6 @@ export default class Input {
 			const maxMoveDistance = 1
 			if (distance <= maxMoveDistance) {
 				OutgoingMessageHandlers.sendUnitMoveOrders(new MoveOrder(orderedUnit, hoveredRow))
-			} else {
-				console.log(hoveredRow.index)
 			}
 		}
 	}

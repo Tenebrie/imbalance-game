@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import Utils from '@/utils/Utils';
 import Localization from '@/Pixi/Localization';
+import ScalingText from '@/Pixi/render/ScalingText';
 var SegmentType;
 (function (SegmentType) {
     SegmentType["TEXT"] = "TEXT";
@@ -122,7 +123,7 @@ export default class RichText extends PIXI.Container {
                     if (contextPosition.x + measure.width >= this.maxWidth * SCALE_MODIFIER) {
                         newLine();
                     }
-                    const renderedText = new PIXI.Text(segment.data, style);
+                    const renderedText = new ScalingText(segment.data, style);
                     renderedText.position = contextPosition;
                     currentLine.push(renderedText);
                     this.addChild(renderedText);

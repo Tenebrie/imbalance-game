@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import Utils from '@/utils/Utils'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import Localization from '@/Pixi/Localization'
+import ScalingText from '@/Pixi/render/ScalingText'
 
 enum SegmentType {
 	TEXT = 'TEXT',
@@ -35,7 +36,7 @@ export default class RichText extends PIXI.Container {
 	baseFontSize: number
 	lineHeight: number
 	maxWidth: number
-	segments: PIXI.Text[]
+	segments: { text: ScalingText, basePosition: PIXI.Point }[]
 
 	constructor(card: RenderedCard, text: string, maxWidth: number) {
 		super()
@@ -86,7 +87,23 @@ export default class RichText extends PIXI.Container {
 		}
 	}
 
-	renderText() {
+	public scaleFont(factor: number): void {
+		this.setFont(this.fontSize * factor, this.lineHeight * factor)
+	}
+
+	public setFont(fontSize: number, lineHeight: number): void {
+		if (this.fontSize === fontSize && this.lineHeight === lineHeight) { return }
+
+		this.fontSize = fontSize
+		this.lineHeight = lineHeight
+		const SCALE_MODIFIER = (this.fontSize / 18)
+		this.segments.forEach(segment => {
+			segment.text.position.set(segment.basePosition.x * SCALE_MODIFIER, segment.basePosition.y * SCALE_MODIFIER)
+			segment.text.updateFont(fontSize, lineHeight)
+		})
+	}
+
+	public renderText() {
 		while (this.children.length > 0) {
 			this.removeChildAt(0)
 		}
@@ -139,11 +156,11 @@ export default class RichText extends PIXI.Container {
 		let contextHighlight = false
 		let contextColor = 0xCCCCCC
 		let contextColorStack: number[] = []
-		let currentLine: PIXI.Text[] = []
+		let currentLine: { text: ScalingText, basePosition: PIXI.Point }[] = []
 
 		const newLine = () => {
-			currentLine.forEach(segment => {
-				segment.position.x -= contextPosition.x / 2
+			currentLine.forEach(renderedSegment => {
+				renderedSegment.basePosition.x -= contextPosition.x / 2
 			})
 
 			contextPosition.x = 0
@@ -165,9 +182,14 @@ export default class RichText extends PIXI.Container {
 						newLine()
 					}
 
-					const renderedText = new PIXI.Text(segment.data!, style)
+					const renderedText = new ScalingText(segment.data!, style)
 					renderedText.position = contextPosition
-					currentLine.push(renderedText)
+					const renderedSegment = {
+						text: renderedText,
+						basePosition: contextPosition.clone()
+					}
+					currentLine.push(renderedSegment)
+					this.segments.push(renderedSegment)
 					this.addChild(renderedText)
 
 					contextPosition.x += measure.width
@@ -209,8 +231,8 @@ export default class RichText extends PIXI.Container {
 		})
 		newLine()
 
-		this.children.forEach(renderedText => {
-			renderedText.position.y -= contextPosition.y / 2
+		this.segments.forEach(segment => {
+			segment.basePosition.y -= contextPosition.y / 2
 		})
 	}
 
