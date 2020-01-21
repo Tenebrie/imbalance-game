@@ -16,21 +16,25 @@ import Constants from '../shared/Constants'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
+	turnIndex: number
 	currentTime: number
 	turnPhase: GameTurnPhase
 	owner: ServerPlayer
 	board: ServerGameBoard
 	players: ServerPlayerInGame[]
 	chatHistory: ServerChatEntry[]
+	playersToMove: ServerPlayerInGame[]
 
 	constructor(owner: ServerPlayer, name: string) {
 		super(uuidv4(), name)
 		this.isStarted = false
+		this.turnIndex = -1
 		this.currentTime = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.owner = owner
 		this.board = new ServerGameBoard(this)
 		this.players = []
+		this.playersToMove = []
 		this.chatHistory = []
 	}
 
@@ -110,19 +114,25 @@ export default class ServerGame extends Game {
 		this.board.getAllUnits().forEach(unit => unit.card.onTurnPhaseChanged(unit, this.turnPhase))
 
 		this.players.forEach(playerInGame => {
-			playerInGame.markTurnNotEnded()
 			OutgoingMessageHandlers.notifyAboutPhaseAdvance(playerInGame.player, this.turnPhase)
 		})
 	}
 
-	public isDeployPhaseFinished(): boolean {
-		const notFinishedPlayers = this.players.filter(playerInGame => !playerInGame.turnEnded && playerInGame.timeUnits > 0)
-		return notFinishedPlayers.length === 0
+	public isPhaseFinished(): boolean {
+		return this.players.filter(playerInGame => !playerInGame.turnEnded).length === 0
 	}
 
-	public isSkirmishPhaseFinished(): boolean {
-		const notFinishedPlayers = this.players.filter(playerInGame => !playerInGame.turnEnded && this.board.getUnitsOwnedByPlayer(playerInGame).length > 0)
-		return notFinishedPlayers.length === 0
+	public advanceTurn(): void {
+		if (this.playersToMove.length > 0) {
+			this.playersToMove[0].startTurn()
+			this.playersToMove[0].setTimeUnits(1)
+			this.playersToMove.shift()
+			return
+		}
+
+		if (this.isPhaseFinished()) {
+			this.advancePhase()
+		}
 	}
 
 	public advancePhase(): void {
@@ -142,21 +152,32 @@ export default class ServerGame extends Game {
 	}
 
 	public startNewTurnPhase(): void {
+		this.turnIndex += 1
 		this.setTime(this.currentTime + 1)
 		this.setTurnPhase(GameTurnPhase.TURN_START)
+
+		this.playersToMove = this.players.slice()
+		if (this.turnIndex % 2 === 1) {
+			this.playersToMove.reverse()
+		}
+
 		this.advancePhase()
 	}
 
 	public startDeployPhase(): void {
-		this.board.releaseQueuedOrders()
+		this.board.orders.release()
 
-		this.players.forEach(playerInGame => playerInGame.advanceTime())
+		this.advanceTurn()
 
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
 	}
 
 	public startSkirmishPhase(): void {
 		this.setTurnPhase(GameTurnPhase.SKIRMISH)
+
+		this.players.forEach(player => {
+			player.startTurn()
+		})
 	}
 
 	public startCombatPhase(): void {
@@ -174,6 +195,11 @@ export default class ServerGame extends Game {
 
 		this.board.getAllUnits().forEach(cardOnBoard => this.board.destroyUnit(cardOnBoard))
 		this.setTime(-1)
+
+		this.players.forEach(player => {
+			player.drawCards(10)
+		})
+
 		this.advancePhase()
 	}
 

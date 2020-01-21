@@ -38,12 +38,12 @@ export default Vue.extend({
 
 	methods: {
 		async fetchGames(): Promise<void> {
-			const response = await axios.get('/games')
+			const response = await axios.get('/api/games')
 			this.games = response.data.data as GameMessage[]
 		},
 
 		async onCreateGame(): Promise<void> {
-			await axios.post('/games')
+			await axios.post('/api/games')
 			this.fetchGames()
 		},
 

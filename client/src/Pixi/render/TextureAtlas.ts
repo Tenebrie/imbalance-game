@@ -31,12 +31,13 @@ export default class TextureAtlas {
 				'components/stat-attack-claw',
 				'components/stat-attack-range',
 				'components/stat-health-armor',
+				'components/overlay-move',
 				'board/boardRow_owned',
 				'board/boardRow_neutral',
 				'board/boardRow_opponent'
 			]
 
-			const response = await axios.get('/cards')
+			const response = await axios.get('/api/cards')
 			const cardMessages: CardMessage[] = response.data
 			const cards = cardMessages.map(cardMessage => {
 				const name = cardMessage.cardClass.substr(0, 1).toLowerCase() + cardMessage.cardClass.substr(1)

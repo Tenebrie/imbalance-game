@@ -23,10 +23,10 @@ export default {
 		}))
 	},
 
-	notifyAboutInvalidMessageType(ws: ws) {
+	notifyAboutInvalidMessageType(ws: ws, messageType: string) {
 		ws.send(JSON.stringify({
 			type: 'error/generic',
-			data: 'Invalid or missing message type'
+			data: `Invalid or missing message type (${messageType})`
 		}))
 	}
 }

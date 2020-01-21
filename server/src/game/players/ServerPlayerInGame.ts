@@ -33,7 +33,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 
 	public canPlayCard(card: ServerCard, rowIndex: number, unitIndex: number): boolean {
 		const gameBoardRow = this.game.board.rows[rowIndex]
-		if (gameBoardRow.cards.length >= 10 || gameBoardRow.owner !== this) {
+		if (gameBoardRow.cards.length >= Ruleset.MAX_CARDS_PER_ROW || gameBoardRow.owner !== this) {
 			return false
 		}
 
@@ -75,8 +75,9 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	}
 
 	public drawCards(count: number): void {
+		const actualCount = Math.min(count, Ruleset.HAND_SIZE_LIMIT - this.cardHand.cards.length)
 		const cards: ServerCard[] = []
-		for (let i = 0; i < count; i++) {
+		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawCard()
 			if (!card) {
 				// TODO: Fatigue damage?
@@ -105,24 +106,29 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutOpponentMoraleChange(opponent.player, this)
 	}
 
-	public advanceTime(): void {
-		this.setTimeUnits(this.timeUnits + 1)
-	}
+	public setTimeUnits(timeUnits: number): void {
+		if (this.timeUnits === timeUnits) { return }
 
-	private setTimeUnits(timeUnits: number): void {
 		this.timeUnits = timeUnits
 		const opponent = this.game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerTimeBankChange(this.player, this)
 		OutgoingMessageHandlers.notifyAboutOpponentTimeBankChange(opponent.player, this)
+		if (timeUnits === 0) {
+			this.endTurn()
+		}
 	}
 
-	public markTurnNotEnded(): void {
+	public startTurn(): void {
 		this.turnEnded = false
+		OutgoingMessageHandlers.notifyAboutTurnStarted(this.player)
+		const opponent = this.game.getOpponent(this)
+		if (opponent) {
+			OutgoingMessageHandlers.notifyAboutOpponentTurnStarted(opponent.player)
+		}
 	}
 
 	public endTurn(): void {
 		this.turnEnded = true
-		this.setTimeUnits(0)
 
 		OutgoingMessageHandlers.notifyAboutTurnEnded(this.player)
 		const opponent = this.game.getOpponent(this)

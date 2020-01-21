@@ -101,10 +101,8 @@ export default class RenderedCard extends Card {
 		this.coreContainer = new PIXI.Container()
 		this.coreContainer.addChild(this.sprite)
 		this.coreContainer.addChild(this.powerText)
-		this.coreContainer.addChild(this.attackText)
-		this.coreContainer.addChild(this.attackRangeText)
-		this.coreContainer.addChild(this.healthArmorText)
 		this.coreContainer.position.set(-1000, -1000)
+		this.coreContainer.addChild(this.attackText)
 
 		/* Card mode text container */
 		this.cardModeTextContainer = new PIXI.Container()
@@ -112,6 +110,8 @@ export default class RenderedCard extends Card {
 		this.cardModeTextContainer.addChild(this.cardTitleText)
 		this.cardTribeTexts.forEach(cardTribeText => { this.cardModeTextContainer.addChild(cardTribeText) })
 		this.cardModeTextContainer.addChild(this.cardDescriptionText)
+		this.cardModeTextContainer.addChild(this.attackRangeText)
+		this.cardModeTextContainer.addChild(this.healthArmorText)
 		this.coreContainer.addChild(this.cardModeTextContainer)
 	}
 
@@ -319,6 +319,7 @@ export default class RenderedCard extends Card {
 	public switchToHiddenMode(): void {
 		this.cardModeContainer.visible = false
 		this.unitModeContainer.visible = false
+		this.cardModeTextContainer.visible = false
 	}
 
 	public unregister(): void {

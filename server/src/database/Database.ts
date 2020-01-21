@@ -9,7 +9,7 @@ export default class Database {
 		let databaseUrl = process.env.DATABASE_URL
 		if (!databaseUrl) {
 			console.info('[DB] Looking for database URL')
-			const { stdout } = await Bash.exec('heroku pg:credentials:url HEROKU_POSTGRESQL_BRONZE --app lootcaster')
+			const { stdout } = await Bash.exec('heroku pg:credentials:url HEROKU_POSTGRESQL_BRONZE --app notgwent')
 			databaseUrl = stdout.split('\n').find(line => line.includes('postgres://')).trim()
 		}
 

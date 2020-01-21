@@ -1,23 +1,21 @@
 import * as PIXI from 'pixi.js'
 import Core from '@/Pixi/Core'
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
-export default class TargetingArrow {
-	arrowLine: PIXI.Graphics
-	startingPoint: PIXI.Graphics
-	targetPoint: PIXI.Graphics
+export default class TargetingLine {
+	arrowSprite: PIXI.Sprite
 
 	constructor() {
-		this.arrowLine = new PIXI.Graphics()
-		this.startingPoint = new PIXI.Graphics()
-		this.targetPoint = new PIXI.Graphics()
-		Core.renderer.pixi.stage.addChild(this.arrowLine)
-		Core.renderer.pixi.stage.addChild(this.startingPoint)
-		Core.renderer.pixi.stage.addChild(this.targetPoint)
+		this.arrowSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/overlay-move'))
+		this.arrowSprite.anchor.set(0.5, 0.5)
+		this.arrowSprite.position.set(-1000, -1000)
+	}
+
+	public create() {
+		Core.renderer.pixi.stage.addChild(this.arrowSprite)
 	}
 
 	public destroy() {
-		Core.renderer.pixi.stage.removeChild(this.arrowLine)
-		Core.renderer.pixi.stage.removeChild(this.startingPoint)
-		Core.renderer.pixi.stage.removeChild(this.targetPoint)
+		Core.renderer.pixi.stage.removeChild(this.arrowSprite)
 	}
 }

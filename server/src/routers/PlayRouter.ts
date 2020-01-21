@@ -32,7 +32,7 @@ router.ws('/:gameId', async (ws, req) => {
 		const msg = JSON.parse(rawMsg)
 		const handler = IncomingMessageHandlers[msg.type]
 		if (!handler) {
-			OutgoingMessageHandlers.notifyAboutInvalidMessageType(ws)
+			OutgoingMessageHandlers.notifyAboutInvalidMessageType(ws, msg.type)
 			return
 		}
 

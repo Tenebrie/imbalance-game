@@ -110,7 +110,7 @@ export default class RichText extends PIXI.Container {
 
 		const SCALE_MODIFIER = this.fontSize / this.baseFontSize
 
-		const replacedText = (this.text || '').replace('{name}', `${Localization.getString(this.card.cardName)}`)
+		const replacedText = (this.text || '').replace(/{name}/g, `${Localization.getString(this.card.cardName)}`)
 		const chars = Array.from(replacedText)
 
 		const segments: Segment[] = []

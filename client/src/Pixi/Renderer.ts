@@ -11,8 +11,13 @@ import RenderedButton from '@/Pixi/models/RenderedButton'
 import CardType from '@/Pixi/shared/enums/CardType'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
+import UnitOrderType from '@/Pixi/shared/enums/UnitOrderType'
+import Settings from '@/Pixi/Settings'
+import Utils from '@/utils/Utils'
 
 const UNIT_ZINDEX = 2
+const UNIT_ORDER_ZINDEX = 3
+const TARGETING_ARROW_ZINDEX = 10
 const HOVERED_CARD_ZINDEX = 50
 const GRABBED_CARD_ZINDEX = 150
 const INSPECTED_CARD_ZINDEX = 200
@@ -26,7 +31,6 @@ export default class Renderer {
 	playerNameLabel: PIXI.Text
 	opponentNameLabel: PIXI.Text
 
-	SSAA_FACTOR = 1
 	CARD_ASPECT_RATIO = 408 / 584
 	GAME_BOARD_WINDOW_FRACTION = 0.6
 	PLAYER_HAND_WINDOW_FRACTION = 0.20
@@ -37,8 +41,8 @@ export default class Renderer {
 
 	constructor(container: Element) {
 		this.pixi = new PIXI.Application({
-			width: window.innerWidth * window.devicePixelRatio * this.SSAA_FACTOR,
-			height: window.innerHeight * window.devicePixelRatio * this.SSAA_FACTOR,
+			width: window.innerWidth * window.devicePixelRatio * Settings.superSamplingLevel,
+			height: window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel,
 			antialias: false,
 			autoDensity: true,
 			resolution: 1
@@ -53,7 +57,7 @@ export default class Renderer {
 		/* Time label */
 		this.timeLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24 * this.SSAA_FACTOR,
+			fontSize: 24 * Settings.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 		this.timeLabel.anchor.set(0, 0.5)
@@ -63,7 +67,7 @@ export default class Renderer {
 		/* Action label */
 		this.actionLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24 * this.SSAA_FACTOR,
+			fontSize: 24 * Settings.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 		this.actionLabel.anchor.set(0.5, 1)
@@ -73,7 +77,7 @@ export default class Renderer {
 		/* Player name label */
 		this.playerNameLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24 * this.SSAA_FACTOR,
+			fontSize: 24 * Settings.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 		this.playerNameLabel.anchor.set(0, 1)
@@ -83,7 +87,7 @@ export default class Renderer {
 		/* Opponent player name */
 		this.opponentNameLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24 * this.SSAA_FACTOR,
+			fontSize: 24 * Settings.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 		this.opponentNameLabel.position.set(10, 10)
@@ -132,7 +136,7 @@ export default class Renderer {
 		this.renderTextLabels()
 		this.renderGameBoard(Core.board)
 		this.renderTargetingArrow()
-		this.renderQueuedAttacks()
+		this.renderQueuedOrders()
 		this.renderInspectedCard()
 	}
 
@@ -337,7 +341,7 @@ export default class Renderer {
 			return
 		}
 
-		const targetingArrow = grabbedCard.targetingArrow
+		const targetingArrow = grabbedCard.targetingLine
 		const startingPosition = grabbedCard.card.hitboxSprite.position
 		const targetPosition = Core.input.mousePosition
 
@@ -346,7 +350,7 @@ export default class Renderer {
 		targetingArrow.startingPoint.beginFill(0xFFFF00, 1.0)
 		targetingArrow.startingPoint.drawCircle(0, 0, 5)
 		targetingArrow.startingPoint.endFill()
-		targetingArrow.startingPoint.zIndex = 80
+		targetingArrow.startingPoint.zIndex = TARGETING_ARROW_ZINDEX
 
 		targetingArrow.arrowLine.position.copyFrom(startingPosition)
 		targetingArrow.arrowLine.clear()
@@ -358,14 +362,14 @@ export default class Renderer {
 		}
 		targetingArrow.arrowLine.lineStyle(2, 0xFFFF00, 0.8)
 		targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
-		targetingArrow.arrowLine.zIndex = 80
+		targetingArrow.arrowLine.zIndex = TARGETING_ARROW_ZINDEX
 
 		targetingArrow.targetPoint.position.copyFrom(targetPosition)
 		targetingArrow.targetPoint.clear()
 		targetingArrow.targetPoint.beginFill(0xFFFF00, 1.0)
 		targetingArrow.targetPoint.drawCircle(0, 0, 5)
 		targetingArrow.targetPoint.endFill()
-		targetingArrow.targetPoint.zIndex = 80
+		targetingArrow.targetPoint.zIndex = TARGETING_ARROW_ZINDEX
 
 		this.updateTargetingLabel(this.actionLabel)
 	}
@@ -389,13 +393,12 @@ export default class Renderer {
 		if (hoveredCard && hoveredCard.location === CardLocation.BOARD && grabbedCard.card !== hoveredCard.card) {
 			const targetUnit = Core.board.findUnitById(hoveredCard.card.id)!
 			if (sourceUnit.owner === targetUnit.owner) {
-				label.text = 'Can\'t attack allies!'
-				label.style.fill = colorError
+				label.text = ''
 			} else if (!sourceUnit.isTargetInRange(targetUnit)) {
-				label.text = 'Out of range!'
+				label.text = 'Target is too far!'
 				label.style.fill = colorError
-			} else if (Core.board.queuedAttacks.find(attack => attack.attacker === sourceUnit && attack.target === targetUnit)) {
-				label.text = 'Cancel order'
+			} else if (Core.board.queuedOrders.find(order => order.orderedUnit === sourceUnit && order.targetUnit === targetUnit)) {
+				label.text = 'Cancel attack'
 				label.style.fill = colorInfo
 			} else {
 				label.text = 'Attack'
@@ -409,8 +412,11 @@ export default class Renderer {
 			const distance = Math.abs(sourceUnit.rowIndex - hoveredRow.index)
 			const maxMoveDistance = 1
 			if (distance > maxMoveDistance) {
-				label.text = 'Out of range!'
+				label.text = 'Row is too far'
 				label.style.fill = colorError
+			} else if (Core.board.queuedOrders.find(order => order.orderedUnit === sourceUnit && order.targetRow === hoveredRow)) {
+				label.text = 'Cancel move'
+				label.style.fill = colorInfo
 			} else {
 				label.text = 'Move'
 				label.style.fill = colorInfo
@@ -421,31 +427,64 @@ export default class Renderer {
 		this.actionLabel.text = ''
 	}
 
-	public renderQueuedAttacks(): void {
-		Core.board.queuedAttacks.forEach(attack => {
-			const targetingArrow = attack.targetingArrow
-			const startingPosition = attack.attacker.card.getPosition()
-			const targetPosition = attack.target.card.getPosition()
+	public renderQueuedOrders(): void {
+		const queuedAttacks = Core.board.queuedOrders.filter(order => order.type === UnitOrderType.ATTACK)
+		const queuedMoves = Core.board.queuedOrders.filter(order => order.type === UnitOrderType.MOVE)
 
-			targetingArrow.startingPoint.position.copyFrom(startingPosition)
-			targetingArrow.startingPoint.clear()
-			targetingArrow.startingPoint.beginFill(0x999999, 1.0)
-			targetingArrow.startingPoint.drawCircle(0, 0, 5)
-			targetingArrow.startingPoint.endFill()
-			targetingArrow.startingPoint.zIndex = 75
+		queuedAttacks.forEach(attackOrder => {
+			const targetingLine = attackOrder.targetingLine
+			const startingPosition = attackOrder.orderedUnit.card.getPosition()
+			const targetPosition = attackOrder.targetUnit!.card.getPosition()
 
-			targetingArrow.arrowLine.position.copyFrom(startingPosition)
-			targetingArrow.arrowLine.clear()
-			targetingArrow.arrowLine.lineStyle(2, 0x999999, 1.0)
-			targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
-			targetingArrow.arrowLine.zIndex = 75
+			let fillColor = 0xBBBBBB
+			const hoveredCard = Core.input.hoveredCard
+			if (hoveredCard && hoveredCard.card === attackOrder.orderedUnit.card) {
+				fillColor = 0xFFFFFF
+			} else if (hoveredCard && hoveredCard.card === attackOrder.targetUnit!.card) {
+				fillColor = 0xFF3333
+			}
 
-			targetingArrow.targetPoint.position.copyFrom(targetPosition)
-			targetingArrow.targetPoint.clear()
-			targetingArrow.targetPoint.beginFill(0x999999, 1.0)
-			targetingArrow.targetPoint.drawCircle(0, 0, 5)
-			targetingArrow.targetPoint.endFill()
-			targetingArrow.targetPoint.zIndex = 75
+			targetingLine.startingPoint.position.copyFrom(startingPosition)
+			targetingLine.startingPoint.clear()
+			targetingLine.startingPoint.beginFill(0x999999, 1.0)
+			targetingLine.startingPoint.drawCircle(0, 0, 5 * Settings.superSamplingLevel)
+			targetingLine.startingPoint.endFill()
+			targetingLine.startingPoint.zIndex = UNIT_ORDER_ZINDEX
+
+			targetingLine.arrowLine.position.copyFrom(startingPosition)
+			targetingLine.arrowLine.clear()
+			targetingLine.arrowLine.lineStyle(2 * Settings.superSamplingLevel, fillColor, 1.0)
+			targetingLine.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
+			targetingLine.arrowLine.zIndex = UNIT_ORDER_ZINDEX
+
+			targetingLine.targetPoint.position.copyFrom(targetPosition)
+			targetingLine.targetPoint.clear()
+			targetingLine.targetPoint.beginFill(fillColor, 1.0)
+			targetingLine.targetPoint.drawCircle(0, 0, 5 * Settings.superSamplingLevel)
+			targetingLine.targetPoint.endFill()
+			targetingLine.targetPoint.zIndex = UNIT_ORDER_ZINDEX
+		})
+
+		queuedMoves.forEach(moveOrder => {
+			const cardPosition = moveOrder.orderedUnit.card.getPosition()
+			const targetRowPosition = moveOrder.targetRow!.container.position
+
+			let tintColor = 0xFFFFFF
+			const hoveredCard = Core.input.hoveredCard
+			if (hoveredCard && hoveredCard.card === moveOrder.orderedUnit.card) {
+				tintColor = 0xCCCCCC
+			}
+
+			moveOrder.targetingArrow.arrowSprite.position.copyFrom(cardPosition)
+			moveOrder.targetingArrow.arrowSprite.zIndex = UNIT_ORDER_ZINDEX
+			moveOrder.targetingArrow.arrowSprite.height = moveOrder.orderedUnit.card.sprite.height
+			moveOrder.targetingArrow.arrowSprite.width = moveOrder.orderedUnit.card.sprite.height * this.CARD_ASPECT_RATIO
+
+			moveOrder.targetingArrow.arrowSprite.tint = tintColor
+			moveOrder.targetingArrow.arrowSprite.rotation = Math.PI
+			if (targetRowPosition.y < cardPosition.y) {
+				moveOrder.targetingArrow.arrowSprite.rotation = 0
+			}
 		})
 	}
 
@@ -458,7 +497,7 @@ export default class Renderer {
 		const container = inspectedCard.coreContainer
 		const sprite = inspectedCard.sprite
 		sprite.tint = 0xFFFFFF
-		sprite.scale.set(this.SSAA_FACTOR)
+		sprite.scale.set(Settings.superSamplingLevel)
 		container.position.x = this.getScreenWidth() / 2
 		container.position.y = this.getScreenHeight() / 2
 		container.zIndex = INSPECTED_CARD_ZINDEX

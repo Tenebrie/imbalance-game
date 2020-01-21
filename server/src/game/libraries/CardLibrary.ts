@@ -9,6 +9,10 @@ import UnitMadBerserker from '../cards/units/UnitMadBerserker'
 import UnitForestScout from '../cards/units/UnitForestScout'
 import UnitTwinBowArcher from '../cards/units/UnitTwinBowArcher'
 import UnitUnfeelingWarrior from '../cards/units/UnitUnfeelingWarrior'
+import UnitChargingKnight from '../cards/units/UnitChargingKnight'
+import UnitSpinningBarbarian from '../cards/units/UnitSpinningBarbarian'
+import SpellRainOfFire from '../cards/spells/SpellRainOfFire'
+import SpellMagicalStarfall from '../cards/spells/SpellMagicalStarfall'
 
 export default class GameLibrary {
 	static cards: any[]
@@ -22,7 +26,11 @@ export default class GameLibrary {
 			UnitMadBerserker,
 			UnitForestScout,
 			UnitTwinBowArcher,
-			UnitUnfeelingWarrior
+			UnitUnfeelingWarrior,
+			UnitChargingKnight,
+			UnitSpinningBarbarian,
+			SpellRainOfFire,
+			SpellMagicalStarfall
 		]
 
 		GameLibrary.cards = cards.map(prototype => {

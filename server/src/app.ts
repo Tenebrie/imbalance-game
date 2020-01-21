@@ -38,6 +38,7 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, '../public')))
+app.use(express.static(path.join(__dirname, '../client')))
 
 /* CORS */
 app.use((req: Request, res: Response, next) => {
@@ -60,16 +61,16 @@ app.use((req: Request, res: Response, next) => {
 })
 
 /* HTTP routers */
-app.use('/', IndexRouter)
-app.use('/cards', CardsRouter)
-app.use('/games', GamesRouter)
-app.use('/login', LoginRouter)
-app.use('/logout', LogoutRouter)
-app.use('/profile', ProfileRouter)
-app.use('/register', RegisterRouter)
+app.use('/status', IndexRouter)
+app.use('/api/cards', CardsRouter)
+app.use('/api/games', GamesRouter)
+app.use('/api/login', LoginRouter)
+app.use('/api/logout', LogoutRouter)
+app.use('/api/profile', ProfileRouter)
+app.use('/api/register', RegisterRouter)
 
 /* WS routers */
-app.use('/game', PlayRouter)
+app.use('/api/game', PlayRouter)
 
 /* Global error handler */
 app.use((err, req, res, next) => {

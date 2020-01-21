@@ -3,8 +3,10 @@ import PlayerInGame from '@/Pixi/shared/models/PlayerInGame'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
+import Core from '@/Pixi/Core'
 
 export default class ClientPlayerInGame extends PlayerInGame {
+	isTurnActive = false
 	cardHand: RenderedCardHand
 	cardDeck: ClientCardDeck
 
@@ -12,6 +14,20 @@ export default class ClientPlayerInGame extends PlayerInGame {
 		super(player)
 		this.cardHand = new RenderedCardHand([])
 		this.cardDeck = new ClientCardDeck([])
+	}
+
+	public startTurn(): void {
+		this.isTurnActive = true
+		if (this === Core.player) {
+			Core.userInterface.endTurnButton.backgroundColor = 0x7777FF
+		}
+	}
+
+	public endTurn(): void {
+		this.isTurnActive = false
+		if (this === Core.player) {
+			Core.userInterface.endTurnButton.backgroundColor = 0xBBBBBB
+		}
 	}
 
 	public static fromPlayer(player: Player): ClientPlayerInGame {

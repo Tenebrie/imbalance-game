@@ -4,6 +4,7 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerGameBoardRow from './ServerGameBoardRow'
+import Ruleset from '../Ruleset'
 
 export default class ServerCardOnBoard {
 	game: ServerGame
@@ -79,7 +80,7 @@ export default class ServerCardOnBoard {
 		const distance = Math.abs(this.rowIndex - target.index)
 		const opponentsUnits = target.cards.filter(unit => unit.owner === this.game.getOpponent(this.owner))
 
-		return opponentsUnits.length === 0 && distance <= range
+		return opponentsUnits.length < Ruleset.MAX_CARDS_PER_ROW && distance <= range
 	}
 
 	destroy(): void {

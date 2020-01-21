@@ -9,6 +9,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '../shared/enums/GameTurnPhase'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerGameBoardRow from './ServerGameBoardRow'
+import UnitOrderType from '../shared/enums/UnitOrderType'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -67,4 +68,8 @@ export default class ServerCard extends Card {
 	onAfterOtherUnitDestroyed(thisUnit: ServerCardOnBoard, destroyedUnit: ServerCardOnBoard): void { return }
 	onReveal(owner: ServerPlayerInGame): void { return }
 	onDestroyUnit(thisUnit: ServerCardOnBoard): void { return }
+
+	canPerformOrdersSimultaneously(thisUnit: ServerCardOnBoard, firstOrder: UnitOrderType, secondOrder: UnitOrderType): boolean { return false }
+	getMaxOrdersOfType(thisUnit: ServerCardOnBoard, type: UnitOrderType): number { return 1 }
+	getMaxOrdersTotal(thisUnit: ServerCardOnBoard, type: UnitOrderType): number { return 1 }
 }

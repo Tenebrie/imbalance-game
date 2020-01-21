@@ -10,6 +10,10 @@ import UnitMadBerserker from '../cards/units/UnitMadBerserker'
 import UnitForestScout from '../cards/units/UnitForestScout'
 import UnitUnfeelingWarrior from '../cards/units/UnitUnfeelingWarrior'
 import UnitTwinBowArcher from '../cards/units/UnitTwinBowArcher'
+import UnitChargingKnight from '../cards/units/UnitChargingKnight'
+import UnitSpinningBarbarian from '../cards/units/UnitSpinningBarbarian'
+import SpellMagicalStarfall from '../cards/spells/SpellMagicalStarfall'
+import SpellRainOfFire from '../cards/spells/SpellRainOfFire'
 
 export default class ServerCardDeck extends CardDeck {
 	game: ServerGame
@@ -65,7 +69,19 @@ export default class ServerCardDeck extends CardDeck {
 			deck.addCard(CardLibrary.createCard(new UnitUnfeelingWarrior(game)))
 		}
 		for (let i = 0; i < 3; i++) {
+			deck.addCard(CardLibrary.createCard(new UnitChargingKnight(game)))
+		}
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(CardLibrary.createCard(new UnitSpinningBarbarian(game)))
+		}
+		for (let i = 0; i < 3; i++) {
 			deck.addCard(CardLibrary.createCard(new UnitTwinBowArcher(game)))
+		}
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(CardLibrary.createCard(new SpellMagicalStarfall(game)))
+		}
+		for (let i = 0; i < 3; i++) {
+			deck.addCard(CardLibrary.createCard(new SpellRainOfFire(game)))
 		}
 
 		deck.shuffle()

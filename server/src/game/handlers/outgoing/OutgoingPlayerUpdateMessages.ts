@@ -32,6 +32,20 @@ export default {
 		})
 	},
 
+	notifyAboutTurnStarted: (player: ServerPlayer) => {
+		player.sendMessage({
+			type: 'update/player/self/turnStarted',
+			data: null
+		})
+	},
+
+	notifyAboutOpponentTurnStarted: (player: ServerPlayer) => {
+		player.sendMessage({
+			type: 'update/player/opponent/turnStarted',
+			data: null
+		})
+	},
+
 	notifyAboutTurnEnded: (player: ServerPlayer) => {
 		player.sendMessage({
 			type: 'update/player/self/turnEnded',

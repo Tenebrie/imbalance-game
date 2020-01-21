@@ -1,6 +1,6 @@
 enum UnitOrderType {
-	ATTACK,
-	MOVE
+	ATTACK = 'attack',
+	MOVE = 'move'
 }
 
 export default UnitOrderType

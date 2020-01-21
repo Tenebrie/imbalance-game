@@ -13,7 +13,7 @@ import ChatEntryMessage from '@/Pixi/shared/models/network/ChatEntryMessage'
 import HiddenCardMessage from '@/Pixi/shared/models/network/HiddenCardMessage'
 import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
-import RenderedAttackOrder from '@/Pixi/models/RenderedAttackOrder'
+import RenderedUnitOrder from '@/Pixi/models/RenderedUnitOrder'
 import AttackOrderMessage from '@/Pixi/shared/models/network/AttackOrderMessage'
 import UnitOrderMessage from '@/Pixi/shared/models/network/UnitOrderMessage'
 import PlayerMessage from '@/Pixi/shared/models/network/PlayerMessage'
@@ -62,13 +62,12 @@ const handlers: {[ index: string ]: any } = {
 		})
 	},
 
-	// TODO: Fix orders
-	// 'gameState/board/orders': (data: UnitOrderMessage[]) => {
-	// 	const newAttackMessages = data.filter(message => !Core.board.queuedAttacks.find(attack => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId))
-	// 	const removedAttacks = Core.board.queuedAttacks.filter(attack => !data.find(message => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId))
-	// 	const newAttacks = newAttackMessages.map(message => RenderedAttackOrder.fromMessage(message))
-	// 	Core.board.updateUnitOrders(newAttacks, removedAttacks)
-	// },
+	'gameState/board/orders': (data: UnitOrderMessage[]) => {
+		const newOrderMessages = data.filter(message => !Core.board.queuedOrders.find(order => order.isEqualToMessage(message)))
+		const removedOrders = Core.board.queuedOrders.filter(order => !data.find(message => order.isEqualToMessage(message)))
+		const newOrders = newOrderMessages.map(message => RenderedUnitOrder.fromMessage(message))
+		Core.board.updateUnitOrders(newOrders, removedOrders)
+	},
 
 	'update/game/phase': (data: GameTurnPhase) => {
 		Core.game.setTurnPhase(data)
@@ -115,6 +114,22 @@ const handlers: {[ index: string ]: any } = {
 		if (!cardOnBoard) { return }
 
 		cardOnBoard.setAttack(data.attack)
+	},
+
+	'update/player/self/turnStarted': (data: void) => {
+		Core.player.startTurn()
+	},
+
+	'update/player/opponent/turnStarted': (data: void) => {
+		Core.opponent.startTurn()
+	},
+
+	'update/player/self/turnEnded': (data: void) => {
+		Core.player.endTurn()
+	},
+
+	'update/player/opponent/turnEnded': (data: void) => {
+		Core.opponent.endTurn()
 	},
 
 	'update/player/self/morale': (data: PlayerInGameMessage) => {
@@ -165,6 +180,10 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/player/opponent/hand/cardDestroyed': (data: CardMessage) => {
 		Core.opponent.cardHand.removeCardById(data.id)
+	},
+
+	'error/generic': (data: string) => {
+		console.error('Generic server error:', data)
 	}
 }
 

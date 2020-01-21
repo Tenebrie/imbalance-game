@@ -36,7 +36,7 @@ export default Vue.extend({
 
 	methods: {
 		async getProfile(): Promise<void> {
-			const response = await axios.get('/profile')
+			const response = await axios.get('/api/profile')
 			const player = response.data.data as Player
 			store.commit.setPlayerData({ player })
 
@@ -49,7 +49,7 @@ export default Vue.extend({
 			const password = this.password
 			const messageElement = this.$refs.message as Element
 			try {
-				await axios.post('/login', { username, password })
+				await axios.post('/api/login', { username, password })
 				await this.getProfile()
 				messageElement.innerHTML = 'Login success'
 			} catch (error) {
@@ -65,7 +65,7 @@ export default Vue.extend({
 			const password = this.password
 			const messageElement = this.$refs.message as Element
 			try {
-				await axios.post('/register', { username, password })
+				await axios.post('/api/register', { username, password })
 				messageElement.innerHTML = 'Registration success. You can login now'
 			} catch (error) {
 				messageElement.innerHTML = 'Registration failure. This user probably exists'

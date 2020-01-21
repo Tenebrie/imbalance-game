@@ -4,13 +4,14 @@ import CardType from '@/Pixi/shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
-import { CardLocation } from '@/Pixi/enums/CardLocation'
-import { TargetingMode } from '@/Pixi/enums/TargetingMode'
+import {CardLocation} from '@/Pixi/enums/CardLocation'
+import {TargetingMode} from '@/Pixi/enums/TargetingMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
-import AttackOrder from '@/Pixi/shared/models/AttackOrder'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import MoveOrder from './shared/models/MoveOrder'
+import ClientUnitOrder from '@/Pixi/models/ClientUnitOrder'
+import Settings from '@/Pixi/Settings'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
@@ -148,7 +149,7 @@ export default class Input {
 
 	public releaseCard(): void {
 		const grabbedCard = this.grabbedCard!
-		grabbedCard.targetingArrow.destroy()
+		grabbedCard.targetingLine.destroy()
 		this.grabbedCard = null
 		this.updateCardHoverStatus()
 	}
@@ -181,8 +182,9 @@ export default class Input {
 	private onCardOrder(orderedCard: RenderedCard): void {
 		const hoveredCard = this.hoveredCard
 		const orderedUnit = Core.board.findUnitById(orderedCard.id)!
-		if (hoveredCard && hoveredCard.owner !== Core.player) {
-			OutgoingMessageHandlers.sendUnitAttackOrders(new AttackOrder(orderedUnit, hoveredCard))
+		if (hoveredCard && hoveredCard.location === CardLocation.BOARD && hoveredCard.owner !== Core.player) {
+			const hoveredUnit = Core.board.findUnitById(hoveredCard.card.id)!
+			OutgoingMessageHandlers.sendUnitOrder(ClientUnitOrder.attack(orderedUnit, hoveredUnit))
 			return
 		}
 
@@ -191,7 +193,7 @@ export default class Input {
 			const distance = Math.abs(orderedUnit.rowIndex - hoveredRow.index)
 			const maxMoveDistance = 1
 			if (distance <= maxMoveDistance) {
-				OutgoingMessageHandlers.sendUnitMoveOrders(new MoveOrder(orderedUnit, hoveredRow))
+				OutgoingMessageHandlers.sendUnitOrder(ClientUnitOrder.move(orderedUnit, hoveredRow))
 			}
 		}
 	}
@@ -200,8 +202,8 @@ export default class Input {
 		const view = Core.renderer.pixi.view
 		const clientRect = view.getBoundingClientRect()
 		this.mousePosition = new PIXI.Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
-		this.mousePosition.x *= window.devicePixelRatio * Core.renderer.SSAA_FACTOR
-		this.mousePosition.y *= window.devicePixelRatio * Core.renderer.SSAA_FACTOR
+		this.mousePosition.x *= window.devicePixelRatio * Settings.superSamplingLevel
+		this.mousePosition.y *= window.devicePixelRatio * Settings.superSamplingLevel
 
 		const windowHeight = Core.renderer.pixi.view.height
 		if (this.grabbedCard && this.grabbedCard.targetingMode === TargetingMode.CARD_PLAY && Core.player.timeUnits === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {

@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import Core from '@/Pixi/Core';
-export default class TargetingArrow {
+export default class TargetingLine {
     constructor() {
         this.arrowLine = new PIXI.Graphics();
         this.startingPoint = new PIXI.Graphics();

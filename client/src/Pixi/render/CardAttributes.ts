@@ -130,13 +130,11 @@ export default class CardAttributes extends PIXI.Container {
 
 	public getAttackRangeTextPosition(): PIXI.Point {
 		const iconPosition = this.statAttackRange!.position
-		let point = new PIXI.Point(iconPosition.x - 39, iconPosition.y - 33)
-		return point
+		return new PIXI.Point(iconPosition.x - 39, iconPosition.y - 33)
 	}
 
 	public getHealthArmorTextPosition(): PIXI.Point {
 		const iconPosition = this.statHealthArmor!.position
-		let point = new PIXI.Point(iconPosition.x - 37, iconPosition.y - 33)
-		return point
+		return new PIXI.Point(iconPosition.x - 37, iconPosition.y - 33)
 	}
 }

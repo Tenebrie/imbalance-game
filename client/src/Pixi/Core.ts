@@ -12,7 +12,6 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import RenderedButton from '@/Pixi/models/RenderedButton'
 import UserInterface from '@/Pixi/UserInterface'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import en from '@/Pixi/locales/en.json'
 
 export default class Core {
 	public static input: Input
@@ -22,14 +21,13 @@ export default class Core {
 	public static userInterface: UserInterface
 	public static keepaliveTimer: number
 
-	public static isReady = false
 	public static game: ClientGame
 	public static board: RenderedGameBoard
 	public static player: ClientPlayerInGame
 	public static opponent: ClientPlayerInGame
 
 	public static init(gameId: string, container: Element): void {
-		const socket = new WebSocket(`ws://${window.location.host}/game/${gameId}`)
+		const socket = new WebSocket(`ws://${window.location.host}/api/game/${gameId}`)
 		socket.onopen = () => this.onConnect(container)
 		socket.onmessage = (event) => this.onMessage(event)
 		socket.onclose = (event) => this.onDisconnect(event)
@@ -53,11 +51,6 @@ export default class Core {
 		Core.board = new RenderedGameBoard()
 		Core.mainHandler = MainHandler.start()
 		Core.userInterface = new UserInterface()
-
-		const endTurnButton = new RenderedButton(new PIXI.Point(this.renderer.pixi.view.width - 100, this.renderer.pixi.view.height / 2), () => {
-			OutgoingMessageHandlers.sendEndTurn()
-		})
-		this.registerButton(endTurnButton)
 
 		console.info('Sending init signal to server')
 		OutgoingMessageHandlers.sendInit()
@@ -109,16 +102,6 @@ export default class Core {
 			type: type,
 			data: data
 		}))
-	}
-
-	public static registerButton(renderedButton: RenderedButton): void {
-		Core.renderer.registerButton(renderedButton)
-		Core.userInterface.registerButton(renderedButton)
-	}
-
-	public static unregisterButton(renderedButton: RenderedButton): void {
-		Core.renderer.unregisterButton(renderedButton)
-		Core.userInterface.unregisterButton(renderedButton)
 	}
 
 	public static registerCard(renderedCard: RenderedCard): void {

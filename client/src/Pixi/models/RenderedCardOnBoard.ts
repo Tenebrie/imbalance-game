@@ -3,11 +3,12 @@ import CardOnBoard from '@/Pixi/shared/models/CardOnBoard'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import CardOnBoardMessage from '@/Pixi/shared/models/network/CardOnBoardMessage'
+import UnitOrder from '@/Pixi/shared/models/UnitOrder'
 
 export default class RenderedCardOnBoard extends CardOnBoard {
 	card: RenderedCard
 	owner: ClientPlayerInGame
-	preferredAttackTarget: CardOnBoard | null
+	lastOrder: UnitOrder | null
 
 	get rowIndex(): number {
 		return Core.board.rows.indexOf(Core.board.getRowWithCard(this)!)
@@ -21,7 +22,7 @@ export default class RenderedCardOnBoard extends CardOnBoard {
 		super(card, owner)
 		this.card = card
 		this.owner = owner
-		this.preferredAttackTarget = null
+		this.lastOrder = null
 	}
 
 	public setPower(value: number): void {
