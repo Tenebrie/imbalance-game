@@ -67,6 +67,9 @@ export default class RichText extends PIXI.Container {
 				parent.fontSize = value
 				parent.renderText()
 			},
+			get baseFontSize() {
+				return parent.baseFontSize
+			},
 			set baseFontSize(value: number) {
 				if (value === parent.baseFontSize) {
 					return

@@ -27,7 +27,8 @@ export default class Core {
 	public static opponent: ClientPlayerInGame
 
 	public static init(gameId: string, container: Element): void {
-		const socket = new WebSocket(`ws://${window.location.host}/api/game/${gameId}`)
+		const protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
+		const socket = new WebSocket(`${protocol}//${window.location.host}/api/game/${gameId}`)
 		socket.onopen = () => this.onConnect(container)
 		socket.onmessage = (event) => this.onMessage(event)
 		socket.onclose = (event) => this.onDisconnect(event)

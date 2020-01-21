@@ -26,7 +26,7 @@ export default class Database {
 			dbClient: client,
 			migrationsTable: 'MIGRATIONS',
 			direction: 'up',
-			dir: 'migrations',
+			dir: process.env.DATABASE_URL ? 'server/migrations' : 'migrations',
 			ignorePattern: ''
 		})
 
