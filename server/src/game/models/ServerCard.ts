@@ -10,6 +10,8 @@ import GameTurnPhase from '../shared/enums/GameTurnPhase'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerGameBoardRow from './ServerGameBoardRow'
 import UnitOrderType from '../shared/enums/UnitOrderType'
+import ServerDamageSource from './ServerDamageSource'
+import ServerUnitOrder from './ServerUnitOrder'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -52,7 +54,11 @@ export default class ServerCard extends Card {
 
 	onPlayUnit(thisUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void { return }
 	onPlaySpell(owner: ServerPlayerInGame): void { return }
+	onTurnStarted(thisUnit: ServerCardOnBoard): void { return }
 	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void { return }
+	onTurnEnded(thisUnit: ServerCardOnBoard): void { return }
+	onBeforeUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void { return }
+	onAfterUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void { return }
 	onPowerChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
 	onAttackChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
 	onBeforeDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
@@ -69,6 +75,9 @@ export default class ServerCard extends Card {
 	onReveal(owner: ServerPlayerInGame): void { return }
 	onDestroyUnit(thisUnit: ServerCardOnBoard): void { return }
 
+	getAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): number { return this.attack }
+	getDamageReduction(thisUnit: ServerCardOnBoard, damageSource: ServerDamageSource): number { return 0 }
+	isUnitOrderValid(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): boolean { return true }
 	canPerformOrdersSimultaneously(thisUnit: ServerCardOnBoard, firstOrder: UnitOrderType, secondOrder: UnitOrderType): boolean { return false }
 	getMaxOrdersOfType(thisUnit: ServerCardOnBoard, type: UnitOrderType): number { return 1 }
 	getMaxOrdersTotal(thisUnit: ServerCardOnBoard, type: UnitOrderType): number { return 1 }

@@ -2,7 +2,6 @@ import CardType from '../../shared/enums/CardType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
 import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import GameTurnPhase from '../../shared/enums/GameTurnPhase'
 import CardTribe from '../../shared/enums/CardTribe'
 
 export default class UnitRavenMessenger extends ServerCard {
@@ -18,11 +17,7 @@ export default class UnitRavenMessenger extends ServerCard {
 		this.turnsLeft = 3
 	}
 
-	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void {
-		if (phase !== GameTurnPhase.TURN_START) {
-			return
-		}
-
+	onTurnStarted(thisUnit: ServerCardOnBoard): void {
 		this.turnsLeft -= 1
 		if (this.turnsLeft === 0) {
 			thisUnit.owner.drawCards(1)

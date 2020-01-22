@@ -8,19 +8,19 @@ export default class Database {
 	public static async init() {
 		let databaseUrl = process.env.DATABASE_URL
 		if (!databaseUrl) {
-			console.info('[DB] Looking for database URL')
+			console.info('Looking for database URL')
 			const { stdout } = await Bash.exec('heroku pg:credentials:url HEROKU_POSTGRESQL_BRONZE --app notgwent')
 			databaseUrl = stdout.split('\n').find(line => line.includes('postgres://')).trim()
 		}
 
-		console.info('[DB] Connecting to database at "' + databaseUrl + '"')
+		console.info('Connecting to database at "' + databaseUrl + '"')
 		const client = new Client({
 			connectionString: databaseUrl,
 			ssl: true,
 		})
 		await client.connect()
 
-		console.info('[DB] Connection established. Running migrations')
+		console.info('Connection established. Running migrations')
 		await pgMigrate({
 			count: 10000,
 			dbClient: client,
@@ -30,7 +30,7 @@ export default class Database {
 			ignorePattern: ''
 		})
 
-		console.info('[DB] Database client ready')
+		console.info('Database client ready')
 		this.client = client
 	}
 

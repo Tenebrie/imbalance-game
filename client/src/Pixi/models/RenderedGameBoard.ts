@@ -61,9 +61,10 @@ export default class RenderedGameBoard extends GameBoard {
 		})
 		this.queuedOrders = this.queuedOrders.filter(order => !removedOrders.includes(order))
 		this.queuedOrders = this.queuedOrders.concat(newOrders)
-		newOrders.forEach(newOrder => {
-			newOrder.orderedUnit.lastOrder = newOrder
-		})
+		// TODO: Remember the unit orders?
+		// newOrders.forEach(newOrder => {
+		// 	newOrder.orderedUnit.lastOrder = newOrder
+		// })
 	}
 
 	public setInverted(isInverted: boolean): void {

@@ -31,7 +31,11 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.turnEnded = false
 	}
 
-	public canPlayCard(card: ServerCard, rowIndex: number, unitIndex: number): boolean {
+	public canPlaySpell(card: ServerCard): boolean {
+		return this.timeUnits > 0
+	}
+
+	public canPlayUnit(card: ServerCard, rowIndex: number, unitIndex: number): boolean {
 		const gameBoardRow = this.game.board.rows[rowIndex]
 		if (gameBoardRow.cards.length >= Ruleset.MAX_CARDS_PER_ROW || gameBoardRow.owner !== this) {
 			return false

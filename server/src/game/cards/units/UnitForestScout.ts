@@ -1,7 +1,6 @@
 import CardType from '../../shared/enums/CardType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import GameTurnPhase from '../../shared/enums/GameTurnPhase'
 import ServerCardOnBoard from '../../models/ServerCardOnBoard'
 import ServerDamageInstance from '../../models/ServerDamageSource'
 
@@ -16,19 +15,18 @@ export default class UnitForestScout extends ServerCard {
 		this.baseAttackRange = 3
 	}
 
-	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void {
-		if (phase !== GameTurnPhase.TURN_END) {
-			return
+	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+		if (this.hasChargedAttack) {
+			target.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(7, thisUnit))
+			this.hasChargedAttack = false
 		}
+		this.hasAttackedThisTurn = true
+	}
 
+	onTurnEnded(thisUnit: ServerCardOnBoard): void {
 		if (!this.hasAttackedThisTurn) {
 			this.hasChargedAttack = true
 		}
 		this.hasAttackedThisTurn = false
-	}
-
-	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
-		target.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(7, thisUnit))
-		this.hasAttackedThisTurn = true
 	}
 }

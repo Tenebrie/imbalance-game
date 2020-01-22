@@ -16,7 +16,9 @@ export default class ServerCardOnBoard {
 	}
 
 	get unitIndex(): number {
-		return this.game.board.rows[this.rowIndex].cards.indexOf(this)
+		const unitRow = this.game.board.rows[this.rowIndex]
+		if (!unitRow) { return -1 }
+		return unitRow.cards.indexOf(this)
 	}
 
 	constructor(game: ServerGame, card: ServerCard, owner: ServerPlayerInGame) {
@@ -44,7 +46,9 @@ export default class ServerCardOnBoard {
 	}
 
 	dealDamageWithoutDestroying(damage: ServerDamageInstance): void {
-		if (damage.value <= 0) {
+		const damageReduction = this.card.getDamageReduction(this, damage)
+		const damageValue = damage.value - damageReduction
+		if (damageValue <= 0) {
 			return
 		}
 

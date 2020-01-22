@@ -13,12 +13,12 @@ export default class UnitSpinningBarbarian extends ServerCard {
 
 	getMaxOrdersOfType(thisUnit: ServerCardOnBoard, type: UnitOrderType): number {
 		if (type === UnitOrderType.ATTACK) {
-			return 5
+			return 3
 		}
 		return 1
 	}
 
 	getMaxOrdersTotal(thisUnit: ServerCardOnBoard, type: UnitOrderType): number {
-		return 5
+		return 3
 	}
 }

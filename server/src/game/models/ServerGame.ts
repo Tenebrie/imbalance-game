@@ -161,6 +161,7 @@ export default class ServerGame extends Game {
 			this.playersToMove.reverse()
 		}
 
+		this.board.getAllUnits().forEach(unit => unit.card.onTurnStarted(unit))
 		this.advancePhase()
 	}
 
@@ -205,6 +206,7 @@ export default class ServerGame extends Game {
 
 	public startEndTurnPhase(): void {
 		this.setTurnPhase(GameTurnPhase.TURN_END)
+		this.board.getAllUnits().forEach(unit => unit.card.onTurnEnded(unit))
 		this.advancePhase()
 	}
 

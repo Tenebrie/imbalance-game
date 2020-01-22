@@ -18,7 +18,7 @@ export default class ServerGameBoardOrders {
 		this.queue = []
 	}
 
-	public addToQueue(order: ServerUnitOrder): void {
+	public addUnitOrder(order: ServerUnitOrder): void {
 		/* Checking if the exact same order is already given */
 		const isOrderClear = this.queue.find(queuedOrder => queuedOrder.isEqual(order))
 		this.queue = this.queue.filter(queuedOrder => !queuedOrder.isEqual(order))
@@ -27,11 +27,23 @@ export default class ServerGameBoardOrders {
 			return
 		}
 
-		this.queue.push(order)
-		this.queue = this.limitDifferentTypeOrders(this.queue, order)
-		this.queue = this.limitSameTypeOrdersToMaxCount(this.queue, order)
-		this.queue = this.limitAnyTypeOrdersToMaxCount(this.queue, order)
+		order.orderedUnit.card.onBeforeUnitOrderIssued(order.orderedUnit, order)
+		if (order.orderedUnit.card.isUnitOrderValid(order.orderedUnit, order)) {
+			this.addUnitOrderDirectly(order)
+			this.queue = this.limitDifferentTypeOrders(this.queue, order)
+			this.queue = this.limitSameTypeOrdersToMaxCount(this.queue, order)
+			this.queue = this.limitAnyTypeOrdersToMaxCount(this.queue, order)
+		}
+		order.orderedUnit.card.onAfterUnitOrderIssued(order.orderedUnit, order)
 		OutgoingMessageHandlers.sendUnitOrders(order.orderedUnit.owner.player, this.queue)
+	}
+
+	public addUnitOrderDirectly(order: ServerUnitOrder): void {
+		this.queue.push(order)
+	}
+
+	public clearUnitOrders(unit: ServerCardOnBoard): void {
+		this.queue = this.queue.filter(queuedOrder => queuedOrder.orderedUnit !== unit)
 	}
 
 	private limitDifferentTypeOrders(originalQueue: ServerUnitOrder[], order: ServerUnitOrder): ServerUnitOrder[] {
@@ -75,13 +87,14 @@ export default class ServerGameBoardOrders {
 
 	public release(): void {
 		/* ATTACKS */
-		const queuedAttacks = this.queue.filter(order => order.type === UnitOrderType.ATTACK)
+		let queuedAttacks = this.queue.filter(order => order.type === UnitOrderType.ATTACK)
 
 		/* Before attacks */
 		queuedAttacks.forEach(queuedAttack => {
 			runCardEventHandler(() => queuedAttack.orderedUnit.card.onBeforePerformingAttack(queuedAttack.orderedUnit, queuedAttack.targetUnit))
 			runCardEventHandler(() => queuedAttack.orderedUnit.card.onBeforeBeingAttacked(queuedAttack.targetUnit, queuedAttack.orderedUnit))
 		})
+		queuedAttacks = queuedAttacks.filter(order => order.orderedUnit.card.power > 0)
 
 		/* Attacks */
 		queuedAttacks.forEach(queuedAttack => {
@@ -111,6 +124,7 @@ export default class ServerGameBoardOrders {
 		queuedMoves.forEach(queuedMove => {
 			runCardEventHandler(() => queuedMove.orderedUnit.card.onBeforePerformingMove(queuedMove.orderedUnit, queuedMove.targetRow))
 		})
+		queuedMoves = queuedMoves.filter(order => order.orderedUnit.card.power > 0)
 
 		/* Contested rows */
 		const playerOne = this.game.players[0]
@@ -158,7 +172,7 @@ export default class ServerGameBoardOrders {
 	}
 
 	public performUnitAttack(orderedUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {
-		const attack = orderedUnit.card.attack
+		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit)
 		targetUnit.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(attack, orderedUnit))
 	}
 

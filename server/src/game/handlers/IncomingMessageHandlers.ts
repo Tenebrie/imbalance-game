@@ -4,7 +4,6 @@ import GameTurnPhase from '../shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
 import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
-import MoveOrderMessage from '../shared/models/network/MoveOrderMessage'
 import ServerUnitOrder from '../models/ServerUnitOrder'
 import UnitOrderMessage from '../shared/models/network/UnitOrderMessage'
 import UnitOrderType from '../shared/enums/UnitOrderType'
@@ -16,7 +15,7 @@ export default {
 
 	'post/playCard': (data: CardPlayedMessage, game: ServerGame, player: ServerPlayerInGame) => {
 		const card = player.cardHand.findCardById(data.id)
-		if (game.turnPhase !== GameTurnPhase.DEPLOY || !card || !player.canPlayCard(card, data.rowIndex, data.unitIndex)) {
+		if (game.turnPhase !== GameTurnPhase.DEPLOY || !card || (card.cardType === CardType.SPELL && !player.canPlaySpell(card)) || (card.cardType === CardType.UNIT && !player.canPlayUnit(card, data.rowIndex, data.unitIndex))) {
 			return
 		}
 
@@ -35,12 +34,12 @@ export default {
 
 		const targetUnit = game.board.findCardById(data.targetUnitId)
 		if (data.type === UnitOrderType.ATTACK && targetUnit && orderedUnit.canAttackTarget(targetUnit)) {
-			game.board.orders.addToQueue(ServerUnitOrder.attack(orderedUnit, targetUnit))
+			game.board.orders.addUnitOrder(ServerUnitOrder.attack(orderedUnit, targetUnit))
 		}
 
 		const targetRow = game.board.rows[data.targetRowIndex]
 		if (data.type === UnitOrderType.MOVE && orderedUnit.canMoveToRow(targetRow)) {
-			game.board.orders.addToQueue(ServerUnitOrder.move(orderedUnit, targetRow))
+			game.board.orders.addUnitOrder(ServerUnitOrder.move(orderedUnit, targetRow))
 		}
 	},
 

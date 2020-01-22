@@ -2,12 +2,10 @@ import CardType from '../../shared/enums/CardType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
 import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import GameTurnPhase from '../../shared/enums/GameTurnPhase'
-import ServerDamageInstance from '../../models/ServerDamageSource'
+import ServerUnitOrder from '../../models/ServerUnitOrder'
+import UnitOrderType from '../../shared/enums/UnitOrderType'
 
 export default class UnitTwinBowArcher extends ServerCard {
-	attacksSurvived = 0
-
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
 		this.basePower = 4
@@ -15,35 +13,23 @@ export default class UnitTwinBowArcher extends ServerCard {
 		this.baseAttackRange = 3
 	}
 
-	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+	isUnitOrderValid(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): boolean {
+		return order.type !== UnitOrderType.ATTACK
+	}
+
+	onBeforeUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void {
+		if (order.type !== UnitOrderType.ATTACK) { return }
+
+		const target = order.targetUnit!
 		const rowWithCard = this.game.board.getRowWithUnit(target)
 		const targetUnitIndex = rowWithCard.cards.indexOf(target)
 		const unitOnLeft = rowWithCard.cards[targetUnitIndex - 1]
 		const unitOnRight = rowWithCard.cards[targetUnitIndex + 1]
-		let secondaryTarget
-		if (unitOnLeft && unitOnRight) {
-			secondaryTarget = Math.random() < 0.5 ? unitOnLeft : unitOnRight
-		} else if (unitOnLeft) {
-			secondaryTarget = unitOnLeft
-		} else if (unitOnRight) {
-			secondaryTarget = unitOnRight
-		} else {
-			return
+		if (unitOnLeft) {
+			this.game.board.orders.addUnitOrderDirectly(ServerUnitOrder.attack(thisUnit, unitOnLeft))
 		}
-
-		secondaryTarget.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(thisUnit.card.attack, thisUnit))
-	}
-
-	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void {
-		if (phase !== GameTurnPhase.TURN_START) {
-			return
+		if (unitOnRight) {
+			this.game.board.orders.addUnitOrderDirectly(ServerUnitOrder.attack(thisUnit, unitOnRight))
 		}
-
-		thisUnit.heal(ServerDamageInstance.fromUnit(this.attacksSurvived * 3, thisUnit))
-		this.attacksSurvived = 0
-	}
-
-	onAfterBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void {
-		this.attacksSurvived += 1
 	}
 }

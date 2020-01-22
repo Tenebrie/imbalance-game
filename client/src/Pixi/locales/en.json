@@ -5,7 +5,7 @@
 
 	"card.name.heroSatia": "Satia",
 	"card.title.heroSatia": "First mistress",
-	"card.description.heroSatia": "*On play:*\nSummon *Night Maiden*",
+	"card.description.heroSatia": "*On play:*\n{name} summons *Night Maiden*, a Dragon that leaves the battlefield if {name} dies",
 
 	"card.name.heroNightMaiden": "Night Maiden",
 	"card.title.heroNightMaiden": "Satia's favorite",
@@ -27,17 +27,17 @@
 	"card.description.unitMadBerserker": "*On attack:*\nEvery consecutive attack on the same target deals *3* more damage",
 
 	"card.name.unitSpinningBarbarian": "Spinning Barbarian",
-	"card.description.unitSpinningBarbarian": "During Skirmishing phase, {name} can attack up to 5 targets simultaneously",
+	"card.description.unitSpinningBarbarian": "During Skirmishing phase, {name} can attack up to 3 targets simultaneously",
 
 	"card.name.unitChargingKnight": "Charging Knight",
 	"card.description.unitChargingKnight": "{name} can move and attack at the same time\nIf {name} has moved during his turn, his next attack deals double damage",
 
 	"card.name.unitTwinBowArcher": "Twin Bow Archer",
-	"card.description.unitTwinBowArcher": "*On attack:*\nAlso deal damage to a creature to the left or to the right of the initial target at random",
+	"card.description.unitTwinBowArcher": "During Skirmishing phase, instead of attacking the chosen target, {name} attacks units directly to the left and to the right from them",
 
 	"card.name.spellRainOfFire": "Rain of Fire",
-	"card.description.spellRainOfFire": "{name} deals *5* damage to all enemy units\nDraw a card",
+	"card.description.spellRainOfFire": "{name} deals *5* damage to all enemy units\nThen, it draws a card",
 
 	"card.name.spellMagicalStarfall": "Magical Starfall",
-	"card.description.spellMagicalStarfall": "{name} increases Power of all allies units by *3* and Attack by *2*\nDraw a card"
+	"card.description.spellMagicalStarfall": "{name} increases Power of all allies units by *3* and Attack by *2*\nThen, it draws a card"
 }
