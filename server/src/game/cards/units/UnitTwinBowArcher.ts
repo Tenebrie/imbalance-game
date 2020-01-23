@@ -9,8 +9,8 @@ export default class UnitTwinBowArcher extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
 		this.basePower = 4
-		this.baseAttack = 6
-		this.baseAttackRange = 3
+		this.baseAttack = 7
+		this.baseAttackRange = 2
 	}
 
 	isUnitOrderValid(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): boolean {

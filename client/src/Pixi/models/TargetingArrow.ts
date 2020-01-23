@@ -12,10 +12,10 @@ export default class TargetingLine {
 	}
 
 	public create() {
-		Core.renderer.pixi.stage.addChild(this.arrowSprite)
+		Core.renderer.rootContainer.addChild(this.arrowSprite)
 	}
 
 	public destroy() {
-		Core.renderer.pixi.stage.removeChild(this.arrowSprite)
+		Core.renderer.rootContainer.removeChild(this.arrowSprite)
 	}
 }

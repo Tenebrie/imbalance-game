@@ -7,8 +7,8 @@ import UnitOrderType from '../../shared/enums/UnitOrderType'
 export default class UnitSpinningBarbarian extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 13
-		this.baseAttack = 2
+		this.basePower = 11
+		this.baseAttack = 4
 	}
 
 	getMaxOrdersOfType(thisUnit: ServerCardOnBoard, type: UnitOrderType): number {

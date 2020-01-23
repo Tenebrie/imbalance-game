@@ -13,7 +13,6 @@ import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
 import UnitOrderType from '@/Pixi/shared/enums/UnitOrderType'
 import Settings from '@/Pixi/Settings'
-import Utils from '@/utils/Utils'
 
 const UNIT_ZINDEX = 2
 const UNIT_ORDER_ZINDEX = 3
@@ -24,6 +23,8 @@ const INSPECTED_CARD_ZINDEX = 200
 
 export default class Renderer {
 	pixi: PIXI.Application
+	rootContainer: PIXI.Container
+
 	container: Element
 
 	timeLabel: PIXI.Text
@@ -48,7 +49,10 @@ export default class Renderer {
 			resolution: 1
 		})
 
-		this.pixi.stage.sortableChildren = true
+		this.rootContainer = new PIXI.Container()
+		this.rootContainer.sortableChildren = true
+		this.pixi.stage.addChild(this.rootContainer)
+
 		this.pixi.view.style.maxWidth = '100vw'
 		this.pixi.view.style.maxHeight = '100vh'
 		container.appendChild(this.pixi.view)
@@ -62,7 +66,7 @@ export default class Renderer {
 		})
 		this.timeLabel.anchor.set(0, 0.5)
 		this.timeLabel.position.set(10, this.getScreenHeight() / 2)
-		this.pixi.stage.addChild(this.timeLabel)
+		this.rootContainer.addChild(this.timeLabel)
 
 		/* Action label */
 		this.actionLabel = new PIXI.Text('', {
@@ -72,7 +76,7 @@ export default class Renderer {
 		})
 		this.actionLabel.anchor.set(0.5, 1)
 		this.actionLabel.zIndex = 85
-		this.pixi.stage.addChild(this.actionLabel)
+		this.rootContainer.addChild(this.actionLabel)
 
 		/* Player name label */
 		this.playerNameLabel = new PIXI.Text('', {
@@ -82,7 +86,7 @@ export default class Renderer {
 		})
 		this.playerNameLabel.anchor.set(0, 1)
 		this.playerNameLabel.position.set(10, this.getScreenHeight() - 10)
-		this.pixi.stage.addChild(this.playerNameLabel)
+		this.rootContainer.addChild(this.playerNameLabel)
 
 		/* Opponent player name */
 		this.opponentNameLabel = new PIXI.Text('', {
@@ -91,7 +95,7 @@ export default class Renderer {
 			fill: 0xFFFFFF
 		})
 		this.opponentNameLabel.position.set(10, 10)
-		this.pixi.stage.addChild(this.opponentNameLabel)
+		this.rootContainer.addChild(this.opponentNameLabel)
 
 		/* Register the ticker */
 		PIXI.Ticker.shared.add(() => this.tick())
@@ -141,25 +145,25 @@ export default class Renderer {
 	}
 
 	public registerButton(button: RenderedButton): void {
-		this.pixi.stage.addChild(button.container)
+		this.rootContainer.addChild(button.container)
 	}
 
 	public unregisterButton(button: RenderedButton): void {
-		this.pixi.stage.removeChild(button.container)
+		this.rootContainer.removeChild(button.container)
 	}
 
 	public registerCard(card: RenderedCard): void {
-		this.pixi.stage.addChild(card.coreContainer)
-		this.pixi.stage.addChild(card.hitboxSprite)
+		this.rootContainer.addChild(card.coreContainer)
+		this.rootContainer.addChild(card.hitboxSprite)
 	}
 
 	public unregisterCard(card: RenderedCard): void {
-		this.pixi.stage.removeChild(card.coreContainer)
-		this.pixi.stage.removeChild(card.hitboxSprite)
+		this.rootContainer.removeChild(card.coreContainer)
+		this.rootContainer.removeChild(card.hitboxSprite)
 	}
 
 	public registerGameBoardRow(row: RenderedGameBoardRow): void {
-		this.pixi.stage.addChild(row.container)
+		this.rootContainer.addChild(row.container)
 	}
 
 	private getScreenWidth(): number {

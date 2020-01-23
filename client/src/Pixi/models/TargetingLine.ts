@@ -13,14 +13,14 @@ export default class TargetingLine {
 	}
 
 	public create() {
-		Core.renderer.pixi.stage.addChild(this.arrowLine)
-		Core.renderer.pixi.stage.addChild(this.startingPoint)
-		Core.renderer.pixi.stage.addChild(this.targetPoint)
+		Core.renderer.rootContainer.addChild(this.arrowLine)
+		Core.renderer.rootContainer.addChild(this.startingPoint)
+		Core.renderer.rootContainer.addChild(this.targetPoint)
 	}
 
 	public destroy() {
-		Core.renderer.pixi.stage.removeChild(this.arrowLine)
-		Core.renderer.pixi.stage.removeChild(this.startingPoint)
-		Core.renderer.pixi.stage.removeChild(this.targetPoint)
+		Core.renderer.rootContainer.removeChild(this.arrowLine)
+		Core.renderer.rootContainer.removeChild(this.startingPoint)
+		Core.renderer.rootContainer.removeChild(this.targetPoint)
 	}
 }

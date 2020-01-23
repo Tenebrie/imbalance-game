@@ -19,7 +19,7 @@ export default class UnitUnfeelingWarrior extends ServerCard {
 			return
 		}
 
-		thisUnit.heal(ServerDamageInstance.fromUnit(this.attacksSurvived * 3, thisUnit))
+		thisUnit.heal(ServerDamageInstance.fromUnit(this.attacksSurvived * 2, thisUnit))
 		this.attacksSurvived = 0
 	}
 

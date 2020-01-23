@@ -11,13 +11,13 @@ export default class UnitForestScout extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
 		this.basePower = 8
-		this.baseAttack = 5
-		this.baseAttackRange = 3
+		this.baseAttack = 3
+		this.baseAttackRange = 2
 	}
 
 	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
 		if (this.hasChargedAttack) {
-			target.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(7, thisUnit))
+			target.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(5, thisUnit))
 			this.hasChargedAttack = false
 		}
 		this.hasAttackedThisTurn = true

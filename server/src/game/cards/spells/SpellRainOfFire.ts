@@ -12,7 +12,7 @@ export default class SpellRainOfFire extends ServerCard {
 	onPlaySpell(owner: ServerPlayerInGame): void {
 		const opposingUnits = this.game.board.getAllUnits().filter(unit => unit.owner !== owner)
 		opposingUnits.forEach(unit => {
-			unit.dealDamage(ServerDamageInstance.fromSpell(5, this))
+			unit.dealDamage(ServerDamageInstance.fromSpell(8, this))
 		})
 		owner.drawCards(1)
 	}

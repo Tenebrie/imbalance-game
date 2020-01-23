@@ -9,7 +9,7 @@ export default class UnitPossessedVulture extends ServerCard {
 		super(game, CardType.UNIT)
 		this.basePower = 10
 		this.baseAttack = 4
-		this.baseAttackRange = 3
+		this.baseAttackRange = 2
 		this.cardTribes = [CardTribe.BIRD]
 	}
 

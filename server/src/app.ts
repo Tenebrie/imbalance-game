@@ -19,8 +19,10 @@ expressWs(app)
 polyfill.injectPolyfills()
 
 /* Routers must be imported after express-ws is initialized, therefore 'require' syntax */
+const StatusRouter = require('./routers/StatusRouter')
+const ChangelogRouter = require('./routers/ChangelogRouter')
+
 const PlayRouter = require('./routers/PlayRouter')
-const IndexRouter = require('./routers/IndexRouter')
 const LoginRouter = require('./routers/LoginRouter')
 const CardsRouter = require('./routers/CardsRouter')
 const GamesRouter = require('./routers/GamesRouter')
@@ -60,8 +62,11 @@ app.use((req: Request, res: Response, next) => {
 	}
 })
 
-/* HTTP routers */
-app.use('/status', IndexRouter)
+/* Page HTTP routers */
+app.use('/status', StatusRouter)
+app.use('/changelog', ChangelogRouter)
+
+/* API HTTP routers */
 app.use('/api/cards', CardsRouter)
 app.use('/api/games', GamesRouter)
 app.use('/api/login', LoginRouter)
