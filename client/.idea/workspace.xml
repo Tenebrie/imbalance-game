@@ -2,28 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="365a96b8-392e-41f9-8067-3f2c0c3e3250" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/public/assets/board/background.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/board/background_night.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/components/PixiUserInterface.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Pixi/shared/enums/UnitSubtype.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/game/shared/enums/UnitSubtype.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/src/enums/UnitSubtype.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/Core.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Core.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Input.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Renderer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/UserInterface.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/UserInterface.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/UserInterface.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/models/ClientPlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/ClientPlayerInGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedButton.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedButton.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedButton.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/render/TextureAtlas.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/render/TextureAtlas.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/components/Pixi.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/Pixi.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/store/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/store/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedCard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedCardHand.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedCardHand.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/shared/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/shared/models/Card.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/shared/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/shared/models/network/CardMessage.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/Utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/Utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/public/stylesheets/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/../server/public/stylesheets/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/views/changelog.jade" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/views/changelog.jade" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/game/libraries/CardLibrary.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/libraries/CardLibrary.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/game/shared/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/shared/models/Card.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/game/shared/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/shared/models/network/CardMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared/src/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/Card.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared/src/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/network/CardMessage.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,7 +126,7 @@
       <workItem from="1579608505601" duration="23638000" />
       <workItem from="1579718086199" duration="4319000" />
       <workItem from="1579798964587" duration="723000" />
-      <workItem from="1579811063932" duration="7830000" />
+      <workItem from="1579811063932" duration="10121000" />
     </task>
     <servers />
   </component>
@@ -187,13 +184,9 @@
         <option value="$PROJECT_DIR$/src/Pixi/enums/CardDisplayMode.js.map" />
         <option value="$PROJECT_DIR$/src/Pixi/enums/CardDisplayMode.js" />
         <option value="$PROJECT_DIR$/src/Pixi/models/RenderedAttackOrder.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedButton.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedButton.js.map" />
         <option value="$PROJECT_DIR$/src/Pixi/models/RenderedAttackOrder.js" />
         <option value="$PROJECT_DIR$/src/Pixi/render/TextureAtlas.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/UserInterface.js.map" />
         <option value="$PROJECT_DIR$/src/Pixi/Localization.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/UserInterface.js" />
         <option value="$PROJECT_DIR$/src/Pixi/Settings.js" />
         <option value="$PROJECT_DIR$/src/Pixi/render/RichText.js" />
         <option value="$PROJECT_DIR$/src/Pixi/Localization.js" />
@@ -221,10 +214,10 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="872" y="359" key="#Inspections" timestamp="1579618943761">
+    <state x="872" y="359" key="#Inspections" timestamp="1579819788929">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="872" y="359" key="#Inspections/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579618943761" />
+    <state x="872" y="359" key="#Inspections/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579819788929" />
     <state x="872" y="359" key="#Scopes" timestamp="1579448174569">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -257,14 +250,14 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="1089" y="618" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579631434050" />
-    <state x="976" y="432" width="737" height="606" key="find.popup" timestamp="1579818475970">
+    <state x="976" y="432" width="737" height="606" key="find.popup" timestamp="1579820396974">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="976" y="432" width="737" height="606" key="find.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579818475970" />
-    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1579818373703">
+    <state x="976" y="432" width="737" height="606" key="find.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579820396974" />
+    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1579821159971">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579818373703" />
+    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579821159971" />
     <state x="1002" y="613" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1579465548009">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>

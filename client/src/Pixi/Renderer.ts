@@ -7,7 +7,6 @@ import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
-import RenderedButton from '@/Pixi/models/RenderedButton'
 import CardType from '@/Pixi/shared/enums/CardType'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
@@ -146,14 +145,6 @@ export default class Renderer {
 
 	public resize(): void {
 		this.pixi.renderer.resize(window.innerWidth * window.devicePixelRatio * Settings.superSamplingLevel, window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel)
-	}
-
-	public registerButton(button: RenderedButton): void {
-		this.rootContainer.addChild(button.container)
-	}
-
-	public unregisterButton(button: RenderedButton): void {
-		this.rootContainer.removeChild(button.container)
 	}
 
 	public registerCard(card: RenderedCard): void {

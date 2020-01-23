@@ -35,6 +35,7 @@ export default class RenderedCard extends Card {
 
 	constructor(message: CardMessage) {
 		super(message.id, message.cardType, message.cardClass)
+		this.unitSubtype = message.unitSubtype
 
 		this.cardName = message.cardName
 		this.cardTitle = message.cardTitle

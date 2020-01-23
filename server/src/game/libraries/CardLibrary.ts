@@ -13,6 +13,8 @@ import UnitChargingKnight from '../cards/units/UnitChargingKnight'
 import UnitSpinningBarbarian from '../cards/units/UnitSpinningBarbarian'
 import SpellRainOfFire from '../cards/spells/SpellRainOfFire'
 import SpellMagicalStarfall from '../cards/spells/SpellMagicalStarfall'
+import CardType from '../shared/enums/CardType'
+import UnitSubtype from '../shared/enums/UnitSubtype'
 
 export default class GameLibrary {
 	static cards: any[]
@@ -54,8 +56,21 @@ export default class GameLibrary {
 		if (!original) {
 			throw new Error(`No registered card with class '${cardClass}'!`)
 		}
+
+		let unitSubtype = null
+		if (cardClass.startsWith('hero')) {
+			unitSubtype = UnitSubtype.HERO
+		} else if (cardClass.startsWith('veteran')) {
+			unitSubtype = UnitSubtype.VETERAN
+		} else if (cardClass.startsWith('unit')) {
+			unitSubtype = UnitSubtype.PAWN
+		}
+
 		const clone: ServerCard = new original.constructor()
+		clone.cardType = original.cardType
 		clone.cardClass = cardClass
+		clone.unitSubtype = unitSubtype
+
 		clone.cardName = `card.name.${cardClass}`
 		clone.cardTitle = `card.title.${cardClass}`
 		clone.cardTribes = (original.cardTribes || []).slice()

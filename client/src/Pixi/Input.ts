@@ -77,13 +77,6 @@ export default class Input {
 			return
 		}
 
-		const buttons = Core.userInterface.buttons
-		const pressedButton = buttons.find(button => button.isHovered(this.mousePosition))
-		if (pressedButton) {
-			Core.userInterface.pressedButton = pressedButton
-			return
-		}
-
 		this.mouseDown = true
 		this.grabCard()
 	}
@@ -94,15 +87,6 @@ export default class Input {
 			if (event.button === RIGHT_MOUSE_BUTTON && this.hoveredCard) {
 				this.inspectedCard = this.hoveredCard.card
 			}
-			return
-		}
-
-		const pressedButton = Core.userInterface.pressedButton
-		if (pressedButton) {
-			if (pressedButton.isHovered(this.mousePosition)) {
-				pressedButton.onClick()
-			}
-			Core.userInterface.pressedButton = null
 			return
 		}
 
