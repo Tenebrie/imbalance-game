@@ -38,7 +38,7 @@ export default class Input {
 			this.updateCardHoverStatus()
 		})
 
-		view.addEventListener('contextmenu', (event: MouseEvent) => {
+		document.addEventListener('contextmenu', (event: MouseEvent) => {
 			event.preventDefault()
 			return false
 		})

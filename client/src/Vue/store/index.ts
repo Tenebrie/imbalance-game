@@ -1,14 +1,30 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Player from '@/Pixi/shared/models/Player'
-import { createDirectStore } from 'direct-vuex'
+import { createDirectStore, createModule } from 'direct-vuex'
 
 Vue.use(Vuex)
 
-const { store, rootActionContext, moduleActionContext } = createDirectStore({
+const userInterfaceModule = createModule({
 	state: {
-		isLoggedIn: false as boolean,
+		isPlayersTurn: false as boolean
+	},
+
+	mutations: {
+		setIsPlayersTurn(state, isPlayersTurn: boolean): void {
+			state.isPlayersTurn = isPlayersTurn
+		}
+	}
+})
+
+const { store, rootActionContext, moduleActionContext } = createDirectStore({
+	modules: {
+		userInterfaceModule
+	},
+
+	state: {
 		player: null as Player | null,
+		isLoggedIn: false as boolean,
 		selectedGameId: '' as string
 	},
 

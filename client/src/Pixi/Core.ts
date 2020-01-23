@@ -9,8 +9,6 @@ import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-import RenderedButton from '@/Pixi/models/RenderedButton'
-import UserInterface from '@/Pixi/UserInterface'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 export default class Core {
@@ -18,7 +16,6 @@ export default class Core {
 	public static socket: WebSocket
 	public static renderer: Renderer
 	public static mainHandler: MainHandler
-	public static userInterface: UserInterface
 	public static keepaliveTimer: number
 
 	public static game: ClientGame
@@ -26,7 +23,7 @@ export default class Core {
 	public static player: ClientPlayerInGame
 	public static opponent: ClientPlayerInGame
 
-	public static init(gameId: string, container: Element): void {
+	public static init(gameId: string, container: HTMLElement): void {
 		const protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
 		const socket = new WebSocket(`${protocol}//${window.location.host}/api/game/${gameId}`)
 		socket.onopen = () => this.onConnect(container)
@@ -38,7 +35,7 @@ export default class Core {
 		Core.player = ClientPlayerInGame.fromPlayer(store.getters.player)
 	}
 
-	private static async onConnect(container: Element): Promise<void> {
+	private static async onConnect(container: HTMLElement): Promise<void> {
 		Core.keepaliveTimer = setInterval(() => {
 			OutgoingMessageHandlers.sendKeepalive()
 		}, 30000)
@@ -51,7 +48,6 @@ export default class Core {
 		Core.input = new Input()
 		Core.board = new RenderedGameBoard()
 		Core.mainHandler = MainHandler.start()
-		Core.userInterface = new UserInterface()
 
 		console.info('Sending init signal to server')
 		OutgoingMessageHandlers.sendInit()

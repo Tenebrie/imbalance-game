@@ -21,7 +21,6 @@ body {
 }
 
 #nav {
-
 	a {
 		font-weight: bold;
 		color: #2c3e50;
@@ -30,5 +29,9 @@ body {
 			color: #42b983;
 		}
 	}
+}
+
+button {
+	cursor: pointer;
 }
 </style>

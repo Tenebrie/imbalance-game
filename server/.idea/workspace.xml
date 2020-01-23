@@ -2,25 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="20d01716-7396-4160-bcea-0f09fcfb1464" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/watcherTasks.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/routers/StatusRouter.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/views/changelog.jade" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/board/background.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/board/background_night.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/src/Vue/components/PixiUserInterface.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Core.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Core.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/locales/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/locales/en.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/TargetingArrow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/TargetingArrow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/TargetingLine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/TargetingLine.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/UserInterface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/UserInterface.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/ClientPlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/ClientPlayerInGame.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedButton.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedButton.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/render/TextureAtlas.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/render/TextureAtlas.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/Pixi.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/Pixi.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/store/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/store/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/stylesheets/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/stylesheets/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/cards/spells/SpellRainOfFire.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/cards/spells/SpellRainOfFire.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/cards/units/UnitForestScout.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/cards/units/UnitForestScout.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/cards/units/UnitPossessedVulture.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/cards/units/UnitPossessedVulture.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/cards/units/UnitRavenMessenger.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/cards/units/UnitRavenMessenger.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/cards/units/UnitSpinningBarbarian.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/cards/units/UnitSpinningBarbarian.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/cards/units/UnitTwinBowArcher.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/cards/units/UnitTwinBowArcher.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/cards/units/UnitUnfeelingWarrior.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/cards/units/UnitUnfeelingWarrior.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routers/IndexRouter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routers/ChangelogRouter.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/changelog.jade" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/changelog.jade" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -50,7 +48,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/views" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../shared" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -119,6 +117,7 @@
       <workItem from="1579608511323" duration="17924000" />
       <workItem from="1579718091694" duration="6307000" />
       <workItem from="1579798924818" duration="1233000" />
+      <workItem from="1579811064182" duration="2750000" />
     </task>
     <servers />
   </component>
@@ -218,11 +217,11 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="1010" y="448" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579470074106" />
-    <state x="915" y="303" key="FileChooserDialogImpl" timestamp="1579798962333">
+    <state x="915" y="303" key="FileChooserDialogImpl" timestamp="1579812639689">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="549" y="187" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1578074229229" />
-    <state x="915" y="303" key="FileChooserDialogImpl/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579798962333" />
+    <state x="915" y="303" key="FileChooserDialogImpl/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579812639689" />
     <state width="2539" height="401" key="GridCell.Tab.0.bottom" timestamp="1579733319190">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>

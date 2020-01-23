@@ -1,6 +1,6 @@
 body {
 	padding: 16px;
-	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
 }
 
 a {
@@ -9,6 +9,10 @@ a {
 
 .version-description {
 	margin-bottom: 4em;
+}
+
+.version:before {
+	content: 'Version '
 }
 
 .version {

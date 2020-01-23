@@ -25,7 +25,7 @@ export default class Renderer {
 	pixi: PIXI.Application
 	rootContainer: PIXI.Container
 
-	container: Element
+	container: HTMLElement
 
 	timeLabel: PIXI.Text
 	actionLabel: PIXI.Text
@@ -40,7 +40,7 @@ export default class Renderer {
 	GAME_BOARD_OFFSET_FRACTION = -0.05
 	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
 
-	constructor(container: Element) {
+	constructor(container: HTMLElement) {
 		this.pixi = new PIXI.Application({
 			width: window.innerWidth * window.devicePixelRatio * Settings.superSamplingLevel,
 			height: window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel,
@@ -142,6 +142,10 @@ export default class Renderer {
 		this.renderTargetingArrow()
 		this.renderQueuedOrders()
 		this.renderInspectedCard()
+	}
+
+	public resize(): void {
+		this.pixi.renderer.resize(window.innerWidth * window.devicePixelRatio * Settings.superSamplingLevel, window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel)
 	}
 
 	public registerButton(button: RenderedButton): void {

@@ -2,12 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7b4957f4-b43a-46ea-8e12-fccea030b7c4" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/board/background.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/public/assets/board/background_night.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../client/src/Vue/components/PixiUserInterface.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Core.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Core.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/TargetingArrow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/TargetingArrow.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/TargetingLine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/TargetingLine.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/UserInterface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/UserInterface.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/ClientPlayerInGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/ClientPlayerInGame.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedButton.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedButton.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/render/TextureAtlas.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/render/TextureAtlas.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/Pixi.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/Pixi.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/store/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/store/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/Ruleset.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/Ruleset.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/public/stylesheets/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/../server/public/stylesheets/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/views/changelog.jade" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/views/changelog.jade" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -32,7 +43,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="eslint.code.style.apply.dismiss" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../server" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -103,6 +114,7 @@
       <workItem from="1579717403298" duration="645000" />
       <workItem from="1579718095528" duration="611000" />
       <workItem from="1579798907978" duration="16000" />
+      <workItem from="1579812642337" duration="599000" />
     </task>
     <servers />
   </component>
