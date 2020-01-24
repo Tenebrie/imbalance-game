@@ -32,11 +32,12 @@ export default class Renderer {
 	opponentNameLabel: PIXI.Text
 
 	CARD_ASPECT_RATIO = 408 / 584
-	GAME_BOARD_WINDOW_FRACTION = 0.6
+	GAME_BOARD_WINDOW_FRACTION = 0.7
 	PLAYER_HAND_WINDOW_FRACTION = 0.20
-	OPPONENT_HAND_WINDOW_FRACTION = 0.10
-	HOVERED_HAND_WINDOW_FRACTION = 0.3
-	GAME_BOARD_OFFSET_FRACTION = -0.05
+	OPPONENT_HAND_WINDOW_FRACTION = 0.20
+	HOVERED_HAND_WINDOW_FRACTION = 0.4
+	GAME_BOARD_OFFSET_FRACTION = -0.075
+	OPPONENT_HAND_OFFSET_FRACTION = -0.15
 	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
 
 	constructor(container: HTMLElement) {
@@ -188,7 +189,9 @@ export default class Renderer {
 		container.position.y = cardHeight * 0.5
 		container.zIndex = (handPosition + 1) * 2
 
-		if (!isOpponent) {
+		if (isOpponent) {
+			container.position.y += this.getScreenHeight() * this.OPPONENT_HAND_OFFSET_FRACTION
+		} else {
 			container.position.y = this.getScreenHeight() - container.position.y
 		}
 
