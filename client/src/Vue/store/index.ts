@@ -1,19 +1,24 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Core from '@/Pixi/Core'
 import Player from '@/Pixi/shared/models/Player'
 import { createDirectStore, createModule } from 'direct-vuex'
-import Core from '@/Pixi/Core'
 
 Vue.use(Vuex)
 
 const gameStateModule = createModule({
 	namespaced: true,
 	state: {
+		opponent: null as Player | null,
 		isGameStarted: false as boolean,
 		isPlayersTurn: false as boolean
 	},
 
 	mutations: {
+		setOpponentData(state, player: Player | null): void {
+			state.opponent = player
+		},
+
 		setIsGameStarted(state, isGameStarted: boolean): void {
 			state.isGameStarted = isGameStarted
 		},
@@ -31,6 +36,7 @@ const gameStateModule = createModule({
 
 		reset(context): void {
 			const { commit } = moduleActionContext(context, gameStateModule)
+			commit.setOpponentData(null)
 			commit.setIsGameStarted(false)
 			commit.setIsPlayersTurn(false)
 		}
@@ -49,7 +55,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	},
 
 	mutations: {
-		setPlayerData(state, { player }: { player: Player}): void {
+		setPlayerData(state, player: Player): void {
 			state.isLoggedIn = true
 			state.player = player
 		},

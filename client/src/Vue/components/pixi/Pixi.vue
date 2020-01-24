@@ -8,9 +8,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import Core from '../../Pixi/Core'
+import Core from '../../../Pixi/Core'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import PixiUserInterface from '@/Vue/components/PixiUserInterface.vue'
+import PixiUserInterface from '@/Vue/components/pixi/PixiUserInterface.vue'
 
 export default Vue.extend({
 	components: {
@@ -38,7 +38,7 @@ export default Vue.extend({
 	},
 
 	beforeDestroy(): void {
-		store.commit.setSelectedGameId(null)
+		store.commit.setSelectedGameId('')
 		Core.reset()
 		window.removeEventListener('resize', this.onWindowResize)
 	},

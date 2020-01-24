@@ -2,25 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7b4957f4-b43a-46ea-8e12-fccea030b7c4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../client/src/Pixi/shared/enums/UnitSubtype.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/game/shared/enums/UnitSubtype.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/enums/UnitSubtype.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Input.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Renderer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/handlers/IncomingMessageHandlers.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCardHand.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/models/RenderedCardHand.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/shared/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/shared/models/Card.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/shared/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/shared/models/network/CardMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/utils/Utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/utils/Utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/FontLoader.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/login/FontLoader.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/GameList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/games/TheGameList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/GameListItem.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/games/TheGameListItem.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/login/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/Pixi.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/pixi/Pixi.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/PixiUserInterface.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/pixi/PixiUserInterface.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/store/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/store/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Vue/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/views/Home.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/libraries/CardLibrary.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/libraries/CardLibrary.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/shared/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/shared/models/Card.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/shared/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/shared/models/network/CardMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/Card.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/network/CardMessage.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +39,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="eslint.code.style.apply.dismiss" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/enums" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -116,6 +111,8 @@
       <workItem from="1579718095528" duration="611000" />
       <workItem from="1579798907978" duration="16000" />
       <workItem from="1579812642337" duration="1474000" />
+      <workItem from="1579896333457" duration="10000" />
+      <workItem from="1579896709990" duration="599000" />
     </task>
     <servers />
   </component>
@@ -211,10 +208,10 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="949" y="479" key="EditFileWatcherDialog/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579449675689" />
-    <state x="1060" y="456" key="FileChooserDialogImpl" timestamp="1579798920466">
+    <state x="1060" y="456" key="FileChooserDialogImpl" timestamp="1579896342234">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="1060" y="456" key="FileChooserDialogImpl/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579798920466" />
+    <state x="1060" y="456" key="FileChooserDialogImpl/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579896342234" />
     <state x="781" y="343" key="SettingsEditor" timestamp="1579449677835">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>

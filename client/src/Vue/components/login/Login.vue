@@ -38,7 +38,7 @@ export default Vue.extend({
 		async getProfile(): Promise<void> {
 			const response = await axios.get('/api/profile')
 			const player = response.data.data as Player
-			store.commit.setPlayerData({ player })
+			store.commit.setPlayerData(player)
 
 			const messageElement = this.$refs.message as Element
 			messageElement.innerHTML = 'Login cookie found'

@@ -45,7 +45,9 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'gameState/player/opponent': (data: PlayerInGameMessage) => {
-		Core.registerOpponent(ClientPlayerInGame.fromMessage(data))
+		const playerInGame = ClientPlayerInGame.fromMessage(data)
+		Core.registerOpponent(playerInGame)
+		store.commit.gameStateModule.setOpponentData(playerInGame.player)
 	},
 
 	'gameState/board': (data: GameBoardMessage) => {

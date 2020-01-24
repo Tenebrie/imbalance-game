@@ -10,7 +10,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import store from '@/Vue/store'
-import GameListItem from '@/Vue/components/GameListItem.vue'
+import GameListItem from '@/Vue/components/games/TheGameListItem.vue'
 import GameMessage from '@/Pixi/shared/models/network/GameMessage'
 
 export default Vue.extend({

@@ -4,7 +4,8 @@
 			<button @click="onEndTurn" class="game-button" :disabled="!isPlayersTurn">End turn</button>
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
-			Waiting for opponent...
+			<span class="overlay-message" v-if="!opponent">Waiting for opponent...</span>
+			<span class="overlay-message" v-if="opponent">{{ opponent.username }} is connecting.<br>Waiting for the game to start...</span>
 		</div>
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
@@ -19,9 +20,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Core from '@/Pixi/Core'
 import store from '@/Vue/store'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import Player from '@/Pixi/shared/models/Player'
 
 export default Vue.extend({
 	data: () => ({
@@ -38,15 +39,17 @@ export default Vue.extend({
 		},
 
 		isGameStarted(): boolean {
-			console.log(store.state.gameStateModule.isGameStarted)
 			return store.state.gameStateModule.isGameStarted
 		},
 
 		fadeInOverlayClass(): {} {
-			console.log('Overlay class!')
 			return {
 				visible: !this.isGameStarted as boolean
 			}
+		},
+
+		opponent(): Player | null {
+			return store.state.gameStateModule.opponent
 		}
 	},
 

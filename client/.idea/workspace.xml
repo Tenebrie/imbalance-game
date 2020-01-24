@@ -2,25 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="365a96b8-392e-41f9-8067-3f2c0c3e3250" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Pixi/shared/enums/UnitSubtype.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../server/src/game/shared/enums/UnitSubtype.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/src/enums/UnitSubtype.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/Input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Input.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/Renderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Renderer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedCard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedCard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/models/RenderedCardHand.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/models/RenderedCardHand.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/shared/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/shared/models/Card.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pixi/shared/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/shared/models/network/CardMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/Utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/Utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Vue/components/FontLoader.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/login/FontLoader.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Vue/components/GameList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/games/TheGameList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Vue/components/GameListItem.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/games/TheGameListItem.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Vue/components/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/login/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Vue/components/Pixi.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/pixi/Pixi.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Vue/components/PixiUserInterface.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/pixi/PixiUserInterface.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Vue/store/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/store/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Vue/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/views/Home.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/libraries/CardLibrary.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/libraries/CardLibrary.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/shared/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/shared/models/Card.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/shared/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/shared/models/network/CardMessage.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/src/models/Card.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/Card.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared/src/models/network/CardMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/src/models/network/CardMessage.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +43,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/Vue/components" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../server" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -66,19 +61,19 @@
     <property name="ts.external.directory.path" value="W:\Workspace\notgwent-game\client\node_modules\typescript\lib" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="W:\Workspace\notgwent-game\client\src\Vue\components\games" />
+      <recent name="W:\Workspace\notgwent-game\client\src\Vue\components\login" />
+      <recent name="W:\Workspace\notgwent-game\client\src\Vue\components\pixi" />
+      <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
+      <recent name="W:\Workspace\notgwent-game\client\public\assets" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="W:\Workspace\notgwent-game\client\src\Vue\components" />
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi\models" />
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi\enums" />
       <recent name="W:\Workspace\notgwent-game\client\public\assets\cards" />
       <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="W:\Workspace\notgwent-game\client\src\Pixi" />
-      <recent name="W:\Workspace\notgwent-game\client\public\assets" />
-      <recent name="W:\Workspace\notgwent-game\client" />
-      <recent name="W:\Workspace\notgwent-game\client\public\assets\fonts" />
-      <recent name="W:\Workspace\notgwent-game\client\src\Pixi\handlers" />
     </key>
   </component>
   <component name="ServiceViewManager">
@@ -126,7 +121,8 @@
       <workItem from="1579608505601" duration="23638000" />
       <workItem from="1579718086199" duration="4319000" />
       <workItem from="1579798964587" duration="723000" />
-      <workItem from="1579811063932" duration="10121000" />
+      <workItem from="1579811063932" duration="10402000" />
+      <workItem from="1579896345124" duration="2891000" />
     </task>
     <servers />
   </component>
@@ -134,66 +130,28 @@
     <option name="version" value="1" />
     <option name="exactExcludedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/Pixi/enums/TargetingMode.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/enums/TargetingMode.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/render/ScalingText.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/render/ScalingText.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedCardHand.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/ClientPlayerInGame.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/GrabbedCard.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoard.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/enums/CardLocation.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoardRow.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/enums/CardLocation.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/Input.js" />
-        <option value="$PROJECT_DIR$/src/Vue/router/index.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedCardOnBoard.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoardRow.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/handlers/OutgoingMessageHandlers.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedCardOnBoard.js.map" />
-        <option value="$PROJECT_DIR$/src/Vue/store/index.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/MainHandler.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedCard.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/Input.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/GrabbedCard.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/Core.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/handlers/OutgoingMessageHandlers.js" />
-        <option value="$PROJECT_DIR$/src/main.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/ClientCardDeck.js" />
         <option value="$PROJECT_DIR$/src/Pixi/models/ClientGame.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/Renderer.js" />
-        <option value="$PROJECT_DIR$/src/Vue/router/index.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/render/ScalingText.js" />
         <option value="$PROJECT_DIR$/src/Pixi/models/RenderedCardHand.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/render/CardAttributes.js.map" />
         <option value="$PROJECT_DIR$/src/Pixi/models/HoveredCard.js" />
         <option value="$PROJECT_DIR$/src/Pixi/models/ClientPlayerInGame.js" />
         <option value="$PROJECT_DIR$/src/Pixi/render/CardAttributes.js" />
         <option value="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoard.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/render/RichText.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/ClientGame.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/enums/CardLocation.js" />
         <option value="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/Renderer.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedGameBoardRow.js" />
         <option value="$PROJECT_DIR$/src/Pixi/models/RenderedCard.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/HoveredCard.js.map" />
         <option value="$PROJECT_DIR$/src/main.js" />
         <option value="$PROJECT_DIR$/src/Vue/store/index.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/MainHandler.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/ClientCardDeck.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/Core.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/enums/CardDisplayMode.js.map" />
+        <option value="$PROJECT_DIR$/src/Vue/router/index.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedCardOnBoard.js" />
         <option value="$PROJECT_DIR$/src/Pixi/enums/CardDisplayMode.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedAttackOrder.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/models/RenderedAttackOrder.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/enums/TargetingMode.js" />
         <option value="$PROJECT_DIR$/src/Pixi/render/TextureAtlas.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/Localization.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/Settings.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/models/GrabbedCard.js" />
         <option value="$PROJECT_DIR$/src/Pixi/render/RichText.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/Localization.js" />
-        <option value="$PROJECT_DIR$/src/Pixi/render/TextureAtlas.js.map" />
-        <option value="$PROJECT_DIR$/src/Pixi/Settings.js.map" />
-        <option value="$PROJECT_DIR$/src/utils/Utils.js" />
-        <option value="$PROJECT_DIR$/src/utils/Utils.js.map" />
+        <option value="$PROJECT_DIR$/src/Pixi/handlers/OutgoingMessageHandlers.js" />
+        <option value="$PROJECT_DIR$/src/Pixi/models/ClientCardDeck.js" />
       </list>
     </option>
   </component>
@@ -234,10 +192,10 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="980" y="231" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579620538766" />
-    <state x="1060" y="456" key="FileChooserDialogImpl" timestamp="1579718089288">
+    <state x="1060" y="456" key="FileChooserDialogImpl" timestamp="1579896703451">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="1060" y="456" key="FileChooserDialogImpl/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579718089288" />
+    <state x="1060" y="456" key="FileChooserDialogImpl/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579896703451" />
     <state x="781" y="343" key="SettingsEditor" timestamp="1579449225410">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -254,10 +212,10 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="976" y="432" width="737" height="606" key="find.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579820396974" />
-    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1579821159971">
+    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1579897384117">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579821159971" />
+    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579897384117" />
     <state x="1002" y="613" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1579465548009">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
