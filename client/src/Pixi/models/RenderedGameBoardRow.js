@@ -66,7 +66,7 @@ export default class RenderedGameBoardRow extends GameBoardRow {
         }
     }
     isHovered(mousePosition) {
-        return this.spriteNeutral.containsPoint(mousePosition);
+        return (this.owner === Core.player && this.spriteOwned.containsPoint(mousePosition)) || (this.owner === null && this.spriteNeutral.containsPoint(mousePosition)) || (this.owner === Core.opponent && this.spriteOpponent.containsPoint(mousePosition));
     }
 }
 //# sourceMappingURL=RenderedGameBoardRow.js.map

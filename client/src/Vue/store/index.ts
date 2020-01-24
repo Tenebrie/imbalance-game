@@ -2,24 +2,44 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Player from '@/Pixi/shared/models/Player'
 import { createDirectStore, createModule } from 'direct-vuex'
+import Core from '@/Pixi/Core'
 
 Vue.use(Vuex)
 
-const userInterfaceModule = createModule({
+const gameStateModule = createModule({
+	namespaced: true,
 	state: {
+		isGameStarted: false as boolean,
 		isPlayersTurn: false as boolean
 	},
 
 	mutations: {
+		setIsGameStarted(state, isGameStarted: boolean): void {
+			state.isGameStarted = isGameStarted
+		},
+
 		setIsPlayersTurn(state, isPlayersTurn: boolean): void {
 			state.isPlayersTurn = isPlayersTurn
+		}
+	},
+
+	actions: {
+		startGame(context): void {
+			const { commit } = moduleActionContext(context, gameStateModule)
+			commit.setIsGameStarted(true)
+		},
+
+		reset(context): void {
+			const { commit } = moduleActionContext(context, gameStateModule)
+			commit.setIsGameStarted(false)
+			commit.setIsPlayersTurn(false)
 		}
 	}
 })
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {
-		userInterfaceModule
+		gameStateModule: gameStateModule
 	},
 
 	state: {
@@ -39,8 +59,12 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			state.player = null
 		},
 
-		setSelectedGameId(state, gameId): void {
+		setSelectedGameId(state, gameId: string): void {
 			state.selectedGameId = gameId
+		},
+
+		resetSelectedGameId(state): void {
+			state.selectedGameId = ''
 		}
 	},
 
@@ -50,6 +74,17 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 				throw new Error('Player is not available!')
 			}
 			return state.player
+		}
+	},
+
+	actions: {
+		leaveGame(): void {
+			Core.socket.close(1000, 'Player disconnect')
+		},
+
+		onSocketClosed(): void {
+			store.commit.resetSelectedGameId()
+			store.dispatch.gameStateModule.reset()
 		}
 	}
 })

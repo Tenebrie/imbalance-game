@@ -20,14 +20,14 @@ export default class ClientPlayerInGame extends PlayerInGame {
 	public startTurn(): void {
 		this.isTurnActive = true
 		if (this === Core.player) {
-			store.commit.setIsPlayersTurn(true)
+			store.commit.gameStateModule.setIsPlayersTurn(true)
 		}
 	}
 
 	public endTurn(): void {
 		this.isTurnActive = false
 		if (this === Core.player) {
-			store.commit.setIsPlayersTurn(false)
+			store.commit.gameStateModule.setIsPlayersTurn(false)
 		}
 	}
 

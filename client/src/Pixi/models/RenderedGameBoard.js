@@ -6,7 +6,7 @@ export default class RenderedGameBoard extends GameBoard {
         super();
         this.isInverted = false;
         this.rows = [];
-        this.queuedAttacks = [];
+        this.queuedOrders = [];
         for (let i = 0; i < Constants.GAME_BOARD_ROW_COUNT; i++) {
             this.rows.push(new RenderedGameBoardRow(i));
         }
@@ -41,14 +41,15 @@ export default class RenderedGameBoard extends GameBoard {
         this.rows.forEach(row => row.clearRow());
     }
     updateUnitOrders(newOrders, removedOrders) {
-        removedOrders.forEach(queuedAttack => {
-            queuedAttack.destroy();
+        removedOrders.forEach(order => {
+            order.destroy();
         });
-        this.queuedAttacks = this.queuedAttacks.filter(queuedAttack => !removedOrders.includes(queuedAttack));
-        this.queuedAttacks = this.queuedAttacks.concat(newOrders);
-        newOrders.forEach(newAttack => {
-            newAttack.attacker.preferredAttackTarget = newAttack.target;
-        });
+        this.queuedOrders = this.queuedOrders.filter(order => !removedOrders.includes(order));
+        this.queuedOrders = this.queuedOrders.concat(newOrders);
+        // TODO: Remember the unit orders?
+        // newOrders.forEach(newOrder => {
+        // 	newOrder.orderedUnit.lastOrder = newOrder
+        // })
     }
     setInverted(isInverted) {
         this.isInverted = isInverted;

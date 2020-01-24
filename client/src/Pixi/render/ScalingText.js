@@ -1,5 +1,13 @@
 import * as PIXI from 'pixi.js';
 export default class ScalingText extends PIXI.Container {
+    constructor(text, style) {
+        super();
+        this.texts = [];
+        this.currentText = text;
+        this.currentStyle = style;
+        this.currentAnchor = new PIXI.Point();
+        this.createNewText();
+    }
     get currentFontSize() {
         return this.currentStyle.fontSize;
     }
@@ -41,13 +49,8 @@ export default class ScalingText extends PIXI.Container {
             }
         };
     }
-    constructor(text, style) {
-        super();
-        this.texts = [];
-        this.currentText = text;
-        this.currentStyle = style;
-        this.currentAnchor = new PIXI.Point();
-        this.createNewText();
+    scaleFont(factor) {
+        this.updateFont(this.currentFontSize * factor, this.currentLineHeight * factor);
     }
     updateText(text) {
         if (text === this.currentText) {
@@ -74,7 +77,6 @@ export default class ScalingText extends PIXI.Container {
         }
         else {
             this.createNewText();
-            console.log('Creating new text');
         }
     }
     updateAnchor(anchor) {
@@ -87,8 +89,7 @@ export default class ScalingText extends PIXI.Container {
         });
     }
     createNewText() {
-        while (this.texts.length > 16) {
-            console.log('Too many texts. Removing!');
+        while (this.texts.length > 4) {
             this.removeChild(this.texts.shift());
         }
         const newText = new PIXI.Text(this.currentText, new PIXI.TextStyle(this.currentStyle));

@@ -6,6 +6,7 @@ export default class CardAttributes extends PIXI.Container {
         super();
         this.card = card;
         this.displayMode = displayMode;
+        this.renderedElements = [];
         this.updateChildren();
         if (displayMode === CardDisplayMode.ON_BOARD) {
             this.scale.set(1.75);
@@ -25,7 +26,6 @@ export default class CardAttributes extends PIXI.Container {
         const bgStatsLeft = new PIXI.Sprite(leftPartTexture);
         const bgStatsMiddle = new PIXI.TilingSprite(middlePartTexture, middlePartTexture.width, middlePartTexture.height);
         const bgStatsRight = new PIXI.Sprite(rightPartTexture);
-        const statAttackClaw = new PIXI.Sprite(TextureAtlas.getTexture('components/stat-attack-claw'));
         if (this.displayMode === CardDisplayMode.IN_HAND) {
             bgStatsLeft.position.y -= 2;
             bgStatsRight.position.y -= 2;
@@ -39,30 +39,73 @@ export default class CardAttributes extends PIXI.Container {
         bgStatsLeft.position.x += 2 - width;
         bgStatsMiddle.position.x += rightPartTexture.width - 40 - width;
         bgStatsMiddle.width = width;
-        statAttackClaw.position.x -= width + 5;
         this.addChild(bgStatsLeft);
         this.addChild(bgStatsMiddle);
         this.addChild(bgStatsRight);
-        this.addChild(statAttackClaw);
+        let cumulativeOffset = 0;
+        if (this.card.healthArmor > 0 && this.displayMode === CardDisplayMode.IN_HAND) {
+            this.statHealthArmor = new PIXI.Sprite(TextureAtlas.getTexture('components/stat-health-armor'));
+            this.statHealthArmor.position.x = -cumulativeOffset;
+            cumulativeOffset += 50;
+            this.renderedElements.push(this.statHealthArmor);
+        }
+        if (this.card.attackRange !== 1 && this.displayMode === CardDisplayMode.IN_HAND) {
+            this.statAttackRange = new PIXI.Sprite(TextureAtlas.getTexture('components/stat-attack-range'));
+            this.statAttackRange.position.x = -cumulativeOffset;
+            cumulativeOffset += 50;
+            this.renderedElements.push(this.statAttackRange);
+        }
+        this.statAttackClaw = new PIXI.Sprite(TextureAtlas.getTexture('components/stat-attack-claw'));
+        this.statAttackClaw.position.x = -cumulativeOffset - this.getAttackTextWidth() - 10;
+        this.statAttackClaw.position.y = -1;
+        this.renderedElements.push(this.statAttackClaw);
+        this.renderedElements.forEach(renderedElement => this.addChild(renderedElement));
     }
-    getCardAttributesWidth() {
+    getAttackTextWidth() {
         const attack = this.card.attack || 0;
-        const attackTextWidth = PIXI.TextMetrics.measureText(attack.toString(), new PIXI.TextStyle({
+        const fontSize = this.getAttackTextFontSize();
+        return PIXI.TextMetrics.measureText(attack.toString(), new PIXI.TextStyle({
             fontFamily: 'BrushScript',
             fontSize: 60
         })).width;
-        return (attackTextWidth - 0) * this.scale.x;
+    }
+    getCardAttributesWidth() {
+        const attackTextWidth = this.getAttackTextWidth();
+        const attackRangeWidth = this.card.attackRange !== 1 && this.displayMode === CardDisplayMode.IN_HAND ? 50 : 0;
+        const healthArmorWidth = this.card.healthArmor > 0 && this.displayMode === CardDisplayMode.IN_HAND ? 50 : 0;
+        return (attackTextWidth + attackRangeWidth + healthArmorWidth + 5) * this.scale.x;
     }
     getAttackTextFontSize() {
         return this.displayMode === CardDisplayMode.IN_HAND ? 60 : 110;
     }
+    getAttackRangeTextFontSize() {
+        return 22;
+    }
+    getHealthArmorTextFontSize() {
+        return 22;
+    }
     getAttackTextPosition() {
+        const clawPosition = this.statAttackClaw.position;
+        let point = new PIXI.Point(clawPosition.x, clawPosition.y);
+        point.x -= 15;
+        point.y -= 33;
         if (this.displayMode === CardDisplayMode.IN_HAND) {
-            return new PIXI.Point(-20, -33);
         }
-        else {
-            return new PIXI.Point(-35, -58);
+        if (this.displayMode === CardDisplayMode.ON_BOARD) {
+            point.x /= (60 / 110);
+            point.y /= (60 / 110);
+            point.x += 5;
+            point.y += 5;
         }
+        return point;
+    }
+    getAttackRangeTextPosition() {
+        const iconPosition = this.statAttackRange.position;
+        return new PIXI.Point(iconPosition.x - 39, iconPosition.y - 33);
+    }
+    getHealthArmorTextPosition() {
+        const iconPosition = this.statHealthArmor.position;
+        return new PIXI.Point(iconPosition.x - 37, iconPosition.y - 33);
     }
 }
 //# sourceMappingURL=CardAttributes.js.map

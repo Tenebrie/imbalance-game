@@ -1,11 +1,42 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { createDirectStore } from 'direct-vuex';
+import { createDirectStore, createModule } from 'direct-vuex';
+import Core from '@/Pixi/Core';
 Vue.use(Vuex);
-const { store, rootActionContext, moduleActionContext } = createDirectStore({
+const gameStateModule = createModule({
+    namespaced: true,
     state: {
-        isLoggedIn: false,
+        isGameStarted: false,
+        isPlayersTurn: false
+    },
+    mutations: {
+        setIsGameStarted(state, isGameStarted) {
+            state.isGameStarted = isGameStarted;
+        },
+        setIsPlayersTurn(state, isPlayersTurn) {
+            state.isPlayersTurn = isPlayersTurn;
+        }
+    },
+    actions: {
+        startGame(context) {
+            console.log(context);
+            const { commit } = moduleActionContext(context, gameStateModule);
+            commit.setIsGameStarted(true);
+        },
+        reset(context) {
+            const { commit } = moduleActionContext(context, gameStateModule);
+            commit.setIsGameStarted(false);
+            commit.setIsPlayersTurn(false);
+        }
+    }
+});
+const { store, rootActionContext, moduleActionContext } = createDirectStore({
+    modules: {
+        gameStateModule: gameStateModule
+    },
+    state: {
         player: null,
+        isLoggedIn: false,
         selectedGameId: ''
     },
     mutations: {
@@ -19,6 +50,9 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
         },
         setSelectedGameId(state, gameId) {
             state.selectedGameId = gameId;
+        },
+        resetSelectedGameId(state) {
+            state.selectedGameId = '';
         }
     },
     getters: {
@@ -27,6 +61,15 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
                 throw new Error('Player is not available!');
             }
             return state.player;
+        }
+    },
+    actions: {
+        leaveGame() {
+            Core.socket.close(1000, 'Player disconnect');
+        },
+        onSocketClosed() {
+            store.commit.resetSelectedGameId();
+            store.dispatch.gameStateModule.reset();
         }
     }
 });

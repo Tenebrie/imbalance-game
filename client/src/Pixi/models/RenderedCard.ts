@@ -303,12 +303,12 @@ export default class RenderedCard extends Card {
 		this.cardDescriptionText.position.set(0, -135)
 
 		const description = Localization.getString(this.cardDescription)
-		let fontSize = 28
-		if (description.length > 50) { fontSize = 26 }
-		if (description.length > 100) { fontSize = 24 }
-		if (description.length > 150) { fontSize = 22 }
-		if (description.length > 200) { fontSize = 20 }
-		if (description.length > 250) { fontSize = 18 }
+		let fontSize = 26
+		if (description.length > 50) { fontSize = 24 }
+		if (description.length > 100) { fontSize = 22 }
+		if (description.length > 150) { fontSize = 20 }
+		if (description.length > 200) { fontSize = 18 }
+		if (description.length > 250) { fontSize = 16 }
 		this.cardDescriptionText.style.baseFontSize = fontSize
 		this.cardDescriptionText.setFont(fontSize, fontSize + 6)
 	}

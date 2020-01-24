@@ -75,6 +75,7 @@ export default class Core {
 		Core.input.clear()
 		Core.mainHandler.stop()
 		Core.renderer.destroy()
+		store.dispatch.onSocketClosed()
 	}
 
 	private static onError(event: Event): void {
