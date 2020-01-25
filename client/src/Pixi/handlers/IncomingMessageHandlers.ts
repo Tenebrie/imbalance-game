@@ -101,7 +101,7 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/board/row/owner': (data: GameBoardRowMessage) => {
-		Core.board.rows[data.index].setOwner(Core.getPlayer(data.ownerId))
+		Core.board.rows[data.index].setOwner(Core.getPlayerOrNull(data.ownerId))
 	},
 
 	'update/board/card/power': (data: CardMessage) => {

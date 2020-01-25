@@ -95,6 +95,15 @@ export default class Core {
 		throw new Error(`Player ${playerId} does not exist!`)
 	}
 
+	public static getPlayerOrNull(playerId: string): ClientPlayerInGame | null {
+		if (this.player && this.player.player.id === playerId) {
+			return this.player
+		} else if (this.opponent && this.opponent.player.id === playerId) {
+			return this.opponent
+		}
+		return null
+	}
+
 	public static sendMessage(type: string, data: any): void {
 		Core.socket.send(JSON.stringify({
 			type: type,

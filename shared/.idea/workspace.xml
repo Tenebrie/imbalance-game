@@ -2,38 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7b4957f4-b43a-46ea-8e12-fccea030b7c4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../client/src/Pixi/enums/ClientGameStatus.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/assets/avatar-placeholder.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/components/TheFooter.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/components/login/TheLoginForm.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/components/login/TheRegisterForm.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/components/navigationbar/TheMiniUserProfile.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/components/navigationbar/TheNavigationBar.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/components/navigationbar/UserAvatar.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/styles/generic.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/views/GameView.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/views/HomeView.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/views/LoginView.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client/src/Vue/views/RegisterView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/.idea/dictionaries/Tianara.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/dictionaries/Tianara.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../client/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Core.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Core.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/Pixi/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/handlers/IncomingMessageHandlers.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Vue/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/games/TheGameList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/games/TheGameList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/games/TheGameListItem.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/games/TheGameListItem.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/login/FontLoader.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/TheFontLoader.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/login/Login.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/pixi/Pixi.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/pixi/Pixi.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Vue/components/pixi/PixiUserInterface.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/components/pixi/PixiUserInterface.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Vue/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/router/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Vue/store/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Vue/store/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Vue/views/Home.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/vue.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/vue.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/game/Ruleset.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/Ruleset.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/game/models/ServerGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/models/ServerGame.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/game/models/ServerGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/models/ServerGameBoardRow.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/views/changelog.jade" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/views/changelog.jade" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>

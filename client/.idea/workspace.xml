@@ -2,37 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="365a96b8-392e-41f9-8067-3f2c0c3e3250" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Pixi/enums/ClientGameStatus.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/assets/avatar-placeholder.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/components/TheFooter.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/components/login/TheLoginForm.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/components/login/TheRegisterForm.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/components/navigationbar/TheMiniUserProfile.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/components/navigationbar/TheNavigationBar.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/components/navigationbar/UserAvatar.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/styles/generic.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/views/HomeView.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/views/LoginView.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Vue/views/RegisterView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/Tianara.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/Tianara.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pixi/Core.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/Core.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pixi/handlers/IncomingMessageHandlers.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/components/games/TheGameList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/games/TheGameList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/components/games/TheGameListItem.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/games/TheGameListItem.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/components/login/FontLoader.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/TheFontLoader.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/components/login/Login.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/components/pixi/Pixi.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/pixi/Pixi.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/components/pixi/PixiUserInterface.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/components/pixi/PixiUserInterface.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/router/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Vue/store/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/store/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Vue/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/Vue/views/GameView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vue.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/game/Ruleset.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/Ruleset.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/game/models/ServerGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/models/ServerGame.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/game/models/ServerGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/models/ServerGameBoardRow.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/src/views/changelog.jade" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/views/changelog.jade" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -149,7 +127,7 @@
       <workItem from="1579798964587" duration="723000" />
       <workItem from="1579811063932" duration="10402000" />
       <workItem from="1579896345124" duration="11689000" />
-      <workItem from="1579947943374" duration="13893000" />
+      <workItem from="1579947943374" duration="16541000" />
     </task>
     <servers />
   </component>
@@ -239,10 +217,10 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="1089" y="618" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579631434050" />
-    <state x="976" y="432" width="737" height="606" key="find.popup" timestamp="1579961849040">
+    <state x="976" y="432" width="737" height="606" key="find.popup" timestamp="1579965130347">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="976" y="432" width="737" height="606" key="find.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579961849040" />
+    <state x="976" y="432" width="737" height="606" key="find.popup/0.0.2560.1400/2560.174.1920.1040@0.0.2560.1400" timestamp="1579965130347" />
     <state x="921" y="426" width="700" height="530" key="recent.locations.popup" timestamp="1579957305923">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>

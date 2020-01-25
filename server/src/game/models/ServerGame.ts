@@ -136,17 +136,24 @@ export default class ServerGame extends Game {
 	}
 
 	public advancePhase(): void {
+		const playerOne = this.players[0]
+		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
+		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
+		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
+		const hasPlayerLostBoard = rowsOwnedByPlayerOne === 0 || rowsOwnedByPlayerTwo === 0
+		console.log(`Rows owned ${rowsOwnedByPlayerOne}, ${rowsOwnedByPlayerTwo}`)
+
 		if (this.turnPhase === GameTurnPhase.TURN_START) {
 			this.startDeployPhase()
 		} else if (this.turnPhase === GameTurnPhase.DEPLOY) {
 			this.startSkirmishPhase()
-		} else if (this.turnPhase === GameTurnPhase.SKIRMISH && this.currentTime === Ruleset.MAX_TIME_OF_DAY) {
-			this.startCombatPhase()
-		} else if (this.turnPhase === GameTurnPhase.SKIRMISH && this.currentTime < Ruleset.MAX_TIME_OF_DAY) {
+		} else if (this.turnPhase === GameTurnPhase.SKIRMISH) {
 			this.startEndTurnPhase()
+		} else if (this.turnPhase === GameTurnPhase.TURN_END && !hasPlayerLostBoard && this.currentTime < Ruleset.MAX_TIME_OF_DAY) {
+			this.startNewTurnPhase()
+		} else if (this.turnPhase === GameTurnPhase.TURN_END && (hasPlayerLostBoard || this.currentTime === Ruleset.MAX_TIME_OF_DAY)) {
+			this.startDayEndPhase()
 		} else if (this.turnPhase === GameTurnPhase.COMBAT) {
-			this.startEndTurnPhase()
-		} else if (this.turnPhase === GameTurnPhase.TURN_END) {
 			this.startNewTurnPhase()
 		}
 	}
@@ -166,8 +173,6 @@ export default class ServerGame extends Game {
 	}
 
 	public startDeployPhase(): void {
-		this.board.orders.release()
-
 		this.advanceTurn()
 
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
@@ -181,24 +186,36 @@ export default class ServerGame extends Game {
 		})
 	}
 
-	public startCombatPhase(): void {
+	public startDayEndPhase(): void {
 		this.setTurnPhase(GameTurnPhase.COMBAT)
 
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
-		const playerOnePower = this.board.getUnitsOwnedByPlayer(playerOne).map(unit => unit.card.power).reduce((total, value) => total += value, 0)
-		const playerTwoPower = this.board.getUnitsOwnedByPlayer(playerTwo).map(unit => unit.card.power).reduce((total, value) => total += value, 0)
-		if (playerOnePower > playerTwoPower) {
-			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(playerOnePower - playerTwoPower))
-		} else if (playerTwoPower > playerOnePower) {
-			playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(playerTwoPower - playerOnePower))
-		}
+
+		// const playerOnePower = this.board.getUnitsOwnedByPlayer(playerOne).map(unit => unit.card.power).reduce((total, value) => total += value, 0)
+		// const playerTwoPower = this.board.getUnitsOwnedByPlayer(playerTwo).map(unit => unit.card.power).reduce((total, value) => total += value, 0)
+		// if (playerOnePower > playerTwoPower) {
+		// 	playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(playerOnePower - playerTwoPower))
+		// } else if (playerTwoPower > playerOnePower) {
+		// 	playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(playerTwoPower - playerOnePower))
+		// }
+
+		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
+		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
+		playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(rowsOwnedByPlayerTwo * 5))
+		playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(rowsOwnedByPlayerOne * 5))
 
 		this.board.getAllUnits().forEach(cardOnBoard => this.board.destroyUnit(cardOnBoard))
 		this.setTime(-1)
 
+		this.board.rows[Constants.GAME_BOARD_ROW_COUNT - 1].setOwner(playerOne)
+		this.board.rows[0].setOwner(playerTwo)
+		for (let i = 1; i < Constants.GAME_BOARD_ROW_COUNT - 1; i++) {
+			this.board.rows[i].setOwner(null)
+		}
+
 		this.players.forEach(player => {
-			player.drawCards(10)
+			player.drawCards(7)
 		})
 
 		this.advancePhase()
@@ -206,6 +223,7 @@ export default class ServerGame extends Game {
 
 	public startEndTurnPhase(): void {
 		this.setTurnPhase(GameTurnPhase.TURN_END)
+		this.board.orders.release()
 		this.board.getAllUnits().forEach(unit => unit.card.onTurnEnded(unit))
 		this.advancePhase()
 	}
