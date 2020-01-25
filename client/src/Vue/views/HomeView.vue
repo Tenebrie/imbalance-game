@@ -4,10 +4,10 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import GameList from '../components/games/TheGameList'
+import GameList from '../components/games/TheGameList.vue'
 
 export default Vue.extend({
 	components: { GameList },

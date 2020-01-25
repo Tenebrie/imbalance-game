@@ -4,9 +4,9 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from 'vue'
-import TheLoginForm from '../components/login/TheLoginForm'
+import TheLoginForm from '../components/login/TheLoginForm.vue'
 
 export default Vue.extend({
 	components: { TheLoginForm },
