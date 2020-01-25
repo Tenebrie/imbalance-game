@@ -150,6 +150,14 @@ const handlers: {[ index: string ]: any } = {
 		Core.opponent.timeUnits = data.timeUnits
 	},
 
+	'update/player/self/victory': (data: PlayerInGameMessage) => {
+		store.dispatch.gameStateModule.winGame()
+	},
+
+	'update/player/self/defeat': (data: PlayerInGameMessage) => {
+		store.dispatch.gameStateModule.loseGame()
+	},
+
 	'update/player/self/hand/cardDrawn': (data: CardMessage[]) => {
 		console.info('Cards drawn', data)
 		data.forEach(cardMessage => {

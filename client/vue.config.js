@@ -1,8 +1,9 @@
 module.exports = {
 	devServer: {
+		publicPath: '/',
 		proxy: {
-			'/': {
-//				logLevel: 'debug',
+			'/api': {
+				logLevel: 'debug',
 				target: 'http://localhost:3000'
 			}
 		}

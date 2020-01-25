@@ -1,7 +1,7 @@
 <template>
-	<div>
+	<div class="pixi">
 		<div ref="game" class="game-container"></div>
-		<pixi-user-interface v-if="isInGame" class="pixi-user-interface" />
+		<pixi-user-interface class="pixi-user-interface" />
 	</div>
 </template>
 
@@ -17,17 +17,8 @@ export default Vue.extend({
 		PixiUserInterface
 	},
 
-	watch: {
-		selectedGameId(newGameId, oldGameId) {
-			if (oldGameId) {
-				Core.reset()
-			}
-
-			if (!newGameId) { return }
-
-			const container = (this.$refs.game as HTMLElement)
-			Core.init(newGameId, container)
-		}
+	created(): void {
+		store.dispatch.gameStateModule.setGameLoading()
 	},
 
 	mounted(): void {
@@ -35,19 +26,17 @@ export default Vue.extend({
 			TextureAtlas.prepare()
 		}, 500)
 		window.addEventListener('resize', this.onWindowResize)
+
+		const container = (this.$refs.game as HTMLElement)
+		Core.init(this.selectedGameId, container)
 	},
 
 	beforeDestroy(): void {
-		store.commit.setSelectedGameId('')
 		Core.reset()
 		window.removeEventListener('resize', this.onWindowResize)
 	},
 
 	computed: {
-		isInGame(): boolean {
-			return !!this.selectedGameId
-		},
-
 		selectedGameId(): string {
 			return store.state.selectedGameId
 		}

@@ -5,7 +5,11 @@
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
 			<span class="overlay-message" v-if="!opponent">Waiting for opponent...</span>
-			<span class="overlay-message" v-if="opponent">{{ opponent.username }} is connecting.<br>Waiting for the game to start...</span>
+			<span class="overlay-message" v-if="opponent">{{ opponent.username }} has connected.<br>Waiting for the game to start...</span>
+		</div>
+		<div class="endgame-screen" :class="endgameScreenClass">
+			<div class="victory" v-if="isVictory">Victory!</div>
+			<div class="defeat" v-if="isDefeat">Defeat :(</div>
 		</div>
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
@@ -21,8 +25,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import Player from '@/Pixi/shared/models/Player'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 
 export default Vue.extend({
 	data: () => ({
@@ -35,16 +40,31 @@ export default Vue.extend({
 
 	computed: {
 		isPlayersTurn(): boolean {
-			return store.state.gameStateModule.isPlayersTurn
+			return store.state.gameStateModule.isPlayersTurn && store.state.gameStateModule.gameStatus === ClientGameStatus.IN_PROGRESS
 		},
 
 		isGameStarted(): boolean {
-			return store.state.gameStateModule.isGameStarted
+			const status = store.state.gameStateModule.gameStatus
+			return status === ClientGameStatus.IN_PROGRESS || status === ClientGameStatus.VICTORY || status === ClientGameStatus.DEFEAT
 		},
 
 		fadeInOverlayClass(): {} {
 			return {
 				visible: !this.isGameStarted as boolean
+			}
+		},
+
+		isVictory(): boolean {
+			return store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY
+		},
+
+		isDefeat(): boolean {
+			return store.state.gameStateModule.gameStatus === ClientGameStatus.DEFEAT
+		},
+
+		endgameScreenClass(): {} {
+			return {
+				visible: (this.isVictory || this.isDefeat) as boolean
 			}
 		},
 
@@ -81,6 +101,8 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+	@import "src/Vue/styles/generic";
+
 	.pixi-user-interface {
 		position: absolute;
 		top: 0;
@@ -104,6 +126,26 @@ export default Vue.extend({
 			color: white;
 			font-size: 40px;
 			font-family: BrushScript, Roboto, sans-serif;
+
+			&.visible {
+				opacity: 1;
+			}
+		}
+
+		.endgame-screen {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			color: $COLOR-TEXT;
+			font-family: BrushScript, sans-serif;
+			font-size: 8em;
+			background: rgba(black, 0.5);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			opacity: 0;
+			transition: opacity 1s;
 
 			&.visible {
 				opacity: 1;

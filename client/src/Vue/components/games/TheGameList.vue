@@ -1,8 +1,18 @@
 <template>
-	<div class="game-list">
-		<game-list-item v-for="game in games" :key="game.id" :game="game" />
-		<button @click="onCreateGame">Create game</button>
-		<button @click="onRefreshGames">Refresh</button>
+	<div class="the-game-list-container">
+		<div class="the-game-list">
+			<h2>Game browser</h2>
+			<div v-if="games.length === 0"><span class="info-text">Nobody is playing :(</span></div>
+			<div class="list">
+				<game-list-item class="list-item" v-for="game in games" :key="game.id" :game="game" />
+			</div>
+			<div class="controls">
+				<div class="button-container">
+					<button @click="onCreateGame" class="primary">Create game</button>
+					<button @click="onRefreshGames" class="secondary">Refresh</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -10,8 +20,8 @@
 import Vue from 'vue'
 import axios from 'axios'
 import store from '@/Vue/store'
-import GameListItem from '@/Vue/components/games/TheGameListItem.vue'
 import GameMessage from '@/Pixi/shared/models/network/GameMessage'
+import GameListItem from '@/Vue/components/games/TheGameListItem.vue'
 
 export default Vue.extend({
 	components: {
@@ -19,21 +29,19 @@ export default Vue.extend({
 	},
 
 	data: () => ({
-		games: [] as GameMessage[]
+		games: [] as GameMessage[],
+		updateTimer: NaN as number
 	}),
 
-	watch: {
-		isLoggedIn(isLoggedInNow): void {
-			if (isLoggedInNow) {
-				this.fetchGames()
-			}
-		}
+	mounted(): void {
+		this.fetchGames()
+		this.updateTimer = setInterval(() => {
+			this.fetchGames()
+		}, 30000)
 	},
 
-	computed: {
-		isLoggedIn(): boolean {
-			return store.state.isLoggedIn
-		}
+	beforeDestroy(): void {
+		clearInterval(this.updateTimer)
 	},
 
 	methods: {
@@ -55,5 +63,52 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+	.the-game-list-container {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
 
+		.the-game-list {
+			min-width: 64em;
+			height: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-direction: column;
+			padding: 32px;
+			background: rgba(white, 0.1);
+
+			.list {
+				width: 100%;
+				height: 100%;
+				margin-bottom: 1em;
+				overflow-y: auto;
+
+				.list-item {
+					padding: 4px 16px;
+				}
+			}
+
+			.controls {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+
+				.button-container {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+
+					button {
+						margin: 4px;
+						width: 8em;
+					}
+				}
+			}
+		}
+	}
 </style>

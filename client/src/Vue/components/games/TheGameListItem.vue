@@ -1,5 +1,5 @@
 <template>
-	<div class="game-list-item" @click="onClick">
+	<div class="the-game-list-item" @click="onClick">
 		<b>{{ game.name }}</b> | Created by <b>{{ game.owner }}</b> | Players: <b>{{ this.game.playerCount }}</b>
 	</div>
 </template>
@@ -20,20 +20,20 @@ export default Vue.extend({
 
 	methods: {
 		onClick(): void {
-			store.commit.setSelectedGameId(this.game.id)
+			store.dispatch.joinGame(this.game.id)
 		}
 	}
 })
 </script>
 
 <style scoped lang="scss">
-	.game-list-item {
+	.the-game-list-item {
 		padding: 2px;
 		cursor: pointer;
 		user-select: none;
 
 		&:hover {
-			background: lightpink;
+			background: rgba(white, 0.1);
 		}
 	}
 </style>
