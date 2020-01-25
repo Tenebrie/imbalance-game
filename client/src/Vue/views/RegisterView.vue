@@ -4,9 +4,9 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from 'vue'
-import TheRegisterForm from '../components/login/TheRegisterForm'
+import TheRegisterForm from '../components/login/TheRegisterForm.vue'
 
 export default Vue.extend({
 	components: { TheRegisterForm },

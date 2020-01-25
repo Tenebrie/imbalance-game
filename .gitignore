@@ -1,6 +1,9 @@
 node_modules/
 dist/
 .idea/*
+client/.idea/*
+server/.idea/*
+shared/.idea/*
 server/client/
 *.js
 *.js.map

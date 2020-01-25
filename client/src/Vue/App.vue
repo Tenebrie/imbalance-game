@@ -9,8 +9,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import TheFooter from '@/Vue/components/TheFooter'
-import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar'
+import TheFooter from '@/Vue/components/TheFooter.vue'
+import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
 
 export default Vue.extend({
 	components: { TheNavigationBar, TheFooter },
