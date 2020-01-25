@@ -49,7 +49,9 @@ export default class ServerGameBoardRow extends GameBoardRow {
 	}
 
 	public setOwner(player: ServerPlayerInGame | null): void {
-		if (this.owner === player) { return }
+		if (this.owner === player) {
+			return
+		}
 
 		this.owner = player
 		this.game.players.forEach(playerInGame => {

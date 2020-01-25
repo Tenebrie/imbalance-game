@@ -7,7 +7,6 @@ import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
-import RenderedButton from '@/Pixi/models/RenderedButton'
 import CardType from '@/Pixi/shared/enums/CardType'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
@@ -25,7 +24,7 @@ export default class Renderer {
 	pixi: PIXI.Application
 	rootContainer: PIXI.Container
 
-	container: Element
+	container: HTMLElement
 
 	timeLabel: PIXI.Text
 	actionLabel: PIXI.Text
@@ -33,14 +32,15 @@ export default class Renderer {
 	opponentNameLabel: PIXI.Text
 
 	CARD_ASPECT_RATIO = 408 / 584
-	GAME_BOARD_WINDOW_FRACTION = 0.6
+	GAME_BOARD_WINDOW_FRACTION = 0.7
 	PLAYER_HAND_WINDOW_FRACTION = 0.20
-	OPPONENT_HAND_WINDOW_FRACTION = 0.10
-	HOVERED_HAND_WINDOW_FRACTION = 0.3
-	GAME_BOARD_OFFSET_FRACTION = -0.05
+	OPPONENT_HAND_WINDOW_FRACTION = 0.20
+	HOVERED_HAND_WINDOW_FRACTION = 0.4
+	GAME_BOARD_OFFSET_FRACTION = -0.075
+	OPPONENT_HAND_OFFSET_FRACTION = -0.15
 	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
 
-	constructor(container: Element) {
+	constructor(container: HTMLElement) {
 		this.pixi = new PIXI.Application({
 			width: window.innerWidth * window.devicePixelRatio * Settings.superSamplingLevel,
 			height: window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel,
@@ -144,12 +144,8 @@ export default class Renderer {
 		this.renderInspectedCard()
 	}
 
-	public registerButton(button: RenderedButton): void {
-		this.rootContainer.addChild(button.container)
-	}
-
-	public unregisterButton(button: RenderedButton): void {
-		this.rootContainer.removeChild(button.container)
+	public resize(): void {
+		this.pixi.renderer.resize(window.innerWidth * window.devicePixelRatio * Settings.superSamplingLevel, window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel)
 	}
 
 	public registerCard(card: RenderedCard): void {
@@ -193,7 +189,9 @@ export default class Renderer {
 		container.position.y = cardHeight * 0.5
 		container.zIndex = (handPosition + 1) * 2
 
-		if (!isOpponent) {
+		if (isOpponent) {
+			container.position.y += this.getScreenHeight() * this.OPPONENT_HAND_OFFSET_FRACTION
+		} else {
 			container.position.y = this.getScreenHeight() - container.position.y
 		}
 

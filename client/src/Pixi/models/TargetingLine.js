@@ -5,14 +5,16 @@ export default class TargetingLine {
         this.arrowLine = new PIXI.Graphics();
         this.startingPoint = new PIXI.Graphics();
         this.targetPoint = new PIXI.Graphics();
-        Core.renderer.pixi.stage.addChild(this.arrowLine);
-        Core.renderer.pixi.stage.addChild(this.startingPoint);
-        Core.renderer.pixi.stage.addChild(this.targetPoint);
+    }
+    create() {
+        Core.renderer.rootContainer.addChild(this.arrowLine);
+        Core.renderer.rootContainer.addChild(this.startingPoint);
+        Core.renderer.rootContainer.addChild(this.targetPoint);
     }
     destroy() {
-        Core.renderer.pixi.stage.removeChild(this.arrowLine);
-        Core.renderer.pixi.stage.removeChild(this.startingPoint);
-        Core.renderer.pixi.stage.removeChild(this.targetPoint);
+        Core.renderer.rootContainer.removeChild(this.arrowLine);
+        Core.renderer.rootContainer.removeChild(this.startingPoint);
+        Core.renderer.rootContainer.removeChild(this.targetPoint);
     }
 }
-//# sourceMappingURL=TargetingArrow.js.map
+//# sourceMappingURL=TargetingLine.js.map

@@ -3,17 +3,27 @@ import * as PIXI from 'pixi.js'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 
 export default class TextureAtlas {
+	static isReady = false
+	static isLoading = false
 	static texturesLoaded: number
 	static texturesToLoad: number
 	static textures: { [ index: string ]: PIXI.Texture }
 
+	static resolveFunctions: { (): void }[] = []
+
 	public static async prepare(): Promise<void> {
 		return new Promise(async (resolve) => {
-			if (TextureAtlas.texturesLoaded > 0) {
+			if (TextureAtlas.isReady) {
 				resolve()
 				return
 			}
 
+			TextureAtlas.resolveFunctions.push(resolve)
+			if (TextureAtlas.isLoading) {
+				return
+			}
+
+			this.isLoading = true
 			TextureAtlas.texturesLoaded = 0
 			TextureAtlas.textures = {}
 
@@ -56,8 +66,8 @@ export default class TextureAtlas {
 					TextureAtlas.textures[fileName.toLowerCase()] = texture
 
 					if (TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad) {
-						console.info('TextureAtlas initialized')
-						resolve()
+						console.info(`TextureAtlas initialized. Resolving ${TextureAtlas.resolveFunctions.length} promise(s).`)
+						TextureAtlas.onReady()
 					}
 				}
 				texture.baseTexture.on('loaded', onLoaded)
@@ -66,14 +76,15 @@ export default class TextureAtlas {
 		})
 	}
 
-	public static isReady(): boolean {
-		return TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad
+	private static onReady(): void {
+		this.isReady = true
+		this.resolveFunctions.forEach(resolve => resolve())
 	}
 
 	public static getTexture(path: string): PIXI.Texture {
 		path = path.toLowerCase()
-		if (!this.isReady()) {
-			console.warn(`Accessing texture at '${path}' before TextureAtlas is ready!`)
+		if (!this.isReady) {
+			throw new Error(`Accessing texture at '${path}' before TextureAtlas is ready!`)
 		}
 		const texture = this.textures[path]
 		if (!texture) {

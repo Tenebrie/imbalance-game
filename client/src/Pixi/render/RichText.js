@@ -39,6 +39,9 @@ export default class RichText extends PIXI.Container {
                 parent.fontSize = value;
                 parent.renderText();
             },
+            get baseFontSize() {
+                return parent.baseFontSize;
+            },
             set baseFontSize(value) {
                 if (value === parent.baseFontSize) {
                     return;
@@ -58,12 +61,27 @@ export default class RichText extends PIXI.Container {
             }
         };
     }
+    scaleFont(factor) {
+        this.setFont(this.fontSize * factor, this.lineHeight * factor);
+    }
+    setFont(fontSize, lineHeight) {
+        if (this.fontSize === fontSize && this.lineHeight === lineHeight) {
+            return;
+        }
+        this.fontSize = fontSize;
+        this.lineHeight = lineHeight;
+        const SCALE_MODIFIER = (this.fontSize / 18);
+        this.segments.forEach(segment => {
+            segment.text.position.set(segment.basePosition.x * SCALE_MODIFIER, segment.basePosition.y * SCALE_MODIFIER);
+            segment.text.updateFont(fontSize, lineHeight);
+        });
+    }
     renderText() {
         while (this.children.length > 0) {
             this.removeChildAt(0);
         }
         const SCALE_MODIFIER = this.fontSize / this.baseFontSize;
-        const replacedText = (this.text || '').replace('{name}', `${Localization.getString(this.card.cardName)}`);
+        const replacedText = (this.text || '').replace(/{name}/g, `${Localization.getString(this.card.cardName)}`);
         const chars = Array.from(replacedText);
         const segments = [];
         let currentState = SegmentType.TEXT;
@@ -103,8 +121,8 @@ export default class RichText extends PIXI.Container {
         let contextColorStack = [];
         let currentLine = [];
         const newLine = () => {
-            currentLine.forEach(segment => {
-                segment.position.x -= contextPosition.x / 2;
+            currentLine.forEach(renderedSegment => {
+                renderedSegment.basePosition.x -= contextPosition.x / 2;
             });
             contextPosition.x = 0;
             contextPosition.y += this.lineHeight;
@@ -125,7 +143,12 @@ export default class RichText extends PIXI.Container {
                     }
                     const renderedText = new ScalingText(segment.data, style);
                     renderedText.position = contextPosition;
-                    currentLine.push(renderedText);
+                    const renderedSegment = {
+                        text: renderedText,
+                        basePosition: contextPosition.clone()
+                    };
+                    currentLine.push(renderedSegment);
+                    this.segments.push(renderedSegment);
                     this.addChild(renderedText);
                     contextPosition.x += measure.width;
                     break;
@@ -160,8 +183,8 @@ export default class RichText extends PIXI.Container {
             }
         });
         newLine();
-        this.children.forEach(renderedText => {
-            renderedText.position.y -= contextPosition.y / 2;
+        this.segments.forEach(segment => {
+            segment.basePosition.y -= contextPosition.y / 2;
         });
     }
     getStateTransition(stateTransitions, trigger) {

@@ -1,7 +1,6 @@
 import Core from '@/Pixi/Core';
 import CardPlayedMessage from '@/Pixi/shared/models/network/CardPlayedMessage';
-import AttackOrderMessage from '@/Pixi/shared/models/network/AttackOrderMessage';
-import MoveOrderMessage from '../shared/models/network/MoveOrderMessage';
+import UnitOrderMessage from '@/Pixi/shared/models/network/UnitOrderMessage';
 export default {
     sendChatMessage(message) {
         Core.sendMessage('post/chat', message);
@@ -13,12 +12,8 @@ export default {
     sendSpellCardPlayed(card) {
         Core.sendMessage('post/playCard', CardPlayedMessage.fromCard(card));
     },
-    sendUnitAttackOrders(order) {
-        Core.sendMessage('post/attackOrder', AttackOrderMessage.fromAttackOrder(order));
-    },
-    sendUnitMoveOrders(order) {
-        console.log('Sending order');
-        Core.sendMessage('post/moveOrder', MoveOrderMessage.fromUnitAndIndex(order.unit, order.targetRow.index));
+    sendUnitOrder(order) {
+        Core.sendMessage('post/unitOrder', new UnitOrderMessage(order));
     },
     sendEndTurn() {
         Core.sendMessage('post/endTurn', null);

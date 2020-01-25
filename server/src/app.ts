@@ -77,6 +77,11 @@ app.use('/api/register', RegisterRouter)
 /* WS routers */
 app.use('/api/game', PlayRouter)
 
+/* Index fallback */
+app.use('*', (req, res) => {
+	res.sendFile(path.join(__dirname, '../client/index.html'))
+})
+
 /* Global error handler */
 app.use((err, req, res, next) => {
 	res.status(err.status || 500)

@@ -1,9 +1,10 @@
+import Core from '@/Pixi/Core'
+import store from '@/Vue/store'
 import Player from '@/Pixi/shared/models/Player'
 import PlayerInGame from '@/Pixi/shared/models/PlayerInGame'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
-import Core from '@/Pixi/Core'
 
 export default class ClientPlayerInGame extends PlayerInGame {
 	isTurnActive = false
@@ -19,14 +20,14 @@ export default class ClientPlayerInGame extends PlayerInGame {
 	public startTurn(): void {
 		this.isTurnActive = true
 		if (this === Core.player) {
-			Core.userInterface.endTurnButton.backgroundColor = 0x7777FF
+			store.commit.gameStateModule.setIsPlayersTurn(true)
 		}
 	}
 
 	public endTurn(): void {
 		this.isTurnActive = false
 		if (this === Core.player) {
-			Core.userInterface.endTurnButton.backgroundColor = 0xBBBBBB
+			store.commit.gameStateModule.setIsPlayersTurn(false)
 		}
 	}
 

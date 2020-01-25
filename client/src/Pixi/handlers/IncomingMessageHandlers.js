@@ -1,11 +1,14 @@
 import Core from '@/Pixi/Core';
+import store from '@/Vue/store';
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck';
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand';
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame';
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard';
+import RenderedUnitOrder from '@/Pixi/models/RenderedUnitOrder';
 const handlers = {
     'gameState/start': (data) => {
         Core.board.setInverted(data.isBoardInverted);
+        store.dispatch.gameStateModule.startGame();
     },
     'gameState/chat': (data) => {
     },
@@ -36,13 +39,12 @@ const handlers = {
             Core.board.insertUnit(card, message.rowIndex, message.unitIndex);
         });
     },
-    // TODO: Fix orders
-    // 'gameState/board/orders': (data: UnitOrderMessage[]) => {
-    // 	const newAttackMessages = data.filter(message => !Core.board.queuedAttacks.find(attack => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId))
-    // 	const removedAttacks = Core.board.queuedAttacks.filter(attack => !data.find(message => attack.attacker.card.id === message.attackerId && attack.target.card.id === message.targetId))
-    // 	const newAttacks = newAttackMessages.map(message => RenderedAttackOrder.fromMessage(message))
-    // 	Core.board.updateUnitOrders(newAttacks, removedAttacks)
-    // },
+    'gameState/board/orders': (data) => {
+        const newOrderMessages = data.filter(message => !Core.board.queuedOrders.find(order => order.isEqualToMessage(message)));
+        const removedOrders = Core.board.queuedOrders.filter(order => !data.find(message => order.isEqualToMessage(message)));
+        const newOrders = newOrderMessages.map(message => RenderedUnitOrder.fromMessage(message));
+        Core.board.updateUnitOrders(newOrders, removedOrders);
+    },
     'update/game/phase': (data) => {
         Core.game.setTurnPhase(data);
     },
@@ -59,7 +61,6 @@ const handlers = {
         if (!unit) {
             return;
         }
-        console.log(`${data.card.id} has moved from ${unit.rowIndex} to ${data.rowIndex}`);
         Core.board.removeUnit(unit);
         Core.board.insertUnit(unit, data.rowIndex, data.unitIndex);
     },
@@ -86,6 +87,18 @@ const handlers = {
             return;
         }
         cardOnBoard.setAttack(data.attack);
+    },
+    'update/player/self/turnStarted': (data) => {
+        Core.player.startTurn();
+    },
+    'update/player/opponent/turnStarted': (data) => {
+        Core.opponent.startTurn();
+    },
+    'update/player/self/turnEnded': (data) => {
+        Core.player.endTurn();
+    },
+    'update/player/opponent/turnEnded': (data) => {
+        Core.opponent.endTurn();
     },
     'update/player/self/morale': (data) => {
         Core.player.morale = data.morale;
@@ -127,6 +140,9 @@ const handlers = {
     },
     'update/player/opponent/hand/cardDestroyed': (data) => {
         Core.opponent.cardHand.removeCardById(data.id);
+    },
+    'error/generic': (data) => {
+        console.error('Generic server error:', data);
     }
 };
 export default handlers;

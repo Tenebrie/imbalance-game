@@ -1,6 +1,7 @@
 import Core from '@/Pixi/Core';
 import * as PIXI from 'pixi.js';
 import Card from '@/Pixi/shared/models/Card';
+import CardType from '@/Pixi/shared/enums/CardType';
 import TextureAtlas from '@/Pixi/render/TextureAtlas';
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode';
 import Localization from '@/Pixi/Localization';
@@ -13,6 +14,7 @@ export default class RenderedCard extends Card {
     constructor(message) {
         super(message.id, message.cardType, message.cardClass);
         this.displayMode = CardDisplayMode.UNDEFINED;
+        this.unitSubtype = message.unitSubtype;
         this.cardName = message.cardName;
         this.cardTitle = message.cardTitle;
         this.cardTribes = message.cardTribes.slice();
@@ -26,10 +28,13 @@ export default class RenderedCard extends Card {
         this.baseAttackRange = message.baseAttackRange;
         this.baseHealthArmor = message.baseHealthArmor;
         this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.cardClass}`));
-        this.powerText = this.createPowerText(this.power ? this.power.toString() : '');
-        this.attackText = this.createAttackText(this.attack ? this.attack.toString() : '');
+        this.powerText = this.createPowerText(this.power.toString());
+        this.attackText = this.createAttackText(this.attack.toString());
+        this.attackRangeText = this.createAttributeText(this.attackRange.toString());
+        this.healthArmorText = this.createAttributeText(this.healthArmor.toString());
         this.cardNameText = this.createCardNameText(Localization.getString(this.cardName));
         this.cardTitleText = this.createCardNameText(Localization.getString(this.cardTitle));
+        this.cardTribeTexts = this.cardTribes.map(tribe => this.createCardNameText(Localization.getString(`card.tribe.${tribe}`)));
         this.cardDescriptionText = new RichText(this, Localization.getString(this.cardDescription), 350);
         this.hitboxSprite = this.createHitboxSprite(this.sprite);
         this.sprite.anchor.set(0.5);
@@ -47,9 +52,15 @@ export default class RenderedCard extends Card {
         this.unitModeAttributes.pivot.set(this.sprite.texture.width, this.sprite.texture.height);
         /* Card mode container */
         this.cardModeContainer = new PIXI.Container();
-        this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power')));
         this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')));
         this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-description')));
+        for (let i = 0; i < this.cardTribes.length; i++) {
+            const tribeBackgroundSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-tribe'));
+            tribeBackgroundSprite.position.y += i * 40;
+            this.cardModeContainer.addChild(tribeBackgroundSprite);
+        }
+        this.powerTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power'));
+        this.cardModeContainer.addChild(this.powerTextBackground);
         this.cardModeContainer.addChild(this.cardModeAttributes);
         internalContainer.addChild(this.cardModeContainer);
         /* Unit mode container */
@@ -61,13 +72,16 @@ export default class RenderedCard extends Card {
         this.coreContainer = new PIXI.Container();
         this.coreContainer.addChild(this.sprite);
         this.coreContainer.addChild(this.powerText);
-        this.coreContainer.addChild(this.attackText);
         this.coreContainer.position.set(-1000, -1000);
+        this.coreContainer.addChild(this.attackText);
         /* Card mode text container */
         this.cardModeTextContainer = new PIXI.Container();
         this.cardModeTextContainer.addChild(this.cardNameText);
         this.cardModeTextContainer.addChild(this.cardTitleText);
+        this.cardTribeTexts.forEach(cardTribeText => { this.cardModeTextContainer.addChild(cardTribeText); });
         this.cardModeTextContainer.addChild(this.cardDescriptionText);
+        this.cardModeTextContainer.addChild(this.attackRangeText);
+        this.cardModeTextContainer.addChild(this.healthArmorText);
         this.coreContainer.addChild(this.cardModeTextContainer);
     }
     getPosition() {
@@ -92,7 +106,7 @@ export default class RenderedCard extends Card {
     }
     createHitboxSprite(sprite) {
         const hitboxSprite = new PIXI.Sprite(sprite.texture);
-        hitboxSprite.visible = false;
+        hitboxSprite.alpha = 0;
         hitboxSprite.anchor.set(0.5);
         hitboxSprite.tint = 0xAA5555;
         hitboxSprite.zIndex = -1;
@@ -113,7 +127,16 @@ export default class RenderedCard extends Card {
             fill: 0x000000,
             padding: 16
         }));
-        textObject.anchor.set(1.0, 0.5);
+        textObject.anchor.set(0, 0.5);
+        return textObject;
+    }
+    createAttributeText(text) {
+        const textObject = new ScalingText(text, new PIXI.TextStyle({
+            fontFamily: 'BrushScript',
+            fill: 0xFFFFFF,
+            padding: 16
+        }));
+        textObject.anchor.set(0.5, 0.5);
         return textObject;
     }
     createCardNameText(text) {
@@ -131,22 +154,19 @@ export default class RenderedCard extends Card {
             return;
         }
         this.displayMode = displayMode;
+        let texts = [];
         if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED) {
             this.switchToCardMode();
+            texts = [this.powerText, this.attackText, this.attackRangeText, this.healthArmorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts);
         }
         else if (displayMode === CardDisplayMode.ON_BOARD) {
             this.switchToUnitMode();
+            texts = [this.powerText, this.attackText];
         }
         else if (displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
             this.switchToHiddenMode();
         }
-        const texts = [
-            this.powerText,
-            this.attackText,
-            this.cardNameText,
-            this.cardTitleText,
-            this.cardDescriptionText
-        ].filter(text => text.text.length > 0);
+        texts = texts.filter(text => text.text.length > 0);
         texts.forEach(text => {
             text.position.x *= this.sprite.scale.x;
             text.position.y *= this.sprite.scale.y;
@@ -160,27 +180,54 @@ export default class RenderedCard extends Card {
                 renderScale = Settings.descriptionFontRenderScale;
             }
             text.scale.set(1 / renderScale);
-            text.style.fontSize *= this.sprite.scale.x * renderScale;
-            text.style.lineHeight *= this.sprite.scale.x * renderScale;
+            text.scaleFont(this.sprite.scale.x * renderScale);
         });
         this.powerText.position.x -= this.sprite.width / 2;
         this.powerText.position.y -= this.sprite.height / 2;
         this.attackText.position.x += this.sprite.width / 2;
         this.attackText.position.y += this.sprite.height / 2;
+        this.attackRangeText.position.x += this.sprite.width / 2;
+        this.attackRangeText.position.y += this.sprite.height / 2;
+        this.healthArmorText.position.x += this.sprite.width / 2;
+        this.healthArmorText.position.y += this.sprite.height / 2;
         this.cardNameText.position.x += this.sprite.width / 2;
         this.cardNameText.position.y -= this.sprite.height / 2;
         this.cardTitleText.position.x += this.sprite.width / 2;
         this.cardTitleText.position.y -= this.sprite.height / 2;
+        this.cardTribeTexts.forEach(cardTribeText => {
+            cardTribeText.position.x += this.sprite.width / 2;
+            cardTribeText.position.y -= this.sprite.height / 2;
+        });
         this.cardDescriptionText.position.y += this.sprite.height / 2;
     }
     switchToCardMode() {
         this.unitModeContainer.visible = false;
         this.cardModeContainer.visible = true;
         this.cardModeTextContainer.visible = true;
+        if (this.cardType === CardType.SPELL) {
+            this.powerText.visible = false;
+            this.attackText.visible = false;
+            this.attackRangeText.visible = false;
+            this.healthArmorText.visible = false;
+            this.cardModeAttributes.visible = false;
+            this.powerTextBackground.visible = false;
+        }
         this.powerText.position.set(60, 45);
         this.powerText.style.fontSize = 71;
         this.attackText.position.copyFrom(this.cardModeAttributes.getAttackTextPosition());
         this.attackText.style.fontSize = this.cardModeAttributes.getAttackTextFontSize();
+        this.attackRangeText.visible = false;
+        if (this.attackRange !== 1) {
+            this.attackRangeText.visible = true;
+            this.attackRangeText.position.copyFrom(this.cardModeAttributes.getAttackRangeTextPosition());
+            this.attackRangeText.style.fontSize = this.cardModeAttributes.getAttackRangeTextFontSize();
+        }
+        this.healthArmorText.visible = false;
+        if (this.healthArmor > 0) {
+            this.healthArmorText.visible = true;
+            this.healthArmorText.position.copyFrom(this.cardModeAttributes.getHealthArmorTextPosition());
+            this.healthArmorText.style.fontSize = this.cardModeAttributes.getHealthArmorTextFontSize();
+        }
         this.cardNameText.position.set(-15, 67);
         this.cardNameText.style.fontSize = 22;
         if (this.cardTitleText.text.length > 0) {
@@ -188,27 +235,32 @@ export default class RenderedCard extends Card {
             this.cardTitleText.position.set(-15, 81);
             this.cardTitleText.style.fontSize = 18;
         }
+        for (let i = 0; i < this.cardTribeTexts.length; i++) {
+            const cardTribeText = this.cardTribeTexts[i];
+            cardTribeText.position.set(-15, 122);
+            cardTribeText.position.y += i * 40;
+            cardTribeText.style.fontSize = 20;
+        }
         this.cardDescriptionText.position.set(0, -135);
         const description = Localization.getString(this.cardDescription);
-        let fontSize = 24;
+        let fontSize = 28;
         if (description.length > 50) {
-            fontSize = 22;
+            fontSize = 26;
         }
         if (description.length > 100) {
-            fontSize = 20;
+            fontSize = 24;
         }
         if (description.length > 150) {
-            fontSize = 18;
+            fontSize = 22;
         }
         if (description.length > 200) {
-            fontSize = 16;
+            fontSize = 20;
         }
         if (description.length > 250) {
-            fontSize = 14;
+            fontSize = 18;
         }
-        this.cardDescriptionText.style.fontSize = fontSize;
         this.cardDescriptionText.style.baseFontSize = fontSize;
-        this.cardDescriptionText.style.lineHeight = fontSize + 6;
+        this.cardDescriptionText.setFont(fontSize, fontSize + 6);
     }
     switchToUnitMode() {
         this.unitModeContainer.visible = true;
@@ -218,10 +270,17 @@ export default class RenderedCard extends Card {
         this.powerText.style.fontSize = 135;
         this.attackText.position.copyFrom(this.unitModeAttributes.getAttackTextPosition());
         this.attackText.style.fontSize = this.unitModeAttributes.getAttackTextFontSize();
+        this.attackRangeText.visible = false;
+        this.healthArmorText.visible = false;
     }
     switchToHiddenMode() {
         this.cardModeContainer.visible = false;
         this.unitModeContainer.visible = false;
+        this.cardModeTextContainer.visible = false;
+        this.powerText.visible = false;
+        this.attackText.visible = false;
+        this.attackRangeText.visible = false;
+        this.healthArmorText.visible = false;
     }
     unregister() {
         Core.unregisterCard(this);

@@ -3,10 +3,15 @@ import * as PIXI from 'pixi.js';
 export default class TextureAtlas {
     static async prepare() {
         return new Promise(async (resolve) => {
-            if (TextureAtlas.texturesLoaded > 0) {
+            if (TextureAtlas.isReady) {
                 resolve();
                 return;
             }
+            TextureAtlas.resolveFunctions.push(resolve);
+            if (TextureAtlas.isLoading) {
+                return;
+            }
+            this.isLoading = true;
             TextureAtlas.texturesLoaded = 0;
             TextureAtlas.textures = {};
             const components = [
@@ -14,17 +19,21 @@ export default class TextureAtlas {
                 'components/bg-power',
                 'components/bg-power-zoom',
                 'components/bg-name',
+                'components/bg-tribe',
                 'components/bg-description',
                 'components/bg-stats-left',
                 'components/bg-stats-middle',
                 'components/bg-stats-right',
                 'components/bg-stats-right-zoom',
                 'components/stat-attack-claw',
+                'components/stat-attack-range',
+                'components/stat-health-armor',
+                'components/overlay-move',
                 'board/boardRow_owned',
                 'board/boardRow_neutral',
                 'board/boardRow_opponent'
             ];
-            const response = await axios.get('/cards');
+            const response = await axios.get('/api/cards');
             const cardMessages = response.data;
             const cards = cardMessages.map(cardMessage => {
                 const name = cardMessage.cardClass.substr(0, 1).toLowerCase() + cardMessage.cardClass.substr(1);
@@ -38,8 +47,8 @@ export default class TextureAtlas {
                     TextureAtlas.texturesLoaded += 1;
                     TextureAtlas.textures[fileName.toLowerCase()] = texture;
                     if (TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad) {
-                        console.info('TextureAtlas initialized');
-                        resolve();
+                        console.info(`TextureAtlas initialized. Resolving ${TextureAtlas.resolveFunctions.length} promise(s).`);
+                        TextureAtlas.onReady();
                     }
                 };
                 texture.baseTexture.on('loaded', onLoaded);
@@ -47,13 +56,14 @@ export default class TextureAtlas {
             });
         });
     }
-    static isReady() {
-        return TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad;
+    static onReady() {
+        this.isReady = true;
+        this.resolveFunctions.forEach(resolve => resolve());
     }
     static getTexture(path) {
         path = path.toLowerCase();
-        if (!this.isReady()) {
-            console.warn(`Accessing texture at '${path}' before TextureAtlas is ready!`);
+        if (!this.isReady) {
+            throw new Error(`Accessing texture at '${path}' before TextureAtlas is ready!`);
         }
         const texture = this.textures[path];
         if (!texture) {
@@ -62,4 +72,7 @@ export default class TextureAtlas {
         return this.textures[path];
     }
 }
+TextureAtlas.isReady = false;
+TextureAtlas.isLoading = false;
+TextureAtlas.resolveFunctions = [];
 //# sourceMappingURL=TextureAtlas.js.map

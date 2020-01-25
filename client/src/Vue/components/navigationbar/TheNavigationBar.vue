@@ -1,0 +1,53 @@
+<template>
+	<div class="the-navigation-bar">
+		<div class="left-side-container">
+
+		</div>
+		<div class="right-side-container">
+			<the-mini-user-profile />
+		</div>
+	</div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import store from '@/Vue/store'
+import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfile.vue'
+
+export default Vue.extend({
+	components: {
+		TheMiniUserProfile
+	},
+
+	data: () => ({
+
+	}),
+
+	computed: {
+		isInGame() {
+			return store.getters.gameStateModule.isInGame
+		}
+	},
+
+	methods: {
+
+	}
+})
+</script>
+
+<style scoped lang="scss">
+	.the-navigation-bar {
+		position: fixed;
+		top: 0;
+		height: 48px;
+		width: 100%;
+		border-bottom: solid gray 1px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.right-side-container {
+			height: 100%;
+		}
+	}
+</style>

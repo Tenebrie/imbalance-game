@@ -2,17 +2,17 @@ import Core from '@/Pixi/Core';
 import CardOnBoard from '@/Pixi/shared/models/CardOnBoard';
 import RenderedCard from '@/Pixi/models/RenderedCard';
 export default class RenderedCardOnBoard extends CardOnBoard {
+    constructor(card, owner) {
+        super(card, owner);
+        this.card = card;
+        this.owner = owner;
+        this.lastOrder = null;
+    }
     get rowIndex() {
         return Core.board.rows.indexOf(Core.board.getRowWithCard(this));
     }
     get unitIndex() {
         return Core.board.rows[this.rowIndex].cards.indexOf(this);
-    }
-    constructor(card, owner) {
-        super(card, owner);
-        this.card = card;
-        this.owner = owner;
-        this.preferredAttackTarget = null;
     }
     setPower(value) {
         this.card.setPower(value);

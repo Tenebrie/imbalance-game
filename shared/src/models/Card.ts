@@ -1,10 +1,12 @@
 import CardType from '../enums/CardType'
 import CardTribe from '../enums/CardTribe'
+import UnitSubtype from '../enums/UnitSubtype'
 
 export default class Card {
 	id: string
 	cardType: CardType
 	cardClass: string
+	unitSubtype: UnitSubtype | null
 
 	cardName: string
 	cardTitle: string
@@ -25,6 +27,7 @@ export default class Card {
 		this.id = id
 		this.cardType = cardType
 		this.cardClass = cardClass
+		this.unitSubtype = null
 
 		this.cardName = ''
 		this.cardTitle = ''

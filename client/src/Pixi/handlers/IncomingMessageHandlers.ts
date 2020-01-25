@@ -1,4 +1,5 @@
 import Core from '@/Pixi/Core'
+import store from '@/Vue/store'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
@@ -14,15 +15,14 @@ import HiddenCardMessage from '@/Pixi/shared/models/network/HiddenCardMessage'
 import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import RenderedUnitOrder from '@/Pixi/models/RenderedUnitOrder'
-import AttackOrderMessage from '@/Pixi/shared/models/network/AttackOrderMessage'
 import UnitOrderMessage from '@/Pixi/shared/models/network/UnitOrderMessage'
-import PlayerMessage from '@/Pixi/shared/models/network/PlayerMessage'
 import GameBoardMessage from '@/Pixi/shared/models/network/GameBoardMessage'
 import GameBoardRowMessage from '@/Pixi/shared/models/network/GameBoardRowMessage'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
 		Core.board.setInverted(data.isBoardInverted)
+		store.dispatch.gameStateModule.startGame()
 	},
 
 	'gameState/chat': (data: ChatEntryMessage) => {
@@ -45,7 +45,9 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'gameState/player/opponent': (data: PlayerInGameMessage) => {
-		Core.registerOpponent(ClientPlayerInGame.fromMessage(data))
+		const playerInGame = ClientPlayerInGame.fromMessage(data)
+		Core.registerOpponent(playerInGame)
+		store.commit.gameStateModule.setOpponentData(playerInGame.player)
 	},
 
 	'gameState/board': (data: GameBoardMessage) => {
@@ -99,7 +101,7 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/board/row/owner': (data: GameBoardRowMessage) => {
-		Core.board.rows[data.index].setOwner(Core.getPlayer(data.ownerId))
+		Core.board.rows[data.index].setOwner(Core.getPlayerOrNull(data.ownerId))
 	},
 
 	'update/board/card/power': (data: CardMessage) => {
@@ -146,6 +148,14 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/player/opponent/timeUnits': (data: PlayerInGameMessage) => {
 		Core.opponent.timeUnits = data.timeUnits
+	},
+
+	'update/player/self/victory': (data: PlayerInGameMessage) => {
+		store.dispatch.gameStateModule.winGame()
+	},
+
+	'update/player/self/defeat': (data: PlayerInGameMessage) => {
+		store.dispatch.gameStateModule.loseGame()
 	},
 
 	'update/player/self/hand/cardDrawn': (data: CardMessage[]) => {

@@ -24,6 +24,8 @@ export default class RenderedCard extends Card {
 	private readonly unitModeContainer: PIXI.Container
 	private readonly unitModeAttributes: CardAttributes
 
+	private readonly powerTextBackground: PIXI.Sprite
+
 	private readonly powerText: ScalingText
 	private readonly attackText: ScalingText
 	private readonly attackRangeText: ScalingText
@@ -35,6 +37,7 @@ export default class RenderedCard extends Card {
 
 	constructor(message: CardMessage) {
 		super(message.id, message.cardType, message.cardClass)
+		this.unitSubtype = message.unitSubtype
 
 		this.cardName = message.cardName
 		this.cardTitle = message.cardTitle
@@ -80,7 +83,6 @@ export default class RenderedCard extends Card {
 
 		/* Card mode container */
 		this.cardModeContainer = new PIXI.Container()
-		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power')))
 		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
 		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-description')))
 		for (let i = 0; i < this.cardTribes.length; i++) {
@@ -88,6 +90,8 @@ export default class RenderedCard extends Card {
 			tribeBackgroundSprite.position.y += i * 40
 			this.cardModeContainer.addChild(tribeBackgroundSprite)
 		}
+		this.powerTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power'))
+		this.cardModeContainer.addChild(this.powerTextBackground)
 		this.cardModeContainer.addChild(this.cardModeAttributes)
 		internalContainer.addChild(this.cardModeContainer)
 
@@ -251,6 +255,14 @@ export default class RenderedCard extends Card {
 		this.unitModeContainer.visible = false
 		this.cardModeContainer.visible = true
 		this.cardModeTextContainer.visible = true
+		if (this.cardType === CardType.SPELL) {
+			this.powerText.visible = false
+			this.attackText.visible = false
+			this.attackRangeText.visible = false
+			this.healthArmorText.visible = false
+			this.cardModeAttributes.visible = false
+			this.powerTextBackground.visible = false
+		}
 
 		this.powerText.position.set(60, 45)
 		this.powerText.style.fontSize = 71
@@ -291,12 +303,12 @@ export default class RenderedCard extends Card {
 		this.cardDescriptionText.position.set(0, -135)
 
 		const description = Localization.getString(this.cardDescription)
-		let fontSize = 24
-		if (description.length > 50) { fontSize = 22 }
-		if (description.length > 100) { fontSize = 20 }
-		if (description.length > 150) { fontSize = 18 }
-		if (description.length > 200) { fontSize = 16 }
-		if (description.length > 250) { fontSize = 14 }
+		let fontSize = 26
+		if (description.length > 50) { fontSize = 24 }
+		if (description.length > 100) { fontSize = 22 }
+		if (description.length > 150) { fontSize = 20 }
+		if (description.length > 200) { fontSize = 18 }
+		if (description.length > 250) { fontSize = 16 }
 		this.cardDescriptionText.style.baseFontSize = fontSize
 		this.cardDescriptionText.setFont(fontSize, fontSize + 6)
 	}
@@ -320,6 +332,10 @@ export default class RenderedCard extends Card {
 		this.cardModeContainer.visible = false
 		this.unitModeContainer.visible = false
 		this.cardModeTextContainer.visible = false
+		this.powerText.visible = false
+		this.attackText.visible = false
+		this.attackRangeText.visible = false
+		this.healthArmorText.visible = false
 	}
 
 	public unregister(): void {

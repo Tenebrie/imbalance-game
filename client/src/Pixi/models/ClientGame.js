@@ -1,7 +1,7 @@
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase';
 import Core from '@/Pixi/Core';
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers';
-import AttackOrder from '@/Pixi/shared/models/AttackOrder';
+import UnitOrderType from '@/Pixi/shared/enums/UnitOrderType';
 export default class ClientGame {
     constructor() {
         this.currentTime = 0;
@@ -11,9 +11,9 @@ export default class ClientGame {
     setTurnPhase(phase) {
         this.turnPhase = phase;
         if (phase === GameTurnPhase.SKIRMISH) {
-            const cards = Core.board.getCardsOwnedByPlayer(Core.player).filter(unit => !!unit.preferredAttackTarget);
-            cards.forEach(unit => {
-                OutgoingMessageHandlers.sendUnitAttackOrders(new AttackOrder(unit, unit.preferredAttackTarget));
+            const units = Core.board.getCardsOwnedByPlayer(Core.player).filter(unit => unit.lastOrder && unit.lastOrder.type === UnitOrderType.ATTACK);
+            units.forEach(unit => {
+                OutgoingMessageHandlers.sendUnitOrder(unit.lastOrder);
             });
         }
     }
