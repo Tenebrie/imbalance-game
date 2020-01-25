@@ -141,7 +141,6 @@ export default class ServerGame extends Game {
 		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
 		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
 		const hasPlayerLostBoard = rowsOwnedByPlayerOne === 0 || rowsOwnedByPlayerTwo === 0
-		console.log(`Rows owned ${rowsOwnedByPlayerOne}, ${rowsOwnedByPlayerTwo}`)
 
 		if (this.turnPhase === GameTurnPhase.TURN_START) {
 			this.startDeployPhase()

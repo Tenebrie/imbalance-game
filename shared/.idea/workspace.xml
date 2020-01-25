@@ -2,15 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7b4957f4-b43a-46ea-8e12-fccea030b7c4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/Core.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/Core.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Pixi/handlers/IncomingMessageHandlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Pixi/handlers/IncomingMessageHandlers.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/Ruleset.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/Ruleset.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/game/models/ServerGame.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/models/ServerGame.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/game/models/ServerGameBoardRow.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/game/models/ServerGameBoardRow.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/src/views/changelog.jade" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/views/changelog.jade" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
