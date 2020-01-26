@@ -96,6 +96,7 @@ button.primary {
 	margin: 4px 0;
 	font-size: 1.0em;
 	font-family: Roboto, sans-serif;
+	color: black;
 	background-color: $COLOR-PRIMARY;
 	outline: none;
 

@@ -60,6 +60,10 @@ export default class Input {
 			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInHand, Core.player)
 		}
 
+		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.isHovered(this.mousePosition)) {
+			hoveredCard = HoveredCard.fromAnnouncedCard(Core.mainHandler.announcedCard)
+		}
+
 		this.hoveredCard = hoveredCard
 	}
 
@@ -75,6 +79,10 @@ export default class Input {
 
 		if (event.button !== LEFT_MOUSE_BUTTON) {
 			return
+		}
+
+		if (this.hoveredCard && this.hoveredCard.card === Core.mainHandler.announcedCard) {
+			Core.mainHandler.skipAnimation()
 		}
 
 		this.mouseDown = true

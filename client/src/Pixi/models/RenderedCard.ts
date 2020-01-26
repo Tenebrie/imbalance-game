@@ -37,6 +37,9 @@ export default class RenderedCard extends Card {
 
 	constructor(message: CardMessage) {
 		super(message.id, message.cardType, message.cardClass)
+		this.id = message.id
+		this.cardType = message.cardType
+		this.cardClass = message.cardClass
 		this.unitSubtype = message.unitSubtype
 
 		this.cardName = message.cardName
@@ -137,13 +140,6 @@ export default class RenderedCard extends Card {
 		this.attackText.text = value.toString()
 	}
 
-	public reveal(cardType: CardType, cardClass: string): void {
-		Core.unregisterCard(this)
-		this.cardType = cardType
-		this.cardClass = cardClass
-		Core.registerCard(this)
-	}
-
 	public createHitboxSprite(sprite: PIXI.Sprite): PIXI.Sprite {
 		const hitboxSprite = new PIXI.Sprite(sprite.texture)
 		hitboxSprite.alpha = 0
@@ -203,7 +199,7 @@ export default class RenderedCard extends Card {
 
 		let texts: (ScalingText | RichText)[] = []
 
-		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED) {
+		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED || displayMode === CardDisplayMode.ANNOUNCED) {
 			this.switchToCardMode()
 			texts = [this.powerText, this.attackText, this.attackRangeText, this.healthArmorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {
@@ -255,6 +251,12 @@ export default class RenderedCard extends Card {
 		this.unitModeContainer.visible = false
 		this.cardModeContainer.visible = true
 		this.cardModeTextContainer.visible = true
+		this.powerText.visible = true
+		this.attackText.visible = true
+		this.attackRangeText.visible = true
+		this.healthArmorText.visible = true
+		this.cardModeAttributes.visible = true
+		this.powerTextBackground.visible = true
 		if (this.cardType === CardType.SPELL) {
 			this.powerText.visible = false
 			this.attackText.visible = false

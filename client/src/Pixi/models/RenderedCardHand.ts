@@ -1,6 +1,8 @@
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import CardHandMessage from '../shared/models/network/CardHandMessage'
 import Utils from '@/utils/Utils'
+import CardMessage from '@/Pixi/shared/models/network/CardMessage'
+import Core from '@/Pixi/Core'
 
 export default class RenderedCardHand {
 	cards: RenderedCard[]
@@ -18,6 +20,17 @@ export default class RenderedCardHand {
 
 	public getCardById(cardId: string): RenderedCard | null {
 		return this.cards.find(renderedCard => renderedCard.id === cardId) || null
+	}
+
+	public reveal(data: CardMessage): void {
+		const card = this.getCardById(data.id)
+		if (!card) { return }
+
+		const revealedCard = new RenderedCard(data)
+		revealedCard.switchToCardMode()
+		Core.registerCard(revealedCard)
+		this.cards.splice(this.cards.indexOf(card), 1, revealedCard)
+		Core.unregisterCard(card)
 	}
 
 	public removeCard(card: RenderedCard) {

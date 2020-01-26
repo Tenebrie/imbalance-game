@@ -113,7 +113,8 @@ export default Vue.extend({
 
 					button {
 						margin: 4px;
-						width: 8em;
+						padding: 8px 16px;
+						white-space: nowrap;
 					}
 				}
 			}

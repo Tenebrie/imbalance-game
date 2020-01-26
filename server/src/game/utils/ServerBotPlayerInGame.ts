@@ -9,6 +9,8 @@ import UnitOrderMessage from '../shared/models/network/UnitOrderMessage'
 import ServerUnitOrder from '../models/ServerUnitOrder'
 import ServerCard from '../models/ServerCard'
 import Utils from '../../utils/Utils'
+import ServerCardOnBoard from '../models/ServerCardOnBoard'
+import ServerGameBoardRow from '../models/ServerGameBoardRow'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
@@ -19,6 +21,12 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	public startTurn(): void {
 		super.startTurn()
 
+		setTimeout(() => {
+			this.botTakesTheirTurn()
+		}, 1000)
+	}
+
+	private botTakesTheirTurn(): void {
 		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
 			this.botPlaysCard()
 		} else if (this.game.turnPhase === GameTurnPhase.SKIRMISH) {
@@ -36,7 +44,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		})
 		const selectedCard = cards[0]
 
-		const ownedRows = this.game.board.rows.filter(row => row.owner === this).sort((a, b) => a.index - b.index)
+		const ownedRows = this.sortOwnedRows(this.game.board.rows.filter(row => row.owner === this))
 		const distanceFromFront = selectedCard.attackRange - 1
 		const targetRow = ownedRows[Math.min(distanceFromFront, ownedRows.length - 1)]
 		const cardPlayerMessage = CardPlayedMessage.fromCardOnRow(selectedCard, targetRow.index, targetRow.cards.length)
@@ -46,7 +54,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	private botOrdersMove(): void {
 		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this)
 		controlledUnits.forEach(unit => {
-			const unitOrder = ServerUnitOrder.move(unit, this.game.board.rows[unit.rowIndex - 1])
+			const unitOrder = ServerUnitOrder.move(unit, this.game.board.rows[this.getForwardRowIndex(unit.rowIndex)])
 			const unitOrderMessage = new UnitOrderMessage(unitOrder)
 			IncomingMessageHandlers['post/unitOrder'](unitOrderMessage, this.game, this)
 		})
@@ -59,7 +67,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 			const validTargets = opponentsUnits.filter(opponentsUnit => unit.canAttackTarget(opponentsUnit))
 			if (validTargets.length === 0) { return }
 
-			const sortedTargets = validTargets.sort((a, b) => a.rowIndex - b.rowIndex || a.unitIndex - b.unitIndex)
+			const sortedTargets = this.sortValidTargets(validTargets)
 
 			const unitOrder = ServerUnitOrder.attack(unit, sortedTargets[0])
 			const unitOrderMessage = new UnitOrderMessage(unitOrder)
@@ -68,9 +76,36 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botEndsTurn(): void {
-		setTimeout(() => {
-			IncomingMessageHandlers['post/endTurn'](null, this.game, this)
-		}, 0)
+		IncomingMessageHandlers['post/endTurn'](null, this.game, this)
+	}
+
+	private isInvertedBoard(): boolean {
+		return this.game.players.indexOf(this) === 1
+	}
+
+	private sortOwnedRows(ownedRows: ServerGameBoardRow[]): ServerGameBoardRow[] {
+		if (this.isInvertedBoard()) {
+			return ownedRows.slice().sort((a, b) => b.index - a.index)
+		} else {
+			return ownedRows.slice().sort((a, b) => a.index - b.index)
+		}
+
+	}
+
+	private getForwardRowIndex(rowIndex: number): number {
+		if (this.isInvertedBoard()) {
+			return rowIndex + 1
+		} else {
+			return rowIndex - 1
+		}
+	}
+
+	private sortValidTargets(validTargets: ServerCardOnBoard[]): ServerCardOnBoard[] {
+		if (this.isInvertedBoard()) {
+			return validTargets.slice().sort((a, b) => b.rowIndex - a.rowIndex || a.unitIndex - b.unitIndex)
+		} else {
+			return validTargets.slice().sort((a, b) => a.rowIndex - b.rowIndex || a.unitIndex - b.unitIndex)
+		}
 	}
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {

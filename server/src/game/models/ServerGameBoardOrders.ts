@@ -8,6 +8,8 @@ import ServerUnitOrder from './ServerUnitOrder'
 import UnitOrderType from '../shared/enums/UnitOrderType'
 import VoidPlayerInGame from '../utils/VoidPlayerInGame'
 import Ruleset from '../Ruleset'
+import OutgoingAnimationMessages from '../handlers/outgoing/OutgoingAnimationMessages'
+import ServerAnimation from './ServerAnimation'
 
 export default class ServerGameBoardOrders {
 	game: ServerGame
@@ -86,6 +88,11 @@ export default class ServerGameBoardOrders {
 	}
 
 	public release(): void {
+		/* Clear orders for clients */
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.sendUnitOrders(playerInGame.player, [])
+		})
+
 		/* ATTACKS */
 		let queuedAttacks = this.queue.filter(order => order.type === UnitOrderType.ATTACK)
 
@@ -100,6 +107,7 @@ export default class ServerGameBoardOrders {
 		queuedAttacks.forEach(queuedAttack => {
 			this.performUnitAttack(queuedAttack.orderedUnit, queuedAttack.targetUnit)
 		})
+		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.delay())
 
 		/* Destroy killed units */
 		const killedUnits = this.game.board.getAllUnits().filter(unit => unit.card.power <= 0)
@@ -166,12 +174,10 @@ export default class ServerGameBoardOrders {
 
 		/* Clear orders */
 		this.queue = []
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.sendUnitOrders(playerInGame.player, this.queue)
-		})
 	}
 
 	public performUnitAttack(orderedUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {
+		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.unitAttack(orderedUnit, targetUnit))
 		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit)
 		targetUnit.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(attack, orderedUnit))
 	}

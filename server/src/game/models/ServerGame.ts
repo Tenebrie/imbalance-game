@@ -52,7 +52,11 @@ export default class ServerGame extends Game {
 			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, serverPlayerInGame)
 		})
 
-		this.players.push(serverPlayerInGame)
+		if (this.isBotGame()) {
+			this.players.splice(0, 0, serverPlayerInGame)
+		} else {
+			this.players.push(serverPlayerInGame)
+		}
 		return serverPlayerInGame
 	}
 
@@ -85,6 +89,10 @@ export default class ServerGame extends Game {
 
 	public getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
 		return this.players.find(otherPlayer => otherPlayer !== player) || VoidPlayerInGame.for(this)
+	}
+
+	public isBotGame(): boolean {
+		return !!this.players.find(playerInGame => playerInGame instanceof ServerBotPlayerInGame)
 	}
 
 	public removePlayer(targetPlayer: ServerPlayer): void {
@@ -196,14 +204,6 @@ export default class ServerGame extends Game {
 
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
-
-		// const playerOnePower = this.board.getUnitsOwnedByPlayer(playerOne).map(unit => unit.card.power).reduce((total, value) => total += value, 0)
-		// const playerTwoPower = this.board.getUnitsOwnedByPlayer(playerTwo).map(unit => unit.card.power).reduce((total, value) => total += value, 0)
-		// if (playerOnePower > playerTwoPower) {
-		// 	playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(playerOnePower - playerTwoPower))
-		// } else if (playerTwoPower > playerOnePower) {
-		// 	playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(playerTwoPower - playerOnePower))
-		// }
 
 		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
 		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length

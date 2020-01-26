@@ -3,7 +3,7 @@ import ServerPlayer from '../players/ServerPlayer'
 
 export default class ServerBotPlayer extends ServerPlayer {
 	constructor() {
-		super(uuidv4(), 'Dummy')
+		super(uuidv4(), 'Bot')
 	}
 
 	sendMessage(json: { type: string; data: any }): void {

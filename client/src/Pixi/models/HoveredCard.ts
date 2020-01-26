@@ -1,3 +1,4 @@
+import Core from '@/Pixi/Core'
 import RenderedCard from '@/Pixi/models/RenderedCard'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
@@ -20,5 +21,9 @@ export default class HoveredCard {
 
 	public static fromCardOnBoard(cardOnBoard: RenderedCardOnBoard): HoveredCard {
 		return new HoveredCard(cardOnBoard.card, CardLocation.BOARD, cardOnBoard.owner)
+	}
+
+	public static fromAnnouncedCard(card: RenderedCard): HoveredCard {
+		return new HoveredCard(card, CardLocation.ANNOUNCED, Core.opponent)
 	}
 }

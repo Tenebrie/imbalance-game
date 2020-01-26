@@ -128,7 +128,7 @@ export default class Renderer {
 			const opponentCards = Core.opponent.cardHand.cards
 			const sortedOpponentCards = Core.opponent.cardHand.cards.slice().reverse()
 			sortedOpponentCards.forEach(renderedCard => {
-				if (renderedCard === Core.input.inspectedCard) {
+				if (renderedCard === Core.input.inspectedCard || renderedCard === Core.mainHandler.announcedCard) {
 					return
 				}
 
@@ -142,6 +142,7 @@ export default class Renderer {
 		this.renderTargetingArrow()
 		this.renderQueuedOrders()
 		this.renderInspectedCard()
+		this.renderAnnouncedCard()
 	}
 
 	public resize(): void {
@@ -505,6 +506,28 @@ export default class Renderer {
 		container.zIndex = INSPECTED_CARD_ZINDEX
 
 		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
+	}
+
+	public renderAnnouncedCard(): void {
+		const announcedCard = Core.mainHandler.announcedCard
+		if (!announcedCard) {
+			return
+		}
+
+		const container = announcedCard.coreContainer
+		const sprite = announcedCard.sprite
+		sprite.tint = 0xFFFFFF
+		sprite.scale.set(Settings.superSamplingLevel)
+		container.position.x = sprite.width / 2 + 50 * Settings.superSamplingLevel
+		container.position.y = this.getScreenHeight() / 2
+		container.zIndex = INSPECTED_CARD_ZINDEX
+
+		const hitboxSprite = announcedCard.hitboxSprite
+		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
+		hitboxSprite.scale = sprite.scale
+		hitboxSprite.zIndex = container.zIndex - 1
+
+		announcedCard.setDisplayMode(CardDisplayMode.ANNOUNCED)
 	}
 
 	public destroy(): void {

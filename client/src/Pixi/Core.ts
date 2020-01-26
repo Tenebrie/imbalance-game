@@ -64,7 +64,10 @@ export default class Core {
 			return
 		}
 
-		handler(messageData)
+		Core.mainHandler.registerMessage({
+			handler: handler,
+			data: messageData
+		})
 	}
 
 	private static onDisconnect(event: CloseEvent): void {
@@ -113,12 +116,10 @@ export default class Core {
 
 	public static registerCard(renderedCard: RenderedCard): void {
 		Core.renderer.registerCard(renderedCard)
-		Core.mainHandler.registerCard(renderedCard)
 	}
 
 	public static unregisterCard(renderedCard: RenderedCard): void {
 		Core.renderer.unregisterCard(renderedCard)
-		Core.mainHandler.unregisterCard(renderedCard)
 	}
 
 	public static reset(): void {
