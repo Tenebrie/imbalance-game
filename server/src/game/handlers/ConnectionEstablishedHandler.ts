@@ -28,6 +28,6 @@ export default {
 			return
 		}
 
-		game.finish('Opponent disconnected')
+		game.finish(game.players[0], 'Opponent disconnected')
 	}
 }

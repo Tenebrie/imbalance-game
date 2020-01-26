@@ -9,7 +9,7 @@
 		</div>
 		<div class="endgame-screen" :class="endgameScreenClass">
 			<div class="victory" v-if="isVictory">Victory!</div>
-			<div class="defeat" v-if="isDefeat">Defeat :(</div>
+			<div class="defeat" v-if="isDefeat">Defeat</div>
 		</div>
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">

@@ -210,6 +210,12 @@ export default class ServerGame extends Game {
 		playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(rowsOwnedByPlayerTwo * 5))
 		playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(rowsOwnedByPlayerOne * 5))
 
+		const defeatedPlayer = this.players.find(player => player.morale <= 0) || null
+		if (defeatedPlayer) {
+			this.finish(this.getOpponent(defeatedPlayer), 'Win condition')
+			return
+		}
+
 		this.board.getAllUnits().forEach(cardOnBoard => this.board.destroyUnit(cardOnBoard))
 		this.setTime(-1)
 
@@ -233,12 +239,13 @@ export default class ServerGame extends Game {
 		this.advancePhase()
 	}
 
-	public finish(reason: string): void {
+	public finish(victoriousPlayer: ServerPlayerInGame, victoryReason: string): void {
 		this.setTurnPhase(GameTurnPhase.AFTER_GAME)
 
-		const remainingPlayerInGame = this.players[0]
-		OutgoingMessageHandlers.notifyAboutVictory(remainingPlayerInGame.player)
-		console.info(`Game ${this.id} finished. ${remainingPlayerInGame.player.username} won! [${reason}]`)
+		const defeatedPlayer = this.getOpponent(victoriousPlayer)
+		OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
+		OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
+		console.info(`Game ${this.id} finished. ${victoriousPlayer.player.username} won! [${victoryReason}]`)
 
 		setTimeout(() => {
 			const gameLibrary: GameLibrary = global.gameLibrary
