@@ -243,8 +243,12 @@ export default class Renderer {
 			phaseLabel = 'Game finished!'
 		} else {
 			let phase = 'Unknown'
-			if (Core.game.turnPhase === GameTurnPhase.TURN_START || Core.game.turnPhase === GameTurnPhase.DEPLOY || Core.game.turnPhase === GameTurnPhase.TURN_END) {
+			if (Core.game.turnPhase === GameTurnPhase.TURN_START) {
+				phase = 'Turn start'
+			} else if (Core.game.turnPhase === GameTurnPhase.DEPLOY) {
 				phase = 'Deploy'
+			} else if (Core.game.turnPhase === GameTurnPhase.TURN_END) {
+				phase = 'Turn end'
 			} else if (Core.game.turnPhase === GameTurnPhase.SKIRMISH) {
 				phase = 'Skirmish'
 			} else if (Core.game.turnPhase === GameTurnPhase.COMBAT) {

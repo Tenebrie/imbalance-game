@@ -233,8 +233,8 @@ export default class ServerGame extends Game {
 	}
 
 	public startEndTurnPhase(): void {
-		this.setTurnPhase(GameTurnPhase.TURN_END)
 		this.board.orders.release()
+		this.setTurnPhase(GameTurnPhase.TURN_END)
 		this.board.getAllUnits().forEach(unit => unit.card.onTurnEnded(unit))
 		this.advancePhase()
 	}
