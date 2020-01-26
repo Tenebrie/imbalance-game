@@ -6,43 +6,56 @@ import Player from '@/Pixi/shared/models/Player'
 
 Vue.use(VueRouter)
 
-const fetchProfile = async (next: Function): Promise<void> => {
+const fetchProfile = async (): Promise<boolean> => {
 	try {
 		const response = await axios.get('/api/profile')
 		const player = response.data.data as Player
 		store.commit.setPlayerData(player)
 	} catch (error) {
-		next('/login')
+		return false
 	}
-	next()
+	return true
 }
 
-const validateAuthentication = (next: Function): void => {
-	if (store.state.isLoggedIn) {
+const requireAuthentication = async (next: Function): Promise<void> => {
+	if (store.state.isLoggedIn || await fetchProfile()) {
 		next()
 		return
 	}
+	next({ name: 'login' })
+}
 
-	fetchProfile(next)
+const requireNoAuthentication = async (next: Function): Promise<void> => {
+	if (store.state.isLoggedIn || await fetchProfile()) {
+		next({ name: 'home' })
+		return
+	}
+	next()
 }
 
 const routes = [
 	{
 		path: '/login',
 		name: 'login',
-		component: () => import('@/Vue/views/LoginView.vue')
+		component: () => import('@/Vue/views/LoginView.vue'),
+		beforeEnter: (to: Route, from: Route, next: Function) => {
+			requireNoAuthentication(next)
+		}
 	},
 	{
 		path: '/register',
 		name: 'register',
-		component: () => import('@/Vue/views/RegisterView.vue')
+		component: () => import('@/Vue/views/RegisterView.vue'),
+		beforeEnter: (to: Route, from: Route, next: Function) => {
+			requireNoAuthentication(next)
+		}
 	},
 	{
 		path: '/',
 		name: 'home',
 		component: () => import('@/Vue/views/HomeView.vue'),
 		beforeEnter: (to: Route, from: Route, next: Function) => {
-			validateAuthentication(next)
+			requireAuthentication(next)
 		}
 	},
 	{
@@ -54,7 +67,7 @@ const routes = [
 				next('/')
 				return
 			}
-			validateAuthentication(next)
+			requireAuthentication(next)
 		}
 	}
 ]

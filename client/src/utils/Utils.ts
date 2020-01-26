@@ -27,7 +27,7 @@ export default {
 		return offsetPoint
 	},
 
-	hashCode(targetString: String): number {
+	hashCode(targetString: string): number {
 		let i
 		let chr
 		let hash = 0

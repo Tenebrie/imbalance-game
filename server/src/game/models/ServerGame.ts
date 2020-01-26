@@ -13,6 +13,8 @@ import GameLibrary from '../libraries/GameLibrary'
 import ServerDamageInstance from './ServerDamageSource'
 import Ruleset from '../Ruleset'
 import Constants from '../shared/Constants'
+import ServerBotPlayer from '../utils/ServerBotPlayer'
+import ServerBotPlayerInGame from '../utils/ServerBotPlayerInGame'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -39,7 +41,12 @@ export default class ServerGame extends Game {
 	}
 
 	public addPlayer(targetPlayer: ServerPlayer, deck: ServerCardDeck): ServerPlayerInGame {
-		const serverPlayerInGame = ServerPlayerInGame.newInstance(this, targetPlayer, deck)
+		let serverPlayerInGame
+		if (targetPlayer instanceof ServerBotPlayer) {
+			serverPlayerInGame = ServerBotPlayerInGame.newInstance(this, targetPlayer, deck)
+		} else {
+			serverPlayerInGame = ServerPlayerInGame.newInstance(this, targetPlayer, deck)
+		}
 
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
 			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, serverPlayerInGame)
@@ -124,9 +131,9 @@ export default class ServerGame extends Game {
 
 	public advanceTurn(): void {
 		if (this.playersToMove.length > 0) {
-			this.playersToMove[0].startTurn()
-			this.playersToMove[0].setTimeUnits(1)
-			this.playersToMove.shift()
+			const playerToMove = this.playersToMove.shift()
+			playerToMove.setTimeUnits(1)
+			playerToMove.startTurn()
 			return
 		}
 
@@ -172,9 +179,8 @@ export default class ServerGame extends Game {
 	}
 
 	public startDeployPhase(): void {
-		this.advanceTurn()
-
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
+		this.advanceTurn()
 	}
 
 	public startSkirmishPhase(): void {

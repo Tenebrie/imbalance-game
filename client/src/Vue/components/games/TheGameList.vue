@@ -8,7 +8,8 @@
 			</div>
 			<div class="controls">
 				<div class="button-container">
-					<button @click="onCreateGame" class="primary">Create game</button>
+					<button @click="onCreateGame" class="primary">Create PvP game</button>
+					<button @click="onCreateTestGame" class="secondary">Create test game</button>
 					<button @click="onRefreshGames" class="secondary">Refresh</button>
 				</div>
 			</div>
@@ -51,8 +52,15 @@ export default Vue.extend({
 		},
 
 		async onCreateGame(): Promise<void> {
-			await axios.post('/api/games')
-			this.fetchGames()
+			const response = await axios.post('/api/games')
+			const gameMessage: GameMessage = response.data.data
+			store.dispatch.joinGame(gameMessage.id)
+		},
+
+		async onCreateTestGame(): Promise<void> {
+			const response = await axios.post('/api/games', { mode: 'test' })
+			const gameMessage: GameMessage = response.data.data
+			store.dispatch.joinGame(gameMessage.id)
 		},
 
 		async onRefreshGames(): Promise<void> {
