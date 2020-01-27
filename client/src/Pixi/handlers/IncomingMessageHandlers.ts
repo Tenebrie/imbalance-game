@@ -199,12 +199,25 @@ const handlers: {[ index: string ]: any } = {
 			const announcedCard = Core.opponent.cardHand.getCardById(data.targetCardId)!
 			Core.mainHandler.announceCard(announcedCard)
 			animationDuration = 3000
+		} else if (data.type === AnimationType.UNIT_ATTACK) {
+			animationDuration = 300
+			const sourceUnit = Core.board.findUnitById(data.sourceUnitId)
+			const targetUnit = Core.board.findUnitById(data.targetUnitId)
+			Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetUnit)
+		} else if (data.type === AnimationType.POST_UNIT_ATTACK) {
+			animationDuration = 100
+		} else if (data.type === AnimationType.ALL_UNITS_MOVE) {
+			animationDuration = 1500
 		}
 		Core.mainHandler.triggerAnimation(animationDuration)
 	},
 
+	'command/disconnect': (data: void) => {
+		store.dispatch.leaveGame()
+	},
+
 	'error/generic': (data: string) => {
-		console.error('Generic server error:', data)
+		console.error('Server error:', data)
 	}
 }
 

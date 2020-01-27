@@ -119,12 +119,11 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		},
 
 		leaveGame(): void {
-			Core.socket.close(1000, 'Player disconnect')
-			router.push({ name: 'home' })
-		},
+			if (store.state.gameStateModule.gameStatus === ClientGameStatus.NOT_STARTED) { return }
 
-		onSocketClosed(): void {
 			store.dispatch.gameStateModule.reset()
+			router.push({ name: 'home' })
+			Core.socket.close(1000, 'Player disconnect')
 		}
 	}
 })

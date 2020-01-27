@@ -28,6 +28,8 @@ export default class TextureAtlas {
 			TextureAtlas.textures = {}
 
 			const components = [
+				'effects/trail',
+				'effects/fireball-static',
 				'cards/cardBack',
 				'components/bg-power',
 				'components/bg-power-zoom',

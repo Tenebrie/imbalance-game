@@ -26,8 +26,8 @@ export default class RenderedCard extends Card {
 
 	private readonly powerTextBackground: PIXI.Sprite
 
-	private readonly powerText: ScalingText
-	private readonly attackText: ScalingText
+	readonly powerText: ScalingText
+	readonly attackText: ScalingText
 	private readonly attackRangeText: ScalingText
 	private readonly healthArmorText: ScalingText
 	private readonly cardNameText: ScalingText
@@ -68,6 +68,7 @@ export default class RenderedCard extends Card {
 		this.cardDescriptionText = new RichText(this, Localization.getString(this.cardDescription), 350)
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
+		this.sprite.alpha = 0
 		this.sprite.anchor.set(0.5)
 
 		/* Internal container */
@@ -106,9 +107,10 @@ export default class RenderedCard extends Card {
 
 		/* Core container */
 		this.coreContainer = new PIXI.Container()
+		this.coreContainer.visible = false
 		this.coreContainer.addChild(this.sprite)
 		this.coreContainer.addChild(this.powerText)
-		this.coreContainer.position.set(-1000, -1000)
+		this.coreContainer.position.set(0, 0)
 		this.coreContainer.addChild(this.attackText)
 
 		/* Card mode text container */
@@ -334,6 +336,7 @@ export default class RenderedCard extends Card {
 		this.cardModeContainer.visible = false
 		this.unitModeContainer.visible = false
 		this.cardModeTextContainer.visible = false
+		this.powerTextBackground.visible = false
 		this.powerText.visible = false
 		this.attackText.visible = false
 		this.attackRangeText.visible = false

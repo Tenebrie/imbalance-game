@@ -1,6 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
 body {
-	padding: 16px;
-	font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+	font: 14px 'Roboto', Helvetica, Arial, sans-serif;
+	color: #e6e6e6;
+}
+
+li {
+	padding: 2px;
 }
 
 a {
@@ -17,4 +23,8 @@ a {
 
 .version {
 	margin-bottom: 0;
+}
+
+body {
+	display: block !important;
 }
