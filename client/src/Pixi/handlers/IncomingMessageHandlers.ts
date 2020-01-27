@@ -203,8 +203,12 @@ const handlers: {[ index: string ]: any } = {
 		Core.mainHandler.triggerAnimation(animationDuration)
 	},
 
+	'command/disconnect': (data: void) => {
+		store.dispatch.leaveGame()
+	},
+
 	'error/generic': (data: string) => {
-		console.error('Generic server error:', data)
+		console.error('Server error:', data)
 	}
 }
 

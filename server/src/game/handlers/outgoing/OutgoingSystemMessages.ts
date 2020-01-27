@@ -9,6 +9,13 @@ export default {
 		})
 	},
 
+	notifyAboutInvalidGameID(ws: ws) {
+		ws.send(JSON.stringify({
+			type: 'error/generic',
+			data: 'Invalid game ID or player token'
+		}))
+	},
+
 	notifyAboutGameAlreadyStarted(ws: ws) {
 		ws.send(JSON.stringify({
 			type: 'error/generic',
@@ -16,10 +23,14 @@ export default {
 		}))
 	},
 
-	notifyAboutInvalidGameID(ws: ws) {
+	notifyAboutDuplicatedConnection(ws: ws) {
 		ws.send(JSON.stringify({
 			type: 'error/generic',
-			data: 'Invalid game ID or player token'
+			data: 'Duplicated connection from the same client'
+		}))
+		ws.send(JSON.stringify({
+			type: 'command/disconnect',
+			data: { reason: 'Duplicated connection' }
 		}))
 	},
 

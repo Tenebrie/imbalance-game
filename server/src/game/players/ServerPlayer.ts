@@ -1,6 +1,7 @@
 import * as ws from 'ws'
 import PlayerWebSocket from './PlayerWebSocket'
 import Player from '../shared/models/Player'
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 
 export default class ServerPlayer extends Player {
 	id: string
@@ -28,6 +29,7 @@ export default class ServerPlayer extends Player {
 
 	disconnect(): void {
 		if (!this.isInGame()) { return }
+
 		this.webSocket.close()
 		this.webSocket = undefined
 	}

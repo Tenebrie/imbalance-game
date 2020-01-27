@@ -23,6 +23,12 @@ router.ws('/:gameId', async (ws, req) => {
 		return
 	}
 
+	if (currentGame.players.find(playerInGame => playerInGame.player === currentPlayer)) {
+		OutgoingMessageHandlers.notifyAboutDuplicatedConnection(ws)
+		ws.close()
+		return
+	}
+
 	currentPlayer.disconnect()
 	currentPlayer.registerConnection(ws)
 
