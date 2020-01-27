@@ -2,14 +2,14 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@/Pixi/shared/Constants'
 import RenderedCard from '@/Pixi/models/RenderedCard'
-import { TargetingMode } from '@/Pixi/enums/TargetingMode'
+import {TargetingMode} from '@/Pixi/enums/TargetingMode'
 import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import CardType from '@/Pixi/shared/enums/CardType'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
-import { CardLocation } from '@/Pixi/enums/CardLocation'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
+import {CardLocation} from '@/Pixi/enums/CardLocation'
 import UnitOrderType from '@/Pixi/shared/enums/UnitOrderType'
 import Settings from '@/Pixi/Settings'
 
@@ -31,11 +31,14 @@ export default class Renderer {
 	playerNameLabel: PIXI.Text
 	opponentNameLabel: PIXI.Text
 
+	deltaTime: number
+	deltaTimeFraction: number
+
 	CARD_ASPECT_RATIO = 408 / 584
 	GAME_BOARD_WINDOW_FRACTION = 0.7
 	PLAYER_HAND_WINDOW_FRACTION = 0.20
 	OPPONENT_HAND_WINDOW_FRACTION = 0.20
-	HOVERED_HAND_WINDOW_FRACTION = 0.4
+	HOVERED_HAND_WINDOW_FRACTION = 0.3
 	GAME_BOARD_OFFSET_FRACTION = -0.075
 	OPPONENT_HAND_OFFSET_FRACTION = -0.15
 	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
@@ -96,14 +99,14 @@ export default class Renderer {
 		})
 		this.opponentNameLabel.position.set(10, 10)
 		this.rootContainer.addChild(this.opponentNameLabel)
-
-		/* Register the ticker */
-		PIXI.Ticker.shared.add(() => this.tick())
 	}
 
-	private tick(): void {
+	public tick(deltaTime: number, deltaTimeFraction: number): void {
+		this.deltaTime = deltaTime
+		this.deltaTimeFraction = deltaTimeFraction
+
 		const playerCards = Core.player.cardHand.cards
-		const sortedPlayerCards = Core.player.cardHand.cards.slice().reverse()
+		const sortedPlayerCards = Core.player.cardHand.cards.filter(card => card !== Core.input.inspectedCard).slice().reverse()
 
 		sortedPlayerCards.forEach(renderedCard => {
 			if (renderedCard === Core.input.inspectedCard) {
@@ -128,7 +131,7 @@ export default class Renderer {
 			const opponentCards = Core.opponent.cardHand.cards
 			const sortedOpponentCards = Core.opponent.cardHand.cards.slice().reverse()
 			sortedOpponentCards.forEach(renderedCard => {
-				if (renderedCard === Core.input.inspectedCard) {
+				if (renderedCard === Core.input.inspectedCard || renderedCard === Core.mainHandler.announcedCard) {
 					return
 				}
 
@@ -142,6 +145,7 @@ export default class Renderer {
 		this.renderTargetingArrow()
 		this.renderQueuedOrders()
 		this.renderInspectedCard()
+		this.renderAnnouncedCard()
 	}
 
 	public resize(): void {
@@ -185,17 +189,29 @@ export default class Renderer {
 		const cardWidth = cardHeight * this.CARD_ASPECT_RATIO * Math.pow(0.95, handSize)
 		const distanceToCenter = handPosition - ((handSize - 1) / 2)
 
-		container.position.x = distanceToCenter * cardWidth + screenCenter
-		container.position.y = cardHeight * 0.5
-		container.zIndex = (handPosition + 1) * 2
-
-		if (isOpponent) {
-			container.position.y += this.getScreenHeight() * this.OPPONENT_HAND_OFFSET_FRACTION
-		} else {
-			container.position.y = this.getScreenHeight() - container.position.y
+		container.visible = true
+		const targetPosition = {
+			x: distanceToCenter * cardWidth + screenCenter,
+			y: cardHeight * 0.5
 		}
 
-		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
+		if (isOpponent) {
+			targetPosition.y += this.getScreenHeight() * this.OPPONENT_HAND_OFFSET_FRACTION
+		} else {
+			targetPosition.y = this.getScreenHeight() - targetPosition.y
+		}
+
+		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED || renderedCard.displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
+			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
+			container.position.x += (targetPosition.x - container.position.x) * this.deltaTimeFraction * 7
+			container.position.y += (targetPosition.y - container.position.y) * this.deltaTimeFraction * 7
+		} else {
+			container.position.x = targetPosition.x
+			container.position.y = targetPosition.y - cardHeight / 2
+		}
+		container.zIndex = (handPosition + 1) * 2
+
+		hitboxSprite.position.set(targetPosition.x + sprite.position.x, targetPosition.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
 	}
@@ -208,8 +224,8 @@ export default class Renderer {
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		container.position.y = cardHeight * 0.5
-		container.position.y = this.getScreenHeight() - container.position.y
+		container.position.y = this.getScreenHeight() - cardHeight * 0.5
+
 		container.zIndex = HOVERED_CARD_ZINDEX
 	}
 
@@ -242,8 +258,12 @@ export default class Renderer {
 			phaseLabel = 'Game finished!'
 		} else {
 			let phase = 'Unknown'
-			if (Core.game.turnPhase === GameTurnPhase.TURN_START || Core.game.turnPhase === GameTurnPhase.DEPLOY || Core.game.turnPhase === GameTurnPhase.TURN_END) {
+			if (Core.game.turnPhase === GameTurnPhase.TURN_START) {
+				phase = 'Turn start'
+			} else if (Core.game.turnPhase === GameTurnPhase.DEPLOY) {
 				phase = 'Deploy'
+			} else if (Core.game.turnPhase === GameTurnPhase.TURN_END) {
+				phase = 'Turn end'
 			} else if (Core.game.turnPhase === GameTurnPhase.SKIRMISH) {
 				phase = 'Skirmish'
 			} else if (Core.game.turnPhase === GameTurnPhase.COMBAT) {
@@ -308,8 +328,18 @@ export default class Renderer {
 		const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
 		const cardWidth = cardHeight * this.CARD_ASPECT_RATIO
 
-		container.position.x = screenCenterX + distanceToCenter * cardWidth
-		container.position.y = rowY
+		const targetPositionX = screenCenterX + distanceToCenter * cardWidth
+		const targetPositionY = rowY
+
+		if (cardOnBoard.card.displayMode === CardDisplayMode.ON_BOARD) {
+			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
+			container.position.x += (targetPositionX - container.position.x) * this.deltaTimeFraction * 7
+			container.position.y += (targetPositionY - container.position.y) * this.deltaTimeFraction * 7
+		} else {
+			container.visible = true
+			container.position.x = targetPositionX
+			container.position.y = targetPositionY
+		}
 		container.zIndex = UNIT_ZINDEX
 
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
@@ -320,13 +350,27 @@ export default class Renderer {
 			sprite.tint = 0xBFBFBF
 		}
 
-		if (Core.game.turnPhase === GameTurnPhase.SKIRMISH && cardOnBoard.owner === Core.player) {
+		if (Core.game.turnPhase === GameTurnPhase.SKIRMISH && cardOnBoard.owner === Core.player && Core.player.isTurnActive) {
 			sprite.tint = 0xBBFFBB
 			if (Core.input.grabbedCard && cardOnBoard.card === Core.input.grabbedCard.card) {
 				sprite.tint = 0x99BB99
 			} else if (Core.input.hoveredCard && cardOnBoard.card === Core.input.hoveredCard.card) {
 				sprite.tint = 0x4CFE4C
 			}
+		}
+
+		const targetingAttacks = Core.board.queuedOrders.filter(order => order.targetUnit === cardOnBoard)
+		const incomingDamage = targetingAttacks.reduce((total, value) => total + value.orderedUnit.card.attack, 0)
+		const displayedPower = cardOnBoard.card.power - incomingDamage
+		cardOnBoard.card.powerText.text = displayedPower.toString()
+		if (incomingDamage > 0) {
+			cardOnBoard.card.powerText.style.fill = 0xAAAA00
+		} else if (cardOnBoard.card.power < cardOnBoard.card.basePower) {
+			cardOnBoard.card.powerText.style.fill = 0x770000
+		} else if (cardOnBoard.card.power > cardOnBoard.card.basePower) {
+			cardOnBoard.card.powerText.style.fill = 0x007700
+		} else {
+			cardOnBoard.card.powerText.style.fill = 0x000000
 		}
 
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
@@ -498,13 +542,49 @@ export default class Renderer {
 
 		const container = inspectedCard.coreContainer
 		const sprite = inspectedCard.sprite
+
 		sprite.tint = 0xFFFFFF
 		sprite.scale.set(Settings.superSamplingLevel)
 		container.position.x = this.getScreenWidth() / 2
 		container.position.y = this.getScreenHeight() / 2
 		container.zIndex = INSPECTED_CARD_ZINDEX
 
+		inspectedCard.powerText.style.fill = 0x000000
+		inspectedCard.powerText.text = inspectedCard.basePower.toString()
+		inspectedCard.attackText.style.fill = 0x000000
+		inspectedCard.attackText.text = inspectedCard.baseAttack.toString()
+
 		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
+	}
+
+	public renderAnnouncedCard(): void {
+		const announcedCard = Core.mainHandler.announcedCard
+		if (!announcedCard) {
+			return
+		}
+
+		const container = announcedCard.coreContainer
+		const sprite = announcedCard.sprite
+		sprite.alpha = 1
+		sprite.scale.set(Settings.superSamplingLevel)
+		container.visible = true
+		container.zIndex = INSPECTED_CARD_ZINDEX
+
+		if (announcedCard.displayMode !== CardDisplayMode.ANNOUNCED) {
+			container.position.x = -sprite.width / 2
+			container.position.y = this.getScreenHeight() / 2
+			announcedCard.setDisplayMode(CardDisplayMode.ANNOUNCED)
+		} else {
+			const targetX = sprite.width / 2 + 50 * Settings.superSamplingLevel
+
+			container.position.x += (targetX - container.position.x) * this.deltaTimeFraction * 7
+			container.position.y = this.getScreenHeight() / 2
+		}
+
+		const hitboxSprite = announcedCard.hitboxSprite
+		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
+		hitboxSprite.scale = sprite.scale
+		hitboxSprite.zIndex = container.zIndex - 1
 	}
 
 	public destroy(): void {

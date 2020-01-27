@@ -8,6 +8,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from '../models/ServerDamageSource'
 import Ruleset from '../Ruleset'
+import ServerAnimation from '../models/ServerAnimation'
 
 export default class ServerPlayerInGame extends PlayerInGame {
 	initialized = false
@@ -45,19 +46,22 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	}
 
 	public playUnit(card: ServerCard, rowIndex: number, unitIndex: number): void {
-		const gameBoardRow = this.game.board.rows[rowIndex]
-
 		/* Remove card from hand */
 		this.cardHand.removeCard(card)
 
+		/* Announce card to opponent */
+		const opponent = this.game.getOpponent(this)
+		card.reveal(this, opponent)
+		OutgoingMessageHandlers.triggerAnimation(opponent.player, ServerAnimation.cardPlay(card))
+
 		/* Insert the card into the board */
+		const gameBoardRow = this.game.board.rows[rowIndex]
 		gameBoardRow.playCard(card, this, unitIndex)
 
 		/* Advance the time */
 		this.setTimeUnits(this.timeUnits - 1)
 
 		/* Send notifications */
-		const opponent = this.game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
 	}
@@ -66,6 +70,11 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		/* Remove card from hand */
 		this.cardHand.removeCard(card)
 
+		/* Announce card to opponent */
+		const opponent = this.game.getOpponent(this)
+		card.reveal(this, opponent)
+		OutgoingMessageHandlers.triggerAnimation(opponent.player, ServerAnimation.cardPlay(card))
+
 		/* Invoke the card onPlay effect */
 		runCardEventHandler(() => card.onPlaySpell(this))
 
@@ -73,7 +82,6 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.setTimeUnits(this.timeUnits - 1)
 
 		/* Send notifications */
-		const opponent = this.game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
 	}

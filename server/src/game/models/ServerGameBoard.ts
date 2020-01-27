@@ -59,4 +59,8 @@ export default class ServerGameBoard extends GameBoard {
 	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame) {
 		return this.getAllUnits().filter(unit => unit.owner === owner)
 	}
+
+	public getUnitsOwnedByOpponent(thisPlayer: ServerPlayerInGame) {
+		return this.getUnitsOwnedByPlayer(this.game.getOpponent(thisPlayer))
+	}
 }

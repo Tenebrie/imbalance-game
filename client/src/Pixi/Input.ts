@@ -16,7 +16,8 @@ const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
 
 export default class Input {
-	mouseDown: boolean = false
+	leftMouseDown: boolean = false
+	rightMouseDown: boolean = false
 	mousePosition: PIXI.Point = new PIXI.Point(-10000, -10000)
 	hoveredCard: HoveredCard | null = null
 	grabbedCard: GrabbedCard | null = null
@@ -36,6 +37,7 @@ export default class Input {
 		view.addEventListener('mousemove', (event: MouseEvent) => {
 			this.onMouseMove(event)
 			this.updateCardHoverStatus()
+			if (this.rightMouseDown) { this.inspectCard() }
 		})
 
 		document.addEventListener('contextmenu', (event: MouseEvent) => {
@@ -44,7 +46,11 @@ export default class Input {
 		})
 	}
 
-	public updateCardHoverStatus() {
+	public tick(): void {
+		this.updateCardHoverStatus()
+	}
+
+	public updateCardHoverStatus(): void {
 		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
 		const playerHandCards = Core.player.cardHand.cards.slice().reverse()
 
@@ -60,6 +66,10 @@ export default class Input {
 			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInHand, Core.player)
 		}
 
+		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.isHovered(this.mousePosition)) {
+			hoveredCard = HoveredCard.fromAnnouncedCard(Core.mainHandler.announcedCard)
+		}
+
 		this.hoveredCard = hoveredCard
 	}
 
@@ -73,30 +83,39 @@ export default class Input {
 			return
 		}
 
-		if (event.button !== LEFT_MOUSE_BUTTON) {
-			return
-		}
-
-		this.mouseDown = true
-		this.grabCard()
-	}
-
-	private onMouseUp(event: MouseEvent) {
-		if (this.inspectedCard) {
-			this.inspectedCard = null
-			if (event.button === RIGHT_MOUSE_BUTTON && this.hoveredCard) {
-				this.inspectedCard = this.hoveredCard.card
-			}
-			return
-		}
-
-		if (event.button === RIGHT_MOUSE_BUTTON && this.hoveredCard) {
-			this.inspectedCard = this.hoveredCard.card
+		if (event.button === LEFT_MOUSE_BUTTON && this.hoveredCard && this.hoveredCard.card === Core.mainHandler.announcedCard) {
+			Core.mainHandler.skipAnimation()
 		}
 
 		if (event.button === LEFT_MOUSE_BUTTON) {
-			this.mouseDown = false
+			this.leftMouseDown = true
+			this.grabCard()
+		} else if (event.button === RIGHT_MOUSE_BUTTON) {
+			this.rightMouseDown = true
+			this.inspectCard()
+		}
+	}
+
+	private onMouseUp(event: MouseEvent) {
+		if (event.button === LEFT_MOUSE_BUTTON) {
+			this.leftMouseDown = false
 			this.useGrabbedCard()
+		} else if (event.button === RIGHT_MOUSE_BUTTON) {
+			this.rightMouseDown = false
+			this.inspectedCard = null
+		}
+	}
+
+	private onMouseMove(event: MouseEvent) {
+		const view = Core.renderer.pixi.view
+		const clientRect = view.getBoundingClientRect()
+		this.mousePosition = new PIXI.Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
+		this.mousePosition.x *= window.devicePixelRatio * Settings.superSamplingLevel
+		this.mousePosition.y *= window.devicePixelRatio * Settings.superSamplingLevel
+
+		const windowHeight = Core.renderer.pixi.view.height
+		if (this.grabbedCard && this.grabbedCard.targetingMode === TargetingMode.CARD_PLAY && Core.player.timeUnits === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {
+			this.releaseCard()
 		}
 	}
 
@@ -114,6 +133,16 @@ export default class Input {
 		}
 
 		this.grabbedCard = new GrabbedCard(hoveredCard.card, targeting)
+	}
+
+	public inspectCard(): void {
+		const hoveredCard = this.hoveredCard
+		if (!hoveredCard) {
+			this.inspectedCard = null
+			return
+		}
+
+		this.inspectedCard = hoveredCard.card
 	}
 
 	public useGrabbedCard(): void {
@@ -178,19 +207,6 @@ export default class Input {
 			if (distance <= maxMoveDistance) {
 				OutgoingMessageHandlers.sendUnitOrder(ClientUnitOrder.move(orderedUnit, hoveredRow))
 			}
-		}
-	}
-
-	private onMouseMove(event: MouseEvent) {
-		const view = Core.renderer.pixi.view
-		const clientRect = view.getBoundingClientRect()
-		this.mousePosition = new PIXI.Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
-		this.mousePosition.x *= window.devicePixelRatio * Settings.superSamplingLevel
-		this.mousePosition.y *= window.devicePixelRatio * Settings.superSamplingLevel
-
-		const windowHeight = Core.renderer.pixi.view.height
-		if (this.grabbedCard && this.grabbedCard.targetingMode === TargetingMode.CARD_PLAY && Core.player.timeUnits === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {
-			this.releaseCard()
 		}
 	}
 

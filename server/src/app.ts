@@ -42,13 +42,11 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, '../public')))
 app.use(express.static(path.join(__dirname, '../client')))
 
-/* CORS */
+/* Forced HTTPS */
 app.use((req: Request, res: Response, next) => {
-	res.header('Access-Control-Allow-Credentials', 'true')
-	res.header('Access-Control-Allow-Origin', req.get('origin'))
-	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-	res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Set-Cookie')
-
+	if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV && process.env.NODE_ENV !== 'development') {
+		return res.redirect('https://' + req.get('host') + req.url)
+	}
 	next()
 })
 

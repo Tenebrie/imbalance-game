@@ -8,6 +8,8 @@ import ServerUnitOrder from './ServerUnitOrder'
 import UnitOrderType from '../shared/enums/UnitOrderType'
 import VoidPlayerInGame from '../utils/VoidPlayerInGame'
 import Ruleset from '../Ruleset'
+import OutgoingAnimationMessages from '../handlers/outgoing/OutgoingAnimationMessages'
+import ServerAnimation from './ServerAnimation'
 
 export default class ServerGameBoardOrders {
 	game: ServerGame
@@ -86,6 +88,11 @@ export default class ServerGameBoardOrders {
 	}
 
 	public release(): void {
+		/* Clear orders for clients */
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.sendUnitOrders(playerInGame.player, [])
+		})
+
 		/* ATTACKS */
 		let queuedAttacks = this.queue.filter(order => order.type === UnitOrderType.ATTACK)
 
@@ -96,16 +103,22 @@ export default class ServerGameBoardOrders {
 		})
 		queuedAttacks = queuedAttacks.filter(order => order.orderedUnit.card.power > 0)
 
-		/* Attacks */
+		/* Perform attacks */
 		queuedAttacks.forEach(queuedAttack => {
 			this.performUnitAttack(queuedAttack.orderedUnit, queuedAttack.targetUnit)
 		})
+		if (queuedAttacks.length > 0) {
+			OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.delay())
+		}
 
 		/* Destroy killed units */
 		const killedUnits = this.game.board.getAllUnits().filter(unit => unit.card.power <= 0)
 		killedUnits.forEach(destroyedUnit => {
 			destroyedUnit.destroy()
 		})
+		if (killedUnits.length > 0) {
+			OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.delay())
+		}
 
 		/* After attacks */
 		const survivingAttackers = queuedAttacks.filter(attack => attack.orderedUnit.card.power > 0)
@@ -122,8 +135,7 @@ export default class ServerGameBoardOrders {
 
 		/* Before moves */
 		queuedMoves.forEach(queuedMove => {
-			runCardEventHandler(() => queuedMove.orderedUnit.card.onBeforePerformingMove(queuedMove.orderedUnit, queuedMove.targetRow))
-		})
+			runCardEventHandler(() => queuedMove.orderedUnit.card.onBeforePerformingMove(queuedMove.orderedUnit, queuedMove.targetRow))		})
 		queuedMoves = queuedMoves.filter(order => order.orderedUnit.card.power > 0)
 
 		/* Contested rows */
@@ -153,10 +165,11 @@ export default class ServerGameBoardOrders {
 			return opposingUnitsOnRow.length === 0
 		})
 
-		/* Moves */
+		/* Perform moves */
 		queuedMoves.forEach(queuedMove => {
 			this.performUnitMove(queuedMove.orderedUnit, queuedMove.targetRow)
 		})
+		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.allUnitsMove())
 
 		/* After moves */
 		const survivingMovers = queuedMoves.filter(move => move.orderedUnit.card.power > 0)
@@ -166,14 +179,13 @@ export default class ServerGameBoardOrders {
 
 		/* Clear orders */
 		this.queue = []
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.sendUnitOrders(playerInGame.player, this.queue)
-		})
 	}
 
 	public performUnitAttack(orderedUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {
+		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.unitAttack(orderedUnit, targetUnit))
 		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit)
 		targetUnit.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(attack, orderedUnit))
+		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.postUnitAttack())
 	}
 
 	public performUnitMove(orderedUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {

@@ -108,8 +108,8 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		async logout(context): Promise<void> {
 			const { commit } = rootActionContext(context)
 			await axios.post('/api/logout')
-			await router.push({ name: 'login' })
 			commit.resetPlayerData()
+			await router.push({ name: 'login' })
 		},
 
 		joinGame(context, selectedGameId: string): void {
@@ -118,13 +118,12 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			router.push({ name: 'game' })
 		},
 
-		leaveGame(context): void {
-			Core.socket.close(1000, 'Player disconnect')
-			router.push({ name: 'home' })
-		},
+		leaveGame(): void {
+			if (store.state.gameStateModule.gameStatus === ClientGameStatus.NOT_STARTED) { return }
 
-		onSocketClosed(): void {
 			store.dispatch.gameStateModule.reset()
+			router.push({ name: 'home' })
+			Core.socket.close(1000, 'Player disconnect')
 		}
 	}
 })

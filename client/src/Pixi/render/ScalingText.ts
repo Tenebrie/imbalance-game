@@ -47,6 +47,12 @@ export default class ScalingText extends PIXI.Container {
 			},
 			set lineHeight(value: number) {
 				parent.updateFont(parent.currentFontSize, value)
+			},
+			get fill() {
+				return parent.currentStyle.fill as number
+			},
+			set fill(value: number) {
+				parent.updateFill(value)
 			}
 		}
 	}
@@ -74,6 +80,15 @@ export default class ScalingText extends PIXI.Container {
 			this.removeChild(this.texts.shift()!)
 		}
 		this.createNewText()
+	}
+
+	private updateFill(fill: number): void {
+		if (fill === this.style.fill) { return }
+
+		this.currentStyle.fill = fill
+		this.texts.forEach(text => {
+			text.style.fill = fill
+		})
 	}
 
 	public updateFont(fontSize: number, lineHeight: number): void {

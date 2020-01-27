@@ -1,16 +1,18 @@
 <template>
 	<div class="home-view">
-		<game-list />
+		<the-game-list />
+		<the-changelog />
 	</div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import GameList from '../components/games/TheGameList.vue'
+import TheGameList from '../components/home/TheGameList.vue'
+import TheChangelog from '@/Vue/components/home/TheChangelog.vue'
 
 export default Vue.extend({
-	components: { GameList },
+	components: { TheGameList, TheChangelog },
 
 	computed: {
 		isInGame() {
@@ -19,3 +21,16 @@ export default Vue.extend({
 	}
 })
 </script>
+
+<style scoped lang="scss">
+	.home-view {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		& > div {
+			height: 75%;
+		}
+	}
+</style>

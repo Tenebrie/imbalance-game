@@ -13,6 +13,8 @@ import GameLibrary from '../libraries/GameLibrary'
 import ServerDamageInstance from './ServerDamageSource'
 import Ruleset from '../Ruleset'
 import Constants from '../shared/Constants'
+import ServerBotPlayer from '../utils/ServerBotPlayer'
+import ServerBotPlayerInGame from '../utils/ServerBotPlayerInGame'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -39,13 +41,22 @@ export default class ServerGame extends Game {
 	}
 
 	public addPlayer(targetPlayer: ServerPlayer, deck: ServerCardDeck): ServerPlayerInGame {
-		const serverPlayerInGame = ServerPlayerInGame.newInstance(this, targetPlayer, deck)
+		let serverPlayerInGame
+		if (targetPlayer instanceof ServerBotPlayer) {
+			serverPlayerInGame = ServerBotPlayerInGame.newInstance(this, targetPlayer, deck)
+		} else {
+			serverPlayerInGame = ServerPlayerInGame.newInstance(this, targetPlayer, deck)
+		}
 
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
 			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, serverPlayerInGame)
 		})
 
-		this.players.push(serverPlayerInGame)
+		if (this.isBotGame()) {
+			this.players.splice(0, 0, serverPlayerInGame)
+		} else {
+			this.players.push(serverPlayerInGame)
+		}
 		return serverPlayerInGame
 	}
 
@@ -78,6 +89,10 @@ export default class ServerGame extends Game {
 
 	public getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
 		return this.players.find(otherPlayer => otherPlayer !== player) || VoidPlayerInGame.for(this)
+	}
+
+	public isBotGame(): boolean {
+		return !!this.players.find(playerInGame => playerInGame instanceof ServerBotPlayerInGame)
 	}
 
 	public removePlayer(targetPlayer: ServerPlayer): void {
@@ -124,9 +139,9 @@ export default class ServerGame extends Game {
 
 	public advanceTurn(): void {
 		if (this.playersToMove.length > 0) {
-			this.playersToMove[0].startTurn()
-			this.playersToMove[0].setTimeUnits(1)
-			this.playersToMove.shift()
+			const playerToMove = this.playersToMove.shift()
+			playerToMove.setTimeUnits(1)
+			playerToMove.startTurn()
 			return
 		}
 
@@ -172,9 +187,8 @@ export default class ServerGame extends Game {
 	}
 
 	public startDeployPhase(): void {
-		this.advanceTurn()
-
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
+		this.advanceTurn()
 	}
 
 	public startSkirmishPhase(): void {
@@ -191,18 +205,16 @@ export default class ServerGame extends Game {
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
 
-		// const playerOnePower = this.board.getUnitsOwnedByPlayer(playerOne).map(unit => unit.card.power).reduce((total, value) => total += value, 0)
-		// const playerTwoPower = this.board.getUnitsOwnedByPlayer(playerTwo).map(unit => unit.card.power).reduce((total, value) => total += value, 0)
-		// if (playerOnePower > playerTwoPower) {
-		// 	playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(playerOnePower - playerTwoPower))
-		// } else if (playerTwoPower > playerOnePower) {
-		// 	playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(playerTwoPower - playerOnePower))
-		// }
-
 		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
 		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
 		playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(rowsOwnedByPlayerTwo * 5))
 		playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(rowsOwnedByPlayerOne * 5))
+
+		const defeatedPlayer = this.players.find(player => player.morale <= 0) || null
+		if (defeatedPlayer) {
+			this.finish(this.getOpponent(defeatedPlayer), 'Win condition')
+			return
+		}
 
 		this.board.getAllUnits().forEach(cardOnBoard => this.board.destroyUnit(cardOnBoard))
 		this.setTime(-1)
@@ -221,18 +233,19 @@ export default class ServerGame extends Game {
 	}
 
 	public startEndTurnPhase(): void {
-		this.setTurnPhase(GameTurnPhase.TURN_END)
 		this.board.orders.release()
+		this.setTurnPhase(GameTurnPhase.TURN_END)
 		this.board.getAllUnits().forEach(unit => unit.card.onTurnEnded(unit))
 		this.advancePhase()
 	}
 
-	public finish(reason: string): void {
+	public finish(victoriousPlayer: ServerPlayerInGame, victoryReason: string): void {
 		this.setTurnPhase(GameTurnPhase.AFTER_GAME)
 
-		const remainingPlayerInGame = this.players[0]
-		OutgoingMessageHandlers.notifyAboutVictory(remainingPlayerInGame.player)
-		console.info(`Game ${this.id} finished. ${remainingPlayerInGame.player.username} won! [${reason}]`)
+		const defeatedPlayer = this.getOpponent(victoriousPlayer)
+		OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
+		OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
+		console.info(`Game ${this.id} finished. ${victoriousPlayer.player.username} won! [${victoryReason}]`)
 
 		setTimeout(() => {
 			const gameLibrary: GameLibrary = global.gameLibrary

@@ -9,7 +9,6 @@
 import Vue from 'vue'
 import store from '@/Vue/store'
 import Core from '../../../Pixi/Core'
-import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import PixiUserInterface from '@/Vue/components/pixi/PixiUserInterface.vue'
 
 export default Vue.extend({
@@ -22,9 +21,6 @@ export default Vue.extend({
 	},
 
 	mounted(): void {
-		setTimeout(() => {
-			TextureAtlas.prepare()
-		}, 500)
 		window.addEventListener('resize', this.onWindowResize)
 
 		const container = (this.$refs.game as HTMLElement)

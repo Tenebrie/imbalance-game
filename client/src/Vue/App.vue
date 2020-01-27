@@ -11,9 +11,16 @@ import Vue from 'vue'
 import store from '@/Vue/store'
 import TheFooter from '@/Vue/components/TheFooter.vue'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 export default Vue.extend({
 	components: { TheNavigationBar, TheFooter },
+
+	mounted(): void {
+		setTimeout(() => {
+			TextureAtlas.prepare()
+		}, 500)
+	},
 
 	computed: {
 		isInGame() {
@@ -89,6 +96,7 @@ button.primary {
 	margin: 4px 0;
 	font-size: 1.0em;
 	font-family: Roboto, sans-serif;
+	color: black;
 	background-color: $COLOR-PRIMARY;
 	outline: none;
 

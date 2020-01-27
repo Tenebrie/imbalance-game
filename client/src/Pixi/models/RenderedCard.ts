@@ -26,8 +26,8 @@ export default class RenderedCard extends Card {
 
 	private readonly powerTextBackground: PIXI.Sprite
 
-	private readonly powerText: ScalingText
-	private readonly attackText: ScalingText
+	readonly powerText: ScalingText
+	readonly attackText: ScalingText
 	private readonly attackRangeText: ScalingText
 	private readonly healthArmorText: ScalingText
 	private readonly cardNameText: ScalingText
@@ -37,6 +37,9 @@ export default class RenderedCard extends Card {
 
 	constructor(message: CardMessage) {
 		super(message.id, message.cardType, message.cardClass)
+		this.id = message.id
+		this.cardType = message.cardType
+		this.cardClass = message.cardClass
 		this.unitSubtype = message.unitSubtype
 
 		this.cardName = message.cardName
@@ -65,6 +68,7 @@ export default class RenderedCard extends Card {
 		this.cardDescriptionText = new RichText(this, Localization.getString(this.cardDescription), 350)
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
+		this.sprite.alpha = 0
 		this.sprite.anchor.set(0.5)
 
 		/* Internal container */
@@ -103,9 +107,10 @@ export default class RenderedCard extends Card {
 
 		/* Core container */
 		this.coreContainer = new PIXI.Container()
+		this.coreContainer.visible = false
 		this.coreContainer.addChild(this.sprite)
 		this.coreContainer.addChild(this.powerText)
-		this.coreContainer.position.set(-1000, -1000)
+		this.coreContainer.position.set(0, 0)
 		this.coreContainer.addChild(this.attackText)
 
 		/* Card mode text container */
@@ -135,13 +140,6 @@ export default class RenderedCard extends Card {
 	public setAttack(value: number): void {
 		this.attack = value
 		this.attackText.text = value.toString()
-	}
-
-	public reveal(cardType: CardType, cardClass: string): void {
-		Core.unregisterCard(this)
-		this.cardType = cardType
-		this.cardClass = cardClass
-		Core.registerCard(this)
 	}
 
 	public createHitboxSprite(sprite: PIXI.Sprite): PIXI.Sprite {
@@ -203,7 +201,7 @@ export default class RenderedCard extends Card {
 
 		let texts: (ScalingText | RichText)[] = []
 
-		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED) {
+		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED || displayMode === CardDisplayMode.ANNOUNCED) {
 			this.switchToCardMode()
 			texts = [this.powerText, this.attackText, this.attackRangeText, this.healthArmorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {
@@ -255,6 +253,12 @@ export default class RenderedCard extends Card {
 		this.unitModeContainer.visible = false
 		this.cardModeContainer.visible = true
 		this.cardModeTextContainer.visible = true
+		this.powerText.visible = true
+		this.attackText.visible = true
+		this.attackRangeText.visible = true
+		this.healthArmorText.visible = true
+		this.cardModeAttributes.visible = true
+		this.powerTextBackground.visible = true
 		if (this.cardType === CardType.SPELL) {
 			this.powerText.visible = false
 			this.attackText.visible = false
@@ -332,6 +336,7 @@ export default class RenderedCard extends Card {
 		this.cardModeContainer.visible = false
 		this.unitModeContainer.visible = false
 		this.cardModeTextContainer.visible = false
+		this.powerTextBackground.visible = false
 		this.powerText.visible = false
 		this.attackText.visible = false
 		this.attackRangeText.visible = false

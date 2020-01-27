@@ -2,8 +2,9 @@ import ServerGame from '../models/ServerGame'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import GameLibrary from '../libraries/GameLibrary'
 import ServerPlayer from '../players/ServerPlayer'
-import GameTurnPhase from '../shared/enums/GameTurnPhase'
 import Ruleset from '../Ruleset'
+import VoidPlayerInGame from '../utils/VoidPlayerInGame'
+import ServerBotPlayer from '../utils/ServerBotPlayer'
 
 export default {
 	onPlayerConnected(game: ServerGame, playerInGame: ServerPlayerInGame): void {
@@ -16,16 +17,17 @@ export default {
 	},
 
 	onPlayerDisconnected(game: ServerGame, player: ServerPlayer): void {
-		if (game.players.length === 0 && game.turnPhase === GameTurnPhase.BEFORE_GAME) {
+		const humanPlayersInGame = game.players.filter(playerInGame => playerInGame !== VoidPlayerInGame.for(game) && !(playerInGame.player instanceof ServerBotPlayer))
+		if (humanPlayersInGame.length === 0) {
 			const gameLibrary: GameLibrary = global.gameLibrary
 			gameLibrary.destroyGame(game)
 			return
 		}
 
-		if (game.players.length !== 1) {
+		if (game.players.length > 1) {
 			return
 		}
 
-		game.finish('Opponent disconnected')
+		game.finish(game.players[0], 'Opponent disconnected')
 	}
 }
