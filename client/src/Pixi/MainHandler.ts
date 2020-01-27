@@ -2,24 +2,27 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import QueuedMessage from '@/Pixi/models/QueuedMessage'
 import RenderedCard from '@/Pixi/models/RenderedCard'
+import ProjectileSystem from '@/Pixi/render/ProjectileSystem'
 
 export default class MainHandler {
-	queuedMessages: QueuedMessage[]
-	messageCooldown: number
+	projectileSystem: ProjectileSystem = new ProjectileSystem()
 
-	announcedCard: RenderedCard | null
+	announcedCard: RenderedCard | null = null
+	queuedMessages: QueuedMessage[] = []
+	messageCooldown: number = 0
 
 	constructor() {
-		this.queuedMessages = []
-		this.messageCooldown = 0
-
 		let lastTime = performance.now()
 		PIXI.Ticker.shared.add(() => {
 			const now = performance.now()
 			const deltaTime = now - lastTime
 			const deltaFraction = deltaTime / 1000
 			lastTime = now
+
 			this.tick(deltaTime, deltaFraction)
+			this.projectileSystem.tick(deltaTime, deltaFraction)
+			Core.renderer.tick(deltaTime, deltaFraction)
+			Core.input.tick()
 		})
 	}
 

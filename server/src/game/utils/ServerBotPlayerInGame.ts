@@ -23,7 +23,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 		setTimeout(() => {
 			this.botTakesTheirTurn()
-		}, 1000)
+		}, 0)
 	}
 
 	private botTakesTheirTurn(): void {

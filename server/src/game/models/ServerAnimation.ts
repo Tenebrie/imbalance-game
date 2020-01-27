@@ -20,4 +20,12 @@ export default class ServerAnimation extends Animation {
 		animation.targetUnit = targetUnit
 		return animation
 	}
+
+	public static postUnitAttack(): ServerAnimation {
+		return new ServerAnimation(AnimationType.POST_UNIT_ATTACK)
+	}
+
+	public static allUnitsMove(): ServerAnimation {
+		return new ServerAnimation(AnimationType.ALL_UNITS_MOVE)
+	}
 }

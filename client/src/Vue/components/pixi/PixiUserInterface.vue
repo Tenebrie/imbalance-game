@@ -13,7 +13,6 @@
 		</div>
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
-				<button @click="onShowChangelog" class="game-button">Changelog</button>
 				<button @click="onShowSettings" class="game-button">Settings</button>
 				<div class="menu-separator"></div>
 				<button @click="onLeaveGame" class="game-button destructive">Leave game</button>
