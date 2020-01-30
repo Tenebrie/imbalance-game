@@ -350,7 +350,7 @@ export default class Renderer {
 			sprite.tint = 0xBFBFBF
 		}
 
-		if (Core.game.turnPhase === GameTurnPhase.SKIRMISH && cardOnBoard.owner === Core.player && Core.player.isTurnActive) {
+		if (Core.game.turnPhase === GameTurnPhase.DEPLOY && cardOnBoard.owner === Core.player && Core.player.isTurnActive) {
 			sprite.tint = 0xBBFFBB
 			if (Core.input.grabbedCard && cardOnBoard.card === Core.input.grabbedCard.card) {
 				sprite.tint = 0x99BB99

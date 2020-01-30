@@ -207,7 +207,7 @@ const handlers: {[ index: string ]: any } = {
 		} else if (data.type === AnimationType.POST_UNIT_ATTACK) {
 			animationDuration = 100
 		} else if (data.type === AnimationType.ALL_UNITS_MOVE) {
-			animationDuration = 1500
+			animationDuration = 750
 		}
 		Core.mainHandler.triggerAnimation(animationDuration)
 	},

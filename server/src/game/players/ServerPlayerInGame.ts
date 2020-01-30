@@ -64,6 +64,8 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		/* Send notifications */
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
+
+		OutgoingMessageHandlers.triggerAnimation(opponent.player, ServerAnimation.delay())
 	}
 
 	public playSpell(card: ServerCard): void {
@@ -125,9 +127,6 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		const opponent = this.game.getOpponent(this)
 		OutgoingMessageHandlers.notifyAboutPlayerTimeBankChange(this.player, this)
 		OutgoingMessageHandlers.notifyAboutOpponentTimeBankChange(opponent.player, this)
-		if (timeUnits === 0) {
-			this.endTurn()
-		}
 	}
 
 	public startTurn(): void {
@@ -137,6 +136,10 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		if (opponent) {
 			OutgoingMessageHandlers.notifyAboutOpponentTurnStarted(opponent.player)
 		}
+	}
+
+	public isAnyActionsAvailable(): boolean {
+		return this.timeUnits > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.hasAvailableActions())
 	}
 
 	public endTurn(): void {

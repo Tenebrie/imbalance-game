@@ -57,6 +57,7 @@ export default class ServerCard extends Card {
 	onTurnStarted(thisUnit: ServerCardOnBoard): void { return }
 	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void { return }
 	onTurnEnded(thisUnit: ServerCardOnBoard): void { return }
+	onUnitOrderDeclined(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void { return }
 	onBeforeUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void { return }
 	onPowerChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
@@ -80,5 +81,5 @@ export default class ServerCard extends Card {
 	isUnitOrderValid(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): boolean { return true }
 	canPerformOrdersSimultaneously(thisUnit: ServerCardOnBoard, firstOrder: UnitOrderType, secondOrder: UnitOrderType): boolean { return false }
 	getMaxOrdersOfType(thisUnit: ServerCardOnBoard, type: UnitOrderType): number { return 1 }
-	getMaxOrdersTotal(thisUnit: ServerCardOnBoard, type: UnitOrderType): number { return 1 }
+	getMaxOrdersTotal(thisUnit: ServerCardOnBoard): number { return 1 }
 }

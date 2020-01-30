@@ -140,7 +140,8 @@ export default class ServerGame extends Game {
 	public advanceTurn(): void {
 		if (this.playersToMove.length > 0) {
 			const playerToMove = this.playersToMove.shift()
-			playerToMove.setTimeUnits(1)
+			const timeUnits = ((this.currentTime === 0 && playerToMove === this.players[0]) || (this.currentTime === Ruleset.MAX_TIME_OF_DAY && playerToMove === this.players[0])) ? 1 : 1
+			playerToMove.setTimeUnits(timeUnits)
 			playerToMove.startTurn()
 			return
 		}
@@ -160,8 +161,6 @@ export default class ServerGame extends Game {
 		if (this.turnPhase === GameTurnPhase.TURN_START) {
 			this.startDeployPhase()
 		} else if (this.turnPhase === GameTurnPhase.DEPLOY) {
-			this.startSkirmishPhase()
-		} else if (this.turnPhase === GameTurnPhase.SKIRMISH) {
 			this.startEndTurnPhase()
 		} else if (this.turnPhase === GameTurnPhase.TURN_END && !hasPlayerLostBoard && this.currentTime < Ruleset.MAX_TIME_OF_DAY) {
 			this.startNewTurnPhase()
@@ -178,25 +177,15 @@ export default class ServerGame extends Game {
 		this.setTurnPhase(GameTurnPhase.TURN_START)
 
 		this.playersToMove = this.players.slice()
-		if (this.turnIndex % 2 === 1) {
-			this.playersToMove.reverse()
-		}
 
 		this.board.getAllUnits().forEach(unit => unit.card.onTurnStarted(unit))
+		this.board.orders.clearPerformedOrders()
 		this.advancePhase()
 	}
 
 	public startDeployPhase(): void {
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
 		this.advanceTurn()
-	}
-
-	public startSkirmishPhase(): void {
-		this.setTurnPhase(GameTurnPhase.SKIRMISH)
-
-		this.players.forEach(player => {
-			player.startTurn()
-		})
 	}
 
 	public startDayEndPhase(): void {
@@ -233,7 +222,6 @@ export default class ServerGame extends Game {
 	}
 
 	public startEndTurnPhase(): void {
-		this.board.orders.release()
 		this.setTurnPhase(GameTurnPhase.TURN_END)
 		this.board.getAllUnits().forEach(unit => unit.card.onTurnEnded(unit))
 		this.advancePhase()

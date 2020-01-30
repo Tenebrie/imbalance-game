@@ -21,7 +21,8 @@ export default {
 	notifyAboutPlayerTimeBankChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
 		player.sendMessage({
 			type: 'update/player/self/timeUnits',
-			data: PlayerInGameMessage.fromPlayerInGame(playerInGame)
+			data: PlayerInGameMessage.fromPlayerInGame(playerInGame),
+			highPriority: true
 		})
 	},
 
@@ -49,7 +50,8 @@ export default {
 	notifyAboutTurnEnded: (player: ServerPlayer) => {
 		player.sendMessage({
 			type: 'update/player/self/turnEnded',
-			data: null
+			data: null,
+			highPriority: true
 		})
 	},
 

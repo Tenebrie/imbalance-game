@@ -8,7 +8,7 @@ import UnitOrderType from '../../shared/enums/UnitOrderType'
 export default class UnitTwinBowArcher extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 4
+		this.basePower = 14
 		this.baseAttack = 7
 		this.baseAttackRange = 2
 	}
@@ -17,8 +17,8 @@ export default class UnitTwinBowArcher extends ServerCard {
 		return order.type !== UnitOrderType.ATTACK
 	}
 
-	onBeforeUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void {
-		if (order.type !== UnitOrderType.ATTACK) { return }
+	onUnitOrderDeclined(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void {
+		if (order.type !== UnitOrderType.ATTACK || !thisUnit.hasAvailableActions()) { return }
 
 		const target = order.targetUnit!
 		const rowWithCard = this.game.board.getRowWithUnit(target)
@@ -26,10 +26,10 @@ export default class UnitTwinBowArcher extends ServerCard {
 		const unitOnLeft = rowWithCard.cards[targetUnitIndex - 1]
 		const unitOnRight = rowWithCard.cards[targetUnitIndex + 1]
 		if (unitOnLeft) {
-			this.game.board.orders.addUnitOrderDirectly(ServerUnitOrder.attack(thisUnit, unitOnLeft))
+			this.game.board.orders.performUnitAttack(thisUnit, unitOnLeft)
 		}
 		if (unitOnRight) {
-			this.game.board.orders.addUnitOrderDirectly(ServerUnitOrder.attack(thisUnit, unitOnRight))
+			this.game.board.orders.performUnitAttack(thisUnit, unitOnRight)
 		}
 	}
 }

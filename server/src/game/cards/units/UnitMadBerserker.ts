@@ -12,7 +12,7 @@ export default class UnitMadBerserker extends ServerCard {
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 17
+		this.basePower = 27
 		this.baseAttack = 3
 	}
 

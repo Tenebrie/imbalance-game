@@ -25,34 +25,37 @@ export default {
 			player.playUnit(card, data.rowIndex, data.unitIndex)
 		}
 
-		game.advanceTurn()
+		if (!player.isAnyActionsAvailable()) {
+			player.endTurn()
+			game.advanceTurn()
+		}
 	},
 
 	'post/unitOrder': (data: UnitOrderMessage, game: ServerGame, player: ServerPlayerInGame) => {
 		const orderedUnit = game.board.findCardById(data.orderedUnitId)
-		if (game.turnPhase !== GameTurnPhase.SKIRMISH || !orderedUnit || orderedUnit.owner !== player) { return }
+		if (game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== player) { return }
 
 		const targetUnit = game.board.findCardById(data.targetUnitId)
 		if (data.type === UnitOrderType.ATTACK && targetUnit && orderedUnit.canAttackTarget(targetUnit)) {
-			game.board.orders.addUnitOrder(ServerUnitOrder.attack(orderedUnit, targetUnit))
+			game.board.orders.performUnitOrder(ServerUnitOrder.attack(orderedUnit, targetUnit))
 		}
 
 		const targetRow = game.board.rows[data.targetRowIndex]
 		if (data.type === UnitOrderType.MOVE && orderedUnit.canMoveToRow(targetRow)) {
-			game.board.orders.addUnitOrder(ServerUnitOrder.move(orderedUnit, targetRow))
+			game.board.orders.performUnitOrder(ServerUnitOrder.move(orderedUnit, targetRow))
+		}
+
+		if (!player.isAnyActionsAvailable()) {
+			player.endTurn()
+			game.advanceTurn()
 		}
 	},
 
 	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
 		if (player.turnEnded) { return }
 
-		if (game.turnPhase === GameTurnPhase.DEPLOY) {
-			player.setTimeUnits(0)
-		} else if (game.turnPhase === GameTurnPhase.SKIRMISH) {
-			player.endTurn()
-		} else {
-			return
-		}
+		player.setTimeUnits(0)
+		player.endTurn()
 
 		game.advanceTurn()
 	},

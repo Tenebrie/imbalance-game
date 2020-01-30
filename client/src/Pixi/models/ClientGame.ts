@@ -1,7 +1,4 @@
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
-import Core from '@/Pixi/Core'
-import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-import UnitOrderType from '@/Pixi/shared/enums/UnitOrderType'
 
 export default class ClientGame {
 	currentTime: number
@@ -16,12 +13,5 @@ export default class ClientGame {
 
 	public setTurnPhase(phase: GameTurnPhase): void {
 		this.turnPhase = phase
-
-		if (phase === GameTurnPhase.SKIRMISH) {
-			const units = Core.board.getCardsOwnedByPlayer(Core.player).filter(unit => unit.lastOrder && unit.lastOrder.type === UnitOrderType.ATTACK)
-			units.forEach(unit => {
-				OutgoingMessageHandlers.sendUnitOrder(unit.lastOrder!)
-			})
-		}
 	}
 }

@@ -57,10 +57,16 @@ export default class Core {
 		const data = JSON.parse(event.data)
 		const messageType = data.type as string
 		const messageData = data.data as any
+		const messageHighPriority = data.highPriority as boolean
 
 		const handler = IncomingMessageHandlers[messageType]
 		if (!handler) {
 			console.error('Unknown message type: ' + messageType)
+			return
+		}
+
+		if (messageHighPriority) {
+			handler(messageData)
 			return
 		}
 

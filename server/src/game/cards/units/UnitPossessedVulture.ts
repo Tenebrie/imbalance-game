@@ -7,7 +7,7 @@ import CardTribe from '../../shared/enums/CardTribe'
 export default class UnitPossessedVulture extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 10
+		this.basePower = 20
 		this.baseAttack = 4
 		this.baseAttackRange = 2
 		this.cardTribes = [CardTribe.BIRD]

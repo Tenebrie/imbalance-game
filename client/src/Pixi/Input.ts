@@ -120,13 +120,15 @@ export default class Input {
 	}
 
 	public grabCard(): void {
+		if (!Core.player.isTurnActive) { return }
+
 		const hoveredCard = this.hoveredCard
 		if (!hoveredCard) { return }
 
 		let targeting: TargetingMode
 		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
 			targeting = TargetingMode.CARD_PLAY
-		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.SKIRMISH) {
+		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY) {
 			targeting = TargetingMode.CARD_ORDER
 		} else {
 			return

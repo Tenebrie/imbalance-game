@@ -9,7 +9,7 @@ export default class UnitRavenMessenger extends ServerCard {
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 8
+		this.basePower = 18
 		this.baseAttack = 4
 		this.baseAttackRange = 2
 		this.cardTribes = [CardTribe.BIRD]

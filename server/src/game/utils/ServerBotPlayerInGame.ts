@@ -3,7 +3,6 @@ import ServerGame from '../models/ServerGame'
 import ServerCardDeck from '../models/ServerCardDeck'
 import ServerPlayer from '../players/ServerPlayer'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
-import GameTurnPhase from '../shared/enums/GameTurnPhase'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
 import UnitOrderMessage from '../shared/models/network/UnitOrderMessage'
 import ServerUnitOrder from '../models/ServerUnitOrder'
@@ -27,11 +26,14 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botTakesTheirTurn(): void {
-		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
-			this.botPlaysCard()
-		} else if (this.game.turnPhase === GameTurnPhase.SKIRMISH) {
-			this.botOrdersMove()
+		try {
+			while (this.timeUnits > 0) {
+				this.botPlaysCard()
+			}
 			this.botOrdersAttacks()
+			this.botOrdersMove()
+		} catch (e) {
+			console.error('Unknown AI error', e)
 		}
 		this.botEndsTurn()
 	}
@@ -51,25 +53,27 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		IncomingMessageHandlers['post/playCard'](cardPlayerMessage, this.game, this)
 	}
 
-	private botOrdersMove(): void {
-		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this)
-		controlledUnits.forEach(unit => {
-			const unitOrder = ServerUnitOrder.move(unit, this.game.board.rows[this.getForwardRowIndex(unit.rowIndex)])
-			const unitOrderMessage = new UnitOrderMessage(unitOrder)
-			IncomingMessageHandlers['post/unitOrder'](unitOrderMessage, this.game, this)
-		})
-	}
-
 	private botOrdersAttacks(): void {
-		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this)
-		const opponentsUnits = this.game.board.getUnitsOwnedByOpponent(this)
+		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this).filter(unit => unit.hasAvailableActions())
 		controlledUnits.forEach(unit => {
+			if (unit.isDead()) { return }
+
+			const opponentsUnits = this.game.board.getUnitsOwnedByOpponent(this)
 			const validTargets = opponentsUnits.filter(opponentsUnit => unit.canAttackTarget(opponentsUnit))
 			if (validTargets.length === 0) { return }
 
 			const sortedTargets = this.sortValidTargets(validTargets)
 
 			const unitOrder = ServerUnitOrder.attack(unit, sortedTargets[0])
+			const unitOrderMessage = new UnitOrderMessage(unitOrder)
+			IncomingMessageHandlers['post/unitOrder'](unitOrderMessage, this.game, this)
+		})
+	}
+
+	private botOrdersMove(): void {
+		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this).filter(unit => unit.hasAvailableActions())
+		controlledUnits.forEach(unit => {
+			const unitOrder = ServerUnitOrder.move(unit, this.game.board.rows[this.getForwardRowIndex(unit.rowIndex)])
 			const unitOrderMessage = new UnitOrderMessage(unitOrder)
 			IncomingMessageHandlers['post/unitOrder'](unitOrderMessage, this.game, this)
 		})

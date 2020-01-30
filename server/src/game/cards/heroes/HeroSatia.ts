@@ -8,7 +8,7 @@ import CardLibrary from '../../libraries/CardLibrary'
 export default class HeroSatia extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 12
+		this.basePower = 22
 		this.baseAttack = 2
 	}
 

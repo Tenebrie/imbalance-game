@@ -10,7 +10,7 @@ export default class UnitUnfeelingWarrior extends ServerCard {
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 18
+		this.basePower = 28
 		this.baseAttack = 5
 	}
 

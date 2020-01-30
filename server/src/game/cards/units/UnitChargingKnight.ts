@@ -13,7 +13,7 @@ export default class UnitChargingKnight extends ServerCard {
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 16
+		this.basePower = 26
 		this.baseAttack = 4
 	}
 
@@ -40,7 +40,7 @@ export default class UnitChargingKnight extends ServerCard {
 		return firstOrder === UnitOrderType.ATTACK && secondOrder === UnitOrderType.MOVE
 	}
 
-	getMaxOrdersTotal(thisUnit: ServerCardOnBoard, type: UnitOrderType): number {
+	getMaxOrdersTotal(thisUnit: ServerCardOnBoard): number {
 		return 2
 	}
 }
