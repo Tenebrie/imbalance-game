@@ -6,19 +6,20 @@ import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import GameStartMessage from '@/Pixi/shared/models/GameStartMessage'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import CardOnBoardMessage from '@/Pixi/shared/models/network/CardOnBoardMessage'
-import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
+import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import CardHandMessage from '@/Pixi/shared/models/network/CardHandMessage'
 import CardDeckMessage from '@/Pixi/shared/models/network/CardDeckMessage'
 import GameTimeMessage from '@/Pixi/shared/models/network/GameTimeMessage'
 import HiddenCardMessage from '@/Pixi/shared/models/network/HiddenCardMessage'
 import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
-import RenderedUnitOrder from '@/Pixi/models/RenderedUnitOrder'
 import UnitOrderMessage from '@/Pixi/shared/models/network/UnitOrderMessage'
 import GameBoardMessage from '@/Pixi/shared/models/network/GameBoardMessage'
 import GameBoardRowMessage from '@/Pixi/shared/models/network/GameBoardRowMessage'
 import AnimationMessage from '@/Pixi/shared/models/network/AnimationMessage'
 import AnimationType from '@/Pixi/shared/enums/AnimationType'
+import ClientUnitOrder from '@/Pixi/models/ClientUnitOrder'
+import UnitOrderType from '@/Pixi/shared/enums/UnitOrderType'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -61,11 +62,9 @@ const handlers: {[ index: string ]: any } = {
 		})
 	},
 
-	'gameState/board/orders': (data: UnitOrderMessage[]) => {
-		const newOrderMessages = data.filter(message => !Core.board.queuedOrders.find(order => order.isEqualToMessage(message)))
-		const removedOrders = Core.board.queuedOrders.filter(order => !data.find(message => order.isEqualToMessage(message)))
-		const newOrders = newOrderMessages.map(message => RenderedUnitOrder.fromMessage(message))
-		Core.board.updateUnitOrders(newOrders, removedOrders)
+	'update/board/unitOrders': (data: UnitOrderMessage[]) => {
+		const orders = data.map(message => ClientUnitOrder.fromMessage(message))
+		Core.board.updateUnitOrders(orders)
 	},
 
 	'update/game/phase': (data: GameTurnPhase) => {
@@ -78,8 +77,11 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/board/unitCreated': (data: CardOnBoardMessage) => {
-		const card = RenderedCardOnBoard.fromMessage(data)
-		Core.board.insertUnit(card, data.rowIndex, data.unitIndex)
+		Core.board.unitsOnHold.push(RenderedCardOnBoard.fromMessage(data))
+	},
+
+	'update/board/unitInserted': (data: CardOnBoardMessage) => {
+		Core.board.insertUnitFromHold(data.card.id, data.rowIndex, data.unitIndex)
 	},
 
 	'update/board/unitMoved': (data: CardOnBoardMessage) => {

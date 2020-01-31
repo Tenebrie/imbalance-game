@@ -3,14 +3,15 @@ import * as PIXI from 'pixi.js'
 import CardType from '@/Pixi/shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
-import RenderedCard from '@/Pixi/models/RenderedCard'
-import { CardLocation } from '@/Pixi/enums/CardLocation'
-import { TargetingMode } from '@/Pixi/enums/TargetingMode'
+import RenderedCard from '@/Pixi/board/RenderedCard'
+import {CardLocation} from '@/Pixi/enums/CardLocation'
+import {TargetingMode} from '@/Pixi/enums/TargetingMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
-import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
+import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import ClientUnitOrder from '@/Pixi/models/ClientUnitOrder'
 import Settings from '@/Pixi/Settings'
+import UnitOrderType from '@/Pixi/shared/enums/UnitOrderType'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
@@ -125,16 +126,18 @@ export default class Input {
 		const hoveredCard = this.hoveredCard
 		if (!hoveredCard) { return }
 
-		let targeting: TargetingMode
-		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
-			targeting = TargetingMode.CARD_PLAY
-		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY) {
-			targeting = TargetingMode.CARD_ORDER
-		} else {
-			return
-		}
+		const card = hoveredCard.card
 
-		this.grabbedCard = new GrabbedCard(hoveredCard.card, targeting)
+		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
+			const validRows = Core.board.rows.filter(row => row.owner === Core.player)
+			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
+		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY) {
+			const validOrders = Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id))
+			console.log(validOrders.filter(order => order.type === UnitOrderType.ATTACK))
+			const validCards = validOrders.filter(order => order.type === UnitOrderType.ATTACK).map(order => order.targetUnit.card)
+			const validRows = validOrders.filter(order => order.type === UnitOrderType.MOVE).map(order => order.targetRow)
+			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)
+		}
 	}
 
 	public inspectCard(): void {

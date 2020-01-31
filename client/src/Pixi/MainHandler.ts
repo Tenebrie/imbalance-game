@@ -1,7 +1,7 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import QueuedMessage from '@/Pixi/models/QueuedMessage'
-import RenderedCard from '@/Pixi/models/RenderedCard'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 import ProjectileSystem from '@/Pixi/render/ProjectileSystem'
 
 export default class MainHandler {
@@ -11,9 +11,12 @@ export default class MainHandler {
 	queuedMessages: QueuedMessage[] = []
 	messageCooldown: number = 0
 
+	coreTicker: PIXI.Ticker
+
 	constructor() {
 		let lastTime = performance.now()
-		PIXI.Ticker.shared.add(() => {
+		this.coreTicker = new PIXI.Ticker()
+		this.coreTicker.add(() => {
 			const now = performance.now()
 			const deltaTime = now - lastTime
 			const deltaFraction = deltaTime / 1000
@@ -24,6 +27,8 @@ export default class MainHandler {
 			Core.renderer.tick(deltaTime, deltaFraction)
 			Core.input.tick()
 		})
+
+		this.coreTicker.start()
 	}
 
 	private tick(deltaTime: number, deltaFraction: number): void {
@@ -70,6 +75,6 @@ export default class MainHandler {
 	}
 
 	public stop(): void {
-		PIXI.Ticker.shared.remove(this.tick)
+		this.coreTicker.stop()
 	}
 }

@@ -1,0 +1,9 @@
+enum CardTint {
+	NORMAL = 0xFFFFFF,
+	GRABBED = 0x99BB99,
+	HOVERED = 0xBFBFBF,
+	VALID_TARGET = 0xBBFFBB,
+	HOVERED_VALID_TARGET = 0x99DD99,
+}
+
+export default CardTint

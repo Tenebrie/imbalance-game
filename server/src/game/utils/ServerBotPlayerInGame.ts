@@ -54,7 +54,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botOrdersAttacks(): void {
-		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this).filter(unit => unit.hasAvailableActions())
+		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this).filter(unit => unit.getValidOrders().length > 0)
 		controlledUnits.forEach(unit => {
 			if (unit.isDead()) { return }
 
@@ -71,7 +71,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botOrdersMove(): void {
-		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this).filter(unit => unit.hasAvailableActions())
+		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this).filter(unit => unit.getValidOrders().length > 0)
 		controlledUnits.forEach(unit => {
 			const unitOrder = ServerUnitOrder.move(unit, this.game.board.rows[this.getForwardRowIndex(unit.rowIndex)])
 			const unitOrderMessage = new UnitOrderMessage(unitOrder)

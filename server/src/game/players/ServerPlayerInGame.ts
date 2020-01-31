@@ -132,6 +132,8 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	public startTurn(): void {
 		this.turnEnded = false
 		OutgoingMessageHandlers.notifyAboutTurnStarted(this.player)
+		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(this.game, this)
+
 		const opponent = this.game.getOpponent(this)
 		if (opponent) {
 			OutgoingMessageHandlers.notifyAboutOpponentTurnStarted(opponent.player)
@@ -139,7 +141,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	}
 
 	public isAnyActionsAvailable(): boolean {
-		return this.timeUnits > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.hasAvailableActions())
+		return this.timeUnits > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0)
 	}
 
 	public endTurn(): void {

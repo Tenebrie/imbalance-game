@@ -7,6 +7,7 @@ import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
 import ServerUnitOrder from '../models/ServerUnitOrder'
 import UnitOrderMessage from '../shared/models/network/UnitOrderMessage'
 import UnitOrderType from '../shared/enums/UnitOrderType'
+import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 
 export default {
 	'post/chat': (data: string, game: ServerGame, playerInGame: ServerPlayerInGame) => {
@@ -15,7 +16,7 @@ export default {
 
 	'post/playCard': (data: CardPlayedMessage, game: ServerGame, player: ServerPlayerInGame) => {
 		const card = player.cardHand.findCardById(data.id)
-		if (game.turnPhase !== GameTurnPhase.DEPLOY || !card || (card.cardType === CardType.SPELL && !player.canPlaySpell(card)) || (card.cardType === CardType.UNIT && !player.canPlayUnit(card, data.rowIndex, data.unitIndex))) {
+		if (player.turnEnded || game.turnPhase !== GameTurnPhase.DEPLOY || !card || (card.cardType === CardType.SPELL && !player.canPlaySpell(card)) || (card.cardType === CardType.UNIT && !player.canPlayUnit(card, data.rowIndex, data.unitIndex))) {
 			return
 		}
 
@@ -25,6 +26,8 @@ export default {
 			player.playUnit(card, data.rowIndex, data.unitIndex)
 		}
 
+		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, player)
+
 		if (!player.isAnyActionsAvailable()) {
 			player.endTurn()
 			game.advanceTurn()
@@ -33,7 +36,7 @@ export default {
 
 	'post/unitOrder': (data: UnitOrderMessage, game: ServerGame, player: ServerPlayerInGame) => {
 		const orderedUnit = game.board.findCardById(data.orderedUnitId)
-		if (game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== player) { return }
+		if (player.turnEnded || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== player || orderedUnit.hasSummoningSickness) { return }
 
 		const targetUnit = game.board.findCardById(data.targetUnitId)
 		if (data.type === UnitOrderType.ATTACK && targetUnit && orderedUnit.canAttackTarget(targetUnit)) {
@@ -44,6 +47,8 @@ export default {
 		if (data.type === UnitOrderType.MOVE && orderedUnit.canMoveToRow(targetRow)) {
 			game.board.orders.performUnitOrder(ServerUnitOrder.move(orderedUnit, targetRow))
 		}
+
+		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, player)
 
 		if (!player.isAnyActionsAvailable()) {
 			player.endTurn()

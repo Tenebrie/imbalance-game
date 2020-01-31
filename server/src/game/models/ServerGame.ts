@@ -178,13 +178,21 @@ export default class ServerGame extends Game {
 
 		this.playersToMove = this.players.slice()
 
-		this.board.getAllUnits().forEach(unit => unit.card.onTurnStarted(unit))
+		this.board.getAllUnits().forEach(unit => {
+			unit.hasSummoningSickness = false
+			unit.card.onTurnStarted(unit)
+		})
 		this.board.orders.clearPerformedOrders()
 		this.advancePhase()
 	}
 
 	public startDeployPhase(): void {
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
+
+		this.players.forEach(player => {
+			OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(this, player)
+		})
+
 		this.advanceTurn()
 	}
 

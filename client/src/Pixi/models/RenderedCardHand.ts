@@ -1,4 +1,4 @@
-import RenderedCard from '@/Pixi/models/RenderedCard'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 import CardHandMessage from '../shared/models/network/CardHandMessage'
 import Utils from '@/utils/Utils'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'

@@ -20,7 +20,11 @@ export default class ServerGameBoardOrders {
 
 	public performUnitOrder(order: ServerUnitOrder): void {
 		if (!this.isOrderValid(order)) {
-			order.orderedUnit.card.onUnitOrderDeclined(order.orderedUnit, order)
+			return
+		}
+
+		if (order.orderedUnit.card.requireCustomOrderLogic(order.orderedUnit, order)) {
+			order.orderedUnit.card.onUnitCustomOrder(order.orderedUnit, order)
 			return
 		}
 
@@ -36,28 +40,7 @@ export default class ServerGameBoardOrders {
 	}
 
 	private isOrderValid(order: ServerUnitOrder): boolean {
-		const orderedUnit = order.orderedUnit
-		if (!orderedUnit.card.isUnitOrderValid(orderedUnit, order)) {
-			return false
-		}
-
-		const performedOrdersTotal = this.performedOrders.filter(performedOrder => performedOrder.orderedUnit === orderedUnit)
-		const maxOrdersTotal = orderedUnit.card.getMaxOrdersTotal(orderedUnit)
-		if (performedOrdersTotal.length >= maxOrdersTotal) {
-			return false
-		}
-
-		const performedOrdersOfType = performedOrdersTotal.filter(performedOrder => performedOrder.type === order.type)
-		const maxOrdersOfType = orderedUnit.card.getMaxOrdersOfType(orderedUnit, order.type)
-		if (performedOrdersOfType.length >= maxOrdersOfType) {
-			return false
-		}
-
-		const otherTypeOrders = performedOrdersTotal.filter(performedOrder => performedOrder.type !== order.type)
-		const incompatibleOtherTypeOrder = otherTypeOrders.find(performedOrder => {
-			return !orderedUnit.card.canPerformOrdersSimultaneously(orderedUnit, order.type, performedOrder.type) && !orderedUnit.card.canPerformOrdersSimultaneously(orderedUnit, performedOrder.type, order.type)
-		})
-		return !incompatibleOtherTypeOrder
+		return !!order.orderedUnit.getValidOrders().find(validOrder => order.isEqual(validOrder))
 	}
 
 	public performUnitAttack(orderedUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import Core from '@/Pixi/Core'
 import RenderedProjectile from '@/Pixi/models/RenderedProjectile'
-import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
+import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { easeInQuad, easeInQuart } from 'js-easing-functions'
 

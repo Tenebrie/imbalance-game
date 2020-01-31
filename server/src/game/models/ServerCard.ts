@@ -57,7 +57,7 @@ export default class ServerCard extends Card {
 	onTurnStarted(thisUnit: ServerCardOnBoard): void { return }
 	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void { return }
 	onTurnEnded(thisUnit: ServerCardOnBoard): void { return }
-	onUnitOrderDeclined(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void { return }
+	onUnitCustomOrder(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void { return }
 	onBeforeUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void { return }
 	onPowerChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
@@ -78,7 +78,9 @@ export default class ServerCard extends Card {
 
 	getAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): number { return this.attack }
 	getDamageReduction(thisUnit: ServerCardOnBoard, damageSource: ServerDamageSource): number { return 0 }
-	isUnitOrderValid(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): boolean { return true }
+	isUnitAttackOrderValid(thisUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): boolean { return true }
+	isUnitMoveOrderValid(thisUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): boolean { return true }
+	requireCustomOrderLogic(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): boolean { return false }
 	canPerformOrdersSimultaneously(thisUnit: ServerCardOnBoard, firstOrder: UnitOrderType, secondOrder: UnitOrderType): boolean { return false }
 	getMaxOrdersOfType(thisUnit: ServerCardOnBoard, type: UnitOrderType): number { return 1 }
 	getMaxOrdersTotal(thisUnit: ServerCardOnBoard): number { return 1 }

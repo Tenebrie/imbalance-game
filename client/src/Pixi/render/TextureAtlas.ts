@@ -1,5 +1,6 @@
 import axios from 'axios'
 import * as PIXI from 'pixi.js'
+import store from '@/Vue/store'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 
 export default class TextureAtlas {
@@ -19,7 +20,7 @@ export default class TextureAtlas {
 			}
 
 			TextureAtlas.resolveFunctions.push(resolve)
-			if (TextureAtlas.isLoading) {
+			if (TextureAtlas.isLoading || !store.state.isLoggedIn) {
 				return
 			}
 
@@ -65,6 +66,7 @@ export default class TextureAtlas {
 
 				const onLoaded = () => {
 					TextureAtlas.texturesLoaded += 1
+					console.info(`Textures loaded: ${TextureAtlas.texturesLoaded}/${TextureAtlas.texturesToLoad}`)
 					TextureAtlas.textures[fileName.toLowerCase()] = texture
 
 					if (TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad) {

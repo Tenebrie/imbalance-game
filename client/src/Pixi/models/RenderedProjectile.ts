@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import RenderedCard from '@/Pixi/models/RenderedCard'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ObjectTrail from '@/Pixi/render/ObjectTrail'
 

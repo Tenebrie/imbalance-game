@@ -1,34 +1,43 @@
 import Constants from '@/Pixi/shared/Constants'
 import GameBoard from '@/Pixi/shared/models/GameBoard'
-import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
-import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
-import RenderedUnitOrder from '@/Pixi/models/RenderedUnitOrder'
+import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
+import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import ClientUnitOrder from '@/Pixi/models/ClientUnitOrder'
 
 export default class RenderedGameBoard extends GameBoard {
 	rows: RenderedGameBoardRow[]
+	unitsOnHold: RenderedCardOnBoard[]
 	isInverted = false
-	queuedOrders: RenderedUnitOrder[]
+	validOrders: ClientUnitOrder[]
 
 	constructor() {
 		super()
 		this.rows = []
-		this.queuedOrders = []
+		this.unitsOnHold = []
 		for (let i = 0; i < Constants.GAME_BOARD_ROW_COUNT; i++) {
 			this.rows.push(new RenderedGameBoardRow(i))
 		}
 	}
 
-	public insertUnit(card: RenderedCardOnBoard, rowIndex: number, unitIndex: number): void {
-		this.rows[rowIndex].insertUnit(card, unitIndex)
+	public insertUnit(unit: RenderedCardOnBoard, rowIndex: number, unitIndex: number): void {
+		this.rows[rowIndex].insertUnit(unit, unitIndex)
 	}
 
 	public removeUnit(unit: RenderedCardOnBoard): void {
 		this.rows[unit.rowIndex].removeUnit(unit)
 	}
 
+	public insertUnitFromHold(unitId: string, rowIndex: number, unitIndex: number): void {
+		const unit = this.unitsOnHold.find(unit => unit.card.id === unitId)
+		if (!unit) { return }
+
+		this.unitsOnHold.splice(this.unitsOnHold.indexOf(unit), 1)
+		this.insertUnit(unit, rowIndex, unitIndex)
+	}
+
 	public findUnitById(unitId: string): RenderedCardOnBoard | null {
-		const cards = this.rows.map(row => row.cards).flat()
+		const cards = this.getAllCards()
 		return cards.find(cardOnBoard => cardOnBoard.card.id === unitId) || null
 	}
 
@@ -44,27 +53,23 @@ export default class RenderedGameBoard extends GameBoard {
 	}
 
 	public getAllCards(): RenderedCardOnBoard[] {
-		return this.rows.map(row => row.cards).flat()
+		return this.rows.map(row => row.cards).flat().concat(this.unitsOnHold)
 	}
 
 	public getCardsOwnedByPlayer(owner: ClientPlayerInGame) {
 		return this.getAllCards().filter(unit => unit.owner === owner)
 	}
 
+	public getValidOrdersForUnit(unit: RenderedCardOnBoard): ClientUnitOrder[] {
+		return this.validOrders.filter(order => order.orderedUnit === unit)
+	}
+
 	public clearBoard(): void {
 		this.rows.forEach(row => row.clearRow())
 	}
 
-	public updateUnitOrders(newOrders: RenderedUnitOrder[], removedOrders: RenderedUnitOrder[]): void {
-		removedOrders.forEach(order => {
-			order.destroy()
-		})
-		this.queuedOrders = this.queuedOrders.filter(order => !removedOrders.includes(order))
-		this.queuedOrders = this.queuedOrders.concat(newOrders)
-		// TODO: Remember the unit orders?
-		// newOrders.forEach(newOrder => {
-		// 	newOrder.orderedUnit.lastOrder = newOrder
-		// })
+	public updateUnitOrders(orders: ClientUnitOrder[]): void {
+		this.validOrders = orders
 	}
 
 	public setInverted(isInverted: boolean): void {

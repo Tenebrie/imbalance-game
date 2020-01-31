@@ -13,13 +13,16 @@ export default class UnitTwinBowArcher extends ServerCard {
 		this.baseAttackRange = 2
 	}
 
-	isUnitOrderValid(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): boolean {
-		return order.type !== UnitOrderType.ATTACK
+	isUnitAttackOrderValid(thisUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): boolean {
+		const targetUnitRow = this.game.board.getRowWithUnit(targetUnit)
+		return targetUnitRow.cards.length > 1
 	}
 
-	onUnitOrderDeclined(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void {
-		if (order.type !== UnitOrderType.ATTACK || !thisUnit.hasAvailableActions()) { return }
+	requireCustomOrderLogic(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): boolean {
+		return order.type === UnitOrderType.ATTACK
+	}
 
+	onUnitCustomOrder(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): void {
 		const target = order.targetUnit!
 		const rowWithCard = this.game.board.getRowWithUnit(target)
 		const targetUnitIndex = rowWithCard.cards.indexOf(target)

@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import Utils from '@/utils/Utils'
-import RenderedCard from '@/Pixi/models/RenderedCard'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 import Localization from '@/Pixi/Localization'
 import ScalingText from '@/Pixi/render/ScalingText'
 

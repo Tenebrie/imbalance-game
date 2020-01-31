@@ -5,11 +5,19 @@ import ServerCardOnBoard from '../../models/ServerCardOnBoard'
 import CardOnBoardMessage from '../../shared/models/network/CardOnBoardMessage'
 import GameBoardRow from '../../shared/models/GameBoardRow'
 import GameBoardRowMessage from '../../shared/models/network/GameBoardRowMessage'
+import UnitOrderMessage from '../../shared/models/network/UnitOrderMessage'
+import ServerGame from '../../models/ServerGame'
+import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 
 export default {
 	notifyAboutUnitCreated(player: ServerPlayer, card: ServerCardOnBoard, rowIndex: number, unitIndex: number) {
 		player.sendMessage({
 			type: 'update/board/unitCreated',
+			data: CardOnBoardMessage.fromCardOnBoardWithIndex(card, rowIndex, unitIndex),
+			highPriority: true
+		})
+		player.sendMessage({
+			type: 'update/board/unitInserted',
 			data: CardOnBoardMessage.fromCardOnBoardWithIndex(card, rowIndex, unitIndex)
 		})
 	},
@@ -25,6 +33,18 @@ export default {
 		player.sendMessage({
 			type: 'update/board/unitDestroyed',
 			data: CardMessage.fromCard(cardOnBoard.card)
+		})
+	},
+
+	notifyAboutUnitValidOrdersChanged(game: ServerGame, playerInGame: ServerPlayerInGame) {
+		const ownedUnits = game.board.getUnitsOwnedByPlayer(playerInGame)
+		const validOrders = ownedUnits.map(unit => unit.getValidOrders()).flat()
+		const messages = validOrders.map(order => new UnitOrderMessage(order))
+
+		playerInGame.player.sendMessage({
+			type: 'update/board/unitOrders',
+			data: messages,
+			highPriority: true
 		})
 	},
 
