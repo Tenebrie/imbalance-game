@@ -204,7 +204,7 @@ export default class RenderedCard extends Card {
 		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED || displayMode === CardDisplayMode.ANNOUNCED) {
 			this.switchToCardMode()
 			texts = [this.powerText, this.attackText, this.attackRangeText, this.healthArmorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
-		} else if (displayMode === CardDisplayMode.ON_BOARD) {
+		} else if (displayMode === CardDisplayMode.ON_BOARD || displayMode === CardDisplayMode.ON_BOARD_HOVERED) {
 			this.switchToUnitMode()
 			texts = [this.powerText, this.attackText]
 		} else if (displayMode === CardDisplayMode.IN_HAND_HIDDEN) {

@@ -30,10 +30,10 @@
 	"card.description.unitSpinningBarbarian": "During Skirmishing phase, {name} can attack up to 3 targets simultaneously",
 
 	"card.name.unitChargingKnight": "Charging Knight",
-	"card.description.unitChargingKnight": "{name} can move and attack at the same time\nIf {name} has moved during his turn, his next attack deals double damage",
+	"card.description.unitChargingKnight": "{name} can move and attack at the same time\nIf {name} has moved this turn, his next attack deals double damage",
 
 	"card.name.unitTwinBowArcher": "Twin Bow Archer",
-	"card.description.unitTwinBowArcher": "During Skirmishing phase, instead of attacking the chosen target, {name} attacks units directly to the left and to the right from them",
+	"card.description.unitTwinBowArcher": "{name} always attacks units directly to the left and to the right from the chosen target",
 
 	"card.name.spellRainOfFire": "Rain of Fire",
 	"card.description.spellRainOfFire": "{name} deals *8* damage to all enemy units\nThen, it draws a card",

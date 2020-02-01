@@ -18,11 +18,11 @@ export default {
 		})
 	},
 
-	notifyAboutPlayerTimeBankChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
+	notifyAboutPlayerTimeBankChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame, delta: number) => {
 		player.sendMessage({
 			type: 'update/player/self/timeUnits',
 			data: PlayerInGameMessage.fromPlayerInGame(playerInGame),
-			highPriority: true
+			highPriority: delta < 0
 		})
 	},
 

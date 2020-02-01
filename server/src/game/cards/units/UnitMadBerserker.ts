@@ -2,8 +2,6 @@ import CardType from '../../shared/enums/CardType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
 import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import GameTurnPhase from '../../shared/enums/GameTurnPhase'
-import ServerDamageInstance from '../../models/ServerDamageSource'
 
 export default class UnitMadBerserker extends ServerCard {
 	hasAttackedThisTurn = false
@@ -16,23 +14,25 @@ export default class UnitMadBerserker extends ServerCard {
 		this.baseAttack = 3
 	}
 
-	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void {
-		if (phase !== GameTurnPhase.TURN_END) { return }
-
+	onTurnEnded(thisUnit: ServerCardOnBoard): void {
 		if (!this.hasAttackedThisTurn) {
 			this.lastAttackTarget = null
 			this.consecutiveAttackCount = 0
 		}
+		this.hasAttackedThisTurn = false
 	}
 
 	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+		this.hasAttackedThisTurn = true
 		if (target === this.lastAttackTarget) {
 			this.consecutiveAttackCount += 1
 		} else {
 			this.lastAttackTarget = target
 			this.consecutiveAttackCount = 0
 		}
+	}
 
-		target.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(this.consecutiveAttackCount * 3, thisUnit))
+	getBonusAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): number {
+		return this.consecutiveAttackCount * 3
 	}
 }

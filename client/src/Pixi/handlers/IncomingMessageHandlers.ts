@@ -19,7 +19,6 @@ import GameBoardRowMessage from '@/Pixi/shared/models/network/GameBoardRowMessag
 import AnimationMessage from '@/Pixi/shared/models/network/AnimationMessage'
 import AnimationType from '@/Pixi/shared/enums/AnimationType'
 import ClientUnitOrder from '@/Pixi/models/ClientUnitOrder'
-import UnitOrderType from '@/Pixi/shared/enums/UnitOrderType'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -63,8 +62,11 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/board/unitOrders': (data: UnitOrderMessage[]) => {
-		const orders = data.map(message => ClientUnitOrder.fromMessage(message))
-		Core.board.updateUnitOrders(orders)
+		Core.board.validOrders = data.map(message => ClientUnitOrder.fromMessage(message))
+	},
+
+	'update/board/opponentOrders': (data: UnitOrderMessage[]) => {
+		Core.board.validOpponentOrders = data.map(message => ClientUnitOrder.fromMessage(message))
 	},
 
 	'update/game/phase': (data: GameTurnPhase) => {

@@ -4,17 +4,21 @@ import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import ClientUnitOrder from '@/Pixi/models/ClientUnitOrder'
+import Core from '@/Pixi/Core'
 
 export default class RenderedGameBoard extends GameBoard {
 	rows: RenderedGameBoardRow[]
 	unitsOnHold: RenderedCardOnBoard[]
 	isInverted = false
 	validOrders: ClientUnitOrder[]
+	validOpponentOrders: ClientUnitOrder[]
 
 	constructor() {
 		super()
 		this.rows = []
 		this.unitsOnHold = []
+		this.validOrders = []
+		this.validOpponentOrders = []
 		for (let i = 0; i < Constants.GAME_BOARD_ROW_COUNT; i++) {
 			this.rows.push(new RenderedGameBoardRow(i))
 		}
@@ -61,15 +65,11 @@ export default class RenderedGameBoard extends GameBoard {
 	}
 
 	public getValidOrdersForUnit(unit: RenderedCardOnBoard): ClientUnitOrder[] {
-		return this.validOrders.filter(order => order.orderedUnit === unit)
+		return this.validOrders.concat(this.validOpponentOrders).filter(order => order.orderedUnit === unit)
 	}
 
 	public clearBoard(): void {
 		this.rows.forEach(row => row.clearRow())
-	}
-
-	public updateUnitOrders(orders: ClientUnitOrder[]): void {
-		this.validOrders = orders
 	}
 
 	public setInverted(isInverted: boolean): void {

@@ -51,7 +51,7 @@ export default class ServerCardOnBoard {
 
 	dealDamageWithoutDestroying(damage: ServerDamageInstance): void {
 		const damageReduction = this.card.getDamageReduction(this, damage)
-		const damageValue = damage.value - damageReduction
+		const damageValue = this.card.getDamageTaken(this, damage) - damageReduction
 		if (damageValue <= 0) {
 			return
 		}

@@ -11,7 +11,7 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 	container: PIXI.Container
 	owner: ClientPlayerInGame | null
 
-	private readonly sprite: PIXI.Sprite
+	readonly sprite: PIXI.Sprite
 
 	constructor(index: number) {
 		super(index)

@@ -8,6 +8,7 @@ import UnitOrderType from '../shared/enums/UnitOrderType'
 import Ruleset from '../Ruleset'
 import OutgoingAnimationMessages from '../handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from './ServerAnimation'
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 
 export default class ServerGameBoardOrders {
 	game: ServerGame
@@ -51,9 +52,10 @@ export default class ServerGameBoardOrders {
 
 		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.unitAttack(orderedUnit, targetUnit))
 
-		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit)
+		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit) + orderedUnit.card.getBonusAttackDamage(orderedUnit, targetUnit)
 		targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
 
+		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(this.game, this.game.getOpponent(orderedUnit.owner))
 		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.postUnitAttack())
 
 		if (orderedUnit.isAlive()) {
@@ -73,6 +75,7 @@ export default class ServerGameBoardOrders {
 		runCardEventHandler(() => orderedUnit.card.onBeforePerformingMove(orderedUnit, targetRow))
 		this.game.board.moveUnit(orderedUnit, targetRow.index, targetRow.cards.length)
 
+		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(this.game, this.game.getOpponent(orderedUnit.owner))
 		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.allUnitsMove())
 
 		if (orderedUnit.isAlive()) {

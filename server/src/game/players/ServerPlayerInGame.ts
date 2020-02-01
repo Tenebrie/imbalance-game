@@ -123,9 +123,11 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	public setTimeUnits(timeUnits: number): void {
 		if (this.timeUnits === timeUnits) { return }
 
+		const delta = timeUnits - this.timeUnits
+
 		this.timeUnits = timeUnits
 		const opponent = this.game.getOpponent(this)
-		OutgoingMessageHandlers.notifyAboutPlayerTimeBankChange(this.player, this)
+		OutgoingMessageHandlers.notifyAboutPlayerTimeBankChange(this.player, this, delta)
 		OutgoingMessageHandlers.notifyAboutOpponentTimeBankChange(opponent.player, this)
 	}
 

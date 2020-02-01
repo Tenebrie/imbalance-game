@@ -77,6 +77,8 @@ export default class ServerCard extends Card {
 	onDestroyUnit(thisUnit: ServerCardOnBoard): void { return }
 
 	getAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): number { return this.attack }
+	getBonusAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): number { return 0 }
+	getDamageTaken(thisUnit: ServerCardOnBoard, damageSource: ServerDamageSource): number { return damageSource.value }
 	getDamageReduction(thisUnit: ServerCardOnBoard, damageSource: ServerDamageSource): number { return 0 }
 	isUnitAttackOrderValid(thisUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): boolean { return true }
 	isUnitMoveOrderValid(thisUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): boolean { return true }

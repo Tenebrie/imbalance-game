@@ -12,6 +12,7 @@ import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import {CardLocation} from '@/Pixi/enums/CardLocation'
 import Settings from '@/Pixi/Settings'
 import CardTint from '@/Pixi/enums/CardTint'
+import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 
 const UNIT_ZINDEX = 2
 const UNIT_ORDER_ZINDEX = 3
@@ -201,6 +202,8 @@ export default class Renderer {
 			targetPosition.y = this.getScreenHeight() - targetPosition.y
 		}
 
+		sprite.tint = Core.player.timeUnits > 0 ? 0xFFFFFF : 0x999999
+
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED || renderedCard.displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
 			container.position.x += (targetPosition.x - container.position.x) * this.deltaTimeFraction * 7
@@ -306,10 +309,31 @@ export default class Renderer {
 		const rowY = screenCenterY + verticalDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 
 		container.position.set(screenCenterX, rowY)
+		gameBoardRow.sprite.tint = this.getBoardRowTint(gameBoardRow)
 
 		for (let i = 0; i < gameBoardRow.cards.length; i++) {
 			const cardOnBoard = gameBoardRow.cards[i]
 			this.renderCardOnBoard(cardOnBoard, rowY, i, gameBoardRow.cards.length)
+		}
+	}
+
+	private getBoardRowTint(row: RenderedGameBoardRow): BoardRowTint {
+		if (Core.input.grabbedCard && Core.input.grabbedCard.validTargetRows.includes(row)) {
+			if (row.owner === Core.player) {
+				return row.isHovered(Core.input.mousePosition) ? BoardRowTint.VALID_TARGET_PLAYER_HOVERED : BoardRowTint.VALID_TARGET_PLAYER
+			} else if (row.owner === Core.opponent) {
+				return row.isHovered(Core.input.mousePosition) ? BoardRowTint.VALID_TARGET_OPPONENT_HOVERED : BoardRowTint.VALID_TARGET_OPPONENT
+			} else {
+				return row.isHovered(Core.input.mousePosition) ? BoardRowTint.VALID_TARGET_NEUTRAL_HOVERED : BoardRowTint.VALID_TARGET_NEUTRAL
+			}
+		}
+
+		if (row.owner === Core.player) {
+			return BoardRowTint.NORMAL_PLAYER
+		} else if (row.owner === Core.opponent) {
+			return BoardRowTint.NORMAL_OPPONENT
+		} else {
+			return BoardRowTint.NORMAL_NEUTRAL
 		}
 	}
 
@@ -362,30 +386,28 @@ export default class Renderer {
 		unit.card.setDisplayMode(CardDisplayMode.ON_BOARD)
 	}
 
-	private getUnitTint(unit: RenderedCardOnBoard): number {
-		if (Core.input.grabbedCard && Core.input.grabbedCard.targetingMode === TargetingMode.CARD_ORDER && Core.input.grabbedCard.validTargetCards.includes(unit.card)) {
-			return CardTint.VALID_TARGET
+	private getUnitTint(unit: RenderedCardOnBoard): CardTint {
+		const card = unit.card
+		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
+		if (Core.input.grabbedCard && Core.input.grabbedCard.card === unit.card) {
+			return CardTint.GRABBED
 		}
 
-		if (Core.input.grabbedCard && Core.input.grabbedCard.card !== unit.card) {
-			return CardTint.NORMAL
+		if (Core.player.isTurnActive && !Core.input.grabbedCard && unit.owner === Core.player && Core.board.getValidOrdersForUnit(unit).length > 0) {
+			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
+		}
+		if (Core.opponent.isTurnActive && !Core.input.grabbedCard && unit.owner === Core.opponent && Core.board.getValidOrdersForUnit(unit).length > 0) {
+			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
 		}
 
-		const unitsValidOrders = Core.board.getValidOrdersForUnit(unit)
-		if (Core.game.turnPhase === GameTurnPhase.DEPLOY && unit.owner === Core.player && Core.player.isTurnActive && unitsValidOrders.length > 0) {
-			if (Core.input.grabbedCard && unit.card === Core.input.grabbedCard.card) {
-				return CardTint.GRABBED
-			} else if (Core.input.hoveredCard && unit.card === Core.input.hoveredCard.card) {
-				return CardTint.HOVERED_VALID_TARGET
-			}
-			return CardTint.VALID_TARGET
+		if (Core.input.grabbedCard && Core.input.grabbedCard.targetingMode === TargetingMode.CARD_ORDER && Core.input.grabbedCard.validTargetCards.includes(unit.card) && unit.owner === Core.player) {
+			return hoveredCard === card ? CardTint.VALID_ALLY_TARGET_HOVERED : CardTint.VALID_ALLY_TARGET
+		}
+		if (Core.input.grabbedCard && Core.input.grabbedCard.targetingMode === TargetingMode.CARD_ORDER && Core.input.grabbedCard.validTargetCards.includes(unit.card) && unit.owner === Core.opponent) {
+			return hoveredCard === card ? CardTint.VALID_ENEMY_TARGET_HOVERED : CardTint.VALID_ENEMY_TARGET
 		}
 
-		if (Core.input.hoveredCard && unit.card === Core.input.hoveredCard.card) {
-			return CardTint.HOVERED
-		}
-
-		return CardTint.NORMAL
+		return CardTint.INACTIVE
 	}
 
 	public renderTargetingArrow(): void {

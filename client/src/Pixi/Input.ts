@@ -131,9 +131,8 @@ export default class Input {
 		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
 			const validRows = Core.board.rows.filter(row => row.owner === Core.player)
 			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
-		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY) {
+		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY && Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0) {
 			const validOrders = Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id))
-			console.log(validOrders.filter(order => order.type === UnitOrderType.ATTACK))
 			const validCards = validOrders.filter(order => order.type === UnitOrderType.ATTACK).map(order => order.targetUnit.card)
 			const validRows = validOrders.filter(order => order.type === UnitOrderType.MOVE).map(order => order.targetRow)
 			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)

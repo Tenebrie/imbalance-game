@@ -27,7 +27,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private botTakesTheirTurn(): void {
 		try {
-			while (this.timeUnits > 0) {
+			while (this.timeUnits > 0 && this.cardHand.cards.length > 0) {
 				this.botPlaysCard()
 			}
 			this.botOrdersAttacks()

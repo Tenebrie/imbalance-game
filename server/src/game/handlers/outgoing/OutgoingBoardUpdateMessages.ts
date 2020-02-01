@@ -48,6 +48,17 @@ export default {
 		})
 	},
 
+	notifyAboutOpponentUnitValidOrdersChanged(game: ServerGame, playerInGame: ServerPlayerInGame) {
+		const opponentUnits = game.board.getUnitsOwnedByPlayer(game.getOpponent(playerInGame))
+		const validOpponentOrders = opponentUnits.map(unit => unit.getValidOrders()).flat()
+		const opponentMessages = validOpponentOrders.map(order => new UnitOrderMessage(order))
+
+		playerInGame.player.sendMessage({
+			type: 'update/board/opponentOrders',
+			data: opponentMessages
+		})
+	},
+
 	notifyAboutRowOwnershipChanged(player: ServerPlayer, row: GameBoardRow) {
 		player.sendMessage({
 			type: 'update/board/row/owner',

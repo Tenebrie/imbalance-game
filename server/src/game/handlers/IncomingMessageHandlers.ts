@@ -27,6 +27,7 @@ export default {
 		}
 
 		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, player)
+		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(game, game.getOpponent(player))
 
 		if (!player.isAnyActionsAvailable()) {
 			player.endTurn()
@@ -49,6 +50,7 @@ export default {
 		}
 
 		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, player)
+		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(game, game.getOpponent(player))
 
 		if (!player.isAnyActionsAvailable()) {
 			player.endTurn()

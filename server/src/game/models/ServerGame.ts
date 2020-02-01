@@ -191,6 +191,7 @@ export default class ServerGame extends Game {
 
 		this.players.forEach(player => {
 			OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(this, player)
+			OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(this, this.getOpponent(player))
 		})
 
 		this.advanceTurn()
