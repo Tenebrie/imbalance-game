@@ -36,6 +36,8 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+	@import "../../styles/generic";
+
 	.the-navigation-bar {
 		position: fixed;
 		top: 0;
@@ -45,6 +47,7 @@ export default Vue.extend({
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		background: $COLOR-BACKGROUND-TRANSPARENT;
 
 		.right-side-container {
 			height: 100%;

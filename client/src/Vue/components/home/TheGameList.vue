@@ -71,6 +71,8 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+	@import "../../styles/generic";
+
 	.the-game-list-container {
 		flex: 2;
 		margin: 32px 16px 32px 32px;
@@ -87,7 +89,11 @@ export default Vue.extend({
 			align-items: center;
 			justify-content: space-between;
 			flex-direction: column;
-			background: rgba(white, 0.1);
+			background: $COLOR-BACKGROUND-TRANSPARENT;
+
+			button {
+				font-size: 1.2em;
+			}
 
 			.list {
 				width: 100%;

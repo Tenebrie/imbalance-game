@@ -45,9 +45,7 @@ export default class TextureAtlas {
 				'components/stat-attack-range',
 				'components/stat-health-armor',
 				'components/overlay-move',
-				'board/boardRow_owned',
-				'board/boardRow_neutral',
-				'board/boardRow_opponent'
+				'board/board-row'
 			]
 
 			const response = await axios.get('/api/cards')

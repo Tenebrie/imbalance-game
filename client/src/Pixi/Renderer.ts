@@ -49,6 +49,7 @@ export default class Renderer {
 			height: window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel,
 			antialias: false,
 			autoDensity: true,
+			transparent: true,
 			resolution: 1
 		})
 

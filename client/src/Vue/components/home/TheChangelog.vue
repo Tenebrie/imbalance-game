@@ -56,6 +56,8 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+	@import "../../styles/generic";
+
 	.the-changelog {
 		flex: 1;
 		margin: 32px 32px 32px 16px;
@@ -68,7 +70,7 @@ export default Vue.extend({
 			width: calc(100% - 64px);
 			height: 100%;
 			padding: 32px;
-			background: rgba(white, 0.1);
+			background: $COLOR-BACKGROUND-TRANSPARENT;
 
 			iframe {
 				width: 100%;

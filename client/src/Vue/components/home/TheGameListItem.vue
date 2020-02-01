@@ -33,7 +33,7 @@ export default Vue.extend({
 		user-select: none;
 
 		&:hover {
-			background: rgba(white, 0.1);
+			background: rgba(#36454f, 0.75);
 		}
 	}
 </style>

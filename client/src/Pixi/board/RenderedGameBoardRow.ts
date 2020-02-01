@@ -3,7 +3,6 @@ import * as PIXI from 'pixi.js'
 import GameBoardRow from '@/Pixi/shared/models/GameBoardRow'
 import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import Constants from '../shared/Constants'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
@@ -12,34 +11,24 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 	container: PIXI.Container
 	owner: ClientPlayerInGame | null
 
-	private readonly spriteOwned: PIXI.Sprite
-	private readonly spriteNeutral: PIXI.Sprite
-	private readonly spriteOpponent: PIXI.Sprite
+	private readonly sprite: PIXI.Sprite
 
 	constructor(index: number) {
 		super(index)
 		this.cards = []
 		this.owner = null
 
-		this.spriteOwned = new PIXI.Sprite(TextureAtlas.getTexture('board/boardRow_owned'))
-		this.spriteNeutral = new PIXI.Sprite(TextureAtlas.getTexture('board/boardRow_neutral'))
-		this.spriteOpponent = new PIXI.Sprite(TextureAtlas.getTexture('board/boardRow_opponent'))
-		this.spriteOwned.anchor.set(0.5, 0.5)
-		this.spriteNeutral.anchor.set(0.5, 0.5)
-		this.spriteOpponent.anchor.set(0.5, 0.5)
-		this.spriteOwned.visible = false
-		this.spriteOpponent.visible = false
+		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture('board/board-row'))
+		this.sprite.anchor.set(0.5, 0.5)
 
 		this.container = new PIXI.Container()
-		this.container.addChild(this.spriteOwned)
-		this.container.addChild(this.spriteNeutral)
-		this.container.addChild(this.spriteOpponent)
+		this.container.addChild(this.sprite)
 
 		Core.renderer.registerGameBoardRow(this)
 	}
 
 	public getHeight(): number {
-		return this.spriteNeutral.texture.height
+		return this.sprite.texture.height
 	}
 
 	public insertUnit(card: RenderedCardOnBoard, unitIndex: number): void {
@@ -77,20 +66,9 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 
 	public setOwner(owner: ClientPlayerInGame | null): void {
 		this.owner = owner
-
-		this.spriteOwned.visible = false
-		this.spriteNeutral.visible = false
-		this.spriteOpponent.visible = false
-		if (this.owner === Core.player) {
-			this.spriteOwned.visible = true
-		} else if (this.owner === Core.opponent) {
-			this.spriteOpponent.visible = true
-		} else {
-			this.spriteNeutral.visible = true
-		}
 	}
 
 	public isHovered(mousePosition: PIXI.Point): boolean {
-		return (this.owner === Core.player && this.spriteOwned.containsPoint(mousePosition)) || (this.owner === null && this.spriteNeutral.containsPoint(mousePosition)) || (this.owner === Core.opponent && this.spriteOpponent.containsPoint(mousePosition))
+		return this.sprite.containsPoint(mousePosition)
 	}
 }

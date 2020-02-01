@@ -98,6 +98,9 @@ export default Vue.extend({
 
 			.submit {
 				margin: 8px 0;
+				& > button {
+					font-size: 1em;
+				}
 			}
 		}
 
