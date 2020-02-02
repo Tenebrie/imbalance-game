@@ -1,10 +1,13 @@
-import UnitOrderType from '../enums/UnitOrderType'
 import CardOnBoard from './CardOnBoard'
 import GameBoardRow from './GameBoardRow'
+import TargetType from '../enums/TargetType'
+import TargetMode from '../enums/TargetMode'
 
 export default interface UnitOrder {
-	type: UnitOrderType
+	targetMode: TargetMode
+	targetType: TargetType
 	orderedUnit: CardOnBoard
 	targetUnit?: CardOnBoard
 	targetRow?: GameBoardRow
+	targetLabel: string
 }

@@ -6,5 +6,6 @@ export var CardDisplayMode;
     CardDisplayMode[CardDisplayMode["IN_HAND_HOVERED"] = 3] = "IN_HAND_HOVERED";
     CardDisplayMode[CardDisplayMode["IN_HAND_HIDDEN"] = 4] = "IN_HAND_HIDDEN";
     CardDisplayMode[CardDisplayMode["INSPECTED"] = 5] = "INSPECTED";
+    CardDisplayMode[CardDisplayMode["ANNOUNCED"] = 6] = "ANNOUNCED";
 })(CardDisplayMode || (CardDisplayMode = {}));
 //# sourceMappingURL=CardDisplayMode.js.map

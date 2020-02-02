@@ -1,3 +1,4 @@
+import Core from '@/Pixi/Core';
 import { CardLocation } from '@/Pixi/enums/CardLocation';
 export default class HoveredCard {
     constructor(card, location, owner) {
@@ -10,6 +11,9 @@ export default class HoveredCard {
     }
     static fromCardOnBoard(cardOnBoard) {
         return new HoveredCard(cardOnBoard.card, CardLocation.BOARD, cardOnBoard.owner);
+    }
+    static fromAnnouncedCard(card) {
+        return new HoveredCard(card, CardLocation.ANNOUNCED, Core.opponent);
     }
 }
 //# sourceMappingURL=HoveredCard.js.map

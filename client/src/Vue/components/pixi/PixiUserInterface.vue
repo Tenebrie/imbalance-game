@@ -107,6 +107,7 @@ export default Vue.extend({
 		top: 0;
 		width: 100%;
 		height: 100%;
+		user-select: none;
 		pointer-events: none;
 
 		.fade-in-overlay {

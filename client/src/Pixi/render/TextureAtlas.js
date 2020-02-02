@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as PIXI from 'pixi.js';
+import store from '@/Vue/store';
 export default class TextureAtlas {
     static async prepare() {
         return new Promise(async (resolve) => {
@@ -8,13 +9,15 @@ export default class TextureAtlas {
                 return;
             }
             TextureAtlas.resolveFunctions.push(resolve);
-            if (TextureAtlas.isLoading) {
+            if (TextureAtlas.isLoading || !store.state.isLoggedIn) {
                 return;
             }
             this.isLoading = true;
             TextureAtlas.texturesLoaded = 0;
             TextureAtlas.textures = {};
             const components = [
+                'effects/trail',
+                'effects/fireball-static',
                 'cards/cardBack',
                 'components/bg-power',
                 'components/bg-power-zoom',
@@ -29,9 +32,7 @@ export default class TextureAtlas {
                 'components/stat-attack-range',
                 'components/stat-health-armor',
                 'components/overlay-move',
-                'board/boardRow_owned',
-                'board/boardRow_neutral',
-                'board/boardRow_opponent'
+                'board/board-row'
             ];
             const response = await axios.get('/api/cards');
             const cardMessages = response.data;
@@ -45,6 +46,7 @@ export default class TextureAtlas {
                 const texture = PIXI.Texture.from(`assets/${fileName}.png`);
                 const onLoaded = () => {
                     TextureAtlas.texturesLoaded += 1;
+                    console.info(`Textures loaded: ${TextureAtlas.texturesLoaded}/${TextureAtlas.texturesToLoad}`);
                     TextureAtlas.textures[fileName.toLowerCase()] = texture;
                     if (TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad) {
                         console.info(`TextureAtlas initialized. Resolving ${TextureAtlas.resolveFunctions.length} promise(s).`);

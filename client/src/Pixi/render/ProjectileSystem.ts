@@ -28,11 +28,21 @@ export default class ProjectileSystem {
 			const currentTime = Math.min(projectile.currentTime, projectile.animationDuration)
 			const timePosition = currentTime / projectile.animationDuration
 			const offsetX = (-4 * Math.pow(timePosition - 0.5, 2) + 1) * (150 + projectile.randomnessFactor * 250)
+			const offsetY = offsetX
 
 			if (projectile.startingPoint.x < targetPoint.x) {
 				targetPoint.x += offsetX
-			} else {
+			} else if (projectile.startingPoint.x > targetPoint.x) {
 				targetPoint.x -= offsetX
+			} else {
+				const mod = Math.floor(projectile.randomnessFactor * 1000000) % 2 === 0 ? 1 : -1
+				targetPoint.x += offsetX * mod
+			}
+
+			if (projectile.startingPoint.y < targetPoint.y) {
+				targetPoint.y -= offsetY
+			} else {
+				targetPoint.y += offsetY
 			}
 
 			const distanceVector = {

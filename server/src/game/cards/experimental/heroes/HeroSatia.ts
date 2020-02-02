@@ -1,9 +1,9 @@
 import HeroNightMaiden from './HeroNightMaiden'
-import CardType from '../../shared/enums/CardType'
-import ServerCard from '../../models/ServerCard'
-import ServerGame from '../../models/ServerGame'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import CardLibrary from '../../libraries/CardLibrary'
+import CardType from '../../../shared/enums/CardType'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import CardLibrary from '../../../libraries/CardLibrary'
 
 export default class HeroSatia extends ServerCard {
 	constructor(game: ServerGame) {

@@ -4,10 +4,11 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerGameBoardRow from './ServerGameBoardRow'
-import Ruleset from '../Ruleset'
-import UnitOrderType from '../shared/enums/UnitOrderType'
 import ServerUnitOrder from './ServerUnitOrder'
 import Constants from '../shared/Constants'
+import ServerTargetDefinition from './ServerTargetDefinition'
+import TargetMode from '../shared/enums/TargetMode'
+import TargetType from '../shared/enums/TargetType'
 
 export default class ServerCardOnBoard {
 	game: ServerGame
@@ -80,77 +81,62 @@ export default class ServerCardOnBoard {
 		return this.card.power <= 0
 	}
 
-	hasActionsRemaining(): boolean {
+	hasActionsRemaining(targetDefinition: ServerTargetDefinition): boolean {
 		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
-
-		const performedOrdersTotal = performedOrders.filter(performedOrder => performedOrder.orderedUnit === this)
-		const maxOrdersTotal = this.card.getMaxOrdersTotal(this)
-
-		return performedOrdersTotal.length < maxOrdersTotal
+		return performedOrders.length < targetDefinition.getTotalTargetCount()
 	}
 
-	canPerformOrderOfType(orderType: UnitOrderType): boolean {
+	canPerformOrder(targetMode: TargetMode, targetType: TargetType, targetDefinition: ServerTargetDefinition): boolean {
 		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
 		const performedOrdersTotal = performedOrders.filter(performedOrder => performedOrder.orderedUnit === this)
 
-		const performedOrdersOfType = performedOrdersTotal.filter(performedOrder => performedOrder.type === orderType)
-		const maxOrdersOfType = this.card.getMaxOrdersOfType(this, orderType)
+		const performedOrdersOfType = performedOrdersTotal.filter(performedOrder => performedOrder.targetMode === targetMode && performedOrder.targetType === targetType)
+		const maxOrdersOfType = targetDefinition.getTargetOfTypeCount(targetMode, targetType)
 		if (performedOrdersOfType.length >= maxOrdersOfType) {
 			return false
 		}
 
-		const otherTypeOrders = performedOrdersTotal.filter(performedOrder => performedOrder.type !== orderType)
+		const otherTypeOrders = performedOrdersTotal.filter(performedOrder => performedOrder.targetMode !== targetMode || performedOrder.targetType !== targetType)
 		const incompatibleOtherTypeOrder = otherTypeOrders.find(performedOrder => {
-			return !this.card.canPerformOrdersSimultaneously(this, orderType, performedOrder.type) && !this.card.canPerformOrdersSimultaneously(this, performedOrder.type, orderType)
+			return !targetDefinition.isValidSimultaneously({ targetMode, targetType }, performedOrder)
 		})
 		return !incompatibleOtherTypeOrder
 	}
 
 	getValidOrders(): ServerUnitOrder[] {
-		if (!this.hasActionsRemaining() || this.hasSummoningSickness) {
+		const targetDefinition = this.card.getUnitOrderTargetDefinition()
+		if (this.hasSummoningSickness || !this.hasActionsRemaining(targetDefinition)) {
 			return []
 		}
 
 		const orders: ServerUnitOrder[] = []
 
-		/* Attacks */
-		if (this.canPerformOrderOfType(UnitOrderType.ATTACK)) {
-			const opponentUnits = this.game.board.getUnitsOwnedByPlayer(this.game.getOpponent(this.owner))
-			const validTargets = opponentUnits.filter(unit => this.canAttackTarget(unit))
-			const allowedOrders = validTargets.map(targetUnit => ServerUnitOrder.attack(this, targetUnit))
-			allowedOrders.forEach(allowedOrder => orders.push(allowedOrder))
-		}
+		const unitTargetOrders = [TargetMode.ORDER_ATTACK, TargetMode.ORDER_DRAIN, TargetMode.ORDER_SUPPORT]
+		const rowTargetOrders = [TargetMode.ORDER_ATTACK, TargetMode.ORDER_DRAIN, TargetMode.ORDER_SUPPORT, TargetMode.ORDER_MOVE]
 
-		/* Moves */
-		if (this.canPerformOrderOfType(UnitOrderType.MOVE)) {
-			const currentRowIndex = this.rowIndex
-			if (currentRowIndex > 0 && this.canMoveToRow(this.game.board.rows[currentRowIndex - 1])) {
-				orders.push(ServerUnitOrder.move(this, this.game.board.rows[currentRowIndex - 1]))
+		unitTargetOrders.forEach(targetMode => {
+			if (!this.canPerformOrder(targetMode, TargetType.UNIT, targetDefinition)) {
+				return
 			}
-			if (currentRowIndex < Constants.GAME_BOARD_ROW_COUNT - 1 && this.canMoveToRow(this.game.board.rows[currentRowIndex + 1])) {
-				orders.push(ServerUnitOrder.move(this, this.game.board.rows[currentRowIndex + 1]))
+
+			const validTargets = this.game.board.getAllUnits().filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { thisUnit: this, targetUnit: unit }))
+			const targetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.UNIT)
+			const allowedOrders = validTargets.map(targetUnit => ServerUnitOrder.targetUnit(targetMode, this, targetUnit, targetLabel))
+			allowedOrders.forEach(allowedOrder => orders.push(allowedOrder))
+		})
+
+		rowTargetOrders.forEach(targetMode => {
+			if (!this.canPerformOrder(targetMode, TargetType.BOARD_ROW, targetDefinition)) {
+				return
 			}
-		}
+
+			const validTargets = this.game.board.rows.filter(row => targetDefinition.validate(targetMode, TargetType.BOARD_ROW, { thisUnit: this, targetRow: row }))
+			const targetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.BOARD_ROW)
+			const allowedOrders = validTargets.map(targetRow => ServerUnitOrder.targetRow(targetMode, this, targetRow, targetLabel))
+			allowedOrders.forEach(allowedOrder => orders.push(allowedOrder))
+		})
 
 		return orders
-	}
-
-	canAttackTarget(target: ServerCardOnBoard): boolean {
-		const range = this.card.attackRange
-		const distance = Math.abs(this.rowIndex - target.rowIndex)
-		const isAttackOrderValid = this.card.isUnitAttackOrderValid(this, target)
-
-		return this.owner !== target.owner && distance <= range && isAttackOrderValid
-	}
-
-	canMoveToRow(target: ServerGameBoardRow): boolean {
-		const range = 1
-		const distance = Math.abs(this.rowIndex - target.index)
-		const rowUnits = target.cards
-		const isMoveOrderValid = this.card.isUnitMoveOrderValid(this, target)
-		const opponentsUnits = target.cards.filter(unit => unit.owner === this.game.getOpponent(this.owner))
-
-		return rowUnits.length < Ruleset.MAX_CARDS_PER_ROW && opponentsUnits.length === 0 && distance <= range && isMoveOrderValid
 	}
 
 	destroy(): void {

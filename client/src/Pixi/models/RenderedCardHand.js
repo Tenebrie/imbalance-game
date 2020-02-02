@@ -1,5 +1,6 @@
-import RenderedCard from '@/Pixi/models/RenderedCard';
+import RenderedCard from '@/Pixi/board/RenderedCard';
 import Utils from '@/utils/Utils';
+import Core from '@/Pixi/Core';
 export default class RenderedCardHand {
     constructor(cards) {
         this.cards = cards;
@@ -12,6 +13,17 @@ export default class RenderedCardHand {
     }
     getCardById(cardId) {
         return this.cards.find(renderedCard => renderedCard.id === cardId) || null;
+    }
+    reveal(data) {
+        const card = this.getCardById(data.id);
+        if (!card) {
+            return;
+        }
+        const revealedCard = new RenderedCard(data);
+        revealedCard.switchToCardMode();
+        Core.registerCard(revealedCard);
+        this.cards.splice(this.cards.indexOf(card), 1, revealedCard);
+        Core.unregisterCard(card);
     }
     removeCard(card) {
         this.cards.splice(this.cards.indexOf(card), 1);

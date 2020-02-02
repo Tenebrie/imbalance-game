@@ -1,9 +1,9 @@
-import CardType from '../../shared/enums/CardType'
-import ServerCard from '../../models/ServerCard'
-import ServerGame from '../../models/ServerGame'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import GameTurnPhase from '../../shared/enums/GameTurnPhase'
-import ServerDamageInstance from '../../models/ServerDamageSource'
+import CardType from '../../../shared/enums/CardType'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import GameTurnPhase from '../../../shared/enums/GameTurnPhase'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
 
 export default class UnitUnfeelingWarrior extends ServerCard {
 	attacksSurvived = 0

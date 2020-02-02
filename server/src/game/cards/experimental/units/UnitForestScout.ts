@@ -1,8 +1,8 @@
-import CardType from '../../shared/enums/CardType'
-import ServerCard from '../../models/ServerCard'
-import ServerGame from '../../models/ServerGame'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import ServerDamageInstance from '../../models/ServerDamageSource'
+import CardType from '../../../shared/enums/CardType'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
 
 export default class UnitForestScout extends ServerCard {
 	hasChargedAttack = true
@@ -15,7 +15,7 @@ export default class UnitForestScout extends ServerCard {
 		this.baseAttackRange = 2
 	}
 
-	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+	onBeforePerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
 		if (this.hasChargedAttack) {
 			target.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(5, thisUnit))
 			this.hasChargedAttack = false

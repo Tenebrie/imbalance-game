@@ -14,10 +14,10 @@ export default class ServerAnimation extends Animation {
 		return animation
 	}
 
-	public static unitAttack(sourceUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): ServerAnimation {
+	public static unitAttack(sourceUnit: ServerCardOnBoard, targetUnits: ServerCardOnBoard[]): ServerAnimation {
 		const animation = new ServerAnimation(AnimationType.UNIT_ATTACK)
 		animation.sourceUnit = sourceUnit
-		animation.targetUnit = targetUnit
+		animation.targetUnits = targetUnits
 		return animation
 	}
 

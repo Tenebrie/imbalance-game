@@ -2,20 +2,20 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@/Pixi/shared/Constants'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import {TargetingMode} from '@/Pixi/enums/TargetingMode'
+import { TargetingMode } from '@/Pixi/enums/TargetingMode'
 import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import CardType from '@/Pixi/shared/enums/CardType'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
-import {CardLocation} from '@/Pixi/enums/CardLocation'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import Settings from '@/Pixi/Settings'
 import CardTint from '@/Pixi/enums/CardTint'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
+import Localization from '@/Pixi/Localization'
+import TargetMode from '@/Pixi/shared/enums/TargetMode'
 
 const UNIT_ZINDEX = 2
-const UNIT_ORDER_ZINDEX = 3
 const TARGETING_ARROW_ZINDEX = 10
 const HOVERED_CARD_ZINDEX = 50
 const GRABBED_CARD_ZINDEX = 150
@@ -400,11 +400,14 @@ export default class Renderer {
 			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
 		}
 
-		if (Core.input.grabbedCard && Core.input.grabbedCard.targetingMode === TargetingMode.CARD_ORDER && Core.input.grabbedCard.validTargetCards.includes(unit.card) && unit.owner === Core.player) {
-			return hoveredCard === card ? CardTint.VALID_ALLY_TARGET_HOVERED : CardTint.VALID_ALLY_TARGET
-		}
-		if (Core.input.grabbedCard && Core.input.grabbedCard.targetingMode === TargetingMode.CARD_ORDER && Core.input.grabbedCard.validTargetCards.includes(unit.card) && unit.owner === Core.opponent) {
-			return hoveredCard === card ? CardTint.VALID_ENEMY_TARGET_HOVERED : CardTint.VALID_ENEMY_TARGET
+		/* Current unit is a valid target for some order */
+		if (Core.input.grabbedCard && Core.input.grabbedCard.targetingMode === TargetingMode.CARD_ORDER && Core.input.grabbedCard.validTargetCards.includes(unit.card)) {
+			const order = Core.board.getValidOrdersForUnit(Core.board.findUnitById(Core.input.grabbedCard.card.id)).find(order => order.targetUnit === unit)
+			if (order.targetMode === TargetMode.ORDER_ATTACK || order.targetMode === TargetMode.ORDER_DRAIN) {
+				return hoveredCard === card ? CardTint.VALID_ENEMY_TARGET_HOVERED : CardTint.VALID_ENEMY_TARGET
+			} else {
+				return hoveredCard === card ? CardTint.VALID_ALLY_TARGET_HOVERED : CardTint.VALID_ALLY_TARGET
+			}
 		}
 
 		return CardTint.INACTIVE
@@ -453,31 +456,23 @@ export default class Renderer {
 	private updateTargetingLabel(label: PIXI.Text): void {
 		label.style.fill = 0x55FF55
 
-		const grabbedCard = Core.input.grabbedCard
-		if (!grabbedCard) {
-			label.text = ''
-			return
-		}
-
-		const sourceUnit = Core.board.findUnitById(grabbedCard.card.id)
-		if (!sourceUnit) {
-			label.text = ''
-			return
-		}
-
 		const hoveredCard = Core.input.hoveredCard
-		if (hoveredCard && hoveredCard.location === CardLocation.BOARD && Core.input.grabbedCard.validTargetCards.includes(hoveredCard.card)) {
-			label.text = 'Attack'
-			return
-		}
-
+		const grabbedCard = Core.input.grabbedCard
 		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
-		if (hoveredRow && Core.input.grabbedCard.validTargetRows.includes(hoveredRow)) {
-			label.text = 'Move'
+		const hoveredUnit = hoveredCard ? Core.board.findUnitById(hoveredCard.card.id) : null
+		const grabbedUnit = grabbedCard ? Core.board.findUnitById(grabbedCard.card.id) : null
+		if (!grabbedCard || (!hoveredUnit && !hoveredRow)) {
+			label.text = ''
 			return
 		}
 
-		label.text = ''
+		const validOrders = Core.board.getValidOrdersForUnit(grabbedUnit).sort((a, b) => a.targetMode - b.targetMode || a.targetType - b.targetType)
+		const performedOrder = validOrders.find(order => (!order.targetUnit || order.targetUnit === hoveredUnit) && (!order.targetRow || order.targetRow === hoveredRow))
+		if (performedOrder) {
+			label.text = Localization.getString(performedOrder.targetLabel)
+		} else {
+			label.text = ''
+		}
 	}
 
 	public renderInspectedCard(): void {
@@ -512,6 +507,7 @@ export default class Renderer {
 		const container = announcedCard.coreContainer
 		const sprite = announcedCard.sprite
 		sprite.alpha = 1
+		sprite.tint = 0xFFFFFF
 		sprite.scale.set(Settings.superSamplingLevel)
 		container.visible = true
 		container.zIndex = INSPECTED_CARD_ZINDEX

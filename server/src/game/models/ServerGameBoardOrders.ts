@@ -4,11 +4,12 @@ import ServerGameBoardRow from './ServerGameBoardRow'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerUnitOrder from './ServerUnitOrder'
-import UnitOrderType from '../shared/enums/UnitOrderType'
 import Ruleset from '../Ruleset'
 import OutgoingAnimationMessages from '../handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from './ServerAnimation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import TargetMode from '../shared/enums/TargetMode'
+import TargetType from '../shared/enums/TargetType'
 
 export default class ServerGameBoardOrders {
 	game: ServerGame
@@ -24,17 +25,27 @@ export default class ServerGameBoardOrders {
 			return
 		}
 
-		if (order.orderedUnit.card.requireCustomOrderLogic(order.orderedUnit, order)) {
+		if (order.orderedUnit.card.isRequireCustomOrderLogic(order.orderedUnit, order)) {
 			order.orderedUnit.card.onUnitCustomOrder(order.orderedUnit, order)
 			return
 		}
 
 		order.orderedUnit.card.onBeforeUnitOrderIssued(order.orderedUnit, order)
 
-		if (order.type === UnitOrderType.ATTACK) {
-			this.performUnitAttack(order.orderedUnit, order.targetUnit)
-		} else if (order.type === UnitOrderType.MOVE) {
+		this.performedOrders.push(order)
+
+		if (order.targetMode === TargetMode.ORDER_ATTACK && order.targetType === TargetType.UNIT) {
+			this.performUnitAttack(TargetMode.ORDER_ATTACK, order.orderedUnit, order.targetUnit)
+		} else if (order.targetMode === TargetMode.ORDER_DRAIN && order.targetType === TargetType.UNIT) {
+			this.performUnitAttack(TargetMode.ORDER_DRAIN, order.orderedUnit, order.targetUnit)
+		} else if (order.targetMode === TargetMode.ORDER_ATTACK && order.targetType === TargetType.BOARD_ROW) {
+			this.performRowAttack(TargetMode.ORDER_ATTACK, order.orderedUnit, order.targetRow)
+		} else if (order.targetMode === TargetMode.ORDER_MOVE && order.targetType === TargetType.BOARD_ROW) {
 			this.performUnitMove(order.orderedUnit, order.targetRow)
+		} else if (order.targetMode === TargetMode.ORDER_SUPPORT && order.targetType === TargetType.UNIT) {
+			this.performUnitSupport(order.orderedUnit, order.targetUnit)
+		} else if (order.targetMode === TargetMode.ORDER_SUPPORT && order.targetType === TargetType.BOARD_ROW) {
+			this.performRowSupport(order.orderedUnit, order.targetRow)
 		}
 
 		order.orderedUnit.card.onAfterUnitOrderIssued(order.orderedUnit, order)
@@ -44,31 +55,67 @@ export default class ServerGameBoardOrders {
 		return !!order.orderedUnit.getValidOrders().find(validOrder => order.isEqual(validOrder))
 	}
 
-	public performUnitAttack(orderedUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {
-		this.performedOrders.push(ServerUnitOrder.attack(orderedUnit, targetUnit))
+	public performUnitAttack(targetMode: TargetMode, orderedUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {
+		runCardEventHandler(() => orderedUnit.card.onBeforePerformingUnitAttack(orderedUnit, targetUnit, targetMode))
 
-		runCardEventHandler(() => orderedUnit.card.onBeforePerformingAttack(orderedUnit, targetUnit))
+		const targetDefinition = orderedUnit.card.getUnitOrderTargetDefinition()
+		if (!targetDefinition.validate(TargetMode.ATTACK, TargetType.UNIT, { thisUnit: orderedUnit, targetUnit })) {
+			return
+		}
 		runCardEventHandler(() => targetUnit.card.onBeforeBeingAttacked(targetUnit, orderedUnit))
 
-		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.unitAttack(orderedUnit, targetUnit))
+		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.unitAttack(orderedUnit, [targetUnit]))
 
-		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit) + orderedUnit.card.getBonusAttackDamage(orderedUnit, targetUnit)
+		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT) + orderedUnit.card.getBonusAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT)
 		targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
 
 		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(this.game, this.game.getOpponent(orderedUnit.owner))
 		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.postUnitAttack())
 
 		if (orderedUnit.isAlive()) {
-			runCardEventHandler(() => orderedUnit.card.onAfterPerformingAttack(orderedUnit, targetUnit))
+			runCardEventHandler(() => orderedUnit.card.onAfterPerformingUnitAttack(orderedUnit, targetUnit, targetMode))
 		}
 		if (targetUnit.isAlive()) {
 			runCardEventHandler(() => targetUnit.card.onAfterBeingAttacked(targetUnit, orderedUnit))
 		}
 	}
 
-	public performUnitMove(orderedUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
-		this.performedOrders.push(ServerUnitOrder.move(orderedUnit, targetRow))
+	public performRowAttack(targetMode: TargetMode, orderedUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
+		runCardEventHandler(() => orderedUnit.card.onBeforePerformingRowAttack(orderedUnit, targetRow, targetMode))
 
+		const targetDefinition = orderedUnit.card.getUnitOrderTargetDefinition()
+		let validTargets = targetRow.cards.filter(unit => targetDefinition.validate(TargetMode.ATTACK, TargetType.UNIT, { thisUnit: orderedUnit, targetRow: targetRow, targetUnit: unit }))
+		if (validTargets.length === 0) {
+			return
+		}
+
+		validTargets.forEach(targetUnit => {
+			runCardEventHandler(() => targetUnit.card.onBeforeBeingAttacked(targetUnit, orderedUnit))
+		})
+
+		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.unitAttack(orderedUnit, validTargets))
+
+		validTargets = validTargets.filter(unit => unit.isAlive())
+		validTargets.forEach(targetUnit => {
+			const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.BOARD_ROW) + orderedUnit.card.getBonusAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.BOARD_ROW)
+			targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
+		})
+
+		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(this.game, this.game.getOpponent(orderedUnit.owner))
+		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.postUnitAttack())
+
+		if (orderedUnit.isAlive()) {
+			runCardEventHandler(() => orderedUnit.card.onAfterPerformingRowAttack(orderedUnit, targetRow, targetMode))
+		}
+
+		validTargets = validTargets.filter(unit => unit.isAlive())
+		validTargets.forEach(targetUnit => {
+			runCardEventHandler(() => targetUnit.card.onAfterBeingAttacked(targetUnit, orderedUnit))
+		})
+
+	}
+
+	public performUnitMove(orderedUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
 		const currentRow = this.game.board.getRowWithUnit(orderedUnit)
 		if (!currentRow || targetRow.cards.length === Ruleset.MAX_CARDS_PER_ROW) { return }
 
@@ -81,6 +128,34 @@ export default class ServerGameBoardOrders {
 		if (orderedUnit.isAlive()) {
 			runCardEventHandler(() => orderedUnit.card.onAfterPerformingMove(orderedUnit, targetRow))
 		}
+	}
+
+	public performUnitSupport(orderedUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {
+		runCardEventHandler(() => targetUnit.card.onBeforeBeingSupported(targetUnit, orderedUnit))
+
+		if (orderedUnit.isDead() || targetUnit.isDead()) {
+			return
+		}
+
+		runCardEventHandler(() => orderedUnit.card.onPerformingUnitSupport(orderedUnit, targetUnit))
+
+		if (targetUnit.isAlive()) {
+			runCardEventHandler(() => targetUnit.card.onAfterBeingSupported(targetUnit, orderedUnit))
+		}
+	}
+
+	public performRowSupport(orderedUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
+		targetRow.cards.forEach(targetUnit => {
+			runCardEventHandler(() => targetUnit.card.onBeforeBeingSupported(targetUnit, orderedUnit))
+		})
+
+		if (orderedUnit.isDead()) { return }
+
+		runCardEventHandler(() => orderedUnit.card.onPerformingRowSupport(orderedUnit, targetRow))
+
+		targetRow.cards.forEach(targetUnit => {
+			runCardEventHandler(() => targetUnit.card.onAfterBeingSupported(targetUnit, orderedUnit))
+		})
 	}
 
 	public getOrdersPerformedByUnit(unit: ServerCardOnBoard) {

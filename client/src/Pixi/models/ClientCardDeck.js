@@ -1,19 +1,18 @@
-import RenderedCard from '@/Pixi/models/RenderedCard';
+import RenderedCard from '@/Pixi/board/RenderedCard';
 export default class ClientCardDeck {
     constructor(cards) {
         this.cards = cards;
     }
     drawCardById(cardId) {
-        const drawnCard = this.cards.find(card => card.id === cardId);
-        if (!drawnCard) {
+        const drawnCardMessage = this.cards.find(card => card.id === cardId);
+        if (!drawnCardMessage) {
             return null;
         }
-        this.cards = this.cards.filter(card => card !== drawnCard);
-        return drawnCard;
+        this.cards = this.cards.filter(card => card !== drawnCardMessage);
+        return RenderedCard.fromMessage(drawnCardMessage);
     }
     static fromMessage(message) {
-        const cards = message.cards.map(cardMessage => RenderedCard.fromMessage(cardMessage));
-        return new ClientCardDeck(cards);
+        return new ClientCardDeck(message.cards);
     }
 }
 //# sourceMappingURL=ClientCardDeck.js.map

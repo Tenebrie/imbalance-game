@@ -1,28 +1,32 @@
 import ServerCard from '../models/ServerCard'
-import HeroNightMaiden from '../cards/heroes/HeroNightMaiden'
-import HeroSatia from '../cards/heroes/HeroSatia'
-import UnitPossessedVulture from '../cards/units/UnitPossessedVulture'
-import UnitRavenMessenger from '../cards/units/UnitRavenMessenger'
+import HeroNightMaiden from '../cards/experimental/heroes/HeroNightMaiden'
+import HeroSatia from '../cards/experimental/heroes/HeroSatia'
+import UnitPossessedVulture from '../cards/experimental/units/UnitPossessedVulture'
+import UnitRavenMessenger from '../cards/experimental/units/UnitRavenMessenger'
 import ServerGame from '../models/ServerGame'
 import VoidGame from '../utils/VoidGame'
-import UnitMadBerserker from '../cards/units/UnitMadBerserker'
-import UnitForestScout from '../cards/units/UnitForestScout'
-import UnitTwinBowArcher from '../cards/units/UnitTwinBowArcher'
-import UnitUnfeelingWarrior from '../cards/units/UnitUnfeelingWarrior'
-import UnitChargingKnight from '../cards/units/UnitChargingKnight'
-import UnitSpinningBarbarian from '../cards/units/UnitSpinningBarbarian'
-import SpellRainOfFire from '../cards/spells/SpellRainOfFire'
-import SpellMagicalStarfall from '../cards/spells/SpellMagicalStarfall'
+import UnitMadBerserker from '../cards/experimental/units/UnitMadBerserker'
+import UnitForestScout from '../cards/experimental/units/UnitForestScout'
+import UnitTwinBowArcher from '../cards/experimental/units/UnitTwinBowArcher'
+import UnitUnfeelingWarrior from '../cards/experimental/units/UnitUnfeelingWarrior'
+import UnitChargingKnight from '../cards/experimental/units/UnitChargingKnight'
+import UnitSpinningBarbarian from '../cards/experimental/units/UnitSpinningBarbarian'
+import SpellRainOfFire from '../cards/experimental/spells/SpellRainOfFire'
+import SpellMagicalStarfall from '../cards/experimental/spells/SpellMagicalStarfall'
 import CardType from '../shared/enums/CardType'
 import UnitSubtype from '../shared/enums/UnitSubtype'
+import BuildingTreeOfLife from '../cards/experimental/buildings/BuildingTreeOfLife'
+import UnitVampireFledgling from '../cards/experimental/units/UnitVampireFledgling'
+import HeroIgnea from '../cards/experimental/heroes/HeroIgnea'
 
 export default class GameLibrary {
 	static cards: any[]
 
 	constructor() {
 		const cards = [
-			HeroNightMaiden,
 			HeroSatia,
+			HeroNightMaiden,
+			HeroIgnea,
 			UnitPossessedVulture,
 			UnitRavenMessenger,
 			UnitMadBerserker,
@@ -31,6 +35,8 @@ export default class GameLibrary {
 			UnitUnfeelingWarrior,
 			UnitChargingKnight,
 			UnitSpinningBarbarian,
+			UnitVampireFledgling,
+			BuildingTreeOfLife,
 			SpellRainOfFire,
 			SpellMagicalStarfall
 		]
@@ -64,6 +70,8 @@ export default class GameLibrary {
 			unitSubtype = UnitSubtype.VETERAN
 		} else if (cardClass.startsWith('unit')) {
 			unitSubtype = UnitSubtype.PAWN
+		} else if (cardClass.startsWith('building')) {
+			unitSubtype = UnitSubtype.BUILDING
 		}
 
 		const clone: ServerCard = new original.constructor()

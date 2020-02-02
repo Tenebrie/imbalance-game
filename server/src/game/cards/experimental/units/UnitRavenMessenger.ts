@@ -1,8 +1,8 @@
-import CardType from '../../shared/enums/CardType'
-import ServerCard from '../../models/ServerCard'
-import ServerGame from '../../models/ServerGame'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import CardTribe from '../../shared/enums/CardTribe'
+import CardType from '../../../shared/enums/CardType'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import CardTribe from '../../../shared/enums/CardTribe'
 
 export default class UnitRavenMessenger extends ServerCard {
 	turnsLeft: number

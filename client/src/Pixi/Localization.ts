@@ -12,6 +12,6 @@ export default class Localization {
 			localizationJson = ru
 		}
 
-		return localizationJson[id] || ''
+		return localizationJson[id] || en[id] || ''
 	}
 }

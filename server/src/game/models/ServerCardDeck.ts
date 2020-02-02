@@ -1,19 +1,22 @@
 import ServerCard from './ServerCard'
 import CardDeck from '../shared/models/CardDeck'
-import HeroSatia from '../cards/heroes/HeroSatia'
-import UnitRavenMessenger from '../cards/units/UnitRavenMessenger'
+import HeroSatia from '../cards/experimental/heroes/HeroSatia'
+import UnitRavenMessenger from '../cards/experimental/units/UnitRavenMessenger'
 import ServerGame from './ServerGame'
-import UnitPossessedVulture from '../cards/units/UnitPossessedVulture'
+import UnitPossessedVulture from '../cards/experimental/units/UnitPossessedVulture'
 import CardLibrary from '../libraries/CardLibrary'
-import HeroNightMaiden from '../cards/heroes/HeroNightMaiden'
-import UnitMadBerserker from '../cards/units/UnitMadBerserker'
-import UnitForestScout from '../cards/units/UnitForestScout'
-import UnitUnfeelingWarrior from '../cards/units/UnitUnfeelingWarrior'
-import UnitTwinBowArcher from '../cards/units/UnitTwinBowArcher'
-import UnitChargingKnight from '../cards/units/UnitChargingKnight'
-import UnitSpinningBarbarian from '../cards/units/UnitSpinningBarbarian'
-import SpellMagicalStarfall from '../cards/spells/SpellMagicalStarfall'
-import SpellRainOfFire from '../cards/spells/SpellRainOfFire'
+import HeroNightMaiden from '../cards/experimental/heroes/HeroNightMaiden'
+import UnitMadBerserker from '../cards/experimental/units/UnitMadBerserker'
+import UnitForestScout from '../cards/experimental/units/UnitForestScout'
+import UnitUnfeelingWarrior from '../cards/experimental/units/UnitUnfeelingWarrior'
+import UnitTwinBowArcher from '../cards/experimental/units/UnitTwinBowArcher'
+import UnitChargingKnight from '../cards/experimental/units/UnitChargingKnight'
+import UnitSpinningBarbarian from '../cards/experimental/units/UnitSpinningBarbarian'
+import SpellMagicalStarfall from '../cards/experimental/spells/SpellMagicalStarfall'
+import SpellRainOfFire from '../cards/experimental/spells/SpellRainOfFire'
+import HeroIgnea from '../cards/experimental/heroes/HeroIgnea'
+import BuildingTreeOfLife from '../cards/experimental/buildings/BuildingTreeOfLife'
+import UnitVampireFledgling from '../cards/experimental/units/UnitVampireFledgling'
 
 export default class ServerCardDeck extends CardDeck {
 	game: ServerGame
@@ -53,34 +56,21 @@ export default class ServerCardDeck extends CardDeck {
 		const deck = new ServerCardDeck(game, [])
 
 		deck.addCard(CardLibrary.createCard(new HeroSatia(game)))
+		deck.addCard(CardLibrary.createCard(new HeroIgnea(game)))
 		for (let i = 0; i < 3; i++) {
-			deck.addCard(CardLibrary.createCard(new UnitRavenMessenger(game)))
-		}
-		for (let i = 0; i < 3; i++) {
-			deck.addCard(CardLibrary.createCard(new UnitPossessedVulture(game)))
-		}
-		for (let i = 0; i < 3; i++) {
-			deck.addCard(CardLibrary.createCard(new UnitMadBerserker(game)))
-		}
-		for (let i = 0; i < 3; i++) {
-			deck.addCard(CardLibrary.createCard(new UnitForestScout(game)))
-		}
-		for (let i = 0; i < 3; i++) {
-			deck.addCard(CardLibrary.createCard(new UnitUnfeelingWarrior(game)))
-		}
-		for (let i = 0; i < 3; i++) {
-			deck.addCard(CardLibrary.createCard(new UnitChargingKnight(game)))
-		}
-		for (let i = 0; i < 3; i++) {
+			deck.addCard(CardLibrary.createCard(new BuildingTreeOfLife(game)))
+			deck.addCard(CardLibrary.createCard(new UnitVampireFledgling(game)))
 			deck.addCard(CardLibrary.createCard(new UnitSpinningBarbarian(game)))
 		}
-		for (let i = 0; i < 3; i++) {
+		for (let i = 0; i < 1; i++) {
+			deck.addCard(CardLibrary.createCard(new UnitRavenMessenger(game)))
+			deck.addCard(CardLibrary.createCard(new UnitPossessedVulture(game)))
+			deck.addCard(CardLibrary.createCard(new UnitMadBerserker(game)))
+			deck.addCard(CardLibrary.createCard(new UnitForestScout(game)))
+			deck.addCard(CardLibrary.createCard(new UnitUnfeelingWarrior(game)))
+			deck.addCard(CardLibrary.createCard(new UnitChargingKnight(game)))
 			deck.addCard(CardLibrary.createCard(new UnitTwinBowArcher(game)))
-		}
-		for (let i = 0; i < 3; i++) {
 			deck.addCard(CardLibrary.createCard(new SpellMagicalStarfall(game)))
-		}
-		for (let i = 0; i < 3; i++) {
 			deck.addCard(CardLibrary.createCard(new SpellRainOfFire(game)))
 		}
 

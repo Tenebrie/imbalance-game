@@ -1,8 +1,8 @@
-import CardType from '../../shared/enums/CardType'
-import ServerCard from '../../models/ServerCard'
-import ServerGame from '../../models/ServerGame'
-import ServerPlayerInGame from '../../players/ServerPlayerInGame'
-import ServerDamageInstance from '../../models/ServerDamageSource'
+import CardType from '../../../shared/enums/CardType'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
 
 export default class SpellRainOfFire extends ServerCard {
 	constructor(game: ServerGame) {

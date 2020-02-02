@@ -1,7 +1,18 @@
 {
+	"target.attack.unit": "Attack",
+	"target.attack.row": "Attack all",
+	"target.drain.unit": "Drain",
+	"target.drain.row": "Drain all",
+	"target.support.unit": "Support",
+	"target.support.row": "Support all",
+	"target.move.row": "Move",
+
 	"card.tribe.bird": "Bird",
 	"card.tribe.beast": "Beast",
+	"card.tribe.undead": "Undead",
 	"card.tribe.dragon": "Dragon",
+	"card.tribe.vampire": "Vampire",
+	"card.tribe.building": "Building",
 
 	"card.name.heroSatia": "Satia",
 	"card.title.heroSatia": "First mistress",
@@ -11,29 +22,40 @@
 	"card.title.heroNightMaiden": "Satia's favorite",
 	"card.description.heroNightMaiden": "If Satia dies, {name} leaves the battlefield",
 
+	"card.name.heroIgnea": "Ignia",
+	"card.title.heroIgnea": "The Flameweaver",
+	"card.description.heroIgnea": "In addition to normal action, {name} may light any enemy row aflame, dealing 1 damage to every affected unit",
+
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "Every *3* turns {name} survives on the board, it draws a card",
 
 	"card.name.unitPossessedVulture": "Possessed Vulture",
-	"card.description.unitPossessedVulture": "*On attack:*\nIf {name} kills an enemy creature, it gains *4* power",
+	"card.description.unitPossessedVulture": "If {name} kills an enemy creature, it gains *4* power",
 
 	"card.name.unitUnfeelingWarrior": "Unfeeling Warrior",
 	"card.description.unitUnfeelingWarrior": "*On turn start:*\nUnfeeling Warrior restores *2* Power for each attack survived last turn",
 
 	"card.name.unitForestScout": "Forest Scout",
-	"card.description.unitForestScout": "*On attack:*\nIf {name} did not attack last turn, it deals *5* extra damage",
+	"card.description.unitForestScout": "If {name} did not attack last turn, she deals *5* extra damage on her first attack this turn",
 
 	"card.name.unitMadBerserker": "Mad Berserker",
-	"card.description.unitMadBerserker": "*On attack:*\nEvery consecutive attack on the same target deals *3* more damage",
+	"card.description.unitMadBerserker": "Every consecutive attack on the same target deals *3* more damage",
 
 	"card.name.unitSpinningBarbarian": "Spinning Barbarian",
-	"card.description.unitSpinningBarbarian": "During Skirmishing phase, {name} can attack up to 3 targets simultaneously",
+	"card.description.unitSpinningBarbarian": "{name} attacks up to 4 closest enemies on target row",
 
 	"card.name.unitChargingKnight": "Charging Knight",
 	"card.description.unitChargingKnight": "{name} can move and attack at the same time\nIf {name} has moved this turn, his next attack deals double damage",
 
 	"card.name.unitTwinBowArcher": "Twin Bow Archer",
 	"card.description.unitTwinBowArcher": "{name} always attacks units directly to the left and to the right from the chosen target",
+
+	"card.name.unitVampireFledgling": "Vampire Fledgling",
+	"card.description.unitVampireFledgling": "When *Draining* allied units, {name} restores *3* Power and gains *4* Attack this turn only",
+
+	"card.name.buildingTreeOfLife": "Tree of Life",
+	"card.description.buildingTreeOfLife": "*Support:*\n{name} targets a row. All units on that row restore *3* Power. All units on adjacent rows restore *1* Power",
+	"card.target.support.row": "Restore power",
 
 	"card.name.spellRainOfFire": "Rain of Fire",
 	"card.description.spellRainOfFire": "{name} deals *8* damage to all enemy units\nThen, it draws a card",

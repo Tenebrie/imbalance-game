@@ -4,14 +4,13 @@ import CardType from '@/Pixi/shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import {CardLocation} from '@/Pixi/enums/CardLocation'
-import {TargetingMode} from '@/Pixi/enums/TargetingMode'
+import { CardLocation } from '@/Pixi/enums/CardLocation'
+import { TargetingMode } from '@/Pixi/enums/TargetingMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
-import ClientUnitOrder from '@/Pixi/models/ClientUnitOrder'
 import Settings from '@/Pixi/Settings'
-import UnitOrderType from '@/Pixi/shared/enums/UnitOrderType'
+import TargetType from '@/Pixi/shared/enums/TargetType'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
@@ -133,8 +132,8 @@ export default class Input {
 			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
 		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY && Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0) {
 			const validOrders = Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id))
-			const validCards = validOrders.filter(order => order.type === UnitOrderType.ATTACK).map(order => order.targetUnit.card)
-			const validRows = validOrders.filter(order => order.type === UnitOrderType.MOVE).map(order => order.targetRow)
+			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetUnit.card)
+			const validRows = validOrders.filter(order => order.targetType === TargetType.BOARD_ROW).map(order => order.targetRow)
 			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)
 		}
 	}
@@ -196,21 +195,14 @@ export default class Input {
 	}
 
 	private onCardOrder(orderedCard: RenderedCard): void {
-		const hoveredCard = this.hoveredCard
 		const orderedUnit = Core.board.findUnitById(orderedCard.id)!
-		if (hoveredCard && hoveredCard.location === CardLocation.BOARD && hoveredCard.owner !== Core.player) {
-			const hoveredUnit = Core.board.findUnitById(hoveredCard.card.id)!
-			OutgoingMessageHandlers.sendUnitOrder(ClientUnitOrder.attack(orderedUnit, hoveredUnit))
-			return
-		}
+		const hoveredUnit = this.hoveredCard ? Core.board.findUnitById(this.hoveredCard.card.id) : null
+		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
 
-		const hoveredRow = Core.board.rows.find(row => row.isHovered(this.mousePosition))
-		if (hoveredRow && orderedUnit.rowIndex !== hoveredRow.index) {
-			const distance = Math.abs(orderedUnit.rowIndex - hoveredRow.index)
-			const maxMoveDistance = 1
-			if (distance <= maxMoveDistance) {
-				OutgoingMessageHandlers.sendUnitOrder(ClientUnitOrder.move(orderedUnit, hoveredRow))
-			}
+		const validOrders = Core.board.getValidOrdersForUnit(orderedUnit).sort((a, b) => a.targetMode - b.targetMode || a.targetType - b.targetType)
+		const performedOrder = validOrders.find(order => (!order.targetUnit || order.targetUnit === hoveredUnit) && (!order.targetRow || order.targetRow === hoveredRow))
+		if (performedOrder) {
+			OutgoingMessageHandlers.sendUnitOrder(performedOrder)
 		}
 	}
 

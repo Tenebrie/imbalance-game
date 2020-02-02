@@ -3,5 +3,6 @@ export var CardLocation;
     CardLocation[CardLocation["HAND"] = 0] = "HAND";
     CardLocation[CardLocation["DECK"] = 1] = "DECK";
     CardLocation[CardLocation["BOARD"] = 2] = "BOARD";
+    CardLocation[CardLocation["ANNOUNCED"] = 3] = "ANNOUNCED";
 })(CardLocation || (CardLocation = {}));
 //# sourceMappingURL=CardLocation.js.map

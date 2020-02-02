@@ -1,7 +1,7 @@
-import CardType from '../../shared/enums/CardType'
-import ServerCard from '../../models/ServerCard'
-import ServerGame from '../../models/ServerGame'
-import ServerPlayerInGame from '../../players/ServerPlayerInGame'
+import CardType from '../../../shared/enums/CardType'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 
 export default class SpellMagicalStarfall extends ServerCard {
 	constructor(game: ServerGame) {

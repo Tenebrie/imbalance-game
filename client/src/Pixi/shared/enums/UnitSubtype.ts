@@ -1,7 +1,8 @@
 enum UnitSubtype {
 	HERO,
 	VETERAN,
-	PAWN
+	PAWN,
+	BUILDING
 }
 
 export default UnitSubtype

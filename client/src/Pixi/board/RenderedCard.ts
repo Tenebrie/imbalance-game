@@ -87,8 +87,12 @@ export default class RenderedCard extends Card {
 
 		/* Card mode container */
 		this.cardModeContainer = new PIXI.Container()
-		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
-		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-description')))
+		if (Localization.getString(this.cardName)) {
+			this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
+		}
+		if (Localization.getString(this.cardDescription)) {
+			this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-description')))
+		}
 		for (let i = 0; i < this.cardTribes.length; i++) {
 			const tribeBackgroundSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-tribe'))
 			tribeBackgroundSprite.position.y += i * 40
@@ -204,7 +208,7 @@ export default class RenderedCard extends Card {
 		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED || displayMode === CardDisplayMode.ANNOUNCED) {
 			this.switchToCardMode()
 			texts = [this.powerText, this.attackText, this.attackRangeText, this.healthArmorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
-		} else if (displayMode === CardDisplayMode.ON_BOARD || displayMode === CardDisplayMode.ON_BOARD_HOVERED) {
+		} else if (displayMode === CardDisplayMode.ON_BOARD) {
 			this.switchToUnitMode()
 			texts = [this.powerText, this.attackText]
 		} else if (displayMode === CardDisplayMode.IN_HAND_HIDDEN) {

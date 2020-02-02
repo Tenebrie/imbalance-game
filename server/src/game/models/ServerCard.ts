@@ -9,9 +9,11 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '../shared/enums/GameTurnPhase'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerGameBoardRow from './ServerGameBoardRow'
-import UnitOrderType from '../shared/enums/UnitOrderType'
 import ServerDamageSource from './ServerDamageSource'
 import ServerUnitOrder from './ServerUnitOrder'
+import ServerTargetDefinition from './ServerTargetDefinition'
+import TargetMode from '../shared/enums/TargetMode'
+import TargetType from '../shared/enums/TargetType'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -25,7 +27,7 @@ export default class ServerCard extends Card {
 	setPower(unit: ServerCardOnBoard, value: number): void {
 		if (this.power === value) { return }
 
-		this.onPowerChanged(unit, value, this.power)
+		runCardEventHandler(() => this.onPowerChanged(unit, value, this.power))
 
 		this.power = value
 		this.game.players.forEach(playerInGame => {
@@ -36,7 +38,7 @@ export default class ServerCard extends Card {
 	setAttack(unit: ServerCardOnBoard, value: number): void {
 		if (this.attack === value) { return }
 
-		this.onAttackChanged(unit, value, this.attack)
+		runCardEventHandler(() => this.onAttackChanged(unit, value, this.attack))
 
 		this.attack = value
 		this.game.players.forEach(playerInGame => {
@@ -65,25 +67,30 @@ export default class ServerCard extends Card {
 	onBeforeDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
 	onAfterDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
 	onDamageSurvived(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
-	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void { return }
-	onAfterPerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void { return }
+	onBeforePerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode): void { return }
+	onAfterPerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode): void { return }
+	onBeforePerformingRowAttack(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow, targetMode: TargetMode): void { return }
+	onAfterPerformingRowAttack(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow, targetMode: TargetMode): void { return }
 	onBeforeBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void { return }
 	onAfterBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void { return }
 	onBeforePerformingMove(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void { return }
 	onAfterPerformingMove(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void { return }
+	onPerformingUnitSupport(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void { return }
+	onPerformingRowSupport(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void { return }
+	onBeforeBeingSupported(thisUnit: ServerCardOnBoard, support: ServerCardOnBoard): void { return }
+	onAfterBeingSupported(thisUnit: ServerCardOnBoard, support: ServerCardOnBoard): void { return }
 	onBeforeOtherUnitDestroyed(thisUnit: ServerCardOnBoard, destroyedUnit: ServerCardOnBoard): void { return }
 	onAfterOtherUnitDestroyed(thisUnit: ServerCardOnBoard, destroyedUnit: ServerCardOnBoard): void { return }
 	onReveal(owner: ServerPlayerInGame): void { return }
 	onDestroyUnit(thisUnit: ServerCardOnBoard): void { return }
 
-	getAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): number { return this.attack }
-	getBonusAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): number { return 0 }
+	getAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode, targetType: TargetType): number { return this.attack }
+	getBonusAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode, targetType: TargetType): number { return 0 }
 	getDamageTaken(thisUnit: ServerCardOnBoard, damageSource: ServerDamageSource): number { return damageSource.value }
 	getDamageReduction(thisUnit: ServerCardOnBoard, damageSource: ServerDamageSource): number { return 0 }
-	isUnitAttackOrderValid(thisUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): boolean { return true }
-	isUnitMoveOrderValid(thisUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): boolean { return true }
-	requireCustomOrderLogic(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): boolean { return false }
-	canPerformOrdersSimultaneously(thisUnit: ServerCardOnBoard, firstOrder: UnitOrderType, secondOrder: UnitOrderType): boolean { return false }
-	getMaxOrdersOfType(thisUnit: ServerCardOnBoard, type: UnitOrderType): number { return 1 }
-	getMaxOrdersTotal(thisUnit: ServerCardOnBoard): number { return 1 }
+
+	getUnitOrderTargetDefinition(): ServerTargetDefinition { return ServerTargetDefinition.defaultUnitOrder(this.game) }
+	isRequireCustomOrderLogic(thisUnit: ServerCardOnBoard, order: ServerUnitOrder): boolean { return false }
+
+	getRequiredEffectTargets(owner: ServerPlayerInGame): ServerTargetDefinition { return ServerTargetDefinition.none(this.game) }
 }

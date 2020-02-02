@@ -6,7 +6,6 @@ import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
 import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
 import ServerUnitOrder from '../models/ServerUnitOrder'
 import UnitOrderMessage from '../shared/models/network/UnitOrderMessage'
-import UnitOrderType from '../shared/enums/UnitOrderType'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 
 export default {
@@ -36,18 +35,10 @@ export default {
 	},
 
 	'post/unitOrder': (data: UnitOrderMessage, game: ServerGame, player: ServerPlayerInGame) => {
-		const orderedUnit = game.board.findCardById(data.orderedUnitId)
+		const orderedUnit = game.board.findUnitById(data.orderedUnitId)
 		if (player.turnEnded || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== player || orderedUnit.hasSummoningSickness) { return }
 
-		const targetUnit = game.board.findCardById(data.targetUnitId)
-		if (data.type === UnitOrderType.ATTACK && targetUnit && orderedUnit.canAttackTarget(targetUnit)) {
-			game.board.orders.performUnitOrder(ServerUnitOrder.attack(orderedUnit, targetUnit))
-		}
-
-		const targetRow = game.board.rows[data.targetRowIndex]
-		if (data.type === UnitOrderType.MOVE && orderedUnit.canMoveToRow(targetRow)) {
-			game.board.orders.performUnitOrder(ServerUnitOrder.move(orderedUnit, targetRow))
-		}
+		game.board.orders.performUnitOrder(ServerUnitOrder.fromMessage(game, data))
 
 		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, player)
 		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(game, game.getOpponent(player))

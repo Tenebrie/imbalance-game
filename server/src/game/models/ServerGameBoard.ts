@@ -22,13 +22,26 @@ export default class ServerGameBoard extends GameBoard {
 		}
 	}
 
-	public findCardById(cardId: string): ServerCardOnBoard | null {
+	public findUnitById(cardId: string): ServerCardOnBoard | null {
 		const cards = this.rows.map(row => row.cards).flat()
 		return cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
 	}
 
 	public getRowWithUnit(targetUnit: ServerCardOnBoard): ServerGameBoardRow | null {
 		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id)) || null
+	}
+
+	public getAdjacentRows(targetRow: ServerGameBoardRow): ServerGameBoardRow[] {
+		let adjacentRows = []
+		if (targetRow.index > 0) { adjacentRows.push(this.game.board.rows[targetRow.index - 1]) }
+		if (targetRow.index < Constants.GAME_BOARD_ROW_COUNT - 1) { adjacentRows.push(this.game.board.rows[targetRow.index + 1]) }
+		return adjacentRows
+	}
+
+	public getHorizontalUnitDistance(first: ServerCardOnBoard, second: ServerCardOnBoard): number {
+		const firstOffsetFromCenter = first.unitIndex - ((this.rows[first.rowIndex].cards.length - 1) / 2)
+		const secondOffsetFromCenter = second.unitIndex - ((this.rows[second.rowIndex].cards.length - 1) / 2)
+		return Math.abs(firstOffsetFromCenter - secondOffsetFromCenter)
 	}
 
 	public moveUnit(unit: ServerCardOnBoard, rowIndex: number, unitIndex: number) {

@@ -200,14 +200,16 @@ const handlers: {[ index: string ]: any } = {
 		let animationDuration = 500
 
 		if (data.type === AnimationType.CARD_PLAY) {
-			const announcedCard = Core.opponent.cardHand.getCardById(data.targetCardId)!
+			const announcedCard = Core.opponent.cardHand.getCardById(data.targetCardID)!
 			Core.mainHandler.announceCard(announcedCard)
 			animationDuration = 3000
 		} else if (data.type === AnimationType.UNIT_ATTACK) {
 			animationDuration = 300
-			const sourceUnit = Core.board.findUnitById(data.sourceUnitId)
-			const targetUnit = Core.board.findUnitById(data.targetUnitId)
-			Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetUnit)
+			const sourceUnit = Core.board.findUnitById(data.sourceUnitID)
+			data.targetUnitIDs.forEach(targetUnitID => {
+				const targetUnit = Core.board.findUnitById(targetUnitID)
+				Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetUnit)
+			})
 		} else if (data.type === AnimationType.POST_UNIT_ATTACK) {
 			animationDuration = 100
 		} else if (data.type === AnimationType.ALL_UNITS_MOVE) {

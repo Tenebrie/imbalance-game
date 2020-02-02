@@ -1,7 +1,7 @@
-import CardType from '../../shared/enums/CardType'
-import ServerCard from '../../models/ServerCard'
-import ServerGame from '../../models/ServerGame'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
+import CardType from '../../../shared/enums/CardType'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
 
 export default class UnitMadBerserker extends ServerCard {
 	hasAttackedThisTurn = false
@@ -22,7 +22,7 @@ export default class UnitMadBerserker extends ServerCard {
 		this.hasAttackedThisTurn = false
 	}
 
-	onBeforePerformingAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+	onBeforePerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
 		this.hasAttackedThisTurn = true
 		if (target === this.lastAttackTarget) {
 			this.consecutiveAttackCount += 1
