@@ -3,63 +3,65 @@ import ServerCardOnBoard from './ServerCardOnBoard'
 import ServerGameBoardRow from './ServerGameBoardRow'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
-import ServerUnitOrder from './ServerUnitOrder'
+import ServerCardTarget from './ServerCardTarget'
 import Ruleset from '../Ruleset'
 import OutgoingAnimationMessages from '../handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from './ServerAnimation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
+import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
 
 export default class ServerGameBoardOrders {
 	game: ServerGame
-	performedOrders: ServerUnitOrder[]
+	performedOrders: ServerCardTarget[]
 
 	constructor(game: ServerGame) {
 		this.game = game
 		this.performedOrders = []
 	}
 
-	public performUnitOrder(order: ServerUnitOrder): void {
+	public performUnitOrder(order: ServerCardTarget): void {
 		if (!this.isOrderValid(order)) {
 			return
 		}
 
-		if (order.orderedUnit.card.isRequireCustomOrderLogic(order.orderedUnit, order)) {
-			order.orderedUnit.card.onUnitCustomOrder(order.orderedUnit, order)
+		if (order.sourceUnit.card.isRequireCustomOrderLogic(order.sourceUnit, order)) {
+			order.sourceUnit.card.onUnitCustomOrder(order.sourceUnit, order)
 			return
 		}
 
-		order.orderedUnit.card.onBeforeUnitOrderIssued(order.orderedUnit, order)
+		order.sourceUnit.card.onBeforeUnitOrderIssued(order.sourceUnit, order)
 
 		this.performedOrders.push(order)
 
 		if (order.targetMode === TargetMode.ORDER_ATTACK && order.targetType === TargetType.UNIT) {
-			this.performUnitAttack(TargetMode.ORDER_ATTACK, order.orderedUnit, order.targetUnit)
+			this.performUnitAttack(TargetMode.ORDER_ATTACK, order.sourceUnit, order.targetUnit)
 		} else if (order.targetMode === TargetMode.ORDER_DRAIN && order.targetType === TargetType.UNIT) {
-			this.performUnitAttack(TargetMode.ORDER_DRAIN, order.orderedUnit, order.targetUnit)
+			this.performUnitAttack(TargetMode.ORDER_DRAIN, order.sourceUnit, order.targetUnit)
 		} else if (order.targetMode === TargetMode.ORDER_ATTACK && order.targetType === TargetType.BOARD_ROW) {
-			this.performRowAttack(TargetMode.ORDER_ATTACK, order.orderedUnit, order.targetRow)
+			this.performRowAttack(TargetMode.ORDER_ATTACK, order.sourceUnit, order.targetRow)
 		} else if (order.targetMode === TargetMode.ORDER_MOVE && order.targetType === TargetType.BOARD_ROW) {
-			this.performUnitMove(order.orderedUnit, order.targetRow)
+			this.performUnitMove(order.sourceUnit, order.targetRow)
 		} else if (order.targetMode === TargetMode.ORDER_SUPPORT && order.targetType === TargetType.UNIT) {
-			this.performUnitSupport(order.orderedUnit, order.targetUnit)
+			this.performUnitSupport(order.sourceUnit, order.targetUnit)
 		} else if (order.targetMode === TargetMode.ORDER_SUPPORT && order.targetType === TargetType.BOARD_ROW) {
-			this.performRowSupport(order.orderedUnit, order.targetRow)
+			this.performRowSupport(order.sourceUnit, order.targetRow)
 		}
 
-		order.orderedUnit.card.onAfterUnitOrderIssued(order.orderedUnit, order)
+		order.sourceUnit.card.onAfterUnitOrderIssued(order.sourceUnit, order)
 	}
 
-	private isOrderValid(order: ServerUnitOrder): boolean {
-		return !!order.orderedUnit.getValidOrders().find(validOrder => order.isEqual(validOrder))
+	private isOrderValid(order: ServerCardTarget): boolean {
+		return !!order.sourceUnit.getValidOrders().find(validOrder => order.isEqual(validOrder))
 	}
 
 	public performUnitAttack(targetMode: TargetMode, orderedUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard): void {
 		runCardEventHandler(() => orderedUnit.card.onBeforePerformingUnitAttack(orderedUnit, targetUnit, targetMode))
 
-		const targetDefinition = orderedUnit.card.getUnitOrderTargetDefinition()
-		if (!targetDefinition.validate(TargetMode.ATTACK, TargetType.UNIT, { thisUnit: orderedUnit, targetUnit })) {
+		const previousTargets = this.getOrdersPerformedByUnit(orderedUnit)
+		const targetDefinition = orderedUnit.card.getValidOrderTargetDefinition()
+		if (!targetDefinition.validate(TargetMode.ATTACK, TargetType.UNIT, { thisUnit: orderedUnit, targetUnit, previousTargets })) {
 			return
 		}
 		runCardEventHandler(() => targetUnit.card.onBeforeBeingAttacked(targetUnit, orderedUnit))
@@ -83,8 +85,9 @@ export default class ServerGameBoardOrders {
 	public performRowAttack(targetMode: TargetMode, orderedUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
 		runCardEventHandler(() => orderedUnit.card.onBeforePerformingRowAttack(orderedUnit, targetRow, targetMode))
 
-		const targetDefinition = orderedUnit.card.getUnitOrderTargetDefinition()
-		let validTargets = targetRow.cards.filter(unit => targetDefinition.validate(TargetMode.ATTACK, TargetType.UNIT, { thisUnit: orderedUnit, targetRow: targetRow, targetUnit: unit }))
+		const previousTargets = this.getOrdersPerformedByUnit(orderedUnit)
+		const targetDefinition = orderedUnit.card.getValidOrderTargetDefinition()
+		let validTargets = targetRow.cards.filter(unit => targetDefinition.validate(TargetMode.ATTACK, TargetType.UNIT, { thisUnit: orderedUnit, targetRow: targetRow, targetUnit: unit, previousTargets }))
 		if (validTargets.length === 0) {
 			return
 		}
@@ -158,8 +161,8 @@ export default class ServerGameBoardOrders {
 		})
 	}
 
-	public getOrdersPerformedByUnit(unit: ServerCardOnBoard) {
-		return this.performedOrders.filter(order => order.orderedUnit === unit)
+	public getOrdersPerformedByUnit(unit: ServerCardOnBoard): ServerCardTarget[] {
+		return this.performedOrders.filter(order => order.sourceUnit === unit)
 	}
 
 	public clearPerformedOrders() {

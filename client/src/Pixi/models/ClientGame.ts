@@ -1,4 +1,6 @@
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
+import Core from '@/Pixi/Core'
+import Card from '@/Pixi/shared/models/Card'
 
 export default class ClientGame {
 	currentTime: number
@@ -13,5 +15,25 @@ export default class ClientGame {
 
 	public setTurnPhase(phase: GameTurnPhase): void {
 		this.turnPhase = phase
+	}
+
+	public findCardById(cardId: string): Card | null {
+		const players = [Core.player, Core.opponent]
+
+		players.forEach(player => {
+			const cardInHand = player.cardHand.findCardById(cardId)
+			if (cardInHand) {
+				return cardInHand
+			}
+			const cardInDeck = player.cardDeck.findCardById(cardId)
+			if (cardInDeck) {
+				return cardInDeck
+			}
+			const cardInGraveyard = player.cardGraveyard.findCardById(cardId)
+			if (cardInGraveyard) {
+				return cardInGraveyard
+			}
+		})
+		return null
 	}
 }

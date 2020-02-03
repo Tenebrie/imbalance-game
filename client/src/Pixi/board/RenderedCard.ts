@@ -132,8 +132,8 @@ export default class RenderedCard extends Card {
 		return new PIXI.Point(this.hitboxSprite.position.x, this.hitboxSprite.position.y)
 	}
 
-	public isHovered(mousePosition: PIXI.Point): boolean {
-		return this.hitboxSprite.containsPoint(mousePosition)
+	public isHovered(): boolean {
+		return this.hitboxSprite.containsPoint(Core.input.mousePosition)
 	}
 
 	public setPower(value: number): void {
@@ -308,7 +308,7 @@ export default class RenderedCard extends Card {
 			cardTribeText.style.fontSize = 20
 		}
 
-		this.cardDescriptionText.position.set(0, -135)
+		this.cardDescriptionText.position.set(0, -130)
 
 		const description = Localization.getString(this.cardDescription)
 		let fontSize = 26

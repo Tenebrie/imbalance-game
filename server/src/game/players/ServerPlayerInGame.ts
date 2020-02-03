@@ -9,6 +9,14 @@ import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from '../models/ServerDamageSource'
 import Ruleset from '../Ruleset'
 import ServerAnimation from '../models/ServerAnimation'
+import ServerCardGraveyard from '../models/ServerCardGraveyard'
+import TargetMode from '../shared/enums/TargetMode'
+import TargetType from '../shared/enums/TargetType'
+import TargetValidatorArguments from '../../types/TargetValidatorArguments'
+import ServerCardTarget from '../models/ServerCardTarget'
+import ServerCardOnBoard from '../models/ServerCardOnBoard'
+import ServerGameBoardRow from '../models/ServerGameBoardRow'
+import CardType from '../shared/enums/CardType'
 
 export default class ServerPlayerInGame extends PlayerInGame {
 	initialized = false
@@ -17,9 +25,14 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	player: ServerPlayer
 	cardHand: ServerCardHand
 	cardDeck: ServerCardDeck
+	cardGraveyard: ServerCardGraveyard
 	morale: number
 	timeUnits: number
 	turnEnded: boolean
+
+	targetRequired: boolean
+	validRequiredTargets: ServerCardTarget[]
+	targetsSelected: ServerCardTarget[]
 
 	constructor(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
 		super(player)
@@ -27,9 +40,13 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		this.player = player
 		this.cardHand = new ServerCardHand(this.player, [])
 		this.cardDeck = cardDeck
+		this.cardGraveyard = new ServerCardGraveyard(this)
 		this.morale = Ruleset.STARTING_PLAYER_MORALE
 		this.timeUnits = 0
 		this.turnEnded = false
+
+		this.targetRequired = false
+		this.targetsSelected = []
 	}
 
 	public canPlaySpell(card: ServerCard): boolean {
@@ -56,7 +73,8 @@ export default class ServerPlayerInGame extends PlayerInGame {
 
 		/* Insert the card into the board */
 		const gameBoardRow = this.game.board.rows[rowIndex]
-		gameBoardRow.playCard(card, this, unitIndex)
+		const unit = gameBoardRow.playCard(card, this, unitIndex)
+		console.log(unit)
 
 		/* Advance the time */
 		this.setTimeUnits(this.timeUnits - 1)
@@ -66,6 +84,9 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
 
 		OutgoingMessageHandlers.triggerAnimation(opponent.player, ServerAnimation.delay())
+
+		/* Require play effect targets */
+		this.requirePlayTargets(card, { thisUnit: unit })
 	}
 
 	public playSpell(card: ServerCard): void {
@@ -86,6 +107,65 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		/* Send notifications */
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
+
+		/* Require play effect targets */
+		this.requirePlayTargets(card, { thisCardOwner: this })
+	}
+
+	public selectCardTarget(target: ServerCardTarget): void {
+		const originalTarget = this.validRequiredTargets.find(validTarget => validTarget.isEqual(target))
+		if (!originalTarget) {
+			OutgoingMessageHandlers.notifyAboutRequiredTarget(this.player, this.validRequiredTargets)
+			return
+		}
+
+		console.log(target)
+		const sourceUnit = target.sourceUnit
+		const sourceCard = target.sourceCard || sourceUnit.card
+
+		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetCard) {
+			sourceCard.onUnitPlayTargetCardSelected(sourceUnit, target.targetCard)
+		}
+		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetUnit) {
+			sourceCard.onUnitPlayTargetUnitSelected(sourceUnit, target.targetUnit)
+		}
+		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetRow) {
+			sourceCard.onUnitPlayTargetRowSelected(sourceUnit, target.targetRow)
+		}
+		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetCard) {
+			sourceCard.onSpellPlayTargetCardSelected(this, target.targetCard)
+		}
+		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetUnit) {
+			sourceCard.onSpellPlayTargetUnitSelected(this, target.targetUnit)
+		}
+		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetRow) {
+			sourceCard.onSpellPlayTargetRowSelected(this, target.targetRow)
+		}
+
+		this.targetsSelected.push(target)
+		this.requirePlayTargets(sourceCard, { thisUnit: sourceUnit })
+	}
+
+	public requirePlayTargets(card: ServerCard, args: TargetValidatorArguments): void {
+		let validTargets: ServerCardTarget[] = []
+		const targetDefinition = card.getPlayRequiredTargetDefinition()
+
+		if (targetDefinition.getTargetCount() > 0) {
+			validTargets = []
+				.concat(card.getValidTargets(TargetMode.ON_PLAY, TargetType.UNIT, targetDefinition, args, this.targetsSelected))
+				.concat(card.getValidTargets(TargetMode.ON_PLAY, TargetType.BOARD_ROW, targetDefinition, args, this.targetsSelected))
+		}
+
+		if (validTargets.length > 0) {
+			this.targetRequired = true
+			this.validRequiredTargets = validTargets
+			OutgoingMessageHandlers.notifyAboutRequiredTarget(this.player, validTargets)
+		} else if (this.targetRequired) {
+			this.targetRequired = false
+			this.targetsSelected = []
+			this.validRequiredTargets = []
+			OutgoingMessageHandlers.notifyAboutRequiredTargetAccepted(this.player)
+		}
 	}
 
 	public drawCards(count: number): void {
@@ -143,7 +223,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	}
 
 	public isAnyActionsAvailable(): boolean {
-		return this.timeUnits > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0)
+		return this.timeUnits > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
 	}
 
 	public endTurn(): void {

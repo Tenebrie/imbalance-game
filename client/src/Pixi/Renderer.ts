@@ -2,7 +2,7 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@/Pixi/shared/Constants'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import { TargetingMode } from '@/Pixi/enums/TargetingMode'
+import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
 import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
@@ -14,6 +14,7 @@ import CardTint from '@/Pixi/enums/CardTint'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import TargetMode from '@/Pixi/shared/enums/TargetMode'
+import MouseHover from '@/Pixi/input/MouseHover'
 
 const UNIT_ZINDEX = 2
 const TARGETING_ARROW_ZINDEX = 10
@@ -235,7 +236,7 @@ export default class Renderer {
 	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): CardDisplayMode {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
-		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
+		const hoveredRow = Core.board.rows.find(row => row.isHovered())
 
 		let cardDisplayMode: CardDisplayMode
 		if (renderedCard.cardType === CardType.UNIT && hoveredRow) {
@@ -318,13 +319,13 @@ export default class Renderer {
 	}
 
 	private getBoardRowTint(row: RenderedGameBoardRow): BoardRowTint {
-		if (Core.input.grabbedCard && Core.input.grabbedCard.validTargetRows.includes(row)) {
+		if ((Core.input.grabbedCard && Core.input.grabbedCard.validTargetRows.includes(row)) || (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isRowPotentialTarget(row))) {
 			if (row.owner === Core.player) {
-				return row.isHovered(Core.input.mousePosition) ? BoardRowTint.VALID_TARGET_PLAYER_HOVERED : BoardRowTint.VALID_TARGET_PLAYER
+				return row.isHovered() ? BoardRowTint.VALID_TARGET_PLAYER_HOVERED : BoardRowTint.VALID_TARGET_PLAYER
 			} else if (row.owner === Core.opponent) {
-				return row.isHovered(Core.input.mousePosition) ? BoardRowTint.VALID_TARGET_OPPONENT_HOVERED : BoardRowTint.VALID_TARGET_OPPONENT
+				return row.isHovered() ? BoardRowTint.VALID_TARGET_OPPONENT_HOVERED : BoardRowTint.VALID_TARGET_OPPONENT
 			} else {
-				return row.isHovered(Core.input.mousePosition) ? BoardRowTint.VALID_TARGET_NEUTRAL_HOVERED : BoardRowTint.VALID_TARGET_NEUTRAL
+				return row.isHovered() ? BoardRowTint.VALID_TARGET_NEUTRAL_HOVERED : BoardRowTint.VALID_TARGET_NEUTRAL
 			}
 		}
 
@@ -393,6 +394,16 @@ export default class Renderer {
 			return CardTint.GRABBED
 		}
 
+		/* Current unit is a valid target for some order */
+		if ((Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isUnitPotentialTarget(unit)) ||
+			(Core.input.grabbedCard && Core.input.grabbedCard.mode === GrabbedCardMode.CARD_ORDER && Core.input.grabbedCard.validTargetCards.includes(unit.card))) {
+			if (unit.owner === Core.opponent) {
+				return hoveredCard === card ? CardTint.VALID_ENEMY_TARGET_HOVERED : CardTint.VALID_ENEMY_TARGET
+			} else {
+				return hoveredCard === card ? CardTint.VALID_ALLY_TARGET_HOVERED : CardTint.VALID_ALLY_TARGET
+			}
+		}
+
 		if (Core.player.isTurnActive && !Core.input.grabbedCard && unit.owner === Core.player && Core.board.getValidOrdersForUnit(unit).length > 0) {
 			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
 		}
@@ -400,22 +411,17 @@ export default class Renderer {
 			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
 		}
 
-		/* Current unit is a valid target for some order */
-		if (Core.input.grabbedCard && Core.input.grabbedCard.targetingMode === TargetingMode.CARD_ORDER && Core.input.grabbedCard.validTargetCards.includes(unit.card)) {
-			const order = Core.board.getValidOrdersForUnit(Core.board.findUnitById(Core.input.grabbedCard.card.id)).find(order => order.targetUnit === unit)
-			if (order.targetMode === TargetMode.ORDER_ATTACK || order.targetMode === TargetMode.ORDER_DRAIN) {
-				return hoveredCard === card ? CardTint.VALID_ENEMY_TARGET_HOVERED : CardTint.VALID_ENEMY_TARGET
-			} else {
-				return hoveredCard === card ? CardTint.VALID_ALLY_TARGET_HOVERED : CardTint.VALID_ALLY_TARGET
-			}
-		}
-
 		return CardTint.INACTIVE
 	}
 
 	public renderTargetingArrow(): void {
+		this.updateTargetingLabel(this.actionLabel)
+		if (Core.input.forcedTargetingMode) {
+			return
+		}
+
 		const grabbedCard = Core.input.grabbedCard
-		if (!grabbedCard || grabbedCard.targetingMode !== TargetingMode.CARD_ORDER) {
+		if (!grabbedCard || grabbedCard.mode !== GrabbedCardMode.CARD_ORDER) {
 			this.actionLabel.text = ''
 			return
 		}
@@ -449,17 +455,21 @@ export default class Renderer {
 		targetingArrow.targetPoint.drawCircle(0, 0, 5)
 		targetingArrow.targetPoint.endFill()
 		targetingArrow.targetPoint.zIndex = TARGETING_ARROW_ZINDEX
-
-		this.updateTargetingLabel(this.actionLabel)
 	}
 
 	private updateTargetingLabel(label: PIXI.Text): void {
 		label.style.fill = 0x55FF55
 
-		const hoveredCard = Core.input.hoveredCard
+		const hoveredCard = MouseHover.getHoveredCard()
+		const hoveredUnit = MouseHover.getHoveredUnit()
+		const hoveredRow = MouseHover.getHoveredRow()
+
+		if (Core.input.forcedTargetingMode) {
+			label.text = Localization.getString(Core.input.forcedTargetingMode.getDisplayedLabel())
+			return
+		}
+
 		const grabbedCard = Core.input.grabbedCard
-		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
-		const hoveredUnit = hoveredCard ? Core.board.findUnitById(hoveredCard.card.id) : null
 		const grabbedUnit = grabbedCard ? Core.board.findUnitById(grabbedCard.card.id) : null
 		if (!grabbedCard || (!hoveredUnit && !hoveredRow)) {
 			label.text = ''

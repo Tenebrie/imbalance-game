@@ -1,11 +1,12 @@
 import CardType from '../../../shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerTargetDefinition from '../../../models/ServerTargetDefinition'
+import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTargetDefinition'
 import TargetValidatorArguments from '../../../../types/TargetValidatorArguments'
 import TargetType from '../../../shared/enums/TargetType'
 import TargetMode from '../../../shared/enums/TargetMode'
 import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 
 export default class HeroIgnea extends ServerCard {
 	constructor(game: ServerGame) {
@@ -15,11 +16,11 @@ export default class HeroIgnea extends ServerCard {
 		this.baseAttackRange = 3
 	}
 
-	getUnitOrderTargetDefinition(): ServerTargetDefinition {
+	defineValidOrderTargets(): TargetDefinitionBuilder {
 		return ServerTargetDefinition.defaultUnitOrder(this.game)
-			.setTotalTargets(2)
-			.allowType(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW)
-			.requireValidation(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, (args: TargetValidatorArguments): boolean => {
+			.multiTarget(2)
+			.allow(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW)
+			.validate(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, (args: TargetValidatorArguments): boolean => {
 				const thisUnit = args.thisUnit
 				const targetRow = args.targetRow!
 				return targetRow.owner === this.game.getOpponent(thisUnit.owner) && targetRow.cards.length > 0

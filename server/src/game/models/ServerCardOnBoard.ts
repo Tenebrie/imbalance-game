@@ -3,10 +3,8 @@ import ServerCard from './ServerCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
-import ServerGameBoardRow from './ServerGameBoardRow'
-import ServerUnitOrder from './ServerUnitOrder'
-import Constants from '../shared/Constants'
-import ServerTargetDefinition from './ServerTargetDefinition'
+import ServerCardTarget from './ServerCardTarget'
+import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
 
@@ -81,62 +79,25 @@ export default class ServerCardOnBoard {
 		return this.card.power <= 0
 	}
 
-	hasActionsRemaining(targetDefinition: ServerTargetDefinition): boolean {
-		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
-		return performedOrders.length < targetDefinition.getTotalTargetCount()
-	}
-
-	canPerformOrder(targetMode: TargetMode, targetType: TargetType, targetDefinition: ServerTargetDefinition): boolean {
-		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
-		const performedOrdersTotal = performedOrders.filter(performedOrder => performedOrder.orderedUnit === this)
-
-		const performedOrdersOfType = performedOrdersTotal.filter(performedOrder => performedOrder.targetMode === targetMode && performedOrder.targetType === targetType)
-		const maxOrdersOfType = targetDefinition.getTargetOfTypeCount(targetMode, targetType)
-		if (performedOrdersOfType.length >= maxOrdersOfType) {
-			return false
-		}
-
-		const otherTypeOrders = performedOrdersTotal.filter(performedOrder => performedOrder.targetMode !== targetMode || performedOrder.targetType !== targetType)
-		const incompatibleOtherTypeOrder = otherTypeOrders.find(performedOrder => {
-			return !targetDefinition.isValidSimultaneously({ targetMode, targetType }, performedOrder)
-		})
-		return !incompatibleOtherTypeOrder
-	}
-
-	getValidOrders(): ServerUnitOrder[] {
-		const targetDefinition = this.card.getUnitOrderTargetDefinition()
-		if (this.hasSummoningSickness || !this.hasActionsRemaining(targetDefinition)) {
+	getValidOrders(): ServerCardTarget[] {
+		if (this.hasSummoningSickness) {
 			return []
 		}
 
-		const orders: ServerUnitOrder[] = []
+		const targetDefinition = this.card.getValidOrderTargetDefinition()
+		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
+		const targets = []
+			.concat(this.card.getValidTargets(TargetMode.ORDER_ATTACK, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_DRAIN, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_SUPPORT, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_DRAIN, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_SUPPORT, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_MOVE, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
 
-		const unitTargetOrders = [TargetMode.ORDER_ATTACK, TargetMode.ORDER_DRAIN, TargetMode.ORDER_SUPPORT]
-		const rowTargetOrders = [TargetMode.ORDER_ATTACK, TargetMode.ORDER_DRAIN, TargetMode.ORDER_SUPPORT, TargetMode.ORDER_MOVE]
+		targets.forEach(target => { target.sourceUnit = this })
 
-		unitTargetOrders.forEach(targetMode => {
-			if (!this.canPerformOrder(targetMode, TargetType.UNIT, targetDefinition)) {
-				return
-			}
-
-			const validTargets = this.game.board.getAllUnits().filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { thisUnit: this, targetUnit: unit }))
-			const targetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.UNIT)
-			const allowedOrders = validTargets.map(targetUnit => ServerUnitOrder.targetUnit(targetMode, this, targetUnit, targetLabel))
-			allowedOrders.forEach(allowedOrder => orders.push(allowedOrder))
-		})
-
-		rowTargetOrders.forEach(targetMode => {
-			if (!this.canPerformOrder(targetMode, TargetType.BOARD_ROW, targetDefinition)) {
-				return
-			}
-
-			const validTargets = this.game.board.rows.filter(row => targetDefinition.validate(targetMode, TargetType.BOARD_ROW, { thisUnit: this, targetRow: row }))
-			const targetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.BOARD_ROW)
-			const allowedOrders = validTargets.map(targetRow => ServerUnitOrder.targetRow(targetMode, this, targetRow, targetLabel))
-			allowedOrders.forEach(allowedOrder => orders.push(allowedOrder))
-		})
-
-		return orders
+		return targets
 	}
 
 	destroy(): void {

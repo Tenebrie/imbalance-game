@@ -1,9 +1,10 @@
 import CardType from '../../../shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerTargetDefinition from '../../../models/ServerTargetDefinition'
+import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTargetDefinition'
 import TargetMode from '../../../shared/enums/TargetMode'
 import TargetType from '../../../shared/enums/TargetType'
+import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 
 export default class UnitSpinningBarbarian extends ServerCard {
 	constructor(game: ServerGame) {
@@ -12,16 +13,16 @@ export default class UnitSpinningBarbarian extends ServerCard {
 		this.baseAttack = 4
 	}
 
-	getUnitOrderTargetDefinition(): ServerTargetDefinition {
+	defineValidOrderTargets(): TargetDefinitionBuilder {
 		return ServerTargetDefinition.defaultUnitOrder(this.game)
 			.disallowType(TargetMode.ORDER_ATTACK, TargetType.UNIT)
-			.allowType(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW)
-			.requireValidation(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, args => {
+			.allow(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW)
+			.validate(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, args => {
 				const thisUnit = args.thisUnit
 				const targetRow = args.targetRow!
 				return targetRow.owner === this.game.getOpponent(thisUnit.owner) && targetRow.cards.length > 0 && Math.abs(thisUnit.rowIndex - targetRow.index) <= thisUnit.card.attackRange
 			})
-			.requireValidation(TargetMode.ATTACK, TargetType.UNIT, args => {
+			.validate(TargetMode.ATTACK, TargetType.UNIT, args => {
 				const thisUnit = args.thisUnit
 				const targetRow = args.targetRow!
 				const targetUnit = args.targetUnit!

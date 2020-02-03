@@ -18,6 +18,7 @@ import UnitSubtype from '../shared/enums/UnitSubtype'
 import BuildingTreeOfLife from '../cards/experimental/buildings/BuildingTreeOfLife'
 import UnitVampireFledgling from '../cards/experimental/units/UnitVampireFledgling'
 import HeroIgnea from '../cards/experimental/heroes/HeroIgnea'
+import UnitPriestessOfAedine from '../cards/experimental/units/UnitPriestessOfAidine'
 
 export default class GameLibrary {
 	static cards: any[]
@@ -36,6 +37,7 @@ export default class GameLibrary {
 			UnitChargingKnight,
 			UnitSpinningBarbarian,
 			UnitVampireFledgling,
+			UnitPriestessOfAedine,
 			BuildingTreeOfLife,
 			SpellRainOfFire,
 			SpellMagicalStarfall
@@ -60,6 +62,7 @@ export default class GameLibrary {
 			return card.cardClass === cardClass
 		})
 		if (!original) {
+			console.error(`No registered card with class '${cardClass}'!`)
 			throw new Error(`No registered card with class '${cardClass}'!`)
 		}
 
@@ -72,6 +75,8 @@ export default class GameLibrary {
 			unitSubtype = UnitSubtype.PAWN
 		} else if (cardClass.startsWith('building')) {
 			unitSubtype = UnitSubtype.BUILDING
+		} else {
+			unitSubtype = UnitSubtype.OTHER
 		}
 
 		const clone: ServerCard = new original.constructor()

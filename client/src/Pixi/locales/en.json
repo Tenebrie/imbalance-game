@@ -1,4 +1,6 @@
 {
+	"target.generic.unit": "Target",
+	"target.generic.row": "Target all",
 	"target.attack.unit": "Attack",
 	"target.attack.row": "Attack all",
 	"target.drain.unit": "Drain",
@@ -53,9 +55,13 @@
 	"card.name.unitVampireFledgling": "Vampire Fledgling",
 	"card.description.unitVampireFledgling": "When *Draining* allied units, {name} restores *3* Power and gains *4* Attack this turn only",
 
+	"card.name.unitPriestessOfAedine": "Priestess of Aedine",
+	"card.description.unitPriestessOfAedine": "*On play:*\nChoose 3 damaged allied units in range. {name} restores *5* Power to each of them.",
+	"card.target.unitPriestessOfAedine.heal": "Restore 5 Power",
+
 	"card.name.buildingTreeOfLife": "Tree of Life",
 	"card.description.buildingTreeOfLife": "*Support:*\n{name} targets a row. All units on that row restore *3* Power. All units on adjacent rows restore *1* Power",
-	"card.target.support.row": "Restore power",
+	"card.target.buildingTreeOfLife.support.row": "Restore power",
 
 	"card.name.spellRainOfFire": "Rain of Fire",
 	"card.description.spellRainOfFire": "{name} deals *8* damage to all enemy units\nThen, it draws a card",

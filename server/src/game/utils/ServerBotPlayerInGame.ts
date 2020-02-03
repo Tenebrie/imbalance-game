@@ -4,8 +4,8 @@ import ServerCardDeck from '../models/ServerCardDeck'
 import ServerPlayer from '../players/ServerPlayer'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
-import UnitOrderMessage from '../shared/models/network/UnitOrderMessage'
-import ServerUnitOrder from '../models/ServerUnitOrder'
+import UnitOrderMessage from '../shared/models/network/CardTargetMessage'
+import ServerCardTarget from '../models/ServerCardTarget'
 import ServerCard from '../models/ServerCard'
 import Utils from '../../utils/Utils'
 import ServerCardOnBoard from '../models/ServerCardOnBoard'
@@ -59,16 +59,20 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 			if (unit.isDead()) { return }
 
 			const opponentsUnits = this.game.board.getUnitsOwnedByOpponent(this)
-			const targetDefinition = unit.card.getUnitOrderTargetDefinition()
-			const validTargets = opponentsUnits.filter(opponentUnit => targetDefinition.validate(TargetMode.ORDER_ATTACK, TargetType.UNIT, {
-				thisUnit: unit,
-				targetUnit: opponentUnit
-			}))
+			const targetDefinition = unit.card.getValidOrderTargetDefinition()
+			const validTargets = opponentsUnits.filter(opponentUnit => {
+				const previousTargets = this.game.board.orders.getOrdersPerformedByUnit(opponentUnit)
+				return targetDefinition.validate(TargetMode.ORDER_ATTACK, TargetType.UNIT, {
+					thisUnit: unit,
+					targetUnit: opponentUnit,
+					previousTargets
+				})
+			})
 			if (validTargets.length === 0) { return }
 
 			const sortedTargets = this.sortValidTargets(validTargets)
 
-			const unitOrder = ServerUnitOrder.targetUnit(TargetMode.ORDER_ATTACK, unit, sortedTargets[0])
+			const unitOrder = ServerCardTarget.unitTargetUnit(TargetMode.ORDER_ATTACK, unit, sortedTargets[0])
 
 			const unitOrderMessage = new UnitOrderMessage(unitOrder)
 			IncomingMessageHandlers['post/unitOrder'](unitOrderMessage, this.game, this)
@@ -78,7 +82,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	private botOrdersMove(): void {
 		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this).filter(unit => unit.getValidOrders().length > 0)
 		controlledUnits.forEach(unit => {
-			const unitOrder = ServerUnitOrder.targetRow(TargetMode.ORDER_MOVE, unit, this.game.board.rows[this.getForwardRowIndex(unit.rowIndex)])
+			const unitOrder = ServerCardTarget.unitTargetRow(TargetMode.ORDER_MOVE, unit, this.game.board.rows[this.getForwardRowIndex(unit.rowIndex)])
 			const unitOrderMessage = new UnitOrderMessage(unitOrder)
 			IncomingMessageHandlers['post/unitOrder'](unitOrderMessage, this.game, this)
 		})

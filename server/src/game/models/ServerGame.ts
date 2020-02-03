@@ -15,6 +15,7 @@ import Ruleset from '../Ruleset'
 import Constants from '../shared/Constants'
 import ServerBotPlayer from '../utils/ServerBotPlayer'
 import ServerBotPlayerInGame from '../utils/ServerBotPlayerInGame'
+import ServerCard from './ServerCard'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -248,6 +249,24 @@ export default class ServerGame extends Game {
 			const gameLibrary: GameLibrary = global.gameLibrary
 			gameLibrary.destroyGame(this)
 		}, 120000)
+	}
+
+	public findCardById(cardId: string): ServerCard | null {
+		this.players.forEach(player => {
+			const cardInHand = player.cardHand.findCardById(cardId)
+			if (cardInHand) {
+				return cardInHand
+			}
+			const cardInDeck = player.cardDeck.findCardById(cardId)
+			if (cardInDeck) {
+				return cardInDeck
+			}
+			const cardInGraveyard = player.cardGraveyard.findCardById(cardId)
+			if (cardInGraveyard) {
+				return cardInGraveyard
+			}
+		})
+		return null
 	}
 
 	static newOwnedInstance(owner: ServerPlayer, name: string): ServerGame {

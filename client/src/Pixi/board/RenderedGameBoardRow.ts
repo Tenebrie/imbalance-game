@@ -68,7 +68,7 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 		this.owner = owner
 	}
 
-	public isHovered(mousePosition: PIXI.Point): boolean {
-		return this.sprite.containsPoint(mousePosition)
+	public isHovered(): boolean {
+		return this.sprite.containsPoint(Core.input.mousePosition)
 	}
 }

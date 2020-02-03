@@ -5,12 +5,15 @@ import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
-import { TargetingMode } from '@/Pixi/enums/TargetingMode'
+import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import Settings from '@/Pixi/Settings'
 import TargetType from '@/Pixi/shared/enums/TargetType'
+import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
+import MouseHover from '@/Pixi/input/MouseHover'
+import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
@@ -22,6 +25,8 @@ export default class Input {
 	hoveredCard: HoveredCard | null = null
 	grabbedCard: GrabbedCard | null = null
 	inspectedCard: RenderedCard | null = null
+
+	forcedTargetingMode: ForcedTargetingMode | null = null
 
 	constructor() {
 		const view = Core.renderer.pixi.view
@@ -56,17 +61,17 @@ export default class Input {
 
 		let hoveredCard: HoveredCard | null = null
 
-		const hoveredCardOnBoard = gameBoardCards.find(cardOnBoard => cardOnBoard.card.isHovered(this.mousePosition)) || null
+		const hoveredCardOnBoard = gameBoardCards.find(cardOnBoard => cardOnBoard.card.isHovered()) || null
 		if (hoveredCardOnBoard) {
 			hoveredCard = HoveredCard.fromCardOnBoard(hoveredCardOnBoard)
 		}
 
-		const hoveredCardInHand = playerHandCards.find(card => card.isHovered(this.mousePosition)) || null
+		const hoveredCardInHand = playerHandCards.find(card => card.isHovered()) || null
 		if (hoveredCardInHand) {
 			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInHand, Core.player)
 		}
 
-		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.isHovered(this.mousePosition)) {
+		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.isHovered()) {
 			hoveredCard = HoveredCard.fromAnnouncedCard(Core.mainHandler.announcedCard)
 		}
 
@@ -85,6 +90,12 @@ export default class Input {
 
 		if (event.button === LEFT_MOUSE_BUTTON && this.hoveredCard && this.hoveredCard.card === Core.mainHandler.announcedCard) {
 			Core.mainHandler.skipAnimation()
+			return
+		}
+
+		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON) {
+			this.forcedTargetingMode.selectTarget()
+			return
 		}
 
 		if (event.button === LEFT_MOUSE_BUTTON) {
@@ -97,6 +108,11 @@ export default class Input {
 	}
 
 	private onMouseUp(event: MouseEvent) {
+		if (this.forcedTargetingMode && this.forcedTargetingMode.isSelectedTargetValid() && event.button === LEFT_MOUSE_BUTTON) {
+			this.forcedTargetingMode.confirmTarget()
+			return
+		}
+
 		if (event.button === LEFT_MOUSE_BUTTON) {
 			this.leftMouseDown = false
 			this.useGrabbedCard()
@@ -114,7 +130,7 @@ export default class Input {
 		this.mousePosition.y *= window.devicePixelRatio * Settings.superSamplingLevel
 
 		const windowHeight = Core.renderer.pixi.view.height
-		if (this.grabbedCard && this.grabbedCard.targetingMode === TargetingMode.CARD_PLAY && Core.player.timeUnits === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {
+		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && Core.player.timeUnits === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {
 			this.releaseCard()
 		}
 	}
@@ -153,10 +169,10 @@ export default class Input {
 			return
 		}
 
-		if (this.grabbedCard.targetingMode === TargetingMode.CARD_PLAY) {
+		if (this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY) {
 			this.onCardPlay(this.grabbedCard.card)
-		} else if (this.grabbedCard.targetingMode === TargetingMode.CARD_ORDER) {
-			this.onCardOrder(this.grabbedCard.card)
+		} else if (this.grabbedCard.mode === GrabbedCardMode.CARD_ORDER) {
+			this.onUnitOrder(this.grabbedCard.card)
 		}
 
 		this.releaseCard()
@@ -182,7 +198,7 @@ export default class Input {
 	}
 
 	private onCardPlay(card: RenderedCard): void {
-		const hoveredRow = Core.board.rows.find(row => row.isHovered(this.mousePosition))
+		const hoveredRow = MouseHover.getHoveredRow()
 		if (!hoveredRow) {
 			return
 		}
@@ -194,16 +210,24 @@ export default class Input {
 		}
 	}
 
-	private onCardOrder(orderedCard: RenderedCard): void {
+	private onUnitOrder(orderedCard: RenderedCard): void {
 		const orderedUnit = Core.board.findUnitById(orderedCard.id)!
-		const hoveredUnit = this.hoveredCard ? Core.board.findUnitById(this.hoveredCard.card.id) : null
-		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
+		const hoveredUnit = MouseHover.getHoveredUnit()
+		const hoveredRow = MouseHover.getHoveredRow()
 
-		const validOrders = Core.board.getValidOrdersForUnit(orderedUnit).sort((a, b) => a.targetMode - b.targetMode || a.targetType - b.targetType)
-		const performedOrder = validOrders.find(order => (!order.targetUnit || order.targetUnit === hoveredUnit) && (!order.targetRow || order.targetRow === hoveredRow))
+		const validOrders = Core.board.getValidOrdersForUnit(orderedUnit)
+		const performedOrder = validOrders.find(order => (order.targetUnit && order.targetUnit === hoveredUnit) || (order.targetRow && order.targetRow === hoveredRow))
 		if (performedOrder) {
 			OutgoingMessageHandlers.sendUnitOrder(performedOrder)
 		}
+	}
+
+	public enableForcedTargetingMode(validTargets: ClientCardTarget[]): void {
+		this.forcedTargetingMode = new ForcedTargetingMode(validTargets)
+	}
+
+	public disableForcedTargetingMode(): void {
+		this.forcedTargetingMode = null
 	}
 
 	public clear() {

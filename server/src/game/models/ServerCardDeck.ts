@@ -17,6 +17,7 @@ import SpellRainOfFire from '../cards/experimental/spells/SpellRainOfFire'
 import HeroIgnea from '../cards/experimental/heroes/HeroIgnea'
 import BuildingTreeOfLife from '../cards/experimental/buildings/BuildingTreeOfLife'
 import UnitVampireFledgling from '../cards/experimental/units/UnitVampireFledgling'
+import UnitPriestessOfAedine from '../cards/experimental/units/UnitPriestessOfAidine'
 
 export default class ServerCardDeck extends CardDeck {
 	game: ServerGame
@@ -34,6 +35,10 @@ export default class ServerCardDeck extends CardDeck {
 
 	public drawCard(): ServerCard {
 		return this.cards.pop()
+	}
+
+	public findCardById(cardId: string): ServerCard | null {
+		return this.cards.find(card => card.id === cardId) || null
 	}
 
 	public shuffle(): void {
@@ -61,6 +66,7 @@ export default class ServerCardDeck extends CardDeck {
 			deck.addCard(CardLibrary.createCard(new BuildingTreeOfLife(game)))
 			deck.addCard(CardLibrary.createCard(new UnitVampireFledgling(game)))
 			deck.addCard(CardLibrary.createCard(new UnitSpinningBarbarian(game)))
+			deck.addCard(CardLibrary.createCard(new UnitPriestessOfAedine(game)))
 		}
 		for (let i = 0; i < 1; i++) {
 			deck.addCard(CardLibrary.createCard(new UnitRavenMessenger(game)))

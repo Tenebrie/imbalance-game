@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
-import Input from '@/Pixi/Input'
+import Input from '@/Pixi/input/Input'
 import Renderer from '@/Pixi/Renderer'
 import MainHandler from '@/Pixi/MainHandler'
 import ClientGame from '@/Pixi/models/ClientGame'
