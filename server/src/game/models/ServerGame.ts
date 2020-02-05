@@ -252,7 +252,8 @@ export default class ServerGame extends Game {
 	}
 
 	public findCardById(cardId: string): ServerCard | null {
-		this.players.forEach(player => {
+		for (let i = 0; i < this.players.length; i++) {
+			const player = this.players[i]
 			const cardInHand = player.cardHand.findCardById(cardId)
 			if (cardInHand) {
 				return cardInHand
@@ -265,7 +266,7 @@ export default class ServerGame extends Game {
 			if (cardInGraveyard) {
 				return cardInGraveyard
 			}
-		})
+		}
 		return null
 	}
 

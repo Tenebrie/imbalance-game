@@ -11,11 +11,10 @@ import ServerDamageInstance from './ServerDamageSource'
 import ServerDamageSource from './ServerDamageSource'
 import ServerGameBoardRow from './ServerGameBoardRow'
 import ServerCardTarget from './ServerCardTarget'
-import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
-import StandardTargetDefinitionBuilder from './targetDefinitions/StandardTargetDefinitionBuilder'
 import TargetValidatorArguments from '../../types/TargetValidatorArguments'
+import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
 import TargetDefinitionBuilder from './targetDefinitions/TargetDefinitionBuilder'
 
 export default class ServerCard extends Card {
@@ -119,9 +118,11 @@ export default class ServerCard extends Card {
 	onUnitPlayTargetCardSelected(thisUnit: ServerCardOnBoard, target: ServerCard): void { return }
 	onUnitPlayTargetUnitSelected(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void { return }
 	onUnitPlayTargetRowSelected(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void { return }
+	onUnitPlayTargetsConfirmed(thisUnit: ServerCardOnBoard): void { return }
 	onSpellPlayTargetCardSelected(owner: ServerPlayerInGame, target: ServerCard): void { return }
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerCardOnBoard): void { return }
 	onSpellPlayTargetRowSelected(owner: ServerPlayerInGame, target: ServerGameBoardRow): void { return }
+	onSpellPlayTargetsConfirmed(owner: ServerPlayerInGame): void { return }
 	onTurnStarted(thisUnit: ServerCardOnBoard): void { return }
 	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void { return }
 	onTurnEnded(thisUnit: ServerCardOnBoard): void { return }

@@ -9,6 +9,10 @@ export default class ClientCardGraveyard {
 		this.cards = cards
 	}
 
+	public addCard(card: CardMessage): void {
+		this.cards.push(card)
+	}
+
 	public findCardById(cardId: string): CardMessage | null {
 		return this.cards.find(card => card.id === cardId) || null
 	}

@@ -46,6 +46,7 @@ export default class RenderedCard extends Card {
 		this.cardTitle = message.cardTitle
 		this.cardTribes = message.cardTribes.slice()
 		this.cardDescription = message.cardDescription
+		this.cardTextVariables = message.cardTextVariables
 
 		this.power = message.power
 		this.attack = message.attack

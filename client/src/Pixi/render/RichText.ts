@@ -113,7 +113,18 @@ export default class RichText extends PIXI.Container {
 
 		const SCALE_MODIFIER = this.fontSize / this.baseFontSize
 
-		const replacedText = (this.text || '').replace(/{name}/g, `${Localization.getString(this.card.cardName)}`)
+		const textVariables = {
+			...this.card.cardTextVariables,
+			name: Localization.getString(this.card.cardName)
+		}
+
+		let replacedText = (this.text || '')
+		for (const variableName in textVariables) {
+			const variableValue = textVariables[variableName]
+			const regexp = new RegExp('{' + variableName + '}', 'g')
+			replacedText = replacedText.replace(regexp, variableValue)
+		}
+
 		const chars = Array.from(replacedText)
 
 		const segments: Segment[] = []

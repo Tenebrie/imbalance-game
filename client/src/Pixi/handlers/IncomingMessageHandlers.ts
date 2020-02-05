@@ -210,6 +210,14 @@ const handlers: {[ index: string ]: any } = {
 		Core.opponent.cardHand.removeCard(card)
 	},
 
+	'update/player/self/graveyard/cardAdded': (data: CardMessage) => {
+		Core.player.cardGraveyard.addCard(data)
+	},
+
+	'update/player/opponent/graveyard/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardGraveyard.addCard(data)
+	},
+
 	'animation/generic': (data: AnimationMessage) => {
 		let animationDuration = 500
 

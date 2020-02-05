@@ -39,5 +39,19 @@ export default {
 			type: 'update/player/opponent/hand/cardDestroyed',
 			data: HiddenCardMessage.fromCard(card)
 		})
-	}
+	},
+
+	notifyAboutPlayerCardInGraveyard(player: ServerPlayer, card: ServerCard) {
+		player.sendMessage({
+			type: 'update/player/self/graveyard/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+	},
+
+	notifyAboutOpponentCardInGraveyard(player: ServerPlayer, card: ServerCard) {
+		player.sendMessage({
+			type: 'update/player/opponent/graveyard/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+	},
 }

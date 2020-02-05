@@ -20,7 +20,8 @@ export default class ClientGame {
 	public findCardById(cardId: string): Card | null {
 		const players = [Core.player, Core.opponent]
 
-		players.forEach(player => {
+		for (let i = 0; i < players.length; i++) {
+			const player = players[i]
 			const cardInHand = player.cardHand.findCardById(cardId)
 			if (cardInHand) {
 				return cardInHand
@@ -33,7 +34,7 @@ export default class ClientGame {
 			if (cardInGraveyard) {
 				return cardInGraveyard
 			}
-		})
+		}
 		return null
 	}
 }

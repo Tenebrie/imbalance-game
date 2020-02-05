@@ -14,8 +14,6 @@ import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
 import TargetValidatorArguments from '../../types/TargetValidatorArguments'
 import ServerCardTarget from '../models/ServerCardTarget'
-import ServerCardOnBoard from '../models/ServerCardOnBoard'
-import ServerGameBoardRow from '../models/ServerGameBoardRow'
 import CardType from '../shared/enums/CardType'
 
 export default class ServerPlayerInGame extends PlayerInGame {
@@ -74,7 +72,6 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		/* Insert the card into the board */
 		const gameBoardRow = this.game.board.rows[rowIndex]
 		const unit = gameBoardRow.playCard(card, this, unitIndex)
-		console.log(unit)
 
 		/* Advance the time */
 		this.setTimeUnits(this.timeUnits - 1)
@@ -86,7 +83,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		OutgoingMessageHandlers.triggerAnimation(opponent.player, ServerAnimation.delay())
 
 		/* Require play effect targets */
-		this.requirePlayTargets(card, { thisUnit: unit })
+		this.requirePlayTargets(card, { thisCardOwner: this, thisUnit: unit })
 	}
 
 	public playSpell(card: ServerCard): void {
@@ -108,6 +105,11 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
 		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
 
+		/* Spells go directly to the graveyard */
+		this.cardGraveyard.addCard(card)
+		OutgoingMessageHandlers.notifyAboutPlayerCardInGraveyard(this.player, card)
+		OutgoingMessageHandlers.notifyAboutOpponentCardInGraveyard(this.player, card)
+
 		/* Require play effect targets */
 		this.requirePlayTargets(card, { thisCardOwner: this })
 	}
@@ -119,7 +121,6 @@ export default class ServerPlayerInGame extends PlayerInGame {
 			return
 		}
 
-		console.log(target)
 		const sourceUnit = target.sourceUnit
 		const sourceCard = target.sourceCard || sourceUnit.card
 
@@ -143,7 +144,17 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		}
 
 		this.targetsSelected.push(target)
-		this.requirePlayTargets(sourceCard, { thisUnit: sourceUnit })
+		this.requirePlayTargets(sourceCard, { thisCardOwner: this, thisUnit: sourceUnit })
+
+		if (this.targetRequired) {
+			return
+		}
+
+		if (sourceCard.cardType === CardType.UNIT) {
+			sourceCard.onUnitPlayTargetsConfirmed(sourceUnit)
+		} else if (sourceCard.cardType === CardType.SPELL) {
+			sourceCard.onSpellPlayTargetsConfirmed(this)
+		}
 	}
 
 	public requirePlayTargets(card: ServerCard, args: TargetValidatorArguments): void {

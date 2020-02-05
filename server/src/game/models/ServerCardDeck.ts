@@ -67,6 +67,7 @@ export default class ServerCardDeck extends CardDeck {
 			deck.addCard(CardLibrary.createCard(new UnitVampireFledgling(game)))
 			deck.addCard(CardLibrary.createCard(new UnitSpinningBarbarian(game)))
 			deck.addCard(CardLibrary.createCard(new UnitPriestessOfAedine(game)))
+			deck.addCard(CardLibrary.createCard(new SpellRainOfFire(game)))
 		}
 		for (let i = 0; i < 1; i++) {
 			deck.addCard(CardLibrary.createCard(new UnitRavenMessenger(game)))
@@ -77,7 +78,6 @@ export default class ServerCardDeck extends CardDeck {
 			deck.addCard(CardLibrary.createCard(new UnitChargingKnight(game)))
 			deck.addCard(CardLibrary.createCard(new UnitTwinBowArcher(game)))
 			deck.addCard(CardLibrary.createCard(new SpellMagicalStarfall(game)))
-			deck.addCard(CardLibrary.createCard(new SpellRainOfFire(game)))
 		}
 
 		deck.shuffle()

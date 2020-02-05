@@ -1,12 +1,12 @@
 import CardType from '../../../shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTargetDefinition'
 import TargetValidatorArguments from '../../../../types/TargetValidatorArguments'
 import TargetType from '../../../shared/enums/TargetType'
 import TargetMode from '../../../shared/enums/TargetMode'
 import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
+import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTargetDefinition'
 
 export default class HeroIgnea extends ServerCard {
 	constructor(game: ServerGame) {
