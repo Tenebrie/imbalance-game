@@ -1,6 +1,5 @@
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerGame from '../models/ServerGame'
-import ServerCardDeck from '../models/ServerCardDeck'
 import ServerPlayer from '../players/ServerPlayer'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
@@ -12,10 +11,11 @@ import ServerCardOnBoard from '../models/ServerCardOnBoard'
 import ServerGameBoardRow from '../models/ServerGameBoardRow'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
+import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
-	constructor(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
-		super(game, player, cardDeck)
+	constructor(game: ServerGame, player: ServerPlayer) {
+		super(game, player)
 		this.initialized = true
 	}
 
@@ -29,6 +29,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private botTakesTheirTurn(): void {
 		try {
+			// TODO: Teach bot how to target something for battlecries
 			while (this.timeUnits > 0 && this.cardHand.cards.length > 0) {
 				this.botPlaysCard()
 			}
@@ -121,7 +122,9 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		}
 	}
 
-	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
-		return new ServerBotPlayerInGame(game, player, cardDeck)
+	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {
+		const playerInGame = new ServerBotPlayerInGame(game, player)
+		playerInGame.cardDeck.instantiateFrom(cardDeck)
+		return playerInGame
 	}
 }

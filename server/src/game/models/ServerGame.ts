@@ -16,6 +16,9 @@ import Constants from '../shared/Constants'
 import ServerBotPlayer from '../utils/ServerBotPlayer'
 import ServerBotPlayerInGame from '../utils/ServerBotPlayerInGame'
 import ServerCard from './ServerCard'
+import ServerCardResolveStack from './ServerCardResolveStack'
+import ServerGameCardPlay from './ServerGameCardPlay'
+import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -26,6 +29,7 @@ export default class ServerGame extends Game {
 	board: ServerGameBoard
 	players: ServerPlayerInGame[]
 	chatHistory: ServerChatEntry[]
+	cardPlay: ServerGameCardPlay
 	playersToMove: ServerPlayerInGame[]
 
 	constructor(owner: ServerPlayer, name: string) {
@@ -39,9 +43,10 @@ export default class ServerGame extends Game {
 		this.players = []
 		this.playersToMove = []
 		this.chatHistory = []
+		this.cardPlay = new ServerGameCardPlay(this)
 	}
 
-	public addPlayer(targetPlayer: ServerPlayer, deck: ServerCardDeck): ServerPlayerInGame {
+	public addPlayer(targetPlayer: ServerPlayer, deck: ServerTemplateCardDeck): ServerPlayerInGame {
 		let serverPlayerInGame
 		if (targetPlayer instanceof ServerBotPlayer) {
 			serverPlayerInGame = ServerBotPlayerInGame.newInstance(this, targetPlayer, deck)
@@ -79,6 +84,7 @@ export default class ServerGame extends Game {
 		this.board.rows[0].setOwner(playerTwo)
 
 		this.players.forEach(playerInGame => {
+			playerInGame.cardDeck.shuffle()
 			playerInGame.drawCards(10)
 		})
 		this.startNewTurnPhase()
@@ -252,6 +258,10 @@ export default class ServerGame extends Game {
 	}
 
 	public findCardById(cardId: string): ServerCard | null {
+		const cardInStack = this.cardPlay.cardResolveStack.findCardById(cardId)
+		if (cardInStack) {
+			return cardInStack.card
+		}
 		for (let i = 0; i < this.players.length; i++) {
 			const player = this.players[i]
 			const cardInHand = player.cardHand.findCardById(cardId)

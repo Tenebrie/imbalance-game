@@ -1,13 +1,18 @@
 import ServerCard from './ServerCard'
-import ServerPlayer from '../players/ServerPlayer'
+import ServerGame from './ServerGame'
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
+import ServerOwnedCard from './ServerOwnedCard'
 
 export default class ServerCardHand {
+	game: ServerGame
 	cards: ServerCard[]
-	player: ServerPlayer
+	owner: ServerPlayerInGame
 
-	constructor(player: ServerPlayer, cards: ServerCard[]) {
+	constructor(game: ServerGame, playerInGame: ServerPlayerInGame, cards: ServerCard[]) {
+		this.game = game
 		this.cards = cards
-		this.player = player
+		this.owner = playerInGame
 	}
 
 	public addCard(card: ServerCard): void {
@@ -24,6 +29,8 @@ export default class ServerCardHand {
 
 	public removeCard(card: ServerCard): void {
 		this.cards.splice(this.cards.indexOf(card), 1)
+
+		OutgoingMessageHandlers.notifyAboutCardInHandDestroyed(new ServerOwnedCard(card, this.owner))
 	}
 
 	public getRandomCard(): ServerCard | null {

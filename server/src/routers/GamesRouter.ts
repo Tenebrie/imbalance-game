@@ -1,14 +1,13 @@
 import express, { Response } from 'express'
-const router = express.Router()
-
 import ServerPlayer from '../game/players/ServerPlayer'
 import ServerGameMessage from '../game/models/messages/ServerGameMessage'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequestMiddleware'
 import ServerGame from '../game/models/ServerGame'
-import VoidPlayer from '../game/utils/VoidPlayer'
-import ServerCardDeck from '../game/models/ServerCardDeck'
 import ServerBotPlayer from '../game/utils/ServerBotPlayer'
+import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
+
+const router = express.Router()
 
 router.use(RequirePlayerTokenMiddleware)
 
@@ -27,8 +26,8 @@ router.post('/', (req, res: Response, next) => {
 
 	const game = gameLibrary.createOwnedGame(player, gameName.trim())
 
-	if (gameMode === 'test') {
-		game.addPlayer(new ServerBotPlayer(), ServerCardDeck.defaultDeck(game))
+	if (gameMode === 'sp_ai') {
+		game.addPlayer(new ServerBotPlayer(), ServerTemplateCardDeck.botDeck(game))
 	}
 
 	res.json({ data: ServerGameMessage.fromServerGame(game) })

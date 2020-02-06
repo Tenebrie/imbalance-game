@@ -206,7 +206,11 @@ export default class RenderedCard extends Card {
 
 		let texts: (ScalingText | RichText)[] = []
 
-		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED || displayMode === CardDisplayMode.ANNOUNCED) {
+		if (displayMode === CardDisplayMode.IN_HAND ||
+				displayMode === CardDisplayMode.IN_HAND_HOVERED ||
+				displayMode === CardDisplayMode.INSPECTED ||
+				displayMode === CardDisplayMode.ANNOUNCED ||
+				displayMode === CardDisplayMode.RESOLVING) {
 			this.switchToCardMode()
 			texts = [this.powerText, this.attackText, this.attackRangeText, this.healthArmorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {

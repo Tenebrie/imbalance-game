@@ -28,6 +28,22 @@
 	"card.title.heroIgnea": "The Flameweaver",
 	"card.description.heroIgnea": "In addition to normal action, {name} may light any enemy row aflame, dealing 1 damage to every affected unit",
 
+	"card.name.heroRider1Famine": "Famine",
+	"card.title.heroRider1Famine": "The First Horseman",
+	"card.description.heroRider1Famine": "*On play:*\nPlay *Conquest* from your deck. Then, deal *1* Damage to an enemy unit",
+
+	"card.name.heroRider2Conquest": "Conquest",
+	"card.title.heroRider2Conquest": "The Second Horseman",
+	"card.description.heroRider2Conquest": "*On play:*\nPlay *War* from your deck. Then, deal *1* Damage to an enemy unit",
+
+	"card.name.heroRider3War": "War",
+	"card.title.heroRider3War": "The Third Horseman",
+	"card.description.heroRider3War": "*On play:*\nPlay *Death* from your deck. Then, deal *1* Damage to an enemy unit",
+
+	"card.name.heroRider4Death": "Death",
+	"card.title.heroRider4Death": "The Last Horseman",
+	"card.description.heroRider4Death": "*On play:*\nPlay *Famine* from your deck. Then, deal *1* Damage to an enemy unit",
+
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "Every *3* turns {name} survives on the board, it draws a card",
 

@@ -19,6 +19,7 @@ import MouseHover from '@/Pixi/input/MouseHover'
 const UNIT_ZINDEX = 2
 const TARGETING_ARROW_ZINDEX = 10
 const HOVERED_CARD_ZINDEX = 50
+const RESOLVING_CARD_ZINDEX = 100
 const GRABBED_CARD_ZINDEX = 150
 const INSPECTED_CARD_ZINDEX = 200
 
@@ -148,6 +149,7 @@ export default class Renderer {
 		this.renderTargetingArrow()
 		this.renderInspectedCard()
 		this.renderAnnouncedCard()
+		this.renderResolveStack()
 	}
 
 	public resize(): void {
@@ -534,6 +536,50 @@ export default class Renderer {
 		}
 
 		const hitboxSprite = announcedCard.hitboxSprite
+		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
+		hitboxSprite.scale = sprite.scale
+		hitboxSprite.zIndex = container.zIndex - 1
+	}
+
+	public renderResolveStack(): void {
+		for (let i = 0; i < Core.resolveStack.cards.length; i++) {
+			const card = Core.resolveStack.cards[i]
+			this.renderResolveStackCard(card, i)
+		}
+	}
+
+	public renderResolveStackCard(card: RenderedCard, index: number): void {
+		const container = card.coreContainer
+		const sprite = card.sprite
+		sprite.alpha = 1
+		sprite.tint = 0xFFFFFF
+		sprite.scale.set(Settings.superSamplingLevel)
+		container.visible = true
+		container.zIndex = RESOLVING_CARD_ZINDEX + index
+
+		const cardHeight = this.getScreenHeight() * this.PLAYER_HAND_WINDOW_FRACTION
+		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
+		sprite.height = cardHeight
+
+		const horizontalOffset = 50 * Settings.superSamplingLevel * index
+
+		let verticalOffset = this.getScreenHeight() * 0.20
+		if (Core.opponent.isTurnActive) {
+			verticalOffset *= -1
+		}
+
+		if (card.displayMode !== CardDisplayMode.RESOLVING) {
+			container.position.x = -sprite.width / 2 + horizontalOffset
+			container.position.y = this.getScreenHeight() / 2 + verticalOffset
+			card.setDisplayMode(CardDisplayMode.RESOLVING)
+		} else {
+			const targetX = sprite.width / 2 + 50 * Settings.superSamplingLevel + horizontalOffset
+
+			container.position.x += (targetX - container.position.x) * this.deltaTimeFraction * 7
+			container.position.y = this.getScreenHeight() / 2 + verticalOffset
+		}
+
+		const hitboxSprite = card.hitboxSprite
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1

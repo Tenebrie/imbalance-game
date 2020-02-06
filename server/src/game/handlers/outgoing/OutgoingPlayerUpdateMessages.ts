@@ -6,23 +6,6 @@ import ServerCardTarget from '../../models/ServerCardTarget'
 import CardTargetMessage from '../../shared/models/network/CardTargetMessage'
 
 export default {
-	notifyAboutRequiredTarget(player: ServerPlayer, validTargets: ServerCardTarget[]) {
-		const messages = validTargets.map(target => new CardTargetMessage(target))
-		player.sendMessage({
-			type: 'update/player/self/requiredTarget',
-			data: messages,
-			highPriority: true
-		})
-	},
-
-	notifyAboutRequiredTargetAccepted(player: ServerPlayer) {
-		player.sendMessage({
-			type: 'update/player/self/requiredTargetAccepted',
-			data: null,
-			highPriority: true
-		})
-	},
-
 	notifyAboutPlayerMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
 		player.sendMessage({
 			type: 'update/player/self/morale',

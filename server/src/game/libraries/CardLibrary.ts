@@ -19,6 +19,10 @@ import BuildingTreeOfLife from '../cards/experimental/buildings/BuildingTreeOfLi
 import UnitVampireFledgling from '../cards/experimental/units/UnitVampireFledgling'
 import HeroIgnea from '../cards/experimental/heroes/HeroIgnea'
 import UnitPriestessOfAedine from '../cards/experimental/units/UnitPriestessOfAidine'
+import HeroRider1Famine from '../cards/experimental/heroes/HeroRider1Famine'
+import HeroRider2Conquest from '../cards/experimental/heroes/HeroRider2Conquest'
+import HeroRider3War from '../cards/experimental/heroes/HeroRider3War'
+import HeroRider4Death from '../cards/experimental/heroes/HeroRider4Death'
 
 export default class GameLibrary {
 	static cards: any[]
@@ -28,6 +32,10 @@ export default class GameLibrary {
 			HeroSatia,
 			HeroNightMaiden,
 			HeroIgnea,
+			HeroRider1Famine,
+			HeroRider2Conquest,
+			HeroRider3War,
+			HeroRider4Death,
 			UnitPossessedVulture,
 			UnitRavenMessenger,
 			UnitMadBerserker,
@@ -52,12 +60,12 @@ export default class GameLibrary {
 		})
 	}
 
-	public static createCard(card: ServerCard): ServerCard {
+	public static instantiate(card: ServerCard): ServerCard {
 		const cardClass = card.constructor.name.substr(0, 1).toLowerCase() + card.constructor.name.substr(1)
-		return this.createCardByClass(card.game, cardClass)
+		return this.instantiateByClass(card.game, cardClass)
 	}
 
-	public static createCardByClass(game: ServerGame, cardClass: string): ServerCard {
+	public static instantiateByClass(game: ServerGame, cardClass: string): ServerCard {
 		const original = GameLibrary.cards.find(card => {
 			return card.cardClass === cardClass
 		})

@@ -19,7 +19,7 @@ import AnimationMessage from '@/Pixi/shared/models/network/AnimationMessage'
 import AnimationType from '@/Pixi/shared/enums/AnimationType'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardTargetMessage from '@/Pixi/shared/models/network/CardTargetMessage'
-import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -132,15 +132,6 @@ const handlers: {[ index: string ]: any } = {
 		Core.opponent.startTurn()
 	},
 
-	'update/player/self/requiredTarget': (data: CardTargetMessage[]) => {
-		const validTargets = data.map(data => ClientCardTarget.fromMessage(data))
-		Core.input.enableForcedTargetingMode(validTargets)
-	},
-
-	'update/player/self/requiredTargetAccepted': (data: void) => {
-		Core.input.disableForcedTargetingMode()
-	},
-
 	'update/player/self/turnEnded': (data: void) => {
 		Core.player.endTurn()
 	},
@@ -216,6 +207,22 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/player/opponent/graveyard/cardAdded': (data: CardMessage) => {
 		Core.opponent.cardGraveyard.addCard(data)
+	},
+
+	'update/stack/cardResolving': (data: CardMessage) => {
+		Core.resolveStack.addCard(RenderedCard.fromMessage(data))
+	},
+
+	'update/stack/cardTargets': (data: CardTargetMessage[]) => {
+		const validTargets = data.map(data => ClientCardTarget.fromMessage(data))
+		Core.input.enableForcedTargetingMode(validTargets)
+	},
+
+	'update/stack/cardResolved': (data: CardMessage) => {
+		Core.resolveStack.destroyCardById(data.id)
+		if (Core.resolveStack.isEmpty()) {
+			Core.input.disableForcedTargetingMode()
+		}
 	},
 
 	'animation/generic': (data: AnimationMessage) => {

@@ -7,33 +7,36 @@ import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
 import ServerCardTarget from '../models/ServerCardTarget'
 import CardTargetMessage from '../shared/models/network/CardTargetMessage'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
+import ServerOwnedCard from '../models/ServerOwnedCard'
 
 export default {
 	'post/chat': (data: string, game: ServerGame, playerInGame: ServerPlayerInGame) => {
 		game.createChatEntry(playerInGame.player, data)
 	},
 
-	'post/playCard': (data: CardPlayedMessage, game: ServerGame, player: ServerPlayerInGame) => {
-		const card = player.cardHand.findCardById(data.id)
-		if (!card || player.turnEnded || player.targetRequired ||
-			game.turnPhase !== GameTurnPhase.DEPLOY ||
-			(card.cardType === CardType.SPELL && !player.canPlaySpell(card)) ||
-			(card.cardType === CardType.UNIT && !player.canPlayUnit(card, data.rowIndex, data.unitIndex))) {
-
+	'post/playCard': (data: CardPlayedMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
+		const card = playerInGame.cardHand.findCardById(data.id)
+		if (!card) {
 			return
 		}
 
-		if (card.cardType === CardType.SPELL) {
-			player.playSpell(card)
-		} else if (card.cardType === CardType.UNIT) {
-			player.playUnit(card, data.rowIndex, data.unitIndex)
+		if (playerInGame.turnEnded || playerInGame.targetRequired ||
+			game.turnPhase !== GameTurnPhase.DEPLOY ||
+			(card.cardType === CardType.SPELL && !playerInGame.canPlaySpell(card)) ||
+			(card.cardType === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex, data.unitIndex))) {
+
+			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
+			return
 		}
 
-		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, player)
-		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(game, game.getOpponent(player))
+		const ownedCard = new ServerOwnedCard(card, playerInGame)
+		game.cardPlay.playCard(ownedCard, data.rowIndex, data.unitIndex)
 
-		if (!player.isAnyActionsAvailable()) {
-			player.endTurn()
+		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, playerInGame)
+		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(game, game.getOpponent(playerInGame))
+
+		if (!playerInGame.isAnyActionsAvailable()) {
+			playerInGame.endTurn()
 			game.advanceTurn()
 		}
 	},
@@ -55,16 +58,16 @@ export default {
 		}
 	},
 
-	'post/cardTarget': (data: CardTargetMessage, game: ServerGame, player: ServerPlayerInGame) => {
-		if (!player.targetRequired) {
+	'post/cardTarget': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
+		if (!playerInGame.targetRequired) {
 			return
 		}
 
 		const target = ServerCardTarget.fromMessage(game, data)
-		player.selectCardTarget(target)
+		game.cardPlay.selectCardTarget(playerInGame, target)
 
-		if (!player.isAnyActionsAvailable()) {
-			player.endTurn()
+		if (!playerInGame.isAnyActionsAvailable()) {
+			playerInGame.endTurn()
 			game.advanceTurn()
 		}
 	},

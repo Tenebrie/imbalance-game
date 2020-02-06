@@ -5,16 +5,12 @@ import PlayerInGame from '../shared/models/PlayerInGame'
 import ServerCardHand from '../models/ServerCardHand'
 import ServerCardDeck from '../models/ServerCardDeck'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from '../models/ServerDamageSource'
 import Ruleset from '../Ruleset'
-import ServerAnimation from '../models/ServerAnimation'
 import ServerCardGraveyard from '../models/ServerCardGraveyard'
-import TargetMode from '../shared/enums/TargetMode'
-import TargetType from '../shared/enums/TargetType'
-import TargetValidatorArguments from '../../types/TargetValidatorArguments'
 import ServerCardTarget from '../models/ServerCardTarget'
-import CardType from '../shared/enums/CardType'
+import CardDeck from '../shared/models/CardDeck'
+import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 
 export default class ServerPlayerInGame extends PlayerInGame {
 	initialized = false
@@ -28,23 +24,24 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	timeUnits: number
 	turnEnded: boolean
 
-	targetRequired: boolean
-	validRequiredTargets: ServerCardTarget[]
-	targetsSelected: ServerCardTarget[]
-
-	constructor(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
+	constructor(game: ServerGame, player: ServerPlayer) {
 		super(player)
 		this.game = game
 		this.player = player
-		this.cardHand = new ServerCardHand(this.player, [])
-		this.cardDeck = cardDeck
+		this.cardHand = new ServerCardHand(game, this, [])
+		this.cardDeck = new ServerCardDeck(game, this, [])
 		this.cardGraveyard = new ServerCardGraveyard(this)
 		this.morale = Ruleset.STARTING_PLAYER_MORALE
 		this.timeUnits = 0
 		this.turnEnded = false
+	}
 
-		this.targetRequired = false
-		this.targetsSelected = []
+	public get targetRequired(): boolean {
+		return !!this.game.cardPlay.cardResolveStack.currentCard
+	}
+
+	public get opponent(): ServerPlayerInGame {
+		return this.game.getOpponent(this)
 	}
 
 	public canPlaySpell(card: ServerCard): boolean {
@@ -58,125 +55,6 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		}
 
 		return this.timeUnits > 0
-	}
-
-	public playUnit(card: ServerCard, rowIndex: number, unitIndex: number): void {
-		/* Remove card from hand */
-		this.cardHand.removeCard(card)
-
-		/* Announce card to opponent */
-		const opponent = this.game.getOpponent(this)
-		card.reveal(this, opponent)
-		OutgoingMessageHandlers.triggerAnimation(opponent.player, ServerAnimation.cardPlay(card))
-
-		/* Insert the card into the board */
-		const gameBoardRow = this.game.board.rows[rowIndex]
-		const unit = gameBoardRow.playCard(card, this, unitIndex)
-
-		/* Advance the time */
-		this.setTimeUnits(this.timeUnits - 1)
-
-		/* Send notifications */
-		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
-		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
-
-		OutgoingMessageHandlers.triggerAnimation(opponent.player, ServerAnimation.delay())
-
-		/* Require play effect targets */
-		this.requirePlayTargets(card, { thisCardOwner: this, thisUnit: unit })
-	}
-
-	public playSpell(card: ServerCard): void {
-		/* Remove card from hand */
-		this.cardHand.removeCard(card)
-
-		/* Announce card to opponent */
-		const opponent = this.game.getOpponent(this)
-		card.reveal(this, opponent)
-		OutgoingMessageHandlers.triggerAnimation(opponent.player, ServerAnimation.cardPlay(card))
-
-		/* Invoke the card onPlay effect */
-		runCardEventHandler(() => card.onPlaySpell(this))
-
-		/* Advance the time */
-		this.setTimeUnits(this.timeUnits - 1)
-
-		/* Send notifications */
-		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
-		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
-
-		/* Spells go directly to the graveyard */
-		this.cardGraveyard.addCard(card)
-		OutgoingMessageHandlers.notifyAboutPlayerCardInGraveyard(this.player, card)
-		OutgoingMessageHandlers.notifyAboutOpponentCardInGraveyard(this.player, card)
-
-		/* Require play effect targets */
-		this.requirePlayTargets(card, { thisCardOwner: this })
-	}
-
-	public selectCardTarget(target: ServerCardTarget): void {
-		const originalTarget = this.validRequiredTargets.find(validTarget => validTarget.isEqual(target))
-		if (!originalTarget) {
-			OutgoingMessageHandlers.notifyAboutRequiredTarget(this.player, this.validRequiredTargets)
-			return
-		}
-
-		const sourceUnit = target.sourceUnit
-		const sourceCard = target.sourceCard || sourceUnit.card
-
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetCard) {
-			sourceCard.onUnitPlayTargetCardSelected(sourceUnit, target.targetCard)
-		}
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetUnit) {
-			sourceCard.onUnitPlayTargetUnitSelected(sourceUnit, target.targetUnit)
-		}
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetRow) {
-			sourceCard.onUnitPlayTargetRowSelected(sourceUnit, target.targetRow)
-		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetCard) {
-			sourceCard.onSpellPlayTargetCardSelected(this, target.targetCard)
-		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetUnit) {
-			sourceCard.onSpellPlayTargetUnitSelected(this, target.targetUnit)
-		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetRow) {
-			sourceCard.onSpellPlayTargetRowSelected(this, target.targetRow)
-		}
-
-		this.targetsSelected.push(target)
-		this.requirePlayTargets(sourceCard, { thisCardOwner: this, thisUnit: sourceUnit })
-
-		if (this.targetRequired) {
-			return
-		}
-
-		if (sourceCard.cardType === CardType.UNIT) {
-			sourceCard.onUnitPlayTargetsConfirmed(sourceUnit)
-		} else if (sourceCard.cardType === CardType.SPELL) {
-			sourceCard.onSpellPlayTargetsConfirmed(this)
-		}
-	}
-
-	public requirePlayTargets(card: ServerCard, args: TargetValidatorArguments): void {
-		let validTargets: ServerCardTarget[] = []
-		const targetDefinition = card.getPlayRequiredTargetDefinition()
-
-		if (targetDefinition.getTargetCount() > 0) {
-			validTargets = []
-				.concat(card.getValidTargets(TargetMode.ON_PLAY, TargetType.UNIT, targetDefinition, args, this.targetsSelected))
-				.concat(card.getValidTargets(TargetMode.ON_PLAY, TargetType.BOARD_ROW, targetDefinition, args, this.targetsSelected))
-		}
-
-		if (validTargets.length > 0) {
-			this.targetRequired = true
-			this.validRequiredTargets = validTargets
-			OutgoingMessageHandlers.notifyAboutRequiredTarget(this.player, validTargets)
-		} else if (this.targetRequired) {
-			this.targetRequired = false
-			this.targetsSelected = []
-			this.validRequiredTargets = []
-			OutgoingMessageHandlers.notifyAboutRequiredTargetAccepted(this.player)
-		}
 	}
 
 	public drawCards(count: number): void {
@@ -247,7 +125,9 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		}
 	}
 
-	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
-		return new ServerPlayerInGame(game, player, cardDeck)
+	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {
+		const playerInGame = new ServerPlayerInGame(game, player)
+		playerInGame.cardDeck.instantiateFrom(cardDeck)
+		return playerInGame
 	}
 }
