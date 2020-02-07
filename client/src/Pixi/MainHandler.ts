@@ -40,7 +40,13 @@ export default class MainHandler {
 
 	private executeNextMessage(): void {
 		const message = this.queuedMessages.shift()
-		message.handler(message.data)
+
+		try {
+			message.handler(message.data)
+		} catch (e) {
+			console.error(e)
+		}
+
 		if (this.messageCooldown === 0 && this.queuedMessages.length > 0) {
 			this.executeNextMessage()
 		}

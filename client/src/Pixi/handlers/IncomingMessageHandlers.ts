@@ -113,6 +113,10 @@ const handlers: {[ index: string ]: any } = {
 	'update/board/card/power': (data: CardMessage) => {
 		const cardOnBoard = Core.board.findUnitById(data.id)
 		if (!cardOnBoard) { return }
+		if (typeof (data.power) === 'undefined') {
+			console.warn(`Trying to set card ${data.id} power to undefined value!`)
+			return
+		}
 
 		cardOnBoard.setPower(data.power)
 	},

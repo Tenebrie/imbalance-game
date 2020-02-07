@@ -69,7 +69,11 @@ export default class Core {
 		}
 
 		if (messageHighPriority) {
-			handler(messageData)
+			try {
+				handler(messageData)
+			} catch (e) {
+				console.error(e)
+			}
 			return
 		}
 

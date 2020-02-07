@@ -61,7 +61,7 @@ export default class ServerGameBoardOrders {
 
 		const previousTargets = this.getOrdersPerformedByUnit(orderedUnit)
 		const targetDefinition = orderedUnit.card.getValidOrderTargetDefinition()
-		if (!targetDefinition.validate(TargetMode.ATTACK, TargetType.UNIT, { thisUnit: orderedUnit, targetUnit, previousTargets })) {
+		if (targetMode === TargetMode.ORDER_ATTACK && !targetDefinition.validate(TargetMode.ATTACK_ORDERED, TargetType.UNIT, { thisUnit: orderedUnit, targetUnit, previousTargets })) {
 			return
 		}
 		runCardEventHandler(() => targetUnit.card.onBeforeBeingAttacked(targetUnit, orderedUnit))
@@ -87,7 +87,7 @@ export default class ServerGameBoardOrders {
 
 		const previousTargets = this.getOrdersPerformedByUnit(orderedUnit)
 		const targetDefinition = orderedUnit.card.getValidOrderTargetDefinition()
-		let validTargets = targetRow.cards.filter(unit => targetDefinition.validate(TargetMode.ATTACK, TargetType.UNIT, { thisUnit: orderedUnit, targetRow: targetRow, targetUnit: unit, previousTargets }))
+		let validTargets = targetRow.cards.filter(unit => targetDefinition.validate(TargetMode.ATTACK_ORDERED, TargetType.UNIT, { thisUnit: orderedUnit, targetRow: targetRow, targetUnit: unit, previousTargets }))
 		if (validTargets.length === 0) {
 			return
 		}

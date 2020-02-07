@@ -123,7 +123,7 @@ export default class ServerGameCardPlay {
 		}
 	}
 
-	private getValidTargets(): ServerCardTarget[] {
+	public getValidTargets(): ServerCardTarget[] {
 		if (!this.cardResolveStack.hasCards()) {
 			return []
 		}

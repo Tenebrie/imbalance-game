@@ -13,8 +13,8 @@ export default class UnitTwinBowArcher extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
 		this.basePower = 14
-		this.baseAttack = 7
-		this.baseAttackRange = 2
+		this.baseAttack = 7 // 70
+		this.baseAttackRange = 2 // 30
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {

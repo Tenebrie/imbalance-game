@@ -11,14 +11,14 @@ import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTarg
 export default class HeroIgnea extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 17
-		this.baseAttack = 2
-		this.baseAttackRange = 3
+		this.basePower = 27
+		this.baseAttack = 2 // 10 (with effect - 25)
+		this.baseAttackRange = 3 // 50
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
 		return ServerTargetDefinition.defaultUnitOrder(this.game)
-			.multiTarget(2)
+			.actions(2)
 			.allow(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW)
 			.validate(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, (args: TargetValidatorArguments): boolean => {
 				const thisUnit = args.thisUnit

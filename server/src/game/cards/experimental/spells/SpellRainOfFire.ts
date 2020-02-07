@@ -24,7 +24,7 @@ export default class SpellRainOfFire extends ServerCard {
 		return CardPlayTargetDefinitionBuilder.base(this.game)
 			.enemyUnit()
 			.unique(TargetType.UNIT)
-			.multiTarget(this.targets)
+			.actions(this.targets)
 			.allow(TargetType.UNIT, this.targets)
 	}
 

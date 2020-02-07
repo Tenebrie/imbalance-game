@@ -2,7 +2,6 @@ import CardType from '../../../shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
-import CardTribe from '../../../shared/enums/CardTribe'
 
 export default class UnitRavenMessenger extends ServerCard {
 	turnsLeft: number
@@ -12,7 +11,6 @@ export default class UnitRavenMessenger extends ServerCard {
 		this.basePower = 18
 		this.baseAttack = 4
 		this.baseAttackRange = 2
-		this.cardTribes = [CardTribe.BIRD]
 
 		this.turnsLeft = 3
 	}

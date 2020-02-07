@@ -35,12 +35,12 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		return new ServerTargetDefinition(this.game, this.totalTargetCount, this.orderLabels, this.targetOfTypeCount, this.validators, this.validSimultaneousTargets)
 	}
 
-	public singleTarget(): StandardTargetDefinitionBuilder {
+	public singleAction(): StandardTargetDefinitionBuilder {
 		this.totalTargetCount = 1
 		return this
 	}
 
-	public multiTarget(count: number): StandardTargetDefinitionBuilder {
+	public actions(count: number): StandardTargetDefinitionBuilder {
 		this.totalTargetCount = count
 		return this
 	}

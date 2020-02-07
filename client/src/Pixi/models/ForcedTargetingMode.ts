@@ -3,6 +3,7 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import MouseHover from '@/Pixi/input/MouseHover'
 import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
+import RichTextVariables from '@/Pixi/shared/models/RichTextVariables'
 
 export default class ForcedTargetingMode {
 	validTargets: ClientCardTarget[] = []
@@ -51,6 +52,17 @@ export default class ForcedTargetingMode {
 			return (target.targetCard && target.targetCard === hoveredCard) || (target.targetUnit && target.targetUnit === hoveredUnit) || (target.targetRow && target.targetRow === hoveredRow)
 		})
 		return hoveredTarget ? hoveredTarget.targetLabel : ''
+	}
+
+	public getDisplayedLabelVariables(): RichTextVariables {
+		const hoveredCard = MouseHover.getHoveredCard()
+		const hoveredUnit = MouseHover.getHoveredUnit()
+		const hoveredRow = MouseHover.getHoveredRow()
+
+		const hoveredTarget = this.validTargets.find(target => {
+			return (target.targetCard && target.targetCard === hoveredCard) || (target.targetUnit && target.targetUnit === hoveredUnit) || (target.targetRow && target.targetRow === hoveredRow)
+		})
+		return hoveredTarget ? hoveredTarget.sourceCard.cardTextVariables : {}
 	}
 
 	public confirmTarget(): void {

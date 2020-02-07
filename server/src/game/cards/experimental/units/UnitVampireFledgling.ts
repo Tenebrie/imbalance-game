@@ -16,15 +16,14 @@ export default class UnitVampireFledgling extends ServerCard {
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 16
+		this.basePower = 28
 		this.baseAttack = 3
-		this.attackRange = 1
 		this.cardTribes = [CardTribe.UNDEAD, CardTribe.VAMPIRE]
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
 		return ServerTargetDefinition.defaultUnitOrder(this.game)
-			.multiTarget(2)
+			.actions(2)
 			.allow(TargetMode.ORDER_DRAIN, TargetType.UNIT)
 			.allowSimultaneously([TargetMode.ORDER_ATTACK, TargetType.UNIT], [TargetMode.ORDER_DRAIN, TargetType.UNIT])
 			.allowSimultaneously([TargetMode.ORDER_MOVE, TargetType.BOARD_ROW], [TargetMode.ORDER_DRAIN, TargetType.UNIT])

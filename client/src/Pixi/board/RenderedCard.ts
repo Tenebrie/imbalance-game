@@ -11,6 +11,7 @@ import Utils from '@/utils/Utils'
 import CardAttributes from '@/Pixi/render/CardAttributes'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 import ScalingText from '@/Pixi/render/ScalingText'
+import RichTextVariables from '@/Pixi/shared/models/RichTextVariables'
 
 export default class RenderedCard extends Card {
 	public coreContainer: PIXI.Container
@@ -66,7 +67,7 @@ export default class RenderedCard extends Card {
 		this.cardNameText = this.createCardNameText(Localization.getString(this.cardName))
 		this.cardTitleText = this.createCardNameText(Localization.getString(this.cardTitle))
 		this.cardTribeTexts = this.cardTribes.map(tribe => this.createCardNameText(Localization.getString(`card.tribe.${tribe}`)))
-		this.cardDescriptionText = new RichText(this, Localization.getString(this.cardDescription), 350)
+		this.cardDescriptionText = new RichText(Localization.getString(this.cardDescription), 350, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.alpha = 0
@@ -127,6 +128,13 @@ export default class RenderedCard extends Card {
 		this.cardModeTextContainer.addChild(this.attackRangeText)
 		this.cardModeTextContainer.addChild(this.healthArmorText)
 		this.coreContainer.addChild(this.cardModeTextContainer)
+	}
+
+	public getDescriptionTextVariables(): RichTextVariables {
+		return {
+			...this.cardTextVariables,
+			name: Localization.getString(this.cardName)
+		}
 	}
 
 	public getPosition(): PIXI.Point {

@@ -62,7 +62,7 @@ export default class ServerTargetDefinition {
 
 	public static defaultUnitOrder(game: ServerGame): StandardTargetDefinitionBuilder {
 		return StandardTargetDefinitionBuilder.base(game)
-			.multiTarget(1)
+			.actions(1)
 			.allow(TargetMode.ORDER_MOVE, TargetType.BOARD_ROW)
 			.validate(TargetMode.ORDER_MOVE, TargetType.BOARD_ROW, (args: TargetValidatorArguments) => {
 				const thisUnit = args.thisUnit

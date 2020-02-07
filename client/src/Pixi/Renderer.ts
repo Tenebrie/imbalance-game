@@ -15,6 +15,7 @@ import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import TargetMode from '@/Pixi/shared/enums/TargetMode'
 import MouseHover from '@/Pixi/input/MouseHover'
+import RichText from '@/Pixi/render/RichText'
 
 const UNIT_ZINDEX = 2
 const TARGETING_ARROW_ZINDEX = 10
@@ -30,7 +31,7 @@ export default class Renderer {
 	container: HTMLElement
 
 	timeLabel: PIXI.Text
-	actionLabel: PIXI.Text
+	actionLabel: RichText
 	playerNameLabel: PIXI.Text
 	opponentNameLabel: PIXI.Text
 
@@ -76,13 +77,9 @@ export default class Renderer {
 		this.rootContainer.addChild(this.timeLabel)
 
 		/* Action label */
-		this.actionLabel = new PIXI.Text('', {
-			fontFamily: 'Arial',
-			fontSize: 24 * Settings.superSamplingLevel,
-			fill: 0xFFFFFF
-		})
-		this.actionLabel.anchor.set(0.5, 1)
+		this.actionLabel = new RichText('Test text', 2000, {})
 		this.actionLabel.zIndex = 85
+		this.actionLabel.setFont(24 * Settings.superSamplingLevel, 12 * Settings.superSamplingLevel)
 		this.rootContainer.addChild(this.actionLabel)
 
 		/* Player name label */
@@ -287,7 +284,7 @@ export default class Renderer {
 
 		/* Action label */
 		const labelPosition = Core.input.mousePosition.clone()
-		labelPosition.y -= 16
+		labelPosition.y -= 32
 		this.actionLabel.position.copyFrom(labelPosition)
 	}
 
@@ -459,15 +456,15 @@ export default class Renderer {
 		targetingArrow.targetPoint.zIndex = TARGETING_ARROW_ZINDEX
 	}
 
-	private updateTargetingLabel(label: PIXI.Text): void {
+	private updateTargetingLabel(label: RichText): void {
 		label.style.fill = 0x55FF55
 
-		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredUnit = MouseHover.getHoveredUnit()
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		if (Core.input.forcedTargetingMode) {
 			label.text = Localization.getString(Core.input.forcedTargetingMode.getDisplayedLabel())
+			label.textVariables = Core.input.forcedTargetingMode.getDisplayedLabelVariables()
 			return
 		}
 

@@ -1,5 +1,5 @@
 type RichTextVariables = {
-	[index: string]: number
+	[index: string]: string | number
 }
 
 export default RichTextVariables

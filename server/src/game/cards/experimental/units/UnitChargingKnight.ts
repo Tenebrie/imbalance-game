@@ -14,20 +14,14 @@ export default class UnitChargingKnight extends ServerCard {
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 26
-		this.baseAttack = 4
+		this.basePower = 35
+		this.baseAttack = 6 // 30 (with effect - 45)
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
 		return ServerTargetDefinition.defaultUnitOrder(this.game)
-			.multiTarget(2)
+			.actions(2)
 			.allowSimultaneously([TargetMode.ORDER_ATTACK, TargetType.UNIT], [TargetMode.ORDER_MOVE, TargetType.BOARD_ROW])
-	}
-
-	onAfterPerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
-		if (this.hasDamageBonus) {
-			target.dealDamage(ServerDamageInstance.fromUnit(this.attack, thisUnit))
-		}
 	}
 
 	onAfterPerformingMove(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void {
@@ -38,5 +32,6 @@ export default class UnitChargingKnight extends ServerCard {
 		if (this.hasDamageBonus) {
 			return this.attack
 		}
+		this.hasDamageBonus = false
 	}
 }

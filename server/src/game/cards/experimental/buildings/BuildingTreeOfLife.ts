@@ -21,7 +21,7 @@ export default class BuildingTreeOfLife extends ServerCard {
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
 		return StandardTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
+			.singleAction()
 			.allow(TargetMode.ORDER_SUPPORT, TargetType.BOARD_ROW)
 			.label(TargetMode.ORDER_SUPPORT, TargetType.BOARD_ROW, 'card.target.buildingTreeOfLife.support.row')
 			.validate(TargetMode.ORDER_SUPPORT, TargetType.BOARD_ROW, args => {

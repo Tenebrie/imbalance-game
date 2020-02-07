@@ -6,24 +6,26 @@ import GameTurnPhase from '../../../shared/enums/GameTurnPhase'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 
 export default class UnitUnfeelingWarrior extends ServerCard {
-	attacksSurvived = 0
+	bonusPower = 5
+	hasBeenAttacked = false
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
 		this.basePower = 28
 		this.baseAttack = 5
+		this.cardTextVariables = {
+			bonusPower: this.bonusPower
+		}
 	}
 
-	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void {
-		if (phase !== GameTurnPhase.TURN_START) {
-			return
+	onTurnStarted(thisUnit: ServerCardOnBoard): void {
+		if (this.hasBeenAttacked) {
+			thisUnit.setPower(thisUnit.card.power + this.bonusPower)
 		}
-
-		thisUnit.heal(ServerDamageInstance.fromUnit(this.attacksSurvived * 2, thisUnit))
-		this.attacksSurvived = 0
+		this.hasBeenAttacked = false
 	}
 
 	onAfterBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void {
-		this.attacksSurvived += 1
+		this.hasBeenAttacked = true
 	}
 }

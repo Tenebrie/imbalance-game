@@ -13,13 +13,13 @@ export default class CardPlayTargetDefinitionBuilder implements TargetDefinition
 		return this.builder.build()
 	}
 
-	public singleTarget(): CardPlayTargetDefinitionBuilder {
-		this.builder.singleTarget()
+	public singleAction(): CardPlayTargetDefinitionBuilder {
+		this.builder.singleAction()
 		return this
 	}
 
-	public multiTarget(count: number): CardPlayTargetDefinitionBuilder {
-		this.builder.multiTarget(count)
+	public actions(count: number): CardPlayTargetDefinitionBuilder {
+		this.builder.actions(count)
 		return this
 	}
 

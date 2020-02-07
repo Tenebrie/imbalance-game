@@ -22,7 +22,7 @@ export default class UnitSpinningBarbarian extends ServerCard {
 				const targetRow = args.targetRow!
 				return targetRow.owner === this.game.getOpponent(thisUnit.owner) && targetRow.cards.length > 0 && Math.abs(thisUnit.rowIndex - targetRow.index) <= thisUnit.card.attackRange
 			})
-			.validate(TargetMode.ATTACK, TargetType.UNIT, args => {
+			.validate(TargetMode.ATTACK_ORDERED, TargetType.UNIT, args => {
 				const thisUnit = args.thisUnit
 				const targetRow = args.targetRow!
 				const targetUnit = args.targetUnit!

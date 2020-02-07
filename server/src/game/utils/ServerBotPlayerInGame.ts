@@ -12,6 +12,7 @@ import ServerGameBoardRow from '../models/ServerGameBoardRow'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
+import CardTargetMessage from '../shared/models/network/CardTargetMessage'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -32,6 +33,9 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 			// TODO: Teach bot how to target something for battlecries
 			while (this.timeUnits > 0 && this.cardHand.cards.length > 0) {
 				this.botPlaysCard()
+				while (this.game.cardPlay.cardResolveStack.hasCards()) {
+					this.botChoosesTarget()
+				}
 			}
 			this.botOrdersAttacks()
 			this.botOrdersMove()
@@ -48,10 +52,20 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const selectedCard = cards[0]
 
 		const ownedRows = this.sortOwnedRows(this.game.board.rows.filter(row => row.owner === this))
+		if (ownedRows.length === 0) {
+			return
+		}
+
 		const distanceFromFront = selectedCard.attackRange - 1
 		const targetRow = ownedRows[Math.min(distanceFromFront, ownedRows.length - 1)]
 		const cardPlayerMessage = CardPlayedMessage.fromCardOnRow(selectedCard, targetRow.index, targetRow.cards.length)
 		IncomingMessageHandlers['post/playCard'](cardPlayerMessage, this.game, this)
+	}
+
+	private botChoosesTarget(): void {
+		const validTargets = this.game.cardPlay.getValidTargets()
+		const cardTargetMessage = new CardTargetMessage(validTargets[0])
+		IncomingMessageHandlers['post/cardTarget'](cardTargetMessage, this.game, this)
 	}
 
 	private botOrdersAttacks(): void {
