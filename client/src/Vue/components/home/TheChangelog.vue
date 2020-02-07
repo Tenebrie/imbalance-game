@@ -8,51 +8,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import axios from 'axios'
-import store from '@/Vue/store'
-import GameMessage from '@/Pixi/shared/models/network/GameMessage'
 
-export default Vue.extend({
-	components: {
-	},
-
-	data: () => ({
-	}),
-
-	mounted(): void {
-		this.fetchGames()
-		this.updateTimer = setInterval(() => {
-			this.fetchGames()
-		}, 30000)
-	},
-
-	beforeDestroy(): void {
-		clearInterval(this.updateTimer)
-	},
-
-	methods: {
-		async fetchGames(): Promise<void> {
-			const response = await axios.get('/api/games')
-			this.games = response.data.data as GameMessage[]
-		},
-
-		async onCreateMultiPlayer(): Promise<void> {
-			const response = await axios.post('/api/games')
-			const gameMessage: GameMessage = response.data.data
-			store.dispatch.joinGame(gameMessage.id)
-		},
-
-		async onCreateSinglePlayer(): Promise<void> {
-			const response = await axios.post('/api/games', { mode: 'test' })
-			const gameMessage: GameMessage = response.data.data
-			store.dispatch.joinGame(gameMessage.id)
-		},
-
-		async onRefreshGames(): Promise<void> {
-			return this.fetchGames()
-		}
-	}
-})
+export default Vue.extend({})
 </script>
 
 <style scoped lang="scss">

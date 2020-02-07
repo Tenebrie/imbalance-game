@@ -8,15 +8,15 @@ import CardLibrary from '../../../libraries/CardLibrary'
 export default class HeroSatia extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 22
-		this.baseAttack = 2
+		this.basePower = 14
+		this.baseAttack = 1
 	}
 
 	onPlayUnit(thisUnit: ServerCardOnBoard): void {
 		const rowWithCard = this.game.board.getRowWithUnit(thisUnit)!
 		const cardUnitIndex = rowWithCard.cards.indexOf(thisUnit)
 
-		const nightMaiden = CardLibrary.createCard(new HeroNightMaiden(this.game))
-		rowWithCard.playCard(nightMaiden, thisUnit.owner, cardUnitIndex + 1)
+		const nightMaiden = CardLibrary.instantiate(new HeroNightMaiden(this.game))
+		rowWithCard.createUnit(nightMaiden, thisUnit.owner, cardUnitIndex + 1)
 	}
 }

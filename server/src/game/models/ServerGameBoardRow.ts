@@ -18,12 +18,6 @@ export default class ServerGameBoardRow extends GameBoardRow {
 		this.cards = []
 	}
 
-	public playCard(card: ServerCard, owner: ServerPlayerInGame, ordinal: number): ServerCardOnBoard {
-		const cardOnBoard = this.createUnit(card, owner, ordinal)
-		runCardEventHandler(() => card.onPlayUnit(cardOnBoard, this))
-		return cardOnBoard
-	}
-
 	public createUnit(card: ServerCard, owner: ServerPlayerInGame, ordinal: number): ServerCardOnBoard {
 		const unit = new ServerCardOnBoard(this.game, card, owner)
 		this.insertUnit(unit, ordinal)

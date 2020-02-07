@@ -11,6 +11,7 @@ import Utils from '@/utils/Utils'
 import CardAttributes from '@/Pixi/render/CardAttributes'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 import ScalingText from '@/Pixi/render/ScalingText'
+import RichTextVariables from '@/Pixi/shared/models/RichTextVariables'
 
 export default class RenderedCard extends Card {
 	public coreContainer: PIXI.Container
@@ -46,6 +47,7 @@ export default class RenderedCard extends Card {
 		this.cardTitle = message.cardTitle
 		this.cardTribes = message.cardTribes.slice()
 		this.cardDescription = message.cardDescription
+		this.cardTextVariables = message.cardTextVariables
 
 		this.power = message.power
 		this.attack = message.attack
@@ -65,7 +67,7 @@ export default class RenderedCard extends Card {
 		this.cardNameText = this.createCardNameText(Localization.getString(this.cardName))
 		this.cardTitleText = this.createCardNameText(Localization.getString(this.cardTitle))
 		this.cardTribeTexts = this.cardTribes.map(tribe => this.createCardNameText(Localization.getString(`card.tribe.${tribe}`)))
-		this.cardDescriptionText = new RichText(this, Localization.getString(this.cardDescription), 350)
+		this.cardDescriptionText = new RichText(Localization.getString(this.cardDescription), 350, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.alpha = 0
@@ -128,12 +130,19 @@ export default class RenderedCard extends Card {
 		this.coreContainer.addChild(this.cardModeTextContainer)
 	}
 
+	public getDescriptionTextVariables(): RichTextVariables {
+		return {
+			...this.cardTextVariables,
+			name: Localization.getString(this.cardName)
+		}
+	}
+
 	public getPosition(): PIXI.Point {
 		return new PIXI.Point(this.hitboxSprite.position.x, this.hitboxSprite.position.y)
 	}
 
-	public isHovered(mousePosition: PIXI.Point): boolean {
-		return this.hitboxSprite.containsPoint(mousePosition)
+	public isHovered(): boolean {
+		return this.hitboxSprite.containsPoint(Core.input.mousePosition)
 	}
 
 	public setPower(value: number): void {
@@ -205,7 +214,11 @@ export default class RenderedCard extends Card {
 
 		let texts: (ScalingText | RichText)[] = []
 
-		if (displayMode === CardDisplayMode.IN_HAND || displayMode === CardDisplayMode.IN_HAND_HOVERED || displayMode === CardDisplayMode.INSPECTED || displayMode === CardDisplayMode.ANNOUNCED) {
+		if (displayMode === CardDisplayMode.IN_HAND ||
+				displayMode === CardDisplayMode.IN_HAND_HOVERED ||
+				displayMode === CardDisplayMode.INSPECTED ||
+				displayMode === CardDisplayMode.ANNOUNCED ||
+				displayMode === CardDisplayMode.RESOLVING) {
 			this.switchToCardMode()
 			texts = [this.powerText, this.attackText, this.attackRangeText, this.healthArmorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {
@@ -308,7 +321,7 @@ export default class RenderedCard extends Card {
 			cardTribeText.style.fontSize = 20
 		}
 
-		this.cardDescriptionText.position.set(0, -135)
+		this.cardDescriptionText.position.set(0, -130)
 
 		const description = Localization.getString(this.cardDescription)
 		let fontSize = 26

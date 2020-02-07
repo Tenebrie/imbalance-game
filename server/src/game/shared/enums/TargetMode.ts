@@ -1,10 +1,11 @@
 enum TargetMode {
-	CARD_PLAY,
+	ON_PLAY,
+	ATTACK_ORDERED,
+	ATTACK_FORCED,
 	ORDER_ATTACK,
 	ORDER_DRAIN,
 	ORDER_SUPPORT,
 	ORDER_MOVE,
-	ATTACK
 }
 
 export default TargetMode

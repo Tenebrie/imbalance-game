@@ -1,13 +1,12 @@
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import VoidPlayer from './VoidPlayer'
-import ServerCardDeck from '../models/ServerCardDeck'
 import ServerGame from '../models/ServerGame'
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
 
 let voidPlayerInGame: VoidPlayerInGame
 
 export default class VoidPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame) {
-		super(game, VoidPlayer.get(), ServerCardDeck.emptyDeck(game))
+		super(game, VoidPlayer.get())
 	}
 
 	public static for(game: ServerGame): VoidPlayerInGame {

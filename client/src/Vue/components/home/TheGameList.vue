@@ -58,7 +58,7 @@ export default Vue.extend({
 		},
 
 		async onCreateSinglePlayer(): Promise<void> {
-			const response = await axios.post('/api/games', { mode: 'test' })
+			const response = await axios.post('/api/games', { mode: 'sp_ai' })
 			const gameMessage: GameMessage = response.data.data
 			store.dispatch.joinGame(gameMessage.id)
 		},

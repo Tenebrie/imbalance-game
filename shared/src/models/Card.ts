@@ -1,6 +1,7 @@
 import CardType from '../enums/CardType'
 import CardTribe from '../enums/CardTribe'
 import UnitSubtype from '../enums/UnitSubtype'
+import RichTextVariables from './RichTextVariables'
 
 export default class Card {
 	id: string
@@ -12,6 +13,7 @@ export default class Card {
 	cardTitle: string
 	cardTribes: CardTribe[]
 	cardDescription: string
+	cardTextVariables: RichTextVariables
 
 	power = 0
 	attack = 0
@@ -33,5 +35,6 @@ export default class Card {
 		this.cardTitle = ''
 		this.cardTribes = []
 		this.cardDescription = ''
+		this.cardTextVariables = {}
 	}
 }

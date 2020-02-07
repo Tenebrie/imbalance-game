@@ -5,16 +5,19 @@ import PlayerInGame from '@/Pixi/shared/models/PlayerInGame'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
+import ClientCardGraveyard from '@/Pixi/models/ClientCardGraveyard'
 
 export default class ClientPlayerInGame extends PlayerInGame {
 	isTurnActive = false
 	cardHand: RenderedCardHand
 	cardDeck: ClientCardDeck
+	cardGraveyard: ClientCardGraveyard
 
 	constructor(player: Player) {
 		super(player)
 		this.cardHand = new RenderedCardHand([])
 		this.cardDeck = new ClientCardDeck([])
+		this.cardGraveyard = new ClientCardGraveyard([])
 	}
 
 	public startTurn(): void {

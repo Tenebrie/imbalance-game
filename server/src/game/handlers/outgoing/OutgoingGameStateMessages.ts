@@ -6,8 +6,8 @@ import CardDeckMessage from '../../shared/models/network/CardDeckMessage'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
 import PlayerInGameMessage from '../../shared/models/network/PlayerInGameMessage'
-import ServerUnitOrder from '../../models/ServerUnitOrder'
-import UnitOrderMessage from '../../shared/models/network/UnitOrderMessage'
+import ServerCardTarget from '../../models/ServerCardTarget'
+import UnitOrderMessage from '../../shared/models/network/CardTargetMessage'
 import ServerGameBoard from '../../models/ServerGameBoard'
 import GameBoardMessage from '../../shared/models/network/GameBoardMessage'
 
@@ -65,8 +65,8 @@ export default {
 		})
 	},
 
-	sendUnitOrders(player: ServerPlayer, orders: ServerUnitOrder[]) {
-		const ordersByPlayer = orders.filter(order => order.orderedUnit.owner.player === player)
+	sendUnitOrders(player: ServerPlayer, orders: ServerCardTarget[]) {
+		const ordersByPlayer = orders.filter(order => order.sourceUnit.owner.player === player)
 		const orderMessages = ordersByPlayer.map(order => new UnitOrderMessage(order))
 		player.sendMessage({
 			type: 'gameState/board/orders',

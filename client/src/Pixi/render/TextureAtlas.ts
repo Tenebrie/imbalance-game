@@ -64,7 +64,6 @@ export default class TextureAtlas {
 
 				const onLoaded = () => {
 					TextureAtlas.texturesLoaded += 1
-					console.info(`Textures loaded: ${TextureAtlas.texturesLoaded}/${TextureAtlas.texturesToLoad}`)
 					TextureAtlas.textures[fileName.toLowerCase()] = texture
 
 					if (TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad) {

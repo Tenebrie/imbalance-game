@@ -5,5 +5,6 @@ export enum CardDisplayMode {
 	IN_HAND_HOVERED,
 	IN_HAND_HIDDEN,
 	INSPECTED,
-	ANNOUNCED
+	ANNOUNCED,
+	RESOLVING
 }

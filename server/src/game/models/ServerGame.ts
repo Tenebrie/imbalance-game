@@ -15,6 +15,11 @@ import Ruleset from '../Ruleset'
 import Constants from '../shared/Constants'
 import ServerBotPlayer from '../utils/ServerBotPlayer'
 import ServerBotPlayerInGame from '../utils/ServerBotPlayerInGame'
+import ServerCard from './ServerCard'
+import ServerCardResolveStack from './ServerCardResolveStack'
+import ServerGameCardPlay from './ServerGameCardPlay'
+import ServerTemplateCardDeck from './ServerTemplateCardDeck'
+import ServerGameAnimation from './ServerGameAnimation'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -25,6 +30,8 @@ export default class ServerGame extends Game {
 	board: ServerGameBoard
 	players: ServerPlayerInGame[]
 	chatHistory: ServerChatEntry[]
+	cardPlay: ServerGameCardPlay
+	animation: ServerGameAnimation
 	playersToMove: ServerPlayerInGame[]
 
 	constructor(owner: ServerPlayer, name: string) {
@@ -38,9 +45,11 @@ export default class ServerGame extends Game {
 		this.players = []
 		this.playersToMove = []
 		this.chatHistory = []
+		this.animation = new ServerGameAnimation(this)
+		this.cardPlay = new ServerGameCardPlay(this)
 	}
 
-	public addPlayer(targetPlayer: ServerPlayer, deck: ServerCardDeck): ServerPlayerInGame {
+	public addPlayer(targetPlayer: ServerPlayer, deck: ServerTemplateCardDeck): ServerPlayerInGame {
 		let serverPlayerInGame
 		if (targetPlayer instanceof ServerBotPlayer) {
 			serverPlayerInGame = ServerBotPlayerInGame.newInstance(this, targetPlayer, deck)
@@ -78,6 +87,7 @@ export default class ServerGame extends Game {
 		this.board.rows[0].setOwner(playerTwo)
 
 		this.players.forEach(playerInGame => {
+			playerInGame.cardDeck.shuffle()
 			playerInGame.drawCards(10)
 		})
 		this.startNewTurnPhase()
@@ -138,6 +148,15 @@ export default class ServerGame extends Game {
 	}
 
 	public advanceTurn(): void {
+		const playerOne = this.players[0]
+		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
+		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
+		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
+		const hasPlayerLostBoard = rowsOwnedByPlayerOne === 0 || rowsOwnedByPlayerTwo === 0
+		if (hasPlayerLostBoard) {
+			this.startDayEndPhase()
+		}
+
 		if (this.playersToMove.length > 0) {
 			const playerToMove = this.playersToMove.shift()
 			const timeUnits = ((this.currentTime === 0 && playerToMove === this.players[0]) || (this.currentTime === Ruleset.MAX_TIME_OF_DAY && playerToMove === this.players[0])) ? 1 : 1
@@ -152,19 +171,13 @@ export default class ServerGame extends Game {
 	}
 
 	public advancePhase(): void {
-		const playerOne = this.players[0]
-		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
-		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
-		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
-		const hasPlayerLostBoard = rowsOwnedByPlayerOne === 0 || rowsOwnedByPlayerTwo === 0
-
 		if (this.turnPhase === GameTurnPhase.TURN_START) {
 			this.startDeployPhase()
 		} else if (this.turnPhase === GameTurnPhase.DEPLOY) {
 			this.startEndTurnPhase()
-		} else if (this.turnPhase === GameTurnPhase.TURN_END && !hasPlayerLostBoard && this.currentTime < Ruleset.MAX_TIME_OF_DAY) {
+		} else if (this.turnPhase === GameTurnPhase.TURN_END && this.currentTime < Ruleset.MAX_TIME_OF_DAY) {
 			this.startNewTurnPhase()
-		} else if (this.turnPhase === GameTurnPhase.TURN_END && (hasPlayerLostBoard || this.currentTime === Ruleset.MAX_TIME_OF_DAY)) {
+		} else if (this.turnPhase === GameTurnPhase.TURN_END && this.currentTime === Ruleset.MAX_TIME_OF_DAY) {
 			this.startDayEndPhase()
 		} else if (this.turnPhase === GameTurnPhase.COMBAT) {
 			this.startNewTurnPhase()
@@ -248,6 +261,29 @@ export default class ServerGame extends Game {
 			const gameLibrary: GameLibrary = global.gameLibrary
 			gameLibrary.destroyGame(this)
 		}, 120000)
+	}
+
+	public findCardById(cardId: string): ServerCard | null {
+		const cardInStack = this.cardPlay.cardResolveStack.findCardById(cardId)
+		if (cardInStack) {
+			return cardInStack.card
+		}
+		for (let i = 0; i < this.players.length; i++) {
+			const player = this.players[i]
+			const cardInHand = player.cardHand.findCardById(cardId)
+			if (cardInHand) {
+				return cardInHand
+			}
+			const cardInDeck = player.cardDeck.findCardById(cardId)
+			if (cardInDeck) {
+				return cardInDeck
+			}
+			const cardInGraveyard = player.cardGraveyard.findCardById(cardId)
+			if (cardInGraveyard) {
+				return cardInGraveyard
+			}
+		}
+		return null
 	}
 
 	static newOwnedInstance(owner: ServerPlayer, name: string): ServerGame {

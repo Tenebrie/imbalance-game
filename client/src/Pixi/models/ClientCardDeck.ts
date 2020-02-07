@@ -18,6 +18,10 @@ export default class ClientCardDeck {
 		return RenderedCard.fromMessage(drawnCardMessage)
 	}
 
+	public findCardById(cardId: string): CardMessage | null {
+		return this.cards.find(card => card.id === cardId) || null
+	}
+
 	public static fromMessage(message: CardDeckMessage): ClientCardDeck {
 		return new ClientCardDeck(message.cards)
 	}

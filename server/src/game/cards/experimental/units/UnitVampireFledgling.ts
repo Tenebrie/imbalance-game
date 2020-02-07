@@ -1,7 +1,7 @@
 import CardType from '../../../shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerTargetDefinition from '../../../models/ServerTargetDefinition'
+import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTargetDefinition'
 import TargetValidatorArguments from '../../../../types/TargetValidatorArguments'
 import CardTribe from '../../../shared/enums/CardTribe'
 import TribeUtils from '../../../../utils/TribeUtils'
@@ -9,25 +9,25 @@ import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import TargetMode from '../../../shared/enums/TargetMode'
 import TargetType from '../../../shared/enums/TargetType'
+import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 
 export default class UnitVampireFledgling extends ServerCard {
 	hasBonus: boolean = false
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 16
+		this.basePower = 28
 		this.baseAttack = 3
-		this.attackRange = 1
 		this.cardTribes = [CardTribe.UNDEAD, CardTribe.VAMPIRE]
 	}
 
-	getUnitOrderTargetDefinition(): ServerTargetDefinition {
+	defineValidOrderTargets(): TargetDefinitionBuilder {
 		return ServerTargetDefinition.defaultUnitOrder(this.game)
-			.setTotalTargets(2)
-			.allowType(TargetMode.ORDER_DRAIN, TargetType.UNIT)
+			.actions(2)
+			.allow(TargetMode.ORDER_DRAIN, TargetType.UNIT)
 			.allowSimultaneously([TargetMode.ORDER_ATTACK, TargetType.UNIT], [TargetMode.ORDER_DRAIN, TargetType.UNIT])
 			.allowSimultaneously([TargetMode.ORDER_MOVE, TargetType.BOARD_ROW], [TargetMode.ORDER_DRAIN, TargetType.UNIT])
-			.requireValidation(TargetMode.ORDER_DRAIN, TargetType.UNIT, (args: TargetValidatorArguments) => {
+			.validate(TargetMode.ORDER_DRAIN, TargetType.UNIT, (args: TargetValidatorArguments) => {
 				const thisUnit = args.thisUnit
 				const targetUnit = args.targetUnit!
 				const distanceToTarget = Math.abs(thisUnit.rowIndex - targetUnit.rowIndex)

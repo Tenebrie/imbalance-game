@@ -2,6 +2,8 @@ import ServerPlayer from '../../players/ServerPlayer'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import PlayerInGameMessage from '../../shared/models/network/PlayerInGameMessage'
 import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
+import ServerCardTarget from '../../models/ServerCardTarget'
+import CardTargetMessage from '../../shared/models/network/CardTargetMessage'
 
 export default {
 	notifyAboutPlayerMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
