@@ -6,19 +6,20 @@ import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import GameStartMessage from '@/Pixi/shared/models/GameStartMessage'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import CardOnBoardMessage from '@/Pixi/shared/models/network/CardOnBoardMessage'
-import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
+import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import CardHandMessage from '@/Pixi/shared/models/network/CardHandMessage'
 import CardDeckMessage from '@/Pixi/shared/models/network/CardDeckMessage'
 import GameTimeMessage from '@/Pixi/shared/models/network/GameTimeMessage'
 import HiddenCardMessage from '@/Pixi/shared/models/network/HiddenCardMessage'
 import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
-import RenderedUnitOrder from '@/Pixi/models/RenderedUnitOrder'
-import UnitOrderMessage from '@/Pixi/shared/models/network/UnitOrderMessage'
 import GameBoardMessage from '@/Pixi/shared/models/network/GameBoardMessage'
 import GameBoardRowMessage from '@/Pixi/shared/models/network/GameBoardRowMessage'
 import AnimationMessage from '@/Pixi/shared/models/network/AnimationMessage'
 import AnimationType from '@/Pixi/shared/enums/AnimationType'
+import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
+import CardTargetMessage from '@/Pixi/shared/models/network/CardTargetMessage'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -61,11 +62,12 @@ const handlers: {[ index: string ]: any } = {
 		})
 	},
 
-	'gameState/board/orders': (data: UnitOrderMessage[]) => {
-		const newOrderMessages = data.filter(message => !Core.board.queuedOrders.find(order => order.isEqualToMessage(message)))
-		const removedOrders = Core.board.queuedOrders.filter(order => !data.find(message => order.isEqualToMessage(message)))
-		const newOrders = newOrderMessages.map(message => RenderedUnitOrder.fromMessage(message))
-		Core.board.updateUnitOrders(newOrders, removedOrders)
+	'update/board/unitOrders': (data: CardTargetMessage[]) => {
+		Core.board.validOrders = data.map(message => ClientCardTarget.fromMessage(message))
+	},
+
+	'update/board/opponentOrders': (data: CardTargetMessage[]) => {
+		Core.board.validOpponentOrders = data.map(message => ClientCardTarget.fromMessage(message))
 	},
 
 	'update/game/phase': (data: GameTurnPhase) => {
@@ -78,8 +80,15 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/board/unitCreated': (data: CardOnBoardMessage) => {
-		const card = RenderedCardOnBoard.fromMessage(data)
-		Core.board.insertUnit(card, data.rowIndex, data.unitIndex)
+		if (Core.board.findUnitById(data.card.id)) { return }
+
+		Core.board.unitsOnHold.push(RenderedCardOnBoard.fromMessage(data))
+	},
+
+	'update/board/unitInserted': (data: CardOnBoardMessage) => {
+		if (Core.board.findInsertedById(data.card.id)) { return }
+
+		Core.board.insertUnitFromHold(data.card.id, data.rowIndex, data.unitIndex)
 	},
 
 	'update/board/unitMoved': (data: CardOnBoardMessage) => {
@@ -104,6 +113,10 @@ const handlers: {[ index: string ]: any } = {
 	'update/board/card/power': (data: CardMessage) => {
 		const cardOnBoard = Core.board.findUnitById(data.id)
 		if (!cardOnBoard) { return }
+		if (typeof (data.power) === 'undefined') {
+			console.warn(`Trying to set card ${data.id} power to undefined value!`)
+			return
+		}
 
 		cardOnBoard.setPower(data.power)
 	},
@@ -183,7 +196,7 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/opponent/hand/cardDestroyed': (data: CardMessage) => {
-		const card = Core.opponent.cardHand.getCardById(data.id)
+		const card = Core.opponent.cardHand.findCardById(data.id)
 		if (!card) { return }
 
 		if (Core.mainHandler.announcedCard === card) {
@@ -192,22 +205,48 @@ const handlers: {[ index: string ]: any } = {
 		Core.opponent.cardHand.removeCard(card)
 	},
 
+	'update/player/self/graveyard/cardAdded': (data: CardMessage) => {
+		Core.player.cardGraveyard.addCard(data)
+	},
+
+	'update/player/opponent/graveyard/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardGraveyard.addCard(data)
+	},
+
+	'update/stack/cardResolving': (data: CardMessage) => {
+		Core.resolveStack.addCard(RenderedCard.fromMessage(data))
+	},
+
+	'update/stack/cardTargets': (data: CardTargetMessage[]) => {
+		const validTargets = data.map(data => ClientCardTarget.fromMessage(data))
+		Core.input.enableForcedTargetingMode(validTargets)
+	},
+
+	'update/stack/cardResolved': (data: CardMessage) => {
+		Core.resolveStack.destroyCardById(data.id)
+		if (Core.resolveStack.isEmpty()) {
+			Core.input.disableForcedTargetingMode()
+		}
+	},
+
 	'animation/generic': (data: AnimationMessage) => {
 		let animationDuration = 500
 
 		if (data.type === AnimationType.CARD_PLAY) {
-			const announcedCard = Core.opponent.cardHand.getCardById(data.targetCardId)!
+			const announcedCard = Core.opponent.cardHand.findCardById(data.targetCardID)!
 			Core.mainHandler.announceCard(announcedCard)
 			animationDuration = 3000
 		} else if (data.type === AnimationType.UNIT_ATTACK) {
 			animationDuration = 300
-			const sourceUnit = Core.board.findUnitById(data.sourceUnitId)
-			const targetUnit = Core.board.findUnitById(data.targetUnitId)
-			Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetUnit)
+			const sourceUnit = Core.board.findUnitById(data.sourceUnitID)
+			data.targetUnitIDs.forEach(targetUnitID => {
+				const targetUnit = Core.board.findUnitById(targetUnitID)
+				Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetUnit)
+			})
 		} else if (data.type === AnimationType.POST_UNIT_ATTACK) {
 			animationDuration = 100
 		} else if (data.type === AnimationType.ALL_UNITS_MOVE) {
-			animationDuration = 1500
+			animationDuration = 750
 		}
 		Core.mainHandler.triggerAnimation(animationDuration)
 	},

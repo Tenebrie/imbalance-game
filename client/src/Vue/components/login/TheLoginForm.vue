@@ -19,6 +19,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 export default Vue.extend({
 	data: () => ({
@@ -57,6 +58,7 @@ export default Vue.extend({
 			try {
 				await axios.post('/api/login', { username, password })
 				await this.$router.push({ name: 'home' })
+				await TextureAtlas.prepare()
 			} catch (error) {
 				this.setMessage('Username or password incorrect')
 			}
@@ -96,6 +98,9 @@ export default Vue.extend({
 
 			.submit {
 				margin: 8px 0;
+				& > button {
+					font-size: 1em;
+				}
 			}
 		}
 

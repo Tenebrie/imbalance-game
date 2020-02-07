@@ -5,6 +5,7 @@ import ServerPlayer from '../game/players/ServerPlayer'
 import IncomingMessageHandlers from '../game/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '../game/handlers/OutgoingMessageHandlers'
 import ConnectionEstablishedHandler from '../game/handlers/ConnectionEstablishedHandler'
+import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 
 const router = express.Router()
 
@@ -32,7 +33,7 @@ router.ws('/:gameId', async (ws, req) => {
 	currentPlayer.disconnect()
 	currentPlayer.registerConnection(ws)
 
-	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerCardDeck.defaultDeck(currentGame))
+	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerTemplateCardDeck.defaultDeck(currentGame))
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)

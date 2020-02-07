@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js'
 import Utils from '@/utils/Utils'
-import RenderedCard from '@/Pixi/models/RenderedCard'
-import Localization from '@/Pixi/Localization'
 import ScalingText from '@/Pixi/render/ScalingText'
+import RichTextVariables from '@/Pixi/shared/models/RichTextVariables'
+import set = Reflect.set
 
 enum SegmentType {
 	TEXT = 'TEXT',
@@ -30,33 +30,63 @@ type Segment = {
 }
 
 export default class RichText extends PIXI.Container {
-	card: RenderedCard
 	source: string
+	fill: number
 	fontSize: number
 	baseFontSize: number
 	lineHeight: number
 	maxWidth: number
+	private variables: RichTextVariables
 	segments: { text: ScalingText, basePosition: PIXI.Point }[]
 
-	constructor(card: RenderedCard, text: string, maxWidth: number) {
+	constructor(text: string, maxWidth: number, variables: RichTextVariables) {
 		super()
-		this.card = card
 		this.source = text
+		this.fill = 0xCCCCCC
 		this.fontSize = 18
 		this.baseFontSize = 18
 		this.lineHeight = 24
 		this.maxWidth = maxWidth
 		this.segments = []
+		this.variables = variables
 		this.renderText()
 	}
 
 	get text() {
 		return this.source
 	}
+	set text(value: string) {
+		if (this.source === value) {
+			return
+		}
+
+		this.source = value
+		this.renderText()
+	}
+	get textVariables() {
+		return this.variables
+	}
+	set textVariables(value: RichTextVariables) {
+		if (this.variables === value) {
+			return
+		}
+		this.variables = value
+		this.renderText()
+	}
 
 	get style() {
 		const parent = this
 		return {
+			get fill() {
+				return parent.fill
+			},
+			set fill(value: number) {
+				if (value === parent.fill) {
+					return
+				}
+				parent.fill = value
+				parent.renderText()
+			},
 			get fontSize() {
 				return parent.fontSize
 			},
@@ -113,7 +143,17 @@ export default class RichText extends PIXI.Container {
 
 		const SCALE_MODIFIER = this.fontSize / this.baseFontSize
 
-		const replacedText = (this.text || '').replace(/{name}/g, `${Localization.getString(this.card.cardName)}`)
+		const textVariables = {
+			...this.variables
+		}
+
+		let replacedText = (this.text || '')
+		for (const variableName in textVariables) {
+			const variableValue = textVariables[variableName]
+			const regexp = new RegExp('{' + variableName + '}', 'g')
+			replacedText = replacedText.replace(regexp, variableValue.toString())
+		}
+
 		const chars = Array.from(replacedText)
 
 		const segments: Segment[] = []
@@ -157,7 +197,7 @@ export default class RichText extends PIXI.Container {
 
 		let contextPosition = new PIXI.Point(0, 0)
 		let contextHighlight = false
-		let contextColor = 0xCCCCCC
+		let contextColor = this.fill
 		let contextColorStack: number[] = []
 		let currentLine: { text: ScalingText, basePosition: PIXI.Point }[] = []
 
@@ -236,6 +276,10 @@ export default class RichText extends PIXI.Container {
 
 		this.segments.forEach(segment => {
 			segment.basePosition.y -= contextPosition.y / 2
+		})
+		const SCALE_MODIFIER2 = (this.fontSize / 18)
+		this.segments.forEach(segment => {
+			segment.text.position.set(segment.basePosition.x, segment.basePosition.y * SCALE_MODIFIER2)
 		})
 	}
 

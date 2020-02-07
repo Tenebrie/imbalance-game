@@ -1,4 +1,4 @@
-import RenderedCard from '@/Pixi/models/RenderedCard'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 import CardHandMessage from '../shared/models/network/CardHandMessage'
 import Utils from '@/utils/Utils'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
@@ -14,16 +14,16 @@ export default class RenderedCardHand {
 	public addCard(card: RenderedCard) {
 		this.cards.push(card)
 		this.cards.sort((a: RenderedCard, b: RenderedCard) => {
-			return a.cardType - b.cardType || (b.unitSubtype ? b.unitSubtype : 10) - (a.unitSubtype ? a.unitSubtype : 10) || b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass)
+			return a.cardType - b.cardType || a.unitSubtype - b.unitSubtype || b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass)
 		})
 	}
 
-	public getCardById(cardId: string): RenderedCard | null {
+	public findCardById(cardId: string): RenderedCard | null {
 		return this.cards.find(renderedCard => renderedCard.id === cardId) || null
 	}
 
 	public reveal(data: CardMessage): void {
-		const card = this.getCardById(data.id)
+		const card = this.findCardById(data.id)
 		if (!card) { return }
 
 		const revealedCard = new RenderedCard(data)

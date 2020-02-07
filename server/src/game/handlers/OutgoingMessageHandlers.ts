@@ -1,19 +1,19 @@
-import OutgoingSystemMessages from './outgoing/OutgoingSystemMessages'
 import OutgoingAnimationMessages from './outgoing/OutgoingAnimationMessages'
+import OutgoingBoardUpdateMessages from './outgoing/OutgoingBoardUpdateMessages'
+import OutgoingCardUpdateMessages from './outgoing/OutgoingCardUpdateMessages'
+import OutgoingChatUpdateMessages from './outgoing/OutgoingChatUpdateMessages'
 import OutgoingGameStateMessages from './outgoing/OutgoingGameStateMessages'
 import OutgoingGameUpdateMessages from './outgoing/OutgoingGameUpdateMessages'
-import OutgoingChatUpdateMessages from './outgoing/OutgoingChatUpdateMessages'
-import OutgoingHandUpdateMessages from './outgoing/OutgoingHandUpdateMessages'
-import OutgoingBoardUpdateMessages from './outgoing/OutgoingBoardUpdateMessages'
 import OutgoingPlayerUpdateMessages from './outgoing/OutgoingPlayerUpdateMessages'
+import OutgoingSystemMessages from './outgoing/OutgoingSystemMessages'
 
 export default {
 	...OutgoingAnimationMessages,
 	...OutgoingBoardUpdateMessages,
+	...OutgoingCardUpdateMessages,
 	...OutgoingChatUpdateMessages,
 	...OutgoingGameStateMessages,
 	...OutgoingGameUpdateMessages,
-	...OutgoingHandUpdateMessages,
 	...OutgoingPlayerUpdateMessages,
 	...OutgoingSystemMessages
 }

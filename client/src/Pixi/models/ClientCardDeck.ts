@@ -1,4 +1,4 @@
-import RenderedCard from '@/Pixi/models/RenderedCard'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 import CardDeckMessage from '@/Pixi/shared/models/network/CardDeckMessage'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 
@@ -16,6 +16,10 @@ export default class ClientCardDeck {
 		}
 		this.cards = this.cards.filter(card => card !== drawnCardMessage)
 		return RenderedCard.fromMessage(drawnCardMessage)
+	}
+
+	public findCardById(cardId: string): CardMessage | null {
+		return this.cards.find(card => card.id === cardId) || null
 	}
 
 	public static fromMessage(message: CardDeckMessage): ClientCardDeck {

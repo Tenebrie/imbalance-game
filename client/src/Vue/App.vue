@@ -1,8 +1,11 @@
 <template>
 	<div id="app" :class="rootClass" >
-		<the-navigation-bar v-if="!isInGame" />
-		<router-view class="view" />
-		<the-footer v-if="!isInGame" />
+		<div id="app-background" />
+		<div id="content">
+			<the-navigation-bar v-if="!isInGame" />
+			<router-view class="view" />
+			<the-footer v-if="!isInGame" />
+		</div>
 	</div>
 </template>
 
@@ -11,16 +14,9 @@ import Vue from 'vue'
 import store from '@/Vue/store'
 import TheFooter from '@/Vue/components/TheFooter.vue'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
-import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 export default Vue.extend({
 	components: { TheNavigationBar, TheFooter },
-
-	mounted(): void {
-		setTimeout(() => {
-			TextureAtlas.prepare()
-		}, 500)
-	},
 
 	computed: {
 		isInGame() {
@@ -57,30 +53,45 @@ body {
 	padding: 0;
 	overflow-y: auto;
 
-	&.in-game {
-		overflow-y: hidden;
-	}
-
-	&.navigation-bar-visible {
-		padding-top: 48px;
-		height: calc(100vh - 48px);
-	}
-
-	.view {
+	#content {
+		position: absolute;
+		width: 100%;
 		height: 100%;
+
+		&.in-game {
+			overflow-y: hidden;
+		}
+
+		&.navigation-bar-visible {
+			padding-top: 48px;
+			height: calc(100vh - 48px);
+		}
+
+		.view {
+			height: 100%;
+		}
+
+		a {
+			color: $COLOR-SECONDARY;
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+
+			&.router-link-exact-active {
+				color: #42b983;
+			}
+		}
 	}
 
-	a {
-		color: $COLOR-SECONDARY;
-		text-decoration: none;
-
-		&:hover {
-			text-decoration: underline;
-		}
-
-		&.router-link-exact-active {
-			color: #42b983;
-		}
+	#app-background {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('./assets/background-menu.jpg');
+		background-size: cover;
+		filter: blur(8px);
 	}
 }
 
@@ -89,44 +100,47 @@ button {
 }
 
 button.primary {
-	border: none;
-	border-radius: 4px;
+	border-radius: 0.25em;
 	width: 100%;
-	padding: 8px;
-	margin: 4px 0;
-	font-size: 1.0em;
+	padding: 0.5em;
+	margin: 0.25em 0;
 	font-family: Roboto, sans-serif;
-	color: black;
+	color: $COLOR-TEXT;
 	background-color: $COLOR-PRIMARY;
+	border: 1px solid $COLOR-PRIMARY;
 	outline: none;
 
 	&:hover {
+		color: darken($COLOR-TEXT, 5);
+		border-color: darken($COLOR-PRIMARY, 5);
 		background-color: darken($COLOR-PRIMARY, 5);
 	}
 
 	&:active {
+		color: darken($COLOR-TEXT, 10);
+		border-color: darken($COLOR-PRIMARY, 10);
 		background-color: darken($COLOR-PRIMARY, 10);
 	}
 }
 
 button.secondary {
-	border: none;
+	border: 1px solid $COLOR-TEXT;
 	border-radius: 4px;
-	color: $COLOR-TEXT;
 	width: 100%;
-	padding: 8px;
-	margin: 4px 0;
+	padding: calc(0.25em - 1px);
+	margin: 0.25em 0;
 	font-size: 1em;
 	font-family: Roboto, sans-serif;
-	background-color: rgba(white, 0.2);
+	color: $COLOR-TEXT;
+	background-color: transparent;
 	outline: none;
 
 	&:hover {
-		background-color: rgba(white, 0.175);
+		background-color: rgba(white, 0.05);
 	}
 
 	&:active {
-		background-color: rgba(white, 0.15);
+		background-color: rgba(white, 0.1);
 	}
 }
 

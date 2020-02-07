@@ -34,14 +34,6 @@ const RegisterRouter = require('./routers/RegisterRouter')
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
 
-/* Random middleware */
-app.use(logger('dev'))
-app.use(cookieParser())
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(express.static(path.join(__dirname, '../public')))
-app.use(express.static(path.join(__dirname, '../client')))
-
 /* Forced HTTPS */
 app.use((req: Request, res: Response, next) => {
 	if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV && process.env.NODE_ENV !== 'development') {
@@ -49,6 +41,14 @@ app.use((req: Request, res: Response, next) => {
 	}
 	next()
 })
+
+/* Random middleware */
+app.use(logger('dev'))
+app.use(cookieParser())
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(express.static(path.join(__dirname, '../public')))
+app.use(express.static(path.join(__dirname, '../client')))
 
 /* OPTIONS request */
 app.use((req: Request, res: Response, next) => {

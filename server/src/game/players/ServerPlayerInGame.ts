@@ -5,10 +5,12 @@ import PlayerInGame from '../shared/models/PlayerInGame'
 import ServerCardHand from '../models/ServerCardHand'
 import ServerCardDeck from '../models/ServerCardDeck'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from '../models/ServerDamageSource'
 import Ruleset from '../Ruleset'
-import ServerAnimation from '../models/ServerAnimation'
+import ServerCardGraveyard from '../models/ServerCardGraveyard'
+import ServerCardTarget from '../models/ServerCardTarget'
+import CardDeck from '../shared/models/CardDeck'
+import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 
 export default class ServerPlayerInGame extends PlayerInGame {
 	initialized = false
@@ -17,19 +19,29 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	player: ServerPlayer
 	cardHand: ServerCardHand
 	cardDeck: ServerCardDeck
+	cardGraveyard: ServerCardGraveyard
 	morale: number
 	timeUnits: number
 	turnEnded: boolean
 
-	constructor(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
+	constructor(game: ServerGame, player: ServerPlayer) {
 		super(player)
 		this.game = game
 		this.player = player
-		this.cardHand = new ServerCardHand(this.player, [])
-		this.cardDeck = cardDeck
+		this.cardHand = new ServerCardHand(game, this, [])
+		this.cardDeck = new ServerCardDeck(game, this, [])
+		this.cardGraveyard = new ServerCardGraveyard(this)
 		this.morale = Ruleset.STARTING_PLAYER_MORALE
 		this.timeUnits = 0
 		this.turnEnded = false
+	}
+
+	public get targetRequired(): boolean {
+		return !!this.game.cardPlay.cardResolveStack.currentCard
+	}
+
+	public get opponent(): ServerPlayerInGame {
+		return this.game.getOpponent(this)
 	}
 
 	public canPlaySpell(card: ServerCard): boolean {
@@ -43,47 +55,6 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		}
 
 		return this.timeUnits > 0
-	}
-
-	public playUnit(card: ServerCard, rowIndex: number, unitIndex: number): void {
-		/* Remove card from hand */
-		this.cardHand.removeCard(card)
-
-		/* Announce card to opponent */
-		const opponent = this.game.getOpponent(this)
-		card.reveal(this, opponent)
-		OutgoingMessageHandlers.triggerAnimation(opponent.player, ServerAnimation.cardPlay(card))
-
-		/* Insert the card into the board */
-		const gameBoardRow = this.game.board.rows[rowIndex]
-		gameBoardRow.playCard(card, this, unitIndex)
-
-		/* Advance the time */
-		this.setTimeUnits(this.timeUnits - 1)
-
-		/* Send notifications */
-		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
-		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
-	}
-
-	public playSpell(card: ServerCard): void {
-		/* Remove card from hand */
-		this.cardHand.removeCard(card)
-
-		/* Announce card to opponent */
-		const opponent = this.game.getOpponent(this)
-		card.reveal(this, opponent)
-		OutgoingMessageHandlers.triggerAnimation(opponent.player, ServerAnimation.cardPlay(card))
-
-		/* Invoke the card onPlay effect */
-		runCardEventHandler(() => card.onPlaySpell(this))
-
-		/* Advance the time */
-		this.setTimeUnits(this.timeUnits - 1)
-
-		/* Send notifications */
-		OutgoingMessageHandlers.notifyAboutPlayerCardDestroyed(this.player, card)
-		OutgoingMessageHandlers.notifyAboutOpponentCardDestroyed(opponent.player, card)
 	}
 
 	public drawCards(count: number): void {
@@ -121,22 +92,27 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	public setTimeUnits(timeUnits: number): void {
 		if (this.timeUnits === timeUnits) { return }
 
+		const delta = timeUnits - this.timeUnits
+
 		this.timeUnits = timeUnits
 		const opponent = this.game.getOpponent(this)
-		OutgoingMessageHandlers.notifyAboutPlayerTimeBankChange(this.player, this)
+		OutgoingMessageHandlers.notifyAboutPlayerTimeBankChange(this.player, this, delta)
 		OutgoingMessageHandlers.notifyAboutOpponentTimeBankChange(opponent.player, this)
-		if (timeUnits === 0) {
-			this.endTurn()
-		}
 	}
 
 	public startTurn(): void {
 		this.turnEnded = false
 		OutgoingMessageHandlers.notifyAboutTurnStarted(this.player)
+		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(this.game, this)
+
 		const opponent = this.game.getOpponent(this)
 		if (opponent) {
 			OutgoingMessageHandlers.notifyAboutOpponentTurnStarted(opponent.player)
 		}
+	}
+
+	public isAnyActionsAvailable(): boolean {
+		return this.timeUnits > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
 	}
 
 	public endTurn(): void {
@@ -149,7 +125,9 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		}
 	}
 
-	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerCardDeck) {
-		return new ServerPlayerInGame(game, player, cardDeck)
+	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {
+		const playerInGame = new ServerPlayerInGame(game, player)
+		playerInGame.cardDeck.instantiateFrom(cardDeck)
+		return playerInGame
 	}
 }

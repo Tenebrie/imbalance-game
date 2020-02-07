@@ -1,15 +1,16 @@
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
-import Input from '@/Pixi/Input'
+import Input from '@/Pixi/input/Input'
 import Renderer from '@/Pixi/Renderer'
 import MainHandler from '@/Pixi/MainHandler'
 import ClientGame from '@/Pixi/models/ClientGame'
-import RenderedCard from '@/Pixi/models/RenderedCard'
-import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
+import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import ClientCardResolveStack from '@/Pixi/models/ClientCardResolveStack'
 
 export default class Core {
 	public static input: Input
@@ -22,6 +23,7 @@ export default class Core {
 	public static board: RenderedGameBoard
 	public static player: ClientPlayerInGame
 	public static opponent: ClientPlayerInGame
+	public static resolveStack: ClientCardResolveStack
 
 	public static init(gameId: string, container: HTMLElement): void {
 		const protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
@@ -47,6 +49,7 @@ export default class Core {
 		Core.game = new ClientGame()
 		Core.input = new Input()
 		Core.board = new RenderedGameBoard()
+		Core.resolveStack = new ClientCardResolveStack()
 		Core.mainHandler = MainHandler.start()
 
 		console.info('Sending init signal to server')
@@ -57,10 +60,20 @@ export default class Core {
 		const data = JSON.parse(event.data)
 		const messageType = data.type as string
 		const messageData = data.data as any
+		const messageHighPriority = data.highPriority as boolean
 
 		const handler = IncomingMessageHandlers[messageType]
 		if (!handler) {
 			console.error('Unknown message type: ' + messageType)
+			return
+		}
+
+		if (messageHighPriority) {
+			try {
+				handler(messageData)
+			} catch (e) {
+				console.error(e)
+			}
 			return
 		}
 

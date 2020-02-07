@@ -6,7 +6,7 @@ export default class Animation {
 	type: AnimationType
 	targetCard: Card | null
 	sourceUnit: CardOnBoard | null
-	targetUnit: CardOnBoard | null
+	targetUnits: CardOnBoard[] | null
 
 	constructor(type: AnimationType) {
 		this.type = type

@@ -1,9 +1,10 @@
 import Core from '@/Pixi/Core'
 import Card from '@/Pixi/shared/models/Card'
-import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
+import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import CardPlayedMessage from '@/Pixi/shared/models/network/CardPlayedMessage'
-import UnitOrderMessage from '@/Pixi/shared/models/network/UnitOrderMessage'
-import UnitOrder from '@/Pixi/shared/models/UnitOrder'
+import CardTargetMessage from '@/Pixi/shared/models/network/CardTargetMessage'
+import CardTarget from '@/Pixi/shared/models/CardTarget'
+import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 
 export default {
 	sendChatMessage(message: string) {
@@ -19,8 +20,12 @@ export default {
 		Core.sendMessage('post/playCard', CardPlayedMessage.fromCard(card))
 	},
 
-	sendUnitOrder(order: UnitOrder) {
-		Core.sendMessage('post/unitOrder', new UnitOrderMessage(order))
+	sendUnitOrder(order: CardTarget) {
+		Core.sendMessage('post/unitOrder', new CardTargetMessage(order))
+	},
+
+	sendCardTarget(target: ClientCardTarget) {
+		Core.sendMessage('post/cardTarget', new CardTargetMessage(target))
 	},
 
 	sendEndTurn() {

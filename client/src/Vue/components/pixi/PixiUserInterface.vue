@@ -1,7 +1,7 @@
 <template>
 	<div class="pixi-user-interface">
 		<div class="end-turn-button-container">
-			<button @click="onEndTurn" class="game-button" :disabled="!isPlayersTurn">End turn</button>
+			<button @click="onEndTurn" class="primary game-button" :disabled="!isPlayersTurn">End turn</button>
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
 			<span class="overlay-message" v-if="!opponent">Waiting for opponent...</span>
@@ -13,9 +13,9 @@
 		</div>
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
-				<button @click="onShowSettings" class="game-button">Settings</button>
+				<button @click="onShowSettings" class="primary game-button">Settings</button>
 				<div class="menu-separator"></div>
-				<button @click="onLeaveGame" class="game-button destructive">Leave game</button>
+				<button @click="onLeaveGame" class="primary game-button destructive">Leave game</button>
 			</div>
 		</div>
 	</div>
@@ -107,6 +107,7 @@ export default Vue.extend({
 		top: 0;
 		width: 100%;
 		height: 100%;
+		user-select: none;
 		pointer-events: none;
 
 		.fade-in-overlay {
@@ -151,34 +152,26 @@ export default Vue.extend({
 			}
 		}
 
-		button {
+		button.game-button {
 			border: none;
 			outline: none;
 			pointer-events: auto;
 
 			padding: 8px 16px;
 			font-size: 24px;
-			color: white;
-			background: #2c3e50;
-
 			border-radius: 4px;
 
-			&:hover {
-				background: darken(#2c3e50, 5);
-			}
-			&:active {
-				color: darken(white, 5);
-				background: darken(#2c3e50, 10);
-			}
 			&:disabled {
 				cursor: default;
 				background: gray;
 			}
 			&.destructive {
 				color: red;
-				&:active {
+				&:hover {
 					color: darken(red, 5);
-					background: darken(#2c3e50, 10);
+				}
+				&:active {
+					color: darken(red, 10);
 				}
 			}
 		}

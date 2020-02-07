@@ -1,22 +1,26 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@/Pixi/shared/Constants'
-import RenderedCard from '@/Pixi/models/RenderedCard'
-import {TargetingMode} from '@/Pixi/enums/TargetingMode'
-import RenderedGameBoard from '@/Pixi/models/RenderedGameBoard'
-import RenderedCardOnBoard from '@/Pixi/models/RenderedCardOnBoard'
-import RenderedGameBoardRow from '@/Pixi/models/RenderedGameBoardRow'
+import RenderedCard from '@/Pixi/board/RenderedCard'
+import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
+import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
+import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
+import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import CardType from '@/Pixi/shared/enums/CardType'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
-import {CardLocation} from '@/Pixi/enums/CardLocation'
-import UnitOrderType from '@/Pixi/shared/enums/UnitOrderType'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import Settings from '@/Pixi/Settings'
+import CardTint from '@/Pixi/enums/CardTint'
+import BoardRowTint from '@/Pixi/enums/BoardRowTint'
+import Localization from '@/Pixi/Localization'
+import TargetMode from '@/Pixi/shared/enums/TargetMode'
+import MouseHover from '@/Pixi/input/MouseHover'
+import RichText from '@/Pixi/render/RichText'
 
 const UNIT_ZINDEX = 2
-const UNIT_ORDER_ZINDEX = 3
 const TARGETING_ARROW_ZINDEX = 10
 const HOVERED_CARD_ZINDEX = 50
+const RESOLVING_CARD_ZINDEX = 100
 const GRABBED_CARD_ZINDEX = 150
 const INSPECTED_CARD_ZINDEX = 200
 
@@ -27,7 +31,7 @@ export default class Renderer {
 	container: HTMLElement
 
 	timeLabel: PIXI.Text
-	actionLabel: PIXI.Text
+	actionLabel: RichText
 	playerNameLabel: PIXI.Text
 	opponentNameLabel: PIXI.Text
 
@@ -49,6 +53,7 @@ export default class Renderer {
 			height: window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel,
 			antialias: false,
 			autoDensity: true,
+			transparent: true,
 			resolution: 1
 		})
 
@@ -72,13 +77,9 @@ export default class Renderer {
 		this.rootContainer.addChild(this.timeLabel)
 
 		/* Action label */
-		this.actionLabel = new PIXI.Text('', {
-			fontFamily: 'Arial',
-			fontSize: 24 * Settings.superSamplingLevel,
-			fill: 0xFFFFFF
-		})
-		this.actionLabel.anchor.set(0.5, 1)
+		this.actionLabel = new RichText('Test text', 2000, {})
 		this.actionLabel.zIndex = 85
+		this.actionLabel.setFont(24 * Settings.superSamplingLevel, 12 * Settings.superSamplingLevel)
 		this.rootContainer.addChild(this.actionLabel)
 
 		/* Player name label */
@@ -143,9 +144,9 @@ export default class Renderer {
 		this.renderTextLabels()
 		this.renderGameBoard(Core.board)
 		this.renderTargetingArrow()
-		this.renderQueuedOrders()
 		this.renderInspectedCard()
 		this.renderAnnouncedCard()
+		this.renderResolveStack()
 	}
 
 	public resize(): void {
@@ -201,6 +202,8 @@ export default class Renderer {
 			targetPosition.y = this.getScreenHeight() - targetPosition.y
 		}
 
+		sprite.tint = Core.player.timeUnits > 0 ? 0xFFFFFF : 0x999999
+
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED || renderedCard.displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
 			container.position.x += (targetPosition.x - container.position.x) * this.deltaTimeFraction * 7
@@ -232,7 +235,7 @@ export default class Renderer {
 	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): CardDisplayMode {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
-		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
+		const hoveredRow = Core.board.rows.find(row => row.isHovered())
 
 		let cardDisplayMode: CardDisplayMode
 		if (renderedCard.cardType === CardType.UNIT && hoveredRow) {
@@ -281,7 +284,7 @@ export default class Renderer {
 
 		/* Action label */
 		const labelPosition = Core.input.mousePosition.clone()
-		labelPosition.y -= 16
+		labelPosition.y -= 32
 		this.actionLabel.position.copyFrom(labelPosition)
 	}
 
@@ -306,6 +309,7 @@ export default class Renderer {
 		const rowY = screenCenterY + verticalDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 
 		container.position.set(screenCenterX, rowY)
+		gameBoardRow.sprite.tint = this.getBoardRowTint(gameBoardRow)
 
 		for (let i = 0; i < gameBoardRow.cards.length; i++) {
 			const cardOnBoard = gameBoardRow.cards[i]
@@ -313,14 +317,34 @@ export default class Renderer {
 		}
 	}
 
-	public renderCardOnBoard(cardOnBoard: RenderedCardOnBoard, rowY: number, unitIndex: number, unitCount: number): void {
-		if (cardOnBoard.card === Core.input.inspectedCard) {
+	private getBoardRowTint(row: RenderedGameBoardRow): BoardRowTint {
+		if ((Core.input.grabbedCard && Core.input.grabbedCard.validTargetRows.includes(row)) || (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isRowPotentialTarget(row))) {
+			if (row.owner === Core.player) {
+				return row.isHovered() ? BoardRowTint.VALID_TARGET_PLAYER_HOVERED : BoardRowTint.VALID_TARGET_PLAYER
+			} else if (row.owner === Core.opponent) {
+				return row.isHovered() ? BoardRowTint.VALID_TARGET_OPPONENT_HOVERED : BoardRowTint.VALID_TARGET_OPPONENT
+			} else {
+				return row.isHovered() ? BoardRowTint.VALID_TARGET_NEUTRAL_HOVERED : BoardRowTint.VALID_TARGET_NEUTRAL
+			}
+		}
+
+		if (row.owner === Core.player) {
+			return BoardRowTint.NORMAL_PLAYER
+		} else if (row.owner === Core.opponent) {
+			return BoardRowTint.NORMAL_OPPONENT
+		} else {
+			return BoardRowTint.NORMAL_NEUTRAL
+		}
+	}
+
+	public renderCardOnBoard(unit: RenderedCardOnBoard, rowY: number, unitIndex: number, unitCount: number): void {
+		if (unit.card === Core.input.inspectedCard) {
 			return
 		}
 
-		const container = cardOnBoard.card.coreContainer
-		const sprite = cardOnBoard.card.sprite
-		const hitboxSprite = cardOnBoard.card.hitboxSprite
+		const container = unit.card.coreContainer
+		const sprite = unit.card.sprite
+		const hitboxSprite = unit.card.hitboxSprite
 
 		const screenCenterX = this.getScreenWidth() / 2
 		const distanceToCenter = unitIndex - unitCount / 2 + 0.5
@@ -331,7 +355,7 @@ export default class Renderer {
 		const targetPositionX = screenCenterX + distanceToCenter * cardWidth
 		const targetPositionY = rowY
 
-		if (cardOnBoard.card.displayMode === CardDisplayMode.ON_BOARD) {
+		if (unit.card.displayMode === CardDisplayMode.ON_BOARD) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
 			container.position.x += (targetPositionX - container.position.x) * this.deltaTimeFraction * 7
 			container.position.y += (targetPositionY - container.position.y) * this.deltaTimeFraction * 7
@@ -345,44 +369,58 @@ export default class Renderer {
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		sprite.tint = 0xFFFFFF
-		if (Core.input.hoveredCard && cardOnBoard.card === Core.input.hoveredCard.card) {
-			sprite.tint = 0xBFBFBF
-		}
+		sprite.tint = this.getUnitTint(unit)
 
-		if (Core.game.turnPhase === GameTurnPhase.SKIRMISH && cardOnBoard.owner === Core.player && Core.player.isTurnActive) {
-			sprite.tint = 0xBBFFBB
-			if (Core.input.grabbedCard && cardOnBoard.card === Core.input.grabbedCard.card) {
-				sprite.tint = 0x99BB99
-			} else if (Core.input.hoveredCard && cardOnBoard.card === Core.input.hoveredCard.card) {
-				sprite.tint = 0x4CFE4C
-			}
-		}
-
-		const targetingAttacks = Core.board.queuedOrders.filter(order => order.targetUnit === cardOnBoard)
-		const incomingDamage = targetingAttacks.reduce((total, value) => total + value.orderedUnit.card.attack, 0)
-		const displayedPower = cardOnBoard.card.power - incomingDamage
-		cardOnBoard.card.powerText.text = displayedPower.toString()
-		if (incomingDamage > 0) {
-			cardOnBoard.card.powerText.style.fill = 0xAAAA00
-		} else if (cardOnBoard.card.power < cardOnBoard.card.basePower) {
-			cardOnBoard.card.powerText.style.fill = 0x770000
-		} else if (cardOnBoard.card.power > cardOnBoard.card.basePower) {
-			cardOnBoard.card.powerText.style.fill = 0x007700
+		if (unit.card.power < unit.card.basePower) {
+			unit.card.powerText.style.fill = 0x770000
+		} else if (unit.card.power > unit.card.basePower) {
+			unit.card.powerText.style.fill = 0x007700
 		} else {
-			cardOnBoard.card.powerText.style.fill = 0x000000
+			unit.card.powerText.style.fill = 0x000000
 		}
 
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
 
-		cardOnBoard.card.setDisplayMode(CardDisplayMode.ON_BOARD)
+		unit.card.setDisplayMode(CardDisplayMode.ON_BOARD)
+	}
+
+	private getUnitTint(unit: RenderedCardOnBoard): CardTint {
+		const card = unit.card
+		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
+		if (Core.input.grabbedCard && Core.input.grabbedCard.card === unit.card) {
+			return CardTint.GRABBED
+		}
+
+		/* Current unit is a valid target for some order */
+		if ((Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isUnitPotentialTarget(unit)) ||
+			(Core.input.grabbedCard && Core.input.grabbedCard.mode === GrabbedCardMode.CARD_ORDER && Core.input.grabbedCard.validTargetCards.includes(unit.card))) {
+			if (unit.owner === Core.opponent) {
+				return hoveredCard === card ? CardTint.VALID_ENEMY_TARGET_HOVERED : CardTint.VALID_ENEMY_TARGET
+			} else {
+				return hoveredCard === card ? CardTint.VALID_ALLY_TARGET_HOVERED : CardTint.VALID_ALLY_TARGET
+			}
+		}
+
+		if (Core.player.isTurnActive && !Core.input.grabbedCard && unit.owner === Core.player && Core.board.getValidOrdersForUnit(unit).length > 0) {
+			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
+		}
+		if (Core.opponent.isTurnActive && !Core.input.grabbedCard && unit.owner === Core.opponent && Core.board.getValidOrdersForUnit(unit).length > 0) {
+			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
+		}
+
+		return CardTint.INACTIVE
 	}
 
 	public renderTargetingArrow(): void {
+		this.updateTargetingLabel(this.actionLabel)
+		if (Core.input.forcedTargetingMode) {
+			return
+		}
+
 		const grabbedCard = Core.input.grabbedCard
-		if (!grabbedCard || grabbedCard.targetingMode !== TargetingMode.CARD_ORDER) {
+		if (!grabbedCard || grabbedCard.mode !== GrabbedCardMode.CARD_ORDER) {
 			this.actionLabel.text = ''
 			return
 		}
@@ -416,122 +454,34 @@ export default class Renderer {
 		targetingArrow.targetPoint.drawCircle(0, 0, 5)
 		targetingArrow.targetPoint.endFill()
 		targetingArrow.targetPoint.zIndex = TARGETING_ARROW_ZINDEX
-
-		this.updateTargetingLabel(this.actionLabel)
 	}
 
-	private updateTargetingLabel(label: PIXI.Text): void {
+	private updateTargetingLabel(label: RichText): void {
+		label.style.fill = 0x55FF55
+
+		const hoveredUnit = MouseHover.getHoveredUnit()
+		const hoveredRow = MouseHover.getHoveredRow()
+
+		if (Core.input.forcedTargetingMode) {
+			label.text = Localization.getString(Core.input.forcedTargetingMode.getDisplayedLabel())
+			label.textVariables = Core.input.forcedTargetingMode.getDisplayedLabelVariables()
+			return
+		}
+
 		const grabbedCard = Core.input.grabbedCard
-		if (!grabbedCard) {
-			this.actionLabel.text = ''
+		const grabbedUnit = grabbedCard ? Core.board.findUnitById(grabbedCard.card.id) : null
+		if (!grabbedCard || (!hoveredUnit && !hoveredRow)) {
+			label.text = ''
 			return
 		}
 
-		const sourceUnit = Core.board.findUnitById(grabbedCard.card.id)
-		if (!sourceUnit) {
-			this.actionLabel.text = ''
-			return
+		const validOrders = Core.board.getValidOrdersForUnit(grabbedUnit).sort((a, b) => a.targetMode - b.targetMode || a.targetType - b.targetType)
+		const performedOrder = validOrders.find(order => (!order.targetUnit || order.targetUnit === hoveredUnit) && (!order.targetRow || order.targetRow === hoveredRow))
+		if (performedOrder) {
+			label.text = Localization.getString(performedOrder.targetLabel)
+		} else {
+			label.text = ''
 		}
-
-		const colorInfo = 0x55FF55
-		const colorError = 0xFF5555
-		const hoveredCard = Core.input.hoveredCard
-		if (hoveredCard && hoveredCard.location === CardLocation.BOARD && grabbedCard.card !== hoveredCard.card) {
-			const targetUnit = Core.board.findUnitById(hoveredCard.card.id)!
-			if (sourceUnit.owner === targetUnit.owner) {
-				label.text = ''
-			} else if (!sourceUnit.isTargetInRange(targetUnit)) {
-				label.text = 'Target is too far!'
-				label.style.fill = colorError
-			} else if (Core.board.queuedOrders.find(order => order.orderedUnit === sourceUnit && order.targetUnit === targetUnit)) {
-				label.text = 'Cancel attack'
-				label.style.fill = colorInfo
-			} else {
-				label.text = 'Attack'
-				label.style.fill = colorInfo
-			}
-			return
-		}
-
-		const hoveredRow = Core.board.rows.find(row => row.isHovered(Core.input.mousePosition))
-		if (hoveredRow && sourceUnit.rowIndex !== hoveredRow.index) {
-			const distance = Math.abs(sourceUnit.rowIndex - hoveredRow.index)
-			const maxMoveDistance = 1
-			if (distance > maxMoveDistance) {
-				label.text = 'Row is too far'
-				label.style.fill = colorError
-			} else if (Core.board.queuedOrders.find(order => order.orderedUnit === sourceUnit && order.targetRow === hoveredRow)) {
-				label.text = 'Cancel move'
-				label.style.fill = colorInfo
-			} else {
-				label.text = 'Move'
-				label.style.fill = colorInfo
-			}
-			return
-		}
-
-		this.actionLabel.text = ''
-	}
-
-	public renderQueuedOrders(): void {
-		const queuedAttacks = Core.board.queuedOrders.filter(order => order.type === UnitOrderType.ATTACK)
-		const queuedMoves = Core.board.queuedOrders.filter(order => order.type === UnitOrderType.MOVE)
-
-		queuedAttacks.forEach(attackOrder => {
-			const targetingLine = attackOrder.targetingLine
-			const startingPosition = attackOrder.orderedUnit.card.getPosition()
-			const targetPosition = attackOrder.targetUnit!.card.getPosition()
-
-			let fillColor = 0xBBBBBB
-			const hoveredCard = Core.input.hoveredCard
-			if (hoveredCard && hoveredCard.card === attackOrder.orderedUnit.card) {
-				fillColor = 0xFFFFFF
-			} else if (hoveredCard && hoveredCard.card === attackOrder.targetUnit!.card) {
-				fillColor = 0xFF3333
-			}
-
-			targetingLine.startingPoint.position.copyFrom(startingPosition)
-			targetingLine.startingPoint.clear()
-			targetingLine.startingPoint.beginFill(0x999999, 1.0)
-			targetingLine.startingPoint.drawCircle(0, 0, 5 * Settings.superSamplingLevel)
-			targetingLine.startingPoint.endFill()
-			targetingLine.startingPoint.zIndex = UNIT_ORDER_ZINDEX
-
-			targetingLine.arrowLine.position.copyFrom(startingPosition)
-			targetingLine.arrowLine.clear()
-			targetingLine.arrowLine.lineStyle(2 * Settings.superSamplingLevel, fillColor, 1.0)
-			targetingLine.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
-			targetingLine.arrowLine.zIndex = UNIT_ORDER_ZINDEX
-
-			targetingLine.targetPoint.position.copyFrom(targetPosition)
-			targetingLine.targetPoint.clear()
-			targetingLine.targetPoint.beginFill(fillColor, 1.0)
-			targetingLine.targetPoint.drawCircle(0, 0, 5 * Settings.superSamplingLevel)
-			targetingLine.targetPoint.endFill()
-			targetingLine.targetPoint.zIndex = UNIT_ORDER_ZINDEX
-		})
-
-		queuedMoves.forEach(moveOrder => {
-			const cardPosition = moveOrder.orderedUnit.card.getPosition()
-			const targetRowPosition = moveOrder.targetRow!.container.position
-
-			let tintColor = 0xFFFFFF
-			const hoveredCard = Core.input.hoveredCard
-			if (hoveredCard && hoveredCard.card === moveOrder.orderedUnit.card) {
-				tintColor = 0xCCCCCC
-			}
-
-			moveOrder.targetingArrow.arrowSprite.position.copyFrom(cardPosition)
-			moveOrder.targetingArrow.arrowSprite.zIndex = UNIT_ORDER_ZINDEX
-			moveOrder.targetingArrow.arrowSprite.height = moveOrder.orderedUnit.card.sprite.height
-			moveOrder.targetingArrow.arrowSprite.width = moveOrder.orderedUnit.card.sprite.height * this.CARD_ASPECT_RATIO
-
-			moveOrder.targetingArrow.arrowSprite.tint = tintColor
-			moveOrder.targetingArrow.arrowSprite.rotation = Math.PI
-			if (targetRowPosition.y < cardPosition.y) {
-				moveOrder.targetingArrow.arrowSprite.rotation = 0
-			}
-		})
 	}
 
 	public renderInspectedCard(): void {
@@ -566,6 +516,7 @@ export default class Renderer {
 		const container = announcedCard.coreContainer
 		const sprite = announcedCard.sprite
 		sprite.alpha = 1
+		sprite.tint = 0xFFFFFF
 		sprite.scale.set(Settings.superSamplingLevel)
 		container.visible = true
 		container.zIndex = INSPECTED_CARD_ZINDEX
@@ -582,6 +533,50 @@ export default class Renderer {
 		}
 
 		const hitboxSprite = announcedCard.hitboxSprite
+		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
+		hitboxSprite.scale = sprite.scale
+		hitboxSprite.zIndex = container.zIndex - 1
+	}
+
+	public renderResolveStack(): void {
+		for (let i = 0; i < Core.resolveStack.cards.length; i++) {
+			const card = Core.resolveStack.cards[i]
+			this.renderResolveStackCard(card, i)
+		}
+	}
+
+	public renderResolveStackCard(card: RenderedCard, index: number): void {
+		const container = card.coreContainer
+		const sprite = card.sprite
+		sprite.alpha = 1
+		sprite.tint = 0xFFFFFF
+		sprite.scale.set(Settings.superSamplingLevel)
+		container.visible = true
+		container.zIndex = RESOLVING_CARD_ZINDEX + index
+
+		const cardHeight = this.getScreenHeight() * this.PLAYER_HAND_WINDOW_FRACTION
+		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
+		sprite.height = cardHeight
+
+		const horizontalOffset = 50 * Settings.superSamplingLevel * index
+
+		let verticalOffset = this.getScreenHeight() * 0.20
+		if (Core.opponent.isTurnActive) {
+			verticalOffset *= -1
+		}
+
+		if (card.displayMode !== CardDisplayMode.RESOLVING) {
+			container.position.x = -sprite.width / 2 + horizontalOffset
+			container.position.y = this.getScreenHeight() / 2 + verticalOffset
+			card.setDisplayMode(CardDisplayMode.RESOLVING)
+		} else {
+			const targetX = sprite.width / 2 + 50 * Settings.superSamplingLevel + horizontalOffset
+
+			container.position.x += (targetX - container.position.x) * this.deltaTimeFraction * 7
+			container.position.y = this.getScreenHeight() / 2 + verticalOffset
+		}
+
+		const hitboxSprite = card.hitboxSprite
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1

@@ -2,6 +2,8 @@ import ServerPlayer from '../../players/ServerPlayer'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import PlayerInGameMessage from '../../shared/models/network/PlayerInGameMessage'
 import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
+import ServerCardTarget from '../../models/ServerCardTarget'
+import CardTargetMessage from '../../shared/models/network/CardTargetMessage'
 
 export default {
 	notifyAboutPlayerMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
@@ -18,10 +20,11 @@ export default {
 		})
 	},
 
-	notifyAboutPlayerTimeBankChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
+	notifyAboutPlayerTimeBankChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame, delta: number) => {
 		player.sendMessage({
 			type: 'update/player/self/timeUnits',
-			data: PlayerInGameMessage.fromPlayerInGame(playerInGame)
+			data: PlayerInGameMessage.fromPlayerInGame(playerInGame),
+			highPriority: delta < 0
 		})
 	},
 
@@ -49,7 +52,8 @@ export default {
 	notifyAboutTurnEnded: (player: ServerPlayer) => {
 		player.sendMessage({
 			type: 'update/player/self/turnEnded',
-			data: null
+			data: null,
+			highPriority: true
 		})
 	},
 

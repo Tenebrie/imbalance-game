@@ -1,5 +1,6 @@
 import axios from 'axios'
 import * as PIXI from 'pixi.js'
+import store from '@/Vue/store'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 
 export default class TextureAtlas {
@@ -19,7 +20,7 @@ export default class TextureAtlas {
 			}
 
 			TextureAtlas.resolveFunctions.push(resolve)
-			if (TextureAtlas.isLoading) {
+			if (TextureAtlas.isLoading || !store.state.isLoggedIn) {
 				return
 			}
 
@@ -44,9 +45,7 @@ export default class TextureAtlas {
 				'components/stat-attack-range',
 				'components/stat-health-armor',
 				'components/overlay-move',
-				'board/boardRow_owned',
-				'board/boardRow_neutral',
-				'board/boardRow_opponent'
+				'board/board-row'
 			]
 
 			const response = await axios.get('/api/cards')

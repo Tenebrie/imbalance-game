@@ -6,7 +6,8 @@ export default {
 	notifyAboutPhaseAdvance: (player: ServerPlayer, phase: GameTurnPhase) => {
 		player.sendMessage({
 			type: 'update/game/phase',
-			data: phase
+			data: phase,
+			highPriority: true
 		})
 	},
 

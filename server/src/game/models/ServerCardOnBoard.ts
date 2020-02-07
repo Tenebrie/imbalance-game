@@ -3,13 +3,16 @@ import ServerCard from './ServerCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
-import ServerGameBoardRow from './ServerGameBoardRow'
-import Ruleset from '../Ruleset'
+import ServerCardTarget from './ServerCardTarget'
+import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
+import TargetMode from '../shared/enums/TargetMode'
+import TargetType from '../shared/enums/TargetType'
 
 export default class ServerCardOnBoard {
 	game: ServerGame
 	card: ServerCard
 	owner: ServerPlayerInGame
+	hasSummoningSickness = true
 
 	get rowIndex(): number {
 		return this.game.board.rows.indexOf(this.game.board.getRowWithUnit(this)!)
@@ -47,7 +50,7 @@ export default class ServerCardOnBoard {
 
 	dealDamageWithoutDestroying(damage: ServerDamageInstance): void {
 		const damageReduction = this.card.getDamageReduction(this, damage)
-		const damageValue = damage.value - damageReduction
+		const damageValue = this.card.getDamageTaken(this, damage) - damageReduction
 		if (damageValue <= 0) {
 			return
 		}
@@ -68,23 +71,33 @@ export default class ServerCardOnBoard {
 		this.setPower(Math.min(this.card.basePower, this.card.power + damage.value))
 	}
 
+	isAlive(): boolean {
+		return this.card.power > 0
+	}
+
 	isDead(): boolean {
 		return this.card.power <= 0
 	}
 
-	canAttackTarget(target: ServerCardOnBoard): boolean {
-		const range = this.card.attackRange
-		const distance = Math.abs(this.rowIndex - target.rowIndex)
+	getValidOrders(): ServerCardTarget[] {
+		if (this.hasSummoningSickness) {
+			return []
+		}
 
-		return this.owner !== target.owner && distance <= range
-	}
+		const targetDefinition = this.card.getValidOrderTargetDefinition()
+		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
+		const targets = []
+			.concat(this.card.getValidTargets(TargetMode.ORDER_ATTACK, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_DRAIN, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_SUPPORT, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_DRAIN, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_SUPPORT, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
+			.concat(this.card.getValidTargets(TargetMode.ORDER_MOVE, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
 
-	canMoveToRow(target: ServerGameBoardRow): boolean {
-		const range = 1
-		const distance = Math.abs(this.rowIndex - target.index)
-		const opponentsUnits = target.cards.filter(unit => unit.owner === this.game.getOpponent(this.owner))
+		targets.forEach(target => { target.sourceUnit = this })
 
-		return opponentsUnits.length < Ruleset.MAX_CARDS_PER_ROW && distance <= range
+		return targets
 	}
 
 	destroy(): void {
