@@ -5,6 +5,7 @@ import HiddenCardMessage from '../../shared/models/network/HiddenCardMessage'
 import ServerOwnedCard from '../../models/ServerOwnedCard'
 import ServerCardTarget from '../../models/ServerCardTarget'
 import CardTargetMessage from '../../shared/models/network/CardTargetMessage'
+import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 
 export default {
 	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard) {
@@ -14,18 +15,30 @@ export default {
 		})
 	},
 
-	notifyAboutCardsDrawn(player: ServerPlayer, cards: ServerCard[]) {
+	notifyAboutUnitCardsDrawn(playerInGame: ServerPlayerInGame, cards: ServerCard[]) {
 		const cardMessages = cards.map((card: ServerCard) => CardMessage.fromCard(card))
-		player.sendMessage({
-			type: 'update/player/self/hand/cardDrawn',
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/hand/unit/cardDrawn',
 			data: cardMessages
+		})
+
+		const hiddenCardMessages = cards.map((card: ServerCard) => HiddenCardMessage.fromCard(card))
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/hand/unit/cardDrawn',
+			data: hiddenCardMessages
 		})
 	},
 
-	notifyAboutOpponentCardsDrawn(player: ServerPlayer, cards: ServerCard[]) {
+	notifyAboutSpellCardsDrawn(playerInGame: ServerPlayerInGame, cards: ServerCard[]) {
+		const cardMessages = cards.map((card: ServerCard) => CardMessage.fromCard(card))
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/hand/spell/cardDrawn',
+			data: cardMessages
+		})
+
 		const hiddenCardMessages = cards.map((card: ServerCard) => HiddenCardMessage.fromCard(card))
-		player.sendMessage({
-			type: 'update/player/opponent/hand/cardDrawn',
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/hand/spell/cardDrawn',
 			data: hiddenCardMessages
 		})
 	},
@@ -106,17 +119,25 @@ export default {
 		})
 	},
 
-	notifyAboutPlayerCardInGraveyard(player: ServerPlayer, card: ServerCard) {
-		player.sendMessage({
-			type: 'update/player/self/graveyard/cardAdded',
+	notifyAboutUnitCardInGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard) {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/graveyard/unit/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/graveyard/unit/cardAdded',
 			data: CardMessage.fromCard(card)
 		})
 	},
 
-	notifyAboutOpponentCardInGraveyard(player: ServerPlayer, card: ServerCard) {
-		player.sendMessage({
-			type: 'update/player/opponent/graveyard/cardAdded',
+	notifyAboutSpellCardInGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard) {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/graveyard/spell/cardAdded',
 			data: CardMessage.fromCard(card)
 		})
-	},
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/graveyard/spell/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+	}
 }

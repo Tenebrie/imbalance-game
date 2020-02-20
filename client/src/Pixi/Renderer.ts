@@ -2,24 +2,23 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@/Pixi/shared/Constants'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
+import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
 import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import CardType from '@/Pixi/shared/enums/CardType'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Settings from '@/Pixi/Settings'
 import CardTint from '@/Pixi/enums/CardTint'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
-import TargetMode from '@/Pixi/shared/enums/TargetMode'
 import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
 
 const UNIT_ZINDEX = 2
 const TARGETING_ARROW_ZINDEX = 10
-const HOVERED_CARD_ZINDEX = 50
+const HOVERED_CARD_ZINDEX = 95
 const RESOLVING_CARD_ZINDEX = 100
 const GRABBED_CARD_ZINDEX = 150
 const INSPECTED_CARD_ZINDEX = 200
@@ -106,37 +105,68 @@ export default class Renderer {
 		this.deltaTime = deltaTime
 		this.deltaTimeFraction = deltaTimeFraction
 
-		const playerCards = Core.player.cardHand.cards
-		const sortedPlayerCards = Core.player.cardHand.cards.filter(card => card !== Core.input.inspectedCard).slice().reverse()
-
-		sortedPlayerCards.forEach(renderedCard => {
+		const unitCards = Core.player.cardHand.unitCards
+		const sortedPlayerUnitCards = Core.player.cardHand.unitCards.filter(card => card !== Core.input.inspectedCard).slice().reverse()
+		sortedPlayerUnitCards.forEach(renderedCard => {
 			if (renderedCard === Core.input.inspectedCard) {
 				return
 			}
 
 			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
-				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length, false)
+				this.renderCardInHand(renderedCard, unitCards.indexOf(renderedCard), unitCards.length, false, false)
 				const displayMode = this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
 				renderedCard.setDisplayMode(displayMode)
 			} else if (!Core.input.grabbedCard && Core.input.hoveredCard && renderedCard === Core.input.hoveredCard.card) {
-				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length, false)
+				this.renderCardInHand(renderedCard, unitCards.indexOf(renderedCard), unitCards.length, false, false)
 				this.renderHoveredCardInHand(renderedCard)
 				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
 			} else {
-				this.renderCardInHand(renderedCard, playerCards.indexOf(renderedCard), playerCards.length, false)
+				this.renderCardInHand(renderedCard, unitCards.indexOf(renderedCard), unitCards.length, false, false)
+				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND)
+			}
+		})
+
+		const spellCards = Core.player.cardHand.spellCards
+		const sortedPlayerSpellCards = Core.player.cardHand.spellCards.filter(card => card !== Core.input.inspectedCard).slice().reverse()
+		sortedPlayerSpellCards.forEach(renderedCard => {
+			if (renderedCard === Core.input.inspectedCard) {
+				return
+			}
+
+			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
+				this.renderCardInHand(renderedCard, spellCards.indexOf(renderedCard), spellCards.length, false, true)
+				const displayMode = this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
+				renderedCard.setDisplayMode(displayMode)
+			} else if (!Core.input.grabbedCard && Core.input.hoveredCard && renderedCard === Core.input.hoveredCard.card) {
+				this.renderCardInHand(renderedCard, spellCards.indexOf(renderedCard), spellCards.length, false, true)
+				this.renderHoveredCardInHand(renderedCard)
+				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
+			} else {
+				this.renderCardInHand(renderedCard, spellCards.indexOf(renderedCard), spellCards.length, false, true)
 				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND)
 			}
 		})
 
 		if (Core.opponent) {
-			const opponentCards = Core.opponent.cardHand.cards
-			const sortedOpponentCards = Core.opponent.cardHand.cards.slice().reverse()
-			sortedOpponentCards.forEach(renderedCard => {
+			const opponentsUnitCards = Core.opponent.cardHand.unitCards
+			const sortedOpponentUnitCards = Core.opponent.cardHand.unitCards.slice().reverse()
+			sortedOpponentUnitCards.forEach(renderedCard => {
 				if (renderedCard === Core.input.inspectedCard || renderedCard === Core.mainHandler.announcedCard) {
 					return
 				}
 
-				this.renderCardInHand(renderedCard, opponentCards.indexOf(renderedCard), opponentCards.length, true)
+				this.renderCardInHand(renderedCard, opponentsUnitCards.indexOf(renderedCard), opponentsUnitCards.length, true, false)
+				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HIDDEN)
+			})
+
+			const opponentsSpellCards = Core.opponent.cardHand.spellCards
+			const sortedOpponentSpellCards = Core.opponent.cardHand.spellCards.slice().reverse()
+			sortedOpponentSpellCards.forEach(renderedCard => {
+				if (renderedCard === Core.input.inspectedCard || renderedCard === Core.mainHandler.announcedCard) {
+					return
+				}
+
+				this.renderCardInHand(renderedCard, opponentsSpellCards.indexOf(renderedCard), opponentsSpellCards.length, true, true)
 				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HIDDEN)
 			})
 		}
@@ -175,7 +205,7 @@ export default class Renderer {
 		return this.pixi.view.height
 	}
 
-	public renderCardInHand(renderedCard: RenderedCard, handPosition: number, handSize: number, isOpponent: boolean): void {
+	public renderCardInHand(renderedCard: RenderedCard, handPosition: number, handSize: number, isOpponent: boolean, isSpellHand: boolean): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
@@ -186,8 +216,14 @@ export default class Renderer {
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
+		const unitHandFraction = 0.50
+		const spellHandFraction = 0.20
+
+		const containerFraction = isSpellHand ? spellHandFraction : unitHandFraction
+		const containerWidth = Math.min(this.getScreenWidth() * containerFraction, cardHeight * this.CARD_ASPECT_RATIO * handSize)
+
 		const screenCenter = this.getScreenWidth() / 2
-		const cardWidth = cardHeight * this.CARD_ASPECT_RATIO * Math.pow(0.95, handSize)
+		const cardWidth = containerWidth / handSize
 		const distanceToCenter = handPosition - ((handSize - 1) / 2)
 
 		container.visible = true
@@ -202,7 +238,18 @@ export default class Renderer {
 			targetPosition.y = this.getScreenHeight() - targetPosition.y
 		}
 
-		sprite.tint = Core.player.timeUnits > 0 ? 0xFFFFFF : 0x999999
+		if (isSpellHand) {
+			targetPosition.x += this.getScreenWidth() * 0.5 / 2 + 125
+		} else {
+			targetPosition.x -= this.getScreenWidth() * 0.2 / 2 + 125
+		}
+
+		const isPlayable = (renderedCard.cardType === CardType.UNIT && Core.player.unitMana > 0) || (renderedCard.cardType === CardType.SPELL && Core.player.spellMana > 0)
+		sprite.tint = isPlayable ? 0xFFFFFF : 0x999999
+
+		if (renderedCard.cardType === CardType.SPELL) {
+			renderedCard.powerText.style.fill = 0x0000AA
+		}
 
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED || renderedCard.displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
@@ -254,7 +301,7 @@ export default class Renderer {
 	}
 
 	public renderTextLabels(): void {
-		let phaseLabel = ''
+		let phaseLabel: string
 		if (Core.game.turnPhase === GameTurnPhase.BEFORE_GAME) {
 			phaseLabel = 'Waiting for the game to start'
 		} else if (Core.game.turnPhase === GameTurnPhase.AFTER_GAME) {
@@ -277,9 +324,9 @@ export default class Renderer {
 		this.timeLabel.text = `${phaseLabel}\nTime of day is ${Core.game.currentTime} out of ${Core.game.maximumTime}`
 
 		/* Player name labels */
-		this.playerNameLabel.text = `${Core.player.player.username} (${Core.player.timeUnits})\nMorale: ${Core.player.morale}`
+		this.playerNameLabel.text = `${Core.player.player.username}\n- Morale: ${Core.player.morale}\n- Unit mana: ${Core.player.unitMana}\n- Spell mana: ${Core.player.spellMana}`
 		if (Core.opponent) {
-			this.opponentNameLabel.text = `${Core.opponent.player.username} (${Core.opponent.timeUnits})\nMorale: ${Core.opponent.morale}`
+			this.opponentNameLabel.text = `${Core.opponent.player.username}\n- Morale: ${Core.opponent.morale}\n- Unit mana: ${Core.opponent.unitMana}\n- Spell mana: ${Core.opponent.spellMana}`
 		}
 
 		/* Action label */

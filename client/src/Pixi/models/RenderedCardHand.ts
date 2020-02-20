@@ -1,25 +1,39 @@
+import Core from '@/Pixi/Core'
+import Utils from '@/utils/Utils'
+import CardHand from '@/Pixi/shared/models/CardHand'
+import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import CardHandMessage from '../shared/models/network/CardHandMessage'
-import Utils from '@/utils/Utils'
-import CardMessage from '@/Pixi/shared/models/network/CardMessage'
-import Core from '@/Pixi/Core'
 
-export default class RenderedCardHand {
-	cards: RenderedCard[]
+export default class RenderedCardHand implements CardHand {
+	unitCards: RenderedCard[]
+	spellCards: RenderedCard[]
 
-	constructor(cards: RenderedCard[]) {
-		this.cards = cards
+	constructor(unitCards: RenderedCard[], spellCards: RenderedCard[]) {
+		this.unitCards = unitCards
+		this.spellCards = spellCards
 	}
 
-	public addCard(card: RenderedCard) {
-		this.cards.push(card)
-		this.cards.sort((a: RenderedCard, b: RenderedCard) => {
-			return a.cardType - b.cardType || a.unitSubtype - b.unitSubtype || b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass)
+	public get allCards() {
+		return this.unitCards.slice().concat(this.spellCards)
+	}
+
+	public addUnit(card: RenderedCard) {
+		this.unitCards.push(card)
+		this.unitCards.sort((a: RenderedCard, b: RenderedCard) => {
+			return a.unitSubtype - b.unitSubtype || b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass)
+		})
+	}
+
+	public addSpell(card: RenderedCard) {
+		this.spellCards.push(card)
+		this.spellCards.sort((a: RenderedCard, b: RenderedCard) => {
+			return b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass)
 		})
 	}
 
 	public findCardById(cardId: string): RenderedCard | null {
-		return this.cards.find(renderedCard => renderedCard.id === cardId) || null
+		return this.unitCards.find(renderedCard => renderedCard.id === cardId) || this.spellCards.find(renderedCard => renderedCard.id === cardId) || null
 	}
 
 	public reveal(data: CardMessage): void {
@@ -29,23 +43,25 @@ export default class RenderedCardHand {
 		const revealedCard = new RenderedCard(data)
 		revealedCard.switchToCardMode()
 		Core.registerCard(revealedCard)
-		this.cards.splice(this.cards.indexOf(card), 1, revealedCard)
+		this.unitCards.splice(this.unitCards.indexOf(card), 1, revealedCard)
 		Core.unregisterCard(card)
 	}
 
 	public removeCard(card: RenderedCard) {
-		this.cards.splice(this.cards.indexOf(card), 1)
+		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
+		this.spellCards = this.spellCards.filter(unitCard => unitCard !== card)
 		card.unregister()
 	}
 
 	public removeCardById(cardId: string) {
-		const card = this.cards.find(card => card.id === cardId)
+		const card = this.findCardById(cardId)
 		if (!card) { return }
 		this.removeCard(card)
 	}
 
 	public static fromMessage(message: CardHandMessage): RenderedCardHand {
-		const cards = message.cards.map(cardMessage => RenderedCard.fromMessage(cardMessage))
-		return new RenderedCardHand(cards)
+		const unitCards = message.unitCards.map(cardMessage => RenderedCard.fromMessage(cardMessage))
+		const spellCards = message.spellCards.map(cardMessage => RenderedCard.fromMessage(cardMessage))
+		return new RenderedCardHand(unitCards, spellCards)
 	}
 }

@@ -4,7 +4,6 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerCardTarget from './ServerCardTarget'
-import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
 

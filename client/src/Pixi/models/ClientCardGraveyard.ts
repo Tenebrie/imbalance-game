@@ -1,23 +1,25 @@
-import RenderedCard from '@/Pixi/board/RenderedCard'
-import CardDeckMessage from '@/Pixi/shared/models/network/CardDeckMessage'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
+import CardDeck from '@/Pixi/shared/models/CardDeck'
+import Card from '@/Pixi/shared/models/Card'
 
-export default class ClientCardGraveyard {
-	cards: CardMessage[]
+export default class ClientCardGraveyard implements CardDeck {
+	unitCards: CardMessage[]
+	spellCards: CardMessage[]
 
-	constructor(cards: CardMessage[]) {
-		this.cards = cards
+	constructor() {
+		this.unitCards = []
+		this.spellCards = []
 	}
 
-	public addCard(card: CardMessage): void {
-		this.cards.push(card)
+	public addUnit(card: CardMessage): void {
+		this.unitCards.push(card)
+	}
+
+	public addSpell(card: CardMessage): void {
+		this.spellCards.push(card)
 	}
 
 	public findCardById(cardId: string): CardMessage | null {
-		return this.cards.find(card => card.id === cardId) || null
-	}
-
-	public static fromMessage(message: CardDeckMessage): ClientCardGraveyard {
-		return new ClientCardGraveyard(message.cards)
+		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
 	}
 }

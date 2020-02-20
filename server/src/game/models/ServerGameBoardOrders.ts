@@ -4,13 +4,13 @@ import ServerGameBoardRow from './ServerGameBoardRow'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerCardTarget from './ServerCardTarget'
-import Ruleset from '../Ruleset'
 import OutgoingAnimationMessages from '../handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from './ServerAnimation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
 import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
+import Constants from '../shared/Constants'
 
 export default class ServerGameBoardOrders {
 	game: ServerGame
@@ -120,7 +120,7 @@ export default class ServerGameBoardOrders {
 
 	public performUnitMove(orderedUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
 		const currentRow = this.game.board.getRowWithUnit(orderedUnit)
-		if (!currentRow || targetRow.cards.length === Ruleset.MAX_CARDS_PER_ROW) { return }
+		if (!currentRow || targetRow.cards.length === Constants.MAX_CARDS_PER_ROW) { return }
 
 		runCardEventHandler(() => orderedUnit.card.onBeforePerformingMove(orderedUnit, targetRow))
 		this.game.board.moveUnit(orderedUnit, targetRow.index, targetRow.cards.length)

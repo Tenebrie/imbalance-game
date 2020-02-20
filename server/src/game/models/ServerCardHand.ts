@@ -6,47 +6,41 @@ import ServerOwnedCard from './ServerOwnedCard'
 
 export default class ServerCardHand {
 	game: ServerGame
-	cards: ServerCard[]
+	unitCards: ServerCard[]
+	spellCards: ServerCard[]
 	owner: ServerPlayerInGame
 
-	constructor(game: ServerGame, playerInGame: ServerPlayerInGame, cards: ServerCard[]) {
+	constructor(game: ServerGame, playerInGame: ServerPlayerInGame, unitCards: ServerCard[], spellCards: ServerCard[]) {
 		this.game = game
-		this.cards = cards
 		this.owner = playerInGame
+		this.unitCards = unitCards
+		this.spellCards = spellCards
 	}
 
-	public addCard(card: ServerCard): void {
-		this.cards.push(card)
+	public addUnit(card: ServerCard): void {
+		this.unitCards.push(card)
 	}
 
-	public drawCard(card: ServerCard): void {
-		this.addCard(card)
+	public addSpell(card: ServerCard): void {
+		this.spellCards.push(card)
+	}
+
+	public onUnitDrawn(card: ServerCard): void {
+		this.addUnit(card)
+	}
+
+	public onSpellDrawn(card: ServerCard): void {
+		this.addSpell(card)
 	}
 
 	public findCardById(cardId: string): ServerCard | null {
-		return this.cards.find(card => card.id === cardId) || null
+		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
 	}
 
 	public removeCard(card: ServerCard): void {
-		this.cards.splice(this.cards.indexOf(card), 1)
+		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
+		this.spellCards = this.spellCards.filter(unitCard => unitCard !== card)
 
 		OutgoingMessageHandlers.notifyAboutCardInHandDestroyed(new ServerOwnedCard(card, this.owner))
-	}
-
-	public getRandomCard(): ServerCard | null {
-		if (this.isEmpty()) { return null }
-
-		return this.cards[Math.floor(Math.random() * this.cards.length)]
-	}
-
-	public isEmpty(): boolean {
-		return this.cards.length === 0
-	}
-
-	public removeCardById(cardId: string) {
-		const card = this.cards.find(card => card.id === cardId)
-		if (!card) { return }
-
-		this.removeCard(card)
 	}
 }

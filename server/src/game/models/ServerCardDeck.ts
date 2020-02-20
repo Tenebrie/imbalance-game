@@ -7,52 +7,70 @@ import ServerOwnedCard from './ServerOwnedCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 
-export default class ServerCardDeck extends CardDeck {
+export default class ServerCardDeck implements CardDeck {
 	game: ServerGame
-	cards: ServerCard[]
+	unitCards: ServerCard[]
+	spellCards: ServerCard[]
 	owner: ServerPlayerInGame
 
-	constructor(game: ServerGame, owner: ServerPlayerInGame, cards: ServerCard[]) {
-		super(cards)
+	constructor(game: ServerGame, owner: ServerPlayerInGame, unitCards: ServerCard[], spellCards: ServerCard[]) {
 		this.game = game
 		this.owner = owner
-		this.cards = cards
+		this.unitCards = unitCards
+		this.spellCards = spellCards
 	}
 
 	public instantiateFrom(deck: ServerTemplateCardDeck): void {
-		deck.cards.forEach(card => this.addCard(CardLibrary.instantiate(card)))
+		deck.unitCards.forEach(card => this.addUnit(CardLibrary.instantiate(card)))
+		deck.spellCards.forEach(card => this.addSpell(CardLibrary.instantiate(card)))
 	}
 
-	public addCard(card: ServerCard): void {
-		this.cards.push(card)
+	public addUnit(card: ServerCard): void {
+		this.unitCards.push(card)
 	}
 
-	public drawCard(): ServerCard {
-		return this.cards.pop()
+	public addSpell(card: ServerCard): void {
+		this.spellCards.push(card)
+	}
+
+	public drawUnit(): ServerCard {
+		return this.unitCards.pop()
+	}
+
+	public drawSpell(): ServerCard {
+		return this.spellCards.pop()
 	}
 
 	public findCardByClass(cardClass: string): ServerCard | null {
-		return this.cards.find(card => card.cardClass === cardClass) || null
+		return this.unitCards.find(card => card.cardClass === cardClass) || this.spellCards.find(card => card.cardClass === cardClass) || null
 	}
 
 	public findCardById(cardId: string): ServerCard | null {
-		return this.cards.find(card => card.id === cardId) || null
+		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
 	}
 
 	public shuffle(): void {
-		let counter = this.cards.length
+		this.unitCards = this.shuffleArray(this.unitCards)
+		this.spellCards = this.shuffleArray(this.spellCards)
+	}
+
+	public shuffleArray(source: any[]): any[] {
+		const array = source.slice()
+		let counter = array.length
 
 		while (counter > 0) {
 			const index = Math.floor(Math.random() * counter)
 			counter--
-			const temp = this.cards[counter]
-			this.cards[counter] = this.cards[index]
-			this.cards[index] = temp
+			const temp = array[counter]
+			array[counter] = array[index]
+			array[index] = temp
 		}
+		return array
 	}
 
 	public removeCard(card: ServerCard): void {
-		this.cards.splice(this.cards.indexOf(card), 1)
+		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
+		this.spellCards = this.spellCards.filter(unitCard => unitCard !== card)
 
 		OutgoingMessageHandlers.notifyAboutCardInDeckDestroyed(new ServerOwnedCard(card, this.owner))
 	}

@@ -31,7 +31,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	private botTakesTheirTurn(): void {
 		try {
 			// TODO: Teach bot how to target something for battlecries
-			while (this.timeUnits > 0 && this.cardHand.cards.length > 0) {
+			while (this.unitMana > 0 && this.cardHand.unitCards.length > 0) {
 				this.botPlaysCard()
 				while (this.game.cardPlay.cardResolveStack.hasCards()) {
 					this.botChoosesTarget()
@@ -46,7 +46,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botPlaysCard(): void {
-		const cards = this.cardHand.cards.slice().sort((a: ServerCard, b: ServerCard) => {
+		const cards = this.cardHand.unitCards.slice().sort((a: ServerCard, b: ServerCard) => {
 			return a.cardType - b.cardType || (b.unitSubtype ? b.unitSubtype : 10) - (a.unitSubtype ? a.unitSubtype : 10) || b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass)
 		})
 		const selectedCard = cards[0]

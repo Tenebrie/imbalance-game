@@ -75,7 +75,7 @@ export default {
 	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
 		if (player.turnEnded || player.targetRequired) { return }
 
-		player.setTimeUnits(0)
+		player.setUnitMana(0)
 		player.endTurn()
 
 		game.advanceTurn()

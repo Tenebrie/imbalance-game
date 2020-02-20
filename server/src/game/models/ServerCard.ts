@@ -26,6 +26,10 @@ export default class ServerCard extends Card {
 		this.game = game
 	}
 
+	public get spellCost() {
+		return this.power
+	}
+
 	setPower(unit: ServerCardOnBoard, value: number): void {
 		if (this.power === value) { return }
 

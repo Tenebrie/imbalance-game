@@ -4,7 +4,7 @@ import CardTribe from '../../enums/CardTribe'
 import UnitSubtype from '../../enums/UnitSubtype'
 import RichTextVariables from '../RichTextVariables'
 
-export default class CardMessage {
+export default class CardMessage implements Card {
 	id: string
 	cardType: CardType
 	cardClass: string

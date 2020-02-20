@@ -1,10 +1,10 @@
-import Ruleset from '../../Ruleset'
 import ServerGame from '../ServerGame'
 import TargetValidatorArguments from '../../../types/TargetValidatorArguments'
 import TargetTypeWithMode from '../../../types/TargetTypeWithMode'
 import TargetMode from '../../shared/enums/TargetMode'
 import TargetType from '../../shared/enums/TargetType'
 import StandardTargetDefinitionBuilder from './StandardTargetDefinitionBuilder'
+import Constants from '../../shared/Constants'
 
 export default class ServerTargetDefinition {
 	private readonly game: ServerGame
@@ -69,7 +69,7 @@ export default class ServerTargetDefinition {
 				const targetRow = args.targetRow!
 
 				const distanceToRow = Math.abs(thisUnit.rowIndex - targetRow.index)
-				const rowIsFull = targetRow.cards.length >= Ruleset.MAX_CARDS_PER_ROW
+				const rowIsFull = targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW
 
 				return distanceToRow === 1 && !rowIsFull && (targetRow.owner === thisUnit.owner || targetRow.owner === null || targetRow.cards.length === 0)
 			})

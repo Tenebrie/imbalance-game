@@ -6,6 +6,7 @@ import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 export default class SpellMagicalStarfall extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.SPELL)
+		this.basePower = 4
 	}
 
 	onPlaySpell(owner: ServerPlayerInGame): void {
@@ -14,6 +15,5 @@ export default class SpellMagicalStarfall extends ServerCard {
 			unit.setPower(unit.card.power + 3)
 			unit.setAttack(unit.card.attack + 2)
 		})
-		owner.drawCards(1)
 	}
 }

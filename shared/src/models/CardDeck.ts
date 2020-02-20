@@ -1,9 +1,6 @@
 import Card from './Card'
 
-export default class CardDeck {
-	cards: Card[]
-
-	constructor(cards: Card[]) {
-		this.cards = cards
-	}
+export default interface CardDeck {
+	unitCards: Card[]
+	spellCards: Card[]
 }

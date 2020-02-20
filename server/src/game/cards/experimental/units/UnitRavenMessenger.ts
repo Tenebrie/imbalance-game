@@ -18,7 +18,7 @@ export default class UnitRavenMessenger extends ServerCard {
 	onTurnStarted(thisUnit: ServerCardOnBoard): void {
 		this.turnsLeft -= 1
 		if (this.turnsLeft === 0) {
-			thisUnit.owner.drawCards(1)
+			thisUnit.owner.drawUnitCards(1)
 			this.turnsLeft = 3
 		}
 	}

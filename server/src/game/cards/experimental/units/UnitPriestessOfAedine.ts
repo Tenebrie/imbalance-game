@@ -24,7 +24,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 
 	definePlayRequiredTargets(): TargetDefinitionBuilder {
 		return CardPlayTargetDefinitionBuilder.base(this.game)
-			.actions(this.targets)
+			.multipleTargets(this.targets)
 			.alliedUnit()
 			.notSelf()
 			.allow(TargetType.UNIT, this.targets)

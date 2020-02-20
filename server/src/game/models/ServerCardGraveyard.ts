@@ -4,25 +4,30 @@ import ServerGame from './ServerGame'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 
-export default class ServerCardGraveyard extends CardDeck {
+export default class ServerCardGraveyard implements CardDeck {
 	game: ServerGame
 	owner: ServerPlayerInGame
-	cards: ServerCard[]
+	unitCards: ServerCard[]
+	spellCards: ServerCard[]
 
 	constructor(owner: ServerPlayerInGame) {
-		super([])
 		this.game = owner.game
 		this.owner = owner
-		this.cards = []
+		this.unitCards = []
+		this.spellCards = []
 	}
 
-	public addCard(card: ServerCard): void {
-		this.cards.push(card)
-		OutgoingMessageHandlers.notifyAboutPlayerCardInGraveyard(this.owner.player, card)
-		OutgoingMessageHandlers.notifyAboutOpponentCardInGraveyard(this.owner.player, card)
+	public addUnit(card: ServerCard): void {
+		this.unitCards.push(card)
+		OutgoingMessageHandlers.notifyAboutUnitCardInGraveyard(this.owner, card)
+	}
+
+	public addSpell(card: ServerCard): void {
+		this.spellCards.push(card)
+		OutgoingMessageHandlers.notifyAboutSpellCardInGraveyard(this.owner, card)
 	}
 
 	public findCardById(cardId: string): ServerCard | null {
-		return this.cards.find(card => card.id === cardId) || null
+		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
 	}
 }

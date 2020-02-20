@@ -18,7 +18,7 @@ export default class HeroRider2Conquest extends ServerCard {
 
 	definePlayRequiredTargets(): TargetDefinitionBuilder {
 		return CardPlayTargetDefinitionBuilder.base(this.game)
-			.singleAction()
+			.singleTarget()
 			.allow(TargetType.BOARD_ROW)
 			.validate(TargetType.BOARD_ROW, args => args.targetRow.owner === args.thisUnit.owner.opponent)
 	}

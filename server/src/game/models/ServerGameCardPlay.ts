@@ -1,7 +1,5 @@
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
-import ServerCard from './ServerCard'
-import TargetValidatorArguments from '../../types/TargetValidatorArguments'
 import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
@@ -24,8 +22,12 @@ export default class ServerGameCardPlay {
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
 		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)
 
-		/* Advance the time */
-		ownedCard.owner.setTimeUnits(ownedCard.owner.timeUnits - 1)
+		/* Deduct mana */
+		if (ownedCard.card.cardType === CardType.UNIT) {
+			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - 1)
+		} else if (ownedCard.card.cardType === CardType.SPELL) {
+			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - ownedCard.card.spellCost)
+		}
 	}
 
 	public forcedPlayCardFromHand(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {

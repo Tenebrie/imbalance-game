@@ -8,7 +8,6 @@ import GameBoardRowMessage from '../../shared/models/network/GameBoardRowMessage
 import CardTargetMessage from '../../shared/models/network/CardTargetMessage'
 import ServerGame from '../../models/ServerGame'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
-import ServerCardTarget from '../../models/ServerCardTarget'
 
 export default {
 	notifyAboutUnitCreated(player: ServerPlayer, card: ServerCardOnBoard, rowIndex: number, unitIndex: number) {

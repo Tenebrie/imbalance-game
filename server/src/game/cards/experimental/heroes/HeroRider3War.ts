@@ -24,7 +24,7 @@ export default class heroRider3War extends ServerCard {
 
 	definePlayRequiredTargets(): TargetDefinitionBuilder {
 		return CardPlayTargetDefinitionBuilder.base(this.game)
-			.actions(this.targets * 2)
+			.multipleTargets(this.targets * 2)
 			.unique(TargetType.UNIT)
 			.allow(TargetType.UNIT, this.targets * 2)
 			.validate(TargetType.UNIT, args => {

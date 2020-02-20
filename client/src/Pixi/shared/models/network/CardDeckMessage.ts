@@ -2,15 +2,12 @@ import Card from '../Card'
 import CardDeck from '../CardDeck'
 import CardMessage from './CardMessage'
 
-export default class CardDeckMessage extends CardDeck {
-	cards: CardMessage[]
+export default class CardDeckMessage implements CardDeck {
+	unitCards: Card[]
+	spellCards: Card[]
 
-	constructor(cards: Card[]) {
-		super(cards)
-		this.cards = cards.map(card => CardMessage.fromCard(card))
-	}
-
-	public static fromDeck(cardDeck: CardDeck): CardDeckMessage {
-		return new CardDeckMessage(cardDeck.cards)
+	constructor(deck: CardDeck) {
+		this.unitCards = deck.unitCards.map(card => CardMessage.fromCard(card))
+		this.spellCards = deck.spellCards.map(card => CardMessage.fromCard(card))
 	}
 }

@@ -2,8 +2,6 @@ import ServerPlayer from '../../players/ServerPlayer'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import PlayerInGameMessage from '../../shared/models/network/PlayerInGameMessage'
 import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
-import ServerCardTarget from '../../models/ServerCardTarget'
-import CardTargetMessage from '../../shared/models/network/CardTargetMessage'
 
 export default {
 	notifyAboutPlayerMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
@@ -20,17 +18,26 @@ export default {
 		})
 	},
 
-	notifyAboutPlayerTimeBankChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame, delta: number) => {
-		player.sendMessage({
-			type: 'update/player/self/timeUnits',
+	notifyAboutUnitManaChange: (playerInGame: ServerPlayerInGame, delta: number) => {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/unitMana',
 			data: PlayerInGameMessage.fromPlayerInGame(playerInGame),
 			highPriority: delta < 0
 		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/unitMana',
+			data: HiddenPlayerInGameMessage.fromPlayerInGame(playerInGame)
+		})
 	},
 
-	notifyAboutOpponentTimeBankChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
-		player.sendMessage({
-			type: 'update/player/opponent/timeUnits',
+	notifyAboutSpellManaChange: (playerInGame: ServerPlayerInGame, delta: number) => {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/spellMana',
+			data: PlayerInGameMessage.fromPlayerInGame(playerInGame),
+			highPriority: delta < 0
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/spellMana',
 			data: HiddenPlayerInGameMessage.fromPlayerInGame(playerInGame)
 		})
 	},

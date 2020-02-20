@@ -39,7 +39,8 @@ const handlers: {[ index: string ]: any } = {
 		Core.player.cardHand = RenderedCardHand.fromMessage(data.cardHand)
 		Core.player.cardDeck = ClientCardDeck.fromMessage(data.cardDeck)
 		Core.player.morale = data.morale
-		Core.player.timeUnits = data.timeUnits
+		Core.player.unitMana = data.unitMana
+		Core.player.spellMana = data.spellMana
 	},
 
 	'gameState/player/opponent': (data: PlayerInGameMessage) => {
@@ -152,12 +153,20 @@ const handlers: {[ index: string ]: any } = {
 		Core.opponent.morale = data.morale
 	},
 
-	'update/player/self/timeUnits': (data: PlayerInGameMessage) => {
-		Core.player.timeUnits = data.timeUnits
+	'update/player/self/unitMana': (data: PlayerInGameMessage) => {
+		Core.player.setUnitMana(data.unitMana)
 	},
 
-	'update/player/opponent/timeUnits': (data: PlayerInGameMessage) => {
-		Core.opponent.timeUnits = data.timeUnits
+	'update/player/opponent/unitMana': (data: PlayerInGameMessage) => {
+		Core.opponent.setUnitMana(data.unitMana)
+	},
+
+	'update/player/self/spellMana': (data: PlayerInGameMessage) => {
+		Core.player.setSpellMana(data.spellMana)
+	},
+
+	'update/player/opponent/spellMana': (data: PlayerInGameMessage) => {
+		Core.opponent.setSpellMana(data.spellMana)
 	},
 
 	'update/player/self/victory': (data: PlayerInGameMessage) => {
@@ -168,21 +177,42 @@ const handlers: {[ index: string ]: any } = {
 		store.dispatch.gameStateModule.loseGame()
 	},
 
-	'update/player/self/hand/cardDrawn': (data: CardMessage[]) => {
-		console.info('Cards drawn', data)
+	'update/player/self/hand/unit/cardDrawn': (data: CardMessage[]) => {
+		console.info('Units drawn', data)
 		data.forEach(cardMessage => {
-			const card = Core.player.cardDeck.drawCardById(cardMessage.id)
+			const card = Core.player.cardDeck.drawUnitById(cardMessage.id)
 			if (card) {
-				Core.player.cardHand.addCard(card)
+				Core.player.cardHand.addUnit(card)
 			}
 		})
 	},
 
-	'update/player/opponent/hand/cardDrawn': (data: HiddenCardMessage[]) => {
+	'update/player/opponent/hand/unit/cardDrawn': (data: HiddenCardMessage[]) => {
+		console.log('Opponent units', data)
 		data.forEach(cardMessage => {
-			const card = Core.opponent.cardDeck.drawCardById(cardMessage.id)
+			const card = Core.opponent.cardDeck.drawUnitById(cardMessage.id)
 			if (card) {
-				Core.opponent.cardHand.addCard(card)
+				Core.opponent.cardHand.addUnit(card)
+			}
+		})
+	},
+
+	'update/player/self/hand/spell/cardDrawn': (data: CardMessage[]) => {
+		console.info('Spells drawn', data)
+		data.forEach(cardMessage => {
+			const card = Core.player.cardDeck.drawSpellById(cardMessage.id)
+			if (card) {
+				Core.player.cardHand.addSpell(card)
+			}
+		})
+	},
+
+	'update/player/opponent/hand/spell/cardDrawn': (data: HiddenCardMessage[]) => {
+		console.log('Opponent spells', data)
+		data.forEach(cardMessage => {
+			const card = Core.opponent.cardDeck.drawSpellById(cardMessage.id)
+			if (card) {
+				Core.opponent.cardHand.addSpell(card)
 			}
 		})
 	},
@@ -206,11 +236,11 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/self/graveyard/cardAdded': (data: CardMessage) => {
-		Core.player.cardGraveyard.addCard(data)
+		Core.player.cardGraveyard.addUnit(data)
 	},
 
 	'update/player/opponent/graveyard/cardAdded': (data: CardMessage) => {
-		Core.opponent.cardGraveyard.addCard(data)
+		Core.opponent.cardGraveyard.addUnit(data)
 	},
 
 	'update/stack/cardResolving': (data: CardMessage) => {

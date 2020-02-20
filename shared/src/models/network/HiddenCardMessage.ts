@@ -1,16 +1,20 @@
 import Card from '../Card'
 import CardType from '../../enums/CardType'
 import CardTribe from '../../enums/CardTribe'
+import RichTextVariables from '../RichTextVariables'
+import UnitSubtype from '../../enums/UnitSubtype'
 
-export default class HiddenCardMessage {
+export default class HiddenCardMessage implements Card {
 	id: string
 	cardType = CardType.HIDDEN
 	cardClass = 'cardBack'
+	unitSubtype: UnitSubtype | null
 
 	cardName = ''
 	cardTitle = ''
 	cardTribes: CardTribe[] = []
 	cardDescription = ''
+	cardTextVariables: RichTextVariables
 
 	power = 1
 	attack = 1

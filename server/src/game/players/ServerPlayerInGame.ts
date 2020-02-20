@@ -6,13 +6,11 @@ import ServerCardHand from '../models/ServerCardHand'
 import ServerCardDeck from '../models/ServerCardDeck'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerDamageInstance from '../models/ServerDamageSource'
-import Ruleset from '../Ruleset'
 import ServerCardGraveyard from '../models/ServerCardGraveyard'
-import ServerCardTarget from '../models/ServerCardTarget'
-import CardDeck from '../shared/models/CardDeck'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
+import Constants from '../shared/Constants'
 
-export default class ServerPlayerInGame extends PlayerInGame {
+export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
 
 	game: ServerGame
@@ -21,18 +19,19 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	cardDeck: ServerCardDeck
 	cardGraveyard: ServerCardGraveyard
 	morale: number
-	timeUnits: number
+	unitMana: number
+	spellMana: number
 	turnEnded: boolean
 
 	constructor(game: ServerGame, player: ServerPlayer) {
-		super(player)
 		this.game = game
 		this.player = player
-		this.cardHand = new ServerCardHand(game, this, [])
-		this.cardDeck = new ServerCardDeck(game, this, [])
+		this.cardHand = new ServerCardHand(game, this, [], [])
+		this.cardDeck = new ServerCardDeck(game, this, [], [])
 		this.cardGraveyard = new ServerCardGraveyard(this)
-		this.morale = Ruleset.STARTING_PLAYER_MORALE
-		this.timeUnits = 0
+		this.morale = Constants.STARTING_PLAYER_MORALE
+		this.unitMana = 0
+		this.spellMana = 0
 		this.turnEnded = false
 	}
 
@@ -45,36 +44,56 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	}
 
 	public canPlaySpell(card: ServerCard): boolean {
-		return this.timeUnits > 0
+		return this.spellMana >= card.spellCost
 	}
 
 	public canPlayUnit(card: ServerCard, rowIndex: number, unitIndex: number): boolean {
 		const gameBoardRow = this.game.board.rows[rowIndex]
-		if (gameBoardRow.cards.length >= Ruleset.MAX_CARDS_PER_ROW || gameBoardRow.owner !== this) {
+		if (gameBoardRow.cards.length >= Constants.MAX_CARDS_PER_ROW || gameBoardRow.owner !== this) {
 			return false
 		}
 
-		return this.timeUnits > 0
+		return this.unitMana > 0
 	}
 
-	public drawCards(count: number): void {
-		const actualCount = Math.min(count, Ruleset.HAND_SIZE_LIMIT - this.cardHand.cards.length)
+	public drawUnitCards(count: number): void {
+		const actualCount = Math.min(count, Constants.UNIT_HAND_SIZE_LIMIT - this.cardHand.unitCards.length)
 		const cards: ServerCard[] = []
 		for (let i = 0; i < actualCount; i++) {
-			const card = this.cardDeck.drawCard()
+			const card = this.cardDeck.drawUnit()
 			if (!card) {
 				// TODO: Fatigue damage?
 				continue
 			}
 
-			this.cardHand.drawCard(card)
+			this.cardHand.onUnitDrawn(card)
 			cards.push(card)
 		}
 
-		OutgoingMessageHandlers.notifyAboutCardsDrawn(this.player, cards)
-		const opponent = this.game.getOpponent(this)
-		if (opponent) {
-			OutgoingMessageHandlers.notifyAboutOpponentCardsDrawn(opponent.player, cards)
+		OutgoingMessageHandlers.notifyAboutUnitCardsDrawn(this, cards)
+	}
+
+	public drawSpellCards(count: number): void {
+		const actualCount = Math.min(count, Constants.SPELL_HAND_SIZE_MAXIMUM - this.cardHand.spellCards.length)
+		const cards: ServerCard[] = []
+		for (let i = 0; i < actualCount; i++) {
+			const card = this.cardDeck.drawSpell()
+			if (!card) {
+				// TODO: Fatigue damage?
+				continue
+			}
+
+			this.cardHand.onSpellDrawn(card)
+			cards.push(card)
+		}
+
+		OutgoingMessageHandlers.notifyAboutSpellCardsDrawn(this, cards)
+	}
+
+	public refillSpellHand(): void {
+		const cardsMissing = Constants.SPELL_HAND_SIZE_MINIMUM - this.cardHand.spellCards.length
+		if (cardsMissing > 0) {
+			this.drawSpellCards(cardsMissing)
 		}
 	}
 
@@ -89,15 +108,22 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutOpponentMoraleChange(opponent.player, this)
 	}
 
-	public setTimeUnits(timeUnits: number): void {
-		if (this.timeUnits === timeUnits) { return }
+	public setUnitMana(value: number): void {
+		if (this.unitMana === value) { return }
 
-		const delta = timeUnits - this.timeUnits
+		const delta = value - this.unitMana
 
-		this.timeUnits = timeUnits
-		const opponent = this.game.getOpponent(this)
-		OutgoingMessageHandlers.notifyAboutPlayerTimeBankChange(this.player, this, delta)
-		OutgoingMessageHandlers.notifyAboutOpponentTimeBankChange(opponent.player, this)
+		this.unitMana = value
+		OutgoingMessageHandlers.notifyAboutUnitManaChange(this, delta)
+	}
+
+	public setSpellMana(value: number): void {
+		if (this.spellMana === value) { return }
+
+		const delta = value - this.spellMana
+
+		this.spellMana = value
+		OutgoingMessageHandlers.notifyAboutSpellManaChange(this, delta)
 	}
 
 	public startTurn(): void {
@@ -112,7 +138,7 @@ export default class ServerPlayerInGame extends PlayerInGame {
 	}
 
 	public isAnyActionsAvailable(): boolean {
-		return this.timeUnits > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
+		return this.unitMana > 0 || this.spellMana > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
 	}
 
 	public endTurn(): void {

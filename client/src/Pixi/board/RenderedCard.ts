@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 import Card from '@/Pixi/shared/models/Card'
 import CardType from '@/Pixi/shared/enums/CardType'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import Settings from '@/Pixi/Settings'
 import RichText from '@/Pixi/render/RichText'
@@ -26,6 +26,7 @@ export default class RenderedCard extends Card {
 	private readonly unitModeAttributes: CardAttributes
 
 	private readonly powerTextBackground: PIXI.Sprite
+	private readonly manacostTextBackground: PIXI.Sprite
 
 	readonly powerText: ScalingText
 	readonly attackText: ScalingText
@@ -101,7 +102,10 @@ export default class RenderedCard extends Card {
 			this.cardModeContainer.addChild(tribeBackgroundSprite)
 		}
 		this.powerTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power'))
+		this.manacostTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-manacost'))
 		this.cardModeContainer.addChild(this.powerTextBackground)
+		this.cardModeContainer.addChild(this.manacostTextBackground)
+
 		this.cardModeContainer.addChild(this.cardModeAttributes)
 		internalContainer.addChild(this.cardModeContainer)
 
@@ -271,19 +275,12 @@ export default class RenderedCard extends Card {
 		this.cardModeContainer.visible = true
 		this.cardModeTextContainer.visible = true
 		this.powerText.visible = true
-		this.attackText.visible = true
-		this.attackRangeText.visible = true
-		this.healthArmorText.visible = true
-		this.cardModeAttributes.visible = true
-		this.powerTextBackground.visible = true
-		if (this.cardType === CardType.SPELL) {
-			this.powerText.visible = false
-			this.attackText.visible = false
-			this.attackRangeText.visible = false
-			this.healthArmorText.visible = false
-			this.cardModeAttributes.visible = false
-			this.powerTextBackground.visible = false
-		}
+		this.attackText.visible = this.cardType === CardType.UNIT
+		this.attackRangeText.visible = this.cardType === CardType.UNIT
+		this.healthArmorText.visible = this.cardType === CardType.UNIT
+		this.cardModeAttributes.visible = this.cardType === CardType.UNIT
+		this.powerTextBackground.visible = this.cardType === CardType.UNIT
+		this.manacostTextBackground.visible = this.cardType === CardType.SPELL
 
 		this.powerText.position.set(60, 45)
 		this.powerText.style.fontSize = 71

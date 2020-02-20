@@ -57,7 +57,7 @@ export default class Input {
 
 	public updateCardHoverStatus(): void {
 		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
-		const playerHandCards = Core.player.cardHand.cards.slice().reverse()
+		const playerHandCards = Core.player.cardHand.allCards
 
 		let hoveredCard: HoveredCard | null = null
 
@@ -130,7 +130,7 @@ export default class Input {
 		this.mousePosition.y *= window.devicePixelRatio * Settings.superSamplingLevel
 
 		const windowHeight = Core.renderer.pixi.view.height
-		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && Core.player.timeUnits === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {
+		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && Core.player.unitMana === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {
 			this.releaseCard()
 		}
 	}

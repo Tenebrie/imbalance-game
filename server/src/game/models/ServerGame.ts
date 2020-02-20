@@ -1,22 +1,18 @@
 import uuidv4 from 'uuid/v4'
 import Game from '../shared/models/Game'
-import Player from '../shared/models/Player'
 import ServerGameBoard from './ServerGameBoard'
 import ServerPlayer from '../players/ServerPlayer'
 import ServerChatEntry from './ServerChatEntry'
 import VoidPlayerInGame from '../utils/VoidPlayerInGame'
 import GameTurnPhase from '../shared/enums/GameTurnPhase'
-import ServerCardDeck from './ServerCardDeck'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameLibrary from '../libraries/GameLibrary'
 import ServerDamageInstance from './ServerDamageSource'
-import Ruleset from '../Ruleset'
 import Constants from '../shared/Constants'
 import ServerBotPlayer from '../utils/ServerBotPlayer'
 import ServerBotPlayerInGame from '../utils/ServerBotPlayerInGame'
 import ServerCard from './ServerCard'
-import ServerCardResolveStack from './ServerCardResolveStack'
 import ServerGameCardPlay from './ServerGameCardPlay'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
@@ -79,7 +75,7 @@ export default class ServerGame extends Game {
 		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.sendPlayerSelf(playerInGame.player, playerInGame)
 			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, this.getOpponent(playerInGame))
-			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Ruleset.MAX_TIME_OF_DAY)
+			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Constants.MAX_TIME_OF_DAY)
 			OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, this.players.indexOf(playerInGame) === 1)
 		})
 
@@ -88,13 +84,11 @@ export default class ServerGame extends Game {
 
 		this.players.forEach(playerInGame => {
 			playerInGame.cardDeck.shuffle()
-			playerInGame.drawCards(10)
+			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_STARTING)
+			playerInGame.drawSpellCards(Constants.SPELL_HAND_SIZE_MINIMUM)
+			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})
 		this.startNewTurnPhase()
-	}
-
-	public getPlayerInGame(player: Player): ServerPlayerInGame {
-		return this.players.find(playerInGame => playerInGame.player === player)
 	}
 
 	public getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
@@ -129,7 +123,7 @@ export default class ServerGame extends Game {
 		this.currentTime = time
 
 		this.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Ruleset.MAX_TIME_OF_DAY)
+			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Constants.MAX_TIME_OF_DAY)
 		})
 	}
 
@@ -154,13 +148,13 @@ export default class ServerGame extends Game {
 		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
 		const hasPlayerLostBoard = rowsOwnedByPlayerOne === 0 || rowsOwnedByPlayerTwo === 0
 		if (hasPlayerLostBoard) {
-			this.startDayEndPhase()
+			this.startNextRound()
 		}
 
 		if (this.playersToMove.length > 0) {
 			const playerToMove = this.playersToMove.shift()
-			const timeUnits = ((this.currentTime === 0 && playerToMove === this.players[0]) || (this.currentTime === Ruleset.MAX_TIME_OF_DAY && playerToMove === this.players[0])) ? 1 : 1
-			playerToMove.setTimeUnits(timeUnits)
+			const unitMana = ((this.currentTime === 0 && playerToMove === this.players[0]) || (this.currentTime === Constants.MAX_TIME_OF_DAY && playerToMove === this.players[0])) ? 1 : 1
+			playerToMove.setUnitMana(unitMana)
 			playerToMove.startTurn()
 			return
 		}
@@ -175,10 +169,10 @@ export default class ServerGame extends Game {
 			this.startDeployPhase()
 		} else if (this.turnPhase === GameTurnPhase.DEPLOY) {
 			this.startEndTurnPhase()
-		} else if (this.turnPhase === GameTurnPhase.TURN_END && this.currentTime < Ruleset.MAX_TIME_OF_DAY) {
+		} else if (this.turnPhase === GameTurnPhase.TURN_END && this.currentTime < Constants.MAX_TIME_OF_DAY) {
 			this.startNewTurnPhase()
-		} else if (this.turnPhase === GameTurnPhase.TURN_END && this.currentTime === Ruleset.MAX_TIME_OF_DAY) {
-			this.startDayEndPhase()
+		} else if (this.turnPhase === GameTurnPhase.TURN_END && this.currentTime === Constants.MAX_TIME_OF_DAY) {
+			this.startNextRound()
 		} else if (this.turnPhase === GameTurnPhase.COMBAT) {
 			this.startNewTurnPhase()
 		}
@@ -210,7 +204,7 @@ export default class ServerGame extends Game {
 		this.advanceTurn()
 	}
 
-	public startDayEndPhase(): void {
+	public startNextRound(): void {
 		this.setTurnPhase(GameTurnPhase.COMBAT)
 
 		const playerOne = this.players[0]
@@ -236,8 +230,9 @@ export default class ServerGame extends Game {
 			this.board.rows[i].setOwner(null)
 		}
 
-		this.players.forEach(player => {
-			player.drawCards(7)
+		this.players.forEach(playerInGame => {
+			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_PER_ROUND)
+			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})
 
 		this.advancePhase()

@@ -7,17 +7,30 @@ import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessag
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import ClientCardGraveyard from '@/Pixi/models/ClientCardGraveyard'
 
-export default class ClientPlayerInGame extends PlayerInGame {
-	isTurnActive = false
+export default class ClientPlayerInGame implements PlayerInGame {
+	player: Player
 	cardHand: RenderedCardHand
 	cardDeck: ClientCardDeck
 	cardGraveyard: ClientCardGraveyard
 
+	morale = 0
+	unitMana = 0
+	spellMana = 0
+	isTurnActive = false
+
 	constructor(player: Player) {
-		super(player)
-		this.cardHand = new RenderedCardHand([])
-		this.cardDeck = new ClientCardDeck([])
-		this.cardGraveyard = new ClientCardGraveyard([])
+		this.player = player
+		this.cardHand = new RenderedCardHand([], [])
+		this.cardDeck = new ClientCardDeck([], [])
+		this.cardGraveyard = new ClientCardGraveyard()
+	}
+
+	public setUnitMana(value: number): void {
+		this.unitMana = value
+	}
+
+	public setSpellMana(value: number): void {
+		this.spellMana = value
 	}
 
 	public startTurn(): void {
@@ -44,7 +57,7 @@ export default class ClientPlayerInGame extends PlayerInGame {
 		clientPlayerInGame.cardHand = RenderedCardHand.fromMessage(message.cardHand)
 		clientPlayerInGame.cardDeck = ClientCardDeck.fromMessage(message.cardDeck)
 		clientPlayerInGame.morale = message.morale
-		clientPlayerInGame.timeUnits = message.timeUnits
+		clientPlayerInGame.unitMana = message.unitMana
 		return clientPlayerInGame
 	}
 }
