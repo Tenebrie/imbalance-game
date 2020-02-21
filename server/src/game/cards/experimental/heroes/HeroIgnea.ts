@@ -12,8 +12,6 @@ export default class HeroIgnea extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
 		this.basePower = 27
-		this.baseAttack = 2 // 10 (with effect - 25)
-		this.baseAttackRange = 3 // 50
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {

@@ -39,8 +39,8 @@ const handlers: {[ index: string ]: any } = {
 		Core.player.cardHand = RenderedCardHand.fromMessage(data.cardHand)
 		Core.player.cardDeck = ClientCardDeck.fromMessage(data.cardDeck)
 		Core.player.morale = data.morale
-		Core.player.unitMana = data.unitMana
-		Core.player.spellMana = data.spellMana
+		Core.player.setUnitMana(data.unitMana)
+		Core.player.setSpellMana(data.spellMana)
 	},
 
 	'gameState/player/opponent': (data: PlayerInGameMessage) => {

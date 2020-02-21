@@ -27,6 +27,9 @@ export default class ClientPlayerInGame implements PlayerInGame {
 
 	public setUnitMana(value: number): void {
 		this.unitMana = value
+		if (this === Core.player) {
+			store.commit.gameStateModule.setPlayerUnitMana(value)
+		}
 	}
 
 	public setSpellMana(value: number): void {

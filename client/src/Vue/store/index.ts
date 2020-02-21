@@ -14,7 +14,8 @@ const gameStateModule = createModule({
 	state: {
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
 		opponent: null as Player | null,
-		isPlayersTurn: false as boolean
+		isPlayersTurn: false as boolean,
+		playerUnitMana: 0 as number
 	},
 
 	mutations: {
@@ -28,6 +29,10 @@ const gameStateModule = createModule({
 
 		setGameStatus(state, gameStatus: ClientGameStatus): void {
 			state.gameStatus = gameStatus
+		},
+
+		setPlayerUnitMana(state, playerUnitMana: number): void {
+			state.playerUnitMana = playerUnitMana
 		}
 	},
 

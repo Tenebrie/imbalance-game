@@ -3,7 +3,7 @@ enum GameTurnPhase {
 	TURN_START,
 	DEPLOY,
 	SKIRMISH,
-	COMBAT,
+	ROUND_START,
 	TURN_END,
 	AFTER_GAME
 }

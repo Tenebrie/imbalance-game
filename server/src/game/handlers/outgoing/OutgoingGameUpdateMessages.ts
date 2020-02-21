@@ -1,6 +1,5 @@
 import GameTurnPhase from '../../shared/enums/GameTurnPhase'
 import ServerPlayer from '../../players/ServerPlayer'
-import GameTimeMessage from '../../shared/models/network/GameTimeMessage'
 
 export default {
 	notifyAboutPhaseAdvance: (player: ServerPlayer, phase: GameTurnPhase) => {
@@ -8,13 +7,6 @@ export default {
 			type: 'update/game/phase',
 			data: phase,
 			highPriority: true
-		})
-	},
-
-	notifyAboutTimeAdvance: (player: ServerPlayer, currentTime: number, maximumTime: number) => {
-		player.sendMessage({
-			type: 'update/game/time',
-			data: new GameTimeMessage(currentTime, maximumTime)
 		})
 	}
 }

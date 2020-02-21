@@ -20,7 +20,6 @@ import ServerGameAnimation from './ServerGameAnimation'
 export default class ServerGame extends Game {
 	isStarted: boolean
 	turnIndex: number
-	currentTime: number
 	turnPhase: GameTurnPhase
 	owner: ServerPlayer
 	board: ServerGameBoard
@@ -34,7 +33,6 @@ export default class ServerGame extends Game {
 		super(uuidv4(), name)
 		this.isStarted = false
 		this.turnIndex = -1
-		this.currentTime = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.owner = owner
 		this.board = new ServerGameBoard(this)
@@ -75,7 +73,6 @@ export default class ServerGame extends Game {
 		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.sendPlayerSelf(playerInGame.player, playerInGame)
 			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, this.getOpponent(playerInGame))
-			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Constants.MAX_TIME_OF_DAY)
 			OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, this.players.indexOf(playerInGame) === 1)
 		})
 
@@ -106,9 +103,6 @@ export default class ServerGame extends Game {
 		}
 
 		this.players.splice(this.players.indexOf(registeredPlayer), 1)
-		this.players.forEach((playerInGame: ServerPlayerInGame) => {
-			// OutgoingMessageHandlers.notifyAboutPlayerDisconnected(playerInGame.player, targetPlayer)
-		})
 	}
 
 	public createChatEntry(sender: ServerPlayer, message: string): void {
@@ -116,14 +110,6 @@ export default class ServerGame extends Game {
 		this.chatHistory.push(chatEntry)
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
 			OutgoingMessageHandlers.notifyAboutChatEntry(playerInGame.player, chatEntry)
-		})
-	}
-
-	public setTime(time: number): void {
-		this.currentTime = time
-
-		this.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutTimeAdvance(playerInGame.player, this.currentTime, Constants.MAX_TIME_OF_DAY)
 		})
 	}
 
@@ -153,8 +139,7 @@ export default class ServerGame extends Game {
 
 		if (this.playersToMove.length > 0) {
 			const playerToMove = this.playersToMove.shift()
-			const unitMana = ((this.currentTime === 0 && playerToMove === this.players[0]) || (this.currentTime === Constants.MAX_TIME_OF_DAY && playerToMove === this.players[0])) ? 1 : 1
-			playerToMove.setUnitMana(unitMana)
+			playerToMove.setUnitMana(1)
 			playerToMove.startTurn()
 			return
 		}
@@ -169,18 +154,15 @@ export default class ServerGame extends Game {
 			this.startDeployPhase()
 		} else if (this.turnPhase === GameTurnPhase.DEPLOY) {
 			this.startEndTurnPhase()
-		} else if (this.turnPhase === GameTurnPhase.TURN_END && this.currentTime < Constants.MAX_TIME_OF_DAY) {
+		} else if (this.turnPhase === GameTurnPhase.TURN_END) {
 			this.startNewTurnPhase()
-		} else if (this.turnPhase === GameTurnPhase.TURN_END && this.currentTime === Constants.MAX_TIME_OF_DAY) {
-			this.startNextRound()
-		} else if (this.turnPhase === GameTurnPhase.COMBAT) {
+		} else if (this.turnPhase === GameTurnPhase.ROUND_START) {
 			this.startNewTurnPhase()
 		}
 	}
 
 	public startNewTurnPhase(): void {
 		this.turnIndex += 1
-		this.setTime(this.currentTime + 1)
 		this.setTurnPhase(GameTurnPhase.TURN_START)
 
 		this.playersToMove = this.players.slice()
@@ -205,15 +187,21 @@ export default class ServerGame extends Game {
 	}
 
 	public startNextRound(): void {
-		this.setTurnPhase(GameTurnPhase.COMBAT)
+		this.setTurnPhase(GameTurnPhase.ROUND_START)
 
 		const playerOne = this.players[0]
-		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
+		const playerTwo = this.players[1]
 
-		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
-		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
-		playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(rowsOwnedByPlayerTwo * 5))
-		playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(rowsOwnedByPlayerOne * 5))
+		const playerOneTotalPower = this.board.getUnitsOwnedByPlayer(playerOne).map(unit => unit.card.power).reduce((total, value) => total + value, 0)
+		const playerTwoTotalPower = this.board.getUnitsOwnedByPlayer(playerTwo).map(unit => unit.card.power).reduce((total, value) => total + value, 0)
+		if (playerOneTotalPower > playerTwoTotalPower) {
+			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+		} else if (playerTwoTotalPower > playerOneTotalPower) {
+			playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+		} else {
+			playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+		}
 
 		const defeatedPlayer = this.players.find(player => player.morale <= 0) || null
 		if (defeatedPlayer) {
@@ -222,7 +210,6 @@ export default class ServerGame extends Game {
 		}
 
 		this.board.getAllUnits().forEach(cardOnBoard => this.board.destroyUnit(cardOnBoard))
-		this.setTime(-1)
 
 		this.board.rows[Constants.GAME_BOARD_ROW_COUNT - 1].setOwner(playerOne)
 		this.board.rows[0].setOwner(playerTwo)

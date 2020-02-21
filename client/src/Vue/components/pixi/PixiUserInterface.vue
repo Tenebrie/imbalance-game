@@ -1,7 +1,8 @@
 <template>
 	<div class="pixi-user-interface">
 		<div class="end-turn-button-container">
-			<button @click="onEndTurn" class="primary game-button" :disabled="!isPlayersTurn">End turn</button>
+			<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
+			<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">End round</button>
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
 			<span class="overlay-message" v-if="!opponent">Waiting for opponent...</span>
@@ -38,6 +39,10 @@ export default Vue.extend({
 	},
 
 	computed: {
+		isEndRoundButtonVisible(): boolean {
+			return store.state.gameStateModule.playerUnitMana > 0
+		},
+
 		isPlayersTurn(): boolean {
 			return store.state.gameStateModule.isPlayersTurn && store.state.gameStateModule.gameStatus === ClientGameStatus.IN_PROGRESS
 		},
@@ -166,12 +171,12 @@ export default Vue.extend({
 				background: gray;
 			}
 			&.destructive {
-				color: red;
+				color: lighten(red, 15);
 				&:hover {
-					color: darken(red, 5);
+					color: lighten(red, 10);
 				}
 				&:active {
-					color: darken(red, 10);
+					color: lighten(red, 5);
 				}
 			}
 		}

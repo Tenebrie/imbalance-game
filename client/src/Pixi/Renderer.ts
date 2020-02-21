@@ -2,13 +2,13 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@/Pixi/shared/Constants'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
+import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
 import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import CardType from '@/Pixi/shared/enums/CardType'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import Settings from '@/Pixi/Settings'
 import CardTint from '@/Pixi/enums/CardTint'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
@@ -33,6 +33,8 @@ export default class Renderer {
 	actionLabel: RichText
 	playerNameLabel: PIXI.Text
 	opponentNameLabel: PIXI.Text
+	playerPowerLabel: PIXI.Text
+	opponentPowerLabel: PIXI.Text
 
 	deltaTime: number
 	deltaTimeFraction: number
@@ -97,8 +99,27 @@ export default class Renderer {
 			fontSize: 24 * Settings.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
+
 		this.opponentNameLabel.position.set(10, 10)
 		this.rootContainer.addChild(this.opponentNameLabel)
+
+		/* Power labels */
+		this.playerPowerLabel = new PIXI.Text('', {
+			fontFamily: 'Roboto',
+			fontSize: 40 * Settings.superSamplingLevel,
+			fill: 0xFFFFFF,
+			align: 'left'
+		})
+		this.playerPowerLabel.anchor.set(0, 0.5)
+		this.rootContainer.addChild(this.playerPowerLabel)
+
+		this.opponentPowerLabel = new PIXI.Text('', {
+			fontFamily: 'Roboto',
+			fontSize: 40 * Settings.superSamplingLevel,
+			fill: 0xFFFFFF
+		})
+		this.opponentPowerLabel.anchor.set(0, 0.5)
+		this.rootContainer.addChild(this.opponentPowerLabel)
 	}
 
 	public tick(deltaTime: number, deltaTimeFraction: number): void {
@@ -316,7 +337,7 @@ export default class Renderer {
 				phase = 'Turn end'
 			} else if (Core.game.turnPhase === GameTurnPhase.SKIRMISH) {
 				phase = 'Skirmish'
-			} else if (Core.game.turnPhase === GameTurnPhase.COMBAT) {
+			} else if (Core.game.turnPhase === GameTurnPhase.ROUND_START) {
 				phase = 'Combat'
 			}
 			phaseLabel = `Turn phase is ${phase}`
@@ -329,6 +350,22 @@ export default class Renderer {
 			this.opponentNameLabel.text = `${Core.opponent.player.username}\n- Morale: ${Core.opponent.morale}\n- Unit mana: ${Core.opponent.unitMana}\n- Spell mana: ${Core.opponent.spellMana}`
 		}
 
+		/* Power labels */
+		const power = Core.board.getUnitsOwnedByPlayer(Core.player).map(unit => unit.card.power).reduce((accumulator, value) => accumulator + value, 0)
+		const opponentPower = Core.board.getUnitsOwnedByPlayer(Core.opponent).map(unit => unit.card.power).reduce((accumulator, value) => accumulator + value, 0)
+		this.playerPowerLabel.text = power.toString()
+		this.opponentPowerLabel.text = opponentPower.toString()
+		if (power > opponentPower) {
+			this.playerPowerLabel.style.fill = 0x77FF77
+			this.opponentPowerLabel.style.fill = 0xFF7777
+		} else if (opponentPower > power) {
+			this.playerPowerLabel.style.fill = 0xFF7777
+			this.opponentPowerLabel.style.fill = 0x77FF77
+		} else {
+			this.playerPowerLabel.style.fill = 0xCCCCCC
+			this.opponentPowerLabel.style.fill = 0xCCCCCC
+		}
+
 		/* Action label */
 		const labelPosition = Core.input.mousePosition.clone()
 		labelPosition.y -= 32
@@ -337,12 +374,27 @@ export default class Renderer {
 
 	public renderGameBoard(gameBoard: RenderedGameBoard): void {
 		let rows = gameBoard.rows.slice()
+		let playerPowerLabelRow = Constants.GAME_BOARD_ROW_COUNT - 1
+		let opponentPowerLabelRow = 0
 		if (gameBoard.isInverted) {
 			rows = rows.reverse()
+			playerPowerLabelRow = 0
+			opponentPowerLabelRow = Constants.GAME_BOARD_ROW_COUNT - 1
 		}
 		for (let i = 0; i < rows.length; i++) {
 			this.renderGameBoardRow(rows[i], i)
 		}
+
+		const rowHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+		const screenCenterX = this.getScreenWidth() / 2
+		const screenCenterY = this.getScreenHeight() / 2
+
+		const playerLabelTargetRowDistanceToCenter = playerPowerLabelRow - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
+		const opponentLabelTargetRowDistanceToCenter = opponentPowerLabelRow - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
+		const playerLabelRowY = screenCenterY + playerLabelTargetRowDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
+		const opponentLabelRowY = screenCenterY + opponentLabelTargetRowDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
+		this.playerPowerLabel.position.set(screenCenterX + (rowHeight * this.CARD_ASPECT_RATIO) * 5, playerLabelRowY)
+		this.opponentPowerLabel.position.set(screenCenterX + (rowHeight * this.CARD_ASPECT_RATIO) * 5, opponentLabelRowY)
 	}
 
 	public renderGameBoardRow(gameBoardRow: RenderedGameBoardRow, rowIndex: number): void {

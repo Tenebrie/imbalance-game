@@ -22,6 +22,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	unitMana: number
 	spellMana: number
 	turnEnded: boolean
+	roundEnded: boolean
 
 	constructor(game: ServerGame, player: ServerPlayer) {
 		this.game = game
@@ -33,6 +34,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.unitMana = 0
 		this.spellMana = 0
 		this.turnEnded = false
+		this.roundEnded = false
 	}
 
 	public get targetRequired(): boolean {
@@ -126,15 +128,15 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutSpellManaChange(this, delta)
 	}
 
+	public startRound(): void {
+		this.roundEnded = false
+		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
+	}
+
 	public startTurn(): void {
 		this.turnEnded = false
-		OutgoingMessageHandlers.notifyAboutTurnStarted(this.player)
+		OutgoingMessageHandlers.notifyAboutTurnStarted(this)
 		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(this.game, this)
-
-		const opponent = this.game.getOpponent(this)
-		if (opponent) {
-			OutgoingMessageHandlers.notifyAboutOpponentTurnStarted(opponent.player)
-		}
 	}
 
 	public isAnyActionsAvailable(): boolean {
@@ -143,12 +145,13 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public endTurn(): void {
 		this.turnEnded = true
+		OutgoingMessageHandlers.notifyAboutTurnEnded(this)
+	}
 
-		OutgoingMessageHandlers.notifyAboutTurnEnded(this.player)
-		const opponent = this.game.getOpponent(this)
-		if (opponent) {
-			OutgoingMessageHandlers.notifyAboutOpponentTurnEnded(opponent.player)
-		}
+	public endRound(): void {
+		this.endTurn()
+		this.roundEnded = true
+		OutgoingMessageHandlers.notifyAboutRoundEnded(this)
 	}
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {

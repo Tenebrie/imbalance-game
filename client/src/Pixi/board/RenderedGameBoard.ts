@@ -41,7 +41,7 @@ export default class RenderedGameBoard extends GameBoard {
 	}
 
 	public findUnitById(unitId: string): RenderedCardOnBoard | null {
-		const cards = this.getAllCards()
+		const cards = this.getAllUnits()
 		return cards.find(cardOnBoard => cardOnBoard.card.id === unitId) || null
 	}
 
@@ -61,12 +61,12 @@ export default class RenderedGameBoard extends GameBoard {
 		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id)) || null
 	}
 
-	public getAllCards(): RenderedCardOnBoard[] {
+	public getAllUnits(): RenderedCardOnBoard[] {
 		return this.rows.map(row => row.cards).flat().concat(this.unitsOnHold)
 	}
 
-	public getCardsOwnedByPlayer(owner: ClientPlayerInGame) {
-		return this.getAllCards().filter(unit => unit.owner === owner)
+	public getUnitsOwnedByPlayer(owner: ClientPlayerInGame) {
+		return this.getAllUnits().filter(unit => unit.owner === owner)
 	}
 
 	public getValidOrdersForUnit(unit: RenderedCardOnBoard): ClientCardTarget[] {

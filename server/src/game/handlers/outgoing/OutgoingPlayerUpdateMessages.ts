@@ -42,31 +42,48 @@ export default {
 		})
 	},
 
-	notifyAboutTurnStarted: (player: ServerPlayer) => {
-		player.sendMessage({
-			type: 'update/player/self/turnStarted',
+	notifyAboutRoundStarted: (playerInGame: ServerPlayerInGame) => {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/roundStarted',
+			data: null
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/roundStarted',
 			data: null
 		})
 	},
 
-	notifyAboutOpponentTurnStarted: (player: ServerPlayer) => {
-		player.sendMessage({
+	notifyAboutTurnStarted: (playerInGame: ServerPlayerInGame) => {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/turnStarted',
+			data: null
+		})
+		playerInGame.opponent.player.sendMessage({
 			type: 'update/player/opponent/turnStarted',
 			data: null
 		})
 	},
 
-	notifyAboutTurnEnded: (player: ServerPlayer) => {
-		player.sendMessage({
+	notifyAboutTurnEnded: (playerInGame: ServerPlayerInGame) => {
+		playerInGame.player.sendMessage({
 			type: 'update/player/self/turnEnded',
 			data: null,
 			highPriority: true
 		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/turnEnded',
+			data: null
+		})
 	},
 
-	notifyAboutOpponentTurnEnded: (player: ServerPlayer) => {
-		player.sendMessage({
-			type: 'update/player/opponent/turnEnded',
+	notifyAboutRoundEnded: (playerInGame: ServerPlayerInGame) => {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/roundEnded',
+			data: null,
+			highPriority: true
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/roundEnded',
 			data: null
 		})
 	},
