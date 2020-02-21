@@ -75,8 +75,8 @@
 	"card.description.unitPriestessOfAedine": "*On play:*\nChoose {targets} damaged allied units in range. {name} restores *{healing}* Power to each of them.",
 	"card.target.unitPriestessOfAedine.heal": "Restore *{healing}* Power",
 
-	"card.name.buildingTreeOfLife": "Tree of Life",
-	"card.description.buildingTreeOfLife": "*Support:*\n{name} targets a row. All units on that row restore *3* Power. All units on adjacent rows restore *1* Power",
+	"card.name.buildingTreeOfLife": "Long-Branched Tree",
+	"card.description.buildingTreeOfLife": "When Long-Branched Tree enters the battlefield, *Stages of Apocalypse* start to happen every turn.<p>*Stage 1:* Babies are now born dead<p>*Stage 2:* Blizzard is not shit anymore<p>*Stage 3:* Coop games become popular again<p>*Stage 4:* Everyone dies",
 	"card.target.buildingTreeOfLife.support.row": "Restore power",
 
 	"card.name.spellRainOfFire": "Rain of Fire",

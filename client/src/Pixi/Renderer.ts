@@ -2,13 +2,13 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@/Pixi/shared/Constants'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
+import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
 import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
 import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import CardType from '@/Pixi/shared/enums/CardType'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Settings from '@/Pixi/Settings'
 import CardTint from '@/Pixi/enums/CardTint'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
@@ -322,28 +322,6 @@ export default class Renderer {
 	}
 
 	public renderTextLabels(): void {
-		let phaseLabel: string
-		if (Core.game.turnPhase === GameTurnPhase.BEFORE_GAME) {
-			phaseLabel = 'Waiting for the game to start'
-		} else if (Core.game.turnPhase === GameTurnPhase.AFTER_GAME) {
-			phaseLabel = 'Game finished!'
-		} else {
-			let phase = 'Unknown'
-			if (Core.game.turnPhase === GameTurnPhase.TURN_START) {
-				phase = 'Turn start'
-			} else if (Core.game.turnPhase === GameTurnPhase.DEPLOY) {
-				phase = 'Deploy'
-			} else if (Core.game.turnPhase === GameTurnPhase.TURN_END) {
-				phase = 'Turn end'
-			} else if (Core.game.turnPhase === GameTurnPhase.SKIRMISH) {
-				phase = 'Skirmish'
-			} else if (Core.game.turnPhase === GameTurnPhase.ROUND_START) {
-				phase = 'Combat'
-			}
-			phaseLabel = `Turn phase is ${phase}`
-		}
-		this.timeLabel.text = `${phaseLabel}\nTime of day is ${Core.game.currentTime} out of ${Core.game.maximumTime}`
-
 		/* Player name labels */
 		this.playerNameLabel.text = `${Core.player.player.username}\n- Morale: ${Core.player.morale}\n- Unit mana: ${Core.player.unitMana}\n- Spell mana: ${Core.player.spellMana}`
 		if (Core.opponent) {
@@ -598,10 +576,12 @@ export default class Renderer {
 		container.position.y = this.getScreenHeight() / 2
 		container.zIndex = INSPECTED_CARD_ZINDEX
 
-		inspectedCard.powerText.style.fill = 0x000000
+		if (inspectedCard.cardType === CardType.SPELL) {
+			inspectedCard.powerText.style.fill = 0x0000AA
+		} else {
+			inspectedCard.powerText.style.fill = 0x000000
+		}
 		inspectedCard.powerText.text = inspectedCard.basePower.toString()
-		inspectedCard.attackText.style.fill = 0x000000
-		inspectedCard.attackText.text = inspectedCard.baseAttack.toString()
 
 		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
 	}

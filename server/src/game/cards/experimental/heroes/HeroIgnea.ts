@@ -11,7 +11,7 @@ import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTarg
 export default class HeroIgnea extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT)
-		this.basePower = 27
+		this.basePower = 7
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {

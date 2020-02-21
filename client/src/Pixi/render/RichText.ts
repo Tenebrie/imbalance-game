@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 import Utils from '@/utils/Utils'
 import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@/Pixi/shared/models/RichTextVariables'
-import set = Reflect.set
+import RichTextBackground from '@/Pixi/render/RichTextBackground'
 
 enum SegmentType {
 	TEXT = 'TEXT',
@@ -38,6 +38,7 @@ export default class RichText extends PIXI.Container {
 	maxWidth: number
 	private variables: RichTextVariables
 	segments: { text: ScalingText, basePosition: PIXI.Point }[]
+	background: RichTextBackground
 
 	constructor(text: string, maxWidth: number, variables: RichTextVariables) {
 		super()
@@ -118,6 +119,10 @@ export default class RichText extends PIXI.Container {
 				parent.renderText()
 			}
 		}
+	}
+
+	public setBackground(background: RichTextBackground): void {
+		this.background = background
 	}
 
 	public scaleFont(factor: number): void {
@@ -246,6 +251,11 @@ export default class RichText extends PIXI.Container {
 							contextColorStack.push(contextColor)
 							contextColor = this.standardizeColor(openingTag.args)
 							break
+						case 'p':
+						case 'para':
+							newLine()
+							contextPosition.y += this.lineHeight * 0.2
+							break
 					}
 					break
 
@@ -275,12 +285,16 @@ export default class RichText extends PIXI.Container {
 		newLine()
 
 		this.segments.forEach(segment => {
-			segment.basePosition.y -= contextPosition.y / 2
+			segment.basePosition.y -= contextPosition.y // Bottom alignment
 		})
 		const SCALE_MODIFIER2 = (this.fontSize / 18)
 		this.segments.forEach(segment => {
 			segment.text.position.set(segment.basePosition.x, segment.basePosition.y * SCALE_MODIFIER2)
 		})
+
+		if (this.background) {
+			this.background.onTextRendered(new PIXI.Point(this.position.x, this.position.y), new PIXI.Point(this.maxWidth, contextPosition.y * (this.baseFontSize / 18)))
+		}
 	}
 
 	getStateTransition(stateTransitions: Map<ParsingStateTransitionTrigger, ParsingStateTransitionAction>, trigger: ParsingStateTransitionTrigger) {
