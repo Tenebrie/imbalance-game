@@ -1,7 +1,7 @@
 import Card from '../Card'
 import CardType from '../../enums/CardType'
 import CardTribe from '../../enums/CardTribe'
-import UnitSubtype from '../../enums/UnitSubtype'
+import UnitSubtype from '../../enums/CardColor'
 import RichTextVariables from '../RichTextVariables'
 
 export default class CardMessage implements Card {

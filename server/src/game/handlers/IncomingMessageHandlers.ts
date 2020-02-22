@@ -20,10 +20,10 @@ export default {
 			return
 		}
 
-		if (playerInGame.turnEnded || playerInGame.targetRequired ||
+		if (playerInGame.turnEnded || playerInGame.roundEnded || playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
-			(card.cardType === CardType.SPELL && !playerInGame.canPlaySpell(card)) ||
-			(card.cardType === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex, data.unitIndex))) {
+			(card.cardType === CardType.SPELL && !playerInGame.canPlaySpell(card, data.rowIndex)) ||
+			(card.cardType === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex))) {
 
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return
@@ -32,8 +32,7 @@ export default {
 		const ownedCard = new ServerOwnedCard(card, playerInGame)
 		game.cardPlay.playCard(ownedCard, data.rowIndex, data.unitIndex)
 
-		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, playerInGame)
-		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(game, game.getOpponent(playerInGame))
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 
 		if (!playerInGame.isAnyActionsAvailable()) {
 			playerInGame.endTurn()
@@ -49,8 +48,7 @@ export default {
 
 		game.board.orders.performUnitOrder(ServerCardTarget.fromMessage(game, data))
 
-		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, player)
-		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(game, game.getOpponent(player))
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
 
 		if (!player.isAnyActionsAvailable()) {
 			player.endTurn()
@@ -75,8 +73,11 @@ export default {
 	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
 		if (player.turnEnded || player.targetRequired) { return }
 
-		player.setUnitMana(0)
 		player.endTurn()
+		if (player.unitMana > 0) {
+			player.setUnitMana(0)
+			player.endRound()
+		}
 
 		game.advanceTurn()
 	},

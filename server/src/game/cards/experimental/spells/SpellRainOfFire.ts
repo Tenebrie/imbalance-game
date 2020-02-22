@@ -4,16 +4,18 @@ import ServerGame from '../../../models/ServerGame'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
-import CardPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/CardPlayTargetDefinitionBuilder'
+import SimpleTargetDefinitionBuilder from '../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
 import TargetType from '../../../shared/enums/TargetType'
 import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import CardColor from '../../../shared/enums/CardColor'
+import TargetMode from '../../../shared/enums/TargetMode'
 
 export default class SpellRainOfFire extends ServerCard {
 	damage = 12
 	targets = 5
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL)
+		super(game, CardType.SPELL, CardColor.BRONZE)
 		this.basePower = 5
 		this.cardTextVariables = {
 			damage: this.damage,
@@ -21,8 +23,8 @@ export default class SpellRainOfFire extends ServerCard {
 		}
 	}
 
-	definePlayRequiredTargets(): TargetDefinitionBuilder {
-		return CardPlayTargetDefinitionBuilder.base(this.game)
+	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
+		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
 			.enemyUnit()
 			.unique(TargetType.UNIT)
 			.multipleTargets(this.targets)

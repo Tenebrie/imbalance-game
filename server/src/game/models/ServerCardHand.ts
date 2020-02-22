@@ -17,12 +17,18 @@ export default class ServerCardHand {
 		this.spellCards = spellCards
 	}
 
+	public get allCards() {
+		return this.unitCards.slice().concat(this.spellCards)
+	}
+
 	public addUnit(card: ServerCard): void {
 		this.unitCards.push(card)
+		OutgoingMessageHandlers.notifyAboutUnitCardAdded(this.owner, card)
 	}
 
 	public addSpell(card: ServerCard): void {
 		this.spellCards.push(card)
+		OutgoingMessageHandlers.notifyAboutSpellCardAdded(this.owner, card)
 	}
 
 	public onUnitDrawn(card: ServerCard): void {

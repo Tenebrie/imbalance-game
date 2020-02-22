@@ -43,8 +43,6 @@ export default class DescriptionTextBackground extends PIXI.Container implements
 		this.addChild(bottomSection)
 		contextPosition.y += bottomSection.texture.height
 
-		console.log(`Created ${this.children.length} elements for background`)
-
 		this.children.forEach(child => {
 			child.position.y -= contextPosition.y
 		})

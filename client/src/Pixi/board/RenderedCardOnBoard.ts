@@ -26,10 +26,6 @@ export default class RenderedCardOnBoard extends CardOnBoard {
 		this.card.setPower(value)
 	}
 
-	public setAttack(value: number): void {
-		this.card.setAttack(value)
-	}
-
 	public static fromMessage(message: CardOnBoardMessage): RenderedCardOnBoard {
 		const renderedCard = RenderedCard.fromMessage(message.card)
 		const owner = Core.getPlayer(message.owner.id)

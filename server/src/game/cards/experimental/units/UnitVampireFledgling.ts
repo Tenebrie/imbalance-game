@@ -2,52 +2,42 @@ import CardType from '../../../shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTargetDefinition'
-import TargetValidatorArguments from '../../../../types/TargetValidatorArguments'
 import CardTribe from '../../../shared/enums/CardTribe'
-import TribeUtils from '../../../../utils/TribeUtils'
 import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import TargetMode from '../../../shared/enums/TargetMode'
-import TargetType from '../../../shared/enums/TargetType'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
+import CardColor from '../../../shared/enums/CardColor'
+import TargetType from '../../../shared/enums/TargetType'
 
 export default class UnitVampireFledgling extends ServerCard {
-	hasBonus: boolean = false
+	powerLost = 1
+	powerDrained = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT)
-		this.basePower = 28
-		this.baseAttack = 3
+		super(game, CardType.UNIT, CardColor.BRONZE)
+		this.basePower = 8
+		this.baseAttack = 1
 		this.cardTribes = [CardTribe.UNDEAD, CardTribe.VAMPIRE]
+		this.cardTextVariables = {
+			powerLost: this.powerLost,
+			powerDrained: this.powerDrained
+		}
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
 		return ServerTargetDefinition.defaultUnitOrder(this.game)
-			.actions(2)
-			.allow(TargetMode.ORDER_DRAIN, TargetType.UNIT)
-			.allowSimultaneously([TargetMode.ORDER_ATTACK, TargetType.UNIT], [TargetMode.ORDER_DRAIN, TargetType.UNIT])
-			.allowSimultaneously([TargetMode.ORDER_MOVE, TargetType.BOARD_ROW], [TargetMode.ORDER_DRAIN, TargetType.UNIT])
-			.validate(TargetMode.ORDER_DRAIN, TargetType.UNIT, (args: TargetValidatorArguments) => {
-				const thisUnit = args.thisUnit
-				const targetUnit = args.targetUnit!
-				const distanceToTarget = Math.abs(thisUnit.rowIndex - targetUnit.rowIndex)
-				const isLiving = TribeUtils.isLiving(targetUnit.card)
-				return targetUnit !== thisUnit && distanceToTarget <= thisUnit.card.attackRange && targetUnit.owner === thisUnit.owner && isLiving
-			})
+			.actions(1)
+			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT, 1)
 	}
 
-	onAfterPerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode): void {
-		if (targetMode === TargetMode.ORDER_DRAIN) {
-			thisUnit.setAttack(thisUnit.card.attack + 4)
-			thisUnit.heal(ServerDamageInstance.fromUnit(3, target))
-			this.hasBonus = true
+	onAfterPerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode, dealtDamage: number): void {
+		if (dealtDamage > 0) {
+			thisUnit.heal(ServerDamageInstance.fromUnit(this.powerDrained, target))
 		}
 	}
 
-	onTurnEnded(thisUnit: ServerCardOnBoard): void {
-		if (this.hasBonus) {
-			thisUnit.setAttack(thisUnit.card.attack - 4)
-		}
-		this.hasBonus = false
+	onTurnStarted(thisUnit: ServerCardOnBoard): void {
+		thisUnit.dealDamage(ServerDamageInstance.fromUnit(this.powerLost, thisUnit))
 	}
 }

@@ -4,6 +4,7 @@ import CardHand from '@/Pixi/shared/models/CardHand'
 import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import CardHandMessage from '../shared/models/network/CardHandMessage'
+import CardType from '@/Pixi/shared/enums/CardType'
 
 export default class RenderedCardHand implements CardHand {
 	unitCards: RenderedCard[]
@@ -16,6 +17,16 @@ export default class RenderedCardHand implements CardHand {
 
 	public get allCards() {
 		return this.unitCards.slice().concat(this.spellCards)
+	}
+
+	public addCard(card: RenderedCard) {
+		if (card.cardType === CardType.UNIT) {
+			this.addUnit(card)
+		} else if (card.cardType === CardType.SPELL) {
+			this.addSpell(card)
+		} else {
+			console.error('Trying to hidden card to hand without type specified!')
+		}
 	}
 
 	public addUnit(card: RenderedCard) {
@@ -47,16 +58,16 @@ export default class RenderedCardHand implements CardHand {
 		Core.unregisterCard(card)
 	}
 
-	public removeCard(card: RenderedCard) {
+	public destroyCard(card: RenderedCard) {
 		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
 		this.spellCards = this.spellCards.filter(unitCard => unitCard !== card)
 		card.unregister()
 	}
 
-	public removeCardById(cardId: string) {
+	public destroyCardById(cardId: string) {
 		const card = this.findCardById(cardId)
 		if (!card) { return }
-		this.removeCard(card)
+		this.destroyCard(card)
 	}
 
 	public static fromMessage(message: CardHandMessage): RenderedCardHand {

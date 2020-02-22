@@ -14,6 +14,7 @@ import TargetType from '@/Pixi/shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
+import CardMessage from '@/Pixi/shared/models/network/CardMessage'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
@@ -22,10 +23,12 @@ export default class Input {
 	leftMouseDown: boolean = false
 	rightMouseDown: boolean = false
 	mousePosition: PIXI.Point = new PIXI.Point(-10000, -10000)
+	cardLimbo: RenderedCard[] = []
 	hoveredCard: HoveredCard | null = null
 	grabbedCard: GrabbedCard | null = null
 	inspectedCard: RenderedCard | null = null
 
+	playableCards: ClientCardTarget[] = []
 	forcedTargetingMode: ForcedTargetingMode | null = null
 
 	constructor() {
@@ -57,7 +60,7 @@ export default class Input {
 
 	public updateCardHoverStatus(): void {
 		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
-		const playerHandCards = Core.player.cardHand.allCards
+		const playerHandCards = Core.player.cardHand.allCards.slice().reverse()
 
 		let hoveredCard: HoveredCard | null = null
 
@@ -144,7 +147,7 @@ export default class Input {
 		const card = hoveredCard.card
 
 		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
-			const validRows = Core.board.rows.filter(row => row.owner === Core.player)
+			const validRows = this.playableCards.filter(playableCard => playableCard.sourceCard === card).map(playableCard => playableCard.targetRow)
 			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
 		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY && Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0) {
 			const validOrders = Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id))
@@ -208,6 +211,8 @@ export default class Input {
 		} else if (card.cardType === CardType.UNIT) {
 			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, this.getCardInsertIndex(hoveredRow))
 		}
+		this.cardLimbo.push(card)
+		Core.player.cardHand.destroyCard(card)
 	}
 
 	private onUnitOrder(orderedCard: RenderedCard): void {
@@ -220,6 +225,21 @@ export default class Input {
 		if (performedOrder) {
 			OutgoingMessageHandlers.sendUnitOrder(performedOrder)
 		}
+	}
+
+	public restoreCardFromLimbo(cardMessage: CardMessage): RenderedCard {
+		const cardInLimbo = this.cardLimbo.find(card => card.id === cardMessage.id)
+		if (!cardInLimbo) {
+			return
+		}
+
+		Core.registerCard(cardInLimbo)
+		this.clearCardInLimbo(cardMessage)
+		return cardInLimbo
+	}
+
+	public clearCardInLimbo(cardMessage: CardMessage): void {
+		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardMessage.id)
 	}
 
 	public enableForcedTargetingMode(validTargets: ClientCardTarget[]): void {

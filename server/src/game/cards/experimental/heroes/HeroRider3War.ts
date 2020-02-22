@@ -4,9 +4,10 @@ import ServerGame from '../../../models/ServerGame'
 import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
-import CardPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/CardPlayTargetDefinitionBuilder'
+import SimpleTargetDefinitionBuilder from '../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
 import TargetType from '../../../shared/enums/TargetType'
 import TargetMode from '../../../shared/enums/TargetMode'
+import CardColor from '../../../shared/enums/CardColor'
 
 export default class heroRider3War extends ServerCard {
 	targets = 3
@@ -14,7 +15,7 @@ export default class heroRider3War extends ServerCard {
 	enemiesSelected: ServerCardOnBoard[] = []
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT)
+		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 20
 		this.baseAttack = 4
 		this.cardTextVariables = {
@@ -22,8 +23,8 @@ export default class heroRider3War extends ServerCard {
 		}
 	}
 
-	definePlayRequiredTargets(): TargetDefinitionBuilder {
-		return CardPlayTargetDefinitionBuilder.base(this.game)
+	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
+		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
 			.multipleTargets(this.targets * 2)
 			.unique(TargetType.UNIT)
 			.allow(TargetType.UNIT, this.targets * 2)

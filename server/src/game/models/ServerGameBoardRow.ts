@@ -29,10 +29,12 @@ export default class ServerGameBoardRow extends GameBoardRow {
 
 	public insertUnit(unit: ServerCardOnBoard, ordinal: number): void {
 		this.cards.splice(ordinal, 0, unit)
+		this.updateOwner()
 	}
 
 	public removeUnit(targetCard: ServerCardOnBoard): void {
 		this.cards = this.cards.filter(cardOnBoard => cardOnBoard !== targetCard)
+		this.updateOwner()
 	}
 
 	public destroyUnit(targetCard: ServerCardOnBoard): void {
@@ -40,6 +42,19 @@ export default class ServerGameBoardRow extends GameBoardRow {
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitDestroyed(playerInGame.player, targetCard)
 		})
+		this.updateOwner()
+	}
+
+	public updateOwner(): void {
+		const playerOneUnits = this.cards.filter(card => card.owner === this.game.players[0])
+		const playerTwoUnits = this.cards.filter(card => card.owner === this.game.players[1])
+		if (playerOneUnits.length > 0 && playerTwoUnits.length > 0) {
+			this.setOwner(null)
+		} else if (playerOneUnits.length > 0) {
+			this.setOwner(this.game.players[0])
+		} else if (playerTwoUnits.length > 0) {
+			this.setOwner(this.game.players[1])
+		}
 	}
 
 	public setOwner(player: ServerPlayerInGame | null): void {
@@ -51,5 +66,9 @@ export default class ServerGameBoardRow extends GameBoardRow {
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutRowOwnershipChanged(playerInGame.player, this)
 		})
+	}
+
+	public distanceTo(targetRow: ServerGameBoardRow): number {
+		return Math.abs(this.index - targetRow.index)
 	}
 }

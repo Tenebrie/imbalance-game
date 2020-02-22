@@ -45,17 +45,14 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		return this.game.getOpponent(this)
 	}
 
-	public canPlaySpell(card: ServerCard): boolean {
-		return this.spellMana >= card.spellCost
+	public canPlaySpell(card: ServerCard, rowIndex: number): boolean {
+		const gameBoardRow = this.game.board.rows[rowIndex]
+		return this.spellMana >= card.spellCost && !!card.getValidPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
 	}
 
-	public canPlayUnit(card: ServerCard, rowIndex: number, unitIndex: number): boolean {
+	public canPlayUnit(card: ServerCard, rowIndex: number): boolean {
 		const gameBoardRow = this.game.board.rows[rowIndex]
-		if (gameBoardRow.cards.length >= Constants.MAX_CARDS_PER_ROW || gameBoardRow.owner !== this) {
-			return false
-		}
-
-		return this.unitMana > 0
+		return this.unitMana > 0 && !!card.getValidPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
 	}
 
 	public drawUnitCards(count: number): void {
@@ -72,7 +69,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			cards.push(card)
 		}
 
-		OutgoingMessageHandlers.notifyAboutUnitCardsDrawn(this, cards)
+		// OutgoingMessageHandlers.notifyAboutUnitCardsDrawn(this, cards)
 	}
 
 	public drawSpellCards(count: number): void {
@@ -89,7 +86,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			cards.push(card)
 		}
 
-		OutgoingMessageHandlers.notifyAboutSpellCardsDrawn(this, cards)
+		// OutgoingMessageHandlers.notifyAboutSpellCardsDrawn(this, cards)
 	}
 
 	public refillSpellHand(): void {
@@ -136,7 +133,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public startTurn(): void {
 		this.turnEnded = false
 		OutgoingMessageHandlers.notifyAboutTurnStarted(this)
-		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(this.game, this)
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this)
 	}
 
 	public isAnyActionsAvailable(): boolean {

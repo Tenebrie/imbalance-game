@@ -2,7 +2,7 @@ import Card from '../Card'
 import CardType from '../../enums/CardType'
 import CardTribe from '../../enums/CardTribe'
 import RichTextVariables from '../RichTextVariables'
-import UnitSubtype from '../../enums/UnitSubtype'
+import UnitSubtype from '../../enums/CardColor'
 
 export default class HiddenCardMessage implements Card {
 	id: string

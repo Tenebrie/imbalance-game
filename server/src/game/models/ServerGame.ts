@@ -76,8 +76,8 @@ export default class ServerGame extends Game {
 			OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, this.players.indexOf(playerInGame) === 1)
 		})
 
-		this.board.rows[Constants.GAME_BOARD_ROW_COUNT - 1].setOwner(playerOne)
-		this.board.rows[0].setOwner(playerTwo)
+		// this.board.rows[Constants.GAME_BOARD_ROW_COUNT - 1].setOwner(playerOne)
+		// this.board.rows[0].setOwner(playerTwo)
 
 		this.players.forEach(playerInGame => {
 			playerInGame.cardDeck.shuffle()
@@ -132,9 +132,11 @@ export default class ServerGame extends Game {
 		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
 		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
 		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
-		const hasPlayerLostBoard = rowsOwnedByPlayerOne === 0 || rowsOwnedByPlayerTwo === 0
-		if (hasPlayerLostBoard) {
+		const hasPlayerWonBoard = rowsOwnedByPlayerOne === Constants.GAME_BOARD_ROW_COUNT || rowsOwnedByPlayerTwo === Constants.GAME_BOARD_ROW_COUNT
+		const notFinishedPlayers = this.players.filter(player => !player.roundEnded)
+		if (hasPlayerWonBoard || notFinishedPlayers.length === 0) {
 			this.startNextRound()
+			return
 		}
 
 		if (this.playersToMove.length > 0) {
@@ -165,7 +167,7 @@ export default class ServerGame extends Game {
 		this.turnIndex += 1
 		this.setTurnPhase(GameTurnPhase.TURN_START)
 
-		this.playersToMove = this.players.slice()
+		this.playersToMove = this.players.filter(player => !player.roundEnded)
 
 		this.board.getAllUnits().forEach(unit => {
 			unit.hasSummoningSickness = false
@@ -179,8 +181,7 @@ export default class ServerGame extends Game {
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
 
 		this.players.forEach(player => {
-			OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(this, player)
-			OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(this, this.getOpponent(player))
+			OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, player)
 		})
 
 		this.advanceTurn()
@@ -203,21 +204,26 @@ export default class ServerGame extends Game {
 			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
 		}
 
+		const survivingPlayer = this.players.find(player => player.morale > 0) || null
 		const defeatedPlayer = this.players.find(player => player.morale <= 0) || null
-		if (defeatedPlayer) {
+		if (survivingPlayer && defeatedPlayer) {
 			this.finish(this.getOpponent(defeatedPlayer), 'Win condition')
+			return
+		} else if (this.players.every(player => player.morale <= 0)) {
+			this.finish(null, 'Draw')
 			return
 		}
 
 		this.board.getAllUnits().forEach(cardOnBoard => this.board.destroyUnit(cardOnBoard))
 
-		this.board.rows[Constants.GAME_BOARD_ROW_COUNT - 1].setOwner(playerOne)
-		this.board.rows[0].setOwner(playerTwo)
+		// this.board.rows[Constants.GAME_BOARD_ROW_COUNT - 1].setOwner(playerOne)
+		// this.board.rows[0].setOwner(playerTwo)
 		for (let i = 1; i < Constants.GAME_BOARD_ROW_COUNT - 1; i++) {
 			this.board.rows[i].setOwner(null)
 		}
 
 		this.players.forEach(playerInGame => {
+			playerInGame.startRound()
 			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_PER_ROUND)
 			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})
@@ -231,13 +237,22 @@ export default class ServerGame extends Game {
 		this.advancePhase()
 	}
 
-	public finish(victoriousPlayer: ServerPlayerInGame, victoryReason: string): void {
+	public finish(victoriousPlayer: ServerPlayerInGame | null, victoryReason: string): void {
+		if (this.turnPhase === GameTurnPhase.AFTER_GAME) {
+			return
+		}
+
 		this.setTurnPhase(GameTurnPhase.AFTER_GAME)
 
-		const defeatedPlayer = this.getOpponent(victoriousPlayer)
-		OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
-		OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
-		console.info(`Game ${this.id} finished. ${victoriousPlayer.player.username} won! [${victoryReason}]`)
+		if (victoriousPlayer === null) {
+			OutgoingMessageHandlers.notifyAboutDraw(this)
+			console.info(`Game ${this.id} finished with a draw. [${victoryReason}]`)
+		} else {
+			const defeatedPlayer = this.getOpponent(victoriousPlayer)
+			OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
+			OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
+			console.info(`Game ${this.id} finished. ${victoriousPlayer.player.username} won! [${victoryReason}]`)
+		}
 
 		setTimeout(() => {
 			const gameLibrary: GameLibrary = global.gameLibrary

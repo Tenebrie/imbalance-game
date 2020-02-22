@@ -64,6 +64,11 @@ const gameStateModule = createModule({
 			commit.setGameStatus(ClientGameStatus.DEFEAT)
 		},
 
+		drawGame(context): void {
+			const { commit } = moduleActionContext(context, gameStateModule)
+			commit.setGameStatus(ClientGameStatus.DRAW)
+		},
+
 		reset(context): void {
 			const { commit } = moduleActionContext(context, gameStateModule)
 			commit.setGameStatus(ClientGameStatus.NOT_STARTED)

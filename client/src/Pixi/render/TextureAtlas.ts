@@ -76,7 +76,10 @@ export default class TextureAtlas {
 					}
 				}
 				texture.baseTexture.on('loaded', onLoaded)
-				texture.baseTexture.on('error', onLoaded)
+				texture.baseTexture.on('error', () => {
+					console.error(`Unable to load texture ${fileName}`)
+					onLoaded()
+				})
 			})
 		})
 	}

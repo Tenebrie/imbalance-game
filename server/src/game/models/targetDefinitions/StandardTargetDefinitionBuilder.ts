@@ -130,8 +130,8 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 
 	public static base(game: ServerGame): StandardTargetDefinitionBuilder {
 		return new StandardTargetDefinitionBuilder(game)
-			.label(TargetMode.ON_PLAY, TargetType.UNIT, 'target.generic.unit')
-			.label(TargetMode.ON_PLAY, TargetType.BOARD_ROW, 'target.generic.row')
+			.label(TargetMode.POST_PLAY_REQUIRED_TARGET, TargetType.UNIT, 'target.generic.unit')
+			.label(TargetMode.POST_PLAY_REQUIRED_TARGET, TargetType.BOARD_ROW, 'target.generic.row')
 			.label(TargetMode.ORDER_ATTACK, TargetType.UNIT, 'target.attack.unit')
 			.label(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, 'target.attack.row')
 			.label(TargetMode.ORDER_DRAIN, TargetType.UNIT, 'target.drain.unit')

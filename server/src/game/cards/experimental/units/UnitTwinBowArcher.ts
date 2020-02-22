@@ -8,10 +8,11 @@ import TargetValidatorArguments from '../../../../types/TargetValidatorArguments
 import TargetMode from '../../../shared/enums/TargetMode'
 import TargetType from '../../../shared/enums/TargetType'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
+import CardColor from '../../../shared/enums/CardColor'
 
 export default class UnitTwinBowArcher extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT)
+		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 14
 		this.baseAttack = 7 // 70
 		this.baseAttackRange = 2 // 30

@@ -43,6 +43,30 @@ export default {
 		})
 	},
 
+	notifyAboutUnitCardAdded(playerInGame: ServerPlayerInGame, card: ServerCard) {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/hand/unit/cardAdded',
+			data: new CardMessage(card)
+		})
+
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/hand/unit/cardAdded',
+			data: new HiddenCardMessage(card)
+		})
+	},
+
+	notifyAboutSpellCardAdded(playerInGame: ServerPlayerInGame, card: ServerCard) {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/hand/spell/cardAdded',
+			data: new CardMessage(card)
+		})
+
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/hand/spell/cardAdded',
+			data: new HiddenCardMessage(card)
+		})
+	},
+
 	notifyAboutOpponentCardRevealed(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
 			type: 'update/player/opponent/hand/cardRevealed',

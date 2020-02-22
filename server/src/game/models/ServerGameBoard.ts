@@ -38,6 +38,24 @@ export default class ServerGameBoard extends GameBoard {
 		return adjacentRows
 	}
 
+	public getDeployDistance(targetRow: ServerGameBoardRow, playerInGame: ServerPlayerInGame): number {
+		const playersRows = this.rows.filter(row => row.owner === playerInGame)
+		if (playersRows.length === 0) {
+			return targetRow === this.getPlayerHomeRow(playerInGame) ? 0 : Infinity
+		}
+
+		const distanceToRow = playersRows.map(row => row.distanceTo(targetRow))
+		return distanceToRow.sort()[0]
+	}
+
+	public getPlayerHomeRow(playerInGame: ServerPlayerInGame): ServerGameBoardRow {
+		return this.rows[this.game.players.indexOf(playerInGame) === 0 ? Constants.GAME_BOARD_ROW_COUNT - 1 : 0]
+	}
+
+	public getTotalPlayerPower(playerInGame: ServerPlayerInGame): number {
+		return this.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card.power).reduce((total, value) => total + value, 0)
+	}
+
 	public getHorizontalUnitDistance(first: ServerCardOnBoard, second: ServerCardOnBoard): number {
 		const firstOffsetFromCenter = first.unitIndex - ((this.rows[first.rowIndex].cards.length - 1) / 2)
 		const secondOffsetFromCenter = second.unitIndex - ((this.rows[second.rowIndex].cards.length - 1) / 2)
@@ -52,7 +70,6 @@ export default class ServerGameBoard extends GameBoard {
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitMoved(playerInGame.player, unit, rowIndex, unitIndex)
 		})
-		targetRow.setOwner(unit.owner)
 	}
 
 	public destroyUnit(unit: ServerCardOnBoard): void {

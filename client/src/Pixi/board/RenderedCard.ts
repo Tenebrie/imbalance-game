@@ -127,7 +127,10 @@ export default class RenderedCard extends Card {
 	public getDescriptionTextVariables(): RichTextVariables {
 		return {
 			...this.cardTextVariables,
-			name: Localization.getString(this.cardName)
+			name: Localization.getString(this.cardName),
+			attack: this.attack.toString(),
+			attackRange: this.attackRange.toString(),
+			healthArmor: this.healthArmor.toString()
 		}
 	}
 
@@ -275,6 +278,7 @@ export default class RenderedCard extends Card {
 		this.unitModeContainer.visible = true
 		this.cardModeContainer.visible = false
 		this.cardModeTextContainer.visible = false
+		this.unitModeAttributes.visible = false
 
 		this.powerText.position.set(97, 80)
 		if (this.power < 10) {

@@ -36,7 +36,16 @@ export default {
 		})
 	},
 
-	notifyAboutUnitValidOrdersChanged(game: ServerGame, playerInGame: ServerPlayerInGame) {
+	notifyAboutValidActionsChanged(game: ServerGame, playerInGame: ServerPlayerInGame) {
+		const cardsInHand = playerInGame.cardHand.allCards
+		const validPlayTargets = cardsInHand.map(card => card.getValidPlayTargets(playerInGame)).flat()
+		const playTargetMessages = validPlayTargets.map(order => new CardTargetMessage(order))
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/hand/playTargets',
+			data: playTargetMessages,
+			highPriority: true
+		})
+
 		const ownedUnits = game.board.getUnitsOwnedByPlayer(playerInGame)
 		const validOrders = ownedUnits.map(unit => unit.getValidOrders()).flat()
 		const messages = validOrders.map(order => new CardTargetMessage(order))
@@ -46,16 +55,9 @@ export default {
 			data: messages,
 			highPriority: true
 		})
-	},
-
-	notifyAboutOpponentUnitValidOrdersChanged(game: ServerGame, playerInGame: ServerPlayerInGame) {
-		const opponentUnits = game.board.getUnitsOwnedByPlayer(game.getOpponent(playerInGame))
-		const validOpponentOrders = opponentUnits.map(unit => unit.getValidOrders()).flat()
-		const opponentMessages = validOpponentOrders.map(order => new CardTargetMessage(order))
-
-		playerInGame.player.sendMessage({
+		playerInGame.opponent.player.sendMessage({
 			type: 'update/board/opponentOrders',
-			data: opponentMessages
+			data: messages
 		})
 	},
 
@@ -69,13 +71,6 @@ export default {
 	notifyAboutCardPowerChange(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
 			type: 'update/board/card/power',
-			data: CardMessage.fromCard(card)
-		})
-	},
-
-	notifyAboutCardAttackChange(player: ServerPlayer, card: ServerCard) {
-		player.sendMessage({
-			type: 'update/board/card/attack',
 			data: CardMessage.fromCard(card)
 		})
 	}

@@ -7,10 +7,11 @@ import TargetMode from '../../../shared/enums/TargetMode'
 import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTargetDefinition'
+import CardColor from '../../../shared/enums/CardColor'
 
 export default class HeroIgnea extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT)
+		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 7
 	}
 

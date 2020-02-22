@@ -16,14 +16,16 @@ import TargetType from '../shared/enums/TargetType'
 import TargetValidatorArguments from '../../types/TargetValidatorArguments'
 import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
 import TargetDefinitionBuilder from './targetDefinitions/TargetDefinitionBuilder'
+import CardColor from '../shared/enums/CardColor'
 
 export default class ServerCard extends Card {
 	game: ServerGame
 	isRevealed = false
 
-	constructor(game: ServerGame, cardType: CardType) {
+	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor) {
 		super(uuidv4(), cardType, 'missingno')
 		this.game = game
+		this.unitSubtype = unitSubtype
 	}
 
 	public get spellCost() {
@@ -41,23 +43,18 @@ export default class ServerCard extends Card {
 		})
 	}
 
-	setAttack(unit: ServerCardOnBoard, value: number): void {
-		if (this.attack === value) { return }
-
-		runCardEventHandler(() => this.onAttackChanged(unit, value, this.attack))
-
-		this.attack = value
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardAttackChange(playerInGame.player, this)
-		})
-	}
-
 	reveal(owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
 		if (this.isRevealed) { return }
 
 		this.isRevealed = true
 		runCardEventHandler(() => this.onReveal(owner))
 		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(opponent.player, this)
+	}
+
+	getValidPlayTargets(cardOwner: ServerPlayerInGame): ServerCardTarget[] {
+		return this.getValidTargets(TargetMode.ON_PLAY_VALID_TARGET, TargetType.BOARD_ROW, this.getPlayValidTargetDefinition(), {
+			thisCardOwner: cardOwner
+		})
 	}
 
 	getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: ServerTargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
@@ -134,12 +131,11 @@ export default class ServerCard extends Card {
 	onBeforeUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerCardTarget): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerCardTarget): void { return }
 	onPowerChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
-	onAttackChanged(thisUnit: ServerCardOnBoard, newValue: number, oldValue: number): void { return }
 	onBeforeDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
 	onAfterDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
 	onDamageSurvived(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
 	onBeforePerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode): void { return }
-	onAfterPerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode): void { return }
+	onAfterPerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode, dealtDamage: number): void { return }
 	onBeforePerformingRowAttack(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow, targetMode: TargetMode): void { return }
 	onAfterPerformingRowAttack(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow, targetMode: TargetMode): void { return }
 	onBeforeBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void { return }
@@ -155,14 +151,16 @@ export default class ServerCard extends Card {
 	onReveal(owner: ServerPlayerInGame): void { return }
 	onDestroyUnit(thisUnit: ServerCardOnBoard): void { return }
 
-	getAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode, targetType: TargetType): number { return this.attack }
+	getAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode, targetType: TargetType): number { return 0 }
 	getBonusAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode, targetType: TargetType): number { return 0 }
 	getDamageTaken(thisUnit: ServerCardOnBoard, damageSource: ServerDamageSource): number { return damageSource.value }
 	getDamageReduction(thisUnit: ServerCardOnBoard, damageSource: ServerDamageSource): number { return 0 }
 
+	definePlayValidTargets(): TargetDefinitionBuilder { return ServerTargetDefinition.defaultCardPlayTarget(this.game) }
 	defineValidOrderTargets(): TargetDefinitionBuilder { return ServerTargetDefinition.defaultUnitOrder(this.game) }
-	definePlayRequiredTargets(): TargetDefinitionBuilder { return ServerTargetDefinition.none(this.game) }
+	definePostPlayRequiredTargets(): TargetDefinitionBuilder { return ServerTargetDefinition.none(this.game) }
+	getPlayValidTargetDefinition(): ServerTargetDefinition { return this.definePlayValidTargets().build() }
 	getValidOrderTargetDefinition(): ServerTargetDefinition { return this.defineValidOrderTargets().build() }
-	getPlayRequiredTargetDefinition(): ServerTargetDefinition { return this.definePlayRequiredTargets().build() }
+	getPostPlayRequiredTargetDefinition(): ServerTargetDefinition { return this.definePostPlayRequiredTargets().build() }
 	isRequireCustomOrderLogic(thisUnit: ServerCardOnBoard, order: ServerCardTarget): boolean { return false }
 }

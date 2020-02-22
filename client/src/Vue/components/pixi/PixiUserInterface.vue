@@ -11,6 +11,7 @@
 		<div class="endgame-screen" :class="endgameScreenClass">
 			<div class="victory" v-if="isVictory">Victory!</div>
 			<div class="defeat" v-if="isDefeat">Defeat</div>
+			<div class="draw" v-if="isDraw">Draw</div>
 		</div>
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
@@ -49,7 +50,7 @@ export default Vue.extend({
 
 		isGameStarted(): boolean {
 			const status = store.state.gameStateModule.gameStatus
-			return status === ClientGameStatus.IN_PROGRESS || status === ClientGameStatus.VICTORY || status === ClientGameStatus.DEFEAT
+			return status === ClientGameStatus.IN_PROGRESS || status === ClientGameStatus.VICTORY || status === ClientGameStatus.DEFEAT || status === ClientGameStatus.DRAW
 		},
 
 		fadeInOverlayClass(): {} {
@@ -66,9 +67,13 @@ export default Vue.extend({
 			return store.state.gameStateModule.gameStatus === ClientGameStatus.DEFEAT
 		},
 
+		isDraw(): boolean {
+			return store.state.gameStateModule.gameStatus === ClientGameStatus.DRAW
+		},
+
 		endgameScreenClass(): {} {
 			return {
-				visible: (this.isVictory || this.isDefeat) as boolean
+				visible: (this.isVictory || this.isDefeat || this.isDraw) as boolean
 			}
 		},
 

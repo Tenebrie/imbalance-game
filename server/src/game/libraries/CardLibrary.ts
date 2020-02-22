@@ -13,16 +13,15 @@ import UnitChargingKnight from '../cards/experimental/units/UnitChargingKnight'
 import UnitSpinningBarbarian from '../cards/experimental/units/UnitSpinningBarbarian'
 import SpellRainOfFire from '../cards/experimental/spells/SpellRainOfFire'
 import SpellMagicalStarfall from '../cards/experimental/spells/SpellMagicalStarfall'
-import CardType from '../shared/enums/CardType'
-import UnitSubtype from '../shared/enums/UnitSubtype'
-import BuildingTreeOfLife from '../cards/experimental/buildings/BuildingTreeOfLife'
+import UnitTreeOfLife from '../cards/experimental/units/UnitTreeOfLife'
 import UnitVampireFledgling from '../cards/experimental/units/UnitVampireFledgling'
 import HeroIgnea from '../cards/experimental/heroes/HeroIgnea'
-import UnitPriestessOfAedine from '../cards/experimental/units/UnitPriestessOfAedine'
+import UnitPriestessOfAedine from '../cards/neutral/UnitPriestessOfAedine'
 import HeroRider1Famine from '../cards/experimental/heroes/HeroRider1Famine'
 import HeroRider2Conquest from '../cards/experimental/heroes/HeroRider2Conquest'
 import HeroRider3War from '../cards/experimental/heroes/HeroRider3War'
 import HeroRider4Death from '../cards/experimental/heroes/HeroRider4Death'
+import SpellSpark from '../cards/experimental/spells/SpellSpark'
 
 export default class GameLibrary {
 	static cards: any[]
@@ -46,9 +45,10 @@ export default class GameLibrary {
 			UnitSpinningBarbarian,
 			UnitVampireFledgling,
 			UnitPriestessOfAedine,
-			BuildingTreeOfLife,
+			UnitTreeOfLife,
 			SpellRainOfFire,
-			SpellMagicalStarfall
+			SpellMagicalStarfall,
+			SpellSpark
 		]
 
 		GameLibrary.cards = cards.map(prototype => {
@@ -74,23 +74,9 @@ export default class GameLibrary {
 			throw new Error(`No registered card with class '${cardClass}'!`)
 		}
 
-		let unitSubtype = null
-		if (cardClass.startsWith('hero')) {
-			unitSubtype = UnitSubtype.HERO
-		} else if (cardClass.startsWith('veteran')) {
-			unitSubtype = UnitSubtype.VETERAN
-		} else if (cardClass.startsWith('unit')) {
-			unitSubtype = UnitSubtype.PAWN
-		} else if (cardClass.startsWith('building')) {
-			unitSubtype = UnitSubtype.BUILDING
-		} else {
-			unitSubtype = UnitSubtype.OTHER
-		}
-
 		const clone: ServerCard = new original.constructor()
 		clone.cardType = original.cardType
 		clone.cardClass = cardClass
-		clone.unitSubtype = unitSubtype
 
 		clone.cardName = `card.name.${cardClass}`
 		clone.cardTitle = `card.title.${cardClass}`

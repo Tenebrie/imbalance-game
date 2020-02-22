@@ -132,7 +132,7 @@ export default class ServerGameCardPlay {
 		const currentCard = this.cardResolveStack.currentCard
 		const card = currentCard.card
 
-		const targetDefinition = card.getPlayRequiredTargetDefinition()
+		const targetDefinition = card.getPostPlayRequiredTargetDefinition()
 		if (targetDefinition.getTargetCount() === 0) {
 			return []
 		}
@@ -144,8 +144,8 @@ export default class ServerGameCardPlay {
 		}
 
 		return []
-			.concat(card.getValidTargets(TargetMode.ON_PLAY, TargetType.UNIT, targetDefinition, args, this.cardResolveStack.currentTargets))
-			.concat(card.getValidTargets(TargetMode.ON_PLAY, TargetType.BOARD_ROW, targetDefinition, args, this.cardResolveStack.currentTargets))
+			.concat(card.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, TargetType.UNIT, targetDefinition, args, this.cardResolveStack.currentTargets))
+			.concat(card.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, TargetType.BOARD_ROW, targetDefinition, args, this.cardResolveStack.currentTargets))
 	}
 
 	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
@@ -163,22 +163,22 @@ export default class ServerGameCardPlay {
 		const sourceUnit = target.sourceUnit
 		const sourceCard = target.sourceCard || sourceUnit.card
 
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetCard) {
+		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
 			sourceCard.onUnitPlayTargetCardSelected(sourceUnit, target.targetCard)
 		}
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetUnit) {
+		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
 			sourceCard.onUnitPlayTargetUnitSelected(sourceUnit, target.targetUnit)
 		}
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetRow) {
+		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
 			sourceCard.onUnitPlayTargetRowSelected(sourceUnit, target.targetRow)
 		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetCard) {
+		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
 			sourceCard.onSpellPlayTargetCardSelected(playerInGame, target.targetCard)
 		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetUnit) {
+		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
 			sourceCard.onSpellPlayTargetUnitSelected(playerInGame, target.targetUnit)
 		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetRow) {
+		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
 			sourceCard.onSpellPlayTargetRowSelected(playerInGame, target.targetRow)
 		}
 		this.cardResolveStack.pushTarget(target)

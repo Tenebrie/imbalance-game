@@ -2,6 +2,7 @@ import ServerPlayer from '../../players/ServerPlayer'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import PlayerInGameMessage from '../../shared/models/network/PlayerInGameMessage'
 import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
+import ServerGame from '../../models/ServerGame'
 
 export default {
 	notifyAboutPlayerMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
@@ -99,6 +100,15 @@ export default {
 		player.sendMessage({
 			type: 'update/player/self/defeat',
 			data: null
+		})
+	},
+
+	notifyAboutDraw: (game: ServerGame) => {
+		game.players.forEach(playerInGame => {
+			playerInGame.player.sendMessage({
+				type: 'update/player/self/draw',
+				data: null
+			})
 		})
 	}
 }

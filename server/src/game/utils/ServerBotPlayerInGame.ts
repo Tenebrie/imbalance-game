@@ -4,6 +4,7 @@ import ServerPlayer from '../players/ServerPlayer'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
 import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
 import UnitOrderMessage from '../shared/models/network/CardTargetMessage'
+import CardTargetMessage from '../shared/models/network/CardTargetMessage'
 import ServerCardTarget from '../models/ServerCardTarget'
 import ServerCard from '../models/ServerCard'
 import Utils from '../../utils/Utils'
@@ -12,7 +13,7 @@ import ServerGameBoardRow from '../models/ServerGameBoardRow'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
-import CardTargetMessage from '../shared/models/network/CardTargetMessage'
+import GameTurnPhase from '../shared/enums/GameTurnPhase'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -29,9 +30,15 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botTakesTheirTurn(): void {
+		const botTotalPower = this.game.board.getTotalPlayerPower(this)
+		const opponentTotalPower = this.game.board.getTotalPlayerPower(this.opponent)
+		if (botTotalPower > opponentTotalPower) {
+			this.botEndsTurn()
+			return
+		}
+
 		try {
-			// TODO: Teach bot how to target something for battlecries
-			while (this.unitMana > 0 && this.cardHand.unitCards.length > 0) {
+			while (this.unitMana > 0 && this.cardHand.unitCards.length > 0 && this.game.turnPhase === GameTurnPhase.DEPLOY) {
 				this.botPlaysCard()
 				while (this.game.cardPlay.cardResolveStack.hasCards()) {
 					this.botChoosesTarget()
@@ -51,13 +58,10 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		})
 		const selectedCard = cards[0]
 
-		const ownedRows = this.sortOwnedRows(this.game.board.rows.filter(row => row.owner === this))
-		if (ownedRows.length === 0) {
-			return
-		}
+		let validRows = this.game.board.rows.filter(row => this.game.board.getDeployDistance(row, this) <= 1)
 
 		const distanceFromFront = selectedCard.attackRange - 1
-		const targetRow = ownedRows[Math.min(distanceFromFront, ownedRows.length - 1)]
+		const targetRow = validRows[Math.min(distanceFromFront, validRows.length - 1)]
 		const cardPlayerMessage = CardPlayedMessage.fromCardOnRow(selectedCard, targetRow.index, targetRow.cards.length)
 		IncomingMessageHandlers['post/playCard'](cardPlayerMessage, this.game, this)
 	}

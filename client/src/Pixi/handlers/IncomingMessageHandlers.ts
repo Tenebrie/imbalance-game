@@ -83,6 +83,7 @@ const handlers: {[ index: string ]: any } = {
 	'update/board/unitCreated': (data: CardOnBoardMessage) => {
 		if (Core.board.findUnitById(data.card.id)) { return }
 
+		Core.input.clearCardInLimbo(data.card)
 		Core.board.unitsOnHold.push(RenderedCardOnBoard.fromMessage(data))
 	},
 
@@ -120,13 +121,6 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		cardOnBoard.setPower(data.power)
-	},
-
-	'update/board/card/attack': (data: CardMessage) => {
-		const cardOnBoard = Core.board.findUnitById(data.id)
-		if (!cardOnBoard) { return }
-
-		cardOnBoard.setAttack(data.attack)
 	},
 
 	'update/player/self/turnStarted': (data: void) => {
@@ -177,6 +171,16 @@ const handlers: {[ index: string ]: any } = {
 		store.dispatch.gameStateModule.loseGame()
 	},
 
+	'update/player/self/draw': (data: PlayerInGameMessage) => {
+		store.dispatch.gameStateModule.drawGame()
+	},
+
+	'update/player/self/hand/playDeclined': (data: CardMessage) => {
+		console.info('Card play declined', data)
+		const cardInLimbo = Core.input.restoreCardFromLimbo(data)
+		Core.player.cardHand.addCard(cardInLimbo)
+	},
+
 	'update/player/self/hand/unit/cardDrawn': (data: CardMessage[]) => {
 		console.info('Units drawn', data)
 		data.forEach(cardMessage => {
@@ -188,13 +192,29 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/opponent/hand/unit/cardDrawn': (data: HiddenCardMessage[]) => {
-		console.log('Opponent units', data)
+		console.info('Opponent units', data)
 		data.forEach(cardMessage => {
 			const card = Core.opponent.cardDeck.drawUnitById(cardMessage.id)
 			if (card) {
 				Core.opponent.cardHand.addUnit(card)
 			}
 		})
+	},
+
+	'update/player/self/hand/unit/cardAdded': (data: CardMessage) => {
+		Core.player.cardHand.addUnit(RenderedCard.fromMessage(data))
+	},
+
+	'update/player/self/hand/spell/cardAdded': (data: CardMessage) => {
+		Core.player.cardHand.addSpell(RenderedCard.fromMessage(data))
+	},
+
+	'update/player/opponent/hand/unit/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardHand.addUnit(RenderedCard.fromMessage(data))
+	},
+
+	'update/player/opponent/hand/spell/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardHand.addSpell(RenderedCard.fromMessage(data))
 	},
 
 	'update/player/self/hand/spell/cardDrawn': (data: CardMessage[]) => {
@@ -208,7 +228,7 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/opponent/hand/spell/cardDrawn': (data: HiddenCardMessage[]) => {
-		console.log('Opponent spells', data)
+		console.info('Opponent spells', data)
 		data.forEach(cardMessage => {
 			const card = Core.opponent.cardDeck.drawSpellById(cardMessage.id)
 			if (card) {
@@ -222,7 +242,7 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/self/hand/cardDestroyed': (data: CardMessage) => {
-		Core.player.cardHand.removeCardById(data.id)
+		Core.player.cardHand.destroyCardById(data.id)
 	},
 
 	'update/player/opponent/hand/cardDestroyed': (data: CardMessage) => {
@@ -232,7 +252,11 @@ const handlers: {[ index: string ]: any } = {
 		if (Core.mainHandler.announcedCard === card) {
 			Core.mainHandler.clearAnnouncedCard()
 		}
-		Core.opponent.cardHand.removeCard(card)
+		Core.opponent.cardHand.destroyCard(card)
+	},
+
+	'update/player/self/hand/playTargets': (data: CardTargetMessage[]) => {
+		Core.input.playableCards = data.map(data => ClientCardTarget.fromMessage(data))
 	},
 
 	'update/player/self/graveyard/cardAdded': (data: CardMessage) => {

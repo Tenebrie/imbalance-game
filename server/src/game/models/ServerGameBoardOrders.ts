@@ -69,13 +69,13 @@ export default class ServerGameBoardOrders {
 		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.unitAttack(orderedUnit, [targetUnit]))
 
 		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT) + orderedUnit.card.getBonusAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT)
-		targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
+		const dealtDamage = targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
 
-		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(this.game, this.game.getOpponent(orderedUnit.owner))
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
 		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.postUnitAttack())
 
 		if (orderedUnit.isAlive()) {
-			runCardEventHandler(() => orderedUnit.card.onAfterPerformingUnitAttack(orderedUnit, targetUnit, targetMode))
+			runCardEventHandler(() => orderedUnit.card.onAfterPerformingUnitAttack(orderedUnit, targetUnit, targetMode, dealtDamage))
 		}
 		if (targetUnit.isAlive()) {
 			runCardEventHandler(() => targetUnit.card.onAfterBeingAttacked(targetUnit, orderedUnit))
@@ -104,7 +104,7 @@ export default class ServerGameBoardOrders {
 			targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
 		})
 
-		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(this.game, this.game.getOpponent(orderedUnit.owner))
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
 		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.postUnitAttack())
 
 		if (orderedUnit.isAlive()) {
@@ -125,7 +125,7 @@ export default class ServerGameBoardOrders {
 		runCardEventHandler(() => orderedUnit.card.onBeforePerformingMove(orderedUnit, targetRow))
 		this.game.board.moveUnit(orderedUnit, targetRow.index, targetRow.cards.length)
 
-		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(this.game, this.game.getOpponent(orderedUnit.owner))
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
 		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.allUnitsMove())
 
 		if (orderedUnit.isAlive()) {

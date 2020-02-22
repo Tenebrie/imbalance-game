@@ -9,13 +9,12 @@ import TargetMode from '../../../shared/enums/TargetMode'
 import TargetType from '../../../shared/enums/TargetType'
 import StandardTargetDefinitionBuilder from '../../../models/targetDefinitions/StandardTargetDefinitionBuilder'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
+import CardColor from '../../../shared/enums/CardColor'
 
-export default class BuildingTreeOfLife extends ServerCard {
+export default class UnitTreeOfLife extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT)
-		this.basePower = 17
-		this.baseAttack = 2
-		this.attackRange = 3
+		super(game, CardType.UNIT, CardColor.BRONZE)
+		this.basePower = 4
 		this.cardTribes = [CardTribe.BUILDING]
 	}
 

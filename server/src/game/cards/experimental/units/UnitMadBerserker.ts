@@ -2,6 +2,7 @@ import CardType from '../../../shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import CardColor from '../../../shared/enums/CardColor'
 
 export default class UnitMadBerserker extends ServerCard {
 	hasAttackedThisTurn = false
@@ -9,7 +10,7 @@ export default class UnitMadBerserker extends ServerCard {
 	consecutiveAttackCount = 0
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT)
+		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 54
 		this.baseAttack = 3
 	}

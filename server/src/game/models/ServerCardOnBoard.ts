@@ -36,22 +36,19 @@ export default class ServerCardOnBoard {
 		this.card.setPower(this, value)
 	}
 
-	setAttack(value: number): void {
-		this.card.setAttack(this, value)
-	}
-
-	dealDamage(damage: ServerDamageInstance): void {
-		this.dealDamageWithoutDestroying(damage)
+	dealDamage(damage: ServerDamageInstance): number {
+		const damageValue = this.dealDamageWithoutDestroying(damage)
 		if (this.card.power <= 0) {
 			this.destroy()
 		}
+		return damageValue
 	}
 
-	dealDamageWithoutDestroying(damage: ServerDamageInstance): void {
+	dealDamageWithoutDestroying(damage: ServerDamageInstance): number {
 		const damageReduction = this.card.getDamageReduction(this, damage)
 		const damageValue = this.card.getDamageTaken(this, damage) - damageReduction
 		if (damageValue <= 0) {
-			return
+			return 0
 		}
 
 		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damage))
@@ -60,6 +57,7 @@ export default class ServerCardOnBoard {
 		if (this.card.power > 0) {
 			runCardEventHandler(() => this.card.onDamageSurvived(this, damage))
 		}
+		return damageValue
 	}
 
 	heal(damage: ServerDamageInstance): void {

@@ -13,14 +13,15 @@ import UnitSpinningBarbarian from '../cards/experimental/units/UnitSpinningBarba
 import SpellMagicalStarfall from '../cards/experimental/spells/SpellMagicalStarfall'
 import SpellRainOfFire from '../cards/experimental/spells/SpellRainOfFire'
 import HeroIgnea from '../cards/experimental/heroes/HeroIgnea'
-import BuildingTreeOfLife from '../cards/experimental/buildings/BuildingTreeOfLife'
+import UnitTreeOfLife from '../cards/experimental/units/UnitTreeOfLife'
 import UnitVampireFledgling from '../cards/experimental/units/UnitVampireFledgling'
-import UnitPriestessOfAedine from '../cards/experimental/units/UnitPriestessOfAedine'
+import UnitPriestessOfAedine from '../cards/neutral/UnitPriestessOfAedine'
 import ServerGame from './ServerGame'
 import HeroRider1Famine from '../cards/experimental/heroes/HeroRider1Famine'
 import HeroRider2Conquest from '../cards/experimental/heroes/HeroRider2Conquest'
 import HeroRider3War from '../cards/experimental/heroes/HeroRider3War'
 import HeroRider4Death from '../cards/experimental/heroes/HeroRider4Death'
+import SpellSpark from '../cards/experimental/spells/SpellSpark'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	unitCards: ServerCard[]
@@ -53,7 +54,7 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		deck.addUnit(CardLibrary.instantiate(new HeroRider3War(game)))
 		deck.addUnit(CardLibrary.instantiate(new HeroRider4Death(game)))
 		for (let i = 0; i < 3; i++) {
-			deck.addUnit(CardLibrary.instantiate(new BuildingTreeOfLife(game)))
+			deck.addUnit(CardLibrary.instantiate(new UnitTreeOfLife(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitVampireFledgling(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitSpinningBarbarian(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitPriestessOfAedine(game)))
@@ -68,10 +69,7 @@ export default class ServerTemplateCardDeck implements CardDeck {
 			deck.addUnit(CardLibrary.instantiate(new UnitTwinBowArcher(game)))
 		}
 
-		for (let i = 0; i < 3; i++) {
-			deck.addSpell(CardLibrary.instantiate(new SpellRainOfFire(game)))
-			deck.addSpell(CardLibrary.instantiate(new SpellMagicalStarfall(game)))
-		}
+		deck.addSpell(CardLibrary.instantiate(new SpellSpark(game)))
 
 		return deck
 	}
