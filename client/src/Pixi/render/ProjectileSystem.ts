@@ -72,7 +72,7 @@ export default class ProjectileSystem {
 		const projectile = RenderedProjectile.targetCard(sprite, sourceUnit.card.getPosition(), targetUnit.card, 300, 800)
 		projectile.trail.rope.zIndex = 99
 		projectile.onImpact = () => {
-			targetUnit.card.power -= 1
+			targetUnit.setPower(targetUnit.card.power - 1)
 		}
 		Core.renderer.rootContainer.addChild(projectile.sprite)
 		Core.renderer.rootContainer.addChild(projectile.trail.rope)

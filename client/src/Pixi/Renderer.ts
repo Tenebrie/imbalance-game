@@ -322,9 +322,9 @@ export default class Renderer {
 
 	public renderTextLabels(): void {
 		/* Player name labels */
-		this.playerNameLabel.text = `${Core.player.player.username}\n- Morale: ${Core.player.morale}\n- Unit mana: ${Core.player.unitMana}\n- Spell mana: ${Core.player.spellMana}`
+		this.playerNameLabel.text = `${Core.player.player.username}\n- Morale: ${Core.player.morale}\n- Mana: ${Core.player.spellMana}`
 		if (Core.opponent) {
-			this.opponentNameLabel.text = `${Core.opponent.player.username}\n- Morale: ${Core.opponent.morale}\n- Unit mana: ${Core.opponent.unitMana}\n- Spell mana: ${Core.opponent.spellMana}`
+			this.opponentNameLabel.text = `${Core.opponent.player.username}\n- Morale: ${Core.opponent.morale}\n- Mana: ${Core.opponent.spellMana}`
 		}
 
 		/* Power labels */

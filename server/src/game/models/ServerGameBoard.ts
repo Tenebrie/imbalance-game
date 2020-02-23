@@ -71,6 +71,14 @@ export default class ServerGameBoard extends GameBoard {
 		return this.rows.map(row => row.cards).flat()
 	}
 
+	public isUnitAdjacent(first: ServerCardOnBoard, second: ServerCardOnBoard) {
+		return this.getHorizontalUnitDistance(first, second) <= 1 && Math.abs(first.rowIndex - second.rowIndex) <= 1
+	}
+
+	public getAdjacentUnits(centerUnit: ServerCardOnBoard) {
+		return this.getAllUnits().filter(unit => this.isUnitAdjacent(centerUnit, unit))
+	}
+
 	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame) {
 		return this.getAllUnits().filter(unit => unit.owner === owner)
 	}

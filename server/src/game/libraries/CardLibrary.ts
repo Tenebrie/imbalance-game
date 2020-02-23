@@ -30,6 +30,8 @@ import HeroSparklingSpirit from '../cards/arcane/HeroSparklingSpirit'
 import UnitFlameTouchCrystal from '../cards/arcane/UnitFlameTouchCrystal'
 import UnitStoneElemental from '../cards/arcane/UnitStoneElemental'
 import UnitTinySparkling from '../cards/arcane/UnitTinySparkling'
+import UnitArcaneCrystal from '../cards/arcane/UnitArcaneCrystal'
+import UnitIceSkinCrystal from '../cards/arcane/UnitIceSkinCrystal'
 
 export default class GameLibrary {
 	static cards: any[]
@@ -58,7 +60,9 @@ export default class GameLibrary {
 			UnitTreeOfLife,
 			UnitSupplyWagon,
 			UnitArcaneElemental,
+			UnitArcaneCrystal,
 			UnitFlameTouchCrystal,
+			UnitIceSkinCrystal,
 			UnitStoneElemental,
 			UnitTinySparkling,
 			SpellRainOfFire,

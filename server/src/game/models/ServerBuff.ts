@@ -32,6 +32,28 @@ export default class ServerBuff implements Buff {
 		return this.game.board.findUnitById(this.card.id)
 	}
 
+	public addDuration(delta: number): void {
+		this.setDuration(this.duration + delta)
+	}
+
+	public setDuration(value: number): void {
+		this.duration = value
+		if (this.duration <= 0) {
+			this.card.cardBuffs.removeByReference(this)
+		}
+	}
+
+	public addIntensity(delta: number): void {
+		this.setIntensity(this.intensity + delta)
+	}
+
+	public setIntensity(value: number): void {
+		this.intensity = value
+		if (this.intensity <= 0) {
+			this.card.cardBuffs.removeByReference(this)
+		}
+	}
+
 	onCreated(): void { return }
 	onDurationChanged(delta: number): void { return }
 	onIntensityChanged(delta: number): void { return }

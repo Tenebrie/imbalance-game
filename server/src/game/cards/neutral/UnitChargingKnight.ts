@@ -32,4 +32,8 @@ export default class UnitChargingKnight extends ServerCard {
 	onAfterPerformingMove(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void {
 		this.hasMovedThisTurn = true
 	}
+
+	onTurnEnded(thisUnit: ServerCardOnBoard): void {
+		this.hasMovedThisTurn = false
+	}
 }

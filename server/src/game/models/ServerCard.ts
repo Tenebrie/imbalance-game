@@ -59,6 +59,17 @@ export default class ServerCard extends Card {
 		})
 	}
 
+	setHealthArmor(value: number): void {
+		if (this.healthArmor === value) { return }
+
+		runCardEventHandler(() => this.onHealthArmorChanged(value, this.healthArmor))
+
+		this.healthArmor = value
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutCardHealthArmorChange(playerInGame.player, this)
+		})
+	}
+
 	reveal(owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
 		if (this.isRevealed) { return }
 
@@ -197,6 +208,9 @@ export default class ServerCard extends Card {
 	onBeforeUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerCardTarget): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerCardTarget): void { return }
 	onPowerChanged(newValue: number, oldValue: number): void { return }
+	onAttackChanged(newValue: number, oldValue: number): void { return }
+	onAttackRangeChanged(newValue: number, oldValue: number): void { return }
+	onHealthArmorChanged(newValue: number, oldValue: number): void { return }
 	onBeforeDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
 	onAfterDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
 	onDamageSurvived(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }

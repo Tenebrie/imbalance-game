@@ -15,6 +15,7 @@
 	"card.tribe.dragon": "Dragon",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.building": "Building",
+	"card.tribe.elemental": "Elemental",
 
 	"card.name.heroSatia": "Satia",
 	"card.title.heroSatia": "First mistress",
@@ -93,8 +94,14 @@
 	"card.name.unitArcaneElemental": "Arcane Elemental",
 	"card.description.unitArcaneElemental": "*Deploy:*\nGenerate {manaGenerated} Mana",
 
+	"card.name.unitArcaneCrystal": "Arcane Crystal",
+	"card.description.unitArcaneCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Generate {manaGenerated} Mana for every {chargesForMana} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill generate {potentialMana} Mana</i></if>",
+
 	"card.name.unitFlameTouchCrystal": "Flame Touch Crystal",
-	"card.description.unitFlameTouchCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Create a *Tiny Sparkling* for each *Charge* accumulated.<if chargesVisible><p><i>(Charges accumulated: {charges})</i></if>",
+	"card.description.unitFlameTouchCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Create a *Tiny Sparkling* for each *Charge* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}</i></if>",
+
+	"card.name.unitIceSkinCrystal": "Ice Skin Crystal",
+	"card.description.unitIceSkinCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
 
 	"card.name.unitStoneElemental": "Stone Elemental",
 	"card.description.unitStoneElemental": "*Deploy:*\nDeal {damage} Damage to any unit",

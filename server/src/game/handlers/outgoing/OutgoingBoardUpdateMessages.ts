@@ -73,5 +73,12 @@ export default {
 			type: 'update/board/card/power',
 			data: CardMessage.fromCard(card)
 		})
+	},
+
+	notifyAboutCardHealthArmorChange(player: ServerPlayer, card: ServerCard) {
+		player.sendMessage({
+			type: 'update/board/card/healthArmor',
+			data: CardMessage.fromCard(card)
+		})
 	}
 }

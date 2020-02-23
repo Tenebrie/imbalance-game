@@ -25,15 +25,20 @@ export default class ServerCardBuffs extends CardBuffs {
 		return buff
 	}
 
-	public add(prototype: ServerBuff, source: ServerCard | null): void {
+	public add(prototype: ServerBuff, source: ServerCard | null, duration: number | 'default' = 'default'): void {
 		const newBuff = this.instantiate(prototype, source)
+		if (duration !== 'default') {
+			newBuff.duration = duration
+		}
 
 		const existingBuff = this.buffs.find(existingBuff => existingBuff.buffClass === newBuff.buffClass)
 		if (existingBuff && newBuff.stackType === BuffStackType.ADD_DURATION) {
 			existingBuff.duration += newBuff.duration
+			runCardEventHandler(() => existingBuff.onDurationChanged(newBuff.duration))
 			return
 		} else if (existingBuff && newBuff.stackType === BuffStackType.ADD_INTENSITY) {
 			existingBuff.intensity += newBuff.intensity
+			runCardEventHandler(() => existingBuff.onIntensityChanged(newBuff.intensity))
 			return
 		}
 
@@ -43,6 +48,8 @@ export default class ServerCardBuffs extends CardBuffs {
 
 		this.buffs.push(newBuff)
 		runCardEventHandler(() => newBuff.onCreated())
+		runCardEventHandler(() => newBuff.onDurationChanged(newBuff.duration))
+		runCardEventHandler(() => newBuff.onIntensityChanged(newBuff.intensity))
 	}
 
 	public getBuffsByPrototype(prototype: any): ServerBuff[] {
@@ -58,8 +65,10 @@ export default class ServerCardBuffs extends CardBuffs {
 		return this.getBuffsByPrototype(prototype).map(buff => buff.intensity).reduce((total, value) => total + value, 0)
 	}
 
-	private removeByReference(buff: ServerBuff): void {
+	public removeByReference(buff: ServerBuff): void {
 		this.buffs.splice(this.buffs.indexOf(buff), 1)
+		runCardEventHandler(() => buff.onIntensityChanged(-buff.intensity))
+		runCardEventHandler(() => buff.onDurationChanged(-buff.duration))
 		runCardEventHandler(() => buff.onDestroyed())
 	}
 
@@ -86,11 +95,7 @@ export default class ServerCardBuffs extends CardBuffs {
 	public onTurnEnded(): void {
 		this.buffs.forEach(buff => {
 			buff.onTurnEnded()
-			buff.duration -= 1
-		})
-		const expiredBuffs = this.buffs.filter(buff => buff.duration <= 0)
-		expiredBuffs.forEach(buffToRemove => {
-			this.removeByReference(buffToRemove)
+			buff.addDuration(-1)
 		})
 	}
 }

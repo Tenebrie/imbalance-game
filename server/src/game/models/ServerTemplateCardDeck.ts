@@ -29,6 +29,8 @@ import HeroZamarath from '../cards/arcane/HeroZamarath'
 import HeroSparklingSpirit from '../cards/arcane/HeroSparklingSpirit'
 import UnitFlameTouchCrystal from '../cards/arcane/UnitFlameTouchCrystal'
 import UnitStoneElemental from '../cards/arcane/UnitStoneElemental'
+import UnitArcaneCrystal from '../cards/arcane/UnitArcaneCrystal'
+import UnitIceSkinCrystal from '../cards/arcane/UnitIceSkinCrystal'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	unitCards: ServerCard[]
@@ -55,6 +57,7 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		const deck = new ServerTemplateCardDeck([], [])
 
 		deck.addUnit(CardLibrary.instantiate(new HeroZamarath(game)))
+		deck.addUnit(CardLibrary.instantiate(new HeroSparklingSpirit(game)))
 		// deck.addUnit(CardLibrary.instantiate(new HeroSatia(game)))
 		// deck.addUnit(CardLibrary.instantiate(new HeroIgnea(game)))
 		// deck.addUnit(CardLibrary.instantiate(new HeroRider1Famine(game)))
@@ -62,13 +65,14 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		// deck.addUnit(CardLibrary.instantiate(new HeroRider3War(game)))
 		// deck.addUnit(CardLibrary.instantiate(new HeroRider4Death(game)))
 		for (let i = 0; i < 3; i++) {
-			deck.addUnit(CardLibrary.instantiate(new HeroSparklingSpirit(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitChargingKnight(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitSupplyWagon(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitVampireFledgling(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitPriestessOfAedine(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitArcaneElemental(game)))
+			deck.addUnit(CardLibrary.instantiate(new UnitArcaneCrystal(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitFlameTouchCrystal(game)))
+			deck.addUnit(CardLibrary.instantiate(new UnitIceSkinCrystal(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitStoneElemental(game)))
 		}
 		// for (let i = 0; i < 1; i++) {

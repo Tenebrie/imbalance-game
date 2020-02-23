@@ -150,7 +150,7 @@ export default class RenderedCard extends Card {
 	}
 
 	public setPower(value: number): void {
-		this.power = value
+		this.power = Math.max(0, value)
 	}
 
 	public createHitboxSprite(sprite: PIXI.Sprite): PIXI.Sprite {

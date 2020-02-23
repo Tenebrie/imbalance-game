@@ -41,6 +41,14 @@ export default class ServerCardOnBoard {
 		this.card.setPower(value)
 	}
 
+	addHealthArmor(value: number): void {
+		this.setHealthArmor(Math.max(0, this.card.healthArmor + value))
+	}
+
+	setHealthArmor(value: number): void {
+		this.card.setHealthArmor(value)
+	}
+
 	dealDamage(damage: ServerDamageInstance): number {
 		const damageValue = this.dealDamageWithoutDestroying(damage)
 		if (this.card.power <= 0) {
