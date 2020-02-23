@@ -1,6 +1,7 @@
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import Core from '@/Pixi/Core'
 import Card from '@/Pixi/shared/models/Card'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 
 export default class ClientGame {
 	currentTime: number
@@ -40,5 +41,13 @@ export default class ClientGame {
 			}
 		}
 		return null
+	}
+
+	public findRenderedCardById(cardId: string): RenderedCard | null {
+		const card = this.findCardById(cardId)
+		if (!card || !(card instanceof RenderedCard)) {
+			return null
+		}
+		return card
 	}
 }

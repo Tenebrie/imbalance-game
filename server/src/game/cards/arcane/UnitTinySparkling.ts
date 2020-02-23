@@ -3,11 +3,9 @@ import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
 import CardColor from '../../shared/enums/CardColor'
 
-export default class UnitSparkingSpirit extends ServerCard {
+export default class UnitTinySparkling extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER)
-		this.basePower = 7
+		super(game, CardType.UNIT, CardColor.TOKEN)
+		this.basePower = 2
 	}
-
-	// TODO: Effect
 }

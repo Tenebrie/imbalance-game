@@ -9,12 +9,11 @@ import ServerAnimation from './ServerAnimation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
-import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
 import Constants from '../shared/Constants'
 
 export default class ServerGameBoardOrders {
-	game: ServerGame
-	performedOrders: ServerCardTarget[]
+	readonly game: ServerGame
+	readonly performedOrders: ServerCardTarget[]
 
 	constructor(game: ServerGame) {
 		this.game = game
@@ -27,7 +26,7 @@ export default class ServerGameBoardOrders {
 		}
 
 		if (order.sourceUnit.card.isRequireCustomOrderLogic(order.sourceUnit, order)) {
-			order.sourceUnit.card.onUnitCustomOrder(order.sourceUnit, order)
+			order.sourceUnit.card.onUnitCustomOrderPerformed(order.sourceUnit, order)
 			return
 		}
 
@@ -66,13 +65,13 @@ export default class ServerGameBoardOrders {
 		}
 		runCardEventHandler(() => targetUnit.card.onBeforeBeingAttacked(targetUnit, orderedUnit))
 
-		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.unitAttack(orderedUnit, [targetUnit]))
+		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.unitAttack(orderedUnit, [targetUnit]))
 
 		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT) + orderedUnit.card.getBonusAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT)
 		const dealtDamage = targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
 
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
-		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.postUnitAttack())
+		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.postUnitAttack())
 
 		if (orderedUnit.isAlive()) {
 			runCardEventHandler(() => orderedUnit.card.onAfterPerformingUnitAttack(orderedUnit, targetUnit, targetMode, dealtDamage))
@@ -96,7 +95,7 @@ export default class ServerGameBoardOrders {
 			runCardEventHandler(() => targetUnit.card.onBeforeBeingAttacked(targetUnit, orderedUnit))
 		})
 
-		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.unitAttack(orderedUnit, validTargets))
+		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.unitAttack(orderedUnit, validTargets))
 
 		validTargets = validTargets.filter(unit => unit.isAlive())
 		validTargets.forEach(targetUnit => {
@@ -105,7 +104,7 @@ export default class ServerGameBoardOrders {
 		})
 
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
-		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.postUnitAttack())
+		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.postUnitAttack())
 
 		if (orderedUnit.isAlive()) {
 			runCardEventHandler(() => orderedUnit.card.onAfterPerformingRowAttack(orderedUnit, targetRow, targetMode))
@@ -126,7 +125,7 @@ export default class ServerGameBoardOrders {
 		this.game.board.moveUnit(orderedUnit, targetRow.index, targetRow.cards.length)
 
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
-		OutgoingAnimationMessages.triggerAnimationForAll(this.game, ServerAnimation.allUnitsMove())
+		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.allUnitsMove())
 
 		if (orderedUnit.isAlive()) {
 			runCardEventHandler(() => orderedUnit.card.onAfterPerformingMove(orderedUnit, targetRow))
@@ -166,6 +165,8 @@ export default class ServerGameBoardOrders {
 	}
 
 	public clearPerformedOrders() {
-		this.performedOrders = []
+		while (this.performedOrders.length > 0) {
+			this.performedOrders.splice(0, 1)
+		}
 	}
 }

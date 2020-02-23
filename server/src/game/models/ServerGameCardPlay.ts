@@ -20,6 +20,7 @@ export default class ServerGameCardPlay {
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
+		/* Resolve card */
 		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)
 
 		/* Deduct mana */
@@ -31,47 +32,37 @@ export default class ServerGameCardPlay {
 	}
 
 	public forcedPlayCardFromHand(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
-		const card = ownedCard.card
-		const owner = ownedCard.owner
-
-		/* Announce card to opponent */
-		card.reveal(owner, owner.opponent)
-		OutgoingMessageHandlers.triggerAnimation(owner.opponent.player, ServerAnimation.cardPlay(card))
-
-		/* Remove card from hand */
-		if (owner.cardHand.findCardById(card.id)) {
-			owner.cardHand.removeCard(card)
-		}
-
-		if (card.cardType === CardType.UNIT) {
-			this.playUnit(ownedCard, rowIndex, unitIndex)
-		} else if (card.cardType === CardType.SPELL) {
-			this.playSpell(ownedCard)
-		}
-
-		OutgoingMessageHandlers.triggerAnimation(owner.opponent.player, ServerAnimation.delay())
+		this.forcedPlayCard(ownedCard, rowIndex, unitIndex, 'hand')
 	}
 
 	public forcedPlayCardFromDeck(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
+		this.forcedPlayCard(ownedCard, rowIndex, unitIndex, 'deck')
+	}
+
+	private forcedPlayCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number, source: 'hand' | 'deck'): void {
 		const card = ownedCard.card
 		const owner = ownedCard.owner
 
 		/* Announce card to opponent */
 		card.reveal(owner, owner.opponent)
-		OutgoingMessageHandlers.triggerAnimation(owner.opponent.player, ServerAnimation.cardPlay(card))
+		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardPlay(card))
 
-		/* Remove card from hand */
-		if (owner.cardDeck.findCardById(card.id)) {
+		/* Remove card from source */
+		if (source === 'hand' && owner.cardHand.findCardById(card.id)) {
+			owner.cardHand.removeCard(card)
+		} else if (source === 'deck' && owner.cardDeck.findCardById(card.id)) {
 			owner.cardDeck.removeCard(card)
 		}
 
+		/* Resolve card */
 		if (card.cardType === CardType.UNIT) {
 			this.playUnit(ownedCard, rowIndex, unitIndex)
 		} else if (card.cardType === CardType.SPELL) {
 			this.playSpell(ownedCard)
 		}
 
-		OutgoingMessageHandlers.triggerAnimation(owner.opponent.player, ServerAnimation.delay())
+		/* Play animation */
+		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.delay())
 	}
 
 	private playUnit(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
@@ -82,11 +73,10 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Insert the card into the board */
-		const targetRow = this.game.board.rows[rowIndex]
-		const unit = targetRow.createUnit(card, owner, unitIndex)
+		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
 
 		/* Invoke the card onPlay effect */
-		runCardEventHandler(() => card.onPlayUnit(unit, targetRow))
+		runCardEventHandler(() => card.onPlayedAsUnit(unit, this.game.board.rows[rowIndex]))
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -105,7 +95,7 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Invoke the card onPlay effect */
-		runCardEventHandler(() => card.onPlaySpell(owner))
+		runCardEventHandler(() => card.onPlayedAsSpell(owner))
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {

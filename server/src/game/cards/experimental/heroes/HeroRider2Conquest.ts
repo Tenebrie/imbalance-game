@@ -24,7 +24,7 @@ export default class HeroRider2Conquest extends ServerCard {
 			.validate(TargetType.BOARD_ROW, args => args.targetRow.owner === args.thisUnit.owner.opponent)
 	}
 
-	onPlayUnit(thisUnit: ServerCardOnBoard): void {
+	onPlayedAsUnit(thisUnit: ServerCardOnBoard): void {
 		const deck = thisUnit.owner.cardDeck
 		const rider = deck.findCardByClass('heroRider1Famine')
 		if (rider) {

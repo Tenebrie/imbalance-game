@@ -3,7 +3,7 @@ import Core from '@/Pixi/Core'
 import RenderedProjectile from '@/Pixi/models/RenderedProjectile'
 import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import { easeInQuad, easeInQuart } from 'js-easing-functions'
+import { easeInQuad } from 'js-easing-functions'
 
 export default class ProjectileSystem {
 	projectiles: RenderedProjectile[] = []
@@ -56,6 +56,10 @@ export default class ProjectileSystem {
 				projectile.trail.update(new PIXI.Point(projectile.sprite.position.x, projectile.sprite.position.y))
 			} else {
 				projectile.trail.postDeathUpdate()
+				if (!projectile.impactPerformed) {
+					projectile.impactPerformed = true
+					projectile.onImpact()
+				}
 			}
 		})
 	}
@@ -67,6 +71,9 @@ export default class ProjectileSystem {
 		sprite.anchor.set(0.5)
 		const projectile = RenderedProjectile.targetCard(sprite, sourceUnit.card.getPosition(), targetUnit.card, 300, 800)
 		projectile.trail.rope.zIndex = 99
+		projectile.onImpact = () => {
+			targetUnit.card.power -= 1
+		}
 		Core.renderer.rootContainer.addChild(projectile.sprite)
 		Core.renderer.rootContainer.addChild(projectile.trail.rope)
 		Core.mainHandler.projectileSystem.projectiles.push(projectile)

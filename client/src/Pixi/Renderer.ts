@@ -447,6 +447,7 @@ export default class Renderer {
 
 		sprite.tint = this.getUnitTint(unit)
 
+		unit.card.powerText.text = unit.card.power.toString()
 		if (unit.card.power < unit.card.basePower) {
 			unit.card.powerText.style.fill = 0x770000
 		} else if (unit.card.power > unit.card.basePower) {

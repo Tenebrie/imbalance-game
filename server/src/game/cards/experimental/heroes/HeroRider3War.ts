@@ -18,7 +18,7 @@ export default class heroRider3War extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 20
 		this.baseAttack = 4
-		this.cardTextVariables = {
+		this.dynamicTextVariables = {
 			targets: this.targets
 		}
 	}
@@ -33,7 +33,7 @@ export default class heroRider3War extends ServerCard {
 			})
 	}
 
-	onPlayUnit(thisUnit: ServerCardOnBoard): void {
+	onPlayedAsUnit(thisUnit: ServerCardOnBoard): void {
 		const deck = thisUnit.owner.cardDeck
 		const rider = deck.findCardByClass('heroRider2Conquest')
 		if (rider) {

@@ -24,7 +24,7 @@
 	"card.title.heroNightMaiden": "Satia's favorite",
 	"card.description.heroNightMaiden": "If Satia dies, {name} leaves the battlefield",
 
-	"card.name.heroIgnea": "Ignia",
+	"card.name.heroIgnea": "Ignea",
 	"card.title.heroIgnea": "The Flameweaver",
 	"card.description.heroIgnea": "In addition to normal action, {name} may light any enemy row aflame, dealing 1 damage to every affected unit",
 
@@ -43,6 +43,13 @@
 	"card.name.heroRider4Death": "Death",
 	"card.title.heroRider4Death": "The Last Horseman",
 	"card.description.heroRider4Death": "*On play:*\nPlay *War* from your deck. Then, {name} destroys ALL damaged units with {powerThreshold} Power or less",
+
+	"card.name.heroZamarath": "Zamarath",
+	"card.title.heroZamarath": "The Protector",
+	"card.description.heroZamarath": "*Immune*",
+
+	"card.name.heroSparklingSpirit": "Sparkling Spirit",
+	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
 
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "Every *3* turns {name} survives on the board, it draws a card",
@@ -72,15 +79,34 @@
 	"card.description.unitVampireFledgling": "Loses {powerLost} Power per turn.<p>*Melee Attack:* Deal {attack} Damage. If damage is not blocked, then Restore {powerDrained} Power",
 
 	"card.name.unitPriestessOfAedine": "Priestess of Aedine",
-	"card.description.unitPriestessOfAedine": "*Deploy:*\nChoose a damaged allied unit on an adjacent row.\nRestore {healing} Power to them",
+	"card.description.unitPriestessOfAedine": "*Deploy:*\nRestore {healing} Power to a damaged allied unit",
 	"card.target.unitPriestessOfAedine.heal": "Restore {healing} Power",
 
 	"card.name.unitTreeOfLife": "Long-Branched Tree",
 	"card.description.unitTreeOfLife": "When Long-Branched Tree enters the battlefield, *Stages of Apocalypse* start to happen every turn.<p>*Stage 1:* Babies are now born dead<p>*Stage 2:* Blizzard is not shit anymore<p>*Stage 3:* Coop games become popular again<p>*Stage 4:* Everyone dies",
 	"card.target.unitTreeOfLife.support.row": "Restore power",
 
+	"card.name.unitSupplyWagon": "Supply Wagon",
+	"card.description.unitSupplyWagon": "*Support:*\nGrant an allied unit an extra move action this turn only",
+	"card.target.unitSupplyWagon.ability": "Grant extra move",
+
+	"card.name.unitArcaneElemental": "Arcane Elemental",
+	"card.description.unitArcaneElemental": "*Deploy:*\nGenerate {manaGenerated} Mana",
+
+	"card.name.unitFlameTouchCrystal": "Flame Touch Crystal",
+	"card.description.unitFlameTouchCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Create a *Tiny Sparkling* for each *Charge* accumulated.<if chargesVisible><p><i>(Charges accumulated: {charges})</i></if>",
+
+	"card.name.unitStoneElemental": "Stone Elemental",
+	"card.description.unitStoneElemental": "*Deploy:*\nDeal {damage} Damage to any unit",
+
+	"card.name.unitTinySparkling": "Tiny Sparkling",
+	"card.description.unitTinySparkling": "<i>No effect</i>",
+
 	"card.name.spellSpark": "Spark",
-	"card.description.spellSpark": "Deal {damage} Damage to\nan enemy unit",
+	"card.description.spellSpark": "*Hero Power*<p>Deal {damage} Damage to\nan enemy unit",
+
+	"card.name.spellSpeedPotion": "Potion of Speed",
+	"card.description.spellSpeedPotion": "*Hero Power*<p>Grant an allied unit {moves} extra move actions this turn only",
 
 	"card.name.spellRainOfFire": "Rain of Fire",
 	"card.description.spellRainOfFire": "{name} deals {damage} damage to {targets} enemy units\nThen, it draws a card",

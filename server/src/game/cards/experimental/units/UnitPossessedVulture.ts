@@ -13,7 +13,7 @@ export default class UnitPossessedVulture extends ServerCard {
 		this.basePower = 26
 		this.baseAttack = 4 // 20
 		this.baseAttackRange = 2 // 30
-		this.cardTextVariables = {
+		this.dynamicTextVariables = {
 			bonusPower: this.bonusPower,
 			bonusAttack: this.bonusAttack
 		}

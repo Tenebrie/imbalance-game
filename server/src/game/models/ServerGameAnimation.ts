@@ -10,11 +10,11 @@ export default class ServerGameAnimation {
 		this.game = game
 	}
 
-	public play(animation: ServerAnimation, targetPlayer: ServerPlayerInGame): void {
-		OutgoingAnimationMessages.triggerAnimation(targetPlayer.player, animation)
+	public play(animation: ServerAnimation): void {
+		OutgoingAnimationMessages.triggerAnimation(this.game, animation)
 	}
 
-	public playForAll(animation: ServerAnimation): void {
-		OutgoingAnimationMessages.triggerAnimationForAll(this.game, animation)
+	public playForPlayer(animation: ServerAnimation, targetPlayer: ServerPlayerInGame): void {
+		OutgoingAnimationMessages.triggerAnimationForPlayer(targetPlayer.player, animation)
 	}
 }

@@ -6,6 +6,7 @@ import RichTextBackground from '@/Pixi/render/RichTextBackground'
 
 enum SegmentType {
 	TEXT = 'TEXT',
+	ITALIC = 'ITALIC',
 	HIGHLIGHT = 'HIGHLIGHT',
 	OPENING_TAG = 'OPENING_TAG',
 	CLOSING_TAG = 'CLOSING_TAG',
@@ -68,7 +69,7 @@ export default class RichText extends PIXI.Container {
 		return this.variables
 	}
 	set textVariables(value: RichTextVariables) {
-		if (this.variables === value) {
+		if (this.variables === value || JSON.stringify(this.variables) === JSON.stringify(value)) {
 			return
 		}
 		this.variables = value
@@ -146,6 +147,12 @@ export default class RichText extends PIXI.Container {
 			this.removeChildAt(0)
 		}
 
+		const oldFontSize = this.fontSize
+		const oldLineHeight = this.lineHeight
+
+		this.fontSize = 18
+		this.lineHeight = 24
+
 		const SCALE_MODIFIER = this.fontSize / this.baseFontSize
 
 		const textVariables = {
@@ -174,6 +181,7 @@ export default class RichText extends PIXI.Container {
 
 		stateTransitions.set({ state: SegmentType.TEXT, token: ' ' }, { state: SegmentType.TEXT, insertedSegment: SegmentType.TEXT, postSegment: SegmentType.WORD_SEPARATOR })
 		stateTransitions.set({ state: SegmentType.TEXT, token: '\n' }, { state: SegmentType.TEXT, insertedSegment: SegmentType.TEXT, postSegment: SegmentType.LINE_SEPARATOR })
+		stateTransitions.set({ state: SegmentType.TEXT, token: '_' }, { state: SegmentType.TEXT, insertedSegment: SegmentType.TEXT, postSegment: SegmentType.ITALIC })
 		stateTransitions.set({ state: SegmentType.TEXT, token: '*' }, { state: SegmentType.TEXT, insertedSegment: SegmentType.TEXT, postSegment: SegmentType.HIGHLIGHT })
 		stateTransitions.set({ state: SegmentType.TEXT, token: '<' }, { state: SegmentType.OPENING_TAG, insertedSegment: SegmentType.TEXT })
 		stateTransitions.set({ state: SegmentType.OPENING_TAG, token: '/' }, { state: SegmentType.CLOSING_TAG })
@@ -202,8 +210,11 @@ export default class RichText extends PIXI.Container {
 
 		let contextPosition = new PIXI.Point(0, 0)
 		let contextHighlight = false
+		let contextItalic = false
 		let contextColor = this.fill
 		let contextColorStack: number[] = []
+		let contextConditionStatus = true
+		let contextConditionStack: boolean[] = []
 		let currentLine: { text: ScalingText, basePosition: PIXI.Point }[] = []
 
 		const newLine = () => {
@@ -217,12 +228,18 @@ export default class RichText extends PIXI.Container {
 		}
 
 		segments.forEach(segment => {
+			if (!contextConditionStatus && segment.type !== 'CLOSING_TAG') {
+				return
+			}
+
 			switch (segment.type) {
 				case SegmentType.TEXT:
 					const text = segment.data!
 					const style = new PIXI.TextStyle({
 						fontFamily: Utils.getFont(text),
 						fontSize: this.fontSize,
+						fontStyle: contextItalic ? 'italic' : 'normal',
+						padding: contextItalic ? 8 : 0,
 						fill: contextHighlight ? 0xFFFFFF : contextColor
 					})
 					const measure = PIXI.TextMetrics.measureText(text, style)
@@ -256,17 +273,43 @@ export default class RichText extends PIXI.Container {
 							newLine()
 							contextPosition.y += this.lineHeight * 0.2
 							break
+						case 'i':
+						case 'info':
+							contextColorStack.push(contextColor)
+							contextColor = 0x999999
+							contextItalic = true
+							break
+						case 'if':
+							contextConditionStack.push(contextConditionStatus)
+							contextConditionStatus = !!textVariables[openingTag.args]
+							break
 					}
 					break
 
 				case SegmentType.CLOSING_TAG:
 					const closingTag = this.parseTag(segment.data!)
+					if (!contextConditionStatus && closingTag.name !== 'if') {
+						break
+					}
+
 					switch (closingTag.name) {
 						case 'c':
 						case 'color':
 							contextColor = contextColorStack.pop()!
 							break
+						case 'i':
+						case 'info':
+							contextColor = contextColorStack.pop()!
+							contextItalic = false
+							break
+						case 'if':
+							contextConditionStatus = contextConditionStack.pop()!
+							break
 					}
+					break
+
+				case SegmentType.ITALIC:
+					contextItalic = !contextItalic
 					break
 
 				case SegmentType.HIGHLIGHT:
@@ -287,10 +330,8 @@ export default class RichText extends PIXI.Container {
 		this.segments.forEach(segment => {
 			segment.basePosition.y -= contextPosition.y // Bottom alignment
 		})
-		const SCALE_MODIFIER2 = (this.fontSize / 18)
-		this.segments.forEach(segment => {
-			segment.text.position.set(segment.basePosition.x, segment.basePosition.y * SCALE_MODIFIER2)
-		})
+
+		this.setFont(oldFontSize, oldLineHeight)
 
 		if (this.background) {
 			this.background.onTextRendered(new PIXI.Point(this.position.x, this.position.y), new PIXI.Point(this.maxWidth, contextPosition.y * (this.baseFontSize / 18)))
@@ -313,6 +354,8 @@ export default class RichText extends PIXI.Container {
 	parseTag(tag: string): { name: string, args: string } {
 		if (tag.includes('=')) {
 			return { name: tag.split('=')[0], args: tag.split('=')[1] }
+		} else if (tag.includes(' ')) {
+			return { name: tag.split(' ')[0], args: tag.split(' ')[1] }
 		}
 		return { name: tag, args: '' }
 	}

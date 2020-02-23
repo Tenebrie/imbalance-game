@@ -84,6 +84,11 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		return this
 	}
 
+	public merge(targetDefinition: StandardTargetDefinitionBuilder): SimpleTargetDefinitionBuilder {
+		this.builder.merge(targetDefinition)
+		return this
+	}
+
 	public static base(game: ServerGame, targetMode: TargetMode): SimpleTargetDefinitionBuilder {
 		const wrapper = new SimpleTargetDefinitionBuilder()
 		wrapper.builder = StandardTargetDefinitionBuilder.base(game)

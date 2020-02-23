@@ -20,6 +20,7 @@ import AnimationType from '@/Pixi/shared/enums/AnimationType'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardTargetMessage from '@/Pixi/shared/models/network/CardTargetMessage'
 import RenderedCard from '@/Pixi/board/RenderedCard'
+import CardVariablesMessage from '@/Pixi/shared/models/network/CardVariablesMessage'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -283,6 +284,16 @@ const handlers: {[ index: string ]: any } = {
 		}
 	},
 
+	'update/card/variables': (data: CardVariablesMessage[]) => {
+		data.forEach(message => {
+			const matchingCard = Core.game.findRenderedCardById(message.cardId) || Core.board.findUnitById(message.cardId).card
+			if (!matchingCard) {
+				return
+			}
+			matchingCard.setCardVariables(message.cardVariables)
+		})
+	},
+
 	'animation/generic': (data: AnimationMessage) => {
 		let animationDuration = 500
 
@@ -291,11 +302,17 @@ const handlers: {[ index: string ]: any } = {
 			Core.mainHandler.announceCard(announcedCard)
 			animationDuration = 3000
 		} else if (data.type === AnimationType.UNIT_ATTACK) {
-			animationDuration = 300
 			const sourceUnit = Core.board.findUnitById(data.sourceUnitID)
+			const projectiles = data.projectileCount
+			const projectileDelay = 100
+			animationDuration = 300 + projectileDelay * projectiles
 			data.targetUnitIDs.forEach(targetUnitID => {
 				const targetUnit = Core.board.findUnitById(targetUnitID)
-				Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetUnit)
+				for (let i = 0; i < projectiles; i++) {
+					setTimeout(() => {
+						Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetUnit)
+					}, projectileDelay * i)
+				}
 			})
 		} else if (data.type === AnimationType.POST_UNIT_ATTACK) {
 			animationDuration = 100

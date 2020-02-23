@@ -4,8 +4,8 @@ import CardType from '@/Pixi/shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import { CardLocation } from '@/Pixi/enums/CardLocation'
-import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
+import {CardLocation} from '@/Pixi/enums/CardLocation'
+import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
@@ -133,7 +133,8 @@ export default class Input {
 		this.mousePosition.y *= window.devicePixelRatio * Settings.superSamplingLevel
 
 		const windowHeight = Core.renderer.pixi.view.height
-		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && Core.player.unitMana === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {
+		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5 &&
+			((Core.player.unitMana === 0 && this.grabbedCard.card.cardType === CardType.UNIT) || (Core.player.spellMana === 0 && this.grabbedCard.card.cardType === CardType.SPELL))) {
 			this.releaseCard()
 		}
 	}

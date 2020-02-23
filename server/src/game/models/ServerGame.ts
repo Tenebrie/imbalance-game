@@ -16,18 +16,19 @@ import ServerCard from './ServerCard'
 import ServerGameCardPlay from './ServerGameCardPlay'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
+import ServerOwnedCard from './ServerOwnedCard'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
 	turnIndex: number
 	turnPhase: GameTurnPhase
-	owner: ServerPlayer
-	board: ServerGameBoard
-	players: ServerPlayerInGame[]
-	chatHistory: ServerChatEntry[]
-	cardPlay: ServerGameCardPlay
-	animation: ServerGameAnimation
 	playersToMove: ServerPlayerInGame[]
+	readonly owner: ServerPlayer
+	readonly board: ServerGameBoard
+	readonly players: ServerPlayerInGame[]
+	readonly chatHistory: ServerChatEntry[]
+	readonly cardPlay: ServerGameCardPlay
+	readonly animation: ServerGameAnimation
 
 	constructor(owner: ServerPlayer, name: string) {
 		super(uuidv4(), name)
@@ -85,6 +86,7 @@ export default class ServerGame extends Game {
 			playerInGame.drawSpellCards(Constants.SPELL_HAND_SIZE_MINIMUM)
 			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})
+		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
 		this.startNewTurnPhase()
 	}
 
@@ -113,7 +115,7 @@ export default class ServerGame extends Game {
 		})
 	}
 
-	public setTurnPhase(turnPhase: GameTurnPhase): void {
+	private setTurnPhase(turnPhase: GameTurnPhase): void {
 		this.turnPhase = turnPhase
 
 		this.board.getAllUnits().forEach(unit => unit.card.onTurnPhaseChanged(unit, this.turnPhase))
@@ -123,7 +125,7 @@ export default class ServerGame extends Game {
 		})
 	}
 
-	public isPhaseFinished(): boolean {
+	private isPhaseFinished(): boolean {
 		return this.players.filter(playerInGame => !playerInGame.turnEnded).length === 0
 	}
 
@@ -151,7 +153,7 @@ export default class ServerGame extends Game {
 		}
 	}
 
-	public advancePhase(): void {
+	private advancePhase(): void {
 		if (this.turnPhase === GameTurnPhase.TURN_START) {
 			this.startDeployPhase()
 		} else if (this.turnPhase === GameTurnPhase.DEPLOY) {
@@ -163,7 +165,7 @@ export default class ServerGame extends Game {
 		}
 	}
 
-	public startNewTurnPhase(): void {
+	private startNewTurnPhase(): void {
 		this.turnIndex += 1
 		this.setTurnPhase(GameTurnPhase.TURN_START)
 
@@ -172,22 +174,24 @@ export default class ServerGame extends Game {
 		this.board.getAllUnits().forEach(unit => {
 			unit.hasSummoningSickness = false
 			unit.card.onTurnStarted(unit)
+			unit.card.cardBuffs.onTurnStarted()
 		})
 		this.board.orders.clearPerformedOrders()
 		this.advancePhase()
 	}
 
-	public startDeployPhase(): void {
+	private startDeployPhase(): void {
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
 
 		this.players.forEach(player => {
 			OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, player)
+			OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
 		})
 
 		this.advanceTurn()
 	}
 
-	public startNextRound(): void {
+	private startNextRound(): void {
 		this.setTurnPhase(GameTurnPhase.ROUND_START)
 
 		const playerOne = this.players[0]
@@ -231,9 +235,12 @@ export default class ServerGame extends Game {
 		this.advancePhase()
 	}
 
-	public startEndTurnPhase(): void {
+	private startEndTurnPhase(): void {
 		this.setTurnPhase(GameTurnPhase.TURN_END)
-		this.board.getAllUnits().forEach(unit => unit.card.onTurnEnded(unit))
+		this.board.getAllUnits().forEach(unit => {
+			unit.card.onTurnEnded(unit)
+			unit.card.cardBuffs.onTurnEnded()
+		})
 		this.advancePhase()
 	}
 
@@ -261,23 +268,28 @@ export default class ServerGame extends Game {
 	}
 
 	public findCardById(cardId: string): ServerCard | null {
+		const ownedCard = this.findOwnedCardById(cardId)
+		return ownedCard ? ownedCard.card : null
+	}
+
+	public findOwnedCardById(cardId: string): ServerOwnedCard | null {
 		const cardInStack = this.cardPlay.cardResolveStack.findCardById(cardId)
 		if (cardInStack) {
-			return cardInStack.card
+			return cardInStack
 		}
 		for (let i = 0; i < this.players.length; i++) {
 			const player = this.players[i]
 			const cardInHand = player.cardHand.findCardById(cardId)
 			if (cardInHand) {
-				return cardInHand
+				return new ServerOwnedCard(cardInHand, player)
 			}
 			const cardInDeck = player.cardDeck.findCardById(cardId)
 			if (cardInDeck) {
-				return cardInDeck
+				return new ServerOwnedCard(cardInDeck, player)
 			}
 			const cardInGraveyard = player.cardGraveyard.findCardById(cardId)
 			if (cardInGraveyard) {
-				return cardInGraveyard
+				return new ServerOwnedCard(cardInGraveyard, player)
 			}
 		}
 		return null

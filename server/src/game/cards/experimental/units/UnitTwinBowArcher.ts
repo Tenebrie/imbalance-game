@@ -29,7 +29,7 @@ export default class UnitTwinBowArcher extends ServerCard {
 		return order.targetMode === TargetMode.ORDER_ATTACK
 	}
 
-	onUnitCustomOrder(thisUnit: ServerCardOnBoard, order: ServerCardTarget): void {
+	onUnitCustomOrderPerformed(thisUnit: ServerCardOnBoard, order: ServerCardTarget): void {
 		const target = order.targetUnit!
 		const rowWithCard = this.game.board.getRowWithUnit(target)
 		const targetUnitIndex = rowWithCard.cards.indexOf(target)

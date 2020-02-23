@@ -63,8 +63,6 @@ export default class ServerTargetDefinition {
 
 	public static defaultUnitOrder(game: ServerGame): StandardTargetDefinitionBuilder {
 		return StandardTargetDefinitionBuilder.base(game)
-			.actions(0)
-			.allow(TargetMode.ORDER_MOVE, TargetType.BOARD_ROW, 0)
 			.validate(TargetMode.ORDER_MOVE, TargetType.BOARD_ROW, (args: TargetValidatorArguments) => {
 				const thisUnit = args.thisUnit
 				const targetRow = args.targetRow!
@@ -74,7 +72,6 @@ export default class ServerTargetDefinition {
 
 				return distanceToRow === 1 && !rowIsFull && (targetRow.owner === thisUnit.owner || targetRow.owner === null || targetRow.cards.length === 0)
 			})
-			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT, 0)
 			.validate(TargetMode.ORDER_ATTACK, TargetType.UNIT, (args: TargetValidatorArguments) => {
 				const thisUnit = args.thisUnit
 				const targetUnit = args.targetUnit!

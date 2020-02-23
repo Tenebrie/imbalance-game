@@ -17,7 +17,7 @@ export default class SpellRainOfFire extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.SPELL, CardColor.BRONZE)
 		this.basePower = 5
-		this.cardTextVariables = {
+		this.dynamicTextVariables = {
 			damage: this.damage,
 			targets: this.targets
 		}

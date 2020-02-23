@@ -6,11 +6,12 @@ import ServerGameBoardRow from './ServerGameBoardRow'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerGameBoardOrders from './ServerGameBoardOrders'
+import ServerCard from './ServerCard'
 
 export default class ServerGameBoard extends GameBoard {
-	game: ServerGame
-	rows: ServerGameBoardRow[]
-	orders: ServerGameBoardOrders
+	readonly game: ServerGame
+	readonly rows: ServerGameBoardRow[]
+	readonly orders: ServerGameBoardOrders
 
 	constructor(game: ServerGame) {
 		super()
@@ -62,6 +63,31 @@ export default class ServerGameBoard extends GameBoard {
 		return Math.abs(firstOffsetFromCenter - secondOffsetFromCenter)
 	}
 
+	public getTotalBuffIntensityForPlayer(buffPrototype: any, player: ServerPlayerInGame): number {
+		return this.getUnitsOwnedByPlayer(player).map(unit => unit.card.cardBuffs.getIntensity(buffPrototype)).reduce((total, value) => total + value, 0)
+	}
+
+	public getAllUnits() {
+		return this.rows.map(row => row.cards).flat()
+	}
+
+	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame) {
+		return this.getAllUnits().filter(unit => unit.owner === owner)
+	}
+
+	public getUnitsOwnedByOpponent(thisPlayer: ServerPlayerInGame) {
+		return this.getUnitsOwnedByPlayer(this.game.getOpponent(thisPlayer))
+	}
+
+	public createUnit(card: ServerCard, owner: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerCardOnBoard {
+		const unit = new ServerCardOnBoard(this.game, card, owner)
+		this.rows[rowIndex].insertUnit(unit, unitIndex)
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutUnitCreated(playerInGame.player, unit, rowIndex, unitIndex)
+		})
+		return unit
+	}
+
 	public moveUnit(unit: ServerCardOnBoard, rowIndex: number, unitIndex: number) {
 		const currentRow = this.rows[unit.rowIndex]
 		const targetRow = this.rows[rowIndex]
@@ -80,17 +106,5 @@ export default class ServerGameBoard extends GameBoard {
 		}
 
 		rowWithCard.destroyUnit(unit)
-	}
-
-	public getAllUnits() {
-		return this.rows.map(row => row.cards).flat()
-	}
-
-	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame) {
-		return this.getAllUnits().filter(unit => unit.owner === owner)
-	}
-
-	public getUnitsOwnedByOpponent(thisPlayer: ServerPlayerInGame) {
-		return this.getUnitsOwnedByPlayer(this.game.getOpponent(thisPlayer))
 	}
 }

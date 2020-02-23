@@ -18,6 +18,15 @@ export default class ServerAnimation extends Animation {
 		const animation = new ServerAnimation(AnimationType.UNIT_ATTACK)
 		animation.sourceUnit = sourceUnit
 		animation.targetUnits = targetUnits
+		animation.projectileCount = sourceUnit.card.attack
+		return animation
+	}
+
+	public static unitAttackCustom(sourceUnit: ServerCardOnBoard, targetUnits: ServerCardOnBoard[], projectileCount: number): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.UNIT_ATTACK)
+		animation.sourceUnit = sourceUnit
+		animation.targetUnits = targetUnits
+		animation.projectileCount = projectileCount
 		return animation
 	}
 

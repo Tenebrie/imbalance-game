@@ -7,6 +7,7 @@ export default class Animation {
 	targetCard: Card | null
 	sourceUnit: CardOnBoard | null
 	targetUnits: CardOnBoard[] | null
+	projectileCount: number
 
 	constructor(type: AnimationType) {
 		this.type = type

@@ -9,12 +9,12 @@ import UnitMadBerserker from '../cards/experimental/units/UnitMadBerserker'
 import UnitForestScout from '../cards/experimental/units/UnitForestScout'
 import UnitTwinBowArcher from '../cards/experimental/units/UnitTwinBowArcher'
 import UnitUnfeelingWarrior from '../cards/experimental/units/UnitUnfeelingWarrior'
-import UnitChargingKnight from '../cards/experimental/units/UnitChargingKnight'
+import UnitChargingKnight from '../cards/neutral/UnitChargingKnight'
 import UnitSpinningBarbarian from '../cards/experimental/units/UnitSpinningBarbarian'
 import SpellRainOfFire from '../cards/experimental/spells/SpellRainOfFire'
 import SpellMagicalStarfall from '../cards/experimental/spells/SpellMagicalStarfall'
 import UnitTreeOfLife from '../cards/experimental/units/UnitTreeOfLife'
-import UnitVampireFledgling from '../cards/experimental/units/UnitVampireFledgling'
+import UnitVampireFledgling from '../cards/neutral/UnitVampireFledgling'
 import HeroIgnea from '../cards/experimental/heroes/HeroIgnea'
 import UnitPriestessOfAedine from '../cards/neutral/UnitPriestessOfAedine'
 import HeroRider1Famine from '../cards/experimental/heroes/HeroRider1Famine'
@@ -22,6 +22,14 @@ import HeroRider2Conquest from '../cards/experimental/heroes/HeroRider2Conquest'
 import HeroRider3War from '../cards/experimental/heroes/HeroRider3War'
 import HeroRider4Death from '../cards/experimental/heroes/HeroRider4Death'
 import SpellSpark from '../cards/experimental/spells/SpellSpark'
+import UnitSupplyWagon from '../cards/neutral/UnitSupplyWagon'
+import SpellSpeedPotion from '../cards/experimental/spells/SpellSpeedPotion'
+import UnitArcaneElemental from '../cards/arcane/UnitArcaneElemental'
+import HeroZamarath from '../cards/arcane/HeroZamarath'
+import HeroSparklingSpirit from '../cards/arcane/HeroSparklingSpirit'
+import UnitFlameTouchCrystal from '../cards/arcane/UnitFlameTouchCrystal'
+import UnitStoneElemental from '../cards/arcane/UnitStoneElemental'
+import UnitTinySparkling from '../cards/arcane/UnitTinySparkling'
 
 export default class GameLibrary {
 	static cards: any[]
@@ -35,6 +43,8 @@ export default class GameLibrary {
 			HeroRider2Conquest,
 			HeroRider3War,
 			HeroRider4Death,
+			HeroZamarath,
+			HeroSparklingSpirit,
 			UnitPossessedVulture,
 			UnitRavenMessenger,
 			UnitMadBerserker,
@@ -46,9 +56,15 @@ export default class GameLibrary {
 			UnitVampireFledgling,
 			UnitPriestessOfAedine,
 			UnitTreeOfLife,
+			UnitSupplyWagon,
+			UnitArcaneElemental,
+			UnitFlameTouchCrystal,
+			UnitStoneElemental,
+			UnitTinySparkling,
 			SpellRainOfFire,
 			SpellMagicalStarfall,
-			SpellSpark
+			SpellSpark,
+			SpellSpeedPotion
 		]
 
 		GameLibrary.cards = cards.map(prototype => {
@@ -74,7 +90,7 @@ export default class GameLibrary {
 			throw new Error(`No registered card with class '${cardClass}'!`)
 		}
 
-		const clone: ServerCard = new original.constructor()
+		const clone: ServerCard = new original.constructor(game)
 		clone.cardType = original.cardType
 		clone.cardClass = cardClass
 

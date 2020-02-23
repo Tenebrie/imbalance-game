@@ -6,12 +6,13 @@ import ServerDamageInstance from './ServerDamageSource'
 import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '../shared/enums/TargetMode'
 import TargetType from '../shared/enums/TargetType'
+import Constants from '../shared/Constants'
 
 export default class ServerCardOnBoard {
 	game: ServerGame
 	card: ServerCard
 	owner: ServerPlayerInGame
-	hasSummoningSickness = true
+	hasSummoningSickness = Constants.SUMMONING_SICKNESS
 
 	get rowIndex(): number {
 		return this.game.board.rows.indexOf(this.game.board.getRowWithUnit(this)!)
@@ -32,8 +33,12 @@ export default class ServerCardOnBoard {
 		card.attack = card.baseAttack
 	}
 
+	addPower(value: number): void {
+		this.card.setPower(Math.max(1, this.card.power + value))
+	}
+
 	setPower(value: number): void {
-		this.card.setPower(this, value)
+		this.card.setPower(value)
 	}
 
 	dealDamage(damage: ServerDamageInstance): number {
@@ -98,15 +103,15 @@ export default class ServerCardOnBoard {
 	}
 
 	destroy(): void {
-		runCardEventHandler(() => this.card.onDestroyUnit(this))
+		runCardEventHandler(() => this.card.onBeforeDestroyedAsUnit(this))
 
 		const otherCards = this.game.board.getAllUnits().filter(cardOnBoard => cardOnBoard !== this)
 		otherCards.forEach(cardOnBoard => {
-			runCardEventHandler(() => cardOnBoard.card.onBeforeOtherUnitDestroyed(cardOnBoard, this))
+			runCardEventHandler(() => cardOnBoard.card.onBeforeOtherUnitDestroyed(this))
 		})
 		this.game.board.destroyUnit(this)
 		otherCards.forEach(cardOnBoard => {
-			runCardEventHandler(() => cardOnBoard.card.onAfterOtherUnitDestroyed(cardOnBoard, this))
+			runCardEventHandler(() => cardOnBoard.card.onAfterOtherUnitDestroyed(this))
 		})
 	}
 }

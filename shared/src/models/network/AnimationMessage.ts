@@ -6,11 +6,13 @@ export default class AnimationMessage {
 	targetCardID: string | null
 	sourceUnitID: string | null
 	targetUnitIDs: string[] | null
+	projectileCount: number
 
 	constructor(animation: Animation) {
 		this.type = animation.type
 		this.targetCardID = animation.targetCard ? animation.targetCard.id : null
 		this.sourceUnitID = animation.sourceUnit ? animation.sourceUnit.card.id : null
 		this.targetUnitIDs = animation.targetUnits ? animation.targetUnits.map(unit => unit.card.id) : null
+		this.projectileCount = animation.projectileCount
 	}
 }

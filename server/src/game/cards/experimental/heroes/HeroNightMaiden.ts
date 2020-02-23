@@ -15,9 +15,9 @@ export default class HeroNightMaiden extends ServerCard {
 		this.cardTribes = [CardTribe.DRAGON] // 5
 	}
 
-	onAfterOtherUnitDestroyed(thisUnit: ServerCardOnBoard, destroyedUnit: ServerCardOnBoard): void {
+	onAfterOtherUnitDestroyed(destroyedUnit: ServerCardOnBoard): void {
 		if (destroyedUnit.card instanceof HeroSatia) {
-			thisUnit.destroy()
+			this.unit.destroy()
 		}
 	}
 }

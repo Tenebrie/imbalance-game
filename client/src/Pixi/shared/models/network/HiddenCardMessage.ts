@@ -3,6 +3,7 @@ import CardType from '../../enums/CardType'
 import CardTribe from '../../enums/CardTribe'
 import RichTextVariables from '../RichTextVariables'
 import UnitSubtype from '../../enums/CardColor'
+import HiddenCardBuffsMessage from './HiddenCardBuffsMessage'
 
 export default class HiddenCardMessage implements Card {
 	id: string
@@ -12,9 +13,9 @@ export default class HiddenCardMessage implements Card {
 
 	cardName = ''
 	cardTitle = ''
+	cardBuffs: HiddenCardBuffsMessage
 	cardTribes: CardTribe[] = []
 	cardDescription = ''
-	cardTextVariables: RichTextVariables
 
 	power = 1
 	attack = 1
@@ -28,6 +29,11 @@ export default class HiddenCardMessage implements Card {
 
 	constructor(card: Card) {
 		this.id = card.id
+		this.cardBuffs = new HiddenCardBuffsMessage(card.cardBuffs)
+	}
+
+	evaluateVariables(): RichTextVariables {
+		return {}
 	}
 
 	static fromCard(card: Card): HiddenCardMessage {

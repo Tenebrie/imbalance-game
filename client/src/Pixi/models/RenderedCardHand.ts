@@ -32,14 +32,14 @@ export default class RenderedCardHand implements CardHand {
 	public addUnit(card: RenderedCard) {
 		this.unitCards.push(card)
 		this.unitCards.sort((a: RenderedCard, b: RenderedCard) => {
-			return a.unitSubtype - b.unitSubtype || b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass)
+			return a.unitSubtype - b.unitSubtype || b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass) || Utils.hashCode(a.id) - Utils.hashCode(b.id)
 		})
 	}
 
 	public addSpell(card: RenderedCard) {
 		this.spellCards.push(card)
 		this.spellCards.sort((a: RenderedCard, b: RenderedCard) => {
-			return b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass)
+			return a.power - b.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass) || Utils.hashCode(a.id) - Utils.hashCode(b.id)
 		})
 	}
 

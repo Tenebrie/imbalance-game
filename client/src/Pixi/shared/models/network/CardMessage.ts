@@ -3,6 +3,8 @@ import CardType from '../../enums/CardType'
 import CardTribe from '../../enums/CardTribe'
 import UnitSubtype from '../../enums/CardColor'
 import RichTextVariables from '../RichTextVariables'
+import CardBuffs from '../CardBuffs'
+import CardBuffsMessage from './CardBuffsMessage'
 
 export default class CardMessage implements Card {
 	id: string
@@ -12,9 +14,10 @@ export default class CardMessage implements Card {
 
 	cardName: string
 	cardTitle: string
+	cardBuffs: CardBuffs
 	cardTribes: CardTribe[]
 	cardDescription: string
-	cardTextVariables: RichTextVariables
+	cardVariables: RichTextVariables
 
 	power: number
 	attack: number
@@ -34,9 +37,10 @@ export default class CardMessage implements Card {
 
 		this.cardName = card.cardName
 		this.cardTitle = card.cardTitle
+		this.cardBuffs = new CardBuffsMessage(card.cardBuffs)
 		this.cardTribes = card.cardTribes.slice()
 		this.cardDescription = card.cardDescription
-		this.cardTextVariables = card.cardTextVariables
+		this.cardVariables = card.evaluateVariables()
 
 		this.power = card.power
 		this.attack = card.attack
@@ -49,7 +53,17 @@ export default class CardMessage implements Card {
 		this.baseHealthArmor = card.baseHealthArmor
 	}
 
+	evaluateVariables(): RichTextVariables {
+		return this.cardVariables
+	}
+
 	static fromCard(card: Card): CardMessage {
 		return new CardMessage(card)
+	}
+
+	static fromCardWithVariables(card: Card, cardVariables: RichTextVariables): CardMessage {
+		const message = new CardMessage(card)
+		message.cardVariables = cardVariables
+		return message
 	}
 }

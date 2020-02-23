@@ -13,15 +13,15 @@ export default class HeroRider1Famine extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 10
 		this.baseAttack = 4
-		this.cardTextVariables = {
+		this.dynamicTextVariables = {
 			damage: this.damage
 		}
 	}
 
-	onPlayUnit(thisUnit: ServerCardOnBoard): void {
+	onPlayedAsUnit(thisUnit: ServerCardOnBoard): void {
 		const allEnemyUnits = this.game.board.getUnitsOwnedByPlayer(thisUnit.owner.opponent)
 		allEnemyUnits.forEach(unit => unit.dealDamage(ServerDamageInstance.fromUnit(this.damage, thisUnit)))
-		this.game.animation.playForAll(ServerAnimation.unitAttack(thisUnit, allEnemyUnits))
+		this.game.animation.play(ServerAnimation.unitAttack(thisUnit, allEnemyUnits))
 	}
 
 	onUnitPlayTargetUnitSelected(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {

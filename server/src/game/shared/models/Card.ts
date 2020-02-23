@@ -1,3 +1,4 @@
+import CardBuffs from './CardBuffs'
 import CardType from '../enums/CardType'
 import CardTribe from '../enums/CardTribe'
 import UnitSubtype from '../enums/CardColor'
@@ -11,9 +12,9 @@ export default class Card {
 
 	cardName: string
 	cardTitle: string
+	cardBuffs: CardBuffs
 	cardTribes: CardTribe[]
 	cardDescription: string
-	cardTextVariables: RichTextVariables
 
 	power = 0
 	attack = 0
@@ -33,8 +34,12 @@ export default class Card {
 
 		this.cardName = ''
 		this.cardTitle = ''
+		this.cardBuffs = new CardBuffs(this)
 		this.cardTribes = []
 		this.cardDescription = ''
-		this.cardTextVariables = {}
+	}
+
+	public evaluateVariables(): RichTextVariables {
+		return {}
 	}
 }

@@ -33,6 +33,7 @@ export default {
 		game.cardPlay.playCard(ownedCard, data.rowIndex, data.unitIndex)
 
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
+		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
 		if (!playerInGame.isAnyActionsAvailable()) {
 			playerInGame.endTurn()
@@ -40,18 +41,19 @@ export default {
 		}
 	},
 
-	'post/unitOrder': (data: CardTargetMessage, game: ServerGame, player: ServerPlayerInGame) => {
+	'post/unitOrder': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
 		const orderedUnit = game.board.findUnitById(data.sourceUnitId)
-		if (player.turnEnded || player.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== player || orderedUnit.hasSummoningSickness) {
+		if (playerInGame.turnEnded || playerInGame.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== playerInGame || orderedUnit.hasSummoningSickness) {
 			return
 		}
 
 		game.board.orders.performUnitOrder(ServerCardTarget.fromMessage(game, data))
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
+		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		if (!player.isAnyActionsAvailable()) {
-			player.endTurn()
+		if (!playerInGame.isAnyActionsAvailable()) {
+			playerInGame.endTurn()
 			game.advanceTurn()
 		}
 	},
@@ -63,6 +65,9 @@ export default {
 
 		const target = ServerCardTarget.fromMessage(game, data)
 		game.cardPlay.selectCardTarget(playerInGame, target)
+
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
+		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
 		if (!playerInGame.isAnyActionsAvailable()) {
 			playerInGame.endTurn()

@@ -10,7 +10,7 @@ export default class SpellMagicalStarfall extends ServerCard {
 		this.basePower = 4
 	}
 
-	onPlaySpell(owner: ServerPlayerInGame): void {
+	onPlayedAsSpell(owner: ServerPlayerInGame): void {
 		const alliedUnits = this.game.board.getAllUnits().filter(unit => unit.owner === owner)
 		alliedUnits.forEach(unit => {
 			unit.setPower(unit.card.power + 3)

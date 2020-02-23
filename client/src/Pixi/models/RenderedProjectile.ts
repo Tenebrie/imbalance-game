@@ -13,6 +13,9 @@ export default class RenderedProjectile {
 	animationDuration: number
 	lifetime: number
 	randomnessFactor: number
+	onImpact: Function
+
+	impactPerformed: boolean
 
 	private constructor(sprite: PIXI.Sprite, startingPoint: PIXI.Point, animationDuration: number, lifetime: number) {
 		this.sprite = sprite
@@ -23,6 +26,9 @@ export default class RenderedProjectile {
 		this.animationDuration = animationDuration
 		this.lifetime = lifetime
 		this.randomnessFactor = Math.random()
+		this.onImpact = () => {}
+
+		this.impactPerformed = false
 	}
 
 	public static inPlace(sprite: PIXI.Sprite, startingPoint: PIXI.Point, animationDuration: number, lifetime: number): RenderedProjectile {

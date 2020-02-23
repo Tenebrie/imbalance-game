@@ -1,10 +1,10 @@
 import CardType from '../../../shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
-import GameTurnPhase from '../../../shared/enums/GameTurnPhase'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardColor from '../../../shared/enums/CardColor'
+import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import ServerGameBoardRow from '../../../models/ServerGameBoardRow'
+import BuffStrength from '../../../buffs/BuffStrength'
 
 export default class UnitUnfeelingWarrior extends ServerCard {
 	bonusPower = 5
@@ -14,9 +14,13 @@ export default class UnitUnfeelingWarrior extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 28
 		this.baseAttack = 5
-		this.cardTextVariables = {
+		this.dynamicTextVariables = {
 			bonusPower: this.bonusPower
 		}
+	}
+
+	onPlayedAsUnit(thisUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
+		this.cardBuffs.add(new BuffStrength(), this)
 	}
 
 	onTurnStarted(thisUnit: ServerCardOnBoard): void {

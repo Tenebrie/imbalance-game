@@ -1,14 +1,14 @@
-import CardType from '../../../shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
-import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTargetDefinition'
-import CardTribe from '../../../shared/enums/CardTribe'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
-import TargetMode from '../../../shared/enums/TargetMode'
-import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
-import CardColor from '../../../shared/enums/CardColor'
-import TargetType from '../../../shared/enums/TargetType'
+import CardType from '../../shared/enums/CardType'
+import ServerCard from '../../models/ServerCard'
+import ServerGame from '../../models/ServerGame'
+import ServerTargetDefinition from '../../models/targetDefinitions/ServerTargetDefinition'
+import CardTribe from '../../shared/enums/CardTribe'
+import ServerCardOnBoard from '../../models/ServerCardOnBoard'
+import ServerDamageInstance from '../../models/ServerDamageSource'
+import TargetMode from '../../shared/enums/TargetMode'
+import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
+import CardColor from '../../shared/enums/CardColor'
+import TargetType from '../../shared/enums/TargetType'
 
 export default class UnitVampireFledgling extends ServerCard {
 	powerLost = 1
@@ -19,7 +19,7 @@ export default class UnitVampireFledgling extends ServerCard {
 		this.basePower = 8
 		this.baseAttack = 1
 		this.cardTribes = [CardTribe.UNDEAD, CardTribe.VAMPIRE]
-		this.cardTextVariables = {
+		this.dynamicTextVariables = {
 			powerLost: this.powerLost,
 			powerDrained: this.powerDrained
 		}

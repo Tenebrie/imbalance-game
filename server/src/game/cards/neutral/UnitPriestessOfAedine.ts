@@ -17,7 +17,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 8
 		this.baseAttackRange = 1
-		this.cardTextVariables = {
+		this.dynamicTextVariables = {
 			targets: this.targets,
 			healing: this.healing
 		}
@@ -30,7 +30,6 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			.notSelf()
 			.allow(TargetType.UNIT, this.targets)
 			.unique(TargetType.UNIT)
-			.inUnitRange(TargetType.UNIT)
 			.label(TargetType.UNIT, 'card.target.unitPriestessOfAedine.heal')
 			.validate(TargetType.UNIT, args => args.targetUnit.card.power < args.targetUnit.card.basePower)
 	}

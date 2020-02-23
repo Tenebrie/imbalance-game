@@ -6,6 +6,8 @@ import ServerOwnedCard from '../../models/ServerOwnedCard'
 import ServerCardTarget from '../../models/ServerCardTarget'
 import CardTargetMessage from '../../shared/models/network/CardTargetMessage'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
+import ServerGame from '../../models/ServerGame'
+import CardVariablesMessage from '../../shared/models/network/CardVariablesMessage'
 
 export default {
 	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard) {
@@ -70,7 +72,7 @@ export default {
 	notifyAboutOpponentCardRevealed(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
 			type: 'update/player/opponent/hand/cardRevealed',
-			data: CardMessage.fromCard(card)
+			data: CardMessage.fromCardWithVariables(card, card.evaluateVariables())
 		})
 	},
 
@@ -162,6 +164,17 @@ export default {
 		playerInGame.opponent.player.sendMessage({
 			type: 'update/player/opponent/graveyard/spell/cardAdded',
 			data: CardMessage.fromCard(card)
+		})
+	},
+
+	notifyAboutCardVariablesUpdated(game: ServerGame) {
+		game.players.forEach(playerInGame => {
+			const cardsToNotify = game.board.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card).concat(playerInGame.cardHand.allCards)
+			const messages = cardsToNotify.map(card => new CardVariablesMessage(card, card.evaluateVariables()))
+			playerInGame.player.sendMessage({
+				type: 'update/card/variables',
+				data: messages
+			})
 		})
 	}
 }

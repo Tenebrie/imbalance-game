@@ -15,7 +15,7 @@ export default class UnitForestScout extends ServerCard {
 		this.basePower = 32
 		this.baseAttack = 3 // 15 (with effect - 35)
 		this.baseAttackRange = 2 // 30
-		this.cardTextVariables = {
+		this.dynamicTextVariables = {
 			bonusDamage: this.bonusDamage
 		}
 	}

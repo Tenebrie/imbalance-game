@@ -7,5 +7,11 @@ export default {
 				}, [])
 			}
 		})
+
+		Object.defineProperty(Array.prototype, 'sum', {
+			value: function(depth = 1) {
+				return this.reduce((total, value) => total + value, 0)
+			}
+		})
 	}
 }

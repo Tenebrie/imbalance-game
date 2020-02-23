@@ -128,6 +128,18 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		})
 	}
 
+	public merge(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
+		this.totalTargetCount += targetDefinition.totalTargetCount
+		for (const targetingReason in Object.values(TargetMode)) {
+			for (const targetType in Object.values(TargetType)) {
+				this.targetOfTypeCount[targetingReason][targetType] += targetDefinition.targetOfTypeCount[targetingReason][targetType]
+				this.orderLabels[targetingReason][targetType] = this.orderLabels[targetingReason][targetType] || targetDefinition.orderLabels[targetingReason][targetType]
+				this.validators[targetingReason][targetType] = this.validators[targetingReason][targetType].concat(targetDefinition.validators[targetingReason][targetType])
+			}
+		}
+		return this
+	}
+
 	public static base(game: ServerGame): StandardTargetDefinitionBuilder {
 		return new StandardTargetDefinitionBuilder(game)
 			.label(TargetMode.POST_PLAY_REQUIRED_TARGET, TargetType.UNIT, 'target.generic.unit')

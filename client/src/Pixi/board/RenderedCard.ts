@@ -15,6 +15,8 @@ import RichTextVariables from '@/Pixi/shared/models/RichTextVariables'
 import DescriptionTextBackground from '@/Pixi/render/DescriptionTextBackground'
 
 export default class RenderedCard extends Card {
+	public cardVariables: RichTextVariables
+
 	public coreContainer: PIXI.Container
 	public sprite: PIXI.Sprite
 	public hitboxSprite: PIXI.Sprite
@@ -46,7 +48,7 @@ export default class RenderedCard extends Card {
 		this.cardTitle = message.cardTitle
 		this.cardTribes = message.cardTribes.slice()
 		this.cardDescription = message.cardDescription
-		this.cardTextVariables = message.cardTextVariables
+		this.cardVariables = message.cardVariables
 
 		this.power = message.power
 		this.attack = message.attack
@@ -126,12 +128,17 @@ export default class RenderedCard extends Card {
 
 	public getDescriptionTextVariables(): RichTextVariables {
 		return {
-			...this.cardTextVariables,
+			...this.cardVariables,
 			name: Localization.getString(this.cardName),
 			attack: this.attack.toString(),
 			attackRange: this.attackRange.toString(),
 			healthArmor: this.healthArmor.toString()
 		}
+	}
+
+	public setCardVariables(cardVariables: RichTextVariables): void {
+		this.cardVariables = cardVariables
+		this.cardDescriptionText.textVariables = this.getDescriptionTextVariables()
 	}
 
 	public getPosition(): PIXI.Point {
@@ -144,7 +151,6 @@ export default class RenderedCard extends Card {
 
 	public setPower(value: number): void {
 		this.power = value
-		this.powerText.text = value.toString()
 	}
 
 	public createHitboxSprite(sprite: PIXI.Sprite): PIXI.Sprite {
