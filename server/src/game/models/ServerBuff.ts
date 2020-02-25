@@ -7,6 +7,7 @@ import ServerCardOnBoard from './ServerCardOnBoard'
 import TargetDefinitionBuilder from './targetDefinitions/TargetDefinitionBuilder'
 import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
 import ServerGameBoardRow from './ServerGameBoardRow'
+import ServerDamageInstance from './ServerDamageSource'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -59,6 +60,8 @@ export default class ServerBuff implements Buff {
 	onIntensityChanged(delta: number): void { return }
 	onTurnStarted(): void { return }
 	onTurnEnded(): void { return }
+	getDamageTaken(thisUnit: ServerCardOnBoard, damage: number, damageSource: ServerDamageInstance): number { return damage }
+	getDamageReduction(thisUnit: ServerCardOnBoard, damage: number, damageSource: ServerDamageInstance): number { return 0 }
 	onBeforeBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void { return }
 	onAfterBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void { return }
 	onBeforePerformingMove(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void { return }

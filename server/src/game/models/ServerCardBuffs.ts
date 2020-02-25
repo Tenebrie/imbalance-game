@@ -25,6 +25,12 @@ export default class ServerCardBuffs extends CardBuffs {
 		return buff
 	}
 
+	/*
+	 * Duration ticks down at the end of every turn:
+	 * - Duration 1 = 'until the end of this turn'
+	 * - Duration 2 = 'until the start of your next turn'
+	 * Default value is Infinity, i.e. buffs never expire
+	 */
 	public add(prototype: ServerBuff, source: ServerCard | null, duration: number | 'default' = 'default'): void {
 		const newBuff = this.instantiate(prototype, source)
 		if (duration !== 'default') {

@@ -57,18 +57,20 @@ export default class ServerCardOnBoard {
 		return damageValue
 	}
 
-	dealDamageWithoutDestroying(damage: ServerDamageInstance): number {
-		const damageReduction = this.card.getDamageReduction(this, damage)
-		const damageValue = this.card.getDamageTaken(this, damage) - damageReduction
+	dealDamageWithoutDestroying(damageInstance: ServerDamageInstance): number {
+		let damageValue = this.card.getDamageTaken(this, damageInstance) - this.card.getDamageReduction(this, damageInstance)
+		this.card.cardBuffs.buffs.forEach(buff => {
+			damageValue = buff.getDamageTaken(this, damageValue, damageInstance) - buff.getDamageReduction(this, damageValue, damageInstance)
+		})
 		if (damageValue <= 0) {
 			return 0
 		}
 
-		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damage))
-		this.setPower(this.card.power - damage.value)
-		runCardEventHandler(() => this.card.onAfterDamageTaken(this, damage))
+		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damageInstance))
+		this.setPower(this.card.power - damageInstance.value)
+		runCardEventHandler(() => this.card.onAfterDamageTaken(this, damageInstance))
 		if (this.card.power > 0) {
-			runCardEventHandler(() => this.card.onDamageSurvived(this, damage))
+			runCardEventHandler(() => this.card.onDamageSurvived(this, damageInstance))
 		}
 		return damageValue
 	}

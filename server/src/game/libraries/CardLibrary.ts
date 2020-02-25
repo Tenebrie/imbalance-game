@@ -32,6 +32,7 @@ import UnitStoneElemental from '../cards/arcane/UnitStoneElemental'
 import UnitTinySparkling from '../cards/arcane/UnitTinySparkling'
 import UnitArcaneCrystal from '../cards/arcane/UnitArcaneCrystal'
 import UnitIceSkinCrystal from '../cards/arcane/UnitIceSkinCrystal'
+import SpellPermafrost from '../cards/experimental/spells/SpellPermafrost'
 
 export default class GameLibrary {
 	static cards: any[]
@@ -68,7 +69,8 @@ export default class GameLibrary {
 			SpellRainOfFire,
 			SpellMagicalStarfall,
 			SpellSpark,
-			SpellSpeedPotion
+			SpellSpeedPotion,
+			SpellPermafrost
 		]
 
 		GameLibrary.cards = cards.map(prototype => {

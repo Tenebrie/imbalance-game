@@ -115,6 +115,9 @@
 	"card.name.spellSpeedPotion": "Potion of Speed",
 	"card.description.spellSpeedPotion": "*Hero Power*<p>Grant an allied unit {moves} extra move actions this turn only",
 
+	"card.name.spellPermafrost": "Permafrost",
+	"card.description.spellPermafrost": "*Hero Power*<p>Grant all allies *Immune* until the start of your next turn",
+
 	"card.name.spellRainOfFire": "Rain of Fire",
 	"card.description.spellRainOfFire": "{name} deals {damage} damage to {targets} enemy units\nThen, it draws a card",
 

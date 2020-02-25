@@ -31,6 +31,7 @@ import UnitFlameTouchCrystal from '../cards/arcane/UnitFlameTouchCrystal'
 import UnitStoneElemental from '../cards/arcane/UnitStoneElemental'
 import UnitArcaneCrystal from '../cards/arcane/UnitArcaneCrystal'
 import UnitIceSkinCrystal from '../cards/arcane/UnitIceSkinCrystal'
+import SpellPermafrost from '../cards/experimental/spells/SpellPermafrost'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	unitCards: ServerCard[]
@@ -88,6 +89,7 @@ export default class ServerTemplateCardDeck implements CardDeck {
 
 		deck.addSpell(CardLibrary.instantiate(new SpellSpark(game)))
 		deck.addSpell(CardLibrary.instantiate(new SpellSpeedPotion(game)))
+		deck.addSpell(CardLibrary.instantiate(new SpellPermafrost(game)))
 
 		return deck
 	}
