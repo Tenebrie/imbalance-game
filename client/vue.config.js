@@ -3,15 +3,15 @@ module.exports = {
 		publicPath: '/',
 		proxy: {
 			'/api': {
-				logLevel: 'debug',
+				// logLevel: 'debug',
 				target: 'http://localhost:3000'
 			},
 			'/changelog': {
-				logLevel: 'debug',
+				// logLevel: 'debug',
 				target: 'http://localhost:3000'
 			},
 			'/stylesheets': {
-				logLevel: 'debug',
+				// logLevel: 'debug',
 				target: 'http://localhost:3000'
 			}
 		}
