@@ -10,7 +10,8 @@
 		"scripts": {
 				"postinstall": "subpkg install",
 				"build": "cd client && npm run build && cd .. && mkdir server/client && cp -r client/dist/* server/client && cd server && npm run build",
-				"start": "node server/dist/app.js"
+				"start": "node server/dist/app.js",
+				"serve": "./scripts/dev.sh"
 		},
 		"dependencies": {
 				"@babel/cli": "^7.6.4",
