@@ -1,6 +1,6 @@
 import express from 'express'
 import ServerGame from '../game/models/ServerGame'
-import ServerCardDeck from '../game/models/ServerCardDeck'
+import ServerDeck from '../game/models/ServerDeck'
 import ServerPlayer from '../game/players/ServerPlayer'
 import IncomingMessageHandlers from '../game/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '../game/handlers/OutgoingMessageHandlers'

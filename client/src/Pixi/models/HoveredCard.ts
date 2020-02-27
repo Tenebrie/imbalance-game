@@ -2,7 +2,7 @@ import Core from '@/Pixi/Core'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
+import RenderedUnit from '@/Pixi/board/RenderedUnit'
 
 export default class HoveredCard {
 	card: RenderedCard
@@ -19,7 +19,7 @@ export default class HoveredCard {
 		return new HoveredCard(card, CardLocation.HAND, owner)
 	}
 
-	public static fromCardOnBoard(cardOnBoard: RenderedCardOnBoard): HoveredCard {
+	public static fromCardOnBoard(cardOnBoard: RenderedUnit): HoveredCard {
 		return new HoveredCard(cardOnBoard.card, CardLocation.BOARD, cardOnBoard.owner)
 	}
 

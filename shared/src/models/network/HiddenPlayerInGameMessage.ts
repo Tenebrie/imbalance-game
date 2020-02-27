@@ -3,7 +3,7 @@ import PlayerMessage from './PlayerMessage'
 import HiddenCardHandMessage from './HiddenCardHandMessage'
 import HiddenCardDeckMessage from './HiddenCardDeckMessage'
 
-export default class HiddenPlayerInGameMessage implements PlayerInGame  {
+export default class HiddenPlayerInGameMessage {
 	player: PlayerMessage
 	cardHand: HiddenCardHandMessage
 	cardDeck: HiddenCardDeckMessage

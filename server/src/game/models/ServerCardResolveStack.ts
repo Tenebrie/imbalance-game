@@ -1,5 +1,5 @@
 import ServerOwnedCard from './ServerOwnedCard'
-import CardType from '../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerGame from './ServerGame'
 import ServerCardTarget from './ServerCardTarget'
@@ -69,7 +69,7 @@ export default class ServerCardResolveStack {
 		OutgoingMessageHandlers.notifyAboutCardResolved(resolvedEntry.ownedCard)
 
 		const resolvedCard = resolvedEntry.ownedCard
-		if (resolvedCard.card.cardType === CardType.SPELL) {
+		if (resolvedCard.card.type === CardType.SPELL) {
 			resolvedCard.owner.refillSpellHand()
 			resolvedCard.owner.cardGraveyard.addSpell(resolvedCard.card)
 		}

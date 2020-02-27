@@ -1,8 +1,8 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
-import CardColor from '../../../shared/enums/CardColor'
+import ServerUnit from '../../../models/ServerUnit'
+import CardColor from '@shared/enums/CardColor'
 
 export default class UnitPossessedVulture extends ServerCard {
 	bonusPower = 4
@@ -19,7 +19,7 @@ export default class UnitPossessedVulture extends ServerCard {
 		}
 	}
 
-	onAfterPerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit): void {
 		if (target.isDead()) {
 			thisUnit.setPower(thisUnit.card.power + 4)
 		}

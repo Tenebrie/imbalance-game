@@ -1,5 +1,5 @@
 import ServerCard from './ServerCard'
-import CardDeck from '../shared/models/CardDeck'
+import CardDeck from '@shared/models/CardDeck'
 import HeroSatia from '../cards/experimental/heroes/HeroSatia'
 import UnitRavenMessenger from '../cards/experimental/units/UnitRavenMessenger'
 import UnitPossessedVulture from '../cards/experimental/units/UnitPossessedVulture'

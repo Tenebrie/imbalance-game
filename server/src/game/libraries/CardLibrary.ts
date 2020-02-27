@@ -75,7 +75,7 @@ export default class GameLibrary {
 
 		GameLibrary.cards = cards.map(prototype => {
 			const cardPrototype = new prototype(VoidGame.get())
-			cardPrototype.cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
+			cardPrototype.class = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 			cardPrototype.power = cardPrototype.basePower
 			cardPrototype.attack = cardPrototype.baseAttack
 			return cardPrototype
@@ -89,7 +89,7 @@ export default class GameLibrary {
 
 	public static instantiateByClass(game: ServerGame, cardClass: string): ServerCard {
 		const original = GameLibrary.cards.find(card => {
-			return card.cardClass === cardClass
+			return card.class === cardClass
 		})
 		if (!original) {
 			console.error(`No registered card with class '${cardClass}'!`)
@@ -97,13 +97,13 @@ export default class GameLibrary {
 		}
 
 		const clone: ServerCard = new original.constructor(game)
-		clone.cardType = original.cardType
-		clone.cardClass = cardClass
+		clone.type = original.type
+		clone.class = cardClass
 
-		clone.cardName = `card.name.${cardClass}`
-		clone.cardTitle = `card.title.${cardClass}`
-		clone.cardTribes = (original.cardTribes || []).slice()
-		clone.cardDescription = `card.description.${cardClass}`
+		clone.name = `card.name.${cardClass}`
+		clone.title = `card.title.${cardClass}`
+		clone.tribes = (original.tribes || []).slice()
+		clone.description = `card.description.${cardClass}`
 		clone.game = game
 		clone.power = clone.basePower
 		clone.attack = clone.baseAttack

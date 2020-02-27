@@ -1,4 +1,4 @@
-import OwnedCard from '../shared/models/OwnedCard'
+import OwnedCard from '@shared/models/OwnedCard'
 import ServerCard from './ServerCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 

@@ -1,5 +1,5 @@
 import ServerGame from '../ServerGame'
-import GameMessage from '../../shared/models/network/GameMessage'
+import GameMessage from '@shared/models/network/GameMessage'
 
 export default class ServerGameMessage extends GameMessage {
 	public static fromServerGame(game: ServerGame) {

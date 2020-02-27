@@ -1,13 +1,13 @@
-import CardType from '../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import CardColor from '../../shared/enums/CardColor'
-import CardTribe from '../../shared/enums/CardTribe'
+import CardColor from '@shared/enums/CardColor'
+import CardTribe from '@shared/enums/CardTribe'
 import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
 import SimpleTargetDefinitionBuilder from '../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
-import TargetMode from '../../shared/enums/TargetMode'
-import TargetType from '../../shared/enums/TargetType'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
+import ServerUnit from '../../models/ServerUnit'
 import ServerDamageInstance from '../../models/ServerDamageSource'
 import ServerAnimation from '../../models/ServerAnimation'
 
@@ -17,7 +17,7 @@ export default class UnitStoneElemental extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 7
-		this.cardTribes = [CardTribe.ELEMENTAL]
+		this.tribes = [CardTribe.ELEMENTAL]
 		this.dynamicTextVariables = {
 			damage: this.damage
 		}
@@ -30,7 +30,7 @@ export default class UnitStoneElemental extends ServerCard {
 			.notSelf()
 	}
 
-	onUnitPlayTargetUnitSelected(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
 		this.game.animation.play(ServerAnimation.unitAttackCustom(thisUnit, [target], this.damage))
 		target.dealDamage(ServerDamageInstance.fromUnit(this.damage, thisUnit))
 	}

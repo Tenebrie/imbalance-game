@@ -1,37 +1,37 @@
 import uuidv4 from 'uuid/v4'
-import Card from '../shared/models/Card'
-import CardType from '../shared/enums/CardType'
+import Card from '@shared/models/Card'
+import CardType from '@shared/enums/CardType'
 import ServerGame from './ServerGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
-import ServerCardOnBoard from './ServerCardOnBoard'
+import ServerUnit from './ServerUnit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import GameTurnPhase from '../shared/enums/GameTurnPhase'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerDamageSource from './ServerDamageSource'
-import ServerGameBoardRow from './ServerGameBoardRow'
+import ServerBoardRow from './ServerBoardRow'
 import ServerCardTarget from './ServerCardTarget'
-import TargetMode from '../shared/enums/TargetMode'
-import TargetType from '../shared/enums/TargetType'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
 import TargetValidatorArguments from '../../types/TargetValidatorArguments'
-import ServerTargetDefinition from './targetDefinitions/ServerTargetDefinition'
+import TargetDefinition from './targetDefinitions/TargetDefinition'
 import TargetDefinitionBuilder from './targetDefinitions/TargetDefinitionBuilder'
-import CardColor from '../shared/enums/CardColor'
-import ServerCardBuffs from './ServerCardBuffs'
+import CardColor from '@shared/enums/CardColor'
+import ServerBuffContainer from './ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
-import RichTextVariables from '../shared/models/RichTextVariables'
+import RichTextVariables from '@shared/models/RichTextVariables'
 import ServerOwnedCard from './ServerOwnedCard'
 
 export default class ServerCard extends Card {
 	game: ServerGame
 	isRevealed = false
-	cardBuffs = new ServerCardBuffs(this)
+	buffs = new ServerBuffContainer(this)
 	dynamicTextVariables: ServerRichTextVariables
 
 	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor) {
 		super(uuidv4(), cardType, 'missingno')
 		this.game = game
-		this.unitSubtype = unitSubtype
+		this.color = unitSubtype
 		this.dynamicTextVariables = {}
 	}
 
@@ -39,7 +39,7 @@ export default class ServerCard extends Card {
 		return this.power
 	}
 
-	public get unit(): ServerCardOnBoard | null {
+	public get unit(): ServerUnit | null {
 		return this.game.board.findUnitById(this.id)
 	}
 
@@ -84,7 +84,7 @@ export default class ServerCard extends Card {
 		})
 	}
 
-	getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: ServerTargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		let targets: ServerCardTarget[] = []
 		if (targetType === TargetType.UNIT) {
 			targets = this.getValidUnitTargets(targetMode, targetDefinition, args, previousTargets)
@@ -102,7 +102,7 @@ export default class ServerCard extends Card {
 		return targets
 	}
 
-	isTargetLimitExceeded(targetMode: TargetMode, targetType: TargetType, targetDefinition: ServerTargetDefinition, previousTargets: ServerCardTarget[]): boolean {
+	isTargetLimitExceeded(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, previousTargets: ServerCardTarget[]): boolean {
 		if (previousTargets.length >= targetDefinition.getTargetCount()) {
 			return true
 		}
@@ -121,7 +121,7 @@ export default class ServerCard extends Card {
 		// return !!incompatibleOtherTypeOrder
 	}
 
-	getValidUnitTargets(targetMode: TargetMode, targetDefinition: ServerTargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	getValidUnitTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.UNIT, targetDefinition, previousTargets)) {
 			return []
 		}
@@ -132,7 +132,7 @@ export default class ServerCard extends Card {
 			.map(targetUnit => ServerCardTarget.cardTargetUnit(targetMode, this, targetUnit, unitTargetLabel))
 	}
 
-	getValidRowTargets(targetMode: TargetMode, targetDefinition: ServerTargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	getValidRowTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.BOARD_ROW, targetDefinition, previousTargets)) {
 			return []
 		}
@@ -143,27 +143,27 @@ export default class ServerCard extends Card {
 			.map(targetRow => ServerCardTarget.cardTargetRow(targetMode, this, targetRow, rowTargetLabel))
 	}
 
-	getPlayValidTargetDefinition(): ServerTargetDefinition {
+	getPlayValidTargetDefinition(): TargetDefinition {
 		let targets = this.definePlayValidTargets()
-		this.cardBuffs.buffs.forEach(buff => {
+		this.buffs.buffs.forEach(buff => {
 			targets = targets.merge(buff.definePlayValidTargetsMod())
 			targets = buff.definePlayValidTargetsOverride(targets)
 		})
 		return targets.build()
 	}
 
-	getValidOrderTargetDefinition(): ServerTargetDefinition {
+	getValidOrderTargetDefinition(): TargetDefinition {
 		let targets = this.defineValidOrderTargets()
-		this.cardBuffs.buffs.forEach(buff => {
+		this.buffs.buffs.forEach(buff => {
 			targets = targets.merge(buff.defineValidOrderTargetsMod())
 			targets = buff.defineValidOrderTargetsOverride(targets)
 		})
 		return targets.build()
 	}
 
-	getPostPlayRequiredTargetDefinition(): ServerTargetDefinition {
+	getPostPlayRequiredTargetDefinition(): TargetDefinition {
 		let targets = this.definePostPlayRequiredTargets()
-		this.cardBuffs.buffs.forEach(buff => {
+		this.buffs.buffs.forEach(buff => {
 			targets = targets.merge(buff.definePostPlayRequiredTargetsMod())
 			targets = buff.definePostPlayRequiredTargetsOverride(targets)
 		})
@@ -183,58 +183,58 @@ export default class ServerCard extends Card {
 		return evaluatedVariables
 	}
 
-	onPlayedAsUnit(thisUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void { return }
+	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow): void { return }
 	onPlayedAsSpell(owner: ServerPlayerInGame): void { return }
 	onRevealed(owner: ServerPlayerInGame): void { return }
 
-	onUnitPlayTargetCardSelected(thisUnit: ServerCardOnBoard, target: ServerCard): void { return }
-	onUnitPlayTargetUnitSelected(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void { return }
-	onUnitPlayTargetRowSelected(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void { return }
-	onUnitPlayTargetsConfirmed(thisUnit: ServerCardOnBoard): void { return }
+	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void { return }
+	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void { return }
+	onUnitPlayTargetRowSelected(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
+	onUnitPlayTargetsConfirmed(thisUnit: ServerUnit): void { return }
 	onSpellPlayTargetCardSelected(owner: ServerPlayerInGame, target: ServerCard): void { return }
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerCardOnBoard): void { return }
-	onSpellPlayTargetRowSelected(owner: ServerPlayerInGame, target: ServerGameBoardRow): void { return }
+	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void { return }
+	onSpellPlayTargetRowSelected(owner: ServerPlayerInGame, target: ServerBoardRow): void { return }
 	onSpellPlayTargetsConfirmed(owner: ServerPlayerInGame): void { return }
 
 	onBeforeOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
 	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
-	onBeforeOtherUnitDestroyed(destroyedUnit: ServerCardOnBoard): void { return }
-	onAfterOtherUnitDestroyed(destroyedUnit: ServerCardOnBoard): void { return }
+	onBeforeOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
+	onAfterOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
 
-	onTurnStarted(thisUnit: ServerCardOnBoard): void { return }
-	onTurnPhaseChanged(thisUnit: ServerCardOnBoard, phase: GameTurnPhase): void { return }
-	onTurnEnded(thisUnit: ServerCardOnBoard): void { return }
-	onUnitCustomOrderPerformed(thisUnit: ServerCardOnBoard, order: ServerCardTarget): void { return }
-	onBeforeUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerCardTarget): void { return }
-	onAfterUnitOrderIssued(thisUnit: ServerCardOnBoard, order: ServerCardTarget): void { return }
+	onTurnStarted(thisUnit: ServerUnit): void { return }
+	onTurnPhaseChanged(thisUnit: ServerUnit, phase: GameTurnPhase): void { return }
+	onTurnEnded(thisUnit: ServerUnit): void { return }
+	onUnitCustomOrderPerformed(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
+	onBeforeUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
+	onAfterUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onPowerChanged(newValue: number, oldValue: number): void { return }
 	onAttackChanged(newValue: number, oldValue: number): void { return }
 	onAttackRangeChanged(newValue: number, oldValue: number): void { return }
 	onHealthArmorChanged(newValue: number, oldValue: number): void { return }
-	onBeforeDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
-	onAfterDamageTaken(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
-	onDamageSurvived(thisUnit: ServerCardOnBoard, damage: ServerDamageInstance): void { return }
-	onBeforePerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode): void { return }
-	onAfterPerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode, dealtDamage: number): void { return }
-	onBeforePerformingRowAttack(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow, targetMode: TargetMode): void { return }
-	onAfterPerformingRowAttack(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow, targetMode: TargetMode): void { return }
-	onBeforeBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void { return }
-	onAfterBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void { return }
-	onBeforePerformingMove(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void { return }
-	onAfterPerformingMove(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void { return }
-	onPerformingUnitSupport(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void { return }
-	onPerformingRowSupport(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void { return }
-	onBeforeBeingSupported(thisUnit: ServerCardOnBoard, support: ServerCardOnBoard): void { return }
-	onAfterBeingSupported(thisUnit: ServerCardOnBoard, support: ServerCardOnBoard): void { return }
-	onBeforeDestroyedAsUnit(thisUnit: ServerCardOnBoard): void { return }
+	onBeforeDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onAfterDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onDamageSurvived(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
+	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, dealtDamage: number): void { return }
+	onBeforePerformingRowAttack(thisUnit: ServerUnit, target: ServerBoardRow, targetMode: TargetMode): void { return }
+	onAfterPerformingRowAttack(thisUnit: ServerUnit, target: ServerBoardRow, targetMode: TargetMode): void { return }
+	onBeforeBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
+	onAfterBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
+	onBeforePerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
+	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
+	onPerformingUnitSupport(thisUnit: ServerUnit, target: ServerUnit): void { return }
+	onPerformingRowSupport(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
+	onBeforeBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
+	onAfterBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
+	onBeforeDestroyedAsUnit(thisUnit: ServerUnit): void { return }
 
-	getAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode, targetType: TargetType): number { return this.attack }
-	getBonusAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard, targetMode: TargetMode, targetType: TargetType): number { return 0 }
-	getDamageTaken(thisUnit: ServerCardOnBoard, damageSource: ServerDamageSource): number { return damageSource.value }
-	getDamageReduction(thisUnit: ServerCardOnBoard, damageSource: ServerDamageSource): number { return 0 }
+	getAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return this.attack }
+	getBonusAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return 0 }
+	getDamageTaken(thisUnit: ServerUnit, damageSource: ServerDamageSource): number { return damageSource.value }
+	getDamageReduction(thisUnit: ServerUnit, damageSource: ServerDamageSource): number { return 0 }
 
-	definePlayValidTargets(): TargetDefinitionBuilder { return ServerTargetDefinition.defaultCardPlayTarget(this.game) }
-	defineValidOrderTargets(): TargetDefinitionBuilder { return ServerTargetDefinition.defaultUnitOrder(this.game) }
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder { return ServerTargetDefinition.none(this.game) }
-	isRequireCustomOrderLogic(thisUnit: ServerCardOnBoard, order: ServerCardTarget): boolean { return false }
+	definePlayValidTargets(): TargetDefinitionBuilder { return TargetDefinition.defaultCardPlayTarget(this.game) }
+	defineValidOrderTargets(): TargetDefinitionBuilder { return TargetDefinition.defaultUnitOrder(this.game) }
+	definePostPlayRequiredTargets(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
+	isRequireCustomOrderLogic(thisUnit: ServerUnit, order: ServerCardTarget): boolean { return false }
 }

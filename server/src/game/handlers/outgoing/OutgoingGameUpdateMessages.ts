@@ -1,4 +1,4 @@
-import GameTurnPhase from '../../shared/enums/GameTurnPhase'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayer from '../../players/ServerPlayer'
 
 export default {

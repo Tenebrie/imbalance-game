@@ -1,15 +1,15 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import SimpleTargetDefinitionBuilder from '../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
-import CardColor from '../../../shared/enums/CardColor'
-import TargetMode from '../../../shared/enums/TargetMode'
+import CardColor from '@shared/enums/CardColor'
+import TargetMode from '@shared/enums/TargetMode'
 import CardLibrary from '../../../libraries/CardLibrary'
-import TargetType from '../../../shared/enums/TargetType'
+import TargetType from '@shared/enums/TargetType'
 import BuffSparksExtraDamage from '../../../buffs/BuffSparksExtraDamage'
 
 export default class SpellSpark extends ServerCard {
@@ -34,7 +34,7 @@ export default class SpellSpark extends ServerCard {
 			.enemyUnit()
 	}
 
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerCardOnBoard): void {
+	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
 		target.dealDamage(ServerDamageInstance.fromSpell(this.damage, this))
 	}
 

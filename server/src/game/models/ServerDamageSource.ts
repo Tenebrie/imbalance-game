@@ -1,12 +1,12 @@
 import ServerCard from './ServerCard'
-import ServerCardOnBoard from './ServerCardOnBoard'
-import DamageInstance from '../shared/models/DamageInstance'
-import DamageSource from '../shared/enums/DamageSource'
+import ServerUnit from './ServerUnit'
+import DamageInstance from '@shared/models/DamageInstance'
+import DamageSource from '@shared/enums/DamageSource'
 
 export default class ServerDamageInstance implements DamageInstance {
 	value: number
 	source: DamageSource
-	sourceUnit: ServerCardOnBoard | null
+	sourceUnit: ServerUnit | null
 	sourceSpell: ServerCard | null
 
 	constructor() {
@@ -15,7 +15,7 @@ export default class ServerDamageInstance implements DamageInstance {
 		this.sourceSpell = null
 	}
 
-	public static fromUnit(value: number, sourceUnit: ServerCardOnBoard): ServerDamageInstance {
+	public static fromUnit(value: number, sourceUnit: ServerUnit): ServerDamageInstance {
 		const damageInstance = new ServerDamageInstance()
 		damageInstance.value = value
 		damageInstance.source = DamageSource.UNIT

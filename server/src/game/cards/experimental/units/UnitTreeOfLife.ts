@@ -1,21 +1,22 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardTribe from '../../../shared/enums/CardTribe'
-import ServerGameBoardRow from '../../../models/ServerGameBoardRow'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import CardTribe from '@shared/enums/CardTribe'
+import ServerBoardRow from '../../../models/ServerBoardRow'
+import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
-import TargetMode from '../../../shared/enums/TargetMode'
-import TargetType from '../../../shared/enums/TargetType'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
 import StandardTargetDefinitionBuilder from '../../../models/targetDefinitions/StandardTargetDefinitionBuilder'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
-import CardColor from '../../../shared/enums/CardColor'
+import CardColor from '@shared/enums/CardColor'
+import Utils from '../../../../utils/Utils'
 
 export default class UnitTreeOfLife extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 4
-		this.cardTribes = [CardTribe.BUILDING]
+		this.tribes = [CardTribe.BUILDING]
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
@@ -30,13 +31,14 @@ export default class UnitTreeOfLife extends ServerCard {
 			})
 	}
 
-	onPerformingRowSupport(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void {
+	onPerformingRowSupport(thisUnit: ServerUnit, target: ServerBoardRow): void {
 		let adjacentRows = this.game.board.getAdjacentRows(target)
 
 		target.cards.forEach(unit => {
 			unit.heal(ServerDamageInstance.fromUnit(3, thisUnit))
 		})
-		adjacentRows.map(row => row.cards).flat().forEach(unit => {
+		const cardsOnAdjacentRows = Utils.flat(adjacentRows.map(row => row.cards))
+		cardsOnAdjacentRows.forEach(unit => {
 			unit.heal(ServerDamageInstance.fromUnit(1, thisUnit))
 		})
 	}

@@ -1,11 +1,11 @@
-import CardType from '../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerGame from '../models/ServerGame'
-import GameTurnPhase from '../shared/enums/GameTurnPhase'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
+import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
 import ServerCardTarget from '../models/ServerCardTarget'
-import CardTargetMessage from '../shared/models/network/CardTargetMessage'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerOwnedCard from '../models/ServerOwnedCard'
 
@@ -22,8 +22,8 @@ export default {
 
 		if (playerInGame.turnEnded || playerInGame.roundEnded || playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
-			(card.cardType === CardType.SPELL && !playerInGame.canPlaySpell(card, data.rowIndex)) ||
-			(card.cardType === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex))) {
+			(card.type === CardType.SPELL && !playerInGame.canPlaySpell(card, data.rowIndex)) ||
+			(card.type === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex))) {
 
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return

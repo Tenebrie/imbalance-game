@@ -2,18 +2,18 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerGame from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
-import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
-import UnitOrderMessage from '../shared/models/network/CardTargetMessage'
-import CardTargetMessage from '../shared/models/network/CardTargetMessage'
+import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
+import UnitOrderMessage from '@shared/models/network/CardTargetMessage'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerCardTarget from '../models/ServerCardTarget'
 import ServerCard from '../models/ServerCard'
 import Utils from '../../utils/Utils'
-import ServerCardOnBoard from '../models/ServerCardOnBoard'
-import ServerGameBoardRow from '../models/ServerGameBoardRow'
-import TargetMode from '../shared/enums/TargetMode'
-import TargetType from '../shared/enums/TargetType'
+import ServerUnit from '../models/ServerUnit'
+import ServerBoardRow from '../models/ServerBoardRow'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
-import GameTurnPhase from '../shared/enums/GameTurnPhase'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -54,7 +54,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private botPlaysCard(): void {
 		const cards = this.cardHand.unitCards.slice().sort((a: ServerCard, b: ServerCard) => {
-			return a.cardType - b.cardType || (b.unitSubtype ? b.unitSubtype : 10) - (a.unitSubtype ? a.unitSubtype : 10) || b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass)
+			return a.type - b.type || (b.color ? b.color : 10) - (a.color ? a.color : 10) || b.power - a.power || Utils.hashCode(a.class) - Utils.hashCode(b.class)
 		})
 		const selectedCard = cards[0]
 
@@ -115,7 +115,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		return this.game.players.indexOf(this) === 1
 	}
 
-	private sortOwnedRows(ownedRows: ServerGameBoardRow[]): ServerGameBoardRow[] {
+	private sortOwnedRows(ownedRows: ServerBoardRow[]): ServerBoardRow[] {
 		if (this.isInvertedBoard()) {
 			return ownedRows.slice().sort((a, b) => b.index - a.index)
 		} else {
@@ -132,7 +132,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		}
 	}
 
-	private sortValidTargets(validTargets: ServerCardOnBoard[]): ServerCardOnBoard[] {
+	private sortValidTargets(validTargets: ServerUnit[]): ServerUnit[] {
 		if (this.isInvertedBoard()) {
 			return validTargets.slice().sort((a, b) => b.rowIndex - a.rowIndex || a.unitIndex - b.unitIndex)
 		} else {

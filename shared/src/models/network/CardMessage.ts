@@ -1,23 +1,23 @@
 import Card from '../Card'
 import CardType from '../../enums/CardType'
 import CardTribe from '../../enums/CardTribe'
-import UnitSubtype from '../../enums/CardColor'
 import RichTextVariables from '../RichTextVariables'
-import CardBuffs from '../CardBuffs'
+import BuffContainer from '../BuffContainer'
 import CardBuffsMessage from './CardBuffsMessage'
+import CardColor from '../../enums/CardColor'
 
 export default class CardMessage implements Card {
 	id: string
-	cardType: CardType
-	cardClass: string
-	unitSubtype: UnitSubtype | null
+	type: CardType
+	class: string
+	color: CardColor
 
-	cardName: string
-	cardTitle: string
-	cardBuffs: CardBuffs
-	cardTribes: CardTribe[]
-	cardDescription: string
-	cardVariables: RichTextVariables
+	name: string
+	title: string
+	buffs: BuffContainer
+	tribes: CardTribe[]
+	description: string
+	variables: RichTextVariables
 
 	power: number
 	attack: number
@@ -31,16 +31,16 @@ export default class CardMessage implements Card {
 
 	constructor(card: Card) {
 		this.id = card.id
-		this.cardType = card.cardType
-		this.cardClass = card.cardClass
-		this.unitSubtype = card.unitSubtype
+		this.type = card.type
+		this.class = card.class
+		this.color = card.color
 
-		this.cardName = card.cardName
-		this.cardTitle = card.cardTitle
-		this.cardBuffs = new CardBuffsMessage(card.cardBuffs)
-		this.cardTribes = card.cardTribes.slice()
-		this.cardDescription = card.cardDescription
-		this.cardVariables = card.evaluateVariables()
+		this.name = card.name
+		this.title = card.title
+		this.buffs = new CardBuffsMessage(card.buffs)
+		this.tribes = card.tribes.slice()
+		this.description = card.description
+		this.variables = card.evaluateVariables()
 
 		this.power = card.power
 		this.attack = card.attack
@@ -54,7 +54,7 @@ export default class CardMessage implements Card {
 	}
 
 	evaluateVariables(): RichTextVariables {
-		return this.cardVariables
+		return this.variables
 	}
 
 	static fromCard(card: Card): CardMessage {
@@ -63,7 +63,7 @@ export default class CardMessage implements Card {
 
 	static fromCardWithVariables(card: Card, cardVariables: RichTextVariables): CardMessage {
 		const message = new CardMessage(card)
-		message.cardVariables = cardVariables
+		message.variables = cardVariables
 		return message
 	}
 }

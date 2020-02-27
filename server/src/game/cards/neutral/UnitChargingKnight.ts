@@ -1,13 +1,13 @@
-import CardType from '../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import ServerGameBoardRow from '../../models/ServerGameBoardRow'
-import ServerTargetDefinition from '../../models/targetDefinitions/ServerTargetDefinition'
-import TargetMode from '../../shared/enums/TargetMode'
-import TargetType from '../../shared/enums/TargetType'
+import ServerUnit from '../../models/ServerUnit'
+import ServerBoardRow from '../../models/ServerBoardRow'
+import TargetDefinition from '../../models/targetDefinitions/TargetDefinition'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
 import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
-import CardColor from '../../shared/enums/CardColor'
+import CardColor from '@shared/enums/CardColor'
 
 export default class UnitChargingKnight extends ServerCard {
 	hasMovedThisTurn = false
@@ -19,7 +19,7 @@ export default class UnitChargingKnight extends ServerCard {
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
-		let orderTargets = ServerTargetDefinition.defaultUnitOrder(this.game)
+		let orderTargets = TargetDefinition.defaultUnitOrder(this.game)
 		if (this.hasMovedThisTurn) {
 			orderTargets = orderTargets
 				.actions(1)
@@ -29,11 +29,11 @@ export default class UnitChargingKnight extends ServerCard {
 		return orderTargets
 	}
 
-	onAfterPerformingMove(thisUnit: ServerCardOnBoard, target: ServerGameBoardRow): void {
+	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void {
 		this.hasMovedThisTurn = true
 	}
 
-	onTurnEnded(thisUnit: ServerCardOnBoard): void {
+	onTurnEnded(thisUnit: ServerUnit): void {
 		this.hasMovedThisTurn = false
 	}
 }

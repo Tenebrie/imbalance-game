@@ -1,10 +1,10 @@
-import CardType from '../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import CardColor from '../../shared/enums/CardColor'
-import CardTribe from '../../shared/enums/CardTribe'
+import CardColor from '@shared/enums/CardColor'
+import CardTribe from '@shared/enums/CardTribe'
 import ServerOwnedCard from '../../models/ServerOwnedCard'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
+import ServerUnit from '../../models/ServerUnit'
 import BuffDecayingArmor from '../../buffs/BuffDecayingArmor'
 
 export default class UnitIceSkinCrystal extends ServerCard {
@@ -16,7 +16,7 @@ export default class UnitIceSkinCrystal extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 4
-		this.cardTribes = [CardTribe.BUILDING]
+		this.tribes = [CardTribe.BUILDING]
 		this.dynamicTextVariables = {
 			armorGranted: this.armorGranted,
 			chargePerMana: this.chargePerMana,
@@ -28,16 +28,16 @@ export default class UnitIceSkinCrystal extends ServerCard {
 	}
 
 	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void {
-		if (otherCard.card.cardType === CardType.SPELL) {
+		if (otherCard.card.type === CardType.SPELL) {
 			this.charges += otherCard.card.spellCost
 		}
 	}
 
-	onBeforeDestroyedAsUnit(thisUnit: ServerCardOnBoard): void {
+	onBeforeDestroyedAsUnit(thisUnit: ServerUnit): void {
 		const adjacentAllies = this.game.board.getAdjacentUnits(thisUnit).filter(unit => unit.owner === thisUnit.owner)
 		adjacentAllies.forEach(unit => {
 			for (let i = 0; i < Math.floor(this.charges / this.chargesForArmor) * this.armorGranted; i++) {
-				unit.card.cardBuffs.add(new BuffDecayingArmor(), this)
+				unit.card.buffs.add(new BuffDecayingArmor(), this)
 			}
 		})
 	}

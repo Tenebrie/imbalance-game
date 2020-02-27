@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import Utils from '@/utils/Utils'
 import ScalingText from '@/Pixi/render/ScalingText'
-import RichTextVariables from '@/Pixi/shared/models/RichTextVariables'
+import RichTextVariables from '@shared/models/RichTextVariables'
 import RichTextBackground from '@/Pixi/render/RichTextBackground'
 
 enum SegmentType {

@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import Card from '@/Pixi/shared/models/Card'
+import Card from '@shared/models/Card'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 
 export default class CardAttributes extends PIXI.Container {

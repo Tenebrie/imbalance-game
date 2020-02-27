@@ -1,11 +1,11 @@
 import Core from '@/Pixi/Core'
-import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
+import RenderedUnit from '@/Pixi/board/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
-import CardTarget from '@/Pixi/shared/models/CardTarget'
-import CardTargetMessage from '@/Pixi/shared/models/network/CardTargetMessage'
-import TargetMode from '@/Pixi/shared/enums/TargetMode'
-import TargetType from '@/Pixi/shared/enums/TargetType'
-import Card from '@/Pixi/shared/models/Card'
+import CardTarget from '@shared/models/CardTarget'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
+import Card from '@shared/models/Card'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
 export default class ClientCardTarget implements CardTarget {
@@ -13,9 +13,9 @@ export default class ClientCardTarget implements CardTarget {
 	targetType: TargetType
 	sourceCard?: Card
 	sourceCardOwner?: ClientPlayerInGame
-	sourceUnit?: RenderedCardOnBoard
+	sourceUnit?: RenderedUnit
 	targetCard?: Card
-	targetUnit?: RenderedCardOnBoard
+	targetUnit?: RenderedUnit
 	targetRow?: RenderedGameBoardRow
 	targetLabel: string
 

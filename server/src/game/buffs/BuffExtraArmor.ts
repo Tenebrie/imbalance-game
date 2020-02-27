@@ -1,5 +1,5 @@
 import ServerBuff from '../models/ServerBuff'
-import BuffStackType from '../shared/enums/BuffStackType'
+import BuffStackType from '@shared/enums/BuffStackType'
 
 export default class BuffExtraArmor extends ServerBuff {
 	constructor() {

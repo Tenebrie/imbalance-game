@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import Core from '@/Pixi/Core'
 import RenderedProjectile from '@/Pixi/models/RenderedProjectile'
-import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
+import RenderedUnit from '@/Pixi/board/RenderedUnit'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { easeInQuad } from 'js-easing-functions'
 
@@ -64,7 +64,7 @@ export default class ProjectileSystem {
 		})
 	}
 
-	public createUnitAttackProjectile(sourceUnit: RenderedCardOnBoard, targetUnit: RenderedCardOnBoard): void {
+	public createUnitAttackProjectile(sourceUnit: RenderedUnit, targetUnit: RenderedUnit): void {
 		const sprite = new PIXI.Sprite(TextureAtlas.getTexture('effects/fireball-static'))
 		sprite.zIndex = 100
 		sprite.scale.set(0.5)

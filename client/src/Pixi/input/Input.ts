@@ -1,20 +1,20 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import CardType from '@/Pixi/shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import {CardLocation} from '@/Pixi/enums/CardLocation'
 import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import Settings from '@/Pixi/Settings'
-import TargetType from '@/Pixi/shared/enums/TargetType'
+import TargetType from '@shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
-import CardMessage from '@/Pixi/shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/CardMessage'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
@@ -134,7 +134,7 @@ export default class Input {
 
 		const windowHeight = Core.renderer.pixi.view.height
 		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5 &&
-			((Core.player.unitMana === 0 && this.grabbedCard.card.cardType === CardType.UNIT) || (Core.player.spellMana === 0 && this.grabbedCard.card.cardType === CardType.SPELL))) {
+			((Core.player.unitMana === 0 && this.grabbedCard.card.type === CardType.UNIT) || (Core.player.spellMana === 0 && this.grabbedCard.card.type === CardType.SPELL))) {
 			this.releaseCard()
 		}
 	}
@@ -207,9 +207,9 @@ export default class Input {
 			return
 		}
 
-		if (card.cardType === CardType.SPELL) {
+		if (card.type === CardType.SPELL) {
 			OutgoingMessageHandlers.sendSpellCardPlayed(card)
-		} else if (card.cardType === CardType.UNIT) {
+		} else if (card.type === CardType.UNIT) {
 			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, this.getCardInsertIndex(hoveredRow))
 		}
 		this.cardLimbo.push(card)

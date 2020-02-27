@@ -1,18 +1,18 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import ServerUnit from '../../../models/ServerUnit'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import SimpleTargetDefinitionBuilder from '../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
-import TargetType from '../../../shared/enums/TargetType'
-import TargetMode from '../../../shared/enums/TargetMode'
-import CardColor from '../../../shared/enums/CardColor'
+import TargetType from '@shared/enums/TargetType'
+import TargetMode from '@shared/enums/TargetMode'
+import CardColor from '@shared/enums/CardColor'
 
 export default class heroRider3War extends ServerCard {
 	targets = 3
-	alliesSelected: ServerCardOnBoard[] = []
-	enemiesSelected: ServerCardOnBoard[] = []
+	alliesSelected: ServerUnit[] = []
+	enemiesSelected: ServerUnit[] = []
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
@@ -33,7 +33,7 @@ export default class heroRider3War extends ServerCard {
 			})
 	}
 
-	onPlayedAsUnit(thisUnit: ServerCardOnBoard): void {
+	onPlayedAsUnit(thisUnit: ServerUnit): void {
 		const deck = thisUnit.owner.cardDeck
 		const rider = deck.findCardByClass('heroRider2Conquest')
 		if (rider) {
@@ -41,7 +41,7 @@ export default class heroRider3War extends ServerCard {
 		}
 	}
 
-	onUnitPlayTargetUnitSelected(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
 		if (thisUnit.owner === target.owner) {
 			this.alliesSelected.push(target)
 		} else {
@@ -49,7 +49,7 @@ export default class heroRider3War extends ServerCard {
 		}
 	}
 
-	onUnitPlayTargetsConfirmed(thisUnit: ServerCardOnBoard): void {
+	onUnitPlayTargetsConfirmed(thisUnit: ServerUnit): void {
 		if (this.alliesSelected.length === 0 || this.enemiesSelected.length === 0) {
 			return
 		}

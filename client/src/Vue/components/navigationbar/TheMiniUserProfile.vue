@@ -9,7 +9,7 @@
 import Vue from 'vue'
 import store from '@/Vue/store'
 import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
-import Player from '@/Pixi/shared/models/Player'
+import Player from '@shared/models/Player'
 
 export default Vue.extend({
 	components: {

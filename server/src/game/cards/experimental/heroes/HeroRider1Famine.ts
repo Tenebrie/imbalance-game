@@ -1,10 +1,10 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ServerAnimation from '../../../models/ServerAnimation'
-import CardColor from '../../../shared/enums/CardColor'
+import CardColor from '@shared/enums/CardColor'
 
 export default class HeroRider1Famine extends ServerCard {
 	damage = 2
@@ -18,13 +18,13 @@ export default class HeroRider1Famine extends ServerCard {
 		}
 	}
 
-	onPlayedAsUnit(thisUnit: ServerCardOnBoard): void {
+	onPlayedAsUnit(thisUnit: ServerUnit): void {
 		const allEnemyUnits = this.game.board.getUnitsOwnedByPlayer(thisUnit.owner.opponent)
 		allEnemyUnits.forEach(unit => unit.dealDamage(ServerDamageInstance.fromUnit(this.damage, thisUnit)))
 		this.game.animation.play(ServerAnimation.unitAttack(thisUnit, allEnemyUnits))
 	}
 
-	onUnitPlayTargetUnitSelected(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
 		target.dealDamage(ServerDamageInstance.fromUnit(1, thisUnit))
 	}
 }

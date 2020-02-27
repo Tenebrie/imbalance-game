@@ -1,21 +1,21 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import Card from '@/Pixi/shared/models/Card'
-import CardType from '@/Pixi/shared/enums/CardType'
+import Card from '@shared/models/Card'
+import CardType from '@shared/enums/CardType'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import Settings from '@/Pixi/Settings'
 import RichText from '@/Pixi/render/RichText'
 import Utils from '@/utils/Utils'
 import CardAttributes from '@/Pixi/render/CardAttributes'
-import CardMessage from '@/Pixi/shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/CardMessage'
 import ScalingText from '@/Pixi/render/ScalingText'
-import RichTextVariables from '@/Pixi/shared/models/RichTextVariables'
+import RichTextVariables from '@shared/models/RichTextVariables'
 import DescriptionTextBackground from '@/Pixi/render/DescriptionTextBackground'
 
 export default class RenderedCard extends Card {
-	public cardVariables: RichTextVariables
+	public variables: RichTextVariables
 
 	public coreContainer: PIXI.Container
 	public sprite: PIXI.Sprite
@@ -38,17 +38,17 @@ export default class RenderedCard extends Card {
 	private readonly cardDescriptionText: RichText
 
 	constructor(message: CardMessage) {
-		super(message.id, message.cardType, message.cardClass)
+		super(message.id, message.type, message.class)
 		this.id = message.id
-		this.cardType = message.cardType
-		this.cardClass = message.cardClass
-		this.unitSubtype = message.unitSubtype
+		this.type = message.type
+		this.class = message.class
+		this.color = message.color
 
-		this.cardName = message.cardName
-		this.cardTitle = message.cardTitle
-		this.cardTribes = message.cardTribes.slice()
-		this.cardDescription = message.cardDescription
-		this.cardVariables = message.cardVariables
+		this.name = message.name
+		this.title = message.title
+		this.tribes = message.tribes.slice()
+		this.description = message.description
+		this.variables = message.variables
 
 		this.power = message.power
 		this.attack = message.attack
@@ -60,12 +60,12 @@ export default class RenderedCard extends Card {
 		this.baseAttackRange = message.baseAttackRange
 		this.baseHealthArmor = message.baseHealthArmor
 
-		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.cardClass}`))
+		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.class}`))
 		this.powerText = this.createPowerText(this.power.toString())
-		this.cardNameText = this.createCardNameText(Localization.getString(this.cardName))
-		this.cardTitleText = this.createCardNameText(Localization.getString(this.cardTitle))
-		this.cardTribeTexts = this.cardTribes.map(tribe => this.createCardNameText(Localization.getString(`card.tribe.${tribe}`)))
-		this.cardDescriptionText = new RichText(Localization.getString(this.cardDescription), 350, this.getDescriptionTextVariables())
+		this.cardNameText = this.createCardNameText(Localization.getString(this.name))
+		this.cardTitleText = this.createCardNameText(Localization.getString(this.title))
+		this.cardTribeTexts = this.tribes.map(tribe => this.createCardNameText(Localization.getString(`card.tribe.${tribe}`)))
+		this.cardDescriptionText = new RichText(Localization.getString(this.description), 350, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.alpha = 0
@@ -84,16 +84,16 @@ export default class RenderedCard extends Card {
 
 		/* Card mode container */
 		this.cardModeContainer = new PIXI.Container()
-		if (Localization.getString(this.cardName)) {
+		if (Localization.getString(this.name)) {
 			this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
 		}
-		if (Localization.getString(this.cardDescription)) {
+		if (Localization.getString(this.description)) {
 			this.descriptionTextBackground = new DescriptionTextBackground()
 			this.descriptionTextBackground.position.set(0, this.sprite.texture.height)
 			this.cardDescriptionText.setBackground(this.descriptionTextBackground)
 			this.cardModeContainer.addChild(this.descriptionTextBackground)
 		}
-		for (let i = 0; i < this.cardTribes.length; i++) {
+		for (let i = 0; i < this.tribes.length; i++) {
 			const tribeBackgroundSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-tribe'))
 			tribeBackgroundSprite.position.y += i * 40
 			this.cardModeContainer.addChild(tribeBackgroundSprite)
@@ -128,8 +128,8 @@ export default class RenderedCard extends Card {
 
 	public getDescriptionTextVariables(): RichTextVariables {
 		return {
-			...this.cardVariables,
-			name: Localization.getString(this.cardName),
+			...this.variables,
+			name: Localization.getString(this.name),
 			attack: this.attack.toString(),
 			attackRange: this.attackRange.toString(),
 			healthArmor: this.healthArmor.toString()
@@ -137,7 +137,7 @@ export default class RenderedCard extends Card {
 	}
 
 	public setCardVariables(cardVariables: RichTextVariables): void {
-		this.cardVariables = cardVariables
+		this.variables = cardVariables
 		this.cardDescriptionText.textVariables = this.getDescriptionTextVariables()
 	}
 
@@ -243,8 +243,8 @@ export default class RenderedCard extends Card {
 		this.cardModeContainer.visible = true
 		this.cardModeTextContainer.visible = true
 		this.powerText.visible = true
-		this.powerTextBackground.visible = this.cardType === CardType.UNIT
-		this.manacostTextBackground.visible = this.cardType === CardType.SPELL
+		this.powerTextBackground.visible = this.type === CardType.UNIT
+		this.manacostTextBackground.visible = this.type === CardType.SPELL
 
 		this.powerText.position.set(60, 45)
 		if (this.power < 10) {
@@ -271,7 +271,7 @@ export default class RenderedCard extends Card {
 
 		this.cardDescriptionText.position.set(0, -24)
 
-		const description = Localization.getString(this.cardDescription)
+		const description = Localization.getString(this.description)
 		let fontSize = 26
 		if (description.length > 150) { fontSize = 22 }
 		if (description.length > 300) { fontSize = 20 }

@@ -1,10 +1,10 @@
 import HeroNightMaiden from './HeroNightMaiden'
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import ServerUnit from '../../../models/ServerUnit'
 import CardLibrary from '../../../libraries/CardLibrary'
-import CardColor from '../../../shared/enums/CardColor'
+import CardColor from '@shared/enums/CardColor'
 
 export default class HeroSatia extends ServerCard {
 	constructor(game: ServerGame) {
@@ -13,7 +13,7 @@ export default class HeroSatia extends ServerCard {
 		this.baseAttack = 1
 	}
 
-	onPlayedAsUnit(thisUnit: ServerCardOnBoard): void {
+	onPlayedAsUnit(thisUnit: ServerUnit): void {
 		const nightMaiden = CardLibrary.instantiate(new HeroNightMaiden(this.game))
 		this.game.board.createUnit(nightMaiden, thisUnit.owner, thisUnit.rowIndex, thisUnit.unitIndex + 1)
 	}

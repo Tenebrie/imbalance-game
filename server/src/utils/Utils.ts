@@ -12,5 +12,11 @@ export default {
 			hash |= 0 // Convert to 32bit integer
 		}
 		return hash
+	},
+
+	flat(array: any[], depth: number = 1): any[] {
+		return array.reduce((flat, toFlatten) => {
+			return flat.concat((Array.isArray(toFlatten) && (depth > 1)) ? flat(toFlatten, depth - 1) : toFlatten)
+		}, [])
 	}
 }

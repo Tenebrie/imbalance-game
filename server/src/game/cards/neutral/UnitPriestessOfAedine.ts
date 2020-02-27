@@ -1,13 +1,13 @@
-import CardType from '../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import TargetType from '../../shared/enums/TargetType'
+import TargetType from '@shared/enums/TargetType'
 import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
 import SimpleTargetDefinitionBuilder from '../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
+import ServerUnit from '../../models/ServerUnit'
 import ServerDamageInstance from '../../models/ServerDamageSource'
-import CardColor from '../../shared/enums/CardColor'
-import TargetMode from '../../shared/enums/TargetMode'
+import CardColor from '@shared/enums/CardColor'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1
@@ -34,7 +34,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			.validate(TargetType.UNIT, args => args.targetUnit.card.power < args.targetUnit.card.basePower)
 	}
 
-	onUnitPlayTargetUnitSelected(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
 		target.heal(ServerDamageInstance.fromUnit(this.healing, thisUnit))
 	}
 }

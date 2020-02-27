@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import Core from '@/Pixi/Core'
 import router from '@/Vue/router'
-import Player from '@/Pixi/shared/models/Player'
+import Player from '@shared/models/Player'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import { createDirectStore, createModule } from 'direct-vuex'
 

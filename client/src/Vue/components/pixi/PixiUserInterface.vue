@@ -26,7 +26,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import Player from '@/Pixi/shared/models/Player'
+import Player from '@shared/models/Player'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 

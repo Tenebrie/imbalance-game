@@ -1,6 +1,6 @@
-import Animation from '../shared/models/Animation'
-import ServerCardOnBoard from './ServerCardOnBoard'
-import AnimationType from '../shared/enums/AnimationType'
+import Animation from '@shared/models/Animation'
+import ServerUnit from './ServerUnit'
+import AnimationType from '@shared/enums/AnimationType'
 import ServerCard from './ServerCard'
 
 export default class ServerAnimation extends Animation {
@@ -14,7 +14,7 @@ export default class ServerAnimation extends Animation {
 		return animation
 	}
 
-	public static unitAttack(sourceUnit: ServerCardOnBoard, targetUnits: ServerCardOnBoard[]): ServerAnimation {
+	public static unitAttack(sourceUnit: ServerUnit, targetUnits: ServerUnit[]): ServerAnimation {
 		const animation = new ServerAnimation(AnimationType.UNIT_ATTACK)
 		animation.sourceUnit = sourceUnit
 		animation.targetUnits = targetUnits
@@ -22,7 +22,7 @@ export default class ServerAnimation extends Animation {
 		return animation
 	}
 
-	public static unitAttackCustom(sourceUnit: ServerCardOnBoard, targetUnits: ServerCardOnBoard[], projectileCount: number): ServerAnimation {
+	public static unitAttackCustom(sourceUnit: ServerUnit, targetUnits: ServerUnit[], projectileCount: number): ServerAnimation {
 		const animation = new ServerAnimation(AnimationType.UNIT_ATTACK)
 		animation.sourceUnit = sourceUnit
 		animation.targetUnits = targetUnits

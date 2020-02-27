@@ -1,10 +1,10 @@
-import CardType from '../../shared/enums/CardType'
-import CardColor from '../../shared/enums/CardColor'
+import CardType from '@shared/enums/CardType'
+import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
 import BuffImmunity from '../../buffs/BuffImmunity'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import ServerGameBoardRow from '../../models/ServerGameBoardRow'
+import ServerUnit from '../../models/ServerUnit'
+import ServerBoardRow from '../../models/ServerBoardRow'
 
 export default class HeroZamarath extends ServerCard {
 	constructor(game: ServerGame) {
@@ -12,7 +12,7 @@ export default class HeroZamarath extends ServerCard {
 		this.basePower = 15
 	}
 
-	onPlayedAsUnit(thisUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
-		this.cardBuffs.add(new BuffImmunity(), this, Infinity)
+	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow): void {
+		this.buffs.add(new BuffImmunity(), this, Infinity)
 	}
 }

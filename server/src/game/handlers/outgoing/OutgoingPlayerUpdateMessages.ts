@@ -1,7 +1,7 @@
 import ServerPlayer from '../../players/ServerPlayer'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
-import PlayerInGameMessage from '../../shared/models/network/PlayerInGameMessage'
-import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
+import PlayerInGameMessage from '@shared/models/network/PlayerInGameMessage'
+import HiddenPlayerInGameMessage from '@shared/models/network/HiddenPlayerInGameMessage'
 import ServerGame from '../../models/ServerGame'
 
 export default {

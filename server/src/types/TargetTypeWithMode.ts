@@ -1,5 +1,5 @@
-import TargetMode from '../game/shared/enums/TargetMode'
-import TargetType from '../game/shared/enums/TargetType'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
 
 type TargetTypeWithMode = {
 	targetMode: TargetMode

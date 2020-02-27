@@ -1,21 +1,21 @@
 import Card from '../Card'
 import CardType from '../../enums/CardType'
 import CardTribe from '../../enums/CardTribe'
-import RichTextVariables from '../RichTextVariables'
-import UnitSubtype from '../../enums/CardColor'
-import HiddenCardBuffsMessage from './HiddenCardBuffsMessage'
+import CardColor from '../../enums/CardColor'
+import HiddenBuffContainerMessage from './HiddenBuffContainerMessage'
 
-export default class HiddenCardMessage implements Card {
+export default class HiddenCardMessage {
 	id: string
-	cardType = CardType.HIDDEN
-	cardClass = 'cardBack'
-	unitSubtype: UnitSubtype | null
+	type = CardType.HIDDEN
+	class = 'cardBack'
+	color: CardColor
 
-	cardName = ''
-	cardTitle = ''
-	cardBuffs: HiddenCardBuffsMessage
-	cardTribes: CardTribe[] = []
-	cardDescription = ''
+	name = ''
+	title = ''
+	buffs: HiddenBuffContainerMessage
+	tribes: CardTribe[] = []
+	description = ''
+	variables = {}
 
 	power = 1
 	attack = 1
@@ -29,11 +29,7 @@ export default class HiddenCardMessage implements Card {
 
 	constructor(card: Card) {
 		this.id = card.id
-		this.cardBuffs = new HiddenCardBuffsMessage(card.cardBuffs)
-	}
-
-	evaluateVariables(): RichTextVariables {
-		return {}
+		this.buffs = new HiddenBuffContainerMessage(card.buffs)
 	}
 
 	static fromCard(card: Card): HiddenCardMessage {

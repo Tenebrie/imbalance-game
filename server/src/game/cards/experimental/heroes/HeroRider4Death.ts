@@ -1,9 +1,9 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import ServerUnit from '../../../models/ServerUnit'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
-import CardColor from '../../../shared/enums/CardColor'
+import CardColor from '@shared/enums/CardColor'
 
 export default class heroRider4Death extends ServerCard {
 	powerThreshold = 10
@@ -17,7 +17,7 @@ export default class heroRider4Death extends ServerCard {
 		}
 	}
 
-	onPlayedAsUnit(thisUnit: ServerCardOnBoard): void {
+	onPlayedAsUnit(thisUnit: ServerUnit): void {
 		const deck = thisUnit.owner.cardDeck
 		const rider = deck.findCardByClass('heroRider3War')
 		if (rider) {

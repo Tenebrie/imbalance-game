@@ -1,9 +1,9 @@
-import CardType from '../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import CardColor from '../../shared/enums/CardColor'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import ServerGameBoardRow from '../../models/ServerGameBoardRow'
+import CardColor from '@shared/enums/CardColor'
+import ServerUnit from '../../models/ServerUnit'
+import ServerBoardRow from '../../models/ServerBoardRow'
 import BuffSparksExtraDamage from '../../buffs/BuffSparksExtraDamage'
 
 export default class HeroSparklingSpirit extends ServerCard {
@@ -17,9 +17,9 @@ export default class HeroSparklingSpirit extends ServerCard {
 		}
 	}
 
-	onPlayedAsUnit(thisUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
+	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow): void {
 		for (let i = 0; i < this.extraDamage; i++) {
-			this.cardBuffs.add(new BuffSparksExtraDamage(), this)
+			this.buffs.add(new BuffSparksExtraDamage(), this)
 		}
 	}
 }

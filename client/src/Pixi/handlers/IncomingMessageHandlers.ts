@@ -1,26 +1,26 @@
 import Core from '@/Pixi/Core'
 import store from '@/Vue/store'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
-import CardMessage from '@/Pixi/shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/CardMessage'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
-import GameStartMessage from '@/Pixi/shared/models/GameStartMessage'
+import GameStartMessage from '@shared/models/network/GameStartMessage'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import CardOnBoardMessage from '@/Pixi/shared/models/network/CardOnBoardMessage'
-import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
-import CardHandMessage from '@/Pixi/shared/models/network/CardHandMessage'
-import CardDeckMessage from '@/Pixi/shared/models/network/CardDeckMessage'
-import GameTimeMessage from '@/Pixi/shared/models/network/GameTimeMessage'
-import HiddenCardMessage from '@/Pixi/shared/models/network/HiddenCardMessage'
-import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
-import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
-import GameBoardMessage from '@/Pixi/shared/models/network/GameBoardMessage'
-import GameBoardRowMessage from '@/Pixi/shared/models/network/GameBoardRowMessage'
-import AnimationMessage from '@/Pixi/shared/models/network/AnimationMessage'
-import AnimationType from '@/Pixi/shared/enums/AnimationType'
+import UnitMessage from '@shared/models/network/UnitMessage'
+import RenderedUnit from '@/Pixi/board/RenderedUnit'
+import CardHandMessage from '@shared/models/network/CardHandMessage'
+import CardDeckMessage from '@shared/models/network/CardDeckMessage'
+import GameTimeMessage from '@shared/models/network/GameTimeMessage'
+import HiddenCardMessage from '@shared/models/network/HiddenCardMessage'
+import PlayerInGameMessage from '@shared/models/network/PlayerInGameMessage'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import BoardMessage from '@shared/models/network/BoardMessage'
+import BoardRowMessage from '@shared/models/network/BoardRowMessage'
+import AnimationMessage from '@shared/models/network/AnimationMessage'
+import AnimationType from '@shared/enums/AnimationType'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
-import CardTargetMessage from '@/Pixi/shared/models/network/CardTargetMessage'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import CardVariablesMessage from '@/Pixi/shared/models/network/CardVariablesMessage'
+import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -50,16 +50,16 @@ const handlers: {[ index: string ]: any } = {
 		store.commit.gameStateModule.setOpponentData(playerInGame.player)
 	},
 
-	'gameState/board': (data: GameBoardMessage) => {
+	'gameState/board': (data: BoardMessage) => {
 		data.rows.forEach(row => {
 			Core.board.rows[row.index].setOwner(Core.getPlayer(row.ownerId))
 		})
 	},
 
-	'gameState/units': (data: CardOnBoardMessage[]) => {
+	'gameState/units': (data: UnitMessage[]) => {
 		Core.board.clearBoard()
 		data.forEach(message => {
-			const card = RenderedCardOnBoard.fromMessage(message)
+			const card = RenderedUnit.fromMessage(message)
 			Core.board.insertUnit(card, message.rowIndex, message.unitIndex)
 		})
 	},
@@ -81,20 +81,20 @@ const handlers: {[ index: string ]: any } = {
 		Core.game.maximumTime = data.maximumTime
 	},
 
-	'update/board/unitCreated': (data: CardOnBoardMessage) => {
+	'update/board/unitCreated': (data: UnitMessage) => {
 		if (Core.board.findUnitById(data.card.id)) { return }
 
 		Core.input.clearCardInLimbo(data.card)
-		Core.board.unitsOnHold.push(RenderedCardOnBoard.fromMessage(data))
+		Core.board.unitsOnHold.push(RenderedUnit.fromMessage(data))
 	},
 
-	'update/board/unitInserted': (data: CardOnBoardMessage) => {
+	'update/board/unitInserted': (data: UnitMessage) => {
 		if (Core.board.findInsertedById(data.card.id)) { return }
 
 		Core.board.insertUnitFromHold(data.card.id, data.rowIndex, data.unitIndex)
 	},
 
-	'update/board/unitMoved': (data: CardOnBoardMessage) => {
+	'update/board/unitMoved': (data: UnitMessage) => {
 		const unit = Core.board.findUnitById(data.card.id)
 		if (!unit) { return }
 
@@ -109,7 +109,7 @@ const handlers: {[ index: string ]: any } = {
 		Core.board.destroyUnit(unit)
 	},
 
-	'update/board/row/owner': (data: GameBoardRowMessage) => {
+	'update/board/row/owner': (data: BoardRowMessage) => {
 		Core.board.rows[data.index].setOwner(Core.getPlayerOrNull(data.ownerId))
 	},
 

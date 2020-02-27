@@ -4,7 +4,7 @@ const router = express.Router()
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequestMiddleware'
 import CardLibrary from '../game/libraries/CardLibrary'
-import CardMessage from '../game/shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/CardMessage'
 
 router.use(RequirePlayerTokenMiddleware)
 

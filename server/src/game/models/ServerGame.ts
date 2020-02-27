@@ -1,15 +1,15 @@
 import uuidv4 from 'uuid/v4'
-import Game from '../shared/models/Game'
-import ServerGameBoard from './ServerGameBoard'
+import Game from '@shared/models/Game'
+import ServerBoard from './ServerBoard'
 import ServerPlayer from '../players/ServerPlayer'
 import ServerChatEntry from './ServerChatEntry'
 import VoidPlayerInGame from '../utils/VoidPlayerInGame'
-import GameTurnPhase from '../shared/enums/GameTurnPhase'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameLibrary from '../libraries/GameLibrary'
 import ServerDamageInstance from './ServerDamageSource'
-import Constants from '../shared/Constants'
+import Constants from '@shared/Constants'
 import ServerBotPlayer from '../utils/ServerBotPlayer'
 import ServerBotPlayerInGame from '../utils/ServerBotPlayerInGame'
 import ServerCard from './ServerCard'
@@ -24,7 +24,7 @@ export default class ServerGame extends Game {
 	turnPhase: GameTurnPhase
 	playersToMove: ServerPlayerInGame[]
 	readonly owner: ServerPlayer
-	readonly board: ServerGameBoard
+	readonly board: ServerBoard
 	readonly players: ServerPlayerInGame[]
 	readonly chatHistory: ServerChatEntry[]
 	readonly cardPlay: ServerGameCardPlay
@@ -36,7 +36,7 @@ export default class ServerGame extends Game {
 		this.turnIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.owner = owner
-		this.board = new ServerGameBoard(this)
+		this.board = new ServerBoard(this)
 		this.players = []
 		this.playersToMove = []
 		this.chatHistory = []
@@ -174,7 +174,7 @@ export default class ServerGame extends Game {
 		this.board.getAllUnits().forEach(unit => {
 			unit.hasSummoningSickness = false
 			unit.card.onTurnStarted(unit)
-			unit.card.cardBuffs.onTurnStarted()
+			unit.card.buffs.onTurnStarted()
 		})
 		this.board.orders.clearPerformedOrders()
 		this.advancePhase()
@@ -239,7 +239,7 @@ export default class ServerGame extends Game {
 		this.setTurnPhase(GameTurnPhase.TURN_END)
 		this.board.getAllUnits().forEach(unit => {
 			unit.card.onTurnEnded(unit)
-			unit.card.cardBuffs.onTurnEnded()
+			unit.card.buffs.onTurnEnded()
 		})
 		this.advancePhase()
 	}

@@ -1,6 +1,6 @@
-import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Core from '@/Pixi/Core'
-import Card from '@/Pixi/shared/models/Card'
+import Card from '@shared/models/Card'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 
 export default class ClientGame {

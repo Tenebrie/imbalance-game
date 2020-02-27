@@ -1,8 +1,8 @@
 import ServerPlayer from '../../players/ServerPlayer'
-import GameStartMessage from '../../shared/models/GameStartMessage'
+import GameStartMessage from '@shared/models/network/GameStartMessage'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
-import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
-import PlayerInGameMessage from '../../shared/models/network/PlayerInGameMessage'
+import HiddenPlayerInGameMessage from '@shared/models/network/HiddenPlayerInGameMessage'
+import PlayerInGameMessage from '@shared/models/network/PlayerInGameMessage'
 
 export default {
 	notifyAboutGameStart(player: ServerPlayer, isBoardInverted: boolean) {

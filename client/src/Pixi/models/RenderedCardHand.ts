@@ -1,10 +1,10 @@
 import Core from '@/Pixi/Core'
 import Utils from '@/utils/Utils'
-import CardHand from '@/Pixi/shared/models/CardHand'
-import CardMessage from '@/Pixi/shared/models/network/CardMessage'
+import CardHand from '@shared/models/CardHand'
+import CardMessage from '@shared/models/network/CardMessage'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import CardHandMessage from '../shared/models/network/CardHandMessage'
-import CardType from '@/Pixi/shared/enums/CardType'
+import CardHandMessage from '@shared/models/network/CardHandMessage'
+import CardType from '@shared/enums/CardType'
 
 export default class RenderedCardHand implements CardHand {
 	unitCards: RenderedCard[]
@@ -20,9 +20,9 @@ export default class RenderedCardHand implements CardHand {
 	}
 
 	public addCard(card: RenderedCard) {
-		if (card.cardType === CardType.UNIT) {
+		if (card.type === CardType.UNIT) {
 			this.addUnit(card)
-		} else if (card.cardType === CardType.SPELL) {
+		} else if (card.type === CardType.SPELL) {
 			this.addSpell(card)
 		} else {
 			console.error('Trying to hidden card to hand without type specified!')
@@ -32,14 +32,14 @@ export default class RenderedCardHand implements CardHand {
 	public addUnit(card: RenderedCard) {
 		this.unitCards.push(card)
 		this.unitCards.sort((a: RenderedCard, b: RenderedCard) => {
-			return a.unitSubtype - b.unitSubtype || b.power - a.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass) || Utils.hashCode(a.id) - Utils.hashCode(b.id)
+			return a.color - b.color || b.power - a.power || Utils.hashCode(a.class) - Utils.hashCode(b.class) || Utils.hashCode(a.id) - Utils.hashCode(b.id)
 		})
 	}
 
 	public addSpell(card: RenderedCard) {
 		this.spellCards.push(card)
 		this.spellCards.sort((a: RenderedCard, b: RenderedCard) => {
-			return a.power - b.power || Utils.hashCode(a.cardClass) - Utils.hashCode(b.cardClass) || Utils.hashCode(a.id) - Utils.hashCode(b.id)
+			return a.power - b.power || Utils.hashCode(a.class) - Utils.hashCode(b.class) || Utils.hashCode(a.id) - Utils.hashCode(b.id)
 		})
 	}
 

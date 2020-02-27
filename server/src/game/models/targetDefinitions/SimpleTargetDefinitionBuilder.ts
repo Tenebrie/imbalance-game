@@ -1,16 +1,16 @@
 import ServerGame from '../ServerGame'
 import TargetValidatorArguments from '../../../types/TargetValidatorArguments'
-import TargetMode from '../../shared/enums/TargetMode'
-import TargetType from '../../shared/enums/TargetType'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
 import StandardTargetDefinitionBuilder from './StandardTargetDefinitionBuilder'
 import TargetDefinitionBuilder from './TargetDefinitionBuilder'
-import ServerTargetDefinition from './ServerTargetDefinition'
+import TargetDefinition from './TargetDefinition'
 
 export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBuilder {
 	builder: StandardTargetDefinitionBuilder
 	targetMode: TargetMode
 
-	public build(): ServerTargetDefinition {
+	public build(): TargetDefinition {
 		return this.builder.build()
 	}
 

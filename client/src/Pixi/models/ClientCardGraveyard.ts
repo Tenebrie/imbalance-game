@@ -1,6 +1,6 @@
-import CardMessage from '@/Pixi/shared/models/network/CardMessage'
-import CardDeck from '@/Pixi/shared/models/CardDeck'
-import Card from '@/Pixi/shared/models/Card'
+import CardMessage from '@shared/models/network/CardMessage'
+import CardDeck from '@shared/models/CardDeck'
+import Card from '@shared/models/Card'
 
 export default class ClientCardGraveyard implements CardDeck {
 	unitCards: CardMessage[]

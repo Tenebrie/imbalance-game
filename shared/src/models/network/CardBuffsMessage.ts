@@ -1,14 +1,14 @@
 import Card from '../Card'
-import CardBuffs from '../CardBuffs'
+import BuffContainer from '../BuffContainer'
 import BuffMessage from './BuffMessage'
 
-export default class CardBuffsMessage implements CardBuffs {
+export default class CardBuffsMessage implements BuffContainer {
 	cardId: string
 	buffs: BuffMessage[]
 
 	card: Card // Unassigned
 
-	constructor(cardBuffs: CardBuffs) {
+	constructor(cardBuffs: BuffContainer) {
 		this.cardId = cardBuffs.card.id
 		this.buffs = cardBuffs.buffs.map(buff => new BuffMessage(buff))
 	}

@@ -1,8 +1,8 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
-import CardColor from '../../../shared/enums/CardColor'
+import ServerUnit from '../../../models/ServerUnit'
+import CardColor from '@shared/enums/CardColor'
 
 export default class UnitRavenMessenger extends ServerCard {
 	turnsLeft: number
@@ -16,7 +16,7 @@ export default class UnitRavenMessenger extends ServerCard {
 		this.turnsLeft = 3
 	}
 
-	onTurnStarted(thisUnit: ServerCardOnBoard): void {
+	onTurnStarted(thisUnit: ServerUnit): void {
 		this.turnsLeft -= 1
 		if (this.turnsLeft === 0) {
 			thisUnit.owner.drawUnitCards(1)

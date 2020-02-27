@@ -1,9 +1,9 @@
 import Core from '@/Pixi/Core'
 import store from '@/Vue/store'
-import Player from '@/Pixi/shared/models/Player'
-import PlayerInGame from '@/Pixi/shared/models/PlayerInGame'
+import Player from '@shared/models/Player'
+import PlayerInGame from '@shared/models/PlayerInGame'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
-import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
+import PlayerInGameMessage from '@shared/models/network/PlayerInGameMessage'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import ClientCardGraveyard from '@/Pixi/models/ClientCardGraveyard'
 

@@ -1,7 +1,7 @@
 import CardDeck from '../CardDeck'
 import HiddenCardMessage from './HiddenCardMessage'
 
-export default class HiddenCardDeckMessage implements CardDeck {
+export default class HiddenCardDeckMessage {
 	unitCards: HiddenCardMessage[]
 	spellCards: HiddenCardMessage[]
 

@@ -1,35 +1,36 @@
 import ServerCard from '../../models/ServerCard'
 import ServerPlayer from '../../players/ServerPlayer'
-import CardMessage from '../../shared/models/network/CardMessage'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
-import CardOnBoardMessage from '../../shared/models/network/CardOnBoardMessage'
-import GameBoardRow from '../../shared/models/GameBoardRow'
-import GameBoardRowMessage from '../../shared/models/network/GameBoardRowMessage'
-import CardTargetMessage from '../../shared/models/network/CardTargetMessage'
+import CardMessage from '@shared/models/network/CardMessage'
+import ServerUnit from '../../models/ServerUnit'
+import UnitMessage from '@shared/models/network/UnitMessage'
+import BoardRow from '@shared/models/BoardRow'
+import BoardRowMessage from '@shared/models/network/BoardRowMessage'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerGame from '../../models/ServerGame'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
+import Utils from '../../../utils/Utils'
 
 export default {
-	notifyAboutUnitCreated(player: ServerPlayer, card: ServerCardOnBoard, rowIndex: number, unitIndex: number) {
+	notifyAboutUnitCreated(player: ServerPlayer, card: ServerUnit, rowIndex: number, unitIndex: number) {
 		player.sendMessage({
 			type: 'update/board/unitCreated',
-			data: CardOnBoardMessage.fromCardOnBoardWithIndex(card, rowIndex, unitIndex),
+			data: UnitMessage.fromCardOnBoardWithIndex(card, rowIndex, unitIndex),
 			highPriority: true
 		})
 		player.sendMessage({
 			type: 'update/board/unitInserted',
-			data: CardOnBoardMessage.fromCardOnBoardWithIndex(card, rowIndex, unitIndex)
+			data: UnitMessage.fromCardOnBoardWithIndex(card, rowIndex, unitIndex)
 		})
 	},
 
-	notifyAboutUnitMoved(player: ServerPlayer, card: ServerCardOnBoard, rowIndex: number, unitIndex: number) {
+	notifyAboutUnitMoved(player: ServerPlayer, card: ServerUnit, rowIndex: number, unitIndex: number) {
 		player.sendMessage({
 			type: 'update/board/unitMoved',
-			data: CardOnBoardMessage.fromCardOnBoardWithIndex(card, rowIndex, unitIndex)
+			data: UnitMessage.fromCardOnBoardWithIndex(card, rowIndex, unitIndex)
 		})
 	},
 
-	notifyAboutUnitDestroyed(player: ServerPlayer, cardOnBoard: ServerCardOnBoard) {
+	notifyAboutUnitDestroyed(player: ServerPlayer, cardOnBoard: ServerUnit) {
 		player.sendMessage({
 			type: 'update/board/unitDestroyed',
 			data: CardMessage.fromCard(cardOnBoard.card)
@@ -38,7 +39,7 @@ export default {
 
 	notifyAboutValidActionsChanged(game: ServerGame, playerInGame: ServerPlayerInGame) {
 		const cardsInHand = playerInGame.cardHand.allCards
-		const validPlayTargets = cardsInHand.map(card => card.getValidPlayTargets(playerInGame)).flat()
+		const validPlayTargets = Utils.flat(cardsInHand.map(card => card.getValidPlayTargets(playerInGame)))
 		const playTargetMessages = validPlayTargets.map(order => new CardTargetMessage(order))
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/hand/playTargets',
@@ -47,7 +48,7 @@ export default {
 		})
 
 		const ownedUnits = game.board.getUnitsOwnedByPlayer(playerInGame)
-		const validOrders = ownedUnits.map(unit => unit.getValidOrders()).flat()
+		const validOrders = Utils.flat(ownedUnits.map(unit => unit.getValidOrders()))
 		const messages = validOrders.map(order => new CardTargetMessage(order))
 
 		playerInGame.player.sendMessage({
@@ -61,10 +62,10 @@ export default {
 		})
 	},
 
-	notifyAboutRowOwnershipChanged(player: ServerPlayer, row: GameBoardRow) {
+	notifyAboutRowOwnershipChanged(player: ServerPlayer, row: BoardRow) {
 		player.sendMessage({
 			type: 'update/board/row/owner',
-			data: new GameBoardRowMessage(row)
+			data: new BoardRowMessage(row)
 		})
 	},
 

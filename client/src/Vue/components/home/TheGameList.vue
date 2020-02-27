@@ -21,7 +21,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import store from '@/Vue/store'
-import GameMessage from '@/Pixi/shared/models/network/GameMessage'
+import GameMessage from '@shared/models/network/GameMessage'
 import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
 
 export default Vue.extend({

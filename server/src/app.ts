@@ -1,8 +1,7 @@
 import path from 'path'
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
-
-import polyfill from './utils/Polyfill'
+import 'module-alias/register'
 
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
@@ -14,9 +13,6 @@ import PlayerLibrary from './game/players/PlayerLibrary'
 
 const app = express()
 expressWs(app)
-
-/* Polyfills */
-polyfill.injectPolyfills()
 
 /* Routers must be imported after express-ws is initialized, therefore 'require' syntax */
 const StatusRouter = require('./routers/StatusRouter')
@@ -47,8 +43,8 @@ app.use(logger('dev'))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(express.static(path.join(__dirname, '../public')))
-app.use(express.static(path.join(__dirname, '../client')))
+app.use(express.static(path.join(__dirname, '../../../public')))
+app.use(express.static(path.join(__dirname, '../../../client')))
 
 /* OPTIONS request */
 app.use((req: Request, res: Response, next) => {
@@ -77,7 +73,7 @@ app.use('/api/game', PlayRouter)
 
 /* Index fallback */
 app.use('*', (req, res) => {
-	res.sendFile(path.join(__dirname, '../client/index.html'))
+	res.sendFile(path.join(__dirname, '../../../client/index.html'))
 })
 
 /* Global error handler */

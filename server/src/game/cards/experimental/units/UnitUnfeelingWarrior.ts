@@ -1,9 +1,9 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardColor from '../../../shared/enums/CardColor'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
-import ServerGameBoardRow from '../../../models/ServerGameBoardRow'
+import CardColor from '@shared/enums/CardColor'
+import ServerUnit from '../../../models/ServerUnit'
+import ServerBoardRow from '../../../models/ServerBoardRow'
 import BuffStrength from '../../../buffs/BuffStrength'
 
 export default class UnitUnfeelingWarrior extends ServerCard {
@@ -19,18 +19,18 @@ export default class UnitUnfeelingWarrior extends ServerCard {
 		}
 	}
 
-	onPlayedAsUnit(thisUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow): void {
-		this.cardBuffs.add(new BuffStrength(), this)
+	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow): void {
+		this.buffs.add(new BuffStrength(), this)
 	}
 
-	onTurnStarted(thisUnit: ServerCardOnBoard): void {
+	onTurnStarted(thisUnit: ServerUnit): void {
 		if (this.hasBeenAttacked) {
 			thisUnit.setPower(thisUnit.card.power + this.bonusPower)
 		}
 		this.hasBeenAttacked = false
 	}
 
-	onAfterBeingAttacked(thisUnit: ServerCardOnBoard, attacker: ServerCardOnBoard): void {
+	onAfterBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void {
 		this.hasBeenAttacked = true
 	}
 }

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
-import CardMessage from '@/Pixi/shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/CardMessage'
 
 export default class TextureAtlas {
 	static isReady = false
@@ -55,7 +55,7 @@ export default class TextureAtlas {
 			const response = await axios.get('/api/cards')
 			const cardMessages: CardMessage[] = response.data
 			const cards = cardMessages.map(cardMessage => {
-				const name = cardMessage.cardClass.substr(0, 1).toLowerCase() + cardMessage.cardClass.substr(1)
+				const name = cardMessage.class.substr(0, 1).toLowerCase() + cardMessage.class.substr(1)
 				return `cards/${name}`
 			})
 

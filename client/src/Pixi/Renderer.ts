@@ -1,12 +1,12 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import Constants from '@/Pixi/shared/Constants'
+import Constants from '@shared/Constants'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
 import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
-import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
+import RenderedUnit from '@/Pixi/board/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
-import CardType from '@/Pixi/shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import Settings from '@/Pixi/Settings'
 import CardTint from '@/Pixi/enums/CardTint'
@@ -264,10 +264,10 @@ export default class Renderer {
 			targetPosition.x -= this.getScreenWidth() * 0.2 / 2 + 125
 		}
 
-		const isPlayable = (renderedCard.cardType === CardType.UNIT && Core.player.unitMana > 0) || (renderedCard.cardType === CardType.SPELL && Core.player.spellMana > 0)
+		const isPlayable = (renderedCard.type === CardType.UNIT && Core.player.unitMana > 0) || (renderedCard.type === CardType.SPELL && Core.player.spellMana > 0)
 		sprite.tint = isPlayable ? 0xFFFFFF : 0x999999
 
-		if (renderedCard.cardType === CardType.SPELL) {
+		if (renderedCard.type === CardType.SPELL) {
 			renderedCard.powerText.style.fill = 0x0000AA
 		}
 
@@ -305,7 +305,7 @@ export default class Renderer {
 		const hoveredRow = Core.board.rows.find(row => row.isHovered())
 
 		let cardDisplayMode: CardDisplayMode
-		if (renderedCard.cardType === CardType.UNIT && hoveredRow) {
+		if (renderedCard.type === CardType.UNIT && hoveredRow) {
 			const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
 			sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 			sprite.height = cardHeight
@@ -413,7 +413,7 @@ export default class Renderer {
 		}
 	}
 
-	public renderCardOnBoard(unit: RenderedCardOnBoard, rowY: number, unitIndex: number, unitCount: number): void {
+	public renderCardOnBoard(unit: RenderedUnit, rowY: number, unitIndex: number, unitCount: number): void {
 		if (unit.card === Core.input.inspectedCard) {
 			return
 		}
@@ -463,7 +463,7 @@ export default class Renderer {
 		unit.card.setDisplayMode(CardDisplayMode.ON_BOARD)
 	}
 
-	private getUnitTint(unit: RenderedCardOnBoard): CardTint {
+	private getUnitTint(unit: RenderedUnit): CardTint {
 		const card = unit.card
 		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
 		if (Core.input.grabbedCard && Core.input.grabbedCard.card === unit.card) {
@@ -576,7 +576,7 @@ export default class Renderer {
 		container.position.y = this.getScreenHeight() / 2
 		container.zIndex = INSPECTED_CARD_ZINDEX
 
-		if (inspectedCard.cardType === CardType.SPELL) {
+		if (inspectedCard.type === CardType.SPELL) {
 			inspectedCard.powerText.style.fill = 0x0000AA
 		} else {
 			inspectedCard.powerText.style.fill = 0x000000

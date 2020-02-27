@@ -1,9 +1,9 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
-import CardColor from '../../../shared/enums/CardColor'
+import CardColor from '@shared/enums/CardColor'
 
 export default class UnitForestScout extends ServerCard {
 	bonusDamage = 10
@@ -20,7 +20,7 @@ export default class UnitForestScout extends ServerCard {
 		}
 	}
 
-	onBeforePerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit): void {
 		if (this.hasChargedAttack) {
 			target.dealDamageWithoutDestroying(ServerDamageInstance.fromUnit(this.bonusDamage, thisUnit))
 			this.hasChargedAttack = false
@@ -28,7 +28,7 @@ export default class UnitForestScout extends ServerCard {
 		this.hasAttackedThisTurn = true
 	}
 
-	onTurnEnded(thisUnit: ServerCardOnBoard): void {
+	onTurnEnded(thisUnit: ServerUnit): void {
 		if (!this.hasAttackedThisTurn) {
 			this.hasChargedAttack = true
 		}

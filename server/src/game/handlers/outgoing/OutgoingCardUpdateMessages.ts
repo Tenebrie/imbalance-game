@@ -1,13 +1,13 @@
 import ServerCard from '../../models/ServerCard'
 import ServerPlayer from '../../players/ServerPlayer'
-import CardMessage from '../../shared/models/network/CardMessage'
-import HiddenCardMessage from '../../shared/models/network/HiddenCardMessage'
+import CardMessage from '@shared/models/network/CardMessage'
+import HiddenCardMessage from '@shared/models/network/HiddenCardMessage'
 import ServerOwnedCard from '../../models/ServerOwnedCard'
 import ServerCardTarget from '../../models/ServerCardTarget'
-import CardTargetMessage from '../../shared/models/network/CardTargetMessage'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import ServerGame from '../../models/ServerGame'
-import CardVariablesMessage from '../../shared/models/network/CardVariablesMessage'
+import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 
 export default {
 	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard) {

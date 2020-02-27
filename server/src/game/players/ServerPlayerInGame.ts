@@ -1,23 +1,23 @@
 import ServerPlayer from './ServerPlayer'
 import ServerGame from '../models/ServerGame'
 import ServerCard from '../models/ServerCard'
-import PlayerInGame from '../shared/models/PlayerInGame'
-import ServerCardHand from '../models/ServerCardHand'
-import ServerCardDeck from '../models/ServerCardDeck'
+import PlayerInGame from '@shared/models/PlayerInGame'
+import ServerHand from '../models/ServerHand'
+import ServerDeck from '../models/ServerDeck'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerDamageInstance from '../models/ServerDamageSource'
-import ServerCardGraveyard from '../models/ServerCardGraveyard'
+import ServerGraveyard from '../models/ServerGraveyard'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
-import Constants from '../shared/Constants'
+import Constants from '@shared/Constants'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
 
 	game: ServerGame
 	player: ServerPlayer
-	cardHand: ServerCardHand
-	cardDeck: ServerCardDeck
-	cardGraveyard: ServerCardGraveyard
+	cardHand: ServerHand
+	cardDeck: ServerDeck
+	cardGraveyard: ServerGraveyard
 	morale: number
 	unitMana: number
 	spellMana: number
@@ -27,9 +27,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
 		this.game = game
 		this.player = player
-		this.cardHand = new ServerCardHand(game, this, [], [])
-		this.cardDeck = new ServerCardDeck(game, this, [], [])
-		this.cardGraveyard = new ServerCardGraveyard(this)
+		this.cardHand = new ServerHand(game, this, [], [])
+		this.cardDeck = new ServerDeck(game, this, [], [])
+		this.cardGraveyard = new ServerGraveyard(this)
 		this.morale = Constants.STARTING_PLAYER_MORALE
 		this.unitMana = 0
 		this.spellMana = 0

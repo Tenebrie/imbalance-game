@@ -1,10 +1,10 @@
-import CardType from '../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import CardColor from '../../shared/enums/CardColor'
-import CardTribe from '../../shared/enums/CardTribe'
+import CardColor from '@shared/enums/CardColor'
+import CardTribe from '@shared/enums/CardTribe'
 import ServerOwnedCard from '../../models/ServerOwnedCard'
-import ServerCardOnBoard from '../../models/ServerCardOnBoard'
+import ServerUnit from '../../models/ServerUnit'
 
 export default class UnitArcaneCrystal extends ServerCard {
 	charges = 0
@@ -15,7 +15,7 @@ export default class UnitArcaneCrystal extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 4
-		this.cardTribes = [CardTribe.BUILDING]
+		this.tribes = [CardTribe.BUILDING]
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated,
 			chargePerMana: this.chargePerMana,
@@ -27,12 +27,12 @@ export default class UnitArcaneCrystal extends ServerCard {
 	}
 
 	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void {
-		if (otherCard.card.cardType === CardType.SPELL) {
+		if (otherCard.card.type === CardType.SPELL) {
 			this.charges += otherCard.card.spellCost
 		}
 	}
 
-	onBeforeDestroyedAsUnit(thisUnit: ServerCardOnBoard): void {
+	onBeforeDestroyedAsUnit(thisUnit: ServerUnit): void {
 		thisUnit.owner.addSpellMana(Math.floor(this.charges / this.chargesForMana) * this.manaGenerated)
 	}
 }

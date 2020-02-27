@@ -1,12 +1,12 @@
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
 import ServerCardTarget from './ServerCardTarget'
-import TargetMode from '../shared/enums/TargetMode'
-import TargetType from '../shared/enums/TargetType'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
 import runCardEventHandler from '../utils/runCardEventHandler'
-import CardType from '../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
 
@@ -24,9 +24,9 @@ export default class ServerGameCardPlay {
 		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)
 
 		/* Deduct mana */
-		if (ownedCard.card.cardType === CardType.UNIT) {
+		if (ownedCard.card.type === CardType.UNIT) {
 			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - 1)
-		} else if (ownedCard.card.cardType === CardType.SPELL) {
+		} else if (ownedCard.card.type === CardType.SPELL) {
 			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - ownedCard.card.spellCost)
 		}
 	}
@@ -55,9 +55,9 @@ export default class ServerGameCardPlay {
 		}
 
 		/* Resolve card */
-		if (card.cardType === CardType.UNIT) {
+		if (card.type === CardType.UNIT) {
 			this.playUnit(ownedCard, rowIndex, unitIndex)
-		} else if (card.cardType === CardType.SPELL) {
+		} else if (card.type === CardType.SPELL) {
 			this.playSpell(ownedCard)
 		}
 
@@ -153,22 +153,22 @@ export default class ServerGameCardPlay {
 		const sourceUnit = target.sourceUnit
 		const sourceCard = target.sourceCard || sourceUnit.card
 
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
+		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
 			sourceCard.onUnitPlayTargetCardSelected(sourceUnit, target.targetCard)
 		}
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
+		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
 			sourceCard.onUnitPlayTargetUnitSelected(sourceUnit, target.targetUnit)
 		}
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
+		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
 			sourceCard.onUnitPlayTargetRowSelected(sourceUnit, target.targetRow)
 		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
+		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
 			sourceCard.onSpellPlayTargetCardSelected(playerInGame, target.targetCard)
 		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
+		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
 			sourceCard.onSpellPlayTargetUnitSelected(playerInGame, target.targetUnit)
 		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
+		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
 			sourceCard.onSpellPlayTargetRowSelected(playerInGame, target.targetRow)
 		}
 		this.cardResolveStack.pushTarget(target)
@@ -180,9 +180,9 @@ export default class ServerGameCardPlay {
 			return
 		}
 
-		if (sourceCard.cardType === CardType.UNIT) {
+		if (sourceCard.type === CardType.UNIT) {
 			sourceCard.onUnitPlayTargetsConfirmed(sourceUnit)
-		} else if (sourceCard.cardType === CardType.SPELL) {
+		} else if (sourceCard.type === CardType.SPELL) {
 			sourceCard.onSpellPlayTargetsConfirmed(playerInGame)
 		}
 		this.cardResolveStack.finishResolving()

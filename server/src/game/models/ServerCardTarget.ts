@@ -1,9 +1,9 @@
-import ServerCardOnBoard from './ServerCardOnBoard'
-import ServerGameBoardRow from './ServerGameBoardRow'
-import CardTarget from '../shared/models/CardTarget'
-import TargetMode from '../shared/enums/TargetMode'
-import TargetType from '../shared/enums/TargetType'
-import CardTargetMessage from '../shared/models/network/CardTargetMessage'
+import ServerUnit from './ServerUnit'
+import ServerBoardRow from './ServerBoardRow'
+import CardTarget from '@shared/models/CardTarget'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
@@ -13,10 +13,10 @@ export default class ServerCardTarget implements CardTarget {
 	targetType: TargetType
 	sourceCard?: ServerCard
 	sourceCardOwner?: ServerPlayerInGame
-	sourceUnit?: ServerCardOnBoard
+	sourceUnit?: ServerUnit
 	targetCard?: ServerCard
-	targetUnit?: ServerCardOnBoard
-	targetRow?: ServerGameBoardRow
+	targetUnit?: ServerUnit
+	targetRow?: ServerBoardRow
 	targetLabel: string
 
 	private constructor(targetMode: TargetMode, targetType: TargetType) {
@@ -32,7 +32,7 @@ export default class ServerCardTarget implements CardTarget {
 			this.targetRow === other.targetRow
 	}
 
-	public static cardTargetUnit(targetMode: TargetMode, orderedCard: ServerCard, targetUnit: ServerCardOnBoard, targetLabel = ''): ServerCardTarget {
+	public static cardTargetUnit(targetMode: TargetMode, orderedCard: ServerCard, targetUnit: ServerUnit, targetLabel = ''): ServerCardTarget {
 		const order = new ServerCardTarget(targetMode, TargetType.UNIT)
 		order.sourceCard = orderedCard
 		order.targetUnit = targetUnit
@@ -40,7 +40,7 @@ export default class ServerCardTarget implements CardTarget {
 		return order
 	}
 
-	public static cardTargetRow(targetMode: TargetMode, orderedCard: ServerCard, targetRow: ServerGameBoardRow, targetLabel = ''): ServerCardTarget {
+	public static cardTargetRow(targetMode: TargetMode, orderedCard: ServerCard, targetRow: ServerBoardRow, targetLabel = ''): ServerCardTarget {
 		const order = new ServerCardTarget(targetMode, TargetType.BOARD_ROW)
 		order.sourceCard = orderedCard
 		order.targetRow = targetRow
@@ -48,7 +48,7 @@ export default class ServerCardTarget implements CardTarget {
 		return order
 	}
 
-	public static unitTargetUnit(targetMode: TargetMode, orderedUnit: ServerCardOnBoard, targetUnit: ServerCardOnBoard, targetLabel = ''): ServerCardTarget {
+	public static unitTargetUnit(targetMode: TargetMode, orderedUnit: ServerUnit, targetUnit: ServerUnit, targetLabel = ''): ServerCardTarget {
 		const order = new ServerCardTarget(targetMode, TargetType.UNIT)
 		order.sourceUnit = orderedUnit
 		order.targetUnit = targetUnit
@@ -56,7 +56,7 @@ export default class ServerCardTarget implements CardTarget {
 		return order
 	}
 
-	public static unitTargetRow(targetMode: TargetMode, orderedUnit: ServerCardOnBoard, targetRow: ServerGameBoardRow, targetLabel = ''): ServerCardTarget {
+	public static unitTargetRow(targetMode: TargetMode, orderedUnit: ServerUnit, targetRow: ServerBoardRow, targetLabel = ''): ServerCardTarget {
 		const order = new ServerCardTarget(targetMode, TargetType.BOARD_ROW)
 		order.sourceUnit = orderedUnit
 		order.targetRow = targetRow
