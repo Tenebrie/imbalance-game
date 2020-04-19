@@ -37,7 +37,7 @@ export default {
 
 		if (!playerInGame.isAnyActionsAvailable()) {
 			playerInGame.endTurn()
-			game.advanceTurn()
+			game.advanceCurrentTurn()
 		}
 	},
 
@@ -54,7 +54,7 @@ export default {
 
 		if (!playerInGame.isAnyActionsAvailable()) {
 			playerInGame.endTurn()
-			game.advanceTurn()
+			game.advanceCurrentTurn()
 		}
 	},
 
@@ -71,7 +71,7 @@ export default {
 
 		if (!playerInGame.isAnyActionsAvailable()) {
 			playerInGame.endTurn()
-			game.advanceTurn()
+			game.advanceCurrentTurn()
 		}
 	},
 
@@ -84,7 +84,7 @@ export default {
 			player.endRound()
 		}
 
-		game.advanceTurn()
+		game.advanceCurrentTurn()
 	},
 
 	'system/init': (data: void, game: ServerGame, player: ServerPlayerInGame) => {

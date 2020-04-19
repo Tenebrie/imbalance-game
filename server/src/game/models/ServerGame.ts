@@ -77,8 +77,10 @@ export default class ServerGame extends Game {
 			OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, this.players.indexOf(playerInGame) === 1)
 		})
 
-		// this.board.rows[Constants.GAME_BOARD_ROW_COUNT - 1].setOwner(playerOne)
-		// this.board.rows[0].setOwner(playerTwo)
+		for (let i = 0; i < 3; i++) {
+			this.board.rows[i].setOwner(playerTwo)
+			this.board.rows[Constants.GAME_BOARD_ROW_COUNT - i - 1].setOwner(playerOne)
+		}
 
 		this.players.forEach(playerInGame => {
 			playerInGame.cardDeck.shuffle()
@@ -87,7 +89,7 @@ export default class ServerGame extends Game {
 			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
-		this.startNewTurnPhase()
+		this.startNextTurn()
 	}
 
 	public getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
@@ -129,7 +131,7 @@ export default class ServerGame extends Game {
 		return this.players.filter(playerInGame => !playerInGame.turnEnded).length === 0
 	}
 
-	public advanceTurn(): void {
+	public advanceCurrentTurn(): void {
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
 		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
@@ -159,13 +161,13 @@ export default class ServerGame extends Game {
 		} else if (this.turnPhase === GameTurnPhase.DEPLOY) {
 			this.startEndTurnPhase()
 		} else if (this.turnPhase === GameTurnPhase.TURN_END) {
-			this.startNewTurnPhase()
+			this.startNextTurn()
 		} else if (this.turnPhase === GameTurnPhase.ROUND_START) {
-			this.startNewTurnPhase()
+			this.startNextTurn()
 		}
 	}
 
-	private startNewTurnPhase(): void {
+	private startNextTurn(): void {
 		this.turnIndex += 1
 		this.setTurnPhase(GameTurnPhase.TURN_START)
 
@@ -176,6 +178,7 @@ export default class ServerGame extends Game {
 			unit.card.onTurnStarted(unit)
 			unit.card.buffs.onTurnStarted()
 		})
+
 		this.board.orders.clearPerformedOrders()
 		this.advancePhase()
 	}
@@ -188,7 +191,7 @@ export default class ServerGame extends Game {
 			OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
 		})
 
-		this.advanceTurn()
+		this.advanceCurrentTurn()
 	}
 
 	private startNextRound(): void {
@@ -220,10 +223,12 @@ export default class ServerGame extends Game {
 
 		this.board.getAllUnits().forEach(cardOnBoard => this.board.destroyUnit(cardOnBoard))
 
-		// this.board.rows[Constants.GAME_BOARD_ROW_COUNT - 1].setOwner(playerOne)
-		// this.board.rows[0].setOwner(playerTwo)
-		for (let i = 1; i < Constants.GAME_BOARD_ROW_COUNT - 1; i++) {
-			this.board.rows[i].setOwner(null)
+		// for (let i = 1; i < Constants.GAME_BOARD_ROW_COUNT - 1; i++) {
+		// 	this.board.rows[i].setOwner(null)
+		// }
+		for (let i = 0; i < 3; i++) {
+			this.board.rows[i].setOwner(playerTwo)
+			this.board.rows[Constants.GAME_BOARD_ROW_COUNT - i - 1].setOwner(playerOne)
 		}
 
 		this.players.forEach(playerInGame => {

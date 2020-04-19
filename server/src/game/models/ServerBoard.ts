@@ -40,20 +40,6 @@ export default class ServerBoard extends Board {
 		return adjacentRows
 	}
 
-	public getDeployDistance(targetRow: ServerBoardRow, playerInGame: ServerPlayerInGame): number {
-		const playersRows = this.rows.filter(row => row.owner === playerInGame)
-		if (playersRows.length === 0) {
-			return targetRow === this.getPlayerHomeRow(playerInGame) ? 0 : Infinity
-		}
-
-		const distanceToRow = playersRows.map(row => row.distanceTo(targetRow))
-		return distanceToRow.sort()[0]
-	}
-
-	public getPlayerHomeRow(playerInGame: ServerPlayerInGame): ServerBoardRow {
-		return this.rows[this.game.players.indexOf(playerInGame) === 0 ? Constants.GAME_BOARD_ROW_COUNT - 1 : 0]
-	}
-
 	public getTotalPlayerPower(playerInGame: ServerPlayerInGame): number {
 		return this.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card.power).reduce((total, value) => total + value, 0)
 	}

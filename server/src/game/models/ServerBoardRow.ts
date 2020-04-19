@@ -1,5 +1,4 @@
 import ServerGame from './ServerGame'
-import ServerCard from './ServerCard'
 import BoardRow from '@shared/models/BoardRow'
 import ServerUnit from './ServerUnit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
@@ -19,12 +18,10 @@ export default class ServerBoardRow extends BoardRow {
 
 	public insertUnit(unit: ServerUnit, ordinal: number): void {
 		this.cards.splice(ordinal, 0, unit)
-		this.updateOwner()
 	}
 
 	public removeUnit(targetCard: ServerUnit): void {
 		this.cards = this.cards.filter(cardOnBoard => cardOnBoard !== targetCard)
-		this.updateOwner()
 	}
 
 	public destroyUnit(targetCard: ServerUnit): void {
@@ -32,19 +29,6 @@ export default class ServerBoardRow extends BoardRow {
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitDestroyed(playerInGame.player, targetCard)
 		})
-		this.updateOwner()
-	}
-
-	public updateOwner(): void {
-		const playerOneUnits = this.cards.filter(card => card.owner === this.game.players[0])
-		const playerTwoUnits = this.cards.filter(card => card.owner === this.game.players[1])
-		if (playerOneUnits.length === 0 && playerTwoUnits.length === 0) {
-			this.setOwner(null)
-		} else if (playerOneUnits.length > 0) {
-			this.setOwner(this.game.players[0])
-		} else if (playerTwoUnits.length > 0) {
-			this.setOwner(this.game.players[1])
-		}
 	}
 
 	public setOwner(player: ServerPlayerInGame | null): void {

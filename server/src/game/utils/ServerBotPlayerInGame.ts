@@ -58,7 +58,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		})
 		const selectedCard = cards[0]
 
-		let validRows = this.game.board.rows.filter(row => this.game.board.getDeployDistance(row, this) <= 1)
+		let validRows = this.game.board.rows.filter(row => row.owner === this)
 
 		const distanceFromFront = selectedCard.attackRange - 1
 		const targetRow = validRows[Math.min(distanceFromFront, validRows.length - 1)]

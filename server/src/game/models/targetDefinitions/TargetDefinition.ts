@@ -70,7 +70,7 @@ export default class TargetDefinition {
 				const distanceToRow = Math.abs(thisUnit.rowIndex - targetRow.index)
 				const rowIsFull = targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW
 
-				return distanceToRow === 1 && !rowIsFull && (targetRow.owner === thisUnit.owner || targetRow.owner === null || targetRow.cards.length === 0)
+				return distanceToRow === 1 && !rowIsFull && targetRow.owner === thisUnit.owner
 			})
 			.validate(TargetMode.ORDER_ATTACK, TargetType.UNIT, (args: TargetValidatorArguments) => {
 				const thisUnit = args.thisUnit
@@ -85,7 +85,7 @@ export default class TargetDefinition {
 			.actions(1)
 			.allow(TargetMode.ON_PLAY_VALID_TARGET, TargetType.BOARD_ROW)
 			.validate(TargetMode.ON_PLAY_VALID_TARGET, TargetType.BOARD_ROW, (args: TargetValidatorArguments) => {
-				return args.thisCard.type === CardType.SPELL || game.board.getDeployDistance(args.targetRow, args.thisCardOwner) <= 1
+				return args.thisCard.type === CardType.SPELL || args.targetRow.owner === args.thisCardOwner
 			})
 	}
 }
