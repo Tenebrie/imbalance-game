@@ -7,13 +7,13 @@ import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import Core from '@/Pixi/Core'
 
 export default class RenderedGameBoard extends Board {
-	rows: RenderedGameBoardRow[]
-	unitsOnHold: RenderedUnit[]
-	isInverted = false
-	validOrders: ClientCardTarget[]
-	validOpponentOrders: ClientCardTarget[]
+	public rows: RenderedGameBoardRow[]
+	public unitsOnHold: RenderedUnit[]
+	public isInverted = false
+	public validOrders: ClientCardTarget[]
+	public validOpponentOrders: ClientCardTarget[]
 
-	constructor() {
+	public constructor() {
 		super()
 		this.rows = []
 		this.unitsOnHold = []

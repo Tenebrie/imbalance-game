@@ -1,4 +1,5 @@
 {
+	"root": true,
     "env": {
         "es6": true,
         "node": true
@@ -15,11 +16,8 @@
         "ecmaVersion": 2018,
         "sourceType": "module"
     },
-	"plugins": [
-		"flowtype"
-	],
     "rules": {
-        "indent": [
+        "@typescript-eslint/indent": [
             "error",
             "tab",
             {
@@ -38,11 +36,17 @@
             "error",
             "never"
         ],
+		"no-tabs": "off",
+		"no-trailing-spaces": "off",
+		"object-curly-spacing": "warn",
+		"space-before-function-paren": "off",
+		"no-mixed-spaces-and-tabs": "error",
 		"@typescript-eslint/no-namespace": "off",
 		"@typescript-eslint/member-delimiter-style": "off",
 		"@typescript-eslint/no-var-requires": "off",
 		"@typescript-eslint/no-unused-vars": "off",
 		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/explicit-member-accessibility": "off",
 		"@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/no-non-null-assertion": "off"
 	}

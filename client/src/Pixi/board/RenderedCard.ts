@@ -31,13 +31,13 @@ export default class RenderedCard extends Card {
 	private readonly manacostTextBackground: PIXI.Sprite
 	private readonly descriptionTextBackground: DescriptionTextBackground
 
-	readonly powerText: ScalingText
+	public readonly powerText: ScalingText
 	private readonly cardNameText: ScalingText
 	private readonly cardTitleText: ScalingText
 	private readonly cardTribeTexts: ScalingText[]
 	private readonly cardDescriptionText: RichText
 
-	constructor(message: CardMessage) {
+	public constructor(message: CardMessage) {
 		super(message.id, message.type, message.class)
 		this.id = message.id
 		this.type = message.type

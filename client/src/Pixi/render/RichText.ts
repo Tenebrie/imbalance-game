@@ -14,18 +14,18 @@ enum SegmentType {
 	LINE_SEPARATOR = 'LINE_SEPARATOR'
 }
 
-type ParsingStateTransitionTrigger = {
+interface ParsingStateTransitionTrigger {
 	state: SegmentType
 	token: string
 }
 
-type ParsingStateTransitionAction = {
+interface ParsingStateTransitionAction {
 	state: SegmentType
 	insertedSegment?: SegmentType
 	postSegment?: SegmentType
 }
 
-type Segment = {
+interface Segment {
 	type: SegmentType
 	data?: string
 }

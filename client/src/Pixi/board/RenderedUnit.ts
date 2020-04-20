@@ -5,18 +5,18 @@ import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import UnitMessage from '@shared/models/network/UnitMessage'
 
 export default class RenderedUnit extends Unit {
-	card: RenderedCard
-	owner: ClientPlayerInGame
+	public card: RenderedCard
+	public owner: ClientPlayerInGame
 
-	get rowIndex(): number {
+	public get rowIndex(): number {
 		return Core.board.rows.indexOf(Core.board.getRowWithCard(this)!)
 	}
 
-	get unitIndex(): number {
+	public get unitIndex(): number {
 		return Core.board.rows[this.rowIndex].cards.indexOf(this)
 	}
 
-	constructor(card: RenderedCard, owner: ClientPlayerInGame) {
+	public constructor(card: RenderedCard, owner: ClientPlayerInGame) {
 		super(card, owner)
 		this.card = card
 		this.owner = owner

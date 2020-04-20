@@ -7,13 +7,13 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
 export default class RenderedGameBoardRow extends BoardRow {
-	cards: RenderedUnit[]
-	container: PIXI.Container
-	owner: ClientPlayerInGame | null
+	public cards: RenderedUnit[]
+	public container: PIXI.Container
+	public owner: ClientPlayerInGame | null
 
-	readonly sprite: PIXI.Sprite
+	public readonly sprite: PIXI.Sprite
 
-	constructor(index: number) {
+	public constructor(index: number) {
 		super(index)
 		this.cards = []
 		this.owner = null

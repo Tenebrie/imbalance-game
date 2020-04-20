@@ -1,6 +1,5 @@
 import CardMessage from '@shared/models/network/CardMessage'
 import CardDeck from '@shared/models/CardDeck'
-import Card from '@shared/models/Card'
 
 export default class ClientCardGraveyard implements CardDeck {
 	unitCards: CardMessage[]

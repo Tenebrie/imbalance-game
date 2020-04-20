@@ -22,7 +22,7 @@
 		"@vue/cli-plugin-babel": "^4.1.0",
 		"@vue/cli-plugin-eslint": "^4.1.0",
 		"@vue/cli-plugin-router": "^4.1.0",
-		"@vue/cli-plugin-typescript": "^4.1.0",
+		"@vue/cli-plugin-typescript": "^4.3.1",
 		"@vue/cli-plugin-vuex": "^4.1.0",
 		"@vue/cli-service": "^4.1.0",
 		"@vue/eslint-config-standard": "^4.0.0",
@@ -40,12 +40,10 @@
 		]
 	},
 	"eslintConfig": {
-		"root": true,
 		"env": {
 			"node": true
 		},
 		"extends": [
-			"plugin:vue/essential",
 			"@vue/standard",
 			"@vue/typescript"
 		],
@@ -78,10 +76,8 @@
 			"@typescript-eslint/no-var-requires": "off",
 			"@typescript-eslint/no-unused-vars": "off",
 			"@typescript-eslint/no-explicit-any": "off",
-			"@typescript-eslint/explicit-function-return-type": "off"
-		},
-		"parserOptions": {
-			"parser": "@typescript-eslint/parser"
+			"@typescript-eslint/explicit-function-return-type": "off",
+			"@typescript-eslint/no-use-before-define": "off"
 		}
 	},
 	"browserslist": [

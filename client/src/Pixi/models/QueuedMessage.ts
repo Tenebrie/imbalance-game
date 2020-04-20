@@ -1,4 +1,4 @@
-type QueuedMessage = {
+interface QueuedMessage {
 	handler: (data: any) => void
 	data: any
 }

@@ -60,7 +60,7 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		return this
 	}
 
-	public allow(reason: TargetMode, type: TargetType, atMost: number = 1): StandardTargetDefinitionBuilder {
+	public allow(reason: TargetMode, type: TargetType, atMost = 1): StandardTargetDefinitionBuilder {
 		this.targetOfTypeCount[reason][type] = atMost
 		return this
 	}
