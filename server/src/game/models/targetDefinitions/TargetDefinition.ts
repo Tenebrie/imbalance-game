@@ -75,7 +75,7 @@ export default class TargetDefinition {
 			.validate(TargetMode.ORDER_ATTACK, TargetType.UNIT, (args: TargetValidatorArguments) => {
 				const thisUnit = args.thisUnit
 				const targetUnit = args.targetUnit!
-				const distanceToTarget = Math.abs(thisUnit.rowIndex - targetUnit.rowIndex)
+				const distanceToTarget = game.board.getVerticalUnitDistance(thisUnit, targetUnit)
 				return distanceToTarget <= thisUnit.card.attackRange && targetUnit.owner === game.getOpponent(thisUnit.owner)
 			})
 	}

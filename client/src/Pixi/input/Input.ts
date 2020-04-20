@@ -20,8 +20,8 @@ const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
 
 export default class Input {
-	leftMouseDown: boolean = false
-	rightMouseDown: boolean = false
+	leftMouseDown = false
+	rightMouseDown = false
 	mousePosition: PIXI.Point = new PIXI.Point(-10000, -10000)
 	cardLimbo: RenderedCard[] = []
 	hoveredCard: HoveredCard | null = null
@@ -48,10 +48,7 @@ export default class Input {
 			if (this.rightMouseDown) { this.inspectCard() }
 		})
 
-		document.addEventListener('contextmenu', (event: MouseEvent) => {
-			event.preventDefault()
-			return false
-		})
+		document.addEventListener('contextmenu', this.onContextMenuOpened)
 	}
 
 	public tick(): void {
@@ -236,7 +233,13 @@ export default class Input {
 
 		Core.registerCard(cardInLimbo)
 		this.clearCardInLimbo(cardMessage)
+
 		return cardInLimbo
+	}
+
+	private onContextMenuOpened(event: MouseEvent) {
+		event.preventDefault()
+		return false
 	}
 
 	public clearCardInLimbo(cardMessage: CardMessage): void {
@@ -252,6 +255,6 @@ export default class Input {
 	}
 
 	public clear() {
-		// TODO: Remove event listeners
+		document.removeEventListener('contextmenu', this.onContextMenuOpened)
 	}
 }

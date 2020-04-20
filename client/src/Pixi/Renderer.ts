@@ -45,6 +45,7 @@ export default class Renderer {
 	HOVERED_HAND_WINDOW_FRACTION = 0.3
 	GAME_BOARD_OFFSET_FRACTION = -0.075
 	OPPONENT_HAND_OFFSET_FRACTION = -0.15
+	ANNOUNCED_CARD_WINDOW_FRACTION = 0.40
 	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
 
 	constructor(container: HTMLElement) {
@@ -264,7 +265,7 @@ export default class Renderer {
 			targetPosition.x -= this.getScreenWidth() * 0.2 / 2 + 125
 		}
 
-		const isPlayable = (renderedCard.type === CardType.UNIT && Core.player.unitMana > 0) || (renderedCard.type === CardType.SPELL && Core.player.spellMana > 0)
+		const isPlayable = (renderedCard.type === CardType.UNIT && Core.player.unitMana > 0) || (renderedCard.type === CardType.SPELL && Core.player.spellMana >= renderedCard.spellCost)
 		sprite.tint = isPlayable ? 0xFFFFFF : 0x999999
 
 		if (renderedCard.type === CardType.SPELL) {
@@ -351,12 +352,10 @@ export default class Renderer {
 
 	public renderGameBoard(gameBoard: RenderedGameBoard): void {
 		let rows = gameBoard.rows.slice()
-		let playerPowerLabelRow = Constants.GAME_BOARD_ROW_COUNT - 1
-		let opponentPowerLabelRow = 0
+		const playerPowerLabelRow = Constants.GAME_BOARD_ROW_COUNT - 2
+		const opponentPowerLabelRow = 1
 		if (gameBoard.isInverted) {
 			rows = rows.reverse()
-			playerPowerLabelRow = 0
-			opponentPowerLabelRow = Constants.GAME_BOARD_ROW_COUNT - 1
 		}
 		for (let i = 0; i < rows.length; i++) {
 			this.renderGameBoardRow(rows[i], i)
@@ -599,6 +598,10 @@ export default class Renderer {
 		sprite.scale.set(Settings.superSamplingLevel)
 		container.visible = true
 		container.zIndex = INSPECTED_CARD_ZINDEX
+
+		const cardHeight = this.getScreenHeight() * this.ANNOUNCED_CARD_WINDOW_FRACTION
+		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
+		sprite.height = cardHeight
 
 		if (announcedCard.displayMode !== CardDisplayMode.ANNOUNCED) {
 			container.position.x = -sprite.width / 2

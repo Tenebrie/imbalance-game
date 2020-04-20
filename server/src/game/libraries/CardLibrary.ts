@@ -21,9 +21,9 @@ import HeroRider1Famine from '../cards/experimental/heroes/HeroRider1Famine'
 import HeroRider2Conquest from '../cards/experimental/heroes/HeroRider2Conquest'
 import HeroRider3War from '../cards/experimental/heroes/HeroRider3War'
 import HeroRider4Death from '../cards/experimental/heroes/HeroRider4Death'
-import SpellSpark from '../cards/experimental/spells/SpellSpark'
+import SpellSpark from '../cards/arcane/SpellSpark'
 import UnitSupplyWagon from '../cards/neutral/UnitSupplyWagon'
-import SpellSpeedPotion from '../cards/experimental/spells/SpellSpeedPotion'
+import SpellSpeedPotion from '../cards/arcane/SpellSpeedPotion'
 import UnitArcaneElemental from '../cards/arcane/UnitArcaneElemental'
 import HeroZamarath from '../cards/arcane/HeroZamarath'
 import HeroSparklingSpirit from '../cards/arcane/HeroSparklingSpirit'
@@ -32,7 +32,8 @@ import UnitStoneElemental from '../cards/arcane/UnitStoneElemental'
 import UnitTinySparkling from '../cards/arcane/UnitTinySparkling'
 import UnitArcaneCrystal from '../cards/arcane/UnitArcaneCrystal'
 import UnitIceSkinCrystal from '../cards/arcane/UnitIceSkinCrystal'
-import SpellPermafrost from '../cards/experimental/spells/SpellPermafrost'
+import SpellPermafrost from '../cards/arcane/SpellPermafrost'
+import HeroRagingElemental from '../cards/arcane/HeroRagingElemental'
 
 export default class GameLibrary {
 	static cards: any[]
@@ -48,6 +49,7 @@ export default class GameLibrary {
 			HeroRider4Death,
 			HeroZamarath,
 			HeroSparklingSpirit,
+			HeroRagingElemental,
 			UnitPossessedVulture,
 			UnitRavenMessenger,
 			UnitMadBerserker,

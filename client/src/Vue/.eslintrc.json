@@ -1,0 +1,45 @@
+{
+	"root": true,
+	"env": {
+		"node": true
+	},
+	"extends": [
+		"plugin:vue/essential",
+		"@vue/typescript"
+	],
+	"rules": {
+		"indent": [
+			"error",
+			"tab",
+			{
+				"SwitchCase": 1
+			}
+		],
+		"linebreak-style": [
+			"error",
+			"unix"
+		],
+		"quotes": [
+			"error",
+			"single"
+		],
+		"semi": [
+			"error",
+			"never"
+		],
+		"no-tabs": "off",
+		"no-trailing-spaces": "off",
+		"object-curly-spacing": [
+			"warn",
+			"always"
+		],
+		"space-before-function-paren": "off",
+		"@typescript-eslint/no-namespace": "off",
+		"@typescript-eslint/member-delimiter-style": "off",
+		"@typescript-eslint/no-var-requires": "off",
+		"@typescript-eslint/no-unused-vars": "off",
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/explicit-function-return-type": "off",
+		"@typescript-eslint/no-use-before-define": "off"
+	}
+}

@@ -4,7 +4,7 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 export default class ObjectTrail {
 	public readonly rope: PIXI.SimpleRope
 	private readonly points: PIXI.Point[]
-	private isInitialized: boolean = false
+	private isInitialized = false
 
 	public constructor(startingPosition: PIXI.Point) {
 		this.points = []

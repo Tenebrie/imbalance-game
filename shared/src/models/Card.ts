@@ -3,6 +3,7 @@ import CardType from '../enums/CardType'
 import CardTribe from '../enums/CardTribe'
 import CardColor from '../enums/CardColor'
 import RichTextVariables from './RichTextVariables'
+import CardFeature from '../enums/CardFeature'
 
 export default class Card {
 	id: string
@@ -14,6 +15,7 @@ export default class Card {
 	title: string
 	buffs: BuffContainer
 	tribes: CardTribe[]
+	features: CardFeature[]
 	description: string
 	variables: RichTextVariables
 
@@ -38,6 +40,7 @@ export default class Card {
 		this.title = ''
 		this.buffs = new BuffContainer(this)
 		this.tribes = []
+		this.features = []
 		this.description = ''
 	}
 

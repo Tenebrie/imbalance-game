@@ -41,8 +41,4 @@ export default class ServerBoardRow extends BoardRow {
 			OutgoingMessageHandlers.notifyAboutRowOwnershipChanged(playerInGame.player, this)
 		})
 	}
-
-	public distanceTo(targetRow: ServerBoardRow): number {
-		return Math.abs(this.index - targetRow.index)
-	}
 }

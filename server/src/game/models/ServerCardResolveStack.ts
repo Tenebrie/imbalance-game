@@ -70,7 +70,6 @@ export default class ServerCardResolveStack {
 
 		const resolvedCard = resolvedEntry.ownedCard
 		if (resolvedCard.card.type === CardType.SPELL) {
-			resolvedCard.owner.refillSpellHand()
 			resolvedCard.owner.cardGraveyard.addSpell(resolvedCard.card)
 		}
 

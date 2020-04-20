@@ -3,8 +3,8 @@ import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
-import ServerOwnedCard from '../../models/ServerOwnedCard'
 import ServerUnit from '../../models/ServerUnit'
+import ServerOwnedCard from '../../models/ServerOwnedCard'
 import BuffDecayingArmor from '../../buffs/BuffDecayingArmor'
 
 export default class UnitIceSkinCrystal extends ServerCard {

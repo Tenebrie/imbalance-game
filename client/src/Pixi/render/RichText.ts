@@ -208,13 +208,13 @@ export default class RichText extends PIXI.Container {
 		}
 		segments.push({ type: currentState, data: currentData || '' })
 
-		let contextPosition = new PIXI.Point(0, 0)
+		const contextPosition = new PIXI.Point(0, 0)
 		let contextHighlight = false
 		let contextItalic = false
 		let contextColor = this.fill
-		let contextColorStack: number[] = []
+		const contextColorStack: number[] = []
 		let contextConditionStatus = true
-		let contextConditionStack: boolean[] = []
+		const contextConditionStack: boolean[] = []
 		let currentLine: { text: ScalingText, basePosition: PIXI.Point }[] = []
 
 		const newLine = () => {

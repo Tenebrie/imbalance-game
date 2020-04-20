@@ -5,7 +5,7 @@ import ServerUnit from '../models/ServerUnit'
 
 export default class BuffImmunity extends ServerBuff {
 	constructor() {
-		super(BuffStackType.OVERLAY);
+		super(BuffStackType.OVERLAY)
 	}
 
 	getDamageTaken(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number {

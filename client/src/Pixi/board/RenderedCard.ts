@@ -13,6 +13,7 @@ import CardMessage from '@shared/models/network/CardMessage'
 import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import DescriptionTextBackground from '@/Pixi/render/DescriptionTextBackground'
+import CardColor from '@shared/enums/CardColor'
 
 export default class RenderedCard extends Card {
 	public variables: RichTextVariables
@@ -76,6 +77,22 @@ export default class RenderedCard extends Card {
 		internalContainer.position.x = -this.sprite.texture.width / 2
 		internalContainer.position.y = -this.sprite.texture.height / 2
 		this.sprite.addChild(internalContainer)
+
+		/* Card quality overlay */
+		let overlaySprite
+		if (this.type === CardType.UNIT && this.color === CardColor.BRONZE) {
+			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-unit-bronze'))
+		} else if (this.type === CardType.UNIT && this.color === CardColor.SILVER) {
+			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-unit-silver'))
+		} else if (this.type === CardType.UNIT && this.color === CardColor.GOLDEN) {
+			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-unit-golden'))
+		} else if (this.type === CardType.SPELL) {
+			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-spell'))
+		}
+		if (overlaySprite) {
+			overlaySprite.anchor.set(0.5, 0.5)
+			this.sprite.addChild(overlaySprite)
+		}
 
 		/* Card attributes */
 		this.unitModeAttributes = new CardAttributes(this, CardDisplayMode.ON_BOARD)
@@ -143,6 +160,10 @@ export default class RenderedCard extends Card {
 
 	public getPosition(): PIXI.Point {
 		return new PIXI.Point(this.hitboxSprite.position.x, this.hitboxSprite.position.y)
+	}
+
+	public get spellCost(): number {
+		return this.power
 	}
 
 	public isHovered(): boolean {

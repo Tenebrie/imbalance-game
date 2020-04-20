@@ -31,9 +31,9 @@ export default class CardAttributes extends PIXI.Container {
 
 		const width = Math.round(this.getCardAttributesWidth())
 
-		let leftPartTexture = TextureAtlas.getTexture('components/bg-stats-left')
+		const leftPartTexture = TextureAtlas.getTexture('components/bg-stats-left')
 		let rightPartTexture = TextureAtlas.getTexture('components/bg-stats-right')
-		let middlePartTexture = TextureAtlas.getTexture('components/bg-stats-middle')
+		const middlePartTexture = TextureAtlas.getTexture('components/bg-stats-middle')
 		if (this.displayMode === CardDisplayMode.ON_BOARD) {
 			rightPartTexture = TextureAtlas.getTexture('components/bg-stats-right-zoom')
 		}

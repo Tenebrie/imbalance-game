@@ -9,6 +9,8 @@ import runCardEventHandler from '../utils/runCardEventHandler'
 import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
+import CardFeature from '@shared/enums/CardFeature'
+import CardLibrary from '../libraries/CardLibrary'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -97,6 +99,11 @@ export default class ServerGameCardPlay {
 		/* Invoke the card onPlay effect */
 		runCardEventHandler(() => card.onPlayedAsSpell(owner))
 
+		/* Push hero powers to the spell deck */
+		if (card.features.includes(CardFeature.HERO_POWER)) {
+			owner.cardDeck.addSpell(CardLibrary.instantiate(card))
+		}
+
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
 			return
@@ -106,7 +113,7 @@ export default class ServerGameCardPlay {
 	}
 
 	private checkCardTargeting(ownedCard: ServerOwnedCard): void {
-		let validTargets = this.getValidTargets()
+		const validTargets = this.getValidTargets()
 
 		if (validTargets.length === 0) {
 			this.cardResolveStack.finishResolving()

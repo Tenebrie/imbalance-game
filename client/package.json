@@ -25,10 +25,16 @@
 		"@vue/cli-plugin-typescript": "^4.3.1",
 		"@vue/cli-plugin-vuex": "^4.1.0",
 		"@vue/cli-service": "^4.1.0",
-		"@vue/eslint-config-standard": "^4.0.0",
-		"@vue/eslint-config-typescript": "^4.0.0",
-		"eslint": "^5.16.0",
-		"eslint-plugin-vue": "^5.0.0",
+		"@vue/eslint-config-standard": "^5.1.2",
+		"@vue/eslint-config-typescript": "^5.0.2",
+		"eslint": "^6.8.0",
+		"eslint-plugin-vue": "^6.2.2",
+		"eslint-plugin-import": "^2.20.2",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-promise": "^4.2.1",
+		"eslint-plugin-standard": "^4.0.1",
+		"@typescript-eslint/eslint-plugin": "^2.29.0",
+		"@typescript-eslint/parser": "^2.29.0",
 		"node-sass": "^4.13.1",
 		"sass-loader": "^8.0.0",
 		"typescript": "~3.5.3",
@@ -38,47 +44,6 @@
 		"plugins": [
 			"@babel/plugin-syntax-dynamic-import"
 		]
-	},
-	"eslintConfig": {
-		"env": {
-			"node": true
-		},
-		"extends": [
-			"@vue/standard",
-			"@vue/typescript"
-		],
-		"rules": {
-			"indent": [
-				"error",
-				"tab",
-				{
-					"SwitchCase": 1
-				}
-			],
-			"linebreak-style": [
-				"error",
-				"unix"
-			],
-			"quotes": [
-				"error",
-				"single"
-			],
-			"semi": [
-				"error",
-				"never"
-			],
-			"no-tabs": "off",
-			"no-trailing-spaces": "off",
-			"object-curly-spacing": "warn",
-			"space-before-function-paren": "off",
-			"@typescript-eslint/no-namespace": "off",
-			"@typescript-eslint/member-delimiter-style": "off",
-			"@typescript-eslint/no-var-requires": "off",
-			"@typescript-eslint/no-unused-vars": "off",
-			"@typescript-eslint/no-explicit-any": "off",
-			"@typescript-eslint/explicit-function-return-type": "off",
-			"@typescript-eslint/no-use-before-define": "off"
-		}
 	},
 	"browserslist": [
 		"> 1%",

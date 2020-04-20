@@ -52,6 +52,9 @@
 	"card.name.heroSparklingSpirit": "Sparkling Spirit",
 	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
 
+	"card.name.heroRagingElemental": "Raging Elemental",
+	"card.description.heroRagingElemental": "When {name} drops below {powerThreshold} Power, it deals Damage equal to own Power to closest opposing enemy units. <p>Then, it destroys itself.",
+
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "Every *3* turns {name} survives on the board, it draws a card",
 

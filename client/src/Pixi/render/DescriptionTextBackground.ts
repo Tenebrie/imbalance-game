@@ -19,7 +19,7 @@ export default class DescriptionTextBackground extends PIXI.Container implements
 			this.removeChildAt(0)
 		}
 
-		let contextPosition = new PIXI.Point(0, 0)
+		const contextPosition = new PIXI.Point(0, 0)
 
 		const topSection = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-description-top'))
 		this.addChild(topSection)

@@ -34,7 +34,7 @@ export default class ServerBoard extends Board {
 	}
 
 	public getAdjacentRows(targetRow: ServerBoardRow): ServerBoardRow[] {
-		let adjacentRows = []
+		const adjacentRows = []
 		if (targetRow.index > 0) { adjacentRows.push(this.game.board.rows[targetRow.index - 1]) }
 		if (targetRow.index < Constants.GAME_BOARD_ROW_COUNT - 1) { adjacentRows.push(this.game.board.rows[targetRow.index + 1]) }
 		return adjacentRows
@@ -50,11 +50,31 @@ export default class ServerBoard extends Board {
 		return Math.abs(firstOffsetFromCenter - secondOffsetFromCenter)
 	}
 
+	public getVerticalUnitDistance(firstUnit: ServerUnit, secondUnit: ServerUnit): number {
+		const firstUnitRowIndex = firstUnit.rowIndex
+		const secondUnitRowIndex = secondUnit.rowIndex
+		const smallIndex = Math.min(firstUnitRowIndex, secondUnitRowIndex)
+		const largeIndex = Math.max(firstUnitRowIndex, secondUnitRowIndex)
+		if (smallIndex === largeIndex) {
+			return 0
+		}
+
+		const obstacleRows = []
+		for (let i = smallIndex + 1; i < largeIndex; i++) {
+			const row = this.rows[i]
+			if (row.cards.length > 0) {
+				obstacleRows.push(row)
+			}
+		}
+
+		return obstacleRows.length + 1
+	}
+
 	public getTotalBuffIntensityForPlayer(buffPrototype: any, player: ServerPlayerInGame): number {
 		return this.getUnitsOwnedByPlayer(player).map(unit => unit.card.buffs.getIntensity(buffPrototype)).reduce((total, value) => total + value, 0)
 	}
 
-	public getAllUnits() {
+	public getAllUnits(): ServerUnit[] {
 		return Utils.flat(this.rows.map(row => row.cards))
 	}
 

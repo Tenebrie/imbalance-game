@@ -17,6 +17,7 @@ import ServerGameCardPlay from './ServerGameCardPlay'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
+import runCardEventHandler from '../utils/runCardEventHandler'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -143,11 +144,16 @@ export default class ServerGame extends Game {
 			return
 		}
 
-		if (this.playersToMove.length > 0) {
-			const playerToMove = this.playersToMove.shift()
-			playerToMove.setUnitMana(1)
+		let playerToMove = this.playersToMove.shift()
+		if (playerToMove && playerToMove.roundEnded) {
+			playerToMove.onTurnStart()
+			playerToMove.onTurnEnd()
+			playerToMove = this.playersToMove.shift()
+		}
+
+		if (playerToMove) {
 			playerToMove.startTurn()
-			return
+			playerToMove.setUnitMana(1)
 		}
 
 		if (this.isPhaseFinished()) {
@@ -171,13 +177,7 @@ export default class ServerGame extends Game {
 		this.turnIndex += 1
 		this.setTurnPhase(GameTurnPhase.TURN_START)
 
-		this.playersToMove = this.players.filter(player => !player.roundEnded)
-
-		this.board.getAllUnits().forEach(unit => {
-			unit.hasSummoningSickness = false
-			unit.card.onTurnStarted(unit)
-			unit.card.buffs.onTurnStarted()
-		})
+		this.playersToMove = this.players.slice()
 
 		this.board.orders.clearPerformedOrders()
 		this.advancePhase()
@@ -242,10 +242,6 @@ export default class ServerGame extends Game {
 
 	private startEndTurnPhase(): void {
 		this.setTurnPhase(GameTurnPhase.TURN_END)
-		this.board.getAllUnits().forEach(unit => {
-			unit.card.onTurnEnded(unit)
-			unit.card.buffs.onTurnEnded()
-		})
 		this.advancePhase()
 	}
 
@@ -278,6 +274,10 @@ export default class ServerGame extends Game {
 	}
 
 	public findOwnedCardById(cardId: string): ServerOwnedCard | null {
+		const cardOnBoard = this.board.findUnitById(cardId)
+		if (cardOnBoard) {
+			return cardOnBoard
+		}
 		const cardInStack = this.cardPlay.cardResolveStack.findCardById(cardId)
 		if (cardInStack) {
 			return cardInStack

@@ -21,6 +21,7 @@ import ServerBuffContainer from './ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import ServerOwnedCard from './ServerOwnedCard'
+import BuffImmunity from '../buffs/BuffImmunity'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -51,9 +52,9 @@ export default class ServerCard extends Card {
 	setPower(value: number): void {
 		if (this.power === value) { return }
 
+		this.power = value
 		runCardEventHandler(() => this.onPowerChanged(value, this.power))
 
-		this.power = value
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutCardPowerChange(playerInGame.player, this)
 		})
@@ -128,6 +129,7 @@ export default class ServerCard extends Card {
 
 		const unitTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.UNIT)
 		return this.game.board.getAllUnits()
+			.filter(unit => !unit.card.buffs.has(BuffImmunity))
 			.filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { ...args, thisCard: this, targetUnit: unit, previousTargets: previousTargets }))
 			.map(targetUnit => ServerCardTarget.cardTargetUnit(targetMode, this, targetUnit, unitTargetLabel))
 	}

@@ -39,7 +39,9 @@ export default class ServerBuff implements Buff {
 
 	public setDuration(value: number): void {
 		this.duration = value
+		console.log(`Remaining duration: ${this.duration}`)
 		if (this.duration <= 0) {
+			console.log('Removing')
 			this.card.buffs.removeByReference(this)
 		}
 	}

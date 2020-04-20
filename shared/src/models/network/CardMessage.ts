@@ -5,6 +5,7 @@ import RichTextVariables from '../RichTextVariables'
 import BuffContainer from '../BuffContainer'
 import CardBuffsMessage from './CardBuffsMessage'
 import CardColor from '../../enums/CardColor'
+import CardFeature from '../../enums/CardFeature'
 
 export default class CardMessage implements Card {
 	id: string
@@ -16,6 +17,7 @@ export default class CardMessage implements Card {
 	title: string
 	buffs: BuffContainer
 	tribes: CardTribe[]
+	features: CardFeature[]
 	description: string
 	variables: RichTextVariables
 
@@ -39,6 +41,7 @@ export default class CardMessage implements Card {
 		this.title = card.title
 		this.buffs = new CardBuffsMessage(card.buffs)
 		this.tribes = card.tribes.slice()
+		this.features = card.features.slice()
 		this.description = card.description
 		this.variables = card.evaluateVariables()
 

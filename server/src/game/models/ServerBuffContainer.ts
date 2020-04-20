@@ -93,13 +93,14 @@ export default class ServerBuffContainer implements BuffContainer {
 
 	public onTurnStarted(): void {
 		this.buffs.forEach(buff => {
-			buff.onTurnStarted()
+			runCardEventHandler(() => buff.onTurnStarted())
+			buff.addDuration(-1)
 		})
 	}
 
 	public onTurnEnded(): void {
 		this.buffs.forEach(buff => {
-			buff.onTurnEnded()
+			runCardEventHandler(() => buff.onTurnEnded())
 			buff.addDuration(-1)
 		})
 	}

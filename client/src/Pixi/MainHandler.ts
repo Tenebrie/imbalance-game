@@ -9,7 +9,7 @@ export default class MainHandler {
 
 	announcedCard: RenderedCard | null = null
 	queuedMessages: QueuedMessage[] = []
-	messageCooldown: number = 0
+	messageCooldown = 0
 
 	coreTicker: PIXI.Ticker
 

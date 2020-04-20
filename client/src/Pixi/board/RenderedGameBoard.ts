@@ -4,7 +4,6 @@ import RenderedUnit from '@/Pixi/board/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
-import Core from '@/Pixi/Core'
 
 export default class RenderedGameBoard extends Board {
 	public rows: RenderedGameBoardRow[]

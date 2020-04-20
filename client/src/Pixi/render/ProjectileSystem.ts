@@ -23,7 +23,7 @@ export default class ProjectileSystem {
 
 		this.projectiles.forEach(projectile => {
 			projectile.currentTime += deltaTime
-			let targetPoint = projectile.targetCard ? projectile.targetCard.getPosition() : projectile.targetPoint!
+			const targetPoint = projectile.targetCard ? projectile.targetCard.getPosition() : projectile.targetPoint!
 
 			const currentTime = Math.min(projectile.currentTime, projectile.animationDuration)
 			const timePosition = currentTime / projectile.animationDuration

@@ -9,6 +9,7 @@ import ServerDamageInstance from '../models/ServerDamageSource'
 import ServerGraveyard from '../models/ServerGraveyard'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import Constants from '@shared/Constants'
+import runCardEventHandler from '../utils/runCardEventHandler'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -57,7 +58,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public drawUnitCards(count: number): void {
 		const actualCount = Math.min(count, Constants.UNIT_HAND_SIZE_LIMIT - this.cardHand.unitCards.length)
-		const cards: ServerCard[] = []
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawUnit()
 			if (!card) {
@@ -66,15 +66,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			}
 
 			this.cardHand.onUnitDrawn(card)
-			cards.push(card)
 		}
-
-		// OutgoingMessageHandlers.notifyAboutUnitCardsDrawn(this, cards)
 	}
 
 	public drawSpellCards(count: number): void {
 		const actualCount = Math.min(count, Constants.SPELL_HAND_SIZE_MAXIMUM - this.cardHand.spellCards.length)
-		const cards: ServerCard[] = []
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawSpell()
 			if (!card) {
@@ -83,10 +79,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			}
 
 			this.cardHand.onSpellDrawn(card)
-			cards.push(card)
 		}
-
-		// OutgoingMessageHandlers.notifyAboutSpellCardsDrawn(this, cards)
 	}
 
 	public refillSpellHand(): void {
@@ -136,8 +129,18 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public startTurn(): void {
 		this.turnEnded = false
+		this.refillSpellHand()
 		OutgoingMessageHandlers.notifyAboutTurnStarted(this)
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this)
+		this.onTurnStart()
+	}
+
+	public onTurnStart(): void {
+		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
+			unit.hasSummoningSickness = false
+			runCardEventHandler(() => unit.card.onTurnStarted(unit))
+			unit.card.buffs.onTurnStarted()
+		})
 	}
 
 	public isAnyActionsAvailable(): boolean {
@@ -147,6 +150,15 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public endTurn(): void {
 		this.turnEnded = true
 		OutgoingMessageHandlers.notifyAboutTurnEnded(this)
+		this.onTurnEnd()
+	}
+
+	public onTurnEnd(): void {
+		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
+			unit.hasSummoningSickness = false
+			runCardEventHandler(() => unit.card.onTurnEnded(unit))
+			unit.card.buffs.onTurnEnded()
+		})
 	}
 
 	public endRound(): void {

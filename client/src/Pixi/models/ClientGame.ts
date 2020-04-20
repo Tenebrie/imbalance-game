@@ -21,6 +21,11 @@ export default class ClientGame {
 	public findCardById(cardId: string): Card | null {
 		const players = [Core.player, Core.opponent]
 
+		const cardOnBoard = Core.board.findUnitById(cardId)
+		if (cardOnBoard) {
+			return cardOnBoard.card
+		}
+
 		const cardInStack = Core.resolveStack.findCardById(cardId)
 		if (cardInStack) {
 			return cardInStack

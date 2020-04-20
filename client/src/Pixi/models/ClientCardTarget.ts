@@ -27,7 +27,7 @@ export default class ClientCardTarget implements CardTarget {
 	public static fromMessage(message: CardTargetMessage): ClientCardTarget {
 		const target = new ClientCardTarget(message.targetMode, message.targetType)
 		if (message.sourceCardId) {
-			target.sourceCard = Core.game.findCardById(message.sourceCardId) || Core.board.findUnitById(message.sourceCardId).card
+			target.sourceCard = Core.game.findCardById(message.sourceCardId)
 		}
 		if (message.sourceCardOwnerId) {
 			target.sourceCardOwner = Core.getPlayer(message.sourceCardOwnerId)
