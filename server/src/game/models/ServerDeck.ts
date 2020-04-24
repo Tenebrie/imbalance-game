@@ -6,6 +6,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerOwnedCard from './ServerOwnedCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
+import Utils from '../../utils/Utils'
 
 export default class ServerDeck implements CardDeck {
 	unitCards: ServerCard[]
@@ -50,22 +51,8 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public shuffle(): void {
-		this.unitCards = this.shuffleArray(this.unitCards)
-		this.spellCards = this.shuffleArray(this.spellCards)
-	}
-
-	public shuffleArray(source: any[]): any[] {
-		const array = source.slice()
-		let counter = array.length
-
-		while (counter > 0) {
-			const index = Math.floor(Math.random() * counter)
-			counter--
-			const temp = array[counter]
-			array[counter] = array[index]
-			array[index] = temp
-		}
-		return array
+		this.unitCards = Utils.shuffle(this.unitCards)
+		this.spellCards = Utils.shuffle(this.spellCards)
 	}
 
 	public removeCard(card: ServerCard): void {

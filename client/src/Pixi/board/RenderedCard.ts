@@ -217,7 +217,8 @@ export default class RenderedCard extends Card {
 				displayMode === CardDisplayMode.IN_HAND_HOVERED ||
 				displayMode === CardDisplayMode.INSPECTED ||
 				displayMode === CardDisplayMode.ANNOUNCED ||
-				displayMode === CardDisplayMode.RESOLVING) {
+				displayMode === CardDisplayMode.RESOLVING ||
+				displayMode === CardDisplayMode.SELECTION) {
 			this.switchToCardMode()
 			texts = [this.powerText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {

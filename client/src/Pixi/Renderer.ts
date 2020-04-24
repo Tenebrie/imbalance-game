@@ -2,25 +2,29 @@ import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@shared/Constants'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
+import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
 import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
 import RenderedUnit from '@/Pixi/board/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import CardType from '@shared/enums/CardType'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Settings from '@/Pixi/Settings'
 import CardTint from '@/Pixi/enums/CardTint'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
+import Utils from '@/utils/Utils'
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 const UNIT_ZINDEX = 2
 const TARGETING_ARROW_ZINDEX = 10
 const HOVERED_CARD_ZINDEX = 95
 const RESOLVING_CARD_ZINDEX = 100
 const GRABBED_CARD_ZINDEX = 150
-const INSPECTED_CARD_ZINDEX = 200
+const ANNOUNCED_CARD_ZINDEX = 200
+const SELECTABLE_CARD_ZINDEX = 250
+const INSPECTED_CARD_ZINDEX = 500
 
 export default class Renderer {
 	pixi: PIXI.Application
@@ -35,6 +39,8 @@ export default class Renderer {
 	playerPowerLabel: PIXI.Text
 	opponentPowerLabel: PIXI.Text
 
+	selectableCardsSmokescreen: PIXI.Sprite
+
 	deltaTime: number
 	deltaTimeFraction: number
 
@@ -46,6 +52,8 @@ export default class Renderer {
 	GAME_BOARD_OFFSET_FRACTION = -0.075
 	OPPONENT_HAND_OFFSET_FRACTION = -0.15
 	ANNOUNCED_CARD_WINDOW_FRACTION = 0.40
+	SELECTABLE_CARD_DECK_WINDOW_FRACTION = 0.20
+	SELECTABLE_CARD_DISCOVER_WINDOW_FRACTION = 0.30
 	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
 
 	constructor(container: HTMLElement) {
@@ -120,6 +128,11 @@ export default class Renderer {
 		})
 		this.opponentPowerLabel.anchor.set(0, 0.5)
 		this.rootContainer.addChild(this.opponentPowerLabel)
+
+		/* Smoke screen */
+		this.selectableCardsSmokescreen = new PIXI.Sprite(TextureAtlas.getTexture('masks/black'))
+		this.selectableCardsSmokescreen.zIndex = SELECTABLE_CARD_ZINDEX - 1
+		this.rootContainer.addChild(this.selectableCardsSmokescreen)
 	}
 
 	public tick(deltaTime: number, deltaTimeFraction: number): void {
@@ -195,9 +208,10 @@ export default class Renderer {
 		this.renderTextLabels()
 		this.renderGameBoard(Core.board)
 		this.renderTargetingArrow()
-		this.renderInspectedCard()
 		this.renderAnnouncedCard()
 		this.renderResolveStack()
+		this.renderSelectableCards()
+		this.renderInspectedCard()
 	}
 
 	public resize(): void {
@@ -560,31 +574,6 @@ export default class Renderer {
 		}
 	}
 
-	public renderInspectedCard(): void {
-		const inspectedCard = Core.input.inspectedCard
-		if (!inspectedCard) {
-			return
-		}
-
-		const container = inspectedCard.coreContainer
-		const sprite = inspectedCard.sprite
-
-		sprite.tint = 0xFFFFFF
-		sprite.scale.set(Settings.superSamplingLevel)
-		container.position.x = this.getScreenWidth() / 2
-		container.position.y = this.getScreenHeight() / 2
-		container.zIndex = INSPECTED_CARD_ZINDEX
-
-		if (inspectedCard.type === CardType.SPELL) {
-			inspectedCard.powerText.style.fill = 0x0000AA
-		} else {
-			inspectedCard.powerText.style.fill = 0x000000
-		}
-		inspectedCard.powerText.text = inspectedCard.basePower.toString()
-
-		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
-	}
-
 	public renderAnnouncedCard(): void {
 		const announcedCard = Core.mainHandler.announcedCard
 		if (!announcedCard) {
@@ -597,7 +586,7 @@ export default class Renderer {
 		sprite.tint = 0xFFFFFF
 		sprite.scale.set(Settings.superSamplingLevel)
 		container.visible = true
-		container.zIndex = INSPECTED_CARD_ZINDEX
+		container.zIndex = ANNOUNCED_CARD_ZINDEX
 
 		const cardHeight = this.getScreenHeight() * this.ANNOUNCED_CARD_WINDOW_FRACTION
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
@@ -662,6 +651,109 @@ export default class Renderer {
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
+	}
+
+	public renderSelectableCards(): void {
+		const selectableCards = Core.input.forcedTargetingCards
+		let chunks
+		let windowFraction
+
+		if (selectableCards.length <= 5) {
+			chunks = [selectableCards]
+			windowFraction = this.SELECTABLE_CARD_DISCOVER_WINDOW_FRACTION
+		} else if (selectableCards.length <= 10) {
+			chunks = Utils.splitArrayIntoChunks(selectableCards, 2)
+			windowFraction = this.SELECTABLE_CARD_DISCOVER_WINDOW_FRACTION
+		} else {
+			chunks = Utils.splitArrayIntoFixedChunks(selectableCards, 10)
+			windowFraction = this.SELECTABLE_CARD_DECK_WINDOW_FRACTION
+		}
+
+		if (selectableCards.length > 0) {
+			this.selectableCardsSmokescreen.visible = true
+			this.selectableCardsSmokescreen.width = this.getScreenWidth()
+			this.selectableCardsSmokescreen.height = this.getScreenHeight()
+			this.selectableCardsSmokescreen.alpha = 0.75
+		} else {
+			this.selectableCardsSmokescreen.visible = false
+		}
+
+		for (let level = 0; level < chunks.length; level++) {
+			for (let i = 0; i < chunks[level].length; i++) {
+				const card = chunks[level][i]
+				this.renderSelectableCard(card, i, chunks[level].length, level, chunks.length, selectableCards.length, windowFraction)
+			}
+		}
+	}
+
+	public renderSelectableCard(renderedCard: RenderedCard, handPosition: number, handSize: number, level: number, levelCount: number, totalCount: number, windowFraction: number): void {
+		const container = renderedCard.coreContainer
+		const sprite = renderedCard.sprite
+		const hitboxSprite = renderedCard.hitboxSprite
+
+		const cardHeight = this.getScreenHeight() * windowFraction
+
+		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
+		sprite.height = cardHeight
+
+		const containerFraction = 0.80
+		const containerWidth = Math.min(this.getScreenWidth() * containerFraction, cardHeight * this.CARD_ASPECT_RATIO * handSize * 1.2)
+
+		const screenCenter = this.getScreenWidth() / 2
+		const cardWidth = containerWidth / handSize
+		const distanceToCenter = handPosition - ((handSize - 1) / 2)
+
+		container.visible = true
+
+		const targetPosition = {
+			x: distanceToCenter * cardWidth + screenCenter,
+			y: this.getScreenHeight() / 2 - cardHeight / 2
+		}
+
+		const effectiveLevel = level - (Math.min(levelCount - 1, 4) / 2)
+		const levelOffset = effectiveLevel * (cardHeight * 1.1)
+
+		targetPosition.y = this.getScreenHeight() - targetPosition.y
+
+		renderedCard.setDisplayMode(CardDisplayMode.SELECTION)
+
+		if (renderedCard.type === CardType.SPELL) {
+			renderedCard.powerText.style.fill = 0x0000AA
+		}
+
+		sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
+		container.position.x = targetPosition.x
+		container.position.y = targetPosition.y - cardHeight / 2 + levelOffset
+		container.zIndex = SELECTABLE_CARD_ZINDEX + handPosition * 2
+
+		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
+		hitboxSprite.scale = sprite.scale
+		hitboxSprite.zIndex = container.zIndex - 1
+	}
+
+	public renderInspectedCard(): void {
+		const inspectedCard = Core.input.inspectedCard
+		if (!inspectedCard) {
+			return
+		}
+
+		const container = inspectedCard.coreContainer
+		const sprite = inspectedCard.sprite
+
+		sprite.tint = 0xFFFFFF
+		sprite.scale.set(Settings.superSamplingLevel)
+		container.position.x = this.getScreenWidth() / 2
+		container.position.y = this.getScreenHeight() / 2
+		container.zIndex = INSPECTED_CARD_ZINDEX
+
+		if (inspectedCard.type === CardType.SPELL) {
+			inspectedCard.powerText.style.fill = 0x0000AA
+		} else {
+			inspectedCard.powerText.style.fill = 0x000000
+		}
+		inspectedCard.powerText.text = inspectedCard.basePower.toString()
+
+		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
 	}
 
 	public destroy(): void {

@@ -29,6 +29,7 @@ export default class TextureAtlas {
 			TextureAtlas.textures = {}
 
 			const components = [
+				'masks/black',
 				'effects/trail',
 				'effects/fireball-static',
 				'cards/cardBack',

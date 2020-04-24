@@ -8,6 +8,8 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import ServerGame from '../../models/ServerGame'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
+import TargetType from '@shared/enums/TargetType'
+import Utils from '../../../utils/Utils'
 
 export default {
 	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard) {
@@ -121,10 +123,17 @@ export default {
 	},
 
 	notifyAboutResolvingCardTargets(player: ServerPlayer, validTargets: ServerCardTarget[]) {
-		const messages = validTargets.map(target => new CardTargetMessage(target))
+		const messages = validTargets.map(target => {
+			const message = new CardTargetMessage(target)
+			if (target.targetType === TargetType.CARD_IN_LIBRARY || target.targetType === TargetType.CARD_IN_UNIT_DECK || target.targetType === TargetType.CARD_IN_SPELL_DECK) {
+				message.attachTargetCardData(target.targetCard)
+			}
+			return message
+		})
+		const shuffledMessages = Utils.shuffle(messages)
 		player.sendMessage({
 			type: 'update/stack/cardTargets',
-			data: messages,
+			data: shuffledMessages,
 			highPriority: true
 		})
 	},

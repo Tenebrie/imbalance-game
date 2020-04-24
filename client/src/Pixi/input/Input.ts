@@ -4,8 +4,8 @@ import CardType from '@shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import { CardLocation } from '@/Pixi/enums/CardLocation'
-import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
+import {CardLocation} from '@/Pixi/enums/CardLocation'
+import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
@@ -15,6 +15,7 @@ import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardMessage from '@shared/models/network/CardMessage'
+import Utils from '@/utils/Utils'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
@@ -30,6 +31,7 @@ export default class Input {
 
 	playableCards: ClientCardTarget[] = []
 	forcedTargetingMode: ForcedTargetingMode | null = null
+	forcedTargetingCards: RenderedCard[] = []
 
 	constructor() {
 		const view = Core.renderer.pixi.view
@@ -58,6 +60,7 @@ export default class Input {
 	public updateCardHoverStatus(): void {
 		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
 		const playerHandCards = Core.player.cardHand.allCards.slice().reverse()
+		const selectableCards = this.forcedTargetingCards.slice().reverse()
 
 		let hoveredCard: HoveredCard | null = null
 
@@ -73,6 +76,11 @@ export default class Input {
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.isHovered()) {
 			hoveredCard = HoveredCard.fromAnnouncedCard(Core.mainHandler.announcedCard)
+		}
+
+		const hoveredSelectableCard = selectableCards.find(card => card.isHovered()) || null
+		if (hoveredSelectableCard) {
+			hoveredCard = HoveredCard.fromSelectableCard(hoveredSelectableCard)
 		}
 
 		this.hoveredCard = hoveredCard
@@ -93,7 +101,7 @@ export default class Input {
 			return
 		}
 
-		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON) {
+		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON && (!this.hoveredCard || this.hoveredCard.location !== CardLocation.SELECTABLE)) {
 			this.forcedTargetingMode.selectTarget()
 			return
 		}
@@ -152,6 +160,8 @@ export default class Input {
 			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetUnit.card)
 			const validRows = validOrders.filter(order => order.targetType === TargetType.BOARD_ROW).map(order => order.targetRow)
 			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)
+		} else if (hoveredCard.location === CardLocation.SELECTABLE) {
+			this.grabbedCard = GrabbedCard.cardSelect(card)
 		}
 	}
 
@@ -174,6 +184,8 @@ export default class Input {
 			this.onCardPlay(this.grabbedCard.card)
 		} else if (this.grabbedCard.mode === GrabbedCardMode.CARD_ORDER) {
 			this.onUnitOrder(this.grabbedCard.card)
+		} else if (this.grabbedCard.mode === GrabbedCardMode.CARD_SELECT) {
+			this.onCardSelect(this.grabbedCard.card)
 		}
 
 		this.releaseCard()
@@ -225,6 +237,15 @@ export default class Input {
 		}
 	}
 
+	private onCardSelect(selectedCard: RenderedCard): void {
+		const hoveredCard = MouseHover.getHoveredCard()
+		if (hoveredCard !== selectedCard) {
+			return
+		}
+
+		OutgoingMessageHandlers.sendCardTarget(this.forcedTargetingMode.validTargets.find(target => target.targetCardData.id === selectedCard.id))
+	}
+
 	public restoreCardFromLimbo(cardMessage: CardMessage): RenderedCard {
 		const cardInLimbo = this.cardLimbo.find(card => card.id === cardMessage.id)
 		if (!cardInLimbo) {
@@ -248,10 +269,21 @@ export default class Input {
 
 	public enableForcedTargetingMode(validTargets: ClientCardTarget[]): void {
 		this.forcedTargetingMode = new ForcedTargetingMode(validTargets)
+		console.log(validTargets)
+		this.createForcedTargetingCards(validTargets)
+	}
+
+	public async createForcedTargetingCards(targets: ClientCardTarget[]): Promise<void> {
+		const forcedTargetingCardMessages = targets
+			.filter(target => target.targetType === TargetType.CARD_IN_LIBRARY || target.targetType === TargetType.CARD_IN_UNIT_DECK || target.targetType === TargetType.CARD_IN_SPELL_DECK)
+			.map(target => target.targetCardData)
+		this.forcedTargetingCards = Utils.sortCards(await Utils.renderCardsAsynchronously(forcedTargetingCardMessages))
 	}
 
 	public disableForcedTargetingMode(): void {
 		this.forcedTargetingMode = null
+		this.forcedTargetingCards.forEach(card => card.unregister())
+		this.forcedTargetingCards = []
 	}
 
 	public clear() {

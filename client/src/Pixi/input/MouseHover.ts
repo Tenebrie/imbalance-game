@@ -13,7 +13,7 @@ export default class MouseHover {
 	}
 
 	public static getHoveredUnit(): RenderedUnit | null {
-		if (!Core.input.hoveredCard) {
+		if (!Core.input.hoveredCard || !Core.input.hoveredCard.card) {
 			return null
 		}
 

@@ -2,7 +2,7 @@ import ServerCard from '../models/ServerCard'
 import HeroNightMaiden from '../cards/experimental/heroes/HeroNightMaiden'
 import HeroSatia from '../cards/experimental/heroes/HeroSatia'
 import UnitPossessedVulture from '../cards/experimental/units/UnitPossessedVulture'
-import UnitRavenMessenger from '../cards/experimental/units/UnitRavenMessenger'
+import UnitRavenMessenger from '../cards/neutral/UnitRavenMessenger'
 import ServerGame from '../models/ServerGame'
 import VoidGame from '../utils/VoidGame'
 import UnitMadBerserker from '../cards/experimental/units/UnitMadBerserker'
@@ -81,11 +81,19 @@ export default class GameLibrary {
 
 		GameLibrary.cards = cards.map(prototype => {
 			const cardPrototype = new prototype(VoidGame.get())
-			cardPrototype.class = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
+			const className = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
+			cardPrototype.class = className
 			cardPrototype.power = cardPrototype.basePower
 			cardPrototype.attack = cardPrototype.baseAttack
+			cardPrototype.name = `card.name.${className}`
+			cardPrototype.title = `card.title.${className}`
+			cardPrototype.description = `card.description.${className}`
 			return cardPrototype
 		})
+	}
+
+	public static findPrototypeById(id: string): ServerCard | null {
+		return this.cards.find(card => card.id === id)
 	}
 
 	public static instantiate(card: ServerCard): ServerCard {
@@ -106,10 +114,10 @@ export default class GameLibrary {
 		clone.type = original.type
 		clone.class = cardClass
 
-		clone.name = `card.name.${cardClass}`
-		clone.title = `card.title.${cardClass}`
+		clone.name = original.name
+		clone.title = original.title
 		clone.tribes = (original.tribes || []).slice()
-		clone.description = `card.description.${cardClass}`
+		clone.description = original.description
 		clone.game = game
 		clone.power = clone.basePower
 		clone.attack = clone.baseAttack

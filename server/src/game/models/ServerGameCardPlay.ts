@@ -11,6 +11,7 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
 import CardFeature from '@shared/enums/CardFeature'
 import CardLibrary from '../libraries/CardLibrary'
+import Utils from '../../utils/Utils'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -140,9 +141,11 @@ export default class ServerGameCardPlay {
 			thisCardOwner: currentCard.owner
 		}
 
-		return []
-			.concat(card.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, TargetType.UNIT, targetDefinition, args, this.cardResolveStack.currentTargets))
-			.concat(card.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, TargetType.BOARD_ROW, targetDefinition, args, this.cardResolveStack.currentTargets))
+		let validTargets = []
+		Utils.forEachInNumericEnum(TargetType, (targetType: TargetType) => {
+			validTargets = validTargets.concat(card.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, targetType, targetDefinition, args, this.cardResolveStack.currentTargets))
+		})
+		return validTargets
 	}
 
 	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {

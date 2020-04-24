@@ -22,6 +22,7 @@ import ServerRichTextVariables from './ServerRichTextVariables'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import ServerOwnedCard from './ServerOwnedCard'
 import BuffImmunity from '../buffs/BuffImmunity'
+import GameLibrary from '../libraries/CardLibrary'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -91,6 +92,10 @@ export default class ServerCard extends Card {
 			targets = this.getValidUnitTargets(targetMode, targetDefinition, args, previousTargets)
 		} else if (targetType === TargetType.BOARD_ROW) {
 			targets = this.getValidRowTargets(targetMode, targetDefinition, args, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_LIBRARY) {
+			targets = this.getValidCardLibraryTargets(targetMode, targetDefinition, args, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_UNIT_DECK) {
+			targets = this.getValidUnitDeckTargets(targetMode, targetDefinition, args, previousTargets)
 		}
 
 		if (args.thisCardOwner) {
@@ -143,6 +148,30 @@ export default class ServerCard extends Card {
 		return this.game.board.rows
 			.filter(row => targetDefinition.validate(targetMode, TargetType.BOARD_ROW, { ...args, thisCard: this, targetRow: row, previousTargets: previousTargets }))
 			.map(targetRow => ServerCardTarget.cardTargetRow(targetMode, this, targetRow, rowTargetLabel))
+	}
+
+	getValidCardLibraryTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_LIBRARY, targetDefinition, previousTargets)) {
+			return []
+		}
+
+		const libraryCards = GameLibrary.cards as ServerCard[]
+		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_LIBRARY)
+		return libraryCards
+			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_LIBRARY, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
+			.map(targetCard => ServerCardTarget.cardTargetCardInLibrary(targetMode, this, targetCard, cardTargetLabel))
+	}
+
+	getValidUnitDeckTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_DECK, targetDefinition, previousTargets)) {
+			return []
+		}
+
+		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_UNIT_DECK)
+		return this.game.players.map(player => player.cardDeck.unitCards)
+			.reduce((accumulator, cards) => accumulator.concat(cards))
+			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_UNIT_DECK, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
+			.map(targetCard => ServerCardTarget.cardTargetCardInUnitDeck(targetMode, this, targetCard, cardTargetLabel))
 	}
 
 	getPlayValidTargetDefinition(): TargetDefinition {

@@ -29,8 +29,13 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		return this
 	}
 
-	public allow(type: TargetType, atMost: number = 1): SimpleTargetDefinitionBuilder {
+	public allow(type: TargetType, atMost = 1): SimpleTargetDefinitionBuilder {
 		this.builder.allow(this.targetMode, type, atMost)
+		return this
+	}
+
+	public require(type: TargetType, number = 1): SimpleTargetDefinitionBuilder {
+		this.builder.require(this.targetMode, type, number)
 		return this
 	}
 
@@ -81,6 +86,16 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 
 	public notSelf(): SimpleTargetDefinitionBuilder {
 		this.builder.notSelf(this.targetMode)
+		return this
+	}
+
+	public inPlayersDeck(): SimpleTargetDefinitionBuilder {
+		this.builder.inPlayersDeck(this.targetMode)
+		return this
+	}
+
+	public inOpponentsDeck(): SimpleTargetDefinitionBuilder {
+		this.builder.inOpponentsDeck(this.targetMode)
 		return this
 	}
 

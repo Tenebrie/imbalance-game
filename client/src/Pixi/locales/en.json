@@ -64,7 +64,7 @@
 	"card.description.heroRagingElemental": "When {name} drops below {powerThreshold} Power, it deals Damage equal to own Power to closest opposing enemy units. <p>Then, it destroys itself.",
 
 	"card.name.unitRavenMessenger": "Raven Messenger",
-	"card.description.unitRavenMessenger": "Every *3* turns {name} survives on the board, it draws a card",
+	"card.description.unitRavenMessenger": "*Deploy:*\n*Play* a bronze unit from your deck.",
 
 	"card.name.unitPossessedVulture": "Possessed Vulture",
 	"card.description.unitPossessedVulture": "If {name} kills an enemy creature, it gains *+{bonusPower} Power and *+{bonusAttack} Attack",

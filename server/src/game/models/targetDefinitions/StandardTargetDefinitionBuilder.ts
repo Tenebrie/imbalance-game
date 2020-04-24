@@ -65,6 +65,11 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		return this
 	}
 
+	public require(reason: TargetMode, type: TargetType, number = 1): StandardTargetDefinitionBuilder {
+		this.targetOfTypeCount[reason][type] = number
+		return this
+	}
+
 	public disallowType(reason: TargetMode, type: TargetType): StandardTargetDefinitionBuilder {
 		this.targetOfTypeCount[reason][type] = 0
 		return this
@@ -125,6 +130,22 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 	public notSelf(targetMode: TargetMode): StandardTargetDefinitionBuilder {
 		return this.validate(targetMode, TargetType.UNIT, args => {
 			return !args.thisUnit || args.thisUnit !== args.targetUnit
+		})
+	}
+
+	public inPlayersDeck(targetMode: TargetMode): StandardTargetDefinitionBuilder {
+		return this.validate(targetMode, TargetType.CARD_IN_UNIT_DECK, args => {
+			return args.targetCard.owner === args.thisCardOwner
+		}).validate(targetMode, TargetType.CARD_IN_SPELL_DECK, args => {
+			return args.targetCard.owner === args.thisCardOwner
+		})
+	}
+
+	public inOpponentsDeck(targetMode: TargetMode): StandardTargetDefinitionBuilder {
+		return this.validate(targetMode, TargetType.CARD_IN_UNIT_DECK, args => {
+			return args.targetCard.owner !== args.thisCardOwner
+		}).validate(targetMode, TargetType.CARD_IN_SPELL_DECK, args => {
+			return args.targetCard.owner !== args.thisCardOwner
 		})
 	}
 
