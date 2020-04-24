@@ -6,7 +6,7 @@ import UnitRavenMessenger from '../cards/experimental/units/UnitRavenMessenger'
 import ServerGame from '../models/ServerGame'
 import VoidGame from '../utils/VoidGame'
 import UnitMadBerserker from '../cards/experimental/units/UnitMadBerserker'
-import UnitForestScout from '../cards/experimental/units/UnitForestScout'
+import UnitForestScout from '../cards/neutral/UnitForestScout'
 import UnitTwinBowArcher from '../cards/experimental/units/UnitTwinBowArcher'
 import UnitUnfeelingWarrior from '../cards/experimental/units/UnitUnfeelingWarrior'
 import UnitChargingKnight from '../cards/neutral/UnitChargingKnight'
@@ -34,6 +34,8 @@ import UnitArcaneCrystal from '../cards/arcane/UnitArcaneCrystal'
 import UnitIceSkinCrystal from '../cards/arcane/UnitIceSkinCrystal'
 import SpellPermafrost from '../cards/arcane/SpellPermafrost'
 import HeroRagingElemental from '../cards/arcane/HeroRagingElemental'
+import HeroKroLah from '../cards/arcane/HeroKroLah'
+import HeroGarellion from '../cards/arcane/HeroGarellion'
 
 export default class GameLibrary {
 	static cards: any[]
@@ -50,6 +52,8 @@ export default class GameLibrary {
 			HeroZamarath,
 			HeroSparklingSpirit,
 			HeroRagingElemental,
+			HeroKroLah,
+			HeroGarellion,
 			UnitPossessedVulture,
 			UnitRavenMessenger,
 			UnitMadBerserker,

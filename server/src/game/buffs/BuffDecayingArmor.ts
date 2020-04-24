@@ -1,9 +1,9 @@
 import ServerBuff from '../models/ServerBuff'
 import BuffStackType from '@shared/enums/BuffStackType'
 
-export default class BuffStrength extends ServerBuff {
+export default class BuffDecayingArmor extends ServerBuff {
 	constructor() {
-		super(BuffStackType.ADD_INTENSITY);
+		super(BuffStackType.ADD_INTENSITY)
 	}
 
 	onTurnStarted(): void {

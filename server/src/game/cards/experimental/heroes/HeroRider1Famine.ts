@@ -21,7 +21,7 @@ export default class HeroRider1Famine extends ServerCard {
 	onPlayedAsUnit(thisUnit: ServerUnit): void {
 		const allEnemyUnits = this.game.board.getUnitsOwnedByPlayer(thisUnit.owner.opponent)
 		allEnemyUnits.forEach(unit => unit.dealDamage(ServerDamageInstance.fromUnit(this.damage, thisUnit)))
-		this.game.animation.play(ServerAnimation.unitAttack(thisUnit, allEnemyUnits))
+		this.game.animation.play(ServerAnimation.unitAttackDefault(thisUnit, allEnemyUnits))
 	}
 
 	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {

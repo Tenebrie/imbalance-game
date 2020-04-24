@@ -49,6 +49,14 @@
 	"card.title.heroZamarath": "The Protector",
 	"card.description.heroZamarath": "*Immune*",
 
+	"card.name.heroKroLah": "Kro'Lah",
+	"card.title.heroKroLah": "The Sky Guardian",
+	"card.description.heroKroLah": "*Deploy:*\nChoose an enemy row.\n*Stun* and *Push 1* all units on that row.",
+
+	"card.name.heroGarellion": "Garellion",
+	"card.title.heroGarellion": "The Conduit",
+	"card.description.heroGarellion": "*End of round:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
+
 	"card.name.heroSparklingSpirit": "Sparkling Spirit",
 	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
 
@@ -65,7 +73,7 @@
 	"card.description.unitUnfeelingWarrior": "*On turn start:*\nIf {name} was attacked last turn, he gains *+{bonusPower} Power",
 
 	"card.name.unitForestScout": "Forest Scout",
-	"card.description.unitForestScout": "If {name} did not attack last turn, she deals {bonusDamage} extra damage on her first attack this turn",
+	"card.description.unitForestScout": "*Deploy:*\nIf you're losing on the board, gains {boardPowerBonus} Power.\nIf you're losing on Morale, gains {moralePowerBonus} Power.",
 
 	"card.name.unitMadBerserker": "Mad Berserker",
 	"card.description.unitMadBerserker": "Every consecutive attack on the same target deals *3* more damage",
@@ -107,7 +115,7 @@
 	"card.description.unitIceSkinCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
 
 	"card.name.unitStoneElemental": "Stone Elemental",
-	"card.description.unitStoneElemental": "*Deploy:*\nDeal {damage} Damage to any unit",
+	"card.description.unitStoneElemental": "*Deploy:*\nDeal {damage} Damage to any other unit",
 
 	"card.name.unitTinySparkling": "Tiny Sparkling",
 	"card.description.unitTinySparkling": "<i>No effect</i>",

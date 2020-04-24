@@ -206,6 +206,7 @@ export default class ServerCard extends Card {
 	onTurnStarted(thisUnit: ServerUnit): void { return }
 	onTurnPhaseChanged(thisUnit: ServerUnit, phase: GameTurnPhase): void { return }
 	onTurnEnded(thisUnit: ServerUnit): void { return }
+	onRoundEnded(thisUnit: ServerUnit): void { return }
 	onUnitCustomOrderPerformed(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onBeforeUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }

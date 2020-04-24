@@ -8,7 +8,7 @@ export default class ObjectTrail {
 
 	public constructor(startingPosition: PIXI.Point) {
 		this.points = []
-		for (let i = 0; i < 30; i++) {
+		for (let i = 0; i < 50; i++) {
 			this.points.push(startingPosition.clone())
 		}
 		this.rope = new PIXI.SimpleRope(TextureAtlas.getTexture('effects/trail'), this.points)

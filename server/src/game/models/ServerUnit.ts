@@ -7,6 +7,7 @@ import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import Constants from '@shared/Constants'
+import ServerBuffContainer from './ServerBuffContainer'
 
 export default class ServerUnit {
 	game: ServerGame
@@ -22,6 +23,10 @@ export default class ServerUnit {
 		const unitRow = this.game.board.rows[this.rowIndex]
 		if (!unitRow) { return -1 }
 		return unitRow.cards.indexOf(this)
+	}
+
+	get buffs(): ServerBuffContainer {
+		return this.card.buffs
 	}
 
 	constructor(game: ServerGame, card: ServerCard, owner: ServerPlayerInGame) {

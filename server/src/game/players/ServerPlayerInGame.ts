@@ -162,6 +162,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public endRound(): void {
+		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
+			runCardEventHandler(() => unit.card.onRoundEnded(unit))
+			unit.card.buffs.onRoundEnded()
+		})
+
 		this.endTurn()
 		this.roundEnded = true
 		OutgoingMessageHandlers.notifyAboutRoundEnded(this)

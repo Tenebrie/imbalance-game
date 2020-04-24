@@ -103,7 +103,7 @@ export default class ServerBoard extends Board {
 		return unit
 	}
 
-	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number) {
+	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number): void {
 		const currentRow = this.rows[unit.rowIndex]
 		const targetRow = this.rows[rowIndex]
 		currentRow.removeUnit(unit)
@@ -111,6 +111,14 @@ export default class ServerBoard extends Board {
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitMoved(playerInGame.player, unit, rowIndex, unitIndex)
 		})
+	}
+
+	public moveUnitToFarLeft(unit: ServerUnit, rowIndex: number): void {
+		return this.moveUnit(unit, rowIndex, 0)
+	}
+
+	public moveUnitToFarRight(unit: ServerUnit, rowIndex: number): void {
+		return this.moveUnit(unit, rowIndex, this.rows[rowIndex].cards.length)
 	}
 
 	public destroyUnit(unit: ServerUnit): void {

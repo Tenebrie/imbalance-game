@@ -3,7 +3,7 @@ import BuffStackType from '@shared/enums/BuffStackType'
 
 export default class BuffExtraArmor extends ServerBuff {
 	constructor() {
-		super(BuffStackType.OVERLAY);
+		super(BuffStackType.OVERLAY)
 	}
 
 	onCreated(): void {

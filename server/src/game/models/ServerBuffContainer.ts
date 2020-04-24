@@ -104,4 +104,10 @@ export default class ServerBuffContainer implements BuffContainer {
 			buff.addDuration(-1)
 		})
 	}
+
+	public onRoundEnded(): void {
+		this.buffs.forEach(buff => {
+			runCardEventHandler(() => buff.onRoundEnded())
+		})
+	}
 }

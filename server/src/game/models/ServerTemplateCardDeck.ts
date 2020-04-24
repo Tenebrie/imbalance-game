@@ -5,7 +5,7 @@ import UnitRavenMessenger from '../cards/experimental/units/UnitRavenMessenger'
 import UnitPossessedVulture from '../cards/experimental/units/UnitPossessedVulture'
 import CardLibrary from '../libraries/CardLibrary'
 import UnitMadBerserker from '../cards/experimental/units/UnitMadBerserker'
-import UnitForestScout from '../cards/experimental/units/UnitForestScout'
+import UnitForestScout from '../cards/neutral/UnitForestScout'
 import UnitUnfeelingWarrior from '../cards/experimental/units/UnitUnfeelingWarrior'
 import UnitTwinBowArcher from '../cards/experimental/units/UnitTwinBowArcher'
 import UnitChargingKnight from '../cards/neutral/UnitChargingKnight'
@@ -33,6 +33,8 @@ import UnitArcaneCrystal from '../cards/arcane/UnitArcaneCrystal'
 import UnitIceSkinCrystal from '../cards/arcane/UnitIceSkinCrystal'
 import SpellPermafrost from '../cards/arcane/SpellPermafrost'
 import HeroRagingElemental from '../cards/arcane/HeroRagingElemental'
+import HeroKroLah from '../cards/arcane/HeroKroLah'
+import HeroGarellion from '../cards/arcane/HeroGarellion'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	unitCards: ServerCard[]
@@ -58,9 +60,15 @@ export default class ServerTemplateCardDeck implements CardDeck {
 	static defaultDeck(game: ServerGame): ServerTemplateCardDeck {
 		const deck = new ServerTemplateCardDeck([], [])
 
+		for (let i = 0; i < 5; i++) {
+			deck.addUnit(CardLibrary.instantiate(new HeroGarellion(game)))
+
+		}
+		deck.addUnit(CardLibrary.instantiate(new HeroKroLah(game)))
 		deck.addUnit(CardLibrary.instantiate(new HeroZamarath(game)))
 		deck.addUnit(CardLibrary.instantiate(new HeroRagingElemental(game)))
 		deck.addUnit(CardLibrary.instantiate(new HeroSparklingSpirit(game)))
+
 		// deck.addUnit(CardLibrary.instantiate(new HeroSatia(game)))
 		// deck.addUnit(CardLibrary.instantiate(new HeroIgnea(game)))
 		// deck.addUnit(CardLibrary.instantiate(new HeroRider1Famine(game)))
@@ -68,13 +76,13 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		// deck.addUnit(CardLibrary.instantiate(new HeroRider3War(game)))
 		// deck.addUnit(CardLibrary.instantiate(new HeroRider4Death(game)))
 		for (let i = 0; i < 3; i++) {
-			deck.addUnit(CardLibrary.instantiate(new HeroRagingElemental(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitChargingKnight(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitSupplyWagon(game)))
-			deck.addUnit(CardLibrary.instantiate(new UnitVampireFledgling(game)))
+			// deck.addUnit(CardLibrary.instantiate(new UnitVampireFledgling(game)))
 			// deck.addUnit(CardLibrary.instantiate(new UnitPriestessOfAedine(game)))
 			// deck.addUnit(CardLibrary.instantiate(new UnitArcaneElemental(game)))
 			// deck.addUnit(CardLibrary.instantiate(new UnitArcaneCrystal(game)))
+			deck.addUnit(CardLibrary.instantiate(new UnitForestScout(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitFlameTouchCrystal(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitIceSkinCrystal(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitStoneElemental(game)))
@@ -86,7 +94,6 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		// 	deck.addUnit(CardLibrary.instantiate(new UnitRavenMessenger(game)))
 		// 	deck.addUnit(CardLibrary.instantiate(new UnitPossessedVulture(game)))
 		// 	deck.addUnit(CardLibrary.instantiate(new UnitMadBerserker(game)))
-		// 	deck.addUnit(CardLibrary.instantiate(new UnitForestScout(game)))
 		// 	deck.addUnit(CardLibrary.instantiate(new UnitUnfeelingWarrior(game)))
 		// 	deck.addUnit(CardLibrary.instantiate(new UnitTwinBowArcher(game)))
 		// }

@@ -39,9 +39,7 @@ export default class ServerBuff implements Buff {
 
 	public setDuration(value: number): void {
 		this.duration = value
-		console.log(`Remaining duration: ${this.duration}`)
 		if (this.duration <= 0) {
-			console.log('Removing')
 			this.card.buffs.removeByReference(this)
 		}
 	}
@@ -62,8 +60,7 @@ export default class ServerBuff implements Buff {
 	onIntensityChanged(delta: number): void { return }
 	onTurnStarted(): void { return }
 	onTurnEnded(): void { return }
-	getDamageTaken(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return damage }
-	getDamageReduction(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return 0 }
+	onRoundEnded(): void { return }
 	onBeforeBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
 	onAfterBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
 	onBeforePerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
@@ -73,6 +70,9 @@ export default class ServerBuff implements Buff {
 	onBeforeBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
 	onAfterBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
 	onDestroyed(): void { return }
+
+	getDamageTaken(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return damage }
+	getDamageReduction(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return 0 }
 
 	definePlayValidTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	defineValidOrderTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }

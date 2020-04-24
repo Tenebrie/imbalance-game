@@ -21,6 +21,7 @@ import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
+import AnimationHandlers from './AnimationHandlers'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -295,30 +296,13 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'animation/generic': (data: AnimationMessage) => {
-		let animationDuration = 500
-
-		if (data.type === AnimationType.CARD_PLAY) {
-			const announcedCard = Core.opponent.cardHand.findCardById(data.targetCardID)!
-			Core.mainHandler.announceCard(announcedCard)
-			animationDuration = 3000
-		} else if (data.type === AnimationType.UNIT_ATTACK) {
-			const sourceUnit = Core.board.findUnitById(data.sourceUnitID)
-			const projectiles = data.projectileCount
-			const projectileDelay = 100
-			animationDuration = 300 + projectileDelay * projectiles
-			data.targetUnitIDs.forEach(targetUnitID => {
-				const targetUnit = Core.board.findUnitById(targetUnitID)
-				for (let i = 0; i < projectiles; i++) {
-					setTimeout(() => {
-						Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetUnit)
-					}, projectileDelay * i)
-				}
-			})
-		} else if (data.type === AnimationType.POST_UNIT_ATTACK) {
-			animationDuration = 100
-		} else if (data.type === AnimationType.ALL_UNITS_MOVE) {
-			animationDuration = 750
+		const handler = AnimationHandlers[data.type]
+		if (!handler) {
+			console.error(`Unknown animation type ${data.type}`)
+			return
 		}
+
+		const animationDuration = handler(data, data.params)
 		Core.mainHandler.triggerAnimation(animationDuration)
 	},
 

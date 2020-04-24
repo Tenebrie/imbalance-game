@@ -7,9 +7,10 @@ export default class Animation {
 	targetCard: Card | null
 	sourceUnit: Unit | null
 	targetUnits: Unit[] | null
-	projectileCount: number
+	params: any
 
-	constructor(type: AnimationType) {
+	constructor(type: AnimationType, params: any) {
 		this.type = type
+		this.params = params
 	}
 }
