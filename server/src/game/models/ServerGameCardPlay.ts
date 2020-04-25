@@ -28,7 +28,7 @@ export default class ServerGameCardPlay {
 
 		/* Deduct mana */
 		if (ownedCard.card.type === CardType.UNIT) {
-			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - 1)
+			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - ownedCard.card.unitCost)
 		} else if (ownedCard.card.type === CardType.SPELL) {
 			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - ownedCard.card.spellCost)
 		}
@@ -113,7 +113,7 @@ export default class ServerGameCardPlay {
 		this.checkCardTargeting(ownedCard)
 	}
 
-	private checkCardTargeting(ownedCard: ServerOwnedCard): void {
+	public checkCardTargeting(ownedCard: ServerOwnedCard): void {
 		const validTargets = this.getValidTargets()
 
 		if (validTargets.length === 0) {
@@ -142,6 +142,7 @@ export default class ServerGameCardPlay {
 		}
 
 		let validTargets = []
+		console.log(this.cardResolveStack.currentTargets)
 		Utils.forEachInNumericEnum(TargetType, (targetType: TargetType) => {
 			validTargets = validTargets.concat(card.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, targetType, targetDefinition, args, this.cardResolveStack.currentTargets))
 		})
@@ -153,6 +154,8 @@ export default class ServerGameCardPlay {
 			return
 		}
 
+		const currentResolvingCard = this.cardResolveStack.currentCard
+
 		let validTargets = this.getValidTargets()
 		const isValidTarget = !!validTargets.find(validTarget => validTarget.isEqual(target))
 		if (!isValidTarget) {
@@ -163,6 +166,7 @@ export default class ServerGameCardPlay {
 		const sourceUnit = target.sourceUnit
 		const sourceCard = target.sourceCard || sourceUnit.card
 
+		this.cardResolveStack.pushTarget(target)
 		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
 			sourceCard.onUnitPlayTargetCardSelected(sourceUnit, target.targetCard)
 		}
@@ -181,7 +185,11 @@ export default class ServerGameCardPlay {
 		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
 			sourceCard.onSpellPlayTargetRowSelected(playerInGame, target.targetRow)
 		}
-		this.cardResolveStack.pushTarget(target)
+
+		// Current card changed - resolve that first
+		if (this.cardResolveStack.currentCard !== currentResolvingCard) {
+			return
+		}
 
 		validTargets = this.getValidTargets()
 
@@ -190,15 +198,12 @@ export default class ServerGameCardPlay {
 			return
 		}
 
+
 		if (sourceCard.type === CardType.UNIT) {
 			sourceCard.onUnitPlayTargetsConfirmed(sourceUnit)
 		} else if (sourceCard.type === CardType.SPELL) {
 			sourceCard.onSpellPlayTargetsConfirmed(playerInGame)
 		}
 		this.cardResolveStack.finishResolving()
-
-		if (this.cardResolveStack.currentCard) {
-			this.checkCardTargeting(this.cardResolveStack.currentCard)
-		}
 	}
 }

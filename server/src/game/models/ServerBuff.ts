@@ -8,6 +8,7 @@ import TargetDefinitionBuilder from './targetDefinitions/TargetDefinitionBuilder
 import TargetDefinition from './targetDefinitions/TargetDefinition'
 import ServerBoardRow from './ServerBoardRow'
 import ServerDamageInstance from './ServerDamageSource'
+import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -39,6 +40,7 @@ export default class ServerBuff implements Buff {
 
 	public setDuration(value: number): void {
 		this.duration = value
+		OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, this)
 		if (this.duration <= 0) {
 			this.card.buffs.removeByReference(this)
 		}
@@ -50,6 +52,7 @@ export default class ServerBuff implements Buff {
 
 	public setIntensity(value: number): void {
 		this.intensity = value
+		OutgoingCardUpdateMessages.notifyAboutCardBuffIntensityChanged(this.card, this)
 		if (this.intensity <= 0) {
 			this.card.buffs.removeByReference(this)
 		}
@@ -73,6 +76,7 @@ export default class ServerBuff implements Buff {
 
 	getDamageTaken(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return damage }
 	getDamageReduction(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return 0 }
+	getUnitCostOverride(baseCost: number): number { return baseCost }
 
 	definePlayValidTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	defineValidOrderTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }

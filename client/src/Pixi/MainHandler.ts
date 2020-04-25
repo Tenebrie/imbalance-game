@@ -22,6 +22,11 @@ export default class MainHandler {
 			const deltaFraction = deltaTime / 1000
 			lastTime = now
 
+			if (deltaTime > 1000) {
+				console.warn(`Delta time too long (${deltaTime}), skipping tick`)
+				return
+			}
+
 			this.tick(deltaTime, deltaFraction)
 			this.projectileSystem.tick(deltaTime, deltaFraction)
 			Core.renderer.tick(deltaTime, deltaFraction)

@@ -22,8 +22,8 @@ export default {
 
 		if (playerInGame.turnEnded || playerInGame.roundEnded || playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
-			(card.type === CardType.SPELL && !playerInGame.canPlaySpell(card, data.rowIndex)) ||
-			(card.type === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex))) {
+			(card.type === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex)) ||
+			(card.type === CardType.SPELL && !playerInGame.canPlaySpell(card, data.rowIndex))) {
 
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return

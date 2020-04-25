@@ -37,6 +37,14 @@ export default class ServerCard extends Card {
 		this.dynamicTextVariables = {}
 	}
 
+	public get unitCost(): number {
+		let cost = 1
+		this.buffs.buffs.forEach(buff => {
+			cost = buff.getUnitCostOverride(cost)
+		})
+		return cost
+	}
+
 	public get spellCost(): number {
 		return this.power
 	}
@@ -83,7 +91,7 @@ export default class ServerCard extends Card {
 	getValidPlayTargets(cardOwner: ServerPlayerInGame): ServerCardTarget[] {
 		return this.getValidTargets(TargetMode.ON_PLAY_VALID_TARGET, TargetType.BOARD_ROW, this.getPlayValidTargetDefinition(), {
 			thisCardOwner: cardOwner
-		})
+		}).filter(target => ((target.sourceCard.type === CardType.UNIT && cardOwner.unitMana >= target.sourceCard.unitCost) || (target.sourceCard.type === CardType.SPELL && cardOwner.spellMana >= target.sourceCard.spellCost)))
 	}
 
 	getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {

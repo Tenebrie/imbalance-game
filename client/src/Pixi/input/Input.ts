@@ -138,8 +138,8 @@ export default class Input {
 		this.mousePosition.y *= window.devicePixelRatio * Settings.superSamplingLevel
 
 		const windowHeight = Core.renderer.pixi.view.height
-		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5 &&
-			((Core.player.unitMana === 0 && this.grabbedCard.card.type === CardType.UNIT) || (Core.player.spellMana === 0 && this.grabbedCard.card.type === CardType.SPELL))) {
+		const heightLimit = windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5
+		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCard === this.grabbedCard.card)) {
 			this.releaseCard()
 		}
 	}
@@ -268,8 +268,10 @@ export default class Input {
 	}
 
 	public enableForcedTargetingMode(validTargets: ClientCardTarget[]): void {
+		this.forcedTargetingCards.forEach(card => card.unregister())
+		this.forcedTargetingCards = []
+
 		this.forcedTargetingMode = new ForcedTargetingMode(validTargets)
-		console.log(validTargets)
 		this.createForcedTargetingCards(validTargets)
 	}
 

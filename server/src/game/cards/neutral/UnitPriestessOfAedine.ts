@@ -8,6 +8,7 @@ import ServerUnit from '../../models/ServerUnit'
 import ServerDamageInstance from '../../models/ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
 import TargetMode from '@shared/enums/TargetMode'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1
@@ -17,6 +18,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 8
 		this.baseAttackRange = 1
+		this.tribes = [CardTribe.HUMAN]
 		this.dynamicTextVariables = {
 			targets: this.targets,
 			healing: this.healing

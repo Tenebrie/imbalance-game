@@ -4,6 +4,7 @@ import ServerGame from '../../models/ServerGame'
 import ServerUnit from '../../models/ServerUnit'
 import CardColor from '@shared/enums/CardColor'
 import ServerBoardRow from '../../models/ServerBoardRow'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitForestScout extends ServerCard {
 	boardPowerBonus = 7
@@ -12,6 +13,7 @@ export default class UnitForestScout extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 4
+		this.tribes = [CardTribe.HUMAN]
 		this.dynamicTextVariables = {
 			boardPowerBonus: this.boardPowerBonus,
 			moralePowerBonus: this.moralePowerBonus

@@ -10,6 +10,8 @@ import ServerGraveyard from '../models/ServerGraveyard'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import Constants from '@shared/Constants'
 import runCardEventHandler from '../utils/runCardEventHandler'
+import BuffTutoredCard from '../buffs/BuffTutoredCard'
+import BuffDuration from '@shared/enums/BuffDuration'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -53,13 +55,13 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public canPlayUnit(card: ServerCard, rowIndex: number): boolean {
 		const gameBoardRow = this.game.board.rows[rowIndex]
-		return this.unitMana > 0 && !!card.getValidPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
+		return this.unitMana >= card.unitCost && !!card.getValidPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
 	}
 
 	public drawUnitCards(count: number): void {
 		const actualCount = Math.min(count, Constants.UNIT_HAND_SIZE_LIMIT - this.cardHand.unitCards.length)
 		for (let i = 0; i < actualCount; i++) {
-			const card = this.cardDeck.drawUnit()
+			const card = this.cardDeck.drawTopUnit()
 			if (!card) {
 				// TODO: Fatigue damage?
 				continue
@@ -70,9 +72,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public drawSpellCards(count: number): void {
-		const actualCount = Math.min(count, Constants.SPELL_HAND_SIZE_MAXIMUM - this.cardHand.spellCards.length)
+		const actualCount = Math.min(count, Constants.SPELL_HAND_SIZE_LIMIT - this.cardHand.spellCards.length)
 		for (let i = 0; i < actualCount; i++) {
-			const card = this.cardDeck.drawSpell()
+			const card = this.cardDeck.drawTopSpell()
 			if (!card) {
 				// TODO: Fatigue damage?
 				continue
@@ -80,6 +82,12 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 			this.cardHand.onSpellDrawn(card)
 		}
+	}
+
+	public tutorCardFromUnitDeck(card: ServerCard): void {
+		this.cardDeck.removeCard(card)
+		this.cardHand.onUnitDrawn(card)
+		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
 	}
 
 	public refillSpellHand(): void {
@@ -107,6 +115,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 		this.unitMana = value
 		OutgoingMessageHandlers.notifyAboutUnitManaChange(this, delta)
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this)
 	}
 
 	public addSpellMana(value: number): void {
@@ -159,15 +168,19 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			runCardEventHandler(() => unit.card.onTurnEnded(unit))
 			unit.card.buffs.onTurnEnded()
 		})
+		this.cardHand.unitCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
+			this.cardHand.discardUnit(card)
+		})
 	}
 
 	public endRound(): void {
+		this.endTurn()
+
 		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
 			runCardEventHandler(() => unit.card.onRoundEnded(unit))
 			unit.card.buffs.onRoundEnded()
 		})
 
-		this.endTurn()
 		this.roundEnded = true
 		OutgoingMessageHandlers.notifyAboutRoundEnded(this)
 	}

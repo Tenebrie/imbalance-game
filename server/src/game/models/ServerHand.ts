@@ -39,6 +39,14 @@ export default class ServerHand {
 		this.addSpell(card)
 	}
 
+	public discardUnit(card: ServerCard): void {
+		this.removeCard(card)
+	}
+
+	public discardSpell(card: ServerCard): void {
+		this.removeCard(card)
+	}
+
 	public findCardById(cardId: string): ServerCard | null {
 		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
 	}

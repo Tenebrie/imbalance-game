@@ -3,6 +3,7 @@ import ServerBuff from './ServerBuff'
 import BuffStackType from '@shared/enums/BuffStackType'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerCard from './ServerCard'
+import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
 
 export default class ServerBuffContainer implements BuffContainer {
 	readonly card: ServerCard
@@ -40,6 +41,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		if (existingBuff && newBuff.stackType === BuffStackType.ADD_DURATION) {
 			existingBuff.duration += newBuff.duration
 			runCardEventHandler(() => existingBuff.onDurationChanged(newBuff.duration))
+			OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, existingBuff)
 			return
 		} else if (existingBuff && newBuff.stackType === BuffStackType.ADD_INTENSITY) {
 			existingBuff.intensity += newBuff.intensity
@@ -52,6 +54,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		}
 
 		this.buffs.push(newBuff)
+		OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
 		runCardEventHandler(() => newBuff.onCreated())
 		runCardEventHandler(() => newBuff.onDurationChanged(newBuff.duration))
 		runCardEventHandler(() => newBuff.onIntensityChanged(newBuff.intensity))
@@ -72,6 +75,7 @@ export default class ServerBuffContainer implements BuffContainer {
 
 	public removeByReference(buff: ServerBuff): void {
 		this.buffs.splice(this.buffs.indexOf(buff), 1)
+		OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(this.card, buff)
 		runCardEventHandler(() => buff.onIntensityChanged(-buff.intensity))
 		runCardEventHandler(() => buff.onDurationChanged(-buff.duration))
 		runCardEventHandler(() => buff.onDestroyed())

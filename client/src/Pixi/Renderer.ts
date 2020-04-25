@@ -48,7 +48,7 @@ export default class Renderer {
 	GAME_BOARD_WINDOW_FRACTION = 0.7
 	PLAYER_HAND_WINDOW_FRACTION = 0.20
 	OPPONENT_HAND_WINDOW_FRACTION = 0.20
-	HOVERED_HAND_WINDOW_FRACTION = 0.3
+	HOVERED_HAND_WINDOW_FRACTION = 0.30
 	GAME_BOARD_OFFSET_FRACTION = -0.075
 	OPPONENT_HAND_OFFSET_FRACTION = -0.15
 	ANNOUNCED_CARD_WINDOW_FRACTION = 0.40
@@ -279,11 +279,11 @@ export default class Renderer {
 			targetPosition.x -= this.getScreenWidth() * 0.2 / 2 + 125
 		}
 
-		const isPlayable = (renderedCard.type === CardType.UNIT && Core.player.unitMana > 0) || (renderedCard.type === CardType.SPELL && Core.player.spellMana >= renderedCard.spellCost)
-		sprite.tint = isPlayable ? 0xFFFFFF : 0x999999
+		const isPlayable = !!Core.input.playableCards.find(target => target.sourceCard === renderedCard)
+		sprite.tint = isPlayable ? 0xFFFFFF : 0x777777
 
 		if (renderedCard.type === CardType.SPELL) {
-			renderedCard.powerText.style.fill = 0x0000AA
+			renderedCard.powerText.style.fill = 0x333333BB
 		}
 
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED || renderedCard.displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
@@ -691,10 +691,15 @@ export default class Renderer {
 		const sprite = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
 
+		let sizeMod = 1.0
+		if (renderedCard === MouseHover.getHoveredCard()) {
+			sizeMod = 1.1
+		}
+
 		const cardHeight = this.getScreenHeight() * windowFraction
 
-		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
-		sprite.height = cardHeight
+		sprite.width = cardHeight * this.CARD_ASPECT_RATIO * sizeMod
+		sprite.height = cardHeight * sizeMod
 
 		const containerFraction = 0.80
 		const containerWidth = Math.min(this.getScreenWidth() * containerFraction, cardHeight * this.CARD_ASPECT_RATIO * handSize * 1.2)
@@ -716,6 +721,11 @@ export default class Renderer {
 		targetPosition.y = this.getScreenHeight() - targetPosition.y
 
 		renderedCard.setDisplayMode(CardDisplayMode.SELECTION)
+		if (renderedCard === MouseHover.getHoveredCard()) {
+			renderedCard.setDisplayMode(CardDisplayMode.SELECTION_HOVERED)
+		} else {
+			renderedCard.setDisplayMode(CardDisplayMode.SELECTION)
+		}
 
 		if (renderedCard.type === CardType.SPELL) {
 			renderedCard.powerText.style.fill = 0x0000AA

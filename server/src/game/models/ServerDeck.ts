@@ -34,11 +34,11 @@ export default class ServerDeck implements CardDeck {
 		this.spellCards.push(card)
 	}
 
-	public drawUnit(): ServerCard {
+	public drawTopUnit(): ServerCard {
 		return this.unitCards.pop()
 	}
 
-	public drawSpell(): ServerCard {
+	public drawTopSpell(): ServerCard {
 		return this.spellCards.pop()
 	}
 

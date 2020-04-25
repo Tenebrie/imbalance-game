@@ -10,6 +10,8 @@ import ServerGame from '../../models/ServerGame'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 import TargetType from '@shared/enums/TargetType'
 import Utils from '../../../utils/Utils'
+import ServerBuff from '../../models/ServerBuff'
+import BuffMessage from '@shared/models/network/BuffMessage'
 
 export default {
 	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard) {
@@ -151,6 +153,66 @@ export default {
 		opponent.sendMessage({
 			type: 'update/stack/cardResolved',
 			data: data
+		})
+	},
+
+	notifyAboutCardBuffAdded(card: ServerCard, buff: ServerBuff) {
+		const owner = card.owner.player
+		const opponent = card.owner.opponent.player
+		const message = new BuffMessage(buff)
+
+		owner.sendMessage({
+			type: 'update/card/buffs/added',
+			data: message
+		})
+		opponent.sendMessage({
+			type: 'update/card/buffs/added',
+			data: message
+		})
+	},
+
+	notifyAboutCardBuffIntensityChanged(card: ServerCard, buff: ServerBuff) {
+		const owner = card.owner.player
+		const opponent = card.owner.opponent.player
+		const message = new BuffMessage(buff)
+
+		owner.sendMessage({
+			type: 'update/card/buffs/intensityChanged',
+			data: message
+		})
+		opponent.sendMessage({
+			type: 'update/card/buffs/intensityChanged',
+			data: message
+		})
+	},
+
+	notifyAboutCardBuffDurationChanged(card: ServerCard, buff: ServerBuff) {
+		const owner = card.owner.player
+		const opponent = card.owner.opponent.player
+		const message = new BuffMessage(buff)
+
+		owner.sendMessage({
+			type: 'update/card/buffs/durationChanged',
+			data: message
+		})
+		opponent.sendMessage({
+			type: 'update/card/buffs/durationChanged',
+			data: message
+		})
+	},
+
+	notifyAboutCardBuffRemoved(card: ServerCard, buff: ServerBuff) {
+		const owner = card.owner.player
+		const opponent = card.owner.opponent.player
+		const message = new BuffMessage(buff)
+
+		owner.sendMessage({
+			type: 'update/card/buffs/removed',
+			data: message
+		})
+		opponent.sendMessage({
+			type: 'update/card/buffs/removed',
+			data: message
 		})
 	},
 

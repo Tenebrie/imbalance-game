@@ -14,8 +14,10 @@ import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import DescriptionTextBackground from '@/Pixi/render/DescriptionTextBackground'
 import CardColor from '@shared/enums/CardColor'
+import ClientBuffContainer from '@/Pixi/models/ClientBuffContainer'
 
 export default class RenderedCard extends Card {
+	public buffs: ClientBuffContainer
 	public variables: RichTextVariables
 
 	public coreContainer: PIXI.Container
@@ -47,6 +49,7 @@ export default class RenderedCard extends Card {
 
 		this.name = message.name
 		this.title = message.title
+		this.buffs = new ClientBuffContainer(this, message.buffs)
 		this.tribes = message.tribes.slice()
 		this.description = message.description
 		this.variables = message.variables
@@ -218,7 +221,8 @@ export default class RenderedCard extends Card {
 				displayMode === CardDisplayMode.INSPECTED ||
 				displayMode === CardDisplayMode.ANNOUNCED ||
 				displayMode === CardDisplayMode.RESOLVING ||
-				displayMode === CardDisplayMode.SELECTION) {
+				displayMode === CardDisplayMode.SELECTION ||
+				displayMode === CardDisplayMode.SELECTION_HOVERED) {
 			this.switchToCardMode()
 			texts = [this.powerText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {

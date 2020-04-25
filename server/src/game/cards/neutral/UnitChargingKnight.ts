@@ -8,6 +8,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
 import CardColor from '@shared/enums/CardColor'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitChargingKnight extends ServerCard {
 	hasMovedThisTurn = false
@@ -16,6 +17,7 @@ export default class UnitChargingKnight extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 10
 		this.baseAttack = 2
+		this.tribes = [CardTribe.HUMAN]
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {

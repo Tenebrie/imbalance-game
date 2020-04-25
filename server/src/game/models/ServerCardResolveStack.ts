@@ -78,5 +78,9 @@ export default class ServerCardResolveStack {
 		otherCards.forEach(otherCard => {
 			runCardEventHandler(() => otherCard.card.onAfterOtherCardPlayed(resolvedCard))
 		})
+
+		if (this.currentCard) {
+			this.game.cardPlay.checkCardTargeting(this.currentCard)
+		}
 	}
 }

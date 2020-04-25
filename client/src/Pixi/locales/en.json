@@ -11,6 +11,7 @@
 
 	"card.tribe.bird": "Bird",
 	"card.tribe.beast": "Beast",
+	"card.tribe.human": "Human",
 	"card.tribe.undead": "Undead",
 	"card.tribe.dragon": "Dragon",
 	"card.tribe.vampire": "Vampire",
@@ -64,7 +65,7 @@
 	"card.description.heroRagingElemental": "When {name} drops below {powerThreshold} Power, it deals Damage equal to own Power to closest opposing enemy units. <p>Then, it destroys itself.",
 
 	"card.name.unitRavenMessenger": "Raven Messenger",
-	"card.description.unitRavenMessenger": "*Deploy:*\n*Play* a bronze unit from your deck.",
+	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
 
 	"card.name.unitPossessedVulture": "Possessed Vulture",
 	"card.description.unitPossessedVulture": "If {name} kills an enemy creature, it gains *+{bonusPower} Power and *+{bonusAttack} Attack",

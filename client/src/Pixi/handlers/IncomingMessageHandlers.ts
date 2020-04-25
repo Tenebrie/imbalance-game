@@ -16,12 +16,13 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import BoardMessage from '@shared/models/network/BoardMessage'
 import BoardRowMessage from '@shared/models/network/BoardRowMessage'
 import AnimationMessage from '@shared/models/network/AnimationMessage'
-import AnimationType from '@shared/enums/AnimationType'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 import AnimationHandlers from './AnimationHandlers'
+import BuffMessage from '@shared/models/network/BuffMessage'
+import ClientBuff from '@/Pixi/models/ClientBuff'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -293,6 +294,42 @@ const handlers: {[ index: string ]: any } = {
 			}
 			matchingCard.setCardVariables(message.cardVariables)
 		})
+	},
+
+	'update/card/buffs/added': (data: BuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.cardId)
+		if (!card) {
+			return
+		}
+
+		card.buffs.add(new ClientBuff(data))
+	},
+
+	'update/card/buffs/intensityChanged': (data: BuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.cardId)
+		if (!card) {
+			return
+		}
+
+		card.buffs.findBuffById(data.id).intensity = data.intensity
+	},
+
+	'update/card/buffs/durationChanged': (data: BuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.cardId)
+		if (!card) {
+			return
+		}
+
+		card.buffs.findBuffById(data.id).duration = data.duration
+	},
+
+	'update/card/buffs/removed': (data: BuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.cardId)
+		if (!card) {
+			return
+		}
+
+		card.buffs.remove(data)
 	},
 
 	'animation/generic': (data: AnimationMessage) => {

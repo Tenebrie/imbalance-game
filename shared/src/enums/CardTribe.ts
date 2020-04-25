@@ -1,6 +1,7 @@
 enum CardTribe {
 	BIRD = 'bird',
 	BEAST = 'beast',
+	HUMAN = 'human',
 	DRAGON = 'dragon',
 	UNDEAD = 'undead',
 	CRYSTAL = 'crystal',
