@@ -1,6 +1,6 @@
 {
 		"name": "notgwent",
-		"version": "1.0.0",
+		"version": "0.0.0",
 		"description": "",
 		"main": "server/dist/app.js",
 		"subPackages": [
@@ -9,8 +9,10 @@
 		],
 		"scripts": {
 				"postinstall": "subpkg install",
-				"build": "cd client && npm run build && cd .. && mkdir server/client && cp -r client/dist/* server/client && cd server && npm run build",
-				"start": "node server/dist/app.js"
+				"build": "cd client && npm run build && cd .. && rm -rf server/client && mkdir server/client && cp -r client/dist/* server/client && cd server && npm run build",
+				"start": "(cd server && npm run start)",
+				"serve": "(cd client && npm run serve) & sleep 8s && (cd server && npm run serve)",
+				"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)"
 		},
 		"dependencies": {
 				"@babel/cli": "^7.6.4",
@@ -54,27 +56,17 @@
 				"typescript": "~3.5.3",
 				"vue-template-compiler": "^2.6.10"
 		},
-		"babel": {
-				"presets": [
-						"@babel/preset-env",
-						"@babel/preset-typescript"
-				],
-				"plugins": [
-						"@babel/proposal-class-properties",
-						"@babel/proposal-object-rest-spread",
-						"@babel/plugin-transform-runtime"
-				]
-		},
 		"engines": {
 				"node": "10.16"
 		},
-		"author": "Tianara",
+		"author": "Tenebrie Interactive",
 		"license": "ISC",
 		"bugs": {
 				"url": "https://github.com/Kos94ok/notgwent-game/issues"
 		},
 		"homepage": "https://github.com/Kos94ok/notgwent-game#readme",
 		"devDependencies": {
+				"babel-plugin-module-resolver": "^4.0.0",
 				"subpackage": "^1.1.0"
 		}
 }

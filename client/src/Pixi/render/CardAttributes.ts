@@ -1,18 +1,18 @@
 import * as PIXI from 'pixi.js'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import Card from '@/Pixi/shared/models/Card'
+import Card from '@shared/models/Card'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 
 export default class CardAttributes extends PIXI.Container {
-	card: Card
-	displayMode: CardDisplayMode
+	private card: Card
+	private readonly displayMode: CardDisplayMode
 
 	private readonly renderedElements: PIXI.DisplayObject[]
 	private statAttackClaw?: PIXI.Sprite
 	private statAttackRange?: PIXI.Sprite
 	private statHealthArmor?: PIXI.Sprite
 
-	constructor(card: Card, displayMode: CardDisplayMode) {
+	public constructor(card: Card, displayMode: CardDisplayMode) {
 		super()
 		this.card = card
 		this.displayMode = displayMode
@@ -31,9 +31,9 @@ export default class CardAttributes extends PIXI.Container {
 
 		const width = Math.round(this.getCardAttributesWidth())
 
-		let leftPartTexture = TextureAtlas.getTexture('components/bg-stats-left')
+		const leftPartTexture = TextureAtlas.getTexture('components/bg-stats-left')
 		let rightPartTexture = TextureAtlas.getTexture('components/bg-stats-right')
-		let middlePartTexture = TextureAtlas.getTexture('components/bg-stats-middle')
+		const middlePartTexture = TextureAtlas.getTexture('components/bg-stats-middle')
 		if (this.displayMode === CardDisplayMode.ON_BOARD) {
 			rightPartTexture = TextureAtlas.getTexture('components/bg-stats-right-zoom')
 		}
@@ -85,7 +85,6 @@ export default class CardAttributes extends PIXI.Container {
 
 	private getAttackTextWidth(): number {
 		const attack = this.card.attack || 0
-		const fontSize = this.getAttackTextFontSize()
 		return PIXI.TextMetrics.measureText(attack.toString(), new PIXI.TextStyle({
 			fontFamily: 'BrushScript',
 			fontSize: 60
@@ -97,44 +96,5 @@ export default class CardAttributes extends PIXI.Container {
 		const attackRangeWidth = this.card.attackRange !== 1 && this.displayMode === CardDisplayMode.IN_HAND ? 50 : 0
 		const healthArmorWidth = this.card.healthArmor > 0 && this.displayMode === CardDisplayMode.IN_HAND ? 50 : 0
 		return (attackTextWidth + attackRangeWidth + healthArmorWidth + 5) * this.scale.x
-	}
-
-	public getAttackTextFontSize(): number {
-		return this.displayMode === CardDisplayMode.IN_HAND ? 60 : 110
-	}
-
-	public getAttackRangeTextFontSize(): number {
-		return 22
-	}
-
-	public getHealthArmorTextFontSize(): number {
-		return 22
-	}
-
-	public getAttackTextPosition(): PIXI.Point {
-		const clawPosition = this.statAttackClaw!.position
-		let point = new PIXI.Point(clawPosition.x, clawPosition.y)
-		point.x -= 15
-		point.y -= 33
-		if (this.displayMode === CardDisplayMode.IN_HAND) {
-
-		}
-		if (this.displayMode === CardDisplayMode.ON_BOARD) {
-			point.x /= (60 / 110)
-			point.y /= (60 / 110)
-			point.x += 5
-			point.y += 5
-		}
-		return point
-	}
-
-	public getAttackRangeTextPosition(): PIXI.Point {
-		const iconPosition = this.statAttackRange!.position
-		return new PIXI.Point(iconPosition.x - 39, iconPosition.y - 33)
-	}
-
-	public getHealthArmorTextPosition(): PIXI.Point {
-		const iconPosition = this.statHealthArmor!.position
-		return new PIXI.Point(iconPosition.x - 37, iconPosition.y - 33)
 	}
 }

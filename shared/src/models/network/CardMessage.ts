@@ -1,20 +1,25 @@
 import Card from '../Card'
 import CardType from '../../enums/CardType'
 import CardTribe from '../../enums/CardTribe'
-import UnitSubtype from '../../enums/UnitSubtype'
 import RichTextVariables from '../RichTextVariables'
+import BuffContainer from '../BuffContainer'
+import BuffContainerMessage from './CardBuffsMessage'
+import CardColor from '../../enums/CardColor'
+import CardFeature from '../../enums/CardFeature'
 
-export default class CardMessage {
+export default class CardMessage implements Card {
 	id: string
-	cardType: CardType
-	cardClass: string
-	unitSubtype: UnitSubtype | null
+	type: CardType
+	class: string
+	color: CardColor
 
-	cardName: string
-	cardTitle: string
-	cardTribes: CardTribe[]
-	cardDescription: string
-	cardTextVariables: RichTextVariables
+	name: string
+	title: string
+	buffs: BuffContainerMessage
+	tribes: CardTribe[]
+	features: CardFeature[]
+	description: string
+	variables: RichTextVariables
 
 	power: number
 	attack: number
@@ -28,15 +33,17 @@ export default class CardMessage {
 
 	constructor(card: Card) {
 		this.id = card.id
-		this.cardType = card.cardType
-		this.cardClass = card.cardClass
-		this.unitSubtype = card.unitSubtype
+		this.type = card.type
+		this.class = card.class
+		this.color = card.color
 
-		this.cardName = card.cardName
-		this.cardTitle = card.cardTitle
-		this.cardTribes = card.cardTribes.slice()
-		this.cardDescription = card.cardDescription
-		this.cardTextVariables = card.cardTextVariables
+		this.name = card.name
+		this.title = card.title
+		this.buffs = new BuffContainerMessage(card.buffs)
+		this.tribes = card.tribes.slice()
+		this.features = card.features.slice()
+		this.description = card.description
+		this.variables = card.evaluateVariables()
 
 		this.power = card.power
 		this.attack = card.attack
@@ -49,7 +56,17 @@ export default class CardMessage {
 		this.baseHealthArmor = card.baseHealthArmor
 	}
 
+	evaluateVariables(): RichTextVariables {
+		return this.variables
+	}
+
 	static fromCard(card: Card): CardMessage {
 		return new CardMessage(card)
+	}
+
+	static fromCardWithVariables(card: Card, cardVariables: RichTextVariables): CardMessage {
+		const message = new CardMessage(card)
+		message.variables = cardVariables
+		return message
 	}
 }

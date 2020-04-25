@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import Core from '@/Pixi/Core'
 import router from '@/Vue/router'
-import Player from '@/Pixi/shared/models/Player'
+import Player from '@shared/models/Player'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import { createDirectStore, createModule } from 'direct-vuex'
 
@@ -14,7 +14,8 @@ const gameStateModule = createModule({
 	state: {
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
 		opponent: null as Player | null,
-		isPlayersTurn: false as boolean
+		isPlayersTurn: false as boolean,
+		playerUnitMana: 0 as number
 	},
 
 	mutations: {
@@ -28,6 +29,10 @@ const gameStateModule = createModule({
 
 		setGameStatus(state, gameStatus: ClientGameStatus): void {
 			state.gameStatus = gameStatus
+		},
+
+		setPlayerUnitMana(state, playerUnitMana: number): void {
+			state.playerUnitMana = playerUnitMana
 		}
 	},
 
@@ -57,6 +62,11 @@ const gameStateModule = createModule({
 		loseGame(context): void {
 			const { commit } = moduleActionContext(context, gameStateModule)
 			commit.setGameStatus(ClientGameStatus.DEFEAT)
+		},
+
+		drawGame(context): void {
+			const { commit } = moduleActionContext(context, gameStateModule)
+			commit.setGameStatus(ClientGameStatus.DRAW)
 		},
 
 		reset(context): void {

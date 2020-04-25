@@ -1,9 +1,10 @@
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import MouseHover from '@/Pixi/input/MouseHover'
-import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
+import RenderedUnit from '@/Pixi/board/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
-import RichTextVariables from '@/Pixi/shared/models/RichTextVariables'
+import RichTextVariables from '@shared/models/RichTextVariables'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 
 export default class ForcedTargetingMode {
 	validTargets: ClientCardTarget[] = []
@@ -35,7 +36,7 @@ export default class ForcedTargetingMode {
 		return (target.targetCard && target.targetCard === hoveredCard) || (target.targetUnit && target.targetUnit === hoveredUnit) || (target.targetRow && target.targetRow === hoveredRow)
 	}
 
-	public isUnitPotentialTarget(unit: RenderedCardOnBoard): boolean {
+	public isUnitPotentialTarget(unit: RenderedUnit): boolean {
 		return !!this.validTargets.find(target => target.targetUnit && target.targetUnit === unit)
 	}
 
@@ -62,7 +63,7 @@ export default class ForcedTargetingMode {
 		const hoveredTarget = this.validTargets.find(target => {
 			return (target.targetCard && target.targetCard === hoveredCard) || (target.targetUnit && target.targetUnit === hoveredUnit) || (target.targetRow && target.targetRow === hoveredRow)
 		})
-		return hoveredTarget ? hoveredTarget.sourceCard.cardTextVariables : {}
+		return hoveredTarget && hoveredTarget.sourceCard instanceof RenderedCard ? hoveredTarget.sourceCard.variables : {}
 	}
 
 	public confirmTarget(): void {

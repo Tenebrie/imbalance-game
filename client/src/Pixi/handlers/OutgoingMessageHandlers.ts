@@ -1,9 +1,9 @@
 import Core from '@/Pixi/Core'
-import Card from '@/Pixi/shared/models/Card'
+import Card from '@shared/models/Card'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
-import CardPlayedMessage from '@/Pixi/shared/models/network/CardPlayedMessage'
-import CardTargetMessage from '@/Pixi/shared/models/network/CardTargetMessage'
-import CardTarget from '@/Pixi/shared/models/CardTarget'
+import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import CardTarget from '@shared/models/CardTarget'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 
 export default {

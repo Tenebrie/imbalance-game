@@ -1,6 +1,6 @@
 <template>
 	<div class="the-footer">
-		<div class="info"><b>Contact:</b> notgwent@tenebrie.com • <b>Version:</b> v1.3 (07.02.2020)</div>
+		<div class="info"><b>Contact:</b> notgwent@tenebrie.com • <b>Version:</b> v1.4 (25.04.2020)</div>
 	</div>
 </template>
 

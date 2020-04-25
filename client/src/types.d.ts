@@ -1,13 +1,13 @@
 // types.d.ts
 
 interface Point {
-    x: double
-    y: double
+	x: double
+	y: double
 }
 
 interface Interval {
-    min: double
-    max: double
+	min: double
+	max: double
 }
 
 type int = number

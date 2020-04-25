@@ -2,12 +2,12 @@ import Core from '@/Pixi/Core'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
+import RenderedUnit from '@/Pixi/board/RenderedUnit'
 
 export default class HoveredCard {
 	card: RenderedCard
 	location: CardLocation
-	owner: ClientPlayerInGame
+	owner: ClientPlayerInGame | null
 
 	constructor(card: RenderedCard, location: CardLocation, owner: ClientPlayerInGame) {
 		this.card = card
@@ -19,11 +19,15 @@ export default class HoveredCard {
 		return new HoveredCard(card, CardLocation.HAND, owner)
 	}
 
-	public static fromCardOnBoard(cardOnBoard: RenderedCardOnBoard): HoveredCard {
+	public static fromCardOnBoard(cardOnBoard: RenderedUnit): HoveredCard {
 		return new HoveredCard(cardOnBoard.card, CardLocation.BOARD, cardOnBoard.owner)
 	}
 
 	public static fromAnnouncedCard(card: RenderedCard): HoveredCard {
 		return new HoveredCard(card, CardLocation.ANNOUNCED, Core.opponent)
+	}
+
+	public static fromSelectableCard(card: RenderedCard): HoveredCard {
+		return new HoveredCard(card, CardLocation.SELECTABLE, null)
 	}
 }

@@ -3,7 +3,8 @@ enum ClientGameStatus {
 	LOADING,
 	IN_PROGRESS,
 	VICTORY,
-	DEFEAT
+	DEFEAT,
+	DRAW
 }
 
 export default ClientGameStatus

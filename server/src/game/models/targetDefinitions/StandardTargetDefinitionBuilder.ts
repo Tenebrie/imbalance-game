@@ -1,9 +1,9 @@
 import ServerGame from '../ServerGame'
 import TargetValidatorArguments from '../../../types/TargetValidatorArguments'
 import TargetTypeWithMode from '../../../types/TargetTypeWithMode'
-import TargetMode from '../../shared/enums/TargetMode'
-import TargetType from '../../shared/enums/TargetType'
-import ServerTargetDefinition from './ServerTargetDefinition'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
+import TargetDefinition from './TargetDefinition'
 import TargetDefinitionBuilder from './TargetDefinitionBuilder'
 
 export default class StandardTargetDefinitionBuilder implements TargetDefinitionBuilder {
@@ -31,12 +31,22 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		}
 	}
 
-	public build(): ServerTargetDefinition {
-		return new ServerTargetDefinition(this.game, this.totalTargetCount, this.orderLabels, this.targetOfTypeCount, this.validators, this.validSimultaneousTargets)
+	public build(): TargetDefinition {
+		return new TargetDefinition(this.game, this.totalTargetCount, this.orderLabels, this.targetOfTypeCount, this.validators, this.validSimultaneousTargets)
+	}
+
+	public singleTarget(): StandardTargetDefinitionBuilder {
+		this.totalTargetCount = 1
+		return this
 	}
 
 	public singleAction(): StandardTargetDefinitionBuilder {
 		this.totalTargetCount = 1
+		return this
+	}
+
+	public multipleTargets(count: number): StandardTargetDefinitionBuilder {
+		this.totalTargetCount = count
 		return this
 	}
 
@@ -50,8 +60,13 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		return this
 	}
 
-	public allow(reason: TargetMode, type: TargetType, atMost: number = 1): StandardTargetDefinitionBuilder {
+	public allow(reason: TargetMode, type: TargetType, atMost = 1): StandardTargetDefinitionBuilder {
 		this.targetOfTypeCount[reason][type] = atMost
+		return this
+	}
+
+	public require(reason: TargetMode, type: TargetType, number = 1): StandardTargetDefinitionBuilder {
+		this.targetOfTypeCount[reason][type] = number
 		return this
 	}
 
@@ -118,10 +133,38 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		})
 	}
 
+	public inPlayersDeck(targetMode: TargetMode): StandardTargetDefinitionBuilder {
+		return this.validate(targetMode, TargetType.CARD_IN_UNIT_DECK, args => {
+			return args.targetCard.owner === args.thisCardOwner
+		}).validate(targetMode, TargetType.CARD_IN_SPELL_DECK, args => {
+			return args.targetCard.owner === args.thisCardOwner
+		})
+	}
+
+	public inOpponentsDeck(targetMode: TargetMode): StandardTargetDefinitionBuilder {
+		return this.validate(targetMode, TargetType.CARD_IN_UNIT_DECK, args => {
+			return args.targetCard.owner !== args.thisCardOwner
+		}).validate(targetMode, TargetType.CARD_IN_SPELL_DECK, args => {
+			return args.targetCard.owner !== args.thisCardOwner
+		})
+	}
+
+	public merge(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
+		this.totalTargetCount += targetDefinition.totalTargetCount
+		for (const targetingReason in Object.values(TargetMode)) {
+			for (const targetType in Object.values(TargetType)) {
+				this.targetOfTypeCount[targetingReason][targetType] += targetDefinition.targetOfTypeCount[targetingReason][targetType]
+				this.orderLabels[targetingReason][targetType] = this.orderLabels[targetingReason][targetType] || targetDefinition.orderLabels[targetingReason][targetType]
+				this.validators[targetingReason][targetType] = this.validators[targetingReason][targetType].concat(targetDefinition.validators[targetingReason][targetType])
+			}
+		}
+		return this
+	}
+
 	public static base(game: ServerGame): StandardTargetDefinitionBuilder {
 		return new StandardTargetDefinitionBuilder(game)
-			.label(TargetMode.ON_PLAY, TargetType.UNIT, 'target.generic.unit')
-			.label(TargetMode.ON_PLAY, TargetType.BOARD_ROW, 'target.generic.row')
+			.label(TargetMode.POST_PLAY_REQUIRED_TARGET, TargetType.UNIT, 'target.generic.unit')
+			.label(TargetMode.POST_PLAY_REQUIRED_TARGET, TargetType.BOARD_ROW, 'target.generic.row')
 			.label(TargetMode.ORDER_ATTACK, TargetType.UNIT, 'target.attack.unit')
 			.label(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, 'target.attack.row')
 			.label(TargetMode.ORDER_DRAIN, TargetType.UNIT, 'target.drain.unit')

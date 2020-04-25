@@ -1,6 +1,6 @@
 import ServerChatEntry from '../../models/ServerChatEntry'
 import ServerPlayer from '../../players/ServerPlayer'
-import ChatEntryMessage from '../../shared/models/network/ChatEntryMessage'
+import ChatEntryMessage from '@shared/models/network/ChatEntryMessage'
 
 export default {
 	notifyAboutChatEntry(player: ServerPlayer, chatEntry: ServerChatEntry) {

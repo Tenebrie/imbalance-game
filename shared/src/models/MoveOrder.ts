@@ -1,11 +1,11 @@
-import CardOnBoard from './CardOnBoard'
-import GameBoardRow from './GameBoardRow'
+import Unit from './Unit'
+import BoardRow from './BoardRow'
 
 export default class MoveOrder {
-	unit: CardOnBoard
-	targetRow: GameBoardRow
+	unit: Unit
+	targetRow: BoardRow
 
-	constructor(unit: CardOnBoard, targetRow: GameBoardRow) {
+	constructor(unit: Unit, targetRow: BoardRow) {
 		this.unit = unit
 		this.targetRow = targetRow
 	}

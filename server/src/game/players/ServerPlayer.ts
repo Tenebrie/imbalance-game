@@ -1,6 +1,6 @@
 import * as ws from 'ws'
 import PlayerWebSocket from './PlayerWebSocket'
-import Player from '../shared/models/Player'
+import Player from '@shared/models/Player'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 
 export default class ServerPlayer extends Player {

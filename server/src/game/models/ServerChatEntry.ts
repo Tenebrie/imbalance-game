@@ -1,5 +1,5 @@
 import uuidv4 from 'uuid/v4'
-import ChatEntry from '../shared/models/ChatEntry'
+import ChatEntry from '@shared/models/ChatEntry'
 import ServerPlayer from '../players/ServerPlayer'
 
 export default class ServerChatEntry extends ChatEntry {

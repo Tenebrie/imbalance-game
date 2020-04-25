@@ -1,17 +1,25 @@
 {
 	"compilerOptions": {
 		"strict": false,
-		// Target latest version of ECMAScript.
-		"target": "esnext",
+		"module": "commonjs",
+		"target": "es2017",
+		"lib": ["es2017"],
 		// Search under node_modules for non-relative imports.
 		"moduleResolution": "node",
 		// Process & infer types from .js files.
 		"allowJs": true,
 		// Don't emit; allow Babel to transform files.
-		"noEmit": true,
+		"noEmit": false,
 		// Import non-ES modules as default imports.
 		"esModuleInterop": true,
-		"jsx": "react"
+		"jsx": "react",
+		"outDir": "./dist",
+		"baseUrl": "./src",
+		"paths": {
+			"@shared/*": [
+				"../../shared/src/*"
+			]
+		}
 	},
 	"include": [
 		"src"

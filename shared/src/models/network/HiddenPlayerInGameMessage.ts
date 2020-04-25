@@ -8,14 +8,16 @@ export default class HiddenPlayerInGameMessage {
 	cardHand: HiddenCardHandMessage
 	cardDeck: HiddenCardDeckMessage
 	morale: number
-	timeUnits: number
+	unitMana: number
+	spellMana: number
 
 	constructor(playerInGame: PlayerInGame) {
 		this.player = PlayerMessage.fromPlayer(playerInGame.player)
-		this.cardHand = HiddenCardHandMessage.fromHand(playerInGame.cardHand)
-		this.cardDeck = HiddenCardDeckMessage.fromDeck(playerInGame.cardDeck)
+		this.cardHand = new HiddenCardHandMessage(playerInGame.cardHand)
+		this.cardDeck = new HiddenCardDeckMessage(playerInGame.cardDeck)
 		this.morale = playerInGame.morale
-		this.timeUnits = playerInGame.timeUnits
+		this.unitMana = playerInGame.unitMana
+		this.spellMana = playerInGame.spellMana
 	}
 
 	static fromPlayerInGame(playerInGame: PlayerInGame): HiddenPlayerInGameMessage {

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import store from '@/Vue/store'
 import VueRouter, { Route } from 'vue-router'
 import axios from 'axios'
-import Player from '@/Pixi/shared/models/Player'
+import Player from '@shared/models/Player'
 
 Vue.use(VueRouter)
 

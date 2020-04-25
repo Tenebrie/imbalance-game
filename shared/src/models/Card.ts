@@ -1,19 +1,23 @@
+import BuffContainer from './BuffContainer'
 import CardType from '../enums/CardType'
 import CardTribe from '../enums/CardTribe'
-import UnitSubtype from '../enums/UnitSubtype'
+import CardColor from '../enums/CardColor'
 import RichTextVariables from './RichTextVariables'
+import CardFeature from '../enums/CardFeature'
 
 export default class Card {
 	id: string
-	cardType: CardType
-	cardClass: string
-	unitSubtype: UnitSubtype | null
+	type: CardType
+	class: string
+	color: CardColor
 
-	cardName: string
-	cardTitle: string
-	cardTribes: CardTribe[]
-	cardDescription: string
-	cardTextVariables: RichTextVariables
+	name: string
+	title: string
+	buffs: BuffContainer
+	tribes: CardTribe[]
+	features: CardFeature[]
+	description: string
+	variables: RichTextVariables
 
 	power = 0
 	attack = 0
@@ -25,16 +29,22 @@ export default class Card {
 	baseAttackRange = 1
 	baseHealthArmor = 0
 
-	constructor(id: string, cardType: CardType, cardClass: string) {
+	constructor(id: string, type: CardType, cardClass: string) {
 		this.id = id
-		this.cardType = cardType
-		this.cardClass = cardClass
-		this.unitSubtype = null
+		this.type = type
+		this.class = cardClass
+		this.color = null
+		this.variables = {}
 
-		this.cardName = ''
-		this.cardTitle = ''
-		this.cardTribes = []
-		this.cardDescription = ''
-		this.cardTextVariables = {}
+		this.name = ''
+		this.title = ''
+		this.buffs = new BuffContainer(this)
+		this.tribes = []
+		this.features = []
+		this.description = ''
+	}
+
+	public evaluateVariables(): RichTextVariables {
+		return {}
 	}
 }

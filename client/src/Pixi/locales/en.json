@@ -11,10 +11,12 @@
 
 	"card.tribe.bird": "Bird",
 	"card.tribe.beast": "Beast",
+	"card.tribe.human": "Human",
 	"card.tribe.undead": "Undead",
 	"card.tribe.dragon": "Dragon",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.building": "Building",
+	"card.tribe.elemental": "Elemental",
 
 	"card.name.heroSatia": "Satia",
 	"card.title.heroSatia": "First mistress",
@@ -24,13 +26,13 @@
 	"card.title.heroNightMaiden": "Satia's favorite",
 	"card.description.heroNightMaiden": "If Satia dies, {name} leaves the battlefield",
 
-	"card.name.heroIgnea": "Ignia",
+	"card.name.heroIgnea": "Ignea",
 	"card.title.heroIgnea": "The Flameweaver",
 	"card.description.heroIgnea": "In addition to normal action, {name} may light any enemy row aflame, dealing 1 damage to every affected unit",
 
 	"card.name.heroRider1Famine": "Famine",
 	"card.title.heroRider1Famine": "The First Horseman",
-	"card.description.heroRider1Famine": "*On play:*\n{name} deals *{damage}* damage to all enemy units",
+	"card.description.heroRider1Famine": "*On play:*\n{name} deals {damage} damage to all enemy units",
 
 	"card.name.heroRider2Conquest": "Conquest",
 	"card.title.heroRider2Conquest": "The Second Horseman",
@@ -38,23 +40,41 @@
 
 	"card.name.heroRider3War": "War",
 	"card.title.heroRider3War": "The Third Horseman",
-	"card.description.heroRider3War": "*On play:*\nPlay *Conquest* from your deck. Then, choose *{targets}* allies and *{targets}* enemies to attack each other",
+	"card.description.heroRider3War": "*On play:*\nPlay *Conquest* from your deck. Then, choose {targets} allies and {targets} enemies to attack each other",
 
 	"card.name.heroRider4Death": "Death",
 	"card.title.heroRider4Death": "The Last Horseman",
 	"card.description.heroRider4Death": "*On play:*\nPlay *War* from your deck. Then, {name} destroys ALL damaged units with {powerThreshold} Power or less",
 
+	"card.name.heroZamarath": "Zamarath",
+	"card.title.heroZamarath": "The Protector",
+	"card.description.heroZamarath": "*Immune*",
+
+	"card.name.heroKroLah": "Kro'Lah",
+	"card.title.heroKroLah": "The Sky Guardian",
+	"card.description.heroKroLah": "*Deploy:*\nChoose an enemy row.\n*Stun* and *Push 1* all units on that row.",
+
+	"card.name.heroGarellion": "Garellion",
+	"card.title.heroGarellion": "The Conduit",
+	"card.description.heroGarellion": "*End of round:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
+
+	"card.name.heroSparklingSpirit": "Sparkling Spirit",
+	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
+
+	"card.name.heroRagingElemental": "Raging Elemental",
+	"card.description.heroRagingElemental": "When {name} drops below {powerThreshold} Power, it deals Damage equal to own Power to closest opposing enemy units. <p>Then, it destroys itself.",
+
 	"card.name.unitRavenMessenger": "Raven Messenger",
-	"card.description.unitRavenMessenger": "Every *3* turns {name} survives on the board, it draws a card",
+	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
 
 	"card.name.unitPossessedVulture": "Possessed Vulture",
-	"card.description.unitPossessedVulture": "If {name} kills an enemy creature, it gains *+{bonusPower}* Power and *+{bonusAttack}* Attack",
+	"card.description.unitPossessedVulture": "If {name} kills an enemy creature, it gains *+{bonusPower} Power and *+{bonusAttack} Attack",
 
 	"card.name.unitUnfeelingWarrior": "Unfeeling Warrior",
-	"card.description.unitUnfeelingWarrior": "*On turn start:*\nIf {name} was attacked last turn, he gains *+{bonusPower}* Power",
+	"card.description.unitUnfeelingWarrior": "*On turn start:*\nIf {name} was attacked last turn, he gains *+{bonusPower} Power",
 
 	"card.name.unitForestScout": "Forest Scout",
-	"card.description.unitForestScout": "If {name} did not attack last turn, she deals *{bonusDamage}* extra damage on her first attack this turn",
+	"card.description.unitForestScout": "*Deploy:*\nIf you're losing on the board, gains {boardPowerBonus} Power.\nIf you're losing on Morale, gains {moralePowerBonus} Power.",
 
 	"card.name.unitMadBerserker": "Mad Berserker",
 	"card.description.unitMadBerserker": "Every consecutive attack on the same target deals *3* more damage",
@@ -63,24 +83,55 @@
 	"card.description.unitSpinningBarbarian": "{name} attacks up to 4 closest enemies on target row",
 
 	"card.name.unitChargingKnight": "Charging Knight",
-	"card.description.unitChargingKnight": "{name} can move and attack at the same time\nIf {name} has moved this turn, his next attack deals double damage",
+	"card.description.unitChargingKnight": "*Melee Attack:* Deal {attack} Damage<p>Can *Melee Attack* only after performing a move",
 
 	"card.name.unitTwinBowArcher": "Twin Bow Archer",
 	"card.description.unitTwinBowArcher": "{name} always attacks units directly to the left and to the right from the chosen target",
 
 	"card.name.unitVampireFledgling": "Vampire Fledgling",
-	"card.description.unitVampireFledgling": "When *Draining* allied units, {name} restores *3* Power and gains *+4* Attack this turn only",
+	"card.description.unitVampireFledgling": "Loses {powerLost} Power per turn.<p>*Melee Attack:* Deal {attack} Damage. If damage is not blocked, then Restore {powerDrained} Power",
 
 	"card.name.unitPriestessOfAedine": "Priestess of Aedine",
-	"card.description.unitPriestessOfAedine": "*On play:*\nChoose {targets} damaged allied units in range. {name} restores *{healing}* Power to each of them.",
-	"card.target.unitPriestessOfAedine.heal": "Restore *{healing}* Power",
+	"card.description.unitPriestessOfAedine": "*Deploy:*\nRestore {healing} Power to a damaged allied unit",
+	"card.target.unitPriestessOfAedine.heal": "Restore {healing} Power",
 
-	"card.name.buildingTreeOfLife": "Tree of Life",
-	"card.description.buildingTreeOfLife": "*Support:*\n{name} targets a row. All units on that row restore *3* Power. All units on adjacent rows restore *1* Power",
-	"card.target.buildingTreeOfLife.support.row": "Restore power",
+	"card.name.unitTreeOfLife": "Long-Branched Tree",
+	"card.description.unitTreeOfLife": "When Long-Branched Tree enters the battlefield, *Stages of Apocalypse* start to happen every turn.<p>*Stage 1:* Babies are now born dead<p>*Stage 2:* Blizzard is not shit anymore<p>*Stage 3:* Coop games become popular again<p>*Stage 4:* Everyone dies",
+	"card.target.unitTreeOfLife.support.row": "Restore power",
+
+	"card.name.unitSupplyWagon": "Supply Wagon",
+	"card.description.unitSupplyWagon": "*Support:*\nGrant an allied unit an extra move action this turn only",
+	"card.target.unitSupplyWagon.ability": "Grant extra move",
+
+	"card.name.unitArcaneElemental": "Arcane Elemental",
+	"card.description.unitArcaneElemental": "*Deploy:*\nGenerate {manaGenerated} Mana",
+
+	"card.name.unitArcaneCrystal": "Arcane Crystal",
+	"card.description.unitArcaneCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Generate {manaGenerated} Mana for every {chargesForMana} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill generate {potentialMana} Mana</i></if>",
+
+	"card.name.unitFlameTouchCrystal": "Flame Touch Crystal",
+	"card.description.unitFlameTouchCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Create a *Tiny Sparkling* for each *Charge* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}</i></if>",
+
+	"card.name.unitIceSkinCrystal": "Ice Skin Crystal",
+	"card.description.unitIceSkinCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
+
+	"card.name.unitStoneElemental": "Stone Elemental",
+	"card.description.unitStoneElemental": "*Deploy:*\nDeal {damage} Damage to any other unit",
+
+	"card.name.unitTinySparkling": "Tiny Sparkling",
+	"card.description.unitTinySparkling": "<i>No effect</i>",
+
+	"card.name.spellSpark": "Spark",
+	"card.description.spellSpark": "*Hero Power*<p>Deal {damage} Damage to\nan enemy unit",
+
+	"card.name.spellSpeedPotion": "Potion of Speed",
+	"card.description.spellSpeedPotion": "*Hero Power*<p>Grant an allied unit {moves} extra move actions this turn only",
+
+	"card.name.spellPermafrost": "Permafrost",
+	"card.description.spellPermafrost": "*Hero Power*<p>Grant all allies *Immune* until the start of your next turn",
 
 	"card.name.spellRainOfFire": "Rain of Fire",
-	"card.description.spellRainOfFire": "{name} deals *{damage}* damage to *{targets}* enemy units\nThen, it draws a card",
+	"card.description.spellRainOfFire": "{name} deals {damage} damage to {targets} enemy units\nThen, it draws a card",
 
 	"card.name.spellMagicalStarfall": "Magical Starfall",
 	"card.description.spellMagicalStarfall": "{name} increases Power of all allies units by *3* and Attack by *2*\nThen, it draws a card"

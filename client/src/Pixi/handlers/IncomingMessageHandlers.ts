@@ -1,25 +1,28 @@
 import Core from '@/Pixi/Core'
 import store from '@/Vue/store'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
-import CardMessage from '@/Pixi/shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/CardMessage'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
-import GameStartMessage from '@/Pixi/shared/models/GameStartMessage'
+import GameStartMessage from '@shared/models/network/GameStartMessage'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import CardOnBoardMessage from '@/Pixi/shared/models/network/CardOnBoardMessage'
-import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
-import CardHandMessage from '@/Pixi/shared/models/network/CardHandMessage'
-import CardDeckMessage from '@/Pixi/shared/models/network/CardDeckMessage'
-import GameTimeMessage from '@/Pixi/shared/models/network/GameTimeMessage'
-import HiddenCardMessage from '@/Pixi/shared/models/network/HiddenCardMessage'
-import PlayerInGameMessage from '@/Pixi/shared/models/network/PlayerInGameMessage'
-import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
-import GameBoardMessage from '@/Pixi/shared/models/network/GameBoardMessage'
-import GameBoardRowMessage from '@/Pixi/shared/models/network/GameBoardRowMessage'
-import AnimationMessage from '@/Pixi/shared/models/network/AnimationMessage'
-import AnimationType from '@/Pixi/shared/enums/AnimationType'
+import UnitMessage from '@shared/models/network/UnitMessage'
+import RenderedUnit from '@/Pixi/board/RenderedUnit'
+import CardHandMessage from '@shared/models/network/CardHandMessage'
+import CardDeckMessage from '@shared/models/network/CardDeckMessage'
+import GameTimeMessage from '@shared/models/network/GameTimeMessage'
+import HiddenCardMessage from '@shared/models/network/HiddenCardMessage'
+import PlayerInGameMessage from '@shared/models/network/PlayerInGameMessage'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import BoardMessage from '@shared/models/network/BoardMessage'
+import BoardRowMessage from '@shared/models/network/BoardRowMessage'
+import AnimationMessage from '@shared/models/network/AnimationMessage'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
-import CardTargetMessage from '@/Pixi/shared/models/network/CardTargetMessage'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import RenderedCard from '@/Pixi/board/RenderedCard'
+import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
+import AnimationHandlers from './AnimationHandlers'
+import BuffMessage from '@shared/models/network/BuffMessage'
+import ClientBuff from '@/Pixi/models/ClientBuff'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -39,7 +42,8 @@ const handlers: {[ index: string ]: any } = {
 		Core.player.cardHand = RenderedCardHand.fromMessage(data.cardHand)
 		Core.player.cardDeck = ClientCardDeck.fromMessage(data.cardDeck)
 		Core.player.morale = data.morale
-		Core.player.timeUnits = data.timeUnits
+		Core.player.setUnitMana(data.unitMana)
+		Core.player.setSpellMana(data.spellMana)
 	},
 
 	'gameState/player/opponent': (data: PlayerInGameMessage) => {
@@ -48,16 +52,16 @@ const handlers: {[ index: string ]: any } = {
 		store.commit.gameStateModule.setOpponentData(playerInGame.player)
 	},
 
-	'gameState/board': (data: GameBoardMessage) => {
+	'gameState/board': (data: BoardMessage) => {
 		data.rows.forEach(row => {
 			Core.board.rows[row.index].setOwner(Core.getPlayer(row.ownerId))
 		})
 	},
 
-	'gameState/units': (data: CardOnBoardMessage[]) => {
+	'gameState/units': (data: UnitMessage[]) => {
 		Core.board.clearBoard()
 		data.forEach(message => {
-			const card = RenderedCardOnBoard.fromMessage(message)
+			const card = RenderedUnit.fromMessage(message)
 			Core.board.insertUnit(card, message.rowIndex, message.unitIndex)
 		})
 	},
@@ -79,19 +83,20 @@ const handlers: {[ index: string ]: any } = {
 		Core.game.maximumTime = data.maximumTime
 	},
 
-	'update/board/unitCreated': (data: CardOnBoardMessage) => {
+	'update/board/unitCreated': (data: UnitMessage) => {
 		if (Core.board.findUnitById(data.card.id)) { return }
 
-		Core.board.unitsOnHold.push(RenderedCardOnBoard.fromMessage(data))
+		Core.input.clearCardInLimbo(data.card)
+		Core.board.unitsOnHold.push(RenderedUnit.fromMessage(data))
 	},
 
-	'update/board/unitInserted': (data: CardOnBoardMessage) => {
+	'update/board/unitInserted': (data: UnitMessage) => {
 		if (Core.board.findInsertedById(data.card.id)) { return }
 
 		Core.board.insertUnitFromHold(data.card.id, data.rowIndex, data.unitIndex)
 	},
 
-	'update/board/unitMoved': (data: CardOnBoardMessage) => {
+	'update/board/unitMoved': (data: UnitMessage) => {
 		const unit = Core.board.findUnitById(data.card.id)
 		if (!unit) { return }
 
@@ -106,7 +111,7 @@ const handlers: {[ index: string ]: any } = {
 		Core.board.destroyUnit(unit)
 	},
 
-	'update/board/row/owner': (data: GameBoardRowMessage) => {
+	'update/board/row/owner': (data: BoardRowMessage) => {
 		Core.board.rows[data.index].setOwner(Core.getPlayerOrNull(data.ownerId))
 	},
 
@@ -119,13 +124,6 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		cardOnBoard.setPower(data.power)
-	},
-
-	'update/board/card/attack': (data: CardMessage) => {
-		const cardOnBoard = Core.board.findUnitById(data.id)
-		if (!cardOnBoard) { return }
-
-		cardOnBoard.setAttack(data.attack)
 	},
 
 	'update/player/self/turnStarted': (data: void) => {
@@ -152,12 +150,20 @@ const handlers: {[ index: string ]: any } = {
 		Core.opponent.morale = data.morale
 	},
 
-	'update/player/self/timeUnits': (data: PlayerInGameMessage) => {
-		Core.player.timeUnits = data.timeUnits
+	'update/player/self/unitMana': (data: PlayerInGameMessage) => {
+		Core.player.setUnitMana(data.unitMana)
 	},
 
-	'update/player/opponent/timeUnits': (data: PlayerInGameMessage) => {
-		Core.opponent.timeUnits = data.timeUnits
+	'update/player/opponent/unitMana': (data: PlayerInGameMessage) => {
+		Core.opponent.setUnitMana(data.unitMana)
+	},
+
+	'update/player/self/spellMana': (data: PlayerInGameMessage) => {
+		Core.player.setSpellMana(data.spellMana)
+	},
+
+	'update/player/opponent/spellMana': (data: PlayerInGameMessage) => {
+		Core.opponent.setSpellMana(data.spellMana)
 	},
 
 	'update/player/self/victory': (data: PlayerInGameMessage) => {
@@ -168,21 +174,68 @@ const handlers: {[ index: string ]: any } = {
 		store.dispatch.gameStateModule.loseGame()
 	},
 
-	'update/player/self/hand/cardDrawn': (data: CardMessage[]) => {
-		console.info('Cards drawn', data)
+	'update/player/self/draw': (data: PlayerInGameMessage) => {
+		store.dispatch.gameStateModule.drawGame()
+	},
+
+	'update/player/self/hand/playDeclined': (data: CardMessage) => {
+		console.info('Card play declined', data)
+		const cardInLimbo = Core.input.restoreCardFromLimbo(data)
+		Core.player.cardHand.addCard(cardInLimbo)
+	},
+
+	'update/player/self/hand/unit/cardDrawn': (data: CardMessage[]) => {
+		console.info('Units drawn', data)
 		data.forEach(cardMessage => {
-			const card = Core.player.cardDeck.drawCardById(cardMessage.id)
+			const card = Core.player.cardDeck.drawUnitById(cardMessage.id)
 			if (card) {
-				Core.player.cardHand.addCard(card)
+				Core.player.cardHand.addUnit(card)
 			}
 		})
 	},
 
-	'update/player/opponent/hand/cardDrawn': (data: HiddenCardMessage[]) => {
+	'update/player/opponent/hand/unit/cardDrawn': (data: HiddenCardMessage[]) => {
+		console.info('Opponent units', data)
 		data.forEach(cardMessage => {
-			const card = Core.opponent.cardDeck.drawCardById(cardMessage.id)
+			const card = Core.opponent.cardDeck.drawUnitById(cardMessage.id)
 			if (card) {
-				Core.opponent.cardHand.addCard(card)
+				Core.opponent.cardHand.addUnit(card)
+			}
+		})
+	},
+
+	'update/player/self/hand/unit/cardAdded': (data: CardMessage) => {
+		Core.player.cardHand.addUnit(RenderedCard.fromMessage(data))
+	},
+
+	'update/player/self/hand/spell/cardAdded': (data: CardMessage) => {
+		Core.player.cardHand.addSpell(RenderedCard.fromMessage(data))
+	},
+
+	'update/player/opponent/hand/unit/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardHand.addUnit(RenderedCard.fromMessage(data))
+	},
+
+	'update/player/opponent/hand/spell/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardHand.addSpell(RenderedCard.fromMessage(data))
+	},
+
+	'update/player/self/hand/spell/cardDrawn': (data: CardMessage[]) => {
+		console.info('Spells drawn', data)
+		data.forEach(cardMessage => {
+			const card = Core.player.cardDeck.drawSpellById(cardMessage.id)
+			if (card) {
+				Core.player.cardHand.addSpell(card)
+			}
+		})
+	},
+
+	'update/player/opponent/hand/spell/cardDrawn': (data: HiddenCardMessage[]) => {
+		console.info('Opponent spells', data)
+		data.forEach(cardMessage => {
+			const card = Core.opponent.cardDeck.drawSpellById(cardMessage.id)
+			if (card) {
+				Core.opponent.cardHand.addSpell(card)
 			}
 		})
 	},
@@ -192,7 +245,7 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/self/hand/cardDestroyed': (data: CardMessage) => {
-		Core.player.cardHand.removeCardById(data.id)
+		Core.player.cardHand.destroyCardById(data.id)
 	},
 
 	'update/player/opponent/hand/cardDestroyed': (data: CardMessage) => {
@@ -202,15 +255,19 @@ const handlers: {[ index: string ]: any } = {
 		if (Core.mainHandler.announcedCard === card) {
 			Core.mainHandler.clearAnnouncedCard()
 		}
-		Core.opponent.cardHand.removeCard(card)
+		Core.opponent.cardHand.destroyCard(card)
+	},
+
+	'update/player/self/hand/playTargets': (data: CardTargetMessage[]) => {
+		Core.input.playableCards = data.map(data => ClientCardTarget.fromMessage(data))
 	},
 
 	'update/player/self/graveyard/cardAdded': (data: CardMessage) => {
-		Core.player.cardGraveyard.addCard(data)
+		Core.player.cardGraveyard.addUnit(data)
 	},
 
 	'update/player/opponent/graveyard/cardAdded': (data: CardMessage) => {
-		Core.opponent.cardGraveyard.addCard(data)
+		Core.opponent.cardGraveyard.addUnit(data)
 	},
 
 	'update/stack/cardResolving': (data: CardMessage) => {
@@ -229,25 +286,60 @@ const handlers: {[ index: string ]: any } = {
 		}
 	},
 
-	'animation/generic': (data: AnimationMessage) => {
-		let animationDuration = 500
+	'update/card/variables': (data: CardVariablesMessage[]) => {
+		data.forEach(message => {
+			const matchingCard = Core.game.findRenderedCardById(message.cardId) || Core.board.findUnitById(message.cardId).card
+			if (!matchingCard) {
+				return
+			}
+			matchingCard.setCardVariables(message.cardVariables)
+		})
+	},
 
-		if (data.type === AnimationType.CARD_PLAY) {
-			const announcedCard = Core.opponent.cardHand.findCardById(data.targetCardID)!
-			Core.mainHandler.announceCard(announcedCard)
-			animationDuration = 3000
-		} else if (data.type === AnimationType.UNIT_ATTACK) {
-			animationDuration = 300
-			const sourceUnit = Core.board.findUnitById(data.sourceUnitID)
-			data.targetUnitIDs.forEach(targetUnitID => {
-				const targetUnit = Core.board.findUnitById(targetUnitID)
-				Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetUnit)
-			})
-		} else if (data.type === AnimationType.POST_UNIT_ATTACK) {
-			animationDuration = 100
-		} else if (data.type === AnimationType.ALL_UNITS_MOVE) {
-			animationDuration = 750
+	'update/card/buffs/added': (data: BuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.cardId)
+		if (!card) {
+			return
 		}
+
+		card.buffs.add(new ClientBuff(data))
+	},
+
+	'update/card/buffs/intensityChanged': (data: BuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.cardId)
+		if (!card) {
+			return
+		}
+
+		card.buffs.findBuffById(data.id).intensity = data.intensity
+	},
+
+	'update/card/buffs/durationChanged': (data: BuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.cardId)
+		if (!card) {
+			return
+		}
+
+		card.buffs.findBuffById(data.id).duration = data.duration
+	},
+
+	'update/card/buffs/removed': (data: BuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.cardId)
+		if (!card) {
+			return
+		}
+
+		card.buffs.remove(data)
+	},
+
+	'animation/generic': (data: AnimationMessage) => {
+		const handler = AnimationHandlers[data.type]
+		if (!handler) {
+			console.error(`Unknown animation type ${data.type}`)
+			return
+		}
+
+		const animationDuration = handler(data, data.params)
 		Core.mainHandler.triggerAnimation(animationDuration)
 	},
 

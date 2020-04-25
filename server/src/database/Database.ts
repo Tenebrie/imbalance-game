@@ -4,13 +4,20 @@ import { Client, QueryResult } from 'pg'
 
 export default class Database {
 	private static client: Client
+	public static autonomousMode = false
 
 	public static async init() {
 		let databaseUrl = process.env.DATABASE_URL
 		if (!databaseUrl) {
 			console.info('Looking for database URL')
-			const { stdout } = await Bash.exec('heroku pg:credentials:url HEROKU_POSTGRESQL_BRONZE --app notgwent')
-			databaseUrl = stdout.split('\n').find(line => line.includes('postgres://')).trim()
+			try {
+				const { stdout } = await Bash.exec('heroku pg:credentials:url HEROKU_POSTGRESQL_BRONZE --app notgwent')
+				databaseUrl = stdout.split('\n').find(line => line.includes('postgres://')).trim()
+			} catch (e) {
+				console.error('[WARN] Unable to find database URL. Operating in autonomous mode')
+				Database.autonomousMode = true
+				return
+			}
 		}
 
 		console.info('Connecting to database at "' + databaseUrl + '"')
@@ -26,7 +33,7 @@ export default class Database {
 			dbClient: client,
 			migrationsTable: 'MIGRATIONS',
 			direction: 'up',
-			dir: process.env.DATABASE_URL ? 'server/migrations' : 'migrations',
+			dir: 'migrations',
 			ignorePattern: ''
 		})
 

@@ -1,9 +1,8 @@
 import ServerPlayer from '../../players/ServerPlayer'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
-import PlayerInGameMessage from '../../shared/models/network/PlayerInGameMessage'
-import HiddenPlayerInGameMessage from '../../shared/models/network/HiddenPlayerInGameMessage'
-import ServerCardTarget from '../../models/ServerCardTarget'
-import CardTargetMessage from '../../shared/models/network/CardTargetMessage'
+import PlayerInGameMessage from '@shared/models/network/PlayerInGameMessage'
+import HiddenPlayerInGameMessage from '@shared/models/network/HiddenPlayerInGameMessage'
+import ServerGame from '../../models/ServerGame'
 
 export default {
 	notifyAboutPlayerMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
@@ -20,46 +19,72 @@ export default {
 		})
 	},
 
-	notifyAboutPlayerTimeBankChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame, delta: number) => {
-		player.sendMessage({
-			type: 'update/player/self/timeUnits',
+	notifyAboutUnitManaChange: (playerInGame: ServerPlayerInGame, delta: number) => {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/unitMana',
 			data: PlayerInGameMessage.fromPlayerInGame(playerInGame),
 			highPriority: delta < 0
 		})
-	},
-
-	notifyAboutOpponentTimeBankChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
-		player.sendMessage({
-			type: 'update/player/opponent/timeUnits',
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/unitMana',
 			data: HiddenPlayerInGameMessage.fromPlayerInGame(playerInGame)
 		})
 	},
 
-	notifyAboutTurnStarted: (player: ServerPlayer) => {
-		player.sendMessage({
-			type: 'update/player/self/turnStarted',
+	notifyAboutSpellManaChange: (playerInGame: ServerPlayerInGame, delta: number) => {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/spellMana',
+			data: PlayerInGameMessage.fromPlayerInGame(playerInGame),
+			highPriority: delta < 0
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/spellMana',
+			data: HiddenPlayerInGameMessage.fromPlayerInGame(playerInGame)
+		})
+	},
+
+	notifyAboutRoundStarted: (playerInGame: ServerPlayerInGame) => {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/roundStarted',
+			data: null
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/roundStarted',
 			data: null
 		})
 	},
 
-	notifyAboutOpponentTurnStarted: (player: ServerPlayer) => {
-		player.sendMessage({
+	notifyAboutTurnStarted: (playerInGame: ServerPlayerInGame) => {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/turnStarted',
+			data: null
+		})
+		playerInGame.opponent.player.sendMessage({
 			type: 'update/player/opponent/turnStarted',
 			data: null
 		})
 	},
 
-	notifyAboutTurnEnded: (player: ServerPlayer) => {
-		player.sendMessage({
+	notifyAboutTurnEnded: (playerInGame: ServerPlayerInGame) => {
+		playerInGame.player.sendMessage({
 			type: 'update/player/self/turnEnded',
 			data: null,
 			highPriority: true
 		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/turnEnded',
+			data: null
+		})
 	},
 
-	notifyAboutOpponentTurnEnded: (player: ServerPlayer) => {
-		player.sendMessage({
-			type: 'update/player/opponent/turnEnded',
+	notifyAboutRoundEnded: (playerInGame: ServerPlayerInGame) => {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/roundEnded',
+			data: null,
+			highPriority: true
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/roundEnded',
 			data: null
 		})
 	},
@@ -75,6 +100,15 @@ export default {
 		player.sendMessage({
 			type: 'update/player/self/defeat',
 			data: null
+		})
+	},
+
+	notifyAboutDraw: (game: ServerGame) => {
+		game.players.forEach(playerInGame => {
+			playerInGame.player.sendMessage({
+				type: 'update/player/self/draw',
+				data: null
+			})
 		})
 	}
 }

@@ -1,32 +1,37 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import CardType from '@/Pixi/shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import { CardLocation } from '@/Pixi/enums/CardLocation'
-import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
+import {CardLocation} from '@/Pixi/enums/CardLocation'
+import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import Settings from '@/Pixi/Settings'
-import TargetType from '@/Pixi/shared/enums/TargetType'
+import TargetType from '@shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
+import CardMessage from '@shared/models/network/CardMessage'
+import Utils from '@/utils/Utils'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
 
 export default class Input {
-	leftMouseDown: boolean = false
-	rightMouseDown: boolean = false
+	leftMouseDown = false
+	rightMouseDown = false
 	mousePosition: PIXI.Point = new PIXI.Point(-10000, -10000)
+	cardLimbo: RenderedCard[] = []
 	hoveredCard: HoveredCard | null = null
 	grabbedCard: GrabbedCard | null = null
 	inspectedCard: RenderedCard | null = null
 
+	playableCards: ClientCardTarget[] = []
 	forcedTargetingMode: ForcedTargetingMode | null = null
+	forcedTargetingCards: RenderedCard[] = []
 
 	constructor() {
 		const view = Core.renderer.pixi.view
@@ -45,10 +50,7 @@ export default class Input {
 			if (this.rightMouseDown) { this.inspectCard() }
 		})
 
-		document.addEventListener('contextmenu', (event: MouseEvent) => {
-			event.preventDefault()
-			return false
-		})
+		document.addEventListener('contextmenu', this.onContextMenuOpened)
 	}
 
 	public tick(): void {
@@ -57,7 +59,8 @@ export default class Input {
 
 	public updateCardHoverStatus(): void {
 		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
-		const playerHandCards = Core.player.cardHand.cards.slice().reverse()
+		const playerHandCards = Core.player.cardHand.allCards.slice().reverse()
+		const selectableCards = this.forcedTargetingCards.slice().reverse()
 
 		let hoveredCard: HoveredCard | null = null
 
@@ -73,6 +76,11 @@ export default class Input {
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.isHovered()) {
 			hoveredCard = HoveredCard.fromAnnouncedCard(Core.mainHandler.announcedCard)
+		}
+
+		const hoveredSelectableCard = selectableCards.find(card => card.isHovered()) || null
+		if (hoveredSelectableCard) {
+			hoveredCard = HoveredCard.fromSelectableCard(hoveredSelectableCard)
 		}
 
 		this.hoveredCard = hoveredCard
@@ -93,7 +101,7 @@ export default class Input {
 			return
 		}
 
-		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON) {
+		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON && (!this.hoveredCard || this.hoveredCard.location !== CardLocation.SELECTABLE)) {
 			this.forcedTargetingMode.selectTarget()
 			return
 		}
@@ -130,7 +138,8 @@ export default class Input {
 		this.mousePosition.y *= window.devicePixelRatio * Settings.superSamplingLevel
 
 		const windowHeight = Core.renderer.pixi.view.height
-		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && Core.player.timeUnits === 0 && windowHeight - this.mousePosition.y > windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5) {
+		const heightLimit = windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5
+		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCard === this.grabbedCard.card)) {
 			this.releaseCard()
 		}
 	}
@@ -144,13 +153,15 @@ export default class Input {
 		const card = hoveredCard.card
 
 		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
-			const validRows = Core.board.rows.filter(row => row.owner === Core.player)
+			const validRows = this.playableCards.filter(playableCard => playableCard.sourceCard === card).map(playableCard => playableCard.targetRow)
 			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
 		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY && Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0) {
 			const validOrders = Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id))
 			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetUnit.card)
 			const validRows = validOrders.filter(order => order.targetType === TargetType.BOARD_ROW).map(order => order.targetRow)
 			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)
+		} else if (hoveredCard.location === CardLocation.SELECTABLE) {
+			this.grabbedCard = GrabbedCard.cardSelect(card)
 		}
 	}
 
@@ -173,6 +184,8 @@ export default class Input {
 			this.onCardPlay(this.grabbedCard.card)
 		} else if (this.grabbedCard.mode === GrabbedCardMode.CARD_ORDER) {
 			this.onUnitOrder(this.grabbedCard.card)
+		} else if (this.grabbedCard.mode === GrabbedCardMode.CARD_SELECT) {
+			this.onCardSelect(this.grabbedCard.card)
 		}
 
 		this.releaseCard()
@@ -203,11 +216,13 @@ export default class Input {
 			return
 		}
 
-		if (card.cardType === CardType.SPELL) {
+		if (card.type === CardType.SPELL) {
 			OutgoingMessageHandlers.sendSpellCardPlayed(card)
-		} else if (card.cardType === CardType.UNIT) {
+		} else if (card.type === CardType.UNIT) {
 			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, this.getCardInsertIndex(hoveredRow))
 		}
+		this.cardLimbo.push(card)
+		Core.player.cardHand.destroyCard(card)
 	}
 
 	private onUnitOrder(orderedCard: RenderedCard): void {
@@ -222,15 +237,58 @@ export default class Input {
 		}
 	}
 
+	private onCardSelect(selectedCard: RenderedCard): void {
+		const hoveredCard = MouseHover.getHoveredCard()
+		if (hoveredCard !== selectedCard) {
+			return
+		}
+
+		OutgoingMessageHandlers.sendCardTarget(this.forcedTargetingMode.validTargets.find(target => target.targetCardData.id === selectedCard.id))
+	}
+
+	public restoreCardFromLimbo(cardMessage: CardMessage): RenderedCard {
+		const cardInLimbo = this.cardLimbo.find(card => card.id === cardMessage.id)
+		if (!cardInLimbo) {
+			return
+		}
+
+		Core.registerCard(cardInLimbo)
+		this.clearCardInLimbo(cardMessage)
+
+		return cardInLimbo
+	}
+
+	private onContextMenuOpened(event: MouseEvent) {
+		event.preventDefault()
+		return false
+	}
+
+	public clearCardInLimbo(cardMessage: CardMessage): void {
+		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardMessage.id)
+	}
+
 	public enableForcedTargetingMode(validTargets: ClientCardTarget[]): void {
+		this.forcedTargetingCards.forEach(card => card.unregister())
+		this.forcedTargetingCards = []
+
 		this.forcedTargetingMode = new ForcedTargetingMode(validTargets)
+		this.createForcedTargetingCards(validTargets)
+	}
+
+	public async createForcedTargetingCards(targets: ClientCardTarget[]): Promise<void> {
+		const forcedTargetingCardMessages = targets
+			.filter(target => target.targetType === TargetType.CARD_IN_LIBRARY || target.targetType === TargetType.CARD_IN_UNIT_DECK || target.targetType === TargetType.CARD_IN_SPELL_DECK)
+			.map(target => target.targetCardData)
+		this.forcedTargetingCards = Utils.sortCards(await Utils.renderCardsAsynchronously(forcedTargetingCardMessages))
 	}
 
 	public disableForcedTargetingMode(): void {
 		this.forcedTargetingMode = null
+		this.forcedTargetingCards.forEach(card => card.unregister())
+		this.forcedTargetingCards = []
 	}
 
 	public clear() {
-		// TODO: Remove event listeners
+		document.removeEventListener('contextmenu', this.onContextMenuOpened)
 	}
 }

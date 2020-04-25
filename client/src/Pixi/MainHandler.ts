@@ -9,7 +9,7 @@ export default class MainHandler {
 
 	announcedCard: RenderedCard | null = null
 	queuedMessages: QueuedMessage[] = []
-	messageCooldown: number = 0
+	messageCooldown = 0
 
 	coreTicker: PIXI.Ticker
 
@@ -21,6 +21,11 @@ export default class MainHandler {
 			const deltaTime = now - lastTime
 			const deltaFraction = deltaTime / 1000
 			lastTime = now
+
+			if (deltaTime > 1000) {
+				console.warn(`Delta time too long (${deltaTime}), skipping tick`)
+				return
+			}
 
 			this.tick(deltaTime, deltaFraction)
 			this.projectileSystem.tick(deltaTime, deltaFraction)

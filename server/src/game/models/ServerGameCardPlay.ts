@@ -1,16 +1,17 @@
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
-import ServerCard from './ServerCard'
-import TargetValidatorArguments from '../../types/TargetValidatorArguments'
 import ServerCardTarget from './ServerCardTarget'
-import TargetMode from '../shared/enums/TargetMode'
-import TargetType from '../shared/enums/TargetType'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
 import runCardEventHandler from '../utils/runCardEventHandler'
-import CardType from '../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
+import CardFeature from '@shared/enums/CardFeature'
+import CardLibrary from '../libraries/CardLibrary'
+import Utils from '../../utils/Utils'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -22,54 +23,49 @@ export default class ServerGameCardPlay {
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
+		/* Resolve card */
 		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)
 
-		/* Advance the time */
-		ownedCard.owner.setTimeUnits(ownedCard.owner.timeUnits - 1)
+		/* Deduct mana */
+		if (ownedCard.card.type === CardType.UNIT) {
+			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - ownedCard.card.unitCost)
+		} else if (ownedCard.card.type === CardType.SPELL) {
+			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - ownedCard.card.spellCost)
+		}
 	}
 
 	public forcedPlayCardFromHand(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
-		const card = ownedCard.card
-		const owner = ownedCard.owner
-
-		/* Announce card to opponent */
-		card.reveal(owner, owner.opponent)
-		OutgoingMessageHandlers.triggerAnimation(owner.opponent.player, ServerAnimation.cardPlay(card))
-
-		/* Remove card from hand */
-		if (owner.cardHand.findCardById(card.id)) {
-			owner.cardHand.removeCard(card)
-		}
-
-		if (card.cardType === CardType.UNIT) {
-			this.playUnit(ownedCard, rowIndex, unitIndex)
-		} else if (card.cardType === CardType.SPELL) {
-			this.playSpell(ownedCard)
-		}
-
-		OutgoingMessageHandlers.triggerAnimation(owner.opponent.player, ServerAnimation.delay())
+		this.forcedPlayCard(ownedCard, rowIndex, unitIndex, 'hand')
 	}
 
 	public forcedPlayCardFromDeck(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
+		this.forcedPlayCard(ownedCard, rowIndex, unitIndex, 'deck')
+	}
+
+	private forcedPlayCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number, source: 'hand' | 'deck'): void {
 		const card = ownedCard.card
 		const owner = ownedCard.owner
 
 		/* Announce card to opponent */
 		card.reveal(owner, owner.opponent)
-		OutgoingMessageHandlers.triggerAnimation(owner.opponent.player, ServerAnimation.cardPlay(card))
+		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardPlay(card))
 
-		/* Remove card from hand */
-		if (owner.cardDeck.findCardById(card.id)) {
+		/* Remove card from source */
+		if (source === 'hand' && owner.cardHand.findCardById(card.id)) {
+			owner.cardHand.removeCard(card)
+		} else if (source === 'deck' && owner.cardDeck.findCardById(card.id)) {
 			owner.cardDeck.removeCard(card)
 		}
 
-		if (card.cardType === CardType.UNIT) {
+		/* Resolve card */
+		if (card.type === CardType.UNIT) {
 			this.playUnit(ownedCard, rowIndex, unitIndex)
-		} else if (card.cardType === CardType.SPELL) {
+		} else if (card.type === CardType.SPELL) {
 			this.playSpell(ownedCard)
 		}
 
-		OutgoingMessageHandlers.triggerAnimation(owner.opponent.player, ServerAnimation.delay())
+		/* Play animation */
+		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.delay())
 	}
 
 	private playUnit(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
@@ -80,11 +76,10 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Insert the card into the board */
-		const targetRow = this.game.board.rows[rowIndex]
-		const unit = targetRow.createUnit(card, owner, unitIndex)
+		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
 
 		/* Invoke the card onPlay effect */
-		runCardEventHandler(() => card.onPlayUnit(unit, targetRow))
+		runCardEventHandler(() => card.onPlayedAsUnit(unit, this.game.board.rows[rowIndex]))
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -103,7 +98,12 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Invoke the card onPlay effect */
-		runCardEventHandler(() => card.onPlaySpell(owner))
+		runCardEventHandler(() => card.onPlayedAsSpell(owner))
+
+		/* Push hero powers to the spell deck */
+		if (card.features.includes(CardFeature.HERO_POWER)) {
+			owner.cardDeck.addSpell(CardLibrary.instantiate(card))
+		}
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -113,8 +113,8 @@ export default class ServerGameCardPlay {
 		this.checkCardTargeting(ownedCard)
 	}
 
-	private checkCardTargeting(ownedCard: ServerOwnedCard): void {
-		let validTargets = this.getValidTargets()
+	public checkCardTargeting(ownedCard: ServerOwnedCard): void {
+		const validTargets = this.getValidTargets()
 
 		if (validTargets.length === 0) {
 			this.cardResolveStack.finishResolving()
@@ -130,7 +130,7 @@ export default class ServerGameCardPlay {
 		const currentCard = this.cardResolveStack.currentCard
 		const card = currentCard.card
 
-		const targetDefinition = card.getPlayRequiredTargetDefinition()
+		const targetDefinition = card.getPostPlayRequiredTargetDefinition()
 		if (targetDefinition.getTargetCount() === 0) {
 			return []
 		}
@@ -141,15 +141,20 @@ export default class ServerGameCardPlay {
 			thisCardOwner: currentCard.owner
 		}
 
-		return []
-			.concat(card.getValidTargets(TargetMode.ON_PLAY, TargetType.UNIT, targetDefinition, args, this.cardResolveStack.currentTargets))
-			.concat(card.getValidTargets(TargetMode.ON_PLAY, TargetType.BOARD_ROW, targetDefinition, args, this.cardResolveStack.currentTargets))
+		let validTargets = []
+		console.log(this.cardResolveStack.currentTargets)
+		Utils.forEachInNumericEnum(TargetType, (targetType: TargetType) => {
+			validTargets = validTargets.concat(card.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, targetType, targetDefinition, args, this.cardResolveStack.currentTargets))
+		})
+		return validTargets
 	}
 
 	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
 		if (playerInGame !== this.cardResolveStack.currentCard.owner) {
 			return
 		}
+
+		const currentResolvingCard = this.cardResolveStack.currentCard
 
 		let validTargets = this.getValidTargets()
 		const isValidTarget = !!validTargets.find(validTarget => validTarget.isEqual(target))
@@ -161,25 +166,30 @@ export default class ServerGameCardPlay {
 		const sourceUnit = target.sourceUnit
 		const sourceCard = target.sourceCard || sourceUnit.card
 
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetCard) {
+		this.cardResolveStack.pushTarget(target)
+		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
 			sourceCard.onUnitPlayTargetCardSelected(sourceUnit, target.targetCard)
 		}
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetUnit) {
+		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
 			sourceCard.onUnitPlayTargetUnitSelected(sourceUnit, target.targetUnit)
 		}
-		if (sourceCard.cardType === CardType.UNIT && target.targetMode === TargetMode.ON_PLAY && target.targetRow) {
+		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
 			sourceCard.onUnitPlayTargetRowSelected(sourceUnit, target.targetRow)
 		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetCard) {
+		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
 			sourceCard.onSpellPlayTargetCardSelected(playerInGame, target.targetCard)
 		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetUnit) {
+		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
 			sourceCard.onSpellPlayTargetUnitSelected(playerInGame, target.targetUnit)
 		}
-		if (sourceCard.cardType === CardType.SPELL && target.targetMode === TargetMode.ON_PLAY && target.targetRow) {
+		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
 			sourceCard.onSpellPlayTargetRowSelected(playerInGame, target.targetRow)
 		}
-		this.cardResolveStack.pushTarget(target)
+
+		// Current card changed - resolve that first
+		if (this.cardResolveStack.currentCard !== currentResolvingCard) {
+			return
+		}
 
 		validTargets = this.getValidTargets()
 
@@ -188,15 +198,12 @@ export default class ServerGameCardPlay {
 			return
 		}
 
-		if (sourceCard.cardType === CardType.UNIT) {
+
+		if (sourceCard.type === CardType.UNIT) {
 			sourceCard.onUnitPlayTargetsConfirmed(sourceUnit)
-		} else if (sourceCard.cardType === CardType.SPELL) {
+		} else if (sourceCard.type === CardType.SPELL) {
 			sourceCard.onSpellPlayTargetsConfirmed(playerInGame)
 		}
 		this.cardResolveStack.finishResolving()
-
-		if (this.cardResolveStack.currentCard) {
-			this.checkCardTargeting(this.cardResolveStack.currentCard)
-		}
 	}
 }

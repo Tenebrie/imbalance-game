@@ -1,8 +1,8 @@
 import ServerCard from '../game/models/ServerCard'
-import CardTribe from '../game/shared/enums/CardTribe'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default {
 	isLiving(card: ServerCard) {
-		return !card.cardTribes.includes(CardTribe.BUILDING) && !card.cardTribes.includes(CardTribe.UNDEAD) && !card.cardTribes.includes(CardTribe.VAMPIRE)
+		return !card.tribes.includes(CardTribe.BUILDING) && !card.tribes.includes(CardTribe.UNDEAD) && !card.tribes.includes(CardTribe.VAMPIRE)
 	}
 }

@@ -1,15 +1,12 @@
-import Card from '../Card'
 import CardHand from '../CardHand'
 import HiddenCardMessage from './HiddenCardMessage'
 
 export default class HiddenCardHandMessage {
-	cards: HiddenCardMessage[]
+	unitCards: HiddenCardMessage[]
+	spellCards: HiddenCardMessage[]
 
-	constructor(cards: Card[]) {
-		this.cards = cards.map(card => HiddenCardMessage.fromCard(card))
-	}
-
-	public static fromHand(cardHand: CardHand): HiddenCardHandMessage {
-		return new HiddenCardHandMessage(cardHand.cards)
+	constructor(cardHand: CardHand) {
+		this.unitCards = cardHand.unitCards.map(card => new HiddenCardMessage(card))
+		this.spellCards = cardHand.spellCards.map(card => new HiddenCardMessage(card))
 	}
 }

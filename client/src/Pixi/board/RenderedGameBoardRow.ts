@@ -1,19 +1,19 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import GameBoardRow from '@/Pixi/shared/models/GameBoardRow'
-import RenderedCardOnBoard from '@/Pixi/board/RenderedCardOnBoard'
+import BoardRow from '@shared/models/BoardRow'
+import RenderedUnit from '@/Pixi/board/RenderedUnit'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
-export default class RenderedGameBoardRow extends GameBoardRow {
-	cards: RenderedCardOnBoard[]
-	container: PIXI.Container
-	owner: ClientPlayerInGame | null
+export default class RenderedGameBoardRow extends BoardRow {
+	public cards: RenderedUnit[]
+	public container: PIXI.Container
+	public owner: ClientPlayerInGame | null
 
-	readonly sprite: PIXI.Sprite
+	public readonly sprite: PIXI.Sprite
 
-	constructor(index: number) {
+	public constructor(index: number) {
 		super(index)
 		this.cards = []
 		this.owner = null
@@ -31,7 +31,7 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 		return this.sprite.texture.height
 	}
 
-	public insertUnit(card: RenderedCardOnBoard, unitIndex: number): void {
+	public insertUnit(card: RenderedUnit, unitIndex: number): void {
 		this.cards.splice(unitIndex, 0, card)
 	}
 
@@ -44,15 +44,15 @@ export default class RenderedGameBoardRow extends GameBoardRow {
 		return this.cards.indexOf(cardOnBoard)
 	}
 
-	public findUnitById(cardId: string): RenderedCardOnBoard | null {
+	public findUnitById(cardId: string): RenderedUnit | null {
 		return this.cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
 	}
 
-	public removeUnit(targetUnit: RenderedCardOnBoard): void {
+	public removeUnit(targetUnit: RenderedUnit): void {
 		this.cards = this.cards.filter(unit => unit !== targetUnit)
 	}
 
-	public destroyUnit(targetUnit: RenderedCardOnBoard): void {
+	public destroyUnit(targetUnit: RenderedUnit): void {
 		this.removeUnit(targetUnit)
 		targetUnit.card.unregister()
 	}

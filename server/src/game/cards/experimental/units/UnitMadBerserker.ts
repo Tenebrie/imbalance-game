@@ -1,20 +1,21 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import ServerUnit from '../../../models/ServerUnit'
+import CardColor from '@shared/enums/CardColor'
 
 export default class UnitMadBerserker extends ServerCard {
 	hasAttackedThisTurn = false
-	lastAttackTarget: ServerCardOnBoard | null = null
+	lastAttackTarget: ServerUnit | null = null
 	consecutiveAttackCount = 0
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT)
+		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 54
 		this.baseAttack = 3
 	}
 
-	onTurnEnded(thisUnit: ServerCardOnBoard): void {
+	onTurnEnded(thisUnit: ServerUnit): void {
 		if (!this.hasAttackedThisTurn) {
 			this.lastAttackTarget = null
 			this.consecutiveAttackCount = 0
@@ -22,7 +23,7 @@ export default class UnitMadBerserker extends ServerCard {
 		this.hasAttackedThisTurn = false
 	}
 
-	onBeforePerformingUnitAttack(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): void {
+	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit): void {
 		this.hasAttackedThisTurn = true
 		if (target === this.lastAttackTarget) {
 			this.consecutiveAttackCount += 1
@@ -32,7 +33,7 @@ export default class UnitMadBerserker extends ServerCard {
 		}
 	}
 
-	getBonusAttackDamage(thisUnit: ServerCardOnBoard, target: ServerCardOnBoard): number {
+	getBonusAttackDamage(thisUnit: ServerUnit, target: ServerUnit): number {
 		return this.consecutiveAttackCount * 3
 	}
 }

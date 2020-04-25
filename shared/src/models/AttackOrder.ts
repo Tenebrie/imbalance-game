@@ -1,10 +1,10 @@
-import CardOnBoard from './CardOnBoard'
+import Unit from './Unit'
 
 export default class AttackOrder {
-	attacker: CardOnBoard
-	target: CardOnBoard
+	attacker: Unit
+	target: Unit
 
-	constructor(attacker: CardOnBoard, target: CardOnBoard) {
+	constructor(attacker: Unit, target: Unit) {
 		this.attacker = attacker
 		this.target = target
 	}

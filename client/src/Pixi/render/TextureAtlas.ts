@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
-import CardMessage from '@/Pixi/shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/CardMessage'
 
 export default class TextureAtlas {
 	static isReady = false
@@ -29,18 +29,27 @@ export default class TextureAtlas {
 			TextureAtlas.textures = {}
 
 			const components = [
+				'masks/black',
 				'effects/trail',
 				'effects/fireball-static',
 				'cards/cardBack',
 				'components/bg-power',
 				'components/bg-power-zoom',
+				'components/bg-manacost',
 				'components/bg-name',
 				'components/bg-tribe',
-				'components/bg-description',
+				'components/bg-description-top',
+				'components/bg-description-middle-short',
+				'components/bg-description-middle-long',
+				'components/bg-description-bottom',
 				'components/bg-stats-left',
 				'components/bg-stats-middle',
 				'components/bg-stats-right',
 				'components/bg-stats-right-zoom',
+				'components/bg-overlay-unit-bronze',
+				'components/bg-overlay-unit-silver',
+				'components/bg-overlay-unit-golden',
+				'components/bg-overlay-spell',
 				'components/stat-attack-claw',
 				'components/stat-attack-range',
 				'components/stat-health-armor',
@@ -51,7 +60,7 @@ export default class TextureAtlas {
 			const response = await axios.get('/api/cards')
 			const cardMessages: CardMessage[] = response.data
 			const cards = cardMessages.map(cardMessage => {
-				const name = cardMessage.cardClass.substr(0, 1).toLowerCase() + cardMessage.cardClass.substr(1)
+				const name = cardMessage.class.substr(0, 1).toLowerCase() + cardMessage.class.substr(1)
 				return `cards/${name}`
 			})
 
@@ -72,7 +81,10 @@ export default class TextureAtlas {
 					}
 				}
 				texture.baseTexture.on('loaded', onLoaded)
-				texture.baseTexture.on('error', onLoaded)
+				texture.baseTexture.on('error', () => {
+					console.error(`Unable to load texture ${fileName}`)
+					onLoaded()
+				})
 			})
 		})
 	}

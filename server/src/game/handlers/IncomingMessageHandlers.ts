@@ -1,11 +1,11 @@
-import CardType from '../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerGame from '../models/ServerGame'
-import GameTurnPhase from '../shared/enums/GameTurnPhase'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import CardPlayedMessage from '../shared/models/network/CardPlayedMessage'
+import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
 import ServerCardTarget from '../models/ServerCardTarget'
-import CardTargetMessage from '../shared/models/network/CardTargetMessage'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerOwnedCard from '../models/ServerOwnedCard'
 
@@ -20,10 +20,10 @@ export default {
 			return
 		}
 
-		if (playerInGame.turnEnded || playerInGame.targetRequired ||
+		if (playerInGame.turnEnded || playerInGame.roundEnded || playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
-			(card.cardType === CardType.SPELL && !playerInGame.canPlaySpell(card)) ||
-			(card.cardType === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex, data.unitIndex))) {
+			(card.type === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex)) ||
+			(card.type === CardType.SPELL && !playerInGame.canPlaySpell(card, data.rowIndex))) {
 
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return
@@ -32,29 +32,29 @@ export default {
 		const ownedCard = new ServerOwnedCard(card, playerInGame)
 		game.cardPlay.playCard(ownedCard, data.rowIndex, data.unitIndex)
 
-		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, playerInGame)
-		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(game, game.getOpponent(playerInGame))
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
+		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
 		if (!playerInGame.isAnyActionsAvailable()) {
 			playerInGame.endTurn()
-			game.advanceTurn()
+			game.advanceCurrentTurn()
 		}
 	},
 
-	'post/unitOrder': (data: CardTargetMessage, game: ServerGame, player: ServerPlayerInGame) => {
+	'post/unitOrder': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
 		const orderedUnit = game.board.findUnitById(data.sourceUnitId)
-		if (player.turnEnded || player.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== player || orderedUnit.hasSummoningSickness) {
+		if (playerInGame.turnEnded || playerInGame.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== playerInGame || orderedUnit.hasSummoningSickness) {
 			return
 		}
 
 		game.board.orders.performUnitOrder(ServerCardTarget.fromMessage(game, data))
 
-		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(game, player)
-		OutgoingMessageHandlers.notifyAboutOpponentUnitValidOrdersChanged(game, game.getOpponent(player))
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
+		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		if (!player.isAnyActionsAvailable()) {
-			player.endTurn()
-			game.advanceTurn()
+		if (!playerInGame.isAnyActionsAvailable()) {
+			playerInGame.endTurn()
+			game.advanceCurrentTurn()
 		}
 	},
 
@@ -66,19 +66,25 @@ export default {
 		const target = ServerCardTarget.fromMessage(game, data)
 		game.cardPlay.selectCardTarget(playerInGame, target)
 
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
+		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
+
 		if (!playerInGame.isAnyActionsAvailable()) {
 			playerInGame.endTurn()
-			game.advanceTurn()
+			game.advanceCurrentTurn()
 		}
 	},
 
 	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
 		if (player.turnEnded || player.targetRequired) { return }
 
-		player.setTimeUnits(0)
 		player.endTurn()
+		if (player.unitMana > 0) {
+			player.setUnitMana(0)
+			player.endRound()
+		}
 
-		game.advanceTurn()
+		game.advanceCurrentTurn()
 	},
 
 	'system/init': (data: void, game: ServerGame, player: ServerPlayerInGame) => {

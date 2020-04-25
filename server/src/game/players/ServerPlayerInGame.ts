@@ -1,39 +1,43 @@
 import ServerPlayer from './ServerPlayer'
 import ServerGame from '../models/ServerGame'
 import ServerCard from '../models/ServerCard'
-import PlayerInGame from '../shared/models/PlayerInGame'
-import ServerCardHand from '../models/ServerCardHand'
-import ServerCardDeck from '../models/ServerCardDeck'
+import PlayerInGame from '@shared/models/PlayerInGame'
+import ServerHand from '../models/ServerHand'
+import ServerDeck from '../models/ServerDeck'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerDamageInstance from '../models/ServerDamageSource'
-import Ruleset from '../Ruleset'
-import ServerCardGraveyard from '../models/ServerCardGraveyard'
-import ServerCardTarget from '../models/ServerCardTarget'
-import CardDeck from '../shared/models/CardDeck'
+import ServerGraveyard from '../models/ServerGraveyard'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
+import Constants from '@shared/Constants'
+import runCardEventHandler from '../utils/runCardEventHandler'
+import BuffTutoredCard from '../buffs/BuffTutoredCard'
+import BuffDuration from '@shared/enums/BuffDuration'
 
-export default class ServerPlayerInGame extends PlayerInGame {
+export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
 
 	game: ServerGame
 	player: ServerPlayer
-	cardHand: ServerCardHand
-	cardDeck: ServerCardDeck
-	cardGraveyard: ServerCardGraveyard
+	cardHand: ServerHand
+	cardDeck: ServerDeck
+	cardGraveyard: ServerGraveyard
 	morale: number
-	timeUnits: number
+	unitMana: number
+	spellMana: number
 	turnEnded: boolean
+	roundEnded: boolean
 
 	constructor(game: ServerGame, player: ServerPlayer) {
-		super(player)
 		this.game = game
 		this.player = player
-		this.cardHand = new ServerCardHand(game, this, [])
-		this.cardDeck = new ServerCardDeck(game, this, [])
-		this.cardGraveyard = new ServerCardGraveyard(this)
-		this.morale = Ruleset.STARTING_PLAYER_MORALE
-		this.timeUnits = 0
+		this.cardHand = new ServerHand(game, this, [], [])
+		this.cardDeck = new ServerDeck(game, this, [], [])
+		this.cardGraveyard = new ServerGraveyard(this)
+		this.morale = Constants.STARTING_PLAYER_MORALE
+		this.unitMana = 0
+		this.spellMana = 0
 		this.turnEnded = false
+		this.roundEnded = false
 	}
 
 	public get targetRequired(): boolean {
@@ -44,37 +48,52 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		return this.game.getOpponent(this)
 	}
 
-	public canPlaySpell(card: ServerCard): boolean {
-		return this.timeUnits > 0
-	}
-
-	public canPlayUnit(card: ServerCard, rowIndex: number, unitIndex: number): boolean {
+	public canPlaySpell(card: ServerCard, rowIndex: number): boolean {
 		const gameBoardRow = this.game.board.rows[rowIndex]
-		if (gameBoardRow.cards.length >= Ruleset.MAX_CARDS_PER_ROW || gameBoardRow.owner !== this) {
-			return false
-		}
-
-		return this.timeUnits > 0
+		return this.spellMana >= card.spellCost && !!card.getValidPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
 	}
 
-	public drawCards(count: number): void {
-		const actualCount = Math.min(count, Ruleset.HAND_SIZE_LIMIT - this.cardHand.cards.length)
-		const cards: ServerCard[] = []
+	public canPlayUnit(card: ServerCard, rowIndex: number): boolean {
+		const gameBoardRow = this.game.board.rows[rowIndex]
+		return this.unitMana >= card.unitCost && !!card.getValidPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
+	}
+
+	public drawUnitCards(count: number): void {
+		const actualCount = Math.min(count, Constants.UNIT_HAND_SIZE_LIMIT - this.cardHand.unitCards.length)
 		for (let i = 0; i < actualCount; i++) {
-			const card = this.cardDeck.drawCard()
+			const card = this.cardDeck.drawTopUnit()
 			if (!card) {
 				// TODO: Fatigue damage?
 				continue
 			}
 
-			this.cardHand.drawCard(card)
-			cards.push(card)
+			this.cardHand.onUnitDrawn(card)
 		}
+	}
 
-		OutgoingMessageHandlers.notifyAboutCardsDrawn(this.player, cards)
-		const opponent = this.game.getOpponent(this)
-		if (opponent) {
-			OutgoingMessageHandlers.notifyAboutOpponentCardsDrawn(opponent.player, cards)
+	public drawSpellCards(count: number): void {
+		const actualCount = Math.min(count, Constants.SPELL_HAND_SIZE_LIMIT - this.cardHand.spellCards.length)
+		for (let i = 0; i < actualCount; i++) {
+			const card = this.cardDeck.drawTopSpell()
+			if (!card) {
+				// TODO: Fatigue damage?
+				continue
+			}
+
+			this.cardHand.onSpellDrawn(card)
+		}
+	}
+
+	public tutorCardFromUnitDeck(card: ServerCard): void {
+		this.cardDeck.removeCard(card)
+		this.cardHand.onUnitDrawn(card)
+		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
+	}
+
+	public refillSpellHand(): void {
+		const cardsMissing = Constants.SPELL_HAND_SIZE_MINIMUM - this.cardHand.spellCards.length
+		if (cardsMissing > 0) {
+			this.drawSpellCards(cardsMissing)
 		}
 	}
 
@@ -89,40 +108,81 @@ export default class ServerPlayerInGame extends PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutOpponentMoraleChange(opponent.player, this)
 	}
 
-	public setTimeUnits(timeUnits: number): void {
-		if (this.timeUnits === timeUnits) { return }
+	public setUnitMana(value: number): void {
+		if (this.unitMana === value) { return }
 
-		const delta = timeUnits - this.timeUnits
+		const delta = value - this.unitMana
 
-		this.timeUnits = timeUnits
-		const opponent = this.game.getOpponent(this)
-		OutgoingMessageHandlers.notifyAboutPlayerTimeBankChange(this.player, this, delta)
-		OutgoingMessageHandlers.notifyAboutOpponentTimeBankChange(opponent.player, this)
+		this.unitMana = value
+		OutgoingMessageHandlers.notifyAboutUnitManaChange(this, delta)
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this)
+	}
+
+	public addSpellMana(value: number): void {
+		this.setSpellMana(this.spellMana + value)
+	}
+
+	public setSpellMana(value: number): void {
+		if (this.spellMana === value) { return }
+
+		const delta = value - this.spellMana
+
+		this.spellMana = value
+		OutgoingMessageHandlers.notifyAboutSpellManaChange(this, delta)
+	}
+
+	public startRound(): void {
+		this.roundEnded = false
+		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
 	}
 
 	public startTurn(): void {
 		this.turnEnded = false
-		OutgoingMessageHandlers.notifyAboutTurnStarted(this.player)
-		OutgoingMessageHandlers.notifyAboutUnitValidOrdersChanged(this.game, this)
+		this.refillSpellHand()
+		OutgoingMessageHandlers.notifyAboutTurnStarted(this)
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this)
+		this.onTurnStart()
+	}
 
-		const opponent = this.game.getOpponent(this)
-		if (opponent) {
-			OutgoingMessageHandlers.notifyAboutOpponentTurnStarted(opponent.player)
-		}
+	public onTurnStart(): void {
+		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
+			unit.hasSummoningSickness = false
+			runCardEventHandler(() => unit.card.onTurnStarted(unit))
+			unit.card.buffs.onTurnStarted()
+		})
 	}
 
 	public isAnyActionsAvailable(): boolean {
-		return this.timeUnits > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
+		return this.unitMana > 0 || this.spellMana > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
 	}
 
 	public endTurn(): void {
 		this.turnEnded = true
+		OutgoingMessageHandlers.notifyAboutTurnEnded(this)
+		this.onTurnEnd()
+	}
 
-		OutgoingMessageHandlers.notifyAboutTurnEnded(this.player)
-		const opponent = this.game.getOpponent(this)
-		if (opponent) {
-			OutgoingMessageHandlers.notifyAboutOpponentTurnEnded(opponent.player)
-		}
+	public onTurnEnd(): void {
+		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
+			unit.hasSummoningSickness = false
+			runCardEventHandler(() => unit.card.onTurnEnded(unit))
+			unit.card.buffs.onTurnEnded()
+		})
+		this.cardHand.unitCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
+			this.cardHand.discardUnit(card)
+		})
+	}
+
+	public endRound(): void {
+		this.endTurn()
+
+		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
+			runCardEventHandler(() => unit.card.onRoundEnded(unit))
+			unit.card.buffs.onRoundEnded()
+		})
+
+		this.roundEnded = true
+		OutgoingMessageHandlers.notifyAboutRoundEnded(this)
 	}
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {

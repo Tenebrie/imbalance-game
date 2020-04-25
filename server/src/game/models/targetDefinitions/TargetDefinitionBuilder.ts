@@ -1,5 +1,6 @@
-import ServerTargetDefinition from './ServerTargetDefinition'
+import TargetDefinition from './TargetDefinition'
 
 export default interface TargetDefinitionBuilder {
-	build(): ServerTargetDefinition
+	build(): TargetDefinition
+	merge(targetDefinition: TargetDefinitionBuilder): TargetDefinitionBuilder
 }

@@ -1,34 +1,35 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerCardOnBoard from '../../../models/ServerCardOnBoard'
+import ServerUnit from '../../../models/ServerUnit'
 import ServerCardTarget from '../../../models/ServerCardTarget'
-import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTargetDefinition'
+import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition'
 import TargetValidatorArguments from '../../../../types/TargetValidatorArguments'
-import TargetMode from '../../../shared/enums/TargetMode'
-import TargetType from '../../../shared/enums/TargetType'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
+import CardColor from '@shared/enums/CardColor'
 
 export default class UnitTwinBowArcher extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT)
+		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 14
 		this.baseAttack = 7 // 70
 		this.baseAttackRange = 2 // 30
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
-		return ServerTargetDefinition.defaultUnitOrder(this.game)
+		return TargetDefinition.defaultUnitOrder(this.game)
 			.validate(TargetMode.ORDER_ATTACK, TargetType.UNIT, (args: TargetValidatorArguments) => {
 				return this.game.board.getRowWithUnit(args.targetUnit).cards.length > 1
 			})
 	}
 
-	isRequireCustomOrderLogic(thisUnit: ServerCardOnBoard, order: ServerCardTarget): boolean {
+	isRequireCustomOrderLogic(thisUnit: ServerUnit, order: ServerCardTarget): boolean {
 		return order.targetMode === TargetMode.ORDER_ATTACK
 	}
 
-	onUnitCustomOrder(thisUnit: ServerCardOnBoard, order: ServerCardTarget): void {
+	onUnitCustomOrderPerformed(thisUnit: ServerUnit, order: ServerCardTarget): void {
 		const target = order.targetUnit!
 		const rowWithCard = this.game.board.getRowWithUnit(target)
 		const targetUnitIndex = rowWithCard.cards.indexOf(target)

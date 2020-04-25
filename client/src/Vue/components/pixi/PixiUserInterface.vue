@@ -1,7 +1,8 @@
 <template>
 	<div class="pixi-user-interface">
 		<div class="end-turn-button-container">
-			<button @click="onEndTurn" class="primary game-button" :disabled="!isPlayersTurn">End turn</button>
+			<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
+			<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">End round</button>
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
 			<span class="overlay-message" v-if="!opponent">Waiting for opponent...</span>
@@ -10,6 +11,7 @@
 		<div class="endgame-screen" :class="endgameScreenClass">
 			<div class="victory" v-if="isVictory">Victory!</div>
 			<div class="defeat" v-if="isDefeat">Defeat</div>
+			<div class="draw" v-if="isDraw">Draw</div>
 		</div>
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
@@ -24,7 +26,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import Player from '@/Pixi/shared/models/Player'
+import Player from '@shared/models/Player'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 
@@ -38,13 +40,17 @@ export default Vue.extend({
 	},
 
 	computed: {
+		isEndRoundButtonVisible(): boolean {
+			return store.state.gameStateModule.playerUnitMana > 0
+		},
+
 		isPlayersTurn(): boolean {
 			return store.state.gameStateModule.isPlayersTurn && store.state.gameStateModule.gameStatus === ClientGameStatus.IN_PROGRESS
 		},
 
 		isGameStarted(): boolean {
 			const status = store.state.gameStateModule.gameStatus
-			return status === ClientGameStatus.IN_PROGRESS || status === ClientGameStatus.VICTORY || status === ClientGameStatus.DEFEAT
+			return status === ClientGameStatus.IN_PROGRESS || status === ClientGameStatus.VICTORY || status === ClientGameStatus.DEFEAT || status === ClientGameStatus.DRAW
 		},
 
 		fadeInOverlayClass(): {} {
@@ -61,9 +67,13 @@ export default Vue.extend({
 			return store.state.gameStateModule.gameStatus === ClientGameStatus.DEFEAT
 		},
 
+		isDraw(): boolean {
+			return store.state.gameStateModule.gameStatus === ClientGameStatus.DRAW
+		},
+
 		endgameScreenClass(): {} {
 			return {
-				visible: (this.isVictory || this.isDefeat) as boolean
+				visible: (this.isVictory || this.isDefeat || this.isDraw) as boolean
 			}
 		},
 
@@ -166,12 +176,12 @@ export default Vue.extend({
 				background: gray;
 			}
 			&.destructive {
-				color: red;
+				color: lighten(red, 15);
 				&:hover {
-					color: darken(red, 5);
+					color: lighten(red, 10);
 				}
 				&:active {
-					color: darken(red, 10);
+					color: lighten(red, 5);
 				}
 			}
 		}

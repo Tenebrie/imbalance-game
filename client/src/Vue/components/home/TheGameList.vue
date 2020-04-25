@@ -21,7 +21,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import store from '@/Vue/store'
-import GameMessage from '@/Pixi/shared/models/network/GameMessage'
+import GameMessage from '@shared/models/network/GameMessage'
 import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
 
 export default Vue.extend({
@@ -54,13 +54,13 @@ export default Vue.extend({
 		async onCreateMultiPlayer(): Promise<void> {
 			const response = await axios.post('/api/games')
 			const gameMessage: GameMessage = response.data.data
-			store.dispatch.joinGame(gameMessage.id)
+			await store.dispatch.joinGame(gameMessage.id)
 		},
 
 		async onCreateSinglePlayer(): Promise<void> {
 			const response = await axios.post('/api/games', { mode: 'sp_ai' })
 			const gameMessage: GameMessage = response.data.data
-			store.dispatch.joinGame(gameMessage.id)
+			await store.dispatch.joinGame(gameMessage.id)
 		},
 
 		async onRefreshGames(): Promise<void> {

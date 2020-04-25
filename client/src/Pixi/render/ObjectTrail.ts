@@ -2,13 +2,13 @@ import * as PIXI from 'pixi.js'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 export default class ObjectTrail {
-	rope: PIXI.SimpleRope
-	points: PIXI.Point[]
-	isInitialized: boolean = false
+	public readonly rope: PIXI.SimpleRope
+	private readonly points: PIXI.Point[]
+	private isInitialized = false
 
-	constructor(startingPosition: PIXI.Point) {
+	public constructor(startingPosition: PIXI.Point) {
 		this.points = []
-		for (let i = 0; i < 30; i++) {
+		for (let i = 0; i < 50; i++) {
 			this.points.push(startingPosition.clone())
 		}
 		this.rope = new PIXI.SimpleRope(TextureAtlas.getTexture('effects/trail'), this.points)

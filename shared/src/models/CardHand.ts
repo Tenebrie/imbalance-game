@@ -1,9 +1,6 @@
 import Card from './Card'
 
-export default class CardHand {
-	cards: Card[] = []
-
-	constructor(cards: Card[]) {
-		this.cards = cards
-	}
+export default interface CardHand {
+	unitCards: Card[]
+	spellCards: Card[]
 }

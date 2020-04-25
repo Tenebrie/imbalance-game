@@ -2,14 +2,14 @@ import ServerGame from '../models/ServerGame'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import GameLibrary from '../libraries/GameLibrary'
 import ServerPlayer from '../players/ServerPlayer'
-import Ruleset from '../Ruleset'
 import VoidPlayerInGame from '../utils/VoidPlayerInGame'
 import ServerBotPlayer from '../utils/ServerBotPlayer'
+import Constants from '@shared/Constants'
 
 export default {
 	onPlayerConnected(game: ServerGame, playerInGame: ServerPlayerInGame): void {
 		const initializedPlayers = game.players.filter(playerInGame => playerInGame.initialized)
-		if (initializedPlayers.length < Ruleset.PLAYERS_PER_GAME) {
+		if (initializedPlayers.length < Constants.PLAYERS_PER_GAME) {
 			return
 		}
 

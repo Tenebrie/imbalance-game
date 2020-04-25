@@ -11,16 +11,5 @@
 		"@typescript-eslint/eslint-plugin": "^2.3.3",
 		"@typescript-eslint/parser": "^2.3.3",
 		"typescript": "^3.6.4"
-	},
-	"babel": {
-		"presets": [
-			"@babel/preset-env",
-			"@babel/preset-typescript"
-		],
-		"plugins": [
-			"@babel/proposal-class-properties",
-			"@babel/proposal-object-rest-spread",
-			"@babel/plugin-transform-runtime"
-		]
 	}
 }

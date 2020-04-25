@@ -29,4 +29,11 @@ export default class GrabbedCard {
 		grabbedCard.validTargetRows = validTargetRows
 		return grabbedCard
 	}
+
+	public static cardSelect(card: RenderedCard) {
+		const grabbedCard = new GrabbedCard(card, GrabbedCardMode.CARD_SELECT)
+		grabbedCard.validTargetCards = [card]
+		grabbedCard.validTargetRows = []
+		return grabbedCard
+	}
 }

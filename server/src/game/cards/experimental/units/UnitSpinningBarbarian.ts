@@ -1,20 +1,21 @@
-import CardType from '../../../shared/enums/CardType'
+import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerTargetDefinition from '../../../models/targetDefinitions/ServerTargetDefinition'
-import TargetMode from '../../../shared/enums/TargetMode'
-import TargetType from '../../../shared/enums/TargetType'
+import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetType from '@shared/enums/TargetType'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
+import CardColor from '@shared/enums/CardColor'
 
 export default class UnitSpinningBarbarian extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT)
+		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 21
 		this.baseAttack = 4
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
-		return ServerTargetDefinition.defaultUnitOrder(this.game)
+		return TargetDefinition.defaultUnitOrder(this.game)
 			.disallowType(TargetMode.ORDER_ATTACK, TargetType.UNIT)
 			.allow(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW)
 			.validate(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, args => {

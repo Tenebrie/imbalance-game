@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ObjectTrail from '@/Pixi/render/ObjectTrail'
 
 export default class RenderedProjectile {
@@ -13,6 +12,9 @@ export default class RenderedProjectile {
 	animationDuration: number
 	lifetime: number
 	randomnessFactor: number
+	onImpact: Function
+
+	impactPerformed: boolean
 
 	private constructor(sprite: PIXI.Sprite, startingPoint: PIXI.Point, animationDuration: number, lifetime: number) {
 		this.sprite = sprite
@@ -23,6 +25,9 @@ export default class RenderedProjectile {
 		this.animationDuration = animationDuration
 		this.lifetime = lifetime
 		this.randomnessFactor = Math.random()
+		this.onImpact = () => { /* Empty */ }
+
+		this.impactPerformed = false
 	}
 
 	public static inPlace(sprite: PIXI.Sprite, startingPoint: PIXI.Point, animationDuration: number, lifetime: number): RenderedProjectile {

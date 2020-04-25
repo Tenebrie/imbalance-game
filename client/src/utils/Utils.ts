@@ -1,9 +1,14 @@
 import * as PIXI from 'pixi.js'
+import CardMessage from '@shared/models/network/CardMessage'
+import RenderedCard from '@/Pixi/board/RenderedCard'
+import Card from '@shared/models/Card'
+import CardType from '@shared/enums/CardType'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 
 export default {
 	getFont(text: string) {
 		let font = 'Roboto'
-		let cyrillic = (/[а-яА-Я]/g).exec(text)
+		const cyrillic = (/[а-яА-Я]/g).exec(text)
 		if (cyrillic) {
 			font = 'Roboto'
 		}
@@ -40,5 +45,51 @@ export default {
 			hash |= 0 // Convert to 32bit integer
 		}
 		return hash
+	},
+
+	async renderCardsAsynchronously(cardMessages: CardMessage[]): Promise<RenderedCard[]> {
+		const promises = []
+		let i = 0
+		cardMessages.forEach(message => {
+			promises.push(new Promise(resolve => {
+				setTimeout(() => resolve(RenderedCard.fromMessage(message)), i)
+			}))
+			i += 5
+		})
+		return await Promise.all(promises)
+	},
+
+	splitArrayIntoChunks(inputArray: any[], chunkCount: number): any[] {
+		const length = inputArray.length
+		const chunks = []
+		let itemsProcessed = 0
+		for (let i = 0; i < chunkCount; i++) {
+			let itemsPerChunk = Math.floor(length / chunkCount)
+			if (length % chunkCount > i) {
+				itemsPerChunk += 1
+			}
+			chunks.push(inputArray.slice(itemsProcessed, itemsProcessed + itemsPerChunk))
+			itemsProcessed += itemsPerChunk
+		}
+		return chunks
+	},
+
+	splitArrayIntoFixedChunks(inputArray: any[], itemsPerChunk: number): any[] {
+		const length = inputArray.length
+		const chunks = []
+		let itemsProcessed = 0
+		while (itemsProcessed < length) {
+			chunks.push(inputArray.slice(itemsProcessed, itemsProcessed + itemsPerChunk))
+			itemsProcessed += itemsPerChunk
+		}
+		return chunks
+	},
+
+	sortCards(inputArray: RenderedCard[]): RenderedCard[] {
+		return inputArray.slice().sort((a: Card, b: Card) => {
+			return (a.type - b.type) ||
+				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
+				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+		})
 	}
 }

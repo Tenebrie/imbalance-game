@@ -1,6 +1,7 @@
-import GameTurnPhase from '@/Pixi/shared/enums/GameTurnPhase'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Core from '@/Pixi/Core'
-import Card from '@/Pixi/shared/models/Card'
+import Card from '@shared/models/Card'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 
 export default class ClientGame {
 	currentTime: number
@@ -19,6 +20,11 @@ export default class ClientGame {
 
 	public findCardById(cardId: string): Card | null {
 		const players = [Core.player, Core.opponent]
+
+		const cardOnBoard = Core.board.findUnitById(cardId)
+		if (cardOnBoard) {
+			return cardOnBoard.card
+		}
 
 		const cardInStack = Core.resolveStack.findCardById(cardId)
 		if (cardInStack) {
@@ -40,5 +46,13 @@ export default class ClientGame {
 			}
 		}
 		return null
+	}
+
+	public findRenderedCardById(cardId: string): RenderedCard | null {
+		const card = this.findCardById(cardId)
+		if (!card || !(card instanceof RenderedCard)) {
+			return null
+		}
+		return card
 	}
 }

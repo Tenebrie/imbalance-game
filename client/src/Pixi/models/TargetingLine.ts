@@ -2,9 +2,9 @@ import * as PIXI from 'pixi.js'
 import Core from '@/Pixi/Core'
 
 export default class TargetingLine {
-	arrowLine: PIXI.Graphics
-	startingPoint: PIXI.Graphics
-	targetPoint: PIXI.Graphics
+	public arrowLine: PIXI.Graphics
+	public startingPoint: PIXI.Graphics
+	public targetPoint: PIXI.Graphics
 
 	constructor() {
 		this.arrowLine = new PIXI.Graphics()

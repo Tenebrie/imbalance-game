@@ -1,11 +1,9 @@
 import ServerOwnedCard from './ServerOwnedCard'
-import CardType from '../shared/enums/CardType'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import ServerCard from './ServerCard'
+import CardType from '@shared/enums/CardType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import ServerAnimation from './ServerAnimation'
 import ServerGame from './ServerGame'
 import ServerCardTarget from './ServerCardTarget'
+import runCardEventHandler from '../utils/runCardEventHandler'
 
 class ServerCardResolveStackEntry {
 	ownedCard: ServerOwnedCard
@@ -42,6 +40,12 @@ export default class ServerCardResolveStack {
 		const card = ownedCard.card
 		const owner = ownedCard.owner
 
+		/* On before card played */
+		const otherCards = this.game.board.getAllUnits().filter(otherCard => otherCard !== ownedCard)
+		otherCards.forEach(otherCard => {
+			runCardEventHandler(() => otherCard.card.onBeforeOtherCardPlayed(ownedCard))
+		})
+
 		/* Create card in stack */
 		this.entries.push(new ServerCardResolveStackEntry(ownedCard))
 		OutgoingMessageHandlers.notifyAboutCardResolving(ownedCard)
@@ -65,8 +69,18 @@ export default class ServerCardResolveStack {
 		OutgoingMessageHandlers.notifyAboutCardResolved(resolvedEntry.ownedCard)
 
 		const resolvedCard = resolvedEntry.ownedCard
-		if (resolvedCard.card.cardType === CardType.SPELL) {
-			resolvedCard.owner.cardGraveyard.addCard(resolvedCard.card)
+		if (resolvedCard.card.type === CardType.SPELL) {
+			resolvedCard.owner.cardGraveyard.addSpell(resolvedCard.card)
+		}
+
+		/* On after card played */
+		const otherCards = this.game.board.getAllUnits().filter(otherCard => otherCard !== resolvedCard)
+		otherCards.forEach(otherCard => {
+			runCardEventHandler(() => otherCard.card.onAfterOtherCardPlayed(resolvedCard))
+		})
+
+		if (this.currentCard) {
+			this.game.cardPlay.checkCardTargeting(this.currentCard)
 		}
 	}
 }
