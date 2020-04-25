@@ -16,5 +16,5 @@ export default interface CardTarget {
 	targetUnit?: Unit
 	targetRow?: BoardRow
 	targetLabel: string
-	targetCardData: CardMessage
+	targetCardData?: CardMessage
 }

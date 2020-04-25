@@ -3,6 +3,7 @@ import CardMessage from '@shared/models/network/CardMessage'
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 
 export default {
 	getFont(text: string) {
@@ -53,7 +54,7 @@ export default {
 			promises.push(new Promise(resolve => {
 				setTimeout(() => resolve(RenderedCard.fromMessage(message)), i)
 			}))
-			i += 3
+			i += 5
 		})
 		return await Promise.all(promises)
 	},
