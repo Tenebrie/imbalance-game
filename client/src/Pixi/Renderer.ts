@@ -279,11 +279,11 @@ export default class Renderer {
 			targetPosition.x -= this.getScreenWidth() * 0.2 / 2 + 125
 		}
 
-		const isPlayable = !!Core.input.playableCards.find(target => target.sourceCard === renderedCard)
+		const isPlayable = Core.player.isTurnActive && !!Core.input.playableCards.find(target => target.sourceCard === renderedCard)
 		sprite.tint = isPlayable ? 0xFFFFFF : 0x777777
 
 		if (renderedCard.type === CardType.SPELL) {
-			renderedCard.powerText.style.fill = 0x333333BB
+			renderedCard.powerText.style.fill = 0x0000FF
 		}
 
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED || renderedCard.displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
@@ -693,7 +693,7 @@ export default class Renderer {
 
 		let sizeMod = 1.0
 		if (renderedCard === MouseHover.getHoveredCard()) {
-			sizeMod = 1.1
+			sizeMod = 1.05
 		}
 
 		const cardHeight = this.getScreenHeight() * windowFraction
