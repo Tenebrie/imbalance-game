@@ -43,8 +43,7 @@ export default {
 		const playTargetMessages = validPlayTargets.map(order => new CardTargetMessage(order))
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/hand/playTargets',
-			data: playTargetMessages,
-			highPriority: true
+			data: playTargetMessages
 		})
 
 		const ownedUnits = game.board.getUnitsOwnedByPlayer(playerInGame)

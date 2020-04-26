@@ -2,7 +2,7 @@ import Card from '../Card'
 import CardTarget from '../CardTarget'
 import TargetMode from '../../enums/TargetMode'
 import TargetType from '../../enums/TargetType'
-import CardMessage from '@shared/models/network/CardMessage'
+import CardMessage from '../network/CardMessage'
 
 export default class CardTargetMessage {
 	targetMode: TargetMode

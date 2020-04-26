@@ -12,7 +12,7 @@ export default class UnitArcaneElemental extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 7
-		this.tribes = [CardTribe.ELEMENTAL]
+		this.baseTribes = [CardTribe.ELEMENTAL]
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated
 		}

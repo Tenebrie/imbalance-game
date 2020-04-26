@@ -85,9 +85,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public tutorCardFromUnitDeck(card: ServerCard): void {
+		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
 		this.cardDeck.removeCard(card)
 		this.cardHand.onUnitDrawn(card)
-		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
 	}
 
 	public refillSpellHand(): void {
@@ -138,6 +138,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public startTurn(): void {
 		this.turnEnded = false
+		this.setUnitMana(1)
 		this.refillSpellHand()
 		OutgoingMessageHandlers.notifyAboutTurnStarted(this)
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this)
@@ -146,7 +147,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public onTurnStart(): void {
 		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
-			unit.hasSummoningSickness = false
 			runCardEventHandler(() => unit.card.onTurnStarted(unit))
 			unit.card.buffs.onTurnStarted()
 		})
@@ -164,7 +164,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public onTurnEnd(): void {
 		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
-			unit.hasSummoningSickness = false
 			runCardEventHandler(() => unit.card.onTurnEnded(unit))
 			unit.card.buffs.onTurnEnded()
 		})

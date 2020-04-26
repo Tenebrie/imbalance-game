@@ -18,7 +18,7 @@ export default class UnitVampireFledgling extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 8
 		this.baseAttack = 1
-		this.tribes = [CardTribe.UNDEAD, CardTribe.VAMPIRE]
+		this.baseTribes = [CardTribe.UNDEAD, CardTribe.VAMPIRE]
 		this.dynamicTextVariables = {
 			powerLost: this.powerLost,
 			powerDrained: this.powerDrained

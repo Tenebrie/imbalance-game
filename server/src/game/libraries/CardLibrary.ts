@@ -116,7 +116,8 @@ export default class GameLibrary {
 
 		clone.name = original.name
 		clone.title = original.title
-		clone.tribes = (original.tribes || []).slice()
+		clone.baseTribes = (original.baseTribes || []).slice()
+		clone.baseFeatures = (original.baseFeatures || []).slice()
 		clone.description = original.description
 		clone.game = game
 		clone.power = clone.basePower

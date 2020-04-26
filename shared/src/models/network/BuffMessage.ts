@@ -1,6 +1,8 @@
 import Buff from '../Buff'
-import BuffStackType from '../../enums/BuffStackType'
 import Card from '../Card'
+import CardFeature from '../../enums/CardFeature'
+import BuffStackType from '../../enums/BuffStackType'
+import CardTribe from '../../enums/CardTribe'
 
 export default class BuffMessage implements Buff {
 	id: string
@@ -8,6 +10,8 @@ export default class BuffMessage implements Buff {
 	sourceId: string | null
 	buffClass: string
 	stackType: BuffStackType
+	cardTribes: CardTribe[]
+	cardFeatures: CardFeature[]
 
 	duration: number
 	intensity: number
@@ -23,6 +27,8 @@ export default class BuffMessage implements Buff {
 		this.sourceId = buff.source ? buff.source.id : null
 		this.buffClass = buff.buffClass
 		this.stackType = buff.stackType
+		this.cardTribes = buff.cardTribes.slice()
+		this.cardFeatures = buff.cardFeatures.slice()
 
 		this.duration = buff.duration
 		this.intensity = buff.intensity

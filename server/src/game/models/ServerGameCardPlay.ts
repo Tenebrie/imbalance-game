@@ -100,11 +100,6 @@ export default class ServerGameCardPlay {
 		/* Invoke the card onPlay effect */
 		runCardEventHandler(() => card.onPlayedAsSpell(owner))
 
-		/* Push hero powers to the spell deck */
-		if (card.features.includes(CardFeature.HERO_POWER)) {
-			owner.cardDeck.addSpell(CardLibrary.instantiate(card))
-		}
-
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
 			return

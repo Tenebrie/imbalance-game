@@ -3,6 +3,7 @@ import ClientBuff from '@/Pixi/models/ClientBuff'
 import BuffContainer from '@shared/models/BuffContainer'
 import CardBuffsMessage from '@shared/models/network/CardBuffsMessage'
 import BuffMessage from '@shared/models/network/BuffMessage'
+import Core from '@/Pixi/Core'
 
 export default class ClientBuffContainer implements BuffContainer {
 	card: RenderedCard
@@ -16,6 +17,9 @@ export default class ClientBuffContainer implements BuffContainer {
 
 	public add(buff: ClientBuff): void {
 		this.buffs.push(buff)
+		if (Core.player.cardHand.unitCards.includes(this.card)) {
+			Core.player.cardHand.sortCards()
+		}
 	}
 
 	public findBuffById(buffId: string): ClientBuff {

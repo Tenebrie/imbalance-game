@@ -43,7 +43,7 @@ export default {
 
 	'post/unitOrder': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
 		const orderedUnit = game.board.findUnitById(data.sourceUnitId)
-		if (playerInGame.turnEnded || playerInGame.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== playerInGame || orderedUnit.hasSummoningSickness) {
+		if (playerInGame.turnEnded || playerInGame.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== playerInGame) {
 			return
 		}
 

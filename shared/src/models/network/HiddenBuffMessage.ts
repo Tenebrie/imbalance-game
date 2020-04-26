@@ -1,6 +1,8 @@
 import Card from '../Card'
 import Buff from '../Buff'
 import BuffStackType from '../../enums/BuffStackType'
+import CardTribe from '../../enums/CardTribe'
+import CardFeature from '../../enums/CardFeature'
 
 export default class HiddenBuffMessage implements Buff {
 	id: string
@@ -11,6 +13,8 @@ export default class HiddenBuffMessage implements Buff {
 	source: Card | null // Unassigned
 	buffClass: string // Unassigned
 	stackType: BuffStackType // Unassigned
+	cardTribes: CardTribe[] // Unassigned
+	cardFeatures: CardFeature[] // Unassigned
 	duration: number // Unassigned
 	intensity: number // Unassigned
 	baseDuration: number // Unassigned

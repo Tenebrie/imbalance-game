@@ -13,7 +13,7 @@ export default class UnitForestScout extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 4
-		this.tribes = [CardTribe.HUMAN]
+		this.baseTribes = [CardTribe.HUMAN]
 		this.dynamicTextVariables = {
 			boardPowerBonus: this.boardPowerBonus,
 			moralePowerBonus: this.moralePowerBonus

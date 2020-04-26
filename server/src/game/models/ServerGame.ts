@@ -153,7 +153,6 @@ export default class ServerGame extends Game {
 
 		if (playerToMove) {
 			playerToMove.startTurn()
-			playerToMove.setUnitMana(1)
 		}
 
 		if (this.isPhaseFinished()) {

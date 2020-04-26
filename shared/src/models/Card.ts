@@ -14,8 +14,8 @@ export default class Card {
 	name: string
 	title: string
 	buffs: BuffContainer
-	tribes: CardTribe[]
-	features: CardFeature[]
+	baseTribes: CardTribe[]
+	baseFeatures: CardFeature[]
 	description: string
 	variables: RichTextVariables
 
@@ -39,8 +39,8 @@ export default class Card {
 		this.name = ''
 		this.title = ''
 		this.buffs = new BuffContainer(this)
-		this.tribes = []
-		this.features = []
+		this.baseTribes = []
+		this.baseFeatures = []
 		this.description = ''
 	}
 

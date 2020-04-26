@@ -15,7 +15,7 @@ export default class UnitArcaneCrystal extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 4
-		this.tribes = [CardTribe.BUILDING]
+		this.baseTribes = [CardTribe.BUILDING]
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated,
 			chargePerMana: this.chargePerMana,

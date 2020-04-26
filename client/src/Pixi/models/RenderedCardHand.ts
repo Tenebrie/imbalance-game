@@ -31,16 +31,17 @@ export default class RenderedCardHand implements CardHand {
 
 	public addUnit(card: RenderedCard) {
 		this.unitCards.push(card)
-		this.unitCards.sort((a: RenderedCard, b: RenderedCard) => {
-			return a.color - b.color || b.power - a.power || Utils.hashCode(a.class) - Utils.hashCode(b.class) || Utils.hashCode(a.id) - Utils.hashCode(b.id)
-		})
+		this.unitCards = Utils.sortCards(this.unitCards)
 	}
 
 	public addSpell(card: RenderedCard) {
 		this.spellCards.push(card)
-		this.spellCards.sort((a: RenderedCard, b: RenderedCard) => {
-			return a.power - b.power || Utils.hashCode(a.class) - Utils.hashCode(b.class) || Utils.hashCode(a.id) - Utils.hashCode(b.id)
-		})
+		this.spellCards = Utils.sortCards(this.spellCards)
+	}
+
+	public sortCards() {
+		this.unitCards = Utils.sortCards(this.unitCards)
+		this.spellCards = Utils.sortCards(this.spellCards)
 	}
 
 	public findCardById(cardId: string): RenderedCard | null {
