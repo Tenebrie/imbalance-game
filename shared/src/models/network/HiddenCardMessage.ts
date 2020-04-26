@@ -3,8 +3,10 @@ import CardType from '../../enums/CardType'
 import CardTribe from '../../enums/CardTribe'
 import CardColor from '../../enums/CardColor'
 import HiddenBuffContainerMessage from './HiddenBuffContainerMessage'
+import RichTextVariables from '../RichTextVariables'
+import CardFeature from '../../enums/CardFeature'
 
-export default class HiddenCardMessage {
+export default class HiddenCardMessage implements Card {
 	id: string
 	type = CardType.HIDDEN
 	class = 'cardBack'
@@ -13,7 +15,9 @@ export default class HiddenCardMessage {
 	name = ''
 	title = ''
 	buffs: HiddenBuffContainerMessage
-	tribes: CardTribe[] = []
+	baseTribes: CardTribe[] = []
+	baseFeatures: CardFeature[] = []
+
 	description = ''
 	variables = {}
 
@@ -30,6 +34,10 @@ export default class HiddenCardMessage {
 	constructor(card: Card) {
 		this.id = card.id
 		this.buffs = new HiddenBuffContainerMessage(card.buffs)
+	}
+
+	evaluateVariables(): RichTextVariables {
+		return this.variables
 	}
 
 	static fromCard(card: Card): HiddenCardMessage {

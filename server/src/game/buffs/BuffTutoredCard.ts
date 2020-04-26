@@ -1,9 +1,11 @@
 import ServerBuff from '../models/ServerBuff'
 import BuffStackType from '@shared/enums/BuffStackType'
+import CardFeature from '@shared/enums/CardFeature'
 
-export default class BuffStun extends ServerBuff {
+export default class BuffTutoredCard extends ServerBuff {
 	constructor() {
 		super(BuffStackType.OVERLAY)
+		this.cardFeatures = [CardFeature.TEMPORARY_CARD]
 	}
 
 	getUnitCostOverride(baseCost: number): number {

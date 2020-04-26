@@ -1,9 +1,8 @@
 import * as PIXI from 'pixi.js'
 import CardMessage from '@shared/models/network/CardMessage'
 import RenderedCard from '@/Pixi/board/RenderedCard'
-import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default {
 	getFont(text: string) {
@@ -86,10 +85,13 @@ export default {
 	},
 
 	sortCards(inputArray: RenderedCard[]): RenderedCard[] {
-		return inputArray.slice().sort((a: Card, b: Card) => {
-			return (a.type - b.type) ||
+		return inputArray.slice().sort((a: RenderedCard, b: RenderedCard) => {
+			return (
+				(+a.features.includes(CardFeature.TEMPORARY_CARD) - +b.features.includes(CardFeature.TEMPORARY_CARD)) ||
+				(a.type - b.type) ||
 				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
 				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+			)
 		})
 	}
 }

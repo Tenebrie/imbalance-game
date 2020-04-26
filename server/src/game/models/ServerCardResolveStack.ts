@@ -4,6 +4,8 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerGame from './ServerGame'
 import ServerCardTarget from './ServerCardTarget'
 import runCardEventHandler from '../utils/runCardEventHandler'
+import CardFeature from '@shared/enums/CardFeature'
+import CardLibrary from '../libraries/CardLibrary'
 
 class ServerCardResolveStackEntry {
 	ownedCard: ServerOwnedCard
@@ -69,7 +71,9 @@ export default class ServerCardResolveStack {
 		OutgoingMessageHandlers.notifyAboutCardResolved(resolvedEntry.ownedCard)
 
 		const resolvedCard = resolvedEntry.ownedCard
-		if (resolvedCard.card.type === CardType.SPELL) {
+		if (resolvedCard.card.features.includes(CardFeature.HERO_POWER)) {
+			resolvedCard.owner.cardDeck.addSpell(resolvedCard.card)
+		} else if (resolvedCard.card.type === CardType.SPELL) {
 			resolvedCard.owner.cardGraveyard.addSpell(resolvedCard.card)
 		}
 

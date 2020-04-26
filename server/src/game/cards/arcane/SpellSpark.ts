@@ -19,7 +19,7 @@ export default class SpellSpark extends ServerCard {
 		super(game, CardType.SPELL, CardColor.GOLDEN)
 
 		this.basePower = 1
-		this.features = [CardFeature.HERO_POWER]
+		this.baseFeatures = [CardFeature.HERO_POWER]
 		this.dynamicTextVariables = {
 			damage: () => this.damage
 		}

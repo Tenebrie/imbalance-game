@@ -17,7 +17,7 @@ export default class SpellSpeedPotion extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.SPELL, CardColor.GOLDEN)
 		this.basePower = 2
-		this.features = [CardFeature.HERO_POWER]
+		this.baseFeatures = [CardFeature.HERO_POWER]
 		this.dynamicTextVariables = {
 			moves: this.moves
 		}

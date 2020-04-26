@@ -17,7 +17,7 @@ export default class UnitChargingKnight extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 10
 		this.baseAttack = 2
-		this.tribes = [CardTribe.HUMAN]
+		this.baseTribes = [CardTribe.HUMAN]
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {

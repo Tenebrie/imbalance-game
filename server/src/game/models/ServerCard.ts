@@ -23,6 +23,8 @@ import RichTextVariables from '@shared/models/RichTextVariables'
 import ServerOwnedCard from './ServerOwnedCard'
 import BuffImmunity from '../buffs/BuffImmunity'
 import GameLibrary from '../libraries/CardLibrary'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -47,6 +49,22 @@ export default class ServerCard extends Card {
 
 	public get spellCost(): number {
 		return this.power
+	}
+
+	public get tribes(): CardTribe[] {
+		let tribes = this.baseTribes.slice()
+		this.buffs.buffs.forEach(buff => {
+			tribes = tribes.concat(buff.cardTribes.slice())
+		})
+		return tribes
+	}
+
+	public get features(): CardFeature[] {
+		let features = this.baseFeatures.slice()
+		this.buffs.buffs.forEach(buff => {
+			features = features.concat(buff.cardFeatures.slice())
+		})
+		return features
 	}
 
 	public get unit(): ServerUnit | null {

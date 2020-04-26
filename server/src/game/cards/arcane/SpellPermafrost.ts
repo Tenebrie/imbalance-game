@@ -9,7 +9,7 @@ import CardFeature from '@shared/enums/CardFeature'
 export default class SpellPermafrost extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.SPELL, CardColor.GOLDEN)
-		this.features = [CardFeature.HERO_POWER]
+		this.baseFeatures = [CardFeature.HERO_POWER]
 		this.basePower = 6
 	}
 

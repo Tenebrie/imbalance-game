@@ -9,6 +9,8 @@ import TargetDefinition from './targetDefinitions/TargetDefinition'
 import ServerBoardRow from './ServerBoardRow'
 import ServerDamageInstance from './ServerDamageSource'
 import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -17,6 +19,8 @@ export default class ServerBuff implements Buff {
 	source: ServerCard | null
 	buffClass: string
 	stackType: BuffStackType
+	cardTribes: CardTribe[]
+	cardFeatures: CardFeature[]
 
 	duration: number
 	intensity: number
@@ -28,6 +32,8 @@ export default class ServerBuff implements Buff {
 		this.stackType = stackType
 		this.baseDuration = Infinity
 		this.baseIntensity = 1
+		this.cardTribes = []
+		this.cardFeatures = []
 	}
 
 	protected get unit(): ServerUnit | null {

@@ -15,6 +15,8 @@ import RichTextVariables from '@shared/models/RichTextVariables'
 import DescriptionTextBackground from '@/Pixi/render/DescriptionTextBackground'
 import CardColor from '@shared/enums/CardColor'
 import ClientBuffContainer from '@/Pixi/models/ClientBuffContainer'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class RenderedCard extends Card {
 	public buffs: ClientBuffContainer
@@ -50,7 +52,8 @@ export default class RenderedCard extends Card {
 		this.name = message.name
 		this.title = message.title
 		this.buffs = new ClientBuffContainer(this, message.buffs)
-		this.tribes = message.tribes.slice()
+		this.baseTribes = message.baseTribes.slice()
+		this.baseFeatures = message.baseFeatures.slice()
 		this.description = message.description
 		this.variables = message.variables
 
@@ -165,8 +168,20 @@ export default class RenderedCard extends Card {
 		return new PIXI.Point(this.hitboxSprite.position.x, this.hitboxSprite.position.y)
 	}
 
-	public get spellCost(): number {
-		return this.power
+	public get tribes(): CardTribe[] {
+		let tribes = this.baseTribes.slice()
+		this.buffs.buffs.forEach(buff => {
+			tribes = tribes.concat(buff.cardTribes.slice())
+		})
+		return tribes
+	}
+
+	public get features(): CardFeature[] {
+		let features = this.baseFeatures.slice()
+		this.buffs.buffs.forEach(buff => {
+			features = features.concat(buff.cardFeatures.slice())
+		})
+		return features
 	}
 
 	public isHovered(): boolean {

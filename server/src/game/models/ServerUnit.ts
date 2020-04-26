@@ -6,14 +6,12 @@ import ServerDamageInstance from './ServerDamageSource'
 import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
-import Constants from '@shared/Constants'
 import ServerBuffContainer from './ServerBuffContainer'
 
 export default class ServerUnit {
 	game: ServerGame
 	card: ServerCard
 	owner: ServerPlayerInGame
-	hasSummoningSickness = Constants.SUMMONING_SICKNESS
 
 	get rowIndex(): number {
 		return this.game.board.rows.indexOf(this.game.board.getRowWithUnit(this)!)
@@ -97,10 +95,6 @@ export default class ServerUnit {
 	}
 
 	getValidOrders(): ServerCardTarget[] {
-		if (this.hasSummoningSickness) {
-			return []
-		}
-
 		const targetDefinition = this.card.getValidOrderTargetDefinition()
 		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
 		const targets = []
@@ -128,5 +122,7 @@ export default class ServerUnit {
 		otherCards.forEach(cardOnBoard => {
 			runCardEventHandler(() => cardOnBoard.card.onAfterOtherUnitDestroyed(this))
 		})
+
+		this.owner.cardGraveyard.addUnit(this.card)
 	}
 }

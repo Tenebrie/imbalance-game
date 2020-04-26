@@ -15,7 +15,7 @@ export default class UnitFlameTouchCrystal extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 4
-		this.tribes = [CardTribe.BUILDING]
+		this.baseTribes = [CardTribe.BUILDING]
 		this.dynamicTextVariables = {
 			chargePerMana: this.chargePerMana,
 			charges: () => this.charges,

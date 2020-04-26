@@ -18,7 +18,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 8
 		this.baseAttackRange = 1
-		this.tribes = [CardTribe.HUMAN]
+		this.baseTribes = [CardTribe.HUMAN]
 		this.dynamicTextVariables = {
 			targets: this.targets,
 			healing: this.healing

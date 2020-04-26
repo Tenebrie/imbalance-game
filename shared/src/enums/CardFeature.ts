@@ -1,5 +1,6 @@
 enum CardFeature {
-	HERO_POWER
+	HERO_POWER,
+	TEMPORARY_CARD
 }
 
 export default CardFeature

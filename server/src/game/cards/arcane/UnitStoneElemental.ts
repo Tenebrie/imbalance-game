@@ -17,7 +17,7 @@ export default class UnitStoneElemental extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 7
-		this.tribes = [CardTribe.ELEMENTAL]
+		this.baseTribes = [CardTribe.ELEMENTAL]
 		this.dynamicTextVariables = {
 			damage: this.damage
 		}

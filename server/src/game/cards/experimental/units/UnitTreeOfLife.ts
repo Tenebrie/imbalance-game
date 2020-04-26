@@ -16,7 +16,7 @@ export default class UnitTreeOfLife extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE)
 		this.basePower = 4
-		this.tribes = [CardTribe.BUILDING]
+		this.baseTribes = [CardTribe.BUILDING]
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
@@ -26,13 +26,13 @@ export default class UnitTreeOfLife extends ServerCard {
 			.label(TargetMode.ORDER_SUPPORT, TargetType.BOARD_ROW, 'card.target.buildingTreeOfLife.support.row')
 			.validate(TargetMode.ORDER_SUPPORT, TargetType.BOARD_ROW, args => {
 				const targetRow = args.targetRow!
-				let adjacentRows = this.game.board.getAdjacentRows(targetRow)
+				const adjacentRows = this.game.board.getAdjacentRows(targetRow)
 				return targetRow.cards.length > 0 || !!adjacentRows.find(row => row.cards.length > 0)
 			})
 	}
 
 	onPerformingRowSupport(thisUnit: ServerUnit, target: ServerBoardRow): void {
-		let adjacentRows = this.game.board.getAdjacentRows(target)
+		const adjacentRows = this.game.board.getAdjacentRows(target)
 
 		target.cards.forEach(unit => {
 			unit.heal(ServerDamageInstance.fromUnit(3, thisUnit))
