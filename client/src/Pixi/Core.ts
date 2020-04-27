@@ -38,6 +38,7 @@ export default class Core {
 	}
 
 	private static async onConnect(container: HTMLElement): Promise<void> {
+		// @ts-ignore
 		Core.keepaliveTimer = setInterval(() => {
 			OutgoingMessageHandlers.sendKeepalive()
 		}, 30000)
