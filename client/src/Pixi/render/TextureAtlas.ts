@@ -69,7 +69,7 @@ export default class TextureAtlas {
 			TextureAtlas.texturesToLoad = texturesToLoad.length
 
 			texturesToLoad.forEach(fileName => {
-				const texture = PIXI.Texture.from(`assets/${fileName}.png`)
+				const texture = PIXI.Texture.from(`/assets/${fileName}.png`)
 
 				const onLoaded = () => {
 					TextureAtlas.texturesLoaded += 1

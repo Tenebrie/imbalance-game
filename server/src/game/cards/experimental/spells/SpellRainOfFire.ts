@@ -9,13 +9,14 @@ import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../models/ServerUnit'
 import CardColor from '@shared/enums/CardColor'
 import TargetMode from '@shared/enums/TargetMode'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class SpellRainOfFire extends ServerCard {
 	damage = 12
 	targets = 5
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.BRONZE)
+		super(game, CardType.SPELL, CardColor.BRONZE, CardFaction.EXPERIMENTAL)
 		this.basePower = 5
 		this.dynamicTextVariables = {
 			damage: this.damage,

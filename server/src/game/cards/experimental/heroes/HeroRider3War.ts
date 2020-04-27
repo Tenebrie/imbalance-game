@@ -8,6 +8,7 @@ import SimpleTargetDefinitionBuilder from '../../../models/targetDefinitions/Sim
 import TargetType from '@shared/enums/TargetType'
 import TargetMode from '@shared/enums/TargetMode'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class heroRider3War extends ServerCard {
 	targets = 3
@@ -15,7 +16,7 @@ export default class heroRider3War extends ServerCard {
 	enemiesSelected: ServerUnit[] = []
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.EXPERIMENTAL)
 		this.basePower = 20
 		this.baseAttack = 4
 		this.dynamicTextVariables = {

@@ -8,10 +8,11 @@ import ServerUnit from '../../../models/ServerUnit'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class HeroIgnea extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.EXPERIMENTAL)
 		this.basePower = 7
 	}
 

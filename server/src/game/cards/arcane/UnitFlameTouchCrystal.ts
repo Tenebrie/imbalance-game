@@ -7,13 +7,14 @@ import ServerOwnedCard from '../../models/ServerOwnedCard'
 import ServerUnit from '../../models/ServerUnit'
 import CardLibrary from '../../libraries/CardLibrary'
 import UnitTinySparkling from './UnitTinySparkling'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitFlameTouchCrystal extends ServerCard {
 	charges = 0
 	chargePerMana = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 4
 		this.baseTribes = [CardTribe.BUILDING]
 		this.dynamicTextVariables = {

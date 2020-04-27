@@ -5,12 +5,13 @@ import CardColor from '@shared/enums/CardColor'
 import ServerUnit from '../../models/ServerUnit'
 import ServerBoardRow from '../../models/ServerBoardRow'
 import BuffSparksExtraDamage from '../../buffs/BuffSparksExtraDamage'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class HeroSparklingSpirit extends ServerCard {
 	extraDamage = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER)
+		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 9
 		this.dynamicTextVariables = {
 			extraDamage: this.extraDamage

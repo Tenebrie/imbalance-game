@@ -10,12 +10,13 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import BuffExtraMove from '../../buffs/BuffExtraMove'
 import CardFeature from '@shared/enums/CardFeature'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class SpellSpeedPotion extends ServerCard {
 	moves = 3
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN)
+		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 2
 		this.baseFeatures = [CardFeature.HERO_POWER]
 		this.dynamicTextVariables = {

@@ -4,12 +4,14 @@ import CardTribe from '../enums/CardTribe'
 import CardColor from '../enums/CardColor'
 import RichTextVariables from './RichTextVariables'
 import CardFeature from '../enums/CardFeature'
+import CardFaction from '../enums/CardFaction'
 
 export default class Card {
 	id: string
 	type: CardType
 	class: string
 	color: CardColor
+	faction: CardFaction
 
 	name: string
 	title: string

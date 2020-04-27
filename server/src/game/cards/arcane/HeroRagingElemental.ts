@@ -4,13 +4,14 @@ import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
 import ServerAnimation from '../../models/ServerAnimation'
 import ServerDamageInstance from '../../models/ServerDamageSource'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class HeroRagingElemental extends ServerCard {
 	powerThreshold = 6
 	isEffectTriggered = false
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER)
+		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 9
 		this.dynamicTextVariables = {
 			powerThreshold: this.powerThreshold

@@ -25,6 +25,7 @@ import BuffImmunity from '../buffs/BuffImmunity'
 import GameLibrary from '../libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -32,10 +33,11 @@ export default class ServerCard extends Card {
 	buffs = new ServerBuffContainer(this)
 	dynamicTextVariables: ServerRichTextVariables
 
-	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor) {
+	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor, faction: CardFaction) {
 		super(uuidv4(), cardType, 'missingno')
 		this.game = game
 		this.color = unitSubtype
+		this.faction = faction
 		this.dynamicTextVariables = {}
 	}
 

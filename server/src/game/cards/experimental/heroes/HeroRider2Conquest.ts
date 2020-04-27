@@ -9,10 +9,11 @@ import TargetType from '@shared/enums/TargetType'
 import ServerBoardRow from '../../../models/ServerBoardRow'
 import TargetMode from '@shared/enums/TargetMode'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class HeroRider2Conquest extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.EXPERIMENTAL)
 		this.basePower = 15
 		this.baseAttack = 4
 	}

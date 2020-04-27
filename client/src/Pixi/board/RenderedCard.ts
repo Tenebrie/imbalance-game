@@ -256,7 +256,7 @@ export default class RenderedCard extends Card {
 			text.position.y = Math.round(text.position.y)
 
 			let renderScale = Settings.generalFontRenderScale
-			if (this === Core.input.inspectedCard) {
+			if (Core.input && this === Core.input.inspectedCard) {
 				renderScale = 1.2
 			} else if (text === this.cardDescriptionText) {
 				renderScale = Settings.descriptionFontRenderScale

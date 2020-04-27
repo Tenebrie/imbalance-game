@@ -5,12 +5,14 @@ import RichTextVariables from '../RichTextVariables'
 import BuffContainerMessage from './CardBuffsMessage'
 import CardColor from '../../enums/CardColor'
 import CardFeature from '../../enums/CardFeature'
+import CardFaction from '../../enums/CardFaction'
 
 export default class CardMessage implements Card {
 	id: string
 	type: CardType
 	class: string
 	color: CardColor
+	faction: CardFaction
 
 	name: string
 	title: string
@@ -35,6 +37,7 @@ export default class CardMessage implements Card {
 		this.type = card.type
 		this.class = card.class
 		this.color = card.color
+		this.faction = card.faction
 
 		this.name = card.name
 		this.title = card.title

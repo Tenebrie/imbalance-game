@@ -53,18 +53,9 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		deck.addUnit(CardLibrary.instantiate(new HeroSparklingSpirit(game)))
 		deck.addUnit(CardLibrary.instantiate(new HeroGarellion(game)))
 
-		// deck.addUnit(CardLibrary.instantiate(new HeroSatia(game)))
-		// deck.addUnit(CardLibrary.instantiate(new HeroIgnea(game)))
-		// deck.addUnit(CardLibrary.instantiate(new HeroRider1Famine(game)))
-		// deck.addUnit(CardLibrary.instantiate(new HeroRider2Conquest(game)))
-		// deck.addUnit(CardLibrary.instantiate(new HeroRider3War(game)))
-		// deck.addUnit(CardLibrary.instantiate(new HeroRider4Death(game)))
 		for (let i = 0; i < 3; i++) {
 			deck.addUnit(CardLibrary.instantiate(new UnitChargingKnight(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitSupplyWagon(game)))
-			// deck.addUnit(CardLibrary.instantiate(new UnitVampireFledgling(game)))
-
-			// deck.addUnit(CardLibrary.instantiate(new UnitArcaneElemental(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitForestScout(game)))
 			deck.addUnit(CardLibrary.instantiate(new UnitStoneElemental(game)))
 		}
@@ -72,15 +63,6 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		deck.addUnit(CardLibrary.instantiate(new UnitArcaneCrystal(game)))
 		deck.addUnit(CardLibrary.instantiate(new UnitFlameTouchCrystal(game)))
 		deck.addUnit(CardLibrary.instantiate(new UnitIceSkinCrystal(game)))
-
-		// for (let i = 0; i < 1; i++) {
-		// 	deck.addUnit(CardLibrary.instantiate(new UnitTreeOfLife(game)))
-		// 	deck.addUnit(CardLibrary.instantiate(new UnitSpinningBarbarian(game)))
-		// 	deck.addUnit(CardLibrary.instantiate(new UnitPossessedVulture(game)))
-		// 	deck.addUnit(CardLibrary.instantiate(new UnitMadBerserker(game)))
-		// 	deck.addUnit(CardLibrary.instantiate(new UnitUnfeelingWarrior(game)))
-		// 	deck.addUnit(CardLibrary.instantiate(new UnitTwinBowArcher(game)))
-		// }
 
 		deck.addSpell(CardLibrary.instantiate(new SpellSpark(game)))
 		deck.addSpell(CardLibrary.instantiate(new SpellSpeedPotion(game)))

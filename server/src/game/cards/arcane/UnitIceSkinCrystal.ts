@@ -6,6 +6,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import ServerUnit from '../../models/ServerUnit'
 import ServerOwnedCard from '../../models/ServerOwnedCard'
 import BuffDecayingArmor from '../../buffs/BuffDecayingArmor'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitIceSkinCrystal extends ServerCard {
 	charges = 0
@@ -14,7 +15,7 @@ export default class UnitIceSkinCrystal extends ServerCard {
 	chargesForArmor = 3
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 4
 		this.baseTribes = [CardTribe.BUILDING]
 		this.dynamicTextVariables = {

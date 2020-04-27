@@ -11,10 +11,11 @@ import ServerAnimation from '../../models/ServerAnimation'
 import BuffStun from '../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import Constants from '@shared/Constants'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class HeroKroLah extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN)
+		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 7
 	}
 

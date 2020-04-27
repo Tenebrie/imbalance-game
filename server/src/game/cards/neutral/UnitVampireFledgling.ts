@@ -9,13 +9,14 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
 import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitVampireFledgling extends ServerCard {
 	powerLost = 1
 	powerDrained = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 8
 		this.baseAttack = 1
 		this.baseTribes = [CardTribe.UNDEAD, CardTribe.VAMPIRE]

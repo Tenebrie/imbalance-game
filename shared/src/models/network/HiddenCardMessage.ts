@@ -5,12 +5,14 @@ import CardColor from '../../enums/CardColor'
 import HiddenBuffContainerMessage from './HiddenBuffContainerMessage'
 import RichTextVariables from '../RichTextVariables'
 import CardFeature from '../../enums/CardFeature'
+import CardFaction from '../../enums/CardFaction'
 
 export default class HiddenCardMessage implements Card {
 	id: string
 	type = CardType.HIDDEN
 	class = 'cardBack'
 	color: CardColor
+	faction = CardFaction.NEUTRAL
 
 	name = ''
 	title = ''

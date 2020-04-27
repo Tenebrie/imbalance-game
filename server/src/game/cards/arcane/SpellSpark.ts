@@ -11,12 +11,13 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import BuffSparksExtraDamage from '../../buffs/BuffSparksExtraDamage'
 import CardFeature from '@shared/enums/CardFeature'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class SpellSpark extends ServerCard {
 	baseDamage = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN)
+		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 
 		this.basePower = 1
 		this.baseFeatures = [CardFeature.HERO_POWER]

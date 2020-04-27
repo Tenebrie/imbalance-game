@@ -8,10 +8,11 @@ import TargetDefinition from '../../models/targetDefinitions/TargetDefinition'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import BuffExtraMove from '../../buffs/BuffExtraMove'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitSupplyWagon extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 6
 	}
 

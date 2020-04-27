@@ -5,6 +5,7 @@ import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import ServerOwnedCard from '../../models/ServerOwnedCard'
 import ServerUnit from '../../models/ServerUnit'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitArcaneCrystal extends ServerCard {
 	charges = 0
@@ -13,7 +14,7 @@ export default class UnitArcaneCrystal extends ServerCard {
 	chargesForMana = 3
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 4
 		this.baseTribes = [CardTribe.BUILDING]
 		this.dynamicTextVariables = {

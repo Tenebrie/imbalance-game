@@ -5,10 +5,11 @@ import ServerGame from '../../models/ServerGame'
 import BuffImmunity from '../../buffs/BuffImmunity'
 import ServerUnit from '../../models/ServerUnit'
 import ServerBoardRow from '../../models/ServerBoardRow'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class HeroZamarath extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN)
+		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 15
 	}
 

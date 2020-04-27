@@ -4,12 +4,13 @@ import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class heroRider4Death extends ServerCard {
 	powerThreshold = 10
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.EXPERIMENTAL)
 		this.basePower = 25
 		this.baseAttack = 4
 		this.dynamicTextVariables = {

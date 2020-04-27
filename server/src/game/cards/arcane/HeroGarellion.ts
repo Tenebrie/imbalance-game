@@ -5,12 +5,13 @@ import ServerGame from '../../models/ServerGame'
 import ServerUnit from '../../models/ServerUnit'
 import BuffStrength from '../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class HeroGarellion extends ServerCard {
 	powerPerMana = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN)
+		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 12
 		this.dynamicTextVariables = {
 			powerPerMana: this.powerPerMana

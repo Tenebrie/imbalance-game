@@ -5,10 +5,11 @@ import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import CardColor from '@shared/enums/CardColor'
 import BuffImmunity from '../../buffs/BuffImmunity'
 import CardFeature from '@shared/enums/CardFeature'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class SpellPermafrost extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN)
+		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.baseFeatures = [CardFeature.HERO_POWER]
 		this.basePower = 6
 	}

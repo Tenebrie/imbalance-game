@@ -5,13 +5,14 @@ import CardColor from '@shared/enums/CardColor'
 import ServerUnit from '../../../models/ServerUnit'
 import ServerBoardRow from '../../../models/ServerBoardRow'
 import BuffStrength from '../../../buffs/BuffStrength'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitUnfeelingWarrior extends ServerCard {
 	bonusPower = 5
 	hasBeenAttacked = false
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.EXPERIMENTAL)
 		this.basePower = 28
 		this.baseAttack = 5
 		this.dynamicTextVariables = {
