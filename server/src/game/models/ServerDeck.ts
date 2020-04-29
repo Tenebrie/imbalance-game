@@ -22,8 +22,8 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public instantiateFrom(deck: ServerTemplateCardDeck): void {
-		deck.unitCards.forEach(card => this.addUnit(CardLibrary.instantiate(card)))
-		deck.spellCards.forEach(card => this.addSpell(CardLibrary.instantiate(card)))
+		deck.unitCards.forEach(card => this.addUnit(CardLibrary.instantiateByInstance(card)))
+		deck.spellCards.forEach(card => this.addSpell(CardLibrary.instantiateByInstance(card)))
 	}
 
 	public addUnit(card: ServerCard): void {

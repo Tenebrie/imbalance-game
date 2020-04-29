@@ -3,22 +3,18 @@ import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddle
 import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequestMiddleware'
 import CardLibrary from '../game/libraries/CardLibrary'
 import CardMessage from '@shared/models/network/CardMessage'
-import CardType from '@shared/enums/CardType'
-import CardFaction from '@shared/enums/CardFaction'
 
 const router = express.Router()
 
 router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req, res, next) => {
-	const onlyPlayable = req.query.onlyPlayable
+	const collectible = req.query.collectible
 
-	let cards = CardLibrary.cards.map(card => CardMessage.fromCard(card))
-	if (onlyPlayable) {
-		cards = cards.filter(card => card.type === CardType.UNIT && card.faction !== CardFaction.EXPERIMENTAL)
-	}
+	const cards = collectible ? CardLibrary.collectibleCards : CardLibrary.cards
+	const cardMessages = cards.map(card => CardMessage.fromCard(card))
 
-	res.json(cards)
+	res.json(cardMessages)
 })
 
 router.use(SendErrorAsBadRequestMiddleware)

@@ -35,12 +35,27 @@ export default Vue.extend({
 
 <style lang="scss">
 @import "styles/generic";
+@import '~vuejs-noty/dist/vuejs-noty.css';
 
 body {
 	background: #121212;
 	padding: 0;
 	margin: 0;
 	overflow: hidden;
+}
+
+*::-webkit-scrollbar {
+	width: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background: #666;
+	border-radius: 20px;
+}
+
+*::-webkit-scrollbar-track {
+	background: #ffffff20;
+	border-radius: 20px;
 }
 
 #app {
@@ -95,11 +110,22 @@ body {
 	}
 }
 
+.button-link {
+	font-size: 1.4em;
+	padding: 16px 8px;
+	width: calc(100% - 16px);
+	cursor: pointer;
+	user-select: none;
+	&:hover {
+		background: $COLOR-BACKGROUND-TRANSPARENT;
+	}
+}
+
 button {
 	cursor: pointer;
 }
 
-button.primary {
+button.primary, .swal-button {
 	border-radius: 0.25em;
 	width: 100%;
 	padding: 0.5em;
@@ -111,9 +137,9 @@ button.primary {
 	outline: none;
 
 	&:hover {
-		color: darken($COLOR-TEXT, 5);
-		border-color: darken($COLOR-PRIMARY, 5);
-		background-color: darken($COLOR-PRIMARY, 5);
+		color: darken($COLOR-TEXT, 5) !important;
+		border-color: darken($COLOR-PRIMARY, 5) !important;
+		background-color: darken($COLOR-PRIMARY, 5) !important;
 	}
 
 	&:active {
@@ -160,5 +186,36 @@ input[type="text"], input[type="password"] {
 span.info-text {
 	font-size: 0.8em;
 	color: gray;
+}
+
+.noty_body {
+	font-family: 'Roboto', sans-serif;
+	font-size: 1.0em !important;
+}
+
+.noty_type__info > .noty_body {
+	background: #323232;
+}
+
+.noty_type__success > .noty_body {
+	background: darkgreen;
+}
+
+.noty_type__warning > .noty_body {
+	background: darken(darkorange, 10);
+}
+
+.noty_type__error > .noty_body {
+	background: darkred;
+}
+
+.noty_progressbar {
+	opacity: 0.75 !important;
+	background-color: white !important;
+	top: 0;
+}
+
+.noty_theme__mint {
+	border-bottom: none !important;
 }
 </style>

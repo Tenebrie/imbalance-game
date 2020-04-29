@@ -15,7 +15,7 @@ export default class HeroSatia extends ServerCard {
 	}
 
 	onPlayedAsUnit(thisUnit: ServerUnit): void {
-		const nightMaiden = CardLibrary.instantiate(new HeroNightMaiden(this.game))
+		const nightMaiden = CardLibrary.instantiateByInstance(new HeroNightMaiden(this.game))
 		this.game.board.createUnit(nightMaiden, thisUnit.owner, thisUnit.rowIndex, thisUnit.unitIndex + 1)
 	}
 }

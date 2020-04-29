@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import Settings from '@/Pixi/Settings'
 import RichText from '@/Pixi/render/RichText'
@@ -56,6 +56,7 @@ export default class RenderedCard extends Card {
 		this.baseFeatures = message.baseFeatures.slice()
 		this.description = message.description
 		this.variables = message.variables
+		this.sortPriority = message.sortPriority
 
 		this.power = message.power
 		this.attack = message.attack
@@ -92,6 +93,8 @@ export default class RenderedCard extends Card {
 			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-unit-silver'))
 		} else if (this.type === CardType.UNIT && this.color === CardColor.GOLDEN) {
 			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-unit-golden'))
+		} else if (this.type === CardType.UNIT && this.color === CardColor.LEADER) {
+			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-unit-leader'))
 		} else if (this.type === CardType.SPELL) {
 			overlaySprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-overlay-spell'))
 		}
@@ -237,7 +240,8 @@ export default class RenderedCard extends Card {
 				displayMode === CardDisplayMode.ANNOUNCED ||
 				displayMode === CardDisplayMode.RESOLVING ||
 				displayMode === CardDisplayMode.SELECTION ||
-				displayMode === CardDisplayMode.SELECTION_HOVERED) {
+				displayMode === CardDisplayMode.SELECTION_HOVERED ||
+				displayMode === CardDisplayMode.IN_EDITOR) {
 			this.switchToCardMode()
 			texts = [this.powerText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {
@@ -319,6 +323,10 @@ export default class RenderedCard extends Card {
 
 		this.cardDescriptionText.style.baseFontSize = fontSize
 		this.cardDescriptionText.setFont(fontSize, fontSize + 6)
+
+		if (this.color === CardColor.LEADER) {
+			this.powerText.text = '-'
+		}
 	}
 
 	public switchToUnitMode(): void {

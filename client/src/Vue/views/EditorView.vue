@@ -14,10 +14,7 @@ import Vue from 'vue'
 import store from '@/Vue/store'
 import TheCardLibrary from '@/Vue/components/editor/TheCardLibrary.vue'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import axios from 'axios'
-import CardMessage from '@shared/models/network/CardMessage'
-import { editorCardRenderer } from '@/Vue/components/editor/EditorCardRenderer'
-import Utils from '@/utils/Utils'
+import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 
 export default Vue.extend({
 	components: { TheCardLibrary },
@@ -29,30 +26,17 @@ export default Vue.extend({
 	mounted(): void {
 		setTimeout(() => {
 			TextureAtlas.prepare()
-			this.loadCardLibrary()
 		}, 500)
+		store.dispatch.editor.loadCardLibrary()
+		editorCardRenderer.startRenderingService()
+	},
 
-		setInterval(() => {
-			const nextCard = store.state.editor.renderQueue[0]
-			if (!nextCard) {
-				return
-			}
-
-			store.commit.editor.shiftRenderQueue()
-			store.commit.editor.addRenderedCard({
-				id: nextCard.id,
-				render: editorCardRenderer.render(nextCard)
-			})
-		}, 0)
+	beforeDestroy(): void {
+		editorCardRenderer.stopRenderingService()
 	},
 
 	methods: {
-		async loadCardLibrary(): Promise<void> {
-			const response = await axios.get('/api/cards', { params: { onlyPlayable: true } })
-			const cardMessages = response.data as CardMessage[]
-			const sortedMessages = Utils.sortEditorCards(cardMessages)
-			store.commit.editor.setCardLibrary(sortedMessages)
-		}
+
 	}
 })
 </script>

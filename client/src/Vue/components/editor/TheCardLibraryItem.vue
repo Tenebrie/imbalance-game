@@ -6,7 +6,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import RenderedEditorCard from '@/Vue/components/editor/RenderedEditorCard'
+import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 
 export default Vue.extend({
 	props: {

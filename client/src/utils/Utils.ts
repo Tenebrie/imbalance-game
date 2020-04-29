@@ -4,6 +4,8 @@ import RenderedCard from '@/Pixi/board/RenderedCard'
 import CardType from '@shared/enums/CardType'
 import CardFeature from '@shared/enums/CardFeature'
 import Card from '@shared/models/Card'
+import CardColor from '@shared/enums/CardColor'
+import Constants from '@shared/Constants'
 
 export default {
 	getFont(text: string) {
@@ -90,8 +92,8 @@ export default {
 			return (
 				(+a.features.includes(CardFeature.TEMPORARY_CARD) - +b.features.includes(CardFeature.TEMPORARY_CARD)) ||
 				(a.type - b.type) ||
-				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
+				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
 			)
 		})
 	},
@@ -100,9 +102,24 @@ export default {
 		return inputArray.slice().sort((a: Card, b: Card) => {
 			return (
 				(a.type - b.type) ||
-				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
+				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
 			)
 		})
+	},
+
+	getMaxCardCountForColor(color: CardColor): number {
+		switch (color) {
+			case CardColor.LEADER:
+				return Constants.CARD_LIMIT_LEADER
+			case CardColor.GOLDEN:
+				return Constants.CARD_LIMIT_GOLDEN
+			case CardColor.SILVER:
+				return Constants.CARD_LIMIT_SILVER
+			case CardColor.BRONZE:
+				return Constants.CARD_LIMIT_BRONZE
+			default:
+				return 0
+		}
 	}
 }

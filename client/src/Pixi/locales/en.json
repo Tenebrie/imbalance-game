@@ -9,6 +9,16 @@
 	"target.support.row": "Support all",
 	"target.move.row": "Move",
 
+	"card.faction.arcane": "Arcane",
+	"card.faction.neutral": "Neutral",
+	"card.faction.experimental": "Experimental",
+	"editor.faction.unfinished": "Unfinished",
+
+	"card.color.leader": "Leader",
+	"card.color.golden": "Legendary",
+	"card.color.silver": "Epic",
+	"card.color.bronze": "Common",
+
 	"card.tribe.bird": "Bird",
 	"card.tribe.beast": "Beast",
 	"card.tribe.human": "Human",
@@ -17,6 +27,18 @@
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.building": "Building",
 	"card.tribe.elemental": "Elemental",
+
+	"card.name.leaderVelElleron": "Vel'Elleron",
+	"card.title.leaderVelElleron": "The Battlemage",
+	"card.description.leaderVelElleron": "*Arcane Leader*<p>*Hero Powers:*\nSpell 1, Spell 2, Spell 3, Spell 4",
+
+	"card.name.leaderVelRaminea": "Vel'Raminea",
+	"card.title.leaderVelRaminea": "The Flameweaver",
+	"card.description.leaderVelRaminea": "*Arcane Leader*<p>*Hero Powers:*\nSpell 1, Spell 2, Spell 3, Spell 4",
+
+	"card.name.leaderNighterie": "Nighterie",
+	"card.title.leaderNighterie": "The Keeper of Shadows",
+	"card.description.leaderNighterie": "*Arcane Leader*<p>*Hero Powers:*\nSpell 1, Spell 2, Spell 3, Spell 4",
 
 	"card.name.heroSatia": "Satia",
 	"card.title.heroSatia": "First mistress",

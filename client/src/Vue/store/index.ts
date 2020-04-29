@@ -20,7 +20,8 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	state: {
 		player: null as Player | null,
 		isLoggedIn: false as boolean,
-		selectedGameId: '' as string
+		selectedGameId: '' as string,
+		selectedDeckId: '' as string
 	},
 
 	mutations: {
@@ -31,6 +32,10 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 
 		setSelectedGameId(state, selectedGameId: string): void {
 			state.selectedGameId = selectedGameId
+		},
+
+		setSelectedDeckId(state, selectedDeckId: string): void {
+			state.selectedDeckId = selectedDeckId
 		},
 
 		resetPlayerData(state): void {

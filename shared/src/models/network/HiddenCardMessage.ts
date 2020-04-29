@@ -19,9 +19,9 @@ export default class HiddenCardMessage implements Card {
 	buffs: HiddenBuffContainerMessage
 	baseTribes: CardTribe[] = []
 	baseFeatures: CardFeature[] = []
-
 	description = ''
 	variables = {}
+	sortPriority = 0
 
 	power = 1
 	attack = 1

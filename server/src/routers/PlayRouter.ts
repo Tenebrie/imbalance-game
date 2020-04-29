@@ -5,6 +5,7 @@ import IncomingMessageHandlers from '../game/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '../game/handlers/OutgoingMessageHandlers'
 import ConnectionEstablishedHandler from '../game/handlers/ConnectionEstablishedHandler'
 import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
+import decks from './TempDeckStorage'
 
 const router = express.Router()
 
@@ -29,10 +30,24 @@ router.ws('/:gameId', async (ws, req) => {
 		return
 	}
 
+	const deckId = req.query.deckId
+	if (!deckId) {
+		OutgoingMessageHandlers.notifyAboutMissingDeckId(ws)
+		ws.close()
+		return
+	}
+
+	const deck = decks.find(deck => deck.id === deckId)
+	if (!deck) {
+		OutgoingMessageHandlers.notifyAboutInvalidDeck(ws)
+		ws.close()
+		return
+	}
+
 	currentPlayer.disconnect()
 	currentPlayer.registerConnection(ws)
 
-	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerTemplateCardDeck.defaultDeck(currentGame))
+	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerTemplateCardDeck.editorDeck(currentGame, deck))
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)

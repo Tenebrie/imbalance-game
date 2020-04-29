@@ -6,7 +6,6 @@ import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequest
 import ServerGame from '../game/models/ServerGame'
 import ServerBotPlayer from '../game/utils/ServerBotPlayer'
 import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
-
 const router = express.Router()
 
 router.use(RequirePlayerTokenMiddleware)
@@ -22,6 +21,7 @@ router.post('/', (req, res: Response, next) => {
 	const player = req['player'] as ServerPlayer
 	const gameName = req.body['name'] || ''
 	const gameMode = req.body['mode'] || ''
+
 	const gameLibrary = global.gameLibrary
 
 	const game = gameLibrary.createOwnedGame(player, gameName.trim())

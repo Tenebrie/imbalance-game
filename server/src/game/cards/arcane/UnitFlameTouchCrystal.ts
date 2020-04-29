@@ -32,7 +32,7 @@ export default class UnitFlameTouchCrystal extends ServerCard {
 
 	onBeforeDestroyedAsUnit(thisUnit: ServerUnit): void {
 		for (let i = 0; i < this.charges; i++) {
-			const sparkling = CardLibrary.instantiate(new UnitTinySparkling(this.game))
+			const sparkling = CardLibrary.instantiateByInstance(new UnitTinySparkling(this.game))
 			this.game.board.createUnit(sparkling, thisUnit.owner, thisUnit.rowIndex, thisUnit.unitIndex)
 		}
 	}

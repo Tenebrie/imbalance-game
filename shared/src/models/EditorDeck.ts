@@ -5,5 +5,4 @@ export default interface EditorDeck {
 	id: string
 	name: string
 	cards: EditorCard[]
-	leader: DeckLeader
 }

@@ -72,7 +72,8 @@ const routes = [
 			},
 			{
 				path: '/decks/:id',
-				component: () => import('@/Vue/components/editor/TheDeckCardList.vue'),
+				name: 'single-deck',
+				component: () => import('@/Vue/components/editor/EditorDeckCardList.vue'),
 			},
 		]
 	},

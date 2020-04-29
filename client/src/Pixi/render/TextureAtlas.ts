@@ -49,6 +49,7 @@ export default class TextureAtlas {
 				'components/bg-overlay-unit-bronze',
 				'components/bg-overlay-unit-silver',
 				'components/bg-overlay-unit-golden',
+				'components/bg-overlay-unit-leader',
 				'components/bg-overlay-spell',
 				'components/stat-attack-claw',
 				'components/stat-attack-range',

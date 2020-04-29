@@ -1,18 +1,17 @@
 import uuidv4 from 'uuid/v4'
-import {createModule} from 'direct-vuex'
-import EditorDeck from '@shared/models/EditorDeck'
+import { createModule } from 'direct-vuex'
 import axios from 'axios'
-import {moduleActionContext} from '@/Vue/store'
+import { moduleActionContext } from '@/Vue/store'
 import Card from '@shared/models/Card'
-import RenderedEditorCard from '@/Vue/components/editor/RenderedEditorCard'
+import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import CardMessage from '@shared/models/network/CardMessage'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import Utils from '@/utils/Utils'
 import CardColor from '@shared/enums/CardColor'
-import PopulatedEditorDeck from '@/Vue/components/editor/PopulatedEditorDeck'
-import PopulatedEditorCard from '@/Vue/components/editor/PopulatedEditorCard'
+import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import RichTextVariables from '@shared/models/RichTextVariables'
-import EditorCard from '@shared/models/EditorCard'
+import Constants from '@shared/Constants'
+import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 
 const editorModule = createModule({
 	namespaced: true,
@@ -51,7 +50,16 @@ const editorModule = createModule({
 	},
 
 	getters: {
-
+		cardsOfColor: (state) => (payload: { deckId: string, color: CardColor }): number => {
+			const deck = state.decks.find(deck => deck.id === payload.deckId) as PopulatedEditorDeck
+			if (!deck) {
+				return 0
+			}
+			return deck.cards
+				.filter(card => card.color === payload.color)
+				.map(card => card.count)
+				.reduce((previousValue, currentValue) => previousValue + currentValue, 0)
+		}
 	},
 
 	actions: {
@@ -66,7 +74,6 @@ const editorModule = createModule({
 					count: card.count
 				}))
 			}
-			console.log(deckMessage)
 
 			await axios.put(`/api/decks/${payload.deckId}`, deckMessage)
 		},
@@ -76,39 +83,57 @@ const editorModule = createModule({
 
 			const decks = (await axios.get('/api/decks')).data
 
-			const sortedDecks = decks.map(deck => ({
-				...deck,
-				cards: Utils.sortEditorCards(deck.cards)
-			}))
+			const sortedDecks = decks.map(deck => new PopulatedEditorDeck(deck.id, deck.name, deck.cards))
 			commit.setDecks(sortedDecks)
 		},
 
+		async loadCardLibrary(context): Promise<void> {
+			const { commit } = moduleActionContext(context, editorModule)
+
+			const response = await axios.get('/api/cards', { params: { collectible: true } })
+			const cardMessages = response.data as CardMessage[]
+			const sortedMessages = Utils.sortEditorCards(cardMessages)
+			commit.setCardLibrary(sortedMessages)
+		},
+
 		async addCardToDeck(context, payload: { deckId: string, cardToAdd: CardMessage }): Promise<void> {
-			const { state, commit } = moduleActionContext(context, editorModule)
+			const { state, commit, getters } = moduleActionContext(context, editorModule)
 
-			const newDeck = state.decks.find(deck => deck.id === payload.deckId)
+			const deckToModify = state.decks.find(deck => deck.id === payload.deckId)
+			const totalCardCount = deckToModify.cards
+				.map(card => card.count)
+				.reduce((previousValue, currentValue) => previousValue + currentValue, 0)
 
-			const maxCount = payload.cardToAdd.color === CardColor.BRONZE ? 3 : 1
-			const oldCard = newDeck.cards.find(card => card.class === payload.cardToAdd.class)
-			if (oldCard && oldCard.count >= maxCount) {
+			if (totalCardCount >= Constants.CARD_LIMIT_TOTAL) {
 				return
 			}
 
-			if (!oldCard) {
+			const cardOfColorCount = getters.cardsOfColor({ deckId: payload.deckId, color: payload.cardToAdd.color })
+			if (cardOfColorCount >= Utils.getMaxCardCountForColor(payload.cardToAdd.color)) {
+				return
+			}
+
+			const maxCount = payload.cardToAdd.color === CardColor.BRONZE ? 3 : 1
+			const cardToModify = deckToModify.cards.find(card => card.class === payload.cardToAdd.class)
+			if (cardToModify && cardToModify.count >= maxCount) {
+				return
+			}
+
+			if (!cardToModify) {
 				const cardToAdd: PopulatedEditorCard = {
 					...payload.cardToAdd,
 					id: uuidv4(),
 					count: 1,
 					evaluateVariables(): RichTextVariables { return }
 				}
-				newDeck.cards.push(cardToAdd)
+				deckToModify.cards.push(cardToAdd)
 			} else {
-				oldCard.count += 1
+				cardToModify.count += 1
 			}
 
-			newDeck.cards = Utils.sortEditorCards(newDeck.cards)
+			deckToModify.cards = Utils.sortEditorCards(deckToModify.cards)
 
-			commit.updateEditorDeck(newDeck)
+			commit.updateEditorDeck(deckToModify)
 		},
 
 		async removeCardFromDeck(context, payload: { deckId: string, cardToRemove: CardMessage }): Promise<void> {
@@ -122,6 +147,14 @@ const editorModule = createModule({
 				oldCard.count -= 1
 			}
 			commit.updateEditorDeck(newDeck)
+		},
+
+		async renameDeck(context, payload: { deckId: string, name: string }): Promise<void> {
+			const { state, commit } = moduleActionContext(context, editorModule)
+			const deck = state.decks.find(deck => deck.id === payload.deckId)
+			deck.name = payload.name
+
+			commit.updateEditorDeck(deck)
 		},
 
 		async requestRender(context, payload: { card: CardMessage }): Promise<void> {

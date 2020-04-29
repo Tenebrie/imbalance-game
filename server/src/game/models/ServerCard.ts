@@ -78,6 +78,10 @@ export default class ServerCard extends Card {
 		return thisCardInGame ? thisCardInGame.owner : null
 	}
 
+	isCollectible(): boolean {
+		return this.faction !== CardFaction.EXPERIMENTAL && this.color !== CardColor.TOKEN && this.type === CardType.UNIT
+	}
+
 	setPower(value: number): void {
 		if (this.power === value) { return }
 
@@ -292,6 +296,9 @@ export default class ServerCard extends Card {
 	getBonusAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return 0 }
 	getDamageTaken(thisUnit: ServerUnit, damageSource: ServerDamageSource): number { return damageSource.value }
 	getDamageReduction(thisUnit: ServerUnit, damageSource: ServerDamageSource): number { return 0 }
+
+	getDeckAddedUnitCards(): any[] { return [] }
+	getDeckAddedSpellCards(): any[] { return [] }
 
 	definePlayValidTargets(): TargetDefinitionBuilder { return TargetDefinition.defaultCardPlayTarget(this.game) }
 	defineValidOrderTargets(): TargetDefinitionBuilder { return TargetDefinition.defaultUnitOrder(this.game) }

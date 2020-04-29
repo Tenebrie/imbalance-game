@@ -13,8 +13,10 @@
 		"direct-vuex": "^0.9.4",
 		"js-easing-functions": "^1.0.3",
 		"pixi.js": "^5.2.0",
+		"sweetalert": "^2.1.2",
 		"vue": "^2.6.10",
 		"vue-router": "^3.1.3",
+		"vuejs-noty": "^0.1.3",
 		"vuex": "^3.1.2"
 	},
 	"devDependencies": {

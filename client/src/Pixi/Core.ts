@@ -25,9 +25,9 @@ export default class Core {
 	public static opponent: ClientPlayerInGame
 	public static resolveStack: ClientCardResolveStack
 
-	public static init(gameId: string, container: HTMLElement): void {
+	public static init(gameId: string, deckId: string, container: HTMLElement): void {
 		const protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
-		const socket = new WebSocket(`${protocol}//${window.location.host}/api/game/${gameId}`)
+		const socket = new WebSocket(`${protocol}//${window.location.host}/api/game/${gameId}?deckId=${deckId}`)
 		socket.onopen = () => this.onConnect(container)
 		socket.onmessage = (event) => this.onMessage(event)
 		socket.onclose = (event) => this.onDisconnect(event)
@@ -38,8 +38,7 @@ export default class Core {
 	}
 
 	private static async onConnect(container: HTMLElement): Promise<void> {
-		// @ts-ignore
-		Core.keepaliveTimer = setInterval(() => {
+		Core.keepaliveTimer = window.setInterval(() => {
 			OutgoingMessageHandlers.sendKeepalive()
 		}, 30000)
 

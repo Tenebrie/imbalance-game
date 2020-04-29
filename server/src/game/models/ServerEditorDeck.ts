@@ -8,20 +8,18 @@ export default class ServerEditorDeck implements EditorDeck {
 	id: string
 	name: string
 	cards: EditorCard[]
-	leader: DeckLeader
 
-	private constructor(name: string, leader: DeckLeader, cards: EditorCard[]) {
+	private constructor(name: string, cards: EditorCard[]) {
 		this.id = uuidv4()
 		this.name = name
 		this.cards = cards
-		this.leader = leader
 	}
 
-	public static newDeck(leader: DeckLeader): ServerEditorDeck {
-		return new ServerEditorDeck('Unnamed deck', leader, [])
+	public static newDeck(): ServerEditorDeck {
+		return new ServerEditorDeck('New deck', [])
 	}
 
-	public static fromTemplate(leader: DeckLeader, template: CardDeck): ServerEditorDeck {
+	public static fromTemplate(template: CardDeck): ServerEditorDeck {
 		const cards: EditorCard[] = []
 
 		template.unitCards.forEach(card => {
@@ -32,6 +30,6 @@ export default class ServerEditorDeck implements EditorDeck {
 				cards.push({ class: card.class, count: 1 })
 			}
 		})
-		return new ServerEditorDeck('Template deck', leader, cards)
+		return new ServerEditorDeck('Template deck', cards)
 	}
 }

@@ -21,6 +21,7 @@ export default class CardMessage implements Card {
 	baseFeatures: CardFeature[]
 	description: string
 	variables: RichTextVariables
+	sortPriority: number
 
 	power: number
 	attack: number
@@ -46,6 +47,7 @@ export default class CardMessage implements Card {
 		this.baseFeatures = card.baseFeatures.slice()
 		this.description = card.description
 		this.variables = card.evaluateVariables()
+		this.sortPriority = card.sortPriority
 
 		this.power = card.power
 		this.attack = card.attack

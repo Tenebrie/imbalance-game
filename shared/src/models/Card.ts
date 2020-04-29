@@ -20,6 +20,7 @@ export default class Card {
 	baseFeatures: CardFeature[]
 	description: string
 	variables: RichTextVariables
+	sortPriority: number
 
 	power = 0
 	attack = 0
@@ -44,6 +45,7 @@ export default class Card {
 		this.baseTribes = []
 		this.baseFeatures = []
 		this.description = ''
+		this.sortPriority = 0
 	}
 
 	public evaluateVariables(): RichTextVariables {

@@ -19,6 +19,8 @@ import HeroGarellion from '../cards/arcane/HeroGarellion'
 import UnitRavenMessenger from '../cards/neutral/UnitRavenMessenger'
 import UnitPriestessOfAedine from '../cards/neutral/UnitPriestessOfAedine'
 import UnitArcaneCrystal from '../cards/arcane/UnitArcaneCrystal'
+import ServerEditorDeck from './ServerEditorDeck'
+import CardColor from '@shared/enums/CardColor'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	unitCards: ServerCard[]
@@ -37,41 +39,65 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		this.spellCards.push(card)
 	}
 
-	static emptyDeck(): ServerTemplateCardDeck {
+	public static emptyDeck(): ServerTemplateCardDeck {
 		return new ServerTemplateCardDeck([], [])
 	}
 
-	static defaultDeck(game: ServerGame): ServerTemplateCardDeck {
+	public static editorDeck(game: ServerGame, editorDeck: ServerEditorDeck): ServerTemplateCardDeck {
+		const temporaryDeck: ServerCard[] = []
+		editorDeck.cards.forEach(card => {
+			for (let i = 0; i < card.count; i++) {
+				temporaryDeck.push(CardLibrary.instantiateByClass(game, card.class))
+			}
+		})
+
+		const inflatedUnitDeck = []
+		const inflatedSpellDeck = []
+		temporaryDeck.forEach(card => {
+			const inflatedUnitCards = card.getDeckAddedUnitCards()
+			const inflatedSpellCards = card.getDeckAddedSpellCards()
+			inflatedUnitCards.forEach(cardPrototype => inflatedUnitDeck.push(CardLibrary.instantiateByConstructor(game, cardPrototype)))
+			inflatedSpellCards.forEach(cardPrototype => inflatedSpellDeck.push(CardLibrary.instantiateByConstructor(game, cardPrototype)))
+			if (card.color === CardColor.LEADER) {
+				return
+			}
+			inflatedUnitDeck.push(card)
+		})
+
+		return new ServerTemplateCardDeck(inflatedUnitDeck, inflatedSpellDeck)
+	}
+
+	public static defaultDeck(game: ServerGame): ServerTemplateCardDeck {
 		const deck = new ServerTemplateCardDeck([], [])
 
 		for (let i = 0; i < 9; i++) {
-			deck.addUnit(CardLibrary.instantiate(new UnitRavenMessenger(game)))
+			deck.addUnit(CardLibrary.instantiateByInstance(new UnitRavenMessenger(game)))
 		}
-		deck.addUnit(CardLibrary.instantiate(new HeroKroLah(game)))
-		deck.addUnit(CardLibrary.instantiate(new HeroZamarath(game)))
-		deck.addUnit(CardLibrary.instantiate(new HeroRagingElemental(game)))
-		deck.addUnit(CardLibrary.instantiate(new HeroSparklingSpirit(game)))
-		deck.addUnit(CardLibrary.instantiate(new HeroGarellion(game)))
+		deck.addUnit(CardLibrary.instantiateByInstance(new HeroKroLah(game)))
+		deck.addUnit(CardLibrary.instantiateByInstance(new HeroZamarath(game)))
+		deck.addUnit(CardLibrary.instantiateByInstance(new HeroRagingElemental(game)))
+		deck.addUnit(CardLibrary.instantiateByInstance(new HeroSparklingSpirit(game)))
+		deck.addUnit(CardLibrary.instantiateByInstance(new HeroGarellion(game)))
 
 		for (let i = 0; i < 3; i++) {
-			deck.addUnit(CardLibrary.instantiate(new UnitChargingKnight(game)))
-			deck.addUnit(CardLibrary.instantiate(new UnitSupplyWagon(game)))
-			deck.addUnit(CardLibrary.instantiate(new UnitForestScout(game)))
-			deck.addUnit(CardLibrary.instantiate(new UnitStoneElemental(game)))
+			deck.addUnit(CardLibrary.instantiateByInstance(new UnitChargingKnight(game)))
+			deck.addUnit(CardLibrary.instantiateByInstance(new UnitSupplyWagon(game)))
+			deck.addUnit(CardLibrary.instantiateByInstance(new UnitForestScout(game)))
+			deck.addUnit(CardLibrary.instantiateByInstance(new UnitStoneElemental(game)))
 		}
-		deck.addUnit(CardLibrary.instantiate(new UnitPriestessOfAedine(game)))
-		deck.addUnit(CardLibrary.instantiate(new UnitArcaneCrystal(game)))
-		deck.addUnit(CardLibrary.instantiate(new UnitFlameTouchCrystal(game)))
-		deck.addUnit(CardLibrary.instantiate(new UnitIceSkinCrystal(game)))
+		deck.addUnit(CardLibrary.instantiateByInstance(new UnitPriestessOfAedine(game)))
+		deck.addUnit(CardLibrary.instantiateByInstance(new UnitArcaneCrystal(game)))
+		deck.addUnit(CardLibrary.instantiateByInstance(new UnitFlameTouchCrystal(game)))
+		deck.addUnit(CardLibrary.instantiateByInstance(new UnitIceSkinCrystal(game)))
 
-		deck.addSpell(CardLibrary.instantiate(new SpellSpark(game)))
-		deck.addSpell(CardLibrary.instantiate(new SpellSpeedPotion(game)))
-		deck.addSpell(CardLibrary.instantiate(new SpellPermafrost(game)))
+		deck.addSpell(CardLibrary.instantiateByInstance(new SpellSpark(game)))
+		deck.addSpell(CardLibrary.instantiateByInstance(new SpellSpeedPotion(game)))
+		deck.addSpell(CardLibrary.instantiateByInstance(new SpellPermafrost(game)))
 
 		return deck
 	}
 
-	static botDeck(game: ServerGame): ServerTemplateCardDeck {
+	public static botDeck(game: ServerGame): ServerTemplateCardDeck {
 		return ServerTemplateCardDeck.defaultDeck(game)
 	}
 }

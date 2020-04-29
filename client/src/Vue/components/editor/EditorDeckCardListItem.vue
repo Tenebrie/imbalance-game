@@ -1,6 +1,6 @@
 <template>
-	<div class="card-list-item" :class="colorClass" @click="onClick">
-		<span class="power">{{ card.basePower }}</span>
+	<div class="editor-deck-card-list-item" :class="colorClass" @click="onClick">
+		<span class="power" v-if="showPower">{{ card.basePower }}</span>
 		<span>{{ fullName }}</span>
 		<span class="count" v-if="displayCount">x{{ card.count }}</span>
 	</div>
@@ -30,12 +30,17 @@ export default Vue.extend({
 			return name
 		},
 
+		showPower(): boolean {
+			return this.card.color !== CardColor.LEADER
+		},
+
 		displayCount(): boolean {
 			return this.card.color === CardColor.BRONZE
 		},
 
 		colorClass(): any {
 			return {
+				'leader': this.card.color === CardColor.LEADER,
 				'golden': this.card.color === CardColor.GOLDEN,
 				'silver': this.card.color === CardColor.SILVER,
 				'bronze': this.card.color === CardColor.BRONZE
@@ -58,7 +63,7 @@ export default Vue.extend({
 <style scoped lang="scss">
 	@import "../../styles/generic";
 
-	.card-list-item {
+	.editor-deck-card-list-item {
 		width: calc(100% - 16px);
 		display: flex;
 		flex-direction: row;
@@ -71,6 +76,10 @@ export default Vue.extend({
 			background: $COLOR-BACKGROUND-TRANSPARENT;
 		}
 
+		&.leader {
+			color: MediumAquamarine;
+		}
+
 		&.golden {
 			color: orange;
 		}
@@ -80,8 +89,9 @@ export default Vue.extend({
 		}
 
 		.power {
-			min-width: 50px;
-			text-align: left;
+			min-width: 25px;
+			margin-right: 20px;
+			text-align: right;
 		}
 
 		.count {

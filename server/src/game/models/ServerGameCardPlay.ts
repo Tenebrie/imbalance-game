@@ -137,7 +137,6 @@ export default class ServerGameCardPlay {
 		}
 
 		let validTargets = []
-		console.log(this.cardResolveStack.currentTargets)
 		Utils.forEachInNumericEnum(TargetType, (targetType: TargetType) => {
 			validTargets = validTargets.concat(card.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, targetType, targetDefinition, args, this.cardResolveStack.currentTargets))
 		})
