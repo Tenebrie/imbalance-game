@@ -60,6 +60,7 @@ export default class Database {
 			}
 			return result.rows[0]
 		} catch (err) {
+			console.error(err)
 			return null
 		}
 	}
@@ -68,12 +69,24 @@ export default class Database {
 		try {
 			const result = await this.runQuery(query)
 			if (!result.rows) {
-				return null
+				return []
 			}
 			return result.rows
 		} catch (err) {
+			console.error(err)
 			return null
 		}
+	}
+
+	public static async deleteRows(query: string): Promise<boolean> {
+		try {
+			await this.runQuery(query)
+		} catch (err) {
+			console.error(err)
+			return false
+		}
+
+		return true
 	}
 
 	private static async runQuery(query: string): Promise<QueryResult> {

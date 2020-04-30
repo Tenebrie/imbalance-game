@@ -72,8 +72,16 @@ export default Vue.extend({
 		cursor: pointer;
 		display: block;
 
-		&:hover, &.selected {
+		&.selected {
+			background: rgba(lighten(green, 20), 0.1);
+		}
+
+		&:hover {
 			background: $COLOR-BACKGROUND-TRANSPARENT;
+		}
+
+		&.selected:hover {
+			background: rgba(lighten(green, 50), 0.1);
 		}
 	}
 </style>

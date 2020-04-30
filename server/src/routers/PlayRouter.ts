@@ -5,7 +5,7 @@ import IncomingMessageHandlers from '../game/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '../game/handlers/OutgoingMessageHandlers'
 import ConnectionEstablishedHandler from '../game/handlers/ConnectionEstablishedHandler'
 import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
-import decks from './TempDeckStorage'
+import EditorDeckDatabase from '../database/EditorDeckDatabase'
 
 const router = express.Router()
 
@@ -37,8 +37,9 @@ router.ws('/:gameId', async (ws, req) => {
 		return
 	}
 
-	const deck = decks.find(deck => deck.id === deckId)
+	const deck = await EditorDeckDatabase.selectEditorDeckByIdForPlayer(deckId, currentPlayer)
 	if (!deck) {
+		console.log(deck)
 		OutgoingMessageHandlers.notifyAboutInvalidDeck(ws)
 		ws.close()
 		return

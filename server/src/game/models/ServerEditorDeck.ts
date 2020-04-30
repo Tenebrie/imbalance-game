@@ -1,6 +1,5 @@
 import uuidv4 from 'uuid/v4'
 import EditorDeck from '@shared/models/EditorDeck'
-import DeckLeader from '@shared/enums/DeckLeader'
 import CardDeck from '@shared/models/CardDeck'
 import EditorCard from '@shared/models/EditorCard'
 

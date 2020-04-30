@@ -1,7 +1,7 @@
 import uuidv4 from 'uuid/v4'
-import { createModule } from 'direct-vuex'
+import {createModule} from 'direct-vuex'
 import axios from 'axios'
-import { moduleActionContext } from '@/Vue/store'
+import {moduleActionContext} from '@/Vue/store'
 import Card from '@shared/models/Card'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import CardMessage from '@shared/models/network/CardMessage'
@@ -63,7 +63,21 @@ const editorModule = createModule({
 	},
 
 	actions: {
-		async saveDeck(context, payload: { deckId: string }): Promise<void> {
+		async createDeck(context): Promise<{ status: number, deckId: string }> {
+			const { state, commit } = moduleActionContext(context, editorModule)
+
+			const response = await axios.post('/api/decks')
+			const deck = response.data.deck as PopulatedEditorDeck | undefined
+			if (deck) {
+				commit.setDecks(state.decks.concat([new PopulatedEditorDeck(deck.id, deck.name, deck.cards)]))
+			}
+			return {
+				status: response.status,
+				deckId: deck ? deck.id : ''
+			}
+		},
+
+		async saveDeck(context, payload: { deckId: string }): Promise<number> {
 			const { state } = moduleActionContext(context, editorModule)
 
 			const deck = state.decks.find(deck => deck.id === payload.deckId)
@@ -75,7 +89,18 @@ const editorModule = createModule({
 				}))
 			}
 
-			await axios.put(`/api/decks/${payload.deckId}`, deckMessage)
+			return (await axios.put(`/api/decks/${payload.deckId}`, deckMessage)).status
+		},
+
+		async deleteDeck(context, payload: { deckId: string }): Promise<number> {
+			const { state, commit } = moduleActionContext(context, editorModule)
+
+			const statusCode = (await axios.delete(`/api/decks/${payload.deckId}`)).status
+			if (statusCode === 204) {
+				const updatedDecks = state.decks.filter(deck => deck.id !== payload.deckId)
+				commit.setDecks(updatedDecks)
+			}
+			return statusCode
 		},
 
 		async loadDecks(context): Promise<void> {

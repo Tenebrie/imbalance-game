@@ -12,7 +12,8 @@
 			<editor-deck-card-list-item :card="card" v-for="card in bronzeCards" :key="card.id" />
 		</div>
 		<div class="buttons">
-			<span class="link button-link" @click="onSave">Save</span>
+			<editor-save-deck-button />
+			<editor-delete-deck-button />
 			<router-link class="link button-link" tag="span" :to="{ name: 'decks' }">Back</router-link>
 		</div>
 	</div>
@@ -26,11 +27,15 @@ import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import EditorDeckCardListItem from '@/Vue/components/editor/EditorDeckCardListItem.vue'
 import EditorDeckCardListSeparator from '@/Vue/components/editor/EditorDeckCardListSeparator.vue'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
+import EditorSaveDeckButton from '@/Vue/components/editor/buttons/EditorSaveDeckButton.vue'
+import EditorDeleteDeckButton from '@/Vue/components/editor/buttons/EditorDeleteDeckButton.vue'
 
 export default Vue.extend({
 	components: {
+		EditorSaveDeckButton,
+		EditorDeleteDeckButton,
 		EditorDeckCardListItem,
-		EditorDeckCardListSeparator
+		EditorDeckCardListSeparator,
 	},
 
 	data: () => ({
@@ -78,10 +83,7 @@ export default Vue.extend({
 	},
 
 	methods: {
-		onSave(): void {
-			const deckId = this.$route.params.id
-			store.dispatch.editor.saveDeck({ deckId })
-		}
+
 	}
 })
 </script>

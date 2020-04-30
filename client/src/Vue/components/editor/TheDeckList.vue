@@ -19,7 +19,7 @@
 			</div>
 		</div>
 		<div class="buttons" v-if="mode === DeckListMode.EDIT">
-			<span class="link button-link" @click="onCreateDeck">Create new deck</span>
+			<editor-create-deck-button />
 		</div>
 	</div>
 </template>
@@ -27,25 +27,25 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import EditorDeck from '@shared/models/EditorDeck'
-import axios from 'axios'
 import CardFaction from '@shared/enums/CardFaction'
 import TheEditorDeckListItem from '@/Vue/components/editor/TheDeckListItem.vue'
 import TheEditorDeckListSeparator from '@/Vue/components/editor/TheDeckListSeparator.vue'
 import TheEditorDeckListSeparatorUnfinished from '@/Vue/components/editor/TheDeckListSeparatorUnfinished.vue'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import DeckListMode from '@/utils/DeckListMode'
+import EditorCreateDeckButton from '@/Vue/components/editor/buttons/EditorCreateDeckButton.vue'
 
 export default Vue.extend({
 	components: {
 		TheEditorDeckListItem,
 		TheEditorDeckListSeparator,
-		TheEditorDeckListSeparatorUnfinished
+		TheEditorDeckListSeparatorUnfinished,
+		EditorCreateDeckButton
 	},
 
 	data: () => ({
 		CardFaction: CardFaction,
-		DeckListMode: DeckListMode
+		DeckListMode: DeckListMode,
 	}),
 
 	computed: {
@@ -79,15 +79,7 @@ export default Vue.extend({
 	},
 
 	methods: {
-		async onCreateDeck(): Promise<void> {
-			const response = (await axios.post('/api/decks')).data as EditorDeck
-			await this.$router.push({
-				name: 'single-deck',
-				params: {
-					id: response.id
-				}
-			})
-		}
+
 	}
 })
 </script>
