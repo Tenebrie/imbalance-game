@@ -13,6 +13,8 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientCardResolveStack from '@/Pixi/models/ClientCardResolveStack'
 
 export default class Core {
+	public static isReady = false
+
 	public static input: Input
 	public static socket: WebSocket
 	public static renderer: Renderer
@@ -53,6 +55,7 @@ export default class Core {
 		Core.mainHandler = MainHandler.start()
 
 		console.info('Sending init signal to server')
+		this.isReady = true
 		OutgoingMessageHandlers.sendInit()
 	}
 
@@ -138,5 +141,6 @@ export default class Core {
 	public static reset(): void {
 		if (!this.socket) { return }
 		this.socket.close()
+		this.isReady = false
 	}
 }

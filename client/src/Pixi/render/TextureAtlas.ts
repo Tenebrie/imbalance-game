@@ -69,6 +69,7 @@ export default class TextureAtlas {
 
 			TextureAtlas.texturesToLoad = texturesToLoad.length
 
+			const t0 = performance.now()
 			texturesToLoad.forEach(fileName => {
 				const texture = PIXI.Texture.from(`/assets/${fileName}.png`)
 
@@ -77,7 +78,8 @@ export default class TextureAtlas {
 					TextureAtlas.textures[fileName.toLowerCase()] = texture
 
 					if (TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad) {
-						console.info(`TextureAtlas initialized. Resolving ${TextureAtlas.resolveFunctions.length} promise(s).`)
+						const t1 = performance.now()
+						console.info(`TextureAtlas initialized. Resolving ${TextureAtlas.resolveFunctions.length} promise(s). Initialization took ${Math.round(t1 - t0) / 1000} seconds`)
 						TextureAtlas.onReady()
 					}
 				}

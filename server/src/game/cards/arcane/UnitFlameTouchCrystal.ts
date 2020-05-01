@@ -16,7 +16,7 @@ export default class UnitFlameTouchCrystal extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 4
-		this.baseTribes = [CardTribe.BUILDING]
+		this.baseTribes = [CardTribe.CRYSTAL]
 		this.dynamicTextVariables = {
 			chargePerMana: this.chargePerMana,
 			charges: () => this.charges,
@@ -32,7 +32,7 @@ export default class UnitFlameTouchCrystal extends ServerCard {
 
 	onBeforeDestroyedAsUnit(thisUnit: ServerUnit): void {
 		for (let i = 0; i < this.charges; i++) {
-			const sparkling = CardLibrary.instantiateByInstance(new UnitTinySparkling(this.game))
+			const sparkling = CardLibrary.instantiateByConstructor(this.game, UnitTinySparkling)
 			this.game.board.createUnit(sparkling, thisUnit.owner, thisUnit.rowIndex, thisUnit.unitIndex)
 		}
 	}

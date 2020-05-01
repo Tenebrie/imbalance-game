@@ -21,9 +21,15 @@ export default class ServerDeck implements CardDeck {
 		this.spellCards = spellCards
 	}
 
+	public getCardIndex(card: ServerCard): number {
+		const unitIndex = this.unitCards.indexOf(card)
+		const spellIndex = this.spellCards.indexOf(card)
+		return unitIndex >= 0 ? unitIndex : spellIndex
+	}
+
 	public instantiateFrom(deck: ServerTemplateCardDeck): void {
-		deck.unitCards.forEach(card => this.addUnit(CardLibrary.instantiateByInstance(card)))
-		deck.spellCards.forEach(card => this.addSpell(CardLibrary.instantiateByInstance(card)))
+		deck.unitCards.forEach(card => this.addUnit(CardLibrary.instantiateByInstance(this.game, card)))
+		deck.spellCards.forEach(card => this.addSpell(CardLibrary.instantiateByInstance(this.game, card)))
 	}
 
 	public addUnit(card: ServerCard): void {

@@ -83,6 +83,7 @@ export default class ServerBuff implements Buff {
 	getDamageTaken(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return damage }
 	getDamageReduction(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return 0 }
 	getUnitCostOverride(baseCost: number): number { return baseCost }
+	getSpellCostOverride(baseCost: number): number { return baseCost }
 
 	definePlayValidTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	defineValidOrderTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }

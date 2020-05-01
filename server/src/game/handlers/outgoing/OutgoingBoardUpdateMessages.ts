@@ -9,6 +9,7 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerGame from '../../models/ServerGame'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import Utils from '../../../utils/Utils'
+import BuffTutoredCard from '../../buffs/BuffTutoredCard'
 
 export default {
 	notifyAboutUnitCreated(player: ServerPlayer, card: ServerUnit, rowIndex: number, unitIndex: number) {

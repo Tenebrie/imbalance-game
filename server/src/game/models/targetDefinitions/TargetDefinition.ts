@@ -85,6 +85,8 @@ export default class TargetDefinition {
 			.actions(1)
 			.allow(TargetMode.ON_PLAY_VALID_TARGET, TargetType.BOARD_ROW)
 			.validate(TargetMode.ON_PLAY_VALID_TARGET, TargetType.BOARD_ROW, (args: TargetValidatorArguments) => {
+				if (args.thisCard.class === 'unitFlameTouchCrystal') {
+				}
 				return args.thisCard.type === CardType.SPELL || args.targetRow.owner === args.thisCardOwner
 			})
 	}

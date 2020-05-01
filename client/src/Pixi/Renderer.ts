@@ -16,6 +16,7 @@ import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
 import Utils from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import CardFeature from '@shared/enums/CardFeature'
 
 const UNIT_ZINDEX = 2
 const TARGETING_ARROW_ZINDEX = 10
@@ -284,6 +285,10 @@ export default class Renderer {
 
 		if (renderedCard.type === CardType.SPELL) {
 			renderedCard.powerText.style.fill = 0x0000FF
+			if (renderedCard.features.includes(CardFeature.TEMPORARY_CARD)) {
+				renderedCard.powerText.text = '0'
+				renderedCard.powerText.style.fill = 0x008800
+			}
 		}
 
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED || renderedCard.displayMode === CardDisplayMode.IN_HAND_HIDDEN) {

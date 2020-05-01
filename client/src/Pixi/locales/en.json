@@ -24,6 +24,7 @@
 	"card.tribe.human": "Human",
 	"card.tribe.undead": "Undead",
 	"card.tribe.dragon": "Dragon",
+	"card.tribe.crystal": "Crystal",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.building": "Building",
 	"card.tribe.elemental": "Elemental",
@@ -76,15 +77,35 @@
 	"card.title.heroKroLah": "The Sky Guardian",
 	"card.description.heroKroLah": "*Deploy:*\nChoose an enemy row.\n*Stun* and *Push 1* all units on that row.",
 
+	"card.name.heroCarienne": "Carienne",
+	"card.title.heroCarienne": "The Storm Unleashed",
+	"card.description.heroCarienne": "*Deploy:*\nDeal {damagePerWave} Damage to all enemy units.\nRepeat once for every *Gathering Storm* in your Graveyard.",
+
 	"card.name.heroGarellion": "Garellion",
 	"card.title.heroGarellion": "The Conduit",
 	"card.description.heroGarellion": "*End of round:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
+
+	"card.name.heroAura": "Aura",
+	"card.title.heroAura": "The Golden Hawk",
+	"card.description.heroAura": "*Deploy:*\n*Summon* a Legendary card from your deck.",
 
 	"card.name.heroSparklingSpirit": "Sparkling Spirit",
 	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
 
 	"card.name.heroRagingElemental": "Raging Elemental",
-	"card.description.heroRagingElemental": "When {name} drops below {powerThreshold} Power, it deals Damage equal to own Power to closest opposing enemy units. <p>Then, it destroys itself.",
+	"card.description.heroRagingElemental": "After {name} takes damage, it deals Damage equal to own Power to closest opposing enemy units.<p>Then, it destroys itself.",
+
+	"card.name.heroStormDancer": "Storm Dancer",
+	"card.description.heroStormDancer": "*Deploy:*\nFor each *Gathering Storm* in your Graveyard, put a copy of it into your spell hand.",
+
+	"card.name.heroRavenCaller": "Raven Caller",
+	"card.description.heroRavenCaller": "*Deploy:*\n*Summon* a card with {powerThreshold} Power or less from your deck.",
+
+	"card.name.heroDarkOracle": "Dark Oracle",
+	"card.description.heroDarkOracle": "*Deploy:*\nLook at top {cardsToSee} cards from your deck. Choose one to *Summon*.",
+
+	"card.name.heroCrystalWarrior": "Crystal Warrior",
+	"card.description.heroCrystalWarrior": "*Deploy:*\nTrigger *Deathrattle* effect of a friendly crystal.",
 
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
@@ -140,6 +161,12 @@
 	"card.name.unitStoneElemental": "Stone Elemental",
 	"card.description.unitStoneElemental": "*Deploy:*\nDeal {damage} Damage to any other unit",
 
+	"card.name.unitMerfolkStormcaller": "Merfolk Stormcaller",
+	"card.description.unitMerfolkStormcaller": "*Deploy:*\n*Create* a *Gathering Storm*",
+
+	"card.name.unitCrystalMiner": "Crystal Miner",
+	"card.description.unitCrystalMiner": "*Deploy:*\n*Create* an Arcane crystal.",
+
 	"card.name.unitTinySparkling": "Tiny Sparkling",
 	"card.description.unitTinySparkling": "<i>No effect</i>",
 
@@ -156,5 +183,8 @@
 	"card.description.spellRainOfFire": "{name} deals {damage} damage to {targets} enemy units\nThen, it draws a card",
 
 	"card.name.spellMagicalStarfall": "Magical Starfall",
-	"card.description.spellMagicalStarfall": "{name} increases Power of all allies units by *3* and Attack by *2*\nThen, it draws a card"
+	"card.description.spellMagicalStarfall": "{name} increases Power of all allies units by *3* and Attack by *2*\nThen, it draws a card",
+
+	"card.name.spellGatheringStorm": "Gathering Storm",
+	"card.description.spellGatheringStorm": "Deal {damage} Damage to {targetCount} enemy units.<p><i>Number of targets increases by {targetsPerStorm} for every {name} in your Graveyard.</i>"
 }

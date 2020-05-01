@@ -12,6 +12,8 @@ import Constants from '@shared/Constants'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import BuffDuration from '@shared/enums/BuffDuration'
+import CardLibrary from '../libraries/CardLibrary'
+import CardType from '@shared/enums/CardType'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -84,10 +86,29 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		}
 	}
 
-	public tutorCardFromUnitDeck(card: ServerCard): void {
+	public summonCardFromUnitDeck(card: ServerCard): void {
 		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
 		this.cardDeck.removeCard(card)
 		this.cardHand.onUnitDrawn(card)
+	}
+
+	public createCardFromLibraryByInstance(prototype: ServerCard): void {
+		const card = CardLibrary.instantiateByInstance(this.game, prototype)
+		this.createCard(card)
+	}
+
+	public createCardFromLibraryByPrototype(prototype: Function): void {
+		const card = CardLibrary.instantiateByConstructor(this.game, prototype)
+		this.createCard(card)
+	}
+
+	private createCard(card: ServerCard): void {
+		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
+		if (card.type === CardType.UNIT) {
+			this.cardHand.onUnitDrawn(card)
+		} else if (card.type === CardType.SPELL) {
+			this.cardHand.onSpellDrawn(card)
+		}
 	}
 
 	public refillSpellHand(): void {
@@ -169,6 +190,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		})
 		this.cardHand.unitCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
 			this.cardHand.discardUnit(card)
+		})
+		this.cardHand.spellCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
+			this.cardHand.discardSpell(card)
 		})
 	}
 

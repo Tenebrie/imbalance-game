@@ -56,7 +56,12 @@ export default Vue.extend({
 
 	methods: {
 		onSelectDeck() {
-			store.commit.setSelectedDeckId(this.deck.id)
+			const selectedDeckId = store.state.selectedDeckId
+			if (selectedDeckId === this.deck.id) {
+				store.commit.setSelectedDeckId('')
+			} else {
+				store.commit.setSelectedDeckId(this.deck.id)
+			}
 		}
 	}
 })

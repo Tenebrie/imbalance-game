@@ -70,29 +70,29 @@ export default class ServerTemplateCardDeck implements CardDeck {
 	public static defaultDeck(game: ServerGame): ServerTemplateCardDeck {
 		const deck = new ServerTemplateCardDeck([], [])
 
-		for (let i = 0; i < 9; i++) {
-			deck.addUnit(CardLibrary.instantiateByInstance(new UnitRavenMessenger(game)))
+		for (let i = 0; i < 3; i++) {
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitRavenMessenger))
 		}
-		deck.addUnit(CardLibrary.instantiateByInstance(new HeroKroLah(game)))
-		deck.addUnit(CardLibrary.instantiateByInstance(new HeroZamarath(game)))
-		deck.addUnit(CardLibrary.instantiateByInstance(new HeroRagingElemental(game)))
-		deck.addUnit(CardLibrary.instantiateByInstance(new HeroSparklingSpirit(game)))
-		deck.addUnit(CardLibrary.instantiateByInstance(new HeroGarellion(game)))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroKroLah))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroZamarath))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroRagingElemental))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroSparklingSpirit))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroGarellion))
 
 		for (let i = 0; i < 3; i++) {
-			deck.addUnit(CardLibrary.instantiateByInstance(new UnitChargingKnight(game)))
-			deck.addUnit(CardLibrary.instantiateByInstance(new UnitSupplyWagon(game)))
-			deck.addUnit(CardLibrary.instantiateByInstance(new UnitForestScout(game)))
-			deck.addUnit(CardLibrary.instantiateByInstance(new UnitStoneElemental(game)))
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitChargingKnight))
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitSupplyWagon))
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitForestScout))
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitStoneElemental))
 		}
-		deck.addUnit(CardLibrary.instantiateByInstance(new UnitPriestessOfAedine(game)))
-		deck.addUnit(CardLibrary.instantiateByInstance(new UnitArcaneCrystal(game)))
-		deck.addUnit(CardLibrary.instantiateByInstance(new UnitFlameTouchCrystal(game)))
-		deck.addUnit(CardLibrary.instantiateByInstance(new UnitIceSkinCrystal(game)))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitPriestessOfAedine))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitArcaneCrystal))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitFlameTouchCrystal))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitIceSkinCrystal))
 
-		deck.addSpell(CardLibrary.instantiateByInstance(new SpellSpark(game)))
-		deck.addSpell(CardLibrary.instantiateByInstance(new SpellSpeedPotion(game)))
-		deck.addSpell(CardLibrary.instantiateByInstance(new SpellPermafrost(game)))
+		deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellSpark))
+		deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellSpeedPotion))
+		deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellPermafrost))
 
 		return deck
 	}

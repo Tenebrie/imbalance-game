@@ -157,6 +157,10 @@ export default {
 	},
 
 	notifyAboutCardBuffAdded(card: ServerCard, buff: ServerBuff) {
+		if (!card.owner) {
+			return
+		}
+
 		const owner = card.owner.player
 		const opponent = card.owner.opponent.player
 		const message = new BuffMessage(buff)
@@ -172,6 +176,10 @@ export default {
 	},
 
 	notifyAboutCardBuffIntensityChanged(card: ServerCard, buff: ServerBuff) {
+		if (!card.owner) {
+			return
+		}
+
 		const owner = card.owner.player
 		const opponent = card.owner.opponent.player
 		const message = new BuffMessage(buff)
@@ -187,6 +195,10 @@ export default {
 	},
 
 	notifyAboutCardBuffDurationChanged(card: ServerCard, buff: ServerBuff) {
+		if (!card.owner) {
+			return
+		}
+
 		const owner = card.owner.player
 		const opponent = card.owner.opponent.player
 		const message = new BuffMessage(buff)
@@ -202,6 +214,10 @@ export default {
 	},
 
 	notifyAboutCardBuffRemoved(card: ServerCard, buff: ServerBuff) {
+		if (!card.owner) {
+			return
+		}
+
 		const owner = card.owner.player
 		const opponent = card.owner.opponent.player
 		const message = new BuffMessage(buff)

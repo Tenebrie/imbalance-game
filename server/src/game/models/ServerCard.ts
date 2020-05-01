@@ -50,7 +50,11 @@ export default class ServerCard extends Card {
 	}
 
 	public get spellCost(): number {
-		return this.power
+		let cost = this.power
+		this.buffs.buffs.forEach(buff => {
+			cost = buff.getSpellCostOverride(cost)
+		})
+		return cost
 	}
 
 	public get tribes(): CardTribe[] {
@@ -76,6 +80,14 @@ export default class ServerCard extends Card {
 	public get owner(): ServerPlayerInGame | null {
 		const thisCardInGame = this.game.findOwnedCardById(this.id)
 		return thisCardInGame ? thisCardInGame.owner : null
+	}
+
+	public get deckPosition(): number {
+		const owner = this.owner
+		if (!owner) {
+			return -1
+		}
+		return owner.cardDeck.getCardIndex(this)
 	}
 
 	isCollectible(): boolean {
@@ -113,9 +125,13 @@ export default class ServerCard extends Card {
 	}
 
 	getValidPlayTargets(cardOwner: ServerPlayerInGame): ServerCardTarget[] {
+		if ((this.type === CardType.UNIT && cardOwner.unitMana < this.unitCost) || (this.type === CardType.SPELL && cardOwner.spellMana < this.spellCost)) {
+			return []
+		}
+
 		return this.getValidTargets(TargetMode.ON_PLAY_VALID_TARGET, TargetType.BOARD_ROW, this.getPlayValidTargetDefinition(), {
 			thisCardOwner: cardOwner
-		}).filter(target => ((target.sourceCard.type === CardType.UNIT && cardOwner.unitMana >= target.sourceCard.unitCost) || (target.sourceCard.type === CardType.SPELL && cardOwner.spellMana >= target.sourceCard.spellCost)))
+		})
 	}
 
 	getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {

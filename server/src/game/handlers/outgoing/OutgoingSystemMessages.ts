@@ -3,6 +3,13 @@ import ServerPlayer from '../../players/ServerPlayer'
 import ErrorCode from '@shared/enums/ErrorCode'
 
 export default {
+	notifyAboutInitRequested(player: ServerPlayer) {
+		player.sendMessage({
+			type: 'system/requestInit',
+			data: null
+		})
+	},
+
 	notifyAboutGameShutdown(player: ServerPlayer) {
 		player.sendMessage({
 			type: 'command/disconnect',

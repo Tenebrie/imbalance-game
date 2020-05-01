@@ -1,17 +1,16 @@
 import CardType from '@shared/enums/CardType'
+import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import ServerUnit from '../../models/ServerUnit'
 import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
 import PostPlayTargetDefinitionBuilder from '../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TargetType from '@shared/enums/TargetType'
-import ServerUnit from '../../models/ServerUnit'
-import CardTribe from '@shared/enums/CardTribe'
-import CardFaction from '@shared/enums/CardFaction'
 
-export default class UnitRavenMessenger extends ServerCard {
+export default class HeroAura extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
+		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 2
 	}
 
@@ -20,8 +19,7 @@ export default class UnitRavenMessenger extends ServerCard {
 			.singleTarget()
 			.require(TargetType.CARD_IN_UNIT_DECK)
 			.inPlayersDeck()
-			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.color === CardColor.BRONZE))
-			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.tribes.includes(CardTribe.HUMAN)))
+			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.color === CardColor.GOLDEN))
 	}
 
 	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {

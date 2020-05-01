@@ -17,7 +17,7 @@ export default class UnitIceSkinCrystal extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 4
-		this.baseTribes = [CardTribe.BUILDING]
+		this.baseTribes = [CardTribe.CRYSTAL]
 		this.dynamicTextVariables = {
 			armorGranted: this.armorGranted,
 			chargePerMana: this.chargePerMana,

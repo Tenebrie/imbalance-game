@@ -39,7 +39,6 @@ router.ws('/:gameId', async (ws, req) => {
 
 	const deck = await EditorDeckDatabase.selectEditorDeckByIdForPlayer(deckId, currentPlayer)
 	if (!deck) {
-		console.log(deck)
 		OutgoingMessageHandlers.notifyAboutInvalidDeck(ws)
 		ws.close()
 		return
@@ -65,6 +64,8 @@ router.ws('/:gameId', async (ws, req) => {
 		currentGame.removePlayer(currentPlayer)
 		ConnectionEstablishedHandler.onPlayerDisconnected(currentGame, currentPlayer)
 	})
+
+	OutgoingMessageHandlers.notifyAboutInitRequested(currentPlayer)
 })
 
 router.use((err, req, res, next) => {

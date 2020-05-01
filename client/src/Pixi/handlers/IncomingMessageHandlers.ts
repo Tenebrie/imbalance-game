@@ -23,6 +23,7 @@ import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 import AnimationHandlers from './AnimationHandlers'
 import BuffMessage from '@shared/models/network/BuffMessage'
 import ClientBuff from '@/Pixi/models/ClientBuff'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -341,6 +342,12 @@ const handlers: {[ index: string ]: any } = {
 
 		const animationDuration = handler(data, data.params)
 		Core.mainHandler.triggerAnimation(animationDuration)
+	},
+
+	'system/requestInit': (data: void) => {
+		if (Core.isReady) {
+			OutgoingMessageHandlers.sendInit()
+		}
 	},
 
 	'command/disconnect': (data: void) => {

@@ -11,4 +11,8 @@ export default class BuffTutoredCard extends ServerBuff {
 	getUnitCostOverride(baseCost: number): number {
 		return 0
 	}
+
+	getSpellCostOverride(baseCost: number): number {
+		return 0
+	}
 }

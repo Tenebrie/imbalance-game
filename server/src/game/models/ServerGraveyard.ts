@@ -30,4 +30,9 @@ export default class ServerGraveyard implements CardDeck {
 	public findCardById(cardId: string): ServerCard | null {
 		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
 	}
+
+	public findCardsByConstructor(prototype: Function): ServerCard[] {
+		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
+		return this.unitCards.filter(card => card.class === cardClass).concat(this.spellCards.filter(card => card.class === cardClass))
+	}
 }
