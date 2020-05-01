@@ -22,6 +22,7 @@ export default Vue.extend({
 				return
 			}
 
+			newValue.render.setAttribute('draggable', 'false')
 			this.$el.appendChild(newValue.render)
 		}
 	},
@@ -58,6 +59,7 @@ export default Vue.extend({
 		width: calc(408px / 2);
 		height: calc(584px / 2);
 		cursor: pointer;
+		user-select: none;
 
 		/deep/
 		img {

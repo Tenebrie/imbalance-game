@@ -1,8 +1,7 @@
 <template>
 	<div class="editor-deck-card-list-item" :class="colorClass" @click="onClick">
 		<span class="power" v-if="showPower">{{ card.basePower }}</span>
-		<span>{{ fullName }}</span>
-		<span class="count" v-if="displayCount">x{{ card.count }}</span>
+		<span class="name">{{ fullName }} <span class="count" v-if="displayCount">x{{ card.count }}</span></span>
 	</div>
 </template>
 
@@ -92,6 +91,10 @@ export default Vue.extend({
 			min-width: 25px;
 			margin-right: 20px;
 			text-align: right;
+		}
+
+		.name {
+			text-align: left;
 		}
 
 		.count {
