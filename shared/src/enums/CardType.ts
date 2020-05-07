@@ -1,7 +1,8 @@
 enum CardType {
 	HIDDEN,
 	UNIT,
-	SPELL
+	SPELL,
+	TOKEN
 }
 
 export default CardType

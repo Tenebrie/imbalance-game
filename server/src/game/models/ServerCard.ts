@@ -90,11 +90,16 @@ export default class ServerCard extends Card {
 		return owner.cardDeck.getCardIndex(this)
 	}
 
-	isCollectible(): boolean {
+	public isCollectible(): boolean {
 		return this.faction !== CardFaction.EXPERIMENTAL && this.color !== CardColor.TOKEN && this.type === CardType.UNIT
 	}
 
-	setPower(value: number): void {
+	public instanceOf(prototype: Function): boolean {
+		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
+		return this.class === cardClass
+	}
+
+	public setPower(value: number): void {
 		if (this.power === value) { return }
 
 		this.power = value
@@ -105,7 +110,7 @@ export default class ServerCard extends Card {
 		})
 	}
 
-	setArmor(value: number): void {
+	public setArmor(value: number): void {
 		if (this.armor === value) { return }
 
 		runCardEventHandler(() => this.onArmorChanged(value, this.armor))
@@ -116,7 +121,7 @@ export default class ServerCard extends Card {
 		})
 	}
 
-	reveal(owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
+	public reveal(owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
 		if (this.isRevealed) { return }
 
 		this.isRevealed = true
@@ -124,7 +129,7 @@ export default class ServerCard extends Card {
 		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(opponent.player, this)
 	}
 
-	getValidPlayTargets(cardOwner: ServerPlayerInGame): ServerCardTarget[] {
+	public getValidPlayTargets(cardOwner: ServerPlayerInGame): ServerCardTarget[] {
 		if ((this.type === CardType.UNIT && cardOwner.unitMana < this.unitCost) || (this.type === CardType.SPELL && cardOwner.spellMana < this.spellCost)) {
 			return []
 		}
@@ -134,7 +139,7 @@ export default class ServerCard extends Card {
 		})
 	}
 
-	getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	public getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		let targets: ServerCardTarget[] = []
 		if (targetType === TargetType.UNIT) {
 			targets = this.getValidUnitTargets(targetMode, targetDefinition, args, previousTargets)
@@ -156,7 +161,7 @@ export default class ServerCard extends Card {
 		return targets
 	}
 
-	isTargetLimitExceeded(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, previousTargets: ServerCardTarget[]): boolean {
+	private isTargetLimitExceeded(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, previousTargets: ServerCardTarget[]): boolean {
 		if (previousTargets.length >= targetDefinition.getTargetCount()) {
 			return true
 		}
@@ -175,7 +180,7 @@ export default class ServerCard extends Card {
 		// return !!incompatibleOtherTypeOrder
 	}
 
-	getValidUnitTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	private getValidUnitTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.UNIT, targetDefinition, previousTargets)) {
 			return []
 		}
@@ -187,7 +192,7 @@ export default class ServerCard extends Card {
 			.map(targetUnit => ServerCardTarget.cardTargetUnit(targetMode, this, targetUnit, unitTargetLabel))
 	}
 
-	getValidRowTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	private getValidRowTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.BOARD_ROW, targetDefinition, previousTargets)) {
 			return []
 		}
@@ -198,7 +203,7 @@ export default class ServerCard extends Card {
 			.map(targetRow => ServerCardTarget.cardTargetRow(targetMode, this, targetRow, rowTargetLabel))
 	}
 
-	getValidCardLibraryTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	private getValidCardLibraryTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_LIBRARY, targetDefinition, previousTargets)) {
 			return []
 		}
@@ -210,7 +215,7 @@ export default class ServerCard extends Card {
 			.map(targetCard => ServerCardTarget.cardTargetCardInLibrary(targetMode, this, targetCard, cardTargetLabel))
 	}
 
-	getValidUnitDeckTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	private getValidUnitDeckTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_DECK, targetDefinition, previousTargets)) {
 			return []
 		}
@@ -222,7 +227,7 @@ export default class ServerCard extends Card {
 			.map(targetCard => ServerCardTarget.cardTargetCardInUnitDeck(targetMode, this, targetCard, cardTargetLabel))
 	}
 
-	getPlayValidTargetDefinition(): TargetDefinition {
+	public getPlayValidTargetDefinition(): TargetDefinition {
 		let targets = this.definePlayValidTargets()
 		this.buffs.buffs.forEach(buff => {
 			targets = targets.merge(buff.definePlayValidTargetsMod())
@@ -231,7 +236,7 @@ export default class ServerCard extends Card {
 		return targets.build()
 	}
 
-	getValidOrderTargetDefinition(): TargetDefinition {
+	public getValidOrderTargetDefinition(): TargetDefinition {
 		let targets = this.defineValidOrderTargets()
 		this.buffs.buffs.forEach(buff => {
 			targets = targets.merge(buff.defineValidOrderTargetsMod())
@@ -240,7 +245,7 @@ export default class ServerCard extends Card {
 		return targets.build()
 	}
 
-	getPostPlayRequiredTargetDefinition(): TargetDefinition {
+	public getPostPlayRequiredTargetDefinition(): TargetDefinition {
 		let targets = this.definePostPlayRequiredTargets()
 		this.buffs.buffs.forEach(buff => {
 			targets = targets.merge(buff.definePostPlayRequiredTargetsMod())
@@ -249,7 +254,7 @@ export default class ServerCard extends Card {
 		return targets.build()
 	}
 
-	evaluateVariables(): RichTextVariables {
+	public evaluateVariables(): RichTextVariables {
 		const evaluatedVariables: RichTextVariables = {}
 		Object.keys(this.dynamicTextVariables).forEach(key => {
 			const value = this.dynamicTextVariables[key]

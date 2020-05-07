@@ -56,6 +56,14 @@ export default class ServerDeck implements CardDeck {
 		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
 	}
 
+	public discardUnit(cardToDiscard: ServerCard): void {
+		this.unitCards = this.unitCards.filter(card => card !== cardToDiscard)
+	}
+
+	public discardSpell(cardToDiscard: ServerCard): void {
+		this.spellCards = this.spellCards.filter(card => card !== cardToDiscard)
+	}
+
 	public shuffle(): void {
 		this.unitCards = Utils.shuffle(this.unitCards)
 		this.spellCards = Utils.shuffle(this.spellCards)

@@ -8,13 +8,13 @@ import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefini
 import PostPlayTargetDefinitionBuilder from '../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TargetType from '@shared/enums/TargetType'
 
-export default class HeroDarkOracle extends ServerCard {
+export default class HeroLightOracle extends ServerCard {
 	cardsToSee = 5
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 4
-		this.sortPriority = 2
+		this.sortPriority = 1
 		this.dynamicTextVariables = {
 			cardsToSee: this.cardsToSee
 		}
@@ -24,11 +24,11 @@ export default class HeroDarkOracle extends ServerCard {
 		return PostPlayTargetDefinitionBuilder.base(this.game)
 			.singleTarget()
 			.require(TargetType.CARD_IN_UNIT_DECK)
-			.inOpponentsDeck()
-			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition >= args.targetCard.owner.cardDeck.unitCards.length - this.cardsToSee))
+			.inPlayersDeck()
+			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition < this.cardsToSee))
 	}
 
 	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {
-		target.owner.cardDeck.discardUnit(target)
+		thisUnit.owner.summonCardFromUnitDeck(target)
 	}
 }

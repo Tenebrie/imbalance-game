@@ -101,8 +101,11 @@
 	"card.name.heroRavenCaller": "Raven Caller",
 	"card.description.heroRavenCaller": "*Deploy:*\n*Summon* a card with {powerThreshold} Power or less from your deck.",
 
-	"card.name.heroDarkOracle": "Dark Oracle",
-	"card.description.heroDarkOracle": "*Deploy:*\nLook at top {cardsToSee} cards from your deck. Choose one to *Summon*.",
+	"card.name.heroLightOracle": "Oracle of Light",
+	"card.description.heroLightOracle": "*Deploy:*\nLook at top {cardsToSee} cards from your deck. Choose one to *Summon*.",
+
+	"card.name.heroDarkOracle": "Oracle of Darkness",
+	"card.description.heroDarkOracle": "*Deploy:*\nLook at bottom {cardsToSee} cards from your opponent's deck. Choose one to *Discard*.",
 
 	"card.name.heroCrystalWarrior": "Crystal Warrior",
 	"card.description.heroCrystalWarrior": "*Deploy:*\nTrigger *Deathrattle* effect of a friendly crystal.",
@@ -167,8 +170,17 @@
 	"card.name.unitCrystalMiner": "Crystal Miner",
 	"card.description.unitCrystalMiner": "*Deploy:*\n*Create* an Arcane crystal.",
 
+	"card.name.unitOracleApprentice": "Oracle Apprentice",
+	"card.description.unitOracleApprentice": "*Deploy:*\nLook at the top card of any deck",
+
 	"card.name.unitTinySparkling": "Tiny Sparkling",
 	"card.description.unitTinySparkling": "<i>No effect</i>",
+
+	"card.name.tokenPlayerDeck": "Your deck",
+	"card.description.tokenPlayerDeck": "Choose your own deck",
+
+	"card.name.tokenOpponentDeck": "Your opponent's deck",
+	"card.description.tokenOpponentDeck": "Choose your opponent's deck",
 
 	"card.name.spellSpark": "Spark",
 	"card.description.spellSpark": "*Hero Power*<p>Deal {damage} Damage to\nan enemy unit",

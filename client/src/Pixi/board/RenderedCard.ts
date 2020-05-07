@@ -306,7 +306,7 @@ export default class RenderedCard extends Card {
 		this.unitModeContainer.visible = false
 		this.cardModeContainer.visible = true
 		this.cardModeTextContainer.visible = true
-		this.powerText.visible = true
+		this.powerText.visible = this.type === CardType.UNIT || this.type === CardType.SPELL
 		this.powerTextBackground.visible = this.type === CardType.UNIT
 		this.armorTextBackground.visible = true
 		this.manacostTextBackground.visible = this.type === CardType.SPELL
