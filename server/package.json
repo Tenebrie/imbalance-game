@@ -1,6 +1,7 @@
 {
 	"name": "server",
 	"version": "0.0.0",
+	"license": "GNU GPL v3.0",
 	"private": true,
 	"scripts": {
 		"build": "tsc && mkdir -p dist/server/src/views && cp src/views/*.jade dist/server/src/views",

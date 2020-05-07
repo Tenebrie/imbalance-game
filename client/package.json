@@ -1,6 +1,7 @@
 {
 	"name": "client",
 	"version": "0.0.0",
+	"license": "GNU GPL v3.0",
 	"private": true,
 	"scripts": {
 		"serve": "node_modules/.bin/vue-cli-service serve",

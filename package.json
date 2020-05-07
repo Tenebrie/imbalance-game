@@ -60,7 +60,7 @@
 				"node": "10.16"
 		},
 		"author": "Tenebrie Interactive",
-		"license": "ISC",
+		"license": "GNU GPL v3.0",
 		"bugs": {
 				"url": "https://github.com/Kos94ok/notgwent-game/issues"
 		},
