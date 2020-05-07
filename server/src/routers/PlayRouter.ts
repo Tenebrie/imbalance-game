@@ -47,7 +47,7 @@ router.ws('/:gameId', async (ws, req) => {
 	currentPlayer.disconnect()
 	currentPlayer.registerConnection(ws)
 
-	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerTemplateCardDeck.editorDeck(currentGame, deck))
+	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerTemplateCardDeck.fromEditorDeck(currentGame, deck))
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)

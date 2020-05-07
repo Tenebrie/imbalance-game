@@ -127,6 +127,17 @@ const handlers: {[ index: string ]: any } = {
 		cardOnBoard.setPower(data.power)
 	},
 
+	'update/board/card/armor': (data: CardMessage) => {
+		const cardOnBoard = Core.board.findUnitById(data.id)
+		if (!cardOnBoard) { return }
+		if (typeof (data.armor) === 'undefined') {
+			console.warn(`Trying to set card ${data.id} power to undefined value!`)
+			return
+		}
+
+		cardOnBoard.setArmor(data.armor)
+	},
+
 	'update/player/self/turnStarted': (data: void) => {
 		Core.player.startTurn()
 	},

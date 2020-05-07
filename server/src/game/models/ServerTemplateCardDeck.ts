@@ -43,7 +43,38 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		return new ServerTemplateCardDeck([], [])
 	}
 
-	public static editorDeck(game: ServerGame, editorDeck: ServerEditorDeck): ServerTemplateCardDeck {
+	public static botDeck(game: ServerGame): ServerTemplateCardDeck {
+		const deck = new ServerTemplateCardDeck([], [])
+
+		for (let i = 0; i < 30; i++) {
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroZamarath))
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitRavenMessenger))
+		}
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroKroLah))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroZamarath))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroRagingElemental))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroSparklingSpirit))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroGarellion))
+
+		for (let i = 0; i < 3; i++) {
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitChargingKnight))
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitSupplyWagon))
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitForestScout))
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitStoneElemental))
+		}
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitPriestessOfAedine))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitArcaneCrystal))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitFlameTouchCrystal))
+		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitIceSkinCrystal))
+
+		// deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellSpark))
+		// deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellSpeedPotion))
+		// deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellPermafrost))
+
+		return deck
+	}
+
+	public static fromEditorDeck(game: ServerGame, editorDeck: ServerEditorDeck): ServerTemplateCardDeck {
 		const temporaryDeck: ServerCard[] = []
 		editorDeck.cards.forEach(card => {
 			for (let i = 0; i < card.count; i++) {
@@ -65,39 +96,5 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		})
 
 		return new ServerTemplateCardDeck(inflatedUnitDeck, inflatedSpellDeck)
-	}
-
-	public static defaultDeck(game: ServerGame): ServerTemplateCardDeck {
-		const deck = new ServerTemplateCardDeck([], [])
-
-		for (let i = 0; i < 3; i++) {
-			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitRavenMessenger))
-		}
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroKroLah))
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroZamarath))
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroRagingElemental))
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroSparklingSpirit))
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroGarellion))
-
-		for (let i = 0; i < 3; i++) {
-			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitChargingKnight))
-			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitSupplyWagon))
-			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitForestScout))
-			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitStoneElemental))
-		}
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitPriestessOfAedine))
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitArcaneCrystal))
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitFlameTouchCrystal))
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitIceSkinCrystal))
-
-		deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellSpark))
-		deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellSpeedPotion))
-		deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellPermafrost))
-
-		return deck
-	}
-
-	public static botDeck(game: ServerGame): ServerTemplateCardDeck {
-		return ServerTemplateCardDeck.defaultDeck(game)
 	}
 }

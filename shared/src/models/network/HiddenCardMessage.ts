@@ -24,14 +24,14 @@ export default class HiddenCardMessage implements Card {
 	sortPriority = 0
 
 	power = 1
+	armor = 0
 	attack = 1
 	attackRange = 1
-	healthArmor = 0
 
 	basePower = 1
+	baseArmor = 0
 	baseAttack = 1
 	baseAttackRange = 1
-	baseHealthArmor = 0
 
 	constructor(card: Card) {
 		this.id = card.id

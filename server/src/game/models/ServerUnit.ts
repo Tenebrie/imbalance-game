@@ -45,11 +45,11 @@ export default class ServerUnit {
 	}
 
 	addHealthArmor(value: number): void {
-		this.setHealthArmor(Math.max(0, this.card.healthArmor + value))
+		this.setHealthArmor(Math.max(0, this.card.armor + value))
 	}
 
 	setHealthArmor(value: number): void {
-		this.card.setHealthArmor(value)
+		this.card.setArmor(value)
 	}
 
 	dealDamage(damage: ServerDamageInstance): number {
@@ -70,8 +70,27 @@ export default class ServerUnit {
 		}
 
 		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damageInstance))
-		this.setPower(this.card.power - damageInstance.value)
+
+		let damageToDeal = damageInstance.value
+		if (this.card.armor > 0) {
+			const armorDamageInstance = damageInstance.clone()
+			armorDamageInstance.value = Math.min(this.card.armor, damageToDeal)
+			runCardEventHandler(() => this.card.onBeforeArmorDamageTaken(this, armorDamageInstance))
+			this.setHealthArmor(this.card.armor - armorDamageInstance.value)
+			runCardEventHandler(() => this.card.onAfterArmorDamageTaken(this, armorDamageInstance))
+			damageToDeal -= armorDamageInstance.value
+		}
+
+		if (damageToDeal > 0) {
+			const healthDamageInstance = damageInstance.clone()
+			healthDamageInstance.value = Math.min(this.card.power, damageToDeal)
+			runCardEventHandler(() => this.card.onBeforeHealthDamageTaken(this, healthDamageInstance))
+			this.setPower(this.card.power - healthDamageInstance.value)
+			runCardEventHandler(() => this.card.onAfterHealthDamageTaken(this, healthDamageInstance))
+		}
+
 		runCardEventHandler(() => this.card.onAfterDamageTaken(this, damageInstance))
+
 		if (this.card.power > 0) {
 			runCardEventHandler(() => this.card.onDamageSurvived(this, damageInstance))
 		}

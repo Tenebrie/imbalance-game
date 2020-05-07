@@ -24,14 +24,14 @@ export default class CardMessage implements Card {
 	sortPriority: number
 
 	power: number
+	armor: number
 	attack: number
 	attackRange: number
-	healthArmor: number
 
 	basePower: number
+	baseArmor: number
 	baseAttack: number
 	baseAttackRange: number
-	baseHealthArmor: number
 
 	constructor(card: Card) {
 		this.id = card.id
@@ -52,12 +52,12 @@ export default class CardMessage implements Card {
 		this.power = card.power
 		this.attack = card.attack
 		this.attackRange = card.attackRange
-		this.healthArmor = card.healthArmor
+		this.armor = card.armor
 
 		this.basePower = card.basePower
 		this.baseAttack = card.baseAttack
 		this.baseAttackRange = card.baseAttackRange
-		this.baseHealthArmor = card.baseHealthArmor
+		this.baseArmor = card.baseArmor
 	}
 
 	evaluateVariables(): RichTextVariables {

@@ -11,8 +11,8 @@ export default class HeroNightMaiden extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.EXPERIMENTAL)
 		this.basePower = 40
+		this.baseArmor = 1 // 10
 		this.baseAttack = 7 // 35
-		this.baseHealthArmor = 1 // 10
 		this.baseTribes = [CardTribe.DRAGON] // 5
 	}
 

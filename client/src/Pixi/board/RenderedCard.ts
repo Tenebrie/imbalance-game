@@ -33,10 +33,13 @@ export default class RenderedCard extends Card {
 	private readonly unitModeAttributes: CardAttributes
 
 	private readonly powerTextBackground: PIXI.Sprite
+	private readonly armorTextBackground: PIXI.Sprite
+	private readonly armorTextZoomBackground: PIXI.Sprite
 	private readonly manacostTextBackground: PIXI.Sprite
 	private readonly descriptionTextBackground: DescriptionTextBackground
 
 	public readonly powerText: ScalingText
+	public readonly armorText: ScalingText
 	private readonly cardNameText: ScalingText
 	private readonly cardTitleText: ScalingText
 	private readonly cardTribeTexts: ScalingText[]
@@ -61,18 +64,19 @@ export default class RenderedCard extends Card {
 		this.power = message.power
 		this.attack = message.attack
 		this.attackRange = message.attackRange
-		this.healthArmor = message.healthArmor
+		this.armor = message.armor
 
 		this.basePower = message.basePower
 		this.baseAttack = message.baseAttack
 		this.baseAttackRange = message.baseAttackRange
-		this.baseHealthArmor = message.baseHealthArmor
+		this.baseArmor = message.baseArmor
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.class}`))
-		this.powerText = this.createPowerText(this.power.toString())
-		this.cardNameText = this.createCardNameText(Localization.getString(this.name))
-		this.cardTitleText = this.createCardNameText(Localization.getString(this.title))
-		this.cardTribeTexts = this.tribes.map(tribe => this.createCardNameText(Localization.getString(`card.tribe.${tribe}`)))
+		this.powerText = this.createBrushScriptText(this.power.toString())
+		this.armorText = this.createBrushScriptText(this.armor.toString())
+		this.cardNameText = this.createTitleText(Localization.getString(this.name))
+		this.cardTitleText = this.createTitleText(Localization.getString(this.title))
+		this.cardTribeTexts = this.tribes.map(tribe => this.createTitleText(Localization.getString(`card.tribe.${tribe}`)))
 		this.cardDescriptionText = new RichText(Localization.getString(this.description), 350, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
@@ -125,15 +129,20 @@ export default class RenderedCard extends Card {
 			this.cardModeContainer.addChild(tribeBackgroundSprite)
 		}
 		this.powerTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power'))
+		this.armorTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-armor'))
 		this.manacostTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-manacost'))
 		this.cardModeContainer.addChild(this.powerTextBackground)
+		this.cardModeContainer.addChild(this.armorTextBackground)
 		this.cardModeContainer.addChild(this.manacostTextBackground)
 		internalContainer.addChild(this.cardModeContainer)
+
 
 		/* Unit mode container */
 		this.unitModeContainer = new PIXI.Container()
 		this.unitModeContainer.addChild(this.unitModeAttributes)
 		this.unitModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power-zoom')))
+		this.armorTextZoomBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-armor-zoom'))
+		this.unitModeContainer.addChild(this.armorTextZoomBackground)
 		internalContainer.addChild(this.unitModeContainer)
 
 		/* Core container */
@@ -141,6 +150,7 @@ export default class RenderedCard extends Card {
 		this.coreContainer.visible = false
 		this.coreContainer.addChild(this.sprite)
 		this.coreContainer.addChild(this.powerText)
+		this.coreContainer.addChild(this.armorText)
 		this.coreContainer.position.set(0, 0)
 
 		/* Card mode text container */
@@ -158,7 +168,7 @@ export default class RenderedCard extends Card {
 			name: Localization.getString(this.name),
 			attack: this.attack.toString(),
 			attackRange: this.attackRange.toString(),
-			healthArmor: this.healthArmor.toString()
+			armor: this.armor.toString()
 		}
 	}
 
@@ -195,6 +205,13 @@ export default class RenderedCard extends Card {
 		this.power = Math.max(0, value)
 	}
 
+	public setArmor(value: number): void {
+		this.armor = Math.max(0, value)
+		this.armorText.visible = this.armor > 0
+		this.armorTextBackground.visible = this.armor > 0
+		this.armorTextZoomBackground.visible = this.armor > 0
+	}
+
 	public createHitboxSprite(sprite: PIXI.Sprite): PIXI.Sprite {
 		const hitboxSprite = new PIXI.Sprite(sprite.texture)
 		hitboxSprite.alpha = 0
@@ -204,7 +221,7 @@ export default class RenderedCard extends Card {
 		return hitboxSprite
 	}
 
-	public createPowerText(text: string): ScalingText {
+	public createBrushScriptText(text: string): ScalingText {
 		const textObject = new ScalingText(text, new PIXI.TextStyle({
 			fontFamily: 'BrushScript',
 			fill: 0x000000,
@@ -214,7 +231,7 @@ export default class RenderedCard extends Card {
 		return textObject
 	}
 
-	public createCardNameText(text: string): ScalingText {
+	public createTitleText(text: string): ScalingText {
 		const textObject = new ScalingText(text, new PIXI.TextStyle({
 			fontFamily: Utils.getFont(text),
 			fill: 0x000000,
@@ -243,7 +260,7 @@ export default class RenderedCard extends Card {
 				displayMode === CardDisplayMode.SELECTION_HOVERED ||
 				displayMode === CardDisplayMode.IN_EDITOR) {
 			this.switchToCardMode()
-			texts = [this.powerText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
+			texts = [this.powerText, this.armorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (displayMode === CardDisplayMode.ON_BOARD) {
 			this.switchToUnitMode()
 			texts = [this.powerText]
@@ -272,6 +289,8 @@ export default class RenderedCard extends Card {
 
 		this.powerText.position.x -= this.sprite.width / 2
 		this.powerText.position.y -= this.sprite.height / 2
+		this.armorText.position.x -= this.sprite.width / 2
+		this.armorText.position.y -= this.sprite.height / 2
 		this.cardNameText.position.x += this.sprite.width / 2
 		this.cardNameText.position.y -= this.sprite.height / 2
 		this.cardTitleText.position.x += this.sprite.width / 2
@@ -289,13 +308,28 @@ export default class RenderedCard extends Card {
 		this.cardModeTextContainer.visible = true
 		this.powerText.visible = true
 		this.powerTextBackground.visible = this.type === CardType.UNIT
+		this.armorTextBackground.visible = true
 		this.manacostTextBackground.visible = this.type === CardType.SPELL
 
+		const power = this.displayMode === CardDisplayMode.INSPECTED ? this.basePower : this.power
+		const armor = this.displayMode === CardDisplayMode.INSPECTED ? this.baseArmor : this.armor
+
 		this.powerText.position.set(60, 45)
-		if (this.power < 10) {
+		if (power < 10) {
 			this.powerText.style.fontSize = 85
 		} else {
 			this.powerText.style.fontSize = 71
+		}
+
+		this.armorText.position.set(132, 33)
+		this.armorText.style.fontSize = 24
+		this.armorText.style.fill = 0xFFFFFF
+		if (armor > 0) {
+			this.armorText.visible = true
+			this.armorTextBackground.visible = true
+		} else {
+			this.armorText.visible = false
+			this.armorTextBackground.visible = false
 		}
 
 		this.cardNameText.position.set(-15, 67)
@@ -340,6 +374,17 @@ export default class RenderedCard extends Card {
 			this.powerText.style.fontSize = 160
 		} else {
 			this.powerText.style.fontSize = 135
+		}
+
+		this.armorText.position.set(131, 33)
+		this.armorText.style.fontSize = 28
+		this.armorText.style.fill = 0xFFFFFF
+		if (this.armor > 0) {
+			this.armorText.visible = true
+			this.armorTextZoomBackground.visible = true
+		} else {
+			this.armorText.visible = false
+			this.armorTextZoomBackground.visible = false
 		}
 	}
 

@@ -71,7 +71,7 @@
 
 	"card.name.heroZamarath": "Zamarath",
 	"card.title.heroZamarath": "The Protector",
-	"card.description.heroZamarath": "*Immune*",
+	"card.description.heroZamarath": "*Deploy:*\nGain *Immune* until your next turn.",
 
 	"card.name.heroKroLah": "Kro'Lah",
 	"card.title.heroKroLah": "The Sky Guardian",
@@ -177,7 +177,7 @@
 	"card.description.spellSpeedPotion": "*Hero Power*<p>Grant an allied unit {moves} extra move actions this turn only",
 
 	"card.name.spellPermafrost": "Permafrost",
-	"card.description.spellPermafrost": "*Hero Power*<p>Grant all allies *Immune* until the start of your next turn",
+	"card.description.spellPermafrost": "*Hero Power*<p>Grant all allies *Immune* until your next turn",
 
 	"card.name.spellRainOfFire": "Rain of Fire",
 	"card.description.spellRainOfFire": "{name} deals {damage} damage to {targets} enemy units\nThen, it draws a card",

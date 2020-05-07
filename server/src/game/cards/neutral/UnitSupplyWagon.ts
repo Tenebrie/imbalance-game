@@ -14,6 +14,7 @@ export default class UnitSupplyWagon extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 6
+		this.baseArmor = 1
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {

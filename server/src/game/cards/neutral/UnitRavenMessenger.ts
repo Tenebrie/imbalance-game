@@ -13,6 +13,7 @@ export default class UnitRavenMessenger extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 2
+		this.baseArmor = 3
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {

@@ -23,14 +23,14 @@ export default class Card {
 	sortPriority: number
 
 	power = 0
+	armor = 0
 	attack = 0
 	attackRange = 1
-	healthArmor = 0
 
 	basePower = 0
+	baseArmor = 0
 	baseAttack = 0
 	baseAttackRange = 1
-	baseHealthArmor = 0
 
 	constructor(id: string, type: CardType, cardClass: string) {
 		this.id = id

@@ -15,6 +15,15 @@ export default class ServerDamageInstance implements DamageInstance {
 		this.sourceSpell = null
 	}
 
+	public clone(): ServerDamageInstance {
+		const clone = new ServerDamageInstance()
+		clone.value = this.value
+		clone.source = this.source
+		clone.sourceUnit = this.sourceUnit
+		clone.sourceSpell = this.sourceSpell
+		return clone
+	}
+
 	public static fromUnit(value: number, sourceUnit: ServerUnit): ServerDamageInstance {
 		const damageInstance = new ServerDamageInstance()
 		damageInstance.value = value

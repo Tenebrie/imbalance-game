@@ -35,6 +35,8 @@ export default class TextureAtlas {
 				'cards/cardBack',
 				'components/bg-power',
 				'components/bg-power-zoom',
+				'components/bg-armor',
+				'components/bg-armor-zoom',
 				'components/bg-manacost',
 				'components/bg-name',
 				'components/bg-tribe',

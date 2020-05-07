@@ -70,7 +70,7 @@ export default class GameLibrary {
 		clone.power = clone.basePower
 		clone.attack = clone.baseAttack
 		clone.attackRange = clone.baseAttackRange
-		clone.healthArmor = clone.baseHealthArmor
+		clone.armor = clone.baseArmor
 		return clone
 	}
 }

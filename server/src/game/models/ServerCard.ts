@@ -105,14 +105,14 @@ export default class ServerCard extends Card {
 		})
 	}
 
-	setHealthArmor(value: number): void {
-		if (this.healthArmor === value) { return }
+	setArmor(value: number): void {
+		if (this.armor === value) { return }
 
-		runCardEventHandler(() => this.onHealthArmorChanged(value, this.healthArmor))
+		runCardEventHandler(() => this.onArmorChanged(value, this.armor))
 
-		this.healthArmor = value
+		this.armor = value
 		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardHealthArmorChange(playerInGame.player, this)
+			OutgoingMessageHandlers.notifyAboutCardArmorChange(playerInGame.player, this)
 		})
 	}
 
@@ -290,9 +290,13 @@ export default class ServerCard extends Card {
 	onPowerChanged(newValue: number, oldValue: number): void { return }
 	onAttackChanged(newValue: number, oldValue: number): void { return }
 	onAttackRangeChanged(newValue: number, oldValue: number): void { return }
-	onHealthArmorChanged(newValue: number, oldValue: number): void { return }
+	onArmorChanged(newValue: number, oldValue: number): void { return }
 	onBeforeDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onAfterDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onBeforeArmorDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onAfterArmorDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onBeforeHealthDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onAfterHealthDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onDamageSurvived(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
 	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, dealtDamage: number): void { return }

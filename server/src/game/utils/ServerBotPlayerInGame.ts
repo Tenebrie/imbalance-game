@@ -14,6 +14,8 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import Card from '@shared/models/Card'
+import CardType from '@shared/enums/CardType'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -53,9 +55,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botPlaysCard(): void {
-		const cards = this.cardHand.unitCards.slice().sort((a: ServerCard, b: ServerCard) => {
-			return a.type - b.type || (b.color ? b.color : 10) - (a.color ? a.color : 10) || b.power - a.power || Utils.hashCode(a.class) - Utils.hashCode(b.class)
-		})
+		const cards = Utils.sortCards(this.cardHand.allCards)
 		const selectedCard = cards[0]
 
 		const validRows = this.game.board.rows.filter(row => row.owner === this).reverse()

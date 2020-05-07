@@ -1,3 +1,7 @@
+import Card from '@shared/models/Card'
+import CardType from '@shared/enums/CardType'
+import ServerCard from '../game/models/ServerCard'
+
 export default {
 	hashCode(targetString: string): number {
 		let i
@@ -49,5 +53,15 @@ export default {
 		}
 
 		return array
-	}
+	},
+
+	sortCards(inputArray: ServerCard[]): ServerCard[] {
+		return inputArray.slice().sort((a: Card, b: Card) => {
+			return (
+				(a.type - b.type) ||
+				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
+				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+			)
+		})
+	},
 }
