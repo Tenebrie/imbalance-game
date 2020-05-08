@@ -3,16 +3,16 @@ import AnimationType from '../../enums/AnimationType'
 
 export default class AnimationMessage {
 	type: AnimationType
-	targetCardID: string | null
-	sourceUnitID: string | null
-	targetUnitIDs: string[] | null
+	sourceUnitId: string | null
+	targetCardId: string | null
+	targetCardIDs: string[] | null
 	params: any
 
 	constructor(animation: Animation) {
 		this.type = animation.type
-		this.targetCardID = animation.targetCard ? animation.targetCard.id : null
-		this.sourceUnitID = animation.sourceUnit ? animation.sourceUnit.card.id : null
-		this.targetUnitIDs = animation.targetUnits ? animation.targetUnits.map(unit => unit.card.id) : null
+		this.sourceUnitId = animation.sourceUnit ? animation.sourceUnit.card.id : null
+		this.targetCardId = animation.targetCard ? animation.targetCard.id : null
+		this.targetCardIDs = animation.targetCards ? animation.targetCards.map(card => card.id) : null
 		this.params = animation.params
 	}
 }

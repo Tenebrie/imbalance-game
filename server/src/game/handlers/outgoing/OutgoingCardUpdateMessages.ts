@@ -257,6 +257,9 @@ export default {
 	notifyAboutCardVariablesUpdated(game: ServerGame) {
 		game.players.forEach(playerInGame => {
 			const cardsToNotify = game.board.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card).concat(playerInGame.cardHand.allCards)
+			if (game.cardPlay.cardResolveStack.currentCard) {
+				cardsToNotify.push(game.cardPlay.cardResolveStack.currentCard.card)
+			}
 			const messages = cardsToNotify.map(card => new CardVariablesMessage(card, card.evaluateVariables()))
 			playerInGame.player.sendMessage({
 				type: 'update/card/variables',

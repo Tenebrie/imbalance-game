@@ -174,7 +174,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public isAnyActionsAvailable(): boolean {
-		return this.unitMana > 0 || this.spellMana > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
+		return this.cardHand.canPlayAnyCard() || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
 	}
 
 	public endTurn(): void {

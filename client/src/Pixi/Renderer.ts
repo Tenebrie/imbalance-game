@@ -257,9 +257,9 @@ export default class Renderer {
 
 		renderedCard.armorText.text = renderedCard.armor.toString()
 		if (renderedCard.armor < renderedCard.baseArmor) {
-			renderedCard.armorText.style.fill = 0x770000
+			renderedCard.armorText.style.fill = 0xFF7777
 		} else if (renderedCard.armor > renderedCard.baseArmor) {
-			renderedCard.armorText.style.fill = 0x007700
+			renderedCard.armorText.style.fill = 0x77FF77
 		} else {
 			renderedCard.armorText.style.fill = 0xFFFFFF
 		}

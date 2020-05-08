@@ -4,9 +4,9 @@ import Card from './Card'
 
 export default class Animation {
 	type: AnimationType
-	targetCard: Card | null
 	sourceUnit: Unit | null
-	targetUnits: Unit[] | null
+	targetCard: Card | null
+	targetCards: Card[] | null
 	params: any
 
 	constructor(type: AnimationType, params: any) {

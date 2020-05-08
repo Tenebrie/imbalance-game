@@ -188,7 +188,7 @@ export default class ServerCard extends Card {
 		const unitTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.UNIT)
 		return this.game.board.getAllUnits()
 			.filter(unit => !unit.card.buffs.has(BuffImmunity))
-			.filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { ...args, thisCard: this, targetUnit: unit, previousTargets: previousTargets }))
+			.filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { ...args, thisCard: this, targetCard: unit.card, targetUnit: unit, previousTargets: previousTargets }))
 			.map(targetUnit => ServerCardTarget.cardTargetUnit(targetMode, this, targetUnit, unitTargetLabel))
 	}
 

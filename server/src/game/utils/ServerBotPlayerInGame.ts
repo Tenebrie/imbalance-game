@@ -6,7 +6,6 @@ import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import UnitOrderMessage from '@shared/models/network/CardTargetMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerCardTarget from '../models/ServerCardTarget'
-import ServerCard from '../models/ServerCard'
 import Utils from '../../utils/Utils'
 import ServerUnit from '../models/ServerUnit'
 import ServerBoardRow from '../models/ServerBoardRow'
@@ -14,8 +13,6 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import Card from '@shared/models/Card'
-import CardType from '@shared/enums/CardType'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -34,7 +31,12 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	private botTakesTheirTurn(): void {
 		const botTotalPower = this.game.board.getTotalPlayerPower(this)
 		const opponentTotalPower = this.game.board.getTotalPlayerPower(this.opponent)
-		if (botTotalPower > opponentTotalPower) {
+
+		const botWonRound = botTotalPower > opponentTotalPower && this.opponent.roundEnded
+		const botLostRound = opponentTotalPower > botTotalPower + 30 && this.morale > 1
+		const botHasGoodLead = botTotalPower > opponentTotalPower + 15 && this.morale > 1
+
+		if (botWonRound || botLostRound || botHasGoodLead) {
 			this.botEndsTurn()
 			return
 		}

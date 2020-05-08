@@ -32,7 +32,7 @@ export default class UnitStoneElemental extends ServerCard {
 	}
 
 	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.unitAttack(thisUnit, [target], this.damage))
+		this.game.animation.play(ServerAnimation.unitAttacksUnits(thisUnit, [target], this.damage))
 		target.dealDamage(ServerDamageInstance.fromUnit(this.damage, thisUnit))
 	}
 }

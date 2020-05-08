@@ -1,5 +1,6 @@
 import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
+import Unit from '@shared/models/Unit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
@@ -8,10 +9,11 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
 
-export default class ServerUnit {
+export default class ServerUnit implements Unit {
 	game: ServerGame
 	card: ServerCard
 	owner: ServerPlayerInGame
+	isDeathrattleTriggered = false
 
 	get rowIndex(): number {
 		return this.game.board.rows.indexOf(this.game.board.getRowWithUnit(this)!)
@@ -131,6 +133,11 @@ export default class ServerUnit {
 	}
 
 	destroy(): void {
+		if (this.isDeathrattleTriggered) {
+			return
+		}
+		this.isDeathrattleTriggered = true
+
 		runCardEventHandler(() => this.card.onBeforeDestroyedAsUnit(this))
 
 		const otherCards = this.game.board.getAllUnits().filter(cardOnBoard => cardOnBoard !== this)
@@ -143,5 +150,6 @@ export default class ServerUnit {
 		})
 
 		this.owner.cardGraveyard.addUnit(this.card)
+		this.isDeathrattleTriggered = false
 	}
 }

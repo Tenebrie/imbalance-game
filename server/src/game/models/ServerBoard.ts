@@ -79,7 +79,7 @@ export default class ServerBoard extends Board {
 	}
 
 	public isUnitAdjacent(first: ServerUnit, second: ServerUnit) {
-		return this.getHorizontalUnitDistance(first, second) <= 1 && Math.abs(first.rowIndex - second.rowIndex) <= 1
+		return this.getHorizontalUnitDistance(first, second) <= 1 && Math.abs(first.rowIndex - second.rowIndex) <= 1 && first !== second
 	}
 
 	public getAdjacentUnits(centerUnit: ServerUnit) {
@@ -94,9 +94,22 @@ export default class ServerBoard extends Board {
 		return this.getUnitsOwnedByPlayer(this.game.getOpponent(thisPlayer))
 	}
 
+	public getRowWithDistanceToFront(player: ServerPlayerInGame, distance: number): ServerBoardRow {
+		let playerRows = this.rows.filter(row => row.owner === player)
+		if (this.game.players[1] === player) {
+			playerRows = playerRows.reverse()
+		}
+		return playerRows[Math.min(playerRows.length - 1, distance)]
+	}
+
 	public createUnit(card: ServerCard, owner: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit {
+		const targetRow = this.rows[rowIndex]
+		if (targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
+			return
+		}
+
 		const unit = new ServerUnit(this.game, card, owner)
-		this.rows[rowIndex].insertUnit(unit, unitIndex)
+		targetRow.insertUnit(unit, unitIndex)
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitCreated(playerInGame.player, unit, rowIndex, unitIndex)
 		})

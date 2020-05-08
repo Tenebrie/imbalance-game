@@ -8,7 +8,7 @@ import TargetDefinitionBuilder from './TargetDefinitionBuilder'
 
 export default class StandardTargetDefinitionBuilder implements TargetDefinitionBuilder {
 	private game: ServerGame
-	private totalTargetCount = 0
+	private totalTargetCount: number = undefined
 	private orderLabels: string[][]
 	private readonly targetOfTypeCount: number[][]
 	private readonly validators: ((args: TargetValidatorArguments) => boolean)[][][] = []
@@ -62,11 +62,17 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 
 	public allow(reason: TargetMode, type: TargetType, atMost = 1): StandardTargetDefinitionBuilder {
 		this.targetOfTypeCount[reason][type] = atMost
+		if (this.totalTargetCount === undefined) {
+			this.totalTargetCount = atMost
+		}
 		return this
 	}
 
 	public require(reason: TargetMode, type: TargetType, number = 1): StandardTargetDefinitionBuilder {
 		this.targetOfTypeCount[reason][type] = number
+		if (this.totalTargetCount === undefined) {
+			this.totalTargetCount = number
+		}
 		return this
 	}
 
@@ -124,6 +130,30 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 	public enemyUnit(targetMode: TargetMode): StandardTargetDefinitionBuilder {
 		return this.validate(targetMode, TargetType.UNIT, args => {
 			return (args.thisCardOwner && args.thisCardOwner !== args.targetUnit.owner) || (args.thisUnit && args.thisUnit.owner !== args.targetUnit.owner)
+		})
+	}
+
+	public playersRow(targetMode: TargetMode): StandardTargetDefinitionBuilder {
+		return this.validate(targetMode, TargetType.BOARD_ROW, args => {
+			return args.targetRow.owner === args.thisCard.owner
+		})
+	}
+
+	public opponentsRow(targetMode: TargetMode): StandardTargetDefinitionBuilder {
+		return this.validate(targetMode, TargetType.BOARD_ROW, args => {
+			return args.targetRow.owner === args.thisCard.owner.opponent
+		})
+	}
+
+	public emptyRow(targetMode: TargetMode): StandardTargetDefinitionBuilder {
+		return this.validate(targetMode, TargetType.BOARD_ROW, args => {
+			return args.targetRow.cards.length === 0
+		})
+	}
+
+	public notEmptyRow(targetMode: TargetMode): StandardTargetDefinitionBuilder {
+		return this.validate(targetMode, TargetType.BOARD_ROW, args => {
+			return args.targetRow.cards.length > 0
 		})
 	}
 

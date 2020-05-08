@@ -16,7 +16,7 @@ export default class UnitOracleApprentice extends ServerCard {
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
-		this.basePower = 5
+		this.basePower = 8
 		this.baseTribes = [CardTribe.HUMAN]
 	}
 

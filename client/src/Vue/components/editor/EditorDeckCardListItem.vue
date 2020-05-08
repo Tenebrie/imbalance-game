@@ -1,7 +1,7 @@
 <template>
 	<div class="editor-deck-card-list-item" :class="colorClass" @click="onClick">
 		<span class="power" v-if="showPower">{{ card.basePower }}</span>
-		<span class="name">{{ fullName }} <span class="count" v-if="displayCount">x{{ card.count }}</span></span>
+		<span class="name">{{ fullName }}<span class="count" v-if="displayCount">x{{ card.count }}</span></span>
 	</div>
 </template>
 

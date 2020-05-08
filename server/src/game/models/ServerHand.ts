@@ -21,6 +21,10 @@ export default class ServerHand {
 		return this.unitCards.slice().concat(this.spellCards)
 	}
 
+	public canPlayAnyCard(): boolean {
+		return !!this.unitCards.find(unit => unit.unitCost <= this.owner.unitMana) || !!this.spellCards.find(spell => spell.spellCost <= this.owner.spellMana)
+	}
+
 	public addUnit(card: ServerCard): void {
 		this.unitCards.push(card)
 		OutgoingMessageHandlers.notifyAboutUnitCardAdded(this.owner, card)

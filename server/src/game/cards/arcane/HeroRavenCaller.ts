@@ -7,16 +7,12 @@ import ServerUnit from '../../models/ServerUnit'
 import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
 import PostPlayTargetDefinitionBuilder from '../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TargetType from '@shared/enums/TargetType'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class HeroRavenCaller extends ServerCard {
-	powerThreshold = 3
-
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 3
-		this.dynamicTextVariables = {
-			powerThreshold: this.powerThreshold
-		}
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -24,7 +20,7 @@ export default class HeroRavenCaller extends ServerCard {
 			.singleTarget()
 			.require(TargetType.CARD_IN_UNIT_DECK)
 			.inPlayersDeck()
-			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.power <= this.powerThreshold))
+			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.tribes.includes(CardTribe.BIRD)))
 	}
 
 	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {

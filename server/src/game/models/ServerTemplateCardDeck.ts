@@ -16,11 +16,11 @@ import SpellPermafrost from '../cards/arcane/SpellPermafrost'
 import HeroRagingElemental from '../cards/arcane/HeroRagingElemental'
 import HeroKroLah from '../cards/arcane/HeroKroLah'
 import HeroGarellion from '../cards/arcane/HeroGarellion'
-import UnitRavenMessenger from '../cards/neutral/UnitRavenMessenger'
 import UnitPriestessOfAedine from '../cards/neutral/UnitPriestessOfAedine'
 import UnitArcaneCrystal from '../cards/arcane/UnitArcaneCrystal'
 import ServerEditorDeck from './ServerEditorDeck'
 import CardColor from '@shared/enums/CardColor'
+import UnitVampireFledgling from '../cards/neutral/UnitVampireFledgling'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	unitCards: ServerCard[]
@@ -46,10 +46,6 @@ export default class ServerTemplateCardDeck implements CardDeck {
 	public static botDeck(game: ServerGame): ServerTemplateCardDeck {
 		const deck = new ServerTemplateCardDeck([], [])
 
-		for (let i = 0; i < 30; i++) {
-			deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroZamarath))
-			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitRavenMessenger))
-		}
 		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroKroLah))
 		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroZamarath))
 		deck.addUnit(CardLibrary.instantiateByConstructor(game, HeroRagingElemental))
@@ -60,15 +56,13 @@ export default class ServerTemplateCardDeck implements CardDeck {
 			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitChargingKnight))
 			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitSupplyWagon))
 			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitForestScout))
-			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitStoneElemental))
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitPriestessOfAedine))
+			deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitVampireFledgling))
 		}
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitPriestessOfAedine))
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitArcaneCrystal))
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitFlameTouchCrystal))
-		deck.addUnit(CardLibrary.instantiateByConstructor(game, UnitIceSkinCrystal))
 
-		// deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellSpark))
-		// deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellSpeedPotion))
+		for (let i = 0; i < 4; i++) {
+			deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellSpark))
+		}
 		// deck.addSpell(CardLibrary.instantiateByConstructor(game, SpellPermafrost))
 
 		return deck

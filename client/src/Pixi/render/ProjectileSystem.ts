@@ -4,6 +4,7 @@ import RenderedProjectile from '@/Pixi/models/RenderedProjectile'
 import RenderedUnit from '@/Pixi/board/RenderedUnit'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { easeInQuad } from 'js-easing-functions'
+import RenderedCard from '@/Pixi/board/RenderedCard'
 
 export default class ProjectileSystem {
 	projectiles: RenderedProjectile[] = []
@@ -60,29 +61,37 @@ export default class ProjectileSystem {
 		})
 	}
 
-	public createUnitAttackProjectile(sourceUnit: RenderedUnit, targetUnit: RenderedUnit, impactDamage: number): RenderedProjectile {
+	public createAttackProjectile(sourcePosition: PIXI.Point, targetCard: RenderedCard, impactDamage: number): RenderedProjectile {
 		const sprite = new PIXI.Sprite(TextureAtlas.getTexture('effects/fireball-static'))
 		sprite.zIndex = 100
 		sprite.scale.set(0.4 + 0.02 * impactDamage)
 		sprite.anchor.set(0.5, 0.5)
-		const projectile = RenderedProjectile.targetCard(sprite, sourceUnit.card.getPosition(), targetUnit.card, 500, 1200)
+		const projectile = RenderedProjectile.targetCard(sprite, sourcePosition, targetCard, 500, 1200)
 		projectile.trail.rope.zIndex = 99
-		const targetUnitPower = targetUnit.card.power
-		const targetUnitArmor = targetUnit.card.armor
+		const targetUnitPower = targetCard.power
+		const targetUnitArmor = targetCard.armor
 		projectile.onImpact = () => {
 			let remainingDamage = impactDamage
 			if (targetUnitArmor > 0) {
 				const armorDamageDealt = Math.min(targetUnitArmor, remainingDamage)
-				targetUnit.setArmor(targetUnitArmor - armorDamageDealt)
+				targetCard.setArmor(targetUnitArmor - armorDamageDealt)
 				remainingDamage -= remainingDamage
 			}
 			if (remainingDamage > 0) {
-				targetUnit.setPower(targetUnitPower - remainingDamage)
+				targetCard.setPower(targetUnitPower - remainingDamage)
 			}
 		}
 		Core.renderer.rootContainer.addChild(projectile.sprite)
 		Core.renderer.rootContainer.addChild(projectile.trail.rope)
 		Core.mainHandler.projectileSystem.projectiles.push(projectile)
 		return projectile
+	}
+
+	public createUnitAttackProjectile(sourceUnit: RenderedUnit, targetCard: RenderedCard, impactDamage: number): RenderedProjectile {
+		return this.createAttackProjectile(sourceUnit.card.getPosition(), targetCard, impactDamage)
+	}
+
+	public createUniverseAttackProjectile(targetCard: RenderedCard, impactDamage: number): RenderedProjectile {
+		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, impactDamage)
 	}
 }

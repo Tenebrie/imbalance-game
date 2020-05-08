@@ -20,6 +20,7 @@ export default class GameLibrary {
 			const className = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 			referenceInstance.class = className
 			referenceInstance.power = referenceInstance.basePower
+			referenceInstance.armor = referenceInstance.baseArmor
 			referenceInstance.attack = referenceInstance.baseAttack
 			referenceInstance.name = `card.name.${className}`
 			referenceInstance.title = `card.title.${className}`

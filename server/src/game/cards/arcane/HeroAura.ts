@@ -7,11 +7,13 @@ import ServerUnit from '../../models/ServerUnit'
 import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
 import PostPlayTargetDefinitionBuilder from '../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TargetType from '@shared/enums/TargetType'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class HeroAura extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 2
+		this.baseTribes = [CardTribe.BIRD]
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
