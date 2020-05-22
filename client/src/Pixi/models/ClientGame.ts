@@ -2,6 +2,7 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Core from '@/Pixi/Core'
 import Card from '@shared/models/Card'
 import RenderedCard from '@/Pixi/board/RenderedCard'
+import CardMessage from '@shared/models/network/CardMessage'
 
 export default class ClientGame {
 	currentTime: number
@@ -18,7 +19,7 @@ export default class ClientGame {
 		this.turnPhase = phase
 	}
 
-	public findCardById(cardId: string): Card | null {
+	public findCardById(cardId: string): Card | CardMessage | null {
 		const players = [Core.player, Core.opponent]
 
 		const cardOnBoard = Core.board.findUnitById(cardId)

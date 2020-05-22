@@ -148,8 +148,7 @@ const editorModule = createModule({
 				const cardToAdd: PopulatedEditorCard = {
 					...payload.cardToAdd,
 					id: uuidv4(),
-					count: 1,
-					evaluateVariables(): RichTextVariables { return }
+					count: 1
 				}
 				deckToModify.cards.push(cardToAdd)
 			} else {

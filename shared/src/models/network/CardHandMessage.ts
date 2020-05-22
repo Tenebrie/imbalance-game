@@ -1,7 +1,7 @@
 import CardHand from '../CardHand'
 import CardMessage from './CardMessage'
 
-export default class CardHandMessage implements CardHand {
+export default class CardHandMessage {
 	unitCards: CardMessage[]
 	spellCards: CardMessage[]
 

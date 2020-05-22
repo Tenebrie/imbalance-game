@@ -1,12 +1,9 @@
-import Card from '../Card'
 import BuffContainer from '../BuffContainer'
 import BuffMessage from './BuffMessage'
 
-export default class BuffContainerMessage implements BuffContainer {
+export default class BuffContainerMessage {
 	cardId: string
 	buffs: BuffMessage[]
-
-	card: Card // Unassigned
 
 	constructor(cardBuffs: BuffContainer) {
 		this.cardId = cardBuffs.card.id

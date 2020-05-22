@@ -7,7 +7,7 @@ import CardColor from '../../enums/CardColor'
 import CardFeature from '../../enums/CardFeature'
 import CardFaction from '../../enums/CardFaction'
 
-export default class CardMessage implements Card {
+export default class CardMessage {
 	id: string
 	type: CardType
 	class: string
@@ -58,10 +58,6 @@ export default class CardMessage implements Card {
 		this.baseAttack = card.baseAttack
 		this.baseAttackRange = card.baseAttackRange
 		this.baseArmor = card.baseArmor
-	}
-
-	evaluateVariables(): RichTextVariables {
-		return this.variables
 	}
 
 	static fromCard(card: Card): CardMessage {

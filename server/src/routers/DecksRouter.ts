@@ -3,11 +3,10 @@ import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddle
 import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequestMiddleware'
 import ServerPlayer from '../game/players/ServerPlayer'
 import ServerEditorDeck from '../game/models/ServerEditorDeck'
-import CardLibrary from '../game/libraries/CardLibrary'
-import CardMessage from '@shared/models/network/CardMessage'
 import EditorDeck from '@shared/models/EditorDeck'
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
 import AsyncHandler from '../utils/AsyncHandler'
+import DeckUtils from '../utils/DeckUtils'
 
 const router = express.Router()
 
@@ -17,15 +16,7 @@ router.get('/', AsyncHandler(async(req, res: Response, next) => {
 	const player = req['player'] as ServerPlayer
 	const decks = await EditorDeckDatabase.selectEditorDecksForPlayer(player)
 
-	const libraryCards = CardLibrary.cards.map(card => CardMessage.fromCard(card))
-	const remappedDecks = decks.map(deck => ({
-		...deck,
-		cards: deck.cards.map(card => ({
-			...libraryCards.find(libraryCard => libraryCard.class === card.class),
-			...card
-		}))
-	}))
-
+	const remappedDecks = decks.map(deck => DeckUtils.populateDeck(deck))
 	res.json(remappedDecks)
 }))
 
@@ -37,15 +28,7 @@ router.get('/:deckId', AsyncHandler(async(req, res: Response, next) => {
 		return
 	}
 
-	const libraryCards = CardLibrary.cards.map(card => CardMessage.fromCard(card))
-	const remappedDeck = {
-		...deck,
-		cards: deck.cards.map(card => ({
-			...libraryCards.find(libraryCard => libraryCard.class === card.class),
-			...card
-		}))
-	}
-
+	const remappedDeck = DeckUtils.populateDeck(deck)
 	res.json(remappedDeck)
 }))
 

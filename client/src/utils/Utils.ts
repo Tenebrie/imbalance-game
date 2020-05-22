@@ -98,8 +98,8 @@ export default {
 		})
 	},
 
-	sortEditorCards(inputArray: Card[]): any[] {
-		return inputArray.slice().sort((a: Card, b: Card) => {
+	sortEditorCards(inputArray: CardMessage[]): any[] {
+		return inputArray.slice().sort((a: CardMessage, b: CardMessage) => {
 			return (
 				(a.type - b.type) ||
 				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||

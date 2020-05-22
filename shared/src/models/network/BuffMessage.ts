@@ -1,10 +1,9 @@
 import Buff from '../Buff'
-import Card from '../Card'
 import CardFeature from '../../enums/CardFeature'
 import BuffStackType from '../../enums/BuffStackType'
 import CardTribe from '../../enums/CardTribe'
 
-export default class BuffMessage implements Buff {
+export default class BuffMessage {
 	id: string
 	cardId: string
 	sourceId: string | null
@@ -17,9 +16,6 @@ export default class BuffMessage implements Buff {
 	intensity: number
 	baseDuration: number
 	baseIntensity: number
-
-	card: Card // Unassigned
-	source: Card | null // Unassigned
 
 	constructor(buff: Buff) {
 		this.id = buff.id

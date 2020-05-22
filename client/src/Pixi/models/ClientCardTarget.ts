@@ -12,10 +12,10 @@ import CardMessage from '@shared/models/network/CardMessage'
 export default class ClientCardTarget implements CardTarget {
 	targetMode: TargetMode
 	targetType: TargetType
-	sourceCard?: Card
+	sourceCard?: Card | CardMessage
 	sourceCardOwner?: ClientPlayerInGame
 	sourceUnit?: RenderedUnit
-	targetCard?: Card
+	targetCard?: Card | CardMessage
 	targetUnit?: RenderedUnit
 	targetRow?: RenderedGameBoardRow
 	targetLabel: string

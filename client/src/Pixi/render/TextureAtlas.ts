@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import CardMessage from '@shared/models/network/CardMessage'
+import CardColor from '@shared/enums/CardColor'
 
 export default class TextureAtlas {
 	static isReady = false
@@ -62,12 +63,18 @@ export default class TextureAtlas {
 
 			const response = await axios.get('/api/cards')
 			const cardMessages: CardMessage[] = response.data
-			const cards = cardMessages.map(cardMessage => {
+			const cardTextures = cardMessages.map(cardMessage => {
 				const name = cardMessage.class.substr(0, 1).toLowerCase() + cardMessage.class.substr(1)
 				return `cards/${name}`
 			})
 
-			const texturesToLoad = components.concat(cards)
+			const leaderMessages = cardMessages.filter(cardMessage => cardMessage.color === CardColor.LEADER)
+			const leaderIcons = leaderMessages.map(cardMessage => {
+				const name = cardMessage.class.substr(0, 1).toLowerCase() + cardMessage.class.substr(1)
+				return `icons/${name}`
+			})
+
+			const texturesToLoad = components.concat(cardTextures).concat(leaderIcons)
 
 			TextureAtlas.texturesToLoad = texturesToLoad.length
 

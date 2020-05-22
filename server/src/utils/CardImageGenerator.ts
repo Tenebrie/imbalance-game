@@ -16,10 +16,10 @@ class CardImageGenerator {
 			return
 		}
 
-		console.info(`Generating ${targetCardClasses.length} placeholder card image(s).`)
 		targetCardClasses.forEach(cardClass => {
 			this.generatePlaceholderImage(cardClass)
 		})
+		console.info(`Generated ${targetCardClasses.length} placeholder card image(s)`)
 	}
 
 	public generatePlaceholderImage(cardClass: string): void {
@@ -46,13 +46,18 @@ class CardImageGenerator {
 
 			ctx.fillStyle = `#${rgb2hex(baseColor.r, baseColor.g, baseColor.b)}`
 
-			const orbCount = seededRandom() * 40 + 20
+			const orbCount = seededRandom() * 20 + 20
 
 			ctx.beginPath()
 			for (let i = 0; i < orbCount; i++) {
 				ctx.lineTo(seededRandom() * width, seededRandom() * height)
 			}
 			ctx.fill()
+
+			ctx.fillStyle = '#FFFFFF80'
+			ctx.font = '24px Roboto'
+			const textMetrics = ctx.measureText('Placeholder artwork')
+			ctx.fillText('Placeholder artwork', width / 2 - textMetrics.width / 2, height / 2 - 24 / 2)
 
 			const buffer = canvas.toBuffer('image/png')
 

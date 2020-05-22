@@ -1,10 +1,10 @@
 <template>
 	<span>
 		<span v-if="mode === DeckListMode.SELECT" class="deck-link" @click="onSelectDeck" :class="selectedClass">
-			<span>{{ deck.name }}</span> <span class="deck-info" v-if="showDeckInfo">({{ leaderName }})</span>
+			<img v-if="iconPath" :src="iconPath" alt="Norm" /> <span>{{ deck.name }}</span>
 		</span>
 		<router-link v-if="mode === DeckListMode.EDIT" tag="span" class="deck-link" :to="{ path: `/decks/${deck.id}` }">
-			<span>{{ deck.name }}</span> <span class="deck-info" v-if="showDeckInfo">({{ leaderName }})</span>
+			<img v-if="iconPath" :src="iconPath" alt="Norm" /> <span>{{ deck.name }}</span>
 		</router-link>
 	</span>
 </template>
@@ -43,14 +43,12 @@ export default Vue.extend({
 			}
 		},
 
-		showDeckInfo(): boolean {
+		iconPath(): string {
 			const deck = this.deck as PopulatedEditorDeck
-			return !deck.isUnfinished()
-		},
-
-		leaderName(): string {
-			const deck = this.deck as PopulatedEditorDeck
-			return Localization.getString(deck.leader.name) + ', ' + Localization.getString(deck.leader.title)
+			if (!deck.leader) {
+				return null
+			}
+			return `/assets/icons/${deck.leader.class}.png`
 		}
 	},
 
@@ -75,7 +73,8 @@ export default Vue.extend({
 		text-align: start;
 		font-size: 1.4em;
 		cursor: pointer;
-		display: block;
+		display: flex;
+		align-items: center;
 
 		&.selected {
 			background: rgba(lighten(green, 20), 0.1);
@@ -88,5 +87,11 @@ export default Vue.extend({
 		&.selected:hover {
 			background: rgba(lighten(green, 50), 0.1);
 		}
+	}
+
+	img {
+		height: 32px;
+		padding: 0 4px 0 0;
+		display: inline;
 	}
 </style>

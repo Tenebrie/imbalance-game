@@ -9,10 +9,10 @@ import CardMessage from './network/CardMessage'
 export default interface CardTarget {
 	targetMode: TargetMode
 	targetType: TargetType
-	sourceCard?: Card
+	sourceCard?: Card | CardMessage
 	sourceCardOwner?: PlayerInGame
 	sourceUnit?: Unit
-	targetCard?: Card
+	targetCard?: Card | CardMessage
 	targetUnit?: Unit
 	targetRow?: BoardRow
 	targetLabel: string

@@ -1,8 +1,7 @@
-import Card from '../Card'
 import CardDeck from '../CardDeck'
 import CardMessage from './CardMessage'
 
-export default class CardDeckMessage implements CardDeck {
+export default class CardDeckMessage {
 	unitCards: CardMessage[]
 	spellCards: CardMessage[]
 
