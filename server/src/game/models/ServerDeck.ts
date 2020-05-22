@@ -21,6 +21,10 @@ export default class ServerDeck implements CardDeck {
 		this.spellCards = spellCards
 	}
 
+	public get allCards() {
+		return this.unitCards.slice().concat(this.spellCards)
+	}
+
 	public getCardIndex(card: ServerCard): number {
 		const unitIndex = this.unitCards.indexOf(card)
 		const spellIndex = this.spellCards.indexOf(card)

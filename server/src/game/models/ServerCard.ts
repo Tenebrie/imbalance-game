@@ -26,6 +26,8 @@ import GameLibrary from '../libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
+import ServerBuff from './ServerBuff'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -80,6 +82,30 @@ export default class ServerCard extends Card {
 	public get owner(): ServerPlayerInGame | null {
 		const thisCardInGame = this.game.findOwnedCardById(this.id)
 		return thisCardInGame ? thisCardInGame.owner : null
+	}
+
+	public get location(): CardLocation {
+		const owner = this.owner
+		const cardInDeck = owner.cardDeck.findCardById(this.id)
+		if (cardInDeck) {
+			return CardLocation.DECK
+		}
+		const cardInHand = owner.cardHand.findCardById(this.id)
+		if (cardInHand) {
+			return CardLocation.HAND
+		}
+		const cardInStack = this.game.cardPlay.cardResolveStack.findCardById(this.id)
+		if (cardInStack) {
+			return CardLocation.STACK
+		}
+		const cardOnBoard = this.game.board.findUnitById(this.id)
+		if (cardOnBoard) {
+			return CardLocation.BOARD
+		}
+		const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
+		if (cardInGraveyard) {
+			return CardLocation.GRAVEYARD
+		}
 	}
 
 	public get deckPosition(): number {
@@ -284,6 +310,7 @@ export default class ServerCard extends Card {
 	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
 	onBeforeOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
 	onAfterOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
+	onOtherCardReceivedNewBuff(otherCard: ServerOwnedCard, buff: ServerBuff): void { return }
 
 	onTurnStarted(thisUnit: ServerUnit): void { return }
 	onTurnPhaseChanged(thisUnit: ServerUnit, phase: GameTurnPhase): void { return }
@@ -293,8 +320,6 @@ export default class ServerCard extends Card {
 	onBeforeUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onPowerChanged(newValue: number, oldValue: number): void { return }
-	onAttackChanged(newValue: number, oldValue: number): void { return }
-	onAttackRangeChanged(newValue: number, oldValue: number): void { return }
 	onArmorChanged(newValue: number, oldValue: number): void { return }
 	onBeforeDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onAfterDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }

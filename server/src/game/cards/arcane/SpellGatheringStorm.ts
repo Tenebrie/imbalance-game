@@ -45,7 +45,7 @@ export default class SpellGatheringStorm extends ServerCard {
 	}
 
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
-		target.dealDamage(ServerDamageInstance.fromSpell(this.damage, this))
+		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 		this.targetsHit.push(target)
 	}
 

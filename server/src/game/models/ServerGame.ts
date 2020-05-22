@@ -299,6 +299,17 @@ export default class ServerGame extends Game {
 		return null
 	}
 
+	public getAllCardsForEventHandling(): ServerOwnedCard[] {
+		let cards: ServerOwnedCard[] = this.board.getAllUnits()
+		for (let i = 0; i < this.players.length; i++) {
+			const player = this.players[i]
+			cards = cards.concat(player.cardHand.allCards.map(card => new ServerOwnedCard(card, player)))
+			cards = cards.concat(player.cardDeck.allCards.map(card => new ServerOwnedCard(card, player)))
+			cards = cards.concat(player.cardGraveyard.allCards.map(card => new ServerOwnedCard(card, player)))
+		}
+		return cards
+	}
+
 	static newOwnedInstance(owner: ServerPlayer, name: string): ServerGame {
 		const randomNumber = Math.floor(1000 + Math.random() * 9000)
 		name = name || (owner.username + `'s game #${randomNumber}`)

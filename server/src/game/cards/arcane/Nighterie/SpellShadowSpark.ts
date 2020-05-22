@@ -42,7 +42,7 @@ export default class SpellShadowSpark extends ServerCard {
 
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
 		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
-		target.dealDamage(ServerDamageInstance.fromSpell(this.damage, this))
+		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
 		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
 		const targetRow = this.game.board.getRowWithDistanceToFront(owner, 0)

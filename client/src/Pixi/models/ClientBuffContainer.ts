@@ -1,7 +1,7 @@
 import RenderedCard from '@/Pixi/board/RenderedCard'
 import ClientBuff from '@/Pixi/models/ClientBuff'
 import BuffContainer from '@shared/models/BuffContainer'
-import CardBuffsMessage from '@shared/models/network/CardBuffsMessage'
+import BuffContainerMessage from '@shared/models/network/BuffContainerMessage'
 import BuffMessage from '@shared/models/network/BuffMessage'
 import Core from '@/Pixi/Core'
 
@@ -9,7 +9,7 @@ export default class ClientBuffContainer implements BuffContainer {
 	card: RenderedCard
 	buffs: ClientBuff[]
 
-	public constructor(card: RenderedCard, buffsMessage: CardBuffsMessage) {
+	public constructor(card: RenderedCard, buffsMessage: BuffContainerMessage) {
 		this.card = card
 		this.buffs = []
 		buffsMessage.buffs.forEach(buffMessage => this.buffs.push(new ClientBuff(buffMessage)))

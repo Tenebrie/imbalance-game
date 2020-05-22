@@ -4,6 +4,8 @@ import BuffStackType from '@shared/enums/BuffStackType'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerCard from './ServerCard'
 import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
+import ServerOwnedCard from './ServerOwnedCard'
+import ServerGame from './ServerGame'
 
 export default class ServerBuffContainer implements BuffContainer {
 	readonly card: ServerCard
@@ -12,6 +14,10 @@ export default class ServerBuffContainer implements BuffContainer {
 	constructor(card: ServerCard) {
 		this.card = card
 		this.buffs = []
+	}
+
+	public get game(): ServerGame {
+		return this.card.game
 	}
 
 	private instantiate(buff: ServerBuff, source: ServerCard | null): ServerBuff {
@@ -58,6 +64,10 @@ export default class ServerBuffContainer implements BuffContainer {
 		runCardEventHandler(() => newBuff.onCreated())
 		runCardEventHandler(() => newBuff.onDurationChanged(newBuff.duration))
 		runCardEventHandler(() => newBuff.onIntensityChanged(newBuff.intensity))
+
+		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
+			ownedCard.card.onOtherCardReceivedNewBuff(new ServerOwnedCard(this.card, this.card.owner), newBuff)
+		})
 	}
 
 	public getBuffsByPrototype(prototype: any): ServerBuff[] {

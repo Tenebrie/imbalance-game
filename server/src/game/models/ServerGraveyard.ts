@@ -17,6 +17,10 @@ export default class ServerGraveyard implements CardDeck {
 		this.spellCards = []
 	}
 
+	public get allCards() {
+		return this.unitCards.slice().concat(this.spellCards)
+	}
+
 	public addUnit(card: ServerCard): void {
 		this.unitCards.push(card)
 		OutgoingMessageHandlers.notifyAboutUnitCardInGraveyard(this.owner, card)

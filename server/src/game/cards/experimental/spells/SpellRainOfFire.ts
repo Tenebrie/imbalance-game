@@ -33,6 +33,6 @@ export default class SpellRainOfFire extends ServerCard {
 	}
 
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
-		target.dealDamage(ServerDamageInstance.fromSpell(this.damage, this))
+		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 	}
 }

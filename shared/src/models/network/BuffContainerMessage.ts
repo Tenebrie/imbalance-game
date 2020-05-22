@@ -2,7 +2,7 @@ import Card from '../Card'
 import BuffContainer from '../BuffContainer'
 import BuffMessage from './BuffMessage'
 
-export default class CardBuffsMessage implements BuffContainer {
+export default class BuffContainerMessage implements BuffContainer {
 	cardId: string
 	buffs: BuffMessage[]
 
