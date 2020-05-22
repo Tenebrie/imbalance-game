@@ -2,6 +2,7 @@ import path from 'path'
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
 import 'module-alias/register'
+import { cardImageGenerator } from './utils/CardImageGenerator'
 
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
@@ -10,7 +11,6 @@ import Database from './database/Database'
 import CardLibrary from './game/libraries/CardLibrary'
 import GameLibrary from './game/libraries/GameLibrary'
 import PlayerLibrary from './game/players/PlayerLibrary'
-import * as fs from 'fs'
 
 const app = express()
 expressWs(app)
@@ -45,9 +45,12 @@ app.use(logger('dev'))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+
+/* Serve static files */
 app.use(express.static(path.join(__dirname, '../../../public')))
 app.use(express.static(path.join(__dirname, '../../../client/optimized')))
 app.use(express.static(path.join(__dirname, '../../../client')))
+app.use(express.static(path.join(__dirname, '../../../client/generated')))
 
 /* OPTIONS request */
 app.use((req: Request, res: Response, next) => {
@@ -94,5 +97,8 @@ Database.init()
 global.cardLibrary = new CardLibrary()
 global.gameLibrary = new GameLibrary()
 global.playerLibrary = new PlayerLibrary()
+
+/* Generate placeholder images */
+cardImageGenerator.generatePlaceholderImages()
 
 app.listen((process.env.PORT || 3000))

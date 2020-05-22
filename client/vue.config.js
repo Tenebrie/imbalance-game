@@ -15,6 +15,10 @@ module.exports = {
 				// logLevel: 'debug',
 				target: 'http://localhost:3000'
 			},
+			'/assets': {
+				// logLevel: 'debug',
+				target: 'http://localhost:3000'
+			},
 			'/changelog': {
 				// logLevel: 'debug',
 				target: 'http://localhost:3000'
