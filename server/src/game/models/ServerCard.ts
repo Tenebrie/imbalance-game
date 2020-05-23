@@ -308,6 +308,8 @@ export default class ServerCard extends Card {
 
 	onBeforeOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
 	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
+	onBeforeOtherUnitDamageTaken(otherUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onAfterOtherUnitDamageTaken(otherUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onBeforeOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
 	onAfterOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
 	onOtherCardReceivedNewBuff(otherCard: ServerOwnedCard, buff: ServerBuff): void { return }

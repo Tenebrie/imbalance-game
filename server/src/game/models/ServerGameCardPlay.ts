@@ -162,22 +162,22 @@ export default class ServerGameCardPlay {
 
 		this.cardResolveStack.pushTarget(target)
 		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
-			sourceCard.onUnitPlayTargetCardSelected(sourceUnit, target.targetCard)
+			runCardEventHandler(() => sourceCard.onUnitPlayTargetCardSelected(sourceUnit, target.targetCard))
 		}
 		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
-			sourceCard.onUnitPlayTargetUnitSelected(sourceUnit, target.targetUnit)
+			runCardEventHandler(() => sourceCard.onUnitPlayTargetUnitSelected(sourceUnit, target.targetUnit))
 		}
 		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
-			sourceCard.onUnitPlayTargetRowSelected(sourceUnit, target.targetRow)
+			runCardEventHandler(() => sourceCard.onUnitPlayTargetRowSelected(sourceUnit, target.targetRow))
 		}
 		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
-			sourceCard.onSpellPlayTargetCardSelected(playerInGame, target.targetCard)
+			runCardEventHandler(() => sourceCard.onSpellPlayTargetCardSelected(playerInGame, target.targetCard))
 		}
 		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
-			sourceCard.onSpellPlayTargetUnitSelected(playerInGame, target.targetUnit)
+			runCardEventHandler(() => sourceCard.onSpellPlayTargetUnitSelected(playerInGame, target.targetUnit))
 		}
 		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
-			sourceCard.onSpellPlayTargetRowSelected(playerInGame, target.targetRow)
+			runCardEventHandler(() => sourceCard.onSpellPlayTargetRowSelected(playerInGame, target.targetRow))
 		}
 
 		// Current card changed - resolve that first
@@ -194,9 +194,9 @@ export default class ServerGameCardPlay {
 
 
 		if (sourceCard.type === CardType.UNIT) {
-			sourceCard.onUnitPlayTargetsConfirmed(sourceUnit)
+			runCardEventHandler(() => sourceCard.onUnitPlayTargetsConfirmed(sourceUnit))
 		} else if (sourceCard.type === CardType.SPELL) {
-			sourceCard.onSpellPlayTargetsConfirmed(playerInGame)
+			runCardEventHandler(() => sourceCard.onSpellPlayTargetsConfirmed(playerInGame))
 		}
 		this.cardResolveStack.finishResolving()
 	}

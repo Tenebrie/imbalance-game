@@ -8,6 +8,7 @@ import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
+import ServerOwnedCard from './ServerOwnedCard'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame
@@ -72,6 +73,9 @@ export default class ServerUnit implements Unit {
 		}
 
 		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damageInstance))
+		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
+			ownedCard.card.onBeforeOtherUnitDamageTaken(this, damageInstance)
+		})
 
 		let damageToDeal = damageInstance.value
 		if (this.card.armor > 0) {
@@ -92,6 +96,9 @@ export default class ServerUnit implements Unit {
 		}
 
 		runCardEventHandler(() => this.card.onAfterDamageTaken(this, damageInstance))
+		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
+			ownedCard.card.onAfterOtherUnitDamageTaken(this, damageInstance)
+		})
 
 		if (this.card.power > 0) {
 			runCardEventHandler(() => this.card.onDamageSurvived(this, damageInstance))
