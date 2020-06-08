@@ -17,7 +17,6 @@ import ServerGameCardPlay from './ServerGameCardPlay'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
-import runCardEventHandler from '../utils/runCardEventHandler'
 import CardLocation from '@shared/enums/CardLocation'
 
 export default class ServerGame extends Game {
@@ -263,9 +262,14 @@ export default class ServerGame extends Game {
 		}
 
 		setTimeout(() => {
-			const gameLibrary: GameLibrary = global.gameLibrary
-			gameLibrary.destroyGame(this)
+			this.forceShutdown('Cleanup')
 		}, 120000)
+	}
+
+	public forceShutdown(reason: string): void {
+		const gameLibrary: GameLibrary = global.gameLibrary
+		this.players.forEach(playerInGame => playerInGame.player.disconnect())
+		gameLibrary.destroyGame(this, reason)
 	}
 
 	public findCardById(cardId: string): ServerCard | null {

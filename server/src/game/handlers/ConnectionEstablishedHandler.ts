@@ -19,8 +19,7 @@ export default {
 	onPlayerDisconnected(game: ServerGame, player: ServerPlayer): void {
 		const humanPlayersInGame = game.players.filter(playerInGame => playerInGame !== VoidPlayerInGame.for(game) && !(playerInGame.player instanceof ServerBotPlayer))
 		if (humanPlayersInGame.length === 0) {
-			const gameLibrary: GameLibrary = global.gameLibrary
-			gameLibrary.destroyGame(game)
+			game.forceShutdown('No human players left')
 			return
 		}
 

@@ -57,7 +57,12 @@ router.ws('/:gameId', async (ws, req) => {
 			return
 		}
 
-		handler(msg.data, currentGame, currentPlayerInGame)
+		try {
+			handler(msg.data, currentGame, currentPlayerInGame)
+		} catch (e) {
+			console.error(`An unexpected error occurred in game ${currentGame.id}. It will be shut down.`, e)
+			currentGame.forceShutdown('An error occurred')
+		}
 	})
 
 	ws.on('close', () => {
