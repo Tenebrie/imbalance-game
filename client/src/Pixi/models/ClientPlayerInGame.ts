@@ -6,9 +6,11 @@ import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import PlayerInGameMessage from '@shared/models/network/PlayerInGameMessage'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import ClientCardGraveyard from '@/Pixi/models/ClientCardGraveyard'
+import Card from '@shared/models/Card'
 
 export default class ClientPlayerInGame implements PlayerInGame {
 	player: Player
+	leader: Card
 	cardHand: RenderedCardHand
 	cardDeck: ClientCardDeck
 	cardGraveyard: ClientCardGraveyard
