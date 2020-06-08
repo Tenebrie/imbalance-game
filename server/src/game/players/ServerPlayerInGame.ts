@@ -19,6 +19,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
 
 	game: ServerGame
+	leader: ServerCard
 	player: ServerPlayer
 	cardHand: ServerHand
 	cardDeck: ServerDeck
@@ -154,6 +155,12 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public startRound(): void {
 		this.roundEnded = false
+
+		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
+			runCardEventHandler(() => unit.card.onRoundStarted())
+			unit.card.buffs.onRoundStarted()
+		})
+
 		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
 	}
 
@@ -167,8 +174,8 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnStart(): void {
-		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onTurnStarted(unit))
+		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
+			runCardEventHandler(() => unit.card.onTurnStarted())
 			unit.card.buffs.onTurnStarted()
 		})
 	}
@@ -184,8 +191,8 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnEnd(): void {
-		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onTurnEnded(unit))
+		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
+			runCardEventHandler(() => unit.card.onTurnEnded())
 			unit.card.buffs.onTurnEnded()
 		})
 		this.cardHand.unitCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
@@ -199,8 +206,8 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public endRound(): void {
 		this.endTurn()
 
-		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onRoundEnded(unit))
+		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
+			runCardEventHandler(() => unit.card.onRoundEnded())
 			unit.card.buffs.onRoundEnded()
 		})
 
@@ -210,6 +217,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {
 		const playerInGame = new ServerPlayerInGame(game, player)
+		playerInGame.leader = CardLibrary.instantiateByInstance(game, cardDeck.leader)
 		playerInGame.cardDeck.instantiateFrom(cardDeck)
 		return playerInGame
 	}

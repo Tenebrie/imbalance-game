@@ -18,6 +18,7 @@ import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
 import runCardEventHandler from '../utils/runCardEventHandler'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -283,6 +284,10 @@ export default class ServerGame extends Game {
 		}
 		for (let i = 0; i < this.players.length; i++) {
 			const player = this.players[i]
+			const cardAsLeader = player.leader
+			if (cardAsLeader && cardAsLeader.id === cardId) {
+				return new ServerOwnedCard(cardAsLeader, player)
+			}
 			const cardInHand = player.cardHand.findCardById(cardId)
 			if (cardInHand) {
 				return new ServerOwnedCard(cardInHand, player)
@@ -303,11 +308,25 @@ export default class ServerGame extends Game {
 		let cards: ServerOwnedCard[] = this.board.getAllUnits()
 		for (let i = 0; i < this.players.length; i++) {
 			const player = this.players[i]
+			cards = cards.concat([new ServerOwnedCard(player.leader, player)])
 			cards = cards.concat(player.cardHand.allCards.map(card => new ServerOwnedCard(card, player)))
 			cards = cards.concat(player.cardDeck.allCards.map(card => new ServerOwnedCard(card, player)))
 			cards = cards.concat(player.cardGraveyard.allCards.map(card => new ServerOwnedCard(card, player)))
 		}
 		return cards
+	}
+
+	public getTotalBuffIntensityForPlayer(buffPrototype: any, player: ServerPlayerInGame, allowedLocations: CardLocation[] | 'any' = 'any'): number {
+		let viableCards = this.board.getUnitsOwnedByPlayer(player).map(unit => unit.card)
+		if (player && player.leader) {
+			viableCards.push(player.leader)
+		}
+
+		if (allowedLocations !== 'any') {
+			viableCards = viableCards.filter(card => allowedLocations.includes(card.location))
+		}
+
+		return viableCards.map(card => card.buffs.getIntensity(buffPrototype)).reduce((total, value) => total + value, 0)
 	}
 
 	static newOwnedInstance(owner: ServerPlayer, name: string): ServerGame {

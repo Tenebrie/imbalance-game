@@ -13,6 +13,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import CardLibrary from '../libraries/CardLibrary'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -144,6 +145,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {
 		const playerInGame = new ServerBotPlayerInGame(game, player)
+		playerInGame.leader = CardLibrary.instantiateByInstance(game, cardDeck.leader)
 		playerInGame.cardDeck.instantiateFrom(cardDeck)
 		return playerInGame
 	}

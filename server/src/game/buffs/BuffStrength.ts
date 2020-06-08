@@ -7,10 +7,10 @@ export default class BuffStrength extends ServerBuff {
 	}
 
 	onCreated(): void {
-		this.unit.addPower(1)
+		this.card.setPower(this.card.power + 1)
 	}
 
 	onDestroyed(): void {
-		this.unit.addPower(-1)
+		this.card.setPower(this.card.power - 1)
 	}
 }

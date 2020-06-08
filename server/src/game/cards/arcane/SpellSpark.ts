@@ -27,7 +27,7 @@ export default class SpellSpark extends ServerCard {
 	}
 
 	get damage() {
-		return this.baseDamage + this.game.board.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
+		return this.baseDamage + this.game.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {

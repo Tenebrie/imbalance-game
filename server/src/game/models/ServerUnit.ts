@@ -34,9 +34,6 @@ export default class ServerUnit implements Unit {
 		this.game = game
 		this.card = card
 		this.owner = owner
-
-		card.power = card.basePower
-		card.attack = card.baseAttack
 	}
 
 	addPower(value: number): void {

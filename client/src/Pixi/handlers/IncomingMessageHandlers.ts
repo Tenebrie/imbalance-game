@@ -116,26 +116,26 @@ const handlers: {[ index: string ]: any } = {
 		Core.board.rows[data.index].setOwner(Core.getPlayerOrNull(data.ownerId))
 	},
 
-	'update/board/card/power': (data: CardMessage) => {
-		const cardOnBoard = Core.board.findUnitById(data.id)
-		if (!cardOnBoard) { return }
+	'update/card/power': (data: CardMessage) => {
+		const card = Core.game.findRenderedCardById(data.id)
+		if (!card) { return }
 		if (typeof (data.power) === 'undefined') {
 			console.warn(`Trying to set card ${data.id} power to undefined value!`)
 			return
 		}
 
-		cardOnBoard.setPower(data.power)
+		card.setPower(data.power)
 	},
 
-	'update/board/card/armor': (data: CardMessage) => {
-		const cardOnBoard = Core.board.findUnitById(data.id)
-		if (!cardOnBoard) { return }
+	'update/card/armor': (data: CardMessage) => {
+		const card = Core.game.findRenderedCardById(data.id)
+		if (!card) { return }
 		if (typeof (data.armor) === 'undefined') {
 			console.warn(`Trying to set card ${data.id} power to undefined value!`)
 			return
 		}
 
-		cardOnBoard.setArmor(data.armor)
+		card.setArmor(data.armor)
 	},
 
 	'update/player/self/turnStarted': (data: void) => {

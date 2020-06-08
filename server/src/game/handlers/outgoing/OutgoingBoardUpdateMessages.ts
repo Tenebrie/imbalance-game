@@ -71,14 +71,14 @@ export default {
 
 	notifyAboutCardPowerChange(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
-			type: 'update/board/card/power',
+			type: 'update/card/power',
 			data: CardMessage.fromCard(card)
 		})
 	},
 
 	notifyAboutCardArmorChange(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
-			type: 'update/board/card/armor',
+			type: 'update/card/armor',
 			data: CardMessage.fromCard(card)
 		})
 	}

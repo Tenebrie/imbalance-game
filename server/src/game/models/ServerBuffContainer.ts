@@ -52,6 +52,13 @@ export default class ServerBuffContainer implements BuffContainer {
 		} else if (existingBuff && newBuff.stackType === BuffStackType.ADD_INTENSITY) {
 			existingBuff.intensity += newBuff.intensity
 			runCardEventHandler(() => existingBuff.onIntensityChanged(newBuff.intensity))
+			OutgoingCardUpdateMessages.notifyAboutCardBuffIntensityChanged(this.card, existingBuff)
+			// Reset duration
+			if (newBuff.duration > existingBuff.duration) {
+				existingBuff.duration = newBuff.duration
+				runCardEventHandler(() => existingBuff.onDurationChanged(newBuff.duration))
+				OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, existingBuff)
+			}
 			return
 		}
 
@@ -92,7 +99,7 @@ export default class ServerBuffContainer implements BuffContainer {
 	}
 
 	public remove(prototype: any): void {
-		const buffClass = prototype.constructor.name.substr(0, 1).toLowerCase() + prototype.constructor.name.substr(1)
+		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 		const buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass)
 		buffsOfType.forEach(buffToRemove => {
 			this.removeByReference(buffToRemove)
@@ -116,6 +123,12 @@ export default class ServerBuffContainer implements BuffContainer {
 		this.buffs.forEach(buff => {
 			runCardEventHandler(() => buff.onTurnEnded())
 			buff.addDuration(-1)
+		})
+	}
+
+	public onRoundStarted(): void {
+		this.buffs.forEach(buff => {
+			runCardEventHandler(() => buff.onRoundStarted())
 		})
 	}
 

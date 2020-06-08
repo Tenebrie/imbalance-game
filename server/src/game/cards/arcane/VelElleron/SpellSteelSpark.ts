@@ -30,11 +30,11 @@ export default class SpellSteelSpark extends ServerCard {
 	}
 
 	get damage() {
-		return this.baseDamage + this.game.board.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
+		return this.baseDamage + this.game.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
 	}
 
 	get sideDamage() {
-		return this.baseSideDamage + this.game.board.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
+		return this.baseSideDamage + this.game.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -45,15 +45,17 @@ export default class SpellSteelSpark extends ServerCard {
 	}
 
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
+		const sideTargets = this.game.board.getAdjacentUnits(target).filter(unit => unit.rowIndex === target.rowIndex)
+
 		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
-		const sideTargets = this.game.board.getAdjacentUnits(target).filter(unit => unit.rowIndex === target.rowIndex)
-		if (sideTargets.length === 0) {
+		const survivingSideTargets = sideTargets.filter(target => target.isAlive())
+		if (survivingSideTargets.length === 0) {
 			return
 		}
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits(sideTargets, this.sideDamage))
-		sideTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.sideDamage, this)))
+		this.game.animation.play(ServerAnimation.universeAttacksUnits(survivingSideTargets, this.sideDamage))
+		survivingSideTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.sideDamage, this)))
 	}
 }

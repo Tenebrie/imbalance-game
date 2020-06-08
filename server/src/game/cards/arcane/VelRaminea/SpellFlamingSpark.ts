@@ -12,12 +12,13 @@ import TargetType from '@shared/enums/TargetType'
 import BuffSparksExtraDamage from '../../../buffs/BuffSparksExtraDamage'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
-import CardLibrary from '../../../libraries/CardLibrary'
-import UnitShadowspawn from '../UnitShadowspawn'
 import ServerAnimation from '../../../models/ServerAnimation'
+import BuffVelRamineaWeave from '../../../buffs/BuffVelRamineaWeave'
+import CardLocation from '@shared/enums/CardLocation'
 
-export default class SpellShadowSpark extends ServerCard {
+export default class SpellFlamingSpark extends ServerCard {
 	baseDamage = 2
+	damagePerWeave = 1
 
 	constructor(game: ServerGame) {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
@@ -25,12 +26,15 @@ export default class SpellShadowSpark extends ServerCard {
 		this.basePower = 2
 		this.baseFeatures = [CardFeature.HERO_POWER]
 		this.dynamicTextVariables = {
-			damage: () => this.damage
+			damage: () => this.damage,
+			damagePerWeave: this.damagePerWeave
 		}
 	}
 
 	get damage() {
-		return this.baseDamage + this.game.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
+		return this.baseDamage
+			+ this.game.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
+			+ this.game.getTotalBuffIntensityForPlayer(BuffVelRamineaWeave, this.owner, [CardLocation.LEADER])
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -43,9 +47,5 @@ export default class SpellShadowSpark extends ServerCard {
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
 		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
-
-		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
-		const targetRow = this.game.board.getRowWithDistanceToFront(owner, 0)
-		this.game.board.createUnit(shadowspawn, owner, targetRow.index, targetRow.cards.length)
 	}
 }

@@ -31,7 +31,7 @@
 
 	"card.name.leaderVelElleron": "Vel'Elleron",
 	"card.title.leaderVelElleron": "The Battlemage",
-	"card.description.leaderVelElleron": "*Arcane Leader*<p>*Hero Powers:*\nSteel Spark, An Encouragement, Fireball, Fiery Entrance",
+	"card.description.leaderVelElleron": "*Arcane Leader*<p>*Hero Powers:*\nSteel Spark, An Encouragement, Fireball, Fiery Entrance",
 
 	"card.name.leaderVelRaminea": "Vel'Raminea",
 	"card.title.leaderVelRaminea": "The Flameweaver",
@@ -219,5 +219,11 @@
 
 	"card.name.spellShadowArmy": "Army of Shadows",
 	"card.description.spellShadowArmy": "*Create* a copy of an allied unit.\n<if showPowerThreshold>If it has {powerThreshold} Power or less, repeat this effect.<p><i>This value decreases by {thresholdDecrease} after every copy.</i></if>",
-	"card.target.spellShadowArmy": "Create a copy\n<i>Power threshold is ({powerThreshold})</i>"
+	"card.target.spellShadowArmy": "Create a copy\n<i>Power threshold is ({powerThreshold})</i>",
+
+	"card.name.spellFlamingSpark": "Flaming Spark",
+	"card.description.spellFlamingSpark": "Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
+
+	"card.name.spellFlameweave": "Flameweave",
+	"card.description.spellFlameweave": "Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
 }

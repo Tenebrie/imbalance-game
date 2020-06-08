@@ -78,6 +78,14 @@ const routes = [
 		]
 	},
 	{
+		path: '/rules',
+		name: 'rules',
+		component: () => import('@/Vue/views/RulesView.vue'),
+		beforeEnter: (to: Route, from: Route, next: Function) => {
+			requireAuthentication(next)
+		}
+	},
+	{
 		path: '/game',
 		name: 'game',
 		component: () => import('@/Vue/views/GameView.vue'),

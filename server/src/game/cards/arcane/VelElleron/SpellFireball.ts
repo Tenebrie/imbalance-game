@@ -44,15 +44,17 @@ export default class SpellFireball extends ServerCard {
 	}
 
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
+		const areaTargets = this.game.board.getAdjacentUnits(target)
+
 		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
-		const areaTargets = this.game.board.getAdjacentUnits(target)
-		if (areaTargets.length === 0) {
+		const survivingAreaTargets = areaTargets.filter(target => target.isAlive())
+		if (survivingAreaTargets.length === 0) {
 			return
 		}
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits(areaTargets, this.areaDamage))
-		areaTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.areaDamage, this)))
+		this.game.animation.play(ServerAnimation.universeAttacksUnits(survivingAreaTargets, this.areaDamage))
+		survivingAreaTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.areaDamage, this)))
 	}
 }

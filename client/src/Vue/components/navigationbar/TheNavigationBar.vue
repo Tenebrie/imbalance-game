@@ -7,6 +7,9 @@
 			<div class="link-container">
 				<router-link tag="span" :to="{ name: 'decks' }" class="router-link">Decks</router-link>
 			</div>
+			<div class="link-container">
+				<router-link tag="span" :to="{ name: 'rules' }" class="router-link">Rules</router-link>
+			</div>
 		</div>
 		<div class="right-side-container">
 			<the-mini-user-profile />

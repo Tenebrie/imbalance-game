@@ -36,7 +36,7 @@ export default class UnitChargingKnight extends ServerCard {
 		this.hasMovedThisTurn = true
 	}
 
-	onTurnEnded(thisUnit: ServerUnit): void {
+	onTurnEnded(): void {
 		this.hasMovedThisTurn = false
 	}
 }

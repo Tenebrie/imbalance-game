@@ -23,22 +23,22 @@ export default class HeroRagingElemental extends ServerCard {
 		this.isEffectTriggered = true
 
 		const opposingEnemies = this.game.board.getUnitsOwnedByOpponent(this.owner)
-			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, this.unit) < 1)
+			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
 			.sort((a, b) => {
-				return this.game.board.getVerticalUnitDistance(a, this.unit) - this.game.board.getVerticalUnitDistance(b, this.unit)
+				return this.game.board.getVerticalUnitDistance(a, thisUnit) - this.game.board.getVerticalUnitDistance(b, thisUnit)
 			})
 
 		if (opposingEnemies.length === 0) {
 			return
 		}
 
-		const shortestDistance = this.game.board.getVerticalUnitDistance(opposingEnemies[0], this.unit)
-		const targets = [this.unit].concat(opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, this.unit) === shortestDistance))
+		const shortestDistance = this.game.board.getVerticalUnitDistance(opposingEnemies[0], thisUnit)
+		const targets = [thisUnit].concat(opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, thisUnit) === shortestDistance))
 
 		const damage = this.power
-		this.game.animation.play(ServerAnimation.unitAttacksUnits(this.unit, targets, damage))
+		this.game.animation.play(ServerAnimation.unitAttacksUnits(thisUnit, targets, damage))
 		targets.forEach(unit => {
-			unit.dealDamage(ServerDamageInstance.fromUnit(damage, this.unit))
+			unit.dealDamage(ServerDamageInstance.fromUnit(damage, thisUnit))
 		})
 	}
 }

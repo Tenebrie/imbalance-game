@@ -16,7 +16,7 @@ export default class UnitMadBerserker extends ServerCard {
 		this.baseAttack = 3
 	}
 
-	onTurnEnded(thisUnit: ServerUnit): void {
+	onTurnEnded(): void {
 		if (!this.hasAttackedThisTurn) {
 			this.lastAttackTarget = null
 			this.consecutiveAttackCount = 0

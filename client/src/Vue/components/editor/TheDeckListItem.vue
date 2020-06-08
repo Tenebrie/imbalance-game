@@ -1,10 +1,10 @@
 <template>
 	<span>
 		<span v-if="mode === DeckListMode.SELECT" class="deck-link" @click="onSelectDeck" :class="selectedClass">
-			<img v-if="iconPath" :src="iconPath" alt="Norm" /> <span>{{ deck.name }}</span>
+			<img v-if="iconPath" :src="iconPath" alt="Deck icon" /> <span>{{ deck.name }}</span>
 		</span>
 		<router-link v-if="mode === DeckListMode.EDIT" tag="span" class="deck-link" :to="{ path: `/decks/${deck.id}` }">
-			<img v-if="iconPath" :src="iconPath" alt="Norm" /> <span>{{ deck.name }}</span>
+			<img v-if="iconPath" :src="iconPath" alt="Deck icon" /> <span>{{ deck.name }}</span>
 		</router-link>
 	</span>
 </template>
@@ -93,5 +93,6 @@ export default Vue.extend({
 		height: 32px;
 		padding: 0 4px 0 0;
 		display: inline;
+		border-radius: 100%;
 	}
 </style>

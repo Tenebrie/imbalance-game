@@ -203,6 +203,7 @@ export default class RenderedCard extends Card {
 
 	public setPower(value: number): void {
 		this.power = Math.max(0, value)
+		this.resetDisplayMode()
 	}
 
 	public setArmor(value: number): void {
@@ -248,23 +249,19 @@ export default class RenderedCard extends Card {
 		}
 
 		this.displayMode = displayMode
+		this.resetDisplayMode()
+	}
 
+	public resetDisplayMode(): void {
 		let texts: (ScalingText | RichText)[] = []
 
-		if (displayMode === CardDisplayMode.IN_HAND ||
-				displayMode === CardDisplayMode.IN_HAND_HOVERED ||
-				displayMode === CardDisplayMode.INSPECTED ||
-				displayMode === CardDisplayMode.ANNOUNCED ||
-				displayMode === CardDisplayMode.RESOLVING ||
-				displayMode === CardDisplayMode.SELECTION ||
-				displayMode === CardDisplayMode.SELECTION_HOVERED ||
-				displayMode === CardDisplayMode.IN_EDITOR) {
+		if (this.isCardMode()) {
 			this.switchToCardMode()
 			texts = [this.powerText, this.armorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
-		} else if (displayMode === CardDisplayMode.ON_BOARD) {
+		} else if (this.isUnitMode()) {
 			this.switchToUnitMode()
 			texts = [this.powerText]
-		} else if (displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
+		} else if (this.isHiddenMode()) {
 			this.switchToHiddenMode()
 		}
 
@@ -394,6 +391,26 @@ export default class RenderedCard extends Card {
 		this.cardModeTextContainer.visible = false
 		this.powerTextBackground.visible = false
 		this.powerText.visible = false
+	}
+
+	public isCardMode(): boolean {
+		return [CardDisplayMode.IN_HAND,
+			CardDisplayMode.IN_HAND_HOVERED,
+			CardDisplayMode.INSPECTED,
+			CardDisplayMode.ANNOUNCED,
+			CardDisplayMode.RESOLVING,
+			CardDisplayMode.SELECTION,
+			CardDisplayMode.SELECTION_HOVERED,
+			CardDisplayMode.IN_EDITOR
+		].includes(this.displayMode)
+	}
+
+	public isUnitMode(): boolean {
+		return [CardDisplayMode.ON_BOARD].includes(this.displayMode)
+	}
+
+	public isHiddenMode(): boolean {
+		return [CardDisplayMode.IN_HAND_HIDDEN].includes(this.displayMode)
 	}
 
 	public unregister(): void {

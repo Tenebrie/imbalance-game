@@ -86,6 +86,9 @@ export default class ServerCard extends Card {
 
 	public get location(): CardLocation {
 		const owner = this.owner
+		if (owner.leader === this) {
+			return CardLocation.LEADER
+		}
 		const cardInDeck = owner.cardDeck.findCardById(this.id)
 		if (cardInDeck) {
 			return CardLocation.DECK
@@ -314,10 +317,11 @@ export default class ServerCard extends Card {
 	onAfterOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
 	onOtherCardReceivedNewBuff(otherCard: ServerOwnedCard, buff: ServerBuff): void { return }
 
-	onTurnStarted(thisUnit: ServerUnit): void { return }
+	onRoundStarted(): void { return }
+	onTurnStarted(): void { return }
 	onTurnPhaseChanged(thisUnit: ServerUnit, phase: GameTurnPhase): void { return }
-	onTurnEnded(thisUnit: ServerUnit): void { return }
-	onRoundEnded(thisUnit: ServerUnit): void { return }
+	onTurnEnded(): void { return }
+	onRoundEnded(): void { return }
 	onUnitCustomOrderPerformed(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onBeforeUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }

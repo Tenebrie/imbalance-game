@@ -8,6 +8,7 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerBoardOrders from './ServerBoardOrders'
 import ServerCard from './ServerCard'
 import Utils from '../../utils/Utils'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class ServerBoard extends Board {
 	readonly game: ServerGame
@@ -68,10 +69,6 @@ export default class ServerBoard extends Board {
 		}
 
 		return obstacleRows.length + 1
-	}
-
-	public getTotalBuffIntensityForPlayer(buffPrototype: any, player: ServerPlayerInGame): number {
-		return this.getUnitsOwnedByPlayer(player).map(unit => unit.card.buffs.getIntensity(buffPrototype)).reduce((total, value) => total + value, 0)
 	}
 
 	public getAllUnits(): ServerUnit[] {

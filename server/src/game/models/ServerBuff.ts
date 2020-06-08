@@ -69,6 +69,7 @@ export default class ServerBuff implements Buff {
 	onIntensityChanged(delta: number): void { return }
 	onTurnStarted(): void { return }
 	onTurnEnded(): void { return }
+	onRoundStarted(): void { return }
 	onRoundEnded(): void { return }
 	onBeforeBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
 	onAfterBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }

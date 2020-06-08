@@ -2,10 +2,10 @@ import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import ServerUnit from '../../models/ServerUnit'
 import BuffStrength from '../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardFaction from '@shared/enums/CardFaction'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class HeroGarellion extends ServerCard {
 	powerPerMana = 2
@@ -18,7 +18,12 @@ export default class HeroGarellion extends ServerCard {
 		}
 	}
 
-	onRoundEnded(thisUnit: ServerUnit): void {
+	onRoundEnded(): void {
+		if (this.location !== CardLocation.BOARD) {
+			return
+		}
+
+		const thisUnit = this.unit
 		const consumedMana = thisUnit.owner.spellMana
 		thisUnit.owner.setSpellMana(0)
 		for (let i = 0; i < consumedMana * this.powerPerMana; i++) {
