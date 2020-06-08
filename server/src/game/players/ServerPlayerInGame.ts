@@ -103,6 +103,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.createCard(card)
 	}
 
+	public createCardFromLibraryByClass(cardClass: string): void {
+		const card = CardLibrary.instantiateByClass(this.game, cardClass)
+		this.createCard(card)
+	}
+
 	private createCard(card: ServerCard): void {
 		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
 		if (card.type === CardType.UNIT) {
