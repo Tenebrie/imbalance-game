@@ -2,6 +2,7 @@ import path from 'path'
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
 import 'module-alias/register'
+import { cardImageGenerator } from './utils/CardImageGenerator'
 
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
@@ -21,6 +22,7 @@ const ChangelogRouter = require('./routers/ChangelogRouter')
 const PlayRouter = require('./routers/PlayRouter')
 const LoginRouter = require('./routers/LoginRouter')
 const CardsRouter = require('./routers/CardsRouter')
+const DecksRouter = require('./routers/DecksRouter')
 const GamesRouter = require('./routers/GamesRouter')
 const LogoutRouter = require('./routers/LogoutRouter')
 const ProfileRouter = require('./routers/ProfileRouter')
@@ -43,8 +45,12 @@ app.use(logger('dev'))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+
+/* Serve static files */
 app.use(express.static(path.join(__dirname, '../../../public')))
+app.use(express.static(path.join(__dirname, '../../../client/optimized')))
 app.use(express.static(path.join(__dirname, '../../../client')))
+app.use(express.static(path.join(__dirname, '../../../client/generated')))
 
 /* OPTIONS request */
 app.use((req: Request, res: Response, next) => {
@@ -62,6 +68,7 @@ app.use('/changelog', ChangelogRouter)
 
 /* API HTTP routers */
 app.use('/api/cards', CardsRouter)
+app.use('/api/decks', DecksRouter)
 app.use('/api/games', GamesRouter)
 app.use('/api/login', LoginRouter)
 app.use('/api/logout', LogoutRouter)
@@ -90,5 +97,8 @@ Database.init()
 global.cardLibrary = new CardLibrary()
 global.gameLibrary = new GameLibrary()
 global.playerLibrary = new PlayerLibrary()
+
+/* Generate placeholder images */
+cardImageGenerator.generatePlaceholderImages()
 
 app.listen((process.env.PORT || 3000))

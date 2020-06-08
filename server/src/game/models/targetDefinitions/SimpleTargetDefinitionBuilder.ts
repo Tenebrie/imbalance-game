@@ -84,6 +84,26 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		return this
 	}
 
+	public playersRow(): SimpleTargetDefinitionBuilder {
+		this.builder.playersRow(this.targetMode)
+		return this
+	}
+
+	public opponentsRow(): SimpleTargetDefinitionBuilder {
+		this.builder.opponentsRow(this.targetMode)
+		return this
+	}
+
+	public emptyRow(): SimpleTargetDefinitionBuilder {
+		this.builder.emptyRow(this.targetMode)
+		return this
+	}
+
+	public notEmptyRow(): SimpleTargetDefinitionBuilder {
+		this.builder.notEmptyRow(this.targetMode)
+		return this
+	}
+
 	public notSelf(): SimpleTargetDefinitionBuilder {
 		this.builder.notSelf(this.targetMode)
 		return this

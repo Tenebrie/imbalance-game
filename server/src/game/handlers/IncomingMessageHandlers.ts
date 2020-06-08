@@ -88,6 +88,9 @@ export default {
 	},
 
 	'system/init': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
+		if (player.initialized) {
+			return
+		}
 		player.initialized = true
 		ConnectionEstablishedHandler.onPlayerConnected(game, player)
 	},

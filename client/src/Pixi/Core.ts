@@ -13,6 +13,8 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientCardResolveStack from '@/Pixi/models/ClientCardResolveStack'
 
 export default class Core {
+	public static isReady = false
+
 	public static input: Input
 	public static socket: WebSocket
 	public static renderer: Renderer
@@ -25,9 +27,9 @@ export default class Core {
 	public static opponent: ClientPlayerInGame
 	public static resolveStack: ClientCardResolveStack
 
-	public static init(gameId: string, container: HTMLElement): void {
+	public static init(gameId: string, deckId: string, container: HTMLElement): void {
 		const protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
-		const socket = new WebSocket(`${protocol}//${window.location.host}/api/game/${gameId}`)
+		const socket = new WebSocket(`${protocol}//${window.location.host}/api/game/${gameId}?deckId=${deckId}`)
 		socket.onopen = () => this.onConnect(container)
 		socket.onmessage = (event) => this.onMessage(event)
 		socket.onclose = (event) => this.onDisconnect(event)
@@ -38,7 +40,7 @@ export default class Core {
 	}
 
 	private static async onConnect(container: HTMLElement): Promise<void> {
-		Core.keepaliveTimer = setInterval(() => {
+		Core.keepaliveTimer = window.setInterval(() => {
 			OutgoingMessageHandlers.sendKeepalive()
 		}, 30000)
 
@@ -53,6 +55,7 @@ export default class Core {
 		Core.mainHandler = MainHandler.start()
 
 		console.info('Sending init signal to server')
+		this.isReady = true
 		OutgoingMessageHandlers.sendInit()
 	}
 
@@ -138,5 +141,6 @@ export default class Core {
 	public static reset(): void {
 		if (!this.socket) { return }
 		this.socket.close()
+		this.isReady = false
 	}
 }

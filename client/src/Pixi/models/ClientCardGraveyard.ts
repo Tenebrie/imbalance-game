@@ -1,24 +1,33 @@
 import CardMessage from '@shared/models/network/CardMessage'
 import CardDeck from '@shared/models/CardDeck'
+import Card from '@shared/models/Card'
 
 export default class ClientCardGraveyard implements CardDeck {
-	unitCards: CardMessage[]
-	spellCards: CardMessage[]
+	unitCardMessages: CardMessage[]
+	spellCardMessages: CardMessage[]
+
+	get unitCards(): Card[] {
+		return []
+	}
+
+	get spellCards(): Card[] {
+		return []
+	}
 
 	constructor() {
-		this.unitCards = []
-		this.spellCards = []
+		this.unitCardMessages = []
+		this.spellCardMessages = []
 	}
 
 	public addUnit(card: CardMessage): void {
-		this.unitCards.push(card)
+		this.unitCardMessages.push(card)
 	}
 
 	public addSpell(card: CardMessage): void {
-		this.spellCards.push(card)
+		this.spellCardMessages.push(card)
 	}
 
 	public findCardById(cardId: string): CardMessage | null {
-		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
+		return this.unitCardMessages.find(card => card.id === cardId) || this.spellCardMessages.find(card => card.id === cardId) || null
 	}
 }

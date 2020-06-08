@@ -4,6 +4,8 @@ import BuffStackType from '@shared/enums/BuffStackType'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerCard from './ServerCard'
 import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
+import ServerOwnedCard from './ServerOwnedCard'
+import ServerGame from './ServerGame'
 
 export default class ServerBuffContainer implements BuffContainer {
 	readonly card: ServerCard
@@ -12,6 +14,10 @@ export default class ServerBuffContainer implements BuffContainer {
 	constructor(card: ServerCard) {
 		this.card = card
 		this.buffs = []
+	}
+
+	public get game(): ServerGame {
+		return this.card.game
 	}
 
 	private instantiate(buff: ServerBuff, source: ServerCard | null): ServerBuff {
@@ -46,6 +52,13 @@ export default class ServerBuffContainer implements BuffContainer {
 		} else if (existingBuff && newBuff.stackType === BuffStackType.ADD_INTENSITY) {
 			existingBuff.intensity += newBuff.intensity
 			runCardEventHandler(() => existingBuff.onIntensityChanged(newBuff.intensity))
+			OutgoingCardUpdateMessages.notifyAboutCardBuffIntensityChanged(this.card, existingBuff)
+			// Reset duration
+			if (newBuff.duration > existingBuff.duration) {
+				existingBuff.duration = newBuff.duration
+				runCardEventHandler(() => existingBuff.onDurationChanged(newBuff.duration))
+				OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, existingBuff)
+			}
 			return
 		}
 
@@ -58,6 +71,10 @@ export default class ServerBuffContainer implements BuffContainer {
 		runCardEventHandler(() => newBuff.onCreated())
 		runCardEventHandler(() => newBuff.onDurationChanged(newBuff.duration))
 		runCardEventHandler(() => newBuff.onIntensityChanged(newBuff.intensity))
+
+		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
+			ownedCard.card.onOtherCardReceivedNewBuff(new ServerOwnedCard(this.card, this.card.owner), newBuff)
+		})
 	}
 
 	public getBuffsByPrototype(prototype: any): ServerBuff[] {
@@ -82,7 +99,7 @@ export default class ServerBuffContainer implements BuffContainer {
 	}
 
 	public remove(prototype: any): void {
-		const buffClass = prototype.constructor.name.substr(0, 1).toLowerCase() + prototype.constructor.name.substr(1)
+		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 		const buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass)
 		buffsOfType.forEach(buffToRemove => {
 			this.removeByReference(buffToRemove)
@@ -106,6 +123,12 @@ export default class ServerBuffContainer implements BuffContainer {
 		this.buffs.forEach(buff => {
 			runCardEventHandler(() => buff.onTurnEnded())
 			buff.addDuration(-1)
+		})
+	}
+
+	public onRoundStarted(): void {
+		this.buffs.forEach(buff => {
+			runCardEventHandler(() => buff.onRoundStarted())
 		})
 	}
 

@@ -61,7 +61,7 @@ export default class CardAttributes extends PIXI.Container {
 
 		let cumulativeOffset = 0
 
-		if (this.card.healthArmor > 0 && this.displayMode === CardDisplayMode.IN_HAND) {
+		if (this.card.armor > 0 && this.displayMode === CardDisplayMode.IN_HAND) {
 			this.statHealthArmor = new PIXI.Sprite(TextureAtlas.getTexture('components/stat-health-armor'))
 			this.statHealthArmor.position.x = -cumulativeOffset
 			cumulativeOffset += 50
@@ -94,7 +94,7 @@ export default class CardAttributes extends PIXI.Container {
 	public getCardAttributesWidth(): number {
 		const attackTextWidth = this.getAttackTextWidth()
 		const attackRangeWidth = this.card.attackRange !== 1 && this.displayMode === CardDisplayMode.IN_HAND ? 50 : 0
-		const healthArmorWidth = this.card.healthArmor > 0 && this.displayMode === CardDisplayMode.IN_HAND ? 50 : 0
+		const healthArmorWidth = this.card.armor > 0 && this.displayMode === CardDisplayMode.IN_HAND ? 50 : 0
 		return (attackTextWidth + attackRangeWidth + healthArmorWidth + 5) * this.scale.x
 	}
 }

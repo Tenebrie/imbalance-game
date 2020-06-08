@@ -15,18 +15,27 @@ export default class ServerAnimation extends Animation {
 		return animation
 	}
 
-	public static unitAttack(sourceUnit: ServerUnit, targetUnits: ServerUnit[], damage = 0): ServerAnimation {
+	public static unitAttacksUnits(sourceUnit: ServerUnit, targetUnits: ServerUnit[], damage = 0): ServerAnimation {
 		const params: UnitAttackAnimParams = {
 			damage: damage
 		}
 		const animation = new ServerAnimation(AnimationType.UNIT_ATTACK, params)
 		animation.sourceUnit = sourceUnit
-		animation.targetUnits = targetUnits
+		animation.targetCards = targetUnits.map(unit => unit.card)
 		return animation
 	}
 
 	public static unitAttackDefault(sourceUnit: ServerUnit, targetUnits: ServerUnit[]): ServerAnimation {
-		return ServerAnimation.unitAttack(sourceUnit, targetUnits, sourceUnit.card.attack)
+		return ServerAnimation.unitAttacksUnits(sourceUnit, targetUnits, sourceUnit.card.attack)
+	}
+
+	public static universeAttacksUnits(targetUnits: ServerUnit[], damage = 0): ServerAnimation {
+		const params: UnitAttackAnimParams = {
+			damage: damage
+		}
+		const animation = new ServerAnimation(AnimationType.UNIVERSE_ATTACK, params)
+		animation.targetCards = targetUnits.map(unit => unit.card)
+		return animation
 	}
 
 	public static postUnitAttack(): ServerAnimation {
@@ -34,6 +43,6 @@ export default class ServerAnimation extends Animation {
 	}
 
 	public static unitMove(): ServerAnimation {
-		return new ServerAnimation(AnimationType.ALL_UNITS_MOVE, {})
+		return new ServerAnimation(AnimationType.UNIT_MOVE, {})
 	}
 }

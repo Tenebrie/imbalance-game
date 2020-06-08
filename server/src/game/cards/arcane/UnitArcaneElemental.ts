@@ -5,12 +5,13 @@ import CardColor from '@shared/enums/CardColor'
 import ServerUnit from '../../models/ServerUnit'
 import ServerBoardRow from '../../models/ServerBoardRow'
 import CardTribe from '@shared/enums/CardTribe'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitArcaneElemental extends ServerCard {
 	manaGenerated = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 7
 		this.baseTribes = [CardTribe.ELEMENTAL]
 		this.dynamicTextVariables = {

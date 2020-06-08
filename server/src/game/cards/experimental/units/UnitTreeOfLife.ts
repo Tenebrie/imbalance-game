@@ -11,10 +11,11 @@ import StandardTargetDefinitionBuilder from '../../../models/targetDefinitions/S
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import CardColor from '@shared/enums/CardColor'
 import Utils from '../../../../utils/Utils'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitTreeOfLife extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.EXPERIMENTAL)
 		this.basePower = 4
 		this.baseTribes = [CardTribe.BUILDING]
 	}

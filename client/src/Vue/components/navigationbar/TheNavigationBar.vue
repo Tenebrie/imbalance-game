@@ -1,7 +1,15 @@
 <template>
 	<div class="the-navigation-bar">
 		<div class="left-side-container">
-
+			<div class="link-container">
+				<router-link tag="span" :to="{ name: 'home' }" class="router-link" exact>Home</router-link>
+			</div>
+			<div class="link-container">
+				<router-link tag="span" :to="{ name: 'decks' }" class="router-link">Decks</router-link>
+			</div>
+			<div class="link-container">
+				<router-link tag="span" :to="{ name: 'rules' }" class="router-link">Rules</router-link>
+			</div>
 		</div>
 		<div class="right-side-container">
 			<the-mini-user-profile />
@@ -48,6 +56,32 @@ export default Vue.extend({
 		align-items: center;
 		justify-content: space-between;
 		background: $COLOR-BACKGROUND-TRANSPARENT;
+
+		.left-side-container {
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			height: 100%;
+			.link-container {
+				height: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin: 0 8px;
+
+				.router-link {
+					cursor: pointer;
+				}
+
+				.router-link:hover {
+					text-decoration: underline;
+				}
+
+				.router-link-active {
+					font-weight: bold;
+				}
+			}
+		}
 
 		.right-side-container {
 			height: 100%;

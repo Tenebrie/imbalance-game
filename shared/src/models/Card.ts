@@ -4,12 +4,14 @@ import CardTribe from '../enums/CardTribe'
 import CardColor from '../enums/CardColor'
 import RichTextVariables from './RichTextVariables'
 import CardFeature from '../enums/CardFeature'
+import CardFaction from '../enums/CardFaction'
 
 export default class Card {
 	id: string
 	type: CardType
 	class: string
 	color: CardColor
+	faction: CardFaction
 
 	name: string
 	title: string
@@ -18,16 +20,17 @@ export default class Card {
 	baseFeatures: CardFeature[]
 	description: string
 	variables: RichTextVariables
+	sortPriority: number
 
 	power = 0
+	armor = 0
 	attack = 0
 	attackRange = 1
-	healthArmor = 0
 
 	basePower = 0
+	baseArmor = 0
 	baseAttack = 0
 	baseAttackRange = 1
-	baseHealthArmor = 0
 
 	constructor(id: string, type: CardType, cardClass: string) {
 		this.id = id
@@ -42,6 +45,7 @@ export default class Card {
 		this.baseTribes = []
 		this.baseFeatures = []
 		this.description = ''
+		this.sortPriority = 0
 	}
 
 	public evaluateVariables(): RichTextVariables {

@@ -33,7 +33,7 @@ export default {
 	},
 
 	sendInit() {
-		Core.sendMessage('system/init', null)
+		Core.sendMessage('system/init', undefined)
 	},
 
 	sendKeepalive() {

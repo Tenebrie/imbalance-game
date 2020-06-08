@@ -16,6 +16,7 @@ import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
 import Utils from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import CardFeature from '@shared/enums/CardFeature'
 
 const UNIT_ZINDEX = 2
 const TARGETING_ARROW_ZINDEX = 10
@@ -146,6 +147,8 @@ export default class Renderer {
 				return
 			}
 
+			this.updateCardStats(renderedCard)
+
 			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
 				this.renderCardInHand(renderedCard, unitCards.indexOf(renderedCard), unitCards.length, false, false)
 				const displayMode = this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
@@ -166,6 +169,8 @@ export default class Renderer {
 			if (renderedCard === Core.input.inspectedCard) {
 				return
 			}
+
+			this.updateCardStats(renderedCard)
 
 			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
 				this.renderCardInHand(renderedCard, spellCards.indexOf(renderedCard), spellCards.length, false, true)
@@ -240,6 +245,26 @@ export default class Renderer {
 		return this.pixi.view.height
 	}
 
+	private updateCardStats(renderedCard: RenderedCard): void {
+		renderedCard.powerText.text = renderedCard.power.toString()
+		if (renderedCard.power < renderedCard.basePower) {
+			renderedCard.powerText.style.fill = 0x770000
+		} else if (renderedCard.power > renderedCard.basePower) {
+			renderedCard.powerText.style.fill = 0x007700
+		} else {
+			renderedCard.powerText.style.fill = 0x000000
+		}
+
+		renderedCard.armorText.text = renderedCard.armor.toString()
+		if (renderedCard.armor < renderedCard.baseArmor) {
+			renderedCard.armorText.style.fill = 0xFF7777
+		} else if (renderedCard.armor > renderedCard.baseArmor) {
+			renderedCard.armorText.style.fill = 0x77FF77
+		} else {
+			renderedCard.armorText.style.fill = 0xFFFFFF
+		}
+	}
+
 	public renderCardInHand(renderedCard: RenderedCard, handPosition: number, handSize: number, isOpponent: boolean, isSpellHand: boolean): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
@@ -284,6 +309,10 @@ export default class Renderer {
 
 		if (renderedCard.type === CardType.SPELL) {
 			renderedCard.powerText.style.fill = 0x0000FF
+			if (renderedCard.features.includes(CardFeature.TEMPORARY_CARD)) {
+				renderedCard.powerText.text = '0'
+				renderedCard.powerText.style.fill = 0x008800
+			}
 		}
 
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED || renderedCard.displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
@@ -401,8 +430,9 @@ export default class Renderer {
 		gameBoardRow.sprite.tint = this.getBoardRowTint(gameBoardRow)
 
 		for (let i = 0; i < gameBoardRow.cards.length; i++) {
-			const cardOnBoard = gameBoardRow.cards[i]
-			this.renderCardOnBoard(cardOnBoard, rowY, i, gameBoardRow.cards.length)
+			const unit = gameBoardRow.cards[i]
+			this.updateCardStats(unit.card)
+			this.renderUnit(unit, rowY, i, gameBoardRow.cards.length)
 		}
 	}
 
@@ -426,7 +456,7 @@ export default class Renderer {
 		}
 	}
 
-	public renderCardOnBoard(unit: RenderedUnit, rowY: number, unitIndex: number, unitCount: number): void {
+	public renderUnit(unit: RenderedUnit, rowY: number, unitIndex: number, unitCount: number): void {
 		if (unit.card === Core.input.inspectedCard) {
 			return
 		}
@@ -459,15 +489,6 @@ export default class Renderer {
 		sprite.height = cardHeight
 
 		sprite.tint = this.getUnitTint(unit)
-
-		unit.card.powerText.text = unit.card.power.toString()
-		if (unit.card.power < unit.card.basePower) {
-			unit.card.powerText.style.fill = 0x770000
-		} else if (unit.card.power > unit.card.basePower) {
-			unit.card.powerText.style.fill = 0x007700
-		} else {
-			unit.card.powerText.style.fill = 0x000000
-		}
 
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
@@ -756,12 +777,15 @@ export default class Renderer {
 		container.position.y = this.getScreenHeight() / 2
 		container.zIndex = INSPECTED_CARD_ZINDEX
 
+		inspectedCard.powerText.text = inspectedCard.basePower.toString()
 		if (inspectedCard.type === CardType.SPELL) {
 			inspectedCard.powerText.style.fill = 0x0000AA
 		} else {
 			inspectedCard.powerText.style.fill = 0x000000
 		}
-		inspectedCard.powerText.text = inspectedCard.basePower.toString()
+
+		inspectedCard.armorText.text = inspectedCard.baseArmor.toString()
+		inspectedCard.armorText.style.fill = 0xFFFFFF
 
 		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
 	}

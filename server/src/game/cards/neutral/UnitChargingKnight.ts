@@ -9,12 +9,13 @@ import TargetType from '@shared/enums/TargetType'
 import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitChargingKnight extends ServerCard {
 	hasMovedThisTurn = false
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 10
 		this.baseAttack = 2
 		this.baseTribes = [CardTribe.HUMAN]
@@ -35,7 +36,7 @@ export default class UnitChargingKnight extends ServerCard {
 		this.hasMovedThisTurn = true
 	}
 
-	onTurnEnded(thisUnit: ServerUnit): void {
+	onTurnEnded(): void {
 		this.hasMovedThisTurn = false
 	}
 }

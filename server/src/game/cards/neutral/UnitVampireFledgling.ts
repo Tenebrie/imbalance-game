@@ -9,13 +9,15 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetDefinitionBuilder from '../../models/targetDefinitions/TargetDefinitionBuilder'
 import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
+import CardFaction from '@shared/enums/CardFaction'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class UnitVampireFledgling extends ServerCard {
 	powerLost = 1
 	powerDrained = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 8
 		this.baseAttack = 1
 		this.baseTribes = [CardTribe.UNDEAD, CardTribe.VAMPIRE]
@@ -37,7 +39,12 @@ export default class UnitVampireFledgling extends ServerCard {
 		}
 	}
 
-	onTurnStarted(thisUnit: ServerUnit): void {
+	onTurnStarted(): void {
+		if (this.location !== CardLocation.BOARD) {
+			return
+		}
+
+		const thisUnit = this.unit
 		thisUnit.dealDamage(ServerDamageInstance.fromUnit(this.powerLost, thisUnit))
 	}
 }

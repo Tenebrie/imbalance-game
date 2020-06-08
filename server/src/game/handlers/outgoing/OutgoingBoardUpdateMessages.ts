@@ -9,6 +9,7 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerGame from '../../models/ServerGame'
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import Utils from '../../../utils/Utils'
+import BuffTutoredCard from '../../buffs/BuffTutoredCard'
 
 export default {
 	notifyAboutUnitCreated(player: ServerPlayer, card: ServerUnit, rowIndex: number, unitIndex: number) {
@@ -70,14 +71,14 @@ export default {
 
 	notifyAboutCardPowerChange(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
-			type: 'update/board/card/power',
+			type: 'update/card/power',
 			data: CardMessage.fromCard(card)
 		})
 	},
 
-	notifyAboutCardHealthArmorChange(player: ServerPlayer, card: ServerCard) {
+	notifyAboutCardArmorChange(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
-			type: 'update/board/card/healthArmor',
+			type: 'update/card/armor',
 			data: CardMessage.fromCard(card)
 		})
 	}

@@ -11,7 +11,7 @@
 				"postinstall": "subpkg install",
 				"build": "cd client && npm run build && cd .. && rm -rf server/client && mkdir server/client && cp -r client/dist/* server/client && cd server && npm run build",
 				"start": "(cd server && npm run start)",
-				"serve": "(cd client && npm run serve) & sleep 8s && (cd server && npm run serve)",
+				"serve": "(cd client && npm run serve) & sleep 8s && (cd server && rm -r dist && npm run serve)",
 				"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)"
 		},
 		"dependencies": {
@@ -32,16 +32,6 @@
 				"@types/uuid": "^3.4.5",
 				"@typescript-eslint/eslint-plugin": "^2.3.3",
 				"@typescript-eslint/parser": "^2.3.3",
-				"babel-eslint": "^10.0.3",
-				"babel-preset-es2015": "^6.24.1",
-				"babel-watch": "^7.0.0",
-				"eslint": "^6.5.1",
-				"eslint-plugin-flowtype": "^4.3.0",
-				"eslint-plugin-node": "^10.0.0",
-				"express-session": "^1.17.0",
-				"flow-bin": "^0.109.0",
-				"nodemon": "^1.19.3",
-				"pgmigrate": "^5.0.0",
 				"@vue/cli-plugin-babel": "^4.1.0",
 				"@vue/cli-plugin-eslint": "^4.1.0",
 				"@vue/cli-plugin-router": "^4.1.0",
@@ -50,8 +40,18 @@
 				"@vue/cli-service": "^4.1.0",
 				"@vue/eslint-config-standard": "^4.0.0",
 				"@vue/eslint-config-typescript": "^4.0.0",
+				"babel-eslint": "^10.0.3",
+				"babel-preset-es2015": "^6.24.1",
+				"babel-watch": "^7.0.0",
+				"eslint": "^6.5.1",
+				"eslint-plugin-flowtype": "^4.3.0",
+				"eslint-plugin-node": "^10.0.0",
 				"eslint-plugin-vue": "^5.0.0",
+				"express-session": "^1.17.0",
+				"flow-bin": "^0.109.0",
 				"node-sass": "^4.12.0",
+				"nodemon": "^1.19.3",
+				"pgmigrate": "^5.0.0",
 				"sass-loader": "^8.0.0",
 				"typescript": "~3.5.3",
 				"vue-template-compiler": "^2.6.10"
@@ -60,7 +60,7 @@
 				"node": "10.16"
 		},
 		"author": "Tenebrie Interactive",
-		"license": "ISC",
+		"license": "GNU GPL v3.0",
 		"bugs": {
 				"url": "https://github.com/Kos94ok/notgwent-game/issues"
 		},

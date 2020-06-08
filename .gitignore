@@ -6,5 +6,10 @@ server/.idea/*
 shared/.idea/*
 server/client/
 tsBuildInfo.json
-*.js
-*.js.map
+client/src/*.js
+client/src/*.js.map
+server/src/*.js
+server/src/*.js.map
+shared/src/*.js
+shared/src/*.js.map
+

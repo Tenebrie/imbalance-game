@@ -1,5 +1,6 @@
 import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
+import Unit from '@shared/models/Unit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
@@ -7,11 +8,13 @@ import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
+import ServerOwnedCard from './ServerOwnedCard'
 
-export default class ServerUnit {
+export default class ServerUnit implements Unit {
 	game: ServerGame
 	card: ServerCard
 	owner: ServerPlayerInGame
+	isDeathrattleTriggered = false
 
 	get rowIndex(): number {
 		return this.game.board.rows.indexOf(this.game.board.getRowWithUnit(this)!)
@@ -31,9 +34,6 @@ export default class ServerUnit {
 		this.game = game
 		this.card = card
 		this.owner = owner
-
-		card.power = card.basePower
-		card.attack = card.baseAttack
 	}
 
 	addPower(value: number): void {
@@ -45,11 +45,11 @@ export default class ServerUnit {
 	}
 
 	addHealthArmor(value: number): void {
-		this.setHealthArmor(Math.max(0, this.card.healthArmor + value))
+		this.setHealthArmor(Math.max(0, this.card.armor + value))
 	}
 
 	setHealthArmor(value: number): void {
-		this.card.setHealthArmor(value)
+		this.card.setArmor(value)
 	}
 
 	dealDamage(damage: ServerDamageInstance): number {
@@ -70,8 +70,33 @@ export default class ServerUnit {
 		}
 
 		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damageInstance))
-		this.setPower(this.card.power - damageInstance.value)
+		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
+			ownedCard.card.onBeforeOtherUnitDamageTaken(this, damageInstance)
+		})
+
+		let damageToDeal = damageInstance.value
+		if (this.card.armor > 0) {
+			const armorDamageInstance = damageInstance.clone()
+			armorDamageInstance.value = Math.min(this.card.armor, damageToDeal)
+			runCardEventHandler(() => this.card.onBeforeArmorDamageTaken(this, armorDamageInstance))
+			this.setHealthArmor(this.card.armor - armorDamageInstance.value)
+			runCardEventHandler(() => this.card.onAfterArmorDamageTaken(this, armorDamageInstance))
+			damageToDeal -= armorDamageInstance.value
+		}
+
+		if (damageToDeal > 0) {
+			const healthDamageInstance = damageInstance.clone()
+			healthDamageInstance.value = Math.min(this.card.power, damageToDeal)
+			runCardEventHandler(() => this.card.onBeforeHealthDamageTaken(this, healthDamageInstance))
+			this.setPower(this.card.power - healthDamageInstance.value)
+			runCardEventHandler(() => this.card.onAfterHealthDamageTaken(this, healthDamageInstance))
+		}
+
 		runCardEventHandler(() => this.card.onAfterDamageTaken(this, damageInstance))
+		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
+			ownedCard.card.onAfterOtherUnitDamageTaken(this, damageInstance)
+		})
+
 		if (this.card.power > 0) {
 			runCardEventHandler(() => this.card.onDamageSurvived(this, damageInstance))
 		}
@@ -112,6 +137,11 @@ export default class ServerUnit {
 	}
 
 	destroy(): void {
+		if (this.isDeathrattleTriggered) {
+			return
+		}
+		this.isDeathrattleTriggered = true
+
 		runCardEventHandler(() => this.card.onBeforeDestroyedAsUnit(this))
 
 		const otherCards = this.game.board.getAllUnits().filter(cardOnBoard => cardOnBoard !== this)
@@ -124,5 +154,6 @@ export default class ServerUnit {
 		})
 
 		this.owner.cardGraveyard.addUnit(this.card)
+		this.isDeathrattleTriggered = false
 	}
 }

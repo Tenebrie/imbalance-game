@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import CardMessage from '@shared/models/network/CardMessage'
+import CardColor from '@shared/enums/CardColor'
 
 export default class TextureAtlas {
 	static isReady = false
@@ -35,6 +36,8 @@ export default class TextureAtlas {
 				'cards/cardBack',
 				'components/bg-power',
 				'components/bg-power-zoom',
+				'components/bg-armor',
+				'components/bg-armor-zoom',
 				'components/bg-manacost',
 				'components/bg-name',
 				'components/bg-tribe',
@@ -49,6 +52,7 @@ export default class TextureAtlas {
 				'components/bg-overlay-unit-bronze',
 				'components/bg-overlay-unit-silver',
 				'components/bg-overlay-unit-golden',
+				'components/bg-overlay-unit-leader',
 				'components/bg-overlay-spell',
 				'components/stat-attack-claw',
 				'components/stat-attack-range',
@@ -59,24 +63,32 @@ export default class TextureAtlas {
 
 			const response = await axios.get('/api/cards')
 			const cardMessages: CardMessage[] = response.data
-			const cards = cardMessages.map(cardMessage => {
+			const cardTextures = cardMessages.map(cardMessage => {
 				const name = cardMessage.class.substr(0, 1).toLowerCase() + cardMessage.class.substr(1)
 				return `cards/${name}`
 			})
 
-			const texturesToLoad = components.concat(cards)
+			const leaderMessages = cardMessages.filter(cardMessage => cardMessage.color === CardColor.LEADER)
+			const leaderIcons = leaderMessages.map(cardMessage => {
+				const name = cardMessage.class.substr(0, 1).toLowerCase() + cardMessage.class.substr(1)
+				return `icons/${name}`
+			})
+
+			const texturesToLoad = components.concat(cardTextures).concat(leaderIcons)
 
 			TextureAtlas.texturesToLoad = texturesToLoad.length
 
+			const t0 = performance.now()
 			texturesToLoad.forEach(fileName => {
-				const texture = PIXI.Texture.from(`assets/${fileName}.png`)
+				const texture = PIXI.Texture.from(`/assets/${fileName}.png`)
 
 				const onLoaded = () => {
 					TextureAtlas.texturesLoaded += 1
 					TextureAtlas.textures[fileName.toLowerCase()] = texture
 
 					if (TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad) {
-						console.info(`TextureAtlas initialized. Resolving ${TextureAtlas.resolveFunctions.length} promise(s).`)
+						const t1 = performance.now()
+						console.info(`TextureAtlas initialized. Resolving ${TextureAtlas.resolveFunctions.length} promise(s). Initialization took ${Math.round(t1 - t0) / 1000} seconds`)
 						TextureAtlas.onReady()
 					}
 				}

@@ -10,12 +10,13 @@ import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../models/ServerUnit'
 import ServerDamageInstance from '../../models/ServerDamageSource'
 import ServerAnimation from '../../models/ServerAnimation'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitStoneElemental extends ServerCard {
 	damage = 4
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 7
 		this.baseTribes = [CardTribe.ELEMENTAL]
 		this.dynamicTextVariables = {
@@ -31,7 +32,7 @@ export default class UnitStoneElemental extends ServerCard {
 	}
 
 	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.unitAttack(thisUnit, [target], this.damage))
+		this.game.animation.play(ServerAnimation.unitAttacksUnits(thisUnit, [target], this.damage))
 		target.dealDamage(ServerDamageInstance.fromUnit(this.damage, thisUnit))
 	}
 }

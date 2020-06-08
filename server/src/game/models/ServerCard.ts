@@ -25,6 +25,9 @@ import BuffImmunity from '../buffs/BuffImmunity'
 import GameLibrary from '../libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
+import CardFaction from '@shared/enums/CardFaction'
+import ServerBuff from './ServerBuff'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -32,10 +35,11 @@ export default class ServerCard extends Card {
 	buffs = new ServerBuffContainer(this)
 	dynamicTextVariables: ServerRichTextVariables
 
-	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor) {
+	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor, faction: CardFaction) {
 		super(uuidv4(), cardType, 'missingno')
 		this.game = game
 		this.color = unitSubtype
+		this.faction = faction
 		this.dynamicTextVariables = {}
 	}
 
@@ -48,7 +52,11 @@ export default class ServerCard extends Card {
 	}
 
 	public get spellCost(): number {
-		return this.power
+		let cost = this.power
+		this.buffs.buffs.forEach(buff => {
+			cost = buff.getSpellCostOverride(cost)
+		})
+		return cost
 	}
 
 	public get tribes(): CardTribe[] {
@@ -76,7 +84,51 @@ export default class ServerCard extends Card {
 		return thisCardInGame ? thisCardInGame.owner : null
 	}
 
-	setPower(value: number): void {
+	public get location(): CardLocation {
+		const owner = this.owner
+		if (owner.leader === this) {
+			return CardLocation.LEADER
+		}
+		const cardInDeck = owner.cardDeck.findCardById(this.id)
+		if (cardInDeck) {
+			return CardLocation.DECK
+		}
+		const cardInHand = owner.cardHand.findCardById(this.id)
+		if (cardInHand) {
+			return CardLocation.HAND
+		}
+		const cardInStack = this.game.cardPlay.cardResolveStack.findCardById(this.id)
+		if (cardInStack) {
+			return CardLocation.STACK
+		}
+		const cardOnBoard = this.game.board.findUnitById(this.id)
+		if (cardOnBoard) {
+			return CardLocation.BOARD
+		}
+		const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
+		if (cardInGraveyard) {
+			return CardLocation.GRAVEYARD
+		}
+	}
+
+	public get deckPosition(): number {
+		const owner = this.owner
+		if (!owner) {
+			return -1
+		}
+		return owner.cardDeck.getCardIndex(this)
+	}
+
+	public isCollectible(): boolean {
+		return this.faction !== CardFaction.EXPERIMENTAL && this.color !== CardColor.TOKEN && this.type === CardType.UNIT
+	}
+
+	public instanceOf(prototype: Function): boolean {
+		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
+		return this.class === cardClass
+	}
+
+	public setPower(value: number): void {
 		if (this.power === value) { return }
 
 		this.power = value
@@ -87,18 +139,18 @@ export default class ServerCard extends Card {
 		})
 	}
 
-	setHealthArmor(value: number): void {
-		if (this.healthArmor === value) { return }
+	public setArmor(value: number): void {
+		if (this.armor === value) { return }
 
-		runCardEventHandler(() => this.onHealthArmorChanged(value, this.healthArmor))
+		runCardEventHandler(() => this.onArmorChanged(value, this.armor))
 
-		this.healthArmor = value
+		this.armor = value
 		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardHealthArmorChange(playerInGame.player, this)
+			OutgoingMessageHandlers.notifyAboutCardArmorChange(playerInGame.player, this)
 		})
 	}
 
-	reveal(owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
+	public reveal(owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
 		if (this.isRevealed) { return }
 
 		this.isRevealed = true
@@ -106,13 +158,17 @@ export default class ServerCard extends Card {
 		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(opponent.player, this)
 	}
 
-	getValidPlayTargets(cardOwner: ServerPlayerInGame): ServerCardTarget[] {
+	public getValidPlayTargets(cardOwner: ServerPlayerInGame): ServerCardTarget[] {
+		if ((this.type === CardType.UNIT && cardOwner.unitMana < this.unitCost) || (this.type === CardType.SPELL && cardOwner.spellMana < this.spellCost)) {
+			return []
+		}
+
 		return this.getValidTargets(TargetMode.ON_PLAY_VALID_TARGET, TargetType.BOARD_ROW, this.getPlayValidTargetDefinition(), {
 			thisCardOwner: cardOwner
-		}).filter(target => ((target.sourceCard.type === CardType.UNIT && cardOwner.unitMana >= target.sourceCard.unitCost) || (target.sourceCard.type === CardType.SPELL && cardOwner.spellMana >= target.sourceCard.spellCost)))
+		})
 	}
 
-	getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	public getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		let targets: ServerCardTarget[] = []
 		if (targetType === TargetType.UNIT) {
 			targets = this.getValidUnitTargets(targetMode, targetDefinition, args, previousTargets)
@@ -134,7 +190,7 @@ export default class ServerCard extends Card {
 		return targets
 	}
 
-	isTargetLimitExceeded(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, previousTargets: ServerCardTarget[]): boolean {
+	private isTargetLimitExceeded(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, previousTargets: ServerCardTarget[]): boolean {
 		if (previousTargets.length >= targetDefinition.getTargetCount()) {
 			return true
 		}
@@ -153,7 +209,7 @@ export default class ServerCard extends Card {
 		// return !!incompatibleOtherTypeOrder
 	}
 
-	getValidUnitTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	private getValidUnitTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.UNIT, targetDefinition, previousTargets)) {
 			return []
 		}
@@ -161,11 +217,11 @@ export default class ServerCard extends Card {
 		const unitTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.UNIT)
 		return this.game.board.getAllUnits()
 			.filter(unit => !unit.card.buffs.has(BuffImmunity))
-			.filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { ...args, thisCard: this, targetUnit: unit, previousTargets: previousTargets }))
+			.filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { ...args, thisCard: this, targetCard: unit.card, targetUnit: unit, previousTargets: previousTargets }))
 			.map(targetUnit => ServerCardTarget.cardTargetUnit(targetMode, this, targetUnit, unitTargetLabel))
 	}
 
-	getValidRowTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	private getValidRowTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.BOARD_ROW, targetDefinition, previousTargets)) {
 			return []
 		}
@@ -176,7 +232,7 @@ export default class ServerCard extends Card {
 			.map(targetRow => ServerCardTarget.cardTargetRow(targetMode, this, targetRow, rowTargetLabel))
 	}
 
-	getValidCardLibraryTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	private getValidCardLibraryTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_LIBRARY, targetDefinition, previousTargets)) {
 			return []
 		}
@@ -188,7 +244,7 @@ export default class ServerCard extends Card {
 			.map(targetCard => ServerCardTarget.cardTargetCardInLibrary(targetMode, this, targetCard, cardTargetLabel))
 	}
 
-	getValidUnitDeckTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+	private getValidUnitDeckTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_DECK, targetDefinition, previousTargets)) {
 			return []
 		}
@@ -200,7 +256,7 @@ export default class ServerCard extends Card {
 			.map(targetCard => ServerCardTarget.cardTargetCardInUnitDeck(targetMode, this, targetCard, cardTargetLabel))
 	}
 
-	getPlayValidTargetDefinition(): TargetDefinition {
+	public getPlayValidTargetDefinition(): TargetDefinition {
 		let targets = this.definePlayValidTargets()
 		this.buffs.buffs.forEach(buff => {
 			targets = targets.merge(buff.definePlayValidTargetsMod())
@@ -209,7 +265,7 @@ export default class ServerCard extends Card {
 		return targets.build()
 	}
 
-	getValidOrderTargetDefinition(): TargetDefinition {
+	public getValidOrderTargetDefinition(): TargetDefinition {
 		let targets = this.defineValidOrderTargets()
 		this.buffs.buffs.forEach(buff => {
 			targets = targets.merge(buff.defineValidOrderTargetsMod())
@@ -218,7 +274,7 @@ export default class ServerCard extends Card {
 		return targets.build()
 	}
 
-	getPostPlayRequiredTargetDefinition(): TargetDefinition {
+	public getPostPlayRequiredTargetDefinition(): TargetDefinition {
 		let targets = this.definePostPlayRequiredTargets()
 		this.buffs.buffs.forEach(buff => {
 			targets = targets.merge(buff.definePostPlayRequiredTargetsMod())
@@ -227,7 +283,7 @@ export default class ServerCard extends Card {
 		return targets.build()
 	}
 
-	evaluateVariables(): RichTextVariables {
+	public evaluateVariables(): RichTextVariables {
 		const evaluatedVariables: RichTextVariables = {}
 		Object.keys(this.dynamicTextVariables).forEach(key => {
 			const value = this.dynamicTextVariables[key]
@@ -255,22 +311,28 @@ export default class ServerCard extends Card {
 
 	onBeforeOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
 	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
+	onBeforeOtherUnitDamageTaken(otherUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onAfterOtherUnitDamageTaken(otherUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onBeforeOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
 	onAfterOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
+	onOtherCardReceivedNewBuff(otherCard: ServerOwnedCard, buff: ServerBuff): void { return }
 
-	onTurnStarted(thisUnit: ServerUnit): void { return }
+	onRoundStarted(): void { return }
+	onTurnStarted(): void { return }
 	onTurnPhaseChanged(thisUnit: ServerUnit, phase: GameTurnPhase): void { return }
-	onTurnEnded(thisUnit: ServerUnit): void { return }
-	onRoundEnded(thisUnit: ServerUnit): void { return }
+	onTurnEnded(): void { return }
+	onRoundEnded(): void { return }
 	onUnitCustomOrderPerformed(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onBeforeUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onPowerChanged(newValue: number, oldValue: number): void { return }
-	onAttackChanged(newValue: number, oldValue: number): void { return }
-	onAttackRangeChanged(newValue: number, oldValue: number): void { return }
-	onHealthArmorChanged(newValue: number, oldValue: number): void { return }
+	onArmorChanged(newValue: number, oldValue: number): void { return }
 	onBeforeDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onAfterDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onBeforeArmorDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onAfterArmorDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onBeforeHealthDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
+	onAfterHealthDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onDamageSurvived(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
 	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, dealtDamage: number): void { return }
@@ -290,6 +352,9 @@ export default class ServerCard extends Card {
 	getBonusAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return 0 }
 	getDamageTaken(thisUnit: ServerUnit, damageSource: ServerDamageSource): number { return damageSource.value }
 	getDamageReduction(thisUnit: ServerUnit, damageSource: ServerDamageSource): number { return 0 }
+
+	getDeckAddedUnitCards(): any[] { return [] }
+	getDeckAddedSpellCards(): any[] { return [] }
 
 	definePlayValidTargets(): TargetDefinitionBuilder { return TargetDefinition.defaultCardPlayTarget(this.game) }
 	defineValidOrderTargets(): TargetDefinitionBuilder { return TargetDefinition.defaultUnitOrder(this.game) }

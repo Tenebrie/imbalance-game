@@ -9,13 +9,14 @@ import ServerDamageInstance from '../../models/ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
 import TargetMode from '@shared/enums/TargetMode'
 import CardTribe from '@shared/enums/CardTribe'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1
 	healing = 5
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 8
 		this.baseAttackRange = 1
 		this.baseTribes = [CardTribe.HUMAN]

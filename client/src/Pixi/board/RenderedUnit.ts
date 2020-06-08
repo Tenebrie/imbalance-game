@@ -26,6 +26,10 @@ export default class RenderedUnit extends Unit {
 		this.card.setPower(value)
 	}
 
+	public setArmor(value: number): void {
+		this.card.setArmor(value)
+	}
+
 	public static fromMessage(message: UnitMessage): RenderedUnit {
 		const renderedCard = RenderedCard.fromMessage(message.card)
 		const owner = Core.getPlayer(message.owner.id)

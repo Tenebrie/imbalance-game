@@ -25,20 +25,25 @@ export default class Database {
 			connectionString: databaseUrl,
 			ssl: true,
 		})
-		await client.connect()
+		try {
+			await client.connect()
 
-		console.info('Connection established. Running migrations')
-		await pgMigrate({
-			count: 10000,
-			dbClient: client,
-			migrationsTable: 'MIGRATIONS',
-			direction: 'up',
-			dir: 'migrations',
-			ignorePattern: ''
-		})
+			console.info('Connection established. Running migrations')
+			await pgMigrate({
+				count: 10000,
+				dbClient: client,
+				migrationsTable: 'MIGRATIONS',
+				direction: 'up',
+				dir: 'migrations',
+				ignorePattern: ''
+			})
 
-		console.info('Database client ready')
-		this.client = client
+			console.info('Database client ready')
+			this.client = client
+		} catch (e) {
+			console.error('[WARN] Unable to connect to database. Operating in autonomous mode')
+			Database.autonomousMode = true
+		}
 	}
 
 	public static async insertRow(query: string): Promise<boolean> {
@@ -60,6 +65,7 @@ export default class Database {
 			}
 			return result.rows[0]
 		} catch (err) {
+			console.error(err)
 			return null
 		}
 	}
@@ -68,12 +74,24 @@ export default class Database {
 		try {
 			const result = await this.runQuery(query)
 			if (!result.rows) {
-				return null
+				return []
 			}
 			return result.rows
 		} catch (err) {
+			console.error(err)
 			return null
 		}
+	}
+
+	public static async deleteRows(query: string): Promise<boolean> {
+		try {
+			await this.runQuery(query)
+		} catch (err) {
+			console.error(err)
+			return false
+		}
+
+		return true
 	}
 
 	private static async runQuery(query: string): Promise<QueryResult> {

@@ -9,17 +9,26 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 	},
 
 	[AnimationType.CARD_PLAY]: (message: AnimationMessage, params: void) => {
-		const announcedCard = Core.opponent.cardHand.findCardById(message.targetCardID)!
+		const announcedCard = Core.opponent.cardHand.findCardById(message.targetCardId)!
 		Core.mainHandler.announceCard(announcedCard)
 		return 2000
 	},
 
 	[AnimationType.UNIT_ATTACK]: (message: AnimationMessage, params: UnitAttackAnimParams) => {
-		const sourceUnit = Core.board.findUnitById(message.sourceUnitID)
+		const sourceUnit = Core.board.findUnitById(message.sourceUnitId)
 		const damage = params.damage
-		message.targetUnitIDs.forEach(targetUnitID => {
-			const targetUnit = Core.board.findUnitById(targetUnitID)
-			Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetUnit, damage)
+		message.targetCardIDs.forEach(targetCardId => {
+			const targetCard = Core.game.findRenderedCardById(targetCardId)
+			Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetCard, damage)
+		})
+		return 500
+	},
+
+	[AnimationType.UNIVERSE_ATTACK]: (message: AnimationMessage, params: UnitAttackAnimParams) => {
+		const damage = params.damage
+		message.targetCardIDs.forEach(targetCardId => {
+			const targetCard = Core.game.findRenderedCardById(targetCardId)
+			Core.mainHandler.projectileSystem.createUniverseAttackProjectile(targetCard, damage)
 		})
 		return 500
 	},
@@ -28,7 +37,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return 100
 	},
 
-	[AnimationType.ALL_UNITS_MOVE]: (message: AnimationMessage, params: void) => {
+	[AnimationType.UNIT_MOVE]: (message: AnimationMessage, params: void) => {
 		return 750
 	}
 }

@@ -6,28 +6,34 @@ import DamageSource from '@shared/enums/DamageSource'
 export default class ServerDamageInstance implements DamageInstance {
 	value: number
 	source: DamageSource
-	sourceUnit: ServerUnit | null
-	sourceSpell: ServerCard | null
+	sourceCard: ServerCard | null
 
 	constructor() {
 		this.value = 0
-		this.sourceUnit = null
-		this.sourceSpell = null
+		this.sourceCard = null
+	}
+
+	public clone(): ServerDamageInstance {
+		const clone = new ServerDamageInstance()
+		clone.value = this.value
+		clone.source = this.source
+		clone.sourceCard = this.sourceCard
+		return clone
+	}
+
+	public static fromCard(value: number, sourceCard: ServerCard): ServerDamageInstance {
+		const damageInstance = new ServerDamageInstance()
+		damageInstance.value = value
+		damageInstance.source = DamageSource.CARD
+		damageInstance.sourceCard = sourceCard
+		return damageInstance
 	}
 
 	public static fromUnit(value: number, sourceUnit: ServerUnit): ServerDamageInstance {
 		const damageInstance = new ServerDamageInstance()
 		damageInstance.value = value
-		damageInstance.source = DamageSource.UNIT
-		damageInstance.sourceUnit = sourceUnit
-		return damageInstance
-	}
-
-	public static fromSpell(value: number, sourceSpell: ServerCard): ServerDamageInstance {
-		const damageInstance = new ServerDamageInstance()
-		damageInstance.value = value
-		damageInstance.source = DamageSource.SPELL
-		damageInstance.sourceSpell = sourceSpell
+		damageInstance.source = DamageSource.CARD
+		damageInstance.sourceCard = sourceUnit.card
 		return damageInstance
 	}
 

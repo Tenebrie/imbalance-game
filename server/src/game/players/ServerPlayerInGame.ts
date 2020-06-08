@@ -12,11 +12,14 @@ import Constants from '@shared/Constants'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import BuffDuration from '@shared/enums/BuffDuration'
+import CardLibrary from '../libraries/CardLibrary'
+import CardType from '@shared/enums/CardType'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
 
 	game: ServerGame
+	leader: ServerCard
 	player: ServerPlayer
 	cardHand: ServerHand
 	cardDeck: ServerDeck
@@ -84,10 +87,29 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		}
 	}
 
-	public tutorCardFromUnitDeck(card: ServerCard): void {
+	public summonCardFromUnitDeck(card: ServerCard): void {
 		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
 		this.cardDeck.removeCard(card)
 		this.cardHand.onUnitDrawn(card)
+	}
+
+	public createCardFromLibraryByInstance(prototype: ServerCard): void {
+		const card = CardLibrary.instantiateByInstance(this.game, prototype)
+		this.createCard(card)
+	}
+
+	public createCardFromLibraryByPrototype(prototype: Function): void {
+		const card = CardLibrary.instantiateByConstructor(this.game, prototype)
+		this.createCard(card)
+	}
+
+	private createCard(card: ServerCard): void {
+		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
+		if (card.type === CardType.UNIT) {
+			this.cardHand.onUnitDrawn(card)
+		} else if (card.type === CardType.SPELL) {
+			this.cardHand.onSpellDrawn(card)
+		}
 	}
 
 	public refillSpellHand(): void {
@@ -133,6 +155,12 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public startRound(): void {
 		this.roundEnded = false
+
+		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
+			runCardEventHandler(() => unit.card.onRoundStarted())
+			unit.card.buffs.onRoundStarted()
+		})
+
 		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
 	}
 
@@ -146,14 +174,14 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnStart(): void {
-		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onTurnStarted(unit))
+		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
+			runCardEventHandler(() => unit.card.onTurnStarted())
 			unit.card.buffs.onTurnStarted()
 		})
 	}
 
 	public isAnyActionsAvailable(): boolean {
-		return this.unitMana > 0 || this.spellMana > 0 || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
+		return this.cardHand.canPlayAnyCard() || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
 	}
 
 	public endTurn(): void {
@@ -163,20 +191,23 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnEnd(): void {
-		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onTurnEnded(unit))
+		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
+			runCardEventHandler(() => unit.card.onTurnEnded())
 			unit.card.buffs.onTurnEnded()
 		})
 		this.cardHand.unitCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
 			this.cardHand.discardUnit(card)
+		})
+		this.cardHand.spellCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
+			this.cardHand.discardSpell(card)
 		})
 	}
 
 	public endRound(): void {
 		this.endTurn()
 
-		this.game.board.getUnitsOwnedByPlayer(this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onRoundEnded(unit))
+		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
+			runCardEventHandler(() => unit.card.onRoundEnded())
 			unit.card.buffs.onRoundEnded()
 		})
 
@@ -186,6 +217,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {
 		const playerInGame = new ServerPlayerInGame(game, player)
+		playerInGame.leader = CardLibrary.instantiateByInstance(game, cardDeck.leader)
 		playerInGame.cardDeck.instantiateFrom(cardDeck)
 		return playerInGame
 	}

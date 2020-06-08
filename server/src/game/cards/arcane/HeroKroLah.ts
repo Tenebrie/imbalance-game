@@ -11,10 +11,11 @@ import ServerAnimation from '../../models/ServerAnimation'
 import BuffStun from '../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import Constants from '@shared/Constants'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class HeroKroLah extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN)
+		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 7
 	}
 
@@ -22,9 +23,8 @@ export default class HeroKroLah extends ServerCard {
 		return PostPlayTargetDefinitionBuilder.base(this.game)
 			.singleTarget()
 			.allow(TargetType.BOARD_ROW)
-			.validate(TargetType.BOARD_ROW, (args => {
-				return args.targetRow.owner === args.thisUnit.owner.opponent && args.targetRow.cards.length > 0
-			}))
+			.opponentsRow()
+			.notEmptyRow()
 	}
 
 	onUnitPlayTargetRowSelected(thisUnit: ServerUnit, target: ServerBoardRow): void {
@@ -32,7 +32,7 @@ export default class HeroKroLah extends ServerCard {
 
 		const pushDirection = target.index - thisUnit.rowIndex
 
-		this.game.animation.play(ServerAnimation.unitAttack(thisUnit, targetUnits))
+		this.game.animation.play(ServerAnimation.unitAttacksUnits(thisUnit, targetUnits))
 		targetUnits.forEach(targetUnit => {
 			targetUnit.card.buffs.add(new BuffStun(), thisUnit.card, BuffDuration.START_OF_NEXT_TURN)
 		})

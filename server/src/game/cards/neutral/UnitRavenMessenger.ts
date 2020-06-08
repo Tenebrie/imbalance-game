@@ -7,11 +7,13 @@ import PostPlayTargetDefinitionBuilder from '../../models/targetDefinitions/Post
 import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../models/ServerUnit'
 import CardTribe from '@shared/enums/CardTribe'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitRavenMessenger extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 2
+		this.baseTribes = [CardTribe.BIRD]
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -24,6 +26,6 @@ export default class UnitRavenMessenger extends ServerCard {
 	}
 
 	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {
-		thisUnit.owner.tutorCardFromUnitDeck(target)
+		thisUnit.owner.summonCardFromUnitDeck(target)
 	}
 }

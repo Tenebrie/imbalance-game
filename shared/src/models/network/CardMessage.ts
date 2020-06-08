@@ -2,15 +2,17 @@ import Card from '../Card'
 import CardType from '../../enums/CardType'
 import CardTribe from '../../enums/CardTribe'
 import RichTextVariables from '../RichTextVariables'
-import BuffContainerMessage from './CardBuffsMessage'
+import BuffContainerMessage from './BuffContainerMessage'
 import CardColor from '../../enums/CardColor'
 import CardFeature from '../../enums/CardFeature'
+import CardFaction from '../../enums/CardFaction'
 
-export default class CardMessage implements Card {
+export default class CardMessage {
 	id: string
 	type: CardType
 	class: string
 	color: CardColor
+	faction: CardFaction
 
 	name: string
 	title: string
@@ -19,22 +21,24 @@ export default class CardMessage implements Card {
 	baseFeatures: CardFeature[]
 	description: string
 	variables: RichTextVariables
+	sortPriority: number
 
 	power: number
+	armor: number
 	attack: number
 	attackRange: number
-	healthArmor: number
 
 	basePower: number
+	baseArmor: number
 	baseAttack: number
 	baseAttackRange: number
-	baseHealthArmor: number
 
 	constructor(card: Card) {
 		this.id = card.id
 		this.type = card.type
 		this.class = card.class
 		this.color = card.color
+		this.faction = card.faction
 
 		this.name = card.name
 		this.title = card.title
@@ -43,20 +47,17 @@ export default class CardMessage implements Card {
 		this.baseFeatures = card.baseFeatures.slice()
 		this.description = card.description
 		this.variables = card.evaluateVariables()
+		this.sortPriority = card.sortPriority
 
 		this.power = card.power
 		this.attack = card.attack
 		this.attackRange = card.attackRange
-		this.healthArmor = card.healthArmor
+		this.armor = card.armor
 
 		this.basePower = card.basePower
 		this.baseAttack = card.baseAttack
 		this.baseAttackRange = card.baseAttackRange
-		this.baseHealthArmor = card.baseHealthArmor
-	}
-
-	evaluateVariables(): RichTextVariables {
-		return this.variables
+		this.baseArmor = card.baseArmor
 	}
 
 	static fromCard(card: Card): CardMessage {

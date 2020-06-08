@@ -1,4 +1,5 @@
 enum CardColor {
+	LEADER,
 	GOLDEN,
 	SILVER,
 	BRONZE,

@@ -3,7 +3,7 @@ import PlayerMessage from './PlayerMessage'
 import CardHandMessage from './CardHandMessage'
 import CardDeckMessage from './CardDeckMessage'
 
-export default class PlayerInGameMessage implements PlayerInGame {
+export default class PlayerInGameMessage {
 	player: PlayerMessage
 	cardHand: CardHandMessage
 	cardDeck: CardDeckMessage

@@ -59,6 +59,33 @@ const routes = [
 		}
 	},
 	{
+		path: '/decks',
+		component: () => import('@/Vue/views/EditorView.vue'),
+		beforeEnter: (to: Route, from: Route, next: Function) => {
+			requireAuthentication(next)
+		},
+		children: [
+			{
+				path: '',
+				name: 'decks',
+				component: () => import('@/Vue/components/editor/TheDeckList.vue'),
+			},
+			{
+				path: '/decks/:id',
+				name: 'single-deck',
+				component: () => import('@/Vue/components/editor/EditorDeckCardList.vue'),
+			},
+		]
+	},
+	{
+		path: '/rules',
+		name: 'rules',
+		component: () => import('@/Vue/views/RulesView.vue'),
+		beforeEnter: (to: Route, from: Route, next: Function) => {
+			requireAuthentication(next)
+		}
+	},
+	{
 		path: '/game',
 		name: 'game',
 		component: () => import('@/Vue/views/GameView.vue'),

@@ -9,60 +9,93 @@
 	"target.support.row": "Support all",
 	"target.move.row": "Move",
 
+	"card.faction.arcane": "Arcane",
+	"card.faction.neutral": "Neutral",
+	"card.faction.experimental": "Experimental",
+	"editor.faction.unfinished": "Unfinished",
+
+	"card.color.leader": "Leader",
+	"card.color.golden": "Legendary",
+	"card.color.silver": "Epic",
+	"card.color.bronze": "Common",
+
 	"card.tribe.bird": "Bird",
 	"card.tribe.beast": "Beast",
 	"card.tribe.human": "Human",
 	"card.tribe.undead": "Undead",
 	"card.tribe.dragon": "Dragon",
+	"card.tribe.crystal": "Crystal",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.building": "Building",
 	"card.tribe.elemental": "Elemental",
 
-	"card.name.heroSatia": "Satia",
-	"card.title.heroSatia": "First mistress",
-	"card.description.heroSatia": "*On play:*\n{name} summons *Night Maiden*, a Dragon that leaves the battlefield if {name} dies",
+	"card.name.leaderVelElleron": "Vel'Elleron",
+	"card.title.leaderVelElleron": "The Battlemage",
+	"card.description.leaderVelElleron": "*Arcane Leader*<p>*Hero Powers:*\nSteel Spark, An Encouragement, Fireball, Fiery Entrance",
 
-	"card.name.heroNightMaiden": "Night Maiden",
-	"card.title.heroNightMaiden": "Satia's favorite",
-	"card.description.heroNightMaiden": "If Satia dies, {name} leaves the battlefield",
+	"card.name.leaderVelRaminea": "Vel'Raminea",
+	"card.title.leaderVelRaminea": "The Flameweaver",
+	"card.description.leaderVelRaminea": "*Arcane Leader*<p>*Hero Powers:*\nSpell 1, Spell 2, Spell 3, Spell 4",
 
-	"card.name.heroIgnea": "Ignea",
-	"card.title.heroIgnea": "The Flameweaver",
-	"card.description.heroIgnea": "In addition to normal action, {name} may light any enemy row aflame, dealing 1 damage to every affected unit",
-
-	"card.name.heroRider1Famine": "Famine",
-	"card.title.heroRider1Famine": "The First Horseman",
-	"card.description.heroRider1Famine": "*On play:*\n{name} deals {damage} damage to all enemy units",
-
-	"card.name.heroRider2Conquest": "Conquest",
-	"card.title.heroRider2Conquest": "The Second Horseman",
-	"card.description.heroRider2Conquest": "*On play:*\nPlay *Famine* from your deck. Then, choose an enemy row. {name} attacks all enemies on that row. If there are no enemies left, *Capture* it.",
-
-	"card.name.heroRider3War": "War",
-	"card.title.heroRider3War": "The Third Horseman",
-	"card.description.heroRider3War": "*On play:*\nPlay *Conquest* from your deck. Then, choose {targets} allies and {targets} enemies to attack each other",
-
-	"card.name.heroRider4Death": "Death",
-	"card.title.heroRider4Death": "The Last Horseman",
-	"card.description.heroRider4Death": "*On play:*\nPlay *War* from your deck. Then, {name} destroys ALL damaged units with {powerThreshold} Power or less",
+	"card.name.leaderNighterie": "Nighterie",
+	"card.title.leaderNighterie": "The Keeper of Shadows",
+	"card.description.leaderNighterie": "*Arcane Leader*<p>*Hero Powers:*\nShadow Spark, Nightmare Drain, Crystal Barrage, Army of Shadows",
 
 	"card.name.heroZamarath": "Zamarath",
 	"card.title.heroZamarath": "The Protector",
-	"card.description.heroZamarath": "*Immune*",
+	"card.description.heroZamarath": "*Deploy:*\nGain *Immune* until your next turn.",
 
 	"card.name.heroKroLah": "Kro'Lah",
 	"card.title.heroKroLah": "The Sky Guardian",
 	"card.description.heroKroLah": "*Deploy:*\nChoose an enemy row.\n*Stun* and *Push 1* all units on that row.",
 
+	"card.name.heroCarienne": "Carienne",
+	"card.title.heroCarienne": "The Storm Unleashed",
+	"card.description.heroCarienne": "*Deploy:*\nDeal {damagePerWave} Damage to all enemy units.\nRepeat once for every *Gathering Storm* in your Graveyard.",
+
 	"card.name.heroGarellion": "Garellion",
 	"card.title.heroGarellion": "The Conduit",
 	"card.description.heroGarellion": "*End of round:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
+
+	"card.name.heroAura": "Aura",
+	"card.title.heroAura": "The Golden Hawk",
+	"card.description.heroAura": "*Deploy:*\n*Summon* a Legendary card from your deck.",
+
+	"card.name.heroAntoria": "Antoria",
+	"card.title.heroAntoria": "The Martyr",
+	"card.description.heroAntoria": "Whenever an ally takes damage while {name} is in your hand, redirect the damage to her.<p>If {name} is killed while in your hand, *Draw* a card.",
+
+	"card.name.heroAurienne": "Aurienne",
+	"card.title.heroAurienne": "The Shield of Faith",
+	"card.description.heroAurienne": "Whenever an ally takes lethal damage while {name} is in your hand, prevent it and *Play* {name} in front of this ally.",
+
+	"card.name.heroTroviar": "Troviar",
+	"card.title.heroTroviar": "The Watcher",
+	"card.description.heroTroviar": "Whenever another unit takes damage, gain {powerGained} Power.",
 
 	"card.name.heroSparklingSpirit": "Sparkling Spirit",
 	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
 
 	"card.name.heroRagingElemental": "Raging Elemental",
-	"card.description.heroRagingElemental": "When {name} drops below {powerThreshold} Power, it deals Damage equal to own Power to closest opposing enemy units. <p>Then, it destroys itself.",
+	"card.description.heroRagingElemental": "After {name} takes damage, it deals Damage equal to own Power to closest opposing enemy units.<p>Then, it destroys itself.",
+
+	"card.name.heroStormDancer": "Storm Dancer",
+	"card.description.heroStormDancer": "*Deploy:*\nFor each *Gathering Storm* in your Graveyard, put a copy of it into your spell hand.",
+
+	"card.name.heroFlameDancer": "Flame Dancer",
+	"card.description.heroFlameDancer": "*Deploy:*\nApply *Burning* for {burnDuration} turns to all units on an enemy row.",
+
+	"card.name.heroRavenCaller": "Raven Caller",
+	"card.description.heroRavenCaller": "*Deploy:*\n*Summon* a Bird from your deck",
+
+	"card.name.heroLightOracle": "Oracle of Light",
+	"card.description.heroLightOracle": "*Deploy:*\nLook at top {cardsToSee} cards from your deck. Choose one to *Summon*.",
+
+	"card.name.heroDarkOracle": "Oracle of Darkness",
+	"card.description.heroDarkOracle": "*Deploy:*\nLook at bottom {cardsToSee} cards from your opponent's deck. Choose one to *Discard*.",
+
+	"card.name.heroCrystalWarrior": "Crystal Warrior",
+	"card.description.heroCrystalWarrior": "*Deploy:*\nTrigger *Deathrattle* effect of a friendly crystal.",
 
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
@@ -118,8 +151,32 @@
 	"card.name.unitStoneElemental": "Stone Elemental",
 	"card.description.unitStoneElemental": "*Deploy:*\nDeal {damage} Damage to any other unit",
 
+	"card.name.unitMerfolkStormcaller": "Merfolk Stormcaller",
+	"card.description.unitMerfolkStormcaller": "*Deploy:*\n*Create* a *Gathering Storm*",
+
+	"card.name.unitCrystalMiner": "Crystal Miner",
+	"card.description.unitCrystalMiner": "*Deploy:*\n*Create* an Arcane crystal.",
+
+	"card.name.unitOracleApprentice": "Oracle Apprentice",
+	"card.description.unitOracleApprentice": "*Deploy:*\nLook at the top card of any deck",
+
+	"card.name.unitLoneLooter": "Lone Looter",
+	"card.description.unitLoneLooter": "Whenever you apply a *Status effect* to an enemy unit, *Summon* one {name} from your deck.",
+
 	"card.name.unitTinySparkling": "Tiny Sparkling",
 	"card.description.unitTinySparkling": "<i>No effect</i>",
+
+	"card.name.unitShadowspawn": "Shadowspawn",
+	"card.description.unitShadowspawn": "<i>No effect</i>",
+
+	"card.name.unitVolatileCrystal": "Volatile Crystal",
+	"card.description.unitVolatileCrystal": "*Deathrattle:*\nDeal {damage} Damage to adjacent units on the same row.",
+
+	"card.name.tokenPlayerDeck": "Your deck",
+	"card.description.tokenPlayerDeck": "Choose your own deck",
+
+	"card.name.tokenOpponentDeck": "Your opponent's deck",
+	"card.description.tokenOpponentDeck": "Choose your opponent's deck",
 
 	"card.name.spellSpark": "Spark",
 	"card.description.spellSpark": "*Hero Power*<p>Deal {damage} Damage to\nan enemy unit",
@@ -128,11 +185,45 @@
 	"card.description.spellSpeedPotion": "*Hero Power*<p>Grant an allied unit {moves} extra move actions this turn only",
 
 	"card.name.spellPermafrost": "Permafrost",
-	"card.description.spellPermafrost": "*Hero Power*<p>Grant all allies *Immune* until the start of your next turn",
+	"card.description.spellPermafrost": "*Hero Power*<p>Grant all allies *Immune* until your next turn",
 
 	"card.name.spellRainOfFire": "Rain of Fire",
 	"card.description.spellRainOfFire": "{name} deals {damage} damage to {targets} enemy units\nThen, it draws a card",
 
 	"card.name.spellMagicalStarfall": "Magical Starfall",
-	"card.description.spellMagicalStarfall": "{name} increases Power of all allies units by *3* and Attack by *2*\nThen, it draws a card"
+	"card.description.spellMagicalStarfall": "{name} increases Power of all allies units by *3* and Attack by *2*\nThen, it draws a card",
+
+	"card.name.spellGatheringStorm": "Gathering Storm",
+	"card.description.spellGatheringStorm": "Deal {damage} Damage to {targetCount} enemy units.<p><i>Number of targets increases by {targetsPerStorm} for every {name} in your Graveyard.</i>",
+
+	"card.name.spellSteelSpark": "Steel Spark",
+	"card.description.spellSteelSpark": "Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
+
+	"card.name.spellAnEncouragement": "An Encouragement",
+	"card.description.spellAnEncouragement": "Choose an allied unit.\nNext turn, it gains {bonusPower} Power.",
+
+	"card.name.spellFireball": "Fireball",
+	"card.description.spellFireball": "Deal {damage} Damage to an enemy unit.<p>Deal {areaDamage} Damage to all adjacent units.",
+
+	"card.name.spellFieryEntrance": "Fiery Entrance",
+	"card.description.spellFieryEntrance": "*Summon* a top card from your deck.",
+
+	"card.name.spellShadowSpark": "Shadow Spark",
+	"card.description.spellShadowSpark": "Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",
+
+	"card.name.spellNightmareDrain": "Nightmare Drain",
+	"card.description.spellNightmareDrain": "Choose a damaged unit.<p>Spawn a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
+
+	"card.name.spellCrystalBarrage": "Crystal Barrage",
+	"card.description.spellCrystalBarrage": "Choose an enemy row.<p>Spawn *Volatile Crystals* around every unit on this row.",
+
+	"card.name.spellShadowArmy": "Army of Shadows",
+	"card.description.spellShadowArmy": "*Create* a copy of an allied unit.\n<if showPowerThreshold>If it has {powerThreshold} Power or less, repeat this effect.<p><i>This value decreases by {thresholdDecrease} after every copy.</i></if>",
+	"card.target.spellShadowArmy": "Create a copy\n<i>Power threshold is ({powerThreshold})</i>",
+
+	"card.name.spellFlamingSpark": "Flaming Spark",
+	"card.description.spellFlamingSpark": "Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
+
+	"card.name.spellFlameweave": "Flameweave",
+	"card.description.spellFlameweave": "Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
 }

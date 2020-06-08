@@ -6,7 +6,6 @@ import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import UnitOrderMessage from '@shared/models/network/CardTargetMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerCardTarget from '../models/ServerCardTarget'
-import ServerCard from '../models/ServerCard'
 import Utils from '../../utils/Utils'
 import ServerUnit from '../models/ServerUnit'
 import ServerBoardRow from '../models/ServerBoardRow'
@@ -14,6 +13,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import CardLibrary from '../libraries/CardLibrary'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -32,7 +32,12 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	private botTakesTheirTurn(): void {
 		const botTotalPower = this.game.board.getTotalPlayerPower(this)
 		const opponentTotalPower = this.game.board.getTotalPlayerPower(this.opponent)
-		if (botTotalPower > opponentTotalPower) {
+
+		const botWonRound = botTotalPower > opponentTotalPower && this.opponent.roundEnded
+		const botLostRound = opponentTotalPower > botTotalPower + 30 && this.morale > 1
+		const botHasGoodLead = botTotalPower > opponentTotalPower + 15 && this.morale > 1
+
+		if (botWonRound || botLostRound || botHasGoodLead) {
 			this.botEndsTurn()
 			return
 		}
@@ -53,9 +58,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botPlaysCard(): void {
-		const cards = this.cardHand.unitCards.slice().sort((a: ServerCard, b: ServerCard) => {
-			return a.type - b.type || (b.color ? b.color : 10) - (a.color ? a.color : 10) || b.power - a.power || Utils.hashCode(a.class) - Utils.hashCode(b.class)
-		})
+		const cards = Utils.sortCards(this.cardHand.allCards)
 		const selectedCard = cards[0]
 
 		const validRows = this.game.board.rows.filter(row => row.owner === this).reverse()
@@ -142,6 +145,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {
 		const playerInGame = new ServerBotPlayerInGame(game, player)
+		playerInGame.leader = CardLibrary.instantiateByInstance(game, cardDeck.leader)
 		playerInGame.cardDeck.instantiateFrom(cardDeck)
 		return playerInGame
 	}

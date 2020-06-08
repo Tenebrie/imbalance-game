@@ -21,9 +21,19 @@ export default class ServerDeck implements CardDeck {
 		this.spellCards = spellCards
 	}
 
+	public get allCards() {
+		return this.unitCards.slice().concat(this.spellCards)
+	}
+
+	public getCardIndex(card: ServerCard): number {
+		const unitIndex = this.unitCards.indexOf(card)
+		const spellIndex = this.spellCards.indexOf(card)
+		return unitIndex >= 0 ? unitIndex : spellIndex
+	}
+
 	public instantiateFrom(deck: ServerTemplateCardDeck): void {
-		deck.unitCards.forEach(card => this.addUnit(CardLibrary.instantiate(card)))
-		deck.spellCards.forEach(card => this.addSpell(CardLibrary.instantiate(card)))
+		deck.unitCards.forEach(card => this.addUnit(CardLibrary.instantiateByInstance(this.game, card)))
+		deck.spellCards.forEach(card => this.addSpell(CardLibrary.instantiateByInstance(this.game, card)))
 	}
 
 	public addUnit(card: ServerCard): void {
@@ -48,6 +58,14 @@ export default class ServerDeck implements CardDeck {
 
 	public findCardById(cardId: string): ServerCard | null {
 		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
+	}
+
+	public discardUnit(cardToDiscard: ServerCard): void {
+		this.unitCards = this.unitCards.filter(card => card !== cardToDiscard)
+	}
+
+	public discardSpell(cardToDiscard: ServerCard): void {
+		this.spellCards = this.spellCards.filter(card => card !== cardToDiscard)
 	}
 
 	public shuffle(): void {

@@ -23,6 +23,7 @@ import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 import AnimationHandlers from './AnimationHandlers'
 import BuffMessage from '@shared/models/network/BuffMessage'
 import ClientBuff from '@/Pixi/models/ClientBuff'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -115,15 +116,26 @@ const handlers: {[ index: string ]: any } = {
 		Core.board.rows[data.index].setOwner(Core.getPlayerOrNull(data.ownerId))
 	},
 
-	'update/board/card/power': (data: CardMessage) => {
-		const cardOnBoard = Core.board.findUnitById(data.id)
-		if (!cardOnBoard) { return }
+	'update/card/power': (data: CardMessage) => {
+		const card = Core.game.findRenderedCardById(data.id)
+		if (!card) { return }
 		if (typeof (data.power) === 'undefined') {
 			console.warn(`Trying to set card ${data.id} power to undefined value!`)
 			return
 		}
 
-		cardOnBoard.setPower(data.power)
+		card.setPower(data.power)
+	},
+
+	'update/card/armor': (data: CardMessage) => {
+		const card = Core.game.findRenderedCardById(data.id)
+		if (!card) { return }
+		if (typeof (data.armor) === 'undefined') {
+			console.warn(`Trying to set card ${data.id} power to undefined value!`)
+			return
+		}
+
+		card.setArmor(data.armor)
 	},
 
 	'update/player/self/turnStarted': (data: void) => {
@@ -341,6 +353,12 @@ const handlers: {[ index: string ]: any } = {
 
 		const animationDuration = handler(data, data.params)
 		Core.mainHandler.triggerAnimation(animationDuration)
+	},
+
+	'system/requestInit': (data: void) => {
+		if (Core.isReady) {
+			OutgoingMessageHandlers.sendInit()
+		}
 	},
 
 	'command/disconnect': (data: void) => {

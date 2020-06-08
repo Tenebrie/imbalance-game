@@ -23,6 +23,7 @@ import axios from 'axios'
 import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
 import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
+import ErrorCode from '@shared/enums/ErrorCode'
 
 export default Vue.extend({
 	components: {
@@ -51,14 +52,24 @@ export default Vue.extend({
 			this.games = response.data.data as GameMessage[]
 		},
 
-		async onCreateMultiPlayer(): Promise<void> {
-			const response = await axios.post('/api/games')
+		async onCreateSinglePlayer(): Promise<void> {
+			if (!store.state.selectedDeckId) {
+				this.$noty.error('Select a deck first!')
+				return
+			}
+
+			const response = await axios.post('/api/games', { mode: 'sp_ai' })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage.id)
 		},
 
-		async onCreateSinglePlayer(): Promise<void> {
-			const response = await axios.post('/api/games', { mode: 'sp_ai' })
+		async onCreateMultiPlayer(): Promise<void> {
+			if (!store.state.selectedDeckId) {
+				this.$noty.error('Select a deck first!')
+				return
+			}
+
+			const response = await axios.post('/api/games', { mode: 'mp_custom' })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage.id)
 		},
@@ -74,12 +85,7 @@ export default Vue.extend({
 	@import "../../styles/generic";
 
 	.the-game-list-container {
-		flex: 2;
-		margin: 32px 16px 32px 32px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-direction: column;
+
 
 		.the-game-list {
 			width: calc(100% - 64px);
@@ -89,7 +95,6 @@ export default Vue.extend({
 			align-items: center;
 			justify-content: space-between;
 			flex-direction: column;
-			background: $COLOR-BACKGROUND-TRANSPARENT;
 
 			button {
 				font-size: 1.2em;

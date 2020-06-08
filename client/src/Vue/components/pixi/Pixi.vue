@@ -25,7 +25,7 @@ export default Vue.extend({
 		window.addEventListener('resize', this.onWindowResize)
 
 		const container = (this.$refs.game as HTMLElement)
-		Core.init(this.selectedGameId, container)
+		Core.init(this.selectedGameId, store.state.selectedDeckId, container)
 	},
 
 	beforeDestroy(): void {

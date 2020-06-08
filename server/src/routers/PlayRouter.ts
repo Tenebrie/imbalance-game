@@ -5,6 +5,7 @@ import IncomingMessageHandlers from '../game/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '../game/handlers/OutgoingMessageHandlers'
 import ConnectionEstablishedHandler from '../game/handlers/ConnectionEstablishedHandler'
 import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
+import EditorDeckDatabase from '../database/EditorDeckDatabase'
 
 const router = express.Router()
 
@@ -29,10 +30,24 @@ router.ws('/:gameId', async (ws, req) => {
 		return
 	}
 
+	const deckId = req.query.deckId
+	if (!deckId) {
+		OutgoingMessageHandlers.notifyAboutMissingDeckId(ws)
+		ws.close()
+		return
+	}
+
+	const deck = await EditorDeckDatabase.selectEditorDeckByIdForPlayer(deckId, currentPlayer)
+	if (!deck) {
+		OutgoingMessageHandlers.notifyAboutInvalidDeck(ws)
+		ws.close()
+		return
+	}
+
 	currentPlayer.disconnect()
 	currentPlayer.registerConnection(ws)
 
-	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerTemplateCardDeck.defaultDeck(currentGame))
+	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerTemplateCardDeck.fromEditorDeck(currentGame, deck))
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)
@@ -49,6 +64,8 @@ router.ws('/:gameId', async (ws, req) => {
 		currentGame.removePlayer(currentPlayer)
 		ConnectionEstablishedHandler.onPlayerDisconnected(currentGame, currentPlayer)
 	})
+
+	OutgoingMessageHandlers.notifyAboutInitRequested(currentPlayer)
 })
 
 router.use((err, req, res, next) => {

@@ -69,6 +69,7 @@ export default class ServerBuff implements Buff {
 	onIntensityChanged(delta: number): void { return }
 	onTurnStarted(): void { return }
 	onTurnEnded(): void { return }
+	onRoundStarted(): void { return }
 	onRoundEnded(): void { return }
 	onBeforeBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
 	onAfterBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
@@ -83,6 +84,7 @@ export default class ServerBuff implements Buff {
 	getDamageTaken(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return damage }
 	getDamageReduction(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return 0 }
 	getUnitCostOverride(baseCost: number): number { return baseCost }
+	getSpellCostOverride(baseCost: number): number { return baseCost }
 
 	definePlayValidTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	defineValidOrderTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }

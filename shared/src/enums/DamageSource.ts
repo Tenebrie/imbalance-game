@@ -1,6 +1,5 @@
 enum DamageSource {
-	UNIT,
-	SPELL,
+	CARD,
 	UNIVERSE
 }
 

@@ -5,12 +5,13 @@ import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ServerAnimation from '../../../models/ServerAnimation'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
 
 export default class HeroRider1Famine extends ServerCard {
 	damage = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE)
+		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.EXPERIMENTAL)
 		this.basePower = 10
 		this.baseAttack = 4
 		this.dynamicTextVariables = {
