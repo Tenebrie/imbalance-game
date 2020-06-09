@@ -175,6 +175,9 @@
 	"card.name.unitVolatileCrystal": "Volatile Crystal",
 	"card.description.unitVolatileCrystal": "*Deathrattle:*\nDeal {damage} Damage to adjacent units on the same row.",
 
+	"card.name.unitUndercityGambler": "Undercity Gambler",
+	"card.description.unitUndercityGambler": "*Deploy:*\nChoose a non-temporary card in your unit hand to return into your deck.<p>*Draw* a card and give it +{bonusPower} Power.",
+
 	"card.name.tokenPlayerDeck": "Your deck",
 	"card.description.tokenPlayerDeck": "Choose your own deck",
 

@@ -60,6 +60,7 @@ export default class TextureAtlas {
 				'components/stat-attack-range',
 				'components/stat-health-armor',
 				'components/overlay-move',
+				'components/overlay-disabled',
 				'board/board-row'
 			]
 

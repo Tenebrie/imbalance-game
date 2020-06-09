@@ -37,11 +37,11 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public addUnit(card: ServerCard): void {
-		this.unitCards.push(card)
+		this.unitCards.unshift(card)
 	}
 
 	public addSpell(card: ServerCard): void {
-		this.spellCards.push(card)
+		this.spellCards.unshift(card)
 	}
 
 	public drawTopUnit(): ServerCard {

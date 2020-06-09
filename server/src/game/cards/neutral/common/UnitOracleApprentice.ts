@@ -32,12 +32,12 @@ export default class UnitOracleApprentice extends ServerCard {
 			builder
 				.require(TargetType.CARD_IN_UNIT_DECK)
 				.inPlayersDeck()
-				.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition === 0))
+				.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition === args.targetCard.owner.cardDeck.unitCards.length - 1))
 		} else if (this.deckToLook === 'opponent') {
 			builder
 				.require(TargetType.CARD_IN_UNIT_DECK)
 				.inOpponentsDeck()
-				.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition === 0))
+				.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition === args.targetCard.owner.cardDeck.unitCards.length - 1))
 		}
 
 		return builder

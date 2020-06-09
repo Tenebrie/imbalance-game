@@ -25,7 +25,7 @@ export default class HeroLightOracle extends ServerCard {
 			.singleTarget()
 			.require(TargetType.CARD_IN_UNIT_DECK)
 			.inPlayersDeck()
-			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition < this.cardsToSee))
+			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition >= args.targetCard.owner.cardDeck.unitCards.length - this.cardsToSee))
 	}
 
 	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {

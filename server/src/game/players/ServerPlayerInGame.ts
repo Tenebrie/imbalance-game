@@ -61,8 +61,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		return this.unitMana >= card.unitCost && !!card.getValidPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
 	}
 
-	public drawUnitCards(count: number): void {
+	public drawUnitCards(count: number): ServerCard[] {
 		const actualCount = Math.min(count, Constants.UNIT_HAND_SIZE_LIMIT - this.cardHand.unitCards.length)
+		const drawnCards = []
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawTopUnit()
 			if (!card) {
@@ -71,11 +72,14 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			}
 
 			this.cardHand.onUnitDrawn(card)
+			drawnCards.push(card)
 		}
+		return drawnCards
 	}
 
-	public drawSpellCards(count: number): void {
+	public drawSpellCards(count: number): ServerCard[] {
 		const actualCount = Math.min(count, Constants.SPELL_HAND_SIZE_LIMIT - this.cardHand.spellCards.length)
+		const drawnCards = []
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawTopSpell()
 			if (!card) {
@@ -84,7 +88,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			}
 
 			this.cardHand.onSpellDrawn(card)
+			drawnCards.push(card)
 		}
+		return drawnCards
 	}
 
 	public summonCardFromUnitDeck(card: ServerCard): void {
