@@ -44,6 +44,9 @@ export default class ServerGameCardPlay {
 		const card = ownedCard.card
 		const owner = ownedCard.owner
 
+		/* Remember played card */
+		owner.addToPlayedCards(card)
+
 		/* Announce card to opponent */
 		card.reveal(owner, owner.opponent)
 		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardPlay(card))

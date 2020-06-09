@@ -104,6 +104,9 @@
 	"card.name.heroCultistOfAreddon": "Cultist of Areddon",
 	"card.description.heroCultistOfAreddon": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",
 
+	"card.name.heroAdventuringGuildMaster": "Adventuring Guild Master",
+	"card.description.heroAdventuringGuildMaster": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
+
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
 

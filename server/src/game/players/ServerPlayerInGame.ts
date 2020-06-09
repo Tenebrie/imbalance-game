@@ -29,6 +29,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	spellMana: number
 	turnEnded: boolean
 	roundEnded: boolean
+	cardsPlayed: ServerCard[]
 
 	constructor(game: ServerGame, player: ServerPlayer) {
 		this.game = game
@@ -41,6 +42,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.spellMana = 0
 		this.turnEnded = false
 		this.roundEnded = false
+		this.cardsPlayed = []
 	}
 
 	public get targetRequired(): boolean {
@@ -164,8 +166,13 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutSpellManaChange(this, delta)
 	}
 
+	public addToPlayedCards(card: ServerCard): void {
+		this.cardsPlayed.push(card)
+	}
+
 	public startRound(): void {
 		this.roundEnded = false
+		this.cardsPlayed = []
 
 		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
 			runCardEventHandler(() => unit.card.onRoundStarted())
