@@ -1,5 +1,5 @@
 <template>
-	<div class="the-card-library-item" @click="onClick">
+	<div class="the-card-library-item" @click="onClick" :class="customClass">
 	</div>
 </template>
 
@@ -7,11 +7,13 @@
 import Vue from 'vue'
 import store from '@/Vue/store'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
+import Card from '@shared/models/Card'
+import Utils from '@/utils/Utils'
 
 export default Vue.extend({
 	props: {
 		card: {
-			type: Object,
+			type: Object as () => Card,
 			required: true
 		}
 	},
@@ -30,6 +32,21 @@ export default Vue.extend({
 	computed: {
 		renderedCard(): RenderedEditorCard | null {
 			return store.state.editor.renderedCards.find(renderedCard => renderedCard.id === this.card.id)
+		},
+
+		isDisabled(): boolean {
+			const currentDeckId = store.state.editor.currentDeckId
+			if (!currentDeckId) {
+				return false
+			}
+
+			return !Utils.canAddCardToDeck(currentDeckId, this.card)
+		},
+
+		customClass(): {} {
+			return {
+				disabled: this.isDisabled
+			}
 		}
 	},
 
@@ -60,6 +77,11 @@ export default Vue.extend({
 		height: calc(584px / 2);
 		cursor: pointer;
 		user-select: none;
+
+		&.disabled {
+			filter: brightness(50%);
+			cursor: default;
+		}
 
 		/deep/
 		img {

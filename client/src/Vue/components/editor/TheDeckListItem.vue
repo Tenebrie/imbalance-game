@@ -12,7 +12,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import Localization from '@/Pixi/Localization'
 import DeckListMode from '@/utils/DeckListMode'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 

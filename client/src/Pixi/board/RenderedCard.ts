@@ -17,6 +17,7 @@ import CardColor from '@shared/enums/CardColor'
 import ClientBuffContainer from '@/Pixi/models/ClientBuffContainer'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
+import store from '@/Vue/store'
 
 export default class RenderedCard extends Card {
 	public buffs: ClientBuffContainer
@@ -273,11 +274,12 @@ export default class RenderedCard extends Card {
 			text.position.x = Math.round(text.position.x)
 			text.position.y = Math.round(text.position.y)
 
-			let renderScale = Settings.generalFontRenderScale
+			const isInGame = store.getters.gameStateModule.isInGame
+			let renderScale = isInGame ? Settings.generalGameFontRenderScale : Settings.generalEditorFontRenderScale
 			if (Core.input && this === Core.input.inspectedCard) {
-				renderScale = 1.2
+				renderScale *= 1.2
 			} else if (text === this.cardDescriptionText) {
-				renderScale = Settings.descriptionFontRenderScale
+				renderScale = isInGame ? Settings.descriptionGameFontRenderScale : Settings.descriptionEditorFontRenderScale
 			}
 
 			text.scale.set(1 / renderScale)

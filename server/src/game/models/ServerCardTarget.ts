@@ -59,8 +59,32 @@ export default class ServerCardTarget implements CardTarget {
 		return order
 	}
 
+	public static cardTargetCardInUnitHand(targetMode: TargetMode, sourceCard: ServerCard, targetCard: ServerCard, targetLabel = ''): ServerCardTarget {
+		const order = new ServerCardTarget(targetMode, TargetType.CARD_IN_UNIT_HAND)
+		order.sourceCard = sourceCard
+		order.targetCard = targetCard
+		order.targetLabel = targetLabel
+		return order
+	}
+
+	public static cardTargetCardInSpellHand(targetMode: TargetMode, sourceCard: ServerCard, targetCard: ServerCard, targetLabel = ''): ServerCardTarget {
+		const order = new ServerCardTarget(targetMode, TargetType.CARD_IN_SPELL_HAND)
+		order.sourceCard = sourceCard
+		order.targetCard = targetCard
+		order.targetLabel = targetLabel
+		return order
+	}
+
 	public static cardTargetCardInUnitDeck(targetMode: TargetMode, sourceCard: ServerCard, targetCard: ServerCard, targetLabel = ''): ServerCardTarget {
 		const order = new ServerCardTarget(targetMode, TargetType.CARD_IN_UNIT_DECK)
+		order.sourceCard = sourceCard
+		order.targetCard = targetCard
+		order.targetLabel = targetLabel
+		return order
+	}
+
+	public static cardTargetCardInSpellDeck(targetMode: TargetMode, sourceCard: ServerCard, targetCard: ServerCard, targetLabel = ''): ServerCardTarget {
+		const order = new ServerCardTarget(targetMode, TargetType.CARD_IN_SPELL_DECK)
 		order.sourceCard = sourceCard
 		order.targetCard = targetCard
 		order.targetLabel = targetLabel

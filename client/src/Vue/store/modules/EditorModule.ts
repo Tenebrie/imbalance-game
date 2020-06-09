@@ -9,7 +9,6 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import Utils from '@/utils/Utils'
 import CardColor from '@shared/enums/CardColor'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
-import RichTextVariables from '@shared/models/RichTextVariables'
 import Constants from '@shared/Constants'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 
@@ -17,6 +16,7 @@ const editorModule = createModule({
 	namespaced: true,
 	state: {
 		decks: [] as PopulatedEditorDeck[],
+		currentDeckId: null as string | null,
 		cardLibrary: [] as Card[],
 		renderQueue: [] as CardMessage[],
 		renderedCards: [] as RenderedEditorCard[],
@@ -25,6 +25,10 @@ const editorModule = createModule({
 	mutations: {
 		setDecks(state, decks: PopulatedEditorDeck[]): void {
 			state.decks = decks.slice()
+		},
+
+		setCurrentDeckId(state, deckId: string | null): void {
+			state.currentDeckId = deckId
 		},
 
 		setCardLibrary(state, cardLibrary: Card[]): void {
@@ -50,6 +54,17 @@ const editorModule = createModule({
 	},
 
 	getters: {
+		deck: (state) => (id: string): PopulatedEditorDeck | null => {
+			return state.decks.find(deck => deck.id === id) || null
+		},
+
+		currentDeck: (state): PopulatedEditorDeck | null => {
+			if (state.currentDeckId === null) {
+				return null
+			}
+			return state.decks.find(deck => deck.id === state.currentDeckId)
+		},
+
 		cardsOfColor: (state) => (payload: { deckId: string, color: CardColor }): number => {
 			const deck = state.decks.find(deck => deck.id === payload.deckId) as PopulatedEditorDeck
 			if (!deck) {
@@ -133,17 +148,11 @@ const editorModule = createModule({
 				return
 			}
 
-			const cardOfColorCount = getters.cardsOfColor({ deckId: payload.deckId, color: payload.cardToAdd.color })
-			if (cardOfColorCount >= Utils.getMaxCardCountForColor(payload.cardToAdd.color)) {
+			if (!Utils.canAddCardToDeck(payload.deckId, payload.cardToAdd)) {
 				return
 			}
 
-			const maxCount = payload.cardToAdd.color === CardColor.BRONZE ? 3 : 1
 			const cardToModify = deckToModify.cards.find(card => card.class === payload.cardToAdd.class)
-			if (cardToModify && cardToModify.count >= maxCount) {
-				return
-			}
-
 			if (!cardToModify) {
 				const cardToAdd: PopulatedEditorCard = {
 					...payload.cardToAdd,

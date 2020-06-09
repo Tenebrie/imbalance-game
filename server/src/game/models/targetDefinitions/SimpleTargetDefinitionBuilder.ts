@@ -109,6 +109,16 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		return this
 	}
 
+	public inPlayersHand(): SimpleTargetDefinitionBuilder {
+		this.builder.inPlayersHand(this.targetMode)
+		return this
+	}
+
+	public inOpponentsHand(): SimpleTargetDefinitionBuilder {
+		this.builder.inOpponentsHand(this.targetMode)
+		return this
+	}
+
 	public inPlayersDeck(): SimpleTargetDefinitionBuilder {
 		this.builder.inPlayersDeck(this.targetMode)
 		return this

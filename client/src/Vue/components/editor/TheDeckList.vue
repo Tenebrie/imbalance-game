@@ -3,19 +3,27 @@
 		<div class="deck-list">
 			<div class="deck-list-segment" v-if="arcaneDecks.length > 0">
 				<the-editor-deck-list-separator :faction="CardFaction.ARCANE" />
-				<the-editor-deck-list-item v-for="deck in arcaneDecks" :key="deck.id" :deck="deck" />
+				<keep-alive>
+					<the-editor-deck-list-item v-for="deck in arcaneDecks" :key="deck.id" :deck="deck" />
+				</keep-alive>
 			</div>
 			<div class="deck-list-segment" v-if="neutralDecks.length > 0">
 				<the-editor-deck-list-separator :faction="CardFaction.NEUTRAL" />
-				<the-editor-deck-list-item v-for="deck in neutralDecks" :key="deck.id" :deck="deck" />
+				<keep-alive>
+					<the-editor-deck-list-item v-for="deck in neutralDecks" :key="deck.id" :deck="deck" />
+				</keep-alive>
 			</div>
 			<div class="deck-list-segment" v-if="experimentalDecks.length > 0">
 				<the-editor-deck-list-separator :faction="CardFaction.EXPERIMENTAL" />
-				<the-editor-deck-list-item v-for="deck in experimentalDecks" :key="deck.id" :deck="deck" />
+				<keep-alive>
+					<the-editor-deck-list-item v-for="deck in experimentalDecks" :key="deck.id" :deck="deck" />
+				</keep-alive>
 			</div>
 			<div class="deck-list-segment" v-if="unfinishedDecks.length > 0 && mode === DeckListMode.EDIT">
 				<the-editor-deck-list-separator-unfinished />
-				<the-editor-deck-list-item v-for="deck in unfinishedDecks" :key="deck.id" :deck="deck" />
+				<keep-alive>
+					<the-editor-deck-list-item v-for="deck in unfinishedDecks" :key="deck.id" :deck="deck" />
+				</keep-alive>
 			</div>
 		</div>
 		<div class="buttons" v-if="mode === DeckListMode.EDIT">

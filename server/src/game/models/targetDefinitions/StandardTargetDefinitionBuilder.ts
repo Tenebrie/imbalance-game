@@ -163,6 +163,22 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		})
 	}
 
+	public inPlayersHand(targetMode: TargetMode): StandardTargetDefinitionBuilder {
+		return this.validate(targetMode, TargetType.CARD_IN_UNIT_HAND, args => {
+			return args.targetCard.owner === args.thisCardOwner
+		}).validate(targetMode, TargetType.CARD_IN_SPELL_HAND, args => {
+			return args.targetCard.owner === args.thisCardOwner
+		})
+	}
+
+	public inOpponentsHand(targetMode: TargetMode): StandardTargetDefinitionBuilder {
+		return this.validate(targetMode, TargetType.CARD_IN_UNIT_HAND, args => {
+			return args.targetCard.owner !== args.thisCardOwner
+		}).validate(targetMode, TargetType.CARD_IN_SPELL_HAND, args => {
+			return args.targetCard.owner !== args.thisCardOwner
+		})
+	}
+
 	public inPlayersDeck(targetMode: TargetMode): StandardTargetDefinitionBuilder {
 		return this.validate(targetMode, TargetType.CARD_IN_UNIT_DECK, args => {
 			return args.targetCard.owner === args.thisCardOwner

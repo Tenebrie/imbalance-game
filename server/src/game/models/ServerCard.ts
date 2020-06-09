@@ -176,8 +176,14 @@ export default class ServerCard extends Card {
 			targets = this.getValidRowTargets(targetMode, targetDefinition, args, previousTargets)
 		} else if (targetType === TargetType.CARD_IN_LIBRARY) {
 			targets = this.getValidCardLibraryTargets(targetMode, targetDefinition, args, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_UNIT_HAND) {
+			targets = this.getValidUnitHandTargets(targetMode, targetDefinition, args, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_SPELL_HAND) {
+			targets = this.getValidSpellHandTargets(targetMode, targetDefinition, args, previousTargets)
 		} else if (targetType === TargetType.CARD_IN_UNIT_DECK) {
 			targets = this.getValidUnitDeckTargets(targetMode, targetDefinition, args, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_SPELL_DECK) {
+			targets = this.getValidSpellDeckTargets(targetMode, targetDefinition, args, previousTargets)
 		}
 
 		if (args.thisCardOwner) {
@@ -244,6 +250,30 @@ export default class ServerCard extends Card {
 			.map(targetCard => ServerCardTarget.cardTargetCardInLibrary(targetMode, this, targetCard, cardTargetLabel))
 	}
 
+	private getValidUnitHandTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_HAND, targetDefinition, previousTargets)) {
+			return []
+		}
+
+		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_UNIT_HAND)
+		return this.game.players.map(player => player.cardHand.unitCards)
+			.reduce((accumulator, cards) => accumulator.concat(cards))
+			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_UNIT_HAND, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
+			.map(targetCard => ServerCardTarget.cardTargetCardInUnitHand(targetMode, this, targetCard, cardTargetLabel))
+	}
+
+	private getValidSpellHandTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_SPELL_HAND, targetDefinition, previousTargets)) {
+			return []
+		}
+
+		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_SPELL_HAND)
+		return this.game.players.map(player => player.cardHand.spellCards)
+			.reduce((accumulator, cards) => accumulator.concat(cards))
+			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_SPELL_HAND, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
+			.map(targetCard => ServerCardTarget.cardTargetCardInSpellHand(targetMode, this, targetCard, cardTargetLabel))
+	}
+
 	private getValidUnitDeckTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_DECK, targetDefinition, previousTargets)) {
 			return []
@@ -254,6 +284,18 @@ export default class ServerCard extends Card {
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_UNIT_DECK, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
 			.map(targetCard => ServerCardTarget.cardTargetCardInUnitDeck(targetMode, this, targetCard, cardTargetLabel))
+	}
+
+	private getValidSpellDeckTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_SPELL_DECK, targetDefinition, previousTargets)) {
+			return []
+		}
+
+		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_SPELL_DECK)
+		return this.game.players.map(player => player.cardDeck.spellCards)
+			.reduce((accumulator, cards) => accumulator.concat(cards))
+			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_SPELL_DECK, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
+			.map(targetCard => ServerCardTarget.cardTargetCardInSpellDeck(targetMode, this, targetCard, cardTargetLabel))
 	}
 
 	public getPlayValidTargetDefinition(): TargetDefinition {
