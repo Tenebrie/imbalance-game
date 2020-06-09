@@ -23,7 +23,6 @@ import axios from 'axios'
 import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
 import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
-import ErrorCode from '@shared/enums/ErrorCode'
 
 export default Vue.extend({
 	components: {

@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import CardMessage from '@shared/models/network/CardMessage'
 import CardColor from '@shared/enums/CardColor'
+import Noty from 'noty'
 
 export default class TextureAtlas {
 	static isReady = false
@@ -77,6 +78,10 @@ export default class TextureAtlas {
 			const texturesToLoad = components.concat(cardTextures).concat(leaderIcons)
 
 			TextureAtlas.texturesToLoad = texturesToLoad.length
+
+			const n = new Noty({ text: 'Hi!', progressBar: true })
+			n.setTimeout(3000)
+			n.show()
 
 			const t0 = performance.now()
 			texturesToLoad.forEach(fileName => {
