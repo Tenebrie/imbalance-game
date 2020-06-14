@@ -81,8 +81,14 @@ export default class TextureAtlas {
 
 			TextureAtlas.texturesToLoad = texturesToLoad.length
 
-			const loadingNotification = Notifications.info('Loading assets...')
+			const loadingNotification = Notifications.info('')
 			loadingNotification.setTimeout(0)
+
+			const updateNotificationText = (loaded: number, total: number) => {
+				loadingNotification.setText(`Loading assets (${loaded}/${total})...`)
+			}
+
+			updateNotificationText(0, TextureAtlas.texturesToLoad)
 
 			const t0 = performance.now()
 			texturesToLoad.forEach(fileName => {
@@ -91,10 +97,11 @@ export default class TextureAtlas {
 				const onLoaded = () => {
 					TextureAtlas.texturesLoaded += 1
 					TextureAtlas.textures[fileName.toLowerCase()] = texture
+					updateNotificationText(TextureAtlas.texturesLoaded, TextureAtlas.texturesToLoad)
 
 					if (TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad) {
 						loadingNotification.close()
-						Notifications.success(`Loaded ${TextureAtlas.texturesLoaded} assets!`)
+						// Notifications.success(`Loaded ${TextureAtlas.texturesLoaded} assets!`)
 						const t1 = performance.now()
 						console.info(`TextureAtlas initialized. Resolving ${TextureAtlas.resolveFunctions.length} promise(s). Initialization took ${Math.round(t1 - t0) / 1000} seconds`)
 						TextureAtlas.onReady()

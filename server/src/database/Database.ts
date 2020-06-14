@@ -7,23 +7,12 @@ export default class Database {
 	public static autonomousMode = false
 
 	public static async init() {
-		let databaseUrl = process.env.DATABASE_URL
-		if (!databaseUrl) {
-			console.info('Looking for database URL')
-			try {
-				const { stdout } = await Bash.exec('heroku pg:credentials:url HEROKU_POSTGRESQL_BRONZE --app notgwent')
-				databaseUrl = stdout.split('\n').find(line => line.includes('postgres://')).trim()
-			} catch (e) {
-				console.error('[WARN] Unable to find database URL. Operating in autonomous mode')
-				Database.autonomousMode = true
-				return
-			}
-		}
+		const databaseUrl = process.env.DATABASE_URL
 
 		console.info('Connecting to database at "' + databaseUrl + '"')
 		const client = new Client({
 			connectionString: databaseUrl,
-			ssl: true,
+			ssl: !databaseUrl.includes('dev-db'),
 		})
 		try {
 			await client.connect()
@@ -41,7 +30,7 @@ export default class Database {
 			console.info('Database client ready')
 			this.client = client
 		} catch (e) {
-			console.error('[WARN] Unable to connect to database. Operating in autonomous mode')
+			console.error('[WARN] Unable to connect to database. Operating in autonomous mode.', e)
 			Database.autonomousMode = true
 		}
 	}
