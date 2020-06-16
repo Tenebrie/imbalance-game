@@ -1,10 +1,8 @@
-import Bash from '../services/BashService'
 import pgMigrate from 'node-pg-migrate'
 import { Client, QueryResult } from 'pg'
 
 export default class Database {
 	private static client: Client
-	public static autonomousMode = false
 
 	public static async init() {
 		const databaseUrl = process.env.DATABASE_URL
@@ -30,8 +28,7 @@ export default class Database {
 			console.info('Database client ready')
 			this.client = client
 		} catch (e) {
-			console.error('[WARN] Unable to connect to database. Operating in autonomous mode.', e)
-			Database.autonomousMode = true
+			console.error('[ERROR] Unable to connect to database!', e)
 		}
 	}
 

@@ -1,10 +1,8 @@
-import uuidv4 from 'uuid/v4'
 import ServerPlayer from './ServerPlayer'
 import HashManager from '../../services/HashService'
 import TokenManager from '../../services/TokenService'
 import { JwtTokenScope } from '../../enums/JwtTokenScope'
 import PlayerDatabase from '../../database/PlayerDatabase'
-import Database from '../../database/Database'
 
 export default class PlayerLibrary {
 	players: Array<ServerPlayer>
@@ -19,15 +17,6 @@ export default class PlayerLibrary {
 	}
 
 	async login(username: string, password: string): Promise<ServerPlayer> {
-		if (Database.autonomousMode) {
-			const mockPlayer: PlayerDatabaseEntry = {
-				id: uuidv4(),
-				username: username,
-				passwordHash: await HashManager.hashPassword(password)
-			}
-			return this.cachePlayer(mockPlayer)
-		}
-
 		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByUsername(username)
 
 		if (!playerDatabaseEntry) {
