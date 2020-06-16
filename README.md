@@ -14,7 +14,7 @@ Both environments go to sleep after long periods of inactivity, and may take up 
 
 ## Development
 The development environment is dockerized, so you'll need to have a working Docker installation on your machine to
-run the dev environment.
+run the dev environment. It is tested in WSL2 and on Mac OS, but any valid installation should work fine.
 
 Please keep in mind that `client/src`, `server/src` and `shared/src` folders are shared between the host machine and
 the Docker containers. If the code fails to compile, check that the shared folders are mounted correctly (a common 
