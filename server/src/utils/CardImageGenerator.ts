@@ -52,7 +52,7 @@ class CardImageGenerator {
 			for (let i = 0; i < orbCount; i++) {
 				ctx.lineTo(seededRandom() * width, seededRandom() * height)
 			}
-			ctx.fill() 
+			ctx.fill()
 
 			ctx.fillStyle = '#FFFFFF80'
 			ctx.font = '24px Roboto'
