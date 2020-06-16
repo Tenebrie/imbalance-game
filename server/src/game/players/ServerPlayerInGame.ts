@@ -29,6 +29,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	spellMana: number
 	turnEnded: boolean
 	roundEnded: boolean
+	cardsPlayed: ServerCard[]
 
 	constructor(game: ServerGame, player: ServerPlayer) {
 		this.game = game
@@ -41,6 +42,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.spellMana = 0
 		this.turnEnded = false
 		this.roundEnded = false
+		this.cardsPlayed = []
 	}
 
 	public get targetRequired(): boolean {
@@ -61,8 +63,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		return this.unitMana >= card.unitCost && !!card.getValidPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
 	}
 
-	public drawUnitCards(count: number): void {
+	public drawUnitCards(count: number): ServerCard[] {
 		const actualCount = Math.min(count, Constants.UNIT_HAND_SIZE_LIMIT - this.cardHand.unitCards.length)
+		const drawnCards = []
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawTopUnit()
 			if (!card) {
@@ -71,11 +74,14 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			}
 
 			this.cardHand.onUnitDrawn(card)
+			drawnCards.push(card)
 		}
+		return drawnCards
 	}
 
-	public drawSpellCards(count: number): void {
+	public drawSpellCards(count: number): ServerCard[] {
 		const actualCount = Math.min(count, Constants.SPELL_HAND_SIZE_LIMIT - this.cardHand.spellCards.length)
+		const drawnCards = []
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawTopSpell()
 			if (!card) {
@@ -84,7 +90,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			}
 
 			this.cardHand.onSpellDrawn(card)
+			drawnCards.push(card)
 		}
+		return drawnCards
 	}
 
 	public summonCardFromUnitDeck(card: ServerCard): void {
@@ -100,6 +108,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public createCardFromLibraryByPrototype(prototype: Function): void {
 		const card = CardLibrary.instantiateByConstructor(this.game, prototype)
+		this.createCard(card)
+	}
+
+	public createCardFromLibraryByClass(cardClass: string): void {
+		const card = CardLibrary.instantiateByClass(this.game, cardClass)
 		this.createCard(card)
 	}
 
@@ -153,8 +166,13 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutSpellManaChange(this, delta)
 	}
 
+	public addToPlayedCards(card: ServerCard): void {
+		this.cardsPlayed.push(card)
+	}
+
 	public startRound(): void {
 		this.roundEnded = false
+		this.cardsPlayed = []
 
 		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
 			runCardEventHandler(() => unit.card.onRoundStarted())

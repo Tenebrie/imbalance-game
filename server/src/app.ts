@@ -101,4 +101,4 @@ global.playerLibrary = new PlayerLibrary()
 /* Generate placeholder images */
 cardImageGenerator.generatePlaceholderImages()
 
-app.listen((process.env.PORT || 3000))
+app.listen(process.env.PORT || 3000)

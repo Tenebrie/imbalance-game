@@ -17,19 +17,19 @@ export default class GameLibrary {
 		return game
 	}
 
-	public destroyGame(game: ServerGame): void {
-		console.info(`Destroying game ${game.id}`)
+	public destroyGame(game: ServerGame, reason: string): void {
+		console.info(`Destroying game ${game.id}. Reason: ${reason}`)
 
 		game.players.forEach(playerInGame => OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player))
 		this.games.splice(this.games.indexOf(game), 1)
 	}
 
-	public destroyOwnedGame(id: string, player: ServerPlayer): void {
+	public destroyOwnedGame(id: string, player: ServerPlayer, reason: string): void {
 		if (!id) { throw 'Missing game ID' }
 
 		const game = this.games.find(game => game.id === id)
 		if (!game || game.owner.id !== player.id) { throw 'Invalid game ID' }
 
-		this.destroyGame(game)
+		this.destroyGame(game, reason)
 	}
 }

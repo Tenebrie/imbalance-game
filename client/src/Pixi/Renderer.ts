@@ -269,6 +269,7 @@ export default class Renderer {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
+		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
 
 		const windowFraction = isOpponent ? this.OPPONENT_HAND_WINDOW_FRACTION : this.PLAYER_HAND_WINDOW_FRACTION
 		const cardHeight = this.getScreenHeight() * windowFraction
@@ -304,8 +305,9 @@ export default class Renderer {
 			targetPosition.x -= this.getScreenWidth() * 0.2 / 2 + 125
 		}
 
-		const isPlayable = Core.player.isTurnActive && !!Core.input.playableCards.find(target => target.sourceCard === renderedCard)
-		sprite.tint = isPlayable ? 0xFFFFFF : 0x777777
+		const isPlayable = Core.player.isTurnActive && !Core.input.forcedTargetingMode && !!Core.input.playableCards.find(target => target.sourceCard === renderedCard)
+		const isForcedTarget = Core.input.forcedTargetingMode && !!Core.input.forcedTargetingMode.validTargets.find(forcedCard => forcedCard.targetCard && forcedCard.targetCard.id === renderedCard.id)
+		renderedCard.cardDisabledOverlay.visible = !isPlayable && !isForcedTarget
 
 		if (renderedCard.type === CardType.SPELL) {
 			renderedCard.powerText.style.fill = 0x0000FF
@@ -328,11 +330,16 @@ export default class Renderer {
 		hitboxSprite.position.set(targetPosition.x + sprite.position.x, targetPosition.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
+
+		disabledOverlaySprite.position.set(sprite.position.x, sprite.position.y)
+		disabledOverlaySprite.scale = sprite.scale
+		disabledOverlaySprite.zIndex = container.zIndex + 1
 	}
 
 	public renderHoveredCardInHand(renderedCard: RenderedCard): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
+		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
 
 		const cardHeight = this.getScreenHeight() * this.HOVERED_HAND_WINDOW_FRACTION
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
@@ -341,11 +348,16 @@ export default class Renderer {
 		container.position.y = this.getScreenHeight() - cardHeight * 0.5
 
 		container.zIndex = HOVERED_CARD_ZINDEX
+
+		disabledOverlaySprite.position.set(sprite.position.x, sprite.position.y)
+		disabledOverlaySprite.scale = sprite.scale
+		disabledOverlaySprite.zIndex = container.zIndex + 1
 	}
 
 	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): CardDisplayMode {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
+		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
 		const hoveredRow = Core.board.rows.find(row => row.isHovered())
 
 		let cardDisplayMode: CardDisplayMode
@@ -361,6 +373,11 @@ export default class Renderer {
 		container.position.x = mousePosition.x
 		container.position.y = mousePosition.y
 		container.zIndex = GRABBED_CARD_ZINDEX
+
+		disabledOverlaySprite.position.set(sprite.position.x, sprite.position.y)
+		disabledOverlaySprite.scale = sprite.scale
+		disabledOverlaySprite.zIndex = container.zIndex + 1
+
 		return cardDisplayMode
 	}
 
@@ -464,6 +481,7 @@ export default class Renderer {
 		const container = unit.card.coreContainer
 		const sprite = unit.card.sprite
 		const hitboxSprite = unit.card.hitboxSprite
+		const disabledOverlaySprite = unit.card.cardDisabledOverlay
 
 		const screenCenterX = this.getScreenWidth() / 2
 		const distanceToCenter = unitIndex - unitCount / 2 + 0.5
@@ -489,6 +507,7 @@ export default class Renderer {
 		sprite.height = cardHeight
 
 		sprite.tint = this.getUnitTint(unit)
+		disabledOverlaySprite.visible = false
 
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
@@ -603,6 +622,8 @@ export default class Renderer {
 
 		const container = announcedCard.coreContainer
 		const sprite = announcedCard.sprite
+		const disabledOverlaySprite = announcedCard.cardDisabledOverlay
+
 		sprite.alpha = 1
 		sprite.tint = 0xFFFFFF
 		sprite.scale.set(Settings.superSamplingLevel)
@@ -628,6 +649,8 @@ export default class Renderer {
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
+
+		disabledOverlaySprite.visible = false
 	}
 
 	public renderResolveStack(): void {
@@ -770,6 +793,7 @@ export default class Renderer {
 
 		const container = inspectedCard.coreContainer
 		const sprite = inspectedCard.sprite
+		const disabledOverlaySprite = inspectedCard.cardDisabledOverlay
 
 		sprite.tint = 0xFFFFFF
 		sprite.scale.set(Settings.superSamplingLevel)
@@ -788,6 +812,8 @@ export default class Renderer {
 		inspectedCard.armorText.style.fill = 0xFFFFFF
 
 		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
+
+		disabledOverlaySprite.visible = false
 	}
 
 	public destroy(): void {

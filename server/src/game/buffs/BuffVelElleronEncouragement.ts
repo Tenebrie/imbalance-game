@@ -1,6 +1,6 @@
 import ServerBuff from '../models/ServerBuff'
 import BuffStackType from '@shared/enums/BuffStackType'
-import SpellAnEncouragement from '../cards/arcane/VelElleron/SpellAnEncouragement'
+import SpellAnEncouragement from '../cards/arcane/leaders/VelElleron/SpellAnEncouragement'
 import BuffStrength from './BuffStrength'
 
 export default class BuffVelElleronEncouragement extends ServerBuff {

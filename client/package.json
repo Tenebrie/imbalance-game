@@ -4,7 +4,7 @@
 	"license": "GNU GPL v3.0",
 	"private": true,
 	"scripts": {
-		"serve": "node_modules/.bin/vue-cli-service serve",
+		"serve": "CHOKIDAR_USEPOLLING=true node_modules/.bin/vue-cli-service serve",
 		"build": "node_modules/.bin/vue-cli-service build",
 		"lint": "node_modules/.bin/vue-cli-service lint"
 	},
@@ -22,6 +22,8 @@
 	},
 	"devDependencies": {
 		"@babel/plugin-syntax-dynamic-import": "^7.8.3",
+		"@typescript-eslint/eslint-plugin": "^2.29.0",
+		"@typescript-eslint/parser": "^2.29.0",
 		"@vue/cli-plugin-babel": "^4.1.0",
 		"@vue/cli-plugin-eslint": "^4.1.0",
 		"@vue/cli-plugin-router": "^4.1.0",
@@ -31,15 +33,14 @@
 		"@vue/eslint-config-standard": "^5.1.2",
 		"@vue/eslint-config-typescript": "^5.0.2",
 		"eslint": "^6.8.0",
-		"eslint-plugin-vue": "^6.2.2",
 		"eslint-plugin-import": "^2.20.2",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-promise": "^4.2.1",
 		"eslint-plugin-standard": "^4.0.1",
-		"@typescript-eslint/eslint-plugin": "^2.29.0",
-		"@typescript-eslint/parser": "^2.29.0",
+		"eslint-plugin-vue": "^6.2.2",
 		"node-sass": "^4.13.1",
 		"sass-loader": "^8.0.0",
+		"simple-progress-webpack-plugin": "^1.1.2",
 		"typescript": "~3.5.3",
 		"vue-template-compiler": "^2.6.10"
 	},

@@ -80,6 +80,11 @@ export default Vue.extend({
 
 	created(): void {
 		store.dispatch.editor.loadDecks()
+		store.commit.editor.setCurrentDeckId(this.deckId)
+	},
+
+	beforeDestroy(): void {
+		store.commit.editor.setCurrentDeckId(null)
 	},
 
 	methods: {

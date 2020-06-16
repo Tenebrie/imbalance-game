@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import Settings from '@/Pixi/Settings'
 import RichText from '@/Pixi/render/RichText'
@@ -17,6 +17,7 @@ import CardColor from '@shared/enums/CardColor'
 import ClientBuffContainer from '@/Pixi/models/ClientBuffContainer'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
+import store from '@/Vue/store'
 
 export default class RenderedCard extends Card {
 	public buffs: ClientBuffContainer
@@ -37,6 +38,8 @@ export default class RenderedCard extends Card {
 	private readonly armorTextZoomBackground: PIXI.Sprite
 	private readonly manacostTextBackground: PIXI.Sprite
 	private readonly descriptionTextBackground: DescriptionTextBackground
+
+	public readonly cardDisabledOverlay: PIXI.Sprite
 
 	public readonly powerText: ScalingText
 	public readonly armorText: ScalingText
@@ -136,7 +139,6 @@ export default class RenderedCard extends Card {
 		this.cardModeContainer.addChild(this.manacostTextBackground)
 		internalContainer.addChild(this.cardModeContainer)
 
-
 		/* Unit mode container */
 		this.unitModeContainer = new PIXI.Container()
 		this.unitModeContainer.addChild(this.unitModeAttributes)
@@ -160,6 +162,12 @@ export default class RenderedCard extends Card {
 		this.cardTribeTexts.forEach(cardTribeText => { this.cardModeTextContainer.addChild(cardTribeText) })
 		this.cardModeTextContainer.addChild(this.cardDescriptionText)
 		this.coreContainer.addChild(this.cardModeTextContainer)
+
+		/* Card disabled overlay */
+		this.cardDisabledOverlay = new PIXI.Sprite(TextureAtlas.getTexture('components/overlay-disabled'))
+		this.cardDisabledOverlay.visible = false
+		this.cardDisabledOverlay.anchor = new PIXI.Point(0.5, 0.5)
+		this.coreContainer.addChild(this.cardDisabledOverlay)
 	}
 
 	public getDescriptionTextVariables(): RichTextVariables {
@@ -273,11 +281,12 @@ export default class RenderedCard extends Card {
 			text.position.x = Math.round(text.position.x)
 			text.position.y = Math.round(text.position.y)
 
-			let renderScale = Settings.generalFontRenderScale
+			const isInGame = store.getters.gameStateModule.isInGame
+			let renderScale = isInGame ? Settings.generalGameFontRenderScale : Settings.generalEditorFontRenderScale
 			if (Core.input && this === Core.input.inspectedCard) {
-				renderScale = 1.2
+				renderScale *= 1.2
 			} else if (text === this.cardDescriptionText) {
-				renderScale = Settings.descriptionFontRenderScale
+				renderScale = isInGame ? Settings.descriptionGameFontRenderScale : Settings.descriptionEditorFontRenderScale
 			}
 
 			text.scale.set(1 / renderScale)
@@ -383,6 +392,7 @@ export default class RenderedCard extends Card {
 			this.armorText.visible = false
 			this.armorTextZoomBackground.visible = false
 		}
+		this.cardDisabledOverlay.visible = false
 	}
 
 	public switchToHiddenMode(): void {

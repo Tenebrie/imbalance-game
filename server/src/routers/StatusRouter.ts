@@ -9,7 +9,7 @@ router.get('/', (req, res, next) => {
 		activePlayerCount: games.reduce((acc, game) => acc + game.players.length, 0)
 	}
 
-	res.render('index', params)
+	res.render('status', params)
 })
 
 module.exports = router

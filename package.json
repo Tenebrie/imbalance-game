@@ -11,7 +11,7 @@
 				"postinstall": "subpkg install",
 				"build": "cd client && npm run build && cd .. && rm -rf server/client && mkdir server/client && cp -r client/dist/* server/client && cd server && npm run build",
 				"start": "(cd server && npm run start)",
-				"serve": "(cd client && npm run serve) & sleep 8s && (cd server && rm -r dist && npm run serve)",
+				"serve": "(cd client && npm run serve) & sleep 9s && (cd server && rm -r dist && npm run serve)",
 				"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)"
 		},
 		"dependencies": {
@@ -31,7 +31,6 @@
 				"@types/sequelize": "^4.28.6",
 				"@types/uuid": "^3.4.5",
 				"@typescript-eslint/eslint-plugin": "^2.3.3",
-				"@typescript-eslint/parser": "^2.3.3",
 				"@vue/cli-plugin-babel": "^4.1.0",
 				"@vue/cli-plugin-eslint": "^4.1.0",
 				"@vue/cli-plugin-router": "^4.1.0",
@@ -51,6 +50,7 @@
 				"flow-bin": "^0.109.0",
 				"node-sass": "^4.12.0",
 				"nodemon": "^1.19.3",
+				"noty": "^3.2.0-beta",
 				"pgmigrate": "^5.0.0",
 				"sass-loader": "^8.0.0",
 				"typescript": "~3.5.3",
@@ -66,6 +66,7 @@
 		},
 		"homepage": "https://github.com/Kos94ok/notgwent-game#readme",
 		"devDependencies": {
+				"@typescript-eslint/parser": "^2.34.0",
 				"babel-plugin-module-resolver": "^4.0.0",
 				"subpackage": "^1.1.0"
 		}

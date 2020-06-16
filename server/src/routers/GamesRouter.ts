@@ -35,7 +35,7 @@ router.post('/', (req, res: Response, next) => {
 
 router.delete('/:gameId', (req, res: Response, next) => {
 	const gameLibrary = global.gameLibrary
-	gameLibrary.destroyOwnedGame(req.params.gameId, req['player'])
+	gameLibrary.destroyOwnedGame(req.params.gameId, req['player'], 'Owner command')
 
 	res.json({ success: true })
 })

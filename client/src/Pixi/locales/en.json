@@ -31,15 +31,15 @@
 
 	"card.name.leaderVelElleron": "Vel'Elleron",
 	"card.title.leaderVelElleron": "The Battlemage",
-	"card.description.leaderVelElleron": "*Arcane Leader*<p>*Hero Powers:*\nSteel Spark, An Encouragement, Fireball, Fiery Entrance",
+	"card.description.leaderVelElleron": "*Arcane Leader*<p>*Leader Powers:*\nSteel Spark, An Encouragement, Fireball, Fiery Entrance",
 
 	"card.name.leaderVelRaminea": "Vel'Raminea",
 	"card.title.leaderVelRaminea": "The Flameweaver",
-	"card.description.leaderVelRaminea": "*Arcane Leader*<p>*Hero Powers:*\nSpell 1, Spell 2, Spell 3, Spell 4",
+	"card.description.leaderVelRaminea": "*Arcane Leader*<p>*Leader Powers:*\nSpell 1, Spell 2, Spell 3, Spell 4",
 
 	"card.name.leaderNighterie": "Nighterie",
 	"card.title.leaderNighterie": "The Keeper of Shadows",
-	"card.description.leaderNighterie": "*Arcane Leader*<p>*Hero Powers:*\nShadow Spark, Nightmare Drain, Crystal Barrage, Army of Shadows",
+	"card.description.leaderNighterie": "*Arcane Leader*<p>*Leader Powers:*\nShadow Spark, Nightmare Drain, Crystal Barrage, Army of Shadows",
 
 	"card.name.heroZamarath": "Zamarath",
 	"card.title.heroZamarath": "The Protector",
@@ -73,6 +73,10 @@
 	"card.title.heroTroviar": "The Watcher",
 	"card.description.heroTroviar": "Whenever another unit takes damage, gain {powerGained} Power.",
 
+	"card.name.heroMetrearte": "Metrearte",
+	"card.title.heroMetrearte": "The Copycat",
+	"card.description.heroMetrearte": "*Deploy:*\nChoose a Leader Power from any Arcane Leader.\nGain a copy of it.",
+
 	"card.name.heroSparklingSpirit": "Sparkling Spirit",
 	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
 
@@ -96,6 +100,12 @@
 
 	"card.name.heroCrystalWarrior": "Crystal Warrior",
 	"card.description.heroCrystalWarrior": "*Deploy:*\nTrigger *Deathrattle* effect of a friendly crystal.",
+
+	"card.name.heroCultistOfAreddon": "Cultist of Areddon",
+	"card.description.heroCultistOfAreddon": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",
+
+	"card.name.heroAdventuringGuildMaster": "Adventuring Guild Master",
+	"card.description.heroAdventuringGuildMaster": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
 
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
@@ -127,10 +137,6 @@
 	"card.name.unitPriestessOfAedine": "Priestess of Aedine",
 	"card.description.unitPriestessOfAedine": "*Deploy:*\nRestore {healing} Power to a damaged allied unit",
 	"card.target.unitPriestessOfAedine.heal": "Restore {healing} Power",
-
-	"card.name.unitTreeOfLife": "Long-Branched Tree",
-	"card.description.unitTreeOfLife": "When Long-Branched Tree enters the battlefield, *Stages of Apocalypse* start to happen every turn.<p>*Stage 1:* Babies are now born dead<p>*Stage 2:* Blizzard is not shit anymore<p>*Stage 3:* Coop games become popular again<p>*Stage 4:* Everyone dies",
-	"card.target.unitTreeOfLife.support.row": "Restore power",
 
 	"card.name.unitSupplyWagon": "Supply Wagon",
 	"card.description.unitSupplyWagon": "*Support:*\nGrant an allied unit an extra move action this turn only",
@@ -172,6 +178,9 @@
 	"card.name.unitVolatileCrystal": "Volatile Crystal",
 	"card.description.unitVolatileCrystal": "*Deathrattle:*\nDeal {damage} Damage to adjacent units on the same row.",
 
+	"card.name.unitUndercityGambler": "Undercity Gambler",
+	"card.description.unitUndercityGambler": "*Deploy:*\nChoose a non-temporary card in your unit hand to return into your deck.<p>*Draw* a card and give it +{bonusPower} Power.",
+
 	"card.name.tokenPlayerDeck": "Your deck",
 	"card.description.tokenPlayerDeck": "Choose your own deck",
 
@@ -197,33 +206,33 @@
 	"card.description.spellGatheringStorm": "Deal {damage} Damage to {targetCount} enemy units.<p><i>Number of targets increases by {targetsPerStorm} for every {name} in your Graveyard.</i>",
 
 	"card.name.spellSteelSpark": "Steel Spark",
-	"card.description.spellSteelSpark": "Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
+	"card.description.spellSteelSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
 
 	"card.name.spellAnEncouragement": "An Encouragement",
-	"card.description.spellAnEncouragement": "Choose an allied unit.\nNext turn, it gains {bonusPower} Power.",
+	"card.description.spellAnEncouragement": "*Leader Power*<p>Choose an allied unit.\nNext turn, it gains {bonusPower} Power.",
 
 	"card.name.spellFireball": "Fireball",
-	"card.description.spellFireball": "Deal {damage} Damage to an enemy unit.<p>Deal {areaDamage} Damage to all adjacent units.",
+	"card.description.spellFireball": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Deal {areaDamage} Damage to all adjacent units.",
 
 	"card.name.spellFieryEntrance": "Fiery Entrance",
-	"card.description.spellFieryEntrance": "*Summon* a top card from your deck.",
+	"card.description.spellFieryEntrance": "*Leader Power*<p>*Summon* a top card from your deck.",
 
 	"card.name.spellShadowSpark": "Shadow Spark",
-	"card.description.spellShadowSpark": "Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",
+	"card.description.spellShadowSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",
 
 	"card.name.spellNightmareDrain": "Nightmare Drain",
-	"card.description.spellNightmareDrain": "Choose a damaged unit.<p>Spawn a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
+	"card.description.spellNightmareDrain": "*Leader Power*<p>Choose a damaged unit.<p>Spawn a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
 
 	"card.name.spellCrystalBarrage": "Crystal Barrage",
-	"card.description.spellCrystalBarrage": "Choose an enemy row.<p>Spawn *Volatile Crystals* around every unit on this row.",
+	"card.description.spellCrystalBarrage": "*Leader Power*<p>Choose an enemy row.<p>Spawn *Volatile Crystals* around every unit on this row.",
 
 	"card.name.spellShadowArmy": "Army of Shadows",
-	"card.description.spellShadowArmy": "*Create* a copy of an allied unit.\n<if showPowerThreshold>If it has {powerThreshold} Power or less, repeat this effect.<p><i>This value decreases by {thresholdDecrease} after every copy.</i></if>",
+	"card.description.spellShadowArmy": "*Leader Power*<p>*Create* a copy of an allied unit.\n<if showPowerThreshold>If it has {powerThreshold} Power or less, repeat this effect.<p><i>This value decreases by {thresholdDecrease} after every copy.</i></if>",
 	"card.target.spellShadowArmy": "Create a copy\n<i>Power threshold is ({powerThreshold})</i>",
 
 	"card.name.spellFlamingSpark": "Flaming Spark",
-	"card.description.spellFlamingSpark": "Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
+	"card.description.spellFlamingSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
 
 	"card.name.spellFlameweave": "Flameweave",
-	"card.description.spellFlameweave": "Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
+	"card.description.spellFlameweave": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
 }

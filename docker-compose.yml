@@ -1,0 +1,45 @@
+version: "3"
+services:
+  client:
+    build:
+      context: ./
+      dockerfile: ./client/Dockerfile
+    working_dir: /app/client
+    depends_on:
+      - server
+    ports:
+      - 8080:8080
+    command: bash -c "npm run serve"
+    volumes:
+      - ./client/src:/app/client/src
+      - ./shared/src:/app/shared/src
+    tty: true
+  server:
+    build:
+      context: ./
+      dockerfile: ./server/Dockerfile
+    working_dir: /app/server
+    environment:
+      DATABASE_URL: postgres://docker:docker@dev-db:5432/db
+      DATABASE_SSL: "false"
+    depends_on:
+      - dev-db
+    ports:
+      - 3000:3000
+    command: npm run serve
+    volumes:
+      - ./server/src:/app/server/src
+      - ./shared/src:/app/shared/src
+    tty: true
+  dev-db:
+    image: postgres:11.5-alpine
+    environment:
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: db
+    ports:
+      - 5432:5432
+    volumes:
+      - dev-database:/var/lib/postgresql/data/
+volumes:
+  dev-database:

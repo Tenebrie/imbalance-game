@@ -3,6 +3,8 @@ import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import CardMessage from '@shared/models/network/CardMessage'
 import CardColor from '@shared/enums/CardColor'
+import Noty from 'noty'
+import Notifications from '@/utils/Notifications'
 
 export default class TextureAtlas {
 	static isReady = false
@@ -58,6 +60,7 @@ export default class TextureAtlas {
 				'components/stat-attack-range',
 				'components/stat-health-armor',
 				'components/overlay-move',
+				'components/overlay-disabled',
 				'board/board-row'
 			]
 
@@ -78,6 +81,15 @@ export default class TextureAtlas {
 
 			TextureAtlas.texturesToLoad = texturesToLoad.length
 
+			const loadingNotification = Notifications.info('')
+			loadingNotification.setTimeout(0)
+
+			const updateNotificationText = (loaded: number, total: number) => {
+				loadingNotification.setText(`Loading assets (${loaded}/${total})...`)
+			}
+
+			updateNotificationText(0, TextureAtlas.texturesToLoad)
+
 			const t0 = performance.now()
 			texturesToLoad.forEach(fileName => {
 				const texture = PIXI.Texture.from(`/assets/${fileName}.png`)
@@ -85,8 +97,11 @@ export default class TextureAtlas {
 				const onLoaded = () => {
 					TextureAtlas.texturesLoaded += 1
 					TextureAtlas.textures[fileName.toLowerCase()] = texture
+					updateNotificationText(TextureAtlas.texturesLoaded, TextureAtlas.texturesToLoad)
 
 					if (TextureAtlas.texturesLoaded >= TextureAtlas.texturesToLoad) {
+						loadingNotification.close()
+						// Notifications.success(`Loaded ${TextureAtlas.texturesLoaded} assets!`)
 						const t1 = performance.now()
 						console.info(`TextureAtlas initialized. Resolving ${TextureAtlas.resolveFunctions.length} promise(s). Initialization took ${Math.round(t1 - t0) / 1000} seconds`)
 						TextureAtlas.onReady()

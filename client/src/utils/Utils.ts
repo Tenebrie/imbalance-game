@@ -6,6 +6,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import Card from '@shared/models/Card'
 import CardColor from '@shared/enums/CardColor'
 import Constants from '@shared/Constants'
+import store from '@/Vue/store'
 
 export default {
 	getFont(text: string) {
@@ -121,5 +122,21 @@ export default {
 			default:
 				return 0
 		}
+	},
+
+	canAddCardToDeck(deckId: string, cardToAdd: Card | CardMessage): boolean {
+		const cardOfColorCount = store.getters.editor.cardsOfColor({ deckId: deckId, color: cardToAdd.color })
+		if (cardOfColorCount >= this.getMaxCardCountForColor(cardToAdd.color)) {
+			return false
+		}
+
+		const deckToModify = store.getters.editor.deck(deckId)
+		if (!deckToModify) {
+			return false
+		}
+
+		const maxCount = cardToAdd.color === CardColor.BRONZE ? 3 : 1
+		const cardToModify = deckToModify.cards.find(card => card.class === cardToAdd.class)
+		return !cardToModify || cardToModify.count < maxCount
 	}
 }
