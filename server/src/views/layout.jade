@@ -1,8 +1,10 @@
 doctype html
+block variables
 
 html
 	head
-		title= title
-		link(rel='stylesheet', href='/stylesheets/style.css')
-	body(style="display: none")
+		title=pageTitle
+		if (stylesheet)
+			link(rel='stylesheet', href=`/stylesheets/${stylesheet}`)
+	body(style=`${hideBody ? 'display: none' : ''}`)
 		block content

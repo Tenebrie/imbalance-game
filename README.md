@@ -1,6 +1,6 @@
-# Not Gwent
+# NotGwent
 
-"*Not Gwent*" (temporary name) is a work-in-progress open-source trading card game. See *Rules*
+"*NotGwent*" (temporary name) is a work-in-progress open-source trading card game. See *Rules*
 section in the game for more information about the ruleset. 
 
 ## Try the game

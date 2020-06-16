@@ -1,6 +1,9 @@
 extends layout
 
+block variables
+	- const pageTitle = 'NotGwent Server status'
+
 block content
-	h1 Status page for notgwent-server
+	h1 Status page for NotGwent Server
 	p Active games: #{activeGameCount}
 	p Total players: #{activePlayerCount}

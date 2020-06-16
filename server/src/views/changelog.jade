@@ -1,12 +1,19 @@
 extends layout
 
+block variables
+	- const pageTitle = 'NotGwent changelog'
+	- const stylesheet = 'style.css'
+	- const hideBody = true
+
 block content
 	.version-description
-		h1.version 1.6
-		span.date ??.06.2020
-		h2 Content updates
+		h1.version 1.6 - Development update
+		span.date 16.06.2020
+		h2 Technical updates
 		ul
-			li Added a number of new cards
+			li Move development environment to Docker
+			li Remove dependency on Heroku database for development
+			li Added simple README
 
 	.version-description
 		h1.version 1.5 - Deckbuilding update
