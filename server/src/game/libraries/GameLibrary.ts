@@ -2,7 +2,7 @@ import ServerGame from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 
-export default class GameLibrary {
+class GameLibrary {
 	games: ServerGame[]
 
 	constructor() {
@@ -33,3 +33,5 @@ export default class GameLibrary {
 		this.destroyGame(game, reason)
 	}
 }
+
+export default new GameLibrary()

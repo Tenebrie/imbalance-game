@@ -7,10 +7,7 @@ import { cardImageGenerator } from './utils/CardImageGenerator'
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
 
-import Database from './database/Database'
-import CardLibrary from './game/libraries/CardLibrary'
-import GameLibrary from './game/libraries/GameLibrary'
-import PlayerLibrary from './game/players/PlayerLibrary'
+
 
 const app = express()
 expressWs(app)
@@ -91,12 +88,6 @@ app.use((err, req, res, next) => {
 		error: req.app.get('env') === 'development' ? err : {}
 	})
 })
-
-/* Global state */
-Database.init()
-global.cardLibrary = new CardLibrary()
-global.gameLibrary = new GameLibrary()
-global.playerLibrary = new PlayerLibrary()
 
 /* Generate placeholder images */
 cardImageGenerator.generatePlaceholderImages()

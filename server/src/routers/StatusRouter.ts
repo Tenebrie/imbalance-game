@@ -1,8 +1,9 @@
 import express from 'express'
+import GameLibrary from '../game/libraries/GameLibrary'
 const router = express.Router()
 
 router.get('/', (req, res, next) => {
-	const games = global.gameLibrary.games
+	const games = GameLibrary.games
 
 	const params = {
 		activeGameCount: games.length,

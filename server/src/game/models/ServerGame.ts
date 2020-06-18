@@ -267,9 +267,8 @@ export default class ServerGame extends Game {
 	}
 
 	public forceShutdown(reason: string): void {
-		const gameLibrary: GameLibrary = global.gameLibrary
 		this.players.forEach(playerInGame => playerInGame.player.disconnect())
-		gameLibrary.destroyGame(this, reason)
+		GameLibrary.destroyGame(this, reason)
 	}
 
 	public findCardById(cardId: string): ServerCard | null {

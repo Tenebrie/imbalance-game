@@ -6,12 +6,13 @@ import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequest
 import ServerGame from '../game/models/ServerGame'
 import ServerBotPlayer from '../game/utils/ServerBotPlayer'
 import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
+import GameLibrary from '../game/libraries/GameLibrary'
 const router = express.Router()
 
 router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req, res: Response, next) => {
-	const library: ServerGame[] = global.gameLibrary.games
+	const library: ServerGame[] = GameLibrary.games
 	const filteredLibrary = library.filter(game => !game.isStarted)
 	const gameMessages = filteredLibrary.map(game => ServerGameMessage.fromServerGame(game))
 	res.json({ data: gameMessages })
@@ -22,9 +23,7 @@ router.post('/', (req, res: Response, next) => {
 	const gameName = req.body['name'] || ''
 	const gameMode = req.body['mode'] || ''
 
-	const gameLibrary = global.gameLibrary
-
-	const game = gameLibrary.createOwnedGame(player, gameName.trim())
+	const game = GameLibrary.createOwnedGame(player, gameName.trim())
 
 	if (gameMode === 'sp_ai') {
 		game.addPlayer(new ServerBotPlayer(), ServerTemplateCardDeck.botDeck(game))
@@ -34,8 +33,7 @@ router.post('/', (req, res: Response, next) => {
 })
 
 router.delete('/:gameId', (req, res: Response, next) => {
-	const gameLibrary = global.gameLibrary
-	gameLibrary.destroyOwnedGame(req.params.gameId, req['player'], 'Owner command')
+	GameLibrary.destroyOwnedGame(req.params.gameId, req['player'], 'Owner command')
 
 	res.json({ success: true })
 })

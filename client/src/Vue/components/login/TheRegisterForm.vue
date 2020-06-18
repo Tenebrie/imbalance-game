@@ -1,11 +1,11 @@
 <template>
-	<div class="the-register-form">
+	<div ref="rootRef" class="the-register-form">
 		<div class="form">
-			<input id="tenebrieUsername" ref="username" type="text" placeholder="Username" v-model="username" autofocus />
-			<input id="tenebriePassword" ref="password" type="password" placeholder="Password" v-model="password" />
-			<input id="tenebrieConfirmPassword" ref="confirmPassword" type="password" placeholder="Confirm password" v-model="confirmPassword" />
+			<input id="tenebrieUsername" type="text" placeholder="Username" v-model="username" autofocus />
+			<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
+			<input id="tenebrieConfirmPassword" type="password" placeholder="Confirm password" v-model="confirmPassword" />
 			<div class="status">
-				<span ref="message"> </span>
+				<span ref="messageRef"> </span>
 			</div>
 			<div class="submit">
 				<button @click="onRegister" class="primary">Create account</button>
@@ -18,75 +18,93 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import axios from 'axios'
+import router from '@/Vue/router'
+import {onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 
-export default Vue.extend({
-	data: () => ({
-		username: '' as string,
-		password: '' as string,
-		confirmPassword: '' as string
-	}),
+function TheRegisterForm() {
+	const rootRef = ref<HTMLDivElement>()
+	const messageRef = ref<HTMLSpanElement>()
 
-	watch: {
-		username() {
-			this.clearMessage()
-		},
-		password() {
-			this.clearMessage()
-		},
-		confirmPassword() {
-			this.clearMessage()
-		}
-	},
+	const username = ref<string>('')
+	const password = ref<string>('')
+	const confirmPassword = ref<string>('')
 
-	mounted(): void {
-		this.$el.addEventListener('keydown', this.onKeyDown)
-	},
+	onMounted(() => {
+		rootRef.value.addEventListener('keydown', onKeyDown)
+	})
 
-	beforeDestroy(): void {
-		this.$el.removeEventListener('keydown', this.onKeyDown)
-	},
+	onBeforeUnmount(() => {
+		rootRef.value.removeEventListener('keydown', onKeyDown)
+	})
 
-	methods: {
-		onKeyDown(event: KeyboardEvent): void {
-			if (event.key === 'Enter') {
-				this.onRegister()
-			}
-		},
+	watch(() => [username.value, password.value, confirmPassword.value], () => {
+		clearMessage()
+	})
 
-		async onRegister(): Promise<void> {
-			const username = this.username
-			const password = this.password
-			const confirmPassword = this.confirmPassword
-			const messageElement = this.$refs.message as Element
-
-			if (password !== confirmPassword) {
-				this.setMessage('Passwords do not match')
-				return
-			}
-
-			this.clearMessage()
-			try {
-				await axios.post('/api/register', { username, password })
-				await axios.post('/api/login', { username, password })
-				await this.$router.push({ name: 'home' })
-			} catch (error) {
-				this.setMessage('Registration failed. This user probably exists.')
-			}
-		},
-
-		setMessage(message: string): void {
-			const messageElement = this.$refs.message as Element
-			messageElement.innerHTML = message
-		},
-
-		clearMessage(): void {
-			const messageElement = this.$refs.message as Element
-			messageElement.innerHTML = ''
+	const onKeyDown = (event: KeyboardEvent): void => {
+		if (event.key === 'Enter') {
+			onRegister()
 		}
 	}
-})
+
+	const onRegister = async(): Promise<void> => {
+		if (password.value !== confirmPassword.value) {
+			setMessage('Passwords do not match')
+			return
+		}
+
+		clearMessage()
+		const credentials = {
+			username: username.value,
+			password: password.value
+		}
+		try {
+			await axios.post('/api/register', credentials)
+			await axios.post('/api/login', credentials)
+			await router.push({ name: 'home' })
+		} catch (error) {
+			console.error(error)
+			setMessage(getErrorMessage(error.response.status))
+		}
+	}
+
+	const getErrorMessage = (statusCode: number): string => {
+		switch (statusCode) {
+			case 400:
+				return 'Missing username or password'
+			case 409:
+				return 'User already exists'
+			case 500:
+				return 'Internal server error'
+			case 503:
+				return 'Database client is not yet ready'
+			default:
+				return `Unknown error with code ${statusCode}`
+		}
+	}
+
+	const setMessage = (message: string): void => {
+		messageRef.value.innerHTML = message
+	}
+
+	const clearMessage = (): void => {
+		messageRef.value.innerHTML = ''
+	}
+
+	return {
+		rootRef,
+		messageRef,
+		username,
+		password,
+		confirmPassword,
+		onRegister
+	}
+}
+
+export default {
+	setup: TheRegisterForm
+}
 </script>
 
 <style scoped lang="scss">
@@ -110,10 +128,6 @@ export default Vue.extend({
 
 			.submit {
 				margin: 8px 0;
-			}
-
-			.to-login {
-
 			}
 		}
 

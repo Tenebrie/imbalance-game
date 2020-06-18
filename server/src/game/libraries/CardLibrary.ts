@@ -4,8 +4,8 @@ import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import VoidGame from '../utils/VoidGame'
 
-export default class GameLibrary {
-	static cards: ServerCard[]
+class CardLibrary {
+	cards: ServerCard[]
 
 	constructor() {
 		const cardPrototypes = []
@@ -15,7 +15,7 @@ export default class GameLibrary {
 		cardModules.forEach(file => cardPrototypes.push(require(file).default))
 		console.info(`Loaded ${cardPrototypes.length} card definitions`)
 
-		GameLibrary.cards = cardPrototypes.map(prototype => {
+		this.cards = cardPrototypes.map(prototype => {
 			const referenceInstance = new prototype(VoidGame.get())
 			const className = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 			referenceInstance.class = className
@@ -29,27 +29,27 @@ export default class GameLibrary {
 		})
 	}
 
-	public static get collectibleCards(): ServerCard[] {
+	public get collectibleCards(): ServerCard[] {
 		const cards = this.cards as ServerCard[]
 		return cards.filter(card => card.isCollectible())
 	}
 
-	public static findPrototypeById(id: string): ServerCard | null {
+	public findPrototypeById(id: string): ServerCard | null {
 		return this.cards.find(card => card.id === id)
 	}
 
-	public static instantiateByInstance(game: ServerGame, card: ServerCard): ServerCard {
+	public instantiateByInstance(game: ServerGame, card: ServerCard): ServerCard {
 		const cardClass = card.constructor.name.substr(0, 1).toLowerCase() + card.constructor.name.substr(1)
 		return this.instantiateByClass(game, cardClass)
 	}
 
-	public static instantiateByConstructor(game: ServerGame, prototype: Function): ServerCard {
+	public instantiateByConstructor(game: ServerGame, prototype: Function): ServerCard {
 		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 		return this.instantiateByClass(game, cardClass)
 	}
 
-	public static instantiateByClass(game: ServerGame, cardClass: string): ServerCard {
-		const reference = GameLibrary.cards.find(card => {
+	public instantiateByClass(game: ServerGame, cardClass: string): ServerCard {
+		const reference = this.cards.find(card => {
 			return card.class === cardClass
 		})
 		if (!reference) {
@@ -75,3 +75,5 @@ export default class GameLibrary {
 		return clone
 	}
 }
+
+export default new CardLibrary()
