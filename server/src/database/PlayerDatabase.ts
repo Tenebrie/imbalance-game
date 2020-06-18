@@ -1,10 +1,11 @@
 import uuidv4 from 'uuid/v4'
 import Database from './Database'
+import PlayerDatabaseEntry from '../types/PlayerDatabaseEntry'
 
 export default {
-	async insertPlayer(username: string, passwordHash: string): Promise<boolean> {
+	async insertPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {
 		const playerId = uuidv4()
-		const query = `INSERT INTO players (id, username, "passwordHash") VALUES('${playerId}', '${username}', '${passwordHash}');`
+		const query = `INSERT INTO players (id, email, username, "passwordHash") VALUES('${playerId}', '${email}', '${username}', '${passwordHash}');`
 		return Database.insertRow(query)
 	},
 
@@ -13,8 +14,8 @@ export default {
 		return Database.selectRow<PlayerDatabaseEntry>(query)
 	},
 
-	async selectPlayerByUsername(username: string): Promise<PlayerDatabaseEntry> {
-		const query = `SELECT * FROM players WHERE username = '${username}'`
+	async selectPlayerByEmail(email: string): Promise<PlayerDatabaseEntry> {
+		const query = `SELECT * FROM players WHERE email = '${email}'`
 		return Database.selectRow<PlayerDatabaseEntry>(query)
 	}
 }

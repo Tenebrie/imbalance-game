@@ -1,7 +1,7 @@
 <template>
 	<div ref="rootRef" class="the-login-form">
 		<div class="form">
-			<input id="tenebrieUsername" type="text" placeholder="Username" v-model="username" autofocus />
+			<input id="tenebrieEmail" type="text" placeholder="Email" v-model="email" autofocus />
 			<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
 			<div class="status">
 				<span ref="messageRef"> </span>
@@ -27,10 +27,10 @@ function TheLoginForm() {
 	const rootRef = ref<HTMLDivElement>()
 	const messageRef = ref<HTMLSpanElement>()
 
-	const username = ref<string>('')
+	const email = ref<string>('')
 	const password = ref<string>('')
 
-	watch(() => [username.value, password.value], () => {
+	watch(() => [email.value, password.value], () => {
 		clearMessage()
 	})
 
@@ -51,7 +51,7 @@ function TheLoginForm() {
 	const onLogin = async(): Promise<void> => {
 		clearMessage()
 		const credentials = {
-			username: username.value,
+			email: email.value,
 			password: password.value
 		}
 		try {
@@ -66,7 +66,7 @@ function TheLoginForm() {
 
 	const getErrorMessage = (statusCode: number, errorCode: number): string => {
 		if (statusCode === 400 && errorCode === UserLoginErrorCode.MISSING_CREDENTIALS) {
-			return 'Missing username or password'
+			return 'Missing email or password'
 		} else if (statusCode === 400 && errorCode === UserLoginErrorCode.INVALID_CREDENTIALS) {
 			return 'Username and password do not match'
 		}
@@ -84,7 +84,7 @@ function TheLoginForm() {
 		rootRef,
 		messageRef,
 		onLogin,
-		username,
+		email,
 		password
 	}
 }
@@ -96,30 +96,10 @@ export default {
 
 <style scoped lang="scss">
 	@import "src/Vue/styles/generic";
+	@import "LoginFormShared";
 
 	.the-login-form {
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		.form {
-			width: 16em;
-			padding: 32px;
-			background: rgba(white, 0.1);
-
-			.status {
-				text-align: start;
-				color: lighten(red, 20);
-			}
-
-			.submit {
-				margin: 8px 0;
-				& > button {
-					font-size: 1em;
-				}
-			}
-		}
+		@include login-form();
 
 		.register-link {
 			font-size: 0.8em;

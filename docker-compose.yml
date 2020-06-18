@@ -14,6 +14,7 @@ services:
       - ./client/src:/app/client/src
       - ./shared/src:/app/shared/src
     tty: true
+    restart: always
   server:
     build:
       context: ./
@@ -31,6 +32,7 @@ services:
       - ./server/src:/app/server/src
       - ./shared/src:/app/shared/src
     tty: true
+    restart: always
   dev-db:
     image: postgres:11.5-alpine
     environment:
@@ -41,5 +43,6 @@ services:
       - 5432:5432
     volumes:
       - dev-database:/var/lib/postgresql/data/
+    restart: always
 volumes:
   dev-database:

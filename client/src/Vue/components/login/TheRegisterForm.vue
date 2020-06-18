@@ -1,7 +1,8 @@
 <template>
 	<div ref="rootRef" class="the-register-form">
 		<div class="form">
-			<input id="tenebrieUsername" type="text" placeholder="Username" v-model="username" autofocus />
+			<input id="tenebrieEmail" type="text" placeholder="Email" v-model="email" autofocus />
+			<input id="tenebrieUsername" type="text" placeholder="Username" v-model="username" />
 			<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
 			<input id="tenebrieConfirmPassword" type="password" placeholder="Confirm password" v-model="confirmPassword" />
 			<div class="status">
@@ -21,11 +22,13 @@
 import axios from 'axios'
 import router from '@/Vue/router'
 import {onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
+import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 
 function TheRegisterForm() {
 	const rootRef = ref<HTMLDivElement>()
 	const messageRef = ref<HTMLSpanElement>()
 
+	const email = ref<string>('')
 	const username = ref<string>('')
 	const password = ref<string>('')
 	const confirmPassword = ref<string>('')
@@ -38,7 +41,7 @@ function TheRegisterForm() {
 		rootRef.value.removeEventListener('keydown', onKeyDown)
 	})
 
-	watch(() => [username.value, password.value, confirmPassword.value], () => {
+	watch(() => [email.value, password.value, confirmPassword.value], () => {
 		clearMessage()
 	})
 
@@ -56,6 +59,7 @@ function TheRegisterForm() {
 
 		clearMessage()
 		const credentials = {
+			email: email.value,
 			username: username.value,
 			password: password.value
 		}
@@ -65,22 +69,23 @@ function TheRegisterForm() {
 			await router.push({ name: 'home' })
 		} catch (error) {
 			console.error(error)
-			setMessage(getErrorMessage(error.response.status))
+			setMessage(getErrorMessage(error.response.status, error.response.data.code))
 		}
 	}
 
-	const getErrorMessage = (statusCode: number): string => {
-		switch (statusCode) {
-			case 400:
-				return 'Missing username or password'
-			case 409:
-				return 'User already exists'
-			case 500:
-				return 'Internal server error'
-			case 503:
-				return 'Database client is not yet ready'
-			default:
-				return `Unknown error with code ${statusCode}`
+	const getErrorMessage = (statusCode: number, errorCode: number): string => {
+		if (statusCode === 400) {
+			return 'Missing email, username or password'
+		} else if (statusCode === 409 && errorCode === UserRegisterErrorCode.EMAIL_TAKEN) {
+			return 'A user with this email already exists'
+		} else if (statusCode === 409 && errorCode === UserRegisterErrorCode.USERNAME_COLLISIONS) {
+			return 'Unable to reserve a username'
+		} else if (statusCode === 500) {
+			return 'Internal server error'
+		} else if (statusCode === 503) {
+			return 'Database client is not yet ready'
+		} else {
+			return `Unknown error with code ${statusCode}`
 		}
 	}
 
@@ -95,6 +100,7 @@ function TheRegisterForm() {
 	return {
 		rootRef,
 		messageRef,
+		email,
 		username,
 		password,
 		confirmPassword,
@@ -109,27 +115,10 @@ export default {
 
 <style scoped lang="scss">
 	@import "src/Vue/styles/generic";
+	@import "LoginFormShared";
 
 	.the-register-form {
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		.form {
-			width: 16em;
-			padding: 32px;
-			background: rgba(white, 0.1);
-
-			.status {
-				text-align: start;
-				color: lighten(red, 20);
-			}
-
-			.submit {
-				margin: 8px 0;
-			}
-		}
+		@include login-form();
 
 		.info-text {
 			font-size: 0.8em;

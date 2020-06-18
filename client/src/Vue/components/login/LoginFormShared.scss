@@ -1,0 +1,26 @@
+@mixin login-form {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	.form {
+		width: 16em;
+		padding: 32px;
+		background: rgba(white, 0.1);
+
+		.status {
+			text-align: start;
+			color: lighten(red, 20);
+			font-size: 12px;
+			min-height: 2em;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		.submit {
+			margin: 0 0 8px 0;
+		}
+	}
+}

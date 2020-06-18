@@ -4,7 +4,7 @@ import ServerCard from '../game/models/ServerCard'
 import ServerCardTarget from '../game/models/ServerCardTarget'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 
-type TargetValidatorArguments = {
+export default interface TargetValidatorArguments {
 	thisCard?: ServerCard
 	thisCardOwner?: ServerPlayerInGame
 	thisUnit?: ServerUnit
@@ -13,5 +13,3 @@ type TargetValidatorArguments = {
 	targetRow?: ServerBoardRow
 	previousTargets?: ServerCardTarget[]
 }
-
-export default TargetValidatorArguments

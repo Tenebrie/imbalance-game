@@ -7,8 +7,6 @@ import { cardImageGenerator } from './utils/CardImageGenerator'
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
 
-
-
 const app = express()
 expressWs(app)
 

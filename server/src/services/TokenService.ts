@@ -11,7 +11,7 @@ export default {
 			playerId: player.id
 		}
 		return jwt.sign(tokenPayload, jwtSecret, {
-			issuer: 'Tianara'
+			issuer: 'TenebrieInteractive'
 		})
 	},
 

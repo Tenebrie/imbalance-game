@@ -3,6 +3,7 @@ import HashManager from '../../services/HashService'
 import TokenManager from '../../services/TokenService'
 import { JwtTokenScope } from '../../enums/JwtTokenScope'
 import PlayerDatabase from '../../database/PlayerDatabase'
+import PlayerDatabaseEntry from '../../types/PlayerDatabaseEntry'
 
 class PlayerLibrary {
 	players: Array<ServerPlayer>
@@ -11,13 +12,13 @@ class PlayerLibrary {
 		this.players = []
 	}
 
-	public async register(username: string, password: string): Promise<boolean> {
+	public async register(email: string, username: string, password: string): Promise<boolean> {
 		const passwordHash = await HashManager.hashPassword(password)
-		return PlayerDatabase.insertPlayer(username, passwordHash)
+		return PlayerDatabase.insertPlayer(email, username, passwordHash)
 	}
 
 	public async login(username: string, password: string): Promise<ServerPlayer> {
-		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByUsername(username)
+		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(username)
 
 		if (!playerDatabaseEntry) {
 			return null
@@ -50,10 +51,23 @@ class PlayerLibrary {
 		return player
 	}
 
+	public async getPlayerByEmail(email: string): Promise<ServerPlayer> {
+		let player = this.players.find(player => player.email === email)
+		if (!player) {
+			const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(email)
+			if (!playerDatabaseEntry) {
+				return null
+			}
+			player = ServerPlayer.newInstance(playerDatabaseEntry)
+			this.players.push(player)
+		}
+		return player
+	}
+
 	public async getPlayerByUsername(username: string): Promise<ServerPlayer> {
 		let player = this.players.find(player => player.username === username)
 		if (!player) {
-			const playerDatabaseEntry = await PlayerDatabase.selectPlayerByUsername(username)
+			const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(username)
 			if (!playerDatabaseEntry) {
 				return null
 			}
