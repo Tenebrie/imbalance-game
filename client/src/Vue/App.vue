@@ -11,7 +11,7 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
-import {reactive} from '@vue/composition-api'
+import {onMounted, reactive} from '@vue/composition-api'
 
 function App() {
 	const isInGame = store.getters.gameStateModule.isInGame
@@ -19,6 +19,8 @@ function App() {
 		'in-game': isInGame as boolean,
 		'navigation-bar-visible': !isInGame as boolean
 	})
+
+	onMounted(() => store.dispatch.userPreferencesModule.fetchPreferences())
 
 	return {
 		isInGame,
