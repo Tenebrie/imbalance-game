@@ -75,8 +75,4 @@ router.ws('/:gameId', async (ws, req) => {
 	OutgoingMessageHandlers.notifyAboutInitRequested(currentPlayer)
 })
 
-router.use((err, req, res, next) => {
-	console.error(err)
-})
-
 module.exports = router

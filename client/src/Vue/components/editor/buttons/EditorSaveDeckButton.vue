@@ -1,8 +1,8 @@
 <template>
 	<div class="button-container">
 		<button class="primary" @click="onClick">
-			<span v-if="!isLoading">Save</span>
-			<span v-if="isLoading">Saving...</span>
+			<span v-if="!requestInFlight">Save</span>
+			<span v-if="requestInFlight">Saving...</span>
 		</button>
 	</div>
 </template>
@@ -13,7 +13,7 @@ import store from '@/Vue/store'
 
 export default Vue.extend({
 	data: () => ({
-		isLoading: false
+		requestInFlight: false
 	}),
 
 	computed: {
@@ -22,7 +22,7 @@ export default Vue.extend({
 
 	methods: {
 		async onClick(): Promise<void> {
-			this.isLoading = true
+			this.requestInFlight = true
 			const deckId = this.$route.params.id
 			const statusCode = await store.dispatch.editor.saveDeck({ deckId })
 			if (statusCode === 204) {
@@ -30,7 +30,7 @@ export default Vue.extend({
 			} else {
 				this.$noty.error('An error occurred while saving the deck')
 			}
-			this.isLoading = false
+			this.requestInFlight = false
 		}
 	}
 })

@@ -38,6 +38,4 @@ router.delete('/:gameId', (req, res: Response, next) => {
 	res.json({ success: true })
 })
 
-router.use(SendErrorAsBadRequestMiddleware)
-
 module.exports = router

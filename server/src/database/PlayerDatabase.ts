@@ -17,5 +17,15 @@ export default {
 	async selectPlayerByEmail(email: string): Promise<PlayerDatabaseEntry> {
 		const query = `SELECT * FROM players WHERE email = '${email}'`
 		return Database.selectRow<PlayerDatabaseEntry>(query)
+	},
+
+	async selectPlayerByUsername(username: string): Promise<PlayerDatabaseEntry> {
+		const query = `SELECT * FROM players WHERE username = '${username}'`
+		return Database.selectRow<PlayerDatabaseEntry>(query)
+	},
+
+	async deletePlayer(id: string): Promise<boolean> {
+		const query = `DELETE FROM players WHERE id = '${id}'`
+		return Database.deleteRows(query)
 	}
 }

@@ -2,6 +2,22 @@ import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../game/models/ServerCard'
 
+interface TryUntilArgs {
+	try: () => void | Promise<void>
+	until: () => boolean | Promise<boolean>
+	maxAttempts: number
+}
+
+export const tryUntil = (args: TryUntilArgs): boolean => {
+	for (let i = 0; i < args.maxAttempts; i++) {
+		args.try()
+		if (args.until) {
+			return true
+		}
+	}
+	return false
+}
+
 export default {
 	hashCode(targetString: string): number {
 		let i

@@ -8,6 +8,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
+import router from '@/Vue/router'
 import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
 import Player from '@shared/models/Player'
 
@@ -35,7 +36,9 @@ export default Vue.extend({
 
 	methods: {
 		onClick(): void {
-			store.dispatch.logout()
+			if (this.$route.name !== 'profile') {
+				router.push({ name: 'profile' })
+			}
 		}
 	}
 })

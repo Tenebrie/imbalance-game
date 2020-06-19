@@ -1,8 +1,8 @@
 <template>
 	<div class="button-container">
 		<button class="primary" @click="onClick">
-			<span v-if="!isLoading">Create new deck</span>
-			<span v-if="isLoading">Creating...</span>
+			<span v-if="!requestInFlight">Create new deck</span>
+			<span v-if="requestInFlight">Creating...</span>
 		</button>
 	</div>
 </template>
@@ -13,12 +13,12 @@ import store from '@/Vue/store'
 
 export default Vue.extend({
 	data: () => ({
-		isLoading: false
+		requestInFlight: false
 	}),
 
 	methods: {
 		async onClick(): Promise<void> {
-			this.isLoading = true
+			this.requestInFlight = true
 			const response = await store.dispatch.editor.createDeck()
 			if (response.status !== 200) {
 				this.$noty.error('An error occurred while creating the deck')

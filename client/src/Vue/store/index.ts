@@ -8,6 +8,7 @@ import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import { createDirectStore } from 'direct-vuex'
 import EditorModule from '@/Vue/store/modules/EditorModule'
 import GameStateModule from '@/Vue/store/modules/GameStateModule'
+import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 
 Vue.use(Vuex)
 
@@ -56,7 +57,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	actions: {
 		async logout(context): Promise<void> {
 			const { commit } = rootActionContext(context)
-			await axios.post('/api/logout')
+			await axios.delete('/api/session')
 			commit.resetPlayerData()
 			await router.push({ name: 'login' })
 		},

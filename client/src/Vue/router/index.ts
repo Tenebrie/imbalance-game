@@ -8,7 +8,7 @@ Vue.use(VueRouter)
 
 const fetchProfile = async (): Promise<boolean> => {
 	try {
-		const response = await axios.get('/api/profile')
+		const response = await axios.get('/api/user')
 		const player = response.data.data as Player
 		store.commit.setPlayerData(player)
 	} catch (error) {

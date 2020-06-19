@@ -6,6 +6,7 @@ import { cardImageGenerator } from './utils/CardImageGenerator'
 
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
+import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 
 const app = express()
 expressWs(app)
@@ -14,14 +15,13 @@ expressWs(app)
 const StatusRouter = require('./routers/StatusRouter')
 const ChangelogRouter = require('./routers/ChangelogRouter')
 
+const UserRouter = require('./routers/UserRouter')
 const PlayRouter = require('./routers/PlayRouter')
-const LoginRouter = require('./routers/LoginRouter')
 const CardsRouter = require('./routers/CardsRouter')
 const DecksRouter = require('./routers/DecksRouter')
 const GamesRouter = require('./routers/GamesRouter')
-const LogoutRouter = require('./routers/LogoutRouter')
-const ProfileRouter = require('./routers/ProfileRouter')
-const RegisterRouter = require('./routers/RegisterRouter')
+const SessionRouter = require('./routers/SessionRouter')
+const UserProfileRouter = require('./routers/UserProfileRouter')
 
 /* Templating engine */
 app.set('views', path.join(__dirname, 'views'))
@@ -65,10 +65,9 @@ app.use('/changelog', ChangelogRouter)
 app.use('/api/cards', CardsRouter)
 app.use('/api/decks', DecksRouter)
 app.use('/api/games', GamesRouter)
-app.use('/api/login', LoginRouter)
-app.use('/api/logout', LogoutRouter)
-app.use('/api/profile', ProfileRouter)
-app.use('/api/register', RegisterRouter)
+app.use('/api/session', SessionRouter)
+app.use('/api/user', UserRouter)
+app.use('/api/user/profile', UserProfileRouter)
 
 /* WS routers */
 app.use('/api/game', PlayRouter)
@@ -78,7 +77,10 @@ app.use('*', (req, res) => {
 	res.sendFile(path.join(__dirname, '../../../client/index.html'))
 })
 
-/* Global error handler */
+/* Generic error handler */
+app.use(GenericErrorMiddleware)
+
+/* Last-resort error handler */
 app.use((err, req, res, next) => {
 	res.status(err.status || 500)
 	res.render('error', {

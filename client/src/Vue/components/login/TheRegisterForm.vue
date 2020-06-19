@@ -64,8 +64,8 @@ function TheRegisterForm() {
 			password: password.value
 		}
 		try {
-			await axios.post('/api/register', credentials)
-			await axios.post('/api/login', credentials)
+			await axios.post('/api/user', credentials)
+			await axios.post('/api/session', credentials)
 			await router.push({ name: 'home' })
 		} catch (error) {
 			console.error(error)

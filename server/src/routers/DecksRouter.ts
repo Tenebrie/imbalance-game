@@ -1,12 +1,12 @@
 import express, { Response } from 'express'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
-import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequestMiddleware'
 import ServerPlayer from '../game/players/ServerPlayer'
 import ServerEditorDeck from '../game/models/ServerEditorDeck'
 import EditorDeck from '@shared/models/EditorDeck'
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
 import AsyncHandler from '../utils/AsyncHandler'
 import DeckUtils from '../utils/DeckUtils'
+import GenericErrorMiddleware from '../middleware/GenericErrorMiddleware'
 
 const router = express.Router()
 
@@ -58,15 +58,14 @@ router.delete('/:deckId', AsyncHandler(async(req, res: Response, next) => {
 	const deckId = req.params.deckId
 	const player = req['player'] as ServerPlayer
 
+	if (!deckId || deckId === 'undefined') {
+		console.log('Throwing')
+		throw { status: 400, error: 'Missing deck ID' }
+	}
+
 	await EditorDeckDatabase.deleteEditorDeck(deckId, player)
 	res.status(204)
 	res.send()
 }))
-
-router.use((err, req, res, next) => {
-	console.error(err)
-})
-
-router.use(SendErrorAsBadRequestMiddleware)
 
 module.exports = router

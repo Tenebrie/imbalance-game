@@ -55,7 +55,7 @@ function TheLoginForm() {
 			password: password.value
 		}
 		try {
-			await axios.post('/api/login', credentials)
+			await axios.post('/api/session', credentials)
 			await router.push({ name: 'home' })
 			await TextureAtlas.prepare()
 		} catch (error) {

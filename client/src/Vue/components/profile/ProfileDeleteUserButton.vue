@@ -1,7 +1,7 @@
 <template>
 	<div class="button-container">
 		<button class="primary destructive" @click="onClick">
-			<span v-if="!requestInFlight">Delete</span>
+			<span v-if="!requestInFlight">Delete profile</span>
 			<span v-if="requestInFlight">Deleting...</span>
 		</button>
 	</div>
@@ -9,6 +9,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import axios from 'axios'
 import store from '@/Vue/store'
 
 export default Vue.extend({
@@ -16,21 +17,18 @@ export default Vue.extend({
 		requestInFlight: false
 	}),
 
-	computed: {
-
-	},
-
 	methods: {
 		async onClick(): Promise<void> {
 			this.requestInFlight = true
-			const deckId = this.$route.params.id
-			const statusCode = await store.dispatch.editor.deleteDeck({ deckId })
-			if (statusCode === 204) {
-				this.$noty.success('Deck deleted!')
-				await this.$router.push({ name: 'decks' })
-			} else {
-				this.$noty.error('An error occurred while deleting the deck')
+
+			try {
+				await axios.delete('/api/user')
+				await store.dispatch.logout()
+				this.$noty.success('Profile deleted!')
+			} catch (e) {
+				this.$noty.error('Unable to delete your profile!')
 			}
+
 			this.requestInFlight = false
 		}
 	}
@@ -38,5 +36,16 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-	@import "../../../styles/generic";
+	.button-container {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		button {
+			width: 80%;
+			max-width: 350px;
+			font-size: 1.2em;
+			margin: 16px;
+		}
+	}
 </style>

@@ -38,36 +38,14 @@ class PlayerLibrary {
 		return player
 	}
 
-	private async getPlayerById(playerId: string): Promise<ServerPlayer> {
+	public removeFromCache(player: ServerPlayer): void {
+		this.players = this.players.filter(playerInCache => playerInCache.id !== player.id)
+	}
+
+	public async getPlayerById(playerId: string): Promise<ServerPlayer> {
 		let player = this.players.find(player => player.id === playerId)
 		if (!player) {
 			const playerDatabaseEntry = await PlayerDatabase.selectPlayerById(playerId)
-			if (!playerDatabaseEntry) {
-				return null
-			}
-			player = ServerPlayer.newInstance(playerDatabaseEntry)
-			this.players.push(player)
-		}
-		return player
-	}
-
-	public async getPlayerByEmail(email: string): Promise<ServerPlayer> {
-		let player = this.players.find(player => player.email === email)
-		if (!player) {
-			const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(email)
-			if (!playerDatabaseEntry) {
-				return null
-			}
-			player = ServerPlayer.newInstance(playerDatabaseEntry)
-			this.players.push(player)
-		}
-		return player
-	}
-
-	public async getPlayerByUsername(username: string): Promise<ServerPlayer> {
-		let player = this.players.find(player => player.username === username)
-		if (!player) {
-			const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(username)
 			if (!playerDatabaseEntry) {
 				return null
 			}
@@ -83,6 +61,10 @@ class PlayerLibrary {
 			return null
 		}
 		return this.getPlayerById(tokenPayload.playerId)
+	}
+
+	public async deletePlayer(player: ServerPlayer): Promise<boolean> {
+		return PlayerDatabase.deletePlayer(player.id)
 	}
 }
 

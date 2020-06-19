@@ -5,7 +5,6 @@ import AsyncHandler from '../utils/AsyncHandler'
 import TokenManager from '../services/TokenService'
 import PlayerMessage from '@shared/models/network/PlayerMessage'
 import PlayerLibrary from '../game/players/PlayerLibrary'
-import GenericErrorMiddleware from '../middleware/GenericErrorMiddleware'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 
 router.post('/', AsyncHandler(async (req, res: Response, next) => {
@@ -25,6 +24,10 @@ router.post('/', AsyncHandler(async (req, res: Response, next) => {
 	res.json({ data: PlayerMessage.fromPlayer(player) })
 }))
 
-router.use(GenericErrorMiddleware)
+router.delete('/', AsyncHandler(async (req, res: Response, next) => {
+	// TODO: Disconnect the player and close the socket, if open
+	res.cookie('playerToken', '', { maxAge: Date.now(), httpOnly: true })
+	res.json({ success: true })
+}))
 
 module.exports = router
