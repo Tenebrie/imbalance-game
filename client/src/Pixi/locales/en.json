@@ -234,5 +234,15 @@
 	"card.description.spellFlamingSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
 
 	"card.name.spellFlameweave": "Flameweave",
-	"card.description.spellFlameweave": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
+	"card.description.spellFlameweave": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
+
+	"ui.language.en": "English",
+	"ui.language.ru": "Russian",
+
+	"ui.editor.deck.create": "Create new deck",
+	"ui.editor.deck.create.progress": "Creating...",
+
+	"ui.profile.logout": "Logout",
+	"ui.profile.delete": "Delete profile",
+	"ui.profile.delete.progress": "Deleting..."
 }

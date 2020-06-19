@@ -1,8 +1,8 @@
 <template>
 	<div class="button-container">
 		<button class="primary" @click="onClick">
-			<span v-if="!requestInFlight">Create new deck</span>
-			<span v-if="requestInFlight">Creating...</span>
+			<span v-if="!requestInFlight">{{ $locale.get('ui.editor.deck.create') }}</span>
+			<span v-if="requestInFlight">{{ $locale.get('ui.editor.deck.create.progress') }}</span>
 		</button>
 	</div>
 </template>

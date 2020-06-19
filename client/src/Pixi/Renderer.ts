@@ -593,7 +593,7 @@ export default class Renderer {
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		if (Core.input.forcedTargetingMode) {
-			label.text = Localization.getString(Core.input.forcedTargetingMode.getDisplayedLabel())
+			label.text = Localization.get(Core.input.forcedTargetingMode.getDisplayedLabel())
 			label.textVariables = Core.input.forcedTargetingMode.getDisplayedLabelVariables()
 			return
 		}
@@ -608,7 +608,7 @@ export default class Renderer {
 		const validOrders = Core.board.getValidOrdersForUnit(grabbedUnit).sort((a, b) => a.targetMode - b.targetMode || a.targetType - b.targetType)
 		const performedOrder = validOrders.find(order => (!order.targetUnit || order.targetUnit === hoveredUnit) && (!order.targetRow || order.targetRow === hoveredRow))
 		if (performedOrder) {
-			label.text = Localization.getString(performedOrder.targetLabel)
+			label.text = Localization.get(performedOrder.targetLabel)
 		} else {
 			label.text = ''
 		}

@@ -18,6 +18,7 @@
 
 <script lang="ts">
 import axios from 'axios'
+import store from '@/Vue/store'
 import router from '@/Vue/router'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import {onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
@@ -56,6 +57,7 @@ function TheLoginForm() {
 		}
 		try {
 			await axios.post('/api/session', credentials)
+			await store.dispatch.userPreferencesModule.fetchPreferences()
 			await router.push({ name: 'home' })
 			await TextureAtlas.prepare()
 		} catch (error) {

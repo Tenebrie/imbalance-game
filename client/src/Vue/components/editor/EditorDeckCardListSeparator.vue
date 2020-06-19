@@ -39,7 +39,7 @@ export default Vue.extend({
 		},
 
 		separatorText(): string {
-			return Localization.getString(`card.color.${this.colorAsString}`)
+			return Localization.get(`card.color.${this.colorAsString}`)
 		},
 
 		cardLimitUsed(): number {

@@ -77,10 +77,10 @@ export default class RenderedCard extends Card {
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.class}`))
 		this.powerText = this.createBrushScriptText(this.power.toString())
 		this.armorText = this.createBrushScriptText(this.armor.toString())
-		this.cardNameText = this.createTitleText(Localization.getString(this.name))
-		this.cardTitleText = this.createTitleText(Localization.getString(this.title))
-		this.cardTribeTexts = this.tribes.map(tribe => this.createTitleText(Localization.getString(`card.tribe.${tribe}`)))
-		this.cardDescriptionText = new RichText(Localization.getString(this.description), 350, this.getDescriptionTextVariables())
+		this.cardNameText = this.createTitleText(Localization.get(this.name))
+		this.cardTitleText = this.createTitleText(Localization.get(this.title))
+		this.cardTribeTexts = this.tribes.map(tribe => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
+		this.cardDescriptionText = new RichText(Localization.get(this.description), 350, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.alpha = 0
@@ -117,10 +117,10 @@ export default class RenderedCard extends Card {
 
 		/* Card mode container */
 		this.cardModeContainer = new PIXI.Container()
-		if (Localization.getString(this.name)) {
+		if (Localization.get(this.name)) {
 			this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
 		}
-		if (Localization.getString(this.description)) {
+		if (Localization.get(this.description)) {
 			this.descriptionTextBackground = new DescriptionTextBackground()
 			this.descriptionTextBackground.position.set(0, this.sprite.texture.height)
 			this.cardDescriptionText.setBackground(this.descriptionTextBackground)
@@ -173,7 +173,7 @@ export default class RenderedCard extends Card {
 	public getDescriptionTextVariables(): RichTextVariables {
 		return {
 			...this.variables,
-			name: Localization.getString(this.name),
+			name: Localization.get(this.name),
 			attack: this.attack.toString(),
 			attackRange: this.attackRange.toString(),
 			armor: this.armor.toString()
@@ -356,7 +356,7 @@ export default class RenderedCard extends Card {
 
 		this.cardDescriptionText.position.set(0, -24)
 
-		const description = Localization.getString(this.description)
+		const description = Localization.get(this.description)
 		let fontSize = 26
 		if (description.length > 150) { fontSize = 22 }
 		if (description.length > 300) { fontSize = 20 }

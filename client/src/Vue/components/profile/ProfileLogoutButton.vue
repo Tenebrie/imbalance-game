@@ -1,7 +1,7 @@
 <template>
 	<div class="button-container">
 		<button class="primary" @click="onClick">
-			<span>Logout</span>
+			<span>{{ $locale.get('ui.profile.logout') }}</span>
 		</button>
 	</div>
 </template>

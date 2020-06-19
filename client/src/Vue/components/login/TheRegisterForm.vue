@@ -23,6 +23,7 @@ import axios from 'axios'
 import router from '@/Vue/router'
 import {onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
+import store from '@/Vue/store'
 
 function TheRegisterForm() {
 	const rootRef = ref<HTMLDivElement>()
@@ -66,6 +67,7 @@ function TheRegisterForm() {
 		try {
 			await axios.post('/api/user', credentials)
 			await axios.post('/api/session', credentials)
+			await store.dispatch.userPreferencesModule.fetchPreferences()
 			await router.push({ name: 'home' })
 		} catch (error) {
 			console.error(error)

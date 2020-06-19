@@ -77,6 +77,17 @@ class Database {
 		}
 	}
 
+	public async updateRows(query: string): Promise<boolean> {
+		try {
+			await this.runQuery(query)
+		} catch (err) {
+			console.error(err)
+			return false
+		}
+
+		return true
+	}
+
 	public async deleteRows(query: string): Promise<boolean> {
 		try {
 			await this.runQuery(query)

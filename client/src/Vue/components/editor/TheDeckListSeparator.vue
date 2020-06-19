@@ -34,7 +34,7 @@ export default Vue.extend({
 		},
 
 		separatorText(): string {
-			return Localization.getString(`card.faction.${this.factionAsString}`)
+			return Localization.get(`card.faction.${this.factionAsString}`)
 		},
 
 		factionClass(): any {

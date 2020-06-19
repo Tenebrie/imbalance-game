@@ -9,26 +9,27 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
+import {reactive} from '@vue/composition-api'
 
-export default Vue.extend({
-	components: { TheNavigationBar },
+function App() {
+	const isInGame = store.getters.gameStateModule.isInGame
+	const rootClass = reactive({
+		'in-game': isInGame as boolean,
+		'navigation-bar-visible': !isInGame as boolean
+	})
 
-	computed: {
-		isInGame() {
-			return store.getters.gameStateModule.isInGame
-		},
-
-		rootClass(): {} {
-			return {
-				'in-game': this.isInGame as boolean,
-				'navigation-bar-visible': !this.isInGame as boolean
-			}
-		}
+	return {
+		isInGame,
+		rootClass
 	}
-})
+}
+
+export default {
+	components: { TheNavigationBar },
+	setup: App
+}
 </script>
 
 <style lang="scss">

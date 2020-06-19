@@ -3,7 +3,7 @@ import HashManager from '../../services/HashService'
 import TokenManager from '../../services/TokenService'
 import { JwtTokenScope } from '../../enums/JwtTokenScope'
 import PlayerDatabase from '../../database/PlayerDatabase'
-import PlayerDatabaseEntry from '../../types/PlayerDatabaseEntry'
+import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 
 class PlayerLibrary {
 	players: Array<ServerPlayer>
@@ -15,6 +15,12 @@ class PlayerLibrary {
 	public async register(email: string, username: string, password: string): Promise<boolean> {
 		const passwordHash = await HashManager.hashPassword(password)
 		return PlayerDatabase.insertPlayer(email, username, passwordHash)
+	}
+
+	public async updatePassword(player: ServerPlayer, password: string): Promise<boolean> {
+		this.removeFromCache(player)
+		const passwordHash = await HashManager.hashPassword(password)
+		return PlayerDatabase.updatePlayerPassword(player.id, passwordHash)
 	}
 
 	public async login(username: string, password: string): Promise<ServerPlayer> {

@@ -8,14 +8,15 @@ import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import { createDirectStore } from 'direct-vuex'
 import EditorModule from '@/Vue/store/modules/EditorModule'
 import GameStateModule from '@/Vue/store/modules/GameStateModule'
-import UserProfileMessage from '@shared/models/network/UserProfileMessage'
+import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
 
 Vue.use(Vuex)
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {
 		editor: EditorModule,
-		gameStateModule: GameStateModule
+		gameStateModule: GameStateModule,
+		userPreferencesModule: UserPreferencesModule
 	},
 
 	state: {

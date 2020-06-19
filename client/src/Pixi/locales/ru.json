@@ -1,3 +1,11 @@
 {
+	"ui.language.en": "Английский",
+	"ui.language.ru": "Русский",
 
+	"ui.editor.deck.create": "Создать новую колоду",
+	"ui.editor.deck.create.progress": "Создание...",
+
+	"ui.profile.logout": "Выйти",
+	"ui.profile.delete": "Удалить профиль",
+	"ui.profile.delete.progress": "Удаление..."
 }

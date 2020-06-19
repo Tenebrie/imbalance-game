@@ -1,7 +1,7 @@
 import * as ws from 'ws'
 import PlayerWebSocket from './PlayerWebSocket'
 import Player from '@shared/models/Player'
-import PlayerDatabaseEntry from '../../types/PlayerDatabaseEntry'
+import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 
 export default class ServerPlayer extends Player {
 	id: string
