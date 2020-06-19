@@ -1,18 +1,17 @@
 <template>
-	<div class="deck-editor-view">
-		<div class="deck-list"></div>
+	<div class="rules-view">
+		<the-rules-list />
 	</div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
+import TheRulesList from '../components/rules/TheRulesList.vue'
 
 export default Vue.extend({
-	components: { },
-
-	computed: {
-
+	components: {
+		TheRulesList
 	}
 })
 </script>
@@ -20,25 +19,25 @@ export default Vue.extend({
 <style scoped lang="scss">
 	@import "../styles/generic";
 
-	.deck-editor-view {
+	.rules-view {
 		width: 100%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 
 		& > div {
-			height: 75%;
-			background: $COLOR-BACKGROUND-TRANSPARENT;
-		}
-
-		.deck-list {
-			flex: 3;
-			margin: 32px;
-			max-width: 1024px;
+			width: 50%;
+			flex-grow: 0;
+			height: 100%;
 			display: flex;
-			align-items: center;
-			justify-content: center;
 			flex-direction: column;
+			background: $COLOR-BACKGROUND-TRANSPARENT;
+
+			&.the-rules-list {
+				max-width: 960px;
+				flex: 1;
+				margin: 32px 32px 32px 32px;
+			}
 		}
 	}
 </style>

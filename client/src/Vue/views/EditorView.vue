@@ -47,17 +47,17 @@ export default Vue.extend({
 	.editor-view {
 		width: 100%;
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
 		justify-content: center;
 
 		& > div {
-			height: 75%;
+			height: calc(100% - #{$NAVIGATION-BAR-HEIGHT});
 			background: $COLOR-BACKGROUND-TRANSPARENT;
 		}
 
 		.card-library {
 			flex: 3;
-			margin: 32px 16px 32px 32px;
+			margin: 0 16px 0 32px;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -66,7 +66,7 @@ export default Vue.extend({
 
 		.deck-list {
 			flex: 1;
-			margin: 32px 32px 32px 16px;
+			margin: 0 32px 0 16px;
 			display: flex;
 			align-items: center;
 			justify-content: center;

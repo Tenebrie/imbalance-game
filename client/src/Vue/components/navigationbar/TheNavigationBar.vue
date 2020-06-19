@@ -18,29 +18,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import store from '@/Vue/store'
 import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfile.vue'
 
-export default Vue.extend({
+export default {
 	components: {
 		TheMiniUserProfile
-	},
-
-	data: () => ({
-
-	}),
-
-	computed: {
-		isInGame() {
-			return store.getters.gameStateModule.isInGame
-		}
-	},
-
-	methods: {
-
 	}
-})
+}
 </script>
 
 <style scoped lang="scss">
@@ -49,7 +33,7 @@ export default Vue.extend({
 	.the-navigation-bar {
 		position: fixed;
 		top: 0;
-		height: 48px;
+		height: $NAVIGATION-BAR-HEIGHT;
 		width: 100%;
 		border-bottom: solid gray 1px;
 		display: flex;

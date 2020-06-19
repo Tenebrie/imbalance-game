@@ -1,10 +1,5 @@
 extends layout
 
-block variables
-	- const pageTitle = 'NotGwent changelog'
-	- const stylesheet = 'style.css'
-	- const hideBody = true
-
 block content
 	.version-description
 		h1.version 1.7 - Profile update
@@ -13,6 +8,11 @@ block content
 		ul
 			li Accounts now use emails instead of usernames for user identification
 			li Usernames are no longer required to be unique
+		h2 Visual updates
+		ul
+			li Improved page layouts
+			li Improved deck editor and selection UX
+			li Unified action button design across pages
 
 	.version-description
 		h1.version 1.6 - Development update
@@ -235,3 +235,9 @@ block content
 		span.date 22.01.2020
 		ul
 			li Initial release
+
+block variables
+	- const pageTitle = 'NotGwent changelog'
+	- const stylesheet = 'style.css'
+	- const hideBody = true
+

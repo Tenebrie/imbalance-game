@@ -4,29 +4,7 @@
 	</div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import store from '@/Vue/store'
-
-export default Vue.extend({
-	components: {
-	},
-
-	data: () => ({
-
-	}),
-
-	computed: {
-		isInGame() {
-			return store.getters.gameStateModule.isInGame
-		}
-	},
-
-	methods: {
-
-	}
-})
-</script>
+<script lang="ts" />
 
 <style scoped lang="scss">
 	.the-footer {
@@ -38,6 +16,10 @@ export default Vue.extend({
 		.info {
 			padding: 4px 8px;
 			text-align: end;
+		}
+
+		@media only screen and (max-width: 1900px) {
+			display: none;
 		}
 	}
 </style>

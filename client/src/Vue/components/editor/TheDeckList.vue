@@ -1,33 +1,26 @@
 <template>
 	<div class="the-editor-deck-list">
-		<div class="deck-list">
+		<div class="deck-list" v-if="isDeckListDisplayed">
 			<div class="deck-list-segment" v-if="arcaneDecks.length > 0">
 				<the-editor-deck-list-separator :faction="CardFaction.ARCANE" />
-				<keep-alive>
-					<the-editor-deck-list-item v-for="deck in arcaneDecks" :key="deck.id" :deck="deck" />
-				</keep-alive>
+				<the-editor-deck-list-item v-for="deck in arcaneDecks" :key="deck.id" :deck="deck" />
 			</div>
 			<div class="deck-list-segment" v-if="neutralDecks.length > 0">
 				<the-editor-deck-list-separator :faction="CardFaction.NEUTRAL" />
-				<keep-alive>
-					<the-editor-deck-list-item v-for="deck in neutralDecks" :key="deck.id" :deck="deck" />
-				</keep-alive>
+				<the-editor-deck-list-item v-for="deck in neutralDecks" :key="deck.id" :deck="deck" />
 			</div>
 			<div class="deck-list-segment" v-if="experimentalDecks.length > 0">
 				<the-editor-deck-list-separator :faction="CardFaction.EXPERIMENTAL" />
-				<keep-alive>
-					<the-editor-deck-list-item v-for="deck in experimentalDecks" :key="deck.id" :deck="deck" />
-				</keep-alive>
+				<the-editor-deck-list-item v-for="deck in experimentalDecks" :key="deck.id" :deck="deck" />
 			</div>
 			<div class="deck-list-segment" v-if="unfinishedDecks.length > 0 && mode === DeckListMode.EDIT">
 				<the-editor-deck-list-separator-unfinished />
-				<keep-alive>
-					<the-editor-deck-list-item v-for="deck in unfinishedDecks" :key="deck.id" :deck="deck" />
-				</keep-alive>
+				<the-editor-deck-list-item v-for="deck in unfinishedDecks" :key="deck.id" :deck="deck" />
 			</div>
 		</div>
-		<div class="buttons" v-if="mode === DeckListMode.EDIT">
-			<editor-create-deck-button />
+		<div class="buttons">
+			<editor-create-deck-button v-if="mode === DeckListMode.EDIT || decks.length === 0" />
+			<editor-decks-button v-if="mode === DeckListMode.SELECT && finishedDecks.length === 0 && decks.length > 0" />
 		</div>
 	</div>
 </template>
@@ -42,13 +35,15 @@ import TheEditorDeckListSeparatorUnfinished from '@/Vue/components/editor/TheDec
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import DeckListMode from '@/utils/DeckListMode'
 import EditorCreateDeckButton from '@/Vue/components/editor/buttons/EditorCreateDeckButton.vue'
+import EditorDecksButton from '@/Vue/components/editor/buttons/EditorDecksButton.vue'
 
 export default Vue.extend({
 	components: {
 		TheEditorDeckListItem,
 		TheEditorDeckListSeparator,
 		TheEditorDeckListSeparatorUnfinished,
-		EditorCreateDeckButton
+		EditorCreateDeckButton,
+		EditorDecksButton
 	},
 
 	data: () => ({
@@ -77,8 +72,17 @@ export default Vue.extend({
 			return this.decks.filter(deck => deck.faction === CardFaction.EXPERIMENTAL && !deck.isUnfinished())
 		},
 
+		finishedDecks(): PopulatedEditorDeck[] {
+			return this.decks.filter(deck => !deck.isUnfinished())
+		},
+
 		unfinishedDecks(): PopulatedEditorDeck[] {
 			return this.decks.filter(deck => deck.isUnfinished())
+		},
+
+		isDeckListDisplayed(): boolean {
+			return (this.mode === DeckListMode.SELECT && this.finishedDecks.length > 0) ||
+				(this.mode === DeckListMode.EDIT && this.decks.length > 0)
 		}
 	},
 
@@ -100,12 +104,14 @@ export default Vue.extend({
 		height: 100%;
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
+		justify-content: space-evenly;
 
 		.deck-list {
+			height: 100%;
 			display: flex;
 			flex-direction: column;
 			padding-top: 16px;
+			overflow-y: auto;
 
 			.deck-list-segment {
 				display: flex;

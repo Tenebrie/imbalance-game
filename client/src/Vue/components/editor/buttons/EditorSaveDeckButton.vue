@@ -1,8 +1,10 @@
 <template>
-	<span class="link button-link" @click="onClick">
-		<span v-if="!isLoading">Save</span>
-		<span v-if="isLoading">Saving...</span>
-	</span>
+	<div class="button-container">
+		<button class="primary" @click="onClick">
+			<span v-if="!isLoading">Save</span>
+			<span v-if="isLoading">Saving...</span>
+		</button>
+	</div>
 </template>
 
 <script lang="ts">

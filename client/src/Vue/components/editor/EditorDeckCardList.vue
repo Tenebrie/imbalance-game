@@ -14,7 +14,7 @@
 		<div class="buttons">
 			<editor-save-deck-button />
 			<editor-delete-deck-button />
-			<router-link class="link button-link" tag="span" :to="{ name: 'decks' }">Back</router-link>
+			<editor-leave-deck-button />
 		</div>
 	</div>
 </template>
@@ -29,11 +29,13 @@ import EditorDeckCardListSeparator from '@/Vue/components/editor/EditorDeckCardL
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import EditorSaveDeckButton from '@/Vue/components/editor/buttons/EditorSaveDeckButton.vue'
 import EditorDeleteDeckButton from '@/Vue/components/editor/buttons/EditorDeleteDeckButton.vue'
+import EditorLeaveDeckButton from '@/Vue/components/editor/buttons/EditorLeaveDeckButton.vue'
 
 export default Vue.extend({
 	components: {
 		EditorSaveDeckButton,
 		EditorDeleteDeckButton,
+		EditorLeaveDeckButton,
 		EditorDeckCardListItem,
 		EditorDeckCardListSeparator,
 	},
@@ -118,9 +120,18 @@ export default Vue.extend({
 		}
 
 		.buttons {
+			width: 80%;
 			display: flex;
 			flex-direction: row;
-			justify-content: space-between;
+			justify-content: center;
+			padding-left: 10%;
+			padding-right: 10%;
+
+			.button-container {
+				font-size: 1.2em;
+				margin: 27px 4px;
+				flex: 1;
+			}
 		}
 	}
 </style>

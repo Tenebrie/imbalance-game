@@ -33,7 +33,7 @@ export default Vue.extend({
 	.the-card-library {
 		width: calc(100% - 32px);
 		height: 100%;
-		padding: 0 32px;
+		padding: 0 16px;
 		display: grid;
 		grid-template-columns: repeat(auto-fill, 230px);
 		justify-content: space-between;

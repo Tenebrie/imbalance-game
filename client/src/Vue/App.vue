@@ -4,7 +4,6 @@
 		<div id="content">
 			<the-navigation-bar v-if="!isInGame" />
 			<router-view class="view" />
-			<the-footer v-if="!isInGame" />
 		</div>
 	</div>
 </template>
@@ -12,11 +11,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import TheFooter from '@/Vue/components/TheFooter.vue'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
 
 export default Vue.extend({
-	components: { TheNavigationBar, TheFooter },
+	components: { TheNavigationBar },
 
 	computed: {
 		isInGame() {
@@ -125,21 +123,32 @@ button {
 	cursor: pointer;
 }
 
-button.primary, .swal-button {
+button.primary, .swal-button, .button-primary {
 	border-radius: 0.25em;
 	width: 100%;
-	padding: 0.5em;
+	padding: 0.5em 1em;
 	margin: 0.25em 0;
 	font-family: Roboto, sans-serif;
+	font-size: 1em;
 	color: $COLOR-TEXT;
 	background-color: $COLOR-PRIMARY;
 	border: 1px solid $COLOR-PRIMARY;
 	outline: none;
 
+	&.destructive {
+		color: lighten(red, 15);
+		&:hover {
+			color: lighten(red, 10);
+		}
+		&:active {
+			color: lighten(red, 5);
+		}
+	}
+
 	&:hover {
-		color: darken($COLOR-TEXT, 5) !important;
-		border-color: darken($COLOR-PRIMARY, 5) !important;
-		background-color: darken($COLOR-PRIMARY, 5) !important;
+		color: darken($COLOR-TEXT, 5);
+		border-color: darken($COLOR-PRIMARY, 5);
+		background-color: darken($COLOR-PRIMARY, 5);
 	}
 
 	&:active {
@@ -149,24 +158,34 @@ button.primary, .swal-button {
 	}
 }
 
-button.secondary {
-	border: 1px solid $COLOR-TEXT;
-	border-radius: 4px;
+button.secondary, .button-secondary {
+	border-radius: 0.25em;
 	width: 100%;
-	padding: calc(0.25em - 1px);
+	padding: 0.5em 1em;
 	margin: 0.25em 0;
-	font-size: 1em;
 	font-family: Roboto, sans-serif;
+	font-size: 1em;
 	color: $COLOR-TEXT;
 	background-color: transparent;
+	border: 1px solid $COLOR-TEXT;
 	outline: none;
+
+	&.destructive {
+		color: lighten(red, 15);
+		&:hover {
+			color: lighten(red, 10);
+		}
+		&:active {
+			color: lighten(red, 5);
+		}
+	}
 
 	&:hover {
 		background-color: rgba(white, 0.05);
 	}
 
 	&:active {
-		background-color: rgba(white, 0.1);
+		background-color: rgba(white, 0.1) !important;
 	}
 }
 
@@ -191,6 +210,10 @@ span.info-text {
 .noty_body {
 	font-family: 'Roboto', sans-serif;
 	font-size: 1.0em !important;
+}
+
+.noty_bar {
+	box-shadow: black 0 0 4px 4px;
 }
 
 .noty_type__info > .noty_body {

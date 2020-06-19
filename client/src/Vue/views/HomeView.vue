@@ -40,27 +40,28 @@ export default Vue.extend({
 
 	.home-view {
 		width: 100%;
+		height: 100%;
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
 		justify-content: center;
 
 		& > div {
-			height: 75%;
+			height: calc(100% - #{$NAVIGATION-BAR-HEIGHT});
 			display: flex;
 			flex-direction: column;
 			background: $COLOR-BACKGROUND-TRANSPARENT;
 
 			&.deck-list {
 				flex: 1;
-				margin: 32px 16px 32px 32px;
+				margin: 0 16px 0 32px;
 			}
 			&.game-list {
 				flex: 2;
-				margin: 32px 16px 32px 16px;
+				margin: 0 16px 0 16px;
 			}
 			&.changelog {
 				flex: 1;
-				margin: 32px 32px 32px 16px;
+				margin: 0 32px 0 16px;
 			}
 		}
 	}

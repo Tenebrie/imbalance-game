@@ -1,8 +1,10 @@
 <template>
-	<span class="link button-link" @click="onClick">
-		<span v-if="!isLoading">Delete</span>
-		<span v-if="isLoading">Deleting...</span>
-	</span>
+	<div class="button-container">
+		<button class="primary destructive" @click="onClick">
+			<span v-if="!isLoading">Delete</span>
+			<span v-if="isLoading">Deleting...</span>
+		</button>
+	</div>
 </template>
 
 <script lang="ts">

@@ -83,6 +83,14 @@ const routes = [
 		component: () => import('@/Vue/views/RulesView.vue')
 	},
 	{
+		path: '/profile',
+		name: 'profile',
+		component: () => import('@/Vue/views/ProfileView.vue'),
+		beforeEnter: (to: Route, from: Route, next: Function) => {
+			requireAuthentication(next)
+		}
+	},
+	{
 		path: '/game',
 		name: 'game',
 		component: () => import('@/Vue/views/GameView.vue'),
