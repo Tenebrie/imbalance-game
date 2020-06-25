@@ -3,6 +3,7 @@ import glob from 'glob'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import VoidGame from '../utils/VoidGame'
+import Utils from '../../utils/Utils'
 
 class CardLibrary {
 	cards: ServerCard[]
@@ -13,7 +14,6 @@ class CardLibrary {
 		const normalizedPath = path.join(__dirname, '../cards')
 		const cardModules = glob.sync(`${normalizedPath}/**/*.js`)
 		cardModules.forEach(file => cardPrototypes.push(require(file).default))
-		console.info(`Loaded ${cardPrototypes.length} card definitions`)
 
 		this.cards = cardPrototypes.map(prototype => {
 			const referenceInstance = new prototype(VoidGame.get())
@@ -27,6 +27,8 @@ class CardLibrary {
 			referenceInstance.description = `card.description.${className}`
 			return referenceInstance
 		})
+
+		console.info(`Loaded ${cardPrototypes.length} card definitions:`, Utils.sortCards(this.cards).map(card => card.class))
 	}
 
 	public get collectibleCards(): ServerCard[] {

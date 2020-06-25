@@ -1,6 +1,7 @@
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../game/models/ServerCard'
+import AsciiColor from '../enums/AsciiColor'
 
 interface TryUntilArgs {
 	try: () => void | Promise<void>
@@ -16,6 +17,18 @@ export const tryUntil = (args: TryUntilArgs): boolean => {
 		}
 	}
 	return false
+}
+
+export const colorize = (text: string, color: AsciiColor): string => {
+	return `${color}${text}\u001b[0m`
+}
+
+export const colorizeId = (text: string): string => {
+	return colorize(text, AsciiColor.CYAN)
+}
+
+export const colorizePlayer = (text: string): string => {
+	return colorize(text, AsciiColor.RED)
 }
 
 export default {

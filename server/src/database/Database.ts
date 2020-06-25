@@ -1,5 +1,7 @@
 import pgMigrate from 'node-pg-migrate'
-import { Client, QueryResult } from 'pg'
+import {Client, QueryResult} from 'pg'
+import {colorize} from '../utils/Utils'
+import AsciiColor from '../enums/AsciiColor'
 
 class Database {
 	private client: Client
@@ -15,7 +17,7 @@ class Database {
 	public async init(): Promise<void> {
 		const databaseUrl = process.env.DATABASE_URL
 
-		console.info('Connecting to database at "' + databaseUrl + '"')
+		console.info(`Connecting to database at ${colorize(databaseUrl, AsciiColor.CYAN)}`)
 		const client = new Client({
 			connectionString: databaseUrl,
 			ssl: !databaseUrl.includes('dev-db'),

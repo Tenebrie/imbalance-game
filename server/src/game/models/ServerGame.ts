@@ -18,6 +18,7 @@ import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
+import {colorize, colorizeId, colorizePlayer} from '../../utils/Utils'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -70,7 +71,8 @@ export default class ServerGame extends Game {
 
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
-		console.info(`Starting game ${this.id}: ${playerOne.player.username} vs ${playerTwo.player.username}`)
+		console.info(`Starting game ${colorizeId(this.id)}: `
+			+ `${colorizePlayer(playerOne.player.username)} vs ${colorizePlayer(playerTwo.player.username)}`)
 
 		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.sendPlayerSelf(playerInGame.player, playerInGame)

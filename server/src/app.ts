@@ -1,3 +1,5 @@
+console.info('Starting up NotGwent server')
+
 import path from 'path'
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
@@ -7,6 +9,7 @@ import { cardImageGenerator } from './utils/CardImageGenerator'
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
 import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
+import { wsLogger } from './utils/WebSocketLogger'
 
 const app = express()
 expressWs(app)
@@ -29,14 +32,17 @@ app.set('view engine', 'jade')
 
 /* Forced HTTPS */
 app.use((req: Request, res: Response, next) => {
-	if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV && process.env.NODE_ENV !== 'development') {
+	if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV !== 'development') {
 		return res.redirect('https://' + req.get('host') + req.url)
 	}
 	next()
 })
 
 /* Random middleware */
-app.use(logger('dev'))
+if (process.env.NODE_ENV === 'development') {
+	app.use(logger('dev'))
+}
+app.use(wsLogger())
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))

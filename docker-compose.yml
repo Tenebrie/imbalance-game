@@ -5,6 +5,8 @@ services:
       context: ./
       dockerfile: ./client/Dockerfile
     working_dir: /app/client
+    environment:
+      NODE_ENV: development
     depends_on:
       - server
     ports:
@@ -21,6 +23,7 @@ services:
       dockerfile: ./server/Dockerfile
     working_dir: /app/server
     environment:
+      NODE_ENV: development
       DATABASE_URL: postgres://docker:docker@dev-db:5432/db
       DATABASE_SSL: "false"
     depends_on:

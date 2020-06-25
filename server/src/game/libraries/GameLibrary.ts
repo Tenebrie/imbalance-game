@@ -1,6 +1,7 @@
 import ServerGame from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import { colorizeId, colorizePlayer } from '../../utils/Utils'
 
 class GameLibrary {
 	games: ServerGame[]
@@ -11,7 +12,7 @@ class GameLibrary {
 
 	public createOwnedGame(owner: ServerPlayer, name: string): ServerGame {
 		const game = ServerGame.newOwnedInstance(owner, name)
-		console.info(`Creating owned game ${game.id}`)
+		console.info(`Player ${colorizePlayer(owner.username)} created game ${colorizeId(game.id)}`)
 
 		this.games.push(game)
 		return game
