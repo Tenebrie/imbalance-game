@@ -26,13 +26,13 @@ export default class HeroCrystalWarrior extends ServerCard {
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
 		if (!this.sacrificedUnit) {
 			return PostPlayTargetDefinitionBuilder.base(this.game)
-				.singleTarget()
+				.multipleTargets(2)
 				.require(TargetType.UNIT)
 				.alliedUnit()
 				.notSelf()
 		} else {
 			return PostPlayTargetDefinitionBuilder.base(this.game)
-				.singleTarget()
+				.multipleTargets(2)
 				.require(TargetType.CARD_IN_LIBRARY)
 				.validate(TargetType.CARD_IN_LIBRARY, args => args.targetCard.tribes.includes(CardTribe.CRYSTAL))
 		}

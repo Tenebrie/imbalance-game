@@ -377,13 +377,14 @@ export default class ServerCard extends Card {
 	onAfterHealthDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onDamageSurvived(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
+	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, dealtDamage: number): void { return }
 	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, dealtDamage: number): void { return }
 	onBeforePerformingRowAttack(thisUnit: ServerUnit, target: ServerBoardRow, targetMode: TargetMode): void { return }
 	onAfterPerformingRowAttack(thisUnit: ServerUnit, target: ServerBoardRow, targetMode: TargetMode): void { return }
 	onBeforeBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
 	onAfterBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
-	onBeforePerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
-	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
+	onBeforePerformingMove(thisUnit: ServerUnit, target: ServerBoardRow, from: ServerBoardRow): void { return }
+	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow, from: ServerBoardRow): void { return }
 	onPerformingUnitSupport(thisUnit: ServerUnit, target: ServerUnit): void { return }
 	onPerformingRowSupport(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
 	onBeforeBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }

@@ -5,36 +5,40 @@ import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import TargetType from '@shared/enums/TargetType'
-import ServerUnit from '../../../models/ServerUnit'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
-import ServerAnimation from '../../../models/ServerAnimation'
 import CardFaction from '@shared/enums/CardFaction'
-import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition'
+import ServerUnit from '../../../models/ServerUnit'
+import ServerBoardRow from '../../../models/ServerBoardRow'
+import BuffStun from '../../../buffs/BuffStun'
+import BuffDuration from '@shared/enums/BuffDuration'
 
 export default class UnitStoneElemental extends ServerCard {
-	damage = 4
+	canAttack = false
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 7
+		this.baseAttack = 3
+		this.baseAttackRange = 2
 		this.baseTribes = [CardTribe.ELEMENTAL]
-		this.dynamicTextVariables = {
-			damage: this.damage
-		}
 	}
 
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.allow(TargetType.UNIT)
-			.notSelf()
-			.validate(TargetType.UNIT, args => {
-				return args.targetUnit.card.power === 5
-			})
+	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow) {
+		this.canAttack = true
 	}
 
-	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.unitAttacksUnits(thisUnit, [target], this.damage))
-		target.dealDamage(ServerDamageInstance.fromUnit(this.damage, thisUnit))
+	defineValidOrderTargets(): TargetDefinitionBuilder {
+		return TargetDefinition.defaultUnitOrder(this.game)
+			.actions(this.canAttack ? 1 : 0)
+			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT)
+	}
+
+	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode) {
+		target.buffs.add(new BuffStun(), this, BuffDuration.END_OF_NEXT_TURN)
+	}
+
+	onTurnEnded() {
+		this.canAttack = false
 	}
 }

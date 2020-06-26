@@ -53,6 +53,10 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		return this.game.getOpponent(this)
 	}
 
+	public isInvertedBoard(): boolean {
+		return this.game.players.indexOf(this) === 1
+	}
+
 	public canPlaySpell(card: ServerCard, rowIndex: number): boolean {
 		const gameBoardRow = this.game.board.rows[rowIndex]
 		return this.spellMana >= card.spellCost && !!card.getValidPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
@@ -209,6 +213,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnEnd(): void {
+		this.cardsPlayed = []
 		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
 			runCardEventHandler(() => unit.card.onTurnEnded())
 			unit.card.buffs.onTurnEnded()

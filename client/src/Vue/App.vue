@@ -11,26 +11,25 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
-import {onMounted, reactive} from '@vue/composition-api'
-
-function App() {
-	const isInGame = store.getters.gameStateModule.isInGame
-	const rootClass = reactive({
-		'in-game': isInGame as boolean,
-		'navigation-bar-visible': !isInGame as boolean
-	})
-
-	onMounted(() => store.dispatch.userPreferencesModule.fetchPreferences())
-
-	return {
-		isInGame,
-		rootClass
-	}
-}
 
 export default {
 	components: { TheNavigationBar },
-	setup: App
+
+	mounted() {
+		store.dispatch.userPreferencesModule.fetchPreferences()
+	},
+
+	computed: {
+		isInGame(): boolean {
+			return store.getters.gameStateModule.isInGame
+		},
+		rootClass() {
+			return {
+				'in-game': this.isInGame as boolean,
+				'navigation-bar-visible': !this.isInGame as boolean
+			}
+		}
+	}
 }
 </script>
 

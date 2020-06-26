@@ -10,9 +10,10 @@ import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDef
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
+import MoveDirection from '@shared/enums/MoveDirection'
 
 export default class UnitChargingKnight extends ServerCard {
-	hasMovedThisTurn = false
+	movesForwardThisTurn = 0
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
@@ -22,21 +23,18 @@ export default class UnitChargingKnight extends ServerCard {
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
-		let orderTargets = TargetDefinition.defaultUnitOrder(this.game)
-		if (this.hasMovedThisTurn) {
-			orderTargets = orderTargets
-				.actions(1)
-				.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT)
-				.allowSimultaneously([TargetMode.ORDER_ATTACK, TargetType.UNIT], [TargetMode.ORDER_MOVE, TargetType.BOARD_ROW])
-		}
-		return orderTargets
+		return TargetDefinition.defaultUnitOrder(this.game)
+			.actions(this.movesForwardThisTurn)
+			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT)
 	}
 
-	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void {
-		this.hasMovedThisTurn = true
+	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow, from: ServerBoardRow): void {
+		if (this.game.board.getMoveDirection(this.owner, from, target) === MoveDirection.FORWARD) {
+			this.movesForwardThisTurn += 1
+		}
 	}
 
 	onTurnEnded(): void {
-		this.hasMovedThisTurn = false
+		this.movesForwardThisTurn = 0
 	}
 }

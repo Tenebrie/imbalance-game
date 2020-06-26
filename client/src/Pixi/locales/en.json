@@ -131,7 +131,7 @@
 	"card.description.unitSpinningBarbarian": "{name} attacks up to 4 closest enemies on target row",
 
 	"card.name.unitChargingKnight": "Charging Knight",
-	"card.description.unitChargingKnight": "*Melee Attack:* Deal {attack} Damage<p>Can *Melee Attack* only after performing a move",
+	"card.description.unitChargingKnight": "Perform an *Attack Action* whenever it moves forward<p>*Melee Attack:*\nDeal {attack} Damage",
 
 	"card.name.unitTwinBowArcher": "Twin Bow Archer",
 	"card.description.unitTwinBowArcher": "{name} always attacks units directly to the left and to the right from the chosen target",
@@ -144,7 +144,7 @@
 	"card.target.unitPriestessOfAedine.heal": "Restore {healing} Power",
 
 	"card.name.unitSupplyWagon": "Supply Wagon",
-	"card.description.unitSupplyWagon": "*Support:*\nGrant an allied unit an extra move action this turn only",
+	"card.description.unitSupplyWagon": "Perform a *Support Action* once a turn<p>*Support:*\nGrant an allied unit an extra move action this turn only",
 	"card.target.unitSupplyWagon.ability": "Grant extra move",
 
 	"card.name.unitArcaneElemental": "Arcane Elemental",
@@ -160,7 +160,7 @@
 	"card.description.unitIceSkinCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
 
 	"card.name.unitStoneElemental": "Stone Elemental",
-	"card.description.unitStoneElemental": "*Deploy:*\nDeal {damage} Damage to any other unit",
+	"card.description.unitStoneElemental": "*Deploy:*\nPerform an attack action this turn only<p>*Short-Ranged Attack*:\nDeal {attack} Damage;\nApply *Stun* for 1 turn",
 
 	"card.name.unitMerfolkStormcaller": "Merfolk Stormcaller",
 	"card.description.unitMerfolkStormcaller": "*Deploy:*\n*Create* a *Gathering Storm*",

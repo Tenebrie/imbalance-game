@@ -8,7 +8,7 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerBoardOrders from './ServerBoardOrders'
 import ServerCard from './ServerCard'
 import Utils from '../../utils/Utils'
-import CardLocation from '@shared/enums/CardLocation'
+import MoveDirection from '@shared/enums/MoveDirection'
 
 export default class ServerBoard extends Board {
 	readonly game: ServerGame
@@ -89,6 +89,16 @@ export default class ServerBoard extends Board {
 
 	public getUnitsOwnedByOpponent(thisPlayer: ServerPlayerInGame) {
 		return this.getUnitsOwnedByPlayer(this.game.getOpponent(thisPlayer))
+	}
+
+	public getMoveDirection(player: ServerPlayerInGame, from: ServerBoardRow, to: ServerBoardRow): MoveDirection {
+		let direction = from.index - to.index
+		if (player.isInvertedBoard()) {
+			direction *= -1
+		}
+		if (direction > 0) return MoveDirection.FORWARD
+		if (direction === 0) return MoveDirection.SIDE
+		if (direction < 0) return MoveDirection.BACK
 	}
 
 	public getRowWithDistanceToFront(player: ServerPlayerInGame, distance: number): ServerBoardRow {

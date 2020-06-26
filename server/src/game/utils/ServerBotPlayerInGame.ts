@@ -114,10 +114,6 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		IncomingMessageHandlers['post/endTurn'](null, this.game, this)
 	}
 
-	private isInvertedBoard(): boolean {
-		return this.game.players.indexOf(this) === 1
-	}
-
 	private sortOwnedRows(ownedRows: ServerBoardRow[]): ServerBoardRow[] {
 		if (this.isInvertedBoard()) {
 			return ownedRows.slice().sort((a, b) => b.index - a.index)
