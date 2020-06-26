@@ -4,13 +4,12 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
-import SimpleTargetDefinitionBuilder from '../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
-import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ServerAnimation from '../../../models/ServerAnimation'
 import CardFaction from '@shared/enums/CardFaction'
+import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 
 export default class UnitStoneElemental extends ServerCard {
 	damage = 4
@@ -25,10 +24,13 @@ export default class UnitStoneElemental extends ServerCard {
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
+		return PostPlayTargetDefinitionBuilder.base(this.game)
 			.singleTarget()
 			.allow(TargetType.UNIT)
 			.notSelf()
+			.validate(TargetType.UNIT, args => {
+				return args.targetUnit.card.power === 5
+			})
 	}
 
 	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {

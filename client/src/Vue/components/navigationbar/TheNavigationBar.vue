@@ -32,6 +32,7 @@ export default {
 
 	.the-navigation-bar {
 		position: fixed;
+		z-index: 1;
 		top: 0;
 		height: $NAVIGATION-BAR-HEIGHT;
 		width: 100%;

@@ -161,7 +161,7 @@ export default class RichText extends PIXI.Container {
 
 		let replacedText = (this.text || '')
 		for (const variableName in textVariables) {
-			const variableValue = textVariables[variableName]
+			const variableValue = textVariables[variableName] || ''
 			const regexp = new RegExp('{' + variableName + '}', 'g')
 			replacedText = replacedText.replace(regexp, '*' + variableValue.toString() + '*')
 		}

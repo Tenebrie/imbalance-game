@@ -1,5 +1,5 @@
 import PlayerDatabaseEntry from '../PlayerDatabaseEntry'
-import Language from '@shared/models/Language'
+import Language from '../Language'
 
 export default class UserProfileMessage {
 	email: string

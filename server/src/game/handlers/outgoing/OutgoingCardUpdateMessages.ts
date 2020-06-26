@@ -21,34 +21,6 @@ export default {
 		})
 	},
 
-	notifyAboutUnitCardsDrawn(playerInGame: ServerPlayerInGame, cards: ServerCard[]) {
-		const cardMessages = cards.map((card: ServerCard) => CardMessage.fromCard(card))
-		playerInGame.player.sendMessage({
-			type: 'update/player/self/hand/unit/cardDrawn',
-			data: cardMessages
-		})
-
-		const hiddenCardMessages = cards.map((card: ServerCard) => HiddenCardMessage.fromCard(card))
-		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/hand/unit/cardDrawn',
-			data: hiddenCardMessages
-		})
-	},
-
-	notifyAboutSpellCardsDrawn(playerInGame: ServerPlayerInGame, cards: ServerCard[]) {
-		const cardMessages = cards.map((card: ServerCard) => CardMessage.fromCard(card))
-		playerInGame.player.sendMessage({
-			type: 'update/player/self/hand/spell/cardDrawn',
-			data: cardMessages
-		})
-
-		const hiddenCardMessages = cards.map((card: ServerCard) => HiddenCardMessage.fromCard(card))
-		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/hand/spell/cardDrawn',
-			data: hiddenCardMessages
-		})
-	},
-
 	notifyAboutUnitCardAdded(playerInGame: ServerPlayerInGame, card: ServerCard) {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/hand/unit/cardAdded',

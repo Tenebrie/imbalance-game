@@ -10,6 +10,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
+import Notifications from '@/utils/Notifications'
 
 export default Vue.extend({
 	data: () => ({
@@ -26,9 +27,9 @@ export default Vue.extend({
 			const deckId = this.$route.params.id
 			const statusCode = await store.dispatch.editor.saveDeck({ deckId })
 			if (statusCode === 204) {
-				this.$noty.success('Deck saved!')
+				Notifications.success('Deck saved!')
 			} else {
-				this.$noty.error('An error occurred while saving the deck')
+				Notifications.error('An error occurred while saving the deck')
 			}
 			this.requestInFlight = false
 		}

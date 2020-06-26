@@ -10,6 +10,7 @@
 	"target.move.row": "Move",
 
 	"card.faction.arcane": "Arcane",
+	"card.faction.nature": "Nature",
 	"card.faction.neutral": "Neutral",
 	"card.faction.experimental": "Experimental",
 	"editor.faction.unfinished": "Unfinished",
@@ -61,6 +62,10 @@
 	"card.title.heroAura": "The Golden Hawk",
 	"card.description.heroAura": "*Deploy:*\n*Summon* a Legendary card from your deck.",
 
+	"card.name.heroArgenta": "Argenta",
+	"card.title.heroArgenta": "The Silver Falcon",
+	"card.description.heroArgenta": "*Deploy:*\n*Summon* an Epic card from your deck.",
+
 	"card.name.heroAntoria": "Antoria",
 	"card.title.heroAntoria": "The Martyr",
 	"card.description.heroAntoria": "Whenever an ally takes damage while {name} is in your hand, redirect the damage to her.<p>If {name} is killed while in your hand, *Draw* a card.",
@@ -99,7 +104,7 @@
 	"card.description.heroDarkOracle": "*Deploy:*\nLook at bottom {cardsToSee} cards from your opponent's deck. Choose one to *Discard*.",
 
 	"card.name.heroCrystalWarrior": "Crystal Warrior",
-	"card.description.heroCrystalWarrior": "*Deploy:*\nTrigger *Deathrattle* effect of a friendly crystal.",
+	"card.description.heroCrystalWarrior": "*Deploy:*\n*Sacrifice* an allied unit.\nSummon a *Crystal* in its place.",
 
 	"card.name.heroCultistOfAreddon": "Cultist of Areddon",
 	"card.description.heroCultistOfAreddon": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",

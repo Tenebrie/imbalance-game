@@ -19,7 +19,7 @@ export const tryUntil = (args: TryUntilArgs): boolean => {
 	return false
 }
 
-export const colorize = (text: string, color: AsciiColor): string => {
+export const colorize = (text: string | number, color: AsciiColor): string => {
 	return `${color}${text}\u001b[0m`
 }
 
@@ -29,6 +29,10 @@ export const colorizeId = (text: string): string => {
 
 export const colorizePlayer = (text: string): string => {
 	return colorize(text, AsciiColor.RED)
+}
+
+export const colorizeConsoleText = (text: string): string => {
+	return colorize(text, AsciiColor.MAGENTA)
 }
 
 export default {

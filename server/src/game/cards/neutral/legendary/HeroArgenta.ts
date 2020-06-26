@@ -9,10 +9,10 @@ import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/P
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
 
-export default class HeroAura extends ServerCard {
+export default class HeroArgenta extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
-		this.basePower = 2
+		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NEUTRAL)
+		this.basePower = 4
 		this.baseTribes = [CardTribe.BIRD]
 	}
 
@@ -21,7 +21,7 @@ export default class HeroAura extends ServerCard {
 			.singleTarget()
 			.require(TargetType.CARD_IN_UNIT_DECK)
 			.inPlayersDeck()
-			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.color === CardColor.GOLDEN))
+			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.color === CardColor.SILVER))
 	}
 
 	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {

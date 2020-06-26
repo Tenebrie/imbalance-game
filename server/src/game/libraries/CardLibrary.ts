@@ -3,17 +3,56 @@ import glob from 'glob'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import VoidGame from '../utils/VoidGame'
-import Utils from '../../utils/Utils'
+import Utils, { colorize } from '../../utils/Utils'
+import AsciiColor from '../../enums/AsciiColor'
+import * as fs from 'fs'
+import CardColor from '@shared/enums/CardColor'
+import CardType from '@shared/enums/CardType'
 
 class CardLibrary {
 	cards: ServerCard[]
 
 	constructor() {
-		const cardPrototypes = []
-
 		const normalizedPath = path.join(__dirname, '../cards')
-		const cardModules = glob.sync(`${normalizedPath}/**/*.js`)
-		cardModules.forEach(file => cardPrototypes.push(require(file).default))
+		const cardDefinitionFiles = glob.sync(`${normalizedPath}/**/*.js`)
+		const cardModules = cardDefinitionFiles.map(path => ({
+			path: path,
+			filename: path.substring(path.lastIndexOf('/') + 1, path.indexOf('.js')),
+			timestamp: fs.statSync(path).mtimeMs,
+			prototypeFunction: require(path).default
+		}))
+		console.info(`Found ${colorize(cardModules.length, AsciiColor.CYAN)} card definition files`)
+
+		const nameMismatchModules = cardModules.filter(module => module.filename !== module.prototypeFunction.name)
+		if (nameMismatchModules.length > 0) {
+			const errorArray = nameMismatchModules.map(module => ({
+				file: module.filename,
+				prototype: module.prototypeFunction.name
+			}))
+			console.warn(colorize(`Clearing ${nameMismatchModules.length} module(s) due to class name mismatch:`, AsciiColor.YELLOW), errorArray)
+			nameMismatchModules.forEach(module => fs.unlinkSync(module.path))
+		}
+
+		const filteredModules = cardModules
+			.filter(module => module.filename === module.prototypeFunction.name)
+			.reduce((acc, obj) => {
+				const updatedArray = acc.slice()
+				const savedObject = updatedArray.find(savedObject => savedObject.filename === obj.filename)
+				if (!savedObject) {
+					updatedArray.push(obj)
+				} else if (obj.timestamp > savedObject.timestamp) {
+					updatedArray.splice(updatedArray.indexOf(savedObject), 1, obj)
+				}
+				return updatedArray
+			}, [])
+
+		const outdatedModules = cardModules.filter(module => !filteredModules.includes(module) && !nameMismatchModules.includes(module))
+		if (outdatedModules.length > 0) {
+			console.info(colorize(`Clearing ${outdatedModules.length} outdated module(s)`, AsciiColor.YELLOW))
+			outdatedModules.forEach(module => fs.unlinkSync(module.path))
+		}
+
+		const cardPrototypes = filteredModules.map(module => module.prototypeFunction)
 
 		this.cards = cardPrototypes.map(prototype => {
 			const referenceInstance = new prototype(VoidGame.get())
@@ -23,12 +62,16 @@ class CardLibrary {
 			referenceInstance.armor = referenceInstance.baseArmor
 			referenceInstance.attack = referenceInstance.baseAttack
 			referenceInstance.name = `card.name.${className}`
-			referenceInstance.title = `card.title.${className}`
 			referenceInstance.description = `card.description.${className}`
+			if ((referenceInstance.color === CardColor.LEADER || referenceInstance.color === CardColor.GOLDEN) && referenceInstance.type === CardType.UNIT) {
+				referenceInstance.title = `card.title.${className}`
+			}
 			return referenceInstance
 		})
 
-		console.info(`Loaded ${cardPrototypes.length} card definitions:`, Utils.sortCards(this.cards).map(card => card.class))
+		const sortedModules = filteredModules.sort((a, b) => b.timestamp - a.timestamp)
+		const latestClasses = sortedModules.slice(0, 5).map(card => card.prototypeFunction.name)
+		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions. Newest 5:`, latestClasses)
 	}
 
 	public get collectibleCards(): ServerCard[] {
