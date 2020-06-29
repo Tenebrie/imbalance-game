@@ -1,4 +1,211 @@
 {
+	"target.generic.unit": "Выбрать",
+	"target.generic.row": "Выбрать ряд",
+	"target.attack.unit": "Атаковать",
+	"target.attack.row": "Атаковать ряд",
+	"target.drain.unit": "Выбрать",
+	"target.drain.row": "Выбрать ряд",
+	"target.support.unit": "Выбрать",
+	"target.support.row": "Выбрать ряд",
+	"target.move.row": "Переместиться",
+
+	"card.faction.arcane": "Аркан",
+	"card.faction.neutral": "Нейтралы",
+	"card.faction.experimental": "Экспериментальное",
+	"editor.faction.unfinished": "Незаконченные",
+
+	"card.color.leader": "Предводитель",
+	"card.color.golden": "Легендарные",
+	"card.color.silver": "Эпические",
+	"card.color.bronze": "Обыкновенные",
+
+	"card.tribe.bird": "Птица",
+	"card.tribe.beast": "Зверь",
+	"card.tribe.human": "Человек",
+	"card.tribe.undead": "Нежить",
+	"card.tribe.dragon": "Дракон",
+	"card.tribe.crystal": "Кристалл",
+	"card.tribe.vampire": "Вампир",
+	"card.tribe.building": "Здание",
+	"card.tribe.elemental": "Элементаль",
+
+	"card.name.leaderVelElleron": "Вель'Эллерон",
+	"card.title.leaderVelElleron": "Боевой Маг",
+	"card.description.leaderVelElleron": "*Предводитель Аркана*<p>*Способности:*\nSteel Spark, An Encouragement, Fireball, Fiery Entrance",
+
+	"card.name.leaderVelRaminea": "Вель'Раминеа",
+	"card.title.leaderVelRaminea": "Заклинательница Пламени",
+	"card.description.leaderVelRaminea": "*Предводитель Аркана*<p>*Способности:*\nSpell 1, Spell 2, Spell 3, Spell 4",
+
+	"card.name.leaderNighterie": "Найтери",
+	"card.title.leaderNighterie": "Хранитель Теней",
+	"card.description.leaderNighterie": "*Предводитель Аркана*<p>*Способности:*\nShadow Spark, Nightmare Drain, Crystal Barrage, Army of Shadows",
+
+	"card.name.heroZamarath": "Zamarath",
+	"card.title.heroZamarath": "The Protector",
+	"card.description.heroZamarath": "*Вход в игру:*\nПолучает *Иммунитет* до конца хода.",
+
+	"card.name.heroKroLah": "Kro'Lah",
+	"card.title.heroKroLah": "The Sky Guardian",
+	"card.description.heroKroLah": "*Вход в игру:*\nChoose an enemy row.\n*Stun* and *Push 1* all units on that row.",
+
+	"card.name.heroCarienne": "Carienne",
+	"card.title.heroCarienne": "The Storm Unleashed",
+	"card.description.heroCarienne": "*Вход в игру:*\nDeal {damagePerWave} Damage to all enemy units.\nRepeat once for every *Gathering Storm* in your Graveyard.",
+
+	"card.name.heroGarellion": "Garellion",
+	"card.title.heroGarellion": "The Conduit",
+	"card.description.heroGarellion": "*End of round:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
+
+	"card.name.heroAura": "Aura",
+	"card.title.heroAura": "Золотой Ястреб",
+	"card.description.heroAura": "*Вход в игру:*\n*Summon* a Legendary card from your deck.",
+
+	"card.name.heroAntoria": "Antoria",
+	"card.title.heroAntoria": "The Martyr",
+	"card.description.heroAntoria": "Whenever an ally takes damage while {name} is in your hand, redirect the damage to her.<p>If {name} is killed while in your hand, *Draw* a card.",
+
+	"card.name.heroAurienne": "Aurienne",
+	"card.title.heroAurienne": "The Shield of Faith",
+	"card.description.heroAurienne": "Whenever an ally takes lethal damage while {name} is in your hand, prevent it and *Play* {name} in front of this ally.",
+
+	"card.name.heroTroviar": "Troviar",
+	"card.title.heroTroviar": "The Watcher",
+	"card.description.heroTroviar": "Когда другая боевая единица получает урон, получает +{powerGained} Силы.",
+
+	"card.name.heroMetrearte": "Метреарт",
+	"card.title.heroMetrearte": "Кот-копирка",
+	"card.description.heroMetrearte": "*Вход в игру:*\nВыберите способность любого предводителя Аркана.\nПолучите его копию.",
+
+	"card.name.heroSparklingSpirit": "Sparkling Spirit",
+	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
+
+	"card.name.heroRagingElemental": "Raging Elemental",
+	"card.description.heroRagingElemental": "After {name} takes damage, it deals Damage equal to own Power to closest opposing enemy units.<p>Then, it destroys itself.",
+
+	"card.name.heroStormDancer": "Storm Dancer",
+	"card.description.heroStormDancer": "*Вход в игру:*\nFor each *Gathering Storm* in your Graveyard, put a copy of it into your spell hand.",
+
+	"card.name.heroFlameDancer": "Flame Dancer",
+	"card.description.heroFlameDancer": "*Вход в игру:*\nApply *Burning* for {burnDuration} turns to all units on an enemy row.",
+
+	"card.name.heroRavenCaller": "Raven Caller",
+	"card.description.heroRavenCaller": "*Вход в игру:*\n*Summon* a Bird from your deck",
+
+	"card.name.heroLightOracle": "Oracle of Light",
+	"card.description.heroLightOracle": "*Вход в игру:*\nLook at top {cardsToSee} cards from your deck. Choose one to *Summon*.",
+
+	"card.name.heroDarkOracle": "Oracle of Darkness",
+	"card.description.heroDarkOracle": "*Вход в игру:*\nLook at bottom {cardsToSee} cards from your opponent's deck. Choose one to *Discard*.",
+
+	"card.name.heroCrystalWarrior": "Crystal Warrior",
+	"card.description.heroCrystalWarrior": "*Вход в игру:*\nTrigger *Deathrattle* effect of a friendly crystal.",
+
+	"card.name.heroCultistOfAreddon": "Cultist of Areddon",
+	"card.description.heroCultistOfAreddon": "*Вход в игру:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",
+
+	"card.name.heroAdventuringGuildMaster": "Adventuring Guild Master",
+	"card.description.heroAdventuringGuildMaster": "*Вход в игру:*\nGain +{powerPerCard} Power per other Unit played this turn.",
+
+	"card.name.unitRavenMessenger": "Raven Messenger",
+	"card.description.unitRavenMessenger": "*Вход в игру:*\n*Summon* a Bronze Human card from your deck.",
+
+	"card.name.unitForestScout": "Forest Scout",
+	"card.description.unitForestScout": "*Вход в игру:*\nIf you're losing on the board, gains {boardPowerBonus} Power.\nIf you're losing on Morale, gains {moralePowerBonus} Power.",
+
+	"card.name.unitChargingKnight": "Charging Knight",
+	"card.description.unitChargingKnight": "*Ближний бой:* Deal {attack} Damage<p>Can *Melee Attack* only after performing a move",
+
+	"card.name.unitVampireFledgling": "Vampire Fledgling",
+	"card.description.unitVampireFledgling": "Loses {powerLost} Power per turn.<p>*Melee Attack:* Deal {attack} Damage. If damage is not blocked, then Restore {powerDrained} Power",
+
+	"card.name.unitPriestessOfAedine": "Priestess of Aedine",
+	"card.description.unitPriestessOfAedine": "*Deploy:*\nRestore {healing} Power to a damaged allied unit",
+	"card.target.unitPriestessOfAedine.heal": "Restore {healing} Power",
+
+	"card.name.unitSupplyWagon": "Supply Wagon",
+	"card.description.unitSupplyWagon": "*Support:*\nGrant an allied unit an extra move action this turn only",
+	"card.target.unitSupplyWagon.ability": "Grant extra move",
+
+	"card.name.unitArcaneElemental": "Arcane Elemental",
+	"card.description.unitArcaneElemental": "*Deploy:*\nGenerate {manaGenerated} Mana",
+
+	"card.name.unitArcaneCrystal": "Arcane Crystal",
+	"card.description.unitArcaneCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Generate {manaGenerated} Mana for every {chargesForMana} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill generate {potentialMana} Mana</i></if>",
+
+	"card.name.unitFlameTouchCrystal": "Flame Touch Crystal",
+	"card.description.unitFlameTouchCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Create a *Tiny Sparkling* for each *Charge* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}</i></if>",
+
+	"card.name.unitIceSkinCrystal": "Ice Skin Crystal",
+	"card.description.unitIceSkinCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
+
+	"card.name.unitStoneElemental": "Stone Elemental",
+	"card.description.unitStoneElemental": "*Вход в игру:*\nDeal {damage} Damage to any other unit",
+
+	"card.name.unitMerfolkStormcaller": "Merfolk Stormcaller",
+	"card.description.unitMerfolkStormcaller": "*Вход в игру:*\n*Create* a *Gathering Storm*",
+
+	"card.name.unitCrystalMiner": "Crystal Miner",
+	"card.description.unitCrystalMiner": "*Вход в игру:*\n*Create* an Arcane crystal.",
+
+	"card.name.unitOracleApprentice": "Oracle Apprentice",
+	"card.description.unitOracleApprentice": "*Вход в игру:*\nLook at the top card of any deck",
+
+	"card.name.unitLoneLooter": "Lone Looter",
+	"card.description.unitLoneLooter": "Whenever you apply a *Status effect* to an enemy unit, *Summon* one {name} from your deck.",
+
+	"card.name.unitTinySparkling": "Tiny Sparkling",
+	"card.description.unitTinySparkling": "<i>No effect</i>",
+
+	"card.name.unitShadowspawn": "Shadowspawn",
+	"card.description.unitShadowspawn": "<i>No effect</i>",
+
+	"card.name.unitVolatileCrystal": "Volatile Crystal",
+	"card.description.unitVolatileCrystal": "*Deathrattle:*\nDeal {damage} Damage to adjacent units on the same row.",
+
+	"card.name.unitUndercityGambler": "Undercity Gambler",
+	"card.description.unitUndercityGambler": "*Вход в игру:*\nChoose a non-temporary card in your unit hand to return into your deck.<p>*Draw* a card and give it +{bonusPower} Power.",
+
+	"card.name.tokenPlayerDeck": "Your deck",
+	"card.description.tokenPlayerDeck": "Choose your own deck",
+
+	"card.name.tokenOpponentDeck": "Your opponent's deck",
+	"card.description.tokenOpponentDeck": "Choose your opponent's deck",
+
+	"card.name.spellGatheringStorm": "Gathering Storm",
+	"card.description.spellGatheringStorm": "Deal {damage} Damage to {targetCount} enemy units.<p><i>Number of targets increases by {targetsPerStorm} for every {name} in your Graveyard.</i>",
+
+	"card.name.spellSteelSpark": "Steel Spark",
+	"card.description.spellSteelSpark": "*Способность предводителя*<p>Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
+
+	"card.name.spellAnEncouragement": "An Encouragement",
+	"card.description.spellAnEncouragement": "*Способность предводителя*<p>Choose an allied unit.\nNext turn, it gains {bonusPower} Power.",
+
+	"card.name.spellFireball": "Fireball",
+	"card.description.spellFireball": "*Способность предводителя*<p>Deal {damage} Damage to an enemy unit.<p>Deal {areaDamage} Damage to all adjacent units.",
+
+	"card.name.spellFieryEntrance": "Fiery Entrance",
+	"card.description.spellFieryEntrance": "*Способность предводителя*<p>*Summon* a top card from your deck.",
+
+	"card.name.spellShadowSpark": "Shadow Spark",
+	"card.description.spellShadowSpark": "*Способность предводителя*<p>Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",
+
+	"card.name.spellNightmareDrain": "Nightmare Drain",
+	"card.description.spellNightmareDrain": "*Способность предводителя*<p>Choose a damaged unit.<p>Spawn a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
+
+	"card.name.spellCrystalBarrage": "Crystal Barrage",
+	"card.description.spellCrystalBarrage": "*Способность предводителя*<p>Choose an enemy row.<p>Spawn *Volatile Crystals* around every unit on this row.",
+
+	"card.name.spellShadowArmy": "Army of Shadows",
+	"card.description.spellShadowArmy": "*Способность предводителя*<p>*Create* a copy of an allied unit.\n<if showPowerThreshold>If it has {powerThreshold} Power or less, repeat this effect.<p><i>This value decreases by {thresholdDecrease} after every copy.</i></if>",
+	"card.target.spellShadowArmy": "Create a copy\n<i>Power threshold is ({powerThreshold})</i>",
+
+	"card.name.spellFlamingSpark": "Flaming Spark",
+	"card.description.spellFlamingSpark": "*Способность предводителя*<p>Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
+
+	"card.name.spellFlameweave": "Flameweave",
+	"card.description.spellFlameweave": "*Способность предводителя*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
+
 	"ui.language.en": "Английский",
 	"ui.language.ru": "Русский",
 
