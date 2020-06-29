@@ -102,9 +102,35 @@ export default class ServerBoard extends Board {
 		if (direction < 0) return MoveDirection.BACK
 	}
 
+	public rowMove(player: ServerPlayerInGame, fromRowIndex: number, direction: MoveDirection, distance: number): number {
+		if (direction === MoveDirection.SIDE) {
+			return fromRowIndex
+		}
+
+		let scalar = 1
+		if (direction === MoveDirection.BACK) {
+			scalar *= -1
+		}
+		if (!player.isInvertedBoard()) {
+			scalar *= -1
+		}
+
+		return Math.max(0, Math.min(fromRowIndex + distance * scalar, Constants.GAME_BOARD_ROW_COUNT - 1))
+	}
+
+	public getDistanceToFront(rowIndex: number): number {
+		const targetRow = this.rows[rowIndex]
+		const player = targetRow.owner
+		let playerRows = this.rows.filter(row => row.owner === player)
+		if (player.isInvertedBoard()) {
+			playerRows = playerRows.reverse()
+		}
+		return playerRows.indexOf(targetRow)
+	}
+
 	public getRowWithDistanceToFront(player: ServerPlayerInGame, distance: number): ServerBoardRow {
 		let playerRows = this.rows.filter(row => row.owner === player)
-		if (this.game.players[1] === player) {
+		if (player.isInvertedBoard()) {
 			playerRows = playerRows.reverse()
 		}
 		return playerRows[Math.min(playerRows.length - 1, distance)]
@@ -130,8 +156,17 @@ export default class ServerBoard extends Board {
 	}
 
 	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number): void {
+		if (unit.rowIndex === rowIndex && unit.unitIndex === unitIndex) {
+			return
+		}
+
 		const currentRow = this.rows[unit.rowIndex]
 		const targetRow = this.rows[rowIndex]
+
+		if (targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
+			return
+		}
+
 		currentRow.removeUnit(unit)
 		targetRow.insertUnit(unit, unitIndex)
 		this.game.players.forEach(playerInGame => {

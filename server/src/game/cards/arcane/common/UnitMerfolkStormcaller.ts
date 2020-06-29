@@ -11,8 +11,8 @@ export default class UnitMerfolkStormcaller extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 4
 
-		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
-			.perform(this.onDeploy)
+		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
+			.perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {

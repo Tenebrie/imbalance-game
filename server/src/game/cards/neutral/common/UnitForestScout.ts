@@ -19,7 +19,7 @@ export default class UnitForestScout extends ServerCard {
 			moralePowerBonus: this.moralePowerBonus
 		}
 
-		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())
 	}
 

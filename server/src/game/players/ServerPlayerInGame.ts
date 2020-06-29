@@ -222,7 +222,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			this.cardHand.discardUnit(card)
 		})
 		this.cardHand.spellCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
-			this.cardHand.discardSpell(card)
+			this.cardHand.discardUnit(card)
 		})
 	}
 

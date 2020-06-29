@@ -3,6 +3,8 @@ import CardDeck from '@shared/models/CardDeck'
 import ServerGame from './ServerGame'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import ServerOwnedCard from './ServerOwnedCard'
+import CardType from '@shared/enums/CardType'
 
 export default class ServerGraveyard implements CardDeck {
 	owner: ServerPlayerInGame
@@ -38,5 +40,12 @@ export default class ServerGraveyard implements CardDeck {
 	public findCardsByConstructor(prototype: Function): ServerCard[] {
 		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 		return this.unitCards.filter(card => card.class === cardClass).concat(this.spellCards.filter(card => card.class === cardClass))
+	}
+
+	public removeCard(card: ServerCard): void {
+		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
+		this.spellCards = this.spellCards.filter(unitCard => unitCard !== card)
+
+		OutgoingMessageHandlers.notifyAboutCardInGraveyardDestroyed(new ServerOwnedCard(card, this.owner))
 	}
 }

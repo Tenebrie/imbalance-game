@@ -7,6 +7,8 @@ import ServerUnit from '../../../models/ServerUnit'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import BuffDecayingArmor from '../../../buffs/BuffDecayingArmor'
 import CardFaction from '@shared/enums/CardFaction'
+import GameEvent from '../../../models/GameEvent'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class UnitIceSkinCrystal extends ServerCard {
 	charges = 0
@@ -26,6 +28,11 @@ export default class UnitIceSkinCrystal extends ServerCard {
 			potentialArmor: () => Math.floor(this.charges / this.chargesForArmor) * this.armorGranted,
 			chargesVisible: () => !!this.unit
 		}
+
+		this.createCallback(GameEvent.UNIT_DESTROYED)
+			.requireLocation(CardLocation.BOARD)
+			.require(({ targetUnit }) => targetUnit.card === this)
+			.perform(() => this.onDestroy())
 	}
 
 	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void {
@@ -34,7 +41,8 @@ export default class UnitIceSkinCrystal extends ServerCard {
 		}
 	}
 
-	onBeforeDestroyedAsUnit(thisUnit: ServerUnit): void {
+	private onDestroy(): void {
+		const thisUnit = this.unit
 		const adjacentAllies = this.game.board.getAdjacentUnits(thisUnit).filter(unit => unit.owner === thisUnit.owner)
 		adjacentAllies.forEach(unit => {
 			for (let i = 0; i < Math.floor(this.charges / this.chargesForArmor) * this.armorGranted; i++) {

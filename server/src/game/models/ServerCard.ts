@@ -28,8 +28,14 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerBuff from './ServerBuff'
 import CardLocation from '@shared/enums/CardLocation'
-import GameEvent, {CardTakesDamageEventArgs, CardTakesDamageEventOverrideArgs} from './GameEvent'
-import {EventSubscription} from './ServerGameEvents'
+import GameHook, {
+	CardDestroyedHookArgs,
+	CardDestroyedHookValues,
+	CardTakesDamageHookArgs,
+	CardTakesDamageHookValues
+} from './GameHook'
+import GameEvent, {CardDestroyedEventArgs, CardTakesDamageEventArgs} from './GameEvent'
+import {EventCallback, EventHook} from './ServerGameEvents'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -37,12 +43,19 @@ export default class ServerCard extends Card {
 	buffs = new ServerBuffContainer(this)
 	dynamicTextVariables: ServerRichTextVariables
 
+	isBeingDestroyed = false
+
 	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor, faction: CardFaction) {
 		super(uuidv4(), cardType, 'missingno')
 		this.game = game
 		this.color = unitSubtype
 		this.faction = faction
 		this.dynamicTextVariables = {}
+
+		this.createCallback<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE)
+			.require(({ targetCard }) => targetCard === this)
+			.require(({ targetCard }) => targetCard.power <= 0)
+			.perform(() => this.destroy())
 	}
 
 	public get unitCost(): number {
@@ -157,11 +170,13 @@ export default class ServerCard extends Card {
 		})
 	}
 
-	public dealDamageWithoutDestroying(originalDamageInstance: ServerDamageInstance): void {
-		const { targetCard, damageInstance } = this.game.events.applyOverrides<CardTakesDamageEventOverrideArgs>(GameEvent.CARD_TAKES_DAMAGE, {
+	public dealDamage(originalDamageInstance: ServerDamageInstance): void {
+		const hookValues = this.game.events.applyHooks<CardTakesDamageHookArgs, CardTakesDamageHookValues>(GameHook.CARD_TAKES_DAMAGE, {
 			targetCard: this,
 			damageInstance: originalDamageInstance,
 		})
+
+		const { targetCard, damageInstance } = hookValues
 
 		if (damageInstance.value <= 0) {
 			return
@@ -190,12 +205,58 @@ export default class ServerCard extends Card {
 			targetCard.setPower(targetCard.power - powerDamageInstance.value)
 		}
 
-		this.game.events.postEffect<CardTakesDamageEventArgs>(targetCard, GameEvent.CARD_TAKES_DAMAGE, {
+		this.game.events.postEvent<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE, {
 			targetCard: targetCard,
 			damageInstance: damageInstance,
 			armorDamageInstance: armorDamageInstance,
 			powerDamageInstance: powerDamageInstance
 		})
+	}
+
+	public destroy(): void {
+		console.log(this)
+		const unit = this.unit
+		if (this.unit) {
+			console.log('Bailing to unit')
+			unit.destroy()
+			return
+		}
+
+		console.log('Card is destroyed')
+
+		if (this.isBeingDestroyed) {
+			return
+		}
+
+		this.isBeingDestroyed = true
+
+		const hookValues = this.game.events.applyHooks<CardDestroyedHookValues, CardDestroyedHookArgs>(GameHook.CARD_DESTROYED, {
+			destructionPrevented: false
+		}, {
+			targetCard: this
+		})
+
+		if (hookValues.destructionPrevented) {
+			this.setPower(1)
+			this.isBeingDestroyed = false
+			console.log('Destruction prevented')
+			return
+		}
+
+		this.game.events.postEvent<CardDestroyedEventArgs>(GameEvent.CARD_DESTROYED, {
+			targetCard: this
+		})
+
+		const owner = this.owner
+		const location = this.location
+		if (location === CardLocation.HAND) {
+			owner.cardHand.removeCard(this)
+		} else if (location === CardLocation.DECK) {
+			owner.cardDeck.removeCard(this)
+		} else if (location === CardLocation.GRAVEYARD) {
+			owner.cardGraveyard.removeCard(this)
+		}
+		this.isBeingDestroyed = false
 	}
 
 	public reveal(owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
@@ -386,8 +447,12 @@ export default class ServerCard extends Card {
 		return evaluatedVariables
 	}
 
-	protected subscribe<T>(event: GameEvent): EventSubscription<T> {
-		return this.game.events.subscribe(this, event)
+	protected createCallback<ArgsType>(event: GameEvent): EventCallback<ArgsType> {
+		return this.game.events.createCallback(this, event)
+	}
+
+	protected createHook<HookValues, HookArgs>(hook: GameHook): EventHook<HookValues, HookArgs> {
+		return this.game.events.createHook<HookValues, HookArgs>(this, hook)
 	}
 
 	onPlayedAsSpell(owner: ServerPlayerInGame): void { return }
@@ -439,7 +504,6 @@ export default class ServerCard extends Card {
 	onPerformingRowSupport(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
 	onBeforeBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
 	onAfterBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
-	onBeforeDestroyedAsUnit(thisUnit: ServerUnit): void { return }
 
 	getAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return this.attack }
 	getBonusAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return 0 }

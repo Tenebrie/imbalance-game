@@ -4,8 +4,9 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
-import ServerUnit from '../../../models/ServerUnit'
 import CardFaction from '@shared/enums/CardFaction'
+import GameEvent from '../../../models/GameEvent'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class UnitArcaneCrystal extends ServerCard {
 	charges = 0
@@ -25,6 +26,11 @@ export default class UnitArcaneCrystal extends ServerCard {
 			potentialMana: () => Math.floor(this.charges / this.chargesForMana) * this.manaGenerated,
 			chargesVisible: () => !!this.unit
 		}
+
+		this.createCallback(GameEvent.UNIT_DESTROYED)
+			.requireLocation(CardLocation.BOARD)
+			.require(({ targetUnit }) => targetUnit.card === this)
+			.perform(() => this.onDestroy())
 	}
 
 	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void {
@@ -33,7 +39,7 @@ export default class UnitArcaneCrystal extends ServerCard {
 		}
 	}
 
-	onBeforeDestroyedAsUnit(thisUnit: ServerUnit): void {
-		thisUnit.owner.addSpellMana(Math.floor(this.charges / this.chargesForMana) * this.manaGenerated)
+	private onDestroy(): void {
+		this.unit.owner.addSpellMana(Math.floor(this.charges / this.chargesForMana) * this.manaGenerated)
 	}
 }

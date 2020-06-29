@@ -13,7 +13,7 @@ export default class HeroZamarath extends ServerCard {
 		this.basePower = 12
 		this.baseArmor = 5
 
-		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
 			.perform(() => {
 				this.buffs.add(BuffImmunity, this, BuffDuration.START_OF_NEXT_TURN)
 			})

@@ -36,7 +36,7 @@ export default class HeroRagingElemental extends ServerCard {
 		const targets = [thisUnit].concat(opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, thisUnit) === shortestDistance))
 
 		const damage = this.power
-		this.game.animation.play(ServerAnimation.unitAttacksUnits(thisUnit, targets, damage))
+		this.game.animation.play(ServerAnimation.cardAttacksUnits(this, targets))
 		targets.forEach(unit => {
 			unit.dealDamage(ServerDamageInstance.fromUnit(damage, thisUnit))
 		})

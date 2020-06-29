@@ -12,7 +12,7 @@ export default class HeroStormDancer extends ServerCard {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 7
 
-		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())
 	}
 

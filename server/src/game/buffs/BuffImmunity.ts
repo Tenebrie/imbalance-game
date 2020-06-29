@@ -1,16 +1,16 @@
 import ServerBuff from '../models/ServerBuff'
 import BuffStackType from '@shared/enums/BuffStackType'
 import ServerDamageInstance from '../models/ServerDamageSource'
-import GameEvent, {CardTakesDamageEventOverrideArgs} from '../models/GameEvent'
 import ServerGame from '../models/ServerGame'
+import GameHook, {CardTakesDamageHookArgs, CardTakesDamageHookValues} from '../models/GameHook'
 
 export default class BuffImmunity extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.OVERLAY)
 
-		this.subscribe<CardTakesDamageEventOverrideArgs>(GameEvent.CARD_TAKES_DAMAGE)
+		this.createHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>(GameHook.CARD_TAKES_DAMAGE)
 			.require(({ targetCard }) => targetCard === this.card)
-			.override((args) => ({
+			.replace((args) => ({
 				...args,
 				damageInstance: this.getUpdatedDamageInstance(args.damageInstance)
 			}))

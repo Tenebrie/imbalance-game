@@ -1,4 +1,14 @@
 {
+	"ui.language.en": "English",
+	"ui.language.ru": "Russian",
+
+	"ui.editor.deck.create": "Create new deck",
+	"ui.editor.deck.create.progress": "Creating...",
+
+	"ui.profile.logout": "Logout",
+	"ui.profile.delete": "Delete profile",
+	"ui.profile.delete.progress": "Deleting...",
+
 	"target.generic.unit": "Target",
 	"target.generic.row": "Target all",
 	"target.attack.unit": "Attack",
@@ -73,7 +83,7 @@
 
 	"card.name.heroAurienne": "Aurienne",
 	"card.title.heroAurienne": "The Shield of Faith",
-	"card.description.heroAurienne": "Whenever an ally takes lethal damage while {name} is in your hand, prevent it and *Play* {name} in front of this ally.",
+	"card.description.heroAurienne": "Whenever an allied unit takes lethal damage while {name} is in your hand, prevent it.\nThen, move the ally back, *Play* {name} in it's place and *Draw* a card.",
 
 	"card.name.heroTroviar": "Troviar",
 	"card.title.heroTroviar": "The Watcher",
@@ -175,6 +185,9 @@
 	"card.name.unitUndercityGambler": "Undercity Gambler",
 	"card.description.unitUndercityGambler": "*Deploy:*\nChoose a non-temporary card in your unit hand to return into your deck.<p>*Draw* a card and give it +{bonusPower} Power.",
 
+	"card.name.unitWingedShieldmaiden": "Winged Shieldmaiden",
+	"card.description.unitWingedShieldmaiden": "Whenever an allied unit takes damage, move the ally back, *Play* {name} in its' place and *Draw* a card.",
+
 	"card.name.tokenPlayerDeck": "Your deck",
 	"card.description.tokenPlayerDeck": "Choose your own deck",
 
@@ -213,15 +226,5 @@
 	"card.description.spellFlamingSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
 
 	"card.name.spellFlameweave": "Flameweave",
-	"card.description.spellFlameweave": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
-
-	"ui.language.en": "English",
-	"ui.language.ru": "Russian",
-
-	"ui.editor.deck.create": "Create new deck",
-	"ui.editor.deck.create.progress": "Creating...",
-
-	"ui.profile.logout": "Logout",
-	"ui.profile.delete": "Delete profile",
-	"ui.profile.delete.progress": "Deleting..."
+	"card.description.spellFlameweave": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
 }

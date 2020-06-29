@@ -6,13 +6,19 @@ enum GameEvent {
 	EFFECT_UNIT_DEPLOY,
 
 	UNIT_PLAYED,
+	UNIT_DESTROYED,
 	CARD_TAKES_DAMAGE,
+	CARD_DESTROYED
 }
 
 export default GameEvent
 
 export interface UnitPlayedEventArgs {
 	playedUnit: ServerUnit
+}
+
+export interface UnitDestroyedEventArgs {
+	targetUnit: ServerUnit
 }
 
 export interface CardTakesDamageEventArgs {
@@ -22,7 +28,6 @@ export interface CardTakesDamageEventArgs {
 	powerDamageInstance: ServerDamageInstance | null
 }
 
-export interface CardTakesDamageEventOverrideArgs {
+export interface CardDestroyedEventArgs {
 	targetCard: ServerCard
-	damageInstance: ServerDamageInstance
 }

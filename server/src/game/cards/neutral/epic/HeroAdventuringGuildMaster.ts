@@ -17,7 +17,7 @@ export default class HeroAdventuringGuildMaster extends ServerCard {
 			powerPerCard: this.powerPerCard
 		}
 
-		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())
 	}
 

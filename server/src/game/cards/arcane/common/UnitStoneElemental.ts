@@ -23,7 +23,7 @@ export default class UnitStoneElemental extends ServerCard {
 		this.baseAttackRange = 2
 		this.baseTribes = [CardTribe.ELEMENTAL]
 
-		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
 			.perform(() => {
 				this.canAttack = true
 			})

@@ -46,7 +46,7 @@ export default class SpellNightmareDrain extends ServerCard {
 		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, owner, targetRow.index, targetRow.cards.length)
 
 		const missingHealth = target.card.basePower - target.card.power
-		this.game.animation.play(ServerAnimation.unitAttacksUnits(target, [shadowspawnUnit]))
+		this.game.animation.play(ServerAnimation.cardAttacksUnits(target.card, [shadowspawnUnit]))
 
 		if (missingHealth <= 0) {
 			return

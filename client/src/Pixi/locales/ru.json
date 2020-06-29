@@ -1,4 +1,14 @@
 {
+	"ui.language.en": "Английский",
+	"ui.language.ru": "Русский",
+
+	"ui.editor.deck.create": "Создать новую колоду",
+	"ui.editor.deck.create.progress": "Создание...",
+
+	"ui.profile.logout": "Выйти",
+	"ui.profile.delete": "Удалить профиль",
+	"ui.profile.delete.progress": "Удаление...",
+
 	"target.generic.unit": "Выбрать",
 	"target.generic.row": "Выбрать ряд",
 	"target.attack.unit": "Атаковать",
@@ -27,6 +37,7 @@
 	"card.tribe.crystal": "Кристалл",
 	"card.tribe.vampire": "Вампир",
 	"card.tribe.building": "Здание",
+	"card.tribe.valkyrie": "Валькирия",
 	"card.tribe.elemental": "Элементаль",
 
 	"card.name.leaderVelElleron": "Вель'Эллерон",
@@ -47,27 +58,31 @@
 
 	"card.name.heroKroLah": "Kro'Lah",
 	"card.title.heroKroLah": "The Sky Guardian",
-	"card.description.heroKroLah": "*Вход в игру:*\nChoose an enemy row.\n*Stun* and *Push 1* all units on that row.",
+	"card.description.heroKroLah": "*Вход в игру:*\nВыберите вражеский ряд.\n*Оглушите* и *Оттолкните на 1* всех юнитов на этом ряду.",
 
 	"card.name.heroCarienne": "Carienne",
 	"card.title.heroCarienne": "The Storm Unleashed",
-	"card.description.heroCarienne": "*Вход в игру:*\nDeal {damagePerWave} Damage to all enemy units.\nRepeat once for every *Gathering Storm* in your Graveyard.",
+	"card.description.heroCarienne": "*Вход в игру:*\nНаносит {damagePerWave} ед. урона всем вражеским юнитам.\nПовторите этот эффект за каждую *Надвигающуюся бурю* в вашем сбросе.",
 
 	"card.name.heroGarellion": "Garellion",
 	"card.title.heroGarellion": "The Conduit",
-	"card.description.heroGarellion": "*End of round:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
+	"card.description.heroGarellion": "*End of round:*\n*Поглощает* всю оставшуюся Ману.\nПолучает {powerPerMana} ед. Силы за каждую единицу Маны.",
 
-	"card.name.heroAura": "Aura",
+	"card.name.heroAura": "Аура",
 	"card.title.heroAura": "Золотой Ястреб",
-	"card.description.heroAura": "*Вход в игру:*\n*Summon* a Legendary card from your deck.",
+	"card.description.heroAura": "*Вход в игру:*\n*Призывает* легендарную карту из вашей колоды.",
 
-	"card.name.heroAntoria": "Antoria",
-	"card.title.heroAntoria": "The Martyr",
-	"card.description.heroAntoria": "Whenever an ally takes damage while {name} is in your hand, redirect the damage to her.<p>If {name} is killed while in your hand, *Draw* a card.",
+	"card.name.heroArgenta": "Аргента",
+	"card.title.heroArgenta": "Серебряный Сокол",
+	"card.description.heroArgenta": "*Вход в игру:*\n*Призывает* эпическую карту из вашей колоды",
 
-	"card.name.heroAurienne": "Aurienne",
-	"card.title.heroAurienne": "The Shield of Faith",
-	"card.description.heroAurienne": "Whenever an ally takes lethal damage while {name} is in your hand, prevent it and *Play* {name} in front of this ally.",
+	"card.name.heroAntoria": "Антория",
+	"card.title.heroAntoria": "Мученица",
+	"card.description.heroAntoria": "Находясь в руке, {name} перехватывает весь урон, наносимый союзным боевым единицам.<p>Если она погибает находясь в руке, *вытяните* карту.",
+
+	"card.name.heroAurienne": "Ауриэн",
+	"card.title.heroAurienne": "Защитница веры",
+	"card.description.heroAurienne": "Если союзная боевая единица получает фатальный урон пока *Ауриэн* находится в вашей руке, предотвратите его.\nЗатем, передвиньте союзника назад, сыграйте *Ауриэн* на его месте и *вытяните* карту.",
 
 	"card.name.heroTroviar": "Troviar",
 	"card.title.heroTroviar": "The Watcher",
@@ -75,31 +90,31 @@
 
 	"card.name.heroMetrearte": "Метреарт",
 	"card.title.heroMetrearte": "Кот-копирка",
-	"card.description.heroMetrearte": "*Вход в игру:*\nВыберите способность любого предводителя Аркана.\nПолучите его копию.",
+	"card.description.heroMetrearte": "*Вход в игру:*\nВыберите способность любого предводителя Аркана.\nПолучите ее копию.",
 
 	"card.name.heroSparklingSpirit": "Sparkling Spirit",
 	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
 
-	"card.name.heroRagingElemental": "Raging Elemental",
-	"card.description.heroRagingElemental": "After {name} takes damage, it deals Damage equal to own Power to closest opposing enemy units.<p>Then, it destroys itself.",
+	"card.name.heroRagingElemental": "Беснующийся элементаль",
+	"card.description.heroRagingElemental": "Получив урон, {name} атакует ближайших вражеских юнитов, нанося урон, равный собственной Силе.<p>Затем, он уничтожает себя.",
 
 	"card.name.heroStormDancer": "Storm Dancer",
-	"card.description.heroStormDancer": "*Вход в игру:*\nFor each *Gathering Storm* in your Graveyard, put a copy of it into your spell hand.",
+	"card.description.heroStormDancer": "*Вход в игру:*\nПоложите копию *Надвигающейся бури* в вашу руку за каждую копию бури в вашем сбросе.",
 
 	"card.name.heroFlameDancer": "Flame Dancer",
-	"card.description.heroFlameDancer": "*Вход в игру:*\nApply *Burning* for {burnDuration} turns to all units on an enemy row.",
+	"card.description.heroFlameDancer": "*Вход в игру:*\nНакладывает *Горение* на {burnDuration} хода всем юнитам на вражеском ряду.",
 
 	"card.name.heroRavenCaller": "Raven Caller",
-	"card.description.heroRavenCaller": "*Вход в игру:*\n*Summon* a Bird from your deck",
+	"card.description.heroRavenCaller": "*Вход в игру:*\n*Призывает* птицу из вашей колоды.",
 
 	"card.name.heroLightOracle": "Oracle of Light",
-	"card.description.heroLightOracle": "*Вход в игру:*\nLook at top {cardsToSee} cards from your deck. Choose one to *Summon*.",
+	"card.description.heroLightOracle": "*Вход в игру:*\nПосмотрите на верхние {cardsToSee} карты из вашей колоды.\n*Призовите* одну из них.",
 
 	"card.name.heroDarkOracle": "Oracle of Darkness",
-	"card.description.heroDarkOracle": "*Вход в игру:*\nLook at bottom {cardsToSee} cards from your opponent's deck. Choose one to *Discard*.",
+	"card.description.heroDarkOracle": "*Вход в игру:*\nПосмотрите на нижние {cardsToSee} карты из колоды вашего противника.\n*Сбросьте* одну из них.",
 
 	"card.name.heroCrystalWarrior": "Crystal Warrior",
-	"card.description.heroCrystalWarrior": "*Вход в игру:*\nTrigger *Deathrattle* effect of a friendly crystal.",
+	"card.description.heroCrystalWarrior": "*Deploy:*\n*Sacrifice* an allied unit.\nSummon a *Crystal* in its place.",
 
 	"card.name.heroCultistOfAreddon": "Cultist of Areddon",
 	"card.description.heroCultistOfAreddon": "*Вход в игру:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",
@@ -140,31 +155,34 @@
 	"card.description.unitIceSkinCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
 
 	"card.name.unitStoneElemental": "Stone Elemental",
-	"card.description.unitStoneElemental": "*Вход в игру:*\nDeal {damage} Damage to any other unit",
+	"card.description.unitStoneElemental": "*Вход в игру:*\nPerform an *Attack* action this turn only<p>*Short-Ranged Attack*:\nDeal {attack} Damage;\nApply *Stun* for 1 turn",
 
 	"card.name.unitMerfolkStormcaller": "Merfolk Stormcaller",
-	"card.description.unitMerfolkStormcaller": "*Вход в игру:*\n*Create* a *Gathering Storm*",
+	"card.description.unitMerfolkStormcaller": "*Вход в игру:*\n*Создайте* *Надвигающуюся бурю*",
 
 	"card.name.unitCrystalMiner": "Crystal Miner",
-	"card.description.unitCrystalMiner": "*Вход в игру:*\n*Create* an Arcane crystal.",
+	"card.description.unitCrystalMiner": "*Вход в игру:*\n*Создайте* кристалл Аркана.",
 
 	"card.name.unitOracleApprentice": "Oracle Apprentice",
-	"card.description.unitOracleApprentice": "*Вход в игру:*\nLook at the top card of any deck",
+	"card.description.unitOracleApprentice": "*Вход в игру:*\nПосмотрите на верхнюю карту любой из колод.",
 
-	"card.name.unitLoneLooter": "Lone Looter",
-	"card.description.unitLoneLooter": "Whenever you apply a *Status effect* to an enemy unit, *Summon* one {name} from your deck.",
+	"card.name.unitLoneLooter": "Мародер-одиночка",
+	"card.description.unitLoneLooter": "Когда вы накладываете *Статус эффект* на вражеского юнита, *Призовите* одного *Мародера-одиночку* из вашей колоды.",
 
 	"card.name.unitTinySparkling": "Tiny Sparkling",
-	"card.description.unitTinySparkling": "<i>No effect</i>",
+	"card.description.unitTinySparkling": "<i>Нет эффекта</i>",
 
 	"card.name.unitShadowspawn": "Shadowspawn",
-	"card.description.unitShadowspawn": "<i>No effect</i>",
+	"card.description.unitShadowspawn": "<i>Нет эффекта</i>",
 
 	"card.name.unitVolatileCrystal": "Volatile Crystal",
-	"card.description.unitVolatileCrystal": "*Deathrattle:*\nDeal {damage} Damage to adjacent units on the same row.",
+	"card.description.unitVolatileCrystal": "*Предсмертный хрип:*\nНанесите {damage} ед. урона соседним юнитам на том же ряду.",
 
 	"card.name.unitUndercityGambler": "Undercity Gambler",
 	"card.description.unitUndercityGambler": "*Вход в игру:*\nChoose a non-temporary card in your unit hand to return into your deck.<p>*Draw* a card and give it +{bonusPower} Power.",
+
+	"card.name.unitWingedShieldmaiden": "Крылатая воительница",
+	"card.description.unitWingedShieldmaiden": "Когда союзный юнит получает урон, передвиньте его на ряд назад, *Сыграйте* *Крылатую воительницу* на его место и *Вытяните* карту.",
 
 	"card.name.tokenPlayerDeck": "Your deck",
 	"card.description.tokenPlayerDeck": "Choose your own deck",
@@ -204,15 +222,5 @@
 	"card.description.spellFlamingSpark": "*Способность предводителя*<p>Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
 
 	"card.name.spellFlameweave": "Flameweave",
-	"card.description.spellFlameweave": "*Способность предводителя*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
-
-	"ui.language.en": "Английский",
-	"ui.language.ru": "Русский",
-
-	"ui.editor.deck.create": "Создать новую колоду",
-	"ui.editor.deck.create.progress": "Создание...",
-
-	"ui.profile.logout": "Выйти",
-	"ui.profile.delete": "Удалить профиль",
-	"ui.profile.delete.progress": "Удаление..."
+	"card.description.spellFlameweave": "*Способность предводителя*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
 }

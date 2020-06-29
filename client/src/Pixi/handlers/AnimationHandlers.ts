@@ -14,13 +14,14 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return 2000
 	},
 
-	[AnimationType.UNIT_ATTACK]: (message: AnimationMessage, params: UnitAttackAnimParams) => {
-		const sourceUnit = Core.board.findUnitById(message.sourceUnitId)
-		const damage = params.damage
-		message.targetCardIDs.forEach(targetCardId => {
-			const targetCard = Core.game.findRenderedCardById(targetCardId)
-			Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetCard, 0)
-		})
+	[AnimationType.CARD_ATTACK]: (message: AnimationMessage, params: void) => {
+		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
+		if (sourceCard) {
+			message.targetCardIDs.forEach(targetCardId => {
+				const targetCard = Core.game.findRenderedCardById(targetCardId)
+				Core.mainHandler.projectileSystem.createCardAttackProjectile(sourceCard, targetCard, 0)
+			})
+		}
 		return 500
 	},
 
@@ -32,7 +33,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return 500
 	},
 
-	[AnimationType.POST_UNIT_ATTACK]: (message: AnimationMessage, params: void) => {
+	[AnimationType.POST_CARD_ATTACK]: (message: AnimationMessage, params: void) => {
 		return 100
 	},
 

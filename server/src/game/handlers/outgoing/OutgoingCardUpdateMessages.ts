@@ -226,6 +226,20 @@ export default {
 		})
 	},
 
+	notifyAboutCardInGraveyardDestroyed(ownedCard: ServerOwnedCard) {
+		const owner = ownedCard.owner.player
+		const opponent = ownedCard.owner.opponent.player
+
+		owner.sendMessage({
+			type: 'update/player/self/graveyard/cardDestroyed',
+			data: CardMessage.fromCard(ownedCard.card)
+		})
+		opponent.sendMessage({
+			type: 'update/player/opponent/graveyard/cardDestroyed',
+			data: CardMessage.fromCard(ownedCard.card)
+		})
+	},
+
 	notifyAboutCardVariablesUpdated(game: ServerGame) {
 		game.players.forEach(playerInGame => {
 			const cardsToNotify = game.board.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card).concat(playerInGame.cardHand.allCards)

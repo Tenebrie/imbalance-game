@@ -19,6 +19,7 @@ export default class HeroCultistOfAreddon extends ServerCard {
 			.singleTarget()
 			.require(TargetType.UNIT)
 			.alliedUnit()
+			.notSelf()
 	}
 
 	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {

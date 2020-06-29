@@ -74,8 +74,8 @@ export default class ProjectileSystem {
 		return projectile
 	}
 
-	public createUnitAttackProjectile(sourceUnit: RenderedUnit, targetCard: RenderedCard, impactDamage: number): RenderedProjectile {
-		return this.createAttackProjectile(sourceUnit.card.getPosition(), targetCard, impactDamage)
+	public createCardAttackProjectile(sourceCard: RenderedCard, targetCard: RenderedCard, impactDamage: number): RenderedProjectile {
+		return this.createAttackProjectile(sourceCard.getPosition(), targetCard, impactDamage)
 	}
 
 	public createUniverseAttackProjectile(targetCard: RenderedCard, impactDamage: number): RenderedProjectile {

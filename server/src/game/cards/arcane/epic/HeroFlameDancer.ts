@@ -34,7 +34,7 @@ export default class HeroFlameDancer extends ServerCard {
 	onUnitPlayTargetRowSelected(thisUnit: ServerUnit, target: ServerBoardRow): void {
 		const targetUnits = target.cards
 
-		this.game.animation.play(ServerAnimation.unitAttacksUnits(thisUnit, targetUnits))
+		this.game.animation.play(ServerAnimation.cardAttacksUnits(this, targetUnits))
 		targetUnits.forEach(targetUnit => {
 			targetUnit.card.buffs.add(BuffBurning, thisUnit.card, BuffDuration.FULL_TURN * this.burnDuration)
 		})
