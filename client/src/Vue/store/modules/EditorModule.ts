@@ -47,6 +47,11 @@ const editorModule = createModule({
 			state.renderedCards.push(renderedCard)
 		},
 
+		clearRenderedCards(state): void {
+			state.renderQueue = []
+			state.renderedCards = []
+		},
+
 		updateEditorDeck(state, newDeck: PopulatedEditorDeck): void {
 			const oldDeck = state.decks.find(deck => deck.id === newDeck.id)
 			state.decks[state.decks.indexOf(oldDeck)] = newDeck

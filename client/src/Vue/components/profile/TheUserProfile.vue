@@ -77,6 +77,7 @@ function TheUserProfile() {
 		set(value) {
 			const language = value as Language
 			store.commit.userPreferencesModule.setSelectedLanguage(language)
+			store.commit.editor.clearRenderedCards()
 		}
 	})
 

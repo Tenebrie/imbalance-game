@@ -1,6 +1,6 @@
 <template>
 	<div class="the-card-library">
-		<the-card-library-item :card="card" class="card" v-for="card in library" :key="card.id" />
+		<the-card-library-item :card="card" class="card" v-for="card in library" :key="`${selectedLanguage}-${card.id}`" />
 	</div>
 </template>
 
@@ -9,6 +9,7 @@ import Vue from 'vue'
 import store from '@/Vue/store'
 import Card from '@shared/models/Card'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
+import Language from '@shared/models/Language'
 
 export default Vue.extend({
 	components: {
@@ -18,6 +19,9 @@ export default Vue.extend({
 	computed: {
 		library(): Card[] {
 			return store.state.editor.cardLibrary
+		},
+		selectedLanguage(): Language {
+			return store.state.userPreferencesModule.selectedLanguage
 		}
 	},
 
