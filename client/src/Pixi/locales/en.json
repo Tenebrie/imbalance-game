@@ -77,7 +77,7 @@
 
 	"card.name.heroTroviar": "Troviar",
 	"card.title.heroTroviar": "The Watcher",
-	"card.description.heroTroviar": "Whenever another unit takes damage, gain {powerGained} Power.",
+	"card.description.heroTroviar": "Whenever another unit takes damage, gain +{powerGained} Power.",
 
 	"card.name.heroMetrearte": "Metrearte",
 	"card.title.heroMetrearte": "The Copycat",
@@ -119,26 +119,11 @@
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
 
-	"card.name.unitPossessedVulture": "Possessed Vulture",
-	"card.description.unitPossessedVulture": "If {name} kills an enemy creature, it gains *+{bonusPower} Power and *+{bonusAttack} Attack",
-
-	"card.name.unitUnfeelingWarrior": "Unfeeling Warrior",
-	"card.description.unitUnfeelingWarrior": "*On turn start:*\nIf {name} was attacked last turn, he gains *+{bonusPower} Power",
-
 	"card.name.unitForestScout": "Forest Scout",
 	"card.description.unitForestScout": "*Deploy:*\nIf you're losing on the board, gains {boardPowerBonus} Power.\nIf you're losing on Morale, gains {moralePowerBonus} Power.",
 
-	"card.name.unitMadBerserker": "Mad Berserker",
-	"card.description.unitMadBerserker": "Every consecutive attack on the same target deals *3* more damage",
-
-	"card.name.unitSpinningBarbarian": "Spinning Barbarian",
-	"card.description.unitSpinningBarbarian": "{name} attacks up to 4 closest enemies on target row",
-
 	"card.name.unitChargingKnight": "Charging Knight",
 	"card.description.unitChargingKnight": "Perform an *Attack Action* whenever it moves forward<p>*Melee Attack:*\nDeal {attack} Damage",
-
-	"card.name.unitTwinBowArcher": "Twin Bow Archer",
-	"card.description.unitTwinBowArcher": "{name} always attacks units directly to the left and to the right from the chosen target",
 
 	"card.name.unitVampireFledgling": "Vampire Fledgling",
 	"card.description.unitVampireFledgling": "Loses {powerLost} Power per turn.<p>*Melee Attack:* Deal {attack} Damage. If damage is not blocked, then Restore {powerDrained} Power",
@@ -195,21 +180,6 @@
 
 	"card.name.tokenOpponentDeck": "Your opponent's deck",
 	"card.description.tokenOpponentDeck": "Choose your opponent's deck",
-
-	"card.name.spellSpark": "Spark",
-	"card.description.spellSpark": "*Hero Power*<p>Deal {damage} Damage to\nan enemy unit",
-
-	"card.name.spellSpeedPotion": "Potion of Speed",
-	"card.description.spellSpeedPotion": "*Hero Power*<p>Grant an allied unit {moves} extra move actions this turn only",
-
-	"card.name.spellPermafrost": "Permafrost",
-	"card.description.spellPermafrost": "*Hero Power*<p>Grant all allies *Immune* until your next turn",
-
-	"card.name.spellRainOfFire": "Rain of Fire",
-	"card.description.spellRainOfFire": "{name} deals {damage} damage to {targets} enemy units\nThen, it draws a card",
-
-	"card.name.spellMagicalStarfall": "Magical Starfall",
-	"card.description.spellMagicalStarfall": "{name} increases Power of all allies units by *3* and Attack by *2*\nThen, it draws a card",
 
 	"card.name.spellGatheringStorm": "Gathering Storm",
 	"card.description.spellGatheringStorm": "Deal {damage} Damage to {targetCount} enemy units.<p><i>Number of targets increases by {targetsPerStorm} for every {name} in your Graveyard.</i>",
