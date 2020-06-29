@@ -38,7 +38,7 @@ export default class UnitIceSkinCrystal extends ServerCard {
 		const adjacentAllies = this.game.board.getAdjacentUnits(thisUnit).filter(unit => unit.owner === thisUnit.owner)
 		adjacentAllies.forEach(unit => {
 			for (let i = 0; i < Math.floor(this.charges / this.chargesForArmor) * this.armorGranted; i++) {
-				unit.card.buffs.add(new BuffDecayingArmor(), this)
+				unit.card.buffs.add(BuffDecayingArmor, this)
 			}
 		})
 	}

@@ -1,11 +1,15 @@
 import BuffContainer from '@shared/models/BuffContainer'
 import ServerBuff from './ServerBuff'
 import BuffStackType from '@shared/enums/BuffStackType'
-import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerCard from './ServerCard'
 import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
 import ServerOwnedCard from './ServerOwnedCard'
 import ServerGame from './ServerGame'
+import runCardEventHandler from '../utils/runCardEventHandler'
+
+interface BuffConstructor {
+	new (game: ServerGame): ServerBuff
+}
 
 export default class ServerBuffContainer implements BuffContainer {
 	readonly card: ServerCard
@@ -20,7 +24,9 @@ export default class ServerBuffContainer implements BuffContainer {
 		return this.card.game
 	}
 
-	private instantiate(buff: ServerBuff, source: ServerCard | null): ServerBuff {
+	private instantiate(prototype: BuffConstructor, source: ServerCard | null): ServerBuff {
+		const buff = new prototype(this.card.game)
+
 		buff.card = this.card
 		buff.game = this.card.game
 		buff.source = source
@@ -37,7 +43,7 @@ export default class ServerBuffContainer implements BuffContainer {
 	 * - Duration 2 = 'until the start of your next turn'
 	 * Default value is Infinity, i.e. buffs never expire
 	 */
-	public add(prototype: ServerBuff, source: ServerCard | null, duration: number | 'default' = 'default'): void {
+	public add(prototype: BuffConstructor, source: ServerCard | null, duration: number | 'default' = 'default'): void {
 		const newBuff = this.instantiate(prototype, source)
 		if (duration !== 'default') {
 			newBuff.duration = duration
@@ -77,6 +83,12 @@ export default class ServerBuffContainer implements BuffContainer {
 		})
 	}
 
+	public addMultiple(prototype: BuffConstructor, count: number, source: ServerCard | null, duration: number | 'default' = 'default') {
+		for (let i = 0; i < count; i++) {
+			this.add(prototype, source, duration)
+		}
+	}
+
 	public getBuffsByPrototype(prototype: any): ServerBuff[] {
 		const buffClass = prototype.prototype.constructor.name.substr(0, 1).toLowerCase() + prototype.prototype.constructor.name.substr(1)
 		return this.buffs.filter(buff => buff.buffClass === buffClass)
@@ -96,6 +108,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		runCardEventHandler(() => buff.onIntensityChanged(-buff.intensity))
 		runCardEventHandler(() => buff.onDurationChanged(-buff.duration))
 		runCardEventHandler(() => buff.onDestroyed())
+		this.game.events.unsubscribe(buff)
 	}
 
 	public remove(prototype: any): void {

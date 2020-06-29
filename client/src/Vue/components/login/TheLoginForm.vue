@@ -71,6 +71,12 @@ function TheLoginForm() {
 			return 'Missing email or password'
 		} else if (statusCode === 400 && errorCode === UserLoginErrorCode.INVALID_CREDENTIALS) {
 			return 'Username and password do not match'
+		} else if (statusCode === 500) {
+			return 'Internal server error'
+		} else if (statusCode === 503) {
+			return 'Database client is not yet ready'
+		} else {
+			return `Unknown error with code ${statusCode}`
 		}
 	}
 

@@ -11,7 +11,7 @@ import CardTribe from '@shared/enums/CardTribe'
 
 export default class HeroNeetka extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NEUTRAL)
+		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.EXPERIMENTAL)
 		this.basePower = 1
 		this.baseTribes = [CardTribe.HUMAN]
 	}

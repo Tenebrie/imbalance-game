@@ -2,11 +2,10 @@ import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerUnit from '../../../models/ServerUnit'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerBoardRow from '../../../models/ServerBoardRow'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
+import GameEvent from '../../../models/GameEvent'
 
 export default class HeroAdventuringGuildMaster extends ServerCard {
 	powerPerCard = 5
@@ -17,12 +16,15 @@ export default class HeroAdventuringGuildMaster extends ServerCard {
 		this.dynamicTextVariables = {
 			powerPerCard: this.powerPerCard
 		}
+
+		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
+			.perform(() => this.onDeploy())
 	}
 
-	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow): void {
-		const otherCardsPlayed = thisUnit.owner.cardsPlayed.filter(card => card !== this && card.type === CardType.UNIT)
+	private onDeploy(): void {
+		const otherCardsPlayed = this.owner.cardsPlayed.filter(card => card !== this && card.type === CardType.UNIT)
 		for (let i = 0; i < otherCardsPlayed.length * this.powerPerCard; i++) {
-			thisUnit.buffs.add(new BuffStrength(), this, BuffDuration.INFINITY)
+			this.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
 		}
 	}
 }

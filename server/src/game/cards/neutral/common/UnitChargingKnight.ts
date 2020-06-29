@@ -25,7 +25,7 @@ export default class UnitChargingKnight extends ServerCard {
 	defineValidOrderTargets(): TargetDefinitionBuilder {
 		return TargetDefinition.defaultUnitOrder(this.game)
 			.actions(this.movesForwardThisTurn)
-			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT)
+			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT, this.movesForwardThisTurn)
 	}
 
 	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow, from: ServerBoardRow): void {

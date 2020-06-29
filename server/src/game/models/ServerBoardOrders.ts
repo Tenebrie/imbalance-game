@@ -68,8 +68,8 @@ export default class ServerBoardOrders {
 		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.unitAttackDefault(orderedUnit, [targetUnit]))
 
 		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT) + orderedUnit.card.getBonusAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT)
-		const dealtDamage = targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
-		runCardEventHandler(() => orderedUnit.card.onPerformingUnitAttack(orderedUnit, targetUnit, targetMode, dealtDamage))
+		targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
+		runCardEventHandler(() => orderedUnit.card.onPerformingUnitAttack(orderedUnit, targetUnit, targetMode))
 
 		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.postUnitAttack())
 
@@ -77,7 +77,7 @@ export default class ServerBoardOrders {
 			runCardEventHandler(() => targetUnit.card.onAfterBeingAttacked(targetUnit, orderedUnit))
 		}
 		if (orderedUnit.isAlive()) {
-			runCardEventHandler(() => orderedUnit.card.onAfterPerformingUnitAttack(orderedUnit, targetUnit, targetMode, dealtDamage))
+			runCardEventHandler(() => orderedUnit.card.onAfterPerformingUnitAttack(orderedUnit, targetUnit, targetMode))
 		}
 
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)

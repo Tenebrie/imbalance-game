@@ -2,10 +2,9 @@ import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
-import ServerUnit from '../../../models/ServerUnit'
-import ServerBoardRow from '../../../models/ServerBoardRow'
 import BuffSparksExtraDamage from '../../../buffs/BuffSparksExtraDamage'
 import CardFaction from '@shared/enums/CardFaction'
+import GameEvent from '../../../models/GameEvent'
 
 export default class HeroSparklingSpirit extends ServerCard {
 	extraDamage = 1
@@ -16,11 +15,14 @@ export default class HeroSparklingSpirit extends ServerCard {
 		this.dynamicTextVariables = {
 			extraDamage: this.extraDamage
 		}
+
+		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
+			.perform(() => this.onDeploy())
 	}
 
-	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow): void {
+	private onDeploy(): void {
 		for (let i = 0; i < this.extraDamage; i++) {
-			this.buffs.add(new BuffSparksExtraDamage(), this)
+			this.buffs.add(BuffSparksExtraDamage, this)
 		}
 	}
 }

@@ -53,7 +53,7 @@ export default class SpellNightmareDrain extends ServerCard {
 		}
 
 		for (let i = 0; i < missingHealth; i++) {
-			shadowspawnUnit.buffs.add(new BuffStrength(), shadowspawn, BuffDuration.INFINITY)
+			shadowspawnUnit.buffs.add(BuffStrength, shadowspawn, BuffDuration.INFINITY)
 		}
 	}
 }

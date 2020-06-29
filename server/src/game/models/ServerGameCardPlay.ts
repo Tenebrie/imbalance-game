@@ -10,6 +10,7 @@ import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
 import Utils from '../../utils/Utils'
+import GameEvent from './GameEvent'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -77,10 +78,10 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Insert the card into the board */
-		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
+		this.game.board.createUnit(card, owner, rowIndex, unitIndex)
 
-		/* Invoke the card onPlay effect */
-		runCardEventHandler(() => card.onPlayedAsUnit(unit, this.game.board.rows[rowIndex]))
+		/* Invoke the card Deploy effect */
+		this.game.events.postEffect(card, GameEvent.EFFECT_UNIT_DEPLOY, null)
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {

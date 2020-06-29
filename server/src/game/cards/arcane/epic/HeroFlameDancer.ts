@@ -36,7 +36,7 @@ export default class HeroFlameDancer extends ServerCard {
 
 		this.game.animation.play(ServerAnimation.unitAttacksUnits(thisUnit, targetUnits))
 		targetUnits.forEach(targetUnit => {
-			targetUnit.card.buffs.add(new BuffBurning(), thisUnit.card, BuffDuration.FULL_TURN * this.burnDuration)
+			targetUnit.card.buffs.add(BuffBurning, thisUnit.card, BuffDuration.FULL_TURN * this.burnDuration)
 		})
 	}
 }

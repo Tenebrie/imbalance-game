@@ -59,7 +59,6 @@ router.delete('/:deckId', AsyncHandler(async(req, res: Response, next) => {
 	const player = req['player'] as ServerPlayer
 
 	if (!deckId || deckId === 'undefined') {
-		console.log('Throwing')
 		throw { status: 400, error: 'Missing deck ID' }
 	}
 

@@ -19,16 +19,15 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		const damage = params.damage
 		message.targetCardIDs.forEach(targetCardId => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
-			Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetCard, damage)
+			Core.mainHandler.projectileSystem.createUnitAttackProjectile(sourceUnit, targetCard, 0)
 		})
 		return 500
 	},
 
 	[AnimationType.UNIVERSE_ATTACK]: (message: AnimationMessage, params: UnitAttackAnimParams) => {
-		const damage = params.damage
 		message.targetCardIDs.forEach(targetCardId => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
-			Core.mainHandler.projectileSystem.createUniverseAttackProjectile(targetCard, damage)
+			Core.mainHandler.projectileSystem.createUniverseAttackProjectile(targetCard, 0)
 		})
 		return 500
 	},

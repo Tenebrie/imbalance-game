@@ -68,19 +68,6 @@ export default class ProjectileSystem {
 		sprite.anchor.set(0.5, 0.5)
 		const projectile = RenderedProjectile.targetCard(sprite, sourcePosition, targetCard, 500, 1200)
 		projectile.trail.rope.zIndex = 99
-		const targetUnitPower = targetCard.power
-		const targetUnitArmor = targetCard.armor
-		projectile.onImpact = () => {
-			let remainingDamage = impactDamage
-			if (targetUnitArmor > 0) {
-				const armorDamageDealt = Math.min(targetUnitArmor, remainingDamage)
-				targetCard.setArmor(targetUnitArmor - armorDamageDealt)
-				remainingDamage -= remainingDamage
-			}
-			if (remainingDamage > 0) {
-				targetCard.setPower(targetUnitPower - remainingDamage)
-			}
-		}
 		Core.renderer.rootContainer.addChild(projectile.sprite)
 		Core.renderer.rootContainer.addChild(projectile.trail.rope)
 		Core.mainHandler.projectileSystem.projectiles.push(projectile)

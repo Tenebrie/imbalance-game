@@ -18,7 +18,8 @@ import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
-import {colorize, colorizeId, colorizePlayer} from '../../utils/Utils'
+import { colorizeId, colorizePlayer } from '../../utils/Utils'
+import ServerGameEvents from './ServerGameEvents'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -27,6 +28,7 @@ export default class ServerGame extends Game {
 	playersToMove: ServerPlayerInGame[]
 	readonly owner: ServerPlayer
 	readonly board: ServerBoard
+	readonly events: ServerGameEvents
 	readonly players: ServerPlayerInGame[]
 	readonly chatHistory: ServerChatEntry[]
 	readonly cardPlay: ServerGameCardPlay
@@ -39,6 +41,7 @@ export default class ServerGame extends Game {
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.owner = owner
 		this.board = new ServerBoard(this)
+		this.events = new ServerGameEvents(this)
 		this.players = []
 		this.playersToMove = []
 		this.chatHistory = []

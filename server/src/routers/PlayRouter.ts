@@ -8,6 +8,7 @@ import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import GameLibrary from '../game/libraries/GameLibrary'
+import {colorizeId} from '../utils/Utils'
 
 const router = express.Router()
 
@@ -62,7 +63,7 @@ router.ws('/:gameId', async (ws, req) => {
 		try {
 			handler(msg.data, currentGame, currentPlayerInGame)
 		} catch (e) {
-			console.error(`An unexpected error occurred in game ${currentGame.id}. It will be shut down.`, e)
+			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, e)
 			currentGame.forceShutdown('An error occurred')
 		}
 	})

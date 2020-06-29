@@ -8,7 +8,7 @@ import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
-import ServerOwnedCard from './ServerOwnedCard'
+import GameEvent, {CardTakesDamageEventArgs, CardTakesDamageEventOverrideArgs} from './GameEvent'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame
@@ -52,55 +52,15 @@ export default class ServerUnit implements Unit {
 		this.card.setArmor(value)
 	}
 
-	dealDamage(damage: ServerDamageInstance): number {
-		const damageValue = this.dealDamageWithoutDestroying(damage)
+	dealDamage(damage: ServerDamageInstance): void {
+		this.dealDamageWithoutDestroying(damage)
 		if (this.card.power <= 0) {
 			this.destroy()
 		}
-		return damageValue
 	}
 
-	dealDamageWithoutDestroying(damageInstance: ServerDamageInstance): number {
-		let damageValue = this.card.getDamageTaken(this, damageInstance) - this.card.getDamageReduction(this, damageInstance)
-		this.card.buffs.buffs.forEach(buff => {
-			damageValue = buff.getDamageTaken(this, damageValue, damageInstance) - buff.getDamageReduction(this, damageValue, damageInstance)
-		})
-		if (damageValue <= 0) {
-			return 0
-		}
-
-		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damageInstance))
-		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
-			ownedCard.card.onBeforeOtherUnitDamageTaken(this, damageInstance)
-		})
-
-		let damageToDeal = damageInstance.value
-		if (this.card.armor > 0) {
-			const armorDamageInstance = damageInstance.clone()
-			armorDamageInstance.value = Math.min(this.card.armor, damageToDeal)
-			runCardEventHandler(() => this.card.onBeforeArmorDamageTaken(this, armorDamageInstance))
-			this.setHealthArmor(this.card.armor - armorDamageInstance.value)
-			runCardEventHandler(() => this.card.onAfterArmorDamageTaken(this, armorDamageInstance))
-			damageToDeal -= armorDamageInstance.value
-		}
-
-		if (damageToDeal > 0) {
-			const healthDamageInstance = damageInstance.clone()
-			healthDamageInstance.value = Math.min(this.card.power, damageToDeal)
-			runCardEventHandler(() => this.card.onBeforeHealthDamageTaken(this, healthDamageInstance))
-			this.setPower(this.card.power - healthDamageInstance.value)
-			runCardEventHandler(() => this.card.onAfterHealthDamageTaken(this, healthDamageInstance))
-		}
-
-		runCardEventHandler(() => this.card.onAfterDamageTaken(this, damageInstance))
-		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
-			ownedCard.card.onAfterOtherUnitDamageTaken(this, damageInstance)
-		})
-
-		if (this.card.power > 0) {
-			runCardEventHandler(() => this.card.onDamageSurvived(this, damageInstance))
-		}
-		return damageValue
+	dealDamageWithoutDestroying(damageInstance: ServerDamageInstance): void {
+		this.card.dealDamageWithoutDestroying(damageInstance)
 	}
 
 	heal(damage: ServerDamageInstance): void {

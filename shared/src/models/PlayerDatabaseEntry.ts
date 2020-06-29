@@ -1,4 +1,4 @@
-import Language from '@shared/models/Language'
+import Language from './Language'
 
 export default interface PlayerDatabaseEntry {
 	id: string

@@ -7,6 +7,7 @@ enum CardTribe {
 	CRYSTAL = 'crystal',
 	VAMPIRE = 'vampire',
 	BUILDING = 'building',
+	VALKYRIE = 'valkyrie',
 	ELEMENTAL = 'elemental',
 }
 

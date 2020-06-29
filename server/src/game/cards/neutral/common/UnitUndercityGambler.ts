@@ -39,7 +39,7 @@ export default class UnitUndercityGambler extends ServerCard {
 		}
 		drawnCards.forEach(card => {
 			for (let i = 0; i < this.bonusPower; i++) {
-				card.buffs.add(new BuffStrength(), this, BuffDuration.INFINITY)
+				card.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
 			}
 		})
 	}

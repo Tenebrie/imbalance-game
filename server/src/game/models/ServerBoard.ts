@@ -9,6 +9,7 @@ import ServerBoardOrders from './ServerBoardOrders'
 import ServerCard from './ServerCard'
 import Utils from '../../utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
+import GameEvent, {UnitPlayedEventArgs} from './GameEvent'
 
 export default class ServerBoard extends Board {
 	readonly game: ServerGame
@@ -117,8 +118,13 @@ export default class ServerBoard extends Board {
 
 		const unit = new ServerUnit(this.game, card, owner)
 		targetRow.insertUnit(unit, unitIndex)
+
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitCreated(playerInGame.player, unit, rowIndex, unitIndex)
+		})
+
+		this.game.events.postEvent<UnitPlayedEventArgs>(GameEvent.UNIT_PLAYED, {
+			playedUnit: unit
 		})
 		return unit
 	}

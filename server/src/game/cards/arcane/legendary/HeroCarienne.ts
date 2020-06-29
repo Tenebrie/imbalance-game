@@ -4,8 +4,7 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import SpellGatheringStorm from '../tokens/SpellGatheringStorm'
-import ServerUnit from '../../../models/ServerUnit'
-import ServerBoardRow from '../../../models/ServerBoardRow'
+import GameEvent from '../../../models/GameEvent'
 import ServerAnimation from '../../../models/ServerAnimation'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 
@@ -19,6 +18,16 @@ export default class HeroCarienne extends ServerCard {
 			damagePerWave: this.damagePerWave,
 			waveCount: () => this.waveCount
 		}
+
+		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
+			.perform(() => {
+				const enemies = this.game.board.getUnitsOwnedByOpponent(this.unit.owner)
+
+				for (let i = 0; i < this.waveCount; i++) {
+					this.game.animation.play(ServerAnimation.unitAttacksUnits(this.unit, enemies, this.damagePerWave))
+					enemies.forEach(enemy => enemy.dealDamage(ServerDamageInstance.fromUnit(this.damagePerWave, this.unit)))
+				}
+			})
 	}
 
 	get waveCount() {
@@ -28,14 +37,5 @@ export default class HeroCarienne extends ServerCard {
 		}
 
 		return stormsPlayed + 1
-	}
-
-	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow): void {
-		const enemies = this.game.board.getUnitsOwnedByOpponent(thisUnit.owner)
-
-		for (let i = 0; i < this.waveCount; i++) {
-			this.game.animation.play(ServerAnimation.unitAttacksUnits(thisUnit, enemies, this.damagePerWave))
-			enemies.forEach(enemy => enemy.dealDamage(ServerDamageInstance.fromUnit(this.damagePerWave, thisUnit)))
-		}
 	}
 }

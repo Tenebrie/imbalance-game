@@ -34,6 +34,6 @@ export default class SpellAnEncouragement extends ServerCard {
 	}
 
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
-		target.buffs.add(new BuffVelElleronEncouragement(), this, BuffDuration.START_OF_NEXT_TURN)
+		target.buffs.add(BuffVelElleronEncouragement, this, BuffDuration.START_OF_NEXT_TURN)
 	}
 }

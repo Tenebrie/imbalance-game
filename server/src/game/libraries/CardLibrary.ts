@@ -3,11 +3,15 @@ import glob from 'glob'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import VoidGame from '../utils/VoidGame'
-import Utils, { colorize } from '../../utils/Utils'
+import { colorize } from '../../utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
 import * as fs from 'fs'
 import CardColor from '@shared/enums/CardColor'
 import CardType from '@shared/enums/CardType'
+
+interface CardConstructor {
+	new (game: ServerGame): ServerCard
+}
 
 class CardLibrary {
 	cards: ServerCard[]
@@ -29,7 +33,7 @@ class CardLibrary {
 				file: module.filename,
 				prototype: module.prototypeFunction.name
 			}))
-			console.warn(colorize(`Clearing ${nameMismatchModules.length} module(s) due to class name mismatch:`, AsciiColor.YELLOW), errorArray)
+			console.warn(colorize(`Clearing ${nameMismatchModules.length} card module(s) due to class name mismatch:`, AsciiColor.YELLOW), errorArray)
 			nameMismatchModules.forEach(module => fs.unlinkSync(module.path))
 		}
 
@@ -48,7 +52,7 @@ class CardLibrary {
 
 		const outdatedModules = cardModules.filter(module => !filteredModules.includes(module) && !nameMismatchModules.includes(module))
 		if (outdatedModules.length > 0) {
-			console.info(colorize(`Clearing ${outdatedModules.length} outdated module(s)`, AsciiColor.YELLOW))
+			console.info(colorize(`Clearing ${outdatedModules.length} outdated card module(s)`, AsciiColor.YELLOW))
 			outdatedModules.forEach(module => fs.unlinkSync(module.path))
 		}
 
@@ -102,8 +106,8 @@ class CardLibrary {
 			throw new Error(`No registered card with class '${cardClass}'!`)
 		}
 
-		// @ts-ignore
-		const clone: ServerCard = new reference.constructor(game)
+		const referenceConstructor = reference.constructor as CardConstructor
+		const clone: ServerCard = new referenceConstructor(game)
 		clone.type = reference.type
 		clone.class = cardClass
 

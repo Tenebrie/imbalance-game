@@ -25,6 +25,6 @@ export default class UnitSupplyWagon extends ServerCard {
 	}
 
 	onPerformingUnitSupport(thisUnit: ServerUnit, target: ServerUnit): void {
-		target.card.buffs.add(new BuffExtraMove(), this)
+		target.card.buffs.add(BuffExtraMove, this)
 	}
 }

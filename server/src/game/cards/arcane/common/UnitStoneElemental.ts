@@ -9,9 +9,9 @@ import CardFaction from '@shared/enums/CardFaction'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition'
 import ServerUnit from '../../../models/ServerUnit'
-import ServerBoardRow from '../../../models/ServerBoardRow'
 import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
+import GameEvent from '../../../models/GameEvent'
 
 export default class UnitStoneElemental extends ServerCard {
 	canAttack = false
@@ -22,10 +22,11 @@ export default class UnitStoneElemental extends ServerCard {
 		this.baseAttack = 3
 		this.baseAttackRange = 2
 		this.baseTribes = [CardTribe.ELEMENTAL]
-	}
 
-	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow) {
-		this.canAttack = true
+		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
+			.perform(() => {
+				this.canAttack = true
+			})
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
@@ -35,7 +36,7 @@ export default class UnitStoneElemental extends ServerCard {
 	}
 
 	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode) {
-		target.buffs.add(new BuffStun(), this, BuffDuration.END_OF_NEXT_TURN)
+		target.buffs.add(BuffStun, this, BuffDuration.END_OF_NEXT_TURN)
 	}
 
 	onTurnEnded() {

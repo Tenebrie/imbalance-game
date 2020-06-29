@@ -2,10 +2,9 @@ import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
-import ServerUnit from '../../../models/ServerUnit'
-import ServerBoardRow from '../../../models/ServerBoardRow'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
+import GameEvent from '../../../models/GameEvent'
 
 export default class UnitArcaneElemental extends ServerCard {
 	manaGenerated = 2
@@ -17,10 +16,13 @@ export default class UnitArcaneElemental extends ServerCard {
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated
 		}
+
+		this.subscribe(GameEvent.EFFECT_UNIT_DEPLOY)
+			.perform(() => this.onDeploy())
 	}
 
-	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow): void {
-		const player = thisUnit.owner
+	private onDeploy() {
+		const player = this.owner
 		player.setSpellMana(player.spellMana + this.manaGenerated)
 	}
 }

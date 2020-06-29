@@ -28,6 +28,7 @@
 	"card.tribe.crystal": "Crystal",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.building": "Building",
+	"card.tribe.valkyrie": "Valkyrie",
 	"card.tribe.elemental": "Elemental",
 
 	"card.name.leaderVelElleron": "Vel'Elleron",
@@ -112,6 +113,9 @@
 	"card.name.heroAdventuringGuildMaster": "Adventuring Guild Master",
 	"card.description.heroAdventuringGuildMaster": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
 
+	"card.name.heroForksmanshipInstructor": "Forksmanship Instructor",
+	"card.description.heroForksmanshipInstructor": "Whenever you play a unit with {powerThreshold} Power or less, give it +{bonusPower} Power.",
+
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
 
@@ -160,7 +164,7 @@
 	"card.description.unitIceSkinCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
 
 	"card.name.unitStoneElemental": "Stone Elemental",
-	"card.description.unitStoneElemental": "*Deploy:*\nPerform an attack action this turn only<p>*Short-Ranged Attack*:\nDeal {attack} Damage;\nApply *Stun* for 1 turn",
+	"card.description.unitStoneElemental": "*Deploy:*\nPerform an *Attack* action this turn only<p>*Short-Ranged Attack*:\nDeal {attack} Damage;\nApply *Stun* for 1 turn",
 
 	"card.name.unitMerfolkStormcaller": "Merfolk Stormcaller",
 	"card.description.unitMerfolkStormcaller": "*Deploy:*\n*Create* a *Gathering Storm*",

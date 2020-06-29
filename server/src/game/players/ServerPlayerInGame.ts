@@ -100,7 +100,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public summonCardFromUnitDeck(card: ServerCard): void {
-		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
+		card.buffs.add(BuffTutoredCard, card, BuffDuration.INFINITY)
 		this.cardDeck.removeCard(card)
 		this.cardHand.onUnitDrawn(card)
 	}
@@ -121,7 +121,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	private createCard(card: ServerCard): void {
-		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
+		card.buffs.add(BuffTutoredCard, card, BuffDuration.INFINITY)
 		if (card.type === CardType.UNIT) {
 			this.cardHand.onUnitDrawn(card)
 		} else if (card.type === CardType.SPELL) {

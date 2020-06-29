@@ -2,12 +2,11 @@ import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerUnit from '../../../models/ServerUnit'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardLocation from '@shared/enums/CardLocation'
+import GameEvent, {CardTakesDamageEventArgs} from '../../../models/GameEvent'
 
 export default class HeroTroviar extends ServerCard {
 	powerGained = 1
@@ -18,15 +17,15 @@ export default class HeroTroviar extends ServerCard {
 		this.dynamicTextVariables = {
 			powerGained: this.powerGained
 		}
+
+		this.subscribe<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE)
+			.requireLocation(CardLocation.BOARD)
+			.perform(this.onCardTakesDamage)
 	}
 
-	onAfterOtherUnitDamageTaken(otherUnit: ServerUnit, damage: ServerDamageInstance): void {
-		if (this.location !== CardLocation.BOARD) {
-			return
-		}
-
+	private onCardTakesDamage(): void {
 		for (let i = 0; i < this.powerGained; i++) {
-			this.buffs.add(new BuffStrength(), this, BuffDuration.INFINITY)
+			this.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
 		}
 	}
 }

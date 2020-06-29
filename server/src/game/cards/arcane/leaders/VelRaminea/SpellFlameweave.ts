@@ -25,6 +25,6 @@ export default class SpellFlameweave extends ServerCard {
 	}
 
 	onPlayedAsSpell(owner: ServerPlayerInGame): void {
-		owner.leader.buffs.add(new BuffVelRamineaWeave(), this, BuffDuration.INFINITY)
+		owner.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
 	}
 }

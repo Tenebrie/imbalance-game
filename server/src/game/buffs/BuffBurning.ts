@@ -1,12 +1,13 @@
 import ServerBuff from '../models/ServerBuff'
 import BuffStackType from '@shared/enums/BuffStackType'
 import ServerDamageInstance from '../models/ServerDamageSource'
+import ServerGame from '../models/ServerGame'
 
 export default class BuffBurning extends ServerBuff {
 	burnDamage = 1
 
-	constructor() {
-		super(BuffStackType.OVERLAY)
+	constructor(game: ServerGame) {
+		super(game, BuffStackType.OVERLAY)
 	}
 
 	onTurnStarted(): void {

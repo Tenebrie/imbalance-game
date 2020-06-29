@@ -28,6 +28,8 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerBuff from './ServerBuff'
 import CardLocation from '@shared/enums/CardLocation'
+import GameEvent, {CardTakesDamageEventArgs, CardTakesDamageEventOverrideArgs} from './GameEvent'
+import {EventSubscription} from './ServerGameEvents'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -86,6 +88,10 @@ export default class ServerCard extends Card {
 
 	public get location(): CardLocation {
 		const owner = this.owner
+		if (!owner) {
+			return CardLocation.UNKNOWN
+		}
+
 		if (owner.leader === this) {
 			return CardLocation.LEADER
 		}
@@ -109,6 +115,7 @@ export default class ServerCard extends Card {
 		if (cardInGraveyard) {
 			return CardLocation.GRAVEYARD
 		}
+		return CardLocation.UNKNOWN
 	}
 
 	public get deckPosition(): number {
@@ -147,6 +154,47 @@ export default class ServerCard extends Card {
 		this.armor = value
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutCardArmorChange(playerInGame.player, this)
+		})
+	}
+
+	public dealDamageWithoutDestroying(originalDamageInstance: ServerDamageInstance): void {
+		const { targetCard, damageInstance } = this.game.events.applyOverrides<CardTakesDamageEventOverrideArgs>(GameEvent.CARD_TAKES_DAMAGE, {
+			targetCard: this,
+			damageInstance: originalDamageInstance,
+		})
+
+		if (damageInstance.value <= 0) {
+			return
+		}
+
+		let damageToDeal = damageInstance.value
+
+		let armorDamageInstance: ServerDamageInstance | null = null
+		if (targetCard.armor > 0) {
+			armorDamageInstance = damageInstance.clone()
+			armorDamageInstance.value = Math.min(targetCard.armor, damageToDeal)
+			damageToDeal -= armorDamageInstance.value
+		}
+
+		let powerDamageInstance: ServerDamageInstance | null = null
+		if (damageToDeal > 0) {
+			powerDamageInstance = damageInstance.clone()
+			powerDamageInstance.value = Math.min(targetCard.power, damageToDeal)
+		}
+
+		if (armorDamageInstance) {
+			targetCard.setArmor(targetCard.armor - armorDamageInstance.value)
+		}
+
+		if (powerDamageInstance) {
+			targetCard.setPower(targetCard.power - powerDamageInstance.value)
+		}
+
+		this.game.events.postEffect<CardTakesDamageEventArgs>(targetCard, GameEvent.CARD_TAKES_DAMAGE, {
+			targetCard: targetCard,
+			damageInstance: damageInstance,
+			armorDamageInstance: armorDamageInstance,
+			powerDamageInstance: powerDamageInstance
 		})
 	}
 
@@ -338,7 +386,10 @@ export default class ServerCard extends Card {
 		return evaluatedVariables
 	}
 
-	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow): void { return }
+	protected subscribe<T>(event: GameEvent): EventSubscription<T> {
+		return this.game.events.subscribe(this, event)
+	}
+
 	onPlayedAsSpell(owner: ServerPlayerInGame): void { return }
 	onRevealed(owner: ServerPlayerInGame): void { return }
 
@@ -353,7 +404,6 @@ export default class ServerCard extends Card {
 
 	onBeforeOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
 	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
-	onBeforeOtherUnitDamageTaken(otherUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onAfterOtherUnitDamageTaken(otherUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onBeforeOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
 	onAfterOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
@@ -377,8 +427,8 @@ export default class ServerCard extends Card {
 	onAfterHealthDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onDamageSurvived(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
-	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, dealtDamage: number): void { return }
-	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, dealtDamage: number): void { return }
+	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
+	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
 	onBeforePerformingRowAttack(thisUnit: ServerUnit, target: ServerBoardRow, targetMode: TargetMode): void { return }
 	onAfterPerformingRowAttack(thisUnit: ServerUnit, target: ServerBoardRow, targetMode: TargetMode): void { return }
 	onBeforeBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }

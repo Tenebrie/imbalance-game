@@ -4,10 +4,11 @@ import TargetDefinitionBuilder from '../models/targetDefinitions/TargetDefinitio
 import TargetDefinition from '../models/targetDefinitions/TargetDefinition'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
+import ServerGame from '../models/ServerGame'
 
 export default class BuffExtraMove extends ServerBuff {
-	constructor() {
-		super(BuffStackType.ADD_INTENSITY);
+	constructor(game: ServerGame) {
+		super(game, BuffStackType.ADD_INTENSITY)
 		this.baseDuration = 1
 	}
 
