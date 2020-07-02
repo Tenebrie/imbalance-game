@@ -52,11 +52,11 @@
 	"card.title.leaderNighterie": "Хранитель Теней",
 	"card.description.leaderNighterie": "*Предводитель Аркана*<p>*Способности:*\nShadow Spark, Nightmare Drain, Crystal Barrage, Army of Shadows",
 
-	"card.name.heroZamarath": "Zamarath",
+	"card.name.heroZamarath": "Замарат",
 	"card.title.heroZamarath": "Защитник",
 	"card.description.heroZamarath": "*Вход в игру:*\nПолучает *Иммунитет* до конца хода.",
 
-	"card.name.heroKroLah": "Kro'Lah",
+	"card.name.heroKroLah": "Кро'Ло",
 	"card.title.heroKroLah": "Небесный страж",
 	"card.description.heroKroLah": "*Вход в игру:*\nВыберите вражеский ряд.\n*Оглушите* и *Оттолкните на 1* всех юнитов на этом ряду.",
 
@@ -64,9 +64,9 @@
 	"card.title.heroCarienne": "The Storm Unleashed",
 	"card.description.heroCarienne": "*Вход в игру:*\nНаносит {damagePerWave} ед. урона всем вражеским юнитам.\nПовторите этот эффект за каждую *Надвигающуюся бурю* в вашем сбросе.",
 
-	"card.name.heroGarellion": "Garellion",
-	"card.title.heroGarellion": "The Conduit",
-	"card.description.heroGarellion": "*End of round:*\n*Поглощает* всю оставшуюся Ману.\nПолучает {powerPerMana} ед. Силы за каждую единицу Маны.",
+	"card.name.heroGarellion": "Гареллион",
+	"card.title.heroGarellion": "Манапровод",
+	"card.description.heroGarellion": "*Конец раунда:*\n*Поглощает* всю оставшуюся Ману.\nи получает {powerPerMana} ед. Силы за каждую поглощённую единицу.",
 
 	"card.name.heroAura": "Аура",
 	"card.title.heroAura": "Золотой Ястреб",
@@ -101,7 +101,7 @@
 	"card.name.heroStormDancer": "Танцующий c бурей",
 	"card.description.heroStormDancer": "*Вход в игру:*\nПоложите копию *Надвигающейся бури* в вашу руку за каждую копию бури в вашем сбросе.",
 
-	"card.name.heroFlameDancer": "Танцующий с огнём",
+	"card.name.heroFlameDancer": "Танцующий с пламенем",
 	"card.description.heroFlameDancer": "*Вход в игру:*\nНакладывает *Горение* на {burnDuration} хода всем юнитам на вражеском ряду.",
 
 	"card.name.heroRavenCaller": "Raven Caller",
@@ -110,22 +110,22 @@
 	"card.name.heroLightOracle": "Оракул Света",
 	"card.description.heroLightOracle": "*Вход в игру:*\nПосмотрите на верхние {cardsToSee} карты из вашей колоды.\n*Призовите* одну из них.",
 
-	"card.name.heroDarkOracle": "Оракл Тьмы",
+	"card.name.heroDarkOracle": "Оракул Тьмы",
 	"card.description.heroDarkOracle": "*Вход в игру:*\nПосмотрите на нижние {cardsToSee} карты из колоды вашего противника.\n*Сбросьте* одну из них.",
 
-	"card.name.heroCrystalWarrior": "Воин Кристаллов",
-	"card.description.heroCrystalWarrior": "*Deploy:*\n*Пожертвуйте* Союзника.\nПризовите *Кристалл* на место жертвы.",
+	"card.name.heroCrystalWarrior": "Кристальный Воин",
+	"card.description.heroCrystalWarrior": "*Вход в игру:*\n*Пожертвуйте* Союзника.\nПризовите *Кристалл* на место жертвы.",
 
-	"card.name.heroCultistOfAreddon": "Культист из Ареддона",
-	"card.description.heroCultistOfAreddon": "*Вход в игру:*\nУничтожте союзника.\nЗатем, *Создайте* его копию.",
+	"card.name.heroCultistOfAreddon": "Культист Ареддона",
+	"card.description.heroCultistOfAreddon": "*Вход в игру:*\nУничтожте выбранного союзника, после чего, *Создайте* его копию.",
 
 	"card.name.heroAdventuringGuildMaster": "Adventuring Guild Master",
 	"card.description.heroAdventuringGuildMaster": "*Вход в игру:*\n+{powerPerCard} Силы за каждого другого юнита, сыгранного в этот ход.",
 
 	"card.name.unitRavenMessenger": "Ворон Знамения",
-	"card.description.unitRavenMessenger": "*Вход в игру:*\n*Призовите* а Bronze Human карту из вашей колоды.",
+	"card.description.unitRavenMessenger": "*Вход в игру:*\n*Призовите* а Бронзову карту Человека из вашей колоды.",
 
-	"card.name.unitForestScout": "Forest Scout",
+	"card.name.unitForestScout": "Дозорный",
 	"card.description.unitForestScout": "*Вход в игру:*\nЕсли вы проигрываете в матче, получает {boardPowerBonus} Силы.\nЕсли Мораль вашей армии ниже, получает {moralePowerBonus} Силы.",
 
 	"card.name.unitChargingKnight": "Кавалерист",
@@ -134,16 +134,16 @@
 	"card.name.unitVampireFledgling": "Молодой Вампир",
 	"card.description.unitVampireFledgling": "Теряет {powerLost} Силы в начале каждого хода.<p>*Melee Attack:* Наносит {attack} Урона. Если урон не был заблокирован, восстанавливает {powerDrained} Силы.",
 
-	"card.name.unitPriestessOfAedine": "Priestess of Aedine",
-	"card.description.unitPriestessOfAedine": "*Deploy:*\nВосстановите {healing} Силы повреждённому союзнику.",
+	"card.name.unitPriestessOfAedine": "Жрица Аедин",
+	"card.description.unitPriestessOfAedine": "*Вход в игру:*\nВосстановите {healing} Силы повреждённому союзнику.",
 	"card.target.unitPriestessOfAedine.heal": "Восстановите {healing} Силы",
 
 	"card.name.unitSupplyWagon": "Военный Обоз",
-	"card.description.unitSupplyWagon": "*Support:*\nДайте союзнику возможность совершить дополнительное пережвижение в этом ходу.",
-	"card.target.unitSupplyWagon.ability": "Дайте возможность дополнительного передвижения.",
+	"card.description.unitSupplyWagon": "*Поддержка:*\nДайте союзнику возможность совершить дополнительное пережвижение в этом ходу.",
+	"card.target.unitSupplyWagon.ability": "Предоставьте дополнительный ход.",
 
 	"card.name.unitArcaneElemental": "Магический Элеменаль",
-	"card.description.unitArcaneElemental": "*Deploy:*\nПолучите {manaGenerated} Маны.",
+	"card.description.unitArcaneElemental": "*Вход в игру:*\nПолучите {manaGenerated} Маны.",
 
 	"card.name.unitArcaneCrystal": "Магический Кристалл",
 	"card.description.unitArcaneCrystal": "Получает {chargePerMana} *Заряд* за каждую единицу потраченной вами маны.<p>*Deathrattle:* Получите {manaGenerated} Маны за каждый сохаранённый *Заряд* ({chargesForMana}).<if chargesVisible><p><i>Charges accumulated: {charges}\nПолучите дополнительно {potentialMana} Маны в ход</i></if>",
@@ -155,7 +155,7 @@
 	"card.description.unitIceSkinCrystal": "Получает {chargePerMana} *Заряд* за каждую единицу потраченной вами маны.<p>*Deathrattle:* Все соседние с этим юниты получают {armorGranted} Decaying Armor за каждый сохранённый *Заряд* ({chargesForArmor}).<if chargesVisible><p><i>Charges accumulated: {charges}\nПредоставляет {potentialArmor} Decaying Armor</i></if>",
 
 	"card.name.unitStoneElemental": "Каменный Элементаль",
-	"card.description.unitStoneElemental": "*Вход в игру:*\n*Атакует* только на этом ходу<p>*Short-Ranged Attack*:\nНаносит {attack} урона;\n *Оглушение* на 1 ход.",
+	"card.description.unitStoneElemental": "*Вход в игру:*\nСовершает *Атаку* в этот ход. <p>*Short-Ranged Attack*:\nНаносит {attack} урона;\n *Оглушение* на 1 ход.",
 
 	"card.name.unitMerfolkStormcaller": "Мерфолк Буревестник",
 	"card.description.unitMerfolkStormcaller": "*Вход в игру:*\n*Создайте* *Надвигающуюся бурю*",
@@ -167,7 +167,7 @@
 	"card.description.unitOracleApprentice": "*Вход в игру:*\nПосмотрите на верхнюю карту любой из колод.",
 
 	"card.name.unitLoneLooter": "Мародер-одиночка",
-	"card.description.unitLoneLooter": "Когда вы накладываете *Статус эффект* на вражеского юнита, *Призовите* одного *Мародера-одиночку* из вашей колоды.",
+	"card.description.unitLoneLooter": "Когда вы накладываете *Статус эффект* на противника, *Призовите* одного *Мародера-одиночку* из вашей колоды.",
 
 	"card.name.unitTinySparkling": "Tiny Sparkling",
 	"card.description.unitTinySparkling": "<i>Нет эффекта</i>",
@@ -191,7 +191,7 @@
 	"card.description.tokenOpponentDeck": "Выберите колоду противника",
 
 	"card.name.spellGatheringStorm": "Надвигающаяся буря",
-	"card.description.spellGatheringStorm": "Наносит {damage} Урона {targetCount} противникам.<p><i>Количество целей увеличивается на {targetsPerStorm} за каждый {name} в вашем сбросе.</i>",
+	"card.description.spellGatheringStorm": "Наносит {damage} Урона {targetCount} противникам.<p><i>Количество целей увеличивается на {targetsPerStorm} за каждую бурю в вашем сбросе.</i>",
 
 	"card.name.spellSteelSpark": "Стальная Искра",
 	"card.description.spellSteelSpark": "*Способность предводителя*<p>Наносит {damage} Урона противнику.<p>Наносит {sideDamage} Урона всем ближайшим к цели юнитам.",
