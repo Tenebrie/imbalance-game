@@ -128,8 +128,8 @@
 	"card.name.unitRavenMessenger": "Почтовый ворон",
 	"card.description.unitRavenMessenger": "*Вход в игру:*\n*Призовите* Обыкновенную карту Человека из вашей колоды.",
 
-	"card.name.unitForestScout": "Дозорный",
-	"card.description.unitForestScout": "*Вход в игру:*\nЕсли вы проигрываете в матче, получает {boardPowerBonus} Силы.\nЕсли Мораль вашей армии ниже, получает {moralePowerBonus} Силы.",
+	"card.name.unitForestScout": "Лесной разведчик",
+	"card.description.unitForestScout": "*Вход в игру:*\nЕсли вы проигрываете на поле, получает +{boardPowerBonus} Силы.\nЕсли вы проигрываете в матче, получает +{moralePowerBonus} Силы.",
 
 	"card.name.unitChargingKnight": "Кавалерист",
 	"card.description.unitChargingKnight": "*Ближний бой:* Наносит {attack} урона<p>Может совершить *атаку* ближнего боя только после движения.",
