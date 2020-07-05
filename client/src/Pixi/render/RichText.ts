@@ -3,6 +3,7 @@ import Utils from '@/utils/Utils'
 import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import RichTextBackground from '@/Pixi/render/RichTextBackground'
+import RichTextAlign from '@/Pixi/render/RichTextAlign'
 
 enum SegmentType {
 	TEXT = 'TEXT',
@@ -40,6 +41,9 @@ export default class RichText extends PIXI.Container {
 	private variables: RichTextVariables
 	segments: { text: ScalingText, basePosition: PIXI.Point }[]
 	background: RichTextBackground
+	private __horizontalAlign: RichTextAlign = RichTextAlign.CENTER
+	private __verticalAlign: RichTextAlign = RichTextAlign.END
+	private __textLineCount = 0
 
 	constructor(text: string, maxWidth: number, variables: RichTextVariables) {
 		super()
@@ -65,6 +69,7 @@ export default class RichText extends PIXI.Container {
 		this.source = value
 		this.renderText()
 	}
+
 	get textVariables() {
 		return this.variables
 	}
@@ -74,6 +79,26 @@ export default class RichText extends PIXI.Container {
 		}
 		this.variables = value
 		this.renderText()
+	}
+
+	get horizontalAlign(): RichTextAlign {
+		return this.__horizontalAlign
+	}
+	set horizontalAlign(value: RichTextAlign) {
+		this.__horizontalAlign = value
+		this.renderText()
+	}
+
+	get verticalAlign(): RichTextAlign {
+		return this.__verticalAlign
+	}
+	set verticalAlign(value: RichTextAlign) {
+		this.__verticalAlign = value
+		this.renderText()
+	}
+
+	get lines(): number {
+		return this.__textLineCount
 	}
 
 	get style() {
@@ -147,11 +172,10 @@ export default class RichText extends PIXI.Container {
 			this.removeChildAt(0)
 		}
 
+		let linesRendered = 0
 		const oldFontSize = this.fontSize
-		const oldLineHeight = this.lineHeight
 
 		this.fontSize = 18
-		this.lineHeight = 24
 
 		const SCALE_MODIFIER = this.fontSize / this.baseFontSize
 
@@ -219,12 +243,17 @@ export default class RichText extends PIXI.Container {
 
 		const newLine = () => {
 			currentLine.forEach(renderedSegment => {
-				renderedSegment.basePosition.x -= contextPosition.x / 2
+				if (this.__horizontalAlign === RichTextAlign.CENTER) {
+					renderedSegment.basePosition.x -= contextPosition.x / 2
+				} else if (this.__horizontalAlign === RichTextAlign.END) {
+					renderedSegment.basePosition.x -= contextPosition.x
+				}
 			})
 
 			contextPosition.x = 0
 			contextPosition.y += this.lineHeight
 			currentLine = []
+			linesRendered += 1
 		}
 
 		segments.forEach(segment => {
@@ -328,10 +357,15 @@ export default class RichText extends PIXI.Container {
 		newLine()
 
 		this.segments.forEach(segment => {
-			segment.basePosition.y -= contextPosition.y // Bottom alignment
+			if (this.__verticalAlign === RichTextAlign.END) {
+				segment.basePosition.y -= contextPosition.y
+			} else if (this.__verticalAlign === RichTextAlign.CENTER) {
+				segment.basePosition.y -= contextPosition.y / 2
+			}
 		})
 
-		this.setFont(oldFontSize, oldLineHeight)
+		this.setFont(oldFontSize, this.lineHeight)
+		this.__textLineCount = linesRendered
 
 		if (this.background) {
 			this.background.onTextRendered(new PIXI.Point(this.position.x, this.position.y), new PIXI.Point(this.maxWidth, contextPosition.y * (this.baseFontSize / 18)))

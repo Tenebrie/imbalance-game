@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import Settings from '@/Pixi/Settings'
 import RichText from '@/Pixi/render/RichText'
@@ -18,6 +18,7 @@ import ClientBuffContainer from '@/Pixi/models/ClientBuffContainer'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import store from '@/Vue/store'
+import RichTextAlign from '@/Pixi/render/RichTextAlign'
 
 export default class RenderedCard extends Card {
 	public buffs: ClientBuffContainer
@@ -43,7 +44,7 @@ export default class RenderedCard extends Card {
 
 	public readonly powerText: ScalingText
 	public readonly armorText: ScalingText
-	private readonly cardNameText: ScalingText
+	private readonly cardNameText: RichText
 	private readonly cardTitleText: ScalingText
 	private readonly cardTribeTexts: ScalingText[]
 	private readonly cardDescriptionText: RichText
@@ -77,7 +78,11 @@ export default class RenderedCard extends Card {
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.class}`))
 		this.powerText = this.createBrushScriptText(this.power.toString())
 		this.armorText = this.createBrushScriptText(this.armor.toString())
-		this.cardNameText = this.createTitleText(Localization.get(this.name))
+		// this.cardNameText = this.createTitleText(Localization.get(this.name))
+		this.cardNameText = new RichText(Localization.get(this.name), 200, {})
+		this.cardNameText.style.fill = 0x000000
+		this.cardNameText.verticalAlign = RichTextAlign.CENTER
+		this.cardNameText.horizontalAlign = RichTextAlign.END
 		this.cardTitleText = this.createTitleText(Localization.get(this.title))
 		this.cardTribeTexts = this.tribes.map(tribe => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
 		this.cardDescriptionText = new RichText(Localization.get(this.description), 350, this.getDescriptionTextVariables())
@@ -338,8 +343,9 @@ export default class RenderedCard extends Card {
 			this.armorTextBackground.visible = false
 		}
 
-		this.cardNameText.position.set(-15, 67)
+		this.cardNameText.position.set(-15, 65)
 		this.cardNameText.style.fontSize = 22
+		this.cardNameText.style.lineHeight = 18
 
 		if (this.cardTitleText.text.length > 0) {
 			this.cardNameText.position.y -= 11

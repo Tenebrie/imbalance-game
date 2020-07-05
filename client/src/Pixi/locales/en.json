@@ -115,7 +115,7 @@
 	"card.description.heroDarkOracle": "*Deploy:*\nLook at bottom {cardsToSee} cards from your opponent's deck. Choose one to *Discard*.",
 
 	"card.name.heroCrystalWarrior": "Crystal Warrior",
-	"card.description.heroCrystalWarrior": "*Deploy:*\n*Sacrifice* an allied unit.\nSummon a *Crystal* in its place.",
+	"card.description.heroCrystalWarrior": "*Deploy:*\nDestroy an allied unit.\nThen, summon a *Crystal* in its place.",
 
 	"card.name.heroCultistOfAreddon": "Cultist of Areddon",
 	"card.description.heroCultistOfAreddon": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",
@@ -212,7 +212,7 @@
 	"card.name.spellShadowSpark": "Shadow Spark",
 	"card.description.spellShadowSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",
 
-	"card.name.spellNightmareDrain": "Nightmare Drain",
+	"card.name.spellNightmareDrain": "Living Nightmare",
 	"card.description.spellNightmareDrain": "*Leader Power*<p>Choose a damaged unit.<p>Spawn a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
 
 	"card.name.spellCrystalBarrage": "Crystal Barrage",
