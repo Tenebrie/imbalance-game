@@ -5,7 +5,7 @@ import ServerGame from '../../../models/ServerGame'
 import ServerAnimation from '../../../models/ServerAnimation'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerUnit from '../../../models/ServerUnit'
+import GameEvent, {CardTakesDamageEventArgs} from '../../../models/GameEvent'
 
 export default class HeroRagingElemental extends ServerCard {
 	isEffectTriggered = false
@@ -13,15 +13,21 @@ export default class HeroRagingElemental extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 9
+
+		this.createCallback<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE)
+			.require(({ targetCard }) => targetCard === this)
+			.require(({ targetCard }) => targetCard.power > 0)
+			.perform(() => this.onDamageSurvived())
 	}
 
-	public onDamageSurvived(thisUnit: ServerUnit, survivedDamage: ServerDamageInstance): void {
+	public onDamageSurvived(): void {
 		if (this.isEffectTriggered) {
 			return
 		}
 
 		this.isEffectTriggered = true
 
+		const thisUnit = this.unit
 		const opposingEnemies = this.game.board.getUnitsOwnedByOpponent(this.owner)
 			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
 			.sort((a, b) => {

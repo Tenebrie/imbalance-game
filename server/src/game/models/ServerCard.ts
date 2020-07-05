@@ -469,9 +469,6 @@ export default class ServerCard extends Card {
 
 	onBeforeOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
 	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
-	onAfterOtherUnitDamageTaken(otherUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onBeforeOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
-	onAfterOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
 	onOtherCardReceivedNewBuff(otherCard: ServerOwnedCard, buff: ServerBuff): void { return }
 
 	onRoundStarted(): void { return }
@@ -484,13 +481,6 @@ export default class ServerCard extends Card {
 	onAfterUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onPowerChanged(newValue: number, oldValue: number): void { return }
 	onArmorChanged(newValue: number, oldValue: number): void { return }
-	onBeforeDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onAfterDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onBeforeArmorDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onAfterArmorDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onBeforeHealthDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onAfterHealthDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onDamageSurvived(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
 	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
 	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }

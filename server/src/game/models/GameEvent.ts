@@ -5,7 +5,7 @@ import ServerCard from './ServerCard'
 enum GameEvent {
 	EFFECT_UNIT_DEPLOY,
 
-	UNIT_PLAYED,
+	UNIT_CREATED,
 	UNIT_DESTROYED,
 	CARD_TAKES_DAMAGE,
 	CARD_DESTROYED
@@ -13,8 +13,8 @@ enum GameEvent {
 
 export default GameEvent
 
-export interface UnitPlayedEventArgs {
-	playedUnit: ServerUnit
+export interface UnitCreatedEventArgs {
+	createdUnit: ServerUnit
 }
 
 export interface UnitDestroyedEventArgs {

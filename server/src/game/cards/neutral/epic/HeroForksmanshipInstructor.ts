@@ -3,7 +3,7 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEvent, {UnitPlayedEventArgs} from '../../../models/GameEvent'
+import GameEvent, {UnitCreatedEventArgs} from '../../../models/GameEvent'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
@@ -21,14 +21,14 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 			bonusPower: this.bonusPower
 		}
 
-		this.createCallback<UnitPlayedEventArgs>(GameEvent.UNIT_PLAYED)
+		this.createCallback<UnitCreatedEventArgs>(GameEvent.UNIT_CREATED)
 			.requireLocation(CardLocation.BOARD)
-			.require(({ playedUnit }) => playedUnit.card !== this)
-			.require(({ playedUnit }) => playedUnit.owner === this.owner)
-			.require(({ playedUnit }) => playedUnit.card.power <= this.powerThreshold)
-			.perform(({ playedUnit }) => {
-				game.animation.play(ServerAnimation.cardAttacksUnits(this, [playedUnit]))
-				playedUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
+			.require(({ createdUnit }) => createdUnit.card !== this)
+			.require(({ createdUnit }) => createdUnit.owner === this.owner)
+			.require(({ createdUnit }) => createdUnit.card.power <= this.powerThreshold)
+			.perform(({ createdUnit }) => {
+				game.animation.play(ServerAnimation.cardAttacksUnits(this, [createdUnit]))
+				createdUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
 			})
 	}
 }
