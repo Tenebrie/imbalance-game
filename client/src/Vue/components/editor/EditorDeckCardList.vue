@@ -13,6 +13,7 @@
 		</div>
 		<div class="buttons">
 			<editor-save-deck-button />
+			<editor-export-deck-button />
 			<editor-delete-deck-button />
 			<editor-leave-deck-button />
 		</div>
@@ -28,12 +29,14 @@ import EditorDeckCardListItem from '@/Vue/components/editor/EditorDeckCardListIt
 import EditorDeckCardListSeparator from '@/Vue/components/editor/EditorDeckCardListSeparator.vue'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import EditorSaveDeckButton from '@/Vue/components/editor/buttons/EditorSaveDeckButton.vue'
+import EditorExportDeckButton from '@/Vue/components/editor/buttons/EditorExportDeckButton.vue'
 import EditorDeleteDeckButton from '@/Vue/components/editor/buttons/EditorDeleteDeckButton.vue'
 import EditorLeaveDeckButton from '@/Vue/components/editor/buttons/EditorLeaveDeckButton.vue'
 
 export default Vue.extend({
 	components: {
 		EditorSaveDeckButton,
+		EditorExportDeckButton,
 		EditorDeleteDeckButton,
 		EditorLeaveDeckButton,
 		EditorDeckCardListItem,

@@ -1,3 +1,5 @@
+import AsyncHandler from './utils/AsyncHandler'
+
 console.info('Starting up NotGwent server')
 
 import path from 'path'
@@ -10,6 +12,7 @@ import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
 import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import { wsLogger } from './utils/WebSocketLogger'
+import Database from './database/Database'
 
 const app = express()
 expressWs(app)
@@ -62,6 +65,14 @@ app.use((req: Request, res: Response, next) => {
 		next()
 	}
 })
+
+/* Wait until database client is ready */
+app.use(AsyncHandler(async (req, res, next) => {
+	if (!Database.isReady()) {
+		throw { status: 503, error: 'Database client is not yet ready' }
+	}
+	next()
+}))
 
 /* Page HTTP routers */
 app.use('/status', StatusRouter)

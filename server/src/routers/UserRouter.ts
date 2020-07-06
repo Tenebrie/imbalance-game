@@ -11,13 +11,6 @@ import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import { tryUntil } from '../utils/Utils'
 import PlayerDatabase from '../database/PlayerDatabase'
 
-router.use(AsyncHandler(async (req, res, next) => {
-	if (!Database.isReady()) {
-		throw { status: 503, error: 'Database client is not yet ready' }
-	}
-	next()
-}))
-
 /* Registration endpoint. Does not require user token */
 router.post('/', AsyncHandler(async(req, res: Response, next) => {
 	const email = req.body['email']

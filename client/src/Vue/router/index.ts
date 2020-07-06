@@ -101,6 +101,13 @@ const routes = [
 			}
 			requireAuthentication(next)
 		}
+	},
+	{
+		path: '/ds/:id',
+		component: () => import('@/Vue/components/editor/SharedDeckImporter.vue'),
+		beforeEnter: (to: Route, from: Route, next: Function) => {
+			requireAuthentication(next)
+		}
 	}
 ]
 

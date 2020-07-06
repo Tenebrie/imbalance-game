@@ -19,6 +19,16 @@ export const tryUntil = (args: TryUntilArgs): boolean => {
 	return false
 }
 
+const shortIdCharset = 'abcdefghkmnopqrstuvwxyzABCDEFGHKMNPQRSTUVWXYZ0123456789'
+export const generateShortId = (length: number): string => {
+	let id = ''
+	for (let i = 0; i < length; i++) {
+		const charIndex = Math.floor(Math.random() * shortIdCharset.length)
+		id += shortIdCharset.charAt(charIndex)
+	}
+	return id
+}
+
 export const colorize = (text: string | number, color: AsciiColor): string => {
 	return `${color}${text}\u001b[0m`
 }
