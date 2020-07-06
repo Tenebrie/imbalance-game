@@ -214,15 +214,11 @@ export default class ServerCard extends Card {
 	}
 
 	public destroy(): void {
-		console.log(this)
 		const unit = this.unit
 		if (this.unit) {
-			console.log('Bailing to unit')
 			unit.destroy()
 			return
 		}
-
-		console.log('Card is destroyed')
 
 		if (this.isBeingDestroyed) {
 			return
@@ -239,7 +235,6 @@ export default class ServerCard extends Card {
 		if (hookValues.destructionPrevented) {
 			this.setPower(1)
 			this.isBeingDestroyed = false
-			console.log('Destruction prevented')
 			return
 		}
 

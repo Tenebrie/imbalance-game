@@ -23,7 +23,7 @@ export default class MainHandler {
 			lastTime = now
 
 			if (deltaTime > 1000) {
-				console.warn(`Delta time too long (${deltaTime}), skipping tick`)
+				console.warn(`Delta time too long (${Math.round(deltaTime) / 1000} seconds), skipping tick`)
 				return
 			}
 

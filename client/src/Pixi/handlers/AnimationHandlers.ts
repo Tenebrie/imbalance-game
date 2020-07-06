@@ -19,6 +19,9 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		if (sourceCard) {
 			message.targetCardIDs.forEach(targetCardId => {
 				const targetCard = Core.game.findRenderedCardById(targetCardId)
+				if (!targetCard) {
+					console.warn(`Target card with id ${targetCardId} does not exist!`)
+				}
 				Core.mainHandler.projectileSystem.createCardAttackProjectile(sourceCard, targetCard, 0)
 			})
 		}

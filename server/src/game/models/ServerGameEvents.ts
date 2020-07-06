@@ -56,6 +56,10 @@ export class EventCallback<EventArgs> {
 	requireLocation(location: CardLocation): EventCallback<EventArgs> {
 		return this.require(() => this.__subscriber.location === location)
 	}
+
+	requireLocations(locations: CardLocation[]): EventCallback<EventArgs> {
+		return this.require(() => locations.includes(this.__subscriber.location))
+	}
 }
 
 export class EventHook<HookValues, HookArgs> {
@@ -137,6 +141,11 @@ export default class ServerGameEvents {
 			const subscriptions = this.eventCallbacks.get(eventType)
 			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
 			this.eventCallbacks.set(eventType, filteredSubscriptions)
+		})
+		Utils.forEachInNumericEnum(GameHook, hookType => {
+			const subscriptions = this.eventHooks.get(hookType)
+			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
+			this.eventHooks.set(hookType, filteredSubscriptions)
 		})
 	}
 

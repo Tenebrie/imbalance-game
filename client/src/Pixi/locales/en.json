@@ -86,8 +86,8 @@
 	"card.description.heroAurienne": "Whenever an allied unit takes lethal damage while {name} is in your hand, prevent it.\nThen, move the ally back, *Play* {name} in it's place and *Draw* a card.",
 
 	"card.name.heroTroviar": "Troviar",
-	"card.title.heroTroviar": "The Watcher",
-	"card.description.heroTroviar": "Whenever another unit takes damage, gain +{powerGained} Power.",
+	"card.title.heroTroviar": "The Torturer",
+	"card.description.heroTroviar": "*Deploy:*\nDeal {deployDamage} Damage to {targetCount} enemy units.<p>Whenever another unit takes damage, gain +{powerGained} Power.",
 
 	"card.name.heroMetrearte": "Metrearte",
 	"card.title.heroMetrearte": "The Copycat",
@@ -120,7 +120,7 @@
 	"card.name.heroCultistOfAreddon": "Cultist of Areddon",
 	"card.description.heroCultistOfAreddon": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",
 
-	"card.name.heroAdventuringGuildMaster": "Adventuring Guild Master",
+	"card.name.heroAdventuringGuildMaster": "Adventuring\nGuild Master",
 	"card.description.heroAdventuringGuildMaster": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
 
 	"card.name.heroForksmanshipInstructor": "Forksmanship Instructor",
@@ -172,6 +172,9 @@
 
 	"card.name.unitLoneLooter": "Lone Looter",
 	"card.description.unitLoneLooter": "Whenever you apply a *Status effect* to an enemy unit, *Summon* one {name} from your deck.",
+
+	"card.name.unitMasterSwordsmith": "Master Swordsmith",
+	"card.description.unitMasterSwordsmith": "*Deploy:*\nGive +{bonusPower} Power to all unit cards in your hand.",
 
 	"card.name.unitTinySparkling": "Tiny Sparkling",
 	"card.description.unitTinySparkling": "<i>No effect</i>",

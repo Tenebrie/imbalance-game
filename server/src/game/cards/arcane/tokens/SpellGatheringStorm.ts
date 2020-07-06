@@ -9,6 +9,7 @@ import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
+import ServerAnimation from '../../../models/ServerAnimation'
 
 export default class SpellGatheringStorm extends ServerCard {
 	damage = 1
@@ -45,11 +46,12 @@ export default class SpellGatheringStorm extends ServerCard {
 	}
 
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
+		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 		this.targetsHit.push(target)
 	}
 
-	onUnitPlayTargetsConfirmed(thisUnit: ServerUnit): void {
+	onSpellPlayTargetsConfirmed(): void {
 		this.targetsHit = []
 	}
 }

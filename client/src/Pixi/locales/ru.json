@@ -86,7 +86,7 @@
 
 	"card.name.heroTroviar": "Тровиар",
 	"card.title.heroTroviar": "Наблюдатель",
-	"card.description.heroTroviar": "Получает +{powerGained} Силы, когда другой юнит получает урон.",
+	"card.description.heroTroviar": "*Вход игру:*\nНанесите {deployDamage} ед. урона {targetCount} вражеским юнитам.<p>Получает +{powerGained} Силы, когда другой юнит получает урон.",
 
 	"card.name.heroMetrearte": "Метреарт",
 	"card.title.heroMetrearte": "Кот-копирка",

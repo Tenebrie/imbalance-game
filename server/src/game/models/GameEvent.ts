@@ -6,6 +6,7 @@ enum GameEvent {
 	EFFECT_UNIT_DEPLOY,
 
 	UNIT_CREATED,
+	UNIT_DEPLOYED,
 	UNIT_DESTROYED,
 	CARD_TAKES_DAMAGE,
 	CARD_DESTROYED
@@ -15,6 +16,10 @@ export default GameEvent
 
 export interface UnitCreatedEventArgs {
 	createdUnit: ServerUnit
+}
+
+export interface UnitDeployedEventArgs {
+	deployedUnit: ServerUnit
 }
 
 export interface UnitDestroyedEventArgs {

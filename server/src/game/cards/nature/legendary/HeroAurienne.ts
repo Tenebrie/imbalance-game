@@ -31,7 +31,9 @@ export default class HeroAurienne extends ServerCard {
 				const targetUnitIndex = targetUnit.unitIndex
 
 				this.game.cardPlay.forcedPlayCardFromHand(ownedCard, targetUnit.rowIndex, targetUnit.unitIndex)
-				this.game.board.moveUnit(targetUnit, targetRowIndex, targetUnitIndex)
+				if (targetUnit.isAlive()) {
+					this.game.board.moveUnit(targetUnit, targetRowIndex, targetUnitIndex)
+				}
 				this.owner.drawUnitCards(1)
 			})
 	}

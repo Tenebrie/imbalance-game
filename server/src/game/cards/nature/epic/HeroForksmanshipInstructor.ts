@@ -14,7 +14,7 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 	bonusPower = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.NEUTRAL)
+		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.CASTLE)
 		this.basePower = 8
 		this.dynamicTextVariables = {
 			powerThreshold: this.powerThreshold,

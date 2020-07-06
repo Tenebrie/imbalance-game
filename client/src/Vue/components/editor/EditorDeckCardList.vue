@@ -106,10 +106,17 @@ export default Vue.extend({
 		width: 100%;
 		height: 100%;
 		input[type="text"] {
+			display: block;
 			font-size: 1.4em;
 			font-family: 'Roboto', sans-serif;
 			background: none;
 			text-align: center;
+			width: calc(100% - 32px);
+			margin: 0 8px;
+
+			&:hover, &:focus {
+				background: rgba(white, 0.1);
+			}
 		}
 
 		.card-list {
