@@ -132,7 +132,7 @@
 	"card.description.unitForestScout": "*Вход в игру:*\nЕсли вы проигрываете на поле, получает +{boardPowerBonus} Силы.\nЕсли вы проигрываете в матче, получает +{moralePowerBonus} Силы.",
 
 	"card.name.unitChargingKnight": "Кавалерист",
-	"card.description.unitChargingKnight": "*Ближний бой:* Наносит {attack} урона<p>Может совершить *атаку* ближнего боя только после движения.",
+	"card.description.unitChargingKnight": "Совершает атаку после каждого передвижения.<p>*Ближний бой:*\nНаносит {attack} ед. урона.",
 
 	"card.name.unitVampireFledgling": "Молодой вампир",
 	"card.description.unitVampireFledgling": "Теряет {powerLost} Силы в начале каждого хода.<p>*Melee Attack:* Наносит {attack} Урона. Если урон не был заблокирован, восстанавливает {powerDrained} Силы.",

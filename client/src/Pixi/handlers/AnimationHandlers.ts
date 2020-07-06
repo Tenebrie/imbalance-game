@@ -15,17 +15,19 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 	},
 
 	[AnimationType.CARD_ATTACK]: (message: AnimationMessage, params: void) => {
+		const animationDuration = 500
 		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
 		if (sourceCard) {
 			message.targetCardIDs.forEach(targetCardId => {
 				const targetCard = Core.game.findRenderedCardById(targetCardId)
 				if (!targetCard) {
 					console.warn(`Target card with id ${targetCardId} does not exist!`)
+					return animationDuration
 				}
 				Core.mainHandler.projectileSystem.createCardAttackProjectile(sourceCard, targetCard, 0)
 			})
 		}
-		return 500
+		return animationDuration
 	},
 
 	[AnimationType.UNIVERSE_ATTACK]: (message: AnimationMessage, params: UnitAttackAnimParams) => {
