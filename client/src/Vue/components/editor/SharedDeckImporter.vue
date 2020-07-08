@@ -8,21 +8,22 @@
 import Vue from 'vue'
 import axios from 'axios'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
+import Notifications from '@/utils/Notifications'
+import {onMounted} from '@vue/composition-api'
 
-export default Vue.extend({
-	computed: {
-		sharedCode(): string {
-			return this.$route.params.id
+function Setup() {
+	onMounted(async () => {
+		try {
+			await importDeck()
+		} catch (e) {
+			Notifications.error('Unable to import deck!')
 		}
-	},
+	})
 
-	async created(): Promise<void> {
+	const importDeck = async (): Promise<void> => {
 		const response = await axios.post('/api/decks', {
-			sharedCode: this.sharedCode
+			sharedCode: this.$route.params.id
 		})
-		if (response.status !== 200) {
-			return
-		}
 
 		const deck = response.data.deck as PopulatedEditorDeck
 
@@ -32,7 +33,12 @@ export default Vue.extend({
 				id: deck.id
 			}
 		})
-	},
+	}
+	return {}
+}
+
+export default Vue.extend({
+	setup: Setup
 })
 </script>
 
