@@ -19,8 +19,6 @@ export default Vue.extend({
 	@import "../styles/generic";
 
 	.profile-view {
-		width: 100%;
-		height: 100%;
 		display: flex;
 		align-items: flex-end;
 		justify-content: center;
@@ -29,7 +27,6 @@ export default Vue.extend({
 			display: flex;
 			flex-direction: column;
 			background: $COLOR-BACKGROUND-TRANSPARENT;
-			height: calc(100% - #{$NAVIGATION-BAR-HEIGHT});
 		}
 	}
 </style>

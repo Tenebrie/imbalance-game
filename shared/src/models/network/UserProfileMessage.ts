@@ -1,10 +1,12 @@
 import PlayerDatabaseEntry from '../PlayerDatabaseEntry'
 import Language from '../Language'
+import RenderQuality from '../../enums/RenderQuality'
 
 export default class UserProfileMessage {
 	email: string
 	username: string
 	userLanguage: Language
+	renderQuality: RenderQuality
 
 	constructor(databaseEntry: PlayerDatabaseEntry) {
 		const splitEmail = databaseEntry.email.split('@')
@@ -14,5 +16,6 @@ export default class UserProfileMessage {
 		}
 		this.username = databaseEntry.username
 		this.userLanguage = databaseEntry.userLanguage
+		this.renderQuality = databaseEntry.renderQuality
 	}
 }

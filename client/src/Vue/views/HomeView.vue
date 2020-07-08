@@ -39,14 +39,12 @@ export default Vue.extend({
 	@import "../styles/generic";
 
 	.home-view {
-		width: 100%;
-		height: 100%;
 		display: flex;
 		align-items: flex-end;
 		justify-content: center;
 
 		& > div {
-			height: calc(100% - #{$NAVIGATION-BAR-HEIGHT});
+			height: 100%;
 			display: flex;
 			flex-direction: column;
 			background: $COLOR-BACKGROUND-TRANSPARENT;

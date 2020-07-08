@@ -20,14 +20,12 @@ export default Vue.extend({
 	@import "../styles/generic";
 
 	.rules-view {
-		width: 100%;
 		display: flex;
 		align-items: flex-end;
 		justify-content: center;
 
 		& > div {
 			flex-grow: 0;
-			height: calc(100% - #{$NAVIGATION-BAR-HEIGHT});
 			display: flex;
 			flex-direction: column;
 			background: $COLOR-BACKGROUND-TRANSPARENT;

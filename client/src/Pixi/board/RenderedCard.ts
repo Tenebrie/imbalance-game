@@ -5,9 +5,8 @@ import CardType from '@shared/enums/CardType'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
-import Settings from '@/Pixi/Settings'
 import RichText from '@/Pixi/render/RichText'
-import Utils from '@/utils/Utils'
+import Utils, {getRenderScale} from '@/utils/Utils'
 import CardAttributes from '@/Pixi/render/CardAttributes'
 import CardMessage from '@shared/models/network/CardMessage'
 import ScalingText from '@/Pixi/render/ScalingText'
@@ -267,6 +266,7 @@ export default class RenderedCard extends Card {
 
 	public resetDisplayMode(): void {
 		let texts: (ScalingText | RichText)[] = []
+		const scaleSettings = getRenderScale()
 
 		if (this.isCardMode()) {
 			this.switchToCardMode()
@@ -287,11 +287,11 @@ export default class RenderedCard extends Card {
 			text.position.y = Math.round(text.position.y)
 
 			const isInGame = store.getters.gameStateModule.isInGame
-			let renderScale = isInGame ? Settings.generalGameFontRenderScale : Settings.generalEditorFontRenderScale
+			let renderScale = isInGame ? scaleSettings.generalGameFontRenderScale : scaleSettings.generalEditorFontRenderScale
 			if (Core.input && this === Core.input.inspectedCard) {
 				renderScale *= 1.2
 			} else if (text === this.cardDescriptionText) {
-				renderScale = isInGame ? Settings.descriptionGameFontRenderScale : Settings.descriptionEditorFontRenderScale
+				renderScale = isInGame ? scaleSettings.descriptionGameFontRenderScale : scaleSettings.descriptionEditorFontRenderScale
 			}
 
 			text.scale.set(1 / renderScale)

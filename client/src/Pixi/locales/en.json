@@ -2,9 +2,17 @@
 	"ui.language.en": "English",
 	"ui.language.ru": "Russian",
 
+	"ui.quality.default": "Default (High)",
+	"ui.quality.normal": "Normal",
+	"ui.quality.high": "High",
+	"ui.quality.ultra": "Ultra",
+	"ui.quality.ultra_x2": "Ultra x2",
+
 	"ui.editor.deck.create": "Create new deck",
 	"ui.editor.deck.create.progress": "Creating...",
 
+	"ui.profile.language.header": "Language",
+	"ui.profile.quality.header": "Render quality",
 	"ui.profile.logout": "Logout",
 	"ui.profile.delete": "Delete profile",
 	"ui.profile.delete.progress": "Deleting...",

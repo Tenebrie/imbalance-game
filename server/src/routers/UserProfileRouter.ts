@@ -7,6 +7,7 @@ import Language from '@shared/models/Language'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import AsyncHandler from '../utils/AsyncHandler'
+import RenderQuality from '@shared/enums/RenderQuality'
 
 router.get('/', AsyncHandler(async(req: Request, res: Response, next) => {
 	const player = req['player'] as ServerPlayer
@@ -25,6 +26,11 @@ router.put('/', (req: Request, res: Response, next) => {
 	const userLanguage = req.body['userLanguage'] as Language
 	if (userLanguage) {
 		PlayerDatabase.updatePlayerUserLanguage(player.id, userLanguage).then()
+	}
+
+	const renderQuality = req.body['renderQuality'] as RenderQuality
+	if (userLanguage) {
+		PlayerDatabase.updatePlayerRenderQuality(player.id, renderQuality).then()
 	}
 
 	PlayerLibrary.removeFromCache(player)

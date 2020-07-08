@@ -22,8 +22,8 @@
 				</div>
 			</div>
 			<div class="section">
-				<div class="language-list">
-					<h3>Language</h3>
+				<div class="list language-list">
+					<h3>{{ $locale.get('ui.profile.language.header') }}</h3>
 					<div v-for="language in supportedLanguages" :key="language">
 						<div class="language-list-content">
 							<input :id="`language-list-item-${language}`"
@@ -33,6 +33,20 @@
 									v-model="selectedLanguage"
 							/>
 							<label :for="`language-list-item-${language}`">{{ $locale.get(`ui.language.${language}`) }}</label>
+						</div>
+					</div>
+				</div>
+				<div class="list render-quality-list">
+					<h3>{{ $locale.get('ui.profile.quality.header') }}</h3>
+					<div v-for="quality in supportedRenderQualities" :key="quality">
+						<div class="render-quality-list-content">
+							<input :id="`render-quality-list-item-${quality}`"
+								   type="radio"
+								   name="quality"
+								   :value="quality"
+								   v-model="selectedQuality"
+							/>
+							<label :for="`render-quality-list-item-${quality}`">{{ $locale.get(`ui.quality.${quality}`) }}</label>
 						</div>
 					</div>
 				</div>
@@ -56,6 +70,7 @@ import ProfileDeleteUserButton from '@/Vue/components/profile/ProfileDeleteUserB
 import {supportedLanguages} from '@/Pixi/Localization'
 import Language from '@shared/models/Language'
 import Notifications from '@/utils/Notifications'
+import RenderQuality from '@shared/enums/RenderQuality'
 
 function TheUserProfile() {
 	const email = ref<string>('')
@@ -81,9 +96,20 @@ function TheUserProfile() {
 		}
 	})
 
-	watch(() => [selectedLanguage.value], () => {
+	const selectedQuality = computed({
+		get() {
+			return store.state.userPreferencesModule.selectedQuality
+		},
+		set(value) {
+			const quality = value as RenderQuality
+			store.commit.userPreferencesModule.setSelectedQuality(quality)
+		}
+	})
+
+	watch(() => [selectedLanguage.value, selectedQuality.value], () => {
 		axios.put('/api/user/profile', {
-			userLanguage: selectedLanguage.value
+			userLanguage: selectedLanguage.value,
+			renderQuality: selectedQuality.value
 		})
 	})
 
@@ -100,8 +126,10 @@ function TheUserProfile() {
 		username,
 		password,
 		selectedLanguage,
+		selectedQuality,
 		supportedLanguages,
-		onChangePassword
+		onChangePassword,
+		supportedRenderQualities: RenderQuality
 	}
 }
 
@@ -129,12 +157,13 @@ export default {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+			overflow-y: auto;
 
 			.section {
 				width: 100%;
 				display: flex;
 				flex-direction: row;
-				justify-content: space-between;
+				justify-content: space-around;
 				border-bottom: 1px solid gray;
 				padding-bottom: 16px;
 
@@ -142,7 +171,7 @@ export default {
 					padding-bottom: 0;
 				}
 
-				.language-list {
+				& > .list {
 					h3 {
 						text-align: left;
 					}
@@ -151,7 +180,8 @@ export default {
 					display: flex;
 					flex-direction: column;
 					height: 100%;
-					justify-content: center;
+					align-items: start;
+					justify-content: start;
 
 					input {
 						margin-left: 0;

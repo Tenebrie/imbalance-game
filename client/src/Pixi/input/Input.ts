@@ -9,7 +9,6 @@ import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
-import Settings from '@/Pixi/Settings'
 import TargetType from '@shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
@@ -134,8 +133,8 @@ export default class Input {
 		const view = Core.renderer.pixi.view
 		const clientRect = view.getBoundingClientRect()
 		this.mousePosition = new PIXI.Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
-		this.mousePosition.x *= window.devicePixelRatio * Settings.superSamplingLevel
-		this.mousePosition.y *= window.devicePixelRatio * Settings.superSamplingLevel
+		this.mousePosition.x *= window.devicePixelRatio * Core.renderer.superSamplingLevel
+		this.mousePosition.y *= window.devicePixelRatio * Core.renderer.superSamplingLevel
 
 		const windowHeight = Core.renderer.pixi.view.height
 		const heightLimit = windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5

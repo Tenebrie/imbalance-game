@@ -1,4 +1,5 @@
 import Language from './Language'
+import RenderQuality from '../enums/RenderQuality'
 
 export default interface PlayerDatabaseEntry {
 	id: string
@@ -6,4 +7,5 @@ export default interface PlayerDatabaseEntry {
 	username: string
 	passwordHash: string
 	userLanguage: Language
+	renderQuality: RenderQuality
 }

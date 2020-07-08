@@ -2,9 +2,17 @@
 	"ui.language.en": "Английский",
 	"ui.language.ru": "Русский",
 
+	"ui.quality.default": "По-умолчанию (Высокое)",
+	"ui.quality.normal": "Стандартное",
+	"ui.quality.high": "Высокое",
+	"ui.quality.ultra": "Ультра",
+	"ui.quality.ultra_x2": "Ультра x2",
+
 	"ui.editor.deck.create": "Создать новую колоду",
 	"ui.editor.deck.create.progress": "Создание...",
 
+	"ui.profile.language.header": "Язык",
+	"ui.profile.quality.header": "Качество графики",
 	"ui.profile.logout": "Выйти",
 	"ui.profile.delete": "Удалить профиль",
 	"ui.profile.delete.progress": "Удаление...",

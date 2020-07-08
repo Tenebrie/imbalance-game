@@ -8,13 +8,12 @@ import RenderedUnit from '@/Pixi/board/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
 import CardType from '@shared/enums/CardType'
 import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
-import Settings from '@/Pixi/Settings'
 import CardTint from '@/Pixi/enums/CardTint'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
-import Utils from '@/utils/Utils'
+import Utils, {getRenderScale} from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import CardFeature from '@shared/enums/CardFeature'
 
@@ -30,6 +29,7 @@ const INSPECTED_CARD_ZINDEX = 500
 export default class Renderer {
 	pixi: PIXI.Application
 	rootContainer: PIXI.Container
+	superSamplingLevel: number
 
 	container: HTMLElement
 
@@ -58,9 +58,10 @@ export default class Renderer {
 	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
 
 	constructor(container: HTMLElement) {
+		this.superSamplingLevel = getRenderScale().superSamplingLevel
 		this.pixi = new PIXI.Application({
-			width: window.innerWidth * window.devicePixelRatio * Settings.superSamplingLevel,
-			height: window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel,
+			width: window.innerWidth * window.devicePixelRatio * this.superSamplingLevel,
+			height: window.innerHeight * window.devicePixelRatio * this.superSamplingLevel,
 			antialias: false,
 			autoDensity: true,
 			transparent: true,
@@ -79,7 +80,7 @@ export default class Renderer {
 		/* Time label */
 		this.timeLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24 * Settings.superSamplingLevel,
+			fontSize: 24 * this.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 		this.timeLabel.anchor.set(0, 0.5)
@@ -89,13 +90,13 @@ export default class Renderer {
 		/* Action label */
 		this.actionLabel = new RichText('Test text', 2000, {})
 		this.actionLabel.zIndex = 85
-		this.actionLabel.setFont(24 * Settings.superSamplingLevel, 12 * Settings.superSamplingLevel)
+		this.actionLabel.setFont(24 * this.superSamplingLevel, 12 * this.superSamplingLevel)
 		this.rootContainer.addChild(this.actionLabel)
 
 		/* Player name label */
 		this.playerNameLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24 * Settings.superSamplingLevel,
+			fontSize: 24 * this.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 		this.playerNameLabel.anchor.set(0, 1)
@@ -105,7 +106,7 @@ export default class Renderer {
 		/* Opponent player name */
 		this.opponentNameLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24 * Settings.superSamplingLevel,
+			fontSize: 24 * this.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 
@@ -115,7 +116,7 @@ export default class Renderer {
 		/* Power labels */
 		this.playerPowerLabel = new PIXI.Text('', {
 			fontFamily: 'Roboto',
-			fontSize: 40 * Settings.superSamplingLevel,
+			fontSize: 40 * this.superSamplingLevel,
 			fill: 0xFFFFFF,
 			align: 'left'
 		})
@@ -124,7 +125,7 @@ export default class Renderer {
 
 		this.opponentPowerLabel = new PIXI.Text('', {
 			fontFamily: 'Roboto',
-			fontSize: 40 * Settings.superSamplingLevel,
+			fontSize: 40 * this.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 		this.opponentPowerLabel.anchor.set(0, 0.5)
@@ -220,7 +221,7 @@ export default class Renderer {
 	}
 
 	public resize(): void {
-		this.pixi.renderer.resize(window.innerWidth * window.devicePixelRatio * Settings.superSamplingLevel, window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel)
+		this.pixi.renderer.resize(window.innerWidth * window.devicePixelRatio * this.superSamplingLevel, window.innerHeight * window.devicePixelRatio * this.superSamplingLevel)
 	}
 
 	public registerCard(card: RenderedCard): void {
@@ -626,7 +627,7 @@ export default class Renderer {
 
 		sprite.alpha = 1
 		sprite.tint = 0xFFFFFF
-		sprite.scale.set(Settings.superSamplingLevel)
+		sprite.scale.set(this.superSamplingLevel)
 		container.visible = true
 		container.zIndex = ANNOUNCED_CARD_ZINDEX
 
@@ -639,7 +640,7 @@ export default class Renderer {
 			container.position.y = this.getScreenHeight() / 2
 			announcedCard.setDisplayMode(CardDisplayMode.ANNOUNCED)
 		} else {
-			const targetX = sprite.width / 2 + 50 * Settings.superSamplingLevel
+			const targetX = sprite.width / 2 + 50 * this.superSamplingLevel
 
 			container.position.x += (targetX - container.position.x) * this.deltaTimeFraction * 7
 			container.position.y = this.getScreenHeight() / 2
@@ -665,7 +666,7 @@ export default class Renderer {
 		const sprite = card.sprite
 		sprite.alpha = 1
 		sprite.tint = 0xFFFFFF
-		sprite.scale.set(Settings.superSamplingLevel)
+		sprite.scale.set(this.superSamplingLevel)
 		container.visible = true
 		container.zIndex = RESOLVING_CARD_ZINDEX + index
 
@@ -673,7 +674,7 @@ export default class Renderer {
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		const horizontalOffset = 50 * Settings.superSamplingLevel * index
+		const horizontalOffset = 50 * this.superSamplingLevel * index
 
 		let verticalOffset = this.getScreenHeight() * 0.20
 		if (Core.opponent.isTurnActive) {
@@ -685,7 +686,7 @@ export default class Renderer {
 			container.position.y = this.getScreenHeight() / 2 + verticalOffset
 			card.setDisplayMode(CardDisplayMode.RESOLVING)
 		} else {
-			const targetX = sprite.width / 2 + 50 * Settings.superSamplingLevel + horizontalOffset
+			const targetX = sprite.width / 2 + 50 * this.superSamplingLevel + horizontalOffset
 
 			container.position.x += (targetX - container.position.x) * this.deltaTimeFraction * 7
 			container.position.y = this.getScreenHeight() / 2 + verticalOffset
@@ -796,7 +797,7 @@ export default class Renderer {
 		const disabledOverlaySprite = inspectedCard.cardDisabledOverlay
 
 		sprite.tint = 0xFFFFFF
-		sprite.scale.set(Settings.superSamplingLevel)
+		sprite.scale.set(this.superSamplingLevel)
 		container.position.x = this.getScreenWidth() / 2
 		container.position.y = this.getScreenHeight() / 2
 		container.zIndex = INSPECTED_CARD_ZINDEX

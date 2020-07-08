@@ -13,8 +13,8 @@ services:
       - 8080:8080
     command: bash -c "npm run serve"
     volumes:
-      - ./client/src:/app/client/src
-      - ./shared/src:/app/shared/src
+      - ./client/src:/app/client/src:cached
+      - ./shared/src:/app/shared/src:cached
     tty: true
     restart: always
   server:
@@ -32,8 +32,8 @@ services:
       - 3000:3000
     command: npm run serve
     volumes:
-      - ./server/src:/app/server/src
-      - ./shared/src:/app/shared/src
+      - ./server/src:/app/server/src:cached
+      - ./shared/src:/app/shared/src:cached
     tty: true
     restart: always
   dev-db:
@@ -45,7 +45,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - dev-database:/var/lib/postgresql/data/
+      - dev-database:/var/lib/postgresql/data/:cached
     restart: always
 volumes:
   dev-database:

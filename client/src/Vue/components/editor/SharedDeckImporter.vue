@@ -7,7 +7,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
-import store from '@/Vue/store'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 
 export default Vue.extend({

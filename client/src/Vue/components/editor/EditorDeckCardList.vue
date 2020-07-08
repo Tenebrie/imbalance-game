@@ -130,17 +130,17 @@ export default Vue.extend({
 		}
 
 		.buttons {
-			width: 80%;
+			width: calc(100% - 24px);
 			display: flex;
+			flex-wrap: wrap;
 			flex-direction: row;
 			justify-content: center;
-			padding-left: 10%;
-			padding-right: 10%;
+			margin: 24px 12px;
 
 			.button-container {
-				font-size: 1.2em;
-				margin: 27px 4px;
 				flex: 1;
+				margin: 4px 4px;
+				font-size: 1.2em;
 			}
 		}
 	}

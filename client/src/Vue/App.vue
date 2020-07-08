@@ -1,7 +1,7 @@
 <template>
-	<div id="app" :class="rootClass" >
+	<div id="app">
 		<div id="app-background" />
-		<div id="content">
+		<div id="content" :class="rootClass">
 			<the-navigation-bar v-if="!isInGame" />
 			<router-view class="view" />
 		</div>
@@ -75,15 +75,24 @@ body {
 
 		&.in-game {
 			overflow-y: hidden;
+			.view {
+				height: 100vh;
+			}
 		}
 
 		&.navigation-bar-visible {
 			padding-top: 48px;
-			height: calc(100vh - 48px);
-		}
+			height: calc(100vh - #{$NAVIGATION-BAR-HEIGHT});
 
-		.view {
-			height: 100%;
+			.view {
+				width: 100%;
+				height: 100%;
+
+				& > * {
+					width: 100%;
+					height: 100%;
+				}
+			}
 		}
 
 		a {
