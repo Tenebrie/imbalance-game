@@ -59,6 +59,7 @@ export default class Input {
 	public updateCardHoverStatus(): void {
 		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
 		const playerHandCards = Core.player.cardHand.allCards.slice().reverse()
+		const opponentHandCards = Core.opponent ? Core.opponent.cardHand.allCards.slice().reverse() : []
 		const selectableCards = this.forcedTargetingCards.slice().reverse()
 
 		let hoveredCard: HoveredCard | null = null
@@ -68,9 +69,14 @@ export default class Input {
 			hoveredCard = HoveredCard.fromCardOnBoard(hoveredCardOnBoard)
 		}
 
-		const hoveredCardInHand = playerHandCards.find(card => card.isHovered()) || null
-		if (hoveredCardInHand) {
-			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInHand, Core.player)
+		const hoveredCardInPlayerHand = playerHandCards.find(card => card.isHovered()) || null
+		if (hoveredCardInPlayerHand) {
+			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInPlayerHand, Core.player)
+		}
+
+		const hoveredCardInOpponentHand = opponentHandCards.find(card => card.isHovered()) || null
+		if (hoveredCardInOpponentHand) {
+			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInOpponentHand, Core.opponent)
 		}
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.isHovered()) {
@@ -100,7 +106,7 @@ export default class Input {
 			return
 		}
 
-		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON && (!this.hoveredCard || this.hoveredCard.location !== CardLocation.SELECTABLE)) {
+		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON) {
 			this.forcedTargetingMode.selectTarget()
 			return
 		}
@@ -147,7 +153,7 @@ export default class Input {
 		if (!Core.player.isTurnActive) { return }
 
 		const hoveredCard = this.hoveredCard
-		if (!hoveredCard) { return }
+		if (!hoveredCard || hoveredCard.owner !== Core.player) { return }
 
 		const card = hoveredCard.card
 
@@ -266,12 +272,17 @@ export default class Input {
 		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardMessage.id)
 	}
 
-	public enableForcedTargetingMode(validTargets: ClientCardTarget[]): void {
+	public async enableForcedTargetingMode(validTargets: ClientCardTarget[]): Promise<void> {
 		this.forcedTargetingCards.forEach(card => card.unregister())
 		this.forcedTargetingCards = []
 
 		this.forcedTargetingMode = new ForcedTargetingMode(validTargets)
-		this.createForcedTargetingCards(validTargets)
+		await this.createForcedTargetingCards(validTargets)
+		this.forcedTargetingMode.validTargets
+			.filter(target => target.targetCardData && !target.targetCard)
+			.forEach(target => {
+				target.targetCard = this.forcedTargetingCards.find(card => card.id === target.targetCardData.id)
+			})
 	}
 
 	public async createForcedTargetingCards(targets: ClientCardTarget[]): Promise<void> {

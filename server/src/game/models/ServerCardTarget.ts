@@ -119,7 +119,7 @@ export default class ServerCardTarget implements CardTarget {
 			target.sourceUnit = game.board.findUnitById(message.sourceUnitId)
 		}
 		if (message.targetCardId) {
-			target.targetCard = game.findCardById(message.targetCardId)
+			target.targetCard = game.findCardById(message.targetCardId) || CardLibrary.findPrototypeById(message.targetCardData.id)
 		} else if (message.targetCardData) {
 			target.targetCard = game.findCardById(message.targetCardData.id) || CardLibrary.findPrototypeById(message.targetCardData.id)
 		}

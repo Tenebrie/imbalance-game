@@ -149,19 +149,7 @@ export default class Renderer {
 			}
 
 			this.updateCardStats(renderedCard)
-
-			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
-				this.renderCardInHand(renderedCard, unitCards.indexOf(renderedCard), unitCards.length, false, false)
-				const displayMode = this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
-				renderedCard.setDisplayMode(displayMode)
-			} else if (!Core.input.grabbedCard && Core.input.hoveredCard && renderedCard === Core.input.hoveredCard.card) {
-				this.renderCardInHand(renderedCard, unitCards.indexOf(renderedCard), unitCards.length, false, false)
-				this.renderHoveredCardInHand(renderedCard)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
-			} else {
-				this.renderCardInHand(renderedCard, unitCards.indexOf(renderedCard), unitCards.length, false, false)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND)
-			}
+			this.renderCard(renderedCard, unitCards, false, false)
 		})
 
 		const spellCards = Core.player.cardHand.spellCards
@@ -172,19 +160,7 @@ export default class Renderer {
 			}
 
 			this.updateCardStats(renderedCard)
-
-			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
-				this.renderCardInHand(renderedCard, spellCards.indexOf(renderedCard), spellCards.length, false, true)
-				const displayMode = this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
-				renderedCard.setDisplayMode(displayMode)
-			} else if (!Core.input.grabbedCard && Core.input.hoveredCard && renderedCard === Core.input.hoveredCard.card) {
-				this.renderCardInHand(renderedCard, spellCards.indexOf(renderedCard), spellCards.length, false, true)
-				this.renderHoveredCardInHand(renderedCard)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
-			} else {
-				this.renderCardInHand(renderedCard, spellCards.indexOf(renderedCard), spellCards.length, false, true)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND)
-			}
+			this.renderCard(renderedCard, spellCards, false, true)
 		})
 
 		if (Core.opponent) {
@@ -195,8 +171,7 @@ export default class Renderer {
 					return
 				}
 
-				this.renderCardInHand(renderedCard, opponentsUnitCards.indexOf(renderedCard), opponentsUnitCards.length, true, false)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HIDDEN)
+				this.renderCard(renderedCard, opponentsUnitCards, true, false)
 			})
 
 			const opponentsSpellCards = Core.opponent.cardHand.spellCards
@@ -206,8 +181,7 @@ export default class Renderer {
 					return
 				}
 
-				this.renderCardInHand(renderedCard, opponentsSpellCards.indexOf(renderedCard), opponentsSpellCards.length, true, true)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HIDDEN)
+				this.renderCard(renderedCard, opponentsSpellCards, true, true)
 			})
 		}
 
@@ -218,6 +192,22 @@ export default class Renderer {
 		this.renderResolveStack()
 		this.renderSelectableCards()
 		this.renderInspectedCard()
+	}
+
+	private renderCard(card: RenderedCard, cardArray: RenderedCard[], isOpponent: boolean, isSpellHand: boolean): void {
+		card.hiddenMode = isOpponent
+		if (Core.input.grabbedCard && card === Core.input.grabbedCard.card) {
+			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
+			const displayMode = this.renderGrabbedCard(card, Core.input.mousePosition)
+			card.setDisplayMode(displayMode)
+		} else if (!Core.input.grabbedCard && Core.input.hoveredCard && card === Core.input.hoveredCard.card) {
+			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
+			this.renderHoveredCardInHand(card, isOpponent)
+			card.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
+		} else {
+			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
+			card.setDisplayMode(CardDisplayMode.IN_HAND)
+		}
 	}
 
 	public resize(): void {
@@ -318,7 +308,7 @@ export default class Renderer {
 			}
 		}
 
-		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED || renderedCard.displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
+		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
 			container.position.x += (targetPosition.x - container.position.x) * this.deltaTimeFraction * 7
 			container.position.y += (targetPosition.y - container.position.y) * this.deltaTimeFraction * 7
@@ -337,7 +327,7 @@ export default class Renderer {
 		disabledOverlaySprite.zIndex = container.zIndex + 1
 	}
 
-	public renderHoveredCardInHand(renderedCard: RenderedCard): void {
+	public renderHoveredCardInHand(renderedCard: RenderedCard, isOpponent: boolean): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
@@ -346,7 +336,11 @@ export default class Renderer {
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		container.position.y = this.getScreenHeight() - cardHeight * 0.5
+		if (isOpponent) {
+			container.position.y = cardHeight * 0.5
+		} else {
+			container.position.y = this.getScreenHeight() - cardHeight * 0.5
+		}
 
 		container.zIndex = HOVERED_CARD_ZINDEX
 
@@ -621,6 +615,7 @@ export default class Renderer {
 			return
 		}
 
+		announcedCard.hiddenMode = false
 		const container = announcedCard.coreContainer
 		const sprite = announcedCard.sprite
 		const disabledOverlaySprite = announcedCard.cardDisabledOverlay

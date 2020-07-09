@@ -6,7 +6,7 @@ import CardFaction from '../../enums/CardFaction'
 export default class HiddenCardMessage {
 	id: string
 	type = CardType.HIDDEN
-	class = 'cardBack'
+	class: string
 	faction = CardFaction.NEUTRAL
 
 	buffs: HiddenBuffContainerMessage
@@ -25,6 +25,11 @@ export default class HiddenCardMessage {
 	constructor(card: Card) {
 		this.id = card.id
 		this.buffs = new HiddenBuffContainerMessage(card.buffs)
+		if (card.type === CardType.UNIT || card.type === CardType.TOKEN) {
+			this.class = 'unitCardBack'
+		} else {
+			this.class = 'spellCardBack'
+		}
 	}
 
 	static fromCard(card: Card): HiddenCardMessage {

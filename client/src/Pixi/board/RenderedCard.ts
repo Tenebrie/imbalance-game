@@ -48,6 +48,8 @@ export default class RenderedCard extends Card {
 	private readonly cardTribeTexts: ScalingText[]
 	private readonly cardDescriptionText: RichText
 
+	public hiddenMode = false
+
 	public constructor(message: CardMessage) {
 		super(message.id, message.type, message.class)
 		this.id = message.id
@@ -410,23 +412,24 @@ export default class RenderedCard extends Card {
 	}
 
 	public isCardMode(): boolean {
-		return [CardDisplayMode.IN_HAND,
-			CardDisplayMode.IN_HAND_HOVERED,
-			CardDisplayMode.INSPECTED,
-			CardDisplayMode.ANNOUNCED,
-			CardDisplayMode.RESOLVING,
-			CardDisplayMode.SELECTION,
-			CardDisplayMode.SELECTION_HOVERED,
-			CardDisplayMode.IN_EDITOR
-		].includes(this.displayMode)
+		return !this.isUnitMode() && !this.isHiddenMode()
+		// return [CardDisplayMode.IN_HAND,
+		// 	CardDisplayMode.IN_HAND_HOVERED,
+		// 	CardDisplayMode.INSPECTED,
+		// 	CardDisplayMode.ANNOUNCED,
+		// 	CardDisplayMode.RESOLVING,
+		// 	CardDisplayMode.SELECTION,
+		// 	CardDisplayMode.SELECTION_HOVERED,
+		// 	CardDisplayMode.IN_EDITOR
+		// ].includes(this.displayMode)
 	}
 
 	public isUnitMode(): boolean {
-		return [CardDisplayMode.ON_BOARD].includes(this.displayMode)
+		return !this.isHiddenMode() && [CardDisplayMode.ON_BOARD].includes(this.displayMode)
 	}
 
 	public isHiddenMode(): boolean {
-		return [CardDisplayMode.IN_HAND_HIDDEN].includes(this.displayMode)
+		return this.hiddenMode
 	}
 
 	public unregister(): void {

@@ -20,7 +20,9 @@ export default class ForcedTargetingMode {
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		this.selectedTarget = this.validTargets.find(target => {
-			return (target.targetCard && target.targetCard === hoveredCard) || (target.targetUnit && target.targetUnit === hoveredUnit) || (target.targetRow && target.targetRow === hoveredRow)
+			return (target.targetCard && hoveredCard && target.targetCard.id === hoveredCard.id) ||
+				(target.targetUnit && target.targetUnit === hoveredUnit) ||
+				(target.targetRow && target.targetRow === hoveredRow)
 		})
 	}
 
@@ -33,7 +35,9 @@ export default class ForcedTargetingMode {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredUnit = MouseHover.getHoveredUnit()
 		const hoveredRow = MouseHover.getHoveredRow()
-		return (target.targetCard && target.targetCard === hoveredCard) || (target.targetUnit && target.targetUnit === hoveredUnit) || (target.targetRow && target.targetRow === hoveredRow)
+		return (target.targetCard && hoveredCard && target.targetCard.id === hoveredCard.id) ||
+			(target.targetUnit && hoveredUnit && target.targetUnit === hoveredUnit) ||
+			(target.targetRow && target.targetRow === hoveredRow)
 	}
 
 	public isUnitPotentialTarget(unit: RenderedUnit): boolean {
