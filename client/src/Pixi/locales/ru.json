@@ -6,7 +6,6 @@
 	"ui.quality.normal": "Стандартное",
 	"ui.quality.high": "Высокое",
 	"ui.quality.ultra": "Ультра",
-	"ui.quality.ultra_x2": "Ультра x2",
 
 	"ui.editor.deck.create": "Создать новую колоду",
 	"ui.editor.deck.create.progress": "Создание...",
@@ -28,6 +27,7 @@
 	"target.move.row": "Переместиться",
 
 	"card.faction.arcane": "Аркан",
+	"card.faction.nature": "Природа",
 	"card.faction.neutral": "Нейтралы",
 	"card.faction.experimental": "Экспериментальное",
 	"editor.faction.unfinished": "Незаконченные",
@@ -40,10 +40,12 @@
 	"card.tribe.bird": "Птица",
 	"card.tribe.beast": "Зверь",
 	"card.tribe.human": "Человек",
+	"card.tribe.storm": "Буря",
 	"card.tribe.undead": "Нежить",
 	"card.tribe.dragon": "Дракон",
 	"card.tribe.crystal": "Кристалл",
 	"card.tribe.vampire": "Вампир",
+	"card.tribe.merfolk": "Мерфолк",
 	"card.tribe.building": "Здание",
 	"card.tribe.valkyrie": "Валькирия",
 	"card.tribe.elemental": "Элементаль",
@@ -71,6 +73,10 @@
 	"card.name.heroCarienne": "Карьен",
 	"card.title.heroCarienne": "Свободный шторм",
 	"card.description.heroCarienne": "*Вход в игру:*\nНаносит {damagePerWave} ед. урона всем вражеским юнитам.\nПовторите этот эффект за каждую *Надвигающуюся бурю* в вашем сбросе.",
+
+	"card.name.heroUrvial": "Урвиал",
+	"card.title.heroUrvial": "Штормовой кузнец",
+	"card.description.heroUrvial": "*Вход в игру:*\nВаши *Бури* улучшены до конца игры.<p><i>Улучшенные *Бури* могут выбирать целью одного и того же юнита несколько раз.</i>",
 
 	"card.name.heroGarellion": "Гареллион",
 	"card.title.heroGarellion": "Манапровод",
@@ -107,7 +113,9 @@
 	"card.description.heroRagingElemental": "Получив урон, {name} атакует ближайших вражеских юнитов, нанося урон, равный собственной Силе.<p>Затем, он уничтожает себя.",
 
 	"card.name.heroStormDancer": "Танцующий c бурей",
+	"card.description.heroStormDancer": "Когда вы используете заклинание, дает +{powerGiven} Силы соседним юнитам.\nЕсли это *Буря*, вместо этого дает им +{stormPowerGiven} Силы.",
 
+	"card.name.heroCoralScribe": "Коралловый писарь",
 	"card.description.heroCoralScribe": "*Вход в игру:*\nПоложите копию *Надвигающейся бури* в вашу руку за каждую копию бури в вашем сбросе.",
 
 	"card.name.heroFlameDancer": "Танцующая с пламенем",
@@ -134,8 +142,11 @@
 	"card.name.heroForksmanshipInstructor": "Инструктор вилования",
 	"card.description.heroForksmanshipInstructor": "Когда вы играете юнита с {powerThreshold} Силы или меньше, дайте ему +{bonusPower} Силы.",
 
+	"card.name.heroTribeShaman": "Племенной шаман",
+	"card.description.heroTribeShaman": "*Вход в игру:*\n*Создайте* *Целебный дождь*",
+
 	"card.name.unitRavenMessenger": "Почтовый ворон",
-	"card.description.unitRavenMessenger": "*Вход в игру:*\n*Призовите* Обыкновенную карту Человека из вашей колоды.",
+	"card.description.unitRavenMessenger": "*Вход в игру:*\n*Призовите* Обыкновенную карту человека из вашей колоды.",
 
 	"card.name.unitForestScout": "Лесной разведчик",
 	"card.description.unitForestScout": "*Вход в игру:*\nЕсли вы проигрываете на поле, получает +{boardPowerBonus} Силы.\nЕсли вы проигрываете в матче, получает +{moralePowerBonus} Силы.",
@@ -170,10 +181,13 @@
 	"card.description.unitStoneElemental": "*Вход в игру:*\nСовершает *Атаку* в этот ход. <p>*Дальний бой (2)*:\nНаносит {attack} ед. урона и *Оглушает* на 1 ход.",
 
 	"card.name.unitMerfolkStormcaller": "Мерфолк буревестник",
-	"card.description.unitMerfolkStormcaller": "*Вход в игру:*\n*Создает* *Надвигающуюся бурю*",
+	"card.description.unitMerfolkStormcaller": "*Вход в игру:*\n*Создайте* *Грозовую бурю*",
+
+	"card.name.unitMerfolkEnchantress": "Мерфолк-заклинатель",
+	"card.description.unitMerfolkEnchantress": "*Вход в игру:*\n*Создайте* *Зачарованную бурю*",
 
 	"card.name.unitCrystalMiner": "Кристаллических\nдел мастер",
-	"card.description.unitCrystalMiner": "*Вход в игру:*\n*Создает* кристалл Аркана.",
+	"card.description.unitCrystalMiner": "*Вход в игру:*\n*Создайте* кристалл Аркана.",
 
 	"card.name.unitOracleApprentice": "Ученица оракула",
 	"card.description.unitOracleApprentice": "*Вход в игру:*\nПосмотрите на верхнюю карту любой из колод.",
@@ -196,11 +210,23 @@
 	"card.name.unitWingedShieldmaiden": "Крылатая воительница",
 	"card.description.unitWingedShieldmaiden": "Когда союзный юнит получает урон, передвиньте его на ряд назад, *Сыграйте* *Крылатую воительницу* на его место и *Вытяните* карту.",
 
+	"card.name.unitOceanicSeagull": "Океаническая чайка",
+	"card.description.unitOceanicSeagull": "*Вход в игру:*\n*Призовите* Обыкновенную карту мерфолка из вашей колоды.",
+
 	"card.name.tokenPlayerDeck": "Ваша колода",
 	"card.description.tokenPlayerDeck": "Выберите вашу колоду",
 
 	"card.name.tokenOpponentDeck": "Колода противника",
 	"card.description.tokenOpponentDeck": "Выберите колоду противника",
+
+	"card.name.spellLightningStorm": "Грозовая буря",
+	"card.description.spellLightningStorm": "<ifn isUpgraded>Нанесите {damage} ед. урона {targetCount} цели(ям).</if><if isUpgraded>Нанесите {damage} ед. урона вражескому юниту. Повторите этот эффект {targetCount} раз(а).</if><p><i>Количество целей увеличивается на {targetsPerStorm} за каждую *Бурю* в вашем сбросе.</i>",
+
+	"card.name.spellEnchantedStorm": "Зачарованная буря",
+	"card.description.spellEnchantedStorm": "<ifn isUpgraded>Добавьте +{buffPower} ед. силы {targetCount} союзным юнитам.</if><if isUpgraded>Добавьте +{buffPower} ед. силы союзному юниту. Повторите этот эффект {targetCount} раз.</if><p><i>Бонус силы увеличивается на {powerPerStorm} за каждую *Бурю* в вашем сбросе.</i>",
+
+	"card.name.spellHealingRain": "Целебный дождь",
+	"card.description.spellHealingRain": "Восстановите {healing} ед. силы всем союзным юнитам.<p><i>Объем исцеления увеличивается на {healingPerStorm} за каждую *Бурю* в вашем сбросе.</i>",
 
 	"card.name.spellSteelSpark": "Стальная Искра",
 	"card.description.spellSteelSpark": "*Способность предводителя*<p>Наносит {damage} Урона противнику.<p>Наносит {sideDamage} Урона всем ближайшим к цели юнитам.",
