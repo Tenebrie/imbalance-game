@@ -19,29 +19,21 @@ export interface CardRenderScale {
 
 export const getRenderScale = (): CardRenderScale => {
 	const selectedQuality = store.state.userPreferencesModule.selectedQuality
-	if (selectedQuality === RenderQuality.ULTRA_X2) {
-		return {
-			superSamplingLevel: 4.0,
-			generalGameFontRenderScale: 1.2,
-			generalEditorFontRenderScale: 1.2,
-			descriptionGameFontRenderScale: 1.2,
-			descriptionEditorFontRenderScale: 1.0
-		}
-	} else if (selectedQuality === RenderQuality.ULTRA) {
+	if (selectedQuality === RenderQuality.ULTRA) {
 		return {
 			superSamplingLevel: 2.0,
 			generalGameFontRenderScale: 1.2,
-			generalEditorFontRenderScale: 1.2,
+			generalEditorFontRenderScale: 1.5,
 			descriptionGameFontRenderScale: 1.2,
-			descriptionEditorFontRenderScale: 1.0
+			descriptionEditorFontRenderScale: 1.2
 		}
 	} else if (selectedQuality === RenderQuality.HIGH || selectedQuality === RenderQuality.DEFAULT) {
 		return {
 			superSamplingLevel: 1.0,
-			generalGameFontRenderScale: 1.2,
-			generalEditorFontRenderScale: 1.2,
-			descriptionGameFontRenderScale: 1.2,
-			descriptionEditorFontRenderScale: 1.0
+			generalGameFontRenderScale: 1.4,
+			generalEditorFontRenderScale: 1.5,
+			descriptionGameFontRenderScale: 1.5,
+			descriptionEditorFontRenderScale: 1.2
 		}
 	} else if (selectedQuality === RenderQuality.NORMAL) {
 		return {
