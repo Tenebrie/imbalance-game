@@ -42,6 +42,7 @@ export default class ServerCard extends Card {
 	isRevealed = false
 	buffs = new ServerBuffContainer(this)
 	dynamicTextVariables: ServerRichTextVariables
+	generatedArtworkMagicString = ''
 
 	isBeingDestroyed = false
 
