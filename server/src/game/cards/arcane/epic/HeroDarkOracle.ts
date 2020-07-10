@@ -18,6 +18,7 @@ export default class HeroDarkOracle extends ServerCard {
 		this.dynamicTextVariables = {
 			cardsToSee: this.cardsToSee
 		}
+		this.generatedArtworkMagicString = '2'
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {

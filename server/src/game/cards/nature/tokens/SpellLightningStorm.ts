@@ -28,7 +28,7 @@ export default class SpellLightningStorm extends ServerCard {
 			damage: this.damage,
 			targetCount: () => this.targetCount,
 			targetsPerStorm: this.targetsPerStorm,
-			isUpgraded: () => this.isUpgraded
+			isUpgraded: () => this.isUpgraded()
 		}
 	}
 

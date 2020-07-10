@@ -41,10 +41,12 @@
 	"card.tribe.bird": "Bird",
 	"card.tribe.beast": "Beast",
 	"card.tribe.human": "Human",
+	"card.tribe.storm": "Storm",
 	"card.tribe.undead": "Undead",
 	"card.tribe.dragon": "Dragon",
 	"card.tribe.crystal": "Crystal",
 	"card.tribe.vampire": "Vampire",
+	"card.tribe.merfolk": "Merfolk",
 	"card.tribe.building": "Building",
 	"card.tribe.valkyrie": "Valkyrie",
 	"card.tribe.elemental": "Elemental",
@@ -72,6 +74,10 @@
 	"card.name.heroCarienne": "Carienne",
 	"card.title.heroCarienne": "The Storm Unleashed",
 	"card.description.heroCarienne": "*Deploy:*\nDeal {damagePerWave} Damage to all enemy units.\nRepeat once for every *Gathering Storm* in your Graveyard.",
+
+	"card.name.heroUrvial": "Urvial",
+	"card.title.heroUrvial": "The Stormsmith",
+	"card.description.heroUrvial": "*Deploy:*\nYour *Storms* are upgraded until the end of the game.<p><i>Upgraded *Storms* may target the same unit multiple times.</i>",
 
 	"card.name.heroGarellion": "Garellion",
 	"card.title.heroGarellion": "The Conduit",
@@ -136,6 +142,9 @@
 
 	"card.name.heroForksmanshipInstructor": "Forksmanship Instructor",
 	"card.description.heroForksmanshipInstructor": "Whenever you play a unit with {powerThreshold} Power or less, give it +{bonusPower} Power.",
+
+	"card.name.heroTribeShaman": "Tribal Shaman",
+	"card.description.heroTribeShaman": "*Deploy:*\n*Create* a *Healing Rain*",
 
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
@@ -215,13 +224,13 @@
 	"card.description.tokenOpponentDeck": "Choose your opponent's deck",
 
 	"card.name.spellLightningStorm": "Lightning Storm",
-	"card.description.spellLightningStorm": "<ifn isUpgraded>Deal {damage} Damage to {targetCount} enemy units.</if><if isUpgraded>Deal {damage} Damage to an enemy unit. Repeat this {targetCount} times.</if><p><i>Number of targets increases by {targetsPerStorm} for every Storm card in your Graveyard.</i>",
+	"card.description.spellLightningStorm": "<ifn isUpgraded>Deal {damage} Damage to {targetCount} enemy units.</if><if isUpgraded>Deal {damage} Damage to an enemy unit. Repeat this {targetCount} times.</if><p><i>Number of targets increases by {targetsPerStorm} for every *Storm* card in your Graveyard.</i>",
 
 	"card.name.spellEnchantedStorm": "Enchanted Storm",
-	"card.description.spellEnchantedStorm": "<ifn isUpgraded>Give +{buffPower} Power to {targetCount} allied units.</if><if isUpgraded>Give +{buffPower} Power to an allied unit. Repeat this {targetCount} times.</if><p><i>Number of targets increases by {targetsPerStorm} for every Storm card in your Graveyard.</i>",
+	"card.description.spellEnchantedStorm": "<ifn isUpgraded>Give +{buffPower} Power to {targetCount} allied units.</if><if isUpgraded>Give +{buffPower} Power to an allied unit. Repeat this {targetCount} times.</if><p><i>Bonus Power increases by {powerPerStorm} for every *Storm* card in your Graveyard.</i>",
 
 	"card.name.spellHealingRain": "Healing Rain",
-	"card.description.spellHealingRain": "Restore {healing} Power to all allied units.<p><i>Healing increases by {healingPerStorm} for every Storm card in your Graveyard.</i>",
+	"card.description.spellHealingRain": "Restore {healing} Power to all allied units.<p><i>Healing increases by {healingPerStorm} for every *Storm* card in your Graveyard.</i>",
 
 	"card.name.spellSteelSpark": "Steel Spark",
 	"card.description.spellSteelSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",

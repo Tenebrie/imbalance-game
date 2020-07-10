@@ -29,7 +29,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 			buffPower: () => this.buffPower,
 			targetCount: this.targetCount,
 			powerPerStorm: this.powerPerStorm,
-			isUpgraded: () => this.isUpgraded
+			isUpgraded: () => this.isUpgraded()
 		}
 	}
 

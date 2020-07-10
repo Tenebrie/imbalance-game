@@ -17,6 +17,8 @@ export default class UnitUndercityGambler extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 4
+		this.generatedArtworkMagicString = '2'
+
 		this.dynamicTextVariables = {
 			bonusPower: this.bonusPower
 		}

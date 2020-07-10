@@ -10,6 +10,7 @@ export default class HeroCoralScribe extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.NATURE)
 		this.basePower = 7
+		this.generatedArtworkMagicString = '2'
 
 		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())

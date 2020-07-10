@@ -16,6 +16,11 @@ export default class HeroStormDancer extends ServerCard {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.NATURE)
 		this.basePower = 5
 
+		this.dynamicTextVariables = {
+			powerGiven: this.normalPowerGiven,
+			stormPowerGiven: this.stormPowerGiven
+		}
+
 		this.createCallback<CardPlayedEventArgs>(GameEvent.CARD_PLAYED)
 			.requireLocation(CardLocation.BOARD)
 			.require(({ playedCard }) => playedCard.type === CardType.SPELL)

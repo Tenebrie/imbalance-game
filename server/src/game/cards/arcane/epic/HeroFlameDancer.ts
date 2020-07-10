@@ -21,6 +21,7 @@ export default class HeroFlameDancer extends ServerCard {
 		this.dynamicTextVariables = {
 			burnDuration: this.burnDuration
 		}
+		this.generatedArtworkMagicString = '2'
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {

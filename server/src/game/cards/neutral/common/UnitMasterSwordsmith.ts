@@ -7,6 +7,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEvent from '../../../models/GameEvent'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
+import ServerAnimation from '../../../models/ServerAnimation'
 
 export default class UnitMasterSwordsmith extends ServerCard {
 	bonusPower = 1
@@ -26,6 +27,8 @@ export default class UnitMasterSwordsmith extends ServerCard {
 	private onDeploy(): void {
 		const unit = this.unit
 		const owner = unit.owner
-		owner.cardHand.unitCards.forEach(card => card.buffs.add(BuffStrength, this, BuffDuration.INFINITY))
+		const targets = owner.cardHand.unitCards
+		this.game.animation.play(ServerAnimation.cardAttacksCards(this, targets))
+		targets.forEach(card => card.buffs.add(BuffStrength, this, BuffDuration.INFINITY))
 	}
 }
