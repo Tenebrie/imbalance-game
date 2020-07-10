@@ -264,7 +264,7 @@ export default class ServerGame extends Game {
 			const defeatedPlayer = this.getOpponent(victoriousPlayer)
 			OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
 			OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
-			console.info(`Game ${this.id} finished. ${victoriousPlayer.player.username} won! [${victoryReason}]`)
+			console.info(`Game ${this.id} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won! [${victoryReason}]`)
 		}
 
 		setTimeout(() => {
