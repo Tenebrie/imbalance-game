@@ -10,39 +10,46 @@ import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import ServerAnimation from '../../../models/ServerAnimation'
+import CardTribe from '@shared/enums/CardTribe'
+import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 
-export default class SpellGatheringStorm extends ServerCard {
-	damage = 1
-	baseTargets = 2
-	targetsPerStorm = 2
+export default class SpellLightningStorm extends ServerCard {
+	damage = 3
+	baseTargets = 1
+	targetsPerStorm = 1
 	targetsHit = []
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.BRONZE, CardFaction.ARCANE)
+		super(game, CardType.SPELL, CardColor.TOKEN, CardFaction.NATURE)
 
-		this.basePower = 3
+		this.basePower = 0
+		this.baseTribes = [CardTribe.STORM]
 		this.dynamicTextVariables = {
 			damage: this.damage,
 			targetCount: () => this.targetCount,
-			targetsPerStorm: this.targetsPerStorm
+			targetsPerStorm: this.targetsPerStorm,
+			isUpgraded: () => this.isUpgraded
 		}
 	}
 
 	get targetCount() {
 		let stormsPlayed = 0
 		if (this.owner) {
-			stormsPlayed = this.owner.cardGraveyard.findCardsByConstructor(SpellGatheringStorm).length
+			stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
 
 		return this.baseTargets + this.targetsPerStorm * stormsPlayed
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
+		const builder = PostPlayTargetDefinitionBuilder.base(this.game)
 			.multipleTargets(this.targetCount)
 			.allow(TargetType.UNIT, this.targetCount)
 			.enemyUnit()
-			.validate(TargetType.UNIT, args => !this.targetsHit.includes(args.targetUnit))
+		if (!this.isUpgraded()) {
+			builder.validate(TargetType.UNIT, args => !this.targetsHit.includes(args.targetUnit))
+		}
+		return builder
 	}
 
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
@@ -53,5 +60,9 @@ export default class SpellGatheringStorm extends ServerCard {
 
 	onSpellPlayTargetsConfirmed(): void {
 		this.targetsHit = []
+	}
+
+	private isUpgraded(): boolean {
+		return this.owner && this.owner.leader.buffs.has(BuffUpgradedStorms)
 	}
 }

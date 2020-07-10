@@ -12,6 +12,12 @@ export default class BuffStrength extends ServerBuff {
 	}
 
 	onDestroyed(): void {
-		this.card.setPower(this.card.power - 1)
+		if (this.card.power >= this.card.maxPower) {
+			this.card.setPower(this.card.power - 1)
+		}
+	}
+
+	getUnitMaxPowerOverride(basePower: number): number {
+		return basePower + 1
 	}
 }

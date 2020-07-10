@@ -10,7 +10,7 @@ import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
 import Utils from '../../utils/Utils'
-import GameEvent, {UnitDeployedEventArgs} from './GameEvent'
+import GameEvent, {CardPlayedEventArgs} from './GameEvent'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -66,6 +66,12 @@ export default class ServerGameCardPlay {
 			this.playSpell(ownedCard)
 		}
 
+		/* Trigger card played event */
+		this.game.events.postEvent<CardPlayedEventArgs>(GameEvent.CARD_PLAYED, {
+			owner: owner,
+			playedCard: card,
+		})
+
 		/* Play animation */
 		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.delay())
 	}
@@ -78,13 +84,10 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Insert the card into the board */
-		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
+		this.game.board.createUnit(card, owner, rowIndex, unitIndex)
 
 		/* Invoke the card Deploy effect */
 		this.game.events.postEffect(card, GameEvent.EFFECT_UNIT_DEPLOY, null)
-		this.game.events.postEvent<UnitDeployedEventArgs>(GameEvent.UNIT_DEPLOYED, {
-			deployedUnit: unit
-		})
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -103,7 +106,7 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Invoke the card onPlay effect */
-		runCardEventHandler(() => card.onPlayedAsSpell(owner))
+		this.game.events.postEffect(card, GameEvent.EFFECT_SPELL_PLAY, null)
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {

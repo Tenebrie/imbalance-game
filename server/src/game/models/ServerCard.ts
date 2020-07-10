@@ -74,6 +74,14 @@ export default class ServerCard extends Card {
 		return cost
 	}
 
+	public get maxPower(): number {
+		let cost = this.basePower
+		this.buffs.buffs.forEach(buff => {
+			cost = buff.getUnitMaxPowerOverride(cost)
+		})
+		return cost
+	}
+
 	public get tribes(): CardTribe[] {
 		let tribes = this.baseTribes.slice()
 		this.buffs.buffs.forEach(buff => {
@@ -450,7 +458,6 @@ export default class ServerCard extends Card {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hook)
 	}
 
-	onPlayedAsSpell(owner: ServerPlayerInGame): void { return }
 	onRevealed(owner: ServerPlayerInGame): void { return }
 
 	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void { return }

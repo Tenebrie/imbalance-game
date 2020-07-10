@@ -77,7 +77,7 @@ export default class ServerBoard extends Board {
 	}
 
 	public isUnitAdjacent(first: ServerUnit, second: ServerUnit) {
-		return this.getHorizontalUnitDistance(first, second) <= 1 && Math.abs(first.rowIndex - second.rowIndex) <= 1 && first !== second
+		return this.getHorizontalUnitDistance(first, second) <= 1 && first.rowIndex === second.rowIndex && first !== second
 	}
 
 	public getAdjacentUnits(centerUnit: ServerUnit) {

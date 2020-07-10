@@ -1,25 +1,28 @@
 import ServerUnit from './ServerUnit'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerCard from './ServerCard'
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
 
 enum GameEvent {
 	EFFECT_UNIT_DEPLOY,
+	EFFECT_SPELL_PLAY,
 
-	UNIT_CREATED,
-	UNIT_DEPLOYED,
-	UNIT_DESTROYED,
+	CARD_PLAYED,
 	CARD_TAKES_DAMAGE,
-	CARD_DESTROYED
+	CARD_DESTROYED,
+	UNIT_CREATED,
+	UNIT_DESTROYED,
 }
 
 export default GameEvent
 
-export interface UnitCreatedEventArgs {
-	createdUnit: ServerUnit
+export interface CardPlayedEventArgs {
+	owner: ServerPlayerInGame
+	playedCard: ServerCard
 }
 
-export interface UnitDeployedEventArgs {
-	deployedUnit: ServerUnit
+export interface UnitCreatedEventArgs {
+	createdUnit: ServerUnit
 }
 
 export interface UnitDestroyedEventArgs {

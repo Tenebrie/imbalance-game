@@ -108,7 +108,10 @@
 	"card.description.heroRagingElemental": "After {name} takes damage, it deals Damage equal to own Power to closest opposing enemy units.<p>Then, it destroys itself.",
 
 	"card.name.heroStormDancer": "Storm Dancer",
-	"card.description.heroStormDancer": "*Deploy:*\nFor each *Gathering Storm* in your Graveyard, put a copy of it into your spell hand.",
+	"card.description.heroStormDancer": "Whenever you cast a spell, give +{powerGiven} Power to adjacent units.\nIf it's a *Storm*, give them +{stormPowerGiven} Power instead.",
+
+	"card.name.heroCoralScribe": "Coral Scribe",
+	"card.description.heroCoralScribe": "*Deploy:*\nFor each different *Storm* in your Graveyard, *Create* a copy of it.",
 
 	"card.name.heroFlameDancer": "Flame Dancer",
 	"card.description.heroFlameDancer": "*Deploy:*\nApply *Burning* for {burnDuration} turns to all units on an enemy row.",
@@ -170,7 +173,10 @@
 	"card.description.unitStoneElemental": "*Deploy:*\nPerform an *Attack* action this turn only<p>*Short-Ranged Attack*:\nDeal {attack} Damage;\nApply *Stun* for 1 turn",
 
 	"card.name.unitMerfolkStormcaller": "Merfolk Stormcaller",
-	"card.description.unitMerfolkStormcaller": "*Deploy:*\n*Create* a *Gathering Storm*",
+	"card.description.unitMerfolkStormcaller": "*Deploy:*\n*Create* a *Lightning Storm*",
+
+	"card.name.unitMerfolkEnchantress": "Merfolk Enchantress",
+	"card.description.unitMerfolkEnchantress": "*Deploy:*\n*Create* an *Enchanted Storm*",
 
 	"card.name.unitCrystalMiner": "Crystal Miner",
 	"card.description.unitCrystalMiner": "*Deploy:*\n*Create* an Arcane crystal.",
@@ -199,14 +205,23 @@
 	"card.name.unitWingedShieldmaiden": "Winged Shieldmaiden",
 	"card.description.unitWingedShieldmaiden": "Whenever an allied unit takes damage, move the ally back, *Play* {name} in its' place and *Draw* a card.",
 
+	"card.name.unitOceanicSeagull": "Oceanic Seagull",
+	"card.description.unitOceanicSeagull": "*Deploy:*\n*Summon* a Bronze Merfolk card from your deck.",
+
 	"card.name.tokenPlayerDeck": "Your deck",
 	"card.description.tokenPlayerDeck": "Choose your own deck",
 
 	"card.name.tokenOpponentDeck": "Your opponent's deck",
 	"card.description.tokenOpponentDeck": "Choose your opponent's deck",
 
-	"card.name.spellGatheringStorm": "Gathering Storm",
-	"card.description.spellGatheringStorm": "Deal {damage} Damage to {targetCount} enemy units.<p><i>Number of targets increases by {targetsPerStorm} for every {name} in your Graveyard.</i>",
+	"card.name.spellLightningStorm": "Lightning Storm",
+	"card.description.spellLightningStorm": "<ifn isUpgraded>Deal {damage} Damage to {targetCount} enemy units.</if><if isUpgraded>Deal {damage} Damage to an enemy unit. Repeat this {targetCount} times.</if><p><i>Number of targets increases by {targetsPerStorm} for every Storm card in your Graveyard.</i>",
+
+	"card.name.spellEnchantedStorm": "Enchanted Storm",
+	"card.description.spellEnchantedStorm": "<ifn isUpgraded>Give +{buffPower} Power to {targetCount} allied units.</if><if isUpgraded>Give +{buffPower} Power to an allied unit. Repeat this {targetCount} times.</if><p><i>Number of targets increases by {targetsPerStorm} for every Storm card in your Graveyard.</i>",
+
+	"card.name.spellHealingRain": "Healing Rain",
+	"card.description.spellHealingRain": "Restore {healing} Power to all allied units.<p><i>Healing increases by {healingPerStorm} for every Storm card in your Graveyard.</i>",
 
 	"card.name.spellSteelSpark": "Steel Spark",
 	"card.description.spellSteelSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",

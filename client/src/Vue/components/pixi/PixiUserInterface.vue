@@ -15,7 +15,10 @@
 		</div>
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
-				<button @click="onShowSettings" class="primary game-button">Settings</button>
+				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>
+				<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>
+				<div class="menu-separator"></div>
+				<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>
 				<div class="menu-separator"></div>
 				<button @click="onLeaveGame" class="primary game-button destructive">Leave game</button>
 			</div>
@@ -104,6 +107,22 @@ export default Vue.extend({
 
 		onEndTurn(): void {
 			OutgoingMessageHandlers.sendEndTurn()
+		},
+
+		onShowPlayersDeck(): void {
+
+		},
+
+		onShowPlayersGraveyard(): void {
+
+		},
+
+		onShowOpponentsDeck(): void {
+
+		},
+
+		onShowOpponentsGraveyard(): void {
+
 		}
 	}
 })

@@ -5,6 +5,7 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerOwnedCard from './ServerOwnedCard'
 import CardType from '@shared/enums/CardType'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class ServerGraveyard implements CardDeck {
 	owner: ServerPlayerInGame
@@ -40,6 +41,10 @@ export default class ServerGraveyard implements CardDeck {
 	public findCardsByConstructor(prototype: Function): ServerCard[] {
 		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 		return this.unitCards.filter(card => card.class === cardClass).concat(this.spellCards.filter(card => card.class === cardClass))
+	}
+
+	public findCardsByTribe(tribe: CardTribe): ServerCard[] {
+		return this.unitCards.concat(this.spellCards).filter(card => card.tribes.includes(tribe))
 	}
 
 	public removeCard(card: ServerCard): void {

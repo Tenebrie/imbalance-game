@@ -8,6 +8,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import BuffVelRamineaWeave from '../../../../buffs/BuffVelRamineaWeave'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardLocation from '@shared/enums/CardLocation'
+import GameEvent from '../../../../models/GameEvent'
 
 export default class SpellFlameweave extends ServerCard {
 	constructor(game: ServerGame) {
@@ -18,13 +19,14 @@ export default class SpellFlameweave extends ServerCard {
 		this.dynamicTextVariables = {
 			currentStacks: () => this.currentStacks
 		}
+
+		this.createCallback(GameEvent.EFFECT_SPELL_PLAY)
+			.perform(() => {
+				this.owner.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
+			})
 	}
 
 	get currentStacks(): number {
 		return this.game.getTotalBuffIntensityForPlayer(BuffVelRamineaWeave, this.owner, [CardLocation.LEADER])
-	}
-
-	onPlayedAsSpell(owner: ServerPlayerInGame): void {
-		owner.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
 	}
 }

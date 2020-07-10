@@ -11,7 +11,7 @@ class CardImageGenerator {
 		const productionDir = path.join(__dirname, '../../../../client/assets/cards')
 		const placeholderDir = path.join(__dirname, '../../../../client/generated/assets/cards')
 
-		const targetCardClasses = cardClasses.filter(cardClass => !fs.existsSync(`${productionDir}/${cardClass}.png`) && !fs.existsSync(`${placeholderDir}/${cardClass}.png`))
+		const targetCardClasses = cardClasses//.filter(cardClass => !fs.existsSync(`${productionDir}/${cardClass}.png`) && !fs.existsSync(`${placeholderDir}/${cardClass}.png`))
 		if (targetCardClasses.length === 0) {
 			return
 		}
@@ -38,6 +38,7 @@ class CardImageGenerator {
 			ctx.strokeStyle = 'transparent'
 
 			const seededRandom = createSeededRandom(cardClass)
+			
 			const baseColor = {
 				r: seededRandom() * 255,
 				g: seededRandom() * 255,
@@ -46,7 +47,7 @@ class CardImageGenerator {
 
 			ctx.fillStyle = `#${rgb2hex(baseColor.r, baseColor.g, baseColor.b)}`
 
-			const orbCount = seededRandom() * 20 + 20
+			const orbCount = seededRandom() * 20 + 5
 
 			ctx.beginPath()
 			for (let i = 0; i < orbCount; i++) {

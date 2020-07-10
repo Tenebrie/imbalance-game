@@ -107,7 +107,8 @@
 	"card.description.heroRagingElemental": "Получив урон, {name} атакует ближайших вражеских юнитов, нанося урон, равный собственной Силе.<p>Затем, он уничтожает себя.",
 
 	"card.name.heroStormDancer": "Танцующий c бурей",
-	"card.description.heroStormDancer": "*Вход в игру:*\nПоложите копию *Надвигающейся бури* в вашу руку за каждую копию бури в вашем сбросе.",
+
+	"card.description.heroCoralScribe": "*Вход в игру:*\nПоложите копию *Надвигающейся бури* в вашу руку за каждую копию бури в вашем сбросе.",
 
 	"card.name.heroFlameDancer": "Танцующая с пламенем",
 	"card.description.heroFlameDancer": "*Вход в игру:*\nНакладывает *Горение* на {burnDuration} хода всем юнитам на вражеском ряду.",
@@ -200,9 +201,6 @@
 
 	"card.name.tokenOpponentDeck": "Колода противника",
 	"card.description.tokenOpponentDeck": "Выберите колоду противника",
-
-	"card.name.spellGatheringStorm": "Надвигающаяся буря",
-	"card.description.spellGatheringStorm": "Наносит {damage} Урона {targetCount} противникам.<p><i>Количество целей увеличивается на {targetsPerStorm} за каждую бурю в вашем сбросе.</i>",
 
 	"card.name.spellSteelSpark": "Стальная Искра",
 	"card.description.spellSteelSpark": "*Способность предводителя*<p>Наносит {damage} Урона противнику.<p>Наносит {sideDamage} Урона всем ближайшим к цели юнитам.",

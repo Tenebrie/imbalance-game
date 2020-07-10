@@ -15,12 +15,22 @@ import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import BuffStrength from '../../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
+import GameEvent from '../../../../models/GameEvent'
 
 export default class SpellNightmareDrain extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 4
 		this.baseFeatures = [CardFeature.HERO_POWER]
+
+		/* Create basic unit if no target available */
+		this.createCallback(GameEvent.EFFECT_SPELL_PLAY)
+			.require(() => this.game.cardPlay.getValidTargets().length === 0)
+			.perform(() => {
+				const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
+				const targetRow = this.game.board.getRowWithDistanceToFront(this.owner, 0)
+				this.game.board.createUnit(shadowspawn, this.owner, targetRow.index, targetRow.cards.length)
+			})
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -28,16 +38,6 @@ export default class SpellNightmareDrain extends ServerCard {
 			.singleTarget()
 			.allow(TargetType.UNIT)
 			.validate(TargetType.UNIT, args => args.targetCard.power < args.targetCard.basePower)
-	}
-
-	onPlayedAsSpell(owner: ServerPlayerInGame): void {
-		if (this.game.cardPlay.getValidTargets().length > 0) {
-			return
-		}
-
-		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
-		const targetRow = this.game.board.getRowWithDistanceToFront(owner, 0)
-		this.game.board.createUnit(shadowspawn, owner, targetRow.index, targetRow.cards.length)
 	}
 
 	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {

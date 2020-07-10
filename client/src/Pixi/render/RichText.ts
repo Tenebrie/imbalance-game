@@ -312,6 +312,10 @@ export default class RichText extends PIXI.Container {
 							contextConditionStack.push(contextConditionStatus)
 							contextConditionStatus = !!textVariables[openingTag.args]
 							break
+						case 'ifn':
+							contextConditionStack.push(contextConditionStatus)
+							contextConditionStatus = !textVariables[openingTag.args]
+							break
 					}
 					break
 
@@ -332,6 +336,7 @@ export default class RichText extends PIXI.Container {
 							contextItalic = false
 							break
 						case 'if':
+						case 'ifn':
 							contextConditionStatus = contextConditionStack.pop()!
 							break
 					}

@@ -88,20 +88,11 @@ export default class ServerBuff implements Buff {
 	onTurnEnded(): void { return }
 	onRoundStarted(): void { return }
 	onRoundEnded(): void { return }
-	onBeforeBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
-	onAfterBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
-	onBeforePerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
-	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
-	onPerformingUnitSupport(thisUnit: ServerUnit, target: ServerUnit): void { return }
-	onPerformingRowSupport(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
-	onBeforeBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
-	onAfterBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
 	onDestroyed(): void { return }
 
-	getDamageTaken(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return damage }
-	getDamageReduction(thisUnit: ServerUnit, damage: number, damageSource: ServerDamageInstance): number { return 0 }
 	getUnitCostOverride(baseCost: number): number { return baseCost }
 	getSpellCostOverride(baseCost: number): number { return baseCost }
+	getUnitMaxPowerOverride(basePower: number): number { return basePower }
 
 	definePlayValidTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	defineValidOrderTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
