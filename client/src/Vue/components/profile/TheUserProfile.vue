@@ -180,8 +180,8 @@ export default {
 					display: flex;
 					flex-direction: column;
 					height: 100%;
-					align-items: start;
-					justify-content: start;
+					align-items: flex-start;
+					justify-content: flex-start;
 
 					input {
 						margin-left: 0;

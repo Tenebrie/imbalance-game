@@ -198,7 +198,7 @@
 	"card.name.unitTinySparkling": "Искрящаяся кроха",
 	"card.description.unitTinySparkling": "<i>Нет эффекта</i>",
 
-	"card.name.unitShadowspawn": "Отродье Тени",
+	"card.name.unitShadowspawn": "Ожившая тень",
 	"card.description.unitShadowspawn": "<i>Нет эффекта</i>",
 
 	"card.name.unitVolatileCrystal": "Нестабильный кристалл",
@@ -241,10 +241,10 @@
 	"card.description.spellFieryEntrance": "*Способность предводителя*<p>*Призовите* верхнюю карту из вашей колоды.",
 
 	"card.name.spellShadowSpark": "Теневая Искра",
-	"card.description.spellShadowSpark": "*Способность предводителя*<p>Нанесите {damage} Урона выбранной цели.<p>В вашем первом ряду появляется *Shadowspawn*.",
+	"card.description.spellShadowSpark": "*Способность предводителя*<p>Нанесите {damage} Урона выбранной цели.<p>В вашем первом ряду появляется *Ожившая тень*.",
 
 	"card.name.spellNightmareDrain": "Оживший кошмар",
-	"card.description.spellNightmareDrain": "*Способность предводителя*<p>Выберите раненного бойца.<p>В вашем первом ряду появляется *Shadowspawn*\nс бонусом силы, равным потерянной силе цели заклинания.",
+	"card.description.spellNightmareDrain": "*Способность предводителя*<p>Выберите раненного бойца.<p>В вашем первом ряду появляется *Ожившая тень* с бонусом силы, равным потерянной силе цели заклинания.",
 
 	"card.name.spellCrystalBarrage": "Кристальный залп",
 	"card.description.spellCrystalBarrage": "*Способность предводителя*<p>Выберите вражеский ряд.<p>Вокруг юнитов в этом ряду появляются *Нестабильные кристаллы*.",

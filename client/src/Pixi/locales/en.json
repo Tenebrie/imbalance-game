@@ -107,6 +107,10 @@
 	"card.title.heroMetrearte": "The Copycat",
 	"card.description.heroMetrearte": "*Deploy:*\nChoose a Leader Power from any Arcane Leader.\nGain a copy of it.",
 
+	"card.name.heroPozoga": "Pożoga",
+	"card.title.heroPozoga": "The Arsonist",
+	"card.description.heroPozoga": "*Deploy:*\nDestroy all cards with the highest Power on the board.",
+
 	"card.name.heroSparklingSpirit": "Sparkling Spirit",
 	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
 

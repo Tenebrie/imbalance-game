@@ -61,10 +61,10 @@ export default class ProjectileSystem {
 		})
 	}
 
-	public createAttackProjectile(sourcePosition: PIXI.Point, targetCard: RenderedCard, impactDamage: number): RenderedProjectile {
+	public createAttackProjectile(sourcePosition: PIXI.Point, targetCard: RenderedCard): RenderedProjectile {
 		const sprite = new PIXI.Sprite(TextureAtlas.getTexture('effects/fireball-static'))
 		sprite.zIndex = 100
-		sprite.scale.set(0.4 + 0.02 * impactDamage)
+		sprite.scale.set(0.4)
 		sprite.anchor.set(0.5, 0.5)
 		const projectile = RenderedProjectile.targetCard(sprite, sourcePosition, targetCard, 500, 1200)
 		projectile.trail.rope.zIndex = 99
@@ -74,11 +74,11 @@ export default class ProjectileSystem {
 		return projectile
 	}
 
-	public createCardAttackProjectile(sourceCard: RenderedCard, targetCard: RenderedCard, impactDamage: number): RenderedProjectile {
-		return this.createAttackProjectile(sourceCard.getPosition(), targetCard, impactDamage)
+	public createCardAttackProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
+		return this.createAttackProjectile(sourceCard.getPosition(), targetCard)
 	}
 
-	public createUniverseAttackProjectile(targetCard: RenderedCard, impactDamage: number): RenderedProjectile {
-		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, impactDamage)
+	public createUniverseAttackProjectile(targetCard: RenderedCard): RenderedProjectile {
+		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard)
 	}
 }

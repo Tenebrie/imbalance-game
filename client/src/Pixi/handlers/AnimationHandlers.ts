@@ -24,7 +24,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 					console.warn(`Target card with id ${targetCardId} does not exist!`)
 					return animationDuration
 				}
-				Core.mainHandler.projectileSystem.createCardAttackProjectile(sourceCard, targetCard, 0)
+				Core.mainHandler.projectileSystem.createCardAttackProjectile(sourceCard, targetCard)
 			})
 		}
 		return animationDuration
@@ -33,7 +33,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 	[AnimationType.UNIVERSE_ATTACK]: (message: AnimationMessage, params: UnitAttackAnimParams) => {
 		message.targetCardIDs.forEach(targetCardId => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
-			Core.mainHandler.projectileSystem.createUniverseAttackProjectile(targetCard, 0)
+			Core.mainHandler.projectileSystem.createUniverseAttackProjectile(targetCard)
 		})
 		return 500
 	},
