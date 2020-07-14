@@ -12,6 +12,7 @@ export default class UnitMerfolkStormcaller extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NATURE)
 		this.basePower = 4
 		this.baseTribes = [CardTribe.MERFOLK]
+		this.sortPriority = 1
 
 		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())
