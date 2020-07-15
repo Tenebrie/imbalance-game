@@ -17,6 +17,12 @@
 	"ui.profile.delete": "Delete profile",
 	"ui.profile.delete.progress": "Deleting...",
 
+	"log.entry.cardPlayed": "{owner} has played card {triggeringCard}",
+	"log.entry.cardTakesDamage": "Card {triggeringCard} has taken damage",
+	"log.entry.cardDestroyed": "Card {triggeringCard} has been destroyed",
+	"log.entry.unitCreated": "Unit {triggeringUnit} has been created",
+	"log.entry.unitDestroyed": "Unit {triggeringUnit} has been destroyed",
+
 	"target.generic.unit": "Target",
 	"target.generic.row": "Target all",
 	"target.attack.unit": "Attack",

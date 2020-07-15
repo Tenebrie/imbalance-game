@@ -10,7 +10,8 @@ import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
 import Utils from '../../utils/Utils'
-import GameEvent, {CardPlayedEventArgs} from './GameEvent'
+import GameEvent, {CardPlayedEventArgs, GameEventSerializers} from './GameEvent'
+import {CardPlayedEventArgsMessage} from '@shared/enums/GameEvent'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -59,18 +60,20 @@ export default class ServerGameCardPlay {
 			owner.cardDeck.removeCard(card)
 		}
 
+		/* Trigger card played event */
+		const eventArgs = {
+			owner: owner,
+			triggeringCard: card,
+		}
+		this.game.events.createEventLogEntry<CardPlayedEventArgsMessage>(GameEvent.CARD_PLAYED, GameEventSerializers.cardPlayed(eventArgs))
+		this.game.events.postEvent<CardPlayedEventArgs>(GameEvent.CARD_PLAYED, eventArgs)
+
 		/* Resolve card */
 		if (card.type === CardType.UNIT) {
 			this.playUnit(ownedCard, rowIndex, unitIndex)
 		} else if (card.type === CardType.SPELL) {
 			this.playSpell(ownedCard)
 		}
-
-		/* Trigger card played event */
-		this.game.events.postEvent<CardPlayedEventArgs>(GameEvent.CARD_PLAYED, {
-			owner: owner,
-			playedCard: card,
-		})
 
 		/* Play animation */
 		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.delay())

@@ -6,6 +6,9 @@ import CardLocation from '@shared/enums/CardLocation'
 import {cardPerform, cardRequire} from '../utils/CardEventHandlers'
 import ServerBuff from './ServerBuff'
 import GameHook from './GameHook'
+import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
+import OutgoingGameStateMessages from '../handlers/outgoing/OutgoingGameStateMessages'
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 
 type EventSubscriber = ServerCard | ServerBuff
 
@@ -112,7 +115,8 @@ export class EventHook<HookValues, HookArgs> {
 }
 
 export default class ServerGameEvents {
-	private game: ServerGame
+	private readonly game: ServerGame
+	private readonly eventLog: EventLogEntryMessage[][]
 	private eventCallbacks: Map<GameEvent, EventCallback<any>[]>
 	private eventHooks: Map<GameHook, EventHook<any, any>[]>
 
@@ -120,8 +124,10 @@ export default class ServerGameEvents {
 		this.game = game
 		this.eventCallbacks = new Map<GameEvent, EventCallback<any>[]>()
 		this.eventHooks = new Map<GameHook, EventHook<any, any>[]>()
-		Utils.forEachInNumericEnum(GameEvent, eventType => this.eventCallbacks.set(eventType, []))
-		Utils.forEachInNumericEnum(GameHook, hookType => this.eventHooks.set(hookType, []))
+		this.eventLog = []
+		this.eventLog.push([])
+		Utils.forEachInStringEnum(GameEvent, eventType => this.eventCallbacks.set(eventType, []))
+		Utils.forEachInStringEnum(GameHook, hookType => this.eventHooks.set(hookType, []))
 	}
 
 	public createCallback<EventArgs>(subscriber: EventSubscriber, event: GameEvent): EventCallback<EventArgs> {
@@ -208,5 +214,25 @@ export default class ServerGameEvents {
 					return replace(accInner, hookArgs)
 				}, accOuter)
 			}, values)
+	}
+
+	private get currentLogEventGroup(): EventLogEntryMessage[] {
+		return this.eventLog[this.eventLog.length - 1]
+	}
+
+	public createEventLogEntry<EventArgs>(event: GameEvent, args: EventArgs): void {
+		this.currentLogEventGroup.push({
+			event: event,
+			timestamp: Number(new Date()),
+			args: args
+		})
+	}
+
+	public flushLogEventGroup(): void {
+		if (this.currentLogEventGroup.length === 0) {
+			return
+		}
+		OutgoingMessageHandlers.sendLogMessageGroup(this.game, this.currentLogEventGroup)
+		this.eventLog.push([])
 	}
 }

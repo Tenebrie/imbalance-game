@@ -9,13 +9,17 @@ import { createDirectStore } from 'direct-vuex'
 import EditorModule from '@/Vue/store/modules/EditorModule'
 import GameStateModule from '@/Vue/store/modules/GameStateModule'
 import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
+import PopupModule from '@/Vue/store/modules/PopupModule'
+import GameLogModule from '@/Vue/store/modules/GameLogModule'
 
 Vue.use(Vuex)
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {
 		editor: EditorModule,
+		gameLogModule: GameLogModule,
 		gameStateModule: GameStateModule,
+		popupModule: PopupModule,
 		userPreferencesModule: UserPreferencesModule
 	},
 

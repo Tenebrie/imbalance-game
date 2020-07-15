@@ -67,7 +67,7 @@ export default class Core {
 
 		const handler = IncomingMessageHandlers[messageType]
 		if (!handler) {
-			console.error('Unknown message type: ' + messageType)
+			console.error(`Unknown message type: ${messageType}`, messageData)
 			return
 		}
 

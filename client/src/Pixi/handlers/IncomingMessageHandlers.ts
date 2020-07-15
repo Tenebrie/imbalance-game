@@ -24,6 +24,7 @@ import AnimationHandlers from './AnimationHandlers'
 import BuffMessage from '@shared/models/network/BuffMessage'
 import ClientBuff from '@/Pixi/models/ClientBuff'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -342,6 +343,12 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		card.buffs.remove(data)
+	},
+
+	'update/log/entry': (data: EventLogEntryMessage[]) => {
+		store.dispatch.gameLogModule.addEntryGroup({
+			entries: data
+		})
 	},
 
 	'animation/generic': (data: AnimationMessage) => {

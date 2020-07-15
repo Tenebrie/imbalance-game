@@ -15,8 +15,8 @@ export default class HeroRagingElemental extends ServerCard {
 		this.basePower = 9
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE)
-			.require(({ targetCard }) => targetCard === this)
-			.require(({ targetCard }) => targetCard.power > 0)
+			.require(({ triggeringCard }) => triggeringCard === this)
+			.require(({ triggeringCard }) => triggeringCard.power > 0)
 			.perform(() => this.onDamageSurvived())
 	}
 

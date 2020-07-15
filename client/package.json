@@ -14,6 +14,7 @@
 		"core-js": "^3.4.4",
 		"direct-vuex": "^0.9.4",
 		"js-easing-functions": "^1.0.3",
+		"moment": "^2.27.0",
 		"pixi.js": "^5.2.0",
 		"sweetalert": "^2.1.2",
 		"vue": "^2.6.10",

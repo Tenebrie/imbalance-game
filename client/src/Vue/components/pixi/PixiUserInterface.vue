@@ -15,6 +15,8 @@
 		</div>
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
+				<button @click="onShowGameLog" class="primary game-button">Game history</button>
+				<div class="menu-separator"></div>
 				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>
 				<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>
 				<div class="menu-separator"></div>
@@ -32,6 +34,8 @@ import store from '@/Vue/store'
 import Player from '@shared/models/Player'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
+import TheLoginForm from '@/Vue/components/login/TheLoginForm.vue'
+import TheGameLog from '@/Vue/components/gamelog/TheGameLog.vue'
 
 export default Vue.extend({
 	data: () => ({
@@ -40,6 +44,10 @@ export default Vue.extend({
 
 	mounted(): void {
 		window.addEventListener('keydown', this.onKeyDown)
+	},
+
+	beforeDestroy() {
+		window.removeEventListener('keydown', this.onKeyDown)
 	},
 
 	computed: {
@@ -87,18 +95,12 @@ export default Vue.extend({
 
 	methods: {
 		onKeyDown(event: KeyboardEvent): void {
+			if (event.defaultPrevented) {
+				return
+			}
 			if (event.key === 'Escape') {
 				this.isEscapeWindowVisible = !this.isEscapeWindowVisible
 			}
-		},
-
-		onShowChangelog(): void {
-			window.open('changelog')
-		},
-
-		onShowSettings(): void {
-			// TODO: Implement settings page
-			window.alert('Not yet!')
 		},
 
 		onLeaveGame(): void {
@@ -109,15 +111,18 @@ export default Vue.extend({
 			OutgoingMessageHandlers.sendEndTurn()
 		},
 
+		onShowGameLog(): void {
+			store.dispatch.popupModule.open({
+				component: TheGameLog
+			})
+			this.isEscapeWindowVisible = false
+		},
+
 		onShowPlayersDeck(): void {
 
 		},
 
 		onShowPlayersGraveyard(): void {
-
-		},
-
-		onShowOpponentsDeck(): void {
 
 		},
 

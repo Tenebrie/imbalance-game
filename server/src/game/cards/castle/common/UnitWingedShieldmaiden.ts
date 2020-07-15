@@ -16,10 +16,10 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE)
 			.requireLocation(CardLocation.HAND)
-			.require(({ targetCard }) => targetCard.owner === this.owner)
-			.require(({ targetCard}) => !!targetCard.unit)
-			.prepare(({ targetCard }) => {
-				const targetUnit = targetCard.unit
+			.require(({ triggeringCard }) => triggeringCard.owner === this.owner)
+			.require(({ triggeringCard}) => !!triggeringCard.unit)
+			.prepare(({ triggeringCard }) => {
+				const targetUnit = triggeringCard.unit
 				const moveTargetRowIndex = this.game.board.rowMove(this.owner, targetUnit.rowIndex, MoveDirection.BACK, 1)
 				const moveTargetUnitIndex = targetUnit.unitIndex
 				return {
@@ -29,12 +29,12 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 					moveTargetUnitIndex
 				}
 			})
-			.perform(({ targetCard }, preparedState) => {
+			.perform(({ triggeringCard }, preparedState) => {
 				const ownedCard = {
 					card: this,
 					owner: this.owner
 				}
-				const targetUnit = targetCard.unit
+				const targetUnit = triggeringCard.unit
 
 				this.game.cardPlay.forcedPlayCardFromHand(ownedCard, preparedState.playTargetRowIndex, preparedState.playTargetUnitIndex)
 				if (targetUnit && targetUnit.isAlive()) {

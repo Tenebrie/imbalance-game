@@ -77,9 +77,7 @@ export default {
 
 	forEachInStringEnum(enumeration: any, handler: (val: any) => any): void {
 		for (const value in enumeration) {
-			if (isNaN(Number(value))) {
-				handler(value)
-			}
+			handler(enumeration[value])
 		}
 	},
 

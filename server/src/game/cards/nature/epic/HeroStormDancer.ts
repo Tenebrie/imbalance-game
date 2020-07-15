@@ -23,9 +23,9 @@ export default class HeroStormDancer extends ServerCard {
 
 		this.createCallback<CardPlayedEventArgs>(GameEvent.CARD_PLAYED)
 			.requireLocation(CardLocation.BOARD)
-			.require(({ playedCard }) => playedCard.type === CardType.SPELL)
+			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
 			.require(({ owner }) => owner === this.owner)
-			.perform(({ playedCard }) => this.onSpellPlayed(playedCard))
+			.perform(({ triggeringCard }) => this.onSpellPlayed(triggeringCard))
 	}
 
 	private onSpellPlayed(playedCard: ServerCard): void {

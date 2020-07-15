@@ -3,9 +3,9 @@ import ServerDamageInstance from './ServerDamageSource'
 import ServerCard from './ServerCard'
 
 enum GameHook {
-	CARD_TAKES_DAMAGE,
-	CARD_DESTROYED,
-	UNIT_DESTROYED
+	CARD_TAKES_DAMAGE= 'cardTakesDamage',
+	CARD_DESTROYED = 'cardDestroyed',
+	UNIT_DESTROYED = 'unitDestroyed',
 }
 
 export default GameHook

@@ -39,6 +39,7 @@ export default {
 			playerInGame.endTurn()
 			game.advanceCurrentTurn()
 		}
+		game.events.flushLogEventGroup()
 	},
 
 	'post/unitOrder': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
@@ -56,6 +57,7 @@ export default {
 			playerInGame.endTurn()
 			game.advanceCurrentTurn()
 		}
+		game.events.flushLogEventGroup()
 	},
 
 	'post/cardTarget': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
@@ -73,6 +75,7 @@ export default {
 			playerInGame.endTurn()
 			game.advanceCurrentTurn()
 		}
+		game.events.flushLogEventGroup()
 	},
 
 	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
@@ -85,6 +88,7 @@ export default {
 		}
 
 		game.advanceCurrentTurn()
+		game.events.flushLogEventGroup()
 	},
 
 	'system/init': (data: void, game: ServerGame, player: ServerPlayerInGame) => {

@@ -2,14 +2,14 @@ import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
 import Unit from '@shared/models/Unit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
 import GameHook, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHook'
-import GameEvent, {UnitDestroyedEventArgs} from './GameEvent'
+import GameEvent, {GameEventSerializers, UnitDestroyedEventArgs} from './GameEvent'
+import {UnitDestroyedEventArgsMessage} from '@shared/enums/GameEvent'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame
@@ -108,9 +108,11 @@ export default class ServerUnit implements Unit {
 			return
 		}
 
-		this.game.events.postEvent<UnitDestroyedEventArgs>(GameEvent.UNIT_DESTROYED, {
-			targetUnit: this
-		})
+		const eventArgs = {
+			triggeringUnit: this
+		}
+		this.game.events.createEventLogEntry<UnitDestroyedEventArgsMessage>(GameEvent.UNIT_DESTROYED, GameEventSerializers.unitDestroyed(eventArgs))
+		this.game.events.postEvent<UnitDestroyedEventArgs>(GameEvent.UNIT_DESTROYED, eventArgs)
 		this.game.board.destroyUnit(this)
 
 		this.card.setPower(this.card.basePower)

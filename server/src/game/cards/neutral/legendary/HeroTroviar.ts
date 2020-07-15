@@ -31,7 +31,7 @@ export default class HeroTroviar extends ServerCard {
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE)
 			.requireLocations([CardLocation.BOARD, CardLocation.STACK])
-			.perform(({ targetCard }) => this.onCardTakesDamage(targetCard))
+			.perform(({ triggeringCard }) => this.onCardTakesDamage(triggeringCard))
 	}
 
 	private onCardTakesDamage(targetCard: ServerCard): void {

@@ -5,6 +5,9 @@
 			<the-navigation-bar v-if="!isInGame" />
 			<router-view class="view" />
 		</div>
+		<div id="popup" v-if="popupComponent">
+			<component :is="popupComponent"></component>
+		</div>
 	</div>
 </template>
 
@@ -17,16 +20,35 @@ export default {
 
 	mounted() {
 		store.dispatch.userPreferencesModule.fetchPreferences()
+		window.addEventListener('keydown', this.onKeyDown)
+	},
+
+	beforeDestroy() {
+		window.removeEventListener('keydown', this.onKeyDown)
 	},
 
 	computed: {
 		isInGame(): boolean {
 			return store.getters.gameStateModule.isInGame
 		},
+
+		popupComponent() {
+			return store.state.popupModule.component
+		},
+
 		rootClass() {
 			return {
 				'in-game': this.isInGame as boolean,
 				'navigation-bar-visible': !this.isInGame as boolean
+			}
+		}
+	},
+
+	methods: {
+		onKeyDown(event: KeyboardEvent): void {
+			if (event.key === 'Escape' && this.popupComponent) {
+				store.dispatch.popupModule.close()
+				event.preventDefault()
 			}
 		}
 	}
@@ -56,6 +78,14 @@ body {
 *::-webkit-scrollbar-track {
 	background: #ffffff20;
 	border-radius: 20px;
+}
+
+#popup {
+	z-index: 1000;
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.7);
 }
 
 #app {

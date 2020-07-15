@@ -34,8 +34,9 @@ import GameHook, {
 	CardTakesDamageHookArgs,
 	CardTakesDamageHookValues
 } from './GameHook'
-import GameEvent, {CardDestroyedEventArgs, CardTakesDamageEventArgs} from './GameEvent'
+import GameEvent, {CardDestroyedEventArgs, CardTakesDamageEventArgs, GameEventSerializers} from './GameEvent'
 import {EventCallback, EventHook} from './ServerGameEvents'
+import {CardDestroyedEventArgsMessage, CardTakesDamageEventArgsMessage} from '@shared/enums/GameEvent'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -54,8 +55,8 @@ export default class ServerCard extends Card {
 		this.dynamicTextVariables = {}
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE)
-			.require(({ targetCard }) => targetCard === this)
-			.require(({ targetCard }) => targetCard.power <= 0)
+			.require(({ triggeringCard }) => triggeringCard === this)
+			.require(({ triggeringCard }) => triggeringCard.power <= 0)
 			.perform(() => this.destroy())
 	}
 
@@ -214,12 +215,14 @@ export default class ServerCard extends Card {
 			targetCard.setPower(targetCard.power - powerDamageInstance.value)
 		}
 
-		this.game.events.postEvent<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE, {
-			targetCard: targetCard,
+		const eventArgs = {
+			triggeringCard: targetCard,
 			damageInstance: damageInstance,
 			armorDamageInstance: armorDamageInstance,
 			powerDamageInstance: powerDamageInstance
-		})
+		}
+		this.game.events.createEventLogEntry<CardTakesDamageEventArgsMessage>(GameEvent.CARD_TAKES_DAMAGE, GameEventSerializers.cardTakesDamage(eventArgs))
+		this.game.events.postEvent<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE, eventArgs)
 	}
 
 	public destroy(): void {
@@ -247,9 +250,11 @@ export default class ServerCard extends Card {
 			return
 		}
 
-		this.game.events.postEvent<CardDestroyedEventArgs>(GameEvent.CARD_DESTROYED, {
-			targetCard: this
-		})
+		const eventArgs = {
+			triggeringCard: this
+		}
+		this.game.events.createEventLogEntry<CardDestroyedEventArgsMessage>(GameEvent.CARD_DESTROYED, GameEventSerializers.cardDestroyed(eventArgs))
+		this.game.events.postEvent<CardDestroyedEventArgs>(GameEvent.CARD_DESTROYED, eventArgs)
 
 		const owner = this.owner
 		const location = this.location

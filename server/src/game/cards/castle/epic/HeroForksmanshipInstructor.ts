@@ -23,12 +23,12 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 
 		this.createCallback<UnitCreatedEventArgs>(GameEvent.UNIT_CREATED)
 			.requireLocation(CardLocation.BOARD)
-			.require(({ createdUnit }) => createdUnit.card !== this)
-			.require(({ createdUnit }) => createdUnit.owner === this.owner)
-			.require(({ createdUnit }) => createdUnit.card.power <= this.powerThreshold)
-			.perform(({ createdUnit }) => {
-				game.animation.play(ServerAnimation.cardAttacksUnits(this, [createdUnit]))
-				createdUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
+			.require(({ triggeringUnit }) => triggeringUnit.card !== this)
+			.require(({ triggeringUnit }) => triggeringUnit.owner === this.owner)
+			.require(({ triggeringUnit }) => triggeringUnit.card.power <= this.powerThreshold)
+			.perform(({ triggeringUnit }) => {
+				game.animation.play(ServerAnimation.cardAttacksUnits(this, [triggeringUnit]))
+				triggeringUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
 			})
 	}
 }
