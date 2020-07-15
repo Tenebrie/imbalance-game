@@ -38,7 +38,9 @@ export default class Renderer {
 	playerNameLabel: PIXI.Text
 	opponentNameLabel: PIXI.Text
 	playerPowerLabel: PIXI.Text
+	playerPowerLabelContainer: PIXI.Sprite
 	opponentPowerLabel: PIXI.Text
+	opponentPowerLabelContainer: PIXI.Sprite
 
 	selectableCardsSmokescreen: PIXI.Sprite
 
@@ -116,20 +118,23 @@ export default class Renderer {
 		/* Power labels */
 		this.playerPowerLabel = new PIXI.Text('', {
 			fontFamily: 'Roboto',
-			fontSize: 40 * this.superSamplingLevel,
-			fill: 0xFFFFFF,
-			align: 'left'
 		})
-		this.playerPowerLabel.anchor.set(0, 0.5)
-		this.rootContainer.addChild(this.playerPowerLabel)
+		this.playerPowerLabel.anchor.set(0.5, 0.5)
+		this.playerPowerLabelContainer = new PIXI.Sprite(TextureAtlas.getTexture('board/power-allied'))
+		this.playerPowerLabelContainer.anchor.set(0, 0.5)
+		this.playerPowerLabelContainer.addChild(this.playerPowerLabel)
+		this.playerPowerLabel.position.set(this.playerPowerLabelContainer.width / 2, 0)
+		this.rootContainer.addChild(this.playerPowerLabelContainer)
 
 		this.opponentPowerLabel = new PIXI.Text('', {
 			fontFamily: 'Roboto',
-			fontSize: 40 * this.superSamplingLevel,
-			fill: 0xFFFFFF
 		})
-		this.opponentPowerLabel.anchor.set(0, 0.5)
-		this.rootContainer.addChild(this.opponentPowerLabel)
+		this.opponentPowerLabel.anchor.set(0.5, 0.5)
+		this.opponentPowerLabelContainer = new PIXI.Sprite(TextureAtlas.getTexture('board/power-enemy'))
+		this.opponentPowerLabelContainer.anchor.set(0, 0.5)
+		this.opponentPowerLabelContainer.addChild(this.opponentPowerLabel)
+		this.opponentPowerLabel.position.set(this.opponentPowerLabelContainer.width / 2, 0)
+		this.rootContainer.addChild(this.opponentPowerLabelContainer)
 
 		/* Smoke screen */
 		this.selectableCardsSmokescreen = new PIXI.Sprite(TextureAtlas.getTexture('masks/black'))
@@ -384,10 +389,23 @@ export default class Renderer {
 		}
 
 		/* Power labels */
+		const getPowerFontSize = (value: number): number => {
+			const string = value.toString()
+			let returnValue = 40
+			if (string.length === 2) {
+				returnValue = 35
+			} else if (string.length >= 3) {
+				returnValue = 30
+			}
+			return returnValue * this.superSamplingLevel
+		}
+
 		const power = Core.board.getUnitsOwnedByPlayer(Core.player).map(unit => unit.card.power).reduce((accumulator, value) => accumulator + value, 0)
 		const opponentPower = Core.board.getUnitsOwnedByPlayer(Core.opponent).map(unit => unit.card.power).reduce((accumulator, value) => accumulator + value, 0)
 		this.playerPowerLabel.text = power.toString()
 		this.opponentPowerLabel.text = opponentPower.toString()
+		this.playerPowerLabel.style.fontSize = getPowerFontSize(power)
+		this.opponentPowerLabel.style.fontSize = getPowerFontSize(opponentPower)
 		if (power > opponentPower) {
 			this.playerPowerLabel.style.fill = 0x77FF77
 			this.opponentPowerLabel.style.fill = 0xFF7777
@@ -424,8 +442,8 @@ export default class Renderer {
 		const opponentLabelTargetRowDistanceToCenter = opponentPowerLabelRow - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
 		const playerLabelRowY = screenCenterY + playerLabelTargetRowDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 		const opponentLabelRowY = screenCenterY + opponentLabelTargetRowDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
-		this.playerPowerLabel.position.set(screenCenterX + (rowHeight * this.CARD_ASPECT_RATIO) * 5, playerLabelRowY)
-		this.opponentPowerLabel.position.set(screenCenterX + (rowHeight * this.CARD_ASPECT_RATIO) * 5, opponentLabelRowY)
+		this.playerPowerLabelContainer.position.set(screenCenterX + (rowHeight * this.CARD_ASPECT_RATIO) * 5.2, playerLabelRowY)
+		this.opponentPowerLabelContainer.position.set(screenCenterX + (rowHeight * this.CARD_ASPECT_RATIO) * 5.2, opponentLabelRowY)
 	}
 
 	public renderGameBoardRow(gameBoardRow: RenderedGameBoardRow, rowIndex: number): void {
@@ -450,22 +468,10 @@ export default class Renderer {
 
 	private getBoardRowTint(row: RenderedGameBoardRow): BoardRowTint {
 		if ((Core.input.grabbedCard && Core.input.grabbedCard.validTargetRows.includes(row)) || (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isRowPotentialTarget(row))) {
-			if (row.owner === Core.player) {
-				return row.isHovered() ? BoardRowTint.VALID_TARGET_PLAYER_HOVERED : BoardRowTint.VALID_TARGET_PLAYER
-			} else if (row.owner === Core.opponent) {
-				return row.isHovered() ? BoardRowTint.VALID_TARGET_OPPONENT_HOVERED : BoardRowTint.VALID_TARGET_OPPONENT
-			} else {
-				return row.isHovered() ? BoardRowTint.VALID_TARGET_NEUTRAL_HOVERED : BoardRowTint.VALID_TARGET_NEUTRAL
-			}
+			return row.isHovered() ? BoardRowTint.VALID_TARGET_HOVERED : BoardRowTint.VALID_TARGET
 		}
 
-		if (row.owner === Core.player) {
-			return BoardRowTint.NORMAL_PLAYER
-		} else if (row.owner === Core.opponent) {
-			return BoardRowTint.NORMAL_OPPONENT
-		} else {
-			return BoardRowTint.NORMAL_NEUTRAL
-		}
+		return BoardRowTint.NORMAL
 	}
 
 	public renderUnit(unit: RenderedUnit, rowY: number, unitIndex: number, unitCount: number): void {

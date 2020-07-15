@@ -18,7 +18,7 @@ export default class RenderedGameBoardRow extends BoardRow {
 		this.cards = []
 		this.owner = null
 
-		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture('board/board-row'))
+		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture('board/row-allied'))
 		this.sprite.anchor.set(0.5, 0.5)
 
 		this.container = new PIXI.Container()
@@ -66,6 +66,11 @@ export default class RenderedGameBoardRow extends BoardRow {
 
 	public setOwner(owner: ClientPlayerInGame | null): void {
 		this.owner = owner
+		if (owner === Core.player) {
+			this.sprite.texture = TextureAtlas.getTexture('board/row-allied')
+		} else if (owner === Core.opponent) {
+			this.sprite.texture = TextureAtlas.getTexture('board/row-enemy')
+		}
 	}
 
 	public isHovered(): boolean {

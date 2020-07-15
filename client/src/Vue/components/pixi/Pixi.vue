@@ -56,7 +56,8 @@ export default Vue.extend({
 		height: 100vh;
 		background: url('../../assets/background-game.jpg');
 		background-size: cover;
-		filter: blur(8px);
+		background-position-x: center;
+		background-position-y: bottom;
 	}
 	.game-container {
 		position: absolute;
