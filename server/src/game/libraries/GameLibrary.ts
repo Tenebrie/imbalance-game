@@ -1,8 +1,7 @@
 import ServerGame from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import {colorize, colorizeConsoleText, colorizeId, colorizePlayer} from '../../utils/Utils'
-import AsciiColor from '../../enums/AsciiColor'
+import {colorizeConsoleText, colorizeId, colorizePlayer} from '../../utils/Utils'
 
 class GameLibrary {
 	games: ServerGame[]
@@ -20,6 +19,10 @@ class GameLibrary {
 	}
 
 	public destroyGame(game: ServerGame, reason: string): void {
+		if (!this.games.includes(game)) {
+			return
+		}
+
 		console.info(`Destroying game ${colorizeId(game.id)}. Reason: ${colorizeConsoleText(reason)}`)
 
 		game.players.forEach(playerInGame => OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player))

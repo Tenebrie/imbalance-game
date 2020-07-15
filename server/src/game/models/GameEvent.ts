@@ -1,6 +1,6 @@
 import ServerUnit from './ServerUnit'
-import ServerDamageInstance from './ServerDamageSource'
 import ServerCard from './ServerCard'
+import ServerDamageInstance from './ServerDamageSource'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 
 enum GameEvent {
