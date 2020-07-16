@@ -3,9 +3,9 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEvent from '../../../models/GameEvent'
 import SpellEnchantedStorm from '../tokens/SpellEnchantedStorm'
 import CardTribe from '@shared/enums/CardTribe'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitMerfolkEnchantress extends ServerCard {
 	constructor(game: ServerGame) {
@@ -14,7 +14,7 @@ export default class UnitMerfolkEnchantress extends ServerCard {
 		this.baseTribes = [CardTribe.MERFOLK]
 		this.sortPriority = 1
 
-		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())
 	}
 

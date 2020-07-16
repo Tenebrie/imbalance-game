@@ -4,9 +4,9 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import SpellLightningStorm from '../tokens/SpellLightningStorm'
-import GameEvent from '../../../models/GameEvent'
 import ServerAnimation from '../../../models/ServerAnimation'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroCarienne extends ServerCard {
 	damagePerWave = 1
@@ -19,7 +19,7 @@ export default class HeroCarienne extends ServerCard {
 			waveCount: () => this.waveCount
 		}
 
-		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
 			.perform(() => {
 				const enemies = this.game.board.getUnitsOwnedByOpponent(this.unit.owner)
 

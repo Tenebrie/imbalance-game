@@ -3,11 +3,12 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEvent, {UnitCreatedEventArgs} from '../../../models/GameEvent'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import ServerAnimation from '../../../models/ServerAnimation'
+import GameEventType from '@shared/enums/GameEventType'
+import {UnitCreatedEventArgs} from '../../../models/GameEventCreators'
 
 export default class HeroForksmanshipInstructor extends ServerCard {
 	powerThreshold = 4
@@ -21,7 +22,7 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 			bonusPower: this.bonusPower
 		}
 
-		this.createCallback<UnitCreatedEventArgs>(GameEvent.UNIT_CREATED)
+		this.createCallback<UnitCreatedEventArgs>(GameEventType.UNIT_CREATED)
 			.requireLocation(CardLocation.BOARD)
 			.require(({ triggeringUnit }) => triggeringUnit.card !== this)
 			.require(({ triggeringUnit }) => triggeringUnit.owner === this.owner)

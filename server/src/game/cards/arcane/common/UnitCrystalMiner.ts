@@ -3,16 +3,20 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerUnit from '../../../models/ServerUnit'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
+import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitCrystalMiner extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 2
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -22,7 +26,7 @@ export default class UnitCrystalMiner extends ServerCard {
 			.validate(TargetType.CARD_IN_LIBRARY, args => args.targetCard.tribes.includes(CardTribe.CRYSTAL))
 	}
 
-	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {
-		thisUnit.owner.createCardFromLibraryByInstance(target)
+	private onTargetSelected(target: ServerCard): void {
+		this.owner.createCardFromLibraryByInstance(target)
 	}
 }

@@ -5,7 +5,7 @@ import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
-import GameEvent from '../../../models/GameEvent'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroAdventuringGuildMaster extends ServerCard {
 	powerPerCard = 5
@@ -17,7 +17,7 @@ export default class HeroAdventuringGuildMaster extends ServerCard {
 			powerPerCard: this.powerPerCard
 		}
 
-		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())
 	}
 

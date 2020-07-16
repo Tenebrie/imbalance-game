@@ -3,10 +3,11 @@ import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEvent, {CardPlayedEventArgs} from '../../../models/GameEvent'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
+import GameEventType from '@shared/enums/GameEventType'
+import {CardPlayedEventArgs} from '../../../models/GameEventCreators'
 
 export default class HeroStormDancer extends ServerCard {
 	normalPowerGiven = 1
@@ -21,7 +22,7 @@ export default class HeroStormDancer extends ServerCard {
 			stormPowerGiven: this.stormPowerGiven
 		}
 
-		this.createCallback<CardPlayedEventArgs>(GameEvent.CARD_PLAYED)
+		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED)
 			.requireLocation(CardLocation.BOARD)
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
 			.require(({ owner }) => owner === this.owner)

@@ -1,7 +1,6 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import ServerUnit from '../../../models/ServerUnit'
 import CardColor from '@shared/enums/CardColor'
@@ -13,6 +12,8 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
+import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellEnchantedStorm extends ServerCard {
 	baseBuffPower = 1
@@ -31,6 +32,12 @@ export default class SpellEnchantedStorm extends ServerCard {
 			powerPerStorm: this.powerPerStorm,
 			isUpgraded: () => this.isUpgraded()
 		}
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+
+		this.createCallback(GameEventType.EFFECT_TARGETS_CONFIRMED)
+			.perform(() => this.onTargetsConfirmed())
 	}
 
 	get buffPower(): number {
@@ -52,13 +59,13 @@ export default class SpellEnchantedStorm extends ServerCard {
 		return builder
 	}
 
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
+	private onTargetSelected(target: ServerUnit): void {
 		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.buffs.addMultiple(BuffStrength, this.buffPower, this, BuffDuration.INFINITY)
 		this.targetsHit.push(target)
 	}
 
-	onSpellPlayTargetsConfirmed(): void {
+	private onTargetsConfirmed(): void {
 		this.targetsHit = []
 	}
 

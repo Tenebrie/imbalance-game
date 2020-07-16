@@ -15,6 +15,8 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import ServerAnimation from '../../../../models/ServerAnimation'
+import {EffectTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellShadowSpark extends ServerCard {
 	baseDamage = 2
@@ -27,6 +29,9 @@ export default class SpellShadowSpark extends ServerCard {
 		this.dynamicTextVariables = {
 			damage: () => this.damage
 		}
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	get damage() {
@@ -40,12 +45,12 @@ export default class SpellShadowSpark extends ServerCard {
 			.enemyUnit()
 	}
 
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
+	private onTargetSelected(target: ServerUnit): void {
 		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
 		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
-		const targetRow = this.game.board.getRowWithDistanceToFront(owner, 0)
-		this.game.board.createUnit(shadowspawn, owner, targetRow.index, targetRow.cards.length)
+		const targetRow = this.game.board.getRowWithDistanceToFront(this.owner, 0)
+		this.game.board.createUnit(shadowspawn, this.owner, targetRow.index, targetRow.cards.length)
 	}
 }

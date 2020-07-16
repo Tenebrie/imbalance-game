@@ -10,8 +10,7 @@ import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
 import Utils from '../../utils/Utils'
-import GameEvent, {CardPlayedEventArgs, GameEventSerializers} from './GameEvent'
-import {CardPlayedEventArgsMessage} from '@shared/enums/GameEvent'
+import GameEventCreators from './GameEventCreators'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -49,6 +48,12 @@ export default class ServerGameCardPlay {
 		/* Remember played card */
 		owner.addToPlayedCards(card)
 
+		/* Trigger card played event */
+		this.game.events.postEvent(GameEventCreators.cardPlayed({
+			owner: owner,
+			triggeringCard: card,
+		}))
+
 		/* Announce card to opponent */
 		card.reveal(owner, owner.opponent)
 		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardPlay(card))
@@ -59,14 +64,6 @@ export default class ServerGameCardPlay {
 		} else if (source === 'deck' && owner.cardDeck.findCardById(card.id)) {
 			owner.cardDeck.removeCard(card)
 		}
-
-		/* Trigger card played event */
-		const eventArgs = {
-			owner: owner,
-			triggeringCard: card,
-		}
-		this.game.events.createEventLogEntry<CardPlayedEventArgsMessage>(GameEvent.CARD_PLAYED, GameEventSerializers.cardPlayed(eventArgs))
-		this.game.events.postEvent<CardPlayedEventArgs>(GameEvent.CARD_PLAYED, eventArgs)
 
 		/* Resolve card */
 		if (card.type === CardType.UNIT) {
@@ -90,7 +87,7 @@ export default class ServerGameCardPlay {
 		this.game.board.createUnit(card, owner, rowIndex, unitIndex)
 
 		/* Invoke the card Deploy effect */
-		this.game.events.postEffect(card, GameEvent.EFFECT_UNIT_DEPLOY, null)
+		this.game.events.postEffect(card, GameEventCreators.effectUnitDeploy())
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -109,7 +106,7 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Invoke the card onPlay effect */
-		this.game.events.postEffect(card, GameEvent.EFFECT_SPELL_PLAY, null)
+		this.game.events.postEffect(card, GameEventCreators.effectSpellPlay())
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -168,28 +165,13 @@ export default class ServerGameCardPlay {
 			return
 		}
 
-		const sourceUnit = target.sourceUnit
-		const sourceCard = target.sourceCard || sourceUnit.card
-
 		this.cardResolveStack.pushTarget(target)
-		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
-			runCardEventHandler(() => sourceCard.onUnitPlayTargetCardSelected(sourceUnit, target.targetCard))
-		}
-		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
-			runCardEventHandler(() => sourceCard.onUnitPlayTargetUnitSelected(sourceUnit, target.targetUnit))
-		}
-		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
-			runCardEventHandler(() => sourceCard.onUnitPlayTargetRowSelected(sourceUnit, target.targetRow))
-		}
-		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
-			runCardEventHandler(() => sourceCard.onSpellPlayTargetCardSelected(playerInGame, target.targetCard))
-		}
-		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
-			runCardEventHandler(() => sourceCard.onSpellPlayTargetUnitSelected(playerInGame, target.targetUnit))
-		}
-		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
-			runCardEventHandler(() => sourceCard.onSpellPlayTargetRowSelected(playerInGame, target.targetRow))
-		}
+
+		this.game.events.postEvent(GameEventCreators.effectTargetSelected({
+			targetCard: target.targetCard,
+			targetUnit: target.targetUnit,
+			targetRow: target.targetRow
+		}))
 
 		// Current card changed - resolve that first
 		if (this.cardResolveStack.currentCard !== currentResolvingCard) {
@@ -203,12 +185,7 @@ export default class ServerGameCardPlay {
 			return
 		}
 
-
-		if (sourceCard.type === CardType.UNIT) {
-			runCardEventHandler(() => sourceCard.onUnitPlayTargetsConfirmed(sourceUnit))
-		} else if (sourceCard.type === CardType.SPELL) {
-			runCardEventHandler(() => sourceCard.onSpellPlayTargetsConfirmed(playerInGame))
-		}
+		this.game.events.postEvent(GameEventCreators.effectTargetsConfirmed())
 		this.cardResolveStack.finishResolving()
 	}
 }

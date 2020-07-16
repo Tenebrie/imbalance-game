@@ -20,7 +20,6 @@ import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
 import {colorizeId, colorizePlayer} from '../../utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
-import MoveDirection from '@shared/enums/MoveDirection'
 
 export default class ServerGame extends Game {
 	isStarted: boolean

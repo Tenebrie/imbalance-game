@@ -10,6 +10,8 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../../models/ServerUnit'
 import ServerPlayerInGame from '../../../../players/ServerPlayerInGame'
+import {EffectTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellShadowArmy extends ServerCard {
 	powerThreshold = 3
@@ -26,6 +28,9 @@ export default class SpellShadowArmy extends ServerCard {
 			showPowerThreshold: () => this.powerThreshold > 0,
 			thresholdDecrease: this.thresholdDecrease
 		}
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -36,13 +41,13 @@ export default class SpellShadowArmy extends ServerCard {
 			.validate(TargetType.UNIT, args => !this.copiedUnits.includes(args.targetUnit))
 	}
 
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
+	private onTargetSelected(target: ServerUnit): void {
 		if (target.card.basePower <= this.powerThreshold) {
 			this.powerThreshold -= this.thresholdDecrease
 			this.allowedTargets += 1
 		}
 
-		owner.createCardFromLibraryByInstance(target.card)
+		this.owner.createCardFromLibraryByInstance(target.card)
 		this.copiedUnits.push(target)
 	}
 }

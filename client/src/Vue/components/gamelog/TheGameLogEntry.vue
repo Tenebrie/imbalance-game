@@ -24,7 +24,8 @@ export default {
 		},
 
 		message(): string {
-			return this.populateTemplate(Localization.get(`log.entry.${this.entry.event}`), this.entry.args)
+			const subtype = this.entry.subtype ? `.${this.entry.subtype}` : ''
+			return this.populateTemplate(Localization.get(`log.entry.${this.entry.event}${subtype}`), this.entry.args)
 		}
 	},
 

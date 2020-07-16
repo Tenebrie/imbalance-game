@@ -3,10 +3,11 @@ import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerUnit from '../../../models/ServerUnit'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TargetType from '@shared/enums/TargetType'
+import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroLightOracle extends ServerCard {
 	cardsToSee = 5
@@ -18,6 +19,9 @@ export default class HeroLightOracle extends ServerCard {
 		this.dynamicTextVariables = {
 			cardsToSee: this.cardsToSee
 		}
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -28,7 +32,7 @@ export default class HeroLightOracle extends ServerCard {
 			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition >= args.targetCard.owner.cardDeck.unitCards.length - this.cardsToSee))
 	}
 
-	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {
-		thisUnit.owner.summonCardFromUnitDeck(target)
+	private onTargetSelected(target: ServerCard): void {
+		this.owner.summonCardFromUnitDeck(target)
 	}
 }

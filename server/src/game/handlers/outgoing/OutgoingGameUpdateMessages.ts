@@ -16,7 +16,8 @@ export default {
 		game.players.forEach(playerInGame => {
 			playerInGame.player.sendMessage({
 				type: 'update/log/entry',
-				data: messages
+				data: messages,
+				highPriority: true
 			})
 		})
 	}

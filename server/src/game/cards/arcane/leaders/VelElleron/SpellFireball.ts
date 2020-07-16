@@ -12,6 +12,8 @@ import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerAnimation from '../../../../models/ServerAnimation'
+import {EffectTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellFireball extends ServerCard {
 	baseDamage = 4
@@ -26,6 +28,9 @@ export default class SpellFireball extends ServerCard {
 			damage: () => this.damage,
 			areaDamage: () => this.areaDamage
 		}
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	get damage() {
@@ -43,7 +48,7 @@ export default class SpellFireball extends ServerCard {
 			.enemyUnit()
 	}
 
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
+	private onTargetSelected(target: ServerUnit): void {
 		const areaTargets = this.game.board.getAdjacentUnits(target)
 
 		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))

@@ -6,7 +6,8 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
 import MoveDirection from '@shared/enums/MoveDirection'
-import GameEvent, {CardTakesDamageEventArgs} from '../../../models/GameEvent'
+import GameEventType from '@shared/enums/GameEventType'
+import {CardTakesDamageEventArgs} from '../../../models/GameEventCreators'
 
 export default class UnitWingedShieldmaiden extends ServerCard {
 	constructor(game: ServerGame) {
@@ -14,7 +15,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 		this.basePower = 4
 		this.baseTribes = [CardTribe.VALKYRIE]
 
-		this.createCallback<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE)
+		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE)
 			.requireLocation(CardLocation.HAND)
 			.require(({ triggeringCard }) => triggeringCard.owner === this.owner)
 			.require(({ triggeringCard}) => !!triggeringCard.unit)

@@ -4,7 +4,7 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
-import GameEvent from '../../../models/GameEvent'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroCoralScribe extends ServerCard {
 	constructor(game: ServerGame) {
@@ -12,7 +12,7 @@ export default class HeroCoralScribe extends ServerCard {
 		this.basePower = 7
 		this.generatedArtworkMagicString = '2'
 
-		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())
 	}
 

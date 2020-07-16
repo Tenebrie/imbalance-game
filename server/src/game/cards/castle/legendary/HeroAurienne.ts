@@ -5,7 +5,7 @@ import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
-import GameHook, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from '../../../models/GameHook'
+import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from '../../../models/GameHookType'
 import MoveDirection from '@shared/enums/MoveDirection'
 
 export default class HeroAurienne extends ServerCard {
@@ -14,7 +14,7 @@ export default class HeroAurienne extends ServerCard {
 		this.basePower = 11
 		this.baseTribes = [CardTribe.VALKYRIE]
 
-		this.createHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHook.UNIT_DESTROYED)
+		this.createHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED)
 			.requireLocation(CardLocation.HAND)
 			.require(({ targetUnit }) => targetUnit.owner === this.owner)
 			.replace(values => ({

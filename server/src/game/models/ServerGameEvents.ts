@@ -1,14 +1,14 @@
-import GameEvent from './GameEvent'
 import ServerGame from './ServerGame'
 import Utils from '../../utils/Utils'
 import ServerCard from './ServerCard'
 import CardLocation from '@shared/enums/CardLocation'
 import {cardPerform, cardRequire} from '../utils/CardEventHandlers'
 import ServerBuff from './ServerBuff'
-import GameHook from './GameHook'
+import GameHookType from './GameHookType'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
-import OutgoingGameStateMessages from '../handlers/outgoing/OutgoingGameStateMessages'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import GameEventType from '@shared/enums/GameEventType'
+import {GameEvent} from './GameEventCreators'
 
 type EventSubscriber = ServerCard | ServerBuff
 
@@ -117,86 +117,88 @@ export class EventHook<HookValues, HookArgs> {
 export default class ServerGameEvents {
 	private readonly game: ServerGame
 	private readonly eventLog: EventLogEntryMessage[][]
-	private eventCallbacks: Map<GameEvent, EventCallback<any>[]>
-	private eventHooks: Map<GameHook, EventHook<any, any>[]>
+	private eventCallbacks: Map<GameEventType, EventCallback<any>[]>
+	private eventHooks: Map<GameHookType, EventHook<any, any>[]>
 
 	constructor(game: ServerGame) {
 		this.game = game
-		this.eventCallbacks = new Map<GameEvent, EventCallback<any>[]>()
-		this.eventHooks = new Map<GameHook, EventHook<any, any>[]>()
+		this.eventCallbacks = new Map<GameEventType, EventCallback<any>[]>()
+		this.eventHooks = new Map<GameHookType, EventHook<any, any>[]>()
 		this.eventLog = []
 		this.eventLog.push([])
-		Utils.forEachInStringEnum(GameEvent, eventType => this.eventCallbacks.set(eventType, []))
-		Utils.forEachInStringEnum(GameHook, hookType => this.eventHooks.set(hookType, []))
+		Utils.forEachInStringEnum(GameEventType, eventType => this.eventCallbacks.set(eventType, []))
+		Utils.forEachInStringEnum(GameHookType, hookType => this.eventHooks.set(hookType, []))
 	}
 
-	public createCallback<EventArgs>(subscriber: EventSubscriber, event: GameEvent): EventCallback<EventArgs> {
+	public createCallback<EventArgs>(subscriber: EventSubscriber, event: GameEventType): EventCallback<EventArgs> {
 		const eventCallback = new EventCallback<EventArgs>(subscriber)
 		this.eventCallbacks.get(event).push(eventCallback)
 		return eventCallback
 	}
 
-	public createHook<HookValues, HookArgs>(subscriber: EventSubscriber, hook: GameHook): EventHook<HookValues, HookArgs> {
+	public createHook<HookValues, HookArgs>(subscriber: EventSubscriber, hook: GameHookType): EventHook<HookValues, HookArgs> {
 		const eventHook = new EventHook<HookValues, HookArgs>(subscriber)
 		this.eventHooks.get(hook).push(eventHook)
 		return eventHook
 	}
 
 	public unsubscribe(targetSubscriber: EventSubscriber): void {
-		Utils.forEachInNumericEnum(GameEvent, eventType => {
+		Utils.forEachInNumericEnum(GameEventType, eventType => {
 			const subscriptions = this.eventCallbacks.get(eventType)
 			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
 			this.eventCallbacks.set(eventType, filteredSubscriptions)
 		})
-		Utils.forEachInNumericEnum(GameHook, hookType => {
+		Utils.forEachInNumericEnum(GameHookType, hookType => {
 			const subscriptions = this.eventHooks.get(hookType)
 			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
 			this.eventHooks.set(hookType, filteredSubscriptions)
 		})
 	}
 
-	public postEvent<EventArgs>(event: GameEvent, args: EventArgs | null): void {
+	public postEvent(event: GameEvent): void {
+		this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
+
 		const validCallbacks = this.eventCallbacks
-			.get(event)
+			.get(event.type)
 			.filter(subscription => !subscription.conditions.find(condition => {
-				return cardRequire(() => !condition(args))
+				return cardRequire(() => !condition(event.args))
 			}))
 
 		const preparedCallbacks = validCallbacks.map(callback => ({
 			callback: callback,
-			preparedState: callback.prepares.reduce((state, preparator) => preparator(args, state), {})
+			preparedState: callback.prepares.reduce((state, preparator) => preparator(event.args, state), {})
 		}))
 
 		preparedCallbacks
 			.forEach(preparedCallback => {
 				preparedCallback.callback.callbacks.forEach(callback => {
-					cardPerform(() => callback(args, preparedCallback.preparedState))
+					cardPerform(() => callback(event.args, preparedCallback.preparedState))
 				})
 			})
 	}
 
-	public postEffect<EventArgs>(subscriber: EventSubscriber, event: GameEvent, args: EventArgs | null): void {
+	public postEffect(subscriber: EventSubscriber, event: GameEvent): void {
 		const validCallbacks = this.eventCallbacks
-			.get(event)
+			.get(event.type)
 			.filter(subscription => subscription.subscriber === subscriber)
 			.filter(subscription => !subscription.conditions.find(condition => {
-				return cardRequire(() => !condition(args))
+				return cardRequire(() => !condition(event.args))
 			}))
 
 		const preparedCallbacks = validCallbacks.map(callback => ({
 			callback: callback,
-			preparedState: callback.prepares.reduce((state, preparator) => preparator(args, state), {})
+			preparedState: callback.prepares.reduce((state, preparator) => preparator(event.args, state), {})
 		}))
 
 		preparedCallbacks
 			.forEach(preparedCallback => {
 				preparedCallback.callback.callbacks.forEach(callback => {
-					cardPerform(() => callback(args, preparedCallback.preparedState))
+					cardPerform(() => callback(event.args, preparedCallback.preparedState))
 				})
 			})
 	}
 
-	public applyHooks<HookValues, HookArgs>(hook: GameHook, values: HookValues, args?: HookArgs): HookValues {
+	public applyHooks<HookValues, HookArgs>(hook: GameHookType, values: HookValues, args?: HookArgs): HookValues {
 		const hookArgs = args ? args : values
 
 		const matchingHooks = this.eventHooks.get(hook)
@@ -220,9 +222,10 @@ export default class ServerGameEvents {
 		return this.eventLog[this.eventLog.length - 1]
 	}
 
-	public createEventLogEntry<EventArgs>(event: GameEvent, args: EventArgs): void {
+	private createEventLogEntry(eventType: GameEventType, subtype: string, args: Record<string, any>): void {
 		this.currentLogEventGroup.push({
-			event: event,
+			event: eventType,
+			subtype: subtype,
 			timestamp: Number(new Date()),
 			args: args
 		})

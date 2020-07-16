@@ -7,9 +7,8 @@ import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
-import GameHook, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHook'
-import GameEvent, {GameEventSerializers, UnitDestroyedEventArgs} from './GameEvent'
-import {UnitDestroyedEventArgsMessage} from '@shared/enums/GameEvent'
+import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
+import GameEventCreators from './GameEventCreators'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame
@@ -57,12 +56,12 @@ export default class ServerUnit implements Unit {
 		this.card.dealDamage(damageInstance)
 	}
 
-	heal(damage: ServerDamageInstance): void {
-		if (damage.value <= 0) {
+	heal(healingInstance: ServerDamageInstance): void {
+		if (healingInstance.value <= 0) {
 			return
 		}
 
-		this.setPower(Math.min(this.card.basePower, this.card.power + damage.value))
+		this.setPower(Math.min(this.card.maxPower, this.card.power + healingInstance.value))
 	}
 
 	isAlive(): boolean {
@@ -97,7 +96,7 @@ export default class ServerUnit implements Unit {
 
 		this.isBeingDestroyed = true
 
-		const hookValues = this.game.events.applyHooks<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHook.UNIT_DESTROYED, {
+		const hookValues = this.game.events.applyHooks<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED, {
 			destructionPrevented: false
 		}, {
 			targetUnit: this
@@ -108,11 +107,10 @@ export default class ServerUnit implements Unit {
 			return
 		}
 
-		const eventArgs = {
+		this.game.events.postEvent(GameEventCreators.unitDestroyed({
 			triggeringUnit: this
-		}
-		this.game.events.createEventLogEntry<UnitDestroyedEventArgsMessage>(GameEvent.UNIT_DESTROYED, GameEventSerializers.unitDestroyed(eventArgs))
-		this.game.events.postEvent<UnitDestroyedEventArgs>(GameEvent.UNIT_DESTROYED, eventArgs)
+		}))
+
 		this.game.board.destroyUnit(this)
 
 		this.card.setPower(this.card.basePower)

@@ -4,8 +4,8 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import SpellLightningStorm from '../tokens/SpellLightningStorm'
-import GameEvent from '../../../models/GameEvent'
 import CardTribe from '@shared/enums/CardTribe'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitMerfolkStormcaller extends ServerCard {
 	constructor(game: ServerGame) {
@@ -14,7 +14,7 @@ export default class UnitMerfolkStormcaller extends ServerCard {
 		this.baseTribes = [CardTribe.MERFOLK]
 		this.sortPriority = 1
 
-		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())
 	}
 

@@ -1,14 +1,13 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import ServerPlayerInGame from '../../../../players/ServerPlayerInGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import BuffVelRamineaWeave from '../../../../buffs/BuffVelRamineaWeave'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardLocation from '@shared/enums/CardLocation'
-import GameEvent from '../../../../models/GameEvent'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellFlameweave extends ServerCard {
 	constructor(game: ServerGame) {
@@ -20,7 +19,7 @@ export default class SpellFlameweave extends ServerCard {
 			currentStacks: () => this.currentStacks
 		}
 
-		this.createCallback(GameEvent.EFFECT_SPELL_PLAY)
+		this.createCallback(GameEventType.EFFECT_SPELL_PLAY)
 			.perform(() => {
 				this.owner.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
 			})

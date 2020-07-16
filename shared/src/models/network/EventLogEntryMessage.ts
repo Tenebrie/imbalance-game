@@ -1,8 +1,9 @@
-import GameEvent from '../../enums/GameEvent'
+import GameEventType from '../../enums/GameEventType'
 
 interface EventLogEntryMessage {
-	event: GameEvent
+	event: GameEventType
 	timestamp: number
+	subtype: string | undefined
 	args: any
 }
 

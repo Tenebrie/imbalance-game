@@ -5,7 +5,7 @@ import ServerGame from './ServerGame'
 import ServerCardTarget from './ServerCardTarget'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import CardFeature from '@shared/enums/CardFeature'
-import CardLibrary from '../libraries/CardLibrary'
+import GameEventCreators from './GameEventCreators'
 
 class ServerCardResolveStackEntry {
 	ownedCard: ServerOwnedCard
@@ -39,9 +39,6 @@ export default class ServerCardResolveStack {
 	}
 
 	public startResolving(ownedCard: ServerOwnedCard): void {
-		const card = ownedCard.card
-		const owner = ownedCard.owner
-
 		/* On before card played */
 		const otherCards = this.game.board.getAllUnits().filter(otherCard => otherCard !== ownedCard)
 		otherCards.forEach(otherCard => {
@@ -78,10 +75,14 @@ export default class ServerCardResolveStack {
 		}
 
 		/* On after card played */
-		const otherCards = this.game.board.getAllUnits().filter(otherCard => otherCard !== resolvedCard)
-		otherCards.forEach(otherCard => {
-			runCardEventHandler(() => otherCard.card.onAfterOtherCardPlayed(resolvedCard))
-		})
+		// const otherCards = this.game.board.getAllUnits().filter(otherCard => otherCard !== resolvedCard)
+		// otherCards.forEach(otherCard => {
+		// 	runCardEventHandler(() => otherCard.card.onAfterOtherCardPlayed(resolvedCard))
+		// })
+
+		this.game.events.postEvent(GameEventCreators.cardResolved({
+			triggeringCard: resolvedCard.card
+		}))
 
 		if (this.currentCard) {
 			this.game.cardPlay.checkCardTargeting(this.currentCard)

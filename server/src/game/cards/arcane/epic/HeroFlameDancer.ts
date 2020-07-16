@@ -2,7 +2,6 @@ import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import TargetType from '@shared/enums/TargetType'
-import ServerUnit from '../../../models/ServerUnit'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
@@ -11,6 +10,8 @@ import ServerBoardRow from '../../../models/ServerBoardRow'
 import ServerAnimation from '../../../models/ServerAnimation'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffBurning from '../../../buffs/BuffBurning'
+import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroFlameDancer extends ServerCard {
 	burnDuration = 3
@@ -22,6 +23,9 @@ export default class HeroFlameDancer extends ServerCard {
 			burnDuration: this.burnDuration
 		}
 		this.generatedArtworkMagicString = '2'
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -32,12 +36,12 @@ export default class HeroFlameDancer extends ServerCard {
 			})
 	}
 
-	onUnitPlayTargetRowSelected(thisUnit: ServerUnit, target: ServerBoardRow): void {
+	private onTargetSelected(target: ServerBoardRow): void {
 		const targetUnits = target.cards
 
 		this.game.animation.play(ServerAnimation.cardAttacksUnits(this, targetUnits))
 		targetUnits.forEach(targetUnit => {
-			targetUnit.card.buffs.add(BuffBurning, thisUnit.card, BuffDuration.FULL_TURN * this.burnDuration)
+			targetUnit.card.buffs.add(BuffBurning, this, BuffDuration.FULL_TURN * this.burnDuration)
 		})
 	}
 }

@@ -9,8 +9,7 @@ import ServerBoardOrders from './ServerBoardOrders'
 import ServerCard from './ServerCard'
 import Utils from '../../utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
-import GameEvent, {GameEventSerializers, UnitCreatedEventArgs} from './GameEvent'
-import {UnitCreatedEventArgsMessage} from '@shared/enums/GameEvent'
+import ServerGameEventCreators from './GameEventCreators'
 
 export default class ServerBoard extends Board {
 	readonly game: ServerGame
@@ -150,11 +149,10 @@ export default class ServerBoard extends Board {
 			OutgoingMessageHandlers.notifyAboutUnitCreated(playerInGame.player, unit, rowIndex, unitIndex)
 		})
 
-		const eventArgs = {
+		this.game.events.postEvent(ServerGameEventCreators.unitCreated({
 			triggeringUnit: unit
-		}
-		this.game.events.createEventLogEntry<UnitCreatedEventArgsMessage>(GameEvent.UNIT_CREATED, GameEventSerializers.unitCreated(eventArgs))
-		this.game.events.postEvent<UnitCreatedEventArgs>(GameEvent.UNIT_CREATED, eventArgs)
+		}))
+
 		return unit
 	}
 

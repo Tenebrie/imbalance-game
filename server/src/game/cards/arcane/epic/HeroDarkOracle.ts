@@ -3,10 +3,11 @@ import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerUnit from '../../../models/ServerUnit'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TargetType from '@shared/enums/TargetType'
+import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroDarkOracle extends ServerCard {
 	cardsToSee = 5
@@ -19,6 +20,9 @@ export default class HeroDarkOracle extends ServerCard {
 			cardsToSee: this.cardsToSee
 		}
 		this.generatedArtworkMagicString = '2'
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -29,7 +33,7 @@ export default class HeroDarkOracle extends ServerCard {
 			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition < this.cardsToSee))
 	}
 
-	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {
+	private onTargetSelected(target: ServerCard): void {
 		target.owner.cardDeck.discardUnit(target)
 	}
 }

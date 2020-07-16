@@ -9,6 +9,8 @@ import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/P
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLibrary from '../../../libraries/CardLibrary'
+import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 interface SacrificedUnit {
 	rowIndex: number,
@@ -21,6 +23,17 @@ export default class HeroCrystalWarrior extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 7
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.require(({ targetUnit }) => !!targetUnit)
+			.perform(({ targetUnit }) => this.onSacrificeTargetSelected(targetUnit))
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.require(({ targetCard}) => !!targetCard)
+			.perform(({ targetCard }) => this.onCrystalSelected(targetCard))
+
+		this.createCallback(GameEventType.EFFECT_TARGETS_CONFIRMED)
+			.perform(() => this.onTargetsConfirmed())
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -38,7 +51,12 @@ export default class HeroCrystalWarrior extends ServerCard {
 		}
 	}
 
-	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
+	private onCrystalSelected(target: ServerCard): void {
+		const crystal = CardLibrary.instantiateByInstance(this.game, target)
+		this.game.board.createUnit(crystal, this.owner, this.sacrificedUnit.rowIndex, this.sacrificedUnit.unitIndex)
+	}
+
+	private onSacrificeTargetSelected(target: ServerUnit): void {
 		this.sacrificedUnit = {
 			rowIndex: target.rowIndex,
 			unitIndex: target.unitIndex
@@ -46,12 +64,7 @@ export default class HeroCrystalWarrior extends ServerCard {
 		target.destroy()
 	}
 
-	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {
-		const crystal = CardLibrary.instantiateByInstance(this.game, target)
-		this.game.board.createUnit(crystal, this.owner, this.sacrificedUnit.rowIndex, this.sacrificedUnit.unitIndex)
-	}
-
-	onUnitPlayTargetsConfirmed(thisUnit: ServerUnit) {
+	private onTargetsConfirmed(): void {
 		this.sacrificedUnit = null
 	}
 }

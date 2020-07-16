@@ -5,7 +5,8 @@ import ServerGame from '../../../models/ServerGame'
 import ServerAnimation from '../../../models/ServerAnimation'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEvent, {CardTakesDamageEventArgs} from '../../../models/GameEvent'
+import GameEventType from '@shared/enums/GameEventType'
+import {CardTakesDamageEventArgs} from '../../../models/GameEventCreators'
 
 export default class HeroRagingElemental extends ServerCard {
 	isEffectTriggered = false
@@ -14,7 +15,7 @@ export default class HeroRagingElemental extends ServerCard {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 9
 
-		this.createCallback<CardTakesDamageEventArgs>(GameEvent.CARD_TAKES_DAMAGE)
+		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE)
 			.require(({ triggeringCard }) => triggeringCard === this)
 			.require(({ triggeringCard }) => triggeringCard.power > 0)
 			.perform(() => this.onDamageSurvived())

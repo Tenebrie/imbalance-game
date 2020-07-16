@@ -10,6 +10,8 @@ import CardColor from '@shared/enums/CardColor'
 import TargetMode from '@shared/enums/TargetMode'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
+import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1
@@ -24,6 +26,9 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			targets: this.targets,
 			healing: this.healing
 		}
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -37,7 +42,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			.validate(TargetType.UNIT, args => args.targetUnit.card.power < args.targetUnit.card.basePower)
 	}
 
-	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
-		target.heal(ServerDamageInstance.fromUnit(this.healing, thisUnit))
+	private onTargetSelected(target: ServerUnit): void {
+		target.heal(ServerDamageInstance.fromUnit(this.healing, this.unit))
 	}
 }

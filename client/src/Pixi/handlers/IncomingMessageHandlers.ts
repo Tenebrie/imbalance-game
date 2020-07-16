@@ -233,6 +233,22 @@ const handlers: {[ index: string ]: any } = {
 		Core.opponent.cardHand.addSpell(RenderedCard.fromMessage(data))
 	},
 
+	'update/player/self/graveyard/unit/cardAdded': (data: CardMessage) => {
+		Core.player.cardGraveyard.addUnit(data)
+	},
+
+	'update/player/self/graveyard/spell/cardAdded': (data: CardMessage) => {
+		Core.player.cardGraveyard.addSpell(data)
+	},
+
+	'update/player/opponent/graveyard/unit/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardGraveyard.addUnit(data)
+	},
+
+	'update/player/opponent/graveyard/spell/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardGraveyard.addSpell(data)
+	},
+
 	'update/player/self/hand/spell/cardDrawn': (data: CardMessage[]) => {
 		console.info('Spells drawn', data)
 		data.forEach(cardMessage => {

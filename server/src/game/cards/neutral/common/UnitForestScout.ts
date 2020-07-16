@@ -4,7 +4,7 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEvent from '../../../models/GameEvent'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitForestScout extends ServerCard {
 	boardPowerBonus = 7
@@ -19,11 +19,11 @@ export default class UnitForestScout extends ServerCard {
 			moralePowerBonus: this.moralePowerBonus
 		}
 
-		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())
 	}
 
-	onDeploy() {
+	private onDeploy(): void {
 		const unit = this.unit
 		const owner = unit.owner
 		const ownPower = this.game.board.getTotalPlayerPower(owner)

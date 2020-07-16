@@ -4,9 +4,9 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
-import GameEvent from '../../../models/GameEvent'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ServerAnimation from '../../../models/ServerAnimation'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellHealingRain extends ServerCard {
 	baseHealing = 3
@@ -22,7 +22,7 @@ export default class SpellHealingRain extends ServerCard {
 			healingPerStorm: this.healingPerStorm
 		}
 
-		this.createCallback(GameEvent.EFFECT_SPELL_PLAY)
+		this.createCallback(GameEventType.EFFECT_SPELL_PLAY)
 			.perform(() => this.onPlay())
 	}
 
@@ -32,7 +32,7 @@ export default class SpellHealingRain extends ServerCard {
 			stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
 
-		return this.baseHealing +  this.healingPerStorm * stormsPlayed
+		return this.baseHealing + this.healingPerStorm * stormsPlayed
 	}
 
 	private onPlay(): void {

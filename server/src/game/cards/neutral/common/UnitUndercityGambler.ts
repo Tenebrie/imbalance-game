@@ -10,6 +10,8 @@ import ServerUnit from '../../../models/ServerUnit'
 import BuffTutoredCard from '../../../buffs/BuffTutoredCard'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
+import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitUndercityGambler extends ServerCard {
 	bonusPower = 5
@@ -22,6 +24,9 @@ export default class UnitUndercityGambler extends ServerCard {
 		this.dynamicTextVariables = {
 			bonusPower: this.bonusPower
 		}
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -31,7 +36,7 @@ export default class UnitUndercityGambler extends ServerCard {
 			.inPlayersHand()
 	}
 
-	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {
+	private onTargetSelected(target: ServerCard): void {
 		const owner = target.owner
 		owner.cardHand.discardUnit(target)
 		owner.cardDeck.addUnit(target)

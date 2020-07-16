@@ -8,12 +8,17 @@ import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../models/ServerUnit'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
+import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitRavenMessenger extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 2
 		this.baseTribes = [CardTribe.BIRD]
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -25,7 +30,7 @@ export default class UnitRavenMessenger extends ServerCard {
 			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.tribes.includes(CardTribe.HUMAN)))
 	}
 
-	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {
-		thisUnit.owner.summonCardFromUnitDeck(target)
+	private onTargetSelected(target: ServerCard): void {
+		this.owner.summonCardFromUnitDeck(target)
 	}
 }

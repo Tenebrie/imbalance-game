@@ -6,15 +6,13 @@ import ServerCard from './ServerCard'
 import ServerUnit from './ServerUnit'
 import TargetDefinitionBuilder from './targetDefinitions/TargetDefinitionBuilder'
 import TargetDefinition from './targetDefinitions/TargetDefinition'
-import ServerBoardRow from './ServerBoardRow'
-import ServerDamageInstance from './ServerDamageSource'
 import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
-import GameEvent from './GameEvent'
 import {EventCallback, EventHook} from './ServerGameEvents'
-import GameHook from './GameHook'
+import GameHookType from './GameHookType'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -73,11 +71,11 @@ export default class ServerBuff implements Buff {
 		}
 	}
 
-	protected createCallback<ArgsType>(event: GameEvent): EventCallback<ArgsType> {
+	protected createCallback<ArgsType>(event: GameEventType): EventCallback<ArgsType> {
 		return this.game.events.createCallback(this, event)
 	}
 
-	protected createHook<HookValues, HookArgs>(hook: GameHook): EventHook<HookValues, HookArgs> {
+	protected createHook<HookValues, HookArgs>(hook: GameHookType): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hook)
 	}
 

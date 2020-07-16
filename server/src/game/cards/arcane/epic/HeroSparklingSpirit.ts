@@ -4,7 +4,7 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import BuffSparksExtraDamage from '../../../buffs/BuffSparksExtraDamage'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEvent from '../../../models/GameEvent'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroSparklingSpirit extends ServerCard {
 	extraDamage = 1
@@ -16,7 +16,7 @@ export default class HeroSparklingSpirit extends ServerCard {
 			extraDamage: this.extraDamage
 		}
 
-		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
 			.perform(() => this.onDeploy())
 	}
 

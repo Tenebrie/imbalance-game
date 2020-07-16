@@ -13,6 +13,8 @@ import BuffSparksExtraDamage from '../../../../buffs/BuffSparksExtraDamage'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerAnimation from '../../../../models/ServerAnimation'
+import {EffectTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellSteelSpark extends ServerCard {
 	baseDamage = 2
@@ -27,6 +29,9 @@ export default class SpellSteelSpark extends ServerCard {
 			damage: () => this.damage,
 			sideDamage: () => this.sideDamage
 		}
+
+		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	get damage() {
@@ -44,7 +49,7 @@ export default class SpellSteelSpark extends ServerCard {
 			.enemyUnit()
 	}
 
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
+	private onTargetSelected(target: ServerUnit): void {
 		const sideTargets = this.game.board.getAdjacentUnits(target).filter(unit => unit.rowIndex === target.rowIndex)
 
 		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))

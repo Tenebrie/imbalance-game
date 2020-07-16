@@ -6,7 +6,6 @@
 	"ui.quality.normal": "Normal",
 	"ui.quality.high": "High",
 	"ui.quality.ultra": "Ultra",
-	"ui.quality.ultra_x2": "Ultra x2",
 
 	"ui.editor.deck.create": "Create new deck",
 	"ui.editor.deck.create.progress": "Creating...",
@@ -18,7 +17,9 @@
 	"ui.profile.delete.progress": "Deleting...",
 
 	"log.entry.cardPlayed": "{owner} has played card {triggeringCard}",
-	"log.entry.cardTakesDamage": "Card {triggeringCard} has taken damage",
+	"log.entry.cardResolved": "Card {triggeringCard} has finished resolving",
+	"log.entry.cardTakesDamage.fromCard": "Card {triggeringCard} has taken {damage} damage from {sourceCard}",
+	"log.entry.cardTakesDamage.fromUniverse": "Card {triggeringCard} has taken {damage} damage",
 	"log.entry.cardDestroyed": "Card {triggeringCard} has been destroyed",
 	"log.entry.unitCreated": "Unit {triggeringUnit} has been created",
 	"log.entry.unitDestroyed": "Unit {triggeringUnit} has been destroyed",

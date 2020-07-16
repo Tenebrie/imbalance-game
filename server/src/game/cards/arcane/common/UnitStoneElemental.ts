@@ -11,7 +11,7 @@ import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition
 import ServerUnit from '../../../models/ServerUnit'
 import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
-import GameEvent from '../../../models/GameEvent'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitStoneElemental extends ServerCard {
 	canAttack = false
@@ -23,7 +23,7 @@ export default class UnitStoneElemental extends ServerCard {
 		this.baseAttackRange = 2
 		this.baseTribes = [CardTribe.ELEMENTAL]
 
-		this.createCallback(GameEvent.EFFECT_UNIT_DEPLOY)
+		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
 			.perform(() => {
 				this.canAttack = true
 			})

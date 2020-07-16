@@ -3,12 +3,11 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
-import ServerUnit from '../../../models/ServerUnit'
-import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import BuffDecayingArmor from '../../../buffs/BuffDecayingArmor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEvent from '../../../models/GameEvent'
 import CardLocation from '@shared/enums/CardLocation'
+import GameEventType from '@shared/enums/GameEventType'
+import {CardPlayedEventArgs} from '../../../models/GameEventCreators'
 
 export default class UnitIceSkinCrystal extends ServerCard {
 	charges = 0
@@ -29,16 +28,19 @@ export default class UnitIceSkinCrystal extends ServerCard {
 			chargesVisible: () => !!this.unit
 		}
 
-		this.createCallback(GameEvent.UNIT_DESTROYED)
+		this.createCallback(GameEventType.UNIT_DESTROYED)
 			.requireLocation(CardLocation.BOARD)
 			.require(({ targetUnit }) => targetUnit.card === this)
 			.perform(() => this.onDestroy())
+
+		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED)
+			.requireLocation(CardLocation.BOARD)
+			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
+			.perform(({ triggeringCard }) => this.onSpellPlayed(triggeringCard))
 	}
 
-	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void {
-		if (otherCard.card.type === CardType.SPELL) {
-			this.charges += otherCard.card.spellCost
-		}
+	private onSpellPlayed(spell: ServerCard): void {
+		this.charges += spell.spellCost
 	}
 
 	private onDestroy(): void {
