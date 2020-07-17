@@ -22,15 +22,15 @@ export default class ServerGameCardPlay {
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
-		/* Resolve card */
-		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)
-
 		/* Deduct mana */
 		if (ownedCard.card.type === CardType.UNIT) {
-			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - ownedCard.card.unitCost)
+			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.unitCost))
 		} else if (ownedCard.card.type === CardType.SPELL) {
-			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - ownedCard.card.spellCost)
+			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.spellCost))
 		}
+
+		/* Resolve card */
+		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)
 	}
 
 	public forcedPlayCardFromHand(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
@@ -167,7 +167,7 @@ export default class ServerGameCardPlay {
 
 		this.cardResolveStack.pushTarget(target)
 
-		this.game.events.postEvent(GameEventCreators.effectTargetSelected({
+		this.game.events.postEffect(currentResolvingCard.card, GameEventCreators.effectTargetSelected({
 			targetCard: target.targetCard,
 			targetUnit: target.targetUnit,
 			targetRow: target.targetRow
@@ -185,7 +185,7 @@ export default class ServerGameCardPlay {
 			return
 		}
 
-		this.game.events.postEvent(GameEventCreators.effectTargetsConfirmed())
+		this.game.events.postEffect(currentResolvingCard.card, GameEventCreators.effectTargetsConfirmed())
 		this.cardResolveStack.finishResolving()
 	}
 }

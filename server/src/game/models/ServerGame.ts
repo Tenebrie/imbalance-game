@@ -126,8 +126,6 @@ export default class ServerGame extends Game {
 	private setTurnPhase(turnPhase: GameTurnPhase): void {
 		this.turnPhase = turnPhase
 
-		this.board.getAllUnits().forEach(unit => unit.card.onTurnPhaseChanged(unit, this.turnPhase))
-
 		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutPhaseAdvance(playerInGame.player, this.turnPhase)
 		})

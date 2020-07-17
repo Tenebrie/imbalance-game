@@ -15,7 +15,6 @@ import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
 import Utils, {getRenderScale} from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import CardFeature from '@shared/enums/CardFeature'
 
 const UNIT_ZINDEX = 2
 const TARGETING_ARROW_ZINDEX = 10
@@ -242,13 +241,26 @@ export default class Renderer {
 	}
 
 	private updateCardStats(renderedCard: RenderedCard): void {
-		renderedCard.powerText.text = renderedCard.power.toString()
-		if (renderedCard.power < renderedCard.basePower) {
-			renderedCard.powerText.style.fill = 0x770000
-		} else if (renderedCard.power > renderedCard.basePower) {
-			renderedCard.powerText.style.fill = 0x007700
-		} else {
-			renderedCard.powerText.style.fill = 0x000000
+		if (renderedCard.type === CardType.UNIT || renderedCard.type === CardType.TOKEN) {
+			renderedCard.powerText.text = renderedCard.power.toString()
+			if (renderedCard.power < renderedCard.basePower) {
+				renderedCard.powerText.style.fill = 0x770000
+			} else if (renderedCard.power > renderedCard.basePower) {
+				renderedCard.powerText.style.fill = 0x007700
+			} else {
+				renderedCard.powerText.style.fill = 0x000000
+			}
+		} else if (renderedCard.type === CardType.SPELL) {
+			const spellCost = renderedCard.spellCost
+			const baseSpellCost = renderedCard.basePower
+			renderedCard.powerText.text = spellCost.toString()
+			if (spellCost < baseSpellCost) {
+				renderedCard.powerText.style.fill = 0x0077AA
+			} else if (spellCost > baseSpellCost) {
+				renderedCard.powerText.style.fill = 0x7700AA
+			} else {
+				renderedCard.powerText.style.fill = 0x0000AA
+			}
 		}
 
 		renderedCard.armorText.text = renderedCard.armor.toString()
@@ -304,14 +316,6 @@ export default class Renderer {
 		const isPlayable = Core.player.isTurnActive && !Core.input.forcedTargetingMode && !!Core.input.playableCards.find(target => target.sourceCard === renderedCard)
 		const isForcedTarget = Core.input.forcedTargetingMode && !!Core.input.forcedTargetingMode.validTargets.find(forcedCard => forcedCard.targetCard && forcedCard.targetCard.id === renderedCard.id)
 		renderedCard.cardDisabledOverlay.visible = !isPlayable && !isForcedTarget
-
-		if (renderedCard.type === CardType.SPELL) {
-			renderedCard.powerText.style.fill = 0x0000FF
-			if (renderedCard.features.includes(CardFeature.TEMPORARY_CARD)) {
-				renderedCard.powerText.text = '0'
-				renderedCard.powerText.style.fill = 0x008800
-			}
-		}
 
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
@@ -771,10 +775,6 @@ export default class Renderer {
 			renderedCard.setDisplayMode(CardDisplayMode.SELECTION_HOVERED)
 		} else {
 			renderedCard.setDisplayMode(CardDisplayMode.SELECTION)
-		}
-
-		if (renderedCard.type === CardType.SPELL) {
-			renderedCard.powerText.style.fill = 0x0000AA
 		}
 
 		sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7

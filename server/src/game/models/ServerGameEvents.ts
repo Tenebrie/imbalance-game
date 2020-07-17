@@ -143,12 +143,12 @@ export default class ServerGameEvents {
 	}
 
 	public unsubscribe(targetSubscriber: EventSubscriber): void {
-		Utils.forEachInNumericEnum(GameEventType, eventType => {
+		Utils.forEachInStringEnum(GameEventType, eventType => {
 			const subscriptions = this.eventCallbacks.get(eventType)
 			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
 			this.eventCallbacks.set(eventType, filteredSubscriptions)
 		})
-		Utils.forEachInNumericEnum(GameHookType, hookType => {
+		Utils.forEachInStringEnum(GameHookType, hookType => {
 			const subscriptions = this.eventHooks.get(hookType)
 			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
 			this.eventHooks.set(hookType, filteredSubscriptions)

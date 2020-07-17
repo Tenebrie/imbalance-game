@@ -39,12 +39,6 @@ export default class ServerCardResolveStack {
 	}
 
 	public startResolving(ownedCard: ServerOwnedCard): void {
-		/* On before card played */
-		const otherCards = this.game.board.getAllUnits().filter(otherCard => otherCard !== ownedCard)
-		otherCards.forEach(otherCard => {
-			runCardEventHandler(() => otherCard.card.onBeforeOtherCardPlayed(ownedCard))
-		})
-
 		/* Create card in stack */
 		this.entries.push(new ServerCardResolveStackEntry(ownedCard))
 		OutgoingMessageHandlers.notifyAboutCardResolving(ownedCard)
@@ -73,12 +67,6 @@ export default class ServerCardResolveStack {
 		} else if (resolvedCard.card.type === CardType.SPELL) {
 			resolvedCard.owner.cardGraveyard.addSpell(resolvedCard.card)
 		}
-
-		/* On after card played */
-		// const otherCards = this.game.board.getAllUnits().filter(otherCard => otherCard !== resolvedCard)
-		// otherCards.forEach(otherCard => {
-		// 	runCardEventHandler(() => otherCard.card.onAfterOtherCardPlayed(resolvedCard))
-		// })
 
 		this.game.events.postEvent(GameEventCreators.cardResolved({
 			triggeringCard: resolvedCard.card

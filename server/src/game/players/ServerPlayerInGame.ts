@@ -14,6 +14,8 @@ import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardLibrary from '../libraries/CardLibrary'
 import CardType from '@shared/enums/CardType'
+import GameEventType from '@shared/enums/GameEventType'
+import GameEventCreators from '../models/GameEventCreators'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -178,10 +180,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.roundEnded = false
 		this.cardsPlayed = []
 
-		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onRoundStarted())
-			unit.card.buffs.onRoundStarted()
-		})
+		this.game.events.postEvent(GameEventCreators.roundStarted({
+			player: this
+		}))
 
 		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
 	}
@@ -196,10 +197,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnStart(): void {
-		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onTurnStarted())
-			unit.card.buffs.onTurnStarted()
-		})
+		this.game.events.postEvent(GameEventCreators.turnStarted({
+			player: this
+		}))
 	}
 
 	public isAnyActionsAvailable(): boolean {
@@ -214,10 +214,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public onTurnEnd(): void {
 		this.cardsPlayed = []
-		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onTurnEnded())
-			unit.card.buffs.onTurnEnded()
-		})
+		this.game.events.postEvent(GameEventCreators.turnEnded({
+			player: this
+		}))
 		this.cardHand.unitCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
 			this.cardHand.discardUnit(card)
 		})
@@ -229,10 +228,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public endRound(): void {
 		this.endTurn()
 
-		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onRoundEnded())
-			unit.card.buffs.onRoundEnded()
-		})
+		this.game.events.postEvent(GameEventCreators.roundEnded({
+			player: this
+		}))
 
 		this.roundEnded = true
 		OutgoingMessageHandlers.notifyAboutRoundEnded(this)

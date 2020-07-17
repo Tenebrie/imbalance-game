@@ -24,6 +24,19 @@ export default {
 		args: {}
 	}),
 
+	roundStarted: (args: RoundStartedEventArgs): GameEvent => ({
+		type: GameEventType.ROUND_STARTED,
+		args: args
+	}),
+	turnStarted: (args: TurnStartedEventArgs): GameEvent => ({
+		type: GameEventType.TURN_STARTED,
+		args: args
+	}),
+
+	cardDrawn: (args: CardDrawnEventArgs): GameEvent => ({
+		type: GameEventType.CARD_DRAWN,
+		args: args
+	}),
 	cardPlayed: (args: CardPlayedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_PLAYED,
 		args: args,
@@ -56,6 +69,7 @@ export default {
 			triggeringCard: args.triggeringCard.id
 		}
 	}),
+
 	unitCreated: (args: UnitCreatedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_CREATED,
 		args: args,
@@ -69,7 +83,16 @@ export default {
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id
 		}
-	})
+	}),
+
+	turnEnded: (args: TurnEndedEventArgs): GameEvent => ({
+		type: GameEventType.TURN_ENDED,
+		args: args
+	}),
+	roundEnded: (args: RoundEndedEventArgs): GameEvent => ({
+		type: GameEventType.ROUND_ENDED,
+		args: args
+	}),
 }
 
 export interface GameEvent {
@@ -85,6 +108,16 @@ export interface EffectTargetSelectedEventArgs {
 	targetRow: ServerBoardRow
 }
 
+export interface RoundStartedEventArgs {
+	player: ServerPlayerInGame
+}
+export interface TurnStartedEventArgs {
+	player: ServerPlayerInGame
+}
+
+export interface CardDrawnEventArgs {
+	triggeringCard: ServerCard
+}
 export interface CardPlayedEventArgs {
 	owner: ServerPlayerInGame
 	triggeringCard: ServerCard
@@ -101,9 +134,17 @@ export interface CardTakesDamageEventArgs {
 export interface CardDestroyedEventArgs {
 	triggeringCard: ServerCard
 }
+
 export interface UnitCreatedEventArgs {
 	triggeringUnit: ServerUnit
 }
 export interface UnitDestroyedEventArgs {
 	triggeringUnit: ServerUnit
+}
+
+export interface TurnEndedEventArgs {
+	player: ServerPlayerInGame
+}
+export interface RoundEndedEventArgs {
+	player: ServerPlayerInGame
 }

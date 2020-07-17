@@ -6,6 +6,8 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
+import {RoundEndedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroGarellion extends ServerCard {
 	powerPerMana = 2
@@ -16,13 +18,14 @@ export default class HeroGarellion extends ServerCard {
 		this.dynamicTextVariables = {
 			powerPerMana: this.powerPerMana
 		}
+
+		this.createCallback<RoundEndedEventArgs>(GameEventType.ROUND_ENDED)
+			.requireLocation(CardLocation.BOARD)
+			.require(({ player }) => player === this.owner)
+			.perform(() => this.onRoundEnded())
 	}
 
-	onRoundEnded(): void {
-		if (this.location !== CardLocation.BOARD) {
-			return
-		}
-
+	private onRoundEnded(): void {
 		const thisUnit = this.unit
 		const consumedMana = thisUnit.owner.spellMana
 		thisUnit.owner.setSpellMana(0)

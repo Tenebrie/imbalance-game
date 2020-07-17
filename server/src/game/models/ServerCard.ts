@@ -462,15 +462,8 @@ export default class ServerCard extends Card {
 
 	onRevealed(owner: ServerPlayerInGame): void { return }
 
-	onBeforeOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
-	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
 	onOtherCardReceivedNewBuff(otherCard: ServerOwnedCard, buff: ServerBuff): void { return }
 
-	onRoundStarted(): void { return }
-	onTurnStarted(): void { return }
-	onTurnPhaseChanged(thisUnit: ServerUnit, phase: GameTurnPhase): void { return }
-	onTurnEnded(): void { return }
-	onRoundEnded(): void { return }
 	onUnitCustomOrderPerformed(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onBeforeUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
@@ -492,8 +485,6 @@ export default class ServerCard extends Card {
 
 	getAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return this.attack }
 	getBonusAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return 0 }
-	getDamageTaken(thisUnit: ServerUnit, damageSource: ServerDamageSource): number { return damageSource.value }
-	getDamageReduction(thisUnit: ServerUnit, damageSource: ServerDamageSource): number { return 0 }
 
 	getDeckAddedUnitCards(): any[] { return [] }
 	getDeckAddedSpellCards(): any[] { return [] }

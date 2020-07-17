@@ -1,6 +1,6 @@
 enum CardFeature {
 	HERO_POWER,
-	TEMPORARY_CARD
+	LOW_SORT_PRIORITY
 }
 
 export default CardFeature

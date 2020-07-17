@@ -129,7 +129,7 @@ export default {
 	sortCards(inputArray: RenderedCard[]): RenderedCard[] {
 		return inputArray.slice().sort((a: RenderedCard, b: RenderedCard) => {
 			return (
-				(+a.features.includes(CardFeature.TEMPORARY_CARD) - +b.features.includes(CardFeature.TEMPORARY_CARD)) ||
+				(+a.features.includes(CardFeature.LOW_SORT_PRIORITY) - +b.features.includes(CardFeature.LOW_SORT_PRIORITY)) ||
 				(a.type - b.type) ||
 				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
 				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))

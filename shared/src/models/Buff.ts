@@ -1,7 +1,8 @@
 import Card from './Card'
-import BuffStackType from '../enums/BuffStackType'
-import CardFeature from '../enums/CardFeature'
 import CardTribe from '../enums/CardTribe'
+import CardFeature from '../enums/CardFeature'
+import BuffStackType from '../enums/BuffStackType'
+import BuffFeature from '../enums/BuffFeature'
 
 export default interface Buff {
 	id: string
@@ -10,6 +11,7 @@ export default interface Buff {
 	buffClass: string
 	stackType: BuffStackType
 	cardTribes: CardTribe[]
+	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
 
 	duration: number

@@ -228,6 +228,9 @@
 	"card.name.unitOceanicSeagull": "Oceanic Seagull",
 	"card.description.unitOceanicSeagull": "*Deploy:*\n*Summon* a Bronze Merfolk card from your deck.",
 
+	"card.name.unitMerchantsAssistant": "Merchants Assistant",
+	"card.description.unitMerchantsAssistant": "*Deploy:*\nNext spell you cast this round costs {spellDiscount} Mana less.",
+
 	"card.name.tokenPlayerDeck": "Your deck",
 	"card.description.tokenPlayerDeck": "Choose your own deck",
 

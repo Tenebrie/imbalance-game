@@ -79,7 +79,6 @@ export default class RenderedCard extends Card {
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.class}`))
 		this.powerText = this.createBrushScriptText(this.power.toString())
 		this.armorText = this.createBrushScriptText(this.armor.toString())
-		// this.cardNameText = this.createTitleText(Localization.get(this.name))
 		this.cardNameText = new RichText(Localization.get(this.name), 200, {})
 		this.cardNameText.style.fill = 0x000000
 		this.cardNameText.verticalAlign = RichTextAlign.CENTER
@@ -174,6 +173,30 @@ export default class RenderedCard extends Card {
 		this.cardDisabledOverlay.visible = false
 		this.cardDisabledOverlay.anchor = new PIXI.Point(0.5, 0.5)
 		this.coreContainer.addChild(this.cardDisabledOverlay)
+	}
+
+	public get unitCost(): number {
+		let cost = 1
+		this.buffs.buffs.forEach(buff => {
+			cost = buff.getUnitCostOverride(cost)
+		})
+		return cost
+	}
+
+	public get spellCost(): number {
+		let cost = this.power
+		this.buffs.buffs.forEach(buff => {
+			cost = buff.getSpellCostOverride(cost)
+		})
+		return cost
+	}
+
+	public get maxPower(): number {
+		let cost = this.basePower
+		this.buffs.buffs.forEach(buff => {
+			cost = buff.getUnitMaxPowerOverride(cost)
+		})
+		return cost
 	}
 
 	public getDescriptionTextVariables(): RichTextVariables {

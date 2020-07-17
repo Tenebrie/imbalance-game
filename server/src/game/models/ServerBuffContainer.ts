@@ -54,6 +54,7 @@ export default class ServerBuffContainer implements BuffContainer {
 			existingBuff.duration += newBuff.duration
 			runCardEventHandler(() => existingBuff.onDurationChanged(newBuff.duration))
 			OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, existingBuff)
+			this.game.events.unsubscribe(newBuff)
 			return
 		} else if (existingBuff && newBuff.stackType === BuffStackType.ADD_INTENSITY) {
 			existingBuff.intensity += newBuff.intensity
@@ -65,6 +66,7 @@ export default class ServerBuffContainer implements BuffContainer {
 				runCardEventHandler(() => existingBuff.onDurationChanged(newBuff.duration))
 				OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, existingBuff)
 			}
+			this.game.events.unsubscribe(newBuff)
 			return
 		}
 
@@ -75,8 +77,12 @@ export default class ServerBuffContainer implements BuffContainer {
 		this.buffs.push(newBuff)
 		OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
 		runCardEventHandler(() => newBuff.onCreated())
-		runCardEventHandler(() => newBuff.onDurationChanged(newBuff.duration))
-		runCardEventHandler(() => newBuff.onIntensityChanged(newBuff.intensity))
+		if (newBuff.duration > 1) {
+			runCardEventHandler(() => newBuff.onDurationChanged(newBuff.duration - 1))
+		}
+		if (newBuff.intensity > 1) {
+			runCardEventHandler(() => newBuff.onIntensityChanged(newBuff.intensity - 1))
+		}
 
 		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
 			ownedCard.card.onOtherCardReceivedNewBuff(new ServerOwnedCard(this.card, this.card.owner), newBuff)
@@ -123,31 +129,5 @@ export default class ServerBuffContainer implements BuffContainer {
 		while (this.buffs.length > 0) {
 			this.removeByReference(this.buffs[0])
 		}
-	}
-
-	public onTurnStarted(): void {
-		this.buffs.forEach(buff => {
-			runCardEventHandler(() => buff.onTurnStarted())
-			buff.addDuration(-1)
-		})
-	}
-
-	public onTurnEnded(): void {
-		this.buffs.forEach(buff => {
-			runCardEventHandler(() => buff.onTurnEnded())
-			buff.addDuration(-1)
-		})
-	}
-
-	public onRoundStarted(): void {
-		this.buffs.forEach(buff => {
-			runCardEventHandler(() => buff.onRoundStarted())
-		})
-	}
-
-	public onRoundEnded(): void {
-		this.buffs.forEach(buff => {
-			runCardEventHandler(() => buff.onRoundEnded())
-		})
 	}
 }

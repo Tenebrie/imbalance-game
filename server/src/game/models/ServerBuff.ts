@@ -13,6 +13,8 @@ import CardLocation from '@shared/enums/CardLocation'
 import {EventCallback, EventHook} from './ServerGameEvents'
 import GameHookType from './GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
+import BuffFeature from '@shared/enums/BuffFeature'
+import {TurnEndedEventArgs, TurnStartedEventArgs} from './GameEventCreators'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -22,6 +24,7 @@ export default class ServerBuff implements Buff {
 	buffClass: string
 	stackType: BuffStackType
 	cardTribes: CardTribe[]
+	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
 
 	duration: number
@@ -36,7 +39,20 @@ export default class ServerBuff implements Buff {
 		this.baseDuration = Infinity
 		this.baseIntensity = 1
 		this.cardTribes = []
+		this.buffFeatures = []
 		this.cardFeatures = []
+
+		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
+			.require(({ player }) => player === this.card.owner)
+			.perform(() => this.onTurnChanged())
+
+		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED)
+			.require(({ player }) => player === this.card.owner)
+			.perform(() => this.onTurnChanged())
+	}
+
+	private onTurnChanged(): void {
+		this.addDuration(-1)
 	}
 
 	protected get unit(): ServerUnit | null {
@@ -82,10 +98,6 @@ export default class ServerBuff implements Buff {
 	onCreated(): void { return }
 	onDurationChanged(delta: number): void { return }
 	onIntensityChanged(delta: number): void { return }
-	onTurnStarted(): void { return }
-	onTurnEnded(): void { return }
-	onRoundStarted(): void { return }
-	onRoundEnded(): void { return }
 	onDestroyed(): void { return }
 
 	getUnitCostOverride(baseCost: number): number { return baseCost }

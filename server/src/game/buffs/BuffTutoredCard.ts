@@ -1,12 +1,14 @@
 import ServerBuff from '../models/ServerBuff'
 import BuffStackType from '@shared/enums/BuffStackType'
-import CardFeature from '@shared/enums/CardFeature'
 import ServerGame from '../models/ServerGame'
+import BuffFeature from '@shared/enums/BuffFeature'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class BuffTutoredCard extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.OVERLAY)
-		this.cardFeatures = [CardFeature.TEMPORARY_CARD]
+		this.buffFeatures = [BuffFeature.CARD_CAST_FREE]
+		this.cardFeatures = [CardFeature.LOW_SORT_PRIORITY]
 	}
 
 	getUnitCostOverride(baseCost: number): number {

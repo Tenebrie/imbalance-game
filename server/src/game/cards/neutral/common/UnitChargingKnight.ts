@@ -11,6 +11,9 @@ import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import MoveDirection from '@shared/enums/MoveDirection'
+import {TurnEndedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class UnitChargingKnight extends ServerCard {
 	movesForwardThisTurn = 0
@@ -20,6 +23,11 @@ export default class UnitChargingKnight extends ServerCard {
 		this.basePower = 10
 		this.baseAttack = 2
 		this.baseTribes = [CardTribe.HUMAN]
+
+		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED)
+			.requireLocation(CardLocation.BOARD)
+			.require(({ player }) => player === this.owner)
+			.perform(() => this.onTurnEnded())
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
@@ -34,7 +42,7 @@ export default class UnitChargingKnight extends ServerCard {
 		}
 	}
 
-	onTurnEnded(): void {
+	private onTurnEnded(): void {
 		this.movesForwardThisTurn = 0
 	}
 }

@@ -12,6 +12,8 @@ import ServerUnit from '../../../models/ServerUnit'
 import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
+import {TurnEndedEventArgs} from '../../../models/GameEventCreators'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class UnitStoneElemental extends ServerCard {
 	canAttack = false
@@ -27,6 +29,11 @@ export default class UnitStoneElemental extends ServerCard {
 			.perform(() => {
 				this.canAttack = true
 			})
+
+		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED)
+			.requireLocation(CardLocation.BOARD)
+			.require(({ player }) => player === this.owner)
+			.perform(() => this.onTurnEnded())
 	}
 
 	defineValidOrderTargets(): TargetDefinitionBuilder {
@@ -39,7 +46,7 @@ export default class UnitStoneElemental extends ServerCard {
 		target.buffs.add(BuffStun, this, BuffDuration.END_OF_NEXT_TURN)
 	}
 
-	onTurnEnded() {
+	private onTurnEnded(): void {
 		this.canAttack = false
 	}
 }
