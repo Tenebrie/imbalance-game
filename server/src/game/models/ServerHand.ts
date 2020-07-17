@@ -3,6 +3,7 @@ import ServerGame from './ServerGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerOwnedCard from './ServerOwnedCard'
+import GameEventCreators from './GameEventCreators'
 
 export default class ServerHand {
 	unitCards: ServerCard[]
@@ -37,10 +38,16 @@ export default class ServerHand {
 
 	public onUnitDrawn(card: ServerCard): void {
 		this.addUnit(card)
+		this.game.events.postEvent(GameEventCreators.cardDrawn({
+			triggeringCard: card
+		}))
 	}
 
 	public onSpellDrawn(card: ServerCard): void {
 		this.addSpell(card)
+		this.game.events.postEvent(GameEventCreators.cardDrawn({
+			triggeringCard: card
+		}))
 	}
 
 	public discardUnit(card: ServerCard): void {

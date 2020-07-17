@@ -88,7 +88,7 @@
 
 	"card.name.heroGarellion": "Garellion",
 	"card.title.heroGarellion": "The Conduit",
-	"card.description.heroGarellion": "*End of round:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
+	"card.description.heroGarellion": "*Round End:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
 
 	"card.name.heroAura": "Aura",
 	"card.title.heroAura": "The Golden Hawk",
@@ -156,6 +156,9 @@
 
 	"card.name.heroTribeShaman": "Tribal Shaman",
 	"card.description.heroTribeShaman": "*Deploy:*\n*Create* a *Healing Rain*",
+
+	"card.name.heroElderElemental": "Elder Elemental",
+	"card.description.heroElderElemental": "*Deploy:*\nGenerate {manaGenerated} Mana.<p>*Turn Start:*\nRepeat this unit's *Deploy* effect.",
 
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",

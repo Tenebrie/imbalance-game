@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import Core from '@/Pixi/Core'
 
 export default class ObjectTrail {
 	public readonly rope: PIXI.SimpleRope

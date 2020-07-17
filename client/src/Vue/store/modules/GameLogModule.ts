@@ -20,6 +20,10 @@ const GameLogModule = createModule({
 				id: uuidv4(),
 				entries: entries
 			})
+		},
+
+		clearLog(state): void {
+			state.entryGroups = []
 		}
 	},
 
@@ -27,6 +31,11 @@ const GameLogModule = createModule({
 		addEntryGroup(context, payload: { entries: EventLogEntryMessage[] }): void {
 			const { commit } = moduleActionContext(context, GameLogModule)
 			commit.addEntryGroup(payload.entries)
+		},
+
+		clearLog(context): void {
+			const { commit } = moduleActionContext(context, GameLogModule)
+			commit.clearLog()
 		}
 	}
 })

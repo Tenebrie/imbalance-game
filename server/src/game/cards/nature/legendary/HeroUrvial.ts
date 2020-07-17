@@ -11,7 +11,7 @@ import GameEventType from '@shared/enums/GameEventType'
 export default class HeroUrvial extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NATURE)
-		this.basePower = 10
+		this.basePower = 8
 		this.baseTribes = [CardTribe.MERFOLK]
 
 		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)

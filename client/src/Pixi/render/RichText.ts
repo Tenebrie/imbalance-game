@@ -39,7 +39,7 @@ export default class RichText extends PIXI.Container {
 	lineHeight: number
 	maxWidth: number
 	private variables: RichTextVariables
-	segments: { text: ScalingText, basePosition: PIXI.Point }[]
+	segments: { text: ScalingText, basePosition: PIXI.Point, lineIndex: number }[]
 	background: RichTextBackground
 	private __horizontalAlign: RichTextAlign = RichTextAlign.CENTER
 	private __verticalAlign: RichTextAlign = RichTextAlign.END
@@ -152,7 +152,7 @@ export default class RichText extends PIXI.Container {
 	}
 
 	public scaleFont(factor: number): void {
-		this.setFont(this.fontSize * factor, this.lineHeight * factor)
+		this.setFont(this.fontSize * factor, this.lineHeight)
 	}
 
 	public setFont(fontSize: number, lineHeight: number): void {
@@ -162,7 +162,8 @@ export default class RichText extends PIXI.Container {
 		this.lineHeight = lineHeight
 		const SCALE_MODIFIER = (this.fontSize / 18)
 		this.segments.forEach(segment => {
-			segment.text.position.set(segment.basePosition.x * SCALE_MODIFIER, segment.basePosition.y * SCALE_MODIFIER)
+			const heightModifier = (lineHeight - 24) * segment.lineIndex
+			segment.text.position.set(segment.basePosition.x * SCALE_MODIFIER, segment.basePosition.y * SCALE_MODIFIER + heightModifier)
 			segment.text.updateFont(fontSize, lineHeight)
 		})
 	}
@@ -174,8 +175,10 @@ export default class RichText extends PIXI.Container {
 
 		let linesRendered = 0
 		const oldFontSize = this.fontSize
+		const oldLineHeight = this.lineHeight
 
 		this.fontSize = 18
+		this.lineHeight = 24
 
 		const SCALE_MODIFIER = this.fontSize / this.baseFontSize
 
@@ -280,7 +283,8 @@ export default class RichText extends PIXI.Container {
 					renderedText.position = contextPosition
 					const renderedSegment = {
 						text: renderedText,
-						basePosition: contextPosition.clone()
+						basePosition: contextPosition.clone(),
+						lineIndex: linesRendered
 					}
 					currentLine.push(renderedSegment)
 					this.segments.push(renderedSegment)
@@ -369,7 +373,7 @@ export default class RichText extends PIXI.Container {
 			}
 		})
 
-		this.setFont(oldFontSize, this.lineHeight)
+		this.setFont(oldFontSize, oldLineHeight)
 		this.__textLineCount = linesRendered
 
 		if (this.background) {

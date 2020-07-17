@@ -17,11 +17,11 @@
 			<div class="escape-menu">
 				<button @click="onShowGameLog" class="primary game-button">Game history</button>
 				<div class="menu-separator"></div>
-				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>
-				<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>
-				<div class="menu-separator"></div>
-				<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>
-				<div class="menu-separator"></div>
+<!--				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>-->
+<!--				<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>-->
+<!--				<div class="menu-separator"></div>-->
+<!--				<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>-->
+<!--				<div class="menu-separator"></div>-->
 				<button @click="onLeaveGame" class="primary game-button destructive">Leave game</button>
 			</div>
 		</div>
@@ -34,7 +34,6 @@ import store from '@/Vue/store'
 import Player from '@shared/models/Player'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
-import TheLoginForm from '@/Vue/components/login/TheLoginForm.vue'
 import TheGameLog from '@/Vue/components/gamelog/TheGameLog.vue'
 
 export default Vue.extend({

@@ -37,9 +37,9 @@ export default class Renderer {
 	playerNameLabel: PIXI.Text
 	opponentNameLabel: PIXI.Text
 	playerPowerLabel: PIXI.Text
-	playerPowerLabelContainer: PIXI.Sprite
+	playerPowerLabelContainer: PIXI.Container
 	opponentPowerLabel: PIXI.Text
-	opponentPowerLabelContainer: PIXI.Sprite
+	opponentPowerLabelContainer: PIXI.Container
 
 	selectableCardsSmokescreen: PIXI.Sprite
 
@@ -119,20 +119,28 @@ export default class Renderer {
 			fontFamily: 'Roboto',
 		})
 		this.playerPowerLabel.anchor.set(0.5, 0.5)
-		this.playerPowerLabelContainer = new PIXI.Sprite(TextureAtlas.getTexture('board/power-allied'))
-		this.playerPowerLabelContainer.anchor.set(0, 0.5)
+		const playerPowerLabelBackground = new PIXI.Sprite(TextureAtlas.getTexture('board/power-allied'))
+		playerPowerLabelBackground.anchor.set(0, 0.5)
+		playerPowerLabelBackground.width = this.GAME_BOARD_ROW_WINDOW_FRACTION * this.getScreenHeight() / 2
+		playerPowerLabelBackground.height = this.GAME_BOARD_ROW_WINDOW_FRACTION * this.getScreenHeight() / 2
+		this.playerPowerLabel.position.set(playerPowerLabelBackground.width / 2, 0)
+		this.playerPowerLabelContainer = new PIXI.Container()
 		this.playerPowerLabelContainer.addChild(this.playerPowerLabel)
-		this.playerPowerLabel.position.set(this.playerPowerLabelContainer.width / 2, 0)
+		this.playerPowerLabelContainer.addChild(playerPowerLabelBackground)
 		this.rootContainer.addChild(this.playerPowerLabelContainer)
 
 		this.opponentPowerLabel = new PIXI.Text('', {
 			fontFamily: 'Roboto',
 		})
 		this.opponentPowerLabel.anchor.set(0.5, 0.5)
-		this.opponentPowerLabelContainer = new PIXI.Sprite(TextureAtlas.getTexture('board/power-enemy'))
-		this.opponentPowerLabelContainer.anchor.set(0, 0.5)
+		const opponentPowerLabelBackground = new PIXI.Sprite(TextureAtlas.getTexture('board/power-enemy'))
+		opponentPowerLabelBackground.anchor.set(0, 0.5)
+		opponentPowerLabelBackground.width = this.GAME_BOARD_ROW_WINDOW_FRACTION * this.getScreenHeight() / 2
+		opponentPowerLabelBackground.height = this.GAME_BOARD_ROW_WINDOW_FRACTION * this.getScreenHeight() / 2
+		this.opponentPowerLabel.position.set(opponentPowerLabelBackground.width / 2, 0)
+		this.opponentPowerLabelContainer = new PIXI.Container()
 		this.opponentPowerLabelContainer.addChild(this.opponentPowerLabel)
-		this.opponentPowerLabel.position.set(this.opponentPowerLabelContainer.width / 2, 0)
+		this.opponentPowerLabelContainer.addChild(opponentPowerLabelBackground)
 		this.rootContainer.addChild(this.opponentPowerLabelContainer)
 
 		/* Smoke screen */
@@ -803,15 +811,15 @@ export default class Renderer {
 		container.position.y = this.getScreenHeight() / 2
 		container.zIndex = INSPECTED_CARD_ZINDEX
 
-		inspectedCard.powerText.text = inspectedCard.basePower.toString()
-		if (inspectedCard.type === CardType.SPELL) {
-			inspectedCard.powerText.style.fill = 0x0000AA
-		} else {
-			inspectedCard.powerText.style.fill = 0x000000
-		}
+		// inspectedCard.powerText.text = inspectedCard.basePower.toString()
+		// if (inspectedCard.type === CardType.SPELL) {
+		// 	inspectedCard.powerText.style.fill = 0x0000AA
+		// } else {
+		// 	inspectedCard.powerText.style.fill = 0x000000
+		// }
 
-		inspectedCard.armorText.text = inspectedCard.baseArmor.toString()
-		inspectedCard.armorText.style.fill = 0xFFFFFF
+		// inspectedCard.armorText.text = inspectedCard.baseArmor.toString()
+		// inspectedCard.armorText.style.fill = 0xFFFFFF
 
 		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
 

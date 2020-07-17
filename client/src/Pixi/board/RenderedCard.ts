@@ -368,9 +368,9 @@ export default class RenderedCard extends Card {
 			this.armorTextBackground.visible = false
 		}
 
-		this.cardNameText.position.set(-15, 65)
+		this.cardNameText.position.set(-15, 69)
 		this.cardNameText.style.fontSize = 22
-		this.cardNameText.style.lineHeight = 18
+		this.cardNameText.style.lineHeight = 12
 
 		if (this.cardTitleText.text.length > 0) {
 			this.cardNameText.position.y -= 11
@@ -393,7 +393,7 @@ export default class RenderedCard extends Card {
 		if (description.length > 300) { fontSize = 20 }
 
 		this.cardDescriptionText.style.baseFontSize = fontSize
-		this.cardDescriptionText.setFont(fontSize, fontSize + 6)
+		this.cardDescriptionText.setFont(fontSize, 25)
 
 		if (this.color === CardColor.LEADER) {
 			this.powerText.text = '-'

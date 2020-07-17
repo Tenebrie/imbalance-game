@@ -8,7 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import {TurnStartedEventArgs} from '../../../models/GameEventCreators'
 
-export default class UnitElderElemental extends ServerCard {
+export default class HeroElderElemental extends ServerCard {
 	manaGenerated = 1
 
 	constructor(game: ServerGame) {
