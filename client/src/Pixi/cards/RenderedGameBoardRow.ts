@@ -1,8 +1,8 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import BoardRow from '@shared/models/BoardRow'
-import RenderedUnit from '@/Pixi/board/RenderedUnit'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 

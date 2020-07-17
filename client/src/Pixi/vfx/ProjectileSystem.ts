@@ -1,13 +1,12 @@
 import * as PIXI from 'pixi.js'
 import Core from '@/Pixi/Core'
 import RenderedProjectile from '@/Pixi/models/RenderedProjectile'
-import RenderedUnit from '@/Pixi/board/RenderedUnit'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { easeInQuad } from 'js-easing-functions'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 export default class ProjectileSystem {
-	projectiles: RenderedProjectile[] = []
+	private projectiles: RenderedProjectile[] = []
 
 	public tick(deltaTime: number, deltaFraction: number): void {
 		const endOfLifeProjectiles = this.projectiles.filter(projectile => projectile.currentTime >= projectile.lifetime)
@@ -61,12 +60,13 @@ export default class ProjectileSystem {
 		})
 	}
 
-	public createAttackProjectile(sourcePosition: PIXI.Point, targetCard: RenderedCard): RenderedProjectile {
+	private createAttackProjectile(sourcePosition: PIXI.Point, targetCard: RenderedCard, onImpact: () => void): RenderedProjectile {
 		const sprite = new PIXI.Sprite(TextureAtlas.getTexture('effects/fireball-static'))
 		sprite.zIndex = 100
 		sprite.scale.set(0.4)
 		sprite.anchor.set(0.5, 0.5)
 		const projectile = RenderedProjectile.targetCard(sprite, sourcePosition, targetCard, 500, 1200)
+		projectile.onImpact = onImpact
 		projectile.trail.rope.zIndex = 99
 		Core.renderer.rootContainer.addChild(projectile.sprite)
 		Core.renderer.rootContainer.addChild(projectile.trail.rope)
@@ -75,10 +75,22 @@ export default class ProjectileSystem {
 	}
 
 	public createCardAttackProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
-		return this.createAttackProjectile(sourceCard.getPosition(), targetCard)
+		return this.createAttackProjectile(sourceCard.getPosition(), targetCard, () => {
+			Core.particleSystem.createInteractionImpactParticleEffect(targetCard)
+		})
 	}
 
 	public createUniverseAttackProjectile(targetCard: RenderedCard): RenderedProjectile {
-		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard)
+		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => {
+			Core.particleSystem.createInteractionImpactParticleEffect(targetCard)
+		})
+	}
+
+	public createCardAffectProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
+		return this.createAttackProjectile(sourceCard.getPosition(), targetCard, () => { /* Empty */ })
+	}
+
+	public createUniverseAffectProjectile(targetCard: RenderedCard): RenderedProjectile {
+		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => { /* Empty */ })
 	}
 }

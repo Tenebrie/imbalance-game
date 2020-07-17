@@ -51,7 +51,7 @@ export default class SpellFireball extends ServerCard {
 	private onTargetSelected(target: ServerUnit): void {
 		const areaTargets = this.game.board.getAdjacentUnits(target)
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
+		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
 		const survivingAreaTargets = areaTargets.filter(target => target.isAlive())
@@ -59,7 +59,7 @@ export default class SpellFireball extends ServerCard {
 			return
 		}
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits(survivingAreaTargets, this.areaDamage))
+		this.game.animation.play(ServerAnimation.universeAttacksUnits(survivingAreaTargets))
 		survivingAreaTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.areaDamage, this)))
 	}
 }

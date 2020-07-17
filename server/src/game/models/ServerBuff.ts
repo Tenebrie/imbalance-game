@@ -15,6 +15,7 @@ import GameHookType from './GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffFeature from '@shared/enums/BuffFeature'
 import {TurnEndedEventArgs, TurnStartedEventArgs} from './GameEventCreators'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -22,6 +23,7 @@ export default class ServerBuff implements Buff {
 	card: ServerCard
 	source: ServerCard | null
 	buffClass: string
+	alignment: BuffAlignment
 	stackType: BuffStackType
 	cardTribes: CardTribe[]
 	buffFeatures: BuffFeature[]
@@ -36,6 +38,7 @@ export default class ServerBuff implements Buff {
 		this.id = uuidv4()
 		this.game = game
 		this.stackType = stackType
+		this.alignment = BuffAlignment.NEUTRAL
 		this.baseDuration = Infinity
 		this.baseIntensity = 1
 		this.cardTribes = []

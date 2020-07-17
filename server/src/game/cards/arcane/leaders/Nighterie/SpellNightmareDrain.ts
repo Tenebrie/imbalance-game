@@ -17,6 +17,7 @@ import BuffStrength from '../../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import {EffectTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class SpellNightmareDrain extends ServerCard {
 	constructor(game: ServerGame) {
@@ -59,5 +60,6 @@ export default class SpellNightmareDrain extends ServerCard {
 		for (let i = 0; i < missingHealth; i++) {
 			shadowspawnUnit.buffs.add(BuffStrength, shadowspawn, BuffDuration.INFINITY)
 		}
+		this.game.animation.play(ServerAnimation.cardReceivedBuff([shadowspawn], BuffAlignment.POSITIVE))
 	}
 }

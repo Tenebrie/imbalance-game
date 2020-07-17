@@ -12,6 +12,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import BuffBurning from '../../../buffs/BuffBurning'
 import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class HeroFlameDancer extends ServerCard {
 	burnDuration = 3
@@ -38,10 +39,12 @@ export default class HeroFlameDancer extends ServerCard {
 
 	private onTargetSelected(target: ServerBoardRow): void {
 		const targetUnits = target.cards
+		const targetCards = targetUnits.map(unit => unit.card)
 
-		this.game.animation.play(ServerAnimation.cardAttacksUnits(this, targetUnits))
+		this.game.animation.play(ServerAnimation.cardAffectsCards(this, targetCards))
 		targetUnits.forEach(targetUnit => {
 			targetUnit.card.buffs.add(BuffBurning, this, BuffDuration.FULL_TURN * this.burnDuration)
 		})
+		this.game.animation.play(ServerAnimation.cardReceivedBuff(targetCards, BuffAlignment.NEGATIVE))
 	}
 }

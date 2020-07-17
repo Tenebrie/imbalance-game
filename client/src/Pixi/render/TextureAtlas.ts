@@ -35,6 +35,7 @@ export default class TextureAtlas {
 				'masks/black',
 				'effects/trail',
 				'effects/fireball-static',
+				'effects/particle',
 				'board/row-allied',
 				'board/row-enemy',
 				'board/power-allied',

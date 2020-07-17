@@ -1,8 +1,8 @@
 import Core from '@/Pixi/Core'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import { CardLocation } from '@/Pixi/enums/CardLocation'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import RenderedUnit from '@/Pixi/board/RenderedUnit'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 
 export default class HoveredCard {
 	card: RenderedCard

@@ -1,7 +1,7 @@
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import TargetingLine from '@/Pixi/models/TargetingLine'
 import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
-import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 
 export default class GrabbedCard {
 	card: RenderedCard

@@ -8,6 +8,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTakesDamageEventArgs} from '../../../models/GameEventCreators'
+import ServerAnimation from '../../../models/ServerAnimation'
 
 export default class UnitWingedShieldmaiden extends ServerCard {
 	constructor(game: ServerGame) {
@@ -41,6 +42,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 				if (targetUnit && targetUnit.isAlive()) {
 					this.game.board.moveUnit(targetUnit, preparedState.moveTargetRowIndex, preparedState.moveTargetUnitIndex)
 				}
+				this.game.animation.play(ServerAnimation.unitMove())
 				this.owner.drawUnitCards(1)
 			})
 	}

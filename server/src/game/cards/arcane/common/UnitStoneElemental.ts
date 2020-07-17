@@ -14,6 +14,8 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import {TurnEndedEventArgs} from '../../../models/GameEventCreators'
 import CardLocation from '@shared/enums/CardLocation'
+import ServerAnimation from '../../../models/ServerAnimation'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class UnitStoneElemental extends ServerCard {
 	canAttack = false
@@ -44,6 +46,7 @@ export default class UnitStoneElemental extends ServerCard {
 
 	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode) {
 		target.buffs.add(BuffStun, this, BuffDuration.END_OF_NEXT_TURN)
+		this.game.animation.play(ServerAnimation.cardReceivedBuff([target.card], BuffAlignment.NEGATIVE))
 	}
 
 	private onTurnEnded(): void {

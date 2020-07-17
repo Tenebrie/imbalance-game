@@ -1,10 +1,10 @@
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import MouseHover from '@/Pixi/input/MouseHover'
-import RenderedUnit from '@/Pixi/board/RenderedUnit'
-import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import RichTextVariables from '@shared/models/RichTextVariables'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 export default class ForcedTargetingMode {
 	validTargets: ClientCardTarget[] = []

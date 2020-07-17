@@ -1,8 +1,8 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import QueuedMessage from '@/Pixi/models/QueuedMessage'
-import RenderedCard from '@/Pixi/board/RenderedCard'
-import ProjectileSystem from '@/Pixi/render/ProjectileSystem'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import ProjectileSystem from '@/Pixi/vfx/ProjectileSystem'
 
 export default class MainHandler {
 	projectileSystem: ProjectileSystem = new ProjectileSystem()
@@ -30,6 +30,7 @@ export default class MainHandler {
 			this.tick(deltaTime, deltaFraction)
 			this.projectileSystem.tick(deltaTime, deltaFraction)
 			Core.renderer.tick(deltaTime, deltaFraction)
+			Core.particleSystem.tick(deltaTime, deltaFraction)
 			Core.input.tick()
 		})
 

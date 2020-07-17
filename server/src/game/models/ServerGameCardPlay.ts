@@ -56,7 +56,7 @@ export default class ServerGameCardPlay {
 
 		/* Announce card to opponent */
 		card.reveal(owner, owner.opponent)
-		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardPlay(card))
+		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardAnnounce(card))
 
 		/* Remove card from source */
 		if (source === 'hand' && owner.cardHand.findCardById(card.id)) {

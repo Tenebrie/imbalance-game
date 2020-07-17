@@ -4,13 +4,14 @@ import Input from '@/Pixi/input/Input'
 import Renderer from '@/Pixi/Renderer'
 import MainHandler from '@/Pixi/MainHandler'
 import ClientGame from '@/Pixi/models/ClientGame'
-import RenderedCard from '@/Pixi/board/RenderedCard'
-import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import RenderedGameBoard from '@/Pixi/cards/RenderedGameBoard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientCardResolveStack from '@/Pixi/models/ClientCardResolveStack'
+import ParticleSystem from '@/Pixi/vfx/ParticleSystem'
 
 export default class Core {
 	public static isReady = false
@@ -19,6 +20,7 @@ export default class Core {
 	public static socket: WebSocket
 	public static renderer: Renderer
 	public static mainHandler: MainHandler
+	public static particleSystem: ParticleSystem
 	public static keepaliveTimer: number
 
 	public static game: ClientGame
@@ -47,6 +49,7 @@ export default class Core {
 		await TextureAtlas.prepare()
 
 		Core.renderer = new Renderer(container)
+		Core.particleSystem = new ParticleSystem()
 
 		Core.game = new ClientGame()
 		Core.input = new Input()

@@ -10,6 +10,7 @@ import ServerCard from './ServerCard'
 import Utils from '../../utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
 import ServerGameEventCreators from './GameEventCreators'
+import ServerAnimation from './ServerAnimation'
 
 export default class ServerBoard extends Board {
 	readonly game: ServerGame
@@ -149,6 +150,9 @@ export default class ServerBoard extends Board {
 			OutgoingMessageHandlers.notifyAboutUnitCreated(playerInGame.player, unit, rowIndex, unitIndex)
 		})
 
+		/* Play deploy animation */
+		this.game.animation.play(ServerAnimation.unitDeploy(card))
+
 		this.game.events.postEvent(ServerGameEventCreators.unitCreated({
 			triggeringUnit: unit
 		}))
@@ -158,6 +162,10 @@ export default class ServerBoard extends Board {
 
 	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number): void {
 		if (unit.rowIndex === rowIndex && unit.unitIndex === unitIndex) {
+			return
+		}
+
+		if (rowIndex < 0 || rowIndex >= Constants.GAME_BOARD_ROW_COUNT) {
 			return
 		}
 

@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
-import RenderedCard from '@/Pixi/board/RenderedCard'
-import ObjectTrail from '@/Pixi/render/ObjectTrail'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import ObjectTrail from '@/Pixi/vfx/ObjectTrail'
 
 export default class RenderedProjectile {
 	sprite: PIXI.Sprite

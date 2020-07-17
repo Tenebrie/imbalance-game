@@ -1,7 +1,7 @@
 import Constants from '@shared/Constants'
 import Board from '@shared/models/Board'
-import RenderedUnit from '@/Pixi/board/RenderedUnit'
-import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 

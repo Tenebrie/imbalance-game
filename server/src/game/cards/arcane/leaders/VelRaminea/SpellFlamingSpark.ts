@@ -22,7 +22,7 @@ export default class SpellFlamingSpark extends ServerCard {
 	damagePerWeave = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
+		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.EXPERIMENTAL)
 
 		this.basePower = 2
 		this.baseFeatures = [CardFeature.HERO_POWER]
@@ -49,7 +49,7 @@ export default class SpellFlamingSpark extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
+		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 	}
 }

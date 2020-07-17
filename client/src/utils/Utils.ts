@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import CardMessage from '@shared/models/network/CardMessage'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardType from '@shared/enums/CardType'
 import CardFeature from '@shared/enums/CardFeature'
 import Card from '@shared/models/Card'
