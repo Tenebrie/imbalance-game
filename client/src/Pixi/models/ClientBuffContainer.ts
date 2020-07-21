@@ -1,4 +1,4 @@
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ClientBuff from '@/Pixi/models/ClientBuff'
 import BuffContainer from '@shared/models/BuffContainer'
 import BuffContainerMessage from '@shared/models/network/BuffContainerMessage'

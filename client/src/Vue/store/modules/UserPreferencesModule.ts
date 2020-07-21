@@ -9,7 +9,12 @@ const userPreferencesModule = createModule({
 	namespaced: true,
 	state: {
 		selectedLanguage: 'en' as Language,
-		selectedQuality: RenderQuality.DEFAULT as RenderQuality
+		selectedQuality: RenderQuality.DEFAULT as RenderQuality,
+		masterVolume: 1.00 as number,
+		musicVolume: 0.50 as number,
+		effectsVolume: 0.50 as number,
+		ambienceVolume: 0.50 as number,
+		userInterfaceVolume: 0.50 as number,
 	},
 
 	mutations: {

@@ -28,6 +28,8 @@ export default class RenderedCard extends Card {
 	public hitboxSprite: PIXI.Sprite
 	public displayMode = CardDisplayMode.UNDEFINED
 
+	public readonly deployEffectContainer: PIXI.Container
+
 	private readonly cardModeContainer: PIXI.Container
 	private readonly cardModeTextContainer: PIXI.Container
 	private readonly unitModeContainer: PIXI.Container
@@ -152,9 +154,12 @@ export default class RenderedCard extends Card {
 		this.unitModeContainer.addChild(this.armorTextZoomBackground)
 		internalContainer.addChild(this.unitModeContainer)
 
+		this.deployEffectContainer = new PIXI.Container()
+
 		/* Core container */
 		this.coreContainer = new PIXI.Container()
 		this.coreContainer.visible = false
+		this.coreContainer.addChild(this.deployEffectContainer)
 		this.coreContainer.addChild(this.sprite)
 		this.coreContainer.addChild(this.powerText)
 		this.coreContainer.addChild(this.armorText)

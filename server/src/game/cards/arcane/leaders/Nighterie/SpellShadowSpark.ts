@@ -46,7 +46,7 @@ export default class SpellShadowSpark extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
+		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
 		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)

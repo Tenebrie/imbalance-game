@@ -14,6 +14,7 @@ import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTakesDamageEventArgs, EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class HeroTroviar extends ServerCard {
 	deployDamage = 1
@@ -35,7 +36,7 @@ export default class HeroTroviar extends ServerCard {
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE)
 			.requireLocations([CardLocation.BOARD, CardLocation.STACK])
-			.perform(({ triggeringCard }) => this.onCardTakesDamage(triggeringCard))
+			.perform(() => this.onCardTakesDamage())
 
 		this.createCallback(GameEventType.EFFECT_TARGETS_CONFIRMED)
 			.perform(() => this.onTargetsConfirmed())
@@ -55,11 +56,11 @@ export default class HeroTroviar extends ServerCard {
 		this.targetsHit.push(target)
 	}
 
-	private onCardTakesDamage(targetCard: ServerCard): void {
-		this.game.animation.play(ServerAnimation.cardAttacksCards(targetCard, [this]))
+	private onCardTakesDamage(): void {
 		for (let i = 0; i < this.powerGained; i++) {
 			this.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
 		}
+		this.game.animation.play(ServerAnimation.cardReceivedBuff([this], BuffAlignment.POSITIVE))
 	}
 
 	private onTargetsConfirmed(): void {

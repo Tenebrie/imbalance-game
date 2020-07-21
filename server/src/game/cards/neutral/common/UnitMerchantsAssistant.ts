@@ -8,6 +8,8 @@ import GameEventType from '@shared/enums/GameEventType'
 import BuffSpellDiscountSingular from '../../../buffs/BuffSpellDiscountSingular'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffSpellDiscountAura from '../../../buffs/BuffSpellDiscountAura'
+import ServerAnimation from '../../../models/ServerAnimation'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class UnitMerchantsAssistant extends ServerCard {
 	spellDiscount = 3
@@ -29,5 +31,6 @@ export default class UnitMerchantsAssistant extends ServerCard {
 		const alliedSpells = player.cardHand.spellCards
 		this.owner.leader.buffs.addMultiple(BuffSpellDiscountAura, this.spellDiscount, this, BuffDuration.INFINITY)
 		alliedSpells.forEach(spell => spell.buffs.addMultiple(BuffSpellDiscountSingular, this.spellDiscount, this, BuffDuration.INFINITY))
+		this.game.animation.play(ServerAnimation.cardReceivedBuff(alliedSpells, BuffAlignment.POSITIVE))
 	}
 }

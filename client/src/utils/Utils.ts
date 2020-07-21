@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import CardMessage from '@shared/models/network/CardMessage'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardType from '@shared/enums/CardType'
 import CardFeature from '@shared/enums/CardFeature'
 import Card from '@shared/models/Card'
@@ -43,6 +43,20 @@ export const getRenderScale = (): CardRenderScale => {
 			descriptionGameFontRenderScale: 1.0,
 			descriptionEditorFontRenderScale: 1.0
 		}
+	}
+}
+
+export const forEachInNumericEnum = (enumeration: any, handler: (val: any) => any): void => {
+	for (const value in enumeration) {
+		if (!isNaN(Number(value))) {
+			handler(Number(value))
+		}
+	}
+}
+
+export const forEachInStringEnum = (enumeration: any, handler: (val: any) => any): void => {
+	for (const value in enumeration) {
+		handler(enumeration[value])
 	}
 }
 

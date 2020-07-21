@@ -1,6 +1,6 @@
 import Core from '@/Pixi/Core'
 import Unit from '@shared/models/Unit'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import UnitMessage from '@shared/models/network/UnitMessage'
 

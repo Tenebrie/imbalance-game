@@ -11,7 +11,7 @@ import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellFlameweave extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
+		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.EXPERIMENTAL)
 
 		this.basePower = 1
 		this.baseFeatures = [CardFeature.HERO_POWER]

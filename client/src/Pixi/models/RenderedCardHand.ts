@@ -2,7 +2,7 @@ import Core from '@/Pixi/Core'
 import Utils from '@/utils/Utils'
 import CardHand from '@shared/models/CardHand'
 import CardMessage from '@shared/models/network/CardMessage'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardHandMessage from '@shared/models/network/CardHandMessage'
 import CardType from '@shared/enums/CardType'
 

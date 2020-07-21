@@ -6,6 +6,7 @@ import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateM
 import ServerOwnedCard from './ServerOwnedCard'
 import ServerGame from './ServerGame'
 import runCardEventHandler from '../utils/runCardEventHandler'
+import ServerAnimation from './ServerAnimation'
 
 interface BuffConstructor {
 	new (game: ServerGame): ServerBuff

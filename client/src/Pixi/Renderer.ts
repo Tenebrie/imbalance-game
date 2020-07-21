@@ -1,11 +1,11 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@shared/Constants'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
-import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
-import RenderedUnit from '@/Pixi/board/RenderedUnit'
-import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
+import RenderedGameBoard from '@/Pixi/cards/RenderedGameBoard'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardType from '@shared/enums/CardType'
 import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import CardTint from '@/Pixi/enums/CardTint'
@@ -17,7 +17,9 @@ import Utils, {getRenderScale} from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 const UNIT_ZINDEX = 2
+const UNIT_EFFECT_ZINDEX = 5
 const TARGETING_ARROW_ZINDEX = 10
+const HAND_EFFECT_ZINDEX = 25
 const HOVERED_CARD_ZINDEX = 95
 const RESOLVING_CARD_ZINDEX = 100
 const GRABBED_CARD_ZINDEX = 150
@@ -28,6 +30,8 @@ const INSPECTED_CARD_ZINDEX = 500
 export default class Renderer {
 	pixi: PIXI.Application
 	rootContainer: PIXI.Container
+	boardEffectsContainer: PIXI.Container
+	handEffectsContainer: PIXI.Container
 	superSamplingLevel: number
 
 	container: HTMLElement
@@ -72,6 +76,13 @@ export default class Renderer {
 		this.rootContainer = new PIXI.Container()
 		this.rootContainer.sortableChildren = true
 		this.pixi.stage.addChild(this.rootContainer)
+
+		this.boardEffectsContainer = new PIXI.Container()
+		this.boardEffectsContainer.zIndex = UNIT_EFFECT_ZINDEX
+		this.rootContainer.addChild(this.boardEffectsContainer)
+		this.handEffectsContainer = new PIXI.Container()
+		this.handEffectsContainer.zIndex = HAND_EFFECT_ZINDEX
+		this.rootContainer.addChild(this.handEffectsContainer)
 
 		this.pixi.view.style.maxWidth = '100vw'
 		this.pixi.view.style.maxHeight = '100vh'
@@ -506,7 +517,9 @@ export default class Renderer {
 		const targetPositionY = rowY
 
 		if (unit.card.displayMode === CardDisplayMode.ON_BOARD) {
-			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
+			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 2
+			unit.card.powerText.alpha = sprite.alpha
+			unit.card.armorText.alpha = sprite.alpha
 			container.position.x += (targetPositionX - container.position.x) * this.deltaTimeFraction * 7
 			container.position.y += (targetPositionY - container.position.y) * this.deltaTimeFraction * 7
 		} else {

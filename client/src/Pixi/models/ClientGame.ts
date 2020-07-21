@@ -1,7 +1,7 @@
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Core from '@/Pixi/Core'
 import Card from '@shared/models/Card'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/CardMessage'
 
 export default class ClientGame {

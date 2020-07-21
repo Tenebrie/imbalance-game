@@ -3,18 +3,20 @@ import * as PIXI from 'pixi.js'
 import CardType from '@shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import {CardLocation} from '@/Pixi/enums/CardLocation'
 import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import TargetType from '@shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardMessage from '@shared/models/network/CardMessage'
 import Utils from '@/utils/Utils'
+import AudioSystem from '@/Pixi/audio/AudioSystem'
+import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
@@ -248,6 +250,7 @@ export default class Input {
 			return
 		}
 
+		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
 		OutgoingMessageHandlers.sendCardTarget(this.forcedTargetingMode.validTargets.find(target => target.targetCardData.id === selectedCard.id))
 	}
 

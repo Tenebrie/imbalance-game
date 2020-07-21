@@ -52,7 +52,7 @@ export default class SpellSteelSpark extends ServerCard {
 	private onTargetSelected(target: ServerUnit): void {
 		const sideTargets = this.game.board.getAdjacentUnits(target).filter(unit => unit.rowIndex === target.rowIndex)
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
+		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
 		const survivingSideTargets = sideTargets.filter(target => target.isAlive())
@@ -60,7 +60,7 @@ export default class SpellSteelSpark extends ServerCard {
 			return
 		}
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits(survivingSideTargets, this.sideDamage))
+		this.game.animation.play(ServerAnimation.universeAttacksUnits(survivingSideTargets))
 		survivingSideTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.sideDamage, this)))
 	}
 }

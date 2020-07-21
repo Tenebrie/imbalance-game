@@ -7,6 +7,8 @@ import CardType from '@shared/enums/CardType'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import ServerCard from '../models/ServerCard'
+import ServerAnimation from '../models/ServerAnimation'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class BuffSpellDiscountSingular extends ServerBuff {
 	constructor(game: ServerGame) {
@@ -30,5 +32,6 @@ export default class BuffSpellDiscountSingular extends ServerBuff {
 
 	private onNewCardDrawn(card: ServerCard): void {
 		card.buffs.addMultiple(BuffSpellDiscountSingular, this.intensity, this.source)
+		this.game.animation.play(ServerAnimation.cardReceivedBuff([card], BuffAlignment.POSITIVE))
 	}
 }
