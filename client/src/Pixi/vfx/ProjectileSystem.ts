@@ -2,8 +2,10 @@ import * as PIXI from 'pixi.js'
 import Core from '@/Pixi/Core'
 import RenderedProjectile from '@/Pixi/models/RenderedProjectile'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import { easeInQuad } from 'js-easing-functions'
+import {easeInQuad} from 'js-easing-functions'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
+import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
+import AudioSystem from '@/Pixi/audio/AudioSystem'
 
 export default class ProjectileSystem {
 	private projectiles: RenderedProjectile[] = []
@@ -71,18 +73,21 @@ export default class ProjectileSystem {
 		Core.renderer.rootContainer.addChild(projectile.sprite)
 		Core.renderer.rootContainer.addChild(projectile.trail.rope)
 		Core.mainHandler.projectileSystem.projectiles.push(projectile)
+		AudioSystem.playEffect(AudioEffectCategory.PROJECTILE)
 		return projectile
 	}
 
 	public createCardAttackProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
 		return this.createAttackProjectile(sourceCard.getPosition(), targetCard, () => {
 			Core.particleSystem.createInteractionImpactParticleEffect(targetCard)
+			AudioSystem.playEffect(AudioEffectCategory.IMPACT_GENERIC)
 		})
 	}
 
 	public createUniverseAttackProjectile(targetCard: RenderedCard): RenderedProjectile {
 		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => {
 			Core.particleSystem.createInteractionImpactParticleEffect(targetCard)
+			AudioSystem.playEffect(AudioEffectCategory.IMPACT_GENERIC)
 		})
 	}
 

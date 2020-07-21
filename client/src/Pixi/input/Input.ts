@@ -15,6 +15,8 @@ import MouseHover from '@/Pixi/input/MouseHover'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardMessage from '@shared/models/network/CardMessage'
 import Utils from '@/utils/Utils'
+import AudioSystem from '@/Pixi/audio/AudioSystem'
+import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
@@ -248,6 +250,7 @@ export default class Input {
 			return
 		}
 
+		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
 		OutgoingMessageHandlers.sendCardTarget(this.forcedTargetingMode.validTargets.find(target => target.targetCardData.id === selectedCard.id))
 	}
 

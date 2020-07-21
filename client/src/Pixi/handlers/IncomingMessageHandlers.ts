@@ -25,6 +25,8 @@ import BuffMessage from '@shared/models/network/BuffMessage'
 import ClientBuff from '@/Pixi/models/ClientBuff'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
+import AudioSystem from '@/Pixi/audio/AudioSystem'
+import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {

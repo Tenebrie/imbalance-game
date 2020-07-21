@@ -45,6 +45,7 @@ export default class UnitStoneElemental extends ServerCard {
 	}
 
 	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode) {
+		this.canAttack = false
 		target.buffs.add(BuffStun, this, BuffDuration.END_OF_NEXT_TURN)
 		this.game.animation.play(ServerAnimation.cardReceivedBuff([target.card], BuffAlignment.NEGATIVE))
 	}

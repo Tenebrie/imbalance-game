@@ -5,6 +5,8 @@ import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
+import AudioSystem from '@/Pixi/audio/AudioSystem'
+import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 
 export default class ForcedTargetingMode {
 	validTargets: ClientCardTarget[] = []
@@ -71,6 +73,7 @@ export default class ForcedTargetingMode {
 	}
 
 	public confirmTarget(): void {
+		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
 		OutgoingMessageHandlers.sendCardTarget(this.selectedTarget)
 		this.validTargets = []
 		this.selectedTarget = null

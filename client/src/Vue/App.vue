@@ -14,13 +14,15 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
+import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
 
 export default {
 	components: { TheNavigationBar },
 
-	mounted() {
-		store.dispatch.userPreferencesModule.fetchPreferences()
+	async mounted() {
 		window.addEventListener('keydown', this.onKeyDown)
+		await store.dispatch.userPreferencesModule.fetchPreferences()
+		AudioSystem.setMode(AudioSystemMode.MENU)
 	},
 
 	beforeDestroy() {

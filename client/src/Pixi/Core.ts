@@ -1,4 +1,3 @@
-import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import Input from '@/Pixi/input/Input'
 import Renderer from '@/Pixi/Renderer'
@@ -12,6 +11,7 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientCardResolveStack from '@/Pixi/models/ClientCardResolveStack'
 import ParticleSystem from '@/Pixi/vfx/ParticleSystem'
+import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
 
 export default class Core {
 	public static isReady = false
@@ -48,6 +48,7 @@ export default class Core {
 
 		await TextureAtlas.prepare()
 
+		AudioSystem.setMode(AudioSystemMode.GAME)
 		Core.renderer = new Renderer(container)
 		Core.particleSystem = new ParticleSystem()
 
@@ -94,6 +95,7 @@ export default class Core {
 			console.error(`Connection closed. Reason: ${event.reason}`)
 		}
 		clearInterval(Core.keepaliveTimer)
+		AudioSystem.setMode(AudioSystemMode.MENU)
 		Core.input.clear()
 		Core.mainHandler.stop()
 		Core.renderer.destroy()

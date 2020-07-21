@@ -46,6 +46,20 @@ export const getRenderScale = (): CardRenderScale => {
 	}
 }
 
+export const forEachInNumericEnum = (enumeration: any, handler: (val: any) => any): void => {
+	for (const value in enumeration) {
+		if (!isNaN(Number(value))) {
+			handler(Number(value))
+		}
+	}
+}
+
+export const forEachInStringEnum = (enumeration: any, handler: (val: any) => any): void => {
+	for (const value in enumeration) {
+		handler(enumeration[value])
+	}
+}
+
 export default {
 	getFont(text: string) {
 		let font = 'Roboto'

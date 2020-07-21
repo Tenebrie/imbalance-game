@@ -3,6 +3,9 @@ import AnimationType from '@shared/enums/AnimationType'
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import CardReceivedBuffAnimParams from '@shared/models/animations/CardReceivedBuffAnimParams'
+import AudioSystem from '@/Pixi/audio/AudioSystem'
+import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 	[AnimationType.DELAY]: (message: AnimationMessage, params: void) => {
@@ -69,6 +72,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 
 	[AnimationType.UNIT_DEPLOY]: (message: AnimationMessage, params: void) => {
 		const targetUnit = Core.board.findUnitById(message.targetCardId)
+		AudioSystem.playEffect(AudioEffectCategory.UNIT_DEPLOY)
 		PIXI.Ticker.shared.addOnce(() => {
 			Core.particleSystem.createUnitDeployParticleEffect(targetUnit)
 		})
@@ -83,6 +87,8 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		message.targetCardIDs.forEach(targetCardId => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			Core.particleSystem.createCardReceivedBuffParticleEffect(targetCard, params.alignment)
+			const audioEffectCategory = params.alignment === BuffAlignment.NEGATIVE ? AudioEffectCategory.BUFF_NEGATIVE : AudioEffectCategory.BUFF_POSITIVE
+			AudioSystem.playEffect(audioEffectCategory)
 		})
 		return 500
 	},
