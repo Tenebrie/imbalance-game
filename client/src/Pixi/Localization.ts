@@ -5,7 +5,7 @@ import ru from '@/Pixi/locales/ru.json'
 class Localization {
 	public get(id: string): string {
 		let localizationJson: {[ index: string]: string}
-		const language = store.state.userPreferencesModule.selectedLanguage
+		const language = store.state.userPreferencesModule.userLanguage
 		if (language === 'en') {
 			localizationJson = en
 		} else {

@@ -7,6 +7,11 @@ export default class UserProfileMessage {
 	username: string
 	userLanguage: Language
 	renderQuality: RenderQuality
+	masterVolume: number
+	musicVolume: number
+	effectsVolume: number
+	ambienceVolume: number
+	userInterfaceVolume: number
 
 	constructor(databaseEntry: PlayerDatabaseEntry) {
 		const splitEmail = databaseEntry.email.split('@')
@@ -17,5 +22,10 @@ export default class UserProfileMessage {
 		this.username = databaseEntry.username
 		this.userLanguage = databaseEntry.userLanguage
 		this.renderQuality = databaseEntry.renderQuality
+		this.masterVolume = databaseEntry.masterVolume
+		this.musicVolume = databaseEntry.musicVolume
+		this.effectsVolume = databaseEntry.effectsVolume
+		this.ambienceVolume = databaseEntry.ambienceVolume
+		this.userInterfaceVolume = databaseEntry.userInterfaceVolume
 	}
 }

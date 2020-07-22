@@ -18,7 +18,7 @@ export interface CardRenderScale {
 }
 
 export const getRenderScale = (): CardRenderScale => {
-	const selectedQuality = store.state.userPreferencesModule.selectedQuality
+	const selectedQuality = store.state.userPreferencesModule.renderQuality
 	if (selectedQuality === RenderQuality.ULTRA) {
 		return {
 			superSamplingLevel: 2.0,

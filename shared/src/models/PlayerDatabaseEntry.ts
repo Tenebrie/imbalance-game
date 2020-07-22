@@ -8,4 +8,9 @@ export default interface PlayerDatabaseEntry {
 	passwordHash: string
 	userLanguage: Language
 	renderQuality: RenderQuality
+	masterVolume: number
+	musicVolume: number
+	effectsVolume: number
+	ambienceVolume: number
+	userInterfaceVolume: number
 }

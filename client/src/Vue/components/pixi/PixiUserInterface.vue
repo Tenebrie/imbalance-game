@@ -15,6 +15,7 @@
 		</div>
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
+				<button @click="onShowSettings" class="primary game-button">Settings</button>
 				<button @click="onShowGameLog" class="primary game-button">Game history</button>
 				<div class="menu-separator"></div>
 <!--				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>-->
@@ -35,6 +36,7 @@ import Player from '@shared/models/Player'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import TheGameLog from '@/Vue/components/gamelog/TheGameLog.vue'
+import TheSimpleSettings from '@/Vue/components/profile/TheSimpleSettings.vue'
 
 export default Vue.extend({
 	data: () => ({
@@ -108,6 +110,13 @@ export default Vue.extend({
 
 		onEndTurn(): void {
 			OutgoingMessageHandlers.sendEndTurn()
+		},
+
+		onShowSettings(): void {
+			store.dispatch.popupModule.open({
+				component: TheSimpleSettings
+			})
+			this.isEscapeWindowVisible = false
 		},
 
 		onShowGameLog(): void {
