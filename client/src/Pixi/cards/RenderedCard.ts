@@ -373,14 +373,21 @@ export default class RenderedCard extends Card {
 			this.armorTextBackground.visible = false
 		}
 
-		this.cardNameText.position.set(-15, 69)
-		this.cardNameText.style.fontSize = 22
-		this.cardNameText.style.lineHeight = 12
+		const name = Localization.get(this.name)
+		let nameFontSize = 26
+		if (name.length > 20) { nameFontSize = 24 }
+		if (name.length > 30) { nameFontSize = 22 }
+		this.cardNameText.position.set(-15, 67)
+		this.cardNameText.style.fontSize = nameFontSize
+		this.cardNameText.style.lineHeight = 20
+		if (name.includes('\n')) {
+			this.cardNameText.position.y += 4
+		}
 
 		if (this.cardTitleText.text.length > 0) {
 			this.cardNameText.position.y -= 11
 			this.cardTitleText.position.set(-15, 81)
-			this.cardTitleText.style.fontSize = 18
+			this.cardTitleText.style.fontSize = 20
 		}
 
 		for (let i = 0; i < this.cardTribeTexts.length; i++) {
