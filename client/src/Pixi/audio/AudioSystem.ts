@@ -126,6 +126,10 @@ class MusicTrack {
 		}
 	}
 
+	public updateVolumeLevels(): void {
+		this.primaryTrack.volume(this.getTrackVolume())
+	}
+
 	private getTrackVolume(): number {
 		return store.state.userPreferencesModule.masterVolume * store.state.userPreferencesModule.musicVolume
 	}
@@ -150,6 +154,10 @@ class AmbienceTrack {
 		}
 	}
 
+	public updateVolumeLevels(): void {
+		this.primaryTrack.volume(this.getTrackVolume())
+	}
+
 	private getTrackVolume(): number {
 		return store.state.userPreferencesModule.masterVolume * store.state.userPreferencesModule.ambienceVolume * 0.07
 	}
@@ -165,6 +173,11 @@ class AudioSystem {
 		this.effectsTrack.playFromCategory(category)
 	}
 
+	public updateVolumeLevels(): void {
+		this.musicTrack.updateVolumeLevels()
+		this.ambienceTrack.updateVolumeLevels()
+	}
+
 	public setMode(mode: AudioSystemMode): void {
 		if (this.currentMode === mode) {
 			return
@@ -177,7 +190,6 @@ class AudioSystem {
 		} else if (mode === AudioSystemMode.GAME) {
 			this.ambienceTrack.start()
 			this.musicTrack.switchToGameMode()
-			// this.musicTrack.switchToMenuMode()
 		}
 	}
 }

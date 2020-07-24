@@ -41,6 +41,31 @@ export default {
 		return Database.updateRows(query)
 	},
 
+	async updatePlayerMasterVolume(id: string, masterVolume: number): Promise<boolean> {
+		const query = `UPDATE players SET "masterVolume" = '${masterVolume}' WHERE id = '${id}'`
+		return Database.updateRows(query)
+	},
+
+	async updatePlayerMusicVolume(id: string, musicVolume: number): Promise<boolean> {
+		const query = `UPDATE players SET "musicVolume" = '${musicVolume}' WHERE id = '${id}'`
+		return Database.updateRows(query)
+	},
+
+	async updatePlayerEffectsVolume(id: string, effectsVolume: number): Promise<boolean> {
+		const query = `UPDATE players SET "effectsVolume" = '${effectsVolume}' WHERE id = '${id}'`
+		return Database.updateRows(query)
+	},
+
+	async updatePlayerAmbienceVolume(id: string, ambienceVolume: number): Promise<boolean> {
+		const query = `UPDATE players SET "ambienceVolume" = '${ambienceVolume}' WHERE id = '${id}'`
+		return Database.updateRows(query)
+	},
+
+	async updatePlayerUserInterfaceVolume(id: string, userInterfaceVolume: number): Promise<boolean> {
+		const query = `UPDATE players SET "userInterfaceVolume" = '${userInterfaceVolume}' WHERE id = '${id}'`
+		return Database.updateRows(query)
+	},
+
 	async deletePlayer(id: string): Promise<boolean> {
 		const query = `DELETE FROM players WHERE id = '${id}'`
 		return Database.deleteRows(query)

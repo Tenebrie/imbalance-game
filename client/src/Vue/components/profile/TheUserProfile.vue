@@ -30,7 +30,7 @@
 									type="radio"
 									name="language"
 									:value="language"
-									v-model="selectedLanguage"
+									v-model="userLanguage"
 							/>
 							<label :for="`language-list-item-${language}`">{{ $locale.get(`ui.language.${language}`) }}</label>
 						</div>
@@ -44,12 +44,15 @@
 								   type="radio"
 								   name="quality"
 								   :value="quality"
-								   v-model="selectedQuality"
+								   v-model="renderQuality"
 							/>
 							<label :for="`render-quality-list-item-${quality}`">{{ $locale.get(`ui.quality.${quality}`) }}</label>
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="section">
+				<the-volume-settings />
 			</div>
 			<div class="section button-section">
 				<profile-logout-button />
@@ -71,6 +74,7 @@ import {supportedLanguages} from '@/Pixi/Localization'
 import Language from '@shared/models/Language'
 import Notifications from '@/utils/Notifications'
 import RenderQuality from '@shared/enums/RenderQuality'
+import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
 
 function TheUserProfile() {
 	const email = ref<string>('')
@@ -85,32 +89,27 @@ function TheUserProfile() {
 		username.value = profileMessage.username
 	})
 
-	const selectedLanguage = computed({
+	const userLanguage = computed<Language>({
 		get() {
-			return store.state.userPreferencesModule.selectedLanguage
+			return store.state.userPreferencesModule.userLanguage
 		},
 		set(value) {
-			const language = value as Language
-			store.commit.userPreferencesModule.setSelectedLanguage(language)
+			store.commit.userPreferencesModule.setUserLanguage(value)
 			store.commit.editor.clearRenderedCards()
 		}
 	})
 
-	const selectedQuality = computed({
+	const renderQuality = computed<RenderQuality>({
 		get() {
-			return store.state.userPreferencesModule.selectedQuality
+			return store.state.userPreferencesModule.renderQuality
 		},
 		set(value) {
-			const quality = value as RenderQuality
-			store.commit.userPreferencesModule.setSelectedQuality(quality)
+			store.commit.userPreferencesModule.setRenderQuality(value)
 		}
 	})
 
-	watch(() => [selectedLanguage.value, selectedQuality.value], () => {
-		axios.put('/api/user/profile', {
-			userLanguage: selectedLanguage.value,
-			renderQuality: selectedQuality.value
-		})
+	watch(() => [userLanguage.value, renderQuality.value], () => {
+		store.dispatch.userPreferencesModule.savePreferences()
 	})
 
 	const onChangePassword = async () => {
@@ -125,8 +124,8 @@ function TheUserProfile() {
 		email,
 		username,
 		password,
-		selectedLanguage,
-		selectedQuality,
+		userLanguage,
+		renderQuality,
 		supportedLanguages,
 		onChangePassword,
 		supportedRenderQualities: RenderQuality
@@ -135,6 +134,7 @@ function TheUserProfile() {
 
 export default {
 	components: {
+		TheVolumeSettings,
 		UserAvatar,
 		ProfileLogoutButton,
 		ProfileDeleteUserButton
@@ -185,7 +185,6 @@ export default {
 
 					input {
 						margin-left: 0;
-						// min-height: 2em;
 						margin-bottom: 1em;
 					}
 

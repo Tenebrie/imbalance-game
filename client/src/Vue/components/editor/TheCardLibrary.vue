@@ -20,8 +20,8 @@ export default Vue.extend({
 		library(): Card[] {
 			return store.state.editor.cardLibrary
 		},
-		selectedLanguage(): Language {
-			return store.state.userPreferencesModule.selectedLanguage
+		userLanguage(): Language {
+			return store.state.userPreferencesModule.userLanguage
 		}
 	},
 
