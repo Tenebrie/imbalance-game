@@ -44,9 +44,9 @@ export default class ServerAnimation extends Animation {
 		return animation
 	}
 
-	public static universeAffectsCards(targetUnits: ServerUnit[]): ServerAnimation {
+	public static universeAffectsCards(targetCards: ServerCard[]): ServerAnimation {
 		const animation = new ServerAnimation(AnimationType.UNIVERSE_AFFECT, {})
-		animation.targetCards = targetUnits.map(unit => unit.card)
+		animation.targetCards = targetCards
 		return animation
 	}
 

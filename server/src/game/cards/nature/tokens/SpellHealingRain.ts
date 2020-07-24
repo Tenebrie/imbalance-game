@@ -39,7 +39,7 @@ export default class SpellHealingRain extends ServerCard {
 		const targets = this.game.board.getUnitsOwnedByPlayer(this.owner)
 			.filter(target => target.card.power < target.card.maxPower)
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits(targets))
+		this.game.animation.play(ServerAnimation.universeAffectsCards(targets.map(unit => unit.card)))
 		targets.forEach(target => {
 			target.heal(ServerDamageInstance.fromCard(this.healing, this))
 		})

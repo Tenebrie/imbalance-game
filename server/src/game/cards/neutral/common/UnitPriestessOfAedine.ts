@@ -12,6 +12,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import ServerAnimation from '../../../models/ServerAnimation'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1
@@ -43,6 +44,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
+		this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target.card]))
 		target.heal(ServerDamageInstance.fromUnit(this.healing, this.unit))
 	}
 }
