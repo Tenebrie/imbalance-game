@@ -127,7 +127,9 @@ class MusicTrack {
 	}
 
 	public updateVolumeLevels(): void {
-		this.primaryTrack.volume(this.getTrackVolume())
+		if (this.primaryTrack) {
+			this.primaryTrack.volume(this.getTrackVolume())
+		}
 	}
 
 	private getTrackVolume(): number {

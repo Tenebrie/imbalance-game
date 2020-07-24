@@ -35,23 +35,23 @@ router.put('/', (req: Request, res: Response, next) => {
 	}
 
 	const masterVolume = req.body['masterVolume'] as number
-	if (masterVolume) {
+	if (typeof(masterVolume) !== 'undefined') {
 		PlayerDatabase.updatePlayerMasterVolume(player.id, masterVolume).then()
 	}
 	const musicVolume = req.body['musicVolume'] as number
-	if (musicVolume) {
+	if (typeof(musicVolume) !== 'undefined') {
 		PlayerDatabase.updatePlayerMusicVolume(player.id, musicVolume).then()
 	}
 	const effectsVolume = req.body['effectsVolume'] as number
-	if (effectsVolume) {
+	if (typeof(effectsVolume) !== 'undefined') {
 		PlayerDatabase.updatePlayerEffectsVolume(player.id, effectsVolume).then()
 	}
 	const ambienceVolume = req.body['ambienceVolume'] as number
-	if (ambienceVolume) {
+	if (typeof(ambienceVolume) !== 'undefined') {
 		PlayerDatabase.updatePlayerAmbienceVolume(player.id, ambienceVolume).then()
 	}
 	const userInterfaceVolume = req.body['userInterfaceVolume'] as number
-	if (userInterfaceVolume) {
+	if (typeof(userInterfaceVolume) !== 'undefined') {
 		PlayerDatabase.updatePlayerUserInterfaceVolume(player.id, userInterfaceVolume).then()
 	}
 

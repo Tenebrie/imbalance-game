@@ -1,6 +1,6 @@
 <template>
 	<div class="the-card-library">
-		<the-card-library-item :card="card" class="card" v-for="card in library" :key="`${selectedLanguage}-${card.id}`" />
+		<the-card-library-item :card="card" class="card" v-for="card in library" :key="`${userLanguage}-${card.id}`" />
 	</div>
 </template>
 
