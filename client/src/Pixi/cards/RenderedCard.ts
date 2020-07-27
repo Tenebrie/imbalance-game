@@ -303,7 +303,7 @@ export default class RenderedCard extends Card {
 			texts = [this.powerText, this.armorText, this.cardNameText, this.cardTitleText, this.cardDescriptionText].concat(this.cardTribeTexts)
 		} else if (this.isUnitMode()) {
 			this.switchToUnitMode()
-			texts = [this.powerText]
+			texts = [this.powerText, this.armorText]
 		} else if (this.isHiddenMode()) {
 			this.switchToHiddenMode()
 		}
@@ -425,8 +425,8 @@ export default class RenderedCard extends Card {
 			this.powerText.style.fontSize = 135
 		}
 
-		this.armorText.position.set(131, 33)
-		this.armorText.style.fontSize = 28
+		this.armorText.position.set(247, 63)
+		this.armorText.style.fontSize = 52
 		this.armorText.style.fill = 0xFFFFFF
 		if (this.armor > 0) {
 			this.armorText.visible = true

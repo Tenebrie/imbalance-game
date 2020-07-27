@@ -44,12 +44,22 @@ export default class ServerDeck implements CardDeck {
 		this.spellCards.unshift(card)
 	}
 
-	public drawTopUnit(): ServerCard {
-		return this.unitCards.pop()
+	public drawTopUnit(): ServerCard | null {
+		if (this.unitCards.length === 0) {
+			return null
+		}
+		const card = this.unitCards[0]
+		this.removeCard(card)
+		return card
 	}
 
-	public drawTopSpell(): ServerCard {
-		return this.spellCards.pop()
+	public drawTopSpell(): ServerCard | null {
+		if (this.spellCards.length === 0) {
+			return null
+		}
+		const card = this.spellCards[0]
+		this.removeCard(card)
+		return card
 	}
 
 	public findCardByClass(cardClass: string): ServerCard | null {

@@ -43,6 +43,11 @@ export default class ClientCardDeck implements CardDeck {
 		return this.unitCardMessages.find(card => card.id === cardId) || this.spellCardMessages.find(card => card.id === cardId) || null
 	}
 
+	public removeCardById(cardId: string): void {
+		this.unitCardMessages = this.unitCardMessages.filter(card => card.id !== cardId)
+		this.spellCardMessages = this.spellCardMessages.filter(card => card.id !== cardId)
+	}
+
 	public static fromMessage(message: CardDeckMessage): ClientCardDeck {
 		return new ClientCardDeck(message.unitCards, message.spellCards)
 	}

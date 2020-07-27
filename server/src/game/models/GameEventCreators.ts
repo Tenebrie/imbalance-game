@@ -26,16 +26,26 @@ export default {
 
 	roundStarted: (args: RoundStartedEventArgs): GameEvent => ({
 		type: GameEventType.ROUND_STARTED,
-		args: args
+		args: args,
+		logVariables: {
+			player: args.player.player.id
+		}
 	}),
 	turnStarted: (args: TurnStartedEventArgs): GameEvent => ({
 		type: GameEventType.TURN_STARTED,
-		args: args
+		args: args,
+		logVariables: {
+			player: args.player.player.id
+		}
 	}),
 
 	cardDrawn: (args: CardDrawnEventArgs): GameEvent => ({
 		type: GameEventType.CARD_DRAWN,
-		args: args
+		args: args,
+		logVariables: {
+			owner: args.owner.player.id,
+			triggeringCard: args.triggeringCard.id
+		}
 	}),
 	cardPlayed: (args: CardPlayedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_PLAYED,
@@ -87,11 +97,17 @@ export default {
 
 	turnEnded: (args: TurnEndedEventArgs): GameEvent => ({
 		type: GameEventType.TURN_ENDED,
-		args: args
+		args: args,
+		logVariables: {
+			player: args.player.player.id
+		}
 	}),
 	roundEnded: (args: RoundEndedEventArgs): GameEvent => ({
 		type: GameEventType.ROUND_ENDED,
-		args: args
+		args: args,
+		logVariables: {
+			player: args.player.player.id
+		}
 	}),
 }
 
@@ -116,6 +132,7 @@ export interface TurnStartedEventArgs {
 }
 
 export interface CardDrawnEventArgs {
+	owner: ServerPlayerInGame
 	triggeringCard: ServerCard
 }
 export interface CardPlayedEventArgs {

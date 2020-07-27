@@ -17,6 +17,6 @@ export default class BuffBurning extends ServerBuff {
 	}
 
 	private onTurnStarted(): void {
-		this.unit.dealDamage(ServerDamageInstance.fromCard(this.burnDamage, this.source))
+		this.card.dealDamage(ServerDamageInstance.fromCard(this.burnDamage, this.source))
 	}
 }

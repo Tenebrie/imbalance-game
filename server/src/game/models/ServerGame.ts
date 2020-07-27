@@ -223,7 +223,10 @@ export default class ServerGame extends Game {
 			return
 		}
 
-		this.board.getAllUnits().forEach(cardOnBoard => this.board.destroyUnit(cardOnBoard))
+		this.board.getAllUnits().forEach(unit => {
+			this.board.destroyUnit(unit)
+			unit.owner.cardGraveyard.addUnit(unit.card)
+		})
 
 		for (let i = 0; i < 3; i++) {
 			this.board.rows[i].setOwner(playerTwo)

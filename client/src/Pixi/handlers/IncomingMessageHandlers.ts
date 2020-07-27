@@ -293,6 +293,14 @@ const handlers: {[ index: string ]: any } = {
 		Core.input.playableCards = data.map(data => ClientCardTarget.fromMessage(data))
 	},
 
+	'update/player/self/deck/cardDestroyed': (data: CardMessage) => {
+		Core.player.cardDeck.removeCardById(data.id)
+	},
+
+	'update/player/opponent/deck/cardDestroyed': (data: CardMessage) => {
+		Core.opponent.cardDeck.removeCardById(data.id)
+	},
+
 	'update/player/self/graveyard/cardAdded': (data: CardMessage) => {
 		Core.player.cardGraveyard.addUnit(data)
 	},

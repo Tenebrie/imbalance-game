@@ -4,7 +4,6 @@ import ServerGame from './ServerGame'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerOwnedCard from './ServerOwnedCard'
-import CardType from '@shared/enums/CardType'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class ServerGraveyard implements CardDeck {

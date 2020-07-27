@@ -16,6 +16,9 @@
 	"ui.profile.delete": "Delete profile",
 	"ui.profile.delete.progress": "Deleting...",
 
+	"log.entry.roundStarted": "Round has started for {player}",
+	"log.entry.turnStarted": "Turn has started for {player}",
+	"log.entry.cardDrawn": "{owner} has drawn card {triggeringCard}",
 	"log.entry.cardPlayed": "{owner} has played card {triggeringCard}",
 	"log.entry.cardResolved": "Card {triggeringCard} has finished resolving",
 	"log.entry.cardTakesDamage.fromCard": "Card {triggeringCard} has taken {damage} damage from {sourceCard}",
@@ -23,6 +26,8 @@
 	"log.entry.cardDestroyed": "Card {triggeringCard} has been destroyed",
 	"log.entry.unitCreated": "Unit {triggeringUnit} has been created",
 	"log.entry.unitDestroyed": "Unit {triggeringUnit} has been destroyed",
+	"log.entry.turnEnded": "Turn has ended for {player}",
+	"log.entry.roundEnded": "Round has ended for {player}",
 
 	"target.generic.unit": "Target",
 	"target.generic.row": "Target all",
