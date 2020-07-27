@@ -41,7 +41,7 @@ export default class UnitStoneElemental extends ServerCard {
 	defineValidOrderTargets(): TargetDefinitionBuilder {
 		return TargetDefinition.defaultUnitOrder(this.game)
 			.actions(this.canAttack ? 1 : 0)
-			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT)
+			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT, this.canAttack ? 1 : 0)
 	}
 
 	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode) {
