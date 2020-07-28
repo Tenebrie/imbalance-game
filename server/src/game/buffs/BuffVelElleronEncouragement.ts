@@ -20,5 +20,6 @@ export default class BuffVelElleronEncouragement extends ServerBuff {
 		for (let i = 0; i < bonusPower; i++) {
 			this.card.buffs.add(BuffStrength, this.source)
 		}
+		this.card.buffs.removeByReference(this)
 	}
 }
