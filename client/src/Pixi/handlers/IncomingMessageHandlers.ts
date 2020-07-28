@@ -70,6 +70,14 @@ const handlers: {[ index: string ]: any } = {
 		})
 	},
 
+	'update/player/self/leader': (data: CardMessage) => {
+		Core.player.leader = new RenderedCard(data)
+	},
+
+	'update/player/opponent/leader': (data: CardMessage) => {
+		Core.opponent.leader = new RenderedCard(data)
+	},
+
 	'update/board/unitOrders': (data: CardTargetMessage[]) => {
 		Core.board.validOrders = data.map(message => ClientCardTarget.fromMessage(message))
 	},

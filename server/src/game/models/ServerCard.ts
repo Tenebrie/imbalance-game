@@ -36,7 +36,7 @@ import GameHookType, {
 } from './GameHookType'
 import {EventCallback, EventHook} from './ServerGameEvents'
 import GameEventType from '@shared/enums/GameEventType'
-import GameEventCreators, {CardDestroyedEventArgs, CardTakesDamageEventArgs} from './GameEventCreators'
+import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -77,11 +77,19 @@ export default class ServerCard extends Card {
 	}
 
 	public get maxPower(): number {
-		let cost = this.basePower
+		let power = this.basePower
 		this.buffs.buffs.forEach(buff => {
-			cost = buff.getUnitMaxPowerOverride(cost)
+			power = buff.getUnitMaxPowerOverride(power)
 		})
-		return cost
+		return power
+	}
+
+	public get maxArmor(): number {
+		let armor = this.baseArmor
+		this.buffs.buffs.forEach(buff => {
+			armor = buff.getUnitMaxArmorOverride(armor)
+		})
+		return armor
 	}
 
 	public get tribes(): CardTribe[] {
@@ -162,8 +170,6 @@ export default class ServerCard extends Card {
 		if (this.power === value) { return }
 
 		this.power = value
-		runCardEventHandler(() => this.onPowerChanged(value, this.power))
-
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutCardPowerChange(playerInGame.player, this)
 		})
@@ -171,8 +177,6 @@ export default class ServerCard extends Card {
 
 	public setArmor(value: number): void {
 		if (this.armor === value) { return }
-
-		runCardEventHandler(() => this.onArmorChanged(value, this.armor))
 
 		this.armor = value
 		this.game.players.forEach(playerInGame => {
@@ -467,8 +471,6 @@ export default class ServerCard extends Card {
 	onUnitCustomOrderPerformed(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onBeforeUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
-	onPowerChanged(newValue: number, oldValue: number): void { return }
-	onArmorChanged(newValue: number, oldValue: number): void { return }
 	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
 	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
 	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }

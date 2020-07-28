@@ -19,6 +19,9 @@ export default class ClientBuff implements Buff {
 	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
 
+	name: string
+	description: string
+
 	duration: number
 	intensity: number
 	baseDuration: number
@@ -34,6 +37,9 @@ export default class ClientBuff implements Buff {
 		this.cardTribes = message.cardTribes.slice()
 		this.buffFeatures = message.buffFeatures.slice()
 		this.cardFeatures = message.cardFeatures.slice()
+
+		this.name = message.name
+		this.description = message.description
 
 		this.duration = message.duration
 		this.intensity = message.intensity

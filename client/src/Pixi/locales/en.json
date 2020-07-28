@@ -27,6 +27,8 @@
 	"log.entry.cardDestroyed": "Card {triggeringCard} has been destroyed",
 	"log.entry.unitCreated": "Unit {triggeringUnit} has been created",
 	"log.entry.unitDestroyed": "Unit {triggeringUnit} has been destroyed",
+	"log.entry.buffCreated": "Buff {triggeringBuff} has been created on {ownerCard}",
+	"log.entry.buffRemoved": "Buff {triggeringBuff} has been removed from {ownerCard}",
 	"log.entry.turnEnded": "Turn has ended for {player}",
 	"log.entry.roundEnded": "Round has ended for {player}",
 
@@ -283,5 +285,11 @@
 	"card.description.spellFlamingSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
 
 	"card.name.spellFlameweave": "Flameweave",
-	"card.description.spellFlameweave": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
+	"card.description.spellFlameweave": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
+
+	"buff.name.buffDecayingArmor": "Decaying Armor",
+	"buff.description.buffDecayingArmor": "Extra armor that decays over time.",
+
+	"buff.name.buffUpgradedStorms": "Upgraded Storms",
+	"buff.description.buffUpgradedStorms": "Your storms are upgraded."
 }

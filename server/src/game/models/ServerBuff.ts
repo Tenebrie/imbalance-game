@@ -14,7 +14,7 @@ import {EventCallback, EventHook} from './ServerGameEvents'
 import GameHookType from './GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffFeature from '@shared/enums/BuffFeature'
-import {TurnEndedEventArgs, TurnStartedEventArgs} from './GameEventCreators'
+import GameEventCreators, {TurnEndedEventArgs, TurnStartedEventArgs} from './GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class ServerBuff implements Buff {
@@ -28,6 +28,9 @@ export default class ServerBuff implements Buff {
 	cardTribes: CardTribe[]
 	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
+
+	name: string
+	description: string
 
 	duration: number
 	intensity: number
@@ -79,12 +82,34 @@ export default class ServerBuff implements Buff {
 	}
 
 	public addIntensity(delta: number): void {
-		this.setIntensity(this.intensity + delta)
+		this.setIntensity(Math.max(0, this.intensity + delta))
 	}
 
 	public setIntensity(value: number): void {
+		value = Math.max(0, value)
+		if (value === this.intensity) {
+			return
+		}
+
+		const delta = value - this.intensity
 		this.intensity = value
 		OutgoingCardUpdateMessages.notifyAboutCardBuffIntensityChanged(this.card, this)
+		if (delta > 0) {
+			for (let i = 0; i < delta; i++) {
+				this.game.events.postEffect(this, GameEventCreators.effectBuffCreated())
+				this.game.events.postEvent(GameEventCreators.buffCreated({
+					triggeringBuff: this
+				}))
+			}
+		} else if (delta < 0) {
+			for (let i = 0; i < Math.abs(delta); i++) {
+				this.game.events.postEffect(this, GameEventCreators.effectBuffRemoved())
+				this.game.events.postEvent(GameEventCreators.buffRemoved({
+					triggeringBuff: this
+				}))
+			}
+		}
+
 		if (this.intensity <= 0) {
 			this.card.buffs.removeByReference(this)
 		}
@@ -98,14 +123,10 @@ export default class ServerBuff implements Buff {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hook)
 	}
 
-	onCreated(): void { return }
-	onDurationChanged(delta: number): void { return }
-	onIntensityChanged(delta: number): void { return }
-	onDestroyed(): void { return }
-
 	getUnitCostOverride(baseCost: number): number { return baseCost }
 	getSpellCostOverride(baseCost: number): number { return baseCost }
 	getUnitMaxPowerOverride(basePower: number): number { return basePower }
+	getUnitMaxArmorOverride(baseArmor: number): number { return baseArmor }
 
 	definePlayValidTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	defineValidOrderTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }

@@ -16,6 +16,9 @@ export default interface Buff {
 	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
 
+	name: string
+	description: string
+
 	duration: number
 	intensity: number
 	baseDuration: number

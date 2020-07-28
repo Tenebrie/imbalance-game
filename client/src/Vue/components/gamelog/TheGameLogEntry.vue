@@ -85,6 +85,10 @@ export default {
 			if (card) {
 				return `${Localization.get(card.name)}`
 			}
+			const buff = Core.game.findBuffById(id)
+			if (buff) {
+				return `${Localization.get(buff.name)}`
+			}
 			return id
 		}
 	}

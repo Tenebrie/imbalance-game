@@ -3,10 +3,8 @@ import ServerBuff from './ServerBuff'
 import BuffStackType from '@shared/enums/BuffStackType'
 import ServerCard from './ServerCard'
 import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
-import ServerOwnedCard from './ServerOwnedCard'
 import ServerGame from './ServerGame'
-import runCardEventHandler from '../utils/runCardEventHandler'
-import ServerAnimation from './ServerAnimation'
+import GameEventCreators from './GameEventCreators'
 
 interface BuffConstructor {
 	new (game: ServerGame): ServerBuff
@@ -27,13 +25,16 @@ export default class ServerBuffContainer implements BuffContainer {
 
 	private instantiate(prototype: BuffConstructor, source: ServerCard | null): ServerBuff {
 		const buff = new prototype(this.card.game)
+		const buffClass = buff.constructor.name.substr(0, 1).toLowerCase() + buff.constructor.name.substr(1)
 
+		buff.name = `buff.name.${buffClass}`
+		buff.description = `buff.description.${buffClass}`
 		buff.card = this.card
 		buff.game = this.card.game
 		buff.source = source
 		buff.duration = buff.baseDuration
 		buff.intensity = buff.baseIntensity
-		buff.buffClass = buff.constructor.name.substr(0, 1).toLowerCase() + buff.constructor.name.substr(1)
+		buff.buffClass = buffClass
 
 		return buff
 	}
@@ -50,44 +51,38 @@ export default class ServerBuffContainer implements BuffContainer {
 			newBuff.duration = duration
 		}
 
+		let invokedBuff = newBuff
+
 		const existingBuff = this.buffs.find(existingBuff => existingBuff.buffClass === newBuff.buffClass)
-		if (existingBuff && newBuff.stackType === BuffStackType.ADD_DURATION) {
-			existingBuff.duration += newBuff.duration
-			runCardEventHandler(() => existingBuff.onDurationChanged(newBuff.duration))
-			OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, existingBuff)
-			this.game.events.unsubscribe(newBuff)
-			return
-		} else if (existingBuff && newBuff.stackType === BuffStackType.ADD_INTENSITY) {
-			existingBuff.intensity += newBuff.intensity
-			runCardEventHandler(() => existingBuff.onIntensityChanged(newBuff.intensity))
-			OutgoingCardUpdateMessages.notifyAboutCardBuffIntensityChanged(this.card, existingBuff)
-			// Reset duration
-			if (newBuff.duration > existingBuff.duration) {
-				existingBuff.duration = newBuff.duration
-				runCardEventHandler(() => existingBuff.onDurationChanged(newBuff.duration))
-				OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, existingBuff)
-			}
-			this.game.events.unsubscribe(newBuff)
-			return
-		}
 
 		if (newBuff.stackType === BuffStackType.NONE && existingBuff.duration < newBuff.duration) {
 			this.buffs.splice(this.buffs.indexOf(existingBuff), 1)
+			OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(this.card, existingBuff)
+			this.buffs.push(newBuff)
+			OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
 		}
 
-		this.buffs.push(newBuff)
-		OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
-		runCardEventHandler(() => newBuff.onCreated())
-		if (newBuff.duration > 1) {
-			runCardEventHandler(() => newBuff.onDurationChanged(newBuff.duration - 1))
-		}
-		if (newBuff.intensity > 1) {
-			runCardEventHandler(() => newBuff.onIntensityChanged(newBuff.intensity - 1))
+		if (newBuff.stackType === BuffStackType.OVERLAY || !existingBuff) {
+			this.buffs.push(newBuff)
+			OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
 		}
 
-		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
-			ownedCard.card.onOtherCardReceivedNewBuff(new ServerOwnedCard(this.card, this.card.owner), newBuff)
-		})
+		if (existingBuff && newBuff.stackType === BuffStackType.ADD_DURATION) {
+			existingBuff.setDuration(existingBuff.duration + newBuff.duration)
+			invokedBuff = existingBuff
+			this.game.events.unsubscribe(newBuff)
+		}
+
+		if (existingBuff && newBuff.stackType === BuffStackType.ADD_INTENSITY) {
+			existingBuff.setIntensity(existingBuff.intensity + 1)
+			this.game.events.unsubscribe(newBuff)
+			return
+		}
+
+		this.game.events.postEffect(invokedBuff, GameEventCreators.effectBuffCreated())
+		this.game.events.postEvent(GameEventCreators.buffCreated({
+			triggeringBuff: invokedBuff
+		}))
 	}
 
 	public addMultiple(prototype: BuffConstructor, count: number, source: ServerCard | null, duration: number | 'default' = 'default') {
@@ -110,11 +105,14 @@ export default class ServerBuffContainer implements BuffContainer {
 	}
 
 	public removeByReference(buff: ServerBuff): void {
-		this.buffs.splice(this.buffs.indexOf(buff), 1)
+		const index = this.buffs.indexOf(buff)
+		if (index === -1) {
+			return
+		}
+
+		this.buffs.splice(index, 1)
+		buff.setIntensity(0)
 		OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(this.card, buff)
-		runCardEventHandler(() => buff.onIntensityChanged(-buff.intensity))
-		runCardEventHandler(() => buff.onDurationChanged(-buff.duration))
-		runCardEventHandler(() => buff.onDestroyed())
 		this.game.events.unsubscribe(buff)
 	}
 

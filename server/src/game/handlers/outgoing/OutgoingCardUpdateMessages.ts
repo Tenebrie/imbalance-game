@@ -21,6 +21,18 @@ export default {
 		})
 	},
 
+	notifyAboutDeckLeader(playerInGame: ServerPlayerInGame, card: ServerCard) {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/leader',
+			data: new CardMessage(card)
+		})
+
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/leader',
+			data: new CardMessage(card)
+		})
+	},
+
 	notifyAboutUnitCardAdded(playerInGame: ServerPlayerInGame, card: ServerCard) {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/hand/unit/cardAdded',

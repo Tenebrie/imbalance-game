@@ -16,6 +16,9 @@ export default class BuffMessage {
 	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
 
+	name: string
+	description: string
+
 	duration: number
 	intensity: number
 	baseDuration: number
@@ -31,6 +34,9 @@ export default class BuffMessage {
 		this.cardTribes = buff.cardTribes.slice()
 		this.buffFeatures = buff.buffFeatures.slice()
 		this.cardFeatures = buff.cardFeatures.slice()
+
+		this.name = buff.name
+		this.description = buff.description
 
 		this.duration = buff.duration
 		this.intensity = buff.intensity

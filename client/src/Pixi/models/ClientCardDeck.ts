@@ -16,6 +16,10 @@ export default class ClientCardDeck implements CardDeck {
 		return []
 	}
 
+	public get allCards() {
+		return this.unitCards.slice().concat(this.spellCards)
+	}
+
 	constructor(unitCards: CardMessage[], spellCards: CardMessage[]) {
 		this.unitCardMessages = unitCards
 		this.spellCardMessages = spellCards

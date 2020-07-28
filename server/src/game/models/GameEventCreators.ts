@@ -5,6 +5,7 @@ import ServerUnit from './ServerUnit'
 import ServerDamageInstance from './ServerDamageSource'
 import DamageSource from '@shared/enums/DamageSource'
 import ServerBoardRow from './ServerBoardRow'
+import ServerBuff from './ServerBuff'
 
 export default {
 	effectUnitDeploy: (): GameEvent => ({
@@ -21,6 +22,14 @@ export default {
 	}),
 	effectTargetsConfirmed: (): GameEvent => ({
 		type: GameEventType.EFFECT_TARGETS_CONFIRMED,
+		args: {}
+	}),
+	effectBuffCreated: (): GameEvent => ({
+		type: GameEventType.EFFECT_BUFF_CREATED,
+		args: {}
+	}),
+	effectBuffRemoved: (): GameEvent => ({
+		type: GameEventType.EFFECT_BUFF_REMOVED,
 		args: {}
 	}),
 
@@ -95,6 +104,23 @@ export default {
 		}
 	}),
 
+	buffCreated: (args: BuffCreatedEventArgs): GameEvent => ({
+		type: GameEventType.BUFF_CREATED,
+		args: args,
+		logVariables: {
+			triggeringBuff: args.triggeringBuff.id,
+			ownerCard: args.triggeringBuff.card.id
+		}
+	}),
+	buffRemoved: (args: BuffRemovedEventArgs): GameEvent => ({
+		type: GameEventType.BUFF_REMOVED,
+		args: args,
+		logVariables: {
+			triggeringBuff: args.triggeringBuff.id,
+			ownerCard: args.triggeringBuff.card.id
+		}
+	}),
+
 	turnEnded: (args: TurnEndedEventArgs): GameEvent => ({
 		type: GameEventType.TURN_ENDED,
 		args: args,
@@ -157,6 +183,13 @@ export interface UnitCreatedEventArgs {
 }
 export interface UnitDestroyedEventArgs {
 	triggeringUnit: ServerUnit
+}
+
+export interface BuffCreatedEventArgs {
+	triggeringBuff: ServerBuff
+}
+export interface BuffRemovedEventArgs {
+	triggeringBuff: ServerBuff
 }
 
 export interface TurnEndedEventArgs {

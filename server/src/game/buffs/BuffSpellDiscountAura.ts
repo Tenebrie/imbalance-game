@@ -9,8 +9,9 @@ import CardLocation from '@shared/enums/CardLocation'
 import ServerCard from '../models/ServerCard'
 import ServerAnimation from '../models/ServerAnimation'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import BuffSpellDiscountSingular from './BuffSpellDiscountSingular'
 
-export default class BuffSpellDiscountSingular extends ServerBuff {
+export default class BuffSpellDiscountAura extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.ADD_INTENSITY)
 		this.buffFeatures = [BuffFeature.SPELL_DISCOUNT_PER_INTENSITY]
