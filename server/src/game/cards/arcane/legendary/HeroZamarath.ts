@@ -6,6 +6,8 @@ import CardFaction from '@shared/enums/CardFaction'
 import BuffImmunity from '../../../buffs/BuffImmunity'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
+import BuffAlignment from '@shared/enums/BuffAlignment'
+import ServerAnimation from '../../../models/ServerAnimation'
 
 export default class HeroZamarath extends ServerCard {
 	constructor(game: ServerGame) {
@@ -14,8 +16,11 @@ export default class HeroZamarath extends ServerCard {
 		this.baseArmor = 5
 
 		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
-			.perform(() => {
-				this.buffs.add(BuffImmunity, this, BuffDuration.START_OF_NEXT_TURN)
-			})
+			.perform(() => this.onDeploy())
+	}
+
+	private onDeploy(): void {
+		this.buffs.add(BuffImmunity, this, BuffDuration.START_OF_NEXT_TURN)
+		this.game.animation.play(ServerAnimation.cardReceivedBuff([this], BuffAlignment.POSITIVE))
 	}
 }
