@@ -162,8 +162,7 @@
 	"card.target.unitPriestessOfAedine.heal": "Восстановите {healing} Силы",
 
 	"card.name.unitSupplyWagon": "Военная повозка",
-	"card.description.unitSupplyWagon": "*Поддержка:*\nДайте союзнику возможность совершить дополнительное пережвижение в этом ходу.",
-	"card.target.unitSupplyWagon.ability": "Предоставьте дополнительный ход.",
+	"card.description.unitSupplyWagon": "*Вход в игру:*\nДайте +{extraPower} ед. Силы соседним юнитам.\nЗатем, *Оттолкните* их {pushDistance} ряд вперед.",
 
 	"card.name.unitArcaneElemental": "Магический\nэлеменаль",
 	"card.description.unitArcaneElemental": "*Вход в игру:*\nПолучите {manaGenerated} Маны.",

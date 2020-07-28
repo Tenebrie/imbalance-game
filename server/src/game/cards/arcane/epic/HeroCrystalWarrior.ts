@@ -11,6 +11,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardLibrary from '../../../libraries/CardLibrary'
 import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import ServerAnimation from '../../../models/ServerAnimation'
 
 interface SacrificedUnit {
 	rowIndex: number,
@@ -61,6 +62,7 @@ export default class HeroCrystalWarrior extends ServerCard {
 			rowIndex: target.rowIndex,
 			unitIndex: target.unitIndex
 		}
+		this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target.card]))
 		target.destroy()
 	}
 

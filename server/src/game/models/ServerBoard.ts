@@ -190,6 +190,14 @@ export default class ServerBoard extends Board {
 		})
 	}
 
+	public moveUnitForward(unit: ServerUnit, distance = 1): void {
+		this.moveUnitToFarRight(unit, this.game.board.rowMove(unit.owner, unit.rowIndex, MoveDirection.FORWARD, distance))
+	}
+
+	public moveUnitBack(unit: ServerUnit, distance = 1): void {
+		this.moveUnitToFarRight(unit, this.game.board.rowMove(unit.owner, unit.rowIndex, MoveDirection.BACK, distance))
+	}
+
 	public moveUnitToFarLeft(unit: ServerUnit, rowIndex: number): void {
 		return this.moveUnit(unit, rowIndex, 0)
 	}

@@ -182,8 +182,7 @@
 	"card.target.unitPriestessOfAedine.heal": "Restore {healing} Power",
 
 	"card.name.unitSupplyWagon": "Supply Wagon",
-	"card.description.unitSupplyWagon": "Perform a *Support Action* once a turn<p>*Support:*\nGrant an allied unit an extra move action this turn only",
-	"card.target.unitSupplyWagon.ability": "Grant extra move",
+	"card.description.unitSupplyWagon": "*Deploy:*\nGive +{extraPower} Power to adjacent units.\nThen, *Push* them {pushDistance} row forward.",
 
 	"card.name.unitArcaneElemental": "Arcane Elemental",
 	"card.description.unitArcaneElemental": "*Deploy:*\nGenerate {manaGenerated} Mana",

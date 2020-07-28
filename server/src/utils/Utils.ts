@@ -2,6 +2,7 @@ import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../game/models/ServerCard'
 import AsciiColor from '../enums/AsciiColor'
+import ServerUnit from '../game/models/ServerUnit'
 
 interface TryUntilArgs {
 	try: () => void | Promise<void>
@@ -43,6 +44,10 @@ export const colorizePlayer = (text: string): string => {
 
 export const colorizeConsoleText = (text: string): string => {
 	return colorize(text, AsciiColor.MAGENTA)
+}
+
+export const mapUnitsToCards = (units: ServerUnit[]): ServerCard[] => {
+	return units.map(unit => unit.card)
 }
 
 export default {
