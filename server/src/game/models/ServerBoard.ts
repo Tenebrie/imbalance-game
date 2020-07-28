@@ -32,6 +32,13 @@ export default class ServerBoard extends Board {
 		return cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
 	}
 
+	public isExtraUnitPlayableToRow(rowIndex: number): boolean {
+		if (rowIndex < 0 || rowIndex >= Constants.GAME_BOARD_ROW_COUNT) {
+			return false
+		}
+		return this.rows[rowIndex].cards.length < Constants.MAX_CARDS_PER_ROW
+	}
+
 	public getRowWithUnit(targetUnit: ServerUnit): ServerBoardRow | null {
 		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id)) || null
 	}

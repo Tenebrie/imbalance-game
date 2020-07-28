@@ -21,7 +21,7 @@ export default {
 		}
 
 		if (playerInGame.turnEnded || playerInGame.roundEnded || playerInGame.targetRequired ||
-			game.turnPhase !== GameTurnPhase.DEPLOY ||
+			game.turnPhase !== GameTurnPhase.DEPLOY || !playerInGame.game.board.isExtraUnitPlayableToRow(data.rowIndex) ||
 			(card.type === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex)) ||
 			(card.type === CardType.SPELL && !playerInGame.canPlaySpell(card, data.rowIndex))) {
 
