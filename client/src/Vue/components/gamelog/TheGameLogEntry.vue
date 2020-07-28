@@ -6,9 +6,10 @@
 
 <script lang="ts">
 import moment from 'moment'
-import Localization from '@/Pixi/Localization'
-import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import Core from '@/Pixi/Core'
+import Localization from '@/Pixi/Localization'
+import GameEventType from '@shared/enums/GameEventType'
+import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 
 export default {
 	props: {
@@ -24,12 +25,23 @@ export default {
 		},
 
 		message(): string {
-			const subtype = this.entry.subtype ? `.${this.entry.subtype}` : ''
-			return this.populateTemplate(Localization.get(`log.entry.${this.entry.event}${subtype}`), this.entry.args)
+			const entry = this.entry as EventLogEntryMessage
+			const subtype = entry.subtype ? `.${entry.subtype}` : this.getCustomSubtype(entry)
+			return this.populateTemplate(Localization.get(`log.entry.${entry.event}${subtype}`), entry.args)
 		}
 	},
 
 	methods: {
+		getCustomSubtype(entry: EventLogEntryMessage): string {
+			if (entry.event === GameEventType.CARD_DRAWN) {
+				const card = Core.game.findCardById(entry.args.triggeringCard)
+				if (!card.name) {
+					return '.hidden'
+				}
+			}
+			return ''
+		},
+
 		populateTemplate(template: string, args: Record<string, any>): string {
 			const variables = this.getTemplateVariables(template)
 

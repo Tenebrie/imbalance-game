@@ -115,7 +115,7 @@ export interface GameEvent {
 	type: GameEventType
 	args: Record<string, any>
 	logSubtype?: string
-	logVariables?: Record<string, any>
+	logVariables?: Record<string, string | number>
 }
 
 export interface EffectTargetSelectedEventArgs {

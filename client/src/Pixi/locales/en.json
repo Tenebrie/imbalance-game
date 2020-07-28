@@ -19,6 +19,7 @@
 	"log.entry.roundStarted": "Round has started for {player}",
 	"log.entry.turnStarted": "Turn has started for {player}",
 	"log.entry.cardDrawn": "{owner} has drawn card {triggeringCard}",
+	"log.entry.cardDrawn.hidden": "{owner} has drawn a hidden card",
 	"log.entry.cardPlayed": "{owner} has played card {triggeringCard}",
 	"log.entry.cardResolved": "Card {triggeringCard} has finished resolving",
 	"log.entry.cardTakesDamage.fromCard": "Card {triggeringCard} has taken {damage} damage from {sourceCard}",

@@ -96,6 +96,7 @@ export default class ServerGame extends Game {
 		})
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
 		this.startNextTurn()
+		this.events.flushLogEventGroup()
 	}
 
 	public getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
