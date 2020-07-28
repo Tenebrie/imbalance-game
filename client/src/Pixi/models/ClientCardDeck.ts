@@ -21,6 +21,14 @@ export default class ClientCardDeck implements CardDeck {
 		this.spellCardMessages = spellCards
 	}
 
+	public addUnit(card: CardMessage): void {
+		this.unitCardMessages.push(card)
+	}
+
+	public addSpell(card: CardMessage): void {
+		this.spellCardMessages.push(card)
+	}
+
 	public drawUnitById(cardId: string): RenderedCard | null {
 		const drawnCardMessage = this.unitCardMessages.find(card => card.id === cardId)
 		if (!drawnCardMessage) {

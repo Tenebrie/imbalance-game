@@ -204,6 +204,28 @@ export default {
 		})
 	},
 
+	notifyAboutUnitCardInDeck(playerInGame: ServerPlayerInGame, card: ServerCard) {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/deck/unit/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/deck/unit/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+	},
+
+	notifyAboutSpellCardInDeck(playerInGame: ServerPlayerInGame, card: ServerCard) {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/deck/spell/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/deck/spell/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+	},
+
 	notifyAboutUnitCardInGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard) {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/graveyard/unit/cardAdded',

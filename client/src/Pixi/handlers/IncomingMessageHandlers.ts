@@ -200,7 +200,6 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/self/hand/unit/cardDrawn': (data: CardMessage[]) => {
-		console.info('Units drawn', data)
 		data.forEach(cardMessage => {
 			const card = Core.player.cardDeck.drawUnitById(cardMessage.id)
 			if (card) {
@@ -210,7 +209,6 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/opponent/hand/unit/cardDrawn': (data: HiddenCardMessage[]) => {
-		console.info('Opponent units', data)
 		data.forEach(cardMessage => {
 			const card = Core.opponent.cardDeck.drawUnitById(cardMessage.id)
 			if (card) {
@@ -233,6 +231,22 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/player/opponent/hand/spell/cardAdded': (data: CardMessage) => {
 		Core.opponent.cardHand.addSpell(RenderedCard.fromMessage(data))
+	},
+
+	'update/player/self/deck/unit/cardAdded': (data: CardMessage) => {
+		Core.player.cardDeck.addUnit(data)
+	},
+
+	'update/player/self/deck/spell/cardAdded': (data: CardMessage) => {
+		Core.player.cardDeck.addSpell(data)
+	},
+
+	'update/player/opponent/deck/unit/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardDeck.addUnit(data)
+	},
+
+	'update/player/opponent/deck/spell/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardDeck.addSpell(data)
 	},
 
 	'update/player/self/graveyard/unit/cardAdded': (data: CardMessage) => {
@@ -299,14 +313,6 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/player/opponent/deck/cardDestroyed': (data: CardMessage) => {
 		Core.opponent.cardDeck.removeCardById(data.id)
-	},
-
-	'update/player/self/graveyard/cardAdded': (data: CardMessage) => {
-		Core.player.cardGraveyard.addUnit(data)
-	},
-
-	'update/player/opponent/graveyard/cardAdded': (data: CardMessage) => {
-		Core.opponent.cardGraveyard.addUnit(data)
 	},
 
 	'update/stack/cardResolving': (data: CardMessage) => {

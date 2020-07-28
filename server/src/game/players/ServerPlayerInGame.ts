@@ -179,12 +179,13 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public startRound(): void {
 		this.roundEnded = false
 		this.cardsPlayed = []
+		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
+	}
 
+	public onRoundStart(): void {
 		this.game.events.postEvent(GameEventCreators.roundStarted({
 			player: this
 		}))
-
-		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
 	}
 
 	public startTurn(): void {
@@ -227,13 +228,14 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public endRound(): void {
 		this.endTurn()
+		this.roundEnded = true
+		OutgoingMessageHandlers.notifyAboutRoundEnded(this)
+	}
 
+	public onEndRound(): void {
 		this.game.events.postEvent(GameEventCreators.roundEnded({
 			player: this
 		}))
-
-		this.roundEnded = true
-		OutgoingMessageHandlers.notifyAboutRoundEnded(this)
 	}
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {
