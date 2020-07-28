@@ -35,10 +35,10 @@ export default {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		if (!playerInGame.isAnyActionsAvailable()) {
-			playerInGame.endTurn()
-			game.advanceCurrentTurn()
-		}
+		// if (!playerInGame.isAnyActionsAvailable()) {
+		// 	playerInGame.endTurn()
+		// 	game.advanceCurrentTurn()
+		// }
 		game.events.flushLogEventGroup()
 	},
 
@@ -53,10 +53,10 @@ export default {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		if (!playerInGame.isAnyActionsAvailable()) {
-			playerInGame.endTurn()
-			game.advanceCurrentTurn()
-		}
+		// if (!playerInGame.isAnyActionsAvailable()) {
+		// 	playerInGame.endTurn()
+		// 	game.advanceCurrentTurn()
+		// }
 		game.events.flushLogEventGroup()
 	},
 
@@ -71,10 +71,10 @@ export default {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		if (!playerInGame.isAnyActionsAvailable()) {
-			playerInGame.endTurn()
-			game.advanceCurrentTurn()
-		}
+		// if (!playerInGame.isAnyActionsAvailable()) {
+		// 	playerInGame.endTurn()
+		// 	game.advanceCurrentTurn()
+		// }
 		game.events.flushLogEventGroup()
 	},
 
