@@ -12,7 +12,6 @@ import RenderQuality from '@shared/enums/RenderQuality'
 router.get('/', AsyncHandler(async(req: Request, res: Response, next) => {
 	const player = req['player'] as ServerPlayer
 	const playerDatabaseEntry = await PlayerDatabase.selectPlayerById(player.id)
-	console.log(playerDatabaseEntry)
 	res.json({ data: new UserProfileMessage(playerDatabaseEntry) })
 }))
 
