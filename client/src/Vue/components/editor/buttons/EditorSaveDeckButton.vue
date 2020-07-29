@@ -1,8 +1,8 @@
 <template>
 	<div class="button-container">
 		<button class="primary" @click="onClick">
-			<span v-if="!requestInFlight">Save</span>
-			<span v-if="requestInFlight">Saving...</span>
+			<span v-if="!requestInFlight">{{ $locale.get('ui.decks.saveDeck') }}</span>
+			<span v-if="requestInFlight">{{ $locale.get('ui.decks.saveDeck.progress') }}</span>
 		</button>
 	</div>
 </template>

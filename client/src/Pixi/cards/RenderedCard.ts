@@ -375,8 +375,8 @@ export default class RenderedCard extends Card {
 
 		const name = Localization.get(this.name)
 		let nameFontSize = 26
-		if (name.length > 20) { nameFontSize = 24 }
-		if (name.length > 30) { nameFontSize = 22 }
+		if (name.length > 15) { nameFontSize = 24 }
+		if (name.length > 25) { nameFontSize = 22 }
 		this.cardNameText.position.set(-15, 67)
 		this.cardNameText.style.fontSize = nameFontSize
 		this.cardNameText.style.lineHeight = 20

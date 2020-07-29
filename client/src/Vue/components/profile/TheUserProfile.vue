@@ -5,18 +5,18 @@
 			<div class="section basic-info-section">
 				<div class="info">
 					<div class="info-field">
-						<span class="label">Email:</span>
+						<span class="label">{{ $locale.get('ui.profile.email') }}:</span>
 						<span class="input">{{ email }}</span>
 					</div>
 					<div class="info-field">
-						<span class="label">Username:</span>
+						<span class="label">{{ $locale.get('ui.profile.username') }}:</span>
 						<span class="input">{{ username }}</span>
 					</div>
 					<div class="info-field">
-						<span class="label">Password:</span>
+						<span class="label">{{ $locale.get('ui.profile.changePassword.label') }}:</span>
 						<span class="input">
-							<input type="password" v-model="password" placeholder="New password" />
-							<button class="primary" @click="onChangePassword">Change password</button>
+							<input type="password" v-model="password" :placeholder="this.$locale.get('ui.profile.changePassword.placeholder')" />
+							<button class="primary" @click="onChangePassword">{{ $locale.get('ui.profile.changePassword.button') }}</button>
 						</span>
 					</div>
 				</div>

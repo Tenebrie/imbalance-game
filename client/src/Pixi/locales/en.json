@@ -2,6 +2,10 @@
 	"ui.language.en": "English",
 	"ui.language.ru": "Russian",
 
+	"ui.navigation.home": "Home",
+	"ui.navigation.decks": "Decks",
+	"ui.navigation.rules": "Rules",
+
 	"ui.quality.default": "Default (High)",
 	"ui.quality.normal": "Normal",
 	"ui.quality.high": "High",
@@ -10,11 +14,31 @@
 	"ui.editor.deck.create": "Create new deck",
 	"ui.editor.deck.create.progress": "Creating...",
 
+	"ui.volume.master": "Master volume",
+	"ui.volume.music": "Music volume",
+	"ui.volume.effects": "Effects volume",
+	"ui.volume.ambience": "Ambience volume",
+	"ui.volume.userInterface": "User interface volume",
+
+	"ui.profile.email": "Email",
+	"ui.profile.username": "Username",
+	"ui.profile.changePassword.label": "Password",
+	"ui.profile.changePassword.button": "Change password",
+	"ui.profile.changePassword.placeholder": "New password",
+
 	"ui.profile.language.header": "Language",
 	"ui.profile.quality.header": "Render quality",
 	"ui.profile.logout": "Logout",
 	"ui.profile.delete": "Delete profile",
 	"ui.profile.delete.progress": "Deleting...",
+
+	"ui.decks.saveDeck": "Save",
+	"ui.decks.saveDeck.progress": "Saving...",
+	"ui.decks.shareDeck": "Share",
+	"ui.decks.shareDeck.progress": "Loading...",
+	"ui.decks.deleteDeck": "Delete",
+	"ui.decks.deleteDeck.progress": "Deleting...",
+	"ui.decks.leaveDeck": "Back",
 
 	"log.entry.roundStarted": "Round has started for {player}",
 	"log.entry.turnStarted": "Turn has started for {player}",

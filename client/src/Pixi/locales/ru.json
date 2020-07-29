@@ -2,6 +2,10 @@
 	"ui.language.en": "Английский",
 	"ui.language.ru": "Русский",
 
+	"ui.navigation.home": "Главная",
+	"ui.navigation.decks": "Колоды",
+	"ui.navigation.rules": "Правила",
+
 	"ui.quality.default": "По-умолчанию (Высокое)",
 	"ui.quality.normal": "Стандартное",
 	"ui.quality.high": "Высокое",
@@ -10,11 +14,31 @@
 	"ui.editor.deck.create": "Создать новую колоду",
 	"ui.editor.deck.create.progress": "Создание...",
 
+	"ui.volume.master": "Общая громкость",
+	"ui.volume.music": "Громкость музыки",
+	"ui.volume.effects": "Громкость эффектов",
+	"ui.volume.ambience": "Громкость фонового сопровождения",
+	"ui.volume.userInterface": "Громкость интерфейса",
+
+	"ui.profile.email": "Эл. почта",
+	"ui.profile.username": "Имя игрока",
+	"ui.profile.changePassword.label": "Пароль",
+	"ui.profile.changePassword.button": "Изменить пароль",
+	"ui.profile.changePassword.placeholder": "Новый пароль",
+
 	"ui.profile.language.header": "Язык",
 	"ui.profile.quality.header": "Качество графики",
 	"ui.profile.logout": "Выйти",
 	"ui.profile.delete": "Удалить профиль",
 	"ui.profile.delete.progress": "Удаление...",
+
+	"ui.decks.saveDeck": "Сохранить",
+	"ui.decks.saveDeck.progress": "Сохранение...",
+	"ui.decks.shareDeck": "Поделиться",
+	"ui.decks.shareDeck.progress": "Загрузка...",
+	"ui.decks.deleteDeck": "Удалить",
+	"ui.decks.deleteDeck.progress": "Удаление...",
+	"ui.decks.leaveDeck": "Назад",
 
 	"target.generic.unit": "Выбрать",
 	"target.generic.row": "Выбрать ряд",
@@ -106,6 +130,10 @@
 	"card.title.heroMetrearte": "Кот-копирка",
 	"card.description.heroMetrearte": "*Вход в игру:*\nВыберите способность любого предводителя Аркана.\nПолучите ее копию.",
 
+	"card.name.heroPozoga": "Пожога",
+	"card.title.heroPozoga": "Поджигатель",
+	"card.description.heroPozoga": "*Вход в игру:*\nУничтожьте все карты с наибольшей Силой на столе.",
+
 	"card.name.heroSparklingSpirit": "Искрящийся дух",
 	"card.description.heroSparklingSpirit": "Ваши *Искры* наносят на {extraDamage} Урона больше.",
 
@@ -118,7 +146,7 @@
 	"card.name.heroCoralScribe": "Коралловый писарь",
 	"card.description.heroCoralScribe": "*Вход в игру:*\nПоложите копию *Надвигающейся бури* в вашу руку за каждую копию бури в вашем сбросе.",
 
-	"card.name.heroFlameDancer": "Танцующая с пламенем",
+	"card.name.heroFlameDancer": "Танцующая\nс пламенем",
 	"card.description.heroFlameDancer": "*Вход в игру:*\nНакладывает *Горение* на {burnDuration} хода всем юнитам на вражеском ряду.",
 
 	"card.name.heroRavenCaller": "Говорящий с воронами",
@@ -130,7 +158,7 @@
 	"card.name.heroDarkOracle": "Темный оракул",
 	"card.description.heroDarkOracle": "*Вход в игру:*\nПосмотрите на нижние {cardsToSee} карт из колоды вашего противника.\n*Сбросьте* одну из них.",
 
-	"card.name.heroCrystalWarrior": "Кристальный Воин",
+	"card.name.heroCrystalWarrior": "Кристальный\nвоитель",
 	"card.description.heroCrystalWarrior": "*Вход в игру:*\nУничтожьте выбранного союзника.\nЗатем, призовите *Кристалл* на его месте.",
 
 	"card.name.heroCultistOfAreddon": "Культист Ареддона",
@@ -139,11 +167,14 @@
 	"card.name.heroAdventuringGuildMaster": "Глава гильдии\nприключений",
 	"card.description.heroAdventuringGuildMaster": "*Вход в игру:*\nПолучает +{powerPerCard} Силы за каждого другого юнита, сыгранного в этот ход.",
 
-	"card.name.heroForksmanshipInstructor": "Инструктор вилования",
+	"card.name.heroForksmanshipInstructor": "Инструктор\nвилования",
 	"card.description.heroForksmanshipInstructor": "Когда вы играете юнита с {powerThreshold} Силы или меньше, дайте ему +{bonusPower} Силы.",
 
 	"card.name.heroTribeShaman": "Племенной шаман",
 	"card.description.heroTribeShaman": "*Вход в игру:*\n*Создайте* *Целебный дождь*",
+
+	"card.name.heroElderElemental": "Древний элементаль",
+	"card.description.heroElderElemental": "*Вход в игру:*\nПолучите {manaGenerated} ед. Маны.<p>*Начало хода:*\nПовторите эффект\n*Вход в игру* этой карты.",
 
 	"card.name.unitRavenMessenger": "Почтовый ворон",
 	"card.description.unitRavenMessenger": "*Вход в игру:*\n*Призовите* Обыкновенную карту человека из вашей колоды.",
@@ -176,7 +207,7 @@
 	"card.name.unitIceSkinCrystal": "Ледяной кристалл",
 	"card.description.unitIceSkinCrystal": "Получает {chargePerMana} *Заряд* за каждую единицу потраченной вами маны.<p>*Deathrattle:* Все соседние с этим юниты получают {armorGranted} Decaying Armor за каждый сохранённый *Заряд* ({chargesForArmor}).<if chargesVisible><p><i>Charges accumulated: {charges}\nПредоставляет {potentialArmor} Decaying Armor</i></if>",
 
-	"card.name.unitStoneElemental": "Каменный элементаль",
+	"card.name.unitStoneElemental": "Каменный\nэлементаль",
 	"card.description.unitStoneElemental": "*Вход в игру:*\nСовершает *Атаку* в этот ход. <p>*Дальний бой (2)*:\nНаносит {attack} ед. урона и *Оглушает* на 1 ход.",
 
 	"card.name.unitMerfolkStormcaller": "Мерфолк буревестник",
@@ -193,6 +224,9 @@
 
 	"card.name.unitLoneLooter": "Мародер-одиночка",
 	"card.description.unitLoneLooter": "Когда вы накладываете *Статус эффект* на противника, *Призовите* одного *Мародера-одиночку* из вашей колоды.",
+
+	"card.name.unitMasterSwordsmith": "Мастер-оружейник",
+	"card.description.unitMasterSwordsmith": "*Вход в игру:*\nДайте +{bonusPower} ед. Силы всем юнитам в вашей руке.",
 
 	"card.name.unitTinySparkling": "Искрящаяся кроха",
 	"card.description.unitTinySparkling": "<i>Нет эффекта</i>",
@@ -211,6 +245,9 @@
 
 	"card.name.unitOceanicSeagull": "Океаническая чайка",
 	"card.description.unitOceanicSeagull": "*Вход в игру:*\n*Призовите* Обыкновенную карту мерфолка из вашей колоды.",
+
+	"card.name.unitMerchantsAssistant": "Помощник торговца",
+	"card.description.unitMerchantsAssistant": "*Вход в игру:*\nВаше следующее заклинание в этом раунде стоит на {spellDiscount} ед. Маны дешевле.",
 
 	"card.name.tokenPlayerDeck": "Ваша колода",
 	"card.description.tokenPlayerDeck": "Выберите вашу колоду",

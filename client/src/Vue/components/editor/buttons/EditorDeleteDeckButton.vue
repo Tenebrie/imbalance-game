@@ -1,8 +1,8 @@
 <template>
 	<div class="button-container">
 		<button class="primary destructive" @click="onClick">
-			<span v-if="!requestInFlight">Delete</span>
-			<span v-if="requestInFlight">Deleting...</span>
+			<span v-if="!requestInFlight">{{ $locale.get('ui.decks.deleteDeck') }}</span>
+			<span v-if="requestInFlight">{{ $locale.get('ui.decks.deleteDeck.progress') }}</span>
 		</button>
 	</div>
 </template>
