@@ -91,7 +91,7 @@ export default class ServerGame extends Game {
 
 		this.players.forEach(playerInGame => {
 			playerInGame.cardDeck.shuffle()
-			playerInGame.onRoundStart()
+			playerInGame.startRound()
 			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_STARTING)
 			playerInGame.drawSpellCards(Constants.SPELL_HAND_SIZE_MINIMUM)
 			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)

@@ -42,8 +42,8 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.morale = Constants.STARTING_PLAYER_MORALE
 		this.unitMana = 0
 		this.spellMana = 0
-		this.turnEnded = false
-		this.roundEnded = false
+		this.turnEnded = true
+		this.roundEnded = true
 		this.cardsPlayed = []
 	}
 
@@ -177,6 +177,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public startRound(): void {
+		if (!this.roundEnded) {
+			return
+		}
 		this.roundEnded = false
 		this.cardsPlayed = []
 		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
@@ -189,6 +192,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public startTurn(): void {
+		if (!this.turnEnded) {
+			return
+		}
 		this.turnEnded = false
 		this.setUnitMana(1)
 		this.refillSpellHand()
@@ -208,6 +214,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public endTurn(): void {
+		if (this.turnEnded) {
+			return
+		}
 		this.turnEnded = true
 		OutgoingMessageHandlers.notifyAboutTurnEnded(this)
 		this.onTurnEnd()
@@ -227,6 +236,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public endRound(): void {
+		if (this.roundEnded) {
+			return
+		}
 		this.endTurn()
 		this.roundEnded = true
 		OutgoingMessageHandlers.notifyAboutRoundEnded(this)
