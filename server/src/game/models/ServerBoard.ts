@@ -179,7 +179,7 @@ export default class ServerBoard extends Board {
 		const currentRow = this.rows[unit.rowIndex]
 		const targetRow = this.rows[rowIndex]
 
-		if (targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
+		if (currentRow.owner !== targetRow.owner || targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
 			return
 		}
 
