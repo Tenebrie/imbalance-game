@@ -21,8 +21,14 @@ export default {
 
 	async mounted() {
 		window.addEventListener('keydown', this.onKeyDown)
-		await store.dispatch.userPreferencesModule.fetchPreferences()
-		AudioSystem.setMode(AudioSystemMode.MENU)
+		try {
+			await store.dispatch.userPreferencesModule.fetchPreferences()
+			AudioSystem.setMode(AudioSystemMode.MENU)
+		} catch (e) {
+			console.warn('Unable to fetch user preferences. User is probably not logged in.')
+		}
+
+		this.printConsoleWelcomeMessage()
 	},
 
 	beforeDestroy() {
@@ -52,6 +58,21 @@ export default {
 				store.dispatch.popupModule.close()
 				event.preventDefault()
 			}
+		},
+
+		printConsoleWelcomeMessage(): void {
+			const headerStyle = 'color: #bada55; padding: 4px; font-size: 24px'
+			const textStyle = 'color: #bada55; padding:4px; font-size: 14px'
+			const warningStyle = 'color: #daba55; padding:4px; font-size: 14px'
+
+			const message = 'If you DO know what you\'re doing, have fun hacking!\n'
+				+ 'This is an open-source project. You can find the code at https://github.com/Tenebrie/notgwent-game.'
+				+ ' If you find a bug or an exploit, or you have a feature request, feel free to open an issue on GitHub.'
+				+ ' You can also make a pull request with a fix. Contributions are welcome!'
+
+			console.info('%cHowdy!', headerStyle)
+			console.info('%cIf you don\'t know what you\'re doing, be VERY careful! Don\'t paste here anything that you do not understand!', warningStyle)
+			console.info(`%c${message}`, textStyle)
 		}
 	}
 }
