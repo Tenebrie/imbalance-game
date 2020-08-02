@@ -1,5 +1,9 @@
 <template>
 	<div class="pixi-user-interface">
+		<div class="settings-button-container">
+			<button @click="onShowGameLog" class="primary game-button"><i class="fas fa-history"></i></button>
+			<button @click="onToggleEscapeWindow" class="primary game-button"><i class="fas fa-cog"></i></button>
+		</div>
 		<div class="end-turn-button-container">
 			<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
 			<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">End round</button>
@@ -16,7 +20,7 @@
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
 				<button @click="onShowSettings" class="primary game-button">Settings</button>
-				<button @click="onShowGameLog" class="primary game-button">Game history</button>
+<!--				<button @click="onShowGameLog" class="primary game-button">Game history</button>-->
 				<div class="menu-separator"></div>
 <!--				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>-->
 <!--				<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>-->
@@ -100,8 +104,12 @@ export default Vue.extend({
 				return
 			}
 			if (event.key === 'Escape') {
-				this.isEscapeWindowVisible = !this.isEscapeWindowVisible
+				this.onToggleEscapeWindow()
 			}
+		},
+
+		onToggleEscapeWindow(): void {
+			this.isEscapeWindowVisible = !this.isEscapeWindowVisible
 		},
 
 		onLeaveGame(): void {
@@ -238,6 +246,29 @@ export default Vue.extend({
 				button {
 					width: 100%;
 					margin: 8px;
+				}
+			}
+		}
+
+		.settings-button-container {
+			position: absolute;
+			top: 0;
+			right: 0;
+			display: flex;
+			flex-direction: row;
+
+			& > button {
+				padding: 16px 24px;
+				margin: 0;
+				background: transparent;
+				color: white;
+				font-size: 32px;
+
+				&:hover {
+					color: darken(white, 10);
+				}
+				&:active {
+					color: darken(white, 20);
 				}
 			}
 		}
