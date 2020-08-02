@@ -1,10 +1,10 @@
 import {Howl} from 'howler'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import store from '@/Vue/store'
-import {forEachInNumericEnum} from '@/utils/Utils'
 
 interface AudioFile {
 	src: string
+	volume: number
 }
 
 export enum AudioSystemMode {
@@ -20,19 +20,49 @@ class EffectsTrack {
 		this.audioEffects = new Map<AudioEffectCategory, any>()
 		this.audioCooldowns = new Map<AudioEffectCategory, number | undefined>()
 
-		const addEffects = (category: AudioEffectCategory, sources: string[]): void => {
-			const insertData: AudioFile[] = sources.map(source => ({
-				src: `/assets/audio/${source}.ogg`
-			}))
-			this.audioEffects.set(category, insertData)
-		}
+		this.addEffects(AudioEffectCategory.PROJECTILE, [
+			{ src: 'projectile00', volume: 0.5 },
+			{ src: 'projectile01', volume: 0.5 },
+			{ src: 'projectile02', volume: 0.5 },
+			{ src: 'projectile03', volume: 0.5 },
+			{ src: 'projectile04', volume: 0.5 },
+		])
+		this.addEffects(AudioEffectCategory.IMPACT_GENERIC, [
+			{ src: 'impact_generic00', volume: 0.5 },
+			{ src: 'impact_generic01', volume: 0.5 },
+			{ src: 'impact_generic02', volume: 0.5 },
+			{ src: 'impact_generic03', volume: 0.5 },
+		])
+		this.addEffects(AudioEffectCategory.UNIT_DEPLOY, ['deploy00', 'deploy01', 'deploy02'])
+		this.addEffects(AudioEffectCategory.BUFF_POSITIVE, [
+			{ src: 'buff_positive', volume: 0.5 },
+		])
+		this.addEffects(AudioEffectCategory.BUFF_NEGATIVE, [
+			{ src: 'buff_negative', volume: 0.4 },
+		])
+		this.addEffects(AudioEffectCategory.TARGETING_CONFIRM, ['targeting_confirm'])
+		this.addEffects(AudioEffectCategory.CARD_MOVE, ['card_move00', 'card_move01', 'card_move02', 'card_move03'])
+		this.addEffects(AudioEffectCategory.CARD_ANNOUNCE, [
+			{ src: 'card_announce00', volume: 0.4 },
+			{ src: 'card_announce01', volume: 0.4 },
+			{ src: 'card_announce02', volume: 0.4 },
+		])
+	}
 
-		addEffects(AudioEffectCategory.PROJECTILE, ['projectile00', 'projectile01', 'projectile02', 'projectile03', 'projectile04'])
-		addEffects(AudioEffectCategory.IMPACT_GENERIC, ['impact_generic00', 'impact_generic01', 'impact_generic02', 'impact_generic03'])
-		addEffects(AudioEffectCategory.UNIT_DEPLOY, ['deploy00', 'deploy01', 'deploy02'])
-		addEffects(AudioEffectCategory.BUFF_POSITIVE, ['buff_positive'])
-		addEffects(AudioEffectCategory.BUFF_NEGATIVE, ['buff_negative'])
-		addEffects(AudioEffectCategory.TARGETING_CONFIRM, ['targeting_confirm'])
+	private addEffects(category: AudioEffectCategory, sources: (string | AudioFile)[]): void {
+		const insertData: AudioFile[] = sources.map(source => {
+			if (typeof(source) === 'object') {
+				return {
+					...source,
+					src: `/assets/audio/${source.src}.ogg`
+				}
+			}
+			return {
+				src: `/assets/audio/${source}.ogg`,
+				volume: 1.0
+			}
+		})
+		this.audioEffects.set(category, insertData)
 	}
 
 	public playFromCategory(category: AudioEffectCategory): void {
@@ -45,7 +75,7 @@ class EffectsTrack {
 		const audioHandle = new Howl({
 			src: selectedEffect.src,
 			loop: false,
-			volume: this.getTrackVolume()
+			volume: this.getTrackVolume() * selectedEffect.volume
 		})
 		audioHandle.play()
 
@@ -75,7 +105,8 @@ class MusicTrack {
 	constructor() {
 		const addFiles = (category: MusicTrackCategory, sources: string[]): void => {
 			const insertData: AudioFile[] = sources.map(source => ({
-				src: `/assets/audio/ost/${source}.ogg`
+				src: `/assets/audio/ost/${source}.ogg`,
+				volume: 1.0
 			}))
 			this.ostFiles.set(category, insertData)
 		}
@@ -157,7 +188,9 @@ class AmbienceTrack {
 	}
 
 	public updateVolumeLevels(): void {
-		this.primaryTrack.volume(this.getTrackVolume())
+		if (this.primaryTrack) {
+			this.primaryTrack.volume(this.getTrackVolume())
+		}
 	}
 
 	private getTrackVolume(): number {

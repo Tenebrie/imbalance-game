@@ -33,8 +33,13 @@ export default class UnitSupplyWagon extends ServerCard {
 		})
 		this.game.animation.play(ServerAnimation.cardReceivedBuff(mapUnitsToCards(adjacentUnits), BuffAlignment.POSITIVE))
 		adjacentUnits = adjacentUnits.filter(unit => unit.isAlive())
+		if (adjacentUnits.length === 0) {
+			return
+		}
+
 		adjacentUnits.forEach(unit => {
 			this.game.board.moveUnitForward(unit, this.pushDistance)
 		})
+		this.game.animation.play(ServerAnimation.unitMove())
 	}
 }

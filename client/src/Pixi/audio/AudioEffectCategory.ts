@@ -4,7 +4,9 @@ enum AudioEffectCategory {
 	BUFF_NEGATIVE,
 	IMPACT_GENERIC,
 	PROJECTILE,
-	TARGETING_CONFIRM
+	TARGETING_CONFIRM,
+	CARD_MOVE,
+	CARD_ANNOUNCE,
 }
 
 export default AudioEffectCategory

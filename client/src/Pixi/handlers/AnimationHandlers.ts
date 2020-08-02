@@ -14,7 +14,10 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 
 	[AnimationType.CARD_ANNOUNCE]: (message: AnimationMessage, params: void) => {
 		const announcedCard = Core.opponent.cardHand.findCardById(message.targetCardId)!
-		Core.mainHandler.announceCard(announcedCard)
+		AudioSystem.playEffect(AudioEffectCategory.CARD_ANNOUNCE)
+		window.setTimeout(() => {
+			Core.mainHandler.announceCard(announcedCard)
+		}, 200)
 		return 2000
 	},
 
@@ -80,6 +83,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 	},
 
 	[AnimationType.UNIT_MOVE]: (message: AnimationMessage, params: void) => {
+		AudioSystem.playEffect(AudioEffectCategory.CARD_MOVE)
 		return 750
 	},
 
