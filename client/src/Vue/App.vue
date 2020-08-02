@@ -20,14 +20,8 @@ export default {
 	components: { TheNavigationBar },
 
 	async mounted() {
+		AudioSystem.setMode(AudioSystemMode.MENU)
 		window.addEventListener('keydown', this.onKeyDown)
-		try {
-			await store.dispatch.userPreferencesModule.fetchPreferences()
-			AudioSystem.setMode(AudioSystemMode.MENU)
-		} catch (e) {
-			console.warn('Unable to fetch user preferences. User is probably not logged in.')
-		}
-
 		this.printConsoleWelcomeMessage()
 	},
 

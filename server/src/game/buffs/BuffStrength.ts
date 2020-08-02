@@ -25,6 +25,6 @@ export default class BuffStrength extends ServerBuff {
 	}
 
 	getUnitMaxPowerOverride(basePower: number): number {
-		return basePower + 1
+		return basePower + this.intensity
 	}
 }

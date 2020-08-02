@@ -53,6 +53,22 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return animationDuration
 	},
 
+	[AnimationType.CARD_HEAL]: (message: AnimationMessage, params: void) => {
+		const animationDuration = 500
+		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
+		if (sourceCard) {
+			message.targetCardIDs.forEach(targetCardId => {
+				const targetCard = Core.game.findRenderedCardById(targetCardId)
+				if (!targetCard) {
+					console.warn(`Target card with id ${targetCardId} does not exist!`)
+					return animationDuration
+				}
+				Core.mainHandler.projectileSystem.createCardHealProjectile(sourceCard, targetCard)
+			})
+		}
+		return animationDuration
+	},
+
 	[AnimationType.UNIVERSE_ATTACK]: (message: AnimationMessage, params: void) => {
 		message.targetCardIDs.forEach(targetCardId => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
@@ -69,6 +85,14 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return 500
 	},
 
+	[AnimationType.UNIVERSE_HEAL]: (message: AnimationMessage, params: void) => {
+		message.targetCardIDs.forEach(targetCardId => {
+			const targetCard = Core.game.findRenderedCardById(targetCardId)
+			Core.mainHandler.projectileSystem.createUniverseHealProjectile(targetCard)
+		})
+		return 500
+	},
+
 	[AnimationType.POST_CARD_ATTACK]: (message: AnimationMessage, params: void) => {
 		return 100
 	},
@@ -77,7 +101,9 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		const targetUnit = Core.board.findUnitById(message.targetCardId)
 		AudioSystem.playEffect(AudioEffectCategory.UNIT_DEPLOY)
 		PIXI.Ticker.shared.addOnce(() => {
-			Core.particleSystem.createUnitDeployParticleEffect(targetUnit)
+			PIXI.Ticker.shared.addOnce(() => {
+				Core.particleSystem.createUnitDeployParticleEffect(targetUnit)
+			})
 		})
 		return 500
 	},

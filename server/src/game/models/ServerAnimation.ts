@@ -30,6 +30,13 @@ export default class ServerAnimation extends Animation {
 		return animation
 	}
 
+	public static cardHealsCards(sourceCard: ServerCard, targetCards: ServerCard[]): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.CARD_HEAL, {})
+		animation.sourceCard = sourceCard
+		animation.targetCards = targetCards
+		return animation
+	}
+
 	public static cardAttacksUnits(sourceCard: ServerCard, targetUnits: ServerUnit[]): ServerAnimation {
 		return ServerAnimation.cardAttacksCards(sourceCard, targetUnits.map(unit => unit.card))
 	}
@@ -46,6 +53,12 @@ export default class ServerAnimation extends Animation {
 
 	public static universeAffectsCards(targetCards: ServerCard[]): ServerAnimation {
 		const animation = new ServerAnimation(AnimationType.UNIVERSE_AFFECT, {})
+		animation.targetCards = targetCards
+		return animation
+	}
+
+	public static universeHealsCards(targetCards: ServerCard[]): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.UNIVERSE_HEAL, {})
 		animation.targetCards = targetCards
 		return animation
 	}

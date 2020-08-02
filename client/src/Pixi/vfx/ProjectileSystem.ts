@@ -98,4 +98,18 @@ export default class ProjectileSystem {
 	public createUniverseAffectProjectile(targetCard: RenderedCard): RenderedProjectile {
 		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => { /* Empty */ })
 	}
+
+	public createCardHealProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
+		return this.createAttackProjectile(sourceCard.getPosition(), targetCard, () => {
+			Core.particleSystem.createHealImpactParticleEffect(targetCard)
+			AudioSystem.playEffect(AudioEffectCategory.IMPACT_HEAL)
+		})
+	}
+
+	public createUniverseHealProjectile(targetCard: RenderedCard): RenderedProjectile {
+		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => {
+			Core.particleSystem.createHealImpactParticleEffect(targetCard)
+			AudioSystem.playEffect(AudioEffectCategory.IMPACT_HEAL)
+		})
+	}
 }

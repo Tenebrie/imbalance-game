@@ -44,7 +44,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target.card]))
+		this.game.animation.play(ServerAnimation.cardHealsCards(this, [target.card]))
 		target.heal(ServerDamageInstance.fromUnit(this.healing, this.unit))
 	}
 }

@@ -33,6 +33,9 @@ class EffectsTrack {
 			{ src: 'impact_generic02', volume: 0.5 },
 			{ src: 'impact_generic03', volume: 0.5 },
 		])
+		this.addEffects(AudioEffectCategory.IMPACT_HEAL, [
+			{ src: 'impact_heal00', volume: 0.5 },
+		])
 		this.addEffects(AudioEffectCategory.UNIT_DEPLOY, ['deploy00', 'deploy01', 'deploy02'])
 		this.addEffects(AudioEffectCategory.BUFF_POSITIVE, [
 			{ src: 'buff_positive', volume: 0.5 },

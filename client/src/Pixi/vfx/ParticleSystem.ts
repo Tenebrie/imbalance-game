@@ -104,6 +104,34 @@ export default class ParticleSystem {
 		this.playEmitter(emitter, container)
 	}
 
+	public createHealImpactParticleEffect(card: RenderedCard): void {
+		const container = this.getCardEffectContainer(card)
+
+		const emitter = this.createDefaultEmitter(container, {
+			alpha: { start: 1.00, end: 0 },
+			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			color: { start: '00ff2b', end: '5ed1ff' },
+			speed: { start: 550,  end: 0 },
+			minimumSpeedMultiplier: 0.1,
+			startRotation: { min: 0, max: 360 },
+			lifetime: { min: 0.5, max: 0.5 },
+			ease: [
+				{ s: 0, cp: 0.1, e: 1 }
+			],
+			blendMode: 'screen',
+			frequency: 0.01,
+			emitterLifetime: 0.011,
+			maxParticles: 1000,
+			pos: {
+				x: card.getPosition().x,
+				y: card.getPosition().y
+			},
+			particlesPerWave: 500,
+			spawnType: 'point',
+		})
+		this.playEmitter(emitter, container)
+	}
+
 	public createUnitDeployParticleEffect(unit: RenderedUnit): void {
 		let color = {
 			start: '55AAFF',
