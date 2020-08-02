@@ -39,7 +39,7 @@ export default class UnitUndercityGambler extends ServerCard {
 	private onTargetSelected(target: ServerCard): void {
 		const owner = target.owner
 		owner.cardHand.discardUnit(target)
-		owner.cardDeck.addUnit(target)
+		owner.cardDeck.addUnitToBottom(target)
 		const drawnCards = owner.drawUnitCards(1)
 		if (drawnCards.length === 0) {
 			return

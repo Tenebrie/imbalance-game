@@ -63,7 +63,7 @@ export default class ServerCardResolveStack {
 
 		const resolvedCard = resolvedEntry.ownedCard
 		if (resolvedCard.card.features.includes(CardFeature.HERO_POWER)) {
-			resolvedCard.owner.cardDeck.addSpell(resolvedCard.card)
+			resolvedCard.owner.cardDeck.addSpellToTop(resolvedCard.card)
 		} else if (resolvedCard.card.type === CardType.SPELL) {
 			resolvedCard.owner.cardGraveyard.addSpell(resolvedCard.card)
 		}
