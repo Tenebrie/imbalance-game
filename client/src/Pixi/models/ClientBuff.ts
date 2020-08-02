@@ -34,9 +34,9 @@ export default class ClientBuff implements Buff {
 		this.buffClass = message.buffClass
 		this.alignment = message.alignment
 		this.stackType = message.stackType
-		this.cardTribes = message.cardTribes.slice()
-		this.buffFeatures = message.buffFeatures.slice()
-		this.cardFeatures = message.cardFeatures.slice()
+		this.cardTribes = (message.cardTribes || []).slice()
+		this.buffFeatures = (message.buffFeatures || []).slice()
+		this.cardFeatures = (message.cardFeatures || []).slice()
 
 		this.name = message.name
 		this.description = message.description
