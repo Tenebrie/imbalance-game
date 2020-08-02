@@ -80,7 +80,13 @@ export default class ServerGame extends Game {
 		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.sendPlayerSelf(playerInGame.player, playerInGame)
 			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, this.getOpponent(playerInGame))
+		})
+
+		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutDeckLeader(playerInGame, playerInGame.leader)
+		})
+
+		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, this.players.indexOf(playerInGame) === 1)
 		})
 
