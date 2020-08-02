@@ -75,6 +75,10 @@ export default {
 		},
 
 		getEntityName(id: string): string {
+			const localizedString = Localization.get(id)
+			if (localizedString && localizedString !== id) {
+				return localizedString
+			}
 			if (Core.player.player.id === id) {
 				return Core.player.player.username
 			}

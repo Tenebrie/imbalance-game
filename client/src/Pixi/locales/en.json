@@ -51,9 +51,9 @@
 	"log.entry.cardDestroyed": "Card {triggeringCard} has been destroyed",
 	"log.entry.unitCreated": "Unit {triggeringUnit} has been created",
 	"log.entry.unitDestroyed": "Unit {triggeringUnit} has been destroyed",
-	"log.entry.buffCreated.fromCard": "Buff {triggeringBuff} has been created on {ownerCard} by {sourceCard}",
-	"log.entry.buffCreated.fromUniverse": "Buff {triggeringBuff} has been created on {ownerCard}",
-	"log.entry.buffRemoved": "Buff {triggeringBuff} has been removed from {ownerCard}",
+	"log.entry.buffCreated.fromCard": "Buff {triggeringBuffName} has been created on {ownerCard} by {sourceCard}",
+	"log.entry.buffCreated.fromUniverse": "Buff {triggeringBuffName} has been created on {ownerCard}",
+	"log.entry.buffRemoved": "Buff {triggeringBuffName} has been removed from {ownerCard}",
 	"log.entry.turnEnded": "Turn has ended for {player}",
 	"log.entry.roundEnded": "Round has ended for {player}",
 
@@ -316,5 +316,8 @@
 	"buff.description.buffDecayingArmor": "Extra armor that decays over time.",
 
 	"buff.name.buffUpgradedStorms": "Upgraded Storms",
-	"buff.description.buffUpgradedStorms": "Your storms are upgraded."
+	"buff.description.buffUpgradedStorms": "Your storms are upgraded.",
+
+	"buff.name.buffImmunity": "Immunity",
+	"buff.description.buffImmunity": "This card is immune to damage and any effects."
 }

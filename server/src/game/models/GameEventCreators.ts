@@ -109,16 +109,16 @@ export default {
 		args: args,
 		logSubtype: args.triggeringBuff.source ? 'fromCard' : 'fromUniverse',
 		logVariables: {
-			triggeringBuff: args.triggeringBuff.id,
+			triggeringBuffName: args.triggeringBuff.name,
 			ownerCard: args.triggeringBuff.card.id,
-			sourceCard: args.triggeringBuff.source ? args.triggeringBuff.source.id : undefined
+			sourceCard: args.triggeringBuff.source ? args.triggeringBuff.source.id : undefined,
 		}
 	}),
 	buffRemoved: (args: BuffRemovedEventArgs): GameEvent => ({
 		type: GameEventType.BUFF_REMOVED,
 		args: args,
 		logVariables: {
-			triggeringBuff: args.triggeringBuff.id,
+			triggeringBuffName: args.triggeringBuff.name,
 			ownerCard: args.triggeringBuff.card.id,
 		}
 	}),
