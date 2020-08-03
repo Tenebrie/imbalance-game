@@ -320,5 +320,38 @@
 	"card.description.spellFlamingSpark": "*Способность предводителя*<p>Наносит {damage} Урона противнику.<p><i> Урон увеличивается от силы вашего *Плетения* ({damagePerWeave})</i>",
 
 	"card.name.spellFlameweave": "Огнеплетение",
-	"card.description.spellFlameweave": "*Способность предводителя*<p>Увеличивает мощность вашего *Плетения*<p><i>Текущее значение: {currentStacks}</i>"
+	"card.description.spellFlameweave": "*Способность предводителя*<p>Увеличивает мощность вашего *Плетения*<p><i>Текущее значение: {currentStacks}</i>",
+
+	"buff.name.buffBurning": "Горение",
+	"buff.description.buffBurning": "Эта карта получает урон каждый ход.",
+
+	"buff.name.buffDecayingArmor": "Исчезающая броня",
+	"buff.description.buffDecayingArmor": "Эта карта имеет дополнительную броню, которая пропадает со временем.",
+
+	"buff.name.buffImmunity": "Неуязвимость",
+	"buff.description.buffImmunity": "Эта карта неуязвима к любому урону или эффектам.",
+
+	"buff.name.buffSparksExtraDamage": "Дополнительный урон Искр",
+	"buff.description.buffSparksExtraDamage": "Ваши Искры наносят дополнительный урон.",
+
+	"buff.name.buffSpellDiscountAura": "Аура скидки на заклинания",
+	"buff.description.buffSpellDiscountAura": "Когда вы вытягиваете карту заклинания, наложите Скидку на заклинание на нее.",
+
+	"buff.name.buffSpellDiscountSingular": "Скидка на заклинания",
+	"buff.description.buffSpellDiscountSingular": "Это заклинание стоит на 1 ед. маны дешевле за каждый уровень этого статуса.",
+
+	"buff.name.buffStrength": "Сила",
+	"buff.description.buffStrength": "Эта карта получает 1 ед. силы за каждый уровень этого статуса.",
+
+	"buff.name.buffStun": "Оглушение",
+	"buff.description.buffStun": "Эта карта оглушена. Ее эффект временно отключен.",
+
+	"buff.name.buffTutoredCard": "Временная карта",
+	"buff.description.buffTutoredCard": "Эта карта стоит 0. Она будет сброшена в конце хода, если останется в вашей руке.",
+
+	"buff.name.buffUpgradedStorms": "Улучшенные Бури",
+	"buff.description.buffUpgradedStorms": "Ваши Бури улучшены.",
+
+	"buff.name.buffVelElleronEncouragement": "Воодушевление",
+	"buff.description.buffVelElleronEncouragement": "Эта карта получит дополнительную Силу в начале следующего хода."
 }

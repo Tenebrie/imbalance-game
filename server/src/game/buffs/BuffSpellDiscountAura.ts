@@ -4,7 +4,6 @@ import ServerGame from '../models/ServerGame'
 import {CardDrawnEventArgs, CardPlayedEventArgs} from '../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardType from '@shared/enums/CardType'
-import BuffFeature from '@shared/enums/BuffFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import ServerCard from '../models/ServerCard'
 import ServerAnimation from '../models/ServerAnimation'
@@ -14,7 +13,6 @@ import BuffSpellDiscountSingular from './BuffSpellDiscountSingular'
 export default class BuffSpellDiscountAura extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.ADD_INTENSITY)
-		this.buffFeatures = [BuffFeature.SPELL_DISCOUNT_PER_INTENSITY]
 
 		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)

@@ -322,12 +322,36 @@
 	"card.name.spellFlameweave": "Flameweave",
 	"card.description.spellFlameweave": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
 
+	"buff.name.buffBurning": "Burning",
+	"buff.description.buffBurning": "This card takes damage every turn.",
+
 	"buff.name.buffDecayingArmor": "Decaying Armor",
 	"buff.description.buffDecayingArmor": "Extra armor that decays over time.",
 
-	"buff.name.buffUpgradedStorms": "Upgraded Storms",
-	"buff.description.buffUpgradedStorms": "Your storms are upgraded.",
-
 	"buff.name.buffImmunity": "Immunity",
-	"buff.description.buffImmunity": "This card is immune to damage and any effects."
+	"buff.description.buffImmunity": "This card is immune to damage and any effects.",
+
+	"buff.name.buffSparksExtraDamage": "Extra Spark Damage",
+	"buff.description.buffSparksExtraDamage": "Your Sparks deal extra damage.",
+
+	"buff.name.buffSpellDiscountAura": "Spell Discount Aura",
+	"buff.description.buffSpellDiscountAura": "Whenever you draw a spell, apply Spell Discount to it.",
+
+	"buff.name.buffSpellDiscountSingular": "Spell Discount",
+	"buff.description.buffSpellDiscountSingular": "This spell costs 1 Mana less for every stack of this buff.",
+
+	"buff.name.buffStrength": "Strength",
+	"buff.description.buffStrength": "This card has 1 extra Power for every stack of this buff.",
+
+	"buff.name.buffStun": "Stun",
+	"buff.description.buffStun": "This card is stunned and is temporarily disabled.",
+
+	"buff.name.buffTutoredCard": "Temporary Card",
+	"buff.description.buffTutoredCard": "This card costs 0. It will be discarded at the end of the turn if not played.",
+
+	"buff.name.buffUpgradedStorms": "Upgraded Storms",
+	"buff.description.buffUpgradedStorms": "Your Storms are upgraded.",
+
+	"buff.name.buffVelElleronEncouragement": "An Encouragement",
+	"buff.description.buffVelElleronEncouragement": "This card will receive bonus Power at the start of next turn."
 }
