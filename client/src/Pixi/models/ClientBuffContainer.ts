@@ -41,5 +41,8 @@ export default class ClientBuffContainer implements BuffContainer {
 
 	public remove(buffMessage: BuffMessage): void {
 		this.buffs.splice(this.buffs.indexOf(this.findBuffById(buffMessage.id)), 1)
+		if (Core.player.cardHand.unitCards.includes(this.card)) {
+			Core.player.cardHand.sortCards()
+		}
 	}
 }

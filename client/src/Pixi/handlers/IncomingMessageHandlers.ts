@@ -363,6 +363,9 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		card.buffs.findBuffById(data.id).intensity = data.intensity
+		if (Core.player.cardHand.unitCards.includes(this.card)) {
+			Core.player.cardHand.sortCards()
+		}
 	},
 
 	'update/card/buffs/durationChanged': (data: BuffMessage) => {
@@ -372,6 +375,9 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		card.buffs.findBuffById(data.id).duration = data.duration
+		if (Core.player.cardHand.unitCards.includes(this.card)) {
+			Core.player.cardHand.sortCards()
+		}
 	},
 
 	'update/card/buffs/removed': (data: BuffMessage) => {
