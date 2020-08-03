@@ -61,7 +61,6 @@ export default class ServerUnit implements Unit {
 			return
 		}
 
-		console.log(`Power = ${Math.min(this.card.maxPower, this.card.power + healingInstance.value)} // Max power = ${this.card.maxPower}`)
 		this.setPower(Math.min(this.card.maxPower, this.card.power + healingInstance.value))
 	}
 

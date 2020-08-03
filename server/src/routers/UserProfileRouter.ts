@@ -3,11 +3,12 @@ const router = express.Router()
 
 import ServerPlayer from '../game/players/ServerPlayer'
 import PlayerDatabase from '../database/PlayerDatabase'
-import Language from '@shared/models/Language'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import AsyncHandler from '../utils/AsyncHandler'
 import RenderQuality from '@shared/enums/RenderQuality'
+import Language from '@shared/models/Language'
+import Utils from '../utils/Utils'
 
 router.get('/', AsyncHandler(async(req: Request, res: Response, next) => {
 	const player = req['player'] as ServerPlayer
@@ -18,41 +19,93 @@ router.get('/', AsyncHandler(async(req: Request, res: Response, next) => {
 router.put('/', (req: Request, res: Response, next) => {
 	const player = req['player'] as ServerPlayer
 
-	const password = req.body['password'] as string
-	if (password) {
-		PlayerLibrary.updatePassword(player, password).then()
+	interface AcceptedUserSetting {
+		name: string
+		validator: (args: any) => boolean
+		setter: (playerId: string, args: any) => void
 	}
 
-	const userLanguage = req.body['userLanguage'] as Language
-	if (userLanguage) {
-		PlayerDatabase.updatePlayerUserLanguage(player.id, userLanguage).then()
+	const validateInput = {
+		password: (password: string): boolean => {
+			return password.length > 0
+		},
+		userLanguage: (userLanguage: string): boolean => {
+			Utils.forEachInStringEnum(Language, (value: Language) => {
+				if (value === userLanguage) {
+					return true
+				}
+			})
+			return false
+		},
+		renderQuality: (renderQuality: string): boolean => {
+			Utils.forEachInStringEnum(RenderQuality, (value: RenderQuality) => {
+				if (value === renderQuality) {
+					return true
+				}
+			})
+			return false
+		},
+		volumeLevel: (volume: number): boolean => {
+			return volume >= 0 && volume <= 1
+		}
 	}
 
-	const renderQuality = req.body['renderQuality'] as RenderQuality
-	if (userLanguage) {
-		PlayerDatabase.updatePlayerRenderQuality(player.id, renderQuality).then()
+	const acceptedSettings: AcceptedUserSetting[] = [
+		{
+			name: 'password',
+			validator: validateInput.password,
+			setter: PlayerLibrary.updatePassword.bind(PlayerLibrary),
+		},
+		{
+			name: 'userLanguage',
+			validator: validateInput.userLanguage,
+			setter: PlayerDatabase.updatePlayerUserLanguage.bind(PlayerDatabase),
+		},
+		{
+			name: 'renderQuality',
+			validator: validateInput.renderQuality,
+			setter: PlayerDatabase.updatePlayerRenderQuality.bind(PlayerDatabase),
+		},
+		{
+			name: 'masterVolume',
+			validator: validateInput.volumeLevel,
+			setter: PlayerDatabase.updatePlayerMasterVolume.bind(PlayerDatabase),
+		},
+		{
+			name: 'musicVolume',
+			validator: validateInput.volumeLevel,
+			setter: PlayerDatabase.updatePlayerMusicVolume.bind(PlayerDatabase),
+		},
+		{
+			name: 'effectsVolume',
+			validator: validateInput.volumeLevel,
+			setter: PlayerDatabase.updatePlayerEffectsVolume.bind(PlayerDatabase),
+		},
+		{
+			name: 'ambienceVolume',
+			validator: validateInput.volumeLevel,
+			setter: PlayerDatabase.updatePlayerAmbienceVolume.bind(PlayerDatabase),
+		},
+		{
+			name: 'userInterfaceVolume',
+			validator: validateInput.volumeLevel,
+			setter: PlayerDatabase.updatePlayerUserInterfaceVolume.bind(PlayerDatabase),
+		},
+	]
+
+	const receivedSettings = acceptedSettings.filter(settingDefinition => typeof(req.body[settingDefinition.name]) !== 'undefined')
+	const validatorsFailedFor = receivedSettings
+		.filter(settingDefinition => !settingDefinition.validator(req.body[settingDefinition.name]))
+
+	if (validatorsFailedFor.length > 0) {
+		const message = `Invalid values: ${validatorsFailedFor.map(definition => definition.name).join(', ')}`
+		throw { status: 400, error: message }
 	}
 
-	const masterVolume = req.body['masterVolume'] as number
-	if (typeof(masterVolume) !== 'undefined') {
-		PlayerDatabase.updatePlayerMasterVolume(player.id, masterVolume).then()
-	}
-	const musicVolume = req.body['musicVolume'] as number
-	if (typeof(musicVolume) !== 'undefined') {
-		PlayerDatabase.updatePlayerMusicVolume(player.id, musicVolume).then()
-	}
-	const effectsVolume = req.body['effectsVolume'] as number
-	if (typeof(effectsVolume) !== 'undefined') {
-		PlayerDatabase.updatePlayerEffectsVolume(player.id, effectsVolume).then()
-	}
-	const ambienceVolume = req.body['ambienceVolume'] as number
-	if (typeof(ambienceVolume) !== 'undefined') {
-		PlayerDatabase.updatePlayerAmbienceVolume(player.id, ambienceVolume).then()
-	}
-	const userInterfaceVolume = req.body['userInterfaceVolume'] as number
-	if (typeof(userInterfaceVolume) !== 'undefined') {
-		PlayerDatabase.updatePlayerUserInterfaceVolume(player.id, userInterfaceVolume).then()
-	}
+	receivedSettings.forEach(settingDefinition => {
+		const value = req.body[settingDefinition.name]
+		settingDefinition.setter(player.id, value)
+	})
 
 	PlayerLibrary.removeFromCache(player)
 

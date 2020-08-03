@@ -113,11 +113,21 @@ function TheUserProfile() {
 	})
 
 	const onChangePassword = async () => {
+		const value = password.value
+		if (value.length === 0) {
+			Notifications.error('Password field is empty!')
+			return
+		}
+
 		password.value = ''
-		await axios.put('/api/user/profile', {
-			password: password.value
-		})
-		Notifications.success('Password updated!')
+		try {
+			await axios.put('/api/user/profile', {
+				password: value
+			})
+			Notifications.success('Password updated!')
+		} catch (error) {
+			Notifications.error('Password update failed!')
+		}
 	}
 
 	return {

@@ -17,10 +17,11 @@ class PlayerLibrary {
 		return PlayerDatabase.insertPlayer(email, username, passwordHash)
 	}
 
-	public async updatePassword(player: ServerPlayer, password: string): Promise<boolean> {
+	public async updatePassword(id: string, password: string): Promise<boolean> {
+		const player = await this.getPlayerById(id)
 		this.removeFromCache(player)
 		const passwordHash = await HashManager.hashPassword(password)
-		return PlayerDatabase.updatePlayerPassword(player.id, passwordHash)
+		return PlayerDatabase.updatePlayerPassword(id, passwordHash)
 	}
 
 	public async login(username: string, password: string): Promise<ServerPlayer> {
