@@ -30,20 +30,22 @@ router.put('/', (req: Request, res: Response, next) => {
 			return password.length > 0
 		},
 		userLanguage: (userLanguage: string): boolean => {
+			let result = false
 			Utils.forEachInStringEnum(Language, (value: Language) => {
 				if (value === userLanguage) {
-					return true
+					result = true
 				}
 			})
-			return false
+			return result
 		},
 		renderQuality: (renderQuality: string): boolean => {
+			let result = false
 			Utils.forEachInStringEnum(RenderQuality, (value: RenderQuality) => {
 				if (value === renderQuality) {
-					return true
+					result = true
 				}
 			})
-			return false
+			return result
 		},
 		volumeLevel: (volume: number): boolean => {
 			return volume >= 0 && volume <= 1
