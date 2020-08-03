@@ -14,7 +14,7 @@ export default class HeroUrvial extends ServerCard {
 		this.basePower = 8
 		this.baseTribes = [CardTribe.MERFOLK]
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => {
 				this.owner.leader.buffs.add(BuffUpgradedStorms, this, BuffDuration.INFINITY)
 			})

@@ -20,7 +20,7 @@ export default class UnitMasterSwordsmith extends ServerCard {
 			bonusPower: this.bonusPower
 		}
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 

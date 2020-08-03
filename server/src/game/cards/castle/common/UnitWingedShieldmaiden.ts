@@ -16,8 +16,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 		this.basePower = 4
 		this.baseTribes = [CardTribe.VALKYRIE]
 
-		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE)
-			.requireLocation(CardLocation.HAND)
+		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
 			.require(({ triggeringCard }) => triggeringCard.owner === this.owner)
 			.require(({ triggeringCard}) => !!triggeringCard.unit)
 			.prepare(({ triggeringCard }) => {

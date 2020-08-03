@@ -1,11 +1,4 @@
 enum GameEventType {
-	EFFECT_UNIT_DEPLOY = 'effectUnitDeploy',
-	EFFECT_SPELL_PLAY = 'effectSpellPlay',
-	EFFECT_TARGET_SELECTED = 'effectTargetSelected',
-	EFFECT_TARGETS_CONFIRMED = 'effectTargetsConfirmed',
-	EFFECT_BUFF_CREATED = 'effectBuffCreated',
-	EFFECT_BUFF_REMOVED = 'effectBuffRemoved',
-
 	ROUND_STARTED = 'roundStarted',
 	TURN_STARTED = 'turnStarted',
 
@@ -15,9 +8,15 @@ enum GameEventType {
 	CARD_TAKES_DAMAGE = 'cardTakesDamage',
 	CARD_DESTROYED = 'cardDestroyed',
 
+	CARD_TARGET_SELECTED = 'effectTargetSelected',
+	CARD_TARGETS_CONFIRMED = 'effectTargetsConfirmed',
+
 	UNIT_CREATED = 'unitCreated',
 	UNIT_MOVED = 'unitMoved',
 	UNIT_DESTROYED = 'unitDestroyed',
+
+	UNIT_DEPLOYED = 'unitDeployed',
+	SPELL_DEPLOYED = 'spellDeployed',
 
 	BUFF_CREATED = 'buffCreated',
 	BUFF_REMOVED = 'buffRemoved',

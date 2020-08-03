@@ -12,7 +12,7 @@ import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/P
 import ServerAnimation from '../../../models/ServerAnimation'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
-import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellLightningStorm extends ServerCard {
@@ -33,10 +33,10 @@ export default class SpellLightningStorm extends ServerCard {
 			isUpgraded: () => this.isUpgraded()
 		}
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
-		this.createCallback(GameEventType.EFFECT_TARGETS_CONFIRMED)
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
 			.perform(() => this.onTargetsConfirmed())
 	}
 

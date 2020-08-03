@@ -10,7 +10,7 @@ import ServerUnit from '../../../models/ServerUnit'
 import BuffTutoredCard from '../../../buffs/BuffTutoredCard'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
-import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitUndercityGambler extends ServerCard {
@@ -25,7 +25,7 @@ export default class UnitUndercityGambler extends ServerCard {
 			bonusPower: this.bonusPower
 		}
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 

@@ -16,8 +16,7 @@ export default class HeroAntoria extends ServerCard {
 		this.basePower = 15
 		this.baseTribes = [CardTribe.VALKYRIE]
 
-		this.createHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>(GameHookType.CARD_TAKES_DAMAGE)
-			.requireLocation(CardLocation.HAND)
+		this.createHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>(GameHookType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
 			.require(({ targetCard }) => targetCard.location === CardLocation.BOARD)
 			.require(({ targetCard }) => targetCard.owner === this.owner)
 			.replace(values => ({
@@ -28,8 +27,7 @@ export default class HeroAntoria extends ServerCard {
 				this.game.animation.play(ServerAnimation.cardAttacksCards(targetCard, [this]))
 			})
 
-		this.createCallback<CardDestroyedEventArgs>(GameEventType.CARD_DESTROYED)
-			.requireLocation(CardLocation.HAND)
+		this.createCallback<CardDestroyedEventArgs>(GameEventType.CARD_DESTROYED, [CardLocation.HAND])
 			.require(({ triggeringCard }) => triggeringCard === this)
 			.perform(() => {
 				this.owner.drawUnitCards(1)

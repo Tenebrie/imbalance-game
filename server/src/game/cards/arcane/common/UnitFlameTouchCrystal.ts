@@ -24,13 +24,11 @@ export default class UnitFlameTouchCrystal extends ServerCard {
 			chargesVisible: () => !!this.unit
 		}
 
-		this.createCallback(GameEventType.UNIT_DESTROYED)
-			.requireLocation(CardLocation.BOARD)
+		this.createCallback(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
 			.require(({ targetUnit }) => targetUnit.card === this)
 			.perform(() => this.onDestroy())
 
-		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED)
-			.requireLocation(CardLocation.BOARD)
+		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED, [CardLocation.BOARD])
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
 			.perform(({ triggeringCard }) => this.onSpellPlayed(triggeringCard))
 	}

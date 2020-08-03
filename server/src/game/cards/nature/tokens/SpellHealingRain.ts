@@ -22,7 +22,7 @@ export default class SpellHealingRain extends ServerCard {
 			healingPerStorm: this.healingPerStorm
 		}
 
-		this.createCallback(GameEventType.EFFECT_SPELL_PLAY)
+		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.perform(() => this.onPlay())
 	}
 

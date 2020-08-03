@@ -12,8 +12,9 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
-import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class SpellEnchantedStorm extends ServerCard {
 	baseBuffPower = 1
@@ -33,10 +34,10 @@ export default class SpellEnchantedStorm extends ServerCard {
 			isUpgraded: () => this.isUpgraded()
 		}
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
-		this.createCallback(GameEventType.EFFECT_TARGETS_CONFIRMED)
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
 			.perform(() => this.onTargetsConfirmed())
 	}
 
@@ -60,8 +61,9 @@ export default class SpellEnchantedStorm extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
+		this.game.animation.play(ServerAnimation.universeAffectsCards([target.card]))
 		target.buffs.addMultiple(BuffStrength, this.buffPower, this, BuffDuration.INFINITY)
+		this.game.animation.play(ServerAnimation.cardReceivedBuff([target.card], BuffAlignment.POSITIVE))
 		this.targetsHit.push(target)
 	}
 

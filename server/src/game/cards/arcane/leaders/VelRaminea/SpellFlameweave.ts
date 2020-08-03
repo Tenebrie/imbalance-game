@@ -19,7 +19,7 @@ export default class SpellFlameweave extends ServerCard {
 			currentStacks: () => this.currentStacks
 		}
 
-		this.createCallback(GameEventType.EFFECT_SPELL_PLAY)
+		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.perform(() => {
 				this.owner.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
 			})

@@ -22,7 +22,7 @@ export default class UnitMerchantsAssistant extends ServerCard {
 			spellDiscount: this.spellDiscount
 		}
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 

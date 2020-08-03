@@ -8,7 +8,7 @@ import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/P
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardLibrary from '../../../libraries/CardLibrary'
-import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroMetrearte extends ServerCard {
@@ -16,7 +16,7 @@ export default class HeroMetrearte extends ServerCard {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 5
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 

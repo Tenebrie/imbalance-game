@@ -19,11 +19,10 @@ export default class HeroElderElemental extends ServerCard {
 			manaGenerated: this.manaGenerated
 		}
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 
-		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
-			.requireLocation(CardLocation.BOARD)
+		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
 			.perform(() => this.onDeploy())
 	}

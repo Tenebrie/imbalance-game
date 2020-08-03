@@ -21,7 +21,7 @@ export default class UnitSupplyWagon extends ServerCard {
 			pushDistance: this.pushDistance
 		}
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 

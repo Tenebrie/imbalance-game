@@ -22,8 +22,7 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 			bonusPower: this.bonusPower
 		}
 
-		this.createCallback<UnitCreatedEventArgs>(GameEventType.UNIT_CREATED)
-			.requireLocation(CardLocation.BOARD)
+		this.createCallback<UnitCreatedEventArgs>(GameEventType.UNIT_CREATED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card !== this)
 			.require(({ triggeringUnit }) => triggeringUnit.owner === this.owner)
 			.require(({ triggeringUnit }) => triggeringUnit.card.power <= this.powerThreshold)

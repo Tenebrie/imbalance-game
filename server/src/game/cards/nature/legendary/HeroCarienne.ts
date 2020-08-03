@@ -3,10 +3,10 @@ import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
-import SpellLightningStorm from '../tokens/SpellLightningStorm'
 import ServerAnimation from '../../../models/ServerAnimation'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import GameEventType from '@shared/enums/GameEventType'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class HeroCarienne extends ServerCard {
 	damagePerWave = 1
@@ -19,7 +19,7 @@ export default class HeroCarienne extends ServerCard {
 			waveCount: () => this.waveCount
 		}
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => {
 				const enemies = this.game.board.getUnitsOwnedByOpponent(this.unit.owner)
 
@@ -33,7 +33,7 @@ export default class HeroCarienne extends ServerCard {
 	get waveCount() {
 		let stormsPlayed = 0
 		if (this.owner) {
-			stormsPlayed = this.owner.cardGraveyard.findCardsByConstructor(SpellLightningStorm).length
+			stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
 
 		return stormsPlayed + 1

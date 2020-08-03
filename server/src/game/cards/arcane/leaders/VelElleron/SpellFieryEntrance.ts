@@ -13,7 +13,7 @@ export default class SpellFieryEntrance extends ServerCard {
 		this.basePower = 8
 		this.baseFeatures = [CardFeature.HERO_POWER]
 
-		this.createCallback(GameEventType.EFFECT_SPELL_PLAY)
+		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.require(() => this.owner.cardDeck.unitCards.length > 0)
 			.perform(() => {
 				const owner = this.owner

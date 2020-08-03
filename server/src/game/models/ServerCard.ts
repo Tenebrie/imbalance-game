@@ -6,9 +6,7 @@ import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerUnit from './ServerUnit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerDamageInstance from './ServerDamageSource'
-import ServerDamageSource from './ServerDamageSource'
 import ServerBoardRow from './ServerBoardRow'
 import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
@@ -20,13 +18,11 @@ import CardColor from '@shared/enums/CardColor'
 import ServerBuffContainer from './ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import RichTextVariables from '@shared/models/RichTextVariables'
-import ServerOwnedCard from './ServerOwnedCard'
 import BuffImmunity from '../buffs/BuffImmunity'
 import GameLibrary from '../libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerBuff from './ServerBuff'
 import CardLocation from '@shared/enums/CardLocation'
 import GameHookType, {
 	CardDestroyedHookArgs,
@@ -54,7 +50,8 @@ export default class ServerCard extends Card {
 		this.faction = faction
 		this.dynamicTextVariables = {}
 
-		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE)
+		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]
+		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, validLocations)
 			.require(({ triggeringCard }) => triggeringCard === this)
 			.require(({ triggeringCard }) => triggeringCard.power <= 0)
 			.perform(() => this.destroy())
@@ -456,12 +453,42 @@ export default class ServerCard extends Card {
 		return evaluatedVariables
 	}
 
-	protected createCallback<ArgsType>(eventType: GameEventType): EventCallback<ArgsType> {
-		return this.game.events.createCallback(this, eventType)
+	/* Subscribe to a game event
+	 * -------------------------
+	 * Create a callback for a global game event. By default, this callback will trigger regardless
+	 * of which card has triggered the event or where the subscriber is located.
+	 *
+	 * Subscribers must **NOT** modify the event that triggered the callback. See `createHook` for
+	 * event modifications.
+	 *
+	 * The callback will only trigger if the subscriber is located in one of the locations specified by `location` argument.
+	 */
+	protected createCallback<ArgsType>(eventType: GameEventType, location: CardLocation[]): EventCallback<ArgsType> {
+		return this.game.events.createCallback<ArgsType>(this, eventType)
+			.requireLocations(location)
 	}
 
-	protected createHook<HookValues, HookArgs>(hookType: GameHookType): EventHook<HookValues, HookArgs> {
+	/* Subscribe to a game event triggered by this buff
+	 * ------------------------------------------------
+	 * `createEffect` is equivalent to `createCallback`, but it will only trigger when
+	 * the `effectSource` is set to the subscriber.
+	 */
+	protected createEffect<ArgsType>(event: GameEventType): EventCallback<ArgsType> {
+		return this.game.events.createCallback<ArgsType>(this, event)
+			.require((args, rawEvent) => rawEvent.effectSource && rawEvent.effectSource === this)
+	}
+
+	/* Subscribe to a game hook
+	 * ------------------------
+	 * Game hooks are callbacks that allow the event to be modified. For example, using the
+	 * `GameHookType.CARD_TAKES_DAMAGE` hook it is possible to increase or decrease the damage a card
+	 * takes from any source.
+	 *
+	 * The hook will only trigger if the subscriber is located in one of the locations specified by `location` argument.
+	 */
+	protected createHook<HookValues, HookArgs>(hookType: GameHookType, location: CardLocation[]): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hookType)
+			.requireLocations(location)
 	}
 
 	onRevealed(owner: ServerPlayerInGame): void { return }

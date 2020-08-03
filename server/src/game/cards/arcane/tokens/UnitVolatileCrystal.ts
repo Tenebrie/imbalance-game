@@ -21,8 +21,7 @@ export default class UnitVolatileCrystal extends ServerCard {
 			damage: this.damage
 		}
 
-		this.createCallback<UnitDestroyedEventArgs>(GameEventType.UNIT_DESTROYED)
-			.requireLocation(CardLocation.BOARD)
+		this.createCallback<UnitDestroyedEventArgs>(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card === this)
 			.perform(() => this.onDestroy())
 	}

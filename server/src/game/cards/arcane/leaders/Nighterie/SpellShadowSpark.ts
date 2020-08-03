@@ -15,7 +15,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import ServerAnimation from '../../../../models/ServerAnimation'
-import {EffectTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellShadowSpark extends ServerCard {
@@ -30,7 +30,7 @@ export default class SpellShadowSpark extends ServerCard {
 			damage: () => this.damage
 		}
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 

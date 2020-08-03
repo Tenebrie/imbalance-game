@@ -16,7 +16,7 @@ export default class HeroSparklingSpirit extends ServerCard {
 			extraDamage: this.extraDamage
 		}
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 

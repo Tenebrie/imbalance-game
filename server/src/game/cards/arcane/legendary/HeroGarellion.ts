@@ -19,8 +19,7 @@ export default class HeroGarellion extends ServerCard {
 			powerPerMana: this.powerPerMana
 		}
 
-		this.createCallback<RoundEndedEventArgs>(GameEventType.ROUND_ENDED)
-			.requireLocation(CardLocation.BOARD)
+		this.createCallback<RoundEndedEventArgs>(GameEventType.ROUND_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
 			.perform(() => this.onRoundEnded())
 	}

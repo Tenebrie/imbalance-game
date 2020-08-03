@@ -12,7 +12,7 @@ import ServerBoardRow from '../../../../models/ServerBoardRow'
 import Constants from '@shared/Constants'
 import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitVolatileCrystal from '../../tokens/UnitVolatileCrystal'
-import {EffectTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellCrystalBarrage extends ServerCard {
@@ -21,7 +21,7 @@ export default class SpellCrystalBarrage extends ServerCard {
 		this.basePower = 6
 		this.baseFeatures = [CardFeature.HERO_POWER]
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 

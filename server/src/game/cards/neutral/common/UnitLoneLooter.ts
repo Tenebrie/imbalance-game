@@ -12,8 +12,7 @@ export default class UnitLoneLooter extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 3
 
-		this.createCallback<BuffCreatedEventArgs>(GameEventType.BUFF_CREATED)
-			.requireLocation(CardLocation.DECK)
+		this.createCallback<BuffCreatedEventArgs>(GameEventType.BUFF_CREATED, [CardLocation.DECK])
 			.require(({ triggeringBuff }) => triggeringBuff.card.owner !== this.owner)
 			.require(({ triggeringBuff }) => triggeringBuff.source && triggeringBuff.source.owner === this.owner)
 			.prepare(() => ({

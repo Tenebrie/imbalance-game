@@ -12,7 +12,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import BuffVelElleronEncouragement from '../../../../buffs/BuffVelElleronEncouragement'
 import BuffDuration from '@shared/enums/BuffDuration'
-import {EffectTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellAnEncouragement extends ServerCard {
@@ -27,7 +27,7 @@ export default class SpellAnEncouragement extends ServerCard {
 			bonusPower: SpellAnEncouragement.bonusPower
 		}
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 

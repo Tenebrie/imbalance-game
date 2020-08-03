@@ -7,10 +7,10 @@ export default class BuffStrength extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.ADD_INTENSITY)
 
-		this.createCallback(GameEventType.EFFECT_BUFF_CREATED)
+		this.createEffect(GameEventType.BUFF_CREATED)
 			.perform(() => this.onCreated())
 
-		this.createCallback(GameEventType.EFFECT_BUFF_REMOVED)
+		this.createEffect(GameEventType.BUFF_REMOVED)
 			.perform(() => this.onDestroyed())
 	}
 

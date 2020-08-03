@@ -9,9 +9,8 @@ import ServerBoardRow from '../../../models/ServerBoardRow'
 import ServerAnimation from '../../../models/ServerAnimation'
 import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
-import Constants from '@shared/Constants'
 import CardFaction from '@shared/enums/CardFaction'
-import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import MoveDirection from '@shared/enums/MoveDirection'
@@ -21,7 +20,7 @@ export default class HeroKroLah extends ServerCard {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 7
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 

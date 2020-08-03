@@ -10,7 +10,7 @@ import ServerBoardRow from '../../../models/ServerBoardRow'
 import ServerAnimation from '../../../models/ServerAnimation'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffBurning from '../../../buffs/BuffBurning'
-import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
@@ -25,7 +25,7 @@ export default class HeroFlameDancer extends ServerCard {
 		}
 		this.generatedArtworkMagicString = '2'
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 

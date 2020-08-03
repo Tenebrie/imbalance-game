@@ -11,7 +11,7 @@ export default class HeroPozoga extends ServerCard {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NEUTRAL)
 		this.basePower = 3
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 

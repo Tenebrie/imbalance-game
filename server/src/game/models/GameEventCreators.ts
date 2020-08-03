@@ -9,31 +9,6 @@ import ServerBuff from './ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
 
 export default {
-	effectUnitDeploy: (): GameEvent => ({
-		type: GameEventType.EFFECT_UNIT_DEPLOY,
-		args: {}
-	}),
-	effectSpellPlay: (): GameEvent => ({
-		type: GameEventType.EFFECT_SPELL_PLAY,
-		args: {}
-	}),
-	effectTargetSelected: (args: EffectTargetSelectedEventArgs): GameEvent => ({
-		type: GameEventType.EFFECT_TARGET_SELECTED,
-		args: args
-	}),
-	effectTargetsConfirmed: (): GameEvent => ({
-		type: GameEventType.EFFECT_TARGETS_CONFIRMED,
-		args: {}
-	}),
-	effectBuffCreated: (): GameEvent => ({
-		type: GameEventType.EFFECT_BUFF_CREATED,
-		args: {}
-	}),
-	effectBuffRemoved: (): GameEvent => ({
-		type: GameEventType.EFFECT_BUFF_REMOVED,
-		args: {}
-	}),
-
 	roundStarted: (args: RoundStartedEventArgs): GameEvent => ({
 		type: GameEventType.ROUND_STARTED,
 		args: args,
@@ -90,6 +65,17 @@ export default {
 		}
 	}),
 
+	cardTargetSelected: (args: CardTargetSelectedEventArgs): GameEvent => ({
+		type: GameEventType.CARD_TARGET_SELECTED,
+		args: args,
+		effectSource: args.triggeringCard
+	}),
+	cardTargetsConfirmed: (args: CardTargetsConfirmedEventArgs): GameEvent => ({
+		type: GameEventType.CARD_TARGETS_CONFIRMED,
+		args: {},
+		effectSource: args.triggeringCard
+	}),
+
 	unitCreated: (args: UnitCreatedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_CREATED,
 		args: args,
@@ -112,9 +98,21 @@ export default {
 		}
 	}),
 
+	unitDeployed: (args: UnitDeployedEventArgs): GameEvent => ({
+		type: GameEventType.UNIT_DEPLOYED,
+		effectSource: args.triggeringUnit.card,
+		args: args
+	}),
+	spellDeployed: (args: SpellDeployedEventArgs): GameEvent => ({
+		type: GameEventType.SPELL_DEPLOYED,
+		effectSource: args.triggeringCard,
+		args: args
+	}),
+
 	buffCreated: (args: BuffCreatedEventArgs): GameEvent => ({
 		type: GameEventType.BUFF_CREATED,
 		args: args,
+		effectSource: args.triggeringBuff,
 		logSubtype: args.triggeringBuff.source ? 'fromCard' : 'fromUniverse',
 		logVariables: {
 			triggeringBuffName: args.triggeringBuff.name,
@@ -125,6 +123,7 @@ export default {
 	buffRemoved: (args: BuffRemovedEventArgs): GameEvent => ({
 		type: GameEventType.BUFF_REMOVED,
 		args: args,
+		effectSource: args.triggeringBuff,
 		logVariables: {
 			triggeringBuffName: args.triggeringBuff.name,
 			ownerCard: args.triggeringBuff.card.id,
@@ -150,14 +149,9 @@ export default {
 export interface GameEvent {
 	type: GameEventType
 	args: Record<string, any>
+	effectSource?: ServerCard | ServerBuff
 	logSubtype?: string
 	logVariables?: Record<string, string | number>
-}
-
-export interface EffectTargetSelectedEventArgs {
-	targetCard: ServerCard
-	targetUnit: ServerUnit
-	targetRow: ServerBoardRow
 }
 
 export interface RoundStartedEventArgs {
@@ -188,6 +182,16 @@ export interface CardDestroyedEventArgs {
 	triggeringCard: ServerCard
 }
 
+export interface CardTargetSelectedEventArgs {
+	triggeringCard: ServerCard
+	targetCard: ServerCard
+	targetUnit: ServerUnit
+	targetRow: ServerBoardRow
+}
+export interface CardTargetsConfirmedEventArgs {
+	triggeringCard: ServerCard
+}
+
 export interface UnitCreatedEventArgs {
 	triggeringUnit: ServerUnit
 }
@@ -198,6 +202,13 @@ export interface UnitMovedEventArgs {
 }
 export interface UnitDestroyedEventArgs {
 	triggeringUnit: ServerUnit
+}
+
+export interface UnitDeployedEventArgs {
+	triggeringUnit: ServerUnit
+}
+export interface SpellDeployedEventArgs {
+	triggeringCard: ServerCard
 }
 
 export interface BuffCreatedEventArgs {

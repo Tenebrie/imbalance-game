@@ -5,7 +5,6 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
-import runCardEventHandler from '../utils/runCardEventHandler'
 import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
@@ -84,10 +83,12 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Insert the card into the board */
-		this.game.board.createUnit(card, owner, rowIndex, unitIndex)
+		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
 
 		/* Invoke the card Deploy effect */
-		this.game.events.postEffect(card, GameEventCreators.effectUnitDeploy())
+		this.game.events.postEvent(GameEventCreators.unitDeployed({
+			triggeringUnit: unit
+		}))
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -100,13 +101,14 @@ export default class ServerGameCardPlay {
 
 	private playSpell(ownedCard: ServerOwnedCard): void {
 		const card = ownedCard.card
-		const owner = ownedCard.owner
 
 		/* Start resolving */
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Invoke the card onPlay effect */
-		this.game.events.postEffect(card, GameEventCreators.effectSpellPlay())
+		this.game.events.postEvent(GameEventCreators.spellDeployed({
+			triggeringCard: card
+		}))
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -167,7 +169,8 @@ export default class ServerGameCardPlay {
 
 		this.cardResolveStack.pushTarget(target)
 
-		this.game.events.postEffect(currentResolvingCard.card, GameEventCreators.effectTargetSelected({
+		this.game.events.postEvent(GameEventCreators.cardTargetSelected({
+			triggeringCard: currentResolvingCard.card,
 			targetCard: target.targetCard,
 			targetUnit: target.targetUnit,
 			targetRow: target.targetRow
@@ -185,7 +188,9 @@ export default class ServerGameCardPlay {
 			return
 		}
 
-		this.game.events.postEffect(currentResolvingCard.card, GameEventCreators.effectTargetsConfirmed())
+		this.game.events.postEvent(GameEventCreators.cardTargetsConfirmed({
+			triggeringCard: currentResolvingCard.card
+		}))
 		this.cardResolveStack.finishResolving()
 	}
 }

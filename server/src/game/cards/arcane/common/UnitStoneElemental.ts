@@ -27,13 +27,12 @@ export default class UnitStoneElemental extends ServerCard {
 		this.baseAttackRange = 2
 		this.baseTribes = [CardTribe.ELEMENTAL]
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => {
 				this.canAttack = true
 			})
 
-		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED)
-			.requireLocation(CardLocation.BOARD)
+		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
 			.perform(() => this.onTurnEnded())
 	}

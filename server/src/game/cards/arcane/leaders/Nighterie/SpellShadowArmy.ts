@@ -10,7 +10,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../../models/ServerUnit'
 import ServerPlayerInGame from '../../../../players/ServerPlayerInGame'
-import {EffectTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellShadowArmy extends ServerCard {
@@ -29,7 +29,7 @@ export default class SpellShadowArmy extends ServerCard {
 			thresholdDecrease: this.thresholdDecrease
 		}
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 

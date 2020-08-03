@@ -9,7 +9,7 @@ import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/P
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLibrary from '../../../libraries/CardLibrary'
-import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerAnimation from '../../../models/ServerAnimation'
 
@@ -25,15 +25,15 @@ export default class HeroCrystalWarrior extends ServerCard {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 7
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.require(({ targetUnit }) => !!targetUnit)
 			.perform(({ targetUnit }) => this.onSacrificeTargetSelected(targetUnit))
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.require(({ targetCard}) => !!targetCard)
 			.perform(({ targetCard }) => this.onCrystalSelected(targetCard))
 
-		this.createCallback(GameEventType.EFFECT_TARGETS_CONFIRMED)
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
 			.perform(() => this.onTargetsConfirmed())
 	}
 

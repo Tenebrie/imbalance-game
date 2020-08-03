@@ -79,7 +79,6 @@ export default class ServerBuffContainer implements BuffContainer {
 			return
 		}
 
-		this.game.events.postEffect(invokedBuff, GameEventCreators.effectBuffCreated())
 		this.game.events.postEvent(GameEventCreators.buffCreated({
 			triggeringBuff: invokedBuff
 		}))

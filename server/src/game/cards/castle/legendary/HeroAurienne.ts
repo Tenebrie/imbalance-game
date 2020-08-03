@@ -14,8 +14,7 @@ export default class HeroAurienne extends ServerCard {
 		this.basePower = 11
 		this.baseTribes = [CardTribe.VALKYRIE]
 
-		this.createHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED)
-			.requireLocation(CardLocation.HAND)
+		this.createHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED, [CardLocation.HAND])
 			.require(({ targetUnit }) => targetUnit.owner === this.owner)
 			.replace(values => ({
 				...values,

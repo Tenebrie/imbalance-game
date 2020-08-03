@@ -10,7 +10,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TokenPlayerDeck from '../tokens/TokenPlayerDeck'
 import TokenOpponentDeck from '../tokens/TokenOpponentDeck'
-import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitOracleApprentice extends ServerCard {
@@ -21,10 +21,10 @@ export default class UnitOracleApprentice extends ServerCard {
 		this.basePower = 8
 		this.baseTribes = [CardTribe.HUMAN]
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 
-		this.createCallback(GameEventType.EFFECT_TARGETS_CONFIRMED)
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
 			.perform(() => this.onTargetsConfirmed())
 	}
 

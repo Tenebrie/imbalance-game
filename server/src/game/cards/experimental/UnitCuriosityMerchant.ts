@@ -17,7 +17,7 @@ export default class UnitCuriosityMerchant extends ServerCard {
 			spellDiscount: this.spellDiscount
 		}
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 

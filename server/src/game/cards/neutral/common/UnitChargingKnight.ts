@@ -22,14 +22,12 @@ export default class UnitChargingKnight extends ServerCard {
 		this.baseAttack = 2
 		this.baseTribes = [CardTribe.HUMAN]
 
-		this.createCallback<UnitMovedEventArgs>(GameEventType.UNIT_MOVED)
-			.requireLocation(CardLocation.BOARD)
+		this.createCallback<UnitMovedEventArgs>(GameEventType.UNIT_MOVED, [CardLocation.BOARD])
 			.require(({ direction }) => direction === MoveDirection.FORWARD)
 			.require(({ triggeringUnit }) => triggeringUnit === this.unit)
 			.perform(() => this.onUnitMove())
 
-		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED)
-			.requireLocation(CardLocation.BOARD)
+		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
 			.perform(() => this.onTurnEnded())
 	}

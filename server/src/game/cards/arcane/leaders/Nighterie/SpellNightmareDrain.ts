@@ -16,7 +16,7 @@ import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import BuffStrength from '../../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
-import {EffectTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class SpellNightmareDrain extends ServerCard {
@@ -26,7 +26,7 @@ export default class SpellNightmareDrain extends ServerCard {
 		this.baseFeatures = [CardFeature.HERO_POWER]
 
 		/* Create basic unit if no target available */
-		this.createCallback(GameEventType.EFFECT_SPELL_PLAY)
+		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.require(() => this.game.cardPlay.getValidTargets().length === 0)
 			.perform(() => {
 				const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
@@ -34,7 +34,7 @@ export default class SpellNightmareDrain extends ServerCard {
 				this.game.board.createUnit(shadowspawn, this.owner, targetRow.index, targetRow.cards.length)
 			})
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 

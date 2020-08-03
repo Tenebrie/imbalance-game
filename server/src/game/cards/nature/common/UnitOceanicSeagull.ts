@@ -7,7 +7,7 @@ import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/P
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitOceanicSeagull extends ServerCard {
@@ -16,7 +16,7 @@ export default class UnitOceanicSeagull extends ServerCard {
 		this.basePower = 2
 		this.baseTribes = [CardTribe.BIRD]
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 

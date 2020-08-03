@@ -17,7 +17,7 @@ export default class UnitArcaneElemental extends ServerCard {
 			manaGenerated: this.manaGenerated
 		}
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 

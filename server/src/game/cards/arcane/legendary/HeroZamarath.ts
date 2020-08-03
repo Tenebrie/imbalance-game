@@ -15,7 +15,7 @@ export default class HeroZamarath extends ServerCard {
 		this.basePower = 12
 		this.baseArmor = 5
 
-		this.createCallback(GameEventType.EFFECT_UNIT_DEPLOY)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 

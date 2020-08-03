@@ -10,7 +10,7 @@ import CardColor from '@shared/enums/CardColor'
 import TargetMode from '@shared/enums/TargetMode'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import {EffectTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerAnimation from '../../../models/ServerAnimation'
 
@@ -28,7 +28,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			healing: this.healing
 		}
 
-		this.createCallback<EffectTargetSelectedEventArgs>(GameEventType.EFFECT_TARGET_SELECTED)
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
