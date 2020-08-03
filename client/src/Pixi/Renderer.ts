@@ -194,6 +194,7 @@ export default class Renderer {
 					return
 				}
 
+				this.updateCardStats(renderedCard)
 				this.renderCard(renderedCard, opponentsUnitCards, true, false)
 			})
 
@@ -204,6 +205,7 @@ export default class Renderer {
 					return
 				}
 
+				this.updateCardStats(renderedCard)
 				this.renderCard(renderedCard, opponentsSpellCards, true, true)
 			})
 		}
@@ -218,7 +220,7 @@ export default class Renderer {
 	}
 
 	private renderCard(card: RenderedCard, cardArray: RenderedCard[], isOpponent: boolean, isSpellHand: boolean): void {
-		card.hiddenMode = isOpponent
+		card.hiddenMode = card.type === CardType.HIDDEN
 		if (Core.input.grabbedCard && card === Core.input.grabbedCard.card) {
 			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
 			const displayMode = this.renderGrabbedCard(card, Core.input.mousePosition)
