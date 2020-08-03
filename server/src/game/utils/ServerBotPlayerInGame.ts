@@ -61,7 +61,10 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const cards = Utils.sortCards(this.cardHand.allCards)
 		const selectedCard = cards[0]
 
-		const validRows = this.game.board.rows.filter(row => row.owner === this).reverse()
+		const validRows = this.game.board.rows
+			.filter(row => row.owner === this)
+			.filter(row => !row.isFull())
+			.reverse()
 
 		const distanceFromFront = selectedCard.attackRange - 1
 		const targetRow = validRows[Math.min(distanceFromFront, validRows.length - 1)]
