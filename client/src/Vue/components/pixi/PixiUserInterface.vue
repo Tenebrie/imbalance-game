@@ -206,6 +206,7 @@ export default Vue.extend({
 			border: none;
 			outline: none;
 			pointer-events: auto;
+			max-width: 250px;
 
 			padding: 8px 16px;
 			font-size: 24px;

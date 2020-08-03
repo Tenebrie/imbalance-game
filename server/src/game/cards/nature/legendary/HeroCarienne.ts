@@ -20,14 +20,7 @@ export default class HeroCarienne extends ServerCard {
 		}
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => {
-				const enemies = this.game.board.getUnitsOwnedByOpponent(this.unit.owner)
-
-				for (let i = 0; i < this.waveCount; i++) {
-					this.game.animation.play(ServerAnimation.cardAttacksUnits(this, enemies))
-					enemies.forEach(enemy => enemy.dealDamage(ServerDamageInstance.fromUnit(this.damagePerWave, this.unit)))
-				}
-			})
+			.perform(() => this.onUnitDeploy())
 	}
 
 	get waveCount() {
@@ -37,5 +30,14 @@ export default class HeroCarienne extends ServerCard {
 		}
 
 		return stormsPlayed + 1
+	}
+
+	private onUnitDeploy(): void {
+		const enemies = this.game.board.getUnitsOwnedByOpponent(this.unit.owner)
+
+		for (let i = 0; i < this.waveCount; i++) {
+			this.game.animation.play(ServerAnimation.cardAttacksUnits(this, enemies))
+			enemies.forEach(enemy => enemy.dealDamage(ServerDamageInstance.fromUnit(this.damagePerWave, this.unit)))
+		}
 	}
 }

@@ -12,6 +12,8 @@ export default class HiddenCardMessage {
 	buffs: HiddenBuffContainerMessage
 	variables = {}
 
+	name = 'card.name.hidden'
+
 	power = 1
 	armor = 0
 	attack = 1

@@ -127,6 +127,10 @@ export default class ServerBoard extends Board {
 		return Math.max(0, Math.min(fromRowIndex + distance * scalar, Constants.GAME_BOARD_ROW_COUNT - 1))
 	}
 
+	public getRowDistance(rowA: ServerBoardRow, rowB: ServerBoardRow): number {
+		return Math.abs(rowA.index - rowB.index)
+	}
+
 	public getDistanceToFront(rowIndex: number): number {
 		const targetRow = this.rows[rowIndex]
 		const player = targetRow.owner
@@ -192,7 +196,8 @@ export default class ServerBoard extends Board {
 		this.game.events.postEvent(GameEventCreators.unitMoved({
 			triggeringUnit: unit,
 			fromRow: fromRow,
-			direction: this.getMoveDirection(unit.owner, fromRow, targetRow)
+			distance: this.getRowDistance(fromRow, targetRow),
+			direction: this.getMoveDirection(unit.owner, fromRow, targetRow),
 		}))
 	}
 

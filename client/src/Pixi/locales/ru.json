@@ -40,6 +40,8 @@
 	"ui.decks.deleteDeck.progress": "Удаление...",
 	"ui.decks.leaveDeck": "Назад",
 
+	"log.entry.cardDrawn": "{owner} вытягивает карту {triggeringCard}",
+
 	"target.generic.unit": "Выбрать",
 	"target.generic.row": "Выбрать ряд",
 	"target.attack.unit": "Атаковать",
@@ -73,6 +75,8 @@
 	"card.tribe.building": "Здание",
 	"card.tribe.valkyrie": "Валькирия",
 	"card.tribe.elemental": "Элементаль",
+
+	"card.name.hidden": "[Скрытая карта]",
 
 	"card.name.leaderVelElleron": "Вель'Эллерон",
 	"card.title.leaderVelElleron": "Боевой Маг",

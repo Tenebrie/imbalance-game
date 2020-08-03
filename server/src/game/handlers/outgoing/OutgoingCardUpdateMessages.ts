@@ -12,6 +12,7 @@ import TargetType from '@shared/enums/TargetType'
 import Utils from '../../../utils/Utils'
 import ServerBuff from '../../models/ServerBuff'
 import BuffMessage from '@shared/models/network/BuffMessage'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default {
 	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard) {
@@ -41,7 +42,7 @@ export default {
 
 		playerInGame.opponent.player.sendMessage({
 			type: 'update/player/opponent/hand/unit/cardAdded',
-			data: new HiddenCardMessage(card)
+			data: card.features.includes(CardFeature.HERO_POWER) ? new CardMessage(card) : new HiddenCardMessage(card)
 		})
 	},
 
@@ -53,7 +54,7 @@ export default {
 
 		playerInGame.opponent.player.sendMessage({
 			type: 'update/player/opponent/hand/spell/cardAdded',
-			data: new HiddenCardMessage(card)
+			data: card.features.includes(CardFeature.HERO_POWER) ? new CardMessage(card) : new HiddenCardMessage(card)
 		})
 	},
 

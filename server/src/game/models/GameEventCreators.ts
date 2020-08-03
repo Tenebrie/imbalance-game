@@ -68,12 +68,22 @@ export default {
 	cardTargetSelected: (args: CardTargetSelectedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGET_SELECTED,
 		args: args,
-		effectSource: args.triggeringCard
+		effectSource: args.triggeringCard,
+		logSubtype: args.targetCard ? 'card' : args.targetRow ? 'row' : 'unit',
+		logVariables: {
+			triggeringCard: args.triggeringCard.id,
+			targetCard: args.targetCard ? args.targetCard.id : undefined,
+			targetUnit: args.targetUnit ? args.targetUnit.card.id : undefined,
+			targetRow: args.targetRow ? args.targetRow.index : undefined
+		}
 	}),
 	cardTargetsConfirmed: (args: CardTargetsConfirmedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGETS_CONFIRMED,
-		args: {},
-		effectSource: args.triggeringCard
+		args: args,
+		effectSource: args.triggeringCard,
+		logVariables: {
+			triggeringCard: args.triggeringCard.id
+		}
 	}),
 
 	unitCreated: (args: UnitCreatedEventArgs): GameEvent => ({
@@ -86,8 +96,11 @@ export default {
 	unitMoved: (args: UnitMovedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_MOVED,
 		args: args,
+		logSubtype: args.direction === MoveDirection.FORWARD ? 'forward' : args.direction === MoveDirection.BACK ? 'backward' : 'sameRow',
 		logVariables: {
-			triggeringUnit: args.triggeringUnit.card.id
+			triggeringUnit: args.triggeringUnit.card.id,
+			distance: args.distance,
+			direction: args.direction,
 		}
 	}),
 	unitDestroyed: (args: UnitDestroyedEventArgs): GameEvent => ({
@@ -101,12 +114,20 @@ export default {
 	unitDeployed: (args: UnitDeployedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_DEPLOYED,
 		effectSource: args.triggeringUnit.card,
-		args: args
+		args: args,
+		logVariables: {
+			triggeringUnit: args.triggeringUnit.card.id,
+			owner: args.triggeringUnit.owner.player.id
+		}
 	}),
 	spellDeployed: (args: SpellDeployedEventArgs): GameEvent => ({
 		type: GameEventType.SPELL_DEPLOYED,
 		effectSource: args.triggeringCard,
-		args: args
+		args: args,
+		logVariables: {
+			triggeringCard: args.triggeringCard.id,
+			owner: args.triggeringCard.owner.player.id
+		}
 	}),
 
 	buffCreated: (args: BuffCreatedEventArgs): GameEvent => ({
@@ -198,6 +219,7 @@ export interface UnitCreatedEventArgs {
 export interface UnitMovedEventArgs {
 	triggeringUnit: ServerUnit
 	fromRow: ServerBoardRow
+	distance: number
 	direction: MoveDirection
 }
 export interface UnitDestroyedEventArgs {
