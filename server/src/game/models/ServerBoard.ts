@@ -11,6 +11,7 @@ import Utils from '../../utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
 import ServerGameEventCreators from './GameEventCreators'
 import ServerAnimation from './ServerAnimation'
+import GameEventCreators from './GameEventCreators'
 
 export default class ServerBoard extends Board {
 	readonly game: ServerGame
@@ -176,18 +177,23 @@ export default class ServerBoard extends Board {
 			return
 		}
 
-		const currentRow = this.rows[unit.rowIndex]
+		const fromRow = this.rows[unit.rowIndex]
 		const targetRow = this.rows[rowIndex]
 
-		if (currentRow.owner !== targetRow.owner || targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
+		if (fromRow.owner !== targetRow.owner || targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
 			return
 		}
 
-		currentRow.removeUnit(unit)
+		fromRow.removeUnit(unit)
 		targetRow.insertUnit(unit, unitIndex)
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitMoved(playerInGame.player, unit, rowIndex, unitIndex)
 		})
+		this.game.events.postEvent(GameEventCreators.unitMoved({
+			triggeringUnit: unit,
+			fromRow: fromRow,
+			direction: this.getMoveDirection(unit.owner, fromRow, targetRow)
+		}))
 	}
 
 	public moveUnitForward(unit: ServerUnit, distance = 1): void {

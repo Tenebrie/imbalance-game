@@ -16,6 +16,7 @@ enum GameEventType {
 	CARD_DESTROYED = 'cardDestroyed',
 
 	UNIT_CREATED = 'unitCreated',
+	UNIT_MOVED = 'unitMoved',
 	UNIT_DESTROYED = 'unitDestroyed',
 
 	BUFF_CREATED = 'buffCreated',

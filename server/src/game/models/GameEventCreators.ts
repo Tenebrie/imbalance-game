@@ -6,6 +6,7 @@ import ServerDamageInstance from './ServerDamageSource'
 import DamageSource from '@shared/enums/DamageSource'
 import ServerBoardRow from './ServerBoardRow'
 import ServerBuff from './ServerBuff'
+import MoveDirection from '@shared/enums/MoveDirection'
 
 export default {
 	effectUnitDeploy: (): GameEvent => ({
@@ -91,6 +92,13 @@ export default {
 
 	unitCreated: (args: UnitCreatedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_CREATED,
+		args: args,
+		logVariables: {
+			triggeringUnit: args.triggeringUnit.card.id
+		}
+	}),
+	unitMoved: (args: UnitMovedEventArgs): GameEvent => ({
+		type: GameEventType.UNIT_MOVED,
 		args: args,
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id
@@ -182,6 +190,11 @@ export interface CardDestroyedEventArgs {
 
 export interface UnitCreatedEventArgs {
 	triggeringUnit: ServerUnit
+}
+export interface UnitMovedEventArgs {
+	triggeringUnit: ServerUnit
+	fromRow: ServerBoardRow
+	direction: MoveDirection
 }
 export interface UnitDestroyedEventArgs {
 	triggeringUnit: ServerUnit
