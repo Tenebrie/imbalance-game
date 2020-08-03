@@ -228,10 +228,12 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			player: this
 		}))
 		this.cardHand.unitCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
-			this.cardHand.discardUnit(card)
+			this.cardHand.discardCard(card)
+			this.cardGraveyard.addUnit(card)
 		})
 		this.cardHand.spellCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
-			this.cardHand.discardUnit(card)
+			this.cardHand.discardCard(card)
+			this.cardGraveyard.addSpell(card)
 		})
 	}
 

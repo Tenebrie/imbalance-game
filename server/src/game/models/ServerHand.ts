@@ -52,11 +52,7 @@ export default class ServerHand {
 		}))
 	}
 
-	public discardUnit(card: ServerCard): void {
-		this.removeCard(card)
-	}
-
-	public discardSpell(card: ServerCard): void {
+	public discardCard(card: ServerCard): void {
 		this.removeCard(card)
 	}
 
