@@ -3,6 +3,7 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/CardMessage'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import store from '@/Vue/store'
+import {CARD_HEIGHT, CARD_WIDTH} from '@/Pixi/renderer/RendererUtils'
 
 class EditorCardRenderer {
 	pixi: PIXI.Renderer
@@ -12,8 +13,8 @@ class EditorCardRenderer {
 	public constructor() {
 		this.pixi = PIXI.autoDetectRenderer()
 		this.renderTexture = PIXI.RenderTexture.create({
-			width: 408,
-			height: 584,
+			width: CARD_WIDTH,
+			height: CARD_HEIGHT,
 		})
 		this.preloadFonts()
 	}
@@ -53,7 +54,7 @@ class EditorCardRenderer {
 		const renderedCard = new RenderedCard(card)
 		renderedCard.setDisplayMode(CardDisplayMode.IN_EDITOR)
 
-		renderedCard.coreContainer.position.set(408 / 2, 584 / 2)
+		renderedCard.coreContainer.position.set(CARD_WIDTH / 2, CARD_HEIGHT / 2)
 
 		renderedCard.sprite.alpha = 1
 		renderedCard.coreContainer.visible = true

@@ -25,7 +25,7 @@ export default Vue.extend({
 
 	mounted(): void {
 		setTimeout(() => {
-			TextureAtlas.prepare()
+			TextureAtlas.preloadComponents()
 		}, 500)
 		store.dispatch.editor.loadCardLibrary()
 		editorCardRenderer.startRenderingService()

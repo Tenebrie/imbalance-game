@@ -201,7 +201,8 @@ const editorModule = createModule({
 		},
 
 		async requestRender(context, payload: { card: CardMessage }): Promise<void> {
-			await TextureAtlas.prepare()
+			await TextureAtlas.preloadComponents()
+			await TextureAtlas.preloadAllCards()
 
 			const { commit } = moduleActionContext(context, editorModule)
 

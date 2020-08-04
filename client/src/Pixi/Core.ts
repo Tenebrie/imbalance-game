@@ -46,7 +46,7 @@ export default class Core {
 			OutgoingMessageHandlers.sendKeepalive()
 		}, 30000)
 
-		await TextureAtlas.prepare()
+		await TextureAtlas.preloadComponents()
 
 		AudioSystem.setMode(AudioSystemMode.GAME)
 		Core.renderer = new Renderer(container)

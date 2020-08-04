@@ -59,7 +59,7 @@ function TheLoginForm() {
 			await axios.post('/api/session', credentials)
 			await store.dispatch.userPreferencesModule.fetchPreferences()
 			await router.push({ name: 'home' })
-			await TextureAtlas.prepare()
+			await TextureAtlas.preloadComponents()
 		} catch (error) {
 			console.error(error)
 			setMessage(getErrorMessage(error.response.status, error.response.data.code))
