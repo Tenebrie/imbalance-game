@@ -19,10 +19,10 @@ export default class BuffMessage {
 	name: string
 	description: string
 
-	duration: number
-	intensity: number
-	baseDuration: number
-	baseIntensity: number
+	duration: string
+	intensity: string
+	baseDuration: string
+	baseIntensity: string
 
 	constructor(buff: Buff) {
 		this.id = buff.id
@@ -38,9 +38,9 @@ export default class BuffMessage {
 		this.name = buff.name
 		this.description = buff.description
 
-		this.duration = buff.duration
-		this.intensity = buff.intensity
-		this.baseDuration = buff.baseDuration
-		this.baseIntensity = buff.baseIntensity
+		this.duration = buff.duration.toString()
+		this.intensity = buff.intensity.toString()
+		this.baseDuration = buff.baseDuration.toString()
+		this.baseIntensity = buff.baseIntensity.toString()
 	}
 }

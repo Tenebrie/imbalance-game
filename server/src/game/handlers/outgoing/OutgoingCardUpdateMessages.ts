@@ -148,6 +148,7 @@ export default {
 
 		const owner = card.owner.player
 		const opponent = card.owner.opponent.player
+		console.log(buff.duration)
 		const message = new BuffMessage(buff)
 
 		owner.sendMessage({

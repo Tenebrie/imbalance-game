@@ -41,10 +41,10 @@ export default class ClientBuff implements Buff {
 		this.name = message.name
 		this.description = message.description
 
-		this.duration = message.duration
-		this.intensity = message.intensity
-		this.baseDuration = message.baseDuration
-		this.baseIntensity = message.baseIntensity
+		this.duration = Number(message.duration)
+		this.intensity = Number(message.intensity)
+		this.baseDuration = Number(message.baseDuration)
+		this.baseIntensity = Number(message.baseIntensity)
 	}
 
 	public addDuration(delta: number): void {
