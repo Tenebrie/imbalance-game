@@ -128,23 +128,29 @@ const handlers: {[ index: string ]: any } = {
 	'update/card/power': (data: CardMessage) => {
 		const card = Core.game.findRenderedCardById(data.id)
 		if (!card) { return }
-		if (typeof (data.power) === 'undefined') {
-			console.warn(`Trying to set card ${data.id} power to undefined value!`)
-			return
-		}
 
 		card.setPower(data.power)
+	},
+
+	'update/card/maxPower': (data: CardMessage) => {
+		const card = Core.game.findRenderedCardById(data.id)
+		if (!card) { return }
+
+		card.setMaxPower(data.maxPower)
 	},
 
 	'update/card/armor': (data: CardMessage) => {
 		const card = Core.game.findRenderedCardById(data.id)
 		if (!card) { return }
-		if (typeof (data.armor) === 'undefined') {
-			console.warn(`Trying to set card ${data.id} power to undefined value!`)
-			return
-		}
 
 		card.setArmor(data.armor)
+	},
+
+	'update/card/maxArmor': (data: CardMessage) => {
+		const card = Core.game.findRenderedCardById(data.id)
+		if (!card) { return }
+
+		card.setMaxArmor(data.maxArmor)
 	},
 
 	'update/player/self/turnStarted': (data: void) => {

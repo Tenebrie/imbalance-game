@@ -33,6 +33,7 @@ import GameHookType, {
 import {EventCallback, EventHook} from './ServerGameEvents'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
+import CardKeyword from '@shared/enums/CardKeyword'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -73,20 +74,9 @@ export default class ServerCard extends Card {
 		return cost
 	}
 
-	public get maxPower(): number {
-		let power = this.basePower
-		this.buffs.buffs.forEach(buff => {
-			power = buff.getUnitMaxPowerOverride(power)
-		})
-		return power
-	}
-
-	public get maxArmor(): number {
-		let armor = this.baseArmor
-		this.buffs.buffs.forEach(buff => {
-			armor = buff.getUnitMaxArmorOverride(armor)
-		})
-		return armor
+	public get keywords(): CardKeyword[] {
+		// TODO: Add auto-resolved keywords here
+		return this.baseKeywords
 	}
 
 	public get tribes(): CardTribe[] {
@@ -166,19 +156,43 @@ export default class ServerCard extends Card {
 	public setPower(value: number): void {
 		if (this.power === value) { return }
 
-		this.power = value
+		this.power = Math.min(value, this.maxPower)
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutCardPowerChange(playerInGame.player, this)
 		})
 	}
 
+	public setMaxPower(value: number): void {
+		if (this.maxPower === value) { return }
+
+		this.maxPower = Math.max(value, 0)
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutCardMaxPowerChange(playerInGame.player, this)
+		})
+		if (this.power > this.maxPower) {
+			this.setPower(this.maxPower)
+		}
+	}
+
 	public setArmor(value: number): void {
 		if (this.armor === value) { return }
 
-		this.armor = value
+		this.armor = Math.min(value, this.maxArmor)
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutCardArmorChange(playerInGame.player, this)
 		})
+	}
+
+	public setMaxArmor(value: number): void {
+		if (this.maxArmor === value) { return }
+
+		this.maxArmor = Math.max(value, 0)
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutCardMaxArmorChange(playerInGame.player, this)
+		})
+		if (this.armor > this.maxArmor) {
+			this.setArmor(this.maxArmor)
+		}
 	}
 
 	public dealDamage(originalDamageInstance: ServerDamageInstance): void {

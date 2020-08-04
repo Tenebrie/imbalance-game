@@ -147,8 +147,6 @@ export default class ServerBuff implements Buff {
 
 	getUnitCostOverride(baseCost: number): number { return baseCost }
 	getSpellCostOverride(baseCost: number): number { return baseCost }
-	getUnitMaxPowerOverride(basePower: number): number { return basePower }
-	getUnitMaxArmorOverride(baseArmor: number): number { return baseArmor }
 
 	definePlayValidTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	defineValidOrderTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }

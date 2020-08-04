@@ -76,9 +76,23 @@ export default {
 		})
 	},
 
+	notifyAboutCardMaxPowerChange(player: ServerPlayer, card: ServerCard) {
+		player.sendMessage({
+			type: 'update/card/maxPower',
+			data: CardMessage.fromCard(card)
+		})
+	},
+
 	notifyAboutCardArmorChange(player: ServerPlayer, card: ServerCard) {
 		player.sendMessage({
 			type: 'update/card/armor',
+			data: CardMessage.fromCard(card)
+		})
+	},
+
+	notifyAboutCardMaxArmorChange(player: ServerPlayer, card: ServerCard) {
+		player.sendMessage({
+			type: 'update/card/maxArmor',
 			data: CardMessage.fromCard(card)
 		})
 	}

@@ -80,5 +80,4 @@ export default class ClientBuff implements Buff {
 		}
 		return Math.max(0, cost)
 	}
-	getUnitMaxPowerOverride(basePower: number): number { return basePower }
 }

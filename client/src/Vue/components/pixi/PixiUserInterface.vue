@@ -8,6 +8,9 @@
 			<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
 			<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">End round</button>
 		</div>
+		<div class="inspected-card-overlay">
+			<pixi-inspected-card-overlay />
+		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
 			<span class="overlay-message" v-if="!opponent">Waiting for opponent...</span>
 			<span class="overlay-message" v-if="opponent">{{ opponent.username }} has connected.<br>Waiting for the game to start...</span>
@@ -41,8 +44,10 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import TheGameLog from '@/Vue/components/gamelog/TheGameLog.vue'
 import TheSimpleSettings from '@/Vue/components/profile/TheSimpleSettings.vue'
+import PixiInspectedCardOverlay from '@/Vue/components/pixi/PixiInspectedCardOverlay.vue'
 
 export default Vue.extend({
+	components: {PixiInspectedCardOverlay},
 	data: () => ({
 		isEscapeWindowVisible: false as boolean
 	}),

@@ -128,14 +128,15 @@ export default class TextureAtlas {
 	}
 
 	public static getTexture(path: string): PIXI.Texture {
-		path = path.toLowerCase()
+		// path = path.toLowerCase()
 		if (!this.isReady) {
 			throw new Error(`Accessing texture at '${path}' before TextureAtlas is ready!`)
 		}
-		const texture = this.textures[path]
+		const texture = this.textures[path.toLowerCase()]
 		if (!texture) {
-			console.warn(`No texture available at '${path}'`)
+			console.log(path)
+			return PIXI.Texture.from(`/assets/${path}.png`)
 		}
-		return this.textures[path]
+		return texture
 	}
 }

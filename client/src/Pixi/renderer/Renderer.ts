@@ -13,8 +13,10 @@ import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
-import Utils, {getRenderScale} from '@/utils/Utils'
+import Utils from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import {inspectedCardRenderer} from './InspectedCardRenderer'
+import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -25,7 +27,6 @@ const RESOLVING_CARD_ZINDEX = 100
 const GRABBED_CARD_ZINDEX = 150
 const ANNOUNCED_CARD_ZINDEX = 200
 const SELECTABLE_CARD_ZINDEX = 250
-const INSPECTED_CARD_ZINDEX = 500
 
 export default class Renderer {
 	pixi: PIXI.Application
@@ -158,6 +159,10 @@ export default class Renderer {
 		this.selectableCardsSmokescreen = new PIXI.Sprite(TextureAtlas.getTexture('masks/black'))
 		this.selectableCardsSmokescreen.zIndex = SELECTABLE_CARD_ZINDEX - 1
 		this.rootContainer.addChild(this.selectableCardsSmokescreen)
+
+		/* Modular initializations */
+		inspectedCardRenderer.init()
+		this.rootContainer.addChild(inspectedCardRenderer.container)
 	}
 
 	public tick(deltaTime: number, deltaTimeFraction: number): void {
@@ -216,7 +221,7 @@ export default class Renderer {
 		this.renderAnnouncedCard()
 		this.renderResolveStack()
 		this.renderSelectableCards()
-		this.renderInspectedCard()
+		inspectedCardRenderer.tick()
 	}
 
 	private renderCard(card: RenderedCard, cardArray: RenderedCard[], isOpponent: boolean, isSpellHand: boolean): void {
@@ -808,37 +813,6 @@ export default class Renderer {
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
-	}
-
-	public renderInspectedCard(): void {
-		const inspectedCard = Core.input.inspectedCard
-		if (!inspectedCard) {
-			return
-		}
-
-		const container = inspectedCard.coreContainer
-		const sprite = inspectedCard.sprite
-		const disabledOverlaySprite = inspectedCard.cardDisabledOverlay
-
-		sprite.tint = 0xFFFFFF
-		sprite.scale.set(this.superSamplingLevel)
-		container.position.x = this.getScreenWidth() / 2
-		container.position.y = this.getScreenHeight() / 2
-		container.zIndex = INSPECTED_CARD_ZINDEX
-
-		// inspectedCard.powerText.text = inspectedCard.basePower.toString()
-		// if (inspectedCard.type === CardType.SPELL) {
-		// 	inspectedCard.powerText.style.fill = 0x0000AA
-		// } else {
-		// 	inspectedCard.powerText.style.fill = 0x000000
-		// }
-
-		// inspectedCard.armorText.text = inspectedCard.baseArmor.toString()
-		// inspectedCard.armorText.style.fill = 0xFFFFFF
-
-		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
-
-		disabledOverlaySprite.visible = false
 	}
 
 	public destroy(): void {

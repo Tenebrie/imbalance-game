@@ -163,7 +163,7 @@ export default class RichText extends PIXI.Container {
 		const SCALE_MODIFIER = (this.fontSize / 18)
 		this.segments.forEach(segment => {
 			const heightModifier = ((lineHeight - 24) * segment.lineIndex) * SCALE_MODIFIER
-			segment.text.position.set(segment.basePosition.x * SCALE_MODIFIER, segment.basePosition.y * SCALE_MODIFIER + heightModifier)
+			segment.text.position.set(Math.round(segment.basePosition.x * SCALE_MODIFIER), Math.round(segment.basePosition.y * SCALE_MODIFIER + heightModifier))
 			segment.text.updateFont(fontSize, lineHeight)
 		})
 	}

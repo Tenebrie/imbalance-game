@@ -8,6 +8,7 @@ import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/P
 import TargetType from '@shared/enums/TargetType'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import CardKeyword from '@shared/enums/CardKeyword'
 
 export default class HeroLightOracle extends ServerCard {
 	cardsToSee = 5
@@ -16,6 +17,7 @@ export default class HeroLightOracle extends ServerCard {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 4
 		this.sortPriority = 1
+		this.baseKeywords = [CardKeyword.SUMMON]
 		this.dynamicTextVariables = {
 			cardsToSee: this.cardsToSee
 		}

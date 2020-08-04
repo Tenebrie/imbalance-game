@@ -2,6 +2,8 @@ import ClientGameStatus from '../../../Pixi/enums/ClientGameStatus'
 import { createModule } from 'direct-vuex'
 import Player from '@shared/models/Player'
 import {moduleActionContext, rootActionContext} from '../index'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
 
 const gameStateModule = createModule({
 	namespaced: true,
@@ -9,7 +11,8 @@ const gameStateModule = createModule({
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
-		playerUnitMana: 0 as number
+		playerUnitMana: 0 as number,
+		inspectedCardId: null as string | null
 	},
 
 	mutations: {
@@ -27,12 +30,20 @@ const gameStateModule = createModule({
 
 		setPlayerUnitMana(state, playerUnitMana: number): void {
 			state.playerUnitMana = playerUnitMana
+		},
+
+		setInspectedCard(state, inspectedCard: RenderedCard | null): void {
+			state.inspectedCardId = inspectedCard ? inspectedCard.id : null
 		}
 	},
 
 	getters: {
 		isInGame: (state): boolean => {
 			return state.gameStatus !== ClientGameStatus.NOT_STARTED
+		},
+
+		inspectedCard: (state): RenderedCard | null => {
+			return state.inspectedCardId === null ? null : Core.game.findRenderedCardById(state.inspectedCardId)
 		}
 	},
 

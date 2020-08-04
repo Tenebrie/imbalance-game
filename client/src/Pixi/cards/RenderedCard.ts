@@ -6,7 +6,7 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import RichText from '@/Pixi/render/RichText'
-import Utils, {getRenderScale} from '@/utils/Utils'
+import Utils from '@/utils/Utils'
 import CardAttributes from '@/Pixi/render/CardAttributes'
 import CardMessage from '@shared/models/network/CardMessage'
 import ScalingText from '@/Pixi/render/ScalingText'
@@ -18,6 +18,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import store from '@/Vue/store'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
+import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
 
 export default class RenderedCard extends Card {
 	public buffs: ClientBuffContainer
@@ -69,9 +70,11 @@ export default class RenderedCard extends Card {
 		this.sortPriority = message.sortPriority
 
 		this.power = message.power
+		this.maxPower = message.maxPower
+		this.armor = message.armor
+		this.maxArmor = message.maxArmor
 		this.attack = message.attack
 		this.attackRange = message.attackRange
-		this.armor = message.armor
 
 		this.basePower = message.basePower
 		this.baseAttack = message.baseAttack
@@ -196,14 +199,6 @@ export default class RenderedCard extends Card {
 		return cost
 	}
 
-	public get maxPower(): number {
-		let cost = this.basePower
-		this.buffs.buffs.forEach(buff => {
-			cost = buff.getUnitMaxPowerOverride(cost)
-		})
-		return cost
-	}
-
 	public getDescriptionTextVariables(): RichTextVariables {
 		return {
 			...this.variables,
@@ -248,11 +243,19 @@ export default class RenderedCard extends Card {
 		this.resetDisplayMode()
 	}
 
+	public setMaxPower(value: number): void {
+		this.maxPower = value
+	}
+
 	public setArmor(value: number): void {
 		this.armor = Math.max(0, value)
 		this.armorText.visible = this.armor > 0
 		this.armorTextBackground.visible = this.armor > 0
 		this.armorTextZoomBackground.visible = this.armor > 0
+	}
+
+	public setMaxArmor(value: number): void {
+		this.maxArmor = value
 	}
 
 	public createHitboxSprite(sprite: PIXI.Sprite): PIXI.Sprite {

@@ -24,7 +24,9 @@ export default class CardMessage {
 	sortPriority: number
 
 	power: number
+	maxPower: number
 	armor: number
+	maxArmor: number
 	attack: number
 	attackRange: number
 
@@ -50,9 +52,11 @@ export default class CardMessage {
 		this.sortPriority = card.sortPriority
 
 		this.power = card.power
+		this.maxPower = card.maxPower
+		this.armor = card.armor
+		this.maxArmor = card.maxArmor
 		this.attack = card.attack
 		this.attackRange = card.attackRange
-		this.armor = card.armor
 
 		this.basePower = card.basePower
 		this.baseAttack = card.baseAttack

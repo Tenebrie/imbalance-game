@@ -118,9 +118,11 @@ class CardLibrary {
 		clone.description = reference.description
 		clone.game = game
 		clone.power = clone.basePower
+		clone.maxPower = clone.basePower
+		clone.armor = clone.baseArmor
+		clone.maxArmor = clone.baseArmor
 		clone.attack = clone.baseAttack
 		clone.attackRange = clone.baseAttackRange
-		clone.armor = clone.baseArmor
 		return clone
 	}
 }
