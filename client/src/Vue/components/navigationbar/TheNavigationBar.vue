@@ -2,13 +2,19 @@
 	<div class="the-navigation-bar">
 		<div class="left-side-container">
 			<div class="link-container">
-				<router-link tag="span" :to="{ name: 'home' }" class="router-link" exact>Home</router-link>
+				<router-link tag="span" :to="{ name: 'home' }" class="router-link" exact>
+					{{ $locale.get('ui.navigation.home') }}
+				</router-link>
 			</div>
 			<div class="link-container">
-				<router-link tag="span" :to="{ name: 'decks' }" class="router-link">Decks</router-link>
+				<router-link tag="span" :to="{ name: 'decks' }" class="router-link">
+					{{ $locale.get('ui.navigation.decks') }}
+				</router-link>
 			</div>
 			<div class="link-container">
-				<router-link tag="span" :to="{ name: 'rules' }" class="router-link">Rules</router-link>
+				<router-link tag="span" :to="{ name: 'rules' }" class="router-link">
+					{{ $locale.get('ui.navigation.rules') }}
+				</router-link>
 			</div>
 		</div>
 		<div class="right-side-container">
@@ -18,29 +24,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import store from '@/Vue/store'
 import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfile.vue'
 
-export default Vue.extend({
+export default {
 	components: {
 		TheMiniUserProfile
-	},
-
-	data: () => ({
-
-	}),
-
-	computed: {
-		isInGame() {
-			return store.getters.gameStateModule.isInGame
-		}
-	},
-
-	methods: {
-
 	}
-})
+}
 </script>
 
 <style scoped lang="scss">
@@ -48,8 +38,9 @@ export default Vue.extend({
 
 	.the-navigation-bar {
 		position: fixed;
+		z-index: 1;
 		top: 0;
-		height: 48px;
+		height: $NAVIGATION-BAR-HEIGHT;
 		width: 100%;
 		border-bottom: solid gray 1px;
 		display: flex;

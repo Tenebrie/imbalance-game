@@ -20,23 +20,19 @@ export default Vue.extend({
 	@import "../styles/generic";
 
 	.rules-view {
-		width: 100%;
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
 		justify-content: center;
 
 		& > div {
-			width: 50%;
 			flex-grow: 0;
-			height: 75%;
 			display: flex;
 			flex-direction: column;
 			background: $COLOR-BACKGROUND-TRANSPARENT;
 
 			&.the-rules-list {
-				max-width: 960px;
 				flex: 1;
-				margin: 32px 32px 32px 32px;
+				max-width: 960px;
 			}
 		}
 	}

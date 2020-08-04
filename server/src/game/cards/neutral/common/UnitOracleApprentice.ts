@@ -10,6 +10,8 @@ import CardFaction from '@shared/enums/CardFaction'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TokenPlayerDeck from '../tokens/TokenPlayerDeck'
 import TokenOpponentDeck from '../tokens/TokenOpponentDeck'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitOracleApprentice extends ServerCard {
 	deckToLook: 'player' | 'opponent' | undefined
@@ -18,6 +20,12 @@ export default class UnitOracleApprentice extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 8
 		this.baseTribes = [CardTribe.HUMAN]
+
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
+
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
+			.perform(() => this.onTargetsConfirmed())
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -43,7 +51,7 @@ export default class UnitOracleApprentice extends ServerCard {
 		return builder
 	}
 
-	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {
+	private onTargetSelected(target: ServerCard): void {
 		if (target.instanceOf(TokenPlayerDeck)) {
 			this.deckToLook = 'player'
 		} else if (target.instanceOf(TokenOpponentDeck)) {
@@ -51,7 +59,7 @@ export default class UnitOracleApprentice extends ServerCard {
 		}
 	}
 
-	onUnitPlayTargetsConfirmed(thisUnit: ServerUnit): void {
+	private onTargetsConfirmed(): void {
 		this.deckToLook = undefined
 	}
 }

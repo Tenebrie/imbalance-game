@@ -1,7 +1,7 @@
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
-import RenderedUnit from '@/Pixi/board/RenderedUnit'
-import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 
 export default class MouseHover {
 	public static getHoveredCard(): RenderedCard | null {

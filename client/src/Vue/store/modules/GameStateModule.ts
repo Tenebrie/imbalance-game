@@ -1,7 +1,7 @@
 import ClientGameStatus from '../../../Pixi/enums/ClientGameStatus'
 import { createModule } from 'direct-vuex'
 import Player from '@shared/models/Player'
-import { moduleActionContext } from '../index'
+import {moduleActionContext, rootActionContext} from '../index'
 
 const gameStateModule = createModule({
 	namespaced: true,
@@ -65,9 +65,11 @@ const gameStateModule = createModule({
 
 		reset(context): void {
 			const { commit } = moduleActionContext(context, gameStateModule)
+			const { rootDispatch } = rootActionContext(context)
 			commit.setGameStatus(ClientGameStatus.NOT_STARTED)
 			commit.setOpponentData(null)
 			commit.setIsPlayersTurn(false)
+			rootDispatch.gameLogModule.clearLog()
 		}
 	}
 })

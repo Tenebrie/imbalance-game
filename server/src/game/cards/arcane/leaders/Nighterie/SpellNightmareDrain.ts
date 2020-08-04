@@ -15,12 +15,27 @@ import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import BuffStrength from '../../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
+import GameEventType from '@shared/enums/GameEventType'
+import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class SpellNightmareDrain extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 4
 		this.baseFeatures = [CardFeature.HERO_POWER]
+
+		/* Create basic unit if no target available */
+		this.createEffect(GameEventType.SPELL_DEPLOYED)
+			.require(() => this.game.cardPlay.getValidTargets().length === 0)
+			.perform(() => {
+				const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
+				const targetRow = this.game.board.getRowWithDistanceToFront(this.owner, 0)
+				this.game.board.createUnit(shadowspawn, this.owner, targetRow.index, targetRow.cards.length)
+			})
+
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -30,30 +45,21 @@ export default class SpellNightmareDrain extends ServerCard {
 			.validate(TargetType.UNIT, args => args.targetCard.power < args.targetCard.basePower)
 	}
 
-	onPlayedAsSpell(owner: ServerPlayerInGame): void {
-		if (this.game.cardPlay.getValidTargets().length > 0) {
-			return
-		}
-
+	private onTargetSelected(target: ServerUnit): void {
 		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
-		const targetRow = this.game.board.getRowWithDistanceToFront(owner, 0)
-		this.game.board.createUnit(shadowspawn, owner, targetRow.index, targetRow.cards.length)
-	}
-
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
-		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
-		const targetRow = this.game.board.getRowWithDistanceToFront(owner, 0)
-		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, owner, targetRow.index, targetRow.cards.length)
+		const targetRow = this.game.board.getRowWithDistanceToFront(this.owner, 0)
+		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, this.owner, targetRow.index, targetRow.cards.length)
 
 		const missingHealth = target.card.basePower - target.card.power
-		this.game.animation.play(ServerAnimation.unitAttacksUnits(target, [shadowspawnUnit]))
+		this.game.animation.play(ServerAnimation.cardAttacksUnits(target.card, [shadowspawnUnit]))
 
 		if (missingHealth <= 0) {
 			return
 		}
 
 		for (let i = 0; i < missingHealth; i++) {
-			shadowspawnUnit.buffs.add(new BuffStrength(), shadowspawn, BuffDuration.INFINITY)
+			shadowspawnUnit.buffs.add(BuffStrength, shadowspawn, BuffDuration.INFINITY)
 		}
+		this.game.animation.play(ServerAnimation.cardReceivedBuff([shadowspawn], BuffAlignment.POSITIVE))
 	}
 }

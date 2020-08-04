@@ -34,9 +34,9 @@
 				"@vue/cli-plugin-babel": "^4.1.0",
 				"@vue/cli-plugin-eslint": "^4.1.0",
 				"@vue/cli-plugin-router": "^4.1.0",
-				"@vue/cli-plugin-typescript": "^4.1.0",
+				"@vue/cli-plugin-typescript": "^4.4.6",
 				"@vue/cli-plugin-vuex": "^4.1.0",
-				"@vue/cli-service": "^4.1.0",
+				"@vue/cli-service": "^4.4.6",
 				"@vue/eslint-config-standard": "^4.0.0",
 				"@vue/eslint-config-typescript": "^4.0.0",
 				"babel-eslint": "^10.0.3",
@@ -66,8 +66,10 @@
 		},
 		"homepage": "https://github.com/Kos94ok/notgwent-game#readme",
 		"devDependencies": {
+				"@types/howler": "^2.2.1",
 				"@typescript-eslint/parser": "^2.34.0",
 				"babel-plugin-module-resolver": "^4.0.0",
+				"cloc": "^2.5.1",
 				"subpackage": "^1.1.0"
 		}
 }

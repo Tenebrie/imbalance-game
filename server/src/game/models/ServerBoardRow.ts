@@ -3,6 +3,7 @@ import BoardRow from '@shared/models/BoardRow'
 import ServerUnit from './ServerUnit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import Constants from '@shared/Constants'
 
 export default class ServerBoardRow extends BoardRow {
 	game: ServerGame
@@ -14,6 +15,10 @@ export default class ServerBoardRow extends BoardRow {
 		this.game = game
 		this.owner = null
 		this.cards = []
+	}
+
+	public isFull(): boolean {
+		return this.cards.length === Constants.MAX_CARDS_PER_ROW
 	}
 
 	public insertUnit(unit: ServerUnit, ordinal: number): void {

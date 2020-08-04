@@ -1,10 +1,16 @@
 <template>
 	<span>
 		<span v-if="mode === DeckListMode.SELECT" class="deck-link" @click="onSelectDeck" :class="selectedClass">
-			<img v-if="iconPath" :src="iconPath" alt="Deck icon" /> <span>{{ deck.name }}</span>
+			<keep-alive>
+				<img v-if="iconPath" :src="iconPath" alt="Deck icon" />
+			</keep-alive>
+			<span>{{ deck.name }}</span>
 		</span>
 		<router-link v-if="mode === DeckListMode.EDIT" tag="span" class="deck-link" :to="{ path: `/decks/${deck.id}` }">
-			<img v-if="iconPath" :src="iconPath" alt="Deck icon" /> <span>{{ deck.name }}</span>
+			<keep-alive>
+				<img v-if="iconPath" :src="iconPath" alt="Deck icon" />
+			</keep-alive>
+			<span>{{ deck.name }}</span>
 		</router-link>
 	</span>
 </template>
@@ -74,6 +80,7 @@ export default Vue.extend({
 		cursor: pointer;
 		display: flex;
 		align-items: center;
+		min-height: 1.4em;
 
 		&.selected {
 			background: rgba(lighten(green, 20), 0.1);

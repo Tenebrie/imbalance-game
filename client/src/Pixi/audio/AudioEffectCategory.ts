@@ -1,0 +1,13 @@
+enum AudioEffectCategory {
+	UNIT_DEPLOY,
+	BUFF_POSITIVE,
+	BUFF_NEGATIVE,
+	IMPACT_GENERIC,
+	IMPACT_HEAL,
+	PROJECTILE,
+	TARGETING_CONFIRM,
+	CARD_MOVE,
+	CARD_ANNOUNCE,
+}
+
+export default AudioEffectCategory

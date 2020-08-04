@@ -1,17 +1,20 @@
 <template>
-	<span class="link button-link" @click="onClick">
-		<span v-if="!isLoading">Save</span>
-		<span v-if="isLoading">Saving...</span>
-	</span>
+	<div class="button-container">
+		<button class="primary" @click="onClick">
+			<span v-if="!requestInFlight">{{ $locale.get('ui.decks.saveDeck') }}</span>
+			<span v-if="requestInFlight">{{ $locale.get('ui.decks.saveDeck.progress') }}</span>
+		</button>
+	</div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
+import Notifications from '@/utils/Notifications'
 
 export default Vue.extend({
 	data: () => ({
-		isLoading: false
+		requestInFlight: false
 	}),
 
 	computed: {
@@ -20,15 +23,15 @@ export default Vue.extend({
 
 	methods: {
 		async onClick(): Promise<void> {
-			this.isLoading = true
+			this.requestInFlight = true
 			const deckId = this.$route.params.id
 			const statusCode = await store.dispatch.editor.saveDeck({ deckId })
 			if (statusCode === 204) {
-				this.$noty.success('Deck saved!')
+				Notifications.success('Deck saved!')
 			} else {
-				this.$noty.error('An error occurred while saving the deck')
+				Notifications.error('An error occurred while saving the deck')
 			}
-			this.isLoading = false
+			this.requestInFlight = false
 		}
 	}
 })

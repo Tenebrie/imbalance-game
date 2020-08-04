@@ -10,6 +10,8 @@ import ServerUnit from '../../../models/ServerUnit'
 import BuffTutoredCard from '../../../buffs/BuffTutoredCard'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class UnitUndercityGambler extends ServerCard {
 	bonusPower = 5
@@ -17,9 +19,14 @@ export default class UnitUndercityGambler extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 4
+		this.generatedArtworkMagicString = '2'
+
 		this.dynamicTextVariables = {
 			bonusPower: this.bonusPower
 		}
+
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -29,17 +36,17 @@ export default class UnitUndercityGambler extends ServerCard {
 			.inPlayersHand()
 	}
 
-	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void {
+	private onTargetSelected(target: ServerCard): void {
 		const owner = target.owner
-		owner.cardHand.discardUnit(target)
-		owner.cardDeck.addUnit(target)
+		owner.cardHand.discardCard(target)
+		owner.cardDeck.addUnitToBottom(target)
 		const drawnCards = owner.drawUnitCards(1)
 		if (drawnCards.length === 0) {
 			return
 		}
 		drawnCards.forEach(card => {
 			for (let i = 0; i < this.bonusPower; i++) {
-				card.buffs.add(new BuffStrength(), this, BuffDuration.INFINITY)
+				card.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
 			}
 		})
 	}

@@ -2,19 +2,19 @@ import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
 import Unit from '@shared/models/Unit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
-import ServerOwnedCard from './ServerOwnedCard'
+import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
+import GameEventCreators from './GameEventCreators'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame
 	card: ServerCard
 	owner: ServerPlayerInGame
-	isDeathrattleTriggered = false
+	isBeingDestroyed = false
 
 	get rowIndex(): number {
 		return this.game.board.rows.indexOf(this.game.board.getRowWithUnit(this)!)
@@ -52,63 +52,16 @@ export default class ServerUnit implements Unit {
 		this.card.setArmor(value)
 	}
 
-	dealDamage(damage: ServerDamageInstance): number {
-		const damageValue = this.dealDamageWithoutDestroying(damage)
-		if (this.card.power <= 0) {
-			this.destroy()
-		}
-		return damageValue
+	dealDamage(damageInstance: ServerDamageInstance): void {
+		this.card.dealDamage(damageInstance)
 	}
 
-	dealDamageWithoutDestroying(damageInstance: ServerDamageInstance): number {
-		let damageValue = this.card.getDamageTaken(this, damageInstance) - this.card.getDamageReduction(this, damageInstance)
-		this.card.buffs.buffs.forEach(buff => {
-			damageValue = buff.getDamageTaken(this, damageValue, damageInstance) - buff.getDamageReduction(this, damageValue, damageInstance)
-		})
-		if (damageValue <= 0) {
-			return 0
-		}
-
-		runCardEventHandler(() => this.card.onBeforeDamageTaken(this, damageInstance))
-		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
-			ownedCard.card.onBeforeOtherUnitDamageTaken(this, damageInstance)
-		})
-
-		let damageToDeal = damageInstance.value
-		if (this.card.armor > 0) {
-			const armorDamageInstance = damageInstance.clone()
-			armorDamageInstance.value = Math.min(this.card.armor, damageToDeal)
-			runCardEventHandler(() => this.card.onBeforeArmorDamageTaken(this, armorDamageInstance))
-			this.setHealthArmor(this.card.armor - armorDamageInstance.value)
-			runCardEventHandler(() => this.card.onAfterArmorDamageTaken(this, armorDamageInstance))
-			damageToDeal -= armorDamageInstance.value
-		}
-
-		if (damageToDeal > 0) {
-			const healthDamageInstance = damageInstance.clone()
-			healthDamageInstance.value = Math.min(this.card.power, damageToDeal)
-			runCardEventHandler(() => this.card.onBeforeHealthDamageTaken(this, healthDamageInstance))
-			this.setPower(this.card.power - healthDamageInstance.value)
-			runCardEventHandler(() => this.card.onAfterHealthDamageTaken(this, healthDamageInstance))
-		}
-
-		runCardEventHandler(() => this.card.onAfterDamageTaken(this, damageInstance))
-		this.game.getAllCardsForEventHandling().filter(ownedCard => ownedCard.card !== this.card).forEach(ownedCard => {
-			ownedCard.card.onAfterOtherUnitDamageTaken(this, damageInstance)
-		})
-
-		if (this.card.power > 0) {
-			runCardEventHandler(() => this.card.onDamageSurvived(this, damageInstance))
-		}
-		return damageValue
-	}
-
-	heal(damage: ServerDamageInstance): void {
-		if (damage.value <= 0) {
+	heal(healingInstance: ServerDamageInstance): void {
+		if (healingInstance.value <= 0) {
 			return
 		}
 
-		this.setPower(Math.min(this.card.basePower, this.card.power + damage.value))
+		this.setPower(Math.min(this.card.maxPower, this.card.power + healingInstance.value))
 	}
 
 	isAlive(): boolean {
@@ -137,23 +90,33 @@ export default class ServerUnit implements Unit {
 	}
 
 	destroy(): void {
-		if (this.isDeathrattleTriggered) {
+		if (this.isBeingDestroyed) {
 			return
 		}
-		this.isDeathrattleTriggered = true
 
-		runCardEventHandler(() => this.card.onBeforeDestroyedAsUnit(this))
+		this.isBeingDestroyed = true
 
-		const otherCards = this.game.board.getAllUnits().filter(cardOnBoard => cardOnBoard !== this)
-		otherCards.forEach(cardOnBoard => {
-			runCardEventHandler(() => cardOnBoard.card.onBeforeOtherUnitDestroyed(this))
+		const hookValues = this.game.events.applyHooks<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED, {
+			destructionPrevented: false
+		}, {
+			targetUnit: this
 		})
+		if (hookValues.destructionPrevented) {
+			this.card.setPower(1)
+			this.isBeingDestroyed = false
+			return
+		}
+
+		this.game.events.postEvent(GameEventCreators.unitDestroyed({
+			triggeringUnit: this
+		}))
+
 		this.game.board.destroyUnit(this)
-		otherCards.forEach(cardOnBoard => {
-			runCardEventHandler(() => cardOnBoard.card.onAfterOtherUnitDestroyed(this))
-		})
+
+		this.card.setPower(this.card.basePower)
+		this.card.buffs.removeAll()
 
 		this.owner.cardGraveyard.addUnit(this.card)
-		this.isDeathrattleTriggered = false
+		this.isBeingDestroyed = false
 	}
 }

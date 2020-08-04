@@ -1,8 +1,9 @@
 import ServerGame from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import {colorizeConsoleText, colorizeId, colorizePlayer} from '../../utils/Utils'
 
-export default class GameLibrary {
+class GameLibrary {
 	games: ServerGame[]
 
 	constructor() {
@@ -11,14 +12,18 @@ export default class GameLibrary {
 
 	public createOwnedGame(owner: ServerPlayer, name: string): ServerGame {
 		const game = ServerGame.newOwnedInstance(owner, name)
-		console.info(`Creating owned game ${game.id}`)
+		console.info(`Player ${colorizePlayer(owner.username)} created game ${colorizeId(game.id)}`)
 
 		this.games.push(game)
 		return game
 	}
 
 	public destroyGame(game: ServerGame, reason: string): void {
-		console.info(`Destroying game ${game.id}. Reason: ${reason}`)
+		if (!this.games.includes(game)) {
+			return
+		}
+
+		console.info(`Destroying game ${colorizeId(game.id)}. Reason: ${colorizeConsoleText(reason)}`)
 
 		game.players.forEach(playerInGame => OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player))
 		this.games.splice(this.games.indexOf(game), 1)
@@ -33,3 +38,5 @@ export default class GameLibrary {
 		this.destroyGame(game, reason)
 	}
 }
+
+export default new GameLibrary()

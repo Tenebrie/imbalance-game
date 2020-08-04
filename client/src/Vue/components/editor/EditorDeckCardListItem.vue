@@ -21,8 +21,8 @@ export default Vue.extend({
 
 	computed: {
 		fullName(): string {
-			let name = Localization.getString(this.card.name)
-			const title = Localization.getString(this.card.title)
+			let name = Localization.get(this.card.name)
+			const title = Localization.get(this.card.title)
 			if (title) {
 				name = `${name}, ${title}`
 			}

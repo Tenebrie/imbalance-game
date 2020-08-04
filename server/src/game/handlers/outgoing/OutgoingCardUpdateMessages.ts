@@ -12,6 +12,7 @@ import TargetType from '@shared/enums/TargetType'
 import Utils from '../../../utils/Utils'
 import ServerBuff from '../../models/ServerBuff'
 import BuffMessage from '@shared/models/network/BuffMessage'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default {
 	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard) {
@@ -21,31 +22,15 @@ export default {
 		})
 	},
 
-	notifyAboutUnitCardsDrawn(playerInGame: ServerPlayerInGame, cards: ServerCard[]) {
-		const cardMessages = cards.map((card: ServerCard) => CardMessage.fromCard(card))
+	notifyAboutDeckLeader(playerInGame: ServerPlayerInGame, card: ServerCard) {
 		playerInGame.player.sendMessage({
-			type: 'update/player/self/hand/unit/cardDrawn',
-			data: cardMessages
+			type: 'update/player/self/leader',
+			data: new CardMessage(card)
 		})
 
-		const hiddenCardMessages = cards.map((card: ServerCard) => HiddenCardMessage.fromCard(card))
 		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/hand/unit/cardDrawn',
-			data: hiddenCardMessages
-		})
-	},
-
-	notifyAboutSpellCardsDrawn(playerInGame: ServerPlayerInGame, cards: ServerCard[]) {
-		const cardMessages = cards.map((card: ServerCard) => CardMessage.fromCard(card))
-		playerInGame.player.sendMessage({
-			type: 'update/player/self/hand/spell/cardDrawn',
-			data: cardMessages
-		})
-
-		const hiddenCardMessages = cards.map((card: ServerCard) => HiddenCardMessage.fromCard(card))
-		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/hand/spell/cardDrawn',
-			data: hiddenCardMessages
+			type: 'update/player/opponent/leader',
+			data: new CardMessage(card)
 		})
 	},
 
@@ -57,7 +42,7 @@ export default {
 
 		playerInGame.opponent.player.sendMessage({
 			type: 'update/player/opponent/hand/unit/cardAdded',
-			data: new HiddenCardMessage(card)
+			data: card.features.includes(CardFeature.HERO_POWER) ? new CardMessage(card) : new HiddenCardMessage(card)
 		})
 	},
 
@@ -69,7 +54,7 @@ export default {
 
 		playerInGame.opponent.player.sendMessage({
 			type: 'update/player/opponent/hand/spell/cardAdded',
-			data: new HiddenCardMessage(card)
+			data: card.features.includes(CardFeature.HERO_POWER) ? new CardMessage(card) : new HiddenCardMessage(card)
 		})
 	},
 
@@ -232,6 +217,28 @@ export default {
 		})
 	},
 
+	notifyAboutUnitCardInDeck(playerInGame: ServerPlayerInGame, card: ServerCard) {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/deck/unit/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/deck/unit/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+	},
+
+	notifyAboutSpellCardInDeck(playerInGame: ServerPlayerInGame, card: ServerCard) {
+		playerInGame.player.sendMessage({
+			type: 'update/player/self/deck/spell/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+		playerInGame.opponent.player.sendMessage({
+			type: 'update/player/opponent/deck/spell/cardAdded',
+			data: CardMessage.fromCard(card)
+		})
+	},
+
 	notifyAboutUnitCardInGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard) {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/graveyard/unit/cardAdded',
@@ -251,6 +258,20 @@ export default {
 		playerInGame.opponent.player.sendMessage({
 			type: 'update/player/opponent/graveyard/spell/cardAdded',
 			data: CardMessage.fromCard(card)
+		})
+	},
+
+	notifyAboutCardInGraveyardDestroyed(ownedCard: ServerOwnedCard) {
+		const owner = ownedCard.owner.player
+		const opponent = ownedCard.owner.opponent.player
+
+		owner.sendMessage({
+			type: 'update/player/self/graveyard/cardDestroyed',
+			data: CardMessage.fromCard(ownedCard.card)
+		})
+		opponent.sendMessage({
+			type: 'update/player/opponent/graveyard/cardDestroyed',
+			data: CardMessage.fromCard(ownedCard.card)
 		})
 	},
 

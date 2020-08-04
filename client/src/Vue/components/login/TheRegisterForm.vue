@@ -1,11 +1,12 @@
 <template>
-	<div class="the-register-form">
+	<div ref="rootRef" class="the-register-form">
 		<div class="form">
-			<input id="tenebrieUsername" ref="username" type="text" placeholder="Username" v-model="username" autofocus />
-			<input id="tenebriePassword" ref="password" type="password" placeholder="Password" v-model="password" />
-			<input id="tenebrieConfirmPassword" ref="confirmPassword" type="password" placeholder="Confirm password" v-model="confirmPassword" />
+			<input id="tenebrieEmail" type="text" placeholder="Email" v-model="email" autofocus />
+			<input id="tenebrieUsername" type="text" placeholder="Username" v-model="username" />
+			<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
+			<input id="tenebrieConfirmPassword" type="password" placeholder="Confirm password" v-model="confirmPassword" />
 			<div class="status">
-				<span ref="message"> </span>
+				<span ref="messageRef"> </span>
 			</div>
 			<div class="submit">
 				<button @click="onRegister" class="primary">Create account</button>
@@ -18,104 +19,108 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import axios from 'axios'
+import router from '@/Vue/router'
+import {onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
+import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
+import store from '@/Vue/store'
 
-export default Vue.extend({
-	data: () => ({
-		username: '' as string,
-		password: '' as string,
-		confirmPassword: '' as string
-	}),
+function TheRegisterForm() {
+	const rootRef = ref<HTMLDivElement>()
+	const messageRef = ref<HTMLSpanElement>()
 
-	watch: {
-		username() {
-			this.clearMessage()
-		},
-		password() {
-			this.clearMessage()
-		},
-		confirmPassword() {
-			this.clearMessage()
-		}
-	},
+	const email = ref<string>('')
+	const username = ref<string>('')
+	const password = ref<string>('')
+	const confirmPassword = ref<string>('')
 
-	mounted(): void {
-		this.$el.addEventListener('keydown', this.onKeyDown)
-	},
+	onMounted(() => {
+		rootRef.value.addEventListener('keydown', onKeyDown)
+	})
 
-	beforeDestroy(): void {
-		this.$el.removeEventListener('keydown', this.onKeyDown)
-	},
+	onBeforeUnmount(() => {
+		rootRef.value.removeEventListener('keydown', onKeyDown)
+	})
 
-	methods: {
-		onKeyDown(event: KeyboardEvent): void {
-			if (event.key === 'Enter') {
-				this.onRegister()
-			}
-		},
+	watch(() => [email.value, password.value, confirmPassword.value], () => {
+		clearMessage()
+	})
 
-		async onRegister(): Promise<void> {
-			const username = this.username
-			const password = this.password
-			const confirmPassword = this.confirmPassword
-			const messageElement = this.$refs.message as Element
-
-			if (password !== confirmPassword) {
-				this.setMessage('Passwords do not match')
-				return
-			}
-
-			this.clearMessage()
-			try {
-				await axios.post('/api/register', { username, password })
-				await axios.post('/api/login', { username, password })
-				await this.$router.push({ name: 'home' })
-			} catch (error) {
-				this.setMessage('Registration failed. This user probably exists.')
-			}
-		},
-
-		setMessage(message: string): void {
-			const messageElement = this.$refs.message as Element
-			messageElement.innerHTML = message
-		},
-
-		clearMessage(): void {
-			const messageElement = this.$refs.message as Element
-			messageElement.innerHTML = ''
+	const onKeyDown = (event: KeyboardEvent): void => {
+		if (event.key === 'Enter') {
+			onRegister()
 		}
 	}
-})
+
+	const onRegister = async(): Promise<void> => {
+		if (password.value !== confirmPassword.value) {
+			setMessage('Passwords do not match')
+			return
+		}
+
+		clearMessage()
+		const credentials = {
+			email: email.value,
+			username: username.value,
+			password: password.value
+		}
+		try {
+			await axios.post('/api/user', credentials)
+			await axios.post('/api/session', credentials)
+			await store.dispatch.userPreferencesModule.fetchPreferences()
+			await router.push({ name: 'home' })
+		} catch (error) {
+			console.error(error)
+			setMessage(getErrorMessage(error.response.status, error.response.data.code))
+		}
+	}
+
+	const getErrorMessage = (statusCode: number, errorCode: number): string => {
+		if (statusCode === 400) {
+			return 'Missing email, username or password'
+		} else if (statusCode === 409 && errorCode === UserRegisterErrorCode.EMAIL_TAKEN) {
+			return 'A user with this email already exists'
+		} else if (statusCode === 409 && errorCode === UserRegisterErrorCode.USERNAME_COLLISIONS) {
+			return 'Unable to reserve a username'
+		} else if (statusCode === 500) {
+			return 'Internal server error'
+		} else if (statusCode === 503) {
+			return 'Database client is not yet ready'
+		} else {
+			return `Unknown error with code ${statusCode}`
+		}
+	}
+
+	const setMessage = (message: string): void => {
+		messageRef.value.innerHTML = message
+	}
+
+	const clearMessage = (): void => {
+		messageRef.value.innerHTML = ''
+	}
+
+	return {
+		rootRef,
+		messageRef,
+		email,
+		username,
+		password,
+		confirmPassword,
+		onRegister
+	}
+}
+
+export default {
+	setup: TheRegisterForm
+}
 </script>
 
 <style scoped lang="scss">
 	@import "src/Vue/styles/generic";
+	@import "LoginFormShared";
 
 	.the-register-form {
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		.form {
-			width: 16em;
-			padding: 32px;
-			background: rgba(white, 0.1);
-
-			.status {
-				text-align: start;
-				color: lighten(red, 20);
-			}
-
-			.submit {
-				margin: 8px 0;
-			}
-
-			.to-login {
-
-			}
-		}
+		@include login-form();
 
 		.info-text {
 			font-size: 0.8em;

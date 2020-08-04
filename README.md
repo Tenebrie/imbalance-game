@@ -1,7 +1,7 @@
 # NotGwent
 
 "*NotGwent*" (temporary name) is a work-in-progress open-source trading card game. See *Rules*
-section in the game for more information about the ruleset. 
+section in the game for more information about the ruleset.
 
 ## Try the game
 You can play the current stable version of the game at https://notgwent.herokuapp.com/. Automatically deployed
@@ -11,6 +11,10 @@ You can also test the latest version, deployed straight from the *Develop* branc
 at https://pure-chamber-21653.herokuapp.com/
 
 Both environments go to sleep after long periods of inactivity, and may take up to 30 seconds to boot up again.
+
+## Licensing
+Please note that while the code is licensed under GPL v3.0, all the art assets
+are property of their respective owners.
 
 ## Development
 The development environment is dockerized, so you'll need to have a working Docker installation on your machine to

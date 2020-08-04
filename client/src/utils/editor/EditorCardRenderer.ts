@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/CardMessage'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import store from '@/Vue/store'

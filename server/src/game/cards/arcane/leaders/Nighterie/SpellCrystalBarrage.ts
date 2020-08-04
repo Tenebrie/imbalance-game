@@ -9,16 +9,20 @@ import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBoardRow from '../../../../models/ServerBoardRow'
-import ServerPlayerInGame from '../../../../players/ServerPlayerInGame'
 import Constants from '@shared/Constants'
 import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitVolatileCrystal from '../../tokens/UnitVolatileCrystal'
+import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellCrystalBarrage extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 6
 		this.baseFeatures = [CardFeature.HERO_POWER]
+
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -28,7 +32,7 @@ export default class SpellCrystalBarrage extends ServerCard {
 			.opponentsRow()
 	}
 
-	onSpellPlayTargetRowSelected(owner: ServerPlayerInGame, target: ServerBoardRow): void {
+	private onTargetSelected(target: ServerBoardRow): void {
 		for (let i = 0; i <= target.cards.length; i += 2) {
 			if (target.cards.length >= Constants.MAX_CARDS_PER_ROW) {
 				break

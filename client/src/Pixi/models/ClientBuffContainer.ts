@@ -1,4 +1,4 @@
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ClientBuff from '@/Pixi/models/ClientBuff'
 import BuffContainer from '@shared/models/BuffContainer'
 import BuffContainerMessage from '@shared/models/network/BuffContainerMessage'
@@ -41,5 +41,8 @@ export default class ClientBuffContainer implements BuffContainer {
 
 	public remove(buffMessage: BuffMessage): void {
 		this.buffs.splice(this.buffs.indexOf(this.findBuffById(buffMessage.id)), 1)
+		if (Core.player.cardHand.unitCards.includes(this.card)) {
+			Core.player.cardHand.sortCards()
+		}
 	}
 }

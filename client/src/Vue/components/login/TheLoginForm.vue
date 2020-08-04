@@ -1,10 +1,10 @@
 <template>
-	<div class="the-login-form">
+	<div ref="rootRef" class="the-login-form">
 		<div class="form">
-			<input id="tenebrieUsername" type="text" placeholder="Username" v-model="username" autofocus />
+			<input id="tenebrieEmail" type="text" placeholder="Email" v-model="email" autofocus />
 			<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
 			<div class="status">
-				<span ref="message"> </span>
+				<span ref="messageRef"> </span>
 			</div>
 			<div class="submit">
 				<button @click="onLogin" class="primary">Login</button>
@@ -17,92 +17,97 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import axios from 'axios'
+import store from '@/Vue/store'
+import router from '@/Vue/router'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import {onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
+import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 
-export default Vue.extend({
-	data: () => ({
-		username: '' as string,
-		password: '' as string
-	}),
+function TheLoginForm() {
+	const rootRef = ref<HTMLDivElement>()
+	const messageRef = ref<HTMLSpanElement>()
 
-	watch: {
-		username() {
-			this.clearMessage()
-		},
-		password() {
-			this.clearMessage()
-		}
-	},
+	const email = ref<string>('')
+	const password = ref<string>('')
 
-	mounted(): void {
-		this.$el.addEventListener('keydown', this.onKeyDown)
-	},
+	watch(() => [email.value, password.value], () => {
+		clearMessage()
+	})
 
-	beforeDestroy(): void {
-		this.$el.removeEventListener('keydown', this.onKeyDown)
-	},
+	onMounted(() => {
+		rootRef.value.addEventListener('keydown', onKeyDown)
+	})
 
-	methods: {
-		onKeyDown(event: KeyboardEvent): void {
-			if (event.key === 'Enter') {
-				this.onLogin()
-			}
-		},
+	onBeforeUnmount(() => {
+		rootRef.value.removeEventListener('keydown', onKeyDown)
+	})
 
-		async onLogin(): Promise<void> {
-			const username = this.username
-			const password = this.password
-			this.clearMessage()
-			try {
-				await axios.post('/api/login', { username, password })
-				await this.$router.push({ name: 'home' })
-				await TextureAtlas.prepare()
-			} catch (error) {
-				this.setMessage('Username or password incorrect')
-			}
-		},
-
-		setMessage(message: string): void {
-			const messageElement = this.$refs.message as Element
-			messageElement.innerHTML = message
-		},
-
-		clearMessage(): void {
-			const messageElement = this.$refs.message as Element
-			messageElement.innerHTML = ''
+	const onKeyDown = (event: KeyboardEvent): void => {
+		if (event.key === 'Enter') {
+			onLogin()
 		}
 	}
-})
+
+	const onLogin = async(): Promise<void> => {
+		clearMessage()
+		const credentials = {
+			email: email.value,
+			password: password.value
+		}
+		try {
+			await axios.post('/api/session', credentials)
+			await store.dispatch.userPreferencesModule.fetchPreferences()
+			await router.push({ name: 'home' })
+			await TextureAtlas.prepare()
+		} catch (error) {
+			console.error(error)
+			setMessage(getErrorMessage(error.response.status, error.response.data.code))
+		}
+	}
+
+	const getErrorMessage = (statusCode: number, errorCode: number): string => {
+		if (statusCode === 400 && errorCode === UserLoginErrorCode.MISSING_CREDENTIALS) {
+			return 'Missing email or password'
+		} else if (statusCode === 400 && errorCode === UserLoginErrorCode.INVALID_CREDENTIALS) {
+			return 'Username and password do not match'
+		} else if (statusCode === 500) {
+			return 'Internal server error'
+		} else if (statusCode === 503) {
+			return 'Database client is not yet ready'
+		} else {
+			return `Unknown error with code ${statusCode}`
+		}
+	}
+
+	const setMessage = (message: string): void => {
+		messageRef.value.innerHTML = message
+	}
+
+	const clearMessage = (): void => {
+		messageRef.value.innerHTML = ''
+	}
+
+	return {
+		rootRef,
+		messageRef,
+		onLogin,
+		email,
+		password
+	}
+}
+
+export default {
+	setup: TheLoginForm
+}
 </script>
 
 <style scoped lang="scss">
 	@import "src/Vue/styles/generic";
+	@import "LoginFormShared";
 
 	.the-login-form {
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		.form {
-			width: 16em;
-			padding: 32px;
-			background: rgba(white, 0.1);
-
-			.status {
-				text-align: start;
-				color: lighten(red, 20);
-			}
-
-			.submit {
-				margin: 8px 0;
-				& > button {
-					font-size: 1em;
-				}
-			}
-		}
+		@include login-form();
 
 		.register-link {
 			font-size: 0.8em;

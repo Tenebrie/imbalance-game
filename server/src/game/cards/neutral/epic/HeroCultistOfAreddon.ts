@@ -7,11 +7,16 @@ import ServerUnit from '../../../models/ServerUnit'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TargetType from '@shared/enums/TargetType'
+import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroCultistOfAreddon extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.NEUTRAL)
 		this.basePower = 2
+
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -19,9 +24,10 @@ export default class HeroCultistOfAreddon extends ServerCard {
 			.singleTarget()
 			.require(TargetType.UNIT)
 			.alliedUnit()
+			.notSelf()
 	}
 
-	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
+	private onTargetSelected(target: ServerUnit): void {
 		const cardClass = target.card.class
 		target.destroy()
 		this.owner.createCardFromLibraryByClass(cardClass)

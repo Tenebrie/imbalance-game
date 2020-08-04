@@ -38,10 +38,7 @@
         ],
 		"no-tabs": "off",
 		"no-trailing-spaces": "off",
-		"object-curly-spacing": [
-			"warn",
-			"always"
-		],
+		"object-curly-spacing": "off",
 		"space-before-function-paren": "off",
 		"no-mixed-spaces-and-tabs": "error",
 		"@typescript-eslint/no-namespace": "off",

@@ -1,12 +1,64 @@
 import * as PIXI from 'pixi.js'
 import CardMessage from '@shared/models/network/CardMessage'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardType from '@shared/enums/CardType'
 import CardFeature from '@shared/enums/CardFeature'
 import Card from '@shared/models/Card'
 import CardColor from '@shared/enums/CardColor'
 import Constants from '@shared/Constants'
 import store from '@/Vue/store'
+import RenderQuality from '@shared/enums/RenderQuality'
+
+export interface CardRenderScale {
+	superSamplingLevel: number
+	generalGameFontRenderScale: number
+	generalEditorFontRenderScale: number
+	descriptionGameFontRenderScale: number
+	descriptionEditorFontRenderScale: number
+}
+
+export const getRenderScale = (): CardRenderScale => {
+	const selectedQuality = store.state.userPreferencesModule.renderQuality
+	if (selectedQuality === RenderQuality.ULTRA) {
+		return {
+			superSamplingLevel: 2.0,
+			generalGameFontRenderScale: 1.2,
+			generalEditorFontRenderScale: 1.5,
+			descriptionGameFontRenderScale: 1.2,
+			descriptionEditorFontRenderScale: 1.2
+		}
+	} else if (selectedQuality === RenderQuality.HIGH || selectedQuality === RenderQuality.DEFAULT) {
+		return {
+			superSamplingLevel: 1.0,
+			generalGameFontRenderScale: 1.4,
+			generalEditorFontRenderScale: 1.5,
+			descriptionGameFontRenderScale: 1.5,
+			descriptionEditorFontRenderScale: 1.2
+		}
+	} else if (selectedQuality === RenderQuality.NORMAL) {
+		return {
+			superSamplingLevel: 1.0,
+			generalGameFontRenderScale: 1.0,
+			generalEditorFontRenderScale: 1.0,
+			descriptionGameFontRenderScale: 1.0,
+			descriptionEditorFontRenderScale: 1.0
+		}
+	}
+}
+
+export const forEachInNumericEnum = (enumeration: any, handler: (val: any) => any): void => {
+	for (const value in enumeration) {
+		if (!isNaN(Number(value))) {
+			handler(Number(value))
+		}
+	}
+}
+
+export const forEachInStringEnum = (enumeration: any, handler: (val: any) => any): void => {
+	for (const value in enumeration) {
+		handler(enumeration[value])
+	}
+}
 
 export default {
 	getFont(text: string) {
@@ -91,7 +143,7 @@ export default {
 	sortCards(inputArray: RenderedCard[]): RenderedCard[] {
 		return inputArray.slice().sort((a: RenderedCard, b: RenderedCard) => {
 			return (
-				(+a.features.includes(CardFeature.TEMPORARY_CARD) - +b.features.includes(CardFeature.TEMPORARY_CARD)) ||
+				(+a.features.includes(CardFeature.LOW_SORT_PRIORITY) - +b.features.includes(CardFeature.LOW_SORT_PRIORITY)) ||
 				(a.type - b.type) ||
 				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
 				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))

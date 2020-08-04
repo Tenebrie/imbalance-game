@@ -1,6 +1,6 @@
 import Core from '@/Pixi/Core'
 import Card from '@shared/models/Card'
-import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import CardTarget from '@shared/models/CardTarget'

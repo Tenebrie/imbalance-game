@@ -32,24 +32,46 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public instantiateFrom(deck: ServerTemplateCardDeck): void {
-		deck.unitCards.forEach(card => this.addUnit(CardLibrary.instantiateByInstance(this.game, card)))
-		deck.spellCards.forEach(card => this.addSpell(CardLibrary.instantiateByInstance(this.game, card)))
+		deck.unitCards.forEach(card => this.addUnitToTop(CardLibrary.instantiateByInstance(this.game, card)))
+		deck.spellCards.forEach(card => this.addSpellToTop(CardLibrary.instantiateByInstance(this.game, card)))
 	}
 
-	public addUnit(card: ServerCard): void {
+	public addUnitToTop(card: ServerCard): void {
 		this.unitCards.unshift(card)
+		OutgoingMessageHandlers.notifyAboutUnitCardInDeck(this.owner, card)
 	}
 
-	public addSpell(card: ServerCard): void {
+	public addSpellToTop(card: ServerCard): void {
 		this.spellCards.unshift(card)
+		OutgoingMessageHandlers.notifyAboutSpellCardInDeck(this.owner, card)
 	}
 
-	public drawTopUnit(): ServerCard {
-		return this.unitCards.pop()
+	public addUnitToBottom(card: ServerCard): void {
+		this.unitCards.push(card)
+		OutgoingMessageHandlers.notifyAboutUnitCardInDeck(this.owner, card)
 	}
 
-	public drawTopSpell(): ServerCard {
-		return this.spellCards.pop()
+	public addSpellToBottom(card: ServerCard): void {
+		this.spellCards.push(card)
+		OutgoingMessageHandlers.notifyAboutSpellCardInDeck(this.owner, card)
+	}
+
+	public drawTopUnit(): ServerCard | null {
+		if (this.unitCards.length === 0) {
+			return null
+		}
+		const card = this.unitCards[0]
+		this.removeCard(card)
+		return card
+	}
+
+	public drawTopSpell(): ServerCard | null {
+		if (this.spellCards.length === 0) {
+			return null
+		}
+		const card = this.spellCards[0]
+		this.removeCard(card)
+		return card
 	}
 
 	public findCardByClass(cardClass: string): ServerCard | null {

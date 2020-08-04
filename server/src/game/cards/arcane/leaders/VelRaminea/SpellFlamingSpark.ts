@@ -1,7 +1,6 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import ServerPlayerInGame from '../../../../players/ServerPlayerInGame'
 import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
 import TargetDefinitionBuilder from '../../../../models/targetDefinitions/TargetDefinitionBuilder'
 import ServerUnit from '../../../../models/ServerUnit'
@@ -15,13 +14,15 @@ import CardFaction from '@shared/enums/CardFaction'
 import ServerAnimation from '../../../../models/ServerAnimation'
 import BuffVelRamineaWeave from '../../../../buffs/BuffVelRamineaWeave'
 import CardLocation from '@shared/enums/CardLocation'
+import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellFlamingSpark extends ServerCard {
 	baseDamage = 2
 	damagePerWeave = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
+		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.EXPERIMENTAL)
 
 		this.basePower = 2
 		this.baseFeatures = [CardFeature.HERO_POWER]
@@ -29,6 +30,9 @@ export default class SpellFlamingSpark extends ServerCard {
 			damage: () => this.damage,
 			damagePerWeave: this.damagePerWeave
 		}
+
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	get damage() {
@@ -44,8 +48,8 @@ export default class SpellFlamingSpark extends ServerCard {
 			.enemyUnit()
 	}
 
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
+	private onTargetSelected(target: ServerUnit): void {
+		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 	}
 }

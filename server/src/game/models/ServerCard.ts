@@ -6,9 +6,7 @@ import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerUnit from './ServerUnit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerDamageInstance from './ServerDamageSource'
-import ServerDamageSource from './ServerDamageSource'
 import ServerBoardRow from './ServerBoardRow'
 import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
@@ -20,20 +18,30 @@ import CardColor from '@shared/enums/CardColor'
 import ServerBuffContainer from './ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import RichTextVariables from '@shared/models/RichTextVariables'
-import ServerOwnedCard from './ServerOwnedCard'
 import BuffImmunity from '../buffs/BuffImmunity'
 import GameLibrary from '../libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerBuff from './ServerBuff'
 import CardLocation from '@shared/enums/CardLocation'
+import GameHookType, {
+	CardDestroyedHookArgs,
+	CardDestroyedHookValues,
+	CardTakesDamageHookArgs,
+	CardTakesDamageHookValues
+} from './GameHookType'
+import {EventCallback, EventHook} from './ServerGameEvents'
+import GameEventType from '@shared/enums/GameEventType'
+import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
 
 export default class ServerCard extends Card {
 	game: ServerGame
 	isRevealed = false
 	buffs = new ServerBuffContainer(this)
 	dynamicTextVariables: ServerRichTextVariables
+	generatedArtworkMagicString = ''
+
+	isBeingDestroyed = false
 
 	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor, faction: CardFaction) {
 		super(uuidv4(), cardType, 'missingno')
@@ -41,6 +49,12 @@ export default class ServerCard extends Card {
 		this.color = unitSubtype
 		this.faction = faction
 		this.dynamicTextVariables = {}
+
+		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]
+		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, validLocations)
+			.require(({ triggeringCard }) => triggeringCard === this)
+			.require(({ triggeringCard }) => triggeringCard.power <= 0)
+			.perform(() => this.destroy())
 	}
 
 	public get unitCost(): number {
@@ -57,6 +71,22 @@ export default class ServerCard extends Card {
 			cost = buff.getSpellCostOverride(cost)
 		})
 		return cost
+	}
+
+	public get maxPower(): number {
+		let power = this.basePower
+		this.buffs.buffs.forEach(buff => {
+			power = buff.getUnitMaxPowerOverride(power)
+		})
+		return power
+	}
+
+	public get maxArmor(): number {
+		let armor = this.baseArmor
+		this.buffs.buffs.forEach(buff => {
+			armor = buff.getUnitMaxArmorOverride(armor)
+		})
+		return armor
 	}
 
 	public get tribes(): CardTribe[] {
@@ -86,6 +116,10 @@ export default class ServerCard extends Card {
 
 	public get location(): CardLocation {
 		const owner = this.owner
+		if (!owner) {
+			return CardLocation.UNKNOWN
+		}
+
 		if (owner.leader === this) {
 			return CardLocation.LEADER
 		}
@@ -109,6 +143,7 @@ export default class ServerCard extends Card {
 		if (cardInGraveyard) {
 			return CardLocation.GRAVEYARD
 		}
+		return CardLocation.UNKNOWN
 	}
 
 	public get deckPosition(): number {
@@ -132,8 +167,6 @@ export default class ServerCard extends Card {
 		if (this.power === value) { return }
 
 		this.power = value
-		runCardEventHandler(() => this.onPowerChanged(value, this.power))
-
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutCardPowerChange(playerInGame.player, this)
 		})
@@ -142,12 +175,94 @@ export default class ServerCard extends Card {
 	public setArmor(value: number): void {
 		if (this.armor === value) { return }
 
-		runCardEventHandler(() => this.onArmorChanged(value, this.armor))
-
 		this.armor = value
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutCardArmorChange(playerInGame.player, this)
 		})
+	}
+
+	public dealDamage(originalDamageInstance: ServerDamageInstance): void {
+		const hookValues = this.game.events.applyHooks<CardTakesDamageHookArgs, CardTakesDamageHookValues>(GameHookType.CARD_TAKES_DAMAGE, {
+			targetCard: this,
+			damageInstance: originalDamageInstance,
+		})
+
+		const { targetCard, damageInstance } = hookValues
+
+		if (damageInstance.value <= 0) {
+			return
+		}
+
+		let damageToDeal = damageInstance.value
+
+		let armorDamageInstance: ServerDamageInstance | null = null
+		if (targetCard.armor > 0) {
+			armorDamageInstance = damageInstance.clone()
+			armorDamageInstance.value = Math.min(targetCard.armor, damageToDeal)
+			damageToDeal -= armorDamageInstance.value
+		}
+
+		let powerDamageInstance: ServerDamageInstance | null = null
+		if (damageToDeal > 0) {
+			powerDamageInstance = damageInstance.clone()
+			powerDamageInstance.value = Math.min(targetCard.power, damageToDeal)
+		}
+
+		if (armorDamageInstance) {
+			targetCard.setArmor(targetCard.armor - armorDamageInstance.value)
+		}
+
+		if (powerDamageInstance) {
+			targetCard.setPower(targetCard.power - powerDamageInstance.value)
+		}
+
+		this.game.events.postEvent(GameEventCreators.cardTakesDamage({
+			triggeringCard: targetCard,
+			damageInstance: damageInstance,
+			armorDamageInstance: armorDamageInstance,
+			powerDamageInstance: powerDamageInstance
+		}))
+	}
+
+	public destroy(): void {
+		const unit = this.unit
+		if (this.unit) {
+			unit.destroy()
+			return
+		}
+
+		if (this.isBeingDestroyed) {
+			return
+		}
+
+		this.isBeingDestroyed = true
+
+		const hookValues = this.game.events.applyHooks<CardDestroyedHookValues, CardDestroyedHookArgs>(GameHookType.CARD_DESTROYED, {
+			destructionPrevented: false
+		}, {
+			targetCard: this
+		})
+
+		if (hookValues.destructionPrevented) {
+			this.setPower(1)
+			this.isBeingDestroyed = false
+			return
+		}
+
+		this.game.events.postEvent(GameEventCreators.cardDestroyed({
+			triggeringCard: this,
+		}))
+
+		const owner = this.owner
+		const location = this.location
+		if (location === CardLocation.HAND) {
+			owner.cardHand.removeCard(this)
+		} else if (location === CardLocation.DECK) {
+			owner.cardDeck.removeCard(this)
+		} else if (location === CardLocation.GRAVEYARD) {
+			owner.cardGraveyard.removeCard(this)
+		}
+		this.isBeingDestroyed = false
 	}
 
 	public reveal(owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
@@ -338,62 +453,65 @@ export default class ServerCard extends Card {
 		return evaluatedVariables
 	}
 
-	onPlayedAsUnit(thisUnit: ServerUnit, targetRow: ServerBoardRow): void { return }
-	onPlayedAsSpell(owner: ServerPlayerInGame): void { return }
+	/* Subscribe to a game event
+	 * -------------------------
+	 * Create a callback for a global game event. By default, this callback will trigger regardless
+	 * of which card has triggered the event or where the subscriber is located.
+	 *
+	 * Subscribers must **NOT** modify the event that triggered the callback. See `createHook` for
+	 * event modifications.
+	 *
+	 * The callback will only trigger if the subscriber is located in one of the locations specified by `location` argument.
+	 */
+	protected createCallback<ArgsType>(eventType: GameEventType, location: CardLocation[]): EventCallback<ArgsType> {
+		return this.game.events.createCallback<ArgsType>(this, eventType)
+			.requireLocations(location)
+	}
+
+	/* Subscribe to a game event triggered by this buff
+	 * ------------------------------------------------
+	 * `createEffect` is equivalent to `createCallback`, but it will only trigger when
+	 * the `effectSource` is set to the subscriber.
+	 */
+	protected createEffect<ArgsType>(event: GameEventType): EventCallback<ArgsType> {
+		return this.game.events.createCallback<ArgsType>(this, event)
+			.require((args, rawEvent) => rawEvent.effectSource && rawEvent.effectSource === this)
+	}
+
+	/* Subscribe to a game hook
+	 * ------------------------
+	 * Game hooks are callbacks that allow the event to be modified. For example, using the
+	 * `GameHookType.CARD_TAKES_DAMAGE` hook it is possible to increase or decrease the damage a card
+	 * takes from any source.
+	 *
+	 * The hook will only trigger if the subscriber is located in one of the locations specified by `location` argument.
+	 */
+	protected createHook<HookValues, HookArgs>(hookType: GameHookType, location: CardLocation[]): EventHook<HookValues, HookArgs> {
+		return this.game.events.createHook<HookValues, HookArgs>(this, hookType)
+			.requireLocations(location)
+	}
+
 	onRevealed(owner: ServerPlayerInGame): void { return }
 
-	onUnitPlayTargetCardSelected(thisUnit: ServerUnit, target: ServerCard): void { return }
-	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void { return }
-	onUnitPlayTargetRowSelected(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
-	onUnitPlayTargetsConfirmed(thisUnit: ServerUnit): void { return }
-	onSpellPlayTargetCardSelected(owner: ServerPlayerInGame, target: ServerCard): void { return }
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void { return }
-	onSpellPlayTargetRowSelected(owner: ServerPlayerInGame, target: ServerBoardRow): void { return }
-	onSpellPlayTargetsConfirmed(owner: ServerPlayerInGame): void { return }
-
-	onBeforeOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
-	onAfterOtherCardPlayed(otherCard: ServerOwnedCard): void { return }
-	onBeforeOtherUnitDamageTaken(otherUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onAfterOtherUnitDamageTaken(otherUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onBeforeOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
-	onAfterOtherUnitDestroyed(destroyedUnit: ServerUnit): void { return }
-	onOtherCardReceivedNewBuff(otherCard: ServerOwnedCard, buff: ServerBuff): void { return }
-
-	onRoundStarted(): void { return }
-	onTurnStarted(): void { return }
-	onTurnPhaseChanged(thisUnit: ServerUnit, phase: GameTurnPhase): void { return }
-	onTurnEnded(): void { return }
-	onRoundEnded(): void { return }
 	onUnitCustomOrderPerformed(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onBeforeUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
 	onAfterUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
-	onPowerChanged(newValue: number, oldValue: number): void { return }
-	onArmorChanged(newValue: number, oldValue: number): void { return }
-	onBeforeDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onAfterDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onBeforeArmorDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onAfterArmorDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onBeforeHealthDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onAfterHealthDamageTaken(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
-	onDamageSurvived(thisUnit: ServerUnit, damage: ServerDamageInstance): void { return }
 	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
-	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, dealtDamage: number): void { return }
+	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
+	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
 	onBeforePerformingRowAttack(thisUnit: ServerUnit, target: ServerBoardRow, targetMode: TargetMode): void { return }
 	onAfterPerformingRowAttack(thisUnit: ServerUnit, target: ServerBoardRow, targetMode: TargetMode): void { return }
 	onBeforeBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
 	onAfterBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
-	onBeforePerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
-	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
+	onBeforePerformingMove(thisUnit: ServerUnit, target: ServerBoardRow, from: ServerBoardRow): void { return }
+	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow, from: ServerBoardRow): void { return }
 	onPerformingUnitSupport(thisUnit: ServerUnit, target: ServerUnit): void { return }
 	onPerformingRowSupport(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
 	onBeforeBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
 	onAfterBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
-	onBeforeDestroyedAsUnit(thisUnit: ServerUnit): void { return }
 
 	getAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return this.attack }
 	getBonusAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return 0 }
-	getDamageTaken(thisUnit: ServerUnit, damageSource: ServerDamageSource): number { return damageSource.value }
-	getDamageReduction(thisUnit: ServerUnit, damageSource: ServerDamageSource): number { return 0 }
 
 	getDeckAddedUnitCards(): any[] { return [] }
 	getDeckAddedSpellCards(): any[] { return [] }

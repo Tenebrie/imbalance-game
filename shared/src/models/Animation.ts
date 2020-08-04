@@ -4,6 +4,7 @@ import Card from './Card'
 
 export default class Animation {
 	type: AnimationType
+	sourceCard: Card | null
 	sourceUnit: Unit | null
 	targetCard: Card | null
 	targetCards: Card[] | null

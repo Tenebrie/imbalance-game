@@ -13,8 +13,15 @@ import HeroGarellion from '../cards/arcane/legendary/HeroGarellion'
 import UnitPriestessOfAedine from '../cards/neutral/common/UnitPriestessOfAedine'
 import ServerEditorDeck from './ServerEditorDeck'
 import CardColor from '@shared/enums/CardColor'
-import UnitVampireFledgling from '../cards/neutral/common/UnitVampireFledgling'
 import LeaderVelElleron from '../cards/arcane/leaders/VelElleron/LeaderVelElleron'
+import UnitStoneElemental from '../cards/arcane/common/UnitStoneElemental'
+import UnitWingedShieldmaiden from '../cards/castle/common/UnitWingedShieldmaiden'
+import HeroForksmanshipInstructor from '../cards/castle/epic/HeroForksmanshipInstructor'
+import HeroAntoria from '../cards/castle/legendary/HeroAntoria'
+import HeroFlameDancer from '../cards/arcane/epic/HeroFlameDancer'
+import UnitArcaneElemental from '../cards/arcane/common/UnitArcaneElemental'
+import HeroStormDancer from '../cards/nature/epic/HeroStormDancer'
+import HeroLightOracle from '../cards/arcane/epic/HeroLightOracle'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	leader: ServerCard
@@ -60,18 +67,24 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		const cards = []
 
 		cards.push(CardLibrary.instantiateByConstructor(game, LeaderVelElleron))
+
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroAntoria))
 		cards.push(CardLibrary.instantiateByConstructor(game, HeroKroLah))
 		cards.push(CardLibrary.instantiateByConstructor(game, HeroZamarath))
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroRagingElemental))
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroSparklingSpirit))
 		cards.push(CardLibrary.instantiateByConstructor(game, HeroGarellion))
 
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroRagingElemental))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroSparklingSpirit))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroFlameDancer))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroForksmanshipInstructor))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroLightOracle))
+
 		for (let i = 0; i < 3; i++) {
-			cards.push(CardLibrary.instantiateByConstructor(game, UnitChargingKnight))
-			cards.push(CardLibrary.instantiateByConstructor(game, UnitSupplyWagon))
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitStoneElemental))
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitForestScout))
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitWingedShieldmaiden))
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitPriestessOfAedine))
-			cards.push(CardLibrary.instantiateByConstructor(game, UnitVampireFledgling))
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitArcaneElemental))
 		}
 
 		return ServerTemplateCardDeck.inflate(game, cards)

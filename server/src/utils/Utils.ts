@@ -1,6 +1,54 @@
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../game/models/ServerCard'
+import AsciiColor from '../enums/AsciiColor'
+import ServerUnit from '../game/models/ServerUnit'
+
+interface TryUntilArgs {
+	try: () => void | Promise<void>
+	until: () => boolean | Promise<boolean>
+	maxAttempts: number
+}
+
+export const tryUntil = (args: TryUntilArgs): boolean => {
+	for (let i = 0; i < args.maxAttempts; i++) {
+		args.try()
+		if (args.until) {
+			return true
+		}
+	}
+	return false
+}
+
+const shortIdCharset = 'abcdefghkmnopqrstuvwxyzABCDEFGHKMNPQRSTUVWXYZ0123456789'
+export const generateShortId = (length: number): string => {
+	let id = ''
+	for (let i = 0; i < length; i++) {
+		const charIndex = Math.floor(Math.random() * shortIdCharset.length)
+		id += shortIdCharset.charAt(charIndex)
+	}
+	return id
+}
+
+export const colorize = (text: string | number, color: AsciiColor): string => {
+	return `${color}${text}\u001b[0m`
+}
+
+export const colorizeId = (text: string): string => {
+	return colorize(text, AsciiColor.CYAN)
+}
+
+export const colorizePlayer = (text: string): string => {
+	return colorize(text, AsciiColor.RED)
+}
+
+export const colorizeConsoleText = (text: string): string => {
+	return colorize(text, AsciiColor.MAGENTA)
+}
+
+export const mapUnitsToCards = (units: ServerUnit[]): ServerCard[] => {
+	return units.map(unit => unit.card)
+}
 
 export default {
 	hashCode(targetString: string): number {
@@ -34,9 +82,7 @@ export default {
 
 	forEachInStringEnum(enumeration: any, handler: (val: any) => any): void {
 		for (const value in enumeration) {
-			if (isNaN(Number(value))) {
-				handler(value)
-			}
+			handler(enumeration[value])
 		}
 	},
 

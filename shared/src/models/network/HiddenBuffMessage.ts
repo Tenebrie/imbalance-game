@@ -9,5 +9,7 @@ export default class HiddenBuffMessage {
 		this.id = buff.id
 		this.cardId = buff.card.id
 		this.sourceId = buff.source ? buff.source.id : null
+
+
 	}
 }

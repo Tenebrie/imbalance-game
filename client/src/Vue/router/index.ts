@@ -8,9 +8,10 @@ Vue.use(VueRouter)
 
 const fetchProfile = async (): Promise<boolean> => {
 	try {
-		const response = await axios.get('/api/profile')
+		const response = await axios.get('/api/user')
 		const player = response.data.data as Player
 		store.commit.setPlayerData(player)
+		await store.dispatch.userPreferencesModule.fetchPreferences()
 	} catch (error) {
 		return false
 	}
@@ -83,6 +84,14 @@ const routes = [
 		component: () => import('@/Vue/views/RulesView.vue')
 	},
 	{
+		path: '/profile',
+		name: 'profile',
+		component: () => import('@/Vue/views/ProfileView.vue'),
+		beforeEnter: (to: Route, from: Route, next: Function) => {
+			requireAuthentication(next)
+		}
+	},
+	{
 		path: '/game',
 		name: 'game',
 		component: () => import('@/Vue/views/GameView.vue'),
@@ -91,6 +100,13 @@ const routes = [
 				next('/')
 				return
 			}
+			requireAuthentication(next)
+		}
+	},
+	{
+		path: '/ds/:id',
+		component: () => import('@/Vue/components/editor/SharedDeckImporter.vue'),
+		beforeEnter: (to: Route, from: Route, next: Function) => {
 			requireAuthentication(next)
 		}
 	}

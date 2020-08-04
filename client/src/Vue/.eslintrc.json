@@ -29,10 +29,6 @@
 		],
 		"no-tabs": "off",
 		"no-trailing-spaces": "off",
-		"object-curly-spacing": [
-			"warn",
-			"always"
-		],
 		"space-before-function-paren": "off",
 		"@typescript-eslint/no-namespace": "off",
 		"@typescript-eslint/member-delimiter-style": "off",

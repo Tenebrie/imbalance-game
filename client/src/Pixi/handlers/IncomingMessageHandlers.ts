@@ -6,7 +6,7 @@ import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import GameStartMessage from '@shared/models/network/GameStartMessage'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import UnitMessage from '@shared/models/network/UnitMessage'
-import RenderedUnit from '@/Pixi/board/RenderedUnit'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import CardHandMessage from '@shared/models/network/CardHandMessage'
 import CardDeckMessage from '@shared/models/network/CardDeckMessage'
 import GameTimeMessage from '@shared/models/network/GameTimeMessage'
@@ -18,12 +18,13 @@ import BoardRowMessage from '@shared/models/network/BoardRowMessage'
 import AnimationMessage from '@shared/models/network/AnimationMessage'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 import AnimationHandlers from './AnimationHandlers'
 import BuffMessage from '@shared/models/network/BuffMessage'
 import ClientBuff from '@/Pixi/models/ClientBuff'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 
 const handlers: {[ index: string ]: any } = {
 	'gameState/start': (data: GameStartMessage) => {
@@ -65,6 +66,14 @@ const handlers: {[ index: string ]: any } = {
 			const card = RenderedUnit.fromMessage(message)
 			Core.board.insertUnit(card, message.rowIndex, message.unitIndex)
 		})
+	},
+
+	'update/player/self/leader': (data: CardMessage) => {
+		Core.player.leader = new RenderedCard(data)
+	},
+
+	'update/player/opponent/leader': (data: CardMessage) => {
+		Core.opponent.leader = new RenderedCard(data)
 	},
 
 	'update/board/unitOrders': (data: CardTargetMessage[]) => {
@@ -197,7 +206,6 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/self/hand/unit/cardDrawn': (data: CardMessage[]) => {
-		console.info('Units drawn', data)
 		data.forEach(cardMessage => {
 			const card = Core.player.cardDeck.drawUnitById(cardMessage.id)
 			if (card) {
@@ -207,7 +215,6 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/opponent/hand/unit/cardDrawn': (data: HiddenCardMessage[]) => {
-		console.info('Opponent units', data)
 		data.forEach(cardMessage => {
 			const card = Core.opponent.cardDeck.drawUnitById(cardMessage.id)
 			if (card) {
@@ -230,6 +237,38 @@ const handlers: {[ index: string ]: any } = {
 
 	'update/player/opponent/hand/spell/cardAdded': (data: CardMessage) => {
 		Core.opponent.cardHand.addSpell(RenderedCard.fromMessage(data))
+	},
+
+	'update/player/self/deck/unit/cardAdded': (data: CardMessage) => {
+		Core.player.cardDeck.addUnit(data)
+	},
+
+	'update/player/self/deck/spell/cardAdded': (data: CardMessage) => {
+		Core.player.cardDeck.addSpell(data)
+	},
+
+	'update/player/opponent/deck/unit/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardDeck.addUnit(data)
+	},
+
+	'update/player/opponent/deck/spell/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardDeck.addSpell(data)
+	},
+
+	'update/player/self/graveyard/unit/cardAdded': (data: CardMessage) => {
+		Core.player.cardGraveyard.addUnit(data)
+	},
+
+	'update/player/self/graveyard/spell/cardAdded': (data: CardMessage) => {
+		Core.player.cardGraveyard.addSpell(data)
+	},
+
+	'update/player/opponent/graveyard/unit/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardGraveyard.addUnit(data)
+	},
+
+	'update/player/opponent/graveyard/spell/cardAdded': (data: CardMessage) => {
+		Core.opponent.cardGraveyard.addSpell(data)
 	},
 
 	'update/player/self/hand/spell/cardDrawn': (data: CardMessage[]) => {
@@ -274,12 +313,12 @@ const handlers: {[ index: string ]: any } = {
 		Core.input.playableCards = data.map(data => ClientCardTarget.fromMessage(data))
 	},
 
-	'update/player/self/graveyard/cardAdded': (data: CardMessage) => {
-		Core.player.cardGraveyard.addUnit(data)
+	'update/player/self/deck/cardDestroyed': (data: CardMessage) => {
+		Core.player.cardDeck.removeCardById(data.id)
 	},
 
-	'update/player/opponent/graveyard/cardAdded': (data: CardMessage) => {
-		Core.opponent.cardGraveyard.addUnit(data)
+	'update/player/opponent/deck/cardDestroyed': (data: CardMessage) => {
+		Core.opponent.cardDeck.removeCardById(data.id)
 	},
 
 	'update/stack/cardResolving': (data: CardMessage) => {
@@ -324,6 +363,9 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		card.buffs.findBuffById(data.id).intensity = data.intensity
+		if (Core.player.cardHand.unitCards.includes(this.card)) {
+			Core.player.cardHand.sortCards()
+		}
 	},
 
 	'update/card/buffs/durationChanged': (data: BuffMessage) => {
@@ -333,6 +375,9 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		card.buffs.findBuffById(data.id).duration = data.duration
+		if (Core.player.cardHand.unitCards.includes(this.card)) {
+			Core.player.cardHand.sortCards()
+		}
 	},
 
 	'update/card/buffs/removed': (data: BuffMessage) => {
@@ -342,6 +387,12 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		card.buffs.remove(data)
+	},
+
+	'update/log/entry': (data: EventLogEntryMessage[]) => {
+		store.dispatch.gameLogModule.addEntryGroup({
+			entries: data
+		})
 	},
 
 	'animation/generic': (data: AnimationMessage) => {

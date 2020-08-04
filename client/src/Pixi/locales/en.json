@@ -1,4 +1,70 @@
 {
+	"ui.language.en": "English",
+	"ui.language.ru": "Russian",
+
+	"ui.navigation.home": "Home",
+	"ui.navigation.decks": "Decks",
+	"ui.navigation.rules": "Rules",
+
+	"ui.quality.default": "Default (High)",
+	"ui.quality.normal": "Normal",
+	"ui.quality.high": "High",
+	"ui.quality.ultra": "Ultra",
+
+	"ui.editor.deck.create": "Create new deck",
+	"ui.editor.deck.create.progress": "Creating...",
+
+	"ui.volume.master": "Master volume",
+	"ui.volume.music": "Music volume",
+	"ui.volume.effects": "Effects volume",
+	"ui.volume.ambience": "Ambience volume",
+	"ui.volume.userInterface": "User interface volume",
+
+	"ui.profile.email": "Email",
+	"ui.profile.username": "Username",
+	"ui.profile.changePassword.label": "Password",
+	"ui.profile.changePassword.button": "Change password",
+	"ui.profile.changePassword.placeholder": "New password",
+
+	"ui.profile.language.header": "Language",
+	"ui.profile.quality.header": "Render quality",
+	"ui.profile.logout": "Logout",
+	"ui.profile.delete": "Delete profile",
+	"ui.profile.delete.progress": "Deleting...",
+
+	"ui.decks.saveDeck": "Save",
+	"ui.decks.saveDeck.progress": "Saving...",
+	"ui.decks.shareDeck": "Share",
+	"ui.decks.shareDeck.progress": "Loading...",
+	"ui.decks.deleteDeck": "Delete",
+	"ui.decks.deleteDeck.progress": "Deleting...",
+	"ui.decks.leaveDeck": "Back",
+
+	"log.entry.roundStarted": "{player} has started a new round",
+	"log.entry.turnStarted": "{player} has started a new turn",
+	"log.entry.cardDrawn": "{owner} has drawn {triggeringCard}",
+	"log.entry.cardPlayed": "{owner} has played card {triggeringCard}",
+	"log.entry.cardResolved": "Card {triggeringCard} has finished resolving",
+	"log.entry.cardTakesDamage.fromCard": "Card {triggeringCard} has taken {damage} damage from {sourceCard}",
+	"log.entry.cardTakesDamage.fromUniverse": "Card {triggeringCard} has taken {damage} damage",
+	"log.entry.cardDestroyed": "Card {triggeringCard} has been destroyed",
+	"log.entry.effectTargetSelected.card": "Card {triggeringCard} has targeted {targetCard}",
+	"log.entry.effectTargetSelected.unit": "Card {triggeringCard} has targeted {targetUnit}",
+	"log.entry.effectTargetSelected.row": "Card {triggeringCard} has targeted row number {targetRow}",
+	"log.entry.effectTargetsConfirmed": "Card {triggeringCard} has finished effect targeting",
+	"log.entry.unitCreated": "Unit {triggeringUnit} has been created on the board",
+	"log.entry.unitMoved.forward": "Unit {triggeringUnit} has moved {distance} row(s) forward",
+	"log.entry.unitMoved.sameRow": "Unit {triggeringUnit} has moved to a different position in the same row",
+	"log.entry.unitMoved.backward": "Unit {triggeringUnit} has moved {distance} row(s) back",
+	"log.entry.unitDestroyed": "Unit {triggeringUnit} has been destroyed",
+	"log.entry.unitDeployed": "Unit {triggeringUnit} has been deployed",
+	"log.entry.spellDeployed": "Spell {triggeringCard} has been deployed",
+	"log.entry.buffCreated.fromCard": "Card {sourceCard} has created buff {triggeringBuffName} on {ownerCard}",
+	"log.entry.buffCreated.fromUniverse": "Buff {triggeringBuffName} has been created on {ownerCard}",
+	"log.entry.buffRemoved": "Buff {triggeringBuffName} has been removed from {ownerCard}",
+	"log.entry.turnEnded": "{player} has finished their turn",
+	"log.entry.roundEnded": "{player} has finished their turn",
+
 	"target.generic.unit": "Target",
 	"target.generic.row": "Target all",
 	"target.attack.unit": "Attack",
@@ -10,6 +76,7 @@
 	"target.move.row": "Move",
 
 	"card.faction.arcane": "Arcane",
+	"card.faction.nature": "Nature",
 	"card.faction.neutral": "Neutral",
 	"card.faction.experimental": "Experimental",
 	"editor.faction.unfinished": "Unfinished",
@@ -22,12 +89,17 @@
 	"card.tribe.bird": "Bird",
 	"card.tribe.beast": "Beast",
 	"card.tribe.human": "Human",
+	"card.tribe.storm": "Storm",
 	"card.tribe.undead": "Undead",
 	"card.tribe.dragon": "Dragon",
 	"card.tribe.crystal": "Crystal",
 	"card.tribe.vampire": "Vampire",
+	"card.tribe.merfolk": "Merfolk",
 	"card.tribe.building": "Building",
+	"card.tribe.valkyrie": "Valkyrie",
 	"card.tribe.elemental": "Elemental",
+
+	"card.name.hidden": "[Hidden card]",
 
 	"card.name.leaderVelElleron": "Vel'Elleron",
 	"card.title.leaderVelElleron": "The Battlemage",
@@ -53,13 +125,21 @@
 	"card.title.heroCarienne": "The Storm Unleashed",
 	"card.description.heroCarienne": "*Deploy:*\nDeal {damagePerWave} Damage to all enemy units.\nRepeat once for every *Gathering Storm* in your Graveyard.",
 
+	"card.name.heroUrvial": "Urvial",
+	"card.title.heroUrvial": "The Stormsmith",
+	"card.description.heroUrvial": "*Deploy:*\nYour *Storms* are upgraded until the end of the game.<p><i>Upgraded *Storms* may target the same unit multiple times.</i>",
+
 	"card.name.heroGarellion": "Garellion",
 	"card.title.heroGarellion": "The Conduit",
-	"card.description.heroGarellion": "*End of round:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
+	"card.description.heroGarellion": "*Round End:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
 
 	"card.name.heroAura": "Aura",
 	"card.title.heroAura": "The Golden Hawk",
 	"card.description.heroAura": "*Deploy:*\n*Summon* a Legendary card from your deck.",
+
+	"card.name.heroArgenta": "Argenta",
+	"card.title.heroArgenta": "The Silver Falcon",
+	"card.description.heroArgenta": "*Deploy:*\n*Summon* an Epic card from your deck.",
 
 	"card.name.heroAntoria": "Antoria",
 	"card.title.heroAntoria": "The Martyr",
@@ -67,15 +147,19 @@
 
 	"card.name.heroAurienne": "Aurienne",
 	"card.title.heroAurienne": "The Shield of Faith",
-	"card.description.heroAurienne": "Whenever an ally takes lethal damage while {name} is in your hand, prevent it and *Play* {name} in front of this ally.",
+	"card.description.heroAurienne": "Whenever an allied unit takes lethal damage while {name} is in your hand, prevent it.\nThen, move the ally back, *Play* {name} in it's place and *Draw* a card.",
 
 	"card.name.heroTroviar": "Troviar",
-	"card.title.heroTroviar": "The Watcher",
-	"card.description.heroTroviar": "Whenever another unit takes damage, gain {powerGained} Power.",
+	"card.title.heroTroviar": "The Torturer",
+	"card.description.heroTroviar": "*Deploy:*\nDeal {deployDamage} Damage to {targetCount} enemy units.<p>Whenever another unit takes damage, gain +{powerGained} Power.",
 
 	"card.name.heroMetrearte": "Metrearte",
 	"card.title.heroMetrearte": "The Copycat",
 	"card.description.heroMetrearte": "*Deploy:*\nChoose a Leader Power from any Arcane Leader.\nGain a copy of it.",
+
+	"card.name.heroPozoga": "Pożoga",
+	"card.title.heroPozoga": "The Arsonist",
+	"card.description.heroPozoga": "*Deploy:*\nDestroy all cards with the highest Power on the board.",
 
 	"card.name.heroSparklingSpirit": "Sparkling Spirit",
 	"card.description.heroSparklingSpirit": "Your *Sparks* deal {extraDamage} extra Damage",
@@ -84,7 +168,10 @@
 	"card.description.heroRagingElemental": "After {name} takes damage, it deals Damage equal to own Power to closest opposing enemy units.<p>Then, it destroys itself.",
 
 	"card.name.heroStormDancer": "Storm Dancer",
-	"card.description.heroStormDancer": "*Deploy:*\nFor each *Gathering Storm* in your Graveyard, put a copy of it into your spell hand.",
+	"card.description.heroStormDancer": "Whenever you cast a spell, give +{powerGiven} Power to adjacent units.\nIf it's a *Storm*, give them +{stormPowerGiven} Power instead.",
+
+	"card.name.heroCoralScribe": "Coral Scribe",
+	"card.description.heroCoralScribe": "*Deploy:*\nFor each different *Storm* in your Graveyard, *Create* a copy of it.",
 
 	"card.name.heroFlameDancer": "Flame Dancer",
 	"card.description.heroFlameDancer": "*Deploy:*\nApply *Burning* for {burnDuration} turns to all units on an enemy row.",
@@ -99,37 +186,31 @@
 	"card.description.heroDarkOracle": "*Deploy:*\nLook at bottom {cardsToSee} cards from your opponent's deck. Choose one to *Discard*.",
 
 	"card.name.heroCrystalWarrior": "Crystal Warrior",
-	"card.description.heroCrystalWarrior": "*Deploy:*\nTrigger *Deathrattle* effect of a friendly crystal.",
+	"card.description.heroCrystalWarrior": "*Deploy:*\nDestroy an allied unit.\nThen, summon a *Crystal* in its place.",
 
 	"card.name.heroCultistOfAreddon": "Cultist of Areddon",
 	"card.description.heroCultistOfAreddon": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",
 
-	"card.name.heroAdventuringGuildMaster": "Adventuring Guild Master",
+	"card.name.heroAdventuringGuildMaster": "Adventuring\nGuild Master",
 	"card.description.heroAdventuringGuildMaster": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
+
+	"card.name.heroForksmanshipInstructor": "Forksmanship Instructor",
+	"card.description.heroForksmanshipInstructor": "Whenever you play a unit with {powerThreshold} Power or less, give it +{bonusPower} Power.",
+
+	"card.name.heroTribeShaman": "Tribal Shaman",
+	"card.description.heroTribeShaman": "*Deploy:*\n*Create* a *Healing Rain*",
+
+	"card.name.heroElderElemental": "Elder Elemental",
+	"card.description.heroElderElemental": "*Deploy:*\nGenerate {manaGenerated} Mana.<p>*Turn Start:*\nRepeat this unit's *Deploy* effect.",
 
 	"card.name.unitRavenMessenger": "Raven Messenger",
 	"card.description.unitRavenMessenger": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
 
-	"card.name.unitPossessedVulture": "Possessed Vulture",
-	"card.description.unitPossessedVulture": "If {name} kills an enemy creature, it gains *+{bonusPower} Power and *+{bonusAttack} Attack",
-
-	"card.name.unitUnfeelingWarrior": "Unfeeling Warrior",
-	"card.description.unitUnfeelingWarrior": "*On turn start:*\nIf {name} was attacked last turn, he gains *+{bonusPower} Power",
-
 	"card.name.unitForestScout": "Forest Scout",
 	"card.description.unitForestScout": "*Deploy:*\nIf you're losing on the board, gains {boardPowerBonus} Power.\nIf you're losing on Morale, gains {moralePowerBonus} Power.",
 
-	"card.name.unitMadBerserker": "Mad Berserker",
-	"card.description.unitMadBerserker": "Every consecutive attack on the same target deals *3* more damage",
-
-	"card.name.unitSpinningBarbarian": "Spinning Barbarian",
-	"card.description.unitSpinningBarbarian": "{name} attacks up to 4 closest enemies on target row",
-
 	"card.name.unitChargingKnight": "Charging Knight",
-	"card.description.unitChargingKnight": "*Melee Attack:* Deal {attack} Damage<p>Can *Melee Attack* only after performing a move",
-
-	"card.name.unitTwinBowArcher": "Twin Bow Archer",
-	"card.description.unitTwinBowArcher": "{name} always attacks units directly to the left and to the right from the chosen target",
+	"card.description.unitChargingKnight": "Perform an *Attack Action* whenever it moves forward<p>*Melee Attack:*\nDeal {attack} Damage",
 
 	"card.name.unitVampireFledgling": "Vampire Fledgling",
 	"card.description.unitVampireFledgling": "Loses {powerLost} Power per turn.<p>*Melee Attack:* Deal {attack} Damage. If damage is not blocked, then Restore {powerDrained} Power",
@@ -139,8 +220,7 @@
 	"card.target.unitPriestessOfAedine.heal": "Restore {healing} Power",
 
 	"card.name.unitSupplyWagon": "Supply Wagon",
-	"card.description.unitSupplyWagon": "*Support:*\nGrant an allied unit an extra move action this turn only",
-	"card.target.unitSupplyWagon.ability": "Grant extra move",
+	"card.description.unitSupplyWagon": "*Deploy:*\nGive +{extraPower} Power to adjacent units.\nThen, *Push* them {pushDistance} row forward.",
 
 	"card.name.unitArcaneElemental": "Arcane Elemental",
 	"card.description.unitArcaneElemental": "*Deploy:*\nGenerate {manaGenerated} Mana",
@@ -155,10 +235,13 @@
 	"card.description.unitIceSkinCrystal": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
 
 	"card.name.unitStoneElemental": "Stone Elemental",
-	"card.description.unitStoneElemental": "*Deploy:*\nDeal {damage} Damage to any other unit",
+	"card.description.unitStoneElemental": "*Deploy:*\nPerform an *Attack* action this turn only<p>*Short-Ranged Attack*:\nDeal {attack} Damage;\nApply *Stun* for 1 turn",
 
 	"card.name.unitMerfolkStormcaller": "Merfolk Stormcaller",
-	"card.description.unitMerfolkStormcaller": "*Deploy:*\n*Create* a *Gathering Storm*",
+	"card.description.unitMerfolkStormcaller": "*Deploy:*\n*Create* a *Lightning Storm*",
+
+	"card.name.unitMerfolkEnchantress": "Merfolk Enchantress",
+	"card.description.unitMerfolkEnchantress": "*Deploy:*\n*Create* an *Enchanted Storm*",
 
 	"card.name.unitCrystalMiner": "Crystal Miner",
 	"card.description.unitCrystalMiner": "*Deploy:*\n*Create* an Arcane crystal.",
@@ -168,6 +251,9 @@
 
 	"card.name.unitLoneLooter": "Lone Looter",
 	"card.description.unitLoneLooter": "Whenever you apply a *Status effect* to an enemy unit, *Summon* one {name} from your deck.",
+
+	"card.name.unitMasterSwordsmith": "Master Swordsmith",
+	"card.description.unitMasterSwordsmith": "*Deploy:*\nGive +{bonusPower} Power to all unit cards in your hand.",
 
 	"card.name.unitTinySparkling": "Tiny Sparkling",
 	"card.description.unitTinySparkling": "<i>No effect</i>",
@@ -181,29 +267,29 @@
 	"card.name.unitUndercityGambler": "Undercity Gambler",
 	"card.description.unitUndercityGambler": "*Deploy:*\nChoose a non-temporary card in your unit hand to return into your deck.<p>*Draw* a card and give it +{bonusPower} Power.",
 
+	"card.name.unitWingedShieldmaiden": "Winged Shieldmaiden",
+	"card.description.unitWingedShieldmaiden": "Whenever an allied unit takes damage, move the ally back, *Play* {name} in its' place and *Draw* a card.",
+
+	"card.name.unitOceanicSeagull": "Oceanic Seagull",
+	"card.description.unitOceanicSeagull": "*Deploy:*\n*Summon* a Bronze Merfolk card from your deck.",
+
+	"card.name.unitMerchantsAssistant": "Merchants Assistant",
+	"card.description.unitMerchantsAssistant": "*Deploy:*\nNext spell you cast this round costs {spellDiscount} Mana less.",
+
 	"card.name.tokenPlayerDeck": "Your deck",
 	"card.description.tokenPlayerDeck": "Choose your own deck",
 
 	"card.name.tokenOpponentDeck": "Your opponent's deck",
 	"card.description.tokenOpponentDeck": "Choose your opponent's deck",
 
-	"card.name.spellSpark": "Spark",
-	"card.description.spellSpark": "*Hero Power*<p>Deal {damage} Damage to\nan enemy unit",
+	"card.name.spellLightningStorm": "Lightning Storm",
+	"card.description.spellLightningStorm": "<ifn isUpgraded>Deal {damage} Damage to {targetCount} enemy units.</if><if isUpgraded>Deal {damage} Damage to an enemy unit. Repeat this {targetCount} times.</if><p><i>Number of targets increases by {targetsPerStorm} for every *Storm* card in your Graveyard.</i>",
 
-	"card.name.spellSpeedPotion": "Potion of Speed",
-	"card.description.spellSpeedPotion": "*Hero Power*<p>Grant an allied unit {moves} extra move actions this turn only",
+	"card.name.spellEnchantedStorm": "Enchanted Storm",
+	"card.description.spellEnchantedStorm": "<ifn isUpgraded>Give +{buffPower} Power to {targetCount} allied units.</if><if isUpgraded>Give +{buffPower} Power to an allied unit. Repeat this {targetCount} times.</if><p><i>Bonus Power increases by {powerPerStorm} for every *Storm* card in your Graveyard.</i>",
 
-	"card.name.spellPermafrost": "Permafrost",
-	"card.description.spellPermafrost": "*Hero Power*<p>Grant all allies *Immune* until your next turn",
-
-	"card.name.spellRainOfFire": "Rain of Fire",
-	"card.description.spellRainOfFire": "{name} deals {damage} damage to {targets} enemy units\nThen, it draws a card",
-
-	"card.name.spellMagicalStarfall": "Magical Starfall",
-	"card.description.spellMagicalStarfall": "{name} increases Power of all allies units by *3* and Attack by *2*\nThen, it draws a card",
-
-	"card.name.spellGatheringStorm": "Gathering Storm",
-	"card.description.spellGatheringStorm": "Deal {damage} Damage to {targetCount} enemy units.<p><i>Number of targets increases by {targetsPerStorm} for every {name} in your Graveyard.</i>",
+	"card.name.spellHealingRain": "Healing Rain",
+	"card.description.spellHealingRain": "Restore {healing} Power to all allied units.<p><i>Healing increases by {healingPerStorm} for every *Storm* card in your Graveyard.</i>",
 
 	"card.name.spellSteelSpark": "Steel Spark",
 	"card.description.spellSteelSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
@@ -220,7 +306,7 @@
 	"card.name.spellShadowSpark": "Shadow Spark",
 	"card.description.spellShadowSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",
 
-	"card.name.spellNightmareDrain": "Nightmare Drain",
+	"card.name.spellNightmareDrain": "Living Nightmare",
 	"card.description.spellNightmareDrain": "*Leader Power*<p>Choose a damaged unit.<p>Spawn a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
 
 	"card.name.spellCrystalBarrage": "Crystal Barrage",
@@ -234,5 +320,38 @@
 	"card.description.spellFlamingSpark": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
 
 	"card.name.spellFlameweave": "Flameweave",
-	"card.description.spellFlameweave": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
+	"card.description.spellFlameweave": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
+
+	"buff.name.buffBurning": "Burning",
+	"buff.description.buffBurning": "This card takes damage every turn.",
+
+	"buff.name.buffDecayingArmor": "Decaying Armor",
+	"buff.description.buffDecayingArmor": "Extra armor that decays over time.",
+
+	"buff.name.buffImmunity": "Immunity",
+	"buff.description.buffImmunity": "This card is immune to damage and any effects.",
+
+	"buff.name.buffSparksExtraDamage": "Extra Spark Damage",
+	"buff.description.buffSparksExtraDamage": "Your Sparks deal extra damage.",
+
+	"buff.name.buffSpellDiscountAura": "Spell Discount Aura",
+	"buff.description.buffSpellDiscountAura": "Whenever you draw a spell, apply Spell Discount to it.",
+
+	"buff.name.buffSpellDiscountSingular": "Spell Discount",
+	"buff.description.buffSpellDiscountSingular": "This spell costs 1 Mana less for every stack of this buff.",
+
+	"buff.name.buffStrength": "Strength",
+	"buff.description.buffStrength": "This card has 1 extra Power for every stack of this buff.",
+
+	"buff.name.buffStun": "Stun",
+	"buff.description.buffStun": "This card is stunned and is temporarily disabled.",
+
+	"buff.name.buffTutoredCard": "Temporary Card",
+	"buff.description.buffTutoredCard": "This card costs 0. It will be discarded at the end of the turn if not played.",
+
+	"buff.name.buffUpgradedStorms": "Upgraded Storms",
+	"buff.description.buffUpgradedStorms": "Your Storms are upgraded.",
+
+	"buff.name.buffVelElleronEncouragement": "An Encouragement",
+	"buff.description.buffVelElleronEncouragement": "This card will receive bonus Power at the start of next turn."
 }

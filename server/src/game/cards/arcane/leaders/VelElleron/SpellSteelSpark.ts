@@ -13,6 +13,8 @@ import BuffSparksExtraDamage from '../../../../buffs/BuffSparksExtraDamage'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerAnimation from '../../../../models/ServerAnimation'
+import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellSteelSpark extends ServerCard {
 	baseDamage = 2
@@ -27,6 +29,9 @@ export default class SpellSteelSpark extends ServerCard {
 			damage: () => this.damage,
 			sideDamage: () => this.sideDamage
 		}
+
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	get damage() {
@@ -44,10 +49,10 @@ export default class SpellSteelSpark extends ServerCard {
 			.enemyUnit()
 	}
 
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
+	private onTargetSelected(target: ServerUnit): void {
 		const sideTargets = this.game.board.getAdjacentUnits(target).filter(unit => unit.rowIndex === target.rowIndex)
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits([target], this.damage))
+		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
 		const survivingSideTargets = sideTargets.filter(target => target.isAlive())
@@ -55,7 +60,7 @@ export default class SpellSteelSpark extends ServerCard {
 			return
 		}
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits(survivingSideTargets, this.sideDamage))
+		this.game.animation.play(ServerAnimation.universeAttacksUnits(survivingSideTargets))
 		survivingSideTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.sideDamage, this)))
 	}
 }

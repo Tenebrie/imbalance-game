@@ -14,6 +14,10 @@ export default class ClientCardGraveyard implements CardDeck {
 		return []
 	}
 
+	public get allCards() {
+		return this.unitCards.slice().concat(this.spellCards)
+	}
+
 	constructor() {
 		this.unitCardMessages = []
 		this.spellCardMessages = []

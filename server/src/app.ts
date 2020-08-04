@@ -1,3 +1,7 @@
+import AsyncHandler from './utils/AsyncHandler'
+
+console.info('Starting up NotGwent server')
+
 import path from 'path'
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
@@ -6,11 +10,9 @@ import { cardImageGenerator } from './utils/CardImageGenerator'
 
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
-
+import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
+import { wsLogger } from './utils/WebSocketLogger'
 import Database from './database/Database'
-import CardLibrary from './game/libraries/CardLibrary'
-import GameLibrary from './game/libraries/GameLibrary'
-import PlayerLibrary from './game/players/PlayerLibrary'
 
 const app = express()
 expressWs(app)
@@ -19,14 +21,13 @@ expressWs(app)
 const StatusRouter = require('./routers/StatusRouter')
 const ChangelogRouter = require('./routers/ChangelogRouter')
 
+const UserRouter = require('./routers/UserRouter')
 const PlayRouter = require('./routers/PlayRouter')
-const LoginRouter = require('./routers/LoginRouter')
 const CardsRouter = require('./routers/CardsRouter')
 const DecksRouter = require('./routers/DecksRouter')
 const GamesRouter = require('./routers/GamesRouter')
-const LogoutRouter = require('./routers/LogoutRouter')
-const ProfileRouter = require('./routers/ProfileRouter')
-const RegisterRouter = require('./routers/RegisterRouter')
+const SessionRouter = require('./routers/SessionRouter')
+const UserProfileRouter = require('./routers/UserProfileRouter')
 
 /* Templating engine */
 app.set('views', path.join(__dirname, 'views'))
@@ -34,14 +35,17 @@ app.set('view engine', 'jade')
 
 /* Forced HTTPS */
 app.use((req: Request, res: Response, next) => {
-	if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV && process.env.NODE_ENV !== 'development') {
+	if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV !== 'development') {
 		return res.redirect('https://' + req.get('host') + req.url)
 	}
 	next()
 })
 
 /* Random middleware */
-app.use(logger('dev'))
+if (process.env.NODE_ENV === 'development') {
+	app.use(logger('dev'))
+}
+app.use(wsLogger())
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -62,6 +66,14 @@ app.use((req: Request, res: Response, next) => {
 	}
 })
 
+/* Wait until database client is ready */
+app.use(AsyncHandler(async (req, res, next) => {
+	if (!Database.isReady()) {
+		throw { status: 503, error: 'Database client is not yet ready' }
+	}
+	next()
+}))
+
 /* Page HTTP routers */
 app.use('/status', StatusRouter)
 app.use('/changelog', ChangelogRouter)
@@ -70,10 +82,9 @@ app.use('/changelog', ChangelogRouter)
 app.use('/api/cards', CardsRouter)
 app.use('/api/decks', DecksRouter)
 app.use('/api/games', GamesRouter)
-app.use('/api/login', LoginRouter)
-app.use('/api/logout', LogoutRouter)
-app.use('/api/profile', ProfileRouter)
-app.use('/api/register', RegisterRouter)
+app.use('/api/session', SessionRouter)
+app.use('/api/user', UserRouter)
+app.use('/api/user/profile', UserProfileRouter)
 
 /* WS routers */
 app.use('/api/game', PlayRouter)
@@ -83,7 +94,10 @@ app.use('*', (req, res) => {
 	res.sendFile(path.join(__dirname, '../../../client/index.html'))
 })
 
-/* Global error handler */
+/* Generic error handler */
+app.use(GenericErrorMiddleware)
+
+/* Last-resort error handler */
 app.use((err, req, res, next) => {
 	res.status(err.status || 500)
 	res.render('error', {
@@ -91,12 +105,6 @@ app.use((err, req, res, next) => {
 		error: req.app.get('env') === 'development' ? err : {}
 	})
 })
-
-/* Global state */
-Database.init()
-global.cardLibrary = new CardLibrary()
-global.gameLibrary = new GameLibrary()
-global.playerLibrary = new PlayerLibrary()
 
 /* Generate placeholder images */
 cardImageGenerator.generatePlaceholderImages()

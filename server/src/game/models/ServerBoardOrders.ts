@@ -68,17 +68,19 @@ export default class ServerBoardOrders {
 		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.unitAttackDefault(orderedUnit, [targetUnit]))
 
 		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT) + orderedUnit.card.getBonusAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT)
-		const dealtDamage = targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
+		targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
+		runCardEventHandler(() => orderedUnit.card.onPerformingUnitAttack(orderedUnit, targetUnit, targetMode))
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
 		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.postUnitAttack())
 
-		if (orderedUnit.isAlive()) {
-			runCardEventHandler(() => orderedUnit.card.onAfterPerformingUnitAttack(orderedUnit, targetUnit, targetMode, dealtDamage))
-		}
 		if (targetUnit.isAlive()) {
 			runCardEventHandler(() => targetUnit.card.onAfterBeingAttacked(targetUnit, orderedUnit))
 		}
+		if (orderedUnit.isAlive()) {
+			runCardEventHandler(() => orderedUnit.card.onAfterPerformingUnitAttack(orderedUnit, targetUnit, targetMode))
+		}
+
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
 	}
 
 	public performRowAttack(targetMode: TargetMode, orderedUnit: ServerUnit, targetRow: ServerBoardRow): void {
@@ -121,14 +123,14 @@ export default class ServerBoardOrders {
 		const currentRow = this.game.board.getRowWithUnit(orderedUnit)
 		if (!currentRow || targetRow.cards.length === Constants.MAX_CARDS_PER_ROW) { return }
 
-		runCardEventHandler(() => orderedUnit.card.onBeforePerformingMove(orderedUnit, targetRow))
+		runCardEventHandler(() => orderedUnit.card.onBeforePerformingMove(orderedUnit, targetRow, currentRow))
 		this.game.board.moveUnit(orderedUnit, targetRow.index, targetRow.cards.length)
 
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
 		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.unitMove())
 
 		if (orderedUnit.isAlive()) {
-			runCardEventHandler(() => orderedUnit.card.onAfterPerformingMove(orderedUnit, targetRow))
+			runCardEventHandler(() => orderedUnit.card.onAfterPerformingMove(orderedUnit, targetRow, currentRow))
 		}
 	}
 

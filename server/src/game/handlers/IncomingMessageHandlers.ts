@@ -21,7 +21,7 @@ export default {
 		}
 
 		if (playerInGame.turnEnded || playerInGame.roundEnded || playerInGame.targetRequired ||
-			game.turnPhase !== GameTurnPhase.DEPLOY ||
+			game.turnPhase !== GameTurnPhase.DEPLOY || !playerInGame.game.board.isExtraUnitPlayableToRow(data.rowIndex) ||
 			(card.type === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex)) ||
 			(card.type === CardType.SPELL && !playerInGame.canPlaySpell(card, data.rowIndex))) {
 
@@ -35,10 +35,11 @@ export default {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		if (!playerInGame.isAnyActionsAvailable()) {
-			playerInGame.endTurn()
-			game.advanceCurrentTurn()
-		}
+		// if (!playerInGame.isAnyActionsAvailable()) {
+		// 	playerInGame.endTurn()
+		// 	game.advanceCurrentTurn()
+		// }
+		game.events.flushLogEventGroup()
 	},
 
 	'post/unitOrder': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
@@ -52,10 +53,11 @@ export default {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		if (!playerInGame.isAnyActionsAvailable()) {
-			playerInGame.endTurn()
-			game.advanceCurrentTurn()
-		}
+		// if (!playerInGame.isAnyActionsAvailable()) {
+		// 	playerInGame.endTurn()
+		// 	game.advanceCurrentTurn()
+		// }
+		game.events.flushLogEventGroup()
 	},
 
 	'post/cardTarget': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
@@ -69,10 +71,11 @@ export default {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		if (!playerInGame.isAnyActionsAvailable()) {
-			playerInGame.endTurn()
-			game.advanceCurrentTurn()
-		}
+		// if (!playerInGame.isAnyActionsAvailable()) {
+		// 	playerInGame.endTurn()
+		// 	game.advanceCurrentTurn()
+		// }
+		game.events.flushLogEventGroup()
 	},
 
 	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
@@ -85,6 +88,7 @@ export default {
 		}
 
 		game.advanceCurrentTurn()
+		game.events.flushLogEventGroup()
 	},
 
 	'system/init': (data: void, game: ServerGame, player: ServerPlayerInGame) => {

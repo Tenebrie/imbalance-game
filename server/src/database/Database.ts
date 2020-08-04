@@ -1,13 +1,23 @@
 import pgMigrate from 'node-pg-migrate'
-import { Client, QueryResult } from 'pg'
+import {Client, QueryResult} from 'pg'
+import {colorize} from '../utils/Utils'
+import AsciiColor from '../enums/AsciiColor'
 
-export default class Database {
-	private static client: Client
+class Database {
+	private client: Client
 
-	public static async init() {
+	public isReady(): boolean {
+		return !!this.client
+	}
+
+	constructor() {
+		this.init()
+	}
+
+	public async init(): Promise<void> {
 		const databaseUrl = process.env.DATABASE_URL
 
-		console.info('Connecting to database at "' + databaseUrl + '"')
+		console.info(`Connecting to database at ${colorize(databaseUrl, AsciiColor.CYAN)}`)
 		const client = new Client({
 			connectionString: databaseUrl,
 			ssl: !databaseUrl.includes('dev-db'),
@@ -32,7 +42,7 @@ export default class Database {
 		}
 	}
 
-	public static async insertRow(query: string): Promise<boolean> {
+	public async insertRow(query: string): Promise<boolean> {
 		try {
 			await this.runQuery(query)
 		} catch (err) {
@@ -43,7 +53,7 @@ export default class Database {
 		return true
 	}
 
-	public static async selectRow<T>(query: string): Promise<T> {
+	public async selectRow<T>(query: string): Promise<T> {
 		try {
 			const result = await this.runQuery(query)
 			if (!result.rows[0]) {
@@ -56,7 +66,7 @@ export default class Database {
 		}
 	}
 
-	public static async selectRows<T>(query: string): Promise<T[]> {
+	public async selectRows<T>(query: string): Promise<T[]> {
 		try {
 			const result = await this.runQuery(query)
 			if (!result.rows) {
@@ -69,7 +79,7 @@ export default class Database {
 		}
 	}
 
-	public static async deleteRows(query: string): Promise<boolean> {
+	public async updateRows(query: string): Promise<boolean> {
 		try {
 			await this.runQuery(query)
 		} catch (err) {
@@ -80,7 +90,18 @@ export default class Database {
 		return true
 	}
 
-	private static async runQuery(query: string): Promise<QueryResult> {
+	public async deleteRows(query: string): Promise<boolean> {
+		try {
+			await this.runQuery(query)
+		} catch (err) {
+			console.error(err)
+			return false
+		}
+
+		return true
+	}
+
+	private async runQuery(query: string): Promise<QueryResult> {
 		if (!this.client) { throw 'Database client is not yet ready' }
 
 		return new Promise((resolve, reject) => {
@@ -94,3 +115,5 @@ export default class Database {
 		})
 	}
 }
+
+export default new Database()

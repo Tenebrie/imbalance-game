@@ -1,16 +1,18 @@
 import * as ws from 'ws'
 import PlayerWebSocket from './PlayerWebSocket'
 import Player from '@shared/models/Player'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 
 export default class ServerPlayer extends Player {
 	id: string
+	email: string
 	username: string
 	webSocket: PlayerWebSocket
 
-	constructor(id: string, username: string) {
+	constructor(id: string, email: string, username: string) {
 		super(id, username)
 		this.id = id
+		this.email = email
 		this.username = username
 		this.webSocket = null
 	}
@@ -39,6 +41,6 @@ export default class ServerPlayer extends Player {
 	}
 
 	static newInstance(playerDatabaseEntry: PlayerDatabaseEntry): ServerPlayer {
-		return new ServerPlayer(playerDatabaseEntry.id, playerDatabaseEntry.username)
+		return new ServerPlayer(playerDatabaseEntry.id, playerDatabaseEntry.email, playerDatabaseEntry.username)
 	}
 }

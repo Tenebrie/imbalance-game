@@ -12,6 +12,8 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import BuffVelElleronEncouragement from '../../../../buffs/BuffVelElleronEncouragement'
 import BuffDuration from '@shared/enums/BuffDuration'
+import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellAnEncouragement extends ServerCard {
 	public static bonusPower = 7
@@ -24,6 +26,9 @@ export default class SpellAnEncouragement extends ServerCard {
 		this.dynamicTextVariables = {
 			bonusPower: SpellAnEncouragement.bonusPower
 		}
+
+		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
@@ -33,7 +38,7 @@ export default class SpellAnEncouragement extends ServerCard {
 			.alliedUnit()
 	}
 
-	onSpellPlayTargetUnitSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
-		target.buffs.add(new BuffVelElleronEncouragement(), this, BuffDuration.START_OF_NEXT_TURN)
+	private onTargetSelected(target: ServerUnit): void {
+		target.buffs.add(BuffVelElleronEncouragement, this, BuffDuration.INFINITY)
 	}
 }

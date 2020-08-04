@@ -14,6 +14,8 @@ import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardLibrary from '../libraries/CardLibrary'
 import CardType from '@shared/enums/CardType'
+import GameEventType from '@shared/enums/GameEventType'
+import GameEventCreators from '../models/GameEventCreators'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -40,8 +42,8 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.morale = Constants.STARTING_PLAYER_MORALE
 		this.unitMana = 0
 		this.spellMana = 0
-		this.turnEnded = false
-		this.roundEnded = false
+		this.turnEnded = true
+		this.roundEnded = true
 		this.cardsPlayed = []
 	}
 
@@ -51,6 +53,10 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public get opponent(): ServerPlayerInGame {
 		return this.game.getOpponent(this)
+	}
+
+	public isInvertedBoard(): boolean {
+		return this.game.players.indexOf(this) === 1
 	}
 
 	public canPlaySpell(card: ServerCard, rowIndex: number): boolean {
@@ -96,7 +102,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public summonCardFromUnitDeck(card: ServerCard): void {
-		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
+		card.buffs.add(BuffTutoredCard, null, BuffDuration.INFINITY)
 		this.cardDeck.removeCard(card)
 		this.cardHand.onUnitDrawn(card)
 	}
@@ -117,7 +123,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	private createCard(card: ServerCard): void {
-		card.buffs.add(new BuffTutoredCard(), card, BuffDuration.INFINITY)
+		card.buffs.add(BuffTutoredCard, null, BuffDuration.INFINITY)
 		if (card.type === CardType.UNIT) {
 			this.cardHand.onUnitDrawn(card)
 		} else if (card.type === CardType.SPELL) {
@@ -171,18 +177,24 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public startRound(): void {
+		if (!this.roundEnded) {
+			return
+		}
 		this.roundEnded = false
 		this.cardsPlayed = []
-
-		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onRoundStarted())
-			unit.card.buffs.onRoundStarted()
-		})
-
 		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
 	}
 
+	public onRoundStart(): void {
+		this.game.events.postEvent(GameEventCreators.roundStarted({
+			player: this
+		}))
+	}
+
 	public startTurn(): void {
+		if (!this.turnEnded) {
+			return
+		}
 		this.turnEnded = false
 		this.setUnitMana(1)
 		this.refillSpellHand()
@@ -192,10 +204,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnStart(): void {
-		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onTurnStarted())
-			unit.card.buffs.onTurnStarted()
-		})
+		this.game.events.postEvent(GameEventCreators.turnStarted({
+			player: this
+		}))
 	}
 
 	public isAnyActionsAvailable(): boolean {
@@ -203,34 +214,42 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public endTurn(): void {
+		if (this.turnEnded) {
+			return
+		}
 		this.turnEnded = true
 		OutgoingMessageHandlers.notifyAboutTurnEnded(this)
 		this.onTurnEnd()
 	}
 
 	public onTurnEnd(): void {
-		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onTurnEnded())
-			unit.card.buffs.onTurnEnded()
-		})
+		this.cardsPlayed = []
+		this.game.events.postEvent(GameEventCreators.turnEnded({
+			player: this
+		}))
 		this.cardHand.unitCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
-			this.cardHand.discardUnit(card)
+			this.cardHand.discardCard(card)
+			this.cardGraveyard.addUnit(card)
 		})
 		this.cardHand.spellCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
-			this.cardHand.discardSpell(card)
+			this.cardHand.discardCard(card)
+			this.cardGraveyard.addSpell(card)
 		})
 	}
 
 	public endRound(): void {
+		if (this.roundEnded) {
+			return
+		}
 		this.endTurn()
-
-		this.game.getAllCardsForEventHandling().filter(card => card.owner === this).forEach(unit => {
-			runCardEventHandler(() => unit.card.onRoundEnded())
-			unit.card.buffs.onRoundEnded()
-		})
-
 		this.roundEnded = true
 		OutgoingMessageHandlers.notifyAboutRoundEnded(this)
+	}
+
+	public onEndRound(): void {
+		this.game.events.postEvent(GameEventCreators.roundEnded({
+			player: this
+		}))
 	}
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {

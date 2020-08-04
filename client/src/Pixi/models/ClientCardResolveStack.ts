@@ -1,4 +1,4 @@
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 
 export default class ClientCardResolveStack {

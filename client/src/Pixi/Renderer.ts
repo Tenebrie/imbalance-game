@@ -1,25 +1,25 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import Constants from '@shared/Constants'
-import RenderedCard from '@/Pixi/board/RenderedCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
-import RenderedGameBoard from '@/Pixi/board/RenderedGameBoard'
-import RenderedUnit from '@/Pixi/board/RenderedUnit'
-import RenderedGameBoardRow from '@/Pixi/board/RenderedGameBoardRow'
+import RenderedGameBoard from '@/Pixi/cards/RenderedGameBoard'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardType from '@shared/enums/CardType'
 import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
-import Settings from '@/Pixi/Settings'
 import CardTint from '@/Pixi/enums/CardTint'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
-import Utils from '@/utils/Utils'
+import Utils, {getRenderScale} from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import CardFeature from '@shared/enums/CardFeature'
 
 const UNIT_ZINDEX = 2
+const UNIT_EFFECT_ZINDEX = 5
 const TARGETING_ARROW_ZINDEX = 10
+const HAND_EFFECT_ZINDEX = 25
 const HOVERED_CARD_ZINDEX = 95
 const RESOLVING_CARD_ZINDEX = 100
 const GRABBED_CARD_ZINDEX = 150
@@ -30,6 +30,9 @@ const INSPECTED_CARD_ZINDEX = 500
 export default class Renderer {
 	pixi: PIXI.Application
 	rootContainer: PIXI.Container
+	boardEffectsContainer: PIXI.Container
+	handEffectsContainer: PIXI.Container
+	superSamplingLevel: number
 
 	container: HTMLElement
 
@@ -38,7 +41,9 @@ export default class Renderer {
 	playerNameLabel: PIXI.Text
 	opponentNameLabel: PIXI.Text
 	playerPowerLabel: PIXI.Text
+	playerPowerLabelContainer: PIXI.Container
 	opponentPowerLabel: PIXI.Text
+	opponentPowerLabelContainer: PIXI.Container
 
 	selectableCardsSmokescreen: PIXI.Sprite
 
@@ -58,9 +63,10 @@ export default class Renderer {
 	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
 
 	constructor(container: HTMLElement) {
+		this.superSamplingLevel = getRenderScale().superSamplingLevel
 		this.pixi = new PIXI.Application({
-			width: window.innerWidth * window.devicePixelRatio * Settings.superSamplingLevel,
-			height: window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel,
+			width: window.innerWidth * window.devicePixelRatio * this.superSamplingLevel,
+			height: window.innerHeight * window.devicePixelRatio * this.superSamplingLevel,
 			antialias: false,
 			autoDensity: true,
 			transparent: true,
@@ -71,6 +77,13 @@ export default class Renderer {
 		this.rootContainer.sortableChildren = true
 		this.pixi.stage.addChild(this.rootContainer)
 
+		this.boardEffectsContainer = new PIXI.Container()
+		this.boardEffectsContainer.zIndex = UNIT_EFFECT_ZINDEX
+		this.rootContainer.addChild(this.boardEffectsContainer)
+		this.handEffectsContainer = new PIXI.Container()
+		this.handEffectsContainer.zIndex = HAND_EFFECT_ZINDEX
+		this.rootContainer.addChild(this.handEffectsContainer)
+
 		this.pixi.view.style.maxWidth = '100vw'
 		this.pixi.view.style.maxHeight = '100vh'
 		container.appendChild(this.pixi.view)
@@ -79,7 +92,7 @@ export default class Renderer {
 		/* Time label */
 		this.timeLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24 * Settings.superSamplingLevel,
+			fontSize: 24 * this.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 		this.timeLabel.anchor.set(0, 0.5)
@@ -89,13 +102,13 @@ export default class Renderer {
 		/* Action label */
 		this.actionLabel = new RichText('Test text', 2000, {})
 		this.actionLabel.zIndex = 85
-		this.actionLabel.setFont(24 * Settings.superSamplingLevel, 12 * Settings.superSamplingLevel)
+		this.actionLabel.setFont(24 * this.superSamplingLevel, 12 * this.superSamplingLevel)
 		this.rootContainer.addChild(this.actionLabel)
 
 		/* Player name label */
 		this.playerNameLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24 * Settings.superSamplingLevel,
+			fontSize: 24 * this.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 		this.playerNameLabel.anchor.set(0, 1)
@@ -105,7 +118,7 @@ export default class Renderer {
 		/* Opponent player name */
 		this.opponentNameLabel = new PIXI.Text('', {
 			fontFamily: 'Arial',
-			fontSize: 24 * Settings.superSamplingLevel,
+			fontSize: 24 * this.superSamplingLevel,
 			fill: 0xFFFFFF
 		})
 
@@ -115,20 +128,31 @@ export default class Renderer {
 		/* Power labels */
 		this.playerPowerLabel = new PIXI.Text('', {
 			fontFamily: 'Roboto',
-			fontSize: 40 * Settings.superSamplingLevel,
-			fill: 0xFFFFFF,
-			align: 'left'
 		})
-		this.playerPowerLabel.anchor.set(0, 0.5)
-		this.rootContainer.addChild(this.playerPowerLabel)
+		this.playerPowerLabel.anchor.set(0.5, 0.5)
+		const playerPowerLabelBackground = new PIXI.Sprite(TextureAtlas.getTexture('board/power-allied'))
+		playerPowerLabelBackground.anchor.set(0, 0.5)
+		playerPowerLabelBackground.width = this.GAME_BOARD_ROW_WINDOW_FRACTION * this.getScreenHeight() / 2
+		playerPowerLabelBackground.height = this.GAME_BOARD_ROW_WINDOW_FRACTION * this.getScreenHeight() / 2
+		this.playerPowerLabel.position.set(playerPowerLabelBackground.width / 2, 0)
+		this.playerPowerLabelContainer = new PIXI.Container()
+		this.playerPowerLabelContainer.addChild(this.playerPowerLabel)
+		this.playerPowerLabelContainer.addChild(playerPowerLabelBackground)
+		this.rootContainer.addChild(this.playerPowerLabelContainer)
 
 		this.opponentPowerLabel = new PIXI.Text('', {
 			fontFamily: 'Roboto',
-			fontSize: 40 * Settings.superSamplingLevel,
-			fill: 0xFFFFFF
 		})
-		this.opponentPowerLabel.anchor.set(0, 0.5)
-		this.rootContainer.addChild(this.opponentPowerLabel)
+		this.opponentPowerLabel.anchor.set(0.5, 0.5)
+		const opponentPowerLabelBackground = new PIXI.Sprite(TextureAtlas.getTexture('board/power-enemy'))
+		opponentPowerLabelBackground.anchor.set(0, 0.5)
+		opponentPowerLabelBackground.width = this.GAME_BOARD_ROW_WINDOW_FRACTION * this.getScreenHeight() / 2
+		opponentPowerLabelBackground.height = this.GAME_BOARD_ROW_WINDOW_FRACTION * this.getScreenHeight() / 2
+		this.opponentPowerLabel.position.set(opponentPowerLabelBackground.width / 2, 0)
+		this.opponentPowerLabelContainer = new PIXI.Container()
+		this.opponentPowerLabelContainer.addChild(this.opponentPowerLabel)
+		this.opponentPowerLabelContainer.addChild(opponentPowerLabelBackground)
+		this.rootContainer.addChild(this.opponentPowerLabelContainer)
 
 		/* Smoke screen */
 		this.selectableCardsSmokescreen = new PIXI.Sprite(TextureAtlas.getTexture('masks/black'))
@@ -148,19 +172,7 @@ export default class Renderer {
 			}
 
 			this.updateCardStats(renderedCard)
-
-			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
-				this.renderCardInHand(renderedCard, unitCards.indexOf(renderedCard), unitCards.length, false, false)
-				const displayMode = this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
-				renderedCard.setDisplayMode(displayMode)
-			} else if (!Core.input.grabbedCard && Core.input.hoveredCard && renderedCard === Core.input.hoveredCard.card) {
-				this.renderCardInHand(renderedCard, unitCards.indexOf(renderedCard), unitCards.length, false, false)
-				this.renderHoveredCardInHand(renderedCard)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
-			} else {
-				this.renderCardInHand(renderedCard, unitCards.indexOf(renderedCard), unitCards.length, false, false)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND)
-			}
+			this.renderCard(renderedCard, unitCards, false, false)
 		})
 
 		const spellCards = Core.player.cardHand.spellCards
@@ -171,19 +183,7 @@ export default class Renderer {
 			}
 
 			this.updateCardStats(renderedCard)
-
-			if (Core.input.grabbedCard && renderedCard === Core.input.grabbedCard.card) {
-				this.renderCardInHand(renderedCard, spellCards.indexOf(renderedCard), spellCards.length, false, true)
-				const displayMode = this.renderGrabbedCard(renderedCard, Core.input.mousePosition)
-				renderedCard.setDisplayMode(displayMode)
-			} else if (!Core.input.grabbedCard && Core.input.hoveredCard && renderedCard === Core.input.hoveredCard.card) {
-				this.renderCardInHand(renderedCard, spellCards.indexOf(renderedCard), spellCards.length, false, true)
-				this.renderHoveredCardInHand(renderedCard)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
-			} else {
-				this.renderCardInHand(renderedCard, spellCards.indexOf(renderedCard), spellCards.length, false, true)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND)
-			}
+			this.renderCard(renderedCard, spellCards, false, true)
 		})
 
 		if (Core.opponent) {
@@ -194,8 +194,8 @@ export default class Renderer {
 					return
 				}
 
-				this.renderCardInHand(renderedCard, opponentsUnitCards.indexOf(renderedCard), opponentsUnitCards.length, true, false)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HIDDEN)
+				this.updateCardStats(renderedCard)
+				this.renderCard(renderedCard, opponentsUnitCards, true, false)
 			})
 
 			const opponentsSpellCards = Core.opponent.cardHand.spellCards
@@ -205,8 +205,8 @@ export default class Renderer {
 					return
 				}
 
-				this.renderCardInHand(renderedCard, opponentsSpellCards.indexOf(renderedCard), opponentsSpellCards.length, true, true)
-				renderedCard.setDisplayMode(CardDisplayMode.IN_HAND_HIDDEN)
+				this.updateCardStats(renderedCard)
+				this.renderCard(renderedCard, opponentsSpellCards, true, true)
 			})
 		}
 
@@ -219,8 +219,24 @@ export default class Renderer {
 		this.renderInspectedCard()
 	}
 
+	private renderCard(card: RenderedCard, cardArray: RenderedCard[], isOpponent: boolean, isSpellHand: boolean): void {
+		card.hiddenMode = card.type === CardType.HIDDEN
+		if (Core.input.grabbedCard && card === Core.input.grabbedCard.card) {
+			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
+			const displayMode = this.renderGrabbedCard(card, Core.input.mousePosition)
+			card.setDisplayMode(displayMode)
+		} else if (!Core.input.grabbedCard && Core.input.hoveredCard && card === Core.input.hoveredCard.card) {
+			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
+			this.renderHoveredCardInHand(card, isOpponent)
+			card.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
+		} else {
+			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
+			card.setDisplayMode(CardDisplayMode.IN_HAND)
+		}
+	}
+
 	public resize(): void {
-		this.pixi.renderer.resize(window.innerWidth * window.devicePixelRatio * Settings.superSamplingLevel, window.innerHeight * window.devicePixelRatio * Settings.superSamplingLevel)
+		this.pixi.renderer.resize(window.innerWidth * window.devicePixelRatio * this.superSamplingLevel, window.innerHeight * window.devicePixelRatio * this.superSamplingLevel)
 	}
 
 	public registerCard(card: RenderedCard): void {
@@ -246,13 +262,26 @@ export default class Renderer {
 	}
 
 	private updateCardStats(renderedCard: RenderedCard): void {
-		renderedCard.powerText.text = renderedCard.power.toString()
-		if (renderedCard.power < renderedCard.basePower) {
-			renderedCard.powerText.style.fill = 0x770000
-		} else if (renderedCard.power > renderedCard.basePower) {
-			renderedCard.powerText.style.fill = 0x007700
-		} else {
-			renderedCard.powerText.style.fill = 0x000000
+		if (renderedCard.type === CardType.UNIT || renderedCard.type === CardType.TOKEN) {
+			renderedCard.powerText.text = renderedCard.power.toString()
+			if (renderedCard.power < renderedCard.basePower) {
+				renderedCard.powerText.style.fill = 0x770000
+			} else if (renderedCard.power > renderedCard.basePower) {
+				renderedCard.powerText.style.fill = 0x007700
+			} else {
+				renderedCard.powerText.style.fill = 0x000000
+			}
+		} else if (renderedCard.type === CardType.SPELL) {
+			const spellCost = renderedCard.spellCost
+			const baseSpellCost = renderedCard.basePower
+			renderedCard.powerText.text = spellCost.toString()
+			if (spellCost < baseSpellCost) {
+				renderedCard.powerText.style.fill = 0x0077AA
+			} else if (spellCost > baseSpellCost) {
+				renderedCard.powerText.style.fill = 0x7700AA
+			} else {
+				renderedCard.powerText.style.fill = 0x0000AA
+			}
 		}
 
 		renderedCard.armorText.text = renderedCard.armor.toString()
@@ -309,15 +338,7 @@ export default class Renderer {
 		const isForcedTarget = Core.input.forcedTargetingMode && !!Core.input.forcedTargetingMode.validTargets.find(forcedCard => forcedCard.targetCard && forcedCard.targetCard.id === renderedCard.id)
 		renderedCard.cardDisabledOverlay.visible = !isPlayable && !isForcedTarget
 
-		if (renderedCard.type === CardType.SPELL) {
-			renderedCard.powerText.style.fill = 0x0000FF
-			if (renderedCard.features.includes(CardFeature.TEMPORARY_CARD)) {
-				renderedCard.powerText.text = '0'
-				renderedCard.powerText.style.fill = 0x008800
-			}
-		}
-
-		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED || renderedCard.displayMode === CardDisplayMode.IN_HAND_HIDDEN) {
+		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
 			container.position.x += (targetPosition.x - container.position.x) * this.deltaTimeFraction * 7
 			container.position.y += (targetPosition.y - container.position.y) * this.deltaTimeFraction * 7
@@ -336,7 +357,7 @@ export default class Renderer {
 		disabledOverlaySprite.zIndex = container.zIndex + 1
 	}
 
-	public renderHoveredCardInHand(renderedCard: RenderedCard): void {
+	public renderHoveredCardInHand(renderedCard: RenderedCard, isOpponent: boolean): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
@@ -345,7 +366,11 @@ export default class Renderer {
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		container.position.y = this.getScreenHeight() - cardHeight * 0.5
+		if (isOpponent) {
+			container.position.y = cardHeight * 0.5
+		} else {
+			container.position.y = this.getScreenHeight() - cardHeight * 0.5
+		}
 
 		container.zIndex = HOVERED_CARD_ZINDEX
 
@@ -389,10 +414,23 @@ export default class Renderer {
 		}
 
 		/* Power labels */
+		const getPowerFontSize = (value: number): number => {
+			const string = value.toString()
+			let returnValue = 40
+			if (string.length === 2) {
+				returnValue = 35
+			} else if (string.length >= 3) {
+				returnValue = 30
+			}
+			return returnValue * this.superSamplingLevel
+		}
+
 		const power = Core.board.getUnitsOwnedByPlayer(Core.player).map(unit => unit.card.power).reduce((accumulator, value) => accumulator + value, 0)
 		const opponentPower = Core.board.getUnitsOwnedByPlayer(Core.opponent).map(unit => unit.card.power).reduce((accumulator, value) => accumulator + value, 0)
 		this.playerPowerLabel.text = power.toString()
 		this.opponentPowerLabel.text = opponentPower.toString()
+		this.playerPowerLabel.style.fontSize = getPowerFontSize(power)
+		this.opponentPowerLabel.style.fontSize = getPowerFontSize(opponentPower)
 		if (power > opponentPower) {
 			this.playerPowerLabel.style.fill = 0x77FF77
 			this.opponentPowerLabel.style.fill = 0xFF7777
@@ -429,8 +467,8 @@ export default class Renderer {
 		const opponentLabelTargetRowDistanceToCenter = opponentPowerLabelRow - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
 		const playerLabelRowY = screenCenterY + playerLabelTargetRowDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 		const opponentLabelRowY = screenCenterY + opponentLabelTargetRowDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
-		this.playerPowerLabel.position.set(screenCenterX + (rowHeight * this.CARD_ASPECT_RATIO) * 5, playerLabelRowY)
-		this.opponentPowerLabel.position.set(screenCenterX + (rowHeight * this.CARD_ASPECT_RATIO) * 5, opponentLabelRowY)
+		this.playerPowerLabelContainer.position.set(screenCenterX + (rowHeight * this.CARD_ASPECT_RATIO) * 5.2, playerLabelRowY)
+		this.opponentPowerLabelContainer.position.set(screenCenterX + (rowHeight * this.CARD_ASPECT_RATIO) * 5.2, opponentLabelRowY)
 	}
 
 	public renderGameBoardRow(gameBoardRow: RenderedGameBoardRow, rowIndex: number): void {
@@ -455,22 +493,10 @@ export default class Renderer {
 
 	private getBoardRowTint(row: RenderedGameBoardRow): BoardRowTint {
 		if ((Core.input.grabbedCard && Core.input.grabbedCard.validTargetRows.includes(row)) || (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isRowPotentialTarget(row))) {
-			if (row.owner === Core.player) {
-				return row.isHovered() ? BoardRowTint.VALID_TARGET_PLAYER_HOVERED : BoardRowTint.VALID_TARGET_PLAYER
-			} else if (row.owner === Core.opponent) {
-				return row.isHovered() ? BoardRowTint.VALID_TARGET_OPPONENT_HOVERED : BoardRowTint.VALID_TARGET_OPPONENT
-			} else {
-				return row.isHovered() ? BoardRowTint.VALID_TARGET_NEUTRAL_HOVERED : BoardRowTint.VALID_TARGET_NEUTRAL
-			}
+			return row.isHovered() ? BoardRowTint.VALID_TARGET_HOVERED : BoardRowTint.VALID_TARGET
 		}
 
-		if (row.owner === Core.player) {
-			return BoardRowTint.NORMAL_PLAYER
-		} else if (row.owner === Core.opponent) {
-			return BoardRowTint.NORMAL_OPPONENT
-		} else {
-			return BoardRowTint.NORMAL_NEUTRAL
-		}
+		return BoardRowTint.NORMAL
 	}
 
 	public renderUnit(unit: RenderedUnit, rowY: number, unitIndex: number, unitCount: number): void {
@@ -493,7 +519,9 @@ export default class Renderer {
 		const targetPositionY = rowY
 
 		if (unit.card.displayMode === CardDisplayMode.ON_BOARD) {
-			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
+			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 2
+			unit.card.powerText.alpha = sprite.alpha
+			unit.card.armorText.alpha = sprite.alpha
 			container.position.x += (targetPositionX - container.position.x) * this.deltaTimeFraction * 7
 			container.position.y += (targetPositionY - container.position.y) * this.deltaTimeFraction * 7
 		} else {
@@ -593,7 +621,7 @@ export default class Renderer {
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		if (Core.input.forcedTargetingMode) {
-			label.text = Localization.getString(Core.input.forcedTargetingMode.getDisplayedLabel())
+			label.text = Localization.get(Core.input.forcedTargetingMode.getDisplayedLabel())
 			label.textVariables = Core.input.forcedTargetingMode.getDisplayedLabelVariables()
 			return
 		}
@@ -608,7 +636,7 @@ export default class Renderer {
 		const validOrders = Core.board.getValidOrdersForUnit(grabbedUnit).sort((a, b) => a.targetMode - b.targetMode || a.targetType - b.targetType)
 		const performedOrder = validOrders.find(order => (!order.targetUnit || order.targetUnit === hoveredUnit) && (!order.targetRow || order.targetRow === hoveredRow))
 		if (performedOrder) {
-			label.text = Localization.getString(performedOrder.targetLabel)
+			label.text = Localization.get(performedOrder.targetLabel)
 		} else {
 			label.text = ''
 		}
@@ -620,13 +648,14 @@ export default class Renderer {
 			return
 		}
 
+		announcedCard.hiddenMode = false
 		const container = announcedCard.coreContainer
 		const sprite = announcedCard.sprite
 		const disabledOverlaySprite = announcedCard.cardDisabledOverlay
 
 		sprite.alpha = 1
 		sprite.tint = 0xFFFFFF
-		sprite.scale.set(Settings.superSamplingLevel)
+		sprite.scale.set(this.superSamplingLevel)
 		container.visible = true
 		container.zIndex = ANNOUNCED_CARD_ZINDEX
 
@@ -639,7 +668,7 @@ export default class Renderer {
 			container.position.y = this.getScreenHeight() / 2
 			announcedCard.setDisplayMode(CardDisplayMode.ANNOUNCED)
 		} else {
-			const targetX = sprite.width / 2 + 50 * Settings.superSamplingLevel
+			const targetX = sprite.width / 2 + 50 * this.superSamplingLevel
 
 			container.position.x += (targetX - container.position.x) * this.deltaTimeFraction * 7
 			container.position.y = this.getScreenHeight() / 2
@@ -665,7 +694,7 @@ export default class Renderer {
 		const sprite = card.sprite
 		sprite.alpha = 1
 		sprite.tint = 0xFFFFFF
-		sprite.scale.set(Settings.superSamplingLevel)
+		sprite.scale.set(this.superSamplingLevel)
 		container.visible = true
 		container.zIndex = RESOLVING_CARD_ZINDEX + index
 
@@ -673,7 +702,7 @@ export default class Renderer {
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		const horizontalOffset = 50 * Settings.superSamplingLevel * index
+		const horizontalOffset = 50 * this.superSamplingLevel * index
 
 		let verticalOffset = this.getScreenHeight() * 0.20
 		if (Core.opponent.isTurnActive) {
@@ -685,7 +714,7 @@ export default class Renderer {
 			container.position.y = this.getScreenHeight() / 2 + verticalOffset
 			card.setDisplayMode(CardDisplayMode.RESOLVING)
 		} else {
-			const targetX = sprite.width / 2 + 50 * Settings.superSamplingLevel + horizontalOffset
+			const targetX = sprite.width / 2 + 50 * this.superSamplingLevel + horizontalOffset
 
 			container.position.x += (targetX - container.position.x) * this.deltaTimeFraction * 7
 			container.position.y = this.getScreenHeight() / 2 + verticalOffset
@@ -771,10 +800,6 @@ export default class Renderer {
 			renderedCard.setDisplayMode(CardDisplayMode.SELECTION)
 		}
 
-		if (renderedCard.type === CardType.SPELL) {
-			renderedCard.powerText.style.fill = 0x0000AA
-		}
-
 		sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
 		container.position.x = targetPosition.x
 		container.position.y = targetPosition.y - cardHeight / 2 + levelOffset
@@ -796,20 +821,20 @@ export default class Renderer {
 		const disabledOverlaySprite = inspectedCard.cardDisabledOverlay
 
 		sprite.tint = 0xFFFFFF
-		sprite.scale.set(Settings.superSamplingLevel)
+		sprite.scale.set(this.superSamplingLevel)
 		container.position.x = this.getScreenWidth() / 2
 		container.position.y = this.getScreenHeight() / 2
 		container.zIndex = INSPECTED_CARD_ZINDEX
 
-		inspectedCard.powerText.text = inspectedCard.basePower.toString()
-		if (inspectedCard.type === CardType.SPELL) {
-			inspectedCard.powerText.style.fill = 0x0000AA
-		} else {
-			inspectedCard.powerText.style.fill = 0x000000
-		}
+		// inspectedCard.powerText.text = inspectedCard.basePower.toString()
+		// if (inspectedCard.type === CardType.SPELL) {
+		// 	inspectedCard.powerText.style.fill = 0x0000AA
+		// } else {
+		// 	inspectedCard.powerText.style.fill = 0x000000
+		// }
 
-		inspectedCard.armorText.text = inspectedCard.baseArmor.toString()
-		inspectedCard.armorText.style.fill = 0xFFFFFF
+		// inspectedCard.armorText.text = inspectedCard.baseArmor.toString()
+		// inspectedCard.armorText.style.fill = 0xFFFFFF
 
 		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
 

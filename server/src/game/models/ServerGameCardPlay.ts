@@ -5,11 +5,11 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
-import runCardEventHandler from '../utils/runCardEventHandler'
 import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
 import Utils from '../../utils/Utils'
+import GameEventCreators from './GameEventCreators'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -21,15 +21,15 @@ export default class ServerGameCardPlay {
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
-		/* Resolve card */
-		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)
-
 		/* Deduct mana */
 		if (ownedCard.card.type === CardType.UNIT) {
-			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - ownedCard.card.unitCost)
+			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.unitCost))
 		} else if (ownedCard.card.type === CardType.SPELL) {
-			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - ownedCard.card.spellCost)
+			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.spellCost))
 		}
+
+		/* Resolve card */
+		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)
 	}
 
 	public forcedPlayCardFromHand(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
@@ -47,9 +47,15 @@ export default class ServerGameCardPlay {
 		/* Remember played card */
 		owner.addToPlayedCards(card)
 
+		/* Trigger card played event */
+		this.game.events.postEvent(GameEventCreators.cardPlayed({
+			owner: owner,
+			triggeringCard: card,
+		}))
+
 		/* Announce card to opponent */
 		card.reveal(owner, owner.opponent)
-		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardPlay(card))
+		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardAnnounce(card))
 
 		/* Remove card from source */
 		if (source === 'hand' && owner.cardHand.findCardById(card.id)) {
@@ -79,8 +85,10 @@ export default class ServerGameCardPlay {
 		/* Insert the card into the board */
 		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
 
-		/* Invoke the card onPlay effect */
-		runCardEventHandler(() => card.onPlayedAsUnit(unit, this.game.board.rows[rowIndex]))
+		/* Invoke the card Deploy effect */
+		this.game.events.postEvent(GameEventCreators.unitDeployed({
+			triggeringUnit: unit
+		}))
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -93,13 +101,14 @@ export default class ServerGameCardPlay {
 
 	private playSpell(ownedCard: ServerOwnedCard): void {
 		const card = ownedCard.card
-		const owner = ownedCard.owner
 
 		/* Start resolving */
 		this.cardResolveStack.startResolving(ownedCard)
 
 		/* Invoke the card onPlay effect */
-		runCardEventHandler(() => card.onPlayedAsSpell(owner))
+		this.game.events.postEvent(GameEventCreators.spellDeployed({
+			triggeringCard: card
+		}))
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -158,28 +167,14 @@ export default class ServerGameCardPlay {
 			return
 		}
 
-		const sourceUnit = target.sourceUnit
-		const sourceCard = target.sourceCard || sourceUnit.card
-
 		this.cardResolveStack.pushTarget(target)
-		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
-			runCardEventHandler(() => sourceCard.onUnitPlayTargetCardSelected(sourceUnit, target.targetCard))
-		}
-		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
-			runCardEventHandler(() => sourceCard.onUnitPlayTargetUnitSelected(sourceUnit, target.targetUnit))
-		}
-		if (sourceCard.type === CardType.UNIT && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
-			runCardEventHandler(() => sourceCard.onUnitPlayTargetRowSelected(sourceUnit, target.targetRow))
-		}
-		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetCard) {
-			runCardEventHandler(() => sourceCard.onSpellPlayTargetCardSelected(playerInGame, target.targetCard))
-		}
-		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetUnit) {
-			runCardEventHandler(() => sourceCard.onSpellPlayTargetUnitSelected(playerInGame, target.targetUnit))
-		}
-		if (sourceCard.type === CardType.SPELL && target.targetMode === TargetMode.POST_PLAY_REQUIRED_TARGET && target.targetRow) {
-			runCardEventHandler(() => sourceCard.onSpellPlayTargetRowSelected(playerInGame, target.targetRow))
-		}
+
+		this.game.events.postEvent(GameEventCreators.cardTargetSelected({
+			triggeringCard: currentResolvingCard.card,
+			targetCard: target.targetCard,
+			targetUnit: target.targetUnit,
+			targetRow: target.targetRow
+		}))
 
 		// Current card changed - resolve that first
 		if (this.cardResolveStack.currentCard !== currentResolvingCard) {
@@ -193,12 +188,9 @@ export default class ServerGameCardPlay {
 			return
 		}
 
-
-		if (sourceCard.type === CardType.UNIT) {
-			runCardEventHandler(() => sourceCard.onUnitPlayTargetsConfirmed(sourceUnit))
-		} else if (sourceCard.type === CardType.SPELL) {
-			runCardEventHandler(() => sourceCard.onSpellPlayTargetsConfirmed(playerInGame))
-		}
+		this.game.events.postEvent(GameEventCreators.cardTargetsConfirmed({
+			triggeringCard: currentResolvingCard.card
+		}))
 		this.cardResolveStack.finishResolving()
 	}
 }

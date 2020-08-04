@@ -1,36 +1,75 @@
 <template>
-	<div id="app" :class="rootClass" >
+	<div id="app">
 		<div id="app-background" />
-		<div id="content">
+		<div id="content" :class="rootClass">
 			<the-navigation-bar v-if="!isInGame" />
 			<router-view class="view" />
-			<the-footer v-if="!isInGame" />
+		</div>
+		<div id="popup" v-if="popupComponent">
+			<component :is="popupComponent"></component>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
-import TheFooter from '@/Vue/components/TheFooter.vue'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
+import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
 
-export default Vue.extend({
-	components: { TheNavigationBar, TheFooter },
+export default {
+	components: { TheNavigationBar },
+
+	async mounted() {
+		AudioSystem.setMode(AudioSystemMode.MENU)
+		window.addEventListener('keydown', this.onKeyDown)
+		this.printConsoleWelcomeMessage()
+	},
+
+	beforeDestroy() {
+		window.removeEventListener('keydown', this.onKeyDown)
+	},
 
 	computed: {
-		isInGame() {
+		isInGame(): boolean {
 			return store.getters.gameStateModule.isInGame
 		},
 
-		rootClass(): {} {
+		popupComponent() {
+			return store.state.popupModule.component
+		},
+
+		rootClass() {
 			return {
 				'in-game': this.isInGame as boolean,
 				'navigation-bar-visible': !this.isInGame as boolean
 			}
 		}
+	},
+
+	methods: {
+		onKeyDown(event: KeyboardEvent): void {
+			if (event.key === 'Escape' && this.popupComponent) {
+				store.dispatch.popupModule.close()
+				event.preventDefault()
+			}
+		},
+
+		printConsoleWelcomeMessage(): void {
+			const headerStyle = 'color: #bada55; padding: 4px; font-size: 24px'
+			const textStyle = 'color: #bada55; padding:4px; font-size: 14px'
+			const warningStyle = 'color: #daba55; padding:4px; font-size: 14px'
+
+			const message = 'If you DO know what you\'re doing, have fun hacking!\n'
+				+ 'This is an open-source project. You can find the code at https://github.com/Tenebrie/notgwent-game.'
+				+ ' If you find a bug or an exploit, or you have a feature request, feel free to open an issue on GitHub.'
+				+ ' You can also make a pull request with a fix. Contributions are welcome!'
+
+			console.info('%cHowdy!', headerStyle)
+			console.info('%cIf you don\'t know what you\'re doing, be VERY careful! Don\'t paste here anything that you do not understand!', warningStyle)
+			console.info(`%c${message}`, textStyle)
+		}
 	}
-})
+}
 </script>
 
 <style lang="scss">
@@ -58,6 +97,14 @@ body {
 	border-radius: 20px;
 }
 
+#popup {
+	z-index: 1000;
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.7);
+}
+
 #app {
 	font-family: Roboto, Helvetica, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
@@ -75,15 +122,24 @@ body {
 
 		&.in-game {
 			overflow-y: hidden;
+			.view {
+				height: 100vh;
+			}
 		}
 
 		&.navigation-bar-visible {
 			padding-top: 48px;
-			height: calc(100vh - 48px);
-		}
+			height: calc(100vh - #{$NAVIGATION-BAR-HEIGHT});
 
-		.view {
-			height: 100%;
+			.view {
+				width: 100%;
+				height: 100%;
+
+				& > * {
+					width: 100%;
+					height: 100%;
+				}
+			}
 		}
 
 		a {
@@ -125,21 +181,32 @@ button {
 	cursor: pointer;
 }
 
-button.primary, .swal-button {
+button.primary, .swal-button, .button-primary {
 	border-radius: 0.25em;
 	width: 100%;
-	padding: 0.5em;
+	padding: 0.5em 1em;
 	margin: 0.25em 0;
 	font-family: Roboto, sans-serif;
+	font-size: 1em;
 	color: $COLOR-TEXT;
 	background-color: $COLOR-PRIMARY;
 	border: 1px solid $COLOR-PRIMARY;
 	outline: none;
 
+	&.destructive {
+		color: lighten(red, 15);
+		&:hover {
+			color: lighten(red, 10);
+		}
+		&:active {
+			color: lighten(red, 5);
+		}
+	}
+
 	&:hover {
-		color: darken($COLOR-TEXT, 5) !important;
-		border-color: darken($COLOR-PRIMARY, 5) !important;
-		background-color: darken($COLOR-PRIMARY, 5) !important;
+		color: darken($COLOR-TEXT, 5);
+		border-color: darken($COLOR-PRIMARY, 5);
+		background-color: darken($COLOR-PRIMARY, 5);
 	}
 
 	&:active {
@@ -149,24 +216,34 @@ button.primary, .swal-button {
 	}
 }
 
-button.secondary {
-	border: 1px solid $COLOR-TEXT;
-	border-radius: 4px;
+button.secondary, .button-secondary {
+	border-radius: 0.25em;
 	width: 100%;
-	padding: calc(0.25em - 1px);
+	padding: 0.5em 1em;
 	margin: 0.25em 0;
-	font-size: 1em;
 	font-family: Roboto, sans-serif;
+	font-size: 1em;
 	color: $COLOR-TEXT;
 	background-color: transparent;
+	border: 1px solid $COLOR-TEXT;
 	outline: none;
+
+	&.destructive {
+		color: lighten(red, 15);
+		&:hover {
+			color: lighten(red, 10);
+		}
+		&:active {
+			color: lighten(red, 5);
+		}
+	}
 
 	&:hover {
 		background-color: rgba(white, 0.05);
 	}
 
 	&:active {
-		background-color: rgba(white, 0.1);
+		background-color: rgba(white, 0.1) !important;
 	}
 }
 
@@ -191,6 +268,10 @@ span.info-text {
 .noty_body {
 	font-family: 'Roboto', sans-serif;
 	font-size: 1.0em !important;
+}
+
+.noty_bar {
+	box-shadow: black 0 0 4px 4px;
 }
 
 .noty_type__info > .noty_body {

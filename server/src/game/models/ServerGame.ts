@@ -18,6 +18,8 @@ import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
+import {colorizeId, colorizePlayer} from '../../utils/Utils'
+import ServerGameEvents from './ServerGameEvents'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -26,6 +28,7 @@ export default class ServerGame extends Game {
 	playersToMove: ServerPlayerInGame[]
 	readonly owner: ServerPlayer
 	readonly board: ServerBoard
+	readonly events: ServerGameEvents
 	readonly players: ServerPlayerInGame[]
 	readonly chatHistory: ServerChatEntry[]
 	readonly cardPlay: ServerGameCardPlay
@@ -38,6 +41,7 @@ export default class ServerGame extends Game {
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.owner = owner
 		this.board = new ServerBoard(this)
+		this.events = new ServerGameEvents(this)
 		this.players = []
 		this.playersToMove = []
 		this.chatHistory = []
@@ -70,11 +74,19 @@ export default class ServerGame extends Game {
 
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
-		console.info(`Starting game ${this.id}: ${playerOne.player.username} vs ${playerTwo.player.username}`)
+		console.info(`Starting game ${colorizeId(this.id)}: `
+			+ `${colorizePlayer(playerOne.player.username)} vs ${colorizePlayer(playerTwo.player.username)}`)
 
 		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.sendPlayerSelf(playerInGame.player, playerInGame)
 			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, this.getOpponent(playerInGame))
+		})
+
+		this.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutDeckLeader(playerInGame, playerInGame.leader)
+		})
+
+		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, this.players.indexOf(playerInGame) === 1)
 		})
 
@@ -85,12 +97,15 @@ export default class ServerGame extends Game {
 
 		this.players.forEach(playerInGame => {
 			playerInGame.cardDeck.shuffle()
+			playerInGame.startRound()
 			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_STARTING)
 			playerInGame.drawSpellCards(Constants.SPELL_HAND_SIZE_MINIMUM)
 			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})
+		this.events.flushLogEventGroup()
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
 		this.startNextTurn()
+		this.events.flushLogEventGroup()
 	}
 
 	public getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
@@ -120,8 +135,6 @@ export default class ServerGame extends Game {
 
 	private setTurnPhase(turnPhase: GameTurnPhase): void {
 		this.turnPhase = turnPhase
-
-		this.board.getAllUnits().forEach(unit => unit.card.onTurnPhaseChanged(unit, this.turnPhase))
 
 		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutPhaseAdvance(playerInGame.player, this.turnPhase)
@@ -220,11 +233,11 @@ export default class ServerGame extends Game {
 			return
 		}
 
-		this.board.getAllUnits().forEach(cardOnBoard => this.board.destroyUnit(cardOnBoard))
+		this.board.getAllUnits().forEach(unit => {
+			this.board.destroyUnit(unit)
+			unit.owner.cardGraveyard.addUnit(unit.card)
+		})
 
-		// for (let i = 1; i < Constants.GAME_BOARD_ROW_COUNT - 1; i++) {
-		// 	this.board.rows[i].setOwner(null)
-		// }
 		for (let i = 0; i < 3; i++) {
 			this.board.rows[i].setOwner(playerTwo)
 			this.board.rows[Constants.GAME_BOARD_ROW_COUNT - i - 1].setOwner(playerOne)
@@ -258,7 +271,7 @@ export default class ServerGame extends Game {
 			const defeatedPlayer = this.getOpponent(victoriousPlayer)
 			OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
 			OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
-			console.info(`Game ${this.id} finished. ${victoriousPlayer.player.username} won! [${victoryReason}]`)
+			console.info(`Game ${this.id} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won! [${victoryReason}]`)
 		}
 
 		setTimeout(() => {
@@ -267,9 +280,8 @@ export default class ServerGame extends Game {
 	}
 
 	public forceShutdown(reason: string): void {
-		const gameLibrary: GameLibrary = global.gameLibrary
 		this.players.forEach(playerInGame => playerInGame.player.disconnect())
-		gameLibrary.destroyGame(this, reason)
+		GameLibrary.destroyGame(this, reason)
 	}
 
 	public findCardById(cardId: string): ServerCard | null {

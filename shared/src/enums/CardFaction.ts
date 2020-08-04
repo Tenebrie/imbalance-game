@@ -1,6 +1,8 @@
 enum CardFaction {
 	NEUTRAL,
+	CASTLE,
 	ARCANE,
+	NATURE,
 	EXPERIMENTAL
 }
 

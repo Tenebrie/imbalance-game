@@ -13,7 +13,7 @@ import Localization from '@/Pixi/Localization'
 export default Vue.extend({
 	computed: {
 		separatorText(): string {
-			return Localization.getString('editor.faction.unfinished')
+			return Localization.get('editor.faction.unfinished')
 		}
 	}
 })

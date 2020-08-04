@@ -1,5 +1,9 @@
 <template>
 	<div class="pixi-user-interface">
+		<div class="settings-button-container">
+			<button @click="onShowGameLog" class="primary game-button"><i class="fas fa-history"></i></button>
+			<button @click="onToggleEscapeWindow" class="primary game-button"><i class="fas fa-cog"></i></button>
+		</div>
 		<div class="end-turn-button-container">
 			<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
 			<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">End round</button>
@@ -16,7 +20,13 @@
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
 				<button @click="onShowSettings" class="primary game-button">Settings</button>
+<!--				<button @click="onShowGameLog" class="primary game-button">Game history</button>-->
 				<div class="menu-separator"></div>
+<!--				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>-->
+<!--				<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>-->
+<!--				<div class="menu-separator"></div>-->
+<!--				<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>-->
+<!--				<div class="menu-separator"></div>-->
 				<button @click="onLeaveGame" class="primary game-button destructive">Leave game</button>
 			</div>
 		</div>
@@ -29,6 +39,8 @@ import store from '@/Vue/store'
 import Player from '@shared/models/Player'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
+import TheGameLog from '@/Vue/components/gamelog/TheGameLog.vue'
+import TheSimpleSettings from '@/Vue/components/profile/TheSimpleSettings.vue'
 
 export default Vue.extend({
 	data: () => ({
@@ -37,6 +49,10 @@ export default Vue.extend({
 
 	mounted(): void {
 		window.addEventListener('keydown', this.onKeyDown)
+	},
+
+	beforeDestroy() {
+		window.removeEventListener('keydown', this.onKeyDown)
 	},
 
 	computed: {
@@ -84,18 +100,16 @@ export default Vue.extend({
 
 	methods: {
 		onKeyDown(event: KeyboardEvent): void {
+			if (event.defaultPrevented) {
+				return
+			}
 			if (event.key === 'Escape') {
-				this.isEscapeWindowVisible = !this.isEscapeWindowVisible
+				this.onToggleEscapeWindow()
 			}
 		},
 
-		onShowChangelog(): void {
-			window.open('changelog')
-		},
-
-		onShowSettings(): void {
-			// TODO: Implement settings page
-			window.alert('Not yet!')
+		onToggleEscapeWindow(): void {
+			this.isEscapeWindowVisible = !this.isEscapeWindowVisible
 		},
 
 		onLeaveGame(): void {
@@ -104,6 +118,32 @@ export default Vue.extend({
 
 		onEndTurn(): void {
 			OutgoingMessageHandlers.sendEndTurn()
+		},
+
+		onShowSettings(): void {
+			store.dispatch.popupModule.open({
+				component: TheSimpleSettings
+			})
+			this.isEscapeWindowVisible = false
+		},
+
+		onShowGameLog(): void {
+			store.dispatch.popupModule.open({
+				component: TheGameLog
+			})
+			this.isEscapeWindowVisible = false
+		},
+
+		onShowPlayersDeck(): void {
+
+		},
+
+		onShowPlayersGraveyard(): void {
+
+		},
+
+		onShowOpponentsGraveyard(): void {
+
 		}
 	}
 })
@@ -166,6 +206,7 @@ export default Vue.extend({
 			border: none;
 			outline: none;
 			pointer-events: auto;
+			max-width: 250px;
 
 			padding: 8px 16px;
 			font-size: 24px;
@@ -196,6 +237,7 @@ export default Vue.extend({
 
 			.escape-menu {
 				height: 100%;
+				min-width: 500px;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
@@ -206,6 +248,29 @@ export default Vue.extend({
 				button {
 					width: 100%;
 					margin: 8px;
+				}
+			}
+		}
+
+		.settings-button-container {
+			position: absolute;
+			top: 0;
+			right: 0;
+			display: flex;
+			flex-direction: row;
+
+			& > button {
+				padding: 16px 24px;
+				margin: 0;
+				background: transparent;
+				color: white;
+				font-size: 32px;
+
+				&:hover {
+					color: darken(white, 10);
+				}
+				&:active {
+					color: darken(white, 20);
 				}
 			}
 		}

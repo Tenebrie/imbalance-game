@@ -9,6 +9,7 @@ import store from '@/Vue/store'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import Card from '@shared/models/Card'
 import Utils from '@/utils/Utils'
+import CardColor from '@shared/enums/CardColor'
 
 export default Vue.extend({
 	props: {
@@ -45,7 +46,11 @@ export default Vue.extend({
 
 		customClass(): {} {
 			return {
-				disabled: this.isDisabled
+				disabled: this.isDisabled,
+				'leader': this.card.color === CardColor.LEADER,
+				'golden': this.card.color === CardColor.GOLDEN,
+				'silver': this.card.color === CardColor.SILVER,
+				'bronze': this.card.color === CardColor.BRONZE
 			}
 		}
 	},
@@ -72,6 +77,7 @@ export default Vue.extend({
 	@import "../../styles/generic";
 
 	.the-card-library-item {
+		position: relative;
 		margin: 16px;
 		width: calc(408px / 2);
 		height: calc(584px / 2);
@@ -83,9 +89,52 @@ export default Vue.extend({
 			cursor: default;
 		}
 
+		&:hover {
+			&::before {
+				opacity: 1;
+				transition: opacity 0s;
+			}
+		}
+
+		&::before {
+			position: absolute;
+			content: '';
+			top: 4px;
+			left: 4px;
+			width: calc(408px / 2 - 8px);
+			height: calc(584px / 2 - 8px);
+			opacity: 0;
+			transition: opacity 1s;
+		}
+
+		&.leader {
+			&::before {
+				box-shadow: MediumAquamarine 0 0 8px 4px;
+			}
+		}
+
+		&.golden {
+			&::before {
+				box-shadow: darkorange 0 0 8px 4px;
+			}
+		}
+
+		&.silver {
+			&::before {
+				box-shadow: #BB20BB 0 0 8px 4px;
+			}
+		}
+
+		&.bronze {
+			&::before {
+				box-shadow: white 0 0 8px 4px;
+			}
+		}
+
 		/deep/
 		img {
-			width: calc(408px / 2);
+			position: relative;
+			height: 100%;
 		}
 	}
 </style>

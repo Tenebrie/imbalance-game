@@ -6,12 +6,15 @@ import OutgoingMessageHandlers from '../game/handlers/OutgoingMessageHandlers'
 import ConnectionEstablishedHandler from '../game/handlers/ConnectionEstablishedHandler'
 import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
+import PlayerLibrary from '../game/players/PlayerLibrary'
+import GameLibrary from '../game/libraries/GameLibrary'
+import {colorizeId} from '../utils/Utils'
 
 const router = express.Router()
 
 router.ws('/:gameId', async (ws, req) => {
-	const currentGame: ServerGame = global.gameLibrary.games.find(game => game.id === req.params.gameId)
-	const currentPlayer: ServerPlayer = await global.playerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
+	const currentGame: ServerGame = GameLibrary.games.find(game => game.id === req.params.gameId)
+	const currentPlayer: ServerPlayer = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
 	if (!currentGame || !currentPlayer) {
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
 		ws.close()
@@ -60,7 +63,7 @@ router.ws('/:gameId', async (ws, req) => {
 		try {
 			handler(msg.data, currentGame, currentPlayerInGame)
 		} catch (e) {
-			console.error(`An unexpected error occurred in game ${currentGame.id}. It will be shut down.`, e)
+			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, e)
 			currentGame.forceShutdown('An error occurred')
 		}
 	})
@@ -71,10 +74,6 @@ router.ws('/:gameId', async (ws, req) => {
 	})
 
 	OutgoingMessageHandlers.notifyAboutInitRequested(currentPlayer)
-})
-
-router.use((err, req, res, next) => {
-	console.error(err)
 })
 
 module.exports = router

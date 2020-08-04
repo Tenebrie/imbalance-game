@@ -47,6 +47,11 @@ const editorModule = createModule({
 			state.renderedCards.push(renderedCard)
 		},
 
+		clearRenderedCards(state): void {
+			state.renderQueue = []
+			state.renderedCards = []
+		},
+
 		updateEditorDeck(state, newDeck: PopulatedEditorDeck): void {
 			const oldDeck = state.decks.find(deck => deck.id === newDeck.id)
 			state.decks[state.decks.indexOf(oldDeck)] = newDeck
@@ -110,12 +115,17 @@ const editorModule = createModule({
 		async deleteDeck(context, payload: { deckId: string }): Promise<number> {
 			const { state, commit } = moduleActionContext(context, editorModule)
 
-			const statusCode = (await axios.delete(`/api/decks/${payload.deckId}`)).status
-			if (statusCode === 204) {
-				const updatedDecks = state.decks.filter(deck => deck.id !== payload.deckId)
-				commit.setDecks(updatedDecks)
+			try {
+				const response = await axios.delete(`/api/decks/${payload.deckId}`)
+				const statusCode = response.status
+				if (statusCode === 204) {
+					const updatedDecks = state.decks.filter(deck => deck.id !== payload.deckId)
+					commit.setDecks(updatedDecks)
+				}
+				return statusCode
+			} catch (e) {
+				return e.response.status
 			}
-			return statusCode
 		},
 
 		async loadDecks(context): Promise<void> {

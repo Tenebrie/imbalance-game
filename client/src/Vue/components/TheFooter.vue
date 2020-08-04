@@ -1,32 +1,10 @@
 <template>
 	<div class="the-footer">
-		<div class="info"><b>Contact:</b> notgwent@tenebrie.com • <b>Version:</b> v1.6 (16.06.2020)</div>
+		<div class="info"><b>Contact:</b> notgwent@tenebrie.com • <b>Version:</b> v1.7 (04.08.2020)</div>
 	</div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import store from '@/Vue/store'
-
-export default Vue.extend({
-	components: {
-	},
-
-	data: () => ({
-
-	}),
-
-	computed: {
-		isInGame() {
-			return store.getters.gameStateModule.isInGame
-		}
-	},
-
-	methods: {
-
-	}
-})
-</script>
+<script lang="ts" />
 
 <style scoped lang="scss">
 	.the-footer {
@@ -38,6 +16,10 @@ export default Vue.extend({
 		.info {
 			padding: 4px 8px;
 			text-align: end;
+		}
+
+		@media only screen and (max-width: 1900px) {
+			display: none;
 		}
 	}
 </style>

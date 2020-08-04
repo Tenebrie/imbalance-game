@@ -8,13 +8,19 @@ import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import { createDirectStore } from 'direct-vuex'
 import EditorModule from '@/Vue/store/modules/EditorModule'
 import GameStateModule from '@/Vue/store/modules/GameStateModule'
+import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
+import PopupModule from '@/Vue/store/modules/PopupModule'
+import GameLogModule from '@/Vue/store/modules/GameLogModule'
 
 Vue.use(Vuex)
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {
 		editor: EditorModule,
-		gameStateModule: GameStateModule
+		gameLogModule: GameLogModule,
+		gameStateModule: GameStateModule,
+		popupModule: PopupModule,
+		userPreferencesModule: UserPreferencesModule
 	},
 
 	state: {
@@ -56,7 +62,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	actions: {
 		async logout(context): Promise<void> {
 			const { commit } = rootActionContext(context)
-			await axios.post('/api/logout')
+			await axios.delete('/api/session')
 			commit.resetPlayerData()
 			await router.push({ name: 'login' })
 		},

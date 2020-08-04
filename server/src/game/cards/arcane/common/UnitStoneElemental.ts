@@ -4,35 +4,52 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
-import SimpleTargetDefinitionBuilder from '../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
-import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
-import ServerUnit from '../../../models/ServerUnit'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
-import ServerAnimation from '../../../models/ServerAnimation'
 import CardFaction from '@shared/enums/CardFaction'
+import TargetMode from '@shared/enums/TargetMode'
+import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition'
+import ServerUnit from '../../../models/ServerUnit'
+import BuffStun from '../../../buffs/BuffStun'
+import BuffDuration from '@shared/enums/BuffDuration'
+import GameEventType from '@shared/enums/GameEventType'
+import {TurnEndedEventArgs} from '../../../models/GameEventCreators'
+import CardLocation from '@shared/enums/CardLocation'
+import ServerAnimation from '../../../models/ServerAnimation'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class UnitStoneElemental extends ServerCard {
-	damage = 4
+	canAttack = false
 
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 7
+		this.baseAttack = 3
+		this.baseAttackRange = 2
 		this.baseTribes = [CardTribe.ELEMENTAL]
-		this.dynamicTextVariables = {
-			damage: this.damage
-		}
+
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
+			.perform(() => {
+				this.canAttack = true
+			})
+
+		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED, [CardLocation.BOARD])
+			.require(({ player }) => player === this.owner)
+			.perform(() => this.onTurnEnded())
 	}
 
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
-			.singleTarget()
-			.allow(TargetType.UNIT)
-			.notSelf()
+	defineValidOrderTargets(): TargetDefinitionBuilder {
+		return TargetDefinition.defaultUnitOrder(this.game)
+			.actions(this.canAttack ? 1 : 0)
+			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT, this.canAttack ? 1 : 0)
 	}
 
-	onUnitPlayTargetUnitSelected(thisUnit: ServerUnit, target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.unitAttacksUnits(thisUnit, [target], this.damage))
-		target.dealDamage(ServerDamageInstance.fromUnit(this.damage, thisUnit))
+	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode) {
+		this.canAttack = false
+		target.buffs.add(BuffStun, this, BuffDuration.END_OF_NEXT_TURN)
+		this.game.animation.play(ServerAnimation.cardReceivedBuff([target.card], BuffAlignment.NEGATIVE))
+	}
+
+	private onTurnEnded(): void {
+		this.canAttack = false
 	}
 }
