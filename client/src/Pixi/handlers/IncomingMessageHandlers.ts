@@ -369,7 +369,7 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		card.buffs.findBuffById(data.id).intensity = data.intensity
-		if (Core.player.cardHand.unitCards.includes(this.card)) {
+		if (Core.player.cardHand.unitCards.includes(card)) {
 			Core.player.cardHand.sortCards()
 		}
 	},
@@ -381,7 +381,7 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		card.buffs.findBuffById(data.id).duration = data.duration
-		if (Core.player.cardHand.unitCards.includes(this.card)) {
+		if (Core.player.cardHand.unitCards.includes(card)) {
 			Core.player.cardHand.sortCards()
 		}
 	},

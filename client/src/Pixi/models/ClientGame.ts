@@ -24,6 +24,11 @@ export default class ClientGame {
 	public findCardById(cardId: string): Card | CardMessage | null {
 		const players = [Core.player, Core.opponent]
 
+		const cardInLimbo = Core.input.cardLimbo.find(card => card.id === cardId)
+		if (cardInLimbo) {
+			return cardInLimbo
+		}
+
 		const cardOnBoard = Core.board.findUnitById(cardId)
 		if (cardOnBoard) {
 			return cardOnBoard.card
