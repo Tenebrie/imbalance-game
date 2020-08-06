@@ -65,10 +65,10 @@ class CardLibrary {
 			referenceInstance.power = referenceInstance.basePower
 			referenceInstance.armor = referenceInstance.baseArmor
 			referenceInstance.attack = referenceInstance.baseAttack
-			referenceInstance.name = `card.name.${className}`
-			referenceInstance.description = `card.description.${className}`
+			referenceInstance.name = `card.${className}.name`
+			referenceInstance.description = `card.${className}.description`
 			if ((referenceInstance.color === CardColor.LEADER || referenceInstance.color === CardColor.GOLDEN) && referenceInstance.type === CardType.UNIT) {
-				referenceInstance.title = `card.title.${className}`
+				referenceInstance.title = `card.${className}.title`
 			}
 			return referenceInstance
 		})

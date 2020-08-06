@@ -27,8 +27,8 @@ export default class ServerBuffContainer implements BuffContainer {
 		const buff = new prototype(this.card.game)
 		const buffClass = buff.constructor.name.substr(0, 1).toLowerCase() + buff.constructor.name.substr(1)
 
-		buff.name = `buff.name.${buffClass}`
-		buff.description = `buff.description.${buffClass}`
+		buff.name = `buff.${buffClass}.name`
+		buff.description = `buff.${buffClass}.description`
 		buff.card = this.card
 		buff.game = this.card.game
 		buff.source = source

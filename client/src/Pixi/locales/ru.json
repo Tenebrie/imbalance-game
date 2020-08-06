@@ -347,7 +347,7 @@
 	"buff.description.buffStun": "Эта карта оглушена. Ее эффект временно отключен.",
 
 	"buff.name.buffTutoredCard": "Временная карта",
-	"buff.description.buffTutoredCard": "Эта карта стоит 0. Она будет сброшена в конце хода, если останется в вашей руке.",
+	"buff.description.buffTutoredCard": "Эта карта стоит может быть сыграна бесплатно. Она будет сброшена в конце хода, если останется в вашей руке.",
 
 	"buff.name.buffUpgradedStorms": "Улучшенные Бури",
 	"buff.description.buffUpgradedStorms": "Ваши Бури улучшены.",
