@@ -9,13 +9,13 @@ import ServerDamageInstance from '../models/ServerDamageSource'
 import ServerGraveyard from '../models/ServerGraveyard'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import Constants from '@shared/Constants'
-import runCardEventHandler from '../utils/runCardEventHandler'
 import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardLibrary from '../libraries/CardLibrary'
 import CardType from '@shared/enums/CardType'
-import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators from '../models/GameEventCreators'
+import CardFeature from '@shared/enums/CardFeature'
+import BuffCreatedCard from '../buffs/BuffCreatedCard'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -102,7 +102,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public summonCardFromUnitDeck(card: ServerCard): void {
-		card.buffs.add(BuffTutoredCard, null, BuffDuration.INFINITY)
+		card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
 		this.cardDeck.removeCard(card)
 		this.cardHand.onUnitDrawn(card)
 	}
@@ -123,7 +123,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	private createCard(card: ServerCard): void {
-		card.buffs.add(BuffTutoredCard, null, BuffDuration.INFINITY)
+		card.buffs.add(BuffCreatedCard, null, BuffDuration.END_OF_THIS_TURN)
 		if (card.type === CardType.UNIT) {
 			this.cardHand.onUnitDrawn(card)
 		} else if (card.type === CardType.SPELL) {
@@ -209,10 +209,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		}))
 	}
 
-	public isAnyActionsAvailable(): boolean {
-		return this.cardHand.canPlayAnyCard() || !!this.game.board.getUnitsOwnedByPlayer(this).find(unit => unit.getValidOrders().length > 0) || this.targetRequired
-	}
-
 	public endTurn(): void {
 		if (this.turnEnded) {
 			return
@@ -224,17 +220,19 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public onTurnEnd(): void {
 		this.cardsPlayed = []
-		this.game.events.postEvent(GameEventCreators.turnEnded({
-			player: this
-		}))
-		this.cardHand.unitCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
+
+		this.cardHand.unitCards.filter(card => card.features.includes(CardFeature.TEMPORARY_CARD)).forEach(card => {
 			this.cardHand.discardCard(card)
 			this.cardGraveyard.addUnit(card)
 		})
-		this.cardHand.spellCards.filter(card => card.buffs.has(BuffTutoredCard)).forEach(card => {
+		this.cardHand.spellCards.filter(card => card.features.includes(CardFeature.TEMPORARY_CARD)).forEach(card => {
 			this.cardHand.discardCard(card)
 			this.cardGraveyard.addSpell(card)
 		})
+
+		this.game.events.postEvent(GameEventCreators.turnEnded({
+			player: this
+		}))
 	}
 
 	public endRound(): void {
@@ -244,6 +242,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.endTurn()
 		this.roundEnded = true
 		OutgoingMessageHandlers.notifyAboutRoundEnded(this)
+		this.onEndRound()
 	}
 
 	public onEndRound(): void {

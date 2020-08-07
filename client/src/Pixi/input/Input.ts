@@ -17,9 +17,15 @@ import CardMessage from '@shared/models/network/CardMessage'
 import Utils from '@/utils/Utils'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
+import store from '@/Vue/store'
 
 const LEFT_MOUSE_BUTTON = 0
 const RIGHT_MOUSE_BUTTON = 2
+
+enum InspectCardMode {
+	CLICK,
+	HOLD,
+}
 
 export default class Input {
 	leftMouseDown = false
@@ -33,6 +39,8 @@ export default class Input {
 	playableCards: ClientCardTarget[] = []
 	forcedTargetingMode: ForcedTargetingMode | null = null
 	forcedTargetingCards: RenderedCard[] = []
+
+	inspectCardMode: InspectCardMode = InspectCardMode.CLICK
 
 	constructor() {
 		const view = Core.renderer.pixi.view
@@ -48,7 +56,9 @@ export default class Input {
 		view.addEventListener('mousemove', (event: MouseEvent) => {
 			this.onMouseMove(event)
 			this.updateCardHoverStatus()
-			if (this.rightMouseDown) { this.inspectCard() }
+			if (this.rightMouseDown && this.inspectCardMode === InspectCardMode.HOLD) {
+				this.inspectCard()
+			}
 		})
 
 		document.addEventListener('contextmenu', this.onContextMenuOpened)
@@ -95,6 +105,13 @@ export default class Input {
 
 	private onMouseDown(event: MouseEvent) {
 		if (this.inspectedCard) {
+			this.releaseInspectedCard()
+			return
+		}
+
+		if (event.button === RIGHT_MOUSE_BUTTON && this.hoveredCard) {
+			this.inspectCardMode = InspectCardMode.CLICK
+			this.inspectCard()
 			return
 		}
 
@@ -118,7 +135,7 @@ export default class Input {
 			this.grabCard()
 		} else if (event.button === RIGHT_MOUSE_BUTTON) {
 			this.rightMouseDown = true
-			this.inspectCard()
+			this.inspectCardMode = InspectCardMode.HOLD
 		}
 	}
 
@@ -131,9 +148,9 @@ export default class Input {
 		if (event.button === LEFT_MOUSE_BUTTON) {
 			this.leftMouseDown = false
 			this.useGrabbedCard()
-		} else if (event.button === RIGHT_MOUSE_BUTTON) {
+		} else if (event.button === RIGHT_MOUSE_BUTTON && this.rightMouseDown) {
 			this.rightMouseDown = false
-			this.inspectedCard = null
+			this.inspectCard()
 		}
 	}
 
@@ -175,11 +192,17 @@ export default class Input {
 	public inspectCard(): void {
 		const hoveredCard = this.hoveredCard
 		if (!hoveredCard) {
-			this.inspectedCard = null
+			this.releaseInspectedCard()
 			return
 		}
 
 		this.inspectedCard = hoveredCard.card
+		store.commit.gameStateModule.setInspectedCard(this.inspectedCard)
+	}
+
+	private releaseInspectedCard(): void {
+		this.inspectedCard = null
+		store.commit.gameStateModule.setInspectedCard(null)
 	}
 
 	public useGrabbedCard(): void {

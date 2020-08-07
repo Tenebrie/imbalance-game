@@ -33,7 +33,6 @@ import GameHookType, {
 import {EventCallback, EventHook} from './ServerGameEvents'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
-import CardKeyword from '@shared/enums/CardKeyword'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -72,11 +71,6 @@ export default class ServerCard extends Card {
 			cost = buff.getSpellCostOverride(cost)
 		})
 		return cost
-	}
-
-	public get keywords(): CardKeyword[] {
-		// TODO: Add auto-resolved keywords here
-		return this.baseKeywords
 	}
 
 	public get tribes(): CardTribe[] {

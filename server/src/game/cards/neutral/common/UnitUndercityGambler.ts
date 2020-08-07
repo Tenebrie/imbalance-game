@@ -6,12 +6,11 @@ import CardFaction from '@shared/enums/CardFaction'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import TargetType from '@shared/enums/TargetType'
-import ServerUnit from '../../../models/ServerUnit'
-import BuffTutoredCard from '../../../buffs/BuffTutoredCard'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitUndercityGambler extends ServerCard {
 	bonusPower = 5
@@ -32,7 +31,7 @@ export default class UnitUndercityGambler extends ServerCard {
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
 		return PostPlayTargetDefinitionBuilder.base(this.game)
 			.require(TargetType.CARD_IN_UNIT_HAND)
-			.validate(TargetType.CARD_IN_UNIT_HAND, args => !args.targetCard.buffs.has(BuffTutoredCard))
+			.validate(TargetType.CARD_IN_UNIT_HAND, args => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
 			.inPlayersHand()
 	}
 

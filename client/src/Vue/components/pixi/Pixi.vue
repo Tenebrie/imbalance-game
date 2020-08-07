@@ -48,26 +48,31 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-	.background {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		background: url('../../assets/background-game.jpg');
-		background-size: cover;
-		background-position-x: center;
-		background-position-y: bottom;
-	}
-	.game-container {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		z-index: 1;
-	}
-	.pixi-user-interface {
-		z-index: 2;
+	.pixi {
+		min-width: 1366px;
+
+		.background {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background: url('../../assets/background-game.jpg');
+			background-size: cover;
+			background-position-x: center;
+			background-position-y: bottom;
+		}
+		.game-container {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: 1;
+			overflow: hidden;
+		}
+		.pixi-user-interface {
+			z-index: 2;
+		}
 	}
 </style>

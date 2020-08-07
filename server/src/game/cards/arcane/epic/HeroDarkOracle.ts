@@ -30,7 +30,7 @@ export default class HeroDarkOracle extends ServerCard {
 			.singleTarget()
 			.require(TargetType.CARD_IN_UNIT_DECK)
 			.inOpponentsDeck()
-			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition < this.cardsToSee))
+			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition >= args.targetCard.owner.cardDeck.unitCards.length - this.cardsToSee))
 	}
 
 	private onTargetSelected(target: ServerCard): void {

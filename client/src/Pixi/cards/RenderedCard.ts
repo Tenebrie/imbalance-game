@@ -6,7 +6,7 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import RichText from '@/Pixi/render/RichText'
-import Utils from '@/utils/Utils'
+import Utils, {snakeToCamelCase} from '@/utils/Utils'
 import CardAttributes from '@/Pixi/render/CardAttributes'
 import CardMessage from '@shared/models/network/CardMessage'
 import ScalingText from '@/Pixi/render/ScalingText'
@@ -90,7 +90,7 @@ export default class RenderedCard extends Card {
 		this.cardNameText.horizontalAlign = RichTextAlign.END
 		this.cardTitleText = this.createTitleText(Localization.get(this.title))
 		this.cardTribeTexts = this.tribes.map(tribe => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
-		this.cardDescriptionText = new RichText(Localization.get(this.description), 350, this.getDescriptionTextVariables())
+		this.cardDescriptionText = new RichText(this.displayedDescription, 350, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.alpha = 0
@@ -209,11 +209,6 @@ export default class RenderedCard extends Card {
 		}
 	}
 
-	public setCardVariables(cardVariables: RichTextVariables): void {
-		this.variables = cardVariables
-		this.cardDescriptionText.textVariables = this.getDescriptionTextVariables()
-	}
-
 	public getPosition(): PIXI.Point {
 		return new PIXI.Point(this.hitboxSprite.position.x, this.hitboxSprite.position.y)
 	}
@@ -232,6 +227,28 @@ export default class RenderedCard extends Card {
 			features = features.concat(buff.cardFeatures.slice())
 		})
 		return features
+	}
+
+	public get displayedDescription(): string {
+		let description = Localization.get(this.description)
+		const featureStrings = this.features
+			.map(feature => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
+			.map(feature => Localization.getValueOrNull(feature))
+			.filter(string => string !== null)
+
+		for (const index in featureStrings) {
+			description = `${featureStrings[index]}<p>${description}`
+		}
+		return description
+	}
+
+	public updateCardDescription(): void {
+		this.cardDescriptionText.text = this.displayedDescription
+	}
+
+	public setCardVariables(cardVariables: RichTextVariables): void {
+		this.variables = cardVariables
+		this.cardDescriptionText.textVariables = this.getDescriptionTextVariables()
 	}
 
 	public isHovered(): boolean {

@@ -157,7 +157,7 @@ export default class TextureAtlas {
 	}
 
 	private static loadTextureOnDemand(path: string): PIXI.Texture {
-		console.log(`Loading '${path}' on demand`)
+		console.info(`Loading '${path}' on demand`)
 		const loadedTexture = PIXI.Texture.from(`/assets/${path}.png`)
 		const clone = this.textures['cards/unitCardBack'.toLowerCase()].clone()
 		loadedTexture.on('update', () => {

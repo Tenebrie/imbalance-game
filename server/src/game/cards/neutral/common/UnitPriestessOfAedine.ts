@@ -39,7 +39,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			.notSelf()
 			.allow(TargetType.UNIT, this.targets)
 			.unique(TargetType.UNIT)
-			.label(TargetType.UNIT, 'card.target.unitPriestessOfAedine.heal')
+			.label(TargetType.UNIT, 'card.unitPriestessOfAedine.target.heal')
 			.validate(TargetType.UNIT, args => args.targetUnit.card.power < args.targetUnit.card.basePower)
 	}
 

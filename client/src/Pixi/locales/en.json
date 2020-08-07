@@ -81,6 +81,27 @@
 	"card.faction.experimental": "Experimental",
 	"editor.faction.unfinished": "Unfinished",
 
+	"card.inspect.power": "Power",
+	"card.inspect.armor": "Armor",
+	"card.inspect.manacost": "Manacost",
+	"card.inspect.stat.base": "Base",
+	"card.inspect.stat.current": "Current",
+	"card.inspect.stat.maximum": "Maximum",
+	"card.inspect.buffs": "Buffs",
+	"card.inspect.buffs.turnsRemaining": "Turns remaining",
+	"card.inspect.keywords": "Keywords",
+
+	"card.feature.keywordCreate.name": "Create",
+	"card.feature.keywordCreate.description": "Add a card into your hand. It gets 'Temporary Card'.",
+	"card.feature.keywordSummon.name": "Summon",
+	"card.feature.keywordSummon.description": "Move a card from your deck into your hand. It gets 'Temporary Card'.",
+	"card.feature.heroPower.name": "Leader Power",
+	"card.feature.heroPower.description": "When played, this card returns to your deck.",
+	"card.feature.heroPower.text": "*Leader Power*",
+	"card.feature.temporaryCard.name": "Temporary card",
+	"card.feature.temporaryCard.description": "This card can be played for free. It will be discarded at the end of the turn if not played.",
+	"card.feature.temporaryCard.text": "<c=orange>Temporary card</c>",
+
 	"card.color.leader": "Leader",
 	"card.color.golden": "Legendary",
 	"card.color.silver": "Epic",
@@ -99,7 +120,7 @@
 	"card.tribe.valkyrie": "Valkyrie",
 	"card.tribe.elemental": "Elemental",
 
-	"card.name.hidden": "[Hidden card]",
+	"card.hidden.name": "[Hidden card]",
 
 	"card.leaderVelElleron.name": "Vel'Elleron",
 	"card.leaderVelElleron.title": "The Battlemage",
@@ -292,35 +313,35 @@
 	"card.spellHealingRain.description": "Restore {healing} Power to all allied units.<p><i>Healing increases by {healingPerStorm} for every *Storm* card in your Graveyard.</i>",
 
 	"card.spellSteelSpark.name": "Steel Spark",
-	"card.spellSteelSpark.description": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
+	"card.spellSteelSpark.description": "Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
 
 	"card.spellAnEncouragement.name": "An Encouragement",
-	"card.spellAnEncouragement.description": "*Leader Power*<p>Choose an allied unit.\nNext turn, it gains {bonusPower} Power.",
+	"card.spellAnEncouragement.description": "Choose an allied unit.\nNext turn, it gains {bonusPower} Power.",
 
 	"card.spellFireball.name": "Fireball",
-	"card.spellFireball.description": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Deal {areaDamage} Damage to all adjacent units.",
+	"card.spellFireball.description": "Deal {damage} Damage to an enemy unit.<p>Deal {areaDamage} Damage to all adjacent units.",
 
 	"card.spellFieryEntrance.name": "Fiery Entrance",
-	"card.spellFieryEntrance.description": "*Leader Power*<p>*Summon* a top card from your deck.",
+	"card.spellFieryEntrance.description": "*Summon* a top card from your deck.",
 
 	"card.spellShadowSpark.name": "Shadow Spark",
-	"card.spellShadowSpark.description": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",
+	"card.spellShadowSpark.description": "Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",
 
 	"card.spellNightmareDrain.name": "Living Nightmare",
-	"card.spellNightmareDrain.description": "*Leader Power*<p>Choose a damaged unit.<p>Spawn a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
+	"card.spellNightmareDrain.description": "Choose a damaged unit.<p>Spawn a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
 
 	"card.spellCrystalBarrage.name": "Crystal Barrage",
-	"card.spellCrystalBarrage.description": "*Leader Power*<p>Choose an enemy row.<p>Spawn *Volatile Crystals* around every unit on this row.",
+	"card.spellCrystalBarrage.description": "Choose an enemy row.<p>Spawn *Volatile Crystals* around every unit on this row.",
 
 	"card.spellShadowArmy.name": "Army of Shadows",
-	"card.spellShadowArmy.description": "*Leader Power*<p>*Create* a copy of an allied unit.\n<if showPowerThreshold>If it has {powerThreshold} Power or less, repeat this effect.<p><i>This value decreases by {thresholdDecrease} after every copy.</i></if>",
+	"card.spellShadowArmy.description": "*Create* a copy of an allied unit.\n<if showPowerThreshold>If it has {powerThreshold} Power or less, repeat this effect.<p><i>This value decreases by {thresholdDecrease} after every copy.</i></if>",
 	"card.spellShadowArmy.target": "Create a copy\n<i>Power threshold is ({powerThreshold})</i>",
 
 	"card.spellFlamingSpark.name": "Flaming Spark",
-	"card.spellFlamingSpark.description": "*Leader Power*<p>Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
+	"card.spellFlamingSpark.description": "Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
 
 	"card.spellFlameweave.name": "Flameweave",
-	"card.spellFlameweave.description": "*Leader Power*<p>Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
+	"card.spellFlameweave.description": "Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
 
 	"buff.buffBurning.name": "Burning",
 	"buff.buffBurning.description": "This card takes damage every turn.",
@@ -346,8 +367,11 @@
 	"buff.buffStun.name": "Stun",
 	"buff.buffStun.description": "This card is stunned and is temporarily disabled.",
 
-	"buff.buffTutoredCard.name": "Temporary Card",
-	"buff.buffTutoredCard.description": "This card can be played for free. It will be discarded at the end of the turn if not played.",
+	"buff.buffTutoredCard.name": "Tutored Card",
+	"buff.buffTutoredCard.description": "This card has 'Temporary card'.",
+
+	"buff.buffCreatedCard.name": "Created Card",
+	"buff.buffCreatedCard.description": "This card has 'Temporary card'.",
 
 	"buff.buffUpgradedStorms.name": "Upgraded Storms",
 	"buff.buffUpgradedStorms.description": "Your Storms are upgraded.",

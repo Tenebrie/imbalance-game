@@ -5,7 +5,6 @@ import CardColor from '../enums/CardColor'
 import RichTextVariables from './RichTextVariables'
 import CardFeature from '../enums/CardFeature'
 import CardFaction from '../enums/CardFaction'
-import CardKeyword from '../enums/CardKeyword'
 
 export default class Card {
 	id: string
@@ -19,7 +18,6 @@ export default class Card {
 	buffs: BuffContainer
 	baseTribes: CardTribe[]
 	baseFeatures: CardFeature[]
-	baseKeywords: CardKeyword[]
 	baseRelatedCards: string[]
 	description: string
 	variables: RichTextVariables

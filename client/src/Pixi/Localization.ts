@@ -3,7 +3,7 @@ import en from '@/Pixi/locales/en.json'
 import ru from '@/Pixi/locales/ru.json'
 
 class Localization {
-	public get(id: string): string {
+	public getValueOrNull(id: string): string | null {
 		let localizationJson: {[ index: string]: string}
 		const language = store.state.userPreferencesModule.userLanguage
 		if (language === 'en') {
@@ -11,8 +11,11 @@ class Localization {
 		} else {
 			localizationJson = ru
 		}
+		return localizationJson[id] || en[id] || null
+	}
 
-		return localizationJson[id] || en[id] || id
+	public get(id: string): string {
+		return this.getValueOrNull(id) || id
 	}
 }
 

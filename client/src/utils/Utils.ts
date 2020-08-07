@@ -22,6 +22,13 @@ export const forEachInStringEnum = (enumeration: any, handler: (val: any) => any
 	}
 }
 
+export const snakeToCamelCase = (str) => str.toLowerCase().replace(
+	/([-_][a-z])/g,
+	(group) => group.toUpperCase()
+		.replace('-', '')
+		.replace('_', '')
+)
+
 export default {
 	getFont(text: string) {
 		let font = 'Roboto'

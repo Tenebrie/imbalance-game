@@ -17,6 +17,7 @@ export default class ClientBuffContainer implements BuffContainer {
 
 	public add(buff: ClientBuff): void {
 		this.buffs.push(buff)
+		this.card.updateCardDescription()
 		if (Core.player.cardHand.unitCards.includes(this.card)) {
 			Core.player.cardHand.sortCards()
 		}
@@ -41,6 +42,7 @@ export default class ClientBuffContainer implements BuffContainer {
 
 	public remove(buffMessage: BuffMessage): void {
 		this.buffs.splice(this.buffs.indexOf(this.findBuffById(buffMessage.id)), 1)
+		this.card.updateCardDescription()
 		if (Core.player.cardHand.unitCards.includes(this.card)) {
 			Core.player.cardHand.sortCards()
 		}

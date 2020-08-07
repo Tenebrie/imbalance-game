@@ -17,6 +17,7 @@ import Utils from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import {inspectedCardRenderer} from './InspectedCardRenderer'
 import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
+import {debounce, throttle} from 'throttle-debounce'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -88,6 +89,7 @@ export default class Renderer {
 		this.pixi.view.style.maxWidth = '100vw'
 		this.pixi.view.style.maxHeight = '100vh'
 		container.appendChild(this.pixi.view)
+		this.pixi.view.style['min-width'] = '1366px'
 		this.container = container
 
 		/* Time label */
@@ -241,7 +243,14 @@ export default class Renderer {
 	}
 
 	public resize(): void {
-		this.pixi.renderer.resize(window.innerWidth * window.devicePixelRatio * this.superSamplingLevel, window.innerHeight * window.devicePixelRatio * this.superSamplingLevel)
+		this.debouncedResizedFunc()()
+	}
+
+	private debouncedResizedFunc(): Function {
+		return throttle(100, () => {
+			const width = Math.max(1366, window.innerWidth * window.devicePixelRatio)
+			this.pixi.renderer.resize(width * this.superSamplingLevel, window.innerHeight * window.devicePixelRatio * this.superSamplingLevel)
+		})
 	}
 
 	public registerCard(card: RenderedCard): void {

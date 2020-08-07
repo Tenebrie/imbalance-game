@@ -37,7 +37,7 @@ export default class SpellShadowArmy extends ServerCard {
 		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
 			.require(TargetType.UNIT, this.allowedTargets)
 			.alliedUnit()
-			.label(TargetType.UNIT, 'card.target.spellShadowArmy')
+			.label(TargetType.UNIT, 'card.spellShadowArmy.target')
 			.validate(TargetType.UNIT, args => !this.copiedUnits.includes(args.targetUnit))
 	}
 

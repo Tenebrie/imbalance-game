@@ -42,7 +42,7 @@ export default class ServerBuff implements Buff {
 		this.game = game
 		this.stackType = stackType
 		this.alignment = BuffAlignment.NEUTRAL
-		this.baseDuration = 999
+		this.baseDuration = Infinity
 		this.baseIntensity = 1
 		this.cardTribes = []
 		this.buffFeatures = []
