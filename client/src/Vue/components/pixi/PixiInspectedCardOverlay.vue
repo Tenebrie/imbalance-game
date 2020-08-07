@@ -47,7 +47,7 @@
 				<span class="object-name">{{ $locale.get(buff.name) }}: </span>
 				<span>{{ $locale.get(buff.description) }}</span>
 				<span v-if="buff.duration !== Infinity">
-					({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ buff.duration }})
+					({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ Math.ceil(buff.duration / 2) }})
 				</span>
 			</div>
 		</div>

@@ -66,6 +66,10 @@ export default class Input {
 
 	public tick(): void {
 		this.updateCardHoverStatus()
+		if (this.grabbedCard && this.grabbedCard.isLongClicked()) {
+			this.releaseCard()
+			this.inspectCard()
+		}
 	}
 
 	public updateCardHoverStatus(): void {
@@ -109,14 +113,19 @@ export default class Input {
 			return
 		}
 
-		if (event.button === RIGHT_MOUSE_BUTTON && this.hoveredCard) {
-			this.inspectCardMode = InspectCardMode.CLICK
-			this.inspectCard()
+		if (event.button === LEFT_MOUSE_BUTTON && this.grabbedCard) {
+			this.useGrabbedCard()
 			return
 		}
 
 		if (event.button === RIGHT_MOUSE_BUTTON && this.grabbedCard) {
 			this.releaseCard()
+			return
+		}
+
+		if (event.button === RIGHT_MOUSE_BUTTON && this.hoveredCard) {
+			this.inspectCardMode = InspectCardMode.CLICK
+			this.inspectCard()
 			return
 		}
 
@@ -147,7 +156,9 @@ export default class Input {
 
 		if (event.button === LEFT_MOUSE_BUTTON) {
 			this.leftMouseDown = false
-			this.useGrabbedCard()
+			if (this.grabbedCard && !this.grabbedCard.shouldStick()) {
+				this.useGrabbedCard()
+			}
 		} else if (event.button === RIGHT_MOUSE_BUTTON && this.rightMouseDown) {
 			this.rightMouseDown = false
 			this.inspectCard()
