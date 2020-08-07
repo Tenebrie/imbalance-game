@@ -38,6 +38,12 @@ export default class ClientGame {
 		if (cardInStack) {
 			return cardInStack
 		}
+
+		const cardInRequiredTargets = Core.input.forcedTargetingCards.find(card => card.id === cardId)
+		if (cardInRequiredTargets) {
+			return cardInRequiredTargets
+		}
+
 		for (let i = 0; i < players.length; i++) {
 			const player = players[i]
 			if (player.leader && player.leader.id === cardId) {
