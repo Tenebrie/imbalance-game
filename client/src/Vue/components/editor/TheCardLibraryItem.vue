@@ -1,6 +1,10 @@
 <template>
-	<div class="the-card-library-item" @click="onClick" :class="customClass">
-	</div>
+	<div class="the-card-library-item"
+		 :class="customClass"
+		 @click="onClick"
+		 @mouseenter="onMouseEnter"
+		 @mouseleave="onMouseLeave"
+	/>
 </template>
 
 <script lang="ts">
@@ -10,6 +14,7 @@ import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import Card from '@shared/models/Card'
 import Utils from '@/utils/Utils'
 import CardColor from '@shared/enums/CardColor'
+import * as PIXI from 'pixi.js'
 
 export default Vue.extend({
 	props: {
@@ -18,6 +23,10 @@ export default Vue.extend({
 			required: true
 		}
 	},
+
+	data: () => ({
+		hoverInfoTimer: null as number | null
+	}),
 
 	watch: {
 		renderedCard(newValue: RenderedEditorCard | null): void {
@@ -68,6 +77,27 @@ export default Vue.extend({
 				deckId: deckId,
 				cardToAdd: this.card
 			})
+		},
+
+		onMouseEnter(): void {
+			this.hoverInfoTimer = setTimeout(() => {
+				const element = this.$el
+				const boundingBox = element.getBoundingClientRect()
+				store.dispatch.editor.inspectedCard.setCard({
+					card: this.card,
+					position: new PIXI.Point(boundingBox.right, boundingBox.top),
+					scrollCallback: this.onParentScroll.bind(this)
+				})
+			}, 750)
+		},
+
+		onParentScroll(): void {
+			this.onMouseLeave()
+		},
+
+		onMouseLeave(): void {
+			clearTimeout(this.hoverInfoTimer)
+			store.commit.editor.inspectedCard.setCard(null)
 		}
 	}
 })

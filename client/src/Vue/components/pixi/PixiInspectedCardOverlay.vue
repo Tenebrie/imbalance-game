@@ -1,6 +1,6 @@
 <template>
-	<div class="pixi-inspected-card-overlay" v-if="this.inspectedCard" :style="positionStyle">
-		<div class="card-info-section">
+	<div class="pixi-inspected-card-overlay" v-if="this.inspectedCard" :style="positionStyle" ref="overlayRef">
+		<div class="card-info-section" v-if="this.isInGame">
 			<div v-if="this.inspectedCard.type === CardType.UNIT" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.power') }}:</div>
 				<span>{{ $locale.get('card.inspect.stat.base') }}: </span>
@@ -26,8 +26,8 @@
 				<span>{{ $locale.get('card.inspect.stat.current') }}: </span>
 				<b>{{ this.inspectedCard.power }}</b>
 			</div>
+			<div class="menu-separator" />
 		</div>
-		<div class="menu-separator" />
 		<div class="card-info-section" v-if="this.displayedFeatures.length > 0">
 			<div class="header">{{ $locale.get('card.inspect.keywords') }}:</div>
 			<div class="line" v-for="feature in this.displayedFeatures" :key="feature">
@@ -55,45 +55,65 @@
 </template>
 
 <script lang="ts">
+import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
-import {computed} from '@vue/composition-api'
-import {CARD_ASPECT_RATIO, getRenderScale} from '@/Pixi/renderer/RendererUtils'
+import {computed, ref} from '@vue/composition-api'
+import {CARD_ASPECT_RATIO, CARD_HEIGHT, getRenderScale} from '@/Pixi/renderer/RendererUtils'
 import Core from '@/Pixi/Core'
 import {INSPECTED_CARD_WINDOW_FRACTION} from '@/Pixi/renderer/InspectedCardRenderer'
 import CardType from '@shared/enums/CardType'
 import {snakeToCamelCase} from '@/utils/Utils'
 import CardFeature from '@shared/enums/CardFeature'
 import Localization from '@/Pixi/Localization'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Card from '@shared/models/Card'
 
 const setup = () => {
-	const inspectedCard = computed(() => store.getters.gameStateModule.inspectedCard)
-	const superSamplingLevel = computed(() => getRenderScale().superSamplingLevel)
-
-	const cardHeight = computed(() => {
-		return Core.renderer.pixi.view.height * INSPECTED_CARD_WINDOW_FRACTION
+	const isInGame = computed<boolean>(() => store.getters.gameStateModule.isInGame)
+	const inspectedCard = computed<Card>(() => {
+		return (isInGame && store.getters.gameStateModule.inspectedCard) || store.getters.editor.inspectedCard.card
 	})
-	const cardWidth = computed(() => {
+	const superSamplingLevel = computed<number>(() => getRenderScale().superSamplingLevel)
+
+	const cardHeight = computed<number>(() => {
+		return Core.renderer ? Core.renderer.pixi.view.height * INSPECTED_CARD_WINDOW_FRACTION : CARD_HEIGHT / 2
+	})
+	const cardWidth = computed<number>(() => {
 		return cardHeight.value * CARD_ASPECT_RATIO
 	})
 
-	const displayArmor = computed(() => {
+	const displayArmor = computed<boolean>(() => {
 		return inspectedCard.value.armor > 0 || inspectedCard.value.maxArmor > 0 || inspectedCard.value.baseArmor > 0
 	})
 
-	const displayedFeatures = computed(() => {
-		return inspectedCard.value.features.filter(feature => Localization.getValueOrNull(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`))
+	const displayedFeatures = computed<CardFeature[]>(() => {
+		const features = inspectedCard.value instanceof RenderedCard ? inspectedCard.value.features : inspectedCard.value.baseFeatures
+		return features.filter(feature => Localization.getValueOrNull(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`))
+	})
+
+	const overlayRef = ref<HTMLDivElement>()
+	const editorModeOffset = computed<PIXI.Point>(() => {
+		const offset = new PIXI.Point(0, 0)
+		if (overlayRef.value) {
+			const boundingBox = overlayRef.value.getBoundingClientRect()
+			offset.set(Math.min(0, window.innerWidth - boundingBox.right), Math.min(window.innerHeight - boundingBox.bottom, 0))
+		}
+		return offset
 	})
 
 	return {
+		isInGame,
 		cardWidth,
 		cardHeight,
+		overlayRef,
 		displayArmor,
 		displayedFeatures,
 		superSamplingLevel,
 		inspectedCard,
+		editorModeOffset,
 		CardType: CardType,
 		CardFeature: CardFeature,
-		snakeToCamelCase: snakeToCamelCase
+		snakeToCamelCase: snakeToCamelCase,
 	}
 }
 
@@ -101,9 +121,16 @@ export default {
 	setup: setup,
 	computed: {
 		positionStyle() {
-			return {
-				top: `calc(50% - ${this.cardHeight / 2 / this.superSamplingLevel}px`,
-				left: `calc(50% + ${this.cardWidth / 2 / this.superSamplingLevel}px`,
+			if (this.isInGame) {
+				return {
+					top: `calc(50% - ${this.cardHeight / 2 / this.superSamplingLevel}px`,
+					left: `calc(50% + ${this.cardWidth / 2 / this.superSamplingLevel}px`,
+				}
+			} else {
+				return {
+					top: `calc(${this.editorModeOffset.y}px - 50px)`,
+					left: `calc(${this.editorModeOffset.x}px - 50px)`,
+				}
 			}
 		}
 	}
@@ -120,9 +147,10 @@ export default {
 		background: black;
 		margin: 4px;
 		padding: 8px 16px;
-		background: rgba(#000000, 0.6);
+		background: rgba(#000000, 0.8);
 		border-radius: 10px;
 		font-size: 20px;
+		// border: 1px solid darkorange;
 
 		.card-base-stats {
 			text-align: start;

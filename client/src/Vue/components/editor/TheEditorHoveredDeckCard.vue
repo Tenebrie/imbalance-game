@@ -1,0 +1,74 @@
+<template>
+	<div class="the-editor-hovered-deck-card" :style="this.overlayPosition" ref="overlayRef">
+		<pixi-library-card class="card" :card="this.hoveredDeckCard" :vertical-offset="this.editorModeOffset.y" />
+	</div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import store from '@/Vue/store'
+import Card from '@shared/models/Card'
+import * as PIXI from 'pixi.js'
+import {computed, ref} from '@vue/composition-api'
+import PixiLibraryCard from '@/Vue/components/pixi/PixiLibraryCard.vue'
+
+const setup = () => {
+	const overlayRef = ref<HTMLDivElement>()
+
+	const overlayPosition = computed(() => {
+		return {
+			top: `calc(${store.state.editor.hoveredDeckCard.position.y}px - 48px)`,
+		}
+	})
+
+	const editorModeOffset = computed<PIXI.Point>(() => {
+		const offset = new PIXI.Point(0, 0)
+
+		if (overlayRef.value) {
+			offset.set(
+				Math.min(0, window.innerWidth - overlayRef.value.offsetLeft),
+				Math.min(window.innerHeight - store.state.editor.hoveredDeckCard.position.y - overlayRef.value.clientHeight, 0)
+			)
+		}
+		return offset
+	})
+
+	const hoveredDeckCard = computed<Card | null>(() => store.getters.editor.hoveredDeckCard.card)
+
+	return {
+		overlayRef,
+		overlayPosition,
+		editorModeOffset,
+		hoveredDeckCard,
+	}
+}
+
+export default Vue.extend({
+	components: {
+		PixiLibraryCard
+	},
+
+	setup: setup,
+})
+</script>
+
+<style scoped lang="scss">
+	@import "../../styles/generic";
+
+	.the-editor-hovered-deck-card {
+		position: absolute;
+		pointer-events: none;
+		display: flex;
+		justify-content: center;
+		width: calc(408px / 1.5);
+		height: calc(584px / 1.5);
+		right: 100%;
+		margin-top: -4px;
+
+		.card {
+			display: flex;
+			width: 100%;
+			height: 100%;
+		}
+	}
+</style>

@@ -15,6 +15,7 @@
 import store from '@/Vue/store'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
 import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
+import { RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 
 export default {
 	components: { TheNavigationBar },
@@ -22,11 +23,13 @@ export default {
 	async mounted() {
 		AudioSystem.setMode(AudioSystemMode.MENU)
 		window.addEventListener('keydown', this.onKeyDown)
+		window.addEventListener('contextmenu', this.onContextMenu)
 		this.printConsoleWelcomeMessage()
 	},
 
 	beforeDestroy() {
 		window.removeEventListener('keydown', this.onKeyDown)
+		window.removeEventListener('contextmenu', this.onContextMenu)
 	},
 
 	computed: {
@@ -54,6 +57,14 @@ export default {
 			}
 		},
 
+		onContextMenu(event: MouseEvent): boolean {
+			if (!event.ctrlKey && !event.shiftKey) {
+				event.preventDefault()
+				return false
+			}
+			return true
+		},
+
 		printConsoleWelcomeMessage(): void {
 			const headerStyle = 'color: #bada55; padding: 4px; font-size: 24px'
 			const textStyle = 'color: #bada55; padding:4px; font-size: 14px'
@@ -61,12 +72,13 @@ export default {
 
 			const message = 'If you DO know what you\'re doing, have fun hacking!\n'
 				+ 'This is an open-source project. You can find the code at https://github.com/Tenebrie/notgwent-game.'
-				+ ' If you find a bug or an exploit, or you have a feature request, feel free to open an issue on GitHub.'
+				+ ' If you find a bug or an exploit, or if you have a feature request, feel free to open an issue on GitHub.'
 				+ ' You can also make a pull request with a fix. Contributions are welcome!'
 
 			console.info('%cHowdy!', headerStyle)
 			console.info('%cIf you don\'t know what you\'re doing, be VERY careful! Don\'t paste here anything that you do not understand!', warningStyle)
 			console.info(`%c${message}`, textStyle)
+			console.info('%cAlso, you can summon browser context menu by using Shift or Ctrl when right-clicking an element.', textStyle)
 		}
 	}
 }

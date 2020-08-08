@@ -7,13 +7,20 @@ import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import CardMessage from '@shared/models/network/CardMessage'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import Utils from '@/utils/Utils'
+import Constants from '@shared/Constants'
 import CardColor from '@shared/enums/CardColor'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
-import Constants from '@shared/Constants'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
+import {hoveredDeckCardModule, inspectedCardModule} from '@/Vue/store/modules/EditorCardModules'
 
 const editorModule = createModule({
 	namespaced: true,
+
+	modules: {
+		inspectedCard: inspectedCardModule,
+		hoveredDeckCard: hoveredDeckCardModule,
+	},
+
 	state: {
 		decks: [] as PopulatedEditorDeck[],
 		currentDeckId: null as string | null,
@@ -55,7 +62,7 @@ const editorModule = createModule({
 		updateEditorDeck(state, newDeck: PopulatedEditorDeck): void {
 			const oldDeck = state.decks.find(deck => deck.id === newDeck.id)
 			state.decks[state.decks.indexOf(oldDeck)] = newDeck
-		}
+		},
 	},
 
 	getters: {
@@ -207,7 +214,7 @@ const editorModule = createModule({
 			const { commit } = moduleActionContext(context, editorModule)
 
 			commit.addToRenderQueue(payload.card)
-		},
+		}
 	}
 })
 

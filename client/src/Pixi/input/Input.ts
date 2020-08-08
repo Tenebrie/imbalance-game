@@ -19,8 +19,8 @@ import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import store from '@/Vue/store'
 
-const LEFT_MOUSE_BUTTON = 0
-const RIGHT_MOUSE_BUTTON = 2
+export const LEFT_MOUSE_BUTTON = 0
+export const RIGHT_MOUSE_BUTTON = 2
 
 enum InspectCardMode {
 	CLICK,
@@ -60,8 +60,6 @@ export default class Input {
 				this.inspectCard()
 			}
 		})
-
-		document.addEventListener('contextmenu', this.onContextMenuOpened)
 	}
 
 	public tick(): void {
@@ -108,6 +106,10 @@ export default class Input {
 	}
 
 	private onMouseDown(event: MouseEvent) {
+		if (event.button === RIGHT_MOUSE_BUTTON && (event.ctrlKey || event.shiftKey)) {
+			return
+		}
+
 		if (this.inspectedCard) {
 			this.releaseInspectedCard()
 			return
@@ -300,11 +302,6 @@ export default class Input {
 		return cardInLimbo
 	}
 
-	private onContextMenuOpened(event: MouseEvent) {
-		event.preventDefault()
-		return false
-	}
-
 	public clearCardInLimbo(cardMessage: CardMessage): void {
 		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardMessage.id)
 	}
@@ -333,9 +330,5 @@ export default class Input {
 		this.forcedTargetingMode = null
 		this.forcedTargetingCards.forEach(card => card.unregister())
 		this.forcedTargetingCards = []
-	}
-
-	public clear() {
-		document.removeEventListener('contextmenu', this.onContextMenuOpened)
 	}
 }

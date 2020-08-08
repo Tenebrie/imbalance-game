@@ -96,7 +96,6 @@ export default class Core {
 		}
 		clearInterval(Core.keepaliveTimer)
 		AudioSystem.setMode(AudioSystemMode.MENU)
-		Core.input.clear()
 		Core.mainHandler.stop()
 		Core.renderer.destroy()
 		store.dispatch.leaveGame()

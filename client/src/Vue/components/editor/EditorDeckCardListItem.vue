@@ -1,5 +1,5 @@
 <template>
-	<div class="editor-deck-card-list-item" :class="colorClass" @click="onClick">
+	<div class="editor-deck-card-list-item" :class="colorClass" @click="onClick" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
 		<span class="power" v-if="showPower">{{ card.basePower }}</span>
 		<span class="name">{{ fullName }}<span class="count" v-if="displayCount">x{{ card.count }}</span></span>
 	</div>
@@ -7,6 +7,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
@@ -54,6 +55,27 @@ export default Vue.extend({
 				deckId: deckId,
 				cardToRemove: this.card
 			})
+			if (!store.getters.editor.deck(deckId).cards.find(card => card.id === this.card.id)) {
+				store.commit.editor.hoveredDeckCard.setCard(null)
+			}
+		},
+
+		onMouseEnter(): void {
+			const element = this.$el
+			const boundingBox = element.getBoundingClientRect()
+			store.dispatch.editor.hoveredDeckCard.setCard({
+				card: this.card,
+				position: new PIXI.Point(boundingBox.left, boundingBox.top),
+				scrollCallback: this.onParentScroll.bind(this)
+			})
+		},
+
+		onParentScroll(): void {
+			this.onMouseLeave()
+		},
+
+		onMouseLeave(): void {
+			store.commit.editor.hoveredDeckCard.setCard(null)
 		}
 	}
 })
