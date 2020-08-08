@@ -8,6 +8,7 @@ import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/P
 import TargetType from '@shared/enums/TargetType'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroDarkOracle extends ServerCard {
 	cardsToSee = 5
@@ -19,6 +20,7 @@ export default class HeroDarkOracle extends ServerCard {
 		this.dynamicTextVariables = {
 			cardsToSee: this.cardsToSee
 		}
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_DISCARD]
 		this.generatedArtworkMagicString = '2'
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

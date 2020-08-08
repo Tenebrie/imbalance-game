@@ -8,6 +8,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerAnimation from '../../../models/ServerAnimation'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroAdventuringGuildMaster extends ServerCard {
 	powerPerCard = 5
@@ -15,6 +16,7 @@ export default class HeroAdventuringGuildMaster extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.NEUTRAL)
 		this.basePower = 10
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 		this.dynamicTextVariables = {
 			powerPerCard: this.powerPerCard
 		}

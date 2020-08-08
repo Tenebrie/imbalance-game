@@ -13,6 +13,7 @@ import BuffBurning from '../../../buffs/BuffBurning'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroFlameDancer extends ServerCard {
 	burnDuration = 3
@@ -20,6 +21,7 @@ export default class HeroFlameDancer extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 5
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 		this.dynamicTextVariables = {
 			burnDuration: this.burnDuration
 		}

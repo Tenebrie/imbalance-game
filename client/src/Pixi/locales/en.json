@@ -91,10 +91,22 @@
 	"card.inspect.buffs.turnsRemaining": "Turns remaining",
 	"card.inspect.keywords": "Keywords",
 
+	"card.feature.keywordDeploy.name": "Deploy",
+	"card.feature.keywordDeploy.description": "Trigger this effect after this unit is played.",
+	"card.feature.keywordTurnStart.name": "Turn start",
+	"card.feature.keywordTurnStart.description": "Trigger this effect on your turn start.",
+	"card.feature.keywordEnrage.name": "Enrage",
+	"card.feature.keywordEnrage.description": "Trigger this effect after this card takes damage as a unit.",
+	"card.feature.keywordInfuseX.name": "Infuse X",
+	"card.feature.keywordInfuseX.description": "When this card is played, consume X of your Mana, if you have it, and trigger this effect. Otherwise, do nothing.",
+	"card.feature.keywordInfuseAll.name": "Infuse All",
+	"card.feature.keywordInfuseAll.description": "When this card is played, consume all your Mana and trigger this effect.",
 	"card.feature.keywordCreate.name": "Create",
 	"card.feature.keywordCreate.description": "Add a card into your hand. It gets 'Temporary Card'.",
 	"card.feature.keywordSummon.name": "Summon",
 	"card.feature.keywordSummon.description": "Move a card from your deck into your hand. It gets 'Temporary Card'.",
+	"card.feature.keywordDiscard.name": "Discard",
+	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
 	"card.feature.heroPower.name": "Leader Power",
 	"card.feature.heroPower.description": "When played, this card returns to your deck.",
 	"card.feature.heroPower.text": "*Leader Power*",
@@ -152,7 +164,7 @@
 
 	"card.heroGarellion.name": "Garellion",
 	"card.heroGarellion.title": "The Conduit",
-	"card.heroGarellion.description": "*Round End:*\n*Consume* all remaining Mana.\nGain {powerPerMana} Power per Mana consumed.",
+	"card.heroGarellion.description": "On round end, *Infuse All*:\nGain {powerPerMana} Power per Mana *Infused*.",
 
 	"card.heroAura.name": "Aura",
 	"card.heroAura.title": "The Golden Hawk",
@@ -186,7 +198,7 @@
 	"card.heroSparklingSpirit.description": "Your *Sparks* deal {extraDamage} extra Damage",
 
 	"card.heroRagingElemental.name": "Raging Elemental",
-	"card.heroRagingElemental.description": "After {name} takes damage, it deals Damage equal to own Power to closest opposing enemy units.<p>Then, it destroys itself.",
+	"card.heroRagingElemental.description": "*Enrage:*\nDeal {power} Damage to closest opposing enemy units.\nThen, destroy this unit.<p><i>Damage dealt is equal to this card's power.",
 
 	"card.heroStormDancer.name": "Storm Dancer",
 	"card.heroStormDancer.description": "Whenever you cast a spell, give +{powerGiven} Power to adjacent units.\nIf it's a *Storm*, give them +{stormPowerGiven} Power instead.",

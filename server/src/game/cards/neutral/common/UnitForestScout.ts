@@ -5,6 +5,7 @@ import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitForestScout extends ServerCard {
 	boardPowerBonus = 7
@@ -18,6 +19,7 @@ export default class UnitForestScout extends ServerCard {
 			boardPowerBonus: this.boardPowerBonus,
 			moralePowerBonus: this.moralePowerBonus
 		}
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

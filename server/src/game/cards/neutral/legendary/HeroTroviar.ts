@@ -15,6 +15,7 @@ import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTakesDamageEventArgs, CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroTroviar extends ServerCard {
 	deployDamage = 1
@@ -25,6 +26,7 @@ export default class HeroTroviar extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NEUTRAL)
 		this.basePower = 5
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 		this.dynamicTextVariables = {
 			deployDamage: this.deployDamage,
 			targetCount: this.targetCount,

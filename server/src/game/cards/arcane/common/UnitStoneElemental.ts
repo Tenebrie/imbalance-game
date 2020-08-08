@@ -16,6 +16,7 @@ import {TurnEndedEventArgs} from '../../../models/GameEventCreators'
 import CardLocation from '@shared/enums/CardLocation'
 import ServerAnimation from '../../../models/ServerAnimation'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitStoneElemental extends ServerCard {
 	canAttack = false
@@ -26,6 +27,7 @@ export default class UnitStoneElemental extends ServerCard {
 		this.baseAttack = 3
 		this.baseAttackRange = 2
 		this.baseTribes = [CardTribe.ELEMENTAL]
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => {

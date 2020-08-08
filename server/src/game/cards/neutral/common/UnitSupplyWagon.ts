@@ -8,6 +8,7 @@ import ServerAnimation from '../../../models/ServerAnimation'
 import {mapUnitsToCards} from '../../../../utils/Utils'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitSupplyWagon extends ServerCard {
 	extraPower = 3
@@ -20,6 +21,7 @@ export default class UnitSupplyWagon extends ServerCard {
 			extraPower: this.extraPower,
 			pushDistance: this.pushDistance
 		}
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

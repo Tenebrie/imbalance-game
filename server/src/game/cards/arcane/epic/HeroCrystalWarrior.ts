@@ -12,6 +12,7 @@ import CardLibrary from '../../../libraries/CardLibrary'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerAnimation from '../../../models/ServerAnimation'
+import CardFeature from '@shared/enums/CardFeature'
 
 interface SacrificedUnit {
 	rowIndex: number,
@@ -24,6 +25,7 @@ export default class HeroCrystalWarrior extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 7
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.require(({ targetUnit }) => !!targetUnit)

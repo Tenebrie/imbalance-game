@@ -9,6 +9,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitMasterSwordsmith extends ServerCard {
 	bonusPower = 1
@@ -20,6 +21,7 @@ export default class UnitMasterSwordsmith extends ServerCard {
 		this.dynamicTextVariables = {
 			bonusPower: this.bonusPower
 		}
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

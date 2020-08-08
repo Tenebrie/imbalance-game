@@ -17,7 +17,7 @@ export default class HeroLightOracle extends ServerCard {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 4
 		this.sortPriority = 1
-		this.baseFeatures = [CardFeature.KEYWORD_SUMMON]
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON]
 		this.dynamicTextVariables = {
 			cardsToSee: this.cardsToSee
 		}

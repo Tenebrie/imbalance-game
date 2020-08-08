@@ -12,6 +12,7 @@ import TokenPlayerDeck from '../tokens/TokenPlayerDeck'
 import TokenOpponentDeck from '../tokens/TokenOpponentDeck'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitOracleApprentice extends ServerCard {
 	deckToLook: 'player' | 'opponent' | undefined
@@ -20,6 +21,7 @@ export default class UnitOracleApprentice extends ServerCard {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
 		this.basePower = 8
 		this.baseTribes = [CardTribe.HUMAN]
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))

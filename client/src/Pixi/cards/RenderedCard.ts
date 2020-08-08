@@ -205,6 +205,7 @@ export default class RenderedCard extends Card {
 			name: Localization.get(this.name),
 			attack: this.attack.toString(),
 			attackRange: this.attackRange.toString(),
+			power: this.power.toString(),
 			armor: this.armor.toString()
 		}
 	}

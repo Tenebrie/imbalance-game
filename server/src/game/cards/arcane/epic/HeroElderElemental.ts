@@ -7,6 +7,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import {TurnStartedEventArgs} from '../../../models/GameEventCreators'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroElderElemental extends ServerCard {
 	manaGenerated = 1
@@ -15,6 +16,7 @@ export default class HeroElderElemental extends ServerCard {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 9
 		this.baseTribes = [CardTribe.ELEMENTAL]
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_TURN_START]
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated
 		}

@@ -5,6 +5,7 @@ import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitArcaneElemental extends ServerCard {
 	manaGenerated = 2
@@ -16,6 +17,7 @@ export default class UnitArcaneElemental extends ServerCard {
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated
 		}
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

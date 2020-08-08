@@ -8,6 +8,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTakesDamageEventArgs} from '../../../models/GameEventCreators'
 import CardLocation from '@shared/enums/CardLocation'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroRagingElemental extends ServerCard {
 	isEffectTriggered = false
@@ -15,6 +16,7 @@ export default class HeroRagingElemental extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 9
+		this.baseFeatures = [CardFeature.KEYWORD_ENRAGE]
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
 			.require(({ triggeringCard }) => triggeringCard === this)

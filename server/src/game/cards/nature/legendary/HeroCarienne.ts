@@ -7,6 +7,7 @@ import ServerAnimation from '../../../models/ServerAnimation'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroCarienne extends ServerCard {
 	damagePerWave = 1
@@ -14,6 +15,7 @@ export default class HeroCarienne extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NATURE)
 		this.basePower = 6
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 		this.dynamicTextVariables = {
 			damagePerWave: this.damagePerWave,
 			waveCount: () => this.waveCount

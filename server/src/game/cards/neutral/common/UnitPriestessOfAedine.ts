@@ -13,6 +13,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerAnimation from '../../../models/ServerAnimation'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1
@@ -27,6 +28,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			targets: this.targets,
 			healing: this.healing
 		}
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
