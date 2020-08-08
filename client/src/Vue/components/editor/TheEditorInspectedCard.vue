@@ -43,8 +43,7 @@ export default Vue.extend({
 
 	.the-editor-inspected-card {
 		position: absolute;
-		width: 100%;
-		height: 100%;
+		width: $INSPECTED_CARD_INFO_WINDOW_WIDTH;
 		padding: 0 16px;
 		pointer-events: none;
 		display: flex;
@@ -54,7 +53,6 @@ export default Vue.extend({
 		.overlay-container {
 			position: absolute;
 			width: 100%;
-			height: 100%;
 			display: flex;
 			align-items: flex-start;
 			justify-content: flex-start;

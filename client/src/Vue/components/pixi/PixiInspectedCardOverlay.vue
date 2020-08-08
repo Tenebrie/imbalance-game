@@ -140,10 +140,9 @@ export default {
 <style scoped lang="scss">
 	@import "src/Vue/styles/generic";
 
-	$WINDOW_WIDTH: 512px;
-
 	.pixi-inspected-card-overlay {
 		position: absolute;
+		z-index: 10;
 		background: black;
 		margin: 4px;
 		padding: 8px 16px;
@@ -167,7 +166,7 @@ export default {
 
 		.card-info-section {
 			text-align: start;
-			max-width: $WINDOW_WIDTH;
+			max-width: $INSPECTED_CARD_INFO_WINDOW_WIDTH;
 
 			.header {
 				margin: 8px 0;
