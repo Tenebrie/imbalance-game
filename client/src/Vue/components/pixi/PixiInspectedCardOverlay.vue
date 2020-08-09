@@ -1,5 +1,5 @@
 <template>
-	<div class="pixi-inspected-card-overlay" v-if="this.inspectedCard" :style="positionStyle" ref="overlayRef">
+	<div class="pixi-inspected-card-overlay" v-if="this.overlayDisplayed" :style="positionStyle" ref="overlayRef">
 		<div class="card-info-section" v-if="this.isInGame">
 			<div v-if="this.inspectedCard.type === CardType.UNIT" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.power') }}:</div>
@@ -101,6 +101,10 @@ const setup = () => {
 		return offset
 	})
 
+	const overlayDisplayed = computed<boolean>(() => {
+		return inspectedCard.value && (isInGame.value || displayedFeatures.value.length > 0)
+	})
+
 	return {
 		isInGame,
 		cardWidth,
@@ -111,6 +115,7 @@ const setup = () => {
 		superSamplingLevel,
 		inspectedCard,
 		editorModeOffset,
+		overlayDisplayed,
 		CardType: CardType,
 		CardFeature: CardFeature,
 		snakeToCamelCase: snakeToCamelCase,
@@ -129,7 +134,7 @@ export default {
 			} else {
 				return {
 					top: `calc(${this.editorModeOffset.y}px - 50px)`,
-					left: `calc(${this.editorModeOffset.x}px - 50px)`,
+					left: `calc(${this.editorModeOffset.x}px - 40px)`,
 				}
 			}
 		}
@@ -149,7 +154,6 @@ export default {
 		background: rgba(#000000, 0.8);
 		border-radius: 10px;
 		font-size: 20px;
-		// border: 1px solid darkorange;
 
 		.card-base-stats {
 			text-align: start;
