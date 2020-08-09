@@ -1,6 +1,6 @@
 <template>
 	<div class="pixi-inspected-card-overlay" v-if="this.overlayDisplayed" :style="positionStyle" ref="overlayRef">
-		<div class="card-info-section" v-if="this.isInGame">
+		<div class="card-info-section card-base-stats" v-if="this.isInGame">
 			<div v-if="this.inspectedCard.type === CardType.UNIT" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.power') }}:</div>
 				<span>{{ $locale.get('card.inspect.stat.base') }}: </span>
@@ -26,9 +26,9 @@
 				<span>{{ $locale.get('card.inspect.stat.current') }}: </span>
 				<b>{{ this.inspectedCard.power }}</b>
 			</div>
-			<div class="menu-separator" />
 		</div>
 		<div class="card-info-section" v-if="this.displayedFeatures.length > 0">
+			<div class="menu-separator" />
 			<div class="header">{{ $locale.get('card.inspect.keywords') }}:</div>
 			<div class="line" v-for="feature in this.displayedFeatures" :key="feature">
 				<span class="object-name">
@@ -39,8 +39,8 @@
 				</span>
 			</div>
 		</div>
-		<div class="menu-separator" v-if="this.inspectedCard.buffs.buffs.length > 0 && this.displayedFeatures.length > 0" />
 		<div class="card-info-section" v-if="this.inspectedCard.buffs.buffs.length > 0">
+			<div class="menu-separator" />
 			<div class="header">{{ $locale.get('card.inspect.buffs') }}:</div>
 			<div class="line" v-for="buff in this.inspectedCard.buffs.buffs" :key="buff.id">
 				<span v-if="buff.intensity > 1">{{ buff.intensity }} x </span>
@@ -149,23 +149,14 @@ export default {
 		position: absolute;
 		z-index: 10;
 		background: black;
-		margin: 4px;
 		padding: 8px 16px;
 		background: rgba(#000000, 0.8);
 		border-radius: 10px;
 		font-size: 20px;
+		margin-top: 4px;
 
 		.card-base-stats {
-			text-align: start;
-			.stats-line {
-				display: flex;
-				flex-direction: row;
-				& > * {
-					display: inline-block;
-					flex: 1;
-				}
-				padding: 4px 0;
-			}
+			padding-bottom: 8px;
 		}
 
 		.card-info-section {

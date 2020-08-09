@@ -152,7 +152,6 @@
 
 	"card.heroGarellion.name": "Гареллион",
 	"card.heroGarellion.title": "Манапровод",
-	"card.heroGarellion.description": "*Конец раунда:*\n*Поглощает* всю оставшуюся Ману.\nПолучает {powerPerMana} ед. Силы за каждую поглощённую единицу.",
 
 	"card.heroAura.name": "Аура",
 	"card.heroAura.title": "Золотой Ястреб",

@@ -11,7 +11,7 @@ export default class SpellFieryEntrance extends ServerCard {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 
 		this.basePower = 8
-		this.baseFeatures = [CardFeature.HERO_POWER]
+		this.baseFeatures = [CardFeature.HERO_POWER, CardFeature.KEYWORD_SUMMON]
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.require(() => this.owner.cardDeck.unitCards.length > 0)

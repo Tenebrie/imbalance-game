@@ -92,15 +92,15 @@
 	"card.inspect.keywords": "Keywords",
 
 	"card.feature.keywordDeploy.name": "Deploy",
-	"card.feature.keywordDeploy.description": "Trigger this effect after this unit is played.",
+	"card.feature.keywordDeploy.description": "Trigger an effect after this unit is played.",
 	"card.feature.keywordTurnStart.name": "Turn start",
-	"card.feature.keywordTurnStart.description": "Trigger this effect on your turn start.",
+	"card.feature.keywordTurnStart.description": "Trigger an effect on the start of your turn.",
 	"card.feature.keywordEnrage.name": "Enrage",
-	"card.feature.keywordEnrage.description": "Trigger this effect after this card takes damage as a unit.",
+	"card.feature.keywordEnrage.description": "Trigger an effect after this card takes damage as a unit.",
 	"card.feature.keywordInfuseX.name": "Infuse X",
-	"card.feature.keywordInfuseX.description": "When this card is played, consume X of your Mana, if you have it, and trigger this effect. Otherwise, do nothing.",
+	"card.feature.keywordInfuseX.description": "When this card is played, consume X of your Mana, if you have it, and trigger an effect. Otherwise, do nothing.",
 	"card.feature.keywordInfuseAll.name": "Infuse All",
-	"card.feature.keywordInfuseAll.description": "When this card is played, consume all your Mana and trigger this effect.",
+	"card.feature.keywordInfuseAll.description": "When this card is played, consume all your Mana and trigger an effect.",
 	"card.feature.keywordCreate.name": "Create",
 	"card.feature.keywordCreate.description": "Add a card into your hand. It gets 'Temporary Card'.",
 	"card.feature.keywordSummon.name": "Summon",
@@ -234,7 +234,7 @@
 	"card.heroTribeShaman.description": "*Deploy:*\n*Create* a *Healing Rain*",
 
 	"card.heroElderElemental.name": "Elder Elemental",
-	"card.heroElderElemental.description": "*Deploy:*\nGenerate {manaGenerated} Mana.<p>*Turn Start:*\nRepeat this unit's *Deploy* effect.",
+	"card.heroElderElemental.description": "*Deploy:*\nGenerate {manaGenerated} Mana.<p>*Turn start:*\nRepeat this unit's *Deploy* effect.",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
 	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
@@ -379,10 +379,10 @@
 	"buff.buffStun.name": "Stun",
 	"buff.buffStun.description": "This card is stunned and is temporarily disabled.",
 
-	"buff.buffTutoredCard.name": "Tutored Card",
+	"buff.buffTutoredCard.name": "Tutored card",
 	"buff.buffTutoredCard.description": "This card has 'Temporary card'.",
 
-	"buff.buffCreatedCard.name": "Created Card",
+	"buff.buffCreatedCard.name": "Created card",
 	"buff.buffCreatedCard.description": "This card has 'Temporary card'.",
 
 	"buff.buffUpgradedStorms.name": "Upgraded Storms",

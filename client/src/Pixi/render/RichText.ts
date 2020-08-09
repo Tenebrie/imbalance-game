@@ -304,7 +304,7 @@ export default class RichText extends PIXI.Container {
 						case 'p':
 						case 'para':
 							newLine()
-							contextPosition.y += this.lineHeight * 0.4
+							contextPosition.y += this.lineHeight * 0.3
 							break
 						case 'i':
 						case 'info':

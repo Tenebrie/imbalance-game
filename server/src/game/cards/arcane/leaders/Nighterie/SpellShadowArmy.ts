@@ -9,7 +9,6 @@ import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../../models/ServerUnit'
-import ServerPlayerInGame from '../../../../players/ServerPlayerInGame'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
@@ -22,12 +21,12 @@ export default class SpellShadowArmy extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 12
-		this.baseFeatures = [CardFeature.HERO_POWER]
 		this.dynamicTextVariables = {
 			powerThreshold: () => this.powerThreshold,
 			showPowerThreshold: () => this.powerThreshold > 0,
 			thresholdDecrease: this.thresholdDecrease
 		}
+		this.baseFeatures = [CardFeature.HERO_POWER, CardFeature.KEYWORD_CREATE]
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
