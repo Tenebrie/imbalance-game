@@ -64,10 +64,11 @@ export default class Input {
 
 	public tick(): void {
 		this.updateCardHoverStatus()
-		if (this.grabbedCard && this.grabbedCard.isLongClicked()) {
-			this.releaseCard()
-			this.inspectCard()
-		}
+		// Long click
+		// if (this.grabbedCard && this.grabbedCard.isLongClicked()) {
+		// 	this.releaseCard()
+		// 	this.inspectCard()
+		// }
 	}
 
 	public updateCardHoverStatus(): void {
