@@ -9,12 +9,14 @@ import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTakesDamageEventArgs} from '../../../models/GameEventCreators'
 import ServerAnimation from '../../../models/ServerAnimation'
+import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 
 export default class UnitWingedShieldmaiden extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.CASTLE)
 		this.basePower = 4
 		this.baseTribes = [CardTribe.VALKYRIE]
+		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
 			.require(({ triggeringCard }) => triggeringCard.owner === this.owner)
@@ -44,5 +46,11 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 				this.game.animation.play(ServerAnimation.unitMove())
 				this.owner.drawUnitCards(1)
 			})
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		return this.card.power - 1
 	}
 }

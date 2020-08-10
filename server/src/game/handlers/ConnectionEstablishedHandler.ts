@@ -3,7 +3,7 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import GameLibrary from '../libraries/GameLibrary'
 import ServerPlayer from '../players/ServerPlayer'
 import VoidPlayerInGame from '../utils/VoidPlayerInGame'
-import ServerBotPlayer from '../utils/ServerBotPlayer'
+import ServerBotPlayer from '../AI/ServerBotPlayer'
 import Constants from '@shared/Constants'
 
 export default {

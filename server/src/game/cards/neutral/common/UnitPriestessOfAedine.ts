@@ -14,6 +14,7 @@ import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerAnimation from '../../../models/ServerAnimation'
 import CardFeature from '@shared/enums/CardFeature'
+import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1
@@ -29,6 +30,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			healing: this.healing
 		}
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
@@ -48,5 +50,18 @@ export default class UnitPriestessOfAedine extends ServerCard {
 	private onTargetSelected(target: ServerUnit): void {
 		this.game.animation.play(ServerAnimation.cardHealsCards(this, [target.card]))
 		target.heal(ServerDamageInstance.fromUnit(this.healing, this.unit))
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		const alliedUnits = this.game.board.getUnitsOwnedByPlayer(this.card.owner)
+		const highestMissingPower = alliedUnits
+			.filter(unit => unit !== this.card.unit)
+			.map(unit => unit.card)
+			.map(card => card.maxPower - card.power)
+			.sort((a, b) => b - a)[0]
+
+		return this.card.power + highestMissingPower
 	}
 }

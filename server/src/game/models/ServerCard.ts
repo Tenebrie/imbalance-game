@@ -32,6 +32,7 @@ import GameHookType, {
 import {EventCallback, EventHook} from './ServerGameEvents'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
+import BotCardEvaluation from '../AI/BotCardEvaluation'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -39,6 +40,7 @@ export default class ServerCard extends Card {
 	buffs = new ServerBuffContainer(this)
 	dynamicTextVariables: ServerRichTextVariables
 	generatedArtworkMagicString = ''
+	botEvaluation: BotCardEvaluation
 
 	isBeingDestroyed = false
 
@@ -48,6 +50,7 @@ export default class ServerCard extends Card {
 		this.color = unitSubtype
 		this.faction = faction
 		this.dynamicTextVariables = {}
+		this.botEvaluation = new BotCardEvaluation(this)
 
 		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, validLocations)

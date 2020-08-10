@@ -7,12 +7,14 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
 import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from '../../../models/GameHookType'
 import MoveDirection from '@shared/enums/MoveDirection'
+import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 
 export default class HeroAurienne extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.CASTLE)
 		this.basePower = 11
 		this.baseTribes = [CardTribe.VALKYRIE]
+		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED, [CardLocation.HAND])
 			.require(({ targetUnit }) => targetUnit.owner === this.owner)
@@ -35,5 +37,11 @@ export default class HeroAurienne extends ServerCard {
 				}
 				this.owner.drawUnitCards(1)
 			})
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		return this.card.power - 1
 	}
 }

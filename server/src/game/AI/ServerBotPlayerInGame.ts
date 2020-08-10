@@ -59,6 +59,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private botPlaysCard(): void {
 		const cards = Utils.sortCards(this.cardHand.allCards)
+			.sort((a, b) => (b.botEvaluation.expectedValue - b.power) - (a.botEvaluation.expectedValue - a.power))
 		const selectedCard = cards[0]
 
 		const validRows = this.game.board.rows

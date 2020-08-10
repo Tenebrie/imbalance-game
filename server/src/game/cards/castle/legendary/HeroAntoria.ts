@@ -9,12 +9,14 @@ import GameHookType, {CardTakesDamageHookArgs, CardTakesDamageHookValues} from '
 import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardDestroyedEventArgs} from '../../../models/GameEventCreators'
+import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 
 export default class HeroAntoria extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.CASTLE)
 		this.basePower = 15
 		this.baseTribes = [CardTribe.VALKYRIE]
+		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>(GameHookType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
 			.require(({ targetCard }) => targetCard.location === CardLocation.BOARD)
@@ -32,5 +34,11 @@ export default class HeroAntoria extends ServerCard {
 			.perform(() => {
 				this.owner.drawUnitCards(1)
 			})
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get expectedValue(): number {
+		return this.card.power - 1
 	}
 }

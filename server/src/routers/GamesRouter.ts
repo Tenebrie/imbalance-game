@@ -4,7 +4,7 @@ import ServerGameMessage from '../game/models/messages/ServerGameMessage'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import SendErrorAsBadRequestMiddleware from '../middleware/SendErrorAsBadRequestMiddleware'
 import ServerGame from '../game/models/ServerGame'
-import ServerBotPlayer from '../game/utils/ServerBotPlayer'
+import ServerBotPlayer from '../game/AI/ServerBotPlayer'
 import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import GameLibrary from '../game/libraries/GameLibrary'
 const router = express.Router()
