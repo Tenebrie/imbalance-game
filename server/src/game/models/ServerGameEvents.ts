@@ -9,6 +9,8 @@ import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameEventType from '@shared/enums/GameEventType'
 import {GameEvent} from './GameEventCreators'
+import BuffStun from '../buffs/BuffStun'
+import CardFeature from '@shared/enums/CardFeature'
 
 type EventSubscriber = ServerCard | ServerBuff
 
@@ -193,6 +195,7 @@ export default class ServerGameEvents {
 
 		const validCallbacks = this.eventCallbacks
 			.get(event.type)
+			.filter(subscription => !this.subscriberSuspended(subscription.subscriber))
 			.filter(subscription => !subscription.conditions.find(condition => {
 				return cardRequire(() => !condition(event.args, event))
 			}))
@@ -214,6 +217,7 @@ export default class ServerGameEvents {
 		const hookArgs = args ? args : values
 
 		const matchingHooks = this.eventHooks.get(hook)
+			.filter(subscription => !this.subscriberSuspended(subscription.subscriber))
 			.filter(hook => !hook.conditions.find(condition => {
 				return cardRequire(() => !condition(hookArgs))
 			}))
@@ -228,6 +232,13 @@ export default class ServerGameEvents {
 					return replace(accInner, hookArgs)
 				}, accOuter)
 			}, values)
+	}
+
+	private subscriberSuspended(subscriber: ServerCard | ServerBuff): boolean {
+		if (subscriber instanceof ServerBuff) {
+			return subscriber.card.features.includes(CardFeature.SUSPENDED)
+		}
+		return subscriber.features.includes(CardFeature.STUNNED)
 	}
 
 	private get currentLogEventGroup(): EventLogEntryMessage[] {

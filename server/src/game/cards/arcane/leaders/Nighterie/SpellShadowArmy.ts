@@ -41,7 +41,7 @@ export default class SpellShadowArmy extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		if (target.card.basePower <= this.powerThreshold) {
+		if (target.card.basePower <= this.powerThreshold && this.powerThreshold > 0) {
 			this.powerThreshold -= this.thresholdDecrease
 			this.allowedTargets += 1
 		}

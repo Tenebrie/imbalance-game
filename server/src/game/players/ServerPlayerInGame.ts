@@ -107,23 +107,26 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.cardHand.onUnitDrawn(card)
 	}
 
-	public createCardFromLibraryByInstance(prototype: ServerCard): void {
+	public createCardFromLibraryByInstance(prototype: ServerCard, beforeDraw?: ((card: ServerCard) => void)): void {
 		const card = CardLibrary.instantiateByInstance(this.game, prototype)
-		this.createCard(card)
+		this.createCard(card, beforeDraw)
 	}
 
-	public createCardFromLibraryByPrototype(prototype: Function): void {
+	public createCardFromLibraryByPrototype(prototype: Function, beforeDraw?: ((card: ServerCard) => void)): void {
 		const card = CardLibrary.instantiateByConstructor(this.game, prototype)
-		this.createCard(card)
+		this.createCard(card, beforeDraw)
 	}
 
-	public createCardFromLibraryByClass(cardClass: string): void {
+	public createCardFromLibraryByClass(cardClass: string, beforeDraw?: ((card: ServerCard) => void)): void {
 		const card = CardLibrary.instantiateByClass(this.game, cardClass)
-		this.createCard(card)
+		this.createCard(card, beforeDraw)
 	}
 
-	private createCard(card: ServerCard): void {
+	private createCard(card: ServerCard, beforeDraw: ((card: ServerCard) => void) | null): void {
 		card.buffs.add(BuffCreatedCard, null, BuffDuration.END_OF_THIS_TURN)
+		if (beforeDraw) {
+			beforeDraw(card)
+		}
 		if (card.type === CardType.UNIT) {
 			this.cardHand.onUnitDrawn(card)
 		} else if (card.type === CardType.SPELL) {
@@ -183,6 +186,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.roundEnded = false
 		this.cardsPlayed = []
 		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
+		this.onRoundStart()
 	}
 
 	public onRoundStart(): void {
@@ -199,8 +203,8 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.setUnitMana(1)
 		this.refillSpellHand()
 		OutgoingMessageHandlers.notifyAboutTurnStarted(this)
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this)
 		this.onTurnStart()
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this)
 	}
 
 	public onTurnStart(): void {

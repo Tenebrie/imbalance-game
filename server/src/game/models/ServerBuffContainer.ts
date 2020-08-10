@@ -55,7 +55,7 @@ export default class ServerBuffContainer implements BuffContainer {
 
 		const existingBuff = this.buffs.find(existingBuff => existingBuff.buffClass === newBuff.buffClass)
 
-		if (newBuff.stackType === BuffStackType.NONE && existingBuff.duration < newBuff.duration) {
+		if (newBuff.stackType === BuffStackType.NONE && existingBuff && existingBuff.duration < newBuff.duration) {
 			this.buffs.splice(this.buffs.indexOf(existingBuff), 1)
 			OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(this.card, existingBuff)
 			this.buffs.push(newBuff)

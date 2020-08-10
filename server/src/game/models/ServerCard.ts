@@ -18,7 +18,6 @@ import CardColor from '@shared/enums/CardColor'
 import ServerBuffContainer from './ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import RichTextVariables from '@shared/models/RichTextVariables'
-import BuffImmunity from '../buffs/BuffImmunity'
 import GameLibrary from '../libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
@@ -54,6 +53,7 @@ export default class ServerCard extends Card {
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, validLocations)
 			.require(({ triggeringCard }) => triggeringCard === this)
 			.require(({ triggeringCard }) => triggeringCard.power <= 0)
+			.require(({ triggeringCard, powerDamageInstance }) => (powerDamageInstance && powerDamageInstance.value > 0) || triggeringCard.armor === 0)
 			.perform(() => this.destroy())
 	}
 
@@ -345,7 +345,7 @@ export default class ServerCard extends Card {
 
 		const unitTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.UNIT)
 		return this.game.board.getAllUnits()
-			.filter(unit => !unit.card.buffs.has(BuffImmunity))
+			.filter(unit => !unit.card.features.includes(CardFeature.UNTARGETABLE))
 			.filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { ...args, thisCard: this, targetCard: unit.card, targetUnit: unit, previousTargets: previousTargets }))
 			.map(targetUnit => ServerCardTarget.cardTargetUnit(targetMode, this, targetUnit, unitTargetLabel))
 	}

@@ -10,11 +10,11 @@ import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerOwnedCard from '../models/ServerOwnedCard'
 
 export default {
-	'post/chat': (data: string, game: ServerGame, playerInGame: ServerPlayerInGame) => {
+	'post/chat': (data: string, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		game.createChatEntry(playerInGame.player, data)
 	},
 
-	'post/playCard': (data: CardPlayedMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
+	'post/playCard': (data: CardPlayedMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		const card = playerInGame.cardHand.findCardById(data.id)
 		if (!card) {
 			return
@@ -42,7 +42,7 @@ export default {
 		game.events.flushLogEventGroup()
 	},
 
-	'post/unitOrder': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
+	'post/unitOrder': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		const orderedUnit = game.board.findUnitById(data.sourceUnitId)
 		if (playerInGame.turnEnded || playerInGame.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== playerInGame) {
 			return
@@ -60,7 +60,7 @@ export default {
 		game.events.flushLogEventGroup()
 	},
 
-	'post/cardTarget': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
+	'post/cardTarget': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		if (!playerInGame.targetRequired) {
 			return
 		}
@@ -78,7 +78,7 @@ export default {
 		game.events.flushLogEventGroup()
 	},
 
-	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
+	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		if (player.turnEnded || player.targetRequired) { return }
 
 		player.endTurn()
@@ -91,7 +91,7 @@ export default {
 		game.events.flushLogEventGroup()
 	},
 
-	'system/init': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
+	'system/init': (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		if (player.initialized) {
 			return
 		}
@@ -99,7 +99,7 @@ export default {
 		ConnectionEstablishedHandler.onPlayerConnected(game, player)
 	},
 
-	'system/keepalive': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
+	'system/keepalive': (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		// No action needed
 	}
 }

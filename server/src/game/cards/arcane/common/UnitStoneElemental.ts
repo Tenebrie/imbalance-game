@@ -27,7 +27,7 @@ export default class UnitStoneElemental extends ServerCard {
 		this.baseAttack = 3
 		this.baseAttackRange = 2
 		this.baseTribes = [CardTribe.ELEMENTAL]
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => {
@@ -45,10 +45,10 @@ export default class UnitStoneElemental extends ServerCard {
 			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT, this.canAttack ? 1 : 0)
 	}
 
-	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode) {
+	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void {
 		this.canAttack = false
 		target.buffs.add(BuffStun, this, BuffDuration.END_OF_NEXT_TURN)
-		this.game.animation.play(ServerAnimation.cardReceivedBuff([target.card], BuffAlignment.NEGATIVE))
+		this.game.animation.play(ServerAnimation.cardsReceivedBuff([target.card], BuffAlignment.NEGATIVE))
 	}
 
 	private onTurnEnded(): void {

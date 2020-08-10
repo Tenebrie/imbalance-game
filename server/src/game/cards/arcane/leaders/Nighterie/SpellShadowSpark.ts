@@ -34,7 +34,7 @@ export default class SpellShadowSpark extends ServerCard {
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
-	get damage() {
+	get damage(): number {
 		return this.baseDamage + this.game.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
 	}
 

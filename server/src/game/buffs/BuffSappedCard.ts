@@ -6,7 +6,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import {SpellDeployedEventArgs, UnitDeployedEventArgs} from '../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
-export default class BuffCreatedCard extends ServerBuff {
+export default class BuffSappedCard extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.NONE)
 		this.buffFeatures = [BuffFeature.CARD_CAST_FREE]

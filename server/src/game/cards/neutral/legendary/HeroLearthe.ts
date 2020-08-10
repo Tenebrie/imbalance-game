@@ -6,21 +6,19 @@ import TargetType from '@shared/enums/TargetType'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import ServerBoardRow from '../../../models/ServerBoardRow'
-import ServerAnimation from '../../../models/ServerAnimation'
-import BuffStun from '../../../buffs/BuffStun'
-import BuffDuration from '@shared/enums/BuffDuration'
 import CardFaction from '@shared/enums/CardFaction'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
-import BuffAlignment from '@shared/enums/BuffAlignment'
-import MoveDirection from '@shared/enums/MoveDirection'
 import CardFeature from '@shared/enums/CardFeature'
+import Constants from '@shared/Constants'
+import CardLibrary from '../../../libraries/CardLibrary'
+import UnitLivingShadow from '../tokens/UnitLivingShadow'
 
-export default class HeroKroLah extends ServerCard {
+export default class HeroLearthe extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
-		this.basePower = 7
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN]
+		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NEUTRAL)
+		this.basePower = 4
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
@@ -30,22 +28,12 @@ export default class HeroKroLah extends ServerCard {
 		return PostPlayTargetDefinitionBuilder.base(this.game)
 			.singleTarget()
 			.allow(TargetType.BOARD_ROW)
-			.opponentsRow()
-			.notEmptyRow()
 	}
 
 	private onTargetSelected(target: ServerBoardRow): void {
-		const targetUnits = target.cards
-
-		this.game.animation.play(ServerAnimation.cardAttacksUnits(this, targetUnits))
-
-		const targetIndex = this.game.board.rowMove(this.owner, target.index, MoveDirection.FORWARD, 1)
-		targetUnits.forEach(targetUnit => this.game.board.moveUnitToFarRight(targetUnit, targetIndex))
-		this.game.animation.play(ServerAnimation.unitMove())
-
-		targetUnits.forEach(targetUnit => {
-			targetUnit.card.buffs.add(BuffStun, this, BuffDuration.START_OF_NEXT_TURN)
-		})
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff(targetUnits.map(unit => unit.card), BuffAlignment.NEGATIVE))
+		for (let i = 0; i < Constants.MAX_CARDS_PER_ROW; i++) {
+			const livingShadow = CardLibrary.instantiateByConstructor(this.game, UnitLivingShadow)
+			this.game.board.createUnit(livingShadow, target.owner, target.index, target.cards.length)
+		}
 	}
 }

@@ -60,6 +60,6 @@ export default class SpellNightmareDrain extends ServerCard {
 		for (let i = 0; i < missingHealth; i++) {
 			shadowspawnUnit.buffs.add(BuffStrength, shadowspawn, BuffDuration.INFINITY)
 		}
-		this.game.animation.play(ServerAnimation.cardReceivedBuff([shadowspawn], BuffAlignment.POSITIVE))
+		this.game.animation.play(ServerAnimation.cardsReceivedBuff([shadowspawn], BuffAlignment.POSITIVE))
 	}
 }

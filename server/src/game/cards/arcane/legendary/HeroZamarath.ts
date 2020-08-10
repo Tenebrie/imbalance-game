@@ -15,7 +15,7 @@ export default class HeroZamarath extends ServerCard {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 12
 		this.baseArmor = 5
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_IMMUNITY]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
@@ -23,6 +23,6 @@ export default class HeroZamarath extends ServerCard {
 
 	private onDeploy(): void {
 		this.buffs.add(BuffImmunity, this, BuffDuration.START_OF_NEXT_TURN)
-		this.game.animation.play(ServerAnimation.cardReceivedBuff([this], BuffAlignment.POSITIVE))
+		this.game.animation.play(ServerAnimation.cardsReceivedBuff([this], BuffAlignment.POSITIVE))
 	}
 }

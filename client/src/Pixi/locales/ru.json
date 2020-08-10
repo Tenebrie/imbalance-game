@@ -91,10 +91,30 @@
 	"card.inspect.buffs.turnsRemaining": "Осталось ходов",
 	"card.inspect.keywords": "Ключевые слова",
 
+	"card.feature.keywordDeploy.name": "Deploy",
+	"card.feature.keywordDeploy.description": "Trigger an effect after this unit is played.",
+	"card.feature.keywordTurnStart.name": "Turn start",
+	"card.feature.keywordTurnStart.description": "Trigger an effect at the start of your turn.",
+	"card.feature.keywordEnrage.name": "Enrage",
+	"card.feature.keywordEnrage.description": "Trigger an effect after this card takes damage as a unit.",
+	"card.feature.keywordInfuseX.name": "Infuse X",
+	"card.feature.keywordInfuseX.description": "When this card is played, consume X of your Mana, if you have it, and trigger an effect. Otherwise, do nothing.",
+	"card.feature.keywordInfuseAll.name": "Infuse All",
+	"card.feature.keywordInfuseAll.description": "When this card is played, consume all your Mana and trigger an effect.",
 	"card.feature.keywordCreate.name": "Создать",
 	"card.feature.keywordCreate.description": "Добавить карту в вашу руку. Она становится 'Временной картой'.",
 	"card.feature.keywordSummon.name": "Призвать",
 	"card.feature.keywordSummon.description": "Добавить карту из вашей колоды в вашу руку. Она становится 'Временной картой'.",
+	"card.feature.keywordDiscard.name": "Discard",
+	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
+	"card.feature.keywordBuffStun.name": "Оглушение",
+	"card.feature.keywordBuffStun.description": "Цель оглушена. Ее эффект временно отключен.",
+	"card.feature.keywordBuffGrowth.name": "Рост",
+	"card.feature.keywordBuffGrowth.description": "Цель получает +1 Силы в начале ее хода.",
+	"card.feature.keywordBuffImmunity.name": "Неуязвимость",
+	"card.feature.keywordBuffImmunity.description": "Цель неуязвима к любому урону или эффектам.",
+	"card.feature.keywordBuffTemporaryCard.name": "Временная карта",
+	"card.feature.keywordBuffTemporaryCard.description": "Цель может быть сыграна бесплатно. Если она не сыграна в конце хода, она сбрасывается.",
 	"card.feature.heroPower.name": "Способность предводителя",
 	"card.feature.heroPower.description": "Будучи сыгранной, эта карта возвращается в вашу колоду.",
 	"card.feature.heroPower.text": "*Способность предводителя*",
@@ -112,6 +132,7 @@
 	"card.tribe.human": "Человек",
 	"card.tribe.storm": "Буря",
 	"card.tribe.undead": "Нежить",
+	"card.tribe.scroll": "Свиток",
 	"card.tribe.dragon": "Дракон",
 	"card.tribe.crystal": "Кристалл",
 	"card.tribe.vampire": "Вампир",
@@ -119,6 +140,51 @@
 	"card.tribe.building": "Здание",
 	"card.tribe.valkyrie": "Валькирия",
 	"card.tribe.elemental": "Элементаль",
+
+	"buff.buffBurning.name": "Горение",
+	"buff.buffBurning.description": "Эта карта получает урон каждый ход.",
+
+	"buff.buffDecayingArmor.name": "Исчезающая броня",
+	"buff.buffDecayingArmor.description": "Эта карта имеет дополнительную броню, которая пропадает со временем.",
+
+	"buff.buffImmunity.name": "Неуязвимость",
+	"buff.buffImmunity.description": "Эта карта неуязвима к любому урону или эффектам.",
+
+	"buff.buffSparksExtraDamage.name": "Дополнительный урон Искр",
+	"buff.buffSparksExtraDamage.description": "Ваши Искры наносят дополнительный урон.",
+
+	"buff.buffNextSpellDiscountAura.name": "Аура скидки на следующее заклинание",
+	"buff.buffNextSpellDiscountAura.description": "Когда вы вытягиваете карту заклинания, наложите 'Скидку на следующее заклинание' на нее.",
+
+	"buff.buffNextSpellDiscount.name": "Скидка на следующее заклинание",
+	"buff.buffNextSpellDiscount.description": "Это заклинание стоит на 1 ед. маны дешевле.",
+
+	"buff.buffSpellDiscount.name": "Скидка на заклинание",
+	"buff.buffSpellDiscount.description": "Это заклинание стоит на 1 ед. маны дешевле.",
+
+	"buff.buffStrength.name": "Сила",
+	"buff.buffStrength.description": "Эта карта получает 1 ед. силы.",
+
+	"buff.buffStun.name": "Оглушение",
+	"buff.buffStun.description": "Эта карта оглушена. Ее эффект временно отключен.",
+
+	"buff.buffGrowth.name": "Рост",
+	"buff.buffGrowth.description": "Эта карта получает +1 Силы в начале ее хода.",
+
+	"buff.buffTutoredCard.name": "Призванная карта",
+	"buff.buffTutoredCard.description": "Эта карта является временной.",
+
+	"buff.buffCreatedCard.name": "Созданная карта",
+	"buff.buffCreatedCard.description": "Эта карта является временной.",
+
+	"buff.buffSappedCard.name": "Возвращенная карта",
+	"buff.buffSappedCard.description": "Эта карта является временной.",
+
+	"buff.buffUpgradedStorms.name": "Улучшенные Бури",
+	"buff.buffUpgradedStorms.description": "Ваши Бури улучшены.",
+
+	"buff.buffVelElleronEncouragement.name": "Воодушевление",
+	"buff.buffVelElleronEncouragement.description": "Эта карта получит дополнительную Силу в начале следующего хода.",
 
 	"card.hidden.name": "[Скрытая карта]",
 
@@ -340,41 +406,5 @@
 	"card.spellFlamingSpark.description": "Наносит {damage} Урона противнику.<p><i> Урон увеличивается от силы вашего *Плетения* ({damagePerWeave})</i>",
 
 	"card.spellFlameweave.name": "Огнеплетение",
-	"card.spellFlameweave.description": "Увеличивает мощность вашего *Плетения*<p><i>Текущее значение: {currentStacks}</i>",
-
-	"buff.buffBurning.name": "Горение",
-	"buff.buffBurning.description": "Эта карта получает урон каждый ход.",
-
-	"buff.buffDecayingArmor.name": "Исчезающая броня",
-	"buff.buffDecayingArmor.description": "Эта карта имеет дополнительную броню, которая пропадает со временем.",
-
-	"buff.buffImmunity.name": "Неуязвимость",
-	"buff.buffImmunity.description": "Эта карта неуязвима к любому урону или эффектам.",
-
-	"buff.buffSparksExtraDamage.name": "Дополнительный урон Искр",
-	"buff.buffSparksExtraDamage.description": "Ваши Искры наносят дополнительный урон.",
-
-	"buff.buffSpellDiscountAura.name": "Аура скидки на заклинания",
-	"buff.buffSpellDiscountAura.description": "Когда вы вытягиваете карту заклинания, наложите Скидку на заклинание на нее.",
-
-	"buff.buffSpellDiscountSingular.name": "Скидка на заклинания",
-	"buff.buffSpellDiscountSingular.description": "Это заклинание стоит на 1 ед. маны дешевле за каждый уровень этого эффекта.",
-
-	"buff.buffStrength.name": "Сила",
-	"buff.buffStrength.description": "Эта карта получает 1 ед. силы за каждый уровень этого эффекта.",
-
-	"buff.buffStun.name": "Оглушение",
-	"buff.buffStun.description": "Эта карта оглушена. Ее эффект временно отключен.",
-
-	"buff.buffTutoredCard.name": "Призванная карта",
-	"buff.buffTutoredCard.description": "Эта карта становится временной.",
-
-	"buff.buffCreatedCard.name": "Созданная карта",
-	"buff.buffCreatedCard.description": "Эта карта становится временной.",
-
-	"buff.buffUpgradedStorms.name": "Улучшенные Бури",
-	"buff.buffUpgradedStorms.description": "Ваши Бури улучшены.",
-
-	"buff.buffVelElleronEncouragement.name": "Воодушевление",
-	"buff.buffVelElleronEncouragement.description": "Эта карта получит дополнительную Силу в начале следующего хода."
+	"card.spellFlameweave.description": "Увеличивает мощность вашего *Плетения*<p><i>Текущее значение: {currentStacks}</i>"
 }

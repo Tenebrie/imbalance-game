@@ -33,6 +33,6 @@ export default class UnitMasterSwordsmith extends ServerCard {
 		const targets = owner.cardHand.unitCards
 		this.game.animation.play(ServerAnimation.cardAffectsCards(this, targets))
 		targets.forEach(card => card.buffs.add(BuffStrength, this, BuffDuration.INFINITY))
-		this.game.animation.play(ServerAnimation.cardReceivedBuff(targets, BuffAlignment.POSITIVE))
+		this.game.animation.play(ServerAnimation.cardsReceivedBuff(targets, BuffAlignment.POSITIVE))
 	}
 }

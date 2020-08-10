@@ -39,6 +39,6 @@ export default class HeroStormDancer extends ServerCard {
 		adjacentUnits.forEach(unit => {
 			unit.buffs.addMultiple(BuffStrength, powerGiven, this)
 		})
-		this.game.animation.play(ServerAnimation.cardReceivedBuff(adjacentCards, BuffAlignment.POSITIVE))
+		this.game.animation.play(ServerAnimation.cardsReceivedBuff(adjacentCards, BuffAlignment.POSITIVE))
 	}
 }

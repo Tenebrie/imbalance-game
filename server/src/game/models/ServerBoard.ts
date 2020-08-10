@@ -12,6 +12,8 @@ import MoveDirection from '@shared/enums/MoveDirection'
 import ServerGameEventCreators from './GameEventCreators'
 import ServerAnimation from './ServerAnimation'
 import GameEventCreators from './GameEventCreators'
+import BuffDuration from '@shared/enums/BuffDuration'
+import BuffSappedCard from '../buffs/BuffSappedCard'
 
 export default class ServerBoard extends Board {
 	readonly game: ServerGame
@@ -149,10 +151,10 @@ export default class ServerBoard extends Board {
 		return playerRows[Math.min(playerRows.length - 1, distance)]
 	}
 
-	public createUnit(card: ServerCard, owner: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit {
+	public createUnit(card: ServerCard, owner: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit | null {
 		const targetRow = this.rows[rowIndex]
 		if (targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
-			return
+			return null
 		}
 
 		const unit = new ServerUnit(this.game, card, owner)
@@ -215,6 +217,19 @@ export default class ServerBoard extends Board {
 
 	public moveUnitToFarRight(unit: ServerUnit, rowIndex: number): void {
 		return this.moveUnit(unit, rowIndex, this.rows[rowIndex].cards.length)
+	}
+
+	public sapUnit(target: ServerUnit, sapper: ServerCard): void {
+		const targetCard = target.card
+		const cardOwner = target.card.owner
+		this.rows[target.rowIndex].destroyUnit(target)
+		cardOwner.cardHand.addUnit(targetCard)
+		if (cardOwner !== sapper.owner) {
+			targetCard.isRevealed = false
+			targetCard.reveal(cardOwner, cardOwner.opponent)
+		}
+		const buffDuration = cardOwner === sapper.owner ? BuffDuration.END_OF_THIS_TURN : BuffDuration.END_OF_NEXT_TURN
+		targetCard.buffs.add(BuffSappedCard, sapper, buffDuration)
 	}
 
 	public destroyUnit(unit: ServerUnit): void {

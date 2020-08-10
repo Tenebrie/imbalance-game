@@ -368,7 +368,12 @@ const handlers: {[ index: string ]: any } = {
 			return
 		}
 
-		card.buffs.findBuffById(data.id).intensity = Number(data.intensity)
+		const buff = card.buffs.findBuffById(data.id)
+		if (!buff) {
+			return
+		}
+
+		buff.intensity = Number(data.intensity)
 		if (Core.player.cardHand.unitCards.includes(card)) {
 			Core.player.cardHand.sortCards()
 		}
@@ -380,7 +385,12 @@ const handlers: {[ index: string ]: any } = {
 			return
 		}
 
-		card.buffs.findBuffById(data.id).duration = Number(data.duration)
+		const buff = card.buffs.findBuffById(data.id)
+		if (!buff) {
+			return
+		}
+
+		buff.duration = Number(data.duration)
 		if (Core.player.cardHand.unitCards.includes(card)) {
 			Core.player.cardHand.sortCards()
 		}

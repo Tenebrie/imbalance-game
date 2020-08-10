@@ -4,6 +4,9 @@ import ServerUnit from './ServerUnit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import Constants from '@shared/Constants'
+import BuffDuration from '@shared/enums/BuffDuration'
+import BuffSappedCard from '../buffs/BuffSappedCard'
+import ServerCard from './ServerCard'
 
 export default class ServerBoardRow extends BoardRow {
 	game: ServerGame

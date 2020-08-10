@@ -33,7 +33,7 @@ export default class UnitSupplyWagon extends ServerCard {
 		adjacentUnits.forEach(unit => {
 			unit.buffs.addMultiple(BuffStrength, this.extraPower, this)
 		})
-		this.game.animation.play(ServerAnimation.cardReceivedBuff(mapUnitsToCards(adjacentUnits), BuffAlignment.POSITIVE))
+		this.game.animation.play(ServerAnimation.cardsReceivedBuff(mapUnitsToCards(adjacentUnits), BuffAlignment.POSITIVE))
 		adjacentUnits = adjacentUnits.filter(unit => unit.isAlive())
 		if (adjacentUnits.length === 0) {
 			return

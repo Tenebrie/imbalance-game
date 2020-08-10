@@ -8,9 +8,9 @@ import CardLocation from '@shared/enums/CardLocation'
 import ServerCard from '../models/ServerCard'
 import ServerAnimation from '../models/ServerAnimation'
 import BuffAlignment from '@shared/enums/BuffAlignment'
-import BuffSpellDiscountSingular from './BuffSpellDiscountSingular'
+import BuffNextSpellDiscount from './BuffNextSpellDiscount'
 
-export default class BuffSpellDiscountAura extends ServerBuff {
+export default class BuffNextSpellDiscountAura extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.ADD_INTENSITY)
 
@@ -30,7 +30,7 @@ export default class BuffSpellDiscountAura extends ServerBuff {
 	}
 
 	private onNewCardDrawn(card: ServerCard): void {
-		card.buffs.addMultiple(BuffSpellDiscountSingular, this.intensity, this.source)
-		this.game.animation.play(ServerAnimation.cardReceivedBuff([card], BuffAlignment.POSITIVE))
+		card.buffs.addMultiple(BuffNextSpellDiscount, this.intensity, this.source)
+		this.game.animation.play(ServerAnimation.cardsReceivedBuff([card], BuffAlignment.POSITIVE))
 	}
 }

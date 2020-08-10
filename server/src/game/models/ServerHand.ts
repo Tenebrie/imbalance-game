@@ -18,7 +18,7 @@ export default class ServerHand {
 		this.spellCards = spellCards
 	}
 
-	public get allCards() {
+	public get allCards(): ServerCard[] {
 		return this.unitCards.slice().concat(this.spellCards)
 	}
 

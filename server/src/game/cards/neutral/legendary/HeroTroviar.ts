@@ -62,7 +62,7 @@ export default class HeroTroviar extends ServerCard {
 		for (let i = 0; i < this.powerGained; i++) {
 			this.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
 		}
-		this.game.animation.play(ServerAnimation.cardReceivedBuff([this], BuffAlignment.POSITIVE))
+		this.game.animation.play(ServerAnimation.cardsReceivedBuff([this], BuffAlignment.POSITIVE))
 	}
 
 	private onTargetsConfirmed(): void {

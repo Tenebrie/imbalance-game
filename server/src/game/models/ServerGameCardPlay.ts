@@ -84,11 +84,12 @@ export default class ServerGameCardPlay {
 
 		/* Insert the card into the board */
 		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
-
-		/* Invoke the card Deploy effect */
-		this.game.events.postEvent(GameEventCreators.unitDeployed({
-			triggeringUnit: unit
-		}))
+		if (unit !== null) {
+			/* Invoke the card Deploy effect */
+			this.game.events.postEvent(GameEventCreators.unitDeployed({
+				triggeringUnit: unit
+			}))
+		}
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {

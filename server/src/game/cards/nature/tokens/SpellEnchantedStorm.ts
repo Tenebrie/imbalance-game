@@ -63,7 +63,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 	private onTargetSelected(target: ServerUnit): void {
 		this.game.animation.play(ServerAnimation.universeAffectsCards([target.card]))
 		target.buffs.addMultiple(BuffStrength, this.buffPower, this, BuffDuration.INFINITY)
-		this.game.animation.play(ServerAnimation.cardReceivedBuff([target.card], BuffAlignment.POSITIVE))
+		this.game.animation.play(ServerAnimation.cardsReceivedBuff([target.card], BuffAlignment.POSITIVE))
 		this.targetsHit.push(target)
 	}
 

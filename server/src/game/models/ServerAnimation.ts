@@ -77,7 +77,7 @@ export default class ServerAnimation extends Animation {
 		return new ServerAnimation(AnimationType.UNIT_MOVE, {})
 	}
 
-	public static cardReceivedBuff(targetCards: ServerCard[], alignment: BuffAlignment): ServerAnimation {
+	public static cardsReceivedBuff(targetCards: ServerCard[], alignment: BuffAlignment): ServerAnimation {
 		const params: CardReceivedBuffAnimParams = {
 			alignment: alignment
 		}

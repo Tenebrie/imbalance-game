@@ -348,8 +348,12 @@ export default class Renderer {
 			targetPosition.x -= this.getScreenWidth() * 0.2 / 2 + 125
 		}
 
-		const isPlayable = Core.player.isTurnActive && !Core.input.forcedTargetingMode && !!Core.input.playableCards.find(target => target.sourceCard === renderedCard)
-		const isForcedTarget = Core.input.forcedTargetingMode && !!Core.input.forcedTargetingMode.validTargets.find(forcedCard => forcedCard.targetCard && forcedCard.targetCard.id === renderedCard.id)
+		const isPlayable = Core.player.isTurnActive &&
+			!Core.input.forcedTargetingMode &&
+			!!Core.input.playableCards.find(target => target.sourceCard && renderedCard && target.sourceCard.id === renderedCard.id)
+		const isForcedTarget = Core.input.forcedTargetingMode &&
+			!!Core.input.forcedTargetingMode.validTargets.find(forcedCard => forcedCard.targetCard && forcedCard.targetCard.id === renderedCard.id)
+
 		renderedCard.cardDisabledOverlay.visible = !isPlayable && !isForcedTarget
 
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED) {

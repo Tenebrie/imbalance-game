@@ -72,6 +72,9 @@ export default class ClientBuff implements Buff {
 	}
 	getSpellCostOverride(baseCost: number): number {
 		let cost = baseCost
+		if (this.buffFeatures.includes(BuffFeature.SPELL_MARKUP_PER_INTENSITY)) {
+			cost += this.intensity
+		}
 		if (this.buffFeatures.includes(BuffFeature.SPELL_DISCOUNT_PER_INTENSITY)) {
 			cost -= this.intensity
 		}

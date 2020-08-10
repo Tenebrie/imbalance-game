@@ -176,7 +176,7 @@ export default class Input {
 
 		const windowHeight = Core.renderer.pixi.view.height
 		const heightLimit = windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5
-		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCard === this.grabbedCard.card)) {
+		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCard.id === this.grabbedCard.card.id)) {
 			this.releaseCard()
 		}
 	}

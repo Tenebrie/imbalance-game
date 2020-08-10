@@ -94,7 +94,7 @@
 	"card.feature.keywordDeploy.name": "Deploy",
 	"card.feature.keywordDeploy.description": "Trigger an effect after this unit is played.",
 	"card.feature.keywordTurnStart.name": "Turn start",
-	"card.feature.keywordTurnStart.description": "Trigger an effect on the start of your turn.",
+	"card.feature.keywordTurnStart.description": "Trigger an effect at the start of your turn.",
 	"card.feature.keywordEnrage.name": "Enrage",
 	"card.feature.keywordEnrage.description": "Trigger an effect after this card takes damage as a unit.",
 	"card.feature.keywordInfuseX.name": "Infuse X",
@@ -107,6 +107,14 @@
 	"card.feature.keywordSummon.description": "Move a card from your deck into your hand. It gets 'Temporary Card'.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
+	"card.feature.keywordBuffStun.name": "Stun",
+	"card.feature.keywordBuffStun.description": "Target card is stunned and is temporarily disabled.",
+	"card.feature.keywordBuffGrowth.name": "Growth",
+	"card.feature.keywordBuffGrowth.description": "Target card gets +1 Power at the start of its turn.",
+	"card.feature.keywordBuffImmunity.name": "Immunity",
+	"card.feature.keywordBuffImmunity.description": "Target card is immune to damage and any effects.",
+	"card.feature.keywordBuffTemporaryCard.name": "Temporary card",
+	"card.feature.keywordBuffTemporaryCard.description": "Target card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.heroPower.name": "Leader Power",
 	"card.feature.heroPower.description": "When played, this card returns to your deck.",
 	"card.feature.heroPower.text": "*Leader Power*",
@@ -124,6 +132,7 @@
 	"card.tribe.human": "Human",
 	"card.tribe.storm": "Storm",
 	"card.tribe.undead": "Undead",
+	"card.tribe.scroll": "Scroll",
 	"card.tribe.dragon": "Dragon",
 	"card.tribe.crystal": "Crystal",
 	"card.tribe.vampire": "Vampire",
@@ -131,6 +140,54 @@
 	"card.tribe.building": "Building",
 	"card.tribe.valkyrie": "Valkyrie",
 	"card.tribe.elemental": "Elemental",
+
+	"buff.buffBurning.name": "Burning",
+	"buff.buffBurning.description": "This card takes damage every turn.",
+
+	"buff.buffDecayingArmor.name": "Decaying armor",
+	"buff.buffDecayingArmor.description": "Extra armor that decays over time.",
+
+	"buff.buffImmunity.name": "Immunity",
+	"buff.buffImmunity.description": "This card is immune to damage and any effects.",
+
+	"buff.buffSparksExtraDamage.name": "Extra Spark damage",
+	"buff.buffSparksExtraDamage.description": "Your Sparks deal extra damage.",
+
+	"buff.buffNextSpellDiscountAura.name": "Next spell discount aura",
+	"buff.buffNextSpellDiscountAura.description": "Whenever you draw a spell, apply 'Next spell discount' to it.",
+
+	"buff.buffNextSpellDiscount.name": "Next spell discount",
+	"buff.buffNextSpellDiscount.description": "Your next spell costs 1 Mana less.",
+
+	"buff.buffSpellDiscount.name": "Spell discount",
+	"buff.buffSpellDiscount.description": "This spell costs 1 Mana less.",
+
+	"buff.buffSpellExtraCost.name": "Spell markup",
+	"buff.buffSpellExtraCost.description": "This spell costs 1 Mana more.",
+
+	"buff.buffStrength.name": "Strength",
+	"buff.buffStrength.description": "This card has 1 extra Power.",
+
+	"buff.buffStun.name": "Stun",
+	"buff.buffStun.description": "This card is stunned and is temporarily disabled.",
+
+	"buff.buffGrowth.name": "Growth",
+	"buff.buffGrowth.description": "This card gets +1 Power at the start of its turn.",
+
+	"buff.buffTutoredCard.name": "Tutored card",
+	"buff.buffTutoredCard.description": "This card has 'Temporary card'.",
+
+	"buff.buffCreatedCard.name": "Created card",
+	"buff.buffCreatedCard.description": "This card has 'Temporary card'.",
+
+	"buff.buffSappedCard.name": "Sapped card",
+	"buff.buffSappedCard.description": "This card has 'Temporary card'.",
+
+	"buff.buffUpgradedStorms.name": "Upgraded Storms",
+	"buff.buffUpgradedStorms.description": "Your Storms are upgraded.",
+
+	"buff.buffVelElleronEncouragement.name": "An Encouragement",
+	"buff.buffVelElleronEncouragement.description": "This card will receive bonus Power at the start of next turn.",
 
 	"card.hidden.name": "[Hidden card]",
 
@@ -193,6 +250,10 @@
 	"card.heroPozoga.name": "Pożoga",
 	"card.heroPozoga.title": "The Arsonist",
 	"card.heroPozoga.description": "*Deploy:*\nDestroy all cards with the highest Power on the board.",
+
+	"card.heroLearthe.name": "Learthe",
+	"card.heroLearthe.title": "The Death Speaker",
+	"card.heroLearthe.description": "*Deploy:*\nChoose a row.\nFill it with *Living Shadows*.",
 
 	"card.heroSparklingSpirit.name": "Sparkling Spirit",
 	"card.heroSparklingSpirit.description": "Your *Sparks* deal {extraDamage} extra Damage",
@@ -309,6 +370,24 @@
 	"card.unitMerchantsAssistant.name": "Merchants Assistant",
 	"card.unitMerchantsAssistant.description": "*Deploy:*\nNext spell you cast this round costs {spellDiscount} Mana less.",
 
+	"card.unitMercantileSpellslinger.name": "Mercantile Spellslinger",
+	"card.unitMercantileSpellslinger.description": "*Deploy:*\nAdd a Scroll to your hand.\nIt costs {manaMarkup} Mana more, but gets {discountPerTurn} Mana cheaper every turn.",
+
+	"card.unitHungrySpellslinger.name": "Hungry Spellslinger",
+	"card.unitHungrySpellslinger.description": "*Infuse *{infuseCost}*:*\nAdd a Scroll to your hand.\nIt costs {spellDiscount} Mana less.",
+
+	"card.unitVoidcaller.name": "Voidcaller",
+	"card.unitVoidcaller.description": "*Deploy:*\n*Create* a *Void Portal*",
+
+	"card.unitVoidPortal.name": "Void Portal",
+	"card.unitVoidPortal.description": "*Turn end:*\nSpawn a *Voidspawn* next to this unit.\nIt gets +{powerPerSpell} Power for every unique spell in your graveyard.",
+
+	"card.unitVoidspawn.name": "Voidspawn",
+	"card.unitVoidspawn.description": "<i>No effect</i>",
+
+	"card.unitLivingShadow.name": "Living Shadow",
+	"card.unitLivingShadow.description": "<i>No effect</i>",
+
 	"card.tokenPlayerDeck.name": "Your deck",
 	"card.tokenPlayerDeck.description": "Choose your own deck",
 
@@ -323,6 +402,21 @@
 
 	"card.spellHealingRain.name": "Healing Rain",
 	"card.spellHealingRain.description": "Restore {healing} Power to all allied units.<p><i>Healing increases by {healingPerStorm} for every *Storm* card in your Graveyard.</i>",
+
+	"card.spellScrollOfLightning.name": "Scroll of Lightning",
+	"card.spellScrollOfLightning.description": "Deal {damage} Damage to an enemy unit.",
+
+	"card.spellScrollOfGrowth.name": "Scroll of Growth",
+	"card.spellScrollOfGrowth.description": "Apply *Growth* to an allied unit.",
+
+	"card.spellScrollOfImmunity.name": "Scroll of Immunity",
+	"card.spellScrollOfImmunity.description": "Apply *Immunity* to an allied unit the start of your next turn.",
+
+	"card.spellScrollOfBlinding.name": "Scroll of Blinding",
+	"card.spellScrollOfBlinding.description": "Choose an enemy unit.\nApply *Stun* to target and adjacent units for {buffDuration} turns.",
+
+	"card.spellScrollOfSapping.name": "Scroll of Sapping",
+	"card.spellScrollOfSapping.description": "Choose a unit.\nReturn it to the owner's hand and grant it *'Temporary card'*.",
 
 	"card.spellSteelSpark.name": "Steel Spark",
 	"card.spellSteelSpark.description": "Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
@@ -353,41 +447,5 @@
 	"card.spellFlamingSpark.description": "Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
 
 	"card.spellFlameweave.name": "Flameweave",
-	"card.spellFlameweave.description": "Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
-
-	"buff.buffBurning.name": "Burning",
-	"buff.buffBurning.description": "This card takes damage every turn.",
-
-	"buff.buffDecayingArmor.name": "Decaying Armor",
-	"buff.buffDecayingArmor.description": "Extra armor that decays over time.",
-
-	"buff.buffImmunity.name": "Immunity",
-	"buff.buffImmunity.description": "This card is immune to damage and any effects.",
-
-	"buff.buffSparksExtraDamage.name": "Extra Spark Damage",
-	"buff.buffSparksExtraDamage.description": "Your Sparks deal extra damage.",
-
-	"buff.buffSpellDiscountAura.name": "Spell Discount Aura",
-	"buff.buffSpellDiscountAura.description": "Whenever you draw a spell, apply Spell Discount to it.",
-
-	"buff.buffSpellDiscountSingular.name": "Spell Discount",
-	"buff.buffSpellDiscountSingular.description": "This spell costs 1 Mana less for every stack of this buff.",
-
-	"buff.buffStrength.name": "Strength",
-	"buff.buffStrength.description": "This card has 1 extra Power for every stack of this buff.",
-
-	"buff.buffStun.name": "Stun",
-	"buff.buffStun.description": "This card is stunned and is temporarily disabled.",
-
-	"buff.buffTutoredCard.name": "Tutored card",
-	"buff.buffTutoredCard.description": "This card has 'Temporary card'.",
-
-	"buff.buffCreatedCard.name": "Created card",
-	"buff.buffCreatedCard.description": "This card has 'Temporary card'.",
-
-	"buff.buffUpgradedStorms.name": "Upgraded Storms",
-	"buff.buffUpgradedStorms.description": "Your Storms are upgraded.",
-
-	"buff.buffVelElleronEncouragement.name": "An Encouragement",
-	"buff.buffVelElleronEncouragement.description": "This card will receive bonus Power at the start of next turn."
+	"card.spellFlameweave.description": "Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
 }

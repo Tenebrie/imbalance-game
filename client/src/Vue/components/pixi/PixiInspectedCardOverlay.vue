@@ -24,11 +24,11 @@
 				<span>{{ $locale.get('card.inspect.stat.base') }}: </span>
 				<b>{{ this.inspectedCard.basePower }}</b> |
 				<span>{{ $locale.get('card.inspect.stat.current') }}: </span>
-				<b>{{ this.inspectedCard.power }}</b>
+				<b>{{ this.inspectedCard.spellCost }}</b>
 			</div>
 		</div>
 		<div class="card-info-section" v-if="this.displayedFeatures.length > 0">
-			<div class="menu-separator" />
+			<div class="menu-separator" v-if="this.isInGame" />
 			<div class="header">{{ $locale.get('card.inspect.keywords') }}:</div>
 			<div class="line" v-for="feature in this.displayedFeatures" :key="feature">
 				<span class="object-name">
@@ -47,7 +47,7 @@
 				<span class="object-name">{{ $locale.get(buff.name) }}: </span>
 				<span>{{ $locale.get(buff.description) }}</span>
 				<span v-if="buff.duration !== Infinity">
-					({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ Math.ceil(buff.duration / 2) }})
+					({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ buff.duration }})
 				</span>
 			</div>
 		</div>

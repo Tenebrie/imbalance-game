@@ -6,7 +6,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardType from '@shared/enums/CardType'
 import BuffFeature from '@shared/enums/BuffFeature'
 
-export default class BuffSpellDiscountSingular extends ServerBuff {
+export default class BuffNextSpellDiscount extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.ADD_INTENSITY)
 		this.buffFeatures = [BuffFeature.SPELL_DISCOUNT_PER_INTENSITY]

@@ -16,6 +16,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import BuffFeature from '@shared/enums/BuffFeature'
 import GameEventCreators, {TurnEndedEventArgs, TurnStartedEventArgs} from './GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import ServerBuffContainer from './ServerBuffContainer'
 
 export default class ServerBuff implements Buff {
 	id: string
