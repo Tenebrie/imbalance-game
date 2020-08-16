@@ -6,9 +6,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
-import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitMasterSwordsmith extends ServerCard {
@@ -31,8 +29,6 @@ export default class UnitMasterSwordsmith extends ServerCard {
 		const unit = this.unit
 		const owner = unit.owner
 		const targets = owner.cardHand.unitCards
-		this.game.animation.play(ServerAnimation.cardAffectsCards(this, targets))
 		targets.forEach(card => card.buffs.add(BuffStrength, this, BuffDuration.INFINITY))
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff(targets, BuffAlignment.POSITIVE))
 	}
 }

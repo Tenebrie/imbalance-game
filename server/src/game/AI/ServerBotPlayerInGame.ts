@@ -14,6 +14,8 @@ import TargetType from '@shared/enums/TargetType'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import CardLibrary from '../libraries/CardLibrary'
+import ServerCard from '../models/ServerCard'
+import CardType from '@shared/enums/CardType'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -37,14 +39,23 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const botLostRound = opponentTotalPower > botTotalPower + 30 && this.morale > 1
 		const botHasGoodLead = botTotalPower > opponentTotalPower + 15 && this.morale > 1
 
+		if (botHasGoodLead) {
+			while (this.hasAnySpellPlays()) {
+				this.botPlaysCard(true)
+				while (this.game.cardPlay.cardResolveStack.hasCards()) {
+					this.botChoosesTarget()
+				}
+			}
+		}
+
 		if (botWonRound || botLostRound || botHasGoodLead) {
 			this.botEndsTurn()
 			return
 		}
 
 		try {
-			while (this.unitMana > 0 && this.cardHand.unitCards.length > 0 && this.game.turnPhase === GameTurnPhase.DEPLOY) {
-				this.botPlaysCard()
+			while (((this.unitMana > 0 && this.cardHand.unitCards.length > 0) || this.hasHighValueSpellPlays()) && this.game.turnPhase === GameTurnPhase.DEPLOY) {
+				this.botPlaysCard(false)
 				while (this.game.cardPlay.cardResolveStack.hasCards()) {
 					this.botChoosesTarget()
 				}
@@ -57,10 +68,18 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		this.botEndsTurn()
 	}
 
-	private botPlaysCard(): void {
-		const cards = Utils.sortCards(this.cardHand.allCards)
-			.sort((a, b) => (b.botEvaluation.expectedValue - b.power) - (a.botEvaluation.expectedValue - a.power))
-		const selectedCard = cards[0]
+	private botPlaysCard(spellsOnly: boolean): void {
+		const baseCards = spellsOnly ? this.cardHand.spellCards : this.cardHand.allCards
+
+		const cards = Utils.sortCards(baseCards)
+			.filter(card => card.getValidPlayTargets(this).length > 0)
+			.map(card => ({
+				card: card,
+				bestExpectedValue: this.getBestExpectedValue(card)
+			}))
+			.sort((a, b) => b.bestExpectedValue - a.bestExpectedValue)
+
+		const selectedCard = cards[0].card
 
 		const validRows = this.game.board.rows
 			.filter(row => row.owner === this)
@@ -75,6 +94,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private botChoosesTarget(): void {
 		const validTargets = this.game.cardPlay.getValidTargets()
+			.sort((a, b) => b.expectedValue - a.expectedValue)
 		const cardTargetMessage = new CardTargetMessage(validTargets[0])
 		IncomingMessageHandlers['post/cardTarget'](cardTargetMessage, this.game, this)
 	}
@@ -118,13 +138,42 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		IncomingMessageHandlers['post/endTurn'](null, this.game, this)
 	}
 
+	private getBestExpectedValue(card: ServerCard): number {
+		const targets = card.getValidPostPlayRequiredTargets()
+
+		const cardBaseValue = card.type === CardType.SPELL ? card.power * 2 : card.power
+		const spellExtraValue = this.cardHand.unitCards.length <= 2 ? 1 : 0
+
+		if (targets.length === 0) {
+			return card.botEvaluation.expectedValue - cardBaseValue + spellExtraValue
+		}
+		const bestTargetingValue = targets.sort((a, b) => b.expectedValue - a.expectedValue)[0].expectedValue || 0
+		return bestTargetingValue + card.botEvaluation.expectedValue - cardBaseValue + spellExtraValue
+	}
+
+	private hasHighValueSpellPlays(): boolean {
+		return Utils.sortCards(this.cardHand.spellCards)
+			.filter(card => card.getValidPlayTargets(this).length > 0)
+			.map(card => ({
+				card: card,
+				bestExpectedValue: this.getBestExpectedValue(card)
+			}))
+			.filter(tuple => tuple.bestExpectedValue > 0)
+			.length > 0
+	}
+
+	private hasAnySpellPlays(): boolean {
+		return Utils.sortCards(this.cardHand.spellCards)
+			.filter(card => card.getValidPlayTargets(this).length > 0)
+			.length > 0
+	}
+
 	private sortOwnedRows(ownedRows: ServerBoardRow[]): ServerBoardRow[] {
 		if (this.isInvertedBoard()) {
 			return ownedRows.slice().sort((a, b) => b.index - a.index)
 		} else {
 			return ownedRows.slice().sort((a, b) => a.index - b.index)
 		}
-
 	}
 
 	private getForwardRowIndex(rowIndex: number): number {
@@ -143,7 +192,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		}
 	}
 
-	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {
+	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerBotPlayerInGame {
 		const playerInGame = new ServerBotPlayerInGame(game, player)
 		playerInGame.leader = CardLibrary.instantiateByInstance(game, cardDeck.leader)
 		playerInGame.cardDeck.instantiateFrom(cardDeck)

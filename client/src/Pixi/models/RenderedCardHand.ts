@@ -15,11 +15,11 @@ export default class RenderedCardHand implements CardHand {
 		this.spellCards = spellCards
 	}
 
-	public get allCards() {
+	public get allCards(): RenderedCard[] {
 		return this.unitCards.slice().concat(this.spellCards)
 	}
 
-	public addCard(card: RenderedCard) {
+	public addCard(card: RenderedCard): void {
 		if (card.type === CardType.UNIT) {
 			this.addUnit(card)
 		} else if (card.type === CardType.SPELL) {
@@ -29,17 +29,17 @@ export default class RenderedCardHand implements CardHand {
 		}
 	}
 
-	public addUnit(card: RenderedCard) {
+	public addUnit(card: RenderedCard): void {
 		this.unitCards.push(card)
 		this.unitCards = Utils.sortCards(this.unitCards)
 	}
 
-	public addSpell(card: RenderedCard) {
+	public addSpell(card: RenderedCard): void {
 		this.spellCards.push(card)
 		this.spellCards = Utils.sortCards(this.spellCards)
 	}
 
-	public sortCards() {
+	public sortCards(): void {
 		this.unitCards = Utils.sortCards(this.unitCards)
 		this.spellCards = Utils.sortCards(this.spellCards)
 	}
@@ -55,17 +55,21 @@ export default class RenderedCardHand implements CardHand {
 		const revealedCard = new RenderedCard(data)
 		revealedCard.switchToCardMode()
 		Core.registerCard(revealedCard)
-		this.unitCards.splice(this.unitCards.indexOf(card), 1, revealedCard)
+		if (this.unitCards.includes(card)) {
+			this.unitCards.splice(this.unitCards.indexOf(card), 1, revealedCard)
+		} else if (this.spellCards.includes(card)) {
+			this.spellCards.splice(this.spellCards.indexOf(card), 1, revealedCard)
+		}
 		Core.unregisterCard(card)
 	}
 
-	public destroyCard(card: RenderedCard) {
+	public destroyCard(card: RenderedCard): void {
 		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
-		this.spellCards = this.spellCards.filter(unitCard => unitCard !== card)
-		card.unregister()
+		this.spellCards = this.spellCards.filter(spellCard => spellCard !== card)
+		Core.unregisterCard(card)
 	}
 
-	public destroyCardById(cardId: string) {
+	public destroyCardById(cardId: string): void {
 		const card = this.findCardById(cardId)
 		if (!card) { return }
 		this.destroyCard(card)

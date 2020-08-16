@@ -6,6 +6,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import BuffStrength from '../../../buffs/BuffStrength'
 
 export default class UnitForestScout extends ServerCard {
 	boardPowerBonus = 7
@@ -31,10 +32,10 @@ export default class UnitForestScout extends ServerCard {
 		const ownPower = this.game.board.getTotalPlayerPower(owner)
 		const opponentsPower = this.game.board.getTotalPlayerPower(owner.opponent)
 		if (ownPower < opponentsPower) {
-			unit.addPower(this.boardPowerBonus)
+			this.buffs.addMultiple(BuffStrength, this.boardPowerBonus, this)
 		}
 		if (owner.morale < owner.opponent.morale) {
-			unit.addPower(this.moralePowerBonus)
+			this.buffs.addMultiple(BuffStrength, this.moralePowerBonus, this)
 		}
 	}
 }

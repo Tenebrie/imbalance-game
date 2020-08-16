@@ -15,14 +15,14 @@ import BuffMessage from '@shared/models/network/BuffMessage'
 import CardFeature from '@shared/enums/CardFeature'
 
 export default {
-	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard) {
+	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard): void {
 		player.sendMessage({
 			type: 'update/player/self/hand/playDeclined',
 			data: CardMessage.fromCard(card)
 		})
 	},
 
-	notifyAboutDeckLeader(playerInGame: ServerPlayerInGame, card: ServerCard) {
+	notifyAboutDeckLeader(playerInGame: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/leader',
 			data: new CardMessage(card)
@@ -34,7 +34,7 @@ export default {
 		})
 	},
 
-	notifyAboutUnitCardAdded(playerInGame: ServerPlayerInGame, card: ServerCard) {
+	notifyAboutUnitCardAdded(playerInGame: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/hand/unit/cardAdded',
 			data: new CardMessage(card)
@@ -46,7 +46,7 @@ export default {
 		})
 	},
 
-	notifyAboutSpellCardAdded(playerInGame: ServerPlayerInGame, card: ServerCard) {
+	notifyAboutSpellCardAdded(playerInGame: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/hand/spell/cardAdded',
 			data: new CardMessage(card)
@@ -58,14 +58,14 @@ export default {
 		})
 	},
 
-	notifyAboutOpponentCardRevealed(player: ServerPlayer, card: ServerCard) {
+	notifyAboutOpponentCardRevealed(player: ServerPlayer, card: ServerCard): void {
 		player.sendMessage({
 			type: 'update/player/opponent/hand/cardRevealed',
 			data: CardMessage.fromCardWithVariables(card, card.evaluateVariables())
 		})
 	},
 
-	notifyAboutCardInHandDestroyed(ownedCard: ServerOwnedCard) {
+	notifyAboutCardInHandDestroyed(ownedCard: ServerOwnedCard): void {
 		const owner = ownedCard.owner.player
 		const opponent = ownedCard.owner.opponent.player
 
@@ -79,7 +79,7 @@ export default {
 		})
 	},
 
-	notifyAboutCardInDeckDestroyed(ownedCard: ServerOwnedCard) {
+	notifyAboutCardInDeckDestroyed(ownedCard: ServerOwnedCard): void {
 		const owner = ownedCard.owner.player
 		const opponent = ownedCard.owner.opponent.player
 
@@ -93,7 +93,7 @@ export default {
 		})
 	},
 
-	notifyAboutCardResolving(ownedCard: ServerOwnedCard) {
+	notifyAboutCardResolving(ownedCard: ServerOwnedCard): void {
 		const owner = ownedCard.owner.player
 		const opponent = ownedCard.owner.opponent.player
 		const data = CardMessage.fromCard(ownedCard.card)
@@ -109,7 +109,7 @@ export default {
 		})
 	},
 
-	notifyAboutResolvingCardTargets(player: ServerPlayer, validTargets: ServerCardTarget[]) {
+	notifyAboutResolvingCardTargets(player: ServerPlayer, validTargets: ServerCardTarget[]): void {
 		const messages = validTargets.map(target => {
 			const message = new CardTargetMessage(target)
 			if (target.targetType === TargetType.CARD_IN_LIBRARY || target.targetType === TargetType.CARD_IN_UNIT_DECK || target.targetType === TargetType.CARD_IN_SPELL_DECK) {
@@ -125,7 +125,7 @@ export default {
 		})
 	},
 
-	notifyAboutCardResolved(ownedCard: ServerOwnedCard) {
+	notifyAboutCardResolved(ownedCard: ServerOwnedCard): void {
 		const owner = ownedCard.owner.player
 		const opponent = ownedCard.owner.opponent.player
 		const data = CardMessage.fromCard(ownedCard.card)
@@ -141,7 +141,7 @@ export default {
 		})
 	},
 
-	notifyAboutCardBuffAdded(card: ServerCard, buff: ServerBuff) {
+	notifyAboutCardBuffAdded(card: ServerCard, buff: ServerBuff): void {
 		if (!card.owner) {
 			return
 		}
@@ -160,7 +160,7 @@ export default {
 		})
 	},
 
-	notifyAboutCardBuffIntensityChanged(card: ServerCard, buff: ServerBuff) {
+	notifyAboutCardBuffIntensityChanged(card: ServerCard, buff: ServerBuff): void {
 		if (!card.owner) {
 			return
 		}
@@ -179,7 +179,7 @@ export default {
 		})
 	},
 
-	notifyAboutCardBuffDurationChanged(card: ServerCard, buff: ServerBuff) {
+	notifyAboutCardBuffDurationChanged(card: ServerCard, buff: ServerBuff): void {
 		if (!card.owner) {
 			return
 		}
@@ -198,7 +198,7 @@ export default {
 		})
 	},
 
-	notifyAboutCardBuffRemoved(card: ServerCard, buff: ServerBuff) {
+	notifyAboutCardBuffRemoved(card: ServerCard, buff: ServerBuff): void {
 		if (!card.owner) {
 			return
 		}
@@ -217,7 +217,7 @@ export default {
 		})
 	},
 
-	notifyAboutUnitCardInDeck(playerInGame: ServerPlayerInGame, card: ServerCard) {
+	notifyAboutUnitCardInDeck(playerInGame: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/deck/unit/cardAdded',
 			data: CardMessage.fromCard(card)
@@ -228,7 +228,7 @@ export default {
 		})
 	},
 
-	notifyAboutSpellCardInDeck(playerInGame: ServerPlayerInGame, card: ServerCard) {
+	notifyAboutSpellCardInDeck(playerInGame: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/deck/spell/cardAdded',
 			data: CardMessage.fromCard(card)
@@ -239,7 +239,7 @@ export default {
 		})
 	},
 
-	notifyAboutUnitCardInGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard) {
+	notifyAboutUnitCardInGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/graveyard/unit/cardAdded',
 			data: CardMessage.fromCard(card)
@@ -250,7 +250,7 @@ export default {
 		})
 	},
 
-	notifyAboutSpellCardInGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard) {
+	notifyAboutSpellCardInGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/graveyard/spell/cardAdded',
 			data: CardMessage.fromCard(card)
@@ -261,7 +261,7 @@ export default {
 		})
 	},
 
-	notifyAboutCardInGraveyardDestroyed(ownedCard: ServerOwnedCard) {
+	notifyAboutCardInGraveyardDestroyed(ownedCard: ServerOwnedCard): void {
 		const owner = ownedCard.owner.player
 		const opponent = ownedCard.owner.opponent.player
 
@@ -275,7 +275,7 @@ export default {
 		})
 	},
 
-	notifyAboutCardVariablesUpdated(game: ServerGame) {
+	notifyAboutCardVariablesUpdated(game: ServerGame): void {
 		game.players.forEach(playerInGame => {
 			const cardsToNotify = game.board.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card).concat(playerInGame.cardHand.allCards)
 			if (game.cardPlay.cardResolveStack.currentCard) {

@@ -13,6 +13,7 @@ import BuffNextSpellDiscount from './BuffNextSpellDiscount'
 export default class BuffNextSpellDiscountAura extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.ADD_INTENSITY)
+		this.alignment = BuffAlignment.POSITIVE
 
 		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)

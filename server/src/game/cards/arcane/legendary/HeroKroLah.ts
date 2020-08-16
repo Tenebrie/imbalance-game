@@ -6,13 +6,11 @@ import TargetType from '@shared/enums/TargetType'
 import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import ServerBoardRow from '../../../models/ServerBoardRow'
-import ServerAnimation from '../../../models/ServerAnimation'
 import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardFaction from '@shared/enums/CardFaction'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 import MoveDirection from '@shared/enums/MoveDirection'
 import CardFeature from '@shared/enums/CardFeature'
 
@@ -37,15 +35,11 @@ export default class HeroKroLah extends ServerCard {
 	private onTargetSelected(target: ServerBoardRow): void {
 		const targetUnits = target.cards
 
-		this.game.animation.play(ServerAnimation.cardAttacksUnits(this, targetUnits))
-
 		const targetIndex = this.game.board.rowMove(this.owner, target.index, MoveDirection.FORWARD, 1)
-		targetUnits.forEach(targetUnit => this.game.board.moveUnitToFarRight(targetUnit, targetIndex))
-		this.game.animation.play(ServerAnimation.unitMove())
 
 		targetUnits.forEach(targetUnit => {
 			targetUnit.card.buffs.add(BuffStun, this, BuffDuration.START_OF_NEXT_TURN)
+			this.game.board.moveUnitToFarRight(targetUnit, targetIndex)
 		})
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff(targetUnits.map(unit => unit.card), BuffAlignment.NEGATIVE))
 	}
 }

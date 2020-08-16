@@ -6,8 +6,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
-import ServerAnimation from '../../../models/ServerAnimation'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroAdventuringGuildMaster extends ServerCard {
@@ -28,6 +26,5 @@ export default class HeroAdventuringGuildMaster extends ServerCard {
 	private onDeploy(): void {
 		const otherCardsPlayed = this.owner.cardsPlayed.filter(card => card !== this && card.type === CardType.UNIT)
 		this.buffs.addMultiple(BuffStrength, otherCardsPlayed.length * this.powerPerCard, this, BuffDuration.INFINITY)
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff([this], BuffAlignment.POSITIVE))
 	}
 }

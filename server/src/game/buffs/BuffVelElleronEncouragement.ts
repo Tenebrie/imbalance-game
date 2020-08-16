@@ -5,10 +5,12 @@ import BuffStrength from './BuffStrength'
 import ServerGame from '../models/ServerGame'
 import {TurnStartedEventArgs} from '../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class BuffVelElleronEncouragement extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.OVERLAY)
+		this.alignment = BuffAlignment.POSITIVE
 
 		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
 			.require(({ player }) => player === this.card.owner)

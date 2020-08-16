@@ -246,7 +246,7 @@ export default class Renderer {
 		this.debouncedResizedFunc()()
 	}
 
-	private debouncedResizedFunc(): Function {
+	private debouncedResizedFunc(): () => void {
 		return throttle(100, () => {
 			const width = Math.max(1366, window.innerWidth * window.devicePixelRatio)
 			this.pixi.renderer.resize(width * this.superSamplingLevel, window.innerHeight * window.devicePixelRatio * this.superSamplingLevel)

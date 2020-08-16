@@ -6,7 +6,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
 import GameHookType, {CardTakesDamageHookArgs, CardTakesDamageHookValues} from '../../../models/GameHookType'
-import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardDestroyedEventArgs} from '../../../models/GameEventCreators'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
@@ -25,9 +24,6 @@ export default class HeroAntoria extends ServerCard {
 				...values,
 				targetCard: this
 			}))
-			.perform(({ targetCard }) => {
-				this.game.animation.play(ServerAnimation.cardAttacksCards(targetCard, [this]))
-			})
 
 		this.createCallback<CardDestroyedEventArgs>(GameEventType.CARD_DESTROYED, [CardLocation.HAND])
 			.require(({ triggeringCard }) => triggeringCard === this)

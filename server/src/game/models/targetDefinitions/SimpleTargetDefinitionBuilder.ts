@@ -39,23 +39,13 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		return this
 	}
 
-	public disallowType(type: TargetType): SimpleTargetDefinitionBuilder {
-		this.builder.disallowType(this.targetMode, type)
-		return this
-	}
-
 	public validate(type: TargetType, validator: (args: TargetValidatorArguments) => boolean): SimpleTargetDefinitionBuilder {
 		this.builder.validate(this.targetMode, type, validator)
 		return this
 	}
 
-	public clearValidation(type: TargetType): SimpleTargetDefinitionBuilder {
-		this.builder.clearValidation(this.targetMode, type)
-		return this
-	}
-
-	public allowSimultaneously(left: TargetType, right: TargetType): SimpleTargetDefinitionBuilder {
-		this.builder.allowSimultaneously([this.targetMode, left], [this.targetMode, right])
+	public evaluate(type: TargetType, evaluator: (args: TargetValidatorArguments) => number): SimpleTargetDefinitionBuilder {
+		this.builder.evaluate(this.targetMode, type, evaluator)
 		return this
 	}
 

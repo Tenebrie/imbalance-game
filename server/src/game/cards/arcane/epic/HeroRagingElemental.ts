@@ -2,7 +2,6 @@ import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import ServerAnimation from '../../../models/ServerAnimation'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
@@ -46,7 +45,6 @@ export default class HeroRagingElemental extends ServerCard {
 		const targets = [thisUnit].concat(opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, thisUnit) === shortestDistance))
 
 		const damage = this.power
-		this.game.animation.play(ServerAnimation.cardAttacksUnits(this, targets))
 		targets.forEach(unit => {
 			unit.dealDamage(ServerDamageInstance.fromUnit(damage, thisUnit))
 		})

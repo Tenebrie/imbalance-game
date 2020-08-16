@@ -11,7 +11,7 @@ import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import Utils from '../../../utils/Utils'
 
 export default {
-	notifyAboutUnitCreated(player: ServerPlayer, card: ServerUnit, rowIndex: number, unitIndex: number) {
+	notifyAboutUnitCreated(player: ServerPlayer, card: ServerUnit, rowIndex: number, unitIndex: number): void {
 		player.sendMessage({
 			type: 'update/board/unitCreated',
 			data: UnitMessage.fromCardOnBoardWithIndex(card, rowIndex, unitIndex),
@@ -23,21 +23,21 @@ export default {
 		})
 	},
 
-	notifyAboutUnitMoved(player: ServerPlayer, card: ServerUnit, rowIndex: number, unitIndex: number) {
+	notifyAboutUnitMoved(player: ServerPlayer, card: ServerUnit, rowIndex: number, unitIndex: number): void {
 		player.sendMessage({
 			type: 'update/board/unitMoved',
 			data: UnitMessage.fromCardOnBoardWithIndex(card, rowIndex, unitIndex)
 		})
 	},
 
-	notifyAboutUnitDestroyed(player: ServerPlayer, cardOnBoard: ServerUnit) {
+	notifyAboutUnitDestroyed(player: ServerPlayer, cardOnBoard: ServerUnit): void {
 		player.sendMessage({
 			type: 'update/board/unitDestroyed',
 			data: CardMessage.fromCard(cardOnBoard.card)
 		})
 	},
 
-	notifyAboutValidActionsChanged(game: ServerGame, playerInGame: ServerPlayerInGame) {
+	notifyAboutValidActionsChanged(game: ServerGame, playerInGame: ServerPlayerInGame): void {
 		const cardsInHand = playerInGame.cardHand.allCards
 		const validPlayTargets = Utils.flat(cardsInHand.map(card => card.getValidPlayTargets(playerInGame)))
 		const playTargetMessages = validPlayTargets.map(order => new CardTargetMessage(order))
@@ -61,35 +61,35 @@ export default {
 		})
 	},
 
-	notifyAboutRowOwnershipChanged(player: ServerPlayer, row: BoardRow) {
+	notifyAboutRowOwnershipChanged(player: ServerPlayer, row: BoardRow): void {
 		player.sendMessage({
 			type: 'update/board/row/owner',
 			data: new BoardRowMessage(row)
 		})
 	},
 
-	notifyAboutCardPowerChange(player: ServerPlayer, card: ServerCard) {
+	notifyAboutCardPowerChange(player: ServerPlayer, card: ServerCard): void {
 		player.sendMessage({
 			type: 'update/card/power',
 			data: CardMessage.fromCard(card)
 		})
 	},
 
-	notifyAboutCardMaxPowerChange(player: ServerPlayer, card: ServerCard) {
+	notifyAboutCardMaxPowerChange(player: ServerPlayer, card: ServerCard): void {
 		player.sendMessage({
 			type: 'update/card/maxPower',
 			data: CardMessage.fromCard(card)
 		})
 	},
 
-	notifyAboutCardArmorChange(player: ServerPlayer, card: ServerCard) {
+	notifyAboutCardArmorChange(player: ServerPlayer, card: ServerCard): void {
 		player.sendMessage({
 			type: 'update/card/armor',
 			data: CardMessage.fromCard(card)
 		})
 	},
 
-	notifyAboutCardMaxArmorChange(player: ServerPlayer, card: ServerCard) {
+	notifyAboutCardMaxArmorChange(player: ServerPlayer, card: ServerCard): void {
 		player.sendMessage({
 			type: 'update/card/maxArmor',
 			data: CardMessage.fromCard(card)

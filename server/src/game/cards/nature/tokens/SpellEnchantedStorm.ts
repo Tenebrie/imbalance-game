@@ -14,7 +14,6 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class SpellEnchantedStorm extends ServerCard {
 	baseBuffPower = 1
@@ -61,9 +60,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.universeAffectsCards([target.card]))
 		target.buffs.addMultiple(BuffStrength, this.buffPower, this, BuffDuration.INFINITY)
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff([target.card], BuffAlignment.POSITIVE))
 		this.targetsHit.push(target)
 	}
 

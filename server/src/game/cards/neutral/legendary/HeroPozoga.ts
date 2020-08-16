@@ -6,6 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import {mapUnitsToCards} from '../../../../utils/Utils'
 
 export default class HeroPozoga extends ServerCard {
 	constructor(game: ServerGame) {
@@ -22,7 +23,7 @@ export default class HeroPozoga extends ServerCard {
 		const maximumPower = sortedUnits[0].card.power
 		const targetUnits = sortedUnits.filter(unit => unit.card.power === maximumPower)
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits(targetUnits))
+		this.game.animation.play(ServerAnimation.cardAttacksCards(this, mapUnitsToCards(targetUnits)))
 		targetUnits.forEach(unit => {
 			unit.destroy()
 		})

@@ -18,7 +18,7 @@ import CardColor from '@shared/enums/CardColor'
 import ServerBuffContainer from './ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import RichTextVariables from '@shared/models/RichTextVariables'
-import GameLibrary from '../libraries/CardLibrary'
+import GameLibrary, {CardConstructor} from '../libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
@@ -33,6 +33,8 @@ import {EventCallback, EventHook} from './ServerGameEvents'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
+import Utils from '../../utils/Utils'
+import ServerAnimation from './ServerAnimation'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -145,7 +147,7 @@ export default class ServerCard extends Card {
 		return this.faction !== CardFaction.EXPERIMENTAL && this.color !== CardColor.TOKEN && this.type === CardType.UNIT
 	}
 
-	public instanceOf(prototype: Function): boolean {
+	public instanceOf(prototype: CardConstructor): boolean {
 		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 		return this.class === cardClass
 	}
@@ -202,6 +204,18 @@ export default class ServerCard extends Card {
 
 		if (damageInstance.value <= 0) {
 			return
+		}
+
+		if (damageInstance.sourceCard) {
+			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.sourceCard, [this]))
+			if (targetCard !== this) {
+				this.game.animation.play(ServerAnimation.cardAttacksCards(this, [targetCard]))
+			}
+		} else {
+			this.game.animation.play(ServerAnimation.universeAttacksCards([this]))
+			if (targetCard !== this) {
+				this.game.animation.play(ServerAnimation.cardAttacksCards(this, [targetCard]))
+			}
 		}
 
 		let damageToDeal = damageInstance.value
@@ -294,6 +308,19 @@ export default class ServerCard extends Card {
 		})
 	}
 
+	public getValidPostPlayRequiredTargets(previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
+		let validTargets = []
+		const args = {
+			thisUnit: this.unit,
+			thisCardOwner: this.owner
+		}
+		const targetDefinition = this.definePostPlayRequiredTargets().build()
+		Utils.forEachInNumericEnum(TargetType, (targetType: TargetType) => {
+			validTargets = validTargets.concat(this.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, targetType, targetDefinition, args, previousTargets))
+		})
+		return validTargets
+	}
+
 	public getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		let targets: ServerCardTarget[] = []
 		if (targetType === TargetType.UNIT) {
@@ -329,16 +356,6 @@ export default class ServerCard extends Card {
 
 		const previousTargetsOfType = previousTargets.filter(target => target.targetMode === targetMode && target.targetType === targetType)
 		return previousTargetsOfType.length >= targetDefinition.getTargetOfTypeCount(targetMode, targetType)
-
-		/*
-		 * All orders are considered to be valid simultaneously
-		 * - TODO: Remove allowSimultaneously from targeting API if no other use is found
-		 * */
-		// const otherTypeOrders = previousTargets.filter(target => target.targetMode !== targetMode || target.targetType !== targetType)
-		// const incompatibleOtherTypeOrder = otherTypeOrders.find(performedOrder => {
-		// 	return !targetDefinition.isValidSimultaneously({ targetMode, targetType }, performedOrder)
-		// })
-		// return !!incompatibleOtherTypeOrder
 	}
 
 	private getValidUnitTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
@@ -347,10 +364,24 @@ export default class ServerCard extends Card {
 		}
 
 		const unitTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.UNIT)
+		args = {
+			...args,
+			thisCard: this,
+			previousTargets: previousTargets
+		}
+
 		return this.game.board.getAllUnits()
 			.filter(unit => !unit.card.features.includes(CardFeature.UNTARGETABLE))
-			.filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { ...args, thisCard: this, targetCard: unit.card, targetUnit: unit, previousTargets: previousTargets }))
-			.map(targetUnit => ServerCardTarget.cardTargetUnit(targetMode, this, targetUnit, unitTargetLabel))
+			.filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card, targetUnit: unit }))
+			.map(unit => ({
+				unit: unit,
+				expectedValue: targetDefinition.evaluate(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card, targetUnit: unit })
+			}))
+			.map(tuple => ({
+				unit: tuple.unit,
+				expectedValue: Math.max(tuple.expectedValue * tuple.unit.card.botEvaluation.threatMultiplier, tuple.unit.card.botEvaluation.baseThreat)
+			}))
+			.map(tuple => ServerCardTarget.cardTargetUnit(targetMode, this, tuple.unit, tuple.expectedValue, unitTargetLabel))
 	}
 
 	private getValidRowTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
@@ -384,6 +415,7 @@ export default class ServerCard extends Card {
 		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_UNIT_HAND)
 		return this.game.players.map(player => player.cardHand.unitCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
+			.filter(unit => !unit.features.includes(CardFeature.UNTARGETABLE))
 			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_UNIT_HAND, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
 			.map(targetCard => ServerCardTarget.cardTargetCardInUnitHand(targetMode, this, targetCard, cardTargetLabel))
 	}
@@ -396,6 +428,7 @@ export default class ServerCard extends Card {
 		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_SPELL_HAND)
 		return this.game.players.map(player => player.cardHand.spellCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
+			.filter(unit => !unit.features.includes(CardFeature.UNTARGETABLE))
 			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_SPELL_HAND, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
 			.map(targetCard => ServerCardTarget.cardTargetCardInSpellHand(targetMode, this, targetCard, cardTargetLabel))
 	}

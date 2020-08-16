@@ -10,6 +10,7 @@ import TargetType from '@shared/enums/TargetType'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ServerAnimation from '../../../models/ServerAnimation'
 
 export default class HeroCultistOfAreddon extends ServerCard {
 	constructor(game: ServerGame) {
@@ -31,6 +32,7 @@ export default class HeroCultistOfAreddon extends ServerCard {
 
 	private onTargetSelected(target: ServerUnit): void {
 		const cardClass = target.card.class
+		this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target.card]))
 		target.destroy()
 		this.owner.createCardFromLibraryByClass(cardClass)
 	}

@@ -7,32 +7,35 @@ import TargetDefinition from './TargetDefinition'
 import TargetDefinitionBuilder from './TargetDefinitionBuilder'
 
 export default class StandardTargetDefinitionBuilder implements TargetDefinitionBuilder {
-	private game: ServerGame
+	private readonly game: ServerGame
 	private totalTargetCount: number = undefined
-	private orderLabels: string[][]
+	private readonly orderLabels: string[][]
 	private readonly targetOfTypeCount: number[][]
 	private readonly validators: ((args: TargetValidatorArguments) => boolean)[][][] = []
-	private validSimultaneousTargets: [TargetTypeWithMode, TargetTypeWithMode][] = []
+	private readonly evaluators: ((args: TargetValidatorArguments) => number)[][][] = []
 
 	constructor(game: ServerGame) {
 		this.game = game
 		this.validators = []
+		this.evaluators = []
 		this.orderLabels = []
 		this.targetOfTypeCount = []
 		for (const targetingReason in Object.values(TargetMode)) {
 			this.orderLabels[targetingReason] = []
 			this.targetOfTypeCount[targetingReason] = []
 			this.validators[targetingReason] = []
+			this.evaluators[targetingReason] = []
 			for (const targetType in Object.values(TargetType)) {
 				this.orderLabels[targetingReason][targetType] = ''
 				this.targetOfTypeCount[targetingReason][targetType] = 0
 				this.validators[targetingReason][targetType] = []
+				this.evaluators[targetingReason][targetType] = []
 			}
 		}
 	}
 
 	public build(): TargetDefinition {
-		return new TargetDefinition(this.game, this.totalTargetCount, this.orderLabels, this.targetOfTypeCount, this.validators, this.validSimultaneousTargets)
+		return new TargetDefinition(this.game, this.totalTargetCount, this.orderLabels, this.targetOfTypeCount, this.validators, this.evaluators)
 	}
 
 	public singleTarget(): StandardTargetDefinitionBuilder {
@@ -76,23 +79,13 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		return this
 	}
 
-	public disallowType(reason: TargetMode, type: TargetType): StandardTargetDefinitionBuilder {
-		this.targetOfTypeCount[reason][type] = 0
-		return this
-	}
-
 	public validate(reason: TargetMode, type: TargetType, validator: (args: TargetValidatorArguments) => boolean): StandardTargetDefinitionBuilder {
 		this.validators[reason][type].push(validator)
 		return this
 	}
 
-	public clearValidation(reason: TargetMode, type: TargetType): StandardTargetDefinitionBuilder {
-		this.validators[reason][type] = []
-		return this
-	}
-
-	public allowSimultaneously(left: [TargetMode, TargetType], right: [TargetMode, TargetType]): StandardTargetDefinitionBuilder {
-		this.validSimultaneousTargets.push([{ targetMode: left[0], targetType: left[1] }, { targetMode: right[0], targetType: right[1] }])
+	public evaluate(reason: TargetMode, type: TargetType, evaluator: (args: TargetValidatorArguments) => number): StandardTargetDefinitionBuilder {
+		this.evaluators[reason][type].push(evaluator)
 		return this
 	}
 

@@ -8,8 +8,6 @@ import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardPlayedEventArgs} from '../../../models/GameEventCreators'
-import ServerAnimation from '../../../models/ServerAnimation'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class HeroStormDancer extends ServerCard {
 	normalPowerGiven = 1
@@ -32,13 +30,10 @@ export default class HeroStormDancer extends ServerCard {
 
 	private onSpellPlayed(playedCard: ServerCard): void {
 		const adjacentUnits = this.game.board.getAdjacentUnits(this.unit)
-		const adjacentCards = adjacentUnits.map(unit => unit.card)
 		const isStorm = playedCard.tribes.includes(CardTribe.STORM)
 		const powerGiven = isStorm ? this.stormPowerGiven : this.normalPowerGiven
-		this.game.animation.play(ServerAnimation.cardAffectsCards(this, adjacentCards))
 		adjacentUnits.forEach(unit => {
 			unit.buffs.addMultiple(BuffStrength, powerGiven, this)
 		})
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff(adjacentCards, BuffAlignment.POSITIVE))
 	}
 }

@@ -5,8 +5,11 @@ import ServerCard from './ServerCard'
 import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
 import ServerGame from './ServerGame'
 import GameEventCreators from './GameEventCreators'
+import ServerAnimation from './ServerAnimation'
+import BuffFeature from '@shared/enums/BuffFeature'
+import CardLocation from '@shared/enums/CardLocation'
 
-interface BuffConstructor {
+export interface BuffConstructor {
 	new (game: ServerGame): ServerBuff
 }
 
@@ -51,6 +54,17 @@ export default class ServerBuffContainer implements BuffContainer {
 			newBuff.duration = duration
 		}
 
+		const playBuffReceivedAnimation = () => {
+			if (newBuff.buffFeatures.includes(BuffFeature.SKIP_ANIMATION) || this.card.location === CardLocation.UNKNOWN) {
+				return
+			}
+			this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.card], newBuff.alignment))
+		}
+
+		if (source && this.card.location !== CardLocation.UNKNOWN) {
+			this.game.animation.play(ServerAnimation.cardAffectsCards(source, [this.card]))
+		}
+
 		let invokedBuff = newBuff
 
 		const existingBuff = this.buffs.find(existingBuff => existingBuff.buffClass === newBuff.buffClass)
@@ -68,38 +82,41 @@ export default class ServerBuffContainer implements BuffContainer {
 		}
 
 		if (existingBuff && newBuff.stackType === BuffStackType.ADD_DURATION) {
+			this.game.events.unsubscribe(newBuff)
 			existingBuff.setDuration(existingBuff.duration + newBuff.duration)
 			invokedBuff = existingBuff
-			this.game.events.unsubscribe(newBuff)
 		}
 
 		if (existingBuff && newBuff.stackType === BuffStackType.ADD_INTENSITY) {
-			existingBuff.setIntensity(existingBuff.intensity + 1)
 			this.game.events.unsubscribe(newBuff)
+			existingBuff.setIntensity(existingBuff.intensity + 1)
+			playBuffReceivedAnimation()
 			return
 		}
 
 		this.game.events.postEvent(GameEventCreators.buffCreated({
 			triggeringBuff: invokedBuff
 		}))
+
+		playBuffReceivedAnimation()
 	}
 
-	public addMultiple(prototype: BuffConstructor, count: number, source: ServerCard | null, duration: number | 'default' = 'default') {
+	public addMultiple(prototype: BuffConstructor, count: number, source: ServerCard | null, duration: number | 'default' = 'default'): void {
 		for (let i = 0; i < count; i++) {
 			this.add(prototype, source, duration)
 		}
 	}
 
-	public getBuffsByPrototype(prototype: any): ServerBuff[] {
+	public getBuffsByPrototype(prototype: BuffConstructor): ServerBuff[] {
 		const buffClass = prototype.prototype.constructor.name.substr(0, 1).toLowerCase() + prototype.prototype.constructor.name.substr(1)
 		return this.buffs.filter(buff => buff.buffClass === buffClass)
 	}
 
-	public has(prototype: any): boolean {
+	public has(prototype: BuffConstructor): boolean {
 		return this.getBuffsByPrototype(prototype).length > 0
 	}
 
-	public getIntensity(prototype: any): number {
+	public getIntensity(prototype: BuffConstructor): number {
 		return this.getBuffsByPrototype(prototype).map(buff => buff.intensity).reduce((total, value) => total + value, 0)
 	}
 
@@ -115,7 +132,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		this.game.events.unsubscribe(buff)
 	}
 
-	public remove(prototype: any): void {
+	public remove(prototype: BuffConstructor): void {
 		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 		const buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass)
 		buffsOfType.forEach(buffToRemove => {

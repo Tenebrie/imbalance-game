@@ -21,10 +21,12 @@ export default class ServerCardTarget implements CardTarget {
 	targetRow?: ServerBoardRow
 	targetLabel: string
 	targetCardData: CardMessage
+	expectedValue: number
 
 	private constructor(targetMode: TargetMode, targetType: TargetType) {
 		this.targetMode = targetMode
 		this.targetType = targetType
+		this.expectedValue = 0
 	}
 
 	public isEqual(other: ServerCardTarget): boolean {
@@ -35,11 +37,12 @@ export default class ServerCardTarget implements CardTarget {
 			this.targetRow === other.targetRow
 	}
 
-	public static cardTargetUnit(targetMode: TargetMode, sourceCard: ServerCard, targetUnit: ServerUnit, targetLabel = ''): ServerCardTarget {
+	public static cardTargetUnit(targetMode: TargetMode, sourceCard: ServerCard, targetUnit: ServerUnit, expectedValue: number, targetLabel = ''): ServerCardTarget {
 		const order = new ServerCardTarget(targetMode, TargetType.UNIT)
 		order.sourceCard = sourceCard
 		order.targetUnit = targetUnit
 		order.targetLabel = targetLabel
+		order.expectedValue = expectedValue
 		return order
 	}
 

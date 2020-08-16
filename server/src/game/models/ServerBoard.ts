@@ -195,6 +195,7 @@ export default class ServerBoard extends Board {
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitMoved(playerInGame.player, unit, rowIndex, unitIndex)
 		})
+		this.game.animation.play(ServerAnimation.unitMove())
 		this.game.events.postEvent(GameEventCreators.unitMoved({
 			triggeringUnit: unit,
 			fromRow: fromRow,

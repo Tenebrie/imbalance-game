@@ -11,10 +11,8 @@ import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/P
 import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
-import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTakesDamageEventArgs, CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroTroviar extends ServerCard {
@@ -53,7 +51,6 @@ export default class HeroTroviar extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.cardAttacksUnits(this, [target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.deployDamage, this))
 		this.targetsHit.push(target)
 	}
@@ -62,7 +59,6 @@ export default class HeroTroviar extends ServerCard {
 		for (let i = 0; i < this.powerGained; i++) {
 			this.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
 		}
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff([this], BuffAlignment.POSITIVE))
 	}
 
 	private onTargetsConfirmed(): void {

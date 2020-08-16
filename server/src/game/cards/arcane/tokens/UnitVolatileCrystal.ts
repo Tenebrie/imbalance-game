@@ -4,7 +4,6 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerAnimation from '../../../models/ServerAnimation'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
@@ -30,7 +29,6 @@ export default class UnitVolatileCrystal extends ServerCard {
 		const unit = this.unit
 		const damageTargets = this.game.board.getAdjacentUnits(unit).filter(unit => unit.rowIndex === unit.rowIndex)
 
-		this.game.animation.play(ServerAnimation.cardAttacksUnits(this, damageTargets))
 		damageTargets.forEach(unit => {
 			unit.dealDamage(ServerDamageInstance.fromUnit(this.damage, unit))
 		})

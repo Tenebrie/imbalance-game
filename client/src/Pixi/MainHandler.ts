@@ -66,6 +66,10 @@ export default class MainHandler {
 		}
 	}
 
+	public triggerPreliminaryAnimation(): void {
+		this.messageCooldown = 100
+	}
+
 	public triggerAnimation(time: number): void {
 		this.messageCooldown += time
 	}

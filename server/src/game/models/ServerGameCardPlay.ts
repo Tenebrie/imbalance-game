@@ -1,15 +1,13 @@
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
 import ServerCardTarget from './ServerCardTarget'
-import TargetMode from '@shared/enums/TargetMode'
-import TargetType from '@shared/enums/TargetType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
 import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
-import Utils from '../../utils/Utils'
 import GameEventCreators from './GameEventCreators'
+import CardLocation from '@shared/enums/CardLocation'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -141,17 +139,7 @@ export default class ServerGameCardPlay {
 			return []
 		}
 
-		const unit = this.game.board.findUnitById(card.id)
-		const args = {
-			thisUnit: unit,
-			thisCardOwner: currentCard.owner
-		}
-
-		let validTargets = []
-		Utils.forEachInNumericEnum(TargetType, (targetType: TargetType) => {
-			validTargets = validTargets.concat(card.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, targetType, targetDefinition, args, this.cardResolveStack.currentTargets))
-		})
-		return validTargets
+		return card.getValidPostPlayRequiredTargets(this.cardResolveStack.currentTargets)
 	}
 
 	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
@@ -170,6 +158,11 @@ export default class ServerGameCardPlay {
 
 		this.cardResolveStack.pushTarget(target)
 
+		// if (target.targetCard && target.targetCard.location !== CardLocation.UNKNOWN) {
+		// 	this.game.animation.play(ServerAnimation.cardAffectsCards(currentResolvingCard.card, [target.targetCard]))
+		// } else if (target.targetUnit) {
+		// 	this.game.animation.play(ServerAnimation.cardAffectsCards(currentResolvingCard.card, [target.targetUnit.card]))
+		// }
 		this.game.events.postEvent(GameEventCreators.cardTargetSelected({
 			triggeringCard: currentResolvingCard.card,
 			targetCard: target.targetCard,

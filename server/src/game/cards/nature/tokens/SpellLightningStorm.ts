@@ -40,7 +40,7 @@ export default class SpellLightningStorm extends ServerCard {
 			.perform(() => this.onTargetsConfirmed())
 	}
 
-	get targetCount() {
+	get targetCount(): number {
 		let stormsPlayed = 0
 		if (this.owner) {
 			stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
@@ -61,7 +61,6 @@ export default class SpellLightningStorm extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 		this.targetsHit.push(target)
 	}

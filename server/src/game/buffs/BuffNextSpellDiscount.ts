@@ -5,10 +5,12 @@ import {CardPlayedEventArgs} from '../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardType from '@shared/enums/CardType'
 import BuffFeature from '@shared/enums/BuffFeature'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class BuffNextSpellDiscount extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.ADD_INTENSITY)
+		this.alignment = BuffAlignment.POSITIVE
 		this.buffFeatures = [BuffFeature.SPELL_DISCOUNT_PER_INTENSITY]
 
 		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED)

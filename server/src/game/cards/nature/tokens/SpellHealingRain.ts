@@ -5,7 +5,6 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
-import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellHealingRain extends ServerCard {
@@ -39,7 +38,6 @@ export default class SpellHealingRain extends ServerCard {
 		const targets = this.game.board.getUnitsOwnedByPlayer(this.owner)
 			.filter(target => target.card.power < target.card.maxPower)
 
-		this.game.animation.play(ServerAnimation.universeHealsCards(targets.map(unit => unit.card)))
 		targets.forEach(target => {
 			target.heal(ServerDamageInstance.fromCard(this.healing, this))
 		})

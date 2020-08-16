@@ -7,12 +7,10 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import ServerBoardRow from '../../../models/ServerBoardRow'
-import ServerAnimation from '../../../models/ServerAnimation'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffBurning from '../../../buffs/BuffBurning'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroFlameDancer extends ServerCard {
@@ -35,7 +33,7 @@ export default class HeroFlameDancer extends ServerCard {
 		return PostPlayTargetDefinitionBuilder.base(this.game)
 			.require(TargetType.BOARD_ROW)
 			.validate(TargetType.BOARD_ROW, args => {
-				return args.targetRow.owner === args.thisUnit.owner.opponent && args.targetRow.cards.length > 0
+				return args.targetRow.owner === args.thisCardOwner.opponent && args.targetRow.cards.length > 0
 			})
 	}
 
@@ -43,10 +41,8 @@ export default class HeroFlameDancer extends ServerCard {
 		const targetUnits = target.cards
 		const targetCards = targetUnits.map(unit => unit.card)
 
-		this.game.animation.play(ServerAnimation.cardAffectsCards(this, targetCards))
 		targetUnits.forEach(targetUnit => {
 			targetUnit.card.buffs.add(BuffBurning, this, BuffDuration.FULL_TURN * this.burnDuration - 1)
 		})
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff(targetCards, BuffAlignment.NEGATIVE))
 	}
 }

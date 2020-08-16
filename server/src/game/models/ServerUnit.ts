@@ -9,6 +9,7 @@ import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
 import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
 import GameEventCreators from './GameEventCreators'
+import ServerAnimation from './ServerAnimation'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame
@@ -61,6 +62,11 @@ export default class ServerUnit implements Unit {
 			return
 		}
 
+		if (healingInstance.sourceCard) {
+			this.game.animation.play(ServerAnimation.cardHealsCards(healingInstance.sourceCard, [this.card]))
+		} else {
+			this.game.animation.play(ServerAnimation.universeHealsCards([this.card]))
+		}
 		this.setPower(Math.min(this.card.maxPower, this.card.power + healingInstance.value))
 	}
 

@@ -8,16 +8,13 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerPlayerInGame from '../../../../players/ServerPlayerInGame'
 import ServerUnit from '../../../../models/ServerUnit'
-import ServerAnimation from '../../../../models/ServerAnimation'
 import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import BuffStrength from '../../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class SpellNightmareDrain extends ServerCard {
 	constructor(game: ServerGame) {
@@ -51,7 +48,6 @@ export default class SpellNightmareDrain extends ServerCard {
 		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, this.owner, targetRow.index, targetRow.cards.length)
 
 		const missingHealth = target.card.basePower - target.card.power
-		this.game.animation.play(ServerAnimation.cardAttacksUnits(target.card, [shadowspawnUnit]))
 
 		if (missingHealth <= 0) {
 			return
@@ -60,6 +56,5 @@ export default class SpellNightmareDrain extends ServerCard {
 		for (let i = 0; i < missingHealth; i++) {
 			shadowspawnUnit.buffs.add(BuffStrength, shadowspawn, BuffDuration.INFINITY)
 		}
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff([shadowspawn], BuffAlignment.POSITIVE))
 	}
 }

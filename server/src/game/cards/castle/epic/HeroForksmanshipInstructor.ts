@@ -27,7 +27,6 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 			.require(({ triggeringUnit }) => triggeringUnit.owner === this.owner)
 			.require(({ triggeringUnit }) => triggeringUnit.card.power <= this.powerThreshold)
 			.perform(({ triggeringUnit }) => {
-				game.animation.play(ServerAnimation.cardAttacksUnits(this, [triggeringUnit]))
 				triggeringUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
 			})
 	}

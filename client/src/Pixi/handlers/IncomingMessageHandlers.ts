@@ -1,5 +1,6 @@
 import Core from '@/Pixi/Core'
 import store from '@/Vue/store'
+import * as PIXI from 'pixi.js'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import CardMessage from '@shared/models/network/CardMessage'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'

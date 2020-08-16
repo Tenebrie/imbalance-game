@@ -20,6 +20,7 @@ import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
 import {colorizeId, colorizePlayer} from '../../utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
+import { BuffConstructor } from './ServerBuffContainer'
 
 export default class ServerGame extends Game {
 	isStarted: boolean
@@ -320,19 +321,7 @@ export default class ServerGame extends Game {
 		return null
 	}
 
-	public getAllCardsForEventHandling(): ServerOwnedCard[] {
-		let cards: ServerOwnedCard[] = this.board.getAllUnits()
-		for (let i = 0; i < this.players.length; i++) {
-			const player = this.players[i]
-			cards = cards.concat([new ServerOwnedCard(player.leader, player)])
-			cards = cards.concat(player.cardHand.allCards.map(card => new ServerOwnedCard(card, player)))
-			cards = cards.concat(player.cardDeck.allCards.map(card => new ServerOwnedCard(card, player)))
-			cards = cards.concat(player.cardGraveyard.allCards.map(card => new ServerOwnedCard(card, player)))
-		}
-		return cards
-	}
-
-	public getTotalBuffIntensityForPlayer(buffPrototype: any, player: ServerPlayerInGame, allowedLocations: CardLocation[] | 'any' = 'any'): number {
+	public getTotalBuffIntensityForPlayer(buffPrototype: BuffConstructor, player: ServerPlayerInGame, allowedLocations: CardLocation[] | 'any' = 'any'): number {
 		let viableCards = this.board.getUnitsOwnedByPlayer(player).map(unit => unit.card)
 		if (player && player.leader) {
 			viableCards.push(player.leader)

@@ -1,7 +1,6 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import ServerPlayerInGame from '../../../../players/ServerPlayerInGame'
 import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
 import TargetDefinitionBuilder from '../../../../models/targetDefinitions/TargetDefinitionBuilder'
 import ServerUnit from '../../../../models/ServerUnit'
@@ -11,9 +10,9 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerAnimation from '../../../../models/ServerAnimation'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import TargetValidatorArguments from '../../../../../types/TargetValidatorArguments'
 
 export default class SpellFireball extends ServerCard {
 	baseDamage = 4
@@ -33,11 +32,11 @@ export default class SpellFireball extends ServerCard {
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
-	get damage() {
+	get damage(): number {
 		return this.baseDamage
 	}
 
-	get areaDamage() {
+	get areaDamage(): number {
 		return this.baseAreaDamage
 	}
 
@@ -46,12 +45,12 @@ export default class SpellFireball extends ServerCard {
 			.singleTarget()
 			.allow(TargetType.UNIT)
 			.enemyUnit()
+			.evaluate(TargetType.UNIT, (args => this.evaluateTarget(args)))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
 		const areaTargets = this.game.board.getAdjacentUnits(target)
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
 		const survivingAreaTargets = areaTargets.filter(target => target.isAlive())
@@ -59,7 +58,14 @@ export default class SpellFireball extends ServerCard {
 			return
 		}
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits(survivingAreaTargets))
 		survivingAreaTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.areaDamage, this)))
+	}
+
+	private evaluateTarget(args: TargetValidatorArguments): number {
+		const target = args.targetUnit
+		const adjacentUnits = this.game.board.getAdjacentUnits(target)
+		let expectedValue = Math.min(target.card.power, this.damage)
+		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.power, this.areaDamage))
+		return expectedValue
 	}
 }

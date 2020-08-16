@@ -5,21 +5,21 @@ import HiddenPlayerInGameMessage from '@shared/models/network/HiddenPlayerInGame
 import ServerGame from '../../models/ServerGame'
 
 export default {
-	notifyAboutPlayerMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
+	notifyAboutPlayerMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame): void => {
 		player.sendMessage({
 			type: 'update/player/self/morale',
 			data: PlayerInGameMessage.fromPlayerInGame(playerInGame)
 		})
 	},
 
-	notifyAboutOpponentMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame) => {
+	notifyAboutOpponentMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame): void => {
 		player.sendMessage({
 			type: 'update/player/opponent/morale',
 			data: HiddenPlayerInGameMessage.fromPlayerInGame(playerInGame)
 		})
 	},
 
-	notifyAboutUnitManaChange: (playerInGame: ServerPlayerInGame, delta: number) => {
+	notifyAboutUnitManaChange: (playerInGame: ServerPlayerInGame, delta: number): void => {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/unitMana',
 			data: PlayerInGameMessage.fromPlayerInGame(playerInGame),
@@ -31,7 +31,7 @@ export default {
 		})
 	},
 
-	notifyAboutSpellManaChange: (playerInGame: ServerPlayerInGame, delta: number) => {
+	notifyAboutSpellManaChange: (playerInGame: ServerPlayerInGame, delta: number): void => {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/spellMana',
 			data: PlayerInGameMessage.fromPlayerInGame(playerInGame),
@@ -43,7 +43,7 @@ export default {
 		})
 	},
 
-	notifyAboutRoundStarted: (playerInGame: ServerPlayerInGame) => {
+	notifyAboutRoundStarted: (playerInGame: ServerPlayerInGame): void => {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/roundStarted',
 			data: null
@@ -54,7 +54,7 @@ export default {
 		})
 	},
 
-	notifyAboutTurnStarted: (playerInGame: ServerPlayerInGame) => {
+	notifyAboutTurnStarted: (playerInGame: ServerPlayerInGame): void => {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/turnStarted',
 			data: null
@@ -65,7 +65,7 @@ export default {
 		})
 	},
 
-	notifyAboutTurnEnded: (playerInGame: ServerPlayerInGame) => {
+	notifyAboutTurnEnded: (playerInGame: ServerPlayerInGame): void => {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/turnEnded',
 			data: null,
@@ -77,7 +77,7 @@ export default {
 		})
 	},
 
-	notifyAboutRoundEnded: (playerInGame: ServerPlayerInGame) => {
+	notifyAboutRoundEnded: (playerInGame: ServerPlayerInGame): void => {
 		playerInGame.player.sendMessage({
 			type: 'update/player/self/roundEnded',
 			data: null,
@@ -89,21 +89,21 @@ export default {
 		})
 	},
 
-	notifyAboutVictory: (player: ServerPlayer) => {
+	notifyAboutVictory: (player: ServerPlayer): void => {
 		player.sendMessage({
 			type: 'update/player/self/victory',
 			data: null
 		})
 	},
 
-	notifyAboutDefeat: (player: ServerPlayer) => {
+	notifyAboutDefeat: (player: ServerPlayer): void => {
 		player.sendMessage({
 			type: 'update/player/self/defeat',
 			data: null
 		})
 	},
 
-	notifyAboutDraw: (game: ServerGame) => {
+	notifyAboutDraw: (game: ServerGame): void => {
 		game.players.forEach(playerInGame => {
 			playerInGame.player.sendMessage({
 				type: 'update/player/self/draw',

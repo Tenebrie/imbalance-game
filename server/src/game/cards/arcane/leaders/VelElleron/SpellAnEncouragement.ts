@@ -1,7 +1,6 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import ServerPlayerInGame from '../../../../players/ServerPlayerInGame'
 import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
 import TargetDefinitionBuilder from '../../../../models/targetDefinitions/TargetDefinitionBuilder'
 import ServerUnit from '../../../../models/ServerUnit'
@@ -36,6 +35,7 @@ export default class SpellAnEncouragement extends ServerCard {
 			.singleTarget()
 			.allow(TargetType.UNIT)
 			.alliedUnit()
+			.evaluate(TargetType.UNIT, (args => this.basePower))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

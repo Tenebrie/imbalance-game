@@ -23,6 +23,5 @@ export default class HeroZamarath extends ServerCard {
 
 	private onDeploy(): void {
 		this.buffs.add(BuffImmunity, this, BuffDuration.START_OF_NEXT_TURN)
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff([this], BuffAlignment.POSITIVE))
 	}
 }

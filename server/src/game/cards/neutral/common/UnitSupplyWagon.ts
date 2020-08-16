@@ -7,7 +7,6 @@ import GameEventType from '@shared/enums/GameEventType'
 import ServerAnimation from '../../../models/ServerAnimation'
 import {mapUnitsToCards} from '../../../../utils/Utils'
 import BuffStrength from '../../../buffs/BuffStrength'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitSupplyWagon extends ServerCard {
@@ -29,11 +28,9 @@ export default class UnitSupplyWagon extends ServerCard {
 
 	private onDeploy(): void {
 		let adjacentUnits = this.game.board.getAdjacentUnits(this.unit)
-		this.game.animation.play(ServerAnimation.cardAffectsCards(this, mapUnitsToCards(adjacentUnits)))
 		adjacentUnits.forEach(unit => {
 			unit.buffs.addMultiple(BuffStrength, this.extraPower, this)
 		})
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff(mapUnitsToCards(adjacentUnits), BuffAlignment.POSITIVE))
 		adjacentUnits = adjacentUnits.filter(unit => unit.isAlive())
 		if (adjacentUnits.length === 0) {
 			return

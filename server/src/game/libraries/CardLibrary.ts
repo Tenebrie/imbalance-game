@@ -9,7 +9,7 @@ import * as fs from 'fs'
 import CardColor from '@shared/enums/CardColor'
 import CardType from '@shared/enums/CardType'
 
-interface CardConstructor {
+export interface CardConstructor {
 	new (game: ServerGame): ServerCard
 }
 

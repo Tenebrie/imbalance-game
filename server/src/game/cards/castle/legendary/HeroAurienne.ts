@@ -8,6 +8,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from '../../../models/GameHookType'
 import MoveDirection from '@shared/enums/MoveDirection'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
+import ServerUnit from '../../../models/ServerUnit'
 
 export default class HeroAurienne extends ServerCard {
 	constructor(game: ServerGame) {
@@ -22,21 +23,23 @@ export default class HeroAurienne extends ServerCard {
 				...values,
 				destructionPrevented: true
 			}))
-			.perform(({ targetUnit }) => {
-				const ownedCard = {
-					card: this,
-					owner: this.owner
-				}
+			.perform(({ targetUnit }) => this.onUnitDestroyedHook(targetUnit))
+	}
 
-				const targetRowIndex = this.game.board.rowMove(this.owner, targetUnit.rowIndex, MoveDirection.BACK, 1)
-				const targetUnitIndex = targetUnit.unitIndex
+	private onUnitDestroyedHook(targetUnit: ServerUnit): void {
+		const ownedCard = {
+			card: this,
+			owner: this.owner
+		}
 
-				this.game.cardPlay.forcedPlayCardFromHand(ownedCard, targetUnit.rowIndex, targetUnit.unitIndex)
-				if (targetUnit.isAlive()) {
-					this.game.board.moveUnit(targetUnit, targetRowIndex, targetUnitIndex)
-				}
-				this.owner.drawUnitCards(1)
-			})
+		const targetRowIndex = this.game.board.rowMove(this.owner, targetUnit.rowIndex, MoveDirection.BACK, 1)
+		const targetUnitIndex = targetUnit.unitIndex
+
+		this.game.cardPlay.forcedPlayCardFromHand(ownedCard, targetUnit.rowIndex, targetUnit.unitIndex)
+		if (targetUnit.isAlive()) {
+			this.game.board.moveUnit(targetUnit, targetRowIndex, targetUnitIndex)
+		}
+		this.owner.drawUnitCards(1)
 	}
 }
 

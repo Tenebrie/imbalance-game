@@ -1,7 +1,6 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import ServerPlayerInGame from '../../../../players/ServerPlayerInGame'
 import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
 import TargetDefinitionBuilder from '../../../../models/targetDefinitions/TargetDefinitionBuilder'
 import ServerUnit from '../../../../models/ServerUnit'
@@ -12,9 +11,9 @@ import TargetType from '@shared/enums/TargetType'
 import BuffSparksExtraDamage from '../../../../buffs/BuffSparksExtraDamage'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerAnimation from '../../../../models/ServerAnimation'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import TargetValidatorArguments from '../../../../../types/TargetValidatorArguments'
 
 export default class SpellSteelSpark extends ServerCard {
 	baseDamage = 2
@@ -34,11 +33,11 @@ export default class SpellSteelSpark extends ServerCard {
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
-	get damage() {
+	get damage(): number {
 		return this.baseDamage + this.game.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
 	}
 
-	get sideDamage() {
+	get sideDamage(): number {
 		return this.baseSideDamage + this.game.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
 	}
 
@@ -47,12 +46,12 @@ export default class SpellSteelSpark extends ServerCard {
 			.singleTarget()
 			.allow(TargetType.UNIT)
 			.enemyUnit()
+			.evaluate(TargetType.UNIT, (args => this.evaluateTarget(args)))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
 		const sideTargets = this.game.board.getAdjacentUnits(target).filter(unit => unit.rowIndex === target.rowIndex)
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits([target]))
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
 		const survivingSideTargets = sideTargets.filter(target => target.isAlive())
@@ -60,7 +59,14 @@ export default class SpellSteelSpark extends ServerCard {
 			return
 		}
 
-		this.game.animation.play(ServerAnimation.universeAttacksUnits(survivingSideTargets))
 		survivingSideTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.sideDamage, this)))
+	}
+
+	private evaluateTarget(args: TargetValidatorArguments): number {
+		const target = args.targetUnit
+		const adjacentUnits = this.game.board.getAdjacentUnits(target)
+		let expectedValue = Math.min(target.card.power, this.damage)
+		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.power, this.sideDamage))
+		return expectedValue
 	}
 }

@@ -14,6 +14,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffGrowth from '../../../buffs/BuffGrowth'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class SpellScrollOfGrowth extends ServerCard {
 	constructor(game: ServerGame) {
@@ -21,6 +22,7 @@ export default class SpellScrollOfGrowth extends ServerCard {
 
 		this.basePower = 2
 		this.baseTribes = [CardTribe.SCROLL]
+		this.baseFeatures = [CardFeature.KEYWORD_BUFF_GROWTH]
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
@@ -34,8 +36,6 @@ export default class SpellScrollOfGrowth extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.universeAffectsCards([target.card]))
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff([target.card], BuffAlignment.POSITIVE))
 		target.buffs.add(BuffGrowth, this, BuffDuration.INFINITY)
 	}
 }

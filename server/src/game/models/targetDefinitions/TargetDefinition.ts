@@ -13,20 +13,20 @@ export default class TargetDefinition {
 	private readonly orderLabels: string[][]
 	private readonly targetOfTypeCount: number[][]
 	private readonly validators: ((args: TargetValidatorArguments) => boolean)[][][] = []
-	private readonly validSimultaneousTargets: [TargetTypeWithMode, TargetTypeWithMode][] = []
+	private readonly evaluators: ((args: TargetValidatorArguments) => number)[][][] = []
 
 	constructor(game: ServerGame,
-				totalTargetCount: number,
-				orderLabels: string[][],
-				targetOfTypeCount: number[][],
-				validators: ((args: TargetValidatorArguments) => boolean)[][][],
-				validSimultaneousTargets: [TargetTypeWithMode, TargetTypeWithMode][]) {
+		totalTargetCount: number,
+		orderLabels: string[][],
+		targetOfTypeCount: number[][],
+		validators: ((args: TargetValidatorArguments) => boolean)[][][],
+		evaluators: ((args: TargetValidatorArguments) => number)[][][]) {
 		this.game = game
 		this.totalTargetCount = totalTargetCount
 		this.orderLabels = orderLabels
 		this.targetOfTypeCount = targetOfTypeCount
 		this.validators = validators
-		this.validSimultaneousTargets = validSimultaneousTargets
+		this.evaluators = evaluators
 	}
 
 	public getTargetCount(): number {
@@ -45,16 +45,8 @@ export default class TargetDefinition {
 		return this.validators[reason][type].every(validator => validator(args))
 	}
 
-	public isValidSimultaneously(left: TargetTypeWithMode, right: TargetTypeWithMode): boolean {
-		return !!this.validSimultaneousTargets.find(tuple => {
-			const tuplesEqual = this.targetTypesEqual(tuple[0], left) && this.targetTypesEqual(tuple[1], right)
-			const tuplesEqualInReverse = this.targetTypesEqual(tuple[1], left) && this.targetTypesEqual(tuple[0], right)
-			return tuplesEqual || tuplesEqualInReverse
-		})
-	}
-
-	private targetTypesEqual(left: TargetTypeWithMode, right: TargetTypeWithMode): boolean {
-		return left.targetType === right.targetType && left.targetMode === right.targetMode
+	public evaluate(reason: TargetMode, type: TargetType, args: TargetValidatorArguments): number {
+		return this.evaluators[reason][type].reduce((acc, evaluator) => acc + evaluator(args), 0)
 	}
 
 	public static none(game: ServerGame): StandardTargetDefinitionBuilder {

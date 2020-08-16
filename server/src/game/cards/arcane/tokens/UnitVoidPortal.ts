@@ -8,10 +8,9 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import CardLibrary from '../../../libraries/CardLibrary'
 import UnitVoidspawn from './UnitVoidspawn'
-import ServerAnimation from '../../../models/ServerAnimation'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
+import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 
 export default class UnitVoidPortal extends ServerCard {
 	powerPerSpell = 1
@@ -19,10 +18,11 @@ export default class UnitVoidPortal extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.TOKEN, CardFaction.ARCANE)
 		this.basePower = 0
-		this.baseArmor = 10
+		this.baseArmor = 5
 		this.dynamicTextVariables = {
 			powerPerSpell: this.powerPerSpell
 		}
+		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
@@ -38,6 +38,11 @@ export default class UnitVoidPortal extends ServerCard {
 		}
 
 		voidspawn.buffs.addMultiple(BuffStrength, uniqueSpellsInDiscard.length, this, BuffDuration.INFINITY)
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff([voidspawn], BuffAlignment.POSITIVE))
+	}
+}
+
+class CustomBotEvaluation extends BotCardEvaluation {
+	get baseThreat(): number {
+		return 5
 	}
 }
