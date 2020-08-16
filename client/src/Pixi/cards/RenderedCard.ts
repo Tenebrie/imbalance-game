@@ -465,19 +465,11 @@ export default class RenderedCard extends Card {
 		this.cardModeTextContainer.visible = false
 		this.powerTextBackground.visible = false
 		this.powerText.visible = false
+		this.armorText.visible = false
 	}
 
 	public isCardMode(): boolean {
 		return !this.isUnitMode() && !this.isHiddenMode()
-		// return [CardDisplayMode.IN_HAND,
-		// 	CardDisplayMode.IN_HAND_HOVERED,
-		// 	CardDisplayMode.INSPECTED,
-		// 	CardDisplayMode.ANNOUNCED,
-		// 	CardDisplayMode.RESOLVING,
-		// 	CardDisplayMode.SELECTION,
-		// 	CardDisplayMode.SELECTION_HOVERED,
-		// 	CardDisplayMode.IN_EDITOR
-		// ].includes(this.displayMode)
 	}
 
 	public isUnitMode(): boolean {

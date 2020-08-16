@@ -102,7 +102,9 @@ const setup = () => {
 	})
 
 	const overlayDisplayed = computed<boolean>(() => {
-		return inspectedCard.value && (isInGame.value || displayedFeatures.value.length > 0)
+		return inspectedCard.value &&
+			inspectedCard.value.type !== CardType.HIDDEN &&
+			(isInGame.value || displayedFeatures.value.length > 0)
 	})
 
 	return {
