@@ -6,18 +6,22 @@ import CardReceivedBuffAnimParams from '@shared/models/animations/CardReceivedBu
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
 
 const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 	[AnimationType.DELAY]: (message: AnimationMessage, params: void) => {
 		return 500
 	},
 
-	[AnimationType.CARD_ANNOUNCE]: (message: AnimationMessage, params: void) => {
-		const announcedCard = Core.opponent.cardHand.findCardById(message.targetCardId)!
+	[AnimationType.CARD_DRAW]: (message: AnimationMessage, params: void) => {
+		return 500
+	},
+
+	[AnimationType.CARD_ANNOUNCE]: (message: AnimationMessage, params: CardAnnounceAnimParams) => {
+		const cardMessage = params.cardMessage
 		AudioSystem.playEffect(AudioEffectCategory.CARD_ANNOUNCE)
-		window.setTimeout(() => {
-			Core.mainHandler.announceCard(announcedCard)
-		}, 200)
+		const revealedCard = Core.opponent.cardHand.reveal(cardMessage)
+		Core.mainHandler.announceCard(revealedCard)
 		return 2000
 	},
 

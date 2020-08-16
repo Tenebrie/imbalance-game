@@ -52,7 +52,6 @@ export default class ServerGameCardPlay {
 		}))
 
 		/* Announce card to opponent */
-		card.reveal(owner, owner.opponent)
 		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardAnnounce(card))
 
 		/* Remove card from source */

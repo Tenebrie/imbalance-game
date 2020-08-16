@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js'
 import Core from '@/Pixi/Core'
 import Utils from '@/utils/Utils'
 import CardHand from '@shared/models/CardHand'
@@ -48,12 +49,16 @@ export default class RenderedCardHand implements CardHand {
 		return this.unitCards.find(renderedCard => renderedCard.id === cardId) || this.spellCards.find(renderedCard => renderedCard.id === cardId) || null
 	}
 
-	public reveal(data: CardMessage): void {
+	public reveal(data: CardMessage): RenderedCard {
 		const card = this.findCardById(data.id)
-		if (!card) { return }
+		if (!card) {
+			return
+		}
 
 		const revealedCard = new RenderedCard(data)
 		revealedCard.switchToCardMode()
+		revealedCard.coreContainer.alpha = 1
+		revealedCard.sprite.alpha = 1
 		Core.registerCard(revealedCard)
 		if (this.unitCards.includes(card)) {
 			this.unitCards.splice(this.unitCards.indexOf(card), 1, revealedCard)
@@ -61,6 +66,7 @@ export default class RenderedCardHand implements CardHand {
 			this.spellCards.splice(this.spellCards.indexOf(card), 1, revealedCard)
 		}
 		Core.unregisterCard(card)
+		return revealedCard
 	}
 
 	public destroyCard(card: RenderedCard): void {

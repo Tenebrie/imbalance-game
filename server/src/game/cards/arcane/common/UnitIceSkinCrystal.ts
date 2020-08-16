@@ -7,7 +7,7 @@ import BuffDecayingArmor from '../../../buffs/BuffDecayingArmor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardPlayedEventArgs} from '../../../models/GameEventCreators'
+import {CardPlayedEventArgs, UnitDestroyedEventArgs} from '../../../models/GameEventCreators'
 
 export default class UnitIceSkinCrystal extends ServerCard {
 	charges = 0
@@ -28,8 +28,8 @@ export default class UnitIceSkinCrystal extends ServerCard {
 			chargesVisible: () => !!this.unit
 		}
 
-		this.createCallback(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
-			.require(({ targetUnit }) => targetUnit.card === this)
+		this.createCallback<UnitDestroyedEventArgs>(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
+			.require(({ triggeringUnit }) => triggeringUnit.card === this)
 			.perform(() => this.onDestroy())
 
 		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED, [CardLocation.BOARD])

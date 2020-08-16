@@ -4,12 +4,14 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerOwnedCard from './ServerOwnedCard'
 import GameEventCreators from './GameEventCreators'
+import ServerAnimation from './ServerAnimation'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 
 export default class ServerHand {
+	game: ServerGame
 	unitCards: ServerCard[]
 	spellCards: ServerCard[]
 	owner: ServerPlayerInGame
-	game: ServerGame
 
 	constructor(game: ServerGame, playerInGame: ServerPlayerInGame, unitCards: ServerCard[], spellCards: ServerCard[]) {
 		this.game = game
@@ -22,18 +24,20 @@ export default class ServerHand {
 		return this.unitCards.slice().concat(this.spellCards)
 	}
 
-	public canPlayAnyCard(): boolean {
-		return !!this.unitCards.find(unit => unit.unitCost <= this.owner.unitMana) || !!this.spellCards.find(spell => spell.spellCost <= this.owner.spellMana)
-	}
-
 	public addUnit(card: ServerCard): void {
 		this.unitCards.push(card)
 		OutgoingMessageHandlers.notifyAboutUnitCardAdded(this.owner, card)
+		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
+			this.game.animation.play(ServerAnimation.cardDraw())
+		}
 	}
 
 	public addSpell(card: ServerCard): void {
 		this.spellCards.push(card)
 		OutgoingMessageHandlers.notifyAboutSpellCardAdded(this.owner, card)
+		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
+			this.game.animation.play(ServerAnimation.cardDraw())
+		}
 	}
 
 	public onUnitDrawn(card: ServerCard): void {

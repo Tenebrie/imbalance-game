@@ -362,7 +362,7 @@ export default class Renderer {
 			container.position.y += (targetPosition.y - container.position.y) * this.deltaTimeFraction * 7
 		} else {
 			container.position.x = targetPosition.x
-			container.position.y = targetPosition.y - cardHeight / 2
+			container.position.y = targetPosition.y - cardHeight / 2 * (isOpponent ? -1 : 1)
 		}
 		container.zIndex = (handPosition + 1) * 2
 
@@ -426,9 +426,11 @@ export default class Renderer {
 
 	public renderTextLabels(): void {
 		/* Player name labels */
-		this.playerNameLabel.text = `${Core.player.player.username}\n- Morale: ${Core.player.morale}\n- Mana: ${Core.player.spellMana}`
+		const username = Core.player.player.username.split('#')[0]
+		this.playerNameLabel.text = `${username}\n- Morale: ${Core.player.morale}\n- Mana: ${Core.player.spellMana}`
 		if (Core.opponent) {
-			this.opponentNameLabel.text = `${Core.opponent.player.username}\n- Morale: ${Core.opponent.morale}\n- Mana: ${Core.opponent.spellMana}`
+			const opponentUsername = Core.opponent.player.username.split('#')[0]
+			this.opponentNameLabel.text = `${opponentUsername}\n- Morale: ${Core.opponent.morale}\n- Mana: ${Core.opponent.spellMana}`
 		}
 
 		/* Power labels */
@@ -682,7 +684,7 @@ export default class Renderer {
 		sprite.height = cardHeight
 
 		if (announcedCard.displayMode !== CardDisplayMode.ANNOUNCED) {
-			container.position.x = -sprite.width / 2
+			container.position.x = -sprite.width / 2 - 3000 * this.superSamplingLevel
 			container.position.y = this.getScreenHeight() / 2
 			announcedCard.setDisplayMode(CardDisplayMode.ANNOUNCED)
 		} else {

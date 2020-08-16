@@ -16,6 +16,7 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import CardLibrary from '../libraries/CardLibrary'
 import ServerCard from '../models/ServerCard'
 import CardType from '@shared/enums/CardType'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -54,7 +55,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		}
 
 		try {
-			while (((this.unitMana > 0 && this.cardHand.unitCards.length > 0) || this.hasHighValueSpellPlays()) && this.game.turnPhase === GameTurnPhase.DEPLOY) {
+			while ((this.canPlayUnitCard() || this.hasHighValueSpellPlays()) && this.game.turnPhase === GameTurnPhase.DEPLOY) {
 				this.botPlaysCard(false)
 				while (this.game.cardPlay.cardResolveStack.hasCards()) {
 					this.botChoosesTarget()
@@ -149,6 +150,11 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		}
 		const bestTargetingValue = targets.sort((a, b) => b.expectedValue - a.expectedValue)[0].expectedValue || 0
 		return bestTargetingValue + card.botEvaluation.expectedValue - cardBaseValue + spellExtraValue
+	}
+
+	private canPlayUnitCard(): boolean {
+		return (this.unitMana > 0 && this.cardHand.unitCards.length > 0) ||
+			(!!this.cardHand.unitCards.find(card => card.unitCost === 0))
 	}
 
 	private hasHighValueSpellPlays(): boolean {

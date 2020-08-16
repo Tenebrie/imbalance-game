@@ -42,7 +42,7 @@ export default class HeroRagingElemental extends ServerCard {
 		}
 
 		const shortestDistance = this.game.board.getVerticalUnitDistance(opposingEnemies[0], thisUnit)
-		const targets = [thisUnit].concat(opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, thisUnit) === shortestDistance))
+		const targets = opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, thisUnit) === shortestDistance).concat([thisUnit])
 
 		const damage = this.power
 		targets.forEach(unit => {
