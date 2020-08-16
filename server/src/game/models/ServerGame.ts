@@ -236,7 +236,6 @@ export default class ServerGame extends Game {
 
 		this.board.getAllUnits().forEach(unit => {
 			this.board.destroyUnit(unit)
-			unit.owner.cardGraveyard.addUnit(unit.card)
 		})
 
 		for (let i = 0; i < 3; i++) {

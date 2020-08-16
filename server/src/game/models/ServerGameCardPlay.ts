@@ -7,7 +7,6 @@ import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
 import GameEventCreators from './GameEventCreators'
-import CardLocation from '@shared/enums/CardLocation'
 
 export default class ServerGameCardPlay {
 	game: ServerGame

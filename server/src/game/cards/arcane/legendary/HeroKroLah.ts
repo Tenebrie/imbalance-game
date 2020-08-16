@@ -11,7 +11,6 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import CardFaction from '@shared/enums/CardFaction'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
-import MoveDirection from '@shared/enums/MoveDirection'
 import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroKroLah extends ServerCard {
@@ -35,11 +34,9 @@ export default class HeroKroLah extends ServerCard {
 	private onTargetSelected(target: ServerBoardRow): void {
 		const targetUnits = target.cards
 
-		const targetIndex = this.game.board.rowMove(this.owner, target.index, MoveDirection.FORWARD, 1)
-
 		targetUnits.forEach(targetUnit => {
 			targetUnit.card.buffs.add(BuffStun, this, BuffDuration.START_OF_NEXT_TURN)
-			this.game.board.moveUnitToFarRight(targetUnit, targetIndex)
+			this.game.board.moveUnitBack(targetUnit)
 		})
 	}
 }

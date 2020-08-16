@@ -4,9 +4,6 @@ import ServerUnit from './ServerUnit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import Constants from '@shared/Constants'
-import BuffDuration from '@shared/enums/BuffDuration'
-import BuffSappedCard from '../buffs/BuffSappedCard'
-import ServerCard from './ServerCard'
 
 export default class ServerBoardRow extends BoardRow {
 	game: ServerGame
@@ -24,16 +21,23 @@ export default class ServerBoardRow extends BoardRow {
 		return this.cards.length === Constants.MAX_CARDS_PER_ROW
 	}
 
-	public insertUnit(unit: ServerUnit, ordinal: number): void {
+	public insertUnitLocally(unit: ServerUnit, ordinal: number): void {
 		this.cards.splice(ordinal, 0, unit)
 	}
 
-	public removeUnit(targetCard: ServerUnit): void {
+	public insertUnit(unit: ServerUnit, ordinal: number): void {
+		this.insertUnitLocally(unit, ordinal)
+		this.game.players.forEach(playerInGame => {
+			OutgoingMessageHandlers.notifyAboutUnitCreated(playerInGame.player, unit, this.index, ordinal)
+		})
+	}
+
+	public removeUnitLocally(targetCard: ServerUnit): void {
 		this.cards = this.cards.filter(cardOnBoard => cardOnBoard !== targetCard)
 	}
 
-	public destroyUnit(targetCard: ServerUnit): void {
-		this.removeUnit(targetCard)
+	public removeUnit(targetCard: ServerUnit): void {
+		this.removeUnitLocally(targetCard)
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitDestroyed(playerInGame.player, targetCard)
 		})

@@ -65,7 +65,7 @@ export default class HeroCrystalWarrior extends ServerCard {
 			unitIndex: target.unitIndex
 		}
 		this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target.card]))
-		target.destroy()
+		this.game.board.destroyUnit(target)
 	}
 
 	private onTargetsConfirmed(): void {

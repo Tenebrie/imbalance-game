@@ -4,7 +4,6 @@ import ServerGame from '../models/ServerGame'
 import {CardDrawnEventArgs, CardPlayedEventArgs} from '../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardType from '@shared/enums/CardType'
-import CardLocation from '@shared/enums/CardLocation'
 import ServerCard from '../models/ServerCard'
 import ServerAnimation from '../models/ServerAnimation'
 import BuffAlignment from '@shared/enums/BuffAlignment'
@@ -21,7 +20,6 @@ export default class BuffNextSpellDiscountAura extends ServerBuff {
 			.perform(() => this.onAlliedSpellPlayed())
 
 		this.createCallback<CardDrawnEventArgs>(GameEventType.CARD_DRAWN)
-			.requireLocation(CardLocation.LEADER)
 			.require(({ triggeringCard }) => triggeringCard.owner === this.card.owner)
 			.perform(({ triggeringCard }) => this.onNewCardDrawn(triggeringCard))
 	}

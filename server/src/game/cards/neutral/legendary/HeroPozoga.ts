@@ -25,7 +25,7 @@ export default class HeroPozoga extends ServerCard {
 
 		this.game.animation.play(ServerAnimation.cardAttacksCards(this, mapUnitsToCards(targetUnits)))
 		targetUnits.forEach(unit => {
-			unit.destroy()
+			this.game.board.destroyUnit(unit)
 		})
 	}
 }

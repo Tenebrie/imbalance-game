@@ -16,7 +16,6 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import CardLibrary from '../libraries/CardLibrary'
 import ServerCard from '../models/ServerCard'
 import CardType from '@shared/enums/CardType'
-import CardFeature from '@shared/enums/CardFeature'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -40,12 +39,9 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const botLostRound = opponentTotalPower > botTotalPower + 30 && this.morale > 1
 		const botHasGoodLead = botTotalPower > opponentTotalPower + 15 && this.morale > 1
 
-		if (botHasGoodLead) {
+		if (botHasGoodLead && !botWonRound) {
 			while (this.hasAnySpellPlays()) {
 				this.botPlaysCard(true)
-				while (this.game.cardPlay.cardResolveStack.hasCards()) {
-					this.botChoosesTarget()
-				}
 			}
 		}
 
@@ -57,9 +53,6 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		try {
 			while ((this.canPlayUnitCard() || this.hasHighValueSpellPlays()) && this.game.turnPhase === GameTurnPhase.DEPLOY) {
 				this.botPlaysCard(false)
-				while (this.game.cardPlay.cardResolveStack.hasCards()) {
-					this.botChoosesTarget()
-				}
 			}
 			this.botOrdersAttacks()
 			this.botOrdersMove()
@@ -91,6 +84,10 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const targetRow = validRows[Math.min(distanceFromFront, validRows.length - 1)]
 		const cardPlayerMessage = CardPlayedMessage.fromCardOnRow(selectedCard, targetRow.index, targetRow.cards.length)
 		IncomingMessageHandlers['post/playCard'](cardPlayerMessage, this.game, this)
+
+		while (this.game.cardPlay.cardResolveStack.hasCards()) {
+			this.botChoosesTarget()
+		}
 	}
 
 	private botChoosesTarget(): void {

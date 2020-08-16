@@ -44,7 +44,7 @@ export default class ServerCard extends Card {
 	generatedArtworkMagicString = ''
 	botEvaluation: BotCardEvaluation
 
-	isBeingDestroyed = false
+	isDead = false
 
 	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor, faction: CardFaction) {
 		super(uuidv4(), cardType, 'missingno')
@@ -56,6 +56,7 @@ export default class ServerCard extends Card {
 
 		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, validLocations)
+			.forceIgnoreControlEffects()
 			.require(({ triggeringCard }) => triggeringCard === this)
 			.require(({ triggeringCard }) => triggeringCard.power <= 0)
 			.require(({ triggeringCard, powerDamageInstance }) => (powerDamageInstance && powerDamageInstance.value > 0) || triggeringCard.armor === 0)
@@ -249,18 +250,44 @@ export default class ServerCard extends Card {
 		}))
 	}
 
+	heal(healingInstance: ServerDamageInstance): void {
+		if (healingInstance.value <= 0) {
+			return
+		}
+
+		if (healingInstance.sourceCard) {
+			this.game.animation.play(ServerAnimation.cardHealsCards(healingInstance.sourceCard, [this]))
+		} else {
+			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
+		}
+		this.setPower(Math.min(this.maxPower, this.power + healingInstance.value))
+	}
+
+	/* Cleanse this card
+	 * -------------------------
+	 * Remove all active buffs from this card
+	 */
+	public cleanse(): void {
+		this.buffs.removeAll()
+	}
+
+	/* Destroy this card / unit
+	 * -------------------------
+	 * If this card has associated unit on the board, the unit is destroyed instead and this method has no effect.
+	 * Otherwise, the card is completely removed from the game (exiled).
+	 */
 	public destroy(): void {
 		const unit = this.unit
-		if (this.unit) {
-			unit.destroy()
+		if (unit) {
+			this.game.board.destroyUnit(unit)
 			return
 		}
 
-		if (this.isBeingDestroyed) {
+		if (this.isDead) {
 			return
 		}
 
-		this.isBeingDestroyed = true
+		this.isDead = true
 
 		const hookValues = this.game.events.applyHooks<CardDestroyedHookValues, CardDestroyedHookArgs>(GameHookType.CARD_DESTROYED, {
 			destructionPrevented: false
@@ -269,8 +296,8 @@ export default class ServerCard extends Card {
 		})
 
 		if (hookValues.destructionPrevented) {
-			this.setPower(1)
-			this.isBeingDestroyed = false
+			this.setPower(0)
+			this.isDead = false
 			return
 		}
 
@@ -287,7 +314,6 @@ export default class ServerCard extends Card {
 		} else if (location === CardLocation.GRAVEYARD) {
 			owner.cardGraveyard.removeCard(this)
 		}
-		this.isBeingDestroyed = false
 	}
 
 	public reveal(owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
@@ -509,7 +535,7 @@ export default class ServerCard extends Card {
 	 */
 	protected createCallback<ArgsType>(eventType: GameEventType, location: CardLocation[]): EventCallback<ArgsType> {
 		return this.game.events.createCallback<ArgsType>(this, eventType)
-			.requireLocations(location)
+			.require(() => location.includes(this.location))
 	}
 
 	/* Subscribe to a game event triggered by this buff

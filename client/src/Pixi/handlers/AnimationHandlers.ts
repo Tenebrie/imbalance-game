@@ -14,7 +14,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 	},
 
 	[AnimationType.CARD_DRAW]: (message: AnimationMessage, params: void) => {
-		return 500
+		return 1000
 	},
 
 	[AnimationType.CARD_ANNOUNCE]: (message: AnimationMessage, params: CardAnnounceAnimParams) => {
@@ -120,6 +120,9 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 	[AnimationType.CARD_RECEIVED_BUFF]: (message: AnimationMessage, params: CardReceivedBuffAnimParams) => {
 		message.targetCardIDs.forEach(targetCardId => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
+			if (!targetCard) {
+				return
+			}
 			Core.particleSystem.createCardReceivedBuffParticleEffect(targetCard, params.alignment)
 			const audioEffectCategory = params.alignment === BuffAlignment.NEGATIVE ? AudioEffectCategory.BUFF_NEGATIVE : AudioEffectCategory.BUFF_POSITIVE
 			AudioSystem.playEffect(audioEffectCategory)

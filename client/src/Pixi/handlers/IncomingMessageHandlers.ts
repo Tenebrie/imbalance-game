@@ -279,7 +279,6 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/self/hand/spell/cardDrawn': (data: CardMessage[]) => {
-		console.info('Spells drawn', data)
 		data.forEach(cardMessage => {
 			const card = Core.player.cardDeck.drawSpellById(cardMessage.id)
 			if (card) {
@@ -289,7 +288,6 @@ const handlers: {[ index: string ]: any } = {
 	},
 
 	'update/player/opponent/hand/spell/cardDrawn': (data: HiddenCardMessage[]) => {
-		console.info('Opponent spells', data)
 		data.forEach(cardMessage => {
 			const card = Core.opponent.cardDeck.drawSpellById(cardMessage.id)
 			if (card) {

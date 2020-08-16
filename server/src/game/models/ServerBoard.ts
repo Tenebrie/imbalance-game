@@ -14,17 +14,20 @@ import ServerAnimation from './ServerAnimation'
 import GameEventCreators from './GameEventCreators'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffSappedCard from '../buffs/BuffSappedCard'
+import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
 
 export default class ServerBoard extends Board {
 	readonly game: ServerGame
 	readonly rows: ServerBoardRow[]
 	readonly orders: ServerBoardOrders
+	readonly unitsBeingDestroyed: ServerUnit[]
 
 	constructor(game: ServerGame) {
 		super()
 		this.game = game
 		this.rows = []
 		this.orders = new ServerBoardOrders(game)
+		this.unitsBeingDestroyed = []
 		for (let i = 0; i < Constants.GAME_BOARD_ROW_COUNT; i++) {
 			this.rows.push(new ServerBoardRow(game, i))
 		}
@@ -87,19 +90,19 @@ export default class ServerBoard extends Board {
 		return Utils.flat(this.rows.map(row => row.cards))
 	}
 
-	public isUnitAdjacent(first: ServerUnit, second: ServerUnit) {
+	public isUnitAdjacent(first: ServerUnit, second: ServerUnit): boolean {
 		return this.getHorizontalUnitDistance(first, second) <= 1 && first.rowIndex === second.rowIndex && first !== second
 	}
 
-	public getAdjacentUnits(centerUnit: ServerUnit) {
+	public getAdjacentUnits(centerUnit: ServerUnit): ServerUnit[] {
 		return this.getAllUnits().filter(unit => this.isUnitAdjacent(centerUnit, unit))
 	}
 
-	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame) {
+	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame): ServerUnit[] {
 		return this.getAllUnits().filter(unit => unit.owner === owner)
 	}
 
-	public getUnitsOwnedByOpponent(thisPlayer: ServerPlayerInGame) {
+	public getUnitsOwnedByOpponent(thisPlayer: ServerPlayerInGame): ServerUnit[] {
 		return this.getUnitsOwnedByPlayer(this.game.getOpponent(thisPlayer))
 	}
 
@@ -160,10 +163,6 @@ export default class ServerBoard extends Board {
 		const unit = new ServerUnit(this.game, card, owner)
 		targetRow.insertUnit(unit, unitIndex)
 
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutUnitCreated(playerInGame.player, unit, rowIndex, unitIndex)
-		})
-
 		/* Play deploy animation */
 		this.game.animation.play(ServerAnimation.unitDeploy(card))
 
@@ -190,8 +189,8 @@ export default class ServerBoard extends Board {
 			return
 		}
 
-		fromRow.removeUnit(unit)
-		targetRow.insertUnit(unit, unitIndex)
+		fromRow.removeUnitLocally(unit)
+		targetRow.insertUnitLocally(unit, unitIndex)
 		this.game.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.notifyAboutUnitMoved(playerInGame.player, unit, rowIndex, unitIndex)
 		})
@@ -205,10 +204,17 @@ export default class ServerBoard extends Board {
 	}
 
 	public moveUnitForward(unit: ServerUnit, distance = 1): void {
+		if (this.getDistanceToFront(unit.rowIndex) === 0) {
+			return
+		}
 		this.moveUnitToFarRight(unit, this.game.board.rowMove(unit.owner, unit.rowIndex, MoveDirection.FORWARD, distance))
 	}
 
 	public moveUnitBack(unit: ServerUnit, distance = 1): void {
+		const rowsOwnedByPlayer = this.rows.filter(row => row.owner === unit.owner).length
+		if (this.getDistanceToFront(unit.rowIndex) === rowsOwnedByPlayer - 1) {
+			return
+		}
 		this.moveUnitToFarRight(unit, this.game.board.rowMove(unit.owner, unit.rowIndex, MoveDirection.BACK, distance))
 	}
 
@@ -223,7 +229,7 @@ export default class ServerBoard extends Board {
 	public sapUnit(target: ServerUnit, sapper: ServerCard): void {
 		const targetCard = target.card
 		const cardOwner = target.card.owner
-		this.rows[target.rowIndex].destroyUnit(target)
+		this.rows[target.rowIndex].removeUnit(target)
 		cardOwner.cardHand.addUnit(targetCard)
 		if (cardOwner !== sapper.owner) {
 			targetCard.isRevealed = false
@@ -233,13 +239,56 @@ export default class ServerBoard extends Board {
 		targetCard.buffs.add(BuffSappedCard, sapper, buffDuration)
 	}
 
-	public destroyUnit(unit: ServerUnit): void {
+	/* Remove this unit from the board
+	 * -------------------------------
+	 * Target unit is removed from the board. Client is notified.
+	 */
+	public removeUnit(unit: ServerUnit): void {
 		const rowWithCard = this.getRowWithUnit(unit)
 		if (!rowWithCard) {
 			console.error(`No row includes unit ${unit.card.id}`)
 			return
 		}
 
-		rowWithCard.destroyUnit(unit)
+		rowWithCard.removeUnit(unit)
+	}
+
+	/* Destroy this unit
+	 * -----------------
+	 * Target unit is destroyed and removed from the board.
+	 * The associated card is then cleansed and transferred to the owner's graveyard with 0 Power.
+	 */
+	public destroyUnit(unit: ServerUnit): void {
+		if (this.unitsBeingDestroyed.includes(unit)) {
+			return
+		}
+
+		this.unitsBeingDestroyed.push(unit)
+
+		const card = unit.card
+
+		const hookValues = this.game.events.applyHooks<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED, {
+			destructionPrevented: false
+		}, {
+			targetUnit: unit
+		})
+		if (hookValues.destructionPrevented) {
+			card.setPower(0)
+			this.unitsBeingDestroyed.splice(this.unitsBeingDestroyed.indexOf(unit), 1)
+			return
+		}
+
+		this.game.events.postEvent(GameEventCreators.unitDestroyed({
+			triggeringUnit: unit
+		}))
+
+		this.removeUnit(unit)
+
+		card.setPower(0)
+		card.cleanse()
+
+		unit.owner.cardGraveyard.addUnit(card)
+
+		this.unitsBeingDestroyed.splice(this.unitsBeingDestroyed.indexOf(unit), 1)
 	}
 }

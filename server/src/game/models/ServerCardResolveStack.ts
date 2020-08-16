@@ -44,7 +44,7 @@ export default class ServerCardResolveStack {
 		OutgoingMessageHandlers.notifyAboutCardResolving(ownedCard)
 	}
 
-	public pushTarget(target: ServerCardTarget) {
+	public pushTarget(target: ServerCardTarget): void {
 		this.currentTargets.push(target)
 	}
 
@@ -63,8 +63,10 @@ export default class ServerCardResolveStack {
 
 		const resolvedCard = resolvedEntry.ownedCard
 		if (resolvedCard.card.features.includes(CardFeature.HERO_POWER)) {
+			resolvedCard.card.cleanse()
 			resolvedCard.owner.cardDeck.addSpellToTop(resolvedCard.card)
 		} else if (resolvedCard.card.type === CardType.SPELL) {
+			resolvedCard.card.cleanse()
 			resolvedCard.owner.cardGraveyard.addSpell(resolvedCard.card)
 		}
 

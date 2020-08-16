@@ -7,15 +7,17 @@ import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
-import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
-import GameEventCreators from './GameEventCreators'
-import ServerAnimation from './ServerAnimation'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame
 	card: ServerCard
 	owner: ServerPlayerInGame
-	isBeingDestroyed = false
+
+	constructor(game: ServerGame, card: ServerCard, owner: ServerPlayerInGame) {
+		this.game = game
+		this.card = card
+		this.owner = owner
+	}
 
 	get rowIndex(): number {
 		return this.game.board.rows.indexOf(this.game.board.getRowWithUnit(this)!)
@@ -31,51 +33,20 @@ export default class ServerUnit implements Unit {
 		return this.card.buffs
 	}
 
-	constructor(game: ServerGame, card: ServerCard, owner: ServerPlayerInGame) {
-		this.game = game
-		this.card = card
-		this.owner = owner
-	}
-
-	addPower(value: number): void {
-		this.card.setPower(Math.max(1, this.card.power + value))
-	}
-
-	setPower(value: number): void {
-		this.card.setPower(value)
-	}
-
-	addHealthArmor(value: number): void {
-		this.setHealthArmor(Math.max(0, this.card.armor + value))
-	}
-
-	setHealthArmor(value: number): void {
-		this.card.setArmor(value)
-	}
-
 	dealDamage(damageInstance: ServerDamageInstance): void {
 		this.card.dealDamage(damageInstance)
 	}
 
 	heal(healingInstance: ServerDamageInstance): void {
-		if (healingInstance.value <= 0) {
-			return
-		}
-
-		if (healingInstance.sourceCard) {
-			this.game.animation.play(ServerAnimation.cardHealsCards(healingInstance.sourceCard, [this.card]))
-		} else {
-			this.game.animation.play(ServerAnimation.universeHealsCards([this.card]))
-		}
-		this.setPower(Math.min(this.card.maxPower, this.card.power + healingInstance.value))
+		this.card.heal(healingInstance)
 	}
 
 	isAlive(): boolean {
-		return this.card.power > 0
+		return !this.card.isDead
 	}
 
 	isDead(): boolean {
-		return this.card.power <= 0
+		return this.card.isDead
 	}
 
 	getValidOrders(): ServerCardTarget[] {
@@ -93,36 +64,5 @@ export default class ServerUnit implements Unit {
 		targets.forEach(target => { target.sourceUnit = this })
 
 		return targets
-	}
-
-	destroy(): void {
-		if (this.isBeingDestroyed) {
-			return
-		}
-
-		this.isBeingDestroyed = true
-
-		const hookValues = this.game.events.applyHooks<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED, {
-			destructionPrevented: false
-		}, {
-			targetUnit: this
-		})
-		if (hookValues.destructionPrevented) {
-			this.card.setPower(1)
-			this.isBeingDestroyed = false
-			return
-		}
-
-		this.game.events.postEvent(GameEventCreators.unitDestroyed({
-			triggeringUnit: this
-		}))
-
-		this.game.board.destroyUnit(this)
-
-		this.card.setPower(this.card.basePower)
-		this.card.buffs.removeAll()
-
-		this.owner.cardGraveyard.addUnit(this.card)
-		this.isBeingDestroyed = false
 	}
 }
