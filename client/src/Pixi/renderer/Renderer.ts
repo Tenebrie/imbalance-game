@@ -668,6 +668,7 @@ export default class Renderer {
 			return
 		}
 
+		this.updateCardStats(announcedCard)
 		announcedCard.hiddenMode = false
 		const container = announcedCard.coreContainer
 		const sprite = announcedCard.sprite
@@ -705,6 +706,7 @@ export default class Renderer {
 	public renderResolveStack(): void {
 		for (let i = 0; i < Core.resolveStack.cards.length; i++) {
 			const card = Core.resolveStack.cards[i]
+			this.updateCardStats(card)
 			this.renderResolveStackCard(card, i)
 		}
 	}
@@ -774,6 +776,7 @@ export default class Renderer {
 		for (let level = 0; level < chunks.length; level++) {
 			for (let i = 0; i < chunks[level].length; i++) {
 				const card = chunks[level][i]
+				this.updateCardStats(card)
 				this.renderSelectableCard(card, i, chunks[level].length, level, chunks.length, selectableCards.length, windowFraction)
 			}
 		}

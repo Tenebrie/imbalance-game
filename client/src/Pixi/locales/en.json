@@ -159,6 +159,9 @@
 	"buff.buffNextSpellDiscount.name": "Next spell discount",
 	"buff.buffNextSpellDiscount.description": "Your next spell costs 1 Mana less.",
 
+	"buff.buffSpellDiscountPerTurn.name": "Spell discount per turn",
+	"buff.buffSpellDiscountPerTurn.description": "This spell gets 1 Mana cheaper at the start of your turn.",
+
 	"buff.buffSpellDiscount.name": "Spell discount",
 	"buff.buffSpellDiscount.description": "This spell costs 1 Mana less.",
 

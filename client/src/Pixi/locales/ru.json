@@ -159,6 +159,9 @@
 	"buff.buffNextSpellDiscount.name": "Скидка на следующее заклинание",
 	"buff.buffNextSpellDiscount.description": "Это заклинание стоит на 1 ед. маны дешевле.",
 
+	"buff.buffSpellDiscountPerTurn.name": "Скидка на заклинание каждый ход",
+	"buff.buffSpellDiscountPerTurn.description": "Это заклинание становится на 1 ед. маны дешевле в начале вашего хода.",
+
 	"buff.buffSpellDiscount.name": "Скидка на заклинание",
 	"buff.buffSpellDiscount.description": "Это заклинание стоит на 1 ед. маны дешевле.",
 
