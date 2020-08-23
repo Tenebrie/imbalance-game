@@ -11,7 +11,7 @@ import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import Constants from '@shared/Constants'
 import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import BuffDuration from '@shared/enums/BuffDuration'
-import CardLibrary from '../libraries/CardLibrary'
+import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
 import CardType from '@shared/enums/CardType'
 import GameEventCreators from '../models/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
@@ -112,7 +112,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.createCard(card, beforeDraw)
 	}
 
-	public createCardFromLibraryByPrototype(prototype: Function, beforeDraw?: ((card: ServerCard) => void)): void {
+	public createCardFromLibraryByPrototype(prototype: CardConstructor, beforeDraw?: ((card: ServerCard) => void)): void {
 		const card = CardLibrary.instantiateByConstructor(this.game, prototype)
 		this.createCard(card, beforeDraw)
 	}

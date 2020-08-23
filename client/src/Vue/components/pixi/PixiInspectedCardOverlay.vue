@@ -51,6 +51,17 @@
 				</span>
 			</div>
 		</div>
+		<div class="card-info-section" v-if="this.inspectedCard.baseRelatedCards.length > 0">
+			<div class="menu-separator" v-if="this.isInGame || this.displayedFeatures.length > 0" />
+			<div class="header" v-if="this.displayLeaderPowersLabel">
+				{{ $locale.get('card.inspect.leaderPowers') }}:
+			</div>
+			<div class="card-section">
+				<div class="related-card" v-for="relatedCardClass in this.inspectedCard.baseRelatedCards" :key="relatedCardClass">
+					<pixi-related-card :card-class="relatedCardClass" />
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -67,6 +78,8 @@ import CardFeature from '@shared/enums/CardFeature'
 import Localization from '@/Pixi/Localization'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Card from '@shared/models/Card'
+import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
+import CardColor from '@shared/enums/CardColor'
 
 const setup = () => {
 	const isInGame = computed<boolean>(() => store.getters.gameStateModule.isInGame)
@@ -101,10 +114,14 @@ const setup = () => {
 		return offset
 	})
 
+	const displayLeaderPowersLabel = computed<boolean>(() => {
+		return inspectedCard.value && inspectedCard.value.color === CardColor.LEADER
+	})
+
 	const overlayDisplayed = computed<boolean>(() => {
 		return inspectedCard.value &&
 			inspectedCard.value.type !== CardType.HIDDEN &&
-			(isInGame.value || displayedFeatures.value.length > 0)
+			(isInGame.value || displayedFeatures.value.length > 0 || inspectedCard.value.baseRelatedCards.length > 0)
 	})
 
 	return {
@@ -113,11 +130,12 @@ const setup = () => {
 		cardHeight,
 		overlayRef,
 		displayArmor,
-		displayedFeatures,
-		superSamplingLevel,
 		inspectedCard,
 		editorModeOffset,
 		overlayDisplayed,
+		displayedFeatures,
+		superSamplingLevel,
+		displayLeaderPowersLabel,
 		CardType: CardType,
 		CardFeature: CardFeature,
 		snakeToCamelCase: snakeToCamelCase,
@@ -126,6 +144,9 @@ const setup = () => {
 
 export default {
 	setup: setup,
+	components: {
+		PixiRelatedCard
+	},
 	computed: {
 		positionStyle() {
 			if (this.isInGame) {
@@ -163,7 +184,7 @@ export default {
 
 		.card-info-section {
 			text-align: start;
-			max-width: $INSPECTED_CARD_INFO_WINDOW_WIDTH;
+			max-width: $INSPECTED-CARD-INFO-WINDOW-WIDTH;
 
 			.header {
 				margin: 8px 0;
@@ -173,6 +194,23 @@ export default {
 
 			.line {
 				margin: 8px 0;
+			}
+
+			.card-section {
+				display: flex;
+				flex-direction: row;
+				max-width: 100%;
+				width: fit-content;
+				flex-wrap: wrap;
+				justify-content: center;
+
+				.related-card {
+					position: relative;
+					flex-grow: 0;
+					flex-shrink: 0;
+					width: calc(#{$CARD_WIDTH} / 2);
+					height: calc(#{$CARD_HEIGHT} / 2);
+				}
 			}
 
 			.object-name {

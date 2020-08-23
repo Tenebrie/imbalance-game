@@ -7,12 +7,14 @@ import SpellSteelSpark from './SpellSteelSpark'
 import SpellFireball from './SpellFireball'
 import SpellFieryEntrance from './SpellFieryEntrance'
 import SpellAnEncouragement from './SpellAnEncouragement'
+import {mapRelatedCards} from '../../../../../utils/Utils'
 
 export default class LeaderVelElleron extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.LEADER, CardFaction.ARCANE)
 		this.basePower = 0
 		this.sortPriority = 0
+		this.baseRelatedCards = mapRelatedCards([SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellFieryEntrance])
 	}
 
 	getDeckAddedSpellCards(): any[] {

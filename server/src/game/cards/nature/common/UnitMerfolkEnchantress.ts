@@ -7,6 +7,7 @@ import SpellEnchantedStorm from '../tokens/SpellEnchantedStorm'
 import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import {mapRelatedCards} from '../../../../utils/Utils'
 
 export default class UnitMerfolkEnchantress extends ServerCard {
 	constructor(game: ServerGame) {
@@ -15,6 +16,7 @@ export default class UnitMerfolkEnchantress extends ServerCard {
 		this.baseTribes = [CardTribe.MERFOLK]
 		this.sortPriority = 1
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
+		this.baseRelatedCards = mapRelatedCards([SpellEnchantedStorm])
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

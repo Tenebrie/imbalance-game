@@ -15,7 +15,7 @@
 import store from '@/Vue/store'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
 import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
-import { RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
+import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
 
 export default {
 	components: { TheNavigationBar },
@@ -25,6 +25,8 @@ export default {
 		window.addEventListener('keydown', this.onKeyDown)
 		window.addEventListener('contextmenu', this.onContextMenu)
 		this.printConsoleWelcomeMessage()
+		await store.dispatch.editor.loadCardLibrary()
+		editorCardRenderer.startRenderingService()
 	},
 
 	beforeDestroy() {

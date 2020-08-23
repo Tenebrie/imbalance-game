@@ -7,36 +7,32 @@ import CardTarget from '@shared/models/CardTarget'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 
 export default {
-	sendChatMessage(message: string) {
-		Core.sendMessage('post/chat', message)
-	},
-
-	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number) {
+	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {
 		const rowIndex = Core.board.rows.indexOf(gameBoardRow)
 		Core.sendMessage('post/playCard', CardPlayedMessage.fromCardOnRow(card, rowIndex, unitIndex))
 	},
 
-	sendSpellCardPlayed(card: Card) {
+	sendSpellCardPlayed(card: Card): void {
 		Core.sendMessage('post/playCard', CardPlayedMessage.fromCard(card))
 	},
 
-	sendUnitOrder(order: CardTarget) {
+	sendUnitOrder(order: CardTarget): void {
 		Core.sendMessage('post/unitOrder', new CardTargetMessage(order))
 	},
 
-	sendCardTarget(target: ClientCardTarget) {
+	sendCardTarget(target: ClientCardTarget): void {
 		Core.sendMessage('post/cardTarget', new CardTargetMessage(target))
 	},
 
-	sendEndTurn() {
+	sendEndTurn(): void {
 		Core.sendMessage('post/endTurn', null)
 	},
 
-	sendInit() {
+	sendInit(): void {
 		Core.sendMessage('system/init', undefined)
 	},
 
-	sendKeepalive() {
+	sendKeepalive(): void {
 		Core.sendMessage('system/keepalive', null)
 	}
 }

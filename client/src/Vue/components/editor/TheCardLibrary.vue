@@ -12,6 +12,9 @@ import Card from '@shared/models/Card'
 import Language from '@shared/models/Language'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
 import TheEditorInspectedCard from '@/Vue/components/editor/TheEditorInspectedCard.vue'
+import CardFaction from '@shared/enums/CardFaction'
+import CardColor from '@shared/enums/CardColor'
+import CardType from '@shared/enums/CardType'
 
 export default Vue.extend({
 	components: {
@@ -21,7 +24,10 @@ export default Vue.extend({
 
 	computed: {
 		library(): Card[] {
-			return store.state.editor.cardLibrary
+			const isCollectible = (card: Card): boolean => {
+				return card.faction !== CardFaction.EXPERIMENTAL && card.color !== CardColor.TOKEN && card.type === CardType.UNIT
+			}
+			return store.state.editor.cardLibrary.filter(card => isCollectible(card))
 		},
 		userLanguage(): Language {
 			return store.state.userPreferencesModule.userLanguage

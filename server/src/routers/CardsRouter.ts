@@ -8,9 +8,7 @@ const router = express.Router()
 router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req, res, next) => {
-	const collectible = req.query.collectible
-
-	const cards = collectible ? CardLibrary.collectibleCards : CardLibrary.cards
+	const cards = CardLibrary.cards
 	const cardMessages = cards.map(card => CardMessage.fromCard(card))
 
 	res.json(cardMessages)

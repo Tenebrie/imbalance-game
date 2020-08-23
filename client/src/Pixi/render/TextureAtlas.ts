@@ -1,4 +1,3 @@
-import axios from 'axios'
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import CardMessage from '@shared/models/network/CardMessage'
@@ -6,10 +5,6 @@ import Notifications from '@/utils/Notifications'
 
 export default class TextureAtlas {
 	static textures: { [ index: string ]: PIXI.Texture }
-
-	static hasPreloadedAllCards = false
-	static isPreloadingAllCards = false
-	static preloadAllCardsResolveFunctions: { (): void }[] = []
 
 	static hasPreloadedComponents = false
 	static isPreloadingComponents = false
@@ -71,37 +66,16 @@ export default class TextureAtlas {
 
 			await TextureAtlas.load(components, () => {
 				this.hasPreloadedComponents = true
+				this.isPreloadingComponents = false
 				this.preloadComponentsResolveFunctions.forEach(resolve => resolve())
 			})
 		})
 	}
 
-	public static async preloadAllCards(): Promise<void> {
-		return new Promise(async (resolve) => {
-			if (TextureAtlas.hasPreloadedAllCards) {
-				resolve()
-				return
-			}
-
-			TextureAtlas.preloadAllCardsResolveFunctions.push(resolve)
-			if (TextureAtlas.isPreloadingAllCards) {
-				return
-			}
-
-			this.isPreloadingAllCards = true
-
-			const response = await axios.get('/api/cards')
-			const cardMessages: CardMessage[] = response.data
-			const cardTextures = cardMessages.map(cardMessage => {
-				const name = cardMessage.class.substr(0, 1).toLowerCase() + cardMessage.class.substr(1)
-				return `cards/${name}`
-			})
-
-			await TextureAtlas.load(cardTextures, () => {
-				TextureAtlas.hasPreloadedAllCards = true
-				this.preloadAllCardsResolveFunctions.forEach(resolve => resolve())
-			})
-		})
+	public static async loadCard(cardMessage: CardMessage, onReady: () => void): Promise<void> {
+		const name = cardMessage.class.substr(0, 1).toLowerCase() + cardMessage.class.substr(1)
+		const path = `cards/${name}`
+		await TextureAtlas.load([path], onReady)
 	}
 
 	private static async load(textureFilenames: string[], onReady: () => void): Promise<void> {
@@ -128,7 +102,7 @@ export default class TextureAtlas {
 				if (texturesLoaded >= texturesToLoad.length) {
 					loadingNotification.close()
 					const t1 = performance.now()
-					console.info(`Preloaded ${texturesLoaded} textures in ${Math.round(t1 - t0) / 1000} seconds`)
+					console.info(`Loaded ${texturesLoaded} textures in ${Math.round(t1 - t0) / 1000} seconds`)
 					onReady()
 				}
 			}
@@ -149,7 +123,7 @@ export default class TextureAtlas {
 	}
 
 	public static getTexture(path: string): PIXI.Texture {
-		const texture = this.textures[path.toLowerCase()]
+		const texture = TextureAtlas.textures[path.toLowerCase()]
 		if (!texture) {
 			return TextureAtlas.loadTextureOnDemand(path)
 		}

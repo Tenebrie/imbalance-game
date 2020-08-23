@@ -7,12 +7,14 @@ import SpellShadowSpark from './SpellShadowSpark'
 import SpellNightmareDrain from './SpellNightmareDrain'
 import SpellCrystalBarrage from './SpellCrystalBarrage'
 import SpellShadowArmy from './SpellShadowArmy'
+import {mapRelatedCards} from '../../../../../utils/Utils'
 
 export default class LeaderNighterie extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.LEADER, CardFaction.ARCANE)
 		this.basePower = 0
 		this.sortPriority = 2
+		this.baseRelatedCards = mapRelatedCards([SpellShadowSpark, SpellNightmareDrain, SpellCrystalBarrage, SpellShadowArmy])
 	}
 
 	getDeckAddedSpellCards(): any[] {

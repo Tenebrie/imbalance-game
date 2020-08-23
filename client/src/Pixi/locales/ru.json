@@ -90,6 +90,8 @@
 	"card.inspect.buffs": "Эффекты",
 	"card.inspect.buffs.turnsRemaining": "Осталось ходов",
 	"card.inspect.keywords": "Ключевые слова",
+	"card.inspect.leaderPowers": "Способности предводителя",
+	"card.inspect.relatedCards": "Связанные карты",
 
 	"card.feature.keywordDeploy.name": "Deploy",
 	"card.feature.keywordDeploy.description": "Trigger an effect after this unit is played.",
@@ -193,15 +195,15 @@
 
 	"card.leaderVelElleron.name": "Вель'Эллерон",
 	"card.leaderVelElleron.title": "Боевой Маг",
-	"card.leaderVelElleron.description": "*Предводитель Аркана*<p>*Способности:*\nСтальная Искра, Воодушевление, Огненный шар, Взрывное появление",
+	"card.leaderVelElleron.description": "*Предводитель Аркана*",
 
 	"card.leaderVelRaminea.name": "Вель'Раминеа",
 	"card.leaderVelRaminea.title": "Заклинательница Пламени",
-	"card.leaderVelRaminea.description": "*Предводитель Аркана*<p>*Способности:*\nSpell 1, Spell 2, Spell 3, Spell 4",
+	"card.leaderVelRaminea.description": "*Предводитель Аркана*",
 
 	"card.leaderNighterie.name": "Найтери",
 	"card.leaderNighterie.title": "Хранитель Теней",
-	"card.leaderNighterie.description": "*Предводитель Аркана*<p>*Способности:*\nТеневая Искра, Оживший кошмар, Кристальный залп, Армия теней",
+	"card.leaderNighterie.description": "*Предводитель Аркана*",
 
 	"card.heroZamarath.name": "Замарат",
 	"card.heroZamarath.title": "Защитник",

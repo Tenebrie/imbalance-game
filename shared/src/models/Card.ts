@@ -47,6 +47,7 @@ export default class Card {
 		this.buffs = new BuffContainer(this)
 		this.baseTribes = []
 		this.baseFeatures = []
+		this.baseRelatedCards = []
 		this.description = ''
 		this.sortPriority = 0
 	}

@@ -19,6 +19,7 @@ export default class CardMessage {
 	buffs: BuffContainerMessage
 	baseTribes: CardTribe[]
 	baseFeatures: CardFeature[]
+	baseRelatedCards: string[]
 	description: string
 	variables: RichTextVariables
 	sortPriority: number
@@ -47,6 +48,7 @@ export default class CardMessage {
 		this.buffs = new BuffContainerMessage(card.buffs)
 		this.baseTribes = card.baseTribes.slice()
 		this.baseFeatures = card.baseFeatures.slice()
+		this.baseRelatedCards = card.baseRelatedCards.slice()
 		this.description = card.description
 		this.variables = card.evaluateVariables()
 		this.sortPriority = card.sortPriority

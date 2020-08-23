@@ -43,6 +43,16 @@ export default Vue.extend({
 		}
 	},
 
+	mounted() {
+		if (this.renderedCard) {
+			this.appendImageNode()
+		} else {
+			store.dispatch.editor.requestRender({
+				card: this.card
+			})
+		}
+	},
+
 	computed: {
 		renderedCard(): RenderedEditorCard | null {
 			if (!this.watchedCard) {
@@ -67,6 +77,7 @@ export default Vue.extend({
 				node.style.position = 'absolute'
 				node.style.width = '100%'
 				node.style.height = '100%'
+				node.style.left = '0'
 				if (typeof(this.verticalOffset) === 'number') {
 					node.style.top = `${this.verticalOffset}px`
 				}
@@ -79,6 +90,4 @@ export default Vue.extend({
 
 <style scoped lang="scss">
 	@import "../../styles/generic";
-
-
 </style>

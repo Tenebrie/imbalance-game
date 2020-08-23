@@ -7,6 +7,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import SpellHealingRain from '../tokens/SpellHealingRain'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import {mapRelatedCards} from '../../../../utils/Utils'
 
 export default class HeroTribeShaman extends ServerCard {
 	constructor(game: ServerGame) {
@@ -14,6 +15,7 @@ export default class HeroTribeShaman extends ServerCard {
 		this.basePower = 6
 		this.baseTribes = [CardTribe.MERFOLK]
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
+		this.baseRelatedCards = mapRelatedCards([SpellHealingRain])
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

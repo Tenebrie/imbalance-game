@@ -43,7 +43,7 @@ export default Vue.extend({
 
 	.the-editor-inspected-card {
 		position: absolute;
-		width: $INSPECTED_CARD_INFO_WINDOW_WIDTH;
+		width: $INSPECTED-CARD-INFO-WINDOW-WIDTH;
 		padding: 0 16px;
 		pointer-events: none;
 		display: flex;

@@ -147,7 +147,7 @@ const editorModule = createModule({
 		async loadCardLibrary(context): Promise<void> {
 			const { commit } = moduleActionContext(context, editorModule)
 
-			const response = await axios.get('/api/cards', { params: { collectible: true } })
+			const response = await axios.get('/api/cards', { params: { collectible: false } })
 			const cardMessages = response.data as CardMessage[]
 			const sortedMessages = Utils.sortEditorCards(cardMessages)
 			commit.setCardLibrary(sortedMessages)
@@ -208,12 +208,11 @@ const editorModule = createModule({
 		},
 
 		async requestRender(context, payload: { card: CardMessage }): Promise<void> {
-			await TextureAtlas.preloadComponents()
-			await TextureAtlas.preloadAllCards()
-
 			const { commit } = moduleActionContext(context, editorModule)
-
-			commit.addToRenderQueue(payload.card)
+			await TextureAtlas.preloadComponents()
+			await TextureAtlas.loadCard(payload.card, () => {
+				commit.addToRenderQueue(payload.card)
+			})
 		}
 	}
 })

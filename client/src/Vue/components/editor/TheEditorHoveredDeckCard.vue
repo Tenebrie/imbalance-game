@@ -1,6 +1,6 @@
 <template>
 	<div class="the-editor-hovered-deck-card" :style="this.overlayPosition" ref="overlayRef">
-		<pixi-library-card class="card" :card="this.hoveredDeckCard" :vertical-offset="this.editorModeOffset.y" />
+		<pixi-pre-rendered-card class="card" :card="this.hoveredDeckCard" :vertical-offset="this.editorModeOffset.y" />
 	</div>
 </template>
 
@@ -10,7 +10,7 @@ import store from '@/Vue/store'
 import Card from '@shared/models/Card'
 import * as PIXI from 'pixi.js'
 import {computed, ref} from '@vue/composition-api'
-import PixiLibraryCard from '@/Vue/components/pixi/PixiLibraryCard.vue'
+import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 
 const setup = () => {
 	const overlayRef = ref<HTMLDivElement>()
@@ -45,7 +45,7 @@ const setup = () => {
 
 export default Vue.extend({
 	components: {
-		PixiLibraryCard
+		PixiPreRenderedCard
 	},
 
 	setup: setup,
@@ -60,8 +60,8 @@ export default Vue.extend({
 		pointer-events: none;
 		display: flex;
 		justify-content: center;
-		width: calc(408px / 1.5);
-		height: calc(584px / 1.5);
+		width: calc(#{$CARD_WIDTH} / 2);
+		height: calc(#{$CARD_HEIGHT} / 2);
 		right: 100%;
 		margin-top: -4px;
 

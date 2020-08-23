@@ -90,6 +90,8 @@
 	"card.inspect.buffs": "Buffs",
 	"card.inspect.buffs.turnsRemaining": "Turns remaining",
 	"card.inspect.keywords": "Keywords",
+	"card.inspect.leaderPowers": "Leader powers",
+	"card.inspect.relatedCards": "Related cards",
 
 	"card.feature.keywordDeploy.name": "Deploy",
 	"card.feature.keywordDeploy.description": "Trigger an effect after this unit is played.",
@@ -196,15 +198,15 @@
 
 	"card.leaderVelElleron.name": "Vel'Elleron",
 	"card.leaderVelElleron.title": "The Battlemage",
-	"card.leaderVelElleron.description": "*Arcane Leader*<p>*Leader Powers:*\nSteel Spark, An Encouragement, Fireball, Fiery Entrance",
+	"card.leaderVelElleron.description": "*Arcane Leader*",
 
 	"card.leaderVelRaminea.name": "Vel'Raminea",
 	"card.leaderVelRaminea.title": "The Flameweaver",
-	"card.leaderVelRaminea.description": "*Arcane Leader*<p>*Leader Powers:*\nSpell 1, Spell 2, Spell 3, Spell 4",
+	"card.leaderVelRaminea.description": "*Arcane Leader*",
 
 	"card.leaderNighterie.name": "Nighterie",
 	"card.leaderNighterie.title": "The Keeper of Shadows",
-	"card.leaderNighterie.description": "*Arcane Leader*<p>*Leader Powers:*\nShadow Spark, Nightmare Drain, Crystal Barrage, Army of Shadows",
+	"card.leaderNighterie.description": "*Arcane Leader*",
 
 	"card.heroZamarath.name": "Zamarath",
 	"card.heroZamarath.title": "The Protector",

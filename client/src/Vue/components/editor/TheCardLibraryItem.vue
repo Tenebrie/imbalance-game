@@ -4,7 +4,9 @@
 		 @click="onClick"
 		 @mouseenter="onMouseEnter"
 		 @mouseleave="onMouseLeave"
-	/>
+	>
+		<pixi-pre-rendered-card :card="card" />
+	</div>
 </template>
 
 <script lang="ts">
@@ -15,8 +17,13 @@ import Card from '@shared/models/Card'
 import Utils from '@/utils/Utils'
 import CardColor from '@shared/enums/CardColor'
 import * as PIXI from 'pixi.js'
+import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 
 export default Vue.extend({
+	components: {
+		PixiPreRenderedCard
+	},
+
 	props: {
 		card: {
 			type: Object as () => Card,
@@ -27,17 +34,6 @@ export default Vue.extend({
 	data: () => ({
 		hoverInfoTimer: null as number | null
 	}),
-
-	watch: {
-		renderedCard(newValue: RenderedEditorCard | null): void {
-			if (newValue === null) {
-				return
-			}
-
-			newValue.render.setAttribute('draggable', 'false')
-			this.$el.appendChild(newValue.render)
-		}
-	},
 
 	computed: {
 		renderedCard(): RenderedEditorCard | null {
@@ -55,19 +51,13 @@ export default Vue.extend({
 
 		customClass(): {} {
 			return {
-				disabled: this.isDisabled,
+				'disabled': this.isDisabled,
 				'leader': this.card.color === CardColor.LEADER,
 				'golden': this.card.color === CardColor.GOLDEN,
 				'silver': this.card.color === CardColor.SILVER,
 				'bronze': this.card.color === CardColor.BRONZE
 			}
 		}
-	},
-
-	mounted(): void {
-		store.dispatch.editor.requestRender({
-			card: this.card
-		})
 	},
 
 	methods: {
@@ -109,8 +99,8 @@ export default Vue.extend({
 	.the-card-library-item {
 		position: relative;
 		margin: 16px;
-		width: calc(408px / 2);
-		height: calc(584px / 2);
+		width: calc(#{$CARD_WIDTH} / 2);
+		height: calc(#{$CARD_HEIGHT} / 2);
 		cursor: pointer;
 		user-select: none;
 
@@ -131,8 +121,8 @@ export default Vue.extend({
 			content: '';
 			top: 4px;
 			left: 4px;
-			width: calc(408px / 2 - 8px);
-			height: calc(584px / 2 - 8px);
+			width: calc(#{$CARD_WIDTH} / 2 - 8px);
+			height: calc(#{$CARD_HEIGHT} / 2 - 8px);
 			opacity: 0;
 			transition: opacity 1s;
 		}

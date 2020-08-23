@@ -11,33 +11,10 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import store from '@/Vue/store'
 import TheCardLibrary from '@/Vue/components/editor/TheCardLibrary.vue'
-import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 
 export default Vue.extend({
 	components: { TheCardLibrary },
-
-	computed: {
-
-	},
-
-	mounted(): void {
-		setTimeout(() => {
-			TextureAtlas.preloadComponents()
-		}, 500)
-		store.dispatch.editor.loadCardLibrary()
-		editorCardRenderer.startRenderingService()
-	},
-
-	beforeDestroy(): void {
-		editorCardRenderer.stopRenderingService()
-	},
-
-	methods: {
-
-	}
 })
 </script>
 

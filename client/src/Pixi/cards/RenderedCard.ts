@@ -65,6 +65,7 @@ export default class RenderedCard extends Card {
 		this.buffs = new ClientBuffContainer(this, message.buffs)
 		this.baseTribes = (message.baseTribes || []).slice()
 		this.baseFeatures = (message.baseFeatures || []).slice()
+		this.baseRelatedCards = (message.baseRelatedCards || []).slice()
 		this.description = message.description
 		this.variables = message.variables
 		this.sortPriority = message.sortPriority
@@ -383,6 +384,12 @@ export default class RenderedCard extends Card {
 			this.powerText.style.fontSize = 71
 		}
 
+		if (this.type === CardType.SPELL) {
+			this.powerText.style.fill = 0x0000AA
+		} else {
+			this.powerText.style.fill = 0x000000
+		}
+
 		this.armorText.position.set(132, 33)
 		this.armorText.style.fontSize = 24
 		this.armorText.style.fill = 0xFFFFFF
@@ -482,6 +489,13 @@ export default class RenderedCard extends Card {
 
 	public unregister(): void {
 		Core.unregisterCard(this)
+	}
+
+	public clone(): RenderedCard {
+		const message = new CardMessage(this)
+		const card = new RenderedCard(message)
+		Core.registerCard(card)
+		return card
 	}
 
 	public static fromMessage(message: CardMessage): RenderedCard {

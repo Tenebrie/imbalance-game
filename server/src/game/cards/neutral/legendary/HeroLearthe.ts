@@ -13,12 +13,14 @@ import CardFeature from '@shared/enums/CardFeature'
 import Constants from '@shared/Constants'
 import CardLibrary from '../../../libraries/CardLibrary'
 import UnitLivingShadow from '../tokens/UnitLivingShadow'
+import {mapRelatedCards} from '../../../../utils/Utils'
 
 export default class HeroLearthe extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NEUTRAL)
 		this.basePower = 4
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		this.baseRelatedCards = mapRelatedCards([UnitLivingShadow])
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))

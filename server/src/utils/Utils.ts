@@ -3,6 +3,8 @@ import CardType from '@shared/enums/CardType'
 import ServerCard from '../game/models/ServerCard'
 import AsciiColor from '../enums/AsciiColor'
 import ServerUnit from '../game/models/ServerUnit'
+import CardLibrary, {CardConstructor} from '../game/libraries/CardLibrary'
+import CardTribe from '@shared/enums/CardTribe'
 
 interface TryUntilArgs {
 	try: () => void | Promise<void>
@@ -48,6 +50,10 @@ export const colorizeConsoleText = (text: string): string => {
 
 export const mapUnitsToCards = (units: ServerUnit[]): ServerCard[] => {
 	return units.map(unit => unit.card)
+}
+
+export const mapRelatedCards = (constructors: CardConstructor[]): string[] => {
+	return constructors.map(constructor => constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1))
 }
 
 export default {
