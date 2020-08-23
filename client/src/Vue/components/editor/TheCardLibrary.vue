@@ -1,7 +1,12 @@
 <template>
 	<div class="the-card-library" @scroll="onScroll">
-		<the-card-library-item :card="card" class="card" v-for="card in library" :key="`${userLanguage}-${card.id}`" />
-		<the-editor-inspected-card />
+		<div class="header">
+			<the-card-library-header />
+		</div>
+		<div class="cards">
+			<the-card-library-item :card="card" class="card" v-for="card in library" :key="`${userLanguage}-${card.id}`" />
+			<the-editor-inspected-card />
+		</div>
 	</div>
 </template>
 
@@ -15,10 +20,13 @@ import TheEditorInspectedCard from '@/Vue/components/editor/TheEditorInspectedCa
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
 import CardType from '@shared/enums/CardType'
+import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
+import Localization from '@/Pixi/Localization'
 
 export default Vue.extend({
 	components: {
 		TheCardLibraryItem,
+		TheCardLibraryHeader,
 		TheEditorInspectedCard,
 	},
 
@@ -27,7 +35,15 @@ export default Vue.extend({
 			const isCollectible = (card: Card): boolean => {
 				return card.faction !== CardFaction.EXPERIMENTAL && card.color !== CardColor.TOKEN && card.type === CardType.UNIT
 			}
+
+			const searchQuery = store.state.editor.searchQuery
+			const selectedColor = store.state.editor.selectedColorFilter
+			const selectedFaction = store.state.editor.selectedFactionFilter
+
 			return store.state.editor.cardLibrary.filter(card => isCollectible(card))
+				.filter(card => searchQuery === null || Localization.get(card.name).includes(searchQuery))
+				.filter(card => selectedColor === null || card.color === selectedColor)
+				.filter(card => selectedFaction === null || card.faction === selectedFaction)
 		},
 		userLanguage(): Language {
 			return store.state.userPreferencesModule.userLanguage
@@ -48,12 +64,26 @@ export default Vue.extend({
 	@import "../../styles/generic";
 
 	.the-card-library {
-		width: calc(100% - 32px);
+		width: 100%;
 		height: 100%;
-		padding: 0 16px;
-		display: grid;
-		grid-template-columns: repeat(auto-fill, 230px);
-		justify-content: space-between;
-		overflow-y: scroll;
+		display: flex;
+		flex-direction: column;
+
+		.header {
+			width: 100%;
+			height: 32px;
+			background: rgba(white, 0.05);
+			border-bottom: 1px solid gray;
+			margin-bottom: 8px;
+		}
+
+		.cards {
+			width: calc(100% - 32px);
+			padding: 0 16px;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, 230px);
+			justify-content: space-between;
+			overflow-y: scroll;
+		}
 	}
 </style>

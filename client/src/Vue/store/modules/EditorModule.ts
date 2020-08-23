@@ -12,6 +12,7 @@ import CardColor from '@shared/enums/CardColor'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import {hoveredDeckCardModule, inspectedCardModule} from '@/Vue/store/modules/EditorCardModules'
+import CardFaction from '@shared/enums/CardFaction'
 
 const editorModule = createModule({
 	namespaced: true,
@@ -27,6 +28,9 @@ const editorModule = createModule({
 		cardLibrary: [] as Card[],
 		renderQueue: [] as CardMessage[],
 		renderedCards: [] as RenderedEditorCard[],
+		selectedFactionFilter: null as CardFaction | null,
+		selectedColorFilter: null as CardColor | null,
+		searchQuery: null as string | null
 	},
 
 	mutations: {
@@ -63,6 +67,18 @@ const editorModule = createModule({
 			const oldDeck = state.decks.find(deck => deck.id === newDeck.id)
 			state.decks[state.decks.indexOf(oldDeck)] = newDeck
 		},
+
+		setSelectedFactionFilter(state, faction: CardFaction | null): void {
+			state.selectedFactionFilter = faction
+		},
+
+		setSelectedColorFilter(state, color: CardColor | null): void {
+			state.selectedColorFilter = color
+		},
+
+		setSearchQuery(state, query: string | null): void {
+			state.searchQuery = query
+		}
 	},
 
 	getters: {
