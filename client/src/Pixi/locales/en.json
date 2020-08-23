@@ -198,15 +198,15 @@
 
 	"card.leaderVelElleron.name": "Vel'Elleron",
 	"card.leaderVelElleron.title": "The Battlemage",
-	"card.leaderVelElleron.description": "*Arcane Leader*",
+	"card.leaderVelElleron.description": "*Arcane Leader*<p>*Round start:*\nGenerate {manaPerRound} Mana",
 
 	"card.leaderVelRaminea.name": "Vel'Raminea",
 	"card.leaderVelRaminea.title": "The Flameweaver",
-	"card.leaderVelRaminea.description": "*Arcane Leader*",
+	"card.leaderVelRaminea.description": "*Arcane Leader*<p>*Round start:*\nGenerate {manaPerRound} Mana",
 
 	"card.leaderNighterie.name": "Nighterie",
 	"card.leaderNighterie.title": "The Keeper of Shadows",
-	"card.leaderNighterie.description": "*Arcane Leader*",
+	"card.leaderNighterie.description": "*Arcane Leader*<p>*Round start:*\nGenerate {manaPerRound} Mana",
 
 	"card.heroZamarath.name": "Zamarath",
 	"card.heroZamarath.title": "The Protector",

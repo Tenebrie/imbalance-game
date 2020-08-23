@@ -7,10 +7,15 @@ import SpellFlamingSpark from './SpellFlamingSpark'
 import SpellFlameweave from './SpellFlameweave'
 
 export default class LeaderVelRaminea extends ServerCard {
+	manaPerRound = 10
+
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.LEADER, CardFaction.EXPERIMENTAL)
 		this.basePower = 0
 		this.sortPriority = 1
+		this.dynamicTextVariables = {
+			manaPerRound: this.manaPerRound
+		}
 	}
 
 	getDeckAddedSpellCards(): any[] {

@@ -10,11 +10,16 @@ import SpellAnEncouragement from './SpellAnEncouragement'
 import {mapRelatedCards} from '../../../../../utils/Utils'
 
 export default class LeaderVelElleron extends ServerCard {
+	manaPerRound = 10
+
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.LEADER, CardFaction.ARCANE)
 		this.basePower = 0
 		this.sortPriority = 0
 		this.baseRelatedCards = mapRelatedCards([SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellFieryEntrance])
+		this.dynamicTextVariables = {
+			manaPerRound: this.manaPerRound
+		}
 	}
 
 	getDeckAddedSpellCards(): any[] {

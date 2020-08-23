@@ -10,11 +10,16 @@ import SpellShadowArmy from './SpellShadowArmy'
 import {mapRelatedCards} from '../../../../../utils/Utils'
 
 export default class LeaderNighterie extends ServerCard {
+	manaPerRound = 10
+
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.LEADER, CardFaction.ARCANE)
 		this.basePower = 0
 		this.sortPriority = 2
 		this.baseRelatedCards = mapRelatedCards([SpellShadowSpark, SpellNightmareDrain, SpellCrystalBarrage, SpellShadowArmy])
+		this.dynamicTextVariables = {
+			manaPerRound: this.manaPerRound
+		}
 	}
 
 	getDeckAddedSpellCards(): any[] {
