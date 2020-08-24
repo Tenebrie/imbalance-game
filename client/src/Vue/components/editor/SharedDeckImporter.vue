@@ -24,7 +24,7 @@ function Setup() {
 
 	const importDeck = async (): Promise<void> => {
 		const response = await axios.post('/api/decks', {
-			sharedCode: router.currentRoute.params.id
+			sharedCode: router.currentRoute.params.deckId
 		})
 
 		const deck = response.data.deck as PopulatedEditorDeck

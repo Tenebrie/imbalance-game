@@ -1,5 +1,5 @@
 <template>
-	<div class="pixi-inspected-card-overlay" v-if="this.overlayDisplayed" :style="positionStyle" ref="overlayRef">
+	<div class="pixi-inspected-card-overlay" v-if="this.overlayDisplayed" :style="positionStyle" ref="overlayRef" @click="onOverlayClick" @contextmenu="onOverlayClick">
 		<div class="card-info-section card-base-stats" v-if="this.isInGame">
 			<div v-if="this.inspectedCard.type === CardType.UNIT" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.power') }}:</div>
@@ -81,7 +81,7 @@ import Card from '@shared/models/Card'
 import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
 import CardColor from '@shared/enums/CardColor'
 
-const setup = () => {
+const setup = (props, { emit }) => {
 	const isInGame = computed<boolean>(() => store.getters.gameStateModule.isInGame)
 	const inspectedCard = computed<Card>(() => {
 		return (isInGame && store.getters.gameStateModule.inspectedCard) || store.getters.editor.inspectedCard.card
@@ -124,6 +124,10 @@ const setup = () => {
 			(isInGame.value || displayedFeatures.value.length > 0 || inspectedCard.value.baseRelatedCards.length > 0)
 	})
 
+	const onOverlayClick = (event: MouseEvent) => {
+		emit('click', event)
+	}
+
 	return {
 		isInGame,
 		cardWidth,
@@ -136,6 +140,7 @@ const setup = () => {
 		displayedFeatures,
 		superSamplingLevel,
 		displayLeaderPowersLabel,
+		onOverlayClick,
 		CardType: CardType,
 		CardFeature: CardFeature,
 		snakeToCamelCase: snakeToCamelCase,
@@ -156,8 +161,6 @@ export default {
 				}
 			} else {
 				return {
-					top: `calc(${this.editorModeOffset.y}px - 50px)`,
-					left: `calc(${this.editorModeOffset.x}px - 40px)`,
 				}
 			}
 		}

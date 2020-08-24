@@ -15,6 +15,7 @@ import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import {mapRelatedCards} from '../../../../../utils/Utils'
 
 export default class SpellShadowSpark extends ServerCard {
 	baseDamage = 2
@@ -24,6 +25,7 @@ export default class SpellShadowSpark extends ServerCard {
 
 		this.basePower = 2
 		this.baseFeatures = [CardFeature.HERO_POWER]
+		this.baseRelatedCards = mapRelatedCards([UnitShadowspawn])
 		this.dynamicTextVariables = {
 			damage: () => this.damage
 		}

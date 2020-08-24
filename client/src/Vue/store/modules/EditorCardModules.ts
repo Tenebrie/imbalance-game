@@ -5,38 +5,48 @@ import store, {moduleActionContext} from '@/Vue/store'
 
 export const inspectedCardModule = createModule({
 	namespaced: true,
+
+	state: {
+		stack: [] as string[]
+	},
+
 	mutations: {
-		setCard(state, inspectedCard: Card | null): void {
-			state.class = inspectedCard ? inspectedCard.class : null
+		pushToStack(state, inspectedCard: Card): void {
+			state.stack.push(inspectedCard.class)
 		},
 
-		setPosition(state, position: PIXI.Point): void {
-			state.position = position
+		popFromStack(state): void {
+			state.stack.pop()
 		},
 
-		setScrollCallback(state, scrollCallback: () => void): void {
-			state.scrollCallback = scrollCallback
+		clearStack(state): void {
+			state.stack = []
 		},
 	},
 
 	getters: {
 		card: (state): Card | null => {
-			return store.state.editor.cardLibrary.find(card => card.class === state.class) || null
+			if (state.stack.length === 0) {
+				return null
+			}
+			return store.state.editor.cardLibrary.find(card => card.class === state.stack[state.stack.length - 1]) || null
 		},
 	},
 
-	state: {
-		class: null as string | null,
-		position: new PIXI.Point(0, 0) as PIXI.Point,
-		scrollCallback: null as (() => void) | null,
-	},
-
 	actions: {
-		setCard(context, payload: { card: Card, position: PIXI.Point, scrollCallback: () => void }): void {
+		setCard(context, payload: { card: Card }): void {
 			const { commit } = moduleActionContext(context, inspectedCardModule)
-			commit.setCard(payload.card)
-			commit.setPosition(payload.position)
-			commit.setScrollCallback(payload.scrollCallback)
+			commit.pushToStack(payload.card)
+		},
+
+		undoCard(context): void {
+			const { commit } = moduleActionContext(context, inspectedCardModule)
+			commit.popFromStack()
+		},
+
+		clear(context): void {
+			const { commit } = moduleActionContext(context, inspectedCardModule)
+			commit.clearStack()
 		}
 	}
 })

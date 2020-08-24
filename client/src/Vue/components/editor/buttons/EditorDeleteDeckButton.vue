@@ -23,7 +23,7 @@ export default Vue.extend({
 	methods: {
 		async onClick(): Promise<void> {
 			this.requestInFlight = true
-			const deckId = this.$route.params.id
+			const deckId = this.$route.params.deckId
 			const statusCode = await store.dispatch.editor.deleteDeck({ deckId })
 			if (statusCode === 204) {
 				this.$noty.success('Deck deleted!')

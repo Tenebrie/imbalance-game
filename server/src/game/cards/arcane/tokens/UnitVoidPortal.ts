@@ -11,6 +11,7 @@ import UnitVoidspawn from './UnitVoidspawn'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
+import {mapRelatedCards} from '../../../../utils/Utils'
 
 export default class UnitVoidPortal extends ServerCard {
 	powerPerSpell = 1
@@ -19,6 +20,7 @@ export default class UnitVoidPortal extends ServerCard {
 		super(game, CardType.UNIT, CardColor.TOKEN, CardFaction.ARCANE)
 		this.basePower = 0
 		this.baseArmor = 5
+		this.baseRelatedCards = mapRelatedCards([UnitVoidspawn])
 		this.dynamicTextVariables = {
 			powerPerSpell: this.powerPerSpell
 		}

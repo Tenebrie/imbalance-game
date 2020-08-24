@@ -1,10 +1,5 @@
 <template>
-	<div class="the-card-library-item"
-		 :class="customClass"
-		 @click="onClick"
-		 @mouseenter="onMouseEnter"
-		 @mouseleave="onMouseLeave"
-	>
+	<div class="the-card-library-item" :class="customClass" @click="onClick" @contextmenu="onRightClick">
 		<pixi-pre-rendered-card :card="card" />
 	</div>
 </template>
@@ -16,8 +11,8 @@ import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import Card from '@shared/models/Card'
 import Utils from '@/utils/Utils'
 import CardColor from '@shared/enums/CardColor'
-import * as PIXI from 'pixi.js'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
+import CardType from '@shared/enums/CardType'
 
 export default Vue.extend({
 	components: {
@@ -28,12 +23,13 @@ export default Vue.extend({
 		card: {
 			type: Object as () => Card,
 			required: true
+		},
+
+		mode: {
+			type: String as () => 'library' | 'inspect',
+			required: true
 		}
 	},
-
-	data: () => ({
-		hoverInfoTimer: null as number | null
-	}),
 
 	computed: {
 		renderedCard(): RenderedEditorCard | null {
@@ -42,7 +38,7 @@ export default Vue.extend({
 
 		isDisabled(): boolean {
 			const currentDeckId = store.state.editor.currentDeckId
-			if (!currentDeckId) {
+			if (!currentDeckId || this.mode === 'inspect') {
 				return false
 			}
 
@@ -55,40 +51,32 @@ export default Vue.extend({
 				'leader': this.card.color === CardColor.LEADER,
 				'golden': this.card.color === CardColor.GOLDEN,
 				'silver': this.card.color === CardColor.SILVER,
-				'bronze': this.card.color === CardColor.BRONZE
+				'bronze': this.card.color === CardColor.BRONZE,
+				'token': this.card.color === CardColor.TOKEN,
+				'spell': this.card.type === CardType.SPELL
 			}
 		}
 	},
 
 	methods: {
 		onClick(): void {
-			const deckId = this.$route.params.id
+			const deckId = this.$route.params.deckId
+			if (this.mode === 'inspect' || !deckId) {
+				this.onRightClick()
+				return
+			}
+
 			store.dispatch.editor.addCardToDeck({
 				deckId: deckId,
 				cardToAdd: this.card
 			})
 		},
 
-		onMouseEnter(): void {
-			this.hoverInfoTimer = setTimeout(() => {
-				const element = this.$el
-				const boundingBox = element.getBoundingClientRect()
-				store.dispatch.editor.inspectedCard.setCard({
-					card: this.card,
-					position: new PIXI.Point(boundingBox.right, boundingBox.top),
-					scrollCallback: this.onParentScroll.bind(this)
-				})
-			}, 750)
+		onRightClick(): void {
+			store.dispatch.editor.inspectedCard.setCard({
+				card: this.card,
+			})
 		},
-
-		onParentScroll(): void {
-			this.onMouseLeave()
-		},
-
-		onMouseLeave(): void {
-			clearTimeout(this.hoverInfoTimer)
-			store.commit.editor.inspectedCard.setCard(null)
-		}
 	}
 })
 </script>
@@ -98,7 +86,6 @@ export default Vue.extend({
 
 	.the-card-library-item {
 		position: relative;
-		margin: 16px;
 		width: calc(#{$CARD_WIDTH} / 2);
 		height: calc(#{$CARD_HEIGHT} / 2);
 		cursor: pointer;
@@ -148,6 +135,18 @@ export default Vue.extend({
 		&.bronze {
 			&::before {
 				box-shadow: white 0 0 8px 4px;
+			}
+		}
+
+		&.token {
+			&::before {
+				box-shadow: gray 0 0 8px 4px;
+			}
+		}
+
+		&.spell {
+			&::before {
+				box-shadow: blue 0 0 8px 4px;
 			}
 		}
 

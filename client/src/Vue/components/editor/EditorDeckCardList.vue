@@ -54,7 +54,7 @@ export default Vue.extend({
 
 	computed: {
 		deckId(): string {
-			return this.$route.params.id
+			return this.$route.params.deckId
 		},
 
 		deck(): PopulatedEditorDeck {

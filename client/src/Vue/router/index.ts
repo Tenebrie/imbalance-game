@@ -72,7 +72,7 @@ const routes = [
 				component: () => import('@/Vue/components/editor/TheDeckList.vue'),
 			},
 			{
-				path: '/decks/:id',
+				path: '/decks/:deckId',
 				name: 'single-deck',
 				component: () => import('@/Vue/components/editor/EditorDeckCardList.vue'),
 			},
@@ -104,7 +104,7 @@ const routes = [
 		}
 	},
 	{
-		path: '/ds/:id',
+		path: '/ds/:deckId',
 		component: () => import('@/Vue/components/editor/SharedDeckImporter.vue'),
 		beforeEnter: (to: Route, from: Route, next: Function) => {
 			requireAuthentication(next)

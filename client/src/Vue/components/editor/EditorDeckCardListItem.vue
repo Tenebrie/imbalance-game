@@ -50,7 +50,7 @@ export default Vue.extend({
 
 	methods: {
 		onClick(): void {
-			const deckId = this.$route.params.id
+			const deckId = this.$route.params.deckId
 			store.dispatch.editor.removeCardFromDeck({
 				deckId: deckId,
 				cardToRemove: this.card

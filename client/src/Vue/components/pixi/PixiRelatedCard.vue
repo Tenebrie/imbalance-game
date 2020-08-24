@@ -1,16 +1,16 @@
 <template>
-	<pixi-pre-rendered-card :card="this.card" />
+	<the-card-library-item :card="this.card" :mode="'inspect'" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
 import Card from '@shared/models/Card'
-import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
+import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
 
 export default Vue.extend({
 	components: {
-		PixiPreRenderedCard
+		TheCardLibraryItem
 	},
 
 	props: {

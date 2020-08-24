@@ -15,12 +15,14 @@ import BuffStrength from '../../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import {mapRelatedCards} from '../../../../../utils/Utils'
 
 export default class SpellNightmareDrain extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 4
 		this.baseFeatures = [CardFeature.HERO_POWER]
+		this.baseRelatedCards = mapRelatedCards([UnitShadowspawn])
 
 		/* Create basic unit if no target available */
 		this.createEffect(GameEventType.SPELL_DEPLOYED)

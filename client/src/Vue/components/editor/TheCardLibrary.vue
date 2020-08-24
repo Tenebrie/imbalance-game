@@ -1,10 +1,16 @@
 <template>
-	<div class="the-card-library" @scroll="onScroll">
+	<div class="the-card-library">
 		<div class="header">
 			<the-card-library-header />
 		</div>
 		<div class="cards">
-			<the-card-library-item :card="card" class="card" v-for="card in library" :key="`${userLanguage}-${card.id}`" />
+			<the-card-library-item
+					:card="card"
+					class="card"
+					v-for="card in library"
+					:key="`${userLanguage}-${card.id}`"
+					:mode="'library'"
+			/>
 			<the-editor-inspected-card />
 		</div>
 	</div>
@@ -49,14 +55,6 @@ export default Vue.extend({
 			return store.state.userPreferencesModule.userLanguage
 		},
 	},
-
-	methods: {
-		onScroll(): void {
-			if (store.state.editor.inspectedCard.scrollCallback) {
-				store.state.editor.inspectedCard.scrollCallback()
-			}
-		}
-	}
 })
 </script>
 
@@ -64,6 +62,7 @@ export default Vue.extend({
 	@import "../../styles/generic";
 
 	.the-card-library {
+		position: relative;
 		width: 100%;
 		height: 100%;
 		display: flex;
@@ -71,10 +70,10 @@ export default Vue.extend({
 
 		.header {
 			width: 100%;
-			height: 32px;
+			height: $CARD_LIBRARY_NAVIGATION_BAR_HEIGHT;
 			background: rgba(white, 0.05);
 			border-bottom: 1px solid gray;
-			margin-bottom: 8px;
+			margin-bottom: $CARD_LIBRARY_NAVIGATION_BAR_MARGIN_BOTTOM;
 		}
 
 		.cards {
@@ -84,6 +83,15 @@ export default Vue.extend({
 			grid-template-columns: repeat(auto-fill, 230px);
 			justify-content: space-between;
 			overflow-y: scroll;
+
+			.card {
+				margin: 16px;
+			}
+		}
+
+		.click-inspect {
+			width: 100%;
+			height: 100%;
 		}
 	}
 </style>
