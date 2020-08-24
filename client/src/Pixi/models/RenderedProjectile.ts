@@ -12,7 +12,7 @@ export default class RenderedProjectile {
 	animationDuration: number
 	lifetime: number
 	randomnessFactor: number
-	onImpact: Function
+	onImpact: () => void
 
 	impactPerformed: boolean
 

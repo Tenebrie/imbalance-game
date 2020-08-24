@@ -2,6 +2,9 @@ import {createModule} from 'direct-vuex'
 import * as PIXI from 'pixi.js'
 import Card from '@shared/models/Card'
 import store, {moduleActionContext} from '@/Vue/store'
+import Core from '@/Pixi/Core'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import CardMessage from '@shared/models/network/CardMessage'
 
 export const inspectedCardModule = createModule({
 	namespaced: true,
@@ -12,7 +15,7 @@ export const inspectedCardModule = createModule({
 
 	mutations: {
 		pushToStack(state, inspectedCard: Card): void {
-			state.stack.push(inspectedCard.class)
+			state.stack.push(inspectedCard.id)
 		},
 
 		popFromStack(state): void {
@@ -25,11 +28,12 @@ export const inspectedCardModule = createModule({
 	},
 
 	getters: {
-		card: (state): Card | null => {
+		card: (state): RenderedCard | CardMessage | null => {
 			if (state.stack.length === 0) {
 				return null
 			}
-			return store.state.editor.cardLibrary.find(card => card.class === state.stack[state.stack.length - 1]) || null
+			const id = state.stack[state.stack.length - 1]
+			return Core.game?.findRenderedCardById(id) || store.state.editor.cardLibrary.find(card => card.id === id) || null
 		},
 	},
 
@@ -40,13 +44,17 @@ export const inspectedCardModule = createModule({
 		},
 
 		undoCard(context): void {
-			const { commit } = moduleActionContext(context, inspectedCardModule)
+			const { state, commit } = moduleActionContext(context, inspectedCardModule)
 			commit.popFromStack()
+			if (state.stack.length === 0) {
+				Core.input?.releaseInspectedCard()
+			}
 		},
 
 		clear(context): void {
 			const { commit } = moduleActionContext(context, inspectedCardModule)
 			commit.clearStack()
+			Core.input?.releaseInspectedCard()
 		}
 	}
 })
@@ -68,7 +76,7 @@ export const hoveredDeckCardModule = createModule({
 	},
 
 	getters: {
-		card: (state): Card | null => {
+		card: (state): CardMessage | null => {
 			return store.state.editor.cardLibrary.find(card => card.class === state.class) || null
 		},
 	},

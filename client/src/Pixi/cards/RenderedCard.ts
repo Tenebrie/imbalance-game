@@ -374,11 +374,8 @@ export default class RenderedCard extends Card {
 		this.armorTextBackground.visible = true
 		this.manacostTextBackground.visible = this.type === CardType.SPELL
 
-		const power = this.displayMode === CardDisplayMode.INSPECTED ? this.basePower : this.power
-		const armor = this.displayMode === CardDisplayMode.INSPECTED ? this.baseArmor : this.armor
-
 		this.powerText.position.set(60, 45)
-		if (power < 10) {
+		if (this.power < 10) {
 			this.powerText.style.fontSize = 85
 		} else {
 			this.powerText.style.fontSize = 71
@@ -393,7 +390,7 @@ export default class RenderedCard extends Card {
 		this.armorText.position.set(132, 33)
 		this.armorText.style.fontSize = 24
 		this.armorText.style.fill = 0xFFFFFF
-		if (armor > 0) {
+		if (this.armor > 0) {
 			this.armorText.visible = true
 			this.armorTextBackground.visible = true
 		} else {

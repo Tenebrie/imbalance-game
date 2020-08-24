@@ -2,7 +2,6 @@ import uuidv4 from 'uuid/v4'
 import {createModule} from 'direct-vuex'
 import axios from 'axios'
 import {moduleActionContext} from '@/Vue/store'
-import Card from '@shared/models/Card'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import CardMessage from '@shared/models/network/CardMessage'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
@@ -25,8 +24,8 @@ const editorModule = createModule({
 	state: {
 		decks: [] as PopulatedEditorDeck[],
 		currentDeckId: null as string | null,
-		cardLibrary: [] as Card[],
-		renderQueue: [] as CardMessage[],
+		cardLibrary: [] as CardMessage[],
+		renderQueue: [] as string[],
 		renderedCards: [] as RenderedEditorCard[],
 		selectedFactionFilter: null as CardFaction | null,
 		selectedColorFilter: null as CardColor | null,
@@ -42,12 +41,12 @@ const editorModule = createModule({
 			state.currentDeckId = deckId
 		},
 
-		setCardLibrary(state, cardLibrary: Card[]): void {
+		setCardLibrary(state, cardLibrary: CardMessage[]): void {
 			state.cardLibrary = cardLibrary.slice()
 		},
 
 		addToRenderQueue(state, card: CardMessage): void {
-			state.renderQueue.push(card)
+			state.renderQueue.push(card.class)
 		},
 
 		shiftRenderQueue(state): void {

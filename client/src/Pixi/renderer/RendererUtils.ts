@@ -31,7 +31,7 @@ export const getRenderScale = (): CardRenderScale => {
 			generalGameFontRenderScale: 1.2,
 			generalEditorFontRenderScale: 1.5,
 			descriptionGameFontRenderScale: 1.2,
-			descriptionEditorFontRenderScale: 1.2
+			descriptionEditorFontRenderScale: 1.5
 		}
 	} else if (selectedQuality === RenderQuality.HIGH || selectedQuality === RenderQuality.DEFAULT) {
 		return {

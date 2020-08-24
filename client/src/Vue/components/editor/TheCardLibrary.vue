@@ -11,7 +11,7 @@
 					:key="`${userLanguage}-${card.id}`"
 					:mode="'library'"
 			/>
-			<the-editor-inspected-card />
+			<pixi-inspected-card />
 		</div>
 	</div>
 </template>
@@ -22,7 +22,7 @@ import store from '@/Vue/store'
 import Card from '@shared/models/Card'
 import Language from '@shared/models/Language'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
-import TheEditorInspectedCard from '@/Vue/components/editor/TheEditorInspectedCard.vue'
+import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
 import CardType from '@shared/enums/CardType'
@@ -33,7 +33,11 @@ export default Vue.extend({
 	components: {
 		TheCardLibraryItem,
 		TheCardLibraryHeader,
-		TheEditorInspectedCard,
+		PixiInspectedCard,
+	},
+
+	beforeDestroy() {
+		store.dispatch.editor.inspectedCard.clear()
 	},
 
 	computed: {

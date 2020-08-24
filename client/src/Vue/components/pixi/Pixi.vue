@@ -14,7 +14,7 @@ import PixiUserInterface from '@/Vue/components/pixi/PixiUserInterface.vue'
 
 export default Vue.extend({
 	components: {
-		PixiUserInterface
+		PixiUserInterface,
 	},
 
 	created(): void {
@@ -73,6 +73,9 @@ export default Vue.extend({
 		}
 		.pixi-user-interface {
 			z-index: 2;
+		}
+		.inspected-card {
+			z-index: 3;
 		}
 	}
 </style>

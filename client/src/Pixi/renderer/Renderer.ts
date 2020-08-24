@@ -275,7 +275,7 @@ export default class Renderer {
 		return this.pixi.view.height
 	}
 
-	private updateCardStats(renderedCard: RenderedCard): void {
+	public updateCardStats(renderedCard: RenderedCard): void {
 		if (renderedCard.type === CardType.UNIT || renderedCard.type === CardType.TOKEN) {
 			renderedCard.powerText.text = renderedCard.power.toString()
 			if (renderedCard.power < renderedCard.basePower) {

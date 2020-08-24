@@ -33,7 +33,7 @@ export default Vue.extend({
 
 	computed: {
 		renderedCard(): RenderedEditorCard | null {
-			return store.state.editor.renderedCards.find(renderedCard => renderedCard.id === this.card.id)
+			return store.state.editor.renderedCards.find(renderedCard => renderedCard.class === this.card.class)
 		},
 
 		isDisabled(): boolean {

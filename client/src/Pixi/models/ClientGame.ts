@@ -21,7 +21,7 @@ export default class ClientGame {
 		this.turnPhase = phase
 	}
 
-	public findCardById(cardId: string): Card | CardMessage | null {
+	public findCardById(cardId: string): Card | RenderedCard | CardMessage | null {
 		const players = [Core.player, Core.opponent]
 
 		const cardInLimbo = Core.input.cardLimbo.find(card => card.id === cardId)

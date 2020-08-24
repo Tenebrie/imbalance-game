@@ -1,6 +1,6 @@
 <template>
-	<div class="pixi-inspected-card-overlay" v-if="this.overlayDisplayed" :style="positionStyle" ref="overlayRef" @click="onOverlayClick" @contextmenu="onOverlayClick">
-		<div class="card-info-section card-base-stats" v-if="this.isInGame">
+	<div class="pixi-inspected-card-overlay" v-if="this.overlayDisplayed" ref="overlayRef" @click="onOverlayClick" @contextmenu="onOverlayClick">
+		<div class="card-info-section card-base-stats" v-if="this.displayInGameStats">
 			<div v-if="this.inspectedCard.type === CardType.UNIT" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.power') }}:</div>
 				<span>{{ $locale.get('card.inspect.stat.base') }}: </span>
@@ -52,7 +52,7 @@
 			</div>
 		</div>
 		<div class="card-info-section" v-if="this.inspectedCard.baseRelatedCards.length > 0">
-			<div class="menu-separator" v-if="this.isInGame || this.displayedFeatures.length > 0" />
+			<div class="menu-separator" v-if="this.displayInGameStats || this.displayedFeatures.length > 0" />
 			<div class="header" v-if="this.displayLeaderPowersLabel">
 				{{ $locale.get('card.inspect.leaderPowers') }}:
 			</div>
@@ -69,30 +69,21 @@
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import {computed, ref} from '@vue/composition-api'
-import {CARD_ASPECT_RATIO, CARD_HEIGHT, getRenderScale} from '@/Pixi/renderer/RendererUtils'
 import Core from '@/Pixi/Core'
-import {INSPECTED_CARD_WINDOW_FRACTION} from '@/Pixi/renderer/InspectedCardRenderer'
 import CardType from '@shared/enums/CardType'
 import {snakeToCamelCase} from '@/utils/Utils'
 import CardFeature from '@shared/enums/CardFeature'
 import Localization from '@/Pixi/Localization'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import Card from '@shared/models/Card'
 import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
 import CardColor from '@shared/enums/CardColor'
+import CardMessage from '@shared/models/network/CardMessage'
 
 const setup = (props, { emit }) => {
 	const isInGame = computed<boolean>(() => store.getters.gameStateModule.isInGame)
-	const inspectedCard = computed<Card>(() => {
-		return (isInGame && store.getters.gameStateModule.inspectedCard) || store.getters.editor.inspectedCard.card
-	})
-	const superSamplingLevel = computed<number>(() => getRenderScale().superSamplingLevel)
-
-	const cardHeight = computed<number>(() => {
-		return Core.renderer ? Core.renderer.pixi.view.height * INSPECTED_CARD_WINDOW_FRACTION : CARD_HEIGHT / 2
-	})
-	const cardWidth = computed<number>(() => {
-		return cardHeight.value * CARD_ASPECT_RATIO
+	const inspectedCard = computed<CardMessage | RenderedCard>(() => {
+		const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.editor.inspectedCard.card.id) : null
+		return (isInGame && cardInGame) || store.getters.editor.inspectedCard.card
 	})
 
 	const displayArmor = computed<boolean>(() => {
@@ -118,6 +109,10 @@ const setup = (props, { emit }) => {
 		return inspectedCard.value && inspectedCard.value.color === CardColor.LEADER
 	})
 
+	const displayInGameStats = computed<boolean>(() => {
+		return isInGame && inspectedCard.value instanceof RenderedCard
+	})
+
 	const overlayDisplayed = computed<boolean>(() => {
 		return inspectedCard.value &&
 			inspectedCard.value.type !== CardType.HIDDEN &&
@@ -130,15 +125,13 @@ const setup = (props, { emit }) => {
 
 	return {
 		isInGame,
-		cardWidth,
-		cardHeight,
 		overlayRef,
 		displayArmor,
 		inspectedCard,
 		editorModeOffset,
 		overlayDisplayed,
+		displayInGameStats,
 		displayedFeatures,
-		superSamplingLevel,
 		displayLeaderPowersLabel,
 		onOverlayClick,
 		CardType: CardType,
@@ -152,19 +145,6 @@ export default {
 	components: {
 		PixiRelatedCard
 	},
-	computed: {
-		positionStyle() {
-			if (this.isInGame) {
-				return {
-					top: `calc(50% - ${this.cardHeight / 2 / this.superSamplingLevel}px`,
-					left: `calc(50% + ${this.cardWidth / 2 / this.superSamplingLevel}px`,
-				}
-			} else {
-				return {
-				}
-			}
-		}
-	}
 }
 </script>
 
@@ -180,6 +160,7 @@ export default {
 		border-radius: 10px;
 		font-size: 20px;
 		margin-top: 4px;
+		pointer-events: auto;
 
 		.card-base-stats {
 			padding-bottom: 8px;

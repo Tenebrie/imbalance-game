@@ -4,6 +4,8 @@ import CardMessage from '@shared/models/network/CardMessage'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import store from '@/Vue/store'
 import {CARD_HEIGHT, CARD_WIDTH} from '@/Pixi/renderer/RendererUtils'
+import Core from '@/Pixi/Core'
+import Card from '@shared/models/Card'
 
 class EditorCardRenderer {
 	pixi: PIXI.Renderer
@@ -32,22 +34,22 @@ class EditorCardRenderer {
 		}
 
 		this.mainTimer = window.setInterval(() => {
-			const nextCard = store.state.editor.renderQueue[0]
-			if (!nextCard) {
+			const nextCardClass = store.state.editor.renderQueue[0]
+			if (!nextCardClass) {
 				return
 			}
 
 			store.commit.editor.shiftRenderQueue()
+			const nextCard = store.state.editor.cardLibrary.find(card => card.class === nextCardClass)
+			if (!nextCard) {
+				return
+			}
+
 			store.commit.editor.addRenderedCard({
-				id: nextCard.id,
+				class: nextCard.class,
 				render: this.doRender(nextCard)
 			})
 		}, 0)
-	}
-
-	public stopRenderingService(): void {
-		window.clearInterval(this.mainTimer)
-		this.mainTimer = null
 	}
 
 	private doRender(card: CardMessage): HTMLImageElement {

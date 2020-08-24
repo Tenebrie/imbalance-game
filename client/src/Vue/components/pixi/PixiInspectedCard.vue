@@ -2,16 +2,17 @@
 	<div class="the-editor-inspected-card"
 		 v-if="inspectedCard"
 		 @click="onSmokeScreenClick"
-		 @contextmenu="onSmokeScreenClick"
+		 @contextmenu="onSmokeScreenRightClick"
+		 :class="customClass"
 	>
 		<div class="content">
 			<div class="card-container">
 				<div class="card">
-					<pixi-pre-rendered-card :card="inspectedCard" />
+					<pixi-pre-rendered-card :card="preRenderedCard" />
 				</div>
 			</div>
 			<div class="overlay-container">
-				<pixi-inspected-card-overlay @click="onOverlayClick" />
+				<pixi-inspected-card-info @click="onOverlayClick" />
 			</div>
 		</div>
 	</div>
@@ -20,25 +21,47 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import Card from '@shared/models/Card'
-import PixiInspectedCardOverlay from '@/Vue/components/pixi/PixiInspectedCardOverlay.vue'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
+import PixiInspectedCardInfo from '@/Vue/components/pixi/PixiInspectedCardInfo.vue'
+import CardMessage from '@shared/models/network/CardMessage'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 export default Vue.extend({
 	components: {
 		PixiPreRenderedCard,
-		PixiInspectedCardOverlay
+		PixiInspectedCardInfo
 	},
 
 	computed: {
-		inspectedCard(): Card | null {
+		preRenderedCard(): CardMessage | null {
+			const card = store.getters.editor.inspectedCard.card
+			if (card instanceof RenderedCard) {
+				return null
+			}
+			return card
+		},
+
+		inspectedCard(): CardMessage | RenderedCard | null {
 			return store.getters.editor.inspectedCard.card
 		},
+
+		customClass(): {} {
+			return {
+				'game': store.getters.gameStateModule.isInGame,
+				'editor': !store.getters.gameStateModule.isInGame,
+			}
+		}
 	},
 
 	methods: {
 		onSmokeScreenClick(): void {
 			store.dispatch.editor.inspectedCard.undoCard()
+		},
+
+		onSmokeScreenRightClick(): void {
+			if (!store.getters.gameStateModule.isInGame) {
+				this.onSmokeScreenClick()
+			}
 		},
 
 		onOverlayClick(event: MouseEvent): void {
@@ -56,14 +79,23 @@ export default Vue.extend({
 
 	.the-editor-inspected-card {
 		position: absolute;
-		background: rgba(black, 0.5);
-		border-radius: 16px;
-		width: calc(100% - 64px);
-		height: calc(100% - #{$CARD_LIBRARY_NAVIGATION_BAR_HEIGHT} - #{$CARD_LIBRARY_NAVIGATION_BAR_MARGIN_BOTTOM});
-		padding: 0 16px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+
+		&.game {
+			width: calc(100%);
+			height: calc(100%);
+			pointer-events: none;
+		}
+
+		&.editor {
+			width: calc(100% - 64px);
+			height: calc(100% - #{$CARD_LIBRARY_NAVIGATION_BAR_HEIGHT} - #{$CARD_LIBRARY_NAVIGATION_BAR_MARGIN_BOTTOM});
+			padding: 0 16px;
+			border-radius: 16px;
+			background: rgba(black, 0.5);
+		}
 
 		.content {
 			display: flex;

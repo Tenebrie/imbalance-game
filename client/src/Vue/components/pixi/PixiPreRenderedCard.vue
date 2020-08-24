@@ -8,6 +8,7 @@ import store from '@/Vue/store'
 import Card from '@shared/models/Card'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import {ref} from '@vue/composition-api'
+import CardMessage from '@shared/models/network/CardMessage'
 
 const setup = () => {
 	const containerRef = ref<HTMLDivElement>()
@@ -46,7 +47,7 @@ export default Vue.extend({
 	mounted() {
 		if (this.renderedCard) {
 			this.appendImageNode()
-		} else {
+		} else if (this.card) {
 			store.dispatch.editor.requestRender({
 				card: this.card
 			})
@@ -58,7 +59,7 @@ export default Vue.extend({
 			if (!this.watchedCard) {
 				return null
 			}
-			return store.state.editor.renderedCards.find(renderedCard => renderedCard.id === this.watchedCard.id) || null
+			return store.state.editor.renderedCards.find(renderedCard => renderedCard.class === this.watchedCard.class) || null
 		},
 
 		watchedCard(): Card | null {

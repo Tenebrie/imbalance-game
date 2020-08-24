@@ -8,8 +8,8 @@
 			<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
 			<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">End round</button>
 		</div>
-		<div class="inspected-card-overlay">
-			<pixi-inspected-card-overlay />
+		<div class="inspected-card">
+			<pixi-inspected-card />
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
 			<span class="overlay-message" v-if="!opponent">Waiting for opponent...</span>
@@ -23,7 +23,7 @@
 		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
 			<div class="escape-menu">
 				<button @click="onShowSettings" class="primary game-button">Settings</button>
-<!--				<button @click="onShowGameLog" class="primary game-button">Game history</button>-->
+				<button @click="onShowGameLog" class="primary game-button">Game history</button>
 				<div class="menu-separator"></div>
 <!--				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>-->
 <!--				<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>-->
@@ -44,10 +44,13 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import TheGameLog from '@/Vue/components/gamelog/TheGameLog.vue'
 import TheSimpleSettings from '@/Vue/components/profile/TheSimpleSettings.vue'
-import PixiInspectedCardOverlay from '@/Vue/components/pixi/PixiInspectedCardOverlay.vue'
+import Core from '@/Pixi/Core'
+import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 
 export default Vue.extend({
-	components: {PixiInspectedCardOverlay},
+	components: {
+		PixiInspectedCard
+	},
 	data: () => ({
 		isEscapeWindowVisible: false as boolean
 	}),
@@ -100,6 +103,12 @@ export default Vue.extend({
 
 		opponent(): Player | null {
 			return store.state.gameStateModule.opponent
+		},
+
+		customClass(): {} {
+			return {
+				'non-interactive': !store.getters.gameStateModule.inspectedCard
+			}
 		}
 	},
 
@@ -139,6 +148,10 @@ export default Vue.extend({
 			this.isEscapeWindowVisible = false
 		},
 
+		onClick(): void {
+			Core.input.releaseInspectedCard()
+		},
+
 		onShowPlayersDeck(): void {
 
 		},
@@ -164,6 +177,10 @@ export default Vue.extend({
 		height: 100%;
 		user-select: none;
 		pointer-events: none;
+
+		&.non-interactive {
+
+		}
 
 		.fade-in-overlay {
 			position: absolute;
@@ -230,6 +247,10 @@ export default Vue.extend({
 					color: lighten(red, 5);
 				}
 			}
+		}
+
+		.inspected-card {
+			pointer-events: auto;
 		}
 
 		.escape-menu-container {
