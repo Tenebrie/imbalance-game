@@ -33,7 +33,7 @@ export const inspectedCardModule = createModule({
 				return null
 			}
 			const id = state.stack[state.stack.length - 1]
-			return Core.game?.findRenderedCardById(id) || store.state.editor.cardLibrary.find(card => card.id === id) || null
+			return (Core.game && Core.game.findRenderedCardById(id)) || store.state.editor.cardLibrary.find(card => card.id === id) || null
 		},
 	},
 
@@ -47,14 +47,14 @@ export const inspectedCardModule = createModule({
 			const { state, commit } = moduleActionContext(context, inspectedCardModule)
 			commit.popFromStack()
 			if (state.stack.length === 0) {
-				Core.input?.releaseInspectedCard()
+				Core.input && Core.input.releaseInspectedCard()
 			}
 		},
 
 		clear(context): void {
 			const { commit } = moduleActionContext(context, inspectedCardModule)
 			commit.clearStack()
-			Core.input?.releaseInspectedCard()
+			Core.input && Core.input.releaseInspectedCard()
 		}
 	}
 })
