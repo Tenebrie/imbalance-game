@@ -66,10 +66,9 @@ class CardLibrary {
 			referenceInstance.armor = referenceInstance.baseArmor
 			referenceInstance.attack = referenceInstance.baseAttack
 			referenceInstance.name = `card.${className}.name`
+			referenceInstance.title = `card.${className}.title`
+			referenceInstance.flavor = `card.${className}.flavor`
 			referenceInstance.description = `card.${className}.description`
-			if ((referenceInstance.color === CardColor.LEADER || referenceInstance.color === CardColor.GOLDEN) && referenceInstance.type === CardType.UNIT) {
-				referenceInstance.title = `card.${className}.title`
-			}
 			return referenceInstance
 		})
 
@@ -113,9 +112,11 @@ class CardLibrary {
 
 		clone.name = reference.name
 		clone.title = reference.title
+		clone.flavor = reference.flavor
+		clone.description = reference.description
+
 		clone.baseTribes = (reference.baseTribes || []).slice()
 		clone.baseFeatures = (reference.baseFeatures || []).slice()
-		clone.description = reference.description
 		clone.game = game
 		clone.power = clone.basePower
 		clone.maxPower = clone.basePower

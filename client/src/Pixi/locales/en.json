@@ -133,6 +133,7 @@
 	"card.tribe.beast": "Beast",
 	"card.tribe.human": "Human",
 	"card.tribe.storm": "Storm",
+	"card.tribe.spark": "Spark",
 	"card.tribe.undead": "Undead",
 	"card.tribe.scroll": "Scroll",
 	"card.tribe.dragon": "Dragon",
@@ -207,6 +208,7 @@
 	"card.leaderNighterie.name": "Nighterie",
 	"card.leaderNighterie.title": "The Keeper of Shadows",
 	"card.leaderNighterie.description": "*Arcane Leader*<p>*Round start:*\nGenerate {manaPerRound} Mana",
+	"card.leaderNighterie.flavor": "...and the shadows bring her their shadowhoney.",
 
 	"card.heroZamarath.name": "Zamarath",
 	"card.heroZamarath.title": "The Protector",
@@ -251,6 +253,7 @@
 	"card.heroMetrearte.name": "Metrearte",
 	"card.heroMetrearte.title": "The Copycat",
 	"card.heroMetrearte.description": "*Deploy:*\nChoose a Leader Power from any Arcane Leader.\nGain a copy of it.",
+	"card.heroMetrearte.flavor": "I'll become what you like\nThis is what you wanted, right?",
 
 	"card.heroPozoga.name": "Pożoga",
 	"card.heroPozoga.title": "The Arsonist",
@@ -265,6 +268,7 @@
 
 	"card.heroRagingElemental.name": "Raging Elemental",
 	"card.heroRagingElemental.description": "*Enrage:*\nDeal {power} Damage to closest opposing enemy units.\nThen, destroy this unit.<p><i>Damage dealt is equal to this card's power.",
+	"card.heroRagingElemental.flavor": "The lightest touch, and it WILL explode.",
 
 	"card.heroStormDancer.name": "Storm Dancer",
 	"card.heroStormDancer.description": "Whenever you cast a spell, give +{powerGiven} Power to adjacent units.\nIf it's a *Storm*, give them +{stormPowerGiven} Power instead.",
@@ -295,6 +299,7 @@
 
 	"card.heroForksmanshipInstructor.name": "Forksmanship Instructor",
 	"card.heroForksmanshipInstructor.description": "Whenever you play a unit with {powerThreshold} Power or less, give it +{bonusPower} Power.",
+	"card.heroForksmanshipInstructor.flavor": "When swords are not an option, you just have to rely on your own trusty pitchfork.",
 
 	"card.heroTribeShaman.name": "Tribal Shaman",
 	"card.heroTribeShaman.description": "*Deploy:*\n*Create* a *Healing Rain*",
@@ -310,6 +315,7 @@
 
 	"card.unitChargingKnight.name": "Charging Knight",
 	"card.unitChargingKnight.description": "Perform an *Attack Action* whenever it moves forward<p>*Melee Attack:*\nDeal {attack} Damage",
+	"card.unitChargingKnight.flavor": "The card that has been reworked way too many times.",
 
 	"card.unitVampireFledgling.name": "Vampire Fledgling",
 	"card.unitVampireFledgling.description": "Loses {powerLost} Power per turn.<p>*Melee Attack:* Deal {attack} Damage. If damage is not blocked, then Restore {powerDrained} Power",
@@ -359,6 +365,7 @@
 
 	"card.unitShadowspawn.name": "Shadowspawn",
 	"card.unitShadowspawn.description": "<i>No effect</i>",
+	"card.unitShadowspawn.flavor": "Likes to cuddle with her little sister, Voidspawn.",
 
 	"card.unitVolatileCrystal.name": "Volatile Crystal",
 	"card.unitVolatileCrystal.description": "*Deathrattle:*\nDeal {damage} Damage to adjacent units on the same row.",
@@ -383,15 +390,18 @@
 
 	"card.unitVoidcaller.name": "Voidcaller",
 	"card.unitVoidcaller.description": "*Deploy:*\n*Create* a *Void Portal*",
+	"card.unitVoidcaller.flavor": "Thankfully, this line is always available.",
 
 	"card.unitVoidPortal.name": "Void Portal",
 	"card.unitVoidPortal.description": "*Turn end:*\nSpawn a *Voidspawn* next to this unit.\nIt gets +{powerPerSpell} Power for every unique spell in your graveyard.",
 
 	"card.unitVoidspawn.name": "Voidspawn",
 	"card.unitVoidspawn.description": "<i>No effect</i>",
+	"card.unitVoidspawn.flavor": "Likes to annoy her older sister, Shadowspawn.",
 
 	"card.unitLivingShadow.name": "Living Shadow",
 	"card.unitLivingShadow.description": "<i>No effect</i>",
+	"card.unitLivingShadow.flavor": "The one forgotten by her siblings.",
 
 	"card.tokenPlayerDeck.name": "Your deck",
 	"card.tokenPlayerDeck.description": "Choose your own deck",

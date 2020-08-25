@@ -39,7 +39,11 @@ export const inspectedCardModule = createModule({
 
 	actions: {
 		setCard(context, payload: { card: Card }): void {
-			const { commit } = moduleActionContext(context, inspectedCardModule)
+			const { state, commit } = moduleActionContext(context, inspectedCardModule)
+			if (state.stack.length >= 8 || (state.stack.length > 0 && payload.card.id === state.stack[state.stack.length - 1])) {
+				return
+			}
+
 			commit.pushToStack(payload.card)
 		},
 

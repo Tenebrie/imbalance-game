@@ -62,11 +62,13 @@ export default class RenderedCard extends Card {
 
 		this.name = message.name
 		this.title = message.title
+		this.flavor = message.flavor
+		this.description = message.description
+
 		this.buffs = new ClientBuffContainer(this, message.buffs)
 		this.baseTribes = (message.baseTribes || []).slice()
 		this.baseFeatures = (message.baseFeatures || []).slice()
 		this.relatedCards = (message.relatedCards || []).slice()
-		this.description = message.description
 		this.variables = message.variables
 		this.sortPriority = message.sortPriority
 
@@ -89,7 +91,7 @@ export default class RenderedCard extends Card {
 		this.cardNameText.style.fill = 0x000000
 		this.cardNameText.verticalAlign = RichTextAlign.CENTER
 		this.cardNameText.horizontalAlign = RichTextAlign.END
-		this.cardTitleText = this.createTitleText(Localization.get(this.title))
+		this.cardTitleText = this.createTitleText(Localization.getValueOrNull(this.title) || '')
 		this.cardTribeTexts = this.tribes.map(tribe => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
 		this.cardDescriptionText = new RichText(this.displayedDescription, 350, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)

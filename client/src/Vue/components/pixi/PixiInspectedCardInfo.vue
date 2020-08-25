@@ -28,7 +28,7 @@
 			</div>
 		</div>
 		<div class="card-info-section" v-if="this.displayedFeatures.length > 0">
-			<div class="menu-separator" v-if="this.isInGame" />
+			<div class="menu-separator" v-if="this.displayInGameStats" />
 			<div class="header">{{ $locale.get('card.inspect.keywords') }}:</div>
 			<div class="line" v-for="feature in this.displayedFeatures" :key="feature">
 				<span class="object-name">
@@ -60,6 +60,12 @@
 				<div class="related-card" v-for="relatedCardClass in this.inspectedCard.relatedCards" :key="relatedCardClass">
 					<pixi-related-card :card-class="relatedCardClass" />
 				</div>
+			</div>
+		</div>
+		<div class="card-info-section flavor-section" v-if="this.flavorTextLines.length > 0">
+			<div class="menu-separator" v-if="this.displayInGameStats || this.displayedFeatures.length > 0 || this.inspectedCard.relatedCards.length > 0" />
+			<div v-for="textLine in this.flavorTextLines" :key="textLine">
+				{{ textLine }}
 			</div>
 		</div>
 	</div>
@@ -116,12 +122,20 @@ const setup = (props, { emit }) => {
 	const overlayDisplayed = computed<boolean>(() => {
 		return inspectedCard.value &&
 			inspectedCard.value.type !== CardType.HIDDEN &&
-			(isInGame.value || displayedFeatures.value.length > 0 || inspectedCard.value.relatedCards.length > 0)
+			(isInGame.value || displayedFeatures.value.length > 0 || inspectedCard.value.relatedCards.length > 0 || flavorTextLines.value.length > 0)
 	})
 
 	const onOverlayClick = (event: MouseEvent) => {
 		emit('click', event)
 	}
+
+	const flavorTextLines = computed<string[]>(() => {
+		const value = Localization.getValueOrNull(inspectedCard.value.flavor)
+		if (value === null) {
+			return []
+		}
+		return value.split('\n')
+	})
 
 	return {
 		isInGame,
@@ -134,6 +148,7 @@ const setup = (props, { emit }) => {
 		displayedFeatures,
 		displayLeaderPowersLabel,
 		onOverlayClick,
+		flavorTextLines,
 		CardType: CardType,
 		CardFeature: CardFeature,
 		snakeToCamelCase: snakeToCamelCase,
@@ -161,6 +176,7 @@ export default {
 		font-size: 20px;
 		margin-top: 4px;
 		pointer-events: auto;
+		color: lightgray;
 
 		.card-base-stats {
 			padding-bottom: 8px;
@@ -186,7 +202,6 @@ export default {
 				max-width: 100%;
 				width: fit-content;
 				flex-wrap: wrap;
-				justify-content: center;
 
 				.related-card {
 					position: relative;
@@ -197,6 +212,11 @@ export default {
 				}
 			}
 
+			&.flavor-section {
+				color: gray;
+				font-style: italic;
+			}
+
 			.object-name {
 				font-weight: bold;
 			}
@@ -205,7 +225,7 @@ export default {
 		.menu-separator {
 			width: 100%;
 			height: 1px;
-			background: white;
+			background: rgba(white, 0.5);
 			margin: 8px 0;
 		}
 	}
