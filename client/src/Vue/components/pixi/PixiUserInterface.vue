@@ -262,8 +262,8 @@ export default Vue.extend({
 			justify-content: center;
 
 			.escape-menu {
-				height: 100%;
-				min-width: 500px;
+				border-radius: 16px;
+				min-width: 400px;
 				display: flex;
 				flex-direction: column;
 				align-items: center;

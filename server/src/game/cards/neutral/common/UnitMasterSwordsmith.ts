@@ -8,6 +8,7 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import Utils from '../../../../utils/Utils'
 
 export default class UnitMasterSwordsmith extends ServerCard {
 	bonusPower = 1
@@ -28,7 +29,7 @@ export default class UnitMasterSwordsmith extends ServerCard {
 	private onDeploy(): void {
 		const unit = this.unit
 		const owner = unit.owner
-		const targets = owner.cardHand.unitCards
+		const targets = Utils.sortCards(owner.cardHand.unitCards)
 		targets.forEach(card => card.buffs.add(BuffStrength, this, BuffDuration.INFINITY))
 	}
 }
