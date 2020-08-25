@@ -24,7 +24,7 @@ export default class CardAttributes extends PIXI.Container {
 		}
 	}
 
-	public updateChildren() {
+	public updateChildren(): void {
 		while (this.children.length > 0) {
 			this.removeChildAt(0)
 		}

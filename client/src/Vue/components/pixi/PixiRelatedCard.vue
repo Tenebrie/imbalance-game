@@ -7,6 +7,7 @@ import Vue from 'vue'
 import store from '@/Vue/store'
 import Card from '@shared/models/Card'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
+import CardMessage from '@shared/models/network/CardMessage'
 
 export default Vue.extend({
 	components: {
@@ -21,7 +22,7 @@ export default Vue.extend({
 	},
 
 	computed: {
-		card(): Card | null {
+		card(): CardMessage | null {
 			return store.state.editor.cardLibrary.find(card => card.class === this.cardClass)
 		}
 	}

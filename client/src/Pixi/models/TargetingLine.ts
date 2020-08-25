@@ -12,13 +12,13 @@ export default class TargetingLine {
 		this.targetPoint = new PIXI.Graphics()
 	}
 
-	public create() {
+	public create(): void {
 		Core.renderer.rootContainer.addChild(this.arrowLine)
 		Core.renderer.rootContainer.addChild(this.startingPoint)
 		Core.renderer.rootContainer.addChild(this.targetPoint)
 	}
 
-	public destroy() {
+	public destroy(): void {
 		Core.renderer.rootContainer.removeChild(this.arrowLine)
 		Core.renderer.rootContainer.removeChild(this.startingPoint)
 		Core.renderer.rootContainer.removeChild(this.targetPoint)

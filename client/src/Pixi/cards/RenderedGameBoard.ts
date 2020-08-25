@@ -64,7 +64,7 @@ export default class RenderedGameBoard extends Board {
 		return this.rows.map(row => row.cards).flat().concat(this.unitsOnHold)
 	}
 
-	public getUnitsOwnedByPlayer(owner: ClientPlayerInGame) {
+	public getUnitsOwnedByPlayer(owner: ClientPlayerInGame): RenderedUnit[] {
 		return this.getAllUnits().filter(unit => unit.owner === owner)
 	}
 

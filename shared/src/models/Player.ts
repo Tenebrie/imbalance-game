@@ -9,7 +9,7 @@ export default class Player {
 		this.username = username
 	}
 
-	public static fromPlayerMessage(playerMessage: PlayerMessage) {
+	public static fromPlayerMessage(playerMessage: PlayerMessage): Player {
 		return new Player(playerMessage.id, playerMessage.username)
 	}
 }

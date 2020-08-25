@@ -58,7 +58,7 @@ export default class RichText extends PIXI.Container {
 		this.renderText()
 	}
 
-	get text() {
+	get text(): string {
 		return this.source
 	}
 	set text(value: string) {
@@ -70,7 +70,7 @@ export default class RichText extends PIXI.Container {
 		this.renderText()
 	}
 
-	get textVariables() {
+	get textVariables(): RichTextVariables {
 		return this.variables
 	}
 	set textVariables(value: RichTextVariables) {
@@ -101,7 +101,7 @@ export default class RichText extends PIXI.Container {
 		return this.__textLineCount
 	}
 
-	get style() {
+	get style(): Record<string, any> {
 		const parent = this
 		return {
 			get fill() {
@@ -168,7 +168,7 @@ export default class RichText extends PIXI.Container {
 		})
 	}
 
-	public renderText() {
+	public renderText(): void {
 		while (this.children.length > 0) {
 			this.removeChildAt(0)
 		}
@@ -381,7 +381,7 @@ export default class RichText extends PIXI.Container {
 		}
 	}
 
-	getStateTransition(stateTransitions: Map<ParsingStateTransitionTrigger, ParsingStateTransitionAction>, trigger: ParsingStateTransitionTrigger) {
+	getStateTransition(stateTransitions: Map<ParsingStateTransitionTrigger, ParsingStateTransitionAction>, trigger: ParsingStateTransitionTrigger): ParsingStateTransitionAction | null {
 		const keys = stateTransitions.keys()
 		let key = keys.next()
 		while (!key.done) {
@@ -403,7 +403,7 @@ export default class RichText extends PIXI.Container {
 		return { name: tag, args: '' }
 	}
 
-	standardizeColor(color: string) {
+	standardizeColor(color: string): number {
 		const ctx = document.createElement('canvas').getContext('2d')!
 		ctx.fillStyle = color
 		return parseInt(ctx.fillStyle.substr(1), 16)

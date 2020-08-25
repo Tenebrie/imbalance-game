@@ -28,6 +28,7 @@ import CardColor from '@shared/enums/CardColor'
 import CardType from '@shared/enums/CardType'
 import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
 import Localization from '@/Pixi/Localization'
+import CardMessage from '@shared/models/network/CardMessage'
 
 export default Vue.extend({
 	components: {
@@ -41,8 +42,8 @@ export default Vue.extend({
 	},
 
 	computed: {
-		library(): Card[] {
-			const isCollectible = (card: Card): boolean => {
+		library(): CardMessage[] {
+			const isCollectible = (card: CardMessage): boolean => {
 				return card.faction !== CardFaction.EXPERIMENTAL && card.color !== CardColor.TOKEN && card.type === CardType.UNIT
 			}
 

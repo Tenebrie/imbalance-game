@@ -46,7 +46,7 @@ export default class CardTargetMessage {
 		this.targetLabel = order.targetLabel
 	}
 
-	public attachTargetCardData(card: Card) {
+	public attachTargetCardData(card: Card): void {
 		this.targetCardData = new CardMessage(card)
 	}
 }

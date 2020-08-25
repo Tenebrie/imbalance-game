@@ -8,7 +8,7 @@ import CardColor from '@shared/enums/CardColor'
 import Constants from '@shared/Constants'
 import store from '@/Vue/store'
 
-export const forEachInNumericEnum = (enumeration: any, handler: (val: any) => any): void => {
+export const forEachInNumericEnum = (enumeration: Enumerator, handler: (val: any) => any): void => {
 	for (const value in enumeration) {
 		if (!isNaN(Number(value))) {
 			handler(Number(value))
@@ -16,21 +16,22 @@ export const forEachInNumericEnum = (enumeration: any, handler: (val: any) => an
 	}
 }
 
-export const forEachInStringEnum = (enumeration: any, handler: (val: any) => any): void => {
+export const forEachInStringEnum = (enumeration: Enumerator, handler: (val: any) => any): void => {
 	for (const value in enumeration) {
 		handler(enumeration[value])
 	}
 }
 
-export const snakeToCamelCase = (str) => str.toLowerCase().replace(
+export const snakeToCamelCase = (str: string): string => str.toLowerCase().replace(
 	/([-_][a-z])/g,
 	(group) => group.toUpperCase()
 		.replace('-', '')
 		.replace('_', '')
 )
 
+
 export default {
-	getFont(text: string) {
+	getFont(text: string): string {
 		let font = 'Roboto'
 		const cyrillic = (/[а-яА-Я]/g).exec(text)
 		if (cyrillic) {

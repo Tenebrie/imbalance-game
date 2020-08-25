@@ -127,7 +127,7 @@ export default class Core {
 		return null
 	}
 
-	public static sendMessage(type: string, data: any): void {
+	public static sendMessage(type: string, data: Record<string, any> | null): void {
 		Core.socket.send(JSON.stringify({
 			type: type,
 			data: data

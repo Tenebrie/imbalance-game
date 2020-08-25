@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 export default class ScalingText extends PIXI.Container {
 	private texts: PIXI.Text[]
 	private currentText: string
-	private currentStyle: PIXI.TextStyle
+	private readonly currentStyle: PIXI.TextStyle
 	private currentAnchor: PIXI.Point
 
 	private get currentFontSize() {
@@ -19,21 +19,21 @@ export default class ScalingText extends PIXI.Container {
 		this.currentStyle.lineHeight = value
 	}
 
-	get text() {
+	get text(): string {
 		return this.currentText
 	}
 	set text(value: string) {
 		this.updateText(value)
 	}
 
-	get anchor() {
+	get anchor(): PIXI.Point {
 		return this.currentAnchor
 	}
 	set anchor(value: PIXI.Point) {
 		this.updateAnchor(value)
 	}
 
-	get style() {
+	get style(): Record<string, unknown> {
 		const parent = this
 		return {
 			get fontSize() {

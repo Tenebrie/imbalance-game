@@ -27,19 +27,6 @@ export default class ClientBuffContainer implements BuffContainer {
 		return this.buffs.find(buff => buff.id === buffId)
 	}
 
-	public getBuffsByPrototype(prototype: any): ClientBuff[] {
-		const buffClass = prototype.prototype.constructor.name.substr(0, 1).toLowerCase() + prototype.prototype.constructor.name.substr(1)
-		return this.buffs.filter(buff => buff.buffClass === buffClass)
-	}
-
-	public has(prototype: any): boolean {
-		return this.getBuffsByPrototype(prototype).length > 0
-	}
-
-	public getIntensity(prototype: any): number {
-		return this.getBuffsByPrototype(prototype).map(buff => buff.intensity).reduce((total, value) => total + value, 0)
-	}
-
 	public remove(buffMessage: BuffMessage): void {
 		this.buffs.splice(this.buffs.indexOf(this.findBuffById(buffMessage.id)), 1)
 		this.card.updateCardDescription()
