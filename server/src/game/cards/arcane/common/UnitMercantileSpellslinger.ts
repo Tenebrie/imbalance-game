@@ -28,6 +28,8 @@ export default class UnitMercantileSpellslinger extends ServerCard {
 			discountPerTurn: this.discountPerTurn
 		}
 
+		this.addRelatedCards().requireTribe(CardTribe.SCROLL)
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}

@@ -20,7 +20,7 @@ export default class UnitVoidPortal extends ServerCard {
 		super(game, CardType.UNIT, CardColor.TOKEN, CardFaction.ARCANE)
 		this.basePower = 0
 		this.baseArmor = 5
-		this.baseRelatedCards = mapRelatedCards([UnitVoidspawn])
+		this.baseRelatedCards = [UnitVoidspawn]
 		this.dynamicTextVariables = {
 			powerPerSpell: this.powerPerSpell
 		}

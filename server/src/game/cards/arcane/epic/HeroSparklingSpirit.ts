@@ -5,10 +5,7 @@ import CardColor from '@shared/enums/CardColor'
 import BuffSparksExtraDamage from '../../../buffs/BuffSparksExtraDamage'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
-import {mapRelatedCards} from '../../../../utils/Utils'
-import SpellSteelSpark from '../leaders/VelElleron/SpellSteelSpark'
-import SpellFlamingSpark from '../leaders/VelRaminea/SpellFlamingSpark'
-import SpellShadowSpark from '../leaders/Nighterie/SpellShadowSpark'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class HeroSparklingSpirit extends ServerCard {
 	extraDamage = 1
@@ -16,10 +13,10 @@ export default class HeroSparklingSpirit extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 9
-		this.baseRelatedCards = mapRelatedCards([SpellSteelSpark, SpellFlamingSpark, SpellShadowSpark])
 		this.dynamicTextVariables = {
 			extraDamage: this.extraDamage
 		}
+		this.addRelatedCards().requireTribe(CardTribe.SPARK)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

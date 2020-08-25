@@ -33,8 +33,10 @@ import {EventCallback, EventHook} from './ServerGameEvents'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
-import Utils from '../../utils/Utils'
+import Utils, {getClassFromConstructor} from '../../utils/Utils'
 import ServerAnimation from './ServerAnimation'
+import CardLibrary from '../libraries/CardLibrary'
+import RelatedCardsDefinition from './RelatedCards'
 
 export default class ServerCard extends Card {
 	game: ServerGame
@@ -43,6 +45,9 @@ export default class ServerCard extends Card {
 	dynamicTextVariables: ServerRichTextVariables
 	generatedArtworkMagicString = ''
 	botEvaluation: BotCardEvaluation
+
+	baseRelatedCards: CardConstructor[]
+	customRelatedCards: RelatedCardsDefinition[]
 
 	isDead = false
 
@@ -53,6 +58,8 @@ export default class ServerCard extends Card {
 		this.faction = faction
 		this.dynamicTextVariables = {}
 		this.botEvaluation = new BotCardEvaluation(this)
+		this.baseRelatedCards = []
+		this.customRelatedCards = []
 
 		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, validLocations)
@@ -134,6 +141,20 @@ export default class ServerCard extends Card {
 			return CardLocation.GRAVEYARD
 		}
 		return CardLocation.UNKNOWN
+	}
+
+	public get relatedCards(): string[] {
+		const customRelatedCards = Utils.sortCards(this.customRelatedCards.map(relatedCardsDefinition => {
+			return CardLibrary.cards.filter(card => relatedCardsDefinition.conditions.every(condition => condition(card)))
+		}).reduce((acc, value) => acc.concat(value), []))
+			.map(obj => obj.class)
+
+		return this.baseRelatedCards.map(obj => getClassFromConstructor(obj))
+			.concat(customRelatedCards)
+	}
+
+	public set relatedCards(values: string[]) {
+		// Empty
 	}
 
 	public get deckPosition(): number {
@@ -559,6 +580,12 @@ export default class ServerCard extends Card {
 	protected createHook<HookValues, HookArgs>(hookType: GameHookType, location: CardLocation[]): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hookType)
 			.requireLocations(location)
+	}
+
+	protected addRelatedCards(): RelatedCardsDefinition {
+		const relatedCardDefinition = new RelatedCardsDefinition()
+		this.customRelatedCards.push(relatedCardDefinition)
+		return relatedCardDefinition
 	}
 
 	onRevealed(owner: ServerPlayerInGame): void { return }

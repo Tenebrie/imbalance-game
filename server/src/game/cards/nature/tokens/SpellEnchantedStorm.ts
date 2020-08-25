@@ -32,6 +32,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 			powerPerStorm: this.powerPerStorm,
 			isUpgraded: () => this.isUpgraded()
 		}
+		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))

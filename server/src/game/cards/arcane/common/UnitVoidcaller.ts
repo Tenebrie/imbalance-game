@@ -6,14 +6,13 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import UnitVoidPortal from '../tokens/UnitVoidPortal'
-import {mapRelatedCards} from '../../../../utils/Utils'
 
 export default class UnitVoidcaller extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
 		this.basePower = 6
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
-		this.baseRelatedCards = mapRelatedCards([UnitVoidPortal])
+		this.baseRelatedCards = [UnitVoidPortal]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

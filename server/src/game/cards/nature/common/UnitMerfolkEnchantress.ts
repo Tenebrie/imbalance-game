@@ -16,7 +16,7 @@ export default class UnitMerfolkEnchantress extends ServerCard {
 		this.baseTribes = [CardTribe.MERFOLK]
 		this.sortPriority = 1
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
-		this.baseRelatedCards = mapRelatedCards([SpellEnchantedStorm])
+		this.baseRelatedCards = [SpellEnchantedStorm]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

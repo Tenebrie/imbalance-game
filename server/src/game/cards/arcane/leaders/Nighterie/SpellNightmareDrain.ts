@@ -22,7 +22,7 @@ export default class SpellNightmareDrain extends ServerCard {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 4
 		this.baseFeatures = [CardFeature.HERO_POWER]
-		this.baseRelatedCards = mapRelatedCards([UnitShadowspawn])
+		this.baseRelatedCards = [UnitShadowspawn]
 
 		/* Create basic unit if no target available */
 		this.createEffect(GameEventType.SPELL_DEPLOYED)

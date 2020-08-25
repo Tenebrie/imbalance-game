@@ -32,6 +32,7 @@ export default class SpellLightningStorm extends ServerCard {
 			targetsPerStorm: this.targetsPerStorm,
 			isUpgraded: () => this.isUpgraded()
 		}
+		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))

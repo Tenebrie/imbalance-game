@@ -15,6 +15,7 @@ export default class HeroUrvial extends ServerCard {
 		this.basePower = 8
 		this.baseTribes = [CardTribe.MERFOLK]
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => {

@@ -20,6 +20,7 @@ export default class SpellHealingRain extends ServerCard {
 			healing: () => this.healing,
 			healingPerStorm: this.healingPerStorm
 		}
+		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.perform(() => this.onPlay())

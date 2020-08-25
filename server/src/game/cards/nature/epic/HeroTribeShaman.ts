@@ -15,7 +15,7 @@ export default class HeroTribeShaman extends ServerCard {
 		this.basePower = 6
 		this.baseTribes = [CardTribe.MERFOLK]
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
-		this.baseRelatedCards = mapRelatedCards([SpellHealingRain])
+		this.baseRelatedCards = [SpellHealingRain]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

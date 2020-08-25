@@ -65,7 +65,7 @@ export default class RenderedCard extends Card {
 		this.buffs = new ClientBuffContainer(this, message.buffs)
 		this.baseTribes = (message.baseTribes || []).slice()
 		this.baseFeatures = (message.baseFeatures || []).slice()
-		this.baseRelatedCards = (message.baseRelatedCards || []).slice()
+		this.relatedCards = (message.relatedCards || []).slice()
 		this.description = message.description
 		this.variables = message.variables
 		this.sortPriority = message.sortPriority

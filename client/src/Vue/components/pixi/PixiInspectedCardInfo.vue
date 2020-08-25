@@ -51,13 +51,13 @@
 				</span>
 			</div>
 		</div>
-		<div class="card-info-section" v-if="this.inspectedCard.baseRelatedCards.length > 0">
+		<div class="card-info-section" v-if="this.inspectedCard.relatedCards.length > 0">
 			<div class="menu-separator" v-if="this.displayInGameStats || this.displayedFeatures.length > 0" />
 			<div class="header" v-if="this.displayLeaderPowersLabel">
 				{{ $locale.get('card.inspect.leaderPowers') }}:
 			</div>
 			<div class="card-section">
-				<div class="related-card" v-for="relatedCardClass in this.inspectedCard.baseRelatedCards" :key="relatedCardClass">
+				<div class="related-card" v-for="relatedCardClass in this.inspectedCard.relatedCards" :key="relatedCardClass">
 					<pixi-related-card :card-class="relatedCardClass" />
 				</div>
 			</div>
@@ -116,7 +116,7 @@ const setup = (props, { emit }) => {
 	const overlayDisplayed = computed<boolean>(() => {
 		return inspectedCard.value &&
 			inspectedCard.value.type !== CardType.HIDDEN &&
-			(isInGame.value || displayedFeatures.value.length > 0 || inspectedCard.value.baseRelatedCards.length > 0)
+			(isInGame.value || displayedFeatures.value.length > 0 || inspectedCard.value.relatedCards.length > 0)
 	})
 
 	const onOverlayClick = (event: MouseEvent) => {

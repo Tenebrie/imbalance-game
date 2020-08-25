@@ -17,6 +17,10 @@ export default class HeroMetrearte extends ServerCard {
 		this.basePower = 5
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
+		this.addRelatedCards()
+			.requireColor(CardColor.LEADER)
+			.requireFaction(CardFaction.ARCANE)
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}

@@ -16,7 +16,7 @@ export default class UnitMerfolkStormcaller extends ServerCard {
 		this.baseTribes = [CardTribe.MERFOLK]
 		this.sortPriority = 1
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
-		this.baseRelatedCards = mapRelatedCards([SpellLightningStorm])
+		this.baseRelatedCards = [SpellLightningStorm]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

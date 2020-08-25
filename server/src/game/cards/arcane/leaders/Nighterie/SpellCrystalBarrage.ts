@@ -21,7 +21,7 @@ export default class SpellCrystalBarrage extends ServerCard {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 		this.basePower = 6
 		this.baseFeatures = [CardFeature.HERO_POWER]
-		this.baseRelatedCards = mapRelatedCards([UnitVolatileCrystal])
+		this.baseRelatedCards = [UnitVolatileCrystal]
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))

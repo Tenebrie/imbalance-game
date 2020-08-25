@@ -83,10 +83,6 @@ class CardLibrary {
 		return cards.filter(card => card.isCollectible())
 	}
 
-	public static getClassFromConstructor(constructor: CardConstructor): string {
-		return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
-	}
-
 	public findPrototypeById(id: string): ServerCard | null {
 		return this.cards.find(card => card.id === id)
 	}

@@ -14,6 +14,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetValidatorArguments from '../../../../../types/TargetValidatorArguments'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class SpellSteelSpark extends ServerCard {
 	baseDamage = 2
@@ -23,6 +24,7 @@ export default class SpellSteelSpark extends ServerCard {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
 
 		this.basePower = 2
+		this.baseTribes = [CardTribe.SPARK]
 		this.baseFeatures = [CardFeature.HERO_POWER]
 		this.dynamicTextVariables = {
 			damage: () => this.damage,

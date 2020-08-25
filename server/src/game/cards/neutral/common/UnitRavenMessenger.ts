@@ -17,6 +17,7 @@ export default class UnitRavenMessenger extends ServerCard {
 		this.basePower = 2
 		this.baseTribes = [CardTribe.BIRD]
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON]
+		this.addRelatedCards().requireTribe(CardTribe.HUMAN).requireColor(CardColor.BRONZE)
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))

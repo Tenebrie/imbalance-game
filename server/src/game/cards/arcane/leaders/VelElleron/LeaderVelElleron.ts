@@ -16,7 +16,7 @@ export default class LeaderVelElleron extends ServerCard {
 		super(game, CardType.UNIT, CardColor.LEADER, CardFaction.ARCANE)
 		this.basePower = 0
 		this.sortPriority = 0
-		this.baseRelatedCards = mapRelatedCards([SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellFieryEntrance])
+		this.baseRelatedCards = [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellFieryEntrance]
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound
 		}

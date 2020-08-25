@@ -13,6 +13,7 @@ export default class HeroCoralScribe extends ServerCard {
 		this.basePower = 7
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
 		this.generatedArtworkMagicString = '2'
+		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

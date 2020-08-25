@@ -218,7 +218,7 @@
 
 	"card.heroCarienne.name": "Carienne",
 	"card.heroCarienne.title": "The Storm Unleashed",
-	"card.heroCarienne.description": "*Deploy:*\nDeal {damagePerWave} Damage to all enemy units.\nRepeat once for every *Gathering Storm* in your Graveyard.",
+	"card.heroCarienne.description": "*Deploy:*\nDeal {damagePerWave} Damage to all enemy units.\nRepeat once for every *Storm* card in your Graveyard.",
 
 	"card.heroUrvial.name": "Urvial",
 	"card.heroUrvial.title": "The Stormsmith",

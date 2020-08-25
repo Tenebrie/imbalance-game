@@ -18,8 +18,8 @@ export default class Card {
 	buffs: BuffContainer
 	baseTribes: CardTribe[]
 	baseFeatures: CardFeature[]
-	baseRelatedCards: string[]
 	description: string
+	relatedCards: string[]
 	variables: RichTextVariables
 	sortPriority: number
 
@@ -47,8 +47,8 @@ export default class Card {
 		this.buffs = new BuffContainer(this)
 		this.baseTribes = []
 		this.baseFeatures = []
-		this.baseRelatedCards = []
 		this.description = ''
+		this.relatedCards = []
 		this.sortPriority = 0
 	}
 

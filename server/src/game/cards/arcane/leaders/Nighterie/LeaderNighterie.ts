@@ -16,7 +16,7 @@ export default class LeaderNighterie extends ServerCard {
 		super(game, CardType.UNIT, CardColor.LEADER, CardFaction.ARCANE)
 		this.basePower = 0
 		this.sortPriority = 2
-		this.baseRelatedCards = mapRelatedCards([SpellShadowSpark, SpellNightmareDrain, SpellCrystalBarrage, SpellShadowArmy])
+		this.baseRelatedCards = [SpellShadowSpark, SpellNightmareDrain, SpellCrystalBarrage, SpellShadowArmy]
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound
 		}

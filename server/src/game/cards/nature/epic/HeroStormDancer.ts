@@ -21,6 +21,7 @@ export default class HeroStormDancer extends ServerCard {
 			powerGiven: this.normalPowerGiven,
 			stormPowerGiven: this.stormPowerGiven
 		}
+		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED, [CardLocation.BOARD])
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)

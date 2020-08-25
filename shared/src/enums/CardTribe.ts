@@ -3,6 +3,7 @@ enum CardTribe {
 	BEAST = 'beast',
 	HUMAN = 'human',
 	STORM = 'storm',
+	SPARK = 'spark',
 	UNDEAD = 'undead',
 	SCROLL = 'scroll',
 	DRAGON = 'dragon',

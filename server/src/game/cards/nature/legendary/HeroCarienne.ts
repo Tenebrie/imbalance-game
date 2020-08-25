@@ -19,6 +19,7 @@ export default class HeroCarienne extends ServerCard {
 			damagePerWave: this.damagePerWave,
 			waveCount: () => this.waveCount
 		}
+		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onUnitDeploy())

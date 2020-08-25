@@ -16,6 +16,7 @@ import BuffVelRamineaWeave from '../../../../buffs/BuffVelRamineaWeave'
 import CardLocation from '@shared/enums/CardLocation'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class SpellFlamingSpark extends ServerCard {
 	baseDamage = 2
@@ -25,6 +26,7 @@ export default class SpellFlamingSpark extends ServerCard {
 		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.EXPERIMENTAL)
 
 		this.basePower = 2
+		this.baseTribes = [CardTribe.SPARK]
 		this.baseFeatures = [CardFeature.HERO_POWER]
 		this.dynamicTextVariables = {
 			damage: () => this.damage,

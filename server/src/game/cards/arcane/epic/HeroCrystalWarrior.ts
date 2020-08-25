@@ -26,6 +26,7 @@ export default class HeroCrystalWarrior extends ServerCard {
 		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
 		this.basePower = 7
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		this.addRelatedCards().requireTribe(CardTribe.CRYSTAL)
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.require(({ targetUnit }) => !!targetUnit)

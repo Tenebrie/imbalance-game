@@ -20,7 +20,7 @@ export default class HeroLearthe extends ServerCard {
 		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NEUTRAL)
 		this.basePower = 4
 		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
-		this.baseRelatedCards = mapRelatedCards([UnitLivingShadow])
+		this.baseRelatedCards = [UnitLivingShadow]
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))

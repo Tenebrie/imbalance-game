@@ -33,6 +33,7 @@ export default class UnitHungrySpellslinger extends ServerCard {
 			infuseCost: this.infuseCost,
 			spellDiscount: this.spellDiscount
 		}
+		this.addRelatedCards().requireTribe(CardTribe.SCROLL)
 
 		this.createEffect<UnitDeployedEventArgs>(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.infuse())

@@ -215,7 +215,7 @@
 
 	"card.heroCarienne.name": "Карьен",
 	"card.heroCarienne.title": "Свободный шторм",
-	"card.heroCarienne.description": "*Вход в игру:*\nНаносит {damagePerWave} ед. урона всем вражеским юнитам.\nПовторите этот эффект за каждую *Надвигающуюся бурю* в вашем сбросе.",
+	"card.heroCarienne.description": "*Вход в игру:*\nНаносит {damagePerWave} ед. урона всем вражеским юнитам.\nПовторите этот эффект за каждую *Бурю* в вашем сбросе.",
 
 	"card.heroUrvial.name": "Урвиал",
 	"card.heroUrvial.title": "Штормовой кузнец",
