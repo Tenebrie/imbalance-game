@@ -4,13 +4,9 @@
 			<the-card-library-header />
 		</div>
 		<div class="cards">
-			<the-card-library-item
-					:card="card"
-					class="card"
-					v-for="card in library"
-					:key="`${userLanguage}-${card.id}`"
-					:mode="'library'"
-			/>
+			<div v-for="card in library" :key="`${userLanguage}-${card.id}`">
+				<the-card-library-item :card="card" class="card" :mode="'library'" />
+			</div>
 			<pixi-inspected-card />
 		</div>
 	</div>
@@ -18,8 +14,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import Fuse from 'fuse.js'
 import store from '@/Vue/store'
-import Card from '@shared/models/Card'
 import Language from '@shared/models/Language'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
 import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
@@ -37,8 +33,13 @@ export default Vue.extend({
 		PixiInspectedCard,
 	},
 
+	mounted() {
+		window.addEventListener('keydown', this.onKeyPress)
+	},
+
 	beforeDestroy() {
-		store.dispatch.editor.inspectedCard.clear()
+		window.removeEventListener('keydown', this.onKeyPress)
+		store.dispatch.inspectedCard.clear()
 	},
 
 	computed: {
@@ -47,19 +48,72 @@ export default Vue.extend({
 				return card.faction !== CardFaction.EXPERIMENTAL && card.color !== CardColor.TOKEN && card.type === CardType.UNIT
 			}
 
-			const searchQuery = store.state.editor.searchQuery
 			const selectedColor = store.state.editor.selectedColorFilter
 			const selectedFaction = store.state.editor.selectedFactionFilter
 
-			return store.state.editor.cardLibrary.filter(card => isCollectible(card))
-				.filter(card => searchQuery === null || Localization.get(card.name).includes(searchQuery))
+			const results = store.state.editor.cardLibrary.filter(card => isCollectible(card))
 				.filter(card => selectedColor === null || card.color === selectedColor)
 				.filter(card => selectedFaction === null || card.faction === selectedFaction)
+				.map(card => ({
+					...card,
+					localizedName: Localization.get(card.name),
+					localizedTitle: Localization.get(card.title),
+					localizedTribes: card.baseTribes.map(tribe => Localization.get(`card.tribe.${tribe}`)).join(' '),
+					localizedFlavor: Localization.get(card.flavor),
+					localizedDescription: Localization.get(card.description),
+				}))
+
+			const searchQuery = store.state.editor.searchQuery
+			if (!searchQuery || searchQuery.length < 2) {
+				return results
+			}
+
+			const fuse = new Fuse(results, {
+				threshold: 0.4,
+				useExtendedSearch: true,
+				keys: [
+					{
+						name: 'localizedName',
+						weight: 4
+					},
+					{
+						name: 'localizedTitle',
+						weight: 3
+					},
+					{
+						name: 'localizedTribes',
+						weight: 5
+					},
+					{
+						name: 'localizedFlavor',
+						weight: 1
+					},
+					{
+						name: 'localizedDescription',
+						weight: 2
+					}
+				]
+			})
+
+			const searchResult = fuse.search(searchQuery)
+			return searchResult.map(result => result.item)
 		},
 		userLanguage(): Language {
 			return store.state.userPreferencesModule.userLanguage
 		},
 	},
+
+	methods: {
+		onKeyPress(event: KeyboardEvent): void {
+			if (event.key === 'Escape' && store.getters.inspectedCard.card) {
+				store.dispatch.inspectedCard.undoCard()
+				return
+			}
+			if (event.key === 'Escape' && store.state.editor.searchQuery) {
+				store.commit.editor.setSearchQuery(null)
+			}
+		}
+	}
 })
 </script>
 
@@ -75,10 +129,10 @@ export default Vue.extend({
 
 		.header {
 			width: 100%;
-			height: $CARD_LIBRARY_NAVIGATION_BAR_HEIGHT;
+			// height: $CARD_LIBRARY_NAVIGATION_BAR_HEIGHT;
 			background: rgba(white, 0.05);
 			border-bottom: 1px solid gray;
-			margin-bottom: $CARD_LIBRARY_NAVIGATION_BAR_MARGIN_BOTTOM;
+			// margin-bottom: $CARD_LIBRARY_NAVIGATION_BAR_MARGIN_BOTTOM;
 		}
 
 		.cards {

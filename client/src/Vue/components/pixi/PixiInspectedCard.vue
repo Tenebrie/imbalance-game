@@ -7,7 +7,7 @@
 	>
 		<div class="content">
 			<div class="card-container">
-				<div class="card">
+				<div class="card" :key="(preRenderedCard && preRenderedCard.class) || ''">
 					<pixi-pre-rendered-card :card="preRenderedCard" />
 				</div>
 			</div>
@@ -34,7 +34,7 @@ export default Vue.extend({
 
 	computed: {
 		preRenderedCard(): CardMessage | null {
-			const card = store.getters.editor.inspectedCard.card
+			const card = store.getters.inspectedCard.card
 			if (card instanceof RenderedCard) {
 				return null
 			}
@@ -42,7 +42,7 @@ export default Vue.extend({
 		},
 
 		inspectedCard(): CardMessage | RenderedCard | null {
-			return store.getters.editor.inspectedCard.card
+			return store.getters.inspectedCard.card
 		},
 
 		customClass(): {} {
@@ -55,7 +55,7 @@ export default Vue.extend({
 
 	methods: {
 		onSmokeScreenClick(): void {
-			store.dispatch.editor.inspectedCard.undoCard()
+			store.dispatch.inspectedCard.undoCard()
 		},
 
 		onSmokeScreenRightClick(): void {

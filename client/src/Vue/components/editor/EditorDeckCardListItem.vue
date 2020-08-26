@@ -1,5 +1,10 @@
 <template>
-	<div class="editor-deck-card-list-item" :class="colorClass" @click="onClick" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+	<div class="editor-deck-card-list-item"
+		 :class="colorClass"
+		 @click="onClick"
+		 @contextmenu="onRightClick"
+		 @mouseenter="onMouseEnter"
+		 @mouseleave="onMouseLeave">
 		<span class="power" v-if="showPower">{{ card.basePower }}</span>
 		<span class="name">{{ fullName }}<span class="count" v-if="displayCount">x{{ card.count }}</span></span>
 	</div>
@@ -23,7 +28,7 @@ export default Vue.extend({
 	computed: {
 		fullName(): string {
 			let name = Localization.get(this.card.name)
-			const title = Localization.get(this.card.title)
+			const title = Localization.getValueOrNull(this.card.title)
 			if (title) {
 				name = `${name}, ${title}`
 			}
@@ -58,6 +63,13 @@ export default Vue.extend({
 			if (!store.getters.editor.deck(deckId).cards.find(card => card.id === this.card.id)) {
 				store.commit.editor.hoveredDeckCard.setCard(null)
 			}
+		},
+
+		onRightClick(): void {
+			store.dispatch.inspectedCard.clear()
+			store.dispatch.inspectedCard.setCard({
+				card: this.card,
+			})
 		},
 
 		onMouseEnter(): void {

@@ -262,6 +262,7 @@ export default Vue.extend({
 			justify-content: center;
 
 			.escape-menu {
+				border: 1px $COLOR-PRIMARY solid;
 				border-radius: 16px;
 				min-width: 400px;
 				display: flex;

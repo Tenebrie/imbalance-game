@@ -14,6 +14,8 @@
 	"ui.editor.deck.create": "Create new deck",
 	"ui.editor.deck.create.progress": "Creating...",
 
+	"ui.editor.library.search.placeholder": "Search...",
+
 	"ui.volume.master": "Master volume",
 	"ui.volume.music": "Music volume",
 	"ui.volume.effects": "Effects volume",

@@ -88,8 +88,8 @@ import CardMessage from '@shared/models/network/CardMessage'
 const setup = (props, { emit }) => {
 	const isInGame = computed<boolean>(() => store.getters.gameStateModule.isInGame)
 	const inspectedCard = computed<CardMessage | RenderedCard>(() => {
-		const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.editor.inspectedCard.card.id) : null
-		return (isInGame && cardInGame) || store.getters.editor.inspectedCard.card
+		const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card.id) : null
+		return (isInGame && cardInGame) || store.getters.inspectedCard.card
 	})
 
 	const displayArmor = computed<boolean>(() => {

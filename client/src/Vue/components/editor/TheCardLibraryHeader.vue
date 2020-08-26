@@ -1,17 +1,31 @@
 <template>
 	<div class="the-card-library-header">
 		<div class="filters">
-			<button @click="this.onImperialClick">Imperial</button>
-			<button @click="this.onArcaneClick">Arcane</button>
-			<button @click="this.onWildClick">Wild</button>
+			<button
+				v-for="data in this.factionData"
+				:key="`faction-button-${data.faction}`"
+				class="primary"
+				:class="{ selected: data.faction === selectedFaction }"
+				@click="() => toggleFaction(data.faction)"
+			>
+				{{ data.text }}
+			</button>
 			<div class="separator" />
-			<button @click="this.onLeaderClick">Leader</button>
-			<button @click="this.onLegendaryClick">Legendary</button>
-			<button @click="this.onEpicClick">Epic</button>
-			<button @click="this.onCommonClick">Common</button>
+			<button
+				v-for="data in this.colorData"
+				:key="`color-button-${data.color}`"
+				class="primary"
+				:class="{ selected: data.color === selectedColor }"
+				@click="() => toggleColor(data.color)"
+			>
+				{{ data.text }}
+			</button>
 		</div>
 		<div class="search">
-			<input type="text" @input="this.onSearchQueryInput" />
+			<div class="search-input-container">
+				<input type="text" :placeholder="this.$locale.get('ui.editor.library.search.placeholder')" v-model="searchQuery" />
+			</div>
+			<button class="secondary" @click="this.clearSearch"><i class="fas fa-times"></i></button>
 		</div>
 	</div>
 </template>
@@ -21,81 +35,71 @@ import Vue from 'vue'
 import store from '@/Vue/store'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
+import {computed} from '@vue/composition-api'
 
 function Setup() {
-	const onImperialClick = () => {
-		if (store.state.editor.selectedFactionFilter === CardFaction.CASTLE) {
+	const toggleFaction = (faction: CardFaction) => {
+		if (store.state.editor.selectedFactionFilter === faction) {
 			store.commit.editor.setSelectedFactionFilter(null)
 		} else {
-			store.commit.editor.setSelectedFactionFilter(CardFaction.CASTLE)
-		}
-	}
-	const onArcaneClick = () => {
-		if (store.state.editor.selectedFactionFilter === CardFaction.ARCANE) {
-			store.commit.editor.setSelectedFactionFilter(null)
-		} else {
-			store.commit.editor.setSelectedFactionFilter(CardFaction.ARCANE)
-		}
-	}
-	const onWildClick = () => {
-		if (store.state.editor.selectedFactionFilter === CardFaction.NATURE) {
-			store.commit.editor.setSelectedFactionFilter(null)
-		} else {
-			store.commit.editor.setSelectedFactionFilter(CardFaction.NATURE)
+			store.commit.editor.setSelectedFactionFilter(faction)
 		}
 	}
 
-	const onLeaderClick = () => {
-		if (store.state.editor.selectedColorFilter === CardColor.LEADER) {
+	const toggleColor = (color: CardColor) => {
+		if (store.state.editor.selectedColorFilter === color) {
 			store.commit.editor.setSelectedColorFilter(null)
 		} else {
-			store.commit.editor.setSelectedColorFilter(CardColor.LEADER)
-		}
-	}
-	const onLegendaryClick = () => {
-		if (store.state.editor.selectedColorFilter === CardColor.GOLDEN) {
-			store.commit.editor.setSelectedColorFilter(null)
-		} else {
-			store.commit.editor.setSelectedColorFilter(CardColor.GOLDEN)
-		}
-	}
-	const onEpicClick = () => {
-		if (store.state.editor.selectedColorFilter === CardColor.SILVER) {
-			store.commit.editor.setSelectedColorFilter(null)
-		} else {
-			store.commit.editor.setSelectedColorFilter(CardColor.SILVER)
-		}
-	}
-	const onCommonClick = () => {
-		if (store.state.editor.selectedColorFilter === CardColor.BRONZE) {
-			store.commit.editor.setSelectedColorFilter(null)
-		} else {
-			store.commit.editor.setSelectedColorFilter(CardColor.BRONZE)
+			store.commit.editor.setSelectedColorFilter(color)
 		}
 	}
 
-	const onSearchQueryInput = (event) => {
-		if (event.target.value) {
-			store.commit.editor.setSearchQuery(event.target.value)
-		} else {
-			store.commit.editor.setSearchQuery(null)
-		}
+	const selectedFaction = computed<CardFaction>(() => store.state.editor.selectedFactionFilter)
+	const selectedColor = computed<CardColor>(() => store.state.editor.selectedColorFilter)
+
+	const factionData = [
+		{ text: 'All', faction: null },
+		{ text: 'Imperial', faction: CardFaction.CASTLE },
+		{ text: 'Arcane', faction: CardFaction.ARCANE },
+		{ text: 'Wild', faction: CardFaction.NATURE },
+		{ text: 'Neutral', faction: CardFaction.NEUTRAL }
+	]
+
+	const colorData = [
+		{ text: 'All', color: null },
+		{ text: 'Leader', color: CardColor.LEADER},
+		{ text: 'Legendary', color: CardColor.GOLDEN},
+		{ text: 'Epic', color: CardColor.SILVER},
+		{ text: 'Common', color: CardColor.BRONZE},
+	]
+
+	const clearSearch = () => {
+		store.commit.editor.setSearchQuery('')
 	}
+
+	const searchQuery = computed<string>({
+		get(): string {
+			return store.state.editor.searchQuery
+		},
+		set(value: string): void {
+			store.commit.editor.setSearchQuery(value)
+		}
+	})
 
 	return {
-		onImperialClick,
-		onArcaneClick,
-		onWildClick,
-		onLeaderClick,
-		onLegendaryClick,
-		onEpicClick,
-		onCommonClick,
-		onSearchQueryInput
+		factionData,
+		colorData,
+		selectedFaction,
+		selectedColor,
+		toggleFaction,
+		toggleColor,
+		clearSearch,
+		searchQuery
 	}
 }
 
 export default Vue.extend({
-	setup: Setup
+	setup: Setup,
 })
 </script>
 
@@ -104,27 +108,66 @@ export default Vue.extend({
 
 	.the-card-library-header {
 		display: flex;
+		flex-wrap: wrap;
+
 		justify-content: space-between;
-		height: 100%;
+		padding: 8px;
+		height: calc(100% - 16px);
+
+		button.selected {
+			color: black;
+			background: darkorange;
+			border-color: darkorange;
+			&:hover {
+				background: darken(darkorange, 5);
+				border-color: darken(darkorange, 5);
+			}
+			&:active {
+				background: darken(darkorange, 10);
+				border-color: darken(darkorange, 10);
+			}
+		}
 
 		.filters {
 			display: flex;
-
-			button {
-			}
 
 			.separator {
 				width: 1px;
 				margin: 0 16px;
 				background: white;
 			}
+
+			button {
+				margin: 0 4px;
+			}
 		}
 
 		.search {
-			input {
-				padding: 4px;
+			position: relative;
+			display: flex;
+			min-height: 40px;
+
+			.search-input-container {
+				flex: 5;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+
+				input {
+					margin: 0;
+					border: 1px solid darken($COLOR-TEXT, 10);
+					height: 100%;
+					border-radius: 0.25em 0 0 0.25em;
+					border-right: none;
+				}
+			}
+
+			button {
+				flex: 1;
 				margin: 0;
-				height: calc(100% - 8px);
+				padding: 0;
+				border-radius: 0 0.25em 0.25em 0;
 			}
 		}
 	}

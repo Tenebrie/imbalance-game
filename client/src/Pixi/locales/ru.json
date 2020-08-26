@@ -14,6 +14,8 @@
 	"ui.editor.deck.create": "Создать новую колоду",
 	"ui.editor.deck.create.progress": "Создание...",
 
+	"ui.editor.library.search.placeholder": "Поиск...",
+
 	"ui.volume.master": "Общая громкость",
 	"ui.volume.music": "Громкость музыки",
 	"ui.volume.effects": "Громкость эффектов",

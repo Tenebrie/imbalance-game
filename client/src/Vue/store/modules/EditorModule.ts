@@ -17,7 +17,6 @@ const editorModule = createModule({
 	namespaced: true,
 
 	modules: {
-		inspectedCard: inspectedCardModule,
 		hoveredDeckCard: hoveredDeckCardModule,
 	},
 
@@ -29,7 +28,7 @@ const editorModule = createModule({
 		renderedCards: [] as RenderedEditorCard[],
 		selectedFactionFilter: null as CardFaction | null,
 		selectedColorFilter: null as CardColor | null,
-		searchQuery: null as string | null
+		searchQuery: '' as string
 	},
 
 	mutations: {
@@ -75,7 +74,7 @@ const editorModule = createModule({
 			state.selectedColorFilter = color
 		},
 
-		setSearchQuery(state, query: string | null): void {
+		setSearchQuery(state, query: string): void {
 			state.searchQuery = query
 		}
 	},

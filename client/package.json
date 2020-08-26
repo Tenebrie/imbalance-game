@@ -14,6 +14,7 @@
 		"camelcase": "^6.0.0",
 		"core-js": "^3.4.4",
 		"direct-vuex": "^0.9.4",
+		"fuse.js": "^6.4.1",
 		"howler": "^2.2.0",
 		"js-easing-functions": "^1.0.3",
 		"moment": "^2.27.0",

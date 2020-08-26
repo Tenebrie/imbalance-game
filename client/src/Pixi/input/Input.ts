@@ -112,7 +112,7 @@ export default class Input {
 		}
 
 		if (this.inspectedCard) {
-			store.dispatch.editor.inspectedCard.undoCard()
+			store.dispatch.inspectedCard.undoCard()
 			return
 		}
 
@@ -206,13 +206,13 @@ export default class Input {
 	public inspectCard(): void {
 		const hoveredCard = this.hoveredCard
 		if (!hoveredCard) {
-			store.dispatch.editor.inspectedCard.undoCard()
+			store.dispatch.inspectedCard.undoCard()
 			return
 		}
 
 		this.inspectedCard = hoveredCard.card
 		store.commit.gameStateModule.setInspectedCard(this.inspectedCard)
-		store.dispatch.editor.inspectedCard.setCard({ card: hoveredCard.card })
+		store.dispatch.inspectedCard.setCard({ card: hoveredCard.card })
 	}
 
 	public releaseInspectedCard(): void {

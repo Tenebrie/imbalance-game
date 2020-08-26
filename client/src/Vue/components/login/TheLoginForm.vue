@@ -98,7 +98,7 @@ function TheLoginForm() {
 }
 
 export default {
-	setup: TheLoginForm
+	setup: TheLoginForm,
 }
 </script>
 

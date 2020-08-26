@@ -73,7 +73,7 @@ export default Vue.extend({
 		},
 
 		onRightClick(): void {
-			store.dispatch.editor.inspectedCard.setCard({
+			store.dispatch.inspectedCard.setCard({
 				card: this.card,
 			})
 		},

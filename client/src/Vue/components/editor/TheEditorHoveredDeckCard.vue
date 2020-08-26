@@ -1,6 +1,11 @@
 <template>
 	<div class="the-editor-hovered-deck-card" :style="this.overlayPosition" ref="overlayRef">
-		<pixi-pre-rendered-card class="card" :card="this.hoveredDeckCard" :vertical-offset="this.editorModeOffset.y" />
+		<pixi-pre-rendered-card
+				class="card"
+				:key="this.hoveredDeckCard && this.hoveredDeckCard.class"
+				:card="this.hoveredDeckCard"
+				:vertical-offset="this.editorModeOffset.y"
+		/>
 	</div>
 </template>
 

@@ -30,6 +30,10 @@ export default Vue.extend({
 		}
 	},
 
+	data: () => ({
+		isImageAppended: false as boolean
+	}),
+
 	watch: {
 		renderedCard(newValue: RenderedEditorCard | null): void {
 			if (newValue === null) {
@@ -69,6 +73,10 @@ export default Vue.extend({
 
 	methods: {
 		appendImageNode(): void {
+			if (this.isImageAppended) {
+				return
+			}
+			this.isImageAppended = true
 			while (this.containerRef.children.length > 0) {
 				this.$el.removeChild(this.$el.children[0])
 			}
