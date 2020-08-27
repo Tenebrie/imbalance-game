@@ -25,6 +25,7 @@ import CardType from '@shared/enums/CardType'
 import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
 import Localization from '@/Pixi/Localization'
 import CardMessage from '@shared/models/network/CardMessage'
+import {insertRichTextVariables} from '@/utils/Utils'
 
 export default Vue.extend({
 	components: {
@@ -48,6 +49,10 @@ export default Vue.extend({
 				return card.faction !== CardFaction.EXPERIMENTAL && card.color !== CardColor.TOKEN && card.type === CardType.UNIT
 			}
 
+			const stripFormatting = (str: string): string => {
+				return str.replace(/\*/g, '')
+			}
+
 			const selectedColor = store.state.editor.selectedColorFilter
 			const selectedFaction = store.state.editor.selectedFactionFilter
 
@@ -56,33 +61,61 @@ export default Vue.extend({
 				.filter(card => selectedFaction === null || card.faction === selectedFaction)
 				.map(card => ({
 					...card,
-					localizedName: Localization.get(card.name),
-					localizedTitle: Localization.get(card.title),
+					originalName: insertRichTextVariables(Localization.getOriginalOrNull(card.name), card.variables),
+					originalTitle: insertRichTextVariables(Localization.getOriginalOrNull(card.title) || '', card.variables),
+					originalTribes: card.baseTribes.map(tribe => Localization.getOriginalOrNull(`card.tribe.${tribe}`)).join(' '),
+					originalFlavor: Localization.getOriginalOrNull(card.flavor),
+					originalDescription: stripFormatting(insertRichTextVariables(Localization.get(card.description), card.variables)),
+					localizedName: insertRichTextVariables(Localization.get(card.name), card.variables),
+					localizedTitle: insertRichTextVariables(Localization.getValueOrNull(card.title) || '', card.variables),
 					localizedTribes: card.baseTribes.map(tribe => Localization.get(`card.tribe.${tribe}`)).join(' '),
 					localizedFlavor: Localization.get(card.flavor),
-					localizedDescription: Localization.get(card.description),
+					localizedDescription: stripFormatting(insertRichTextVariables(Localization.get(card.description), card.variables)),
 				}))
 
 			const searchQuery = store.state.editor.searchQuery
-			if (!searchQuery || searchQuery.length < 2) {
+			if (!searchQuery) {
 				return results
 			}
 
 			const fuse = new Fuse(results, {
 				threshold: 0.4,
-				useExtendedSearch: true,
+				ignoreLocation: true,
+				findAllMatches: true,
+				includeMatches: true,
+				includeScore: true,
 				keys: [
 					{
+						name: 'originalName',
+						weight: 10,
+					},
+					{
+						name: 'originalTitle',
+						weight: 10
+					},
+					{
+						name: 'originalTribes',
+						weight: 10
+					},
+					{
+						name: 'originalFlavor',
+						weight: 1
+					},
+					{
+						name: 'originalDescription',
+						weight: 9
+					},
+					{
 						name: 'localizedName',
-						weight: 4
+						weight: 10,
 					},
 					{
 						name: 'localizedTitle',
-						weight: 3
+						weight: 10
 					},
 					{
 						name: 'localizedTribes',
-						weight: 5
+						weight: 10
 					},
 					{
 						name: 'localizedFlavor',
@@ -90,12 +123,13 @@ export default Vue.extend({
 					},
 					{
 						name: 'localizedDescription',
-						weight: 2
+						weight: 9
 					}
 				]
 			})
 
 			const searchResult = fuse.search(searchQuery)
+			console.log(searchResult)
 			return searchResult.map(result => result.item)
 		},
 		userLanguage(): Language {

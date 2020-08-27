@@ -36,6 +36,7 @@ import store from '@/Vue/store'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
 import {computed} from '@vue/composition-api'
+import {debounce} from 'throttle-debounce'
 
 function Setup() {
 	const toggleFaction = (faction: CardFaction) => {
@@ -77,12 +78,16 @@ function Setup() {
 		store.commit.editor.setSearchQuery('')
 	}
 
+	const setSearchQueryDebounced = debounce(200, (query: string) => {
+		store.commit.editor.setSearchQuery(query)
+	})
+
 	const searchQuery = computed<string>({
 		get(): string {
 			return store.state.editor.searchQuery
 		},
 		set(value: string): void {
-			store.commit.editor.setSearchQuery(value)
+			setSearchQueryDebounced(value)
 		}
 	})
 

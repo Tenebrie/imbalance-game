@@ -85,6 +85,9 @@ export default class TextureAtlas {
 
 		const loadingNotification = Notifications.info('')
 		loadingNotification.setTimeout(0)
+		if (textureFilenames.length === 1) {
+			loadingNotification.close()
+		}
 
 		const updateNotificationText = (loaded: number, total: number) => {
 			loadingNotification.setText(`Loading assets (${loaded}/${total})...`)
@@ -102,7 +105,9 @@ export default class TextureAtlas {
 				if (texturesLoaded >= texturesToLoad.length) {
 					loadingNotification.close()
 					const t1 = performance.now()
-					console.info(`Loaded ${texturesLoaded} textures in ${Math.round(t1 - t0) / 1000} seconds`)
+					if (textureFilenames.length > 1) {
+						console.info(`Loaded ${texturesLoaded} textures in ${Math.round(t1 - t0) / 1000} seconds`)
+					}
 					onReady()
 				}
 			}

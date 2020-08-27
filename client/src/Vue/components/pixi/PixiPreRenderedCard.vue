@@ -76,12 +76,12 @@ export default Vue.extend({
 			if (this.isImageAppended) {
 				return
 			}
-			this.isImageAppended = true
 			while (this.containerRef.children.length > 0) {
 				this.$el.removeChild(this.$el.children[0])
 			}
 
 			if (this.renderedCard) {
+				this.isImageAppended = true
 				const node = this.renderedCard.render.cloneNode()
 				node.style.position = 'absolute'
 				node.style.width = '100%'

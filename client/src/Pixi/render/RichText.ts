@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import Utils from '@/utils/Utils'
+import Utils, {insertRichTextVariables} from '@/utils/Utils'
 import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import RichTextBackground from '@/Pixi/render/RichTextBackground'
@@ -182,17 +182,7 @@ export default class RichText extends PIXI.Container {
 
 		const SCALE_MODIFIER = this.fontSize / this.baseFontSize
 
-		const textVariables = {
-			...this.variables
-		}
-
-		let replacedText = (this.text || '')
-		for (const variableName in textVariables) {
-			const variableValue = textVariables[variableName] || ''
-			const regexp = new RegExp('{' + variableName + '}', 'g')
-			replacedText = replacedText.replace(regexp, '*' + variableValue.toString() + '*')
-		}
-
+		const replacedText = insertRichTextVariables((this.text || ''), this.variables)
 		const chars = Array.from(replacedText)
 
 		const segments: Segment[] = []
@@ -314,11 +304,11 @@ export default class RichText extends PIXI.Container {
 							break
 						case 'if':
 							contextConditionStack.push(contextConditionStatus)
-							contextConditionStatus = !!textVariables[openingTag.args]
+							contextConditionStatus = !!this.variables[openingTag.args]
 							break
 						case 'ifn':
 							contextConditionStack.push(contextConditionStatus)
-							contextConditionStatus = !textVariables[openingTag.args]
+							contextConditionStatus = !this.variables[openingTag.args]
 							break
 					}
 					break

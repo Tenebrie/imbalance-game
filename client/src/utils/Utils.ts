@@ -7,6 +7,7 @@ import Card from '@shared/models/Card'
 import CardColor from '@shared/enums/CardColor'
 import Constants from '@shared/Constants'
 import store from '@/Vue/store'
+import RichTextVariables from '@shared/models/RichTextVariables'
 
 export const forEachInNumericEnum = (enumeration: Enumerator, handler: (val: any) => any): void => {
 	for (const value in enumeration) {
@@ -29,6 +30,15 @@ export const snakeToCamelCase = (str: string): string => str.toLowerCase().repla
 		.replace('_', '')
 )
 
+export const insertRichTextVariables = (str: string, variables: RichTextVariables): string => {
+	let replacedText = str
+	for (const variableName in variables) {
+		const variableValue = variables[variableName] || ''
+		const regexp = new RegExp('{' + variableName + '}', 'g')
+		replacedText = replacedText.replace(regexp, '*' + variableValue.toString() + '*')
+	}
+	return replacedText
+}
 
 export default {
 	getFont(text: string): string {

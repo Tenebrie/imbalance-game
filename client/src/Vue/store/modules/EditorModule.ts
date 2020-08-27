@@ -10,14 +10,14 @@ import Constants from '@shared/Constants'
 import CardColor from '@shared/enums/CardColor'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
-import {hoveredDeckCardModule, inspectedCardModule} from '@/Vue/store/modules/EditorCardModules'
 import CardFaction from '@shared/enums/CardFaction'
+import HoveredDeckCardModule from '@/Vue/store/modules/HoveredDeckCardModule'
 
 const editorModule = createModule({
 	namespaced: true,
 
 	modules: {
-		hoveredDeckCard: hoveredDeckCardModule,
+		hoveredDeckCard: HoveredDeckCardModule,
 	},
 
 	state: {

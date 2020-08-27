@@ -11,7 +11,7 @@ import GameStateModule from '@/Vue/store/modules/GameStateModule'
 import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
 import PopupModule from '@/Vue/store/modules/PopupModule'
 import GameLogModule from '@/Vue/store/modules/GameLogModule'
-import {inspectedCardModule} from '@/Vue/store/modules/EditorCardModules'
+import InspectedCardModule from '@/Vue/store/modules/InspectedCardModule'
 
 Vue.use(Vuex)
 
@@ -21,7 +21,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		gameLogModule: GameLogModule,
 		gameStateModule: GameStateModule,
 		popupModule: PopupModule,
-		inspectedCard: inspectedCardModule,
+		inspectedCard: InspectedCardModule,
 		userPreferencesModule: UserPreferencesModule,
 	},
 

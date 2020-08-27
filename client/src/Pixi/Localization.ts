@@ -17,6 +17,11 @@ class Localization {
 	public get(id: string): string {
 		return this.getValueOrNull(id) || id
 	}
+
+	public getOriginalOrNull(id: string): string {
+		const localizationJson: {[ index: string]: string} = en
+		return localizationJson[id] || null
+	}
 }
 
 export default new Localization()
