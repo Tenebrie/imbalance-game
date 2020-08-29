@@ -16,7 +16,6 @@ class AnimationThread {
 	private readonly __parentThread: AnimationThread | null
 
 	protected __isStarted = false
-	protected readonly isWorker: boolean = false
 
 	constructor(parentThread: AnimationThread | null) {
 		this.__parentThread = parentThread
@@ -55,13 +54,14 @@ class AnimationThread {
 			this.executeNextMessage()
 		}
 
-		if (this.messageCooldown === 0 && this.__workerThreads.filter(thread => thread.started).length === 0 && this.queuedMessages.length === 0 && this.isWorker) {
+		const isWorker = this !== Core.mainHandler.mainAnimationThread
+		if (this.messageCooldown === 0 && this.__workerThreads.filter(thread => thread.started).length === 0 && this.queuedMessages.length === 0 && isWorker) {
 			this.__parentThread.killAnimationThread(this.id)
 		}
 	}
 
-	public createAnimationThread(): WorkerAnimationThread {
-		const newThread = new WorkerAnimationThread(this)
+	public createAnimationThread(): AnimationThread {
+		const newThread = new AnimationThread(this)
 		this.__workerThreads.push(newThread)
 		return newThread
 	}
@@ -119,20 +119,11 @@ class AnimationThread {
 	}
 }
 
-class MainAnimationThread extends AnimationThread {
-	protected __isStarted = true
-	protected readonly isWorker: boolean = false
-}
-
-class WorkerAnimationThread extends AnimationThread {
-	protected readonly isWorker: boolean = true
-}
-
 export default class MainHandler {
 	projectileSystem: ProjectileSystem = new ProjectileSystem()
 	announcedCard: RenderedCard | null = null
 
-	mainAnimationThread: AnimationThread = new MainAnimationThread(null)
+	mainAnimationThread: AnimationThread = new AnimationThread(null)
 	currentOpenAnimationThread: AnimationThread = this.mainAnimationThread
 
 	coreTicker: PIXI.Ticker
@@ -159,6 +150,7 @@ export default class MainHandler {
 		})
 
 		this.coreTicker.start()
+		this.mainAnimationThread.start()
 	}
 
 	private tick(deltaTime: number): void {
