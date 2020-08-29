@@ -8,7 +8,7 @@ import ProjectileSystem from '@/Pixi/vfx/ProjectileSystem'
 class AnimationThread {
 	public id: string = uuidv4()
 
-	private __workerThreads: WorkerAnimationThread[] = []
+	private __workerThreads: AnimationThread[] = []
 
 	protected queuedMessages: QueuedMessage[] = []
 	protected messageCooldown = 0
@@ -30,15 +30,11 @@ class AnimationThread {
 		return this.__isStarted
 	}
 
-	public get messageCount(): number {
-		return this.queuedMessages.length
-	}
-
 	public get parentThread(): AnimationThread | null {
 		return this.__parentThread
 	}
 
-	public get workerThreads(): WorkerAnimationThread[] {
+	public get workerThreads(): AnimationThread[] {
 		return this.__workerThreads
 	}
 
