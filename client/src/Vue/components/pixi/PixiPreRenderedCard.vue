@@ -8,7 +8,6 @@ import store from '@/Vue/store'
 import Card from '@shared/models/Card'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import {ref} from '@vue/composition-api'
-import CardMessage from '@shared/models/network/CardMessage'
 
 const setup = () => {
 	const containerRef = ref<HTMLDivElement>()
@@ -24,9 +23,6 @@ export default Vue.extend({
 	props: {
 		card: {
 			type: Object as () => Card | null,
-		},
-		verticalOffset: {
-			type: Number as () => Number,
 		}
 	},
 
@@ -82,16 +78,25 @@ export default Vue.extend({
 
 			if (this.renderedCard) {
 				this.isImageAppended = true
-				const node = this.renderedCard.render.cloneNode()
+				const node = this.cloneCanvas(this.renderedCard.render)
 				node.style.position = 'absolute'
 				node.style.width = '100%'
 				node.style.height = '100%'
 				node.style.left = '0'
-				if (typeof(this.verticalOffset) === 'number') {
-					node.style.top = `${this.verticalOffset}px`
-				}
 				this.containerRef.appendChild(node)
 			}
+		},
+
+		cloneCanvas(original: HTMLCanvasElement): HTMLCanvasElement {
+			const newCanvas = document.createElement('canvas')
+			const context = newCanvas.getContext('2d')
+
+			newCanvas.width = original.width
+			newCanvas.height = original.height
+
+			context.drawImage(original, 0, 0)
+
+			return newCanvas
 		}
 	}
 })

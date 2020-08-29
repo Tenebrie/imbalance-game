@@ -3,10 +3,15 @@ import store from '@/Vue/store'
 import VueRouter, { Route } from 'vue-router'
 import axios from 'axios'
 import Player from '@shared/models/Player'
+import LocalStorage from '@/utils/LocalStorage'
 
 Vue.use(VueRouter)
 
 const fetchProfile = async (): Promise<boolean> => {
+	if (!LocalStorage.hasAuthCookie()) {
+		return false
+	}
+
 	try {
 		const response = await axios.get('/api/user')
 		const player = response.data.data as Player

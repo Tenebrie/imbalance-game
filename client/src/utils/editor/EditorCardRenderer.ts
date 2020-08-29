@@ -1,11 +1,9 @@
 import * as PIXI from 'pixi.js'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/CardMessage'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import store from '@/Vue/store'
 import {CARD_HEIGHT, CARD_WIDTH} from '@/Pixi/renderer/RendererUtils'
-import Core from '@/Pixi/Core'
-import Card from '@shared/models/Card'
 
 class EditorCardRenderer {
 	pixi: PIXI.Renderer
@@ -13,7 +11,9 @@ class EditorCardRenderer {
 	mainTimer: number | null = null
 
 	public constructor() {
-		this.pixi = PIXI.autoDetectRenderer()
+		this.pixi = PIXI.autoDetectRenderer({
+			resolution: window.devicePixelRatio
+		})
 		this.renderTexture = PIXI.RenderTexture.create({
 			width: CARD_WIDTH,
 			height: CARD_HEIGHT,
@@ -35,9 +35,6 @@ class EditorCardRenderer {
 
 		this.mainTimer = window.setInterval(() => {
 			const nextCardClass = store.state.editor.renderQueue[0]
-			if (!nextCardClass) {
-				return
-			}
 
 			store.commit.editor.shiftRenderQueue()
 			const nextCard = store.state.editor.cardLibrary.find(card => card.class === nextCardClass)
@@ -52,7 +49,7 @@ class EditorCardRenderer {
 		}, 0)
 	}
 
-	private doRender(card: CardMessage): HTMLImageElement {
+	private doRender(card: CardMessage): HTMLCanvasElement {
 		const renderedCard = new RenderedCard(card)
 		renderedCard.setDisplayMode(CardDisplayMode.IN_EDITOR)
 
@@ -62,7 +59,7 @@ class EditorCardRenderer {
 		renderedCard.coreContainer.visible = true
 		this.pixi.render(renderedCard.coreContainer, this.renderTexture)
 
-		return this.pixi.extract.image(this.renderTexture)
+		return this.pixi.extract.canvas(this.renderTexture)
 	}
 }
 

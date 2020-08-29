@@ -12,6 +12,9 @@ import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
 import PopupModule from '@/Vue/store/modules/PopupModule'
 import GameLogModule from '@/Vue/store/modules/GameLogModule'
 import InspectedCardModule from '@/Vue/store/modules/InspectedCardModule'
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import LocalStorage from '@/utils/LocalStorage'
+import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
 
 Vue.use(Vuex)
 
@@ -62,9 +65,21 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	},
 
 	actions: {
+		async login(context, payload: { email: string, password: string }): Promise<void> {
+			const { dispatch } = rootActionContext(context)
+
+			await axios.post('/api/session', payload)
+			LocalStorage.setHasAuthCookie(true)
+			await dispatch.userPreferencesModule.fetchPreferences()
+			await router.push({ name: 'home' })
+			await store.dispatch.editor.loadCardLibrary()
+			editorCardRenderer.startRenderingService()
+		},
+
 		async logout(context): Promise<void> {
 			const { commit } = rootActionContext(context)
 			await axios.delete('/api/session')
+			LocalStorage.setHasAuthCookie(false)
 			commit.resetPlayerData()
 			await router.push({ name: 'login' })
 		},
