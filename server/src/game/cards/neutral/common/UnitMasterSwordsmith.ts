@@ -35,6 +35,5 @@ export default class UnitMasterSwordsmith extends ServerCard {
 			card.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
 			this.game.animation.commitAnimationThread()
 		})
-		this.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
 	}
 }

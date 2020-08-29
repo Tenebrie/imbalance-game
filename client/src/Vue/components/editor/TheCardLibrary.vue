@@ -129,7 +129,6 @@ export default Vue.extend({
 			})
 
 			const searchResult = fuse.search(searchQuery)
-			console.log(searchResult)
 			return searchResult.map(result => result.item)
 		},
 		userLanguage(): Language {
