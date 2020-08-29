@@ -68,6 +68,8 @@ export default class Core {
 		const messageType = data.type as string
 		const messageData = data.data as any
 		const messageHighPriority = data.highPriority as boolean
+		const messageAllowBatching = data.allowBatching as boolean
+		const messageIgnoreWorkerThreads = data.ignoreWorkerThreads as boolean
 
 		const handler = IncomingMessageHandlers[messageType]
 		if (!handler) {
@@ -75,9 +77,13 @@ export default class Core {
 			return
 		}
 
+		const handlerSystemData = {
+			animationThreadId: Core.mainHandler.mainAnimationThread.id
+		}
+
 		if (messageHighPriority) {
 			try {
-				handler(messageData)
+				handler(messageData, handlerSystemData)
 			} catch (e) {
 				console.error(e)
 			}
@@ -86,7 +92,9 @@ export default class Core {
 
 		Core.mainHandler.registerMessage({
 			handler: handler,
-			data: messageData
+			data: messageData,
+			allowBatching: messageAllowBatching || false,
+			ignoreWorkerThreads: messageIgnoreWorkerThreads || false
 		})
 	}
 

@@ -35,8 +35,10 @@ export default class HeroKroLah extends ServerCard {
 		const targetUnits = target.cards
 
 		targetUnits.forEach(targetUnit => {
+			this.game.animation.createAnimationThread()
 			targetUnit.card.buffs.add(BuffStun, this, BuffDuration.START_OF_NEXT_TURN)
 			this.game.board.moveUnitBack(targetUnit)
+			this.game.animation.commitAnimationThread()
 		})
 	}
 }

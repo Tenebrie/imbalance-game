@@ -8,6 +8,10 @@ import CardMessage from '@shared/models/network/CardMessage'
 import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
 
 export default class ServerAnimation extends Animation {
+	public static null(): ServerAnimation {
+		return new ServerAnimation(AnimationType.NULL, {})
+	}
+
 	public static delay(): ServerAnimation {
 		return new ServerAnimation(AnimationType.DELAY, {})
 	}

@@ -1,4 +1,5 @@
 enum AnimationType {
+	NULL,
 	DELAY,
 	CARD_DRAW,
 	CARD_ANNOUNCE,

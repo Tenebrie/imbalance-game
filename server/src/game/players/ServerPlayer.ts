@@ -21,7 +21,7 @@ export default class ServerPlayer extends Player {
 		this.webSocket = PlayerWebSocket.newInstance(ws)
 	}
 
-	sendMessage(json: { type: string, data: any, highPriority?: boolean }): void {
+	sendMessage(json: { type: string, data: any, highPriority?: boolean, ignoreWorkerThreads?: boolean, allowBatching?: boolean }): void {
 		if (!this.webSocket) {
 			console.warn('Trying to send message to disconnected player')
 			return

@@ -5,7 +5,6 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerAnimation from '../../../models/ServerAnimation'
-import {mapUnitsToCards} from '../../../../utils/Utils'
 import BuffStrength from '../../../buffs/BuffStrength'
 import CardFeature from '@shared/enums/CardFeature'
 
@@ -29,15 +28,20 @@ export default class UnitSupplyWagon extends ServerCard {
 	private onDeploy(): void {
 		let adjacentUnits = this.game.board.getAdjacentUnits(this.unit)
 		adjacentUnits.forEach(unit => {
+			this.game.animation.createAnimationThread()
 			unit.buffs.addMultiple(BuffStrength, this.extraPower, this)
+			this.game.animation.commitAnimationThread()
 		})
 		adjacentUnits = adjacentUnits.filter(unit => unit.isAlive())
 		if (adjacentUnits.length === 0) {
 			return
 		}
 
+		this.game.animation.syncAnimationThreads()
 		adjacentUnits.forEach(unit => {
+			this.game.animation.createAnimationThread()
 			this.game.board.moveUnitForward(unit, this.pushDistance)
+			this.game.animation.commitAnimationThread()
 		})
 		this.game.animation.play(ServerAnimation.unitMove())
 	}

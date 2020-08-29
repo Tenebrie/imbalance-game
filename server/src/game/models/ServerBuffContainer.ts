@@ -103,7 +103,9 @@ export default class ServerBuffContainer implements BuffContainer {
 
 	public addMultiple(prototype: BuffConstructor, count: number, source: ServerCard | null, duration: number | 'default' = 'default'): void {
 		for (let i = 0; i < count; i++) {
+			this.game.animation.createStaggeredAnimationThread()
 			this.add(prototype, source, duration)
+			this.game.animation.commitAnimationThread()
 		}
 	}
 

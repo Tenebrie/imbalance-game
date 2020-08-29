@@ -9,6 +9,10 @@ import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
 
 const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
+	[AnimationType.NULL]: (message: AnimationMessage, params: void) => {
+		return 0
+	},
+
 	[AnimationType.DELAY]: (message: AnimationMessage, params: void) => {
 		return 500
 	},

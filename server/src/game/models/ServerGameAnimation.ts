@@ -14,6 +14,22 @@ export default class ServerGameAnimation {
 		OutgoingAnimationMessages.triggerAnimation(this.game, animation)
 	}
 
+	public createAnimationThread(): void {
+		OutgoingAnimationMessages.createAnimationThread(this.game)
+	}
+
+	public createStaggeredAnimationThread(): void {
+		OutgoingAnimationMessages.createStaggeredAnimationThread(this.game)
+	}
+
+	public commitAnimationThread(): void {
+		OutgoingAnimationMessages.commitAnimationThread(this.game)
+	}
+
+	public syncAnimationThreads(): void {
+		this.play(ServerAnimation.null())
+	}
+
 	public playForPlayer(animation: ServerAnimation, targetPlayer: ServerPlayerInGame): void {
 		OutgoingAnimationMessages.triggerAnimationForPlayer(targetPlayer.player, animation)
 	}

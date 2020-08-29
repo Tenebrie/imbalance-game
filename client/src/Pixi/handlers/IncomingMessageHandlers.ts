@@ -1,6 +1,5 @@
 import Core from '@/Pixi/Core'
 import store from '@/Vue/store'
-import * as PIXI from 'pixi.js'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import CardMessage from '@shared/models/network/CardMessage'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
@@ -26,8 +25,12 @@ import BuffMessage from '@shared/models/network/BuffMessage'
 import ClientBuff from '@/Pixi/models/ClientBuff'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
+import {QueuedMessageSystemData} from '@/Pixi/models/QueuedMessage'
+import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
 
-const handlers: {[ index: string ]: any } = {
+type HandlerFunction = (data: any, systemData: QueuedMessageSystemData) => void
+
+const handlers: {[ index: string ]: HandlerFunction } = {
 	'gameState/start': (data: GameStartMessage) => {
 		Core.board.setInverted(data.isBoardInverted)
 		store.dispatch.gameStateModule.startGame()
@@ -154,19 +157,19 @@ const handlers: {[ index: string ]: any } = {
 		card.setMaxArmor(data.maxArmor)
 	},
 
-	'update/player/self/turnStarted': (data: void) => {
+	'update/player/self/turnStarted': () => {
 		Core.player.startTurn()
 	},
 
-	'update/player/opponent/turnStarted': (data: void) => {
+	'update/player/opponent/turnStarted': () => {
 		Core.opponent.startTurn()
 	},
 
-	'update/player/self/turnEnded': (data: void) => {
+	'update/player/self/turnEnded': () => {
 		Core.player.endTurn()
 	},
 
-	'update/player/opponent/turnEnded': (data: void) => {
+	'update/player/opponent/turnEnded': () => {
 		Core.opponent.endTurn()
 	},
 
@@ -410,7 +413,7 @@ const handlers: {[ index: string ]: any } = {
 		})
 	},
 
-	'animation/generic': (data: AnimationMessage) => {
+	'animation/generic': (data: AnimationMessage, systemData: QueuedMessageSystemData) => {
 		const handler = AnimationHandlers[data.type]
 		if (!handler) {
 			console.error(`Unknown animation type ${data.type}`)
@@ -418,16 +421,34 @@ const handlers: {[ index: string ]: any } = {
 		}
 
 		const animationDuration = handler(data, data.params)
-		Core.mainHandler.triggerAnimation(animationDuration)
+		Core.mainHandler.triggerAnimation(animationDuration, systemData.animationThreadId)
 	},
 
-	'system/requestInit': (data: void) => {
+	'animation/createThread': () => {
+		Core.mainHandler.createAnimationThread()
+	},
+
+	'animation/commitThread': () => {
+		Core.mainHandler.commitAnimationThread()
+	},
+
+	'animation/startThread': (data: AnimationThreadStartMessage, systemData: QueuedMessageSystemData) => {
+		const parentThread = Core.mainHandler.mainAnimationThread.findThread(systemData.animationThreadId)
+		const targetThread = parentThread.workerThreads.find(thread => !thread.started)
+		const activeWorkerThreadCount = parentThread.workerThreads.filter(thread => thread.started).length
+		if (data.isStaggered) {
+			targetThread.triggerCooldown(activeWorkerThreadCount * 150)
+		}
+		targetThread.start()
+	},
+
+	'system/requestInit': () => {
 		if (Core.isReady) {
 			OutgoingMessageHandlers.sendInit()
 		}
 	},
 
-	'command/disconnect': (data: void) => {
+	'command/disconnect': () => {
 		store.dispatch.leaveGame()
 	},
 
