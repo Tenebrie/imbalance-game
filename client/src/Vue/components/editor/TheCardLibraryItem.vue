@@ -8,7 +8,6 @@
 import Vue from 'vue'
 import store from '@/Vue/store'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
-import Card from '@shared/models/Card'
 import Utils from '@/utils/Utils'
 import CardColor from '@shared/enums/CardColor'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
@@ -73,7 +72,11 @@ export default Vue.extend({
 			})
 		},
 
-		onRightClick(): void {
+		onRightClick(event: MouseEvent): void {
+			if (event && (event.shiftKey || event.ctrlKey)) {
+				return
+			}
+
 			store.dispatch.inspectedCard.setCard({
 				card: this.card,
 			})

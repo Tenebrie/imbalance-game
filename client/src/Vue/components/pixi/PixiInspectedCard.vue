@@ -58,8 +58,8 @@ export default Vue.extend({
 			store.dispatch.inspectedCard.undoCard()
 		},
 
-		onSmokeScreenRightClick(): void {
-			if (!store.getters.gameStateModule.isInGame) {
+		onSmokeScreenRightClick(event: MouseEvent): void {
+			if (!store.getters.gameStateModule.isInGame && !event.shiftKey && !event.ctrlKey) {
 				this.onSmokeScreenClick()
 			}
 		},
