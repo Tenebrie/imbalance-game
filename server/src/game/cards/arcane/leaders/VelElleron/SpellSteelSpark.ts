@@ -8,7 +8,6 @@ import ServerDamageInstance from '../../../../models/ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
-import BuffSparksExtraDamage from '../../../../buffs/BuffSparksExtraDamage'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
@@ -36,11 +35,11 @@ export default class SpellSteelSpark extends ServerCard {
 	}
 
 	get damage(): number {
-		return this.baseDamage + this.game.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
+		return this.baseDamage
 	}
 
 	get sideDamage(): number {
-		return this.baseSideDamage + this.game.getTotalBuffIntensityForPlayer(BuffSparksExtraDamage, this.owner)
+		return this.baseSideDamage
 	}
 
 	definePostPlayRequiredTargets(): TargetDefinitionBuilder {

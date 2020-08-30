@@ -289,7 +289,6 @@
 	"card.heroAdventuringGuildMaster.description": "*Вход в игру:*\nПолучает +{powerPerCard} Силы за каждого другого юнита, сыгранного в этот ход.",
 
 	"card.heroForksmanshipInstructor.name": "Инструктор\nвилования",
-	"card.heroForksmanshipInstructor.description": "Когда вы играете юнита с {powerThreshold} Силы или меньше, дайте ему +{bonusPower} Силы.",
 
 	"card.heroTribeShaman.name": "Племенной шаман",
 	"card.heroTribeShaman.description": "*Вход в игру:*\n*Создайте* *Целебный дождь*",

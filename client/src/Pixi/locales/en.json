@@ -266,7 +266,7 @@
 	"card.heroLearthe.description": "*Deploy:*\nChoose a row.\nFill it with *Living Shadows*.",
 
 	"card.heroSparklingSpirit.name": "Sparkling Spirit",
-	"card.heroSparklingSpirit.description": "Your *Sparks* deal {extraDamage} extra Damage",
+	"card.heroSparklingSpirit.description": "*Deploy:*\nAdd a *Fleeting Spark* into your hand<p>Your *Sparks* deal {extraDamage} extra Damage",
 
 	"card.heroRagingElemental.name": "Raging Elemental",
 	"card.heroRagingElemental.description": "*Enrage:*\nDeal {power} Damage to closest opposing enemy units.\nThen, destroy this unit.<p><i>Damage dealt is equal to this card's power.",
@@ -299,7 +299,7 @@
 	"card.heroAdventuringGuildMaster.name": "Adventuring\nGuild Master",
 	"card.heroAdventuringGuildMaster.description": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
 
-	"card.heroForksmanshipInstructor.name": "Forksmanship Instructor",
+	"card.heroForksmanshipInstructor.name": "Forksmanship\nInstructor",
 	"card.heroForksmanshipInstructor.description": "Whenever you play a unit with {powerThreshold} Power or less, give it +{bonusPower} Power.",
 	"card.heroForksmanshipInstructor.flavor": "When swords are not an option, you just have to rely on your own trusty pitchfork.",
 
@@ -437,6 +437,9 @@
 
 	"card.spellSteelSpark.name": "Steel Spark",
 	"card.spellSteelSpark.description": "Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
+
+	"card.spellFleetingSpark.name": "Fleeting Spark",
+	"card.spellFleetingSpark.description": "Deal {damage} Damage to an enemy unit.",
 
 	"card.spellAnEncouragement.name": "An Encouragement",
 	"card.spellAnEncouragement.description": "Choose an allied unit.\nNext turn, it gains {bonusPower} Power.",

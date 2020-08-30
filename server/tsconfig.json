@@ -16,6 +16,9 @@
 		"outDir": "./dist",
 		"baseUrl": "./src",
 		"paths": {
+			"@src/*": [
+				"./src"
+			],
 			"@shared/*": [
 				"../../shared/src/*"
 			]

@@ -51,13 +51,13 @@
 				</span>
 			</div>
 		</div>
-		<div class="card-info-section" v-if="this.inspectedCard.relatedCards.length > 0">
+		<div class="card-info-section" v-if="this.displayedRelatedCards.length > 0">
 			<div class="menu-separator" v-if="this.displayInGameStats || this.displayedFeatures.length > 0" />
 			<div class="header" v-if="this.displayLeaderPowersLabel">
 				{{ $locale.get('card.inspect.leaderPowers') }}:
 			</div>
 			<div class="card-section">
-				<div class="related-card" v-for="relatedCardClass in this.inspectedCard.relatedCards" :key="relatedCardClass">
+				<div class="related-card" v-for="relatedCardClass in this.displayedRelatedCards" :key="relatedCardClass">
 					<pixi-related-card :card-class="relatedCardClass" />
 				</div>
 			</div>
@@ -99,6 +99,10 @@ const setup = (props, { emit }) => {
 	const displayedFeatures = computed<CardFeature[]>(() => {
 		const features = inspectedCard.value instanceof RenderedCard ? inspectedCard.value.features : inspectedCard.value.baseFeatures
 		return features.filter(feature => Localization.getValueOrNull(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`))
+	})
+
+	const displayedRelatedCards = computed<string[]>(() => {
+		return new Array(...new Set(inspectedCard.value.relatedCards))
 	})
 
 	const overlayRef = ref<HTMLDivElement>()
@@ -146,6 +150,7 @@ const setup = (props, { emit }) => {
 		overlayDisplayed,
 		displayInGameStats,
 		displayedFeatures,
+		displayedRelatedCards,
 		displayLeaderPowersLabel,
 		onOverlayClick,
 		flavorTextLines,
