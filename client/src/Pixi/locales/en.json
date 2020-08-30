@@ -11,6 +11,8 @@
 	"ui.quality.high": "High",
 	"ui.quality.ultra": "Ultra",
 
+	"ui.editor.header.factions.tooltip": "Faction restrictions are not being enforced yet",
+
 	"ui.editor.deck.create": "Create new deck",
 	"ui.editor.deck.create.progress": "Creating...",
 

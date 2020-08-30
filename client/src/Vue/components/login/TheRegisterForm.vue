@@ -1,10 +1,20 @@
 <template>
 	<div ref="rootRef" class="the-register-form">
 		<div class="form">
-			<input id="tenebrieEmail" type="text" placeholder="Email" v-model="email" autofocus />
-			<input id="tenebrieUsername" type="text" placeholder="Username" v-model="username" />
-			<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
-			<input id="tenebrieConfirmPassword" type="password" placeholder="Confirm password" v-model="confirmPassword" />
+			<div class="input">
+				<input id="tenebrieEmail" class="has-tooltip" type="text" placeholder="Email" v-model="email" autofocus />
+				<inline-tooltip class="tooltip">No email confirmation required</inline-tooltip>
+			</div>
+			<div class="input">
+				<input id="tenebrieUsername" type="text" placeholder="Username" v-model="username" />
+			</div>
+			<div class="input">
+				<input id="tenebriePassword" class="has-tooltip" type="password" placeholder="Password" v-model="password" />
+				<inline-tooltip class="tooltip"><the-password-policy /></inline-tooltip>
+			</div>
+			<div class="input">
+				<input id="tenebrieConfirmPassword" type="password" placeholder="Confirm password" v-model="confirmPassword" />
+			</div>
 			<div class="status">
 				<span ref="messageRef"> </span>
 			</div>
@@ -21,11 +31,17 @@
 <script lang="ts">
 import axios from 'axios'
 import router from '@/Vue/router'
-import {onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
+import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import store from '@/Vue/store'
+import InlineTooltip from '@/Vue/components/InlineTooltip.vue'
+import ThePasswordPolicy from '@/Vue/components/ThePasswordPolicy.vue'
 
-export default {
+export default defineComponent({
+	components: {
+		InlineTooltip,
+		ThePasswordPolicy
+	},
 	setup() {
 		const rootRef = ref<HTMLDivElement>()
 		const messageRef = ref<HTMLSpanElement>()
@@ -110,7 +126,7 @@ export default {
 			onRegister
 		}
 	}
-}
+})
 </script>
 
 <style scoped lang="scss">
@@ -119,6 +135,22 @@ export default {
 
 	.the-register-form {
 		@include login-form();
+
+		.form > .input {
+			position: relative;
+			display: flex;
+			flex-direction: row;
+
+			.tooltip {
+				position: absolute;
+				right: 0;
+				height: 100%;
+			}
+
+			input.has-tooltip {
+				padding-right: 2.5em;
+			}
+		}
 
 		.info-text {
 			font-size: 0.8em;

@@ -1,8 +1,12 @@
 <template>
 	<div ref="rootRef" class="the-login-form">
 		<div class="form">
-			<input id="tenebrieEmail" type="text" placeholder="Email" v-model="email" autofocus />
-			<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
+			<div class="input">
+				<input id="tenebrieEmail" type="text" placeholder="Email" v-model="email" autofocus />
+			</div>
+			<div class="input">
+				<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
+			</div>
 			<div class="status">
 				<span ref="messageRef"> </span>
 			</div>
@@ -18,10 +22,15 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import {onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
+import InlineTooltip from '@/Vue/components/InlineTooltip.vue'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
+import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 
-export default {
+export default defineComponent({
+	components: {
+		InlineTooltip
+	},
+
 	setup() {
 		const rootRef = ref<HTMLDivElement>()
 		const messageRef = ref<HTMLSpanElement>()
@@ -91,7 +100,7 @@ export default {
 			password
 		}
 	},
-}
+})
 </script>
 
 <style scoped lang="scss">
@@ -100,6 +109,18 @@ export default {
 
 	.the-login-form {
 		@include login-form();
+
+		.form > .input {
+			position: relative;
+			display: flex;
+			flex-direction: row;
+
+			.tooltip {
+				position: absolute;
+				right: 0;
+				height: 100%;
+			}
+		}
 
 		.register-link {
 			font-size: 0.8em;

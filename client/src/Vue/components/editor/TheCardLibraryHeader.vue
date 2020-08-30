@@ -5,17 +5,18 @@
 				v-for="data in this.factionData"
 				:key="`faction-button-${data.faction}`"
 				class="primary"
-				:class="{ selected: selectedFaction && data.faction === selectedFaction.value }"
+				:class="{ selected: data.faction === selectedFaction }"
 				@click="() => toggleFaction(data.faction)"
 			>
 				{{ data.text }}
 			</button>
+			<inline-tooltip class="tooltip">{{ $locale.get('ui.editor.header.factions.tooltip') }}</inline-tooltip>
 			<div class="separator" />
 			<button
 				v-for="data in this.colorData"
 				:key="`color-button-${data.color}`"
 				class="primary"
-				:class="{ selected: selectedColor && data.color === selectedColor.value }"
+				:class="{ selected: data.color === selectedColor }"
 				@click="() => toggleColor(data.color)"
 			>
 				{{ data.text }}
@@ -31,14 +32,17 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
-import {computed} from '@vue/composition-api'
+import {computed, defineComponent} from '@vue/composition-api'
 import {debounce} from 'throttle-debounce'
+import InlineTooltip from '@/Vue/components/InlineTooltip.vue'
 
-export default Vue.extend({
+export default defineComponent({
+	components: {
+		InlineTooltip
+	},
 	setup() {
 		const toggleFaction = (faction: CardFaction) => {
 			if (store.state.editor.selectedFactionFilter === faction) {
@@ -134,9 +138,15 @@ export default Vue.extend({
 		.filters {
 			display: flex;
 
+			.tooltip {
+				font-size: 1.2em;
+			}
+
 			.separator {
+				flex-grow: 0;
+				flex-shrink: 0;
 				width: 1px;
-				margin: 0 16px;
+				margin: 0 8px;
 				background: white;
 			}
 
