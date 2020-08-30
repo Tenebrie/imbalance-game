@@ -1,6 +1,7 @@
 import {Component} from 'vue'
 import {createModule} from 'direct-vuex'
 import {moduleActionContext} from '@/Vue/store'
+import {ComponentRenderProxy} from '@vue/composition-api'
 
 const PopupModule = createModule({
 	namespaced: true,
@@ -15,7 +16,7 @@ const PopupModule = createModule({
 	},
 
 	actions: {
-		open(context, payload: { component: Component }): void {
+		open(context, payload: { component: any }): void {
 			const { commit } = moduleActionContext(context, PopupModule)
 			commit.setComponent(payload.component)
 		},

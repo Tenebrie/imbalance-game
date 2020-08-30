@@ -1,13 +1,11 @@
 import path from 'path'
 import glob from 'glob'
+import * as fs from 'fs'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import VoidGame from '../utils/VoidGame'
 import { colorize } from '../../utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
-import * as fs from 'fs'
-import CardColor from '@shared/enums/CardColor'
-import CardType from '@shared/enums/CardType'
 
 export interface CardConstructor {
 	new (game: ServerGame): ServerCard

@@ -51,9 +51,9 @@
 				</span>
 			</div>
 		</div>
-		<div class="card-info-section" v-if="this.displayedRelatedCards.length > 0">
-			<div class="menu-separator" v-if="this.displayInGameStats || this.displayedFeatures.length > 0" />
-			<div class="header" v-if="this.displayLeaderPowersLabel">
+		<div class="card-info-section" v-if="displayedRelatedCards.length > 0">
+			<div class="menu-separator" v-if="displayInGameStats || displayedFeatures.length > 0" />
+			<div class="header" v-if="displayLeaderPowersLabel">
 				{{ $locale.get('card.inspect.leaderPowers') }}:
 			</div>
 			<div class="card-section">
@@ -85,86 +85,85 @@ import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
 import CardColor from '@shared/enums/CardColor'
 import CardMessage from '@shared/models/network/CardMessage'
 
-const setup = (props, { emit }) => {
-	const isInGame = computed<boolean>(() => store.getters.gameStateModule.isInGame)
-	const inspectedCard = computed<CardMessage | RenderedCard>(() => {
-		const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card.id) : null
-		return (isInGame && cardInGame) || store.getters.inspectedCard.card
-	})
-
-	const displayArmor = computed<boolean>(() => {
-		return inspectedCard.value.armor > 0 || inspectedCard.value.maxArmor > 0 || inspectedCard.value.baseArmor > 0
-	})
-
-	const displayedFeatures = computed<CardFeature[]>(() => {
-		const features = inspectedCard.value instanceof RenderedCard ? inspectedCard.value.features : inspectedCard.value.baseFeatures
-		return features.filter(feature => Localization.getValueOrNull(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`))
-	})
-
-	const displayedRelatedCards = computed<string[]>(() => {
-		return new Array(...new Set(inspectedCard.value.relatedCards))
-	})
-
-	const overlayRef = ref<HTMLDivElement>()
-	const editorModeOffset = computed<PIXI.Point>(() => {
-		const offset = new PIXI.Point(0, 0)
-		if (overlayRef.value) {
-			const boundingBox = overlayRef.value.getBoundingClientRect()
-			offset.set(Math.min(0, window.innerWidth - boundingBox.right), Math.min(window.innerHeight - boundingBox.bottom, 0))
-		}
-		return offset
-	})
-
-	const displayLeaderPowersLabel = computed<boolean>(() => {
-		return inspectedCard.value && inspectedCard.value.color === CardColor.LEADER
-	})
-
-	const displayInGameStats = computed<boolean>(() => {
-		return isInGame && inspectedCard.value instanceof RenderedCard
-	})
-
-	const overlayDisplayed = computed<boolean>(() => {
-		return inspectedCard.value &&
-			inspectedCard.value.type !== CardType.HIDDEN &&
-			(isInGame.value || displayedFeatures.value.length > 0 || inspectedCard.value.relatedCards.length > 0 || flavorTextLines.value.length > 0)
-	})
-
-	const onOverlayClick = (event: MouseEvent) => {
-		emit('click', event)
-	}
-
-	const flavorTextLines = computed<string[]>(() => {
-		const value = Localization.getValueOrNull(inspectedCard.value.flavor)
-		if (value === null) {
-			return []
-		}
-		return value.split('\n')
-	})
-
-	return {
-		isInGame,
-		overlayRef,
-		displayArmor,
-		inspectedCard,
-		editorModeOffset,
-		overlayDisplayed,
-		displayInGameStats,
-		displayedFeatures,
-		displayedRelatedCards,
-		displayLeaderPowersLabel,
-		onOverlayClick,
-		flavorTextLines,
-		CardType: CardType,
-		CardFeature: CardFeature,
-		snakeToCamelCase: snakeToCamelCase,
-	}
-}
-
 export default {
-	setup: setup,
 	components: {
 		PixiRelatedCard
 	},
+
+	setup(props, { emit }) {
+		const isInGame = computed<boolean>(() => store.getters.gameStateModule.isInGame)
+		const inspectedCard = computed<CardMessage | RenderedCard>(() => {
+			const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card.id) : null
+			return (isInGame && cardInGame) || store.getters.inspectedCard.card
+		})
+
+		const displayArmor = computed<boolean>(() => {
+			return inspectedCard.value.armor > 0 || inspectedCard.value.maxArmor > 0 || inspectedCard.value.baseArmor > 0
+		})
+
+		const displayedFeatures = computed<CardFeature[]>(() => {
+			const features = inspectedCard.value instanceof RenderedCard ? inspectedCard.value.features : inspectedCard.value.baseFeatures
+			return features.filter(feature => Localization.getValueOrNull(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`))
+		})
+
+		const displayedRelatedCards = computed<string[]>(() => {
+			return new Array(...new Set(inspectedCard.value.relatedCards))
+		})
+
+		const overlayRef = ref<HTMLDivElement>()
+		const editorModeOffset = computed<PIXI.Point>(() => {
+			const offset = new PIXI.Point(0, 0)
+			if (overlayRef.value) {
+				const boundingBox = overlayRef.value.getBoundingClientRect()
+				offset.set(Math.min(0, window.innerWidth - boundingBox.right), Math.min(window.innerHeight - boundingBox.bottom, 0))
+			}
+			return offset
+		})
+
+		const displayLeaderPowersLabel = computed<boolean>(() => {
+			return inspectedCard.value && inspectedCard.value.color === CardColor.LEADER
+		})
+
+		const displayInGameStats = computed<boolean>(() => {
+			return isInGame && inspectedCard.value instanceof RenderedCard
+		})
+
+		const overlayDisplayed = computed<boolean>(() => {
+			return inspectedCard.value &&
+				inspectedCard.value.type !== CardType.HIDDEN &&
+				(isInGame.value || displayedFeatures.value.length > 0 || inspectedCard.value.relatedCards.length > 0 || flavorTextLines.value.length > 0)
+		})
+
+		const onOverlayClick = (event: MouseEvent) => {
+			emit('click', event)
+		}
+
+		const flavorTextLines = computed<string[]>(() => {
+			const value = Localization.getValueOrNull(inspectedCard.value.flavor)
+			if (value === null) {
+				return []
+			}
+			return value.split('\n')
+		})
+
+		return {
+			isInGame,
+			overlayRef,
+			displayArmor,
+			inspectedCard,
+			editorModeOffset,
+			overlayDisplayed,
+			displayInGameStats,
+			displayedFeatures,
+			displayedRelatedCards,
+			displayLeaderPowersLabel,
+			onOverlayClick,
+			flavorTextLines,
+			CardType: CardType,
+			CardFeature: CardFeature,
+			snakeToCamelCase: snakeToCamelCase,
+		}
+	}
 }
 </script>
 

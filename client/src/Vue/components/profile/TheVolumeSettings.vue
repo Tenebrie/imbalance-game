@@ -24,72 +24,70 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import {computed, watch} from '@vue/composition-api'
+import {computed, defineComponent, watch} from '@vue/composition-api'
 import Slider from '@/Vue/components/generic/Slider.vue'
 
-function setup() {
-	const masterVolume = computed<number>({
-		get() {
-			return Math.round(store.state.userPreferencesModule.masterVolume * 100)
-		},
-		set(value) {
-			store.commit.userPreferencesModule.setMasterVolume(value / 100)
-		}
-	})
-
-	const musicVolume = computed<number>({
-		get() {
-			return Math.round(store.state.userPreferencesModule.musicVolume * 100)
-		},
-		set(value) {
-			store.commit.userPreferencesModule.setMusicVolume(value / 100)
-		}
-	})
-
-	const effectsVolume = computed<number>({
-		get() {
-			return Math.round(store.state.userPreferencesModule.effectsVolume * 100)
-		},
-		set(value) {
-			store.commit.userPreferencesModule.setEffectsVolume(value / 100)
-		}
-	})
-
-	const ambienceVolume = computed<number>({
-		get() {
-			return Math.round(store.state.userPreferencesModule.ambienceVolume * 100)
-		},
-		set(value) {
-			store.commit.userPreferencesModule.setAmbienceVolume(value / 100)
-		}
-	})
-
-	const userInterfaceVolume = computed<number>({
-		get() {
-			return Math.round(store.state.userPreferencesModule.userInterfaceVolume * 100)
-		},
-		set(value) {
-			store.commit.userPreferencesModule.setUserInterfaceVolume(value / 100)
-		}
-	})
-
-	watch(() => [masterVolume.value, musicVolume.value, effectsVolume.value, ambienceVolume.value, userInterfaceVolume.value], () => {
-		store.dispatch.userPreferencesModule.savePreferences()
-	})
-
-	return {
-		masterVolume,
-		musicVolume,
-		effectsVolume,
-		ambienceVolume,
-		userInterfaceVolume,
-	}
-}
-
-export default {
+export default defineComponent({
 	components: {Slider},
-	setup: setup
-}
+	setup() {
+		const masterVolume = computed<number>({
+			get() {
+				return Math.round(store.state.userPreferencesModule.masterVolume * 100)
+			},
+			set(value) {
+				store.commit.userPreferencesModule.setMasterVolume(value / 100)
+			}
+		})
+
+		const musicVolume = computed<number>({
+			get() {
+				return Math.round(store.state.userPreferencesModule.musicVolume * 100)
+			},
+			set(value) {
+				store.commit.userPreferencesModule.setMusicVolume(value / 100)
+			}
+		})
+
+		const effectsVolume = computed<number>({
+			get() {
+				return Math.round(store.state.userPreferencesModule.effectsVolume * 100)
+			},
+			set(value) {
+				store.commit.userPreferencesModule.setEffectsVolume(value / 100)
+			}
+		})
+
+		const ambienceVolume = computed<number>({
+			get() {
+				return Math.round(store.state.userPreferencesModule.ambienceVolume * 100)
+			},
+			set(value) {
+				store.commit.userPreferencesModule.setAmbienceVolume(value / 100)
+			}
+		})
+
+		const userInterfaceVolume = computed<number>({
+			get() {
+				return Math.round(store.state.userPreferencesModule.userInterfaceVolume * 100)
+			},
+			set(value) {
+				store.commit.userPreferencesModule.setUserInterfaceVolume(value / 100)
+			}
+		})
+
+		watch(() => [masterVolume.value, musicVolume.value, effectsVolume.value, ambienceVolume.value, userInterfaceVolume.value], () => {
+			store.dispatch.userPreferencesModule.savePreferences()
+		})
+
+		return {
+			masterVolume,
+			musicVolume,
+			effectsVolume,
+			ambienceVolume,
+			userInterfaceVolume,
+		}
+	}
+})
 </script>
 
 <style scoped lang="scss">

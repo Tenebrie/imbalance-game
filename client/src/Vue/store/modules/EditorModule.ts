@@ -222,7 +222,11 @@ const editorModule = createModule({
 		},
 
 		async requestRender(context, payload: { card: CardMessage }): Promise<void> {
-			const { commit } = moduleActionContext(context, editorModule)
+			const { state, commit } = moduleActionContext(context, editorModule)
+			if (state.renderedCards.find(renderedCard => renderedCard.class === payload.card.class)) {
+				console.warn(`Requesting render to existing card ${payload.card.class}`)
+				return
+			}
 			await TextureAtlas.preloadComponents()
 			await TextureAtlas.loadCard(payload.card, () => {
 				commit.addToRenderQueue(payload.card)

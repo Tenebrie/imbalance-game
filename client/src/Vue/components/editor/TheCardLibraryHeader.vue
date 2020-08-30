@@ -5,7 +5,7 @@
 				v-for="data in this.factionData"
 				:key="`faction-button-${data.faction}`"
 				class="primary"
-				:class="{ selected: data.faction === selectedFaction }"
+				:class="{ selected: selectedFaction && data.faction === selectedFaction.value }"
 				@click="() => toggleFaction(data.faction)"
 			>
 				{{ data.text }}
@@ -15,7 +15,7 @@
 				v-for="data in this.colorData"
 				:key="`color-button-${data.color}`"
 				class="primary"
-				:class="{ selected: data.color === selectedColor }"
+				:class="{ selected: selectedColor && data.color === selectedColor.value }"
 				@click="() => toggleColor(data.color)"
 			>
 				{{ data.text }}
@@ -38,73 +38,71 @@ import CardColor from '@shared/enums/CardColor'
 import {computed} from '@vue/composition-api'
 import {debounce} from 'throttle-debounce'
 
-function Setup() {
-	const toggleFaction = (faction: CardFaction) => {
-		if (store.state.editor.selectedFactionFilter === faction) {
-			store.commit.editor.setSelectedFactionFilter(null)
-		} else {
-			store.commit.editor.setSelectedFactionFilter(faction)
-		}
-	}
-
-	const toggleColor = (color: CardColor) => {
-		if (store.state.editor.selectedColorFilter === color) {
-			store.commit.editor.setSelectedColorFilter(null)
-		} else {
-			store.commit.editor.setSelectedColorFilter(color)
-		}
-	}
-
-	const selectedFaction = computed<CardFaction>(() => store.state.editor.selectedFactionFilter)
-	const selectedColor = computed<CardColor>(() => store.state.editor.selectedColorFilter)
-
-	const factionData = [
-		{ text: 'All', faction: null },
-		{ text: 'Imperial', faction: CardFaction.CASTLE },
-		{ text: 'Arcane', faction: CardFaction.ARCANE },
-		{ text: 'Wild', faction: CardFaction.NATURE },
-		{ text: 'Neutral', faction: CardFaction.NEUTRAL }
-	]
-
-	const colorData = [
-		{ text: 'All', color: null },
-		{ text: 'Leader', color: CardColor.LEADER},
-		{ text: 'Legendary', color: CardColor.GOLDEN},
-		{ text: 'Epic', color: CardColor.SILVER},
-		{ text: 'Common', color: CardColor.BRONZE},
-	]
-
-	const clearSearch = () => {
-		store.commit.editor.setSearchQuery('')
-	}
-
-	const setSearchQueryDebounced = debounce(200, (query: string) => {
-		store.commit.editor.setSearchQuery(query)
-	})
-
-	const searchQuery = computed<string>({
-		get(): string {
-			return store.state.editor.searchQuery
-		},
-		set(value: string): void {
-			setSearchQueryDebounced(value)
-		}
-	})
-
-	return {
-		factionData,
-		colorData,
-		selectedFaction,
-		selectedColor,
-		toggleFaction,
-		toggleColor,
-		clearSearch,
-		searchQuery
-	}
-}
-
 export default Vue.extend({
-	setup: Setup,
+	setup() {
+		const toggleFaction = (faction: CardFaction) => {
+			if (store.state.editor.selectedFactionFilter === faction) {
+				store.commit.editor.setSelectedFactionFilter(null)
+			} else {
+				store.commit.editor.setSelectedFactionFilter(faction)
+			}
+		}
+
+		const toggleColor = (color: CardColor) => {
+			if (store.state.editor.selectedColorFilter === color) {
+				store.commit.editor.setSelectedColorFilter(null)
+			} else {
+				store.commit.editor.setSelectedColorFilter(color)
+			}
+		}
+
+		const selectedFaction = computed<CardFaction>(() => store.state.editor.selectedFactionFilter)
+		const selectedColor = computed<CardColor>(() => store.state.editor.selectedColorFilter)
+
+		const factionData = [
+			{ text: 'All', faction: null },
+			{ text: 'Imperial', faction: CardFaction.CASTLE },
+			{ text: 'Arcane', faction: CardFaction.ARCANE },
+			{ text: 'Wild', faction: CardFaction.NATURE },
+			{ text: 'Neutral', faction: CardFaction.NEUTRAL }
+		]
+
+		const colorData = [
+			{ text: 'All', color: null },
+			{ text: 'Leader', color: CardColor.LEADER},
+			{ text: 'Legendary', color: CardColor.GOLDEN},
+			{ text: 'Epic', color: CardColor.SILVER},
+			{ text: 'Common', color: CardColor.BRONZE},
+		]
+
+		const clearSearch = () => {
+			store.commit.editor.setSearchQuery('')
+		}
+
+		const setSearchQueryDebounced = debounce(200, (query: string) => {
+			store.commit.editor.setSearchQuery(query)
+		})
+
+		const searchQuery = computed<string>({
+			get(): string {
+				return store.state.editor.searchQuery
+			},
+			set(value: string): void {
+				setSearchQueryDebounced(value)
+			}
+		})
+
+		return {
+			factionData,
+			colorData,
+			selectedFaction,
+			selectedColor,
+			toggleFaction,
+			toggleColor,
+			clearSearch,
+			searchQuery
+		}
+	},
 })
 </script>
 

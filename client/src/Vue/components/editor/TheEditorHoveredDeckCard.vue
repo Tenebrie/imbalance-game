@@ -10,51 +10,48 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import * as PIXI from 'pixi.js'
 import {computed, ref} from '@vue/composition-api'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import CardMessage from '@shared/models/network/CardMessage'
 
-const setup = () => {
-	const overlayRef = ref<HTMLDivElement>()
-
-	const overlayPosition = computed(() => {
-		return {
-			top: `calc(${store.state.editor.hoveredDeckCard.position.y}px - 48px)`,
-		}
-	})
-
-	const editorModeOffset = computed<PIXI.Point>(() => {
-		const offset = new PIXI.Point(0, 0)
-
-		if (overlayRef.value) {
-			offset.set(
-				Math.min(0, window.innerWidth - overlayRef.value.offsetLeft),
-				Math.min(window.innerHeight - store.state.editor.hoveredDeckCard.position.y - overlayRef.value.clientHeight, 0)
-			)
-		}
-		return offset
-	})
-
-	const hoveredDeckCard = computed<CardMessage | null>(() => store.getters.editor.hoveredDeckCard.card)
-
-	return {
-		overlayRef,
-		overlayPosition,
-		editorModeOffset,
-		hoveredDeckCard,
-	}
-}
-
-export default Vue.extend({
+export default {
 	components: {
 		PixiPreRenderedCard
 	},
 
-	setup: setup,
-})
+	setup() {
+		const overlayRef = ref<HTMLDivElement>()
+
+		const overlayPosition = computed(() => {
+			return {
+				top: `calc(${store.state.editor.hoveredDeckCard.position.y}px - 48px)`,
+			}
+		})
+
+		const editorModeOffset = computed<PIXI.Point>(() => {
+			const offset = new PIXI.Point(0, 0)
+
+			if (overlayRef.value) {
+				offset.set(
+					Math.min(0, window.innerWidth - overlayRef.value.offsetLeft),
+					Math.min(window.innerHeight - store.state.editor.hoveredDeckCard.position.y - overlayRef.value.clientHeight, 0)
+				)
+			}
+			return offset
+		})
+
+		const hoveredDeckCard = computed<CardMessage | null>(() => store.getters.editor.hoveredDeckCard.card)
+
+		return {
+			overlayRef,
+			overlayPosition,
+			editorModeOffset,
+			hoveredDeckCard,
+		}
+	},
+}
 </script>
 
 <style scoped lang="scss">

@@ -17,30 +17,30 @@ import {onMounted, onUnmounted, ref} from '@vue/composition-api'
 import TheGameLogEntry from '@/Vue/components/gamelog/TheGameLogEntry.vue'
 import moment from 'moment'
 
-function TheGameLog() {
-	const entryGroups = ref(store.state.gameLogModule.entryGroups)
-	const currentTime = ref<string>('')
-
-	let updateCurrentTimeInterval
-	onMounted(() => {
-		updateCurrentTimeInterval = setInterval(updateCurrentTime, 500)
-		updateCurrentTime()
-	})
-	onUnmounted(() => clearInterval(updateCurrentTimeInterval))
-
-	const updateCurrentTime = () => {
-		currentTime.value = moment().format('HH:mm:ss')
-	}
-
-	return {
-		entryGroups,
-		currentTime,
-	}
-}
-
 export default {
-	components: {TheGameLogEntry},
-	setup: TheGameLog,
+	components: {
+		TheGameLogEntry
+	},
+	setup() {
+		const entryGroups = ref(store.state.gameLogModule.entryGroups)
+		const currentTime = ref<string>('')
+
+		let updateCurrentTimeInterval
+		onMounted(() => {
+			updateCurrentTimeInterval = setInterval(updateCurrentTime, 500)
+			updateCurrentTime()
+		})
+		onUnmounted(() => clearInterval(updateCurrentTimeInterval))
+
+		const updateCurrentTime = () => {
+			currentTime.value = moment().format('HH:mm:ss')
+		}
+
+		return {
+			entryGroups,
+			currentTime,
+		}
+	},
 
 }
 </script>

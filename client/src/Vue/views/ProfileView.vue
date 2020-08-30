@@ -5,14 +5,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import TheUserProfile from '@/Vue/components/profile/TheUserProfile.vue'
 
-export default Vue.extend({
+export default {
 	components: {
 		TheUserProfile
 	}
-})
+}
 </script>
 
 <style scoped lang="scss">

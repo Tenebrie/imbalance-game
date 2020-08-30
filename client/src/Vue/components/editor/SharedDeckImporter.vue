@@ -12,35 +12,33 @@ import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import Notifications from '@/utils/Notifications'
 import {onMounted} from '@vue/composition-api'
 
-function Setup() {
-	onMounted(async () => {
-		try {
-			await importDeck()
-		} catch (e) {
-			Notifications.error('Unable to import deck!')
-			console.error('Unable to import deck', e)
-		}
-	})
-
-	const importDeck = async (): Promise<void> => {
-		const response = await axios.post('/api/decks', {
-			sharedCode: router.currentRoute.params.deckId
-		})
-
-		const deck = response.data.deck as PopulatedEditorDeck
-
-		await router.push({
-			name: 'single-deck',
-			params: {
-				id: deck.id
+export default Vue.extend({
+	setup() {
+		onMounted(async () => {
+			try {
+				await importDeck()
+			} catch (e) {
+				Notifications.error('Unable to import deck!')
+				console.error('Unable to import deck', e)
 			}
 		})
-	}
-	return {}
-}
 
-export default Vue.extend({
-	setup: Setup
+		const importDeck = async (): Promise<void> => {
+			const response = await axios.post('/api/decks', {
+				sharedCode: router.currentRoute.params.deckId
+			})
+
+			const deck = response.data.deck as PopulatedEditorDeck
+
+			await router.push({
+				name: 'single-deck',
+				params: {
+					id: deck.id
+				}
+			})
+		}
+		return {}
+	}
 })
 </script>
 

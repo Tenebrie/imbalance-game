@@ -3,91 +3,62 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
-import Card from '@shared/models/Card'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
-import {ref} from '@vue/composition-api'
+import {computed, defineComponent, onMounted, ref, watch} from '@vue/composition-api'
+import CardMessage from '@shared/models/network/CardMessage'
 
-const setup = () => {
-	const containerRef = ref<HTMLDivElement>()
-
-	return {
-		containerRef,
-	}
+interface Props {
+	card: CardMessage | null
 }
 
-export default Vue.extend({
-	setup: setup,
-
+export default defineComponent({
 	props: {
 		card: {
-			type: Object as () => Card | null,
+			type: Object as () => CardMessage | null,
 		}
 	},
 
-	data: () => ({
-		isImageAppended: false as boolean
-	}),
+	setup(props: Props) {
+		const containerRef = ref<HTMLDivElement>()
+		const isImageAppended = ref<boolean>(false)
 
-	watch: {
-		renderedCard(newValue: RenderedEditorCard | null): void {
-			if (newValue === null) {
-				return
-			}
-
-			this.appendImageNode()
-		},
-
-		watchedCard(): void {
-			this.appendImageNode()
-		}
-	},
-
-	mounted() {
-		if (this.renderedCard) {
-			this.appendImageNode()
-		} else if (this.card) {
-			store.dispatch.editor.requestRender({
-				card: this.card
-			})
-		}
-	},
-
-	computed: {
-		renderedCard(): RenderedEditorCard | null {
-			if (!this.watchedCard) {
+		const renderedCard = computed<RenderedEditorCard | null>(() => {
+			if (!props.card) {
 				return null
 			}
-			return store.state.editor.renderedCards.find(renderedCard => renderedCard.class === this.watchedCard.class) || null
-		},
+			return store.state.editor.renderedCards.find(renderedCard => renderedCard.class === props.card.class) || null
+		})
 
-		watchedCard(): Card | null {
-			return this.card
-		}
-	},
+		onMounted(() => {
+			if (renderedCard.value) {
+				appendImageNode()
+			} else if (props.card) {
+				store.dispatch.editor.requestRender({ card: props.card })
+			}
+		})
 
-	methods: {
-		appendImageNode(): void {
-			if (this.isImageAppended) {
+		watch(() => [renderedCard.value], () => {
+			if (renderedCard.value) {
+				appendImageNode()
+			}
+		})
+
+		const appendImageNode = () => {
+			if (isImageAppended.value) {
 				return
 			}
-			while (this.containerRef.children.length > 0) {
-				this.$el.removeChild(this.$el.children[0])
-			}
 
-			if (this.renderedCard) {
-				this.isImageAppended = true
-				const node = this.cloneCanvas(this.renderedCard.render)
-				node.style.position = 'absolute'
-				node.style.width = '100%'
-				node.style.height = '100%'
-				node.style.left = '0'
-				this.containerRef.appendChild(node)
-			}
-		},
+			isImageAppended.value = true
+			const node = cloneCanvas(renderedCard.value.render)
+			node.style.position = 'absolute'
+			node.style.width = '100%'
+			node.style.height = '100%'
+			node.style.left = '0'
+			containerRef.value.appendChild(node)
+		}
 
-		cloneCanvas(original: HTMLCanvasElement): HTMLCanvasElement {
+		const cloneCanvas = (original: HTMLCanvasElement): HTMLCanvasElement => {
 			const newCanvas = document.createElement('canvas')
 			const context = newCanvas.getContext('2d')
 
@@ -98,7 +69,11 @@ export default Vue.extend({
 
 			return newCanvas
 		}
-	}
+
+		return {
+			containerRef,
+		}
+	},
 })
 </script>
 
