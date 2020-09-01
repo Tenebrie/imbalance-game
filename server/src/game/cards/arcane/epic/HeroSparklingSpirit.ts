@@ -14,13 +14,20 @@ export default class HeroSparklingSpirit extends ServerCard {
 	extraDamage = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
-		this.basePower = 8
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.ARCANE,
+			// relatedCards: [SpellFleetingSpark],
+			stats: {
+				power: 8
+			}
+		})
+		this.addRelatedCards().requireExact(SpellFleetingSpark)
+		this.addRelatedCards().requireTribe(CardTribe.SPARK)
 		this.dynamicTextVariables = {
 			extraDamage: this.extraDamage
 		}
-		this.baseRelatedCards = [SpellFleetingSpark]
-		this.addRelatedCards().requireTribe(CardTribe.SPARK)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

@@ -22,11 +22,17 @@ export default class SpellFlamingSpark extends ServerCard {
 	damagePerWeave = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.EXPERIMENTAL)
-
-		this.basePower = 2
-		this.baseTribes = [CardTribe.SPARK]
-		this.baseFeatures = [CardFeature.HERO_POWER]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.SPARK],
+			features: [CardFeature.HERO_POWER],
+			stats: {
+				cost: 2
+			},
+			isExperimental: true,
+		})
 		this.dynamicTextVariables = {
 			damage: () => this.damage,
 			damagePerWeave: this.damagePerWeave

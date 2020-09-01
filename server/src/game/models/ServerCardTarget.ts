@@ -7,8 +7,8 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import CardMessage from '@shared/models/network/CardMessage'
 import CardLibrary from '../libraries/CardLibrary'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default class ServerCardTarget implements CardTarget {
 	targetMode: TargetMode

@@ -9,10 +9,16 @@ import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroCoralScribe extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.NATURE)
-		this.basePower = 7
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
-		this.generatedArtworkMagicString = '2'
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.NATURE,
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
+			generatedArtworkMagicString: '2',
+			stats: {
+				power: 7,
+			}
+		})
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)

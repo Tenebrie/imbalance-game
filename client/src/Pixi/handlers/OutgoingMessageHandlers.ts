@@ -5,34 +5,35 @@ import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import CardTarget from '@shared/models/CardTarget'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
+import {GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 
 export default {
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {
 		const rowIndex = Core.board.rows.indexOf(gameBoardRow)
-		Core.sendMessage('post/playCard', CardPlayedMessage.fromCardOnRow(card, rowIndex, unitIndex))
+		Core.sendMessage(GenericActionMessageType.CARD_PLAY, CardPlayedMessage.fromCardOnRow(card, rowIndex, unitIndex))
 	},
 
 	sendSpellCardPlayed(card: Card): void {
-		Core.sendMessage('post/playCard', CardPlayedMessage.fromCard(card))
+		Core.sendMessage(GenericActionMessageType.CARD_PLAY, CardPlayedMessage.fromCard(card))
 	},
 
 	sendUnitOrder(order: CardTarget): void {
-		Core.sendMessage('post/unitOrder', new CardTargetMessage(order))
+		Core.sendMessage(GenericActionMessageType.UNIT_ORDER, new CardTargetMessage(order))
 	},
 
 	sendCardTarget(target: ClientCardTarget): void {
-		Core.sendMessage('post/cardTarget', new CardTargetMessage(target))
+		Core.sendMessage(GenericActionMessageType.CARD_TARGET, new CardTargetMessage(target))
 	},
 
 	sendEndTurn(): void {
-		Core.sendMessage('post/endTurn', null)
+		Core.sendMessage(GenericActionMessageType.TURN_END, null)
 	},
 
 	sendInit(): void {
-		Core.sendMessage('system/init', undefined)
+		Core.sendMessage(SystemMessageType.INIT, undefined)
 	},
 
 	sendKeepalive(): void {
-		Core.sendMessage('system/keepalive', null)
+		Core.sendMessage(SystemMessageType.KEEPALIVE, null)
 	}
 }

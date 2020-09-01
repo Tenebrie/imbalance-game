@@ -20,12 +20,16 @@ export default class UnitStoneElemental extends ServerCard {
 	canAttack = false
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
-		this.basePower = 7
-		this.baseAttack = 3
-		this.baseAttackRange = 2
-		this.baseTribes = [CardTribe.ELEMENTAL]
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.ELEMENTAL],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN],
+			stats: {
+				power: 7
+			}
+		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => {

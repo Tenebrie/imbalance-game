@@ -14,14 +14,20 @@ export default class HeroDarkOracle extends ServerCard {
 	cardsToSee = 5
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
-		this.basePower = 4
-		this.sortPriority = 2
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_DISCARD],
+			sortPriority: 2,
+			generatedArtworkMagicString: '2',
+			stats: {
+				power: 4
+			}
+		})
 		this.dynamicTextVariables = {
 			cardsToSee: this.cardsToSee
 		}
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_DISCARD]
-		this.generatedArtworkMagicString = '2'
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))

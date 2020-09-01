@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import VoidGame from '../utils/VoidGame'
-import { colorize } from '../../utils/Utils'
+import {colorize} from '../../utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
 
 export interface CardConstructor {
@@ -57,27 +57,12 @@ class CardLibrary {
 		const cardPrototypes = filteredModules.map(module => module.prototypeFunction)
 
 		this.cards = cardPrototypes.map(prototype => {
-			const referenceInstance = new prototype(VoidGame.get())
-			const className = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
-			referenceInstance.class = className
-			referenceInstance.power = referenceInstance.basePower
-			referenceInstance.armor = referenceInstance.baseArmor
-			referenceInstance.attack = referenceInstance.baseAttack
-			referenceInstance.name = `card.${className}.name`
-			referenceInstance.title = `card.${className}.title`
-			referenceInstance.flavor = `card.${className}.flavor`
-			referenceInstance.description = `card.${className}.description`
-			return referenceInstance
+			return new prototype(VoidGame.get())
 		})
 
 		const sortedModules = filteredModules.sort((a, b) => b.timestamp - a.timestamp)
 		const latestClasses = sortedModules.slice(0, 5).map(card => card.prototypeFunction.name)
 		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions. Newest 5:`, latestClasses)
-	}
-
-	public get collectibleCards(): ServerCard[] {
-		const cards = this.cards as ServerCard[]
-		return cards.filter(card => card.isCollectible())
 	}
 
 	public findPrototypeById(id: string): ServerCard | null {
@@ -104,25 +89,7 @@ class CardLibrary {
 		}
 
 		const referenceConstructor = reference.constructor as CardConstructor
-		const clone: ServerCard = new referenceConstructor(game)
-		clone.type = reference.type
-		clone.class = cardClass
-
-		clone.name = reference.name
-		clone.title = reference.title
-		clone.flavor = reference.flavor
-		clone.description = reference.description
-
-		clone.baseTribes = (reference.baseTribes || []).slice()
-		clone.baseFeatures = (reference.baseFeatures || []).slice()
-		clone.game = game
-		clone.power = clone.basePower
-		clone.maxPower = clone.basePower
-		clone.armor = clone.baseArmor
-		clone.maxArmor = clone.baseArmor
-		clone.attack = clone.baseAttack
-		clone.attackRange = clone.baseAttackRange
-		return clone
+		return new referenceConstructor(game)
 	}
 }
 

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { createModule } from 'direct-vuex'
-import Language from '@shared/models/Language'
+import Language from '@shared/enums/Language'
 import {moduleActionContext} from '@/Vue/store'
 import RenderQuality from '@shared/enums/RenderQuality'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'

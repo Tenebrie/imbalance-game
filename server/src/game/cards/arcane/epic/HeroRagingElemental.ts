@@ -13,13 +13,19 @@ export default class HeroRagingElemental extends ServerCard {
 	isEffectTriggered = false
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
-		this.basePower = 9
-		this.baseFeatures = [CardFeature.KEYWORD_ENRAGE]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_ENRAGE],
+			stats: {
+				power: 9
+			}
+		})
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
 			.require(({ triggeringCard }) => triggeringCard === this)
-			.require(({ triggeringCard }) => triggeringCard.power > 0)
+			.require(({ triggeringCard }) => triggeringCard.stats.power > 0)
 			.perform(() => this.onDamageSurvived())
 	}
 
@@ -44,7 +50,7 @@ export default class HeroRagingElemental extends ServerCard {
 		const shortestDistance = this.game.board.getVerticalUnitDistance(opposingEnemies[0], thisUnit)
 		const targets = opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, thisUnit) === shortestDistance).concat([thisUnit])
 
-		const damage = this.power
+		const damage = this.stats.power
 		targets.forEach(unit => {
 			unit.dealDamage(ServerDamageInstance.fromUnit(damage, thisUnit))
 		})

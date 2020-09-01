@@ -13,10 +13,16 @@ import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitOceanicSeagull extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NATURE)
-		this.basePower = 2
-		this.baseTribes = [CardTribe.BIRD]
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NATURE,
+			tribes: [CardTribe.BIRD],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
+			stats: {
+				power: 2,
+			}
+		})
 		this.addRelatedCards().requireTribe(CardTribe.MERFOLK).requireColor(CardColor.BRONZE)
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

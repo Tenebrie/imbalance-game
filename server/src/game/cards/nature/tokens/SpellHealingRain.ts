@@ -12,10 +12,15 @@ export default class SpellHealingRain extends ServerCard {
 	healingPerStorm = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.TOKEN, CardFaction.NATURE)
-
-		this.basePower = 0
-		this.baseTribes = [CardTribe.STORM]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.TOKEN,
+			faction: CardFaction.NATURE,
+			tribes: [CardTribe.STORM],
+			stats: {
+				cost: 0,
+			}
+		})
 		this.dynamicTextVariables = {
 			healing: () => this.healing,
 			healingPerStorm: this.healingPerStorm
@@ -37,7 +42,7 @@ export default class SpellHealingRain extends ServerCard {
 
 	private onPlay(): void {
 		const targets = this.game.board.getUnitsOwnedByPlayer(this.owner)
-			.filter(target => target.card.power < target.card.maxPower)
+			.filter(target => target.card.stats.power < target.card.stats.maxPower)
 
 		targets.forEach(target => {
 			target.heal(ServerDamageInstance.fromCard(this.healing, this))

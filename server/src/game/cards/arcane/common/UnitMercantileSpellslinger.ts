@@ -20,9 +20,15 @@ export default class UnitMercantileSpellslinger extends ServerCard {
 	discountPerTurn = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
-		this.basePower = 3
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 3
+			}
+		})
 		this.dynamicTextVariables = {
 			manaMarkup: this.manaMarkup,
 			discountPerTurn: this.discountPerTurn

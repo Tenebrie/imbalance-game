@@ -14,9 +14,15 @@ import ServerAnimation from '../../../models/ServerAnimation'
 
 export default class HeroCultistOfAreddon extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.NEUTRAL)
-		this.basePower = 2
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.NEUTRAL,
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
+			stats: {
+				power: 2,
+			}
+		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))

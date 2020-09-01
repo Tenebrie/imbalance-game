@@ -7,16 +7,18 @@ import SpellShadowSpark from './SpellShadowSpark'
 import SpellNightmareDrain from './SpellNightmareDrain'
 import SpellCrystalBarrage from './SpellCrystalBarrage'
 import SpellShadowArmy from './SpellShadowArmy'
-import {mapRelatedCards} from '../../../../../utils/Utils'
 
 export default class LeaderNighterie extends ServerCard {
 	manaPerRound = 10
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.LEADER, CardFaction.ARCANE)
-		this.basePower = 0
-		this.sortPriority = 2
-		this.baseRelatedCards = [SpellShadowSpark, SpellNightmareDrain, SpellCrystalBarrage, SpellShadowArmy]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.LEADER,
+			faction: CardFaction.ARCANE,
+			relatedCards: [SpellShadowSpark, SpellNightmareDrain, SpellCrystalBarrage, SpellShadowArmy],
+			sortPriority: 2
+		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound
 		}

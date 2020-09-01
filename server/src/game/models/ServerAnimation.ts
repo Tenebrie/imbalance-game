@@ -4,10 +4,24 @@ import AnimationType from '@shared/enums/AnimationType'
 import ServerCard from './ServerCard'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardReceivedBuffAnimParams from '@shared/models/animations/CardReceivedBuffAnimParams'
-import CardMessage from '@shared/models/network/CardMessage'
 import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
+import Card from '@shared/models/Card'
+import Unit from '@shared/models/Unit'
+import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 
-export default class ServerAnimation extends Animation {
+export default class ServerAnimation implements Animation {
+	type: AnimationType
+	sourceCard: Card | null
+	sourceUnit: Unit | null
+	targetCard: Card | null
+	targetCards: Card[] | null
+	params: any
+
+	constructor(type: AnimationType, params: any) {
+		this.type = type
+		this.params = params
+	}
+
 	public static null(): ServerAnimation {
 		return new ServerAnimation(AnimationType.NULL, {})
 	}
@@ -22,7 +36,7 @@ export default class ServerAnimation extends Animation {
 
 	public static cardAnnounce(targetCard: ServerCard): ServerAnimation {
 		const params: CardAnnounceAnimParams = {
-			cardMessage: new CardMessage(targetCard)
+			cardMessage: new OpenCardMessage(targetCard)
 		}
 		const animation = new ServerAnimation(AnimationType.CARD_ANNOUNCE, params)
 		animation.targetCard = targetCard

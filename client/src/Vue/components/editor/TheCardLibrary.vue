@@ -16,7 +16,7 @@
 import Vue from 'vue'
 import Fuse from 'fuse.js'
 import store from '@/Vue/store'
-import Language from '@shared/models/Language'
+import Language from '@shared/enums/Language'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
 import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 import CardFaction from '@shared/enums/CardFaction'
@@ -24,8 +24,8 @@ import CardColor from '@shared/enums/CardColor'
 import CardType from '@shared/enums/CardType'
 import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
 import Localization from '@/Pixi/Localization'
-import CardMessage from '@shared/models/network/CardMessage'
 import {insertRichTextVariables} from '@/utils/Utils'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default Vue.extend({
 	components: {

@@ -13,11 +13,11 @@ import TargetType from '@shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
-import CardMessage from '@shared/models/network/CardMessage'
 import Utils from '@/utils/Utils'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import store from '@/Vue/store'
+import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -292,7 +292,7 @@ export default class Input {
 		OutgoingMessageHandlers.sendCardTarget(this.forcedTargetingMode.validTargets.find(target => target.targetCardData.id === selectedCard.id))
 	}
 
-	public restoreCardFromLimbo(cardMessage: CardMessage): RenderedCard {
+	public restoreCardFromLimbo(cardMessage: CardRefMessage): RenderedCard {
 		const cardInLimbo = this.cardLimbo.find(card => card.id === cardMessage.id)
 		if (!cardInLimbo) {
 			return
@@ -304,7 +304,7 @@ export default class Input {
 		return cardInLimbo
 	}
 
-	public clearCardInLimbo(cardMessage: CardMessage): void {
+	public clearCardInLimbo(cardMessage: CardRefMessage): void {
 		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardMessage.id)
 	}
 

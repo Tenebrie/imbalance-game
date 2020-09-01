@@ -12,6 +12,7 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientCardResolveStack from '@/Pixi/models/ClientCardResolveStack'
 import ParticleSystem from '@/Pixi/vfx/ParticleSystem'
 import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
+import {ClientToServerMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 
 export default class Core {
 	public static isReady = false
@@ -135,7 +136,7 @@ export default class Core {
 		return null
 	}
 
-	public static sendMessage(type: string, data: Record<string, any> | null): void {
+	public static sendMessage(type: ClientToServerMessageTypes, data: Record<string, any> | null): void {
 		Core.socket.send(JSON.stringify({
 			type: type,
 			data: data

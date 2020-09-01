@@ -14,13 +14,19 @@ export default class UnitMasterSwordsmith extends ServerCard {
 	bonusPower = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
-		this.basePower = 2
-		this.baseTribes = [CardTribe.HUMAN]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NEUTRAL,
+			tribes: [CardTribe.HUMAN],
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 2,
+			}
+		})
 		this.dynamicTextVariables = {
 			bonusPower: this.bonusPower
 		}
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

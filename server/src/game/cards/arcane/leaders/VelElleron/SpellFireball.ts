@@ -19,10 +19,15 @@ export default class SpellFireball extends ServerCard {
 	baseAreaDamage = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
-
-		this.basePower = 6
-		this.baseFeatures = [CardFeature.HERO_POWER]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.HERO_POWER],
+			stats: {
+				cost: 6
+			}
+		})
 		this.dynamicTextVariables = {
 			damage: () => this.damage,
 			areaDamage: () => this.areaDamage
@@ -64,8 +69,8 @@ export default class SpellFireball extends ServerCard {
 	private evaluateTarget(args: TargetValidatorArguments): number {
 		const target = args.targetUnit
 		const adjacentUnits = this.game.board.getAdjacentUnits(target)
-		let expectedValue = Math.min(target.card.power, this.damage)
-		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.power, this.areaDamage))
+		let expectedValue = Math.min(target.card.stats.power, this.damage)
+		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.stats.power, this.areaDamage))
 		return expectedValue
 	}
 }

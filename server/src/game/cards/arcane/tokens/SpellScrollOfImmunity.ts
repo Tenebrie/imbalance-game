@@ -16,11 +16,16 @@ import CardFeature from '@shared/enums/CardFeature'
 
 export default class SpellScrollOfImmunity extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.TOKEN, CardFaction.ARCANE)
-
-		this.basePower = 3
-		this.baseTribes = [CardTribe.SCROLL]
-		this.baseFeatures = [CardFeature.KEYWORD_BUFF_IMMUNITY]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.TOKEN,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.SCROLL],
+			features: [CardFeature.KEYWORD_BUFF_IMMUNITY],
+			stats: {
+				cost: 3,
+			}
+		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))

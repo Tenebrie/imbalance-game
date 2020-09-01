@@ -13,7 +13,7 @@ export default class BotCardEvaluation {
 	}
 
 	public get expectedValue(): number {
-		return this.card.power
+		return this.card.stats.power
 	}
 
 	public get baseThreat(): number {

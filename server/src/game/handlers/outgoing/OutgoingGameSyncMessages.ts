@@ -1,0 +1,41 @@
+import ServerPlayer from '../../players/ServerPlayer'
+import GameStartMessage from '@shared/models/network/GameStartMessage'
+import ServerPlayerInGame from '../../players/ServerPlayerInGame'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import {GameSyncMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import OpenPlayerInGameMessage from '@shared/models/network/playerInGame/OpenPlayerInGameMessage'
+import HiddenPlayerInGameMessage from '@shared/models/network/playerInGame/HiddenPlayerInGameMessage'
+import ServerGame from '../../models/ServerGame'
+
+export default {
+	notifyAboutGameStart(player: ServerPlayer, isBoardInverted: boolean): void {
+		player.sendMessage({
+			type: GameSyncMessageType.START,
+			data: new GameStartMessage(isBoardInverted)
+		})
+	},
+
+	notifyAboutGamePhaseAdvance: (game: ServerGame, phase: GameTurnPhase): void => {
+		game.players.forEach(playerInGame => {
+			playerInGame.player.sendMessage({
+				type: GameSyncMessageType.PHASE_ADVANCE,
+				data: phase,
+				// highPriority: true
+			})
+		})
+	},
+
+	sendPlayerSelf: (player: ServerPlayer, self: ServerPlayerInGame): void => {
+		player.sendMessage({
+			type: GameSyncMessageType.PLAYER_SELF,
+			data: new OpenPlayerInGameMessage(self)
+		})
+	},
+
+	sendPlayerOpponent: (player: ServerPlayer, opponent: ServerPlayerInGame): void => {
+		player.sendMessage({
+			type: GameSyncMessageType.PLAYER_OPPONENT,
+			data: new HiddenPlayerInGameMessage(opponent)
+		})
+	}
+}

@@ -1,9 +1,8 @@
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ClientBuff from '@/Pixi/models/ClientBuff'
 import BuffContainer from '@shared/models/BuffContainer'
-import BuffContainerMessage from '@shared/models/network/BuffContainerMessage'
-import BuffMessage from '@shared/models/network/BuffMessage'
 import Core from '@/Pixi/Core'
+import BuffContainerMessage from '@shared/models/network/buffContainer/BuffContainerMessage'
 
 export default class ClientBuffContainer implements BuffContainer {
 	card: RenderedCard
@@ -27,8 +26,8 @@ export default class ClientBuffContainer implements BuffContainer {
 		return this.buffs.find(buff => buff.id === buffId)
 	}
 
-	public remove(buffMessage: BuffMessage): void {
-		this.buffs.splice(this.buffs.indexOf(this.findBuffById(buffMessage.id)), 1)
+	public removeById(id: string): void {
+		this.buffs.splice(this.buffs.indexOf(this.findBuffById(id)), 1)
 		this.card.updateCardDescription()
 		if (Core.player.cardHand.unitCards.includes(this.card)) {
 			Core.player.cardHand.sortCards()

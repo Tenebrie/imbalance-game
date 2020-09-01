@@ -19,14 +19,20 @@ export default class SpellShadowArmy extends ServerCard {
 	copiedUnits: ServerUnit[] = []
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
-		this.basePower = 12
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_CREATE],
+			stats: {
+				cost: 12
+			}
+		})
 		this.dynamicTextVariables = {
 			powerThreshold: () => this.powerThreshold,
 			showPowerThreshold: () => this.powerThreshold > 0,
 			thresholdDecrease: this.thresholdDecrease
 		}
-		this.baseFeatures = [CardFeature.HERO_POWER, CardFeature.KEYWORD_CREATE]
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
@@ -41,7 +47,7 @@ export default class SpellShadowArmy extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		if (target.card.basePower <= this.powerThreshold && this.powerThreshold > 0) {
+		if (target.card.stats.basePower <= this.powerThreshold && this.powerThreshold > 0) {
 			this.powerThreshold -= this.thresholdDecrease
 			this.allowedTargets += 1
 		}

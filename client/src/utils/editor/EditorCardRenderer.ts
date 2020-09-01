@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import CardMessage from '@shared/models/network/CardMessage'
 import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import store from '@/Vue/store'
 import {CARD_HEIGHT, CARD_WIDTH} from '@/Pixi/renderer/RendererUtils'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 class EditorCardRenderer {
 	pixi: PIXI.Renderer

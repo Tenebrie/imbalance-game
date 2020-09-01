@@ -6,7 +6,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
-import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 import {UnitCreatedEventArgs} from '../../../models/GameEventCreators'
 
@@ -15,8 +14,14 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 	bonusPower = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.CASTLE)
-		this.basePower = 8
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.CASTLE,
+			stats: {
+				power: 8,
+			}
+		})
 		this.dynamicTextVariables = {
 			powerThreshold: this.powerThreshold,
 			bonusPower: this.bonusPower
@@ -25,7 +30,7 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 		this.createCallback<UnitCreatedEventArgs>(GameEventType.UNIT_CREATED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card !== this)
 			.require(({ triggeringUnit }) => triggeringUnit.owner === this.owner)
-			.require(({ triggeringUnit }) => triggeringUnit.card.power <= this.powerThreshold)
+			.require(({ triggeringUnit }) => triggeringUnit.card.stats.power <= this.powerThreshold)
 			.perform(({ triggeringUnit }) => {
 				triggeringUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
 			})

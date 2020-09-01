@@ -1,6 +1,6 @@
-import PlayerDatabaseEntry from '../PlayerDatabaseEntry'
-import Language from '../Language'
+import Language from '../../enums/Language'
 import RenderQuality from '../../enums/RenderQuality'
+import PlayerDatabaseEntry from '../PlayerDatabaseEntry'
 
 export default class UserProfileMessage {
 	email: string

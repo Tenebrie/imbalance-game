@@ -13,9 +13,15 @@ import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitCrystalMiner extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
-		this.basePower = 2
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
+			stats: {
+				power: 2
+			}
+		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))

@@ -6,7 +6,14 @@ import CardFaction from '@shared/enums/CardFaction'
 
 export default class TokenPlayerDeck extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.TOKEN, CardColor.TOKEN, CardFaction.NEUTRAL)
-		this.sortPriority = 1
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.TOKEN,
+			faction: CardFaction.NEUTRAL,
+			sortPriority: 1,
+			stats: {
+				cost: 0
+			}
+		})
 	}
 }

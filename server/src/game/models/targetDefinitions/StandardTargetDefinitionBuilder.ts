@@ -98,14 +98,6 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		})
 	}
 
-	public inUnitRange(targetMode: TargetMode, targetType: TargetType): StandardTargetDefinitionBuilder {
-		return this.validate(targetMode, targetType, args => {
-			const thisUnit = args.thisUnit
-			const rowIndex = targetType === TargetType.UNIT ? args.targetUnit.rowIndex : args.targetRow.index
-			return Math.abs(thisUnit.rowIndex - rowIndex) <= thisUnit.card.attackRange
-		})
-	}
-
 	public inStaticRange(targetMode: TargetMode, targetType: TargetType, range: number): StandardTargetDefinitionBuilder {
 		return this.validate(targetMode, targetType, args => {
 			const thisUnit = args.thisUnit

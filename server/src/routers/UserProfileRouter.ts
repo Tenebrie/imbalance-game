@@ -7,7 +7,7 @@ import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import AsyncHandler from '../utils/AsyncHandler'
 import RenderQuality from '@shared/enums/RenderQuality'
-import Language from '@shared/models/Language'
+import Language from '@shared/enums/Language'
 import Utils from '../utils/Utils'
 
 router.get('/', AsyncHandler(async(req: Request, res: Response, next) => {

@@ -16,6 +16,7 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import CardLibrary from '../libraries/CardLibrary'
 import ServerCard from '../models/ServerCard'
 import CardType from '@shared/enums/CardType'
+import {GenericActionMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -80,10 +81,10 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 			.filter(row => !row.isFull())
 			.reverse()
 
-		const distanceFromFront = selectedCard.attackRange - 1
+		const distanceFromFront = 0
 		const targetRow = validRows[Math.min(distanceFromFront, validRows.length - 1)]
 		const cardPlayerMessage = CardPlayedMessage.fromCardOnRow(selectedCard, targetRow.index, targetRow.cards.length)
-		IncomingMessageHandlers['post/playCard'](cardPlayerMessage, this.game, this)
+		IncomingMessageHandlers[GenericActionMessageType.CARD_PLAY](cardPlayerMessage, this.game, this)
 
 		while (this.game.cardPlay.cardResolveStack.hasCards()) {
 			this.botChoosesTarget()
@@ -94,7 +95,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const validTargets = this.game.cardPlay.getValidTargets()
 			.sort((a, b) => b.expectedValue - a.expectedValue)
 		const cardTargetMessage = new CardTargetMessage(validTargets[0])
-		IncomingMessageHandlers['post/cardTarget'](cardTargetMessage, this.game, this)
+		IncomingMessageHandlers[GenericActionMessageType.CARD_TARGET](cardTargetMessage, this.game, this)
 	}
 
 	private botOrdersAttacks(): void {
@@ -119,7 +120,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 			const unitOrder = ServerCardTarget.unitTargetUnit(TargetMode.ORDER_ATTACK, unit, sortedTargets[0])
 
 			const unitOrderMessage = new UnitOrderMessage(unitOrder)
-			IncomingMessageHandlers['post/unitOrder'](unitOrderMessage, this.game, this)
+			IncomingMessageHandlers[GenericActionMessageType.UNIT_ORDER](unitOrderMessage, this.game, this)
 		})
 	}
 
@@ -128,18 +129,18 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		controlledUnits.forEach(unit => {
 			const unitOrder = ServerCardTarget.unitTargetRow(TargetMode.ORDER_MOVE, unit, this.game.board.rows[this.getForwardRowIndex(unit.rowIndex)])
 			const unitOrderMessage = new UnitOrderMessage(unitOrder)
-			IncomingMessageHandlers['post/unitOrder'](unitOrderMessage, this.game, this)
+			IncomingMessageHandlers[GenericActionMessageType.UNIT_ORDER](unitOrderMessage, this.game, this)
 		})
 	}
 
 	private botEndsTurn(): void {
-		IncomingMessageHandlers['post/endTurn'](null, this.game, this)
+		IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, this.game, this)
 	}
 
 	private getBestExpectedValue(card: ServerCard): number {
 		const targets = card.getValidPostPlayRequiredTargets()
 
-		const cardBaseValue = card.type === CardType.SPELL ? card.power * 2 : card.power
+		const cardBaseValue = card.type === CardType.SPELL ? card.stats.baseSpellCost * 2 : card.stats.basePower
 		const spellExtraValue = this.cardHand.unitCards.length <= 2 ? 1 : 0
 
 		if (targets.length === 0) {

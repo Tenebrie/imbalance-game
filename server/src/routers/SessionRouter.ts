@@ -21,7 +21,7 @@ router.post('/', AsyncHandler(async (req, res: Response, next) => {
 
 	const playerToken = TokenManager.generateJwtToken(player)
 	res.cookie('playerToken', playerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
-	res.json({ data: PlayerMessage.fromPlayer(player) })
+	res.json({ data: new PlayerMessage(player) })
 }))
 
 router.delete('/', AsyncHandler(async (req, res: Response, next) => {

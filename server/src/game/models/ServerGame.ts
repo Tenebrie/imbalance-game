@@ -2,7 +2,6 @@ import uuidv4 from 'uuid/v4'
 import Game from '@shared/models/Game'
 import ServerBoard from './ServerBoard'
 import ServerPlayer from '../players/ServerPlayer'
-import ServerChatEntry from './ServerChatEntry'
 import VoidPlayerInGame from '../utils/VoidPlayerInGame'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
@@ -22,21 +21,23 @@ import {colorizeId, colorizePlayer} from '../../utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
 import { BuffConstructor } from './ServerBuffContainer'
 
-export default class ServerGame extends Game {
-	isStarted: boolean
-	turnIndex: number
-	turnPhase: GameTurnPhase
-	playersToMove: ServerPlayerInGame[]
+export default class ServerGame implements Game {
+	public readonly id: string
+	public readonly name: string
+	public isStarted: boolean
+	public turnIndex: number
+	public turnPhase: GameTurnPhase
+	public playersToMove: ServerPlayerInGame[]
 	readonly owner: ServerPlayer
 	readonly board: ServerBoard
 	readonly events: ServerGameEvents
 	readonly players: ServerPlayerInGame[]
-	readonly chatHistory: ServerChatEntry[]
 	readonly cardPlay: ServerGameCardPlay
 	readonly animation: ServerGameAnimation
 
 	constructor(owner: ServerPlayer, name: string) {
-		super(uuidv4(), name)
+		this.id = uuidv4()
+		this.name = name
 		this.isStarted = false
 		this.turnIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
@@ -45,7 +46,6 @@ export default class ServerGame extends Game {
 		this.events = new ServerGameEvents(this)
 		this.players = []
 		this.playersToMove = []
-		this.chatHistory = []
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
 	}
@@ -126,20 +126,9 @@ export default class ServerGame extends Game {
 		this.players.splice(this.players.indexOf(registeredPlayer), 1)
 	}
 
-	public createChatEntry(sender: ServerPlayer, message: string): void {
-		const chatEntry = ServerChatEntry.newInstance(sender, message)
-		this.chatHistory.push(chatEntry)
-		this.players.forEach((playerInGame: ServerPlayerInGame) => {
-			OutgoingMessageHandlers.notifyAboutChatEntry(playerInGame.player, chatEntry)
-		})
-	}
-
 	private setTurnPhase(turnPhase: GameTurnPhase): void {
 		this.turnPhase = turnPhase
-
-		this.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutPhaseAdvance(playerInGame.player, this.turnPhase)
-		})
+		OutgoingMessageHandlers.notifyAboutGamePhaseAdvance(this, this.turnPhase)
 	}
 
 	private isPhaseFinished(): boolean {
@@ -213,8 +202,8 @@ export default class ServerGame extends Game {
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1]
 
-		const playerOneTotalPower = this.board.getUnitsOwnedByPlayer(playerOne).map(unit => unit.card.power).reduce((total, value) => total + value, 0)
-		const playerTwoTotalPower = this.board.getUnitsOwnedByPlayer(playerTwo).map(unit => unit.card.power).reduce((total, value) => total + value, 0)
+		const playerOneTotalPower = this.board.getUnitsOwnedByPlayer(playerOne).map(unit => unit.card.stats.power).reduce((total, value) => total + value, 0)
+		const playerTwoTotalPower = this.board.getUnitsOwnedByPlayer(playerTwo).map(unit => unit.card.stats.power).reduce((total, value) => total + value, 0)
 		if (playerOneTotalPower > playerTwoTotalPower) {
 			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
 		} else if (playerTwoTotalPower > playerOneTotalPower) {

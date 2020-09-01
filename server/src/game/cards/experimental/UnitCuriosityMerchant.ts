@@ -10,9 +10,15 @@ export default class UnitCuriosityMerchant extends ServerCard {
 	spellDiscount = 3
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.EXPERIMENTAL)
-		this.basePower = 5
-		this.baseTribes = [CardTribe.HUMAN]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.EXPERIMENTAL,
+			tribes: [CardTribe.HUMAN],
+			stats: {
+				power: 5,
+			}
+		})
 		this.dynamicTextVariables = {
 			spellDiscount: this.spellDiscount
 		}

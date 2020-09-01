@@ -16,10 +16,15 @@ export default class SpellScrollOfLightning extends ServerCard {
 	damage = 8
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.TOKEN, CardFaction.ARCANE)
-
-		this.basePower = 4
-		this.baseTribes = [CardTribe.SCROLL]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.TOKEN,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.SCROLL],
+			stats: {
+				cost: 4,
+			}
+		})
 		this.dynamicTextVariables = {
 			damage: this.damage,
 		}

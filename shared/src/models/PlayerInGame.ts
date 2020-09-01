@@ -1,7 +1,7 @@
+import Card from './Card'
 import Player from './Player'
 import CardHand from './CardHand'
 import CardDeck from './CardDeck'
-import Card from './Card'
 
 export default interface PlayerInGame {
 	player: Player

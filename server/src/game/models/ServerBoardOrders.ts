@@ -67,8 +67,7 @@ export default class ServerBoardOrders {
 
 		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.unitAttackDefault(orderedUnit, [targetUnit]))
 
-		const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT) + orderedUnit.card.getBonusAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.UNIT)
-		targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
+		targetUnit.dealDamage(ServerDamageInstance.fromUnit(0, orderedUnit))
 		runCardEventHandler(() => orderedUnit.card.onPerformingUnitAttack(orderedUnit, targetUnit, targetMode))
 
 		OutgoingAnimationMessages.triggerAnimation(this.game, ServerAnimation.postUnitAttack())
@@ -101,8 +100,7 @@ export default class ServerBoardOrders {
 
 		validTargets = validTargets.filter(unit => unit.isAlive())
 		validTargets.forEach(targetUnit => {
-			const attack = orderedUnit.card.getAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.BOARD_ROW) + orderedUnit.card.getBonusAttackDamage(orderedUnit, targetUnit, targetMode, TargetType.BOARD_ROW)
-			targetUnit.dealDamage(ServerDamageInstance.fromUnit(attack, orderedUnit))
+			targetUnit.dealDamage(ServerDamageInstance.fromUnit(0, orderedUnit))
 		})
 
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)

@@ -15,14 +15,19 @@ import BuffStrength from '../../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
-import {mapRelatedCards} from '../../../../../utils/Utils'
 
 export default class SpellNightmareDrain extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
-		this.basePower = 4
-		this.baseFeatures = [CardFeature.HERO_POWER]
-		this.baseRelatedCards = [UnitShadowspawn]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.HERO_POWER],
+			relatedCards: [UnitShadowspawn],
+			stats: {
+				cost: 4
+			}
+		})
 
 		/* Create basic unit if no target available */
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
@@ -41,7 +46,7 @@ export default class SpellNightmareDrain extends ServerCard {
 		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
 			.singleTarget()
 			.allow(TargetType.UNIT)
-			.validate(TargetType.UNIT, args => args.targetCard.power < args.targetCard.basePower)
+			.validate(TargetType.UNIT, args => args.targetCard.stats.power < args.targetCard.stats.basePower)
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
@@ -49,7 +54,7 @@ export default class SpellNightmareDrain extends ServerCard {
 		const targetRow = this.game.board.getRowWithDistanceToFront(this.owner, 0)
 		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, this.owner, targetRow.index, targetRow.cards.length)
 
-		const missingHealth = target.card.basePower - target.card.power
+		const missingHealth = target.card.stats.basePower - target.card.stats.power
 
 		if (missingHealth <= 0) {
 			return

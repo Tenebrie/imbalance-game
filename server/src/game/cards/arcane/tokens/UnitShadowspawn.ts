@@ -6,7 +6,13 @@ import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitShadowspawn extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.TOKEN, CardFaction.ARCANE)
-		this.basePower = 2
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.TOKEN,
+			faction: CardFaction.ARCANE,
+			stats: {
+				power: 2,
+			}
+		})
 	}
 }

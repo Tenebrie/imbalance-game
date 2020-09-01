@@ -17,10 +17,15 @@ export default class UnitChargingKnight extends ServerCard {
 	movesForwardThisTurn = 0
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
-		this.basePower = 10
-		this.baseAttack = 2
-		this.baseTribes = [CardTribe.HUMAN]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NEUTRAL,
+			tribes: [CardTribe.HUMAN],
+			stats: {
+				power: 10,
+			}
+		})
 
 		this.createCallback<UnitMovedEventArgs>(GameEventType.UNIT_MOVED, [CardLocation.BOARD])
 			.require(({ direction }) => direction === MoveDirection.FORWARD)

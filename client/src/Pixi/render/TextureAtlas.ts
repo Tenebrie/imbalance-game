@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
-import CardMessage from '@shared/models/network/CardMessage'
 import Notifications from '@/utils/Notifications'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default class TextureAtlas {
 	static textures: { [ index: string ]: PIXI.Texture }
@@ -34,8 +34,9 @@ export default class TextureAtlas {
 				'board/row-enemy',
 				'board/power-allied',
 				'board/power-enemy',
-				'cards/unitCardBack',
-				'cards/spellCardBack',
+				'cards/unitHidden',
+				'cards/spellHidden',
+				'cards/tokenPlaceholder',
 				'components/bg-power',
 				'components/bg-power-zoom',
 				'components/bg-armor',
@@ -138,7 +139,7 @@ export default class TextureAtlas {
 	private static loadTextureOnDemand(path: string): PIXI.Texture {
 		console.info(`Loading '${path}' on demand`)
 		const loadedTexture = PIXI.Texture.from(`/assets/${path}.png`)
-		const clone = this.textures['cards/unitCardBack'.toLowerCase()].clone()
+		const clone = this.textures['cards/tokenPlaceholder'.toLowerCase()].clone()
 		loadedTexture.on('update', () => {
 			clone.baseTexture = loadedTexture.baseTexture
 			this.textures[path.toLowerCase()] = loadedTexture

@@ -13,13 +13,19 @@ export default class UnitSupplyWagon extends ServerCard {
 	pushDistance = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
-		this.basePower = 4
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NEUTRAL,
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 4,
+			}
+		})
 		this.dynamicTextVariables = {
 			extraPower: this.extraPower,
 			pushDistance: this.pushDistance
 		}
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

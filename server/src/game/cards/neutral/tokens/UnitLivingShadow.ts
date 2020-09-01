@@ -6,7 +6,13 @@ import CardFaction from '@shared/enums/CardFaction'
 
 export default class UnitLivingShadow extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.TOKEN, CardFaction.NEUTRAL)
-		this.basePower = 0
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.TOKEN,
+			faction: CardFaction.NEUTRAL,
+			stats: {
+				power: 0,
+			}
+		})
 	}
 }

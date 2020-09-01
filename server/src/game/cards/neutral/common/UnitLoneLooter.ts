@@ -10,9 +10,15 @@ import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitLoneLooter extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
-		this.basePower = 3
-		this.baseFeatures = [CardFeature.KEYWORD_SUMMON]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NEUTRAL,
+			features: [CardFeature.KEYWORD_SUMMON],
+			stats: {
+				power: 3,
+			}
+		})
 
 		this.createCallback<BuffCreatedEventArgs>(GameEventType.BUFF_CREATED, [CardLocation.DECK])
 			.require(({ triggeringBuff }) => triggeringBuff.card.owner !== this.owner)

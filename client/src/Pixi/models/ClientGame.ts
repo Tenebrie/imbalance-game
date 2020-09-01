@@ -2,18 +2,14 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Core from '@/Pixi/Core'
 import Card from '@shared/models/Card'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import CardMessage from '@shared/models/network/CardMessage'
 import Buff from '@shared/models/Buff'
-import BuffMessage from '@shared/models/network/BuffMessage'
+import CardMessage from '@shared/models/network/card/CardMessage'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 
 export default class ClientGame {
-	currentTime: number
-	maximumTime: number
 	turnPhase: GameTurnPhase
 
 	constructor() {
-		this.currentTime = 0
-		this.maximumTime = 1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 	}
 

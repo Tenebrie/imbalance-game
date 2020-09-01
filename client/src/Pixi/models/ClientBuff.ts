@@ -1,12 +1,12 @@
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import BuffStackType from '@shared/enums/BuffStackType'
-import BuffMessage from '@shared/models/network/BuffMessage'
 import Buff from '@shared/models/Buff'
 import Core from '@/Pixi/Core'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffFeature from '@shared/enums/BuffFeature'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 
 export default class ClientBuff implements Buff {
 	id: string

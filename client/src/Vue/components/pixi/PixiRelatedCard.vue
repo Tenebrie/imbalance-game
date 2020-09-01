@@ -5,8 +5,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
-import CardMessage from '@shared/models/network/CardMessage'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default Vue.extend({
 	components: {

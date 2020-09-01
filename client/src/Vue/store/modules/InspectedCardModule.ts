@@ -3,7 +3,7 @@ import Card from '@shared/models/Card'
 import store, {moduleActionContext} from '@/Vue/store'
 import Core from '@/Pixi/Core'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import CardMessage from '@shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 const InspectedCardModule = createModule({
 	namespaced: true,

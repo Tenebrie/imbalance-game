@@ -7,16 +7,21 @@ import SpellLightningStorm from '../tokens/SpellLightningStorm'
 import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
-import {mapRelatedCards} from '../../../../utils/Utils'
 
 export default class UnitMerfolkStormcaller extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NATURE)
-		this.basePower = 4
-		this.baseTribes = [CardTribe.MERFOLK]
-		this.sortPriority = 1
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
-		this.baseRelatedCards = [SpellLightningStorm]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NATURE,
+			tribes: [CardTribe.MERFOLK],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
+			relatedCards: [SpellLightningStorm],
+			sortPriority: 1,
+			stats: {
+				power: 4,
+			}
+		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

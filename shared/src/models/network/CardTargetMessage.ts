@@ -2,7 +2,7 @@ import Card from '../Card'
 import CardTarget from '../CardTarget'
 import TargetMode from '../../enums/TargetMode'
 import TargetType from '../../enums/TargetType'
-import CardMessage from '../network/CardMessage'
+import OpenCardMessage from './card/OpenCardMessage'
 
 export default class CardTargetMessage {
 	targetMode: TargetMode
@@ -14,7 +14,7 @@ export default class CardTargetMessage {
 	targetUnitId: string
 	targetRowIndex: number
 	targetLabel: string
-	targetCardData: CardMessage
+	targetCardData: OpenCardMessage
 
 	constructor(order: CardTarget) {
 		this.targetMode = order.targetMode
@@ -47,6 +47,6 @@ export default class CardTargetMessage {
 	}
 
 	public attachTargetCardData(card: Card): void {
-		this.targetCardData = new CardMessage(card)
+		this.targetCardData = new OpenCardMessage(card)
 	}
 }

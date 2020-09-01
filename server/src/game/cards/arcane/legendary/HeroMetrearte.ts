@@ -13,9 +13,15 @@ import GameEventType from '@shared/enums/GameEventType'
 
 export default class HeroMetrearte extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
-		this.basePower = 5
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 5
+			}
+		})
 
 		this.addRelatedCards()
 			.requireColor(CardColor.LEADER)

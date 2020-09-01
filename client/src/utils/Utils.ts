@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js'
-import CardMessage from '@shared/models/network/CardMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardType from '@shared/enums/CardType'
 import CardFeature from '@shared/enums/CardFeature'
@@ -8,6 +7,7 @@ import CardColor from '@shared/enums/CardColor'
 import Constants from '@shared/Constants'
 import store from '@/Vue/store'
 import RichTextVariables from '@shared/models/RichTextVariables'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 export const forEachInNumericEnum = (enumeration: Enumerator, handler: (val: any) => any): void => {
 	for (const value in enumeration) {
@@ -125,8 +125,8 @@ export default {
 			return (
 				(+a.features.includes(CardFeature.LOW_SORT_PRIORITY) - +b.features.includes(CardFeature.LOW_SORT_PRIORITY)) ||
 				(a.type - b.type) ||
-				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+				(a.type === CardType.UNIT && (a.color - b.color || b.stats.basePower - a.stats.basePower || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
+				(a.type === CardType.SPELL && (a.color - b.color || a.stats.baseSpellCost - b.stats.baseSpellCost || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
 			)
 		})
 	},
@@ -135,8 +135,8 @@ export default {
 		return inputArray.slice().sort((a: CardMessage, b: CardMessage) => {
 			return (
 				(a.type - b.type) ||
-				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+				(a.type === CardType.UNIT && (a.color - b.color || b.stats.basePower - a.stats.basePower || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
+				(a.type === CardType.SPELL && (a.color - b.color || a.stats.basePower - b.stats.basePower || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
 			)
 		})
 	},

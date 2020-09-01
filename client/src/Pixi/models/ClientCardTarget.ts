@@ -7,7 +7,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import Card from '@shared/models/Card'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import CardMessage from '@shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default class ClientCardTarget implements CardTarget {
 	targetMode: TargetMode

@@ -11,10 +11,16 @@ import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroUrvial extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NATURE)
-		this.basePower = 8
-		this.baseTribes = [CardTribe.MERFOLK]
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.NATURE,
+			tribes: [CardTribe.MERFOLK],
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 8,
+			}
+		})
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)

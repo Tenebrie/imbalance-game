@@ -11,12 +11,18 @@ import {mapRelatedCards} from '../../../../utils/Utils'
 
 export default class UnitMerfolkEnchantress extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NATURE)
-		this.basePower = 4
-		this.baseTribes = [CardTribe.MERFOLK]
-		this.sortPriority = 1
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
-		this.baseRelatedCards = [SpellEnchantedStorm]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NATURE,
+			tribes: [CardTribe.MERFOLK],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
+			relatedCards: [SpellEnchantedStorm],
+			sortPriority: 1,
+			stats: {
+				power: 4,
+			},
+		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

@@ -1,9 +1,5 @@
 import BoardRow from './BoardRow'
 
-export default class Board {
+export default interface Board {
 	rows: BoardRow[]
-
-	constructor() {
-		this.rows = []
-	}
 }

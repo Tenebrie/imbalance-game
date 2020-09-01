@@ -13,10 +13,16 @@ import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroArgenta extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NEUTRAL)
-		this.basePower = 4
-		this.baseTribes = [CardTribe.BIRD]
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.NEUTRAL,
+			tribes: [CardTribe.BIRD],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
+			stats: {
+				power: 4,
+			}
+		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))

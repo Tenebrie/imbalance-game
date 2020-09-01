@@ -18,11 +18,16 @@ export default class SpellScrollOfBlinding extends ServerCard {
 	buffDuration = 3
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.TOKEN, CardFaction.ARCANE)
-
-		this.basePower = 4
-		this.baseTribes = [CardTribe.SCROLL]
-		this.baseFeatures = [CardFeature.KEYWORD_BUFF_STUN]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.TOKEN,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.SCROLL],
+			features: [CardFeature.KEYWORD_BUFF_STUN],
+			stats: {
+				cost: 4,
+			}
+		})
 		this.dynamicTextVariables = {
 			buffDuration: this.buffDuration
 		}

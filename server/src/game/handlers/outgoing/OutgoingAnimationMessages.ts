@@ -3,6 +3,7 @@ import ServerAnimation from '../../models/ServerAnimation'
 import AnimationMessage from '@shared/models/network/AnimationMessage'
 import ServerGame from '../../models/ServerGame'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
+import {AnimationMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 export default {
 	triggerAnimation(game: ServerGame, animation: ServerAnimation): void {
@@ -31,19 +32,19 @@ export default {
 
 	triggerAnimationForPlayer(player: ServerPlayer, animation: ServerAnimation): void {
 		player.sendMessage({
-			type: 'animation/generic',
+			type: AnimationMessageType.PLAY,
 			data: new AnimationMessage(animation)
 		})
 	},
 
 	createAnimationThreadForPlayer(player: ServerPlayer, isStaggered: boolean): void {
 		player.sendMessage({
-			type: 'animation/createThread',
+			type: AnimationMessageType.THREAD_CREATE,
 			data: undefined,
 			highPriority: true
 		})
 		player.sendMessage({
-			type: 'animation/startThread',
+			type: AnimationMessageType.THREAD_START,
 			data: new AnimationThreadStartMessage(isStaggered),
 			allowBatching: true,
 			ignoreWorkerThreads: true
@@ -52,7 +53,7 @@ export default {
 
 	commitAnimationThreadForPlayer(player: ServerPlayer): void {
 		player.sendMessage({
-			type: 'animation/commitThread',
+			type: AnimationMessageType.THREAD_COMMIT,
 			data: undefined,
 			highPriority: true,
 		})

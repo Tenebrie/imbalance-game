@@ -15,9 +15,15 @@ import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroKroLah extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
-		this.basePower = 7
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN],
+			stats: {
+				power: 7
+			}
+		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))

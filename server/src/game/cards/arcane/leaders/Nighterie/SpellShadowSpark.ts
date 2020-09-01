@@ -20,12 +20,17 @@ export default class SpellShadowSpark extends ServerCard {
 	baseDamage = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
-
-		this.basePower = 2
-		this.baseTribes = [CardTribe.SPARK]
-		this.baseFeatures = [CardFeature.HERO_POWER]
-		this.baseRelatedCards = [UnitShadowspawn]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.SPARK],
+			features: [CardFeature.HERO_POWER],
+			relatedCards: [UnitShadowspawn],
+			stats: {
+				cost: 2
+			}
+		})
 		this.dynamicTextVariables = {
 			damage: () => this.damage
 		}

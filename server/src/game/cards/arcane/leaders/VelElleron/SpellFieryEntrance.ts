@@ -9,10 +9,15 @@ import BotCardEvaluation from '../../../../AI/BotCardEvaluation'
 
 export default class SpellFieryEntrance extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
-
-		this.basePower = 8
-		this.baseFeatures = [CardFeature.HERO_POWER, CardFeature.KEYWORD_SUMMON]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_SUMMON],
+			stats: {
+				cost: 8
+			}
+		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
@@ -26,6 +31,6 @@ export default class SpellFieryEntrance extends ServerCard {
 
 class CustomBotEvaluation extends BotCardEvaluation {
 	get expectedValue(): number {
-		return this.card.basePower * 2
+		return this.card.stats.basePower * 2
 	}
 }

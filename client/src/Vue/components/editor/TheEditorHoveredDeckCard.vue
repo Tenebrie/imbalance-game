@@ -14,7 +14,7 @@ import store from '@/Vue/store'
 import * as PIXI from 'pixi.js'
 import {computed, ref} from '@vue/composition-api'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
-import CardMessage from '@shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default {
 	components: {

@@ -5,13 +5,14 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import Constants from '@shared/Constants'
 
-export default class ServerBoardRow extends BoardRow {
+export default class ServerBoardRow implements BoardRow {
+	index: number
 	game: ServerGame
 	owner: ServerPlayerInGame | null
 	cards: ServerUnit[]
 
 	constructor(game: ServerGame, index: number) {
-		super(index)
+		this.index = index
 		this.game = game
 		this.owner = null
 		this.cards = []
@@ -27,20 +28,16 @@ export default class ServerBoardRow extends BoardRow {
 
 	public insertUnit(unit: ServerUnit, ordinal: number): void {
 		this.insertUnitLocally(unit, ordinal)
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutUnitCreated(playerInGame.player, unit, this.index, ordinal)
-		})
+		OutgoingMessageHandlers.notifyAboutUnitCreated(unit)
 	}
 
 	public removeUnitLocally(targetCard: ServerUnit): void {
 		this.cards = this.cards.filter(cardOnBoard => cardOnBoard !== targetCard)
 	}
 
-	public removeUnit(targetCard: ServerUnit): void {
-		this.removeUnitLocally(targetCard)
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutUnitDestroyed(playerInGame.player, targetCard)
-		})
+	public removeUnit(unit: ServerUnit): void {
+		this.removeUnitLocally(unit)
+		OutgoingMessageHandlers.notifyAboutUnitDestroyed(unit)
 	}
 
 	public setOwner(player: ServerPlayerInGame | null): void {

@@ -2,7 +2,7 @@ import {createModule} from 'direct-vuex'
 import * as PIXI from 'pixi.js'
 import Card from '@shared/models/Card'
 import store, {moduleActionContext} from '@/Vue/store'
-import CardMessage from '@shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 const HoveredDeckCardModule = createModule({
 	namespaced: true,

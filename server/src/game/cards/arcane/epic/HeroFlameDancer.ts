@@ -17,13 +17,19 @@ export default class HeroFlameDancer extends ServerCard {
 	burnDuration = 3
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
-		this.basePower = 5
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_DEPLOY],
+			generatedArtworkMagicString: '2',
+			stats: {
+				power: 5
+			}
+		})
 		this.dynamicTextVariables = {
 			burnDuration: this.burnDuration
 		}
-		this.generatedArtworkMagicString = '2'
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))

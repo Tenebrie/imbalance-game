@@ -1,11 +1,11 @@
-import * as PIXI from 'pixi.js'
 import Core from '@/Pixi/Core'
 import Utils from '@/utils/Utils'
 import CardHand from '@shared/models/CardHand'
-import CardMessage from '@shared/models/network/CardMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import CardHandMessage from '@shared/models/network/CardHandMessage'
 import CardType from '@shared/enums/CardType'
+import CardMessage from '@shared/models/network/card/CardMessage'
+import CardHandMessage from '@shared/models/network/cardHand/CardHandMessage'
+import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 
 export default class RenderedCardHand implements CardHand {
 	unitCards: RenderedCard[]
@@ -49,7 +49,7 @@ export default class RenderedCardHand implements CardHand {
 		return this.unitCards.find(renderedCard => renderedCard.id === cardId) || this.spellCards.find(renderedCard => renderedCard.id === cardId) || null
 	}
 
-	public reveal(data: CardMessage): RenderedCard {
+	public reveal(data: OpenCardMessage): RenderedCard {
 		const card = this.findCardById(data.id)
 		if (!card) {
 			return

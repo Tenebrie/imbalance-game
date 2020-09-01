@@ -16,14 +16,13 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import BuffSappedCard from '../buffs/BuffSappedCard'
 import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
 
-export default class ServerBoard extends Board {
+export default class ServerBoard implements Board {
 	readonly game: ServerGame
 	readonly rows: ServerBoardRow[]
 	readonly orders: ServerBoardOrders
 	readonly unitsBeingDestroyed: ServerUnit[]
 
 	constructor(game: ServerGame) {
-		super()
 		this.game = game
 		this.rows = []
 		this.orders = new ServerBoardOrders(game)
@@ -57,7 +56,7 @@ export default class ServerBoard extends Board {
 	}
 
 	public getTotalPlayerPower(playerInGame: ServerPlayerInGame): number {
-		return this.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card.power).reduce((total, value) => total + value, 0)
+		return this.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card.stats.power).reduce((total, value) => total + value, 0)
 	}
 
 	public getHorizontalUnitDistance(first: ServerUnit, second: ServerUnit): number {
@@ -191,9 +190,8 @@ export default class ServerBoard extends Board {
 
 		fromRow.removeUnitLocally(unit)
 		targetRow.insertUnitLocally(unit, unitIndex)
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutUnitMoved(playerInGame.player, unit, rowIndex, unitIndex)
-		})
+		OutgoingMessageHandlers.notifyAboutUnitMoved(unit)
+
 		this.game.animation.play(ServerAnimation.unitMove())
 		this.game.events.postEvent(GameEventCreators.unitMoved({
 			triggeringUnit: unit,
@@ -273,7 +271,7 @@ export default class ServerBoard extends Board {
 			targetUnit: unit
 		})
 		if (hookValues.destructionPrevented) {
-			card.setPower(0)
+			card.stats.power = 0
 			this.unitsBeingDestroyed.splice(this.unitsBeingDestroyed.indexOf(unit), 1)
 			return
 		}
@@ -282,10 +280,9 @@ export default class ServerBoard extends Board {
 			triggeringUnit: unit
 		}))
 
-		this.removeUnit(unit)
-
-		card.setPower(0)
 		card.cleanse()
+		card.stats.power = 0
+		this.removeUnit(unit)
 
 		unit.owner.cardGraveyard.addUnit(card)
 

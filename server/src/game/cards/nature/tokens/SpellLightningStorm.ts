@@ -22,10 +22,15 @@ export default class SpellLightningStorm extends ServerCard {
 	targetsHit = []
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.TOKEN, CardFaction.NATURE)
-
-		this.basePower = 0
-		this.baseTribes = [CardTribe.STORM]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.TOKEN,
+			faction: CardFaction.NATURE,
+			tribes: [CardTribe.STORM],
+			stats: {
+				cost: 0,
+			}
+		})
 		this.dynamicTextVariables = {
 			damage: this.damage,
 			targetCount: () => this.targetCount,

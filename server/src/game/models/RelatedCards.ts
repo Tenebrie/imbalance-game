@@ -2,6 +2,8 @@ import ServerCard from './ServerCard'
 import CardTribe from '@shared/enums/CardTribe'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import {CardConstructor} from '../libraries/CardLibrary'
+import {getClassFromConstructor} from '../../utils/Utils'
 
 export default class RelatedCards {
 	private readonly __conditions: ((card: ServerCard) => boolean)[]
@@ -22,6 +24,11 @@ export default class RelatedCards {
 	 */
 	require(condition: (card: ServerCard) => boolean): RelatedCards {
 		this.__conditions.push(condition)
+		return this
+	}
+
+	requireExact(target: CardConstructor): RelatedCards {
+		this.__conditions.push((card) => card.class === getClassFromConstructor(target))
 		return this
 	}
 

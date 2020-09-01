@@ -3,7 +3,6 @@ import {createModule} from 'direct-vuex'
 import axios from 'axios'
 import {moduleActionContext} from '@/Vue/store'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
-import CardMessage from '@shared/models/network/CardMessage'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import Utils from '@/utils/Utils'
 import Constants from '@shared/Constants'
@@ -12,6 +11,7 @@ import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import CardFaction from '@shared/enums/CardFaction'
 import HoveredDeckCardModule from '@/Vue/store/modules/HoveredDeckCardModule'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 const editorModule = createModule({
 	namespaced: true,

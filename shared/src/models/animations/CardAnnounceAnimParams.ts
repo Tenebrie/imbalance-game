@@ -1,7 +1,7 @@
-import CardMessage from '../network/CardMessage'
+import OpenCardMessage from '../network/card/OpenCardMessage'
 
 type CardAnnounceAnimParams = {
-	cardMessage: CardMessage
+	cardMessage: OpenCardMessage
 }
 
 export default CardAnnounceAnimParams

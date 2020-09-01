@@ -10,9 +10,13 @@ export default class LeaderVelRaminea extends ServerCard {
 	manaPerRound = 10
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.LEADER, CardFaction.EXPERIMENTAL)
-		this.basePower = 0
-		this.sortPriority = 1
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.LEADER,
+			faction: CardFaction.EXPERIMENTAL,
+			sortPriority: 1,
+			isExperimental: true
+		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound
 		}

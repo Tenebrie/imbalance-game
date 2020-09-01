@@ -22,12 +22,11 @@ export default class BuffDecayingArmor extends ServerBuff {
 	}
 
 	private onCreated(): void {
-		this.card.setMaxArmor(this.card.maxArmor + 1)
-		this.card.setArmor(this.card.armor + 1)
+		this.card.stats.maxArmor = this.card.stats.maxArmor + 1
 	}
 
 	private onDestroyed(): void {
-		this.card.setMaxArmor(this.card.maxArmor - 1)
+		this.card.stats.maxArmor = this.card.stats.maxArmor - 1
 	}
 
 	private onTurnStarted(): void {

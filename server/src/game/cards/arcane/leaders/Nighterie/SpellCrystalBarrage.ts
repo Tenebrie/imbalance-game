@@ -14,14 +14,19 @@ import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitVolatileCrystal from '../../tokens/UnitVolatileCrystal'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
-import {mapRelatedCards} from '../../../../../utils/Utils'
 
 export default class SpellCrystalBarrage extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
-		this.basePower = 6
-		this.baseFeatures = [CardFeature.HERO_POWER]
-		this.baseRelatedCards = [UnitVolatileCrystal]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.HERO_POWER],
+			relatedCards: [UnitVolatileCrystal],
+			stats: {
+				cost: 6
+			}
+		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))

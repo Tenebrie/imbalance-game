@@ -11,10 +11,15 @@ import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellFlameweave extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.EXPERIMENTAL)
-
-		this.basePower = 1
-		this.baseFeatures = [CardFeature.HERO_POWER]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.EXPERIMENTAL,
+			features: [CardFeature.HERO_POWER],
+			stats: {
+				cost: 1
+			}
+		})
 		this.dynamicTextVariables = {
 			currentStacks: () => this.currentStacks
 		}

@@ -12,9 +12,15 @@ export default class HeroAdventuringGuildMaster extends ServerCard {
 	powerPerCard = 5
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.NEUTRAL)
-		this.basePower = 10
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.NEUTRAL,
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 10,
+			}
+		})
 		this.dynamicTextVariables = {
 			powerPerCard: this.powerPerCard
 		}

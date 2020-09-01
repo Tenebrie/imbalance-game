@@ -1,14 +1,8 @@
 import Unit from './Unit'
 import PlayerInGame from './PlayerInGame'
 
-export default class BoardRow {
+export default interface BoardRow {
 	index: number
-	owner: PlayerInGame | null
 	cards: Unit[]
-
-	constructor(index: number) {
-		this.index = index
-		this.owner = null
-		this.cards = []
-	}
+	owner: PlayerInGame | null
 }

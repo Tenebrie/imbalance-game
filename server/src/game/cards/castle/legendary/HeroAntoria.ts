@@ -12,9 +12,15 @@ import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 
 export default class HeroAntoria extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.CASTLE)
-		this.basePower = 15
-		this.baseTribes = [CardTribe.VALKYRIE]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.CASTLE,
+			tribes: [CardTribe.VALKYRIE],
+			stats: {
+				power: 15,
+			}
+		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>(GameHookType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
@@ -35,6 +41,6 @@ export default class HeroAntoria extends ServerCard {
 
 class CustomBotEvaluation extends BotCardEvaluation {
 	get expectedValue(): number {
-		return this.card.power - 1
+		return this.card.stats.power - 1
 	}
 }

@@ -148,8 +148,8 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public setMorale(morale: number): void {
 		this.morale = morale
 		const opponent = this.game.getOpponent(this)
-		OutgoingMessageHandlers.notifyAboutPlayerMoraleChange(this.player, this)
-		OutgoingMessageHandlers.notifyAboutOpponentMoraleChange(opponent.player, this)
+		OutgoingMessageHandlers.notifyAboutMoraleChange(this.player, this)
+		OutgoingMessageHandlers.notifyAboutMoraleChange(opponent.player, this)
 	}
 
 	public setUnitMana(value: number): void {
@@ -158,7 +158,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		const delta = value - this.unitMana
 
 		this.unitMana = value
-		OutgoingMessageHandlers.notifyAboutUnitManaChange(this, delta)
+		OutgoingMessageHandlers.notifyAboutManaChange(this, delta)
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this)
 	}
 
@@ -172,7 +172,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		const delta = value - this.spellMana
 
 		this.spellMana = value
-		OutgoingMessageHandlers.notifyAboutSpellManaChange(this, delta)
+		OutgoingMessageHandlers.notifyAboutManaChange(this, delta)
 	}
 
 	public addToPlayedCards(card: ServerCard): void {

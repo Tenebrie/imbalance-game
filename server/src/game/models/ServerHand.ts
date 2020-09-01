@@ -26,7 +26,7 @@ export default class ServerHand {
 
 	public addUnit(card: ServerCard): void {
 		this.unitCards.push(card)
-		OutgoingMessageHandlers.notifyAboutUnitCardAdded(this.owner, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToHand(this.owner, card)
 		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
 			this.game.animation.playForPlayer(ServerAnimation.cardDraw(), this.owner.opponent)
 		}
@@ -34,7 +34,7 @@ export default class ServerHand {
 
 	public addSpell(card: ServerCard): void {
 		this.spellCards.push(card)
-		OutgoingMessageHandlers.notifyAboutSpellCardAdded(this.owner, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToHand(this.owner, card)
 		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
 			this.game.animation.playForPlayer(ServerAnimation.cardDraw(), this.owner.opponent)
 		}

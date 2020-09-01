@@ -5,8 +5,8 @@ export default class CardVariablesMessage {
 	cardId: string
 	cardVariables: RichTextVariables
 
-	constructor(card: Card, cardVariables: RichTextVariables) {
+	constructor(card: Card) {
 		this.cardId = card.id
-		this.cardVariables = cardVariables
+		this.cardVariables = card.variables
 	}
 }

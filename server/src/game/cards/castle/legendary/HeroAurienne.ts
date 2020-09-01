@@ -12,9 +12,15 @@ import ServerUnit from '../../../models/ServerUnit'
 
 export default class HeroAurienne extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.CASTLE)
-		this.basePower = 11
-		this.baseTribes = [CardTribe.VALKYRIE]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.CASTLE,
+			tribes: [CardTribe.VALKYRIE],
+			stats: {
+				power: 11,
+			}
+		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED, [CardLocation.HAND])
@@ -45,6 +51,6 @@ export default class HeroAurienne extends ServerCard {
 
 class CustomBotEvaluation extends BotCardEvaluation {
 	get expectedValue(): number {
-		return this.card.power - 1
+		return this.card.stats.power - 1
 	}
 }

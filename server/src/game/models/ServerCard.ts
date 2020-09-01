@@ -18,7 +18,8 @@ import CardColor from '@shared/enums/CardColor'
 import ServerBuffContainer from './ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import RichTextVariables from '@shared/models/RichTextVariables'
-import GameLibrary, {CardConstructor} from '../libraries/CardLibrary'
+import GameLibrary from '../libraries/CardLibrary'
+import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
@@ -35,43 +36,137 @@ import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
 import Utils, {getClassFromConstructor} from '../../utils/Utils'
 import ServerAnimation from './ServerAnimation'
-import CardLibrary from '../libraries/CardLibrary'
 import RelatedCardsDefinition from './RelatedCards'
+import ServerCardStats from './ServerCardStats'
 
-export default class ServerCard extends Card {
-	game: ServerGame
-	isRevealed = false
-	buffs = new ServerBuffContainer(this)
-	dynamicTextVariables: ServerRichTextVariables
-	generatedArtworkMagicString = ''
-	botEvaluation: BotCardEvaluation
+interface ServerCardBaseProps {
+	faction: CardFaction
+	tribes?: CardTribe | CardTribe[]
+	features?: CardFeature | CardFeature[]
+	relatedCards?: CardConstructor | CardConstructor[]
+	sortPriority?: number
+	isExperimental?: boolean
+	generatedArtworkMagicString?: string
+}
 
-	baseRelatedCards: CardConstructor[]
-	customRelatedCards: RelatedCardsDefinition[]
+interface ServerCardLeaderProps extends ServerCardBaseProps {
+	color: CardColor.LEADER
+	isCollectible?: boolean
+}
 
-	isDead = false
+interface ServerCardUnitProps extends ServerCardBaseProps{
+	type: CardType.UNIT
+	color: CardColor.GOLDEN | CardColor.SILVER | CardColor.BRONZE | CardColor.TOKEN
+	stats: {
+		power: number
+		armor?: number
+	}
+	isCollectible?: boolean
+}
 
-	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor, faction: CardFaction) {
-		super(uuidv4(), cardType, 'missingno')
+interface ServerCardSpellProps extends ServerCardBaseProps {
+	type: CardType.SPELL
+	color: CardColor.GOLDEN | CardColor.SILVER | CardColor.BRONZE | CardColor.TOKEN
+	stats: {
+		cost: number
+	}
+}
+
+export type ServerCardProps = ServerCardLeaderProps | ServerCardUnitProps | ServerCardSpellProps
+
+export default class ServerCard implements Card {
+	public readonly id: string = uuidv4()
+	public readonly game: ServerGame
+
+	public readonly type: CardType
+	public readonly class: string
+	public readonly color: CardColor
+	public readonly faction: CardFaction
+
+	public readonly name: string
+	public readonly title: string
+	public readonly flavor: string
+	public readonly description: string
+
+	public readonly stats: ServerCardStats
+	public readonly buffs: ServerBuffContainer = new ServerBuffContainer(this)
+	public readonly baseTribes: CardTribe[]
+	public readonly baseFeatures: CardFeature[]
+	public readonly sortPriority: number
+
+	public dynamicTextVariables: ServerRichTextVariables = {}
+	public botEvaluation: BotCardEvaluation = new BotCardEvaluation(this)
+	public readonly generatedArtworkMagicString: string
+
+	public readonly baseRelatedCards: CardConstructor[] = []
+	public readonly customRelatedCards: RelatedCardsDefinition[] = []
+
+	public readonly isCollectible: boolean
+	public readonly isExperimental: boolean
+
+	public isRevealed = false
+	public isDead = false
+
+	constructor(game: ServerGame, props: ServerCardProps) {
 		this.game = game
-		this.color = unitSubtype
-		this.faction = faction
-		this.dynamicTextVariables = {}
-		this.botEvaluation = new BotCardEvaluation(this)
-		this.baseRelatedCards = []
-		this.customRelatedCards = []
+		this.class = getClassFromConstructor(this.constructor as CardConstructor)
+
+		this.type = props.color === CardColor.LEADER ? CardType.UNIT : props.type
+		this.color = props.color
+		this.faction = props.faction
+
+		if (props.tribes === undefined) {
+			this.baseTribes = []
+		} else if (typeof(props.tribes) === 'object') {
+			this.baseTribes = props.tribes
+		} else {
+			this.baseTribes = [props.tribes]
+		}
+
+		if (props.features === undefined) {
+			this.baseFeatures = []
+		} else if (typeof(props.features) === 'object') {
+			this.baseFeatures = props.features
+		} else {
+			this.baseFeatures = [props.features]
+		}
+
+		if (props.relatedCards === undefined) {
+			this.baseRelatedCards = []
+		} else if (typeof(props.relatedCards) === 'object') {
+			this.baseRelatedCards = props.relatedCards
+		} else {
+			this.baseRelatedCards = [props.relatedCards]
+		}
+
+		const statsProps = {
+			basePower: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
+			baseArmor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
+			baseSpellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0
+		}
+		this.stats = new ServerCardStats(this, statsProps)
+
+		this.name = `card.${this.class}.name`
+		this.title = `card.${this.class}.title`
+		this.flavor = `card.${this.class}.flavor`
+		this.description = `card.${this.class}.description`
+
+		this.sortPriority = props.sortPriority ? props.sortPriority : 0
+		this.isCollectible = props.color !== CardColor.LEADER && props.type === CardType.UNIT && props.isCollectible !== undefined ? props.isCollectible : false
+		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
+		this.generatedArtworkMagicString = props.generatedArtworkMagicString ? props.generatedArtworkMagicString : ''
 
 		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, validLocations)
 			.forceIgnoreControlEffects()
 			.require(({ triggeringCard }) => triggeringCard === this)
-			.require(({ triggeringCard }) => triggeringCard.power <= 0)
-			.require(({ triggeringCard, powerDamageInstance }) => (powerDamageInstance && powerDamageInstance.value > 0) || triggeringCard.armor === 0)
+			.require(({ triggeringCard }) => triggeringCard.stats.power <= 0)
+			.require(({ triggeringCard, powerDamageInstance }) => (powerDamageInstance && powerDamageInstance.value > 0) || triggeringCard.stats.armor === 0)
 			.perform(() => this.destroy())
 	}
 
 	public get unitCost(): number {
-		let cost = 1
+		let cost = this.stats.unitCost
 		this.buffs.buffs.forEach(buff => {
 			cost = buff.getUnitCostOverride(cost)
 		})
@@ -79,7 +174,7 @@ export default class ServerCard extends Card {
 	}
 
 	public get spellCost(): number {
-		let cost = this.power
+		let cost = this.stats.spellCost
 		this.buffs.buffs.forEach(buff => {
 			cost = buff.getSpellCostOverride(cost)
 		})
@@ -100,6 +195,19 @@ export default class ServerCard extends Card {
 			features = features.concat(buff.cardFeatures.slice())
 		})
 		return features
+	}
+
+	public get variables(): RichTextVariables {
+		const evaluatedVariables: RichTextVariables = {}
+		Object.keys(this.dynamicTextVariables).forEach(key => {
+			const value = this.dynamicTextVariables[key]
+			if (typeof(value) === 'function') {
+				evaluatedVariables[key] = value()
+			} else {
+				evaluatedVariables[key] = value
+			}
+		})
+		return evaluatedVariables
 	}
 
 	public get unit(): ServerUnit | null {
@@ -153,10 +261,6 @@ export default class ServerCard extends Card {
 			.concat(customRelatedCards)
 	}
 
-	public set relatedCards(values: string[]) {
-		// Empty
-	}
-
 	public get deckPosition(): number {
 		const owner = this.owner
 		if (!owner) {
@@ -165,55 +269,9 @@ export default class ServerCard extends Card {
 		return owner.cardDeck.getCardIndex(this)
 	}
 
-	public isCollectible(): boolean {
-		return this.faction !== CardFaction.EXPERIMENTAL && this.color !== CardColor.TOKEN && this.type === CardType.UNIT
-	}
-
 	public instanceOf(prototype: CardConstructor): boolean {
 		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 		return this.class === cardClass
-	}
-
-	public setPower(value: number): void {
-		if (this.power === value) { return }
-
-		this.power = Math.min(value, this.maxPower)
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardPowerChange(playerInGame.player, this)
-		})
-	}
-
-	public setMaxPower(value: number): void {
-		if (this.maxPower === value) { return }
-
-		this.maxPower = Math.max(value, 0)
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardMaxPowerChange(playerInGame.player, this)
-		})
-		if (this.power > this.maxPower) {
-			this.setPower(this.maxPower)
-		}
-	}
-
-	public setArmor(value: number): void {
-		if (this.armor === value) { return }
-
-		this.armor = Math.min(value, this.maxArmor)
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardArmorChange(playerInGame.player, this)
-		})
-	}
-
-	public setMaxArmor(value: number): void {
-		if (this.maxArmor === value) { return }
-
-		this.maxArmor = Math.max(value, 0)
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardMaxArmorChange(playerInGame.player, this)
-		})
-		if (this.armor > this.maxArmor) {
-			this.setArmor(this.maxArmor)
-		}
 	}
 
 	public dealDamage(originalDamageInstance: ServerDamageInstance): void {
@@ -243,24 +301,24 @@ export default class ServerCard extends Card {
 		let damageToDeal = damageInstance.value
 
 		let armorDamageInstance: ServerDamageInstance | null = null
-		if (targetCard.armor > 0) {
+		if (targetCard.stats.armor > 0) {
 			armorDamageInstance = damageInstance.clone()
-			armorDamageInstance.value = Math.min(targetCard.armor, damageToDeal)
+			armorDamageInstance.value = Math.min(targetCard.stats.armor, damageToDeal)
 			damageToDeal -= armorDamageInstance.value
 		}
 
 		let powerDamageInstance: ServerDamageInstance | null = null
 		if (damageToDeal > 0) {
 			powerDamageInstance = damageInstance.clone()
-			powerDamageInstance.value = Math.min(targetCard.power, damageToDeal)
+			powerDamageInstance.value = Math.min(targetCard.stats.power, damageToDeal)
 		}
 
 		if (armorDamageInstance) {
-			targetCard.setArmor(targetCard.armor - armorDamageInstance.value)
+			targetCard.stats.maxArmor = targetCard.stats.armor - armorDamageInstance.value
 		}
 
 		if (powerDamageInstance) {
-			targetCard.setPower(targetCard.power - powerDamageInstance.value)
+			targetCard.stats.power = targetCard.stats.power - powerDamageInstance.value
 		}
 
 		this.game.events.postEvent(GameEventCreators.cardTakesDamage({
@@ -281,7 +339,7 @@ export default class ServerCard extends Card {
 		} else {
 			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
 		}
-		this.setPower(Math.min(this.maxPower, this.power + healingInstance.value))
+		this.stats.power = Math.min(this.stats.maxPower, this.stats.power + healingInstance.value)
 	}
 
 	/* Cleanse this card
@@ -317,7 +375,7 @@ export default class ServerCard extends Card {
 		})
 
 		if (hookValues.destructionPrevented) {
-			this.setPower(0)
+			this.stats.power = 0
 			this.isDead = false
 			return
 		}
@@ -531,19 +589,6 @@ export default class ServerCard extends Card {
 		return targets.build()
 	}
 
-	public evaluateVariables(): RichTextVariables {
-		const evaluatedVariables: RichTextVariables = {}
-		Object.keys(this.dynamicTextVariables).forEach(key => {
-			const value = this.dynamicTextVariables[key]
-			if (typeof(value) === 'function') {
-				evaluatedVariables[key] = value()
-			} else {
-				evaluatedVariables[key] = value
-			}
-		})
-		return evaluatedVariables
-	}
-
 	/* Subscribe to a game event
 	 * -------------------------
 	 * Create a callback for a global game event. By default, this callback will trigger regardless
@@ -606,9 +651,6 @@ export default class ServerCard extends Card {
 	onPerformingRowSupport(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
 	onBeforeBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
 	onAfterBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
-
-	getAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return this.attack }
-	getBonusAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return 0 }
 
 	getDeckAddedUnitCards(): any[] { return [] }
 	getDeckAddedSpellCards(): any[] { return [] }

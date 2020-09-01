@@ -11,11 +11,17 @@ import {mapRelatedCards} from '../../../../utils/Utils'
 
 export default class HeroTribeShaman extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.NATURE)
-		this.basePower = 6
-		this.baseTribes = [CardTribe.MERFOLK]
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE]
-		this.baseRelatedCards = [SpellHealingRain]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.NATURE,
+			tribes: [CardTribe.MERFOLK],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
+			relatedCards: [SpellHealingRain],
+			stats: {
+				power: 6,
+			}
+		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

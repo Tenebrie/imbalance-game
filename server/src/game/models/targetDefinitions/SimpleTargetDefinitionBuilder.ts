@@ -54,11 +54,6 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		return this
 	}
 
-	public inUnitRange(targetType: TargetType): SimpleTargetDefinitionBuilder {
-		this.builder.inUnitRange(this.targetMode, targetType)
-		return this
-	}
-
 	public inStaticRange(targetType: TargetType, range: number): SimpleTargetDefinitionBuilder {
 		this.builder.inStaticRange(this.targetMode, targetType, range)
 		return this

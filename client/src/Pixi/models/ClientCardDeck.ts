@@ -1,8 +1,8 @@
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import CardDeckMessage from '@shared/models/network/CardDeckMessage'
-import CardMessage from '@shared/models/network/CardMessage'
 import CardDeck from '@shared/models/CardDeck'
 import Card from '@shared/models/Card'
+import CardMessage from '@shared/models/network/card/CardMessage'
+import CardDeckMessage from '@shared/models/network/cardDeck/CardDeckMessage'
 
 export default class ClientCardDeck implements CardDeck {
 	unitCardMessages: CardMessage[]
@@ -55,7 +55,7 @@ export default class ClientCardDeck implements CardDeck {
 		return this.unitCardMessages.find(card => card.id === cardId) || this.spellCardMessages.find(card => card.id === cardId) || null
 	}
 
-	public removeCardById(cardId: string): void {
+	public destroyCardById(cardId: string): void {
 		this.unitCardMessages = this.unitCardMessages.filter(card => card.id !== cardId)
 		this.spellCardMessages = this.spellCardMessages.filter(card => card.id !== cardId)
 	}

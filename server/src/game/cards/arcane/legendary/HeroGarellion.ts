@@ -14,9 +14,15 @@ export default class HeroGarellion extends ServerCard {
 	powerPerMana = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
-		this.basePower = 12
-		this.baseFeatures = [CardFeature.KEYWORD_INFUSE_ALL]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_INFUSE_ALL],
+			stats: {
+				power: 12
+			}
+		})
 		this.dynamicTextVariables = {
 			powerPerMana: this.powerPerMana
 		}
@@ -31,7 +37,9 @@ export default class HeroGarellion extends ServerCard {
 		const consumedMana = thisUnit.owner.spellMana
 		thisUnit.owner.setSpellMana(0)
 		for (let i = 0; i < consumedMana * this.powerPerMana; i++) {
+			this.game.animation.createStaggeredAnimationThread()
 			thisUnit.buffs.add(BuffStrength, thisUnit.card, BuffDuration.INFINITY)
+			this.game.animation.commitAnimationThread()
 		}
 	}
 }

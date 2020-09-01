@@ -13,10 +13,16 @@ export default class HeroElderElemental extends ServerCard {
 	manaGenerated = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
-		this.basePower = 9
-		this.baseTribes = [CardTribe.ELEMENTAL]
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_TURN_START]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.ELEMENTAL],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_TURN_START],
+			stats: {
+				power: 9
+			}
+		})
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated
 		}

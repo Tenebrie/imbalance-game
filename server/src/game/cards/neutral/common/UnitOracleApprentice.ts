@@ -18,10 +18,16 @@ export default class UnitOracleApprentice extends ServerCard {
 	deckToLook: 'player' | 'opponent' | undefined
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
-		this.basePower = 8
-		this.baseTribes = [CardTribe.HUMAN]
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NEUTRAL,
+			tribes: [CardTribe.HUMAN],
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 8,
+			}
+		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))

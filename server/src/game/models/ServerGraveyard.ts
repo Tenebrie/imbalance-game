@@ -25,12 +25,12 @@ export default class ServerGraveyard implements CardDeck {
 
 	public addUnit(card: ServerCard): void {
 		this.unitCards.push(card)
-		OutgoingMessageHandlers.notifyAboutUnitCardInGraveyard(this.owner, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToGrave(this.owner, card)
 	}
 
 	public addSpell(card: ServerCard): void {
 		this.spellCards.push(card)
-		OutgoingMessageHandlers.notifyAboutSpellCardInGraveyard(this.owner, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToGrave(this.owner, card)
 	}
 
 	public findCardById(cardId: string): ServerCard | null {

@@ -12,13 +12,19 @@ export default class UnitArcaneElemental extends ServerCard {
 	manaGenerated = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
-		this.basePower = 7
-		this.baseTribes = [CardTribe.ELEMENTAL]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.ELEMENTAL],
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 7
+			}
+		})
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated
 		}
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
@@ -34,6 +40,6 @@ export default class UnitArcaneElemental extends ServerCard {
 class CustomBotEvaluation extends BotCardEvaluation {
 	get expectedValue(): number {
 		const card = this.card as UnitArcaneElemental
-		return card.power + card.manaGenerated * 2
+		return card.stats.power + card.manaGenerated * 2
 	}
 }

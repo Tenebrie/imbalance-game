@@ -22,9 +22,15 @@ export default class HeroTroviar extends ServerCard {
 	targetsHit = []
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NEUTRAL)
-		this.basePower = 5
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.NEUTRAL,
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 5,
+			}
+		})
 		this.dynamicTextVariables = {
 			deployDamage: this.deployDamage,
 			targetCount: this.targetCount,

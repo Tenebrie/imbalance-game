@@ -6,16 +6,20 @@ import CardFaction from '@shared/enums/CardFaction'
 import BuffImmunity from '../../../buffs/BuffImmunity'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
-import BuffAlignment from '@shared/enums/BuffAlignment'
-import ServerAnimation from '../../../models/ServerAnimation'
 import CardFeature from '@shared/enums/CardFeature'
 
 export default class HeroZamarath extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.ARCANE)
-		this.basePower = 12
-		this.baseArmor = 5
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_IMMUNITY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_IMMUNITY],
+			stats: {
+				power: 12,
+				armor: 5
+			}
+		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

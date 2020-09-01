@@ -177,6 +177,7 @@ export default Vue.extend({
 		height: 100%;
 		user-select: none;
 		pointer-events: none;
+		overflow: hidden;
 
 		&.non-interactive {
 

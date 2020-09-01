@@ -15,11 +15,16 @@ import CardFeature from '@shared/enums/CardFeature'
 
 export default class SpellScrollOfSapping extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.TOKEN, CardFaction.ARCANE)
-
-		this.basePower = 2
-		this.baseTribes = [CardTribe.SCROLL]
-		this.baseFeatures = [CardFeature.KEYWORD_BUFF_TEMPORARY_CARD]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.TOKEN,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.SCROLL],
+			features: [CardFeature.KEYWORD_BUFF_TEMPORARY_CARD],
+			stats: {
+				cost: 2,
+			}
+		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))

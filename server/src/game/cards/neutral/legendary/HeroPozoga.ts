@@ -10,18 +10,24 @@ import {mapUnitsToCards} from '../../../../utils/Utils'
 
 export default class HeroPozoga extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NEUTRAL)
-		this.basePower = 3
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.NEUTRAL,
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 3,
+			}
+		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {
-		const sortedUnits = this.game.board.getAllUnits().sort((a, b) => b.card.power - a.card.power)
-		const maximumPower = sortedUnits[0].card.power
-		const targetUnits = sortedUnits.filter(unit => unit.card.power === maximumPower)
+		const sortedUnits = this.game.board.getAllUnits().sort((a, b) => b.card.stats.power - a.card.stats.power)
+		const maximumPower = sortedUnits[0].card.stats.power
+		const targetUnits = sortedUnits.filter(unit => unit.card.stats.power === maximumPower)
 
 		this.game.animation.play(ServerAnimation.cardAttacksCards(this, mapUnitsToCards(targetUnits)))
 		targetUnits.forEach(unit => {

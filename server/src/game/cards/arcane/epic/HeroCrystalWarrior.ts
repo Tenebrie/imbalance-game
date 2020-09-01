@@ -23,9 +23,16 @@ export default class HeroCrystalWarrior extends ServerCard {
 	sacrificedUnit: SacrificedUnit | null = null
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
-		this.basePower = 7
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 7,
+				armor: 5
+			}
+		})
 		this.addRelatedCards().requireTribe(CardTribe.CRYSTAL)
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

@@ -3,8 +3,9 @@ import CardType from '@shared/enums/CardType'
 import ServerCard from '../game/models/ServerCard'
 import AsciiColor from '../enums/AsciiColor'
 import ServerUnit from '../game/models/ServerUnit'
-import CardLibrary, {CardConstructor} from '../game/libraries/CardLibrary'
-import CardTribe from '@shared/enums/CardTribe'
+import {CardConstructor} from '../game/libraries/CardLibrary'
+import CardLocation from '@shared/enums/CardLocation'
+import CardFeature from '@shared/enums/CardFeature'
 
 interface TryUntilArgs {
 	try: () => void | Promise<void>
@@ -30,6 +31,12 @@ export const generateShortId = (length: number): string => {
 		id += shortIdCharset.charAt(charIndex)
 	}
 	return id
+}
+
+export const isCardPublic = (card: ServerCard): boolean => {
+	const location = card.location
+	const isHeroPower = card.features.includes(CardFeature.HERO_POWER)
+	return (location !== CardLocation.HAND && location !== CardLocation.DECK) || (location === CardLocation.HAND && isHeroPower)
 }
 
 export const colorize = (text: string | number, color: AsciiColor): string => {
@@ -119,8 +126,8 @@ export default {
 		return inputArray.slice().sort((a: Card, b: Card) => {
 			return (
 				(a.type - b.type) ||
-				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+				(a.type === CardType.UNIT && (a.color - b.color || b.stats.power - a.stats.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
+				(a.type === CardType.SPELL && (a.color - b.color || a.stats.power - b.stats.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
 			)
 		})
 	},

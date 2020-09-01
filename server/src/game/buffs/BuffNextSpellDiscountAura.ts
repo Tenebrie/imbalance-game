@@ -20,6 +20,7 @@ export default class BuffNextSpellDiscountAura extends ServerBuff {
 			.perform(() => this.onAlliedSpellPlayed())
 
 		this.createCallback<CardDrawnEventArgs>(GameEventType.CARD_DRAWN)
+			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
 			.require(({ triggeringCard }) => triggeringCard.owner === this.card.owner)
 			.perform(({ triggeringCard }) => this.onNewCardDrawn(triggeringCard))
 	}

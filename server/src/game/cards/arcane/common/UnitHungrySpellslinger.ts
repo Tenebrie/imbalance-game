@@ -25,10 +25,16 @@ export default class UnitHungrySpellslinger extends ServerCard {
 	didInfuse = false
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.ARCANE)
-		this.basePower = 5
-		this.baseTribes = [CardTribe.ELEMENTAL]
-		this.baseFeatures = [CardFeature.KEYWORD_INFUSE_X]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.ELEMENTAL],
+			features: [CardFeature.KEYWORD_INFUSE_X],
+			stats: {
+				power: 5
+			}
+		})
 		this.dynamicTextVariables = {
 			infuseCost: this.infuseCost,
 			spellDiscount: this.spellDiscount

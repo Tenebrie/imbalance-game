@@ -12,7 +12,7 @@ import Utils from '@/utils/Utils'
 import CardColor from '@shared/enums/CardColor'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import CardType from '@shared/enums/CardType'
-import CardMessage from '@shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default Vue.extend({
 	components: {

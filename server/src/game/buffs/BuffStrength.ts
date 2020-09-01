@@ -17,11 +17,11 @@ export default class BuffStrength extends ServerBuff {
 	}
 
 	private onCreated(): void {
-		this.card.setMaxPower(this.card.maxPower + 1)
-		this.card.setPower(this.card.power + 1)
+		this.card.stats.maxPower = this.card.stats.maxPower + 1
+		this.card.stats.power = this.card.stats.power + 1
 	}
 
 	private onDestroyed(): void {
-		this.card.setMaxPower(this.card.maxPower - 1)
+		this.card.stats.maxPower = this.card.stats.maxPower - 1
 	}
 }

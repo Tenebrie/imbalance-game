@@ -19,15 +19,20 @@ export default class UnitPriestessOfAedine extends ServerCard {
 	healing = 5
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
-		this.basePower = 8
-		this.baseAttackRange = 1
-		this.baseTribes = [CardTribe.HUMAN]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NEUTRAL,
+			tribes: [CardTribe.HUMAN],
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 8,
+			}
+		})
 		this.dynamicTextVariables = {
 			targets: this.targets,
 			healing: this.healing
 		}
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
@@ -41,8 +46,8 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			.allow(TargetType.UNIT, this.targets)
 			.unique(TargetType.UNIT)
 			.label(TargetType.UNIT, 'card.unitPriestessOfAedine.target.heal')
-			.validate(TargetType.UNIT, args => args.targetUnit.card.power < args.targetUnit.card.basePower)
-			.evaluate(TargetType.UNIT, args => args.targetUnit.card.maxPower - args.targetUnit.card.power)
+			.validate(TargetType.UNIT, args => args.targetUnit.card.stats.power < args.targetUnit.card.stats.basePower)
+			.evaluate(TargetType.UNIT, args => args.targetUnit.card.stats.maxPower - args.targetUnit.card.stats.power)
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

@@ -11,16 +11,21 @@ import UnitVoidspawn from './UnitVoidspawn'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
-import {mapRelatedCards} from '../../../../utils/Utils'
 
 export default class UnitVoidPortal extends ServerCard {
 	powerPerSpell = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.TOKEN, CardFaction.ARCANE)
-		this.basePower = 0
-		this.baseArmor = 5
-		this.baseRelatedCards = [UnitVoidspawn]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.TOKEN,
+			faction: CardFaction.ARCANE,
+			relatedCards: [UnitVoidspawn],
+			stats: {
+				power: 0,
+				armor: 5,
+			}
+		})
 		this.dynamicTextVariables = {
 			powerPerSpell: this.powerPerSpell
 		}

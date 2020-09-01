@@ -7,8 +7,6 @@ import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import RichText from '@/Pixi/render/RichText'
 import Utils, {snakeToCamelCase} from '@/utils/Utils'
-import CardAttributes from '@/Pixi/render/CardAttributes'
-import CardMessage from '@shared/models/network/CardMessage'
 import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import DescriptionTextBackground from '@/Pixi/render/DescriptionTextBackground'
@@ -19,10 +17,35 @@ import CardTribe from '@shared/enums/CardTribe'
 import store from '@/Vue/store'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
 import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
+import CardFaction from '@shared/enums/CardFaction'
+import ClientCardStats from '@/Pixi/models/ClientCardStats'
+import CardMessage from '@shared/models/network/card/CardMessage'
+import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 
-export default class RenderedCard extends Card {
-	public buffs: ClientBuffContainer
+export default class RenderedCard implements Card {
+	public readonly id: string
+	public readonly type: CardType
+	public readonly class: string
+	public readonly color: CardColor
+	public readonly faction: CardFaction
+
+	public readonly name: string
+	public readonly title: string
+	public readonly flavor: string
+	public readonly description: string
+
+	public readonly stats: ClientCardStats
+	public readonly buffs: ClientBuffContainer
+	public readonly baseTribes: CardTribe[]
+	public readonly baseFeatures: CardFeature[]
+	public readonly relatedCards: string[]
 	public variables: RichTextVariables
+	public readonly sortPriority: number
+
+	public readonly isCollectible: boolean
+	public readonly isExperimental: boolean
+
+	public isHidden: boolean
 
 	public coreContainer: PIXI.Container
 	public sprite: PIXI.Sprite
@@ -34,7 +57,6 @@ export default class RenderedCard extends Card {
 	private readonly cardModeContainer: PIXI.Container
 	private readonly cardModeTextContainer: PIXI.Container
 	private readonly unitModeContainer: PIXI.Container
-	private readonly unitModeAttributes: CardAttributes
 
 	private readonly powerTextBackground: PIXI.Sprite
 	private readonly armorTextBackground: PIXI.Sprite
@@ -51,10 +73,7 @@ export default class RenderedCard extends Card {
 	private readonly cardTribeTexts: ScalingText[]
 	private readonly cardDescriptionText: RichText
 
-	public hiddenMode = false
-
 	public constructor(message: CardMessage) {
-		super(message.id, message.type, message.class)
 		this.id = message.id
 		this.type = message.type
 		this.class = message.class
@@ -65,6 +84,7 @@ export default class RenderedCard extends Card {
 		this.flavor = message.flavor
 		this.description = message.description
 
+		this.stats = new ClientCardStats(this, message.stats)
 		this.buffs = new ClientBuffContainer(this, message.buffs)
 		this.baseTribes = (message.baseTribes || []).slice()
 		this.baseFeatures = (message.baseFeatures || []).slice()
@@ -72,21 +92,14 @@ export default class RenderedCard extends Card {
 		this.variables = message.variables
 		this.sortPriority = message.sortPriority
 
-		this.power = message.power
-		this.maxPower = message.maxPower
-		this.armor = message.armor
-		this.maxArmor = message.maxArmor
-		this.attack = message.attack
-		this.attackRange = message.attackRange
+		this.isCollectible = message.isCollectible
+		this.isExperimental = message.isExperimental
 
-		this.basePower = message.basePower
-		this.baseAttack = message.baseAttack
-		this.baseAttackRange = message.baseAttackRange
-		this.baseArmor = message.baseArmor
+		this.isHidden = message.isHidden
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.class}`))
-		this.powerText = this.createBrushScriptText(this.power.toString())
-		this.armorText = this.createBrushScriptText(this.armor.toString())
+		this.powerText = this.createBrushScriptText(this.stats.power.toString())
+		this.armorText = this.createBrushScriptText(this.stats.armor.toString())
 		this.cardNameText = new RichText(Localization.get(this.name), 200, {})
 		this.cardNameText.style.fill = 0x000000
 		this.cardNameText.verticalAlign = RichTextAlign.CENTER
@@ -123,11 +136,6 @@ export default class RenderedCard extends Card {
 			this.sprite.addChild(overlaySprite)
 		}
 
-		/* Card attributes */
-		this.unitModeAttributes = new CardAttributes(this, CardDisplayMode.ON_BOARD)
-		this.unitModeAttributes.position.set(this.sprite.texture.width, this.sprite.texture.height)
-		this.unitModeAttributes.pivot.set(this.sprite.texture.width, this.sprite.texture.height)
-
 		/* Card mode container */
 		this.cardModeContainer = new PIXI.Container()
 		if (Localization.get(this.name)) {
@@ -154,7 +162,6 @@ export default class RenderedCard extends Card {
 
 		/* Unit mode container */
 		this.unitModeContainer = new PIXI.Container()
-		this.unitModeContainer.addChild(this.unitModeAttributes)
 		this.unitModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power-zoom')))
 		this.armorTextZoomBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-armor-zoom'))
 		this.unitModeContainer.addChild(this.armorTextZoomBackground)
@@ -187,7 +194,7 @@ export default class RenderedCard extends Card {
 	}
 
 	public get unitCost(): number {
-		let cost = 1
+		let cost = this.stats.unitCost
 		this.buffs.buffs.forEach(buff => {
 			cost = buff.getUnitCostOverride(cost)
 		})
@@ -195,7 +202,7 @@ export default class RenderedCard extends Card {
 	}
 
 	public get spellCost(): number {
-		let cost = this.power
+		let cost = this.stats.spellCost
 		this.buffs.buffs.forEach(buff => {
 			cost = buff.getSpellCostOverride(cost)
 		})
@@ -206,10 +213,8 @@ export default class RenderedCard extends Card {
 		return {
 			...this.variables,
 			name: Localization.get(this.name),
-			attack: this.attack.toString(),
-			attackRange: this.attackRange.toString(),
-			power: this.power.toString(),
-			armor: this.armor.toString()
+			power: this.stats.power.toString(),
+			armor: this.stats.armor.toString()
 		}
 	}
 
@@ -260,23 +265,23 @@ export default class RenderedCard extends Card {
 	}
 
 	public setPower(value: number): void {
-		this.power = Math.max(0, value)
+		this.stats.power = Math.max(0, value)
 		this.resetDisplayMode()
 	}
 
 	public setMaxPower(value: number): void {
-		this.maxPower = value
+		this.stats.maxPower = value
 	}
 
 	public setArmor(value: number): void {
-		this.armor = Math.max(0, value)
-		this.armorText.visible = this.armor > 0
-		this.armorTextBackground.visible = this.armor > 0
-		this.armorTextZoomBackground.visible = this.armor > 0
+		this.stats.armor = Math.max(0, value)
+		this.armorText.visible = this.stats.armor > 0
+		this.armorTextBackground.visible = this.stats.armor > 0
+		this.armorTextZoomBackground.visible = this.stats.armor > 0
 	}
 
 	public setMaxArmor(value: number): void {
-		this.maxArmor = value
+		this.stats.maxArmor = value
 	}
 
 	public createHitboxSprite(sprite: PIXI.Sprite): PIXI.Sprite {
@@ -328,7 +333,7 @@ export default class RenderedCard extends Card {
 		} else if (this.isUnitMode()) {
 			this.switchToUnitMode()
 			texts = [this.powerText, this.armorText]
-		} else if (this.isHiddenMode()) {
+		} else if (this.isHidden) {
 			this.switchToHiddenMode()
 		}
 
@@ -377,7 +382,7 @@ export default class RenderedCard extends Card {
 		this.manacostTextBackground.visible = this.type === CardType.SPELL
 
 		this.powerText.position.set(60, 45)
-		if (this.power < 10) {
+		if (this.stats.power < 10) {
 			this.powerText.style.fontSize = 85
 		} else {
 			this.powerText.style.fontSize = 71
@@ -392,7 +397,7 @@ export default class RenderedCard extends Card {
 		this.armorText.position.set(132, 33)
 		this.armorText.style.fontSize = 24
 		this.armorText.style.fill = 0xFFFFFF
-		if (this.armor > 0) {
+		if (this.stats.armor > 0) {
 			this.armorText.visible = true
 			this.armorTextBackground.visible = true
 		} else {
@@ -443,10 +448,9 @@ export default class RenderedCard extends Card {
 		this.unitModeContainer.visible = true
 		this.cardModeContainer.visible = false
 		this.cardModeTextContainer.visible = false
-		this.unitModeAttributes.visible = false
 
 		this.powerText.position.set(97, 80)
-		if (this.power < 10) {
+		if (this.stats.power < 10) {
 			this.powerText.style.fontSize = 160
 		} else {
 			this.powerText.style.fontSize = 135
@@ -455,7 +459,7 @@ export default class RenderedCard extends Card {
 		this.armorText.position.set(247, 63)
 		this.armorText.style.fontSize = 52
 		this.armorText.style.fill = 0xFFFFFF
-		if (this.armor > 0) {
+		if (this.stats.armor > 0) {
 			this.armorText.visible = true
 			this.armorTextZoomBackground.visible = true
 		} else {
@@ -475,15 +479,11 @@ export default class RenderedCard extends Card {
 	}
 
 	public isCardMode(): boolean {
-		return !this.isUnitMode() && !this.isHiddenMode()
+		return !this.isUnitMode() && !this.isHidden
 	}
 
 	public isUnitMode(): boolean {
-		return !this.isHiddenMode() && [CardDisplayMode.ON_BOARD].includes(this.displayMode)
-	}
-
-	public isHiddenMode(): boolean {
-		return this.hiddenMode
+		return !this.isHidden && [CardDisplayMode.ON_BOARD].includes(this.displayMode)
 	}
 
 	public unregister(): void {
@@ -491,7 +491,7 @@ export default class RenderedCard extends Card {
 	}
 
 	public clone(): RenderedCard {
-		const message = new CardMessage(this)
+		const message = new OpenCardMessage(this)
 		const card = new RenderedCard(message)
 		Core.registerCard(card)
 		return card

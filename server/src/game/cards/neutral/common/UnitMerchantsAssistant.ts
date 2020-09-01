@@ -11,18 +11,25 @@ import BuffNextSpellDiscountAura from '../../../buffs/BuffNextSpellDiscountAura'
 import ServerAnimation from '../../../models/ServerAnimation'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardFeature from '@shared/enums/CardFeature'
+import Utils from '../../../../utils/Utils'
 
 export default class UnitMerchantsAssistant extends ServerCard {
 	spellDiscount = 3
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
-		this.basePower = 5
-		this.baseTribes = [CardTribe.HUMAN]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NEUTRAL,
+			tribes: [CardTribe.HUMAN],
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 5,
+			}
+		})
 		this.dynamicTextVariables = {
 			spellDiscount: this.spellDiscount
 		}
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
@@ -30,7 +37,7 @@ export default class UnitMerchantsAssistant extends ServerCard {
 
 	private onDeploy() {
 		const player = this.owner
-		const alliedSpells = player.cardHand.spellCards
+		const alliedSpells = Utils.sortCards(player.cardHand.spellCards)
 		this.owner.leader.buffs.addMultiple(BuffNextSpellDiscountAura, this.spellDiscount, this, BuffDuration.INFINITY)
 		alliedSpells.forEach(spell => spell.buffs.addMultiple(BuffNextSpellDiscount, this.spellDiscount, this, BuffDuration.INFINITY))
 	}

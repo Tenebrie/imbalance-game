@@ -18,10 +18,15 @@ export default class SpellAnEncouragement extends ServerCard {
 	public static bonusPower = 7
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
-
-		this.basePower = 3
-		this.baseFeatures = [CardFeature.HERO_POWER]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.HERO_POWER],
+			stats: {
+				cost: 3
+			}
+		})
 		this.dynamicTextVariables = {
 			bonusPower: SpellAnEncouragement.bonusPower
 		}
@@ -35,7 +40,7 @@ export default class SpellAnEncouragement extends ServerCard {
 			.singleTarget()
 			.allow(TargetType.UNIT)
 			.alliedUnit()
-			.evaluate(TargetType.UNIT, (args => this.basePower))
+			.evaluate(TargetType.UNIT, (args => this.stats.basePower))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

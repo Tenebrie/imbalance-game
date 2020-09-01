@@ -20,11 +20,16 @@ export default class SpellSteelSpark extends ServerCard {
 	baseSideDamage = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.GOLDEN, CardFaction.ARCANE)
-
-		this.basePower = 2
-		this.baseTribes = [CardTribe.SPARK]
-		this.baseFeatures = [CardFeature.HERO_POWER]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.SPARK],
+			features: [CardFeature.HERO_POWER],
+			stats: {
+				cost: 2
+			}
+		})
 		this.dynamicTextVariables = {
 			damage: () => this.damage,
 			sideDamage: () => this.sideDamage
@@ -66,8 +71,8 @@ export default class SpellSteelSpark extends ServerCard {
 	private evaluateTarget(args: TargetValidatorArguments): number {
 		const target = args.targetUnit
 		const adjacentUnits = this.game.board.getAdjacentUnits(target)
-		let expectedValue = Math.min(target.card.power, this.damage)
-		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.power, this.sideDamage))
+		let expectedValue = Math.min(target.card.stats.power, this.damage)
+		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.stats.power, this.sideDamage))
 		return expectedValue
 	}
 }

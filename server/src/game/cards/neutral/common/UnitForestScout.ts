@@ -13,14 +13,20 @@ export default class UnitForestScout extends ServerCard {
 	moralePowerBonus = 3
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.NEUTRAL)
-		this.basePower = 4
-		this.baseTribes = [CardTribe.HUMAN]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.NEUTRAL,
+			tribes: [CardTribe.HUMAN],
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 4,
+			}
+		})
 		this.dynamicTextVariables = {
 			boardPowerBonus: this.boardPowerBonus,
 			moralePowerBonus: this.moralePowerBonus
 		}
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())

@@ -12,9 +12,15 @@ export default class HeroCarienne extends ServerCard {
 	damagePerWave = 1
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.GOLDEN, CardFaction.NATURE)
-		this.basePower = 6
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.GOLDEN,
+			faction: CardFaction.NATURE,
+			features: [CardFeature.KEYWORD_DEPLOY],
+			stats: {
+				power: 6,
+			}
+		})
 		this.dynamicTextVariables = {
 			damagePerWave: this.damagePerWave,
 			waveCount: () => this.waveCount

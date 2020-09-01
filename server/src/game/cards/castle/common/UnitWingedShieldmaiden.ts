@@ -13,9 +13,15 @@ import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 
 export default class UnitWingedShieldmaiden extends ServerCard {
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.BRONZE, CardFaction.CASTLE)
-		this.basePower = 4
-		this.baseTribes = [CardTribe.VALKYRIE]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.BRONZE,
+			faction: CardFaction.CASTLE,
+			tribes: [CardTribe.VALKYRIE],
+			stats: {
+				power: 4,
+			}
+		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
@@ -51,6 +57,6 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 
 class CustomBotEvaluation extends BotCardEvaluation {
 	get expectedValue(): number {
-		return this.card.power - 1
+		return this.card.stats.power - 1
 	}
 }

@@ -14,10 +14,16 @@ export default class HeroLightOracle extends ServerCard {
 	cardsToSee = 5
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.ARCANE)
-		this.basePower = 4
-		this.sortPriority = 1
-		this.baseFeatures = [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON]
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
+			sortPriority: 1,
+			stats: {
+				power: 4
+			}
+		})
 		this.dynamicTextVariables = {
 			cardsToSee: this.cardsToSee
 		}

@@ -14,8 +14,14 @@ export default class HeroStormDancer extends ServerCard {
 	stormPowerGiven = 3
 
 	constructor(game: ServerGame) {
-		super(game, CardType.UNIT, CardColor.SILVER, CardFaction.NATURE)
-		this.basePower = 5
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.NATURE,
+			stats: {
+				power: 5,
+			}
+		})
 
 		this.dynamicTextVariables = {
 			powerGiven: this.normalPowerGiven,

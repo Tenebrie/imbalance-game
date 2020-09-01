@@ -227,7 +227,6 @@ export default class Renderer {
 	}
 
 	private renderCard(card: RenderedCard, cardArray: RenderedCard[], isOpponent: boolean, isSpellHand: boolean): void {
-		card.hiddenMode = card.type === CardType.HIDDEN
 		if (Core.input.grabbedCard && card === Core.input.grabbedCard.card) {
 			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
 			const displayMode = this.renderGrabbedCard(card, Core.input.mousePosition)
@@ -276,18 +275,18 @@ export default class Renderer {
 	}
 
 	public updateCardStats(renderedCard: RenderedCard): void {
-		if (renderedCard.type === CardType.UNIT || renderedCard.type === CardType.TOKEN) {
-			renderedCard.powerText.text = renderedCard.power.toString()
-			if (renderedCard.power < renderedCard.basePower) {
+		if (renderedCard.type === CardType.UNIT) {
+			renderedCard.powerText.text = renderedCard.stats.power.toString()
+			if (renderedCard.stats.power < renderedCard.stats.basePower) {
 				renderedCard.powerText.style.fill = 0x770000
-			} else if (renderedCard.power > renderedCard.basePower) {
+			} else if (renderedCard.stats.power > renderedCard.stats.basePower) {
 				renderedCard.powerText.style.fill = 0x007700
 			} else {
 				renderedCard.powerText.style.fill = 0x000000
 			}
 		} else if (renderedCard.type === CardType.SPELL) {
 			const spellCost = renderedCard.spellCost
-			const baseSpellCost = renderedCard.basePower
+			const baseSpellCost = renderedCard.stats.baseSpellCost
 			renderedCard.powerText.text = spellCost.toString()
 			if (spellCost < baseSpellCost) {
 				renderedCard.powerText.style.fill = 0x0077AA
@@ -298,10 +297,10 @@ export default class Renderer {
 			}
 		}
 
-		renderedCard.armorText.text = renderedCard.armor.toString()
-		if (renderedCard.armor < renderedCard.baseArmor) {
+		renderedCard.armorText.text = renderedCard.stats.armor.toString()
+		if (renderedCard.stats.armor < renderedCard.stats.baseArmor) {
 			renderedCard.armorText.style.fill = 0xFF7777
-		} else if (renderedCard.armor > renderedCard.baseArmor) {
+		} else if (renderedCard.stats.armor > renderedCard.stats.baseArmor) {
 			renderedCard.armorText.style.fill = 0x77FF77
 		} else {
 			renderedCard.armorText.style.fill = 0xFFFFFF
@@ -445,8 +444,8 @@ export default class Renderer {
 			return returnValue * this.superSamplingLevel
 		}
 
-		const power = Core.board.getUnitsOwnedByPlayer(Core.player).map(unit => unit.card.power).reduce((accumulator, value) => accumulator + value, 0)
-		const opponentPower = Core.board.getUnitsOwnedByPlayer(Core.opponent).map(unit => unit.card.power).reduce((accumulator, value) => accumulator + value, 0)
+		const power = Core.board.getUnitsOwnedByPlayer(Core.player).map(unit => unit.card.stats.power).reduce((accumulator, value) => accumulator + value, 0)
+		const opponentPower = Core.board.getUnitsOwnedByPlayer(Core.opponent).map(unit => unit.card.stats.power).reduce((accumulator, value) => accumulator + value, 0)
 		this.playerPowerLabel.text = power.toString()
 		this.opponentPowerLabel.text = opponentPower.toString()
 		this.playerPowerLabel.style.fontSize = getPowerFontSize(power)
@@ -669,7 +668,6 @@ export default class Renderer {
 		}
 
 		this.updateCardStats(announcedCard)
-		announcedCard.hiddenMode = false
 		const container = announcedCard.coreContainer
 		const sprite = announcedCard.sprite
 		const disabledOverlaySprite = announcedCard.cardDisabledOverlay

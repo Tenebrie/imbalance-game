@@ -6,7 +6,7 @@
 import store from '@/Vue/store'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import {computed, defineComponent, onMounted, ref, watch} from '@vue/composition-api'
-import CardMessage from '@shared/models/network/CardMessage'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 interface Props {
 	card: CardMessage | null

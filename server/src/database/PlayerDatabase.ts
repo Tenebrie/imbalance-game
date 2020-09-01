@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4'
 import Database from './Database'
-import Language from '@shared/models/Language'
+import Language from '@shared/enums/Language'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import RenderQuality from '@shared/enums/RenderQuality'
 

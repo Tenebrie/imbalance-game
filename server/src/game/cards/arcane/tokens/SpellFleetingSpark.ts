@@ -17,10 +17,15 @@ export default class SpellFleetingSpark extends ServerCard {
 	baseDamage = 2
 
 	constructor(game: ServerGame) {
-		super(game, CardType.SPELL, CardColor.TOKEN, CardFaction.ARCANE)
-
-		this.basePower = 1
-		this.baseTribes = [CardTribe.SPARK]
+		super(game, {
+			type: CardType.SPELL,
+			color: CardColor.TOKEN,
+			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.SPARK],
+			stats: {
+				cost: 1,
+			}
+		})
 		this.dynamicTextVariables = {
 			damage: () => this.damage
 		}
