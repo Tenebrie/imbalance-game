@@ -134,10 +134,14 @@ export default class TextureAtlas {
 
 	public static getTexture(path: string): PIXI.Texture {
 		const texture = TextureAtlas.textures[path.toLowerCase()]
-		if (!texture) {
-			return TextureAtlas.loadTextureOnDemand(path)
+		if (texture) {
+			return texture
 		}
-		return texture
+		const textureInCache = PIXI.utils.TextureCache[`/assets/${path}.png`]
+		if (textureInCache) {
+			return textureInCache
+		}
+		return TextureAtlas.loadTextureOnDemand(path)
 	}
 
 	private static loadTextureOnDemand(path: string): PIXI.Texture {

@@ -14,13 +14,13 @@ export default {
 
 	createAnimationThread(game: ServerGame): void {
 		game.players.forEach(playerInGame => {
-			this.createAnimationThreadForPlayer(playerInGame.player, false)
+			this.createAnimationThreadForPlayer(playerInGame.player, true)
 		})
 	},
 
-	createStaggeredAnimationThread(game: ServerGame): void {
+	createInstantAnimationThread(game: ServerGame): void {
 		game.players.forEach(playerInGame => {
-			this.createAnimationThreadForPlayer(playerInGame.player, true)
+			this.createAnimationThreadForPlayer(playerInGame.player, false)
 		})
 	},
 

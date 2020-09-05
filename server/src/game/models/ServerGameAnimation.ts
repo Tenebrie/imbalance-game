@@ -18,8 +18,8 @@ export default class ServerGameAnimation {
 		OutgoingAnimationMessages.createAnimationThread(this.game)
 	}
 
-	public createStaggeredAnimationThread(): void {
-		OutgoingAnimationMessages.createStaggeredAnimationThread(this.game)
+	public createInstantAnimationThread(): void {
+		OutgoingAnimationMessages.createInstantAnimationThread(this.game)
 	}
 
 	public commitAnimationThread(): void {

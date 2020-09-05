@@ -19,12 +19,12 @@ export default class HeroSparklingSpirit extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
+			relatedCards: [SpellFleetingSpark],
 			stats: {
 				power: 8
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
-		this.addRelatedCards().requireExact(SpellFleetingSpark)
 		this.addRelatedCards().requireTribe(CardTribe.SPARK)
 		this.dynamicTextVariables = {
 			extraDamage: this.extraDamage

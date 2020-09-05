@@ -36,7 +36,7 @@ export default class UnitSupplyWagon extends ServerCard {
 	private onDeploy(): void {
 		let adjacentUnits = this.game.board.getAdjacentUnits(this.unit)
 		adjacentUnits.forEach(unit => {
-			this.game.animation.createAnimationThread()
+			this.game.animation.createInstantAnimationThread()
 			unit.buffs.addMultiple(BuffStrength, this.extraPower, this)
 			this.game.animation.commitAnimationThread()
 		})
@@ -47,7 +47,7 @@ export default class UnitSupplyWagon extends ServerCard {
 
 		this.game.animation.syncAnimationThreads()
 		adjacentUnits.forEach(unit => {
-			this.game.animation.createAnimationThread()
+			this.game.animation.createInstantAnimationThread()
 			this.game.board.moveUnitForward(unit, this.pushDistance)
 			this.game.animation.commitAnimationThread()
 		})

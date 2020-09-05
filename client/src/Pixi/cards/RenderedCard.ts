@@ -385,8 +385,9 @@ export default class RenderedCard implements Card {
 		this.armorTextBackground.visible = true
 		this.manacostTextBackground.visible = this.type === CardType.SPELL
 
+		const powerTextValue = this.type === CardType.UNIT ? this.stats.power : this.stats.spellCost
 		this.powerText.position.set(60, 45)
-		if (this.stats.power < 10) {
+		if (powerTextValue < 10) {
 			this.powerText.style.fontSize = 85
 		} else {
 			this.powerText.style.fontSize = 71

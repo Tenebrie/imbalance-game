@@ -50,7 +50,9 @@ export default class HeroFlameDancer extends ServerCard {
 		const targetCards = targetUnits.map(unit => unit.card)
 
 		targetUnits.forEach(targetUnit => {
+			this.game.animation.createAnimationThread()
 			targetUnit.card.buffs.add(BuffBurning, this, BuffDuration.FULL_TURN * this.burnDuration - 1)
+			this.game.animation.commitAnimationThread()
 		})
 	}
 }
