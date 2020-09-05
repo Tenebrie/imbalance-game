@@ -5,6 +5,7 @@ import ServerGame from '../../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import SpellFlamingSpark from './SpellFlamingSpark'
 import SpellFlameweave from './SpellFlameweave'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class LeaderVelRaminea extends ServerCard {
 	manaPerRound = 10
@@ -15,7 +16,8 @@ export default class LeaderVelRaminea extends ServerCard {
 			color: CardColor.LEADER,
 			faction: CardFaction.EXPERIMENTAL,
 			sortPriority: 1,
-			isExperimental: true
+			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound

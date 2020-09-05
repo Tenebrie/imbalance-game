@@ -13,6 +13,7 @@ import BuffVelElleronEncouragement from '../../../../buffs/BuffVelElleronEncoura
 import BuffDuration from '@shared/enums/BuffDuration'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellAnEncouragement extends ServerCard {
 	public static bonusPower = 7
@@ -25,7 +26,8 @@ export default class SpellAnEncouragement extends ServerCard {
 			features: [CardFeature.HERO_POWER],
 			stats: {
 				cost: 3
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			bonusPower: SpellAnEncouragement.bonusPower

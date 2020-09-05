@@ -9,6 +9,7 @@ import GameHookType, {CardTakesDamageHookArgs, CardTakesDamageHookValues} from '
 import GameEventType from '@shared/enums/GameEventType'
 import {CardDestroyedEventArgs} from '../../../models/GameEventCreators'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroAntoria extends ServerCard {
 	constructor(game: ServerGame) {
@@ -19,7 +20,8 @@ export default class HeroAntoria extends ServerCard {
 			tribes: [CardTribe.VALKYRIE],
 			stats: {
 				power: 15,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 

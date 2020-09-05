@@ -7,6 +7,7 @@ import BuffImmunity from '../../../buffs/BuffImmunity'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroZamarath extends ServerCard {
 	constructor(game: ServerGame) {
@@ -18,7 +19,8 @@ export default class HeroZamarath extends ServerCard {
 			stats: {
 				power: 12,
 				armor: 5
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)

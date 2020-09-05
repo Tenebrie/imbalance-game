@@ -10,6 +10,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroArgenta extends ServerCard {
 	constructor(game: ServerGame) {
@@ -21,7 +22,8 @@ export default class HeroArgenta extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
 			stats: {
 				power: 4,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

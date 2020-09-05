@@ -10,6 +10,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitOceanicSeagull extends ServerCard {
 	constructor(game: ServerGame) {
@@ -21,7 +22,8 @@ export default class UnitOceanicSeagull extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
 			stats: {
 				power: 2,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.MERFOLK).requireColor(CardColor.BRONZE)
 

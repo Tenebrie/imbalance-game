@@ -9,6 +9,7 @@ import TargetType from '@shared/enums/TargetType'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroLightOracle extends ServerCard {
 	cardsToSee = 5
@@ -22,7 +23,8 @@ export default class HeroLightOracle extends ServerCard {
 			sortPriority: 1,
 			stats: {
 				power: 4
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			cardsToSee: this.cardsToSee

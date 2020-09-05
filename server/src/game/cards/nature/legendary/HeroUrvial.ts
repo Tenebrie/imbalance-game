@@ -8,6 +8,7 @@ import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroUrvial extends ServerCard {
 	constructor(game: ServerGame) {
@@ -19,7 +20,8 @@ export default class HeroUrvial extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 8,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 

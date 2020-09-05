@@ -9,6 +9,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardPlayedEventArgs, UnitDestroyedEventArgs} from '../../../models/GameEventCreators'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitFlameTouchCrystal extends ServerCard {
 	charges = 0
@@ -22,7 +23,8 @@ export default class UnitFlameTouchCrystal extends ServerCard {
 			faction: CardFaction.ARCANE,
 			stats: {
 				power: 4
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			chargePerMana: this.chargePerMana,

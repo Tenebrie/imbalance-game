@@ -8,6 +8,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardPlayedEventArgs} from '../../../models/GameEventCreators'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroStormDancer extends ServerCard {
 	normalPowerGiven = 1
@@ -20,7 +21,8 @@ export default class HeroStormDancer extends ServerCard {
 			faction: CardFaction.NATURE,
 			stats: {
 				power: 5,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.dynamicTextVariables = {

@@ -7,6 +7,7 @@ import SpellShadowSpark from './SpellShadowSpark'
 import SpellNightmareDrain from './SpellNightmareDrain'
 import SpellCrystalBarrage from './SpellCrystalBarrage'
 import SpellShadowArmy from './SpellShadowArmy'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class LeaderNighterie extends ServerCard {
 	manaPerRound = 10
@@ -17,7 +18,8 @@ export default class LeaderNighterie extends ServerCard {
 			color: CardColor.LEADER,
 			faction: CardFaction.ARCANE,
 			relatedCards: [SpellShadowSpark, SpellNightmareDrain, SpellCrystalBarrage, SpellShadowArmy],
-			sortPriority: 2
+			sortPriority: 2,
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound

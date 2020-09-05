@@ -38,6 +38,7 @@ import Utils, {getClassFromConstructor} from '../../utils/Utils'
 import ServerAnimation from './ServerAnimation'
 import RelatedCardsDefinition from './RelatedCards'
 import ServerCardStats from './ServerCardStats'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -45,6 +46,7 @@ interface ServerCardBaseProps {
 	features?: CardFeature | CardFeature[]
 	relatedCards?: CardConstructor | CardConstructor[]
 	sortPriority?: number
+	expansionSet: ExpansionSet
 	isExperimental?: boolean
 	generatedArtworkMagicString?: string
 }
@@ -93,6 +95,10 @@ export default class ServerCard implements Card {
 	public readonly baseTribes: CardTribe[]
 	public readonly baseFeatures: CardFeature[]
 	public readonly sortPriority: number
+	public readonly expansionSet: ExpansionSet
+
+	public readonly isCollectible: boolean
+	public readonly isExperimental: boolean
 
 	public dynamicTextVariables: ServerRichTextVariables = {}
 	public botEvaluation: BotCardEvaluation = new BotCardEvaluation(this)
@@ -100,9 +106,6 @@ export default class ServerCard implements Card {
 
 	public readonly baseRelatedCards: CardConstructor[] = []
 	public readonly customRelatedCards: RelatedCardsDefinition[] = []
-
-	public readonly isCollectible: boolean
-	public readonly isExperimental: boolean
 
 	public isRevealed = false
 	public isDead = false
@@ -114,6 +117,18 @@ export default class ServerCard implements Card {
 		this.type = props.color === CardColor.LEADER ? CardType.UNIT : props.type
 		this.color = props.color
 		this.faction = props.faction
+
+		const statsProps = {
+			basePower: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
+			baseArmor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
+			baseSpellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0
+		}
+		this.stats = new ServerCardStats(this, statsProps)
+
+		this.name = `card.${this.class}.name`
+		this.title = `card.${this.class}.title`
+		this.flavor = `card.${this.class}.flavor`
+		this.description = `card.${this.class}.description`
 
 		if (props.tribes === undefined) {
 			this.baseTribes = []
@@ -138,22 +153,12 @@ export default class ServerCard implements Card {
 		} else {
 			this.baseRelatedCards = [props.relatedCards]
 		}
-
-		const statsProps = {
-			basePower: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
-			baseArmor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
-			baseSpellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0
-		}
-		this.stats = new ServerCardStats(this, statsProps)
-
-		this.name = `card.${this.class}.name`
-		this.title = `card.${this.class}.title`
-		this.flavor = `card.${this.class}.flavor`
-		this.description = `card.${this.class}.description`
-
 		this.sortPriority = props.sortPriority ? props.sortPriority : 0
+		this.expansionSet = props.expansionSet
+
 		this.isCollectible = props.color !== CardColor.LEADER && props.type === CardType.UNIT && props.isCollectible !== undefined ? props.isCollectible : false
 		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
+
 		this.generatedArtworkMagicString = props.generatedArtworkMagicString ? props.generatedArtworkMagicString : ''
 
 		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]

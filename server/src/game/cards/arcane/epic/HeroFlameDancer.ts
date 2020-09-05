@@ -12,6 +12,7 @@ import BuffBurning from '../../../buffs/BuffBurning'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroFlameDancer extends ServerCard {
 	burnDuration = 3
@@ -25,7 +26,8 @@ export default class HeroFlameDancer extends ServerCard {
 			generatedArtworkMagicString: '2',
 			stats: {
 				power: 5
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			burnDuration: this.burnDuration

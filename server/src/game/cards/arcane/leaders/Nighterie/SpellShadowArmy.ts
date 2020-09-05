@@ -11,6 +11,7 @@ import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../../models/ServerUnit'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellShadowArmy extends ServerCard {
 	powerThreshold = 3
@@ -26,7 +27,8 @@ export default class SpellShadowArmy extends ServerCard {
 			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_CREATE],
 			stats: {
 				cost: 12
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			powerThreshold: () => this.powerThreshold,

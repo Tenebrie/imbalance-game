@@ -18,6 +18,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import CardTribe from '@shared/enums/CardTribe'
 import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition'
 import BuffSpellDiscount from '../../../buffs/BuffSpellDiscount'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitHungrySpellslinger extends ServerCard {
 	infuseCost = 3
@@ -33,7 +34,8 @@ export default class UnitHungrySpellslinger extends ServerCard {
 			features: [CardFeature.KEYWORD_INFUSE_X],
 			stats: {
 				power: 5
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			infuseCost: this.infuseCost,

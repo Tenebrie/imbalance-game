@@ -8,10 +8,9 @@ import GameEventType from '@shared/enums/GameEventType'
 import BuffNextSpellDiscount from '../../../buffs/BuffNextSpellDiscount'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffNextSpellDiscountAura from '../../../buffs/BuffNextSpellDiscountAura'
-import ServerAnimation from '../../../models/ServerAnimation'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardFeature from '@shared/enums/CardFeature'
 import Utils from '../../../../utils/Utils'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitMerchantsAssistant extends ServerCard {
 	spellDiscount = 3
@@ -25,7 +24,8 @@ export default class UnitMerchantsAssistant extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 5,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			spellDiscount: this.spellDiscount

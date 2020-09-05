@@ -11,6 +11,7 @@ import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/P
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellScrollOfLightning extends ServerCard {
 	damage = 8
@@ -23,7 +24,8 @@ export default class SpellScrollOfLightning extends ServerCard {
 			tribes: [CardTribe.SCROLL],
 			stats: {
 				cost: 4,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,

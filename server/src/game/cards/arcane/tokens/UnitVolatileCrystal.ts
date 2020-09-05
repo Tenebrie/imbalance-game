@@ -8,6 +8,7 @@ import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
 import {UnitDestroyedEventArgs} from '../../../models/GameEventCreators'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitVolatileCrystal extends ServerCard {
 	damage = 3
@@ -20,7 +21,8 @@ export default class UnitVolatileCrystal extends ServerCard {
 			tribes: [CardTribe.CRYSTAL],
 			stats: {
 				power: 1,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage

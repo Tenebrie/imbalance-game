@@ -10,6 +10,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitCrystalMiner extends ServerCard {
 	constructor(game: ServerGame) {
@@ -20,7 +21,8 @@ export default class UnitCrystalMiner extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			stats: {
 				power: 2
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

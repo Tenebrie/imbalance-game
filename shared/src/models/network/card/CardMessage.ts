@@ -6,6 +6,7 @@ import CardFeature from '../../../enums/CardFeature'
 import CardFaction from '../../../enums/CardFaction'
 import BuffContainerMessage from '../buffContainer/BuffContainerMessage'
 import CardStatsMessage from '../cardStats/CardStatsMessage'
+import ExpansionSet from '../../../enums/ExpansionSet'
 
 export default interface CardMessage {
 	id: string
@@ -26,6 +27,8 @@ export default interface CardMessage {
 	relatedCards: string[]
 	variables: RichTextVariables
 	sortPriority: number
+	expansionSet: ExpansionSet
+
 	isCollectible: boolean
 	isExperimental: boolean
 

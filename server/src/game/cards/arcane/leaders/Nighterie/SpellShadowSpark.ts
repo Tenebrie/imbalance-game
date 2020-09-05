@@ -15,6 +15,7 @@ import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellShadowSpark extends ServerCard {
 	baseDamage = 2
@@ -29,7 +30,8 @@ export default class SpellShadowSpark extends ServerCard {
 			relatedCards: [UnitShadowspawn],
 			stats: {
 				cost: 2
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			damage: () => this.damage

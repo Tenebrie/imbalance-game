@@ -13,6 +13,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellScrollOfBlinding extends ServerCard {
 	buffDuration = 3
@@ -26,7 +27,8 @@ export default class SpellScrollOfBlinding extends ServerCard {
 			features: [CardFeature.KEYWORD_BUFF_STUN],
 			stats: {
 				cost: 4,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			buffDuration: this.buffDuration

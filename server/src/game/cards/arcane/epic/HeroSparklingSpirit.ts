@@ -9,6 +9,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
 import SpellFleetingSpark from '../tokens/SpellFleetingSpark'
 import CardLibrary from '../../../libraries/CardLibrary'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroSparklingSpirit extends ServerCard {
 	extraDamage = 1
@@ -18,10 +19,10 @@ export default class HeroSparklingSpirit extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
-			// relatedCards: [SpellFleetingSpark],
 			stats: {
 				power: 8
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.addRelatedCards().requireExact(SpellFleetingSpark)
 		this.addRelatedCards().requireTribe(CardTribe.SPARK)

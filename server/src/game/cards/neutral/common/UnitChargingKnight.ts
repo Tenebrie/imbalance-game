@@ -12,6 +12,7 @@ import MoveDirection from '@shared/enums/MoveDirection'
 import {TurnEndedEventArgs, UnitMovedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitChargingKnight extends ServerCard {
 	movesForwardThisTurn = 0
@@ -24,7 +25,8 @@ export default class UnitChargingKnight extends ServerCard {
 			tribes: [CardTribe.HUMAN],
 			stats: {
 				power: 10,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createCallback<UnitMovedEventArgs>(GameEventType.UNIT_MOVED, [CardLocation.BOARD])

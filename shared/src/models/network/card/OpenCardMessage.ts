@@ -8,6 +8,7 @@ import CardFeature from '../../../enums/CardFeature'
 import CardFaction from '../../../enums/CardFaction'
 import OpenCardStatsMessage from '../cardStats/OpenCardStatsMessage'
 import CardMessage from './CardMessage'
+import ExpansionSet from '../../../enums/ExpansionSet'
 
 export default class OpenCardMessage implements CardMessage {
 	id: string
@@ -28,6 +29,8 @@ export default class OpenCardMessage implements CardMessage {
 	relatedCards: string[]
 	variables: RichTextVariables
 	sortPriority: number
+	expansionSet: ExpansionSet
+
 	isCollectible: boolean
 	isExperimental: boolean
 
@@ -52,6 +55,7 @@ export default class OpenCardMessage implements CardMessage {
 		this.relatedCards = card.relatedCards.slice()
 		this.variables = card.variables
 		this.sortPriority = card.sortPriority
+		this.expansionSet = card.expansionSet
 		this.isCollectible = card.isCollectible
 		this.isExperimental = card.isExperimental
 	}

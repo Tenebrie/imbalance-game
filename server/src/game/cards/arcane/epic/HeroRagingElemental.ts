@@ -8,6 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import {CardTakesDamageEventArgs} from '../../../models/GameEventCreators'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroRagingElemental extends ServerCard {
 	isEffectTriggered = false
@@ -20,7 +21,8 @@ export default class HeroRagingElemental extends ServerCard {
 			features: [CardFeature.KEYWORD_ENRAGE],
 			stats: {
 				power: 9
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])

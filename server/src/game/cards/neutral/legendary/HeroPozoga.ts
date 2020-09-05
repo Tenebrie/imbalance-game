@@ -7,6 +7,7 @@ import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import {mapUnitsToCards} from '../../../../utils/Utils'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroPozoga extends ServerCard {
 	constructor(game: ServerGame) {
@@ -17,7 +18,8 @@ export default class HeroPozoga extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 3,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)

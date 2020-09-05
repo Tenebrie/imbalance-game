@@ -14,6 +14,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellEnchantedStorm extends ServerCard {
 	baseBuffPower = 1
@@ -29,7 +30,8 @@ export default class SpellEnchantedStorm extends ServerCard {
 			tribes: [CardTribe.STORM],
 			stats: {
 				cost: 0,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			buffPower: () => this.buffPower,

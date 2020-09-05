@@ -11,6 +11,7 @@ import UnitVoidspawn from './UnitVoidspawn'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitVoidPortal extends ServerCard {
 	powerPerSpell = 1
@@ -24,7 +25,8 @@ export default class UnitVoidPortal extends ServerCard {
 			stats: {
 				power: 0,
 				armor: 5,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			powerPerSpell: this.powerPerSpell

@@ -16,6 +16,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellFlamingSpark extends ServerCard {
 	baseDamage = 2
@@ -31,6 +32,7 @@ export default class SpellFlamingSpark extends ServerCard {
 			stats: {
 				cost: 2
 			},
+			expansionSet: ExpansionSet.BASE,
 			isExperimental: true,
 		})
 		this.dynamicTextVariables = {

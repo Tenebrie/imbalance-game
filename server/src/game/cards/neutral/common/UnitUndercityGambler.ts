@@ -11,6 +11,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitUndercityGambler extends ServerCard {
 	bonusPower = 5
@@ -24,7 +25,8 @@ export default class UnitUndercityGambler extends ServerCard {
 			generatedArtworkMagicString: '2',
 			stats: {
 				power: 4,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.dynamicTextVariables = {

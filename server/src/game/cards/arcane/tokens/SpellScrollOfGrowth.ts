@@ -7,14 +7,13 @@ import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
-import ServerAnimation from '../../../models/ServerAnimation'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffGrowth from '../../../buffs/BuffGrowth'
 import BuffDuration from '@shared/enums/BuffDuration'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellScrollOfGrowth extends ServerCard {
 	constructor(game: ServerGame) {
@@ -26,7 +25,8 @@ export default class SpellScrollOfGrowth extends ServerCard {
 			features: [CardFeature.KEYWORD_BUFF_GROWTH],
 			stats: {
 				cost: 2,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

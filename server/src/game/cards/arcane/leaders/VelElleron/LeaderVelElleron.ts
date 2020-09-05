@@ -7,6 +7,7 @@ import SpellSteelSpark from './SpellSteelSpark'
 import SpellFireball from './SpellFireball'
 import SpellFieryEntrance from './SpellFieryEntrance'
 import SpellAnEncouragement from './SpellAnEncouragement'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class LeaderVelElleron extends ServerCard {
 	manaPerRound = 10
@@ -17,7 +18,8 @@ export default class LeaderVelElleron extends ServerCard {
 			color: CardColor.LEADER,
 			faction: CardFaction.ARCANE,
 			relatedCards: [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellFieryEntrance],
-			sortPriority: 0
+			sortPriority: 0,
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound

@@ -9,6 +9,7 @@ import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from '../.
 import MoveDirection from '@shared/enums/MoveDirection'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ServerUnit from '../../../models/ServerUnit'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroAurienne extends ServerCard {
 	constructor(game: ServerGame) {
@@ -19,7 +20,8 @@ export default class HeroAurienne extends ServerCard {
 			tribes: [CardTribe.VALKYRIE],
 			stats: {
 				power: 11,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 

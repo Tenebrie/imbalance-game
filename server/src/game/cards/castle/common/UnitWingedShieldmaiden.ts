@@ -10,6 +10,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import {CardTakesDamageEventArgs} from '../../../models/GameEventCreators'
 import ServerAnimation from '../../../models/ServerAnimation'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitWingedShieldmaiden extends ServerCard {
 	constructor(game: ServerGame) {
@@ -20,7 +21,8 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 			tribes: [CardTribe.VALKYRIE],
 			stats: {
 				power: 4,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 

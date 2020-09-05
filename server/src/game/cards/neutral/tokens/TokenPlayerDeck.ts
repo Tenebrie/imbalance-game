@@ -3,6 +3,7 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class TokenPlayerDeck extends ServerCard {
 	constructor(game: ServerGame) {
@@ -13,7 +14,8 @@ export default class TokenPlayerDeck extends ServerCard {
 			sortPriority: 1,
 			stats: {
 				cost: 0
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 	}
 }

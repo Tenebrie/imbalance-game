@@ -8,6 +8,7 @@ import SpellHealingRain from '../tokens/SpellHealingRain'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import {mapRelatedCards} from '../../../../utils/Utils'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroTribeShaman extends ServerCard {
 	constructor(game: ServerGame) {
@@ -20,7 +21,8 @@ export default class HeroTribeShaman extends ServerCard {
 			relatedCards: [SpellHealingRain],
 			stats: {
 				power: 6,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)

@@ -6,6 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import GameEventType from '@shared/enums/GameEventType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellHealingRain extends ServerCard {
 	baseHealing = 3
@@ -19,7 +20,8 @@ export default class SpellHealingRain extends ServerCard {
 			tribes: [CardTribe.STORM],
 			stats: {
 				cost: 0,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			healing: () => this.healing,

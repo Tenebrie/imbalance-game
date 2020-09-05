@@ -6,6 +6,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import BotCardEvaluation from '../../../../AI/BotCardEvaluation'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellFieryEntrance extends ServerCard {
 	constructor(game: ServerGame) {
@@ -16,7 +17,8 @@ export default class SpellFieryEntrance extends ServerCard {
 			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_SUMMON],
 			stats: {
 				cost: 8
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 

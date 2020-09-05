@@ -13,6 +13,7 @@ import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerAnimation from '../../../models/ServerAnimation'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 interface SacrificedUnit {
 	rowIndex: number,
@@ -31,7 +32,8 @@ export default class HeroCrystalWarrior extends ServerCard {
 			stats: {
 				power: 7,
 				armor: 5
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.CRYSTAL)
 

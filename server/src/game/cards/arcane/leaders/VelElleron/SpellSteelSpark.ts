@@ -14,6 +14,7 @@ import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetValidatorArguments from '../../../../../types/TargetValidatorArguments'
 import CardTribe from '@shared/enums/CardTribe'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellSteelSpark extends ServerCard {
 	baseDamage = 2
@@ -28,7 +29,8 @@ export default class SpellSteelSpark extends ServerCard {
 			features: [CardFeature.HERO_POWER],
 			stats: {
 				cost: 2
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			damage: () => this.damage,

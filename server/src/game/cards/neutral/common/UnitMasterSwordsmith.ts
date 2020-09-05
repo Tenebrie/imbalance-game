@@ -9,6 +9,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import Utils from '../../../../utils/Utils'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitMasterSwordsmith extends ServerCard {
 	bonusPower = 1
@@ -22,7 +23,8 @@ export default class UnitMasterSwordsmith extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 2,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			bonusPower: this.bonusPower

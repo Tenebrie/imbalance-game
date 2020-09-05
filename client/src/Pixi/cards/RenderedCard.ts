@@ -21,6 +21,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import ClientCardStats from '@/Pixi/models/ClientCardStats'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class RenderedCard implements Card {
 	public readonly id: string
@@ -41,6 +42,7 @@ export default class RenderedCard implements Card {
 	public readonly relatedCards: string[]
 	public variables: RichTextVariables
 	public readonly sortPriority: number
+	public readonly expansionSet: ExpansionSet
 
 	public readonly isCollectible: boolean
 	public readonly isExperimental: boolean
@@ -89,6 +91,7 @@ export default class RenderedCard implements Card {
 		this.baseTribes = (message.baseTribes || []).slice()
 		this.baseFeatures = (message.baseFeatures || []).slice()
 		this.relatedCards = (message.relatedCards || []).slice()
+		this.expansionSet = message.expansionSet
 		this.variables = message.variables
 		this.sortPriority = message.sortPriority
 

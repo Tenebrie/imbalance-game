@@ -12,6 +12,7 @@ import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDef
 import SimpleTargetDefinitionBuilder from '../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
 import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellFleetingSpark extends ServerCard {
 	baseDamage = 2
@@ -24,7 +25,8 @@ export default class SpellFleetingSpark extends ServerCard {
 			tribes: [CardTribe.SPARK],
 			stats: {
 				cost: 1,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			damage: () => this.damage

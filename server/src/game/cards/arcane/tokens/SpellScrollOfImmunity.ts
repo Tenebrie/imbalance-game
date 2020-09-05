@@ -13,6 +13,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffImmunity from '../../../buffs/BuffImmunity'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellScrollOfImmunity extends ServerCard {
 	constructor(game: ServerGame) {
@@ -24,7 +25,8 @@ export default class SpellScrollOfImmunity extends ServerCard {
 			features: [CardFeature.KEYWORD_BUFF_IMMUNITY],
 			stats: {
 				cost: 3,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

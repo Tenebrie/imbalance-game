@@ -5,6 +5,7 @@ import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitCuriosityMerchant extends ServerCard {
 	spellDiscount = 3
@@ -17,7 +18,9 @@ export default class UnitCuriosityMerchant extends ServerCard {
 			tribes: [CardTribe.HUMAN],
 			stats: {
 				power: 5,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			spellDiscount: this.spellDiscount

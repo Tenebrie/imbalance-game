@@ -14,6 +14,7 @@ import BuffSpellExtraCost from '../../../buffs/BuffSpellExtraCost'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffSpellDiscountPerTurn from '../../../buffs/BuffSpellDiscountPerTurn'
 import CardTribe from '@shared/enums/CardTribe'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitMercantileSpellslinger extends ServerCard {
 	manaMarkup = 3
@@ -27,7 +28,8 @@ export default class UnitMercantileSpellslinger extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 3
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			manaMarkup: this.manaMarkup,

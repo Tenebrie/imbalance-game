@@ -13,6 +13,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import Constants from '@shared/Constants'
 import CardLibrary from '../../../libraries/CardLibrary'
 import UnitLivingShadow from '../tokens/UnitLivingShadow'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroLearthe extends ServerCard {
 	constructor(game: ServerGame) {
@@ -24,7 +25,8 @@ export default class HeroLearthe extends ServerCard {
 			relatedCards: [UnitLivingShadow],
 			stats: {
 				power: 4,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

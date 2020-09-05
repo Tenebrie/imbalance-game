@@ -7,6 +7,7 @@ import SpellLightningStorm from '../tokens/SpellLightningStorm'
 import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitMerfolkStormcaller extends ServerCard {
 	constructor(game: ServerGame) {
@@ -20,7 +21,8 @@ export default class UnitMerfolkStormcaller extends ServerCard {
 			sortPriority: 1,
 			stats: {
 				power: 4,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)

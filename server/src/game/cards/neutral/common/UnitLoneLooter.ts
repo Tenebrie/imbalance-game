@@ -7,6 +7,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import {BuffCreatedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitLoneLooter extends ServerCard {
 	constructor(game: ServerGame) {
@@ -17,7 +18,8 @@ export default class UnitLoneLooter extends ServerCard {
 			features: [CardFeature.KEYWORD_SUMMON],
 			stats: {
 				power: 3,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createCallback<BuffCreatedEventArgs>(GameEventType.BUFF_CREATED, [CardLocation.DECK])

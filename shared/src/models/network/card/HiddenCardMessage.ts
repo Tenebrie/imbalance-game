@@ -7,6 +7,7 @@ import CardMessage from './CardMessage'
 import CardColor from '../../../enums/CardColor'
 import CardTribe from '../../../enums/CardTribe'
 import CardFeature from '../../../enums/CardFeature'
+import ExpansionSet from '../../../enums/ExpansionSet'
 
 export default class HiddenCardMessage implements CardMessage {
 	id: string
@@ -22,6 +23,8 @@ export default class HiddenCardMessage implements CardMessage {
 	relatedCards: string[]
 	variables = {}
 	sortPriority: number
+	expansionSet: ExpansionSet.BASE
+
 	isCollectible: boolean
 	isExperimental: boolean
 

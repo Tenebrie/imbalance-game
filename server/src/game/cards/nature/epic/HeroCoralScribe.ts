@@ -6,6 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroCoralScribe extends ServerCard {
 	constructor(game: ServerGame) {
@@ -17,7 +18,8 @@ export default class HeroCoralScribe extends ServerCard {
 			generatedArtworkMagicString: '2',
 			stats: {
 				power: 7,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 

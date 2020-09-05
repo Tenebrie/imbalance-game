@@ -13,6 +13,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetValidatorArguments from '../../../../../types/TargetValidatorArguments'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellFireball extends ServerCard {
 	baseDamage = 4
@@ -26,7 +27,8 @@ export default class SpellFireball extends ServerCard {
 			features: [CardFeature.HERO_POWER],
 			stats: {
 				cost: 6
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			damage: () => this.damage,

@@ -14,6 +14,7 @@ import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitVolatileCrystal from '../../tokens/UnitVolatileCrystal'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellCrystalBarrage extends ServerCard {
 	constructor(game: ServerGame) {
@@ -25,7 +26,8 @@ export default class SpellCrystalBarrage extends ServerCard {
 			relatedCards: [UnitVolatileCrystal],
 			stats: {
 				cost: 6
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

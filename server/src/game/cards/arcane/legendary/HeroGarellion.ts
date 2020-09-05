@@ -9,6 +9,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import {RoundEndedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroGarellion extends ServerCard {
 	powerPerMana = 2
@@ -21,7 +22,8 @@ export default class HeroGarellion extends ServerCard {
 			features: [CardFeature.KEYWORD_INFUSE_ALL],
 			stats: {
 				power: 12
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			powerPerMana: this.powerPerMana

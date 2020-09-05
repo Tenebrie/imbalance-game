@@ -8,6 +8,7 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import {UnitCreatedEventArgs} from '../../../models/GameEventCreators'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroForksmanshipInstructor extends ServerCard {
 	powerThreshold = 4
@@ -20,7 +21,8 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 			faction: CardFaction.CASTLE,
 			stats: {
 				power: 8,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			powerThreshold: this.powerThreshold,

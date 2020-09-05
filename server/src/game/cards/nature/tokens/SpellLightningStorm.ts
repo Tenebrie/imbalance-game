@@ -14,6 +14,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellLightningStorm extends ServerCard {
 	damage = 3
@@ -29,7 +30,8 @@ export default class SpellLightningStorm extends ServerCard {
 			tribes: [CardTribe.STORM],
 			stats: {
 				cost: 0,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,

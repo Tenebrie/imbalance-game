@@ -12,6 +12,7 @@ import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellScrollOfSapping extends ServerCard {
 	constructor(game: ServerGame) {
@@ -23,7 +24,8 @@ export default class SpellScrollOfSapping extends ServerCard {
 			features: [CardFeature.KEYWORD_BUFF_TEMPORARY_CARD],
 			stats: {
 				cost: 2,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

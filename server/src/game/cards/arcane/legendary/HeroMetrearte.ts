@@ -10,6 +10,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardLibrary from '../../../libraries/CardLibrary'
 import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroMetrearte extends ServerCard {
 	constructor(game: ServerGame) {
@@ -20,7 +21,8 @@ export default class HeroMetrearte extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 5
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.addRelatedCards()

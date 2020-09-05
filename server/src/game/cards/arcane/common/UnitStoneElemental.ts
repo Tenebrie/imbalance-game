@@ -15,6 +15,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import {TurnEndedEventArgs} from '../../../models/GameEventCreators'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitStoneElemental extends ServerCard {
 	canAttack = false
@@ -28,7 +29,8 @@ export default class UnitStoneElemental extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN],
 			stats: {
 				power: 7
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)

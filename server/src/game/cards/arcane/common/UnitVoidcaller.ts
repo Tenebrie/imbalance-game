@@ -6,6 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import UnitVoidPortal from '../tokens/UnitVoidPortal'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitVoidcaller extends ServerCard {
 	constructor(game: ServerGame) {
@@ -18,6 +19,7 @@ export default class UnitVoidcaller extends ServerCard {
 			stats: {
 				power: 6
 			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)

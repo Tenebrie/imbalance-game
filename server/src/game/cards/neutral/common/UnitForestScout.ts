@@ -7,6 +7,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import BuffStrength from '../../../buffs/BuffStrength'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitForestScout extends ServerCard {
 	boardPowerBonus = 7
@@ -21,7 +22,8 @@ export default class UnitForestScout extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 4,
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			boardPowerBonus: this.boardPowerBonus,

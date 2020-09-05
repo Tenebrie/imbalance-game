@@ -7,6 +7,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitArcaneElemental extends ServerCard {
 	manaGenerated = 2
@@ -20,7 +21,8 @@ export default class UnitArcaneElemental extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 7
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated

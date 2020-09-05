@@ -15,6 +15,7 @@ import BuffStrength from '../../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellNightmareDrain extends ServerCard {
 	constructor(game: ServerGame) {
@@ -26,7 +27,8 @@ export default class SpellNightmareDrain extends ServerCard {
 			relatedCards: [UnitShadowspawn],
 			stats: {
 				cost: 4
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 
 		/* Create basic unit if no target available */

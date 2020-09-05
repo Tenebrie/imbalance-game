@@ -8,6 +8,7 @@ import BuffVelRamineaWeave from '../../../../buffs/BuffVelRamineaWeave'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellFlameweave extends ServerCard {
 	constructor(game: ServerGame) {
@@ -18,7 +19,8 @@ export default class SpellFlameweave extends ServerCard {
 			features: [CardFeature.HERO_POWER],
 			stats: {
 				cost: 1
-			}
+			},
+			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			currentStacks: () => this.currentStacks

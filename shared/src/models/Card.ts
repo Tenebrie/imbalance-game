@@ -6,6 +6,7 @@ import RichTextVariables from './RichTextVariables'
 import CardFeature from '../enums/CardFeature'
 import CardFaction from '../enums/CardFaction'
 import CardStats from './CardStats'
+import ExpansionSet from '../enums/ExpansionSet'
 
 export default interface Card {
 	id: string
@@ -26,6 +27,7 @@ export default interface Card {
 	relatedCards: string[]
 	variables: RichTextVariables
 	sortPriority: number
+	expansionSet: ExpansionSet
 	isCollectible: boolean
 	isExperimental: boolean
 }
