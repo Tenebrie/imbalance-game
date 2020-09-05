@@ -24,7 +24,7 @@ class CardImageGenerator {
 		const productionDir = path.join(__dirname, '../../../../client/assets/cards')
 		const placeholderDir = path.join(__dirname, '../../../../client/generated/assets/cards')
 
-		const targetCardClasses = CardLibrary.cards//.filter(cardClass => !fs.existsSync(`${productionDir}/${cardClass}.png`) && !fs.existsSync(`${placeholderDir}/${cardClass}.png`))
+		const targetCardClasses = CardLibrary.cards.filter(card => !fs.existsSync(`${productionDir}/${card.class}.png`) && !fs.existsSync(`${placeholderDir}/${card.class}.png`))
 		if (targetCardClasses.length === 0) {
 			return
 		}

@@ -3,7 +3,7 @@ import ServerGame from '../../models/ServerGame'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 import {isCardPublic} from '../../../utils/Utils'
 import ServerBuff from '../../models/ServerBuff'
-import VoidGame from '../../utils/VoidGame'
+import CardLibraryPlaceholderGame from '../../utils/CardLibraryPlaceholderGame'
 import OpenCardStatsMessage from '@shared/models/network/cardStats/OpenCardStatsMessage'
 import HiddenCardStatsMessage from '@shared/models/network/cardStats/HiddenCardStatsMessage'
 import OpenBuffMessage from '@shared/models/network/buffs/OpenBuffMessage'
@@ -12,7 +12,7 @@ import {CardUpdateMessageType} from '@shared/models/network/messageHandlers/Serv
 
 export default {
 	notifyAboutCardStatsChange(card: ServerCard): void {
-		if (card.game === VoidGame.get()) {
+		if (card.game === CardLibraryPlaceholderGame) {
 			return
 		}
 

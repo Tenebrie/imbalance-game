@@ -40,7 +40,7 @@ export default {
 			data: new OpenPlayerInGameMessage(playerInGame),
 			highPriority: delta < 0
 		})
-		playerInGame.opponent.player.sendMessage({
+		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.MANA,
 			data: new HiddenPlayerInGameMessage(playerInGame)
 		})
@@ -52,7 +52,7 @@ export default {
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
 
-		playerInGame.opponent.player.sendMessage({
+		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.CARD_ADD_HAND,
 			data: isCardPublic(card) ? new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)) : new HiddenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
@@ -63,7 +63,7 @@ export default {
 			type: PlayerUpdateMessageType.CARD_ADD_DECK,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
-		playerInGame.opponent.player.sendMessage({
+		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.CARD_ADD_DECK,
 			data: isCardPublic(card) ? new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)) : new HiddenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
@@ -74,7 +74,7 @@ export default {
 			type: PlayerUpdateMessageType.CARD_ADD_GRAVE,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
-		playerInGame.opponent.player.sendMessage({
+		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.CARD_ADD_GRAVE,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})

@@ -1,8 +1,6 @@
 import ServerGame from '../models/ServerGame'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import GameLibrary from '../libraries/GameLibrary'
 import ServerPlayer from '../players/ServerPlayer'
-import VoidPlayerInGame from '../utils/VoidPlayerInGame'
 import ServerBotPlayer from '../AI/ServerBotPlayer'
 import Constants from '@shared/Constants'
 
@@ -17,7 +15,7 @@ export default {
 	},
 
 	onPlayerDisconnected(game: ServerGame, player: ServerPlayer): void {
-		const humanPlayersInGame = game.players.filter(playerInGame => playerInGame !== VoidPlayerInGame.for(game) && !(playerInGame.player instanceof ServerBotPlayer))
+		const humanPlayersInGame = game.players.filter(playerInGame => !(playerInGame.player instanceof ServerBotPlayer))
 		if (humanPlayersInGame.length === 0) {
 			game.forceShutdown('No human players left')
 			return

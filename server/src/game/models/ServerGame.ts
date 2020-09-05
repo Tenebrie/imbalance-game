@@ -2,7 +2,6 @@ import uuidv4 from 'uuid/v4'
 import Game from '@shared/models/Game'
 import ServerBoard from './ServerBoard'
 import ServerPlayer from '../players/ServerPlayer'
-import VoidPlayerInGame from '../utils/VoidPlayerInGame'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
@@ -21,6 +20,11 @@ import {colorizeId, colorizePlayer} from '../../utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
 import { BuffConstructor } from './ServerBuffContainer'
 
+interface ServerGameProps {
+	name?: string
+	owner?: ServerPlayer
+}
+
 export default class ServerGame implements Game {
 	public readonly id: string
 	public readonly name: string
@@ -28,26 +32,31 @@ export default class ServerGame implements Game {
 	public turnIndex: number
 	public turnPhase: GameTurnPhase
 	public playersToMove: ServerPlayerInGame[]
-	readonly owner: ServerPlayer
+	readonly owner: ServerPlayer | undefined
 	readonly board: ServerBoard
 	readonly events: ServerGameEvents
 	readonly players: ServerPlayerInGame[]
 	readonly cardPlay: ServerGameCardPlay
 	readonly animation: ServerGameAnimation
 
-	constructor(owner: ServerPlayer, name: string) {
+	constructor(props: ServerGameProps) {
 		this.id = uuidv4()
-		this.name = name
+		this.name = props.name || this.generateName(props.owner)
 		this.isStarted = false
 		this.turnIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
-		this.owner = owner
+		this.owner = props.owner
 		this.board = new ServerBoard(this)
 		this.events = new ServerGameEvents(this)
 		this.players = []
 		this.playersToMove = []
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
+	}
+
+	private generateName(owner?: ServerPlayer): string {
+		const randomNumber = Math.floor(1000 + Math.random() * 9000)
+		return owner ? (owner.username + `'s game #${randomNumber}`) : `Game #${randomNumber}`
 	}
 
 	public addPlayer(targetPlayer: ServerPlayer, deck: ServerTemplateCardDeck): ServerPlayerInGame {
@@ -74,7 +83,7 @@ export default class ServerGame implements Game {
 		this.isStarted = true
 
 		const playerOne = this.players[0]
-		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
+		const playerTwo = this.players[1]
 		console.info(`Starting game ${colorizeId(this.id)}: `
 			+ `${colorizePlayer(playerOne.player.username)} vs ${colorizePlayer(playerTwo.player.username)}`)
 
@@ -110,7 +119,7 @@ export default class ServerGame implements Game {
 	}
 
 	public getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
-		return this.players.find(otherPlayer => otherPlayer !== player) || VoidPlayerInGame.for(this)
+		return this.players.find(otherPlayer => otherPlayer !== player)
 	}
 
 	public isBotGame(): boolean {
@@ -137,7 +146,7 @@ export default class ServerGame implements Game {
 
 	public advanceCurrentTurn(): void {
 		const playerOne = this.players[0]
-		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
+		const playerTwo = this.players[1]
 		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
 		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
 		const hasPlayerWonBoard = rowsOwnedByPlayerOne === Constants.GAME_BOARD_ROW_COUNT || rowsOwnedByPlayerTwo === Constants.GAME_BOARD_ROW_COUNT
@@ -323,8 +332,6 @@ export default class ServerGame implements Game {
 	}
 
 	static newOwnedInstance(owner: ServerPlayer, name: string): ServerGame {
-		const randomNumber = Math.floor(1000 + Math.random() * 9000)
-		name = name || (owner.username + `'s game #${randomNumber}`)
-		return new ServerGame(owner, name)
+		return new ServerGame({ name, owner })
 	}
 }

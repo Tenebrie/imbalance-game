@@ -118,12 +118,11 @@ export default class ServerCard implements Card {
 		this.color = props.color
 		this.faction = props.faction
 
-		const statsProps = {
+		this.stats = new ServerCardStats(this, {
 			basePower: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
 			baseArmor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
 			baseSpellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0
-		}
-		this.stats = new ServerCardStats(this, statsProps)
+		})
 
 		this.name = `card.${this.class}.name`
 		this.title = `card.${this.class}.title`
@@ -160,6 +159,10 @@ export default class ServerCard implements Card {
 		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
 
 		this.generatedArtworkMagicString = props.generatedArtworkMagicString ? props.generatedArtworkMagicString : ''
+
+		if (!this.game) {
+			return
+		}
 
 		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, validLocations)

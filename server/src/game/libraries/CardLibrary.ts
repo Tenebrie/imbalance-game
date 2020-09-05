@@ -3,7 +3,7 @@ import glob from 'glob'
 import * as fs from 'fs'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
-import VoidGame from '../utils/VoidGame'
+import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
 import {colorize} from '../../utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
 
@@ -35,7 +35,7 @@ class CardLibrary {
 			nameMismatchModules.forEach(module => fs.unlinkSync(module.path))
 		}
 
-		const filteredModules = cardModules
+		const upToDateModules = cardModules
 			.filter(module => module.filename === module.prototypeFunction.name)
 			.reduce((acc, obj) => {
 				const updatedArray = acc.slice()
@@ -48,21 +48,30 @@ class CardLibrary {
 				return updatedArray
 			}, [])
 
-		const outdatedModules = cardModules.filter(module => !filteredModules.includes(module) && !nameMismatchModules.includes(module))
+		const outdatedModules = cardModules.filter(module => !upToDateModules.includes(module) && !nameMismatchModules.includes(module))
 		if (outdatedModules.length > 0) {
 			console.info(colorize(`Clearing ${outdatedModules.length} outdated card module(s)`, AsciiColor.YELLOW))
 			outdatedModules.forEach(module => fs.unlinkSync(module.path))
 		}
 
-		const cardPrototypes = filteredModules.map(module => module.prototypeFunction)
+		const cardPrototypes = upToDateModules.map(module => module.prototypeFunction)
 
 		this.cards = cardPrototypes.map(prototype => {
-			return new prototype(VoidGame.get())
+			return new prototype(CardLibraryPlaceholderGame)
 		})
 
-		const sortedModules = filteredModules.sort((a, b) => b.timestamp - a.timestamp)
-		const latestClasses = sortedModules.slice(0, 5).map(card => card.prototypeFunction.name)
-		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions. Newest 5:`, latestClasses)
+		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions.`)
+		if (cardPrototypes.length === 0) {
+			return
+		}
+
+		const oldestTimestamp = upToDateModules.sort((a, b) => a.timestamp - b.timestamp)[0].timestamp
+		const newModules = upToDateModules.filter(module => (module.timestamp - oldestTimestamp) > 1000000)
+		if (newModules.length === 0) {
+			return
+		}
+		const sortedNewModules = newModules.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5)
+		console.info('Latest updated card definitions:', sortedNewModules.map(module => module.filename))
 	}
 
 	public findPrototypeById(id: string): ServerCard | null {
