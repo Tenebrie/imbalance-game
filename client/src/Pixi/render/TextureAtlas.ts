@@ -116,9 +116,13 @@ export default class TextureAtlas {
 			const existingTexture = TextureAtlas.textures[fileName.toLowerCase()]
 			if (existingTexture) {
 				onLoaded(existingTexture)
+				return
 			}
 
 			const newTexture = PIXI.Texture.from(`/assets/${fileName}.png`)
+			if (newTexture.valid) {
+				onLoaded(newTexture)
+			}
 
 			newTexture.baseTexture.on('loaded', () => onLoaded(newTexture))
 			newTexture.baseTexture.on('error', () => {
@@ -146,5 +150,10 @@ export default class TextureAtlas {
 			PIXI.Texture.removeFromCache(loadedTexture)
 		})
 		return clone
+	}
+	public static clear(): void {
+		TextureAtlas.textures = {}
+		TextureAtlas.hasPreloadedComponents = false
+		TextureAtlas.isPreloadingComponents = false
 	}
 }

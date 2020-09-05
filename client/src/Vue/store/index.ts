@@ -96,6 +96,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			store.dispatch.gameStateModule.reset()
 			router.push({ name: 'home' })
 			Core.socket.close(1000, 'Player disconnect')
+			Core.cleanUp()
 		}
 	}
 })

@@ -29,8 +29,10 @@ export default Vue.extend({
 	},
 
 	beforeDestroy(): void {
-		Core.reset()
 		window.removeEventListener('resize', this.onWindowResize)
+		if (Core.socket) {
+			Core.socket.close()
+		}
 	},
 
 	computed: {

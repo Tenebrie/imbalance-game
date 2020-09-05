@@ -9,15 +9,13 @@ import RichTextAlign from '@/Pixi/render/RichTextAlign'
 export const INSPECTED_CARD_WINDOW_FRACTION = 0.40
 
 class InspectedCardRenderer {
-	public container: PIXI.Container = new PIXI.Container()
+	public container: PIXI.Container
 
 	private richText: RichText
 
-	constructor() {
-		this.container.zIndex = INSPECTED_CARD_ZINDEX
-	}
-
 	public init(): void {
+		this.container = new PIXI.Container()
+		this.container.zIndex = INSPECTED_CARD_ZINDEX
 		this.richText = new RichText('', 500, {})
 		this.richText.style.fontSize = 20
 		this.richText.horizontalAlign = RichTextAlign.START

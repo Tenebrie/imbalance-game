@@ -142,7 +142,7 @@ export default class MainHandler {
 				return
 			}
 
-			this.tick(deltaTime)
+			this.mainAnimationThread.tick(deltaTime)
 			this.projectileSystem.tick(deltaTime, deltaFraction)
 			Core.renderer.tick(deltaTime, deltaFraction)
 			Core.particleSystem.tick(deltaTime, deltaFraction)
@@ -151,10 +151,6 @@ export default class MainHandler {
 
 		this.coreTicker.start()
 		this.mainAnimationThread.start()
-	}
-
-	private tick(deltaTime: number): void {
-		this.mainAnimationThread.tick(deltaTime)
 	}
 
 	public registerMessage(message: QueuedMessage): void {
@@ -195,6 +191,6 @@ export default class MainHandler {
 	}
 
 	public stop(): void {
-		this.coreTicker.stop()
+		this.coreTicker.destroy()
 	}
 }

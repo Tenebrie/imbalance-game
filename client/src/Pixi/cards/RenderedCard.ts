@@ -24,6 +24,7 @@ import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class RenderedCard implements Card {
+	private readonly gameId: string
 	public readonly id: string
 	public readonly type: CardType
 	public readonly class: string

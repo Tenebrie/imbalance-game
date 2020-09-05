@@ -17,7 +17,8 @@ import Utils from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import {inspectedCardRenderer} from './InspectedCardRenderer'
 import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
-import {debounce, throttle} from 'throttle-debounce'
+import {throttle} from 'throttle-debounce'
+import {DisplayObject} from 'pixi.js'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -832,7 +833,21 @@ export default class Renderer {
 	}
 
 	public destroy(): void {
-		this.pixi.stop()
-		this.container.removeChild(this.pixi.view)
+		TextureAtlas.clear()
+		// PIXI.utils.clearTextureCache()
+		this.pixi.destroy(true, {
+			children: true,
+			texture: true,
+			baseTexture: true
+		})
+	}
+
+	private destroyRecursively(object: PIXI.Container | DisplayObject): void {
+		if (object instanceof PIXI.Container) {
+			object.children.forEach(child => {
+				this.destroyRecursively(child)
+			})
+		}
+		object.destroy()
 	}
 }

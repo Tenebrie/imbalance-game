@@ -103,10 +103,7 @@ export default class Core {
 		if (!event.wasClean) {
 			console.error(`Connection closed. Reason: ${event.reason}`)
 		}
-		clearInterval(Core.keepaliveTimer)
-		AudioSystem.setMode(AudioSystemMode.MENU)
-		Core.mainHandler.stop()
-		Core.renderer.destroy()
+
 		store.dispatch.leaveGame()
 	}
 
@@ -151,9 +148,16 @@ export default class Core {
 		Core.renderer.unregisterCard(renderedCard)
 	}
 
-	public static reset(): void {
-		if (!this.socket) { return }
-		this.socket.close()
+	public static cleanUp(): void {
+		clearInterval(Core.keepaliveTimer)
+		AudioSystem.setMode(AudioSystemMode.MENU)
+		Core.mainHandler.stop()
+		Core.opponent = undefined
+		Core.renderer.destroy()
+
+		if (this.socket) {
+			this.socket.close()
+		}
 		this.isReady = false
 	}
 }
