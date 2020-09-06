@@ -111,13 +111,15 @@
 	"card.feature.keywordSummon.description": "Добавить карту из вашей колоды в вашу руку. Она становится 'Временной картой'.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
-	"card.feature.keywordBuffStun.name": "Оглушение",
+	"card.feature.keywordBuffStun.name": "Оглушение (эффект)",
 	"card.feature.keywordBuffStun.description": "Цель оглушена. Ее эффект временно отключен.",
-	"card.feature.keywordBuffGrowth.name": "Рост",
+	"card.feature.keywordBuffGrowth.name": "Рост (эффект)",
 	"card.feature.keywordBuffGrowth.description": "Цель получает +1 Силы в начале ее хода.",
-	"card.feature.keywordBuffImmunity.name": "Неуязвимость",
+	"card.feature.keywordBuffStrength.name": "Мощь (эффект)",
+	"card.feature.keywordBuffStrength.description": "Цель получает +1 Силы.",
+	"card.feature.keywordBuffImmunity.name": "Неуязвимость (эффект)",
 	"card.feature.keywordBuffImmunity.description": "Цель неуязвима к любому урону или эффектам.",
-	"card.feature.keywordBuffTemporaryCard.name": "Временная карта",
+	"card.feature.keywordBuffTemporaryCard.name": "Временная карта (эффект)",
 	"card.feature.keywordBuffTemporaryCard.description": "Цель может быть сыграна бесплатно. Если она не сыграна в конце хода, она сбрасывается.",
 	"card.feature.heroPower.name": "Способность предводителя",
 	"card.feature.heroPower.description": "Будучи сыгранной, эта карта возвращается в вашу колоду.",
@@ -170,7 +172,7 @@
 	"buff.buffSpellDiscount.name": "Скидка на заклинание",
 	"buff.buffSpellDiscount.description": "Это заклинание стоит на 1 ед. маны дешевле.",
 
-	"buff.buffStrength.name": "Сила",
+	"buff.buffStrength.name": "Мощь",
 	"buff.buffStrength.description": "Эта карта получает 1 ед. силы.",
 
 	"buff.buffStun.name": "Оглушение",
@@ -210,7 +212,7 @@
 
 	"card.heroZamarath.name": "Замарат",
 	"card.heroZamarath.title": "Защитник",
-	"card.heroZamarath.description": "*Вход в игру:*\nПолучает *Иммунитет* до конца хода.",
+	"card.heroZamarath.description": "*Вход в игру:*\nПолучает *Неуязвимость* до конца хода.",
 
 	"card.heroKroLah.name": "Кро'Ла",
 	"card.heroKroLah.title": "Небесный страж",
@@ -244,7 +246,7 @@
 	"card.heroAurienne.description": "Если союзная боевая единица получает фатальный урон пока *Ауриэн* находится в вашей руке, предотвратите его.\nЗатем, передвиньте союзника назад, сыграйте *Ауриэн* на его месте и *вытяните* карту.",
 
 	"card.heroTroviar.name": "Тровиар",
-	"card.heroTroviar.title": "Наблюдатель",
+	"card.heroTroviar.title": "Мучитель",
 	"card.heroTroviar.description": "*Вход игру:*\nНанесите {deployDamage} ед. урона {targetCount} вражеским юнитам.<p>Получает +{powerGained} Силы, когда другой юнит получает урон.",
 
 	"card.heroMetrearte.name": "Метреарт",
@@ -254,6 +256,10 @@
 	"card.heroPozoga.name": "Пожога",
 	"card.heroPozoga.title": "Поджигатель",
 	"card.heroPozoga.description": "*Вход в игру:*\nУничтожьте все карты с наибольшей Силой на столе.",
+
+	"card.heroTaekana.name": "Таекана",
+	"card.heroTaekana.title": "Смотрительница",
+	"card.heroTaekana.description": "*Вход в игру:*\nДайте +{strengthGiven} ед. Силы ВСЕМ юнитам.",
 
 	"card.heroSparklingSpirit.name": "Искрящийся дух",
 	"card.heroSparklingSpirit.description": "Ваши *Искры* наносят на {extraDamage} Урона больше.",
@@ -295,6 +301,9 @@
 
 	"card.heroElderElemental.name": "Древний элементаль",
 	"card.heroElderElemental.description": "*Вход в игру:*\nПолучите {manaGenerated} ед. Маны.<p>*Начало хода:*\nПовторите эффект\n*Вход в игру* этой карты.",
+
+	"card.unitTravelingEnchantress.name": "Путешествующая\nчародейка",
+	"card.unitTravelingEnchantress.description": "*Вход в игру:*\nДайте +{baseStrengthGiven} ед. Силы союзному юниту.\nЗатем, удвойте их эффекты *Мощи*.",
 
 	"card.unitRavenMessenger.name": "Почтовый ворон",
 	"card.unitRavenMessenger.description": "*Вход в игру:*\n*Призовите* Обыкновенную карту человека из вашей колоды.",

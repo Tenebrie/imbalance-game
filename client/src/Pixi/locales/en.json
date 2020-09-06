@@ -117,13 +117,15 @@
 	"card.feature.keywordSummon.description": "Move a card from your deck into your hand. It gets 'Temporary Card'.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
-	"card.feature.keywordBuffStun.name": "Stun",
+	"card.feature.keywordBuffStun.name": "Stun (Buff)",
 	"card.feature.keywordBuffStun.description": "Target card is stunned and is temporarily disabled.",
-	"card.feature.keywordBuffGrowth.name": "Growth",
+	"card.feature.keywordBuffGrowth.name": "Growth (Buff)",
 	"card.feature.keywordBuffGrowth.description": "Target card gets +1 Power at the start of its turn.",
-	"card.feature.keywordBuffImmunity.name": "Immunity",
+	"card.feature.keywordBuffStrength.name": "Strength (Buff)",
+	"card.feature.keywordBuffStrength.description": "Target card card has 1 extra Power.",
+	"card.feature.keywordBuffImmunity.name": "Immunity (Buff)",
 	"card.feature.keywordBuffImmunity.description": "Target card is immune to damage and any effects.",
-	"card.feature.keywordBuffTemporaryCard.name": "Temporary card",
+	"card.feature.keywordBuffTemporaryCard.name": "Temporary card (Buff)",
 	"card.feature.keywordBuffTemporaryCard.description": "Target card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.heroPower.name": "Leader Power",
 	"card.feature.heroPower.description": "When played, this card returns to your deck.",
@@ -271,6 +273,10 @@
 	"card.heroLearthe.title": "The Death Speaker",
 	"card.heroLearthe.description": "*Deploy:*\nChoose a row.\nFill it with *Living Shadows*.",
 
+	"card.heroTaekana.name": "Taekana",
+	"card.heroTaekana.title": "The Zookeeper",
+	"card.heroTaekana.description": "*Deploy:*\nGive +{strengthGiven} Power to ALL units.",
+
 	"card.heroSparklingSpirit.name": "Sparkling Spirit",
 	"card.heroSparklingSpirit.description": "*Deploy:*\nAdd a *Fleeting Spark* into your hand<p>Your *Sparks* deal {extraDamage} extra Damage",
 
@@ -301,6 +307,7 @@
 
 	"card.heroCultistOfAreddon.name": "Cultist of Areddon",
 	"card.heroCultistOfAreddon.description": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",
+	"card.heroCultistOfAreddon.flavor": "- \"So say we all\"",
 
 	"card.heroAdventuringGuildMaster.name": "Adventuring\nGuild Master",
 	"card.heroAdventuringGuildMaster.description": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
@@ -315,11 +322,14 @@
 	"card.heroElderElemental.name": "Elder Elemental",
 	"card.heroElderElemental.description": "*Deploy:*\nGenerate {manaGenerated} Mana.<p>*Turn start:*\nRepeat this unit's *Deploy* effect.",
 
+	"card.unitTravelingEnchantress.name": "Traveling\nEnchantress",
+	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, double their *Strength* effects.",
+
 	"card.unitRavenMessenger.name": "Raven Messenger",
 	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
 
 	"card.unitForestScout.name": "Forest Scout",
-	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gains {boardPowerBonus} Power.\nIf you're losing on Morale, gains {moralePowerBonus} Power.",
+	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power.\nIf you're losing on Morale, gain +{moralePowerBonus} Power.",
 
 	"card.unitChargingKnight.name": "Charging Knight",
 	"card.unitChargingKnight.description": "Perform an *Attack Action* whenever it moves forward<p>*Melee Attack:*\nDeal {attack} Damage",

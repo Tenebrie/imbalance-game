@@ -160,7 +160,7 @@ export default defineComponent({
 	@import "../../styles/generic";
 
 	$MOBILE_MODE_THRESHOLD: 1240px;
-	$PLEB_MODE_THRESHOLD: 2050px;
+	$COMPACT_MODE_THRESHOLD: 2050px;
 
 	.the-card-library-header {
 		display: flex;
@@ -250,7 +250,7 @@ export default defineComponent({
 
 		.right-side {
 			display: flex;
-			@media (max-width: $PLEB_MODE_THRESHOLD) {
+			@media (max-width: $COMPACT_MODE_THRESHOLD) {
 				width: 100%;
 			}
 
@@ -264,7 +264,7 @@ export default defineComponent({
 				display: flex;
 				min-height: 40px;
 				margin: 8px 0;
-				@media (max-width: $PLEB_MODE_THRESHOLD) {
+				@media (max-width: $COMPACT_MODE_THRESHOLD) {
 					width: 100%;
 				}
 
