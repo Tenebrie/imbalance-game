@@ -5,7 +5,7 @@
 		 @contextmenu="onRightClick"
 		 @mouseenter="onMouseEnter"
 		 @mouseleave="onMouseLeave">
-		<span class="power" v-if="showPower">{{ card.basePower }}</span>
+		<span class="power" v-if="showPower">{{ card.stats.basePower }}</span>
 		<span class="name">{{ fullName }}<span class="count" v-if="displayCount">x{{ card.count }}</span></span>
 	</div>
 </template>

@@ -137,10 +137,10 @@ export default class TextureAtlas {
 		if (texture) {
 			return texture
 		}
-		const textureInCache = PIXI.utils.TextureCache[`/assets/${path}.png`]
+		/*const textureInCache = PIXI.utils.TextureCache[`/assets/${path}.png`]
 		if (textureInCache) {
 			return textureInCache
-		}
+		}*/
 		return TextureAtlas.loadTextureOnDemand(path)
 	}
 

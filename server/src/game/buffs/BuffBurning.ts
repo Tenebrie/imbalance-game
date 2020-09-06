@@ -19,6 +19,8 @@ export default class BuffBurning extends ServerBuff {
 	}
 
 	private onTurnStarted(): void {
+		this.game.animation.createAnimationThread()
 		this.card.dealDamage(ServerDamageInstance.fromCard(this.burnDamage, this.card))
+		this.game.animation.commitAnimationThread()
 	}
 }
