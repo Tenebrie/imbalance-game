@@ -18,7 +18,7 @@ export default class HeroStormDancer extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
-			faction: CardFaction.NATURE,
+			faction: CardFaction.WILD,
 			stats: {
 				power: 5,
 			},

@@ -7,54 +7,64 @@
 			<div v-for="card in library" :key="`${userLanguage}-${card.id}`">
 				<the-card-library-item :card="card" class="card" :mode="'library'" />
 			</div>
-			<pixi-inspected-card />
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import Fuse from 'fuse.js'
 import store from '@/Vue/store'
 import Language from '@shared/enums/Language'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
-import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
-import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
 import CardType from '@shared/enums/CardType'
 import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
 import Localization from '@/Pixi/Localization'
 import {insertRichTextVariables} from '@/utils/Utils'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
+import {computed, defineComponent, onMounted, onUnmounted} from '@vue/composition-api'
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
 		TheCardLibraryItem,
 		TheCardLibraryHeader,
-		PixiInspectedCard,
 	},
 
-	mounted() {
-		window.addEventListener('keydown', this.onKeyPress)
-	},
+	setup() {
+		onMounted(() => {
+			window.addEventListener('keydown', onKeyPress)
+		})
 
-	beforeDestroy() {
-		window.removeEventListener('keydown', this.onKeyPress)
-		store.dispatch.inspectedCard.clear()
-	},
+		onUnmounted(() => {
+			window.removeEventListener('keydown', onKeyPress)
+			store.dispatch.inspectedCard.clear()
+		})
 
-	computed: {
-		library(): CardMessage[] {
+		const onKeyPress = (event: KeyboardEvent): void => {
+			if (event.key === 'Escape' && store.getters.inspectedCard.card) {
+				store.dispatch.inspectedCard.undoCard()
+				return
+			}
+			if (event.key === 'Escape' && store.state.editor.searchQuery) {
+				store.commit.editor.setSearchQuery(null)
+			}
+		}
+
+		const userLanguage = computed<Language>(() => store.state.userPreferencesModule.userLanguage)
+
+		const library = computed<CardMessage[]>(() => {
+			const routeQuery = useDecksRouteQuery()
 			const isCollectible = (card: CardMessage): boolean => {
-				return card.faction !== CardFaction.EXPERIMENTAL && card.color !== CardColor.TOKEN && card.type === CardType.UNIT
+				return card.color !== CardColor.TOKEN && card.type === CardType.UNIT && (!card.isExperimental || routeQuery.value.experimental)
 			}
 
 			const stripFormatting = (str: string): string => {
 				return str.replace(/\*/g, '')
 			}
 
-			const selectedColor = store.state.editor.selectedColorFilter
-			const selectedFaction = store.state.editor.selectedFactionFilter
+			const selectedColor = routeQuery.value.color
+			const selectedFaction = routeQuery.value.faction
 
 			const results = store.state.editor.cardLibrary.filter(card => isCollectible(card))
 				.filter(card => selectedColor === null || card.color === selectedColor)
@@ -130,23 +140,13 @@ export default Vue.extend({
 
 			const searchResult = fuse.search(searchQuery)
 			return searchResult.map(result => result.item)
-		},
-		userLanguage(): Language {
-			return store.state.userPreferencesModule.userLanguage
-		},
-	},
+		})
 
-	methods: {
-		onKeyPress(event: KeyboardEvent): void {
-			if (event.key === 'Escape' && store.getters.inspectedCard.card) {
-				store.dispatch.inspectedCard.undoCard()
-				return
-			}
-			if (event.key === 'Escape' && store.state.editor.searchQuery) {
-				store.commit.editor.setSearchQuery(null)
-			}
+		return {
+			library,
+			userLanguage,
 		}
-	}
+	},
 })
 </script>
 
@@ -162,10 +162,8 @@ export default Vue.extend({
 
 		.header {
 			width: 100%;
-			// height: $CARD_LIBRARY_NAVIGATION_BAR_HEIGHT;
 			background: rgba(white, 0.05);
 			border-bottom: 1px solid gray;
-			// margin-bottom: $CARD_LIBRARY_NAVIGATION_BAR_MARGIN_BOTTOM;
 		}
 
 		.cards {

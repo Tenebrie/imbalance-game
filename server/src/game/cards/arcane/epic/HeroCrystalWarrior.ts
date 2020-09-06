@@ -31,9 +31,9 @@ export default class HeroCrystalWarrior extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 7,
-				armor: 5
 			},
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.CRYSTAL)
 

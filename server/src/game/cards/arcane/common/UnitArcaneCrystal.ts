@@ -25,6 +25,7 @@ export default class UnitArcaneCrystal extends ServerCard {
 				power: 4
 			},
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated,

@@ -21,6 +21,13 @@
 			>
 				{{ data.text }}
 			</button>
+			<div class="separator" />
+			<div class="checkbox-container">
+				<div class="checkbox">
+					<input id="bigcheckbox" type="checkbox" value="Test" v-model="experimentalToggle" />
+					<label for="bigcheckbox">Experimental</label>
+				</div>
+			</div>
 		</div>
 		<div class="search">
 			<div class="search-input-container">
@@ -38,45 +45,47 @@ import CardColor from '@shared/enums/CardColor'
 import {computed, defineComponent} from '@vue/composition-api'
 import {debounce} from 'throttle-debounce'
 import InlineTooltip from '@/Vue/components/InlineTooltip.vue'
+import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
 
 export default defineComponent({
 	components: {
 		InlineTooltip
 	},
 	setup() {
-		const toggleFaction = (faction: CardFaction) => {
-			if (store.state.editor.selectedFactionFilter === faction) {
-				store.commit.editor.setSelectedFactionFilter(null)
-			} else {
-				store.commit.editor.setSelectedFactionFilter(faction)
-			}
-		}
+		const routeQuery = useDecksRouteQuery()
+		const selectedColor = computed<CardColor>(() => routeQuery.value.color)
+		const selectedFaction = computed<CardFaction>(() => routeQuery.value.faction)
 
 		const toggleColor = (color: CardColor) => {
-			if (store.state.editor.selectedColorFilter === color) {
-				store.commit.editor.setSelectedColorFilter(null)
+			if (selectedColor.value === color) {
+				routeQuery.value.color = null
 			} else {
-				store.commit.editor.setSelectedColorFilter(color)
+				routeQuery.value.color = color
 			}
 		}
 
-		const selectedFaction = computed<CardFaction>(() => store.state.editor.selectedFactionFilter)
-		const selectedColor = computed<CardColor>(() => store.state.editor.selectedColorFilter)
-
-		const factionData = [
-			{ text: 'All', faction: null },
-			{ text: 'Imperial', faction: CardFaction.CASTLE },
-			{ text: 'Arcane', faction: CardFaction.ARCANE },
-			{ text: 'Wild', faction: CardFaction.NATURE },
-			{ text: 'Neutral', faction: CardFaction.NEUTRAL }
-		]
+		const toggleFaction = (faction: CardFaction) => {
+			if (selectedFaction.value === faction) {
+				routeQuery.value.faction = null
+			} else {
+				routeQuery.value.faction = faction
+			}
+		}
 
 		const colorData = [
 			{ text: 'All', color: null },
-			{ text: 'Leader', color: CardColor.LEADER},
-			{ text: 'Legendary', color: CardColor.GOLDEN},
-			{ text: 'Epic', color: CardColor.SILVER},
-			{ text: 'Common', color: CardColor.BRONZE},
+			{ text: 'Leader', color: CardColor.LEADER },
+			{ text: 'Legendary', color: CardColor.GOLDEN },
+			{ text: 'Epic', color: CardColor.SILVER },
+			{ text: 'Common', color: CardColor.BRONZE },
+		]
+
+		const factionData = [
+			{ text: 'All', faction: null },
+			{ text: 'Imperial', faction: CardFaction.HUMAN },
+			{ text: 'Arcane', faction: CardFaction.ARCANE },
+			{ text: 'Wild', faction: CardFaction.WILD },
+			{ text: 'Neutral', faction: CardFaction.NEUTRAL },
 		]
 
 		const clearSearch = () => {
@@ -87,11 +96,20 @@ export default defineComponent({
 			store.commit.editor.setSearchQuery(query)
 		})
 
+		const experimentalToggle = computed<boolean>({
+			get(): boolean {
+				return routeQuery.value.experimental
+			},
+			set (value: boolean) {
+				routeQuery.value.experimental = value
+			}
+		})
+
 		const searchQuery = computed<string>({
 			get(): string {
 				return store.state.editor.searchQuery
 			},
-			set(value: string): void {
+			set(value: string) {
 				setSearchQueryDebounced(value)
 			}
 		})
@@ -104,6 +122,7 @@ export default defineComponent({
 			toggleFaction,
 			toggleColor,
 			clearSearch,
+			experimentalToggle,
 			searchQuery
 		}
 	},
@@ -138,6 +157,10 @@ export default defineComponent({
 		.filters {
 			display: flex;
 
+			& > * {
+				flex-grow: 0;
+			}
+
 			.tooltip {
 				font-size: 1.2em;
 			}
@@ -152,6 +175,16 @@ export default defineComponent({
 
 			button {
 				margin: 0 4px;
+			}
+
+			.checkbox-container {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				.checkbox {
+					display: flex;
+				}
 			}
 		}
 

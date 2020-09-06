@@ -30,7 +30,11 @@ export const snakeToCamelCase = (str: string): string => str.toLowerCase().repla
 		.replace('_', '')
 )
 
-export const insertRichTextVariables = (str: string, variables: RichTextVariables): string => {
+export const insertRichTextVariables = (str: string | null | undefined, variables: RichTextVariables): string => {
+	if (str === null || str === undefined) {
+		return ''
+	}
+
 	let replacedText = str
 	for (const variableName in variables) {
 		const variableValue = variables[variableName] || ''
@@ -156,6 +160,21 @@ export default {
 		}
 	},
 
+	getMaxCardCopiesForColor(color: CardColor): number {
+		switch (color) {
+			case CardColor.LEADER:
+				return Constants.CARD_COPIES_LIMIT_LEADER
+			case CardColor.GOLDEN:
+				return Constants.CARD_COPIES_LIMIT_GOLDEN
+			case CardColor.SILVER:
+				return Constants.CARD_COPIES_LIMIT_SILVER
+			case CardColor.BRONZE:
+				return Constants.CARD_COPIES_LIMIT_BRONZE
+			default:
+				return 0
+		}
+	},
+
 	canAddCardToDeck(deckId: string, cardToAdd: Card | CardMessage): boolean {
 		const cardOfColorCount = store.getters.editor.cardsOfColor({ deckId: deckId, color: cardToAdd.color })
 		if (cardOfColorCount >= this.getMaxCardCountForColor(cardToAdd.color)) {
@@ -167,7 +186,7 @@ export default {
 			return false
 		}
 
-		const maxCount = cardToAdd.color === CardColor.BRONZE ? 3 : 1
+		const maxCount = this.getMaxCardCopiesForColor(cardToAdd.color)
 		const cardToModify = deckToModify.cards.find(card => card.class === cardToAdd.class)
 		return !cardToModify || cardToModify.count < maxCount
 	}

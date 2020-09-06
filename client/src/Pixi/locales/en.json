@@ -79,10 +79,14 @@
 	"target.support.row": "Support all",
 	"target.move.row": "Move",
 
+	"card.faction.human": "Human",
 	"card.faction.arcane": "Arcane",
-	"card.faction.nature": "Nature",
+	"card.faction.wild": "Wild",
 	"card.faction.neutral": "Neutral",
-	"card.faction.experimental": "Experimental",
+	"card.faction.human.experimental": "Human (Experimental)",
+	"card.faction.arcane.experimental": "Arcane (Experimental)",
+	"card.faction.wild.experimental": "Wild (Experimental)",
+	"card.faction.neutral.experimental": "Neutral (Experimental)",
 	"editor.faction.unfinished": "Unfinished",
 
 	"card.inspect.power": "Power",

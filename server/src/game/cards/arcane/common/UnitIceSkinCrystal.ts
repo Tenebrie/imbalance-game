@@ -19,13 +19,14 @@ export default class UnitIceSkinCrystal extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			tribes: [CardTribe.CRYSTAL],
 			faction: CardFaction.ARCANE,
 			stats: {
 				power: 4
 			},
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			armorGranted: this.armorGranted,

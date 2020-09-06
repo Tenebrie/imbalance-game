@@ -13,7 +13,7 @@ export default class HeroCoralScribe extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
-			faction: CardFaction.NATURE,
+			faction: CardFaction.WILD,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			generatedArtworkMagicString: '2',
 			stats: {

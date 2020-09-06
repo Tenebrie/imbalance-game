@@ -17,7 +17,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
-			faction: CardFaction.CASTLE,
+			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.VALKYRIE],
 			stats: {
 				power: 4,

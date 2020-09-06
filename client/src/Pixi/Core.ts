@@ -17,18 +17,18 @@ import {ClientToServerMessageTypes} from '@shared/models/network/messageHandlers
 export default class Core {
 	public static isReady = false
 
-	public static input: Input
-	public static socket: WebSocket
-	public static renderer: Renderer
-	public static mainHandler: MainHandler
-	public static particleSystem: ParticleSystem
+	public static input?: Input
+	public static socket?: WebSocket
+	public static renderer?: Renderer
+	public static mainHandler?: MainHandler
+	public static particleSystem?: ParticleSystem
 	public static keepaliveTimer: number
 
-	public static game: ClientGame
-	public static board: RenderedGameBoard
-	public static player: ClientPlayerInGame
-	public static opponent: ClientPlayerInGame
-	public static resolveStack: ClientCardResolveStack
+	public static game?: ClientGame
+	public static board?: RenderedGameBoard
+	public static player?: ClientPlayerInGame
+	public static opponent?: ClientPlayerInGame
+	public static resolveStack?: ClientCardResolveStack
 
 	public static init(gameId: string, deckId: string, container: HTMLElement): void {
 		const protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
@@ -154,6 +154,7 @@ export default class Core {
 		Core.mainHandler.stop()
 		Core.opponent = undefined
 		Core.renderer.destroy()
+		Core.game = undefined
 
 		if (this.socket) {
 			this.socket.close()

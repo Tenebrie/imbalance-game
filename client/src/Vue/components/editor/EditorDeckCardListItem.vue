@@ -16,6 +16,7 @@ import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
+import Utils from '@/utils/Utils'
 
 export default Vue.extend({
 	props: {
@@ -40,7 +41,7 @@ export default Vue.extend({
 		},
 
 		displayCount(): boolean {
-			return this.card.color === CardColor.BRONZE
+			return Utils.getMaxCardCopiesForColor(this.card.color) > 1
 		},
 
 		colorClass(): any {

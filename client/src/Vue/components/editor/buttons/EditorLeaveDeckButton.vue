@@ -8,11 +8,12 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import router from '@/Vue/router'
 
 export default Vue.extend({
 	methods: {
 		onClick(): void {
-			this.$router.push({ name: 'decks' })
+			this.$router.push({ name: 'decks', query: router.currentRoute.query })
 		}
 	}
 })

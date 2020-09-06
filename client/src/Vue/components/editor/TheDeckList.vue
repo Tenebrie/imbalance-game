@@ -1,21 +1,15 @@
 <template>
 	<div class="the-editor-deck-list">
 		<div class="deck-list" v-if="isDeckListDisplayed">
-			<div class="deck-list-segment" v-if="arcaneDecks.length > 0">
-				<the-editor-deck-list-separator :faction="CardFaction.ARCANE" />
-				<the-editor-deck-list-item v-for="deck in arcaneDecks" :key="deck.id" :deck="deck" />
+			<div class="deck-list-segment" v-for="deckFilter in deckFilters" :key="String(deckFilter.faction) + deckFilter.experimental">
+				<div v-if="deckFilter.decks.length > 0">
+					<the-editor-deck-list-separator :faction="deckFilter.faction" :is-experimental="deckFilter.experimental" />
+					<the-editor-deck-list-item v-for="deck in deckFilter.decks" :key="deck.id" :deck="deck" />
+				</div>
 			</div>
-			<div class="deck-list-segment" v-if="neutralDecks.length > 0">
-				<the-editor-deck-list-separator :faction="CardFaction.NEUTRAL" />
-				<the-editor-deck-list-item v-for="deck in neutralDecks" :key="deck.id" :deck="deck" />
-			</div>
-			<div class="deck-list-segment" v-if="experimentalDecks.length > 0">
-				<the-editor-deck-list-separator :faction="CardFaction.EXPERIMENTAL" />
-				<the-editor-deck-list-item v-for="deck in experimentalDecks" :key="deck.id" :deck="deck" />
-			</div>
-			<div class="deck-list-segment" v-if="unfinishedDecks.length > 0 && mode === DeckListMode.EDIT">
+			<div class="deck-list-segment" v-if="draftDecks.length > 0 && mode === DeckListMode.EDIT">
 				<the-editor-deck-list-separator-unfinished />
-				<the-editor-deck-list-item v-for="deck in unfinishedDecks" :key="deck.id" :deck="deck" />
+				<the-editor-deck-list-item v-for="deck in draftDecks" :key="deck.id" :deck="deck" />
 			</div>
 		</div>
 		<div class="buttons">
@@ -36,6 +30,8 @@ import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import DeckListMode from '@/utils/DeckListMode'
 import EditorCreateDeckButton from '@/Vue/components/editor/buttons/EditorCreateDeckButton.vue'
 import EditorDecksButton from '@/Vue/components/editor/buttons/EditorDecksButton.vue'
+
+type FilteredDeck = { faction: CardFaction, experimental: boolean, decks: PopulatedEditorDeck[] }
 
 export default Vue.extend({
 	components: {
@@ -60,24 +56,30 @@ export default Vue.extend({
 			return store.state.editor.decks
 		},
 
-		arcaneDecks(): PopulatedEditorDeck[] {
-			return this.decks.filter(deck => deck.faction === CardFaction.ARCANE && !deck.isUnfinished())
-		},
+		deckFilters(): FilteredDeck[] {
+			const factions = [CardFaction.HUMAN, CardFaction.ARCANE, CardFaction.WILD, CardFaction.NEUTRAL]
 
-		neutralDecks(): PopulatedEditorDeck[] {
-			return this.decks.filter(deck => deck.faction === CardFaction.NEUTRAL && !deck.isUnfinished())
-		},
-
-		experimentalDecks(): PopulatedEditorDeck[] {
-			return this.decks.filter(deck => deck.faction === CardFaction.EXPERIMENTAL && !deck.isUnfinished())
+			return factions.reduce((result: FilteredDeck[], faction) => {
+				const normalDeck = {
+					faction: faction,
+					experimental: false,
+					decks: this.decks.filter(deck => deck.faction === faction && !deck.isExperimental && !deck.isDraft)
+				}
+				const experimentalDeck = {
+					faction: faction,
+					experimental: true,
+					decks: this.decks.filter(deck => deck.faction === faction && deck.isExperimental && !deck.isDraft)
+				}
+				return result.concat(normalDeck).concat(experimentalDeck)
+			}, [])
 		},
 
 		finishedDecks(): PopulatedEditorDeck[] {
-			return this.decks.filter(deck => !deck.isUnfinished())
+			return this.decks.filter(deck => !deck.isDraft)
 		},
 
-		unfinishedDecks(): PopulatedEditorDeck[] {
-			return this.decks.filter(deck => deck.isUnfinished())
+		draftDecks(): PopulatedEditorDeck[] {
+			return this.decks.filter(deck => deck.isDraft)
 		},
 
 		isDeckListDisplayed(): boolean {

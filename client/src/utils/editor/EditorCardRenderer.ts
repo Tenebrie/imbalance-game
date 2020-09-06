@@ -11,8 +11,8 @@ class EditorCardRenderer {
 	mainTimer: number | null = null
 
 	public constructor() {
-		this.pixi = PIXI.autoDetectRenderer({
-			resolution: window.devicePixelRatio
+		this.pixi = new PIXI.Renderer({
+			resolution: window.devicePixelRatio,
 		})
 		this.renderTexture = PIXI.RenderTexture.create({
 			width: CARD_WIDTH,

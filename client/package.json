@@ -19,7 +19,7 @@
 		"js-easing-functions": "^1.0.3",
 		"moment": "^2.27.0",
 		"pixi-particles": "^4.2.1",
-		"pixi.js": "^5.2.0",
+		"pixi.js": "^5.3.3",
 		"sweetalert": "^2.1.2",
 		"throttle-debounce": "^2.2.1",
 		"vue": "^2.6.10",

@@ -15,7 +15,7 @@ export default class HeroTribeShaman extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
-			faction: CardFaction.NATURE,
+			faction: CardFaction.WILD,
 			tribes: [CardTribe.MERFOLK],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			relatedCards: [SpellHealingRain],

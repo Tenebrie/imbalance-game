@@ -15,7 +15,7 @@ export default class UnitMerfolkEnchantress extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
-			faction: CardFaction.NATURE,
+			faction: CardFaction.WILD,
 			tribes: [CardTribe.MERFOLK],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			relatedCards: [SpellEnchantedStorm],

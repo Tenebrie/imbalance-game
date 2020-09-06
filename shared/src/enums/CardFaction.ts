@@ -1,9 +1,8 @@
 enum CardFaction {
-	NEUTRAL,
-	CASTLE,
+	HUMAN,
 	ARCANE,
-	NATURE,
-	EXPERIMENTAL
+	WILD,
+	NEUTRAL,
 }
 
 export default CardFaction

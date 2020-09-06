@@ -23,6 +23,7 @@ export default class UnitCrystalMiner extends ServerCard {
 				power: 2
 			},
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)

@@ -6,7 +6,7 @@
 			</keep-alive>
 			<span>{{ deck.name }}</span>
 		</span>
-		<router-link v-if="mode === DeckListMode.EDIT" tag="span" class="deck-link" :to="{ path: `/decks/${deck.id}` }">
+		<router-link v-if="mode === DeckListMode.EDIT" tag="span" class="deck-link" :to="{ path: `/decks/${deck.id}`, query: router.currentRoute.query }">
 			<keep-alive>
 				<img v-if="iconPath" :src="iconPath" alt="Deck icon" />
 			</keep-alive>
@@ -16,16 +16,23 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import DeckListMode from '@/utils/DeckListMode'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
+import {defineComponent} from '@vue/composition-api'
+import router from '@/Vue/router'
 
-export default Vue.extend({
+export default defineComponent({
 	props: {
 		deck: {
 			type: Object,
 			required: true
+		}
+	},
+
+	setup() {
+		return {
+			router
 		}
 	},
 

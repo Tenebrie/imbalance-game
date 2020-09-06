@@ -1,5 +1,5 @@
 <template>
-	<div class="pixi-inspected-card-overlay" v-if="this.overlayDisplayed" ref="overlayRef" @click="onOverlayClick" @contextmenu="onOverlayClick">
+	<div class="pixi-inspected-card-info-overlay" v-if="this.overlayDisplayed" ref="overlayRef" @click="onOverlayClick" @contextmenu="onOverlayClick">
 		<div class="card-info-section card-base-stats" v-if="displayInGameStats">
 			<div v-if="this.inspectedCard.type === CardType.UNIT" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.power') }}:</div>
@@ -84,6 +84,7 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
 import CardColor from '@shared/enums/CardColor'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
 
 export default {
 	components: {
@@ -91,10 +92,13 @@ export default {
 	},
 
 	setup(props, { emit }) {
+		const routeQuery = useDecksRouteQuery()
 		const isInGame = computed<boolean>(() => store.getters.gameStateModule.isInGame)
+		const displayExperimentalCards = computed<boolean>(() => !isInGame.value && routeQuery.value.experimental)
+
 		const inspectedCard = computed<CardMessage | RenderedCard>(() => {
 			const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card.id) : null
-			return (isInGame && cardInGame) || store.getters.inspectedCard.card
+			return (isInGame.value && cardInGame) || store.getters.inspectedCard.card
 		})
 
 		const displayArmor = computed<boolean>(() => {
@@ -108,6 +112,10 @@ export default {
 
 		const displayedRelatedCards = computed<string[]>(() => {
 			return new Array(...new Set(inspectedCard.value.relatedCards))
+				.filter(cardClass => {
+					const populatedCard = store.state.editor.cardLibrary.find(card => card.class === cardClass)
+					return !populatedCard.isExperimental || inspectedCard.value.isExperimental || displayExperimentalCards.value
+				})
 		})
 
 		const overlayRef = ref<HTMLDivElement>()
@@ -170,7 +178,7 @@ export default {
 <style scoped lang="scss">
 	@import "src/Vue/styles/generic";
 
-	.pixi-inspected-card-overlay {
+	.pixi-inspected-card-info-overlay {
 		position: absolute;
 		z-index: 10;
 		background: black;
@@ -181,6 +189,8 @@ export default {
 		margin-top: 4px;
 		pointer-events: auto;
 		color: lightgray;
+		overflow-y: auto;
+		max-height: calc(100% - 22px);
 
 		.card-base-stats {
 			padding-bottom: 8px;

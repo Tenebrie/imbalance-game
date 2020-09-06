@@ -15,7 +15,7 @@ export default class HeroUrvial extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.GOLDEN,
-			faction: CardFaction.NATURE,
+			faction: CardFaction.WILD,
 			tribes: [CardTribe.MERFOLK],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {

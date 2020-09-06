@@ -17,7 +17,7 @@ export default class UnitOceanicSeagull extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
-			faction: CardFaction.NATURE,
+			faction: CardFaction.WILD,
 			tribes: [CardTribe.BIRD],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
 			stats: {

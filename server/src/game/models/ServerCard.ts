@@ -36,7 +36,7 @@ import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
 import Utils, {getClassFromConstructor} from '../../utils/Utils'
 import ServerAnimation from './ServerAnimation'
-import RelatedCardsDefinition from './RelatedCards'
+import RelatedCardsDefinition from './RelatedCardsDefinition'
 import ServerCardStats from './ServerCardStats'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
@@ -261,7 +261,8 @@ export default class ServerCard implements Card {
 
 	public get relatedCards(): string[] {
 		const customRelatedCards = Utils.sortCards(this.customRelatedCards.map(relatedCardsDefinition => {
-			return CardLibrary.cards.filter(card => relatedCardsDefinition.conditions.every(condition => condition(card)))
+			return CardLibrary.cards
+				.filter(card => relatedCardsDefinition.conditions.every(condition => condition(card)))
 		}).reduce((acc, value) => acc.concat(value), []))
 			.map(obj => obj.class)
 

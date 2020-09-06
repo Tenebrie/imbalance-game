@@ -14,7 +14,7 @@ export default class UnitCuriosityMerchant extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
-			faction: CardFaction.EXPERIMENTAL,
+			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.HUMAN],
 			stats: {
 				power: 5,

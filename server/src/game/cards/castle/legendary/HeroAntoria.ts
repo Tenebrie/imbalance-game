@@ -16,7 +16,7 @@ export default class HeroAntoria extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.GOLDEN,
-			faction: CardFaction.CASTLE,
+			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.VALKYRIE],
 			stats: {
 				power: 15,

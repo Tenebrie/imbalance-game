@@ -30,25 +30,35 @@ export default defineComponent({
 			return store.state.editor.renderedCards.find(renderedCard => renderedCard.class === props.card.class) || null
 		})
 
+		const isVisibleOnScreen = ref<boolean>(false)
+
 		onMounted(() => {
 			if (renderedCard.value) {
 				appendImageNode()
-			} else if (props.card) {
+			} else {
+				const o = new IntersectionObserver(([entry]) => {
+					if (entry.intersectionRatio === 1) {
+						isVisibleOnScreen.value = entry.intersectionRatio === 1
+						o.disconnect()
+					}
+				})
+				o.observe(containerRef.value)
+			}
+		})
+
+		watch(() => [isVisibleOnScreen.value], () => {
+			if (props.card && !renderedCard.value && isVisibleOnScreen.value) {
 				store.dispatch.editor.requestRender({ card: props.card })
 			}
 		})
 
-		watch(() => [renderedCard.value], () => {
-			if (renderedCard.value) {
+		watch(() => [renderedCard.value, isVisibleOnScreen.value], () => {
+			if (!isImageAppended.value && renderedCard.value && isVisibleOnScreen.value) {
 				appendImageNode()
 			}
 		})
 
 		const appendImageNode = () => {
-			if (isImageAppended.value) {
-				return
-			}
-
 			isImageAppended.value = true
 			const node = cloneCanvas(renderedCard.value.render)
 			node.style.position = 'absolute'

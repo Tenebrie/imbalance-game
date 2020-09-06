@@ -18,7 +18,7 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
-			faction: CardFaction.CASTLE,
+			faction: CardFaction.HUMAN,
 			stats: {
 				power: 8,
 			},

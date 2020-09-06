@@ -15,12 +15,13 @@ export default class SpellFlameweave extends ServerCard {
 		super(game, {
 			type: CardType.SPELL,
 			color: CardColor.GOLDEN,
-			faction: CardFaction.EXPERIMENTAL,
+			faction: CardFaction.ARCANE,
 			features: [CardFeature.HERO_POWER],
 			stats: {
 				cost: 1
 			},
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			currentStacks: () => this.currentStacks

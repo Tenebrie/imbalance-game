@@ -137,16 +137,16 @@ export default class TextureAtlas {
 		if (texture) {
 			return texture
 		}
-		/*const textureInCache = PIXI.utils.TextureCache[`/assets/${path}.png`]
-		if (textureInCache) {
-			return textureInCache
-		}*/
 		return TextureAtlas.loadTextureOnDemand(path)
 	}
 
 	private static loadTextureOnDemand(path: string): PIXI.Texture {
-		console.info(`Loading '${path}' on demand`)
 		const loadedTexture = PIXI.Texture.from(`/assets/${path}.png`)
+		if (loadedTexture.valid) {
+			return loadedTexture
+		}
+
+		console.info(`Loading '${path}' on demand`)
 		const clone = this.textures['cards/tokenPlaceholder'.toLowerCase()].clone()
 		loadedTexture.on('update', () => {
 			clone.baseTexture = loadedTexture.baseTexture
@@ -155,6 +155,7 @@ export default class TextureAtlas {
 		})
 		return clone
 	}
+
 	public static clear(): void {
 		TextureAtlas.textures = {}
 		TextureAtlas.hasPreloadedComponents = false

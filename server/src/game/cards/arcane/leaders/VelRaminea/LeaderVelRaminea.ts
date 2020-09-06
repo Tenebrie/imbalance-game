@@ -14,7 +14,7 @@ export default class LeaderVelRaminea extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.LEADER,
-			faction: CardFaction.EXPERIMENTAL,
+			faction: CardFaction.ARCANE,
 			sortPriority: 1,
 			expansionSet: ExpansionSet.BASE,
 			isExperimental: true,

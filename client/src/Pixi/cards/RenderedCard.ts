@@ -24,7 +24,6 @@ import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class RenderedCard implements Card {
-	private readonly gameId: string
 	public readonly id: string
 	public readonly type: CardType
 	public readonly class: string
@@ -102,7 +101,8 @@ export default class RenderedCard implements Card {
 		this.isHidden = message.isHidden
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.class}`))
-		this.powerText = this.createBrushScriptText(this.stats.power.toString())
+		const powerTextValue = this.type === CardType.UNIT ? this.stats.power : this.stats.spellCost
+		this.powerText = this.createBrushScriptText(powerTextValue.toString())
 		this.armorText = this.createBrushScriptText(this.stats.armor.toString())
 		this.cardNameText = new RichText(Localization.get(this.name), 200, {})
 		this.cardNameText.style.fill = 0x000000
