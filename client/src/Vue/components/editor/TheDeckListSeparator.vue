@@ -12,15 +12,10 @@ import CardFaction from '@shared/enums/CardFaction'
 import {computed, defineComponent} from '@vue/composition-api'
 import {PropType} from 'vue'
 
-interface Props {
-	faction: CardFaction,
-	isExperimental: boolean,
-}
-
 export default defineComponent({
 	props: {
 		faction: {
-			type: [Number, String] as PropType<CardFaction | 'e'>,
+			type: Number as PropType<CardFaction>,
 			required: true,
 		},
 
@@ -30,7 +25,7 @@ export default defineComponent({
 		}
 	},
 
-	setup(props: Props) {
+	setup(props) {
 		const factionAsString = computed<string>(() => {
 			switch (props.faction) {
 				case CardFaction.HUMAN:

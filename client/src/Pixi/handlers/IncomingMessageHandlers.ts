@@ -11,7 +11,7 @@ import {ServerToClientMessageTypes} from '@shared/models/network/messageHandlers
 
 export type IncomingMessageHandlerFunction = (data: any, systemData: QueuedMessageSystemData) => void
 
-const handlers: {[ index in ServerToClientMessageTypes ]: IncomingMessageHandlerFunction } = {
+const IncomingMessageHandlers: {[ index in ServerToClientMessageTypes ]: IncomingMessageHandlerFunction } = {
 	...IncomingAnimationMessages,
 	...IncomingBoardUpdateMessages,
 	...IncomingCardUpdateMessages,
@@ -22,4 +22,4 @@ const handlers: {[ index in ServerToClientMessageTypes ]: IncomingMessageHandler
 	...IncomingSystemMessages,
 }
 
-export default handlers
+export default IncomingMessageHandlers

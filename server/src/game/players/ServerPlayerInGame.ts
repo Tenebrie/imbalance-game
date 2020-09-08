@@ -107,26 +107,23 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.cardHand.onUnitDrawn(card)
 	}
 
-	public createCardFromLibraryByInstance(prototype: ServerCard, beforeDraw?: ((card: ServerCard) => void)): void {
+	public createCardFromLibraryByInstance(prototype: ServerCard): void {
 		const card = CardLibrary.instantiateByInstance(this.game, prototype)
-		this.createCard(card, beforeDraw)
+		this.createCard(card)
 	}
 
-	public createCardFromLibraryByPrototype(prototype: CardConstructor, beforeDraw?: ((card: ServerCard) => void)): void {
+	public createCardFromLibraryByPrototype(prototype: CardConstructor): void {
 		const card = CardLibrary.instantiateByConstructor(this.game, prototype)
-		this.createCard(card, beforeDraw)
+		this.createCard(card)
 	}
 
-	public createCardFromLibraryByClass(cardClass: string, beforeDraw?: ((card: ServerCard) => void)): void {
+	public createCardFromLibraryByClass(cardClass: string): void {
 		const card = CardLibrary.instantiateByClass(this.game, cardClass)
-		this.createCard(card, beforeDraw)
+		this.createCard(card)
 	}
 
-	private createCard(card: ServerCard, beforeDraw: ((card: ServerCard) => void) | null): void {
+	private createCard(card: ServerCard): void {
 		card.buffs.add(BuffCreatedCard, null, BuffDuration.END_OF_THIS_TURN)
-		if (beforeDraw) {
-			beforeDraw(card)
-		}
 		if (card.type === CardType.UNIT) {
 			this.cardHand.onUnitDrawn(card)
 		} else if (card.type === CardType.SPELL) {

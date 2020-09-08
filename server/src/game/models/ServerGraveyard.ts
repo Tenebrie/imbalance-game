@@ -19,7 +19,7 @@ export default class ServerGraveyard implements CardDeck {
 		this.spellCards = []
 	}
 
-	public get allCards() {
+	public get allCards(): ServerCard[] {
 		return this.unitCards.slice().concat(this.spellCards)
 	}
 

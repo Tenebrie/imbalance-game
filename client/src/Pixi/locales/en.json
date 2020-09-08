@@ -277,6 +277,11 @@
 	"card.heroTaekana.title": "The Zookeeper",
 	"card.heroTaekana.description": "*Deploy:*\nGive +{strengthGiven} Power to ALL units.",
 
+	"card.heroJom.name": "Jom",
+	"card.heroJom.title": "Acolyte of the Void",
+	"card.heroJom.description": "*Deploy:*\n*Create* a *Void portal*.<p>*Turn End:*\nIf you control at least {portalsNeeded} *Void portals*, merge them into an *Abyss Portal*.",
+	"card.heroJom.flavor": "He has ascended way beyond the elements.",
+
 	"card.heroSparklingSpirit.name": "Sparkling Spirit",
 	"card.heroSparklingSpirit.description": "*Deploy:*\nAdd a *Fleeting Spark* into your hand<p>Your *Sparks* deal {extraDamage} extra Damage",
 
@@ -412,6 +417,9 @@
 
 	"card.unitVoidPortal.name": "Void Portal",
 	"card.unitVoidPortal.description": "*Turn end:*\nSpawn a *Voidspawn* next to this unit.\nIt gets +{powerPerSpell} Power for every unique spell in your graveyard.",
+
+	"card.unitAbyssPortal.name": "Abyss Portal",
+	"card.unitAbyssPortal.description": "*Turn end:*\nSpawn a *Voidspawn* next to this unit.\nIt gets +{powerPerCard} Power for every unique card in your or your opponent's graveyards.",
 
 	"card.unitVoidspawn.name": "Voidspawn",
 	"card.unitVoidspawn.description": "<i>No effect</i>",

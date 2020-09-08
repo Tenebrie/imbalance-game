@@ -63,11 +63,11 @@ export default class SpellSteelSpark extends ServerCard {
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 
 		const survivingSideTargets = sideTargets.filter(target => target.isAlive())
-		if (survivingSideTargets.length === 0) {
-			return
-		}
-
-		survivingSideTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.sideDamage, this)))
+		survivingSideTargets.forEach(sideTarget => {
+			this.game.animation.createInstantAnimationThread()
+			sideTarget.dealDamage(ServerDamageInstance.fromCard(this.sideDamage, this))
+			this.game.animation.commitAnimationThread()
+		})
 	}
 
 	private evaluateTarget(args: TargetValidatorArguments): number {

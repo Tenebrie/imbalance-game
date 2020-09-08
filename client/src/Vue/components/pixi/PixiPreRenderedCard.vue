@@ -8,10 +8,6 @@ import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import {computed, defineComponent, onMounted, ref, watch} from '@vue/composition-api'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
-interface Props {
-	card: CardMessage | null
-}
-
 export default defineComponent({
 	props: {
 		card: {
@@ -19,7 +15,7 @@ export default defineComponent({
 		}
 	},
 
-	setup(props: Props) {
+	setup(props) {
 		const containerRef = ref<HTMLDivElement>()
 		const isImageAppended = ref<boolean>(false)
 
@@ -58,7 +54,7 @@ export default defineComponent({
 			}
 		})
 
-		const appendImageNode = () => {
+		const appendImageNode = (): void => {
 			isImageAppended.value = true
 			const node = cloneCanvas(renderedCard.value.render)
 			node.style.position = 'absolute'

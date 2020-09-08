@@ -10,13 +10,6 @@
 <script lang="ts">
 import {computed, defineComponent, onMounted, ref, watch} from '@vue/composition-api'
 
-interface Props {
-	model: number
-	min: number
-	max: number
-	step: number
-}
-
 export default defineComponent({
 	props: {
 		model: {
@@ -41,7 +34,7 @@ export default defineComponent({
 		event: 'updateModel'
 	},
 
-	setup(props: Props, { emit }) {
+	setup(props, { emit }) {
 		const thumbRef = ref<HTMLDivElement>()
 		const trackRef = ref<HTMLDivElement>()
 		const sliderRef = ref<HTMLDivElement>()
