@@ -9,12 +9,18 @@ import {GenericActionMessageType, SystemMessageType} from '@shared/models/networ
 
 export default {
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {
+		const t1 = performance.now()
 		const rowIndex = Core.board.rows.indexOf(gameBoardRow)
 		Core.sendMessage(GenericActionMessageType.CARD_PLAY, CardPlayedMessage.fromCardOnRow(card, rowIndex, unitIndex))
+		const t2 = performance.now()
+		console.log(`Unit played request took ${(t2 - t1).toFixed(3)}ms`)
 	},
 
 	sendSpellCardPlayed(card: Card): void {
+		const t1 = performance.now()
 		Core.sendMessage(GenericActionMessageType.CARD_PLAY, CardPlayedMessage.fromCard(card))
+		const t2 = performance.now()
+		console.log(`Spell played request took ${(t2 - t1).toFixed(3)}ms`)
 	},
 
 	sendUnitOrder(order: CardTarget): void {
