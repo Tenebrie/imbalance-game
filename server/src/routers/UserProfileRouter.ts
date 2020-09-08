@@ -56,42 +56,42 @@ router.put('/', (req: Request, res: Response, next) => {
 		{
 			name: 'password',
 			validator: validateInput.password,
-			setter: PlayerLibrary.updatePassword.bind(PlayerLibrary),
+			setter: (id: string, value: string) => PlayerLibrary.updatePassword(id, value),
 		},
 		{
 			name: 'userLanguage',
 			validator: validateInput.userLanguage,
-			setter: PlayerDatabase.updatePlayerUserLanguage.bind(PlayerDatabase),
+			setter: (id: string, value: Language) => PlayerDatabase.updatePlayerUserLanguage(id, value),
 		},
 		{
 			name: 'renderQuality',
 			validator: validateInput.renderQuality,
-			setter: PlayerDatabase.updatePlayerRenderQuality.bind(PlayerDatabase),
+			setter: (id: string, value: RenderQuality) => PlayerDatabase.updatePlayerRenderQuality(id, value),
 		},
 		{
 			name: 'masterVolume',
 			validator: validateInput.volumeLevel,
-			setter: PlayerDatabase.updatePlayerMasterVolume.bind(PlayerDatabase),
+			setter: (id: string, value: number) => PlayerDatabase.updatePlayerMasterVolume(id, value),
 		},
 		{
 			name: 'musicVolume',
 			validator: validateInput.volumeLevel,
-			setter: PlayerDatabase.updatePlayerMusicVolume.bind(PlayerDatabase),
+			setter: (id: string, value: number) => PlayerDatabase.updatePlayerMusicVolume(id, value),
 		},
 		{
 			name: 'effectsVolume',
 			validator: validateInput.volumeLevel,
-			setter: PlayerDatabase.updatePlayerEffectsVolume.bind(PlayerDatabase),
+			setter: (id: string, value: number) => PlayerDatabase.updatePlayerEffectsVolume(id, value),
 		},
 		{
 			name: 'ambienceVolume',
 			validator: validateInput.volumeLevel,
-			setter: PlayerDatabase.updatePlayerAmbienceVolume.bind(PlayerDatabase),
+			setter: (id: string, value: number) => PlayerDatabase.updatePlayerAmbienceVolume(id, value),
 		},
 		{
 			name: 'userInterfaceVolume',
 			validator: validateInput.volumeLevel,
-			setter: PlayerDatabase.updatePlayerUserInterfaceVolume.bind(PlayerDatabase),
+			setter: (id: string, value: number) => PlayerDatabase.updatePlayerUserInterfaceVolume(id, value),
 		},
 	]
 

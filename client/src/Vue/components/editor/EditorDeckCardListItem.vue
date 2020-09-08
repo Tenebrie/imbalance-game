@@ -79,7 +79,7 @@ export default Vue.extend({
 			store.dispatch.editor.hoveredDeckCard.setCard({
 				card: this.card,
 				position: new PIXI.Point(boundingBox.left, boundingBox.top),
-				scrollCallback: this.onParentScroll.bind(this)
+				scrollCallback: () => this.onParentScroll()
 			})
 		},
 
