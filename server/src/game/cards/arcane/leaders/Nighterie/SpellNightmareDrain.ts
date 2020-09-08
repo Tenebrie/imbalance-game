@@ -57,13 +57,6 @@ export default class SpellNightmareDrain extends ServerCard {
 		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, this.owner, targetRow.index, targetRow.cards.length)
 
 		const missingHealth = target.card.stats.basePower - target.card.stats.power
-
-		if (missingHealth <= 0) {
-			return
-		}
-
-		for (let i = 0; i < missingHealth; i++) {
-			shadowspawnUnit.buffs.add(BuffStrength, shadowspawn, BuffDuration.INFINITY)
-		}
+		shadowspawnUnit.buffs.addMultiple(BuffStrength, missingHealth, shadowspawn, BuffDuration.INFINITY)
 	}
 }

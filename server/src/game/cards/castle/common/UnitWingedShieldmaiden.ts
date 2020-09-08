@@ -47,11 +47,14 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 				}
 				const targetUnit = triggeringCard.unit
 
-				this.game.cardPlay.forcedPlayCardFromHand(ownedCard, preparedState.playTargetRowIndex, preparedState.playTargetUnitIndex)
 				if (targetUnit && targetUnit.isAlive()) {
 					this.game.board.moveUnit(targetUnit, preparedState.moveTargetRowIndex, preparedState.moveTargetUnitIndex)
 				}
 				this.game.animation.play(ServerAnimation.unitMove())
+				if (this.game.board.rows[preparedState.playTargetRowIndex].isFull()) {
+					return
+				}
+				this.game.cardPlay.forcedPlayCardFromHand(ownedCard, preparedState.playTargetRowIndex, preparedState.playTargetUnitIndex)
 				this.owner.drawUnitCards(1)
 			})
 	}
