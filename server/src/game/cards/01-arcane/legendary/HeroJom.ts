@@ -62,8 +62,9 @@ export default class HeroJom extends ServerCard {
 			this.game.animation.commitAnimationThread()
 		})
 
-		const abyssPortal = CardLibrary.instantiateByConstructor(this.game, UnitAbyssPortal)
+		const abyssPortal = CardLibrary.instantiateByConstructor(this.game, UnitAbyssPortal) as UnitAbyssPortal
 		const thisUnit = this.unit
 		this.game.board.createUnit(abyssPortal, this.owner, thisUnit.rowIndex, thisUnit.unitIndex + 1)
+		abyssPortal.onTurnEnded()
 	}
 }

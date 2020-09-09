@@ -326,6 +326,9 @@
 	"card.heroElderElemental.name": "Elder Elemental",
 	"card.heroElderElemental.description": "*Deploy:*\nGenerate {manaGenerated} Mana.<p>*Turn start:*\nRepeat this unit's *Deploy* effect",
 
+	"card.unitDarkTimewarper.name": "Dark Timewarper",
+	"card.unitDarkTimewarper.description": "*Deploy:*\nTrigger a *Turn end* effect on all allied *Void Portals*.\nThen, *Create* a *Void Portal*.",
+
 	"card.unitTravelingEnchantress.name": "Traveling\nEnchantress",
 	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, double their *Strength* effects",
 
@@ -406,6 +409,7 @@
 
 	"card.unitHighClassPerformer.name": "High Class Performer",
 	"card.unitHighClassPerformer.description": "*Deploy:*\nGive +{bonusPower} Power to all allied units on other rows.<p>This card can only be played on a row with at least {cardsRequired} allied units.",
+	"card.unitHighClassPerformer.flavor": "After the valley of plenty has finally tossed its' last coin, he decided to try his lute in a different genre.",
 
 	"card.unitHungrySpellslinger.name": "Hungry Spellslinger",
 	"card.unitHungrySpellslinger.description": "*Infuse *{infuseCost}*:*\nAdd a Scroll to your hand.\nIt costs {spellDiscount} Mana less.",

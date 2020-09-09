@@ -7,47 +7,41 @@ import CardFaction from '@shared/enums/CardFaction'
 import ServerBoardRow from '../../../models/ServerBoardRow'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffBurning from '../../../buffs/BuffBurning'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import GameEventCreators, {CardTargetSelectedEventArgs, UnitDeployedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import UnitVoidPortal from '../tokens/UnitVoidPortal'
+import ServerAnimation from '../../../models/ServerAnimation'
 
-export default class HeroFlameDancer extends ServerCard {
-	burnDuration = 3
-
+export default class UnitDarkTimewarper extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_DEPLOY],
-			generatedArtworkMagicString: '2',
+			relatedCards: [UnitVoidPortal],
 			stats: {
-				power: 5
+				power: 6
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
-		this.dynamicTextVariables = {
-			burnDuration: this.burnDuration
-		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.BOARD_ROW)
-			.require(TargetType.BOARD_ROW, args => {
-				return args.targetRow.owner === args.sourceCardOwner.opponent && args.targetRow.cards.length > 0
-			})
-
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
-			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
+		this.createEffect<UnitDeployedEventArgs>(GameEventType.UNIT_DEPLOYED)
+			.perform(() => this.onDeploy())
 	}
 
-	private onTargetSelected(target: ServerBoardRow): void {
-		const targetUnits = target.cards
+	private onDeploy(): void {
+		const targets = this.game.board.getAllUnits().map(unit => unit.card).filter(card => card instanceof UnitVoidPortal) as UnitVoidPortal[]
 
-		targetUnits.forEach(targetUnit => {
+		targets.forEach(target => {
 			this.game.animation.createAnimationThread()
-			targetUnit.card.buffs.add(BuffBurning, this, BuffDuration.FULL_TURN * this.burnDuration - 1)
+			this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target]))
+			target.onTurnEnded()
 			this.game.animation.commitAnimationThread()
 		})
+
+		this.owner.createCardFromLibraryByPrototype(UnitVoidPortal)
 	}
 }
