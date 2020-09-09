@@ -25,6 +25,10 @@ export default class HeroMetrearte extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
+		this.createDeployEffectTargets()
+			.target(TargetType.CARD_IN_LIBRARY)
+			.validate(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.features.includes(CardFeature.HERO_POWER) && args.targetCard.faction === CardFaction.ARCANE))
+
 		this.addRelatedCards()
 			.requireColor(CardColor.LEADER)
 			.requireFaction(CardFaction.ARCANE)
@@ -36,12 +40,5 @@ export default class HeroMetrearte extends ServerCard {
 	private onTargetSelected(target: ServerCard): void {
 		const cardCopy = CardLibrary.instantiateByClass(this.game, target.class)
 		this.unit.owner.cardHand.addSpell(cardCopy)
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.require(TargetType.CARD_IN_LIBRARY)
-			.validate(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.features.includes(CardFeature.HERO_POWER) && args.targetCard.faction === CardFaction.ARCANE))
 	}
 }

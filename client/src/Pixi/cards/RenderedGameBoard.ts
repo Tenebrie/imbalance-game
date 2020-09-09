@@ -68,7 +68,7 @@ export default class RenderedGameBoard implements Board {
 	}
 
 	public getValidOrdersForUnit(unit: RenderedUnit): ClientCardTarget[] {
-		return this.validOrders.concat(this.validOpponentOrders).filter(order => order.sourceUnit === unit)
+		return this.validOrders.concat(this.validOpponentOrders).filter(order => order.sourceCard === unit.card)
 	}
 
 	public clearBoard(): void {

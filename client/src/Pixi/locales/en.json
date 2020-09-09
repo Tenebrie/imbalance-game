@@ -70,14 +70,11 @@
 	"log.entry.roundEnded": "{player} has finished their turn",
 
 	"target.generic.unit": "Target",
-	"target.generic.row": "Target all",
-	"target.attack.unit": "Attack",
-	"target.attack.row": "Attack all",
-	"target.drain.unit": "Drain",
-	"target.drain.row": "Drain all",
-	"target.support.unit": "Support",
-	"target.support.row": "Support all",
-	"target.move.row": "Move",
+	"target.generic.row": "Target row",
+	"target.order.unit": "Target",
+	"target.order.row": "Target row",
+	"target.order.card.unit": "Target",
+	"target.order.card.spell": "Target",
 
 	"card.faction.human": "Human",
 	"card.faction.arcane": "Arcane",
@@ -325,30 +322,27 @@
 	"card.heroTribeShaman.description": "*Deploy:*\n*Create* a *Healing Rain*",
 
 	"card.heroElderElemental.name": "Elder Elemental",
-	"card.heroElderElemental.description": "*Deploy:*\nGenerate {manaGenerated} Mana.<p>*Turn start:*\nRepeat this unit's *Deploy* effect.",
+	"card.heroElderElemental.description": "*Deploy:*\nGenerate {manaGenerated} Mana.<p>*Turn start:*\nRepeat this unit's *Deploy* effect",
 
 	"card.unitTravelingEnchantress.name": "Traveling\nEnchantress",
-	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, double their *Strength* effects.",
+	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, double their *Strength* effects",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
-	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Human card from your deck.",
+	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Human card from your deck",
 
 	"card.unitForestScout.name": "Forest Scout",
-	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power.\nIf you're losing on Morale, gain +{moralePowerBonus} Power.",
+	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power\nIf you're losing on Morale, gain +{moralePowerBonus} Power",
 
 	"card.unitChargingKnight.name": "Charging Knight",
-	"card.unitChargingKnight.description": "Perform an *Attack Action* whenever it moves forward<p>*Melee Attack:*\nDeal {attack} Damage",
+	"card.unitChargingKnight.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only perform *Orders* if it has moved forward this turn",
 	"card.unitChargingKnight.flavor": "The card that has been reworked way too many times.",
-
-	"card.unitVampireFledgling.name": "Vampire Fledgling",
-	"card.unitVampireFledgling.description": "Loses {powerLost} Power per turn.<p>*Melee Attack:* Deal {attack} Damage. If damage is not blocked, then Restore {powerDrained} Power",
 
 	"card.unitPriestessOfAedine.name": "Priestess of Aedine",
 	"card.unitPriestessOfAedine.description": "*Deploy:*\nRestore {healing} Power to a damaged allied unit",
 	"card.unitPriestessOfAedine.target.heal": "Restore {healing} Power",
 
 	"card.unitSupplyWagon.name": "Supply Wagon",
-	"card.unitSupplyWagon.description": "*Deploy:*\nGive +{extraPower} Power to adjacent units.\nThen, *Push* them {pushDistance} row forward.",
+	"card.unitSupplyWagon.description": "*Deploy:*\nGive +{extraPower} Power to adjacent units\nThen, *Push* them {pushDistance} row forward",
 
 	"card.unitArcaneElemental.name": "Arcane Elemental",
 	"card.unitArcaneElemental.description": "*Deploy:*\nGenerate {manaGenerated} Mana",
@@ -363,7 +357,7 @@
 	"card.unitIceSkinCrystal.description": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
 
 	"card.unitStoneElemental.name": "Stone Elemental",
-	"card.unitStoneElemental.description": "*Deploy:*\nPerform an *Attack* action this turn only<p>*Short-Ranged Attack*:\nDeal {attack} Damage;\nApply *Stun* for 1 turn",
+	"card.unitStoneElemental.description": "*Deploy:*\nDeal {damage} Damage to an enemy unit\nApply *Stun* for 1 turn",
 
 	"card.unitMerfolkStormcaller.name": "Merfolk Stormcaller",
 	"card.unitMerfolkStormcaller.description": "*Deploy:*\n*Create* a *Lightning Storm*",
@@ -372,7 +366,7 @@
 	"card.unitMerfolkEnchantress.description": "*Deploy:*\n*Create* an *Enchanted Storm*",
 
 	"card.unitCrystalMiner.name": "Crystal Miner",
-	"card.unitCrystalMiner.description": "*Deploy:*\n*Create* an Arcane crystal.",
+	"card.unitCrystalMiner.description": "*Deploy:*\n*Create* an Arcane crystal",
 
 	"card.unitOracleApprentice.name": "Oracle Apprentice",
 	"card.unitOracleApprentice.description": "*Deploy:*\nLook at the top card of any deck",

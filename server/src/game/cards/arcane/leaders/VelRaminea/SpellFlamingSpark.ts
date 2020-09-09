@@ -40,6 +40,10 @@ export default class SpellFlamingSpark extends ServerCard {
 			damagePerWeave: this.damagePerWeave
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT)
+			.requireEnemyUnit()
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
@@ -47,13 +51,6 @@ export default class SpellFlamingSpark extends ServerCard {
 	get damage(): number {
 		return this.baseDamage
 			+ this.game.getTotalBuffIntensityForPlayer(BuffVelRamineaWeave, this.owner, [CardLocation.LEADER])
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
-			.singleTarget()
-			.allow(TargetType.UNIT)
-			.enemyUnit()
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

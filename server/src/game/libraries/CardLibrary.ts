@@ -78,6 +78,11 @@ class CardLibrary {
 		return this.cards.find(card => card.id === id)
 	}
 
+	public findPrototypeByConstructor(constructor: CardConstructor): ServerCard | null {
+		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
+		return this.cards.find(card => card.class === cardClass)
+	}
+
 	public instantiateByInstance(game: ServerGame, card: ServerCard): ServerCard {
 		const cardClass = card.constructor.name.substr(0, 1).toLowerCase() + card.constructor.name.substr(1)
 		return this.instantiateByClass(game, cardClass)

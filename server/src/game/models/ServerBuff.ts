@@ -16,6 +16,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import BuffFeature from '@shared/enums/BuffFeature'
 import GameEventCreators, {TurnEndedEventArgs, TurnStartedEventArgs} from './GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import StandardTargetDefinitionBuilder from './targetDefinitions/StandardTargetDefinitionBuilder'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -148,10 +149,10 @@ export default class ServerBuff implements Buff {
 	getUnitCostOverride(baseCost: number): number { return baseCost }
 	getSpellCostOverride(baseCost: number): number { return baseCost }
 
-	definePlayValidTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
-	defineValidOrderTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
-	definePostPlayRequiredTargetsMod(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
-	definePlayValidTargetsOverride(targetDefinition: TargetDefinitionBuilder): TargetDefinitionBuilder { return targetDefinition }
-	defineValidOrderTargetsOverride(targetDefinition: TargetDefinitionBuilder): TargetDefinitionBuilder { return targetDefinition }
-	definePostPlayRequiredTargetsOverride(targetDefinition: TargetDefinitionBuilder): TargetDefinitionBuilder { return targetDefinition }
+	definePlayValidTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }
+	defineValidOrderTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }
+	definePostPlayRequiredTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }
+	definePlayValidTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder { return targetDefinition }
+	defineValidOrderTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder { return targetDefinition }
+	definePostPlayRequiredTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder { return targetDefinition }
 }

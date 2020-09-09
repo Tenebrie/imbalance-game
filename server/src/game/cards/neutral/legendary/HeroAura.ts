@@ -26,16 +26,13 @@ export default class HeroAura extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
+		this.createDeployEffectTargets()
+			.target(TargetType.CARD_IN_UNIT_DECK)
+			.requireCardInPlayersDeck()
+			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.color === CardColor.GOLDEN))
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.require(TargetType.CARD_IN_UNIT_DECK)
-			.inPlayersDeck()
-			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.color === CardColor.GOLDEN))
 	}
 
 	private onTargetSelected(target: ServerCard): void {

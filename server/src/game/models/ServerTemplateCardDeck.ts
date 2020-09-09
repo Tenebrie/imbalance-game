@@ -2,9 +2,7 @@ import ServerCard from './ServerCard'
 import CardDeck from '@shared/models/CardDeck'
 import CardLibrary from '../libraries/CardLibrary'
 import UnitForestScout from '../cards/neutral/common/UnitForestScout'
-import UnitChargingKnight from '../cards/neutral/common/UnitChargingKnight'
 import ServerGame from './ServerGame'
-import UnitSupplyWagon from '../cards/neutral/common/UnitSupplyWagon'
 import HeroZamarath from '../cards/arcane/legendary/HeroZamarath'
 import HeroSparklingSpirit from '../cards/arcane/epic/HeroSparklingSpirit'
 import HeroRagingElemental from '../cards/arcane/epic/HeroRagingElemental'
@@ -20,8 +18,8 @@ import HeroForksmanshipInstructor from '../cards/castle/epic/HeroForksmanshipIns
 import HeroAntoria from '../cards/castle/legendary/HeroAntoria'
 import HeroFlameDancer from '../cards/arcane/epic/HeroFlameDancer'
 import UnitArcaneElemental from '../cards/arcane/common/UnitArcaneElemental'
-import HeroStormDancer from '../cards/nature/epic/HeroStormDancer'
 import HeroLightOracle from '../cards/arcane/epic/HeroLightOracle'
+import CardType from '@shared/enums/CardType'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	leader: ServerCard
@@ -47,8 +45,8 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		const inflatedUnitDeck: ServerCard[] = []
 		const inflatedSpellDeck: ServerCard[] = []
 		cards.forEach(card => {
-			const inflatedUnitCards = card.getDeckAddedUnitCards()
-			const inflatedSpellCards = card.getDeckAddedSpellCards()
+			const inflatedUnitCards = card.deckAddedCards.filter(card => CardLibrary.findPrototypeByConstructor(card).type === CardType.UNIT)
+			const inflatedSpellCards = card.deckAddedCards.filter(card => CardLibrary.findPrototypeByConstructor(card).type === CardType.SPELL)
 			inflatedUnitCards.forEach(cardPrototype => inflatedUnitDeck.push(CardLibrary.instantiateByConstructor(game, cardPrototype)))
 			inflatedSpellCards.forEach(cardPrototype => inflatedSpellDeck.push(CardLibrary.instantiateByConstructor(game, cardPrototype)))
 			if (card.color === CardColor.LEADER) {

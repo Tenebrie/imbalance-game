@@ -195,7 +195,7 @@ export default class Input {
 			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
 		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY && Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0) {
 			const validOrders = Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id))
-			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetUnit.card)
+			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetCard).map(card => Core.game.findRenderedCardById(card.id))
 			const validRows = validOrders.filter(order => order.targetType === TargetType.BOARD_ROW).map(order => order.targetRow)
 			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)
 		} else if (hoveredCard.location === CardLocation.SELECTABLE) {
@@ -272,11 +272,11 @@ export default class Input {
 
 	private onUnitOrder(orderedCard: RenderedCard): void {
 		const orderedUnit = Core.board.findUnitById(orderedCard.id)!
-		const hoveredUnit = MouseHover.getHoveredUnit()
+		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		const validOrders = Core.board.getValidOrdersForUnit(orderedUnit)
-		const performedOrder = validOrders.find(order => (order.targetUnit && order.targetUnit === hoveredUnit) || (order.targetRow && order.targetRow === hoveredRow))
+		const performedOrder = validOrders.find(order => (order.targetCard === hoveredCard) || (order.targetRow && order.targetRow === hoveredRow))
 		if (performedOrder) {
 			OutgoingMessageHandlers.sendUnitOrder(performedOrder)
 		}

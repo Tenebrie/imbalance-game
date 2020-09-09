@@ -55,8 +55,6 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 			while ((this.canPlayUnitCard() || this.hasHighValueSpellPlays()) && this.game.turnPhase === GameTurnPhase.DEPLOY) {
 				this.botPlaysCard(false)
 			}
-			this.botOrdersAttacks()
-			this.botOrdersMove()
 		} catch (e) {
 			console.error('Unknown AI error', e)
 		}
@@ -67,7 +65,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const baseCards = spellsOnly ? this.cardHand.spellCards : this.cardHand.allCards
 
 		const cards = Utils.sortCards(baseCards)
-			.filter(card => card.getValidPlayTargets(this).length > 0)
+			.filter(card => card.targeting.getValidCardPlayTargets(this).length > 0)
 			.map(card => ({
 				card: card,
 				bestExpectedValue: this.getBestExpectedValue(card)
@@ -98,47 +96,12 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		IncomingMessageHandlers[GenericActionMessageType.CARD_TARGET](cardTargetMessage, this.game, this)
 	}
 
-	private botOrdersAttacks(): void {
-		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this).filter(unit => unit.getValidOrders().length > 0)
-		controlledUnits.forEach(unit => {
-			if (unit.isDead()) { return }
-
-			const opponentsUnits = this.game.board.getUnitsOwnedByOpponent(this)
-			const targetDefinition = unit.card.getValidOrderTargetDefinition()
-			const validTargets = opponentsUnits.filter(opponentUnit => {
-				const previousTargets = this.game.board.orders.getOrdersPerformedByUnit(opponentUnit)
-				return targetDefinition.validate(TargetMode.ORDER_ATTACK, TargetType.UNIT, {
-					thisUnit: unit,
-					targetUnit: opponentUnit,
-					previousTargets
-				})
-			})
-			if (validTargets.length === 0) { return }
-
-			const sortedTargets = this.sortValidTargets(validTargets)
-
-			const unitOrder = ServerCardTarget.unitTargetUnit(TargetMode.ORDER_ATTACK, unit, sortedTargets[0])
-
-			const unitOrderMessage = new UnitOrderMessage(unitOrder)
-			IncomingMessageHandlers[GenericActionMessageType.UNIT_ORDER](unitOrderMessage, this.game, this)
-		})
-	}
-
-	private botOrdersMove(): void {
-		const controlledUnits = this.game.board.getUnitsOwnedByPlayer(this).filter(unit => unit.getValidOrders().length > 0)
-		controlledUnits.forEach(unit => {
-			const unitOrder = ServerCardTarget.unitTargetRow(TargetMode.ORDER_MOVE, unit, this.game.board.rows[this.getForwardRowIndex(unit.rowIndex)])
-			const unitOrderMessage = new UnitOrderMessage(unitOrder)
-			IncomingMessageHandlers[GenericActionMessageType.UNIT_ORDER](unitOrderMessage, this.game, this)
-		})
-	}
-
 	private botEndsTurn(): void {
 		IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, this.game, this)
 	}
 
 	private getBestExpectedValue(card: ServerCard): number {
-		const targets = card.getValidPostPlayRequiredTargets()
+		const targets = card.targeting.getDeployEffectTargets()
 
 		const cardBaseValue = card.type === CardType.SPELL ? card.stats.baseSpellCost * 2 : card.stats.basePower
 		const spellExtraValue = this.cardHand.unitCards.length <= 2 ? 1 : 0
@@ -157,7 +120,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private hasHighValueSpellPlays(): boolean {
 		return Utils.sortCards(this.cardHand.spellCards)
-			.filter(card => card.getValidPlayTargets(this).length > 0)
+			.filter(card => card.targeting.getValidCardPlayTargets(this).length > 0)
 			.map(card => ({
 				card: card,
 				bestExpectedValue: this.getBestExpectedValue(card)
@@ -168,32 +131,8 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private hasAnySpellPlays(): boolean {
 		return Utils.sortCards(this.cardHand.spellCards)
-			.filter(card => card.getValidPlayTargets(this).length > 0)
+			.filter(card => card.targeting.getValidCardPlayTargets(this).length > 0)
 			.length > 0
-	}
-
-	private sortOwnedRows(ownedRows: ServerBoardRow[]): ServerBoardRow[] {
-		if (this.isInvertedBoard()) {
-			return ownedRows.slice().sort((a, b) => b.index - a.index)
-		} else {
-			return ownedRows.slice().sort((a, b) => a.index - b.index)
-		}
-	}
-
-	private getForwardRowIndex(rowIndex: number): number {
-		if (this.isInvertedBoard()) {
-			return rowIndex + 1
-		} else {
-			return rowIndex - 1
-		}
-	}
-
-	private sortValidTargets(validTargets: ServerUnit[]): ServerUnit[] {
-		if (this.isInvertedBoard()) {
-			return validTargets.slice().sort((a, b) => b.rowIndex - a.rowIndex || a.unitIndex - b.unitIndex)
-		} else {
-			return validTargets.slice().sort((a, b) => a.rowIndex - b.rowIndex || a.unitIndex - b.unitIndex)
-		}
 	}
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerBotPlayerInGame {

@@ -33,16 +33,13 @@ export default class SpellAnEncouragement extends ServerCard {
 			bonusPower: SpellAnEncouragement.bonusPower
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT)
+			.requireAlliedUnit()
+			.evaluate(TargetType.UNIT, () => this.stats.basePower)
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
-			.singleTarget()
-			.allow(TargetType.UNIT)
-			.alliedUnit()
-			.evaluate(TargetType.UNIT, (args => this.stats.basePower))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

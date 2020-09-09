@@ -11,9 +11,7 @@ export default interface CardTarget {
 	targetType: TargetType
 	sourceCard?: Card | OpenCardMessage
 	sourceCardOwner?: PlayerInGame
-	sourceUnit?: Unit
 	targetCard?: Card | OpenCardMessage
-	targetUnit?: Unit
 	targetRow?: BoardRow
 	targetLabel: string
 	targetCardData?: OpenCardMessage

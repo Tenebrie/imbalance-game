@@ -637,6 +637,7 @@ export default class Renderer {
 	private updateTargetingLabel(label: RichText): void {
 		label.style.fill = 0x55FF55
 
+		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredUnit = MouseHover.getHoveredUnit()
 		const hoveredRow = MouseHover.getHoveredRow()
 
@@ -654,7 +655,7 @@ export default class Renderer {
 		}
 
 		const validOrders = Core.board.getValidOrdersForUnit(grabbedUnit).sort((a, b) => a.targetMode - b.targetMode || a.targetType - b.targetType)
-		const performedOrder = validOrders.find(order => (!order.targetUnit || order.targetUnit === hoveredUnit) && (!order.targetRow || order.targetRow === hoveredRow))
+		const performedOrder = validOrders.find(order => (!order.targetCard || order.targetCard === hoveredCard) && (!order.targetRow || order.targetRow === hoveredRow))
 		if (performedOrder) {
 			label.text = Localization.get(performedOrder.targetLabel)
 		} else {

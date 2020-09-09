@@ -53,8 +53,6 @@ router.ws('/:gameId', async (ws, req) => {
 	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerTemplateCardDeck.fromEditorDeck(currentGame, deck))
 
 	ws.on('message', (rawMsg: string) => {
-		const t1 = Math.round(process.hrtime()[1] / 1000000)
-
 		const msg = JSON.parse(rawMsg)
 		const handler = IncomingMessageHandlers[msg.type]
 		if (!handler) {
@@ -68,9 +66,6 @@ router.ws('/:gameId', async (ws, req) => {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, e)
 			currentGame.forceShutdown('An error occurred')
 		}
-
-		const t2 = Math.round(process.hrtime()[1] / 1000000)
-		console.log(`Request processed in ${t2-t1}ms`)
 	})
 
 	ws.on('close', () => {

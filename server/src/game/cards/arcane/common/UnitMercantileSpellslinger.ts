@@ -35,18 +35,14 @@ export default class UnitMercantileSpellslinger extends ServerCard {
 			manaMarkup: this.manaMarkup,
 			discountPerTurn: this.discountPerTurn
 		}
-
 		this.addRelatedCards().requireTribe(CardTribe.SCROLL)
+
+		this.createDeployEffectTargets()
+			.target(TargetType.CARD_IN_LIBRARY)
+			.validate(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.tribes.includes(CardTribe.SCROLL)))
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.require(TargetType.CARD_IN_LIBRARY)
-			.validate(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.tribes.includes(CardTribe.SCROLL)))
 	}
 
 	private onTargetSelected(target: ServerCard): void {

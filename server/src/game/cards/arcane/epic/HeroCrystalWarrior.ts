@@ -37,6 +37,19 @@ export default class HeroCrystalWarrior extends ServerCard {
 		})
 		this.addRelatedCards().requireTribe(CardTribe.CRYSTAL)
 
+		this.createDeployEffectTargets()
+			.totalTargets(2)
+			.target(TargetType.UNIT)
+			.requireAlliedUnit()
+			.requireNotSelf()
+			.validate(TargetType.UNIT, () => !this.sacrificedUnit)
+
+		this.createDeployEffectTargets()
+			.totalTargets(2)
+			.target(TargetType.CARD_IN_LIBRARY)
+			.validate(TargetType.CARD_IN_LIBRARY, args => args.targetCard.tribes.includes(CardTribe.CRYSTAL))
+			.validate(TargetType.UNIT, () => !!this.sacrificedUnit)
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.require(({ targetUnit }) => !!targetUnit)
 			.perform(({ targetUnit }) => this.onSacrificeTargetSelected(targetUnit))
@@ -47,21 +60,6 @@ export default class HeroCrystalWarrior extends ServerCard {
 
 		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
 			.perform(() => this.onTargetsConfirmed())
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		if (!this.sacrificedUnit) {
-			return PostPlayTargetDefinitionBuilder.base(this.game)
-				.multipleTargets(2)
-				.require(TargetType.UNIT)
-				.alliedUnit()
-				.notSelf()
-		} else {
-			return PostPlayTargetDefinitionBuilder.base(this.game)
-				.multipleTargets(2)
-				.require(TargetType.CARD_IN_LIBRARY)
-				.validate(TargetType.CARD_IN_LIBRARY, args => args.targetCard.tribes.includes(CardTribe.CRYSTAL))
-		}
 	}
 
 	private onCrystalSelected(target: ServerCard): void {

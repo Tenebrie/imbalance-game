@@ -32,19 +32,16 @@ export default class SpellFleetingSpark extends ServerCard {
 			damage: () => this.damage
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT)
+			.requireEnemyUnit()
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	get damage(): number {
 		return this.baseDamage
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
-			.singleTarget()
-			.allow(TargetType.UNIT)
-			.enemyUnit()
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

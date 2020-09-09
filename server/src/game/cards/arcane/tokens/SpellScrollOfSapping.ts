@@ -28,14 +28,11 @@ export default class SpellScrollOfSapping extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT)
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.allow(TargetType.UNIT)
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

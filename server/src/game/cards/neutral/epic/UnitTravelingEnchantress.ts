@@ -31,16 +31,13 @@ export default class UnitTravelingEnchantress extends ServerCard {
 			baseStrengthGiven: this.baseStrengthGiven
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT)
+			.requireAlliedUnit()
+			.requireNotSelf()
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.require(TargetType.UNIT)
-			.alliedUnit()
-			.notSelf()
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

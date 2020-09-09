@@ -31,6 +31,10 @@ export default class SpellNightmareDrain extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT)
+			.validate(TargetType.UNIT, args => args.targetCard.stats.power < args.targetCard.stats.basePower)
+
 		/* Create basic unit if no target available */
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.require(() => this.game.cardPlay.getValidTargets().length === 0)
@@ -42,13 +46,6 @@ export default class SpellNightmareDrain extends ServerCard {
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
-			.singleTarget()
-			.allow(TargetType.UNIT)
-			.validate(TargetType.UNIT, args => args.targetCard.stats.power < args.targetCard.stats.basePower)
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

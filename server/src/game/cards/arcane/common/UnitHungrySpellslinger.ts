@@ -43,6 +43,11 @@ export default class UnitHungrySpellslinger extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.SCROLL)
 
+		this.createDeployEffectTargets()
+			.target(TargetType.CARD_IN_LIBRARY)
+			.validate(TargetType.CARD_IN_LIBRARY, () => this.didInfuse)
+			.validate(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.tribes.includes(CardTribe.SCROLL)))
+
 		this.createEffect<UnitDeployedEventArgs>(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.infuse())
 
@@ -59,16 +64,6 @@ export default class UnitHungrySpellslinger extends ServerCard {
 		}
 		this.owner.addSpellMana(-this.infuseCost)
 		this.didInfuse = true
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		if (!this.didInfuse) {
-			return TargetDefinition.none(this.game)
-		}
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.require(TargetType.CARD_IN_LIBRARY)
-			.validate(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.tribes.includes(CardTribe.SCROLL)))
 	}
 
 	private onTargetSelected(target: ServerCard): void {

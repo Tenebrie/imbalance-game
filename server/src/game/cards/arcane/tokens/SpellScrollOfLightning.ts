@@ -31,15 +31,12 @@ export default class SpellScrollOfLightning extends ServerCard {
 			damage: this.damage,
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT)
+			.requireEnemyUnit()
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.allow(TargetType.UNIT)
-			.enemyUnit()
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

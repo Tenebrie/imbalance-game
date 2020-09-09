@@ -42,7 +42,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 	},
 
 	[GenericActionMessageType.UNIT_ORDER]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
-		const orderedUnit = game.board.findUnitById(data.sourceUnitId)
+		const orderedUnit = game.board.findUnitById(data.sourceCardId)
 		if (playerInGame.turnEnded || playerInGame.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== playerInGame) {
 			return
 		}

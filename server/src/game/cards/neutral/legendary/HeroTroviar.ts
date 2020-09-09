@@ -20,7 +20,7 @@ export default class HeroTroviar extends ServerCard {
 	deployDamage = 1
 	targetCount = 3
 	powerGained = 1
-	targetsHit = []
+	targetsHit: ServerCard[] = []
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -39,6 +39,11 @@ export default class HeroTroviar extends ServerCard {
 			powerGained: this.powerGained
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT, this.targetCount)
+			.requireEnemyUnit()
+			.validate(TargetType.UNIT, args => !this.targetsHit.includes(args.targetCard))
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
@@ -50,17 +55,9 @@ export default class HeroTroviar extends ServerCard {
 			.perform(() => this.onTargetsConfirmed())
 	}
 
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.multipleTargets(this.targetCount)
-			.allow(TargetType.UNIT, this.targetCount)
-			.enemyUnit()
-			.validate(TargetType.UNIT, args => !this.targetsHit.includes(args.targetUnit))
-	}
-
 	private onTargetSelected(target: ServerUnit): void {
 		target.dealDamage(ServerDamageInstance.fromCard(this.deployDamage, this))
-		this.targetsHit.push(target)
+		this.targetsHit.push(target.card)
 	}
 
 	private onCardTakesDamage(): void {

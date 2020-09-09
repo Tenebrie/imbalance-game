@@ -69,13 +69,10 @@
 
 	"target.generic.unit": "Выбрать",
 	"target.generic.row": "Выбрать ряд",
-	"target.attack.unit": "Атаковать",
-	"target.attack.row": "Атаковать ряд",
-	"target.drain.unit": "Выбрать",
-	"target.drain.row": "Выбрать ряд",
-	"target.support.unit": "Выбрать",
-	"target.support.row": "Выбрать ряд",
-	"target.move.row": "Переместиться",
+	"target.order.unit": "Выбрать",
+	"target.order.row": "Выбрать ряд",
+	"target.order.card.unit": "Выбрать",
+	"target.order.card.spell": "Выбрать",
 
 	"card.faction.arcane": "Аркан",
 	"card.faction.nature": "Природа",

@@ -231,7 +231,7 @@ export default class ServerBoard implements Board {
 		cardOwner.cardHand.addUnit(targetCard)
 		if (cardOwner !== sapper.owner) {
 			targetCard.isRevealed = false
-			targetCard.reveal(cardOwner, cardOwner.opponent)
+			targetCard.reveal()
 		}
 		const buffDuration = cardOwner === sapper.owner ? BuffDuration.END_OF_THIS_TURN : BuffDuration.END_OF_NEXT_TURN
 		targetCard.buffs.add(BuffSappedCard, sapper, buffDuration)

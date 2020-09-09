@@ -17,16 +17,12 @@ export default class LeaderVelElleron extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.LEADER,
 			faction: CardFaction.ARCANE,
-			relatedCards: [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellFieryEntrance],
 			sortPriority: 0,
 			expansionSet: ExpansionSet.BASE,
+			deckAddedCards: [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellFieryEntrance]
 		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound
 		}
-	}
-
-	getDeckAddedSpellCards(): any[] {
-		return [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellFieryEntrance]
 	}
 }

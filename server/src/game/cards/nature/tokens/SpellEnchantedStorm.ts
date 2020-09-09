@@ -7,7 +7,6 @@ import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
 import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
-import ServerAnimation from '../../../models/ServerAnimation'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
@@ -20,7 +19,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 	baseBuffPower = 1
 	targetCount = 3
 	powerPerStorm = 1
-	targetsHit = []
+	targetsHit: ServerCard[] = []
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -41,6 +40,11 @@ export default class SpellEnchantedStorm extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT, () => this.targetCount)
+			.requireAlliedUnit()
+			.validate(TargetType.UNIT, args => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
@@ -56,20 +60,9 @@ export default class SpellEnchantedStorm extends ServerCard {
 		return this.baseBuffPower + this.powerPerStorm * stormsPlayed
 	}
 
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		const builder = PostPlayTargetDefinitionBuilder.base(this.game)
-			.multipleTargets(this.targetCount)
-			.allow(TargetType.UNIT, this.targetCount)
-			.alliedUnit()
-		if (!this.isUpgraded()) {
-			builder.validate(TargetType.UNIT, args => !this.targetsHit.includes(args.targetUnit))
-		}
-		return builder
-	}
-
 	private onTargetSelected(target: ServerUnit): void {
 		target.buffs.addMultiple(BuffStrength, this.buffPower, this, BuffDuration.INFINITY)
-		this.targetsHit.push(target)
+		this.targetsHit.push(target.card)
 	}
 
 	private onTargetsConfirmed(): void {

@@ -31,34 +31,31 @@ export default class UnitOracleApprentice extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
+		this.createDeployEffectTargets()
+			.totalTargets(2)
+			.target(TargetType.CARD_IN_LIBRARY)
+			.validate(TargetType.CARD_IN_LIBRARY, () => this.deckToLook === undefined)
+			.validate(TargetType.CARD_IN_LIBRARY, args => args.targetCard.instanceOf(TokenPlayerDeck) || args.targetCard.instanceOf(TokenOpponentDeck))
+
+		this.createDeployEffectTargets()
+			.totalTargets(2)
+			.target(TargetType.CARD_IN_UNIT_DECK)
+			.requireCardInPlayersDeck()
+			.validate(TargetType.CARD_IN_LIBRARY, () => this.deckToLook === 'player')
+			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition === args.targetCard.owner.cardDeck.unitCards.length - 1))
+
+		this.createDeployEffectTargets()
+			.totalTargets(2)
+			.target(TargetType.CARD_IN_UNIT_DECK)
+			.requireCardInOpponentsDeck()
+			.validate(TargetType.CARD_IN_LIBRARY, () => this.deckToLook === 'opponent')
+			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition === args.targetCard.owner.cardDeck.unitCards.length - 1))
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 
 		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
 			.perform(() => this.onTargetsConfirmed())
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		const builder = PostPlayTargetDefinitionBuilder.base(this.game)
-			.multipleTargets(2)
-
-		if (!this.deckToLook) {
-			builder
-				.require(TargetType.CARD_IN_LIBRARY)
-				.validate(TargetType.CARD_IN_LIBRARY, args => args.targetCard.instanceOf(TokenPlayerDeck) || args.targetCard.instanceOf(TokenOpponentDeck))
-		} else if (this.deckToLook === 'player') {
-			builder
-				.require(TargetType.CARD_IN_UNIT_DECK)
-				.inPlayersDeck()
-				.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition === args.targetCard.owner.cardDeck.unitCards.length - 1))
-		} else if (this.deckToLook === 'opponent') {
-			builder
-				.require(TargetType.CARD_IN_UNIT_DECK)
-				.inOpponentsDeck()
-				.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition === args.targetCard.owner.cardDeck.unitCards.length - 1))
-		}
-
-		return builder
 	}
 
 	private onTargetSelected(target: ServerCard): void {

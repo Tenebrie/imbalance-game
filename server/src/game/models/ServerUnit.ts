@@ -50,16 +50,16 @@ export default class ServerUnit implements Unit {
 	}
 
 	getValidOrders(): ServerCardTarget[] {
-		const targetDefinition = this.card.getValidOrderTargetDefinition()
+		const targetDefinitions = this.card.targeting.getUnitOrderTargetDefinitions()
 		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
-		const targets = []
-			.concat(this.card.getValidTargets(TargetMode.ORDER_ATTACK, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_DRAIN, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_SUPPORT, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_DRAIN, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_SUPPORT, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_MOVE, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
+		let targets = []
+		targetDefinitions.forEach(targetDefinition => {
+			targets = targets
+				.concat(this.card.targeting.getValidTargets(TargetMode.UNIT_ORDER, TargetType.UNIT, targetDefinition, { sourceCard: this.card }, performedOrders))
+				.concat(this.card.targeting.getValidTargets(TargetMode.UNIT_ORDER, TargetType.BOARD_ROW, targetDefinition, { sourceCard: this.card }, performedOrders))
+				.concat(this.card.targeting.getValidTargets(TargetMode.UNIT_ORDER, TargetType.CARD_IN_UNIT_HAND, targetDefinition, { sourceCard: this.card }, performedOrders))
+				.concat(this.card.targeting.getValidTargets(TargetMode.UNIT_ORDER, TargetType.CARD_IN_SPELL_HAND, targetDefinition, { sourceCard: this.card }, performedOrders))
+		})
 
 		targets.forEach(target => { target.sourceUnit = this })
 

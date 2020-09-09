@@ -9,9 +9,7 @@ export default class CardTargetMessage {
 	targetType: TargetType
 	sourceCardId: string
 	sourceCardOwnerId: string
-	sourceUnitId: string
 	targetCardId: string
-	targetUnitId: string
 	targetRowIndex: number
 	targetLabel: string
 	targetCardData: OpenCardMessage
@@ -25,20 +23,13 @@ export default class CardTargetMessage {
 		if (order.sourceCardOwner) {
 			this.sourceCardOwnerId = order.sourceCardOwner.player.id
 		}
-		if (order.sourceUnit) {
-			this.sourceUnitId = order.sourceUnit.card.id
-		}
 		this.targetCardId = ''
-		this.targetUnitId = ''
 		this.targetRowIndex = -1
 		if (order.targetCard) {
 			this.targetCardId = order.targetCard.id
 		}
 		if (order.targetCardData) {
 			this.targetCardData = order.targetCardData
-		}
-		if (order.targetUnit) {
-			this.targetUnitId = order.targetUnit.card.id
 		}
 		if (order.targetRow) {
 			this.targetRowIndex = order.targetRow.index

@@ -132,12 +132,7 @@ export default class ServerGameCardPlay {
 		const currentCard = this.cardResolveStack.currentCard
 		const card = currentCard.card
 
-		const targetDefinition = card.getPostPlayRequiredTargetDefinition()
-		if (targetDefinition.getTargetCount() === 0) {
-			return []
-		}
-
-		return card.getValidPostPlayRequiredTargets(this.cardResolveStack.currentTargets)
+		return card.targeting.getDeployEffectTargets(this.cardResolveStack.currentTargets)
 	}
 
 	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
@@ -156,15 +151,10 @@ export default class ServerGameCardPlay {
 
 		this.cardResolveStack.pushTarget(target)
 
-		// if (target.targetCard && target.targetCard.location !== CardLocation.UNKNOWN) {
-		// 	this.game.animation.play(ServerAnimation.cardAffectsCards(currentResolvingCard.card, [target.targetCard]))
-		// } else if (target.targetUnit) {
-		// 	this.game.animation.play(ServerAnimation.cardAffectsCards(currentResolvingCard.card, [target.targetUnit.card]))
-		// }
 		this.game.events.postEvent(GameEventCreators.cardTargetSelected({
 			triggeringCard: currentResolvingCard.card,
 			targetCard: target.targetCard,
-			targetUnit: target.targetUnit,
+			targetUnit: target.targetCard?.unit,
 			targetRow: target.targetRow
 		}))
 

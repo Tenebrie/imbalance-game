@@ -9,13 +9,18 @@ import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import MoveDirection from '@shared/enums/MoveDirection'
-import {TurnEndedEventArgs, UnitMovedEventArgs} from '../../../models/GameEventCreators'
+import {TurnEndedEventArgs, UnitMovedEventArgs, UnitOrderedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import OrderTargetDefinitionBuilder from '../../../models/targetDefinitions/OrderTargetDefinitionBuilder'
+import ServerCardTarget from '../../../models/ServerCardTarget'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
 
 export default class UnitChargingKnight extends ServerCard {
+	damage = 3
 	movesForwardThisTurn = 0
+	maximumMovesThisTurn = 1
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -28,25 +33,34 @@ export default class UnitChargingKnight extends ServerCard {
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
+		this.dynamicTextVariables = {
+			damage: this.damage
+		}
+
+		this.createUnitOrderTargets()
+			.target(TargetType.UNIT, () => this.movesForwardThisTurn)
+			.requireEnemyUnit()
 
 		this.createCallback<UnitMovedEventArgs>(GameEventType.UNIT_MOVED, [CardLocation.BOARD])
 			.require(({ direction }) => direction === MoveDirection.FORWARD)
 			.require(({ triggeringUnit }) => triggeringUnit === this.unit)
 			.perform(() => this.onUnitMove())
 
+		this.createEffect<UnitOrderedEventArgs>(GameEventType.UNIT_ORDERED)
+			.perform(({ targetArguments }) => this.onUnitOrdered(targetArguments))
+
 		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
 			.perform(() => this.onTurnEnded())
 	}
 
-	defineValidOrderTargets(): TargetDefinitionBuilder {
-		return TargetDefinition.defaultUnitOrder(this.game)
-			.actions(this.movesForwardThisTurn)
-			.allow(TargetMode.ORDER_ATTACK, TargetType.UNIT, this.movesForwardThisTurn)
+	private onUnitMove(): void {
+		this.movesForwardThisTurn = Math.min(this.maximumMovesThisTurn, this.movesForwardThisTurn + 1)
 	}
 
-	private onUnitMove(): void {
-		this.movesForwardThisTurn += 1
+	private onUnitOrdered(targetArguments: ServerCardTarget): void {
+		const targetCard = targetArguments.targetCard
+		targetCard.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 	}
 
 	private onTurnEnded(): void {

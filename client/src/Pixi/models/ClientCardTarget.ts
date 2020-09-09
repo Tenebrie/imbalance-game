@@ -12,11 +12,9 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 export default class ClientCardTarget implements CardTarget {
 	targetMode: TargetMode
 	targetType: TargetType
-	sourceCard?: Card | CardMessage
+	sourceCard: Card | CardMessage
 	sourceCardOwner?: ClientPlayerInGame
-	sourceUnit?: RenderedUnit
 	targetCard?: Card | CardMessage
-	targetUnit?: RenderedUnit
 	targetRow?: RenderedGameBoardRow
 	targetLabel: string
 	targetCardData?: CardMessage
@@ -34,14 +32,8 @@ export default class ClientCardTarget implements CardTarget {
 		if (message.sourceCardOwnerId) {
 			target.sourceCardOwner = Core.getPlayer(message.sourceCardOwnerId)
 		}
-		if (message.sourceUnitId) {
-			target.sourceUnit = Core.board.findUnitById(message.sourceUnitId)
-		}
 		if (message.targetCardId) {
 			target.targetCard = Core.game.findCardById(message.targetCardId)
-		}
-		if (message.targetUnitId) {
-			target.targetUnit = Core.board.findUnitById(message.targetUnitId)
 		}
 		if (message.targetRowIndex !== -1) {
 			target.targetRow = Core.board.rows[message.targetRowIndex]

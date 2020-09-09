@@ -36,20 +36,17 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			healing: this.healing
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT, this.targets)
+			.requireAlliedUnit()
+			.requireNotSelf()
+			.requireUnique(TargetType.UNIT)
+			.label(TargetType.UNIT, 'card.unitPriestessOfAedine.target.heal')
+			.validate(TargetType.UNIT, args => args.targetCard.stats.power < args.targetCard.stats.basePower)
+			.evaluate(TargetType.UNIT, args => args.targetCard.stats.maxPower - args.targetCard.stats.power)
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
-			.multipleTargets(this.targets)
-			.alliedUnit()
-			.notSelf()
-			.allow(TargetType.UNIT, this.targets)
-			.unique(TargetType.UNIT)
-			.label(TargetType.UNIT, 'card.unitPriestessOfAedine.target.heal')
-			.validate(TargetType.UNIT, args => args.targetUnit.card.stats.power < args.targetUnit.card.stats.basePower)
-			.evaluate(TargetType.UNIT, args => args.targetUnit.card.stats.maxPower - args.targetUnit.card.stats.power)
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

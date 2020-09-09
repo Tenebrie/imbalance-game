@@ -20,7 +20,7 @@ export default class SpellLightningStorm extends ServerCard {
 	damage = 3
 	baseTargets = 1
 	targetsPerStorm = 1
-	targetsHit = []
+	targetsHit: ServerCard[] = []
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -41,6 +41,11 @@ export default class SpellLightningStorm extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT, () => this.targetCount)
+			.requireEnemyUnit()
+			.validate(TargetType.UNIT, args => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
@@ -57,20 +62,9 @@ export default class SpellLightningStorm extends ServerCard {
 		return this.baseTargets + this.targetsPerStorm * stormsPlayed
 	}
 
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		const builder = PostPlayTargetDefinitionBuilder.base(this.game)
-			.multipleTargets(this.targetCount)
-			.allow(TargetType.UNIT, this.targetCount)
-			.enemyUnit()
-		if (!this.isUpgraded()) {
-			builder.validate(TargetType.UNIT, args => !this.targetsHit.includes(args.targetUnit))
-		}
-		return builder
-	}
-
 	private onTargetSelected(target: ServerUnit): void {
 		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
-		this.targetsHit.push(target)
+		this.targetsHit.push(target.card)
 	}
 
 	private onTargetsConfirmed(): void {

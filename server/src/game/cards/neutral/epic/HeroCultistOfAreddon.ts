@@ -26,16 +26,13 @@ export default class HeroCultistOfAreddon extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT)
+			.requireAlliedUnit()
+			.requireNotSelf()
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.require(TargetType.UNIT)
-			.alliedUnit()
-			.notSelf()
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

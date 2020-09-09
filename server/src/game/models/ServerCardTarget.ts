@@ -13,11 +13,9 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 export default class ServerCardTarget implements CardTarget {
 	targetMode: TargetMode
 	targetType: TargetType
-	sourceCard?: ServerCard
+	sourceCard: ServerCard
 	sourceCardOwner?: ServerPlayerInGame
-	sourceUnit?: ServerUnit
 	targetCard?: ServerCard
-	targetUnit?: ServerUnit
 	targetRow?: ServerBoardRow
 	targetLabel: string
 	targetCardData: CardMessage
@@ -32,15 +30,15 @@ export default class ServerCardTarget implements CardTarget {
 	public isEqual(other: ServerCardTarget): boolean {
 		return this.targetMode === other.targetMode &&
 			this.targetType === other.targetType &&
-			(this.sourceCard === other.sourceCard || this.sourceUnit === other.sourceUnit) &&
-			this.targetUnit === other.targetUnit &&
+			(this.sourceCard === other.sourceCard) &&
+			this.targetCard === other.targetCard &&
 			this.targetRow === other.targetRow
 	}
 
 	public static cardTargetUnit(targetMode: TargetMode, sourceCard: ServerCard, targetUnit: ServerUnit, expectedValue: number, targetLabel = ''): ServerCardTarget {
 		const order = new ServerCardTarget(targetMode, TargetType.UNIT)
 		order.sourceCard = sourceCard
-		order.targetUnit = targetUnit
+		order.targetCard = targetUnit.card
 		order.targetLabel = targetLabel
 		order.expectedValue = expectedValue
 		return order
@@ -94,22 +92,6 @@ export default class ServerCardTarget implements CardTarget {
 		return order
 	}
 
-	public static unitTargetUnit(targetMode: TargetMode, orderedUnit: ServerUnit, targetUnit: ServerUnit, targetLabel = ''): ServerCardTarget {
-		const order = new ServerCardTarget(targetMode, TargetType.UNIT)
-		order.sourceUnit = orderedUnit
-		order.targetUnit = targetUnit
-		order.targetLabel = targetLabel
-		return order
-	}
-
-	public static unitTargetRow(targetMode: TargetMode, orderedUnit: ServerUnit, targetRow: ServerBoardRow, targetLabel = ''): ServerCardTarget {
-		const order = new ServerCardTarget(targetMode, TargetType.BOARD_ROW)
-		order.sourceUnit = orderedUnit
-		order.targetRow = targetRow
-		order.targetLabel = targetLabel
-		return order
-	}
-
 	public static fromMessage(game: ServerGame, message: CardTargetMessage): ServerCardTarget {
 		const target = new ServerCardTarget(message.targetMode, message.targetType)
 		if (message.sourceCardId) {
@@ -118,16 +100,10 @@ export default class ServerCardTarget implements CardTarget {
 		if (message.sourceCardOwnerId) {
 			target.sourceCardOwner = game.players.find(playerInGame => playerInGame.player.id === message.sourceCardOwnerId)
 		}
-		if (message.sourceUnitId) {
-			target.sourceUnit = game.board.findUnitById(message.sourceUnitId)
-		}
 		if (message.targetCardId) {
 			target.targetCard = game.findCardById(message.targetCardId) || CardLibrary.findPrototypeById(message.targetCardData.id)
 		} else if (message.targetCardData) {
 			target.targetCard = game.findCardById(message.targetCardData.id) || CardLibrary.findPrototypeById(message.targetCardData.id)
-		}
-		if (message.targetUnitId) {
-			target.targetUnit = game.board.findUnitById(message.targetUnitId)
 		}
 		if (message.targetRowIndex !== -1) {
 			target.targetRow = game.board.rows[message.targetRowIndex]

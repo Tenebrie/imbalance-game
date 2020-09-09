@@ -37,6 +37,11 @@ export default class SpellSteelSpark extends ServerCard {
 			sideDamage: () => this.sideDamage
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT)
+			.requireEnemyUnit()
+			.evaluate(TargetType.UNIT, (args => this.evaluateTarget(args)))
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
@@ -47,14 +52,6 @@ export default class SpellSteelSpark extends ServerCard {
 
 	get sideDamage(): number {
 		return this.baseSideDamage
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
-			.singleTarget()
-			.allow(TargetType.UNIT)
-			.enemyUnit()
-			.evaluate(TargetType.UNIT, (args => this.evaluateTarget(args)))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
@@ -71,9 +68,9 @@ export default class SpellSteelSpark extends ServerCard {
 	}
 
 	private evaluateTarget(args: TargetValidatorArguments): number {
-		const target = args.targetUnit
-		const adjacentUnits = this.game.board.getAdjacentUnits(target)
-		let expectedValue = Math.min(target.card.stats.power, this.damage)
+		const target = args.targetCard
+		const adjacentUnits = this.game.board.getAdjacentUnits(target.unit)
+		let expectedValue = Math.min(target.stats.power, this.damage)
 		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.stats.power, this.sideDamage))
 		return expectedValue
 	}

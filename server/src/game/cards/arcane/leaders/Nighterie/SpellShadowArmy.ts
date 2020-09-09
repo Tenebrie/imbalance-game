@@ -9,12 +9,12 @@ import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../../models/ServerUnit'
-import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
+import {CardTargetsConfirmedEventArgs, CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellShadowArmy extends ServerCard {
-	powerThreshold = 3
+	powerThreshold: number
 	thresholdDecrease = 1
 	allowedTargets = 1
 	copiedUnits: ServerUnit[] = []
@@ -36,16 +36,24 @@ export default class SpellShadowArmy extends ServerCard {
 			thresholdDecrease: this.thresholdDecrease
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT, () => this.allowedTargets)
+			.requireAlliedUnit()
+			.label(TargetType.UNIT, 'card.spellShadowArmy.target')
+			.validate(TargetType.UNIT, args => !this.copiedUnits.includes(args.targetCard.unit))
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+
+		this.createEffect<CardTargetsConfirmedEventArgs>(GameEventType.CARD_TARGETS_CONFIRMED)
+			.perform(() => this.resetState())
+
+		this.resetState()
 	}
 
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return SimpleTargetDefinitionBuilder.base(this.game, TargetMode.POST_PLAY_REQUIRED_TARGET)
-			.require(TargetType.UNIT, this.allowedTargets)
-			.alliedUnit()
-			.label(TargetType.UNIT, 'card.spellShadowArmy.target')
-			.validate(TargetType.UNIT, args => !this.copiedUnits.includes(args.targetUnit))
+	private resetState(): void {
+		this.powerThreshold = 3
+		this.copiedUnits = []
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

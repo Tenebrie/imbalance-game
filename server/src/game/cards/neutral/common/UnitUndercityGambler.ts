@@ -33,15 +33,13 @@ export default class UnitUndercityGambler extends ServerCard {
 			bonusPower: this.bonusPower
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.CARD_IN_UNIT_HAND)
+			.validate(TargetType.CARD_IN_UNIT_HAND, args => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
+			.requireCardInPlayersHand()
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.require(TargetType.CARD_IN_UNIT_HAND)
-			.validate(TargetType.CARD_IN_UNIT_HAND, args => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
-			.inPlayersHand()
 	}
 
 	private onTargetSelected(target: ServerCard): void {

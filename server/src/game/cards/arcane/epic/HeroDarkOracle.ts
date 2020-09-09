@@ -31,16 +31,13 @@ export default class HeroDarkOracle extends ServerCard {
 			cardsToSee: this.cardsToSee
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.CARD_IN_UNIT_DECK)
+			.requireCardInOpponentsDeck()
+			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition >= args.targetCard.owner.cardDeck.unitCards.length - this.cardsToSee))
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.require(TargetType.CARD_IN_UNIT_DECK)
-			.inOpponentsDeck()
-			.validate(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition >= args.targetCard.owner.cardDeck.unitCards.length - this.cardsToSee))
 	}
 
 	private onTargetSelected(target: ServerCard): void {

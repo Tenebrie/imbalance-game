@@ -34,15 +34,12 @@ export default class SpellScrollOfBlinding extends ServerCard {
 			buffDuration: this.buffDuration
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.UNIT)
+			.requireEnemyUnit()
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.singleTarget()
-			.allow(TargetType.UNIT)
-			.enemyUnit()
 	}
 
 	private onTargetSelected(selectedTarget: ServerUnit): void {

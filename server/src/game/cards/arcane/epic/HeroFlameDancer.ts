@@ -33,16 +33,14 @@ export default class HeroFlameDancer extends ServerCard {
 			burnDuration: this.burnDuration
 		}
 
+		this.createDeployEffectTargets()
+			.target(TargetType.BOARD_ROW)
+			.validate(TargetType.BOARD_ROW, args => {
+				return args.targetRow.owner === args.sourceCardOwner.opponent && args.targetRow.cards.length > 0
+			})
+
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
-	}
-
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder {
-		return PostPlayTargetDefinitionBuilder.base(this.game)
-			.require(TargetType.BOARD_ROW)
-			.validate(TargetType.BOARD_ROW, args => {
-				return args.targetRow.owner === args.thisCardOwner.opponent && args.targetRow.cards.length > 0
-			})
 	}
 
 	private onTargetSelected(target: ServerBoardRow): void {

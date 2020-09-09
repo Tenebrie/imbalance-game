@@ -7,6 +7,9 @@ import DamageSource from '@shared/enums/DamageSource'
 import ServerBoardRow from './ServerBoardRow'
 import ServerBuff from './ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
+import TargetType from '@shared/enums/TargetType'
+import TargetValidatorArguments from '../../types/TargetValidatorArguments'
+import ServerCardTarget from './ServerCardTarget'
 
 export default {
 	roundStarted: (args: RoundStartedEventArgs): GameEvent => ({
@@ -101,6 +104,17 @@ export default {
 			triggeringUnit: args.triggeringUnit.card.id,
 			distance: args.distance,
 			direction: args.direction,
+		}
+	}),
+	unitOrdered: (args: UnitOrderedEventArgs): GameEvent => ({
+		type: GameEventType.UNIT_ORDERED,
+		args: args,
+		effectSource: args.triggeringUnit.card,
+		logSubtype: args.targetArguments.targetCard ? 'card' : args.targetArguments.targetRow ? 'row' : 'noTarget',
+		logVariables: {
+			triggeringUnit: args.triggeringUnit.card.id,
+			targetCard: args.targetArguments.targetCard?.id,
+			targetRow: args.targetArguments.targetRow?.index
 		}
 	}),
 	unitDestroyed: (args: UnitDestroyedEventArgs): GameEvent => ({
@@ -221,6 +235,11 @@ export interface UnitMovedEventArgs {
 	fromRow: ServerBoardRow
 	distance: number
 	direction: MoveDirection
+}
+export interface UnitOrderedEventArgs {
+	triggeringUnit: ServerUnit
+	targetType: TargetType
+	targetArguments: ServerCardTarget
 }
 export interface UnitDestroyedEventArgs {
 	triggeringUnit: ServerUnit
