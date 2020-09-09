@@ -102,6 +102,8 @@
 	"card.feature.keywordInfuseX.description": "When this card is played, consume X of your Mana, if you have it, and trigger an effect. Otherwise, do nothing.",
 	"card.feature.keywordInfuseAll.name": "Infuse All",
 	"card.feature.keywordInfuseAll.description": "When this card is played, consume all your Mana and trigger an effect.",
+	"card.feature.keywordOrder.name": "Приказ",
+	"card.feature.keywordOrder.description": "Пока этот юнит находится на столе, один раз в ваш ход выберите цель и выполните эффект.",
 	"card.feature.keywordCreate.name": "Создать",
 	"card.feature.keywordCreate.description": "Добавить карту в вашу руку. Она становится 'Временной картой'.",
 	"card.feature.keywordSummon.name": "Призвать",

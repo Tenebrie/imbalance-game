@@ -1,10 +1,8 @@
 import ServerGame from '../ServerGame'
 import TargetValidatorArguments from '../../../types/TargetValidatorArguments'
-import TargetTypeWithMode from '../../../types/TargetTypeWithMode'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import StandardTargetDefinitionBuilder from './StandardTargetDefinitionBuilder'
-import Constants from '@shared/Constants'
 import CardType from '@shared/enums/CardType'
 
 export default class TargetDefinition {
@@ -12,20 +10,20 @@ export default class TargetDefinition {
 	private readonly totalTargetCountGetters: (number | (() => number))[]
 	private readonly orderLabels: string[][]
 	private readonly targetOfTypeCountGetters: (number | (() => number))[][][]
-	private readonly validators: ((args: TargetValidatorArguments) => boolean)[][][] = []
+	private readonly conditions: ((args: TargetValidatorArguments) => boolean)[][][] = []
 	private readonly evaluators: ((args: TargetValidatorArguments) => number)[][][] = []
 
 	constructor(game: ServerGame,
 		totalTargetCountGetters: (number | (() => number))[],
 		orderLabels: string[][],
 		targetOfTypeCountGetters: (number | (() => number))[][][],
-		validators: ((args: TargetValidatorArguments) => boolean)[][][],
+		conditions: ((args: TargetValidatorArguments) => boolean)[][][],
 		evaluators: ((args: TargetValidatorArguments) => number)[][][]) {
 		this.game = game
 		this.totalTargetCountGetters = totalTargetCountGetters
 		this.orderLabels = orderLabels
 		this.targetOfTypeCountGetters = targetOfTypeCountGetters
-		this.validators = validators
+		this.conditions = conditions
 		this.evaluators = evaluators
 	}
 
@@ -51,8 +49,8 @@ export default class TargetDefinition {
 		}).reduce((acc, val) => acc + val, 0)
 	}
 
-	public validate(reason: TargetMode, type: TargetType, args: TargetValidatorArguments): boolean {
-		return this.validators[reason][type].every(validator => validator(args))
+	public require(reason: TargetMode, type: TargetType, args: TargetValidatorArguments): boolean {
+		return this.conditions[reason][type].every(condition => condition(args))
 	}
 
 	public evaluate(reason: TargetMode, type: TargetType, args: TargetValidatorArguments): number {
@@ -66,7 +64,7 @@ export default class TargetDefinition {
 	public static defaultCardPlayTarget(game: ServerGame): StandardTargetDefinitionBuilder {
 		return StandardTargetDefinitionBuilder.base(game)
 			.targetsOfType(TargetMode.CARD_PLAY, TargetType.BOARD_ROW)
-			.validate(TargetMode.CARD_PLAY, TargetType.BOARD_ROW, (args: TargetValidatorArguments) => {
+			.require(TargetMode.CARD_PLAY, TargetType.BOARD_ROW, (args: TargetValidatorArguments) => {
 				return args.sourceCard.type === CardType.SPELL || args.targetRow.owner === args.sourceCardOwner
 			})
 	}

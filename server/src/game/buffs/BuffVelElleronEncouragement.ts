@@ -1,6 +1,6 @@
 import ServerBuff from '../models/ServerBuff'
 import BuffStackType from '@shared/enums/BuffStackType'
-import SpellAnEncouragement from '../cards/arcane/leaders/VelElleron/SpellAnEncouragement'
+import SpellAnEncouragement from '../cards/01-arcane/leaders/VelElleron/SpellAnEncouragement'
 import BuffStrength from './BuffStrength'
 import ServerGame from '../models/ServerGame'
 import {TurnStartedEventArgs} from '../models/GameEventCreators'

@@ -55,7 +55,7 @@
 				"vue-template-compiler": "^2.6.10"
 		},
 		"engines": {
-				"node": "10.16"
+				"node": "14.10"
 		},
 		"author": "Tenebrie Interactive",
 		"license": "GNU GPL v3.0",

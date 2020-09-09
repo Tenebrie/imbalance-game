@@ -1,4 +1,3 @@
-import ServerUnit from '../game/models/ServerUnit'
 import ServerBoardRow from '../game/models/ServerBoardRow'
 import ServerCard from '../game/models/ServerCard'
 import ServerCardTarget from '../game/models/ServerCardTarget'

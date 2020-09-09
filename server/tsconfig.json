@@ -2,8 +2,8 @@
 	"compilerOptions": {
 		"strict": false,
 		"module": "commonjs",
-		"target": "es2017",
-		"lib": ["es2017"],
+		"target": "es2019",
+		"lib": ["es2019"],
 		// Search under node_modules for non-relative imports.
 		"moduleResolution": "node",
 		// Process & infer types from .js files.

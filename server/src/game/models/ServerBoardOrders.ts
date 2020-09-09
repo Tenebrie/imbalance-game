@@ -32,7 +32,7 @@ export default class ServerBoardOrders {
 		const previousTargets = this.getOrdersPerformedByUnit(orderedUnit)
 		const targetDefinitions = orderedUnit.card.targeting.getUnitOrderTargetDefinitions()
 		const isValid = targetDefinitions.every(targetDefinition => {
-			return targetDefinition.validate(TargetMode.UNIT_ORDER, order.targetType, { ...order, previousTargets })
+			return targetDefinition.require(TargetMode.UNIT_ORDER, order.targetType, { ...order, previousTargets })
 		})
 		if (!isValid) {
 			return

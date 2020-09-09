@@ -1,6 +1,5 @@
 import ServerGame from '../ServerGame'
 import TargetValidatorArguments from '../../../types/TargetValidatorArguments'
-import TargetTypeWithMode from '../../../types/TargetTypeWithMode'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import TargetDefinition from './TargetDefinition'
@@ -11,12 +10,12 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 	private totalTargetCountGetters: (number | (() => number))[] | undefined = undefined
 	private readonly orderLabels: string[][]
 	private readonly targetOfTypeCountGetters: (number | (() => number))[][][]
-	private readonly validators: ((args: TargetValidatorArguments) => boolean)[][][] = []
+	private readonly conditions: ((args: TargetValidatorArguments) => boolean)[][][] = []
 	private readonly evaluators: ((args: TargetValidatorArguments) => number)[][][] = []
 
 	constructor(game: ServerGame) {
 		this.game = game
-		this.validators = []
+		this.conditions = []
 		this.evaluators = []
 		this.orderLabels = []
 		this.targetOfTypeCountGetters = []
@@ -25,12 +24,12 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		for (const targetingReason in targetModeValues) {
 			this.orderLabels[targetingReason] = []
 			this.targetOfTypeCountGetters[targetingReason] = []
-			this.validators[targetingReason] = []
+			this.conditions[targetingReason] = []
 			this.evaluators[targetingReason] = []
 			for (const targetType in targetTypeValues) {
 				this.orderLabels[targetingReason][targetType] = ''
 				this.targetOfTypeCountGetters[targetingReason][targetType] = []
-				this.validators[targetingReason][targetType] = []
+				this.conditions[targetingReason][targetType] = []
 				this.evaluators[targetingReason][targetType] = []
 			}
 		}
@@ -38,7 +37,7 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 
 	public build(): TargetDefinition {
 		const totalTargetCount = this.totalTargetCountGetters === undefined ? [1000] : this.totalTargetCountGetters
-		return new TargetDefinition(this.game, totalTargetCount, this.orderLabels, this.targetOfTypeCountGetters, this.validators, this.evaluators)
+		return new TargetDefinition(this.game, totalTargetCount, this.orderLabels, this.targetOfTypeCountGetters, this.conditions, this.evaluators)
 	}
 
 	public targetsTotal(count: number | (() => number)): StandardTargetDefinitionBuilder {
@@ -59,8 +58,8 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		return this
 	}
 
-	public validate(reason: TargetMode, type: TargetType, validator: (args: TargetValidatorArguments) => boolean): StandardTargetDefinitionBuilder {
-		this.validators[reason][type].push(validator)
+	public require(reason: TargetMode, type: TargetType, condition: (args: TargetValidatorArguments) => boolean): StandardTargetDefinitionBuilder {
+		this.conditions[reason][type].push(condition)
 		return this
 	}
 
@@ -81,7 +80,7 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 					targetDefinition.targetOfTypeCountGetters[targetingReason][targetType]
 				)
 				this.orderLabels[targetingReason][targetType] = this.orderLabels[targetingReason][targetType] || targetDefinition.orderLabels[targetingReason][targetType]
-				this.validators[targetingReason][targetType] = this.validators[targetingReason][targetType].concat(targetDefinition.validators[targetingReason][targetType])
+				this.conditions[targetingReason][targetType] = this.conditions[targetingReason][targetType].concat(targetDefinition.conditions[targetingReason][targetType])
 				this.evaluators[targetingReason][targetType] = this.evaluators[targetingReason][targetType].concat(targetDefinition.evaluators[targetingReason][targetType])
 			}
 		}
@@ -97,7 +96,7 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 			for (const targetType in targetTypeValues) {
 				clone.targetOfTypeCountGetters[targetingReason][targetType] = this.targetOfTypeCountGetters[targetingReason][targetType]
 				clone.orderLabels[targetingReason][targetType] = this.orderLabels[targetingReason][targetType]
-				clone.validators[targetingReason][targetType] = this.validators[targetingReason][targetType]
+				clone.conditions[targetingReason][targetType] = this.conditions[targetingReason][targetType]
 				clone.evaluators[targetingReason][targetType] = this.evaluators[targetingReason][targetType]
 			}
 		}

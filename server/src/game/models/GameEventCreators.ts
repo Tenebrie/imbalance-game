@@ -8,7 +8,6 @@ import ServerBoardRow from './ServerBoardRow'
 import ServerBuff from './ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
-import TargetValidatorArguments from '../../types/TargetValidatorArguments'
 import ServerCardTarget from './ServerCardTarget'
 
 export default {

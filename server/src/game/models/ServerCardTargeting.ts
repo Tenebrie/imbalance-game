@@ -39,14 +39,14 @@ export class ServerCardTargeting {
 				sourceCard: this.card,
 				sourceCardOwner: cardOwner
 			})
-		}).reduce((acc, val) => acc.concat(val), [])
+		}).flat()
 	}
 
 	public getDeployEffectTargets(previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
 		const targetDefinitions = this.getDeployEffectTargetDefinitions()
 		return targetDefinitions
 			.map(targetDefinition => this.getDeployEffectTargetsForTargetDefinition(targetDefinition, previousTargets))
-			.reduce((acc, val) => acc.concat(val), [])
+			.flat()
 	}
 
 	private getDeployEffectTargetsForTargetDefinition(targetDefinition: TargetDefinition, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
@@ -114,7 +114,7 @@ export class ServerCardTargeting {
 
 		return this.game.board.getAllUnits()
 			.filter(unit => !unit.card.features.includes(CardFeature.UNTARGETABLE))
-			.filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card }))
+			.filter(unit => targetDefinition.require(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card }))
 			.map(unit => ({
 				unit: unit,
 				expectedValue: targetDefinition.evaluate(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card })
@@ -133,7 +133,7 @@ export class ServerCardTargeting {
 
 		const rowTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.BOARD_ROW)
 		return this.game.board.rows
-			.filter(row => targetDefinition.validate(targetMode, TargetType.BOARD_ROW, { ...args, sourceCard: this.card, targetRow: row, previousTargets: previousTargets }))
+			.filter(row => targetDefinition.require(targetMode, TargetType.BOARD_ROW, { ...args, sourceCard: this.card, targetRow: row, previousTargets: previousTargets }))
 			.map(targetRow => ServerCardTarget.cardTargetRow(targetMode, this.card, targetRow, rowTargetLabel))
 	}
 
@@ -145,7 +145,7 @@ export class ServerCardTargeting {
 		const libraryCards = GameLibrary.cards as ServerCard[]
 		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_LIBRARY)
 		return libraryCards
-			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_LIBRARY, { ... args, sourceCard: this.card, targetCard: card, previousTargets: previousTargets }))
+			.filter(card => targetDefinition.require(targetMode, TargetType.CARD_IN_LIBRARY, { ... args, sourceCard: this.card, targetCard: card, previousTargets: previousTargets }))
 			.map(targetCard => ServerCardTarget.cardTargetCardInLibrary(targetMode, this.card, targetCard, cardTargetLabel))
 	}
 
@@ -158,7 +158,7 @@ export class ServerCardTargeting {
 		return this.game.players.map(player => player.cardHand.unitCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter(unit => !unit.features.includes(CardFeature.UNTARGETABLE))
-			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_UNIT_HAND, { ... args, sourceCard: this.card, targetCard: card, previousTargets: previousTargets }))
+			.filter(card => targetDefinition.require(targetMode, TargetType.CARD_IN_UNIT_HAND, { ... args, sourceCard: this.card, targetCard: card, previousTargets: previousTargets }))
 			.map(targetCard => ServerCardTarget.cardTargetCardInUnitHand(targetMode, this.card, targetCard, cardTargetLabel))
 	}
 
@@ -171,7 +171,7 @@ export class ServerCardTargeting {
 		return this.game.players.map(player => player.cardHand.spellCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter(unit => !unit.features.includes(CardFeature.UNTARGETABLE))
-			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_SPELL_HAND, { ... args, sourceCard: this.card, targetCard: card, previousTargets: previousTargets }))
+			.filter(card => targetDefinition.require(targetMode, TargetType.CARD_IN_SPELL_HAND, { ... args, sourceCard: this.card, targetCard: card, previousTargets: previousTargets }))
 			.map(targetCard => ServerCardTarget.cardTargetCardInSpellHand(targetMode, this.card, targetCard, cardTargetLabel))
 	}
 
@@ -183,7 +183,7 @@ export class ServerCardTargeting {
 		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_UNIT_DECK)
 		return this.game.players.map(player => player.cardDeck.unitCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
-			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_UNIT_DECK, { ... args, sourceCard: this.card, targetCard: card, previousTargets: previousTargets }))
+			.filter(card => targetDefinition.require(targetMode, TargetType.CARD_IN_UNIT_DECK, { ... args, sourceCard: this.card, targetCard: card, previousTargets: previousTargets }))
 			.map(targetCard => ServerCardTarget.cardTargetCardInUnitDeck(targetMode, this.card, targetCard, cardTargetLabel))
 	}
 
@@ -195,7 +195,7 @@ export class ServerCardTargeting {
 		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_SPELL_DECK)
 		return this.game.players.map(player => player.cardDeck.spellCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
-			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_SPELL_DECK, { ... args, sourceCard: this.card, targetCard: card, previousTargets: previousTargets }))
+			.filter(card => targetDefinition.require(targetMode, TargetType.CARD_IN_SPELL_DECK, { ... args, sourceCard: this.card, targetCard: card, previousTargets: previousTargets }))
 			.map(targetCard => ServerCardTarget.cardTargetCardInSpellDeck(targetMode, this.card, targetCard, cardTargetLabel))
 	}
 

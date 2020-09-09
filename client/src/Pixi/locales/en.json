@@ -108,6 +108,8 @@
 	"card.feature.keywordInfuseX.description": "When this card is played, consume X of your Mana, if you have it, and trigger an effect. Otherwise, do nothing.",
 	"card.feature.keywordInfuseAll.name": "Infuse All",
 	"card.feature.keywordInfuseAll.description": "When this card is played, consume all your Mana and trigger an effect.",
+	"card.feature.keywordOrder.name": "Order",
+	"card.feature.keywordOrder.description": "While this unit is on the board, choose a target and trigger an effect once a turn.",
 	"card.feature.keywordCreate.name": "Create",
 	"card.feature.keywordCreate.description": "Add a card into your hand. It gets 'Temporary Card'.",
 	"card.feature.keywordSummon.name": "Summon",
@@ -401,6 +403,9 @@
 
 	"card.unitMercantileSpellslinger.name": "Mercantile Spellslinger",
 	"card.unitMercantileSpellslinger.description": "*Deploy:*\nAdd a Scroll to your hand.\nIt costs {manaMarkup} Mana more, but gets {discountPerTurn} Mana cheaper every turn.",
+
+	"card.unitHighClassPerformer.name": "High Class Performer",
+	"card.unitHighClassPerformer.description": "*Deploy:*\nGive +{bonusPower} Power to all allied units on other rows.<p>This card can only be played on a row with at least {cardsRequired} allied units.",
 
 	"card.unitHungrySpellslinger.name": "Hungry Spellslinger",
 	"card.unitHungrySpellslinger.description": "*Infuse *{infuseCost}*:*\nAdd a Scroll to your hand.\nIt costs {spellDiscount} Mana less.",

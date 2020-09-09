@@ -28,6 +28,7 @@ import ServerCardStats from './ServerCardStats'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import SimpleTargetDefinitionBuilder from './targetDefinitions/SimpleTargetDefinitionBuilder'
 import {ServerCardTargeting} from './ServerCardTargeting'
+import TargetType from '@shared/enums/TargetType'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -259,7 +260,7 @@ export default class ServerCard implements Card {
 		const customRelatedCards = Utils.sortCards(
 			this.customRelatedCards.map(relatedCardsDefinition =>
 				CardLibrary.cards.filter(card => relatedCardsDefinition.conditions.every(condition => condition(card)))
-			).reduce((acc, value) => acc.concat(value), []))
+			).flat())
 			.map(obj => obj.class)
 
 		return this.baseRelatedCards.map(obj => getClassFromConstructor(obj))
@@ -417,6 +418,7 @@ export default class ServerCard implements Card {
 	 */
 	protected createPlayTargets(): SimpleTargetDefinitionBuilder {
 		const builder = SimpleTargetDefinitionBuilder.base(this.game, TargetMode.CARD_PLAY)
+			.target(TargetType.BOARD_ROW)
 		this.targeting.cardPlayTargetDefinitions.push(builder)
 		return builder
 	}

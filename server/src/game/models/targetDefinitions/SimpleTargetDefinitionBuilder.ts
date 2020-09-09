@@ -38,12 +38,12 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		return this
 	}
 
-	/* Validate target
-	 * ------------------------
-	 * The target will only be considered valid if all validators return true
+	/* Require condition
+	 * -----------------
+	 * The target will only be considered valid if all require conditions return true
 	 */
-	public validate(type: TargetType, validator: (args: TargetValidatorArguments) => boolean): SimpleTargetDefinitionBuilder {
-		this.builder.validate(this.targetMode, type, validator)
+	public require(type: TargetType, condition: (args: TargetValidatorArguments) => boolean): SimpleTargetDefinitionBuilder {
+		this.builder.require(this.targetMode, type, condition)
 		return this
 	}
 
@@ -59,7 +59,7 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 	}
 
 	public requireUnique(targetType: TargetType): SimpleTargetDefinitionBuilder {
-		return this.validate(targetType, args => {
+		return this.require(targetType, args => {
 			const applicablePreviousTargets = args.previousTargets.filter(target => target.targetMode === this.targetMode && target.targetType === targetType)
 			return (!args.targetCard || !applicablePreviousTargets.find(target => target.targetCard === args.targetCard)) &&
 				(!args.targetRow || !applicablePreviousTargets.find(target => target.targetRow === args.targetRow))
@@ -67,7 +67,7 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 	}
 
 	public requireInStaticRange(targetType: TargetType, range: number): SimpleTargetDefinitionBuilder {
-		return this.validate(targetType, args => {
+		return this.require(targetType, args => {
 			const thisUnit = args.sourceCard.unit
 			const rowIndex = targetType === TargetType.UNIT ? args.targetCard.unit.rowIndex : args.targetRow.index
 			return Math.abs(thisUnit.rowIndex - rowIndex) <= range
@@ -75,7 +75,7 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 	}
 
 	public requireAlliedUnit(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.UNIT, args => {
+		return this.require(TargetType.UNIT, args => {
 			const sourceUnit = args.sourceCard.unit
 			const targetUnit = args.targetCard.unit
 			return (args.sourceCardOwner && args.sourceCardOwner === targetUnit.owner) || (sourceUnit && sourceUnit.owner === targetUnit.owner)
@@ -83,7 +83,7 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 	}
 
 	public requireEnemyUnit(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.UNIT, args => {
+		return this.require(TargetType.UNIT, args => {
 			const sourceUnit = args.sourceCard.unit
 			const targetUnit = args.targetCard.unit
 			return (args.sourceCardOwner && args.sourceCardOwner !== targetUnit.owner) || (sourceUnit && sourceUnit.owner !== targetUnit.owner)
@@ -91,63 +91,63 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 	}
 
 	public requirePlayersRow(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.BOARD_ROW, args => {
+		return this.require(TargetType.BOARD_ROW, args => {
 			return args.targetRow.owner === args.sourceCard.owner
 		})
 	}
 
 	public requireOpponentsRow(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.BOARD_ROW, args => {
+		return this.require(TargetType.BOARD_ROW, args => {
 			return args.targetRow.owner === args.sourceCard.owner.opponent
 		})
 	}
 
 	public requireEmptyRow(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.BOARD_ROW, args => {
+		return this.require(TargetType.BOARD_ROW, args => {
 			return args.targetRow.cards.length === 0
 		})
 	}
 
 	public requireNotEmptyRow(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.BOARD_ROW, args => {
+		return this.require(TargetType.BOARD_ROW, args => {
 			return args.targetRow.cards.length > 0
 		})
 	}
 
 	public requireNotSelf(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.UNIT, args => {
+		return this.require(TargetType.UNIT, args => {
 			return !args.targetCard || args.sourceCard !== args.targetCard
 		})
 	}
 
 	public requireCardInPlayersHand(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.CARD_IN_UNIT_HAND, args => {
+		return this.require(TargetType.CARD_IN_UNIT_HAND, args => {
 			return args.targetCard.owner === args.sourceCardOwner
-		}).validate(TargetType.CARD_IN_SPELL_HAND, args => {
+		}).require(TargetType.CARD_IN_SPELL_HAND, args => {
 			return args.targetCard.owner === args.sourceCardOwner
 		})
 	}
 
 	public requireCardInOpponentsHand(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.CARD_IN_UNIT_HAND, args => {
+		return this.require(TargetType.CARD_IN_UNIT_HAND, args => {
 			return args.targetCard.owner !== args.sourceCardOwner
-		}).validate(TargetType.CARD_IN_SPELL_HAND, args => {
+		}).require(TargetType.CARD_IN_SPELL_HAND, args => {
 			return args.targetCard.owner !== args.sourceCardOwner
 		})
 	}
 
 	public requireCardInPlayersDeck(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.CARD_IN_UNIT_DECK, args => {
+		return this.require(TargetType.CARD_IN_UNIT_DECK, args => {
 			return args.targetCard.owner === args.sourceCardOwner
-		}).validate(TargetType.CARD_IN_SPELL_DECK, args => {
+		}).require(TargetType.CARD_IN_SPELL_DECK, args => {
 			return args.targetCard.owner === args.sourceCardOwner
 		})
 	}
 
 	public requireCardInOpponentsDeck(): SimpleTargetDefinitionBuilder {
-		return this.validate(TargetType.CARD_IN_UNIT_DECK, args => {
+		return this.require(TargetType.CARD_IN_UNIT_DECK, args => {
 			return args.targetCard.owner !== args.sourceCardOwner
-		}).validate(TargetType.CARD_IN_SPELL_DECK, args => {
+		}).require(TargetType.CARD_IN_SPELL_DECK, args => {
 			return args.targetCard.owner !== args.sourceCardOwner
 		})
 	}
