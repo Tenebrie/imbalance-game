@@ -20,9 +20,9 @@ export default class ServerGameCardPlay {
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
 		/* Deduct mana */
 		if (ownedCard.card.type === CardType.UNIT) {
-			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.unitCost))
+			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.stats.unitCost))
 		} else if (ownedCard.card.type === CardType.SPELL) {
-			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.spellCost))
+			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.stats.spellCost))
 		}
 
 		/* Resolve card */

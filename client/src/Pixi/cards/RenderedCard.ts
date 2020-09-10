@@ -60,8 +60,8 @@ export default class RenderedCard implements Card {
 	private readonly cardModeTextContainer: PIXI.Container
 	private readonly unitModeContainer: PIXI.Container
 
-	private readonly powerTextBackground: PIXI.Sprite
-	private readonly armorTextBackground: PIXI.Sprite
+	public readonly powerTextBackground: PIXI.Sprite
+	public readonly armorTextBackground: PIXI.Sprite
 	private readonly armorTextZoomBackground: PIXI.Sprite
 	private readonly manacostTextBackground: PIXI.Sprite
 	private readonly descriptionTextBackground: DescriptionTextBackground
@@ -197,22 +197,6 @@ export default class RenderedCard implements Card {
 		this.coreContainer.addChild(this.cardDisabledOverlay)
 	}
 
-	public get unitCost(): number {
-		let cost = this.stats.unitCost
-		this.buffs.buffs.forEach(buff => {
-			cost = buff.getUnitCostOverride(cost)
-		})
-		return cost
-	}
-
-	public get spellCost(): number {
-		let cost = this.stats.spellCost
-		this.buffs.buffs.forEach(buff => {
-			cost = buff.getSpellCostOverride(cost)
-		})
-		return cost
-	}
-
 	public getDescriptionTextVariables(): RichTextVariables {
 		return {
 			...this.variables,
@@ -264,26 +248,6 @@ export default class RenderedCard implements Card {
 
 	public isHovered(): boolean {
 		return this.hitboxSprite.containsPoint(Core.input.mousePosition)
-	}
-
-	public setPower(value: number): void {
-		this.stats.power = Math.max(0, value)
-		this.resetDisplayMode()
-	}
-
-	public setMaxPower(value: number): void {
-		this.stats.maxPower = value
-	}
-
-	public setArmor(value: number): void {
-		this.stats.armor = Math.max(0, value)
-		this.armorText.visible = this.stats.armor > 0
-		this.armorTextBackground.visible = this.stats.armor > 0
-		this.armorTextZoomBackground.visible = this.stats.armor > 0
-	}
-
-	public setMaxArmor(value: number): void {
-		this.stats.maxArmor = value
 	}
 
 	public createHitboxSprite(sprite: PIXI.Sprite): PIXI.Sprite {
@@ -372,6 +336,13 @@ export default class RenderedCard implements Card {
 			cardTribeText.position.y -= this.sprite.height / 2
 		})
 		this.cardDescriptionText.position.y += this.sprite.height / 2
+
+		if (this.type === CardType.UNIT) {
+			this.updatePowerTextColors()
+			this.updateArmorTextColors()
+		} else {
+			this.updateSpellCostTextColors()
+		}
 	}
 
 	public switchToCardMode(): void {
@@ -441,10 +412,6 @@ export default class RenderedCard implements Card {
 
 		this.cardDescriptionText.style.baseFontSize = fontSize
 		this.cardDescriptionText.setFont(fontSize, 25)
-
-		if (this.color === CardColor.LEADER) {
-			this.powerText.text = '-'
-		}
 	}
 
 	public switchToUnitMode(): void {
@@ -479,6 +446,45 @@ export default class RenderedCard implements Card {
 		this.powerTextBackground.visible = false
 		this.powerText.visible = false
 		this.armorText.visible = false
+	}
+
+	public updatePowerTextColors(): void {
+		this.powerText.text = this.stats.power.toString()
+		if (this.stats.power < this.stats.basePower) {
+			this.powerText.style.fill = 0x770000
+		} else if (this.stats.power > this.stats.basePower) {
+			this.powerText.style.fill = 0x007700
+		} else {
+			this.powerText.style.fill = 0x000000
+		}
+	}
+
+	public updateArmorTextColors(): void {
+		this.armorText.text = this.stats.card.stats.armor.toString()
+		this.armorText.visible = this.stats.armor > 0
+		this.armorTextBackground.visible = this.stats.armor > 0
+		this.armorTextZoomBackground.visible = this.stats.armor > 0
+
+		if (this.stats.armor === 0) {
+			this.armorText.style.fill = 0xFF7777
+		} else if (this.stats.armor < this.stats.baseArmor) {
+			this.armorText.style.fill = 0xFF7777
+		} else if (this.stats.armor > this.stats.baseArmor) {
+			this.armorText.style.fill = 0x77FF77
+		} else {
+			this.armorText.style.fill = 0xFFFFFF
+		}
+	}
+
+	public updateSpellCostTextColors(): void {
+		this.powerText.text = this.stats.spellCost.toString()
+		if (this.stats.spellCost < this.stats.baseSpellCost) {
+			this.powerText.style.fill = 0x0077AA
+		} else if (this.stats.spellCost > this.stats.baseSpellCost) {
+			this.powerText.style.fill = 0x7700AA
+		} else {
+			this.powerText.style.fill = 0x0000AA
+		}
 	}
 
 	public isCardMode(): boolean {

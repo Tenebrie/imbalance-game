@@ -62,25 +62,4 @@ export default class ClientBuff implements Buff {
 	public setIntensity(value: number): void {
 		this.intensity = value
 	}
-
-	getUnitCostOverride(baseCost: number): number {
-		let cost = baseCost
-		if (this.buffFeatures.includes(BuffFeature.CARD_CAST_FREE)) {
-			cost = 0
-		}
-		return Math.max(0, cost)
-	}
-	getSpellCostOverride(baseCost: number): number {
-		let cost = baseCost
-		if (this.buffFeatures.includes(BuffFeature.SPELL_MARKUP_PER_INTENSITY)) {
-			cost += this.intensity
-		}
-		if (this.buffFeatures.includes(BuffFeature.SPELL_DISCOUNT_PER_INTENSITY)) {
-			cost -= this.intensity
-		}
-		if (this.buffFeatures.includes(BuffFeature.CARD_CAST_FREE)) {
-			cost = 0
-		}
-		return Math.max(0, cost)
-	}
 }

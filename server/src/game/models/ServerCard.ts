@@ -170,22 +170,6 @@ export default class ServerCard implements Card {
 			.perform(() => this.destroy())
 	}
 
-	public get unitCost(): number {
-		let cost = this.stats.unitCost
-		this.buffs.buffs.forEach(buff => {
-			cost = buff.getUnitCostOverride(cost)
-		})
-		return cost
-	}
-
-	public get spellCost(): number {
-		let cost = this.stats.spellCost
-		this.buffs.buffs.forEach(buff => {
-			cost = buff.getSpellCostOverride(cost)
-		})
-		return cost
-	}
-
 	public get tribes(): CardTribe[] {
 		let tribes = this.baseTribes.slice()
 		this.buffs.buffs.forEach(buff => {
@@ -321,7 +305,7 @@ export default class ServerCard implements Card {
 		}
 
 		if (armorDamageInstance) {
-			targetCard.stats.maxArmor = targetCard.stats.armor - armorDamageInstance.value
+			targetCard.stats.armor = targetCard.stats.armor - armorDamageInstance.value
 		}
 
 		if (powerDamageInstance) {

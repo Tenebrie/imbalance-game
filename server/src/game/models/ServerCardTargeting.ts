@@ -26,7 +26,7 @@ export class ServerCardTargeting {
 	}
 
 	public getValidCardPlayTargets(cardOwner: ServerPlayerInGame): ServerCardTarget[] {
-		if ((this.card.type === CardType.UNIT && cardOwner.unitMana < this.card.unitCost) || (this.card.type === CardType.SPELL && cardOwner.spellMana < this.card.spellCost)) {
+		if ((this.card.type === CardType.UNIT && cardOwner.unitMana < this.card.stats.unitCost) || (this.card.type === CardType.SPELL && cardOwner.spellMana < this.card.stats.spellCost)) {
 			return []
 		}
 

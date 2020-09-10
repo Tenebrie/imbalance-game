@@ -71,6 +71,10 @@ export const getClassFromConstructor = (constructor: CardConstructor): string =>
 	return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
 }
 
+export const limitValueToInterval = (min: number, value: number, max: number): number => {
+	return Math.max(min, Math.min(value, max))
+}
+
 export default {
 	hashCode(targetString: string): number {
 		let i

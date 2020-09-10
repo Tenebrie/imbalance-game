@@ -180,7 +180,7 @@
 	"buff.buffGrowth.name": "Рост",
 	"buff.buffGrowth.description": "Эта карта получает +1 Силы в начале ее хода.",
 
-	"buff.buffTutoredCard.name": "Призванная карта",
+	"buff.buffTutoredCard.name": "Временная карта",
 	"buff.buffTutoredCard.description": "Эта карта является временной.",
 
 	"buff.buffCreatedCard.name": "Созданная карта",

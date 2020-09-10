@@ -11,7 +11,6 @@ export default class BuffNextSpellDiscount extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.ADD_INTENSITY)
 		this.alignment = BuffAlignment.POSITIVE
-		this.buffFeatures = [BuffFeature.SPELL_DISCOUNT_PER_INTENSITY]
 
 		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)

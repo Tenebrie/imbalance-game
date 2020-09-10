@@ -13,6 +13,7 @@ import ClientCardResolveStack from '@/Pixi/models/ClientCardResolveStack'
 import ParticleSystem from '@/Pixi/vfx/ParticleSystem'
 import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
 import {ClientToServerMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import {ServerToClientMessageTypes} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 export default class Core {
 	public static isReady = false
@@ -66,7 +67,7 @@ export default class Core {
 
 	private static onMessage(event: MessageEvent): void {
 		const data = JSON.parse(event.data)
-		const messageType = data.type as string
+		const messageType = data.type as ServerToClientMessageTypes
 		const messageData = data.data as any
 		const messageHighPriority = data.highPriority as boolean
 		const messageAllowBatching = data.allowBatching as boolean
@@ -92,6 +93,7 @@ export default class Core {
 		}
 
 		Core.mainHandler.registerMessage({
+			type: messageType,
 			handler: handler,
 			data: messageData,
 			allowBatching: messageAllowBatching || false,

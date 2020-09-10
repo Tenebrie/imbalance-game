@@ -10,23 +10,13 @@ export default class BuffDecayingArmor extends ServerBuff {
 		super(game, BuffStackType.ADD_INTENSITY)
 		this.alignment = BuffAlignment.POSITIVE
 
-		this.createEffect(GameEventType.BUFF_CREATED)
-			.perform(() => this.onCreated())
-
-		this.createEffect(GameEventType.BUFF_REMOVED)
-			.perform(() => this.onDestroyed())
-
 		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
 			.require(({ player }) => player === this.card.owner)
 			.perform(() => this.onTurnStarted())
 	}
 
-	private onCreated(): void {
-		this.card.stats.maxArmor = this.card.stats.maxArmor + 1
-	}
-
-	private onDestroyed(): void {
-		this.card.stats.maxArmor = this.card.stats.maxArmor - 1
+	getMaxArmorOverride(baseValue: number): number {
+		return baseValue + this.intensity
 	}
 
 	private onTurnStarted(): void {

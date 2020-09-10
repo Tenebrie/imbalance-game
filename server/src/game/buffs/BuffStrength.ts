@@ -11,17 +11,13 @@ export default class BuffStrength extends ServerBuff {
 
 		this.createEffect(GameEventType.BUFF_CREATED)
 			.perform(() => this.onCreated())
-
-		this.createEffect(GameEventType.BUFF_REMOVED)
-			.perform(() => this.onDestroyed())
 	}
 
 	private onCreated(): void {
-		this.card.stats.maxPower = this.card.stats.maxPower + 1
 		this.card.stats.power = this.card.stats.power + 1
 	}
 
-	private onDestroyed(): void {
-		this.card.stats.maxPower = this.card.stats.maxPower - 1
+	getMaxPowerOverride(baseValue: number): number {
+		return baseValue + this.intensity
 	}
 }

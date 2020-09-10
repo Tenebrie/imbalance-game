@@ -52,7 +52,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		}
 
 		try {
-			while ((this.canPlayUnitCard() || this.hasHighValueSpellPlays()) && this.game.turnPhase === GameTurnPhase.DEPLOY) {
+			while ((this.canPlayUnitCard() || (this.hasHighValueSpellPlays()) && this.game.turnPhase === GameTurnPhase.DEPLOY)) {
 				this.botPlaysCard(false)
 			}
 		} catch (e) {
@@ -114,8 +114,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private canPlayUnitCard(): boolean {
-		return (this.unitMana > 0 && this.cardHand.unitCards.length > 0) ||
-			(!!this.cardHand.unitCards.find(card => card.unitCost === 0))
+		return this.cardHand.unitCards.filter(card => card.stats.unitCost <= this.unitMana).length > 0
 	}
 
 	private hasHighValueSpellPlays(): boolean {

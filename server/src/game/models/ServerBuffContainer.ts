@@ -8,6 +8,7 @@ import GameEventCreators from './GameEventCreators'
 import ServerAnimation from './ServerAnimation'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardLocation from '@shared/enums/CardLocation'
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 
 export interface BuffConstructor {
 	new (game: ServerGame): ServerBuff
@@ -70,6 +71,9 @@ export default class ServerBuffContainer implements BuffContainer {
 		const existingBuff = this.buffs.find(existingBuff => existingBuff.buffClass === newBuff.buffClass)
 
 		if (newBuff.stackType === BuffStackType.NONE && existingBuff && existingBuff.duration < newBuff.duration) {
+			this.game.events.postEvent(GameEventCreators.buffRemoved({
+				triggeringBuff: existingBuff
+			}))
 			this.buffs.splice(this.buffs.indexOf(existingBuff), 1)
 			OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(this.card, existingBuff)
 			this.buffs.push(newBuff)
@@ -89,10 +93,12 @@ export default class ServerBuffContainer implements BuffContainer {
 
 		if (existingBuff && newBuff.stackType === BuffStackType.ADD_INTENSITY) {
 			this.game.events.unsubscribe(newBuff)
-			existingBuff.setIntensity(existingBuff.intensity + 1)
+			existingBuff.setIntensity(existingBuff.intensity + newBuff.intensity)
 			playBuffReceivedAnimation()
 			return
 		}
+
+		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
 
 		this.game.events.postEvent(GameEventCreators.buffCreated({
 			triggeringBuff: invokedBuff

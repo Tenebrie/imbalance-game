@@ -21,14 +21,6 @@ export default class RenderedUnit implements Unit {
 		return Core.board.rows[this.rowIndex].cards.indexOf(this)
 	}
 
-	public setPower(value: number): void {
-		this.card.setPower(value)
-	}
-
-	public setArmor(value: number): void {
-		this.card.setArmor(value)
-	}
-
 	public static fromMessage(message: UnitMessage): RenderedUnit {
 		const renderedCard = RenderedCard.fromMessage(message.card)
 		const owner = Core.getPlayer(message.ownerId)

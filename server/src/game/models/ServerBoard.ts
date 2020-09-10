@@ -10,11 +10,11 @@ import ServerCard from './ServerCard'
 import Utils from '../../utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
 import ServerGameEventCreators from './GameEventCreators'
-import ServerAnimation from './ServerAnimation'
 import GameEventCreators from './GameEventCreators'
+import ServerAnimation from './ServerAnimation'
 import BuffDuration from '@shared/enums/BuffDuration'
-import BuffSappedCard from '../buffs/BuffSappedCard'
 import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
+import BuffTutoredCard from '../buffs/BuffTutoredCard'
 
 export default class ServerBoard implements Board {
 	readonly game: ServerGame
@@ -234,7 +234,7 @@ export default class ServerBoard implements Board {
 			targetCard.reveal()
 		}
 		const buffDuration = cardOwner === sapper.owner ? BuffDuration.END_OF_THIS_TURN : BuffDuration.END_OF_NEXT_TURN
-		targetCard.buffs.add(BuffSappedCard, sapper, buffDuration)
+		targetCard.buffs.add(BuffTutoredCard, sapper, buffDuration)
 	}
 
 	/* Remove this unit from the board

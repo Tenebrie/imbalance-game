@@ -30,7 +30,7 @@ const IncomingAnimationMessages: {[ index in AnimationMessageType ]: IncomingMes
 		const parentThread = Core.mainHandler.mainAnimationThread.findThread(systemData.animationThreadId)
 		const targetThread = parentThread.workerThreads.find(thread => !thread.started)
 		const activeWorkerThreadCount = parentThread.workerThreads.filter(thread => thread.started).length
-		if (data.isStaggered) {
+		if (data.isStaggered && targetThread.hasAnimationMessages()) {
 			targetThread.triggerCooldown(activeWorkerThreadCount * 150)
 		}
 		targetThread.start()

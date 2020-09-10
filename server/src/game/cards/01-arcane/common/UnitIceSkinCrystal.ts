@@ -47,7 +47,7 @@ export default class UnitIceSkinCrystal extends ServerCard {
 	}
 
 	private onSpellPlayed(spell: ServerCard): void {
-		this.charges += spell.spellCost
+		this.charges += spell.stats.spellCost
 	}
 
 	private onDestroy(): void {

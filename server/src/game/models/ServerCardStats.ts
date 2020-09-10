@@ -2,6 +2,8 @@ import ServerCard from './ServerCard'
 import ServerGame from './ServerGame'
 import CardStats from '@shared/models/CardStats'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import {limitValueToInterval} from '../../utils/Utils'
+import ServerBuff from './ServerBuff'
 
 interface ServerCardStatsProps {
 	basePower: number
@@ -46,25 +48,12 @@ export default class ServerCardStats implements CardStats {
 
 	/* Power */
 	public get power(): number {
-		return Math.max(this.__power, 0)
+		return limitValueToInterval(0, this.__power, this.maxPower)
 	}
 	public set power(value: number) {
 		if (this.__power === value) { return }
 
-		this.__power = Math.min(value, this.__maxPower)
-		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
-	}
-
-	public get maxPower(): number {
-		return this.__maxPower
-	}
-	public set maxPower(value: number) {
-		if (this.__maxPower === value) { return }
-
-		this.__maxPower = Math.max(value, 0)
-		if (this.__power > this.__maxPower) {
-			this.__power = this.__maxPower
-		}
+		this.__power = limitValueToInterval(0, value, this.maxPower)
 		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
 	}
 
@@ -72,31 +61,18 @@ export default class ServerCardStats implements CardStats {
 		return this.__basePower
 	}
 
-	public get actualPower(): number {
-		return this.__power
+	public get maxPower(): number {
+		return this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getMaxPowerOverride(value), this.basePower)
 	}
 
 	/* Armor */
 	public get armor(): number {
-		return Math.max(this.__armor, 0)
+		return limitValueToInterval(0, this.__armor, this.maxArmor)
 	}
 	public set armor(value: number) {
 		if (this.__armor === value) { return }
 
-		this.__armor = Math.min(value, this.__maxArmor)
-		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
-	}
-
-	public get maxArmor(): number {
-		return this.__maxArmor
-	}
-	public set maxArmor(value: number) {
-		if (this.__maxArmor === value) { return }
-
-		this.__maxArmor = Math.max(value, 0)
-		if (this.__armor > this.__maxArmor) {
-			this.__armor = this.__maxArmor
-		}
+		this.__armor = limitValueToInterval(0, value, this.maxArmor)
 		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
 	}
 
@@ -104,39 +80,25 @@ export default class ServerCardStats implements CardStats {
 		return this.__baseArmor
 	}
 
-	public get actualArmor(): number {
-		return this.__armor
+	public get maxArmor(): number {
+		return this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getMaxArmorOverride(value), this.baseArmor)
 	}
 
 	/* Unit cost */
-	public get unitCost(): number {
-		return this.__unitCost
-	}
-
-	public set unitCost(value: number) {
-		if (this.__unitCost === value) { return }
-
-		this.__unitCost = Math.max(value, 0)
-		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
-	}
-
 	public get baseUnitCost(): number {
 		return this.__baseUnitCost
 	}
 
+	public get unitCost(): number {
+		return this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getUnitCostOverride(value), this.baseUnitCost)
+	}
+
 	/* Spell cost */
-	public get spellCost(): number {
-		return this.__spellCost
-	}
-
-	public set spellCost(value: number) {
-		if (this.__spellCost === value) { return }
-
-		this.__spellCost = Math.max(value, 0)
-		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
-	}
-
 	public get baseSpellCost(): number {
 		return this.__baseSpellCost
+	}
+
+	public get spellCost(): number {
+		return this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getSpellCostOverride(value), this.baseSpellCost)
 	}
 }

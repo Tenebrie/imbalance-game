@@ -8,7 +8,6 @@ export default class BuffSpellDiscount extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.ADD_INTENSITY)
 		this.alignment = BuffAlignment.POSITIVE
-		this.buffFeatures = [BuffFeature.SPELL_DISCOUNT_PER_INTENSITY]
 	}
 
 	getSpellCostOverride(baseCost: number): number {

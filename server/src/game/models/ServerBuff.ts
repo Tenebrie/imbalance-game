@@ -51,15 +51,17 @@ export default class ServerBuff implements Buff {
 
 		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
 			.require(({ player }) => player === this.card.owner)
+			.require(() => this.duration < Infinity)
 			.perform(() => this.onTurnChanged())
 
 		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED)
 			.require(({ player }) => player === this.card.owner)
+			.require(() => this.duration < Infinity)
 			.perform(() => this.onTurnChanged())
 	}
 
 	private onTurnChanged(): void {
-		this.addDuration(-1)
+		this.setDuration(this.duration - 1)
 	}
 
 	protected get unit(): ServerUnit | null {
@@ -70,20 +72,12 @@ export default class ServerBuff implements Buff {
 		return this.card.location
 	}
 
-	public addDuration(delta: number): void {
-		this.setDuration(this.duration + delta)
-	}
-
 	public setDuration(value: number): void {
 		this.duration = value
 		OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, this)
 		if (this.duration <= 0) {
 			this.card.buffs.removeByReference(this)
 		}
-	}
-
-	public addIntensity(delta: number): void {
-		this.setIntensity(Math.max(0, this.intensity + delta))
 	}
 
 	public setIntensity(value: number): void {
@@ -146,8 +140,10 @@ export default class ServerBuff implements Buff {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hook)
 	}
 
-	getUnitCostOverride(baseCost: number): number { return baseCost }
-	getSpellCostOverride(baseCost: number): number { return baseCost }
+	getMaxPowerOverride(baseValue: number): number { return baseValue }
+	getMaxArmorOverride(baseValue: number): number { return baseValue }
+	getUnitCostOverride(baseValue: number): number { return baseValue }
+	getSpellCostOverride(baseValue: number): number { return baseValue }
 
 	definePlayValidTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	defineValidOrderTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }

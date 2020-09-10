@@ -15,7 +15,6 @@ import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
 import CardType from '@shared/enums/CardType'
 import GameEventCreators from '../models/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
-import BuffCreatedCard from '../buffs/BuffCreatedCard'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -61,12 +60,14 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public canPlaySpell(card: ServerCard, rowIndex: number): boolean {
 		const gameBoardRow = this.game.board.rows[rowIndex]
-		return this.spellMana >= card.spellCost && !!card.targeting.getValidCardPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
+		return this.spellMana >= card.stats.spellCost &&
+			!!card.targeting.getValidCardPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
 	}
 
 	public canPlayUnit(card: ServerCard, rowIndex: number): boolean {
 		const gameBoardRow = this.game.board.rows[rowIndex]
-		return this.unitMana >= card.unitCost && !!card.targeting.getValidCardPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
+		return this.unitMana >= card.stats.unitCost &&
+			!!card.targeting.getValidCardPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
 	}
 
 	public drawUnitCards(count: number): ServerCard[] {
@@ -123,7 +124,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	private createCard(card: ServerCard): void {
-		card.buffs.add(BuffCreatedCard, null, BuffDuration.END_OF_THIS_TURN)
+		card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
 		if (card.type === CardType.UNIT) {
 			this.cardHand.onUnitDrawn(card)
 		} else if (card.type === CardType.SPELL) {

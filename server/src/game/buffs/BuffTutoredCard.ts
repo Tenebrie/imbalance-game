@@ -9,7 +9,7 @@ import GameEventType from '@shared/enums/GameEventType'
 export default class BuffTutoredCard extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.NONE)
-		this.buffFeatures = [BuffFeature.CARD_CAST_FREE, BuffFeature.SKIP_ANIMATION]
+		this.buffFeatures = [BuffFeature.SKIP_ANIMATION]
 		this.cardFeatures = [CardFeature.LOW_SORT_PRIORITY, CardFeature.TEMPORARY_CARD]
 
 		this.createCallback<UnitDeployedEventArgs>(GameEventType.UNIT_DEPLOYED)

@@ -2,7 +2,7 @@
 	<div class="the-game-log">
 		<div class="the-game-log-container">
 			<div class="current-time">{{ currentTime }}</div>
-			<div class="entry-group" v-for="group in entryGroups" :key="group.id">
+			<div class="entry-group" v-for="group in displayedEntryGroups" :key="group.id">
 				<div class="entry" v-for="(entry, index) in group.entries" :key="`${group.id}-${index}`">
 					<TheGameLogEntry :entry="entry" />
 				</div>
@@ -23,6 +23,7 @@ export default {
 	},
 	setup() {
 		const entryGroups = ref(store.state.gameLogModule.entryGroups)
+		const displayedEntryGroups = entryGroups.value.slice().reverse()
 		const currentTime = ref<string>('')
 
 		let updateCurrentTimeInterval
@@ -37,8 +38,8 @@ export default {
 		}
 
 		return {
-			entryGroups,
 			currentTime,
+			displayedEntryGroups,
 		}
 	},
 
@@ -70,8 +71,12 @@ export default {
 			}
 
 			.entry-group {
+				width: 100%;
 				font-size: 20px;
-				margin-bottom: 1em;
+				margin-bottom: 0.5em;
+				padding-bottom: 0.5em;
+
+				border-bottom: 1px solid rgba(white, 0.7);
 
 				.entry {
 

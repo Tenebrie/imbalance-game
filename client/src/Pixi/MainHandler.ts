@@ -4,6 +4,7 @@ import * as PIXI from 'pixi.js'
 import QueuedMessage from '@/Pixi/models/QueuedMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ProjectileSystem from '@/Pixi/vfx/ProjectileSystem'
+import {AnimationMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 class AnimationThread {
 	public id: string = uuidv4()
@@ -93,6 +94,10 @@ class AnimationThread {
 	public triggerCooldown(time: number): AnimationThread {
 		this.messageCooldown += time
 		return this
+	}
+
+	public hasAnimationMessages(): boolean {
+		return this.queuedMessages.filter(message => message.type === AnimationMessageType.PLAY).length > 0
 	}
 
 	public skipCooldown(): void {
