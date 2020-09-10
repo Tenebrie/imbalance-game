@@ -32,6 +32,7 @@ export enum AnimationMessageType {
 	THREAD_CREATE = 'animation_threadCreate',
 	THREAD_START = 'animation_threadStart',
 	THREAD_COMMIT = 'animation_threadCommit',
+	EXECUTE_QUEUE = 'animation_executeQueue'
 }
 
 export enum GameSyncMessageType {

@@ -57,5 +57,13 @@ export default {
 			data: undefined,
 			highPriority: true,
 		})
+	},
+
+	executeMessageQueue(game: ServerGame): void {
+		game.players.forEach(playerInGame => playerInGame.player.sendMessage({
+			type: AnimationMessageType.EXECUTE_QUEUE,
+			data: undefined,
+			highPriority: true,
+		}))
 	}
 }

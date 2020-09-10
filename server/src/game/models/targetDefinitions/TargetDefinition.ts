@@ -64,6 +64,7 @@ export default class TargetDefinition {
 	public static defaultCardPlayTarget(game: ServerGame): StandardTargetDefinitionBuilder {
 		return StandardTargetDefinitionBuilder.base(game)
 			.targetsOfType(TargetMode.CARD_PLAY, TargetType.BOARD_ROW)
+			.require(TargetMode.CARD_PLAY, TargetType.BOARD_ROW, ({ targetRow }) => !targetRow.isFull())
 			.require(TargetMode.CARD_PLAY, TargetType.BOARD_ROW, (args: TargetValidatorArguments) => {
 				return args.sourceCard.type === CardType.SPELL || args.targetRow.owner === args.sourceCardOwner
 			})

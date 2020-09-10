@@ -23,11 +23,9 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			return
 		}
 
+		const validTargets = card.targeting.getValidCardPlayTargets(card.owner)
 		if (playerInGame.turnEnded || playerInGame.roundEnded || playerInGame.targetRequired ||
-			game.turnPhase !== GameTurnPhase.DEPLOY || !playerInGame.game.board.isExtraUnitPlayableToRow(data.rowIndex) ||
-			(card.type === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex)) ||
-			(card.type === CardType.SPELL && !playerInGame.canPlaySpell(card, data.rowIndex))) {
-
+			game.turnPhase !== GameTurnPhase.DEPLOY || !validTargets.find(target => data.rowIndex === target.targetRow.index)) {
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return
 		}
@@ -39,6 +37,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
 		game.events.flushLogEventGroup()
+		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
 	[GenericActionMessageType.UNIT_ORDER]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
@@ -53,6 +52,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
 		game.events.flushLogEventGroup()
+		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
 	[GenericActionMessageType.CARD_TARGET]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
@@ -67,6 +67,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
 		game.events.flushLogEventGroup()
+		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
 	[GenericActionMessageType.TURN_END]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
@@ -80,6 +81,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 
 		game.advanceCurrentTurn()
 		game.events.flushLogEventGroup()
+		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
 	[SystemMessageType.INIT]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {

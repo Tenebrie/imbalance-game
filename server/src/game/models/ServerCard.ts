@@ -419,6 +419,7 @@ export default class ServerCard implements Card {
 	protected createPlayTargets(): SimpleTargetDefinitionBuilder {
 		const builder = SimpleTargetDefinitionBuilder.base(this.game, TargetMode.CARD_PLAY)
 			.target(TargetType.BOARD_ROW)
+			.require(TargetType.BOARD_ROW, ({ targetRow }) => !targetRow.isFull())
 		this.targeting.cardPlayTargetDefinitions.push(builder)
 		return builder
 	}

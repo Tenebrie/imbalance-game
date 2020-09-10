@@ -35,6 +35,10 @@ const IncomingAnimationMessages: {[ index in AnimationMessageType ]: IncomingMes
 		}
 		targetThread.start()
 	},
+
+	[AnimationMessageType.EXECUTE_QUEUE]: () => {
+		Core.mainHandler.mainAnimationThread.start()
+	}
 }
 
 export default IncomingAnimationMessages

@@ -10,6 +10,7 @@ import {UnitDeployedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffStrength from '../../../buffs/BuffStrength'
 import CardFeature from '@shared/enums/CardFeature'
+import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition'
 
 export default class UnitHighClassPerformer extends ServerCard {
 	bonusPower = 1
@@ -33,6 +34,7 @@ export default class UnitHighClassPerformer extends ServerCard {
 		}
 
 		this.createPlayTargets()
+			.merge(TargetDefinition.defaultCardPlayTarget(this.game))
 			.require(TargetType.BOARD_ROW, ({ targetRow }) => targetRow.cards.length >= this.cardsRequired)
 
 		this.createEffect<UnitDeployedEventArgs>(GameEventType.UNIT_DEPLOYED)

@@ -107,6 +107,7 @@ export default class Renderer {
 		/* Action label */
 		this.actionLabel = new RichText('Test text', 2000, {})
 		this.actionLabel.zIndex = 85
+		this.actionLabel.verticalAlign = RichTextAlign.END
 		this.actionLabel.setFont(24 * this.superSamplingLevel, 12 * this.superSamplingLevel)
 		this.actionLabel.style.dropShadow = true
 		this.actionLabel.style.dropShadowBlur = 4
@@ -467,7 +468,6 @@ export default class Renderer {
 
 		/* Action label */
 		const labelPosition = Core.input.mousePosition.clone()
-		// labelPosition.y += 24 * (2 - getRenderScale().superSamplingLevel)
 		this.actionLabel.position.copyFrom(labelPosition)
 		this.actionLabel.style.lineHeight = 24
 	}
@@ -518,6 +518,10 @@ export default class Renderer {
 	private getBoardRowTint(row: RenderedGameBoardRow): BoardRowTint {
 		if ((Core.input.grabbedCard && Core.input.grabbedCard.validTargetRows.includes(row)) || (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isRowPotentialTarget(row))) {
 			return row.isHovered() ? BoardRowTint.VALID_TARGET_HOVERED : BoardRowTint.VALID_TARGET
+		}
+
+		if ((Core.input.grabbedCard && !Core.input.grabbedCard.validTargetRows.includes(row)) || (Core.input.forcedTargetingMode && !Core.input.forcedTargetingMode.isRowPotentialTarget(row))) {
+			return BoardRowTint.INVALID_TARGET
 		}
 
 		return BoardRowTint.NORMAL
@@ -644,7 +648,6 @@ export default class Renderer {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredUnit = MouseHover.getHoveredUnit()
 		const hoveredRow = MouseHover.getHoveredRow()
-		label.verticalAlign = RichTextAlign.END
 
 		if (Core.input.forcedTargetingMode) {
 			label.text = Localization.get(Core.input.forcedTargetingMode.getDisplayedLabel())

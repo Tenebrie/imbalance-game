@@ -179,7 +179,8 @@ export default {
 	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard): void {
 		player.sendMessage({
 			type: PlayerUpdateMessageType.PLAY_DECLINED,
-			data: new CardRefMessage(card)
+			data: new CardRefMessage(card),
+			highPriority: true
 		})
 	},
 

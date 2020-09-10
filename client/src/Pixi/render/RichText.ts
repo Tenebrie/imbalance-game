@@ -99,6 +99,10 @@ export default class RichText extends PIXI.Container {
 		return this.__horizontalAlign
 	}
 	set horizontalAlign(value: RichTextAlign) {
+		if (this.__horizontalAlign === value) {
+			return
+		}
+
 		this.__horizontalAlign = value
 		this.renderText()
 	}
@@ -107,6 +111,10 @@ export default class RichText extends PIXI.Container {
 		return this.__verticalAlign
 	}
 	set verticalAlign(value: RichTextAlign) {
+		if (this.__verticalAlign === value) {
+			return
+		}
+
 		this.__verticalAlign = value
 		this.renderText()
 	}

@@ -54,9 +54,12 @@ class AnimationThread {
 			this.executeNextMessage()
 		}
 
-		const isWorker = this !== Core.mainHandler.mainAnimationThread
-		if (this.messageCooldown === 0 && this.__workerThreads.filter(thread => thread.started).length === 0 && this.queuedMessages.length === 0 && isWorker) {
-			this.__parentThread.killAnimationThread(this.id)
+		if (this.messageCooldown === 0 && this.__workerThreads.filter(thread => thread.started).length === 0 && this.queuedMessages.length === 0) {
+			if (this === Core.mainHandler.mainAnimationThread) {
+				this.__isStarted = false
+			} else {
+				this.__parentThread.killAnimationThread(this.id)
+			}
 		}
 	}
 
@@ -150,7 +153,6 @@ export default class MainHandler {
 		})
 
 		this.coreTicker.start()
-		this.mainAnimationThread.start()
 	}
 
 	public registerMessage(message: QueuedMessage): void {

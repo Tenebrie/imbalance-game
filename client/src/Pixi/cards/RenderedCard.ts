@@ -217,8 +217,6 @@ export default class RenderedCard implements Card {
 		return {
 			...this.variables,
 			name: Localization.get(this.name),
-			power: this.stats.power.toString(),
-			armor: this.stats.armor.toString()
 		}
 	}
 
