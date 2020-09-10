@@ -30,6 +30,6 @@ export default class HeroTribeShaman extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		this.owner.createCardFromLibraryByPrototype(SpellHealingRain)
+		this.owner.createCardFromLibraryFromPrototype(SpellHealingRain)
 	}
 }

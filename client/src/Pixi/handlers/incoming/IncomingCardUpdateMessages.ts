@@ -19,6 +19,8 @@ const IncomingCardUpdateMessages: {[ index in CardUpdateMessageType ]: IncomingM
 		card.stats.armor = data.armor
 		card.stats.maxPower = data.maxPower
 		card.stats.maxArmor = data.maxArmor
+		card.stats.unitCost = data.unitCost
+		card.stats.spellCost = data.spellCost
 	},
 
 	[CardUpdateMessageType.VARIABLES]: (data: CardVariablesMessage[]) => {

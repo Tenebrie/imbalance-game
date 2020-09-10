@@ -62,7 +62,7 @@ export default class SpellShadowArmy extends ServerCard {
 			this.allowedTargets += 1
 		}
 
-		this.owner.createCardFromLibraryByInstance(target.card)
+		this.owner.createCardFromLibraryFromInstance(target.card)
 		this.copiedUnits.push(target)
 	}
 }

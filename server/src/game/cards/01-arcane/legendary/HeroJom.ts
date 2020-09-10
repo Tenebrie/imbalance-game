@@ -42,7 +42,7 @@ export default class HeroJom extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		this.owner.createCardFromLibraryByPrototype(UnitVoidPortal)
+		this.owner.createCardFromLibraryFromPrototype(UnitVoidPortal)
 	}
 
 	private ownerControlsEnoughPortals(): boolean {

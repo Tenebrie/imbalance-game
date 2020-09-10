@@ -449,6 +449,10 @@ export default class RenderedCard implements Card {
 	}
 
 	public updatePowerTextColors(): void {
+		if (this.type !== CardType.UNIT) {
+			return
+		}
+
 		this.powerText.text = this.stats.power.toString()
 		if (this.stats.power < this.stats.basePower) {
 			this.powerText.style.fill = 0x770000
@@ -477,6 +481,10 @@ export default class RenderedCard implements Card {
 	}
 
 	public updateSpellCostTextColors(): void {
+		if (this.type !== CardType.SPELL) {
+			return
+		}
+
 		this.powerText.text = this.stats.spellCost.toString()
 		if (this.stats.spellCost < this.stats.baseSpellCost) {
 			this.powerText.style.fill = 0x0077AA

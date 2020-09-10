@@ -13,7 +13,7 @@ export default class ClientCardStats implements CardStats {
 	maxArmor: number
 	baseArmor: number
 
-	unitCost: number
+	__unitCost: number
 	baseUnitCost: number
 
 	__spellCost: number
@@ -30,7 +30,7 @@ export default class ClientCardStats implements CardStats {
 		this.maxArmor = message.maxArmor || 0
 		this.baseArmor = message.baseArmor || 0
 
-		this.unitCost = message.unitCost || 0
+		this.__unitCost = message.unitCost || 0
 		this.baseUnitCost = message.baseUnitCost || 0
 
 		this.__spellCost = message.spellCost || 0
@@ -63,6 +63,14 @@ export default class ClientCardStats implements CardStats {
 		} else {
 			this.card.updateArmorTextColors()
 		}
+	}
+
+	public get unitCost(): number {
+		return this.__unitCost
+	}
+	public set unitCost(value: number) {
+		this.__unitCost = value
+		console.log(value)
 	}
 
 	public get spellCost(): number {

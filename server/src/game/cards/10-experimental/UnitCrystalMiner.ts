@@ -1,11 +1,11 @@
 import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
+import ServerCard from '../../models/ServerCard'
+import ServerGame from '../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
+import {CardTargetSelectedEventArgs} from '../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -33,6 +33,6 @@ export default class UnitCrystalMiner extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		this.owner.createCardFromLibraryByInstance(target)
+		this.owner.createCardFromLibraryFromInstance(target)
 	}
 }

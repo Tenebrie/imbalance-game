@@ -37,6 +37,6 @@ export default class HeroCultistOfAreddon extends ServerCard {
 		const cardClass = target.card.class
 		this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target.card]))
 		this.game.board.destroyUnit(target)
-		this.owner.createCardFromLibraryByClass(cardClass)
+		this.owner.createCardFromLibraryFromClass(cardClass)
 	}
 }

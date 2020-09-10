@@ -17,6 +17,7 @@ import BuffFeature from '@shared/enums/BuffFeature'
 import GameEventCreators, {TurnEndedEventArgs, TurnStartedEventArgs} from './GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import StandardTargetDefinitionBuilder from './targetDefinitions/StandardTargetDefinitionBuilder'
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -78,6 +79,7 @@ export default class ServerBuff implements Buff {
 		if (this.duration <= 0) {
 			this.card.buffs.removeByReference(this)
 		}
+		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
 	}
 
 	public setIntensity(value: number): void {
@@ -106,6 +108,8 @@ export default class ServerBuff implements Buff {
 		if (this.intensity <= 0) {
 			this.card.buffs.removeByReference(this)
 		}
+
+		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
 	}
 
 	/* Subscribe to a game event

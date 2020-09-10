@@ -42,6 +42,6 @@ export default class UnitDarkTimewarper extends ServerCard {
 			this.game.animation.commitAnimationThread()
 		})
 
-		this.owner.createCardFromLibraryByPrototype(UnitVoidPortal)
+		this.owner.createCardFromLibraryFromPrototype(UnitVoidPortal)
 	}
 }

@@ -32,7 +32,7 @@ export default class HeroCoralScribe extends ServerCard {
 		const uniqueStorms = [...new Set(stormsPlayed)]
 
 		uniqueStorms.forEach(stormClass => {
-			this.owner.createCardFromLibraryByClass(stormClass)
+			this.owner.createCardFromLibraryFromClass(stormClass)
 		})
 	}
 }

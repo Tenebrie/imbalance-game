@@ -30,6 +30,6 @@ export default class UnitMerfolkStormcaller extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		this.owner.createCardFromLibraryByPrototype(SpellLightningStorm)
+		this.owner.createCardFromLibraryFromPrototype(SpellLightningStorm)
 	}
 }

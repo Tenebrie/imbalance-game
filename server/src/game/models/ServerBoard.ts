@@ -256,7 +256,7 @@ export default class ServerBoard implements Board {
 	 * Target unit is destroyed and removed from the board.
 	 * The associated card is then cleansed and transferred to the owner's graveyard with 0 Power.
 	 */
-	public destroyUnit(unit: ServerUnit): void {
+	public destroyUnit(unit: ServerUnit, destroyer?: ServerCard): void {
 		if (this.unitsBeingDestroyed.includes(unit)) {
 			return
 		}
@@ -274,6 +274,10 @@ export default class ServerBoard implements Board {
 			card.stats.power = 0
 			this.unitsBeingDestroyed.splice(this.unitsBeingDestroyed.indexOf(unit), 1)
 			return
+		}
+
+		if (destroyer) {
+			this.game.animation.play(ServerAnimation.cardAffectsCards(destroyer, [unit.card]))
 		}
 
 		this.game.events.postEvent(GameEventCreators.unitDestroyed({

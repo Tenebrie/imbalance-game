@@ -1,26 +1,27 @@
 import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
+import ServerCard from '../../models/ServerCard'
+import ServerGame from '../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
+import BuffDecayingArmor from '../../buffs/BuffDecayingArmor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardPlayedEventArgs, UnitDestroyedEventArgs} from '../../../models/GameEventCreators'
+import {CardPlayedEventArgs, UnitDestroyedEventArgs} from '../../models/GameEventCreators'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
-export default class UnitArcaneCrystal extends ServerCard {
+export default class UnitIceSkinCrystal extends ServerCard {
 	charges = 0
-	manaGenerated = 1
+	armorGranted = 1
 	chargePerMana = 1
-	chargesForMana = 3
+	chargesForArmor = 3
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
-			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.CRYSTAL],
+			faction: CardFaction.ARCANE,
 			stats: {
 				power: 4
 			},
@@ -28,11 +29,11 @@ export default class UnitArcaneCrystal extends ServerCard {
 			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
-			manaGenerated: this.manaGenerated,
+			armorGranted: this.armorGranted,
 			chargePerMana: this.chargePerMana,
-			chargesForMana: this.chargesForMana,
+			chargesForArmor: this.chargesForArmor,
 			charges: () => this.charges,
-			potentialMana: () => Math.floor(this.charges / this.chargesForMana) * this.manaGenerated,
+			potentialArmor: () => Math.floor(this.charges / this.chargesForArmor) * this.armorGranted,
 			chargesVisible: () => !!this.unit
 		}
 
@@ -50,6 +51,12 @@ export default class UnitArcaneCrystal extends ServerCard {
 	}
 
 	private onDestroy(): void {
-		this.unit.owner.addSpellMana(Math.floor(this.charges / this.chargesForMana) * this.manaGenerated)
+		const thisUnit = this.unit
+		const adjacentAllies = this.game.board.getAdjacentUnits(thisUnit).filter(unit => unit.owner === thisUnit.owner)
+		adjacentAllies.forEach(unit => {
+			for (let i = 0; i < Math.floor(this.charges / this.chargesForArmor) * this.armorGranted; i++) {
+				unit.card.buffs.add(BuffDecayingArmor, this)
+			}
+		})
 	}
 }

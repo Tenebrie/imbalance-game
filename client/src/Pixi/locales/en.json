@@ -313,6 +313,10 @@
 	"card.heroCultistOfAreddon.description": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",
 	"card.heroCultistOfAreddon.flavor": "- \"So say we all\"",
 
+	"card.unitCultistSpellslinger.name": "Cultist Spellslinger",
+	"card.unitCultistSpellslinger.description": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a *Scroll*.\nIt costs 1 Mana less for every Power the target unit had.",
+	"card.unitCultistSpellslinger.flavor": "- \"So say we all\"",
+
 	"card.heroAdventuringGuildMaster.name": "Adventuring\nGuild Master",
 	"card.heroAdventuringGuildMaster.description": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
 

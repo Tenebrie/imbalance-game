@@ -27,6 +27,6 @@ export default class UnitVoidcaller extends ServerCard {
 	}
 
 	private onDeploy() {
-		this.owner.createCardFromLibraryByPrototype(UnitVoidPortal)
+		this.owner.createCardFromLibraryFromPrototype(UnitVoidPortal)
 	}
 }
