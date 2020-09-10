@@ -9,6 +9,7 @@ import TargetType from '@shared/enums/TargetType'
 import {UnitDeployedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffStrength from '../../../buffs/BuffStrength'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitHighClassPerformer extends ServerCard {
 	bonusPower = 1
@@ -20,6 +21,7 @@ export default class UnitHighClassPerformer extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.HUMAN],
+			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 5,
 			},

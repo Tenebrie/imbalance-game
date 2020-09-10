@@ -1,12 +1,10 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import TargetDefinitionBuilder from '../../../models/targetDefinitions/TargetDefinitionBuilder'
 import ServerUnit from '../../../models/ServerUnit'
 import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
-import PostPlayTargetDefinitionBuilder from '../../../models/targetDefinitions/PostPlayTargetDefinitionBuilder'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
@@ -36,7 +34,8 @@ export default class SpellEnchantedStorm extends ServerCard {
 			buffPower: () => this.buffPower,
 			targetCount: this.targetCount,
 			powerPerStorm: this.powerPerStorm,
-			isUpgraded: () => this.isUpgraded()
+			isUpgraded: () => this.isUpgraded(),
+			targetsRemaining: () => this.targetCount - this.targetsHit.length
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
@@ -44,6 +43,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 			.target(TargetType.UNIT, () => this.targetCount)
 			.requireAlliedUnit()
 			.require(TargetType.UNIT, args => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
+			.label(TargetType.UNIT, 'card.spellEnchantedStorm.targetLabel')
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))

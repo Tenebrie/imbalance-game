@@ -31,13 +31,25 @@ interface Segment {
 	data?: string
 }
 
-export default class RichText extends PIXI.Container {
-	source: string
+interface RichTextStyle {
 	fill: number
 	fontSize: number
 	baseFontSize: number
 	lineHeight: number
-	maxWidth: number
+	dropShadow: boolean
+	dropShadowBlur: number
+}
+
+export default class RichText extends PIXI.Container {
+	private source: string
+	private fill: number
+	private fontSize: number
+	private baseFontSize: number
+	private lineHeight: number
+	private maxWidth: number
+	private dropShadow: boolean
+	private dropShadowBlur: number
+
 	private variables: RichTextVariables
 	segments: { text: ScalingText, basePosition: PIXI.Point, lineIndex: number }[]
 	background: RichTextBackground
@@ -52,6 +64,8 @@ export default class RichText extends PIXI.Container {
 		this.fontSize = 18
 		this.baseFontSize = 18
 		this.lineHeight = 24
+		this.dropShadow = false
+		this.dropShadowBlur = 0
 		this.maxWidth = maxWidth
 		this.segments = []
 		this.variables = variables
@@ -101,10 +115,10 @@ export default class RichText extends PIXI.Container {
 		return this.__textLineCount
 	}
 
-	get style(): Record<string, any> {
+	get style(): RichTextStyle {
 		const parent = this
 		return {
-			get fill() {
+			get fill(): number {
 				return parent.fill
 			},
 			set fill(value: number) {
@@ -114,7 +128,7 @@ export default class RichText extends PIXI.Container {
 				parent.fill = value
 				parent.renderText()
 			},
-			get fontSize() {
+			get fontSize(): number {
 				return parent.fontSize
 			},
 			set fontSize(value: number) {
@@ -124,7 +138,7 @@ export default class RichText extends PIXI.Container {
 				parent.fontSize = value
 				parent.renderText()
 			},
-			get baseFontSize() {
+			get baseFontSize(): number {
 				return parent.baseFontSize
 			},
 			set baseFontSize(value: number) {
@@ -143,7 +157,29 @@ export default class RichText extends PIXI.Container {
 				}
 				parent.lineHeight = value
 				parent.renderText()
-			}
+			},
+
+			get dropShadow(): boolean {
+				return parent.dropShadow
+			},
+			set dropShadow(value: boolean) {
+				if (value === parent.dropShadow) {
+					return
+				}
+				parent.dropShadow = value
+				parent.renderText()
+			},
+
+			get dropShadowBlur(): number {
+				return parent.dropShadowBlur
+			},
+			set dropShadowBlur(value: number) {
+				if (value === parent.dropShadowBlur) {
+					return
+				}
+				parent.dropShadowBlur = value
+				parent.renderText()
+			},
 		}
 	}
 
@@ -262,9 +298,14 @@ export default class RichText extends PIXI.Container {
 						fontSize: this.fontSize,
 						fontStyle: contextItalic ? 'italic' : 'normal',
 						padding: contextItalic ? 8 : 0,
-						fill: contextHighlight ? 0xFFFFFF : contextColor
+						fill: contextHighlight ? 0xFFFFFF : contextColor,
+						dropShadow: this.dropShadow,
+						dropShadowBlur: this.dropShadowBlur,
 					})
-					const measure = PIXI.TextMetrics.measureText(text, style)
+					const measureStyle = new PIXI.TextStyle(style)
+					measureStyle.dropShadow = false
+
+					const measure = PIXI.TextMetrics.measureText(text, measureStyle)
 					if (contextPosition.x + measure.width >= this.maxWidth * SCALE_MODIFIER) {
 						newLine()
 					}

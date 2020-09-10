@@ -37,7 +37,8 @@ export default class SpellLightningStorm extends ServerCard {
 			damage: this.damage,
 			targetCount: () => this.targetCount,
 			targetsPerStorm: this.targetsPerStorm,
-			isUpgraded: () => this.isUpgraded()
+			isUpgraded: () => this.isUpgraded(),
+			targetsRemaining: () => this.targetCount - this.targetsHit.length
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
@@ -45,6 +46,7 @@ export default class SpellLightningStorm extends ServerCard {
 			.target(TargetType.UNIT, () => this.targetCount)
 			.requireEnemyUnit()
 			.require(TargetType.UNIT, args => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
+			.label(TargetType.UNIT, 'card.spellLightningStorm.targetLabel')
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))

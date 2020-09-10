@@ -1,5 +1,6 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
+import {DisplayObject} from 'pixi.js'
 import Constants from '@shared/Constants'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
@@ -18,7 +19,7 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import {inspectedCardRenderer} from './InspectedCardRenderer'
 import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
 import {throttle} from 'throttle-debounce'
-import {DisplayObject} from 'pixi.js'
+import RichTextAlign from '@/Pixi/render/RichTextAlign'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -107,6 +108,8 @@ export default class Renderer {
 		this.actionLabel = new RichText('Test text', 2000, {})
 		this.actionLabel.zIndex = 85
 		this.actionLabel.setFont(24 * this.superSamplingLevel, 12 * this.superSamplingLevel)
+		this.actionLabel.style.dropShadow = true
+		this.actionLabel.style.dropShadowBlur = 4
 		this.rootContainer.addChild(this.actionLabel)
 
 		/* Player name label */
@@ -464,8 +467,9 @@ export default class Renderer {
 
 		/* Action label */
 		const labelPosition = Core.input.mousePosition.clone()
-		labelPosition.y -= 32
+		// labelPosition.y += 24 * (2 - getRenderScale().superSamplingLevel)
 		this.actionLabel.position.copyFrom(labelPosition)
+		this.actionLabel.style.lineHeight = 24
 	}
 
 	public renderGameBoard(gameBoard: RenderedGameBoard): void {
@@ -640,6 +644,7 @@ export default class Renderer {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredUnit = MouseHover.getHoveredUnit()
 		const hoveredRow = MouseHover.getHoveredRow()
+		label.verticalAlign = RichTextAlign.END
 
 		if (Core.input.forcedTargetingMode) {
 			label.text = Localization.get(Core.input.forcedTargetingMode.getDisplayedLabel())
