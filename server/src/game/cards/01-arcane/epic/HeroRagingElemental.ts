@@ -24,6 +24,9 @@ export default class HeroRagingElemental extends ServerCard {
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
+		this.dynamicTextVariables = {
+			power: () => this.stats.power
+		}
 
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
 			.require(({ triggeringCard }) => triggeringCard === this)
