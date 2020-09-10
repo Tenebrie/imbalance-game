@@ -407,8 +407,8 @@ export default class RenderedCard implements Card {
 
 		const description = Localization.get(this.description)
 		let fontSize = 26
-		if (description.length > 150) { fontSize = 22 }
-		if (description.length > 300) { fontSize = 20 }
+		if (description.length > 150) { fontSize = 24 }
+		if (description.length > 300) { fontSize = 22 }
 
 		this.cardDescriptionText.style.baseFontSize = fontSize
 		this.cardDescriptionText.setFont(fontSize, 25)

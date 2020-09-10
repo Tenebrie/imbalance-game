@@ -17,7 +17,7 @@ export default class UnitSupplyWagon extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
-			faction: CardFaction.NEUTRAL,
+			faction: CardFaction.HUMAN,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 4,

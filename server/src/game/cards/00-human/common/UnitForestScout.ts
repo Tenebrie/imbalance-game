@@ -4,30 +4,30 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import BuffStrength from '../../../buffs/BuffStrength'
-import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
-import Utils from '../../../../utils/Utils'
+import BuffStrength from '../../../buffs/BuffStrength'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
-export default class UnitMasterSwordsmith extends ServerCard {
-	bonusPower = 1
+export default class UnitForestScout extends ServerCard {
+	boardPowerBonus = 7
+	moralePowerBonus = 3
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
-			faction: CardFaction.NEUTRAL,
+			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.HUMAN],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 2,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			bonusPower: this.bonusPower
+			boardPowerBonus: this.boardPowerBonus,
+			moralePowerBonus: this.moralePowerBonus
 		}
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
@@ -37,11 +37,13 @@ export default class UnitMasterSwordsmith extends ServerCard {
 	private onDeploy(): void {
 		const unit = this.unit
 		const owner = unit.owner
-		const targets = Utils.sortCards(owner.cardHand.unitCards)
-		targets.forEach(card => {
-			this.game.animation.createAnimationThread()
-			card.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
-			this.game.animation.commitAnimationThread()
-		})
+		const ownPower = this.game.board.getTotalPlayerPower(owner)
+		const opponentsPower = this.game.board.getTotalPlayerPower(owner.opponent)
+		if (ownPower < opponentsPower) {
+			this.buffs.addMultiple(BuffStrength, this.boardPowerBonus, this)
+		}
+		if (owner.morale < owner.opponent.morale) {
+			this.buffs.addMultiple(BuffStrength, this.moralePowerBonus, this)
+		}
 	}
 }

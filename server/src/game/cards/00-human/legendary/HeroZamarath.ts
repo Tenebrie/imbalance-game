@@ -14,7 +14,7 @@ export default class HeroZamarath extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.GOLDEN,
-			faction: CardFaction.ARCANE,
+			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_IMMUNITY],
 			stats: {
 				power: 12,

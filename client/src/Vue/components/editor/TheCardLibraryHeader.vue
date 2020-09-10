@@ -106,7 +106,7 @@ export default defineComponent({
 
 		const factionData = [
 			{ text: 'All', faction: null },
-			{ text: 'Imperial', faction: CardFaction.HUMAN },
+			{ text: 'Human', faction: CardFaction.HUMAN },
 			{ text: 'Arcane', faction: CardFaction.ARCANE },
 			{ text: 'Wild', faction: CardFaction.WILD },
 			{ text: 'Neutral', faction: CardFaction.NEUTRAL },

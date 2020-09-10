@@ -225,7 +225,7 @@
 
 	"card.heroKroLah.name": "Kro'Lah",
 	"card.heroKroLah.title": "The Sky Guardian",
-	"card.heroKroLah.description": "*Deploy:*\nChoose an enemy row.\n*Stun* and *Push 1* all units on that row.",
+	"card.heroKroLah.description": "*Deploy:*\n*Stun* and *Push 1* all units on an enemy row.",
 
 	"card.heroCarienne.name": "Carienne",
 	"card.heroCarienne.title": "The Storm Unleashed",
@@ -278,7 +278,7 @@
 
 	"card.heroJom.name": "Jom",
 	"card.heroJom.title": "Acolyte of the Void",
-	"card.heroJom.description": "*Deploy:*\n*Create* a *Void portal*.<p>*Turn End:*\nIf you control at least {portalsNeeded} *Void portals*, merge them into an *Abyss Portal*.",
+	"card.heroJom.description": "*Deploy:*\n*Create* a *Void portal*.<p>*Turn End:*\nIf you control at least {portalsNeeded} *Void portals*, destroy them and *Create* an *Abyss Portal*.",
 	"card.heroJom.flavor": "He has ascended way beyond the elements.",
 
 	"card.heroSparklingSpirit.name": "Sparkling Spirit",

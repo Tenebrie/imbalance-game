@@ -16,7 +16,7 @@ export default class HeroLightOracle extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
-			faction: CardFaction.ARCANE,
+			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
 			sortPriority: 1,
 			stats: {
