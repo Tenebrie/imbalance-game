@@ -33,7 +33,7 @@ router.ws('/:gameId', async (ws, req) => {
 		return
 	}
 
-	const deckId = req.query.deckId
+	const deckId = req.query.deckId as string
 	if (!deckId) {
 		OutgoingMessageHandlers.notifyAboutMissingDeckId(ws)
 		ws.close()

@@ -8,7 +8,6 @@ import CardLocation from '@shared/enums/CardLocation'
 import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTakesDamageEventArgs} from '../../../models/GameEventCreators'
-import ServerAnimation from '../../../models/ServerAnimation'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 

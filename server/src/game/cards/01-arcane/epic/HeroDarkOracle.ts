@@ -32,7 +32,7 @@ export default class HeroDarkOracle extends ServerCard {
 		this.createDeployEffectTargets()
 			.target(TargetType.CARD_IN_UNIT_DECK)
 			.requireCardInOpponentsDeck()
-			.require(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition >= args.targetCard.owner.cardDeck.unitCards.length - this.cardsToSee))
+			.require(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition < this.cardsToSee))
 
 		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))

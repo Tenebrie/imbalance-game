@@ -282,7 +282,7 @@
 	"card.heroLightOracle.description": "*Вход в игру:*\nПосмотрите на верхние {cardsToSee} карт из вашей колоды.\n*Призовите* одну из них.",
 
 	"card.heroDarkOracle.name": "Темный оракул",
-	"card.heroDarkOracle.description": "*Вход в игру:*\nПосмотрите на нижние {cardsToSee} карт из колоды вашего противника.\n*Сбросьте* одну из них.",
+	"card.heroDarkOracle.description": "*Вход в игру:*\nПосмотрите на верхние {cardsToSee} карт из колоды вашего противника.\n*Сбросьте* одну из них.",
 
 	"card.heroCrystalWarrior.name": "Кристальный\nвоитель",
 	"card.heroCrystalWarrior.description": "*Вход в игру:*\nУничтожьте выбранного союзника.\nЗатем, призовите *Кристалл* на его месте.",

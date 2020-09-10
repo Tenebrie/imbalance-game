@@ -214,7 +214,7 @@ export default class ServerGameEvents {
 		})
 	}
 
-	public postEvent(event: GameEvent): void {
+	public postEvent(event: GameEvent, args: { allowThreading?: boolean } = { allowThreading: false }): void {
 		this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
 
 		const validCallbacks = this.eventCallbacks
@@ -232,7 +232,15 @@ export default class ServerGameEvents {
 		preparedCallbacks
 			.forEach(preparedCallback => {
 				preparedCallback.callback.callbacks.forEach(callback => {
+					if (args.allowThreading) {
+						this.game.animation.createAnimationThread()
+					}
+
 					cardPerform(() => callback(event.args, preparedCallback.preparedState))
+
+					if (args.allowThreading) {
+						this.game.animation.commitAnimationThread()
+					}
 				})
 			})
 	}

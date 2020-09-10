@@ -207,7 +207,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public onTurnStart(): void {
 		this.game.events.postEvent(GameEventCreators.turnStarted({
 			player: this
-		}))
+		}), { allowThreading: true })
 	}
 
 	public endTurn(): void {
@@ -233,7 +233,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 		this.game.events.postEvent(GameEventCreators.turnEnded({
 			player: this
-		}))
+		}), { allowThreading: true })
 	}
 
 	public endRound(): void {
@@ -252,7 +252,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		}))
 	}
 
-	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck) {
+	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerPlayerInGame {
 		const playerInGame = new ServerPlayerInGame(game, player)
 		playerInGame.leader = CardLibrary.instantiateByInstance(game, cardDeck.leader)
 		playerInGame.cardDeck.instantiateFrom(cardDeck)
