@@ -76,7 +76,7 @@ export default class ClientCardStats implements CardStats {
 		return this.__spellCost
 	}
 	public set spellCost(value: number) {
-		const oldValue = this.power
+		const oldValue = this.__spellCost
 		this.__spellCost = value
 
 		if (String(this.spellCost).length !== String (oldValue).length) {

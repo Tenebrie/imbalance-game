@@ -49,8 +49,7 @@ export default {
 
 		owner.sendMessage({
 			type: ResolveStackMessageType.REMOVE,
-			data: data,
-			highPriority: true
+			data: data
 		})
 		opponent.sendMessage({
 			type: ResolveStackMessageType.REMOVE,
