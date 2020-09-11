@@ -97,7 +97,8 @@ class AnimationThread {
 	}
 
 	public hasAnimationMessages(): boolean {
-		return this.queuedMessages.filter(message => message.type === AnimationMessageType.PLAY).length > 0
+		return this.queuedMessages.filter(message => message.type === AnimationMessageType.PLAY).length > 0 ||
+			!!this.__workerThreads.find(thread => thread.hasAnimationMessages())
 	}
 
 	public skipCooldown(): void {

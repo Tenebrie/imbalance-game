@@ -189,10 +189,12 @@ export default class ParticleSystem {
 			config.startRotation = { min: 90, max: 90 }
 		}
 
+		const count = card.isUnitMode() ? 500 : 1000
+
 		const container = this.getCardEffectContainer(card)
 		const emitter = this.createDefaultEmitter(container, {
 			alpha: { start: 1.00, end: 0 },
-			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0.15 * Core.renderer.superSamplingLevel },
+			scale: { start: 0.30 * Core.renderer.superSamplingLevel, end: 0.30 * Core.renderer.superSamplingLevel },
 			color: config.color,
 			speed: { start: 50,  end: 50 },
 			minimumSpeedMultiplier: 0.1,
@@ -206,7 +208,7 @@ export default class ParticleSystem {
 			],
 			frequency: 0.001,
 			emitterLifetime: 0.05,
-			maxParticles: 1000,
+			maxParticles: count,
 			pos: {
 				x: 0,
 				y: 0

@@ -25,7 +25,7 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import {computed, defineComponent, watch} from '@vue/composition-api'
-import Slider from '@/Vue/components/generic/Slider.vue'
+import Slider from '@/Vue/components/utils/Slider.vue'
 
 export default defineComponent({
 	components: {Slider},

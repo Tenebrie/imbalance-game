@@ -147,7 +147,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+	@import "src/Vue/styles/generic";
 
 	.slider {
 		cursor: pointer;

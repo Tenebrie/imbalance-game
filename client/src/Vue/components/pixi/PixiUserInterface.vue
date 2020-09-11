@@ -12,14 +12,10 @@
 			<pixi-inspected-card />
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
-			<div class="overlay-message">{{ store.state.gameStateModule.gameStatus }}</div>
 			<div class="overlay-message" v-if="!opponent">Waiting for opponent...</div>
 			<div class="overlay-message" v-if="opponent">
-				<p>{{ opponent.username }} has connected.</p>
-				<p>Waiting for the game to start...</p>
-				<p>
-
-				</p>
+				{{ opponent.username }} has connected.<br>
+				Waiting for the game to start...
 			</div>
 		</div>
 		<div class="endgame-screen" :class="gameEndScreenClass">
@@ -153,7 +149,6 @@ export default Vue.extend({
 			}
 
 			.overlay-message {
-				margin: 1em;
 			}
 		}
 

@@ -15,6 +15,10 @@ const PopupModule = createModule({
 
 		popComponent(state): void {
 			state.componentStack.pop()
+		},
+
+		clearComponents(state): void {
+			state.componentStack = []
 		}
 	},
 
@@ -36,6 +40,11 @@ const PopupModule = createModule({
 		close(context): void {
 			const { commit } = moduleActionContext(context, PopupModule)
 			commit.popComponent()
+		},
+
+		closeAll(context): void {
+			const { commit } = moduleActionContext(context, PopupModule)
+			commit.clearComponents()
 		},
 	}
 })

@@ -41,6 +41,7 @@ export default {
 
 		const onLeaveGame = (): void => {
 			store.dispatch.leaveGame()
+			store.dispatch.popupModule.closeAll()
 		}
 
 		const onMenuClick = (event: MouseEvent) => {
