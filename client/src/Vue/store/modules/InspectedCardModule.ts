@@ -13,7 +13,7 @@ const InspectedCardModule = createModule({
 	},
 
 	mutations: {
-		pushToStack(state, inspectedCard: Card): void {
+		pushToStack(state, inspectedCard: Card | CardMessage): void {
 			state.stack.push(inspectedCard.id)
 		},
 
@@ -37,7 +37,7 @@ const InspectedCardModule = createModule({
 	},
 
 	actions: {
-		setCard(context, payload: { card: Card }): void {
+		setCard(context, payload: { card: Card | CardMessage }): void {
 			const { state, commit } = moduleActionContext(context, InspectedCardModule)
 			if (state.stack.length > 0 && payload.card.id === state.stack[state.stack.length - 1]) {
 				return

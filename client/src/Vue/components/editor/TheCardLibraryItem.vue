@@ -1,11 +1,10 @@
 <template>
-	<div class="the-card-library-item" :class="customClass" @click="onClick" @contextmenu="onRightClick">
+	<div class="the-card-library-item" :class="customClass" @click="onLeftClick" @mousedown="onMouseDown" @mouseup="onMouseUp">
 		<pixi-pre-rendered-card :card="card" />
 	</div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import Utils from '@/utils/Utils'
@@ -13,74 +12,98 @@ import CardColor from '@shared/enums/CardColor'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import CardType from '@shared/enums/CardType'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import {RIGHT_MOUSE_BUTTON} from '@/Pixi/input/Input'
+import {computed, defineComponent, PropType, ref} from '@vue/composition-api'
+import router from '@/Vue/router'
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
 		PixiPreRenderedCard
 	},
 
 	props: {
 		card: {
-			type: Object as () => CardMessage | null,
+			type: Object as PropType<CardMessage | null>,
 			required: true
 		},
 
 		mode: {
-			type: String as () => 'library' | 'inspect',
+			type: String as PropType<'library' | 'inspect'>,
 			required: true
 		}
 	},
 
-	computed: {
-		renderedCard(): RenderedEditorCard | null {
-			return store.state.editor.renderedCards.find(renderedCard => renderedCard.class === this.card.class)
-		},
-
-		isDisabled(): boolean {
-			const currentDeckId = store.state.editor.currentDeckId
-			if (!currentDeckId || this.mode === 'inspect') {
-				return false
-			}
-
-			return !Utils.canAddCardToDeck(currentDeckId, this.card)
-		},
-
-		customClass(): {} {
-			return {
-				'disabled': this.isDisabled,
-				'leader': this.card.color === CardColor.LEADER,
-				'golden': this.card.color === CardColor.GOLDEN,
-				'silver': this.card.color === CardColor.SILVER,
-				'bronze': this.card.color === CardColor.BRONZE,
-				'token': this.card.color === CardColor.TOKEN,
-				'spell': this.card.type === CardType.SPELL
-			}
-		}
-	},
-
-	methods: {
-		onClick(): void {
-			const deckId = this.$route.params.deckId
-			if (this.mode === 'inspect' || !deckId) {
-				this.onRightClick()
+	setup(props) {
+		const onLeftClick = (event: MouseEvent): void => {
+			const deckId = router.currentRoute.params.deckId
+			if (props.mode === 'inspect' || !deckId) {
+				onRightClick(event)
 				return
 			}
-
 			store.dispatch.editor.addCardToDeck({
 				deckId: deckId,
-				cardToAdd: this.card
+				cardToAdd: props.card
 			})
-		},
+		}
 
-		onRightClick(event: MouseEvent): void {
+		const isRightClicking = ref(false)
+
+		const onMouseDown = (event: MouseEvent) => {
+			if (event.button === RIGHT_MOUSE_BUTTON) {
+				isRightClicking.value = true
+				window.setTimeout(() => isRightClicking.value = false, 5000)
+			}
+		}
+
+		const onMouseUp = (event: MouseEvent) => {
+			if (event.button === RIGHT_MOUSE_BUTTON && isRightClicking.value) {
+				onRightClick(event)
+			}
+		}
+
+		const onRightClick = (event: MouseEvent): void => {
 			if (event && (event.shiftKey || event.ctrlKey)) {
 				return
 			}
 
+			event.cancelBubble = true
+			event.preventDefault()
 			store.dispatch.inspectedCard.setCard({
-				card: this.card,
+				card: props.card,
 			})
-		},
+		}
+
+		const renderedCard = computed<RenderedEditorCard | null>(() => {
+			return store.state.editor.renderedCards.find(renderedCard => renderedCard.class === props.card.class)
+		})
+
+		const isDisabled = computed<boolean>(() => {
+			const currentDeckId = store.state.editor.currentDeckId
+			if (!currentDeckId || props.mode === 'inspect') {
+				return false
+			}
+
+			return !Utils.canAddCardToDeck(currentDeckId, props.card)
+		})
+
+		const customClass = computed<Record<string, boolean>>(() => ({
+			'disabled': isDisabled.value,
+			'leader': props.card.color === CardColor.LEADER,
+			'golden': props.card.color === CardColor.GOLDEN,
+			'silver': props.card.color === CardColor.SILVER,
+			'bronze': props.card.color === CardColor.BRONZE,
+			'token': props.card.color === CardColor.TOKEN,
+			'spell': props.card.type === CardType.SPELL
+		}))
+
+		return {
+			renderedCard,
+			isDisabled,
+			customClass,
+			onLeftClick,
+			onMouseDown,
+			onMouseUp,
+		}
 	}
 })
 </script>

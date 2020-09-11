@@ -70,7 +70,6 @@ export default class ClientCardStats implements CardStats {
 	}
 	public set unitCost(value: number) {
 		this.__unitCost = value
-		console.log(value)
 	}
 
 	public get spellCost(): number {

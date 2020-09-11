@@ -2,7 +2,7 @@
 	<div class="the-editor-inspected-card"
 		 v-if="inspectedCard"
 		 @click="onSmokeScreenClick"
-		 @contextmenu="onSmokeScreenRightClick"
+		 @mouseup="onSmokeScreenRightClick"
 		 :class="customClass"
 	>
 		<div class="content">
@@ -12,7 +12,7 @@
 				</div>
 			</div>
 			<div class="overlay-container">
-				<pixi-inspected-card-info @click="onOverlayClick" />
+				<pixi-inspected-card-info />
 			</div>
 		</div>
 	</div>
@@ -25,6 +25,7 @@ import PixiInspectedCardInfo from '@/Vue/components/pixi/PixiInspectedCardInfo.v
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import {computed, defineComponent} from '@vue/composition-api'
+import {RIGHT_MOUSE_BUTTON} from '@/Pixi/input/Input'
 
 export default defineComponent({
 	components: {
@@ -55,15 +56,8 @@ export default defineComponent({
 		}
 
 		const onSmokeScreenRightClick = (event: MouseEvent) => {
-			if (!store.getters.gameStateModule.isInGame && !event.shiftKey && !event.ctrlKey) {
+			if (event.button === RIGHT_MOUSE_BUTTON && !store.getters.gameStateModule.isInGame && !event.shiftKey && !event.ctrlKey) {
 				onSmokeScreenClick()
-			}
-		}
-
-		const onOverlayClick = (event: MouseEvent) => {
-			event.cancelBubble = true
-			if (!event.ctrlKey && !event.shiftKey) {
-				event.preventDefault()
 			}
 		}
 
@@ -73,7 +67,6 @@ export default defineComponent({
 			customClass,
 			onSmokeScreenClick,
 			onSmokeScreenRightClick,
-			onOverlayClick,
 		}
 	},
 })

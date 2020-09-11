@@ -1,5 +1,5 @@
 <template>
-	<div class="pixi-inspected-card-info-overlay" v-if="this.overlayDisplayed" ref="overlayRef" @click="onOverlayClick" @contextmenu="onOverlayClick">
+	<div class="pixi-inspected-card-info-overlay" v-if="this.overlayDisplayed" ref="overlayRef" @click="onOverlayClick" @mouseup="onOverlayClick">
 		<div class="card-info-section card-base-stats" v-if="displayInGameStats">
 			<div v-if="this.inspectedCard.type === CardType.UNIT" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.power') }}:</div>
@@ -85,6 +85,7 @@ import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
 import CardColor from '@shared/enums/CardColor'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
+import {RIGHT_MOUSE_BUTTON} from '@/Pixi/input/Input'
 
 export default {
 	components: {
@@ -143,7 +144,10 @@ export default {
 		})
 
 		const onOverlayClick = (event: MouseEvent) => {
-			emit('click', event)
+			event.cancelBubble = true
+			if (!event.ctrlKey && !event.shiftKey) {
+				event.preventDefault()
+			}
 		}
 
 		const flavorTextLines = computed<string[]>(() => {
