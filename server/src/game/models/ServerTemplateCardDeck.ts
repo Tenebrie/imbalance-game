@@ -71,14 +71,14 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		cards.push(CardLibrary.instantiateByConstructor(game, HeroZamarath))
 		cards.push(CardLibrary.instantiateByConstructor(game, HeroGarellion))
 
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroRagingElemental))
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroSparklingSpirit))
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroFlameDancer))
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroForksmanshipInstructor))
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroLightOracle))
+		for (let i = 0; i < 2; i++) {
+			cards.push(CardLibrary.instantiateByConstructor(game, HeroSparklingSpirit))
+			cards.push(CardLibrary.instantiateByConstructor(game, HeroFlameDancer))
+			cards.push(CardLibrary.instantiateByConstructor(game, HeroForksmanshipInstructor))
+			cards.push(CardLibrary.instantiateByConstructor(game, HeroLightOracle))
+		}
 
 		for (let i = 0; i < 3; i++) {
-			cards.push(CardLibrary.instantiateByConstructor(game, HeroAntoria))
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitStoneElemental))
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitForestScout))
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitWingedShieldmaiden))

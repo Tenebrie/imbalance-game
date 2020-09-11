@@ -6,10 +6,21 @@
 	"ui.navigation.decks": "Колоды",
 	"ui.navigation.rules": "Правила",
 
+	"ui.browser.header": "Список игр",
+	"ui.browser.empty": "Сейчас никто не играет :(",
+
+	"ui.play.ai.normal": "Играть против ИИ",
+	"ui.play.pvp.normal": "Создать игру",
+	"ui.play.refresh": "Обновить",
+
+	"ui.noty.deckRequired": "Вам нужно выбрать колоду!",
+
 	"ui.quality.default": "По-умолчанию (Высокое)",
 	"ui.quality.normal": "Стандартное",
 	"ui.quality.high": "Высокое",
 	"ui.quality.ultra": "Ультра",
+
+	"ui.editor.header.factions.tooltip": "Ограничения фракций при сборе колоды сейчас не активны",
 
 	"ui.editor.deck.create": "Создать новую колоду",
 	"ui.editor.deck.create.progress": "Создание...",
@@ -74,10 +85,22 @@
 	"target.order.card.unit": "Выбрать",
 	"target.order.card.spell": "Выбрать",
 
+	"filter.all": "Все",
+	"filter.experimental": "Экспериментальные",
+
+	"card.color.leader": "Предводитель",
+	"card.color.golden": "Легендарные",
+	"card.color.silver": "Эпические",
+	"card.color.bronze": "Обычные",
+
+	"card.faction.human": "Порядок",
 	"card.faction.arcane": "Аркан",
-	"card.faction.nature": "Природа",
-	"card.faction.neutral": "Нейтралы",
-	"card.faction.experimental": "Экспериментальное",
+	"card.faction.wild": "Дикость",
+	"card.faction.neutral": "Нейтрал",
+	"card.faction.human.experimental": "Порядок (Экспериментальные)",
+	"card.faction.arcane.experimental": "Аркан (Экспериментальные)",
+	"card.faction.wild.experimental": "Дикость (Экспериментальные)",
+	"card.faction.neutral.experimental": "Нейтралитет (Экспериментальные)",
 	"editor.faction.unfinished": "Незаконченные",
 
 	"card.inspect.power": "Сила",
@@ -92,24 +115,24 @@
 	"card.inspect.leaderPowers": "Способности предводителя",
 	"card.inspect.relatedCards": "Связанные карты",
 
-	"card.feature.keywordDeploy.name": "Deploy",
-	"card.feature.keywordDeploy.description": "Trigger an effect after this unit is played.",
-	"card.feature.keywordTurnStart.name": "Turn start",
-	"card.feature.keywordTurnStart.description": "Trigger an effect at the start of your turn.",
-	"card.feature.keywordEnrage.name": "Enrage",
-	"card.feature.keywordEnrage.description": "Trigger an effect after this card takes damage as a unit.",
-	"card.feature.keywordInfuseX.name": "Infuse X",
-	"card.feature.keywordInfuseX.description": "When this card is played, consume X of your Mana, if you have it, and trigger an effect. Otherwise, do nothing.",
-	"card.feature.keywordInfuseAll.name": "Infuse All",
-	"card.feature.keywordInfuseAll.description": "When this card is played, consume all your Mana and trigger an effect.",
+	"card.feature.keywordDeploy.name": "Вход в игру",
+	"card.feature.keywordDeploy.description": "Исполните эффект когда этот юнит сыгран на стол.",
+	"card.feature.keywordTurnStart.name": "Начало хода",
+	"card.feature.keywordTurnStart.description": "Исполните эффект в начале вашего хода.",
+	"card.feature.keywordEnrage.name": "Ярость",
+	"card.feature.keywordEnrage.description": "Исполните эффект когда эта карта получает урон, находясь на столе.",
+	"card.feature.keywordInfuseX.name": "Поглощение Х",
+	"card.feature.keywordInfuseX.description": "Когда эта карта сыграна, потеряйте Х вашей Маны, если она у вас есть, и исполните эффект. В противном случае, пропустите этот эффект.",
+	"card.feature.keywordInfuseAll.name": "Поглотить все",
+	"card.feature.keywordInfuseAll.description": "Когда эта карта сыграна, потеряйте всю вашу Ману и исполните эффект.",
 	"card.feature.keywordOrder.name": "Приказ",
 	"card.feature.keywordOrder.description": "Пока этот юнит находится на столе, один раз в ваш ход выберите цель и выполните эффект.",
 	"card.feature.keywordCreate.name": "Создать",
 	"card.feature.keywordCreate.description": "Добавить карту в вашу руку. Она становится 'Временной картой'.",
 	"card.feature.keywordSummon.name": "Призвать",
 	"card.feature.keywordSummon.description": "Добавить карту из вашей колоды в вашу руку. Она становится 'Временной картой'.",
-	"card.feature.keywordDiscard.name": "Discard",
-	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
+	"card.feature.keywordDiscard.name": "Сбросить",
+	"card.feature.keywordDiscard.description": "Передвиньте карту в сброс ее владельца.",
 	"card.feature.keywordBuffStun.name": "Оглушение (эффект)",
 	"card.feature.keywordBuffStun.description": "Цель оглушена. Ее эффект временно отключен.",
 	"card.feature.keywordBuffGrowth.name": "Рост (эффект)",
@@ -126,11 +149,6 @@
 	"card.feature.temporaryCard.name": "Временная карта",
 	"card.feature.temporaryCard.description": "Эта карта может быть сыграна бесплатно. Если она не сыграна в конце хода, она сбрасывается.",
 	"card.feature.temporaryCard.text": "<c=orange>Временная карта</c>",
-
-	"card.color.leader": "Предводитель",
-	"card.color.golden": "Легендарные",
-	"card.color.silver": "Эпические",
-	"card.color.bronze": "Обыкновенные",
 
 	"card.tribe.bird": "Птица",
 	"card.tribe.beast": "Зверь",
@@ -199,15 +217,15 @@
 
 	"card.leaderVelElleron.name": "Вель'Эллерон",
 	"card.leaderVelElleron.title": "Боевой Маг",
-	"card.leaderVelElleron.description": "*Предводитель Аркана*",
+	"card.leaderVelElleron.description": "*Предводитель Аркана*<p>*Начало раунда:*\nПолучите +{manaPerRound} ед. Маны.",
 
 	"card.leaderVelRaminea.name": "Вель'Раминеа",
 	"card.leaderVelRaminea.title": "Заклинательница Пламени",
-	"card.leaderVelRaminea.description": "*Предводитель Аркана*",
+	"card.leaderVelRaminea.description": "*Предводитель Аркана*<p>*Начало раунда:*\nПолучите +{manaPerRound} ед. Маны.",
 
 	"card.leaderNighterie.name": "Найтери",
 	"card.leaderNighterie.title": "Хранитель Теней",
-	"card.leaderNighterie.description": "*Предводитель Аркана*",
+	"card.leaderNighterie.description": "*Предводитель Аркана*<p>*Начало раунда:*\nПолучите +{manaPerRound} ед. Маны.",
 
 	"card.heroZamarath.name": "Замарат",
 	"card.heroZamarath.title": "Защитник",
@@ -227,6 +245,7 @@
 
 	"card.heroGarellion.name": "Гареллион",
 	"card.heroGarellion.title": "Манапровод",
+	"card.heroGarellion.description": "В конце хода, *Поглотите всё*:\nПолучает {powerPerMana} ед. Силы за каждую единицу *поглощенной* Маны.",
 
 	"card.heroAura.name": "Аура",
 	"card.heroAura.title": "Золотой Ястреб",
@@ -256,9 +275,17 @@
 	"card.heroPozoga.title": "Поджигатель",
 	"card.heroPozoga.description": "*Вход в игру:*\nУничтожьте все карты с наибольшей Силой на столе.",
 
+	"card.heroLearthe.name": "Леарте",
+	"card.heroLearthe.title": "Говорящая со смертью",
+	"card.heroLearthe.description": "*Вход в игру:*\nВыберите любой ряд.\nЗаполните его *Ожившими тенями*.",
+
 	"card.heroTaekana.name": "Таекана",
 	"card.heroTaekana.title": "Смотрительница",
 	"card.heroTaekana.description": "*Вход в игру:*\nДайте +{strengthGiven} ед. Силы ВСЕМ юнитам.",
+
+	"card.heroJom.name": "Джом",
+	"card.heroJom.title": "Послушник Пустоты",
+	"card.heroJom.description": "*Вход в игру:*\n*Создайте* *Разлом Пустоты*.<p>*Начало хода:*\nЕсли у вас на столе есть как минимум {portalsNeeded} *Разлома Пустоты*, уничтожьте их и *создайте* *Разлом Бездны*.",
 
 	"card.heroSparklingSpirit.name": "Искрящийся дух",
 	"card.heroSparklingSpirit.description": "Ваши *Искры* наносят на {extraDamage} Урона больше.",
@@ -285,21 +312,28 @@
 	"card.heroDarkOracle.description": "*Вход в игру:*\nПосмотрите на верхние {cardsToSee} карт из колоды вашего противника.\n*Сбросьте* одну из них.",
 
 	"card.heroCrystalWarrior.name": "Кристальный\nвоитель",
-	"card.heroCrystalWarrior.description": "*Вход в игру:*\nУничтожьте выбранного союзника.\nЗатем, призовите *Кристалл* на его месте.",
+	"card.heroCrystalWarrior.description": "*Вход в игру:*\nУничтожьте союзного юнита.\nЗатем, призовите *Кристалл* на его месте.",
 
 	"card.heroCultistOfAreddon.name": "Культист Ареддона",
-	"card.heroCultistOfAreddon.description": "*Вход в игру:*\nУничтожьте выбранного союзника.\nЗатем, *Создайте* его копию.",
+	"card.heroCultistOfAreddon.description": "*Вход в игру:*\nУничтожьте союзного юнита.\nЗатем, *Создайте* его копию.",
+
+	"card.unitCultistSpellslinger.name": "Культист-заклинатель",
+	"card.unitCultistSpellslinger.description": "*Вход в игру:*\nУничтожьте союзного юнита.\nЗатем, *Создайте* *Свиток*.\nОн стоит на 1 ед. Маны дешевле за каждую единицу Силы цели.",
 
 	"card.heroAdventuringGuildMaster.name": "Глава гильдии\nприключений",
 	"card.heroAdventuringGuildMaster.description": "*Вход в игру:*\nПолучает +{powerPerCard} Силы за каждого другого юнита, сыгранного в этот ход.",
 
 	"card.heroForksmanshipInstructor.name": "Инструктор\nвилования",
+	"card.heroForksmanshipInstructor.description": "Когда вы играете юнита с {powerThreshold} ед. Силы или меньше, дайте ему +{bonusPower} ед. Силы.",
 
 	"card.heroTribeShaman.name": "Племенной шаман",
 	"card.heroTribeShaman.description": "*Вход в игру:*\n*Создайте* *Целебный дождь*",
 
 	"card.heroElderElemental.name": "Древний элементаль",
 	"card.heroElderElemental.description": "*Вход в игру:*\nПолучите {manaGenerated} ед. Маны.<p>*Начало хода:*\nПовторите эффект\n*Вход в игру* этой карты.",
+
+	"card.unitDarkTimewarper.name": "Темный хрономант",
+	"card.unitDarkTimewarper.description": "*Вход в игру:*\nВызовите эффект *Конца хода* на всех союзных *Разломах Пустоты*.\nЗатем, *Создайте* *Разлом Пустоты*.",
 
 	"card.unitTravelingEnchantress.name": "Путешествующая\nчародейка",
 	"card.unitTravelingEnchantress.description": "*Вход в игру:*\nДайте +{baseStrengthGiven} ед. Силы союзному юниту.\nЗатем, удвойте их эффекты *Мощи*.",
@@ -310,8 +344,8 @@
 	"card.unitForestScout.name": "Лесной разведчик",
 	"card.unitForestScout.description": "*Вход в игру:*\nЕсли вы проигрываете на поле, получает +{boardPowerBonus} Силы.\nЕсли вы проигрываете в матче, получает +{moralePowerBonus} Силы.",
 
-	"card.unitChargingKnight.name": "Кавалерист",
-	"card.unitChargingKnight.description": "Совершает атаку после каждого передвижения.<p>*Ближний бой:*\nНаносит {attack} ед. урона.",
+	"card.unitChargingKnight.name": "Несущийся рыцарь",
+	"card.unitChargingKnight.description": "*Приказ*:\nНанесите {damage} ед. Урона вражескому юниту.<p>Может совершать *Приказы* только если передвинулся на ряд вперед в этот ход.",
 
 	"card.unitVampireFledgling.name": "Молодой вампир",
 	"card.unitVampireFledgling.description": "Теряет {powerLost} Силы в начале каждого хода.<p>*Melee Attack:* Наносит {attack} Урона. Если урон не был заблокирован, восстанавливает {powerDrained} Силы.",
@@ -336,7 +370,7 @@
 	"card.unitIceSkinCrystal.description": "Получает {chargePerMana} *Заряд* за каждую единицу потраченной вами маны.<p>*Deathrattle:* Все соседние с этим юниты получают {armorGranted} Decaying Armor за каждый сохранённый *Заряд* ({chargesForArmor}).<if chargesVisible><p><i>Charges accumulated: {charges}\nПредоставляет {potentialArmor} Decaying Armor</i></if>",
 
 	"card.unitStoneElemental.name": "Каменный\nэлементаль",
-	"card.unitStoneElemental.description": "*Вход в игру:*\nСовершает *Атаку* в этот ход. <p>*Дальний бой (2)*:\nНаносит {attack} ед. урона и *Оглушает* на 1 ход.",
+	"card.unitStoneElemental.description": "*Вход в игру:*\nНанесите {damage} ед. урона.\nНаложите *Оглушение* на 1 ход.",
 
 	"card.unitMerfolkStormcaller.name": "Мерфолк-буревестник",
 	"card.unitMerfolkStormcaller.description": "*Вход в игру:*\n*Создайте* *Грозовую бурю*",
@@ -347,22 +381,13 @@
 	"card.unitCrystalMiner.name": "Кристаллических\nдел мастер",
 	"card.unitCrystalMiner.description": "*Вход в игру:*\n*Создайте* кристалл Аркана.",
 
-	"card.unitOracleApprentice.name": "Ученица оракула",
-	"card.unitOracleApprentice.description": "*Вход в игру:*\nПосмотрите на верхнюю карту любой из колод.",
-
 	"card.unitLoneLooter.name": "Мародер-одиночка",
 	"card.unitLoneLooter.description": "Когда вы накладываете *Статус эффект* на противника, *Призовите* одного *Мародера-одиночку* из вашей колоды.",
 
 	"card.unitMasterSwordsmith.name": "Мастер-оружейник",
 	"card.unitMasterSwordsmith.description": "*Вход в игру:*\nДайте +{bonusPower} ед. Силы всем юнитам в вашей руке.",
 
-	"card.unitTinySparkling.name": "Искрящаяся кроха",
-	"card.unitTinySparkling.description": "<i>Нет эффекта</i>",
-
-	"card.unitShadowspawn.name": "Ожившая тень",
-	"card.unitShadowspawn.description": "<i>Нет эффекта</i>",
-
-	"card.unitVolatileCrystal.name": "Нестабильный кристалл",
+	"card.unitVolatileCrystal.name": "Нестабильный\nкристалл",
 	"card.unitVolatileCrystal.description": "*Предсмертный хрип:*\nНанесите {damage} ед. урона ближайшим юнитам на том же ряду.",
 
 	"card.unitUndercityGambler.name": "Аферист Подгорода",
@@ -376,6 +401,36 @@
 
 	"card.unitMerchantsAssistant.name": "Помощник торговца",
 	"card.unitMerchantsAssistant.description": "*Вход в игру:*\nВаше следующее заклинание в этом раунде стоит на {spellDiscount} ед. Маны дешевле.",
+
+	"card.unitMercantileSpellslinger.name": "Меркантильный\nзаклинатель",
+	"card.unitMercantileSpellslinger.description": "*Вход в игру:*\nДобавьте Свиток в вашу руку.\nОн стоит на {manaMarkup} ед. Маны больше, но становится на {discountPerTurn} ед. Маны дешевле каждый ход.",
+
+	"card.unitHighClassPerformer.name": "Профессиональный\nисполнитель",
+	"card.unitHighClassPerformer.description": "*Вход в игру:*\nДайте +{bonusPower} ед. Силы всем союзным юнитам на других рядах.<p>Эта карта может быть сыграна только на ряд как минимум с {cardsRequired} союзными юнитами.",
+
+	"card.unitHungrySpellslinger.name": "Голодный\nзаклинатель",
+	"card.unitHungrySpellslinger.description": "*Поглощение *{infuseCost}*:*\nДобавьте Свиток в вашу руку.\nОн стоит на {spellDiscount} ед. Маны дешевле.",
+
+	"card.unitVoidcaller.name": "Зовущий Пустоту",
+	"card.unitVoidcaller.description": "*Вход в игру:*\n*Создайте* *Разлом Пустоты*",
+
+	"card.unitVoidPortal.name": "Разлом Пустоты",
+	"card.unitVoidPortal.description": "*Конец хода:*\nДобавьте *Зверя Пустоты* на стол рядом с этим юнитом.\nОн получает +{powerPerSpell} ед. Силы за каждое уникальное заклинание в вашем сбросе.",
+
+	"card.unitAbyssPortal.name": "Разлом Бездны",
+	"card.unitAbyssPortal.description": "*Конец хода:*\nДобавьте *Зверя Пустоты* на стол рядом с этим юнитом.\nОн получает +{powerPerCard} ед. Силы за каждую уникальную карту в вашем или вражеском сбросе.",
+
+	"card.unitVoidspawn.name": "Зверь Пустоты",
+	"card.unitVoidspawn.description": "<i>Нет эффекта</i>",
+
+	"card.unitShadowspawn.name": "Теневой зверь",
+	"card.unitShadowspawn.description": "<i>Нет эффекта</i>",
+
+	"card.unitLivingShadow.name": "Ожившая тень",
+	"card.unitLivingShadow.description": "<i>Нет эффекта</i>",
+
+	"card.unitTinySparkling.name": "Искрящаяся кроха",
+	"card.unitTinySparkling.description": "<i>Нет эффекта</i>",
 
 	"card.tokenPlayerDeck.name": "Ваша колода",
 	"card.tokenPlayerDeck.description": "Выберите вашу колоду",
@@ -392,6 +447,21 @@
 	"card.spellHealingRain.name": "Целебный дождь",
 	"card.spellHealingRain.description": "Восстановите {healing} ед. силы всем союзным юнитам.<p><i>Объем исцеления увеличивается на {healingPerStorm} за каждую *Бурю* в вашем сбросе.</i>",
 
+	"card.spellScrollOfLightning.name": "Свиток Молнии",
+	"card.spellScrollOfLightning.description": "Нанесите {damage} ед. Урона вражескому юниту.",
+
+	"card.spellScrollOfGrowth.name": "Свиток Роста",
+	"card.spellScrollOfGrowth.description": "Наложите *Рост* на союзного юнита.",
+
+	"card.spellScrollOfImmunity.name": "Свиток Неуязвимости",
+	"card.spellScrollOfImmunity.description": "Наложите *Неуязвимость* на союзного юнита до начала вашего следующего хода.",
+
+	"card.spellScrollOfBlinding.name": "Свиток Ослепления",
+	"card.spellScrollOfBlinding.description": "Выберите вражеского юнита.\nНаложите *Оглушение* на цель и соседних юнитов на {buffDuration} ходов.",
+
+	"card.spellScrollOfSapping.name": "Свиток Возврата",
+	"card.spellScrollOfSapping.description": "Выберите юнита.\nВерните его в руку владельца и дайте ему эффект *Временная карта*.",
+
 	"card.spellSteelSpark.name": "Стальная Искра",
 	"card.spellSteelSpark.description": "Наносит {damage} Урона противнику.<p>Наносит {sideDamage} Урона всем ближайшим к цели юнитам.",
 
@@ -405,10 +475,10 @@
 	"card.spellFieryEntrance.description": "*Призовите* верхнюю карту из вашей колоды.",
 
 	"card.spellShadowSpark.name": "Теневая Искра",
-	"card.spellShadowSpark.description": "Нанесите {damage} Урона выбранной цели.<p>В вашем первом ряду появляется *Ожившая тень*.",
+	"card.spellShadowSpark.description": "Нанесите {damage} Урона выбранной цели.<p>В вашем первом ряду появляется *Теневой зверь*.",
 
 	"card.spellNightmareDrain.name": "Оживший кошмар",
-	"card.spellNightmareDrain.description": "Выберите раненного бойца.<p>В вашем первом ряду появляется *Ожившая тень* с бонусом силы, равным потерянной силе цели заклинания.",
+	"card.spellNightmareDrain.description": "Выберите раненного бойца.<p>В вашем первом ряду появляется *Теневой зверь* с бонусом силы, равным потерянной силе цели заклинания.",
 
 	"card.spellCrystalBarrage.name": "Кристальный залп",
 	"card.spellCrystalBarrage.description": "Выберите вражеский ряд.<p>Вокруг юнитов в этом ряду появляются *Нестабильные кристаллы*.",

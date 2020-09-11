@@ -1,16 +1,16 @@
 <template>
 	<div class="the-game-list-container">
 		<div class="the-game-list">
-			<h2>Game browser</h2>
-			<div v-if="games.length === 0"><span class="info-text">Nobody is playing :(</span></div>
+			<h2>{{ $locale.get('ui.browser.header') }}</h2>
+			<div v-if="games.length === 0"><span class="info-text">{{ $locale.get('ui.browser.empty') }}</span></div>
 			<div class="list">
 				<game-list-item class="list-item" v-for="game in games" :key="game.id" :game="game" />
 			</div>
 			<div class="controls">
 				<div class="button-container">
-					<button @click="onCreateSinglePlayer" class="primary">Play vs AI</button>
-					<button @click="onCreateMultiPlayer" class="primary">Create game</button>
-					<button @click="onRefreshGames" class="secondary">Refresh</button>
+					<button @click="onCreateSinglePlayer" class="primary">{{ $locale.get('ui.play.ai.normal') }}</button>
+					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp.normal') }}</button>
+					<button @click="onRefreshGames" class="secondary">{{ $locale.get('ui.play.refresh') }}</button>
 				</div>
 			</div>
 		</div>
@@ -23,6 +23,7 @@ import axios from 'axios'
 import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
 import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
+import Localization from '@/Pixi/Localization'
 
 export default Vue.extend({
 	components: {
@@ -53,7 +54,7 @@ export default Vue.extend({
 
 		async onCreateSinglePlayer(): Promise<void> {
 			if (!store.state.selectedDeckId) {
-				this.$noty.error('Select a deck first!')
+				this.$noty.error(Localization.get('ui.noty.deckRequired'))
 				return
 			}
 
@@ -64,7 +65,7 @@ export default Vue.extend({
 
 		async onCreateMultiPlayer(): Promise<void> {
 			if (!store.state.selectedDeckId) {
-				this.$noty.error('Select a deck first!')
+				this.$noty.error(Localization.get('ui.noty.deckRequired'))
 				return
 			}
 

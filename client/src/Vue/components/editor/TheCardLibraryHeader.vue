@@ -11,8 +11,8 @@
 				>
 					{{ data.text }}
 				</button>
+				<inline-tooltip class="tooltip">{{ $locale.get('ui.editor.header.factions.tooltip') }}</inline-tooltip>
 			</div>
-			<inline-tooltip class="tooltip">{{ $locale.get('ui.editor.header.factions.tooltip') }}</inline-tooltip>
 			<div class="filter-buttons">
 				<button
 					v-for="data in this.colorData"
@@ -23,11 +23,11 @@
 				>
 					{{ data.text }}
 				</button>
-			</div>
-			<div class="checkbox-container">
-				<div class="checkbox">
-					<input id="bigcheckbox" type="checkbox" value="Test" v-model="experimentalToggle" />
-					<label for="bigcheckbox">Experimental</label>
+				<div class="checkbox-container">
+					<div class="checkbox">
+						<input id="checkbox-experimental" type="checkbox" value="Test" v-model="experimentalToggle" />
+						<label for="checkbox-experimental">{{ $locale.get('filter.experimental') }}</label>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -61,6 +61,7 @@ import {computed, defineComponent, ref} from '@vue/composition-api'
 import {debounce} from 'throttle-debounce'
 import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
+import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
 	components: {
@@ -97,19 +98,19 @@ export default defineComponent({
 		}))
 
 		const colorData = [
-			{ text: 'All', color: null },
-			{ text: 'Leader', color: CardColor.LEADER },
-			{ text: 'Legendary', color: CardColor.GOLDEN },
-			{ text: 'Epic', color: CardColor.SILVER },
-			{ text: 'Common', color: CardColor.BRONZE },
+			{ text: Localization.get('filter.all'), color: null },
+			{ text: Localization.get('card.color.leader'), color: CardColor.LEADER },
+			{ text: Localization.get('card.color.golden'), color: CardColor.GOLDEN },
+			{ text: Localization.get('card.color.silver'), color: CardColor.SILVER },
+			{ text: Localization.get('card.color.bronze'), color: CardColor.BRONZE },
 		]
 
 		const factionData = [
-			{ text: 'All', faction: null },
-			{ text: 'Human', faction: CardFaction.HUMAN },
-			{ text: 'Arcane', faction: CardFaction.ARCANE },
-			{ text: 'Wild', faction: CardFaction.WILD },
-			{ text: 'Neutral', faction: CardFaction.NEUTRAL },
+			{ text: Localization.get('filter.all'), faction: null },
+			{ text: Localization.get('card.faction.human'), faction: CardFaction.HUMAN },
+			{ text: Localization.get('card.faction.arcane'), faction: CardFaction.ARCANE },
+			{ text: Localization.get('card.faction.wild'), faction: CardFaction.WILD },
+			{ text: Localization.get('card.faction.neutral'), faction: CardFaction.NEUTRAL },
 		]
 
 		const clearSearch = () => {
@@ -159,7 +160,7 @@ export default defineComponent({
 <style scoped lang="scss">
 	@import "../../styles/generic";
 
-	$MOBILE_MODE_THRESHOLD: 1240px;
+	$MOBILE_MODE_THRESHOLD: 1300px;
 	$COMPACT_MODE_THRESHOLD: 2050px;
 
 	.the-card-library-header {
@@ -214,7 +215,7 @@ export default defineComponent({
 
 			button {
 				margin: 0 4px;
-				min-width: 110px;
+				min-width: fit-content;
 
 				&:nth-child(1) {
 					min-width: 50px;

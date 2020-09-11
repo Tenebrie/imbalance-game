@@ -6,6 +6,15 @@
 	"ui.navigation.decks": "Decks",
 	"ui.navigation.rules": "Rules",
 
+	"ui.browser.header": "Game browser",
+	"ui.browser.empty": "Nobody is playing right now :(",
+
+	"ui.play.ai.normal": "Play vs AI",
+	"ui.play.pvp.normal": "Create game",
+	"ui.play.refresh": "Refresh",
+
+	"ui.noty.deckRequired": "Select a deck first!",
+
 	"ui.quality.default": "Default (High)",
 	"ui.quality.normal": "Normal",
 	"ui.quality.high": "High",
@@ -76,6 +85,14 @@
 	"target.order.card.unit": "Target",
 	"target.order.card.spell": "Target",
 
+	"filter.all": "All",
+	"filter.experimental": "Experimental",
+
+	"card.color.leader": "Leader",
+	"card.color.golden": "Legendary",
+	"card.color.silver": "Epic",
+	"card.color.bronze": "Common",
+
 	"card.faction.human": "Human",
 	"card.faction.arcane": "Arcane",
 	"card.faction.wild": "Wild",
@@ -132,11 +149,6 @@
 	"card.feature.temporaryCard.name": "Temporary card",
 	"card.feature.temporaryCard.description": "This card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.temporaryCard.text": "<c=orange>Temporary card</c>",
-
-	"card.color.leader": "Leader",
-	"card.color.golden": "Legendary",
-	"card.color.silver": "Epic",
-	"card.color.bronze": "Common",
 
 	"card.tribe.bird": "Bird",
 	"card.tribe.beast": "Beast",
@@ -208,15 +220,15 @@
 
 	"card.leaderVelElleron.name": "Vel'Elleron",
 	"card.leaderVelElleron.title": "The Battlemage",
-	"card.leaderVelElleron.description": "*Arcane Leader*<p>*Round start:*\nGenerate {manaPerRound} Mana",
+	"card.leaderVelElleron.description": "*Arcane Leader*<p>*Round start:*\nGain +{manaPerRound} Mana",
 
 	"card.leaderVelRaminea.name": "Vel'Raminea",
 	"card.leaderVelRaminea.title": "The Flameweaver",
-	"card.leaderVelRaminea.description": "*Arcane Leader*<p>*Round start:*\nGenerate {manaPerRound} Mana",
+	"card.leaderVelRaminea.description": "*Arcane Leader*<p>*Round start:*\nGain +{manaPerRound} Mana",
 
 	"card.leaderNighterie.name": "Nighterie",
 	"card.leaderNighterie.title": "The Keeper of Shadows",
-	"card.leaderNighterie.description": "*Arcane Leader*<p>*Round start:*\nGenerate {manaPerRound} Mana",
+	"card.leaderNighterie.description": "*Arcane Leader*<p>*Round start:*\nGain +{manaPerRound} Mana",
 	"card.leaderNighterie.flavor": "...and the shadows bring her their shadowhoney.",
 
 	"card.heroZamarath.name": "Zamarath",
@@ -366,7 +378,7 @@
 	"card.unitIceSkinCrystal.description": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
 
 	"card.unitStoneElemental.name": "Stone Elemental",
-	"card.unitStoneElemental.description": "*Deploy:*\nDeal {damage} Damage to an enemy unit\nApply *Stun* for 1 turn",
+	"card.unitStoneElemental.description": "*Deploy:*\nDeal {damage} Damage to an enemy unit.\nApply *Stun* for 1 turn.",
 
 	"card.unitMerfolkStormcaller.name": "Merfolk Stormcaller",
 	"card.unitMerfolkStormcaller.description": "*Deploy:*\n*Create* a *Lightning Storm*",
@@ -377,21 +389,11 @@
 	"card.unitCrystalMiner.name": "Crystal Miner",
 	"card.unitCrystalMiner.description": "*Deploy:*\n*Create* an Arcane crystal",
 
-	"card.unitOracleApprentice.name": "Oracle Apprentice",
-	"card.unitOracleApprentice.description": "*Deploy:*\nLook at the top card of any deck",
-
 	"card.unitLoneLooter.name": "Lone Looter",
 	"card.unitLoneLooter.description": "Whenever you apply a *Status effect* to an enemy unit, *Summon* one {name} from your deck.",
 
 	"card.unitMasterSwordsmith.name": "Master Swordsmith",
 	"card.unitMasterSwordsmith.description": "*Deploy:*\nGive +{bonusPower} Power to all unit cards in your hand.",
-
-	"card.unitTinySparkling.name": "Tiny Sparkling",
-	"card.unitTinySparkling.description": "<i>No effect</i>",
-
-	"card.unitShadowspawn.name": "Shadowspawn",
-	"card.unitShadowspawn.description": "<i>No effect</i>",
-	"card.unitShadowspawn.flavor": "Likes to cuddle with her little sister, Voidspawn.",
 
 	"card.unitVolatileCrystal.name": "Volatile Crystal",
 	"card.unitVolatileCrystal.description": "*Deathrattle:*\nDeal {damage} Damage to adjacent units on the same row.",
@@ -435,6 +437,13 @@
 	"card.unitLivingShadow.name": "Living Shadow",
 	"card.unitLivingShadow.description": "<i>No effect</i>",
 	"card.unitLivingShadow.flavor": "The one forgotten by her siblings.",
+
+	"card.unitShadowspawn.name": "Shadowspawn",
+	"card.unitShadowspawn.description": "<i>No effect</i>",
+	"card.unitShadowspawn.flavor": "Likes to cuddle with her little sister, Voidspawn.",
+
+	"card.unitTinySparkling.name": "Tiny Sparkling",
+	"card.unitTinySparkling.description": "<i>No effect</i>",
 
 	"card.tokenPlayerDeck.name": "Your deck",
 	"card.tokenPlayerDeck.description": "Choose your own deck",
