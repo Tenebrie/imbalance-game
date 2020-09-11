@@ -5,6 +5,7 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Buff from '@shared/models/Buff'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import BuffMessage from '@shared/models/network/buffs/BuffMessage'
+import OwnedClientCard from '@/Pixi/cards/OwnedClientCard'
 
 export default class ClientGame {
 	turnPhase: GameTurnPhase
@@ -32,7 +33,7 @@ export default class ClientGame {
 
 		const cardInStack = Core.resolveStack.findCardById(cardId)
 		if (cardInStack) {
-			return cardInStack
+			return cardInStack.card
 		}
 
 		const cardInRequiredTargets = Core.input.forcedTargetingCards.find(card => card.id === cardId)
@@ -61,11 +62,44 @@ export default class ClientGame {
 		return null
 	}
 
+	public findOwnedCardById(cardId: string): OwnedClientCard | null {
+		const cardOnBoard = Core.board.findUnitById(cardId)
+		if (cardOnBoard) {
+			return cardOnBoard
+		}
+		const cardInStack = Core.resolveStack.findCardById(cardId)
+		if (cardInStack) {
+			return cardInStack
+		}
+
+		const players = [Core.player, Core.opponent]
+		for (let i = 0; i < players.length; i++) {
+			const player = players[i]
+			const cardAsLeader = player.leader
+			if (cardAsLeader && cardAsLeader.id === cardId) {
+				return { card: cardAsLeader, owner: player }
+			}
+			const cardInHand = player.cardHand.findCardById(cardId)
+			if (cardInHand) {
+				return { card: cardInHand, owner: player }
+			}
+			const cardInDeck = player.cardDeck.findCardById(cardId)
+			if (cardInDeck) {
+				return { card: cardInDeck, owner: player }
+			}
+			const cardInGraveyard = player.cardGraveyard.findCardById(cardId)
+			if (cardInGraveyard) {
+				return { card: cardInGraveyard, owner: player }
+			}
+		}
+		return null
+	}
+
 	public findBuffById(buffId: string): Buff | BuffMessage | null {
 		const players = [Core.player, Core.opponent]
 
 		let cards: (Card | CardMessage)[] = Core.board.getAllUnits().map(unit => unit.card)
-			.concat(Core.resolveStack.cards)
+			.concat(Core.resolveStack.cards.map(ownedCard => ownedCard.card))
 
 		for (let i = 0; i < players.length; i++) {
 			const player = players[i]

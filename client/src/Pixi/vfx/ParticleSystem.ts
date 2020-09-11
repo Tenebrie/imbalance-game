@@ -194,7 +194,7 @@ export default class ParticleSystem {
 		const container = this.getCardEffectContainer(card)
 		const emitter = this.createDefaultEmitter(container, {
 			alpha: { start: 1.00, end: 0 },
-			scale: { start: 0.30 * Core.renderer.superSamplingLevel, end: 0.30 * Core.renderer.superSamplingLevel },
+			scale: { start: 0.20 * Core.renderer.superSamplingLevel, end: 0.20 * Core.renderer.superSamplingLevel },
 			color: config.color,
 			speed: { start: 50,  end: 50 },
 			minimumSpeedMultiplier: 0.1,
@@ -224,5 +224,9 @@ export default class ParticleSystem {
 		})
 
 		this.playAttachedEmitter(emitter, container, card)
+	}
+
+	public destroy(): void {
+		this.emitters.forEach(emitter => emitter.emitter.destroy())
 	}
 }

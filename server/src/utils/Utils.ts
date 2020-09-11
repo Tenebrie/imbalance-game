@@ -36,7 +36,7 @@ export const generateShortId = (length: number): string => {
 export const isCardPublic = (card: ServerCard): boolean => {
 	const location = card.location
 	const isHeroPower = card.features.includes(CardFeature.HERO_POWER)
-	return (location !== CardLocation.HAND && location !== CardLocation.DECK) || (location === CardLocation.HAND && isHeroPower)
+	return (location !== CardLocation.HAND && location !== CardLocation.DECK) || (location === CardLocation.HAND && (isHeroPower || card.isRevealed))
 }
 
 export const colorize = (text: string | number, color: AsciiColor): string => {

@@ -79,6 +79,7 @@ export default class ClientCardStats implements CardStats {
 		const oldValue = this.power
 		this.__spellCost = value
 
+		console.log('Set spell cost')
 		if (String(this.spellCost).length !== String (oldValue).length) {
 			this.card.resetDisplayMode()
 		} else {

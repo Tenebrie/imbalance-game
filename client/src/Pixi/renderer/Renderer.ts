@@ -280,9 +280,7 @@ export default class Renderer {
 	}
 
 	public updateCardStats(renderedCard: RenderedCard): void {
-		if (renderedCard.type === CardType.SPELL) {
-
-		}
+		// Empty for now
 	}
 
 	public renderCardInHand(renderedCard: RenderedCard, handPosition: number, handSize: number, isOpponent: boolean, isSpellHand: boolean): void {
@@ -686,9 +684,9 @@ export default class Renderer {
 
 	public renderResolveStack(): void {
 		for (let i = 0; i < Core.resolveStack.cards.length; i++) {
-			const card = Core.resolveStack.cards[i]
-			this.updateCardStats(card)
-			this.renderResolveStackCard(card, i)
+			const ownedCard = Core.resolveStack.cards[i]
+			this.updateCardStats(ownedCard.card)
+			this.renderResolveStackCard(ownedCard.card, i)
 		}
 	}
 
@@ -816,20 +814,11 @@ export default class Renderer {
 
 	public destroy(): void {
 		TextureAtlas.clear()
-		// PIXI.utils.clearTextureCache()
+		Core.particleSystem.destroy()
 		this.pixi.destroy(true, {
 			children: true,
 			texture: true,
 			baseTexture: true
 		})
-	}
-
-	private destroyRecursively(object: PIXI.Container | DisplayObject): void {
-		if (object instanceof PIXI.Container) {
-			object.children.forEach(child => {
-				this.destroyRecursively(child)
-			})
-		}
-		object.destroy()
 	}
 }

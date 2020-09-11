@@ -299,13 +299,13 @@ export default class Input {
 		}
 
 		Core.registerCard(cardInLimbo)
-		this.clearCardInLimbo(cardMessage)
+		this.clearCardInLimbo(cardMessage.id)
 
 		return cardInLimbo
 	}
 
-	public clearCardInLimbo(cardMessage: CardRefMessage): void {
-		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardMessage.id)
+	public clearCardInLimbo(cardId: string): void {
+		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardId)
 	}
 
 	public async enableForcedTargetingMode(validTargets: ClientCardTarget[]): Promise<void> {

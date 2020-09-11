@@ -6,10 +6,11 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
 
 const IncomingResolveStackMessages: {[ index in ResolveStackMessageType ]: IncomingMessageHandlerFunction } = {
-	[ResolveStackMessageType.ADD]: (data: CardMessage) => {
-		Core.resolveStack.addCard(RenderedCard.fromMessage(data))
+	[ResolveStackMessageType.ADD]: (data: OwnedCardMessage) => {
+		Core.resolveStack.addCard(RenderedCard.fromMessage(data.card), Core.getPlayer(data.owner.player.id))
 	},
 
 	[ResolveStackMessageType.TARGETS]: (data: CardTargetMessage[]) => {

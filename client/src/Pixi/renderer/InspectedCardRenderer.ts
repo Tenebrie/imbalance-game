@@ -40,7 +40,7 @@ class InspectedCardRenderer {
 		sprite.tint = 0xFFFFFF
 		sprite.alpha = 1
 
-		const cardHeight = CARD_HEIGHT * Core.renderer.superSamplingLevel
+		const cardHeight = CARD_HEIGHT * Core.renderer.superSamplingLevel * window.devicePixelRatio
 		sprite.width = cardHeight * CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 

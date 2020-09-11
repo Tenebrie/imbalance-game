@@ -90,7 +90,8 @@ export default class ServerCardStats implements CardStats {
 	}
 
 	public get unitCost(): number {
-		return this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getUnitCostOverride(value), this.baseUnitCost)
+		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getUnitCostOverride(value), this.baseUnitCost)
+		return Math.max(value, 0)
 	}
 
 	/* Spell cost */
@@ -99,6 +100,7 @@ export default class ServerCardStats implements CardStats {
 	}
 
 	public get spellCost(): number {
-		return this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getSpellCostOverride(value), this.baseSpellCost)
+		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getSpellCostOverride(value), this.baseSpellCost)
+		return Math.max(value, 0)
 	}
 }

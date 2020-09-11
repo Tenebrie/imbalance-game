@@ -22,6 +22,9 @@ import ClientCardStats from '@/Pixi/models/ClientCardStats'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import CardLocation from '@shared/enums/CardLocation'
+import PlayerInGame from '@shared/models/PlayerInGame'
+import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
 export default class RenderedCard implements Card {
 	public readonly id: string
@@ -501,6 +504,43 @@ export default class RenderedCard implements Card {
 
 	public isUnitMode(): boolean {
 		return !this.isHidden && [CardDisplayMode.ON_BOARD].includes(this.displayMode)
+	}
+
+	public get owner(): ClientPlayerInGame | null {
+		const thisCardInGame = Core.game.findOwnedCardById(this.id)
+		return thisCardInGame ? thisCardInGame.owner : null
+	}
+
+	public get location(): CardLocation {
+		const owner = this.owner
+		if (!owner) {
+			return CardLocation.UNKNOWN
+		}
+
+		if (owner.leader === this) {
+			return CardLocation.LEADER
+		}
+		const cardInDeck = owner.cardDeck.findCardById(this.id)
+		if (cardInDeck) {
+			return CardLocation.DECK
+		}
+		const cardInHand = owner.cardHand.findCardById(this.id)
+		if (cardInHand) {
+			return CardLocation.HAND
+		}
+		const cardInStack = Core.resolveStack.findCardById(this.id)
+		if (cardInStack) {
+			return CardLocation.STACK
+		}
+		const cardOnBoard = Core.board.findUnitById(this.id)
+		if (cardOnBoard) {
+			return CardLocation.BOARD
+		}
+		const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
+		if (cardInGraveyard) {
+			return CardLocation.GRAVEYARD
+		}
+		return CardLocation.UNKNOWN
 	}
 
 	public unregister(): void {

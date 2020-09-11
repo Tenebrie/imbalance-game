@@ -66,7 +66,7 @@ export default class ServerHand {
 
 	public removeCard(card: ServerCard): void {
 		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
-		this.spellCards = this.spellCards.filter(unitCard => unitCard !== card)
+		this.spellCards = this.spellCards.filter(spellCard => spellCard !== card)
 
 		OutgoingMessageHandlers.notifyAboutCardInHandDestroyed(new ServerOwnedCard(card, this.owner))
 	}

@@ -1,6 +1,6 @@
 import OwnedCard from '../../OwnedCard'
 
-export default class OwnedCardMessage {
+export default class OwnedCardRefMessage {
 	public readonly cardId: string
 	public readonly ownerId: string
 

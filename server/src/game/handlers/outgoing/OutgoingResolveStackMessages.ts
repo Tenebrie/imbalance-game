@@ -7,12 +7,13 @@ import Utils from '../../../utils/Utils'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import {ResolveStackMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import OpenOwnedCardMessage from '@shared/models/network/ownedCard/OpenOwnedCardMessage'
 
 export default {
 	notifyAboutCardResolving(ownedCard: ServerOwnedCard): void {
 		const owner = ownedCard.owner.player
 		const opponent = ownedCard.owner.opponent.player
-		const data = new OpenCardMessage(ownedCard.card)
+		const data = new OpenOwnedCardMessage(ownedCard)
 
 		owner.sendMessage({
 			type: ResolveStackMessageType.ADD,
