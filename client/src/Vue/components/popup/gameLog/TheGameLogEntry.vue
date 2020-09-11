@@ -10,11 +10,13 @@ import Core from '@/Pixi/Core'
 import Localization from '@/Pixi/Localization'
 import GameEventType from '@shared/enums/GameEventType'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
+import {PropType} from '@vue/composition-api'
+import store from '@/Vue/store'
 
 export default {
 	props: {
 		entry: {
-			type: Object as () => EventLogEntryMessage,
+			type: Object as PropType<EventLogEntryMessage>,
 			required: true
 		}
 	},
@@ -88,6 +90,10 @@ export default {
 			const card = Core.game.findCardById(id)
 			if (card) {
 				return `${Localization.get(card.name)}`
+			}
+			const cardInLibrary = store.state.editor.cardLibrary.find(card => card.id === id)
+			if (cardInLibrary) {
+				return `${Localization.get(cardInLibrary.name)}`
 			}
 			const buff = Core.game.findBuffById(id)
 			if (buff) {
