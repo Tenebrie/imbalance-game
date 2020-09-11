@@ -59,7 +59,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
 import {computed, defineComponent, ref} from '@vue/composition-api'
 import {debounce} from 'throttle-debounce'
-import InlineTooltip from '@/Vue/components/InlineTooltip.vue'
+import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
 
 export default defineComponent({

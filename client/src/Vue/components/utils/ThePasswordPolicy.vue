@@ -13,7 +13,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-	@import "../styles/generic";
+	@import "src/Vue/styles/generic";
 
 	.the-password-policy {
 		text-align: left;

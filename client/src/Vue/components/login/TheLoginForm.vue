@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import InlineTooltip from '@/Vue/components/InlineTooltip.vue'
+import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 

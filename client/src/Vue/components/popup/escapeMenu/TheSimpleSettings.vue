@@ -1,6 +1,6 @@
 <template>
 	<div class="the-simple-settings">
-		<div class="the-simple-settings-container">
+		<div class="the-simple-settings-container" @click="onMenuClick">
 			<the-volume-settings />
 		</div>
 	</div>
@@ -10,7 +10,17 @@
 import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
 
 export default {
-	components: {TheVolumeSettings},
+	components: { TheVolumeSettings },
+
+	setup() {
+		const onMenuClick = (event: MouseEvent) => {
+			event.cancelBubble = true
+		}
+
+		return {
+			onMenuClick
+		}
+	}
 }
 </script>
 
@@ -26,11 +36,12 @@ export default {
 
 		.the-simple-settings-container {
 			width: calc(100% - 16px);
-			height: 100%;
 			max-width: 1000px;
 			text-align: start;
-			background: rgba(white, 0.1);
-			padding: 8px;
+			background: $COLOR_BACKGROUND_GAME_MENU;
+			border: 2px solid $COLOR_BACKGROUND_GAME_MENU_BORDER;
+			border-radius: 16px;
+			padding: 16px 32px;
 			overflow-y: auto;
 			display: flex;
 			align-items: center;

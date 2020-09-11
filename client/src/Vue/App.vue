@@ -5,9 +5,7 @@
 			<the-navigation-bar v-if="!isInGame" />
 			<router-view class="view" />
 		</div>
-		<div id="popup" v-if="popupComponent">
-			<component :is="popupComponent"></component>
-		</div>
+		<the-popup-view />
 	</div>
 </template>
 
@@ -17,13 +15,13 @@ import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vu
 import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
 import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
 import LocalStorage from '@/utils/LocalStorage'
+import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 
 export default {
-	components: { TheNavigationBar },
+	components: { ThePopupView, TheNavigationBar },
 
 	async mounted() {
 		AudioSystem.setMode(AudioSystemMode.MENU)
-		window.addEventListener('keydown', this.onKeyDown)
 		window.addEventListener('contextmenu', this.onContextMenu)
 		this.printConsoleWelcomeMessage()
 		if (LocalStorage.hasAuthCookie()) {
@@ -33,17 +31,12 @@ export default {
 	},
 
 	beforeDestroy() {
-		window.removeEventListener('keydown', this.onKeyDown)
 		window.removeEventListener('contextmenu', this.onContextMenu)
 	},
 
 	computed: {
 		isInGame(): boolean {
 			return store.getters.gameStateModule.isInGame
-		},
-
-		popupComponent() {
-			return store.state.popupModule.component
 		},
 
 		rootClass() {
@@ -55,13 +48,6 @@ export default {
 	},
 
 	methods: {
-		onKeyDown(event: KeyboardEvent): void {
-			if (event.key === 'Escape' && this.popupComponent) {
-				store.dispatch.popupModule.close()
-				event.preventDefault()
-			}
-		},
-
 		onContextMenu(event: MouseEvent): boolean {
 			if (!event.ctrlKey && !event.shiftKey) {
 				event.preventDefault()
@@ -112,14 +98,6 @@ body {
 *::-webkit-scrollbar-track {
 	background: #ffffff20;
 	border-radius: 20px;
-}
-
-#popup {
-	z-index: 1000;
-	position: absolute;
-	width: 100vw;
-	height: 100vh;
-	background: rgba(0, 0, 0, 0.7);
 }
 
 #app {

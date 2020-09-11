@@ -34,8 +34,8 @@ import router from '@/Vue/router'
 import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import store from '@/Vue/store'
-import InlineTooltip from '@/Vue/components/InlineTooltip.vue'
-import ThePasswordPolicy from '@/Vue/components/ThePasswordPolicy.vue'
+import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
+import ThePasswordPolicy from '@/Vue/components/utils/ThePasswordPolicy.vue'
 
 export default defineComponent({
 	components: {

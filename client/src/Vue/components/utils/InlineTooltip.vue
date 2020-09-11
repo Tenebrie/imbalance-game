@@ -27,7 +27,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-	@import "../styles/generic";
+	@import "src/Vue/styles/generic";
 
 	$ARROW_SIZE: 12px;
 	$BACKGROUND_COLOR: #404040;
