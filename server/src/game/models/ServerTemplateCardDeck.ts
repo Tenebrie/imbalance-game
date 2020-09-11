@@ -1,27 +1,25 @@
 import ServerCard from './ServerCard'
 import CardDeck from '@shared/models/CardDeck'
 import CardLibrary from '../libraries/CardLibrary'
-import UnitForestScout from '../cards/neutral/common/UnitForestScout'
-import UnitChargingKnight from '../cards/neutral/common/UnitChargingKnight'
+import UnitForestScout from '../cards/00-human/common/UnitForestScout'
 import ServerGame from './ServerGame'
-import UnitSupplyWagon from '../cards/neutral/common/UnitSupplyWagon'
-import HeroZamarath from '../cards/arcane/legendary/HeroZamarath'
-import HeroSparklingSpirit from '../cards/arcane/epic/HeroSparklingSpirit'
-import HeroRagingElemental from '../cards/arcane/epic/HeroRagingElemental'
-import HeroKroLah from '../cards/arcane/legendary/HeroKroLah'
-import HeroGarellion from '../cards/arcane/legendary/HeroGarellion'
-import UnitPriestessOfAedine from '../cards/neutral/common/UnitPriestessOfAedine'
+import HeroZamarath from '../cards/00-human/legendary/HeroZamarath'
+import HeroSparklingSpirit from '../cards/01-arcane/epic/HeroSparklingSpirit'
+import HeroRagingElemental from '../cards/01-arcane/epic/HeroRagingElemental'
+import HeroKroLah from '../cards/01-arcane/legendary/HeroKroLah'
+import HeroGarellion from '../cards/01-arcane/legendary/HeroGarellion'
+import UnitPriestessOfAedine from '../cards/00-human/common/UnitPriestessOfAedine'
 import ServerEditorDeck from './ServerEditorDeck'
 import CardColor from '@shared/enums/CardColor'
-import LeaderVelElleron from '../cards/arcane/leaders/VelElleron/LeaderVelElleron'
-import UnitStoneElemental from '../cards/arcane/common/UnitStoneElemental'
-import UnitWingedShieldmaiden from '../cards/castle/common/UnitWingedShieldmaiden'
-import HeroForksmanshipInstructor from '../cards/castle/epic/HeroForksmanshipInstructor'
-import HeroAntoria from '../cards/castle/legendary/HeroAntoria'
-import HeroFlameDancer from '../cards/arcane/epic/HeroFlameDancer'
-import UnitArcaneElemental from '../cards/arcane/common/UnitArcaneElemental'
-import HeroStormDancer from '../cards/nature/epic/HeroStormDancer'
-import HeroLightOracle from '../cards/arcane/epic/HeroLightOracle'
+import LeaderVelElleron from '../cards/01-arcane/leaders/VelElleron/LeaderVelElleron'
+import UnitStoneElemental from '../cards/01-arcane/common/UnitStoneElemental'
+import UnitWingedShieldmaiden from '../cards/00-human/common/UnitWingedShieldmaiden'
+import HeroForksmanshipInstructor from '../cards/00-human/epic/HeroForksmanshipInstructor'
+import HeroAntoria from '../cards/00-human/legendary/HeroAntoria'
+import HeroFlameDancer from '../cards/01-arcane/epic/HeroFlameDancer'
+import UnitArcaneElemental from '../cards/01-arcane/common/UnitArcaneElemental'
+import HeroLightOracle from '../cards/09-neutral/epic/HeroLightOracle'
+import CardType from '@shared/enums/CardType'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	leader: ServerCard
@@ -47,8 +45,8 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		const inflatedUnitDeck: ServerCard[] = []
 		const inflatedSpellDeck: ServerCard[] = []
 		cards.forEach(card => {
-			const inflatedUnitCards = card.getDeckAddedUnitCards()
-			const inflatedSpellCards = card.getDeckAddedSpellCards()
+			const inflatedUnitCards = card.deckAddedCards.filter(card => CardLibrary.findPrototypeByConstructor(card).type === CardType.UNIT)
+			const inflatedSpellCards = card.deckAddedCards.filter(card => CardLibrary.findPrototypeByConstructor(card).type === CardType.SPELL)
 			inflatedUnitCards.forEach(cardPrototype => inflatedUnitDeck.push(CardLibrary.instantiateByConstructor(game, cardPrototype)))
 			inflatedSpellCards.forEach(cardPrototype => inflatedSpellDeck.push(CardLibrary.instantiateByConstructor(game, cardPrototype)))
 			if (card.color === CardColor.LEADER) {
@@ -73,11 +71,12 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		cards.push(CardLibrary.instantiateByConstructor(game, HeroZamarath))
 		cards.push(CardLibrary.instantiateByConstructor(game, HeroGarellion))
 
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroRagingElemental))
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroSparklingSpirit))
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroFlameDancer))
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroForksmanshipInstructor))
-		cards.push(CardLibrary.instantiateByConstructor(game, HeroLightOracle))
+		for (let i = 0; i < 2; i++) {
+			cards.push(CardLibrary.instantiateByConstructor(game, HeroSparklingSpirit))
+			cards.push(CardLibrary.instantiateByConstructor(game, HeroFlameDancer))
+			cards.push(CardLibrary.instantiateByConstructor(game, HeroForksmanshipInstructor))
+			cards.push(CardLibrary.instantiateByConstructor(game, HeroLightOracle))
+		}
 
 		for (let i = 0; i < 3; i++) {
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitStoneElemental))

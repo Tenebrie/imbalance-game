@@ -1,4 +1,4 @@
 export default interface RenderedEditorCard {
-	id: string,
-	render: HTMLImageElement
+	class: string,
+	render: HTMLCanvasElement
 }

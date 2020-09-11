@@ -2,24 +2,33 @@ import uuidv4 from 'uuid/v4'
 import {createModule} from 'direct-vuex'
 import axios from 'axios'
 import {moduleActionContext} from '@/Vue/store'
-import Card from '@shared/models/Card'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
-import CardMessage from '@shared/models/network/CardMessage'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import Utils from '@/utils/Utils'
+import Constants from '@shared/Constants'
 import CardColor from '@shared/enums/CardColor'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
-import Constants from '@shared/Constants'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
+import CardFaction from '@shared/enums/CardFaction'
+import HoveredDeckCardModule from '@/Vue/store/modules/HoveredDeckCardModule'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 const editorModule = createModule({
 	namespaced: true,
+
+	modules: {
+		hoveredDeckCard: HoveredDeckCardModule,
+	},
+
 	state: {
 		decks: [] as PopulatedEditorDeck[],
 		currentDeckId: null as string | null,
-		cardLibrary: [] as Card[],
-		renderQueue: [] as CardMessage[],
+		cardLibrary: [] as CardMessage[],
+		renderQueue: [] as string[],
 		renderedCards: [] as RenderedEditorCard[],
+		selectedFactionFilter: null as CardFaction | null,
+		selectedColorFilter: null as CardColor | null,
+		searchQuery: '' as string
 	},
 
 	mutations: {
@@ -31,12 +40,12 @@ const editorModule = createModule({
 			state.currentDeckId = deckId
 		},
 
-		setCardLibrary(state, cardLibrary: Card[]): void {
+		setCardLibrary(state, cardLibrary: CardMessage[]): void {
 			state.cardLibrary = cardLibrary.slice()
 		},
 
 		addToRenderQueue(state, card: CardMessage): void {
-			state.renderQueue.push(card)
+			state.renderQueue.push(card.class)
 		},
 
 		shiftRenderQueue(state): void {
@@ -55,6 +64,18 @@ const editorModule = createModule({
 		updateEditorDeck(state, newDeck: PopulatedEditorDeck): void {
 			const oldDeck = state.decks.find(deck => deck.id === newDeck.id)
 			state.decks[state.decks.indexOf(oldDeck)] = newDeck
+		},
+
+		setSelectedFactionFilter(state, faction: CardFaction | null): void {
+			state.selectedFactionFilter = faction
+		},
+
+		setSelectedColorFilter(state, color: CardColor | null): void {
+			state.selectedColorFilter = color
+		},
+
+		setSearchQuery(state, query: string): void {
+			state.searchQuery = query
 		}
 	},
 
@@ -140,7 +161,7 @@ const editorModule = createModule({
 		async loadCardLibrary(context): Promise<void> {
 			const { commit } = moduleActionContext(context, editorModule)
 
-			const response = await axios.get('/api/cards', { params: { collectible: true } })
+			const response = await axios.get('/api/cards', { params: { collectible: false } })
 			const cardMessages = response.data as CardMessage[]
 			const sortedMessages = Utils.sortEditorCards(cardMessages)
 			commit.setCardLibrary(sortedMessages)
@@ -201,12 +222,16 @@ const editorModule = createModule({
 		},
 
 		async requestRender(context, payload: { card: CardMessage }): Promise<void> {
-			await TextureAtlas.prepare()
-
-			const { commit } = moduleActionContext(context, editorModule)
-
-			commit.addToRenderQueue(payload.card)
-		},
+			const { state, commit } = moduleActionContext(context, editorModule)
+			if (state.renderedCards.find(renderedCard => renderedCard.class === payload.card.class)) {
+				console.warn(`Requesting render to existing card ${payload.card.class}`)
+				return
+			}
+			await TextureAtlas.preloadComponents()
+			await TextureAtlas.loadCard(payload.card, () => {
+				commit.addToRenderQueue(payload.card)
+			})
+		}
 	}
 })
 

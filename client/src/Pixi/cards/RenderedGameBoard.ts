@@ -5,7 +5,7 @@ import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 
-export default class RenderedGameBoard extends Board {
+export default class RenderedGameBoard implements Board {
 	public rows: RenderedGameBoardRow[]
 	public unitsOnHold: RenderedUnit[]
 	public isInverted = false
@@ -13,7 +13,6 @@ export default class RenderedGameBoard extends Board {
 	public validOpponentOrders: ClientCardTarget[]
 
 	public constructor() {
-		super()
 		this.rows = []
 		this.unitsOnHold = []
 		this.validOrders = []
@@ -64,12 +63,12 @@ export default class RenderedGameBoard extends Board {
 		return this.rows.map(row => row.cards).flat().concat(this.unitsOnHold)
 	}
 
-	public getUnitsOwnedByPlayer(owner: ClientPlayerInGame) {
+	public getUnitsOwnedByPlayer(owner: ClientPlayerInGame): RenderedUnit[] {
 		return this.getAllUnits().filter(unit => unit.owner === owner)
 	}
 
 	public getValidOrdersForUnit(unit: RenderedUnit): ClientCardTarget[] {
-		return this.validOrders.concat(this.validOpponentOrders).filter(order => order.sourceUnit === unit)
+		return this.validOrders.concat(this.validOpponentOrders).filter(order => order.sourceCard === unit.card)
 	}
 
 	public clearBoard(): void {

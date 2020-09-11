@@ -3,6 +3,9 @@ import CardType from '@shared/enums/CardType'
 import ServerCard from '../game/models/ServerCard'
 import AsciiColor from '../enums/AsciiColor'
 import ServerUnit from '../game/models/ServerUnit'
+import {CardConstructor} from '../game/libraries/CardLibrary'
+import CardLocation from '@shared/enums/CardLocation'
+import CardFeature from '@shared/enums/CardFeature'
 
 interface TryUntilArgs {
 	try: () => void | Promise<void>
@@ -30,6 +33,12 @@ export const generateShortId = (length: number): string => {
 	return id
 }
 
+export const isCardPublic = (card: ServerCard): boolean => {
+	const location = card.location
+	const isHeroPower = card.features.includes(CardFeature.HERO_POWER)
+	return (location !== CardLocation.HAND && location !== CardLocation.DECK) || (location === CardLocation.HAND && (isHeroPower || card.isRevealed))
+}
+
 export const colorize = (text: string | number, color: AsciiColor): string => {
 	return `${color}${text}\u001b[0m`
 }
@@ -48,6 +57,22 @@ export const colorizeConsoleText = (text: string): string => {
 
 export const mapUnitsToCards = (units: ServerUnit[]): ServerCard[] => {
 	return units.map(unit => unit.card)
+}
+
+export const mapRelatedCards = (constructors: CardConstructor[]): string[] => {
+	return constructors.map(constructor => getClassFromConstructor(constructor))
+}
+
+export const mapTribeCards = (constructors: CardConstructor[]): string[] => {
+	return constructors.map(constructor => constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1))
+}
+
+export const getClassFromConstructor = (constructor: CardConstructor): string => {
+	return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
+}
+
+export const limitValueToInterval = (min: number, value: number, max: number): number => {
+	return Math.max(min, Math.min(value, max))
 }
 
 export default {
@@ -105,8 +130,8 @@ export default {
 		return inputArray.slice().sort((a: Card, b: Card) => {
 			return (
 				(a.type - b.type) ||
-				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+				(a.type === CardType.UNIT && (a.color - b.color || b.stats.power - a.stats.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
+				(a.type === CardType.SPELL && (a.color - b.color || a.stats.power - b.stats.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
 			)
 		})
 	},

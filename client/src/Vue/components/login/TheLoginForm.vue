@@ -1,8 +1,12 @@
 <template>
 	<div ref="rootRef" class="the-login-form">
 		<div class="form">
-			<input id="tenebrieEmail" type="text" placeholder="Email" v-model="email" autofocus />
-			<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
+			<div class="input">
+				<input id="tenebrieEmail" type="text" placeholder="Email" v-model="email" autofocus />
+			</div>
+			<div class="input">
+				<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
+			</div>
 			<div class="status">
 				<span ref="messageRef"> </span>
 			</div>
@@ -17,89 +21,86 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
 import store from '@/Vue/store'
-import router from '@/Vue/router'
-import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import {onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
+import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
+import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 
-function TheLoginForm() {
-	const rootRef = ref<HTMLDivElement>()
-	const messageRef = ref<HTMLSpanElement>()
+export default defineComponent({
+	components: {
+		InlineTooltip
+	},
 
-	const email = ref<string>('')
-	const password = ref<string>('')
+	setup() {
+		const rootRef = ref<HTMLDivElement>()
+		const messageRef = ref<HTMLSpanElement>()
 
-	watch(() => [email.value, password.value], () => {
-		clearMessage()
-	})
+		const email = ref<string>('')
+		const password = ref<string>('')
 
-	onMounted(() => {
-		rootRef.value.addEventListener('keydown', onKeyDown)
-	})
+		watch(() => [email.value, password.value], () => {
+			clearMessage()
+		})
 
-	onBeforeUnmount(() => {
-		rootRef.value.removeEventListener('keydown', onKeyDown)
-	})
+		onMounted(() => {
+			rootRef.value.addEventListener('keydown', onKeyDown)
+		})
 
-	const onKeyDown = (event: KeyboardEvent): void => {
-		if (event.key === 'Enter') {
-			onLogin()
+		onBeforeUnmount(() => {
+			rootRef.value.removeEventListener('keydown', onKeyDown)
+		})
+
+		const onKeyDown = (event: KeyboardEvent): void => {
+			if (event.key === 'Enter') {
+				onLogin()
+			}
 		}
-	}
 
-	const onLogin = async(): Promise<void> => {
-		clearMessage()
-		const credentials = {
-			email: email.value,
-			password: password.value
+		const onLogin = async(): Promise<void> => {
+			clearMessage()
+			const credentials = {
+				email: email.value,
+				password: password.value
+			}
+			try {
+				await store.dispatch.login(credentials)
+			} catch (error) {
+				console.error(error)
+				setMessage(getErrorMessage(error.response.status, error.response.data.code))
+			}
 		}
-		try {
-			await axios.post('/api/session', credentials)
-			await store.dispatch.userPreferencesModule.fetchPreferences()
-			await router.push({ name: 'home' })
-			await TextureAtlas.prepare()
-		} catch (error) {
-			console.error(error)
-			setMessage(getErrorMessage(error.response.status, error.response.data.code))
+
+		const getErrorMessage = (statusCode: number, errorCode: number): string => {
+			if (statusCode === 400 && errorCode === UserLoginErrorCode.MISSING_CREDENTIALS) {
+				return 'Missing email or password'
+			} else if (statusCode === 400 && errorCode === UserLoginErrorCode.INVALID_CREDENTIALS) {
+				return 'Username and password do not match'
+			} else if (statusCode === 500) {
+				return 'Internal server error'
+			} else if (statusCode === 503) {
+				return 'Database client is not yet ready'
+			} else {
+				return `Unknown error with code ${statusCode}`
+			}
 		}
-	}
 
-	const getErrorMessage = (statusCode: number, errorCode: number): string => {
-		if (statusCode === 400 && errorCode === UserLoginErrorCode.MISSING_CREDENTIALS) {
-			return 'Missing email or password'
-		} else if (statusCode === 400 && errorCode === UserLoginErrorCode.INVALID_CREDENTIALS) {
-			return 'Username and password do not match'
-		} else if (statusCode === 500) {
-			return 'Internal server error'
-		} else if (statusCode === 503) {
-			return 'Database client is not yet ready'
-		} else {
-			return `Unknown error with code ${statusCode}`
+		const setMessage = (message: string): void => {
+			messageRef.value.innerHTML = message
 		}
-	}
 
-	const setMessage = (message: string): void => {
-		messageRef.value.innerHTML = message
-	}
+		const clearMessage = (): void => {
+			messageRef.value.innerHTML = ''
+		}
 
-	const clearMessage = (): void => {
-		messageRef.value.innerHTML = ''
-	}
-
-	return {
-		rootRef,
-		messageRef,
-		onLogin,
-		email,
-		password
-	}
-}
-
-export default {
-	setup: TheLoginForm
-}
+		return {
+			rootRef,
+			messageRef,
+			onLogin,
+			email,
+			password
+		}
+	},
+})
 </script>
 
 <style scoped lang="scss">
@@ -108,6 +109,18 @@ export default {
 
 	.the-login-form {
 		@include login-form();
+
+		.form > .input {
+			position: relative;
+			display: flex;
+			flex-direction: row;
+
+			.tooltip {
+				position: absolute;
+				right: 0;
+				height: 100%;
+			}
+		}
 
 		.register-link {
 			font-size: 0.8em;

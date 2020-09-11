@@ -2,16 +2,14 @@ import uuidv4 from 'uuid/v4'
 import Game from '@shared/models/Game'
 import ServerBoard from './ServerBoard'
 import ServerPlayer from '../players/ServerPlayer'
-import ServerChatEntry from './ServerChatEntry'
-import VoidPlayerInGame from '../utils/VoidPlayerInGame'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameLibrary from '../libraries/GameLibrary'
 import ServerDamageInstance from './ServerDamageSource'
 import Constants from '@shared/Constants'
-import ServerBotPlayer from '../utils/ServerBotPlayer'
-import ServerBotPlayerInGame from '../utils/ServerBotPlayerInGame'
+import ServerBotPlayer from '../AI/ServerBotPlayer'
+import ServerBotPlayerInGame from '../AI/ServerBotPlayerInGame'
 import ServerCard from './ServerCard'
 import ServerGameCardPlay from './ServerGameCardPlay'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
@@ -20,33 +18,45 @@ import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
 import {colorizeId, colorizePlayer} from '../../utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
+import { BuffConstructor } from './ServerBuffContainer'
 
-export default class ServerGame extends Game {
-	isStarted: boolean
-	turnIndex: number
-	turnPhase: GameTurnPhase
-	playersToMove: ServerPlayerInGame[]
-	readonly owner: ServerPlayer
+interface ServerGameProps {
+	name?: string
+	owner?: ServerPlayer
+}
+
+export default class ServerGame implements Game {
+	public readonly id: string
+	public readonly name: string
+	public isStarted: boolean
+	public turnIndex: number
+	public turnPhase: GameTurnPhase
+	public playersToMove: ServerPlayerInGame[]
+	readonly owner: ServerPlayer | undefined
 	readonly board: ServerBoard
 	readonly events: ServerGameEvents
 	readonly players: ServerPlayerInGame[]
-	readonly chatHistory: ServerChatEntry[]
 	readonly cardPlay: ServerGameCardPlay
 	readonly animation: ServerGameAnimation
 
-	constructor(owner: ServerPlayer, name: string) {
-		super(uuidv4(), name)
+	constructor(props: ServerGameProps) {
+		this.id = uuidv4()
+		this.name = props.name || this.generateName(props.owner)
 		this.isStarted = false
 		this.turnIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
-		this.owner = owner
+		this.owner = props.owner
 		this.board = new ServerBoard(this)
 		this.events = new ServerGameEvents(this)
 		this.players = []
 		this.playersToMove = []
-		this.chatHistory = []
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
+	}
+
+	private generateName(owner?: ServerPlayer): string {
+		const randomNumber = Math.floor(1000 + Math.random() * 9000)
+		return owner ? (owner.username + `'s game #${randomNumber}`) : `Game #${randomNumber}`
 	}
 
 	public addPlayer(targetPlayer: ServerPlayer, deck: ServerTemplateCardDeck): ServerPlayerInGame {
@@ -73,7 +83,7 @@ export default class ServerGame extends Game {
 		this.isStarted = true
 
 		const playerOne = this.players[0]
-		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
+		const playerTwo = this.players[1]
 		console.info(`Starting game ${colorizeId(this.id)}: `
 			+ `${colorizePlayer(playerOne.player.username)} vs ${colorizePlayer(playerTwo.player.username)}`)
 
@@ -106,10 +116,11 @@ export default class ServerGame extends Game {
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
 		this.startNextTurn()
 		this.events.flushLogEventGroup()
+		OutgoingMessageHandlers.executeMessageQueue(this)
 	}
 
 	public getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
-		return this.players.find(otherPlayer => otherPlayer !== player) || VoidPlayerInGame.for(this)
+		return this.players.find(otherPlayer => otherPlayer !== player)
 	}
 
 	public isBotGame(): boolean {
@@ -125,20 +136,9 @@ export default class ServerGame extends Game {
 		this.players.splice(this.players.indexOf(registeredPlayer), 1)
 	}
 
-	public createChatEntry(sender: ServerPlayer, message: string): void {
-		const chatEntry = ServerChatEntry.newInstance(sender, message)
-		this.chatHistory.push(chatEntry)
-		this.players.forEach((playerInGame: ServerPlayerInGame) => {
-			OutgoingMessageHandlers.notifyAboutChatEntry(playerInGame.player, chatEntry)
-		})
-	}
-
 	private setTurnPhase(turnPhase: GameTurnPhase): void {
 		this.turnPhase = turnPhase
-
-		this.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutPhaseAdvance(playerInGame.player, this.turnPhase)
-		})
+		OutgoingMessageHandlers.notifyAboutGamePhaseAdvance(this, this.turnPhase)
 	}
 
 	private isPhaseFinished(): boolean {
@@ -147,7 +147,7 @@ export default class ServerGame extends Game {
 
 	public advanceCurrentTurn(): void {
 		const playerOne = this.players[0]
-		const playerTwo = this.players[1] || VoidPlayerInGame.for(this)
+		const playerTwo = this.players[1]
 		const rowsOwnedByPlayerOne = this.board.rows.filter(row => row.owner === playerOne).length
 		const rowsOwnedByPlayerTwo = this.board.rows.filter(row => row.owner === playerTwo).length
 		const hasPlayerWonBoard = rowsOwnedByPlayerOne === Constants.GAME_BOARD_ROW_COUNT || rowsOwnedByPlayerTwo === Constants.GAME_BOARD_ROW_COUNT
@@ -212,8 +212,8 @@ export default class ServerGame extends Game {
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1]
 
-		const playerOneTotalPower = this.board.getUnitsOwnedByPlayer(playerOne).map(unit => unit.card.power).reduce((total, value) => total + value, 0)
-		const playerTwoTotalPower = this.board.getUnitsOwnedByPlayer(playerTwo).map(unit => unit.card.power).reduce((total, value) => total + value, 0)
+		const playerOneTotalPower = this.board.getUnitsOwnedByPlayer(playerOne).map(unit => unit.card.stats.power).reduce((total, value) => total + value, 0)
+		const playerTwoTotalPower = this.board.getUnitsOwnedByPlayer(playerTwo).map(unit => unit.card.stats.power).reduce((total, value) => total + value, 0)
 		if (playerOneTotalPower > playerTwoTotalPower) {
 			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
 		} else if (playerTwoTotalPower > playerOneTotalPower) {
@@ -235,7 +235,6 @@ export default class ServerGame extends Game {
 
 		this.board.getAllUnits().forEach(unit => {
 			this.board.destroyUnit(unit)
-			unit.owner.cardGraveyard.addUnit(unit.card)
 		})
 
 		for (let i = 0; i < 3; i++) {
@@ -320,19 +319,7 @@ export default class ServerGame extends Game {
 		return null
 	}
 
-	public getAllCardsForEventHandling(): ServerOwnedCard[] {
-		let cards: ServerOwnedCard[] = this.board.getAllUnits()
-		for (let i = 0; i < this.players.length; i++) {
-			const player = this.players[i]
-			cards = cards.concat([new ServerOwnedCard(player.leader, player)])
-			cards = cards.concat(player.cardHand.allCards.map(card => new ServerOwnedCard(card, player)))
-			cards = cards.concat(player.cardDeck.allCards.map(card => new ServerOwnedCard(card, player)))
-			cards = cards.concat(player.cardGraveyard.allCards.map(card => new ServerOwnedCard(card, player)))
-		}
-		return cards
-	}
-
-	public getTotalBuffIntensityForPlayer(buffPrototype: any, player: ServerPlayerInGame, allowedLocations: CardLocation[] | 'any' = 'any'): number {
+	public getTotalBuffIntensityForPlayer(buffPrototype: BuffConstructor, player: ServerPlayerInGame, allowedLocations: CardLocation[] | 'any' = 'any'): number {
 		let viableCards = this.board.getUnitsOwnedByPlayer(player).map(unit => unit.card)
 		if (player && player.leader) {
 			viableCards.push(player.leader)
@@ -346,8 +333,6 @@ export default class ServerGame extends Game {
 	}
 
 	static newOwnedInstance(owner: ServerPlayer, name: string): ServerGame {
-		const randomNumber = Math.floor(1000 + Math.random() * 9000)
-		name = name || (owner.username + `'s game #${randomNumber}`)
-		return new ServerGame(owner, name)
+		return new ServerGame({ name, owner })
 	}
 }

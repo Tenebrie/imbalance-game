@@ -8,8 +8,4 @@ export default class PlayerMessage {
 		this.id = player.id
 		this.username = player.username
 	}
-
-	static fromPlayer(player: Player): PlayerMessage {
-		return new PlayerMessage(player)
-	}
 }

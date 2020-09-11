@@ -2,18 +2,15 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Core from '@/Pixi/Core'
 import Card from '@shared/models/Card'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import CardMessage from '@shared/models/network/CardMessage'
 import Buff from '@shared/models/Buff'
-import BuffMessage from '@shared/models/network/BuffMessage'
+import CardMessage from '@shared/models/network/card/CardMessage'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
+import OwnedClientCard from '@/Pixi/cards/OwnedClientCard'
 
 export default class ClientGame {
-	currentTime: number
-	maximumTime: number
 	turnPhase: GameTurnPhase
 
 	constructor() {
-		this.currentTime = 0
-		this.maximumTime = 1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 	}
 
@@ -21,8 +18,13 @@ export default class ClientGame {
 		this.turnPhase = phase
 	}
 
-	public findCardById(cardId: string): Card | CardMessage | null {
+	public findCardById(cardId: string): Card | RenderedCard | CardMessage | null {
 		const players = [Core.player, Core.opponent]
+
+		const cardInLimbo = Core.input.cardLimbo.find(card => card.id === cardId)
+		if (cardInLimbo) {
+			return cardInLimbo
+		}
 
 		const cardOnBoard = Core.board.findUnitById(cardId)
 		if (cardOnBoard) {
@@ -31,8 +33,14 @@ export default class ClientGame {
 
 		const cardInStack = Core.resolveStack.findCardById(cardId)
 		if (cardInStack) {
-			return cardInStack
+			return cardInStack.card
 		}
+
+		const cardInRequiredTargets = Core.input.forcedTargetingCards.find(card => card.id === cardId)
+		if (cardInRequiredTargets) {
+			return cardInRequiredTargets
+		}
+
 		for (let i = 0; i < players.length; i++) {
 			const player = players[i]
 			if (player.leader && player.leader.id === cardId) {
@@ -54,11 +62,44 @@ export default class ClientGame {
 		return null
 	}
 
+	public findOwnedCardById(cardId: string): OwnedClientCard | null {
+		const cardOnBoard = Core.board.findUnitById(cardId)
+		if (cardOnBoard) {
+			return cardOnBoard
+		}
+		const cardInStack = Core.resolveStack.findCardById(cardId)
+		if (cardInStack) {
+			return cardInStack
+		}
+
+		const players = [Core.player, Core.opponent]
+		for (let i = 0; i < players.length; i++) {
+			const player = players[i]
+			const cardAsLeader = player.leader
+			if (cardAsLeader && cardAsLeader.id === cardId) {
+				return { card: cardAsLeader, owner: player }
+			}
+			const cardInHand = player.cardHand.findCardById(cardId)
+			if (cardInHand) {
+				return { card: cardInHand, owner: player }
+			}
+			const cardInDeck = player.cardDeck.findCardById(cardId)
+			if (cardInDeck) {
+				return { card: cardInDeck, owner: player }
+			}
+			const cardInGraveyard = player.cardGraveyard.findCardById(cardId)
+			if (cardInGraveyard) {
+				return { card: cardInGraveyard, owner: player }
+			}
+		}
+		return null
+	}
+
 	public findBuffById(buffId: string): Buff | BuffMessage | null {
 		const players = [Core.player, Core.opponent]
 
 		let cards: (Card | CardMessage)[] = Core.board.getAllUnits().map(unit => unit.card)
-			.concat(Core.resolveStack.cards)
+			.concat(Core.resolveStack.cards.map(ownedCard => ownedCard.card))
 
 		for (let i = 0; i < players.length; i++) {
 			const player = players[i]

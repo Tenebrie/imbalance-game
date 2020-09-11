@@ -1,6 +1,6 @@
 <template>
 	<div class="editor-deck-card-list">
-		<div class="card-list" v-if="deck">
+		<div class="card-list" v-if="deck" @scroll="onScroll">
 			<editor-deck-name />
 			<editor-deck-card-list-separator :color="CardColor.LEADER" />
 			<editor-deck-card-list-item :card="card" v-for="card in leaderCards" :key="card.id" />
@@ -17,6 +17,7 @@
 			<editor-delete-deck-button />
 			<editor-leave-deck-button />
 		</div>
+		<the-editor-hovered-deck-card />
 	</div>
 </template>
 
@@ -33,6 +34,7 @@ import EditorSaveDeckButton from '@/Vue/components/editor/buttons/EditorSaveDeck
 import EditorExportDeckButton from '@/Vue/components/editor/buttons/EditorExportDeckButton.vue'
 import EditorDeleteDeckButton from '@/Vue/components/editor/buttons/EditorDeleteDeckButton.vue'
 import EditorLeaveDeckButton from '@/Vue/components/editor/buttons/EditorLeaveDeckButton.vue'
+import TheEditorHoveredDeckCard from '@/Vue/components/editor/TheEditorHoveredDeckCard.vue'
 
 export default Vue.extend({
 	components: {
@@ -43,6 +45,7 @@ export default Vue.extend({
 		EditorLeaveDeckButton,
 		EditorDeckCardListItem,
 		EditorDeckCardListSeparator,
+		TheEditorHoveredDeckCard,
 	},
 
 	data: () => ({
@@ -51,7 +54,7 @@ export default Vue.extend({
 
 	computed: {
 		deckId(): string {
-			return this.$route.params.id
+			return this.$route.params.deckId
 		},
 
 		deck(): PopulatedEditorDeck {
@@ -83,6 +86,14 @@ export default Vue.extend({
 	beforeDestroy(): void {
 		store.commit.editor.setCurrentDeckId(null)
 	},
+
+	methods: {
+		onScroll(): void {
+			if (store.state.editor.hoveredDeckCard.scrollCallback) {
+				store.state.editor.hoveredDeckCard.scrollCallback()
+			}
+		}
+	}
 })
 </script>
 
@@ -90,6 +101,7 @@ export default Vue.extend({
 	@import "../../styles/generic";
 
 	.editor-deck-card-list {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;

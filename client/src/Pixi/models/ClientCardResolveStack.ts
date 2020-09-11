@@ -1,30 +1,32 @@
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
+import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import OwnedRenderedCard from '@/Pixi/cards/OwnedRenderedCard'
 
 export default class ClientCardResolveStack {
-	cards: RenderedCard[]
+	cards: OwnedRenderedCard[]
 
 	constructor() {
 		this.cards = []
 	}
 
-	public addCard(card: RenderedCard): void {
-		this.cards.push(card)
+	public addCard(card: RenderedCard, owner: ClientPlayerInGame): void {
+		this.cards.push({ card, owner })
 	}
 
 	public isEmpty(): boolean {
 		return this.cards.length === 0
 	}
 
-	public findCardById(cardId: string): RenderedCard | null {
-		return this.cards.find(card => card.id === cardId) || null
+	public findCardById(cardId: string): OwnedRenderedCard | null {
+		return this.cards.find(ownedCard => ownedCard.card.id === cardId) || null
 	}
 
 	public destroyCardById(cardId: string): void {
-		const card = this.findCardById(cardId)
-		if (!card) { return }
+		const ownedCard = this.findCardById(cardId)
+		if (!ownedCard) { return }
 
-		this.cards.splice(this.cards.indexOf(card), 1)
-		Core.unregisterCard(card)
+		this.cards.splice(this.cards.indexOf(ownedCard), 1)
+		Core.unregisterCard(ownedCard.card)
 	}
 }

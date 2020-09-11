@@ -5,9 +5,7 @@
 			<the-navigation-bar v-if="!isInGame" />
 			<router-view class="view" />
 		</div>
-		<div id="popup" v-if="popupComponent">
-			<component :is="popupComponent"></component>
-		</div>
+		<the-popup-view />
 	</div>
 </template>
 
@@ -15,27 +13,30 @@
 import store from '@/Vue/store'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
 import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
+import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
+import LocalStorage from '@/utils/LocalStorage'
+import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 
 export default {
-	components: { TheNavigationBar },
+	components: { ThePopupView, TheNavigationBar },
 
 	async mounted() {
 		AudioSystem.setMode(AudioSystemMode.MENU)
-		window.addEventListener('keydown', this.onKeyDown)
+		window.addEventListener('contextmenu', this.onContextMenu)
 		this.printConsoleWelcomeMessage()
+		if (LocalStorage.hasAuthCookie()) {
+			await store.dispatch.editor.loadCardLibrary()
+			editorCardRenderer.startRenderingService()
+		}
 	},
 
 	beforeDestroy() {
-		window.removeEventListener('keydown', this.onKeyDown)
+		window.removeEventListener('contextmenu', this.onContextMenu)
 	},
 
 	computed: {
 		isInGame(): boolean {
 			return store.getters.gameStateModule.isInGame
-		},
-
-		popupComponent() {
-			return store.state.popupModule.component
 		},
 
 		rootClass() {
@@ -47,11 +48,12 @@ export default {
 	},
 
 	methods: {
-		onKeyDown(event: KeyboardEvent): void {
-			if (event.key === 'Escape' && this.popupComponent) {
-				store.dispatch.popupModule.close()
+		onContextMenu(event: MouseEvent): boolean {
+			if (!event.ctrlKey && !event.shiftKey) {
 				event.preventDefault()
+				return false
 			}
+			return true
 		},
 
 		printConsoleWelcomeMessage(): void {
@@ -61,12 +63,13 @@ export default {
 
 			const message = 'If you DO know what you\'re doing, have fun hacking!\n'
 				+ 'This is an open-source project. You can find the code at https://github.com/Tenebrie/notgwent-game.'
-				+ ' If you find a bug or an exploit, or you have a feature request, feel free to open an issue on GitHub.'
+				+ ' If you find a bug or an exploit, or if you have a feature request, feel free to open an issue on GitHub.'
 				+ ' You can also make a pull request with a fix. Contributions are welcome!'
 
 			console.info('%cHowdy!', headerStyle)
 			console.info('%cIf you don\'t know what you\'re doing, be VERY careful! Don\'t paste here anything that you do not understand!', warningStyle)
 			console.info(`%c${message}`, textStyle)
+			console.info('%cAlso, you can summon browser context menu by using Shift or Ctrl when right-clicking an element.', textStyle)
 		}
 	}
 }
@@ -97,15 +100,8 @@ body {
 	border-radius: 20px;
 }
 
-#popup {
-	z-index: 1000;
-	position: absolute;
-	width: 100vw;
-	height: 100vh;
-	background: rgba(0, 0, 0, 0.7);
-}
-
 #app {
+	overflow: hidden;
 	font-family: Roboto, Helvetica, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;

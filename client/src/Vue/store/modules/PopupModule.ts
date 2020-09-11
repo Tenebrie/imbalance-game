@@ -5,24 +5,46 @@ import {moduleActionContext} from '@/Vue/store'
 const PopupModule = createModule({
 	namespaced: true,
 	state: {
-		component: null as Component | null
+		componentStack: [] as Component[]
 	},
 
 	mutations: {
-		setComponent(state, component: Component | null): void {
-			state.component = component
+		pushComponent(state, component: Component): void {
+			state.componentStack.push(component)
+		},
+
+		popComponent(state): void {
+			state.componentStack.pop()
+		},
+
+		clearComponents(state): void {
+			state.componentStack = []
+		}
+	},
+
+	getters: {
+		component: (state): Component | null => {
+			if (state.componentStack.length === 0) {
+				return null
+			}
+			return state.componentStack[state.componentStack.length - 1]
 		}
 	},
 
 	actions: {
-		open(context, payload: { component: Component }): void {
+		open(context, payload: { component: any }): void {
 			const { commit } = moduleActionContext(context, PopupModule)
-			commit.setComponent(payload.component)
+			commit.pushComponent(payload.component)
 		},
 
 		close(context): void {
 			const { commit } = moduleActionContext(context, PopupModule)
-			commit.setComponent(null)
+			commit.popComponent()
+		},
+
+		closeAll(context): void {
+			const { commit } = moduleActionContext(context, PopupModule)
+			commit.clearComponents()
 		},
 	}
 })

@@ -3,13 +3,24 @@ import store from '@/Vue/store'
 import Player from '@shared/models/Player'
 import PlayerInGame from '@shared/models/PlayerInGame'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
-import PlayerInGameMessage from '@shared/models/network/PlayerInGameMessage'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import ClientCardGraveyard from '@/Pixi/models/ClientCardGraveyard'
 import Card from '@shared/models/Card'
+import PlayerMessage from '@shared/models/network/PlayerMessage'
+import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
+
+class ClientPlayer implements Player {
+	id: string
+	username: string
+
+	constructor(player: PlayerMessage) {
+		this.id = player.id
+		this.username = player.username
+	}
+}
 
 export default class ClientPlayerInGame implements PlayerInGame {
-	player: Player
+	player: ClientPlayer
 	leader: Card
 	cardHand: RenderedCardHand
 	cardDeck: ClientCardDeck
@@ -57,7 +68,7 @@ export default class ClientPlayerInGame implements PlayerInGame {
 	}
 
 	public static fromMessage(message: PlayerInGameMessage): ClientPlayerInGame {
-		const player = Player.fromPlayerMessage(message.player)
+		const player = new ClientPlayer(message.player)
 		const clientPlayerInGame = new ClientPlayerInGame(player)
 		clientPlayerInGame.cardHand = RenderedCardHand.fromMessage(message.cardHand)
 		clientPlayerInGame.cardDeck = ClientCardDeck.fromMessage(message.cardDeck)

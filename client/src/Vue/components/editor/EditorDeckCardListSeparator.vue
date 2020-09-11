@@ -43,7 +43,7 @@ export default Vue.extend({
 		},
 
 		cardLimitUsed(): number {
-			const deckId = this.$route.params.id
+			const deckId = this.$route.params.deckId
 			return store.getters.editor.cardsOfColor({
 				deckId: deckId,
 				color: this.color

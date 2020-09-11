@@ -13,6 +13,7 @@ class PlayerLibrary {
 	}
 
 	public async register(email: string, username: string, password: string): Promise<boolean> {
+		// username = username.toLowerCase()
 		const passwordHash = await HashManager.hashPassword(password)
 		return PlayerDatabase.insertPlayer(email, username, passwordHash)
 	}
@@ -25,6 +26,7 @@ class PlayerLibrary {
 	}
 
 	public async login(username: string, password: string): Promise<ServerPlayer> {
+		username = username.toLowerCase()
 		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(username)
 
 		if (!playerDatabaseEntry) {

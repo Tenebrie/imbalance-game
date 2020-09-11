@@ -1,291 +1,124 @@
 import ServerCard from '../../models/ServerCard'
-import ServerPlayer from '../../players/ServerPlayer'
-import CardMessage from '@shared/models/network/CardMessage'
-import HiddenCardMessage from '@shared/models/network/HiddenCardMessage'
-import ServerOwnedCard from '../../models/ServerOwnedCard'
-import ServerCardTarget from '../../models/ServerCardTarget'
-import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 import ServerGame from '../../models/ServerGame'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
-import TargetType from '@shared/enums/TargetType'
-import Utils from '../../../utils/Utils'
+import {isCardPublic} from '../../../utils/Utils'
 import ServerBuff from '../../models/ServerBuff'
-import BuffMessage from '@shared/models/network/BuffMessage'
-import CardFeature from '@shared/enums/CardFeature'
+import CardLibraryPlaceholderGame from '../../utils/CardLibraryPlaceholderGame'
+import OpenCardStatsMessage from '@shared/models/network/cardStats/OpenCardStatsMessage'
+import HiddenCardStatsMessage from '@shared/models/network/cardStats/HiddenCardStatsMessage'
+import OpenBuffMessage from '@shared/models/network/buffs/OpenBuffMessage'
+import BuffRefMessage from '@shared/models/network/buffs/BuffRefMessage'
+import {CardUpdateMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 export default {
-	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard) {
-		player.sendMessage({
-			type: 'update/player/self/hand/playDeclined',
-			data: CardMessage.fromCard(card)
-		})
-	},
-
-	notifyAboutDeckLeader(playerInGame: ServerPlayerInGame, card: ServerCard) {
-		playerInGame.player.sendMessage({
-			type: 'update/player/self/leader',
-			data: new CardMessage(card)
-		})
-
-		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/leader',
-			data: new CardMessage(card)
-		})
-	},
-
-	notifyAboutUnitCardAdded(playerInGame: ServerPlayerInGame, card: ServerCard) {
-		playerInGame.player.sendMessage({
-			type: 'update/player/self/hand/unit/cardAdded',
-			data: new CardMessage(card)
-		})
-
-		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/hand/unit/cardAdded',
-			data: card.features.includes(CardFeature.HERO_POWER) ? new CardMessage(card) : new HiddenCardMessage(card)
-		})
-	},
-
-	notifyAboutSpellCardAdded(playerInGame: ServerPlayerInGame, card: ServerCard) {
-		playerInGame.player.sendMessage({
-			type: 'update/player/self/hand/spell/cardAdded',
-			data: new CardMessage(card)
-		})
-
-		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/hand/spell/cardAdded',
-			data: card.features.includes(CardFeature.HERO_POWER) ? new CardMessage(card) : new HiddenCardMessage(card)
-		})
-	},
-
-	notifyAboutOpponentCardRevealed(player: ServerPlayer, card: ServerCard) {
-		player.sendMessage({
-			type: 'update/player/opponent/hand/cardRevealed',
-			data: CardMessage.fromCardWithVariables(card, card.evaluateVariables())
-		})
-	},
-
-	notifyAboutCardInHandDestroyed(ownedCard: ServerOwnedCard) {
-		const owner = ownedCard.owner.player
-		const opponent = ownedCard.owner.opponent.player
-
-		owner.sendMessage({
-			type: 'update/player/self/hand/cardDestroyed',
-			data: CardMessage.fromCard(ownedCard.card)
-		})
-		opponent.sendMessage({
-			type: 'update/player/opponent/hand/cardDestroyed',
-			data: HiddenCardMessage.fromCard(ownedCard.card)
-		})
-	},
-
-	notifyAboutCardInDeckDestroyed(ownedCard: ServerOwnedCard) {
-		const owner = ownedCard.owner.player
-		const opponent = ownedCard.owner.opponent.player
-
-		owner.sendMessage({
-			type: 'update/player/self/deck/cardDestroyed',
-			data: CardMessage.fromCard(ownedCard.card)
-		})
-		opponent.sendMessage({
-			type: 'update/player/opponent/deck/cardDestroyed',
-			data: HiddenCardMessage.fromCard(ownedCard.card)
-		})
-	},
-
-	notifyAboutCardResolving(ownedCard: ServerOwnedCard) {
-		const owner = ownedCard.owner.player
-		const opponent = ownedCard.owner.opponent.player
-		const data = CardMessage.fromCard(ownedCard.card)
-
-		owner.sendMessage({
-			type: 'update/stack/cardResolving',
-			data: data,
-			highPriority: true
-		})
-		opponent.sendMessage({
-			type: 'update/stack/cardResolving',
-			data: data
-		})
-	},
-
-	notifyAboutResolvingCardTargets(player: ServerPlayer, validTargets: ServerCardTarget[]) {
-		const messages = validTargets.map(target => {
-			const message = new CardTargetMessage(target)
-			if (target.targetType === TargetType.CARD_IN_LIBRARY || target.targetType === TargetType.CARD_IN_UNIT_DECK || target.targetType === TargetType.CARD_IN_SPELL_DECK) {
-				message.attachTargetCardData(target.targetCard)
-			}
-			return message
-		})
-		const shuffledMessages = Utils.shuffle(messages)
-		player.sendMessage({
-			type: 'update/stack/cardTargets',
-			data: shuffledMessages,
-			highPriority: true
-		})
-	},
-
-	notifyAboutCardResolved(ownedCard: ServerOwnedCard) {
-		const owner = ownedCard.owner.player
-		const opponent = ownedCard.owner.opponent.player
-		const data = CardMessage.fromCard(ownedCard.card)
-
-		owner.sendMessage({
-			type: 'update/stack/cardResolved',
-			data: data,
-			highPriority: true
-		})
-		opponent.sendMessage({
-			type: 'update/stack/cardResolved',
-			data: data
-		})
-	},
-
-	notifyAboutCardBuffAdded(card: ServerCard, buff: ServerBuff) {
-		if (!card.owner) {
+	notifyAboutCardStatsChange(card: ServerCard): void {
+		if (card.game === CardLibraryPlaceholderGame) {
 			return
 		}
 
-		const owner = card.owner.player
-		const opponent = card.owner.opponent.player
-		const message = new BuffMessage(buff)
-
-		owner.sendMessage({
-			type: 'update/card/buffs/added',
-			data: message
-		})
-		opponent.sendMessage({
-			type: 'update/card/buffs/added',
-			data: message
-		})
-	},
-
-	notifyAboutCardBuffIntensityChanged(card: ServerCard, buff: ServerBuff) {
-		if (!card.owner) {
+		const owner = card.owner
+		if (!owner) {
+			console.warn(`Trying to update stats for unowned card ${card.class} / ${card.id}`)
 			return
 		}
 
-		const owner = card.owner.player
-		const opponent = card.owner.opponent.player
-		const message = new BuffMessage(buff)
-
-		owner.sendMessage({
-			type: 'update/card/buffs/intensityChanged',
-			data: message
+		owner.player.sendMessage({
+			type: CardUpdateMessageType.STATS,
+			data: new OpenCardStatsMessage(card.stats)
 		})
-		opponent.sendMessage({
-			type: 'update/card/buffs/intensityChanged',
-			data: message
+		owner.opponent.player.sendMessage({
+			type: CardUpdateMessageType.STATS,
+			data: isCardPublic(card) ? new OpenCardStatsMessage(card.stats) : new HiddenCardStatsMessage(card.stats)
 		})
 	},
 
-	notifyAboutCardBuffDurationChanged(card: ServerCard, buff: ServerBuff) {
-		if (!card.owner) {
-			return
-		}
-
-		const owner = card.owner.player
-		const opponent = card.owner.opponent.player
-		const message = new BuffMessage(buff)
-
-		owner.sendMessage({
-			type: 'update/card/buffs/durationChanged',
-			data: message
-		})
-		opponent.sendMessage({
-			type: 'update/card/buffs/durationChanged',
-			data: message
-		})
-	},
-
-	notifyAboutCardBuffRemoved(card: ServerCard, buff: ServerBuff) {
-		if (!card.owner) {
-			return
-		}
-
-		const owner = card.owner.player
-		const opponent = card.owner.opponent.player
-		const message = new BuffMessage(buff)
-
-		owner.sendMessage({
-			type: 'update/card/buffs/removed',
-			data: message
-		})
-		opponent.sendMessage({
-			type: 'update/card/buffs/removed',
-			data: message
-		})
-	},
-
-	notifyAboutUnitCardInDeck(playerInGame: ServerPlayerInGame, card: ServerCard) {
-		playerInGame.player.sendMessage({
-			type: 'update/player/self/deck/unit/cardAdded',
-			data: CardMessage.fromCard(card)
-		})
-		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/deck/unit/cardAdded',
-			data: CardMessage.fromCard(card)
-		})
-	},
-
-	notifyAboutSpellCardInDeck(playerInGame: ServerPlayerInGame, card: ServerCard) {
-		playerInGame.player.sendMessage({
-			type: 'update/player/self/deck/spell/cardAdded',
-			data: CardMessage.fromCard(card)
-		})
-		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/deck/spell/cardAdded',
-			data: CardMessage.fromCard(card)
-		})
-	},
-
-	notifyAboutUnitCardInGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard) {
-		playerInGame.player.sendMessage({
-			type: 'update/player/self/graveyard/unit/cardAdded',
-			data: CardMessage.fromCard(card)
-		})
-		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/graveyard/unit/cardAdded',
-			data: CardMessage.fromCard(card)
-		})
-	},
-
-	notifyAboutSpellCardInGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard) {
-		playerInGame.player.sendMessage({
-			type: 'update/player/self/graveyard/spell/cardAdded',
-			data: CardMessage.fromCard(card)
-		})
-		playerInGame.opponent.player.sendMessage({
-			type: 'update/player/opponent/graveyard/spell/cardAdded',
-			data: CardMessage.fromCard(card)
-		})
-	},
-
-	notifyAboutCardInGraveyardDestroyed(ownedCard: ServerOwnedCard) {
-		const owner = ownedCard.owner.player
-		const opponent = ownedCard.owner.opponent.player
-
-		owner.sendMessage({
-			type: 'update/player/self/graveyard/cardDestroyed',
-			data: CardMessage.fromCard(ownedCard.card)
-		})
-		opponent.sendMessage({
-			type: 'update/player/opponent/graveyard/cardDestroyed',
-			data: CardMessage.fromCard(ownedCard.card)
-		})
-	},
-
-	notifyAboutCardVariablesUpdated(game: ServerGame) {
+	notifyAboutCardVariablesUpdated(game: ServerGame): void {
 		game.players.forEach(playerInGame => {
 			const cardsToNotify = game.board.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card).concat(playerInGame.cardHand.allCards)
 			if (game.cardPlay.cardResolveStack.currentCard) {
 				cardsToNotify.push(game.cardPlay.cardResolveStack.currentCard.card)
 			}
-			const messages = cardsToNotify.map(card => new CardVariablesMessage(card, card.evaluateVariables()))
+			const messages = cardsToNotify.map(card => new CardVariablesMessage(card))
 			playerInGame.player.sendMessage({
-				type: 'update/card/variables',
+				type: CardUpdateMessageType.VARIABLES,
 				data: messages
 			})
 		})
-	}
+	},
+
+	notifyAboutCardBuffAdded(card: ServerCard, buff: ServerBuff): void {
+		if (!card.owner) {
+			return
+		}
+
+		const owner = card.owner.player
+		const opponent = card.owner.opponent.player
+		const message = new OpenBuffMessage(buff)
+
+		owner.sendMessage({
+			type: CardUpdateMessageType.BUFF_ADD,
+			data: message
+		})
+		opponent.sendMessage({
+			type: CardUpdateMessageType.BUFF_ADD,
+			data: message
+		})
+	},
+
+	notifyAboutCardBuffDurationChanged(card: ServerCard, buff: ServerBuff): void {
+		if (!card.owner) {
+			return
+		}
+
+		const owner = card.owner.player
+		const opponent = card.owner.opponent.player
+		const message = new OpenBuffMessage(buff)
+
+		owner.sendMessage({
+			type: CardUpdateMessageType.BUFF_DURATION,
+			data: message
+		})
+		opponent.sendMessage({
+			type: CardUpdateMessageType.BUFF_DURATION,
+			data: message
+		})
+	},
+
+	notifyAboutCardBuffIntensityChanged(card: ServerCard, buff: ServerBuff): void {
+		if (!card.owner) {
+			return
+		}
+
+		const owner = card.owner.player
+		const opponent = card.owner.opponent.player
+		const message = new OpenBuffMessage(buff)
+
+		owner.sendMessage({
+			type: CardUpdateMessageType.BUFF_INTENSITY,
+			data: message
+		})
+		opponent.sendMessage({
+			type: CardUpdateMessageType.BUFF_INTENSITY,
+			data: message
+		})
+	},
+
+	notifyAboutCardBuffRemoved(card: ServerCard, buff: ServerBuff): void {
+		if (!card.owner) {
+			return
+		}
+
+		const owner = card.owner.player
+		const opponent = card.owner.opponent.player
+		const message = new BuffRefMessage(buff)
+
+		owner.sendMessage({
+			type: CardUpdateMessageType.BUFF_REMOVE,
+			data: message
+		})
+		opponent.sendMessage({
+			type: CardUpdateMessageType.BUFF_REMOVE,
+			data: message
+		})
+	},
 }

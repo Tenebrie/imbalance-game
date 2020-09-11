@@ -6,9 +6,7 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import RichText from '@/Pixi/render/RichText'
-import Utils, {getRenderScale} from '@/utils/Utils'
-import CardAttributes from '@/Pixi/render/CardAttributes'
-import CardMessage from '@shared/models/network/CardMessage'
+import Utils, {snakeToCamelCase} from '@/utils/Utils'
 import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import DescriptionTextBackground from '@/Pixi/render/DescriptionTextBackground'
@@ -18,10 +16,41 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import store from '@/Vue/store'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
+import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
+import CardFaction from '@shared/enums/CardFaction'
+import ClientCardStats from '@/Pixi/models/ClientCardStats'
+import CardMessage from '@shared/models/network/card/CardMessage'
+import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import CardLocation from '@shared/enums/CardLocation'
+import PlayerInGame from '@shared/models/PlayerInGame'
+import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
-export default class RenderedCard extends Card {
-	public buffs: ClientBuffContainer
+export default class RenderedCard implements Card {
+	public readonly id: string
+	public readonly type: CardType
+	public readonly class: string
+	public readonly color: CardColor
+	public readonly faction: CardFaction
+
+	public readonly name: string
+	public readonly title: string
+	public readonly flavor: string
+	public readonly description: string
+
+	public readonly stats: ClientCardStats
+	public readonly buffs: ClientBuffContainer
+	public readonly baseTribes: CardTribe[]
+	public readonly baseFeatures: CardFeature[]
+	public readonly relatedCards: string[]
 	public variables: RichTextVariables
+	public readonly sortPriority: number
+	public readonly expansionSet: ExpansionSet
+
+	public readonly isCollectible: boolean
+	public readonly isExperimental: boolean
+
+	public isHidden: boolean
 
 	public coreContainer: PIXI.Container
 	public sprite: PIXI.Sprite
@@ -33,10 +62,9 @@ export default class RenderedCard extends Card {
 	private readonly cardModeContainer: PIXI.Container
 	private readonly cardModeTextContainer: PIXI.Container
 	private readonly unitModeContainer: PIXI.Container
-	private readonly unitModeAttributes: CardAttributes
 
-	private readonly powerTextBackground: PIXI.Sprite
-	private readonly armorTextBackground: PIXI.Sprite
+	public readonly powerTextBackground: PIXI.Sprite
+	public readonly armorTextBackground: PIXI.Sprite
 	private readonly armorTextZoomBackground: PIXI.Sprite
 	private readonly manacostTextBackground: PIXI.Sprite
 	private readonly descriptionTextBackground: DescriptionTextBackground
@@ -50,10 +78,7 @@ export default class RenderedCard extends Card {
 	private readonly cardTribeTexts: ScalingText[]
 	private readonly cardDescriptionText: RichText
 
-	public hiddenMode = false
-
 	public constructor(message: CardMessage) {
-		super(message.id, message.type, message.class)
 		this.id = message.id
 		this.type = message.type
 		this.class = message.class
@@ -61,33 +86,34 @@ export default class RenderedCard extends Card {
 
 		this.name = message.name
 		this.title = message.title
+		this.flavor = message.flavor
+		this.description = message.description
+
+		this.stats = new ClientCardStats(this, message.stats)
 		this.buffs = new ClientBuffContainer(this, message.buffs)
 		this.baseTribes = (message.baseTribes || []).slice()
 		this.baseFeatures = (message.baseFeatures || []).slice()
-		this.description = message.description
+		this.relatedCards = (message.relatedCards || []).slice()
+		this.expansionSet = message.expansionSet
 		this.variables = message.variables
 		this.sortPriority = message.sortPriority
 
-		this.power = message.power
-		this.attack = message.attack
-		this.attackRange = message.attackRange
-		this.armor = message.armor
+		this.isCollectible = message.isCollectible
+		this.isExperimental = message.isExperimental
 
-		this.basePower = message.basePower
-		this.baseAttack = message.baseAttack
-		this.baseAttackRange = message.baseAttackRange
-		this.baseArmor = message.baseArmor
+		this.isHidden = message.isHidden
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.class}`))
-		this.powerText = this.createBrushScriptText(this.power.toString())
-		this.armorText = this.createBrushScriptText(this.armor.toString())
+		const powerTextValue = this.type === CardType.UNIT ? this.stats.power : this.stats.spellCost
+		this.powerText = this.createBrushScriptText(powerTextValue.toString())
+		this.armorText = this.createBrushScriptText(this.stats.armor.toString())
 		this.cardNameText = new RichText(Localization.get(this.name), 200, {})
 		this.cardNameText.style.fill = 0x000000
 		this.cardNameText.verticalAlign = RichTextAlign.CENTER
 		this.cardNameText.horizontalAlign = RichTextAlign.END
-		this.cardTitleText = this.createTitleText(Localization.get(this.title))
+		this.cardTitleText = this.createTitleText(Localization.getValueOrNull(this.title) || '')
 		this.cardTribeTexts = this.tribes.map(tribe => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
-		this.cardDescriptionText = new RichText(Localization.get(this.description), 350, this.getDescriptionTextVariables())
+		this.cardDescriptionText = new RichText(this.displayedDescription, 350, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.alpha = 0
@@ -117,11 +143,6 @@ export default class RenderedCard extends Card {
 			this.sprite.addChild(overlaySprite)
 		}
 
-		/* Card attributes */
-		this.unitModeAttributes = new CardAttributes(this, CardDisplayMode.ON_BOARD)
-		this.unitModeAttributes.position.set(this.sprite.texture.width, this.sprite.texture.height)
-		this.unitModeAttributes.pivot.set(this.sprite.texture.width, this.sprite.texture.height)
-
 		/* Card mode container */
 		this.cardModeContainer = new PIXI.Container()
 		if (Localization.get(this.name)) {
@@ -148,7 +169,6 @@ export default class RenderedCard extends Card {
 
 		/* Unit mode container */
 		this.unitModeContainer = new PIXI.Container()
-		this.unitModeContainer.addChild(this.unitModeAttributes)
 		this.unitModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power-zoom')))
 		this.armorTextZoomBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-armor-zoom'))
 		this.unitModeContainer.addChild(this.armorTextZoomBackground)
@@ -180,43 +200,11 @@ export default class RenderedCard extends Card {
 		this.coreContainer.addChild(this.cardDisabledOverlay)
 	}
 
-	public get unitCost(): number {
-		let cost = 1
-		this.buffs.buffs.forEach(buff => {
-			cost = buff.getUnitCostOverride(cost)
-		})
-		return cost
-	}
-
-	public get spellCost(): number {
-		let cost = this.power
-		this.buffs.buffs.forEach(buff => {
-			cost = buff.getSpellCostOverride(cost)
-		})
-		return cost
-	}
-
-	public get maxPower(): number {
-		let cost = this.basePower
-		this.buffs.buffs.forEach(buff => {
-			cost = buff.getUnitMaxPowerOverride(cost)
-		})
-		return cost
-	}
-
 	public getDescriptionTextVariables(): RichTextVariables {
 		return {
 			...this.variables,
 			name: Localization.get(this.name),
-			attack: this.attack.toString(),
-			attackRange: this.attackRange.toString(),
-			armor: this.armor.toString()
 		}
-	}
-
-	public setCardVariables(cardVariables: RichTextVariables): void {
-		this.variables = cardVariables
-		this.cardDescriptionText.textVariables = this.getDescriptionTextVariables()
 	}
 
 	public getPosition(): PIXI.Point {
@@ -239,20 +227,30 @@ export default class RenderedCard extends Card {
 		return features
 	}
 
+	public get displayedDescription(): string {
+		let description = Localization.get(this.description)
+		const featureStrings = this.features
+			.map(feature => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
+			.map(feature => Localization.getValueOrNull(feature))
+			.filter(string => string !== null)
+
+		for (const index in featureStrings) {
+			description = `${featureStrings[index]}<p>${description}`
+		}
+		return description
+	}
+
+	public updateCardDescription(): void {
+		this.cardDescriptionText.text = this.displayedDescription
+	}
+
+	public setCardVariables(cardVariables: RichTextVariables): void {
+		this.variables = cardVariables
+		this.cardDescriptionText.textVariables = this.getDescriptionTextVariables()
+	}
+
 	public isHovered(): boolean {
 		return this.hitboxSprite.containsPoint(Core.input.mousePosition)
-	}
-
-	public setPower(value: number): void {
-		this.power = Math.max(0, value)
-		this.resetDisplayMode()
-	}
-
-	public setArmor(value: number): void {
-		this.armor = Math.max(0, value)
-		this.armorText.visible = this.armor > 0
-		this.armorTextBackground.visible = this.armor > 0
-		this.armorTextZoomBackground.visible = this.armor > 0
 	}
 
 	public createHitboxSprite(sprite: PIXI.Sprite): PIXI.Sprite {
@@ -304,7 +302,7 @@ export default class RenderedCard extends Card {
 		} else if (this.isUnitMode()) {
 			this.switchToUnitMode()
 			texts = [this.powerText, this.armorText]
-		} else if (this.isHiddenMode()) {
+		} else if (this.isHidden) {
 			this.switchToHiddenMode()
 		}
 
@@ -341,6 +339,13 @@ export default class RenderedCard extends Card {
 			cardTribeText.position.y -= this.sprite.height / 2
 		})
 		this.cardDescriptionText.position.y += this.sprite.height / 2
+
+		if (this.type === CardType.UNIT) {
+			this.updatePowerTextColors()
+			this.updateArmorTextColors()
+		} else {
+			this.updateSpellCostTextColors()
+		}
 	}
 
 	public switchToCardMode(): void {
@@ -352,20 +357,24 @@ export default class RenderedCard extends Card {
 		this.armorTextBackground.visible = true
 		this.manacostTextBackground.visible = this.type === CardType.SPELL
 
-		const power = this.displayMode === CardDisplayMode.INSPECTED ? this.basePower : this.power
-		const armor = this.displayMode === CardDisplayMode.INSPECTED ? this.baseArmor : this.armor
-
+		const powerTextValue = this.type === CardType.UNIT ? this.stats.power : this.stats.spellCost
 		this.powerText.position.set(60, 45)
-		if (power < 10) {
+		if (powerTextValue < 10) {
 			this.powerText.style.fontSize = 85
 		} else {
 			this.powerText.style.fontSize = 71
 		}
 
+		if (this.type === CardType.SPELL) {
+			this.powerText.style.fill = 0x0000AA
+		} else {
+			this.powerText.style.fill = 0x000000
+		}
+
 		this.armorText.position.set(132, 33)
 		this.armorText.style.fontSize = 24
 		this.armorText.style.fill = 0xFFFFFF
-		if (armor > 0) {
+		if (this.stats.armor > 0) {
 			this.armorText.visible = true
 			this.armorTextBackground.visible = true
 		} else {
@@ -401,25 +410,20 @@ export default class RenderedCard extends Card {
 
 		const description = Localization.get(this.description)
 		let fontSize = 26
-		if (description.length > 150) { fontSize = 22 }
-		if (description.length > 300) { fontSize = 20 }
+		if (description.length > 150) { fontSize = 24 }
+		if (description.length > 300) { fontSize = 22 }
 
 		this.cardDescriptionText.style.baseFontSize = fontSize
 		this.cardDescriptionText.setFont(fontSize, 25)
-
-		if (this.color === CardColor.LEADER) {
-			this.powerText.text = '-'
-		}
 	}
 
 	public switchToUnitMode(): void {
 		this.unitModeContainer.visible = true
 		this.cardModeContainer.visible = false
 		this.cardModeTextContainer.visible = false
-		this.unitModeAttributes.visible = false
 
 		this.powerText.position.set(97, 80)
-		if (this.power < 10) {
+		if (this.stats.power < 10) {
 			this.powerText.style.fontSize = 160
 		} else {
 			this.powerText.style.fontSize = 135
@@ -428,7 +432,7 @@ export default class RenderedCard extends Card {
 		this.armorText.position.set(247, 63)
 		this.armorText.style.fontSize = 52
 		this.armorText.style.fill = 0xFFFFFF
-		if (this.armor > 0) {
+		if (this.stats.armor > 0) {
 			this.armorText.visible = true
 			this.armorTextZoomBackground.visible = true
 		} else {
@@ -444,31 +448,110 @@ export default class RenderedCard extends Card {
 		this.cardModeTextContainer.visible = false
 		this.powerTextBackground.visible = false
 		this.powerText.visible = false
+		this.armorText.visible = false
+	}
+
+	public updatePowerTextColors(): void {
+		if (this.type !== CardType.UNIT) {
+			return
+		}
+
+		this.powerText.text = this.stats.power.toString()
+		if (this.stats.power < this.stats.basePower) {
+			this.powerText.style.fill = 0x770000
+		} else if (this.stats.power > this.stats.basePower) {
+			this.powerText.style.fill = 0x007700
+		} else {
+			this.powerText.style.fill = 0x000000
+		}
+	}
+
+	public updateArmorTextColors(): void {
+		this.armorText.text = this.stats.card.stats.armor.toString()
+		this.armorText.visible = this.stats.armor > 0
+		this.armorTextBackground.visible = this.stats.armor > 0
+		this.armorTextZoomBackground.visible = this.stats.armor > 0
+
+		if (this.stats.armor === 0) {
+			this.armorText.style.fill = 0xFF7777
+		} else if (this.stats.armor < this.stats.baseArmor) {
+			this.armorText.style.fill = 0xFF7777
+		} else if (this.stats.armor > this.stats.baseArmor) {
+			this.armorText.style.fill = 0x77FF77
+		} else {
+			this.armorText.style.fill = 0xFFFFFF
+		}
+	}
+
+	public updateSpellCostTextColors(): void {
+		if (this.type !== CardType.SPELL) {
+			return
+		}
+
+		this.powerText.text = this.stats.spellCost.toString()
+		if (this.stats.spellCost < this.stats.baseSpellCost) {
+			this.powerText.style.fill = 0x0077AA
+		} else if (this.stats.spellCost > this.stats.baseSpellCost) {
+			this.powerText.style.fill = 0x7700AA
+		} else {
+			this.powerText.style.fill = 0x0000AA
+		}
 	}
 
 	public isCardMode(): boolean {
-		return !this.isUnitMode() && !this.isHiddenMode()
-		// return [CardDisplayMode.IN_HAND,
-		// 	CardDisplayMode.IN_HAND_HOVERED,
-		// 	CardDisplayMode.INSPECTED,
-		// 	CardDisplayMode.ANNOUNCED,
-		// 	CardDisplayMode.RESOLVING,
-		// 	CardDisplayMode.SELECTION,
-		// 	CardDisplayMode.SELECTION_HOVERED,
-		// 	CardDisplayMode.IN_EDITOR
-		// ].includes(this.displayMode)
+		return !this.isUnitMode() && !this.isHidden
 	}
 
 	public isUnitMode(): boolean {
-		return !this.isHiddenMode() && [CardDisplayMode.ON_BOARD].includes(this.displayMode)
+		return !this.isHidden && [CardDisplayMode.ON_BOARD].includes(this.displayMode)
 	}
 
-	public isHiddenMode(): boolean {
-		return this.hiddenMode
+	public get owner(): ClientPlayerInGame | null {
+		const thisCardInGame = Core.game.findOwnedCardById(this.id)
+		return thisCardInGame ? thisCardInGame.owner : null
+	}
+
+	public get location(): CardLocation {
+		const owner = this.owner
+		if (!owner) {
+			return CardLocation.UNKNOWN
+		}
+
+		if (owner.leader === this) {
+			return CardLocation.LEADER
+		}
+		const cardInDeck = owner.cardDeck.findCardById(this.id)
+		if (cardInDeck) {
+			return CardLocation.DECK
+		}
+		const cardInHand = owner.cardHand.findCardById(this.id)
+		if (cardInHand) {
+			return CardLocation.HAND
+		}
+		const cardInStack = Core.resolveStack.findCardById(this.id)
+		if (cardInStack) {
+			return CardLocation.STACK
+		}
+		const cardOnBoard = Core.board.findUnitById(this.id)
+		if (cardOnBoard) {
+			return CardLocation.BOARD
+		}
+		const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
+		if (cardInGraveyard) {
+			return CardLocation.GRAVEYARD
+		}
+		return CardLocation.UNKNOWN
 	}
 
 	public unregister(): void {
 		Core.unregisterCard(this)
+	}
+
+	public clone(): RenderedCard {
+		const message = new OpenCardMessage(this)
+		const card = new RenderedCard(message)
+		Core.registerCard(card)
+		return card
 	}
 
 	public static fromMessage(message: CardMessage): RenderedCard {

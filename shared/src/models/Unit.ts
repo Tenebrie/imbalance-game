@@ -1,12 +1,9 @@
 import Card from './Card'
 import PlayerInGame from './PlayerInGame'
 
-export default class Unit {
+export default interface Unit {
 	card: Card
 	owner: PlayerInGame
-
-	constructor(card: Card, owner: PlayerInGame) {
-		this.card = card
-		this.owner = owner
-	}
+	rowIndex: number
+	unitIndex: number
 }

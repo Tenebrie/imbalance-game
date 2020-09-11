@@ -13,16 +13,15 @@
 
 			<h2>Deck building</h2>
 			<p>
-				Every deck contains a total of 25 cards, plus 1 Leader card. Choosing a leader card also locks the
-				factions this deck belongs to (currently, only Arcane leaders are available). The cards that the
-				player puts into their deck are all <i>Units</i>.
+				Every deck contains a total of {{ cardLimitTotal - 1 }} cards, plus a Leader card. Choosing a leader card also locks the
+				factions this deck belongs to. The cards that the player puts into their deck are all <i>Units</i>.
 			</p>
 			<p>The deck must include exactly the following number of cards:</p>
 			<ul>
 				<li>1 Leader card</li>
-				<li>4 Legendary cards</li>
-				<li>6 Epic cards</li>
-				<li>15 Common cards</li>
+				<li>{{ goldenCardsLimit }} Legendary cards</li>
+				<li>{{ silverCardsLimit }} Epic cards</li>
+				<li>{{ bronzeCardsLimit }} Common cards</li>
 			</ul>
 			<p>
 				Only one copy of a Legendary or an Epic card may be included. Commons, however, may have up to 3 copies.
@@ -91,9 +90,19 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Constants from '@shared/Constants'
+import {defineComponent} from '@vue/composition-api'
 
-export default Vue.extend({})
+export default defineComponent({
+	setup() {
+		return {
+			cardLimitTotal: Constants.CARD_LIMIT_TOTAL,
+			goldenCardsLimit: Constants.CARD_LIMIT_GOLDEN,
+			silverCardsLimit: Constants.CARD_LIMIT_SILVER,
+			bronzeCardsLimit: Constants.CARD_LIMIT_BRONZE,
+		}
+	}
+})
 </script>
 
 <style scoped lang="scss">

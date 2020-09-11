@@ -23,7 +23,6 @@ export default class ForcedTargetingMode {
 
 		this.selectedTarget = this.validTargets.find(target => {
 			return (target.targetCard && hoveredCard && target.targetCard.id === hoveredCard.id) ||
-				(target.targetUnit && target.targetUnit === hoveredUnit) ||
 				(target.targetRow && target.targetRow === hoveredRow)
 		})
 	}
@@ -38,12 +37,11 @@ export default class ForcedTargetingMode {
 		const hoveredUnit = MouseHover.getHoveredUnit()
 		const hoveredRow = MouseHover.getHoveredRow()
 		return (target.targetCard && hoveredCard && target.targetCard.id === hoveredCard.id) ||
-			(target.targetUnit && hoveredUnit && target.targetUnit === hoveredUnit) ||
 			(target.targetRow && target.targetRow === hoveredRow)
 	}
 
 	public isUnitPotentialTarget(unit: RenderedUnit): boolean {
-		return !!this.validTargets.find(target => target.targetUnit && target.targetUnit === unit)
+		return !!this.validTargets.find(target => target.targetCard === unit.card)
 	}
 
 	public isRowPotentialTarget(row: RenderedGameBoardRow): boolean {
@@ -56,7 +54,7 @@ export default class ForcedTargetingMode {
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		const hoveredTarget = this.validTargets.find(target => {
-			return (target.targetCard && target.targetCard === hoveredCard) || (target.targetUnit && target.targetUnit === hoveredUnit) || (target.targetRow && target.targetRow === hoveredRow)
+			return (target.targetCard && target.targetCard === hoveredCard) || (target.targetCard === hoveredCard) || (target.targetRow && target.targetRow === hoveredRow)
 		})
 		return hoveredTarget ? hoveredTarget.targetLabel : ''
 	}
@@ -67,7 +65,7 @@ export default class ForcedTargetingMode {
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		const hoveredTarget = this.validTargets.find(target => {
-			return (target.targetCard && target.targetCard === hoveredCard) || (target.targetUnit && target.targetUnit === hoveredUnit) || (target.targetRow && target.targetRow === hoveredRow)
+			return (target.targetCard && target.targetCard === hoveredCard) || (target.targetCard === hoveredCard) || (target.targetRow && target.targetRow === hoveredRow)
 		})
 		return hoveredTarget && hoveredTarget.sourceCard instanceof RenderedCard ? hoveredTarget.sourceCard.variables : {}
 	}

@@ -1,12 +1,7 @@
-import Buff from './Buff'
 import Card from './Card'
+import Buff from './Buff'
 
-export default class BuffContainer {
+export default interface BuffContainer {
 	card: Card
 	buffs: Buff[]
-
-	constructor(card: Card) {
-		this.card = card
-		this.buffs = []
-	}
 }

@@ -1,15 +1,22 @@
 <template>
-	<div class="editor-deck-card-list-item" :class="colorClass" @click="onClick">
-		<span class="power" v-if="showPower">{{ card.basePower }}</span>
+	<div class="editor-deck-card-list-item"
+		 :class="colorClass"
+		 @click="onClick"
+		 @contextmenu="onRightClick"
+		 @mouseenter="onMouseEnter"
+		 @mouseleave="onMouseLeave">
+		<span class="power" v-if="showPower">{{ card.stats.basePower }}</span>
 		<span class="name">{{ fullName }}<span class="count" v-if="displayCount">x{{ card.count }}</span></span>
 	</div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
+import Utils from '@/utils/Utils'
 
 export default Vue.extend({
 	props: {
@@ -22,7 +29,7 @@ export default Vue.extend({
 	computed: {
 		fullName(): string {
 			let name = Localization.get(this.card.name)
-			const title = Localization.get(this.card.title)
+			const title = Localization.getValueOrNull(this.card.title)
 			if (title) {
 				name = `${name}, ${title}`
 			}
@@ -34,7 +41,7 @@ export default Vue.extend({
 		},
 
 		displayCount(): boolean {
-			return this.card.color === CardColor.BRONZE
+			return Utils.getMaxCardCopiesForColor(this.card.color) > 1
 		},
 
 		colorClass(): any {
@@ -49,11 +56,39 @@ export default Vue.extend({
 
 	methods: {
 		onClick(): void {
-			const deckId = this.$route.params.id
+			const deckId = this.$route.params.deckId
 			store.dispatch.editor.removeCardFromDeck({
 				deckId: deckId,
 				cardToRemove: this.card
 			})
+			if (!store.getters.editor.deck(deckId).cards.find(card => card.id === this.card.id)) {
+				store.commit.editor.hoveredDeckCard.setCard(null)
+			}
+		},
+
+		onRightClick(): void {
+			store.dispatch.inspectedCard.clear()
+			store.dispatch.inspectedCard.setCard({
+				card: this.card,
+			})
+		},
+
+		onMouseEnter(): void {
+			const element = this.$el
+			const boundingBox = element.getBoundingClientRect()
+			store.dispatch.editor.hoveredDeckCard.setCard({
+				card: this.card,
+				position: new PIXI.Point(boundingBox.left, boundingBox.top),
+				scrollCallback: () => this.onParentScroll()
+			})
+		},
+
+		onParentScroll(): void {
+			this.onMouseLeave()
+		},
+
+		onMouseLeave(): void {
+			store.commit.editor.hoveredDeckCard.setCard(null)
 		}
 	}
 })

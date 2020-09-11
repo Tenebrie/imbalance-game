@@ -1,8 +1,9 @@
 import * as PIXI from 'pixi.js'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import CardMessage from '@shared/models/network/CardMessage'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
 import store from '@/Vue/store'
+import {CARD_HEIGHT, CARD_WIDTH} from '@/Pixi/renderer/RendererUtils'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 class EditorCardRenderer {
 	pixi: PIXI.Renderer
@@ -10,10 +11,12 @@ class EditorCardRenderer {
 	mainTimer: number | null = null
 
 	public constructor() {
-		this.pixi = PIXI.autoDetectRenderer()
+		this.pixi = new PIXI.Renderer({
+			resolution: window.devicePixelRatio,
+		})
 		this.renderTexture = PIXI.RenderTexture.create({
-			width: 408,
-			height: 584,
+			width: CARD_WIDTH,
+			height: CARD_HEIGHT,
 		})
 		this.preloadFonts()
 	}
@@ -31,35 +34,32 @@ class EditorCardRenderer {
 		}
 
 		this.mainTimer = window.setInterval(() => {
-			const nextCard = store.state.editor.renderQueue[0]
+			const nextCardClass = store.state.editor.renderQueue[0]
+
+			store.commit.editor.shiftRenderQueue()
+			const nextCard = store.state.editor.cardLibrary.find(card => card.class === nextCardClass)
 			if (!nextCard) {
 				return
 			}
 
-			store.commit.editor.shiftRenderQueue()
 			store.commit.editor.addRenderedCard({
-				id: nextCard.id,
+				class: nextCard.class,
 				render: this.doRender(nextCard)
 			})
 		}, 0)
 	}
 
-	public stopRenderingService(): void {
-		window.clearInterval(this.mainTimer)
-		this.mainTimer = null
-	}
-
-	private doRender(card: CardMessage): HTMLImageElement {
+	private doRender(card: CardMessage): HTMLCanvasElement {
 		const renderedCard = new RenderedCard(card)
 		renderedCard.setDisplayMode(CardDisplayMode.IN_EDITOR)
 
-		renderedCard.coreContainer.position.set(408 / 2, 584 / 2)
+		renderedCard.coreContainer.position.set(CARD_WIDTH / 2, CARD_HEIGHT / 2)
 
 		renderedCard.sprite.alpha = 1
 		renderedCard.coreContainer.visible = true
 		this.pixi.render(renderedCard.coreContainer, this.renderTexture)
 
-		return this.pixi.extract.image(this.renderTexture)
+		return this.pixi.extract.canvas(this.renderTexture)
 	}
 }
 

@@ -1,14 +1,11 @@
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
 import ServerCardTarget from './ServerCardTarget'
-import TargetMode from '@shared/enums/TargetMode'
-import TargetType from '@shared/enums/TargetType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
 import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardResolveStack from './ServerCardResolveStack'
-import Utils from '../../utils/Utils'
 import GameEventCreators from './GameEventCreators'
 
 export default class ServerGameCardPlay {
@@ -23,9 +20,9 @@ export default class ServerGameCardPlay {
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
 		/* Deduct mana */
 		if (ownedCard.card.type === CardType.UNIT) {
-			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.unitCost))
+			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.stats.unitCost))
 		} else if (ownedCard.card.type === CardType.SPELL) {
-			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.spellCost))
+			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.stats.spellCost))
 		}
 
 		/* Resolve card */
@@ -54,7 +51,6 @@ export default class ServerGameCardPlay {
 		}))
 
 		/* Announce card to opponent */
-		card.reveal(owner, owner.opponent)
 		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardAnnounce(card))
 
 		/* Remove card from source */
@@ -84,11 +80,12 @@ export default class ServerGameCardPlay {
 
 		/* Insert the card into the board */
 		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
-
-		/* Invoke the card Deploy effect */
-		this.game.events.postEvent(GameEventCreators.unitDeployed({
-			triggeringUnit: unit
-		}))
+		if (unit !== null) {
+			/* Invoke the card Deploy effect */
+			this.game.events.postEvent(GameEventCreators.unitDeployed({
+				triggeringUnit: unit
+			}))
+		}
 
 		/* Another card has been played and requires targeting. Continue execution later */
 		if (this.cardResolveStack.currentCard !== ownedCard) {
@@ -135,22 +132,7 @@ export default class ServerGameCardPlay {
 		const currentCard = this.cardResolveStack.currentCard
 		const card = currentCard.card
 
-		const targetDefinition = card.getPostPlayRequiredTargetDefinition()
-		if (targetDefinition.getTargetCount() === 0) {
-			return []
-		}
-
-		const unit = this.game.board.findUnitById(card.id)
-		const args = {
-			thisUnit: unit,
-			thisCardOwner: currentCard.owner
-		}
-
-		let validTargets = []
-		Utils.forEachInNumericEnum(TargetType, (targetType: TargetType) => {
-			validTargets = validTargets.concat(card.getValidTargets(TargetMode.POST_PLAY_REQUIRED_TARGET, targetType, targetDefinition, args, this.cardResolveStack.currentTargets))
-		})
-		return validTargets
+		return card.targeting.getDeployEffectTargets(this.cardResolveStack.currentTargets)
 	}
 
 	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
@@ -172,7 +154,7 @@ export default class ServerGameCardPlay {
 		this.game.events.postEvent(GameEventCreators.cardTargetSelected({
 			triggeringCard: currentResolvingCard.card,
 			targetCard: target.targetCard,
-			targetUnit: target.targetUnit,
+			targetUnit: target.targetCard?.unit,
 			targetRow: target.targetRow
 		}))
 

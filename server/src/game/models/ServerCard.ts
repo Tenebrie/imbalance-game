@@ -2,91 +2,172 @@ import uuidv4 from 'uuid/v4'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import ServerGame from './ServerGame'
-import runCardEventHandler from '../utils/runCardEventHandler'
 import ServerUnit from './ServerUnit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerDamageInstance from './ServerDamageSource'
-import ServerBoardRow from './ServerBoardRow'
-import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
-import TargetType from '@shared/enums/TargetType'
-import TargetValidatorArguments from '../../types/TargetValidatorArguments'
-import TargetDefinition from './targetDefinitions/TargetDefinition'
-import TargetDefinitionBuilder from './targetDefinitions/TargetDefinitionBuilder'
 import CardColor from '@shared/enums/CardColor'
 import ServerBuffContainer from './ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import RichTextVariables from '@shared/models/RichTextVariables'
-import BuffImmunity from '../buffs/BuffImmunity'
-import GameLibrary from '../libraries/CardLibrary'
+import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
-import GameHookType, {
-	CardDestroyedHookArgs,
-	CardDestroyedHookValues,
-	CardTakesDamageHookArgs,
-	CardTakesDamageHookValues
-} from './GameHookType'
+import GameHookType, {CardDestroyedHookArgs, CardDestroyedHookValues, CardTakesDamageHookArgs, CardTakesDamageHookValues} from './GameHookType'
 import {EventCallback, EventHook} from './ServerGameEvents'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
+import BotCardEvaluation from '../AI/BotCardEvaluation'
+import Utils, {getClassFromConstructor} from '../../utils/Utils'
+import ServerAnimation from './ServerAnimation'
+import RelatedCardsDefinition from './RelatedCardsDefinition'
+import ServerCardStats from './ServerCardStats'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import SimpleTargetDefinitionBuilder from './targetDefinitions/SimpleTargetDefinitionBuilder'
+import {ServerCardTargeting} from './ServerCardTargeting'
+import TargetType from '@shared/enums/TargetType'
 
-export default class ServerCard extends Card {
-	game: ServerGame
-	isRevealed = false
-	buffs = new ServerBuffContainer(this)
-	dynamicTextVariables: ServerRichTextVariables
-	generatedArtworkMagicString = ''
+interface ServerCardBaseProps {
+	faction: CardFaction
+	tribes?: CardTribe | CardTribe[]
+	features?: CardFeature | CardFeature[]
+	relatedCards?: CardConstructor | CardConstructor[]
+	sortPriority?: number
+	expansionSet: ExpansionSet
+	isExperimental?: boolean
+	generatedArtworkMagicString?: string
+	deckAddedCards?: CardConstructor[]
+}
 
-	isBeingDestroyed = false
+interface ServerCardLeaderProps extends ServerCardBaseProps {
+	color: CardColor.LEADER
+	isCollectible?: boolean
+}
 
-	constructor(game: ServerGame, cardType: CardType, unitSubtype: CardColor, faction: CardFaction) {
-		super(uuidv4(), cardType, 'missingno')
+interface ServerCardUnitProps extends ServerCardBaseProps{
+	type: CardType.UNIT
+	color: CardColor.GOLDEN | CardColor.SILVER | CardColor.BRONZE | CardColor.TOKEN
+	stats: {
+		power: number
+		armor?: number
+	}
+	isCollectible?: boolean
+}
+
+interface ServerCardSpellProps extends ServerCardBaseProps {
+	type: CardType.SPELL
+	color: CardColor.GOLDEN | CardColor.SILVER | CardColor.BRONZE | CardColor.TOKEN
+	stats: {
+		cost: number
+	}
+}
+
+export type ServerCardProps = ServerCardLeaderProps | ServerCardUnitProps | ServerCardSpellProps
+
+export default class ServerCard implements Card {
+	public readonly id: string = uuidv4()
+	public readonly game: ServerGame
+	public readonly targeting: ServerCardTargeting
+
+	public readonly type: CardType
+	public readonly class: string
+	public readonly color: CardColor
+	public readonly faction: CardFaction
+
+	public readonly name: string
+	public readonly title: string
+	public readonly flavor: string
+	public readonly description: string
+
+	public readonly stats: ServerCardStats
+	public readonly buffs: ServerBuffContainer = new ServerBuffContainer(this)
+	public readonly baseTribes: CardTribe[]
+	public readonly baseFeatures: CardFeature[]
+	public readonly sortPriority: number
+	public readonly expansionSet: ExpansionSet
+
+	public readonly isCollectible: boolean
+	public readonly isExperimental: boolean
+
+	public dynamicTextVariables: ServerRichTextVariables = {}
+	public botEvaluation: BotCardEvaluation = new BotCardEvaluation(this)
+	public readonly generatedArtworkMagicString: string
+
+	public readonly baseRelatedCards: CardConstructor[] = []
+	public readonly customRelatedCards: RelatedCardsDefinition[] = []
+
+	public isRevealed = false
+	public isDead = false
+
+	public readonly deckAddedCards: CardConstructor[] = []
+
+	constructor(game: ServerGame, props: ServerCardProps) {
 		this.game = game
-		this.color = unitSubtype
-		this.faction = faction
-		this.dynamicTextVariables = {}
+		this.targeting = new ServerCardTargeting(this)
+		this.class = getClassFromConstructor(this.constructor as CardConstructor)
+
+		this.type = props.color === CardColor.LEADER ? CardType.UNIT : props.type
+		this.color = props.color
+		this.faction = props.faction
+
+		this.stats = new ServerCardStats(this, {
+			basePower: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
+			baseArmor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
+			baseSpellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0
+		})
+
+		this.name = `card.${this.class}.name`
+		this.title = `card.${this.class}.title`
+		this.flavor = `card.${this.class}.flavor`
+		this.description = `card.${this.class}.description`
+
+		if (props.tribes === undefined) {
+			this.baseTribes = []
+		} else if (typeof(props.tribes) === 'object') {
+			this.baseTribes = props.tribes
+		} else {
+			this.baseTribes = [props.tribes]
+		}
+
+		if (props.features === undefined) {
+			this.baseFeatures = []
+		} else if (typeof(props.features) === 'object') {
+			this.baseFeatures = props.features
+		} else {
+			this.baseFeatures = [props.features]
+		}
+
+		if (props.relatedCards === undefined) {
+			this.baseRelatedCards = []
+		} else if (typeof(props.relatedCards) === 'object') {
+			this.baseRelatedCards = props.relatedCards
+		} else {
+			this.baseRelatedCards = [props.relatedCards]
+		}
+		this.sortPriority = props.sortPriority ? props.sortPriority : 0
+		this.expansionSet = props.expansionSet
+
+		this.isCollectible = props.color !== CardColor.LEADER && props.type === CardType.UNIT && props.isCollectible !== undefined ? props.isCollectible : false
+		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
+
+		this.generatedArtworkMagicString = props.generatedArtworkMagicString ? props.generatedArtworkMagicString : ''
+
+		this.deckAddedCards = props.deckAddedCards || []
+
+		if (!this.game) {
+			return
+		}
 
 		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]
 		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, validLocations)
+			.forceIgnoreControlEffects()
 			.require(({ triggeringCard }) => triggeringCard === this)
-			.require(({ triggeringCard }) => triggeringCard.power <= 0)
+			.require(({ triggeringCard }) => triggeringCard.stats.power <= 0)
+			.require(({ triggeringCard, powerDamageInstance }) => (powerDamageInstance && powerDamageInstance.value > 0) || triggeringCard.stats.armor === 0)
 			.perform(() => this.destroy())
-	}
-
-	public get unitCost(): number {
-		let cost = 1
-		this.buffs.buffs.forEach(buff => {
-			cost = buff.getUnitCostOverride(cost)
-		})
-		return cost
-	}
-
-	public get spellCost(): number {
-		let cost = this.power
-		this.buffs.buffs.forEach(buff => {
-			cost = buff.getSpellCostOverride(cost)
-		})
-		return cost
-	}
-
-	public get maxPower(): number {
-		let power = this.basePower
-		this.buffs.buffs.forEach(buff => {
-			power = buff.getUnitMaxPowerOverride(power)
-		})
-		return power
-	}
-
-	public get maxArmor(): number {
-		let armor = this.baseArmor
-		this.buffs.buffs.forEach(buff => {
-			armor = buff.getUnitMaxArmorOverride(armor)
-		})
-		return armor
 	}
 
 	public get tribes(): CardTribe[] {
@@ -103,6 +184,19 @@ export default class ServerCard extends Card {
 			features = features.concat(buff.cardFeatures.slice())
 		})
 		return features
+	}
+
+	public get variables(): RichTextVariables {
+		const evaluatedVariables: RichTextVariables = {}
+		Object.keys(this.dynamicTextVariables).forEach(key => {
+			const value = this.dynamicTextVariables[key]
+			if (typeof(value) === 'function') {
+				evaluatedVariables[key] = value()
+			} else {
+				evaluatedVariables[key] = value
+			}
+		})
+		return evaluatedVariables
 	}
 
 	public get unit(): ServerUnit | null {
@@ -146,6 +240,18 @@ export default class ServerCard extends Card {
 		return CardLocation.UNKNOWN
 	}
 
+	public get relatedCards(): string[] {
+		const customRelatedCards = Utils.sortCards(
+			this.customRelatedCards.map(relatedCardsDefinition =>
+				CardLibrary.cards.filter(card => relatedCardsDefinition.conditions.every(condition => condition(card)))
+			).flat())
+			.map(obj => obj.class)
+
+		return this.baseRelatedCards.map(obj => getClassFromConstructor(obj))
+			.concat(this.deckAddedCards.map(obj => getClassFromConstructor(obj)))
+			.concat(customRelatedCards)
+	}
+
 	public get deckPosition(): number {
 		const owner = this.owner
 		if (!owner) {
@@ -154,31 +260,9 @@ export default class ServerCard extends Card {
 		return owner.cardDeck.getCardIndex(this)
 	}
 
-	public isCollectible(): boolean {
-		return this.faction !== CardFaction.EXPERIMENTAL && this.color !== CardColor.TOKEN && this.type === CardType.UNIT
-	}
-
-	public instanceOf(prototype: Function): boolean {
+	public instanceOf(prototype: CardConstructor): boolean {
 		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 		return this.class === cardClass
-	}
-
-	public setPower(value: number): void {
-		if (this.power === value) { return }
-
-		this.power = value
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardPowerChange(playerInGame.player, this)
-		})
-	}
-
-	public setArmor(value: number): void {
-		if (this.armor === value) { return }
-
-		this.armor = value
-		this.game.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutCardArmorChange(playerInGame.player, this)
-		})
 	}
 
 	public dealDamage(originalDamageInstance: ServerDamageInstance): void {
@@ -193,27 +277,39 @@ export default class ServerCard extends Card {
 			return
 		}
 
+		if (damageInstance.sourceCard) {
+			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.sourceCard, [this]))
+			if (targetCard !== this) {
+				this.game.animation.play(ServerAnimation.cardAttacksCards(this, [targetCard]))
+			}
+		} else {
+			this.game.animation.play(ServerAnimation.universeAttacksCards([this]))
+			if (targetCard !== this) {
+				this.game.animation.play(ServerAnimation.cardAttacksCards(this, [targetCard]))
+			}
+		}
+
 		let damageToDeal = damageInstance.value
 
 		let armorDamageInstance: ServerDamageInstance | null = null
-		if (targetCard.armor > 0) {
+		if (targetCard.stats.armor > 0) {
 			armorDamageInstance = damageInstance.clone()
-			armorDamageInstance.value = Math.min(targetCard.armor, damageToDeal)
+			armorDamageInstance.value = Math.min(targetCard.stats.armor, damageToDeal)
 			damageToDeal -= armorDamageInstance.value
 		}
 
 		let powerDamageInstance: ServerDamageInstance | null = null
 		if (damageToDeal > 0) {
 			powerDamageInstance = damageInstance.clone()
-			powerDamageInstance.value = Math.min(targetCard.power, damageToDeal)
+			powerDamageInstance.value = Math.min(targetCard.stats.power, damageToDeal)
 		}
 
 		if (armorDamageInstance) {
-			targetCard.setArmor(targetCard.armor - armorDamageInstance.value)
+			targetCard.stats.armor = targetCard.stats.armor - armorDamageInstance.value
 		}
 
 		if (powerDamageInstance) {
-			targetCard.setPower(targetCard.power - powerDamageInstance.value)
+			targetCard.stats.power = targetCard.stats.power - powerDamageInstance.value
 		}
 
 		this.game.events.postEvent(GameEventCreators.cardTakesDamage({
@@ -224,18 +320,44 @@ export default class ServerCard extends Card {
 		}))
 	}
 
+	heal(healingInstance: ServerDamageInstance): void {
+		if (healingInstance.value <= 0) {
+			return
+		}
+
+		if (healingInstance.sourceCard) {
+			this.game.animation.play(ServerAnimation.cardHealsCards(healingInstance.sourceCard, [this]))
+		} else {
+			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
+		}
+		this.stats.power = Math.min(this.stats.maxPower, this.stats.power + healingInstance.value)
+	}
+
+	/* Cleanse this card
+	 * -------------------------
+	 * Remove all active buffs from this card
+	 */
+	public cleanse(): void {
+		this.buffs.removeAll()
+	}
+
+	/* Destroy this card / unit
+	 * -------------------------
+	 * If this card has associated unit on the board, the unit is destroyed instead and this method has no effect.
+	 * Otherwise, the card is completely removed from the game (exiled).
+	 */
 	public destroy(): void {
 		const unit = this.unit
-		if (this.unit) {
-			unit.destroy()
+		if (unit) {
+			this.game.board.destroyUnit(unit)
 			return
 		}
 
-		if (this.isBeingDestroyed) {
+		if (this.isDead) {
 			return
 		}
 
-		this.isBeingDestroyed = true
+		this.isDead = true
 
 		const hookValues = this.game.events.applyHooks<CardDestroyedHookValues, CardDestroyedHookArgs>(GameHookType.CARD_DESTROYED, {
 			destructionPrevented: false
@@ -244,8 +366,8 @@ export default class ServerCard extends Card {
 		})
 
 		if (hookValues.destructionPrevented) {
-			this.setPower(1)
-			this.isBeingDestroyed = false
+			this.stats.power = 0
+			this.isDead = false
 			return
 		}
 
@@ -262,195 +384,52 @@ export default class ServerCard extends Card {
 		} else if (location === CardLocation.GRAVEYARD) {
 			owner.cardGraveyard.removeCard(this)
 		}
-		this.isBeingDestroyed = false
 	}
 
-	public reveal(owner: ServerPlayerInGame, opponent: ServerPlayerInGame): void {
+	public reveal(): void {
 		if (this.isRevealed) { return }
 
 		this.isRevealed = true
-		runCardEventHandler(() => this.onRevealed(owner))
-		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(opponent.player, this)
+		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(this.owner.opponent.player, this)
 	}
 
-	public getValidPlayTargets(cardOwner: ServerPlayerInGame): ServerCardTarget[] {
-		if ((this.type === CardType.UNIT && cardOwner.unitMana < this.unitCost) || (this.type === CardType.SPELL && cardOwner.spellMana < this.spellCost)) {
-			return []
-		}
-
-		return this.getValidTargets(TargetMode.ON_PLAY_VALID_TARGET, TargetType.BOARD_ROW, this.getPlayValidTargetDefinition(), {
-			thisCardOwner: cardOwner
-		})
+	/* Create card play targets
+	 * ------------------------
+	 * Add a target definition specifying the available card play targets.
+	 * Adding first target definition will override the default behaviour (units can be played to any allied row, spells can be played to any row).
+	 *
+	 * Multiple target definitions will be added as inclusive OR.
+	 */
+	protected createPlayTargets(): SimpleTargetDefinitionBuilder {
+		const builder = SimpleTargetDefinitionBuilder.base(this.game, TargetMode.CARD_PLAY)
+			.target(TargetType.BOARD_ROW)
+			.require(TargetType.BOARD_ROW, ({ targetRow }) => !targetRow.isFull())
+		this.targeting.cardPlayTargetDefinitions.push(builder)
+		return builder
 	}
 
-	public getValidTargets(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
-		let targets: ServerCardTarget[] = []
-		if (targetType === TargetType.UNIT) {
-			targets = this.getValidUnitTargets(targetMode, targetDefinition, args, previousTargets)
-		} else if (targetType === TargetType.BOARD_ROW) {
-			targets = this.getValidRowTargets(targetMode, targetDefinition, args, previousTargets)
-		} else if (targetType === TargetType.CARD_IN_LIBRARY) {
-			targets = this.getValidCardLibraryTargets(targetMode, targetDefinition, args, previousTargets)
-		} else if (targetType === TargetType.CARD_IN_UNIT_HAND) {
-			targets = this.getValidUnitHandTargets(targetMode, targetDefinition, args, previousTargets)
-		} else if (targetType === TargetType.CARD_IN_SPELL_HAND) {
-			targets = this.getValidSpellHandTargets(targetMode, targetDefinition, args, previousTargets)
-		} else if (targetType === TargetType.CARD_IN_UNIT_DECK) {
-			targets = this.getValidUnitDeckTargets(targetMode, targetDefinition, args, previousTargets)
-		} else if (targetType === TargetType.CARD_IN_SPELL_DECK) {
-			targets = this.getValidSpellDeckTargets(targetMode, targetDefinition, args, previousTargets)
-		}
-
-		if (args.thisCardOwner) {
-			targets.forEach(target => target.sourceCardOwner = args.thisCardOwner)
-		}
-		if (args.thisUnit) {
-			targets.forEach(target => target.sourceUnit = args.thisUnit)
-		}
-
-		return targets
+	/* Create unit order targets
+	 * -------------------------
+	 * Add a target definition specifying the available unit order targets.
+	 *
+	 * Multiple target definitions will be added as inclusive OR.
+	 */
+	protected createUnitOrderTargets(): SimpleTargetDefinitionBuilder {
+		const builder = SimpleTargetDefinitionBuilder.base(this.game, TargetMode.UNIT_ORDER)
+		this.targeting.unitOrderTargetDefinitions.push(builder)
+		return builder
 	}
 
-	private isTargetLimitExceeded(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, previousTargets: ServerCardTarget[]): boolean {
-		if (previousTargets.length >= targetDefinition.getTargetCount()) {
-			return true
-		}
-
-		const previousTargetsOfType = previousTargets.filter(target => target.targetMode === targetMode && target.targetType === targetType)
-		return previousTargetsOfType.length >= targetDefinition.getTargetOfTypeCount(targetMode, targetType)
-
-		/*
-		 * All orders are considered to be valid simultaneously
-		 * - TODO: Remove allowSimultaneously from targeting API if no other use is found
-		 * */
-		// const otherTypeOrders = previousTargets.filter(target => target.targetMode !== targetMode || target.targetType !== targetType)
-		// const incompatibleOtherTypeOrder = otherTypeOrders.find(performedOrder => {
-		// 	return !targetDefinition.isValidSimultaneously({ targetMode, targetType }, performedOrder)
-		// })
-		// return !!incompatibleOtherTypeOrder
-	}
-
-	private getValidUnitTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.UNIT, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const unitTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.UNIT)
-		return this.game.board.getAllUnits()
-			.filter(unit => !unit.card.buffs.has(BuffImmunity))
-			.filter(unit => targetDefinition.validate(targetMode, TargetType.UNIT, { ...args, thisCard: this, targetCard: unit.card, targetUnit: unit, previousTargets: previousTargets }))
-			.map(targetUnit => ServerCardTarget.cardTargetUnit(targetMode, this, targetUnit, unitTargetLabel))
-	}
-
-	private getValidRowTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.BOARD_ROW, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const rowTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.BOARD_ROW)
-		return this.game.board.rows
-			.filter(row => targetDefinition.validate(targetMode, TargetType.BOARD_ROW, { ...args, thisCard: this, targetRow: row, previousTargets: previousTargets }))
-			.map(targetRow => ServerCardTarget.cardTargetRow(targetMode, this, targetRow, rowTargetLabel))
-	}
-
-	private getValidCardLibraryTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_LIBRARY, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const libraryCards = GameLibrary.cards as ServerCard[]
-		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_LIBRARY)
-		return libraryCards
-			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_LIBRARY, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
-			.map(targetCard => ServerCardTarget.cardTargetCardInLibrary(targetMode, this, targetCard, cardTargetLabel))
-	}
-
-	private getValidUnitHandTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_HAND, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_UNIT_HAND)
-		return this.game.players.map(player => player.cardHand.unitCards)
-			.reduce((accumulator, cards) => accumulator.concat(cards))
-			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_UNIT_HAND, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
-			.map(targetCard => ServerCardTarget.cardTargetCardInUnitHand(targetMode, this, targetCard, cardTargetLabel))
-	}
-
-	private getValidSpellHandTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_SPELL_HAND, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_SPELL_HAND)
-		return this.game.players.map(player => player.cardHand.spellCards)
-			.reduce((accumulator, cards) => accumulator.concat(cards))
-			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_SPELL_HAND, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
-			.map(targetCard => ServerCardTarget.cardTargetCardInSpellHand(targetMode, this, targetCard, cardTargetLabel))
-	}
-
-	private getValidUnitDeckTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_DECK, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_UNIT_DECK)
-		return this.game.players.map(player => player.cardDeck.unitCards)
-			.reduce((accumulator, cards) => accumulator.concat(cards))
-			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_UNIT_DECK, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
-			.map(targetCard => ServerCardTarget.cardTargetCardInUnitDeck(targetMode, this, targetCard, cardTargetLabel))
-	}
-
-	private getValidSpellDeckTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, args: TargetValidatorArguments = {}, previousTargets: ServerCardTarget[] = []): ServerCardTarget[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_SPELL_DECK, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_SPELL_DECK)
-		return this.game.players.map(player => player.cardDeck.spellCards)
-			.reduce((accumulator, cards) => accumulator.concat(cards))
-			.filter(card => targetDefinition.validate(targetMode, TargetType.CARD_IN_SPELL_DECK, { ... args, thisCard: this, targetCard: card, previousTargets: previousTargets }))
-			.map(targetCard => ServerCardTarget.cardTargetCardInSpellDeck(targetMode, this, targetCard, cardTargetLabel))
-	}
-
-	public getPlayValidTargetDefinition(): TargetDefinition {
-		let targets = this.definePlayValidTargets()
-		this.buffs.buffs.forEach(buff => {
-			targets = targets.merge(buff.definePlayValidTargetsMod())
-			targets = buff.definePlayValidTargetsOverride(targets)
-		})
-		return targets.build()
-	}
-
-	public getValidOrderTargetDefinition(): TargetDefinition {
-		let targets = this.defineValidOrderTargets()
-		this.buffs.buffs.forEach(buff => {
-			targets = targets.merge(buff.defineValidOrderTargetsMod())
-			targets = buff.defineValidOrderTargetsOverride(targets)
-		})
-		return targets.build()
-	}
-
-	public getPostPlayRequiredTargetDefinition(): TargetDefinition {
-		let targets = this.definePostPlayRequiredTargets()
-		this.buffs.buffs.forEach(buff => {
-			targets = targets.merge(buff.definePostPlayRequiredTargetsMod())
-			targets = buff.definePostPlayRequiredTargetsOverride(targets)
-		})
-		return targets.build()
-	}
-
-	public evaluateVariables(): RichTextVariables {
-		const evaluatedVariables: RichTextVariables = {}
-		Object.keys(this.dynamicTextVariables).forEach(key => {
-			const value = this.dynamicTextVariables[key]
-			if (typeof(value) === 'function') {
-				evaluatedVariables[key] = value()
-			} else {
-				evaluatedVariables[key] = value
-			}
-		})
-		return evaluatedVariables
+	/* Require deploy effect targets
+	 * -----------------------------
+	 * Add a target definition specifying the required deploy effect targets.
+	 *
+	 * Multiple target definitions will be added as inclusive OR.
+	 */
+	protected createDeployEffectTargets(): SimpleTargetDefinitionBuilder {
+		const builder = SimpleTargetDefinitionBuilder.base(this.game, TargetMode.DEPLOY_EFFECT)
+		this.targeting.deployEffectTargetDefinitions.push(builder)
+		return builder
 	}
 
 	/* Subscribe to a game event
@@ -465,7 +444,7 @@ export default class ServerCard extends Card {
 	 */
 	protected createCallback<ArgsType>(eventType: GameEventType, location: CardLocation[]): EventCallback<ArgsType> {
 		return this.game.events.createCallback<ArgsType>(this, eventType)
-			.requireLocations(location)
+			.require(() => location.includes(this.location))
 	}
 
 	/* Subscribe to a game event triggered by this buff
@@ -491,33 +470,9 @@ export default class ServerCard extends Card {
 			.requireLocations(location)
 	}
 
-	onRevealed(owner: ServerPlayerInGame): void { return }
-
-	onUnitCustomOrderPerformed(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
-	onBeforeUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
-	onAfterUnitOrderIssued(thisUnit: ServerUnit, order: ServerCardTarget): void { return }
-	onBeforePerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
-	onPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
-	onAfterPerformingUnitAttack(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode): void { return }
-	onBeforePerformingRowAttack(thisUnit: ServerUnit, target: ServerBoardRow, targetMode: TargetMode): void { return }
-	onAfterPerformingRowAttack(thisUnit: ServerUnit, target: ServerBoardRow, targetMode: TargetMode): void { return }
-	onBeforeBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
-	onAfterBeingAttacked(thisUnit: ServerUnit, attacker: ServerUnit): void { return }
-	onBeforePerformingMove(thisUnit: ServerUnit, target: ServerBoardRow, from: ServerBoardRow): void { return }
-	onAfterPerformingMove(thisUnit: ServerUnit, target: ServerBoardRow, from: ServerBoardRow): void { return }
-	onPerformingUnitSupport(thisUnit: ServerUnit, target: ServerUnit): void { return }
-	onPerformingRowSupport(thisUnit: ServerUnit, target: ServerBoardRow): void { return }
-	onBeforeBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
-	onAfterBeingSupported(thisUnit: ServerUnit, support: ServerUnit): void { return }
-
-	getAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return this.attack }
-	getBonusAttackDamage(thisUnit: ServerUnit, target: ServerUnit, targetMode: TargetMode, targetType: TargetType): number { return 0 }
-
-	getDeckAddedUnitCards(): any[] { return [] }
-	getDeckAddedSpellCards(): any[] { return [] }
-
-	definePlayValidTargets(): TargetDefinitionBuilder { return TargetDefinition.defaultCardPlayTarget(this.game) }
-	defineValidOrderTargets(): TargetDefinitionBuilder { return TargetDefinition.defaultUnitOrder(this.game) }
-	definePostPlayRequiredTargets(): TargetDefinitionBuilder { return TargetDefinition.none(this.game) }
-	isRequireCustomOrderLogic(thisUnit: ServerUnit, order: ServerCardTarget): boolean { return false }
+	protected addRelatedCards(): RelatedCardsDefinition {
+		const relatedCardDefinition = new RelatedCardsDefinition()
+		this.customRelatedCards.push(relatedCardDefinition)
+		return relatedCardDefinition
+	}
 }

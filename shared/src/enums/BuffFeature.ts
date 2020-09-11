@@ -1,6 +1,5 @@
 enum BuffFeature {
-	CARD_CAST_FREE,
-	SPELL_DISCOUNT_PER_INTENSITY
+	SKIP_ANIMATION,
 }
 
 export default BuffFeature

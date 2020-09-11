@@ -2,6 +2,7 @@ enum BoardRowTint {
 	NORMAL = 0xDDDDDD,
 	VALID_TARGET = 0xFFFFFF,
 	VALID_TARGET_HOVERED = 0xEEEEEE,
+	INVALID_TARGET = 0x777777,
 }
 
 export default BoardRowTint

@@ -30,9 +30,9 @@ export default Vue.extend({
 		user-select: none;
 		font-size: 1.1em;
 
-		color: red;
+		color: darken(red, 10);
 		.line {
-			background: red;
+			background: darken(red, 10);
 		}
 
 		.text {

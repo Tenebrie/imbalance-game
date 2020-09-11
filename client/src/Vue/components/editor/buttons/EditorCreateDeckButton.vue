@@ -28,7 +28,7 @@ export default Vue.extend({
 			await this.$router.push({
 				name: 'single-deck',
 				params: {
-					id: response.deckId
+					deckId: response.deckId
 				}
 			})
 		}

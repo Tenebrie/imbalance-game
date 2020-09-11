@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import Utils from '@/utils/Utils'
+import Utils, {insertRichTextVariables} from '@/utils/Utils'
 import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import RichTextBackground from '@/Pixi/render/RichTextBackground'
@@ -31,13 +31,25 @@ interface Segment {
 	data?: string
 }
 
-export default class RichText extends PIXI.Container {
-	source: string
+interface RichTextStyle {
 	fill: number
 	fontSize: number
 	baseFontSize: number
 	lineHeight: number
-	maxWidth: number
+	dropShadow: boolean
+	dropShadowBlur: number
+}
+
+export default class RichText extends PIXI.Container {
+	private source: string
+	private fill: number
+	private fontSize: number
+	private baseFontSize: number
+	private lineHeight: number
+	private maxWidth: number
+	private dropShadow: boolean
+	private dropShadowBlur: number
+
 	private variables: RichTextVariables
 	segments: { text: ScalingText, basePosition: PIXI.Point, lineIndex: number }[]
 	background: RichTextBackground
@@ -52,13 +64,15 @@ export default class RichText extends PIXI.Container {
 		this.fontSize = 18
 		this.baseFontSize = 18
 		this.lineHeight = 24
+		this.dropShadow = false
+		this.dropShadowBlur = 0
 		this.maxWidth = maxWidth
 		this.segments = []
 		this.variables = variables
 		this.renderText()
 	}
 
-	get text() {
+	get text(): string {
 		return this.source
 	}
 	set text(value: string) {
@@ -70,7 +84,7 @@ export default class RichText extends PIXI.Container {
 		this.renderText()
 	}
 
-	get textVariables() {
+	get textVariables(): RichTextVariables {
 		return this.variables
 	}
 	set textVariables(value: RichTextVariables) {
@@ -85,6 +99,10 @@ export default class RichText extends PIXI.Container {
 		return this.__horizontalAlign
 	}
 	set horizontalAlign(value: RichTextAlign) {
+		if (this.__horizontalAlign === value) {
+			return
+		}
+
 		this.__horizontalAlign = value
 		this.renderText()
 	}
@@ -93,6 +111,10 @@ export default class RichText extends PIXI.Container {
 		return this.__verticalAlign
 	}
 	set verticalAlign(value: RichTextAlign) {
+		if (this.__verticalAlign === value) {
+			return
+		}
+
 		this.__verticalAlign = value
 		this.renderText()
 	}
@@ -101,10 +123,10 @@ export default class RichText extends PIXI.Container {
 		return this.__textLineCount
 	}
 
-	get style() {
+	get style(): RichTextStyle {
 		const parent = this
 		return {
-			get fill() {
+			get fill(): number {
 				return parent.fill
 			},
 			set fill(value: number) {
@@ -114,7 +136,7 @@ export default class RichText extends PIXI.Container {
 				parent.fill = value
 				parent.renderText()
 			},
-			get fontSize() {
+			get fontSize(): number {
 				return parent.fontSize
 			},
 			set fontSize(value: number) {
@@ -124,7 +146,7 @@ export default class RichText extends PIXI.Container {
 				parent.fontSize = value
 				parent.renderText()
 			},
-			get baseFontSize() {
+			get baseFontSize(): number {
 				return parent.baseFontSize
 			},
 			set baseFontSize(value: number) {
@@ -143,7 +165,29 @@ export default class RichText extends PIXI.Container {
 				}
 				parent.lineHeight = value
 				parent.renderText()
-			}
+			},
+
+			get dropShadow(): boolean {
+				return parent.dropShadow
+			},
+			set dropShadow(value: boolean) {
+				if (value === parent.dropShadow) {
+					return
+				}
+				parent.dropShadow = value
+				parent.renderText()
+			},
+
+			get dropShadowBlur(): number {
+				return parent.dropShadowBlur
+			},
+			set dropShadowBlur(value: number) {
+				if (value === parent.dropShadowBlur) {
+					return
+				}
+				parent.dropShadowBlur = value
+				parent.renderText()
+			},
 		}
 	}
 
@@ -163,12 +207,12 @@ export default class RichText extends PIXI.Container {
 		const SCALE_MODIFIER = (this.fontSize / 18)
 		this.segments.forEach(segment => {
 			const heightModifier = ((lineHeight - 24) * segment.lineIndex) * SCALE_MODIFIER
-			segment.text.position.set(segment.basePosition.x * SCALE_MODIFIER, segment.basePosition.y * SCALE_MODIFIER + heightModifier)
+			segment.text.position.set(Math.round(segment.basePosition.x * SCALE_MODIFIER), Math.round(segment.basePosition.y * SCALE_MODIFIER + heightModifier))
 			segment.text.updateFont(fontSize, lineHeight)
 		})
 	}
 
-	public renderText() {
+	public renderText(): void {
 		while (this.children.length > 0) {
 			this.removeChildAt(0)
 		}
@@ -182,17 +226,7 @@ export default class RichText extends PIXI.Container {
 
 		const SCALE_MODIFIER = this.fontSize / this.baseFontSize
 
-		const textVariables = {
-			...this.variables
-		}
-
-		let replacedText = (this.text || '')
-		for (const variableName in textVariables) {
-			const variableValue = textVariables[variableName] || ''
-			const regexp = new RegExp('{' + variableName + '}', 'g')
-			replacedText = replacedText.replace(regexp, '*' + variableValue.toString() + '*')
-		}
-
+		const replacedText = insertRichTextVariables((this.text || ''), this.variables)
 		const chars = Array.from(replacedText)
 
 		const segments: Segment[] = []
@@ -272,9 +306,14 @@ export default class RichText extends PIXI.Container {
 						fontSize: this.fontSize,
 						fontStyle: contextItalic ? 'italic' : 'normal',
 						padding: contextItalic ? 8 : 0,
-						fill: contextHighlight ? 0xFFFFFF : contextColor
+						fill: contextHighlight ? 0xFFFFFF : contextColor,
+						dropShadow: this.dropShadow,
+						dropShadowBlur: this.dropShadowBlur,
 					})
-					const measure = PIXI.TextMetrics.measureText(text, style)
+					const measureStyle = new PIXI.TextStyle(style)
+					measureStyle.dropShadow = false
+
+					const measure = PIXI.TextMetrics.measureText(text, measureStyle)
 					if (contextPosition.x + measure.width >= this.maxWidth * SCALE_MODIFIER) {
 						newLine()
 					}
@@ -304,7 +343,7 @@ export default class RichText extends PIXI.Container {
 						case 'p':
 						case 'para':
 							newLine()
-							contextPosition.y += this.lineHeight * 0.2
+							contextPosition.y += this.lineHeight * 0.3
 							break
 						case 'i':
 						case 'info':
@@ -314,11 +353,11 @@ export default class RichText extends PIXI.Container {
 							break
 						case 'if':
 							contextConditionStack.push(contextConditionStatus)
-							contextConditionStatus = !!textVariables[openingTag.args]
+							contextConditionStatus = !!this.variables[openingTag.args]
 							break
 						case 'ifn':
 							contextConditionStack.push(contextConditionStatus)
-							contextConditionStatus = !textVariables[openingTag.args]
+							contextConditionStatus = !this.variables[openingTag.args]
 							break
 					}
 					break
@@ -381,7 +420,7 @@ export default class RichText extends PIXI.Container {
 		}
 	}
 
-	getStateTransition(stateTransitions: Map<ParsingStateTransitionTrigger, ParsingStateTransitionAction>, trigger: ParsingStateTransitionTrigger) {
+	getStateTransition(stateTransitions: Map<ParsingStateTransitionTrigger, ParsingStateTransitionAction>, trigger: ParsingStateTransitionTrigger): ParsingStateTransitionAction | null {
 		const keys = stateTransitions.keys()
 		let key = keys.next()
 		while (!key.done) {
@@ -403,7 +442,7 @@ export default class RichText extends PIXI.Container {
 		return { name: tag, args: '' }
 	}
 
-	standardizeColor(color: string) {
+	standardizeColor(color: string): number {
 		const ctx = document.createElement('canvas').getContext('2d')!
 		ctx.fillStyle = color
 		return parseInt(ctx.fillStyle.substr(1), 16)

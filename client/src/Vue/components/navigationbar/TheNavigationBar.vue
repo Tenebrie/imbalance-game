@@ -28,7 +28,7 @@ import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfil
 
 export default {
 	components: {
-		TheMiniUserProfile
+		TheMiniUserProfile,
 	}
 }
 </script>

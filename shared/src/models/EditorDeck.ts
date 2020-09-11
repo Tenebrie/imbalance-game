@@ -1,4 +1,3 @@
-import DeckLeader from '../enums/DeckLeader'
 import EditorCard from './EditorCard'
 
 export default interface EditorDeck {

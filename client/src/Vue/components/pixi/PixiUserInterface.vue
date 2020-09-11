@@ -2,33 +2,26 @@
 	<div class="pixi-user-interface">
 		<div class="settings-button-container">
 			<button @click="onShowGameLog" class="primary game-button"><i class="fas fa-history"></i></button>
-			<button @click="onToggleEscapeWindow" class="primary game-button"><i class="fas fa-cog"></i></button>
+			<button @click="onShowEscapeMenu" class="primary game-button"><i class="fas fa-cog"></i></button>
 		</div>
 		<div class="end-turn-button-container">
 			<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
 			<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">End round</button>
 		</div>
-		<div class="fade-in-overlay" :class="fadeInOverlayClass">
-			<span class="overlay-message" v-if="!opponent">Waiting for opponent...</span>
-			<span class="overlay-message" v-if="opponent">{{ opponent.username }} has connected.<br>Waiting for the game to start...</span>
+		<div class="inspected-card">
+			<pixi-inspected-card />
 		</div>
-		<div class="endgame-screen" :class="endgameScreenClass">
+		<div class="fade-in-overlay" :class="fadeInOverlayClass">
+			<div class="overlay-message" v-if="!opponent">Waiting for opponent...</div>
+			<div class="overlay-message" v-if="opponent">
+				{{ opponent.username }} has connected.<br>
+				Waiting for the game to start...
+			</div>
+		</div>
+		<div class="endgame-screen" :class="gameEndScreenClass">
 			<div class="victory" v-if="isVictory">Victory!</div>
 			<div class="defeat" v-if="isDefeat">Defeat</div>
 			<div class="draw" v-if="isDraw">Draw</div>
-		</div>
-		<div v-if="isEscapeWindowVisible" class="escape-menu-container">
-			<div class="escape-menu">
-				<button @click="onShowSettings" class="primary game-button">Settings</button>
-<!--				<button @click="onShowGameLog" class="primary game-button">Game history</button>-->
-				<div class="menu-separator"></div>
-<!--				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>-->
-<!--				<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>-->
-<!--				<div class="menu-separator"></div>-->
-<!--				<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>-->
-<!--				<div class="menu-separator"></div>-->
-				<button @click="onLeaveGame" class="primary game-button destructive">Leave game</button>
-			</div>
 		</div>
 	</div>
 </template>
@@ -39,111 +32,79 @@ import store from '@/Vue/store'
 import Player from '@shared/models/Player'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
-import TheGameLog from '@/Vue/components/gamelog/TheGameLog.vue'
-import TheSimpleSettings from '@/Vue/components/profile/TheSimpleSettings.vue'
+import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
+import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
+import TheEscapeMenu from '@/Vue/components/popup/escapeMenu/TheEscapeMenu.vue'
+import {computed, onMounted, onUnmounted} from '@vue/composition-api'
 
 export default Vue.extend({
-	data: () => ({
-		isEscapeWindowVisible: false as boolean
-	}),
-
-	mounted(): void {
-		window.addEventListener('keydown', this.onKeyDown)
+	components: {
+		PixiInspectedCard
 	},
+	setup() {
+		onMounted(() => window.addEventListener('keydown', onKeyDown))
+		onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
 
-	beforeDestroy() {
-		window.removeEventListener('keydown', this.onKeyDown)
-	},
-
-	computed: {
-		isEndRoundButtonVisible(): boolean {
-			return store.state.gameStateModule.playerUnitMana > 0
-		},
-
-		isPlayersTurn(): boolean {
-			return store.state.gameStateModule.isPlayersTurn && store.state.gameStateModule.gameStatus === ClientGameStatus.IN_PROGRESS
-		},
-
-		isGameStarted(): boolean {
-			const status = store.state.gameStateModule.gameStatus
-			return status === ClientGameStatus.IN_PROGRESS || status === ClientGameStatus.VICTORY || status === ClientGameStatus.DEFEAT || status === ClientGameStatus.DRAW
-		},
-
-		fadeInOverlayClass(): {} {
-			return {
-				visible: !this.isGameStarted as boolean
-			}
-		},
-
-		isVictory(): boolean {
-			return store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY
-		},
-
-		isDefeat(): boolean {
-			return store.state.gameStateModule.gameStatus === ClientGameStatus.DEFEAT
-		},
-
-		isDraw(): boolean {
-			return store.state.gameStateModule.gameStatus === ClientGameStatus.DRAW
-		},
-
-		endgameScreenClass(): {} {
-			return {
-				visible: (this.isVictory || this.isDefeat || this.isDraw) as boolean
-			}
-		},
-
-		opponent(): Player | null {
-			return store.state.gameStateModule.opponent
-		}
-	},
-
-	methods: {
-		onKeyDown(event: KeyboardEvent): void {
+		const onKeyDown = (event: KeyboardEvent): void => {
 			if (event.defaultPrevented) {
 				return
 			}
 			if (event.key === 'Escape') {
-				this.onToggleEscapeWindow()
+				onShowEscapeMenu()
 			}
-		},
+		}
 
-		onToggleEscapeWindow(): void {
-			this.isEscapeWindowVisible = !this.isEscapeWindowVisible
-		},
-
-		onLeaveGame(): void {
-			store.dispatch.leaveGame()
-		},
-
-		onEndTurn(): void {
+		const onEndTurn = (): void => {
 			OutgoingMessageHandlers.sendEndTurn()
-		},
+		}
 
-		onShowSettings(): void {
-			store.dispatch.popupModule.open({
-				component: TheSimpleSettings
-			})
-			this.isEscapeWindowVisible = false
-		},
-
-		onShowGameLog(): void {
+		const onShowGameLog = (): void => {
 			store.dispatch.popupModule.open({
 				component: TheGameLog
 			})
-			this.isEscapeWindowVisible = false
-		},
+		}
 
-		onShowPlayersDeck(): void {
+		const onShowEscapeMenu = (): void => {
+			store.dispatch.popupModule.open({
+				component: TheEscapeMenu
+			})
+		}
 
-		},
+		const isEndRoundButtonVisible = computed(() => store.state.gameStateModule.playerUnitMana > 0)
+		const isPlayersTurn = computed(() => {
+			return store.state.gameStateModule.isPlayersTurn && store.state.gameStateModule.gameStatus === ClientGameStatus.IN_PROGRESS
+		})
+		const isGameStarted = computed(() => {
+			const status = store.state.gameStateModule.gameStatus
+			return status === ClientGameStatus.IN_PROGRESS || status === ClientGameStatus.VICTORY || status === ClientGameStatus.DEFEAT || status === ClientGameStatus.DRAW
+		})
 
-		onShowPlayersGraveyard(): void {
+		const isVictory = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY)
+		const isDefeat = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DEFEAT)
+		const isDraw = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DRAW)
 
-		},
+		const fadeInOverlayClass = computed(() => ({
+			visible: !isGameStarted.value
+		}))
+		const gameEndScreenClass = computed(() => ({
+			visible: isVictory.value || isDefeat.value || isDraw.value
+		}))
 
-		onShowOpponentsGraveyard(): void {
+		const opponent = computed<Player | null>(() => store.state.gameStateModule.opponent)
 
+		return {
+			opponent,
+			isVictory,
+			isDefeat,
+			isDraw,
+			isPlayersTurn,
+			isEndRoundButtonVisible,
+			onEndTurn,
+			onShowGameLog,
+			onShowEscapeMenu,
+			fadeInOverlayClass,
+			gameEndScreenClass,
+			store,
 		}
 	}
 })
@@ -159,6 +120,11 @@ export default Vue.extend({
 		height: 100%;
 		user-select: none;
 		pointer-events: none;
+		overflow: hidden;
+
+		&.non-interactive {
+
+		}
 
 		.fade-in-overlay {
 			position: absolute;
@@ -171,6 +137,7 @@ export default Vue.extend({
 			transition-delay: 0.5s;
 
 			display: flex;
+			flex-direction: column;
 			align-items: center;
 			justify-content: center;
 			color: white;
@@ -179,6 +146,9 @@ export default Vue.extend({
 
 			&.visible {
 				opacity: 1;
+			}
+
+			.overlay-message {
 			}
 		}
 
@@ -227,29 +197,8 @@ export default Vue.extend({
 			}
 		}
 
-		.escape-menu-container {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-
-			.escape-menu {
-				height: 100%;
-				min-width: 500px;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				background: #BBBBBBBB;
-				padding: 16px;
-
-				button {
-					width: 100%;
-					margin: 8px;
-				}
-			}
+		.inspected-card {
+			pointer-events: auto;
 		}
 
 		.settings-button-container {

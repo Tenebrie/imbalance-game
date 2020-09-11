@@ -38,22 +38,22 @@ export default class ServerDeck implements CardDeck {
 
 	public addUnitToTop(card: ServerCard): void {
 		this.unitCards.unshift(card)
-		OutgoingMessageHandlers.notifyAboutUnitCardInDeck(this.owner, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToDeck(this.owner, card)
 	}
 
 	public addSpellToTop(card: ServerCard): void {
 		this.spellCards.unshift(card)
-		OutgoingMessageHandlers.notifyAboutSpellCardInDeck(this.owner, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToDeck(this.owner, card)
 	}
 
 	public addUnitToBottom(card: ServerCard): void {
 		this.unitCards.push(card)
-		OutgoingMessageHandlers.notifyAboutUnitCardInDeck(this.owner, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToDeck(this.owner, card)
 	}
 
 	public addSpellToBottom(card: ServerCard): void {
 		this.spellCards.push(card)
-		OutgoingMessageHandlers.notifyAboutSpellCardInDeck(this.owner, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToDeck(this.owner, card)
 	}
 
 	public drawTopUnit(): ServerCard | null {

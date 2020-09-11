@@ -1,4 +1,4 @@
-import Language from './Language'
+import Language from '../enums/Language'
 import RenderQuality from '../enums/RenderQuality'
 
 export default interface PlayerDatabaseEntry {

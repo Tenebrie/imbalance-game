@@ -65,92 +65,90 @@
 <script lang="ts">
 import axios from 'axios'
 import store from '@/Vue/store'
-import {computed, onMounted, ref, watch} from '@vue/composition-api'
+import {computed, defineComponent, onMounted, ref, watch} from '@vue/composition-api'
 import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 import ProfileLogoutButton from '@/Vue/components/profile/ProfileLogoutButton.vue'
 import ProfileDeleteUserButton from '@/Vue/components/profile/ProfileDeleteUserButton.vue'
 import {supportedLanguages} from '@/Pixi/Localization'
-import Language from '@shared/models/Language'
+import Language from '@shared/enums/Language'
 import Notifications from '@/utils/Notifications'
 import RenderQuality from '@shared/enums/RenderQuality'
 import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
 
-function TheUserProfile() {
-	const email = ref<string>('')
-	const username = ref<string>('')
-	const password = ref<string>('')
-
-	onMounted(async () => {
-		const response = await axios.get('/api/user/profile')
-		const profileMessage = response.data.data as UserProfileMessage
-
-		email.value = profileMessage.email
-		username.value = profileMessage.username
-	})
-
-	const userLanguage = computed<Language>({
-		get() {
-			return store.state.userPreferencesModule.userLanguage
-		},
-		set(value) {
-			store.commit.userPreferencesModule.setUserLanguage(value)
-			store.commit.editor.clearRenderedCards()
-		}
-	})
-
-	const renderQuality = computed<RenderQuality>({
-		get() {
-			return store.state.userPreferencesModule.renderQuality
-		},
-		set(value) {
-			store.commit.userPreferencesModule.setRenderQuality(value)
-		}
-	})
-
-	watch(() => [userLanguage.value, renderQuality.value], () => {
-		store.dispatch.userPreferencesModule.savePreferences()
-	})
-
-	const onChangePassword = async () => {
-		const value = password.value
-		if (value.length === 0) {
-			Notifications.error('Password field is empty!')
-			return
-		}
-
-		password.value = ''
-		try {
-			await axios.put('/api/user/profile', {
-				password: value
-			})
-			Notifications.success('Password updated!')
-		} catch (error) {
-			Notifications.error('Password update failed!')
-		}
-	}
-
-	return {
-		email,
-		username,
-		password,
-		userLanguage,
-		renderQuality,
-		supportedLanguages,
-		onChangePassword,
-		supportedRenderQualities: RenderQuality
-	}
-}
-
-export default {
+export default defineComponent({
 	components: {
 		TheVolumeSettings,
 		UserAvatar,
 		ProfileLogoutButton,
 		ProfileDeleteUserButton
 	},
-	setup: TheUserProfile
-}
+	setup() {
+		const email = ref<string>('')
+		const username = ref<string>('')
+		const password = ref<string>('')
+
+		onMounted(async () => {
+			const response = await axios.get('/api/user/profile')
+			const profileMessage = response.data.data as UserProfileMessage
+
+			email.value = profileMessage.email
+			username.value = profileMessage.username
+		})
+
+		const userLanguage = computed<Language>({
+			get() {
+				return store.state.userPreferencesModule.userLanguage
+			},
+			set(value) {
+				store.commit.userPreferencesModule.setUserLanguage(value)
+				store.commit.editor.clearRenderedCards()
+			}
+		})
+
+		const renderQuality = computed<RenderQuality>({
+			get() {
+				return store.state.userPreferencesModule.renderQuality
+			},
+			set(value) {
+				store.commit.userPreferencesModule.setRenderQuality(value)
+			}
+		})
+
+		watch(() => [userLanguage.value, renderQuality.value], () => {
+			store.dispatch.userPreferencesModule.savePreferences()
+		})
+
+		const onChangePassword = async () => {
+			const value = password.value
+			if (value.length === 0) {
+				Notifications.error('Password field is empty!')
+				return
+			}
+
+			password.value = ''
+			try {
+				await axios.put('/api/user/profile', {
+					password: value
+				})
+				Notifications.success('Password updated!')
+			} catch (error) {
+				Notifications.error('Password update failed!')
+			}
+		}
+
+		return {
+			email,
+			username,
+			password,
+			userLanguage,
+			renderQuality,
+			supportedLanguages,
+			onChangePassword,
+			supportedRenderQualities: RenderQuality
+		}
+	}
+})
 </script>
 
 <style scoped lang="scss">

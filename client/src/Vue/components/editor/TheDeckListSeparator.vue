@@ -7,46 +7,58 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import Localization from '@/Pixi/Localization'
 import CardFaction from '@shared/enums/CardFaction'
+import {computed, defineComponent} from '@vue/composition-api'
+import {PropType} from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	props: {
 		faction: {
-			type: Number,
-			required: true
+			type: Number as PropType<CardFaction>,
+			required: true,
+		},
+
+		isExperimental: {
+			type: Boolean as PropType<boolean>,
+			required: true,
 		}
 	},
 
-	computed: {
-		factionAsString(): string {
-			switch (this.faction) {
+	setup(props) {
+		const factionAsString = computed<string>(() => {
+			switch (props.faction) {
+				case CardFaction.HUMAN:
+					return 'human'
 				case CardFaction.ARCANE:
 					return 'arcane'
+				case CardFaction.WILD:
+					return 'wild'
 				case CardFaction.NEUTRAL:
 					return 'neutral'
-				case CardFaction.EXPERIMENTAL:
-					return 'experimental'
 				default:
-					return ''
+					return props.faction
 			}
-		},
+		})
 
-		separatorText(): string {
-			return Localization.get(`card.faction.${this.factionAsString}`)
-		},
-
-		factionClass(): any {
-			return {
-				[this.factionAsString]: true
+		const separatorText = computed<string>(() => {
+			let faction = factionAsString.value
+			if (props.isExperimental) {
+				faction += '.experimental'
 			}
+			return Localization.get(`card.faction.${faction}`)
+		})
+
+		const factionClass = computed<Record<string, boolean>>(() => ({
+			[factionAsString.value]: true,
+			experimental: props.isExperimental,
+		}))
+
+		return {
+			factionClass,
+			separatorText,
 		}
 	},
-
-	methods: {
-
-	}
 })
 </script>
 
@@ -61,6 +73,14 @@ export default Vue.extend({
 		user-select: none;
 		font-size: 1.1em;
 
+		&.human {
+			color: darkgoldenrod;
+
+			.line {
+				background: darkgoldenrod;
+			}
+		}
+
 		&.arcane {
 			color: teal;
 
@@ -69,27 +89,19 @@ export default Vue.extend({
 			}
 		}
 
+		&.wild {
+			color: green;
+
+			.line {
+				background: green;
+			}
+		}
+
 		&.neutral {
-			color: white;
+			color: gray;
 
 			.line {
-				background: white;
-			}
-		}
-
-		&.experimental {
-			color: white;
-
-			.line {
-				background: white;
-			}
-		}
-
-		&.unfinished {
-			color: red;
-
-			.line {
-				background: red;
+				background: gray;
 			}
 		}
 

@@ -13,6 +13,7 @@ enum GameEventType {
 
 	UNIT_CREATED = 'unitCreated',
 	UNIT_MOVED = 'unitMoved',
+	UNIT_ORDERED = 'unitOrdered',
 	UNIT_DESTROYED = 'unitDestroyed',
 
 	UNIT_DEPLOYED = 'unitDeployed',

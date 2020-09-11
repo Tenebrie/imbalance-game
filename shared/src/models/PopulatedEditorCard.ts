@@ -1,6 +1,6 @@
 import EditorCard from './EditorCard'
-import CardMessage from './network/CardMessage'
+import OpenCardMessage from './network/card/OpenCardMessage'
 
-export default interface PopulatedEditorCard extends EditorCard, CardMessage {
+export default interface PopulatedEditorCard extends EditorCard, OpenCardMessage {
 
 }

@@ -1,12 +1,12 @@
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import BuffStackType from '@shared/enums/BuffStackType'
-import BuffMessage from '@shared/models/network/BuffMessage'
 import Buff from '@shared/models/Buff'
 import Core from '@/Pixi/Core'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffFeature from '@shared/enums/BuffFeature'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 
 export default class ClientBuff implements Buff {
 	id: string
@@ -41,10 +41,10 @@ export default class ClientBuff implements Buff {
 		this.name = message.name
 		this.description = message.description
 
-		this.duration = message.duration
-		this.intensity = message.intensity
-		this.baseDuration = message.baseDuration
-		this.baseIntensity = message.baseIntensity
+		this.duration = Number(message.duration)
+		this.intensity = Number(message.intensity)
+		this.baseDuration = Number(message.baseDuration)
+		this.baseIntensity = Number(message.baseIntensity)
 	}
 
 	public addDuration(delta: number): void {
@@ -62,23 +62,4 @@ export default class ClientBuff implements Buff {
 	public setIntensity(value: number): void {
 		this.intensity = value
 	}
-
-	getUnitCostOverride(baseCost: number): number {
-		let cost = baseCost
-		if (this.buffFeatures.includes(BuffFeature.CARD_CAST_FREE)) {
-			cost = 0
-		}
-		return Math.max(0, cost)
-	}
-	getSpellCostOverride(baseCost: number): number {
-		let cost = baseCost
-		if (this.buffFeatures.includes(BuffFeature.SPELL_DISCOUNT_PER_INTENSITY)) {
-			cost -= this.intensity
-		}
-		if (this.buffFeatures.includes(BuffFeature.CARD_CAST_FREE)) {
-			cost = 0
-		}
-		return Math.max(0, cost)
-	}
-	getUnitMaxPowerOverride(basePower: number): number { return basePower }
 }

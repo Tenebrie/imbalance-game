@@ -60,7 +60,7 @@ router.get('/', AsyncHandler(async(req, res: Response, next) => {
 		PlayerLibrary.removeFromCache(player)
 		throw { status: 401, error: 'User does not exist' }
 	}
-	res.json({ data: PlayerMessage.fromPlayer(player) })
+	res.json({ data: new PlayerMessage(player) })
 }))
 
 router.delete('/', AsyncHandler(async(req, res: Response, next) => {

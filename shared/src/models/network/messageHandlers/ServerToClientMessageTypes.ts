@@ -1,0 +1,74 @@
+export enum PlayerUpdateMessageType {
+	LEADER_SELF = 'playerUpdate_leaderSelf',
+	LEADER_OPPONENT = 'playerUpdate_leaderOpponent',
+	MORALE = 'playerUpdate_morale',
+	MANA = 'playerUpdate_mana',
+	CARD_ADD_HAND = 'playerUpdate_cardAddToHand',
+	CARD_ADD_DECK = 'playerUpdate_cardAddToDeck',
+	CARD_ADD_GRAVE = 'playerUpdate_cardAddToGrave',
+	CARD_DESTROY_HAND = 'playerUpdate_cardDestroyFromHand',
+	CARD_DESTROY_DECK = 'playerUpdate_cardDestroyFromDeck',
+	CARD_DESTROY_GRAVE = 'playerUpdate_cardDestroyFromGrave',
+	PLAY_TARGETS = 'playerUpdate_playTargets',
+	UNIT_ORDERS_SELF = 'playerUpdate_unitOrdersSelf',
+	UNIT_ORDERS_OPPONENT = 'playerUpdate_unitOrdersOpponent',
+	CARD_REVEALED = 'playerUpdate_cardRevealed',
+	PLAY_DECLINED = 'playerUpdate_playDeclined',
+	TURN_START = 'playerUpdate_turnStart',
+	TURN_END = 'playerUpdate_turnEnd',
+	ROUND_START = 'playerUpdate_roundStart',
+	ROUND_END = 'playerUpdate_roundEnd',
+	GAME_END_VICTORY = 'playerUpdate_gameEndAsVictory',
+	GAME_END_DEFEAT = 'playerUpdate_gameEndAsDefeat',
+	GAME_END_DRAW = 'playerUpdate_gameEndAsDraw',
+}
+
+export enum GameLogUpdateMessageType {
+	ENTRY = 'gameLogUpdate_entry',
+}
+
+export enum AnimationMessageType {
+	PLAY = 'animation_play',
+	THREAD_CREATE = 'animation_threadCreate',
+	THREAD_START = 'animation_threadStart',
+	THREAD_COMMIT = 'animation_threadCommit',
+	EXECUTE_QUEUE = 'animation_executeQueue'
+}
+
+export enum GameSyncMessageType {
+	START = 'gameSync_start',
+	PHASE_ADVANCE = 'gameSync_phaseAdvance',
+	PLAYER_SELF = 'gameSync_playerSelf',
+	PLAYER_OPPONENT = 'gameSync_playerOpponent',
+}
+
+export enum SystemMessageType {
+	REQUEST_INIT = 'system_requestInit',
+	ERROR_GENERIC = 'system_errorGeneric',
+	COMMAND_DISCONNECT = 'system_commandDisconnect',
+}
+
+export enum BoardUpdateMessageType {
+	UNIT_CREATE = 'boardUpdate_unitCreate',
+	UNIT_INSERT = 'boardUpdate_unitInsert',
+	UNIT_MOVE = 'boardUpdate_unitMove',
+	UNIT_DESTROY = 'boardUpdate_unitDestroy',
+	ROW_OWNER = 'boardUpdate_rowOwner',
+}
+
+export enum ResolveStackMessageType {
+	ADD = 'resolveStack_add',
+	TARGETS = 'resolveStack_targets',
+	REMOVE = 'resolveStack_remove',
+}
+
+export enum CardUpdateMessageType {
+	STATS = 'cardUpdate_stats',
+	VARIABLES = 'cardUpdate_variables',
+	BUFF_ADD = 'cardUpdate_buffAdd',
+	BUFF_DURATION = 'cardUpdate_buffDuration',
+	BUFF_INTENSITY = 'cardUpdate_buffIntensity',
+	BUFF_REMOVE = 'cardUpdate_buffRemove',
+}
+
+export type ServerToClientMessageTypes = PlayerUpdateMessageType | GameLogUpdateMessageType | AnimationMessageType | GameSyncMessageType | SystemMessageType | BoardUpdateMessageType | ResolveStackMessageType | CardUpdateMessageType

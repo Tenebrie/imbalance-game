@@ -102,7 +102,9 @@ class Database {
 	}
 
 	private async runQuery(query: string): Promise<QueryResult> {
-		if (!this.client) { throw 'Database client is not yet ready' }
+		if (!this.client) {
+			throw { status: 503, message: 'Database client is not yet ready' }
+		}
 
 		return new Promise((resolve, reject) => {
 			this.client.query(query, (err, res) => {

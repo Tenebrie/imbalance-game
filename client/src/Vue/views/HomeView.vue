@@ -23,7 +23,7 @@ export default Vue.extend({
 
 	mounted(): void {
 		setTimeout(() => {
-			TextureAtlas.prepare()
+			TextureAtlas.preloadComponents()
 		}, 500)
 	},
 

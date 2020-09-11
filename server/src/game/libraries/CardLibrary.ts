@@ -1,15 +1,13 @@
 import path from 'path'
 import glob from 'glob'
+import * as fs from 'fs'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
-import VoidGame from '../utils/VoidGame'
-import { colorize } from '../../utils/Utils'
+import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
+import {colorize} from '../../utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
-import * as fs from 'fs'
-import CardColor from '@shared/enums/CardColor'
-import CardType from '@shared/enums/CardType'
 
-interface CardConstructor {
+export interface CardConstructor {
 	new (game: ServerGame): ServerCard
 }
 
@@ -37,7 +35,7 @@ class CardLibrary {
 			nameMismatchModules.forEach(module => fs.unlinkSync(module.path))
 		}
 
-		const filteredModules = cardModules
+		const upToDateModules = cardModules
 			.filter(module => module.filename === module.prototypeFunction.name)
 			.reduce((acc, obj) => {
 				const updatedArray = acc.slice()
@@ -50,41 +48,39 @@ class CardLibrary {
 				return updatedArray
 			}, [])
 
-		const outdatedModules = cardModules.filter(module => !filteredModules.includes(module) && !nameMismatchModules.includes(module))
+		const outdatedModules = cardModules.filter(module => !upToDateModules.includes(module) && !nameMismatchModules.includes(module))
 		if (outdatedModules.length > 0) {
 			console.info(colorize(`Clearing ${outdatedModules.length} outdated card module(s)`, AsciiColor.YELLOW))
 			outdatedModules.forEach(module => fs.unlinkSync(module.path))
 		}
 
-		const cardPrototypes = filteredModules.map(module => module.prototypeFunction)
+		const cardPrototypes = upToDateModules.map(module => module.prototypeFunction)
 
 		this.cards = cardPrototypes.map(prototype => {
-			const referenceInstance = new prototype(VoidGame.get())
-			const className = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
-			referenceInstance.class = className
-			referenceInstance.power = referenceInstance.basePower
-			referenceInstance.armor = referenceInstance.baseArmor
-			referenceInstance.attack = referenceInstance.baseAttack
-			referenceInstance.name = `card.name.${className}`
-			referenceInstance.description = `card.description.${className}`
-			if ((referenceInstance.color === CardColor.LEADER || referenceInstance.color === CardColor.GOLDEN) && referenceInstance.type === CardType.UNIT) {
-				referenceInstance.title = `card.title.${className}`
-			}
-			return referenceInstance
+			return new prototype(CardLibraryPlaceholderGame)
 		})
 
-		const sortedModules = filteredModules.sort((a, b) => b.timestamp - a.timestamp)
-		const latestClasses = sortedModules.slice(0, 5).map(card => card.prototypeFunction.name)
-		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions. Newest 5:`, latestClasses)
-	}
+		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions.`)
+		if (cardPrototypes.length === 0) {
+			return
+		}
 
-	public get collectibleCards(): ServerCard[] {
-		const cards = this.cards as ServerCard[]
-		return cards.filter(card => card.isCollectible())
+		const oldestTimestamp = upToDateModules.sort((a, b) => a.timestamp - b.timestamp)[0].timestamp
+		const newModules = upToDateModules.filter(module => (module.timestamp - oldestTimestamp) > 1000000)
+		if (newModules.length === 0) {
+			return
+		}
+		const sortedNewModules = newModules.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5)
+		console.info('Latest updated card definitions:', sortedNewModules.map(module => module.filename))
 	}
 
 	public findPrototypeById(id: string): ServerCard | null {
 		return this.cards.find(card => card.id === id)
+	}
+
+	public findPrototypeByConstructor(constructor: CardConstructor): ServerCard | null {
+		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
+		return this.cards.find(card => card.class === cardClass)
 	}
 
 	public instantiateByInstance(game: ServerGame, card: ServerCard): ServerCard {
@@ -92,8 +88,8 @@ class CardLibrary {
 		return this.instantiateByClass(game, cardClass)
 	}
 
-	public instantiateByConstructor(game: ServerGame, prototype: Function): ServerCard {
-		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
+	public instantiateByConstructor(game: ServerGame, constructor: CardConstructor): ServerCard {
+		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
 		return this.instantiateByClass(game, cardClass)
 	}
 
@@ -107,21 +103,7 @@ class CardLibrary {
 		}
 
 		const referenceConstructor = reference.constructor as CardConstructor
-		const clone: ServerCard = new referenceConstructor(game)
-		clone.type = reference.type
-		clone.class = cardClass
-
-		clone.name = reference.name
-		clone.title = reference.title
-		clone.baseTribes = (reference.baseTribes || []).slice()
-		clone.baseFeatures = (reference.baseFeatures || []).slice()
-		clone.description = reference.description
-		clone.game = game
-		clone.power = clone.basePower
-		clone.attack = clone.baseAttack
-		clone.attackRange = clone.baseAttackRange
-		clone.armor = clone.baseArmor
-		return clone
+		return new referenceConstructor(game)
 	}
 }
 

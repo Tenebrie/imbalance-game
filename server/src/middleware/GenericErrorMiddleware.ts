@@ -6,7 +6,11 @@ interface ErrorJson {
 }
 
 export default (err, req, res: Response, next) => {
-	const statusCode = err.status || 400
+	if (err && !err.status) {
+		console.error(err)
+	}
+
+	const statusCode = err.status || 500
 	const json: ErrorJson = {
 		code: err.code,
 		error: typeof(err) === 'object' ? err.error : err

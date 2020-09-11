@@ -7,14 +7,17 @@ import ServerCardTarget from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
-import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
-import GameEventCreators from './GameEventCreators'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame
 	card: ServerCard
 	owner: ServerPlayerInGame
-	isBeingDestroyed = false
+
+	constructor(game: ServerGame, card: ServerCard, owner: ServerPlayerInGame) {
+		this.game = game
+		this.card = card
+		this.owner = owner
+	}
 
 	get rowIndex(): number {
 		return this.game.board.rows.indexOf(this.game.board.getRowWithUnit(this)!)
@@ -30,93 +33,36 @@ export default class ServerUnit implements Unit {
 		return this.card.buffs
 	}
 
-	constructor(game: ServerGame, card: ServerCard, owner: ServerPlayerInGame) {
-		this.game = game
-		this.card = card
-		this.owner = owner
-	}
-
-	addPower(value: number): void {
-		this.card.setPower(Math.max(1, this.card.power + value))
-	}
-
-	setPower(value: number): void {
-		this.card.setPower(value)
-	}
-
-	addHealthArmor(value: number): void {
-		this.setHealthArmor(Math.max(0, this.card.armor + value))
-	}
-
-	setHealthArmor(value: number): void {
-		this.card.setArmor(value)
-	}
-
 	dealDamage(damageInstance: ServerDamageInstance): void {
 		this.card.dealDamage(damageInstance)
 	}
 
 	heal(healingInstance: ServerDamageInstance): void {
-		if (healingInstance.value <= 0) {
-			return
-		}
-
-		this.setPower(Math.min(this.card.maxPower, this.card.power + healingInstance.value))
+		this.card.heal(healingInstance)
 	}
 
 	isAlive(): boolean {
-		return this.card.power > 0
+		return !this.card.isDead
 	}
 
 	isDead(): boolean {
-		return this.card.power <= 0
+		return this.card.isDead
 	}
 
 	getValidOrders(): ServerCardTarget[] {
-		const targetDefinition = this.card.getValidOrderTargetDefinition()
+		const targetDefinitions = this.card.targeting.getUnitOrderTargetDefinitions()
 		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
-		const targets = []
-			.concat(this.card.getValidTargets(TargetMode.ORDER_ATTACK, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_DRAIN, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_SUPPORT, TargetType.UNIT, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_ATTACK, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_DRAIN, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_SUPPORT, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
-			.concat(this.card.getValidTargets(TargetMode.ORDER_MOVE, TargetType.BOARD_ROW, targetDefinition, { thisUnit: this }, performedOrders))
+		let targets = []
+		targetDefinitions.forEach(targetDefinition => {
+			targets = targets
+				.concat(this.card.targeting.getValidTargets(TargetMode.UNIT_ORDER, TargetType.UNIT, targetDefinition, { sourceCard: this.card }, performedOrders))
+				.concat(this.card.targeting.getValidTargets(TargetMode.UNIT_ORDER, TargetType.BOARD_ROW, targetDefinition, { sourceCard: this.card }, performedOrders))
+				.concat(this.card.targeting.getValidTargets(TargetMode.UNIT_ORDER, TargetType.CARD_IN_UNIT_HAND, targetDefinition, { sourceCard: this.card }, performedOrders))
+				.concat(this.card.targeting.getValidTargets(TargetMode.UNIT_ORDER, TargetType.CARD_IN_SPELL_HAND, targetDefinition, { sourceCard: this.card }, performedOrders))
+		})
 
 		targets.forEach(target => { target.sourceUnit = this })
 
 		return targets
-	}
-
-	destroy(): void {
-		if (this.isBeingDestroyed) {
-			return
-		}
-
-		this.isBeingDestroyed = true
-
-		const hookValues = this.game.events.applyHooks<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED, {
-			destructionPrevented: false
-		}, {
-			targetUnit: this
-		})
-		if (hookValues.destructionPrevented) {
-			this.card.setPower(1)
-			this.isBeingDestroyed = false
-			return
-		}
-
-		this.game.events.postEvent(GameEventCreators.unitDestroyed({
-			triggeringUnit: this
-		}))
-
-		this.game.board.destroyUnit(this)
-
-		this.card.setPower(this.card.basePower)
-		this.card.buffs.removeAll()
-
-		this.owner.cardGraveyard.addUnit(this.card)
-		this.isBeingDestroyed = false
 	}
 }

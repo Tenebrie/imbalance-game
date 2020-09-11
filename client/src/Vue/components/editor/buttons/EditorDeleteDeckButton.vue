@@ -10,6 +10,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
+import router from '@/Vue/router'
 
 export default Vue.extend({
 	data: () => ({
@@ -23,11 +24,11 @@ export default Vue.extend({
 	methods: {
 		async onClick(): Promise<void> {
 			this.requestInFlight = true
-			const deckId = this.$route.params.id
+			const deckId = this.$route.params.deckId
 			const statusCode = await store.dispatch.editor.deleteDeck({ deckId })
 			if (statusCode === 204) {
 				this.$noty.success('Deck deleted!')
-				await this.$router.push({ name: 'decks' })
+				await this.$router.push({ name: 'decks', query: router.currentRoute.query })
 			} else {
 				this.$noty.error('An error occurred while deleting the deck')
 			}

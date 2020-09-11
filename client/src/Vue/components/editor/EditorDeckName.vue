@@ -13,7 +13,7 @@ import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 export default Vue.extend({
 	computed: {
 		deckId(): string {
-			return this.$route.params.id
+			return this.$route.params.deckId
 		},
 
 		deck(): PopulatedEditorDeck {
@@ -25,7 +25,7 @@ export default Vue.extend({
 				return this.deck.name
 			},
 			set(name: string): void {
-				const deckId = this.$route.params.id
+				const deckId = this.$route.params.deckId
 				store.dispatch.editor.renameDeck({ deckId, name })
 			}
 		},

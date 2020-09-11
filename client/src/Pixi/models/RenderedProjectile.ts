@@ -12,7 +12,7 @@ export default class RenderedProjectile {
 	animationDuration: number
 	lifetime: number
 	randomnessFactor: number
-	onImpact: Function
+	onImpact: () => void
 
 	impactPerformed: boolean
 
@@ -24,7 +24,7 @@ export default class RenderedProjectile {
 		this.currentTime = 0
 		this.animationDuration = animationDuration
 		this.lifetime = lifetime
-		this.randomnessFactor = Math.random()
+		this.randomnessFactor = 0.5
 		this.onImpact = () => { /* Empty */ }
 
 		this.impactPerformed = false

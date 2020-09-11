@@ -9,6 +9,7 @@ import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameEventType from '@shared/enums/GameEventType'
 import {GameEvent} from './GameEventCreators'
+import CardFeature from '@shared/enums/CardFeature'
 
 type EventSubscriber = ServerCard | ServerBuff
 
@@ -17,12 +18,14 @@ export class EventCallback<EventArgs> {
 	private readonly __prepares: ((args: EventArgs, preparedState: Record<string, any>) => Record<string, any>)[]
 	private readonly __callbacks: ((args: EventArgs, preparedState: Record<string, any>) => void)[]
 	private readonly __conditions: ((args: EventArgs, rawEvent: GameEvent) => boolean)[]
+	private __ignoreControlEffects: boolean
 
 	constructor(subscriber: EventSubscriber) {
 		this.__subscriber = subscriber
 		this.__prepares = []
 		this.__callbacks = []
 		this.__conditions = []
+		this.__ignoreControlEffects = false
 	}
 
 	public get subscriber(): EventSubscriber {
@@ -39,6 +42,10 @@ export class EventCallback<EventArgs> {
 
 	public get conditions(): ((args: EventArgs, rawEvent: GameEvent) => boolean)[] {
 		return this.__conditions
+	}
+
+	public get ignoreControlEffects(): boolean {
+		return this.__ignoreControlEffects
 	}
 
 	/* Prepare state to be used in the callback
@@ -72,12 +79,13 @@ export class EventCallback<EventArgs> {
 		return this
 	}
 
-	requireLocation(location: CardLocation): EventCallback<EventArgs> {
-		return this.require(() => this.__subscriber.location === location)
-	}
-
-	requireLocations(locations: CardLocation[]): EventCallback<EventArgs> {
-		return this.require(() => locations.includes(this.__subscriber.location))
+	/* Ignore control effects
+	 * ------------------------------------------------------------------------
+	 * This callback will ignore stun and suspension effects applied to card and fire even if the normal callbacks would be skipped.
+	 */
+	forceIgnoreControlEffects(): EventCallback<EventArgs> {
+		this.__ignoreControlEffects = true
+		return this
 	}
 }
 
@@ -86,6 +94,7 @@ export class EventHook<HookValues, HookArgs> {
 	private readonly __hooks: ((values: HookValues, args?: HookArgs) => HookValues)[]
 	private readonly __callbacks: ((args: HookArgs) => void)[]
 	private readonly __conditions: ((args: HookArgs) => boolean)[]
+	private __ignoreControlEffects: boolean
 
 	constructor(subscriber: EventSubscriber) {
 		this.__subscriber = subscriber
@@ -108,6 +117,10 @@ export class EventHook<HookValues, HookArgs> {
 
 	public get conditions(): ((args: HookArgs) => boolean)[] {
 		return this.__conditions
+	}
+
+	public get ignoreControlEffects(): boolean {
+		return this.__ignoreControlEffects
 	}
 
 	/* Add a hook values replace function
@@ -142,8 +155,21 @@ export class EventHook<HookValues, HookArgs> {
 		return this
 	}
 
+	/* Require card location to be a specified value before callback execution
+	 * ------------------------------------------------------------------------
+	 * Add a new condition to the require chain. Card location must match any of the specified values.
+	 */
 	requireLocations(locations: CardLocation[]): EventHook<HookValues, HookArgs> {
 		return this.require(() => locations.includes(this.__subscriber.location))
+	}
+
+	/* Ignore control effects
+	 * ------------------------------------------------------------------------
+	 * This callback will ignore stun and suspension effects applied to card and fire even if the normal callbacks would be skipped.
+	 */
+	forceIgnoreControlEffects(): EventHook<HookValues, HookArgs> {
+		this.__ignoreControlEffects = true
+		return this
 	}
 }
 
@@ -188,11 +214,12 @@ export default class ServerGameEvents {
 		})
 	}
 
-	public postEvent(event: GameEvent): void {
+	public postEvent(event: GameEvent, args: { allowThreading?: boolean } = { allowThreading: false }): void {
 		this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
 
 		const validCallbacks = this.eventCallbacks
 			.get(event.type)
+			.filter(subscription => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
 			.filter(subscription => !subscription.conditions.find(condition => {
 				return cardRequire(() => !condition(event.args, event))
 			}))
@@ -205,7 +232,15 @@ export default class ServerGameEvents {
 		preparedCallbacks
 			.forEach(preparedCallback => {
 				preparedCallback.callback.callbacks.forEach(callback => {
+					if (args.allowThreading) {
+						this.game.animation.createAnimationThread()
+					}
+
 					cardPerform(() => callback(event.args, preparedCallback.preparedState))
+
+					if (args.allowThreading) {
+						this.game.animation.commitAnimationThread()
+					}
 				})
 			})
 	}
@@ -214,6 +249,7 @@ export default class ServerGameEvents {
 		const hookArgs = args ? args : values
 
 		const matchingHooks = this.eventHooks.get(hook)
+			.filter(subscription => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
 			.filter(hook => !hook.conditions.find(condition => {
 				return cardRequire(() => !condition(hookArgs))
 			}))
@@ -228,6 +264,13 @@ export default class ServerGameEvents {
 					return replace(accInner, hookArgs)
 				}, accOuter)
 			}, values)
+	}
+
+	private subscriberSuspended(subscriber: ServerCard | ServerBuff): boolean {
+		if (subscriber instanceof ServerBuff) {
+			return subscriber.card.features.includes(CardFeature.SUSPENDED)
+		}
+		return subscriber.features.includes(CardFeature.STUNNED)
 	}
 
 	private get currentLogEventGroup(): EventLogEntryMessage[] {

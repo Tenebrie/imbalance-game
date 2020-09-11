@@ -1,17 +1,12 @@
-import AnimationType from '../enums/AnimationType'
-import Unit from './Unit'
 import Card from './Card'
+import Unit from './Unit'
+import AnimationType from '../enums/AnimationType'
 
-export default class Animation {
+export default interface Animation {
 	type: AnimationType
 	sourceCard: Card | null
 	sourceUnit: Unit | null
 	targetCard: Card | null
 	targetCards: Card[] | null
 	params: any
-
-	constructor(type: AnimationType, params: any) {
-		this.type = type
-		this.params = params
-	}
 }

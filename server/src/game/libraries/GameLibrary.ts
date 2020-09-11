@@ -33,7 +33,7 @@ class GameLibrary {
 		if (!id) { throw 'Missing game ID' }
 
 		const game = this.games.find(game => game.id === id)
-		if (!game || game.owner.id !== player.id) { throw 'Invalid game ID' }
+		if (!game || !game.owner || game.owner.id !== player.id) { throw 'Invalid game ID' }
 
 		this.destroyGame(game, reason)
 	}

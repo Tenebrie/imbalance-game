@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js'
-import CardMessage from '@shared/models/network/CardMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardType from '@shared/enums/CardType'
 import CardFeature from '@shared/enums/CardFeature'
@@ -7,46 +6,10 @@ import Card from '@shared/models/Card'
 import CardColor from '@shared/enums/CardColor'
 import Constants from '@shared/Constants'
 import store from '@/Vue/store'
-import RenderQuality from '@shared/enums/RenderQuality'
+import RichTextVariables from '@shared/models/RichTextVariables'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
-export interface CardRenderScale {
-	superSamplingLevel: number
-	generalGameFontRenderScale: number
-	generalEditorFontRenderScale: number
-	descriptionGameFontRenderScale: number
-	descriptionEditorFontRenderScale: number
-}
-
-export const getRenderScale = (): CardRenderScale => {
-	const selectedQuality = store.state.userPreferencesModule.renderQuality
-	if (selectedQuality === RenderQuality.ULTRA) {
-		return {
-			superSamplingLevel: 2.0,
-			generalGameFontRenderScale: 1.2,
-			generalEditorFontRenderScale: 1.5,
-			descriptionGameFontRenderScale: 1.2,
-			descriptionEditorFontRenderScale: 1.2
-		}
-	} else if (selectedQuality === RenderQuality.HIGH || selectedQuality === RenderQuality.DEFAULT) {
-		return {
-			superSamplingLevel: 1.0,
-			generalGameFontRenderScale: 1.4,
-			generalEditorFontRenderScale: 1.5,
-			descriptionGameFontRenderScale: 1.5,
-			descriptionEditorFontRenderScale: 1.2
-		}
-	} else if (selectedQuality === RenderQuality.NORMAL) {
-		return {
-			superSamplingLevel: 1.0,
-			generalGameFontRenderScale: 1.0,
-			generalEditorFontRenderScale: 1.0,
-			descriptionGameFontRenderScale: 1.0,
-			descriptionEditorFontRenderScale: 1.0
-		}
-	}
-}
-
-export const forEachInNumericEnum = (enumeration: any, handler: (val: any) => any): void => {
+export const forEachInNumericEnum = (enumeration: Enumerator, handler: (val: any) => any): void => {
 	for (const value in enumeration) {
 		if (!isNaN(Number(value))) {
 			handler(Number(value))
@@ -54,14 +17,35 @@ export const forEachInNumericEnum = (enumeration: any, handler: (val: any) => an
 	}
 }
 
-export const forEachInStringEnum = (enumeration: any, handler: (val: any) => any): void => {
+export const forEachInStringEnum = (enumeration: Enumerator, handler: (val: any) => any): void => {
 	for (const value in enumeration) {
 		handler(enumeration[value])
 	}
 }
 
+export const snakeToCamelCase = (str: string): string => str.toLowerCase().replace(
+	/([-_][a-z])/g,
+	(group) => group.toUpperCase()
+		.replace('-', '')
+		.replace('_', '')
+)
+
+export const insertRichTextVariables = (str: string | null | undefined, variables: RichTextVariables): string => {
+	if (str === null || str === undefined) {
+		return ''
+	}
+
+	let replacedText = str
+	for (const variableName in variables) {
+		const variableValue = variables[variableName] || ''
+		const regexp = new RegExp('{' + variableName + '}', 'g')
+		replacedText = replacedText.replace(regexp, '*' + variableValue.toString() + '*')
+	}
+	return replacedText
+}
+
 export default {
-	getFont(text: string) {
+	getFont(text: string): string {
 		let font = 'Roboto'
 		const cyrillic = (/[а-яА-Я]/g).exec(text)
 		if (cyrillic) {
@@ -145,8 +129,8 @@ export default {
 			return (
 				(+a.features.includes(CardFeature.LOW_SORT_PRIORITY) - +b.features.includes(CardFeature.LOW_SORT_PRIORITY)) ||
 				(a.type - b.type) ||
-				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+				(a.type === CardType.UNIT && (a.color - b.color || b.stats.basePower - a.stats.basePower || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
+				(a.type === CardType.SPELL && (a.color - b.color || a.stats.baseSpellCost - b.stats.baseSpellCost || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
 			)
 		})
 	},
@@ -155,8 +139,8 @@ export default {
 		return inputArray.slice().sort((a: CardMessage, b: CardMessage) => {
 			return (
 				(a.type - b.type) ||
-				(a.type === CardType.UNIT && (a.color - b.color || b.power - a.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.power - b.power || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+				(a.type === CardType.UNIT && (a.color - b.color || b.stats.basePower - a.stats.basePower || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
+				(a.type === CardType.SPELL && (a.color - b.color || a.stats.basePower - b.stats.basePower || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
 			)
 		})
 	},
@@ -176,6 +160,21 @@ export default {
 		}
 	},
 
+	getMaxCardCopiesForColor(color: CardColor): number {
+		switch (color) {
+			case CardColor.LEADER:
+				return Constants.CARD_COPIES_LIMIT_LEADER
+			case CardColor.GOLDEN:
+				return Constants.CARD_COPIES_LIMIT_GOLDEN
+			case CardColor.SILVER:
+				return Constants.CARD_COPIES_LIMIT_SILVER
+			case CardColor.BRONZE:
+				return Constants.CARD_COPIES_LIMIT_BRONZE
+			default:
+				return 0
+		}
+	},
+
 	canAddCardToDeck(deckId: string, cardToAdd: Card | CardMessage): boolean {
 		const cardOfColorCount = store.getters.editor.cardsOfColor({ deckId: deckId, color: cardToAdd.color })
 		if (cardOfColorCount >= this.getMaxCardCountForColor(cardToAdd.color)) {
@@ -187,7 +186,7 @@ export default {
 			return false
 		}
 
-		const maxCount = cardToAdd.color === CardColor.BRONZE ? 3 : 1
+		const maxCount = this.getMaxCardCopiesForColor(cardToAdd.color)
 		const cardToModify = deckToModify.cards.find(card => card.class === cardToAdd.class)
 		return !cardToModify || cardToModify.count < maxCount
 	}

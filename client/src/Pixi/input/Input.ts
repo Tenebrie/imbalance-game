@@ -13,13 +13,19 @@ import TargetType from '@shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
-import CardMessage from '@shared/models/network/CardMessage'
 import Utils from '@/utils/Utils'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
+import store from '@/Vue/store'
+import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 
-const LEFT_MOUSE_BUTTON = 0
-const RIGHT_MOUSE_BUTTON = 2
+export const LEFT_MOUSE_BUTTON = 0
+export const RIGHT_MOUSE_BUTTON = 2
+
+enum InspectCardMode {
+	CLICK,
+	HOLD,
+}
 
 export default class Input {
 	leftMouseDown = false
@@ -33,6 +39,8 @@ export default class Input {
 	playableCards: ClientCardTarget[] = []
 	forcedTargetingMode: ForcedTargetingMode | null = null
 	forcedTargetingCards: RenderedCard[] = []
+
+	inspectCardMode: InspectCardMode = InspectCardMode.CLICK
 
 	constructor() {
 		const view = Core.renderer.pixi.view
@@ -48,14 +56,19 @@ export default class Input {
 		view.addEventListener('mousemove', (event: MouseEvent) => {
 			this.onMouseMove(event)
 			this.updateCardHoverStatus()
-			if (this.rightMouseDown) { this.inspectCard() }
+			if (this.rightMouseDown && this.inspectCardMode === InspectCardMode.HOLD) {
+				this.inspectCard()
+			}
 		})
-
-		document.addEventListener('contextmenu', this.onContextMenuOpened)
 	}
 
 	public tick(): void {
 		this.updateCardHoverStatus()
+		// Long click
+		// if (this.grabbedCard && this.grabbedCard.isLongClicked()) {
+		// 	this.releaseCard()
+		// 	this.inspectCard()
+		// }
 	}
 
 	public updateCardHoverStatus(): void {
@@ -94,12 +107,28 @@ export default class Input {
 	}
 
 	private onMouseDown(event: MouseEvent) {
+		if (event.button === RIGHT_MOUSE_BUTTON && (event.ctrlKey || event.shiftKey)) {
+			return
+		}
+
 		if (this.inspectedCard) {
+			store.dispatch.inspectedCard.undoCard()
+			return
+		}
+
+		if (event.button === LEFT_MOUSE_BUTTON && this.grabbedCard) {
+			this.useGrabbedCard()
 			return
 		}
 
 		if (event.button === RIGHT_MOUSE_BUTTON && this.grabbedCard) {
 			this.releaseCard()
+			return
+		}
+
+		if (event.button === RIGHT_MOUSE_BUTTON && this.hoveredCard) {
+			this.inspectCardMode = InspectCardMode.CLICK
+			this.inspectCard()
 			return
 		}
 
@@ -118,7 +147,7 @@ export default class Input {
 			this.grabCard()
 		} else if (event.button === RIGHT_MOUSE_BUTTON) {
 			this.rightMouseDown = true
-			this.inspectCard()
+			this.inspectCardMode = InspectCardMode.HOLD
 		}
 	}
 
@@ -130,10 +159,12 @@ export default class Input {
 
 		if (event.button === LEFT_MOUSE_BUTTON) {
 			this.leftMouseDown = false
-			this.useGrabbedCard()
-		} else if (event.button === RIGHT_MOUSE_BUTTON) {
+			if (this.grabbedCard && !this.grabbedCard.shouldStick()) {
+				this.useGrabbedCard()
+			}
+		} else if (event.button === RIGHT_MOUSE_BUTTON && this.rightMouseDown) {
 			this.rightMouseDown = false
-			this.inspectedCard = null
+			this.inspectCard()
 		}
 	}
 
@@ -146,7 +177,7 @@ export default class Input {
 
 		const windowHeight = Core.renderer.pixi.view.height
 		const heightLimit = windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5
-		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCard === this.grabbedCard.card)) {
+		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCard.id === this.grabbedCard.card.id)) {
 			this.releaseCard()
 		}
 	}
@@ -164,7 +195,7 @@ export default class Input {
 			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
 		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY && Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0) {
 			const validOrders = Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id))
-			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetUnit.card)
+			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetCard).map(card => Core.game.findRenderedCardById(card.id))
 			const validRows = validOrders.filter(order => order.targetType === TargetType.BOARD_ROW).map(order => order.targetRow)
 			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)
 		} else if (hoveredCard.location === CardLocation.SELECTABLE) {
@@ -175,11 +206,18 @@ export default class Input {
 	public inspectCard(): void {
 		const hoveredCard = this.hoveredCard
 		if (!hoveredCard) {
-			this.inspectedCard = null
+			store.dispatch.inspectedCard.undoCard()
 			return
 		}
 
 		this.inspectedCard = hoveredCard.card
+		store.commit.gameStateModule.setInspectedCard(this.inspectedCard)
+		store.dispatch.inspectedCard.setCard({ card: hoveredCard.card })
+	}
+
+	public releaseInspectedCard(): void {
+		this.inspectedCard = null
+		store.commit.gameStateModule.setInspectedCard(null)
 	}
 
 	public useGrabbedCard(): void {
@@ -234,11 +272,11 @@ export default class Input {
 
 	private onUnitOrder(orderedCard: RenderedCard): void {
 		const orderedUnit = Core.board.findUnitById(orderedCard.id)!
-		const hoveredUnit = MouseHover.getHoveredUnit()
+		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		const validOrders = Core.board.getValidOrdersForUnit(orderedUnit)
-		const performedOrder = validOrders.find(order => (order.targetUnit && order.targetUnit === hoveredUnit) || (order.targetRow && order.targetRow === hoveredRow))
+		const performedOrder = validOrders.find(order => (order.targetCard === hoveredCard) || (order.targetRow && order.targetRow === hoveredRow))
 		if (performedOrder) {
 			OutgoingMessageHandlers.sendUnitOrder(performedOrder)
 		}
@@ -254,25 +292,20 @@ export default class Input {
 		OutgoingMessageHandlers.sendCardTarget(this.forcedTargetingMode.validTargets.find(target => target.targetCardData.id === selectedCard.id))
 	}
 
-	public restoreCardFromLimbo(cardMessage: CardMessage): RenderedCard {
+	public restoreCardFromLimbo(cardMessage: CardRefMessage): RenderedCard {
 		const cardInLimbo = this.cardLimbo.find(card => card.id === cardMessage.id)
 		if (!cardInLimbo) {
 			return
 		}
 
 		Core.registerCard(cardInLimbo)
-		this.clearCardInLimbo(cardMessage)
+		this.clearCardInLimbo(cardMessage.id)
 
 		return cardInLimbo
 	}
 
-	private onContextMenuOpened(event: MouseEvent) {
-		event.preventDefault()
-		return false
-	}
-
-	public clearCardInLimbo(cardMessage: CardMessage): void {
-		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardMessage.id)
+	public clearCardInLimbo(cardId: string): void {
+		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardId)
 	}
 
 	public async enableForcedTargetingMode(validTargets: ClientCardTarget[]): Promise<void> {
@@ -299,9 +332,5 @@ export default class Input {
 		this.forcedTargetingMode = null
 		this.forcedTargetingCards.forEach(card => card.unregister())
 		this.forcedTargetingCards = []
-	}
-
-	public clear() {
-		document.removeEventListener('contextmenu', this.onContextMenuOpened)
 	}
 }

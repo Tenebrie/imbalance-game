@@ -8,23 +8,24 @@ import ServerCardTarget from '../models/ServerCardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerOwnedCard from '../models/ServerOwnedCard'
+import {
+	ClientToServerMessageTypes,
+	GenericActionMessageType,
+	SystemMessageType
+} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 
-export default {
-	'post/chat': (data: string, game: ServerGame, playerInGame: ServerPlayerInGame) => {
-		game.createChatEntry(playerInGame.player, data)
-	},
+export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
-	'post/playCard': (data: CardPlayedMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
+const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: IncomingMessageHandlerFunction } = {
+	[GenericActionMessageType.CARD_PLAY]: (data: CardPlayedMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		const card = playerInGame.cardHand.findCardById(data.id)
 		if (!card) {
 			return
 		}
 
+		const validTargets = card.targeting.getValidCardPlayTargets(card.owner)
 		if (playerInGame.turnEnded || playerInGame.roundEnded || playerInGame.targetRequired ||
-			game.turnPhase !== GameTurnPhase.DEPLOY || !playerInGame.game.board.isExtraUnitPlayableToRow(data.rowIndex) ||
-			(card.type === CardType.UNIT && !playerInGame.canPlayUnit(card, data.rowIndex)) ||
-			(card.type === CardType.SPELL && !playerInGame.canPlaySpell(card, data.rowIndex))) {
-
+			game.turnPhase !== GameTurnPhase.DEPLOY || !validTargets.find(target => data.rowIndex === target.targetRow.index)) {
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return
 		}
@@ -35,15 +36,12 @@ export default {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		// if (!playerInGame.isAnyActionsAvailable()) {
-		// 	playerInGame.endTurn()
-		// 	game.advanceCurrentTurn()
-		// }
 		game.events.flushLogEventGroup()
+		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
-	'post/unitOrder': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
-		const orderedUnit = game.board.findUnitById(data.sourceUnitId)
+	[GenericActionMessageType.UNIT_ORDER]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
+		const orderedUnit = game.board.findUnitById(data.sourceCardId)
 		if (playerInGame.turnEnded || playerInGame.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== playerInGame) {
 			return
 		}
@@ -53,14 +51,11 @@ export default {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		// if (!playerInGame.isAnyActionsAvailable()) {
-		// 	playerInGame.endTurn()
-		// 	game.advanceCurrentTurn()
-		// }
 		game.events.flushLogEventGroup()
+		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
-	'post/cardTarget': (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame) => {
+	[GenericActionMessageType.CARD_TARGET]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		if (!playerInGame.targetRequired) {
 			return
 		}
@@ -71,14 +66,11 @@ export default {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
-		// if (!playerInGame.isAnyActionsAvailable()) {
-		// 	playerInGame.endTurn()
-		// 	game.advanceCurrentTurn()
-		// }
 		game.events.flushLogEventGroup()
+		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
-	'post/endTurn': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
+	[GenericActionMessageType.TURN_END]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		if (player.turnEnded || player.targetRequired) { return }
 
 		player.endTurn()
@@ -89,9 +81,10 @@ export default {
 
 		game.advanceCurrentTurn()
 		game.events.flushLogEventGroup()
+		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
-	'system/init': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
+	[SystemMessageType.INIT]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		if (player.initialized) {
 			return
 		}
@@ -99,7 +92,9 @@ export default {
 		ConnectionEstablishedHandler.onPlayerConnected(game, player)
 	},
 
-	'system/keepalive': (data: void, game: ServerGame, player: ServerPlayerInGame) => {
+	[SystemMessageType.KEEPALIVE]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		// No action needed
 	}
 }
+
+export default IncomingMessageHandlers
