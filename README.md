@@ -4,7 +4,7 @@
 section in the game for more information about the ruleset.
 
 ## Try the game
-You can play the current stable version of the game at https://notgwent.herokuapp.com/. Automatically deployed
+You can play the current stable version of the game at https://app.tenebrie.com/. Automatically deployed
 from the *Master* branch.
 
 You can also test the latest version, deployed straight from the *Develop* branch (i.e. unstable builds),

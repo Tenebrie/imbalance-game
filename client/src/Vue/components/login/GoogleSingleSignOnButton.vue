@@ -1,9 +1,9 @@
 <template>
-	<div id="google-login" />
+	<div id="google-login" v-if="isButtonDisplayed" />
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted} from '@vue/composition-api'
+import {computed, defineComponent, onMounted} from '@vue/composition-api'
 import Notifications from '@/utils/Notifications'
 import axios from 'axios'
 import store from '@/Vue/store'
@@ -11,6 +11,10 @@ import store from '@/Vue/store'
 export default defineComponent({
 	setup() {
 		onMounted(() => {
+			if (!isButtonDisplayed.value) {
+				return
+			}
+
 			gapi.signin2.render('google-login', {
 				'width': 256,
 				'height': 38,
@@ -33,7 +37,12 @@ export default defineComponent({
 			Notifications.error('Unable to login with Google!')
 		}
 
+		const isButtonDisplayed = computed<boolean>(() => {
+			return window.location.hostname.endsWith('tenebrie.com')
+		})
+
 		return {
+			isButtonDisplayed,
 			onGoogleSignInSuccess,
 			onGoogleSignInError
 		}
