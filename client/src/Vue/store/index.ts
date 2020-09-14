@@ -65,18 +65,22 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	},
 
 	actions: {
+		async fetchUser(context): Promise<void> {
+			const { commit } = rootActionContext(context)
+
+			const response = await axios.get('/api/user')
+			const player = response.data.data as Player
+			commit.setPlayerData(player)
+		},
+
 		async login(context, payload: { email: string, password: string }): Promise<void> {
 			const { dispatch } = rootActionContext(context)
 
 			await axios.post('/api/session', payload)
-			LocalStorage.setHasAuthCookie(true)
-			await dispatch.userPreferencesModule.fetchPreferences()
-			await router.push({ name: 'home' })
-			await store.dispatch.editor.loadCardLibrary()
-			editorCardRenderer.startRenderingService()
+			await dispatch.postLogin()
 		},
 
-		async loginWithSingleSignOn(context): Promise<void> {
+		async postLogin(context): Promise<void> {
 			const { dispatch } = rootActionContext(context)
 
 			LocalStorage.setHasAuthCookie(true)

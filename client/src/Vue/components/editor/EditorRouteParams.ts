@@ -31,7 +31,7 @@ export const useDecksRouteQuery = () => {
 		},
 		set color(value: CardColor | null) {
 			const color = value === null ? undefined : value
-			router.push({ query: { ...router.currentRoute.query, color }})
+			router.push({ query: { ...router.currentRoute.query, color: String(color) }})
 		},
 
 		get faction(): CardFaction | null {
@@ -42,7 +42,7 @@ export const useDecksRouteQuery = () => {
 		},
 		set faction(value: CardFaction | null) {
 			const faction = value === null ? undefined : value
-			router.push({ query: { ...router.currentRoute.query, faction }})
+			router.push({ query: { ...router.currentRoute.query, faction: String(faction) }})
 		},
 
 		get experimental(): boolean {

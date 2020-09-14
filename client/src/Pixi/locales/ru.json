@@ -5,6 +5,17 @@
 	"ui.navigation.home": "Главная",
 	"ui.navigation.decks": "Колоды",
 	"ui.navigation.rules": "Правила",
+	"ui.navigation.login": "Войти",
+
+	"ui.auth.email": "Эл. почта",
+	"ui.auth.emailTooltip": "Подтверждение не требуется",
+	"ui.auth.username": "Имя игрока",
+	"ui.auth.password": "Пароль",
+	"ui.auth.confirmPassword": "Подтверждение пароля",
+	"ui.auth.login": "Войти",
+	"ui.auth.createAccount": "Создать",
+	"ui.auth.moveToLogin": "Уже есть учетная запись?",
+	"ui.auth.moveToRegister": "Нет учетной записи?",
 
 	"ui.browser.header": "Список игр",
 	"ui.browser.empty": "Сейчас никто не играет :(",
@@ -34,7 +45,8 @@
 	"ui.volume.userInterface": "Громкость интерфейса",
 
 	"ui.profile.email": "Эл. почта",
-	"ui.profile.username": "Имя игрока",
+	"ui.profile.changeUsername.label": "Имя игрока",
+	"ui.profile.changeUsername.button": "Изменить имя",
 	"ui.profile.changePassword.label": "Пароль",
 	"ui.profile.changePassword.button": "Изменить пароль",
 	"ui.profile.changePassword.placeholder": "Новый пароль",

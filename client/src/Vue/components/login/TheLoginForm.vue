@@ -2,19 +2,20 @@
 	<div ref="rootRef" class="the-login-form">
 		<div class="form">
 			<div class="input">
-				<input id="tenebrieEmail" type="text" placeholder="Email" v-model="email" autofocus />
+				<input id="tenebrieEmail" type="text" :placeholder="Localization.get('ui.auth.email')" v-model="email" autofocus />
 			</div>
 			<div class="input">
-				<input id="tenebriePassword" type="password" placeholder="Password" v-model="password" />
+				<input id="tenebriePassword" type="password" :placeholder="Localization.get('ui.auth.password')" v-model="password" />
 			</div>
 			<div class="status">
 				<span ref="messageRef"> </span>
 			</div>
 			<div class="submit">
-				<button @click="onLogin" class="primary">Login</button>
+				<button @click="onLogin" class="primary">{{ $locale.get('ui.auth.login') }}</button>
 			</div>
 			<div class="to-register">
-				<span class="info-text">Not registered?</span> <router-link class="register-link" :to="{ name: 'register' }">Create an account</router-link>
+				<span class="info-text">{{ $locale.get('ui.auth.moveToRegister') }} </span>
+				<router-link class="register-link" :to="{ name: 'register' }">{{ $locale.get('ui.auth.createAccount') }}</router-link>
 			</div>
 			<google-single-sign-on-button />
 		</div>
@@ -27,6 +28,7 @@ import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 import GoogleSingleSignOnButton from '@/Vue/components/login/GoogleSingleSignOnButton.vue'
+import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
 	components: {
@@ -101,6 +103,7 @@ export default defineComponent({
 			onLogin,
 			email,
 			password,
+			Localization,
 		}
 	},
 })

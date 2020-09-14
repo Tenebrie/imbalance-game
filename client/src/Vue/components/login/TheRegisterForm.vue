@@ -2,27 +2,28 @@
 	<div ref="rootRef" class="the-register-form">
 		<div class="form">
 			<div class="input">
-				<input id="tenebrieEmail" class="has-tooltip" type="text" placeholder="Email" v-model="email" autofocus />
-				<inline-tooltip class="tooltip">No email confirmation required</inline-tooltip>
+				<input id="tenebrieEmail" class="has-tooltip" type="text" :placeholder="Localization.get('ui.auth.email')" v-model="email" autofocus />
+				<inline-tooltip class="tooltip">{{ $locale.get('ui.auth.emailTooltip') }}</inline-tooltip>
 			</div>
 			<div class="input">
-				<input id="tenebrieUsername" type="text" placeholder="Username" v-model="username" />
+				<input id="tenebrieUsername" type="text" :placeholder="Localization.get('ui.auth.username')" v-model="username" />
 			</div>
 			<div class="input">
-				<input id="tenebriePassword" class="has-tooltip" type="password" placeholder="Password" v-model="password" />
+				<input id="tenebriePassword" class="has-tooltip" type="password" :placeholder="Localization.get('ui.auth.password')" v-model="password" />
 				<inline-tooltip class="tooltip"><the-password-policy /></inline-tooltip>
 			</div>
 			<div class="input">
-				<input id="tenebrieConfirmPassword" type="password" placeholder="Confirm password" v-model="confirmPassword" />
+				<input id="tenebrieConfirmPassword" type="password" :placeholder="Localization.get('ui.auth.confirmPassword')" v-model="confirmPassword" />
 			</div>
 			<div class="status">
 				<span ref="messageRef"> </span>
 			</div>
 			<div class="submit">
-				<button @click="onRegister" class="primary">Create account</button>
+				<button @click="onRegister" class="primary">{{ $locale.get('ui.auth.createAccount') }}</button>
 			</div>
 			<div class="to-login">
-				<span class="info-text">Already have an account?</span> <router-link class="login-link" :to="{ name: 'login' }">Login</router-link>
+				<span class="info-text">{{ $locale.get('ui.auth.moveToLogin') }} </span>
+				<router-link class="login-link" :to="{ name: 'login' }">{{ $locale.get('ui.auth.login') }}</router-link>
 			</div>
 		</div>
 	</div>
@@ -30,12 +31,12 @@
 
 <script lang="ts">
 import axios from 'axios'
-import router from '@/Vue/router'
 import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import store from '@/Vue/store'
 import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import ThePasswordPolicy from '@/Vue/components/utils/ThePasswordPolicy.vue'
+import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
 	components: {
@@ -79,13 +80,16 @@ export default defineComponent({
 			const credentials = {
 				email: email.value,
 				username: username.value,
-				password: password.value
+				password: password.value,
+			}
+			const profileInformation = {
+				userLanguage: store.state.userPreferencesModule.userLanguage
 			}
 			try {
 				await axios.post('/api/user', credentials)
 				await axios.post('/api/session', credentials)
-				await store.dispatch.userPreferencesModule.fetchPreferences()
-				await router.push({ name: 'home' })
+				await axios.put('/api/user/profile', profileInformation)
+				await store.dispatch.postLogin()
 			} catch (error) {
 				console.error(error)
 				setMessage(getErrorMessage(error.response.status, error.response.data.code))
@@ -123,7 +127,8 @@ export default defineComponent({
 			username,
 			password,
 			confirmPassword,
-			onRegister
+			onRegister,
+			Localization
 		}
 	}
 })

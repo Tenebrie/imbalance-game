@@ -13,9 +13,7 @@ const fetchProfile = async (): Promise<boolean> => {
 	}
 
 	try {
-		const response = await axios.get('/api/user')
-		const player = response.data.data as Player
-		store.commit.setPlayerData(player)
+		await store.dispatch.fetchUser()
 		await store.dispatch.userPreferencesModule.fetchPreferences()
 	} catch (error) {
 		return false

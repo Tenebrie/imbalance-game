@@ -27,7 +27,7 @@ export default defineComponent({
 		const onGoogleSignInSuccess = async (googleUser): Promise<void> => {
 			try {
 				await axios.post('/api/user/google', { token: googleUser.wc.id_token })
-				await store.dispatch.loginWithSingleSignOn()
+				await store.dispatch.postLogin()
 			} catch (error) {
 				console.error(error)
 				Notifications.error('Token validation failed!')

@@ -23,6 +23,21 @@ export const tryUntil = (args: TryUntilArgs): boolean => {
 	return false
 }
 
+export const invalidEmailCharacters = /[^a-zA-Zа-яА-Я0-9\-_.@]/g
+export const invalidUsernameCharacters = /[^a-zA-Zа-яА-Я0-9\-_.]/g
+
+export const registerFormValidators = {
+	email: (email: string): boolean => {
+		return email.length > 0 && !invalidEmailCharacters.exec(email)
+	},
+	username: (username: string): boolean => {
+		return username.length > 0 && !invalidUsernameCharacters.exec(username)
+	},
+	password: (password: string): boolean => {
+		return password.length > 0
+	},
+}
+
 const shortIdCharset = 'abcdefghkmnopqrstuvwxyzABCDEFGHKMNPQRSTUVWXYZ0123456789'
 export const generateShortId = (length: number): string => {
 	let id = ''

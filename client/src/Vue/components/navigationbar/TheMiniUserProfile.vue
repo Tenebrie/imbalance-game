@@ -11,6 +11,7 @@ import store from '@/Vue/store'
 import router from '@/Vue/router'
 import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
 import Player from '@shared/models/Player'
+import Localization from '@/Pixi/Localization'
 
 export default Vue.extend({
 	components: {
@@ -30,7 +31,7 @@ export default Vue.extend({
 			if (this.player) {
 				return this.player.username
 			}
-			return 'Login'
+			return Localization.get('ui.navigation.login')
 		}
 	},
 

@@ -8,7 +8,7 @@ import PlayerLibrary from '../game/players/PlayerLibrary'
 import AsyncHandler from '../utils/AsyncHandler'
 import RenderQuality from '@shared/enums/RenderQuality'
 import Language from '@shared/enums/Language'
-import Utils from '../utils/Utils'
+import Utils, {invalidUsernameCharacters, registerFormValidators} from '../utils/Utils'
 
 router.get('/', AsyncHandler(async(req: Request, res: Response, next) => {
 	const player = req['player'] as ServerPlayer
@@ -26,9 +26,7 @@ router.put('/', (req: Request, res: Response, next) => {
 	}
 
 	const validateInput = {
-		password: (password: string): boolean => {
-			return password.length > 0
-		},
+		...registerFormValidators,
 		userLanguage: (userLanguage: string): boolean => {
 			let result = false
 			Utils.forEachInStringEnum(Language, (value: Language) => {
@@ -53,6 +51,11 @@ router.put('/', (req: Request, res: Response, next) => {
 	}
 
 	const acceptedSettings: AcceptedUserSetting[] = [
+		{
+			name: 'username',
+			validator: validateInput.username,
+			setter: (id: string, value: string) => PlayerLibrary.updateUsername(id, value),
+		},
 		{
 			name: 'password',
 			validator: validateInput.password,

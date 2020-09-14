@@ -26,6 +26,11 @@ export default {
 		return Database.selectRow<PlayerDatabaseEntry>(query)
 	},
 
+	async updatePlayerUsername(id: string, username: string): Promise<boolean> {
+		const query = `UPDATE players SET "username" = '${username}' WHERE id = '${id}'`
+		return Database.updateRows(query)
+	},
+
 	async updatePlayerPassword(id: string, passwordHash: string): Promise<boolean> {
 		const query = `UPDATE players SET "passwordHash" = '${passwordHash}' WHERE id = '${id}'`
 		return Database.updateRows(query)

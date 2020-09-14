@@ -18,6 +18,7 @@
 			</div>
 		</div>
 		<div class="right-side-container">
+			<language-dropdown />
 			<the-mini-user-profile />
 		</div>
 	</div>
@@ -25,10 +26,12 @@
 
 <script lang="ts">
 import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfile.vue'
+import LanguageDropdown from '@/Vue/components/navigationbar/LanguageSelector.vue'
 
 export default {
 	components: {
 		TheMiniUserProfile,
+		LanguageDropdown,
 	}
 }
 </script>
@@ -76,6 +79,12 @@ export default {
 
 		.right-side-container {
 			height: 100%;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+
+			& > * {
+			}
 		}
 	}
 </style>
