@@ -76,8 +76,22 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			editorCardRenderer.startRenderingService()
 		},
 
+		async loginWithSingleSignOn(context): Promise<void> {
+			const { dispatch } = rootActionContext(context)
+
+			LocalStorage.setHasAuthCookie(true)
+			await dispatch.userPreferencesModule.fetchPreferences()
+			await router.push({ name: 'home' })
+			await store.dispatch.editor.loadCardLibrary()
+			editorCardRenderer.startRenderingService()
+		},
+
 		async logout(context): Promise<void> {
 			const { commit } = rootActionContext(context)
+			const auth2 = gapi.auth2.getAuthInstance()
+			if (auth2 && auth2.isSignedIn) {
+				await auth2.signOut()
+			}
 			await axios.delete('/api/session')
 			LocalStorage.setHasAuthCookie(false)
 			commit.resetPlayerData()

@@ -41,6 +41,22 @@ class PlayerLibrary {
 		return this.cachePlayer(playerDatabaseEntry)
 	}
 
+	public async loginWithoutPassword(username: string): Promise<ServerPlayer> {
+		username = username.toLowerCase()
+		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(username)
+
+		if (!playerDatabaseEntry) {
+			return null
+		}
+
+		return this.cachePlayer(playerDatabaseEntry)
+	}
+
+	public async doesPlayerExist(username: string): Promise<boolean> {
+		username = username.toLowerCase()
+		return !!await PlayerDatabase.selectPlayerByEmail(username)
+	}
+
 	private cachePlayer(playerDatabaseEntry: PlayerDatabaseEntry): ServerPlayer {
 		const player = ServerPlayer.newInstance(playerDatabaseEntry)
 		this.players.push(player)

@@ -16,7 +16,7 @@ export default Vue.extend({
 			try {
 				await store.dispatch.logout()
 			} catch (e) {
-				this.$noty.error('Unable to logout')
+				this.$noty.error('Unable to logout', e)
 			}
 		}
 	}

@@ -16,6 +16,7 @@
 			<div class="to-register">
 				<span class="info-text">Not registered?</span> <router-link class="register-link" :to="{ name: 'register' }">Create an account</router-link>
 			</div>
+			<google-single-sign-on-button />
 		</div>
 	</div>
 </template>
@@ -25,10 +26,12 @@ import store from '@/Vue/store'
 import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
+import GoogleSingleSignOnButton from '@/Vue/components/login/GoogleSingleSignOnButton.vue'
 
 export default defineComponent({
 	components: {
-		InlineTooltip
+		InlineTooltip,
+		GoogleSingleSignOnButton
 	},
 
 	setup() {
@@ -97,7 +100,7 @@ export default defineComponent({
 			messageRef,
 			onLogin,
 			email,
-			password
+			password,
 		}
 	},
 })
