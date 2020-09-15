@@ -40,9 +40,13 @@ export enum GameSyncMessageType {
 	PHASE_ADVANCE = 'gameSync_phaseAdvance',
 	PLAYER_SELF = 'gameSync_playerSelf',
 	PLAYER_OPPONENT = 'gameSync_playerOpponent',
+	BOARD_STATE = 'gameSync_boardState',
+	STACK_STATE = 'gameSync_stackState',
+	ACTIVE_PLAYER = 'gameSync_activePlayer',
 }
 
 export enum SystemMessageType {
+	MODE_SPECTATE = 'system_modeSpectate',
 	REQUEST_INIT = 'system_requestInit',
 	ERROR_GENERIC = 'system_errorGeneric',
 	COMMAND_DISCONNECT = 'system_commandDisconnect',

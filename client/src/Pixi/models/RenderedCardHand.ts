@@ -14,6 +14,7 @@ export default class RenderedCardHand implements CardHand {
 	constructor(unitCards: RenderedCard[], spellCards: RenderedCard[]) {
 		this.unitCards = unitCards
 		this.spellCards = spellCards
+		this.sortCards()
 	}
 
 	public get allCards(): RenderedCard[] {

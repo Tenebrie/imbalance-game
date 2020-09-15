@@ -49,7 +49,8 @@ export default Vue.extend({
 	methods: {
 		async fetchGames(): Promise<void> {
 			const response = await axios.get('/api/games')
-			this.games = response.data.data as GameMessage[]
+			const games = response.data.data as GameMessage[]
+			this.games = games.sort((a, b) => a.players.length - b.players.length)
 		},
 
 		async onCreateSinglePlayer(): Promise<void> {
@@ -60,7 +61,7 @@ export default Vue.extend({
 
 			const response = await axios.post('/api/games', { mode: 'sp_ai' })
 			const gameMessage: GameMessage = response.data.data
-			await store.dispatch.joinGame(gameMessage.id)
+			await store.dispatch.joinGame(gameMessage)
 		},
 
 		async onCreateMultiPlayer(): Promise<void> {
@@ -71,7 +72,7 @@ export default Vue.extend({
 
 			const response = await axios.post('/api/games', { mode: 'mp_custom' })
 			const gameMessage: GameMessage = response.data.data
-			await store.dispatch.joinGame(gameMessage.id)
+			await store.dispatch.joinGame(gameMessage)
 		},
 
 		async onRefreshGames(): Promise<void> {

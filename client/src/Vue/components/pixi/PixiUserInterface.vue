@@ -23,6 +23,9 @@
 			<div class="defeat" v-if="isDefeat">Defeat</div>
 			<div class="draw" v-if="isDraw">Draw</div>
 		</div>
+		<div class="spectator-overlay" :class="spectatorOverlayClass">
+			Spectator mode
+		</div>
 	</div>
 </template>
 
@@ -82,6 +85,7 @@ export default Vue.extend({
 		const isVictory = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY)
 		const isDefeat = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DEFEAT)
 		const isDraw = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DRAW)
+		const isSpectating = computed(() => store.state.gameStateModule.isSpectating)
 
 		const fadeInOverlayClass = computed(() => ({
 			visible: !isGameStarted.value
@@ -89,10 +93,14 @@ export default Vue.extend({
 		const gameEndScreenClass = computed(() => ({
 			visible: isVictory.value || isDefeat.value || isDraw.value
 		}))
+		const spectatorOverlayClass = computed(() => ({
+			visible: isSpectating.value
+		}))
 
 		const opponent = computed<Player | null>(() => store.state.gameStateModule.opponent)
 
 		return {
+			store,
 			opponent,
 			isVictory,
 			isDefeat,
@@ -104,7 +112,7 @@ export default Vue.extend({
 			onShowEscapeMenu,
 			fadeInOverlayClass,
 			gameEndScreenClass,
-			store,
+			spectatorOverlayClass,
 		}
 	}
 })
@@ -236,6 +244,20 @@ export default Vue.extend({
 			.end-turn-button:disabled {
 
 			}
+		}
+	}
+
+	.spectator-overlay {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		padding: 8px 16px;
+		color: rgba(gray, 0.5);
+		font-size: 16px;
+
+		display: none;
+		&.visible {
+			display: block;
 		}
 	}
 

@@ -11,3 +11,4 @@ export enum SystemMessageType {
 }
 
 export type ClientToServerMessageTypes = GenericActionMessageType | SystemMessageType
+export type ClientToServerSpectatorMessageTypes = SystemMessageType

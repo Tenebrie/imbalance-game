@@ -6,33 +6,13 @@ import AsyncHandler from '../utils/AsyncHandler'
 import {OAuth2Client} from 'google-auth-library'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
-import {tryUntil} from '../utils/Utils'
 import PlayerDatabase from '../database/PlayerDatabase'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import TokenManager from '../services/TokenService'
 import uuidv4 from 'uuid/v4'
+import {registerFormValidators} from '../utils/Utils'
 
 const router = express.Router()
-
-const createNumberedUsername = (username: string): string => {
-	let existingPlayer
-	let numberedUsername
-	const isUsernameAvailable = tryUntil({
-		try: async () => {
-			const randomNumber = Math.floor(1000 + Math.random() * 9000)
-			numberedUsername = `${username}#${randomNumber}`
-			existingPlayer = await PlayerDatabase.selectPlayerByUsername(numberedUsername)
-		},
-		until: async () => {
-			return !existingPlayer
-		},
-		maxAttempts: 10
-	})
-	if (!isUsernameAvailable || !numberedUsername) {
-		throw { status: 409, code: UserRegisterErrorCode.USERNAME_COLLISIONS, error: 'Username collision after 10 attempts' }
-	}
-	return numberedUsername
-}
 
 /* Registration endpoint. Does not require user token */
 router.post('/', AsyncHandler(async(req, res: Response, next) => {
@@ -49,7 +29,17 @@ router.post('/', AsyncHandler(async(req, res: Response, next) => {
 		throw { status: 409, code: UserRegisterErrorCode.EMAIL_TAKEN, error: 'User already exists' }
 	}
 
-	const success = await PlayerLibrary.register(email, createNumberedUsername(username), password)
+	if (!registerFormValidators.email(email)) {
+		throw { status: 400, error: 'Email value invalid' }
+	}
+	if (!registerFormValidators.username(username)) {
+		throw { status: 400, error: 'Username value invalid' }
+	}
+	if (!registerFormValidators.password(password)) {
+		throw { status: 400, error: 'Password value invalid' }
+	}
+
+	const success = await PlayerLibrary.register(email, username, password)
 	if (!success) {
 		throw { status: 500, error: 'General database error' }
 	}
@@ -75,7 +65,7 @@ router.post('/google', AsyncHandler(async (req, res: Response, next) => {
 	const email = payload.email
 	if (!await PlayerLibrary.doesPlayerExist(email)) {
 		const username = payload.given_name.toLowerCase() + '.' + payload.family_name.toLowerCase()
-		const success = await PlayerLibrary.register(email, createNumberedUsername(username), uuidv4())
+		const success = await PlayerLibrary.register(email, username, uuidv4())
 		if (!success) {
 			throw { status: 500, error: 'General database error' }
 		}

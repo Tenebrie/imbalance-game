@@ -1,16 +1,20 @@
 import Game from '../Game'
 import Player from '../Player'
+import PlayerMessage from './PlayerMessage'
+import HiddenPlayerInGameMessage from '../network/playerInGame/HiddenPlayerInGameMessage'
 
 export default class GameMessage {
 	id: string
 	name: string
-	owner: string
-	playerCount: number
+	isStarted: boolean
+	owner: PlayerMessage
+	players: HiddenPlayerInGameMessage[]
 
-	constructor(game: Game, owner: Player, playerCount: number) {
+	constructor(game: Game) {
 		this.id = game.id
 		this.name = game.name
-		this.owner = owner.username
-		this.playerCount = playerCount
+		this.owner = new PlayerMessage(game.owner)
+		this.isStarted = game.isStarted
+		this.players = game.players.map(player => new HiddenPlayerInGameMessage(player))
 	}
 }

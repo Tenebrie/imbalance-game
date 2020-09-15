@@ -4,6 +4,28 @@ import TokenManager from '../../services/TokenService'
 import { JwtTokenScope } from '../../enums/JwtTokenScope'
 import PlayerDatabase from '../../database/PlayerDatabase'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
+import {tryUntil} from '../../utils/Utils'
+import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
+
+const createNumberedUsername = (username: string): string => {
+	let existingPlayer
+	let numberedUsername
+	const isUsernameAvailable = tryUntil({
+		try: async () => {
+			const randomNumber = Math.floor(1000 + Math.random() * 9000)
+			numberedUsername = `${username}#${randomNumber}`
+			existingPlayer = await PlayerDatabase.selectPlayerByUsername(numberedUsername)
+		},
+		until: async () => {
+			return !existingPlayer
+		},
+		maxAttempts: 10
+	})
+	if (!isUsernameAvailable || !numberedUsername) {
+		throw { status: 409, code: UserRegisterErrorCode.USERNAME_COLLISIONS, error: 'Username collision after 10 attempts' }
+	}
+	return numberedUsername
+}
 
 class PlayerLibrary {
 	players: Array<ServerPlayer>
@@ -13,9 +35,14 @@ class PlayerLibrary {
 	}
 
 	public async register(email: string, username: string, password: string): Promise<boolean> {
-		// username = username.toLowerCase()
 		const passwordHash = await HashManager.hashPassword(password)
-		return PlayerDatabase.insertPlayer(email, username, passwordHash)
+		return PlayerDatabase.insertPlayer(email, createNumberedUsername(username), passwordHash)
+	}
+
+	public async updateUsername(id: string, username: string): Promise<boolean> {
+		const player = await this.getPlayerById(id)
+		this.removeFromCache(player)
+		return PlayerDatabase.updatePlayerUsername(id, createNumberedUsername(username))
 	}
 
 	public async updatePassword(id: string, password: string): Promise<boolean> {

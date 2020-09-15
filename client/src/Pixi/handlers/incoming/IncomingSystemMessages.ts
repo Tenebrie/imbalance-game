@@ -5,6 +5,10 @@ import Core from '@/Pixi/Core'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 
 const IncomingSystemMessages: {[ index in SystemMessageType ]: IncomingMessageHandlerFunction } = {
+	[SystemMessageType.MODE_SPECTATE]: () => {
+		store.commit.gameStateModule.setIsSpectating(true)
+	},
+
 	[SystemMessageType.REQUEST_INIT]: () => {
 		if (Core.isReady) {
 			OutgoingMessageHandlers.sendInit()
@@ -12,6 +16,7 @@ const IncomingSystemMessages: {[ index in SystemMessageType ]: IncomingMessageHa
 	},
 
 	[SystemMessageType.COMMAND_DISCONNECT]: () => {
+		console.log('Discon')
 		store.dispatch.leaveGame()
 	},
 

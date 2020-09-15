@@ -13,15 +13,16 @@ import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMe
 import OpenOwnedCardMessage from '@shared/models/network/ownedCard/OpenOwnedCardMessage'
 import HiddenOwnedCardMessage from '@shared/models/network/ownedCard/HiddenOwnedCardMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import ServerPlayerSpectator from '../../players/ServerPlayerSpectator'
 
 export default {
-	notifyAboutDeckLeader(playerInGame: ServerPlayerInGame, card: ServerCard): void {
+	notifyAboutDeckLeader(playerInGame: ServerPlayerInGame | ServerPlayerSpectator, opponent: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
 			type: PlayerUpdateMessageType.LEADER_SELF,
 			data: new OpenCardMessage(card)
 		})
 
-		playerInGame.opponent.player.sendMessage({
+		opponent.player.sendMessage({
 			type: PlayerUpdateMessageType.LEADER_OPPONENT,
 			data: new OpenCardMessage(card)
 		})

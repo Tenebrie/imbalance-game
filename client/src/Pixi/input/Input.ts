@@ -64,11 +64,6 @@ export default class Input {
 
 	public tick(): void {
 		this.updateCardHoverStatus()
-		// Long click
-		// if (this.grabbedCard && this.grabbedCard.isLongClicked()) {
-		// 	this.releaseCard()
-		// 	this.inspectCard()
-		// }
 	}
 
 	public updateCardHoverStatus(): void {
@@ -134,6 +129,10 @@ export default class Input {
 
 		if (event.button === LEFT_MOUSE_BUTTON && this.hoveredCard && this.hoveredCard.card === Core.mainHandler.announcedCard) {
 			Core.mainHandler.skipAnimation()
+			return
+		}
+
+		if (Core.isSpectating) {
 			return
 		}
 

@@ -43,6 +43,10 @@ export default class ClientGame {
 
 		for (let i = 0; i < players.length; i++) {
 			const player = players[i]
+			if (!player) {
+				continue
+			}
+
 			if (player.leader && player.leader.id === cardId) {
 				return player.leader
 			}

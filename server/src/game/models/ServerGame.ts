@@ -18,7 +18,8 @@ import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
 import {colorizeId, colorizePlayer} from '../../utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
-import { BuffConstructor } from './ServerBuffContainer'
+import {BuffConstructor} from './ServerBuffContainer'
+import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 
 interface ServerGameProps {
 	name?: string
@@ -52,6 +53,14 @@ export default class ServerGame implements Game {
 		this.playersToMove = []
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
+	}
+
+	public get activePlayer(): ServerPlayerInGame | null {
+		return this.players.find(player => !player.turnEnded && !player.roundEnded)
+	}
+
+	public get spectators(): ServerPlayerSpectator[] {
+		return this.players.map(playerInGame => playerInGame.player.spectators).flat()
 	}
 
 	private generateName(owner?: ServerPlayer): string {
@@ -93,7 +102,7 @@ export default class ServerGame implements Game {
 		})
 
 		this.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutDeckLeader(playerInGame, playerInGame.leader)
+			OutgoingMessageHandlers.notifyAboutDeckLeader(playerInGame, playerInGame.opponent, playerInGame.leader)
 		})
 
 		this.players.forEach(playerInGame => {
@@ -279,6 +288,7 @@ export default class ServerGame implements Game {
 	}
 
 	public forceShutdown(reason: string): void {
+		this.spectators.forEach(spectator => spectator.player.disconnect())
 		this.players.forEach(playerInGame => playerInGame.player.disconnect())
 		GameLibrary.destroyGame(this, reason)
 	}

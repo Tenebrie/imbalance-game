@@ -1,6 +1,7 @@
 import store from '@/Vue/store'
 import en from '@/Pixi/locales/en.json'
 import ru from '@/Pixi/locales/ru.json'
+import Language from '@shared/enums/Language'
 
 class Localization {
 	public getValueOrNull(id: string): string | null {
@@ -25,4 +26,4 @@ class Localization {
 }
 
 export default new Localization()
-export const supportedLanguages = ['en', 'ru']
+export const supportedLanguages: Language[] = Object.values(Language) as Language[]

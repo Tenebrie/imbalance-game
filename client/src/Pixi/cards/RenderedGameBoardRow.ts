@@ -7,17 +7,17 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
 export default class RenderedGameBoardRow implements BoardRow {
-	public index: number
+	public readonly index: number
 	public cards: RenderedUnit[]
 	public container: PIXI.Container
-	public owner: ClientPlayerInGame | null
+	private __owner: ClientPlayerInGame | null
 
 	public readonly sprite: PIXI.Sprite
 
 	public constructor(index: number) {
 		this.index = index
 		this.cards = []
-		this.owner = null
+		this.__owner = null
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture('board/row-allied'))
 		this.sprite.anchor.set(0.5, 0.5)
@@ -65,8 +65,12 @@ export default class RenderedGameBoardRow implements BoardRow {
 		this.cards = []
 	}
 
-	public setOwner(owner: ClientPlayerInGame | null): void {
-		this.owner = owner
+	public get owner(): ClientPlayerInGame | null {
+		return this.__owner
+	}
+
+	public set owner(owner: ClientPlayerInGame | null) {
+		this.__owner = owner
 		if (owner === Core.player) {
 			this.sprite.texture = TextureAtlas.getTexture('board/row-allied')
 		} else if (owner === Core.opponent) {

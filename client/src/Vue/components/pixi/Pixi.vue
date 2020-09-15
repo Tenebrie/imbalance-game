@@ -25,19 +25,13 @@ export default Vue.extend({
 		window.addEventListener('resize', this.onWindowResize)
 
 		const container = (this.$refs.game as HTMLElement)
-		Core.init(this.selectedGameId, store.state.selectedDeckId, container)
+		Core.init(store.state.selectedGame, store.state.selectedDeckId, container)
 	},
 
 	beforeDestroy(): void {
 		window.removeEventListener('resize', this.onWindowResize)
 		if (Core.socket) {
 			Core.socket.close()
-		}
-	},
-
-	computed: {
-		selectedGameId(): string {
-			return store.state.selectedGameId
 		}
 	},
 

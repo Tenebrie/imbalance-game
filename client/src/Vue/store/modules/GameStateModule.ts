@@ -12,7 +12,8 @@ const gameStateModule = createModule({
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
 		playerUnitMana: 0 as number,
-		inspectedCardId: null as string | null
+		inspectedCardId: null as string | null,
+		isSpectating: false as boolean,
 	},
 
 	mutations: {
@@ -34,6 +35,10 @@ const gameStateModule = createModule({
 
 		setInspectedCard(state, inspectedCard: RenderedCard | null): void {
 			state.inspectedCardId = inspectedCard ? inspectedCard.id : null
+		},
+
+		setIsSpectating(state, isSpectating: boolean): void {
+			state.isSpectating = isSpectating
 		}
 	},
 
@@ -79,6 +84,7 @@ const gameStateModule = createModule({
 			const { rootDispatch } = rootActionContext(context)
 			commit.setGameStatus(ClientGameStatus.NOT_STARTED)
 			commit.setOpponentData(null)
+			commit.setIsSpectating(false)
 			commit.setIsPlayersTurn(false)
 			rootDispatch.gameLogModule.clearLog()
 		}

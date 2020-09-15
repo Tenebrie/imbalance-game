@@ -74,6 +74,7 @@ export default class ClientPlayerInGame implements PlayerInGame {
 		clientPlayerInGame.cardDeck = ClientCardDeck.fromMessage(message.cardDeck)
 		clientPlayerInGame.morale = message.morale
 		clientPlayerInGame.unitMana = message.unitMana
+		clientPlayerInGame.spellMana = message.spellMana
 		return clientPlayerInGame
 	}
 }

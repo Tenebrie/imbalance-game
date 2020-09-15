@@ -9,8 +9,11 @@
 						<span class="input">{{ email }}</span>
 					</div>
 					<div class="info-field">
-						<span class="label">{{ $locale.get('ui.profile.username') }}:</span>
-						<span class="input">{{ username }}</span>
+						<span class="label">{{ $locale.get('ui.profile.changeUsername.label') }}:</span>
+						<span class="input">
+							<input type="text" v-model="username" :placeholder="currentUsername" />
+							<button class="primary" @click="onChangeUsername">{{ $locale.get('ui.profile.changeUsername.button') }}</button>
+						</span>
 					</div>
 					<div class="info-field">
 						<span class="label">{{ $locale.get('ui.profile.changePassword.label') }}:</span>
@@ -75,6 +78,7 @@ import Language from '@shared/enums/Language'
 import Notifications from '@/utils/Notifications'
 import RenderQuality from '@shared/enums/RenderQuality'
 import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
+import Player from '@shared/models/Player'
 
 export default defineComponent({
 	components: {
@@ -87,13 +91,14 @@ export default defineComponent({
 		const email = ref<string>('')
 		const username = ref<string>('')
 		const password = ref<string>('')
+		const currentUsername = ref<string>('')
 
 		onMounted(async () => {
 			const response = await axios.get('/api/user/profile')
 			const profileMessage = response.data.data as UserProfileMessage
 
 			email.value = profileMessage.email
-			username.value = profileMessage.username
+			currentUsername.value = profileMessage.username
 		})
 
 		const userLanguage = computed<Language>({
@@ -119,6 +124,26 @@ export default defineComponent({
 			store.dispatch.userPreferencesModule.savePreferences()
 		})
 
+		const onChangeUsername = async () => {
+			const value = username.value
+			if (value.length === 0) {
+				Notifications.error('Username field is empty!')
+				return
+			}
+
+			username.value = ''
+			try {
+				await axios.put('/api/user/profile', {
+					username: value
+				})
+				await store.dispatch.fetchUser()
+				currentUsername.value = store.state.player.username
+				Notifications.success('Username updated!')
+			} catch (error) {
+				Notifications.error('Username update failed!')
+			}
+		}
+
 		const onChangePassword = async () => {
 			const value = password.value
 			if (value.length === 0) {
@@ -141,9 +166,11 @@ export default defineComponent({
 			email,
 			username,
 			password,
+			currentUsername,
 			userLanguage,
 			renderQuality,
 			supportedLanguages,
+			onChangeUsername,
 			onChangePassword,
 			supportedRenderQualities: RenderQuality
 		}

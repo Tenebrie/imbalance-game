@@ -5,6 +5,17 @@
 	"ui.navigation.home": "Home",
 	"ui.navigation.decks": "Decks",
 	"ui.navigation.rules": "Rules",
+	"ui.navigation.login": "Login",
+
+	"ui.auth.email": "Email",
+	"ui.auth.emailTooltip": "No confirmation required",
+	"ui.auth.username": "Username",
+	"ui.auth.password": "Password",
+	"ui.auth.confirmPassword": "Confirm password",
+	"ui.auth.login": "Login",
+	"ui.auth.createAccount": "Create an account",
+	"ui.auth.moveToLogin": "Already have an account?",
+	"ui.auth.moveToRegister": "Don't have an account?",
 
 	"ui.browser.header": "Game browser",
 	"ui.browser.empty": "Nobody is playing right now :(",
@@ -34,7 +45,8 @@
 	"ui.volume.userInterface": "User interface volume",
 
 	"ui.profile.email": "Email",
-	"ui.profile.username": "Username",
+	"ui.profile.changeUsername.label": "Username",
+	"ui.profile.changeUsername.button": "Change username",
 	"ui.profile.changePassword.label": "Password",
 	"ui.profile.changePassword.button": "Change password",
 	"ui.profile.changePassword.placeholder": "New password",
