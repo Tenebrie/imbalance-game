@@ -15,6 +15,9 @@ import InspectedCardModule from '@/Vue/store/modules/InspectedCardModule'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import LocalStorage from '@/utils/LocalStorage'
 import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
+import ClientGame from '@/Pixi/models/ClientGame'
+import Game from '@shared/models/Game'
+import GameMessage from '@shared/models/network/GameMessage'
 
 Vue.use(Vuex)
 
@@ -31,7 +34,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	state: {
 		player: null as Player | null,
 		isLoggedIn: false as boolean,
-		selectedGameId: '' as string,
+		selectedGame: null as GameMessage | null,
 		selectedDeckId: '' as string
 	},
 
@@ -41,8 +44,8 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			state.player = player
 		},
 
-		setSelectedGameId(state, selectedGameId: string): void {
-			state.selectedGameId = selectedGameId
+		setSelectedGame(state, selectedGame: GameMessage): void {
+			state.selectedGame = selectedGame
 		},
 
 		setSelectedDeckId(state, selectedDeckId: string): void {
@@ -102,9 +105,9 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			await router.push({ name: 'login' })
 		},
 
-		joinGame(context, selectedGameId: string): void {
+		joinGame(context, selectedGame: GameMessage): void {
 			const { commit } = rootActionContext(context)
-			commit.setSelectedGameId(selectedGameId)
+			commit.setSelectedGame(selectedGame)
 			router.push({ name: 'game' })
 		},
 

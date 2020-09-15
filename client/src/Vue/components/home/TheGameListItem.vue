@@ -1,26 +1,43 @@
 <template>
 	<div class="the-game-list-item" @click="onClick">
-		<b>{{ game.name }}</b> | Created by <b>{{ game.owner }}</b> | Players: <b>{{ this.game.playerCount }}</b>
+		<span v-if="thisGame.isStarted">
+			<i>
+				Spectate:
+				<b>{{ thisGame.players[0].player.username }}</b>
+				vs
+				<b>{{ thisGame.players[1].player.username }}</b>
+			</i>
+		</span>
+		<span v-if="!thisGame.isStarted">
+			<i>
+				Challenge:
+				<b>{{ thisGame.players[0].player.username }}</b>
+			</i>
+		</span>
 	</div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
+import {defineComponent, PropType} from '@vue/composition-api'
 
-export default Vue.extend({
+interface Props {
+	game: GameMessage
+}
+
+export default defineComponent({
 	props: {
-		game: Object as () => GameMessage
+		game: Object as PropType<GameMessage>
 	},
 
-	data: () => ({
-
-	}),
-
-	methods: {
-		onClick(): void {
-			store.dispatch.joinGame(this.game.id)
+	setup(props: Props) {
+		const onClick = () => {
+			store.dispatch.joinGame(props.game)
+		}
+		return {
+			thisGame: props.game,
+			onClick,
 		}
 	}
 })

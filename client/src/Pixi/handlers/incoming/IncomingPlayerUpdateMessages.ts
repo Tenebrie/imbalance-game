@@ -84,6 +84,7 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 
 	[PlayerUpdateMessageType.CARD_REVEALED]: (data: CardMessage) => {
 		Core.opponent.cardHand.reveal(data)
+		Core.opponent.cardHand.sortCards()
 	},
 
 	[PlayerUpdateMessageType.PLAY_DECLINED]: (data: CardRefMessage) => {

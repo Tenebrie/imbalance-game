@@ -25,6 +25,7 @@ class GameLibrary {
 
 		console.info(`Destroying game ${colorizeId(game.id)}. Reason: ${colorizeConsoleText(reason)}`)
 
+		game.spectators.forEach(spectator => OutgoingMessageHandlers.notifyAboutGameShutdown(spectator.player))
 		game.players.forEach(playerInGame => OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player))
 		this.games.splice(this.games.indexOf(game), 1)
 	}

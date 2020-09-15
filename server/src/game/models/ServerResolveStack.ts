@@ -6,8 +6,10 @@ import ServerCardTarget from './ServerCardTarget'
 import runCardEventHandler from '../utils/runCardEventHandler'
 import CardFeature from '@shared/enums/CardFeature'
 import GameEventCreators from './GameEventCreators'
+import ResolveStackEntry from '@shared/models/ResolveStackEntry'
+import ResolveStack from '@shared/models/ResolveStack'
 
-class ServerCardResolveStackEntry {
+class ServerResolveStackEntry implements ResolveStackEntry{
 	ownedCard: ServerOwnedCard
 	targetsSelected: ServerCardTarget[]
 
@@ -17,9 +19,9 @@ class ServerCardResolveStackEntry {
 	}
 }
 
-export default class ServerCardResolveStack {
+export default class ServerResolveStack implements ResolveStack {
 	game: ServerGame
-	entries: ServerCardResolveStackEntry[]
+	entries: ServerResolveStackEntry[]
 
 	constructor(game: ServerGame) {
 		this.game = game
@@ -40,7 +42,7 @@ export default class ServerCardResolveStack {
 
 	public startResolving(ownedCard: ServerOwnedCard): void {
 		/* Create card in stack */
-		this.entries.push(new ServerCardResolveStackEntry(ownedCard))
+		this.entries.push(new ServerResolveStackEntry(ownedCard))
 		OutgoingMessageHandlers.notifyAboutCardResolving(ownedCard)
 	}
 

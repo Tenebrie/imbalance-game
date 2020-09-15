@@ -1,9 +1,17 @@
 import * as ws from 'ws'
 import ServerPlayer from '../../players/ServerPlayer'
 import ErrorCode from '@shared/enums/ErrorCode'
-import {SystemMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import {GameSyncMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import OpenPlayerInGameMessage from '@shared/models/network/playerInGame/OpenPlayerInGameMessage'
 
 export default {
+	notifyAboutSpectateMode: (player: ServerPlayer): void => {
+		player.sendMessage({
+			type: SystemMessageType.MODE_SPECTATE,
+			data: null
+		})
+	},
+
 	notifyAboutInitRequested(player: ServerPlayer): void {
 		player.sendMessage({
 			type: SystemMessageType.REQUEST_INIT,

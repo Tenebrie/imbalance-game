@@ -14,6 +14,8 @@ import ParticleSystem from '@/Pixi/vfx/ParticleSystem'
 import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
 import {ClientToServerMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import {ServerToClientMessageTypes} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import GameMessage from '@shared/models/network/GameMessage'
+import PlayerMessage from '@shared/models/network/PlayerMessage'
 
 export default class Core {
 	public static isReady = false
@@ -31,9 +33,13 @@ export default class Core {
 	public static opponent?: ClientPlayerInGame
 	public static resolveStack?: ClientCardResolveStack
 
-	public static init(gameId: string, deckId: string, container: HTMLElement): void {
+	public static init(game: GameMessage, deckId: string, container: HTMLElement): void {
 		const protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
-		const socket = new WebSocket(`${protocol}//${window.location.host}/api/game/${gameId}?deckId=${deckId}`)
+		let targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}?deckId=${deckId}`
+		if (game.players.length >= 2) {
+			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}/spectate/${game.owner.id}`
+		}
+		const socket = new WebSocket(targetUrl)
 		socket.onopen = () => this.onConnect(container)
 		socket.onmessage = (event) => this.onMessage(event)
 		socket.onclose = (event) => this.onDisconnect(event)
@@ -111,6 +117,10 @@ export default class Core {
 
 	private static onError(event: Event): void {
 		console.error('Unknown error occurred', event)
+	}
+
+	public static get isSpectating(): boolean {
+		return store.state.gameStateModule.isSpectating
 	}
 
 	public static registerOpponent(opponent: ClientPlayerInGame): void {

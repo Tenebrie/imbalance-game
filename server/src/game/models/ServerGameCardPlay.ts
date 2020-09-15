@@ -5,16 +5,16 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
 import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import ServerCardResolveStack from './ServerCardResolveStack'
+import ServerResolveStack from './ServerResolveStack'
 import GameEventCreators from './GameEventCreators'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
-	cardResolveStack: ServerCardResolveStack
+	cardResolveStack: ServerResolveStack
 
 	constructor(game: ServerGame) {
 		this.game = game
-		this.cardResolveStack = new ServerCardResolveStack(game)
+		this.cardResolveStack = new ServerResolveStack(game)
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {

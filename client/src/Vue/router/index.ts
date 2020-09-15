@@ -101,7 +101,7 @@ const router = new VueRouter({
 			name: 'game',
 			component: () => import('@/Vue/views/GameView.vue'),
 			beforeEnter: (to: Route, from: Route, next: Function) => {
-				if (!store.state.selectedGameId) {
+				if (!store.state.selectedGame) {
 					next('/')
 					return
 				}

@@ -8,6 +8,10 @@ import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
 import {GameSyncMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import BoardMessage from '@shared/models/network/BoardMessage'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import PlayerInGameRefMessage from '@shared/models/network/playerInGame/PlayerInGameRefMessage'
 
 const IncomingGameSyncMessages: {[ index in GameSyncMessageType ]: IncomingMessageHandlerFunction } = {
 	[GameSyncMessageType.START]: (data: GameStartMessage) => {
@@ -20,8 +24,11 @@ const IncomingGameSyncMessages: {[ index in GameSyncMessageType ]: IncomingMessa
 	},
 
 	[GameSyncMessageType.PLAYER_SELF]: (data: PlayerInGameMessage) => {
+		Core.player.player.id = data.player.id
+		Core.player.player.username = data.player.username
 		Core.player.cardHand = RenderedCardHand.fromMessage(data.cardHand)
 		Core.player.cardDeck = ClientCardDeck.fromMessage(data.cardDeck)
+		Core.player.cardGraveyard = ClientCardDeck.fromMessage(data.cardGraveyard)
 		Core.player.morale = data.morale
 		Core.player.setUnitMana(data.unitMana)
 		Core.player.setSpellMana(data.spellMana)
@@ -31,6 +38,22 @@ const IncomingGameSyncMessages: {[ index in GameSyncMessageType ]: IncomingMessa
 		const playerInGame = ClientPlayerInGame.fromMessage(data)
 		Core.registerOpponent(playerInGame)
 		store.commit.gameStateModule.setOpponentData(playerInGame.player)
+	},
+
+	[GameSyncMessageType.BOARD_STATE]: (data: BoardMessage) => {
+		Core.board.clearBoard()
+		data.rows.forEach(row => {
+			Core.board.rows[row.index].owner = Core.getPlayerOrNull(row.ownerId)
+			Core.board.rows[row.index].cards = row.cards.map(unit => new RenderedUnit(RenderedCard.fromMessage(unit.card), Core.getPlayer(unit.ownerId)))
+		})
+	},
+
+	[GameSyncMessageType.STACK_STATE]: (data: BoardMessage) => {
+		// TODO: Copy stack state
+	},
+
+	[GameSyncMessageType.ACTIVE_PLAYER]: (data: PlayerInGameRefMessage) => {
+		Core.getPlayer(data.playerId).startTurn()
 	},
 }
 

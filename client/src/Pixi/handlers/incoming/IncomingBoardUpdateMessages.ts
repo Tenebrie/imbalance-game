@@ -36,7 +36,7 @@ const IncomingBoardUpdateMessages: {[ index in BoardUpdateMessageType ]: Incomin
 	},
 
 	[BoardUpdateMessageType.ROW_OWNER]: (data: BoardRowMessage) => {
-		Core.board.rows[data.index].setOwner(Core.getPlayerOrNull(data.ownerId))
+		Core.board.rows[data.index].owner = Core.getPlayerOrNull(data.ownerId)
 	},
 }
 
