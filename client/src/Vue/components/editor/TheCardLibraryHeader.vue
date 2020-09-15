@@ -97,21 +97,21 @@ export default defineComponent({
 			'filters-hidden': !filtersVisible.value
 		}))
 
-		const colorData = [
+		const colorData = computed(() => [
 			{ text: Localization.get('filter.all'), color: null },
 			{ text: Localization.get('card.color.leader'), color: CardColor.LEADER },
 			{ text: Localization.get('card.color.golden'), color: CardColor.GOLDEN },
 			{ text: Localization.get('card.color.silver'), color: CardColor.SILVER },
 			{ text: Localization.get('card.color.bronze'), color: CardColor.BRONZE },
-		]
+		])
 
-		const factionData = [
+		const factionData = computed(() => [
 			{ text: Localization.get('filter.all'), faction: null },
 			{ text: Localization.get('card.faction.human'), faction: CardFaction.HUMAN },
 			{ text: Localization.get('card.faction.arcane'), faction: CardFaction.ARCANE },
 			{ text: Localization.get('card.faction.wild'), faction: CardFaction.WILD },
 			{ text: Localization.get('card.faction.neutral'), faction: CardFaction.NEUTRAL },
-		]
+		])
 
 		const clearSearch = () => {
 			store.commit.editor.setSearchQuery('')
@@ -151,7 +151,7 @@ export default defineComponent({
 			toggleFilters,
 			clearSearch,
 			experimentalToggle,
-			searchQuery
+			searchQuery,
 		}
 	},
 })
