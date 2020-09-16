@@ -95,10 +95,6 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 
 		async logout(context): Promise<void> {
 			const { commit } = rootActionContext(context)
-			const auth2 = gapi.auth2.getAuthInstance()
-			if (auth2 && auth2.isSignedIn) {
-				await auth2.signOut()
-			}
 			await axios.delete('/api/session')
 			LocalStorage.setHasAuthCookie(false)
 			commit.resetPlayerData()
