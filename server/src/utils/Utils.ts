@@ -23,7 +23,7 @@ export const tryUntil = (args: TryUntilArgs): boolean => {
 	return false
 }
 
-export const invalidEmailCharacters = /[^a-zA-Zа-яА-Я0-9\-_.@]/g
+export const invalidEmailCharacters = /[^a-zA-Zа-яА-Я0-9\-_.@+]/g
 export const invalidUsernameCharacters = /[^a-zA-Zа-яА-Я0-9\-_.]/g
 
 export const registerFormValidators = {
