@@ -8,6 +8,10 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerOwnedCard from '../models/ServerOwnedCard'
 import {ClientToServerMessageTypes, GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import TargetMode from '@shared/enums/TargetMode'
+import Utils from '../../utils/Utils'
+import CardLibrary from '../libraries/CardLibrary'
+import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
 
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
@@ -66,7 +70,13 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 	},
 
 	[GenericActionMessageType.CONFIRM_TARGETS]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (!player.targetRequired || game.cardPlay.cardResolveStack.currentCard) {
+		if (!player.targetRequired) {
+			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(player.player, [])
+			OutgoingMessageHandlers.executeMessageQueue(game)
+			return
+		}
+
+		if (game.cardPlay.cardResolveStack.currentCard) {
 			return
 		}
 
@@ -74,10 +84,38 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			player.finishMulligan()
 			game.advanceMulliganPhase()
 			game.events.flushLogEventGroup()
-		} else {
-			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(player.player, [])
 		}
 
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
+	[GenericActionMessageType.REQUEST_PLAYERS_DECK]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+		const cards = Utils.sortCards(player.cardDeck.unitCards.concat(player.cardDeck.spellCards))
+		if (cards.length === 0) {
+			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+		}
+		const targets = cards.map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		OutgoingMessageHandlers.notifyAboutResolvingCardTargets(player.player, targets)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
+	[GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+		const cards = Utils.sortCards(player.cardGraveyard.unitCards.concat(player.cardGraveyard.spellCards))
+		if (cards.length === 0) {
+			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+		}
+		const targets = cards.map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		OutgoingMessageHandlers.notifyAboutResolvingCardTargets(player.player, targets)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
+	[GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+		const cards = Utils.sortCards(player.opponent.cardGraveyard.unitCards.concat(player.opponent.cardGraveyard.spellCards))
+		if (cards.length === 0) {
+			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+		}
+		const targets = cards.map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		OutgoingMessageHandlers.notifyAboutResolvingCardTargets(player.player, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 

@@ -29,6 +29,18 @@ export default {
 		Core.sendMessage(GenericActionMessageType.CONFIRM_TARGETS, null)
 	},
 
+	requestShowPlayersDeck(): void {
+		Core.sendMessage(GenericActionMessageType.REQUEST_PLAYERS_DECK, null)
+	},
+
+	requestShowPlayersGraveyard(): void {
+		Core.sendMessage(GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD, null)
+	},
+
+	requestShowOpponentsGraveyard(): void {
+		Core.sendMessage(GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD, null)
+	},
+
 	sendEndTurn(): void {
 		Core.sendMessage(GenericActionMessageType.TURN_END, null)
 	},

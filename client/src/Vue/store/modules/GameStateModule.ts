@@ -19,6 +19,7 @@ const gameStateModule = createModule({
 		cardsMulliganed: 0 as number,
 		maxCardMulligans: 0 as number,
 		forcedTargetingCardsLength: 0 as number,
+		resolveStackCardsLength: 0 as number,
 	},
 
 	mutations: {
@@ -60,6 +61,10 @@ const gameStateModule = createModule({
 
 		setForcedTargetingCardsLength(state, length: number): void {
 			state.forcedTargetingCardsLength = length
+		},
+
+		setResolveStackCardsLength(state, length: number): void {
+			state.resolveStackCardsLength = length
 		},
 	},
 

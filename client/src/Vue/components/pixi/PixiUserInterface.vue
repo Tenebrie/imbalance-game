@@ -16,7 +16,7 @@
 		<div class="confirm-targets-button-container" v-if="isConfirmTargetsButtonVisible">
 			<div>
 				<button @click="onConfirmTargets" class="primary game-button">Confirm</button>
-				<button @click="onSortCards" class="secondary game-button">Sort cards</button>
+				<button @click="onSortCards" class="secondary game-button" v-if="isMulliganLabelVisible">Sort cards</button>
 			</div>
 		</div>
 		<div class="inspected-card">
@@ -67,6 +67,10 @@ export default Vue.extend({
 				return
 			}
 			if (event.key === 'Escape') {
+				if (isConfirmTargetsButtonVisible.value) {
+					onConfirmTargets()
+					return
+				}
 				onShowEscapeMenu()
 			}
 		}
@@ -104,16 +108,26 @@ export default Vue.extend({
 		})
 		const isGameStarted = computed(() => {
 			const status = store.state.gameStateModule.gameStatus
-			return status === ClientGameStatus.IN_PROGRESS || status === ClientGameStatus.VICTORY || status === ClientGameStatus.DEFEAT || status === ClientGameStatus.DRAW
+			return status === ClientGameStatus.IN_PROGRESS ||
+				status === ClientGameStatus.VICTORY ||
+				status === ClientGameStatus.DEFEAT ||
+				status === ClientGameStatus.DRAW
+		})
+		const isBrowsingDeck = computed(() => {
+			const state = store.state.gameStateModule
+			return state.forcedTargetingCardsLength > 0 && state.turnPhase === GameTurnPhase.DEPLOY && state.resolveStackCardsLength === 0
 		})
 		const isEndTurnButtonVisible = computed(() => {
-			return store.state.gameStateModule.turnPhase !== GameTurnPhase.MULLIGAN && !Core.input?.forcedTargetingMode
+			const state = store.state.gameStateModule
+			return !isBrowsingDeck.value && state.turnPhase !== GameTurnPhase.MULLIGAN && state.forcedTargetingCardsLength === 0
 		})
 		const isMulliganLabelVisible = computed(() => {
-			return store.state.gameStateModule.turnPhase === GameTurnPhase.MULLIGAN && store.state.gameStateModule.forcedTargetingCardsLength > 0
+			const state = store.state.gameStateModule
+			return state.turnPhase === GameTurnPhase.MULLIGAN && state.forcedTargetingCardsLength > 0
 		})
 		const isConfirmTargetsButtonVisible = computed(() => {
-			return isMulliganLabelVisible.value || (Core.input?.forcedTargetingMode && Core.resolveStack?.cards.length === 0)
+			const state = store.state.gameStateModule
+			return isBrowsingDeck.value || isMulliganLabelVisible.value || (state.forcedTargetingCardsLength > 0 && state.resolveStackCardsLength === 0)
 		})
 
 		const isVictory = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY)
@@ -295,8 +309,13 @@ export default Vue.extend({
 			height: calc(100% - 128px);
 			display: flex;
 			padding: 64px;
+			min-width: 250px;
 			align-items: flex-end;
 			justify-content: center;
+
+			& > div {
+				width: 100%;
+			}
 		}
 	}
 

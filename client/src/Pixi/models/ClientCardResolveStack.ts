@@ -2,6 +2,7 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import OwnedRenderedCard from '@/Pixi/cards/OwnedRenderedCard'
+import store from '@/Vue/store'
 
 export default class ClientCardResolveStack {
 	cards: OwnedRenderedCard[]
@@ -12,6 +13,7 @@ export default class ClientCardResolveStack {
 
 	public addCard(card: RenderedCard, owner: ClientPlayerInGame): void {
 		this.cards.push({ card, owner })
+		store.commit.gameStateModule.setResolveStackCardsLength(this.cards.length)
 	}
 
 	public isEmpty(): boolean {
@@ -27,6 +29,7 @@ export default class ClientCardResolveStack {
 		if (!ownedCard) { return }
 
 		this.cards.splice(this.cards.indexOf(ownedCard), 1)
+		store.commit.gameStateModule.setResolveStackCardsLength(this.cards.length)
 		Core.unregisterCard(ownedCard.card)
 	}
 }

@@ -67,12 +67,20 @@ export default class Input {
 	}
 
 	public updateCardHoverStatus(): void {
+		let hoveredCard: HoveredCard | null = null
+		const selectableCards = this.forcedTargetingCards.slice().reverse()
+		if (selectableCards.length > 0) {
+			const hoveredSelectableCard = selectableCards.find(card => card.isHovered()) || null
+			if (hoveredSelectableCard) {
+				hoveredCard = HoveredCard.fromSelectableCard(hoveredSelectableCard)
+			}
+			this.hoveredCard = hoveredCard
+			return
+		}
+
 		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
 		const playerHandCards = Core.player.cardHand.allCards.slice().reverse()
 		const opponentHandCards = Core.opponent ? Core.opponent.cardHand.allCards.slice().reverse() : []
-		const selectableCards = this.forcedTargetingCards.slice().reverse()
-
-		let hoveredCard: HoveredCard | null = null
 
 		const hoveredCardOnBoard = gameBoardCards.find(cardOnBoard => cardOnBoard.card.isHovered()) || null
 		if (hoveredCardOnBoard) {
@@ -91,11 +99,6 @@ export default class Input {
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.isHovered()) {
 			hoveredCard = HoveredCard.fromAnnouncedCard(Core.mainHandler.announcedCard)
-		}
-
-		const hoveredSelectableCard = selectableCards.find(card => card.isHovered()) || null
-		if (hoveredSelectableCard) {
-			hoveredCard = HoveredCard.fromSelectableCard(hoveredSelectableCard)
 		}
 
 		this.hoveredCard = hoveredCard

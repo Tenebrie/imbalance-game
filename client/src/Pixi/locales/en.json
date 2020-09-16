@@ -457,6 +457,9 @@
 	"card.unitTinySparkling.name": "Tiny Sparkling",
 	"card.unitTinySparkling.description": "<i>No effect</i>",
 
+	"card.tokenEmptyDeck.name": "Cricket",
+	"card.tokenEmptyDeck.description": "<i><star>Cricket noises<star>\n(No cards here)</i>",
+
 	"card.tokenPlayerDeck.name": "Your deck",
 	"card.tokenPlayerDeck.description": "Choose your own deck",
 
