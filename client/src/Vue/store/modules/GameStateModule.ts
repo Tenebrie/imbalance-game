@@ -4,19 +4,28 @@ import Player from '@shared/models/Player'
 import {moduleActionContext, rootActionContext} from '../index'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 
 const gameStateModule = createModule({
 	namespaced: true,
 	state: {
+		turnPhase: GameTurnPhase.BEFORE_GAME as GameTurnPhase,
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
 		playerUnitMana: 0 as number,
 		inspectedCardId: null as string | null,
 		isSpectating: false as boolean,
+		cardsMulliganed: 0 as number,
+		maxCardMulligans: 0 as number,
+		forcedTargetingCardsLength: 0 as number,
 	},
 
 	mutations: {
+		setTurnPhase(state, turnPhase: GameTurnPhase): void {
+			state.turnPhase = turnPhase
+		},
+
 		setOpponentData(state, player: Player | null): void {
 			state.opponent = player
 		},
@@ -39,7 +48,19 @@ const gameStateModule = createModule({
 
 		setIsSpectating(state, isSpectating: boolean): void {
 			state.isSpectating = isSpectating
-		}
+		},
+
+		setCardsMulliganed(state, number: number): void {
+			state.cardsMulliganed = number
+		},
+
+		setMaxCardMulligans(state, number: number): void {
+			state.maxCardMulligans = number
+		},
+
+		setForcedTargetingCardsLength(state, length: number): void {
+			state.forcedTargetingCardsLength = length
+		},
 	},
 
 	getters: {

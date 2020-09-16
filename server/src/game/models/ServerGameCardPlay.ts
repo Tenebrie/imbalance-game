@@ -7,6 +7,7 @@ import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerResolveStack from './ServerResolveStack'
 import GameEventCreators from './GameEventCreators'
+import Utils from '../../utils/Utils'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -121,7 +122,7 @@ export default class ServerGameCardPlay {
 		if (validTargets.length === 0) {
 			this.cardResolveStack.finishResolving()
 		} else {
-			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(ownedCard.owner.player, validTargets)
+			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(ownedCard.owner.player, Utils.shuffle(validTargets))
 		}
 	}
 
@@ -136,23 +137,27 @@ export default class ServerGameCardPlay {
 	}
 
 	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
-		if (playerInGame !== this.cardResolveStack.currentCard.owner) {
-			return
-		}
-
 		const currentResolvingCard = this.cardResolveStack.currentCard
 
-		let validTargets = this.getValidTargets()
-		const isValidTarget = !!validTargets.find(validTarget => validTarget.isEqual(target))
-		if (!isValidTarget) {
-			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(playerInGame.player, validTargets)
-			return
+		let validTargets
+		if (currentResolvingCard) {
+			validTargets = this.getValidTargets()
+			const isValidTarget = !!validTargets.find(validTarget => validTarget.isEqual(target))
+			if (!isValidTarget) {
+				OutgoingMessageHandlers.notifyAboutResolvingCardTargets(playerInGame.player, Utils.shuffle(validTargets))
+				return
+			} else {
+				OutgoingMessageHandlers.notifyAboutResolvingCardTargets(playerInGame.player, [])
+			}
 		}
 
 		this.cardResolveStack.pushTarget(target)
 
 		this.game.events.postEvent(GameEventCreators.cardTargetSelected({
-			triggeringCard: currentResolvingCard.card,
+			targetMode: target.targetMode,
+			targetType: target.targetType,
+			triggeringCard: currentResolvingCard?.card,
+			triggeringPlayer: playerInGame,
 			targetCard: target.targetCard,
 			targetUnit: target.targetCard?.unit,
 			targetRow: target.targetRow
@@ -166,13 +171,16 @@ export default class ServerGameCardPlay {
 		validTargets = this.getValidTargets()
 
 		if (validTargets.length > 0) {
-			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(playerInGame.player, validTargets)
+			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(playerInGame.player, Utils.shuffle(validTargets))
 			return
 		}
 
 		this.game.events.postEvent(GameEventCreators.cardTargetsConfirmed({
-			triggeringCard: currentResolvingCard.card
+			triggeringCard: currentResolvingCard?.card,
+			triggeringPlayer: playerInGame,
 		}))
-		this.cardResolveStack.finishResolving()
+		if (currentResolvingCard) {
+			this.cardResolveStack.finishResolving()
+		}
 	}
 }

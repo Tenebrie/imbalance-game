@@ -7,6 +7,7 @@ import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
+import store from '@/Vue/store'
 
 const IncomingResolveStackMessages: {[ index in ResolveStackMessageType ]: IncomingMessageHandlerFunction } = {
 	[ResolveStackMessageType.ADD]: (data: OwnedCardMessage) => {
@@ -15,7 +16,11 @@ const IncomingResolveStackMessages: {[ index in ResolveStackMessageType ]: Incom
 
 	[ResolveStackMessageType.TARGETS]: (data: CardTargetMessage[]) => {
 		const validTargets = data.map(data => ClientCardTarget.fromMessage(data))
-		Core.input.enableForcedTargetingMode(validTargets)
+		if (data.length > 0) {
+			Core.input.enableForcedTargetingMode(validTargets)
+		} else {
+			Core.input.disableForcedTargetingMode()
+		}
 	},
 
 	[ResolveStackMessageType.REMOVE]: (data: CardRefMessage) => {

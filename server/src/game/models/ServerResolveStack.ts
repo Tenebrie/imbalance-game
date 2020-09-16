@@ -47,6 +47,9 @@ export default class ServerResolveStack implements ResolveStack {
 	}
 
 	public pushTarget(target: ServerCardTarget): void {
+		if (!this.currentTargets) {
+			return
+		}
 		this.currentTargets.push(target)
 	}
 
@@ -61,6 +64,7 @@ export default class ServerResolveStack implements ResolveStack {
 
 	public finishResolving(): void {
 		const resolvedEntry = this.entries.pop()
+
 		OutgoingMessageHandlers.notifyAboutCardResolved(resolvedEntry.ownedCard)
 
 		const resolvedCard = resolvedEntry.ownedCard

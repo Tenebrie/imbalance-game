@@ -1,4 +1,3 @@
-import CardType from '@shared/enums/CardType'
 import ServerGame from '../models/ServerGame'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
@@ -8,11 +7,7 @@ import ServerCardTarget from '../models/ServerCardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerOwnedCard from '../models/ServerOwnedCard'
-import {
-	ClientToServerMessageTypes,
-	GenericActionMessageType,
-	SystemMessageType
-} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import {ClientToServerMessageTypes, GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
@@ -70,8 +65,26 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
+	[GenericActionMessageType.CONFIRM_TARGETS]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+		if (!player.targetRequired || game.cardPlay.cardResolveStack.currentCard) {
+			return
+		}
+
+		if (player.mulliganMode) {
+			player.finishMulligan()
+			game.advanceMulliganPhase()
+			game.events.flushLogEventGroup()
+		} else {
+			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(player.player, [])
+		}
+
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
 	[GenericActionMessageType.TURN_END]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (player.turnEnded || player.targetRequired) { return }
+		if (player.turnEnded || player.targetRequired) {
+			return
+		}
 
 		player.endTurn()
 		if (player.unitMana > 0) {

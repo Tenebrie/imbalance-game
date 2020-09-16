@@ -308,9 +308,6 @@ export default class Input {
 	}
 
 	public async enableForcedTargetingMode(validTargets: ClientCardTarget[]): Promise<void> {
-		this.forcedTargetingCards.forEach(card => card.unregister())
-		this.forcedTargetingCards = []
-
 		this.forcedTargetingMode = new ForcedTargetingMode(validTargets)
 		await this.createForcedTargetingCards(validTargets)
 		this.forcedTargetingMode.validTargets
@@ -321,15 +318,38 @@ export default class Input {
 	}
 
 	public async createForcedTargetingCards(targets: ClientCardTarget[]): Promise<void> {
-		const forcedTargetingCardMessages = targets
+		const newCards = targets
 			.filter(target => target.targetType === TargetType.CARD_IN_LIBRARY || target.targetType === TargetType.CARD_IN_UNIT_DECK || target.targetType === TargetType.CARD_IN_SPELL_DECK)
 			.map(target => target.targetCardData)
-		this.forcedTargetingCards = Utils.sortCards(await Utils.renderCardsAsynchronously(forcedTargetingCardMessages))
+
+		const existingCards = this.forcedTargetingCards
+		const addedCardMessages = newCards.filter(card => !existingCards.find(existingCard => existingCard.id === card.id))
+
+		const cardsToAdd = await Utils.renderCardsAsynchronously(addedCardMessages)
+		const cardsToRemove = existingCards.filter(card => newCards.every(newCard => newCard.id !== card.id))
+		const result = existingCards.reduce<RenderedCard[]>((result, existingCard) => {
+			if (cardsToRemove.includes(existingCard) && cardsToAdd.length > 0) {
+				return result.concat(cardsToAdd.shift())
+			} else if (cardsToRemove.includes(existingCard)) {
+				return result
+			}
+
+			return result.concat(existingCard)
+		}, []).concat(cardsToAdd)
+
+		cardsToRemove.forEach(card => card.unregister())
+		PIXI.Ticker.shared.addOnce(() => {
+			result.forEach(card => card.resetDisplayMode())
+		})
+
+		this.forcedTargetingCards = result
+		store.commit.gameStateModule.setForcedTargetingCardsLength(this.forcedTargetingCards.length)
 	}
 
 	public disableForcedTargetingMode(): void {
 		this.forcedTargetingMode = null
 		this.forcedTargetingCards.forEach(card => card.unregister())
 		this.forcedTargetingCards = []
+		store.commit.gameStateModule.setForcedTargetingCardsLength(0)
 	}
 }

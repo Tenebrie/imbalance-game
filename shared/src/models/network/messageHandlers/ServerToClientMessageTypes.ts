@@ -3,6 +3,7 @@ export enum PlayerUpdateMessageType {
 	LEADER_OPPONENT = 'playerUpdate_leaderOpponent',
 	MORALE = 'playerUpdate_morale',
 	MANA = 'playerUpdate_mana',
+	MULLIGANS = 'playerUpdate_mulligans',
 	CARD_ADD_HAND = 'playerUpdate_cardAddToHand',
 	CARD_ADD_DECK = 'playerUpdate_cardAddToDeck',
 	CARD_ADD_GRAVE = 'playerUpdate_cardAddToGrave',

@@ -15,6 +15,10 @@ import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
 import CardType from '@shared/enums/CardType'
 import GameEventCreators from '../models/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import Utils from '../../utils/Utils'
+import ServerCardTarget from '../models/ServerCardTarget'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -28,9 +32,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	morale: number
 	unitMana: number
 	spellMana: number
+	mulliganMode: boolean
 	turnEnded: boolean
 	roundEnded: boolean
 	cardsPlayed: ServerCard[]
+	cardsMulliganed: number
 
 	constructor(game: ServerGame, player: ServerPlayer) {
 		this.game = game
@@ -41,13 +47,21 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.morale = Constants.STARTING_PLAYER_MORALE
 		this.unitMana = 0
 		this.spellMana = 0
+		this.mulliganMode = false
 		this.turnEnded = true
 		this.roundEnded = true
 		this.cardsPlayed = []
+		this.cardsMulliganed = 0
 	}
 
 	public get targetRequired(): boolean {
-		return !!this.game.cardPlay.cardResolveStack.currentCard
+		if (!this.mulliganMode && this.turnEnded) {
+			return false
+		}
+
+		const currentResolvingCard = this.game.cardPlay.cardResolveStack.currentCard
+		return (this.game.turnPhase === GameTurnPhase.DEPLOY && currentResolvingCard && currentResolvingCard.owner === this) ||
+			this.game.turnPhase === GameTurnPhase.MULLIGAN
 	}
 
 	public get opponent(): ServerPlayerInGame {
@@ -133,6 +147,14 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		return card
 	}
 
+	public mulliganCard(card: ServerCard): void {
+		const cardIndex = this.cardHand.unitCards.indexOf(card)
+		this.cardHand.removeCard(card)
+		this.cardDeck.addUnitToBottom(card)
+		const cardToAdd = this.cardDeck.drawTopUnit()
+		this.cardHand.addUnit(cardToAdd, cardIndex)
+	}
+
 	public refillSpellHand(): void {
 		const cardsMissing = Constants.SPELL_HAND_SIZE_MINIMUM - this.cardHand.spellCards.length
 		if (cardsMissing > 0) {
@@ -194,11 +216,30 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		}))
 	}
 
+	public startMulligan(): void {
+		this.mulliganMode = true
+		this.showMulliganCards()
+		OutgoingMessageHandlers.notifyAboutCardsMulliganed(this)
+	}
+
+	public showMulliganCards(): void {
+		const cardsToMulligan = this.cardHand.unitCards
+		const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
+		OutgoingMessageHandlers.notifyAboutResolvingCardTargets(this.player, targets)
+	}
+
+	public finishMulligan(): void {
+		this.mulliganMode = false
+		this.cardsMulliganed = 0
+		OutgoingMessageHandlers.notifyAboutResolvingCardTargets(this.player, [])
+	}
+
 	public startTurn(): void {
 		if (!this.turnEnded) {
 			return
 		}
 		this.turnEnded = false
+		this.mulliganMode = false
 		this.setUnitMana(1)
 		this.refillSpellHand()
 		OutgoingMessageHandlers.notifyAboutTurnStarted(this)
@@ -224,6 +265,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public onTurnEnd(): void {
 		this.cardsPlayed = []
 
+		// TODO: Move this to corresponding buffs
 		this.cardHand.unitCards.filter(card => card.features.includes(CardFeature.TEMPORARY_CARD)).forEach(card => {
 			this.cardHand.discardCard(card)
 			this.cardGraveyard.addUnit(card)

@@ -9,6 +9,7 @@ import ServerBuff from './ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
 import ServerCardTarget from './ServerCardTarget'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default {
 	roundStarted: (args: RoundStartedEventArgs): GameEvent => ({
@@ -73,10 +74,10 @@ export default {
 		effectSource: args.triggeringCard,
 		logSubtype: args.targetCard ? 'card' : args.targetRow ? 'row' : 'unit',
 		logVariables: {
-			triggeringCard: args.triggeringCard.id,
-			targetCard: args.targetCard ? args.targetCard.id : undefined,
-			targetUnit: args.targetUnit ? args.targetUnit.card.id : undefined,
-			targetRow: args.targetRow ? args.targetRow.index : undefined
+			triggeringCard: args.triggeringCard?.id,
+			targetCard: args.targetCard?.id,
+			targetUnit: args.targetUnit?.card.id,
+			targetRow: args.targetRow?.index,
 		}
 	}),
 	cardTargetsConfirmed: (args: CardTargetsConfirmedEventArgs): GameEvent => ({
@@ -84,7 +85,7 @@ export default {
 		args: args,
 		effectSource: args.triggeringCard,
 		logVariables: {
-			triggeringCard: args.triggeringCard.id
+			triggeringCard: args.triggeringCard?.id
 		}
 	}),
 
@@ -217,13 +218,17 @@ export interface CardDestroyedEventArgs {
 }
 
 export interface CardTargetSelectedEventArgs {
+	targetMode: TargetMode
+	targetType: TargetType
 	triggeringCard: ServerCard
+	triggeringPlayer: ServerPlayerInGame
 	targetCard: ServerCard
 	targetUnit: ServerUnit
 	targetRow: ServerBoardRow
 }
 export interface CardTargetsConfirmedEventArgs {
 	triggeringCard: ServerCard
+	triggeringPlayer: ServerPlayerInGame
 }
 
 export interface UnitCreatedEventArgs {

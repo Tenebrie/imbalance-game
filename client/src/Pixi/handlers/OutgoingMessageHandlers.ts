@@ -25,6 +25,10 @@ export default {
 		Core.sendMessage(GenericActionMessageType.CARD_TARGET, new CardTargetMessage(target))
 	},
 
+	sendConfirmTargets(): void {
+		Core.sendMessage(GenericActionMessageType.CONFIRM_TARGETS, null)
+	},
+
 	sendEndTurn(): void {
 		Core.sendMessage(GenericActionMessageType.TURN_END, null)
 	},

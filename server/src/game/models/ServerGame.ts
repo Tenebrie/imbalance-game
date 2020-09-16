@@ -20,6 +20,9 @@ import {colorizeId, colorizePlayer} from '../../utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
 import {BuffConstructor} from './ServerBuffContainer'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
+import TargetMode from '@shared/enums/TargetMode'
+import {CardTargetSelectedEventArgs} from './GameEventCreators'
+import GameEventType from '@shared/enums/GameEventType'
 
 interface ServerGameProps {
 	name?: string
@@ -53,6 +56,10 @@ export default class ServerGame implements Game {
 		this.playersToMove = []
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
+
+		this.events.createCallback<CardTargetSelectedEventArgs>(this, GameEventType.CARD_TARGET_SELECTED)
+			.require(({ targetMode }) => targetMode === TargetMode.MULLIGAN)
+			.perform(({ triggeringPlayer, targetCard }) => this.mulliganCard(triggeringPlayer, targetCard))
 	}
 
 	public get activePlayer(): ServerPlayerInGame | null {
@@ -116,15 +123,13 @@ export default class ServerGame implements Game {
 
 		this.players.forEach(playerInGame => {
 			playerInGame.cardDeck.shuffle()
-			playerInGame.startRound()
 			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_STARTING)
 			playerInGame.drawSpellCards(Constants.SPELL_HAND_SIZE_MINIMUM)
 			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})
 		this.events.flushLogEventGroup()
-		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
-		this.startNextTurn()
-		this.events.flushLogEventGroup()
+		this.startMulliganPhase()
+
 		OutgoingMessageHandlers.executeMessageQueue(this)
 	}
 
@@ -154,6 +159,12 @@ export default class ServerGame implements Game {
 		return this.players.filter(playerInGame => !playerInGame.turnEnded).length === 0
 	}
 
+	public advanceMulliganPhase(): void {
+		if (this.players.every(player => !player.mulliganMode)) {
+			this.advancePhase()
+		}
+	}
+
 	public advanceCurrentTurn(): void {
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1]
@@ -162,7 +173,7 @@ export default class ServerGame implements Game {
 		const hasPlayerWonBoard = rowsOwnedByPlayerOne === Constants.GAME_BOARD_ROW_COUNT || rowsOwnedByPlayerTwo === Constants.GAME_BOARD_ROW_COUNT
 		const notFinishedPlayers = this.players.filter(player => !player.roundEnded)
 		if (hasPlayerWonBoard || notFinishedPlayers.length === 0) {
-			this.startNextRound()
+			this.endCurrentRound()
 			return
 		}
 
@@ -183,25 +194,38 @@ export default class ServerGame implements Game {
 	}
 
 	private advancePhase(): void {
-		if (this.turnPhase === GameTurnPhase.TURN_START) {
+		if (this.turnPhase === GameTurnPhase.MULLIGAN) {
+			this.startNextRound()
+		} else if (this.turnPhase === GameTurnPhase.ROUND_START) {
+			this.startNextTurn()
+		} else if (this.turnPhase === GameTurnPhase.TURN_START) {
 			this.startDeployPhase()
 		} else if (this.turnPhase === GameTurnPhase.DEPLOY) {
 			this.startEndTurnPhase()
 		} else if (this.turnPhase === GameTurnPhase.TURN_END) {
 			this.startNextTurn()
-		} else if (this.turnPhase === GameTurnPhase.ROUND_START) {
-			this.startNextTurn()
+		} else if (this.turnPhase === GameTurnPhase.ROUND_END) {
+			this.startMulliganPhase()
 		}
 	}
 
-	private startNextTurn(): void {
-		this.turnIndex += 1
-		this.setTurnPhase(GameTurnPhase.TURN_START)
+	private startMulliganPhase(): void {
+		this.setTurnPhase(GameTurnPhase.MULLIGAN)
 
-		this.playersToMove = this.players.slice()
+		this.players.forEach(playerInGame => {
+			playerInGame.startMulligan()
+		})
+	}
 
-		this.board.orders.clearPerformedOrders()
-		this.advancePhase()
+	private startNextRound(): void {
+		this.setTurnPhase(GameTurnPhase.ROUND_START)
+
+		this.players.forEach(playerInGame => {
+			playerInGame.startRound()
+		})
+
+		this.startNextTurn()
+		this.events.flushLogEventGroup()
 	}
 
 	private startDeployPhase(): void {
@@ -215,8 +239,18 @@ export default class ServerGame implements Game {
 		this.advanceCurrentTurn()
 	}
 
-	private startNextRound(): void {
-		this.setTurnPhase(GameTurnPhase.ROUND_START)
+	private startNextTurn(): void {
+		this.turnIndex += 1
+		this.setTurnPhase(GameTurnPhase.TURN_START)
+
+		this.playersToMove = this.players.slice()
+
+		this.board.orders.clearPerformedOrders()
+		this.advancePhase()
+	}
+
+	private endCurrentRound(): void {
+		this.setTurnPhase(GameTurnPhase.ROUND_END)
 
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1]
@@ -263,6 +297,24 @@ export default class ServerGame implements Game {
 	private startEndTurnPhase(): void {
 		this.setTurnPhase(GameTurnPhase.TURN_END)
 		this.advancePhase()
+	}
+
+	public get maxMulligans(): number {
+		return this.turnIndex === -1 ? Constants.MULLIGAN_INITIAL_CARD_COUNT : Constants.MULLIGAN_ROUND_CARD_COUNT
+	}
+
+	public mulliganCard(player: ServerPlayerInGame, card: ServerCard): void {
+		if (!player.cardHand.unitCards.includes(card) || player.cardsMulliganed >= this.maxMulligans) {
+			return
+		}
+
+		player.mulliganCard(card)
+		player.cardsMulliganed += 1
+		OutgoingMessageHandlers.notifyAboutCardsMulliganed(player)
+
+		if (player.cardsMulliganed < this.maxMulligans) {
+			player.showMulliganCards()
+		}
 	}
 
 	public finish(victoriousPlayer: ServerPlayerInGame | null, victoryReason: string): void {

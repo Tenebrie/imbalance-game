@@ -11,7 +11,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import {GameEvent} from './GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 
-type EventSubscriber = ServerCard | ServerBuff
+type EventSubscriber = ServerGame | ServerCard | ServerBuff
 
 export class EventCallback<EventArgs> {
 	private readonly __subscriber: EventSubscriber
@@ -160,7 +160,7 @@ export class EventHook<HookValues, HookArgs> {
 	 * Add a new condition to the require chain. Card location must match any of the specified values.
 	 */
 	requireLocations(locations: CardLocation[]): EventHook<HookValues, HookArgs> {
-		return this.require(() => locations.includes(this.__subscriber.location))
+		return this.require(() => !(this.__subscriber instanceof ServerGame) && locations.includes(this.__subscriber.location))
 	}
 
 	/* Ignore control effects
@@ -266,7 +266,10 @@ export default class ServerGameEvents {
 			}, values)
 	}
 
-	private subscriberSuspended(subscriber: ServerCard | ServerBuff): boolean {
+	private subscriberSuspended(subscriber: EventSubscriber): boolean {
+		if (subscriber instanceof ServerGame) {
+			return false
+		}
 		if (subscriber instanceof ServerBuff) {
 			return subscriber.card.features.includes(CardFeature.SUSPENDED)
 		}

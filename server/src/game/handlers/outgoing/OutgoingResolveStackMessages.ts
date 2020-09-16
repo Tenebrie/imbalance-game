@@ -34,11 +34,9 @@ export default {
 			}
 			return message
 		})
-		const shuffledMessages = Utils.shuffle(messages)
 		player.sendMessage({
 			type: ResolveStackMessageType.TARGETS,
-			data: shuffledMessages,
-			highPriority: true
+			data: messages,
 		})
 	},
 

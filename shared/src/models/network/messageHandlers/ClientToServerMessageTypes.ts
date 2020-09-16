@@ -2,6 +2,7 @@ export enum GenericActionMessageType {
 	CARD_PLAY = 'genericAction_cardPlay',
 	UNIT_ORDER = 'genericAction_unitOrder',
 	CARD_TARGET = 'genericAction_cardTarget',
+	CONFIRM_TARGETS = 'genericAction_confirmTargets',
 	TURN_END = 'genericAction_turnEnd',
 }
 

@@ -3,14 +3,8 @@ import ServerGame from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
-import UnitOrderMessage from '@shared/models/network/CardTargetMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import ServerCardTarget from '../models/ServerCardTarget'
 import Utils from '../../utils/Utils'
-import ServerUnit from '../models/ServerUnit'
-import ServerBoardRow from '../models/ServerBoardRow'
-import TargetMode from '@shared/enums/TargetMode'
-import TargetType from '@shared/enums/TargetType'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import CardLibrary from '../libraries/CardLibrary'
@@ -22,6 +16,12 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
 		super(game, player)
 		this.initialized = true
+	}
+
+	public startMulligan(): void {
+		setTimeout(() => {
+			this.finishMulligan()
+		})
 	}
 
 	public startTurn(): void {

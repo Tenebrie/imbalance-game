@@ -16,7 +16,6 @@ const IncomingSystemMessages: {[ index in SystemMessageType ]: IncomingMessageHa
 	},
 
 	[SystemMessageType.COMMAND_DISCONNECT]: () => {
-		console.log('Discon')
 		store.dispatch.leaveGame()
 	},
 

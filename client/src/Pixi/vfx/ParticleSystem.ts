@@ -28,7 +28,7 @@ export default class ParticleSystem {
 
 	public tick(deltaTime: number, deltaFraction: number): void {
 		this.emitters
-			.filter(handle => !!handle.ownerCard && !!handle.container)
+			.filter(handle => !!handle.ownerCard && !!handle.container && !!handle.ownerCard.coreContainer && !!handle.ownerCard.coreContainer.transform)
 			.forEach(handle => {
 				handle.container.position.copyFrom(handle.ownerCard.coreContainer.position)
 			})

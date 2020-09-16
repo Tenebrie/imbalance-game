@@ -11,6 +11,7 @@ import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
 import CardType from '@shared/enums/CardType'
 import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMessage'
 import {IncomingMessageHandlerFunction} from '@/Pixi/handlers/IncomingMessageHandlers'
+import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
 
 const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: IncomingMessageHandlerFunction } = {
 	[PlayerUpdateMessageType.LEADER_SELF]: (data: CardMessage) => {
@@ -29,6 +30,11 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 	[PlayerUpdateMessageType.MANA]: (data: PlayerInGameMessage) => {
 		Core.getPlayer(data.player.id).setUnitMana(data.unitMana)
 		Core.getPlayer(data.player.id).setSpellMana(data.spellMana)
+	},
+
+	[PlayerUpdateMessageType.MULLIGANS]: (data: MulliganCountMessage) => {
+		store.commit.gameStateModule.setCardsMulliganed(data.usedMulligans)
+		store.commit.gameStateModule.setMaxCardMulligans(data.maxMulligans)
 	},
 
 	[PlayerUpdateMessageType.CARD_ADD_HAND]: (data: OwnedCardMessage) => {

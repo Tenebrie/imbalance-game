@@ -92,6 +92,13 @@ export default class ServerCardTarget implements CardTarget {
 		return order
 	}
 
+	public static playerTargetCardInUnitDeck(targetMode: TargetMode, targetCard: ServerCard, targetLabel = ''): ServerCardTarget {
+		const order = new ServerCardTarget(targetMode, TargetType.CARD_IN_UNIT_DECK)
+		order.targetCard = targetCard
+		order.targetLabel = targetLabel
+		return order
+	}
+
 	public static fromMessage(game: ServerGame, message: CardTargetMessage): ServerCardTarget {
 		const target = new ServerCardTarget(message.targetMode, message.targetType)
 		if (message.sourceCardId) {

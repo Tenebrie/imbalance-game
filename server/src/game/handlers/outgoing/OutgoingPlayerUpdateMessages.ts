@@ -14,6 +14,7 @@ import OpenOwnedCardMessage from '@shared/models/network/ownedCard/OpenOwnedCard
 import HiddenOwnedCardMessage from '@shared/models/network/ownedCard/HiddenOwnedCardMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerPlayerSpectator from '../../players/ServerPlayerSpectator'
+import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
 
 export default {
 	notifyAboutDeckLeader(playerInGame: ServerPlayerInGame | ServerPlayerSpectator, opponent: ServerPlayerInGame, card: ServerCard): void {
@@ -44,6 +45,14 @@ export default {
 		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.MANA,
 			data: new HiddenPlayerInGameMessage(playerInGame)
+		})
+	},
+
+	notifyAboutCardsMulliganed: (playerInGame: ServerPlayerInGame): void => {
+		playerInGame.player.sendMessage({
+			type: PlayerUpdateMessageType.MULLIGANS,
+			data: new MulliganCountMessage(playerInGame.cardsMulliganed, playerInGame.game.maxMulligans),
+			highPriority: true
 		})
 	},
 

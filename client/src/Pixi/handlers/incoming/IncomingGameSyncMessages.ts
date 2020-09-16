@@ -20,7 +20,7 @@ const IncomingGameSyncMessages: {[ index in GameSyncMessageType ]: IncomingMessa
 	},
 
 	[GameSyncMessageType.PHASE_ADVANCE]: (data: GameTurnPhase) => {
-		Core.game.setTurnPhase(data)
+		store.commit.gameStateModule.setTurnPhase(data)
 	},
 
 	[GameSyncMessageType.PLAYER_SELF]: (data: PlayerInGameMessage) => {
