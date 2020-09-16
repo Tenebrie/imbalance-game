@@ -311,10 +311,7 @@ export default class ServerGame implements Game {
 		player.mulliganCard(card)
 		player.cardsMulliganed += 1
 		OutgoingMessageHandlers.notifyAboutCardsMulliganed(player)
-
-		if (player.cardsMulliganed < this.maxMulligans) {
-			player.showMulliganCards()
-		}
+		player.showMulliganCards()
 	}
 
 	public finish(victoriousPlayer: ServerPlayerInGame | null, victoryReason: string): void {
