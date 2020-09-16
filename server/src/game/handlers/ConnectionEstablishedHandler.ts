@@ -43,7 +43,9 @@ export default {
 		OutgoingMessageHandlers.notifyAboutDeckLeader(spectator, opponent, spectatedPlayerInGame.leader)
 		OutgoingMessageHandlers.sendBoardState(spectator.player, game.board)
 		OutgoingMessageHandlers.sendStackState(spectator.player, game.cardPlay.cardResolveStack)
-		OutgoingMessageHandlers.sendActivePlayer(spectator.player, game.activePlayer)
+		if (game.activePlayer) {
+			OutgoingMessageHandlers.sendActivePlayer(spectator.player, game.activePlayer)
+		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, spectatedPlayerInGame)
 		OutgoingMessageHandlers.notifyAboutGameStart(spectator.player, spectatedPlayerInGame.isInvertedBoard())
 		game.events.flushLogEventGroup()
