@@ -171,6 +171,7 @@
 	"card.tribe.scroll": "Scroll",
 	"card.tribe.dragon": "Dragon",
 	"card.tribe.crystal": "Crystal",
+	"card.tribe.cultist": "Cultist",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.merfolk": "Merfolk",
 	"card.tribe.building": "Building",
@@ -309,7 +310,7 @@
 	"card.heroSparklingSpirit.description": "*Deploy:*\nAdd a *Fleeting Spark* into your hand<p>Your *Sparks* deal {extraDamage} extra Damage",
 
 	"card.heroRagingElemental.name": "Raging Elemental",
-	"card.heroRagingElemental.description": "*Enrage:*\nDeal {power} Damage to closest opposing enemy units.\nThen, destroy this unit.<p><i>Damage dealt is equal to this card's power.",
+	"card.heroRagingElemental.description": "*Enrage:*\nDeal {power} Damage to opposing enemy units.\nThen, destroy this unit.<p><i>Damage dealt is equal to this card's power.",
 	"card.heroRagingElemental.flavor": "The lightest touch, and it WILL explode.",
 
 	"card.heroStormDancer.name": "Storm Dancer",
@@ -333,13 +334,17 @@
 	"card.heroCrystalWarrior.name": "Crystal Warrior",
 	"card.heroCrystalWarrior.description": "*Deploy:*\nDestroy an allied unit.\nThen, summon a *Crystal* in its place.",
 
-	"card.heroCultistOfAreddon.name": "Cultist of Areddon",
-	"card.heroCultistOfAreddon.description": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a copy of it.",
-	"card.heroCultistOfAreddon.flavor": "- \"So say we all\"",
+	"card.unitCultistBrute.name": "Cultist Brute",
+	"card.unitCultistBrute.description": "*Deploy:*\nDestroy an allied unit.\nThen, gain +{bonusPower} Power.",
+	"card.unitCultistBrute.flavor": "- \"So say we all\"",
 
 	"card.unitCultistSpellslinger.name": "Cultist Spellslinger",
 	"card.unitCultistSpellslinger.description": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a *Scroll*.\nIt costs 1 Mana less for every Power the target unit had.",
 	"card.unitCultistSpellslinger.flavor": "- \"So say we all\"",
+
+	"card.heroCultistOfAreddon.name": "Cultist of Areddon",
+	"card.heroCultistOfAreddon.description": "*Deploy:*\nDestroy an allied non-cultist unit.\nThen, *Create* a copy of it.",
+	"card.heroCultistOfAreddon.flavor": "- \"So say we all\"",
 
 	"card.heroAdventuringGuildMaster.name": "Adventuring\nGuild Master",
 	"card.heroAdventuringGuildMaster.description": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
@@ -431,6 +436,16 @@
 
 	"card.unitHungrySpellslinger.name": "Hungry Spellslinger",
 	"card.unitHungrySpellslinger.description": "*Infuse *{infuseCost}*:*\nAdd a Scroll to your hand.\nIt costs {spellDiscount} Mana less.",
+
+	"card.unitElderHoundmaster.name": "Elder Houndmaster",
+	"card.unitElderHoundmaster.description": "*Deploy*\nSpawn two *Trained Hounds*.",
+
+	"card.unitTrainedHound.name": "Trained Hound",
+	"card.unitTrainedHound.description": "<i>No effect</i>",
+	"card.unitTrainedHound.flavor": "Who let the dogs out?",
+
+	"card.unitEnergyRelay.name": "Energy Relay",
+	"card.unitEnergyRelay.description": "On *Turn end*, *Infuse *{infuseCost}*:*\nDeal {damageDealt} Damage to\nopposing enemy units.",
 
 	"card.unitVoidcaller.name": "Voidcaller",
 	"card.unitVoidcaller.description": "*Deploy:*\n*Create* a *Void Portal*",

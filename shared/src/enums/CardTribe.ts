@@ -8,6 +8,7 @@ enum CardTribe {
 	SCROLL = 'scroll',
 	DRAGON = 'dragon',
 	CRYSTAL = 'crystal',
+	CULTIST = 'cultist',
 	VAMPIRE = 'vampire',
 	MERFOLK = 'merfolk',
 	BUILDING = 'building',

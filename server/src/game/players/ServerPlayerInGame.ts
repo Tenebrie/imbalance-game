@@ -155,6 +155,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.cardHand.addUnit(cardToAdd, cardIndex)
 	}
 
+	public useManaForInfuse(mana: number, card: ServerCard): void {
+		this.addSpellMana(-mana)
+		// TODO: Add special effect
+	}
+
 	public refillSpellHand(): void {
 		const cardsMissing = Constants.SPELL_HAND_SIZE_MINIMUM - this.cardHand.spellCards.length
 		if (cardsMissing > 0) {

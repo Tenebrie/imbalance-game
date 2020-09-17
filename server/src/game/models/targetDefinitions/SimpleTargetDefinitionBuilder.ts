@@ -66,14 +66,6 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		})
 	}
 
-	public requireInStaticRange(targetType: TargetType, range: number): SimpleTargetDefinitionBuilder {
-		return this.require(targetType, args => {
-			const thisUnit = args.sourceCard.unit
-			const rowIndex = targetType === TargetType.UNIT ? args.targetCard.unit.rowIndex : args.targetRow.index
-			return Math.abs(thisUnit.rowIndex - rowIndex) <= range
-		})
-	}
-
 	public requireAlliedUnit(): SimpleTargetDefinitionBuilder {
 		return this.require(TargetType.UNIT, args => {
 			const sourceUnit = args.sourceCard.unit

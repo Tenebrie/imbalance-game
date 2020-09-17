@@ -231,6 +231,10 @@ export default class ServerGameEvents {
 
 		preparedCallbacks
 			.forEach(preparedCallback => {
+				if (preparedCallback.callback.conditions.find((condition) => cardRequire(() => !condition(event.args, event)))) {
+					return
+				}
+
 				preparedCallback.callback.callbacks.forEach(callback => {
 					if (args.allowThreading) {
 						this.game.animation.createAnimationThread()

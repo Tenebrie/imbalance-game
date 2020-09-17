@@ -327,7 +327,7 @@
 	"card.heroCrystalWarrior.description": "*Вход в игру:*\nУничтожьте союзного юнита.\nЗатем, призовите *Кристалл* на его месте.",
 
 	"card.heroCultistOfAreddon.name": "Культист Ареддона",
-	"card.heroCultistOfAreddon.description": "*Вход в игру:*\nУничтожьте союзного юнита.\nЗатем, *Создайте* его копию.",
+	"card.heroCultistOfAreddon.description": "*Вход в игру:*\nУничтожьте союзного юнита, который не является культистом.\nЗатем, *Создайте* его копию.",
 
 	"card.unitCultistSpellslinger.name": "Культист-заклинатель",
 	"card.unitCultistSpellslinger.description": "*Вход в игру:*\nУничтожьте союзного юнита.\nЗатем, *Создайте* *Свиток*.\nОн стоит на 1 ед. Маны дешевле за каждую единицу Силы цели.",
