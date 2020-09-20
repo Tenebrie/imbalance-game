@@ -447,6 +447,9 @@
 	"card.unitEnergyRelay.name": "Energy Relay",
 	"card.unitEnergyRelay.description": "On *Turn end*, *Infuse *{infuseCost}*:*\nDeal {damageDealt} Damage to\nopposing enemy units.",
 
+	"card.unitWoundedVeteran.name": "Wounded Veteran",
+	"card.unitWoundedVeteran.description": "*Deploy:*\nDeal {damageToSelf} Damage to self",
+
 	"card.unitVoidcaller.name": "Voidcaller",
 	"card.unitVoidcaller.description": "*Deploy:*\n*Create* a *Void Portal*",
 	"card.unitVoidcaller.flavor": "Thankfully, this line is always available.",
