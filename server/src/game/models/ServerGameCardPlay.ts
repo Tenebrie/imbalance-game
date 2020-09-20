@@ -8,6 +8,7 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerResolveStack from './ServerResolveStack'
 import GameEventCreators from './GameEventCreators'
 import Utils from '../../utils/Utils'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -122,7 +123,7 @@ export default class ServerGameCardPlay {
 		if (validTargets.length === 0) {
 			this.cardResolveStack.finishResolving()
 		} else {
-			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(ownedCard.owner.player, Utils.shuffle(validTargets))
+			OutgoingMessageHandlers.notifyAboutPopupTargets(ownedCard.owner.player, TargetMode.DEPLOY_EFFECT, Utils.shuffle(validTargets))
 		}
 	}
 
@@ -139,16 +140,11 @@ export default class ServerGameCardPlay {
 	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
 		const currentResolvingCard = this.cardResolveStack.currentCard
 
-		let validTargets
-		if (currentResolvingCard) {
-			validTargets = this.getValidTargets()
-			const isValidTarget = !!validTargets.find(validTarget => validTarget.isEqual(target))
-			if (!isValidTarget) {
-				OutgoingMessageHandlers.notifyAboutResolvingCardTargets(playerInGame.player, Utils.shuffle(validTargets))
-				return
-			} else {
-				OutgoingMessageHandlers.notifyAboutResolvingCardTargets(playerInGame.player, [])
-			}
+		let validTargets: ServerCardTarget[] = this.getValidTargets()
+		const isValidTarget = !!validTargets.find(validTarget => validTarget.isEqual(target))
+		if (!isValidTarget) {
+			OutgoingMessageHandlers.notifyAboutPopupTargets(playerInGame.player, TargetMode.DEPLOY_EFFECT, Utils.shuffle(validTargets))
+			return
 		}
 
 		this.cardResolveStack.pushTarget(target)
@@ -156,7 +152,7 @@ export default class ServerGameCardPlay {
 		this.game.events.postEvent(GameEventCreators.cardTargetSelected({
 			targetMode: target.targetMode,
 			targetType: target.targetType,
-			triggeringCard: currentResolvingCard?.card,
+			triggeringCard: currentResolvingCard.card,
 			triggeringPlayer: playerInGame,
 			targetCard: target.targetCard,
 			targetUnit: target.targetCard?.unit,
@@ -171,7 +167,7 @@ export default class ServerGameCardPlay {
 		validTargets = this.getValidTargets()
 
 		if (validTargets.length > 0) {
-			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(playerInGame.player, Utils.shuffle(validTargets))
+			OutgoingMessageHandlers.notifyAboutPopupTargets(playerInGame.player,TargetMode.DEPLOY_EFFECT, Utils.shuffle(validTargets))
 			return
 		}
 
@@ -179,8 +175,26 @@ export default class ServerGameCardPlay {
 			triggeringCard: currentResolvingCard?.card,
 			triggeringPlayer: playerInGame,
 		}))
-		if (currentResolvingCard) {
-			this.cardResolveStack.finishResolving()
+		this.cardResolveStack.finishResolving()
+	}
+
+	public selectPlayerMulliganTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
+		this.cardResolveStack.pushTarget(target)
+
+		this.game.events.postEvent(GameEventCreators.playerTargetSelected({
+			targetMode: target.targetMode,
+			targetType: target.targetType,
+			triggeringPlayer: playerInGame,
+			targetCard: target.targetCard,
+			targetUnit: target.targetCard?.unit,
+			targetRow: target.targetRow
+		}))
+
+		const validTargets = this.getValidTargets()
+
+		if (validTargets.length > 0) {
+			OutgoingMessageHandlers.notifyAboutPopupTargets(playerInGame.player, TargetMode.MULLIGAN, Utils.shuffle(validTargets))
+			return
 		}
 	}
 }

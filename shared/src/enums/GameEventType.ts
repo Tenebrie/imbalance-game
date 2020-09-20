@@ -8,8 +8,11 @@ enum GameEventType {
 	CARD_TAKES_DAMAGE = 'cardTakesDamage',
 	CARD_DESTROYED = 'cardDestroyed',
 
-	CARD_TARGET_SELECTED = 'effectTargetSelected',
-	CARD_TARGETS_CONFIRMED = 'effectTargetsConfirmed',
+	CARD_TARGET_SELECTED = 'cardTargetSelected',
+	CARD_TARGETS_CONFIRMED = 'cardTargetsConfirmed',
+
+	PLAYER_TARGET_SELECTED = 'playerTargetSelected',
+	PLAYER_TARGETS_CONFIRMED = 'playerTargetConfirmed',
 
 	UNIT_CREATED = 'unitCreated',
 	UNIT_MOVED = 'unitMoved',

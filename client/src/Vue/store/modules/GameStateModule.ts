@@ -5,6 +5,7 @@ import {moduleActionContext, rootActionContext} from '../index'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import TargetMode from '@shared/enums/TargetMode'
 
 const gameStateModule = createModule({
 	namespaced: true,
@@ -18,8 +19,7 @@ const gameStateModule = createModule({
 		isSpectating: false as boolean,
 		cardsMulliganed: 0 as number,
 		maxCardMulligans: 0 as number,
-		forcedTargetingCardsLength: 0 as number,
-		resolveStackCardsLength: 0 as number,
+		popupTargetingMode: null as TargetMode | null,
 	},
 
 	mutations: {
@@ -59,13 +59,9 @@ const gameStateModule = createModule({
 			state.maxCardMulligans = number
 		},
 
-		setForcedTargetingCardsLength(state, length: number): void {
-			state.forcedTargetingCardsLength = length
-		},
-
-		setResolveStackCardsLength(state, length: number): void {
-			state.resolveStackCardsLength = length
-		},
+		setPopupTargetingMode(state, mode: TargetMode | null): void {
+			state.popupTargetingMode = mode
+		}
 	},
 
 	getters: {

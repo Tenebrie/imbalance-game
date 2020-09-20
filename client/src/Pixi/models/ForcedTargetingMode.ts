@@ -7,12 +7,15 @@ import RichTextVariables from '@shared/models/RichTextVariables'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default class ForcedTargetingMode {
-	validTargets: ClientCardTarget[] = []
+	readonly targetMode: TargetMode
+	readonly validTargets: ClientCardTarget[]
 	selectedTarget: ClientCardTarget | null = null
 
-	constructor(validTargets: ClientCardTarget[]) {
+	constructor(targetMode: TargetMode, validTargets: ClientCardTarget[]) {
+		this.targetMode = targetMode
 		this.validTargets = validTargets
 	}
 

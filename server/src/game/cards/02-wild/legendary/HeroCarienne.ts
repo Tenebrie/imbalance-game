@@ -46,9 +46,12 @@ export default class HeroCarienne extends ServerCard {
 		const enemies = this.game.board.getUnitsOwnedByOpponent(this.unit.owner)
 
 		for (let i = 0; i < this.waveCount; i++) {
-			this.game.animation.createAnimationThread()
-			enemies.forEach(enemy => enemy.dealDamage(ServerDamageInstance.fromUnit(this.damagePerWave, this.unit)))
-			this.game.animation.commitAnimationThread()
+			enemies.forEach(enemy => {
+				this.game.animation.createAnimationThread()
+				enemy.dealDamage(ServerDamageInstance.fromUnit(this.damagePerWave, this.unit))
+				this.game.animation.commitAnimationThread()
+			})
+			this.game.animation.syncAnimationThreads()
 		}
 	}
 }

@@ -18,6 +18,7 @@ import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import store from '@/Vue/store'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
+import TargetMode from '@shared/enums/TargetMode'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -136,6 +137,10 @@ export default class Input {
 		}
 
 		if (Core.isSpectating) {
+			return
+		}
+
+		if (this.forcedTargetingMode && this.forcedTargetingMode.targetMode === TargetMode.BROWSE) {
 			return
 		}
 
@@ -310,14 +315,15 @@ export default class Input {
 		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardId)
 	}
 
-	public async enableForcedTargetingMode(validTargets: ClientCardTarget[]): Promise<void> {
-		this.forcedTargetingMode = new ForcedTargetingMode(validTargets)
+	public async enableForcedTargetingMode(targetMode: TargetMode, validTargets: ClientCardTarget[]): Promise<void> {
+		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets)
 		await this.createForcedTargetingCards(validTargets)
 		this.forcedTargetingMode.validTargets
 			.filter(target => target.targetCardData && !target.targetCard)
 			.forEach(target => {
 				target.targetCard = this.forcedTargetingCards.find(card => card.id === target.targetCardData.id)
 			})
+		store.commit.gameStateModule.setPopupTargetingMode(targetMode)
 	}
 
 	public async createForcedTargetingCards(targets: ClientCardTarget[]): Promise<void> {
@@ -346,13 +352,12 @@ export default class Input {
 		})
 
 		this.forcedTargetingCards = result
-		store.commit.gameStateModule.setForcedTargetingCardsLength(this.forcedTargetingCards.length)
 	}
 
 	public disableForcedTargetingMode(): void {
 		this.forcedTargetingMode = null
 		this.forcedTargetingCards.forEach(card => card.unregister())
 		this.forcedTargetingCards = []
-		store.commit.gameStateModule.setForcedTargetingCardsLength(0)
+		store.commit.gameStateModule.setPopupTargetingMode(null)
 	}
 }

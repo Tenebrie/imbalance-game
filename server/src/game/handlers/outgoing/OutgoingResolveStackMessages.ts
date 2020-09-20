@@ -8,6 +8,8 @@ import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import {ResolveStackMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import OpenOwnedCardMessage from '@shared/models/network/ownedCard/OpenOwnedCardMessage'
+import ResolvingCardTargetsMessage from '@shared/models/network/ResolvingCardTargetsMessage'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default {
 	notifyAboutCardResolving(ownedCard: ServerOwnedCard): void {
@@ -26,17 +28,10 @@ export default {
 		})
 	},
 
-	notifyAboutResolvingCardTargets(player: ServerPlayer, validTargets: ServerCardTarget[]): void {
-		const messages = validTargets.map(target => {
-			const message = new CardTargetMessage(target)
-			if (target.targetType === TargetType.CARD_IN_LIBRARY || target.targetType === TargetType.CARD_IN_UNIT_DECK || target.targetType === TargetType.CARD_IN_SPELL_DECK) {
-				message.attachTargetCardData(target.targetCard)
-			}
-			return message
-		})
+	notifyAboutPopupTargets(player: ServerPlayer, targetMode: TargetMode, validTargets: ServerCardTarget[]): void {
 		player.sendMessage({
 			type: ResolveStackMessageType.TARGETS,
-			data: messages,
+			data: new ResolvingCardTargetsMessage(targetMode, validTargets),
 		})
 	},
 

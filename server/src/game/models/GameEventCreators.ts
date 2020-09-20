@@ -89,6 +89,18 @@ export default {
 		}
 	}),
 
+	playerTargetSelected: (args: PlayerTargetSelectedEventArgs): GameEvent => ({
+		type: GameEventType.PLAYER_TARGET_SELECTED,
+		args: args,
+		logSubtype: args.targetCard ? 'card' : args.targetRow ? 'row' : 'unit',
+		logVariables: {
+			triggeringPlayer: args.triggeringPlayer?.player.id,
+			targetCard: args.targetCard?.id,
+			targetUnit: args.targetUnit?.card.id,
+			targetRow: args.targetRow?.index,
+		}
+	}),
+
 	unitCreated: (args: UnitCreatedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_CREATED,
 		args: args,
@@ -229,6 +241,15 @@ export interface CardTargetSelectedEventArgs {
 export interface CardTargetsConfirmedEventArgs {
 	triggeringCard: ServerCard
 	triggeringPlayer: ServerPlayerInGame
+}
+
+export interface PlayerTargetSelectedEventArgs {
+	targetMode: TargetMode
+	targetType: TargetType
+	triggeringPlayer: ServerPlayerInGame
+	targetCard: ServerCard
+	targetUnit: ServerUnit
+	targetRow: ServerBoardRow
 }
 
 export interface UnitCreatedEventArgs {

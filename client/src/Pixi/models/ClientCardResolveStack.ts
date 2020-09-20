@@ -13,7 +13,6 @@ export default class ClientCardResolveStack {
 
 	public addCard(card: RenderedCard, owner: ClientPlayerInGame): void {
 		this.cards.push({ card, owner })
-		store.commit.gameStateModule.setResolveStackCardsLength(this.cards.length)
 	}
 
 	public isEmpty(): boolean {
@@ -29,7 +28,6 @@ export default class ClientCardResolveStack {
 		if (!ownedCard) { return }
 
 		this.cards.splice(this.cards.indexOf(ownedCard), 1)
-		store.commit.gameStateModule.setResolveStackCardsLength(this.cards.length)
 		Core.unregisterCard(ownedCard.card)
 	}
 }

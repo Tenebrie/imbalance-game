@@ -60,7 +60,11 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		}
 
 		const target = ServerCardTarget.fromMessage(game, data)
-		game.cardPlay.selectCardTarget(playerInGame, target)
+		if (game.cardPlay.cardResolveStack.currentCard) {
+			game.cardPlay.selectCardTarget(playerInGame, target)
+		} else {
+			game.cardPlay.selectPlayerMulliganTarget(playerInGame, target)
+		}
 
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
@@ -69,18 +73,12 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
-	[GenericActionMessageType.CONFIRM_TARGETS]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (!player.targetRequired) {
-			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(player.player, [])
-			OutgoingMessageHandlers.executeMessageQueue(game)
-			return
-		}
-
-		if (game.cardPlay.cardResolveStack.currentCard) {
-			return
-		}
-
-		if (player.mulliganMode) {
+	[GenericActionMessageType.CONFIRM_TARGETS]: (data: TargetMode, game: ServerGame, player: ServerPlayerInGame): void => {
+		if (data !== TargetMode.MULLIGAN && player.mulliganMode) {
+			player.showMulliganCards()
+		} else if (data === TargetMode.BROWSE) {
+			OutgoingMessageHandlers.notifyAboutPopupTargets(player.player, TargetMode.BROWSE, [])
+		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
 			game.events.flushLogEventGroup()
@@ -95,7 +93,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutResolvingCardTargets(player.player, targets)
+		OutgoingMessageHandlers.notifyAboutPopupTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -105,7 +103,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutResolvingCardTargets(player.player, targets)
+		OutgoingMessageHandlers.notifyAboutPopupTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -115,7 +113,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutResolvingCardTargets(player.player, targets)
+		OutgoingMessageHandlers.notifyAboutPopupTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 

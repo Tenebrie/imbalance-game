@@ -6,6 +6,7 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import CardTarget from '@shared/models/CardTarget'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import {GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default {
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {
@@ -25,8 +26,8 @@ export default {
 		Core.sendMessage(GenericActionMessageType.CARD_TARGET, new CardTargetMessage(target))
 	},
 
-	sendConfirmTargets(): void {
-		Core.sendMessage(GenericActionMessageType.CONFIRM_TARGETS, null)
+	sendConfirmTargets(targetMode: TargetMode): void {
+		Core.sendMessage(GenericActionMessageType.CONFIRM_TARGETS, targetMode)
 	},
 
 	requestShowPlayersDeck(): void {

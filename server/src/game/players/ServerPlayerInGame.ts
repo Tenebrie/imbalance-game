@@ -230,13 +230,13 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public showMulliganCards(): void {
 		const cardsToMulligan = this.cardHand.unitCards
 		const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
-		OutgoingMessageHandlers.notifyAboutResolvingCardTargets(this.player, targets)
+		OutgoingMessageHandlers.notifyAboutPopupTargets(this.player, TargetMode.MULLIGAN, targets)
 	}
 
 	public finishMulligan(): void {
 		this.mulliganMode = false
 		this.cardsMulliganed = 0
-		OutgoingMessageHandlers.notifyAboutResolvingCardTargets(this.player, [])
+		OutgoingMessageHandlers.notifyAboutPopupTargets(this.player, TargetMode.MULLIGAN, [])
 	}
 
 	public startTurn(): void {

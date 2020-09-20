@@ -57,7 +57,7 @@ export default class ServerGame implements Game {
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
 
-		this.events.createCallback<CardTargetSelectedEventArgs>(this, GameEventType.CARD_TARGET_SELECTED)
+		this.events.createCallback<CardTargetSelectedEventArgs>(this, GameEventType.PLAYER_TARGET_SELECTED)
 			.require(({ targetMode }) => targetMode === TargetMode.MULLIGAN)
 			.perform(({ triggeringPlayer, targetCard }) => this.mulliganCard(triggeringPlayer, targetCard))
 	}
