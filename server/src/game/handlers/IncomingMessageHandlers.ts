@@ -77,7 +77,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		if (data !== TargetMode.MULLIGAN && player.mulliganMode) {
 			player.showMulliganCards()
 		} else if (data === TargetMode.BROWSE) {
-			OutgoingMessageHandlers.notifyAboutPopupTargets(player.player, TargetMode.BROWSE, [])
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, [])
 		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
@@ -93,7 +93,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutPopupTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -103,7 +103,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutPopupTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -113,7 +113,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutPopupTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 

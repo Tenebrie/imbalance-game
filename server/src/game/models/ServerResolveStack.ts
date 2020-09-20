@@ -28,6 +28,10 @@ export default class ServerResolveStack implements ResolveStack {
 		this.entries = []
 	}
 
+	public get cards(): ServerOwnedCard[] {
+		return this.entries.map(entry => entry.ownedCard)
+	}
+
 	public get currentCard(): ServerOwnedCard | null {
 		if (this.entries.length === 0) { return null }
 

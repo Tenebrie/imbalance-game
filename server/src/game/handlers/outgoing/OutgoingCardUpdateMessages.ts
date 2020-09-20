@@ -18,7 +18,6 @@ export default {
 
 		const owner = card.owner
 		if (!owner) {
-			console.warn(`Trying to update stats for unowned card ${card.class} / ${card.id}`)
 			return
 		}
 
@@ -35,14 +34,21 @@ export default {
 	notifyAboutCardVariablesUpdated(game: ServerGame): void {
 		game.players.forEach(playerInGame => {
 			const cardsToNotify = game.board.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card).concat(playerInGame.cardHand.allCards)
-			if (game.cardPlay.cardResolveStack.currentCard) {
-				cardsToNotify.push(game.cardPlay.cardResolveStack.currentCard.card)
-			}
 			const messages = cardsToNotify.map(card => new CardVariablesMessage(card))
 			playerInGame.player.sendMessage({
 				type: CardUpdateMessageType.VARIABLES,
-				data: messages
+				data: messages,
 			})
+
+			const resolveStackCards = game.cardPlay.cardResolveStack.cards
+			if (resolveStackCards.length > 0) {
+				const stackMessages = resolveStackCards.map(ownedCard => new CardVariablesMessage(ownedCard.card))
+				playerInGame.player.sendMessage({
+					type: CardUpdateMessageType.VARIABLES,
+					data: stackMessages,
+					highPriority: true
+				})
+			}
 		})
 	},
 

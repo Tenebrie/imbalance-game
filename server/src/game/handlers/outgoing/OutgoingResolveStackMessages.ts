@@ -1,10 +1,7 @@
 import ServerPlayer from '../../players/ServerPlayer'
 import ServerOwnedCard from '../../models/ServerOwnedCard'
 import ServerCardTarget from '../../models/ServerCardTarget'
-import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import TargetType from '@shared/enums/TargetType'
-import Utils from '../../../utils/Utils'
-import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import {ResolveStackMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import OpenOwnedCardMessage from '@shared/models/network/ownedCard/OpenOwnedCardMessage'
@@ -28,10 +25,13 @@ export default {
 		})
 	},
 
-	notifyAboutPopupTargets(player: ServerPlayer, targetMode: TargetMode, validTargets: ServerCardTarget[]): void {
+	notifyAboutRequestedTargets(player: ServerPlayer, targetMode: TargetMode, validTargets: ServerCardTarget[]): void {
+		const highPriorityTargets = [TargetType.UNIT, TargetType.BOARD_ROW, TargetType.CARD_IN_UNIT_HAND, TargetType.CARD_IN_SPELL_HAND]
+		const highPriority = validTargets.every(target => highPriorityTargets.includes(target.targetType))
 		player.sendMessage({
 			type: ResolveStackMessageType.TARGETS,
 			data: new ResolvingCardTargetsMessage(targetMode, validTargets),
+			highPriority: highPriority,
 		})
 	},
 
