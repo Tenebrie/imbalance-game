@@ -6,9 +6,10 @@ import ServerAnimation from './ServerAnimation'
 import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerResolveStack from './ServerResolveStack'
-import GameEventCreators from './GameEventCreators'
+import GameEventCreators, {CardTargetsConfirmedEventArgs} from './GameEventCreators'
 import Utils from '../../utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -17,6 +18,10 @@ export default class ServerGameCardPlay {
 	constructor(game: ServerGame) {
 		this.game = game
 		this.cardResolveStack = new ServerResolveStack(game)
+
+		// this.game.events.createCallback<CardTargetsConfirmedEventArgs>(this.game, GameEventType.CARD_TARGETS_CONFIRMED)
+		// 	.perform()
+
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
@@ -79,6 +84,7 @@ export default class ServerGameCardPlay {
 
 		/* Start resolving */
 		this.cardResolveStack.startResolving(ownedCard)
+		this.cardResolveStack.onResumeResolving(() => this.checkCardTargeting(ownedCard))
 
 		/* Insert the card into the board */
 		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
@@ -87,15 +93,10 @@ export default class ServerGameCardPlay {
 			this.game.events.postEvent(GameEventCreators.unitDeployed({
 				triggeringUnit: unit
 			}))
+			if (this.cardResolveStack.currentCard.card === card) {
+				this.cardResolveStack.resumeResolving()
+			}
 		}
-
-		/* Another card has been played and requires targeting. Continue execution later */
-		if (this.cardResolveStack.currentCard !== ownedCard) {
-			return
-		}
-
-		/* Require targets */
-		this.checkCardTargeting(ownedCard)
 	}
 
 	private playSpell(ownedCard: ServerOwnedCard): void {
@@ -103,18 +104,15 @@ export default class ServerGameCardPlay {
 
 		/* Start resolving */
 		this.cardResolveStack.startResolving(ownedCard)
+		this.cardResolveStack.onResumeResolving(() => this.checkCardTargeting(ownedCard))
 
 		/* Invoke the card onPlay effect */
 		this.game.events.postEvent(GameEventCreators.spellDeployed({
 			triggeringCard: card
 		}))
-
-		/* Another card has been played and requires targeting. Continue execution later */
-		if (this.cardResolveStack.currentCard !== ownedCard) {
-			return
+		if (this.cardResolveStack.currentCard.card === card) {
+			this.cardResolveStack.resumeResolving()
 		}
-
-		this.checkCardTargeting(ownedCard)
 	}
 
 	public checkCardTargeting(ownedCard: ServerOwnedCard): void {
@@ -137,7 +135,7 @@ export default class ServerGameCardPlay {
 		return card.targeting.getDeployEffectTargets(this.cardResolveStack.currentTargets)
 	}
 
-	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
+	public async selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): Promise<void> {
 		const currentResolvingCard = this.cardResolveStack.currentCard
 
 		let validTargets: ServerCardTarget[] = this.getValidTargets()
@@ -149,6 +147,21 @@ export default class ServerGameCardPlay {
 
 		this.cardResolveStack.pushTarget(target)
 
+		this.cardResolveStack.onResumeResolving(() => {
+			validTargets = this.getValidTargets()
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player,TargetMode.DEPLOY_EFFECT, Utils.shuffle(validTargets))
+
+			if (validTargets.length > 0) {
+				return
+			}
+
+			this.game.events.postEvent(GameEventCreators.cardTargetsConfirmed({
+				triggeringCard: currentResolvingCard?.card,
+				triggeringPlayer: playerInGame,
+			}))
+			this.cardResolveStack.finishResolving()
+		})
+
 		this.game.events.postEvent(GameEventCreators.cardTargetSelected({
 			targetMode: target.targetMode,
 			targetType: target.targetType,
@@ -159,28 +172,12 @@ export default class ServerGameCardPlay {
 			targetRow: target.targetRow
 		}))
 
-		// Current card changed - resolve that first
-		if (this.cardResolveStack.currentCard !== currentResolvingCard) {
-			return
+		if (this.cardResolveStack.currentCard === currentResolvingCard) {
+			this.cardResolveStack.resumeResolving()
 		}
-
-		validTargets = this.getValidTargets()
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player,TargetMode.DEPLOY_EFFECT, Utils.shuffle(validTargets))
-
-		if (validTargets.length > 0) {
-			return
-		}
-
-		this.game.events.postEvent(GameEventCreators.cardTargetsConfirmed({
-			triggeringCard: currentResolvingCard?.card,
-			triggeringPlayer: playerInGame,
-		}))
-		this.cardResolveStack.finishResolving()
 	}
 
 	public selectPlayerMulliganTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
-		this.cardResolveStack.pushTarget(target)
-
 		this.game.events.postEvent(GameEventCreators.playerTargetSelected({
 			targetMode: target.targetMode,
 			targetType: target.targetType,

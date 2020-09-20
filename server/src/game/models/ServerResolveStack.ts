@@ -9,9 +9,12 @@ import GameEventCreators from './GameEventCreators'
 import ResolveStackEntry from '@shared/models/ResolveStackEntry'
 import ResolveStack from '@shared/models/ResolveStack'
 
+const EMPTY_FUNCTION = () => { /* Empty */ }
+
 class ServerResolveStackEntry implements ResolveStackEntry{
 	ownedCard: ServerOwnedCard
 	targetsSelected: ServerCardTarget[]
+	onResumeResolving: () => void = EMPTY_FUNCTION
 
 	constructor(ownedCard: ServerOwnedCard) {
 		this.ownedCard = ownedCard
@@ -50,11 +53,21 @@ export default class ServerResolveStack implements ResolveStack {
 		OutgoingMessageHandlers.notifyAboutCardResolving(ownedCard)
 	}
 
+	public resumeResolving(): void {
+		this.entries[this.entries.length - 1].onResumeResolving()
+	}
+
 	public pushTarget(target: ServerCardTarget): void {
 		if (!this.currentTargets) {
 			return
 		}
 		this.currentTargets.push(target)
+	}
+
+	public onResumeResolving(callback: () => void): void {
+		if (this.entries.length === 0) { return }
+
+		this.entries[this.entries.length - 1].onResumeResolving = callback
 	}
 
 	public findCardById(cardId: string): ServerOwnedCard | null {
@@ -84,8 +97,8 @@ export default class ServerResolveStack implements ResolveStack {
 			triggeringCard: resolvedCard.card
 		}))
 
-		if (this.currentCard) {
-			this.game.cardPlay.checkCardTargeting(this.currentCard)
+		if (this.entries.length > 0) {
+			this.resumeResolving()
 		}
 	}
 }
