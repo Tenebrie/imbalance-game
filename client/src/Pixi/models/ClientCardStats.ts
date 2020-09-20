@@ -41,6 +41,10 @@ export default class ClientCardStats implements CardStats {
 		return this.__power
 	}
 	public set power(value: number) {
+		if (this.power === value) {
+			return
+		}
+
 		const oldValue = this.power
 		this.__power = value
 
@@ -55,6 +59,10 @@ export default class ClientCardStats implements CardStats {
 		return this.__armor
 	}
 	public set armor(value: number) {
+		if (this.armor === value) {
+			return
+		}
+
 		const oldValue = this.armor
 		this.__armor = value
 
@@ -76,6 +84,10 @@ export default class ClientCardStats implements CardStats {
 		return this.__spellCost
 	}
 	public set spellCost(value: number) {
+		if (this.spellCost === value) {
+			return
+		}
+
 		const oldValue = this.__spellCost
 		this.__spellCost = value
 

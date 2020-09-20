@@ -59,8 +59,16 @@ export default class RenderedGameBoard implements Board {
 		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id)) || null
 	}
 
+	public getInsertedUnits(): RenderedUnit[] {
+		return this.rows.map(row => row.cards).flat()
+	}
+
 	public getAllUnits(): RenderedUnit[] {
-		return this.rows.map(row => row.cards).flat().concat(this.unitsOnHold)
+		return this.getInsertedUnits().concat(this.unitsOnHold)
+	}
+
+	public getInsertedUnitsOwnedByPlayer(owner: ClientPlayerInGame): RenderedUnit[] {
+		return this.getInsertedUnits().filter(unit => unit.owner === owner)
 	}
 
 	public getUnitsOwnedByPlayer(owner: ClientPlayerInGame): RenderedUnit[] {
