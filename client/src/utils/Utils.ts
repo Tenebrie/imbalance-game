@@ -140,7 +140,7 @@ export default {
 			return (
 				(a.type - b.type) ||
 				(a.type === CardType.UNIT && (a.color - b.color || b.stats.basePower - a.stats.basePower || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.stats.basePower - b.stats.basePower || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
+				(a.type === CardType.SPELL && (a.color - b.color || a.stats.baseSpellCost - b.stats.baseSpellCost || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
 			)
 		})
 	},
