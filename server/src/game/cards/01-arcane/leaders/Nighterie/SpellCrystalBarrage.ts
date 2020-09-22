@@ -4,17 +4,14 @@ import ServerGame from '../../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
-import TargetDefinitionBuilder from '../../../../models/targetDefinitions/TargetDefinitionBuilder'
-import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
-import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBoardRow from '../../../../models/ServerBoardRow'
 import Constants from '@shared/Constants'
 import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitVolatileCrystal from '../../tokens/UnitVolatileCrystal'
-import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {ownerOf} from '../../../../../utils/GameUtils'
 
 export default class SpellCrystalBarrage extends ServerCard {
 	constructor(game: ServerGame) {
@@ -34,7 +31,7 @@ export default class SpellCrystalBarrage extends ServerCard {
 			.target(TargetType.BOARD_ROW)
 			.requireOpponentsRow()
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 
@@ -45,7 +42,7 @@ export default class SpellCrystalBarrage extends ServerCard {
 			}
 
 			const crystal = CardLibrary.instantiateByConstructor(this.game, UnitVolatileCrystal)
-			this.game.board.createUnit(crystal, this.owner.opponent, target.index, i)
+			this.game.board.createUnit(crystal, ownerOf(this), target.index, i)
 		}
 	}
 }

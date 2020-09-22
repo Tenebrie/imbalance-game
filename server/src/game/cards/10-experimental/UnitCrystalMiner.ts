@@ -5,7 +5,6 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
-import {CardTargetSelectedEventArgs} from '../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -28,11 +27,11 @@ export default class UnitCrystalMiner extends ServerCard {
 			.target(TargetType.CARD_IN_LIBRARY)
 			.require(TargetType.CARD_IN_LIBRARY, args => args.targetCard.tribes.includes(CardTribe.CRYSTAL))
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		this.owner.createCardFromLibraryFromInstance(target)
+		this.owner!.createCardFromLibraryFromInstance(target)
 	}
 }

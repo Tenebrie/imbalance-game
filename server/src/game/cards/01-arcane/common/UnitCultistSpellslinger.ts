@@ -8,7 +8,6 @@ import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import ServerUnit from '../../../models/ServerUnit'
 import BuffSpellDiscount from '../../../buffs/BuffSpellDiscount'
 import CardLibrary from '../../../libraries/CardLibrary'
@@ -48,13 +47,11 @@ export default class UnitCultistSpellslinger extends ServerCard {
 			.require(TargetType.CARD_IN_LIBRARY, () => !!this.sacrificedUnit)
 			.require(TargetType.CARD_IN_LIBRARY, args => args.targetCard.tribes.includes(CardTribe.SCROLL))
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
-			.require(({ targetUnit }) => !!targetUnit)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.require(() => !this.sacrificedUnit)
 			.perform(({ targetUnit }) => this.onSacrificeTargetSelected(targetUnit))
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
-			.require(({ targetCard}) => !!targetCard)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
 			.require(() => !!this.sacrificedUnit)
 			.perform(({ targetCard }) => this.onScrollSelected(targetCard))
 
@@ -64,8 +61,8 @@ export default class UnitCultistSpellslinger extends ServerCard {
 
 	private onScrollSelected(target: ServerCard): void {
 		const newCard = CardLibrary.instantiateByInstance(this.game, target)
-		this.owner.cardHand.addSpell(newCard)
-		newCard.buffs.addMultiple(BuffSpellDiscount, this.sacrificedUnit.power, this, BuffDuration.INFINITY)
+		this.owner!.cardHand.addSpell(newCard)
+		newCard.buffs.addMultiple(BuffSpellDiscount, this.sacrificedUnit!.power, this, BuffDuration.INFINITY)
 	}
 
 	private onSacrificeTargetSelected(target: ServerUnit): void {

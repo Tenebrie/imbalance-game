@@ -7,7 +7,6 @@ import ServerUnit from '../../models/ServerUnit'
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLibrary from '../../libraries/CardLibrary'
-import {CardTargetSelectedEventArgs} from '../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerAnimation from '../../models/ServerAnimation'
 import CardFeature from '@shared/enums/CardFeature'
@@ -48,12 +47,10 @@ export default class HeroCrystalWarrior extends ServerCard {
 			.require(TargetType.CARD_IN_LIBRARY, args => args.targetCard.tribes.includes(CardTribe.CRYSTAL))
 			.require(TargetType.UNIT, () => !!this.sacrificedUnit)
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
-			.require(({ targetUnit }) => !!targetUnit)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onSacrificeTargetSelected(targetUnit))
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
-			.require(({ targetCard}) => !!targetCard)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
 			.perform(({ targetCard }) => this.onCrystalSelected(targetCard))
 
 		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
@@ -62,7 +59,7 @@ export default class HeroCrystalWarrior extends ServerCard {
 
 	private onCrystalSelected(target: ServerCard): void {
 		const crystal = CardLibrary.instantiateByInstance(this.game, target)
-		this.game.board.createUnit(crystal, this.owner, this.sacrificedUnit.rowIndex, this.sacrificedUnit.unitIndex)
+		this.game.board.createUnit(crystal, this.owner, this.sacrificedUnit!.rowIndex, this.sacrificedUnit!.unitIndex)
 	}
 
 	private onSacrificeTargetSelected(target: ServerUnit): void {

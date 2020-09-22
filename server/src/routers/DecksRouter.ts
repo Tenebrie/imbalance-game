@@ -1,4 +1,4 @@
-import express, { Response } from 'express'
+import express, {Response} from 'express'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import ServerPlayer from '../game/players/ServerPlayer'
 import ServerEditorDeck from '../game/models/ServerEditorDeck'
@@ -14,15 +14,19 @@ const router = express.Router()
 
 router.use(RequirePlayerTokenMiddleware)
 
-router.get('/', AsyncHandler(async(req, res: Response, next) => {
+router.get('/', AsyncHandler(async(req, res: Response) => {
 	const player = req['player'] as ServerPlayer
 	const decks = await EditorDeckDatabase.selectEditorDecksForPlayer(player)
+	if (!decks) {
+		res.json([])
+		return
+	}
 
 	const populatedDecks = decks.map(deck => DeckUtils.populateDeck(deck))
 	res.json(populatedDecks)
 }))
 
-router.get('/:deckId', AsyncHandler(async(req, res: Response, next) => {
+router.get('/:deckId', AsyncHandler(async(req, res: Response) => {
 	const player = req['player'] as ServerPlayer
 	const deckId = req.params.deckId
 	const deck = await EditorDeckDatabase.selectEditorDeckByIdForPlayer(deckId, player)
@@ -34,7 +38,7 @@ router.get('/:deckId', AsyncHandler(async(req, res: Response, next) => {
 	res.json(populatedDeck)
 }))
 
-router.post('/:deckId/share', AsyncHandler(async(req, res: Response, next) => {
+router.post('/:deckId/share', AsyncHandler(async(req, res: Response) => {
 	const deckId = req.params.deckId
 	const deck = await EditorDeckDatabase.selectEditorDeckById(deckId)
 	if (!deck) {
@@ -52,7 +56,7 @@ router.post('/:deckId/share', AsyncHandler(async(req, res: Response, next) => {
 	})
 }))
 
-router.post('/', AsyncHandler(async(req, res: Response, next) => {
+router.post('/', AsyncHandler(async(req, res: Response) => {
 	const player = req['player'] as ServerPlayer
 	const sharedDeckId = req.body.sharedCode
 	let deck
@@ -62,16 +66,18 @@ router.post('/', AsyncHandler(async(req, res: Response, next) => {
 	} else {
 		deck = ServerEditorDeck.newDeck()
 	}
-	const success = await EditorDeckDatabase.insertEditorDeck(player, deckId, deck)
+	const success = deck ? await EditorDeckDatabase.insertEditorDeck(player, deckId, deck) : false
 
 	res.status(success ? 200 : 400)
-	deck.id = deckId
+	if (deck) {
+		deck.id = deckId
+	}
 	res.json({
 		deck: success ? deck : undefined
 	})
 }))
 
-router.put('/:deckId', AsyncHandler(async(req, res: Response, next) => {
+router.put('/:deckId', AsyncHandler(async(req, res: Response) => {
 	const deckId = req.params.deckId
 	const deckData = req.body as EditorDeck
 	const player = req['player'] as ServerPlayer
@@ -82,7 +88,7 @@ router.put('/:deckId', AsyncHandler(async(req, res: Response, next) => {
 	res.send()
 }))
 
-router.delete('/:deckId', AsyncHandler(async(req, res: Response, next) => {
+router.delete('/:deckId', AsyncHandler(async(req, res: Response) => {
 	const deckId = req.params.deckId
 	const player = req['player'] as ServerPlayer
 

@@ -4,17 +4,14 @@ import ServerGame from '../../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
-import TargetDefinitionBuilder from '../../../../models/targetDefinitions/TargetDefinitionBuilder'
-import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
-import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../../models/ServerUnit'
-import {CardTargetsConfirmedEventArgs, CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {createCardFromInstance, createCardFromLibrary, ownerOf} from '../../../../../utils/GameUtils'
 
 export default class SpellShadowArmy extends ServerCard {
-	powerThreshold: number
+	powerThreshold = 3
 	thresholdDecrease = 1
 	allowedTargets = 1
 	copiedUnits: ServerUnit[] = []
@@ -40,12 +37,12 @@ export default class SpellShadowArmy extends ServerCard {
 			.target(TargetType.UNIT, () => this.allowedTargets)
 			.requireAlliedUnit()
 			.label(TargetType.UNIT, 'card.spellShadowArmy.target')
-			.require(TargetType.UNIT, args => !this.copiedUnits.includes(args.targetCard.unit))
+			.require(TargetType.UNIT, args => !this.copiedUnits.includes(args.targetCard.unit!))
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
-		this.createEffect<CardTargetsConfirmedEventArgs>(GameEventType.CARD_TARGETS_CONFIRMED)
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
 			.perform(() => this.resetState())
 
 		this.resetState()
@@ -62,7 +59,7 @@ export default class SpellShadowArmy extends ServerCard {
 			this.allowedTargets += 1
 		}
 
-		this.owner.createCardFromLibraryFromInstance(target.card)
+		createCardFromInstance(this, target.card)
 		this.copiedUnits.push(target)
 	}
 }

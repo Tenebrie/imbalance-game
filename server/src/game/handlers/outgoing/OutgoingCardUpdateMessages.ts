@@ -17,7 +17,7 @@ export default {
 		}
 
 		const owner = card.owner
-		if (!owner) {
+		if (!owner || !owner.opponent) {
 			return
 		}
 
@@ -53,7 +53,7 @@ export default {
 	},
 
 	notifyAboutCardBuffAdded(card: ServerCard, buff: ServerBuff): void {
-		if (!card.owner) {
+		if (!card.owner || !card.owner.opponent) {
 			return
 		}
 
@@ -72,7 +72,7 @@ export default {
 	},
 
 	notifyAboutCardBuffDurationChanged(card: ServerCard, buff: ServerBuff): void {
-		if (!card.owner) {
+		if (!card.owner || !card.owner.opponent) {
 			return
 		}
 
@@ -91,7 +91,7 @@ export default {
 	},
 
 	notifyAboutCardBuffIntensityChanged(card: ServerCard, buff: ServerBuff): void {
-		if (!card.owner) {
+		if (!card.owner || !card.owner.opponent) {
 			return
 		}
 
@@ -110,7 +110,7 @@ export default {
 	},
 
 	notifyAboutCardBuffRemoved(card: ServerCard, buff: ServerBuff): void {
-		if (!card.owner) {
+		if (!card.owner || !card.owner.opponent) {
 			return
 		}
 

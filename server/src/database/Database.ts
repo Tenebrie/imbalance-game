@@ -4,7 +4,7 @@ import {colorize} from '../utils/Utils'
 import AsciiColor from '../enums/AsciiColor'
 
 class Database {
-	private client: Client
+	private client: Client | undefined
 
 	public isReady(): boolean {
 		return !!this.client
@@ -15,7 +15,7 @@ class Database {
 	}
 
 	public async init(): Promise<void> {
-		const databaseUrl = process.env.DATABASE_URL
+		const databaseUrl = process.env.DATABASE_URL || ''
 
 		console.info(`Connecting to database at ${colorize(databaseUrl, AsciiColor.CYAN)}`)
 		const client = new Client({
@@ -53,7 +53,7 @@ class Database {
 		return true
 	}
 
-	public async selectRow<T>(query: string): Promise<T> {
+	public async selectRow<T>(query: string): Promise<T | null> {
 		try {
 			const result = await this.runQuery(query)
 			if (!result.rows[0]) {
@@ -66,7 +66,7 @@ class Database {
 		}
 	}
 
-	public async selectRows<T>(query: string): Promise<T[]> {
+	public async selectRows<T>(query: string): Promise<T[] | null> {
 		try {
 			const result = await this.runQuery(query)
 			if (!result.rows) {
@@ -107,6 +107,11 @@ class Database {
 		}
 
 		return new Promise((resolve, reject) => {
+			if (!this.client) {
+				reject(new Error('Client is not defined'))
+				return
+			}
+
 			this.client.query(query, (err, res) => {
 				if (err) {
 					reject(err)

@@ -4,7 +4,6 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
-import {BuffCreatedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -22,11 +21,11 @@ export default class UnitLoneLooter extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createCallback<BuffCreatedEventArgs>(GameEventType.BUFF_CREATED, [CardLocation.DECK])
+		this.createCallback(GameEventType.BUFF_CREATED, [CardLocation.DECK])
 			.require(({ triggeringBuff }) => triggeringBuff.card.owner !== this.owner)
-			.require(({ triggeringBuff }) => triggeringBuff.source && triggeringBuff.source.owner === this.owner)
+			.require(({ triggeringBuff }) => triggeringBuff.source?.owner === this.owner)
 			.prepare(() => ({
-				index: this.owner.cardDeck.unitCards.filter(unit => unit.class === this.class)
+				index: this.owner!.cardDeck.unitCards.filter(unit => unit.class === this.class)
 			}))
 			.perform((args, preparedState) => this.onEffect(preparedState.index))
 	}
@@ -36,6 +35,6 @@ export default class UnitLoneLooter extends ServerCard {
 			return
 		}
 
-		this.owner.summonCardFromUnitDeck(this)
+		this.owner!.summonCardFromUnitDeck(this)
 	}
 }

@@ -6,6 +6,8 @@ import ServerUnit from '../game/models/ServerUnit'
 import {CardConstructor} from '../game/libraries/CardLibrary'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
+import ServerPlayer from '../game/players/ServerPlayer'
+import {Request} from 'express'
 
 interface TryUntilArgs {
 	try: () => void | Promise<void>
@@ -16,11 +18,16 @@ interface TryUntilArgs {
 export const tryUntil = (args: TryUntilArgs): boolean => {
 	for (let i = 0; i < args.maxAttempts; i++) {
 		args.try()
-		if (args.until) {
+		if (args.until()) {
 			return true
 		}
 	}
 	return false
+}
+
+export const getPlayerFromAuthenticatedRequest = (req: Request): ServerPlayer => {
+	// @ts-ignore
+	return req['player'] as unknown as ServerPlayer
 }
 
 export const invalidEmailCharacters = /[^a-zA-Zа-яА-Я0-9\-_.@+]/g
@@ -142,6 +149,7 @@ export default {
 	},
 
 	sortCards(inputArray: ServerCard[]): ServerCard[] {
+		// @ts-ignore
 		return inputArray.slice().sort((a: Card, b: Card) => {
 			return (
 				(a.type - b.type) ||

@@ -10,7 +10,6 @@ import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardTakesDamageEventArgs, CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
@@ -42,10 +41,10 @@ export default class HeroTroviar extends ServerCard {
 			.requireEnemyUnit()
 			.require(TargetType.UNIT, args => !this.targetsHit.includes(args.targetCard))
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
-		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD, CardLocation.STACK])
+		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD, CardLocation.STACK])
 			.require(({ triggeringCard }) => triggeringCard !== this)
 			.perform(() => this.onCardTakesDamage())
 

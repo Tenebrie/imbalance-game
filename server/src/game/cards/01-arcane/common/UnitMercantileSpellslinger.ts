@@ -4,7 +4,6 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import TargetType from '@shared/enums/TargetType'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardLibrary from '../../../libraries/CardLibrary'
@@ -39,7 +38,7 @@ export default class UnitMercantileSpellslinger extends ServerCard {
 			.target(TargetType.CARD_IN_LIBRARY)
 			.require(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.tribes.includes(CardTribe.SCROLL)))
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
@@ -47,6 +46,6 @@ export default class UnitMercantileSpellslinger extends ServerCard {
 		const newCard = CardLibrary.instantiateByInstance(this.game, target)
 		newCard.buffs.addMultiple(BuffSpellExtraCost, this.manaMarkup, this, BuffDuration.INFINITY)
 		newCard.buffs.addMultiple(BuffSpellDiscountPerTurn, this.discountPerTurn, this, BuffDuration.INFINITY)
-		this.owner.cardHand.addSpell(newCard)
+		this.owner!.cardHand.addSpell(newCard)
 	}
 }

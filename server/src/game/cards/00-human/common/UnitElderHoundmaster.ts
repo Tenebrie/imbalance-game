@@ -31,7 +31,7 @@ export default class UnitElderHoundmaster extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		const unit = this.unit
+		const unit = this.unit!
 		const owner = unit.owner
 		const makeHound = () => CardLibrary.instantiateByConstructor(this.game, UnitTrainedHound)
 		const hounds = [makeHound(), makeHound()]

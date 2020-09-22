@@ -7,7 +7,6 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardPlayedEventArgs} from '../../../models/GameEventCreators'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroStormDancer extends ServerCard {
@@ -31,7 +30,7 @@ export default class HeroStormDancer extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
-		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.CARD_PLAYED, [CardLocation.BOARD])
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
 			.require(({ owner }) => owner === this.owner)
 			.perform(({ triggeringCard }) => this.onSpellPlayed(triggeringCard))

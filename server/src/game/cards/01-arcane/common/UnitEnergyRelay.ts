@@ -5,7 +5,6 @@ import ServerGame from '../../../models/ServerGame'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
-import {TurnEndedEventArgs} from '../../../models/GameEventCreators'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -30,15 +29,15 @@ export default class UnitEnergyRelay extends ServerCard {
 			damageDealt: this.damageDealt,
 		}
 
-		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
 			.require(({ player }) => player.spellMana >= this.infuseCost)
 			.perform(() => this.onDealDamage())
 	}
 
 	private onDealDamage(): void {
-		this.owner.useManaForInfuse(this.infuseCost, this)
-		const thisUnit = this.unit
+		this.owner!.useManaForInfuse(this.infuseCost, this)
+		const thisUnit = this.unit!
 		const opposingEnemies = this.game.board.getUnitsOwnedByOpponent(this.owner)
 			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
 			.sort((a, b) => {

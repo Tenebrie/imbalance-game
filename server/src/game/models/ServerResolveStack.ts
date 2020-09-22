@@ -2,8 +2,7 @@ import ServerOwnedCard from './ServerOwnedCard'
 import CardType from '@shared/enums/CardType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerGame from './ServerGame'
-import ServerCardTarget from './ServerCardTarget'
-import runCardEventHandler from '../utils/runCardEventHandler'
+import ServerCardTarget, {ServerCardTargetCard, ServerCardTargetRow} from './ServerCardTarget'
 import CardFeature from '@shared/enums/CardFeature'
 import GameEventCreators from './GameEventCreators'
 import ResolveStackEntry from '@shared/models/ResolveStackEntry'
@@ -11,9 +10,9 @@ import ResolveStack from '@shared/models/ResolveStack'
 
 const EMPTY_FUNCTION = () => { /* Empty */ }
 
-class ServerResolveStackEntry implements ResolveStackEntry{
+class ServerResolveStackEntry implements ResolveStackEntry {
 	ownedCard: ServerOwnedCard
-	targetsSelected: ServerCardTarget[]
+	targetsSelected: (ServerCardTargetCard | ServerCardTargetRow)[]
 	onResumeResolving: () => void = EMPTY_FUNCTION
 
 	constructor(ownedCard: ServerOwnedCard) {
@@ -41,8 +40,8 @@ export default class ServerResolveStack implements ResolveStack {
 		return this.entries[this.entries.length - 1].ownedCard
 	}
 
-	public get currentTargets(): ServerCardTarget[] | null {
-		if (this.entries.length === 0) { return null }
+	public get currentTargets(): (ServerCardTargetCard | ServerCardTargetRow)[] | undefined {
+		if (this.entries.length === 0) { return undefined }
 
 		return this.entries[this.entries.length - 1].targetsSelected
 	}
@@ -57,7 +56,7 @@ export default class ServerResolveStack implements ResolveStack {
 		this.entries[this.entries.length - 1].onResumeResolving()
 	}
 
-	public pushTarget(target: ServerCardTarget): void {
+	public pushTarget(target: ServerCardTargetCard | ServerCardTargetRow): void {
 		if (!this.currentTargets) {
 			return
 		}
@@ -81,6 +80,9 @@ export default class ServerResolveStack implements ResolveStack {
 
 	public finishResolving(): void {
 		const resolvedEntry = this.entries.pop()
+		if (!resolvedEntry) {
+			return
+		}
 
 		OutgoingMessageHandlers.notifyAboutCardResolved(resolvedEntry.ownedCard)
 

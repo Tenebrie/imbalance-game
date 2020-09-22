@@ -5,7 +5,6 @@ import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerUnit from '../../../models/ServerUnit'
 import TargetType from '@shared/enums/TargetType'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -34,7 +33,7 @@ export default class UnitTravelingEnchantress extends ServerCard {
 			.requireAlliedUnit()
 			.requireNotSelf()
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 

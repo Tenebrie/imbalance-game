@@ -7,7 +7,6 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
 import GameHookType, {CardTakesDamageHookArgs, CardTakesDamageHookValues} from '../../../models/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardDestroyedEventArgs} from '../../../models/GameEventCreators'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
@@ -34,10 +33,10 @@ export default class HeroAntoria extends ServerCard {
 			}))
 			.perform(() => this.reveal())
 
-		this.createCallback<CardDestroyedEventArgs>(GameEventType.CARD_DESTROYED, [CardLocation.HAND])
+		this.createCallback(GameEventType.CARD_DESTROYED, [CardLocation.HAND])
 			.require(({ triggeringCard }) => triggeringCard === this)
 			.perform(() => {
-				this.owner.drawUnitCards(1)
+				this.owner!.drawUnitCards(1)
 			})
 	}
 }

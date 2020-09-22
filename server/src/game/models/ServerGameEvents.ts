@@ -94,7 +94,7 @@ export class EventHook<HookValues, HookArgs> {
 	private readonly __hooks: ((values: HookValues, args?: HookArgs) => HookValues)[]
 	private readonly __callbacks: ((args: HookArgs) => void)[]
 	private readonly __conditions: ((args: HookArgs) => boolean)[]
-	private __ignoreControlEffects: boolean
+	private __ignoreControlEffects = false
 
 	constructor(subscriber: EventSubscriber) {
 		this.__subscriber = subscriber
@@ -191,24 +191,24 @@ export default class ServerGameEvents {
 
 	public createCallback<EventArgs>(subscriber: EventSubscriber, event: GameEventType): EventCallback<EventArgs> {
 		const eventCallback = new EventCallback<EventArgs>(subscriber)
-		this.eventCallbacks.get(event).push(eventCallback)
+		this.eventCallbacks.get(event)!.push(eventCallback)
 		return eventCallback
 	}
 
 	public createHook<HookValues, HookArgs>(subscriber: EventSubscriber, hook: GameHookType): EventHook<HookValues, HookArgs> {
 		const eventHook = new EventHook<HookValues, HookArgs>(subscriber)
-		this.eventHooks.get(hook).push(eventHook)
+		this.eventHooks.get(hook)!.push(eventHook)
 		return eventHook
 	}
 
 	public unsubscribe(targetSubscriber: EventSubscriber): void {
 		Utils.forEachInStringEnum(GameEventType, eventType => {
-			const subscriptions = this.eventCallbacks.get(eventType)
+			const subscriptions = this.eventCallbacks.get(eventType)!
 			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
 			this.eventCallbacks.set(eventType, filteredSubscriptions)
 		})
 		Utils.forEachInStringEnum(GameHookType, hookType => {
-			const subscriptions = this.eventHooks.get(hookType)
+			const subscriptions = this.eventHooks.get(hookType)!
 			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
 			this.eventHooks.set(hookType, filteredSubscriptions)
 		})
@@ -218,7 +218,7 @@ export default class ServerGameEvents {
 		this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
 
 		const validCallbacks = this.eventCallbacks
-			.get(event.type)
+			.get(event.type)!
 			.filter(subscription => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
 			.filter(subscription => !subscription.conditions.find(condition => {
 				return cardRequire(() => !condition(event.args, event))
@@ -252,7 +252,7 @@ export default class ServerGameEvents {
 	public applyHooks<HookValues, HookArgs>(hook: GameHookType, values: HookValues, args?: HookArgs): HookValues {
 		const hookArgs = args ? args : values
 
-		const matchingHooks = this.eventHooks.get(hook)
+		const matchingHooks = this.eventHooks.get(hook)!
 			.filter(subscription => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
 			.filter(hook => !hook.conditions.find(condition => {
 				return cardRequire(() => !condition(hookArgs))
@@ -284,7 +284,7 @@ export default class ServerGameEvents {
 		return this.eventLog[this.eventLog.length - 1]
 	}
 
-	private createEventLogEntry(eventType: GameEventType, subtype: string, args: Record<string, any>): void {
+	private createEventLogEntry(eventType: GameEventType, subtype: string | undefined, args: Record<string, any> | undefined): void {
 		this.currentLogEventGroup.push({
 			event: eventType,
 			subtype: subtype,

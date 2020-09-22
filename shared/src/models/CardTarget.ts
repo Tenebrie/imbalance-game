@@ -10,7 +10,6 @@ export default interface CardTarget {
 	targetMode: TargetMode
 	targetType: TargetType
 	sourceCard?: Card | OpenCardMessage
-	sourceCardOwner?: PlayerInGame
 	targetCard?: Card | OpenCardMessage
 	targetRow?: BoardRow
 	targetLabel: string

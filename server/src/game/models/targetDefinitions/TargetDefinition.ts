@@ -4,6 +4,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import StandardTargetDefinitionBuilder from './StandardTargetDefinitionBuilder'
 import CardType from '@shared/enums/CardType'
+import SimpleTargetDefinitionBuilder from './SimpleTargetDefinitionBuilder'
 
 export default class TargetDefinition {
 	private readonly game: ServerGame
@@ -61,12 +62,12 @@ export default class TargetDefinition {
 		return new StandardTargetDefinitionBuilder(game)
 	}
 
-	public static defaultCardPlayTarget(game: ServerGame): StandardTargetDefinitionBuilder {
-		return StandardTargetDefinitionBuilder.base(game)
-			.targetsOfType(TargetMode.CARD_PLAY, TargetType.BOARD_ROW)
-			.require(TargetMode.CARD_PLAY, TargetType.BOARD_ROW, ({ targetRow }) => !targetRow.isFull())
-			.require(TargetMode.CARD_PLAY, TargetType.BOARD_ROW, (args: TargetValidatorArguments) => {
-				return args.sourceCard.type === CardType.SPELL || args.targetRow.owner === args.sourceCardOwner
+	public static defaultCardPlayTarget(game: ServerGame): SimpleTargetDefinitionBuilder {
+		return SimpleTargetDefinitionBuilder.base(game, TargetMode.CARD_PLAY)
+			.target(TargetType.BOARD_ROW)
+			.require(TargetType.BOARD_ROW, ({ targetRow }) => !targetRow.isFull())
+			.require(TargetType.BOARD_ROW, (args) => {
+				return args.sourceCard.type === CardType.SPELL || args.targetRow.owner === args.sourceCard.owner
 			})
 	}
 }

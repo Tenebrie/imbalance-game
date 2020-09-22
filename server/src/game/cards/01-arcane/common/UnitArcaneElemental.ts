@@ -34,7 +34,7 @@ export default class UnitArcaneElemental extends ServerCard {
 	}
 
 	private onDeploy() {
-		const player = this.owner
+		const player = this.owner!
 		player.setSpellMana(player.spellMana + this.manaGenerated)
 	}
 }

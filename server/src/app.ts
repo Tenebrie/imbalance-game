@@ -1,18 +1,17 @@
 import AsyncHandler from './utils/AsyncHandler'
-
-console.info('Starting up NotGwent server')
-
 import path from 'path'
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
 import 'module-alias/register'
-import { cardImageGenerator } from './utils/CardImageGenerator'
+import {cardImageGenerator} from './utils/CardImageGenerator'
 
-import express, { Request, Response } from 'express'
+import express, {Request, Response} from 'express'
 import expressWs from 'express-ws'
 import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
-import { wsLogger } from './utils/WebSocketLogger'
+import {wsLogger} from './utils/WebSocketLogger'
 import Database from './database/Database'
+
+console.info('Starting up NotGwent server')
 
 const app = express()
 expressWs(app)
@@ -67,7 +66,7 @@ app.use((req: Request, res: Response, next) => {
 })
 
 /* Wait until database client is ready */
-app.use(AsyncHandler(async (req, res, next) => {
+app.use(AsyncHandler(async (req: any, res: any, next: () => void) => {
 	if (!Database.isReady()) {
 		throw { status: 503, error: 'Database client is not yet ready' }
 	}
@@ -98,7 +97,9 @@ app.use('*', (req, res) => {
 app.use(GenericErrorMiddleware)
 
 /* Last-resort error handler */
-app.use((err, req, res, next) => {
+app.use((err: any, req: Request, res: Response) => {
+	console.log(err)
+	console.log(JSON.stringify(err))
 	res.status(err.status || 500)
 	res.render('error', {
 		message: err.message,

@@ -5,7 +5,6 @@ import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerUnit from '../../../models/ServerUnit'
 import TargetType from '@shared/enums/TargetType'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerAnimation from '../../../models/ServerAnimation'
@@ -32,7 +31,7 @@ export default class HeroCultistOfAreddon extends ServerCard {
 			.requireNotSelf()
 			.require(TargetType.UNIT, ({ targetCard }) => !targetCard.tribes.includes(CardTribe.CULTIST))
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
@@ -40,6 +39,6 @@ export default class HeroCultistOfAreddon extends ServerCard {
 		const cardClass = target.card.class
 		this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target.card]))
 		this.game.board.destroyUnit(target)
-		this.owner.createCardFromLibraryFromClass(cardClass)
+		this.owner!.createCardFromLibraryFromClass(cardClass)
 	}
 }

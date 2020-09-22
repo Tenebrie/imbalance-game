@@ -41,7 +41,7 @@ export default class ServerTemplateCardDeck implements CardDeck {
 	}
 
 	public static inflate(game: ServerGame, cards: ServerCard[]): ServerTemplateCardDeck {
-		let leader: ServerCard = undefined
+		let leader: ServerCard | undefined = undefined
 		const inflatedUnitDeck: ServerCard[] = []
 		const inflatedSpellDeck: ServerCard[] = []
 		cards.forEach(card => {
@@ -56,7 +56,7 @@ export default class ServerTemplateCardDeck implements CardDeck {
 			}
 		})
 		if (!leader) {
-			console.warn('Inflating a deck without a leader card!')
+			throw new Error('Inflating a deck without a leader card!')
 		}
 		return new ServerTemplateCardDeck(leader, inflatedUnitDeck, inflatedSpellDeck)
 	}

@@ -35,14 +35,14 @@ export default class UnitForestScout extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		const unit = this.unit
+		const unit = this.unit!
 		const owner = unit.owner
 		const ownPower = this.game.board.getTotalPlayerPower(owner)
-		const opponentsPower = this.game.board.getTotalPlayerPower(owner.opponent)
+		const opponentsPower = this.game.board.getTotalPlayerPower(owner.opponent!)
 		if (ownPower < opponentsPower) {
 			this.buffs.addMultiple(BuffStrength, this.boardPowerBonus, this)
 		}
-		if (owner.morale < owner.opponent.morale) {
+		if (owner.morale < owner.opponent!.morale) {
 			this.buffs.addMultiple(BuffStrength, this.moralePowerBonus, this)
 		}
 	}

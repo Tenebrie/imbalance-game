@@ -92,7 +92,7 @@ export default {
 
 	notifyAboutCardInHandDestroyed(ownedCard: ServerOwnedCard): void {
 		const owner = ownedCard.owner.player
-		const opponent = ownedCard.owner.opponent.player
+		const opponent = ownedCard.owner.opponent!.player
 
 		owner.sendMessage({
 			type: PlayerUpdateMessageType.CARD_DESTROY_HAND,
@@ -106,7 +106,7 @@ export default {
 
 	notifyAboutCardInDeckDestroyed(ownedCard: ServerOwnedCard): void {
 		const owner = ownedCard.owner.player
-		const opponent = ownedCard.owner.opponent.player
+		const opponent = ownedCard.owner.opponent!.player
 
 		owner.sendMessage({
 			type: PlayerUpdateMessageType.CARD_DESTROY_DECK,
@@ -119,14 +119,13 @@ export default {
 	},
 
 	notifyAboutCardInGraveyardDestroyed(ownedCard: ServerOwnedCard): void {
-		const owner = ownedCard.owner.player
-		const opponent = ownedCard.owner.opponent.player
+		const opponent =
 
-		owner.sendMessage({
+		ownedCard.owner.player.sendMessage({
 			type: PlayerUpdateMessageType.CARD_DESTROY_GRAVE,
 			data: new OwnedCardRefMessage(ownedCard)
 		})
-		opponent.sendMessage({
+		ownedCard.owner.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.CARD_DESTROY_GRAVE,
 			data: new OwnedCardRefMessage(ownedCard)
 		})
@@ -150,7 +149,7 @@ export default {
 			data: messages,
 			highPriority: true
 		})
-		playerInGame.opponent.player.sendMessage({
+		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.UNIT_ORDERS_OPPONENT,
 			data: messages
 		})
@@ -199,7 +198,7 @@ export default {
 			type: PlayerUpdateMessageType.ROUND_START,
 			data: new OpenPlayerInGameMessage(playerInGame)
 		})
-		playerInGame.opponent.player.sendMessage({
+		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.ROUND_START,
 			data: new HiddenPlayerInGameMessage(playerInGame)
 		})
@@ -210,7 +209,7 @@ export default {
 			type: PlayerUpdateMessageType.TURN_START,
 			data: new OpenPlayerInGameMessage(playerInGame)
 		})
-		playerInGame.opponent.player.sendMessage({
+		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.TURN_START,
 			data: new HiddenPlayerInGameMessage(playerInGame)
 		})
@@ -222,7 +221,7 @@ export default {
 			data: new OpenPlayerInGameMessage(playerInGame),
 			highPriority: true
 		})
-		playerInGame.opponent.player.sendMessage({
+		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.TURN_END,
 			data: new HiddenPlayerInGameMessage(playerInGame)
 		})
@@ -234,7 +233,7 @@ export default {
 			data: new OpenPlayerInGameMessage(playerInGame),
 			highPriority: true
 		})
-		playerInGame.opponent.player.sendMessage({
+		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.ROUND_END,
 			data: new HiddenPlayerInGameMessage(playerInGame)
 		})

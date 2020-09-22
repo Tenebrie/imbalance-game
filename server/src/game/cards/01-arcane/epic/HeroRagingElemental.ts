@@ -5,7 +5,6 @@ import ServerGame from '../../../models/ServerGame'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardTakesDamageEventArgs} from '../../../models/GameEventCreators'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -28,7 +27,7 @@ export default class HeroRagingElemental extends ServerCard {
 			power: () => this.stats.power
 		}
 
-		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
+		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
 			.require(({ triggeringCard }) => triggeringCard === this)
 			.require(({ triggeringCard }) => triggeringCard.stats.power > 0)
 			.perform(() => this.onDamageSurvived())
@@ -41,8 +40,8 @@ export default class HeroRagingElemental extends ServerCard {
 
 		this.isEffectTriggered = true
 
-		const thisUnit = this.unit
-		const opposingEnemies = this.game.board.getUnitsOwnedByOpponent(this.owner)
+		const thisUnit = this.unit!
+		const opposingEnemies = this.game.board.getUnitsOwnedByOpponent(this.owner!)
 			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
 			.sort((a, b) => {
 				return this.game.board.getVerticalUnitDistance(a, thisUnit) - this.game.board.getVerticalUnitDistance(b, thisUnit)

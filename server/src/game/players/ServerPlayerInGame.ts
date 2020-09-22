@@ -19,12 +19,14 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Utils from '../../utils/Utils'
 import ServerCardTarget from '../models/ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
 
 	game: ServerGame
-	leader: ServerCard
 	player: ServerPlayer
 	cardHand: ServerHand
 	cardDeck: ServerDeck
@@ -38,9 +40,12 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	cardsPlayed: ServerCard[]
 	cardsMulliganed: number
 
+	__leader: ServerCard | null
+
 	constructor(game: ServerGame, player: ServerPlayer) {
 		this.game = game
 		this.player = player
+		this.__leader = null
 		this.cardHand = new ServerHand(game, this, [], [])
 		this.cardDeck = new ServerDeck(game, this, [], [])
 		this.cardGraveyard = new ServerGraveyard(this)
@@ -54,6 +59,17 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.cardsMulliganed = 0
 	}
 
+	public get leader(): ServerCard {
+		if (!this.__leader) {
+			throw new Error('Player has no leader')
+		}
+		return this.__leader
+	}
+
+	public set leader(value: ServerCard) {
+		this.__leader = value
+	}
+
 	public get targetRequired(): boolean {
 		if (!this.mulliganMode && this.turnEnded) {
 			return false
@@ -64,24 +80,12 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			this.game.turnPhase === GameTurnPhase.MULLIGAN
 	}
 
-	public get opponent(): ServerPlayerInGame {
+	public get opponent(): ServerPlayerInGame | null {
 		return this.game.getOpponent(this)
 	}
 
 	public isInvertedBoard(): boolean {
 		return this.game.players.indexOf(this) === 1
-	}
-
-	public canPlaySpell(card: ServerCard, rowIndex: number): boolean {
-		const gameBoardRow = this.game.board.rows[rowIndex]
-		return this.spellMana >= card.stats.spellCost &&
-			!!card.targeting.getValidCardPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
-	}
-
-	public canPlayUnit(card: ServerCard, rowIndex: number): boolean {
-		const gameBoardRow = this.game.board.rows[rowIndex]
-		return this.unitMana >= card.stats.unitCost &&
-			!!card.targeting.getValidCardPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
 	}
 
 	public drawUnitCards(count: number): ServerCard[] {
@@ -152,6 +156,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.cardHand.removeCard(card)
 		this.cardDeck.addUnitToBottom(card)
 		const cardToAdd = this.cardDeck.drawTopUnit()
+		if (!cardToAdd) {
+			return
+		}
 		this.cardHand.addUnit(cardToAdd, cardIndex)
 	}
 
@@ -173,7 +180,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public setMorale(morale: number): void {
 		this.morale = morale
-		const opponent = this.game.getOpponent(this)
+		const opponent = this.game.getOpponent(this)!
 		OutgoingMessageHandlers.notifyAboutMoraleChange(this.player, this)
 		OutgoingMessageHandlers.notifyAboutMoraleChange(opponent.player, this)
 	}
@@ -229,7 +236,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public showMulliganCards(): void {
 		const cardsToMulligan = this.cardHand.unitCards
-		const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.playerTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
+		const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
 		OutgoingMessageHandlers.notifyAboutRequestedTargets(this.player, TargetMode.MULLIGAN, targets)
 	}
 

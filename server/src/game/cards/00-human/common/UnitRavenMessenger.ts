@@ -5,7 +5,6 @@ import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -31,11 +30,11 @@ export default class UnitRavenMessenger extends ServerCard {
 			.require(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.color === CardColor.BRONZE))
 			.require(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.tribes.includes(CardTribe.HUMAN)))
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		this.owner.summonCardFromUnitDeck(target)
+		this.owner!.summonCardFromUnitDeck(target)
 	}
 }

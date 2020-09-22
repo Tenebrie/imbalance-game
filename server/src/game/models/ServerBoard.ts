@@ -32,9 +32,9 @@ export default class ServerBoard implements Board {
 		}
 	}
 
-	public findUnitById(cardId: string): ServerUnit | null {
+	public findUnitById(cardId: string): ServerUnit | undefined {
 		const cards = Utils.flat(this.rows.map(row => row.cards))
-		return cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
+		return cards.find(cardOnBoard => cardOnBoard.card.id === cardId)
 	}
 
 	public isExtraUnitPlayableToRow(rowIndex: number): boolean {
@@ -93,16 +93,25 @@ export default class ServerBoard implements Board {
 		return this.getHorizontalUnitDistance(first, second) <= 1 && first.rowIndex === second.rowIndex && first !== second
 	}
 
-	public getAdjacentUnits(centerUnit: ServerUnit): ServerUnit[] {
+	public getAdjacentUnits(centerUnit: ServerUnit | null): ServerUnit[] {
+		if (!centerUnit) { return [] }
 		return this.getAllUnits().filter(unit => this.isUnitAdjacent(centerUnit, unit))
 	}
 
-	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame): ServerUnit[] {
+	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame | null): ServerUnit[] {
+		if (!owner) { return [] }
 		return this.getAllUnits().filter(unit => unit.owner === owner)
 	}
 
-	public getUnitsOwnedByOpponent(thisPlayer: ServerPlayerInGame): ServerUnit[] {
-		return this.getUnitsOwnedByPlayer(this.game.getOpponent(thisPlayer))
+	public getUnitsOwnedByOpponent(context: ServerCard | ServerPlayerInGame | null): ServerUnit[] {
+		if (!context) {
+			return []
+		}
+		const player = context instanceof ServerCard ? context.owner! : context
+		if (!player) {
+			return []
+		}
+		return this.getUnitsOwnedByPlayer(player.opponent)
 	}
 
 	public getMoveDirection(player: ServerPlayerInGame, from: ServerBoardRow, to: ServerBoardRow): MoveDirection {
@@ -110,9 +119,13 @@ export default class ServerBoard implements Board {
 		if (player.isInvertedBoard()) {
 			direction *= -1
 		}
-		if (direction > 0) return MoveDirection.FORWARD
-		if (direction === 0) return MoveDirection.SIDE
-		if (direction < 0) return MoveDirection.BACK
+		if (direction > 0) {
+			return MoveDirection.FORWARD
+		} else if (direction < 0) {
+			return MoveDirection.BACK
+		} else {
+			return MoveDirection.SIDE
+		}
 	}
 
 	public rowMove(player: ServerPlayerInGame, fromRowIndex: number, direction: MoveDirection, distance: number): number {
@@ -139,7 +152,7 @@ export default class ServerBoard implements Board {
 		const targetRow = this.rows[rowIndex]
 		const player = targetRow.owner
 		let playerRows = this.rows.filter(row => row.owner === player)
-		if (player.isInvertedBoard()) {
+		if (player && player.isInvertedBoard()) {
 			playerRows = playerRows.reverse()
 		}
 		return playerRows.indexOf(targetRow)
@@ -153,7 +166,11 @@ export default class ServerBoard implements Board {
 		return playerRows[Math.min(playerRows.length - 1, distance)]
 	}
 
-	public createUnit(card: ServerCard, owner: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit | null {
+	public createUnit(card: ServerCard, owner: ServerPlayerInGame | null, rowIndex: number, unitIndex: number): ServerUnit | null {
+		if (!owner) {
+			return null
+		}
+
 		const targetRow = this.rows[rowIndex]
 		if (targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
 			return null
@@ -227,6 +244,10 @@ export default class ServerBoard implements Board {
 	public sapUnit(target: ServerUnit, sapper: ServerCard): void {
 		const targetCard = target.card
 		const cardOwner = target.card.owner
+		if (!cardOwner) {
+			return
+		}
+
 		this.rows[target.rowIndex].removeUnit(target)
 		cardOwner.cardHand.addUnit(targetCard)
 		if (cardOwner !== sapper.owner) {

@@ -6,11 +6,10 @@ import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import MoveDirection from '@shared/enums/MoveDirection'
-import {TurnEndedEventArgs, UnitMovedEventArgs, UnitOrderedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import ServerCardTarget from '../../../models/ServerCardTarget'
+import {ServerCardTargetCard} from '../../../models/ServerCardTarget'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFeature from '@shared/enums/CardFeature'
 
@@ -39,15 +38,15 @@ export default class UnitChargingKnight extends ServerCard {
 			.target(TargetType.UNIT, () => this.movesForwardThisTurn)
 			.requireEnemyUnit()
 
-		this.createCallback<UnitMovedEventArgs>(GameEventType.UNIT_MOVED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.UNIT_MOVED, [CardLocation.BOARD])
 			.require(({ direction }) => direction === MoveDirection.FORWARD)
 			.require(({ triggeringUnit }) => triggeringUnit === this.unit)
 			.perform(() => this.onUnitMove())
 
-		this.createEffect<UnitOrderedEventArgs>(GameEventType.UNIT_ORDERED)
+		this.createEffect(GameEventType.UNIT_ORDERED_CARD)
 			.perform(({ targetArguments }) => this.onUnitOrdered(targetArguments))
 
-		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
 			.perform(() => this.onTurnEnded())
 	}
@@ -56,7 +55,7 @@ export default class UnitChargingKnight extends ServerCard {
 		this.movesForwardThisTurn = Math.min(this.maximumMovesThisTurn, this.movesForwardThisTurn + 1)
 	}
 
-	private onUnitOrdered(targetArguments: ServerCardTarget): void {
+	private onUnitOrdered(targetArguments: ServerCardTargetCard): void {
 		const targetCard = targetArguments.targetCard
 		targetCard.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 	}

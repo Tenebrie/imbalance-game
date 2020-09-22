@@ -23,7 +23,7 @@ export default class HiddenCardMessage implements CardMessage {
 	relatedCards: string[]
 	variables = {}
 	sortPriority: number
-	expansionSet: ExpansionSet.BASE
+	expansionSet = ExpansionSet.BASE
 
 	isCollectible: boolean
 	isExperimental: boolean
@@ -45,5 +45,13 @@ export default class HiddenCardMessage implements CardMessage {
 		} else {
 			this.class = 'spellHidden'
 		}
+
+		this.baseTribes = []
+		this.baseFeatures = []
+		this.relatedCards = []
+		this.sortPriority = 0
+
+		this.isCollectible = false
+		this.isExperimental = false
 	}
 }

@@ -21,8 +21,8 @@ import ServerGameEvents from './ServerGameEvents'
 import {BuffConstructor} from './ServerBuffContainer'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
-import {CardTargetSelectedEventArgs} from './GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import {PlayerTargetCardSelectedEventArgs} from './GameEventCreators'
 
 interface ServerGameProps {
 	name?: string
@@ -56,14 +56,15 @@ export default class ServerGame implements Game {
 		this.playersToMove = []
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
+		this.owner = undefined
 
-		this.events.createCallback<CardTargetSelectedEventArgs>(this, GameEventType.PLAYER_TARGET_SELECTED)
+		this.events.createCallback<PlayerTargetCardSelectedEventArgs>(this, GameEventType.PLAYER_TARGET_SELECTED_CARD)
 			.require(({ targetMode }) => targetMode === TargetMode.MULLIGAN)
 			.perform(({ triggeringPlayer, targetCard }) => this.mulliganCard(triggeringPlayer, targetCard))
 	}
 
 	public get activePlayer(): ServerPlayerInGame | null {
-		return this.players.find(player => !player.turnEnded && !player.roundEnded)
+		return this.players.find(player => !player.turnEnded && !player.roundEnded) || null
 	}
 
 	public get spectators(): ServerPlayerSpectator[] {
@@ -76,7 +77,7 @@ export default class ServerGame implements Game {
 	}
 
 	public addPlayer(targetPlayer: ServerPlayer, deck: ServerTemplateCardDeck): ServerPlayerInGame {
-		let serverPlayerInGame
+		let serverPlayerInGame: ServerPlayerInGame
 		if (targetPlayer instanceof ServerBotPlayer) {
 			serverPlayerInGame = ServerBotPlayerInGame.newInstance(this, targetPlayer, deck)
 		} else {
@@ -105,11 +106,11 @@ export default class ServerGame implements Game {
 
 		this.players.forEach(playerInGame => {
 			OutgoingMessageHandlers.sendPlayerSelf(playerInGame.player, playerInGame)
-			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, this.getOpponent(playerInGame))
+			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, this.getOpponent(playerInGame)!)
 		})
 
 		this.players.forEach(playerInGame => {
-			OutgoingMessageHandlers.notifyAboutDeckLeader(playerInGame, playerInGame.opponent, playerInGame.leader)
+			OutgoingMessageHandlers.notifyAboutDeckLeader(playerInGame, playerInGame.opponent!, playerInGame.leader)
 		})
 
 		this.players.forEach(playerInGame => {
@@ -133,8 +134,8 @@ export default class ServerGame implements Game {
 		OutgoingMessageHandlers.executeMessageQueue(this)
 	}
 
-	public getOpponent(player: ServerPlayerInGame): ServerPlayerInGame {
-		return this.players.find(otherPlayer => otherPlayer !== player)
+	public getOpponent(player: ServerPlayerInGame | null): ServerPlayerInGame | null {
+		return this.players.find(otherPlayer => otherPlayer !== player) || null
 	}
 
 	public isBotGame(): boolean {
@@ -325,7 +326,7 @@ export default class ServerGame implements Game {
 			OutgoingMessageHandlers.notifyAboutDraw(this)
 			console.info(`Game ${this.id} finished with a draw. [${victoryReason}]`)
 		} else {
-			const defeatedPlayer = this.getOpponent(victoriousPlayer)
+			const defeatedPlayer = this.getOpponent(victoriousPlayer)!
 			OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
 			OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
 			console.info(`Game ${this.id} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won! [${victoryReason}]`)
@@ -342,9 +343,8 @@ export default class ServerGame implements Game {
 		GameLibrary.destroyGame(this, reason)
 	}
 
-	public findCardById(cardId: string): ServerCard | null {
-		const ownedCard = this.findOwnedCardById(cardId)
-		return ownedCard ? ownedCard.card : null
+	public findCardById(cardId: string): ServerCard | undefined {
+		return this.findOwnedCardById(cardId)?.card
 	}
 
 	public findOwnedCardById(cardId: string): ServerOwnedCard | null {

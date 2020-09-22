@@ -3,6 +3,6 @@ import DamageSource from '../enums/DamageSource'
 
 export default interface DamageInstance {
 	value: number
-	source: DamageSource
-	sourceCard: Card | null
+	source: DamageSource | undefined
+	sourceCard: Card | undefined
 }

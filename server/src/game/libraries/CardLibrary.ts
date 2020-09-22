@@ -11,13 +11,21 @@ export interface CardConstructor {
 	new (game: ServerGame): ServerCard
 }
 
+type CardModule = {
+	path: string,
+	filename: string,
+	timestamp: number,
+	prototypeFunction: CardConstructor
+}
+
 class CardLibrary {
 	cards: ServerCard[]
 
 	constructor() {
 		const normalizedPath = path.join(__dirname, '../cards')
 		const cardDefinitionFiles = glob.sync(`${normalizedPath}/**/*.js`)
-		const cardModules = cardDefinitionFiles.map(path => ({
+
+		const cardModules: CardModule[] = cardDefinitionFiles.map(path => ({
 			path: path,
 			filename: path.substring(path.lastIndexOf('/') + 1, path.indexOf('.js')),
 			timestamp: fs.statSync(path).mtimeMs,
@@ -37,7 +45,7 @@ class CardLibrary {
 
 		const upToDateModules = cardModules
 			.filter(module => module.filename === module.prototypeFunction.name)
-			.reduce((acc, obj) => {
+			.reduce((acc: CardModule[], obj) => {
 				const updatedArray = acc.slice()
 				const savedObject = updatedArray.find(savedObject => savedObject.filename === obj.filename)
 				if (!savedObject) {
@@ -74,13 +82,17 @@ class CardLibrary {
 		console.info('Latest updated card definitions:', sortedNewModules.map(module => module.filename))
 	}
 
-	public findPrototypeById(id: string): ServerCard | null {
+	public findPrototypeById(id: string): ServerCard | undefined {
 		return this.cards.find(card => card.id === id)
 	}
 
-	public findPrototypeByConstructor(constructor: CardConstructor): ServerCard | null {
+	public findPrototypeByConstructor(constructor: CardConstructor): ServerCard {
 		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
-		return this.cards.find(card => card.class === cardClass)
+		const card = this.cards.find(card => card.class === cardClass)
+		if (!card) {
+			throw new Error(`Unable to find card ${cardClass}`)
+		}
+		return card
 	}
 
 	public instantiateByInstance(game: ServerGame, card: ServerCard): ServerCard {

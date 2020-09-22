@@ -1,12 +1,26 @@
 import ServerBoardRow from '../game/models/ServerBoardRow'
 import ServerCard from '../game/models/ServerCard'
-import ServerCardTarget from '../game/models/ServerCardTarget'
-import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
+import ServerCardTarget, {ServerCardTargetCard, ServerCardTargetRow} from '../game/models/ServerCardTarget'
+import ServerUnit from '../game/models/ServerUnit'
 
-export default interface TargetValidatorArguments {
+export interface CardTargetValidatorArguments {
 	sourceCard: ServerCard
-	sourceCardOwner?: ServerPlayerInGame
-	targetCard?: ServerCard
-	targetRow?: ServerBoardRow
-	previousTargets?: ServerCardTarget[]
+	targetCard: ServerCard
+	previousTargets?: (ServerCardTargetCard | ServerCardTargetRow)[]
 }
+
+export interface UnitTargetValidatorArguments {
+	sourceCard: ServerCard
+	targetCard: ServerCard
+	targetUnit: ServerUnit
+	previousTargets?: (ServerCardTargetCard | ServerCardTargetRow)[]
+}
+
+export interface RowTargetValidatorArguments {
+	sourceCard: ServerCard
+	targetRow: ServerBoardRow
+	previousTargets?: (ServerCardTargetCard | ServerCardTargetRow)[]
+}
+
+type TargetValidatorArguments = CardTargetValidatorArguments | RowTargetValidatorArguments
+export default TargetValidatorArguments

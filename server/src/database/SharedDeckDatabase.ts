@@ -19,7 +19,7 @@ export default {
 		return Database.updateRows(query)
 	},
 
-	async selectSharedDeckById(id: string): Promise<EditorDeck> {
+	async selectSharedDeckById(id: string): Promise<EditorDeck | null> {
 		const query = `SELECT * FROM shared_decks WHERE id = '${id}'`
 		return Database.selectRow<EditorDeck>(query)
 	},

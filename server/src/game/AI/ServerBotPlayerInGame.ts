@@ -34,9 +34,9 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private botTakesTheirTurn(): void {
 		const botTotalPower = this.game.board.getTotalPlayerPower(this)
-		const opponentTotalPower = this.game.board.getTotalPlayerPower(this.opponent)
+		const opponentTotalPower = this.opponent ? this.game.board.getTotalPlayerPower(this.opponent) : 0
 
-		const botWonRound = botTotalPower > opponentTotalPower && this.opponent.roundEnded
+		const botWonRound = botTotalPower > opponentTotalPower && this.opponent && this.opponent.roundEnded
 		const botLostRound = opponentTotalPower > botTotalPower + 30 && this.morale > 1
 		const botHasGoodLead = botTotalPower > opponentTotalPower + 15 && this.morale > 1
 

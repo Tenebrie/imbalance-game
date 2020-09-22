@@ -13,7 +13,6 @@ export default class ClientCardTarget implements CardTarget {
 	targetMode: TargetMode
 	targetType: TargetType
 	sourceCard: Card | CardMessage
-	sourceCardOwner?: ClientPlayerInGame
 	targetCard?: Card | CardMessage
 	targetRow?: RenderedGameBoardRow
 	targetLabel: string
@@ -28,9 +27,6 @@ export default class ClientCardTarget implements CardTarget {
 		const target = new ClientCardTarget(message.targetMode, message.targetType)
 		if (message.sourceCardId) {
 			target.sourceCard = Core.game.findCardById(message.sourceCardId)
-		}
-		if (message.sourceCardOwnerId) {
-			target.sourceCardOwner = Core.getPlayer(message.sourceCardOwnerId)
 		}
 		if (message.targetCardId) {
 			target.targetCard = Core.game.findCardById(message.targetCardId)

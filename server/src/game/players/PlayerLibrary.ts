@@ -8,7 +8,7 @@ import {tryUntil} from '../../utils/Utils'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 
 const createNumberedUsername = (username: string): string => {
-	let existingPlayer
+	let existingPlayer: PlayerDatabaseEntry | null
 	let numberedUsername
 	const isUsernameAvailable = tryUntil({
 		try: async () => {
@@ -42,18 +42,24 @@ class PlayerLibrary {
 
 	public async updateUsername(id: string, username: string): Promise<boolean> {
 		const player = await this.getPlayerById(id)
+		if (!player) {
+			return false
+		}
 		this.removeFromCache(player)
 		return PlayerDatabase.updatePlayerUsername(id, createNumberedUsername(username))
 	}
 
 	public async updatePassword(id: string, password: string): Promise<boolean> {
 		const player = await this.getPlayerById(id)
+		if (!player) {
+			return false
+		}
 		this.removeFromCache(player)
 		const passwordHash = await HashManager.hashPassword(password)
 		return PlayerDatabase.updatePlayerPassword(id, passwordHash)
 	}
 
-	public async login(email: string, password: string): Promise<ServerPlayer> {
+	public async login(email: string, password: string): Promise<ServerPlayer | null> {
 		email = email.toLowerCase()
 		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(email)
 
@@ -69,7 +75,7 @@ class PlayerLibrary {
 		return this.cachePlayer(playerDatabaseEntry)
 	}
 
-	public async loginWithoutPassword(email: string): Promise<ServerPlayer> {
+	public async loginWithoutPassword(email: string): Promise<ServerPlayer | null> {
 		email = email.toLowerCase()
 		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(email)
 
@@ -95,7 +101,7 @@ class PlayerLibrary {
 		this.players = this.players.filter(playerInCache => playerInCache.id !== player.id)
 	}
 
-	public async getPlayerById(playerId: string): Promise<ServerPlayer> {
+	public async getPlayerById(playerId: string): Promise<ServerPlayer | null> {
 		let player = this.players.find(player => player.id === playerId)
 		if (!player) {
 			const playerDatabaseEntry = await PlayerDatabase.selectPlayerById(playerId)
@@ -108,7 +114,7 @@ class PlayerLibrary {
 		return player
 	}
 
-	public async getPlayerByJwtToken(token: string): Promise<ServerPlayer> {
+	public async getPlayerByJwtToken(token: string): Promise<ServerPlayer | null> {
 		const tokenPayload = await TokenManager.verifyToken(token, [JwtTokenScope.AUTH])
 		if (!tokenPayload) {
 			return null

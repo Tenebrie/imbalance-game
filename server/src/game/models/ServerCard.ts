@@ -16,10 +16,30 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
-import GameHookType, {CardDestroyedHookArgs, CardDestroyedHookValues, CardTakesDamageHookArgs, CardTakesDamageHookValues} from './GameHookType'
+import GameHookType, {CardDestroyedHookArgs, CardDestroyedHookValues, CardTakesDamageHookArgs, CardTakesDamageHookValues, UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
 import {EventCallback, EventHook} from './ServerGameEvents'
 import GameEventType from '@shared/enums/GameEventType'
-import GameEventCreators, {CardTakesDamageEventArgs} from './GameEventCreators'
+import GameEventCreators, {
+	BuffCreatedEventArgs,
+	BuffRemovedEventArgs,
+	CardDestroyedEventArgs,
+	CardPlayedEventArgs,
+	CardTakesDamageEventArgs,
+	CardTargetsConfirmedEventArgs,
+	CardTargetSelectedCardEventArgs,
+	CardTargetSelectedRowEventArgs, CardTargetSelectedUnitEventArgs,
+	RoundEndedEventArgs,
+	RoundStartedEventArgs,
+	SpellDeployedEventArgs,
+	TurnEndedEventArgs,
+	TurnStartedEventArgs,
+	UnitCreatedEventArgs,
+	UnitDeployedEventArgs,
+	UnitDestroyedEventArgs,
+	UnitMovedEventArgs,
+	UnitOrderedCardEventArgs,
+	UnitOrderedRowEventArgs
+} from './GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
 import Utils, {getClassFromConstructor} from '../../utils/Utils'
 import ServerAnimation from './ServerAnimation'
@@ -29,6 +49,8 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import SimpleTargetDefinitionBuilder from './targetDefinitions/SimpleTargetDefinitionBuilder'
 import {ServerCardTargeting} from './ServerCardTargeting'
 import TargetType from '@shared/enums/TargetType'
+import ServerPlayer from '../players/ServerPlayer'
+import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -162,7 +184,7 @@ export default class ServerCard implements Card {
 		}
 
 		const validLocations = [CardLocation.BOARD, CardLocation.HAND, CardLocation.GRAVEYARD, CardLocation.DECK]
-		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, validLocations)
+		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, validLocations)
 			.forceIgnoreControlEffects()
 			.require(({ triggeringCard }) => triggeringCard === this)
 			.require(({ triggeringCard }) => triggeringCard.stats.power <= 0)
@@ -200,12 +222,15 @@ export default class ServerCard implements Card {
 	}
 
 	public get unit(): ServerUnit | null {
-		return this.game.board.findUnitById(this.id)
+		return this.game.board.findUnitById(this.id) || null
 	}
 
 	public get owner(): ServerPlayerInGame | null {
 		const thisCardInGame = this.game.findOwnedCardById(this.id)
-		return thisCardInGame ? thisCardInGame.owner : null
+		if (!thisCardInGame) {
+			return null
+		}
+		return thisCardInGame.owner
 	}
 
 	public get location(): CardLocation {
@@ -258,11 +283,6 @@ export default class ServerCard implements Card {
 			return -1
 		}
 		return owner.cardDeck.getCardIndex(this)
-	}
-
-	public instanceOf(prototype: CardConstructor): boolean {
-		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
-		return this.class === cardClass
 	}
 
 	public dealDamage(originalDamageInstance: ServerDamageInstance): void {
@@ -376,6 +396,10 @@ export default class ServerCard implements Card {
 		}))
 
 		const owner = this.owner
+		if (!owner) {
+			return
+		}
+
 		const location = this.location
 		if (location === CardLocation.HAND) {
 			owner.cardHand.removeCard(this)
@@ -389,8 +413,13 @@ export default class ServerCard implements Card {
 	public reveal(): void {
 		if (this.isRevealed) { return }
 
+		const owner = this.owner
+		if (!owner) { return }
+		const opponent = owner.opponent
+		if (!opponent) { return }
+
 		this.isRevealed = true
-		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(this.owner.opponent.player, this)
+		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(opponent.player, this)
 	}
 
 	/* Create card play targets
@@ -442,8 +471,25 @@ export default class ServerCard implements Card {
 	 *
 	 * The callback will only trigger if the subscriber is located in one of the locations specified by `location` argument.
 	 */
-	protected createCallback<ArgsType>(eventType: GameEventType, location: CardLocation[]): EventCallback<ArgsType> {
-		return this.game.events.createCallback<ArgsType>(this, eventType)
+	protected createCallback(event: GameEventType.TURN_STARTED, location: CardLocation[]): EventCallback<TurnStartedEventArgs>
+	protected createCallback(event: GameEventType.TURN_ENDED, location: CardLocation[]): EventCallback<TurnEndedEventArgs>
+	protected createCallback(event: GameEventType.ROUND_STARTED, location: CardLocation[]): EventCallback<RoundStartedEventArgs>
+	protected createCallback(event: GameEventType.ROUND_ENDED, location: CardLocation[]): EventCallback<RoundEndedEventArgs>
+	protected createCallback(event: GameEventType.UNIT_MOVED, location: CardLocation[]): EventCallback<UnitMovedEventArgs>
+	protected createCallback(event: GameEventType.CARD_TAKES_DAMAGE, location: CardLocation[]): EventCallback<CardTakesDamageEventArgs>
+	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_CARD, location: CardLocation[]): EventCallback<CardTargetSelectedCardEventArgs>
+	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_UNIT, location: CardLocation[]): EventCallback<CardTargetSelectedUnitEventArgs>
+	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_ROW, location: CardLocation[]): EventCallback<CardTargetSelectedRowEventArgs>
+	protected createCallback(event: GameEventType.UNIT_ORDERED_CARD, location: CardLocation[]): EventCallback<UnitOrderedCardEventArgs>
+	protected createCallback(event: GameEventType.UNIT_ORDERED_ROW, location: CardLocation[]): EventCallback<UnitOrderedRowEventArgs>
+	protected createCallback(event: GameEventType.UNIT_CREATED, location: CardLocation[]): EventCallback<UnitCreatedEventArgs>
+	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[]): EventCallback<CardDestroyedEventArgs>
+	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[]): EventCallback<UnitDestroyedEventArgs>
+	protected createCallback(event: GameEventType.CARD_PLAYED, location: CardLocation[]): EventCallback<CardPlayedEventArgs>
+	protected createCallback(event: GameEventType.BUFF_CREATED, location: CardLocation[]): EventCallback<BuffCreatedEventArgs>
+	protected createCallback(event: GameEventType.BUFF_REMOVED, location: CardLocation[]): EventCallback<BuffRemovedEventArgs>
+	protected createCallback<ArgsType>(event: GameEventType, location: CardLocation[]): EventCallback<ArgsType> {
+		return this.game.events.createCallback<ArgsType>(this, event)
 			.require(() => location.includes(this.location))
 	}
 
@@ -452,9 +498,17 @@ export default class ServerCard implements Card {
 	 * `createEffect` is equivalent to `createCallback`, but it will only trigger when
 	 * the `effectSource` is set to the subscriber.
 	 */
+	protected createEffect(event: GameEventType.UNIT_DEPLOYED): EventCallback<UnitDeployedEventArgs>
+	protected createEffect(event: GameEventType.SPELL_DEPLOYED): EventCallback<SpellDeployedEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_CARD): EventCallback<CardTargetSelectedCardEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_UNIT): EventCallback<CardTargetSelectedUnitEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_ROW): EventCallback<CardTargetSelectedRowEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGETS_CONFIRMED): EventCallback<CardTargetsConfirmedEventArgs>
+	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventCallback<UnitOrderedCardEventArgs>
+	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventCallback<UnitOrderedRowEventArgs>
 	protected createEffect<ArgsType>(event: GameEventType): EventCallback<ArgsType> {
 		return this.game.events.createCallback<ArgsType>(this, event)
-			.require((args, rawEvent) => rawEvent.effectSource && rawEvent.effectSource === this)
+			.require((args, rawEvent) => !!rawEvent.effectSource && rawEvent.effectSource === this)
 	}
 
 	/* Subscribe to a game hook
@@ -465,6 +519,9 @@ export default class ServerCard implements Card {
 	 *
 	 * The hook will only trigger if the subscriber is located in one of the locations specified by `location` argument.
 	 */
+	protected createHook<HookValues, HookArgs>(hookType: GameHookType.CARD_TAKES_DAMAGE, location: CardLocation[]): EventHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>
+	protected createHook<HookValues, HookArgs>(hookType: GameHookType.CARD_DESTROYED, location: CardLocation[]): EventHook<CardDestroyedHookValues, CardDestroyedHookArgs>
+	protected createHook<HookValues, HookArgs>(hookType: GameHookType.UNIT_DESTROYED, location: CardLocation[]): EventHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>
 	protected createHook<HookValues, HookArgs>(hookType: GameHookType, location: CardLocation[]): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hookType)
 			.requireLocations(location)

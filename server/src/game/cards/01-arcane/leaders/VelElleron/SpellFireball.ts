@@ -1,18 +1,14 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
-import TargetDefinitionBuilder from '../../../../models/targetDefinitions/TargetDefinitionBuilder'
 import ServerUnit from '../../../../models/ServerUnit'
 import ServerDamageInstance from '../../../../models/ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
-import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
-import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
-import TargetValidatorArguments from '../../../../../types/TargetValidatorArguments'
+import {CardTargetValidatorArguments} from '../../../../../types/TargetValidatorArguments'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellFireball extends ServerCard {
@@ -40,7 +36,7 @@ export default class SpellFireball extends ServerCard {
 			.requireEnemyUnit()
 			.evaluate(TargetType.UNIT, (args => this.evaluateTarget(args)))
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
@@ -65,7 +61,7 @@ export default class SpellFireball extends ServerCard {
 		survivingAreaTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.areaDamage, this)))
 	}
 
-	private evaluateTarget(args: TargetValidatorArguments): number {
+	private evaluateTarget(args: CardTargetValidatorArguments): number {
 		const target = args.targetCard
 		const adjacentUnits = this.game.board.getAdjacentUnits(target.unit)
 		let expectedValue = Math.min(target.stats.power, this.damage)

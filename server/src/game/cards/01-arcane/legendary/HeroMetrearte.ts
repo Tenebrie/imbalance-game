@@ -6,7 +6,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardLibrary from '../../../libraries/CardLibrary'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
@@ -31,12 +30,12 @@ export default class HeroMetrearte extends ServerCard {
 			.requireColor(CardColor.LEADER)
 			.requireFaction(CardFaction.ARCANE)
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {
 		const cardCopy = CardLibrary.instantiateByClass(this.game, target.class)
-		this.unit.owner.cardHand.addSpell(cardCopy)
+		this.owner!.cardHand.addSpell(cardCopy)
 	}
 }

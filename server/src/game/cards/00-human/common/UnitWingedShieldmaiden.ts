@@ -7,7 +7,6 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
 import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardTakesDamageEventArgs} from '../../../models/GameEventCreators'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
@@ -25,12 +24,12 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 
-		this.createCallback<CardTakesDamageEventArgs>(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
+		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
 			.require(({ triggeringCard }) => triggeringCard.owner === this.owner)
 			.require(({ triggeringCard}) => !!triggeringCard.unit)
 			.prepare(({ triggeringCard }) => {
-				const targetUnit = triggeringCard.unit
-				const moveTargetRowIndex = this.game.board.rowMove(this.owner, targetUnit.rowIndex, MoveDirection.BACK, 1)
+				const targetUnit = triggeringCard.unit!
+				const moveTargetRowIndex = this.game.board.rowMove(this.owner!, targetUnit.rowIndex, MoveDirection.BACK, 1)
 				const moveTargetUnitIndex = targetUnit.unitIndex
 				return {
 					playTargetRowIndex: targetUnit.rowIndex,
@@ -42,7 +41,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 			.perform(({ triggeringCard }, preparedState) => {
 				const ownedCard = {
 					card: this,
-					owner: this.owner
+					owner: this.owner!
 				}
 				const targetUnit = triggeringCard.unit
 
@@ -60,7 +59,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 
 				this.game.animation.createInstantAnimationThread()
 				this.game.cardPlay.forcedPlayCardFromHand(ownedCard, preparedState.playTargetRowIndex, preparedState.playTargetUnitIndex)
-				this.owner.drawUnitCards(1)
+				this.owner!.drawUnitCards(1)
 				this.game.animation.commitAnimationThread()
 			})
 	}

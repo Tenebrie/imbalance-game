@@ -1,6 +1,4 @@
-import express, { Request, Response } from 'express'
-const router = express.Router()
-
+import express, {Request, Response} from 'express'
 import ServerPlayer from '../game/players/ServerPlayer'
 import PlayerDatabase from '../database/PlayerDatabase'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
@@ -8,16 +6,24 @@ import PlayerLibrary from '../game/players/PlayerLibrary'
 import AsyncHandler from '../utils/AsyncHandler'
 import RenderQuality from '@shared/enums/RenderQuality'
 import Language from '@shared/enums/Language'
-import Utils, {invalidUsernameCharacters, registerFormValidators} from '../utils/Utils'
+import Utils, {getPlayerFromAuthenticatedRequest, registerFormValidators} from '../utils/Utils'
 
-router.get('/', AsyncHandler(async(req: Request, res: Response, next) => {
-	const player = req['player'] as ServerPlayer
+const router = express.Router()
+
+router.get('/', AsyncHandler(async(req: Request, res: Response) => {
+	const player = getPlayerFromAuthenticatedRequest(req)
 	const playerDatabaseEntry = await PlayerDatabase.selectPlayerById(player.id)
+	if (!playerDatabaseEntry) {
+		res.status(404)
+		res.send()
+		return
+	}
+
 	res.json({ data: new UserProfileMessage(playerDatabaseEntry) })
 }))
 
-router.put('/', (req: Request, res: Response, next) => {
-	const player = req['player'] as ServerPlayer
+router.put('/', (req: Request, res: Response) => {
+	const player = getPlayerFromAuthenticatedRequest(req)
 
 	interface AcceptedUserSetting {
 		name: string

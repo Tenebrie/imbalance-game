@@ -8,11 +8,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import ServerUnit from '../../../models/ServerUnit'
-import BuffSpellDiscount from '../../../buffs/BuffSpellDiscount'
-import CardLibrary from '../../../libraries/CardLibrary'
-import BuffDuration from '@shared/enums/BuffDuration'
 import BuffStrength from '../../../buffs/BuffStrength'
 
 export default class UnitCultistBrute extends ServerCard {
@@ -39,9 +35,8 @@ export default class UnitCultistBrute extends ServerCard {
 			.requireAlliedUnit()
 			.requireNotSelf()
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
-			.require(({ targetUnit }) => !!targetUnit)
-			.perform(({ targetUnit }) => this.onSacrificeTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
+			.perform(({ targetCard }) => this.onSacrificeTargetSelected(targetCard.unit!))
 	}
 
 	private onSacrificeTargetSelected(target: ServerUnit): void {

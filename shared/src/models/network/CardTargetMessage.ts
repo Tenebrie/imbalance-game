@@ -8,21 +8,15 @@ export default class CardTargetMessage {
 	targetMode: TargetMode
 	targetType: TargetType
 	sourceCardId: string
-	sourceCardOwnerId: string
 	targetCardId: string
 	targetRowIndex: number
 	targetLabel: string
-	targetCardData: OpenCardMessage
+	targetCardData: OpenCardMessage | null
 
 	constructor(order: CardTarget) {
 		this.targetMode = order.targetMode
 		this.targetType = order.targetType
-		if (order.sourceCard) {
-			this.sourceCardId = order.sourceCard.id
-		}
-		if (order.sourceCardOwner) {
-			this.sourceCardOwnerId = order.sourceCardOwner.player.id
-		}
+		this.sourceCardId = order.sourceCard ? order.sourceCard.id : ''
 		this.targetCardId = ''
 		this.targetRowIndex = -1
 		if (order.targetCard) {
@@ -35,6 +29,7 @@ export default class CardTargetMessage {
 			this.targetRowIndex = order.targetRow.index
 		}
 		this.targetLabel = order.targetLabel
+		this.targetCardData = null
 	}
 
 	public attachTargetCardData(card: Card): void {

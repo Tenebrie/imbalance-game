@@ -6,7 +6,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
-import {UnitDeployedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffStrength from '../../../buffs/BuffStrength'
 import CardFeature from '@shared/enums/CardFeature'
@@ -34,17 +33,17 @@ export default class UnitHighClassPerformer extends ServerCard {
 		}
 
 		this.createPlayTargets()
-			.merge(TargetDefinition.defaultCardPlayTarget(this.game))
+			.merge(TargetDefinition.defaultCardPlayTarget(this.game).commit())
 			.require(TargetType.BOARD_ROW, ({ targetRow }) => targetRow.cards.length >= this.cardsRequired)
 
-		this.createEffect<UnitDeployedEventArgs>(GameEventType.UNIT_DEPLOYED)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {
 		const otherAlliedRows = this.game.board.rows
 			.filter(row => row.owner === this.owner)
-			.filter(row => row.index !== this.unit.rowIndex)
+			.filter(row => row.index !== this.unit!.rowIndex)
 
 		const alliedUnitsOnTargetRows = otherAlliedRows
 			.map(row => row.cards)

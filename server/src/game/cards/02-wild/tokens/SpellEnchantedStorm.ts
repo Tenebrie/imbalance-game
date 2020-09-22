@@ -9,7 +9,6 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
@@ -45,7 +44,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 			.require(TargetType.UNIT, args => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
 			.label(TargetType.UNIT, 'card.spellEnchantedStorm.targetLabel')
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
 		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
@@ -70,6 +69,6 @@ export default class SpellEnchantedStorm extends ServerCard {
 	}
 
 	private isUpgraded(): boolean {
-		return this.owner && this.owner.leader.buffs.has(BuffUpgradedStorms)
+		return !!this.owner && this.owner.leader.buffs.has(BuffUpgradedStorms)
 	}
 }

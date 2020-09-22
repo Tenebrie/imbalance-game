@@ -31,6 +31,6 @@ export default class UnitMerfolkEnchantress extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		this.owner.createCardFromLibraryFromPrototype(SpellEnchantedStorm)
+		this.owner!.createCardFromLibraryFromPrototype(SpellEnchantedStorm)
 	}
 }

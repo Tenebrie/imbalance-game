@@ -7,7 +7,7 @@ export default {
 		return bcrypt.hash(plaintextPassword, passwordHashIterations)
 	},
 
-	async passwordsMatch(plaintextPassword: string, hashedPassword: string): Promise<string> {
+	async passwordsMatch(plaintextPassword: string, hashedPassword: string): Promise<boolean> {
 		if (!plaintextPassword || !hashedPassword) {
 			console.error('HashManager: No password provided for comparison!')
 		}

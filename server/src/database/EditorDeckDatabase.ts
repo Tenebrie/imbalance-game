@@ -15,17 +15,17 @@ export default {
 		return Database.insertRow(query)
 	},
 
-	async selectEditorDeckById(id: string): Promise<EditorDeck> {
+	async selectEditorDeckById(id: string): Promise<EditorDeck | null> {
 		const query = `SELECT * FROM editor_decks WHERE id = '${id}'`
 		return Database.selectRow<EditorDeck>(query)
 	},
 
-	async selectEditorDeckByIdForPlayer(id: string, player: ServerPlayer): Promise<EditorDeck> {
+	async selectEditorDeckByIdForPlayer(id: string, player: ServerPlayer): Promise<EditorDeck | null> {
 		const query = `SELECT * FROM editor_decks WHERE id = '${id}' AND "playerId" = '${player.id}'`
 		return Database.selectRow<EditorDeck>(query)
 	},
 
-	async selectEditorDecksForPlayer(player: ServerPlayer): Promise<EditorDeck[]> {
+	async selectEditorDecksForPlayer(player: ServerPlayer): Promise<EditorDeck[] | null> {
 		const query = `SELECT * FROM editor_decks WHERE "playerId" = '${player.id}'`
 		return Database.selectRows<EditorDeck>(query)
 	},

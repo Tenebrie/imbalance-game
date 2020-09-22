@@ -8,7 +8,7 @@ import ServerBoardRow from './ServerBoardRow'
 import ServerBuff from './ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
-import ServerCardTarget from './ServerCardTarget'
+import {ServerCardTargetCard, ServerCardTargetRow} from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 
 export default {
@@ -68,16 +68,34 @@ export default {
 		}
 	}),
 
-	cardTargetSelected: (args: CardTargetSelectedEventArgs): GameEvent => ({
-		type: GameEventType.CARD_TARGET_SELECTED,
+	cardTargetCardSelected: (args: CardTargetSelectedCardEventArgs): GameEvent => ({
+		type: GameEventType.CARD_TARGET_SELECTED_CARD,
 		args: args,
 		effectSource: args.triggeringCard,
-		logSubtype: args.targetCard ? 'card' : args.targetRow ? 'row' : 'unit',
+		logSubtype: 'card',
 		logVariables: {
-			triggeringCard: args.triggeringCard?.id,
-			targetCard: args.targetCard?.id,
-			targetUnit: args.targetUnit?.card.id,
-			targetRow: args.targetRow?.index,
+			triggeringCard: args.triggeringCard.id,
+			targetCard: args.targetCard.id,
+		}
+	}),
+	cardTargetUnitSelected: (args: CardTargetSelectedUnitEventArgs): GameEvent => ({
+		type: GameEventType.CARD_TARGET_SELECTED_UNIT,
+		args: args,
+		effectSource: args.triggeringCard,
+		logSubtype: 'unit',
+		logVariables: {
+			triggeringCard: args.triggeringCard.id,
+			targetUnit: args.targetUnit.card.id,
+		}
+	}),
+	cardTargetRowSelected: (args: CardTargetSelectedRowEventArgs): GameEvent => ({
+		type: GameEventType.CARD_TARGET_SELECTED_ROW,
+		args: args,
+		effectSource: args.triggeringCard,
+		logSubtype: 'row',
+		logVariables: {
+			triggeringCard: args.triggeringCard.id,
+			targetRow: args.targetRow.index,
 		}
 	}),
 	cardTargetsConfirmed: (args: CardTargetsConfirmedEventArgs): GameEvent => ({
@@ -89,15 +107,13 @@ export default {
 		}
 	}),
 
-	playerTargetSelected: (args: PlayerTargetSelectedEventArgs): GameEvent => ({
-		type: GameEventType.PLAYER_TARGET_SELECTED,
+	playerTargetSelectedCard: (args: PlayerTargetCardSelectedEventArgs): GameEvent => ({
+		type: GameEventType.PLAYER_TARGET_SELECTED_CARD,
 		args: args,
-		logSubtype: args.targetCard ? 'card' : args.targetRow ? 'row' : 'unit',
+		logSubtype: 'card',
 		logVariables: {
-			triggeringPlayer: args.triggeringPlayer?.player.id,
-			targetCard: args.targetCard?.id,
-			targetUnit: args.targetUnit?.card.id,
-			targetRow: args.targetRow?.index,
+			triggeringPlayer: args.triggeringPlayer.player.id,
+			targetCard: args.targetCard.id,
 		}
 	}),
 
@@ -118,15 +134,24 @@ export default {
 			direction: args.direction,
 		}
 	}),
-	unitOrdered: (args: UnitOrderedEventArgs): GameEvent => ({
-		type: GameEventType.UNIT_ORDERED,
+	unitOrderedCard: (args: UnitOrderedCardEventArgs): GameEvent => ({
+		type: GameEventType.UNIT_ORDERED_CARD,
 		args: args,
 		effectSource: args.triggeringUnit.card,
-		logSubtype: args.targetArguments.targetCard ? 'card' : args.targetArguments.targetRow ? 'row' : 'noTarget',
+		logSubtype: 'card',
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
-			targetCard: args.targetArguments.targetCard?.id,
-			targetRow: args.targetArguments.targetRow?.index
+			targetCard: args.targetArguments.targetCard.id,
+		}
+	}),
+	unitOrderedRow: (args: UnitOrderedRowEventArgs): GameEvent => ({
+		type: GameEventType.UNIT_ORDERED_ROW,
+		args: args,
+		effectSource: args.triggeringUnit.card,
+		logSubtype: 'row',
+		logVariables: {
+			triggeringUnit: args.triggeringUnit.card.id,
+			targetRow: args.targetArguments.targetRow.index
 		}
 	}),
 	unitDestroyed: (args: UnitDestroyedEventArgs): GameEvent => ({
@@ -152,7 +177,7 @@ export default {
 		args: args,
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
-			owner: args.triggeringCard.owner.player.id
+			owner: args.triggeringCard.owner!.player.id
 		}
 	}),
 
@@ -198,7 +223,7 @@ export interface GameEvent {
 	args: Record<string, any>
 	effectSource?: ServerCard | ServerBuff
 	logSubtype?: string
-	logVariables?: Record<string, string | number>
+	logVariables?: Record<string, string | number | undefined>
 }
 
 export interface RoundStartedEventArgs {
@@ -229,13 +254,26 @@ export interface CardDestroyedEventArgs {
 	triggeringCard: ServerCard
 }
 
-export interface CardTargetSelectedEventArgs {
+export interface CardTargetSelectedCardEventArgs {
+	targetMode: TargetMode
+	targetType: TargetType
+	triggeringCard: ServerCard
+	triggeringPlayer: ServerPlayerInGame
+	targetCard: ServerCard
+}
+export interface CardTargetSelectedUnitEventArgs {
 	targetMode: TargetMode
 	targetType: TargetType
 	triggeringCard: ServerCard
 	triggeringPlayer: ServerPlayerInGame
 	targetCard: ServerCard
 	targetUnit: ServerUnit
+}
+export interface CardTargetSelectedRowEventArgs {
+	targetMode: TargetMode
+	targetType: TargetType
+	triggeringCard: ServerCard
+	triggeringPlayer: ServerPlayerInGame
 	targetRow: ServerBoardRow
 }
 export interface CardTargetsConfirmedEventArgs {
@@ -243,13 +281,11 @@ export interface CardTargetsConfirmedEventArgs {
 	triggeringPlayer: ServerPlayerInGame
 }
 
-export interface PlayerTargetSelectedEventArgs {
+export interface PlayerTargetCardSelectedEventArgs {
 	targetMode: TargetMode
 	targetType: TargetType
 	triggeringPlayer: ServerPlayerInGame
 	targetCard: ServerCard
-	targetUnit: ServerUnit
-	targetRow: ServerBoardRow
 }
 
 export interface UnitCreatedEventArgs {
@@ -261,10 +297,15 @@ export interface UnitMovedEventArgs {
 	distance: number
 	direction: MoveDirection
 }
-export interface UnitOrderedEventArgs {
+export interface UnitOrderedCardEventArgs {
 	triggeringUnit: ServerUnit
 	targetType: TargetType
-	targetArguments: ServerCardTarget
+	targetArguments: ServerCardTargetCard
+}
+export interface UnitOrderedRowEventArgs {
+	triggeringUnit: ServerUnit
+	targetType: TargetType
+	targetArguments: ServerCardTargetRow
 }
 export interface UnitDestroyedEventArgs {
 	triggeringUnit: ServerUnit

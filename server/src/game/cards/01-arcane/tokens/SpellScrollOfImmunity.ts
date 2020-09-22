@@ -5,7 +5,6 @@ import ServerUnit from '../../../models/ServerUnit'
 import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffDuration from '@shared/enums/BuffDuration'
@@ -31,7 +30,7 @@ export default class SpellScrollOfImmunity extends ServerCard {
 			.target(TargetType.UNIT)
 			.requireAlliedUnit()
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 

@@ -5,7 +5,7 @@ import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
-import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from '../../../models/GameHookType'
+import GameHookType from '../../../models/GameHookType'
 import MoveDirection from '@shared/enums/MoveDirection'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ServerUnit from '../../../models/ServerUnit'
@@ -25,7 +25,7 @@ export default class HeroAurienne extends ServerCard {
 		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 
-		this.createHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>(GameHookType.UNIT_DESTROYED, [CardLocation.HAND])
+		this.createHook(GameHookType.UNIT_DESTROYED, [CardLocation.HAND])
 			.require(({ targetUnit }) => targetUnit.owner === this.owner)
 			.replace(values => ({
 				...values,
@@ -37,17 +37,17 @@ export default class HeroAurienne extends ServerCard {
 	private onUnitDestroyedHook(targetUnit: ServerUnit): void {
 		const ownedCard = {
 			card: this,
-			owner: this.owner
+			owner: this.owner!
 		}
 
-		const targetRowIndex = this.game.board.rowMove(this.owner, targetUnit.rowIndex, MoveDirection.BACK, 1)
+		const targetRowIndex = this.game.board.rowMove(this.owner!, targetUnit.rowIndex, MoveDirection.BACK, 1)
 		const targetUnitIndex = targetUnit.unitIndex
 
 		this.game.cardPlay.forcedPlayCardFromHand(ownedCard, targetUnit.rowIndex, targetUnit.unitIndex)
 		if (targetUnit.isAlive()) {
 			this.game.board.moveUnit(targetUnit, targetRowIndex, targetUnitIndex)
 		}
-		this.owner.drawUnitCards(1)
+		this.owner!.drawUnitCards(1)
 	}
 }
 
