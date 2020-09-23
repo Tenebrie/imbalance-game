@@ -108,7 +108,7 @@ export default class ServerBoard implements Board {
 		if (!context) {
 			return []
 		}
-		const player = context instanceof ServerCard ? context.owner! : context
+		const player = context instanceof ServerCard ? context.ownerInGame : context
 		if (!player) {
 			return []
 		}

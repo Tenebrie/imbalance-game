@@ -29,7 +29,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 			.require(({ triggeringCard}) => !!triggeringCard.unit)
 			.prepare(({ triggeringCard }) => {
 				const targetUnit = triggeringCard.unit!
-				const moveTargetRowIndex = this.game.board.rowMove(this.owner!, targetUnit.rowIndex, MoveDirection.BACK, 1)
+				const moveTargetRowIndex = this.game.board.rowMove(this.ownerInGame, targetUnit.rowIndex, MoveDirection.BACK, 1)
 				const moveTargetUnitIndex = targetUnit.unitIndex
 				return {
 					playTargetRowIndex: targetUnit.rowIndex,
@@ -41,7 +41,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 			.perform(({ triggeringCard }, preparedState) => {
 				const ownedCard = {
 					card: this,
-					owner: this.owner!
+					owner: this.ownerInGame
 				}
 				const targetUnit = triggeringCard.unit
 
@@ -59,7 +59,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 
 				this.game.animation.createInstantAnimationThread()
 				this.game.cardPlay.forcedPlayCardFromHand(ownedCard, preparedState.playTargetRowIndex, preparedState.playTargetUnitIndex)
-				this.owner!.drawUnitCards(1)
+				this.ownerInGame.drawUnitCards(1)
 				this.game.animation.commitAnimationThread()
 			})
 	}

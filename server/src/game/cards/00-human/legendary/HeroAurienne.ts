@@ -37,17 +37,17 @@ export default class HeroAurienne extends ServerCard {
 	private onUnitDestroyedHook(targetUnit: ServerUnit): void {
 		const ownedCard = {
 			card: this,
-			owner: this.owner!
+			owner: this.ownerInGame
 		}
 
-		const targetRowIndex = this.game.board.rowMove(this.owner!, targetUnit.rowIndex, MoveDirection.BACK, 1)
+		const targetRowIndex = this.game.board.rowMove(this.ownerInGame, targetUnit.rowIndex, MoveDirection.BACK, 1)
 		const targetUnitIndex = targetUnit.unitIndex
 
 		this.game.cardPlay.forcedPlayCardFromHand(ownedCard, targetUnit.rowIndex, targetUnit.unitIndex)
 		if (targetUnit.isAlive()) {
 			this.game.board.moveUnit(targetUnit, targetRowIndex, targetUnitIndex)
 		}
-		this.owner!.drawUnitCards(1)
+		this.ownerInGame.drawUnitCards(1)
 	}
 }
 

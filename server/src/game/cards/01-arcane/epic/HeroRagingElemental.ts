@@ -41,7 +41,7 @@ export default class HeroRagingElemental extends ServerCard {
 		this.isEffectTriggered = true
 
 		const thisUnit = this.unit!
-		const opposingEnemies = this.game.board.getUnitsOwnedByOpponent(this.owner!)
+		const opposingEnemies = this.game.board.getUnitsOwnedByOpponent(this.ownerInGame)
 			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
 			.sort((a, b) => {
 				return this.game.board.getVerticalUnitDistance(a, thisUnit) - this.game.board.getVerticalUnitDistance(b, thisUnit)

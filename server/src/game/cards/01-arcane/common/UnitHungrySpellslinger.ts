@@ -42,7 +42,7 @@ export default class UnitHungrySpellslinger extends ServerCard {
 			.require(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.tribes.includes(CardTribe.SCROLL)))
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.require(() => this.owner!.spellMana >= this.infuseCost)
+			.require(() => this.ownerInGame.spellMana >= this.infuseCost)
 			.perform(() => Keywords.infuse(this, this.infuseCost))
 			.perform(() => this.didInfuse = true)
 

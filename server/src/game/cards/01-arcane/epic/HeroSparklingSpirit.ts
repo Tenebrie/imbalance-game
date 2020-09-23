@@ -40,7 +40,7 @@ export default class HeroSparklingSpirit extends ServerCard {
 
 	private onDeploy(): void {
 		const card = CardLibrary.instantiateByConstructor(this.game, SpellFleetingSpark)
-		this.owner!.cardHand.addSpell(card)
+		this.ownerInGame.cardHand.addSpell(card)
 	}
 
 	private onSparkDealsDamage(values: CardTakesDamageHookValues): CardTakesDamageHookValues {

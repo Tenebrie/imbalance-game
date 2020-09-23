@@ -46,6 +46,6 @@ export default class UnitMercantileSpellslinger extends ServerCard {
 		const newCard = CardLibrary.instantiateByInstance(this.game, target)
 		newCard.buffs.addMultiple(BuffSpellExtraCost, this.manaMarkup, this, BuffDuration.INFINITY)
 		newCard.buffs.addMultiple(BuffSpellDiscountPerTurn, this.discountPerTurn, this, BuffDuration.INFINITY)
-		this.owner!.cardHand.addSpell(newCard)
+		this.ownerInGame.cardHand.addSpell(newCard)
 	}
 }

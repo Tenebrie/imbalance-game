@@ -24,9 +24,9 @@ export default class SpellFieryEntrance extends ServerCard {
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
-			.require(() => this.owner!.cardDeck.unitCards.length > 0)
+			.require(() => this.ownerInGame.cardDeck.unitCards.length > 0)
 			.perform(() => {
-				const owner = this.owner!
+				const owner = this.ownerInGame
 				Keywords.summonCard(owner.cardDeck.unitCards[0])
 			})
 	}

@@ -177,7 +177,7 @@ export default {
 		args: args,
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
-			owner: args.triggeringCard.owner!.player.id
+			owner: args.triggeringCard.ownerInGame.player.id
 		}
 	}),
 

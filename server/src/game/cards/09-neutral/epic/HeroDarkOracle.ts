@@ -38,6 +38,6 @@ export default class HeroDarkOracle extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		target.owner!.cardDeck.discardUnit(target)
+		target.ownerInGame.cardDeck.discardUnit(target)
 	}
 }

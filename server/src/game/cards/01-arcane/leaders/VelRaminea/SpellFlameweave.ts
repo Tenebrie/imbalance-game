@@ -29,7 +29,7 @@ export default class SpellFlameweave extends ServerCard {
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.perform(() => {
-				this.owner!.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
+				this.ownerInGame.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
 			})
 	}
 

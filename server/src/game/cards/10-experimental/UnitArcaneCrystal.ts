@@ -49,6 +49,6 @@ export default class UnitArcaneCrystal extends ServerCard {
 	}
 
 	private onDestroy(): void {
-		this.owner!.addSpellMana(Math.floor(this.charges / this.chargesForMana) * this.manaGenerated)
+		this.ownerInGame.addSpellMana(Math.floor(this.charges / this.chargesForMana) * this.manaGenerated)
 	}
 }

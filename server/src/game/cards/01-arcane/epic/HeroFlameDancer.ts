@@ -33,7 +33,7 @@ export default class HeroFlameDancer extends ServerCard {
 		this.createDeployEffectTargets()
 			.target(TargetType.BOARD_ROW)
 			.require(TargetType.BOARD_ROW, args => {
-				return args.targetRow.owner === args.sourceCard.owner!.opponent && args.targetRow.cards.length > 0
+				return args.targetRow.owner === args.sourceCard.ownerInGame.opponent && args.targetRow.cards.length > 0
 			})
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW)

@@ -39,7 +39,7 @@ export default class UnitAbyssPortal extends ServerCard {
 
 	public onTurnEnded(): void {
 		const unit = this.unit!
-		const owner = this.owner!
+		const owner = this.ownerInGame
 		const voidspawn = CardLibrary.instantiateByConstructor(this.game, UnitVoidspawn)
 		this.game.board.createUnit(voidspawn, this.owner, unit.rowIndex, unit.unitIndex + 1)
 		const uniqueCardsInBothDiscards = [...new Set(
