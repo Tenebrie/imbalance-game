@@ -1,4 +1,5 @@
-import express from 'express'
+import * as ws from 'ws'
+import * as express from 'express'
 import ServerGame from '../game/models/ServerGame'
 import ServerPlayer from '../game/players/ServerPlayer'
 import IncomingMessageHandlers from '../game/handlers/IncomingMessageHandlers'
@@ -12,10 +13,12 @@ import {colorizeId} from '../utils/Utils'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import IncomingSpectatorMessageHandlers from '../game/handlers/IncomingSpectatorMessageHandlers'
 import {ClientToServerMessageTypes, ClientToServerSpectatorMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import {Router as WebSocketRouter} from 'express-ws'
 
-const router = express.Router()
+const router = express.Router() as WebSocketRouter
 
-router.ws('/:gameId', async (ws, req) => {
+// @ts-ignore
+router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	const currentGame: ServerGame | null = GameLibrary.games.find(game => game.id === req.params.gameId) || null
 	const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
 	if (!currentGame || !currentPlayer) {
@@ -80,7 +83,8 @@ router.ws('/:gameId', async (ws, req) => {
 	OutgoingMessageHandlers.notifyAboutInitRequested(currentPlayer)
 })
 
-router.ws('/:gameId/spectate/:playerId', async (ws, req) => {
+// @ts-ignore
+router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) => {
 	const gameId = req.params.gameId as string
 	const playerId = req.params.playerId as string
 

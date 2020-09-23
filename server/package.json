@@ -12,6 +12,10 @@
 	},
 	"dependencies": {
 		"@babel/runtime": "^7.11.2",
+		"@types/morgan": "^1.9.1",
+		"@types/bcrypt": "^3.0.0",
+		"@types/cookie-parser": "^1.4.2",
+		"@types/seedrandom": "^2.4.28",
 		"babel-node": "0.0.1-security",
 		"babel-polyfill": "^6.26.0",
 		"bcrypt": "^5.0.0",

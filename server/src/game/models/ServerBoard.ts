@@ -55,7 +55,8 @@ export default class ServerBoard implements Board {
 		return adjacentRows
 	}
 
-	public getTotalPlayerPower(playerInGame: ServerPlayerInGame): number {
+	public getTotalPlayerPower(playerInGame: ServerPlayerInGame | null): number {
+		if (!playerInGame) { return 0 }
 		return this.getUnitsOwnedByPlayer(playerInGame).map(unit => unit.card.stats.power).reduce((total, value) => total + value, 0)
 	}
 
