@@ -11,7 +11,6 @@ import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitVolatileCrystal from '../../tokens/UnitVolatileCrystal'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {ownerOf} from '../../../../../utils/GameUtils'
 
 export default class SpellCrystalBarrage extends ServerCard {
 	constructor(game: ServerGame) {
@@ -42,7 +41,7 @@ export default class SpellCrystalBarrage extends ServerCard {
 			}
 
 			const crystal = CardLibrary.instantiateByConstructor(this.game, UnitVolatileCrystal)
-			this.game.board.createUnit(crystal, ownerOf(this), target.index, i)
+			this.game.board.createUnit(crystal, this.ownerInGame, target.index, i)
 		}
 	}
 }

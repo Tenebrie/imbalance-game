@@ -233,6 +233,14 @@ export default class ServerCard implements Card {
 		return thisCardInGame.owner
 	}
 
+	public get ownerInGame(): ServerPlayerInGame {
+		const owner = this.owner
+		if (!owner) {
+			throw new Error('Card has no owner while in the game!')
+		}
+		return owner
+	}
+
 	public get location(): CardLocation {
 		const owner = this.owner
 		if (!owner) {

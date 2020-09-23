@@ -8,6 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../utils/Keywords'
 
 export default class UnitEnergyRelay extends ServerCard {
 	infuseCost = 1
@@ -31,29 +32,28 @@ export default class UnitEnergyRelay extends ServerCard {
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
-			.require(({ player }) => player.spellMana >= this.infuseCost)
+			.perform(() => Keywords.infuse(this, this.infuseCost))
 			.perform(() => this.onDealDamage())
 	}
 
 	private onDealDamage(): void {
-		this.owner!.useManaForInfuse(this.infuseCost, this)
-		const thisUnit = this.unit!
+		const triggeringUnit = this.unit!
 		const opposingEnemies = this.game.board.getUnitsOwnedByOpponent(this.owner)
-			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
+			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, triggeringUnit) < 1)
 			.sort((a, b) => {
-				return this.game.board.getVerticalUnitDistance(a, thisUnit) - this.game.board.getVerticalUnitDistance(b, thisUnit)
+				return this.game.board.getVerticalUnitDistance(a, triggeringUnit) - this.game.board.getVerticalUnitDistance(b, triggeringUnit)
 			})
 
 		if (opposingEnemies.length === 0) {
 			return
 		}
 
-		const shortestDistance = this.game.board.getVerticalUnitDistance(opposingEnemies[0], thisUnit)
-		const targets = opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, thisUnit) === shortestDistance)
+		const shortestDistance = this.game.board.getVerticalUnitDistance(opposingEnemies[0], triggeringUnit)
+		const targets = opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, triggeringUnit) === shortestDistance)
 
 		targets.forEach(unit => {
 			this.game.animation.createInstantAnimationThread()
-			unit.dealDamage(ServerDamageInstance.fromUnit(this.damageDealt, thisUnit))
+			unit.dealDamage(ServerDamageInstance.fromUnit(this.damageDealt, triggeringUnit))
 			this.game.animation.commitAnimationThread()
 		})
 	}

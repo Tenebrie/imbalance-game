@@ -84,6 +84,14 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		return this.game.getOpponent(this)
 	}
 
+	public get opponentInGame(): ServerPlayerInGame {
+		const opponent = this.opponent
+		if (!opponent) {
+			throw new Error('No opponent available!')
+		}
+		return opponent
+	}
+
 	public isInvertedBoard(): boolean {
 		return this.game.players.indexOf(this) === 1
 	}
@@ -120,37 +128,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		return drawnCards
 	}
 
-	public summonCardFromUnitDeck(card: ServerCard): void {
-		card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
-		this.cardDeck.removeCard(card)
-		this.cardHand.onUnitDrawn(card)
-	}
-
-	public createCardFromLibraryFromInstance(prototype: ServerCard): ServerCard {
-		const card = CardLibrary.instantiateByInstance(this.game, prototype)
-		return this.createCard(card)
-	}
-
-	public createCardFromLibraryFromPrototype(prototype: CardConstructor): ServerCard {
-		const card = CardLibrary.instantiateByConstructor(this.game, prototype)
-		return this.createCard(card)
-	}
-
-	public createCardFromLibraryFromClass(cardClass: string): ServerCard {
-		const card = CardLibrary.instantiateByClass(this.game, cardClass)
-		return this.createCard(card)
-	}
-
-	private createCard(card: ServerCard): ServerCard {
-		card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
-		if (card.type === CardType.UNIT) {
-			this.cardHand.onUnitDrawn(card)
-		} else if (card.type === CardType.SPELL) {
-			this.cardHand.onSpellDrawn(card)
-		}
-		return card
-	}
-
 	public mulliganCard(card: ServerCard): void {
 		const cardIndex = this.cardHand.unitCards.indexOf(card)
 		this.cardHand.removeCard(card)
@@ -160,11 +137,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			return
 		}
 		this.cardHand.addUnit(cardToAdd, cardIndex)
-	}
-
-	public useManaForInfuse(mana: number, card: ServerCard): void {
-		this.addSpellMana(-mana)
-		// TODO: Add special effect
 	}
 
 	public refillSpellHand(): void {
@@ -262,7 +234,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public onTurnStart(): void {
 		this.game.events.postEvent(GameEventCreators.turnStarted({
 			player: this
-		}), { allowThreading: true })
+		}), { allowThreading: false })
 	}
 
 	public endTurn(): void {
@@ -289,7 +261,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 		this.game.events.postEvent(GameEventCreators.turnEnded({
 			player: this
-		}), { allowThreading: true })
+		}), { allowThreading: false })
 	}
 
 	public endRound(): void {

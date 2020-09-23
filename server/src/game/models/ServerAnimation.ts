@@ -98,6 +98,12 @@ export default class ServerAnimation implements Animation {
 		return animation
 	}
 
+	public static unitDestroy(targetCard: ServerCard): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.UNIT_DESTROY, {})
+		animation.targetCard = targetCard
+		return animation
+	}
+
 	public static unitMove(): ServerAnimation {
 		return new ServerAnimation(AnimationType.UNIT_MOVE, {})
 	}
@@ -108,6 +114,18 @@ export default class ServerAnimation implements Animation {
 		}
 		const animation = new ServerAnimation(AnimationType.CARD_RECEIVED_BUFF, params)
 		animation.targetCards = targetCards
+		return animation
+	}
+
+	public static cardInfuse(targetCard: ServerCard): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.CARD_INFUSE, {})
+		animation.targetCard = targetCard
+		return animation
+	}
+
+	public static cardGenerateMana(targetCard: ServerCard): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.CARD_GENERATE_MANA, {})
+		animation.targetCard = targetCard
 		return animation
 	}
 }

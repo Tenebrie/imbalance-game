@@ -8,6 +8,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../utils/Keywords'
 
 export default class UnitOceanicSeagull extends ServerCard {
 	constructor(game: ServerGame) {
@@ -35,6 +36,6 @@ export default class UnitOceanicSeagull extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		this.owner!.summonCardFromUnitDeck(target)
+		Keywords.summonCard(target)
 	}
 }

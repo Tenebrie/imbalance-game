@@ -8,6 +8,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import UnitVoidPortal from '../tokens/UnitVoidPortal'
 import ServerAnimation from '../../../models/ServerAnimation'
+import Keywords from '../../../../utils/Keywords'
 
 export default class UnitDarkTimewarper extends ServerCard {
 	constructor(game: ServerGame) {
@@ -37,6 +38,6 @@ export default class UnitDarkTimewarper extends ServerCard {
 			this.game.animation.commitAnimationThread()
 		})
 
-		this.owner!.createCardFromLibraryFromPrototype(UnitVoidPortal)
+		Keywords.createCard.forOwnerOf(this).fromConstructor(UnitVoidPortal)
 	}
 }

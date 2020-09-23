@@ -11,6 +11,7 @@ import UnitVoidPortal from '../tokens/UnitVoidPortal'
 import ServerAnimation from '../../../models/ServerAnimation'
 import UnitAbyssPortal from '../tokens/UnitAbyssPortal'
 import CardLibrary from '../../../libraries/CardLibrary'
+import Keywords from '../../../../utils/Keywords'
 
 export default class HeroJom extends ServerCard {
 	portalsNeeded = 3
@@ -41,7 +42,7 @@ export default class HeroJom extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		this.owner!.createCardFromLibraryFromPrototype(UnitVoidPortal)
+		Keywords.createCard.forOwnerOf(this).fromConstructor(UnitVoidPortal)
 	}
 
 	private ownerControlsEnoughPortals(): boolean {

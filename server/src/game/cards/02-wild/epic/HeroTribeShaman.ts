@@ -9,6 +9,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import {mapRelatedCards} from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../utils/Keywords'
 
 export default class HeroTribeShaman extends ServerCard {
 	constructor(game: ServerGame) {
@@ -30,6 +31,6 @@ export default class HeroTribeShaman extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		this.owner!.createCardFromLibraryFromPrototype(SpellHealingRain)
+		Keywords.createCard.forOwnerOf(this).fromConstructor(SpellHealingRain)
 	}
 }

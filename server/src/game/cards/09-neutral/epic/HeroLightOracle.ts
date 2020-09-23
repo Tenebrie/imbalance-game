@@ -7,6 +7,7 @@ import TargetType from '@shared/enums/TargetType'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../utils/Keywords'
 
 export default class HeroLightOracle extends ServerCard {
 	cardsToSee = 5
@@ -37,6 +38,6 @@ export default class HeroLightOracle extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		this.owner!.summonCardFromUnitDeck(target)
+		Keywords.summonCard(target)
 	}
 }

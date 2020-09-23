@@ -8,6 +8,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../utils/Keywords'
 
 export default class UnitCrystalMiner extends ServerCard {
 	constructor(game: ServerGame) {
@@ -32,6 +33,6 @@ export default class UnitCrystalMiner extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		this.owner!.createCardFromLibraryFromInstance(target)
+		Keywords.createCard.forOwnerOf(this).fromInstance(target)
 	}
 }

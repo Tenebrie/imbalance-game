@@ -38,7 +38,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			.requireNotSelf()
 			.requireUnique(TargetType.UNIT)
 			.label(TargetType.UNIT, 'card.unitPriestessOfAedine.target.heal')
-			.require(TargetType.UNIT, args => args.targetCard.stats.power < args.targetCard.stats.basePower)
+			.require(TargetType.UNIT, args => args.targetCard.stats.power < args.targetCard.stats.maxPower)
 			.evaluate(TargetType.UNIT, args => args.targetCard.stats.maxPower - args.targetCard.stats.power)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)

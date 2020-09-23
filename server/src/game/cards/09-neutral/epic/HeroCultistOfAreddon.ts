@@ -10,6 +10,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import ServerAnimation from '../../../models/ServerAnimation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardTribe from '@shared/enums/CardTribe'
+import Keywords from '../../../../utils/Keywords'
 
 export default class HeroCultistOfAreddon extends ServerCard {
 	constructor(game: ServerGame) {
@@ -39,6 +40,6 @@ export default class HeroCultistOfAreddon extends ServerCard {
 		const cardClass = target.card.class
 		this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target.card]))
 		this.game.board.destroyUnit(target)
-		this.owner!.createCardFromLibraryFromClass(cardClass)
+		Keywords.createCard.forOwnerOf(this).fromClass(cardClass)
 	}
 }

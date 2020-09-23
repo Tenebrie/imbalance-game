@@ -8,6 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../utils/Keywords'
 
 export default class HeroElderElemental extends ServerCard {
 	manaGenerated = 1
@@ -37,7 +38,6 @@ export default class HeroElderElemental extends ServerCard {
 	}
 
 	private onDeploy() {
-		const player = this.owner!
-		player.setSpellMana(player.spellMana + this.manaGenerated)
+		Keywords.generateMana(this, this.manaGenerated)
 	}
 }

@@ -8,6 +8,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../utils/Keywords'
 
 export default class HeroArgenta extends ServerCard {
 	constructor(game: ServerGame) {
@@ -33,6 +34,6 @@ export default class HeroArgenta extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		this.owner!.summonCardFromUnitDeck(target)
+		Keywords.summonCard(target)
 	}
 }

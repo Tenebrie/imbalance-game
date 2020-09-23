@@ -11,6 +11,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffSpellDiscount from '../../../buffs/BuffSpellDiscount'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../utils/Keywords'
 
 export default class UnitHungrySpellslinger extends ServerCard {
 	infuseCost = 3
@@ -42,7 +43,8 @@ export default class UnitHungrySpellslinger extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.require(() => this.owner!.spellMana >= this.infuseCost)
-			.perform(() => this.infuse())
+			.perform(() => Keywords.infuse(this, this.infuseCost))
+			.perform(() => this.didInfuse = true)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
@@ -51,15 +53,10 @@ export default class UnitHungrySpellslinger extends ServerCard {
 			.perform(() => this.onTargetsConfirmed())
 	}
 
-	private infuse(): void {
-		this.owner!.useManaForInfuse(this.infuseCost, this)
-		this.didInfuse = true
-	}
-
 	private onTargetSelected(target: ServerCard): void {
 		const newCard = CardLibrary.instantiateByInstance(this.game, target)
 		newCard.buffs.addMultiple(BuffSpellDiscount, this.spellDiscount, this, BuffDuration.INFINITY)
-		this.owner!.cardHand.addSpell(newCard)
+		this.ownerInGame.cardHand.addSpell(newCard)
 	}
 
 	private onTargetsConfirmed(): void {

@@ -8,6 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../utils/Keywords'
 
 export default class UnitArcaneElemental extends ServerCard {
 	manaGenerated = 2
@@ -34,8 +35,7 @@ export default class UnitArcaneElemental extends ServerCard {
 	}
 
 	private onDeploy() {
-		const player = this.owner!
-		player.setSpellMana(player.spellMana + this.manaGenerated)
+		Keywords.generateMana(this, this.manaGenerated)
 	}
 }
 

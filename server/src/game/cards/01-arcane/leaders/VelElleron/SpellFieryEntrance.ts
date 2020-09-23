@@ -7,6 +7,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import BotCardEvaluation from '../../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../../utils/Keywords'
 
 export default class SpellFieryEntrance extends ServerCard {
 	constructor(game: ServerGame) {
@@ -26,7 +27,7 @@ export default class SpellFieryEntrance extends ServerCard {
 			.require(() => this.owner!.cardDeck.unitCards.length > 0)
 			.perform(() => {
 				const owner = this.owner!
-				owner.summonCardFromUnitDeck(owner.cardDeck.unitCards[0])
+				Keywords.summonCard(owner.cardDeck.unitCards[0])
 			})
 	}
 }

@@ -7,6 +7,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../utils/Keywords'
 
 export default class UnitLoneLooter extends ServerCard {
 	constructor(game: ServerGame) {
@@ -35,6 +36,6 @@ export default class UnitLoneLooter extends ServerCard {
 			return
 		}
 
-		this.owner!.summonCardFromUnitDeck(this)
+		Keywords.summonCard(this)
 	}
 }

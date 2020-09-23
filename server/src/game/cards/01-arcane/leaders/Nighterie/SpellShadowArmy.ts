@@ -8,7 +8,7 @@ import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../../models/ServerUnit'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {createCardFromInstance, createCardFromLibrary, ownerOf} from '../../../../../utils/GameUtils'
+import Keywords from '../../../../../utils/Keywords'
 
 export default class SpellShadowArmy extends ServerCard {
 	powerThreshold = 3
@@ -59,7 +59,7 @@ export default class SpellShadowArmy extends ServerCard {
 			this.allowedTargets += 1
 		}
 
-		createCardFromInstance(this, target.card)
 		this.copiedUnits.push(target)
+		Keywords.createCard.forOwnerOf(this).fromInstance(target.card)
 	}
 }

@@ -11,7 +11,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import {GameEvent} from './GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 
-type EventSubscriber = ServerGame | ServerCard | ServerBuff
+export type EventSubscriber = ServerGame | ServerCard | ServerBuff
 
 export class EventCallback<EventArgs> {
 	private readonly __subscriber: EventSubscriber
@@ -62,6 +62,8 @@ export class EventCallback<EventArgs> {
 	 * ------------------------------------------------------------------------
 	 * Subscribers must **NOT** modify the event that triggered the callback. See `createHook` for
 	 * event modifications.
+	 *
+	 * If any of the `perform` expressions throws an error, the execution of the chain is stopped.
 	 */
 	perform(callback: (args: EventArgs, preparedState: Record<string, any>) => void): EventCallback<EventArgs> {
 		this.__callbacks.push(callback)
@@ -226,7 +228,8 @@ export default class ServerGameEvents {
 
 		const preparedCallbacks = validCallbacks.map(callback => ({
 			callback: callback,
-			preparedState: callback.prepares.reduce((state, preparator) => preparator(event.args, state), {})
+			subscriber: callback.subscriber,
+			preparedState: callback.prepares.reduce((state, preparator) => preparator(event.args, state), {}),
 		}))
 
 		preparedCallbacks
@@ -235,15 +238,26 @@ export default class ServerGameEvents {
 					return
 				}
 
+				const failedSubscribers: EventSubscriber[] = []
 				preparedCallback.callback.callbacks.forEach(callback => {
+					if (failedSubscribers.includes(preparedCallback.subscriber)) {
+						return
+					}
+
 					if (args.allowThreading) {
 						this.game.animation.createAnimationThread()
 					}
 
-					cardPerform(() => callback(event.args, preparedCallback.preparedState))
+					try {
+						callback(event.args, preparedCallback.preparedState)
+					} catch (err) {
+						failedSubscribers.push(preparedCallback.subscriber)
+					}
 
 					if (args.allowThreading) {
 						this.game.animation.commitAnimationThread()
+					} else {
+						this.game.animation.syncAnimationThreads()
 					}
 				})
 			})
