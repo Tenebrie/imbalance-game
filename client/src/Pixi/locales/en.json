@@ -382,7 +382,7 @@
 
 	"card.unitPriestessOfAedine.name": "Priestess of Aedine",
 	"card.unitPriestessOfAedine.description": "*Deploy:*\nRestore {healing} Power to a damaged allied unit",
-	"card.unitPriestessOfAedine.target.heal": "Restore {healing} Power",
+	"card.unitPriestessOfAedine.heal.target": "Restore {healing} Power",
 
 	"card.unitSupplyWagon.name": "Supply Wagon",
 	"card.unitSupplyWagon.description": "*Deploy:*\nGive +{extraPower} Power to adjacent units\nThen, *Push* them {pushDistance} row forward",
@@ -443,7 +443,7 @@
 	"card.unitHungrySpellslinger.description": "*Infuse *{infuseCost}*:*\nAdd a Scroll to your hand.\nIt costs {spellDiscount} Mana less.",
 
 	"card.unitElderHoundmaster.name": "Elder Houndmaster",
-	"card.unitElderHoundmaster.description": "*Deploy*\nSpawn two *Trained Hounds*.",
+	"card.unitElderHoundmaster.description": "*Deploy:*\nSpawn two *Trained Hounds*.",
 
 	"card.unitTrainedHound.name": "Trained Hound",
 	"card.unitTrainedHound.description": "<i>No effect</i>",
@@ -491,11 +491,11 @@
 
 	"card.spellLightningStorm.name": "Lightning Storm",
 	"card.spellLightningStorm.description": "<ifn isUpgraded>Deal {damage} Damage to {targetCount} enemy units.</if><if isUpgraded>Deal {damage} Damage to an enemy unit. Repeat this {targetCount} times.</if><p><i>Number of targets increases by {targetsPerStorm} for every *Storm* card in your Graveyard.</i>",
-	"card.spellLightningStorm.targetLabel": "Deal {damage} Damage\nTargets remaining: {targetsRemaining}",
+	"card.spellLightningStorm.target": "Deal {damage} Damage\nTargets remaining: {targetsRemaining}",
 
 	"card.spellEnchantedStorm.name": "Enchanted Storm",
 	"card.spellEnchantedStorm.description": "<ifn isUpgraded>Give +{buffPower} Power to {targetCount} allied units.</if><if isUpgraded>Give +{buffPower} Power to an allied unit. Repeat this {targetCount} times.</if><p><i>Bonus Power increases by {powerPerStorm} for every *Storm* card in your Graveyard.</i>",
-	"card.spellEnchantedStorm.targetLabel": "Give +{buffPower} Power\nTargets remaining: {targetsRemaining}",
+	"card.spellEnchantedStorm.target": "Give +{buffPower} Power\nTargets remaining: {targetsRemaining}",
 
 	"card.spellHealingRain.name": "Healing Rain",
 	"card.spellHealingRain.description": "Restore {healing} Power to all allied units.<p><i>Healing increases by {healingPerStorm} for every *Storm* card in your Graveyard.</i>",

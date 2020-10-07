@@ -14,7 +14,7 @@ import BuffUnitToSpellConversion from '../../../../buffs/BuffUnitToSpellConversi
 import BuffLeaderPower from '../../../../buffs/BuffLeaderPower'
 
 export default class SpellEternalServitude extends ServerCard {
-	public extraCost = 2
+	public extraCost = 0
 
 	constructor(game: ServerGame) {
 		super(game, {
