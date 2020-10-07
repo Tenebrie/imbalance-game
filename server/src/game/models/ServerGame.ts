@@ -311,7 +311,7 @@ export default class ServerGame implements Game {
 
 		player.mulliganCard(card)
 		player.cardsMulliganed += 1
-		OutgoingMessageHandlers.notifyAboutCardsMulliganed(player)
+		OutgoingMessageHandlers.notifyAboutCardsMulliganed(player.player, player)
 		player.showMulliganCards()
 	}
 

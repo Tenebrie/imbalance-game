@@ -4,6 +4,7 @@ import CardStats from '@shared/models/CardStats'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import {limitValueToInterval} from '../../utils/Utils'
 import ServerBuff from './ServerBuff'
+import CardType from '@shared/enums/CardType'
 
 interface ServerCardStatsProps {
 	basePower: number
@@ -35,14 +36,14 @@ export default class ServerCardStats implements CardStats {
 
 		this.__power = props.basePower
 		this.__armor = props.baseArmor
-		this.__unitCost = 1
+		this.__unitCost = card.type === CardType.UNIT ? 1 : 0
 		this.__spellCost = props.baseSpellCost
 
 		this.__maxPower = props.basePower
 		this.__maxArmor = props.baseArmor
 		this.__basePower = props.basePower
 		this.__baseArmor = props.baseArmor
-		this.__baseUnitCost = 1
+		this.__baseUnitCost = card.type === CardType.UNIT ? 1 : 0
 		this.__baseSpellCost = props.baseSpellCost
 	}
 

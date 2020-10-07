@@ -8,6 +8,7 @@ import Constants from '@shared/Constants'
 import store from '@/Vue/store'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import {sortCards} from '@shared/Utils'
 
 export const forEachInNumericEnum = (enumeration: Enumerator, handler: (val: any) => any): void => {
 	for (const value in enumeration) {
@@ -125,24 +126,11 @@ export default {
 	},
 
 	sortCards(inputArray: RenderedCard[]): RenderedCard[] {
-		return inputArray.slice().sort((a: RenderedCard, b: RenderedCard) => {
-			return (
-				(+a.features.includes(CardFeature.LOW_SORT_PRIORITY) - +b.features.includes(CardFeature.LOW_SORT_PRIORITY)) ||
-				(a.type - b.type) ||
-				(a.type === CardType.UNIT && (a.color - b.color || b.stats.basePower - a.stats.basePower || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.stats.baseSpellCost - b.stats.baseSpellCost || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
-			)
-		})
+		return sortCards(inputArray) as RenderedCard[]
 	},
 
 	sortEditorCards(inputArray: CardMessage[]): any[] {
-		return inputArray.slice().sort((a: CardMessage, b: CardMessage) => {
-			return (
-				(a.type - b.type) ||
-				(a.type === CardType.UNIT && (a.color - b.color || b.stats.basePower - a.stats.basePower || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id))) ||
-				(a.type === CardType.SPELL && (a.color - b.color || a.stats.baseSpellCost - b.stats.baseSpellCost || a.sortPriority - b.sortPriority || this.hashCode(a.class) - this.hashCode(b.class) || this.hashCode(a.id) - this.hashCode(b.id)))
-			)
-		})
+		return sortCards(inputArray) as CardMessage[]
 	},
 
 	getMaxCardCountForColor(color: CardColor): number {

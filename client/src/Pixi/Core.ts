@@ -38,7 +38,7 @@ export default class Core {
 		const protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
 		let targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}?deckId=${deckId}`
 		if (game.players.length >= 2) {
-			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}/spectate/${game.owner.id}`
+			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}/spectate/${game.players[0].player.id}`
 		}
 		const socket = new WebSocket(targetUrl)
 		socket.onopen = () => this.onConnect(container)

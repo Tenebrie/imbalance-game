@@ -87,7 +87,7 @@ export default class ServerResolveStack implements ResolveStack {
 		OutgoingMessageHandlers.notifyAboutCardResolved(resolvedEntry.ownedCard)
 
 		const resolvedCard = resolvedEntry.ownedCard
-		if (resolvedCard.card.features.includes(CardFeature.HERO_POWER)) {
+		if (resolvedCard.card.type === CardType.SPELL && resolvedCard.card.features.includes(CardFeature.HERO_POWER)) {
 			resolvedCard.card.cleanse()
 			resolvedCard.owner.cardDeck.addSpellToTop(resolvedCard.card)
 		} else if (resolvedCard.card.type === CardType.SPELL) {

@@ -9,6 +9,8 @@ import ServerAnimation from './ServerAnimation'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import BuffLeaderPower from '../buffs/BuffLeaderPower'
+import BuffUnitToSpellConversion from '../buffs/BuffUnitToSpellConversion'
 
 export interface BuffConstructor {
 	new (game: ServerGame): ServerBuff
@@ -146,6 +148,11 @@ export default class ServerBuffContainer implements BuffContainer {
 		buffsOfType.forEach(buffToRemove => {
 			this.removeByReference(buffToRemove)
 		})
+	}
+
+	public removeCleansable(): void {
+		const buffsToRemove = this.buffs.filter(buff => buff.constructor !== BuffLeaderPower && buff.constructor !== BuffUnitToSpellConversion)
+		buffsToRemove.forEach(buff => this.removeByReference(buff))
 	}
 
 	public removeAll(): void {

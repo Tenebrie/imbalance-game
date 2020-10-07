@@ -17,19 +17,12 @@ export default class ServerGameCardPlay {
 	constructor(game: ServerGame) {
 		this.game = game
 		this.cardResolveStack = new ServerResolveStack(game)
-
-		// this.game.events.createCallback<CardTargetsConfirmedEventArgs>(this.game, GameEventType.CARD_TARGETS_CONFIRMED)
-		// 	.perform()
-
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
 		/* Deduct mana */
-		if (ownedCard.card.type === CardType.UNIT) {
-			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.stats.unitCost))
-		} else if (ownedCard.card.type === CardType.SPELL) {
-			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.stats.spellCost))
-		}
+		ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.stats.unitCost))
+		ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.stats.spellCost))
 
 		/* Resolve card */
 		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)

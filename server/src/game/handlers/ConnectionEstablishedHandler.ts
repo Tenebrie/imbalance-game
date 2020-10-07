@@ -57,6 +57,7 @@ export default {
 			OutgoingMessageHandlers.sendActivePlayer(spectator.player, game.activePlayer)
 		}
 		if (spectatedPlayerInGame.targetRequired && !spectatedPlayerInGame.mulliganMode) {
+			OutgoingMessageHandlers.notifyAboutCardsMulliganed(spectator.player, spectatedPlayerInGame)
 			OutgoingMessageHandlers.notifyAboutRequestedTargets(spectator.player, TargetMode.DEPLOY_EFFECT, game.cardPlay.getValidTargets())
 		} else if (spectatedPlayerInGame.mulliganMode) {
 			const cardsToMulligan = spectatedPlayerInGame.cardHand.unitCards

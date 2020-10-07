@@ -48,44 +48,78 @@ export default {
 		})
 	},
 
-	notifyAboutCardsMulliganed: (playerInGame: ServerPlayerInGame): void => {
-		playerInGame.player.sendMessage({
+	notifyAboutCardsMulliganed: (playerToNotify: ServerPlayer, playerInGame: ServerPlayerInGame): void => {
+		playerToNotify.sendMessage({
 			type: PlayerUpdateMessageType.MULLIGANS,
 			data: new MulliganCountMessage(playerInGame.cardsMulliganed, playerInGame.game.maxMulligans),
 			highPriority: true
 		})
 	},
 
-	notifyAboutCardAddedToHand(playerInGame: ServerPlayerInGame, card: ServerCard): void {
+	notifyAboutCardAddedToUnitHand(playerInGame: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
-			type: PlayerUpdateMessageType.CARD_ADD_HAND,
+			type: PlayerUpdateMessageType.CARD_ADD_HAND_UNIT,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
 
 		playerInGame.opponent?.player.sendMessage({
-			type: PlayerUpdateMessageType.CARD_ADD_HAND,
+			type: PlayerUpdateMessageType.CARD_ADD_HAND_UNIT,
 			data: isCardPublic(card) ? new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)) : new HiddenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
 	},
 
-	notifyAboutCardAddedToDeck(playerInGame: ServerPlayerInGame, card: ServerCard): void {
+	notifyAboutCardAddedToSpellHand(playerInGame: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
-			type: PlayerUpdateMessageType.CARD_ADD_DECK,
+			type: PlayerUpdateMessageType.CARD_ADD_HAND_SPELL,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
+
 		playerInGame.opponent?.player.sendMessage({
-			type: PlayerUpdateMessageType.CARD_ADD_DECK,
+			type: PlayerUpdateMessageType.CARD_ADD_HAND_SPELL,
 			data: isCardPublic(card) ? new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)) : new HiddenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
 	},
 
-	notifyAboutCardAddedToGrave(playerInGame: ServerPlayerInGame, card: ServerCard): void {
+	notifyAboutCardAddedToUnitDeck(playerInGame: ServerPlayerInGame, card: ServerCard): void {
 		playerInGame.player.sendMessage({
-			type: PlayerUpdateMessageType.CARD_ADD_GRAVE,
+			type: PlayerUpdateMessageType.CARD_ADD_DECK_UNIT,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
 		playerInGame.opponent?.player.sendMessage({
-			type: PlayerUpdateMessageType.CARD_ADD_GRAVE,
+			type: PlayerUpdateMessageType.CARD_ADD_DECK_UNIT,
+			data: isCardPublic(card) ? new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)) : new HiddenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
+		})
+	},
+
+	notifyAboutCardAddedToSpellDeck(playerInGame: ServerPlayerInGame, card: ServerCard): void {
+		playerInGame.player.sendMessage({
+			type: PlayerUpdateMessageType.CARD_ADD_DECK_SPELL,
+			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
+		})
+		playerInGame.opponent?.player.sendMessage({
+			type: PlayerUpdateMessageType.CARD_ADD_DECK_SPELL,
+			data: isCardPublic(card) ? new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)) : new HiddenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
+		})
+	},
+
+	notifyAboutCardAddedToUnitGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard): void {
+		playerInGame.player.sendMessage({
+			type: PlayerUpdateMessageType.CARD_ADD_GRAVE_UNIT,
+			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
+		})
+		playerInGame.opponent?.player.sendMessage({
+			type: PlayerUpdateMessageType.CARD_ADD_GRAVE_UNIT,
+			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
+		})
+	},
+
+	notifyAboutCardAddedToSpellGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard): void {
+		playerInGame.player.sendMessage({
+			type: PlayerUpdateMessageType.CARD_ADD_GRAVE_SPELL,
+			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
+		})
+		playerInGame.opponent?.player.sendMessage({
+			type: PlayerUpdateMessageType.CARD_ADD_GRAVE_SPELL,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
 		})
 	},
@@ -95,11 +129,11 @@ export default {
 		const opponent = ownedCard.owner.opponent!.player
 
 		owner.sendMessage({
-			type: PlayerUpdateMessageType.CARD_DESTROY_HAND,
+			type: PlayerUpdateMessageType.CARD_DESTROY_IN_HAND,
 			data: new OwnedCardRefMessage(ownedCard)
 		})
 		opponent.sendMessage({
-			type: PlayerUpdateMessageType.CARD_DESTROY_HAND,
+			type: PlayerUpdateMessageType.CARD_DESTROY_IN_HAND,
 			data: new OwnedCardRefMessage(ownedCard)
 		})
 	},
@@ -109,24 +143,22 @@ export default {
 		const opponent = ownedCard.owner.opponent!.player
 
 		owner.sendMessage({
-			type: PlayerUpdateMessageType.CARD_DESTROY_DECK,
+			type: PlayerUpdateMessageType.CARD_DESTROY_IN_DECK,
 			data: new OwnedCardRefMessage(ownedCard)
 		})
 		opponent.sendMessage({
-			type: PlayerUpdateMessageType.CARD_DESTROY_DECK,
+			type: PlayerUpdateMessageType.CARD_DESTROY_IN_DECK,
 			data: new OwnedCardRefMessage(ownedCard)
 		})
 	},
 
 	notifyAboutCardInGraveyardDestroyed(ownedCard: ServerOwnedCard): void {
-		const opponent =
-
 		ownedCard.owner.player.sendMessage({
-			type: PlayerUpdateMessageType.CARD_DESTROY_GRAVE,
+			type: PlayerUpdateMessageType.CARD_DESTROY_IN_GRAVE,
 			data: new OwnedCardRefMessage(ownedCard)
 		})
 		ownedCard.owner.opponent?.player.sendMessage({
-			type: PlayerUpdateMessageType.CARD_DESTROY_GRAVE,
+			type: PlayerUpdateMessageType.CARD_DESTROY_IN_GRAVE,
 			data: new OwnedCardRefMessage(ownedCard)
 		})
 	},

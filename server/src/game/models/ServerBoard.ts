@@ -15,6 +15,8 @@ import ServerAnimation from './ServerAnimation'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
 import BuffTutoredCard from '../buffs/BuffTutoredCard'
+import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
 
 export default class ServerBoard implements Board {
 	readonly game: ServerGame
@@ -307,10 +309,15 @@ export default class ServerBoard implements Board {
 		}))
 
 		card.cleanse()
-		card.stats.power = 0
 		this.removeUnit(unit)
 
-		unit.owner.cardGraveyard.addUnit(card)
+		if (card.features.includes(CardFeature.HERO_POWER)) {
+			unit.owner.cardDeck.addSpellToTop(card)
+		} else if (card.type === CardType.UNIT) {
+			unit.owner.cardGraveyard.addUnit(card)
+		} else if (card.type === CardType.SPELL) {
+			unit.owner.cardGraveyard.addSpell(card)
+		}
 
 		this.unitsBeingDestroyed.splice(this.unitsBeingDestroyed.indexOf(unit), 1)
 	}

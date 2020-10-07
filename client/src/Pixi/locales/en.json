@@ -145,6 +145,8 @@
 	"card.feature.keywordSummon.description": "Move a card from your deck into your hand. It gets 'Temporary Card'.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
+	"card.feature.keywordHeroPower.name": "Leader Power",
+	"card.feature.keywordHeroPower.description": "When played as spell or destroyed as unit, target card returns to your deck. It is also always revealed.",
 	"card.feature.keywordBuffStun.name": "Stun (Buff)",
 	"card.feature.keywordBuffStun.description": "Target card is stunned and is temporarily disabled.",
 	"card.feature.keywordBuffGrowth.name": "Growth (Buff)",
@@ -156,8 +158,11 @@
 	"card.feature.keywordBuffTemporaryCard.name": "Temporary card (Buff)",
 	"card.feature.keywordBuffTemporaryCard.description": "Target card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.heroPower.name": "Leader Power",
-	"card.feature.heroPower.description": "When played, this card returns to your deck.",
+	"card.feature.heroPower.description": "When played as spell or destroyed as unit, this card returns to your deck. It is also always revealed.",
 	"card.feature.heroPower.text": "*Leader Power*",
+	"card.feature.heroArtifact.name": "Leader Artifact",
+	"card.feature.heroArtifact.description": "This card is always revealed.",
+	"card.feature.heroArtifact.text": "*Leader Artifact*",
 	"card.feature.temporaryCard.name": "Temporary card",
 	"card.feature.temporaryCard.description": "This card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.temporaryCard.text": "<c=orange>Temporary card</c>",
@@ -510,6 +515,9 @@
 	"card.spellScrollOfSapping.name": "Scroll of Sapping",
 	"card.spellScrollOfSapping.description": "Choose a unit.\nReturn it to the owner's hand and grant it *'Temporary card'*.",
 
+	"card.spellFieryEntrance.name": "Fiery Entrance",
+	"card.spellFieryEntrance.description": "*Summon* a top card from your deck.",
+
 	"card.spellSteelSpark.name": "Steel Spark",
 	"card.spellSteelSpark.description": "Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
 
@@ -522,8 +530,8 @@
 	"card.spellFireball.name": "Fireball",
 	"card.spellFireball.description": "Deal {damage} Damage to an enemy unit.<p>Deal {areaDamage} Damage to all adjacent units.",
 
-	"card.spellFieryEntrance.name": "Fiery Entrance",
-	"card.spellFieryEntrance.description": "*Summon* a top card from your deck.",
+	"card.spellEternalServitude.name": "Eternal Servitude",
+	"card.spellEternalServitude.description": "Transform an allied unit into a *Leader Power*.\nThis unit now costs Mana equal to it's base Power.",
 
 	"card.spellShadowSpark.name": "Shadow Spark",
 	"card.spellShadowSpark.description": "Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",

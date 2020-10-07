@@ -9,19 +9,13 @@ import ServerDamageInstance from '../models/ServerDamageSource'
 import ServerGraveyard from '../models/ServerGraveyard'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import Constants from '@shared/Constants'
-import BuffTutoredCard from '../buffs/BuffTutoredCard'
-import BuffDuration from '@shared/enums/BuffDuration'
-import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
-import CardType from '@shared/enums/CardType'
+import CardLibrary from '../libraries/CardLibrary'
 import GameEventCreators from '../models/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Utils from '../../utils/Utils'
 import ServerCardTarget from '../models/ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
-import CardColor from '@shared/enums/CardColor'
-import CardFaction from '@shared/enums/CardFaction'
-import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -203,7 +197,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public startMulligan(): void {
 		this.mulliganMode = true
 		this.showMulliganCards()
-		OutgoingMessageHandlers.notifyAboutCardsMulliganed(this)
+		OutgoingMessageHandlers.notifyAboutCardsMulliganed(this.player, this)
 	}
 
 	public showMulliganCards(): void {
