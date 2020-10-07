@@ -228,6 +228,9 @@
 	"buff.buffSappedCard.name": "Sapped card",
 	"buff.buffSappedCard.description": "This card has 'Temporary card'.",
 
+	"buff.buffLeaderPower.name": "Leader Power",
+	"buff.buffLeaderPower.description": "This card is a leader power.",
+
 	"buff.buffUpgradedStorms.name": "Upgraded Storms",
 	"buff.buffUpgradedStorms.description": "Your Storms are upgraded.",
 

@@ -228,6 +228,9 @@
 	"buff.buffSappedCard.name": "Возвращенная карта",
 	"buff.buffSappedCard.description": "Эта карта является временной.",
 
+	"buff.buffLeaderPower.name": "Способность предводителя",
+	"buff.buffLeaderPower.description": "Эта карта является способностью предводителя.",
+
 	"buff.buffUpgradedStorms.name": "Улучшенные Бури",
 	"buff.buffUpgradedStorms.description": "Ваши Бури улучшены.",
 
