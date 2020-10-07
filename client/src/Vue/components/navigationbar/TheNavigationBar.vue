@@ -18,7 +18,7 @@
 			</div>
 		</div>
 		<div class="right-side-container">
-			<language-dropdown />
+			<language-dropdown v-if="displayLanguageSelector" />
 			<the-mini-user-profile />
 		</div>
 	</div>
@@ -27,13 +27,22 @@
 <script lang="ts">
 import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfile.vue'
 import LanguageDropdown from '@/Vue/components/navigationbar/LanguageSelector.vue'
+import {computed, defineComponent} from '@vue/composition-api'
+import store from '@/Vue/store'
 
-export default {
+export default defineComponent({
 	components: {
 		TheMiniUserProfile,
 		LanguageDropdown,
+	},
+	setup() {
+		const displayLanguageSelector = computed<boolean>(() => !store.state.isLoggedIn)
+
+		return {
+			displayLanguageSelector
+		}
 	}
-}
+})
 </script>
 
 <style scoped lang="scss">
