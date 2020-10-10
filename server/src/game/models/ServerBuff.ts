@@ -21,7 +21,6 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 export default class ServerBuff implements Buff {
 	id: string
 	game: ServerGame
-	card: ServerCard
 	source: ServerCard | null
 	buffClass: string
 	alignment: BuffAlignment
@@ -38,6 +37,8 @@ export default class ServerBuff implements Buff {
 	baseDuration: number
 	baseIntensity: number
 
+	__card: ServerCard | null
+
 	constructor(game: ServerGame, stackType: BuffStackType) {
 		this.id = uuidv4()
 		this.game = game
@@ -48,6 +49,15 @@ export default class ServerBuff implements Buff {
 		this.cardTribes = []
 		this.buffFeatures = []
 		this.cardFeatures = []
+
+		this.name = ''
+		this.description = ''
+		this.duration = this.baseDuration
+		this.intensity = this.baseIntensity
+
+		this.__card = null
+		this.source = null
+		this.buffClass = ''
 
 		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
 			.require(({ player }) => player === this.card.owner)
@@ -60,11 +70,22 @@ export default class ServerBuff implements Buff {
 			.perform(() => this.onTurnChanged())
 	}
 
+	public get card(): ServerCard {
+		if (!this.__card) {
+			throw new Error('Buff is not assigned to a card yet')
+		}
+		return this.__card
+	}
+
+	public set card(value: ServerCard) {
+		this.__card = value
+	}
+
 	private onTurnChanged(): void {
 		this.setDuration(this.duration - 1)
 	}
 
-	protected get unit(): ServerUnit | null {
+	protected get unit(): ServerUnit | undefined {
 		return this.game.board.findUnitById(this.card.id)
 	}
 
@@ -130,7 +151,7 @@ export default class ServerBuff implements Buff {
 	 */
 	protected createEffect<ArgsType>(event: GameEventType): EventCallback<ArgsType> {
 		return this.game.events.createCallback<ArgsType>(this, event)
-			.require((args, rawEvent) => rawEvent.effectSource && rawEvent.effectSource === this)
+			.require((args, rawEvent) => !!rawEvent.effectSource && rawEvent.effectSource === this)
 	}
 
 	/* Subscribe to a game hook

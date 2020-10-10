@@ -7,7 +7,6 @@ import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
-import {UnitCreatedEventArgs} from '../../../models/GameEventCreators'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroForksmanshipInstructor extends ServerCard {
@@ -29,7 +28,7 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 			bonusPower: this.bonusPower
 		}
 
-		this.createCallback<UnitCreatedEventArgs>(GameEventType.UNIT_CREATED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.UNIT_CREATED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card !== this)
 			.require(({ triggeringUnit }) => triggeringUnit.owner === this.owner)
 			.require(({ triggeringUnit }) => triggeringUnit.card.stats.power <= this.powerThreshold)

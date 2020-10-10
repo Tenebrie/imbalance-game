@@ -36,9 +36,13 @@ export default class UnitMerchantsAssistant extends ServerCard {
 	}
 
 	private onDeploy() {
-		const player = this.owner
+		const player = this.ownerInGame
 		const alliedSpells = Utils.sortCards(player.cardHand.spellCards)
-		this.owner.leader.buffs.addMultiple(BuffNextSpellDiscountAura, this.spellDiscount, this, BuffDuration.INFINITY)
-		alliedSpells.forEach(spell => spell.buffs.addMultiple(BuffNextSpellDiscount, this.spellDiscount, this, BuffDuration.INFINITY))
+		player.leader.buffs.addMultiple(BuffNextSpellDiscountAura, this.spellDiscount, this, BuffDuration.INFINITY)
+		alliedSpells.forEach(spell => {
+			this.game.animation.createAnimationThread()
+			spell.buffs.addMultiple(BuffNextSpellDiscount, this.spellDiscount, this, BuffDuration.INFINITY)
+			this.game.animation.commitAnimationThread()
+		})
 	}
 }

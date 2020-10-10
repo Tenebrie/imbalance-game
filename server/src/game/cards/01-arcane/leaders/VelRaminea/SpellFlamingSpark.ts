@@ -1,19 +1,15 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import SimpleTargetDefinitionBuilder from '../../../../models/targetDefinitions/SimpleTargetDefinitionBuilder'
-import TargetDefinitionBuilder from '../../../../models/targetDefinitions/TargetDefinitionBuilder'
 import ServerUnit from '../../../../models/ServerUnit'
 import ServerDamageInstance from '../../../../models/ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
-import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerAnimation from '../../../../models/ServerAnimation'
 import BuffVelRamineaWeave from '../../../../buffs/BuffVelRamineaWeave'
 import CardLocation from '@shared/enums/CardLocation'
-import {CardTargetSelectedEventArgs} from '../../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -44,13 +40,17 @@ export default class SpellFlamingSpark extends ServerCard {
 			.target(TargetType.UNIT)
 			.requireEnemyUnit()
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	get damage(): number {
+		const owner = this.owner
+		if (!owner) {
+			return 0
+		}
 		return this.baseDamage
-			+ this.game.getTotalBuffIntensityForPlayer(BuffVelRamineaWeave, this.owner, [CardLocation.LEADER])
+			+ this.game.getTotalBuffIntensityForPlayer(BuffVelRamineaWeave, owner, [CardLocation.LEADER])
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

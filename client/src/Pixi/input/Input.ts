@@ -18,6 +18,7 @@ import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import store from '@/Vue/store'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
+import TargetMode from '@shared/enums/TargetMode'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -67,12 +68,20 @@ export default class Input {
 	}
 
 	public updateCardHoverStatus(): void {
+		let hoveredCard: HoveredCard | null = null
+		const selectableCards = this.forcedTargetingCards.slice().reverse()
+		if (selectableCards.length > 0) {
+			const hoveredSelectableCard = selectableCards.find(card => card.isHovered()) || null
+			if (hoveredSelectableCard) {
+				hoveredCard = HoveredCard.fromSelectableCard(hoveredSelectableCard)
+			}
+			this.hoveredCard = hoveredCard
+			return
+		}
+
 		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
 		const playerHandCards = Core.player.cardHand.allCards.slice().reverse()
 		const opponentHandCards = Core.opponent ? Core.opponent.cardHand.allCards.slice().reverse() : []
-		const selectableCards = this.forcedTargetingCards.slice().reverse()
-
-		let hoveredCard: HoveredCard | null = null
 
 		const hoveredCardOnBoard = gameBoardCards.find(cardOnBoard => cardOnBoard.card.isHovered()) || null
 		if (hoveredCardOnBoard) {
@@ -91,11 +100,6 @@ export default class Input {
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.isHovered()) {
 			hoveredCard = HoveredCard.fromAnnouncedCard(Core.mainHandler.announcedCard)
-		}
-
-		const hoveredSelectableCard = selectableCards.find(card => card.isHovered()) || null
-		if (hoveredSelectableCard) {
-			hoveredCard = HoveredCard.fromSelectableCard(hoveredSelectableCard)
 		}
 
 		this.hoveredCard = hoveredCard
@@ -133,6 +137,10 @@ export default class Input {
 		}
 
 		if (Core.isSpectating) {
+			return
+		}
+
+		if (this.forcedTargetingMode && this.forcedTargetingMode.targetMode === TargetMode.BROWSE) {
 			return
 		}
 
@@ -307,29 +315,49 @@ export default class Input {
 		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardId)
 	}
 
-	public async enableForcedTargetingMode(validTargets: ClientCardTarget[]): Promise<void> {
-		this.forcedTargetingCards.forEach(card => card.unregister())
-		this.forcedTargetingCards = []
-
-		this.forcedTargetingMode = new ForcedTargetingMode(validTargets)
+	public async enableForcedTargetingMode(targetMode: TargetMode, validTargets: ClientCardTarget[]): Promise<void> {
+		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets)
 		await this.createForcedTargetingCards(validTargets)
 		this.forcedTargetingMode.validTargets
 			.filter(target => target.targetCardData && !target.targetCard)
 			.forEach(target => {
 				target.targetCard = this.forcedTargetingCards.find(card => card.id === target.targetCardData.id)
 			})
+		store.commit.gameStateModule.setPopupTargetingMode(targetMode)
 	}
 
 	public async createForcedTargetingCards(targets: ClientCardTarget[]): Promise<void> {
-		const forcedTargetingCardMessages = targets
+		const newCards = targets
 			.filter(target => target.targetType === TargetType.CARD_IN_LIBRARY || target.targetType === TargetType.CARD_IN_UNIT_DECK || target.targetType === TargetType.CARD_IN_SPELL_DECK)
 			.map(target => target.targetCardData)
-		this.forcedTargetingCards = Utils.sortCards(await Utils.renderCardsAsynchronously(forcedTargetingCardMessages))
+
+		const existingCards = this.forcedTargetingCards
+		const addedCardMessages = newCards.filter(card => !existingCards.find(existingCard => existingCard.id === card.id))
+
+		const cardsToAdd = await Utils.renderCardsAsynchronously(addedCardMessages)
+		const cardsToRemove = existingCards.filter(card => newCards.every(newCard => newCard.id !== card.id))
+		const result = existingCards.reduce<RenderedCard[]>((result, existingCard) => {
+			if (cardsToRemove.includes(existingCard) && cardsToAdd.length > 0) {
+				return result.concat(cardsToAdd.shift())
+			} else if (cardsToRemove.includes(existingCard)) {
+				return result
+			}
+
+			return result.concat(existingCard)
+		}, []).concat(cardsToAdd)
+
+		cardsToRemove.forEach(card => card.unregister())
+		PIXI.Ticker.shared.addOnce(() => {
+			result.forEach(card => card.resetDisplayMode())
+		})
+
+		this.forcedTargetingCards = result
 	}
 
 	public disableForcedTargetingMode(): void {
 		this.forcedTargetingMode = null
 		this.forcedTargetingCards.forEach(card => card.unregister())
 		this.forcedTargetingCards = []
+		store.commit.gameStateModule.setPopupTargetingMode(null)
 	}
 }

@@ -24,19 +24,20 @@ export default class ServerHand {
 		return this.unitCards.slice().concat(this.spellCards)
 	}
 
-	public addUnit(card: ServerCard): void {
-		this.unitCards.push(card)
-		OutgoingMessageHandlers.notifyAboutCardAddedToHand(this.owner, card)
+	public addUnit(card: ServerCard, index: number | 'default' = 'default'): void {
+		index = index === 'default' ? this.unitCards.length - 1 : index
+		this.unitCards.splice(index, 0, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToUnitHand(this.owner, card)
 		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
-			this.game.animation.playForPlayer(ServerAnimation.cardDraw(), this.owner.opponent)
+			this.game.animation.playForPlayer(ServerAnimation.cardDraw(), this.owner.opponent!)
 		}
 	}
 
 	public addSpell(card: ServerCard): void {
 		this.spellCards.push(card)
-		OutgoingMessageHandlers.notifyAboutCardAddedToHand(this.owner, card)
+		OutgoingMessageHandlers.notifyAboutCardAddedToSpellHand(this.owner, card)
 		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
-			this.game.animation.playForPlayer(ServerAnimation.cardDraw(), this.owner.opponent)
+			this.game.animation.playForPlayer(ServerAnimation.cardDraw(), this.owner.opponent!)
 		}
 	}
 

@@ -16,6 +16,7 @@ import {ClientToServerMessageTypes} from '@shared/models/network/messageHandlers
 import {ServerToClientMessageTypes} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import GameMessage from '@shared/models/network/GameMessage'
 import PlayerMessage from '@shared/models/network/PlayerMessage'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default class Core {
 	public static isReady = false
@@ -37,7 +38,7 @@ export default class Core {
 		const protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
 		let targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}?deckId=${deckId}`
 		if (game.players.length >= 2) {
-			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}/spectate/${game.owner.id}`
+			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}/spectate/${game.players[0].player.id}`
 		}
 		const socket = new WebSocket(targetUrl)
 		socket.onopen = () => this.onConnect(container)
@@ -145,7 +146,7 @@ export default class Core {
 		return null
 	}
 
-	public static sendMessage(type: ClientToServerMessageTypes, data: Record<string, any> | null): void {
+	public static sendMessage(type: ClientToServerMessageTypes, data: Record<string, any> | TargetMode | null): void {
 		Core.socket.send(JSON.stringify({
 			type: type,
 			data: data

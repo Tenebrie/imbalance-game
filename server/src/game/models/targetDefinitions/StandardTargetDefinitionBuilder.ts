@@ -70,7 +70,7 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 
 	public merge(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
 		if (this.totalTargetCountGetters && this.totalTargetCountGetters.length > 0 || targetDefinition.totalTargetCountGetters && targetDefinition.totalTargetCountGetters.length > 0) {
-			this.totalTargetCountGetters = (this.totalTargetCountGetters || []).concat(targetDefinition.totalTargetCountGetters)
+			this.totalTargetCountGetters = (this.totalTargetCountGetters || []).concat(targetDefinition.totalTargetCountGetters || [])
 		}
 		const targetModeValues = Object.values(TargetMode).filter(val => typeof(val) === 'number')
 		const targetTypeValues = Object.values(TargetType).filter(val => typeof(val) === 'number')

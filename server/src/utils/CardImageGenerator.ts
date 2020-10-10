@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import {CanvasRenderingContext2D, createCanvas, loadImage, NodeCanvasRenderingContext2DSettings} from 'canvas'
+import {CanvasRenderingContext2D, createCanvas, loadImage} from 'canvas'
 import CardLibrary from '../game/libraries/CardLibrary'
 import createSeededRandom from 'seedrandom'
 import rgb2hex from 'rgb-hex'
@@ -92,7 +92,7 @@ class CardImageGenerator {
 		})
 	}
 
-	private renderSimplePath(ctx: CanvasRenderingContext2D, seededRandom, baseColor: RenderColor, x: number, y: number, width: number, height: number): void {
+	private renderSimplePath(ctx: CanvasRenderingContext2D, seededRandom: () => number, baseColor: RenderColor, x: number, y: number, width: number, height: number): void {
 		const variation = 40
 		const color: RenderColor = {
 			r: Math.min(255, Math.max(0, baseColor.r - variation / 2 + seededRandom() * variation)),
@@ -111,7 +111,7 @@ class CardImageGenerator {
 		ctx.fill()
 	}
 
-	private getImageMode(seededRandom): ImageMode {
+	private getImageMode(seededRandom: () => number): ImageMode {
 		const imageModes = [
 			{ mode: ImageMode.SINGLE_PATH, weight: 10 },
 			{ mode: ImageMode.DOUBLE_PATH_SPLIT_X, weight: 7 },

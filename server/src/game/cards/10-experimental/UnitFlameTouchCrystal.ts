@@ -8,7 +8,6 @@ import UnitTinySparkling from './UnitTinySparkling'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardPlayedEventArgs, UnitDestroyedEventArgs} from '../../models/GameEventCreators'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitFlameTouchCrystal extends ServerCard {
@@ -33,11 +32,11 @@ export default class UnitFlameTouchCrystal extends ServerCard {
 			chargesVisible: () => !!this.unit
 		}
 
-		this.createCallback<UnitDestroyedEventArgs>(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card === this)
 			.perform(() => this.onDestroy())
 
-		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.CARD_PLAYED, [CardLocation.BOARD])
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
 			.perform(({ triggeringCard }) => this.onSpellPlayed(triggeringCard))
 	}
@@ -47,10 +46,10 @@ export default class UnitFlameTouchCrystal extends ServerCard {
 	}
 
 	private onDestroy(): void {
-		const thisUnit = this.unit
+		const unit = this.unit!
 		for (let i = 0; i < this.charges; i++) {
 			const sparkling = CardLibrary.instantiateByConstructor(this.game, UnitTinySparkling)
-			this.game.board.createUnit(sparkling, thisUnit.owner, thisUnit.rowIndex, thisUnit.unitIndex)
+			this.game.board.createUnit(sparkling, unit.owner, unit.rowIndex, unit.unitIndex)
 		}
 	}
 }

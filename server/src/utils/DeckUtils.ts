@@ -11,7 +11,7 @@ export default {
 			cards: deck.cards
 				.filter(card => libraryCards.find(libraryCard => libraryCard.class === card.class))
 				.map(card => ({
-					...libraryCards.find(libraryCard => libraryCard.class === card.class),
+					...libraryCards.find(libraryCard => libraryCard.class === card.class)!,
 					...card
 				})),
 		}

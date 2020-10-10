@@ -9,7 +9,6 @@ import ServerUnit from '../../../models/ServerUnit'
 import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
@@ -37,7 +36,7 @@ export default class UnitStoneElemental extends ServerCard {
 			.target(TargetType.UNIT)
 			.requireEnemyUnit()
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 

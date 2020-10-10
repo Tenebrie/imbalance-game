@@ -263,6 +263,9 @@ export default class Renderer {
 	}
 
 	public unregisterCard(card: RenderedCard): void {
+		card.coreContainer.destroy({
+			children: true,
+		})
 		this.rootContainer.removeChild(card.coreContainer)
 		this.rootContainer.removeChild(card.hitboxSprite)
 	}
@@ -420,8 +423,8 @@ export default class Renderer {
 			return returnValue * this.superSamplingLevel
 		}
 
-		const power = Core.board.getUnitsOwnedByPlayer(Core.player).map(unit => unit.card.stats.power).reduce((accumulator, value) => accumulator + value, 0)
-		const opponentPower = Core.board.getUnitsOwnedByPlayer(Core.opponent).map(unit => unit.card.stats.power).reduce((accumulator, value) => accumulator + value, 0)
+		const power = Core.board.getInsertedUnitsOwnedByPlayer(Core.player).map(unit => unit.card.stats.power).reduce((accumulator, value) => accumulator + value, 0)
+		const opponentPower = Core.board.getInsertedUnitsOwnedByPlayer(Core.opponent).map(unit => unit.card.stats.power).reduce((accumulator, value) => accumulator + value, 0)
 		this.playerPowerLabel.text = power.toString()
 		this.opponentPowerLabel.text = opponentPower.toString()
 		this.playerPowerLabel.style.fontSize = getPowerFontSize(power)
@@ -738,8 +741,11 @@ export default class Renderer {
 		} else if (selectableCards.length <= 10) {
 			chunks = Utils.splitArrayIntoChunks(selectableCards, 2)
 			windowFraction = this.SELECTABLE_CARD_DISCOVER_WINDOW_FRACTION
+		} else if (selectableCards.length <= 20) {
+			chunks = Utils.splitArrayIntoChunks(selectableCards, 2)
+			windowFraction = this.SELECTABLE_CARD_DECK_WINDOW_FRACTION
 		} else {
-			chunks = Utils.splitArrayIntoFixedChunks(selectableCards, 10)
+			chunks = Utils.splitArrayIntoChunks(selectableCards, 3)
 			windowFraction = this.SELECTABLE_CARD_DECK_WINDOW_FRACTION
 		}
 

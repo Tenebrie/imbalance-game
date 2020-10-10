@@ -1,18 +1,17 @@
-import CardType from '@shared/enums/CardType'
 import ServerGame from '../models/ServerGame'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
-import ServerCardTarget from '../models/ServerCardTarget'
+import ServerCardTarget, {ServerCardTargetCard} from '../models/ServerCardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerOwnedCard from '../models/ServerOwnedCard'
-import {
-	ClientToServerMessageTypes,
-	GenericActionMessageType,
-	SystemMessageType
-} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import {ClientToServerMessageTypes, GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import TargetMode from '@shared/enums/TargetMode'
+import Utils from '../../utils/Utils'
+import CardLibrary from '../libraries/CardLibrary'
+import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
 
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
@@ -61,7 +60,11 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		}
 
 		const target = ServerCardTarget.fromMessage(game, data)
-		game.cardPlay.selectCardTarget(playerInGame, target)
+		if (game.cardPlay.cardResolveStack.currentCard) {
+			game.cardPlay.selectCardTarget(playerInGame, target)
+		} else if (target instanceof ServerCardTargetCard) {
+			game.cardPlay.selectPlayerMulliganTarget(playerInGame, target)
+		}
 
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
@@ -70,8 +73,54 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
+	[GenericActionMessageType.CONFIRM_TARGETS]: (data: TargetMode, game: ServerGame, player: ServerPlayerInGame): void => {
+		if (data !== TargetMode.MULLIGAN && player.mulliganMode) {
+			player.showMulliganCards()
+		} else if (data === TargetMode.BROWSE) {
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, [])
+		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
+			player.finishMulligan()
+			game.advanceMulliganPhase()
+			game.events.flushLogEventGroup()
+		}
+
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
+	[GenericActionMessageType.REQUEST_PLAYERS_DECK]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+		const cards = Utils.sortCards(player.cardDeck.unitCards.concat(player.cardDeck.spellCards))
+		if (cards.length === 0) {
+			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+		}
+		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
+	[GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+		const cards = Utils.sortCards(player.cardGraveyard.unitCards.concat(player.cardGraveyard.spellCards))
+		if (cards.length === 0) {
+			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+		}
+		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
+	[GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+		const cards = Utils.sortCards(player.opponent!.cardGraveyard.unitCards.concat(player.opponent!.cardGraveyard.spellCards))
+		if (cards.length === 0) {
+			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+		}
+		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
 	[GenericActionMessageType.TURN_END]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (player.turnEnded || player.targetRequired) { return }
+		if (player.turnEnded || player.targetRequired) {
+			return
+		}
 
 		player.endTurn()
 		if (player.unitMana > 0) {

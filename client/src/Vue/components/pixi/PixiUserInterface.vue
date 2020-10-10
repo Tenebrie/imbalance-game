@@ -1,12 +1,23 @@
 <template>
 	<div class="pixi-user-interface">
 		<div class="settings-button-container">
-			<button @click="onShowGameLog" class="primary game-button"><i class="fas fa-history"></i></button>
-			<button @click="onShowEscapeMenu" class="primary game-button"><i class="fas fa-cog"></i></button>
+			<button @click="onShowGameLog" class="primary borderless game-button"><i class="fas fa-history"></i></button>
+			<button @click="onShowEscapeMenu" class="primary borderless game-button"><i class="fas fa-cog"></i></button>
 		</div>
-		<div class="end-turn-button-container">
-			<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
-			<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">End round</button>
+		<div class="end-turn-button-container" v-if="isEndTurnButtonVisible">
+			<div>
+				<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
+				<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">End round</button>
+			</div>
+		</div>
+		<div class="mulligan-label-container" v-if="mulliganMode">
+			<div>Replace cards ({{ maxCardMulligans - cardsMulliganed }}/{{ maxCardMulligans }})</div>
+		</div>
+		<div class="confirm-targets-button-container" v-if="isConfirmTargetsButtonVisible">
+			<div>
+				<button @click="onConfirmTargets" class="primary game-button">Confirm</button>
+				<button @click="onSortCards" class="secondary game-button" v-if="mulliganMode">Sort cards</button>
+			</div>
 		</div>
 		<div class="inspected-card">
 			<pixi-inspected-card />
@@ -39,6 +50,9 @@ import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
 import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 import TheEscapeMenu from '@/Vue/components/popup/escapeMenu/TheEscapeMenu.vue'
 import {computed, onMounted, onUnmounted} from '@vue/composition-api'
+import Core from '@/Pixi/Core'
+import Utils from '@/utils/Utils'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default Vue.extend({
 	components: {
@@ -53,12 +67,27 @@ export default Vue.extend({
 				return
 			}
 			if (event.key === 'Escape') {
+				if (isConfirmTargetsButtonVisible.value && !mulliganMode) {
+					onConfirmTargets()
+					return
+				}
 				onShowEscapeMenu()
 			}
 		}
 
 		const onEndTurn = (): void => {
 			OutgoingMessageHandlers.sendEndTurn()
+		}
+
+		const onConfirmTargets = (): void => {
+			OutgoingMessageHandlers.sendConfirmTargets(Core.input.forcedTargetingMode.targetMode)
+		}
+
+		const onSortCards = (): void => {
+			if (!Core.input) {
+				return
+			}
+			Core.input.forcedTargetingCards = Utils.sortCards(Core.input.forcedTargetingCards)
 		}
 
 		const onShowGameLog = (): void => {
@@ -79,7 +108,22 @@ export default Vue.extend({
 		})
 		const isGameStarted = computed(() => {
 			const status = store.state.gameStateModule.gameStatus
-			return status === ClientGameStatus.IN_PROGRESS || status === ClientGameStatus.VICTORY || status === ClientGameStatus.DEFEAT || status === ClientGameStatus.DRAW
+			return status === ClientGameStatus.IN_PROGRESS ||
+				status === ClientGameStatus.VICTORY ||
+				status === ClientGameStatus.DEFEAT ||
+				status === ClientGameStatus.DRAW
+		})
+		const isEndTurnButtonVisible = computed(() => {
+			return store.state.gameStateModule.popupTargetingMode === null
+		})
+		const isBrowsingDeck = computed(() => {
+			return store.state.gameStateModule.popupTargetingMode === TargetMode.BROWSE
+		})
+		const mulliganMode = computed(() => {
+			return store.state.gameStateModule.popupTargetingMode === TargetMode.MULLIGAN
+		})
+		const isConfirmTargetsButtonVisible = computed(() => {
+			return isBrowsingDeck.value || mulliganMode.value
 		})
 
 		const isVictory = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY)
@@ -99,6 +143,9 @@ export default Vue.extend({
 
 		const opponent = computed<Player | null>(() => store.state.gameStateModule.opponent)
 
+		const cardsMulliganed = computed(() => store.state.gameStateModule.cardsMulliganed)
+		const maxCardMulligans = computed(() => store.state.gameStateModule.maxCardMulligans)
+
 		return {
 			store,
 			opponent,
@@ -106,13 +153,20 @@ export default Vue.extend({
 			isDefeat,
 			isDraw,
 			isPlayersTurn,
+			isEndTurnButtonVisible,
 			isEndRoundButtonVisible,
+			mulliganMode,
+			isConfirmTargetsButtonVisible,
 			onEndTurn,
+			onConfirmTargets,
+			onSortCards,
 			onShowGameLog,
 			onShowEscapeMenu,
 			fadeInOverlayClass,
 			gameEndScreenClass,
 			spectatorOverlayClass,
+			cardsMulliganed,
+			maxCardMulligans,
 		}
 	}
 })
@@ -181,7 +235,6 @@ export default Vue.extend({
 		}
 
 		button.game-button {
-			border: none;
 			outline: none;
 			pointer-events: auto;
 			max-width: 250px;
@@ -189,6 +242,10 @@ export default Vue.extend({
 			padding: 8px 16px;
 			font-size: 24px;
 			border-radius: 4px;
+
+			&.borderless {
+				border: none;
+			}
 
 			&:disabled {
 				cursor: default;
@@ -240,9 +297,20 @@ export default Vue.extend({
 			padding: 64px;
 			align-items: center;
 			justify-content: center;
+		}
 
-			.end-turn-button:disabled {
+		.confirm-targets-button-container {
+			position: absolute;
+			right: 0;
+			height: calc(100% - 128px);
+			display: flex;
+			padding: 64px;
+			min-width: 250px;
+			align-items: flex-end;
+			justify-content: center;
 
+			& > div {
+				width: 100%;
 			}
 		}
 	}
@@ -259,6 +327,14 @@ export default Vue.extend({
 		&.visible {
 			display: block;
 		}
+	}
+
+	.mulligan-label-container {
+		position: absolute;
+		width: 100%;
+		top: 128px;
+		font-size: 36px;
+		font-weight: bold;
 	}
 
 	.menu-separator {

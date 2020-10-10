@@ -19,7 +19,7 @@
 				<span>{{ $locale.get('card.inspect.stat.maximum') }}: </span>
 				<b>{{ this.inspectedCard.stats.maxArmor }}</b>
 			</div>
-			<div v-if="this.inspectedCard.type === CardType.SPELL" class="stats-line">
+			<div v-if="displayManacost" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.manacost') }}:</div>
 				<span>{{ $locale.get('card.inspect.stat.base') }}: </span>
 				<b>{{ this.inspectedCard.stats.baseSpellCost }}</b> |
@@ -92,7 +92,7 @@ export default {
 		PixiRelatedCard
 	},
 
-	setup(props, { emit }) {
+	setup() {
 		const routeQuery = useDecksRouteQuery()
 		const isInGame = computed<boolean>(() => store.getters.gameStateModule.isInGame)
 		const displayExperimentalCards = computed<boolean>(() => !isInGame.value && routeQuery.value.experimental)
@@ -104,6 +104,10 @@ export default {
 
 		const displayArmor = computed<boolean>(() => {
 			return inspectedCard.value.stats.armor > 0 || inspectedCard.value.stats.maxArmor > 0 || inspectedCard.value.stats.baseArmor > 0
+		})
+
+		const displayManacost = computed<boolean>(() => {
+			return inspectedCard.value.stats.baseSpellCost > 0 || inspectedCard.value.stats.spellCost > 0
 		})
 
 		const displayedFeatures = computed<CardFeature[]>(() => {
@@ -162,6 +166,7 @@ export default {
 			isInGame,
 			overlayRef,
 			displayArmor,
+			displayManacost,
 			inspectedCard,
 			editorModeOffset,
 			overlayDisplayed,

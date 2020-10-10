@@ -7,18 +7,20 @@ import RichTextVariables from '@shared/models/RichTextVariables'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default class ForcedTargetingMode {
-	validTargets: ClientCardTarget[] = []
+	readonly targetMode: TargetMode
+	readonly validTargets: ClientCardTarget[]
 	selectedTarget: ClientCardTarget | null = null
 
-	constructor(validTargets: ClientCardTarget[]) {
+	constructor(targetMode: TargetMode, validTargets: ClientCardTarget[]) {
+		this.targetMode = targetMode
 		this.validTargets = validTargets
 	}
 
 	public selectTarget(): void {
 		const hoveredCard = MouseHover.getHoveredCard()
-		const hoveredUnit = MouseHover.getHoveredUnit()
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		this.selectedTarget = this.validTargets.find(target => {
@@ -34,7 +36,6 @@ export default class ForcedTargetingMode {
 
 		const target = this.selectedTarget
 		const hoveredCard = MouseHover.getHoveredCard()
-		const hoveredUnit = MouseHover.getHoveredUnit()
 		const hoveredRow = MouseHover.getHoveredRow()
 		return (target.targetCard && hoveredCard && target.targetCard.id === hoveredCard.id) ||
 			(target.targetRow && target.targetRow === hoveredRow)
@@ -50,7 +51,6 @@ export default class ForcedTargetingMode {
 
 	public getDisplayedLabel(): string {
 		const hoveredCard = MouseHover.getHoveredCard()
-		const hoveredUnit = MouseHover.getHoveredUnit()
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		const hoveredTarget = this.validTargets.find(target => {
@@ -61,7 +61,6 @@ export default class ForcedTargetingMode {
 
 	public getDisplayedLabelVariables(): RichTextVariables {
 		const hoveredCard = MouseHover.getHoveredCard()
-		const hoveredUnit = MouseHover.getHoveredUnit()
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		const hoveredTarget = this.validTargets.find(target => {
@@ -73,7 +72,6 @@ export default class ForcedTargetingMode {
 	public confirmTarget(): void {
 		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
 		OutgoingMessageHandlers.sendCardTarget(this.selectedTarget)
-		this.validTargets = []
 		this.selectedTarget = null
 	}
 }

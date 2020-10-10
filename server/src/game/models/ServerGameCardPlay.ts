@@ -1,12 +1,14 @@
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
-import ServerCardTarget from './ServerCardTarget'
+import ServerCardTarget, {ServerCardTargetCard, ServerCardTargetRow} from './ServerCardTarget'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
 import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerResolveStack from './ServerResolveStack'
 import GameEventCreators from './GameEventCreators'
+import Utils from '../../utils/Utils'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default class ServerGameCardPlay {
 	game: ServerGame
@@ -19,11 +21,8 @@ export default class ServerGameCardPlay {
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
 		/* Deduct mana */
-		if (ownedCard.card.type === CardType.UNIT) {
-			ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.stats.unitCost))
-		} else if (ownedCard.card.type === CardType.SPELL) {
-			ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.stats.spellCost))
-		}
+		ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.stats.unitCost))
+		ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.stats.spellCost))
 
 		/* Resolve card */
 		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)
@@ -51,7 +50,7 @@ export default class ServerGameCardPlay {
 		}))
 
 		/* Announce card to opponent */
-		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.cardAnnounce(card))
+		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent!.player, ServerAnimation.cardAnnounce(card))
 
 		/* Remove card from source */
 		if (source === 'hand' && owner.cardHand.findCardById(card.id)) {
@@ -68,7 +67,7 @@ export default class ServerGameCardPlay {
 		}
 
 		/* Play animation */
-		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent.player, ServerAnimation.delay())
+		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent!.player, ServerAnimation.delay())
 	}
 
 	private playUnit(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
@@ -77,6 +76,7 @@ export default class ServerGameCardPlay {
 
 		/* Start resolving */
 		this.cardResolveStack.startResolving(ownedCard)
+		this.cardResolveStack.onResumeResolving(() => this.checkCardTargeting(ownedCard))
 
 		/* Insert the card into the board */
 		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
@@ -85,15 +85,10 @@ export default class ServerGameCardPlay {
 			this.game.events.postEvent(GameEventCreators.unitDeployed({
 				triggeringUnit: unit
 			}))
+			if (this.cardResolveStack.currentCard?.card === card) {
+				this.cardResolveStack.resumeResolving()
+			}
 		}
-
-		/* Another card has been played and requires targeting. Continue execution later */
-		if (this.cardResolveStack.currentCard !== ownedCard) {
-			return
-		}
-
-		/* Require targets */
-		this.checkCardTargeting(ownedCard)
 	}
 
 	private playSpell(ownedCard: ServerOwnedCard): void {
@@ -101,18 +96,15 @@ export default class ServerGameCardPlay {
 
 		/* Start resolving */
 		this.cardResolveStack.startResolving(ownedCard)
+		this.cardResolveStack.onResumeResolving(() => this.checkCardTargeting(ownedCard))
 
 		/* Invoke the card onPlay effect */
 		this.game.events.postEvent(GameEventCreators.spellDeployed({
 			triggeringCard: card
 		}))
-
-		/* Another card has been played and requires targeting. Continue execution later */
-		if (this.cardResolveStack.currentCard !== ownedCard) {
-			return
+		if (this.cardResolveStack.currentCard?.card === card) {
+			this.cardResolveStack.resumeResolving()
 		}
-
-		this.checkCardTargeting(ownedCard)
 	}
 
 	public checkCardTargeting(ownedCard: ServerOwnedCard): void {
@@ -121,58 +113,96 @@ export default class ServerGameCardPlay {
 		if (validTargets.length === 0) {
 			this.cardResolveStack.finishResolving()
 		} else {
-			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(ownedCard.owner.player, validTargets)
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(ownedCard.owner.player, TargetMode.DEPLOY_EFFECT, Utils.shuffle(validTargets))
 		}
 	}
 
-	public getValidTargets(): ServerCardTarget[] {
-		if (!this.cardResolveStack.hasCards()) {
+	public getValidTargets(): (ServerCardTargetCard | ServerCardTargetRow)[] {
+		const currentCard = this.cardResolveStack.currentCard
+		if (!currentCard) {
 			return []
 		}
-		const currentCard = this.cardResolveStack.currentCard
-		const card = currentCard.card
+		const card = currentCard?.card
 
 		return card.targeting.getDeployEffectTargets(this.cardResolveStack.currentTargets)
 	}
 
-	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTarget): void {
-		if (playerInGame !== this.cardResolveStack.currentCard.owner) {
+	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTargetCard | ServerCardTargetRow): void {
+		const currentResolvingCard = this.cardResolveStack.currentCard
+		if (!currentResolvingCard) {
 			return
 		}
-
-		const currentResolvingCard = this.cardResolveStack.currentCard
 
 		let validTargets = this.getValidTargets()
 		const isValidTarget = !!validTargets.find(validTarget => validTarget.isEqual(target))
 		if (!isValidTarget) {
-			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(playerInGame.player, validTargets)
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player, TargetMode.DEPLOY_EFFECT, Utils.shuffle(validTargets))
 			return
 		}
 
 		this.cardResolveStack.pushTarget(target)
 
-		this.game.events.postEvent(GameEventCreators.cardTargetSelected({
-			triggeringCard: currentResolvingCard.card,
-			targetCard: target.targetCard,
-			targetUnit: target.targetCard?.unit,
-			targetRow: target.targetRow
-		}))
+		this.cardResolveStack.onResumeResolving(() => {
+			validTargets = this.getValidTargets()
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player,TargetMode.DEPLOY_EFFECT, Utils.shuffle(validTargets))
 
-		// Current card changed - resolve that first
-		if (this.cardResolveStack.currentCard !== currentResolvingCard) {
-			return
+			if (validTargets.length > 0) {
+				return
+			}
+
+			this.game.events.postEvent(GameEventCreators.cardTargetsConfirmed({
+				triggeringCard: currentResolvingCard.card,
+				triggeringPlayer: playerInGame,
+			}))
+			this.cardResolveStack.finishResolving()
+		})
+
+		if (target instanceof ServerCardTargetCard) {
+			this.game.events.postEvent(GameEventCreators.cardTargetCardSelected({
+				targetMode: target.targetMode,
+				targetType: target.targetType,
+				triggeringCard: currentResolvingCard.card,
+				triggeringPlayer: playerInGame,
+				targetCard: target.targetCard,
+			}))
+			if (target.targetCard.unit) {
+				this.game.events.postEvent(GameEventCreators.cardTargetUnitSelected({
+					targetMode: target.targetMode,
+					targetType: target.targetType,
+					triggeringCard: currentResolvingCard.card,
+					triggeringPlayer: playerInGame,
+					targetCard: target.targetCard,
+					targetUnit: target.targetCard.unit
+				}))
+			}
+		} else {
+			this.game.events.postEvent(GameEventCreators.cardTargetRowSelected({
+				targetMode: target.targetMode,
+				targetType: target.targetType,
+				triggeringCard: currentResolvingCard.card,
+				triggeringPlayer: playerInGame,
+				targetRow: target.targetRow,
+			}))
 		}
 
-		validTargets = this.getValidTargets()
+		if (this.cardResolveStack.currentCard === currentResolvingCard) {
+			this.cardResolveStack.resumeResolving()
+		}
+	}
+
+	public selectPlayerMulliganTarget(playerInGame: ServerPlayerInGame, target: ServerCardTargetCard): void {
+		this.game.events.postEvent(GameEventCreators.playerTargetSelectedCard({
+			targetMode: target.targetMode,
+			targetType: target.targetType,
+			triggeringPlayer: playerInGame,
+			targetCard: target.targetCard,
+		}))
+
+		const validTargets = this.getValidTargets()
 
 		if (validTargets.length > 0) {
-			OutgoingMessageHandlers.notifyAboutResolvingCardTargets(playerInGame.player, validTargets)
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player, TargetMode.MULLIGAN, Utils.shuffle(validTargets))
 			return
 		}
-
-		this.game.events.postEvent(GameEventCreators.cardTargetsConfirmed({
-			triggeringCard: currentResolvingCard.card
-		}))
-		this.cardResolveStack.finishResolving()
 	}
 }

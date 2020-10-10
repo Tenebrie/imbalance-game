@@ -7,7 +7,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
-import {UnitDestroyedEventArgs} from '../../../models/GameEventCreators'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitVolatileCrystal extends ServerCard {
@@ -28,7 +27,7 @@ export default class UnitVolatileCrystal extends ServerCard {
 			damage: this.damage
 		}
 
-		this.createCallback<UnitDestroyedEventArgs>(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card === this)
 			.perform(() => this.onDestroy())
 	}

@@ -6,7 +6,6 @@ import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerAnimation from '../../../models/ServerAnimation'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFeature from '@shared/enums/CardFeature'
@@ -29,7 +28,7 @@ export default class SpellScrollOfSapping extends ServerCard {
 		this.createDeployEffectTargets()
 			.target(TargetType.UNIT)
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 

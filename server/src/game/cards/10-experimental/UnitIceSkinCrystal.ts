@@ -7,7 +7,6 @@ import BuffDecayingArmor from '../../buffs/BuffDecayingArmor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardPlayedEventArgs, UnitDestroyedEventArgs} from '../../models/GameEventCreators'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitIceSkinCrystal extends ServerCard {
@@ -37,11 +36,11 @@ export default class UnitIceSkinCrystal extends ServerCard {
 			chargesVisible: () => !!this.unit
 		}
 
-		this.createCallback<UnitDestroyedEventArgs>(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card === this)
 			.perform(() => this.onDestroy())
 
-		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.CARD_PLAYED, [CardLocation.BOARD])
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
 			.perform(({ triggeringCard }) => this.onSpellPlayed(triggeringCard))
 	}
@@ -51,8 +50,8 @@ export default class UnitIceSkinCrystal extends ServerCard {
 	}
 
 	private onDestroy(): void {
-		const thisUnit = this.unit
-		const adjacentAllies = this.game.board.getAdjacentUnits(thisUnit).filter(unit => unit.owner === thisUnit.owner)
+		const unit = this.unit!
+		const adjacentAllies = this.game.board.getAdjacentUnits(unit).filter(unit => unit.owner === unit.owner)
 		adjacentAllies.forEach(unit => {
 			for (let i = 0; i < Math.floor(this.charges / this.chargesForArmor) * this.armorGranted; i++) {
 				unit.card.buffs.add(BuffDecayingArmor, this)

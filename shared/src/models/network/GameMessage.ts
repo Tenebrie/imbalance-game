@@ -7,13 +7,13 @@ export default class GameMessage {
 	id: string
 	name: string
 	isStarted: boolean
-	owner: PlayerMessage
+	owner: PlayerMessage | null
 	players: HiddenPlayerInGameMessage[]
 
 	constructor(game: Game) {
 		this.id = game.id
 		this.name = game.name
-		this.owner = new PlayerMessage(game.owner)
+		this.owner = game.owner ? new PlayerMessage(game.owner) : null
 		this.isStarted = game.isStarted
 		this.players = game.players.map(player => new HiddenPlayerInGameMessage(player))
 	}

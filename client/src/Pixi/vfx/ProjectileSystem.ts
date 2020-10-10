@@ -79,14 +79,14 @@ export default class ProjectileSystem {
 
 	public createCardAttackProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
 		return this.createAttackProjectile(sourceCard.getPosition(), targetCard, () => {
-			Core.particleSystem.createInteractionImpactParticleEffect(targetCard)
+			Core.particleSystem.createAttackImpactParticleEffect(targetCard)
 			AudioSystem.playEffect(AudioEffectCategory.IMPACT_GENERIC)
 		})
 	}
 
 	public createUniverseAttackProjectile(targetCard: RenderedCard): RenderedProjectile {
 		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => {
-			Core.particleSystem.createInteractionImpactParticleEffect(targetCard)
+			Core.particleSystem.createAttackImpactParticleEffect(targetCard)
 			AudioSystem.playEffect(AudioEffectCategory.IMPACT_GENERIC)
 		})
 	}

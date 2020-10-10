@@ -6,6 +6,7 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import CardTarget from '@shared/models/CardTarget'
 import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import {GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default {
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {
@@ -23,6 +24,22 @@ export default {
 
 	sendCardTarget(target: ClientCardTarget): void {
 		Core.sendMessage(GenericActionMessageType.CARD_TARGET, new CardTargetMessage(target))
+	},
+
+	sendConfirmTargets(targetMode: TargetMode): void {
+		Core.sendMessage(GenericActionMessageType.CONFIRM_TARGETS, targetMode)
+	},
+
+	requestShowPlayersDeck(): void {
+		Core.sendMessage(GenericActionMessageType.REQUEST_PLAYERS_DECK, null)
+	},
+
+	requestShowPlayersGraveyard(): void {
+		Core.sendMessage(GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD, null)
+	},
+
+	requestShowOpponentsGraveyard(): void {
+		Core.sendMessage(GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD, null)
 	},
 
 	sendEndTurn(): void {

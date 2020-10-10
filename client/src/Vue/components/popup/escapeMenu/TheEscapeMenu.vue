@@ -5,11 +5,11 @@
 			<button @click="onShowSettings" class="primary game-button">Settings</button>
 			<button @click="onShowGameLog" class="primary game-button">Game history</button>
 			<div class="menu-separator"></div>
-<!--			<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>-->
-<!--			<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>-->
-<!--			<div class="menu-separator"></div>-->
-<!--			<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>-->
-<!--			<div class="menu-separator"></div>-->
+			<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>
+			<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>
+			<div class="menu-separator"></div>
+			<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>
+			<div class="menu-separator"></div>
 			<button @click="onLeaveGame" class="primary game-button destructive">Leave game</button>
 		</div>
 	</div>
@@ -20,6 +20,7 @@ import store from '@/Vue/store'
 import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
 import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
 import TheSimpleSettings from '@/Vue/components/popup/escapeMenu/TheSimpleSettings.vue'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 
 export default {
 	components: {
@@ -27,6 +28,10 @@ export default {
 	},
 
 	setup() {
+		const onMenuClick = (event: MouseEvent) => {
+			event.cancelBubble = true
+		}
+
 		const onShowSettings = (): void => {
 			store.dispatch.popupModule.open({
 				component: TheSimpleSettings
@@ -39,20 +44,34 @@ export default {
 			})
 		}
 
+		const onShowPlayersDeck = (): void => {
+			store.dispatch.popupModule.close()
+			OutgoingMessageHandlers.requestShowPlayersDeck()
+		}
+
+		const onShowPlayersGraveyard = (): void => {
+			store.dispatch.popupModule.close()
+			OutgoingMessageHandlers.requestShowPlayersGraveyard()
+		}
+
+		const onShowOpponentsGraveyard = (): void => {
+			store.dispatch.popupModule.close()
+			OutgoingMessageHandlers.requestShowOpponentsGraveyard()
+		}
+
 		const onLeaveGame = (): void => {
 			store.dispatch.leaveGame()
 			store.dispatch.popupModule.closeAll()
 		}
 
-		const onMenuClick = (event: MouseEvent) => {
-			event.cancelBubble = true
-		}
-
 		return {
-			onLeaveGame,
-			onShowGameLog,
-			onShowSettings,
 			onMenuClick,
+			onShowSettings,
+			onShowGameLog,
+			onShowPlayersDeck,
+			onShowPlayersGraveyard,
+			onShowOpponentsGraveyard,
+			onLeaveGame,
 		}
 	},
 
@@ -95,6 +114,6 @@ export default {
 	}
 
 	.logo {
-		width: 35%;
+		height: 170px;
 	}
 </style>

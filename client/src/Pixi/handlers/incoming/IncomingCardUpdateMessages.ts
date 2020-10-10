@@ -6,7 +6,6 @@ import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import ClientBuff from '@/Pixi/models/ClientBuff'
 import BuffRefMessage from '@shared/models/network/buffs/BuffRefMessage'
 import CardStatsMessage from '@shared/models/network/cardStats/CardStatsMessage'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 const IncomingCardUpdateMessages: {[ index in CardUpdateMessageType ]: IncomingMessageHandlerFunction } = {
 	[CardUpdateMessageType.STATS]: (data: CardStatsMessage) => {

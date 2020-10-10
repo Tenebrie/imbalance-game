@@ -4,7 +4,6 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
-import {TurnEndedEventArgs, UnitDeployedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -12,6 +11,7 @@ import UnitVoidPortal from '../tokens/UnitVoidPortal'
 import ServerAnimation from '../../../models/ServerAnimation'
 import UnitAbyssPortal from '../tokens/UnitAbyssPortal'
 import CardLibrary from '../../../libraries/CardLibrary'
+import Keywords from '../../../../utils/Keywords'
 
 export default class HeroJom extends ServerCard {
 	portalsNeeded = 3
@@ -32,17 +32,17 @@ export default class HeroJom extends ServerCard {
 			portalsNeeded: this.portalsNeeded
 		}
 
-		this.createEffect<UnitDeployedEventArgs>(GameEventType.UNIT_DEPLOYED)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 
-		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED, [CardLocation.BOARD])
+		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
 			.require(() => this.ownerControlsEnoughPortals())
 			.perform(() => this.onTurnEnded())
 	}
 
 	private onDeploy(): void {
-		this.owner.createCardFromLibraryFromPrototype(UnitVoidPortal)
+		Keywords.createCard.forOwnerOf(this).fromConstructor(UnitVoidPortal)
 	}
 
 	private ownerControlsEnoughPortals(): boolean {
@@ -63,8 +63,8 @@ export default class HeroJom extends ServerCard {
 		})
 
 		const abyssPortal = CardLibrary.instantiateByConstructor(this.game, UnitAbyssPortal) as UnitAbyssPortal
-		const thisUnit = this.unit
-		this.game.board.createUnit(abyssPortal, this.owner, thisUnit.rowIndex, thisUnit.unitIndex + 1)
+		const unit = this.unit!
+		this.game.board.createUnit(abyssPortal, this.owner, unit.rowIndex, unit.unitIndex + 1)
 		abyssPortal.onTurnEnded()
 	}
 }

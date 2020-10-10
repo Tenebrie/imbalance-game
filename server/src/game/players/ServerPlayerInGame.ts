@@ -9,18 +9,18 @@ import ServerDamageInstance from '../models/ServerDamageSource'
 import ServerGraveyard from '../models/ServerGraveyard'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import Constants from '@shared/Constants'
-import BuffTutoredCard from '../buffs/BuffTutoredCard'
-import BuffDuration from '@shared/enums/BuffDuration'
-import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
-import CardType from '@shared/enums/CardType'
+import CardLibrary from '../libraries/CardLibrary'
 import GameEventCreators from '../models/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import Utils from '../../utils/Utils'
+import ServerCardTarget from '../models/ServerCardTarget'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
 
 	game: ServerGame
-	leader: ServerCard
 	player: ServerPlayer
 	cardHand: ServerHand
 	cardDeck: ServerDeck
@@ -28,46 +28,66 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	morale: number
 	unitMana: number
 	spellMana: number
+	mulliganMode: boolean
 	turnEnded: boolean
 	roundEnded: boolean
 	cardsPlayed: ServerCard[]
+	cardsMulliganed: number
+
+	__leader: ServerCard | null
 
 	constructor(game: ServerGame, player: ServerPlayer) {
 		this.game = game
 		this.player = player
+		this.__leader = null
 		this.cardHand = new ServerHand(game, this, [], [])
 		this.cardDeck = new ServerDeck(game, this, [], [])
 		this.cardGraveyard = new ServerGraveyard(this)
 		this.morale = Constants.STARTING_PLAYER_MORALE
 		this.unitMana = 0
 		this.spellMana = 0
+		this.mulliganMode = false
 		this.turnEnded = true
 		this.roundEnded = true
 		this.cardsPlayed = []
+		this.cardsMulliganed = 0
+	}
+
+	public get leader(): ServerCard {
+		if (!this.__leader) {
+			throw new Error('Player has no leader')
+		}
+		return this.__leader
+	}
+
+	public set leader(value: ServerCard) {
+		this.__leader = value
 	}
 
 	public get targetRequired(): boolean {
-		return !!this.game.cardPlay.cardResolveStack.currentCard
+		if (!this.mulliganMode && this.turnEnded) {
+			return false
+		}
+
+		const currentResolvingCard = this.game.cardPlay.cardResolveStack.currentCard
+		return (this.game.turnPhase === GameTurnPhase.DEPLOY && currentResolvingCard && currentResolvingCard.owner === this) ||
+			this.game.turnPhase === GameTurnPhase.MULLIGAN
 	}
 
-	public get opponent(): ServerPlayerInGame {
+	public get opponent(): ServerPlayerInGame | null {
 		return this.game.getOpponent(this)
+	}
+
+	public get opponentInGame(): ServerPlayerInGame {
+		const opponent = this.opponent
+		if (!opponent) {
+			throw new Error('No opponent available!')
+		}
+		return opponent
 	}
 
 	public isInvertedBoard(): boolean {
 		return this.game.players.indexOf(this) === 1
-	}
-
-	public canPlaySpell(card: ServerCard, rowIndex: number): boolean {
-		const gameBoardRow = this.game.board.rows[rowIndex]
-		return this.spellMana >= card.stats.spellCost &&
-			!!card.targeting.getValidCardPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
-	}
-
-	public canPlayUnit(card: ServerCard, rowIndex: number): boolean {
-		const gameBoardRow = this.game.board.rows[rowIndex]
-		return this.unitMana >= card.stats.unitCost &&
-			!!card.targeting.getValidCardPlayTargets(this).find(playTarget => playTarget.sourceCard === card && playTarget.targetRow === gameBoardRow)
 	}
 
 	public drawUnitCards(count: number): ServerCard[] {
@@ -102,35 +122,15 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		return drawnCards
 	}
 
-	public summonCardFromUnitDeck(card: ServerCard): void {
-		card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
-		this.cardDeck.removeCard(card)
-		this.cardHand.onUnitDrawn(card)
-	}
-
-	public createCardFromLibraryFromInstance(prototype: ServerCard): ServerCard {
-		const card = CardLibrary.instantiateByInstance(this.game, prototype)
-		return this.createCard(card)
-	}
-
-	public createCardFromLibraryFromPrototype(prototype: CardConstructor): ServerCard {
-		const card = CardLibrary.instantiateByConstructor(this.game, prototype)
-		return this.createCard(card)
-	}
-
-	public createCardFromLibraryFromClass(cardClass: string): ServerCard {
-		const card = CardLibrary.instantiateByClass(this.game, cardClass)
-		return this.createCard(card)
-	}
-
-	private createCard(card: ServerCard): ServerCard {
-		card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
-		if (card.type === CardType.UNIT) {
-			this.cardHand.onUnitDrawn(card)
-		} else if (card.type === CardType.SPELL) {
-			this.cardHand.onSpellDrawn(card)
+	public mulliganCard(card: ServerCard): void {
+		const cardIndex = this.cardHand.unitCards.indexOf(card)
+		this.cardHand.removeCard(card)
+		this.cardDeck.addUnitToBottom(card)
+		const cardToAdd = this.cardDeck.drawTopUnit()
+		if (!cardToAdd) {
+			return
 		}
-		return card
+		this.cardHand.addUnit(cardToAdd, cardIndex)
 	}
 
 	public refillSpellHand(): void {
@@ -146,7 +146,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public setMorale(morale: number): void {
 		this.morale = morale
-		const opponent = this.game.getOpponent(this)
+		const opponent = this.game.getOpponent(this)!
 		OutgoingMessageHandlers.notifyAboutMoraleChange(this.player, this)
 		OutgoingMessageHandlers.notifyAboutMoraleChange(opponent.player, this)
 	}
@@ -194,11 +194,30 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		}))
 	}
 
+	public startMulligan(): void {
+		this.mulliganMode = true
+		this.showMulliganCards()
+		OutgoingMessageHandlers.notifyAboutCardsMulliganed(this.player, this)
+	}
+
+	public showMulliganCards(): void {
+		const cardsToMulligan = this.cardHand.unitCards
+		const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(this.player, TargetMode.MULLIGAN, targets)
+	}
+
+	public finishMulligan(): void {
+		this.mulliganMode = false
+		this.cardsMulliganed = 0
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(this.player, TargetMode.MULLIGAN, [])
+	}
+
 	public startTurn(): void {
 		if (!this.turnEnded) {
 			return
 		}
 		this.turnEnded = false
+		this.mulliganMode = false
 		this.setUnitMana(1)
 		this.refillSpellHand()
 		OutgoingMessageHandlers.notifyAboutTurnStarted(this)
@@ -209,7 +228,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public onTurnStart(): void {
 		this.game.events.postEvent(GameEventCreators.turnStarted({
 			player: this
-		}), { allowThreading: true })
+		}), { allowThreading: false })
 	}
 
 	public endTurn(): void {
@@ -224,6 +243,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public onTurnEnd(): void {
 		this.cardsPlayed = []
 
+		// TODO: Move this to corresponding buffs
 		this.cardHand.unitCards.filter(card => card.features.includes(CardFeature.TEMPORARY_CARD)).forEach(card => {
 			this.cardHand.discardCard(card)
 			this.cardGraveyard.addUnit(card)
@@ -235,7 +255,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 		this.game.events.postEvent(GameEventCreators.turnEnded({
 			player: this
-		}), { allowThreading: true })
+		}), { allowThreading: false })
 	}
 
 	public endRound(): void {

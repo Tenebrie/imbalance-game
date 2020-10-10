@@ -1,18 +1,14 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import TargetType from '@shared/enums/TargetType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerBoardRow from '../../../models/ServerBoardRow'
-import BuffDuration from '@shared/enums/BuffDuration'
-import BuffBurning from '../../../buffs/BuffBurning'
-import GameEventCreators, {CardTargetSelectedEventArgs, UnitDeployedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import UnitVoidPortal from '../tokens/UnitVoidPortal'
 import ServerAnimation from '../../../models/ServerAnimation'
+import Keywords from '../../../../utils/Keywords'
 
 export default class UnitDarkTimewarper extends ServerCard {
 	constructor(game: ServerGame) {
@@ -28,7 +24,7 @@ export default class UnitDarkTimewarper extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createEffect<UnitDeployedEventArgs>(GameEventType.UNIT_DEPLOYED)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 
@@ -42,6 +38,6 @@ export default class UnitDarkTimewarper extends ServerCard {
 			this.game.animation.commitAnimationThread()
 		})
 
-		this.owner.createCardFromLibraryFromPrototype(UnitVoidPortal)
+		Keywords.createCard.forOwnerOf(this).fromConstructor(UnitVoidPortal)
 	}
 }

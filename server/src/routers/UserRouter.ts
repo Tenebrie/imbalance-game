@@ -1,4 +1,4 @@
-import express, {Response} from 'express'
+import express, {Request, Response} from 'express'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import ServerPlayer from '../game/players/ServerPlayer'
 import PlayerMessage from '@shared/models/network/PlayerMessage'
@@ -48,7 +48,7 @@ router.post('/', AsyncHandler(async(req, res: Response, next) => {
 }))
 
 /* Google SSO endpoint. Does not require user token */
-router.post('/google', AsyncHandler(async (req, res: Response, next) => {
+router.post('/google', AsyncHandler(async (req: Request, res: Response) => {
 	const token = req.body['token']
 	if (!token) {
 		throw { status: 400, code: UserLoginErrorCode.MISSING_CREDENTIALS, error: 'Missing token' }
@@ -61,10 +61,13 @@ router.post('/google', AsyncHandler(async (req, res: Response, next) => {
 		audience: googleClientId,
 	})
 	const payload = ticket.getPayload()
+	if (!payload) {
+		throw { status: 400, error: 'Bad token' }
+	}
 
-	const email = payload.email
+	const email = payload.email!
 	if (!await PlayerLibrary.doesPlayerExist(email)) {
-		const username = payload.given_name.toLowerCase() + '.' + payload.family_name.toLowerCase()
+		const username = payload.given_name!.toLowerCase() + '.' + payload.family_name!.toLowerCase()
 		const success = await PlayerLibrary.register(email, username, uuidv4())
 		if (!success) {
 			throw { status: 500, error: 'General database error' }
@@ -72,6 +75,10 @@ router.post('/google', AsyncHandler(async (req, res: Response, next) => {
 	}
 
 	const player = await PlayerLibrary.loginWithoutPassword(email)
+	if (!player) {
+		throw { status: 404, error: 'User does not exist' }
+	}
+
 	const playerToken = TokenManager.generateJwtToken(player)
 	res.cookie('playerToken', playerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
 	res.json({ data: new PlayerMessage(player) })
@@ -79,7 +86,7 @@ router.post('/google', AsyncHandler(async (req, res: Response, next) => {
 
 router.use(RequirePlayerTokenMiddleware)
 
-router.get('/', AsyncHandler(async(req, res: Response, next) => {
+router.get('/', AsyncHandler(async(req, res: Response) => {
 	const player = req['player'] as ServerPlayer
 	const playerInDatabase = await PlayerDatabase.selectPlayerById(player.id)
 	if (!playerInDatabase) {
@@ -89,7 +96,7 @@ router.get('/', AsyncHandler(async(req, res: Response, next) => {
 	res.json({ data: new PlayerMessage(player) })
 }))
 
-router.delete('/', AsyncHandler(async(req, res: Response, next) => {
+router.delete('/', AsyncHandler(async(req, res: Response) => {
 	const player = req['player'] as ServerPlayer
 
 	const playerInDatabase = await PlayerDatabase.selectPlayerById(player.id)

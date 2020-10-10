@@ -14,7 +14,7 @@ export default class ServerPlayer implements Player {
 	id: string
 	email: string
 	username: string
-	webSocket: PlayerWebSocket
+	webSocket: PlayerWebSocket | null
 	spectators: ServerPlayerSpectator[]
 
 	constructor(id: string, email: string, username: string) {
@@ -30,7 +30,7 @@ export default class ServerPlayer implements Player {
 	}
 
 	public get playerInGame(): ServerPlayerInGame | null {
-		return this.game.players.find(playerInGame => playerInGame.player === this) || null
+		return this.game?.players.find(playerInGame => playerInGame.player === this) || null
 	}
 
 	registerConnection(ws: ws): void {
@@ -47,10 +47,10 @@ export default class ServerPlayer implements Player {
 	}
 
 	disconnect(): void {
-		if (!this.isInGame()) { return }
+		if (!this.isInGame() || !this.webSocket) { return }
 
 		this.webSocket.close()
-		this.webSocket = undefined
+		this.webSocket = null
 	}
 
 	isInGame(): boolean {

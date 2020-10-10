@@ -11,7 +11,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import {GameEvent} from './GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 
-type EventSubscriber = ServerCard | ServerBuff
+export type EventSubscriber = ServerGame | ServerCard | ServerBuff
 
 export class EventCallback<EventArgs> {
 	private readonly __subscriber: EventSubscriber
@@ -62,6 +62,8 @@ export class EventCallback<EventArgs> {
 	 * ------------------------------------------------------------------------
 	 * Subscribers must **NOT** modify the event that triggered the callback. See `createHook` for
 	 * event modifications.
+	 *
+	 * If any of the `perform` expressions throws an error, the execution of the chain is stopped.
 	 */
 	perform(callback: (args: EventArgs, preparedState: Record<string, any>) => void): EventCallback<EventArgs> {
 		this.__callbacks.push(callback)
@@ -94,7 +96,7 @@ export class EventHook<HookValues, HookArgs> {
 	private readonly __hooks: ((values: HookValues, args?: HookArgs) => HookValues)[]
 	private readonly __callbacks: ((args: HookArgs) => void)[]
 	private readonly __conditions: ((args: HookArgs) => boolean)[]
-	private __ignoreControlEffects: boolean
+	private __ignoreControlEffects = false
 
 	constructor(subscriber: EventSubscriber) {
 		this.__subscriber = subscriber
@@ -160,7 +162,7 @@ export class EventHook<HookValues, HookArgs> {
 	 * Add a new condition to the require chain. Card location must match any of the specified values.
 	 */
 	requireLocations(locations: CardLocation[]): EventHook<HookValues, HookArgs> {
-		return this.require(() => locations.includes(this.__subscriber.location))
+		return this.require(() => !(this.__subscriber instanceof ServerGame) && locations.includes(this.__subscriber.location))
 	}
 
 	/* Ignore control effects
@@ -191,24 +193,24 @@ export default class ServerGameEvents {
 
 	public createCallback<EventArgs>(subscriber: EventSubscriber, event: GameEventType): EventCallback<EventArgs> {
 		const eventCallback = new EventCallback<EventArgs>(subscriber)
-		this.eventCallbacks.get(event).push(eventCallback)
+		this.eventCallbacks.get(event)!.push(eventCallback)
 		return eventCallback
 	}
 
 	public createHook<HookValues, HookArgs>(subscriber: EventSubscriber, hook: GameHookType): EventHook<HookValues, HookArgs> {
 		const eventHook = new EventHook<HookValues, HookArgs>(subscriber)
-		this.eventHooks.get(hook).push(eventHook)
+		this.eventHooks.get(hook)!.push(eventHook)
 		return eventHook
 	}
 
 	public unsubscribe(targetSubscriber: EventSubscriber): void {
 		Utils.forEachInStringEnum(GameEventType, eventType => {
-			const subscriptions = this.eventCallbacks.get(eventType)
+			const subscriptions = this.eventCallbacks.get(eventType)!
 			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
 			this.eventCallbacks.set(eventType, filteredSubscriptions)
 		})
 		Utils.forEachInStringEnum(GameHookType, hookType => {
-			const subscriptions = this.eventHooks.get(hookType)
+			const subscriptions = this.eventHooks.get(hookType)!
 			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
 			this.eventHooks.set(hookType, filteredSubscriptions)
 		})
@@ -218,7 +220,7 @@ export default class ServerGameEvents {
 		this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
 
 		const validCallbacks = this.eventCallbacks
-			.get(event.type)
+			.get(event.type)!
 			.filter(subscription => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
 			.filter(subscription => !subscription.conditions.find(condition => {
 				return cardRequire(() => !condition(event.args, event))
@@ -226,20 +228,36 @@ export default class ServerGameEvents {
 
 		const preparedCallbacks = validCallbacks.map(callback => ({
 			callback: callback,
-			preparedState: callback.prepares.reduce((state, preparator) => preparator(event.args, state), {})
+			subscriber: callback.subscriber,
+			preparedState: callback.prepares.reduce((state, preparator) => preparator(event.args, state), {}),
 		}))
 
 		preparedCallbacks
 			.forEach(preparedCallback => {
+				if (preparedCallback.callback.conditions.find((condition) => cardRequire(() => !condition(event.args, event)))) {
+					return
+				}
+
+				const failedSubscribers: EventSubscriber[] = []
 				preparedCallback.callback.callbacks.forEach(callback => {
+					if (failedSubscribers.includes(preparedCallback.subscriber)) {
+						return
+					}
+
 					if (args.allowThreading) {
 						this.game.animation.createAnimationThread()
 					}
 
-					cardPerform(() => callback(event.args, preparedCallback.preparedState))
+					try {
+						callback(event.args, preparedCallback.preparedState)
+					} catch (err) {
+						failedSubscribers.push(preparedCallback.subscriber)
+					}
 
 					if (args.allowThreading) {
 						this.game.animation.commitAnimationThread()
+					} else {
+						this.game.animation.syncAnimationThreads()
 					}
 				})
 			})
@@ -248,7 +266,7 @@ export default class ServerGameEvents {
 	public applyHooks<HookValues, HookArgs>(hook: GameHookType, values: HookValues, args?: HookArgs): HookValues {
 		const hookArgs = args ? args : values
 
-		const matchingHooks = this.eventHooks.get(hook)
+		const matchingHooks = this.eventHooks.get(hook)!
 			.filter(subscription => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
 			.filter(hook => !hook.conditions.find(condition => {
 				return cardRequire(() => !condition(hookArgs))
@@ -266,7 +284,10 @@ export default class ServerGameEvents {
 			}, values)
 	}
 
-	private subscriberSuspended(subscriber: ServerCard | ServerBuff): boolean {
+	private subscriberSuspended(subscriber: EventSubscriber): boolean {
+		if (subscriber instanceof ServerGame) {
+			return false
+		}
 		if (subscriber instanceof ServerBuff) {
 			return subscriber.card.features.includes(CardFeature.SUSPENDED)
 		}
@@ -277,7 +298,7 @@ export default class ServerGameEvents {
 		return this.eventLog[this.eventLog.length - 1]
 	}
 
-	private createEventLogEntry(eventType: GameEventType, subtype: string, args: Record<string, any>): void {
+	private createEventLogEntry(eventType: GameEventType, subtype: string | undefined, args: Record<string, any> | undefined): void {
 		this.currentLogEventGroup.push({
 			event: eventType,
 			subtype: subtype,

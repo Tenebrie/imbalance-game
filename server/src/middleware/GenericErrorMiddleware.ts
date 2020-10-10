@@ -1,11 +1,11 @@
-import { Response } from 'express'
+import {Request, Response} from 'express'
 
 interface ErrorJson {
 	code: number | undefined,
 	error: string
 }
 
-export default (err, req, res: Response, next) => {
+export default (err: any, req: Request, res: Response) => {
 	if (err && !err.status) {
 		console.error(err)
 	}

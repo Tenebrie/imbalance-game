@@ -1,4 +1,3 @@
-import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Core from '@/Pixi/Core'
 import Card from '@shared/models/Card'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
@@ -6,16 +5,12 @@ import Buff from '@shared/models/Buff'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import OwnedClientCard from '@/Pixi/cards/OwnedClientCard'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import store from '@/Vue/store'
 
 export default class ClientGame {
-	turnPhase: GameTurnPhase
-
-	constructor() {
-		this.turnPhase = GameTurnPhase.BEFORE_GAME
-	}
-
-	public setTurnPhase(phase: GameTurnPhase): void {
-		this.turnPhase = phase
+	public get turnPhase(): GameTurnPhase {
+		return store.state.gameStateModule.turnPhase
 	}
 
 	public findCardById(cardId: string): Card | RenderedCard | CardMessage | null {

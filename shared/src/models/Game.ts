@@ -5,6 +5,6 @@ export default interface Game {
 	id: string
 	name: string
 	isStarted: boolean
-	owner: Player
+	owner: Player | undefined
 	players: PlayerInGame[]
 }

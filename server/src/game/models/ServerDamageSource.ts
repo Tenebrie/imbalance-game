@@ -5,12 +5,11 @@ import DamageSource from '@shared/enums/DamageSource'
 
 export default class ServerDamageInstance implements DamageInstance {
 	value: number
-	source: DamageSource
-	sourceCard: ServerCard | null
+	source: DamageSource | undefined
+	sourceCard: ServerCard | undefined
 
 	constructor() {
 		this.value = 0
-		this.sourceCard = null
 	}
 
 	public clone(): ServerDamageInstance {

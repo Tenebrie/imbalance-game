@@ -5,7 +5,6 @@ import ServerGame from '../../../models/ServerGame'
 import TargetType from '@shared/enums/TargetType'
 import ServerBoardRow from '../../../models/ServerBoardRow'
 import CardFaction from '@shared/enums/CardFaction'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import Constants from '@shared/Constants'
@@ -29,8 +28,9 @@ export default class HeroLearthe extends ServerCard {
 
 		this.createDeployEffectTargets()
 			.target(TargetType.BOARD_ROW)
+			.require(TargetType.BOARD_ROW, args => !!args.targetRow.owner)
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 
@@ -38,7 +38,7 @@ export default class HeroLearthe extends ServerCard {
 		for (let i = 0; i < Constants.MAX_CARDS_PER_ROW; i++) {
 			this.game.animation.createAnimationThread()
 			const livingShadow = CardLibrary.instantiateByConstructor(this.game, UnitLivingShadow)
-			this.game.board.createUnit(livingShadow, target.owner, target.index, target.cards.length)
+			this.game.board.createUnit(livingShadow, target.owner!, target.index, target.cards.length)
 			this.game.animation.commitAnimationThread()
 		}
 	}

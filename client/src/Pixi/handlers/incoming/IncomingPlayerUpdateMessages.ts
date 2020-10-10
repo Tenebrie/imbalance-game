@@ -11,6 +11,8 @@ import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
 import CardType from '@shared/enums/CardType'
 import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMessage'
 import {IncomingMessageHandlerFunction} from '@/Pixi/handlers/IncomingMessageHandlers'
+import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
+import CardFeature from '@shared/enums/CardFeature'
 
 const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: IncomingMessageHandlerFunction } = {
 	[PlayerUpdateMessageType.LEADER_SELF]: (data: CardMessage) => {
@@ -31,34 +33,42 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 		Core.getPlayer(data.player.id).setSpellMana(data.spellMana)
 	},
 
-	[PlayerUpdateMessageType.CARD_ADD_HAND]: (data: OwnedCardMessage) => {
-		const player = Core.getPlayer(data.owner.player.id)
-		if (data.card.type === CardType.UNIT) {
-			player.cardHand.addUnit(RenderedCard.fromMessage(data.card))
-		} else if (data.card.type === CardType.SPELL) {
-			player.cardHand.addSpell(RenderedCard.fromMessage(data.card))
-		}
+	[PlayerUpdateMessageType.MULLIGANS]: (data: MulliganCountMessage) => {
+		store.commit.gameStateModule.setCardsMulliganed(data.usedMulligans)
+		store.commit.gameStateModule.setMaxCardMulligans(data.maxMulligans)
 	},
 
-	[PlayerUpdateMessageType.CARD_ADD_DECK]: (data: OwnedCardMessage) => {
+	[PlayerUpdateMessageType.CARD_ADD_HAND_UNIT]: (data: OwnedCardMessage) => {
 		const player = Core.getPlayer(data.owner.player.id)
-		if (data.card.type === CardType.UNIT) {
-			player.cardDeck.addUnit(data.card)
-		} else if (data.card.type === CardType.SPELL) {
-			player.cardDeck.addSpell(data.card)
-		}
+		player.cardHand.addUnit(RenderedCard.fromMessage(data.card))
 	},
 
-	[PlayerUpdateMessageType.CARD_ADD_GRAVE]: (data: OwnedCardMessage) => {
+	[PlayerUpdateMessageType.CARD_ADD_HAND_SPELL]: (data: OwnedCardMessage) => {
 		const player = Core.getPlayer(data.owner.player.id)
-		if (data.card.type === CardType.UNIT) {
-			player.cardGraveyard.addUnit(data.card)
-		} else if (data.card.type === CardType.SPELL) {
-			player.cardGraveyard.addSpell(data.card)
-		}
+		player.cardHand.addSpell(RenderedCard.fromMessage(data.card))
 	},
 
-	[PlayerUpdateMessageType.CARD_DESTROY_HAND]: (data: OwnedCardRefMessage) => {
+	[PlayerUpdateMessageType.CARD_ADD_DECK_UNIT]: (data: OwnedCardMessage) => {
+		const player = Core.getPlayer(data.owner.player.id)
+		player.cardDeck.addUnit(data.card)
+	},
+
+	[PlayerUpdateMessageType.CARD_ADD_DECK_SPELL]: (data: OwnedCardMessage) => {
+		const player = Core.getPlayer(data.owner.player.id)
+		player.cardDeck.addSpell(data.card)
+	},
+
+	[PlayerUpdateMessageType.CARD_ADD_GRAVE_UNIT]: (data: OwnedCardMessage) => {
+		const player = Core.getPlayer(data.owner.player.id)
+		player.cardGraveyard.addUnit(data.card)
+	},
+
+	[PlayerUpdateMessageType.CARD_ADD_GRAVE_SPELL]: (data: OwnedCardMessage) => {
+		const player = Core.getPlayer(data.owner.player.id)
+		player.cardGraveyard.addSpell(data.card)
+	},
+
+	[PlayerUpdateMessageType.CARD_DESTROY_IN_HAND]: (data: OwnedCardRefMessage) => {
 		const player = Core.getPlayer(data.ownerId)
 		player.cardHand.destroyCardById(data.cardId)
 		Core.input.clearCardInLimbo(data.cardId)
@@ -68,12 +78,12 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 		}
 	},
 
-	[PlayerUpdateMessageType.CARD_DESTROY_DECK]: (data: OwnedCardRefMessage) => {
+	[PlayerUpdateMessageType.CARD_DESTROY_IN_DECK]: (data: OwnedCardRefMessage) => {
 		const player = Core.getPlayer(data.ownerId)
 		player.cardDeck.destroyCardById(data.cardId)
 	},
 
-	[PlayerUpdateMessageType.CARD_DESTROY_GRAVE]: (data: OwnedCardRefMessage) => {
+	[PlayerUpdateMessageType.CARD_DESTROY_IN_GRAVE]: (data: OwnedCardRefMessage) => {
 		const player = Core.getPlayer(data.ownerId)
 		player.cardGraveyard.destroyCardById(data.cardId)
 	},

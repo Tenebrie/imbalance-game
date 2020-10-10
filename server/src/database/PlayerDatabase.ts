@@ -11,17 +11,17 @@ export default {
 		return Database.insertRow(query)
 	},
 
-	async selectPlayerById(id: string): Promise<PlayerDatabaseEntry> {
+	async selectPlayerById(id: string): Promise<PlayerDatabaseEntry | null> {
 		const query = `SELECT * FROM players WHERE id = '${id}'`
 		return Database.selectRow<PlayerDatabaseEntry>(query)
 	},
 
-	async selectPlayerByEmail(email: string): Promise<PlayerDatabaseEntry> {
+	async selectPlayerByEmail(email: string): Promise<PlayerDatabaseEntry | null> {
 		const query = `SELECT * FROM players WHERE email = '${email}'`
 		return Database.selectRow<PlayerDatabaseEntry>(query)
 	},
 
-	async selectPlayerByUsername(username: string): Promise<PlayerDatabaseEntry> {
+	async selectPlayerByUsername(username: string): Promise<PlayerDatabaseEntry | null> {
 		const query = `SELECT * FROM players WHERE username = '${username}'`
 		return Database.selectRow<PlayerDatabaseEntry>(query)
 	},

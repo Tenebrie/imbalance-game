@@ -28,7 +28,7 @@ export default class ParticleSystem {
 
 	public tick(deltaTime: number, deltaFraction: number): void {
 		this.emitters
-			.filter(handle => !!handle.ownerCard && !!handle.container)
+			.filter(handle => !!handle.ownerCard && !!handle.container && !!handle.ownerCard.coreContainer && !!handle.ownerCard.coreContainer.transform)
 			.forEach(handle => {
 				handle.container.position.copyFrom(handle.ownerCard.coreContainer.position)
 			})
@@ -76,21 +76,20 @@ export default class ParticleSystem {
 		})
 	}
 
-	public createInteractionImpactParticleEffect(card: RenderedCard): void {
+	public createAttackImpactParticleEffect(card: RenderedCard): void {
 		const container = this.getCardEffectContainer(card)
 		const emitter = this.createDefaultEmitter(container, {
 			alpha: { start: 1.00, end: 0 },
 			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
-			color: { start: 'FFFFFF', end: 'FFFFFF' },
+			color: { start: 'ff002b', end: 'ff5ed1' },
 			speed: { start: 550,  end: 0 },
 			minimumSpeedMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },
-			rotationSpeed: { min: 0, max: 200 },
 			lifetime: { min: 0.5, max: 0.5 },
-			blendMode: 'screen',
 			ease: [
 				{ s: 0, cp: 0.1, e: 1 }
 			],
+			blendMode: 'screen',
 			frequency: 0.01,
 			emitterLifetime: 0.011,
 			maxParticles: 1000,
@@ -98,7 +97,7 @@ export default class ParticleSystem {
 				x: card.getPosition().x,
 				y: card.getPosition().y
 			},
-			particlesPerWave: 250,
+			particlesPerWave: 500,
 			spawnType: 'point',
 		})
 		this.playEmitter(emitter, container)
@@ -185,7 +184,7 @@ export default class ParticleSystem {
 		}
 
 		if (alignment === BuffAlignment.NEGATIVE) {
-			config.color = { start: 'FF5555', end: 'FF5555' }
+			config.color = { start: 'FF5555', end: '550000' }
 			config.startRotation = { min: 90, max: 90 }
 		}
 
@@ -223,6 +222,77 @@ export default class ParticleSystem {
 			}
 		})
 
+		this.playAttachedEmitter(emitter, container, card)
+	}
+
+	public createInfuseParticleEffect(card: RenderedCard): void {
+		const container = this.getCardEffectContainer(card)
+		const emitter = this.createDefaultEmitter(container, {
+			alpha: { start: 1.00, end: 0 },
+			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			color: { start: '002bff', end: '5ed1ff' },
+			speed: { start: 150,  end: 0 },
+			minimumSpeedMultiplier: 0.1,
+			startRotation: { min: 0, max: 360 },
+			lifetime: { min: 0.5, max: 0.5 },
+			ease: [
+				{ s: 0, cp: 0.1, e: 1 }
+			],
+			blendMode: 'screen',
+			frequency: 0.02,
+			emitterLifetime: 0.5,
+			maxParticles: 1000,
+			pos: {
+				x: card.getPosition().x,
+				y: card.getPosition().y
+			},
+			particlesPerWave: 20,
+			spawnType: 'ring',
+			particleSpacing: 10,
+			spawnCircle: {
+				x: 0,
+				y: 0,
+				r: 30,
+				minR: 20
+			},
+		})
+		this.playEmitter(emitter, container)
+	}
+
+	public createManaGeneratedParticleEffect(card: RenderedCard): void {
+		const container = this.getCardEffectContainer(card)
+
+		const count = card.isUnitMode() ? 500 : 1000
+		const emitter = this.createDefaultEmitter(container, {
+			alpha: { start: 1.00, end: 0 },
+			scale: { start: 0.20 * Core.renderer.superSamplingLevel, end: 0.20 * Core.renderer.superSamplingLevel },
+			color: { start: '5555FF', end: '000055' },
+			speed: { start: 10,  end: 10 },
+			minimumSpeedMultiplier: 0.1,
+			minimumScaleMultiplier: 0.1,
+			startRotation: { min: 0, max: 360 },
+			rotationSpeed: { min: 0, max: 200 },
+			lifetime: { min: 0.8, max: 2.0 },
+			blendMode: 'screen',
+			ease: [
+				{ s: 0, cp: 0.1, e: 1 }
+			],
+			frequency: 0.001,
+			emitterLifetime: 0.05,
+			maxParticles: count,
+			pos: {
+				x: 0,
+				y: 0
+			},
+			particlesPerWave: 25,
+			spawnType: 'rect',
+			spawnRect: {
+				x: -card.sprite.width / 2,
+				y: -card.sprite.height / 2,
+				w: card.sprite.width,
+				h: card.sprite.height
+			}
+		})
 		this.playAttachedEmitter(emitter, container, card)
 	}
 

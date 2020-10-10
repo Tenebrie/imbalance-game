@@ -1,4 +1,5 @@
-import express from 'express'
+import * as ws from 'ws'
+import * as express from 'express'
 import ServerGame from '../game/models/ServerGame'
 import ServerPlayer from '../game/players/ServerPlayer'
 import IncomingMessageHandlers from '../game/handlers/IncomingMessageHandlers'
@@ -11,12 +12,15 @@ import GameLibrary from '../game/libraries/GameLibrary'
 import {colorizeId} from '../utils/Utils'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import IncomingSpectatorMessageHandlers from '../game/handlers/IncomingSpectatorMessageHandlers'
+import {ClientToServerMessageTypes, ClientToServerSpectatorMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import {Router as WebSocketRouter} from 'express-ws'
 
-const router = express.Router()
+const router = express.Router() as WebSocketRouter
 
-router.ws('/:gameId', async (ws, req) => {
-	const currentGame: ServerGame = GameLibrary.games.find(game => game.id === req.params.gameId)
-	const currentPlayer: ServerPlayer = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
+// @ts-ignore
+router.ws('/:gameId', async (ws: ws, req: express.Request) => {
+	const currentGame: ServerGame | null = GameLibrary.games.find(game => game.id === req.params.gameId) || null
+	const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
 	if (!currentGame || !currentPlayer) {
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
 		ws.close()
@@ -56,7 +60,8 @@ router.ws('/:gameId', async (ws, req) => {
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)
-		const handler = IncomingMessageHandlers[msg.type]
+		const messageType = msg.type as ClientToServerMessageTypes
+		const handler = IncomingMessageHandlers[messageType]
 		if (!handler) {
 			OutgoingMessageHandlers.notifyAboutInvalidMessageType(ws, msg.type)
 			return
@@ -78,14 +83,21 @@ router.ws('/:gameId', async (ws, req) => {
 	OutgoingMessageHandlers.notifyAboutInitRequested(currentPlayer)
 })
 
-router.ws('/:gameId/spectate/:playerId', async (ws, req) => {
+// @ts-ignore
+router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) => {
 	const gameId = req.params.gameId as string
 	const playerId = req.params.playerId as string
 
-	const currentGame: ServerGame = GameLibrary.games.find(game => game.id === gameId)
-	const currentPlayer: ServerPlayer = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
-	const spectatedPlayer: ServerPlayerInGame = currentGame.players.find(player => player.player.id === playerId)
-	if (!currentGame || !currentPlayer || !spectatedPlayer) {
+	const currentGame: ServerGame | null = GameLibrary.games.find(game => game.id === gameId) || null
+	const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
+	if (!currentGame || !currentPlayer) {
+		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
+		ws.close()
+		return
+	}
+
+	const spectatedPlayer: ServerPlayerInGame | undefined = currentGame.players.find(player => player.player.id === playerId)
+	if (!spectatedPlayer) {
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
 		ws.close()
 		return
@@ -104,7 +116,8 @@ router.ws('/:gameId/spectate/:playerId', async (ws, req) => {
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)
-		const handler = IncomingSpectatorMessageHandlers[msg.type]
+		const messageType = msg.type as ClientToServerSpectatorMessageTypes
+		const handler = IncomingSpectatorMessageHandlers[messageType]
 		if (!handler) {
 			OutgoingMessageHandlers.notifyAboutInvalidMessageType(ws, msg.type)
 			return

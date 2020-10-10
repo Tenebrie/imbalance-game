@@ -5,7 +5,9 @@ import ServerBotPlayer from '../AI/ServerBotPlayer'
 import Constants from '@shared/Constants'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
-import {isCardPublic} from '../../utils/Utils'
+import Utils, {isCardPublic} from '../../utils/Utils'
+import ServerCardTarget from '../models/ServerCardTarget'
+import TargetMode from '@shared/enums/TargetMode'
 
 export default {
 	onPlayerConnected(game: ServerGame, playerInGame: ServerPlayerInGame): void {
@@ -32,7 +34,15 @@ export default {
 
 	onSpectatorConnected(game: ServerGame, spectator: ServerPlayerSpectator): void {
 		const spectatedPlayerInGame = spectator.spectatedPlayer.playerInGame
+		if (!spectatedPlayerInGame) {
+			spectator.player.disconnect()
+			return
+		}
 		const opponent = spectatedPlayerInGame.opponent
+		if (!opponent) {
+			spectator.player.disconnect()
+			return
+		}
 
 		OutgoingMessageHandlers.notifyAboutSpectateMode(spectator.player)
 		OutgoingMessageHandlers.sendPlayerSelf(spectator.player, spectatedPlayerInGame)
@@ -43,7 +53,17 @@ export default {
 		OutgoingMessageHandlers.notifyAboutDeckLeader(spectator, opponent, spectatedPlayerInGame.leader)
 		OutgoingMessageHandlers.sendBoardState(spectator.player, game.board)
 		OutgoingMessageHandlers.sendStackState(spectator.player, game.cardPlay.cardResolveStack)
-		OutgoingMessageHandlers.sendActivePlayer(spectator.player, game.activePlayer)
+		if (game.activePlayer) {
+			OutgoingMessageHandlers.sendActivePlayer(spectator.player, game.activePlayer)
+		}
+		if (spectatedPlayerInGame.targetRequired && !spectatedPlayerInGame.mulliganMode) {
+			OutgoingMessageHandlers.notifyAboutCardsMulliganed(spectator.player, spectatedPlayerInGame)
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(spectator.player, TargetMode.DEPLOY_EFFECT, game.cardPlay.getValidTargets())
+		} else if (spectatedPlayerInGame.mulliganMode) {
+			const cardsToMulligan = spectatedPlayerInGame.cardHand.unitCards
+			const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(spectator.player, TargetMode.MULLIGAN, targets)
+		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, spectatedPlayerInGame)
 		OutgoingMessageHandlers.notifyAboutGameStart(spectator.player, spectatedPlayerInGame.isInvertedBoard())
 		game.events.flushLogEventGroup()

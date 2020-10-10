@@ -8,16 +8,16 @@ import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
 
-const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
-	[AnimationType.NULL]: (message: AnimationMessage, params: void) => {
+const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number } = {
+	[AnimationType.NULL]: () => {
 		return 0
 	},
 
-	[AnimationType.DELAY]: (message: AnimationMessage, params: void) => {
+	[AnimationType.DELAY]: () => {
 		return 500
 	},
 
-	[AnimationType.CARD_DRAW]: (message: AnimationMessage, params: void) => {
+	[AnimationType.CARD_DRAW]: () => {
 		return 1000
 	},
 
@@ -29,7 +29,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return 2000
 	},
 
-	[AnimationType.CARD_ATTACK]: (message: AnimationMessage, params: void) => {
+	[AnimationType.CARD_ATTACK]: (message: AnimationMessage) => {
 		const animationDuration = 500
 		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
 		if (sourceCard) {
@@ -45,7 +45,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return animationDuration
 	},
 
-	[AnimationType.CARD_AFFECT]: (message: AnimationMessage, params: void) => {
+	[AnimationType.CARD_AFFECT]: (message: AnimationMessage) => {
 		const animationDuration = 500
 		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
 		if (sourceCard) {
@@ -61,7 +61,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return animationDuration
 	},
 
-	[AnimationType.CARD_HEAL]: (message: AnimationMessage, params: void) => {
+	[AnimationType.CARD_HEAL]: (message: AnimationMessage) => {
 		const animationDuration = 500
 		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
 		if (sourceCard) {
@@ -77,7 +77,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return animationDuration
 	},
 
-	[AnimationType.UNIVERSE_ATTACK]: (message: AnimationMessage, params: void) => {
+	[AnimationType.UNIVERSE_ATTACK]: (message: AnimationMessage) => {
 		message.targetCardIDs.forEach(targetCardId => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			Core.mainHandler.projectileSystem.createUniverseAttackProjectile(targetCard)
@@ -85,7 +85,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return 500
 	},
 
-	[AnimationType.UNIVERSE_AFFECT]: (message: AnimationMessage, params: void) => {
+	[AnimationType.UNIVERSE_AFFECT]: (message: AnimationMessage) => {
 		message.targetCardIDs.forEach(targetCardId => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			Core.mainHandler.projectileSystem.createUniverseAffectProjectile(targetCard)
@@ -93,7 +93,7 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return 500
 	},
 
-	[AnimationType.UNIVERSE_HEAL]: (message: AnimationMessage, params: void) => {
+	[AnimationType.UNIVERSE_HEAL]: (message: AnimationMessage) => {
 		message.targetCardIDs.forEach(targetCardId => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			Core.mainHandler.projectileSystem.createUniverseHealProjectile(targetCard)
@@ -101,11 +101,11 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 		return 500
 	},
 
-	[AnimationType.POST_CARD_ATTACK]: (message: AnimationMessage, params: void) => {
+	[AnimationType.POST_CARD_ATTACK]: (message: AnimationMessage) => {
 		return 100
 	},
 
-	[AnimationType.UNIT_DEPLOY]: (message: AnimationMessage, params: void) => {
+	[AnimationType.UNIT_DEPLOY]: (message: AnimationMessage) => {
 		const targetUnit = Core.board.findUnitById(message.targetCardId)
 		AudioSystem.playEffect(AudioEffectCategory.UNIT_DEPLOY)
 		PIXI.Ticker.shared.addOnce(() => {
@@ -113,10 +113,16 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 				Core.particleSystem.createUnitDeployParticleEffect(targetUnit)
 			})
 		})
+		return 750
+	},
+
+	[AnimationType.UNIT_DESTROY]: (message: AnimationMessage) => {
+		const targetUnit = Core.board.findUnitById(message.targetCardId)
+
 		return 500
 	},
 
-	[AnimationType.UNIT_MOVE]: (message: AnimationMessage, params: void) => {
+	[AnimationType.UNIT_MOVE]: () => {
 		AudioSystem.playEffect(AudioEffectCategory.CARD_MOVE)
 		return 750
 	},
@@ -131,6 +137,18 @@ const handlers: {[ index: number ]: (AnimationMessage, any) => number } = {
 			const audioEffectCategory = params.alignment === BuffAlignment.NEGATIVE ? AudioEffectCategory.BUFF_NEGATIVE : AudioEffectCategory.BUFF_POSITIVE
 			AudioSystem.playEffect(audioEffectCategory)
 		})
+		return 500
+	},
+
+	[AnimationType.CARD_INFUSE]: (message: AnimationMessage) => {
+		const targetCard = Core.game.findRenderedCardById(message.targetCardId)
+		Core.particleSystem.createInfuseParticleEffect(targetCard)
+		return 500
+	},
+
+	[AnimationType.CARD_GENERATE_MANA]: (message: AnimationMessage) => {
+		const targetCard = Core.game.findRenderedCardById(message.targetCardId)
+		Core.particleSystem.createManaGeneratedParticleEffect(targetCard)
 		return 500
 	},
 }

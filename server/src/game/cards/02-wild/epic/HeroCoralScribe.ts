@@ -7,6 +7,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '../../../../utils/Keywords'
 
 export default class HeroCoralScribe extends ServerCard {
 	constructor(game: ServerGame) {
@@ -28,11 +29,12 @@ export default class HeroCoralScribe extends ServerCard {
 	}
 
 	private onDeploy() {
-		const stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).map(card => card.class)
+		const owner = this.ownerInGame
+		const stormsPlayed = owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).map(card => card.class)
 		const uniqueStorms = [...new Set(stormsPlayed)]
 
 		uniqueStorms.forEach(stormClass => {
-			this.owner.createCardFromLibraryFromClass(stormClass)
+			Keywords.createCard.forOwnerOf(this).fromClass(stormClass)
 		})
 	}
 }

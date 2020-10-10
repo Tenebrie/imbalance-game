@@ -7,7 +7,6 @@ import ServerBoardRow from '../../../models/ServerBoardRow'
 import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardFaction from '@shared/enums/CardFaction'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -30,7 +29,7 @@ export default class HeroKroLah extends ServerCard {
 			.requireOpponentsRow()
 			.requireNotEmptyRow()
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 

@@ -8,12 +8,18 @@ enum GameEventType {
 	CARD_TAKES_DAMAGE = 'cardTakesDamage',
 	CARD_DESTROYED = 'cardDestroyed',
 
-	CARD_TARGET_SELECTED = 'effectTargetSelected',
-	CARD_TARGETS_CONFIRMED = 'effectTargetsConfirmed',
+	CARD_TARGET_SELECTED_CARD = 'cardTargetSelectedCard',
+	CARD_TARGET_SELECTED_UNIT = 'cardTargetSelectedUnit',
+	CARD_TARGET_SELECTED_ROW = 'cardTargetSelectedRow',
+	CARD_TARGETS_CONFIRMED = 'cardTargetsConfirmed',
+
+	PLAYER_TARGET_SELECTED_CARD = 'playerTargetSelectedCard',
+	PLAYER_TARGETS_CONFIRMED = 'playerTargetConfirmed',
 
 	UNIT_CREATED = 'unitCreated',
 	UNIT_MOVED = 'unitMoved',
-	UNIT_ORDERED = 'unitOrdered',
+	UNIT_ORDERED_CARD = 'unitOrderedCard',
+	UNIT_ORDERED_ROW = 'unitOrderedRow',
 	UNIT_DESTROYED = 'unitDestroyed',
 
 	UNIT_DEPLOYED = 'unitDeployed',

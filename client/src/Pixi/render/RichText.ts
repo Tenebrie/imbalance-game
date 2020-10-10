@@ -293,6 +293,38 @@ export default class RichText extends PIXI.Container {
 			linesRendered += 1
 		}
 
+		const insertText = (text: string) => {
+			const style = new PIXI.TextStyle({
+				fontFamily: Utils.getFont(text),
+				fontSize: this.fontSize,
+				fontStyle: contextItalic ? 'italic' : 'normal',
+				padding: contextItalic ? 8 : 0,
+				fill: contextHighlight ? 0xFFFFFF : contextColor,
+				dropShadow: this.dropShadow,
+				dropShadowBlur: this.dropShadowBlur,
+			})
+			const measureStyle = new PIXI.TextStyle(style)
+			measureStyle.dropShadow = false
+
+			const measure = PIXI.TextMetrics.measureText(text, measureStyle)
+			if (contextPosition.x + measure.width >= this.maxWidth * SCALE_MODIFIER) {
+				newLine()
+			}
+
+			const renderedText = new ScalingText(text, style)
+			renderedText.position = contextPosition
+			const renderedSegment = {
+				text: renderedText,
+				basePosition: contextPosition.clone(),
+				lineIndex: linesRendered
+			}
+			currentLine.push(renderedSegment)
+			this.segments.push(renderedSegment)
+			this.addChild(renderedText)
+
+			contextPosition.x += measure.width
+		}
+
 		segments.forEach(segment => {
 			if (!contextConditionStatus && segment.type !== 'CLOSING_TAG') {
 				return
@@ -301,40 +333,15 @@ export default class RichText extends PIXI.Container {
 			switch (segment.type) {
 				case SegmentType.TEXT:
 					const text = segment.data!
-					const style = new PIXI.TextStyle({
-						fontFamily: Utils.getFont(text),
-						fontSize: this.fontSize,
-						fontStyle: contextItalic ? 'italic' : 'normal',
-						padding: contextItalic ? 8 : 0,
-						fill: contextHighlight ? 0xFFFFFF : contextColor,
-						dropShadow: this.dropShadow,
-						dropShadowBlur: this.dropShadowBlur,
-					})
-					const measureStyle = new PIXI.TextStyle(style)
-					measureStyle.dropShadow = false
-
-					const measure = PIXI.TextMetrics.measureText(text, measureStyle)
-					if (contextPosition.x + measure.width >= this.maxWidth * SCALE_MODIFIER) {
-						newLine()
-					}
-
-					const renderedText = new ScalingText(segment.data!, style)
-					renderedText.position = contextPosition
-					const renderedSegment = {
-						text: renderedText,
-						basePosition: contextPosition.clone(),
-						lineIndex: linesRendered
-					}
-					currentLine.push(renderedSegment)
-					this.segments.push(renderedSegment)
-					this.addChild(renderedText)
-
-					contextPosition.x += measure.width
+					insertText(text)
 					break
 
 				case SegmentType.OPENING_TAG:
 					const openingTag = this.parseTag(segment.data!)
 					switch (openingTag.name) {
+						case 'star':
+							insertText('*')
+							break
 						case 'c':
 						case 'color':
 							contextColorStack.push(contextColor)

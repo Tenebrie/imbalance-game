@@ -7,7 +7,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import ServerBoardRow from '../../../models/ServerBoardRow'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffBurning from '../../../buffs/BuffBurning'
-import {CardTargetSelectedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -34,10 +33,10 @@ export default class HeroFlameDancer extends ServerCard {
 		this.createDeployEffectTargets()
 			.target(TargetType.BOARD_ROW)
 			.require(TargetType.BOARD_ROW, args => {
-				return args.targetRow.owner === args.sourceCardOwner.opponent && args.targetRow.cards.length > 0
+				return args.targetRow.owner === args.sourceCard.ownerInGame.opponent && args.targetRow.cards.length > 0
 			})
 
-		this.createEffect<CardTargetSelectedEventArgs>(GameEventType.CARD_TARGET_SELECTED)
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW)
 			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 

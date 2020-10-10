@@ -30,4 +30,7 @@ export default interface Card {
 	expansionSet: ExpansionSet
 	isCollectible: boolean
 	isExperimental: boolean
+
+	tribes: CardTribe[]
+	features: CardFeature[]
 }

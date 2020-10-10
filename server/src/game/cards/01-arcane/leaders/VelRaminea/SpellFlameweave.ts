@@ -29,11 +29,15 @@ export default class SpellFlameweave extends ServerCard {
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.perform(() => {
-				this.owner.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
+				this.ownerInGame.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
 			})
 	}
 
 	get currentStacks(): number {
-		return this.game.getTotalBuffIntensityForPlayer(BuffVelRamineaWeave, this.owner, [CardLocation.LEADER])
+		const owner = this.owner
+		if (!owner) {
+			return 0
+		}
+		return this.game.getTotalBuffIntensityForPlayer(BuffVelRamineaWeave, owner, [CardLocation.LEADER])
 	}
 }

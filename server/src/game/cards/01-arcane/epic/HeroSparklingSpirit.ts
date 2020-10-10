@@ -4,7 +4,7 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
-import GameHookType, {CardTakesDamageHookArgs, CardTakesDamageHookValues} from '../../../models/GameHookType'
+import GameHookType, {CardTakesDamageHookValues} from '../../../models/GameHookType'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
 import SpellFleetingSpark from '../tokens/SpellFleetingSpark'
@@ -33,14 +33,14 @@ export default class HeroSparklingSpirit extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 
-		this.createHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>(GameHookType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
-			.require(({ damageInstance }) => damageInstance.sourceCard.tribes.includes(CardTribe.SPARK))
+		this.createHook(GameHookType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
+			.require(({ damageInstance }) => !!damageInstance.sourceCard?.tribes.includes(CardTribe.SPARK))
 			.replace(values => this.onSparkDealsDamage(values))
 	}
 
 	private onDeploy(): void {
 		const card = CardLibrary.instantiateByConstructor(this.game, SpellFleetingSpark)
-		this.owner.cardHand.addSpell(card)
+		this.ownerInGame.cardHand.addSpell(card)
 	}
 
 	private onSparkDealsDamage(values: CardTakesDamageHookValues): CardTakesDamageHookValues {

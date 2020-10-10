@@ -2,6 +2,7 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import OwnedRenderedCard from '@/Pixi/cards/OwnedRenderedCard'
+import store from '@/Vue/store'
 
 export default class ClientCardResolveStack {
 	cards: OwnedRenderedCard[]

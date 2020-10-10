@@ -3,7 +3,6 @@ import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
-import {UnitDeployedEventArgs} from '../../../models/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -27,7 +26,7 @@ export default class HeroTaekana extends ServerCard {
 			strengthGiven: this.strengthGiven
 		}
 
-		this.createEffect<UnitDeployedEventArgs>(GameEventType.UNIT_DEPLOYED)
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.perform(() => this.onDeploy())
 	}
 

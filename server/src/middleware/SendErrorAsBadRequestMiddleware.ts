@@ -1,6 +1,6 @@
-import { Response } from 'express'
+import {Request, Response} from 'express'
 
-export default (err, req, res: Response, next) => {
+export default (err: any, req: Request, res: Response) => {
 	res.status(400)
 	res.json({ error: err })
 }
