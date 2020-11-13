@@ -8,10 +8,11 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class HeroForksmanshipInstructor extends ServerCard {
 	powerThreshold = 4
-	bonusPower = 1
+	bonusPower = asMassBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {

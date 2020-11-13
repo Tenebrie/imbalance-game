@@ -12,9 +12,10 @@ import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asSoloSpellDamage} from '../../../../../utils/LeaderStats'
 
 export default class SpellShadowSpark extends ServerCard {
-	baseDamage = 2
+	baseDamage = asSoloSpellDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -30,7 +31,7 @@ export default class SpellShadowSpark extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			damage: () => this.damage
+			damage: this.baseDamage
 		}
 
 		this.createDeployEffectTargets()
@@ -41,12 +42,8 @@ export default class SpellShadowSpark extends ServerCard {
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard.unit!))
 	}
 
-	get damage(): number {
-		return this.baseDamage
-	}
-
 	private onTargetSelected(target: ServerUnit): void {
-		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
 
 		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
 		const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 0)

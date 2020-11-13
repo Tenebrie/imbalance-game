@@ -7,9 +7,10 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffStrength from '../../../buffs/BuffStrength'
+import {asMassBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class HeroTaekana extends ServerCard {
-	strengthGiven = 1
+	strengthGiven = asMassBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {

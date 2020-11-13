@@ -169,6 +169,21 @@ export default class ServerBuff implements Buff {
 	getUnitCostOverride(baseValue: number): number { return baseValue }
 	getSpellCostOverride(baseValue: number): number { return baseValue }
 
+	getSoloUnitDamageOverride(baseValue: number): number { return baseValue }
+	getMassUnitDamageOverride(baseValue: number): number { return baseValue }
+	getSoloSpellDamageOverride(baseValue: number): number { return baseValue }
+	getMassSpellDamageOverride(baseValue: number): number { return baseValue }
+	getSoloHealingPotencyOverride(baseValue: number): number { return baseValue }
+	getMassHealingPotencyOverride(baseValue: number): number { return baseValue }
+	getSoloBuffPotencyOverride(baseValue: number): number { return baseValue }
+	getMassBuffPotencyOverride(baseValue: number): number { return baseValue }
+	getSoloEffectDurationOverride(baseValue: number): number { return baseValue }
+	getMassEffectDurationOverride(baseValue: number): number { return baseValue }
+	getTargetCountOverride(baseValue: number): number { return baseValue }
+	getCriticalHitChanceOverride(baseValue: number): number { return baseValue }
+	getCriticalBuffChanceOverride(baseValue: number): number { return baseValue }
+	getCriticalHealChanceOverride(baseValue: number): number { return baseValue }
+
 	definePlayValidTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	defineValidOrderTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	definePostPlayRequiredTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }

@@ -167,7 +167,23 @@
 	"card.feature.temporaryCard.description": "This card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.temporaryCard.text": "<c=orange>Temporary card</c>",
 
+	"card.stats.soloUnitDamage.text": "*Unit Damage +{value}*",
+	"card.stats.massUnitDamage.text": "*Mass Unit Damage +{value}*",
+	"card.stats.soloSpellDamage.text": "*Spell Damage +{value}*",
+	"card.stats.massSpellDamage.text": "*Mass Spell Damage +{value}*",
+	"card.stats.soloHealingPotency.text": "*Heal Potency +{value}*",
+	"card.stats.massHealingPotency.text": "*Mass Heal Potency +{value}*",
+	"card.stats.soloBuffPotency.text": "*Buff Potency +{value}*",
+	"card.stats.massBuffPotency.text": "*Mass Buff Potency +{value}*",
+	"card.stats.soloEffectDuration.text": "*Effect Duration +{value}*",
+	"card.stats.massEffectDuration.text": "*Mass Effect Duration +{value}*",
+	"card.stats.targetCount.text": "*Card Target Count +{value}*",
+	"card.stats.criticalHitChance.text": "*Critical Hit Chance +{value}%*",
+	"card.stats.criticalBuffChance.text": "*Critical Buff Chance +{value}%*",
+	"card.stats.criticalHealChance.text": "*Critical Heal Chance +{value}%*",
+
 	"card.tribe.bird": "Bird",
+	"card.tribe.loot": "Loot",
 	"card.tribe.beast": "Beast",
 	"card.tribe.human": "Human",
 	"card.tribe.storm": "Storm",
@@ -480,6 +496,9 @@
 	"card.unitShadowspawn.description": "<i>No effect</i>",
 	"card.unitShadowspawn.flavor": "Likes to cuddle with her little sister, Voidspawn.",
 
+	"card.unitYoungSquire.name": "Young Squire",
+	"card.unitYoungSquire.description": "*Deploy:*\n*Push* an allied unit forward.",
+
 	"card.unitTinySparkling.name": "Tiny Sparkling",
 	"card.unitTinySparkling.description": "<i>No effect</i>",
 
@@ -553,5 +572,14 @@
 	"card.spellFlamingSpark.description": "Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
 
 	"card.spellFlameweave.name": "Flameweave",
-	"card.spellFlameweave.description": "Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
+	"card.spellFlameweave.description": "Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
+
+	"card.heroQidala.name": "Qidala",
+	"card.heroQidala.title": "The Mistress of Exchange",
+	"card.heroQidala.description": "*Deploy:*\n*Discard* a unit card from your hand and receive a *Loot* spell of appropriate rarity.\nThen, *Draw* a card.",
+	"card.heroQidala.flavor": "- \"The rule of equivalent exchange will I always follow, yet deep in my heart do I know that fortune does indeed favor the bold.\"",
+
+	"card.unitYogaTeacher.name": "Yoga Teacher",
+	"card.unitYogaTeacher.description": "*Deploy:*\n*Discard* a card from your hand.\nThen, add a copy of that card to your hand.",
+	"card.unitYogaTeacher.flavor": "- \"Trust in yoga, train your body and soul, and one day you will awaken a new man.\""
 }

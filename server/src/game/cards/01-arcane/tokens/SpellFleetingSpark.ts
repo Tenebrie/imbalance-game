@@ -9,9 +9,10 @@ import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asSoloSpellDamage} from '../../../../utils/LeaderStats'
 
 export default class SpellFleetingSpark extends ServerCard {
-	baseDamage = 2
+	damage = asSoloSpellDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -25,7 +26,7 @@ export default class SpellFleetingSpark extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			damage: () => this.damage
+			damage: this.damage
 		}
 
 		this.createDeployEffectTargets()
@@ -34,10 +35,6 @@ export default class SpellFleetingSpark extends ServerCard {
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	get damage(): number {
-		return this.baseDamage
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

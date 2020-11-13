@@ -11,11 +11,12 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassBuffPotency, asTargetCount} from '../../../../utils/LeaderStats'
 
 export default class SpellEnchantedStorm extends ServerCard {
-	baseBuffPower = 1
-	targetCount = 3
-	powerPerStorm = 1
+	baseBuffPower = asMassBuffPotency(1)
+	targetCount = asTargetCount(3)
+	powerPerStorm = asMassBuffPotency(1)
 	targetsHit: ServerCard[] = []
 
 	constructor(game: ServerGame) {
@@ -34,12 +35,12 @@ export default class SpellEnchantedStorm extends ServerCard {
 			targetCount: this.targetCount,
 			powerPerStorm: this.powerPerStorm,
 			isUpgraded: () => this.isUpgraded(),
-			targetsRemaining: () => this.targetCount - this.targetsHit.length
+			targetsRemaining: () => this.targetCount(this) - this.targetsHit.length
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createDeployEffectTargets()
-			.target(TargetType.UNIT, () => this.targetCount)
+			.target(TargetType.UNIT, this.targetCount)
 			.requireAlliedUnit()
 			.require(TargetType.UNIT, args => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
 			.label(TargetType.UNIT, 'card.spellEnchantedStorm.target')
@@ -56,7 +57,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 		if (this.owner) {
 			stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
-		return this.baseBuffPower + this.powerPerStorm * stormsPlayed
+		return this.baseBuffPower(this) + this.powerPerStorm(this) * stormsPlayed
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

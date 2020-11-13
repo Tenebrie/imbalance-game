@@ -24,7 +24,7 @@ export default class RenderedProjectile {
 		this.currentTime = 0
 		this.animationDuration = animationDuration
 		this.lifetime = lifetime
-		this.randomnessFactor = 0.5
+		this.randomnessFactor = Math.random()
 		this.onImpact = () => { /* Empty */ }
 
 		this.impactPerformed = false

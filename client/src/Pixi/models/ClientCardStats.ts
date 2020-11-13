@@ -19,6 +19,21 @@ export default class ClientCardStats implements CardStats {
 	__spellCost: number
 	baseSpellCost: number
 
+	soloUnitDamage: number
+	massUnitDamage: number
+	soloSpellDamage: number
+	massSpellDamage: number
+	soloHealingPotency: number
+	massHealingPotency: number
+	soloBuffPotency: number
+	massBuffPotency: number
+	soloEffectDuration: number
+	massEffectDuration: number
+	targetCount: number
+	criticalHitChance: number
+	criticalBuffChance: number
+	criticalHealChance: number
+
 	public constructor(card: RenderedCard, message: CardStatsMessage) {
 		this.card = card
 
@@ -35,6 +50,21 @@ export default class ClientCardStats implements CardStats {
 
 		this.__spellCost = message.spellCost || 0
 		this.baseSpellCost = message.baseSpellCost || 0
+
+		this.soloUnitDamage = message.soloUnitDamage || 0
+		this.massUnitDamage = message.massUnitDamage || 0
+		this.soloSpellDamage = message.soloSpellDamage || 0
+		this.massSpellDamage = message.massSpellDamage || 0
+		this.soloHealingPotency = message.soloHealingPotency || 0
+		this.massHealingPotency = message.massHealingPotency || 0
+		this.soloBuffPotency = message.soloBuffPotency || 0
+		this.massBuffPotency = message.massBuffPotency || 0
+		this.soloEffectDuration = message.soloEffectDuration || 0
+		this.massEffectDuration = message.massEffectDuration || 0
+		this.targetCount = message.targetCount || 0
+		this.criticalHitChance = message.criticalHitChance || 0
+		this.criticalBuffChance = message.criticalBuffChance || 0
+		this.criticalHealChance = message.criticalHealChance || 0
 	}
 
 	public get power(): number {

@@ -10,10 +10,11 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asSoloHealingPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1
-	healing = 5
+	healing = asSoloHealingPotency(5)
 
 	constructor(game: ServerGame) {
 		super(game, {

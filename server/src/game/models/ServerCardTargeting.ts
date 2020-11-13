@@ -46,7 +46,7 @@ export class ServerCardTargeting {
 	}
 
 	private getDeployEffectTargetsForTargetDefinition(targetDefinition: TargetDefinition, previousTargets: (ServerCardTargetCard | ServerCardTargetRow)[] = []): (ServerCardTargetCard | ServerCardTargetRow)[] {
-		if (targetDefinition.getTargetCount() === 0) {
+		if (targetDefinition.getTargetCount(this.card) === 0) {
 			return []
 		}
 
@@ -86,12 +86,12 @@ export class ServerCardTargeting {
 	}
 
 	private isTargetLimitExceeded(targetMode: TargetMode, targetType: TargetType, targetDefinition: TargetDefinition, previousTargets: (ServerCardTargetCard | ServerCardTargetRow)[]): boolean {
-		if (previousTargets.length >= targetDefinition.getTargetCount()) {
+		if (previousTargets.length >= targetDefinition.getTargetCount(this.card)) {
 			return true
 		}
 
 		const previousTargetsOfType = previousTargets.filter(target => target.targetMode === targetMode && target.targetType === targetType)
-		return previousTargetsOfType.length >= targetDefinition.getTargetOfTypeCount(targetMode, targetType)
+		return previousTargetsOfType.length >= targetDefinition.getTargetOfTypeCount(this.card, targetMode, targetType)
 	}
 
 	private getValidUnitTargets(targetMode: TargetMode, targetDefinition: TargetDefinition, previousTargets: (ServerCardTargetCard | ServerCardTargetRow)[] = []): ServerCardTargetCard[] {

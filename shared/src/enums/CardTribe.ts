@@ -1,5 +1,6 @@
 enum CardTribe {
 	BIRD = 'bird',
+	LOOT = 'loot',
 	BEAST = 'beast',
 	HUMAN = 'human',
 	STORM = 'storm',

@@ -12,9 +12,10 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import {ServerCardTargetCard} from '../../../models/ServerCardTarget'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFeature from '@shared/enums/CardFeature'
+import {asSoloUnitDamage} from '../../../../utils/LeaderStats'
 
 export default class UnitChargingKnight extends ServerCard {
-	damage = 3
+	damage = asSoloUnitDamage(3)
 	movesForwardThisTurn = 0
 	maximumMovesThisTurn = 1
 

@@ -10,8 +10,7 @@
 		"scripts": {
 				"postinstall": "subpkg install",
 				"build": "cd client && npm run build && cd .. && rm -rf server/client && mkdir server/client && cp -r client/dist/* server/client && cd server && npm run build",
-				"start": "(cd server && npm run start)",
-				"serve": "(cd client && npm run serve) & sleep 9s && (cd server && rm -r dist && npm run serve)",
+				"start": "docker-compose up --force-recreate",
 				"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)"
 		},
 		"dependencies": {

@@ -10,9 +10,10 @@ import BuffBurning from '../../../buffs/BuffBurning'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassEffectDuration} from '../../../../utils/LeaderStats'
 
 export default class HeroFlameDancer extends ServerCard {
-	burnDuration = 3
+	burnDuration = asMassEffectDuration(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -45,7 +46,7 @@ export default class HeroFlameDancer extends ServerCard {
 
 		targetUnits.forEach(targetUnit => {
 			this.game.animation.createAnimationThread()
-			targetUnit.card.buffs.add(BuffBurning, this, BuffDuration.FULL_TURN * this.burnDuration - 1)
+			targetUnit.card.buffs.add(BuffBurning, this, BuffDuration.FULL_TURN * this.burnDuration(this) - 1)
 			this.game.animation.commitAnimationThread()
 		})
 	}

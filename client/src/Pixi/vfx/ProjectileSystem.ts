@@ -25,7 +25,7 @@ export default class ProjectileSystem {
 
 			const currentTime = Math.min(projectile.currentTime, projectile.animationDuration)
 			const timePosition = currentTime / projectile.animationDuration
-			const quadOffset = (-4 * Math.pow(timePosition - 0.5, 2) + 1) * (150 + projectile.randomnessFactor * 250)
+			const quadOffset = (-4 * Math.pow(timePosition - 0.5, 2) + 1) * (350 + projectile.randomnessFactor * 50)
 
 			if (projectile.startingPoint.x <= targetPoint.x) {
 				targetPoint.x += quadOffset

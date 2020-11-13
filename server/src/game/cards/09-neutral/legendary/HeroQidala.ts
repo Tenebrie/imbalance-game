@@ -1,38 +1,40 @@
 import CardType from '@shared/enums/CardType'
-import ServerCard from '../../models/ServerCard'
-import ServerGame from '../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import TargetType from '@shared/enums/TargetType'
-import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import Keywords from '../../../utils/Keywords'
+import Keywords from '../../../../utils/Keywords'
+import CardTribe from '@shared/enums/CardTribe'
 
-export default class UnitCrystalMiner extends ServerCard {
+export default class HeroQidala extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
-			color: CardColor.BRONZE,
-			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
+			color: CardColor.GOLDEN,
+			faction: CardFaction.NEUTRAL,
+			features: [CardFeature.KEYWORD_DISCARD],
 			stats: {
-				power: 2
+				power: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
-			isExperimental: true,
+			isExperimental: true
 		})
+		this.addRelatedCards().requireTribe(CardTribe.LOOT)
 
 		this.createDeployEffectTargets()
-			.target(TargetType.CARD_IN_LIBRARY)
-			.require(TargetType.CARD_IN_LIBRARY, args => args.targetCard.tribes.includes(CardTribe.CRYSTAL))
+			.target(TargetType.CARD_IN_UNIT_DECK)
+			.requireCardInPlayersDeck()
+			.require(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.color === CardColor.SILVER))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		Keywords.createCard.forOwnerOf(this).fromInstance(target)
+		Keywords.summonCard(target)
 	}
 }

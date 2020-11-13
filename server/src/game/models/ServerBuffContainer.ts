@@ -11,6 +11,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import BuffLeaderPower from '../buffs/BuffLeaderPower'
 import BuffUnitToSpellConversion from '../buffs/BuffUnitToSpellConversion'
+import {LeaderStatValueGetter} from '../../utils/LeaderStats'
 
 export interface BuffConstructor {
 	new (game: ServerGame): ServerBuff
@@ -109,7 +110,10 @@ export default class ServerBuffContainer implements BuffContainer {
 		playBuffReceivedAnimation()
 	}
 
-	public addMultiple(prototype: BuffConstructor, count: number, source: ServerCard | null, duration: number | 'default' = 'default'): void {
+	public addMultiple(prototype: BuffConstructor, count: number | LeaderStatValueGetter, source: ServerCard | null, duration: number | 'default' = 'default'): void {
+		if (typeof(count) === 'function') {
+			count = count(this.card)
+		}
 		for (let i = 0; i < count; i++) {
 			this.game.animation.createAnimationThread()
 			this.add(prototype, source, duration)

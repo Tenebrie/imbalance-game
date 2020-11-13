@@ -6,6 +6,7 @@ import StandardTargetDefinitionBuilder from './StandardTargetDefinitionBuilder'
 import TargetDefinitionBuilder from './TargetDefinitionBuilder'
 import TargetDefinition from './TargetDefinition'
 import {ServerCardTargetCard, ServerCardTargetRow} from '../ServerCardTarget'
+import ServerCard from '../ServerCard'
 
 export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBuilder {
 	private readonly builder: StandardTargetDefinitionBuilder
@@ -24,7 +25,7 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		return this.builder
 	}
 
-	public totalTargets(count: number | (() => number)): SimpleTargetDefinitionBuilder {
+	public totalTargets(count: number | ((card: ServerCard) => number)): SimpleTargetDefinitionBuilder {
 		this.builder.targetsTotal(count)
 		return this
 	}
@@ -34,7 +35,7 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		return this
 	}
 
-	public target(type: TargetType, count: number | (() => number) = 1): SimpleTargetDefinitionBuilder {
+	public target(type: TargetType, count: number | ((card: ServerCard) => number) = 1): SimpleTargetDefinitionBuilder {
 		this.builder.targetsOfType(this.targetMode, type, count)
 		return this
 	}

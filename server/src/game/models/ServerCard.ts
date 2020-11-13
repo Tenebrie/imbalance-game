@@ -22,12 +22,13 @@ import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {
 	BuffCreatedEventArgs,
 	BuffRemovedEventArgs,
-	CardDestroyedEventArgs,
+	CardDestroyedEventArgs, CardDrawnEventArgs,
 	CardPlayedEventArgs,
 	CardTakesDamageEventArgs,
 	CardTargetsConfirmedEventArgs,
 	CardTargetSelectedCardEventArgs,
-	CardTargetSelectedRowEventArgs, CardTargetSelectedUnitEventArgs,
+	CardTargetSelectedRowEventArgs,
+	CardTargetSelectedUnitEventArgs,
 	RoundEndedEventArgs,
 	RoundStartedEventArgs,
 	SpellDeployedEventArgs,
@@ -49,8 +50,6 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import SimpleTargetDefinitionBuilder from './targetDefinitions/SimpleTargetDefinitionBuilder'
 import {ServerCardTargeting} from './ServerCardTargeting'
 import TargetType from '@shared/enums/TargetType'
-import ServerPlayer from '../players/ServerPlayer'
-import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -64,9 +63,27 @@ interface ServerCardBaseProps {
 	deckAddedCards?: CardConstructor[]
 }
 
+interface LeaderStatsCardProps {
+	soloUnitDamage?: number
+	massUnitDamage?: number
+	soloSpellDamage?: number
+	massSpellDamage?: number
+	soloHealingPotency?: number
+	massHealingPotency?: number
+	soloBuffPotency?: number
+	massBuffPotency?: number
+	soloEffectDuration?: number
+	massEffectDuration?: number
+	targetCount?: number
+	criticalHitChance?: number
+	criticalBuffChance?: number
+	criticalHealChance?: number
+}
+
 interface ServerCardLeaderProps extends ServerCardBaseProps {
 	color: CardColor.LEADER
 	isCollectible?: boolean
+	stats?: LeaderStatsCardProps
 }
 
 interface ServerCardUnitProps extends ServerCardBaseProps{
@@ -75,7 +92,7 @@ interface ServerCardUnitProps extends ServerCardBaseProps{
 	stats: {
 		power: number
 		armor?: number
-	}
+	} & LeaderStatsCardProps
 	isCollectible?: boolean
 }
 
@@ -136,9 +153,24 @@ export default class ServerCard implements Card {
 		this.faction = props.faction
 
 		this.stats = new ServerCardStats(this, {
-			basePower: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
-			baseArmor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
-			baseSpellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0
+			power: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
+			armor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
+			spellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0,
+
+			soloUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloUnitDamage || 0 : 0,
+			massUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massUnitDamage || 0 : 0,
+			soloSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloSpellDamage || 0 : 0,
+			massSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massSpellDamage || 0 : 0,
+			soloHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloHealingPotency || 0 : 0,
+			massHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massHealingPotency || 0 : 0,
+			soloBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloBuffPotency || 0 : 0,
+			massBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massBuffPotency || 0 : 0,
+			soloEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloEffectDuration || 0 : 0,
+			massEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massEffectDuration || 0 : 0,
+			targetCount: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.targetCount || 0 : 0,
+			criticalHitChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHitChance || 0 : 0,
+			criticalBuffChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalBuffChance || 0 : 0,
+			criticalHealChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHealChance || 0 : 0,
 		})
 
 		this.name = `card.${this.class}.name`
@@ -213,7 +245,7 @@ export default class ServerCard implements Card {
 		Object.keys(this.dynamicTextVariables).forEach(key => {
 			const value = this.dynamicTextVariables[key]
 			if (typeof(value) === 'function') {
-				evaluatedVariables[key] = value()
+				evaluatedVariables[key] = value(this)
 			} else {
 				evaluatedVariables[key] = value
 			}
@@ -506,6 +538,7 @@ export default class ServerCard implements Card {
 	 * `createEffect` is equivalent to `createCallback`, but it will only trigger when
 	 * the `effectSource` is set to the subscriber.
 	 */
+	protected createEffect(event: GameEventType.CARD_DRAWN): EventCallback<CardDrawnEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DEPLOYED): EventCallback<UnitDeployedEventArgs>
 	protected createEffect(event: GameEventType.SPELL_DEPLOYED): EventCallback<SpellDeployedEventArgs>
 	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_CARD): EventCallback<CardTargetSelectedCardEventArgs>

@@ -234,8 +234,21 @@ export default class RenderedCard implements Card {
 			.map(feature => Localization.getValueOrNull(feature))
 			.filter(string => string !== null)
 
+		const leaderStatsStrings = Object.keys(this.stats)
+			.filter(key => typeof(this.stats[key]) === 'number' && this.stats[key] > 0)
+			.map(key => ({
+				key: key,
+				text: Localization.getValueOrNull(`card.stats.${key}.text`)
+			}))
+			.filter(object => object.text !== null)
+			.map(object => object.text.replace(/{value}/g, this.stats[object.key]))
+
 		for (const index in featureStrings) {
 			description = `${featureStrings[index]}<p>${description}`
+		}
+		for (const index in leaderStatsStrings.reverse()) {
+			const delimiter = Number(index) === 0 ? '<p>' : '\n'
+			description = `${leaderStatsStrings[index]}${delimiter}${description}`
 		}
 		return description
 	}

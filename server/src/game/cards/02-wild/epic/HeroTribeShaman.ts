@@ -7,7 +7,6 @@ import CardTribe from '@shared/enums/CardTribe'
 import SpellHealingRain from '../tokens/SpellHealingRain'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
-import {mapRelatedCards} from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 

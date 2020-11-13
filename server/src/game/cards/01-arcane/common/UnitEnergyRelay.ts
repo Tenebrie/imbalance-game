@@ -9,10 +9,11 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
+import {asMassUnitDamage} from '../../../../utils/LeaderStats'
 
 export default class UnitEnergyRelay extends ServerCard {
 	infuseCost = 1
-	damageDealt = 3
+	damageDealt = asMassUnitDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

@@ -4,12 +4,13 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import TargetDefinition from './TargetDefinition'
 import TargetDefinitionBuilder from './TargetDefinitionBuilder'
+import ServerCard from '../ServerCard'
 
 export default class StandardTargetDefinitionBuilder implements TargetDefinitionBuilder {
 	private readonly game: ServerGame
-	private totalTargetCountGetters: (number | (() => number))[] | undefined = undefined
+	private totalTargetCountGetters: (number | ((card: ServerCard) => number))[] | undefined = undefined
 	private readonly orderLabels: string[][]
-	private readonly targetOfTypeCountGetters: (number | (() => number))[][][]
+	private readonly targetOfTypeCountGetters: (number | ((card: ServerCard) => number))[][][]
 	private readonly conditions: ((args: TargetValidatorArguments) => boolean)[][][] = []
 	private readonly evaluators: ((args: TargetValidatorArguments) => number)[][][] = []
 
@@ -40,7 +41,7 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		return new TargetDefinition(this.game, totalTargetCount, this.orderLabels, this.targetOfTypeCountGetters, this.conditions, this.evaluators)
 	}
 
-	public targetsTotal(count: number | (() => number)): StandardTargetDefinitionBuilder {
+	public targetsTotal(count: number | ((card: ServerCard) => number)): StandardTargetDefinitionBuilder {
 		if (this.totalTargetCountGetters === undefined) {
 			this.totalTargetCountGetters = []
 		}
@@ -53,7 +54,7 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		return this
 	}
 
-	public targetsOfType(reason: TargetMode, type: TargetType, targetCount: number | (() => number) = 1): StandardTargetDefinitionBuilder {
+	public targetsOfType(reason: TargetMode, type: TargetType, targetCount: number | ((card: ServerCard) => number) = 1): StandardTargetDefinitionBuilder {
 		this.targetOfTypeCountGetters[reason][type].push(targetCount)
 		return this
 	}
