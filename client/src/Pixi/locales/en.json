@@ -17,7 +17,9 @@
 	"ui.auth.moveToLogin": "Already have an account?",
 	"ui.auth.moveToRegister": "Don't have an account?",
 
-	"ui.browser.header": "Game browser",
+	"ui.browser.reconnect.header": "Current game",
+	"ui.browser.reconnect.button": "Reconnect",
+	"ui.browser.list.header": "Game browser",
 	"ui.browser.empty": "Nobody is playing right now :(",
 
 	"ui.play.ai.normal": "Play vs AI",

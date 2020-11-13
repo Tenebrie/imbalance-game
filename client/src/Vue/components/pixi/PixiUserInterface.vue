@@ -23,10 +23,10 @@
 			<pixi-inspected-card />
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
-			<div class="overlay-message" v-if="!opponent">Waiting for opponent...</div>
+			<div class="overlay-message" v-if="!opponent">Connecting...</div>
 			<div class="overlay-message" v-if="opponent">
-				{{ opponent.username }} has connected.<br>
-				Waiting for the game to start...
+				{{ player.username }} vs {{ opponent.username }}<br>
+				Starting the game...
 			</div>
 		</div>
 		<div class="endgame-screen" :class="gameEndScreenClass">
@@ -141,6 +141,7 @@ export default Vue.extend({
 			visible: isSpectating.value
 		}))
 
+		const player = computed<Player>(() => store.state.player)
 		const opponent = computed<Player | null>(() => store.state.gameStateModule.opponent)
 
 		const cardsMulliganed = computed(() => store.state.gameStateModule.cardsMulliganed)
@@ -148,6 +149,7 @@ export default Vue.extend({
 
 		return {
 			store,
+			player,
 			opponent,
 			isVictory,
 			isDefeat,
@@ -195,8 +197,8 @@ export default Vue.extend({
 			background: black;
 
 			opacity: 0;
-			transition: opacity 1s;
-			transition-delay: 0.5s;
+			transition: opacity 0.5s;
+			transition-delay: 0.25s;
 
 			display: flex;
 			flex-direction: column;

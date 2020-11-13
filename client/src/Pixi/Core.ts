@@ -40,6 +40,9 @@ export default class Core {
 		if (game.players.length >= 2) {
 			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}/spectate/${game.players[0].player.id}`
 		}
+		if (game.players.find(playerInGame => playerInGame.player.id === store.state.player.id)) {
+			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}`
+		}
 		const socket = new WebSocket(targetUrl)
 		socket.onopen = () => this.onConnect(container)
 		socket.onmessage = (event) => this.onMessage(event)

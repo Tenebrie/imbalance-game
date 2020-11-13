@@ -1,5 +1,4 @@
 import express, {Request, Response} from 'express'
-import ServerPlayer from '../game/players/ServerPlayer'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import ServerGame from '../game/models/ServerGame'
 import ServerBotPlayer from '../game/AI/ServerBotPlayer'
@@ -12,8 +11,15 @@ const router = express.Router()
 router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req: Request, res: Response) => {
-	const library: ServerGame[] = GameLibrary.games
-	const gameMessages = library.map(game => new GameMessage(game))
+	const currentPlayer = getPlayerFromAuthenticatedRequest(req)
+	const reconnect = req.query['reconnect'] || '' as string
+
+	let filteredGames: ServerGame[] = GameLibrary.games.filter(game => !game.isFinished)
+	if (reconnect) {
+		filteredGames = filteredGames.filter(game => game.players.find(playerInGame => playerInGame.player.id === currentPlayer.id))
+	}
+
+	const gameMessages = filteredGames.map(game => new GameMessage(game))
 	res.json({ data: gameMessages })
 })
 
@@ -22,6 +28,12 @@ router.post('/', (req: Request, res: Response) => {
 	const gameName = req.body['name'] || ''
 	const gameMode = req.body['mode'] || ''
 
+	const connectedGames = GameLibrary.games.filter(game => game.players.find(playerInGame => playerInGame.player === player))
+	connectedGames.forEach(game => {
+		const playerInGame = game.players.find(playerInGame => playerInGame.player === player)
+		game.finish(playerInGame?.opponent || null, 'Opponent created a new game')
+	})
+
 	const game = GameLibrary.createOwnedGame(player, gameName.trim())
 
 	if (gameMode === 'sp_ai') {
@@ -29,6 +41,14 @@ router.post('/', (req: Request, res: Response) => {
 	}
 
 	res.json({ data: new GameMessage(game) })
+})
+
+router.post('/disconnect', (req: Request, res: Response) => {
+	const currentPlayer = getPlayerFromAuthenticatedRequest(req)
+	currentPlayer.disconnect()
+
+	res.status(204)
+	res.send()
 })
 
 router.delete('/:gameId', (req: Request, res: Response) => {

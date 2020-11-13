@@ -63,7 +63,3 @@ with open('../src/Pixi/locales/ru.json', 'w', encoding='utf-8') as f:
 	f.write(finalJson)
 
 print('\033[0;33mLocalization file updated!\033[0m')
-
-# Encode the Python dictionary into a JSON string.
-# new_json_string = json.dumps(apod_dict, indent=4)
-# print(new_json_string)

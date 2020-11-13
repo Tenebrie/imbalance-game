@@ -39,7 +39,6 @@ export default class ServerPlayer implements Player {
 
 	sendMessage(json: MessageJson): void {
 		if (!this.webSocket) {
-			console.warn('Trying to send message to disconnected player')
 			return
 		}
 		this.webSocket.send(json)
@@ -47,7 +46,7 @@ export default class ServerPlayer implements Player {
 	}
 
 	disconnect(): void {
-		if (!this.isInGame() || !this.webSocket) { return }
+		if (!this.webSocket) { return }
 
 		this.webSocket.close()
 		this.webSocket = null

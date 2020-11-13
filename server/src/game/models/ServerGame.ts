@@ -23,6 +23,7 @@ import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
 import GameEventType from '@shared/enums/GameEventType'
 import {PlayerTargetCardSelectedEventArgs} from './GameEventCreators'
+import ServerGameTimers from './ServerGameTimers'
 
 interface ServerGameProps {
 	name?: string
@@ -39,6 +40,7 @@ export default class ServerGame implements Game {
 	readonly owner: ServerPlayer | undefined
 	readonly board: ServerBoard
 	readonly events: ServerGameEvents
+	readonly timers: ServerGameTimers
 	readonly players: ServerPlayerInGame[]
 	readonly cardPlay: ServerGameCardPlay
 	readonly animation: ServerGameAnimation
@@ -52,6 +54,7 @@ export default class ServerGame implements Game {
 		this.owner = props.owner
 		this.board = new ServerBoard(this)
 		this.events = new ServerGameEvents(this)
+		this.timers = new ServerGameTimers(this)
 		this.players = []
 		this.playersToMove = []
 		this.animation = new ServerGameAnimation(this)
@@ -324,17 +327,21 @@ export default class ServerGame implements Game {
 
 		if (victoriousPlayer === null) {
 			OutgoingMessageHandlers.notifyAboutDraw(this)
-			console.info(`Game ${this.id} finished with a draw. [${victoryReason}]`)
+			console.info(`Game ${colorizeId(this.id)} finished with a draw. [${victoryReason}]`)
 		} else {
 			const defeatedPlayer = this.getOpponent(victoriousPlayer)!
 			OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
 			OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
-			console.info(`Game ${this.id} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won! [${victoryReason}]`)
+			console.info(`Game ${colorizeId(this.id)} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won! [${victoryReason}]`)
 		}
 
 		setTimeout(() => {
 			this.forceShutdown('Cleanup')
 		}, 120000)
+	}
+
+	public get isFinished(): boolean {
+		return this.turnPhase === GameTurnPhase.AFTER_GAME
 	}
 
 	public forceShutdown(reason: string): void {

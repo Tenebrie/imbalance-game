@@ -274,6 +274,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		}))
 	}
 
+	public disconnect(): void {
+		this.player.disconnect()
+		this.initialized = false
+	}
+
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerPlayerInGame {
 		const playerInGame = new ServerPlayerInGame(game, player)
 		playerInGame.leader = CardLibrary.instantiateByInstance(game, cardDeck.leader)

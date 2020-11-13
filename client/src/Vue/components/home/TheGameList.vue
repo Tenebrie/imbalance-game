@@ -1,7 +1,11 @@
 <template>
 	<div class="the-game-list-container">
 		<div class="the-game-list">
-			<h2>{{ $locale.get('ui.browser.header') }}</h2>
+			<div v-if="this.reconnectGames.length > 0">
+				<h2>{{ $locale.get('ui.browser.reconnect.header')}}</h2>
+				<button @click="onReconnect" class="primary">{{ $locale.get('ui.browser.reconnect.button') }}</button>
+			</div>
+			<h2>{{ $locale.get('ui.browser.list.header') }}</h2>
 			<div v-if="games.length === 0"><span class="info-text">{{ $locale.get('ui.browser.empty') }}</span></div>
 			<div class="list">
 				<game-list-item class="list-item" v-for="game in games" :key="game.id" :game="game" />
@@ -32,6 +36,7 @@ export default Vue.extend({
 
 	data: () => ({
 		games: [] as GameMessage[],
+		reconnectGames: [] as GameMessage[],
 		updateTimer: NaN as number
 	}),
 
@@ -48,9 +53,13 @@ export default Vue.extend({
 
 	methods: {
 		async fetchGames(): Promise<void> {
-			const response = await axios.get('/api/games')
-			const games = response.data.data as GameMessage[]
+			const allGamesRequest = axios.get('/api/games')
+			const reconnectGamesRequest = axios.get('/api/games', { params: { reconnect: '1' }})
+			const [allGamesResponse, reconnectGamesResponse] = await Promise.all([allGamesRequest, reconnectGamesRequest])
+
+			const games = allGamesResponse.data.data as GameMessage[]
 			this.games = games.sort((a, b) => a.players.length - b.players.length)
+			this.reconnectGames = reconnectGamesResponse.data.data as GameMessage[]
 		},
 
 		async onCreateSinglePlayer(): Promise<void> {
@@ -77,6 +86,11 @@ export default Vue.extend({
 
 		async onRefreshGames(): Promise<void> {
 			return this.fetchGames()
+		},
+
+		async onReconnect(): Promise<void> {
+			await axios.post('/api/games/disconnect')
+			await store.dispatch.joinGame(this.reconnectGames[0])
 		}
 	}
 })
