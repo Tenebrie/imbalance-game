@@ -22,6 +22,7 @@ const ChangelogRouter = require('./routers/ChangelogRouter')
 
 const UserRouter = require('./routers/UserRouter')
 const PlayRouter = require('./routers/PlayRouter')
+const AdminRouter = require('./routers/AdminRouter')
 const CardsRouter = require('./routers/CardsRouter')
 const DecksRouter = require('./routers/DecksRouter')
 const GamesRouter = require('./routers/GamesRouter')
@@ -78,6 +79,7 @@ app.use('/status', StatusRouter)
 app.use('/changelog', ChangelogRouter)
 
 /* API HTTP routers */
+app.use('/api/admin', AdminRouter)
 app.use('/api/cards', CardsRouter)
 app.use('/api/decks', DecksRouter)
 app.use('/api/games', GamesRouter)

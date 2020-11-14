@@ -1,4 +1,5 @@
 import Language from '../enums/Language'
+import AccessLevel from '../enums/AccessLevel'
 import RenderQuality from '../enums/RenderQuality'
 
 export default interface PlayerDatabaseEntry {
@@ -6,6 +7,7 @@ export default interface PlayerDatabaseEntry {
 	email: string
 	username: string
 	passwordHash: string
+	accessLevel: AccessLevel
 	userLanguage: Language
 	renderQuality: RenderQuality
 	masterVolume: number

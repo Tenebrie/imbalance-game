@@ -7,6 +7,7 @@ import ServerPlayerSpectator from './ServerPlayerSpectator'
 import ServerGame from '../models/ServerGame'
 import GameLibrary from '../libraries/GameLibrary'
 import ServerPlayerInGame from './ServerPlayerInGame'
+import AccessLevel from '@shared/enums/AccessLevel'
 
 type MessageJson = { type: ServerToClientMessageTypes, data: any, highPriority?: boolean, ignoreWorkerThreads?: boolean, allowBatching?: boolean }
 
@@ -14,13 +15,15 @@ export default class ServerPlayer implements Player {
 	id: string
 	email: string
 	username: string
+	accessLevel: AccessLevel
 	webSocket: PlayerWebSocket | null
 	spectators: ServerPlayerSpectator[]
 
-	constructor(id: string, email: string, username: string) {
+	constructor(id: string, email: string, username: string, accessLevel: AccessLevel) {
 		this.id = id
 		this.email = email
 		this.username = username
+		this.accessLevel = accessLevel
 		this.webSocket = null
 		this.spectators = []
 	}
@@ -67,6 +70,6 @@ export default class ServerPlayer implements Player {
 	}
 
 	static newInstance(playerDatabaseEntry: PlayerDatabaseEntry): ServerPlayer {
-		return new ServerPlayer(playerDatabaseEntry.id, playerDatabaseEntry.email, playerDatabaseEntry.username)
+		return new ServerPlayer(playerDatabaseEntry.id, playerDatabaseEntry.email, playerDatabaseEntry.username, playerDatabaseEntry.accessLevel)
 	}
 }

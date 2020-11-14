@@ -122,6 +122,14 @@ class PlayerLibrary {
 		return this.getPlayerById(tokenPayload.playerId)
 	}
 
+	public async getAllPlayers(): Promise<ServerPlayer[] | null> {
+		const result = await PlayerDatabase.selectAllPlayers()
+		if (!result) {
+			return null
+		}
+		return result.map(entry => ServerPlayer.newInstance(entry))
+	}
+
 	public async deletePlayer(player: ServerPlayer): Promise<boolean> {
 		return PlayerDatabase.deletePlayer(player.id)
 	}

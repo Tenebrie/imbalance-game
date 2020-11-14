@@ -15,7 +15,6 @@ import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
 import {ClientToServerMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import {ServerToClientMessageTypes} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import GameMessage from '@shared/models/network/GameMessage'
-import PlayerMessage from '@shared/models/network/PlayerMessage'
 import TargetMode from '@shared/enums/TargetMode'
 
 export default class Core {

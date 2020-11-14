@@ -1,11 +1,11 @@
 import PlayerInGame from '../../PlayerInGame'
-import PlayerMessage from '../PlayerMessage'
+import OpenPlayerMessage from '../player/OpenPlayerMessage'
 import OpenCardHandMessage from '../cardHand/OpenCardHandMessage'
 import OpenCardDeckMessage from '../cardDeck/OpenCardDeckMessage'
 import PlayerInGameMessage from './PlayerInGameMessage'
 
 export default class OpenPlayerInGameMessage implements PlayerInGameMessage  {
-	player: PlayerMessage
+	player: OpenPlayerMessage
 	cardHand: OpenCardHandMessage
 	cardDeck: OpenCardDeckMessage
 	cardGraveyard: OpenCardDeckMessage
@@ -14,7 +14,7 @@ export default class OpenPlayerInGameMessage implements PlayerInGameMessage  {
 	spellMana: number
 
 	constructor(playerInGame: PlayerInGame) {
-		this.player = new PlayerMessage(playerInGame.player)
+		this.player = new OpenPlayerMessage(playerInGame.player)
 		this.cardHand = new OpenCardHandMessage(playerInGame.cardHand)
 		this.cardDeck = new OpenCardDeckMessage(playerInGame.cardDeck)
 		this.cardGraveyard = new OpenCardDeckMessage(playerInGame.cardGraveyard)

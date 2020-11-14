@@ -5,6 +5,7 @@
 	"ui.navigation.home": "Home",
 	"ui.navigation.decks": "Decks",
 	"ui.navigation.rules": "Rules",
+	"ui.navigation.admin": "Admin",
 	"ui.navigation.login": "Login",
 
 	"ui.auth.email": "Email",

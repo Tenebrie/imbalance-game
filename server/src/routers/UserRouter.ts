@@ -1,7 +1,6 @@
 import express, {Request, Response} from 'express'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import ServerPlayer from '../game/players/ServerPlayer'
-import PlayerMessage from '@shared/models/network/PlayerMessage'
 import AsyncHandler from '../utils/AsyncHandler'
 import {OAuth2Client} from 'google-auth-library'
 import PlayerLibrary from '../game/players/PlayerLibrary'
@@ -11,6 +10,7 @@ import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import TokenManager from '../services/TokenService'
 import uuidv4 from 'uuid/v4'
 import {registerFormValidators} from '../utils/Utils'
+import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
 
 const router = express.Router()
 
@@ -81,7 +81,7 @@ router.post('/google', AsyncHandler(async (req: Request, res: Response) => {
 
 	const playerToken = TokenManager.generateJwtToken(player)
 	res.cookie('playerToken', playerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
-	res.json({ data: new PlayerMessage(player) })
+	res.json({ data: new OpenPlayerMessage(player) })
 }))
 
 router.use(RequirePlayerTokenMiddleware)
@@ -93,7 +93,7 @@ router.get('/', AsyncHandler(async(req, res: Response) => {
 		PlayerLibrary.removeFromCache(player)
 		throw { status: 401, error: 'User does not exist' }
 	}
-	res.json({ data: new PlayerMessage(player) })
+	res.json({ data: new OpenPlayerMessage(player) })
 }))
 
 router.delete('/', AsyncHandler(async(req, res: Response) => {

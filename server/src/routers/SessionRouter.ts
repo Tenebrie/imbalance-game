@@ -3,9 +3,9 @@ const router = express.Router()
 
 import AsyncHandler from '../utils/AsyncHandler'
 import TokenManager from '../services/TokenService'
-import PlayerMessage from '@shared/models/network/PlayerMessage'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
+import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
 
 router.post('/', AsyncHandler(async (req, res: Response, next) => {
 	const email = req.body['email']
@@ -21,7 +21,7 @@ router.post('/', AsyncHandler(async (req, res: Response, next) => {
 
 	const playerToken = TokenManager.generateJwtToken(player)
 	res.cookie('playerToken', playerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
-	res.json({ data: new PlayerMessage(player) })
+	res.json({ data: new OpenPlayerMessage(player) })
 }))
 
 router.delete('/', AsyncHandler(async (req, res: Response, next) => {
