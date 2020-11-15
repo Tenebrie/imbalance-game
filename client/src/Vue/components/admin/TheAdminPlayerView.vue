@@ -25,8 +25,8 @@
 					</td>
 					<td>
 						<div v-if="player.id !== currentPlayer.id">
-							<a class="action-link" @click="onLogin(player)">Login</a> |
-							<span>Disable</span> |
+							<a v-if="player.accessLevel !== AccessLevel.DISABLED" class="action-link" @click="onLogin(player)">Login</a>
+							<span v-if="player.accessLevel !== AccessLevel.DISABLED"> | </span>
 							<span>Delete</span>
 						</div>
 					</td>
@@ -51,9 +51,13 @@ export default defineComponent({
 		const players = ref<PlayerMessage[]>([])
 		const currentPlayer = computed<Player>(() => store.state.player)
 
-		onMounted(async () => {
+		const loadData = async () => {
 			const response = await axios.get('/api/admin/players')
 			players.value = response.data as PlayerMessage[]
+		}
+
+		onMounted(() => {
+			loadData()
 		})
 
 		const onLogin = async(player: PlayerMessage) => {
@@ -71,6 +75,7 @@ export default defineComponent({
 			} else {
 				Notifications.error('Unable to update user access level')
 			}
+			await loadData()
 		}
 
 		const accessLevels: string[] = []
@@ -83,7 +88,8 @@ export default defineComponent({
 			players,
 			accessLevels,
 			onLogin,
-			onAccessLevelChange
+			onAccessLevelChange,
+			AccessLevel
 		}
 	}
 })
