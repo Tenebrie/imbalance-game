@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import Database from './Database'
 import Language from '@shared/enums/Language'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'

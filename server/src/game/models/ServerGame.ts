@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import Game from '@shared/models/Game'
 import ServerBoard from './ServerBoard'
 import ServerPlayer from '../players/ServerPlayer'

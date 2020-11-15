@@ -24,7 +24,6 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 import GoogleSingleSignOnButton from '@/Vue/components/login/GoogleSingleSignOnButton.vue'
@@ -32,7 +31,6 @@ import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
 	components: {
-		InlineTooltip,
 		GoogleSingleSignOnButton
 	},
 

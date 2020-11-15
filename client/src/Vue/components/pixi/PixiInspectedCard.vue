@@ -39,11 +39,11 @@ export default defineComponent({
 			if (card instanceof RenderedCard) {
 				return null
 			}
-			return card
+			return card as CardMessage
 		})
 
 		const inspectedCard = computed<CardMessage | RenderedCard | null>(() => {
-			return store.getters.inspectedCard.card
+			return store.getters.inspectedCard.card as CardMessage
 		})
 
 		const customClass = computed<Record<string, boolean>>(() => ({

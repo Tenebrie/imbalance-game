@@ -6,7 +6,7 @@ import EditorDeck from '@shared/models/EditorDeck'
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
 import AsyncHandler from '../utils/AsyncHandler'
 import DeckUtils from '../utils/DeckUtils'
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import SharedDeckDatabase from '../database/SharedDeckDatabase'
 import {generateShortId} from '../utils/Utils'
 

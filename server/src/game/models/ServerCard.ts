@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import ServerGame from './ServerGame'

@@ -8,7 +8,7 @@ import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import PlayerDatabase from '../database/PlayerDatabase'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import TokenManager from '../services/TokenService'
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import {registerFormValidators} from '../utils/Utils'
 import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
 
