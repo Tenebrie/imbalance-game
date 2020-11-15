@@ -1,6 +1,7 @@
 {
 		"name": "notgwent",
 		"version": "0.0.0",
+		"license": "GPL-3.0-or-later",
 		"description": "",
 		"main": "server/dist/app.js",
 		"subPackages": [
@@ -34,7 +35,7 @@
 				"@types/pg": "^7.11.2",
 				"@types/seedrandom": "^2.4.28",
 				"@types/sequelize": "^4.28.6",
-				"@types/uuid": "^3.4.5",
+				"@types/uuid": "^8.3.0",
 				"@vue/cli-plugin-babel": "^4.1.0",
 				"@vue/cli-plugin-eslint": "^4.1.0",
 				"@vue/cli-plugin-router": "^4.1.0",
@@ -63,7 +64,6 @@
 				"node": "12.x"
 		},
 		"author": "Tenebrie Interactive",
-		"license": "GNU GPL v3.0",
 		"bugs": {
 				"url": "https://github.com/Kos94ok/notgwent-game/issues"
 		},

@@ -1,7 +1,7 @@
 {
 	"name": "client",
 	"version": "0.0.0",
-	"license": "GNU GPL v3.0",
+	"license": "GPL-3.0-or-later",
 	"private": true,
 	"scripts": {
 		"serve": "CHOKIDAR_USEPOLLING=true node_modules/.bin/vue-cli-service serve",
@@ -24,7 +24,7 @@
 		"pixi.js": "^5.3.3",
 		"sweetalert": "^2.1.2",
 		"throttle-debounce": "^2.2.1",
-		"uuid": "^8.3.0",
+		"uuid": "^8.3.1",
 		"vue": "^2.6.10",
 		"vue-google-signin-button": "^1.0.4",
 		"vue-router": "^3.1.3",

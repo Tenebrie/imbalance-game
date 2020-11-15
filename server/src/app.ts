@@ -11,8 +11,6 @@ import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import {wsLogger} from './utils/WebSocketLogger'
 import Database from './database/Database'
 
-console.info('Starting up NotGwent server')
-
 const app = express()
 expressWs(app)
 

@@ -10,7 +10,7 @@ import RichTextVariables from '@shared/models/RichTextVariables'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import {sortCards} from '@shared/Utils'
 
-export const forEachInNumericEnum = (enumeration: any, handler: (val: number) => any): void => {
+export const forEachInNumericEnum = (enumeration: { [s: number]: number }, handler: (val: number) => any): void => {
 	for (const value in enumeration) {
 		if (!isNaN(Number(value))) {
 			handler(Number(value))
@@ -18,7 +18,7 @@ export const forEachInNumericEnum = (enumeration: any, handler: (val: number) =>
 	}
 }
 
-export const forEachInStringEnum = (enumeration: any, handler: (val: string) => any): void => {
+export const forEachInStringEnum = (enumeration: { [s: number]: string }, handler: (val: string) => any): void => {
 	for (const value in enumeration) {
 		handler(enumeration[value])
 	}
