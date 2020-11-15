@@ -86,6 +86,16 @@ class PlayerLibrary {
 		return this.cachePlayer(playerDatabaseEntry)
 	}
 
+	public async loginById(playerId: string): Promise<ServerPlayer | null> {
+		const playerDatabaseEntry = await PlayerDatabase.selectPlayerById(playerId)
+
+		if (!playerDatabaseEntry) {
+			return null
+		}
+
+		return this.cachePlayer(playerDatabaseEntry)
+	}
+
 	public async doesPlayerExist(username: string): Promise<boolean> {
 		username = username.toLowerCase()
 		return !!await PlayerDatabase.selectPlayerByEmail(username)
