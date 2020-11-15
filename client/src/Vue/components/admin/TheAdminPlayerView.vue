@@ -15,7 +15,14 @@
 					<td>{{ player.id.substr(0, 8) }}</td>
 					<td>{{ player.email }}</td>
 					<td>{{ player.username }}</td>
-					<td>{{ player.accessLevel }}</td>
+					<td>
+						<span v-if="player.id === currentPlayer.id">{{ player.accessLevel }}</span>
+						<label v-if="player.id !== currentPlayer.id">
+							<select @change="event => onAccessLevelChange(player, event)">
+								<option :selected="accessLevel === player.accessLevel" :key="accessLevel" v-for="accessLevel in accessLevels">{{ accessLevel }}</option>
+							</select>
+						</label>
+					</td>
 					<td>
 						<div v-if="player.id !== currentPlayer.id">
 							<a class="action-link" @click="onLogin(player)">Login</a> |
@@ -35,6 +42,9 @@ import {computed, defineComponent, onMounted, ref} from '@vue/composition-api'
 import PlayerMessage from '@shared/models/network/player/PlayerMessage'
 import store from '@/Vue/store'
 import Player from '@shared/models/Player'
+import AccessLevel from '@shared/enums/AccessLevel'
+import Utils, {forEachInStringEnum} from '@/utils/Utils'
+import Notifications from '@/utils/Notifications'
 
 export default defineComponent({
 	setup() {
@@ -54,10 +64,26 @@ export default defineComponent({
 			window.location.href = '/'
 		}
 
+		const onAccessLevelChange = async(player: Player, event: Event & { target: { value: AccessLevel }}) => {
+			const response = await axios.post(`/api/admin/players/${player.id}/accessLevel`, { accessLevel: event.target.value })
+			if (response.status === 204) {
+				Notifications.success('Access level updated!')
+			} else {
+				Notifications.error('Unable to update user access level')
+			}
+		}
+
+		const accessLevels: string[] = []
+		forEachInStringEnum(AccessLevel, level => {
+			accessLevels.push(level)
+		})
+
 		return {
 			currentPlayer,
 			players,
-			onLogin
+			accessLevels,
+			onLogin,
+			onAccessLevelChange
 		}
 	}
 })
@@ -94,5 +120,9 @@ export default defineComponent({
 	.action-link {
 		cursor: pointer;
 		user-select: none;
+	}
+
+	select {
+		padding: 2px 4px;
 	}
 </style>

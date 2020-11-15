@@ -87,6 +87,9 @@ app.use('/api/session', SessionRouter)
 app.use('/api/user', UserRouter)
 app.use('/api/user/profile', UserProfileRouter)
 
+/* Generic error handler */
+app.use(GenericErrorMiddleware)
+
 /* WS routers */
 app.use('/api/game', PlayRouter)
 
@@ -95,11 +98,8 @@ app.use('*', (req, res) => {
 	res.sendFile(path.join(__dirname, '../../../client/index.html'))
 })
 
-/* Generic error handler */
-app.use(GenericErrorMiddleware)
-
 /* Last-resort error handler */
-app.use((err: any, req: Request, res: Response) => {
+app.use((err: any, req: Request, res: Response, next: () => void) => {
 	console.log(err)
 	console.log(JSON.stringify(err))
 	res.status(err.status || 500)

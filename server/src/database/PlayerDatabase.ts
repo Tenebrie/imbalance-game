@@ -3,6 +3,7 @@ import Database from './Database'
 import Language from '@shared/enums/Language'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import RenderQuality from '@shared/enums/RenderQuality'
+import AccessLevel from '@shared/enums/AccessLevel'
 
 export default {
 	async insertPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {
@@ -38,6 +39,11 @@ export default {
 
 	async updatePlayerPassword(id: string, passwordHash: string): Promise<boolean> {
 		const query = `UPDATE players SET "passwordHash" = '${passwordHash}' WHERE id = '${id}'`
+		return Database.updateRows(query)
+	},
+
+	async updatePlayerAccessLevel(id: string, accessLevel: AccessLevel): Promise<boolean> {
+		const query = `UPDATE players SET "accessLevel" = '${accessLevel}' WHERE id = '${id}'`
 		return Database.updateRows(query)
 	},
 

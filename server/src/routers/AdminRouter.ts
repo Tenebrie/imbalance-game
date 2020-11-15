@@ -7,6 +7,7 @@ import RequireSupportAccessLevelMiddleware from '../middleware/RequireSupportAcc
 import RequireOriginalPlayerTokenMiddleware from '../middleware/RequireOriginalPlayerTokenMiddleware'
 import TokenManager from '../services/TokenService'
 import {getPlayerFromAuthenticatedRequest} from '../utils/Utils'
+import AccessLevel from '@shared/enums/AccessLevel'
 
 const router = express.Router()
 
@@ -29,7 +30,7 @@ router.post('/players/:playerId/login', AsyncHandler(async(req, res: Response) =
 	}
 
 	if (currentPlayer.id === targetPlayerId) {
-		throw { status: 403, error: 'Can\'t impersonate self' }
+		throw { status: 403, error: 'Unable to impersonate self' }
 	}
 
 	const player = await PlayerLibrary.loginById(targetPlayerId)
@@ -41,6 +42,24 @@ router.post('/players/:playerId/login', AsyncHandler(async(req, res: Response) =
 	const originalPlayerToken = TokenManager.generateJwtToken(currentPlayer)
 	res.cookie('playerToken', playerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
 	res.cookie('originalPlayerToken', originalPlayerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
+
+	res.status(204)
+	res.send()
+}))
+
+router.post('/players/:playerId/accessLevel', AsyncHandler(async(req, res: Response) => {
+	const currentPlayer = getPlayerFromAuthenticatedRequest(req)
+	const targetPlayerId = req.params['playerId']
+	const accessLevel = req.body['accessLevel'] as AccessLevel
+	if (!targetPlayerId || !accessLevel) {
+		throw { status: 400, error: 'Missing playerId or accessLevel' }
+	}
+
+	if (currentPlayer.id === targetPlayerId) {
+		throw { status: 403, error: 'Unable to edit self' }
+	}
+
+	await PlayerLibrary.updateAccessLevel(targetPlayerId, accessLevel)
 
 	res.status(204)
 	res.send()

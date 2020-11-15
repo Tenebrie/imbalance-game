@@ -6,6 +6,7 @@ import PlayerDatabase from '../../database/PlayerDatabase'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import {tryUntil} from '../../utils/Utils'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
+import AccessLevel from '@shared/enums/AccessLevel'
 
 const createNumberedUsername = (username: string): string => {
 	let existingPlayer: PlayerDatabaseEntry | null
@@ -57,6 +58,15 @@ class PlayerLibrary {
 		this.removeFromCache(player)
 		const passwordHash = await HashManager.hashPassword(password)
 		return PlayerDatabase.updatePlayerPassword(id, passwordHash)
+	}
+
+	public async updateAccessLevel(id: string, accessLevel: AccessLevel): Promise<boolean> {
+		const player = await this.getPlayerById(id)
+		if (!player) {
+			return false
+		}
+		this.removeFromCache(player)
+		return PlayerDatabase.updatePlayerAccessLevel(id, accessLevel)
 	}
 
 	public async login(email: string, password: string): Promise<ServerPlayer | null> {

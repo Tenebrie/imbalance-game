@@ -5,7 +5,7 @@ interface ErrorJson {
 	error: string
 }
 
-export default (err: any, req: Request, res: Response) => {
+export default (err: any, req: Request, res: Response, next: () => void) => {
 	if (err && !err.status) {
 		console.error(err)
 	}
