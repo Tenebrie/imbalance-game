@@ -143,9 +143,9 @@
 	"card.feature.keywordOrder.name": "Order",
 	"card.feature.keywordOrder.description": "While this unit is on the board, choose a target and trigger an effect once a turn.",
 	"card.feature.keywordCreate.name": "Create",
-	"card.feature.keywordCreate.description": "Add a card into your hand. It gets 'Temporary Card'.",
+	"card.feature.keywordCreate.description": "Add a card into your hand until the end of your turn.",
 	"card.feature.keywordSummon.name": "Summon",
-	"card.feature.keywordSummon.description": "Move a card from your deck into your hand. It gets 'Temporary Card'.",
+	"card.feature.keywordSummon.description": "Move a card from your deck into your hand until the end of your turn.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
 	"card.feature.keywordHeroPower.name": "Leader Power",
@@ -366,7 +366,7 @@
 	"card.unitCultistBrute.flavor": "- \"So say we all\"",
 
 	"card.unitCultistSpellslinger.name": "Cultist Spellslinger",
-	"card.unitCultistSpellslinger.description": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a *Scroll*.\nIt costs 1 Mana less for every Power the target unit had.",
+	"card.unitCultistSpellslinger.description": "*Deploy:*\nDestroy an allied unit\nto *Create* a *Scroll*.\nIt costs 1 Mana less for every Power the target unit had.",
 	"card.unitCultistSpellslinger.flavor": "- \"So say we all\"",
 
 	"card.heroCultistOfAreddon.name": "Cultist of Areddon",

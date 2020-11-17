@@ -26,7 +26,7 @@ export default class UnitCultistSpellslinger extends ServerCard {
 			color: CardColor.BRONZE,
 			tribes: CardTribe.CULTIST,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_DEPLOY],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			stats: {
 				power: 2,
 			},
