@@ -1,6 +1,6 @@
-import ServerUnit from './ServerUnit'
-import ServerDamageInstance from './ServerDamageSource'
-import ServerCard from './ServerCard'
+import ServerUnit from '../ServerUnit'
+import ServerDamageInstance from '../ServerDamageSource'
+import ServerCard from '../ServerCard'
 
 enum GameHookType {
 	CARD_TAKES_DAMAGE = 'cardTakesDamage',

@@ -6,7 +6,7 @@ import ServerAnimation from './ServerAnimation'
 import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerResolveStack from './ServerResolveStack'
-import GameEventCreators from './GameEventCreators'
+import GameEventCreators from './events/GameEventCreators'
 import Utils from '../../utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
 

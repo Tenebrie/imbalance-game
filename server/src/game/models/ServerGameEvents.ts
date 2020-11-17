@@ -4,187 +4,32 @@ import ServerCard from './ServerCard'
 import CardLocation from '@shared/enums/CardLocation'
 import {cardPerform, cardRequire} from '../utils/CardEventHandlers'
 import ServerBuff from './ServerBuff'
-import GameHookType from './GameHookType'
+import GameHookType from './events/GameHookType'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameEventType from '@shared/enums/GameEventType'
-import {GameEvent} from './GameEventCreators'
+import {GameEvent} from './events/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
+import {EventCallback} from './events/EventCallback'
+import {EventHook} from './events/EventHook'
+import {CardSelector, CardSelectorBuilder} from './events/CardSelector'
 
 export type EventSubscriber = ServerGame | ServerCard | ServerBuff
-
-export class EventCallback<EventArgs> {
-	private readonly __subscriber: EventSubscriber
-	private readonly __prepares: ((args: EventArgs, preparedState: Record<string, any>) => Record<string, any>)[]
-	private readonly __callbacks: ((args: EventArgs, preparedState: Record<string, any>) => void)[]
-	private readonly __conditions: ((args: EventArgs, rawEvent: GameEvent) => boolean)[]
-	private __ignoreControlEffects: boolean
-
-	constructor(subscriber: EventSubscriber) {
-		this.__subscriber = subscriber
-		this.__prepares = []
-		this.__callbacks = []
-		this.__conditions = []
-		this.__ignoreControlEffects = false
-	}
-
-	public get subscriber(): EventSubscriber {
-		return this.__subscriber
-	}
-
-	public get prepares(): ((args: EventArgs, preparedState: Record<string, any>) => Record<string, any>)[] {
-		return this.__prepares
-	}
-
-	public get callbacks(): ((args: EventArgs, preparedState: Record<string, any>) => void)[] {
-		return this.__callbacks
-	}
-
-	public get conditions(): ((args: EventArgs, rawEvent: GameEvent) => boolean)[] {
-		return this.__conditions
-	}
-
-	public get ignoreControlEffects(): boolean {
-		return this.__ignoreControlEffects
-	}
-
-	/* Prepare state to be used in the callback
-	 * ----------------------------------------
-	 * State is being prepared synchronously on every queued callback before any of them execute. As a result, this is useful
-	 * to synchronize multiple copies of the same card and prevent effect race conditions.
-	 */
-	prepare(callback: (args: EventArgs, preparedState: Record<string, any>) => Record<string, any>): EventCallback<EventArgs> {
-		this.__prepares.push(callback)
-		return this
-	}
-
-	/* Perform a callback when an event occurs and all conditions are satisfied
-	 * ------------------------------------------------------------------------
-	 * Subscribers must **NOT** modify the event that triggered the callback. See `createHook` for
-	 * event modifications.
-	 *
-	 * If any of the `perform` expressions throws an error, the execution of the chain is stopped.
-	 */
-	perform(callback: (args: EventArgs, preparedState: Record<string, any>) => void): EventCallback<EventArgs> {
-		this.__callbacks.push(callback)
-		return this
-	}
-
-	/* Require a condition to be true before callback execution
-	 * ------------------------------------------------------------------------
-	 * Add a new condition to the require chain.
-	 *
-	 * The callback will only execute if all conditions return `true` or other truthy value.
-	 */
-	require(condition: (args: EventArgs, rawEvent: GameEvent) => boolean): EventCallback<EventArgs> {
-		this.__conditions.push(condition)
-		return this
-	}
-
-	/* Ignore control effects
-	 * ------------------------------------------------------------------------
-	 * This callback will ignore stun and suspension effects applied to card and fire even if the normal callbacks would be skipped.
-	 */
-	forceIgnoreControlEffects(): EventCallback<EventArgs> {
-		this.__ignoreControlEffects = true
-		return this
-	}
-}
-
-export class EventHook<HookValues, HookArgs> {
-	private readonly __subscriber: EventSubscriber
-	private readonly __hooks: ((values: HookValues, args?: HookArgs) => HookValues)[]
-	private readonly __callbacks: ((args: HookArgs) => void)[]
-	private readonly __conditions: ((args: HookArgs) => boolean)[]
-	private __ignoreControlEffects = false
-
-	constructor(subscriber: EventSubscriber) {
-		this.__subscriber = subscriber
-		this.__hooks = []
-		this.__callbacks = []
-		this.__conditions = []
-	}
-
-	public get subscriber(): EventSubscriber {
-		return this.__subscriber
-	}
-
-	public get hooks(): ((values: HookValues, args?: HookArgs) => HookValues)[] {
-		return this.__hooks
-	}
-
-	public get callbacks(): ((args: HookArgs) => void)[] {
-		return this.__callbacks
-	}
-
-	public get conditions(): ((args: HookArgs) => boolean)[] {
-		return this.__conditions
-	}
-
-	public get ignoreControlEffects(): boolean {
-		return this.__ignoreControlEffects
-	}
-
-	/* Add a hook values replace function
-	 * ------------------------------------------------------------------------
-	 * In the replace function parameters, `values` is replaceable values object, and `args` is optional extra hook
-	 * parameters.
-	 *
-	 * Replace function must return a modified `values` object.
-	 */
-	replace(func: (values: HookValues, args?: HookArgs) => HookValues): EventHook<HookValues, HookArgs> {
-		this.__hooks.push(func)
-		return this
-	}
-
-	/* Perform a callback when a hook event occurs and all conditions are satisfied
-	 * ------------------------------------------------------------------------
-	 * The `args` argument provided to the callback is the original one, not affected by `replace` result.
-	 */
-	perform(callback: (args: HookArgs) => void): EventHook<HookValues, HookArgs> {
-		this.__callbacks.push(callback)
-		return this
-	}
-
-	/* Require a condition to be true before callback execution
-	 * ------------------------------------------------------------------------
-	 * Add a new condition to the require chain.
-	 *
-	 * The hook will only execute if all conditions return `true`
-	 */
-	require(condition: (args: HookArgs) => boolean): EventHook<HookValues, HookArgs> {
-		this.__conditions.push(condition)
-		return this
-	}
-
-	/* Require card location to be a specified value before callback execution
-	 * ------------------------------------------------------------------------
-	 * Add a new condition to the require chain. Card location must match any of the specified values.
-	 */
-	requireLocations(locations: CardLocation[]): EventHook<HookValues, HookArgs> {
-		return this.require(() => !(this.__subscriber instanceof ServerGame) && locations.includes(this.__subscriber.location))
-	}
-
-	/* Ignore control effects
-	 * ------------------------------------------------------------------------
-	 * This callback will ignore stun and suspension effects applied to card and fire even if the normal callbacks would be skipped.
-	 */
-	forceIgnoreControlEffects(): EventHook<HookValues, HookArgs> {
-		this.__ignoreControlEffects = true
-		return this
-	}
-}
 
 export default class ServerGameEvents {
 	private readonly game: ServerGame
 	private readonly eventLog: EventLogEntryMessage[][]
 	private eventCallbacks: Map<GameEventType, EventCallback<any>[]>
 	private eventHooks: Map<GameHookType, EventHook<any, any>[]>
+	private cardSelectors: CardSelector[]
+	private cardSelectorBuilders: CardSelectorBuilder[]
 
 	constructor(game: ServerGame) {
 		this.game = game
 		this.eventCallbacks = new Map<GameEventType, EventCallback<any>[]>()
 		this.eventHooks = new Map<GameHookType, EventHook<any, any>[]>()
+		this.cardSelectors = []
+		this.cardSelectorBuilders = []
 		this.eventLog = []
 		this.eventLog.push([])
 		Utils.forEachInStringEnum(GameEventType, eventType => this.eventCallbacks.set(eventType, []))
@@ -201,6 +46,12 @@ export default class ServerGameEvents {
 		const eventHook = new EventHook<HookValues, HookArgs>(subscriber)
 		this.eventHooks.get(hook)!.push(eventHook)
 		return eventHook
+	}
+
+	public createSelector(subscriber: EventSubscriber): CardSelectorBuilder {
+		const cardSelector = new CardSelectorBuilder(subscriber)
+		this.cardSelectorBuilders.push(cardSelector)
+		return cardSelector
 	}
 
 	public unsubscribe(targetSubscriber: EventSubscriber): void {
@@ -282,6 +133,28 @@ export default class ServerGameEvents {
 					return replace(accInner, hookArgs)
 				}, accOuter)
 			}, values)
+	}
+
+	public evaluateSelectors(): void {
+		this.cardSelectors = this.cardSelectors.concat(this.cardSelectorBuilders.map(builder => builder.build()))
+		this.cardSelectorBuilders = []
+
+		let allGameCards: ServerCard[] = this.game.board.getAllUnits().map(unit => unit.card)
+			.concat(this.game.cardPlay.cardResolveStack.entries.map(entry => entry.ownedCard.card))
+		this.game.players.forEach(player => {
+			allGameCards = allGameCards.concat(player.cardHand.allCards)
+			allGameCards = allGameCards.concat(player.cardDeck.allCards)
+			allGameCards = allGameCards.concat(player.cardGraveyard.allCards)
+		})
+		allGameCards = new Array(...new Set(allGameCards))
+
+		this.cardSelectors.forEach(selector => {
+			if (this.subscriberSuspended(selector.subscriber)) {
+				selector.clearSelection()
+			} else {
+				selector.evaluate(allGameCards)
+			}
+		})
 	}
 
 	private subscriberSuspended(subscriber: EventSubscriber): boolean {

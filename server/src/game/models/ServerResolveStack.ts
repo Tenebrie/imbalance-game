@@ -4,7 +4,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerGame from './ServerGame'
 import ServerCardTarget, {ServerCardTargetCard, ServerCardTargetRow} from './ServerCardTarget'
 import CardFeature from '@shared/enums/CardFeature'
-import GameEventCreators from './GameEventCreators'
+import GameEventCreators from './events/GameEventCreators'
 import ResolveStackEntry from '@shared/models/ResolveStackEntry'
 import ResolveStack from '@shared/models/ResolveStack'
 

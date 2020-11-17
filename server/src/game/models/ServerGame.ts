@@ -22,7 +22,7 @@ import {BuffConstructor} from './ServerBuffContainer'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
 import GameEventType from '@shared/enums/GameEventType'
-import {PlayerTargetCardSelectedEventArgs} from './GameEventCreators'
+import {PlayerTargetCardSelectedEventArgs} from './events/GameEventCreators'
 import ServerGameTimers from './ServerGameTimers'
 
 interface ServerGameProps {

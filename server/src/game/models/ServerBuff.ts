@@ -9,14 +9,16 @@ import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateM
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
-import {EventCallback, EventHook} from './ServerGameEvents'
-import GameHookType from './GameHookType'
+import GameHookType from './events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffFeature from '@shared/enums/BuffFeature'
-import GameEventCreators, {TurnEndedEventArgs, TurnStartedEventArgs} from './GameEventCreators'
+import GameEventCreators, {TurnEndedEventArgs, TurnStartedEventArgs} from './events/GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import StandardTargetDefinitionBuilder from './targetDefinitions/StandardTargetDefinitionBuilder'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import {CardSelector, CardSelectorBuilder} from './events/CardSelector'
+import {EventCallback} from './events/EventCallback'
+import {EventHook} from './events/EventHook'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -162,6 +164,14 @@ export default class ServerBuff implements Buff {
 	 */
 	protected createHook<HookValues, HookArgs>(hook: GameHookType): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hook)
+	}
+
+	/* Create an aura effect
+	 * ------------------------
+	 * Description
+	 */
+	protected createSelector(): CardSelectorBuilder {
+		return this.game.events.createSelector(this)
 	}
 
 	getMaxPowerOverride(baseValue: number): number { return baseValue }

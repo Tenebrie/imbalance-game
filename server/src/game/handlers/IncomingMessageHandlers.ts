@@ -35,6 +35,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
+		game.events.evaluateSelectors()
 		game.events.flushLogEventGroup()
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
@@ -50,6 +51,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
+		game.events.evaluateSelectors()
 		game.events.flushLogEventGroup()
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
@@ -69,6 +71,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
+		game.events.evaluateSelectors()
 		game.events.flushLogEventGroup()
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
@@ -81,6 +84,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
+			game.events.evaluateSelectors()
 			game.events.flushLogEventGroup()
 		}
 
@@ -129,6 +133,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		}
 
 		game.advanceCurrentTurn()
+		game.events.evaluateSelectors()
 		game.events.flushLogEventGroup()
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},

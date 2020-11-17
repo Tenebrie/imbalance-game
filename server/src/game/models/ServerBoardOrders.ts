@@ -3,7 +3,7 @@ import ServerUnit from './ServerUnit'
 import {ServerCardTargetCard, ServerCardTargetRow} from './ServerCardTarget'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import TargetMode from '@shared/enums/TargetMode'
-import GameEventCreators from './GameEventCreators'
+import GameEventCreators from './events/GameEventCreators'
 
 export default class ServerBoardOrders {
 	readonly game: ServerGame

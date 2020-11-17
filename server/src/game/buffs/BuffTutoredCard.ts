@@ -3,7 +3,7 @@ import BuffStackType from '@shared/enums/BuffStackType'
 import ServerGame from '../models/ServerGame'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardFeature from '@shared/enums/CardFeature'
-import {SpellDeployedEventArgs, UnitDeployedEventArgs} from '../models/GameEventCreators'
+import {SpellDeployedEventArgs, UnitDeployedEventArgs} from '../models/events/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class BuffTutoredCard extends ServerBuff {

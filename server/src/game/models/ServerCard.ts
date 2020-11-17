@@ -16,8 +16,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
-import GameHookType, {CardDestroyedHookArgs, CardDestroyedHookValues, CardTakesDamageHookArgs, CardTakesDamageHookValues, UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
-import {EventCallback, EventHook} from './ServerGameEvents'
+import GameHookType, {CardDestroyedHookArgs, CardDestroyedHookValues, CardTakesDamageHookArgs, CardTakesDamageHookValues, UnitDestroyedHookArgs, UnitDestroyedHookValues} from './events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {
 	BuffCreatedEventArgs,
@@ -40,7 +39,7 @@ import GameEventCreators, {
 	UnitMovedEventArgs,
 	UnitOrderedCardEventArgs,
 	UnitOrderedRowEventArgs
-} from './GameEventCreators'
+} from './events/GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
 import Utils, {getClassFromConstructor} from '../../utils/Utils'
 import ServerAnimation from './ServerAnimation'
@@ -50,6 +49,9 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import SimpleTargetDefinitionBuilder from './targetDefinitions/SimpleTargetDefinitionBuilder'
 import {ServerCardTargeting} from './ServerCardTargeting'
 import TargetType from '@shared/enums/TargetType'
+import {EventCallback} from './events/EventCallback'
+import {EventHook} from './events/EventHook'
+import {CardSelectorBuilder} from './events/CardSelector'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -566,6 +568,14 @@ export default class ServerCard implements Card {
 	protected createHook<HookValues, HookArgs>(hookType: GameHookType, location: CardLocation[]): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hookType)
 			.requireLocations(location)
+	}
+
+	/* Create an aura effect
+	 * ------------------------
+	 * Description
+	 */
+	protected createSelector(): CardSelectorBuilder {
+		return this.game.events.createSelector(this)
 	}
 
 	protected addRelatedCards(): RelatedCardsDefinition {

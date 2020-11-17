@@ -3,7 +3,7 @@ import BuffStackType from '@shared/enums/BuffStackType'
 import SpellAnEncouragement from '../cards/01-arcane/leaders/VelElleron/SpellAnEncouragement'
 import BuffStrength from './BuffStrength'
 import ServerGame from '../models/ServerGame'
-import {TurnStartedEventArgs} from '../models/GameEventCreators'
+import {TurnStartedEventArgs} from '../models/events/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 

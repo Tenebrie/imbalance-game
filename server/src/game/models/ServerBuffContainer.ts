@@ -4,7 +4,7 @@ import BuffStackType from '@shared/enums/BuffStackType'
 import ServerCard from './ServerCard'
 import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
 import ServerGame from './ServerGame'
-import GameEventCreators from './GameEventCreators'
+import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardLocation from '@shared/enums/CardLocation'
@@ -146,7 +146,26 @@ export default class ServerBuffContainer implements BuffContainer {
 		this.game.events.unsubscribe(buff)
 	}
 
-	public remove(prototype: BuffConstructor): void {
+	public remove(prototype: BuffConstructor, stacksToRemove = Infinity): void {
+		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
+
+		let stacksLeftToRemove = stacksToRemove
+		let buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass).reverse()
+		while (buffsOfType.length > 0 && stacksLeftToRemove > 0) {
+			const buff = buffsOfType[0]
+			if (buff.intensity <= stacksLeftToRemove) {
+				stacksLeftToRemove -= buff.intensity
+				this.removeByReference(buff)
+			} else {
+				buff.setIntensity(buff.intensity - stacksLeftToRemove)
+				stacksLeftToRemove = 0
+			}
+
+			buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass).reverse()
+		}
+	}
+
+	public removeAll(prototype: BuffConstructor): void {
 		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 		const buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass)
 		buffsOfType.forEach(buffToRemove => {
@@ -157,11 +176,5 @@ export default class ServerBuffContainer implements BuffContainer {
 	public removeCleansable(): void {
 		const buffsToRemove = this.buffs.filter(buff => buff.constructor !== BuffLeaderPower && buff.constructor !== BuffUnitToSpellConversion)
 		buffsToRemove.forEach(buff => this.removeByReference(buff))
-	}
-
-	public removeAll(): void {
-		while (this.buffs.length > 0) {
-			this.removeByReference(this.buffs[0])
-		}
 	}
 }

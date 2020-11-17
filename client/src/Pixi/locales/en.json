@@ -328,6 +328,10 @@
 	"card.heroTaekana.title": "The Zookeeper",
 	"card.heroTaekana.description": "*Deploy:*\nGive +{strengthGiven} Power to ALL units.",
 
+	"card.heroNoekana.name": "Noekana",
+	"card.heroNoekana.title": "The Zookeeper",
+	"card.heroNoekana.description": "ALL units have +{strengthGiven} Power.",
+
 	"card.heroJom.name": "Jom",
 	"card.heroJom.title": "Acolyte of the Void",
 	"card.heroJom.description": "*Deploy:*\n*Create* a *Void portal*.<p>*Turn End:*\nIf you control at least {portalsNeeded} *Void portals*, destroy them and *Create* an *Abyss Portal*.",

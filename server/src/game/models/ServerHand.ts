@@ -3,7 +3,7 @@ import ServerGame from './ServerGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerOwnedCard from './ServerOwnedCard'
-import GameEventCreators from './GameEventCreators'
+import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 
