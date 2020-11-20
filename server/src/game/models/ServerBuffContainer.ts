@@ -65,7 +65,7 @@ export default class ServerBuffContainer implements BuffContainer {
 			this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.card], newBuff.alignment))
 		}
 
-		if (source && this.card.location !== CardLocation.UNKNOWN) {
+		if (source && !newBuff.buffFeatures.includes(BuffFeature.SKIP_ANIMATION) && this.card.location !== CardLocation.UNKNOWN) {
 			this.game.animation.play(ServerAnimation.cardAffectsCards(source, [this.card]))
 		}
 
@@ -112,7 +112,7 @@ export default class ServerBuffContainer implements BuffContainer {
 
 	public addMultiple(prototype: BuffConstructor, count: number | LeaderStatValueGetter, source: ServerCard | null, duration: number | 'default' = 'default'): void {
 		if (typeof(count) === 'function') {
-			count = count(this.card)
+			count = count(source)
 		}
 		for (let i = 0; i < count; i++) {
 			this.game.animation.createAnimationThread()
@@ -146,10 +146,10 @@ export default class ServerBuffContainer implements BuffContainer {
 		this.game.events.unsubscribe(buff)
 	}
 
-	public remove(prototype: BuffConstructor, stacksToRemove = Infinity): void {
+	public remove(prototype: BuffConstructor, count = Infinity): void {
 		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 
-		let stacksLeftToRemove = stacksToRemove
+		let stacksLeftToRemove = count
 		let buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass).reverse()
 		while (buffsOfType.length > 0 && stacksLeftToRemove > 0) {
 			const buff = buffsOfType[0]

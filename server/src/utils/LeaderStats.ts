@@ -1,11 +1,12 @@
 import ServerCard from '../game/models/ServerCard'
 import ServerUnit from '../game/models/ServerUnit'
 
-export type LeaderStatValueGetter = (card: ServerCard) => number
+export type LeaderStatValueGetter = (card: ServerCard | null) => number
 
 const asSingleUnitStat = (value: number, mapper: (unit: ServerUnit) => number): LeaderStatValueGetter => {
-	return (card: ServerCard) => {
-		const totalBoardStat = card.game.board.getUnitsOwnedByPlayer(card.owner).map(mapper).reduce((acc, val) => acc + val, 0)
+	return (card: ServerCard | null) => {
+		const totalBoardStat = card === null ? 0 :
+			card.game.board.getUnitsOwnedByPlayer(card.owner).map(mapper).reduce((acc, val) => acc + val, 0)
 		return value + totalBoardStat
 	}
 }

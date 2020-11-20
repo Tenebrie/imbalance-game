@@ -36,6 +36,7 @@ export default class ServerGame implements Game {
 	public isStarted: boolean
 	public turnIndex: number
 	public turnPhase: GameTurnPhase
+	public roundIndex: number
 	public playersToMove: ServerPlayerInGame[]
 	readonly owner: ServerPlayer | undefined
 	readonly board: ServerBoard
@@ -50,6 +51,7 @@ export default class ServerGame implements Game {
 		this.name = props.name || this.generateName(props.owner)
 		this.isStarted = false
 		this.turnIndex = -1
+		this.roundIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.owner = props.owner
 		this.board = new ServerBoard(this)
@@ -222,6 +224,7 @@ export default class ServerGame implements Game {
 	}
 
 	private startNextRound(): void {
+		this.roundIndex += 1
 		this.setTurnPhase(GameTurnPhase.ROUND_START)
 
 		this.players.forEach(playerInGame => {

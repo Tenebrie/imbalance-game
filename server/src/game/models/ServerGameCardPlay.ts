@@ -1,6 +1,6 @@
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
-import ServerCardTarget, {ServerCardTargetCard, ServerCardTargetRow} from './ServerCardTarget'
+import {ServerCardTargetCard, ServerCardTargetRow} from './ServerCardTarget'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
 import CardType from '@shared/enums/CardType'
@@ -9,13 +9,23 @@ import ServerResolveStack from './ServerResolveStack'
 import GameEventCreators from './events/GameEventCreators'
 import Utils from '../../utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
+import ServerCard from './ServerCard'
+
+type PlayedCard = {
+	card: ServerCard
+	player: ServerPlayerInGame
+	turnIndex: number
+	roundIndex: number
+}
 
 export default class ServerGameCardPlay {
 	game: ServerGame
+	playedCards: PlayedCard[]
 	cardResolveStack: ServerResolveStack
 
 	constructor(game: ServerGame) {
 		this.game = game
+		this.playedCards = []
 		this.cardResolveStack = new ServerResolveStack(game)
 	}
 
@@ -41,7 +51,12 @@ export default class ServerGameCardPlay {
 		const owner = ownedCard.owner
 
 		/* Remember played card */
-		owner.addToPlayedCards(card)
+		this.playedCards.push({
+			card: card,
+			player: owner,
+			turnIndex: this.game.turnIndex,
+			roundIndex: this.game.roundIndex
+		})
 
 		/* Trigger card played event */
 		this.game.events.postEvent(GameEventCreators.cardPlayed({

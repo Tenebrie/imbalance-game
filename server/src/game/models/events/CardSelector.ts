@@ -109,10 +109,24 @@ export class CardSelectorBuilder {
 	/* Require a condition to be true for a card to be selected
 	 * --------------------------------------------------------
 	 * Add a new condition to the require chain.
+	 * Use this function if the condition doesn't need to access the target card and only applies
+	 * to the current card or another game state.
 	 *
 	 * The selection will only execute if all conditions return `true` or other truthy value.
 	 */
-	public require(condition: (args: CardSelectorArgs) => boolean): CardSelectorBuilder {
+	public require(condition: () => boolean): CardSelectorBuilder {
+		this.__selfConditions.push(condition)
+		return this
+	}
+
+	/* Require a condition to be true for a card to be selected
+	 * --------------------------------------------------------
+	 * Add a new condition to the require chain.
+	 * Use this function only if the condition needs to access the target card.
+	 *
+	 * The selection will only execute if all conditions return `true` or other truthy value.
+	 */
+	public requireTarget(condition: (args: CardSelectorArgs) => boolean): CardSelectorBuilder {
 		this.__targetConditions.push(condition)
 		return this
 	}
