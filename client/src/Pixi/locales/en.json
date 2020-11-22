@@ -586,6 +586,10 @@
 	"card.heroQidala.description": "*Deploy:*\n*Discard* a unit card from your hand and receive a *Loot* spell of appropriate rarity.\nThen, *Draw* a card.",
 	"card.heroQidala.flavor": "- \"The rule of equivalent exchange will I always follow, yet deep in my heart do I know that fortune does indeed favor the bold.\"",
 
+	"card.heroIllusionTwin.name": "Illusion Twin",
+	"card.heroIllusionTwin.description": "*Turn end:*\nDeal {powerLost} Damage to self.<p>Then, add +{powerGiven} Power to the left-most copy of this card in the owner's hand.</p>",
+	"card.heroIllusionTwin.flavor": "- \"Have you seen my better half?\"",
+
 	"card.unitYogaTeacher.name": "Yoga Teacher",
 	"card.unitYogaTeacher.description": "*Deploy:*\n*Discard* a card from your hand.\nThen, add a copy of that card to your hand.",
 	"card.unitYogaTeacher.flavor": "- \"Trust in yoga, train your body and soul, and one day you will awaken a new man.\"",
