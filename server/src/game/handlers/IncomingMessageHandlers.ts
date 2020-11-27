@@ -146,7 +146,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		ConnectionEstablishedHandler.onPlayerConnected(game, player)
 	},
 
-	[SystemMessageType.KEEPALIVE]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+	[SystemMessageType.KEEPALIVE]: (): void => {
 		// No action needed
 	}
 }

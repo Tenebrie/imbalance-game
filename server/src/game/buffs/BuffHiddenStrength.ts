@@ -5,7 +5,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import BuffFeature from '@shared/enums/BuffFeature'
 
-export default class BuffStrength extends ServerBuff {
+export default class BuffHiddenStrength extends ServerBuff {
 	constructor(game: ServerGame) {
 		super(game, BuffStackType.ADD_INTENSITY)
 		this.alignment = BuffAlignment.POSITIVE

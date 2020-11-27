@@ -197,7 +197,7 @@ export default Vue.extend({
 			background: black;
 
 			opacity: 0;
-			transition: opacity 0.5s;
+			transition: opacity 0.50s;
 			transition-delay: 0.25s;
 
 			display: flex;

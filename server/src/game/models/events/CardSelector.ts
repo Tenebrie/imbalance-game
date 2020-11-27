@@ -36,9 +36,18 @@ export class CardSelector {
 	}
 
 	public evaluate(allGameCards: ServerCard[]): void {
+		this.game.animation.syncAnimationThreads()
+
 		if (this.selfConditions.find(condition => !condition())) {
+			this.clearSelection()
 			return
 		}
+
+		const deselectedCards = this.selectedCards.filter(card =>
+			this.targetConditions.find(condition => !condition({
+				target: card
+			}))
+		)
 
 		const newSelectedCards = allGameCards
 			.filter(card => !this.selectedCards.includes(card))
@@ -47,23 +56,18 @@ export class CardSelector {
 					target: card
 				}))
 			)
-		const deselectedCards = this.selectedCards.filter(card =>
-			this.targetConditions.find(condition => !condition({
-				target: card
-			}))
-		)
 
-		newSelectedCards.forEach(card => {
+		deselectedCards.forEach(card => {
 			this.game.animation.createAnimationThread()
-			this.onSelectCallbacks.forEach(callback => callback({
+			this.onReleaseCallbacks.forEach(callback => callback({
 				target: card
 			}))
 			this.game.animation.commitAnimationThread()
 		})
 
-		deselectedCards.forEach(card => {
+		newSelectedCards.forEach(card => {
 			this.game.animation.createAnimationThread()
-			this.onReleaseCallbacks.forEach(callback => callback({
+			this.onSelectCallbacks.forEach(callback => callback({
 				target: card
 			}))
 			this.game.animation.commitAnimationThread()
@@ -75,6 +79,8 @@ export class CardSelector {
 	}
 
 	public clearSelection(): void {
+		this.game.animation.syncAnimationThreads()
+
 		this.selectedCards.forEach(card => {
 			this.game.animation.createAnimationThread()
 			this.onReleaseCallbacks.forEach(callback => callback({

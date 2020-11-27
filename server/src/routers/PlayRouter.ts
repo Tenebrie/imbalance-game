@@ -60,7 +60,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	}
 
 	currentPlayer.disconnect()
-	currentPlayer.registerConnection(ws)
+	currentPlayer.registerConnection(ws, currentGame)
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)
@@ -114,7 +114,7 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 	}
 
 	currentPlayer.disconnect()
-	currentPlayer.registerConnection(ws)
+	currentPlayer.registerConnection(ws, currentGame)
 
 	const currentSpectator = spectatedPlayer.player.spectate(currentGame, currentPlayer)
 

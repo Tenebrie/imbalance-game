@@ -114,6 +114,8 @@ class AnimationThread {
 				const nextMessage = this.queuedMessages.shift()
 				this.executeMessage(nextMessage)
 			}
+		} else if (this.messageCooldown === 0 && this.queuedMessages.length > 0) {
+			this.executeNextMessage()
 		}
 	}
 

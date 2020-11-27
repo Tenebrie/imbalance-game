@@ -6,7 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import BuffHiddenStrength from '../../../buffs/BuffHiddenStrength'
+import BuffStrength from '../../../buffs/BuffStrength'
 
 export default class UnitSkybornMother extends ServerCard {
 	powerGiven = 2
@@ -29,20 +29,20 @@ export default class UnitSkybornMother extends ServerCard {
 		this.createSelector()
 			.require(() => this.location === CardLocation.HAND)
 			.requireTarget(({ target }) => target === getLastPlayedUnit())
-			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.ownerInGame === this.ownerInGame)
 			.onSelected(({ target }) => onTargetSelected(target))
 			.onReleased(({ target }) => onTargetReleased(target))
 
 		const getLastPlayedUnit = () => game.cardPlay.playedCards
 			.filter(playedCard => playedCard.player === this.ownerInGame)
+			.filter(playedCard => playedCard.card.location === CardLocation.BOARD)
 			.reverse()[0]?.card
 
 		const onTargetSelected = (target: ServerCard) => {
-			target.buffs.addMultiple(BuffHiddenStrength, this.powerGiven, this)
+			target.buffs.addMultiple(BuffStrength, this.powerGiven, this)
 		}
 		const onTargetReleased = (target: ServerCard) => {
-			target.buffs.remove(BuffHiddenStrength, this.powerGiven)
+			target.buffs.remove(BuffStrength, this.powerGiven)
 		}
 	}
 }

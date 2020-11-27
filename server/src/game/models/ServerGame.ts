@@ -349,7 +349,9 @@ export default class ServerGame implements Game {
 
 	public forceShutdown(reason: string): void {
 		this.spectators.forEach(spectator => spectator.player.disconnect())
-		this.players.forEach(playerInGame => playerInGame.player.disconnect())
+		this.players
+			.filter(playerInGame => playerInGame.player.webSocket && playerInGame.player.webSocket.game === this)
+			.forEach(playerInGame => playerInGame.player.disconnect())
 		GameLibrary.destroyGame(this, reason)
 	}
 

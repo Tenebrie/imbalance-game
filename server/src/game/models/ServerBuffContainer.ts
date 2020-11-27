@@ -54,18 +54,42 @@ export default class ServerBuffContainer implements BuffContainer {
 	 */
 	public add(prototype: BuffConstructor, source: ServerCard | null, duration: number | 'default' = 'default'): void {
 		const newBuff = this.instantiate(prototype, source)
+		this.addInstance(newBuff, source, duration)
+	}
+
+	public addMultiple(prototype: BuffConstructor, count: number | LeaderStatValueGetter, source: ServerCard | null, duration: number | 'default' = 'default'): void {
+		if (typeof(count) === 'function') {
+			count = count(source)
+		}
+		for (let i = 0; i < count; i++) {
+			const newBuff = this.instantiate(prototype, source)
+			if (!this.buffSkipsAnimation(newBuff)) {
+				this.game.animation.createAnimationThread()
+			}
+			this.addInstance(newBuff, source, duration)
+			if (!this.buffSkipsAnimation(newBuff)) {
+				this.game.animation.commitAnimationThread()
+			}
+		}
+	}
+
+	private buffSkipsAnimation(buff: ServerBuff): boolean {
+		return buff.buffFeatures.includes(BuffFeature.SKIP_ANIMATION) || this.card.location === CardLocation.UNKNOWN
+	}
+
+	private addInstance(newBuff: ServerBuff, source: ServerCard | null, duration: number | 'default' = 'default'): void {
 		if (duration !== 'default') {
 			newBuff.duration = duration
 		}
 
 		const playBuffReceivedAnimation = () => {
-			if (newBuff.buffFeatures.includes(BuffFeature.SKIP_ANIMATION) || this.card.location === CardLocation.UNKNOWN) {
+			if (this.buffSkipsAnimation(newBuff)) {
 				return
 			}
 			this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.card], newBuff.alignment))
 		}
 
-		if (source && !newBuff.buffFeatures.includes(BuffFeature.SKIP_ANIMATION) && this.card.location !== CardLocation.UNKNOWN) {
+		if (source && !this.buffSkipsAnimation(newBuff)) {
 			this.game.animation.play(ServerAnimation.cardAffectsCards(source, [this.card]))
 		}
 
@@ -108,17 +132,6 @@ export default class ServerBuffContainer implements BuffContainer {
 		}))
 
 		playBuffReceivedAnimation()
-	}
-
-	public addMultiple(prototype: BuffConstructor, count: number | LeaderStatValueGetter, source: ServerCard | null, duration: number | 'default' = 'default'): void {
-		if (typeof(count) === 'function') {
-			count = count(source)
-		}
-		for (let i = 0; i < count; i++) {
-			this.game.animation.createAnimationThread()
-			this.add(prototype, source, duration)
-			this.game.animation.commitAnimationThread()
-		}
 	}
 
 	public getBuffsByPrototype(prototype: BuffConstructor): ServerBuff[] {

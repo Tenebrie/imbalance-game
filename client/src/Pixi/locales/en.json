@@ -596,5 +596,9 @@
 
 	"card.unitSkybornMother.name": "Skyborn Mother",
 	"card.unitSkybornMother.description": "While you hold this in your hand, the last unit you have played has +{powerGiven} Power.",
-	"card.unitSkybornMother.flavor": "- \"I'm taking care of you.\""
+	"card.unitSkybornMother.flavor": "- \"I'm taking care of you.\"",
+
+	"card.unitEndlessArmy.name": "Endless Army",
+	"card.unitEndlessArmy.description": "*Deploy:*\nAdd an *Endless Army* to the bottom of your deck.",
+	"card.unitEndlessArmy.flavor": "- \"They are legion.\""
 }

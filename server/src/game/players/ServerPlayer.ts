@@ -29,15 +29,15 @@ export default class ServerPlayer implements Player {
 	}
 
 	public get game(): ServerGame | null {
-		return GameLibrary.games.find(game => game.players.map(playerInGame => playerInGame.player).includes(this)) || null
+		return this.webSocket?.game || null
 	}
 
 	public get playerInGame(): ServerPlayerInGame | null {
 		return this.game?.players.find(playerInGame => playerInGame.player === this) || null
 	}
 
-	registerConnection(ws: ws): void {
-		this.webSocket = PlayerWebSocket.newInstance(ws)
+	registerConnection(ws: ws, game: ServerGame): void {
+		this.webSocket = PlayerWebSocket.newInstance(ws, game)
 	}
 
 	sendMessage(json: MessageJson): void {

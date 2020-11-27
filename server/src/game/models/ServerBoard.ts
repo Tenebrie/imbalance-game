@@ -312,6 +312,8 @@ export default class ServerBoard implements Board {
 		this.removeUnit(unit)
 
 		if (card.features.includes(CardFeature.HERO_POWER)) {
+			card.cleanse()
+			card.stats.power = card.stats.basePower
 			unit.owner.cardDeck.addSpellToTop(card)
 		} else if (card.type === CardType.UNIT) {
 			unit.owner.cardGraveyard.addUnit(card)
