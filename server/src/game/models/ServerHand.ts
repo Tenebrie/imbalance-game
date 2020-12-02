@@ -6,7 +6,6 @@ import ServerOwnedCard from './ServerOwnedCard'
 import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import CardType from '@shared/enums/CardType'
 
 export default class ServerHand {
 	game: ServerGame

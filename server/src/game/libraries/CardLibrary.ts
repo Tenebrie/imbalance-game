@@ -22,11 +22,6 @@ class CardLibrary {
 	cards: ServerCard[]
 
 	constructor() {
-		if (process.env.JEST_WORKER_ID !== undefined) {
-			this.cards = []
-			return
-		}
-
 		const normalizedPath = path.join(__dirname, '../cards')
 		const cardDefinitionFiles = glob.sync(`${normalizedPath}/**/*.js`)
 
@@ -70,7 +65,7 @@ class CardLibrary {
 		const cardPrototypes = upToDateModules.map(module => module.prototypeFunction)
 
 		this.cards = cardPrototypes.map(prototype => {
-			return new prototype(CardLibraryPlaceholderGame.get())
+			return new prototype(CardLibraryPlaceholderGame)
 		})
 
 		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions.`)
@@ -107,9 +102,6 @@ class CardLibrary {
 
 	public instantiateByConstructor(game: ServerGame, constructor: CardConstructor): ServerCard {
 		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
-		if (!this.cards.find(card => card.class === cardClass)) {
-			this.cards.push(new constructor(CardLibraryPlaceholderGame.get()))
-		}
 		return this.instantiateByClass(game, cardClass)
 	}
 

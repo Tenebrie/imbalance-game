@@ -45,11 +45,10 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		const inflatedUnitDeck: ServerCard[] = []
 		const inflatedSpellDeck: ServerCard[] = []
 		cards.forEach(card => {
-			const inflatedCards = card.deckAddedCards.map(cardPrototype => CardLibrary.instantiateByConstructor(game, cardPrototype))
-			const inflatedUnitCards = inflatedCards.filter(card => card.type === CardType.UNIT)
-			const inflatedSpellCards = inflatedCards.filter(card => card.type === CardType.SPELL)
-			inflatedUnitCards.forEach(cardPrototype => inflatedUnitDeck.push(cardPrototype))
-			inflatedSpellCards.forEach(cardPrototype => inflatedSpellDeck.push(cardPrototype))
+			const inflatedUnitCards = card.deckAddedCards.filter(card => CardLibrary.findPrototypeByConstructor(card).type === CardType.UNIT)
+			const inflatedSpellCards = card.deckAddedCards.filter(card => CardLibrary.findPrototypeByConstructor(card).type === CardType.SPELL)
+			inflatedUnitCards.forEach(cardPrototype => inflatedUnitDeck.push(CardLibrary.instantiateByConstructor(game, cardPrototype)))
+			inflatedSpellCards.forEach(cardPrototype => inflatedSpellDeck.push(CardLibrary.instantiateByConstructor(game, cardPrototype)))
 			if (card.color === CardColor.LEADER) {
 				leader = card
 			} else {
