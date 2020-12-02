@@ -30,39 +30,33 @@ export default class ServerGameCardPlay {
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
+		/* Check if the card can be played to specified row.
+		 * This already includes the check for unit/spell mana
+		 * Player is prevented from playing cards on their opponent's turn in IncomingMessageHandlers
+		 */
+		if (!ownedCard.card.targeting.getValidCardPlayTargets(ownedCard.owner).find(target => target.targetRow.index === rowIndex)) {
+			return
+		}
+
 		/* Deduct mana */
 		ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.stats.unitCost))
 		ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.stats.spellCost))
 
 		/* Resolve card */
-		this.forcedPlayCardFromHand(ownedCard, rowIndex, unitIndex)
-	}
-
-	public forcedPlayCardFromHand(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
 		this.forcedPlayCard(ownedCard, rowIndex, unitIndex, 'hand')
 	}
 
-	public forcedPlayCardFromDeck(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
-		this.forcedPlayCard(ownedCard, rowIndex, unitIndex, 'deck')
+	public forcedPlayCardFromHand(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
+		if (!this.game.board.isExtraUnitPlayableToRow(rowIndex)) {
+			return
+		}
+
+		this.forcedPlayCard(ownedCard, rowIndex, unitIndex, 'hand')
 	}
 
 	private forcedPlayCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number, source: 'hand' | 'deck'): void {
 		const card = ownedCard.card
 		const owner = ownedCard.owner
-
-		/* Remember played card */
-		this.playedCards.push({
-			card: card,
-			player: owner,
-			turnIndex: this.game.turnIndex,
-			roundIndex: this.game.roundIndex
-		})
-
-		/* Trigger card played event */
-		this.game.events.postEvent(GameEventCreators.cardPlayed({
-			owner: owner,
-			triggeringCard: card,
-		}))
 
 		/* Announce card to opponent */
 		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent!.player, ServerAnimation.cardAnnounce(card))
@@ -83,6 +77,20 @@ export default class ServerGameCardPlay {
 
 		/* Play animation */
 		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent!.player, ServerAnimation.delay())
+
+		/* Remember played card */
+		this.playedCards.push({
+			card: card,
+			player: owner,
+			turnIndex: this.game.turnIndex,
+			roundIndex: this.game.roundIndex
+		})
+
+		/* Trigger card played event */
+		this.game.events.postEvent(GameEventCreators.cardPlayed({
+			owner: owner,
+			triggeringCard: card,
+		}))
 	}
 
 	private playUnit(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
