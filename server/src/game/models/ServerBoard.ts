@@ -169,7 +169,11 @@ export default class ServerBoard implements Board {
 		return playerRows[Math.min(playerRows.length - 1, distance)]
 	}
 
-	public createUnit(card: ServerCard, owner: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit | null {
+	public createUnit(card: ServerCard, owner: ServerPlayerInGame | null, rowIndex: number, unitIndex: number): ServerUnit | null {
+		if (!owner) {
+			return null
+		}
+
 		const targetRow = this.rows[rowIndex]
 		if (targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
 			return null

@@ -1,14 +1,11 @@
 import ServerGame from '../models/ServerGame'
 
-let instance: ServerGame | null = null
-
-export default {
-	get(): ServerGame {
-		if (!instance) {
-			instance = new ServerGame({
-				name: 'Card Library Placeholder Game'
-			})
-		}
-		return instance
+class CardLibraryPlaceholderGame extends ServerGame {
+	constructor() {
+		super({
+			name: 'CardLibrary placeholder game'
+		})
 	}
 }
+
+export default new CardLibraryPlaceholderGame()
