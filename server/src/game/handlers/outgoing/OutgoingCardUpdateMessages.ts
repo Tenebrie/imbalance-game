@@ -12,7 +12,7 @@ import {CardUpdateMessageType} from '@shared/models/network/messageHandlers/Serv
 
 export default {
 	notifyAboutCardStatsChange(card: ServerCard): void {
-		if (card.game === CardLibraryPlaceholderGame) {
+		if (card.game === CardLibraryPlaceholderGame.get()) {
 			return
 		}
 
