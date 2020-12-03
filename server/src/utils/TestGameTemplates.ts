@@ -5,11 +5,25 @@ import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import CardLibrary from '../game/libraries/CardLibrary'
 import LeaderVelElleron from '../game/cards/01-arcane/leaders/VelElleron/LeaderVelElleron'
 
+const consoleInfo = console.info
+const consoleWarn = console.warn
+const consoleError = console.error
+
+export const silenceLogging = (): void => {
+	console.info = jest.fn()
+	console.warn = jest.fn()
+	console.error = jest.fn()
+}
+
+export const resumeLogging = (): void => {
+	console.info = consoleInfo
+	console.warn = consoleWarn
+	console.error = consoleError
+}
+
 export default {
 	emptyDecks(): ServerGame {
-		const consoleLog = console.info
-		console.info = jest.fn()
-
+		silenceLogging()
 		const game = new ServerGame({})
 		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
 		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
@@ -17,8 +31,7 @@ export default {
 		game.addPlayer(playerOne, template)
 		game.addPlayer(playerTwo, template)
 		game.start()
-
-		console.info = consoleLog
+		resumeLogging()
 		return game
 	}
 }

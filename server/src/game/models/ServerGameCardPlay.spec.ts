@@ -14,14 +14,13 @@ describe('ServerGameCardPlay', () => {
 
 	beforeEach(() => {
 		game = TestGameTemplates.emptyDecks()
-		// eventSpy = jest.spyOn(game.events, 'postEvent')
+		eventSpy = jest.spyOn(game.events, 'postEvent')
 	})
 
 	describe('when a player plays a unit card', () => {
 		let cardInHand: ServerCard
 
 		beforeEach(() => {
-			game = TestGameTemplates.emptyDecks()
 			cardInHand = new UnitEndlessArmy(game)
 			game.players[0].setUnitMana(3)
 			game.players[0].cardHand.addUnit(cardInHand)
@@ -52,6 +51,23 @@ describe('ServerGameCardPlay', () => {
 			expect(game.players[0].cardHand.unitCards.length).toEqual(0)
 		})
 
+		it('posts valid events', () => {
+			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 4, 0)
+			expect(eventSpy).toBeCalledTimes(4)
+			expect(eventSpy).nthCalledWith(1, expect.objectContaining({
+				type: 'unitCreated'
+			}))
+			expect(eventSpy).nthCalledWith(2, expect.objectContaining({
+				type: 'unitDeployed'
+			}))
+			expect(eventSpy).nthCalledWith(3, expect.objectContaining({
+				type: 'cardResolved'
+			}))
+			expect(eventSpy).nthCalledWith(4, expect.objectContaining({
+				type: 'cardPlayed'
+			}))
+		})
+
 		describe('when the target row is full', () => {
 			beforeEach(() => {
 				for (let i = 0; i < Constants.MAX_CARDS_PER_ROW; i++) {
@@ -70,7 +86,7 @@ describe('ServerGameCardPlay', () => {
 				expect(game.players[0].unitMana).toEqual(3)
 			})
 
-			it('is unable to create the unit', () => {
+			it('does not create the unit', () => {
 				game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 0, 0)
 				expect(game.board.rows[0].cards.length).toEqual(Constants.MAX_CARDS_PER_ROW)
 				expect(game.board.rows[0].cards.find(unit => unit.card === cardInHand)).toBeFalsy()

@@ -394,7 +394,7 @@
 	"card.unitDarkTimewarper.description": "*Deploy:*\nTrigger a *Turn end* effect on all allied *Void Portals*.\nThen, *Create* a *Void Portal*.",
 
 	"card.unitTravelingEnchantress.name": "Traveling\nEnchantress",
-	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, double their *Strength* effects",
+	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current power is at least double their base power, give +{extraStrengthGiven} Power more.",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
 	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Human card from your deck",
@@ -600,5 +600,9 @@
 
 	"card.unitEndlessArmy.name": "Endless Army",
 	"card.unitEndlessArmy.description": "*Deploy:*\nAdd an *Endless Army* to the bottom of your deck.",
-	"card.unitEndlessArmy.flavor": "- \"They are legion.\""
+	"card.unitEndlessArmy.flavor": "- \"They are legion.\"",
+
+	"card.unitAulerianSongwriter.name": "Aulerian Songwriter",
+	"card.unitAulerianSongwriter.description": "*Deploy:*\nChoose a unit.\nAll copies of this card have +{bonusPower} Power for the rest of the game.",
+	"card.unitAulerianSongwriter.flavor": "- \"Stay awhile and listen.\""
 }

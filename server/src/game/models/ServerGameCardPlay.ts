@@ -30,7 +30,8 @@ export default class ServerGameCardPlay {
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
-		/* Check if the card can be played to specified row.
+		/*
+		 * Check if the card can be played to specified row.
 		 * This already includes the check for unit/spell mana
 		 * Player is prevented from playing cards on their opponent's turn in IncomingMessageHandlers
 		 */
@@ -103,14 +104,16 @@ export default class ServerGameCardPlay {
 
 		/* Insert the card into the board */
 		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
-		if (unit !== null) {
-			/* Invoke the card Deploy effect */
-			this.game.events.postEvent(GameEventCreators.unitDeployed({
-				triggeringUnit: unit
-			}))
-			if (this.cardResolveStack.currentCard?.card === card) {
-				this.cardResolveStack.resumeResolving()
-			}
+		if (unit === null) {
+			return
+		}
+
+		/* Invoke the card Deploy effect */
+		this.game.events.postEvent(GameEventCreators.unitDeployed({
+			triggeringUnit: unit
+		}))
+		if (this.cardResolveStack.currentCard?.card === card) {
+			this.cardResolveStack.resumeResolving()
 		}
 	}
 
