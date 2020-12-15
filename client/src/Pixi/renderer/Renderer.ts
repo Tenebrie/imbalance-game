@@ -495,7 +495,7 @@ export default class Renderer {
 		for (let i = 0; i < gameBoardRow.cards.length; i++) {
 			const unit = gameBoardRow.cards[i]
 			this.updateCardStats(unit.card)
-			this.renderUnit(unit, rowY, i, gameBoardRow.cards.length)
+			this.renderUnit(unit, rowY, rowIndex, i, gameBoardRow.cards.length)
 		}
 	}
 
@@ -511,7 +511,7 @@ export default class Renderer {
 		return BoardRowTint.NORMAL
 	}
 
-	public renderUnit(unit: RenderedUnit, rowY: number, unitIndex: number, unitCount: number): void {
+	public renderUnit(unit: RenderedUnit, rowY: number, rowIndex: number, unitIndex: number, unitCount: number): void {
 		if (unit.card === Core.input.inspectedCard) {
 			return
 		}
@@ -530,11 +530,21 @@ export default class Renderer {
 		const targetPositionX = screenCenterX + distanceToCenter * cardWidth
 		const targetPositionY = rowY
 
+		let shadowUnitOffsetX = 0
+		const shadowUnit = Core.input.limboShadowUnit || Core.input.hoveredShadowUnit
+		if (shadowUnit && rowIndex === shadowUnit.rowIndex) {
+			if (shadowUnit.unitIndex <= unitIndex) {
+				shadowUnitOffsetX = cardWidth / 2
+			} else {
+				shadowUnitOffsetX = -cardWidth / 2
+			}
+		}
+
 		if (unit.card.displayMode === CardDisplayMode.ON_BOARD) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 2
 			unit.card.powerText.alpha = sprite.alpha
 			unit.card.armorText.alpha = sprite.alpha
-			container.position.x += (targetPositionX - container.position.x) * this.deltaTimeFraction * 7
+			container.position.x += (targetPositionX - container.position.x + shadowUnitOffsetX) * this.deltaTimeFraction * 7
 			container.position.y += (targetPositionY - container.position.y) * this.deltaTimeFraction * 7
 		} else {
 			container.visible = true
@@ -549,7 +559,7 @@ export default class Renderer {
 		sprite.tint = this.getUnitTint(unit)
 		disabledOverlaySprite.visible = false
 
-		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
+		hitboxSprite.position.set(targetPositionX, targetPositionY)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
 

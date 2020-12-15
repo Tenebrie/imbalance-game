@@ -1,6 +1,6 @@
 <template>
 	<div class="the-challenge-ai-selection">
-		<div class="container">
+		<div class="container" @click="onMenuClick">
 			<h2>AI Difficulty</h2>
 			<button @click="onEasySelected" class="primary game-button">Easy: <b>Dummy</b></button>
 			<button @click="onNormalSelected" class="primary game-button">Normal: <b>Vel'Elleron</b></button>
@@ -17,19 +17,26 @@ import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
 
 export default {
 	setup() {
+		const onMenuClick = (event: MouseEvent) => {
+			event.cancelBubble = true
+		}
+
 		const onEasySelected = async (): Promise<void> => {
+			store.dispatch.popupModule.close()
 			const response = await axios.post('/api/games', { mode: GameMode.VS_AI, difficulty: ChallengeAIDifficulty.EASY })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
 		}
 
 		const onNormalSelected = async (): Promise<void> => {
+			store.dispatch.popupModule.close()
 			const response = await axios.post('/api/games', { mode: GameMode.VS_AI, difficulty: ChallengeAIDifficulty.NORMAL })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
 		}
 
 		return {
+			onMenuClick,
 			onEasySelected,
 			onNormalSelected,
 		}

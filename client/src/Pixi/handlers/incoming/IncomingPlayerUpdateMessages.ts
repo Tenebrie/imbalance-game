@@ -70,7 +70,7 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 	[PlayerUpdateMessageType.CARD_DESTROY_IN_HAND]: (data: OwnedCardRefMessage) => {
 		const player = Core.getPlayer(data.ownerId)
 		player.cardHand.destroyCardById(data.cardId)
-		Core.input.destroyCardInLimbo(data.cardId)
+		Core.input.destroyLimboCard(data.cardId)
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.id === data.cardId) {
 			Core.mainHandler.clearAnnouncedCard()
@@ -98,7 +98,7 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 
 	[PlayerUpdateMessageType.PLAY_DECLINED]: (data: CardRefMessage) => {
 		console.info('Card play declined', data)
-		const cardInLimbo = Core.input.restoreCardFromLimbo(data)
+		const cardInLimbo = Core.input.restoreLimboCard(data)
 		Core.player.cardHand.addCard(cardInLimbo)
 	},
 

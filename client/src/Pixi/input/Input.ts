@@ -28,6 +28,12 @@ enum InspectCardMode {
 	HOLD,
 }
 
+interface ShadowUnit {
+	card: RenderedCard
+	rowIndex: number
+	unitIndex: number
+}
+
 export default class Input {
 	leftMouseDown = false
 	rightMouseDown = false
@@ -36,6 +42,9 @@ export default class Input {
 	hoveredCard: HoveredCard | null = null
 	grabbedCard: GrabbedCard | null = null
 	inspectedCard: RenderedCard | null = null
+
+	limboShadowUnit: ShadowUnit | null = null
+	hoveredShadowUnit: ShadowUnit | null = null
 
 	playableCards: ClientCardTarget[] = []
 	forcedTargetingMode: ForcedTargetingMode | null = null
@@ -103,6 +112,18 @@ export default class Input {
 		}
 
 		this.hoveredCard = hoveredCard
+
+		const hoveredRow = MouseHover.getHoveredRow()
+		if (hoveredRow && this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && this.grabbedCard.validTargetRows.includes(hoveredRow)) {
+			this.hoveredShadowUnit = {
+				card: this.grabbedCard.card,
+				rowIndex: hoveredRow.index,
+				unitIndex: this.getCardInsertIndex(hoveredRow)
+			}
+		} else {
+			this.hoveredShadowUnit = null
+		}
+		console.log(this.hoveredShadowUnit)
 	}
 
 	private onMouseDown(event: MouseEvent) {
@@ -273,6 +294,11 @@ export default class Input {
 		} else if (card.type === CardType.UNIT) {
 			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, this.getCardInsertIndex(hoveredRow))
 		}
+		this.limboShadowUnit = {
+			card: card,
+			rowIndex: hoveredRow.index,
+			unitIndex: this.getCardInsertIndex(hoveredRow)
+		}
 		this.cardLimbo.push(card)
 		Core.player.cardHand.removeCard(card)
 		Core.renderer.hideCard(card)
@@ -300,24 +326,30 @@ export default class Input {
 		OutgoingMessageHandlers.sendCardTarget(this.forcedTargetingMode.validTargets.find(target => target.targetCardData.id === selectedCard.id))
 	}
 
-	public restoreCardFromLimbo(cardMessage: CardRefMessage): RenderedCard {
+	public restoreLimboCard(cardMessage: CardRefMessage): RenderedCard {
 		const cardInLimbo = this.cardLimbo.find(card => card.id === cardMessage.id)
 		if (!cardInLimbo) {
 			return
 		}
 
 		Core.renderer.showCard(cardInLimbo)
-		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardMessage.id)
-
+		this.evictCardFromLimbo(cardMessage.id)
 		return cardInLimbo
 	}
 
-	public destroyCardInLimbo(cardId: string): void {
+	public destroyLimboCard(cardId: string): void {
 		const cardInLimbo = this.cardLimbo.find(card => card.id === cardId)
 		if (cardInLimbo) {
 			Core.renderer.destroyCard(cardInLimbo)
 		}
+		this.evictCardFromLimbo(cardId)
+	}
+
+	private evictCardFromLimbo(cardId: string): void {
 		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardId)
+		if (this.limboShadowUnit && this.limboShadowUnit.card.id === cardId) {
+			this.limboShadowUnit = null
+		}
 	}
 
 	public async enableForcedTargetingMode(targetMode: TargetMode, validTargets: ClientCardTarget[]): Promise<void> {
