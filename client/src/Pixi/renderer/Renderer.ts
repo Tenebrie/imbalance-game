@@ -524,7 +524,7 @@ export default class Renderer {
 		const screenCenterX = this.getScreenWidth() / 2
 		const distanceToCenter = unitIndex - unitCount / 2 + 0.5
 
-		const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+		const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION * 0.905
 		const cardWidth = cardHeight * this.CARD_ASPECT_RATIO
 
 		const targetPositionX = screenCenterX + distanceToCenter * cardWidth

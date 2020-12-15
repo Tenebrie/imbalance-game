@@ -114,7 +114,11 @@ export default class Input {
 		this.hoveredCard = hoveredCard
 
 		const hoveredRow = MouseHover.getHoveredRow()
-		if (hoveredRow && this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && this.grabbedCard.validTargetRows.includes(hoveredRow)) {
+		if (hoveredRow && this.grabbedCard &&
+			this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY &&
+			this.grabbedCard.validTargetRows.includes(hoveredRow) &&
+			this.grabbedCard.card.type === CardType.UNIT) {
+
 			this.hoveredShadowUnit = {
 				card: this.grabbedCard.card,
 				rowIndex: hoveredRow.index,
