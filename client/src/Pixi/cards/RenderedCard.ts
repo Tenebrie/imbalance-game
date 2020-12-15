@@ -113,7 +113,7 @@ export default class RenderedCard implements Card {
 		this.cardNameText.horizontalAlign = RichTextAlign.END
 		this.cardTitleText = this.createTitleText(Localization.getValueOrNull(this.title) || '')
 		this.cardTribeTexts = this.tribes.map(tribe => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
-		this.cardDescriptionText = new RichText(this.displayedDescription, 350, this.getDescriptionTextVariables())
+		this.cardDescriptionText = new RichText(this.displayedDescription, 370, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.alpha = 0

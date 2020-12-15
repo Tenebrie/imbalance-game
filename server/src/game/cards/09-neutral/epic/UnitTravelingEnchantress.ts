@@ -13,7 +13,7 @@ import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitTravelingEnchantress extends ServerCard {
 	baseStrengthGiven = asSoloBuffPotency(1)
-	extraStrengthGiven = asSoloBuffPotency(11)
+	extraStrengthGiven = asSoloBuffPotency(7)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -43,8 +43,8 @@ export default class UnitTravelingEnchantress extends ServerCard {
 	private onTargetSelected(target: ServerUnit): void {
 		target.buffs.addMultiple(BuffStrength, this.baseStrengthGiven, this)
 		this.game.animation.syncAnimationThreads()
-		if (target.card.stats.power >= target.card.stats.basePower) {
-			target.buffs.addMultiple(BuffStrength, this.baseStrengthGiven, this)
+		if (target.card.stats.power >= target.card.stats.basePower * 2) {
+			target.buffs.addMultiple(BuffStrength, this.extraStrengthGiven, this)
 		}
 	}
 }

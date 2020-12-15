@@ -205,7 +205,7 @@ export default class ServerCard implements Card {
 		this.sortPriority = props.sortPriority ? props.sortPriority : 0
 		this.expansionSet = props.expansionSet
 
-		this.isCollectible = props.hiddenFromLibrary ? false : props.color !== CardColor.LEADER && props.color !== CardColor.TOKEN && props.type === CardType.UNIT
+		this.isCollectible = props.hiddenFromLibrary ? false : props.color === CardColor.LEADER || (props.color !== CardColor.TOKEN && props.type === CardType.UNIT)
 		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
 
 		this.generatedArtworkMagicString = props.generatedArtworkMagicString ? props.generatedArtworkMagicString : ''

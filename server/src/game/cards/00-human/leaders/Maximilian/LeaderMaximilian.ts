@@ -3,14 +3,12 @@ import CardColor from '@shared/enums/CardColor'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
-import SpellSteelSpark from './SpellSteelSpark'
-import SpellFireball from './SpellFireball'
-import SpellReinforcements from '../../../00-human/leaders/Maximilian/SpellReinforcements'
-import SpellAnEncouragement from './SpellAnEncouragement'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import SpellEternalServitude from './SpellEternalServitude'
+import SpellReinforcements from './SpellReinforcements'
+import SpellQuickStrike from './SpellQuickStrike'
+import SpellTacticalMove from './SpellTacticalMove'
 
-export default class LeaderVelElleron extends ServerCard {
+export default class LeaderMaximilian extends ServerCard {
 	manaPerRound = 10
 
 	constructor(game: ServerGame) {
@@ -20,7 +18,7 @@ export default class LeaderVelElleron extends ServerCard {
 			faction: CardFaction.ARCANE,
 			sortPriority: 0,
 			expansionSet: ExpansionSet.BASE,
-			deckAddedCards: [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellEternalServitude]
+			deckAddedCards: [SpellQuickStrike, SpellTacticalMove, SpellTacticalMove, SpellReinforcements]
 		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound

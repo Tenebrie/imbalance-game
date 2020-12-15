@@ -123,7 +123,6 @@ export default class Input {
 		} else {
 			this.hoveredShadowUnit = null
 		}
-		console.log(this.hoveredShadowUnit)
 	}
 
 	private onMouseDown(event: MouseEvent) {

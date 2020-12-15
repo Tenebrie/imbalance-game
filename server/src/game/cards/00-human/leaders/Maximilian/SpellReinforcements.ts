@@ -9,12 +9,12 @@ import BotCardEvaluation from '../../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../../utils/Keywords'
 
-export default class SpellFieryEntrance extends ServerCard {
+export default class SpellReinforcements extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,
 			color: CardColor.GOLDEN,
-			faction: CardFaction.ARCANE,
+			faction: CardFaction.HUMAN,
 			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_SUMMON],
 			stats: {
 				cost: 8

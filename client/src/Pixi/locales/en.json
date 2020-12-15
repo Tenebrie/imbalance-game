@@ -394,7 +394,7 @@
 	"card.unitDarkTimewarper.description": "*Deploy:*\nTrigger a *Turn end* effect on all allied *Void Portals*.\nThen, *Create* a *Void Portal*.",
 
 	"card.unitTravelingEnchantress.name": "Traveling\nEnchantress",
-	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current power is at least double their base power, give +{extraStrengthGiven} Power more.",
+	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current Power is at least double their base Power, give +{extraStrengthGiven} Power more.",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
 	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Human card from your deck",
@@ -544,9 +544,6 @@
 	"card.spellScrollOfSapping.name": "Scroll of Sapping",
 	"card.spellScrollOfSapping.description": "Choose a unit.\nReturn it to the owner's hand and grant it *'Temporary card'*.",
 
-	"card.spellFieryEntrance.name": "Fiery Entrance",
-	"card.spellFieryEntrance.description": "*Summon* a top card from your deck.",
-
 	"card.spellSteelSpark.name": "Steel Spark",
 	"card.spellSteelSpark.description": "Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
 
@@ -634,5 +631,20 @@
 
 	"card.tokenChallengeDummyTargetDummy.name": "Target Dummy",
 	"card.tokenChallengeDummyTargetDummy.description": "<i>No effect</i>",
-	"card.tokenChallengeDummyTargetDummy.flavor": "- \"We have put all our Mana into our new creation. It is the most powerful Dummy of them all.\""
+	"card.tokenChallengeDummyTargetDummy.flavor": "- \"We have put all our Mana into our new creation. It is the most powerful Dummy of them all.\"",
+
+	"card.leaderMaximilian.name": "Maximilian",
+	"card.leaderMaximilian.title": "The Commander",
+	"card.leaderMaximilian.description": "*Human Leader*<p>*Round start:*\nGain +{manaPerRound} Mana<p>Gets two copies of *Tactical Move*",
+
+	"card.spellQuickStrike.name": "Quick Strike",
+	"card.spellQuickStrike.description": "Deal {damage} Damage to an enemy unit.",
+
+	"card.spellTacticalMove.name": "Tactical Move",
+	"card.spellTacticalMove.description": "Move an allied unit to an adjacent allied row.<p>If it moved to the front row,\ndeal {damage} Damage to opposing enemy units.\nOtherwise, restore {healing} Power.",
+	"card.spellTacticalMove.target.label.unit": "Choose a unit",
+	"card.spellTacticalMove.target.label.row": "Move here",
+
+	"card.spellReinforcements.name": "Reinforcements",
+	"card.spellReinforcements.description": "*Summon* a top card from your deck."
 }
