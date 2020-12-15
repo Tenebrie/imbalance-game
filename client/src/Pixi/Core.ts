@@ -159,8 +159,8 @@ export default class Core {
 		Core.renderer.registerCard(renderedCard)
 	}
 
-	public static unregisterCard(renderedCard: RenderedCard): void {
-		Core.renderer.unregisterCard(renderedCard)
+	public static destroyCard(renderedCard: RenderedCard): void {
+		Core.renderer.destroyCard(renderedCard)
 	}
 
 	public static cleanUp(): void {

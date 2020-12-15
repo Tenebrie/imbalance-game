@@ -28,6 +28,8 @@ import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
 import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
 import Localization from '@/Pixi/Localization'
+import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
+import TheChallengeAISelection from '@/Vue/components/popup/escapeMenu/TheChallengeAISelection.vue'
 
 export default Vue.extend({
 	components: {
@@ -68,9 +70,9 @@ export default Vue.extend({
 				return
 			}
 
-			const response = await axios.post('/api/games', { mode: 'sp_ai' })
-			const gameMessage: GameMessage = response.data.data
-			await store.dispatch.joinGame(gameMessage)
+			store.dispatch.popupModule.open({
+				component: TheChallengeAISelection
+			})
 		},
 
 		async onCreateMultiPlayer(): Promise<void> {

@@ -34,6 +34,7 @@ export default class HeroAdventuringGuildMaster extends ServerCard {
 
 	private onDeploy(): void {
 		const otherCardsPlayedThisRound = this.game.cardPlay.playedCards
+			.filter(playerCard => playerCard.turnIndex === this.game.turnIndex)
 			.filter(playedCard => playedCard.player === this.ownerInGame && playedCard.roundIndex === this.game.roundIndex)
 			.filter(playedCard => playedCard.card !== this && playedCard.card.type === CardType.UNIT)
 		this.buffs.addMultiple(BuffStrength, otherCardsPlayedThisRound.length * this.powerPerCard(this), this, BuffDuration.INFINITY)

@@ -262,7 +262,17 @@ export default class Renderer {
 		this.rootContainer.addChild(card.hitboxSprite)
 	}
 
-	public unregisterCard(card: RenderedCard): void {
+	public showCard(card: RenderedCard): void {
+		card.coreContainer.visible = true
+		card.hitboxSprite.visible = true
+	}
+
+	public hideCard(card: RenderedCard): void {
+		card.coreContainer.visible = false
+		card.hitboxSprite.visible = false
+	}
+
+	public destroyCard(card: RenderedCard): void {
 		card.coreContainer.destroy({
 			children: true,
 		})

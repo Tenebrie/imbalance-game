@@ -25,7 +25,6 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 
 	[PlayerUpdateMessageType.MORALE]: (data: PlayerInGameMessage) => {
 		Core.getPlayer(data.player.id).morale = data.morale
-		Core.player.morale = data.morale
 	},
 
 	[PlayerUpdateMessageType.MANA]: (data: PlayerInGameMessage) => {
@@ -71,7 +70,7 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 	[PlayerUpdateMessageType.CARD_DESTROY_IN_HAND]: (data: OwnedCardRefMessage) => {
 		const player = Core.getPlayer(data.ownerId)
 		player.cardHand.destroyCardById(data.cardId)
-		Core.input.clearCardInLimbo(data.cardId)
+		Core.input.destroyCardInLimbo(data.cardId)
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.id === data.cardId) {
 			Core.mainHandler.clearAnnouncedCard()

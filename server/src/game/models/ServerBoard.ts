@@ -9,7 +9,6 @@ import ServerBoardOrders from './ServerBoardOrders'
 import ServerCard from './ServerCard'
 import Utils from '../../utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
-import ServerGameEventCreators from './events/GameEventCreators'
 import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
 import BuffDuration from '@shared/enums/BuffDuration'
@@ -171,21 +170,7 @@ export default class ServerBoard implements Board {
 
 	public createUnit(card: ServerCard, owner: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit | null {
 		const targetRow = this.rows[rowIndex]
-		if (targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
-			return null
-		}
-
-		const unit = new ServerUnit(this.game, card, owner)
-		targetRow.insertUnit(unit, unitIndex)
-
-		/* Play deploy animation */
-		this.game.animation.play(ServerAnimation.unitDeploy(card))
-
-		this.game.events.postEvent(ServerGameEventCreators.unitCreated({
-			triggeringUnit: unit
-		}))
-
-		return unit
+		return targetRow.createUnit(card, owner, unitIndex)
 	}
 
 	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number): void {

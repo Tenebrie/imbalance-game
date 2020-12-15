@@ -12,6 +12,14 @@ import {ServerCardTargetCard, ServerCardTargetRow} from '../ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 
 export default {
+	gameStarted: (args: GameStartedEventArgs): GameEvent => ({
+		type: GameEventType.GAME_STARTED,
+		args: args,
+		logVariables: {
+			player: args.player.player.id
+		}
+	}),
+
 	roundStarted: (args: RoundStartedEventArgs): GameEvent => ({
 		type: GameEventType.ROUND_STARTED,
 		args: args,
@@ -224,6 +232,10 @@ export interface GameEvent {
 	effectSource?: ServerCard | ServerBuff
 	logSubtype?: string
 	logVariables?: Record<string, string | number | undefined>
+}
+
+export interface GameStartedEventArgs {
+	player: ServerPlayerInGame
 }
 
 export interface RoundStartedEventArgs {

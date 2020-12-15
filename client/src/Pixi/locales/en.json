@@ -604,5 +604,35 @@
 
 	"card.unitAulerianSongwriter.name": "Aulerian Songwriter",
 	"card.unitAulerianSongwriter.description": "*Deploy:*\nChoose a unit.\nAll copies of this card have +{bonusPower} Power for the rest of the game.",
-	"card.unitAulerianSongwriter.flavor": "- \"Stay awhile and listen.\""
+	"card.unitAulerianSongwriter.flavor": "- \"Stay awhile and listen.\"",
+
+	"card.leaderChallengeDummy.name": "Dummy",
+	"card.leaderChallengeDummy.title": "The Scapegoat",
+	"card.leaderChallengeDummy.description": "*Round start:*\nSpawn a *Target Dummy* on your middle row.",
+
+	"card.heroChallengeDummyWarrior0.name": "Oenus",
+	"card.heroChallengeDummyWarrior0.title": "Dummy of Prudence",
+	"card.heroChallengeDummyWarrior0.description": "<i>No effect</i>",
+
+	"card.heroChallengeDummyWarrior1.name": "Josclyn",
+	"card.heroChallengeDummyWarrior1.title": "Dummy of Justice",
+	"card.heroChallengeDummyWarrior1.description": "<i>No effect</i>",
+
+	"card.heroChallengeDummyWarrior2.name": "Willmot",
+	"card.heroChallengeDummyWarrior2.title": "Dummy of Fortitude",
+	"card.heroChallengeDummyWarrior2.description": "<i>No effect</i>",
+
+	"card.heroChallengeDummyWarrior3.name": "Tomkin",
+	"card.heroChallengeDummyWarrior3.title": "Dummy of Temperance",
+	"card.heroChallengeDummyWarrior3.description": "<i>No effect</i>",
+
+	"card.unitChallengeDummyRoyalWarrior.name": "Royal Dummy",
+	"card.unitChallengeDummyRoyalWarrior.description": "<i>No effect</i>",
+
+	"card.unitChallengeDummyVanillaWarrior.name": "Vanilla Dummy",
+	"card.unitChallengeDummyVanillaWarrior.description": "<i>No effect</i>",
+
+	"card.tokenChallengeDummyTargetDummy.name": "Target Dummy",
+	"card.tokenChallengeDummyTargetDummy.description": "<i>No effect</i>",
+	"card.tokenChallengeDummyTargetDummy.flavor": "- \"We have put all our Mana into our new creation. It is the most powerful Dummy of them all.\""
 }

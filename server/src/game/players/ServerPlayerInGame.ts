@@ -182,6 +182,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onRoundStart(): void {
+		if (this.game.roundIndex === 0) {
+			this.game.events.postEvent(GameEventCreators.gameStarted({
+				player: this
+			}))
+		}
 		this.game.events.postEvent(GameEventCreators.roundStarted({
 			player: this
 		}))

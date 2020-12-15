@@ -39,7 +39,7 @@ export default class SpellLightningStorm extends ServerCard {
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createDeployEffectTargets()
-			.target(TargetType.UNIT, this.targetCount)
+			.target(TargetType.UNIT, () => this.targetCount)
 			.requireEnemyUnit()
 			.require(TargetType.UNIT, args => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
 			.label(TargetType.UNIT, 'card.spellLightningStorm.target')
@@ -56,7 +56,6 @@ export default class SpellLightningStorm extends ServerCard {
 		if (this.owner) {
 			stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
-
 		return this.baseTargets(this) + this.targetsPerStorm(this) * stormsPlayed
 	}
 

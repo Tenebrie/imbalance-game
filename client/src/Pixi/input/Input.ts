@@ -274,7 +274,8 @@ export default class Input {
 			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, this.getCardInsertIndex(hoveredRow))
 		}
 		this.cardLimbo.push(card)
-		Core.player.cardHand.destroyCard(card)
+		Core.player.cardHand.removeCard(card)
+		Core.renderer.hideCard(card)
 	}
 
 	private onUnitOrder(orderedCard: RenderedCard): void {
@@ -305,13 +306,17 @@ export default class Input {
 			return
 		}
 
-		Core.registerCard(cardInLimbo)
-		this.clearCardInLimbo(cardMessage.id)
+		Core.renderer.showCard(cardInLimbo)
+		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardMessage.id)
 
 		return cardInLimbo
 	}
 
-	public clearCardInLimbo(cardId: string): void {
+	public destroyCardInLimbo(cardId: string): void {
+		const cardInLimbo = this.cardLimbo.find(card => card.id === cardId)
+		if (cardInLimbo) {
+			Core.renderer.destroyCard(cardInLimbo)
+		}
 		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardId)
 	}
 
@@ -346,7 +351,7 @@ export default class Input {
 			return result.concat(existingCard)
 		}, []).concat(cardsToAdd)
 
-		cardsToRemove.forEach(card => card.unregister())
+		cardsToRemove.forEach(card => Core.destroyCard(card))
 		PIXI.Ticker.shared.addOnce(() => {
 			result.forEach(card => card.resetDisplayMode())
 		})
@@ -356,7 +361,7 @@ export default class Input {
 
 	public disableForcedTargetingMode(): void {
 		this.forcedTargetingMode = null
-		this.forcedTargetingCards.forEach(card => card.unregister())
+		this.forcedTargetingCards.forEach(card => Core.destroyCard(card))
 		this.forcedTargetingCards = []
 		store.commit.gameStateModule.setPopupTargetingMode(null)
 	}

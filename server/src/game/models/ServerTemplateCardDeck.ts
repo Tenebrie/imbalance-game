@@ -20,6 +20,14 @@ import HeroFlameDancer from '../cards/01-arcane/epic/HeroFlameDancer'
 import UnitArcaneElemental from '../cards/01-arcane/common/UnitArcaneElemental'
 import HeroLightOracle from '../cards/09-neutral/epic/HeroLightOracle'
 import CardType from '@shared/enums/CardType'
+import LeaderChallengeDummy from '../cards/08-challenge/ai-00-dummy/LeaderChallengeDummy'
+import HeroChallengeDummyWarrior0 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
+import HeroChallengeDummyWarrior1 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
+import HeroChallengeDummyWarrior2 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior2'
+import HeroChallengeDummyWarrior3 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior3'
+import Constants from '@shared/Constants'
+import UnitChallengeDummyRoyalWarrior from '../cards/08-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
+import UnitChallengeDummyVanillaWarrior from '../cards/08-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	leader: ServerCard
@@ -62,7 +70,27 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		return new ServerTemplateCardDeck(leader, inflatedUnitDeck, inflatedSpellDeck)
 	}
 
-	public static botDeck(game: ServerGame): ServerTemplateCardDeck {
+	public static challengeAI00(game: ServerGame): ServerTemplateCardDeck {
+		const cards = []
+
+		cards.push(CardLibrary.instantiateByConstructor(game, LeaderChallengeDummy))
+
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeDummyWarrior0))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeDummyWarrior1))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeDummyWarrior2))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeDummyWarrior3))
+
+		for (let i = 0; i < Constants.CARD_LIMIT_SILVER; i++) {
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitChallengeDummyRoyalWarrior))
+		}
+		for (let i = 0; i < Constants.CARD_LIMIT_BRONZE; i++) {
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitChallengeDummyVanillaWarrior))
+		}
+
+		return ServerTemplateCardDeck.inflate(game, cards)
+	}
+
+	public static challengeAI01(game: ServerGame): ServerTemplateCardDeck {
 		const cards = []
 
 		cards.push(CardLibrary.instantiateByConstructor(game, LeaderVelElleron))

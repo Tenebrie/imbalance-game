@@ -4,6 +4,9 @@ import ServerUnit from './ServerUnit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import Constants from '@shared/Constants'
+import ServerCard from './ServerCard'
+import ServerAnimation from './ServerAnimation'
+import ServerGameEventCreators from './events/GameEventCreators'
 
 export default class ServerBoardRow implements BoardRow {
 	index: number
@@ -22,11 +25,29 @@ export default class ServerBoardRow implements BoardRow {
 		return this.cards.length === Constants.MAX_CARDS_PER_ROW
 	}
 
+	public createUnit(card: ServerCard, owner: ServerPlayerInGame, unitIndex: number): ServerUnit | null {
+		if (this.cards.length >= Constants.MAX_CARDS_PER_ROW) {
+			return null
+		}
+
+		const unit = new ServerUnit(this.game, card, owner)
+		this.insertUnit(unit, unitIndex)
+
+		/* Play deploy animation */
+		this.game.animation.play(ServerAnimation.unitDeploy(card))
+
+		this.game.events.postEvent(ServerGameEventCreators.unitCreated({
+			triggeringUnit: unit
+		}))
+
+		return unit
+	}
+
 	public insertUnitLocally(unit: ServerUnit, ordinal: number): void {
 		this.cards.splice(ordinal, 0, unit)
 	}
 
-	public insertUnit(unit: ServerUnit, ordinal: number): void {
+	private insertUnit(unit: ServerUnit, ordinal: number): void {
 		this.insertUnitLocally(unit, ordinal)
 		OutgoingMessageHandlers.notifyAboutUnitCreated(unit)
 	}

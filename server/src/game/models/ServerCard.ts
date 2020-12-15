@@ -27,7 +27,7 @@ import GameEventCreators, {
 	CardTargetsConfirmedEventArgs,
 	CardTargetSelectedCardEventArgs,
 	CardTargetSelectedRowEventArgs,
-	CardTargetSelectedUnitEventArgs,
+	CardTargetSelectedUnitEventArgs, GameStartedEventArgs,
 	RoundEndedEventArgs,
 	RoundStartedEventArgs,
 	SpellDeployedEventArgs,
@@ -63,6 +63,7 @@ interface ServerCardBaseProps {
 	isExperimental?: boolean
 	generatedArtworkMagicString?: string
 	deckAddedCards?: CardConstructor[]
+	hiddenFromLibrary?: boolean
 }
 
 interface LeaderStatsCardProps {
@@ -84,7 +85,6 @@ interface LeaderStatsCardProps {
 
 interface ServerCardLeaderProps extends ServerCardBaseProps {
 	color: CardColor.LEADER
-	isCollectible?: boolean
 	stats?: LeaderStatsCardProps
 }
 
@@ -95,7 +95,6 @@ interface ServerCardUnitProps extends ServerCardBaseProps{
 		power: number
 		armor?: number
 	} & LeaderStatsCardProps
-	isCollectible?: boolean
 }
 
 interface ServerCardSpellProps extends ServerCardBaseProps {
@@ -206,7 +205,7 @@ export default class ServerCard implements Card {
 		this.sortPriority = props.sortPriority ? props.sortPriority : 0
 		this.expansionSet = props.expansionSet
 
-		this.isCollectible = props.color !== CardColor.LEADER && props.type === CardType.UNIT && props.isCollectible !== undefined ? props.isCollectible : false
+		this.isCollectible = props.hiddenFromLibrary ? false : props.color !== CardColor.LEADER && props.color !== CardColor.TOKEN && props.type === CardType.UNIT
 		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
 
 		this.generatedArtworkMagicString = props.generatedArtworkMagicString ? props.generatedArtworkMagicString : ''
@@ -513,6 +512,7 @@ export default class ServerCard implements Card {
 	 *
 	 * The callback will only trigger if the subscriber is located in one of the locations specified by `location` argument.
 	 */
+	protected createCallback(event: GameEventType.GAME_STARTED, location: CardLocation[]): EventCallback<GameStartedEventArgs>
 	protected createCallback(event: GameEventType.TURN_STARTED, location: CardLocation[]): EventCallback<TurnStartedEventArgs>
 	protected createCallback(event: GameEventType.TURN_ENDED, location: CardLocation[]): EventCallback<TurnEndedEventArgs>
 	protected createCallback(event: GameEventType.ROUND_STARTED, location: CardLocation[]): EventCallback<RoundStartedEventArgs>

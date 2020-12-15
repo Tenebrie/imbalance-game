@@ -10,7 +10,7 @@ const IncomingBoardUpdateMessages: {[ index in BoardUpdateMessageType ]: Incomin
 	[BoardUpdateMessageType.UNIT_CREATE]: (data: UnitMessage) => {
 		if (Core.board.findUnitById(data.card.id)) { return }
 
-		Core.input.clearCardInLimbo(data.card.id)
+		Core.input.destroyCardInLimbo(data.card.id)
 		Core.board.unitsOnHold.push(RenderedUnit.fromMessage(data))
 	},
 

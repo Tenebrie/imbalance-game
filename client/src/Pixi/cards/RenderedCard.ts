@@ -556,10 +556,6 @@ export default class RenderedCard implements Card {
 		return CardLocation.UNKNOWN
 	}
 
-	public unregister(): void {
-		Core.unregisterCard(this)
-	}
-
 	public clone(): RenderedCard {
 		const message = new OpenCardMessage(this)
 		const card = new RenderedCard(message)
