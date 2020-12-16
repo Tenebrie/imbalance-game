@@ -10,14 +10,19 @@ const IncomingBoardUpdateMessages: {[ index in BoardUpdateMessageType ]: Incomin
 	[BoardUpdateMessageType.UNIT_CREATE]: (data: UnitMessage) => {
 		if (Core.board.findUnitById(data.card.id)) { return }
 
-		Core.input.destroyLimboCard(data.card.id)
-		Core.board.unitsOnHold.push(RenderedUnit.fromMessage(data))
+		// const cardInLimbo = Core.input.cardLimbo.find(card => card.id === data.card.id)
+		// Core.input.restoreLimboCard(data.card)
+		// const card = cardInLimbo ? new RenderedUnit(cardInLimbo, Core.getPlayer(data.ownerId)) : RenderedUnit.fromMessage(data)
+		// Core.board.unitsOnHold.push(card)
 	},
 
 	[BoardUpdateMessageType.UNIT_INSERT]: (data: UnitMessage) => {
 		if (Core.board.findInsertedById(data.card.id)) { return }
 
-		Core.board.insertUnitFromHold(data.card.id, data.rowIndex, data.unitIndex)
+		const cardInLimbo = Core.input.cardLimbo.find(card => card.id === data.card.id)
+		Core.input.restoreLimboCard(data.card)
+		const card = cardInLimbo ? new RenderedUnit(cardInLimbo, Core.getPlayer(data.ownerId)) : RenderedUnit.fromMessage(data)
+		Core.board.insertUnit(card, data.rowIndex, data.unitIndex)
 	},
 
 	[BoardUpdateMessageType.UNIT_MOVE]: (data: UnitMessage) => {

@@ -70,7 +70,6 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 	[PlayerUpdateMessageType.CARD_DESTROY_IN_HAND]: (data: OwnedCardRefMessage) => {
 		const player = Core.getPlayer(data.ownerId)
 		player.cardHand.destroyCardById(data.cardId)
-		Core.input.destroyLimboCard(data.cardId)
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.id === data.cardId) {
 			Core.mainHandler.clearAnnouncedCard()

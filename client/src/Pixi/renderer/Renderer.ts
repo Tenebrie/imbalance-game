@@ -1,6 +1,5 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import {DisplayObject} from 'pixi.js'
 import Constants from '@shared/Constants'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
@@ -393,7 +392,7 @@ export default class Renderer {
 
 		let cardDisplayMode: CardDisplayMode
 		if (renderedCard.type === CardType.UNIT && hoveredRow) {
-			const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+			const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION * 0.905
 			sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 			sprite.height = cardHeight
 			cardDisplayMode = CardDisplayMode.ON_BOARD
@@ -651,7 +650,7 @@ export default class Renderer {
 
 		const grabbedCard = Core.input.grabbedCard
 		const grabbedUnit = grabbedCard ? Core.board.findUnitById(grabbedCard.card.id) : null
-		if (!grabbedCard || (!hoveredUnit && !hoveredRow)) {
+		if (!grabbedCard || !grabbedUnit || (!hoveredUnit && !hoveredRow)) {
 			label.text = ''
 			return
 		}

@@ -296,11 +296,11 @@ export default class Input {
 			OutgoingMessageHandlers.sendSpellCardPlayed(card)
 		} else if (card.type === CardType.UNIT) {
 			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, this.getCardInsertIndex(hoveredRow))
-		}
-		this.limboShadowUnit = {
-			card: card,
-			rowIndex: hoveredRow.index,
-			unitIndex: this.getCardInsertIndex(hoveredRow)
+			this.limboShadowUnit = {
+				card: card,
+				rowIndex: hoveredRow.index,
+				unitIndex: this.getCardInsertIndex(hoveredRow)
+			}
 		}
 		this.cardLimbo.push(card)
 		Core.player.cardHand.removeCard(card)
