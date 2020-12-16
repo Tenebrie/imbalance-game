@@ -304,7 +304,6 @@ export default class ServerGame implements Game {
 		}
 
 		this.players.forEach(playerInGame => {
-			playerInGame.startRound()
 			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_PER_ROUND)
 			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})

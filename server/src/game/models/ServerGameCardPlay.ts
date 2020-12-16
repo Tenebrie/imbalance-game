@@ -192,9 +192,6 @@ export default class ServerGameCardPlay {
 				targetCard: target.targetCard,
 			}))
 			if (target instanceof ServerCardTargetUnit) {
-				console.log(target.targetCard)
-				console.log(target.targetCard.unit)
-				console.log(this.game.board.getAllUnits().length)
 				this.game.events.postEvent(GameEventCreators.cardTargetUnitSelected({
 					targetMode: target.targetMode,
 					targetType: target.targetType,
