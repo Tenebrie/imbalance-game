@@ -2,9 +2,9 @@ import ServerOwnedCard from './ServerOwnedCard'
 import CardType from '@shared/enums/CardType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerGame from './ServerGame'
-import ServerCardTarget, {ServerCardTargetCard, ServerCardTargetRow} from './ServerCardTarget'
+import ServerCardTarget, {ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit} from './ServerCardTarget'
 import CardFeature from '@shared/enums/CardFeature'
-import GameEventCreators from './GameEventCreators'
+import GameEventCreators from './events/GameEventCreators'
 import ResolveStackEntry from '@shared/models/ResolveStackEntry'
 import ResolveStack from '@shared/models/ResolveStack'
 
@@ -40,7 +40,7 @@ export default class ServerResolveStack implements ResolveStack {
 		return this.entries[this.entries.length - 1].ownedCard
 	}
 
-	public get currentTargets(): (ServerCardTargetCard | ServerCardTargetRow)[] | undefined {
+	public get currentTargets(): (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] | undefined {
 		if (this.entries.length === 0) { return undefined }
 
 		return this.entries[this.entries.length - 1].targetsSelected
@@ -56,7 +56,7 @@ export default class ServerResolveStack implements ResolveStack {
 		this.entries[this.entries.length - 1].onResumeResolving()
 	}
 
-	public pushTarget(target: ServerCardTargetCard | ServerCardTargetRow): void {
+	public pushTarget(target: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): void {
 		if (!this.currentTargets) {
 			return
 		}

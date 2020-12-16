@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
 import QueuedMessage from '@/Pixi/models/QueuedMessage'
@@ -114,6 +114,8 @@ class AnimationThread {
 				const nextMessage = this.queuedMessages.shift()
 				this.executeMessage(nextMessage)
 			}
+		} else if (this.messageCooldown === 0 && this.queuedMessages.length > 0) {
+			this.executeNextMessage()
 		}
 	}
 

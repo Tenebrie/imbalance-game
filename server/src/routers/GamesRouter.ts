@@ -1,5 +1,4 @@
 import express, {Request, Response} from 'express'
-import ServerPlayer from '../game/players/ServerPlayer'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import ServerGame from '../game/models/ServerGame'
 import ServerBotPlayer from '../game/AI/ServerBotPlayer'
@@ -7,28 +6,79 @@ import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import GameLibrary from '../game/libraries/GameLibrary'
 import GameMessage from '@shared/models/network/GameMessage'
 import {getPlayerFromAuthenticatedRequest} from '../utils/Utils'
+import GameMode from '@shared/enums/GameMode'
+import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
+import ChallengeLevel from '@shared/enums/ChallengeLevel'
+
 const router = express.Router()
 
 router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req: Request, res: Response) => {
-	const library: ServerGame[] = GameLibrary.games
-	const gameMessages = library.map(game => new GameMessage(game))
+	const currentPlayer = getPlayerFromAuthenticatedRequest(req)
+	const reconnect = req.query['reconnect'] || '' as string
+
+	let filteredGames: ServerGame[] = GameLibrary.games.filter(game => !game.isFinished)
+	if (reconnect) {
+		filteredGames = filteredGames.filter(game => game.players.find(playerInGame => playerInGame.player.id === currentPlayer.id))
+	}
+
+	const gameMessages = filteredGames.map(game => new GameMessage(game))
 	res.json({ data: gameMessages })
 })
 
 router.post('/', (req: Request, res: Response) => {
 	const player = getPlayerFromAuthenticatedRequest(req)
 	const gameName = req.body['name'] || ''
-	const gameMode = req.body['mode'] || ''
+	const gameMode = req.body['mode'] as GameMode
+	const difficulty = req.body['difficulty'] || ''
+	const level = req.body['level'] as ChallengeLevel || null
 
-	const game = GameLibrary.createOwnedGame(player, gameName.trim())
+	if (!gameMode) {
+		res.status(400)
+		res.send()
+		return
+	}
 
-	if (gameMode === 'sp_ai') {
-		game.addPlayer(new ServerBotPlayer(), ServerTemplateCardDeck.botDeck(game))
+	const connectedGames = GameLibrary.games.filter(game => game.players.find(playerInGame => playerInGame.player === player))
+	connectedGames.forEach(game => {
+		const playerInGame = game.players.find(playerInGame => playerInGame.player === player)
+		game.finish(playerInGame?.opponent || null, 'Opponent created a new game')
+	})
+
+	const game = GameLibrary.createOwnedGame(player, gameName.trim(), gameMode, {
+		challengeLevel: level
+	})
+
+	if (gameMode === GameMode.VS_AI) {
+		let deck: ServerTemplateCardDeck | null = null
+		if (difficulty === ChallengeAIDifficulty.EASY) {
+			deck = ServerTemplateCardDeck.challengeAI00(game)
+		} else if (difficulty === ChallengeAIDifficulty.NORMAL) {
+			deck = ServerTemplateCardDeck.challengeAI01(game)
+		}
+
+		if (!deck) {
+			GameLibrary.destroyGame(game, 'Invalid AI difficulty')
+			res.status(400)
+			res.send()
+			return
+		}
+
+		game.addPlayer(new ServerBotPlayer(), deck)
+	} else if (gameMode === GameMode.CHALLENGE && level === ChallengeLevel.DISCOVERY_LEAGUE) {
+		game.addPlayer(new ServerBotPlayer(), ServerTemplateCardDeck.challengeAI00(game))
 	}
 
 	res.json({ data: new GameMessage(game) })
+})
+
+router.post('/disconnect', (req: Request, res: Response) => {
+	const currentPlayer = getPlayerFromAuthenticatedRequest(req)
+	currentPlayer.disconnect()
+
+	res.status(204)
+	res.send()
 })
 
 router.delete('/:gameId', (req: Request, res: Response) => {

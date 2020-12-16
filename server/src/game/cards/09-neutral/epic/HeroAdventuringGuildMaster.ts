@@ -8,9 +8,10 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class HeroAdventuringGuildMaster extends ServerCard {
-	powerPerCard = 5
+	powerPerCard = asSoloBuffPotency(5)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -32,7 +33,10 @@ export default class HeroAdventuringGuildMaster extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		const otherCardsPlayed = this.ownerInGame.cardsPlayed.filter(card => card !== this && card.type === CardType.UNIT)
-		this.buffs.addMultiple(BuffStrength, otherCardsPlayed.length * this.powerPerCard, this, BuffDuration.INFINITY)
+		const otherCardsPlayedThisRound = this.game.cardPlay.playedCards
+			.filter(playerCard => playerCard.turnIndex === this.game.turnIndex)
+			.filter(playedCard => playedCard.player === this.ownerInGame && playedCard.roundIndex === this.game.roundIndex)
+			.filter(playedCard => playedCard.card !== this && playedCard.card.type === CardType.UNIT)
+		this.buffs.addMultiple(BuffStrength, otherCardsPlayedThisRound.length * this.powerPerCard(this), this, BuffDuration.INFINITY)
 	}
 }

@@ -10,7 +10,7 @@ import ServerGraveyard from '../models/ServerGraveyard'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import Constants from '@shared/Constants'
 import CardLibrary from '../libraries/CardLibrary'
-import GameEventCreators from '../models/GameEventCreators'
+import GameEventCreators from '../models/events/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Utils from '../../utils/Utils'
@@ -31,7 +31,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	mulliganMode: boolean
 	turnEnded: boolean
 	roundEnded: boolean
-	cardsPlayed: ServerCard[]
 	cardsMulliganed: number
 
 	__leader: ServerCard | null
@@ -49,7 +48,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.mulliganMode = false
 		this.turnEnded = true
 		this.roundEnded = true
-		this.cardsPlayed = []
 		this.cardsMulliganed = 0
 	}
 
@@ -174,21 +172,21 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutManaChange(this, delta)
 	}
 
-	public addToPlayedCards(card: ServerCard): void {
-		this.cardsPlayed.push(card)
-	}
-
 	public startRound(): void {
 		if (!this.roundEnded) {
 			return
 		}
 		this.roundEnded = false
-		this.cardsPlayed = []
 		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
 		this.onRoundStart()
 	}
 
 	public onRoundStart(): void {
+		if (this.game.roundIndex === 0) {
+			this.game.events.postEvent(GameEventCreators.gameStarted({
+				player: this
+			}))
+		}
 		this.game.events.postEvent(GameEventCreators.roundStarted({
 			player: this
 		}))
@@ -203,13 +201,13 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public showMulliganCards(): void {
 		const cardsToMulligan = this.cardHand.unitCards
 		const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(this.player, TargetMode.MULLIGAN, targets)
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(this.player, TargetMode.MULLIGAN, targets, null)
 	}
 
 	public finishMulligan(): void {
 		this.mulliganMode = false
 		this.cardsMulliganed = 0
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(this.player, TargetMode.MULLIGAN, [])
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(this.player, TargetMode.MULLIGAN, [], null)
 	}
 
 	public startTurn(): void {
@@ -241,8 +239,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnEnd(): void {
-		this.cardsPlayed = []
-
 		// TODO: Move this to corresponding buffs
 		this.cardHand.unitCards.filter(card => card.features.includes(CardFeature.TEMPORARY_CARD)).forEach(card => {
 			this.cardHand.discardCard(card)
@@ -272,6 +268,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.game.events.postEvent(GameEventCreators.roundEnded({
 			player: this
 		}))
+	}
+
+	public disconnect(): void {
+		this.player.disconnect()
+		this.initialized = false
 	}
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerPlayerInGame {

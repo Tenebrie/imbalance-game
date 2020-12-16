@@ -12,11 +12,12 @@ import ServerDamageInstance from '../../../models/ServerDamageSource'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassUnitDamage, asSoloBuffPotency, asTargetCount} from '../../../../utils/LeaderStats'
 
 export default class HeroTroviar extends ServerCard {
-	deployDamage = 1
-	targetCount = 3
-	powerGained = 1
+	deployDamage = asMassUnitDamage(1)
+	targetCount = asTargetCount(3)
+	powerGained = asSoloBuffPotency(1)
 	targetsHit: ServerCard[] = []
 
 	constructor(game: ServerGame) {
@@ -58,9 +59,7 @@ export default class HeroTroviar extends ServerCard {
 	}
 
 	private onCardTakesDamage(): void {
-		for (let i = 0; i < this.powerGained; i++) {
-			this.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
-		}
+		this.buffs.addMultiple(BuffStrength, this.powerGained, this, BuffDuration.INFINITY)
 	}
 
 	private onTargetsConfirmed(): void {

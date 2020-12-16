@@ -18,6 +18,21 @@ export default class OpenCardStatsMessage implements CardStatsMessage {
 	spellCost: number
 	baseSpellCost: number
 
+	soloUnitDamage: number
+	massUnitDamage: number
+	soloSpellDamage: number
+	massSpellDamage: number
+	soloHealingPotency: number
+	massHealingPotency: number
+	soloBuffPotency: number
+	massBuffPotency: number
+	soloEffectDuration: number
+	massEffectDuration: number
+	targetCount: number
+	criticalHitChance: number
+	criticalBuffChance: number
+	criticalHealChance: number
+
 	constructor(stats: CardStats) {
 		this.cardId = stats.card.id
 
@@ -34,5 +49,20 @@ export default class OpenCardStatsMessage implements CardStatsMessage {
 
 		this.spellCost = stats.spellCost
 		this.baseSpellCost = stats.baseSpellCost
+
+		this.soloUnitDamage = stats.soloUnitDamage
+		this.massUnitDamage = stats.massUnitDamage
+		this.soloSpellDamage = stats.soloSpellDamage
+		this.massSpellDamage = stats.massSpellDamage
+		this.soloHealingPotency = stats.soloHealingPotency
+		this.massHealingPotency = stats.massHealingPotency
+		this.soloBuffPotency = stats.soloBuffPotency
+		this.massBuffPotency = stats.massBuffPotency
+		this.soloEffectDuration = stats.soloEffectDuration
+		this.massEffectDuration = stats.massEffectDuration
+		this.targetCount = stats.targetCount
+		this.criticalHitChance = stats.criticalHitChance
+		this.criticalBuffChance = stats.criticalBuffChance
+		this.criticalHealChance = stats.criticalHealChance
 	}
 }

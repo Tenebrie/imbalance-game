@@ -9,14 +9,14 @@ import ServerBoardOrders from './ServerBoardOrders'
 import ServerCard from './ServerCard'
 import Utils from '../../utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
-import ServerGameEventCreators from './GameEventCreators'
-import GameEventCreators from './GameEventCreators'
+import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
 import BuffDuration from '@shared/enums/BuffDuration'
-import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
+import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './events/GameHookType'
 import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
+import ServerPlayer from '../players/ServerPlayer'
 
 export default class ServerBoard implements Board {
 	readonly game: ServerGame
@@ -101,6 +101,23 @@ export default class ServerBoard implements Board {
 		return this.getAllUnits().filter(unit => this.isUnitAdjacent(centerUnit, unit))
 	}
 
+	public getOpposingUnits(thisUnit: ServerUnit): ServerUnit[] {
+		return this.game.board.getUnitsOwnedByOpponent(thisUnit.card.ownerInGame)
+			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
+			.sort((a, b) => {
+				return this.game.board.getVerticalUnitDistance(a, thisUnit) - this.game.board.getVerticalUnitDistance(b, thisUnit)
+			})
+	}
+
+	public getClosestOpposingUnits(thisUnit: ServerUnit): ServerUnit[] {
+		const opposingEnemies = this.getOpposingUnits(thisUnit)
+		if (opposingEnemies.length === 0) {
+			return []
+		}
+		const shortestDistance = this.getVerticalUnitDistance(opposingEnemies[0], thisUnit)
+		return opposingEnemies.filter(unit => this.getVerticalUnitDistance(unit, thisUnit) === shortestDistance)
+	}
+
 	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame | null): ServerUnit[] {
 		if (!owner) { return [] }
 		return this.getAllUnits().filter(unit => unit.owner === owner)
@@ -151,7 +168,7 @@ export default class ServerBoard implements Board {
 		return Math.abs(rowA.index - rowB.index)
 	}
 
-	public getDistanceToFront(rowIndex: number): number {
+	public getDistanceToStaticFront(rowIndex: number): number {
 		const targetRow = this.rows[rowIndex]
 		const player = targetRow.owner
 		let playerRows = this.rows.filter(row => row.owner === player)
@@ -159,6 +176,23 @@ export default class ServerBoard implements Board {
 			playerRows = playerRows.reverse()
 		}
 		return playerRows.indexOf(targetRow)
+	}
+
+	public getDistanceToDynamicFrontForPlayer(rowIndex: number, player: ServerPlayerInGame): number {
+		const targetRow = this.rows[rowIndex]
+		const distanceToStaticFront = this.getDistanceToStaticFront(rowIndex)
+		if (player !== targetRow.owner) {
+			return distanceToStaticFront
+		}
+
+		let result = distanceToStaticFront
+		for (let i = 0; i < distanceToStaticFront; i++) {
+			const potentialRow = this.getRowWithDistanceToFront(player, i)
+			if (potentialRow.cards.length === 0) {
+				result -= 1
+			}
+		}
+		return result
 	}
 
 	public getRowWithDistanceToFront(player: ServerPlayerInGame, distance: number): ServerBoardRow {
@@ -169,27 +203,9 @@ export default class ServerBoard implements Board {
 		return playerRows[Math.min(playerRows.length - 1, distance)]
 	}
 
-	public createUnit(card: ServerCard, owner: ServerPlayerInGame | null, rowIndex: number, unitIndex: number): ServerUnit | null {
-		if (!owner) {
-			return null
-		}
-
+	public createUnit(card: ServerCard, owner: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit | null {
 		const targetRow = this.rows[rowIndex]
-		if (targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
-			return null
-		}
-
-		const unit = new ServerUnit(this.game, card, owner)
-		targetRow.insertUnit(unit, unitIndex)
-
-		/* Play deploy animation */
-		this.game.animation.play(ServerAnimation.unitDeploy(card))
-
-		this.game.events.postEvent(ServerGameEventCreators.unitCreated({
-			triggeringUnit: unit
-		}))
-
-		return unit
+		return targetRow.createUnit(card, owner, unitIndex)
 	}
 
 	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number): void {
@@ -222,7 +238,7 @@ export default class ServerBoard implements Board {
 	}
 
 	public moveUnitForward(unit: ServerUnit, distance = 1): void {
-		if (this.getDistanceToFront(unit.rowIndex) === 0) {
+		if (this.getDistanceToStaticFront(unit.rowIndex) === 0) {
 			return
 		}
 		this.moveUnitToFarRight(unit, this.game.board.rowMove(unit.owner, unit.rowIndex, MoveDirection.FORWARD, distance))
@@ -230,7 +246,7 @@ export default class ServerBoard implements Board {
 
 	public moveUnitBack(unit: ServerUnit, distance = 1): void {
 		const rowsOwnedByPlayer = this.rows.filter(row => row.owner === unit.owner).length
-		if (this.getDistanceToFront(unit.rowIndex) === rowsOwnedByPlayer - 1) {
+		if (this.getDistanceToStaticFront(unit.rowIndex) === rowsOwnedByPlayer - 1) {
 			return
 		}
 		this.moveUnitToFarRight(unit, this.game.board.rowMove(unit.owner, unit.rowIndex, MoveDirection.BACK, distance))
@@ -312,6 +328,8 @@ export default class ServerBoard implements Board {
 		this.removeUnit(unit)
 
 		if (card.features.includes(CardFeature.HERO_POWER)) {
+			card.cleanse()
+			card.stats.power = card.stats.basePower
 			unit.owner.cardDeck.addSpellToTop(card)
 		} else if (card.type === CardType.UNIT) {
 			unit.owner.cardGraveyard.addUnit(card)

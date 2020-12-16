@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import ServerGame from './ServerGame'
@@ -16,18 +16,19 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
-import GameHookType, {CardDestroyedHookArgs, CardDestroyedHookValues, CardTakesDamageHookArgs, CardTakesDamageHookValues, UnitDestroyedHookArgs, UnitDestroyedHookValues} from './GameHookType'
-import {EventCallback, EventHook} from './ServerGameEvents'
+import GameHookType, {CardDestroyedHookArgs, CardDestroyedHookValues, CardTakesDamageHookArgs, CardTakesDamageHookValues, UnitDestroyedHookArgs, UnitDestroyedHookValues} from './events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {
 	BuffCreatedEventArgs,
 	BuffRemovedEventArgs,
-	CardDestroyedEventArgs,
+	CardDestroyedEventArgs, CardDrawnEventArgs,
 	CardPlayedEventArgs,
 	CardTakesDamageEventArgs,
 	CardTargetsConfirmedEventArgs,
 	CardTargetSelectedCardEventArgs,
-	CardTargetSelectedRowEventArgs, CardTargetSelectedUnitEventArgs,
+	CardTargetSelectedRowEventArgs,
+	CardTargetSelectedUnitEventArgs,
+	GameStartedEventArgs,
 	RoundEndedEventArgs,
 	RoundStartedEventArgs,
 	SpellDeployedEventArgs,
@@ -39,7 +40,7 @@ import GameEventCreators, {
 	UnitMovedEventArgs,
 	UnitOrderedCardEventArgs,
 	UnitOrderedRowEventArgs
-} from './GameEventCreators'
+} from './events/GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
 import Utils, {getClassFromConstructor} from '../../utils/Utils'
 import ServerAnimation from './ServerAnimation'
@@ -49,8 +50,9 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import SimpleTargetDefinitionBuilder from './targetDefinitions/SimpleTargetDefinitionBuilder'
 import {ServerCardTargeting} from './ServerCardTargeting'
 import TargetType from '@shared/enums/TargetType'
-import ServerPlayer from '../players/ServerPlayer'
-import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
+import {EventCallback} from './events/EventCallback'
+import {EventHook} from './events/EventHook'
+import {CardSelectorBuilder} from './events/CardSelector'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -62,11 +64,29 @@ interface ServerCardBaseProps {
 	isExperimental?: boolean
 	generatedArtworkMagicString?: string
 	deckAddedCards?: CardConstructor[]
+	hiddenFromLibrary?: boolean
+}
+
+interface LeaderStatsCardProps {
+	soloUnitDamage?: number
+	massUnitDamage?: number
+	soloSpellDamage?: number
+	massSpellDamage?: number
+	soloHealingPotency?: number
+	massHealingPotency?: number
+	soloBuffPotency?: number
+	massBuffPotency?: number
+	soloEffectDuration?: number
+	massEffectDuration?: number
+	targetCount?: number
+	criticalHitChance?: number
+	criticalBuffChance?: number
+	criticalHealChance?: number
 }
 
 interface ServerCardLeaderProps extends ServerCardBaseProps {
 	color: CardColor.LEADER
-	isCollectible?: boolean
+	stats?: LeaderStatsCardProps
 }
 
 interface ServerCardUnitProps extends ServerCardBaseProps{
@@ -75,8 +95,7 @@ interface ServerCardUnitProps extends ServerCardBaseProps{
 	stats: {
 		power: number
 		armor?: number
-	}
-	isCollectible?: boolean
+	} & LeaderStatsCardProps
 }
 
 interface ServerCardSpellProps extends ServerCardBaseProps {
@@ -136,9 +155,24 @@ export default class ServerCard implements Card {
 		this.faction = props.faction
 
 		this.stats = new ServerCardStats(this, {
-			basePower: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
-			baseArmor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
-			baseSpellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0
+			power: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
+			armor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
+			spellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0,
+
+			soloUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloUnitDamage || 0 : 0,
+			massUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massUnitDamage || 0 : 0,
+			soloSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloSpellDamage || 0 : 0,
+			massSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massSpellDamage || 0 : 0,
+			soloHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloHealingPotency || 0 : 0,
+			massHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massHealingPotency || 0 : 0,
+			soloBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloBuffPotency || 0 : 0,
+			massBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massBuffPotency || 0 : 0,
+			soloEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloEffectDuration || 0 : 0,
+			massEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massEffectDuration || 0 : 0,
+			targetCount: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.targetCount || 0 : 0,
+			criticalHitChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHitChance || 0 : 0,
+			criticalBuffChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalBuffChance || 0 : 0,
+			criticalHealChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHealChance || 0 : 0,
 		})
 
 		this.name = `card.${this.class}.name`
@@ -172,7 +206,7 @@ export default class ServerCard implements Card {
 		this.sortPriority = props.sortPriority ? props.sortPriority : 0
 		this.expansionSet = props.expansionSet
 
-		this.isCollectible = props.color !== CardColor.LEADER && props.type === CardType.UNIT && props.isCollectible !== undefined ? props.isCollectible : false
+		this.isCollectible = props.hiddenFromLibrary ? false : props.color === CardColor.LEADER || (props.color !== CardColor.TOKEN && props.type === CardType.UNIT)
 		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
 
 		this.generatedArtworkMagicString = props.generatedArtworkMagicString ? props.generatedArtworkMagicString : ''
@@ -213,7 +247,7 @@ export default class ServerCard implements Card {
 		Object.keys(this.dynamicTextVariables).forEach(key => {
 			const value = this.dynamicTextVariables[key]
 			if (typeof(value) === 'function') {
-				evaluatedVariables[key] = value()
+				evaluatedVariables[key] = value(this)
 			} else {
 				evaluatedVariables[key] = value
 			}
@@ -479,6 +513,7 @@ export default class ServerCard implements Card {
 	 *
 	 * The callback will only trigger if the subscriber is located in one of the locations specified by `location` argument.
 	 */
+	protected createCallback(event: GameEventType.GAME_STARTED, location: CardLocation[]): EventCallback<GameStartedEventArgs>
 	protected createCallback(event: GameEventType.TURN_STARTED, location: CardLocation[]): EventCallback<TurnStartedEventArgs>
 	protected createCallback(event: GameEventType.TURN_ENDED, location: CardLocation[]): EventCallback<TurnEndedEventArgs>
 	protected createCallback(event: GameEventType.ROUND_STARTED, location: CardLocation[]): EventCallback<RoundStartedEventArgs>
@@ -506,6 +541,7 @@ export default class ServerCard implements Card {
 	 * `createEffect` is equivalent to `createCallback`, but it will only trigger when
 	 * the `effectSource` is set to the subscriber.
 	 */
+	protected createEffect(event: GameEventType.CARD_DRAWN): EventCallback<CardDrawnEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DEPLOYED): EventCallback<UnitDeployedEventArgs>
 	protected createEffect(event: GameEventType.SPELL_DEPLOYED): EventCallback<SpellDeployedEventArgs>
 	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_CARD): EventCallback<CardTargetSelectedCardEventArgs>
@@ -533,6 +569,14 @@ export default class ServerCard implements Card {
 	protected createHook<HookValues, HookArgs>(hookType: GameHookType, location: CardLocation[]): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hookType)
 			.requireLocations(location)
+	}
+
+	/* Create an aura effect
+	 * ------------------------
+	 * Description
+	 */
+	protected createSelector(): CardSelectorBuilder {
+		return this.game.events.createSelector(this)
 	}
 
 	protected addRelatedCards(): RelatedCardsDefinition {

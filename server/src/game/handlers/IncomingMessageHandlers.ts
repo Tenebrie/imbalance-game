@@ -35,6 +35,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
+		game.events.evaluateSelectors()
 		game.events.flushLogEventGroup()
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
@@ -50,6 +51,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
+		game.events.evaluateSelectors()
 		game.events.flushLogEventGroup()
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
@@ -69,6 +71,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 
+		game.events.evaluateSelectors()
 		game.events.flushLogEventGroup()
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
@@ -77,10 +80,11 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		if (data !== TargetMode.MULLIGAN && player.mulliganMode) {
 			player.showMulliganCards()
 		} else if (data === TargetMode.BROWSE) {
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, [])
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, [], null)
 		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
+			game.events.evaluateSelectors()
 			game.events.flushLogEventGroup()
 		}
 
@@ -93,7 +97,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -103,7 +107,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -113,7 +117,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -129,6 +133,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		}
 
 		game.advanceCurrentTurn()
+		game.events.evaluateSelectors()
 		game.events.flushLogEventGroup()
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
@@ -141,7 +146,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		ConnectionEstablishedHandler.onPlayerConnected(game, player)
 	},
 
-	[SystemMessageType.KEEPALIVE]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+	[SystemMessageType.KEEPALIVE]: (): void => {
 		// No action needed
 	}
 }

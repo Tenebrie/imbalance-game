@@ -55,12 +55,12 @@ export default class RenderedGameBoardRow implements BoardRow {
 
 	public destroyUnit(targetUnit: RenderedUnit): void {
 		this.removeUnit(targetUnit)
-		targetUnit.card.unregister()
+		Core.destroyCard(targetUnit.card)
 	}
 
 	public clearRow(): void {
 		this.cards.forEach(cardOnBoard => {
-			Core.unregisterCard(cardOnBoard.card)
+			Core.destroyCard(cardOnBoard.card)
 		})
 		this.cards = []
 	}

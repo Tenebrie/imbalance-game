@@ -1,6 +1,6 @@
-import PlayerMessage from '../PlayerMessage'
 import CardHandMessage from '../cardHand/CardHandMessage'
 import CardDeckMessage from '../cardDeck/CardDeckMessage'
+import PlayerMessage from '../player/PlayerMessage'
 
 export default interface PlayerInGameMessage {
 	player: PlayerMessage

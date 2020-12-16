@@ -56,7 +56,7 @@ export default defineComponent({
 		const library = computed<CardMessage[]>(() => {
 			const routeQuery = useDecksRouteQuery()
 			const isCollectible = (card: CardMessage): boolean => {
-				return card.color !== CardColor.TOKEN && card.type === CardType.UNIT && (!card.isExperimental || routeQuery.value.experimental)
+				return card.isCollectible && (card.isExperimental === routeQuery.value.experimental)
 			}
 
 			const stripFormatting = (str: string): string => {

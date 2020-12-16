@@ -14,6 +14,8 @@ import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import IncomingSpectatorMessageHandlers from '../game/handlers/IncomingSpectatorMessageHandlers'
 import {ClientToServerMessageTypes, ClientToServerSpectatorMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import {Router as WebSocketRouter} from 'express-ws'
+import GameMode from '@shared/enums/GameMode'
+import ChallengeLevel from '@shared/enums/ChallengeLevel'
 
 const router = express.Router() as WebSocketRouter
 
@@ -21,42 +23,50 @@ const router = express.Router() as WebSocketRouter
 router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	const currentGame: ServerGame | null = GameLibrary.games.find(game => game.id === req.params.gameId) || null
 	const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
+	let currentPlayerInGame: ServerPlayerInGame
 	if (!currentGame || !currentPlayer) {
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
 		ws.close()
 		return
 	}
 
-	if (currentGame.isStarted) {
+	const connectedPlayer = currentGame.players.find(playerInGame => playerInGame.player === currentPlayer)
+	if (currentGame.isStarted && (!connectedPlayer || (connectedPlayer && connectedPlayer.player.isInGame()))) {
 		OutgoingMessageHandlers.notifyAboutGameAlreadyStarted(ws)
 		ws.close()
 		return
 	}
 
-	if (currentGame.players.find(playerInGame => playerInGame.player === currentPlayer)) {
-		OutgoingMessageHandlers.notifyAboutDuplicatedConnection(ws)
-		ws.close()
-		return
+	// Reconnecting
+	if (connectedPlayer) {
+		currentPlayerInGame = currentGame.players.find(playerInGame => playerInGame.player === currentPlayer)!
 	}
 
-	const deckId = req.query.deckId as string
-	if (!deckId) {
-		OutgoingMessageHandlers.notifyAboutMissingDeckId(ws)
-		ws.close()
-		return
-	}
+	// Fresh connection
+	if (!connectedPlayer) {
+		const deckId = req.query.deckId as string
+		if (!deckId) {
+			OutgoingMessageHandlers.notifyAboutMissingDeckId(ws)
+			ws.close()
+			return
+		}
 
-	const deck = await EditorDeckDatabase.selectEditorDeckByIdForPlayer(deckId, currentPlayer)
-	if (!deck) {
-		OutgoingMessageHandlers.notifyAboutInvalidDeck(ws)
-		ws.close()
-		return
+		const deck = await EditorDeckDatabase.selectEditorDeckByIdForPlayer(deckId, currentPlayer)
+		if (!deck) {
+			OutgoingMessageHandlers.notifyAboutInvalidDeck(ws)
+			ws.close()
+			return
+		}
+
+		let inflatedDeck = ServerTemplateCardDeck.fromEditorDeck(currentGame, deck)
+		if (currentGame.gameMode === GameMode.CHALLENGE && currentGame.challengeLevel === ChallengeLevel.DISCOVERY_LEAGUE) {
+			inflatedDeck = ServerTemplateCardDeck.challengeDiscovery(currentGame, inflatedDeck.leader)
+		}
+		currentPlayerInGame = currentGame.addPlayer(currentPlayer, inflatedDeck)
 	}
 
 	currentPlayer.disconnect()
-	currentPlayer.registerConnection(ws)
-
-	const currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerTemplateCardDeck.fromEditorDeck(currentGame, deck))
+	currentPlayer.registerConnection(ws, currentGame)
 
 	ws.on('message', (rawMsg: string) => {
 		const msg = JSON.parse(rawMsg)
@@ -76,7 +86,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	})
 
 	ws.on('close', () => {
-		currentGame.removePlayer(currentPlayer)
+		currentPlayerInGame.disconnect()
 		ConnectionEstablishedHandler.onPlayerDisconnected(currentGame, currentPlayer)
 	})
 
@@ -110,7 +120,7 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 	}
 
 	currentPlayer.disconnect()
-	currentPlayer.registerConnection(ws)
+	currentPlayer.registerConnection(ws, currentGame)
 
 	const currentSpectator = spectatedPlayer.player.spectate(currentGame, currentPlayer)
 

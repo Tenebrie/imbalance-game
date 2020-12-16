@@ -10,9 +10,10 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 import BuffStrength from '../../../buffs/BuffStrength'
+import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitCultistBrute extends ServerCard {
-	bonusPower = 3
+	bonusPower = asSoloBuffPotency(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

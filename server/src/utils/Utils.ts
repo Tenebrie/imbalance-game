@@ -1,5 +1,3 @@
-import Card from '@shared/models/Card'
-import CardType from '@shared/enums/CardType'
 import ServerCard from '../game/models/ServerCard'
 import AsciiColor from '../enums/AsciiColor'
 import ServerUnit from '../game/models/ServerUnit'
@@ -84,10 +82,6 @@ export const mapUnitsToCards = (units: ServerUnit[]): ServerCard[] => {
 
 export const mapRelatedCards = (constructors: CardConstructor[]): string[] => {
 	return constructors.map(constructor => getClassFromConstructor(constructor))
-}
-
-export const mapTribeCards = (constructors: CardConstructor[]): string[] => {
-	return constructors.map(constructor => constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1))
 }
 
 export const getClassFromConstructor = (constructor: CardConstructor): string => {

@@ -7,10 +7,11 @@ import CardTribe from '@shared/enums/CardTribe'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassHealingPotency} from '../../../../utils/LeaderStats'
 
 export default class SpellHealingRain extends ServerCard {
-	baseHealing = 3
-	healingPerStorm = 1
+	baseHealing = asMassHealingPotency(3)
+	healingPerStorm = asMassHealingPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -39,7 +40,7 @@ export default class SpellHealingRain extends ServerCard {
 			stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
 
-		return this.baseHealing + this.healingPerStorm * stormsPlayed
+		return this.baseHealing(this) + this.healingPerStorm(this) * stormsPlayed
 	}
 
 	private onPlay(): void {

@@ -11,9 +11,10 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitAbyssPortal extends ServerCard {
-	powerPerCard = 1
+	powerPerCard = asMassBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -41,7 +42,7 @@ export default class UnitAbyssPortal extends ServerCard {
 		const unit = this.unit!
 		const owner = this.ownerInGame
 		const voidspawn = CardLibrary.instantiateByConstructor(this.game, UnitVoidspawn)
-		this.game.board.createUnit(voidspawn, this.owner, unit.rowIndex, unit.unitIndex + 1)
+		this.game.board.createUnit(voidspawn, this.ownerInGame, unit.rowIndex, unit.unitIndex + 1)
 		const uniqueCardsInBothDiscards = [...new Set(
 			owner.cardGraveyard.allCards
 				.concat(owner.opponent!.cardGraveyard.allCards)

@@ -8,10 +8,11 @@ import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class HeroStormDancer extends ServerCard {
-	normalPowerGiven = 1
-	stormPowerGiven = 3
+	normalPowerGiven = asMassBuffPotency(1)
+	stormPowerGiven = asMassBuffPotency(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

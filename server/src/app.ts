@@ -11,8 +11,6 @@ import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import {wsLogger} from './utils/WebSocketLogger'
 import Database from './database/Database'
 
-console.info('Starting up NotGwent server')
-
 const app = express()
 expressWs(app)
 
@@ -22,6 +20,7 @@ const ChangelogRouter = require('./routers/ChangelogRouter')
 
 const UserRouter = require('./routers/UserRouter')
 const PlayRouter = require('./routers/PlayRouter')
+const AdminRouter = require('./routers/AdminRouter')
 const CardsRouter = require('./routers/CardsRouter')
 const DecksRouter = require('./routers/DecksRouter')
 const GamesRouter = require('./routers/GamesRouter')
@@ -78,12 +77,16 @@ app.use('/status', StatusRouter)
 app.use('/changelog', ChangelogRouter)
 
 /* API HTTP routers */
+app.use('/api/admin', AdminRouter)
 app.use('/api/cards', CardsRouter)
 app.use('/api/decks', DecksRouter)
 app.use('/api/games', GamesRouter)
 app.use('/api/session', SessionRouter)
 app.use('/api/user', UserRouter)
 app.use('/api/user/profile', UserProfileRouter)
+
+/* Generic error handler */
+app.use(GenericErrorMiddleware)
 
 /* WS routers */
 app.use('/api/game', PlayRouter)
@@ -93,13 +96,8 @@ app.use('*', (req, res) => {
 	res.sendFile(path.join(__dirname, '../../../client/index.html'))
 })
 
-/* Generic error handler */
-app.use(GenericErrorMiddleware)
-
 /* Last-resort error handler */
-app.use((err: any, req: Request, res: Response) => {
-	console.log(err)
-	console.log(JSON.stringify(err))
+app.use((err: any, req: Request, res: Response, next: () => void) => {
 	res.status(err.status || 500)
 	res.render('error', {
 		message: err.message,

@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import Game from '@shared/models/Game'
 import ServerBoard from './ServerBoard'
 import ServerPlayer from '../players/ServerPlayer'
@@ -22,11 +22,19 @@ import {BuffConstructor} from './ServerBuffContainer'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
 import GameEventType from '@shared/enums/GameEventType'
-import {PlayerTargetCardSelectedEventArgs} from './GameEventCreators'
+import {PlayerTargetCardSelectedEventArgs} from './events/GameEventCreators'
+import ServerGameTimers from './ServerGameTimers'
+import GameMode from '@shared/enums/GameMode'
+import ChallengeLevel from '@shared/enums/ChallengeLevel'
 
-interface ServerGameProps {
+interface ServerGameProps extends OptionalGameProps {
+	gameMode: GameMode
+}
+
+export interface OptionalGameProps {
 	name?: string
 	owner?: ServerPlayer
+	challengeLevel?: ChallengeLevel
 }
 
 export default class ServerGame implements Game {
@@ -35,28 +43,36 @@ export default class ServerGame implements Game {
 	public isStarted: boolean
 	public turnIndex: number
 	public turnPhase: GameTurnPhase
+	public roundIndex: number
 	public playersToMove: ServerPlayerInGame[]
 	readonly owner: ServerPlayer | undefined
 	readonly board: ServerBoard
 	readonly events: ServerGameEvents
+	readonly timers: ServerGameTimers
 	readonly players: ServerPlayerInGame[]
 	readonly cardPlay: ServerGameCardPlay
 	readonly animation: ServerGameAnimation
+
+	public gameMode: GameMode
+	public challengeLevel: ChallengeLevel | null
 
 	constructor(props: ServerGameProps) {
 		this.id = uuidv4()
 		this.name = props.name || this.generateName(props.owner)
 		this.isStarted = false
 		this.turnIndex = -1
+		this.roundIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.owner = props.owner
 		this.board = new ServerBoard(this)
 		this.events = new ServerGameEvents(this)
+		this.timers = new ServerGameTimers(this)
 		this.players = []
 		this.playersToMove = []
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
-		this.owner = undefined
+		this.gameMode = props.gameMode
+		this.challengeLevel = props.challengeLevel || null
 
 		this.events.createCallback<PlayerTargetCardSelectedEventArgs>(this, GameEventType.PLAYER_TARGET_SELECTED_CARD)
 			.require(({ targetMode }) => targetMode === TargetMode.MULLIGAN)
@@ -219,6 +235,7 @@ export default class ServerGame implements Game {
 	}
 
 	private startNextRound(): void {
+		this.roundIndex += 1
 		this.setTurnPhase(GameTurnPhase.ROUND_START)
 
 		this.players.forEach(playerInGame => {
@@ -287,7 +304,6 @@ export default class ServerGame implements Game {
 		}
 
 		this.players.forEach(playerInGame => {
-			playerInGame.startRound()
 			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_PER_ROUND)
 			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})
@@ -324,22 +340,24 @@ export default class ServerGame implements Game {
 
 		if (victoriousPlayer === null) {
 			OutgoingMessageHandlers.notifyAboutDraw(this)
-			console.info(`Game ${this.id} finished with a draw. [${victoryReason}]`)
+			console.info(`Game ${colorizeId(this.id)} finished with a draw. [${victoryReason}]`)
 		} else {
 			const defeatedPlayer = this.getOpponent(victoriousPlayer)!
 			OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
 			OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
-			console.info(`Game ${this.id} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won! [${victoryReason}]`)
+			console.info(`Game ${colorizeId(this.id)} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won! [${victoryReason}]`)
 		}
 
 		setTimeout(() => {
 			this.forceShutdown('Cleanup')
-		}, 120000)
+		}, 60000)
+	}
+
+	public get isFinished(): boolean {
+		return this.turnPhase === GameTurnPhase.AFTER_GAME
 	}
 
 	public forceShutdown(reason: string): void {
-		this.spectators.forEach(spectator => spectator.player.disconnect())
-		this.players.forEach(playerInGame => playerInGame.player.disconnect())
 		GameLibrary.destroyGame(this, reason)
 	}
 
@@ -391,7 +409,12 @@ export default class ServerGame implements Game {
 		return viableCards.map(card => card.buffs.getIntensity(buffPrototype)).reduce((total, value) => total + value, 0)
 	}
 
-	static newOwnedInstance(owner: ServerPlayer, name: string): ServerGame {
-		return new ServerGame({ name, owner })
+	static newOwnedInstance(owner: ServerPlayer, name: string, gameMode: GameMode, props: OptionalGameProps): ServerGame {
+		return new ServerGame({
+			...props,
+			name,
+			owner,
+			gameMode
+		})
 	}
 }

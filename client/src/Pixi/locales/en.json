@@ -5,6 +5,7 @@
 	"ui.navigation.home": "Home",
 	"ui.navigation.decks": "Decks",
 	"ui.navigation.rules": "Rules",
+	"ui.navigation.admin": "Admin",
 	"ui.navigation.login": "Login",
 
 	"ui.auth.email": "Email",
@@ -17,7 +18,9 @@
 	"ui.auth.moveToLogin": "Already have an account?",
 	"ui.auth.moveToRegister": "Don't have an account?",
 
-	"ui.browser.header": "Game browser",
+	"ui.browser.reconnect.header": "Current game",
+	"ui.browser.reconnect.button": "Reconnect",
+	"ui.browser.list.header": "Game browser",
 	"ui.browser.empty": "Nobody is playing right now :(",
 
 	"ui.play.ai.normal": "Play vs AI",
@@ -65,6 +68,7 @@
 	"ui.decks.deleteDeck.progress": "Deleting...",
 	"ui.decks.leaveDeck": "Back",
 
+	"log.entry.gameStarted": "The game has started for {player}",
 	"log.entry.roundStarted": "{player} has started a new round",
 	"log.entry.turnStarted": "{player} has started a new turn",
 	"log.entry.cardDrawn": "{owner} has drawn {triggeringCard}",
@@ -73,10 +77,10 @@
 	"log.entry.cardTakesDamage.fromCard": "Card {triggeringCard} has taken {damage} damage from {sourceCard}",
 	"log.entry.cardTakesDamage.fromUniverse": "Card {triggeringCard} has taken {damage} damage",
 	"log.entry.cardDestroyed": "Card {triggeringCard} has been destroyed",
-	"log.entry.effectTargetSelected.card": "Card {triggeringCard} has targeted {targetCard}",
-	"log.entry.effectTargetSelected.unit": "Card {triggeringCard} has targeted {targetUnit}",
-	"log.entry.effectTargetSelected.row": "Card {triggeringCard} has targeted row number {targetRow}",
-	"log.entry.effectTargetsConfirmed": "Card {triggeringCard} has finished effect targeting",
+	"log.entry.cardTargetSelectedCard": "Card {triggeringCard} has targeted {targetCard}",
+	"log.entry.cardTargetSelectedUnit": "Card {triggeringCard} has targeted {targetUnit}",
+	"log.entry.cardTargetSelectedRow": "Card {triggeringCard} has targeted row number {targetRow}",
+	"log.entry.cardTargetsConfirmed": "Card {triggeringCard} has finished effect targeting",
 	"log.entry.unitCreated": "Unit {triggeringUnit} has been created on the board",
 	"log.entry.unitMoved.forward": "Unit {triggeringUnit} has moved {distance} row(s) forward",
 	"log.entry.unitMoved.sameRow": "Unit {triggeringUnit} has moved to a different position in the same row",
@@ -140,9 +144,9 @@
 	"card.feature.keywordOrder.name": "Order",
 	"card.feature.keywordOrder.description": "While this unit is on the board, choose a target and trigger an effect once a turn.",
 	"card.feature.keywordCreate.name": "Create",
-	"card.feature.keywordCreate.description": "Add a card into your hand. It gets 'Temporary Card'.",
+	"card.feature.keywordCreate.description": "Add a card into your hand until the end of your turn.",
 	"card.feature.keywordSummon.name": "Summon",
-	"card.feature.keywordSummon.description": "Move a card from your deck into your hand. It gets 'Temporary Card'.",
+	"card.feature.keywordSummon.description": "Move a card from your deck into your hand until the end of your turn.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
 	"card.feature.keywordHeroPower.name": "Leader Power",
@@ -152,7 +156,7 @@
 	"card.feature.keywordBuffGrowth.name": "Growth (Buff)",
 	"card.feature.keywordBuffGrowth.description": "Target card gets +1 Power at the start of its turn.",
 	"card.feature.keywordBuffStrength.name": "Strength (Buff)",
-	"card.feature.keywordBuffStrength.description": "Target card card has 1 extra Power.",
+	"card.feature.keywordBuffStrength.description": "Target card has 1 extra Power.",
 	"card.feature.keywordBuffImmunity.name": "Immunity (Buff)",
 	"card.feature.keywordBuffImmunity.description": "Target card is immune to damage and any effects.",
 	"card.feature.keywordBuffTemporaryCard.name": "Temporary card (Buff)",
@@ -167,7 +171,23 @@
 	"card.feature.temporaryCard.description": "This card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.temporaryCard.text": "<c=orange>Temporary card</c>",
 
+	"card.stats.soloUnitDamage.text": "*Unit Damage +{value}*",
+	"card.stats.massUnitDamage.text": "*Mass Unit Damage +{value}*",
+	"card.stats.soloSpellDamage.text": "*Spell Damage +{value}*",
+	"card.stats.massSpellDamage.text": "*Mass Spell Damage +{value}*",
+	"card.stats.soloHealingPotency.text": "*Heal Potency +{value}*",
+	"card.stats.massHealingPotency.text": "*Mass Heal Potency +{value}*",
+	"card.stats.soloBuffPotency.text": "*Buff Potency +{value}*",
+	"card.stats.massBuffPotency.text": "*Mass Buff Potency +{value}*",
+	"card.stats.soloEffectDuration.text": "*Effect Duration +{value}*",
+	"card.stats.massEffectDuration.text": "*Mass Effect Duration +{value}*",
+	"card.stats.targetCount.text": "*Card Target Count +{value}*",
+	"card.stats.criticalHitChance.text": "*Critical Hit Chance +{value}%*",
+	"card.stats.criticalBuffChance.text": "*Critical Buff Chance +{value}%*",
+	"card.stats.criticalHealChance.text": "*Critical Heal Chance +{value}%*",
+
 	"card.tribe.bird": "Bird",
+	"card.tribe.loot": "Loot",
 	"card.tribe.beast": "Beast",
 	"card.tribe.human": "Human",
 	"card.tribe.storm": "Storm",
@@ -309,6 +329,10 @@
 	"card.heroTaekana.title": "The Zookeeper",
 	"card.heroTaekana.description": "*Deploy:*\nGive +{strengthGiven} Power to ALL units.",
 
+	"card.heroNoekana.name": "Noekana",
+	"card.heroNoekana.title": "The Zookeeper",
+	"card.heroNoekana.description": "ALL units have +{strengthGiven} Power.",
+
 	"card.heroJom.name": "Jom",
 	"card.heroJom.title": "Acolyte of the Void",
 	"card.heroJom.description": "*Deploy:*\n*Create* a *Void portal*.<p>*Turn End:*\nIf you control at least {portalsNeeded} *Void portals*, destroy them and *Create* an *Abyss Portal*.",
@@ -347,7 +371,7 @@
 	"card.unitCultistBrute.flavor": "- \"So say we all\"",
 
 	"card.unitCultistSpellslinger.name": "Cultist Spellslinger",
-	"card.unitCultistSpellslinger.description": "*Deploy:*\nDestroy an allied unit.\nThen, *Create* a *Scroll*.\nIt costs 1 Mana less for every Power the target unit had.",
+	"card.unitCultistSpellslinger.description": "*Deploy:*\nDestroy an allied unit\nto *Create* a *Scroll*.\nIt costs 1 Mana less for every Power the target unit had.",
 	"card.unitCultistSpellslinger.flavor": "- \"So say we all\"",
 
 	"card.heroCultistOfAreddon.name": "Cultist of Areddon",
@@ -371,7 +395,7 @@
 	"card.unitDarkTimewarper.description": "*Deploy:*\nTrigger a *Turn end* effect on all allied *Void Portals*.\nThen, *Create* a *Void Portal*.",
 
 	"card.unitTravelingEnchantress.name": "Traveling\nEnchantress",
-	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, double their *Strength* effects",
+	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current Power is at least double their base Power, give +{extraStrengthGiven} Power more.",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
 	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Human card from your deck",
@@ -480,6 +504,9 @@
 	"card.unitShadowspawn.description": "<i>No effect</i>",
 	"card.unitShadowspawn.flavor": "Likes to cuddle with her little sister, Voidspawn.",
 
+	"card.unitYoungSquire.name": "Young Squire",
+	"card.unitYoungSquire.description": "*Deploy:*\n*Push* an allied unit forward.",
+
 	"card.unitTinySparkling.name": "Tiny Sparkling",
 	"card.unitTinySparkling.description": "<i>No effect</i>",
 
@@ -518,9 +545,6 @@
 	"card.spellScrollOfSapping.name": "Scroll of Sapping",
 	"card.spellScrollOfSapping.description": "Choose a unit.\nReturn it to the owner's hand and grant it *'Temporary card'*.",
 
-	"card.spellFieryEntrance.name": "Fiery Entrance",
-	"card.spellFieryEntrance.description": "*Summon* a top card from your deck.",
-
 	"card.spellSteelSpark.name": "Steel Spark",
 	"card.spellSteelSpark.description": "Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
 
@@ -553,5 +577,97 @@
 	"card.spellFlamingSpark.description": "Deal {damage} Damage to an enemy unit.<p><i>Deals {damagePerWeave} extra Damage per stack of *Weave*</i>",
 
 	"card.spellFlameweave.name": "Flameweave",
-	"card.spellFlameweave.description": "Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>"
+	"card.spellFlameweave.description": "Create a stack of *Weave*<p><i>Current stacks: {currentStacks}</i>",
+
+	"card.heroQidala.name": "Qidala",
+	"card.heroQidala.title": "The Mistress of Exchange",
+	"card.heroQidala.description": "*Deploy:*\n*Discard* a unit card from your hand and receive a *Loot* spell of appropriate rarity.\nThen, *Draw* a card.",
+	"card.heroQidala.flavor": "- \"The rule of equivalent exchange will I always follow, yet deep in my heart do I know that fortune does indeed favor the bold.\"",
+
+	"card.heroIllusionTwin.name": "Illusion Twin",
+	"card.heroIllusionTwin.description": "*Turn end:*\nDeal {powerLost} Damage to self.<p>Then, add +{powerGiven} Power to the left-most copy of this card in the owner's hand.</p>",
+	"card.heroIllusionTwin.flavor": "- \"Have you seen my better half?\"",
+
+	"card.unitYogaTeacher.name": "Yoga Teacher",
+	"card.unitYogaTeacher.description": "*Deploy:*\n*Discard* a card from your hand.\nThen, add a copy of that card to your hand.",
+	"card.unitYogaTeacher.flavor": "- \"Trust in yoga, train your body and soul, and one day you will awaken a new man.\"",
+
+	"card.unitSkybornMother.name": "Skyborn Mother",
+	"card.unitSkybornMother.description": "While you hold this in your hand, the last unit you have played has +{powerGiven} Power.",
+	"card.unitSkybornMother.flavor": "- \"I'm taking care of you.\"",
+
+	"card.unitEndlessArmy.name": "Endless Army",
+	"card.unitEndlessArmy.description": "*Deploy:*\nAdd an *Endless Army* to the bottom of your deck.",
+	"card.unitEndlessArmy.flavor": "- \"They are legion.\"",
+
+	"card.unitAulerianSongwriter.name": "Aulerian Songwriter",
+	"card.unitAulerianSongwriter.description": "*Deploy:*\nChoose a unit.\nAll copies of this card have +{bonusPower} Power for the rest of the game.",
+	"card.unitAulerianSongwriter.flavor": "- \"Stay awhile and listen.\"",
+
+	"card.leaderChallengeDummy.name": "Dummy",
+	"card.leaderChallengeDummy.title": "The Scapegoat",
+	"card.leaderChallengeDummy.description": "*Round start:*\nSpawn a *Target Dummy* on your middle row.",
+
+	"card.heroChallengeDummyWarrior0.name": "Oenus",
+	"card.heroChallengeDummyWarrior0.title": "Dummy of Prudence",
+	"card.heroChallengeDummyWarrior0.description": "<i>No effect</i>",
+
+	"card.heroChallengeDummyWarrior1.name": "Josclyn",
+	"card.heroChallengeDummyWarrior1.title": "Dummy of Justice",
+	"card.heroChallengeDummyWarrior1.description": "<i>No effect</i>",
+
+	"card.heroChallengeDummyWarrior2.name": "Willmot",
+	"card.heroChallengeDummyWarrior2.title": "Dummy of Fortitude",
+	"card.heroChallengeDummyWarrior2.description": "<i>No effect</i>",
+
+	"card.heroChallengeDummyWarrior3.name": "Tomkin",
+	"card.heroChallengeDummyWarrior3.title": "Dummy of Temperance",
+	"card.heroChallengeDummyWarrior3.description": "<i>No effect</i>",
+
+	"card.unitChallengeDummyRoyalWarrior.name": "Royal Dummy",
+	"card.unitChallengeDummyRoyalWarrior.description": "<i>No effect</i>",
+
+	"card.unitChallengeDummyVanillaWarrior.name": "Vanilla Dummy",
+	"card.unitChallengeDummyVanillaWarrior.description": "<i>No effect</i>",
+
+	"card.tokenChallengeDummyTargetDummy.name": "Target Dummy",
+	"card.tokenChallengeDummyTargetDummy.description": "<i>No effect</i>",
+	"card.tokenChallengeDummyTargetDummy.flavor": "- \"We have put all our Mana into our new creation. It is the most powerful Dummy of them all.\"",
+
+	"card.leaderMaximilian.name": "Maximilian",
+	"card.leaderMaximilian.title": "The Commander",
+	"card.leaderMaximilian.description": "*Human Leader*<p>*Round start:*\nGain +{manaPerRound} Mana<p>Gets two copies of *Tactical Move*",
+
+	"card.spellQuickStrike.name": "Quick Strike",
+	"card.spellQuickStrike.description": "Deal {damage} Damage to an enemy unit.",
+
+	"card.spellTacticalMove.name": "Tactical Move",
+	"card.spellTacticalMove.description": "Move an allied unit to an adjacent allied row.<p>If it moved to the front row,\ndeal {damage} Damage to opposing enemy units.\nOtherwise, restore {healing} Power.",
+	"card.spellTacticalMove.target.label.unit": "Choose a unit",
+	"card.spellTacticalMove.target.label.row": "Move here",
+
+	"card.spellReinforcements.name": "Reinforcements",
+	"card.spellReinforcements.description": "*Summon* a top card from your deck.",
+
+	"card.heroChallengeLegendaryExplorer0.name": "Jeno Rackson",
+	"card.heroChallengeLegendaryExplorer0.title": "One-of-Many",
+	"card.heroChallengeLegendaryExplorer0.description": "Choose one of {cardsToExplore} random Legendary cards.\n*Create* a copy of it.",
+
+	"card.heroChallengeLegendaryExplorer1.name": "Seline Moonseeker",
+	"card.heroChallengeLegendaryExplorer1.title": "The Iron Monkey",
+	"card.heroChallengeLegendaryExplorer1.description": "Choose one of {cardsToExplore} random Legendary cards.\n*Create* a copy of it.",
+
+	"card.heroChallengeLegendaryExplorer2.name": "R'bann Copperbeard",
+	"card.heroChallengeLegendaryExplorer2.title": "The Crying One",
+	"card.heroChallengeLegendaryExplorer2.description": "Choose one of {cardsToExplore} random Legendary cards.\n*Create* a copy of it.",
+
+	"card.heroChallengeLegendaryExplorer3.name": "Finley",
+	"card.heroChallengeLegendaryExplorer3.title": "The Commoner",
+	"card.heroChallengeLegendaryExplorer3.description": "Choose one of {cardsToExplore} random Legendary cards.\n*Create* a copy of it.",
+
+	"card.unitChallengeScarredExplorer.name": "Scarred Explorer",
+	"card.unitChallengeScarredExplorer.description": "Choose one of {cardsToExplore} random Epic cards.\n*Create* a copy of it.",
+
+	"card.unitChallengeEagerExplorer.name": "Eager Explorer",
+	"card.unitChallengeEagerExplorer.description": "Choose one of {cardsToExplore} random Common cards.\n*Create* a copy of it."
 }

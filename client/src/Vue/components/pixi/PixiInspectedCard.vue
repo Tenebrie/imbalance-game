@@ -39,11 +39,11 @@ export default defineComponent({
 			if (card instanceof RenderedCard) {
 				return null
 			}
-			return card
+			return card as CardMessage
 		})
 
 		const inspectedCard = computed<CardMessage | RenderedCard | null>(() => {
-			return store.getters.inspectedCard.card
+			return store.getters.inspectedCard.card as CardMessage
 		})
 
 		const customClass = computed<Record<string, boolean>>(() => ({
@@ -118,19 +118,19 @@ export default defineComponent({
 				width: $INSPECTED-CARD-INFO-WINDOW-WIDTH;
 			}
 
-			@media (max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} * 2 + 16px)) {
+			@media (max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} * 2 + 24px)) {
 				.card-container {
-					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 2 + 16px);
+					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 2 + 24px);
 				}
 
 				.overlay-container {
-					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 2 + 16px);
+					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 2 + 24px);
 				}
 			}
 
-			@media (max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} + 16px)) {
+			@media (max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} + 24px)) {
 				.card-container {
-					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 4 + 16px);
+					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 4 + 24px);
 					.card {
 						width: calc(#{$CARD_WIDTH} / 1.5);
 						height: calc(#{$CARD_HEIGHT} / 1.5);
@@ -138,7 +138,7 @@ export default defineComponent({
 				}
 
 				.overlay-container {
-					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 4 + 16px);
+					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 4 + 24px);
 				}
 			}
 		}

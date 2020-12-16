@@ -9,12 +9,13 @@ import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {ServerCardTargetCard} from '../../../models/ServerCardTarget'
+import {ServerCardTargetCard, ServerCardTargetUnit} from '../../../models/ServerCardTarget'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFeature from '@shared/enums/CardFeature'
+import {asSoloUnitDamage} from '../../../../utils/LeaderStats'
 
 export default class UnitChargingKnight extends ServerCard {
-	damage = 3
+	damage = asSoloUnitDamage(3)
 	movesForwardThisTurn = 0
 	maximumMovesThisTurn = 1
 
@@ -55,7 +56,7 @@ export default class UnitChargingKnight extends ServerCard {
 		this.movesForwardThisTurn = Math.min(this.maximumMovesThisTurn, this.movesForwardThisTurn + 1)
 	}
 
-	private onUnitOrdered(targetArguments: ServerCardTargetCard): void {
+	private onUnitOrdered(targetArguments: ServerCardTargetCard | ServerCardTargetUnit): void {
 		const targetCard = targetArguments.targetCard
 		targetCard.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 	}

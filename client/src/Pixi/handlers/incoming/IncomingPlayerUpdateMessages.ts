@@ -1,6 +1,5 @@
 import Core from '@/Pixi/Core'
 import store from '@/Vue/store'
-import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
@@ -25,7 +24,6 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 
 	[PlayerUpdateMessageType.MORALE]: (data: PlayerInGameMessage) => {
 		Core.getPlayer(data.player.id).morale = data.morale
-		Core.player.morale = data.morale
 	},
 
 	[PlayerUpdateMessageType.MANA]: (data: PlayerInGameMessage) => {
@@ -71,7 +69,6 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 	[PlayerUpdateMessageType.CARD_DESTROY_IN_HAND]: (data: OwnedCardRefMessage) => {
 		const player = Core.getPlayer(data.ownerId)
 		player.cardHand.destroyCardById(data.cardId)
-		Core.input.clearCardInLimbo(data.cardId)
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.id === data.cardId) {
 			Core.mainHandler.clearAnnouncedCard()
@@ -89,7 +86,7 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 	},
 
 	[PlayerUpdateMessageType.PLAY_TARGETS]: (data: CardTargetMessage[]) => {
-		Core.input.playableCards = data.map(data => ClientCardTarget.fromMessage(data))
+		Core.input.playableCards = data
 	},
 
 	[PlayerUpdateMessageType.CARD_REVEALED]: (data: CardMessage) => {
@@ -99,16 +96,16 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 
 	[PlayerUpdateMessageType.PLAY_DECLINED]: (data: CardRefMessage) => {
 		console.info('Card play declined', data)
-		const cardInLimbo = Core.input.restoreCardFromLimbo(data)
+		const cardInLimbo = Core.input.restoreLimboCard(data)
 		Core.player.cardHand.addCard(cardInLimbo)
 	},
 
 	[PlayerUpdateMessageType.UNIT_ORDERS_SELF]: (data: CardTargetMessage[]) => {
-		Core.board.validOrders = data.map(message => ClientCardTarget.fromMessage(message))
+		Core.board.validOrders = data
 	},
 
 	[PlayerUpdateMessageType.UNIT_ORDERS_OPPONENT]: (data: CardTargetMessage[]) => {
-		Core.board.validOpponentOrders = data.map(message => ClientCardTarget.fromMessage(message))
+		Core.board.validOpponentOrders = data
 	},
 
 	[PlayerUpdateMessageType.TURN_START]: (player: PlayerInGameMessage) => {

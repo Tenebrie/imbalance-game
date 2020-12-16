@@ -9,9 +9,11 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffStrength from '../../../buffs/BuffStrength'
+import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitTravelingEnchantress extends ServerCard {
-	baseStrengthGiven = 2
+	baseStrengthGiven = asSoloBuffPotency(1)
+	extraStrengthGiven = asSoloBuffPotency(7)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -20,12 +22,13 @@ export default class UnitTravelingEnchantress extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STRENGTH],
 			stats: {
-				power: 5,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			baseStrengthGiven: this.baseStrengthGiven
+			baseStrengthGiven: this.baseStrengthGiven,
+			extraStrengthGiven: this.extraStrengthGiven
 		}
 
 		this.createDeployEffectTargets()
@@ -39,8 +42,9 @@ export default class UnitTravelingEnchantress extends ServerCard {
 
 	private onTargetSelected(target: ServerUnit): void {
 		target.buffs.addMultiple(BuffStrength, this.baseStrengthGiven, this)
-		const strengthIntensity = target.buffs.getIntensity(BuffStrength)
 		this.game.animation.syncAnimationThreads()
-		target.buffs.addMultiple(BuffStrength, strengthIntensity, this)
+		if (target.card.stats.power >= target.card.stats.basePower * 2) {
+			target.buffs.addMultiple(BuffStrength, this.extraStrengthGiven, this)
+		}
 	}
 }

@@ -6,6 +6,7 @@ import PlayerDatabase from '../../database/PlayerDatabase'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import {tryUntil} from '../../utils/Utils'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
+import AccessLevel from '@shared/enums/AccessLevel'
 
 const createNumberedUsername = (username: string): string => {
 	let existingPlayer: PlayerDatabaseEntry | null
@@ -59,6 +60,15 @@ class PlayerLibrary {
 		return PlayerDatabase.updatePlayerPassword(id, passwordHash)
 	}
 
+	public async updateAccessLevel(id: string, accessLevel: AccessLevel): Promise<boolean> {
+		const player = await this.getPlayerById(id)
+		if (!player) {
+			return false
+		}
+		this.removeFromCache(player)
+		return PlayerDatabase.updatePlayerAccessLevel(id, accessLevel)
+	}
+
 	public async login(email: string, password: string): Promise<ServerPlayer | null> {
 		email = email.toLowerCase()
 		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(email)
@@ -78,6 +88,16 @@ class PlayerLibrary {
 	public async loginWithoutPassword(email: string): Promise<ServerPlayer | null> {
 		email = email.toLowerCase()
 		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(email)
+
+		if (!playerDatabaseEntry) {
+			return null
+		}
+
+		return this.cachePlayer(playerDatabaseEntry)
+	}
+
+	public async loginById(playerId: string): Promise<ServerPlayer | null> {
+		const playerDatabaseEntry = await PlayerDatabase.selectPlayerById(playerId)
 
 		if (!playerDatabaseEntry) {
 			return null
@@ -120,6 +140,14 @@ class PlayerLibrary {
 			return null
 		}
 		return this.getPlayerById(tokenPayload.playerId)
+	}
+
+	public async getAllPlayers(): Promise<ServerPlayer[] | null> {
+		const result = await PlayerDatabase.selectAllPlayers()
+		if (!result) {
+			return null
+		}
+		return result.map(entry => ServerPlayer.newInstance(entry))
 	}
 
 	public async deletePlayer(player: ServerPlayer): Promise<boolean> {

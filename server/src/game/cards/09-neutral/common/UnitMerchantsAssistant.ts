@@ -11,9 +11,10 @@ import BuffNextSpellDiscountAura from '../../../buffs/BuffNextSpellDiscountAura'
 import CardFeature from '@shared/enums/CardFeature'
 import Utils from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitMerchantsAssistant extends ServerCard {
-	spellDiscount = 3
+	spellDiscount = asSoloBuffPotency(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

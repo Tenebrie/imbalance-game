@@ -66,14 +66,19 @@ export default class RenderedCardHand implements CardHand {
 		} else if (this.spellCards.includes(card)) {
 			this.spellCards.splice(this.spellCards.indexOf(card), 1, revealedCard)
 		}
-		Core.unregisterCard(card)
+		Core.destroyCard(card)
 		return revealedCard
+	}
+
+	public removeCard(card: RenderedCard): void {
+		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
+		this.spellCards = this.spellCards.filter(spellCard => spellCard !== card)
 	}
 
 	public destroyCard(card: RenderedCard): void {
 		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
 		this.spellCards = this.spellCards.filter(spellCard => spellCard !== card)
-		Core.unregisterCard(card)
+		Core.destroyCard(card)
 	}
 
 	public destroyCardById(cardId: string): void {

@@ -8,9 +8,10 @@ import ServerAnimation from '../../../models/ServerAnimation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitSupplyWagon extends ServerCard {
-	extraPower = 3
+	extraPower = asMassBuffPotency(3)
 	pushDistance = 1
 
 	constructor(game: ServerGame) {

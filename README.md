@@ -26,6 +26,8 @@ issue with WSL).
 
 ### Running the app
 `$ docker-compose up`
+or
+`$ yarn docker:start`
 
 After the build, you can access any of the apps:
 

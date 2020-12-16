@@ -5,7 +5,10 @@ RUN apt-get update
 RUN apt-get install --yes curl
 RUN curl --silent --location https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get install --yes nodejs
-RUN apt-get install --yes build-essential
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update
+RUN apt-get install --yes build-essential yarn
 
 ADD ./client /app/client
 ADD ./shared /app/shared
@@ -13,10 +16,10 @@ COPY .eslintrc.json /app/client
 COPY .eslintrc.json /app/shared
 
 WORKDIR /app/shared
-RUN npm install
+RUN yarn
 
 WORKDIR /app/client
-RUN npm install
+RUN yarn
 
 # Expose server
 EXPOSE 8080

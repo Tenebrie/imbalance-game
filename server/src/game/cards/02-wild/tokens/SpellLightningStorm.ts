@@ -10,11 +10,12 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassSpellDamage, asTargetCount} from '../../../../utils/LeaderStats'
 
 export default class SpellLightningStorm extends ServerCard {
-	damage = 3
-	baseTargets = 1
-	targetsPerStorm = 1
+	damage = asMassSpellDamage(3)
+	baseTargets = asTargetCount(1)
+	targetsPerStorm = asMassSpellDamage(1)
 	targetsHit: ServerCard[] = []
 
 	constructor(game: ServerGame) {
@@ -55,8 +56,7 @@ export default class SpellLightningStorm extends ServerCard {
 		if (this.owner) {
 			stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
-
-		return this.baseTargets + this.targetsPerStorm * stormsPlayed
+		return this.baseTargets(this) + this.targetsPerStorm(this) * stormsPlayed
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

@@ -1,6 +1,6 @@
 import ServerCard from './ServerCard'
 import CardDeck from '@shared/models/CardDeck'
-import CardLibrary from '../libraries/CardLibrary'
+import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
 import UnitForestScout from '../cards/00-human/common/UnitForestScout'
 import ServerGame from './ServerGame'
 import HeroZamarath from '../cards/00-human/legendary/HeroZamarath'
@@ -20,6 +20,20 @@ import HeroFlameDancer from '../cards/01-arcane/epic/HeroFlameDancer'
 import UnitArcaneElemental from '../cards/01-arcane/common/UnitArcaneElemental'
 import HeroLightOracle from '../cards/09-neutral/epic/HeroLightOracle'
 import CardType from '@shared/enums/CardType'
+import LeaderChallengeDummy from '../cards/08-challenge/ai-00-dummy/LeaderChallengeDummy'
+import HeroChallengeDummyWarrior0 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
+import HeroChallengeDummyWarrior1 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
+import HeroChallengeDummyWarrior2 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior2'
+import HeroChallengeDummyWarrior3 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior3'
+import Constants from '@shared/Constants'
+import UnitChallengeDummyRoyalWarrior from '../cards/08-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
+import UnitChallengeDummyVanillaWarrior from '../cards/08-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
+import HeroChallengeLegendaryExplorer0 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer0'
+import HeroChallengeLegendaryExplorer1 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer1'
+import HeroChallengeLegendaryExplorer2 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer2'
+import HeroChallengeLegendaryExplorer3 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer3'
+import UnitChallengeScarredExplorer from '../cards/08-challenge/challenge-discovery/UnitChallengeScarredExplorer'
+import UnitChallengeEagerExplorer from '../cards/08-challenge/challenge-discovery/UnitChallengeEagerExplorer'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	leader: ServerCard
@@ -45,10 +59,11 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		const inflatedUnitDeck: ServerCard[] = []
 		const inflatedSpellDeck: ServerCard[] = []
 		cards.forEach(card => {
-			const inflatedUnitCards = card.deckAddedCards.filter(card => CardLibrary.findPrototypeByConstructor(card).type === CardType.UNIT)
-			const inflatedSpellCards = card.deckAddedCards.filter(card => CardLibrary.findPrototypeByConstructor(card).type === CardType.SPELL)
-			inflatedUnitCards.forEach(cardPrototype => inflatedUnitDeck.push(CardLibrary.instantiateByConstructor(game, cardPrototype)))
-			inflatedSpellCards.forEach(cardPrototype => inflatedSpellDeck.push(CardLibrary.instantiateByConstructor(game, cardPrototype)))
+			const inflatedCards = card.deckAddedCards.map(cardPrototype => CardLibrary.instantiateByConstructor(game, cardPrototype))
+			const inflatedUnitCards = inflatedCards.filter(card => card.type === CardType.UNIT)
+			const inflatedSpellCards = inflatedCards.filter(card => card.type === CardType.SPELL)
+			inflatedUnitCards.forEach(cardPrototype => inflatedUnitDeck.push(cardPrototype))
+			inflatedSpellCards.forEach(cardPrototype => inflatedSpellDeck.push(cardPrototype))
 			if (card.color === CardColor.LEADER) {
 				leader = card
 			} else {
@@ -61,7 +76,27 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		return new ServerTemplateCardDeck(leader, inflatedUnitDeck, inflatedSpellDeck)
 	}
 
-	public static botDeck(game: ServerGame): ServerTemplateCardDeck {
+	public static challengeAI00(game: ServerGame): ServerTemplateCardDeck {
+		const cards = []
+
+		cards.push(CardLibrary.instantiateByConstructor(game, LeaderChallengeDummy))
+
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeDummyWarrior0))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeDummyWarrior1))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeDummyWarrior2))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeDummyWarrior3))
+
+		for (let i = 0; i < Constants.CARD_LIMIT_SILVER; i++) {
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitChallengeDummyRoyalWarrior))
+		}
+		for (let i = 0; i < Constants.CARD_LIMIT_BRONZE; i++) {
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitChallengeDummyVanillaWarrior))
+		}
+
+		return ServerTemplateCardDeck.inflate(game, cards)
+	}
+
+	public static challengeAI01(game: ServerGame): ServerTemplateCardDeck {
 		const cards = []
 
 		cards.push(CardLibrary.instantiateByConstructor(game, LeaderVelElleron))
@@ -84,6 +119,26 @@ export default class ServerTemplateCardDeck implements CardDeck {
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitWingedShieldmaiden))
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitPriestessOfAedine))
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitArcaneElemental))
+		}
+
+		return ServerTemplateCardDeck.inflate(game, cards)
+	}
+
+	public static challengeDiscovery(game: ServerGame, leader: ServerCard): ServerTemplateCardDeck {
+		const cards = []
+
+		cards.push(CardLibrary.instantiateByInstance(game, leader))
+
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeLegendaryExplorer0))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeLegendaryExplorer1))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeLegendaryExplorer2))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeLegendaryExplorer3))
+
+		for (let i = 0; i < Constants.CARD_LIMIT_SILVER; i++) {
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitChallengeScarredExplorer))
+		}
+		for (let i = 0; i < Constants.CARD_LIMIT_BRONZE; i++) {
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitChallengeEagerExplorer))
 		}
 
 		return ServerTemplateCardDeck.inflate(game, cards)

@@ -25,7 +25,7 @@ export default class ProjectileSystem {
 
 			const currentTime = Math.min(projectile.currentTime, projectile.animationDuration)
 			const timePosition = currentTime / projectile.animationDuration
-			const quadOffset = (-4 * Math.pow(timePosition - 0.5, 2) + 1) * (150 + projectile.randomnessFactor * 250)
+			const quadOffset = (-4 * Math.pow(timePosition - 0.5, 2) + 1) * (350 + projectile.randomnessFactor * 50)
 
 			if (projectile.startingPoint.x <= targetPoint.x) {
 				targetPoint.x += quadOffset
@@ -78,7 +78,7 @@ export default class ProjectileSystem {
 	}
 
 	public createCardAttackProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
-		return this.createAttackProjectile(sourceCard.getPosition(), targetCard, () => {
+		return this.createAttackProjectile(sourceCard.getVisualPosition(), targetCard, () => {
 			Core.particleSystem.createAttackImpactParticleEffect(targetCard)
 			AudioSystem.playEffect(AudioEffectCategory.IMPACT_GENERIC)
 		})
@@ -92,7 +92,7 @@ export default class ProjectileSystem {
 	}
 
 	public createCardAffectProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
-		return this.createAttackProjectile(sourceCard.getPosition(), targetCard, () => { /* Empty */ })
+		return this.createAttackProjectile(sourceCard.getVisualPosition(), targetCard, () => { /* Empty */ })
 	}
 
 	public createUniverseAffectProjectile(targetCard: RenderedCard): RenderedProjectile {
@@ -100,7 +100,7 @@ export default class ProjectileSystem {
 	}
 
 	public createCardHealProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
-		return this.createAttackProjectile(sourceCard.getPosition(), targetCard, () => {
+		return this.createAttackProjectile(sourceCard.getVisualPosition(), targetCard, () => {
 			Core.particleSystem.createHealImpactParticleEffect(targetCard)
 			AudioSystem.playEffect(AudioEffectCategory.IMPACT_HEAL)
 		})

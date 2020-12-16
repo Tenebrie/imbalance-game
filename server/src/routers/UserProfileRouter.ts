@@ -1,5 +1,4 @@
 import express, {Request, Response} from 'express'
-import ServerPlayer from '../game/players/ServerPlayer'
 import PlayerDatabase from '../database/PlayerDatabase'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 import PlayerLibrary from '../game/players/PlayerLibrary'

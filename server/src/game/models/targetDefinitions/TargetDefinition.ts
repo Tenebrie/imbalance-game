@@ -5,19 +5,20 @@ import TargetType from '@shared/enums/TargetType'
 import StandardTargetDefinitionBuilder from './StandardTargetDefinitionBuilder'
 import CardType from '@shared/enums/CardType'
 import SimpleTargetDefinitionBuilder from './SimpleTargetDefinitionBuilder'
+import ServerCard from '../ServerCard'
 
 export default class TargetDefinition {
 	private readonly game: ServerGame
-	private readonly totalTargetCountGetters: (number | (() => number))[]
+	private readonly totalTargetCountGetters: (number | ((card: ServerCard) => number))[]
 	private readonly orderLabels: string[][]
-	private readonly targetOfTypeCountGetters: (number | (() => number))[][][]
+	private readonly targetOfTypeCountGetters: (number | ((card: ServerCard) => number))[][][]
 	private readonly conditions: ((args: TargetValidatorArguments) => boolean)[][][] = []
 	private readonly evaluators: ((args: TargetValidatorArguments) => number)[][][] = []
 
 	constructor(game: ServerGame,
-		totalTargetCountGetters: (number | (() => number))[],
+		totalTargetCountGetters: (number | ((card: ServerCard) => number))[],
 		orderLabels: string[][],
-		targetOfTypeCountGetters: (number | (() => number))[][][],
+		targetOfTypeCountGetters: (number | ((card: ServerCard) => number))[][][],
 		conditions: ((args: TargetValidatorArguments) => boolean)[][][],
 		evaluators: ((args: TargetValidatorArguments) => number)[][][]) {
 		this.game = game
@@ -28,10 +29,10 @@ export default class TargetDefinition {
 		this.evaluators = evaluators
 	}
 
-	public getTargetCount(): number {
+	public getTargetCount(card: ServerCard): number {
 		return this.totalTargetCountGetters.map(value => {
 			if (typeof(value) === 'function') {
-				return value()
+				return value(card)
 			}
 			return value
 		}).reduce((acc, val) => acc + val, 0)
@@ -41,10 +42,10 @@ export default class TargetDefinition {
 		return this.orderLabels[reason][type]
 	}
 
-	public getTargetOfTypeCount(targetMode: TargetMode, targetType: TargetType): number {
+	public getTargetOfTypeCount(card: ServerCard, targetMode: TargetMode, targetType: TargetType): number {
 		return this.targetOfTypeCountGetters[targetMode][targetType].map(value => {
 			if (typeof(value) === 'function') {
-				return value()
+				return value(card)
 			}
 			return value
 		}).reduce((acc, val) => acc + val, 0)

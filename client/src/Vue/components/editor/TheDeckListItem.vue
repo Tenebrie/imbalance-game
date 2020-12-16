@@ -6,7 +6,7 @@
 			</keep-alive>
 			<span>{{ deck.name }}</span>
 		</span>
-		<router-link v-if="mode === DeckListMode.EDIT" tag="span" class="deck-link" :to="{ path: `/decks/${deck.id}`, query: router.currentRoute.query }">
+		<router-link v-if="mode === DeckListMode.EDIT" tag="span" class="deck-link" :to="{ path: `/decks/${deck.id}`, query: getCurrentRouteQuery() }">
 			<keep-alive>
 				<img v-if="iconPath" :src="iconPath" alt="Deck icon" />
 			</keep-alive>
@@ -31,14 +31,13 @@ export default defineComponent({
 	},
 
 	setup() {
+		const getCurrentRouteQuery = () => router.currentRoute.query
+
 		return {
-			router
+			getCurrentRouteQuery,
+			DeckListMode
 		}
 	},
-
-	data: () => ({
-		DeckListMode: DeckListMode
-	}),
 
 	computed: {
 		mode(): DeckListMode {

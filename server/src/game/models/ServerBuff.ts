@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import Buff from '@shared/models/Buff'
 import BuffStackType from '@shared/enums/BuffStackType'
 import ServerGame from './ServerGame'
@@ -9,14 +9,16 @@ import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateM
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
-import {EventCallback, EventHook} from './ServerGameEvents'
-import GameHookType from './GameHookType'
+import GameHookType from './events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffFeature from '@shared/enums/BuffFeature'
-import GameEventCreators, {TurnEndedEventArgs, TurnStartedEventArgs} from './GameEventCreators'
+import GameEventCreators, {TurnEndedEventArgs, TurnStartedEventArgs} from './events/GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import StandardTargetDefinitionBuilder from './targetDefinitions/StandardTargetDefinitionBuilder'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import {CardSelector, CardSelectorBuilder} from './events/CardSelector'
+import {EventCallback} from './events/EventCallback'
+import {EventHook} from './events/EventHook'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -164,10 +166,33 @@ export default class ServerBuff implements Buff {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hook)
 	}
 
+	/* Create an aura effect
+	 * ------------------------
+	 * Description
+	 */
+	protected createSelector(): CardSelectorBuilder {
+		return this.game.events.createSelector(this)
+	}
+
 	getMaxPowerOverride(baseValue: number): number { return baseValue }
 	getMaxArmorOverride(baseValue: number): number { return baseValue }
 	getUnitCostOverride(baseValue: number): number { return baseValue }
 	getSpellCostOverride(baseValue: number): number { return baseValue }
+
+	getSoloUnitDamageOverride(baseValue: number): number { return baseValue }
+	getMassUnitDamageOverride(baseValue: number): number { return baseValue }
+	getSoloSpellDamageOverride(baseValue: number): number { return baseValue }
+	getMassSpellDamageOverride(baseValue: number): number { return baseValue }
+	getSoloHealingPotencyOverride(baseValue: number): number { return baseValue }
+	getMassHealingPotencyOverride(baseValue: number): number { return baseValue }
+	getSoloBuffPotencyOverride(baseValue: number): number { return baseValue }
+	getMassBuffPotencyOverride(baseValue: number): number { return baseValue }
+	getSoloEffectDurationOverride(baseValue: number): number { return baseValue }
+	getMassEffectDurationOverride(baseValue: number): number { return baseValue }
+	getTargetCountOverride(baseValue: number): number { return baseValue }
+	getCriticalHitChanceOverride(baseValue: number): number { return baseValue }
+	getCriticalBuffChanceOverride(baseValue: number): number { return baseValue }
+	getCriticalHealChanceOverride(baseValue: number): number { return baseValue }
 
 	definePlayValidTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }
 	defineValidOrderTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }

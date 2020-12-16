@@ -3,8 +3,6 @@ import Card from '@shared/models/Card'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import CardTarget from '@shared/models/CardTarget'
-import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import {GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import TargetMode from '@shared/enums/TargetMode'
 
@@ -18,12 +16,12 @@ export default {
 		Core.sendMessage(GenericActionMessageType.CARD_PLAY, CardPlayedMessage.fromCard(card))
 	},
 
-	sendUnitOrder(order: CardTarget): void {
-		Core.sendMessage(GenericActionMessageType.UNIT_ORDER, new CardTargetMessage(order))
+	sendUnitOrder(order: CardTargetMessage): void {
+		Core.sendMessage(GenericActionMessageType.UNIT_ORDER, order)
 	},
 
-	sendCardTarget(target: ClientCardTarget): void {
-		Core.sendMessage(GenericActionMessageType.CARD_TARGET, new CardTargetMessage(target))
+	sendCardTarget(target: CardTargetMessage): void {
+		Core.sendMessage(GenericActionMessageType.CARD_TARGET, target)
 	},
 
 	sendConfirmTargets(targetMode: TargetMode): void {

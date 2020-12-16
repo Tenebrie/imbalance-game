@@ -9,9 +9,10 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitUndercityGambler extends ServerCard {
-	bonusPower = 5
+	bonusPower = asSoloBuffPotency(5)
 
 	constructor(game: ServerGame) {
 		super(game, {

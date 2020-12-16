@@ -7,46 +7,53 @@ export default {
 	notifyAboutSpectateMode: (player: ServerPlayer): void => {
 		player.sendMessage({
 			type: SystemMessageType.MODE_SPECTATE,
-			data: null
+			data: null,
+			highPriority: true
 		})
 	},
 
 	notifyAboutInitRequested(player: ServerPlayer): void {
 		player.sendMessage({
 			type: SystemMessageType.REQUEST_INIT,
-			data: null
+			data: null,
+			highPriority: true
 		})
 	},
 
 	notifyAboutGameShutdown(player: ServerPlayer): void {
 		player.sendMessage({
 			type: SystemMessageType.COMMAND_DISCONNECT,
-			data: { reason: 'ServerGame shutdown' }
+			data: { reason: 'ServerGame shutdown' },
+			highPriority: true
 		})
 	},
 
 	notifyAboutInvalidGameID(ws: ws): void {
 		ws.send(JSON.stringify({
 			type: SystemMessageType.ERROR_GENERIC,
-			data: 'Invalid game ID or player token'
+			data: 'Invalid game ID or player token',
+			highPriority: true
 		}))
 	},
 
 	notifyAboutGameAlreadyStarted(ws: ws): void {
 		ws.send(JSON.stringify({
 			type: SystemMessageType.ERROR_GENERIC,
-			data: 'Game has already started'
+			data: 'Game has already started',
+			highPriority: true
 		}))
 	},
 
 	notifyAboutDuplicatedConnection(ws: ws): void {
 		ws.send(JSON.stringify({
 			type: SystemMessageType.ERROR_GENERIC,
-			data: 'Duplicated connection from the same client'
+			data: 'Duplicated connection from the same client',
+			highPriority: true
 		}))
 		ws.send(JSON.stringify({
 			type: SystemMessageType.COMMAND_DISCONNECT,
-			data: { reason: 'Duplicated connection' }
+			data: { reason: 'Duplicated connection' },
+			highPriority: true
 		}))
 	},
 
@@ -54,11 +61,13 @@ export default {
 		ws.send(JSON.stringify({
 			type: SystemMessageType.ERROR_GENERIC,
 			data: 'Missing required param: deckId',
-			code: ErrorCode.NO_DECK_SELECTED
+			code: ErrorCode.NO_DECK_SELECTED,
+			highPriority: true
 		}))
 		ws.send(JSON.stringify({
 			type: SystemMessageType.COMMAND_DISCONNECT,
-			data: { reason: 'Duplicated connection' }
+			data: { reason: 'Duplicated connection' },
+			highPriority: true
 		}))
 	},
 
@@ -66,18 +75,21 @@ export default {
 		ws.send(JSON.stringify({
 			type: SystemMessageType.ERROR_GENERIC,
 			data: 'Invalid deck',
-			code: ErrorCode.INVALID_DECK
+			code: ErrorCode.INVALID_DECK,
+			highPriority: true
 		}))
 		ws.send(JSON.stringify({
 			type: SystemMessageType.COMMAND_DISCONNECT,
-			data: { reason: 'Duplicated connection' }
+			data: { reason: 'Duplicated connection' },
+			highPriority: true
 		}))
 	},
 
 	notifyAboutInvalidMessageType(ws: ws, messageType: string): void {
 		ws.send(JSON.stringify({
 			type: SystemMessageType.ERROR_GENERIC,
-			data: `Invalid or missing message type (${messageType})`
+			data: `Invalid or missing message type (${messageType})`,
+			highPriority: true
 		}))
 	}
 }

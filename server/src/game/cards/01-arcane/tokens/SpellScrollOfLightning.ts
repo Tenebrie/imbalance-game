@@ -9,9 +9,10 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asSoloSpellDamage} from '../../../../utils/LeaderStats'
 
 export default class SpellScrollOfLightning extends ServerCard {
-	damage = 8
+	damage = asSoloSpellDamage(8)
 
 	constructor(game: ServerGame) {
 		super(game, {

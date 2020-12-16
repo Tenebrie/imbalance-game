@@ -10,9 +10,10 @@ import BuffVelElleronEncouragement from '../../../../buffs/BuffVelElleronEncoura
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asSoloBuffPotency} from '../../../../../utils/LeaderStats'
 
 export default class SpellAnEncouragement extends ServerCard {
-	public static bonusPower = 7
+	public static bonusPower = asSoloBuffPotency(7)
 
 	constructor(game: ServerGame) {
 		super(game, {

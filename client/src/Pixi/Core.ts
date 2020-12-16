@@ -15,7 +15,6 @@ import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
 import {ClientToServerMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import {ServerToClientMessageTypes} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import GameMessage from '@shared/models/network/GameMessage'
-import PlayerMessage from '@shared/models/network/PlayerMessage'
 import TargetMode from '@shared/enums/TargetMode'
 
 export default class Core {
@@ -39,6 +38,9 @@ export default class Core {
 		let targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}?deckId=${deckId}`
 		if (game.players.length >= 2) {
 			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}/spectate/${game.players[0].player.id}`
+		}
+		if (game.players.find(playerInGame => playerInGame.player.id === store.state.player.id)) {
+			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}`
 		}
 		const socket = new WebSocket(targetUrl)
 		socket.onopen = () => this.onConnect(container)
@@ -134,7 +136,7 @@ export default class Core {
 		} else if (this.opponent && this.opponent.player.id === playerId) {
 			return this.opponent
 		}
-		throw new Error(`Player ${playerId} does not exist!`)
+		throw new Error(`Player ${playerId} does not exist! Existing players: ${this.player?.player.id}, ${this.opponent?.player.id}`)
 	}
 
 	public static getPlayerOrNull(playerId: string): ClientPlayerInGame | null {
@@ -157,8 +159,8 @@ export default class Core {
 		Core.renderer.registerCard(renderedCard)
 	}
 
-	public static unregisterCard(renderedCard: RenderedCard): void {
-		Core.renderer.unregisterCard(renderedCard)
+	public static destroyCard(renderedCard: RenderedCard): void {
+		Core.renderer.destroyCard(renderedCard)
 	}
 
 	public static cleanUp(): void {

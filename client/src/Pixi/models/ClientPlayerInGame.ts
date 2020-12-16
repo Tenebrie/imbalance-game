@@ -6,16 +6,21 @@ import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import ClientCardGraveyard from '@/Pixi/models/ClientCardGraveyard'
 import Card from '@shared/models/Card'
-import PlayerMessage from '@shared/models/network/PlayerMessage'
 import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
+import AccessLevel from '@shared/enums/AccessLevel'
+import PlayerMessage from '@shared/models/network/player/PlayerMessage'
 
 class ClientPlayer implements Player {
 	id: string
+	email: string
 	username: string
+	accessLevel: AccessLevel
 
 	constructor(player: PlayerMessage) {
 		this.id = player.id
+		this.email = player.email
 		this.username = player.username
+		this.accessLevel = player.accessLevel
 	}
 }
 

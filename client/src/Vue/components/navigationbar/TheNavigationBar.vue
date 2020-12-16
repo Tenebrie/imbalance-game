@@ -16,6 +16,11 @@
 					{{ $locale.get('ui.navigation.rules') }}
 				</router-link>
 			</div>
+			<div class="link-container" v-if="showAdminView">
+				<router-link tag="span" :to="{ name: 'admin' }" class="router-link">
+					{{ $locale.get('ui.navigation.admin') }}
+				</router-link>
+			</div>
 		</div>
 		<div class="right-side-container">
 			<language-dropdown v-if="displayLanguageSelector" />
@@ -29,6 +34,7 @@ import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfil
 import LanguageDropdown from '@/Vue/components/navigationbar/LanguageSelector.vue'
 import {computed, defineComponent} from '@vue/composition-api'
 import store from '@/Vue/store'
+import AccessLevel from '@shared/enums/AccessLevel'
 
 export default defineComponent({
 	components: {
@@ -37,8 +43,11 @@ export default defineComponent({
 	},
 	setup() {
 		const displayLanguageSelector = computed<boolean>(() => !store.state.isLoggedIn)
+		const accessLevel = computed<AccessLevel>(() => store.state.player ? store.state.player.accessLevel : AccessLevel.NORMAL)
+		const showAdminView = computed<boolean>(() => accessLevel.value === AccessLevel.ADMIN || accessLevel.value === AccessLevel.SUPPORT)
 
 		return {
+			showAdminView,
 			displayLanguageSelector
 		}
 	}

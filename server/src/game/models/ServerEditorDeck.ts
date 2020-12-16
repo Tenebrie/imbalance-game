@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import EditorDeck from '@shared/models/EditorDeck'
 import CardDeck from '@shared/models/CardDeck'
 import EditorCard from '@shared/models/EditorCard'

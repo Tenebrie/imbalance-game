@@ -28,6 +28,6 @@ export default class ClientCardResolveStack {
 		if (!ownedCard) { return }
 
 		this.cards.splice(this.cards.indexOf(ownedCard), 1)
-		Core.unregisterCard(ownedCard.card)
+		Core.destroyCard(ownedCard.card)
 	}
 }

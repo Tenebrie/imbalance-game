@@ -99,7 +99,7 @@ export default {
 
 		const inspectedCard = computed<CardMessage | RenderedCard>(() => {
 			const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card.id) : null
-			return (isInGame.value && cardInGame) || store.getters.inspectedCard.card
+			return (isInGame.value && cardInGame) || store.getters.inspectedCard.card as CardMessage | RenderedCard
 		})
 
 		const displayArmor = computed<boolean>(() => {

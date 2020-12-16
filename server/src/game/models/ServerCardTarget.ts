@@ -7,17 +7,18 @@ import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
 import CardLibrary from '../libraries/CardLibrary'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import {CardTargetCard, CardTargetCardAllowedTypes, CardTargetRow, CardTargetUnit} from '@shared/models/CardTarget'
 
-export class ServerCardTargetCard {
+export class ServerCardTargetUnit implements CardTargetUnit {
 	public readonly targetMode: TargetMode
-	public readonly targetType: TargetType
+	public readonly targetType: TargetType.UNIT
 	public readonly targetCard: ServerCard
 	public sourceCard: ServerCard | undefined
 	public targetLabel: string
-	public targetCardData: CardMessage | undefined
 	public expectedValue: number
 
-	public constructor(targetMode: TargetMode, targetType: TargetType, targetCard: ServerCard) {
+	public constructor(targetMode: TargetMode, targetType: TargetType.UNIT, targetCard: ServerCard) {
 		this.targetMode = targetMode
 		this.targetType = targetType
 		this.targetCard = targetCard
@@ -25,7 +26,52 @@ export class ServerCardTargetCard {
 		this.expectedValue = 0
 	}
 
-	public isEqual(other: ServerCardTargetCard | ServerCardTargetRow): boolean {
+	public get sourceCardId(): string {
+		return this.sourceCard ? this.sourceCard.id : ''
+	}
+
+	public get targetCardId(): string {
+		return this.targetCard.id
+	}
+
+	public isEqual(other: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): boolean {
+		return other instanceof ServerCardTargetUnit &&
+			this.targetMode === other.targetMode &&
+			this.targetType === other.targetType &&
+			(this.sourceCard === other.sourceCard) &&
+			this.targetCard === other.targetCard
+	}
+}
+
+export class ServerCardTargetCard implements CardTargetCard {
+	public readonly targetMode: TargetMode
+	public readonly targetType: CardTargetCardAllowedTypes
+	public readonly targetCard: ServerCard
+	public sourceCard: ServerCard | undefined
+	public targetLabel: string
+	public expectedValue: number
+
+	public constructor(targetMode: TargetMode, targetType: CardTargetCardAllowedTypes, targetCard: ServerCard) {
+		this.targetMode = targetMode
+		this.targetType = targetType
+		this.targetCard = targetCard
+		this.targetLabel = ''
+		this.expectedValue = 0
+	}
+
+	public get sourceCardId(): string {
+		return this.sourceCard ? this.sourceCard.id : ''
+	}
+
+	public get targetCardId(): string {
+		return this.targetCard.id
+	}
+
+	public get targetCardData(): CardMessage {
+		return new OpenCardMessage(this.targetCard)
+	}
+
+	public isEqual(other: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): boolean {
 		return other instanceof ServerCardTargetCard &&
 			this.targetMode === other.targetMode &&
 			this.targetType === other.targetType &&
@@ -34,16 +80,15 @@ export class ServerCardTargetCard {
 	}
 }
 
-export class ServerCardTargetRow {
+export class ServerCardTargetRow implements CardTargetRow {
 	public readonly targetMode: TargetMode
-	public readonly targetType: TargetType
+	public readonly targetType: TargetType.BOARD_ROW
 	public readonly targetRow: ServerBoardRow
 	public sourceCard: ServerCard | undefined
 	public targetLabel: string
-	public targetCardData: CardMessage | undefined
 	public expectedValue: number
 
-	public constructor(targetMode: TargetMode, targetType: TargetType, targetRow: ServerBoardRow) {
+	public constructor(targetMode: TargetMode, targetType: TargetType.BOARD_ROW, targetRow: ServerBoardRow) {
 		this.targetMode = targetMode
 		this.targetType = targetType
 		this.targetRow = targetRow
@@ -51,7 +96,11 @@ export class ServerCardTargetRow {
 		this.expectedValue = 0
 	}
 
-	public isEqual(other: ServerCardTargetCard | ServerCardTargetRow): boolean {
+	public get sourceCardId(): string {
+		return this.sourceCard ? this.sourceCard.id : ''
+	}
+
+	public isEqual(other: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): boolean {
 		return other instanceof ServerCardTargetRow &&
 			this.targetMode === other.targetMode &&
 			this.targetType === other.targetType &&
@@ -61,8 +110,8 @@ export class ServerCardTargetRow {
 }
 
 export default class ServerCardTarget {
-	public static cardTargetUnit(targetMode: TargetMode, sourceCard: ServerCard, targetUnit: ServerUnit, expectedValue: number, targetLabel = ''): ServerCardTargetCard {
-		const order = new ServerCardTargetCard(targetMode, TargetType.UNIT, targetUnit.card)
+	public static cardTargetUnit(targetMode: TargetMode, sourceCard: ServerCard, targetUnit: ServerUnit, expectedValue: number, targetLabel = ''): ServerCardTargetUnit {
+		const order = new ServerCardTargetUnit(targetMode, TargetType.UNIT, targetUnit.card)
 		order.sourceCard = sourceCard
 		order.targetLabel = targetLabel
 		order.expectedValue = expectedValue
@@ -117,8 +166,8 @@ export default class ServerCardTarget {
 		return order
 	}
 
-	public static fromMessage(game: ServerGame, message: CardTargetMessage): ServerCardTargetCard | ServerCardTargetRow {
-		let target: ServerCardTargetCard | ServerCardTargetRow
+	public static fromMessage(game: ServerGame, message: CardTargetMessage): ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow {
+		let target: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow
 		if (message.targetType === TargetType.BOARD_ROW) {
 			const targetRow = game.board.rows[message.targetRowIndex]
 			if (!targetRow) {
@@ -133,9 +182,15 @@ export default class ServerCardTarget {
 				targetCard = game.findCardById(message.targetCardData.id) || CardLibrary.findPrototypeById(message.targetCardData.id)
 			}
 			if (!targetCard) {
+				console.error('Invalid target card id', message)
 				throw new Error('Invalid target card id')
 			}
-			target = new ServerCardTargetCard(message.targetMode, message.targetType, targetCard)
+
+			if (message.targetType === TargetType.UNIT) {
+				target = new ServerCardTargetUnit(message.targetMode, message.targetType, targetCard)
+			} else {
+				target = new ServerCardTargetCard(message.targetMode, message.targetType, targetCard)
+			}
 		}
 		if (message.sourceCardId) {
 			target.sourceCard = game.findCardById(message.sourceCardId) || game.board.findUnitById(message.sourceCardId)?.card

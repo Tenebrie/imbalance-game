@@ -11,10 +11,11 @@ import GameEventType from '@shared/enums/GameEventType'
 import {CardTargetValidatorArguments} from '../../../../../types/TargetValidatorArguments'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassSpellDamage, asSoloSpellDamage} from '../../../../../utils/LeaderStats'
 
 export default class SpellSteelSpark extends ServerCard {
-	baseDamage = 2
-	baseSideDamage = 1
+	baseDamage = asSoloSpellDamage(2)
+	baseSideDamage = asMassSpellDamage(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -29,8 +30,8 @@ export default class SpellSteelSpark extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			damage: () => this.damage,
-			sideDamage: () => this.sideDamage
+			damage: this.baseDamage,
+			sideDamage: this.baseSideDamage
 		}
 
 		this.createDeployEffectTargets()
@@ -42,23 +43,15 @@ export default class SpellSteelSpark extends ServerCard {
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
-	get damage(): number {
-		return this.baseDamage
-	}
-
-	get sideDamage(): number {
-		return this.baseSideDamage
-	}
-
 	private onTargetSelected(target: ServerUnit): void {
 		const sideTargets = this.game.board.getAdjacentUnits(target).filter(unit => unit.rowIndex === target.rowIndex)
 
-		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
 
 		const survivingSideTargets = sideTargets.filter(target => target.isAlive())
 		survivingSideTargets.forEach(sideTarget => {
 			this.game.animation.createInstantAnimationThread()
-			sideTarget.dealDamage(ServerDamageInstance.fromCard(this.sideDamage, this))
+			sideTarget.dealDamage(ServerDamageInstance.fromCard(this.baseSideDamage, this))
 			this.game.animation.commitAnimationThread()
 		})
 	}
@@ -66,8 +59,8 @@ export default class SpellSteelSpark extends ServerCard {
 	private evaluateTarget(args: CardTargetValidatorArguments): number {
 		const target = args.targetCard
 		const adjacentUnits = this.game.board.getAdjacentUnits(target.unit)
-		let expectedValue = Math.min(target.stats.power, this.damage)
-		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.stats.power, this.sideDamage))
+		let expectedValue = Math.min(target.stats.power, this.baseDamage(this))
+		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.stats.power, this.baseSideDamage(this)))
 		return expectedValue
 	}
 }

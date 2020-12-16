@@ -14,6 +14,6 @@ export default class BuffVelRamineaWeave extends ServerBuff {
 	}
 
 	private onRoundStarted(): void {
-		this.card.buffs.remove(BuffVelRamineaWeave)
+		this.card.buffs.removeAll(BuffVelRamineaWeave)
 	}
 }

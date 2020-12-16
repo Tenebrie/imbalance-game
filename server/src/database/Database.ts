@@ -20,7 +20,9 @@ class Database {
 		console.info(`Connecting to database at ${colorize(databaseUrl, AsciiColor.CYAN)}`)
 		const client = new Client({
 			connectionString: databaseUrl,
-			ssl: !databaseUrl.includes('dev-db'),
+			ssl: databaseUrl.includes('dev-db') ? false : {
+				rejectUnauthorized: false
+			}
 		})
 		try {
 			await client.connect()

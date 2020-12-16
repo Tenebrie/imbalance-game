@@ -113,7 +113,7 @@ export default class RenderedCard implements Card {
 		this.cardNameText.horizontalAlign = RichTextAlign.END
 		this.cardTitleText = this.createTitleText(Localization.getValueOrNull(this.title) || '')
 		this.cardTribeTexts = this.tribes.map(tribe => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
-		this.cardDescriptionText = new RichText(this.displayedDescription, 350, this.getDescriptionTextVariables())
+		this.cardDescriptionText = new RichText(this.displayedDescription, 370, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
 		this.sprite.alpha = 0
@@ -208,7 +208,19 @@ export default class RenderedCard implements Card {
 	}
 
 	public getPosition(): PIXI.Point {
+		if (!this.hitboxSprite || !this.hitboxSprite.position) {
+			console.warn('No hitbox sprite available')
+			return new PIXI.Point(0, 0)
+		}
 		return new PIXI.Point(this.hitboxSprite.position.x, this.hitboxSprite.position.y)
+	}
+
+	public getVisualPosition(): PIXI.Point {
+		if (!this.sprite || !this.sprite.position) {
+			console.warn('No visual sprite available')
+			return new PIXI.Point(0, 0)
+		}
+		return new PIXI.Point(this.coreContainer.position.x + this.sprite.position.x, this.coreContainer.position.y + this.sprite.position.y)
 	}
 
 	public get tribes(): CardTribe[] {
@@ -234,8 +246,21 @@ export default class RenderedCard implements Card {
 			.map(feature => Localization.getValueOrNull(feature))
 			.filter(string => string !== null)
 
+		const leaderStatsStrings = Object.keys(this.stats)
+			.filter(key => typeof(this.stats[key]) === 'number' && this.stats[key] > 0)
+			.map(key => ({
+				key: key,
+				text: Localization.getValueOrNull(`card.stats.${key}.text`)
+			}))
+			.filter(object => object.text !== null)
+			.map(object => object.text.replace(/{value}/g, this.stats[object.key]))
+
 		for (const index in featureStrings) {
 			description = `${featureStrings[index]}<p>${description}`
+		}
+		for (const index in leaderStatsStrings.reverse()) {
+			const delimiter = Number(index) === 0 ? '<p>' : '\n'
+			description = `${leaderStatsStrings[index]}${delimiter}${description}`
 		}
 		return description
 	}
@@ -541,10 +566,6 @@ export default class RenderedCard implements Card {
 			return CardLocation.GRAVEYARD
 		}
 		return CardLocation.UNKNOWN
-	}
-
-	public unregister(): void {
-		Core.unregisterCard(this)
 	}
 
 	public clone(): RenderedCard {

@@ -31,7 +31,7 @@ export default defineComponent({
 
 	model: {
 		prop: 'model',
-		event: 'updateModel'
+		event: 'update-model'
 	},
 
 	setup(props, { emit }) {
@@ -62,7 +62,7 @@ export default defineComponent({
 				value -= props.step
 			}
 			value = Math.max(props.min, Math.min(props.max, value))
-			emit('updateModel', value)
+			emit('update-model', value)
 			showOutline.value = true
 		}
 
@@ -95,7 +95,7 @@ export default defineComponent({
 			tempValue = Math.round(min + tempValue * (max - min))
 
 			// Flush value
-			emit('updateModel', tempValue)
+			emit('update-model', tempValue)
 		}
 
 		const onMouseUp = () => {

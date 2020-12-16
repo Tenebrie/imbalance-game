@@ -24,7 +24,6 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
 import GoogleSingleSignOnButton from '@/Vue/components/login/GoogleSingleSignOnButton.vue'
@@ -32,7 +31,6 @@ import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
 	components: {
-		InlineTooltip,
 		GoogleSingleSignOnButton
 	},
 
@@ -76,10 +74,12 @@ export default defineComponent({
 		}
 
 		const getErrorMessage = (statusCode: number, errorCode: number): string => {
-			if (statusCode === 400 && errorCode === UserLoginErrorCode.MISSING_CREDENTIALS) {
+			if (errorCode === UserLoginErrorCode.MISSING_CREDENTIALS) {
 				return 'Missing email or password'
-			} else if (statusCode === 400 && errorCode === UserLoginErrorCode.INVALID_CREDENTIALS) {
+			} else if (errorCode === UserLoginErrorCode.INVALID_CREDENTIALS) {
 				return 'Username and password do not match'
+			} else if (statusCode === 402) {
+				return 'Your account has been disabled'
 			} else if (statusCode === 500) {
 				return 'Internal server error'
 			} else if (statusCode === 503) {

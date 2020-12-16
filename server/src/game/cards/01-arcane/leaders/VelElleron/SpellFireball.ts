@@ -10,10 +10,11 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import {CardTargetValidatorArguments} from '../../../../../types/TargetValidatorArguments'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asMassSpellDamage, asSoloSpellDamage} from '../../../../../utils/LeaderStats'
 
 export default class SpellFireball extends ServerCard {
-	baseDamage = 4
-	baseAreaDamage = 2
+	baseDamage = asSoloSpellDamage(4)
+	baseAreaDamage = asMassSpellDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -27,8 +28,8 @@ export default class SpellFireball extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			damage: () => this.damage,
-			areaDamage: () => this.areaDamage
+			damage: this.baseDamage,
+			areaDamage: this.baseAreaDamage
 		}
 
 		this.createDeployEffectTargets()
@@ -40,32 +41,24 @@ export default class SpellFireball extends ServerCard {
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
-	get damage(): number {
-		return this.baseDamage
-	}
-
-	get areaDamage(): number {
-		return this.baseAreaDamage
-	}
-
 	private onTargetSelected(target: ServerUnit): void {
 		const areaTargets = this.game.board.getAdjacentUnits(target)
 
-		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
 
 		const survivingAreaTargets = areaTargets.filter(target => target.isAlive())
 		if (survivingAreaTargets.length === 0) {
 			return
 		}
 
-		survivingAreaTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.areaDamage, this)))
+		survivingAreaTargets.forEach(sideTarget => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.baseAreaDamage, this)))
 	}
 
 	private evaluateTarget(args: CardTargetValidatorArguments): number {
 		const target = args.targetCard
 		const adjacentUnits = this.game.board.getAdjacentUnits(target.unit)
-		let expectedValue = Math.min(target.stats.power, this.damage)
-		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.stats.power, this.areaDamage))
+		let expectedValue = Math.min(target.stats.power, this.baseDamage(this))
+		adjacentUnits.forEach(unit => expectedValue += Math.min(unit.card.stats.power, this.baseAreaDamage(this)))
 		return expectedValue
 	}
 }

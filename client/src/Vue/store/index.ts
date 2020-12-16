@@ -95,10 +95,11 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 
 		async logout(context): Promise<void> {
 			const { commit } = rootActionContext(context)
-			await axios.delete('/api/session')
-			LocalStorage.setHasAuthCookie(false)
+			const response = await axios.delete('/api/session')
+			const stillAuthenticated = response.data['stillAuthenticated']
+			LocalStorage.setHasAuthCookie(stillAuthenticated)
 			commit.resetPlayerData()
-			await router.push({ name: 'login' })
+			window.location.reload()
 		},
 
 		joinGame(context, selectedGame: GameMessage): void {

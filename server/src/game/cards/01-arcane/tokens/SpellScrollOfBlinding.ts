@@ -11,9 +11,10 @@ import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import {asSoloEffectDuration} from '../../../../utils/LeaderStats'
 
 export default class SpellScrollOfBlinding extends ServerCard {
-	buffDuration = 3
+	buffDuration = asSoloEffectDuration(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -42,7 +43,7 @@ export default class SpellScrollOfBlinding extends ServerCard {
 	private onTargetSelected(selectedTarget: ServerUnit): void {
 		const targets = [selectedTarget].concat(this.game.board.getAdjacentUnits(selectedTarget))
 		targets.forEach(target => {
-			target.buffs.add(BuffStun, this, this.buffDuration * BuffDuration.FULL_TURN - 1)
+			target.buffs.add(BuffStun, this, this.buffDuration(this) * BuffDuration.FULL_TURN - 1)
 		})
 	}
 }

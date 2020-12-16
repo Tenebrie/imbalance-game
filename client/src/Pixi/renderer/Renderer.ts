@@ -1,6 +1,5 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import {DisplayObject} from 'pixi.js'
 import Constants from '@shared/Constants'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
@@ -20,16 +19,18 @@ import {inspectedCardRenderer} from './InspectedCardRenderer'
 import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
 import {throttle} from 'throttle-debounce'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
+import {PI_2} from 'pixi.js'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
-const TARGETING_ARROW_ZINDEX = 10
-const HAND_EFFECT_ZINDEX = 25
-const HOVERED_CARD_ZINDEX = 95
-const RESOLVING_CARD_ZINDEX = 100
-const GRABBED_CARD_ZINDEX = 150
-const ANNOUNCED_CARD_ZINDEX = 200
-const SELECTABLE_CARD_ZINDEX = 250
+const RESOLVING_CARD_ZINDEX = 10
+const HAND_CARD_ZINDEX = 11
+const HAND_EFFECT_ZINDEX = 100
+const HOVERED_CARD_ZINDEX = 105
+const GRABBED_CARD_ZINDEX = 400
+const ANNOUNCED_CARD_ZINDEX = 450
+const SELECTABLE_CARD_ZINDEX = 500
+const TARGETING_ARROW_ZINDEX = 550
 
 export default class Renderer {
 	pixi: PIXI.Application
@@ -224,9 +225,9 @@ export default class Renderer {
 
 		this.renderTextLabels()
 		this.renderGameBoard(Core.board)
-		this.renderTargetingArrow()
 		this.renderAnnouncedCard()
 		this.renderResolveStack()
+		this.renderTargetingArrow()
 		this.renderSelectableCards()
 		inspectedCardRenderer.tick()
 	}
@@ -262,7 +263,17 @@ export default class Renderer {
 		this.rootContainer.addChild(card.hitboxSprite)
 	}
 
-	public unregisterCard(card: RenderedCard): void {
+	public showCard(card: RenderedCard): void {
+		card.coreContainer.visible = true
+		card.hitboxSprite.visible = true
+	}
+
+	public hideCard(card: RenderedCard): void {
+		card.coreContainer.visible = false
+		card.hitboxSprite.visible = false
+	}
+
+	public destroyCard(card: RenderedCard): void {
 		card.coreContainer.destroy({
 			children: true,
 		})
@@ -328,9 +339,9 @@ export default class Renderer {
 
 		const isPlayable = Core.player.isTurnActive &&
 			!Core.input.forcedTargetingMode &&
-			!!Core.input.playableCards.find(target => target.sourceCard && renderedCard && target.sourceCard.id === renderedCard.id)
+			!!Core.input.playableCards.find(target => renderedCard && target.sourceCardId === renderedCard.id)
 		const isForcedTarget = Core.input.forcedTargetingMode &&
-			!!Core.input.forcedTargetingMode.validTargets.find(forcedCard => forcedCard.targetCard && forcedCard.targetCard.id === renderedCard.id)
+			!!Core.input.forcedTargetingMode.validTargets.find(forcedCard => forcedCard.targetCardId === renderedCard.id)
 
 		renderedCard.cardDisabledOverlay.visible = !isPlayable && !isForcedTarget
 
@@ -342,7 +353,7 @@ export default class Renderer {
 			container.position.x = targetPosition.x
 			container.position.y = targetPosition.y - cardHeight / 2 * (isOpponent ? -1 : 1)
 		}
-		container.zIndex = (handPosition + 1) * 2
+		container.zIndex = HAND_CARD_ZINDEX + (handPosition + 1) * 2
 
 		hitboxSprite.position.set(targetPosition.x + sprite.position.x, targetPosition.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
@@ -383,7 +394,7 @@ export default class Renderer {
 
 		let cardDisplayMode: CardDisplayMode
 		if (renderedCard.type === CardType.UNIT && hoveredRow) {
-			const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+			const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION * 0.905
 			sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 			sprite.height = cardHeight
 			cardDisplayMode = CardDisplayMode.ON_BOARD
@@ -485,7 +496,7 @@ export default class Renderer {
 		for (let i = 0; i < gameBoardRow.cards.length; i++) {
 			const unit = gameBoardRow.cards[i]
 			this.updateCardStats(unit.card)
-			this.renderUnit(unit, rowY, i, gameBoardRow.cards.length)
+			this.renderUnit(unit, rowY, rowIndex, i, gameBoardRow.cards.length)
 		}
 	}
 
@@ -501,7 +512,7 @@ export default class Renderer {
 		return BoardRowTint.NORMAL
 	}
 
-	public renderUnit(unit: RenderedUnit, rowY: number, unitIndex: number, unitCount: number): void {
+	public renderUnit(unit: RenderedUnit, rowY: number, rowIndex: number, unitIndex: number, unitCount: number): void {
 		if (unit.card === Core.input.inspectedCard) {
 			return
 		}
@@ -514,17 +525,27 @@ export default class Renderer {
 		const screenCenterX = this.getScreenWidth() / 2
 		const distanceToCenter = unitIndex - unitCount / 2 + 0.5
 
-		const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION
+		const cardHeight = this.getScreenHeight() * this.GAME_BOARD_ROW_WINDOW_FRACTION * 0.905
 		const cardWidth = cardHeight * this.CARD_ASPECT_RATIO
 
 		const targetPositionX = screenCenterX + distanceToCenter * cardWidth
 		const targetPositionY = rowY
 
+		let shadowUnitOffsetX = 0
+		const shadowUnit = Core.input.limboShadowUnit || Core.input.hoveredShadowUnit
+		if (shadowUnit && rowIndex === shadowUnit.rowIndex) {
+			if (shadowUnit.unitIndex <= unitIndex) {
+				shadowUnitOffsetX = cardWidth / 2
+			} else {
+				shadowUnitOffsetX = -cardWidth / 2
+			}
+		}
+
 		if (unit.card.displayMode === CardDisplayMode.ON_BOARD) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 2
 			unit.card.powerText.alpha = sprite.alpha
 			unit.card.armorText.alpha = sprite.alpha
-			container.position.x += (targetPositionX - container.position.x) * this.deltaTimeFraction * 7
+			container.position.x += (targetPositionX - container.position.x + shadowUnitOffsetX) * this.deltaTimeFraction * 7
 			container.position.y += (targetPositionY - container.position.y) * this.deltaTimeFraction * 7
 		} else {
 			container.visible = true
@@ -539,7 +560,7 @@ export default class Renderer {
 		sprite.tint = this.getUnitTint(unit)
 		disabledOverlaySprite.visible = false
 
-		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
+		hitboxSprite.position.set(targetPositionX, targetPositionY)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
 
@@ -575,45 +596,77 @@ export default class Renderer {
 
 	public renderTargetingArrow(): void {
 		this.updateTargetingLabel(this.actionLabel)
-		if (Core.input.forcedTargetingMode) {
-			return
-		}
 
 		const grabbedCard = Core.input.grabbedCard
-		if (!grabbedCard || grabbedCard.mode !== GrabbedCardMode.CARD_ORDER) {
+		const forcedTargeting = Core.input.forcedTargetingMode
+		const targetingArrow = grabbedCard?.targetingLine || forcedTargeting?.targetingLine
+		if ((!grabbedCard || grabbedCard.mode !== GrabbedCardMode.CARD_ORDER) && (!forcedTargeting || !forcedTargeting.source || Core.input.forcedTargetingCards.length > 0)) {
 			this.actionLabel.text = ''
 			return
 		}
 
-		const targetingArrow = grabbedCard.targetingLine
-		const startingPosition = grabbedCard.card.hitboxSprite.position
-		const targetPosition = Core.input.mousePosition
+		let startingPosition
+		if (grabbedCard) {
+			startingPosition = grabbedCard.card.getVisualPosition()
+		} else if (forcedTargeting && forcedTargeting.source) {
+			startingPosition = forcedTargeting.source.getVisualPosition()
+		}
+
+		if (!startingPosition) {
+			return
+		}
+
+		let snappingToTarget = false
+		let targetPosition = Core.input.mousePosition
+		if (Core.input.hoveredCard) {
+			const validTargetCards = forcedTargeting?.validTargets.map(target => target.targetCardId) || grabbedCard?.validTargetCards.map(card => card.id)
+			if (validTargetCards && validTargetCards.length > 0) {
+				const target = Core.game.findRenderedCardById(validTargetCards.find(id => id === Core.input.hoveredCard.card.id))
+				if (target) {
+					targetPosition = target.getVisualPosition()
+					snappingToTarget = true
+				}
+			}
+		}
+
+		let color = 0xFFFF00
+		if (snappingToTarget) {
+			color = 0x00FF00
+		}
 
 		targetingArrow.startingPoint.position.copyFrom(startingPosition)
 		targetingArrow.startingPoint.clear()
-		targetingArrow.startingPoint.beginFill(0xFFFF00, 1.0)
+		targetingArrow.startingPoint.beginFill(color, 1.0)
 		targetingArrow.startingPoint.drawCircle(0, 0, 5)
 		targetingArrow.startingPoint.endFill()
 		targetingArrow.startingPoint.zIndex = TARGETING_ARROW_ZINDEX
+
+		if (targetingArrow.targetPoint.position.equals({ x: 0, y: 0})) {
+			targetingArrow.targetPoint.position.copyFrom(targetPosition)
+		} else {
+			const currentPosition = targetingArrow.targetPoint.position
+			currentPosition.x += (targetPosition.x - currentPosition.x) * this.deltaTimeFraction * 15
+			currentPosition.y += (targetPosition.y - currentPosition.y) * this.deltaTimeFraction * 15
+		}
+		targetingArrow.targetPoint.clear()
+		targetingArrow.targetPoint.beginFill(color, 1.0)
+		targetingArrow.targetPoint.drawCircle(0, 0, 5)
+		targetingArrow.targetPoint.endFill()
+		targetingArrow.targetPoint.zIndex = TARGETING_ARROW_ZINDEX
 
 		targetingArrow.arrowLine.position.copyFrom(startingPosition)
 		targetingArrow.arrowLine.clear()
 		const iterations = 5
 		for (let i = 0; i < iterations; i++) {
-			targetingArrow.arrowLine.lineStyle(i + 1, 0xFFFF00, (iterations + 1 - i) / (iterations + 1))
-			targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
+			targetingArrow.arrowLine.lineStyle(i + 1, color, (iterations + 1 - i) / (iterations + 1))
+			const targetX = targetingArrow.targetPoint.position.x - startingPosition.x
+			const targetY = targetingArrow.targetPoint.position.y - startingPosition.y
+			const distance = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2))
+
+			targetingArrow.arrowLine.bezierCurveTo(0, 0, targetX / 2, targetY / 2 - distance / 2, targetX, targetY)
 			targetingArrow.arrowLine.moveTo(0, 0)
 		}
-		targetingArrow.arrowLine.lineStyle(2, 0xFFFF00, 0.8)
-		targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
 		targetingArrow.arrowLine.zIndex = TARGETING_ARROW_ZINDEX
-
-		targetingArrow.targetPoint.position.copyFrom(targetPosition)
-		targetingArrow.targetPoint.clear()
-		targetingArrow.targetPoint.beginFill(0xFFFF00, 1.0)
-		targetingArrow.targetPoint.drawCircle(0, 0, 5)
-		targetingArrow.targetPoint.endFill()
-		targetingArrow.targetPoint.zIndex = TARGETING_ARROW_ZINDEX
 	}
 
 	private updateTargetingLabel(label: RichText): void {
@@ -631,13 +684,15 @@ export default class Renderer {
 
 		const grabbedCard = Core.input.grabbedCard
 		const grabbedUnit = grabbedCard ? Core.board.findUnitById(grabbedCard.card.id) : null
-		if (!grabbedCard || (!hoveredUnit && !hoveredRow)) {
+		if (!grabbedCard || !grabbedUnit || (!hoveredUnit && !hoveredRow)) {
 			label.text = ''
 			return
 		}
 
 		const validOrders = Core.board.getValidOrdersForUnit(grabbedUnit).sort((a, b) => a.targetMode - b.targetMode || a.targetType - b.targetType)
-		const performedOrder = validOrders.find(order => (!order.targetCard || order.targetCard === hoveredCard) && (!order.targetRow || order.targetRow === hoveredRow))
+		const performedOrder = validOrders.find(order =>
+			(hoveredCard && order.targetCardId === hoveredCard.id) ||
+			(hoveredRow && Core.board.getRow(order.targetRowIndex) === hoveredRow))
 		if (performedOrder) {
 			label.text = Localization.get(performedOrder.targetLabel)
 		} else {

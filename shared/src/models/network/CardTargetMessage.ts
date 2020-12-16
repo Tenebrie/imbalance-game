@@ -1,4 +1,3 @@
-import Card from '../Card'
 import CardTarget from '../CardTarget'
 import TargetMode from '../../enums/TargetMode'
 import TargetType from '../../enums/TargetType'
@@ -16,23 +15,23 @@ export default class CardTargetMessage {
 	constructor(order: CardTarget) {
 		this.targetMode = order.targetMode
 		this.targetType = order.targetType
-		this.sourceCardId = order.sourceCard ? order.sourceCard.id : ''
+		this.sourceCardId = order.sourceCardId
 		this.targetCardId = ''
-		this.targetRowIndex = -1
-		if (order.targetCard) {
-			this.targetCardId = order.targetCard.id
+		if ('targetCardId' in order) {
+			this.targetCardId = order.targetCardId
+		} else {
+			this.targetCardId = ''
 		}
-		if (order.targetCardData) {
+		if ('targetCardData' in order) {
 			this.targetCardData = order.targetCardData
+		} else {
+			this.targetCardData = null
 		}
-		if (order.targetRow) {
+		if ('targetRow' in order) {
 			this.targetRowIndex = order.targetRow.index
+		} else {
+			this.targetRowIndex = -1
 		}
 		this.targetLabel = order.targetLabel
-		this.targetCardData = null
-	}
-
-	public attachTargetCardData(card: Card): void {
-		this.targetCardData = new OpenCardMessage(card)
 	}
 }

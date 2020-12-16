@@ -10,7 +10,7 @@ import RichTextVariables from '@shared/models/RichTextVariables'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import {sortCards} from '@shared/Utils'
 
-export const forEachInNumericEnum = (enumeration: Enumerator, handler: (val: any) => any): void => {
+export const forEachInNumericEnum = (enumeration: { [s: number]: number }, handler: (val: number) => any): void => {
 	for (const value in enumeration) {
 		if (!isNaN(Number(value))) {
 			handler(Number(value))
@@ -18,7 +18,7 @@ export const forEachInNumericEnum = (enumeration: Enumerator, handler: (val: any
 	}
 }
 
-export const forEachInStringEnum = (enumeration: Enumerator, handler: (val: any) => any): void => {
+export const forEachInStringEnum = (enumeration: { [s: number]: string }, handler: (val: string) => any): void => {
 	for (const value in enumeration) {
 		handler(enumeration[value])
 	}
@@ -91,6 +91,9 @@ export default {
 		const promises = []
 		let i = 0
 		cardMessages.forEach(message => {
+			if (!message) {
+				throw new Error('')
+			}
 			promises.push(new Promise(resolve => {
 				setTimeout(() => resolve(RenderedCard.fromMessage(message)), i)
 			}))

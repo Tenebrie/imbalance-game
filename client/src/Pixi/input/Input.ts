@@ -12,13 +12,13 @@ import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import TargetType from '@shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
-import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import Utils from '@/utils/Utils'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import store from '@/Vue/store'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import TargetMode from '@shared/enums/TargetMode'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -26,6 +26,12 @@ export const RIGHT_MOUSE_BUTTON = 2
 enum InspectCardMode {
 	CLICK,
 	HOLD,
+}
+
+interface ShadowUnit {
+	card: RenderedCard
+	rowIndex: number
+	unitIndex: number
 }
 
 export default class Input {
@@ -37,7 +43,10 @@ export default class Input {
 	grabbedCard: GrabbedCard | null = null
 	inspectedCard: RenderedCard | null = null
 
-	playableCards: ClientCardTarget[] = []
+	limboShadowUnit: ShadowUnit | null = null
+	hoveredShadowUnit: ShadowUnit | null = null
+
+	playableCards: CardTargetMessage[] = []
 	forcedTargetingMode: ForcedTargetingMode | null = null
 	forcedTargetingCards: RenderedCard[] = []
 
@@ -103,6 +112,21 @@ export default class Input {
 		}
 
 		this.hoveredCard = hoveredCard
+
+		const hoveredRow = MouseHover.getHoveredRow()
+		if (hoveredRow && this.grabbedCard &&
+			this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY &&
+			this.grabbedCard.validTargetRows.includes(hoveredRow) &&
+			this.grabbedCard.card.type === CardType.UNIT) {
+
+			this.hoveredShadowUnit = {
+				card: this.grabbedCard.card,
+				rowIndex: hoveredRow.index,
+				unitIndex: this.getCardInsertIndex(hoveredRow)
+			}
+		} else {
+			this.hoveredShadowUnit = null
+		}
 	}
 
 	private onMouseDown(event: MouseEvent) {
@@ -184,7 +208,7 @@ export default class Input {
 
 		const windowHeight = Core.renderer.pixi.view.height
 		const heightLimit = windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5
-		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCard.id === this.grabbedCard.card.id)) {
+		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCardId === this.grabbedCard.card.id)) {
 			this.releaseCard()
 		}
 	}
@@ -198,12 +222,12 @@ export default class Input {
 		const card = hoveredCard.card
 
 		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
-			const validRows = this.playableCards.filter(playableCard => playableCard.sourceCard === card).map(playableCard => playableCard.targetRow)
+			const validRows = this.playableCards.filter(playableCard => playableCard.sourceCardId === card.id).map(playableCard => Core.board.getRow(playableCard.targetRowIndex))
 			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
 		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY && Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0) {
 			const validOrders = Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id))
-			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetCard).map(card => Core.game.findRenderedCardById(card.id))
-			const validRows = validOrders.filter(order => order.targetType === TargetType.BOARD_ROW).map(order => order.targetRow)
+			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetCardId).map(id => Core.game.findRenderedCardById(id))
+			const validRows = validOrders.filter(order => order.targetType === TargetType.BOARD_ROW).map(order => Core.board.getRow(order.targetRowIndex))
 			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)
 		} else if (hoveredCard.location === CardLocation.SELECTABLE) {
 			this.grabbedCard = GrabbedCard.cardSelect(card)
@@ -272,9 +296,15 @@ export default class Input {
 			OutgoingMessageHandlers.sendSpellCardPlayed(card)
 		} else if (card.type === CardType.UNIT) {
 			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, this.getCardInsertIndex(hoveredRow))
+			this.limboShadowUnit = {
+				card: card,
+				rowIndex: hoveredRow.index,
+				unitIndex: this.getCardInsertIndex(hoveredRow)
+			}
 		}
 		this.cardLimbo.push(card)
-		Core.player.cardHand.destroyCard(card)
+		Core.player.cardHand.removeCard(card)
+		Core.renderer.hideCard(card)
 	}
 
 	private onUnitOrder(orderedCard: RenderedCard): void {
@@ -283,7 +313,7 @@ export default class Input {
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		const validOrders = Core.board.getValidOrdersForUnit(orderedUnit)
-		const performedOrder = validOrders.find(order => (order.targetCard === hoveredCard) || (order.targetRow && order.targetRow === hoveredRow))
+		const performedOrder = validOrders.find(order => (order.targetCardId === hoveredCard.id) || (hoveredRow && Core.board.getRow(order.targetRowIndex) === hoveredRow))
 		if (performedOrder) {
 			OutgoingMessageHandlers.sendUnitOrder(performedOrder)
 		}
@@ -299,34 +329,49 @@ export default class Input {
 		OutgoingMessageHandlers.sendCardTarget(this.forcedTargetingMode.validTargets.find(target => target.targetCardData.id === selectedCard.id))
 	}
 
-	public restoreCardFromLimbo(cardMessage: CardRefMessage): RenderedCard {
+	public restoreLimboCard(cardMessage: CardRefMessage): RenderedCard {
 		const cardInLimbo = this.cardLimbo.find(card => card.id === cardMessage.id)
 		if (!cardInLimbo) {
 			return
 		}
 
-		Core.registerCard(cardInLimbo)
-		this.clearCardInLimbo(cardMessage.id)
-
+		Core.renderer.showCard(cardInLimbo)
+		this.evictCardFromLimbo(cardMessage.id)
 		return cardInLimbo
 	}
 
-	public clearCardInLimbo(cardId: string): void {
-		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardId)
+	public destroyLimboCard(cardId: string): void {
+		const cardInLimbo = this.cardLimbo.find(card => card.id === cardId)
+		if (cardInLimbo) {
+			Core.renderer.destroyCard(cardInLimbo)
+		}
+		this.evictCardFromLimbo(cardId)
 	}
 
-	public async enableForcedTargetingMode(targetMode: TargetMode, validTargets: ClientCardTarget[]): Promise<void> {
-		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets)
+	private evictCardFromLimbo(cardId: string): void {
+		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardId)
+		if (this.limboShadowUnit && this.limboShadowUnit.card.id === cardId) {
+			this.limboShadowUnit = null
+		}
+	}
+
+	public async enableForcedTargetingMode(targetMode: TargetMode, validTargets: CardTargetMessage[], source: CardRefMessage | null): Promise<void> {
+		if (this.forcedTargetingMode) {
+			this.forcedTargetingMode.destroy()
+		}
+
+		const sourceCard: RenderedCard | null = Core.game.findRenderedCardById(source?.id)
 		await this.createForcedTargetingCards(validTargets)
+		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets, this.forcedTargetingCards.length === 0 ? sourceCard : null)
 		this.forcedTargetingMode.validTargets
-			.filter(target => target.targetCardData && !target.targetCard)
+			.filter(target => target.targetCardData && !target.targetCardId)
 			.forEach(target => {
-				target.targetCard = this.forcedTargetingCards.find(card => card.id === target.targetCardData.id)
+				target.targetCardId = target.targetCardData.id
 			})
 		store.commit.gameStateModule.setPopupTargetingMode(targetMode)
 	}
 
-	public async createForcedTargetingCards(targets: ClientCardTarget[]): Promise<void> {
+	public async createForcedTargetingCards(targets: CardTargetMessage[]): Promise<void> {
 		const newCards = targets
 			.filter(target => target.targetType === TargetType.CARD_IN_LIBRARY || target.targetType === TargetType.CARD_IN_UNIT_DECK || target.targetType === TargetType.CARD_IN_SPELL_DECK)
 			.map(target => target.targetCardData)
@@ -346,7 +391,7 @@ export default class Input {
 			return result.concat(existingCard)
 		}, []).concat(cardsToAdd)
 
-		cardsToRemove.forEach(card => card.unregister())
+		cardsToRemove.forEach(card => Core.destroyCard(card))
 		PIXI.Ticker.shared.addOnce(() => {
 			result.forEach(card => card.resetDisplayMode())
 		})
@@ -355,8 +400,12 @@ export default class Input {
 	}
 
 	public disableForcedTargetingMode(): void {
+		if (!this.forcedTargetingMode) {
+			return
+		}
+		this.forcedTargetingMode.destroy()
 		this.forcedTargetingMode = null
-		this.forcedTargetingCards.forEach(card => card.unregister())
+		this.forcedTargetingCards.forEach(card => Core.destroyCard(card))
 		this.forcedTargetingCards = []
 		store.commit.gameStateModule.setPopupTargetingMode(null)
 	}

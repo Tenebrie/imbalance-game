@@ -1,7 +1,11 @@
 <template>
 	<div class="the-game-list-container">
 		<div class="the-game-list">
-			<h2>{{ $locale.get('ui.browser.header') }}</h2>
+			<div v-if="this.reconnectGames.length > 0">
+				<h2>{{ $locale.get('ui.browser.reconnect.header')}}</h2>
+				<button @click="onReconnect" class="primary">{{ $locale.get('ui.browser.reconnect.button') }}</button>
+			</div>
+			<h2>{{ $locale.get('ui.browser.list.header') }}</h2>
 			<div v-if="games.length === 0"><span class="info-text">{{ $locale.get('ui.browser.empty') }}</span></div>
 			<div class="list">
 				<game-list-item class="list-item" v-for="game in games" :key="game.id" :game="game" />
@@ -24,6 +28,9 @@ import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
 import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
 import Localization from '@/Pixi/Localization'
+import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
+import TheChallengeAISelection from '@/Vue/components/popup/escapeMenu/TheChallengeAISelection.vue'
+import GameMode from '@shared/enums/GameMode'
 
 export default Vue.extend({
 	components: {
@@ -32,6 +39,7 @@ export default Vue.extend({
 
 	data: () => ({
 		games: [] as GameMessage[],
+		reconnectGames: [] as GameMessage[],
 		updateTimer: NaN as number
 	}),
 
@@ -48,9 +56,13 @@ export default Vue.extend({
 
 	methods: {
 		async fetchGames(): Promise<void> {
-			const response = await axios.get('/api/games')
-			const games = response.data.data as GameMessage[]
+			const allGamesRequest = axios.get('/api/games')
+			const reconnectGamesRequest = axios.get('/api/games', { params: { reconnect: '1' }})
+			const [allGamesResponse, reconnectGamesResponse] = await Promise.all([allGamesRequest, reconnectGamesRequest])
+
+			const games = allGamesResponse.data.data as GameMessage[]
 			this.games = games.sort((a, b) => a.players.length - b.players.length)
+			this.reconnectGames = reconnectGamesResponse.data.data as GameMessage[]
 		},
 
 		async onCreateSinglePlayer(): Promise<void> {
@@ -59,9 +71,9 @@ export default Vue.extend({
 				return
 			}
 
-			const response = await axios.post('/api/games', { mode: 'sp_ai' })
-			const gameMessage: GameMessage = response.data.data
-			await store.dispatch.joinGame(gameMessage)
+			store.dispatch.popupModule.open({
+				component: TheChallengeAISelection
+			})
 		},
 
 		async onCreateMultiPlayer(): Promise<void> {
@@ -70,13 +82,18 @@ export default Vue.extend({
 				return
 			}
 
-			const response = await axios.post('/api/games', { mode: 'mp_custom' })
+			const response = await axios.post('/api/games', { mode: GameMode.VS_PLAYER })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
 		},
 
 		async onRefreshGames(): Promise<void> {
 			return this.fetchGames()
+		},
+
+		async onReconnect(): Promise<void> {
+			await axios.post('/api/games/disconnect')
+			await store.dispatch.joinGame(this.reconnectGames[0])
 		}
 	}
 })

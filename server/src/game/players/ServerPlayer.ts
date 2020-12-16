@@ -7,6 +7,7 @@ import ServerPlayerSpectator from './ServerPlayerSpectator'
 import ServerGame from '../models/ServerGame'
 import GameLibrary from '../libraries/GameLibrary'
 import ServerPlayerInGame from './ServerPlayerInGame'
+import AccessLevel from '@shared/enums/AccessLevel'
 
 type MessageJson = { type: ServerToClientMessageTypes, data: any, highPriority?: boolean, ignoreWorkerThreads?: boolean, allowBatching?: boolean }
 
@@ -14,32 +15,33 @@ export default class ServerPlayer implements Player {
 	id: string
 	email: string
 	username: string
+	accessLevel: AccessLevel
 	webSocket: PlayerWebSocket | null
 	spectators: ServerPlayerSpectator[]
 
-	constructor(id: string, email: string, username: string) {
+	constructor(id: string, email: string, username: string, accessLevel: AccessLevel) {
 		this.id = id
 		this.email = email
 		this.username = username
+		this.accessLevel = accessLevel
 		this.webSocket = null
 		this.spectators = []
 	}
 
 	public get game(): ServerGame | null {
-		return GameLibrary.games.find(game => game.players.map(playerInGame => playerInGame.player).includes(this)) || null
+		return this.webSocket?.game || null
 	}
 
 	public get playerInGame(): ServerPlayerInGame | null {
 		return this.game?.players.find(playerInGame => playerInGame.player === this) || null
 	}
 
-	registerConnection(ws: ws): void {
-		this.webSocket = PlayerWebSocket.newInstance(ws)
+	registerConnection(ws: ws, game: ServerGame): void {
+		this.webSocket = PlayerWebSocket.newInstance(ws, game)
 	}
 
 	sendMessage(json: MessageJson): void {
 		if (!this.webSocket) {
-			console.warn('Trying to send message to disconnected player')
 			return
 		}
 		this.webSocket.send(json)
@@ -47,7 +49,7 @@ export default class ServerPlayer implements Player {
 	}
 
 	disconnect(): void {
-		if (!this.isInGame() || !this.webSocket) { return }
+		if (!this.webSocket) { return }
 
 		this.webSocket.close()
 		this.webSocket = null
@@ -68,6 +70,6 @@ export default class ServerPlayer implements Player {
 	}
 
 	static newInstance(playerDatabaseEntry: PlayerDatabaseEntry): ServerPlayer {
-		return new ServerPlayer(playerDatabaseEntry.id, playerDatabaseEntry.email, playerDatabaseEntry.username)
+		return new ServerPlayer(playerDatabaseEntry.id, playerDatabaseEntry.email, playerDatabaseEntry.username, playerDatabaseEntry.accessLevel)
 	}
 }

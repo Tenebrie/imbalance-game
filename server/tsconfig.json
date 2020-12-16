@@ -15,6 +15,8 @@
 		"jsx": "react",
 		"outDir": "./dist",
 		"baseUrl": "./src",
+		"types": ["jest"],
+		"typeRoots": ["node_modules/@types"],
 		"paths": {
 			"@src/*": [
 				"./src"
@@ -26,5 +28,9 @@
 	},
 	"include": [
 		"./src"
+	],
+	"exclude": [
+		"node_modules",
+		"**/*.spec.ts"
 	]
 }
