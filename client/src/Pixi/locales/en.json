@@ -155,7 +155,7 @@
 	"card.feature.keywordBuffGrowth.name": "Growth (Buff)",
 	"card.feature.keywordBuffGrowth.description": "Target card gets +1 Power at the start of its turn.",
 	"card.feature.keywordBuffStrength.name": "Strength (Buff)",
-	"card.feature.keywordBuffStrength.description": "Target card card has 1 extra Power.",
+	"card.feature.keywordBuffStrength.description": "Target card has 1 extra Power.",
 	"card.feature.keywordBuffImmunity.name": "Immunity (Buff)",
 	"card.feature.keywordBuffImmunity.description": "Target card is immune to damage and any effects.",
 	"card.feature.keywordBuffTemporaryCard.name": "Temporary card (Buff)",

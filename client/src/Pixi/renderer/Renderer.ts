@@ -19,6 +19,7 @@ import {inspectedCardRenderer} from './InspectedCardRenderer'
 import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
 import {throttle} from 'throttle-debounce'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
+import {PI_2} from 'pixi.js'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -338,9 +339,9 @@ export default class Renderer {
 
 		const isPlayable = Core.player.isTurnActive &&
 			!Core.input.forcedTargetingMode &&
-			!!Core.input.playableCards.find(target => target.sourceCard && renderedCard && target.sourceCard.id === renderedCard.id)
+			!!Core.input.playableCards.find(target => renderedCard && target.sourceCardId === renderedCard.id)
 		const isForcedTarget = Core.input.forcedTargetingMode &&
-			!!Core.input.forcedTargetingMode.validTargets.find(forcedCard => forcedCard.targetCard && forcedCard.targetCard.id === renderedCard.id)
+			!!Core.input.forcedTargetingMode.validTargets.find(forcedCard => forcedCard.targetCardId === renderedCard.id)
 
 		renderedCard.cardDisabledOverlay.visible = !isPlayable && !isForcedTarget
 
@@ -607,30 +608,35 @@ export default class Renderer {
 		let startingPosition
 		if (grabbedCard) {
 			startingPosition = grabbedCard.card.getVisualPosition()
-		} else if (forcedTargeting && forcedTargeting.source.type === CardType.UNIT) {
+		} else if (forcedTargeting && forcedTargeting.source) {
 			startingPosition = forcedTargeting.source.getVisualPosition()
-		} else if (forcedTargeting && Core.resolveStack?.cards.length > 0) {
-			startingPosition = Core.resolveStack.cards[Core.resolveStack.cards.length - 1].card.getVisualPosition()
 		}
 
 		if (!startingPosition) {
 			return
 		}
 
+		let snappingToTarget = false
 		let targetPosition = Core.input.mousePosition
 		if (Core.input.hoveredCard) {
-			const validTargetCards = forcedTargeting?.validTargets.filter(target => !!target.targetCard).map(target => target.targetCard) || grabbedCard?.validTargetCards
+			const validTargetCards = forcedTargeting?.validTargets.map(target => target.targetCardId) || grabbedCard?.validTargetCards.map(card => card.id)
 			if (validTargetCards && validTargetCards.length > 0) {
-				const target = validTargetCards.find(target => target === Core.input.hoveredCard.card) as RenderedCard | null
+				const target = Core.game.findRenderedCardById(validTargetCards.find(id => id === Core.input.hoveredCard.card.id))
 				if (target) {
 					targetPosition = target.getVisualPosition()
+					snappingToTarget = true
 				}
 			}
 		}
 
+		let color = 0xFFFF00
+		if (snappingToTarget) {
+			color = 0x00FF00
+		}
+
 		targetingArrow.startingPoint.position.copyFrom(startingPosition)
 		targetingArrow.startingPoint.clear()
-		targetingArrow.startingPoint.beginFill(0xFFFF00, 1.0)
+		targetingArrow.startingPoint.beginFill(color, 1.0)
 		targetingArrow.startingPoint.drawCircle(0, 0, 5)
 		targetingArrow.startingPoint.endFill()
 		targetingArrow.startingPoint.zIndex = TARGETING_ARROW_ZINDEX
@@ -643,7 +649,7 @@ export default class Renderer {
 			currentPosition.y += (targetPosition.y - currentPosition.y) * this.deltaTimeFraction * 15
 		}
 		targetingArrow.targetPoint.clear()
-		targetingArrow.targetPoint.beginFill(0xFFFF00, 1.0)
+		targetingArrow.targetPoint.beginFill(color, 1.0)
 		targetingArrow.targetPoint.drawCircle(0, 0, 5)
 		targetingArrow.targetPoint.endFill()
 		targetingArrow.targetPoint.zIndex = TARGETING_ARROW_ZINDEX
@@ -652,12 +658,14 @@ export default class Renderer {
 		targetingArrow.arrowLine.clear()
 		const iterations = 5
 		for (let i = 0; i < iterations; i++) {
-			targetingArrow.arrowLine.lineStyle(i + 1, 0xFFFF00, (iterations + 1 - i) / (iterations + 1))
-			targetingArrow.arrowLine.lineTo(targetingArrow.targetPoint.position.x - startingPosition.x, targetingArrow.targetPoint.position.y - startingPosition.y)
+			targetingArrow.arrowLine.lineStyle(i + 1, color, (iterations + 1 - i) / (iterations + 1))
+			const targetX = targetingArrow.targetPoint.position.x - startingPosition.x
+			const targetY = targetingArrow.targetPoint.position.y - startingPosition.y
+			const distance = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2))
+
+			targetingArrow.arrowLine.bezierCurveTo(0, 0, targetX / 2, targetY / 2 - distance / 2, targetX, targetY)
 			targetingArrow.arrowLine.moveTo(0, 0)
 		}
-		targetingArrow.arrowLine.lineStyle(2, 0xFFFF00, 0.8)
-		targetingArrow.arrowLine.lineTo(targetingArrow.targetPoint.position.x - startingPosition.x, targetingArrow.targetPoint.position.y - startingPosition.y)
 		targetingArrow.arrowLine.zIndex = TARGETING_ARROW_ZINDEX
 	}
 
@@ -682,7 +690,9 @@ export default class Renderer {
 		}
 
 		const validOrders = Core.board.getValidOrdersForUnit(grabbedUnit).sort((a, b) => a.targetMode - b.targetMode || a.targetType - b.targetType)
-		const performedOrder = validOrders.find(order => (!order.targetCard || order.targetCard === hoveredCard) && (!order.targetRow || order.targetRow === hoveredRow))
+		const performedOrder = validOrders.find(order =>
+			(hoveredCard && order.targetCardId === hoveredCard.id) ||
+			(hoveredRow && Core.board.getRow(order.targetRowIndex) === hoveredRow))
 		if (performedOrder) {
 			label.text = Localization.get(performedOrder.targetLabel)
 		} else {

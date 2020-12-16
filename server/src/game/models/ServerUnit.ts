@@ -3,7 +3,7 @@ import ServerCard from './ServerCard'
 import Unit from '@shared/models/Unit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerDamageInstance from './ServerDamageSource'
-import {ServerCardTargetCard, ServerCardTargetRow} from './ServerCardTarget'
+import {ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit} from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
@@ -49,16 +49,18 @@ export default class ServerUnit implements Unit {
 		return this.card.isDead
 	}
 
-	getValidOrders(): (ServerCardTargetCard | ServerCardTargetRow)[] {
+	getValidOrders(): (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] {
 		const targetDefinitions = this.card.targeting.getUnitOrderTargetDefinitions()
 		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
-		let targets: (ServerCardTargetCard | ServerCardTargetRow)[] = []
+		let targets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
 		targetDefinitions.forEach(targetDefinition => {
 			targets = targets
-				.concat(this.card.targeting.getValidTargetsForCards(TargetMode.UNIT_ORDER, TargetType.UNIT, targetDefinition, performedOrders))
+				.concat(this.card.targeting.getValidTargetsForUnits(TargetMode.UNIT_ORDER, targetDefinition, performedOrders))
 				.concat(this.card.targeting.getValidTargetsForRows(TargetMode.UNIT_ORDER, targetDefinition, performedOrders))
 				.concat(this.card.targeting.getValidTargetsForCards(TargetMode.UNIT_ORDER, TargetType.CARD_IN_UNIT_HAND, targetDefinition, performedOrders))
 				.concat(this.card.targeting.getValidTargetsForCards(TargetMode.UNIT_ORDER, TargetType.CARD_IN_SPELL_HAND, targetDefinition, performedOrders))
+				.concat(this.card.targeting.getValidTargetsForCards(TargetMode.UNIT_ORDER, TargetType.CARD_IN_UNIT_DECK, targetDefinition, performedOrders))
+				.concat(this.card.targeting.getValidTargetsForCards(TargetMode.UNIT_ORDER, TargetType.CARD_IN_SPELL_DECK, targetDefinition, performedOrders))
 		})
 
 		return targets

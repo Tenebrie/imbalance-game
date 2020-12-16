@@ -1,6 +1,6 @@
 import ServerPlayer from '../../players/ServerPlayer'
 import ServerOwnedCard from '../../models/ServerOwnedCard'
-import {ServerCardTargetCard, ServerCardTargetRow} from '../../models/ServerCardTarget'
+import {ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit} from '../../models/ServerCardTarget'
 import TargetType from '@shared/enums/TargetType'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import {ResolveStackMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
@@ -24,7 +24,7 @@ export default {
 		})
 	},
 
-	notifyAboutRequestedTargets(player: ServerPlayer, targetMode: TargetMode, validTargets: (ServerCardTargetCard | ServerCardTargetRow)[], source: ServerCard | null): void {
+	notifyAboutRequestedTargets(player: ServerPlayer, targetMode: TargetMode, validTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[], source: ServerCard | null): void {
 		const highPriorityTargets = [TargetType.UNIT, TargetType.BOARD_ROW, TargetType.CARD_IN_UNIT_HAND, TargetType.CARD_IN_SPELL_HAND]
 		const highPriority = validTargets.every(target => highPriorityTargets.includes(target.targetType))
 		player.sendMessage({

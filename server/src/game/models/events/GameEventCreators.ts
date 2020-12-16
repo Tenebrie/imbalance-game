@@ -8,7 +8,7 @@ import ServerBoardRow from '../ServerBoardRow'
 import ServerBuff from '../ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
-import {ServerCardTargetCard, ServerCardTargetRow} from '../ServerCardTarget'
+import {ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit} from '../ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 
 export default {
@@ -312,7 +312,7 @@ export interface UnitMovedEventArgs {
 export interface UnitOrderedCardEventArgs {
 	triggeringUnit: ServerUnit
 	targetType: TargetType
-	targetArguments: ServerCardTargetCard
+	targetArguments: ServerCardTargetCard | ServerCardTargetUnit
 }
 export interface UnitOrderedRowEventArgs {
 	triggeringUnit: ServerUnit

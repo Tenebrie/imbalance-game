@@ -1,4 +1,3 @@
-import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import MouseHover from '@/Pixi/input/MouseHover'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
@@ -9,16 +8,18 @@ import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetingLine from '@/Pixi/models/TargetingLine'
+import Core from '@/Pixi/Core'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 
 export default class ForcedTargetingMode {
 	readonly targetMode: TargetMode
-	readonly validTargets: ClientCardTarget[]
+	readonly validTargets: CardTargetMessage[]
 	readonly source: RenderedCard | null
-	selectedTarget: ClientCardTarget | null = null
+	selectedTarget: CardTargetMessage | null = null
 
 	readonly targetingLine: TargetingLine | null
 
-	constructor(targetMode: TargetMode, validTargets: ClientCardTarget[], source: RenderedCard | null) {
+	constructor(targetMode: TargetMode, validTargets: CardTargetMessage[], source: RenderedCard | null) {
 		this.targetMode = targetMode
 		this.validTargets = validTargets
 		this.source = source
@@ -33,8 +34,8 @@ export default class ForcedTargetingMode {
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		this.selectedTarget = this.validTargets.find(target => {
-			return (target.targetCard && hoveredCard && target.targetCard.id === hoveredCard.id) ||
-				(target.targetRow && target.targetRow === hoveredRow)
+			return (hoveredCard && target.targetCardId === hoveredCard.id) ||
+				(hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
 		})
 	}
 
@@ -46,16 +47,16 @@ export default class ForcedTargetingMode {
 		const target = this.selectedTarget
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
-		return (target.targetCard && hoveredCard && target.targetCard.id === hoveredCard.id) ||
-			(target.targetRow && target.targetRow === hoveredRow)
+		return (hoveredCard && target.targetCardId === hoveredCard.id) ||
+			(hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
 	}
 
 	public isUnitPotentialTarget(unit: RenderedUnit): boolean {
-		return !!this.validTargets.find(target => target.targetCard === unit.card)
+		return !!this.validTargets.find(target => target.targetCardId === unit.card.id)
 	}
 
 	public isRowPotentialTarget(row: RenderedGameBoardRow): boolean {
-		return !!this.validTargets.find(target => target.targetRow && target.targetRow === row)
+		return !!this.validTargets.find(target => Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === row)
 	}
 
 	public getDisplayedLabel(): string {
@@ -63,7 +64,7 @@ export default class ForcedTargetingMode {
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		const hoveredTarget = this.validTargets.find(target => {
-			return (target.targetCard && target.targetCard === hoveredCard) || (target.targetCard === hoveredCard) || (target.targetRow && target.targetRow === hoveredRow)
+			return (hoveredCard && target.targetCardId === hoveredCard.id) || (Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
 		})
 		return hoveredTarget ? hoveredTarget.targetLabel : ''
 	}
@@ -73,9 +74,13 @@ export default class ForcedTargetingMode {
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		const hoveredTarget = this.validTargets.find(target => {
-			return (target.targetCard && target.targetCard === hoveredCard) || (target.targetCard === hoveredCard) || (target.targetRow && target.targetRow === hoveredRow)
+			return (hoveredCard && target.targetCardId === hoveredCard.id) || (Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
 		})
-		return hoveredTarget && hoveredTarget.sourceCard instanceof RenderedCard ? hoveredTarget.sourceCard.variables : {}
+		if (!hoveredTarget) {
+			return {}
+		}
+		const sourceCard = Core.game.findCardById(hoveredTarget.sourceCardId)
+		return sourceCard && sourceCard instanceof RenderedCard ? sourceCard.variables : {}
 	}
 
 	public confirmTarget(): void {

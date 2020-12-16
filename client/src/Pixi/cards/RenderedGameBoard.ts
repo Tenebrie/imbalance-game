@@ -3,14 +3,14 @@ import Board from '@shared/models/Board'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import ClientCardTarget from '@/Pixi/models/ClientCardTarget'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 
 export default class RenderedGameBoard implements Board {
 	public rows: RenderedGameBoardRow[]
 	public unitsOnHold: RenderedUnit[]
 	public isInverted = false
-	public validOrders: ClientCardTarget[]
-	public validOpponentOrders: ClientCardTarget[]
+	public validOrders: CardTargetMessage[]
+	public validOpponentOrders: CardTargetMessage[]
 
 	public constructor() {
 		this.rows = []
@@ -55,6 +55,13 @@ export default class RenderedGameBoard implements Board {
 		currentRow.destroyUnit(unit)
 	}
 
+	public getRow(index: number): RenderedGameBoardRow | null {
+		if (index < 0 || index >= Constants.GAME_BOARD_ROW_COUNT) {
+			return null
+		}
+		return this.rows[index]
+	}
+
 	public getRowWithCard(targetUnit: RenderedUnit): RenderedGameBoardRow | null {
 		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id)) || null
 	}
@@ -75,8 +82,8 @@ export default class RenderedGameBoard implements Board {
 		return this.getAllUnits().filter(unit => unit.owner === owner)
 	}
 
-	public getValidOrdersForUnit(unit: RenderedUnit): ClientCardTarget[] {
-		return this.validOrders.concat(this.validOpponentOrders).filter(order => order.sourceCard === unit.card)
+	public getValidOrdersForUnit(unit: RenderedUnit): CardTargetMessage[] {
+		return this.validOrders.concat(this.validOpponentOrders).filter(order => order.sourceCardId === unit.card.id)
 	}
 
 	public clearBoard(): void {

@@ -91,6 +91,9 @@ export default {
 		const promises = []
 		let i = 0
 		cardMessages.forEach(message => {
+			if (!message) {
+				throw new Error('')
+			}
 			promises.push(new Promise(resolve => {
 				setTimeout(() => resolve(RenderedCard.fromMessage(message)), i)
 			}))

@@ -1,6 +1,6 @@
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
-import {ServerCardTargetCard, ServerCardTargetRow} from './ServerCardTarget'
+import {ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit} from './ServerCardTarget'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
 import CardType from '@shared/enums/CardType'
@@ -143,7 +143,7 @@ export default class ServerGameCardPlay {
 		}
 	}
 
-	public getValidTargets(): (ServerCardTargetCard | ServerCardTargetRow)[] {
+	public getValidTargets(): (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] {
 		const currentCard = this.cardResolveStack.currentCard
 		if (!currentCard) {
 			return []
@@ -153,7 +153,7 @@ export default class ServerGameCardPlay {
 		return card.targeting.getDeployEffectTargets(this.cardResolveStack.currentTargets)
 	}
 
-	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTargetCard | ServerCardTargetRow): void {
+	public selectCardTarget(playerInGame: ServerPlayerInGame, target: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): void {
 		const currentResolvingCard = this.cardResolveStack.currentCard
 		if (!currentResolvingCard) {
 			return
@@ -183,7 +183,7 @@ export default class ServerGameCardPlay {
 			this.cardResolveStack.finishResolving()
 		})
 
-		if (target instanceof ServerCardTargetCard) {
+		if (target instanceof ServerCardTargetCard || target instanceof ServerCardTargetUnit) {
 			this.game.events.postEvent(GameEventCreators.cardTargetCardSelected({
 				targetMode: target.targetMode,
 				targetType: target.targetType,
@@ -191,17 +191,17 @@ export default class ServerGameCardPlay {
 				triggeringPlayer: playerInGame,
 				targetCard: target.targetCard,
 			}))
-			if (target.targetCard.unit) {
+			if (target instanceof ServerCardTargetUnit) {
 				this.game.events.postEvent(GameEventCreators.cardTargetUnitSelected({
 					targetMode: target.targetMode,
 					targetType: target.targetType,
 					triggeringCard: currentResolvingCard.card,
 					triggeringPlayer: playerInGame,
 					targetCard: target.targetCard,
-					targetUnit: target.targetCard.unit
+					targetUnit: target.targetCard.unit!
 				}))
 			}
-		} else {
+		} else if (target instanceof ServerCardTargetRow) {
 			this.game.events.postEvent(GameEventCreators.cardTargetRowSelected({
 				targetMode: target.targetMode,
 				targetType: target.targetType,

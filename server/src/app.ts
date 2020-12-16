@@ -98,8 +98,6 @@ app.use('*', (req, res) => {
 
 /* Last-resort error handler */
 app.use((err: any, req: Request, res: Response, next: () => void) => {
-	console.log(err)
-	console.log(JSON.stringify(err))
 	res.status(err.status || 500)
 	res.render('error', {
 		message: err.message,
