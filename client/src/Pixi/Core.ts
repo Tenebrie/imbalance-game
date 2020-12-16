@@ -136,7 +136,7 @@ export default class Core {
 		} else if (this.opponent && this.opponent.player.id === playerId) {
 			return this.opponent
 		}
-		throw new Error(`Player ${playerId} does not exist!`)
+		throw new Error(`Player ${playerId} does not exist! Existing players: ${this.player?.player.id}, ${this.opponent?.player.id}`)
 	}
 
 	public static getPlayerOrNull(playerId: string): ClientPlayerInGame | null {

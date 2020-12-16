@@ -340,7 +340,7 @@ export default class ServerGame implements Game {
 
 		setTimeout(() => {
 			this.forceShutdown('Cleanup')
-		}, 120000)
+		}, 60000)
 	}
 
 	public get isFinished(): boolean {
@@ -348,10 +348,6 @@ export default class ServerGame implements Game {
 	}
 
 	public forceShutdown(reason: string): void {
-		this.spectators.forEach(spectator => spectator.player.disconnect())
-		this.players
-			.filter(playerInGame => playerInGame.player.webSocket && playerInGame.player.webSocket.game === this)
-			.forEach(playerInGame => playerInGame.player.disconnect())
 		GameLibrary.destroyGame(this, reason)
 	}
 

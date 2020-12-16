@@ -8,15 +8,24 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import TargetMode from '@shared/enums/TargetMode'
+import TargetingLine from '@/Pixi/models/TargetingLine'
 
 export default class ForcedTargetingMode {
 	readonly targetMode: TargetMode
 	readonly validTargets: ClientCardTarget[]
+	readonly source: RenderedCard | null
 	selectedTarget: ClientCardTarget | null = null
 
-	constructor(targetMode: TargetMode, validTargets: ClientCardTarget[]) {
+	readonly targetingLine: TargetingLine | null
+
+	constructor(targetMode: TargetMode, validTargets: ClientCardTarget[], source: RenderedCard | null) {
 		this.targetMode = targetMode
 		this.validTargets = validTargets
+		this.source = source
+		if (source) {
+			this.targetingLine = new TargetingLine()
+			this.targetingLine.create()
+		}
 	}
 
 	public selectTarget(): void {
@@ -73,5 +82,11 @@ export default class ForcedTargetingMode {
 		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
 		OutgoingMessageHandlers.sendCardTarget(this.selectedTarget)
 		this.selectedTarget = null
+	}
+
+	public destroy(): void {
+		if (this.targetingLine) {
+			this.targetingLine.destroy()
+		}
 	}
 }

@@ -25,8 +25,18 @@ class GameLibrary {
 
 		console.info(`Destroying game ${colorizeId(game.id)}. Reason: ${colorizeConsoleText(reason)}`)
 
-		game.spectators.forEach(spectator => OutgoingMessageHandlers.notifyAboutGameShutdown(spectator.player))
-		game.players.forEach(playerInGame => OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player))
+		game.spectators
+			.filter(spectator => spectator.player.webSocket && spectator.player.webSocket.game === game)
+			.forEach(spectator => {
+				OutgoingMessageHandlers.notifyAboutGameShutdown(spectator.player)
+				spectator.player.disconnect()
+			})
+		game.players
+			.filter(playerInGame => playerInGame.player.webSocket && playerInGame.player.webSocket.game === game)
+			.forEach(playerInGame => {
+				OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player)
+				playerInGame.player.disconnect()
+			})
 		this.games.splice(this.games.indexOf(game), 1)
 	}
 

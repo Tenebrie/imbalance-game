@@ -22,13 +22,14 @@ import RichTextAlign from '@/Pixi/render/RichTextAlign'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
-const TARGETING_ARROW_ZINDEX = 10
-const HAND_EFFECT_ZINDEX = 25
-const HOVERED_CARD_ZINDEX = 95
-const RESOLVING_CARD_ZINDEX = 100
-const GRABBED_CARD_ZINDEX = 150
-const ANNOUNCED_CARD_ZINDEX = 200
-const SELECTABLE_CARD_ZINDEX = 250
+const RESOLVING_CARD_ZINDEX = 10
+const HAND_CARD_ZINDEX = 11
+const HAND_EFFECT_ZINDEX = 100
+const HOVERED_CARD_ZINDEX = 105
+const GRABBED_CARD_ZINDEX = 400
+const ANNOUNCED_CARD_ZINDEX = 450
+const SELECTABLE_CARD_ZINDEX = 500
+const TARGETING_ARROW_ZINDEX = 550
 
 export default class Renderer {
 	pixi: PIXI.Application
@@ -223,9 +224,9 @@ export default class Renderer {
 
 		this.renderTextLabels()
 		this.renderGameBoard(Core.board)
-		this.renderTargetingArrow()
 		this.renderAnnouncedCard()
 		this.renderResolveStack()
+		this.renderTargetingArrow()
 		this.renderSelectableCards()
 		inspectedCardRenderer.tick()
 	}
@@ -351,7 +352,7 @@ export default class Renderer {
 			container.position.x = targetPosition.x
 			container.position.y = targetPosition.y - cardHeight / 2 * (isOpponent ? -1 : 1)
 		}
-		container.zIndex = (handPosition + 1) * 2
+		container.zIndex = HAND_CARD_ZINDEX + (handPosition + 1) * 2
 
 		hitboxSprite.position.set(targetPosition.x + sprite.position.x, targetPosition.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
@@ -594,19 +595,38 @@ export default class Renderer {
 
 	public renderTargetingArrow(): void {
 		this.updateTargetingLabel(this.actionLabel)
-		if (Core.input.forcedTargetingMode) {
-			return
-		}
 
 		const grabbedCard = Core.input.grabbedCard
-		if (!grabbedCard || grabbedCard.mode !== GrabbedCardMode.CARD_ORDER) {
+		const forcedTargeting = Core.input.forcedTargetingMode
+		const targetingArrow = grabbedCard?.targetingLine || forcedTargeting?.targetingLine
+		if ((!grabbedCard || grabbedCard.mode !== GrabbedCardMode.CARD_ORDER) && (!forcedTargeting || !forcedTargeting.source || Core.input.forcedTargetingCards.length > 0)) {
 			this.actionLabel.text = ''
 			return
 		}
 
-		const targetingArrow = grabbedCard.targetingLine
-		const startingPosition = grabbedCard.card.hitboxSprite.position
-		const targetPosition = Core.input.mousePosition
+		let startingPosition
+		if (grabbedCard) {
+			startingPosition = grabbedCard.card.getVisualPosition()
+		} else if (forcedTargeting && forcedTargeting.source.type === CardType.UNIT) {
+			startingPosition = forcedTargeting.source.getVisualPosition()
+		} else if (forcedTargeting && Core.resolveStack?.cards.length > 0) {
+			startingPosition = Core.resolveStack.cards[Core.resolveStack.cards.length - 1].card.getVisualPosition()
+		}
+
+		if (!startingPosition) {
+			return
+		}
+
+		let targetPosition = Core.input.mousePosition
+		if (Core.input.hoveredCard) {
+			const validTargetCards = forcedTargeting?.validTargets.filter(target => !!target.targetCard).map(target => target.targetCard) || grabbedCard?.validTargetCards
+			if (validTargetCards && validTargetCards.length > 0) {
+				const target = validTargetCards.find(target => target === Core.input.hoveredCard.card) as RenderedCard | null
+				if (target) {
+					targetPosition = target.getVisualPosition()
+				}
+			}
+		}
 
 		targetingArrow.startingPoint.position.copyFrom(startingPosition)
 		targetingArrow.startingPoint.clear()
@@ -615,24 +635,30 @@ export default class Renderer {
 		targetingArrow.startingPoint.endFill()
 		targetingArrow.startingPoint.zIndex = TARGETING_ARROW_ZINDEX
 
-		targetingArrow.arrowLine.position.copyFrom(startingPosition)
-		targetingArrow.arrowLine.clear()
-		const iterations = 5
-		for (let i = 0; i < iterations; i++) {
-			targetingArrow.arrowLine.lineStyle(i + 1, 0xFFFF00, (iterations + 1 - i) / (iterations + 1))
-			targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
-			targetingArrow.arrowLine.moveTo(0, 0)
+		if (targetingArrow.targetPoint.position.equals({ x: 0, y: 0})) {
+			targetingArrow.targetPoint.position.copyFrom(targetPosition)
+		} else {
+			const currentPosition = targetingArrow.targetPoint.position
+			currentPosition.x += (targetPosition.x - currentPosition.x) * this.deltaTimeFraction * 15
+			currentPosition.y += (targetPosition.y - currentPosition.y) * this.deltaTimeFraction * 15
 		}
-		targetingArrow.arrowLine.lineStyle(2, 0xFFFF00, 0.8)
-		targetingArrow.arrowLine.lineTo(targetPosition.x - startingPosition.x, targetPosition.y - startingPosition.y)
-		targetingArrow.arrowLine.zIndex = TARGETING_ARROW_ZINDEX
-
-		targetingArrow.targetPoint.position.copyFrom(targetPosition)
 		targetingArrow.targetPoint.clear()
 		targetingArrow.targetPoint.beginFill(0xFFFF00, 1.0)
 		targetingArrow.targetPoint.drawCircle(0, 0, 5)
 		targetingArrow.targetPoint.endFill()
 		targetingArrow.targetPoint.zIndex = TARGETING_ARROW_ZINDEX
+
+		targetingArrow.arrowLine.position.copyFrom(startingPosition)
+		targetingArrow.arrowLine.clear()
+		const iterations = 5
+		for (let i = 0; i < iterations; i++) {
+			targetingArrow.arrowLine.lineStyle(i + 1, 0xFFFF00, (iterations + 1 - i) / (iterations + 1))
+			targetingArrow.arrowLine.lineTo(targetingArrow.targetPoint.position.x - startingPosition.x, targetingArrow.targetPoint.position.y - startingPosition.y)
+			targetingArrow.arrowLine.moveTo(0, 0)
+		}
+		targetingArrow.arrowLine.lineStyle(2, 0xFFFF00, 0.8)
+		targetingArrow.arrowLine.lineTo(targetingArrow.targetPoint.position.x - startingPosition.x, targetingArrow.targetPoint.position.y - startingPosition.y)
+		targetingArrow.arrowLine.zIndex = TARGETING_ARROW_ZINDEX
 	}
 
 	private updateTargetingLabel(label: RichText): void {

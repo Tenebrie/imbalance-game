@@ -355,9 +355,14 @@ export default class Input {
 		}
 	}
 
-	public async enableForcedTargetingMode(targetMode: TargetMode, validTargets: ClientCardTarget[]): Promise<void> {
-		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets)
+	public async enableForcedTargetingMode(targetMode: TargetMode, validTargets: ClientCardTarget[], source: CardRefMessage | null): Promise<void> {
+		if (this.forcedTargetingMode) {
+			this.forcedTargetingMode.destroy()
+		}
+
+		const sourceCard: RenderedCard | null = Core.game.findRenderedCardById(source?.id)
 		await this.createForcedTargetingCards(validTargets)
+		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets, this.forcedTargetingCards.length === 0 ? sourceCard : null)
 		this.forcedTargetingMode.validTargets
 			.filter(target => target.targetCardData && !target.targetCard)
 			.forEach(target => {
@@ -395,6 +400,10 @@ export default class Input {
 	}
 
 	public disableForcedTargetingMode(): void {
+		if (!this.forcedTargetingMode) {
+			return
+		}
+		this.forcedTargetingMode.destroy()
 		this.forcedTargetingMode = null
 		this.forcedTargetingCards.forEach(card => Core.destroyCard(card))
 		this.forcedTargetingCards = []

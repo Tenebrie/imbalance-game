@@ -5,7 +5,7 @@ import RenderQuality from '@shared/enums/RenderQuality'
 export const CARD_WIDTH = 408
 export const CARD_HEIGHT = 584
 export const CARD_ASPECT_RATIO = CARD_WIDTH / CARD_HEIGHT
-export const INSPECTED_CARD_ZINDEX = 500
+export const INSPECTED_CARD_ZINDEX = 1000
 
 export const getScreenWidth = (): number => {
 	return Core.renderer.pixi.view.width

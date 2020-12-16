@@ -113,6 +113,9 @@ export default class ClientGame {
 	}
 
 	public findRenderedCardById(cardId: string): RenderedCard | null {
+		if (!cardId) {
+			return null
+		}
 		const card = this.findCardById(cardId)
 		if (!card || !(card instanceof RenderedCard)) {
 			return null

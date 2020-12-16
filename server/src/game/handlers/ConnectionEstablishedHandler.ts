@@ -48,11 +48,11 @@ export default {
 		}
 		if (playerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(playerInGame.player, playerInGame)
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player, TargetMode.DEPLOY_EFFECT, game.cardPlay.getValidTargets())
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player, TargetMode.DEPLOY_EFFECT, game.cardPlay.getValidTargets(), game.cardPlay.cardResolveStack.currentCard.card)
 		} else if (playerInGame.mulliganMode) {
 			const cardsToMulligan = playerInGame.cardHand.unitCards
 			const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player, TargetMode.MULLIGAN, targets)
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player, TargetMode.MULLIGAN, targets, null)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, playerInGame.isInvertedBoard())
@@ -97,11 +97,11 @@ export default {
 		}
 		if (spectatedPlayerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(spectator.player, spectatedPlayerInGame)
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(spectator.player, TargetMode.DEPLOY_EFFECT, game.cardPlay.getValidTargets())
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(spectator.player, TargetMode.DEPLOY_EFFECT, game.cardPlay.getValidTargets(), game.cardPlay.cardResolveStack.currentCard.card)
 		} else if (spectatedPlayerInGame.mulliganMode) {
 			const cardsToMulligan = spectatedPlayerInGame.cardHand.unitCards
 			const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(spectator.player, TargetMode.MULLIGAN, targets)
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(spectator.player, TargetMode.MULLIGAN, targets, null)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, spectatedPlayerInGame)
 		OutgoingMessageHandlers.notifyAboutGameStart(spectator.player, spectatedPlayerInGame.isInvertedBoard())

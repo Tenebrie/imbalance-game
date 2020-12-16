@@ -3,12 +3,15 @@ import CardTarget from '../CardTarget'
 import CardTargetMessage from './CardTargetMessage'
 import TargetType from '../../enums/TargetType'
 import OpenCardMessage from './card/OpenCardMessage'
+import CardRefMessage from './card/CardRefMessage'
+import Card from '../Card'
 
 export default class ResolvingCardTargetsMessage {
 	targetMode: TargetMode
 	targets: CardTargetMessage[]
+	source: CardRefMessage | null
 
-	public constructor(targetMode: TargetMode, targets: CardTarget[]) {
+	public constructor(targetMode: TargetMode, targets: CardTarget[], source: Card | null) {
 		const messages = targets.map(target => {
 			const message = new CardTargetMessage(target)
 			if (target.targetCard && !(target.targetCard instanceof OpenCardMessage) &&
@@ -20,5 +23,6 @@ export default class ResolvingCardTargetsMessage {
 
 		this.targetMode = targetMode
 		this.targets = messages
+		this.source = source ? new CardRefMessage(source) : null
 	}
 }

@@ -208,7 +208,19 @@ export default class RenderedCard implements Card {
 	}
 
 	public getPosition(): PIXI.Point {
+		if (!this.hitboxSprite || !this.hitboxSprite.position) {
+			console.warn('No hitbox sprite available')
+			return new PIXI.Point(0, 0)
+		}
 		return new PIXI.Point(this.hitboxSprite.position.x, this.hitboxSprite.position.y)
+	}
+
+	public getVisualPosition(): PIXI.Point {
+		if (!this.sprite || !this.sprite.position) {
+			console.warn('No visual sprite available')
+			return new PIXI.Point(0, 0)
+		}
+		return new PIXI.Point(this.coreContainer.position.x + this.sprite.position.x, this.coreContainer.position.y + this.sprite.position.y)
 	}
 
 	public get tribes(): CardTribe[] {

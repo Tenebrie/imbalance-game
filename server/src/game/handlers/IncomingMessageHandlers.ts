@@ -80,7 +80,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		if (data !== TargetMode.MULLIGAN && player.mulliganMode) {
 			player.showMulliganCards()
 		} else if (data === TargetMode.BROWSE) {
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, [])
+			OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, [], null)
 		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
@@ -97,7 +97,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -107,7 +107,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -117,7 +117,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
