@@ -4,6 +4,7 @@
 			<h2>AI Difficulty</h2>
 			<button @click="onEasySelected" class="primary game-button">Easy: <b>Dummy</b></button>
 			<button @click="onNormalSelected" class="primary game-button">Normal: <b>Vel'Elleron</b></button>
+			<button @click="onDiscoveryLeagueSelected" class="primary game-button">Brawl #1: <b>Discovery League</b></button>
 		</div>
 	</div>
 </template>
@@ -14,6 +15,7 @@ import axios from 'axios'
 import GameMode from '@shared/enums/GameMode'
 import GameMessage from '@shared/models/network/GameMessage'
 import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
+import ChallengeLevel from '@shared/enums/ChallengeLevel'
 
 export default {
 	setup() {
@@ -35,10 +37,18 @@ export default {
 			await store.dispatch.joinGame(gameMessage)
 		}
 
+		const onDiscoveryLeagueSelected = async (): Promise<void> => {
+			store.dispatch.popupModule.close()
+			const response = await axios.post('/api/games', { mode: GameMode.CHALLENGE, level: ChallengeLevel.DISCOVERY_LEAGUE })
+			const gameMessage: GameMessage = response.data.data
+			await store.dispatch.joinGame(gameMessage)
+		}
+
 		return {
 			onMenuClick,
 			onEasySelected,
 			onNormalSelected,
+			onDiscoveryLeagueSelected
 		}
 	},
 

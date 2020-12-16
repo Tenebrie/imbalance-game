@@ -1,7 +1,8 @@
-import ServerGame from '../models/ServerGame'
+import ServerGame, {OptionalGameProps} from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import {colorizeConsoleText, colorizeId, colorizePlayer} from '../../utils/Utils'
+import GameMode from '@shared/enums/GameMode'
 
 class GameLibrary {
 	games: ServerGame[]
@@ -10,8 +11,8 @@ class GameLibrary {
 		this.games = []
 	}
 
-	public createOwnedGame(owner: ServerPlayer, name: string): ServerGame {
-		const game = ServerGame.newOwnedInstance(owner, name)
+	public createOwnedGame(owner: ServerPlayer, name: string, gameMode: GameMode, props: OptionalGameProps): ServerGame {
+		const game = ServerGame.newOwnedInstance(owner, name, gameMode, props)
 		console.info(`Player ${colorizePlayer(owner.username)} created game ${colorizeId(game.id)}`)
 
 		this.games.push(game)

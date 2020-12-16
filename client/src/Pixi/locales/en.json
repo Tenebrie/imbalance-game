@@ -646,5 +646,27 @@
 	"card.spellTacticalMove.target.label.row": "Move here",
 
 	"card.spellReinforcements.name": "Reinforcements",
-	"card.spellReinforcements.description": "*Summon* a top card from your deck."
+	"card.spellReinforcements.description": "*Summon* a top card from your deck.",
+
+	"card.heroChallengeLegendaryExplorer0.name": "Jeno Rackson",
+	"card.heroChallengeLegendaryExplorer0.title": "One-of-Many",
+	"card.heroChallengeLegendaryExplorer0.description": "Choose one of {cardsToExplore} random Legendary cards.\n*Create* a copy of it.",
+
+	"card.heroChallengeLegendaryExplorer1.name": "Seline Moonseeker",
+	"card.heroChallengeLegendaryExplorer1.title": "The Iron Monkey",
+	"card.heroChallengeLegendaryExplorer1.description": "Choose one of {cardsToExplore} random Legendary cards.\n*Create* a copy of it.",
+
+	"card.heroChallengeLegendaryExplorer2.name": "R'bann Copperbeard",
+	"card.heroChallengeLegendaryExplorer2.title": "The Crying One",
+	"card.heroChallengeLegendaryExplorer2.description": "Choose one of {cardsToExplore} random Legendary cards.\n*Create* a copy of it.",
+
+	"card.heroChallengeLegendaryExplorer3.name": "Finley",
+	"card.heroChallengeLegendaryExplorer3.title": "The Commoner",
+	"card.heroChallengeLegendaryExplorer3.description": "Choose one of {cardsToExplore} random Legendary cards.\n*Create* a copy of it.",
+
+	"card.unitChallengeScarredExplorer.name": "Scarred Explorer",
+	"card.unitChallengeScarredExplorer.description": "Choose one of {cardsToExplore} random Epic cards.\n*Create* a copy of it.",
+
+	"card.unitChallengeEagerExplorer.name": "Eager Explorer",
+	"card.unitChallengeEagerExplorer.description": "Choose one of {cardsToExplore} random Common cards.\n*Create* a copy of it."
 }

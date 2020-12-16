@@ -30,6 +30,7 @@ import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
 import Localization from '@/Pixi/Localization'
 import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
 import TheChallengeAISelection from '@/Vue/components/popup/escapeMenu/TheChallengeAISelection.vue'
+import GameMode from '@shared/enums/GameMode'
 
 export default Vue.extend({
 	components: {
@@ -81,7 +82,7 @@ export default Vue.extend({
 				return
 			}
 
-			const response = await axios.post('/api/games', { mode: 'mp_custom' })
+			const response = await axios.post('/api/games', { mode: GameMode.VS_PLAYER })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
 		},

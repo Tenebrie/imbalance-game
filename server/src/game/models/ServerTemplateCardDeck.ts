@@ -1,6 +1,6 @@
 import ServerCard from './ServerCard'
 import CardDeck from '@shared/models/CardDeck'
-import CardLibrary from '../libraries/CardLibrary'
+import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
 import UnitForestScout from '../cards/00-human/common/UnitForestScout'
 import ServerGame from './ServerGame'
 import HeroZamarath from '../cards/00-human/legendary/HeroZamarath'
@@ -28,6 +28,12 @@ import HeroChallengeDummyWarrior3 from '../cards/08-challenge/ai-00-dummy/HeroCh
 import Constants from '@shared/Constants'
 import UnitChallengeDummyRoyalWarrior from '../cards/08-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
 import UnitChallengeDummyVanillaWarrior from '../cards/08-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
+import HeroChallengeLegendaryExplorer0 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer0'
+import HeroChallengeLegendaryExplorer1 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer1'
+import HeroChallengeLegendaryExplorer2 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer2'
+import HeroChallengeLegendaryExplorer3 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer3'
+import UnitChallengeScarredExplorer from '../cards/08-challenge/challenge-discovery/UnitChallengeScarredExplorer'
+import UnitChallengeEagerExplorer from '../cards/08-challenge/challenge-discovery/UnitChallengeEagerExplorer'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	leader: ServerCard
@@ -113,6 +119,26 @@ export default class ServerTemplateCardDeck implements CardDeck {
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitWingedShieldmaiden))
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitPriestessOfAedine))
 			cards.push(CardLibrary.instantiateByConstructor(game, UnitArcaneElemental))
+		}
+
+		return ServerTemplateCardDeck.inflate(game, cards)
+	}
+
+	public static challengeDiscovery(game: ServerGame, leader: ServerCard): ServerTemplateCardDeck {
+		const cards = []
+
+		cards.push(CardLibrary.instantiateByInstance(game, leader))
+
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeLegendaryExplorer0))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeLegendaryExplorer1))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeLegendaryExplorer2))
+		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeLegendaryExplorer3))
+
+		for (let i = 0; i < Constants.CARD_LIMIT_SILVER; i++) {
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitChallengeScarredExplorer))
+		}
+		for (let i = 0; i < Constants.CARD_LIMIT_BRONZE; i++) {
+			cards.push(CardLibrary.instantiateByConstructor(game, UnitChallengeEagerExplorer))
 		}
 
 		return ServerTemplateCardDeck.inflate(game, cards)

@@ -192,6 +192,9 @@ export default class ServerGameCardPlay {
 				targetCard: target.targetCard,
 			}))
 			if (target instanceof ServerCardTargetUnit) {
+				console.log(target.targetCard)
+				console.log(target.targetCard.unit)
+				console.log(this.game.board.getAllUnits().length)
 				this.game.events.postEvent(GameEventCreators.cardTargetUnitSelected({
 					targetMode: target.targetMode,
 					targetType: target.targetType,
@@ -201,7 +204,7 @@ export default class ServerGameCardPlay {
 					targetUnit: target.targetCard.unit!
 				}))
 			}
-		} else if (target instanceof ServerCardTargetRow) {
+		} else {
 			this.game.events.postEvent(GameEventCreators.cardTargetRowSelected({
 				targetMode: target.targetMode,
 				targetType: target.targetType,

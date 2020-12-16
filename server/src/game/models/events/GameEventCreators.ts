@@ -93,7 +93,7 @@ export default {
 		logSubtype: 'unit',
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
-			targetUnit: args.targetUnit.card.id,
+			targetUnit: args.targetCard.id,
 		}
 	}),
 	cardTargetRowSelected: (args: CardTargetSelectedRowEventArgs): GameEvent => ({
