@@ -80,7 +80,6 @@ export default {
 		type: GameEventType.CARD_TARGET_SELECTED_CARD,
 		args: args,
 		effectSource: args.triggeringCard,
-		logSubtype: 'card',
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
 			targetCard: args.targetCard.id,
@@ -90,17 +89,15 @@ export default {
 		type: GameEventType.CARD_TARGET_SELECTED_UNIT,
 		args: args,
 		effectSource: args.triggeringCard,
-		logSubtype: 'unit',
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
-			targetUnit: args.targetUnit.card.id,
+			targetUnit: args.targetCard.id,
 		}
 	}),
 	cardTargetRowSelected: (args: CardTargetSelectedRowEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGET_SELECTED_ROW,
 		args: args,
 		effectSource: args.triggeringCard,
-		logSubtype: 'row',
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
 			targetRow: args.targetRow.index,

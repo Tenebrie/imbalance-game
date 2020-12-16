@@ -24,10 +24,17 @@ import TargetMode from '@shared/enums/TargetMode'
 import GameEventType from '@shared/enums/GameEventType'
 import {PlayerTargetCardSelectedEventArgs} from './events/GameEventCreators'
 import ServerGameTimers from './ServerGameTimers'
+import GameMode from '@shared/enums/GameMode'
+import ChallengeLevel from '@shared/enums/ChallengeLevel'
 
-interface ServerGameProps {
+interface ServerGameProps extends OptionalGameProps {
+	gameMode: GameMode
+}
+
+export interface OptionalGameProps {
 	name?: string
 	owner?: ServerPlayer
+	challengeLevel?: ChallengeLevel
 }
 
 export default class ServerGame implements Game {
@@ -46,6 +53,9 @@ export default class ServerGame implements Game {
 	readonly cardPlay: ServerGameCardPlay
 	readonly animation: ServerGameAnimation
 
+	public gameMode: GameMode
+	public challengeLevel: ChallengeLevel | null
+
 	constructor(props: ServerGameProps) {
 		this.id = uuidv4()
 		this.name = props.name || this.generateName(props.owner)
@@ -61,7 +71,8 @@ export default class ServerGame implements Game {
 		this.playersToMove = []
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
-		this.owner = undefined
+		this.gameMode = props.gameMode
+		this.challengeLevel = props.challengeLevel || null
 
 		this.events.createCallback<PlayerTargetCardSelectedEventArgs>(this, GameEventType.PLAYER_TARGET_SELECTED_CARD)
 			.require(({ targetMode }) => targetMode === TargetMode.MULLIGAN)
@@ -293,7 +304,6 @@ export default class ServerGame implements Game {
 		}
 
 		this.players.forEach(playerInGame => {
-			playerInGame.startRound()
 			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_PER_ROUND)
 			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})
@@ -399,7 +409,12 @@ export default class ServerGame implements Game {
 		return viableCards.map(card => card.buffs.getIntensity(buffPrototype)).reduce((total, value) => total + value, 0)
 	}
 
-	static newOwnedInstance(owner: ServerPlayer, name: string): ServerGame {
-		return new ServerGame({ name, owner })
+	static newOwnedInstance(owner: ServerPlayer, name: string, gameMode: GameMode, props: OptionalGameProps): ServerGame {
+		return new ServerGame({
+			...props,
+			name,
+			owner,
+			gameMode
+		})
 	}
 }
