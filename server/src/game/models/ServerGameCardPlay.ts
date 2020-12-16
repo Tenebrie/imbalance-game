@@ -201,7 +201,7 @@ export default class ServerGameCardPlay {
 					targetUnit: target.targetCard.unit!
 				}))
 			}
-		} else if (target instanceof ServerCardTargetRow) {
+		} else {
 			this.game.events.postEvent(GameEventCreators.cardTargetRowSelected({
 				targetMode: target.targetMode,
 				targetType: target.targetType,

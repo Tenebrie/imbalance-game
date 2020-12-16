@@ -14,6 +14,8 @@ import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import IncomingSpectatorMessageHandlers from '../game/handlers/IncomingSpectatorMessageHandlers'
 import {ClientToServerMessageTypes, ClientToServerSpectatorMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import {Router as WebSocketRouter} from 'express-ws'
+import GameMode from '@shared/enums/GameMode'
+import ChallengeLevel from '@shared/enums/ChallengeLevel'
 
 const router = express.Router() as WebSocketRouter
 
@@ -56,7 +58,11 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			return
 		}
 
-		currentPlayerInGame = currentGame.addPlayer(currentPlayer, ServerTemplateCardDeck.fromEditorDeck(currentGame, deck))
+		let inflatedDeck = ServerTemplateCardDeck.fromEditorDeck(currentGame, deck)
+		if (currentGame.gameMode === GameMode.CHALLENGE && currentGame.challengeLevel === ChallengeLevel.DISCOVERY_LEAGUE) {
+			inflatedDeck = ServerTemplateCardDeck.challengeDiscovery(currentGame, inflatedDeck.leader)
+		}
+		currentPlayerInGame = currentGame.addPlayer(currentPlayer, inflatedDeck)
 	}
 
 	currentPlayer.disconnect()

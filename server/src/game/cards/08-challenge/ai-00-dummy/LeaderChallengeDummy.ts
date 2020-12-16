@@ -20,7 +20,7 @@ export default class LeaderChallengeDummy extends ServerCard {
 			hiddenFromLibrary: true
 		})
 
-		this.createCallback(GameEventType.GAME_STARTED, [CardLocation.LEADER])
+		this.createCallback(GameEventType.ROUND_STARTED, [CardLocation.LEADER])
 			.require(({ player }) => player === this.ownerInGame)
 			.perform(() => this.onRoundStart())
 	}

@@ -7,6 +7,7 @@ import LeaderVelElleron from '../game/cards/01-arcane/leaders/VelElleron/LeaderV
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import ServerCard from '../game/models/ServerCard'
 import HeroAdventuringGuildMaster from '../game/cards/09-neutral/epic/HeroAdventuringGuildMaster'
+import GameMode from '@shared/enums/GameMode'
 
 const consoleInfo = console.info
 const consoleWarn = console.warn
@@ -33,7 +34,7 @@ interface TestGameTemplateResult {
 export default {
 	emptyDecks(): ServerGame {
 		silenceLogging()
-		const game = new ServerGame({})
+		const game = new ServerGame({ gameMode: GameMode.VS_AI }, )
 		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
 		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
 		const template = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, LeaderVelElleron), [], [])
@@ -46,7 +47,7 @@ export default {
 
 	singleCardTest(card: CardConstructor): TestGameTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({})
+		const game = new ServerGame({ gameMode: GameMode.VS_AI })
 		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
 		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
 		const template = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, LeaderVelElleron), [], [])
