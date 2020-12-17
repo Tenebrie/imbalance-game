@@ -16,6 +16,7 @@ import {ClientToServerMessageTypes} from '@shared/models/network/messageHandlers
 import {ServerToClientMessageTypes} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import GameMessage from '@shared/models/network/GameMessage'
 import TargetMode from '@shared/enums/TargetMode'
+import {electronWebsocketTarget, isElectron} from '@/utils/Utils'
 
 export default class Core {
 	public static isReady = false
@@ -34,13 +35,14 @@ export default class Core {
 	public static resolveStack?: ClientCardResolveStack
 
 	public static init(game: GameMessage, deckId: string, container: HTMLElement): void {
-		const protocol = location.protocol === 'http:' ? 'ws:' : 'wss:'
-		let targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}?deckId=${deckId}`
+		const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
+		const urlHost = isElectron() ? electronWebsocketTarget() : window.location.host
+		let targetUrl = `${protocol}//${urlHost}/api/game/${game.id}?deckId=${deckId}`
 		if (game.players.length >= 2) {
-			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}/spectate/${game.players[0].player.id}`
+			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}/spectate/${game.players[0].player.id}`
 		}
 		if (game.players.find(playerInGame => playerInGame.player.id === store.state.player.id)) {
-			targetUrl = `${protocol}//${window.location.host}/api/game/${game.id}`
+			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}`
 		}
 		const socket = new WebSocket(targetUrl)
 		socket.onopen = () => this.onConnect(container)

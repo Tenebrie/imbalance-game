@@ -1,6 +1,7 @@
 import AsyncHandler from '../utils/AsyncHandler'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import AccessLevel from '@shared/enums/AccessLevel'
+import {setCookie} from '../utils/Utils'
 
 export default AsyncHandler(async (req, res, next) => {
 	const playerToken = req.cookies['playerToken']
@@ -21,10 +22,10 @@ export default AsyncHandler(async (req, res, next) => {
 	}
 
 	if (playerToken) {
-		res.cookie('playerToken', playerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
+		setCookie(res, 'playerToken', playerToken)
 	}
 	if (originalPlayerToken) {
-		res.cookie('originalPlayerToken', originalPlayerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
+		setCookie(res, 'originalPlayerToken', originalPlayerToken)
 	}
 
 	req['player'] = player

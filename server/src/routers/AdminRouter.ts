@@ -6,7 +6,7 @@ import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
 import RequireSupportAccessLevelMiddleware from '../middleware/RequireSupportAccessLevelMiddleware'
 import RequireOriginalPlayerTokenMiddleware from '../middleware/RequireOriginalPlayerTokenMiddleware'
 import TokenManager from '../services/TokenService'
-import {getPlayerFromAuthenticatedRequest} from '../utils/Utils'
+import {getPlayerFromAuthenticatedRequest, setCookie} from '../utils/Utils'
 import AccessLevel from '@shared/enums/AccessLevel'
 
 const router = express.Router()
@@ -44,8 +44,8 @@ router.post('/players/:playerId/login', AsyncHandler(async(req, res: Response) =
 
 	const playerToken = TokenManager.generateJwtToken(player)
 	const originalPlayerToken = TokenManager.generateJwtToken(currentPlayer)
-	res.cookie('playerToken', playerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
-	res.cookie('originalPlayerToken', originalPlayerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
+	setCookie(res, 'playerToken', playerToken)
+	setCookie(res, 'originalPlayerToken', originalPlayerToken)
 
 	res.status(204)
 	res.send()

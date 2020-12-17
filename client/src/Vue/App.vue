@@ -16,11 +16,16 @@ import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
 import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
 import LocalStorage from '@/utils/LocalStorage'
 import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
+import axios from 'axios'
+import {electronHost, isElectron} from '@/utils/Utils'
 
 export default {
 	components: { ThePopupView, TheNavigationBar },
 
 	async mounted() {
+		if (isElectron()) {
+			axios.defaults.baseURL = electronHost()
+		}
 		AudioSystem.setMode(AudioSystemMode.MENU)
 		window.addEventListener('contextmenu', this.onContextMenu)
 		this.printConsoleWelcomeMessage()

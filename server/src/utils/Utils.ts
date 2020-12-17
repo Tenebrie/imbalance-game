@@ -5,7 +5,7 @@ import {CardConstructor} from '../game/libraries/CardLibrary'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerPlayer from '../game/players/ServerPlayer'
-import {Request} from 'express'
+import express, {Request} from 'express'
 import {sortCards} from '@shared/Utils'
 
 interface TryUntilArgs {
@@ -22,6 +22,14 @@ export const tryUntil = (args: TryUntilArgs): boolean => {
 		}
 	}
 	return false
+}
+
+export const setCookie = (res: express.Response, name: string, value: string): void => {
+	res.cookie(name, value, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
+}
+
+export const clearCookie = (res: express.Response, name: string, value: string): void => {
+	res.cookie(name, value, { maxAge: Date.now(), httpOnly: true, sameSite: true })
 }
 
 export const getPlayerFromAuthenticatedRequest = (req: Request): ServerPlayer => {

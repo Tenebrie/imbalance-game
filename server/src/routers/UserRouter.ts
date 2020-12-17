@@ -9,7 +9,7 @@ import PlayerDatabase from '../database/PlayerDatabase'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import TokenManager from '../services/TokenService'
 import { v4 as uuidv4 } from 'uuid'
-import {registerFormValidators} from '../utils/Utils'
+import {registerFormValidators, setCookie} from '../utils/Utils'
 import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
 
 const router = express.Router()
@@ -80,7 +80,7 @@ router.post('/google', AsyncHandler(async (req: Request, res: Response) => {
 	}
 
 	const playerToken = TokenManager.generateJwtToken(player)
-	res.cookie('playerToken', playerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
+	setCookie(res, 'playerToken', playerToken)
 	res.json({ data: new OpenPlayerMessage(player) })
 }))
 

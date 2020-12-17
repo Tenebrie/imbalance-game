@@ -4,6 +4,7 @@ import TokenManager from '../services/TokenService'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
+import {clearCookie, setCookie} from '../utils/Utils'
 
 const router = express.Router()
 
@@ -20,7 +21,7 @@ router.post('/', AsyncHandler(async (req, res: Response, next) => {
 	}
 
 	const playerToken = TokenManager.generateJwtToken(player)
-	res.cookie('playerToken', playerToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
+	setCookie(res, 'playerToken', playerToken)
 	res.json({ data: new OpenPlayerMessage(player) })
 }))
 
@@ -28,10 +29,10 @@ router.delete('/', AsyncHandler(async (req, res: Response) => {
 	// TODO: Disconnect the player and close the socket, if open
 	const originalToken = req.cookies['originalPlayerToken']
 	if (originalToken) {
-		res.cookie('playerToken', originalToken, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
-		res.cookie('originalPlayerToken', '', { maxAge: Date.now(), httpOnly: true, sameSite: true })
+		setCookie(res, 'playerToken', originalToken)
+		clearCookie(res, 'originalPlayerToken', '')
 	} else {
-		res.cookie('playerToken', '', { maxAge: Date.now(), httpOnly: true, sameSite: true })
+		clearCookie(res, 'playerToken', '')
 	}
 
 	res.json({

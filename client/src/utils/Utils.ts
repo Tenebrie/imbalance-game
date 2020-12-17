@@ -45,6 +45,30 @@ export const insertRichTextVariables = (str: string | null | undefined, variable
 	return replacedText
 }
 
+export const isElectron = (): boolean => {
+	if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process['type'] === 'renderer') {
+		return true
+	}
+
+	// Main process
+	if (typeof process !== 'undefined' && typeof process['versions'] === 'object' && !!process['versions'].electron) {
+		return true
+	}
+
+	// Detect the user agent when the `nodeIntegration` option is set to true
+	if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
+		return true
+	}
+}
+
+export const electronHost = (): string => {
+	return 'http://localhost:3000'
+}
+
+export const electronWebsocketTarget = (): string => {
+	return 'localhost:3000'
+}
+
 export default {
 	getFont(text: string): string {
 		let font = 'Roboto'
