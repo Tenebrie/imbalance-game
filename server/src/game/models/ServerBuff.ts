@@ -17,7 +17,7 @@ import BuffAlignment from '@shared/enums/BuffAlignment'
 import StandardTargetDefinitionBuilder from './targetDefinitions/StandardTargetDefinitionBuilder'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import {CardSelector, CardSelectorBuilder} from './events/CardSelector'
-import {EventCallback} from './events/EventCallback'
+import {EventSubscription} from './events/EventSubscription'
 import {EventHook} from './events/EventHook'
 
 export default class ServerBuff implements Buff {
@@ -142,7 +142,7 @@ export default class ServerBuff implements Buff {
 	 * Subscribers must **NOT** modify the event that triggered the callback. See `createHook` for
 	 * event modifications.
 	 */
-	protected createCallback<ArgsType>(event: GameEventType): EventCallback<ArgsType> {
+	protected createCallback<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events.createCallback(this, event)
 	}
 
@@ -151,7 +151,7 @@ export default class ServerBuff implements Buff {
 	 * `createEffect` is equivalent to `createCallback`, but it will only trigger when
 	 * the `effectSource` is set to the subscriber.
 	 */
-	protected createEffect<ArgsType>(event: GameEventType): EventCallback<ArgsType> {
+	protected createEffect<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events.createCallback<ArgsType>(this, event)
 			.require((args, rawEvent) => !!rawEvent.effectSource && rawEvent.effectSource === this)
 	}

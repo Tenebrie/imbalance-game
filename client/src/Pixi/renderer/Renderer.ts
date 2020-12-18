@@ -741,8 +741,9 @@ export default class Renderer {
 	}
 
 	public renderResolveStack(): void {
-		for (let i = 0; i < Core.resolveStack.cards.length; i++) {
-			const ownedCard = Core.resolveStack.cards[i]
+		const invertedStack = Core.resolveStack.cards.slice().reverse()
+		for (let i = 0; i < invertedStack.length; i++) {
+			const ownedCard = invertedStack[i]
 			this.updateCardStats(ownedCard.card)
 			this.renderResolveStackCard(ownedCard.card, i)
 		}

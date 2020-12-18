@@ -11,12 +11,13 @@ import ResolveStack from '@shared/models/ResolveStack'
 const EMPTY_FUNCTION = () => { /* Empty */ }
 
 class ServerResolveStackEntry implements ResolveStackEntry {
-	ownedCard: ServerOwnedCard
-	targetsSelected: (ServerCardTargetCard | ServerCardTargetRow)[]
-	onResumeResolving: () => void = EMPTY_FUNCTION
+	public readonly ownedCard: ServerOwnedCard
+	public readonly targetsSelected: (ServerCardTargetCard | ServerCardTargetRow)[]
+	public onResumeResolving: () => void
 
-	constructor(ownedCard: ServerOwnedCard) {
+	constructor(ownedCard: ServerOwnedCard, onResumeResolving: () => void) {
 		this.ownedCard = ownedCard
+		this.onResumeResolving = onResumeResolving
 		this.targetsSelected = []
 	}
 }
@@ -40,15 +41,21 @@ export default class ServerResolveStack implements ResolveStack {
 		return this.entries[this.entries.length - 1].ownedCard
 	}
 
+	public get currentEntry(): ServerResolveStackEntry | null {
+		if (this.entries.length === 0) { return null }
+
+		return this.entries[this.entries.length - 1]
+	}
+
 	public get currentTargets(): (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] | undefined {
 		if (this.entries.length === 0) { return undefined }
 
 		return this.entries[this.entries.length - 1].targetsSelected
 	}
 
-	public startResolving(ownedCard: ServerOwnedCard): void {
+	public startResolving(ownedCard: ServerOwnedCard, onResumeResolving: () => void): void {
 		/* Create card in stack */
-		this.entries.push(new ServerResolveStackEntry(ownedCard))
+		this.entries.unshift(new ServerResolveStackEntry(ownedCard, onResumeResolving))
 		OutgoingMessageHandlers.notifyAboutCardResolving(ownedCard)
 	}
 
@@ -61,12 +68,6 @@ export default class ServerResolveStack implements ResolveStack {
 			return
 		}
 		this.currentTargets.push(target)
-	}
-
-	public onResumeResolving(callback: () => void): void {
-		if (this.entries.length === 0) { return }
-
-		this.entries[this.entries.length - 1].onResumeResolving = callback
 	}
 
 	public findCardById(cardId: string): ServerOwnedCard | null {
@@ -98,9 +99,5 @@ export default class ServerResolveStack implements ResolveStack {
 		this.game.events.postEvent(GameEventCreators.cardResolved({
 			triggeringCard: resolvedCard.card
 		}))
-
-		if (this.entries.length > 0) {
-			this.resumeResolving()
-		}
 	}
 }

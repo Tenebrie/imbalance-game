@@ -38,6 +38,9 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 					moveTargetUnitIndex
 				}
 			})
+			.requireImmediate(({ triggeringCard }, preparedState) => {
+				return this.location === CardLocation.HAND && triggeringCard.unit?.rowIndex === preparedState.playTargetRowIndex && !!triggeringCard.unit
+			})
 			.perform(({ triggeringCard }, preparedState) => {
 				const ownedCard = {
 					card: this,
@@ -45,22 +48,14 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 				}
 				const targetUnit = triggeringCard.unit
 
-				if (!targetUnit || targetUnit.isDead()) {
-					return
-				}
-
-				this.game.animation.createInstantAnimationThread()
-				this.game.board.moveUnit(targetUnit, preparedState.moveTargetRowIndex, preparedState.moveTargetUnitIndex)
-				this.game.animation.commitAnimationThread()
+				this.game.board.moveUnitToFarRight(targetUnit!, preparedState.moveTargetRowIndex)
 
 				if (this.game.board.rows[preparedState.playTargetRowIndex].isFull()) {
 					return
 				}
 
-				this.game.animation.createInstantAnimationThread()
 				this.game.cardPlay.forcedPlayCardFromHand(ownedCard, preparedState.playTargetRowIndex, preparedState.playTargetUnitIndex)
 				this.ownerInGame.drawUnitCards(1)
-				this.game.animation.commitAnimationThread()
 			})
 	}
 }

@@ -19,6 +19,7 @@ describe('HeroAdventuringGuildMaster', () => {
 	it('does not add any power if played alone', () => {
 		const basePower = cardInHand.stats.power
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+		game.events.resolveEvents()
 		expect(game.board.rows[0].cards[0].card.stats.power).toEqual(basePower)
 	})
 
@@ -37,6 +38,7 @@ describe('HeroAdventuringGuildMaster', () => {
 		})
 
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+		game.events.resolveEvents()
 		expect(game.board.rows[0].cards[0].card.stats.power).toEqual(baseCardPower + 10)
 	})
 
@@ -55,6 +57,7 @@ describe('HeroAdventuringGuildMaster', () => {
 		})
 
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+		game.events.resolveEvents()
 		expect(game.board.rows[0].cards[0].card.stats.power).toEqual(baseCardPower)
 	})
 
@@ -73,6 +76,7 @@ describe('HeroAdventuringGuildMaster', () => {
 		})
 
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+		game.events.resolveEvents()
 		expect(game.board.rows[0].cards[0].card.stats.power).toEqual(baseCardPower)
 	})
 })

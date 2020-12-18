@@ -53,18 +53,19 @@ describe('ServerGameCardPlay', () => {
 
 		it('posts valid events', () => {
 			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 4, 0)
+			game.events.resolveEvents()
 			expect(eventSpy).toBeCalledTimes(4)
 			expect(eventSpy).nthCalledWith(1, expect.objectContaining({
-				type: 'unitCreated'
+				type: 'cardPlayed'
 			}))
 			expect(eventSpy).nthCalledWith(2, expect.objectContaining({
-				type: 'unitDeployed'
+				type: 'unitCreated'
 			}))
 			expect(eventSpy).nthCalledWith(3, expect.objectContaining({
-				type: 'cardResolved'
+				type: 'unitDeployed'
 			}))
 			expect(eventSpy).nthCalledWith(4, expect.objectContaining({
-				type: 'cardPlayed'
+				type: 'cardResolved'
 			}))
 		})
 

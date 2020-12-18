@@ -18,7 +18,7 @@ const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number }
 	},
 
 	[AnimationType.CARD_DRAW]: () => {
-		return 1000
+		return 500
 	},
 
 	[AnimationType.CARD_ANNOUNCE]: (message: AnimationMessage, params: CardAnnounceAnimParams) => {

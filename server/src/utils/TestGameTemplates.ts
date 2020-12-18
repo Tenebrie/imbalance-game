@@ -8,6 +8,7 @@ import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import ServerCard from '../game/models/ServerCard'
 import HeroAdventuringGuildMaster from '../game/cards/09-neutral/epic/HeroAdventuringGuildMaster'
 import GameMode from '@shared/enums/GameMode'
+import ServerOwnedCard from '../game/models/ServerOwnedCard'
 
 const consoleInfo = console.info
 const consoleWarn = console.warn
@@ -29,6 +30,7 @@ interface TestGameTemplateResult {
 	game: ServerGame
 	cardInHand: ServerCard
 	player: ServerPlayerInGame
+	ownedCard: ServerOwnedCard
 }
 
 export default {
@@ -64,7 +66,11 @@ export default {
 		return {
 			game,
 			player,
-			cardInHand
+			cardInHand,
+			ownedCard: {
+				card: cardInHand,
+				owner: player
+			}
 		}
 	}
 }

@@ -16,6 +16,7 @@ import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
 const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void => {
+	game.events.resolveEvents()
 	game.events.evaluateSelectors()
 	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
 	OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
@@ -127,8 +128,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		}
 
 		game.advanceCurrentTurn()
-		game.events.evaluateSelectors()
-		game.events.flushLogEventGroup()
+		onPlayerActionEnd(game, player)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -137,6 +137,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			return
 		}
 		player.initialized = true
+		game.events.resolveEvents()
 		ConnectionEstablishedHandler.onPlayerConnected(game, player)
 	},
 

@@ -20,7 +20,8 @@ export default {
 		})
 		ownedCard.owner.opponent?.player.sendMessage({
 			type: ResolveStackMessageType.ADD,
-			data: data
+			data: data,
+			highPriority: ownedCard.card.game.activePlayer === ownedCard.owner.opponent
 		})
 	},
 

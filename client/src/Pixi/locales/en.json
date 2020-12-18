@@ -455,6 +455,7 @@
 
 	"card.unitWingedShieldmaiden.name": "Winged Shieldmaiden",
 	"card.unitWingedShieldmaiden.description": "Whenever an allied unit takes damage, move the ally back, *Play* {name} in its' place and *Draw* a card.",
+	"card.unitWingedShieldmaiden.flavor": "- \"That girl? Not again. She's so much more trouble than she could ever be worth...\"",
 
 	"card.unitOceanicSeagull.name": "Oceanic Seagull",
 	"card.unitOceanicSeagull.description": "*Deploy:*\n*Summon* a Bronze Merfolk card from your deck.",

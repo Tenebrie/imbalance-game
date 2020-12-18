@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid'
+import {v4 as uuidv4} from 'uuid'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import ServerGame from './ServerGame'
@@ -21,7 +21,8 @@ import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {
 	BuffCreatedEventArgs,
 	BuffRemovedEventArgs,
-	CardDestroyedEventArgs, CardDrawnEventArgs,
+	CardDestroyedEventArgs,
+	CardDrawnEventArgs,
 	CardPlayedEventArgs,
 	CardTakesDamageEventArgs,
 	CardTargetsConfirmedEventArgs,
@@ -50,7 +51,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import SimpleTargetDefinitionBuilder from './targetDefinitions/SimpleTargetDefinitionBuilder'
 import {ServerCardTargeting} from './ServerCardTargeting'
 import TargetType from '@shared/enums/TargetType'
-import {EventCallback} from './events/EventCallback'
+import {EventSubscription} from './events/EventSubscription'
 import {EventHook} from './events/EventHook'
 import {CardSelectorBuilder} from './events/CardSelector'
 
@@ -513,25 +514,25 @@ export default class ServerCard implements Card {
 	 *
 	 * The callback will only trigger if the subscriber is located in one of the locations specified by `location` argument.
 	 */
-	protected createCallback(event: GameEventType.GAME_STARTED, location: CardLocation[]): EventCallback<GameStartedEventArgs>
-	protected createCallback(event: GameEventType.TURN_STARTED, location: CardLocation[]): EventCallback<TurnStartedEventArgs>
-	protected createCallback(event: GameEventType.TURN_ENDED, location: CardLocation[]): EventCallback<TurnEndedEventArgs>
-	protected createCallback(event: GameEventType.ROUND_STARTED, location: CardLocation[]): EventCallback<RoundStartedEventArgs>
-	protected createCallback(event: GameEventType.ROUND_ENDED, location: CardLocation[]): EventCallback<RoundEndedEventArgs>
-	protected createCallback(event: GameEventType.UNIT_MOVED, location: CardLocation[]): EventCallback<UnitMovedEventArgs>
-	protected createCallback(event: GameEventType.CARD_TAKES_DAMAGE, location: CardLocation[]): EventCallback<CardTakesDamageEventArgs>
-	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_CARD, location: CardLocation[]): EventCallback<CardTargetSelectedCardEventArgs>
-	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_UNIT, location: CardLocation[]): EventCallback<CardTargetSelectedUnitEventArgs>
-	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_ROW, location: CardLocation[]): EventCallback<CardTargetSelectedRowEventArgs>
-	protected createCallback(event: GameEventType.UNIT_ORDERED_CARD, location: CardLocation[]): EventCallback<UnitOrderedCardEventArgs>
-	protected createCallback(event: GameEventType.UNIT_ORDERED_ROW, location: CardLocation[]): EventCallback<UnitOrderedRowEventArgs>
-	protected createCallback(event: GameEventType.UNIT_CREATED, location: CardLocation[]): EventCallback<UnitCreatedEventArgs>
-	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[]): EventCallback<CardDestroyedEventArgs>
-	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[]): EventCallback<UnitDestroyedEventArgs>
-	protected createCallback(event: GameEventType.CARD_PLAYED, location: CardLocation[]): EventCallback<CardPlayedEventArgs>
-	protected createCallback(event: GameEventType.BUFF_CREATED, location: CardLocation[]): EventCallback<BuffCreatedEventArgs>
-	protected createCallback(event: GameEventType.BUFF_REMOVED, location: CardLocation[]): EventCallback<BuffRemovedEventArgs>
-	protected createCallback<ArgsType>(event: GameEventType, location: CardLocation[]): EventCallback<ArgsType> {
+	protected createCallback(event: GameEventType.GAME_STARTED, location: CardLocation[]): EventSubscription<GameStartedEventArgs>
+	protected createCallback(event: GameEventType.TURN_STARTED, location: CardLocation[]): EventSubscription<TurnStartedEventArgs>
+	protected createCallback(event: GameEventType.TURN_ENDED, location: CardLocation[]): EventSubscription<TurnEndedEventArgs>
+	protected createCallback(event: GameEventType.ROUND_STARTED, location: CardLocation[]): EventSubscription<RoundStartedEventArgs>
+	protected createCallback(event: GameEventType.ROUND_ENDED, location: CardLocation[]): EventSubscription<RoundEndedEventArgs>
+	protected createCallback(event: GameEventType.UNIT_MOVED, location: CardLocation[]): EventSubscription<UnitMovedEventArgs>
+	protected createCallback(event: GameEventType.CARD_TAKES_DAMAGE, location: CardLocation[]): EventSubscription<CardTakesDamageEventArgs>
+	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_CARD, location: CardLocation[]): EventSubscription<CardTargetSelectedCardEventArgs>
+	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_UNIT, location: CardLocation[]): EventSubscription<CardTargetSelectedUnitEventArgs>
+	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_ROW, location: CardLocation[]): EventSubscription<CardTargetSelectedRowEventArgs>
+	protected createCallback(event: GameEventType.UNIT_ORDERED_CARD, location: CardLocation[]): EventSubscription<UnitOrderedCardEventArgs>
+	protected createCallback(event: GameEventType.UNIT_ORDERED_ROW, location: CardLocation[]): EventSubscription<UnitOrderedRowEventArgs>
+	protected createCallback(event: GameEventType.UNIT_CREATED, location: CardLocation[]): EventSubscription<UnitCreatedEventArgs>
+	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[]): EventSubscription<CardDestroyedEventArgs>
+	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[]): EventSubscription<UnitDestroyedEventArgs>
+	protected createCallback(event: GameEventType.CARD_PLAYED, location: CardLocation[]): EventSubscription<CardPlayedEventArgs>
+	protected createCallback(event: GameEventType.BUFF_CREATED, location: CardLocation[]): EventSubscription<BuffCreatedEventArgs>
+	protected createCallback(event: GameEventType.BUFF_REMOVED, location: CardLocation[]): EventSubscription<BuffRemovedEventArgs>
+	protected createCallback<ArgsType>(event: GameEventType, location: CardLocation[]): EventSubscription<ArgsType> {
 		return this.game.events.createCallback<ArgsType>(this, event)
 			.require(() => location.includes(this.location))
 	}
@@ -541,16 +542,16 @@ export default class ServerCard implements Card {
 	 * `createEffect` is equivalent to `createCallback`, but it will only trigger when
 	 * the `effectSource` is set to the subscriber.
 	 */
-	protected createEffect(event: GameEventType.CARD_DRAWN): EventCallback<CardDrawnEventArgs>
-	protected createEffect(event: GameEventType.UNIT_DEPLOYED): EventCallback<UnitDeployedEventArgs>
-	protected createEffect(event: GameEventType.SPELL_DEPLOYED): EventCallback<SpellDeployedEventArgs>
-	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_CARD): EventCallback<CardTargetSelectedCardEventArgs>
-	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_UNIT): EventCallback<CardTargetSelectedUnitEventArgs>
-	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_ROW): EventCallback<CardTargetSelectedRowEventArgs>
-	protected createEffect(event: GameEventType.CARD_TARGETS_CONFIRMED): EventCallback<CardTargetsConfirmedEventArgs>
-	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventCallback<UnitOrderedCardEventArgs>
-	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventCallback<UnitOrderedRowEventArgs>
-	protected createEffect<ArgsType>(event: GameEventType): EventCallback<ArgsType> {
+	protected createEffect(event: GameEventType.CARD_DRAWN): EventSubscription<CardDrawnEventArgs>
+	protected createEffect(event: GameEventType.UNIT_DEPLOYED): EventSubscription<UnitDeployedEventArgs>
+	protected createEffect(event: GameEventType.SPELL_DEPLOYED): EventSubscription<SpellDeployedEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_CARD): EventSubscription<CardTargetSelectedCardEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_UNIT): EventSubscription<CardTargetSelectedUnitEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_ROW): EventSubscription<CardTargetSelectedRowEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGETS_CONFIRMED): EventSubscription<CardTargetsConfirmedEventArgs>
+	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventSubscription<UnitOrderedCardEventArgs>
+	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
+	protected createEffect<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events.createCallback<ArgsType>(this, event)
 			.require((args, rawEvent) => !!rawEvent.effectSource && rawEvent.effectSource === this)
 	}

@@ -226,7 +226,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public onTurnStart(): void {
 		this.game.events.postEvent(GameEventCreators.turnStarted({
 			player: this
-		}), { allowThreading: false })
+		}))
 	}
 
 	public endTurn(): void {
@@ -251,7 +251,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 		this.game.events.postEvent(GameEventCreators.turnEnded({
 			player: this
-		}), { allowThreading: false })
+		}))
 	}
 
 	public endRound(): void {

@@ -14,7 +14,8 @@
 				"start": "(cd server && yarn start)",
 				"docker:start": "docker-compose up --force-recreate",
 				"docker:clear": "docker container kill $(docker ps -q)",
-				"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)"
+				"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)",
+				"test": "(cd server && yarn test)"
 		},
 		"dependencies": {
 				"@babel/cli": "^7.6.4",

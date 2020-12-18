@@ -14,6 +14,18 @@ export default class ServerGameAnimation {
 		OutgoingAnimationMessages.triggerAnimation(this.game, animation)
 	}
 
+	public thread(callback: () => void): void {
+		this.createAnimationThread()
+		callback()
+		this.commitAnimationThread()
+	}
+
+	public instantThread(callback: () => void): void {
+		this.createInstantAnimationThread()
+		callback()
+		this.commitAnimationThread()
+	}
+
 	public createAnimationThread(): void {
 		OutgoingAnimationMessages.createAnimationThread(this.game)
 	}
