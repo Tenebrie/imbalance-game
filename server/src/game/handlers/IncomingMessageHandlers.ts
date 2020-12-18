@@ -15,6 +15,13 @@ import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
 
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
+const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void => {
+	game.events.evaluateSelectors()
+	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
+	OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
+	game.events.flushLogEventGroup()
+}
+
 const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: IncomingMessageHandlerFunction } = {
 	[GenericActionMessageType.CARD_PLAY]: (data: CardPlayedMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		const card = playerInGame.cardHand.findCardById(data.id)
@@ -32,11 +39,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		const ownedCard = new ServerOwnedCard(card, playerInGame)
 		game.cardPlay.playCard(ownedCard, data.rowIndex, data.unitIndex)
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
-		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
-
-		game.events.evaluateSelectors()
-		game.events.flushLogEventGroup()
+		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -48,11 +51,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 
 		game.board.orders.performUnitOrder(ServerCardTarget.fromMessage(game, data))
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
-		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
-
-		game.events.evaluateSelectors()
-		game.events.flushLogEventGroup()
+		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -68,11 +67,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			game.cardPlay.selectPlayerMulliganTarget(playerInGame, target)
 		}
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
-		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
-
-		game.events.evaluateSelectors()
-		game.events.flushLogEventGroup()
+		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -84,8 +79,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
-			game.events.evaluateSelectors()
-			game.events.flushLogEventGroup()
+			onPlayerActionEnd(game, player)
 		}
 
 		OutgoingMessageHandlers.executeMessageQueue(game)

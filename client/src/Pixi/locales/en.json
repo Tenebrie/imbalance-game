@@ -161,6 +161,9 @@
 	"card.feature.keywordBuffImmunity.description": "Target card is immune to damage and any effects.",
 	"card.feature.keywordBuffTemporaryCard.name": "Temporary card (Buff)",
 	"card.feature.keywordBuffTemporaryCard.description": "Target card can be played for free. It will be discarded at the end of the turn if not played.",
+	"card.feature.building.name": "Building",
+	"card.feature.building.description": "Stays on the board after the round end.",
+	"card.feature.building.text": "*Building*",
 	"card.feature.heroPower.name": "Leader Power",
 	"card.feature.heroPower.description": "When played as spell or destroyed as unit, this card returns to your deck. It is also always revealed.",
 	"card.feature.heroPower.text": "*Leader Power*",
@@ -669,5 +672,11 @@
 	"card.unitChallengeScarredExplorer.description": "Choose one of {cardsToExplore} random Epic cards.\n*Create* a copy of it.",
 
 	"card.unitChallengeEagerExplorer.name": "Eager Explorer",
-	"card.unitChallengeEagerExplorer.description": "Choose one of {cardsToExplore} random Common cards.\n*Create* a copy of it."
+	"card.unitChallengeEagerExplorer.description": "Choose one of {cardsToExplore} random Common cards.\n*Create* a copy of it.",
+
+	"card.unitArcheryTower.name": "Archery Tower",
+	"card.unitArcheryTower.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only attack once per adjacent Human.",
+
+	"card.unitWoodenPalisade.name": "Wooden Palisade",
+	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn a *Wooden Palisade* on either side.<p>Whenever an allied unit behind this takes damage, *Intercept* it."
 }

@@ -92,7 +92,10 @@ export default class ServerBoard implements Board {
 		return Utils.flat(this.rows.map(row => row.cards))
 	}
 
-	public isUnitAdjacent(first: ServerUnit, second: ServerUnit): boolean {
+	public isUnitAdjacent(first: ServerUnit | null, second: ServerUnit | null): boolean {
+		if (!first || !second) {
+			return false
+		}
 		return this.getHorizontalUnitDistance(first, second) <= 1 && first.rowIndex === second.rowIndex && first !== second
 	}
 

@@ -1,7 +1,7 @@
 import ServerCard from './ServerCard'
 import CardDeck from '@shared/models/CardDeck'
 import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
-import UnitForestScout from '../cards/00-human/common/UnitForestScout'
+import UnitForestScout from '../cards/02-wild/common/UnitForestScout'
 import ServerGame from './ServerGame'
 import HeroZamarath from '../cards/00-human/legendary/HeroZamarath'
 import HeroSparklingSpirit from '../cards/01-arcane/epic/HeroSparklingSpirit'
