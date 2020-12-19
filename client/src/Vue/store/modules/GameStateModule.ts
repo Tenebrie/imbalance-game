@@ -20,6 +20,8 @@ const gameStateModule = createModule({
 		cardsMulliganed: 0 as number,
 		maxCardMulligans: 0 as number,
 		popupTargetingMode: null as TargetMode | null,
+		popupTargetingCardCount: 0 as number,
+		popupTargetingCardsVisible: true as boolean
 	},
 
 	mutations: {
@@ -61,6 +63,14 @@ const gameStateModule = createModule({
 
 		setPopupTargetingMode(state, mode: TargetMode | null): void {
 			state.popupTargetingMode = mode
+		},
+
+		setPopupTargetingCardCount(state, count: number): void {
+			state.popupTargetingCardCount = count
+		},
+
+		setPopupTargetingCardsVisible(state, mode: boolean): void {
+			state.popupTargetingCardsVisible = mode
 		}
 	},
 

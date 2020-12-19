@@ -22,6 +22,7 @@ import RichTextAlign from '@/Pixi/render/RichTextAlign'
 import {announcedCardRenderer} from '@/Pixi/renderer/AnnouncedCardRenderer'
 import {playQueueRenderer} from '@/Pixi/renderer/PlayQueueRenderer'
 import {isCardPlayable, isGrabbedCardPlayableToRow} from '@/Pixi/input/ValidActions'
+import store from '@/Vue/store'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -716,7 +717,7 @@ export default class Renderer {
 			windowFraction = this.SELECTABLE_CARD_DECK_WINDOW_FRACTION
 		}
 
-		if (selectableCards.length > 0) {
+		if (selectableCards.length > 0 && store.state.gameStateModule.popupTargetingCardsVisible) {
 			this.selectableCardsSmokescreen.visible = true
 			this.selectableCardsSmokescreen.width = this.getScreenWidth()
 			this.selectableCardsSmokescreen.height = this.getScreenHeight()
@@ -728,7 +729,6 @@ export default class Renderer {
 		for (let level = 0; level < chunks.length; level++) {
 			for (let i = 0; i < chunks[level].length; i++) {
 				const card = chunks[level][i]
-				this.updateCardStats(card)
 				this.renderSelectableCard(card, i, chunks[level].length, level, chunks.length, selectableCards.length, windowFraction)
 			}
 		}
@@ -756,7 +756,7 @@ export default class Renderer {
 		const cardWidth = containerWidth / handSize
 		const distanceToCenter = handPosition - ((handSize - 1) / 2)
 
-		container.visible = true
+		container.visible = Core.input.forcedTargetingMode ? store.state.gameStateModule.popupTargetingCardsVisible : true
 
 		const targetPosition = {
 			x: distanceToCenter * cardWidth + screenCenter,

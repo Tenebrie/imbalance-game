@@ -60,12 +60,25 @@ export default class Input {
 		view.addEventListener('mousedown', (event: MouseEvent) => {
 			this.onMouseDown(event)
 		})
+		view.addEventListener('touchstart', (event: TouchEvent) => {
+			this.onTouchStart(event)
+		})
 
 		view.addEventListener('mouseup', (event: MouseEvent) => {
 			this.onMouseUp(event)
 		})
+		view.addEventListener('touchend', (event: MouseEvent) => {
+			this.onMouseUp(event)
+		})
 
 		view.addEventListener('mousemove', (event: MouseEvent) => {
+			this.onMouseMove(event)
+			this.updateCardHoverStatus()
+			if (this.rightMouseDown && this.inspectCardMode === InspectCardMode.HOLD) {
+				this.inspectCard()
+			}
+		})
+		view.addEventListener('touchmove', (event: MouseEvent) => {
 			this.onMouseMove(event)
 			this.updateCardHoverStatus()
 			if (this.rightMouseDown && this.inspectCardMode === InspectCardMode.HOLD) {
@@ -92,7 +105,7 @@ export default class Input {
 	public updateCardHoverStatus(): void {
 		let hoveredCard: HoveredCard | null = null
 		const selectableCards = this.forcedTargetingCards.slice().reverse()
-		if (selectableCards.length > 0) {
+		if (selectableCards.length > 0 && store.state.gameStateModule.popupTargetingCardsVisible) {
 			const hoveredSelectableCard = selectableCards.find(card => card.isHovered()) || null
 			if (hoveredSelectableCard) {
 				hoveredCard = HoveredCard.fromSelectableCard(hoveredSelectableCard)
@@ -181,7 +194,7 @@ export default class Input {
 			return
 		}
 
-		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON) {
+		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON && store.state.gameStateModule.popupTargetingCardsVisible) {
 			this.forcedTargetingMode.selectTarget()
 			return
 		}
@@ -193,6 +206,45 @@ export default class Input {
 			this.rightMouseDown = true
 			this.inspectCardMode = InspectCardMode.HOLD
 		}
+	}
+
+	private onTouchStart(event: TouchEvent) {
+		const view = Core.renderer.pixi.view
+		const clientRect = view.getBoundingClientRect()
+		this.mousePosition = new PIXI.Point(event.touches[0].clientX - clientRect.left, event.touches[0].clientY - clientRect.top)
+		this.mousePosition.x *= window.devicePixelRatio * Core.renderer.superSamplingLevel
+		this.mousePosition.y *= window.devicePixelRatio * Core.renderer.superSamplingLevel
+
+		if (this.inspectedCard) {
+			store.dispatch.inspectedCard.undoCard()
+			return
+		}
+
+		if (this.grabbedCard) {
+			this.useGrabbedCard()
+			return
+		}
+
+		if (this.hoveredCard && this.hoveredCard.card === Core.mainHandler.announcedCard) {
+			Core.mainHandler.skipCardAnnounce()
+			return
+		}
+
+		if (Core.isSpectating) {
+			return
+		}
+
+		if (this.forcedTargetingMode && this.forcedTargetingMode.targetMode === TargetMode.BROWSE) {
+			return
+		}
+
+		if (this.forcedTargetingMode && store.state.gameStateModule.popupTargetingCardsVisible) {
+			this.forcedTargetingMode.selectTarget()
+			return
+		}
+
+		this.leftMouseDown = true
+		this.grabCard()
 	}
 
 	private onMouseUp(event: MouseEvent) {
@@ -218,17 +270,9 @@ export default class Input {
 		this.mousePosition = new PIXI.Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
 		this.mousePosition.x *= window.devicePixelRatio * Core.renderer.superSamplingLevel
 		this.mousePosition.y *= window.devicePixelRatio * Core.renderer.superSamplingLevel
-
-		// const windowHeight = Core.renderer.pixi.view.height
-		// const heightLimit = windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION
-		// if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCardId === this.grabbedCard.card.id)) {
-		// 	this.releaseCard()
-		// }
 	}
 
 	public grabCard(): void {
-		// if (!Core.player.isTurnActive) { return }
-
 		const hoveredCard = this.hoveredCard
 		if (!hoveredCard || hoveredCard.owner !== Core.player) { return }
 
@@ -382,6 +426,8 @@ export default class Input {
 				target.targetCardId = target.targetCardData.id
 			})
 		store.commit.gameStateModule.setPopupTargetingMode(targetMode)
+		store.commit.gameStateModule.setPopupTargetingCardCount(this.forcedTargetingCards.length)
+		store.commit.gameStateModule.setPopupTargetingCardsVisible(true)
 	}
 
 	public async createForcedTargetingCards(targets: CardTargetMessage[]): Promise<void> {
@@ -421,5 +467,6 @@ export default class Input {
 		this.forcedTargetingCards.forEach(card => Core.destroyCard(card))
 		this.forcedTargetingCards = []
 		store.commit.gameStateModule.setPopupTargetingMode(null)
+		store.commit.gameStateModule.setPopupTargetingCardCount(0)
 	}
 }

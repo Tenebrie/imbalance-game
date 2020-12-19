@@ -12,11 +12,8 @@ import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
 import PopupModule from '@/Vue/store/modules/PopupModule'
 import GameLogModule from '@/Vue/store/modules/GameLogModule'
 import InspectedCardModule from '@/Vue/store/modules/InspectedCardModule'
-import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import LocalStorage from '@/utils/LocalStorage'
 import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
-import ClientGame from '@/Pixi/models/ClientGame'
-import Game from '@shared/models/Game'
 import GameMessage from '@shared/models/network/GameMessage'
 
 Vue.use(Vuex)
