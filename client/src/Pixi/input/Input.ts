@@ -11,7 +11,7 @@ import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import TargetType from '@shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
-import Utils from '@/utils/Utils'
+import Utils, {isMobile} from '@/utils/Utils'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import store from '@/Vue/store'
@@ -21,6 +21,7 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import {isGrabbedCardPlayableToRow} from '@/Pixi/input/ValidActions'
 import CardLocation from '@shared/enums/CardLocation'
 import {HoveredCardLocation} from '@/Pixi/enums/HoveredCardLocation'
+import Notifications from '@/utils/Notifications'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -67,8 +68,8 @@ export default class Input {
 		view.addEventListener('mouseup', (event: MouseEvent) => {
 			this.onMouseUp(event)
 		})
-		view.addEventListener('touchend', (event: MouseEvent) => {
-			this.onMouseUp(event)
+		view.addEventListener('touchend', (event: TouchEvent) => {
+			this.onTouchEnd(event)
 		})
 
 		view.addEventListener('mousemove', (event: MouseEvent) => {
@@ -78,12 +79,8 @@ export default class Input {
 				this.inspectCard()
 			}
 		})
-		view.addEventListener('touchmove', (event: MouseEvent) => {
-			this.onMouseMove(event)
-			this.updateCardHoverStatus()
-			if (this.rightMouseDown && this.inspectCardMode === InspectCardMode.HOLD) {
-				this.inspectCard()
-			}
+		view.addEventListener('touchmove', (event: TouchEvent) => {
+			this.onTouchMove(event)
 		})
 	}
 
@@ -209,11 +206,8 @@ export default class Input {
 	}
 
 	private onTouchStart(event: TouchEvent) {
-		const view = Core.renderer.pixi.view
-		const clientRect = view.getBoundingClientRect()
-		this.mousePosition = new PIXI.Point(event.touches[0].clientX - clientRect.left, event.touches[0].clientY - clientRect.top)
-		this.mousePosition.x *= window.devicePixelRatio * Core.renderer.superSamplingLevel
-		this.mousePosition.y *= window.devicePixelRatio * Core.renderer.superSamplingLevel
+		// Notifications.info(`${}`)
+		this.onTouchMove(event)
 
 		if (this.inspectedCard) {
 			store.dispatch.inspectedCard.undoCard()
@@ -247,6 +241,12 @@ export default class Input {
 		this.grabCard()
 	}
 
+	private onTouchMove(event: TouchEvent) {
+		const view = Core.renderer.pixi.view
+		const clientRect = view.getBoundingClientRect()
+		this.mousePosition = new PIXI.Point(event.touches[0].clientX - clientRect.left, event.touches[0].clientY - clientRect.top)
+	}
+
 	private onMouseUp(event: MouseEvent) {
 		if (this.forcedTargetingMode && this.forcedTargetingMode.isSelectedTargetValid() && event.button === LEFT_MOUSE_BUTTON) {
 			this.forcedTargetingMode.confirmTarget()
@@ -261,6 +261,18 @@ export default class Input {
 		} else if (event.button === RIGHT_MOUSE_BUTTON && this.rightMouseDown) {
 			this.rightMouseDown = false
 			this.inspectCard()
+		}
+	}
+
+	private onTouchEnd(event: TouchEvent) {
+		if (this.forcedTargetingMode && this.forcedTargetingMode.isSelectedTargetValid()) {
+			this.forcedTargetingMode.confirmTarget()
+			return
+		}
+
+		this.leftMouseDown = false
+		if (this.grabbedCard && !this.grabbedCard.shouldStick()) {
+			this.useGrabbedCard()
 		}
 	}
 

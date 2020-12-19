@@ -13,7 +13,7 @@ import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
-import Utils from '@/utils/Utils'
+import Utils, {isMobile} from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import {inspectedCardRenderer} from './InspectedCardRenderer'
 import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
@@ -70,9 +70,16 @@ export default class Renderer {
 
 	constructor(container: HTMLElement) {
 		this.superSamplingLevel = getRenderScale().superSamplingLevel
+		let width = window.innerWidth * window.devicePixelRatio * this.superSamplingLevel
+		let height = window.innerHeight * window.devicePixelRatio * this.superSamplingLevel
+		if (isMobile()) {
+			width = window.innerWidth
+			height = window.innerHeight
+		}
+
 		this.pixi = new PIXI.Application({
-			width: window.innerWidth * window.devicePixelRatio * this.superSamplingLevel,
-			height: window.innerHeight * window.devicePixelRatio * this.superSamplingLevel,
+			width,
+			height,
 			antialias: false,
 			autoDensity: true,
 			transparent: true,
@@ -226,11 +233,11 @@ export default class Renderer {
 
 		this.renderTextLabels()
 		this.renderGameBoard(Core.board)
-		this.renderTargetingArrow()
 		this.renderSelectableCards()
 		playQueueRenderer.tick()
 		inspectedCardRenderer.tick()
 		announcedCardRenderer.tick()
+		this.renderTargetingArrow()
 	}
 
 	private renderCard(card: RenderedCard, cardArray: RenderedCard[], isOpponent: boolean, isSpellHand: boolean): void {

@@ -15,7 +15,7 @@
 		</div>
 		<div class="confirm-targets-button-container" v-if="isConfirmTargetsButtonVisible">
 			<div :class="confirmTargetsButtonContainerClass">
-				<button @click="onConfirmTargets" class="primary game-button button" v-if="mulliganMode">Confirm</button>
+				<button @click="onConfirmTargets" class="primary game-button button">Confirm</button>
 				<button @click="onSortCards" class="secondary game-button button" v-if="mulliganMode">Sort cards</button>
 				<button @click="onToggleVisibility" class="secondary game-button button">
 					<span class="show-hide-button" v-if="!cardsVisible">Show</span>

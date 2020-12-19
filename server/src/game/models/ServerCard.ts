@@ -434,14 +434,15 @@ export default class ServerCard implements Card {
 			return
 		}
 
-		this.game.events.postEvent(GameEventCreators.cardDestroyed({
-			triggeringCard: this,
-		}))
-
 		const owner = this.owner
 		if (!owner) {
 			return
 		}
+
+		this.game.events.postEvent(GameEventCreators.cardDestroyed({
+			triggeringCard: this,
+			formerOwner: owner
+		}))
 
 		const location = this.location
 		if (location === CardLocation.HAND) {

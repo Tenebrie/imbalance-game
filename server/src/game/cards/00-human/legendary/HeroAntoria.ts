@@ -35,8 +35,8 @@ export default class HeroAntoria extends ServerCard {
 
 		this.createCallback(GameEventType.CARD_DESTROYED, [CardLocation.HAND])
 			.require(({ triggeringCard }) => triggeringCard === this)
-			.perform(() => {
-				this.ownerInGame.drawUnitCards(1)
+			.perform(({ formerOwner }) => {
+				formerOwner.drawUnitCards(1)
 			})
 	}
 }

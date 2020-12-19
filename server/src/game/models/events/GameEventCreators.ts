@@ -261,6 +261,7 @@ export interface CardTakesDamageEventArgs {
 }
 export interface CardDestroyedEventArgs {
 	triggeringCard: ServerCard
+	formerOwner: ServerPlayerInGame
 }
 
 export interface CardTargetSelectedCardEventArgs {
