@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid'
+import {v4 as uuidv4} from 'uuid'
 import Game from '@shared/models/Game'
 import ServerBoard from './ServerBoard'
 import ServerPlayer from '../players/ServerPlayer'
@@ -26,6 +26,7 @@ import {PlayerTargetCardSelectedEventArgs} from './events/GameEventCreators'
 import ServerGameTimers from './ServerGameTimers'
 import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
+import CardFeature from '@shared/enums/CardFeature'
 
 interface ServerGameProps extends OptionalGameProps {
 	gameMode: GameMode
@@ -294,7 +295,7 @@ export default class ServerGame implements Game {
 			return
 		}
 
-		this.board.getAllUnits().forEach(unit => {
+		this.board.getAllUnits().filter(unit => !unit.card.features.includes(CardFeature.BUILDING)).forEach(unit => {
 			this.board.destroyUnit(unit)
 		})
 

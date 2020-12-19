@@ -75,6 +75,11 @@ export default class RenderedCardHand implements CardHand {
 		this.spellCards = this.spellCards.filter(spellCard => spellCard !== card)
 	}
 
+	public removeCardById(cardId: string): void {
+		this.unitCards = this.unitCards.filter(unitCard => unitCard.id !== cardId)
+		this.spellCards = this.spellCards.filter(spellCard => spellCard.id !== cardId)
+	}
+
 	public destroyCard(card: RenderedCard): void {
 		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
 		this.spellCards = this.spellCards.filter(spellCard => spellCard !== card)

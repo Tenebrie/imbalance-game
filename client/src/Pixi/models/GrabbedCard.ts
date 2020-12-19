@@ -29,11 +29,8 @@ export default class GrabbedCard {
 		return distance <= 15 && (performance.now() - this.grabTimestamp) <= 150
 	}
 
-	public isLongClicked(): boolean {
-		const mousePosition = Core.input.mousePosition
-		const grabPosition = this.grabPosition
-		const distance = Math.sqrt(Math.pow(mousePosition.x - grabPosition.x, 2) + Math.pow(mousePosition.y - grabPosition.y, 2))
-		return distance <= 50 && performance.now() - this.grabTimestamp >= 1000
+	public updateValidTargetRows(rows: RenderedGameBoardRow[]): void {
+		this.validTargetRows = rows
 	}
 
 	public static cardPlay(card: RenderedCard, validTargetRows: RenderedGameBoardRow[]): GrabbedCard {

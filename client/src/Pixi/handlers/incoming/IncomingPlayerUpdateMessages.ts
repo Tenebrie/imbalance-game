@@ -7,11 +7,9 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
 import {PlayerUpdateMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
-import CardType from '@shared/enums/CardType'
 import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMessage'
 import {IncomingMessageHandlerFunction} from '@/Pixi/handlers/IncomingMessageHandlers'
 import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
-import CardFeature from '@shared/enums/CardFeature'
 
 const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: IncomingMessageHandlerFunction } = {
 	[PlayerUpdateMessageType.LEADER_SELF]: (data: CardMessage) => {
@@ -68,10 +66,12 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 
 	[PlayerUpdateMessageType.CARD_DESTROY_IN_HAND]: (data: OwnedCardRefMessage) => {
 		const player = Core.getPlayer(data.ownerId)
-		player.cardHand.destroyCardById(data.cardId)
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.id === data.cardId) {
 			Core.mainHandler.clearAnnouncedCard()
+			player.cardHand.removeCardById(data.cardId)
+		} else {
+			player.cardHand.destroyCardById(data.cardId)
 		}
 	},
 
@@ -87,6 +87,7 @@ const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: Incom
 
 	[PlayerUpdateMessageType.PLAY_TARGETS]: (data: CardTargetMessage[]) => {
 		Core.input.playableCards = data
+		Core.input.updateGrabbedCard()
 	},
 
 	[PlayerUpdateMessageType.CARD_REVEALED]: (data: CardMessage) => {

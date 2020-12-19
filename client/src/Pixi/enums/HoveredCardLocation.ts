@@ -1,4 +1,4 @@
-export enum CardLocation {
+export enum HoveredCardLocation {
 	HAND,
 	DECK,
 	BOARD,

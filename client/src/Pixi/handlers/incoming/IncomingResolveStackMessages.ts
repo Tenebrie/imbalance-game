@@ -21,7 +21,7 @@ const IncomingResolveStackMessages: {[ index in ResolveStackMessageType ]: Incom
 	},
 
 	[ResolveStackMessageType.REMOVE]: (data: CardRefMessage) => {
-		Core.resolveStack.destroyCardById(data.id)
+		Core.resolveStack.discardCardById(data.id)
 		if (Core.resolveStack.isEmpty()) {
 			Core.input.disableForcedTargetingMode()
 		}

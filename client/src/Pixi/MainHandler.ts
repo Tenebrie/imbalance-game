@@ -132,7 +132,10 @@ class AnimationThread {
 
 export default class MainHandler {
 	projectileSystem: ProjectileSystem = new ProjectileSystem()
+
 	announcedCard: RenderedCard | null = null
+	previousAnnouncedCard: RenderedCard | null = null
+	destroyPreviousAnnouncedCardTimer: number | null = null
 
 	mainAnimationThread: AnimationThread = new AnimationThread(null)
 	currentOpenAnimationThread: AnimationThread = this.mainAnimationThread
@@ -184,16 +187,33 @@ export default class MainHandler {
 		this.currentOpenAnimationThread = this.currentOpenAnimationThread.parentThread
 	}
 
-	public skipAnimation(): void {
+	public skipCardAnnounce(): void {
 		this.currentOpenAnimationThread.skipCooldown()
+		this.clearAnnouncedCard()
+		this.destroyPreviousAnnouncedCard()
 	}
 
 	public announceCard(card: RenderedCard): void {
 		this.announcedCard = card
+		this.destroyPreviousAnnouncedCard()
 	}
 
 	public clearAnnouncedCard(): void {
+		this.previousAnnouncedCard = this.announcedCard
 		this.announcedCard = null
+
+		this.destroyPreviousAnnouncedCardTimer = window.setTimeout(() => {
+			this.destroyPreviousAnnouncedCard()
+		}, 2000)
+	}
+
+	public destroyPreviousAnnouncedCard(): void {
+		if (this.previousAnnouncedCard) {
+			Core.destroyCard(this.previousAnnouncedCard)
+			window.clearTimeout(this.destroyPreviousAnnouncedCardTimer)
+			this.previousAnnouncedCard = null
+			this.destroyPreviousAnnouncedCardTimer = null
+		}
 	}
 
 	public static start(): MainHandler {

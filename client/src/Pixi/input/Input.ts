@@ -4,7 +4,6 @@ import CardType from '@shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import {CardLocation} from '@/Pixi/enums/CardLocation'
 import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
@@ -19,6 +18,9 @@ import store from '@/Vue/store'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import TargetMode from '@shared/enums/TargetMode'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import {isGrabbedCardPlayableToRow} from '@/Pixi/input/ValidActions'
+import CardLocation from '@shared/enums/CardLocation'
+import {HoveredCardLocation} from '@/Pixi/enums/HoveredCardLocation'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -74,6 +76,17 @@ export default class Input {
 
 	public tick(): void {
 		this.updateCardHoverStatus()
+	}
+
+	public updateGrabbedCard(): void {
+		if (!this.grabbedCard || this.grabbedCard.card.location !== CardLocation.HAND || this.grabbedCard.card.owner !== Core.player) {
+			return
+		}
+
+		const validRows = this.playableCards
+			.filter(playableCard => playableCard.sourceCardId === this.grabbedCard.card.id)
+			.map(playableCard => Core.board.getRow(playableCard.targetRowIndex))
+		this.grabbedCard.updateValidTargetRows(validRows)
 	}
 
 	public updateCardHoverStatus(): void {
@@ -156,7 +169,7 @@ export default class Input {
 		}
 
 		if (event.button === LEFT_MOUSE_BUTTON && this.hoveredCard && this.hoveredCard.card === Core.mainHandler.announcedCard) {
-			Core.mainHandler.skipAnimation()
+			Core.mainHandler.skipCardAnnounce()
 			return
 		}
 
@@ -206,30 +219,30 @@ export default class Input {
 		this.mousePosition.x *= window.devicePixelRatio * Core.renderer.superSamplingLevel
 		this.mousePosition.y *= window.devicePixelRatio * Core.renderer.superSamplingLevel
 
-		const windowHeight = Core.renderer.pixi.view.height
-		const heightLimit = windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5
-		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCardId === this.grabbedCard.card.id)) {
-			this.releaseCard()
-		}
+		// const windowHeight = Core.renderer.pixi.view.height
+		// const heightLimit = windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION
+		// if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCardId === this.grabbedCard.card.id)) {
+		// 	this.releaseCard()
+		// }
 	}
 
 	public grabCard(): void {
-		if (!Core.player.isTurnActive) { return }
+		// if (!Core.player.isTurnActive) { return }
 
 		const hoveredCard = this.hoveredCard
 		if (!hoveredCard || hoveredCard.owner !== Core.player) { return }
 
 		const card = hoveredCard.card
 
-		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
+		if (hoveredCard.location === HoveredCardLocation.HAND && hoveredCard.owner === Core.player) {
 			const validRows = this.playableCards.filter(playableCard => playableCard.sourceCardId === card.id).map(playableCard => Core.board.getRow(playableCard.targetRowIndex))
 			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
-		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY && Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0) {
+		} else if (hoveredCard.location === HoveredCardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY && Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0) {
 			const validOrders = Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id))
 			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetCardId).map(id => Core.game.findRenderedCardById(id))
 			const validRows = validOrders.filter(order => order.targetType === TargetType.BOARD_ROW).map(order => Core.board.getRow(order.targetRowIndex))
 			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)
-		} else if (hoveredCard.location === CardLocation.SELECTABLE) {
+		} else if (hoveredCard.location === HoveredCardLocation.SELECTABLE) {
 			this.grabbedCard = GrabbedCard.cardSelect(card)
 		}
 	}
@@ -256,7 +269,7 @@ export default class Input {
 			return
 		}
 
-		if (this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY) {
+		if (this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && isGrabbedCardPlayableToRow(MouseHover.getHoveredRow())) {
 			this.onCardPlay(this.grabbedCard.card)
 		} else if (this.grabbedCard.mode === GrabbedCardMode.CARD_ORDER) {
 			this.onUnitOrder(this.grabbedCard.card)

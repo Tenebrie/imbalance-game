@@ -6,8 +6,6 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import RichText from '@/Pixi/render/RichText'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
 
-export const INSPECTED_CARD_WINDOW_FRACTION = 0.40
-
 class InspectedCardRenderer {
 	public container: PIXI.Container
 

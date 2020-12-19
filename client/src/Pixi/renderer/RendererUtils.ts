@@ -5,6 +5,9 @@ import RenderQuality from '@shared/enums/RenderQuality'
 export const CARD_WIDTH = 408
 export const CARD_HEIGHT = 584
 export const CARD_ASPECT_RATIO = CARD_WIDTH / CARD_HEIGHT
+
+export const RESOLVING_CARD_ZINDEX = 10
+export const ANNOUNCED_CARD_ZINDEX = 450
 export const INSPECTED_CARD_ZINDEX = 1000
 
 export const getScreenWidth = (): number => {

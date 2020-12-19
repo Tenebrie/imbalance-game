@@ -19,16 +19,16 @@ import {inspectedCardRenderer} from './InspectedCardRenderer'
 import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
 import {throttle} from 'throttle-debounce'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
-import {PI_2} from 'pixi.js'
+import {announcedCardRenderer} from '@/Pixi/renderer/AnnouncedCardRenderer'
+import {playQueueRenderer} from '@/Pixi/renderer/PlayQueueRenderer'
+import {isCardPlayable, isGrabbedCardPlayableToRow} from '@/Pixi/input/ValidActions'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
-const RESOLVING_CARD_ZINDEX = 10
 const HAND_CARD_ZINDEX = 11
 const HAND_EFFECT_ZINDEX = 100
 const HOVERED_CARD_ZINDEX = 105
 const GRABBED_CARD_ZINDEX = 400
-const ANNOUNCED_CARD_ZINDEX = 450
 const SELECTABLE_CARD_ZINDEX = 500
 const TARGETING_ARROW_ZINDEX = 550
 
@@ -225,11 +225,11 @@ export default class Renderer {
 
 		this.renderTextLabels()
 		this.renderGameBoard(Core.board)
-		this.renderAnnouncedCard()
-		this.renderResolveStack()
 		this.renderTargetingArrow()
 		this.renderSelectableCards()
+		playQueueRenderer.tick()
 		inspectedCardRenderer.tick()
+		announcedCardRenderer.tick()
 	}
 
 	private renderCard(card: RenderedCard, cardArray: RenderedCard[], isOpponent: boolean, isSpellHand: boolean): void {
@@ -337,13 +337,10 @@ export default class Renderer {
 			targetPosition.x -= this.getScreenWidth() * 0.2 / 2 + 125
 		}
 
-		const isPlayable = Core.player.isTurnActive &&
-			!Core.input.forcedTargetingMode &&
-			!!Core.input.playableCards.find(target => renderedCard && target.sourceCardId === renderedCard.id)
 		const isForcedTarget = Core.input.forcedTargetingMode &&
 			!!Core.input.forcedTargetingMode.validTargets.find(forcedCard => forcedCard.targetCardId === renderedCard.id)
 
-		renderedCard.cardDisabledOverlay.visible = !isPlayable && !isForcedTarget
+		renderedCard.cardDisabledOverlay.visible = !isCardPlayable(renderedCard) && !isForcedTarget
 
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
@@ -501,7 +498,7 @@ export default class Renderer {
 	}
 
 	private getBoardRowTint(row: RenderedGameBoardRow): BoardRowTint {
-		if ((Core.input.grabbedCard && Core.input.grabbedCard.validTargetRows.includes(row)) || (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isRowPotentialTarget(row))) {
+		if (isGrabbedCardPlayableToRow(row) || (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isRowPotentialTarget(row))) {
 			return row.isHovered() ? BoardRowTint.VALID_TARGET_HOVERED : BoardRowTint.VALID_TARGET
 		}
 
@@ -698,92 +695,6 @@ export default class Renderer {
 		} else {
 			label.text = ''
 		}
-	}
-
-	public renderAnnouncedCard(): void {
-		const announcedCard = Core.mainHandler.announcedCard
-		if (!announcedCard) {
-			return
-		}
-
-		this.updateCardStats(announcedCard)
-		const container = announcedCard.coreContainer
-		const sprite = announcedCard.sprite
-		const disabledOverlaySprite = announcedCard.cardDisabledOverlay
-
-		sprite.alpha = 1
-		sprite.tint = 0xFFFFFF
-		sprite.scale.set(this.superSamplingLevel)
-		container.visible = true
-		container.zIndex = ANNOUNCED_CARD_ZINDEX
-
-		const cardHeight = this.getScreenHeight() * this.ANNOUNCED_CARD_WINDOW_FRACTION
-		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
-		sprite.height = cardHeight
-
-		if (announcedCard.displayMode !== CardDisplayMode.ANNOUNCED) {
-			container.position.x = -sprite.width / 2 - 3000 * this.superSamplingLevel
-			container.position.y = this.getScreenHeight() / 2
-			announcedCard.setDisplayMode(CardDisplayMode.ANNOUNCED)
-		} else {
-			const targetX = sprite.width / 2 + 50 * this.superSamplingLevel
-
-			container.position.x += (targetX - container.position.x) * this.deltaTimeFraction * 7
-			container.position.y = this.getScreenHeight() / 2
-		}
-
-		const hitboxSprite = announcedCard.hitboxSprite
-		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
-		hitboxSprite.scale = sprite.scale
-		hitboxSprite.zIndex = container.zIndex - 1
-
-		disabledOverlaySprite.visible = false
-	}
-
-	public renderResolveStack(): void {
-		const invertedStack = Core.resolveStack.cards.slice().reverse()
-		for (let i = 0; i < invertedStack.length; i++) {
-			const ownedCard = invertedStack[i]
-			this.updateCardStats(ownedCard.card)
-			this.renderResolveStackCard(ownedCard.card, i)
-		}
-	}
-
-	public renderResolveStackCard(card: RenderedCard, index: number): void {
-		const container = card.coreContainer
-		const sprite = card.sprite
-		sprite.alpha = 1
-		sprite.tint = 0xFFFFFF
-		sprite.scale.set(this.superSamplingLevel)
-		container.visible = true
-		container.zIndex = RESOLVING_CARD_ZINDEX + index
-
-		const cardHeight = this.getScreenHeight() * this.PLAYER_HAND_WINDOW_FRACTION
-		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
-		sprite.height = cardHeight
-
-		const horizontalOffset = 50 * this.superSamplingLevel * index
-
-		let verticalOffset = this.getScreenHeight() * 0.20
-		if (Core.opponent.isTurnActive) {
-			verticalOffset *= -1
-		}
-
-		if (card.displayMode !== CardDisplayMode.RESOLVING) {
-			container.position.x = -sprite.width / 2 + horizontalOffset
-			container.position.y = this.getScreenHeight() / 2 + verticalOffset
-			card.setDisplayMode(CardDisplayMode.RESOLVING)
-		} else {
-			const targetX = sprite.width / 2 + 50 * this.superSamplingLevel + horizontalOffset
-
-			container.position.x += (targetX - container.position.x) * this.deltaTimeFraction * 7
-			container.position.y = this.getScreenHeight() / 2 + verticalOffset
-		}
-
-		const hitboxSprite = card.hitboxSprite
-		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
-		hitboxSprite.scale = sprite.scale
-		hitboxSprite.zIndex = container.zIndex - 1
 	}
 
 	public renderSelectableCards(): void {

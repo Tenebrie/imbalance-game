@@ -18,8 +18,8 @@ export default class UnitWoodenPalisade extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.BUILDING],
 			stats: {
-				power: 3,
-				armor: 8
+				power: 0,
+				armor: 5
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
