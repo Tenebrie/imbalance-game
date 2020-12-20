@@ -221,6 +221,7 @@ export default class ServerBoard implements Board {
 		}
 
 		const fromRow = this.rows[unit.rowIndex]
+		const fromIndex = unit.unitIndex
 		const targetRow = this.rows[rowIndex]
 
 		if (fromRow.owner !== targetRow.owner || targetRow.cards.length >= Constants.MAX_CARDS_PER_ROW) {
@@ -235,6 +236,9 @@ export default class ServerBoard implements Board {
 		this.game.events.postEvent(GameEventCreators.unitMoved({
 			triggeringUnit: unit,
 			fromRow: fromRow,
+			fromIndex: fromIndex,
+			toRow: this.rows[unit.rowIndex],
+			toIndex: unit.unitIndex,
 			distance: this.getRowDistance(fromRow, targetRow),
 			direction: this.getMoveDirection(unit.owner, fromRow, targetRow),
 		}))

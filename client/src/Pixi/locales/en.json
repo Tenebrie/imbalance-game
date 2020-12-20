@@ -155,8 +155,6 @@
 	"card.feature.keywordBuffStun.description": "Target card is stunned and is temporarily disabled.",
 	"card.feature.keywordBuffGrowth.name": "Growth (Buff)",
 	"card.feature.keywordBuffGrowth.description": "Target card gets +1 Power at the start of its turn.",
-	"card.feature.keywordBuffStrength.name": "Strength (Buff)",
-	"card.feature.keywordBuffStrength.description": "Target card has 1 extra Power.",
 	"card.feature.keywordBuffImmunity.name": "Immunity (Buff)",
 	"card.feature.keywordBuffImmunity.description": "Target card is immune to damage and any effects.",
 	"card.feature.keywordBuffTemporaryCard.name": "Temporary card (Buff)",
@@ -192,7 +190,7 @@
 	"card.tribe.bird": "Bird",
 	"card.tribe.loot": "Loot",
 	"card.tribe.beast": "Beast",
-	"card.tribe.human": "Human",
+	"card.tribe.noble": "Noble",
 	"card.tribe.storm": "Storm",
 	"card.tribe.spark": "Spark",
 	"card.tribe.undead": "Undead",
@@ -200,6 +198,7 @@
 	"card.tribe.dragon": "Dragon",
 	"card.tribe.crystal": "Crystal",
 	"card.tribe.cultist": "Cultist",
+	"card.tribe.peasant": "Peasant",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.merfolk": "Merfolk",
 	"card.tribe.building": "Building",
@@ -233,8 +232,11 @@
 	"buff.buffSpellExtraCost.name": "Spell markup",
 	"buff.buffSpellExtraCost.description": "This spell costs 1 Mana more.",
 
-	"buff.buffStrength.name": "Strength",
+	"buff.buffStrength.name": "Power",
 	"buff.buffStrength.description": "This card has 1 extra Power.",
+
+	"buff.buffExtraArmor.name": "Armor",
+	"buff.buffExtraArmor.description": "This card has 1 extra Armor.",
 
 	"buff.buffStun.name": "Stun",
 	"buff.buffStun.description": "This card is stunned and is temporarily disabled.",
@@ -401,7 +403,7 @@
 	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current Power is at least double their base Power, give +{extraStrengthGiven} Power more.",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
-	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Human card from your deck",
+	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Peasant card from your deck",
 
 	"card.unitForestScout.name": "Forest Scout",
 	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power\nIf you're losing on Morale, gain +{moralePowerBonus} Power",
@@ -676,8 +678,11 @@
 	"card.unitChallengeEagerExplorer.description": "Choose one of {cardsToExplore} random Common cards.\n*Create* a copy of it.",
 
 	"card.unitArcheryTower.name": "Archery Tower",
-	"card.unitArcheryTower.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only attack once per adjacent Human.",
+	"card.unitArcheryTower.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only attack once per adjacent Peasant.",
 
 	"card.unitWoodenPalisade.name": "Wooden Palisade",
-	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn a *Wooden Palisade* on either side.<p>Whenever an allied unit behind this takes damage, *Intercept* it."
+	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn a *Wooden Palisade* on either side.<p>Whenever an allied unit behind this takes damage, *Intercept* it.",
+
+	"card.unitGenerousBlacksmith.name": "Generous Blacksmith",
+	"card.unitGenerousBlacksmith.description": "Whenever a unit moves into adjacent position from another row, give it +{bonusArmor} Armor."
 }

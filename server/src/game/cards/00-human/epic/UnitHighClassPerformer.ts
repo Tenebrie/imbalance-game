@@ -21,7 +21,7 @@ export default class UnitHighClassPerformer extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.HUMAN],
+			tribes: [CardTribe.NOBLE],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 5,

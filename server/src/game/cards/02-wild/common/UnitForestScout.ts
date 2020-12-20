@@ -19,7 +19,7 @@ export default class UnitForestScout extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.WILD,
-			tribes: [CardTribe.HUMAN],
+			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 4,

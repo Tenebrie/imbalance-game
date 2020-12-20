@@ -21,7 +21,7 @@ export default class UnitMerchantsAssistant extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
-			tribes: [CardTribe.HUMAN],
+			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 5,

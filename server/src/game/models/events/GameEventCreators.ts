@@ -304,6 +304,9 @@ export interface UnitCreatedEventArgs {
 export interface UnitMovedEventArgs {
 	triggeringUnit: ServerUnit
 	fromRow: ServerBoardRow
+	fromIndex: number
+	toRow: ServerBoardRow
+	toIndex: number
 	distance: number
 	direction: MoveDirection
 }

@@ -20,7 +20,7 @@ export default class UnitTravelingEnchantress extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.NEUTRAL,
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STRENGTH],
+			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 4,
 			},

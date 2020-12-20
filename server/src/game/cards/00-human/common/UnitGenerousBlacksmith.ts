@@ -11,9 +11,11 @@ import CardFeature from '@shared/enums/CardFeature'
 import Utils from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import CardLocation from '@shared/enums/CardLocation'
+import BuffExtraArmor from '../../../buffs/BuffExtraArmor'
 
-export default class UnitMasterSwordsmith extends ServerCard {
-	bonusPower = asMassBuffPotency(1)
+export default class UnitGenerousBlacksmith extends ServerCard {
+	bonusArmor = asMassBuffPotency(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -23,25 +25,21 @@ export default class UnitMasterSwordsmith extends ServerCard {
 			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 2,
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			bonusPower: this.bonusPower
+			bonusArmor: this.bonusArmor
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
-	}
-
-	private onDeploy(): void {
-		const owner = this.ownerInGame
-		const targets = Utils.sortCards(owner.cardHand.unitCards)
-		targets.forEach(card => {
-			this.game.animation.createAnimationThread()
-			card.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
-			this.game.animation.commitAnimationThread()
-		})
+		this.createCallback(GameEventType.UNIT_MOVED, [CardLocation.BOARD])
+			.require(({ triggeringUnit }) => triggeringUnit.card !== this)
+			.require(({ fromRow, toRow }) => fromRow !== toRow)
+			.require(({ toRow, toIndex }) => toRow.index === this.unit!.rowIndex && Math.abs(toIndex - this.unit!.unitIndex) === 1)
+			.requireImmediate(({ triggeringUnit }) => triggeringUnit.isAlive())
+			.perform(({ triggeringUnit }) => {
+				triggeringUnit.buffs.addMultiple(BuffExtraArmor, this.bonusArmor, this)
+			})
 	}
 }

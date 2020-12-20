@@ -16,7 +16,7 @@ export default class UnitElderHoundmaster extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.HUMAN],
+			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitTrainedHound],
 			stats: {
