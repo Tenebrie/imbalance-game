@@ -332,7 +332,7 @@
 
 	"card.heroTaekana.name": "Taekana",
 	"card.heroTaekana.title": "The Zookeeper",
-	"card.heroTaekana.description": "*Deploy:*\nGive +{strengthGiven} Power to ALL units.",
+	"card.heroTaekana.description": "*Deploy:*\nGive +{strengthGiven} Power to all units that do not have any buffs.",
 
 	"card.heroNoekana.name": "Noekana",
 	"card.heroNoekana.title": "The Zookeeper",

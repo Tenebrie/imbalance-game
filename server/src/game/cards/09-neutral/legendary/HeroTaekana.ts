@@ -32,7 +32,9 @@ export default class HeroTaekana extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		const units = this.game.board.getAllUnits()
+		const units = this.game.board
+			.getAllUnits()
+			.filter(unit => unit.buffs.buffs.length === 0)
 		units.forEach(unit => {
 			this.game.animation.createAnimationThread()
 			unit.buffs.addMultiple(BuffStrength, this.strengthGiven, this)
