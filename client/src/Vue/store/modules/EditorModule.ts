@@ -26,8 +26,6 @@ const editorModule = createModule({
 		cardLibrary: [] as CardMessage[],
 		renderQueue: [] as string[],
 		renderedCards: [] as RenderedEditorCard[],
-		selectedFactionFilter: null as CardFaction | null,
-		selectedColorFilter: null as CardColor | null,
 		searchQuery: '' as string
 	},
 
@@ -64,14 +62,6 @@ const editorModule = createModule({
 		updateEditorDeck(state, newDeck: PopulatedEditorDeck): void {
 			const oldDeck = state.decks.find(deck => deck.id === newDeck.id)
 			state.decks[state.decks.indexOf(oldDeck)] = newDeck
-		},
-
-		setSelectedFactionFilter(state, faction: CardFaction | null): void {
-			state.selectedFactionFilter = faction
-		},
-
-		setSelectedColorFilter(state, color: CardColor | null): void {
-			state.selectedColorFilter = color
 		},
 
 		setSearchQuery(state, query: string): void {

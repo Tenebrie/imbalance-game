@@ -6,6 +6,7 @@ import StandardTargetDefinitionBuilder from './StandardTargetDefinitionBuilder'
 import CardType from '@shared/enums/CardType'
 import SimpleTargetDefinitionBuilder from './SimpleTargetDefinitionBuilder'
 import ServerCard from '../ServerCard'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class TargetDefinition {
 	private readonly game: ServerGame
@@ -68,7 +69,9 @@ export default class TargetDefinition {
 			.target(TargetType.BOARD_ROW)
 			.require(TargetType.BOARD_ROW, ({ targetRow }) => !targetRow.isFull())
 			.require(TargetType.BOARD_ROW, (args) => {
-				return args.sourceCard.type === CardType.SPELL || args.targetRow.owner === args.sourceCard.owner
+				return args.sourceCard.type === CardType.SPELL ||
+					(!args.sourceCard.features.includes(CardFeature.SPY) && args.targetRow.owner === args.sourceCard.owner) ||
+					(args.sourceCard.features.includes(CardFeature.SPY) && args.targetRow.owner !== args.sourceCard.owner)
 			})
 	}
 }

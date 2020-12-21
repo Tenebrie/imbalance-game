@@ -162,6 +162,9 @@
 	"card.feature.building.name": "Building",
 	"card.feature.building.description": "Stays on the board after the round end.",
 	"card.feature.building.text": "*Building*",
+	"card.feature.spy.name": "Spy",
+	"card.feature.spy.description": "Played on your opponent's side of the board.",
+	"card.feature.spy.text": "*Spy*",
 	"card.feature.heroPower.name": "Leader Power",
 	"card.feature.heroPower.description": "When played as spell or destroyed as unit, this card returns to your deck. It is also always revealed.",
 	"card.feature.heroPower.text": "*Leader Power*",
@@ -684,5 +687,8 @@
 	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn a *Wooden Palisade* on either side.<p>Whenever an allied unit behind this takes damage, *Intercept* it.",
 
 	"card.unitGenerousBlacksmith.name": "Generous Blacksmith",
-	"card.unitGenerousBlacksmith.description": "Whenever a unit moves into adjacent position from another row, give it +{bonusArmor} Armor."
+	"card.unitGenerousBlacksmith.description": "Whenever a unit moves into adjacent position from another row, give it +{bonusArmor} Armor.",
+
+	"card.unitQuietInfiltrator.name": "Quiet Infiltrator",
+	"card.unitQuietInfiltrator.description": "*Deploy:*\nDeal {damage} Damage to adjacent units."
 }

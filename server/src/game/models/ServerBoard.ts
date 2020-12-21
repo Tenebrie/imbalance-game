@@ -16,7 +16,6 @@ import GameHookType, {UnitDestroyedHookArgs, UnitDestroyedHookValues} from './ev
 import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
-import ServerPlayer from '../players/ServerPlayer'
 
 export default class ServerBoard implements Board {
 	readonly game: ServerGame
@@ -208,6 +207,9 @@ export default class ServerBoard implements Board {
 
 	public createUnit(card: ServerCard, owner: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit | null {
 		const targetRow = this.rows[rowIndex]
+		if (card.features.includes(CardFeature.SPY)) {
+			owner = owner.opponentInGame
+		}
 		return targetRow.createUnit(card, owner, unitIndex)
 	}
 
