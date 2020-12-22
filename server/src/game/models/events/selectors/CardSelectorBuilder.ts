@@ -8,6 +8,7 @@ export class CardSelectorBuilder {
 	private readonly __selfConditions: (() => boolean)[]
 	private readonly __targetConditions: ((args: CardSelectorArgs) => boolean)[]
 	private readonly __provideBuffs: CardSelectorProvideBuff[]
+	private readonly __provideSelfBuffs: CardSelectorProvideBuff[]
 	private readonly __onSelectCallbacks: ((args: CardSelectorArgs) => void)[]
 	private readonly __onReleaseCallbacks: ((args: CardSelectorArgs) => void)[]
 	private __ignoreControlEffects = false
@@ -17,6 +18,7 @@ export class CardSelectorBuilder {
 		this.__selfConditions = []
 		this.__targetConditions = []
 		this.__provideBuffs = []
+		this.__provideSelfBuffs = []
 		this.__onSelectCallbacks = []
 		this.__onReleaseCallbacks = []
 	}
@@ -27,6 +29,7 @@ export class CardSelectorBuilder {
 			this.__selfConditions,
 			this.__targetConditions,
 			this.__provideBuffs,
+			this.__provideSelfBuffs,
 			this.__onSelectCallbacks,
 			this.__onReleaseCallbacks,
 			this.__ignoreControlEffects
@@ -60,11 +63,21 @@ export class CardSelectorBuilder {
 
 	/* Provide the selected target with a buff
 	 * ---------------------------------------
-	 * While the selector is true, the card will have the specified buff.
+	 * While the selector is true, the target card will have the specified buff.
 	 * The buff will also be non-dispellable.
 	 */
 	public provide(buff: BuffConstructor, count = 1): CardSelectorBuilder {
 		this.__provideBuffs.push({ buff, count })
+		return this
+	}
+
+	/* Provide self with a buff
+	 * ---------------------------------------
+	 * While the selector is true, this card will have the specified buff.
+	 * The buff will also be non-dispellable.
+	 */
+	public provideSelf(buff: BuffConstructor, count = 1): CardSelectorBuilder {
+		this.__provideSelfBuffs.push({ buff, count })
 		return this
 	}
 

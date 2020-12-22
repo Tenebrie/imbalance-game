@@ -320,6 +320,15 @@ export default class ServerCard implements Card {
 		return CardLocation.UNKNOWN
 	}
 
+	public get isVisuallyRendered(): boolean {
+		return (
+			this.location === CardLocation.BOARD ||
+			this.location === CardLocation.HAND ||
+			this.location === CardLocation.LEADER ||
+			this.location === CardLocation.STACK
+		)
+	}
+
 	public get relatedCards(): string[] {
 		const customRelatedCards = Utils.sortCards(
 			this.customRelatedCards

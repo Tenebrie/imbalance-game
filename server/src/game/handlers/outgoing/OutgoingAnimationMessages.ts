@@ -40,7 +40,7 @@ export default {
 	createAnimationThreadForPlayer(player: ServerPlayer, isStaggered: boolean): void {
 		player.sendMessage({
 			type: AnimationMessageType.THREAD_CREATE,
-			data: undefined,
+			data: new AnimationThreadStartMessage(isStaggered),
 			highPriority: true,
 		})
 		player.sendMessage({

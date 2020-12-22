@@ -18,8 +18,11 @@ class AnimationThread {
 
 	protected __isStarted = false
 
-	constructor(parentThread: AnimationThread | null) {
+	public readonly isStaggered: boolean
+
+	constructor(parentThread: AnimationThread | null, isStaggered: boolean) {
 		this.__parentThread = parentThread
+		this.isStaggered = isStaggered
 	}
 
 	public start(): void {
@@ -68,8 +71,8 @@ class AnimationThread {
 		}
 	}
 
-	public createAnimationThread(): AnimationThread {
-		const newThread = new AnimationThread(this)
+	public createAnimationThread(isStaggered: boolean): AnimationThread {
+		const newThread = new AnimationThread(this, isStaggered)
 		this.__workerThreads.push(newThread)
 		return newThread
 	}
@@ -143,7 +146,7 @@ export default class MainHandler {
 	previousAnnouncedCard: RenderedCard | null = null
 	destroyPreviousAnnouncedCardTimer: number | null = null
 
-	mainAnimationThread: AnimationThread = new AnimationThread(null)
+	mainAnimationThread: AnimationThread = new AnimationThread(null, false)
 	currentOpenAnimationThread: AnimationThread = this.mainAnimationThread
 
 	coreTicker: PIXI.Ticker
@@ -185,8 +188,8 @@ export default class MainHandler {
 		targetThread.triggerCooldown(time)
 	}
 
-	public createAnimationThread(): void {
-		this.currentOpenAnimationThread = this.currentOpenAnimationThread.createAnimationThread()
+	public createAnimationThread(isStaggered: boolean): void {
+		this.currentOpenAnimationThread = this.currentOpenAnimationThread.createAnimationThread(isStaggered)
 	}
 
 	public commitAnimationThread(): void {

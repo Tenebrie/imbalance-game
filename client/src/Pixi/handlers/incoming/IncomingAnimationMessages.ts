@@ -5,21 +5,19 @@ import { QueuedMessageSystemData } from '@/Pixi/models/QueuedMessage'
 import AnimationHandlers from '@/Pixi/handlers/AnimationHandlers'
 import Core from '@/Pixi/Core'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
+import AnimationDuration from '@shared/enums/AnimationDuration'
 
 const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMessageHandlerFunction } = {
 	[AnimationMessageType.PLAY]: (data: AnimationMessage, systemData: QueuedMessageSystemData) => {
 		const handler = AnimationHandlers[data.type]
-		if (!handler) {
-			console.error(`Unknown animation type ${data.type}`)
-			return
+		const handlerResponse = handler(data, data.params)
+		if (!handlerResponse || !handlerResponse.skip) {
+			Core.mainHandler.triggerAnimation(AnimationDuration[data.type], systemData.animationThreadId)
 		}
-
-		const animationDuration = handler(data, data.params)
-		Core.mainHandler.triggerAnimation(animationDuration, systemData.animationThreadId)
 	},
 
-	[AnimationMessageType.THREAD_CREATE]: () => {
-		Core.mainHandler.createAnimationThread()
+	[AnimationMessageType.THREAD_CREATE]: (data: AnimationThreadStartMessage) => {
+		Core.mainHandler.createAnimationThread(data.isStaggered)
 	},
 
 	[AnimationMessageType.THREAD_COMMIT]: () => {
@@ -29,9 +27,11 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 	[AnimationMessageType.THREAD_START]: (data: AnimationThreadStartMessage, systemData: QueuedMessageSystemData) => {
 		const parentThread = Core.mainHandler.mainAnimationThread.findThread(systemData.animationThreadId)
 		const targetThread = parentThread.workerThreads.find((thread) => !thread.started)
-		const activeWorkerThreadCount = parentThread.workerThreads.filter((thread) => thread.started).length
+		const activeStaggeredWorkerThreadCount = parentThread.workerThreads.filter(
+			(thread) => thread.started && thread.isStaggered && thread.hasAnimationMessages()
+		).length
 		if (data.isStaggered && targetThread.hasAnimationMessages()) {
-			targetThread.triggerCooldown(activeWorkerThreadCount * 150)
+			targetThread.triggerCooldown(activeStaggeredWorkerThreadCount * 150)
 		}
 		targetThread.start()
 	},

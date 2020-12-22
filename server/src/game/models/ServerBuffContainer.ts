@@ -11,6 +11,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import BuffLeaderPower from '../buffs/BuffLeaderPower'
 import BuffUnitToSpellConversion from '../buffs/BuffUnitToSpellConversion'
 import { LeaderStatValueGetter } from '../../utils/LeaderStats'
+import { CardSelector } from './events/selectors/CardSelector'
 
 export interface BuffConstructor {
 	new (params: BuffConstructorParams): ServerBuff
@@ -29,15 +30,6 @@ export default class ServerBuffContainer implements BuffContainer {
 		return this.card.game
 	}
 
-	private instantiate(prototype: BuffConstructor, source: ServerCard | null, duration: number | 'default'): ServerBuff {
-		return new prototype({
-			card: this.card,
-			source: source,
-			selector: null,
-			duration: duration,
-		})
-	}
-
 	/*
 	 * Duration ticks down at the end of every turn:
 	 * - Duration 1 = 'until the end of this turn'
@@ -45,7 +37,12 @@ export default class ServerBuffContainer implements BuffContainer {
 	 * Default value is Infinity, i.e. buffs never expire
 	 */
 	public add(prototype: BuffConstructor, source: ServerCard | null, duration: number | 'default' = 'default'): void {
-		const newBuff = this.instantiate(prototype, source, duration)
+		const newBuff = new prototype({
+			card: this.card,
+			source,
+			duration,
+			selector: null,
+		})
 		this.addInstance(newBuff, source)
 	}
 
@@ -59,7 +56,30 @@ export default class ServerBuffContainer implements BuffContainer {
 			count = count(source)
 		}
 		for (let i = 0; i < count; i++) {
-			const newBuff = this.instantiate(prototype, source, duration)
+			const newBuff = new prototype({
+				card: this.card,
+				source,
+				duration,
+				selector: null,
+			})
+			if (!this.buffSkipsAnimation(newBuff)) {
+				this.game.animation.createAnimationThread()
+			}
+			this.addInstance(newBuff, source)
+			if (!this.buffSkipsAnimation(newBuff)) {
+				this.game.animation.commitAnimationThread()
+			}
+		}
+	}
+
+	public addForSelector(prototype: BuffConstructor, count: number, source: ServerCard | null, selector: CardSelector): void {
+		for (let i = 0; i < count; i++) {
+			const newBuff = new prototype({
+				card: this.card,
+				source,
+				selector,
+				duration: 'default',
+			})
 			if (!this.buffSkipsAnimation(newBuff)) {
 				this.game.animation.createAnimationThread()
 			}
@@ -75,7 +95,7 @@ export default class ServerBuffContainer implements BuffContainer {
 	}
 
 	private addInstance(newBuff: ServerBuff, source: ServerCard | null): void {
-		if (source && !this.buffSkipsAnimation(newBuff)) {
+		if (source && !this.buffSkipsAnimation(newBuff) && this.card.isVisuallyRendered) {
 			this.game.animation.play(ServerAnimation.cardAffectsCards(source, [this.card]))
 		}
 
@@ -90,7 +110,7 @@ export default class ServerBuffContainer implements BuffContainer {
 			})
 		)
 
-		if (this.buffSkipsAnimation(newBuff)) {
+		if (this.buffSkipsAnimation(newBuff) || !this.card.isVisuallyRendered) {
 			return
 		}
 		this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.card], newBuff.alignment))
@@ -109,6 +129,10 @@ export default class ServerBuffContainer implements BuffContainer {
 		return this.getBuffsByPrototype(prototype).length
 	}
 
+	public getIntensityForSelector(prototype: BuffConstructor, selector: CardSelector): number {
+		return this.getBuffsByPrototype(prototype).filter((buff) => buff.selector === selector).length
+	}
+
 	public removeByReference(buff: ServerBuff): void {
 		const index = this.buffs.indexOf(buff)
 		if (index === -1) {
@@ -117,20 +141,27 @@ export default class ServerBuffContainer implements BuffContainer {
 
 		this.buffs.splice(index, 1)
 		OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(this.card, buff)
+		OutgoingCardUpdateMessages.notifyAboutCardStatsChange(this.card)
 		this.game.events.unsubscribe(buff)
 	}
 
-	public remove(prototype: BuffConstructor, count = Infinity): void {
+	public removeBySelector(prototype: BuffConstructor, selector: CardSelector, count = Infinity): void {
 		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 
 		let stacksLeftToRemove = count
-		let buffsOfType = this.buffs.filter((buff) => buff.class === buffClass).reverse()
+		let buffsOfType = this.buffs
+			.filter((buff) => buff.class === buffClass)
+			.filter((buff) => buff.selector === selector)
+			.reverse()
 		while (buffsOfType.length > 0 && stacksLeftToRemove > 0) {
 			const buff = buffsOfType[0]
 			stacksLeftToRemove -= 1
 			this.removeByReference(buff)
 
-			buffsOfType = this.buffs.filter((buff) => buff.class === buffClass).reverse()
+			buffsOfType = this.buffs
+				.filter((buff) => buff.class === buffClass)
+				.filter((buff) => buff.selector === selector)
+				.reverse()
 		}
 	}
 
@@ -140,6 +171,10 @@ export default class ServerBuffContainer implements BuffContainer {
 		buffsOfType.forEach((buffToRemove) => {
 			this.removeByReference(buffToRemove)
 		})
+	}
+
+	public removeAllByCardSelector(selector: CardSelector): void {
+		this.buffs.filter((buff) => buff.selector === selector).forEach((buff) => this.removeByReference(buff))
 	}
 
 	public removeCleansable(): void {

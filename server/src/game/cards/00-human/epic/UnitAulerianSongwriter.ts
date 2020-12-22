@@ -37,7 +37,6 @@ export default class UnitAulerianSongwriter extends ServerCard {
 	private onDeploy(targetCard: ServerCard): void {
 		this.createSelector()
 			.requireTarget(({ target }) => target.class === targetCard.class)
-			.onSelected(({ target }) => target.buffs.addMultiple(BuffStrength, this.bonusPower, null))
-			.onReleased(({ target }) => target.buffs.remove(BuffStrength, this.bonusPower))
+			.provide(BuffStrength, this.bonusPower)
 	}
 }

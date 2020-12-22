@@ -31,15 +31,6 @@ export default class HeroNoekana extends ServerCard {
 		this.createSelector()
 			.require(() => this.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
-			.onSelected(({ target }) => this.onSelected(target))
-			.onReleased(({ target }) => this.onReleased(target))
-	}
-
-	private onSelected(card: ServerCard): void {
-		card.buffs.add(BuffStrength, this)
-	}
-
-	private onReleased(card: ServerCard): void {
-		card.buffs.remove(BuffStrength, 1)
+			.provide(BuffStrength)
 	}
 }

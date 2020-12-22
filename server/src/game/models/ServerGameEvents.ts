@@ -233,7 +233,7 @@ export default class ServerGameEvents {
 		allGameCards = new Array(...new Set(allGameCards))
 
 		this.cardSelectors.forEach((selector) => {
-			if (this.subscriberSuspended(selector.subscriber) || selector.markedForRemoval) {
+			if ((!selector.ignoreControlEffects && this.subscriberSuspended(selector.subscriber)) || selector.markedForRemoval) {
 				selector.clearSelection()
 			} else {
 				selector.evaluate(allGameCards)
