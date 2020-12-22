@@ -1,12 +1,12 @@
 import ServerCard from '../game/models/ServerCard'
 import AsciiColor from '../enums/AsciiColor'
 import ServerUnit from '../game/models/ServerUnit'
-import { CardConstructor } from '../game/libraries/CardLibrary'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerPlayer from '../game/players/ServerPlayer'
 import express, { Request } from 'express'
 import { sortCards } from '@shared/Utils'
+import { CardConstructor } from '../game/libraries/CardLibrary'
 
 interface TryUntilArgs {
 	try: () => void | Promise<void>

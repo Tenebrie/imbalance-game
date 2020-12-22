@@ -59,23 +59,6 @@ const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMe
 		}
 	},
 
-	[CardUpdateMessageType.BUFF_INTENSITY]: (data: BuffMessage) => {
-		const card = Core.game.findRenderedCardById(data.cardId)
-		if (!card) {
-			return
-		}
-
-		const buff = card.buffs.findBuffById(data.id)
-		if (!buff) {
-			return
-		}
-
-		buff.intensity = Number(data.intensity)
-		if (Core.player.cardHand.unitCards.includes(card)) {
-			Core.player.cardHand.sortCards()
-		}
-	},
-
 	[CardUpdateMessageType.BUFF_REMOVE]: (data: BuffRefMessage) => {
 		const card = Core.game.findRenderedCardById(data.cardId)
 		if (!card) {

@@ -60,7 +60,7 @@ import { ServerCardTargeting } from './ServerCardTargeting'
 import TargetType from '@shared/enums/TargetType'
 import { EventSubscription } from './events/EventSubscription'
 import { EventHook } from './events/EventHook'
-import { CardSelectorBuilder } from './events/CardSelector'
+import { CardSelectorBuilder } from './events/selectors/CardSelectorBuilder'
 
 interface ServerCardBaseProps {
 	faction: CardFaction

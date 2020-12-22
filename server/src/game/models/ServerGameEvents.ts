@@ -11,7 +11,8 @@ import { GameEvent } from './events/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 import { EventSubscription } from './events/EventSubscription'
 import { EventHook } from './events/EventHook'
-import { CardSelector, CardSelectorBuilder } from './events/CardSelector'
+import { CardSelector } from './events/selectors/CardSelector'
+import { CardSelectorBuilder } from './events/selectors/CardSelectorBuilder'
 
 export type EventSubscriber = ServerGame | ServerCard | ServerBuff
 
@@ -206,7 +207,7 @@ export default class ServerGameEvents {
 		const subscriber = subscription.subscriber
 		const subscriberId = subscriber instanceof ServerGame ? '' : `${subscriber.id}`
 		const subscriberClass =
-			subscriber instanceof ServerCard ? subscriber.class : subscriber instanceof ServerBuff ? subscriber.buffClass : 'System'
+			subscriber instanceof ServerCard ? subscriber.class : subscriber instanceof ServerBuff ? subscriber.class : 'System'
 
 		const gameId = colorizeId(this.game.id)
 		const eventType = colorizeClass(event.type)
@@ -217,7 +218,7 @@ export default class ServerGameEvents {
 
 	public evaluateSelectors(): void {
 		this.evaluatingSelectors = true
-		this.cardSelectors = this.cardSelectors.concat(this.cardSelectorBuilders.map((builder) => builder.build()))
+		this.cardSelectors = this.cardSelectors.concat(this.cardSelectorBuilders.map((builder) => builder._build()))
 		this.cardSelectorBuilders = []
 
 		let allGameCards: ServerCard[] = this.game.board

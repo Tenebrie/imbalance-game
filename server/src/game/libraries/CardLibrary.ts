@@ -25,6 +25,7 @@ class CardLibrary {
 	cards: ServerCard[]
 
 	constructor() {
+		// Do not load cards if running tests
 		if (process.env.JEST_WORKER_ID !== undefined) {
 			this.cards = []
 			return

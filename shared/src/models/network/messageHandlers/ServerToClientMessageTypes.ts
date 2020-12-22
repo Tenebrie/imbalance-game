@@ -75,7 +75,6 @@ export enum CardUpdateMessageType {
 	VARIABLES = 'cardUpdate_variables',
 	BUFF_ADD = 'cardUpdate_buffAdd',
 	BUFF_DURATION = 'cardUpdate_buffDuration',
-	BUFF_INTENSITY = 'cardUpdate_buffIntensity',
 	BUFF_REMOVE = 'cardUpdate_buffRemove',
 }
 

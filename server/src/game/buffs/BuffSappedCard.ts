@@ -1,16 +1,17 @@
-import ServerBuff from '../models/ServerBuff'
-import BuffStackType from '@shared/enums/BuffStackType'
-import ServerGame from '../models/ServerGame'
+import ServerBuff, { BuffConstructorParams } from '../models/ServerBuff'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardFeature from '@shared/enums/CardFeature'
 import { SpellDeployedEventArgs, UnitDeployedEventArgs } from '../models/events/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class BuffSappedCard extends ServerBuff {
-	constructor(game: ServerGame) {
-		super(game, BuffStackType.NONE)
-		this.buffFeatures = [BuffFeature.SKIP_ANIMATION]
-		this.cardFeatures = [CardFeature.LOW_SORT_PRIORITY, CardFeature.TEMPORARY_CARD]
+	constructor(params: BuffConstructorParams) {
+		super(params, {
+			alignment: BuffAlignment.NEUTRAL,
+			features: [BuffFeature.SKIP_ANIMATION],
+			cardFeatures: [CardFeature.LOW_SORT_PRIORITY, CardFeature.TEMPORARY_CARD],
+		})
 
 		this.createCallback<UnitDeployedEventArgs>(GameEventType.UNIT_DEPLOYED)
 			.require(({ triggeringUnit }) => triggeringUnit.card === this.card)

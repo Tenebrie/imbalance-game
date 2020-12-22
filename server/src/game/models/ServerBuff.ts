@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
 import Buff from '@shared/models/Buff'
-import BuffStackType from '@shared/enums/BuffStackType'
 import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
 import ServerUnit from './ServerUnit'
@@ -16,71 +15,75 @@ import GameEventCreators, { TurnEndedEventArgs, TurnStartedEventArgs } from './e
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import StandardTargetDefinitionBuilder from './targetDefinitions/StandardTargetDefinitionBuilder'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import { CardSelectorBuilder } from './events/CardSelector'
 import { EventSubscription } from './events/EventSubscription'
 import { EventHook } from './events/EventHook'
+import { CardSelectorBuilder } from './events/selectors/CardSelectorBuilder'
+import { CardSelector } from './events/selectors/CardSelector'
+
+export type ServerBuffProps = {
+	alignment: BuffAlignment
+	duration?: number
+	features?: BuffFeature[]
+	cardTribes?: CardTribe[]
+	cardFeatures?: CardFeature[]
+}
+
+export type BuffConstructorParams = {
+	card: ServerCard
+	source: ServerCard | null
+	selector: CardSelector | null
+	duration: number | 'default'
+}
 
 export default class ServerBuff implements Buff {
-	id: string
-	game: ServerGame
-	source: ServerCard | null
-	buffClass: string
-	alignment: BuffAlignment
-	stackType: BuffStackType
-	cardTribes: CardTribe[]
-	buffFeatures: BuffFeature[]
-	cardFeatures: CardFeature[]
+	public readonly id: string
+	public readonly game: ServerGame
+	public readonly card: ServerCard
+	public readonly class: string
+	public readonly source: ServerCard | null
+	public readonly selector: CardSelector | null
+	public readonly alignment: BuffAlignment
+	public readonly cardTribes: CardTribe[]
+	public readonly buffFeatures: BuffFeature[]
+	public readonly cardFeatures: CardFeature[]
 
-	name: string
-	description: string
+	public readonly name: string
+	public readonly description: string
+	public readonly baseDuration: number
 
-	duration: number
-	intensity: number
-	baseDuration: number
-	baseIntensity: number
+	private __duration: number
 
-	__card: ServerCard | null
-
-	constructor(game: ServerGame, stackType: BuffStackType) {
+	constructor(params: BuffConstructorParams, props: ServerBuffProps) {
 		this.id = uuidv4()
-		this.game = game
-		this.stackType = stackType
-		this.alignment = BuffAlignment.NEUTRAL
-		this.baseDuration = Infinity
-		this.baseIntensity = 1
-		this.cardTribes = []
-		this.buffFeatures = []
-		this.cardFeatures = []
+		this.game = params.card.game
+		this.card = params.card
+		this.class = this.constructor.name.substr(0, 1).toLowerCase() + this.constructor.name.substr(1)
+		this.source = params.source
+		this.selector = params.selector
+		this.alignment = props.alignment
+		this.cardTribes = props.cardTribes ? props.cardTribes.slice() : []
+		this.buffFeatures = props.features ? props.features.slice() : []
+		this.cardFeatures = props.cardFeatures ? props.cardFeatures.slice() : []
 
-		this.name = ''
-		this.description = ''
-		this.duration = this.baseDuration
-		this.intensity = this.baseIntensity
+		this.name = `buff.${this.class}.name`
+		this.description = `buff.${this.class}.description`
 
-		this.__card = null
-		this.source = null
-		this.buffClass = ''
+		const duration = params.duration !== 'default' ? params.duration : props.duration !== undefined ? props.duration : Infinity
+		this.__duration = this.baseDuration = duration
 
 		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
 			.require(({ player }) => player === this.card.owner)
-			.require(() => this.duration < Infinity)
+			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
 
 		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED)
 			.require(({ player }) => player === this.card.owner)
-			.require(() => this.duration < Infinity)
+			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
 	}
 
-	public get card(): ServerCard {
-		if (!this.__card) {
-			throw new Error('Buff is not assigned to a card yet')
-		}
-		return this.__card
-	}
-
-	public set card(value: ServerCard) {
-		this.__card = value
+	public get duration(): number {
+		return this.__duration
 	}
 
 	private onTurnChanged(): void {
@@ -96,45 +99,11 @@ export default class ServerBuff implements Buff {
 	}
 
 	public setDuration(value: number): void {
-		this.duration = value
+		this.__duration = value
 		OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, this)
-		if (this.duration <= 0) {
+		if (this.__duration <= 0) {
 			this.card.buffs.removeByReference(this)
 		}
-		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
-	}
-
-	public setIntensity(value: number): void {
-		value = Math.max(0, value)
-		if (value === this.intensity) {
-			return
-		}
-
-		const delta = value - this.intensity
-		this.intensity = value
-		OutgoingCardUpdateMessages.notifyAboutCardBuffIntensityChanged(this.card, this)
-		if (delta > 0) {
-			for (let i = 0; i < delta; i++) {
-				this.game.events.postEvent(
-					GameEventCreators.buffCreated({
-						triggeringBuff: this,
-					})
-				)
-			}
-		} else if (delta < 0) {
-			for (let i = 0; i < Math.abs(delta); i++) {
-				this.game.events.postEvent(
-					GameEventCreators.buffRemoved({
-						triggeringBuff: this,
-					})
-				)
-			}
-		}
-
-		if (this.intensity <= 0) {
-			this.card.buffs.removeByReference(this)
-		}
-
 		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
 	}
 

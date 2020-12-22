@@ -93,25 +93,6 @@ export default {
 		})
 	},
 
-	notifyAboutCardBuffIntensityChanged(card: ServerCard, buff: ServerBuff): void {
-		if (!card.owner || !card.owner.opponent) {
-			return
-		}
-
-		const owner = card.owner.player
-		const opponent = card.owner.opponent.player
-		const message = new OpenBuffMessage(buff)
-
-		owner.sendMessage({
-			type: CardUpdateMessageType.BUFF_INTENSITY,
-			data: message,
-		})
-		opponent.sendMessage({
-			type: CardUpdateMessageType.BUFF_INTENSITY,
-			data: message,
-		})
-	},
-
 	notifyAboutCardBuffRemoved(card: ServerCard, buff: ServerBuff): void {
 		if (!card.owner || !card.owner.opponent) {
 			return

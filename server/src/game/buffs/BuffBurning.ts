@@ -1,7 +1,5 @@
-import ServerBuff from '../models/ServerBuff'
-import BuffStackType from '@shared/enums/BuffStackType'
+import ServerBuff, { BuffConstructorParams } from '../models/ServerBuff'
 import ServerDamageInstance from '../models/ServerDamageSource'
-import ServerGame from '../models/ServerGame'
 import { TurnStartedEventArgs } from '../models/events/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
@@ -9,9 +7,10 @@ import BuffAlignment from '@shared/enums/BuffAlignment'
 export default class BuffBurning extends ServerBuff {
 	burnDamage = 1
 
-	constructor(game: ServerGame) {
-		super(game, BuffStackType.OVERLAY)
-		this.alignment = BuffAlignment.NEGATIVE
+	constructor(params: BuffConstructorParams) {
+		super(params, {
+			alignment: BuffAlignment.NEGATIVE,
+		})
 
 		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
 			.require(({ player }) => player === this.card.owner)

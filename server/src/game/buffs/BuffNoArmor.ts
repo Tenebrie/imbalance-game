@@ -1,12 +1,15 @@
-import ServerBuff from '../models/ServerBuff'
-import BuffStackType from '@shared/enums/BuffStackType'
-import ServerGame from '../models/ServerGame'
+import ServerBuff, { BuffConstructorParams } from '../models/ServerBuff'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import BuffFeature from '@shared/enums/BuffFeature'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class BuffNoArmor extends ServerBuff {
-	constructor(game: ServerGame) {
-		super(game, BuffStackType.OVERLAY)
-		this.alignment = BuffAlignment.NEGATIVE
+	constructor(params: BuffConstructorParams) {
+		super(params, {
+			alignment: BuffAlignment.NEGATIVE,
+			features: [BuffFeature.SKIP_ANIMATION],
+			cardFeatures: [CardFeature.LOW_SORT_PRIORITY, CardFeature.TEMPORARY_CARD],
+		})
 	}
 
 	getMaxArmorOverride(): number {

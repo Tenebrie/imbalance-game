@@ -56,9 +56,8 @@ export default Vue.extend({
 
 	methods: {
 		async fetchGames(): Promise<void> {
-			const allGamesRequest = axios.get('/api/games')
-			const reconnectGamesRequest = axios.get('/api/games', { params: { reconnect: '1' }})
-			const [allGamesResponse, reconnectGamesResponse] = await Promise.all([allGamesRequest, reconnectGamesRequest])
+			const allGamesResponse = await axios.get('/api/games')
+			const reconnectGamesResponse = await axios.get('/api/games', { params: { reconnect: '1' }})
 
 			const games = allGamesResponse.data.data as GameMessage[]
 			this.games = games.sort((a, b) => a.players.length - b.players.length)

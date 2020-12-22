@@ -18,7 +18,6 @@ import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
 import { colorizeId, colorizePlayer } from '../../utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
-import { BuffConstructor } from './ServerBuffContainer'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
 import GameEventType from '@shared/enums/GameEventType'
@@ -27,6 +26,7 @@ import ServerGameTimers from './ServerGameTimers'
 import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import CardFeature from '@shared/enums/CardFeature'
+import { BuffConstructor } from './ServerBuffContainer'
 
 interface ServerGameProps extends OptionalGameProps {
 	gameMode: GameMode
