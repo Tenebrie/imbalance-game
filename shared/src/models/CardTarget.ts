@@ -1,9 +1,6 @@
-import Card from './Card'
-import Unit from './Unit'
 import BoardRow from './BoardRow'
 import TargetType from '../enums/TargetType'
 import TargetMode from '../enums/TargetMode'
-import PlayerInGame from './PlayerInGame'
 import OpenCardMessage from './network/card/OpenCardMessage'
 
 export interface CardTargetUnit {
@@ -14,7 +11,13 @@ export interface CardTargetUnit {
 	targetLabel: string
 }
 
-export type CardTargetCardAllowedTypes = TargetType.CARD_IN_LIBRARY | TargetType.CARD_IN_UNIT_HAND | TargetType.CARD_IN_SPELL_HAND | TargetType.CARD_IN_UNIT_DECK | TargetType.CARD_IN_SPELL_DECK
+export type CardTargetCardAllowedTypes =
+	| TargetType.CARD_IN_LIBRARY
+	| TargetType.CARD_IN_UNIT_HAND
+	| TargetType.CARD_IN_SPELL_HAND
+	| TargetType.CARD_IN_UNIT_DECK
+	| TargetType.CARD_IN_SPELL_DECK
+
 export interface CardTargetCard {
 	targetMode: TargetMode
 	targetType: CardTargetCardAllowedTypes

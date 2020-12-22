@@ -1,4 +1,4 @@
-import {EventSubscriber} from '../ServerGameEvents'
+import { EventSubscriber } from '../ServerGameEvents'
 import ServerCard from '../ServerCard'
 import ServerGame from '../ServerGame'
 
@@ -16,13 +16,14 @@ export class CardSelector {
 
 	private selectedCards: ServerCard[] = []
 
-	constructor(subscriber: EventSubscriber,
+	constructor(
+		subscriber: EventSubscriber,
 		selfConditions: (() => boolean)[],
 		targetConditions: ((args: CardSelectorArgs) => boolean)[],
 		onSelectCallbacks: ((args: CardSelectorArgs) => void)[],
 		onReleaseCallbacks: ((args: CardSelectorArgs) => void)[],
-		ignoreControlEffects: boolean) {
-
+		ignoreControlEffects: boolean
+	) {
 		this.subscriber = subscriber
 		this.selfConditions = selfConditions
 		this.targetConditions = targetConditions
@@ -38,54 +39,38 @@ export class CardSelector {
 	public evaluate(allGameCards: ServerCard[]): void {
 		this.game.animation.syncAnimationThreads()
 
-		if (this.selfConditions.find(condition => !condition())) {
+		if (this.selfConditions.find((condition) => !condition())) {
 			this.clearSelection()
 			return
 		}
 
-		const deselectedCards = this.selectedCards.filter(card =>
-			this.targetConditions.find(condition => !condition({
-				target: card
-			}))
-		)
+		const deselectedCards = this.selectedCards.filter((card) => this.targetConditions.find((condition) => !condition({ target: card })))
 
 		const newSelectedCards = allGameCards
-			.filter(card => !this.selectedCards.includes(card))
-			.filter(card =>
-				this.targetConditions.every(condition => condition({
-					target: card
-				}))
-			)
+			.filter((card) => !this.selectedCards.includes(card))
+			.filter((card) => this.targetConditions.every((condition) => condition({ target: card })))
 
-		deselectedCards.forEach(card => {
+		deselectedCards.forEach((card) => {
 			this.game.animation.createAnimationThread()
-			this.onReleaseCallbacks.forEach(callback => callback({
-				target: card
-			}))
+			this.onReleaseCallbacks.forEach((callback) => callback({ target: card }))
 			this.game.animation.commitAnimationThread()
 		})
 
-		newSelectedCards.forEach(card => {
+		newSelectedCards.forEach((card) => {
 			this.game.animation.createAnimationThread()
-			this.onSelectCallbacks.forEach(callback => callback({
-				target: card
-			}))
+			this.onSelectCallbacks.forEach((callback) => callback({ target: card }))
 			this.game.animation.commitAnimationThread()
 		})
 
-		this.selectedCards = this.selectedCards
-			.concat(newSelectedCards)
-			.filter(card => !deselectedCards.includes(card))
+		this.selectedCards = this.selectedCards.concat(newSelectedCards).filter((card) => !deselectedCards.includes(card))
 	}
 
 	public clearSelection(): void {
 		this.game.animation.syncAnimationThreads()
 
-		this.selectedCards.forEach(card => {
+		this.selectedCards.forEach((card) => {
 			this.game.animation.createAnimationThread()
-			this.onReleaseCallbacks.forEach(callback => callback({
-				target: card
-			}))
+			this.onReleaseCallbacks.forEach((callback) => callback({ target: card }))
 			this.game.animation.commitAnimationThread()
 		})
 		this.selectedCards = []
@@ -117,7 +102,14 @@ export class CardSelectorBuilder {
 	}
 
 	public build(): CardSelector {
-		return new CardSelector(this.__subscriber, this.__selfConditions, this.__targetConditions, this.__onSelectCallbacks, this.__onReleaseCallbacks, this.__ignoreControlEffects)
+		return new CardSelector(
+			this.__subscriber,
+			this.__selfConditions,
+			this.__targetConditions,
+			this.__onSelectCallbacks,
+			this.__onReleaseCallbacks,
+			this.__ignoreControlEffects
+		)
 	}
 
 	/* Require a condition to be true for a card to be selected

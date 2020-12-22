@@ -8,7 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSplashUnitDamage} from '../../../../utils/LeaderStats'
+import { asSplashUnitDamage } from '../../../../utils/LeaderStats'
 
 export default class HeroCarienne extends ServerCard {
 	damagePerWave = asSplashUnitDamage(1)
@@ -26,12 +26,11 @@ export default class HeroCarienne extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			damagePerWave: this.damagePerWave,
-			waveCount: () => this.waveCount
+			waveCount: () => this.waveCount,
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onUnitDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onUnitDeploy())
 	}
 
 	get waveCount(): number {
@@ -47,7 +46,7 @@ export default class HeroCarienne extends ServerCard {
 		const enemies = this.game.board.getUnitsOwnedByOpponent(this)
 
 		for (let i = 0; i < this.waveCount; i++) {
-			enemies.forEach(enemy => {
+			enemies.forEach((enemy) => {
 				this.game.animation.createAnimationThread()
 				enemy.dealDamage(ServerDamageInstance.fromCard(this.damagePerWave, this))
 				this.game.animation.commitAnimationThread()

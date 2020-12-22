@@ -5,7 +5,7 @@ import Language from '@shared/enums/Language'
 
 class Localization {
 	public getValueOrNull(id: string): string | null {
-		let localizationJson: {[ index: string]: string}
+		let localizationJson: { [index: string]: string }
 		const language = store.state.userPreferencesModule.userLanguage
 		if (language === 'en') {
 			localizationJson = en
@@ -20,7 +20,7 @@ class Localization {
 	}
 
 	public getOriginalOrNull(id: string): string {
-		const localizationJson: {[ index: string]: string} = en
+		const localizationJson: { [index: string]: string } = en
 		return localizationJson[id] || null
 	}
 }

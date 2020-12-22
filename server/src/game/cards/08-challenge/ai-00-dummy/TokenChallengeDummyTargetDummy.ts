@@ -15,7 +15,7 @@ export default class TokenChallengeDummyTargetDummy extends ServerCard {
 				power: 20,
 			},
 			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true
+			hiddenFromLibrary: true,
 		})
 	}
 }

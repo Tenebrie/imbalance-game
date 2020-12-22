@@ -1,4 +1,4 @@
-import {ServerToClientMessageTypes} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 export interface QueuedMessageSystemData {
 	animationThreadId: string

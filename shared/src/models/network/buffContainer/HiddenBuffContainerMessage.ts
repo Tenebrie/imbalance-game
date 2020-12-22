@@ -8,6 +8,6 @@ export default class HiddenBuffContainerMessage implements BuffContainerMessage 
 
 	constructor(cardBuffs: BuffContainer) {
 		this.cardId = cardBuffs.card.id
-		this.buffs = cardBuffs.buffs.map(buff => new HiddenBuffMessage(buff))
+		this.buffs = cardBuffs.buffs.map((buff) => new HiddenBuffMessage(buff))
 	}
 }

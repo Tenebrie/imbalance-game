@@ -7,7 +7,7 @@ export default class OpenCardDeckMessage implements CardDeckMessage {
 	spellCards: OpenCardMessage[]
 
 	constructor(deck: CardDeck) {
-		this.unitCards = deck.unitCards.map(card => new OpenCardMessage(card))
-		this.spellCards = deck.spellCards.map(card => new OpenCardMessage(card))
+		this.unitCards = deck.unitCards.map((card) => new OpenCardMessage(card))
+		this.spellCards = deck.spellCards.map((card) => new OpenCardMessage(card))
 	}
 }

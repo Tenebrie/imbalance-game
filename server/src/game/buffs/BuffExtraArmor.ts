@@ -9,8 +9,7 @@ export default class BuffExtraArmor extends ServerBuff {
 		super(game, BuffStackType.ADD_INTENSITY)
 		this.alignment = BuffAlignment.POSITIVE
 
-		this.createEffect(GameEventType.BUFF_CREATED)
-			.perform(() => this.onCreated())
+		this.createEffect(GameEventType.BUFF_CREATED).perform(() => this.onCreated())
 	}
 
 	private onCreated(): void {

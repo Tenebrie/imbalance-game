@@ -3,29 +3,29 @@ import ServerAnimation from '../../models/ServerAnimation'
 import AnimationMessage from '@shared/models/network/AnimationMessage'
 import ServerGame from '../../models/ServerGame'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
-import {AnimationMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 export default {
 	triggerAnimation(game: ServerGame, animation: ServerAnimation): void {
-		game.players.forEach(playerInGame => {
+		game.players.forEach((playerInGame) => {
 			this.triggerAnimationForPlayer(playerInGame.player, animation)
 		})
 	},
 
 	createAnimationThread(game: ServerGame): void {
-		game.players.forEach(playerInGame => {
+		game.players.forEach((playerInGame) => {
 			this.createAnimationThreadForPlayer(playerInGame.player, true)
 		})
 	},
 
 	createInstantAnimationThread(game: ServerGame): void {
-		game.players.forEach(playerInGame => {
+		game.players.forEach((playerInGame) => {
 			this.createAnimationThreadForPlayer(playerInGame.player, false)
 		})
 	},
 
 	commitAnimationThread(game: ServerGame): void {
-		game.players.forEach(playerInGame => {
+		game.players.forEach((playerInGame) => {
 			this.commitAnimationThreadForPlayer(playerInGame.player)
 		})
 	},
@@ -33,7 +33,7 @@ export default {
 	triggerAnimationForPlayer(player: ServerPlayer, animation: ServerAnimation): void {
 		player.sendMessage({
 			type: AnimationMessageType.PLAY,
-			data: new AnimationMessage(animation)
+			data: new AnimationMessage(animation),
 		})
 	},
 
@@ -41,13 +41,13 @@ export default {
 		player.sendMessage({
 			type: AnimationMessageType.THREAD_CREATE,
 			data: undefined,
-			highPriority: true
+			highPriority: true,
 		})
 		player.sendMessage({
 			type: AnimationMessageType.THREAD_START,
 			data: new AnimationThreadStartMessage(isStaggered),
 			allowBatching: true,
-			ignoreWorkerThreads: true
+			ignoreWorkerThreads: true,
 		})
 	},
 
@@ -60,14 +60,14 @@ export default {
 	},
 
 	executeMessageQueue(game: ServerGame): void {
-		game.players.forEach(playerInGame => this.executeMessageQueueForPlayer(game, playerInGame.player))
+		game.players.forEach((playerInGame) => this.executeMessageQueueForPlayer(game, playerInGame.player))
 	},
 
 	executeMessageQueueForPlayer(game: ServerGame, player: ServerPlayer): void {
 		player.sendMessage({
 			type: AnimationMessageType.EXECUTE_QUEUE,
 			data: undefined,
-			highPriority: true
+			highPriority: true,
 		})
-	}
+	},
 }

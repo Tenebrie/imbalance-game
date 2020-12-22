@@ -19,10 +19,10 @@ export default class LeaderVelElleron extends ServerCard {
 			faction: CardFaction.ARCANE,
 			sortPriority: 0,
 			expansionSet: ExpansionSet.BASE,
-			deckAddedCards: [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellEternalServitude]
+			deckAddedCards: [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellEternalServitude],
 		})
 		this.dynamicTextVariables = {
-			manaPerRound: this.manaPerRound
+			manaPerRound: this.manaPerRound,
 		}
 	}
 }

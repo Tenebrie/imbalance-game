@@ -27,9 +27,9 @@ export default class HeroAurienne extends ServerCard {
 
 		this.createHook(GameHookType.UNIT_DESTROYED, [CardLocation.HAND])
 			.require(({ targetUnit }) => targetUnit.owner === this.owner)
-			.replace(values => ({
+			.replace((values) => ({
 				...values,
-				destructionPrevented: true
+				destructionPrevented: true,
 			}))
 			.perform(({ targetUnit }) => this.onUnitDestroyedHook(targetUnit))
 	}
@@ -37,7 +37,7 @@ export default class HeroAurienne extends ServerCard {
 	private onUnitDestroyedHook(targetUnit: ServerUnit): void {
 		const ownedCard = {
 			card: this,
-			owner: this.ownerInGame
+			owner: this.ownerInGame,
 		}
 
 		const targetRowIndex = this.game.board.rowMove(this.ownerInGame, targetUnit.rowIndex, MoveDirection.BACK, 1)

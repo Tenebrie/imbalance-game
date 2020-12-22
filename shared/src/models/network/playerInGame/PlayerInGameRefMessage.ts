@@ -1,6 +1,6 @@
 import PlayerInGame from '../../PlayerInGame'
 
-export default class PlayerInGameRefMessage  {
+export default class PlayerInGameRefMessage {
 	public readonly playerId: string
 
 	constructor(playerInGame: PlayerInGame) {

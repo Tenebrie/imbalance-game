@@ -9,6 +9,6 @@ export default class BoardRowMessage {
 	constructor(row: BoardRow) {
 		this.index = row.index
 		this.ownerId = row.owner ? row.owner.player.id : ''
-		this.cards = row.cards.map(card => new UnitMessage(card))
+		this.cards = row.cards.map((card) => new UnitMessage(card))
 	}
 }

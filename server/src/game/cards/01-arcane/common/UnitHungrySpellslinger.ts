@@ -26,31 +26,29 @@ export default class UnitHungrySpellslinger extends ServerCard {
 			tribes: [CardTribe.ELEMENTAL],
 			features: [CardFeature.KEYWORD_INFUSE_X],
 			stats: {
-				power: 5
+				power: 5,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			infuseCost: this.infuseCost,
-			spellDiscount: this.spellDiscount
+			spellDiscount: this.spellDiscount,
 		}
 		this.addRelatedCards().requireTribe(CardTribe.SCROLL)
 
 		this.createDeployEffectTargets()
 			.target(TargetType.CARD_IN_LIBRARY)
 			.require(TargetType.CARD_IN_LIBRARY, () => this.didInfuse)
-			.require(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.tribes.includes(CardTribe.SCROLL)))
+			.require(TargetType.CARD_IN_LIBRARY, (args) => args.targetCard.tribes.includes(CardTribe.SCROLL))
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.require(() => this.ownerInGame.spellMana >= this.infuseCost)
 			.perform(() => Keywords.infuse(this, this.infuseCost))
-			.perform(() => this.didInfuse = true)
+			.perform(() => (this.didInfuse = true))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 
-		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
-			.perform(() => this.onTargetsConfirmed())
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED).perform(() => this.onTargetsConfirmed())
 	}
 
 	private onTargetSelected(target: ServerCard): void {

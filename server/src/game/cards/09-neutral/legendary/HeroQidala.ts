@@ -21,17 +21,16 @@ export default class HeroQidala extends ServerCard {
 				power: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
-			isExperimental: true
+			isExperimental: true,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.LOOT)
 
 		this.createDeployEffectTargets()
 			.target(TargetType.CARD_IN_UNIT_DECK)
 			.requireCardInPlayersDeck()
-			.require(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.color === CardColor.SILVER))
+			.require(TargetType.CARD_IN_UNIT_DECK, (args) => args.targetCard.color === CardColor.SILVER)
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {

@@ -18,19 +18,18 @@ export default class SpellFlameweave extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.HERO_POWER],
 			stats: {
-				cost: 1
+				cost: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
 			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
-			currentStacks: () => this.currentStacks
+			currentStacks: () => this.currentStacks,
 		}
 
-		this.createEffect(GameEventType.SPELL_DEPLOYED)
-			.perform(() => {
-				this.ownerInGame.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
-			})
+		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => {
+			this.ownerInGame.leader.buffs.add(BuffVelRamineaWeave, this, BuffDuration.INFINITY)
+		})
 	}
 
 	get currentStacks(): number {

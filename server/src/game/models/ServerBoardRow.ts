@@ -36,9 +36,11 @@ export default class ServerBoardRow implements BoardRow {
 		/* Play deploy animation */
 		this.game.animation.play(ServerAnimation.unitDeploy(card))
 
-		this.game.events.postEvent(ServerGameEventCreators.unitCreated({
-			triggeringUnit: unit
-		}))
+		this.game.events.postEvent(
+			ServerGameEventCreators.unitCreated({
+				triggeringUnit: unit,
+			})
+		)
 
 		return unit
 	}
@@ -53,7 +55,7 @@ export default class ServerBoardRow implements BoardRow {
 	}
 
 	public removeUnitLocally(targetCard: ServerUnit): void {
-		this.cards = this.cards.filter(cardOnBoard => cardOnBoard !== targetCard)
+		this.cards = this.cards.filter((cardOnBoard) => cardOnBoard !== targetCard)
 	}
 
 	public removeUnit(unit: ServerUnit): void {
@@ -67,7 +69,7 @@ export default class ServerBoardRow implements BoardRow {
 		}
 
 		this.owner = player
-		this.game.players.forEach(playerInGame => {
+		this.game.players.forEach((playerInGame) => {
 			OutgoingMessageHandlers.notifyAboutRowOwnershipChanged(playerInGame.player, this)
 		})
 	}

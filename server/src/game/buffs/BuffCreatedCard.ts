@@ -3,7 +3,7 @@ import BuffStackType from '@shared/enums/BuffStackType'
 import ServerGame from '../models/ServerGame'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardFeature from '@shared/enums/CardFeature'
-import {SpellDeployedEventArgs, UnitDeployedEventArgs} from '../models/events/GameEventCreators'
+import { SpellDeployedEventArgs, UnitDeployedEventArgs } from '../models/events/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 
 export default class BuffCreatedCard extends ServerBuff {
@@ -25,11 +25,11 @@ export default class BuffCreatedCard extends ServerBuff {
 		this.card.buffs.removeByReference(this)
 	}
 
-	getUnitCostOverride(baseCost: number): number {
+	getUnitCostOverride(): number {
 		return 0
 	}
 
-	getSpellCostOverride(baseCost: number): number {
+	getSpellCostOverride(): number {
 		return 0
 	}
 }

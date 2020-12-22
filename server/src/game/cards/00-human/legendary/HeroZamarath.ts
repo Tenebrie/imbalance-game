@@ -18,13 +18,12 @@ export default class HeroZamarath extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_IMMUNITY],
 			stats: {
 				power: 12,
-				armor: 5
+				armor: 5,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {

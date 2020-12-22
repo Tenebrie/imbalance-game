@@ -10,7 +10,7 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import CardLibrary from '../libraries/CardLibrary'
 import ServerCard from '../models/ServerCard'
 import CardType from '@shared/enums/CardType'
-import {GenericActionMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	constructor(game: ServerGame, player: ServerPlayer) {
@@ -52,7 +52,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		}
 
 		try {
-			while ((this.canPlayUnitCard() || (this.hasHighValueSpellPlays()) && this.game.turnPhase === GameTurnPhase.DEPLOY)) {
+			while (this.canPlayUnitCard() || (this.hasHighValueSpellPlays() && this.game.turnPhase === GameTurnPhase.DEPLOY)) {
 				this.botPlaysCard(false)
 			}
 		} catch (e) {
@@ -65,18 +65,18 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const baseCards = spellsOnly ? this.cardHand.spellCards : this.cardHand.allCards
 
 		const cards = Utils.sortCards(baseCards)
-			.filter(card => card.targeting.getValidCardPlayTargets(this).length > 0)
-			.map(card => ({
+			.filter((card) => card.targeting.getValidCardPlayTargets(this).length > 0)
+			.map((card) => ({
 				card: card,
-				bestExpectedValue: this.getBestExpectedValue(card)
+				bestExpectedValue: this.getBestExpectedValue(card),
 			}))
 			.sort((a, b) => b.bestExpectedValue - a.bestExpectedValue)
 
 		const selectedCard = cards[0].card
 
 		const validRows = this.game.board.rows
-			.filter(row => row.owner === this)
-			.filter(row => !row.isFull())
+			.filter((row) => row.owner === this)
+			.filter((row) => !row.isFull())
 			.reverse()
 
 		const distanceFromFront = 0
@@ -90,8 +90,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botChoosesTarget(): void {
-		const validTargets = this.game.cardPlay.getValidTargets()
-			.sort((a, b) => b.expectedValue - a.expectedValue)
+		const validTargets = this.game.cardPlay.getValidTargets().sort((a, b) => b.expectedValue - a.expectedValue)
 		const cardTargetMessage = new CardTargetMessage(validTargets[0])
 		IncomingMessageHandlers[GenericActionMessageType.CARD_TARGET](cardTargetMessage, this.game, this)
 	}
@@ -114,24 +113,23 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private canPlayUnitCard(): boolean {
-		return this.cardHand.unitCards.filter(card => card.stats.unitCost <= this.unitMana).length > 0
+		return this.cardHand.unitCards.filter((card) => card.stats.unitCost <= this.unitMana).length > 0
 	}
 
 	private hasHighValueSpellPlays(): boolean {
-		return Utils.sortCards(this.cardHand.spellCards)
-			.filter(card => card.targeting.getValidCardPlayTargets(this).length > 0)
-			.map(card => ({
-				card: card,
-				bestExpectedValue: this.getBestExpectedValue(card)
-			}))
-			.filter(tuple => tuple.bestExpectedValue > 0)
-			.length > 0
+		return (
+			Utils.sortCards(this.cardHand.spellCards)
+				.filter((card) => card.targeting.getValidCardPlayTargets(this).length > 0)
+				.map((card) => ({
+					card: card,
+					bestExpectedValue: this.getBestExpectedValue(card),
+				}))
+				.filter((tuple) => tuple.bestExpectedValue > 0).length > 0
+		)
 	}
 
 	private hasAnySpellPlays(): boolean {
-		return Utils.sortCards(this.cardHand.spellCards)
-			.filter(card => card.targeting.getValidCardPlayTargets(this).length > 0)
-			.length > 0
+		return Utils.sortCards(this.cardHand.spellCards).filter((card) => card.targeting.getValidCardPlayTargets(this).length > 0).length > 0
 	}
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerBotPlayerInGame {

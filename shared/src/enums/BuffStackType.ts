@@ -2,7 +2,7 @@ enum BuffStackType {
 	NONE,
 	OVERLAY,
 	ADD_DURATION,
-	ADD_INTENSITY
+	ADD_INTENSITY,
 }
 
 export default BuffStackType

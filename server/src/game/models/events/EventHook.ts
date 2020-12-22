@@ -1,6 +1,6 @@
 import CardLocation from '@shared/enums/CardLocation'
 import ServerGame from '../ServerGame'
-import {EventSubscriber} from '../ServerGameEvents'
+import { EventSubscriber } from '../ServerGameEvents'
 
 export class EventHook<HookValues, HookArgs> {
 	private readonly __subscriber: EventSubscriber

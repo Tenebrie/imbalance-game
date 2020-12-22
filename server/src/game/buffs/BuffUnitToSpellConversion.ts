@@ -11,11 +11,11 @@ export default class BuffUnitToSpellConversion extends ServerBuff {
 		this.cardFeatures = [CardFeature.LOW_SORT_PRIORITY]
 	}
 
-	getUnitCostOverride(baseValue: number): number {
+	getUnitCostOverride(): number {
 		return 0
 	}
 
-	getSpellCostOverride(baseCost: number): number {
+	getSpellCostOverride(): number {
 		return this.card.stats.basePower
 	}
 }

@@ -12,13 +12,13 @@ import CardLocation from '@shared/enums/CardLocation'
 import GameHookType from './events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffFeature from '@shared/enums/BuffFeature'
-import GameEventCreators, {TurnEndedEventArgs, TurnStartedEventArgs} from './events/GameEventCreators'
+import GameEventCreators, { TurnEndedEventArgs, TurnStartedEventArgs } from './events/GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import StandardTargetDefinitionBuilder from './targetDefinitions/StandardTargetDefinitionBuilder'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import {CardSelector, CardSelectorBuilder} from './events/CardSelector'
-import {EventSubscription} from './events/EventSubscription'
-import {EventHook} from './events/EventHook'
+import { CardSelectorBuilder } from './events/CardSelector'
+import { EventSubscription } from './events/EventSubscription'
+import { EventHook } from './events/EventHook'
 
 export default class ServerBuff implements Buff {
 	id: string
@@ -115,15 +115,19 @@ export default class ServerBuff implements Buff {
 		OutgoingCardUpdateMessages.notifyAboutCardBuffIntensityChanged(this.card, this)
 		if (delta > 0) {
 			for (let i = 0; i < delta; i++) {
-				this.game.events.postEvent(GameEventCreators.buffCreated({
-					triggeringBuff: this
-				}))
+				this.game.events.postEvent(
+					GameEventCreators.buffCreated({
+						triggeringBuff: this,
+					})
+				)
 			}
 		} else if (delta < 0) {
 			for (let i = 0; i < Math.abs(delta); i++) {
-				this.game.events.postEvent(GameEventCreators.buffRemoved({
-					triggeringBuff: this
-				}))
+				this.game.events.postEvent(
+					GameEventCreators.buffRemoved({
+						triggeringBuff: this,
+					})
+				)
 			}
 		}
 
@@ -152,7 +156,8 @@ export default class ServerBuff implements Buff {
 	 * the `effectSource` is set to the subscriber.
 	 */
 	protected createEffect<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
-		return this.game.events.createCallback<ArgsType>(this, event)
+		return this.game.events
+			.createCallback<ArgsType>(this, event)
 			.require((args, rawEvent) => !!rawEvent.effectSource && rawEvent.effectSource === this)
 	}
 
@@ -174,30 +179,78 @@ export default class ServerBuff implements Buff {
 		return this.game.events.createSelector(this)
 	}
 
-	getMaxPowerOverride(baseValue: number): number { return baseValue }
-	getMaxArmorOverride(baseValue: number): number { return baseValue }
-	getUnitCostOverride(baseValue: number): number { return baseValue }
-	getSpellCostOverride(baseValue: number): number { return baseValue }
+	getMaxPowerOverride(baseValue: number): number {
+		return baseValue
+	}
+	getMaxArmorOverride(baseValue: number): number {
+		return baseValue
+	}
+	getUnitCostOverride(baseValue: number): number {
+		return baseValue
+	}
+	getSpellCostOverride(baseValue: number): number {
+		return baseValue
+	}
 
-	getSoloUnitDamageOverride(baseValue: number): number { return baseValue }
-	getMassUnitDamageOverride(baseValue: number): number { return baseValue }
-	getSoloSpellDamageOverride(baseValue: number): number { return baseValue }
-	getMassSpellDamageOverride(baseValue: number): number { return baseValue }
-	getSoloHealingPotencyOverride(baseValue: number): number { return baseValue }
-	getMassHealingPotencyOverride(baseValue: number): number { return baseValue }
-	getSoloBuffPotencyOverride(baseValue: number): number { return baseValue }
-	getMassBuffPotencyOverride(baseValue: number): number { return baseValue }
-	getSoloEffectDurationOverride(baseValue: number): number { return baseValue }
-	getMassEffectDurationOverride(baseValue: number): number { return baseValue }
-	getTargetCountOverride(baseValue: number): number { return baseValue }
-	getCriticalHitChanceOverride(baseValue: number): number { return baseValue }
-	getCriticalBuffChanceOverride(baseValue: number): number { return baseValue }
-	getCriticalHealChanceOverride(baseValue: number): number { return baseValue }
+	getSoloUnitDamageOverride(baseValue: number): number {
+		return baseValue
+	}
+	getMassUnitDamageOverride(baseValue: number): number {
+		return baseValue
+	}
+	getSoloSpellDamageOverride(baseValue: number): number {
+		return baseValue
+	}
+	getMassSpellDamageOverride(baseValue: number): number {
+		return baseValue
+	}
+	getSoloHealingPotencyOverride(baseValue: number): number {
+		return baseValue
+	}
+	getMassHealingPotencyOverride(baseValue: number): number {
+		return baseValue
+	}
+	getSoloBuffPotencyOverride(baseValue: number): number {
+		return baseValue
+	}
+	getMassBuffPotencyOverride(baseValue: number): number {
+		return baseValue
+	}
+	getSoloEffectDurationOverride(baseValue: number): number {
+		return baseValue
+	}
+	getMassEffectDurationOverride(baseValue: number): number {
+		return baseValue
+	}
+	getTargetCountOverride(baseValue: number): number {
+		return baseValue
+	}
+	getCriticalHitChanceOverride(baseValue: number): number {
+		return baseValue
+	}
+	getCriticalBuffChanceOverride(baseValue: number): number {
+		return baseValue
+	}
+	getCriticalHealChanceOverride(baseValue: number): number {
+		return baseValue
+	}
 
-	definePlayValidTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }
-	defineValidOrderTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }
-	definePostPlayRequiredTargetsMod(): StandardTargetDefinitionBuilder { return TargetDefinition.none(this.game) }
-	definePlayValidTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder { return targetDefinition }
-	defineValidOrderTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder { return targetDefinition }
-	definePostPlayRequiredTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder { return targetDefinition }
+	definePlayValidTargetsMod(): StandardTargetDefinitionBuilder {
+		return TargetDefinition.none(this.game)
+	}
+	defineValidOrderTargetsMod(): StandardTargetDefinitionBuilder {
+		return TargetDefinition.none(this.game)
+	}
+	definePostPlayRequiredTargetsMod(): StandardTargetDefinitionBuilder {
+		return TargetDefinition.none(this.game)
+	}
+	definePlayValidTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
+		return targetDefinition
+	}
+	defineValidOrderTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
+		return targetDefinition
+	}
+	definePostPlayRequiredTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
+		return targetDefinition
+	}
 }

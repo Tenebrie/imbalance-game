@@ -6,7 +6,6 @@ import ServerOwnedCard from './ServerOwnedCard'
 import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import CardType from '@shared/enums/CardType'
 
 export default class ServerHand {
 	game: ServerGame
@@ -46,18 +45,22 @@ export default class ServerHand {
 
 	public onUnitDrawn(card: ServerCard): void {
 		this.addUnit(card)
-		this.game.events.postEvent(GameEventCreators.cardDrawn({
-			owner: this.owner,
-			triggeringCard: card
-		}))
+		this.game.events.postEvent(
+			GameEventCreators.cardDrawn({
+				owner: this.owner,
+				triggeringCard: card,
+			})
+		)
 	}
 
 	public onSpellDrawn(card: ServerCard): void {
 		this.addSpell(card)
-		this.game.events.postEvent(GameEventCreators.cardDrawn({
-			owner: this.owner,
-			triggeringCard: card
-		}))
+		this.game.events.postEvent(
+			GameEventCreators.cardDrawn({
+				owner: this.owner,
+				triggeringCard: card,
+			})
+		)
 	}
 
 	public discardCard(card: ServerCard): void {
@@ -65,12 +68,12 @@ export default class ServerHand {
 	}
 
 	public findCardById(cardId: string): ServerCard | null {
-		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
+		return this.unitCards.find((card) => card.id === cardId) || this.spellCards.find((card) => card.id === cardId) || null
 	}
 
 	public removeCard(card: ServerCard): void {
-		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
-		this.spellCards = this.spellCards.filter(spellCard => spellCard !== card)
+		this.unitCards = this.unitCards.filter((unitCard) => unitCard !== card)
+		this.spellCards = this.spellCards.filter((spellCard) => spellCard !== card)
 
 		OutgoingMessageHandlers.notifyAboutCardInHandDestroyed(new ServerOwnedCard(card, this.owner))
 	}

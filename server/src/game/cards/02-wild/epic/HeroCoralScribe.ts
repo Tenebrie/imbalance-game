@@ -24,16 +24,15 @@ export default class HeroCoralScribe extends ServerCard {
 		})
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy() {
 		const owner = this.ownerInGame
-		const stormsPlayed = owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).map(card => card.class)
+		const stormsPlayed = owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).map((card) => card.class)
 		const uniqueStorms = [...new Set(stormsPlayed)]
 
-		uniqueStorms.forEach(stormClass => {
+		uniqueStorms.forEach((stormClass) => {
 			Keywords.createCard.forOwnerOf(this).fromClass(stormClass)
 		})
 	}

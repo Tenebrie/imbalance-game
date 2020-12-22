@@ -19,12 +19,12 @@ export default class HeroRagingElemental extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_ENRAGE],
 			stats: {
-				power: 9
+				power: 9,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			power: () => this.stats.power
+			power: () => this.stats.power,
 		}
 
 		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
@@ -41,8 +41,9 @@ export default class HeroRagingElemental extends ServerCard {
 		this.isEffectTriggered = true
 
 		const thisUnit = this.unit!
-		const opposingEnemies = this.game.board.getUnitsOwnedByOpponent(this.ownerInGame)
-			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
+		const opposingEnemies = this.game.board
+			.getUnitsOwnedByOpponent(this.ownerInGame)
+			.filter((unit) => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
 			.sort((a, b) => {
 				return this.game.board.getVerticalUnitDistance(a, thisUnit) - this.game.board.getVerticalUnitDistance(b, thisUnit)
 			})
@@ -52,10 +53,12 @@ export default class HeroRagingElemental extends ServerCard {
 		}
 
 		const shortestDistance = this.game.board.getVerticalUnitDistance(opposingEnemies[0], thisUnit)
-		const targets = opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, thisUnit) === shortestDistance).concat([thisUnit])
+		const targets = opposingEnemies
+			.filter((unit) => this.game.board.getVerticalUnitDistance(unit, thisUnit) === shortestDistance)
+			.concat([thisUnit])
 
 		const damage = this.stats.power
-		targets.forEach(unit => {
+		targets.forEach((unit) => {
 			unit.dealDamage(ServerDamageInstance.fromUnit(damage, thisUnit))
 		})
 	}

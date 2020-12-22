@@ -6,7 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffStrength from '../../../buffs/BuffStrength'
-import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 import CardLocation from '@shared/enums/CardLocation'
 
 export default class HeroNoekana extends ServerCard {
@@ -22,10 +22,10 @@ export default class HeroNoekana extends ServerCard {
 				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
-			isExperimental: true
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
-			strengthGiven: this.strengthGiven
+			strengthGiven: this.strengthGiven,
 		}
 
 		this.createSelector()

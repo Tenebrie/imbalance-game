@@ -8,7 +8,7 @@ import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
 
-const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number } = {
+const handlers: { [index in AnimationType]: (AnimationMessage, any) => number } = {
 	[AnimationType.NULL]: () => {
 		return 0
 	},
@@ -33,7 +33,7 @@ const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number }
 		const animationDuration = 500
 		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
 		if (sourceCard) {
-			message.targetCardIDs.forEach(targetCardId => {
+			message.targetCardIDs.forEach((targetCardId) => {
 				const targetCard = Core.game.findRenderedCardById(targetCardId)
 				if (!targetCard) {
 					console.warn(`Target card with id ${targetCardId} does not exist!`)
@@ -49,7 +49,7 @@ const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number }
 		const animationDuration = 500
 		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
 		if (sourceCard) {
-			message.targetCardIDs.forEach(targetCardId => {
+			message.targetCardIDs.forEach((targetCardId) => {
 				const targetCard = Core.game.findRenderedCardById(targetCardId)
 				if (!targetCard) {
 					console.warn(`Target card with id ${targetCardId} does not exist!`)
@@ -65,7 +65,7 @@ const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number }
 		const animationDuration = 500
 		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
 		if (sourceCard) {
-			message.targetCardIDs.forEach(targetCardId => {
+			message.targetCardIDs.forEach((targetCardId) => {
 				const targetCard = Core.game.findRenderedCardById(targetCardId)
 				if (!targetCard) {
 					console.warn(`Target card with id ${targetCardId} does not exist!`)
@@ -78,7 +78,7 @@ const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number }
 	},
 
 	[AnimationType.UNIVERSE_ATTACK]: (message: AnimationMessage) => {
-		message.targetCardIDs.forEach(targetCardId => {
+		message.targetCardIDs.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			Core.mainHandler.projectileSystem.createUniverseAttackProjectile(targetCard)
 		})
@@ -86,7 +86,7 @@ const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number }
 	},
 
 	[AnimationType.UNIVERSE_AFFECT]: (message: AnimationMessage) => {
-		message.targetCardIDs.forEach(targetCardId => {
+		message.targetCardIDs.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			Core.mainHandler.projectileSystem.createUniverseAffectProjectile(targetCard)
 		})
@@ -94,14 +94,14 @@ const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number }
 	},
 
 	[AnimationType.UNIVERSE_HEAL]: (message: AnimationMessage) => {
-		message.targetCardIDs.forEach(targetCardId => {
+		message.targetCardIDs.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			Core.mainHandler.projectileSystem.createUniverseHealProjectile(targetCard)
 		})
 		return 500
 	},
 
-	[AnimationType.POST_CARD_ATTACK]: (message: AnimationMessage) => {
+	[AnimationType.POST_CARD_ATTACK]: () => {
 		return 100
 	},
 
@@ -118,6 +118,7 @@ const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number }
 
 	[AnimationType.UNIT_DESTROY]: (message: AnimationMessage) => {
 		const targetUnit = Core.board.findUnitById(message.targetCardId)
+		// TODO: Create unit destruction animation
 
 		return 500
 	},
@@ -128,13 +129,14 @@ const handlers: {[ index in AnimationType ]: (AnimationMessage, any) => number }
 	},
 
 	[AnimationType.CARD_RECEIVED_BUFF]: (message: AnimationMessage, params: CardReceivedBuffAnimParams) => {
-		message.targetCardIDs.forEach(targetCardId => {
+		message.targetCardIDs.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			if (!targetCard) {
 				return
 			}
 			Core.particleSystem.createCardReceivedBuffParticleEffect(targetCard, params.alignment)
-			const audioEffectCategory = params.alignment === BuffAlignment.NEGATIVE ? AudioEffectCategory.BUFF_NEGATIVE : AudioEffectCategory.BUFF_POSITIVE
+			const audioEffectCategory =
+				params.alignment === BuffAlignment.NEGATIVE ? AudioEffectCategory.BUFF_NEGATIVE : AudioEffectCategory.BUFF_POSITIVE
 			AudioSystem.playEffect(audioEffectCategory)
 		})
 		return 500

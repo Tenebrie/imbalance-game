@@ -1,7 +1,7 @@
 enum MoveDirection {
 	FORWARD,
 	SIDE,
-	BACK
+	BACK,
 }
 
 export default MoveDirection

@@ -11,7 +11,7 @@ import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asDirectEffectDuration} from '../../../../utils/LeaderStats'
+import { asDirectEffectDuration } from '../../../../utils/LeaderStats'
 
 export default class SpellScrollOfBlinding extends ServerCard {
 	buffDuration = asDirectEffectDuration(3)
@@ -29,20 +29,17 @@ export default class SpellScrollOfBlinding extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			buffDuration: this.buffDuration
+			buffDuration: this.buffDuration,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireEnemyUnit()
+		this.createDeployEffectTargets().target(TargetType.UNIT).requireEnemyUnit()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(selectedTarget: ServerUnit): void {
 		const targets = [selectedTarget].concat(this.game.board.getAdjacentUnits(selectedTarget))
-		targets.forEach(target => {
+		targets.forEach((target) => {
 			target.buffs.add(BuffStun, this, this.buffDuration(this) * BuffDuration.FULL_TURN - 1)
 		})
 	}

@@ -9,7 +9,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffStrength from '../../../buffs/BuffStrength'
-import {asDirectBuffPotency} from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitTravelingEnchantress extends ServerCard {
 	baseStrengthGiven = asDirectBuffPotency(1)
@@ -28,16 +28,12 @@ export default class UnitTravelingEnchantress extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			baseStrengthGiven: this.baseStrengthGiven,
-			extraStrengthGiven: this.extraStrengthGiven
+			extraStrengthGiven: this.extraStrengthGiven,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireAlliedUnit()
-			.requireNotSelf()
+		this.createDeployEffectTargets().target(TargetType.UNIT).requireAlliedUnit().requireNotSelf()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

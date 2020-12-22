@@ -1,6 +1,6 @@
 import Core from '@/Pixi/Core'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
-import {CARD_ASPECT_RATIO, getScreenHeight, RESOLVING_CARD_ZINDEX} from '@/Pixi/renderer/RendererUtils'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import { CARD_ASPECT_RATIO, getScreenHeight, RESOLVING_CARD_ZINDEX } from '@/Pixi/renderer/RendererUtils'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
@@ -11,17 +11,17 @@ class PlayQueueRenderer {
 
 	public renderPlayQueue(): void {
 		const invertedStack = Core.resolveStack.cards.slice().reverse()
-		const playersStack = invertedStack.filter(card => card.owner === Core.player)
+		const playersStack = invertedStack.filter((card) => card.owner === Core.player)
 		for (let i = 0; i < playersStack.length; i++) {
 			const ownedCard = playersStack[i]
 			this.renderPlayQueueCard(ownedCard.card, ownedCard.owner, i)
 		}
-		const opponentsStack = invertedStack.filter(card => card.owner !== Core.player)
+		const opponentsStack = invertedStack.filter((card) => card.owner !== Core.player)
 		for (let i = 0; i < opponentsStack.length; i++) {
 			const ownedCard = opponentsStack[i]
 			this.renderPlayQueueCard(ownedCard.card, ownedCard.owner, i)
 		}
-		Core.resolveStack.discardedCards.forEach(discardedCard => {
+		Core.resolveStack.discardedCards.forEach((discardedCard) => {
 			this.renderDiscardedPlayQueueCard(discardedCard.card, discardedCard.owner, discardedCard.index)
 		})
 	}
@@ -30,7 +30,7 @@ class PlayQueueRenderer {
 		const container = card.coreContainer
 		const sprite = card.sprite
 		sprite.alpha = 1
-		sprite.tint = 0xFFFFFF
+		sprite.tint = 0xffffff
 		sprite.scale.set(Core.renderer.superSamplingLevel)
 		container.visible = true
 		container.zIndex = RESOLVING_CARD_ZINDEX + index
@@ -41,7 +41,7 @@ class PlayQueueRenderer {
 
 		const horizontalOffset = 50 * Core.renderer.superSamplingLevel * index
 
-		let verticalOffset = getScreenHeight() * 0.20
+		let verticalOffset = getScreenHeight() * 0.2
 		if (owner === Core.opponent) {
 			verticalOffset *= -1
 		}
@@ -76,15 +76,10 @@ class PlayQueueRenderer {
 		sprite.width = cardHeight * CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		let verticalOffset = getScreenHeight() * 0.20
-		if (owner === Core.opponent) {
-			verticalOffset *= -1
-		}
-
 		container.alpha -= Core.renderer.deltaTimeFraction * 5
 
 		const horizontalOffset = 50 * Core.renderer.superSamplingLevel * index
-		const targetX = sprite.width / 2 + 50 * Core.renderer.superSamplingLevel + horizontalOffset + cardHeight * CARD_ASPECT_RATIO / 4
+		const targetX = sprite.width / 2 + 50 * Core.renderer.superSamplingLevel + horizontalOffset + (cardHeight * CARD_ASPECT_RATIO) / 4
 		container.position.x += (targetX - container.position.x) * Core.renderer.deltaTimeFraction * 7
 
 		const hitboxSprite = card.hitboxSprite

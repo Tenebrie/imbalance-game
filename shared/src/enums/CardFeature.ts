@@ -21,7 +21,7 @@ enum CardFeature {
 	SUSPENDED,
 	UNTARGETABLE,
 	TEMPORARY_CARD,
-	LOW_SORT_PRIORITY
+	LOW_SORT_PRIORITY,
 }
 
 export default CardFeature

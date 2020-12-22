@@ -1,12 +1,12 @@
 import ServerCard from '../game/models/ServerCard'
 import AsciiColor from '../enums/AsciiColor'
 import ServerUnit from '../game/models/ServerUnit'
-import {CardConstructor} from '../game/libraries/CardLibrary'
+import { CardConstructor } from '../game/libraries/CardLibrary'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerPlayer from '../game/players/ServerPlayer'
-import express, {Request} from 'express'
-import {sortCards} from '@shared/Utils'
+import express, { Request } from 'express'
+import { sortCards } from '@shared/Utils'
 
 interface TryUntilArgs {
 	try: () => void | Promise<void>
@@ -34,7 +34,7 @@ export const clearCookie = (res: express.Response, name: string, value: string):
 
 export const getPlayerFromAuthenticatedRequest = (req: Request): ServerPlayer => {
 	// @ts-ignore
-	return req['player'] as unknown as ServerPlayer
+	return (req['player'] as unknown) as ServerPlayer
 }
 
 export const invalidEmailCharacters = /[^a-zA-Zа-яА-Я0-9\-_.@+]/g
@@ -65,7 +65,10 @@ export const generateShortId = (length: number): string => {
 export const isCardPublic = (card: ServerCard): boolean => {
 	const location = card.location
 	const isHeroPower = card.features.includes(CardFeature.HERO_POWER) || card.features.includes(CardFeature.HERO_ARTIFACT)
-	return (location !== CardLocation.HAND && location !== CardLocation.DECK) || (location === CardLocation.HAND && (isHeroPower || card.isRevealed))
+	return (
+		(location !== CardLocation.HAND && location !== CardLocation.DECK) ||
+		(location === CardLocation.HAND && (isHeroPower || card.isRevealed))
+	)
 }
 
 export const colorize = (text: string | number, color: AsciiColor): string => {
@@ -89,11 +92,11 @@ export const colorizeConsoleText = (text: string): string => {
 }
 
 export const mapUnitsToCards = (units: ServerUnit[]): ServerCard[] => {
-	return units.map(unit => unit.card)
+	return units.map((unit) => unit.card)
 }
 
 export const mapRelatedCards = (constructors: CardConstructor[]): string[] => {
-	return constructors.map(constructor => getClassFromConstructor(constructor))
+	return constructors.map((constructor) => getClassFromConstructor(constructor))
 }
 
 export const getClassFromConstructor = (constructor: CardConstructor): string => {
@@ -107,10 +110,11 @@ export const limitValueToInterval = (min: number, value: number, max: number): n
 export default {
 	flat(array: any[], depth = 1): any[] {
 		return array.reduce((flat, toFlatten) => {
-			return flat.concat((Array.isArray(toFlatten) && (depth > 1)) ? flat(toFlatten, depth - 1) : toFlatten)
+			return flat.concat(Array.isArray(toFlatten) && depth > 1 ? flat(toFlatten, depth - 1) : toFlatten)
 		}, [])
 	},
 
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	forEachInNumericEnum(enumeration: any, handler: (val: any) => any): void {
 		for (const value in enumeration) {
 			if (!isNaN(Number(value))) {
@@ -119,6 +123,7 @@ export default {
 		}
 	},
 
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	forEachInStringEnum(enumeration: any, handler: (val: any) => any): void {
 		for (const value in enumeration) {
 			handler(enumeration[value])

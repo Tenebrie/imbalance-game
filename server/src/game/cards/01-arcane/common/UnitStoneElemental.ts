@@ -12,7 +12,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
-import {asDirectUnitDamage} from '../../../../utils/LeaderStats'
+import { asDirectUnitDamage } from '../../../../utils/LeaderStats'
 
 export default class UnitStoneElemental extends ServerCard {
 	damage = asDirectUnitDamage(2)
@@ -25,20 +25,17 @@ export default class UnitStoneElemental extends ServerCard {
 			tribes: [CardTribe.ELEMENTAL],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN],
 			stats: {
-				power: 7
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			damage: this.damage
+			damage: this.damage,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireEnemyUnit()
+		this.createDeployEffectTargets().target(TargetType.UNIT).requireEnemyUnit()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(targetUnit: ServerUnit): void {

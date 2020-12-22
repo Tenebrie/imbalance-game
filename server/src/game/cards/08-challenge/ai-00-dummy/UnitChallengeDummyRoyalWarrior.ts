@@ -16,7 +16,7 @@ export default class UnitChallengeDummyRoyalWarrior extends ServerCard {
 				power: 13,
 			},
 			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true
+			hiddenFromLibrary: true,
 		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 	}

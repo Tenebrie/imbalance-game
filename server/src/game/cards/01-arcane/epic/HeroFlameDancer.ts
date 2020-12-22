@@ -10,7 +10,7 @@ import BuffBurning from '../../../buffs/BuffBurning'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSplashEffectDuration} from '../../../../utils/LeaderStats'
+import { asSplashEffectDuration } from '../../../../utils/LeaderStats'
 
 export default class HeroFlameDancer extends ServerCard {
 	burnDuration = asSplashEffectDuration(3)
@@ -23,28 +23,27 @@ export default class HeroFlameDancer extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			generatedArtworkMagicString: '2',
 			stats: {
-				power: 5
+				power: 5,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			burnDuration: this.burnDuration
+			burnDuration: this.burnDuration,
 		}
 
 		this.createDeployEffectTargets()
 			.target(TargetType.BOARD_ROW)
-			.require(TargetType.BOARD_ROW, args => {
+			.require(TargetType.BOARD_ROW, (args) => {
 				return args.targetRow.owner === args.sourceCard.ownerInGame.opponent && args.targetRow.cards.length > 0
 			})
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW)
-			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 
 	private onTargetSelected(target: ServerBoardRow): void {
 		const targetUnits = target.cards
 
-		targetUnits.forEach(targetUnit => {
+		targetUnits.forEach((targetUnit) => {
 			this.game.animation.createAnimationThread()
 			targetUnit.card.buffs.add(BuffBurning, this, BuffDuration.FULL_TURN * this.burnDuration(this) - 1)
 			this.game.animation.commitAnimationThread()

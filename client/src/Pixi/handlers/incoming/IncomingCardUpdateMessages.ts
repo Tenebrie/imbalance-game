@@ -1,5 +1,5 @@
-import {IncomingMessageHandlerFunction} from '@/Pixi/handlers/IncomingMessageHandlers'
-import {CardUpdateMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
+import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 import Core from '@/Pixi/Core'
 import BuffMessage from '@shared/models/network/buffs/BuffMessage'
@@ -7,7 +7,7 @@ import ClientBuff from '@/Pixi/models/ClientBuff'
 import BuffRefMessage from '@shared/models/network/buffs/BuffRefMessage'
 import CardStatsMessage from '@shared/models/network/cardStats/CardStatsMessage'
 
-const IncomingCardUpdateMessages: {[ index in CardUpdateMessageType ]: IncomingMessageHandlerFunction } = {
+const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMessageHandlerFunction } = {
 	[CardUpdateMessageType.STATS]: (data: CardStatsMessage) => {
 		const card = Core.game.findCardById(data.cardId)
 		if (!card) {
@@ -24,7 +24,7 @@ const IncomingCardUpdateMessages: {[ index in CardUpdateMessageType ]: IncomingM
 	},
 
 	[CardUpdateMessageType.VARIABLES]: (data: CardVariablesMessage[]) => {
-		data.forEach(message => {
+		data.forEach((message) => {
 			const matchingCard = Core.game.findRenderedCardById(message.cardId) || Core.board.findUnitById(message.cardId).card
 			if (!matchingCard) {
 				return

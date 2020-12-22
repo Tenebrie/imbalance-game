@@ -11,7 +11,7 @@ export enum GenericActionMessageType {
 
 export enum SystemMessageType {
 	INIT = 'system_init',
-	KEEPALIVE = 'system_keepAlive'
+	KEEPALIVE = 'system_keepAlive',
 }
 
 export type ClientToServerMessageTypes = GenericActionMessageType | SystemMessageType

@@ -10,7 +10,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import BuffStrength from '../../../buffs/BuffStrength'
 import CardFeature from '@shared/enums/CardFeature'
 import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition'
-import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitHighClassPerformer extends ServerCard {
 	bonusPower = asSplashBuffPotency(1)
@@ -30,27 +30,24 @@ export default class UnitHighClassPerformer extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			bonusPower: this.bonusPower,
-			cardsRequired: this.cardsRequired
+			cardsRequired: this.cardsRequired,
 		}
 
 		this.createPlayTargets()
 			.merge(TargetDefinition.defaultCardPlayTarget(this.game).commit())
 			.require(TargetType.BOARD_ROW, ({ targetRow }) => targetRow.cards.length >= this.cardsRequired)
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {
 		const otherAlliedRows = this.game.board.rows
-			.filter(row => row.owner === this.owner)
-			.filter(row => row.index !== this.unit!.rowIndex)
+			.filter((row) => row.owner === this.owner)
+			.filter((row) => row.index !== this.unit!.rowIndex)
 
-		const alliedUnitsOnTargetRows = otherAlliedRows
-			.map(row => row.cards)
-			.flat()
+		const alliedUnitsOnTargetRows = otherAlliedRows.map((row) => row.cards).flat()
 
-		alliedUnitsOnTargetRows.forEach(unit => {
+		alliedUnitsOnTargetRows.forEach((unit) => {
 			unit.buffs.addMultiple(BuffStrength, this.bonusPower, this)
 		})
 	}

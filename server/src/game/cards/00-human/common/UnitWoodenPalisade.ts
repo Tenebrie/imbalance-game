@@ -19,7 +19,7 @@ export default class UnitWoodenPalisade extends ServerCard {
 			features: [CardFeature.BUILDING],
 			stats: {
 				power: 0,
-				armor: 5
+				armor: 5,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -30,25 +30,28 @@ export default class UnitWoodenPalisade extends ServerCard {
 			.require(({ targetCard }) => {
 				const thisUnit = this.unit!
 				const targetUnit = targetCard.unit!
-				const direction = this.game.board.getMoveDirection(this.ownerInGame, this.game.board.rows[thisUnit.rowIndex], this.game.board.rows[targetUnit.rowIndex])
+				const direction = this.game.board.getMoveDirection(
+					this.ownerInGame,
+					this.game.board.rows[thisUnit.rowIndex],
+					this.game.board.rows[targetUnit.rowIndex]
+				)
 				const horizontalDistance = this.game.board.getHorizontalUnitDistance(thisUnit, targetUnit)
 				return direction === MoveDirection.BACK && horizontalDistance < 1
 			})
-			.replace(values => ({
+			.replace((values) => ({
 				...values,
-				targetCard: this
+				targetCard: this,
 			}))
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(({ triggeringUnit }) => {
-				const leftPalisade = new UnitWoodenPalisade(this.game)
-				const rightPalisade = new UnitWoodenPalisade(this.game)
-				this.game.animation.instantThread(() => {
-					this.game.board.createUnit(leftPalisade, this.ownerInGame, triggeringUnit.rowIndex, triggeringUnit.unitIndex)
-				})
-				this.game.animation.instantThread(() => {
-					this.game.board.createUnit(rightPalisade, this.ownerInGame, triggeringUnit.rowIndex, triggeringUnit.unitIndex + 1)
-				})
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
+			const leftPalisade = new UnitWoodenPalisade(this.game)
+			const rightPalisade = new UnitWoodenPalisade(this.game)
+			this.game.animation.instantThread(() => {
+				this.game.board.createUnit(leftPalisade, this.ownerInGame, triggeringUnit.rowIndex, triggeringUnit.unitIndex)
 			})
+			this.game.animation.instantThread(() => {
+				this.game.board.createUnit(rightPalisade, this.ownerInGame, triggeringUnit.rowIndex, triggeringUnit.unitIndex + 1)
+			})
+		})
 	}
 }

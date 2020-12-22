@@ -11,8 +11,7 @@ export default class BuffHiddenStrength extends ServerBuff {
 		this.alignment = BuffAlignment.POSITIVE
 		this.buffFeatures = [BuffFeature.SKIP_ANIMATION]
 
-		this.createEffect(GameEventType.BUFF_CREATED)
-			.perform(() => this.onCreated())
+		this.createEffect(GameEventType.BUFF_CREATED).perform(() => this.onCreated())
 	}
 
 	private onCreated(): void {

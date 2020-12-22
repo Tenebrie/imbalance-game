@@ -8,7 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import BuffStrength from '../../../buffs/BuffStrength'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asDirectBuffPotency} from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitForestScout extends ServerCard {
 	boardPowerBonus = asDirectBuffPotency(7)
@@ -28,11 +28,10 @@ export default class UnitForestScout extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			boardPowerBonus: this.boardPowerBonus,
-			moralePowerBonus: this.moralePowerBonus
+			moralePowerBonus: this.moralePowerBonus,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {

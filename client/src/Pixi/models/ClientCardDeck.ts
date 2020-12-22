@@ -34,30 +34,30 @@ export default class ClientCardDeck implements CardDeck {
 	}
 
 	public drawUnitById(cardId: string): RenderedCard | null {
-		const drawnCardMessage = this.unitCardMessages.find(card => card.id === cardId)
+		const drawnCardMessage = this.unitCardMessages.find((card) => card.id === cardId)
 		if (!drawnCardMessage) {
 			return null
 		}
-		this.unitCardMessages = this.unitCardMessages.filter(card => card !== drawnCardMessage)
+		this.unitCardMessages = this.unitCardMessages.filter((card) => card !== drawnCardMessage)
 		return RenderedCard.fromMessage(drawnCardMessage)
 	}
 
 	public drawSpellById(cardId: string): RenderedCard | null {
-		const drawnCardMessage = this.spellCardMessages.find(card => card.id === cardId)
+		const drawnCardMessage = this.spellCardMessages.find((card) => card.id === cardId)
 		if (!drawnCardMessage) {
 			return null
 		}
-		this.spellCardMessages = this.spellCardMessages.filter(card => card !== drawnCardMessage)
+		this.spellCardMessages = this.spellCardMessages.filter((card) => card !== drawnCardMessage)
 		return RenderedCard.fromMessage(drawnCardMessage)
 	}
 
 	public findCardById(cardId: string): CardMessage | null {
-		return this.unitCardMessages.find(card => card.id === cardId) || this.spellCardMessages.find(card => card.id === cardId) || null
+		return this.unitCardMessages.find((card) => card.id === cardId) || this.spellCardMessages.find((card) => card.id === cardId) || null
 	}
 
 	public destroyCardById(cardId: string): void {
-		this.unitCardMessages = this.unitCardMessages.filter(card => card.id !== cardId)
-		this.spellCardMessages = this.spellCardMessages.filter(card => card.id !== cardId)
+		this.unitCardMessages = this.unitCardMessages.filter((card) => card.id !== cardId)
+		this.spellCardMessages = this.spellCardMessages.filter((card) => card.id !== cardId)
 	}
 
 	public static fromMessage(message: CardDeckMessage): ClientCardDeck {

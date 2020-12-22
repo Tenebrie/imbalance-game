@@ -15,5 +15,5 @@ export default {
 	...OutgoingGameSyncMessages,
 	...OutgoingPlayerUpdateMessages,
 	...OutgoingResolveStackUpdateMessages,
-	...OutgoingSystemMessages
+	...OutgoingSystemMessages,
 }

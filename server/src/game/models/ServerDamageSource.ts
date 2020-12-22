@@ -6,7 +6,7 @@ import DamageSource from '@shared/enums/DamageSource'
 type NumberOrGetter = number | ((card: ServerCard) => number)
 
 const collapseValue = (value: NumberOrGetter, sourceCard: ServerCard) => {
-	if (typeof(value) === 'function') {
+	if (typeof value === 'function') {
 		return value(sourceCard)
 	}
 	return value

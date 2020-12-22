@@ -4,7 +4,7 @@ import * as PIXI from 'pixi.js'
 import QueuedMessage from '@/Pixi/models/QueuedMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ProjectileSystem from '@/Pixi/vfx/ProjectileSystem'
-import {AnimationMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 class AnimationThread {
 	public id: string = uuidv4()
@@ -43,9 +43,9 @@ class AnimationThread {
 			return
 		}
 
-		this.__workerThreads.forEach(thread => thread.tick(deltaTime))
+		this.__workerThreads.forEach((thread) => thread.tick(deltaTime))
 
-		const activeWorkerThreads = this.__workerThreads.filter(thread => thread.started)
+		const activeWorkerThreads = this.__workerThreads.filter((thread) => thread.started)
 		if (activeWorkerThreads.length > 0) {
 			return
 		}
@@ -55,7 +55,11 @@ class AnimationThread {
 			this.executeNextMessage()
 		}
 
-		if (this.messageCooldown === 0 && this.__workerThreads.filter(thread => thread.started).length === 0 && this.queuedMessages.length === 0) {
+		if (
+			this.messageCooldown === 0 &&
+			this.__workerThreads.filter((thread) => thread.started).length === 0 &&
+			this.queuedMessages.length === 0
+		) {
 			if (this === Core.mainHandler.mainAnimationThread) {
 				this.__isStarted = false
 			} else {
@@ -84,7 +88,7 @@ class AnimationThread {
 	}
 
 	public killAnimationThread(id: string): void {
-		this.__workerThreads = this.__workerThreads.filter(thread => thread.id !== id)
+		this.__workerThreads = this.__workerThreads.filter((thread) => thread.id !== id)
 	}
 
 	public registerMessage(message: QueuedMessage): void {
@@ -97,8 +101,10 @@ class AnimationThread {
 	}
 
 	public hasAnimationMessages(): boolean {
-		return this.queuedMessages.filter(message => message.type === AnimationMessageType.PLAY).length > 0 ||
-			!!this.__workerThreads.find(thread => thread.hasAnimationMessages())
+		return (
+			this.queuedMessages.filter((message) => message.type === AnimationMessageType.PLAY).length > 0 ||
+			!!this.__workerThreads.find((thread) => thread.hasAnimationMessages())
+		)
 	}
 
 	public skipCooldown(): void {
@@ -122,7 +128,7 @@ class AnimationThread {
 	private executeMessage(message: QueuedMessage): void {
 		try {
 			message.handler(message.data, {
-				animationThreadId: this.id
+				animationThreadId: this.id,
 			})
 		} catch (e) {
 			console.error(e)
@@ -159,7 +165,7 @@ export default class MainHandler {
 			this.mainAnimationThread.tick(deltaTime)
 			this.projectileSystem.tick(deltaTime, deltaFraction)
 			Core.renderer.tick(deltaTime, deltaFraction)
-			Core.particleSystem.tick(deltaTime, deltaFraction)
+			Core.particleSystem.tick()
 			Core.input.tick()
 		})
 

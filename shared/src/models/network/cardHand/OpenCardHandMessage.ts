@@ -7,7 +7,7 @@ export default class OpenCardHandMessage implements CardHandMessage {
 	spellCards: OpenCardMessage[]
 
 	constructor(cardHand: CardHand) {
-		this.unitCards = cardHand.unitCards.map(card => new OpenCardMessage(card))
-		this.spellCards = cardHand.spellCards.map(card => new OpenCardMessage(card))
+		this.unitCards = cardHand.unitCards.map((card) => new OpenCardMessage(card))
+		this.spellCards = cardHand.spellCards.map((card) => new OpenCardMessage(card))
 	}
 }

@@ -20,8 +20,8 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		this.evaluators = []
 		this.orderLabels = []
 		this.targetOfTypeCountGetters = []
-		const targetModeValues = Object.values(TargetMode).filter(val => typeof(val) === 'number')
-		const targetTypeValues = Object.values(TargetType).filter(val => typeof(val) === 'number')
+		const targetModeValues = Object.values(TargetMode).filter((val) => typeof val === 'number')
+		const targetTypeValues = Object.values(TargetType).filter((val) => typeof val === 'number')
 		for (const targetingReason in targetModeValues) {
 			this.orderLabels[targetingReason] = []
 			this.targetOfTypeCountGetters[targetingReason] = []
@@ -38,7 +38,14 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 
 	public build(): TargetDefinition {
 		const totalTargetCount = this.totalTargetCountGetters === undefined ? [1000] : this.totalTargetCountGetters
-		return new TargetDefinition(this.game, totalTargetCount, this.orderLabels, this.targetOfTypeCountGetters, this.conditions, this.evaluators)
+		return new TargetDefinition(
+			this.game,
+			totalTargetCount,
+			this.orderLabels,
+			this.targetOfTypeCountGetters,
+			this.conditions,
+			this.evaluators
+		)
 	}
 
 	public targetsTotal(count: number | ((card: ServerCard) => number)): StandardTargetDefinitionBuilder {
@@ -54,35 +61,55 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		return this
 	}
 
-	public targetsOfType(reason: TargetMode, type: TargetType, targetCount: number | ((card: ServerCard) => number) = 1): StandardTargetDefinitionBuilder {
+	public targetsOfType(
+		reason: TargetMode,
+		type: TargetType,
+		targetCount: number | ((card: ServerCard) => number) = 1
+	): StandardTargetDefinitionBuilder {
 		this.targetOfTypeCountGetters[reason][type].push(targetCount)
 		return this
 	}
 
-	public require(reason: TargetMode, type: TargetType, condition: (args: TargetValidatorArguments) => boolean): StandardTargetDefinitionBuilder {
+	public require(
+		reason: TargetMode,
+		type: TargetType,
+		condition: (args: TargetValidatorArguments) => boolean
+	): StandardTargetDefinitionBuilder {
 		this.conditions[reason][type].push(condition)
 		return this
 	}
 
-	public evaluate(reason: TargetMode, type: TargetType, evaluator: (args: TargetValidatorArguments) => number): StandardTargetDefinitionBuilder {
+	public evaluate(
+		reason: TargetMode,
+		type: TargetType,
+		evaluator: (args: TargetValidatorArguments) => number
+	): StandardTargetDefinitionBuilder {
 		this.evaluators[reason][type].push(evaluator)
 		return this
 	}
 
 	public merge(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
-		if (this.totalTargetCountGetters && this.totalTargetCountGetters.length > 0 || targetDefinition.totalTargetCountGetters && targetDefinition.totalTargetCountGetters.length > 0) {
+		if (
+			(this.totalTargetCountGetters && this.totalTargetCountGetters.length > 0) ||
+			(targetDefinition.totalTargetCountGetters && targetDefinition.totalTargetCountGetters.length > 0)
+		) {
 			this.totalTargetCountGetters = (this.totalTargetCountGetters || []).concat(targetDefinition.totalTargetCountGetters || [])
 		}
-		const targetModeValues = Object.values(TargetMode).filter(val => typeof(val) === 'number')
-		const targetTypeValues = Object.values(TargetType).filter(val => typeof(val) === 'number')
+		const targetModeValues = Object.values(TargetMode).filter((val) => typeof val === 'number')
+		const targetTypeValues = Object.values(TargetType).filter((val) => typeof val === 'number')
 		for (const targetingReason in targetModeValues) {
 			for (const targetType in targetTypeValues) {
 				this.targetOfTypeCountGetters[targetingReason][targetType] = this.targetOfTypeCountGetters[targetingReason][targetType].concat(
 					targetDefinition.targetOfTypeCountGetters[targetingReason][targetType]
 				)
-				this.orderLabels[targetingReason][targetType] = this.orderLabels[targetingReason][targetType] || targetDefinition.orderLabels[targetingReason][targetType]
-				this.conditions[targetingReason][targetType] = this.conditions[targetingReason][targetType].concat(targetDefinition.conditions[targetingReason][targetType])
-				this.evaluators[targetingReason][targetType] = this.evaluators[targetingReason][targetType].concat(targetDefinition.evaluators[targetingReason][targetType])
+				this.orderLabels[targetingReason][targetType] =
+					this.orderLabels[targetingReason][targetType] || targetDefinition.orderLabels[targetingReason][targetType]
+				this.conditions[targetingReason][targetType] = this.conditions[targetingReason][targetType].concat(
+					targetDefinition.conditions[targetingReason][targetType]
+				)
+				this.evaluators[targetingReason][targetType] = this.evaluators[targetingReason][targetType].concat(
+					targetDefinition.evaluators[targetingReason][targetType]
+				)
 			}
 		}
 		return this
@@ -91,8 +118,8 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 	public clone(): StandardTargetDefinitionBuilder {
 		const clone = new StandardTargetDefinitionBuilder(this.game)
 		clone.totalTargetCountGetters = this.totalTargetCountGetters
-		const targetModeValues = Object.values(TargetMode).filter(val => typeof(val) === 'number')
-		const targetTypeValues = Object.values(TargetType).filter(val => typeof(val) === 'number')
+		const targetModeValues = Object.values(TargetMode).filter((val) => typeof val === 'number')
+		const targetTypeValues = Object.values(TargetType).filter((val) => typeof val === 'number')
 		for (const targetingReason in targetModeValues) {
 			for (const targetType in targetTypeValues) {
 				clone.targetOfTypeCountGetters[targetingReason][targetType] = this.targetOfTypeCountGetters[targetingReason][targetType]

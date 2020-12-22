@@ -24,7 +24,7 @@ export default class UnitVolatileCrystal extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			damage: this.damage
+			damage: this.damage,
 		}
 
 		this.createCallback(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
@@ -34,9 +34,9 @@ export default class UnitVolatileCrystal extends ServerCard {
 
 	private onDestroy(): void {
 		const unit = this.unit
-		const damageTargets = this.game.board.getAdjacentUnits(unit).filter(unit => unit.rowIndex === unit.rowIndex)
+		const damageTargets = this.game.board.getAdjacentUnits(unit).filter((unit) => unit.rowIndex === unit.rowIndex)
 
-		damageTargets.forEach(unit => {
+		damageTargets.forEach((unit) => {
 			unit.dealDamage(ServerDamageInstance.fromUnit(this.damage, unit))
 		})
 	}

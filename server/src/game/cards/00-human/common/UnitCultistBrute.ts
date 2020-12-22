@@ -10,7 +10,7 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 import BuffStrength from '../../../buffs/BuffStrength'
-import {asDirectBuffPotency} from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitCultistBrute extends ServerCard {
 	bonusPower = asDirectBuffPotency(3)
@@ -28,16 +28,12 @@ export default class UnitCultistBrute extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			bonusPower: this.bonusPower
+			bonusPower: this.bonusPower,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireAlliedUnit()
-			.requireNotSelf()
+		this.createDeployEffectTargets().target(TargetType.UNIT).requireAlliedUnit().requireNotSelf()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onSacrificeTargetSelected(targetCard.unit!))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onSacrificeTargetSelected(targetCard.unit!))
 	}
 
 	private onSacrificeTargetSelected(target: ServerUnit): void {

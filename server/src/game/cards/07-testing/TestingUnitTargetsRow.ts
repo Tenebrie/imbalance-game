@@ -16,10 +16,9 @@ export default class TestingUnitTargetsRow extends ServerCard {
 				power: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true
+			hiddenFromLibrary: true,
 		})
 
-		this.createDeployEffectTargets()
-			.target(TargetType.BOARD_ROW)
+		this.createDeployEffectTargets().target(TargetType.BOARD_ROW)
 	}
 }

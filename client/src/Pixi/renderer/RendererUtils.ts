@@ -34,7 +34,7 @@ export const getRenderScale = (): CardRenderScale => {
 			generalGameFontRenderScale: 1.2,
 			generalEditorFontRenderScale: 1.5,
 			descriptionGameFontRenderScale: 1.2,
-			descriptionEditorFontRenderScale: 1.5
+			descriptionEditorFontRenderScale: 1.5,
 		}
 	} else if (selectedQuality === RenderQuality.HIGH || selectedQuality === RenderQuality.DEFAULT) {
 		return {
@@ -42,7 +42,7 @@ export const getRenderScale = (): CardRenderScale => {
 			generalGameFontRenderScale: 1.4,
 			generalEditorFontRenderScale: 1.5,
 			descriptionGameFontRenderScale: 1.5,
-			descriptionEditorFontRenderScale: 1.2
+			descriptionEditorFontRenderScale: 1.2,
 		}
 	} else if (selectedQuality === RenderQuality.NORMAL) {
 		return {
@@ -50,7 +50,7 @@ export const getRenderScale = (): CardRenderScale => {
 			generalGameFontRenderScale: 1.0,
 			generalEditorFontRenderScale: 1.0,
 			descriptionGameFontRenderScale: 1.0,
-			descriptionEditorFontRenderScale: 1.0
+			descriptionEditorFontRenderScale: 1.0,
 		}
 	}
 }

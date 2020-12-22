@@ -18,10 +18,10 @@ export default class LeaderMaximilian extends ServerCard {
 			faction: CardFaction.HUMAN,
 			sortPriority: 0,
 			expansionSet: ExpansionSet.BASE,
-			deckAddedCards: [SpellQuickStrike, SpellTacticalMove, SpellTacticalMove, SpellReinforcements]
+			deckAddedCards: [SpellQuickStrike, SpellTacticalMove, SpellTacticalMove, SpellReinforcements],
 		})
 		this.dynamicTextVariables = {
-			manaPerRound: this.manaPerRound
+			manaPerRound: this.manaPerRound,
 		}
 	}
 }

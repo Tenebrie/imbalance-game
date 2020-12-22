@@ -2,7 +2,7 @@ import ServerCard from './ServerCard'
 import ServerGame from './ServerGame'
 import CardStats from '@shared/models/CardStats'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import {limitValueToInterval} from '../../utils/Utils'
+import { limitValueToInterval } from '../../utils/Utils'
 import ServerBuff from './ServerBuff'
 import CardType from '@shared/enums/CardType'
 
@@ -97,7 +97,9 @@ export default class ServerCardStats implements CardStats {
 		return limitValueToInterval(0, this.__power, this.maxPower)
 	}
 	public set power(value: number) {
-		if (this.__power === value) { return }
+		if (this.__power === value) {
+			return
+		}
 
 		this.__power = limitValueToInterval(0, value, this.maxPower)
 		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
@@ -116,7 +118,9 @@ export default class ServerCardStats implements CardStats {
 		return limitValueToInterval(0, this.__armor, this.maxArmor)
 	}
 	public set armor(value: number) {
-		if (this.__armor === value) { return }
+		if (this.__armor === value) {
+			return
+		}
 
 		this.__armor = limitValueToInterval(0, value, this.maxArmor)
 		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
@@ -152,72 +156,114 @@ export default class ServerCardStats implements CardStats {
 
 	/* Other */
 	public get soloUnitDamage(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getSoloUnitDamageOverride(value), this.__baseSoloUnitDamage)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getSoloUnitDamageOverride(value),
+			this.__baseSoloUnitDamage
+		)
 		return Math.max(value, 0)
 	}
 
 	public get massUnitDamage(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getMassUnitDamageOverride(value), this.__baseMassUnitDamage)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getMassUnitDamageOverride(value),
+			this.__baseMassUnitDamage
+		)
 		return Math.max(value, 0)
 	}
 
 	public get soloSpellDamage(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getSoloSpellDamageOverride(value), this.__baseSoloSpellDamage)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getSoloSpellDamageOverride(value),
+			this.__baseSoloSpellDamage
+		)
 		return Math.max(value, 0)
 	}
 
 	public get massSpellDamage(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getMassSpellDamageOverride(value), this.__baseMassSpellDamage)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getMassSpellDamageOverride(value),
+			this.__baseMassSpellDamage
+		)
 		return Math.max(value, 0)
 	}
 
 	public get soloHealingPotency(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getSoloHealingPotencyOverride(value), this.__baseSoloHealingPotency)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getSoloHealingPotencyOverride(value),
+			this.__baseSoloHealingPotency
+		)
 		return Math.max(value, 0)
 	}
 
 	public get massHealingPotency(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getMassHealingPotencyOverride(value), this.__baseMassHealingPotency)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getMassHealingPotencyOverride(value),
+			this.__baseMassHealingPotency
+		)
 		return Math.max(value, 0)
 	}
 
 	public get soloBuffPotency(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getSoloBuffPotencyOverride(value), this.__baseSoloBuffPotency)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getSoloBuffPotencyOverride(value),
+			this.__baseSoloBuffPotency
+		)
 		return Math.max(value, 0)
 	}
 
 	public get massBuffPotency(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getMassBuffPotencyOverride(value), this.__baseMassBuffPotency)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getMassBuffPotencyOverride(value),
+			this.__baseMassBuffPotency
+		)
 		return Math.max(value, 0)
 	}
 
 	public get soloEffectDuration(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getSoloEffectDurationOverride(value), this.__baseSoloEffectDuration)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getSoloEffectDurationOverride(value),
+			this.__baseSoloEffectDuration
+		)
 		return Math.max(value, 0)
 	}
 
 	public get massEffectDuration(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getMassEffectDurationOverride(value), this.__baseMassEffectDuration)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getMassEffectDurationOverride(value),
+			this.__baseMassEffectDuration
+		)
 		return Math.max(value, 0)
 	}
 
 	public get targetCount(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getTargetCountOverride(value), this.__baseTargetCount)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getTargetCountOverride(value),
+			this.__baseTargetCount
+		)
 		return Math.max(value, 0)
 	}
 
 	public get criticalHitChance(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getCriticalHitChanceOverride(value), this.__baseCriticalHitChance)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getCriticalHitChanceOverride(value),
+			this.__baseCriticalHitChance
+		)
 		return Math.max(value, 0)
 	}
 
 	public get criticalBuffChance(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getCriticalBuffChanceOverride(value), this.__baseCriticalBuffChance)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getCriticalBuffChanceOverride(value),
+			this.__baseCriticalBuffChance
+		)
 		return Math.max(value, 0)
 	}
 
 	public get criticalHealChance(): number {
-		const value = this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getCriticalHealChanceOverride(value), this.__baseCriticalHitChance)
+		const value = this.card.buffs.buffs.reduce(
+			(value: number, buff: ServerBuff) => buff.getCriticalHealChanceOverride(value),
+			this.__baseCriticalHitChance
+		)
 		return Math.max(value, 0)
 	}
 }

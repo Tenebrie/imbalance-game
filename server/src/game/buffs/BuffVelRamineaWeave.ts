@@ -9,8 +9,7 @@ export default class BuffVelRamineaWeave extends ServerBuff {
 		super(game, BuffStackType.OVERLAY)
 		this.alignment = BuffAlignment.POSITIVE
 
-		this.createCallback(GameEventType.ROUND_STARTED)
-			.perform(() => this.onRoundStarted())
+		this.createCallback(GameEventType.ROUND_STARTED).perform(() => this.onRoundStarted())
 	}
 
 	private onRoundStarted(): void {

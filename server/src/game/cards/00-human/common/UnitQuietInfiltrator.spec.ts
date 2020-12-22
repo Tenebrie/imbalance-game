@@ -14,18 +14,18 @@ describe('UnitQuietInfiltrator', () => {
 	let enemyRow: ServerBoardRow
 
 	beforeEach(() => {
-		({ game, cardInHand, player } = TestGameTemplates.singleCardTest(UnitQuietInfiltrator))
-		enemyRow = game.board.rows.find(row => row.owner === player.opponentInGame)!
+		;({ game, cardInHand, player } = TestGameTemplates.singleCardTest(UnitQuietInfiltrator))
+		enemyRow = game.board.rows.find((row) => row.owner === player.opponentInGame)!
 	})
 
-	it('can be played on the opponent\'s board', () => {
+	it("can be played on the opponent's board", () => {
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), enemyRow.index, 0)
 		expect(game.board.getAllUnits().length).toEqual(1)
 		expect(enemyRow.cards[0].card.class).toEqual('unitQuietInfiltrator')
 	})
 
 	it('deals damage to enemies', () => {
-		const enemyRow = game.board.rows.find(row => row.owner === player.opponentInGame)!
+		const enemyRow = game.board.rows.find((row) => row.owner === player.opponentInGame)!
 		game.board.createUnit(new TestingUnitNoTargeting(game), player.opponentInGame, enemyRow.index, 0)
 		game.board.createUnit(new TestingUnitNoTargeting(game), player.opponentInGame, enemyRow.index, 1)
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), enemyRow.index, 1)

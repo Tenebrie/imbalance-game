@@ -1,9 +1,9 @@
 import ServerPlayer from '../../players/ServerPlayer'
 import ServerOwnedCard from '../../models/ServerOwnedCard'
-import {ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit} from '../../models/ServerCardTarget'
+import { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from '../../models/ServerCardTarget'
 import TargetType from '@shared/enums/TargetType'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
-import {ResolveStackMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { ResolveStackMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import OpenOwnedCardMessage from '@shared/models/network/ownedCard/OpenOwnedCardMessage'
 import ResolvingCardTargetsMessage from '@shared/models/network/ResolvingCardTargetsMessage'
 import TargetMode from '@shared/enums/TargetMode'
@@ -16,18 +16,23 @@ export default {
 		ownedCard.owner.player.sendMessage({
 			type: ResolveStackMessageType.ADD,
 			data: data,
-			highPriority: true
+			highPriority: true,
 		})
 		ownedCard.owner.opponent?.player.sendMessage({
 			type: ResolveStackMessageType.ADD,
 			data: data,
-			highPriority: ownedCard.card.game.activePlayer === ownedCard.owner.opponent
+			highPriority: ownedCard.card.game.activePlayer === ownedCard.owner.opponent,
 		})
 	},
 
-	notifyAboutRequestedTargets(player: ServerPlayer, targetMode: TargetMode, validTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[], source: ServerCard | null): void {
+	notifyAboutRequestedTargets(
+		player: ServerPlayer,
+		targetMode: TargetMode,
+		validTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[],
+		source: ServerCard | null
+	): void {
 		const highPriorityTargets = [TargetType.UNIT, TargetType.BOARD_ROW, TargetType.CARD_IN_UNIT_HAND, TargetType.CARD_IN_SPELL_HAND]
-		const highPriority = validTargets.every(target => highPriorityTargets.includes(target.targetType))
+		const highPriority = validTargets.every((target) => highPriorityTargets.includes(target.targetType))
 		player.sendMessage({
 			type: ResolveStackMessageType.TARGETS,
 			data: new ResolvingCardTargetsMessage(targetMode, validTargets, source),
@@ -40,11 +45,11 @@ export default {
 
 		ownedCard.owner.player.sendMessage({
 			type: ResolveStackMessageType.REMOVE,
-			data: data
+			data: data,
 		})
 		ownedCard.owner.opponent?.player.sendMessage({
 			type: ResolveStackMessageType.REMOVE,
-			data: data
+			data: data,
 		})
 	},
 }

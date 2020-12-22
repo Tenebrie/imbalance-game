@@ -20,12 +20,12 @@ export default class HeroGarellion extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_INFUSE_ALL],
 			stats: {
-				power: 12
+				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			powerPerMana: this.powerPerMana
+			powerPerMana: this.powerPerMana,
 		}
 
 		this.createCallback(GameEventType.ROUND_ENDED, [CardLocation.BOARD])

@@ -4,13 +4,10 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import BuffStrength from '../../../buffs/BuffStrength'
-import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
-import Utils from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffExtraArmor from '../../../buffs/BuffExtraArmor'
 
@@ -30,7 +27,7 @@ export default class UnitGenerousBlacksmith extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			bonusArmor: this.bonusArmor
+			bonusArmor: this.bonusArmor,
 		}
 
 		this.createCallback(GameEventType.UNIT_MOVED, [CardLocation.BOARD])

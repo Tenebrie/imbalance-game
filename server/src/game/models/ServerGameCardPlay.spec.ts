@@ -24,16 +24,14 @@ describe('ServerGameCardPlay', () => {
 			cardInHand = new UnitEndlessArmy(game)
 			game.players[0].setUnitMana(3)
 			game.players[0].cardHand.addUnit(cardInHand)
-		});
-
-		[0, 1, 2].forEach((index: number) =>
+		})
+		;[0, 1, 2].forEach((index: number) =>
 			it(`player 0 can not play the card on row ${index}`, () => {
 				game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), index, 0)
 				expect(game.board.rows[index].cards.length).toEqual(0)
 			})
-		);
-
-		[3, 4, 5].forEach((index: number) =>
+		)
+		;[3, 4, 5].forEach((index: number) =>
 			it(`player 0 can play the card on row ${index}`, () => {
 				game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), index, 0)
 				expect(game.board.rows[index].cards.length).toEqual(1)
@@ -55,18 +53,30 @@ describe('ServerGameCardPlay', () => {
 			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 4, 0)
 			game.events.resolveEvents()
 			expect(eventSpy).toBeCalledTimes(4)
-			expect(eventSpy).nthCalledWith(1, expect.objectContaining({
-				type: 'cardPlayed'
-			}))
-			expect(eventSpy).nthCalledWith(2, expect.objectContaining({
-				type: 'unitCreated'
-			}))
-			expect(eventSpy).nthCalledWith(3, expect.objectContaining({
-				type: 'unitDeployed'
-			}))
-			expect(eventSpy).nthCalledWith(4, expect.objectContaining({
-				type: 'cardResolved'
-			}))
+			expect(eventSpy).nthCalledWith(
+				1,
+				expect.objectContaining({
+					type: 'cardPlayed',
+				})
+			)
+			expect(eventSpy).nthCalledWith(
+				2,
+				expect.objectContaining({
+					type: 'unitCreated',
+				})
+			)
+			expect(eventSpy).nthCalledWith(
+				3,
+				expect.objectContaining({
+					type: 'unitDeployed',
+				})
+			)
+			expect(eventSpy).nthCalledWith(
+				4,
+				expect.objectContaining({
+					type: 'cardResolved',
+				})
+			)
 		})
 
 		describe('when the target row is full', () => {
@@ -90,7 +100,7 @@ describe('ServerGameCardPlay', () => {
 			it('does not create the unit', () => {
 				game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 0, 0)
 				expect(game.board.rows[0].cards.length).toEqual(Constants.MAX_CARDS_PER_ROW)
-				expect(game.board.rows[0].cards.find(unit => unit.card === cardInHand)).toBeFalsy()
+				expect(game.board.rows[0].cards.find((unit) => unit.card === cardInHand)).toBeFalsy()
 			})
 		})
 	})

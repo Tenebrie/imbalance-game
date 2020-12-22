@@ -1,4 +1,4 @@
-import {Howl} from 'howler'
+import { Howl } from 'howler'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import store from '@/Vue/store'
 
@@ -33,16 +33,10 @@ class EffectsTrack {
 			{ src: 'impact_generic02', volume: 0.5 },
 			{ src: 'impact_generic03', volume: 0.5 },
 		])
-		this.addEffects(AudioEffectCategory.IMPACT_HEAL, [
-			{ src: 'impact_heal00', volume: 0.5 },
-		])
+		this.addEffects(AudioEffectCategory.IMPACT_HEAL, [{ src: 'impact_heal00', volume: 0.5 }])
 		this.addEffects(AudioEffectCategory.UNIT_DEPLOY, ['deploy00', 'deploy01', 'deploy02'])
-		this.addEffects(AudioEffectCategory.BUFF_POSITIVE, [
-			{ src: 'buff_positive', volume: 0.5 },
-		])
-		this.addEffects(AudioEffectCategory.BUFF_NEGATIVE, [
-			{ src: 'buff_negative', volume: 0.4 },
-		])
+		this.addEffects(AudioEffectCategory.BUFF_POSITIVE, [{ src: 'buff_positive', volume: 0.5 }])
+		this.addEffects(AudioEffectCategory.BUFF_NEGATIVE, [{ src: 'buff_negative', volume: 0.4 }])
 		this.addEffects(AudioEffectCategory.TARGETING_CONFIRM, ['targeting_confirm'])
 		this.addEffects(AudioEffectCategory.CARD_MOVE, ['card_move00', 'card_move01', 'card_move02', 'card_move03'])
 		this.addEffects(AudioEffectCategory.CARD_ANNOUNCE, [
@@ -53,16 +47,16 @@ class EffectsTrack {
 	}
 
 	private addEffects(category: AudioEffectCategory, sources: (string | AudioFile)[]): void {
-		const insertData: AudioFile[] = sources.map(source => {
-			if (typeof(source) === 'object') {
+		const insertData: AudioFile[] = sources.map((source) => {
+			if (typeof source === 'object') {
 				return {
 					...source,
-					src: `/assets/audio/${source.src}.ogg`
+					src: `/assets/audio/${source.src}.ogg`,
 				}
 			}
 			return {
 				src: `/assets/audio/${source}.ogg`,
-				volume: 1.0
+				volume: 1.0,
 			}
 		})
 		this.audioEffects.set(category, insertData)
@@ -78,7 +72,7 @@ class EffectsTrack {
 		const audioHandle = new Howl({
 			src: selectedEffect.src,
 			loop: false,
-			volume: this.getTrackVolume() * selectedEffect.volume
+			volume: this.getTrackVolume() * selectedEffect.volume,
 		})
 		audioHandle.play()
 
@@ -107,9 +101,9 @@ class MusicTrack {
 
 	constructor() {
 		const addFiles = (category: MusicTrackCategory, sources: string[]): void => {
-			const insertData: AudioFile[] = sources.map(source => ({
+			const insertData: AudioFile[] = sources.map((source) => ({
 				src: `/assets/audio/ost/${source}.ogg`,
-				volume: 1.0
+				volume: 1.0,
 			}))
 			this.ostFiles.set(category, insertData)
 		}
@@ -118,7 +112,14 @@ class MusicTrack {
 		addFiles(MusicTrackCategory.MENU, ['ambient_campfire01', 'ambient_campfire02'])
 		addFiles(MusicTrackCategory.GAME_DAY, ['ambient_day01', 'ambient_day02'])
 		addFiles(MusicTrackCategory.GAME_NIGHT, ['ambient_night01', 'ambient_night02'])
-		addFiles(MusicTrackCategory.GAME_ANY, ['ambient_campfire01', 'ambient_campfire02', 'ambient_day01', 'ambient_day02', 'ambient_night01', 'ambient_night02'])
+		addFiles(MusicTrackCategory.GAME_ANY, [
+			'ambient_campfire01',
+			'ambient_campfire02',
+			'ambient_day01',
+			'ambient_day02',
+			'ambient_night01',
+			'ambient_night02',
+		])
 	}
 
 	public switchToMenuMode(): void {
@@ -133,14 +134,14 @@ class MusicTrack {
 	private playPrimarySong(category: MusicTrackCategory, excludedIndex = -1): void {
 		let validFiles = this.ostFiles.get(category)
 		if (excludedIndex >= 0) {
-			validFiles = validFiles.filter(file => file !== this.ostFiles.get(category)[excludedIndex])
+			validFiles = validFiles.filter((file) => file !== this.ostFiles.get(category)[excludedIndex])
 		}
 		const fileIndex = Math.floor(Math.random() * validFiles.length)
 
 		this.primaryTrack = new Howl({
 			src: validFiles[fileIndex].src,
 			volume: this.getTrackVolume(),
-			onend: () => this.onSongEnded(category, fileIndex)
+			onend: () => this.onSongEnded(category, fileIndex),
 		})
 		this.primaryTrack.play()
 	}
@@ -179,7 +180,7 @@ class AmbienceTrack {
 			src: '/assets/audio/ambience.ogg',
 			loop: true,
 			autoplay: true,
-			volume: this.getTrackVolume()
+			volume: this.getTrackVolume(),
 		})
 		this.primaryTrack.play()
 	}

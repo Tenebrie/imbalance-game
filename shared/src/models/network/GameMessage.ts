@@ -14,6 +14,6 @@ export default class GameMessage {
 		this.name = game.name
 		this.owner = game.owner ? new HiddenPlayerMessage(game.owner) : null
 		this.isStarted = game.isStarted
-		this.players = game.players.map(player => new HiddenPlayerInGameMessage(player))
+		this.players = game.players.map((player) => new HiddenPlayerInGameMessage(player))
 	}
 }

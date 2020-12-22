@@ -32,5 +32,5 @@ export default {
 		noty.setTimeout(5000)
 		noty.show()
 		return noty
-	}
+	},
 }

@@ -3,13 +3,19 @@
 	"version": "0.0.0",
 	"license": "GPL-3.0-or-later",
 	"private": true,
-	"scripts": {},
+	"scripts": {
+		"lint": "yarn eslint src/ --ext .ts"
+	},
 	"dependencies": {
 		"@typescript-eslint/eslint-plugin": "^2.3.3",
 		"@typescript-eslint/parser": "^3.8.0",
-		"eslint": "^6.5.1",
+		"eslint": "^7.16.0",
+		"eslint-config-prettier": "^7.1.0",
 		"eslint-plugin-flowtype": "^4.3.0",
 		"eslint-plugin-node": "^10.0.0",
+		"eslint-plugin-prettier": "^3.3.0",
+		"prettier": "^2.2.1",
+		"prettier-eslint": "^12.0.0",
 		"typescript": "^3.9.5"
 	}
 }

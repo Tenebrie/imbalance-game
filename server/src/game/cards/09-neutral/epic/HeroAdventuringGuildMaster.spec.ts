@@ -12,7 +12,7 @@ describe('HeroAdventuringGuildMaster', () => {
 	let baseCardPower: number
 
 	beforeEach(() => {
-		({ game, cardInHand, player } = TestGameTemplates.singleCardTest(HeroAdventuringGuildMaster))
+		;({ game, cardInHand, player } = TestGameTemplates.singleCardTest(HeroAdventuringGuildMaster))
 		baseCardPower = cardInHand.stats.power
 	})
 
@@ -28,13 +28,13 @@ describe('HeroAdventuringGuildMaster', () => {
 			card: new HeroAdventuringGuildMaster(game),
 			player: player,
 			turnIndex: game.turnIndex,
-			roundIndex: game.roundIndex
+			roundIndex: game.roundIndex,
 		})
 		game.cardPlay.playedCards.push({
 			card: new HeroAdventuringGuildMaster(game),
 			player: player,
 			turnIndex: game.turnIndex,
-			roundIndex: game.roundIndex
+			roundIndex: game.roundIndex,
 		})
 
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
@@ -47,13 +47,13 @@ describe('HeroAdventuringGuildMaster', () => {
 			card: new HeroAdventuringGuildMaster(game),
 			player: player,
 			turnIndex: game.turnIndex - 1,
-			roundIndex: game.roundIndex
+			roundIndex: game.roundIndex,
 		})
 		game.cardPlay.playedCards.push({
 			card: new HeroAdventuringGuildMaster(game),
 			player: player,
 			turnIndex: game.turnIndex - 1,
-			roundIndex: game.roundIndex
+			roundIndex: game.roundIndex,
 		})
 
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
@@ -66,13 +66,13 @@ describe('HeroAdventuringGuildMaster', () => {
 			card: new HeroAdventuringGuildMaster(game),
 			player: player,
 			turnIndex: game.turnIndex,
-			roundIndex: game.roundIndex - 1
+			roundIndex: game.roundIndex - 1,
 		})
 		game.cardPlay.playedCards.push({
 			card: new HeroAdventuringGuildMaster(game),
 			player: player,
 			turnIndex: game.turnIndex,
-			roundIndex: game.roundIndex - 1
+			roundIndex: game.roundIndex - 1,
 		})
 
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)

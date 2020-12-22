@@ -8,7 +8,7 @@ import ServerCard from './ServerCard'
 import CardLibrary from '../libraries/CardLibrary'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
-import {CardTargetCard, CardTargetCardAllowedTypes, CardTargetRow, CardTargetUnit} from '@shared/models/CardTarget'
+import { CardTargetCard, CardTargetCardAllowedTypes, CardTargetRow, CardTargetUnit } from '@shared/models/CardTarget'
 
 export class ServerCardTargetUnit implements CardTargetUnit {
 	public readonly targetMode: TargetMode
@@ -35,11 +35,13 @@ export class ServerCardTargetUnit implements CardTargetUnit {
 	}
 
 	public isEqual(other: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): boolean {
-		return other instanceof ServerCardTargetUnit &&
+		return (
+			other instanceof ServerCardTargetUnit &&
 			this.targetMode === other.targetMode &&
 			this.targetType === other.targetType &&
-			(this.sourceCard === other.sourceCard) &&
+			this.sourceCard === other.sourceCard &&
 			this.targetCard === other.targetCard
+		)
 	}
 }
 
@@ -72,11 +74,13 @@ export class ServerCardTargetCard implements CardTargetCard {
 	}
 
 	public isEqual(other: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): boolean {
-		return other instanceof ServerCardTargetCard &&
+		return (
+			other instanceof ServerCardTargetCard &&
 			this.targetMode === other.targetMode &&
 			this.targetType === other.targetType &&
-			(this.sourceCard === other.sourceCard) &&
+			this.sourceCard === other.sourceCard &&
 			this.targetCard === other.targetCard
+		)
 	}
 }
 
@@ -101,16 +105,24 @@ export class ServerCardTargetRow implements CardTargetRow {
 	}
 
 	public isEqual(other: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): boolean {
-		return other instanceof ServerCardTargetRow &&
+		return (
+			other instanceof ServerCardTargetRow &&
 			this.targetMode === other.targetMode &&
 			this.targetType === other.targetType &&
-			(this.sourceCard === other.sourceCard) &&
+			this.sourceCard === other.sourceCard &&
 			this.targetRow === other.targetRow
+		)
 	}
 }
 
 export default class ServerCardTarget {
-	public static cardTargetUnit(targetMode: TargetMode, sourceCard: ServerCard, targetUnit: ServerUnit, expectedValue: number, targetLabel = ''): ServerCardTargetUnit {
+	public static cardTargetUnit(
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetUnit: ServerUnit,
+		expectedValue: number,
+		targetLabel = ''
+	): ServerCardTargetUnit {
 		const order = new ServerCardTargetUnit(targetMode, TargetType.UNIT, targetUnit.card)
 		order.sourceCard = sourceCard
 		order.targetLabel = targetLabel
@@ -118,42 +130,72 @@ export default class ServerCardTarget {
 		return order
 	}
 
-	public static cardTargetRow(targetMode: TargetMode, sourceCard: ServerCard, targetRow: ServerBoardRow, targetLabel = ''): ServerCardTargetRow {
+	public static cardTargetRow(
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetRow: ServerBoardRow,
+		targetLabel = ''
+	): ServerCardTargetRow {
 		const order = new ServerCardTargetRow(targetMode, TargetType.BOARD_ROW, targetRow)
 		order.sourceCard = sourceCard
 		order.targetLabel = targetLabel
 		return order
 	}
 
-	public static cardTargetCardInLibrary(targetMode: TargetMode, sourceCard: ServerCard, targetCard: ServerCard, targetLabel = ''): ServerCardTargetCard {
+	public static cardTargetCardInLibrary(
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetCard: ServerCard,
+		targetLabel = ''
+	): ServerCardTargetCard {
 		const order = new ServerCardTargetCard(targetMode, TargetType.CARD_IN_LIBRARY, targetCard)
 		order.sourceCard = sourceCard
 		order.targetLabel = targetLabel
 		return order
 	}
 
-	public static cardTargetCardInUnitHand(targetMode: TargetMode, sourceCard: ServerCard, targetCard: ServerCard, targetLabel = ''): ServerCardTargetCard {
+	public static cardTargetCardInUnitHand(
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetCard: ServerCard,
+		targetLabel = ''
+	): ServerCardTargetCard {
 		const order = new ServerCardTargetCard(targetMode, TargetType.CARD_IN_UNIT_HAND, targetCard)
 		order.sourceCard = sourceCard
 		order.targetLabel = targetLabel
 		return order
 	}
 
-	public static cardTargetCardInSpellHand(targetMode: TargetMode, sourceCard: ServerCard, targetCard: ServerCard, targetLabel = ''): ServerCardTargetCard {
+	public static cardTargetCardInSpellHand(
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetCard: ServerCard,
+		targetLabel = ''
+	): ServerCardTargetCard {
 		const order = new ServerCardTargetCard(targetMode, TargetType.CARD_IN_SPELL_HAND, targetCard)
 		order.sourceCard = sourceCard
 		order.targetLabel = targetLabel
 		return order
 	}
 
-	public static cardTargetCardInUnitDeck(targetMode: TargetMode, sourceCard: ServerCard, targetCard: ServerCard, targetLabel = ''): ServerCardTargetCard {
+	public static cardTargetCardInUnitDeck(
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetCard: ServerCard,
+		targetLabel = ''
+	): ServerCardTargetCard {
 		const order = new ServerCardTargetCard(targetMode, TargetType.CARD_IN_UNIT_DECK, targetCard)
 		order.sourceCard = sourceCard
 		order.targetLabel = targetLabel
 		return order
 	}
 
-	public static cardTargetCardInSpellDeck(targetMode: TargetMode, sourceCard: ServerCard, targetCard: ServerCard, targetLabel = ''): ServerCardTargetCard {
+	public static cardTargetCardInSpellDeck(
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetCard: ServerCard,
+		targetLabel = ''
+	): ServerCardTargetCard {
 		const order = new ServerCardTargetCard(targetMode, TargetType.CARD_IN_SPELL_DECK, targetCard)
 		order.sourceCard = sourceCard
 		order.targetLabel = targetLabel
@@ -166,7 +208,10 @@ export default class ServerCardTarget {
 		return order
 	}
 
-	public static fromMessage(game: ServerGame, message: CardTargetMessage): ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow {
+	public static fromMessage(
+		game: ServerGame,
+		message: CardTargetMessage
+	): ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow {
 		let target: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow
 		if (message.targetType === TargetType.BOARD_ROW) {
 			const targetRow = game.board.rows[message.targetRowIndex]

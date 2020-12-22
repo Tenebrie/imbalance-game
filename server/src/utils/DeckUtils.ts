@@ -5,15 +5,15 @@ import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 
 export default {
 	populateDeck(deck: EditorDeck): PopulatedEditorDeck {
-		const libraryCards = CardLibrary.cards.map(card => new OpenCardMessage(card))
+		const libraryCards = CardLibrary.cards.map((card) => new OpenCardMessage(card))
 		return {
 			...deck,
 			cards: deck.cards
-				.filter(card => libraryCards.find(libraryCard => libraryCard.class === card.class))
-				.map(card => ({
-					...libraryCards.find(libraryCard => libraryCard.class === card.class)!,
-					...card
+				.filter((card) => libraryCards.find((libraryCard) => libraryCard.class === card.class))
+				.map((card) => ({
+					...libraryCards.find((libraryCard) => libraryCard.class === card.class)!,
+					...card,
 				})),
 		}
-	}
+	},
 }

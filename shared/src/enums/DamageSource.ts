@@ -1,6 +1,6 @@
 enum DamageSource {
 	CARD,
-	UNIVERSE
+	UNIVERSE,
 }
 
 export default DamageSource

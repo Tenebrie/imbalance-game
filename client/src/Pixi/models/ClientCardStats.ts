@@ -78,7 +78,7 @@ export default class ClientCardStats implements CardStats {
 		const oldValue = this.power
 		this.__power = value
 
-		if (String(this.power).length !== String (oldValue).length) {
+		if (String(this.power).length !== String(oldValue).length) {
 			this.card.resetDisplayMode()
 		} else {
 			this.card.updatePowerTextColors()
@@ -96,7 +96,7 @@ export default class ClientCardStats implements CardStats {
 		const oldValue = this.armor
 		this.__armor = value
 
-		if (String(this.armor).length !== String (oldValue).length) {
+		if (String(this.armor).length !== String(oldValue).length) {
 			this.card.resetDisplayMode()
 		} else {
 			this.card.updateArmorTextColors()
@@ -121,7 +121,7 @@ export default class ClientCardStats implements CardStats {
 		const oldValue = this.__spellCost
 		this.__spellCost = value
 
-		if (String(this.spellCost).length !== String (oldValue).length) {
+		if (String(this.spellCost).length !== String(oldValue).length) {
 			this.card.resetDisplayMode()
 		} else {
 			this.card.updateSpellCostTextColors()

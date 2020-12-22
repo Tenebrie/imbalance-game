@@ -32,11 +32,11 @@ export default class ClientCardGraveyard implements CardDeck {
 	}
 
 	public findCardById(cardId: string): CardMessage | null {
-		return this.unitCardMessages.find(card => card.id === cardId) || this.spellCardMessages.find(card => card.id === cardId) || null
+		return this.unitCardMessages.find((card) => card.id === cardId) || this.spellCardMessages.find((card) => card.id === cardId) || null
 	}
 
 	public destroyCardById(cardId: string): void {
-		this.unitCardMessages = this.unitCardMessages.filter(card => card.id !== cardId)
-		this.spellCardMessages = this.spellCardMessages.filter(card => card.id !== cardId)
+		this.unitCardMessages = this.unitCardMessages.filter((card) => card.id !== cardId)
+		this.spellCardMessages = this.spellCardMessages.filter((card) => card.id !== cardId)
 	}
 }

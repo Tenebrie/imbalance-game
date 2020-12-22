@@ -8,5 +8,5 @@ export enum CardDisplayMode {
 	RESOLVING,
 	SELECTION,
 	SELECTION_HOVERED,
-	IN_EDITOR
+	IN_EDITOR,
 }

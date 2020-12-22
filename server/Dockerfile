@@ -18,6 +18,8 @@ ADD ./server /app/server
 ADD ./shared /app/shared
 COPY .eslintrc.json /app/server
 COPY .eslintrc.json /app/shared
+COPY .prettierrc.js /app/server
+COPY .prettierrc.js /app/shared
 RUN yarn add canvas@2.6.1
 
 # Expose server

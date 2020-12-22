@@ -10,7 +10,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSplashSpellDamage, asTargetCount} from '../../../../utils/LeaderStats'
+import { asSplashSpellDamage, asTargetCount } from '../../../../utils/LeaderStats'
 
 export default class SpellLightningStorm extends ServerCard {
 	damage = asSplashSpellDamage(3)
@@ -34,21 +34,19 @@ export default class SpellLightningStorm extends ServerCard {
 			targetCount: () => this.targetCount,
 			targetsPerStorm: this.targetsPerStorm,
 			isUpgraded: () => this.isUpgraded(),
-			targetsRemaining: () => this.targetCount - this.targetsHit.length
+			targetsRemaining: () => this.targetCount - this.targetsHit.length,
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createDeployEffectTargets()
 			.target(TargetType.UNIT, () => this.targetCount)
 			.requireEnemyUnit()
-			.require(TargetType.UNIT, args => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
+			.require(TargetType.UNIT, (args) => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
 			.label(TargetType.UNIT, 'card.spellLightningStorm.target')
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
-		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
-			.perform(() => this.onTargetsConfirmed())
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED).perform(() => this.onTargetsConfirmed())
 	}
 
 	get targetCount(): number {

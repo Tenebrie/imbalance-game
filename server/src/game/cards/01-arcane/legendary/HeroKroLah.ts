@@ -19,24 +19,20 @@ export default class HeroKroLah extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN],
 			stats: {
-				power: 7
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets()
-			.target(TargetType.BOARD_ROW)
-			.requireOpponentsRow()
-			.requireNotEmptyRow()
+		this.createDeployEffectTargets().target(TargetType.BOARD_ROW).requireOpponentsRow().requireNotEmptyRow()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW)
-			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 
 	private onTargetSelected(target: ServerBoardRow): void {
 		const targetUnits = target.cards
 
-		targetUnits.forEach(targetUnit => {
+		targetUnits.forEach((targetUnit) => {
 			this.game.animation.createAnimationThread()
 			targetUnit.card.buffs.add(BuffStun, this, BuffDuration.START_OF_NEXT_TURN)
 			this.game.board.moveUnitBack(targetUnit)

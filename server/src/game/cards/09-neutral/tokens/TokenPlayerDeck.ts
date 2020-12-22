@@ -13,7 +13,7 @@ export default class TokenPlayerDeck extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			sortPriority: 1,
 			stats: {
-				cost: 0
+				cost: 0,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

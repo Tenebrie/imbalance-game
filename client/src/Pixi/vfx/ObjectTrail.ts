@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import Core from '@/Pixi/Core'
 
 export default class ObjectTrail {
 	public readonly rope: PIXI.SimpleRope
@@ -19,7 +18,7 @@ export default class ObjectTrail {
 	public update(currentPosition: PIXI.Point): void {
 		if (!this.isInitialized) {
 			this.isInitialized = true
-			this.points.forEach(point => {
+			this.points.forEach((point) => {
 				point.x = currentPosition.x
 				point.y = currentPosition.y
 			})
@@ -28,9 +27,5 @@ export default class ObjectTrail {
 
 		this.points.pop()
 		this.points.unshift(currentPosition.clone())
-	}
-
-	public postDeathUpdate(): void {
-		this.update(this.points[0])
 	}
 }

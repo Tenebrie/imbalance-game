@@ -36,7 +36,7 @@ export enum AnimationMessageType {
 	THREAD_CREATE = 'animation_threadCreate',
 	THREAD_START = 'animation_threadStart',
 	THREAD_COMMIT = 'animation_threadCommit',
-	EXECUTE_QUEUE = 'animation_executeQueue'
+	EXECUTE_QUEUE = 'animation_executeQueue',
 }
 
 export enum GameSyncMessageType {
@@ -79,4 +79,12 @@ export enum CardUpdateMessageType {
 	BUFF_REMOVE = 'cardUpdate_buffRemove',
 }
 
-export type ServerToClientMessageTypes = PlayerUpdateMessageType | GameLogUpdateMessageType | AnimationMessageType | GameSyncMessageType | SystemMessageType | BoardUpdateMessageType | ResolveStackMessageType | CardUpdateMessageType
+export type ServerToClientMessageTypes =
+	| PlayerUpdateMessageType
+	| GameLogUpdateMessageType
+	| AnimationMessageType
+	| GameSyncMessageType
+	| SystemMessageType
+	| BoardUpdateMessageType
+	| ResolveStackMessageType
+	| CardUpdateMessageType

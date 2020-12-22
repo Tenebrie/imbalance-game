@@ -7,7 +7,7 @@ export default class HiddenCardDeckMessage implements CardDeckMessage {
 	spellCards: HiddenCardMessage[]
 
 	constructor(cardDeck: CardDeck) {
-		this.unitCards = cardDeck.unitCards.map(card => new HiddenCardMessage(card))
-		this.spellCards = cardDeck.spellCards.map(card => new HiddenCardMessage(card))
+		this.unitCards = cardDeck.unitCards.map((card) => new HiddenCardMessage(card))
+		this.spellCards = cardDeck.spellCards.map((card) => new HiddenCardMessage(card))
 	}
 }

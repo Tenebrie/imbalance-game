@@ -14,7 +14,7 @@ export default class AnimationMessage {
 		this.sourceCardId = animation.sourceCard ? animation.sourceCard.id : null
 		this.sourceUnitId = animation.sourceUnit ? animation.sourceUnit.card.id : null
 		this.targetCardId = animation.targetCard ? animation.targetCard.id : null
-		this.targetCardIDs = animation.targetCards ? animation.targetCards.map(card => card.id) : null
+		this.targetCardIDs = animation.targetCards ? animation.targetCards.map((card) => card.id) : null
 		this.params = animation.params
 	}
 }

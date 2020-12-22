@@ -3,5 +3,5 @@ export enum HoveredCardLocation {
 	DECK,
 	BOARD,
 	ANNOUNCED,
-	SELECTABLE
+	SELECTABLE,
 }

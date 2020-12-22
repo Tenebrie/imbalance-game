@@ -11,7 +11,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import BuffLeaderPower from '../buffs/BuffLeaderPower'
 import BuffUnitToSpellConversion from '../buffs/BuffUnitToSpellConversion'
-import {LeaderStatValueGetter} from '../../utils/LeaderStats'
+import { LeaderStatValueGetter } from '../../utils/LeaderStats'
 
 export interface BuffConstructor {
 	new (game: ServerGame): ServerBuff
@@ -57,8 +57,13 @@ export default class ServerBuffContainer implements BuffContainer {
 		this.addInstance(newBuff, source, duration)
 	}
 
-	public addMultiple(prototype: BuffConstructor, count: number | LeaderStatValueGetter, source: ServerCard | null, duration: number | 'default' = 'default'): void {
-		if (typeof(count) === 'function') {
+	public addMultiple(
+		prototype: BuffConstructor,
+		count: number | LeaderStatValueGetter,
+		source: ServerCard | null,
+		duration: number | 'default' = 'default'
+	): void {
+		if (typeof count === 'function') {
 			count = count(source)
 		}
 		for (let i = 0; i < count; i++) {
@@ -95,12 +100,14 @@ export default class ServerBuffContainer implements BuffContainer {
 
 		let invokedBuff = newBuff
 
-		const existingBuff = this.buffs.find(existingBuff => existingBuff.buffClass === newBuff.buffClass)
+		const existingBuff = this.buffs.find((existingBuff) => existingBuff.buffClass === newBuff.buffClass)
 
 		if (newBuff.stackType === BuffStackType.NONE && existingBuff && existingBuff.duration < newBuff.duration) {
-			this.game.events.postEvent(GameEventCreators.buffRemoved({
-				triggeringBuff: existingBuff
-			}))
+			this.game.events.postEvent(
+				GameEventCreators.buffRemoved({
+					triggeringBuff: existingBuff,
+				})
+			)
 			this.removeByReference(existingBuff)
 			this.buffs.push(newBuff)
 			OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
@@ -126,16 +133,18 @@ export default class ServerBuffContainer implements BuffContainer {
 
 		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
 
-		this.game.events.postEvent(GameEventCreators.buffCreated({
-			triggeringBuff: invokedBuff
-		}))
+		this.game.events.postEvent(
+			GameEventCreators.buffCreated({
+				triggeringBuff: invokedBuff,
+			})
+		)
 
 		playBuffReceivedAnimation()
 	}
 
 	public getBuffsByPrototype(prototype: BuffConstructor): ServerBuff[] {
 		const buffClass = prototype.prototype.constructor.name.substr(0, 1).toLowerCase() + prototype.prototype.constructor.name.substr(1)
-		return this.buffs.filter(buff => buff.buffClass === buffClass)
+		return this.buffs.filter((buff) => buff.buffClass === buffClass)
 	}
 
 	public has(prototype: BuffConstructor): boolean {
@@ -143,7 +152,9 @@ export default class ServerBuffContainer implements BuffContainer {
 	}
 
 	public getIntensity(prototype: BuffConstructor): number {
-		return this.getBuffsByPrototype(prototype).map(buff => buff.intensity).reduce((total, value) => total + value, 0)
+		return this.getBuffsByPrototype(prototype)
+			.map((buff) => buff.intensity)
+			.reduce((total, value) => total + value, 0)
 	}
 
 	public removeByReference(buff: ServerBuff): void {
@@ -162,7 +173,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 
 		let stacksLeftToRemove = count
-		let buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass).reverse()
+		let buffsOfType = this.buffs.filter((buff) => buff.buffClass === buffClass).reverse()
 		while (buffsOfType.length > 0 && stacksLeftToRemove > 0) {
 			const buff = buffsOfType[0]
 			if (buff.intensity <= stacksLeftToRemove) {
@@ -173,20 +184,22 @@ export default class ServerBuffContainer implements BuffContainer {
 				stacksLeftToRemove = 0
 			}
 
-			buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass).reverse()
+			buffsOfType = this.buffs.filter((buff) => buff.buffClass === buffClass).reverse()
 		}
 	}
 
 	public removeAll(prototype: BuffConstructor): void {
 		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
-		const buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass)
-		buffsOfType.forEach(buffToRemove => {
+		const buffsOfType = this.buffs.filter((buff) => buff.buffClass === buffClass)
+		buffsOfType.forEach((buffToRemove) => {
 			this.removeByReference(buffToRemove)
 		})
 	}
 
 	public removeCleansable(): void {
-		const buffsToRemove = this.buffs.filter(buff => buff.constructor !== BuffLeaderPower && buff.constructor !== BuffUnitToSpellConversion)
-		buffsToRemove.forEach(buff => this.removeByReference(buff))
+		const buffsToRemove = this.buffs.filter(
+			(buff) => buff.constructor !== BuffLeaderPower && buff.constructor !== BuffUnitToSpellConversion
+		)
+		buffsToRemove.forEach((buff) => this.removeByReference(buff))
 	}
 }

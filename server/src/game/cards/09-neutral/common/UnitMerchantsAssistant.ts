@@ -5,13 +5,11 @@ import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
-import BuffNextSpellDiscount from '../../../buffs/BuffNextSpellDiscount'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffNextSpellDiscountAura from '../../../buffs/BuffNextSpellDiscountAura'
 import CardFeature from '@shared/enums/CardFeature'
-import Utils from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asDirectBuffPotency} from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitMerchantsAssistant extends ServerCard {
 	spellDiscount = asDirectBuffPotency(3)
@@ -29,21 +27,14 @@ export default class UnitMerchantsAssistant extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			spellDiscount: this.spellDiscount
+			spellDiscount: this.spellDiscount,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy() {
 		const player = this.ownerInGame
-		const alliedSpells = Utils.sortCards(player.cardHand.spellCards)
 		player.leader.buffs.addMultiple(BuffNextSpellDiscountAura, this.spellDiscount, this, BuffDuration.INFINITY)
-		// alliedSpells.forEach(spell => {
-		// 	this.game.animation.createAnimationThread()
-		// 	spell.buffs.addMultiple(BuffNextSpellDiscount, this.spellDiscount, this, BuffDuration.INFINITY)
-		// 	this.game.animation.commitAnimationThread()
-		// })
 	}
 }

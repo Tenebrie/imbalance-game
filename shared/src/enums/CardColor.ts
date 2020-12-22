@@ -3,7 +3,7 @@ enum CardColor {
 	GOLDEN,
 	SILVER,
 	BRONZE,
-	TOKEN
+	TOKEN,
 }
 
 export default CardColor

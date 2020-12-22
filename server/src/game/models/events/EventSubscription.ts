@@ -1,5 +1,5 @@
-import {GameEvent} from './GameEventCreators'
-import {EventSubscriber} from '../ServerGameEvents'
+import { GameEvent } from './GameEventCreators'
+import { EventSubscriber } from '../ServerGameEvents'
 
 export class EventSubscription<EventArgs> {
 	private readonly __subscriber: EventSubscriber
@@ -83,7 +83,9 @@ export class EventSubscription<EventArgs> {
 	 * The callback will only execute if all conditions return `true` or other truthy value.
 	 * All requireImmediate conditions must be true at the moment of event happening **and** callback execution.
 	 */
-	requireImmediate(condition: (args: EventArgs, preparedState: Record<string, any>, rawEvent: GameEvent) => boolean): EventSubscription<EventArgs> {
+	requireImmediate(
+		condition: (args: EventArgs, preparedState: Record<string, any>, rawEvent: GameEvent) => boolean
+	): EventSubscription<EventArgs> {
 		this.__immediateConditions.push(condition)
 		return this
 	}

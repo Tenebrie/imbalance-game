@@ -4,7 +4,7 @@ enum ClientGameStatus {
 	IN_PROGRESS,
 	VICTORY,
 	DEFEAT,
-	DRAW
+	DRAW,
 }
 
 export default ClientGameStatus

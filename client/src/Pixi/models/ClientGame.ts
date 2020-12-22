@@ -26,7 +26,7 @@ export default class ClientGame {
 			return cardInStack.card
 		}
 
-		const cardInRequiredTargets = Core.input.forcedTargetingCards.find(card => card.id === cardId)
+		const cardInRequiredTargets = Core.input.forcedTargetingCards.find((card) => card.id === cardId)
 		if (cardInRequiredTargets) {
 			return cardInRequiredTargets
 		}
@@ -54,7 +54,7 @@ export default class ClientGame {
 			}
 		}
 
-		const cardInLimbo = Core.input.cardLimbo.find(card => card.id === cardId)
+		const cardInLimbo = Core.input.cardLimbo.find((card) => card.id === cardId)
 		if (cardInLimbo) {
 			return cardInLimbo
 		}
@@ -97,8 +97,10 @@ export default class ClientGame {
 	public findBuffById(buffId: string): Buff | BuffMessage | null {
 		const players = [Core.player, Core.opponent]
 
-		let cards: (Card | CardMessage)[] = Core.board.getAllUnits().map(unit => unit.card)
-			.concat(Core.resolveStack.cards.map(ownedCard => ownedCard.card))
+		let cards: (Card | CardMessage)[] = Core.board
+			.getAllUnits()
+			.map((unit) => unit.card)
+			.concat(Core.resolveStack.cards.map((ownedCard) => ownedCard.card))
 
 		for (let i = 0; i < players.length; i++) {
 			const player = players[i]
@@ -109,7 +111,7 @@ export default class ClientGame {
 		}
 
 		const buffs = cards.reduce((acc, value) => acc.concat(value.buffs.buffs), [])
-		return buffs.find(buff => buff.id === buffId)
+		return buffs.find((buff) => buff.id === buffId)
 	}
 
 	public findRenderedCardById(cardId: string): RenderedCard | null {

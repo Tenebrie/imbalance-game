@@ -9,10 +9,10 @@ import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {ServerCardTargetCard, ServerCardTargetUnit} from '../../../models/ServerCardTarget'
+import { ServerCardTargetCard, ServerCardTargetUnit } from '../../../models/ServerCardTarget'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFeature from '@shared/enums/CardFeature'
-import {asDirectUnitDamage} from '../../../../utils/LeaderStats'
+import { asDirectUnitDamage } from '../../../../utils/LeaderStats'
 
 export default class UnitChargingKnight extends ServerCard {
 	damage = asDirectUnitDamage(3)
@@ -32,7 +32,7 @@ export default class UnitChargingKnight extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			damage: this.damage
+			damage: this.damage,
 		}
 
 		this.createUnitOrderTargets()
@@ -44,8 +44,7 @@ export default class UnitChargingKnight extends ServerCard {
 			.require(({ triggeringUnit }) => triggeringUnit === this.unit)
 			.perform(() => this.onUnitMove())
 
-		this.createEffect(GameEventType.UNIT_ORDERED_CARD)
-			.perform(({ targetArguments }) => this.onUnitOrdered(targetArguments))
+		this.createEffect(GameEventType.UNIT_ORDERED_CARD).perform(({ targetArguments }) => this.onUnitOrdered(targetArguments))
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)

@@ -3,7 +3,7 @@ import Card from '@shared/models/Card'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import {GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import { GenericActionMessageType, SystemMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import TargetMode from '@shared/enums/TargetMode'
 
 export default {
@@ -50,5 +50,5 @@ export default {
 
 	sendKeepalive(): void {
 		Core.sendMessage(SystemMessageType.KEEPALIVE, null)
-	}
+	},
 }

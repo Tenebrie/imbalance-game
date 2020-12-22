@@ -12,7 +12,7 @@ import ServerDamageInstance from '../../../models/ServerDamageSource'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSplashUnitDamage, asDirectBuffPotency, asTargetCount} from '../../../../utils/LeaderStats'
+import { asSplashUnitDamage, asDirectBuffPotency, asTargetCount } from '../../../../utils/LeaderStats'
 
 export default class HeroTroviar extends ServerCard {
 	deployDamage = asSplashUnitDamage(1)
@@ -34,23 +34,21 @@ export default class HeroTroviar extends ServerCard {
 		this.dynamicTextVariables = {
 			deployDamage: this.deployDamage,
 			targetCount: this.targetCount,
-			powerGained: this.powerGained
+			powerGained: this.powerGained,
 		}
 
 		this.createDeployEffectTargets()
 			.target(TargetType.UNIT, this.targetCount)
 			.requireEnemyUnit()
-			.require(TargetType.UNIT, args => !this.targetsHit.includes(args.targetCard))
+			.require(TargetType.UNIT, (args) => !this.targetsHit.includes(args.targetCard))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
 		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD, CardLocation.STACK])
 			.require(({ triggeringCard }) => triggeringCard !== this)
 			.perform(() => this.onCardTakesDamage())
 
-		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
-			.perform(() => this.onTargetsConfirmed())
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED).perform(() => this.onTargetsConfirmed())
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

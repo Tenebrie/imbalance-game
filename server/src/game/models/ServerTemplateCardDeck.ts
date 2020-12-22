@@ -1,11 +1,10 @@
 import ServerCard from './ServerCard'
 import CardDeck from '@shared/models/CardDeck'
-import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
+import CardLibrary from '../libraries/CardLibrary'
 import UnitForestScout from '../cards/02-wild/common/UnitForestScout'
 import ServerGame from './ServerGame'
 import HeroZamarath from '../cards/00-human/legendary/HeroZamarath'
 import HeroSparklingSpirit from '../cards/01-arcane/epic/HeroSparklingSpirit'
-import HeroRagingElemental from '../cards/01-arcane/epic/HeroRagingElemental'
 import HeroKroLah from '../cards/01-arcane/legendary/HeroKroLah'
 import HeroGarellion from '../cards/01-arcane/legendary/HeroGarellion'
 import UnitPriestessOfAedine from '../cards/00-human/common/UnitPriestessOfAedine'
@@ -58,12 +57,12 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		let leader: ServerCard | undefined = undefined
 		const inflatedUnitDeck: ServerCard[] = []
 		const inflatedSpellDeck: ServerCard[] = []
-		cards.forEach(card => {
-			const inflatedCards = card.deckAddedCards.map(cardPrototype => CardLibrary.instantiateByConstructor(game, cardPrototype))
-			const inflatedUnitCards = inflatedCards.filter(card => card.type === CardType.UNIT)
-			const inflatedSpellCards = inflatedCards.filter(card => card.type === CardType.SPELL)
-			inflatedUnitCards.forEach(cardPrototype => inflatedUnitDeck.push(cardPrototype))
-			inflatedSpellCards.forEach(cardPrototype => inflatedSpellDeck.push(cardPrototype))
+		cards.forEach((card) => {
+			const inflatedCards = card.deckAddedCards.map((cardPrototype) => CardLibrary.instantiateByConstructor(game, cardPrototype))
+			const inflatedUnitCards = inflatedCards.filter((card) => card.type === CardType.UNIT)
+			const inflatedSpellCards = inflatedCards.filter((card) => card.type === CardType.SPELL)
+			inflatedUnitCards.forEach((cardPrototype) => inflatedUnitDeck.push(cardPrototype))
+			inflatedSpellCards.forEach((cardPrototype) => inflatedSpellDeck.push(cardPrototype))
 			if (card.color === CardColor.LEADER) {
 				leader = card
 			} else {
@@ -146,7 +145,7 @@ export default class ServerTemplateCardDeck implements CardDeck {
 
 	public static fromEditorDeck(game: ServerGame, editorDeck: ServerEditorDeck): ServerTemplateCardDeck {
 		const temporaryDeck: ServerCard[] = []
-		editorDeck.cards.forEach(card => {
+		editorDeck.cards.forEach((card) => {
 			for (let i = 0; i < card.count; i++) {
 				temporaryDeck.push(CardLibrary.instantiateByClass(game, card.class))
 			}

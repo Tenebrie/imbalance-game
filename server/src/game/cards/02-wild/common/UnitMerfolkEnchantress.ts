@@ -7,7 +7,6 @@ import SpellEnchantedStorm from '../tokens/SpellEnchantedStorm'
 import CardTribe from '@shared/enums/CardTribe'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
-import {mapRelatedCards} from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 
@@ -27,8 +26,7 @@ export default class UnitMerfolkEnchantress extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {

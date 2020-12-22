@@ -11,12 +11,12 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientCardResolveStack from '@/Pixi/models/ClientCardResolveStack'
 import ParticleSystem from '@/Pixi/vfx/ParticleSystem'
-import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
-import {ClientToServerMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
-import {ServerToClientMessageTypes} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import AudioSystem, { AudioSystemMode } from '@/Pixi/audio/AudioSystem'
+import { ClientToServerMessageTypes } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import GameMessage from '@shared/models/network/GameMessage'
 import TargetMode from '@shared/enums/TargetMode'
-import {electronWebsocketTarget, isElectron} from '@/utils/Utils'
+import { electronWebsocketTarget, isElectron } from '@/utils/Utils'
 
 export default class Core {
 	public static isReady = false
@@ -41,7 +41,7 @@ export default class Core {
 		if (game.players.length >= 2) {
 			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}/spectate/${game.players[0].player.id}`
 		}
-		if (game.players.find(playerInGame => playerInGame.player.id === store.state.player.id)) {
+		if (game.players.find((playerInGame) => playerInGame.player.id === store.state.player.id)) {
 			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}`
 		}
 		const socket = new WebSocket(targetUrl)
@@ -91,7 +91,7 @@ export default class Core {
 		}
 
 		const handlerSystemData = {
-			animationThreadId: Core.mainHandler.mainAnimationThread.id
+			animationThreadId: Core.mainHandler.mainAnimationThread.id,
 		}
 
 		if (messageHighPriority) {
@@ -108,7 +108,7 @@ export default class Core {
 			handler: handler,
 			data: messageData,
 			allowBatching: messageAllowBatching || false,
-			ignoreWorkerThreads: messageIgnoreWorkerThreads || false
+			ignoreWorkerThreads: messageIgnoreWorkerThreads || false,
 		})
 	}
 
@@ -151,10 +151,12 @@ export default class Core {
 	}
 
 	public static sendMessage(type: ClientToServerMessageTypes, data: Record<string, any> | TargetMode | null): void {
-		Core.socket.send(JSON.stringify({
-			type: type,
-			data: data
-		}))
+		Core.socket.send(
+			JSON.stringify({
+				type: type,
+				data: data,
+			})
+		)
 	}
 
 	public static registerCard(renderedCard: RenderedCard): void {

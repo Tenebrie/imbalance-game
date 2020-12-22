@@ -3,11 +3,15 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
-import ServerCardTarget, {ServerCardTargetCard} from '../models/ServerCardTarget'
+import ServerCardTarget, { ServerCardTargetCard } from '../models/ServerCardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerOwnedCard from '../models/ServerOwnedCard'
-import {ClientToServerMessageTypes, GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import {
+	ClientToServerMessageTypes,
+	GenericActionMessageType,
+	SystemMessageType,
+} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import TargetMode from '@shared/enums/TargetMode'
 import Utils from '../../utils/Utils'
 import CardLibrary from '../libraries/CardLibrary'
@@ -23,7 +27,7 @@ const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void =
 	game.events.flushLogEventGroup()
 }
 
-const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: IncomingMessageHandlerFunction } = {
+const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: IncomingMessageHandlerFunction } = {
 	[GenericActionMessageType.CARD_PLAY]: (data: CardPlayedMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		const card = playerInGame.cardHand.findCardById(data.id)
 		if (!card) {
@@ -31,8 +35,13 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		}
 
 		const validTargets = card.targeting.getValidCardPlayTargets(card.owner)
-		if (playerInGame.turnEnded || playerInGame.roundEnded || playerInGame.targetRequired ||
-			game.turnPhase !== GameTurnPhase.DEPLOY || !validTargets.find(target => data.rowIndex === target.targetRow.index)) {
+		if (
+			playerInGame.turnEnded ||
+			playerInGame.roundEnded ||
+			playerInGame.targetRequired ||
+			game.turnPhase !== GameTurnPhase.DEPLOY ||
+			!validTargets.find((target) => data.rowIndex === target.targetRow.index)
+		) {
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return
 		}
@@ -46,7 +55,13 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 
 	[GenericActionMessageType.UNIT_ORDER]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		const orderedUnit = game.board.findUnitById(data.sourceCardId)
-		if (playerInGame.turnEnded || playerInGame.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== playerInGame) {
+		if (
+			playerInGame.turnEnded ||
+			playerInGame.targetRequired ||
+			game.turnPhase !== GameTurnPhase.DEPLOY ||
+			!orderedUnit ||
+			orderedUnit.owner !== playerInGame
+		) {
 			return
 		}
 
@@ -91,7 +106,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
-		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
@@ -101,7 +116,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
-		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
@@ -111,7 +126,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
-		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
@@ -143,7 +158,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 
 	[SystemMessageType.KEEPALIVE]: (): void => {
 		// No action needed
-	}
+	},
 }
 
 export default IncomingMessageHandlers

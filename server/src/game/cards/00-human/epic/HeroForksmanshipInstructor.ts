@@ -8,7 +8,7 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class HeroForksmanshipInstructor extends ServerCard {
@@ -28,7 +28,7 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			powerThreshold: this.powerThreshold,
-			bonusPower: this.bonusPower
+			bonusPower: this.bonusPower,
 		}
 
 		this.createCallback(GameEventType.UNIT_CREATED, [CardLocation.BOARD])

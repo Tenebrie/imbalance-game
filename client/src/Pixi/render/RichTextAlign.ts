@@ -1,7 +1,7 @@
 enum RichTextAlign {
 	START,
 	CENTER,
-	END
+	END,
 }
 
 export default RichTextAlign

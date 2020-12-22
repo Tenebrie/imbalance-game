@@ -16,14 +16,14 @@ export default class PopulatedEditorDeck {
 	}
 
 	public get leader(): PopulatedEditorCard | null {
-		return this.cards.find(card => card.color === CardColor.LEADER) || null
+		return this.cards.find((card) => card.color === CardColor.LEADER) || null
 	}
 
 	public get faction(): CardFaction {
 		if (this.leader) {
 			return this.leader.faction
 		}
-		const factionCard = this.cards.find(card => card.faction !== CardFaction.NEUTRAL)
+		const factionCard = this.cards.find((card) => card.faction !== CardFaction.NEUTRAL)
 		if (factionCard) {
 			return factionCard.faction
 		}
@@ -31,16 +31,18 @@ export default class PopulatedEditorDeck {
 	}
 
 	public get isExperimental(): boolean {
-		return !!this.cards.find(card => card.isExperimental)
+		return !!this.cards.find((card) => card.isExperimental)
 	}
 
 	public get isDraft(): boolean {
-		return !this.leader || this.cardCount !== Constants.CARD_LIMIT_TOTAL || !!this.cards.find(card => card.count > Utils.getMaxCardCountForColor(card.color))
+		return (
+			!this.leader ||
+			this.cardCount !== Constants.CARD_LIMIT_TOTAL ||
+			!!this.cards.find((card) => card.count > Utils.getMaxCardCountForColor(card.color))
+		)
 	}
 
 	public get cardCount(): number {
-		return this.cards
-			.map(card => card.count)
-			.reduce((previousValue, currentValue) => previousValue + currentValue, 0)
+		return this.cards.map((card) => card.count).reduce((previousValue, currentValue) => previousValue + currentValue, 0)
 	}
 }

@@ -33,9 +33,10 @@ export default class ForcedTargetingMode {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
 
-		this.selectedTarget = this.validTargets.find(target => {
-			return (hoveredCard && target.targetCardId === hoveredCard.id) ||
-				(hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+		this.selectedTarget = this.validTargets.find((target) => {
+			return (
+				(hoveredCard && target.targetCardId === hoveredCard.id) || (hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+			)
 		})
 	}
 
@@ -47,24 +48,30 @@ export default class ForcedTargetingMode {
 		const target = this.selectedTarget
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
-		return (hoveredCard && target.targetCardId === hoveredCard.id) ||
-			(hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+		return (
+			(hoveredCard && target.targetCardId === hoveredCard.id) || (hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+		)
 	}
 
 	public isUnitPotentialTarget(unit: RenderedUnit): boolean {
-		return !!this.validTargets.find(target => target.targetCardId === unit.card.id)
+		return !!this.validTargets.find((target) => target.targetCardId === unit.card.id)
 	}
 
 	public isRowPotentialTarget(row: RenderedGameBoardRow): boolean {
-		return !!this.validTargets.find(target => Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === row)
+		return !!this.validTargets.find(
+			(target) => Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === row
+		)
 	}
 
 	public getDisplayedLabel(): string {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
 
-		const hoveredTarget = this.validTargets.find(target => {
-			return (hoveredCard && target.targetCardId === hoveredCard.id) || (Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+		const hoveredTarget = this.validTargets.find((target) => {
+			return (
+				(hoveredCard && target.targetCardId === hoveredCard.id) ||
+				(Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+			)
 		})
 		return hoveredTarget ? hoveredTarget.targetLabel : ''
 	}
@@ -73,8 +80,11 @@ export default class ForcedTargetingMode {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
 
-		const hoveredTarget = this.validTargets.find(target => {
-			return (hoveredCard && target.targetCardId === hoveredCard.id) || (Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+		const hoveredTarget = this.validTargets.find((target) => {
+			return (
+				(hoveredCard && target.targetCardId === hoveredCard.id) ||
+				(Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+			)
 		})
 		if (!hoveredTarget) {
 			return {}

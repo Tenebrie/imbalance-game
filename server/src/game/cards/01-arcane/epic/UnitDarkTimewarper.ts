@@ -19,19 +19,21 @@ export default class UnitDarkTimewarper extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitVoidPortal],
 			stats: {
-				power: 6
+				power: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {
-		const targets = this.game.board.getAllUnits().map(unit => unit.card).filter(card => card instanceof UnitVoidPortal) as UnitVoidPortal[]
+		const targets = this.game.board
+			.getAllUnits()
+			.map((unit) => unit.card)
+			.filter((card) => card instanceof UnitVoidPortal) as UnitVoidPortal[]
 
-		targets.forEach(target => {
+		targets.forEach((target) => {
 			this.game.animation.createAnimationThread()
 			this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target]))
 			target.onTurnEnded()

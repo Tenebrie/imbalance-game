@@ -10,7 +10,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asDirectHealingPotency} from '../../../../utils/LeaderStats'
+import { asDirectHealingPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1
@@ -30,7 +30,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			targets: this.targets,
-			healing: this.healing
+			healing: this.healing,
 		}
 
 		this.createDeployEffectTargets()
@@ -39,11 +39,10 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			.requireNotSelf()
 			.requireUnique(TargetType.UNIT)
 			.label(TargetType.UNIT, 'card.unitPriestessOfAedine.heal.target')
-			.require(TargetType.UNIT, args => args.targetCard.stats.power < args.targetCard.stats.maxPower)
-			.evaluate(TargetType.UNIT, args => args.targetCard.stats.maxPower - args.targetCard.stats.power)
+			.require(TargetType.UNIT, (args) => args.targetCard.stats.power < args.targetCard.stats.maxPower)
+			.evaluate(TargetType.UNIT, (args) => args.targetCard.stats.maxPower - args.targetCard.stats.power)
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

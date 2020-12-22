@@ -12,7 +12,7 @@ export default class TokenEmptyDeck extends ServerCard {
 			color: CardColor.TOKEN,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 0
+				power: 0,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

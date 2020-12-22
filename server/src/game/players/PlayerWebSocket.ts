@@ -11,7 +11,9 @@ export default class PlayerWebSocket {
 	}
 
 	send(json: Record<string, any>): void {
-		if (this.ws.readyState != 1) { return }
+		if (this.ws.readyState != 1) {
+			return
+		}
 
 		this.ws.send(JSON.stringify(json))
 	}

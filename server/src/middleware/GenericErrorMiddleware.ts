@@ -1,11 +1,12 @@
-import {Request, Response} from 'express'
+import { Request, Response } from 'express'
 
 interface ErrorJson {
-	code: number | undefined,
+	code: number | undefined
 	error: string
 }
 
-export default (err: any, req: Request, res: Response, next: () => void) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/explicit-module-boundary-types
+export default (err: any, req: Request, res: Response, next: () => void): void => {
 	if (err && !err.status) {
 		console.error(err)
 	}
@@ -13,7 +14,7 @@ export default (err: any, req: Request, res: Response, next: () => void) => {
 	const statusCode = err.status || 500
 	const json: ErrorJson = {
 		code: err.code,
-		error: typeof(err) === 'object' ? err.error : err
+		error: typeof err === 'object' ? err.error : err,
 	}
 	res.status(statusCode)
 	res.json(json)

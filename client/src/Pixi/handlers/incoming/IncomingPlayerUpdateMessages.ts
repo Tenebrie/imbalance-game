@@ -5,13 +5,13 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
-import {PlayerUpdateMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { PlayerUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
 import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMessage'
-import {IncomingMessageHandlerFunction} from '@/Pixi/handlers/IncomingMessageHandlers'
+import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
 import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
 
-const IncomingPlayerUpdateMessages: {[ index in PlayerUpdateMessageType ]: IncomingMessageHandlerFunction } = {
+const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: IncomingMessageHandlerFunction } = {
 	[PlayerUpdateMessageType.LEADER_SELF]: (data: CardMessage) => {
 		Core.player.leader = new RenderedCard(data)
 	},

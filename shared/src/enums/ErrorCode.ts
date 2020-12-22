@@ -1,6 +1,6 @@
 enum ErrorCode {
 	NO_DECK_SELECTED,
-	INVALID_DECK
+	INVALID_DECK,
 }
 
 export default ErrorCode

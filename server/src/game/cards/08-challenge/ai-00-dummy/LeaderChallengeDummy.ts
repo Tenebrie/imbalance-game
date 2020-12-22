@@ -17,7 +17,7 @@ export default class LeaderChallengeDummy extends ServerCard {
 			faction: CardFaction.HUMAN,
 			expansionSet: ExpansionSet.BASE,
 			deckAddedCards: [],
-			hiddenFromLibrary: true
+			hiddenFromLibrary: true,
 		})
 
 		this.createCallback(GameEventType.ROUND_STARTED, [CardLocation.LEADER])

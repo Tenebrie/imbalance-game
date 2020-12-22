@@ -37,9 +37,13 @@ export default class ServerGameTimers {
 	constructor(game: ServerGame) {
 		this.game = game
 
-		this.playerLeaveTimeout = new ReusableTimeout(game, () => {
-			const victoriousPlayer = game.players.find(player => player.player.isInGame() || player instanceof ServerBotPlayerInGame) || null
-			game.finish(victoriousPlayer, 'Opponent disconnected')
-		}, 60000)
+		this.playerLeaveTimeout = new ReusableTimeout(
+			game,
+			() => {
+				const victoriousPlayer = game.players.find((player) => player.player.isInGame() || player instanceof ServerBotPlayerInGame) || null
+				game.finish(victoriousPlayer, 'Opponent disconnected')
+			},
+			60000
+		)
 	}
 }

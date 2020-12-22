@@ -11,7 +11,7 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitAbyssPortal extends ServerCard {
 	powerPerCard = asSplashBuffPotency(1)
@@ -29,7 +29,7 @@ export default class UnitAbyssPortal extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			powerPerCard: this.powerPerCard
+			powerPerCard: this.powerPerCard,
 		}
 		this.botEvaluation = new CustomBotEvaluation(this)
 
@@ -43,11 +43,9 @@ export default class UnitAbyssPortal extends ServerCard {
 		const owner = this.ownerInGame
 		const voidspawn = CardLibrary.instantiateByConstructor(this.game, UnitVoidspawn)
 		this.game.board.createUnit(voidspawn, this.ownerInGame, unit.rowIndex, unit.unitIndex + 1)
-		const uniqueCardsInBothDiscards = [...new Set(
-			owner.cardGraveyard.allCards
-				.concat(owner.opponent!.cardGraveyard.allCards)
-				.map(card => card.class)
-		)]
+		const uniqueCardsInBothDiscards = [
+			...new Set(owner.cardGraveyard.allCards.concat(owner.opponent!.cardGraveyard.allCards).map((card) => card.class)),
+		]
 		if (uniqueCardsInBothDiscards.length === 0) {
 			return
 		}

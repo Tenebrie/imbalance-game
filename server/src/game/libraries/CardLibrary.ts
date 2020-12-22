@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
-import {colorize} from '../../utils/Utils'
+import { colorize } from '../../utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
@@ -15,9 +15,9 @@ export interface CardConstructor {
 }
 
 type CardModule = {
-	path: string,
-	filename: string,
-	timestamp: number,
+	path: string
+	filename: string
+	timestamp: number
 	prototypeFunction: CardConstructor
 }
 
@@ -33,29 +33,32 @@ class CardLibrary {
 		const normalizedPath = path.join(__dirname, '../cards')
 		const cardDefinitionFiles = glob.sync(`${normalizedPath}/**/*.js`)
 
-		const cardModules: CardModule[] = cardDefinitionFiles.map(path => ({
+		const cardModules: CardModule[] = cardDefinitionFiles.map((path) => ({
 			path: path,
 			filename: path.substring(path.lastIndexOf('/') + 1, path.indexOf('.js')),
 			timestamp: fs.statSync(path).mtimeMs,
-			prototypeFunction: require(path).default
+			prototypeFunction: require(path).default,
 		}))
 		console.info(`Found ${colorize(cardModules.length, AsciiColor.CYAN)} card definition files`)
 
-		const nameMismatchModules = cardModules.filter(module => module.filename !== module.prototypeFunction.name)
+		const nameMismatchModules = cardModules.filter((module) => module.filename !== module.prototypeFunction.name)
 		if (nameMismatchModules.length > 0) {
-			const errorArray = nameMismatchModules.map(module => ({
+			const errorArray = nameMismatchModules.map((module) => ({
 				file: module.filename,
-				prototype: module.prototypeFunction.name
+				prototype: module.prototypeFunction.name,
 			}))
-			console.warn(colorize(`Clearing ${nameMismatchModules.length} card module(s) due to class name mismatch:`, AsciiColor.YELLOW), errorArray)
-			nameMismatchModules.forEach(module => fs.unlinkSync(module.path))
+			console.warn(
+				colorize(`Clearing ${nameMismatchModules.length} card module(s) due to class name mismatch:`, AsciiColor.YELLOW),
+				errorArray
+			)
+			nameMismatchModules.forEach((module) => fs.unlinkSync(module.path))
 		}
 
 		const upToDateModules = cardModules
-			.filter(module => module.filename === module.prototypeFunction.name)
+			.filter((module) => module.filename === module.prototypeFunction.name)
 			.reduce((acc: CardModule[], obj) => {
 				const updatedArray = acc.slice()
-				const savedObject = updatedArray.find(savedObject => savedObject.filename === obj.filename)
+				const savedObject = updatedArray.find((savedObject) => savedObject.filename === obj.filename)
 				if (!savedObject) {
 					updatedArray.push(obj)
 				} else if (obj.timestamp > savedObject.timestamp) {
@@ -64,15 +67,15 @@ class CardLibrary {
 				return updatedArray
 			}, [])
 
-		const outdatedModules = cardModules.filter(module => !upToDateModules.includes(module) && !nameMismatchModules.includes(module))
+		const outdatedModules = cardModules.filter((module) => !upToDateModules.includes(module) && !nameMismatchModules.includes(module))
 		if (outdatedModules.length > 0) {
 			console.info(colorize(`Clearing ${outdatedModules.length} outdated card module(s)`, AsciiColor.YELLOW))
-			outdatedModules.forEach(module => fs.unlinkSync(module.path))
+			outdatedModules.forEach((module) => fs.unlinkSync(module.path))
 		}
 
-		const cardPrototypes = upToDateModules.map(module => module.prototypeFunction)
+		const cardPrototypes = upToDateModules.map((module) => module.prototypeFunction)
 
-		this.cards = cardPrototypes.map(prototype => {
+		this.cards = cardPrototypes.map((prototype) => {
 			return new prototype(CardLibraryPlaceholderGame.get())
 		})
 
@@ -82,57 +85,98 @@ class CardLibrary {
 		}
 
 		console.info('Card library breakdown:')
-		const nonTestingCards = this.cards.filter(card => !card.class.startsWith('testing'))
+		const nonTestingCards = this.cards.filter((card) => !card.class.startsWith('testing'))
 		console.table({
-			'Human': {
-				'Leaders': nonTestingCards.filter(card => card.faction === CardFaction.HUMAN && card.isCollectible && card.color === CardColor.LEADER).length,
-				'Units': nonTestingCards.filter(card => card.faction === CardFaction.HUMAN && card.isCollectible && card.color !== CardColor.LEADER).length,
-				'Spells': nonTestingCards.filter(card => card.faction === CardFaction.HUMAN && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN).length,
-				'Tokens': nonTestingCards.filter(card => card.faction === CardFaction.HUMAN && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)).length,
-				'Total': nonTestingCards.filter(card => card.faction === CardFaction.HUMAN).length,
+			Human: {
+				Leaders: nonTestingCards.filter(
+					(card) => card.faction === CardFaction.HUMAN && card.isCollectible && card.color === CardColor.LEADER
+				).length,
+				Units: nonTestingCards.filter((card) => card.faction === CardFaction.HUMAN && card.isCollectible && card.color !== CardColor.LEADER)
+					.length,
+				Spells: nonTestingCards.filter(
+					(card) =>
+						card.faction === CardFaction.HUMAN && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
+				).length,
+				Tokens: nonTestingCards.filter(
+					(card) =>
+						card.faction === CardFaction.HUMAN && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
+				).length,
+				Total: nonTestingCards.filter((card) => card.faction === CardFaction.HUMAN).length,
 			},
-			'Arcane': {
-				'Leaders': nonTestingCards.filter(card => card.faction === CardFaction.ARCANE && card.isCollectible && card.color === CardColor.LEADER).length,
-				'Units': nonTestingCards.filter(card => card.faction === CardFaction.ARCANE && card.isCollectible && card.color !== CardColor.LEADER).length,
-				'Spells': nonTestingCards.filter(card => card.faction === CardFaction.ARCANE && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN).length,
-				'Tokens': nonTestingCards.filter(card => card.faction === CardFaction.ARCANE && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)).length,
-				'Total': nonTestingCards.filter(card => card.faction === CardFaction.ARCANE).length,
+			Arcane: {
+				Leaders: nonTestingCards.filter(
+					(card) => card.faction === CardFaction.ARCANE && card.isCollectible && card.color === CardColor.LEADER
+				).length,
+				Units: nonTestingCards.filter(
+					(card) => card.faction === CardFaction.ARCANE && card.isCollectible && card.color !== CardColor.LEADER
+				).length,
+				Spells: nonTestingCards.filter(
+					(card) =>
+						card.faction === CardFaction.ARCANE && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
+				).length,
+				Tokens: nonTestingCards.filter(
+					(card) =>
+						card.faction === CardFaction.ARCANE && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
+				).length,
+				Total: nonTestingCards.filter((card) => card.faction === CardFaction.ARCANE).length,
 			},
-			'Wild': {
-				'Leaders': nonTestingCards.filter(card => card.faction === CardFaction.WILD && card.isCollectible && card.color === CardColor.LEADER).length,
-				'Units': nonTestingCards.filter(card => card.faction === CardFaction.WILD && card.isCollectible && card.color !== CardColor.LEADER).length,
-				'Spells': nonTestingCards.filter(card => card.faction === CardFaction.WILD && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN).length,
-				'Tokens': nonTestingCards.filter(card => card.faction === CardFaction.WILD && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)).length,
-				'Total': nonTestingCards.filter(card => card.faction === CardFaction.WILD).length,
+			Wild: {
+				Leaders: nonTestingCards.filter(
+					(card) => card.faction === CardFaction.WILD && card.isCollectible && card.color === CardColor.LEADER
+				).length,
+				Units: nonTestingCards.filter((card) => card.faction === CardFaction.WILD && card.isCollectible && card.color !== CardColor.LEADER)
+					.length,
+				Spells: nonTestingCards.filter(
+					(card) =>
+						card.faction === CardFaction.WILD && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
+				).length,
+				Tokens: nonTestingCards.filter(
+					(card) =>
+						card.faction === CardFaction.WILD && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
+				).length,
+				Total: nonTestingCards.filter((card) => card.faction === CardFaction.WILD).length,
 			},
-			'Neutral': {
-				'Leaders': nonTestingCards.filter(card => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color === CardColor.LEADER).length,
-				'Units': nonTestingCards.filter(card => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color !== CardColor.LEADER).length,
-				'Spells': nonTestingCards.filter(card => card.faction === CardFaction.NEUTRAL && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN).length,
-				'Tokens': nonTestingCards.filter(card => card.faction === CardFaction.NEUTRAL && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)).length,
-				'Total': nonTestingCards.filter(card => card.faction === CardFaction.NEUTRAL).length,
+			Neutral: {
+				Leaders: nonTestingCards.filter(
+					(card) => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color === CardColor.LEADER
+				).length,
+				Units: nonTestingCards.filter(
+					(card) => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color !== CardColor.LEADER
+				).length,
+				Spells: nonTestingCards.filter(
+					(card) =>
+						card.faction === CardFaction.NEUTRAL && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
+				).length,
+				Tokens: nonTestingCards.filter(
+					(card) =>
+						card.faction === CardFaction.NEUTRAL && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
+				).length,
+				Total: nonTestingCards.filter((card) => card.faction === CardFaction.NEUTRAL).length,
 			},
-			'Testing': {
-				'Total': this.cards.filter(card => card.class.startsWith('testing')).length,
+			Testing: {
+				Total: this.cards.filter((card) => card.class.startsWith('testing')).length,
 			},
 		})
 
 		const oldestTimestamp = upToDateModules.sort((a, b) => a.timestamp - b.timestamp)[0].timestamp
-		const newModules = upToDateModules.filter(module => (module.timestamp - oldestTimestamp) > 1000000)
+		const newModules = upToDateModules.filter((module) => module.timestamp - oldestTimestamp > 1000000)
 		if (newModules.length === 0) {
 			return
 		}
 		const sortedNewModules = newModules.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5)
-		console.info('Latest updated card definitions:', sortedNewModules.map(module => module.filename))
+		console.info(
+			'Latest updated card definitions:',
+			sortedNewModules.map((module) => module.filename)
+		)
 	}
 
 	public findPrototypeById(id: string): ServerCard | undefined {
-		return this.cards.find(card => card.id === id)
+		return this.cards.find((card) => card.id === id)
 	}
 
 	public findPrototypeByConstructor(constructor: CardConstructor): ServerCard {
 		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
-		const card = this.cards.find(card => card.class === cardClass)
+		const card = this.cards.find((card) => card.class === cardClass)
 		if (!card) {
 			throw new Error(`Unable to find card ${cardClass}`)
 		}
@@ -146,14 +190,14 @@ class CardLibrary {
 
 	public instantiateByConstructor(game: ServerGame, constructor: CardConstructor): ServerCard {
 		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
-		if (!this.cards.find(card => card.class === cardClass)) {
+		if (!this.cards.find((card) => card.class === cardClass)) {
 			this.cards.push(new constructor(CardLibraryPlaceholderGame.get()))
 		}
 		return this.instantiateByClass(game, cardClass)
 	}
 
 	public instantiateByClass(game: ServerGame, cardClass: string): ServerCard {
-		const reference = this.cards.find(card => {
+		const reference = this.cards.find((card) => {
 			return card.class === cardClass
 		})
 		if (!reference) {

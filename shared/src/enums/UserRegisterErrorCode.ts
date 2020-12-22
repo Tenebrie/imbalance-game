@@ -1,6 +1,6 @@
 enum UserRegisterErrorCode {
 	EMAIL_TAKEN,
-	USERNAME_COLLISIONS
+	USERNAME_COLLISIONS,
 }
 
 export default UserRegisterErrorCode

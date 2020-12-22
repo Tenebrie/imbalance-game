@@ -31,8 +31,10 @@ export default class RenderedGameBoard implements Board {
 	}
 
 	public insertUnitFromHold(unitId: string, rowIndex: number, unitIndex: number): void {
-		const unit = this.unitsOnHold.find(unit => unit.card.id === unitId)
-		if (!unit) { return }
+		const unit = this.unitsOnHold.find((unit) => unit.card.id === unitId)
+		if (!unit) {
+			return
+		}
 
 		this.unitsOnHold.splice(this.unitsOnHold.indexOf(unit), 1)
 		this.insertUnit(unit, rowIndex, unitIndex)
@@ -40,17 +42,19 @@ export default class RenderedGameBoard implements Board {
 
 	public findUnitById(unitId: string): RenderedUnit | null {
 		const cards = this.getAllUnits()
-		return cards.find(cardOnBoard => cardOnBoard.card.id === unitId) || null
+		return cards.find((cardOnBoard) => cardOnBoard.card.id === unitId) || null
 	}
 
 	public findInsertedById(unitId: string): RenderedUnit | null {
-		const cards = this.rows.map(row => row.cards).flat()
-		return cards.find(cardOnBoard => cardOnBoard.card.id === unitId) || null
+		const cards = this.rows.map((row) => row.cards).flat()
+		return cards.find((cardOnBoard) => cardOnBoard.card.id === unitId) || null
 	}
 
 	public destroyUnit(unit: RenderedUnit): void {
 		const currentRow = this.getRowWithCard(unit)
-		if (!currentRow) { return }
+		if (!currentRow) {
+			return
+		}
 
 		currentRow.destroyUnit(unit)
 	}
@@ -63,11 +67,11 @@ export default class RenderedGameBoard implements Board {
 	}
 
 	public getRowWithCard(targetUnit: RenderedUnit): RenderedGameBoardRow | null {
-		return this.rows.find(row => !!row.cards.find(unit => unit.card.id === targetUnit.card.id)) || null
+		return this.rows.find((row) => !!row.cards.find((unit) => unit.card.id === targetUnit.card.id)) || null
 	}
 
 	public getInsertedUnits(): RenderedUnit[] {
-		return this.rows.map(row => row.cards).flat()
+		return this.rows.map((row) => row.cards).flat()
 	}
 
 	public getAllUnits(): RenderedUnit[] {
@@ -75,19 +79,19 @@ export default class RenderedGameBoard implements Board {
 	}
 
 	public getInsertedUnitsOwnedByPlayer(owner: ClientPlayerInGame): RenderedUnit[] {
-		return this.getInsertedUnits().filter(unit => unit.owner === owner)
+		return this.getInsertedUnits().filter((unit) => unit.owner === owner)
 	}
 
 	public getUnitsOwnedByPlayer(owner: ClientPlayerInGame): RenderedUnit[] {
-		return this.getAllUnits().filter(unit => unit.owner === owner)
+		return this.getAllUnits().filter((unit) => unit.owner === owner)
 	}
 
 	public getValidOrdersForUnit(unit: RenderedUnit): CardTargetMessage[] {
-		return this.validOrders.concat(this.validOpponentOrders).filter(order => order.sourceCardId === unit.card.id)
+		return this.validOrders.concat(this.validOpponentOrders).filter((order) => order.sourceCardId === unit.card.id)
 	}
 
 	public clearBoard(): void {
-		this.rows.forEach(row => row.clearRow())
+		this.rows.forEach((row) => row.clearRow())
 	}
 
 	public setInverted(isInverted: boolean): void {

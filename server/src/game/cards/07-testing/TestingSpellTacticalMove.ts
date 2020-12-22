@@ -18,7 +18,7 @@ export default class TestingSpellTacticalMove extends ServerCard {
 			color: CardColor.TOKEN,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				cost: 0
+				cost: 0,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -33,11 +33,9 @@ export default class TestingSpellTacticalMove extends ServerCard {
 			.require(TargetType.BOARD_ROW, () => !!this.movingUnit)
 			.require(TargetType.BOARD_ROW, ({ targetRow }) => targetRow.index !== this.movingUnit!.rowIndex)
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetUnitSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetUnitSelected(targetUnit))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW)
-			.perform(({ targetRow }) => this.onTargetRowSelected(targetRow))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetRowSelected(targetRow))
 	}
 
 	private onTargetUnitSelected(target: ServerUnit): void {
@@ -46,7 +44,6 @@ export default class TestingSpellTacticalMove extends ServerCard {
 
 	private onTargetRowSelected(target: ServerBoardRow): void {
 		const movingUnit = this.movingUnit!
-		const moveDirection = this.game.board.getMoveDirection(this.ownerInGame, this.game.board.rows[movingUnit.rowIndex], target)
 		this.game.board.moveUnitToFarRight(movingUnit, target.index)
 	}
 }

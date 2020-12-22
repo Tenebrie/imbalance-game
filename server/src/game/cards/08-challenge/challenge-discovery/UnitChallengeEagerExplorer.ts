@@ -25,28 +25,26 @@ export default class UnitChallengeEagerExplorer extends ServerCard {
 				power: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true
+			hiddenFromLibrary: true,
 		})
 		this.dynamicTextVariables = {
-			cardsToExplore: this.cardsToExplore
+			cardsToExplore: this.cardsToExplore,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 
 		this.createDeployEffectTargets()
 			.target(TargetType.CARD_IN_LIBRARY)
-			.require(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.color === CardColor.BRONZE))
+			.require(TargetType.CARD_IN_LIBRARY, (args) => args.targetCard.color === CardColor.BRONZE)
 			.require(TargetType.CARD_IN_LIBRARY, ({ targetCard }) => this.exploredCards.includes(targetCard))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onDeploy(): void {
 		const commonCards = CardLibrary.cards
-			.filter(card => card.color === CardColor.BRONZE)
-			.filter(card => card.isCollectible)
+			.filter((card) => card.color === CardColor.BRONZE)
+			.filter((card) => card.isCollectible)
 			.slice()
 		this.exploredCards = Utils.shuffle(commonCards).slice(0, this.cardsToExplore)
 	}

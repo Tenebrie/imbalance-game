@@ -12,4 +12,5 @@ server/src/*.js
 server/src/*.js.map
 shared/src/*.js
 shared/src/*.js.map
+yarn-error.log
 

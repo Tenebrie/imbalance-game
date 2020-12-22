@@ -40,7 +40,7 @@ export default class ServerAnimation implements Animation {
 
 	public static cardAnnounce(targetCard: ServerCard): ServerAnimation {
 		const params: CardAnnounceAnimParams = {
-			cardMessage: new OpenCardMessage(targetCard)
+			cardMessage: new OpenCardMessage(targetCard),
 		}
 		const animation = new ServerAnimation(AnimationType.CARD_ANNOUNCE, params)
 		animation.targetCard = targetCard
@@ -76,7 +76,7 @@ export default class ServerAnimation implements Animation {
 
 	public static universeAttacksUnits(targetUnits: ServerUnit[]): ServerAnimation {
 		const animation = new ServerAnimation(AnimationType.UNIVERSE_ATTACK, {})
-		animation.targetCards = targetUnits.map(unit => unit.card)
+		animation.targetCards = targetUnits.map((unit) => unit.card)
 		return animation
 	}
 
@@ -110,7 +110,7 @@ export default class ServerAnimation implements Animation {
 
 	public static cardsReceivedBuff(targetCards: ServerCard[], alignment: BuffAlignment): ServerAnimation {
 		const params: CardReceivedBuffAnimParams = {
-			alignment: alignment
+			alignment: alignment,
 		}
 		const animation = new ServerAnimation(AnimationType.CARD_RECEIVED_BUFF, params)
 		animation.targetCards = targetCards

@@ -26,7 +26,7 @@ export default class UnitLoneLooter extends ServerCard {
 			.require(({ triggeringBuff }) => triggeringBuff.card.owner !== this.owner)
 			.require(({ triggeringBuff }) => triggeringBuff.source?.owner === this.owner)
 			.prepare(() => ({
-				index: this.ownerInGame.cardDeck.unitCards.filter(unit => unit.class === this.class)
+				index: this.ownerInGame.cardDeck.unitCards.filter((unit) => unit.class === this.class),
 			}))
 			.perform((args, preparedState) => this.onEffect(preparedState.index))
 	}

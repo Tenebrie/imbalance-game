@@ -1,7 +1,7 @@
-import ServerGame, {OptionalGameProps} from '../models/ServerGame'
+import ServerGame, { OptionalGameProps } from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import {colorizeConsoleText, colorizeId, colorizePlayer} from '../../utils/Utils'
+import { colorizeConsoleText, colorizeId, colorizePlayer } from '../../utils/Utils'
 import GameMode from '@shared/enums/GameMode'
 
 class GameLibrary {
@@ -27,14 +27,14 @@ class GameLibrary {
 		console.info(`Destroying game ${colorizeId(game.id)}. Reason: ${colorizeConsoleText(reason)}`)
 
 		game.spectators
-			.filter(spectator => spectator.player.webSocket && spectator.player.webSocket.game === game)
-			.forEach(spectator => {
+			.filter((spectator) => spectator.player.webSocket && spectator.player.webSocket.game === game)
+			.forEach((spectator) => {
 				OutgoingMessageHandlers.notifyAboutGameShutdown(spectator.player)
 				spectator.player.disconnect()
 			})
 		game.players
-			.filter(playerInGame => playerInGame.player.webSocket && playerInGame.player.webSocket.game === game)
-			.forEach(playerInGame => {
+			.filter((playerInGame) => playerInGame.player.webSocket && playerInGame.player.webSocket.game === game)
+			.forEach((playerInGame) => {
 				OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player)
 				playerInGame.player.disconnect()
 			})
@@ -42,10 +42,14 @@ class GameLibrary {
 	}
 
 	public destroyOwnedGame(id: string, player: ServerPlayer, reason: string): void {
-		if (!id) { throw 'Missing game ID' }
+		if (!id) {
+			throw 'Missing game ID'
+		}
 
-		const game = this.games.find(game => game.id === id)
-		if (!game || !game.owner || game.owner.id !== player.id) { throw 'Invalid game ID' }
+		const game = this.games.find((game) => game.id === id)
+		if (!game || !game.owner || game.owner.id !== player.id) {
+			throw 'Invalid game ID'
+		}
 
 		this.destroyGame(game, reason)
 	}

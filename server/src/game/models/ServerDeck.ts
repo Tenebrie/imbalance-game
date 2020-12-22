@@ -21,7 +21,7 @@ export default class ServerDeck implements CardDeck {
 		this.spellCards = spellCards
 	}
 
-	public get allCards() {
+	public get allCards(): ServerCard[] {
 		return this.unitCards.slice().concat(this.spellCards)
 	}
 
@@ -32,8 +32,8 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public instantiateFrom(deck: ServerTemplateCardDeck): void {
-		deck.unitCards.forEach(card => this.addUnitToTop(CardLibrary.instantiateByInstance(this.game, card)))
-		deck.spellCards.forEach(card => this.addSpellToTop(CardLibrary.instantiateByInstance(this.game, card)))
+		deck.unitCards.forEach((card) => this.addUnitToTop(CardLibrary.instantiateByInstance(this.game, card)))
+		deck.spellCards.forEach((card) => this.addSpellToTop(CardLibrary.instantiateByInstance(this.game, card)))
 	}
 
 	public addUnitToTop(card: ServerCard): void {
@@ -75,19 +75,19 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public findCardByClass(cardClass: string): ServerCard | null {
-		return this.unitCards.find(card => card.class === cardClass) || this.spellCards.find(card => card.class === cardClass) || null
+		return this.unitCards.find((card) => card.class === cardClass) || this.spellCards.find((card) => card.class === cardClass) || null
 	}
 
 	public findCardById(cardId: string): ServerCard | null {
-		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
+		return this.unitCards.find((card) => card.id === cardId) || this.spellCards.find((card) => card.id === cardId) || null
 	}
 
 	public discardUnit(cardToDiscard: ServerCard): void {
-		this.unitCards = this.unitCards.filter(card => card !== cardToDiscard)
+		this.unitCards = this.unitCards.filter((card) => card !== cardToDiscard)
 	}
 
 	public discardSpell(cardToDiscard: ServerCard): void {
-		this.spellCards = this.spellCards.filter(card => card !== cardToDiscard)
+		this.spellCards = this.spellCards.filter((card) => card !== cardToDiscard)
 	}
 
 	public shuffle(): void {
@@ -96,8 +96,8 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public removeCard(card: ServerCard): void {
-		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
-		this.spellCards = this.spellCards.filter(unitCard => unitCard !== card)
+		this.unitCards = this.unitCards.filter((unitCard) => unitCard !== card)
+		this.spellCards = this.spellCards.filter((unitCard) => unitCard !== card)
 
 		OutgoingMessageHandlers.notifyAboutCardInDeckDestroyed(new ServerOwnedCard(card, this.owner))
 	}

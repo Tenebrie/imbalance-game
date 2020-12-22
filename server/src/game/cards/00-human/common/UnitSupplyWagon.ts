@@ -8,7 +8,7 @@ import ServerAnimation from '../../../models/ServerAnimation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitSupplyWagon extends ServerCard {
 	extraPower = asSplashBuffPotency(3)
@@ -27,27 +27,26 @@ export default class UnitSupplyWagon extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			extraPower: this.extraPower,
-			pushDistance: this.pushDistance
+			pushDistance: this.pushDistance,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {
 		let adjacentUnits = this.game.board.getAdjacentUnits(this.unit!)
-		adjacentUnits.forEach(unit => {
+		adjacentUnits.forEach((unit) => {
 			this.game.animation.createInstantAnimationThread()
 			unit.buffs.addMultiple(BuffStrength, this.extraPower, this)
 			this.game.animation.commitAnimationThread()
 		})
-		adjacentUnits = adjacentUnits.filter(unit => unit.isAlive())
+		adjacentUnits = adjacentUnits.filter((unit) => unit.isAlive())
 		if (adjacentUnits.length === 0) {
 			return
 		}
 
 		this.game.animation.syncAnimationThreads()
-		adjacentUnits.forEach(unit => {
+		adjacentUnits.forEach((unit) => {
 			this.game.animation.createInstantAnimationThread()
 			this.game.board.moveUnitForward(unit, this.pushDistance)
 			this.game.animation.commitAnimationThread()

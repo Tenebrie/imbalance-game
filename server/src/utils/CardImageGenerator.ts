@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import {CanvasRenderingContext2D, createCanvas, loadImage} from 'canvas'
+import { CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas'
 import CardLibrary from '../game/libraries/CardLibrary'
 import createSeededRandom from 'seedrandom'
 import rgb2hex from 'rgb-hex'
@@ -14,8 +14,8 @@ enum ImageMode {
 }
 
 interface RenderColor {
-	r: number,
-	g: number,
+	r: number
+	g: number
 	b: number
 }
 
@@ -24,12 +24,14 @@ class CardImageGenerator {
 		const productionDir = path.join(__dirname, '../../../../client/assets/cards')
 		const placeholderDir = path.join(__dirname, '../../../../client/generated/assets/cards')
 
-		const targetCardClasses = CardLibrary.cards.filter(card => !fs.existsSync(`${productionDir}/${card.class}.png`) && !fs.existsSync(`${placeholderDir}/${card.class}.png`))
+		const targetCardClasses = CardLibrary.cards.filter(
+			(card) => !fs.existsSync(`${productionDir}/${card.class}.png`) && !fs.existsSync(`${placeholderDir}/${card.class}.png`)
+		)
 		if (targetCardClasses.length === 0) {
 			return
 		}
 
-		targetCardClasses.forEach(card => {
+		targetCardClasses.forEach((card) => {
 			this.generatePlaceholderImage(card.class, card.generatedArtworkMagicString)
 		})
 		console.info(`Generated ${targetCardClasses.length} placeholder card image(s)`)
@@ -44,7 +46,7 @@ class CardImageGenerator {
 		ctx.translate(0.5, 0.5)
 
 		const filepath = path.join(__dirname, '../../../../assets/bg-clean.png')
-		loadImage(filepath).then(image => {
+		loadImage(filepath).then((image) => {
 			ctx.drawImage(image, 0, 0, width, height)
 
 			ctx.globalCompositeOperation = 'source-atop'
@@ -57,7 +59,7 @@ class CardImageGenerator {
 			const baseColor: RenderColor = {
 				r: 20 + seededRandom() * 180,
 				g: 20 + seededRandom() * 180,
-				b: 20 + seededRandom() * 180
+				b: 20 + seededRandom() * 180,
 			}
 
 			if (imageMode === ImageMode.SINGLE_PATH) {
@@ -65,7 +67,7 @@ class CardImageGenerator {
 			} else if (imageMode === ImageMode.DOUBLE_PATH_SPLIT_X) {
 				this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width, height / 2 + 50)
 				this.renderSimplePath(ctx, seededRandom, baseColor, 0, height / 2 - 50, width, height / 2 + 50)
-			}  else if (imageMode === ImageMode.DOUBLE_PATH_SPLIT_Y) {
+			} else if (imageMode === ImageMode.DOUBLE_PATH_SPLIT_Y) {
 				this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width / 2 + 30, height)
 				this.renderSimplePath(ctx, seededRandom, baseColor, width / 2 - 30, 0, width / 2 + 30, height)
 			} else if (imageMode === ImageMode.TRIPLE_PATH_SPLIT) {
@@ -92,12 +94,20 @@ class CardImageGenerator {
 		})
 	}
 
-	private renderSimplePath(ctx: CanvasRenderingContext2D, seededRandom: () => number, baseColor: RenderColor, x: number, y: number, width: number, height: number): void {
+	private renderSimplePath(
+		ctx: CanvasRenderingContext2D,
+		seededRandom: () => number,
+		baseColor: RenderColor,
+		x: number,
+		y: number,
+		width: number,
+		height: number
+	): void {
 		const variation = 40
 		const color: RenderColor = {
 			r: Math.min(255, Math.max(0, baseColor.r - variation / 2 + seededRandom() * variation)),
 			g: Math.min(255, Math.max(0, baseColor.g - variation / 2 + seededRandom() * variation)),
-			b: Math.min(255, Math.max(0, baseColor.b - variation / 2 + seededRandom() * variation))
+			b: Math.min(255, Math.max(0, baseColor.b - variation / 2 + seededRandom() * variation)),
 		}
 
 		ctx.fillStyle = `#${rgb2hex(color.r, color.g, color.b)}`

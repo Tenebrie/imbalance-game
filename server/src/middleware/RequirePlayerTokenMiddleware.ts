@@ -1,12 +1,12 @@
 import AsyncHandler from '../utils/AsyncHandler'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import AccessLevel from '@shared/enums/AccessLevel'
-import {setCookie} from '../utils/Utils'
+import { setCookie } from '../utils/Utils'
 
 export default AsyncHandler(async (req, res, next) => {
 	const token = req.cookies['playerToken']
 	if (!token) {
-		throw { status: 400, error: 'Missing \'playerToken\' cookie' }
+		throw { status: 400, error: "Missing 'playerToken' cookie" }
 	}
 
 	const player = await PlayerLibrary.getPlayerByJwtToken(token)

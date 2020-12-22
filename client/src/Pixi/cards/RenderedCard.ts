@@ -3,10 +3,10 @@ import * as PIXI from 'pixi.js'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import Localization from '@/Pixi/Localization'
 import RichText from '@/Pixi/render/RichText'
-import Utils, {snakeToCamelCase} from '@/utils/Utils'
+import Utils, { snakeToCamelCase } from '@/utils/Utils'
 import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import DescriptionTextBackground from '@/Pixi/render/DescriptionTextBackground'
@@ -16,14 +16,12 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import store from '@/Vue/store'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
-import {getRenderScale} from '@/Pixi/renderer/RendererUtils'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 import CardFaction from '@shared/enums/CardFaction'
 import ClientCardStats from '@/Pixi/models/ClientCardStats'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardLocation from '@shared/enums/CardLocation'
-import PlayerInGame from '@shared/models/PlayerInGame'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
 export default class RenderedCard implements Card {
@@ -112,7 +110,7 @@ export default class RenderedCard implements Card {
 		this.cardNameText.verticalAlign = RichTextAlign.CENTER
 		this.cardNameText.horizontalAlign = RichTextAlign.END
 		this.cardTitleText = this.createTitleText(Localization.getValueOrNull(this.title) || '')
-		this.cardTribeTexts = this.tribes.map(tribe => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
+		this.cardTribeTexts = this.tribes.map((tribe) => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
 		this.cardDescriptionText = new RichText(this.displayedDescription, 370, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
@@ -189,7 +187,9 @@ export default class RenderedCard implements Card {
 		this.cardModeTextContainer = new PIXI.Container()
 		this.cardModeTextContainer.addChild(this.cardNameText)
 		this.cardModeTextContainer.addChild(this.cardTitleText)
-		this.cardTribeTexts.forEach(cardTribeText => { this.cardModeTextContainer.addChild(cardTribeText) })
+		this.cardTribeTexts.forEach((cardTribeText) => {
+			this.cardModeTextContainer.addChild(cardTribeText)
+		})
 		this.cardModeTextContainer.addChild(this.cardDescriptionText)
 		this.coreContainer.addChild(this.cardModeTextContainer)
 
@@ -225,7 +225,7 @@ export default class RenderedCard implements Card {
 
 	public get tribes(): CardTribe[] {
 		let tribes = this.baseTribes.slice()
-		this.buffs.buffs.forEach(buff => {
+		this.buffs.buffs.forEach((buff) => {
 			tribes = tribes.concat(buff.cardTribes.slice())
 		})
 		return tribes
@@ -233,7 +233,7 @@ export default class RenderedCard implements Card {
 
 	public get features(): CardFeature[] {
 		let features = this.baseFeatures.slice()
-		this.buffs.buffs.forEach(buff => {
+		this.buffs.buffs.forEach((buff) => {
 			features = features.concat(buff.cardFeatures.slice())
 		})
 		return features
@@ -242,18 +242,18 @@ export default class RenderedCard implements Card {
 	public get displayedDescription(): string {
 		let description = Localization.get(this.description)
 		const featureStrings = this.features
-			.map(feature => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
-			.map(feature => Localization.getValueOrNull(feature))
-			.filter(string => string !== null)
+			.map((feature) => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
+			.map((feature) => Localization.getValueOrNull(feature))
+			.filter((string) => string !== null)
 
 		const leaderStatsStrings = Object.keys(this.stats)
-			.filter(key => typeof(this.stats[key]) === 'number' && this.stats[key] > 0)
-			.map(key => ({
+			.filter((key) => typeof this.stats[key] === 'number' && this.stats[key] > 0)
+			.map((key) => ({
 				key: key,
-				text: Localization.getValueOrNull(`card.stats.${key}.text`)
+				text: Localization.getValueOrNull(`card.stats.${key}.text`),
 			}))
-			.filter(object => object.text !== null)
-			.map(object => object.text.replace(/{value}/g, this.stats[object.key]))
+			.filter((object) => object.text !== null)
+			.map((object) => object.text.replace(/{value}/g, this.stats[object.key]))
 
 		for (const index in featureStrings) {
 			description = `${featureStrings[index]}<p>${description}`
@@ -282,28 +282,34 @@ export default class RenderedCard implements Card {
 		const hitboxSprite = new PIXI.Sprite(sprite.texture)
 		hitboxSprite.alpha = 0
 		hitboxSprite.anchor.set(0.5)
-		hitboxSprite.tint = 0xAA5555
+		hitboxSprite.tint = 0xaa5555
 		hitboxSprite.zIndex = -1
 		return hitboxSprite
 	}
 
 	public createBrushScriptText(text: string): ScalingText {
-		const textObject = new ScalingText(text, new PIXI.TextStyle({
-			fontFamily: 'BrushScript',
-			fill: 0x000000,
-			padding: 16
-		}))
+		const textObject = new ScalingText(
+			text,
+			new PIXI.TextStyle({
+				fontFamily: 'BrushScript',
+				fill: 0x000000,
+				padding: 16,
+			})
+		)
 		textObject.anchor.set(0.5)
 		return textObject
 	}
 
 	public createTitleText(text: string): ScalingText {
-		const textObject = new ScalingText(text, new PIXI.TextStyle({
-			fontFamily: Utils.getFont(text),
-			fill: 0x000000,
-			padding: 16,
-			align: 'right'
-		}))
+		const textObject = new ScalingText(
+			text,
+			new PIXI.TextStyle({
+				fontFamily: Utils.getFont(text),
+				fill: 0x000000,
+				padding: 16,
+				align: 'right',
+			})
+		)
 		textObject.anchor.set(1, 0.5)
 		return textObject
 	}
@@ -331,9 +337,9 @@ export default class RenderedCard implements Card {
 			this.switchToHiddenMode()
 		}
 
-		texts = texts.filter(text => text.text.length > 0)
+		texts = texts.filter((text) => text.text.length > 0)
 
-		texts.forEach(text => {
+		texts.forEach((text) => {
 			text.position.x *= this.sprite.scale.x
 			text.position.y *= this.sprite.scale.y
 			text.position.x = Math.round(text.position.x)
@@ -359,7 +365,7 @@ export default class RenderedCard implements Card {
 		this.cardNameText.position.y -= this.sprite.height / 2
 		this.cardTitleText.position.x += this.sprite.width / 2
 		this.cardTitleText.position.y -= this.sprite.height / 2
-		this.cardTribeTexts.forEach(cardTribeText => {
+		this.cardTribeTexts.forEach((cardTribeText) => {
 			cardTribeText.position.x += this.sprite.width / 2
 			cardTribeText.position.y -= this.sprite.height / 2
 		})
@@ -391,14 +397,14 @@ export default class RenderedCard implements Card {
 		}
 
 		if (this.type === CardType.SPELL) {
-			this.powerText.style.fill = 0x0000AA
+			this.powerText.style.fill = 0x0000aa
 		} else {
 			this.powerText.style.fill = 0x000000
 		}
 
 		this.armorText.position.set(132, 33)
 		this.armorText.style.fontSize = 24
-		this.armorText.style.fill = 0xFFFFFF
+		this.armorText.style.fill = 0xffffff
 		if (this.stats.armor > 0) {
 			this.armorText.visible = true
 			this.armorTextBackground.visible = true
@@ -409,8 +415,12 @@ export default class RenderedCard implements Card {
 
 		const name = Localization.get(this.name)
 		let nameFontSize = 26
-		if (name.length > 15) { nameFontSize = 24 }
-		if (name.length > 25) { nameFontSize = 22 }
+		if (name.length > 15) {
+			nameFontSize = 24
+		}
+		if (name.length > 25) {
+			nameFontSize = 22
+		}
 		this.cardNameText.position.set(-15, 67)
 		this.cardNameText.style.fontSize = nameFontSize
 		this.cardNameText.style.lineHeight = 20
@@ -435,8 +445,12 @@ export default class RenderedCard implements Card {
 
 		const description = Localization.get(this.description)
 		let fontSize = 26
-		if (description.length > 150) { fontSize = 24 }
-		if (description.length > 300) { fontSize = 22 }
+		if (description.length > 150) {
+			fontSize = 24
+		}
+		if (description.length > 300) {
+			fontSize = 22
+		}
 
 		this.cardDescriptionText.style.baseFontSize = fontSize
 		this.cardDescriptionText.setFont(fontSize, 25)
@@ -456,7 +470,7 @@ export default class RenderedCard implements Card {
 
 		this.armorText.position.set(247, 63)
 		this.armorText.style.fontSize = 52
-		this.armorText.style.fill = 0xFFFFFF
+		this.armorText.style.fill = 0xffffff
 		if (this.stats.armor > 0) {
 			this.armorText.visible = true
 			this.armorTextZoomBackground.visible = true
@@ -498,13 +512,13 @@ export default class RenderedCard implements Card {
 		this.armorTextZoomBackground.visible = this.stats.armor > 0
 
 		if (this.stats.armor === 0) {
-			this.armorText.style.fill = 0xFF7777
+			this.armorText.style.fill = 0xff7777
 		} else if (this.stats.armor < this.stats.baseArmor) {
-			this.armorText.style.fill = 0xFF7777
+			this.armorText.style.fill = 0xff7777
 		} else if (this.stats.armor > this.stats.baseArmor) {
-			this.armorText.style.fill = 0x77FF77
+			this.armorText.style.fill = 0x77ff77
 		} else {
-			this.armorText.style.fill = 0xFFFFFF
+			this.armorText.style.fill = 0xffffff
 		}
 	}
 
@@ -515,11 +529,11 @@ export default class RenderedCard implements Card {
 
 		this.powerText.text = this.stats.spellCost.toString()
 		if (this.stats.spellCost < this.stats.baseSpellCost) {
-			this.powerText.style.fill = 0x0077AA
+			this.powerText.style.fill = 0x0077aa
 		} else if (this.stats.spellCost > this.stats.baseSpellCost) {
-			this.powerText.style.fill = 0x7700AA
+			this.powerText.style.fill = 0x7700aa
 		} else {
-			this.powerText.style.fill = 0x0000AA
+			this.powerText.style.fill = 0x0000aa
 		}
 	}
 
@@ -566,13 +580,6 @@ export default class RenderedCard implements Card {
 			return CardLocation.GRAVEYARD
 		}
 		return CardLocation.UNKNOWN
-	}
-
-	public clone(): RenderedCard {
-		const message = new OpenCardMessage(this)
-		const card = new RenderedCard(message)
-		Core.registerCard(card)
-		return card
 	}
 
 	public static fromMessage(message: CardMessage): RenderedCard {

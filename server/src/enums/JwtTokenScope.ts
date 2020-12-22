@@ -1,3 +1,3 @@
 export enum JwtTokenScope {
-	AUTH = 'auth'
+	AUTH = 'auth',
 }

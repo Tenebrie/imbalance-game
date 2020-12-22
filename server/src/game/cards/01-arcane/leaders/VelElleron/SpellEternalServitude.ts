@@ -22,12 +22,12 @@ export default class SpellEternalServitude extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.HERO_ARTIFACT, CardFeature.KEYWORD_HERO_POWER],
 			stats: {
-				cost: 7
+				cost: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			extraCost: this.extraCost
+			extraCost: this.extraCost,
 		}
 
 		this.createDeployEffectTargets()
@@ -35,8 +35,7 @@ export default class SpellEternalServitude extends ServerCard {
 			.requireAlliedUnit()
 			.evaluate(TargetType.UNIT, () => this.stats.basePower)
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

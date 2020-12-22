@@ -8,7 +8,7 @@ import ServerBoardRow from '../ServerBoardRow'
 import ServerBuff from '../ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
-import {ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit} from '../ServerCardTarget'
+import { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from '../ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 
 export default {
@@ -16,23 +16,23 @@ export default {
 		type: GameEventType.GAME_STARTED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id
-		}
+			player: args.player.player.id,
+		},
 	}),
 
 	roundStarted: (args: RoundStartedEventArgs): GameEvent => ({
 		type: GameEventType.ROUND_STARTED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id
-		}
+			player: args.player.player.id,
+		},
 	}),
 	turnStarted: (args: TurnStartedEventArgs): GameEvent => ({
 		type: GameEventType.TURN_STARTED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id
-		}
+			player: args.player.player.id,
+		},
 	}),
 
 	cardDrawn: (args: CardDrawnEventArgs): GameEvent => ({
@@ -40,23 +40,23 @@ export default {
 		args: args,
 		logVariables: {
 			owner: args.owner.player.id,
-			triggeringCard: args.triggeringCard.id
-		}
+			triggeringCard: args.triggeringCard.id,
+		},
 	}),
 	cardPlayed: (args: CardPlayedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_PLAYED,
 		args: args,
 		logVariables: {
 			owner: args.owner.player.id,
-			triggeringCard: args.triggeringCard.id
-		}
+			triggeringCard: args.triggeringCard.id,
+		},
 	}),
 	cardResolved: (args: CardResolvedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_RESOLVED,
 		args: args,
 		logVariables: {
-			triggeringCard: args.triggeringCard.id
-		}
+			triggeringCard: args.triggeringCard.id,
+		},
 	}),
 	cardTakesDamage: (args: CardTakesDamageEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TAKES_DAMAGE,
@@ -65,15 +65,15 @@ export default {
 		logVariables: {
 			damage: args.damageInstance.value,
 			sourceCard: args.damageInstance.sourceCard ? args.damageInstance.sourceCard.id : '',
-			triggeringCard: args.triggeringCard.id
-		}
+			triggeringCard: args.triggeringCard.id,
+		},
 	}),
 	cardDestroyed: (args: CardDestroyedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_DESTROYED,
 		args: args,
 		logVariables: {
-			triggeringCard: args.triggeringCard.id
-		}
+			triggeringCard: args.triggeringCard.id,
+		},
 	}),
 
 	cardTargetCardSelected: (args: CardTargetSelectedCardEventArgs): GameEvent => ({
@@ -83,7 +83,7 @@ export default {
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
 			targetCard: args.targetCard.id,
-		}
+		},
 	}),
 	cardTargetUnitSelected: (args: CardTargetSelectedUnitEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGET_SELECTED_UNIT,
@@ -92,7 +92,7 @@ export default {
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
 			targetUnit: args.targetCard.id,
-		}
+		},
 	}),
 	cardTargetRowSelected: (args: CardTargetSelectedRowEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGET_SELECTED_ROW,
@@ -101,15 +101,15 @@ export default {
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
 			targetRow: args.targetRow.index,
-		}
+		},
 	}),
 	cardTargetsConfirmed: (args: CardTargetsConfirmedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGETS_CONFIRMED,
 		args: args,
 		effectSource: args.triggeringCard,
 		logVariables: {
-			triggeringCard: args.triggeringCard?.id
-		}
+			triggeringCard: args.triggeringCard?.id,
+		},
 	}),
 
 	playerTargetSelectedCard: (args: PlayerTargetCardSelectedEventArgs): GameEvent => ({
@@ -119,15 +119,15 @@ export default {
 		logVariables: {
 			triggeringPlayer: args.triggeringPlayer.player.id,
 			targetCard: args.targetCard.id,
-		}
+		},
 	}),
 
 	unitCreated: (args: UnitCreatedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_CREATED,
 		args: args,
 		logVariables: {
-			triggeringUnit: args.triggeringUnit.card.id
-		}
+			triggeringUnit: args.triggeringUnit.card.id,
+		},
 	}),
 	unitMoved: (args: UnitMovedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_MOVED,
@@ -137,7 +137,7 @@ export default {
 			triggeringUnit: args.triggeringUnit.card.id,
 			distance: args.distance,
 			direction: args.direction,
-		}
+		},
 	}),
 	unitOrderedCard: (args: UnitOrderedCardEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_ORDERED_CARD,
@@ -147,7 +147,7 @@ export default {
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
 			targetCard: args.targetArguments.targetCard.id,
-		}
+		},
 	}),
 	unitOrderedRow: (args: UnitOrderedRowEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_ORDERED_ROW,
@@ -156,15 +156,15 @@ export default {
 		logSubtype: 'row',
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
-			targetRow: args.targetArguments.targetRow.index
-		}
+			targetRow: args.targetArguments.targetRow.index,
+		},
 	}),
 	unitDestroyed: (args: UnitDestroyedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_DESTROYED,
 		args: args,
 		logVariables: {
-			triggeringUnit: args.triggeringUnit.card.id
-		}
+			triggeringUnit: args.triggeringUnit.card.id,
+		},
 	}),
 
 	unitDeployed: (args: UnitDeployedEventArgs): GameEvent => ({
@@ -173,8 +173,8 @@ export default {
 		args: args,
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
-			owner: args.triggeringUnit.owner.player.id
-		}
+			owner: args.triggeringUnit.owner.player.id,
+		},
 	}),
 	spellDeployed: (args: SpellDeployedEventArgs): GameEvent => ({
 		type: GameEventType.SPELL_DEPLOYED,
@@ -182,8 +182,8 @@ export default {
 		args: args,
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
-			owner: args.triggeringCard.ownerInGame.player.id
-		}
+			owner: args.triggeringCard.ownerInGame.player.id,
+		},
 	}),
 
 	buffCreated: (args: BuffCreatedEventArgs): GameEvent => ({
@@ -195,7 +195,7 @@ export default {
 			triggeringBuffName: args.triggeringBuff.name,
 			ownerCard: args.triggeringBuff.card.id,
 			sourceCard: args.triggeringBuff.source ? args.triggeringBuff.source.id : undefined,
-		}
+		},
 	}),
 	buffRemoved: (args: BuffRemovedEventArgs): GameEvent => ({
 		type: GameEventType.BUFF_REMOVED,
@@ -204,22 +204,22 @@ export default {
 		logVariables: {
 			triggeringBuffName: args.triggeringBuff.name,
 			ownerCard: args.triggeringBuff.card.id,
-		}
+		},
 	}),
 
 	turnEnded: (args: TurnEndedEventArgs): GameEvent => ({
 		type: GameEventType.TURN_ENDED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id
-		}
+			player: args.player.player.id,
+		},
 	}),
 	roundEnded: (args: RoundEndedEventArgs): GameEvent => ({
 		type: GameEventType.ROUND_ENDED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id
-		}
+			player: args.player.player.id,
+		},
 	}),
 }
 

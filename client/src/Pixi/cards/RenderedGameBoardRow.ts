@@ -46,11 +46,11 @@ export default class RenderedGameBoardRow implements BoardRow {
 	}
 
 	public findUnitById(cardId: string): RenderedUnit | null {
-		return this.cards.find(cardOnBoard => cardOnBoard.card.id === cardId) || null
+		return this.cards.find((cardOnBoard) => cardOnBoard.card.id === cardId) || null
 	}
 
 	public removeUnit(targetUnit: RenderedUnit): void {
-		this.cards = this.cards.filter(unit => unit !== targetUnit)
+		this.cards = this.cards.filter((unit) => unit !== targetUnit)
 	}
 
 	public destroyUnit(targetUnit: RenderedUnit): void {
@@ -59,7 +59,7 @@ export default class RenderedGameBoardRow implements BoardRow {
 	}
 
 	public clearRow(): void {
-		this.cards.forEach(cardOnBoard => {
+		this.cards.forEach((cardOnBoard) => {
 			Core.destroyCard(cardOnBoard.card)
 		})
 		this.cards = []

@@ -16,7 +16,7 @@ export default class HeroChallengeDummyWarrior1 extends ServerCard {
 				power: 15,
 			},
 			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true
+			hiddenFromLibrary: true,
 		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 	}

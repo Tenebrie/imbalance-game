@@ -9,7 +9,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asDirectSpellDamage} from '../../../../utils/LeaderStats'
+import { asDirectSpellDamage } from '../../../../utils/LeaderStats'
 
 export default class SpellScrollOfLightning extends ServerCard {
 	damage = asDirectSpellDamage(8)
@@ -29,12 +29,9 @@ export default class SpellScrollOfLightning extends ServerCard {
 			damage: this.damage,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireEnemyUnit()
+		this.createDeployEffectTargets().target(TargetType.UNIT).requireEnemyUnit()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

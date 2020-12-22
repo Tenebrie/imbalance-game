@@ -3,7 +3,7 @@ import ServerOwnedCard from './ServerOwnedCard'
 import TestGameTemplates from '../../utils/TestGameTemplates'
 import ServerCard from './ServerCard'
 import ServerGameEvents from './ServerGameEvents'
-import GameEventCreators, {GameStartedEventArgs} from './events/GameEventCreators'
+import GameEventCreators, { GameStartedEventArgs } from './events/GameEventCreators'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import GameEventType from '../../../../shared/src/enums/GameEventType'
 import TestingUnitTargetsRow from '../cards/07-testing/TestingUnitTargetsRow'
@@ -31,8 +31,7 @@ describe('ServerGameEvents', () => {
 
 	describe('event resolution', () => {
 		it('does not resolve events immediately', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED)
-				.perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 
@@ -40,8 +39,7 @@ describe('ServerGameEvents', () => {
 		})
 
 		it('does not trigger callbacks for another event', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_STARTED)
-				.perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_STARTED).perform(() => callbackSpy())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 			events.resolveEvents()
@@ -50,8 +48,7 @@ describe('ServerGameEvents', () => {
 		})
 
 		it('resolves single event from the queue', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED)
-				.perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 			events.resolveEvents()
@@ -60,12 +57,9 @@ describe('ServerGameEvents', () => {
 		})
 
 		it('resolves multiple callbacks for the same event', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED)
-				.perform(() => callbackSpy())
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED)
-				.perform(() => callbackSpyB())
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED)
-				.perform(() => callbackSpyC())
+			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpyB())
+			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpyC())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 			events.resolveEvents()
@@ -76,8 +70,7 @@ describe('ServerGameEvents', () => {
 		})
 
 		it('resolves multiple events from the queue', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED)
-				.perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 			events.postEvent(GameEventCreators.gameStarted({ player }))
@@ -88,12 +81,13 @@ describe('ServerGameEvents', () => {
 		})
 
 		it('resolves chaining events', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED)
+			events
+				.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED)
 				.perform(() => events.postEvent(GameEventCreators.roundStarted({ player })))
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_STARTED)
+			events
+				.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_STARTED)
 				.perform(() => events.postEvent(GameEventCreators.roundEnded({ player })))
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_ENDED)
-				.perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_ENDED).perform(() => callbackSpy())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 			events.resolveEvents()
@@ -107,7 +101,7 @@ describe('ServerGameEvents', () => {
 			let ownedCard: ServerOwnedCard
 
 			beforeEach(() => {
-				({ game, cardInHand, player, ownedCard } = TestGameTemplates.singleCardTest(TestingUnitNoTargeting))
+				;({ game, cardInHand, player, ownedCard } = TestGameTemplates.singleCardTest(TestingUnitNoTargeting))
 				events = game.events
 				resolutionStackSpy = jest.spyOn(game.cardPlay.cardResolveStack, 'finishResolving')
 			})
@@ -122,26 +116,33 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('resolves multiple cards', () => {
-				const ownedCards = [{
-					card: cardInHand,
-					owner: player
-				},{
-					card: new TestingUnitNoTargeting(game),
-					owner: player
-				},{
-					card: new TestingUnitNoTargeting(game),
-					owner: player
-				},{
-					card: new TestingUnitNoTargeting(game),
-					owner: player
-				},{
-					card: new TestingUnitNoTargeting(game),
-					owner: player
-				},{
-					card: new TestingUnitNoTargeting(game),
-					owner: player
-				}]
-				ownedCards.forEach(card => {
+				const ownedCards = [
+					{
+						card: cardInHand,
+						owner: player,
+					},
+					{
+						card: new TestingUnitNoTargeting(game),
+						owner: player,
+					},
+					{
+						card: new TestingUnitNoTargeting(game),
+						owner: player,
+					},
+					{
+						card: new TestingUnitNoTargeting(game),
+						owner: player,
+					},
+					{
+						card: new TestingUnitNoTargeting(game),
+						owner: player,
+					},
+					{
+						card: new TestingUnitNoTargeting(game),
+						owner: player,
+					},
+				]
+				ownedCards.forEach((card) => {
 					game.cardPlay.cardResolveStack.startResolving(card, () => game.cardPlay.updateResolvingCardTargetingStatus())
 				})
 
@@ -153,12 +154,11 @@ describe('ServerGameEvents', () => {
 		})
 
 		describe('card resolution with simple targeting', () => {
-			let cardInHand: ServerCard
 			let ownedCard: ServerOwnedCard
 			let resolutionStackSpy: SpyInstance
 
 			beforeEach(() => {
-				({ game, cardInHand, player, ownedCard } = TestGameTemplates.singleCardTest(TestingSpellQuickStrike))
+				;({ game, player, ownedCard } = TestGameTemplates.singleCardTest(TestingSpellQuickStrike))
 				events = game.events
 				resolutionStackSpy = jest.spyOn(game.cardPlay.cardResolveStack, 'finishResolving')
 			})
@@ -184,12 +184,11 @@ describe('ServerGameEvents', () => {
 		})
 
 		describe('multistage card targeting', () => {
-			let cardInHand: ServerCard
 			let ownedCard: ServerOwnedCard
 			let resolutionStackSpy: SpyInstance
 
 			beforeEach(() => {
-				({ game, cardInHand, player, ownedCard } = TestGameTemplates.singleCardTest(TestingSpellTacticalMove))
+				;({ game, player, ownedCard } = TestGameTemplates.singleCardTest(TestingSpellTacticalMove))
 				events = game.events
 				resolutionStackSpy = jest.spyOn(game.cardPlay.cardResolveStack, 'finishResolving')
 				game.board.createUnit(new TestingUnitNoTargeting(game), player, 0, 0)

@@ -22,14 +22,14 @@ export default class SpellNightmareDrain extends ServerCard {
 			features: [CardFeature.HERO_POWER],
 			relatedCards: [UnitShadowspawn],
 			stats: {
-				cost: 4
+				cost: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createDeployEffectTargets()
 			.target(TargetType.UNIT)
-			.require(TargetType.UNIT, args => args.targetCard.stats.power < args.targetCard.stats.basePower)
+			.require(TargetType.UNIT, (args) => args.targetCard.stats.power < args.targetCard.stats.basePower)
 
 		/* Create basic unit if no target available */
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
@@ -40,8 +40,7 @@ export default class SpellNightmareDrain extends ServerCard {
 				this.game.board.createUnit(shadowspawn, this.ownerInGame, targetRow.index, targetRow.cards.length)
 			})
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onTargetSelected(targetCard.unit!))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard.unit!))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

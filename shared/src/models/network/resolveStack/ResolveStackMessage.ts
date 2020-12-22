@@ -5,6 +5,6 @@ export default class ResolveStackMessage {
 	entries: ResolveStackEntryMessage[]
 
 	constructor(resolveStack: ResolveStack) {
-		this.entries = resolveStack.entries.map(entry => new ResolveStackEntryMessage(entry))
+		this.entries = resolveStack.entries.map((entry) => new ResolveStackEntryMessage(entry))
 	}
 }

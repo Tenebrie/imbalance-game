@@ -9,7 +9,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
-import {asSplashUnitDamage} from '../../../../utils/LeaderStats'
+import { asSplashUnitDamage } from '../../../../utils/LeaderStats'
 
 export default class UnitEnergyRelay extends ServerCard {
 	infuseCost = 1
@@ -22,7 +22,7 @@ export default class UnitEnergyRelay extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_INFUSE_X],
 			stats: {
-				power: 7
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -39,8 +39,9 @@ export default class UnitEnergyRelay extends ServerCard {
 
 	private onDealDamage(): void {
 		const triggeringUnit = this.unit!
-		const opposingEnemies = this.game.board.getUnitsOwnedByOpponent(this.owner)
-			.filter(unit => this.game.board.getHorizontalUnitDistance(unit, triggeringUnit) < 1)
+		const opposingEnemies = this.game.board
+			.getUnitsOwnedByOpponent(this.owner)
+			.filter((unit) => this.game.board.getHorizontalUnitDistance(unit, triggeringUnit) < 1)
 			.sort((a, b) => {
 				return this.game.board.getVerticalUnitDistance(a, triggeringUnit) - this.game.board.getVerticalUnitDistance(b, triggeringUnit)
 			})
@@ -50,9 +51,9 @@ export default class UnitEnergyRelay extends ServerCard {
 		}
 
 		const shortestDistance = this.game.board.getVerticalUnitDistance(opposingEnemies[0], triggeringUnit)
-		const targets = opposingEnemies.filter(unit => this.game.board.getVerticalUnitDistance(unit, triggeringUnit) === shortestDistance)
+		const targets = opposingEnemies.filter((unit) => this.game.board.getVerticalUnitDistance(unit, triggeringUnit) === shortestDistance)
 
-		targets.forEach(unit => {
+		targets.forEach((unit) => {
 			this.game.animation.createInstantAnimationThread()
 			unit.dealDamage(ServerDamageInstance.fromUnit(this.damageDealt, triggeringUnit))
 			this.game.animation.commitAnimationThread()

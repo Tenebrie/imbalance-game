@@ -25,18 +25,17 @@ export default class HeroIllusionTwin extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			powerGiven: this.powerGiven,
-			powerLost: this.powerLost
+			powerLost: this.powerLost,
 		}
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
 			.perform(({ player }) => {
-				const copyInHand = player.cardHand.unitCards.find(u => u.class === this.class)
+				const copyInHand = player.cardHand.unitCards.find((u) => u.class === this.class)
 				if (copyInHand) {
 					this.dealDamage(ServerDamageInstance.fromCard(this.powerLost, this))
 					copyInHand.buffs.addMultiple(BuffStrength, this.powerGiven, this)
 				}
 			})
-
 	}
 }

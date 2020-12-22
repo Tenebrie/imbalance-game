@@ -1,7 +1,7 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
-import {CARD_ASPECT_RATIO, CARD_HEIGHT, getScreenHeight, getScreenWidth, INSPECTED_CARD_ZINDEX} from '@/Pixi/renderer/RendererUtils'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import { CARD_ASPECT_RATIO, CARD_HEIGHT, getScreenHeight, getScreenWidth, INSPECTED_CARD_ZINDEX } from '@/Pixi/renderer/RendererUtils'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import RichText from '@/Pixi/render/RichText'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
@@ -25,7 +25,6 @@ class InspectedCardRenderer {
 	public tick(): void {
 		this.container.visible = !!Core.input.inspectedCard
 		if (Core.input.inspectedCard) {
-			Core.renderer.updateCardStats(Core.input.inspectedCard)
 			this.renderInspectedCard(Core.input.inspectedCard)
 		}
 	}
@@ -35,7 +34,7 @@ class InspectedCardRenderer {
 		const sprite = inspectedCard.sprite
 		const disabledOverlaySprite = inspectedCard.cardDisabledOverlay
 
-		sprite.tint = 0xFFFFFF
+		sprite.tint = 0xffffff
 		sprite.alpha = 1
 
 		const cardHeight = CARD_HEIGHT * Core.renderer.superSamplingLevel * window.devicePixelRatio

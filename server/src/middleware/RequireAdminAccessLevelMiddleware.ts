@@ -1,6 +1,5 @@
 import AsyncHandler from '../utils/AsyncHandler'
-import PlayerLibrary from '../game/players/PlayerLibrary'
-import {getPlayerFromAuthenticatedRequest} from '../utils/Utils'
+import { getPlayerFromAuthenticatedRequest } from '../utils/Utils'
 import AccessLevel from '@shared/enums/AccessLevel'
 
 export default AsyncHandler(async (req, res, next) => {

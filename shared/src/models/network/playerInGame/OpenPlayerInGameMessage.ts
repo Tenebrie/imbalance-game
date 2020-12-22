@@ -4,7 +4,7 @@ import OpenCardHandMessage from '../cardHand/OpenCardHandMessage'
 import OpenCardDeckMessage from '../cardDeck/OpenCardDeckMessage'
 import PlayerInGameMessage from './PlayerInGameMessage'
 
-export default class OpenPlayerInGameMessage implements PlayerInGameMessage  {
+export default class OpenPlayerInGameMessage implements PlayerInGameMessage {
 	player: OpenPlayerMessage
 	cardHand: OpenCardHandMessage
 	cardDeck: OpenCardDeckMessage

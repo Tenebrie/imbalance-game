@@ -3,5 +3,5 @@ export default {
 	START_OF_NEXT_TURN: 2,
 	END_OF_NEXT_TURN: 3,
 	FULL_TURN: 2,
-	INFINITY: Infinity
+	INFINITY: Infinity,
 }

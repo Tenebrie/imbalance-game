@@ -6,7 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSplashUnitDamage} from '../../../../utils/LeaderStats'
+import { asSplashUnitDamage } from '../../../../utils/LeaderStats'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 
 export default class UnitQuietInfiltrator extends ServerCard {
@@ -24,16 +24,15 @@ export default class UnitQuietInfiltrator extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			damage: this.damage
+			damage: this.damage,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {
 		const adjacentUnits = this.game.board.getAdjacentUnits(this.unit!)
-		adjacentUnits.forEach(unit => {
+		adjacentUnits.forEach((unit) => {
 			this.game.animation.createInstantAnimationThread()
 			unit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 			this.game.animation.commitAnimationThread()

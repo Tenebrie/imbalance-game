@@ -1,6 +1,6 @@
 import Core from '@/Pixi/Core'
-import {CardDisplayMode} from '@/Pixi/enums/CardDisplayMode'
-import {ANNOUNCED_CARD_ZINDEX, CARD_ASPECT_RATIO, getScreenHeight} from '@/Pixi/renderer/RendererUtils'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import { ANNOUNCED_CARD_ZINDEX, CARD_ASPECT_RATIO, getScreenHeight } from '@/Pixi/renderer/RendererUtils'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 class AnnouncedCardRenderer {
@@ -9,7 +9,6 @@ class AnnouncedCardRenderer {
 			this.renderAnnouncedCard(Core.mainHandler.previousAnnouncedCard, 'previous')
 		}
 		if (Core.mainHandler.announcedCard) {
-			Core.renderer.updateCardStats(Core.mainHandler.announcedCard)
 			this.renderAnnouncedCard(Core.mainHandler.announcedCard, 'current')
 		}
 	}
@@ -20,7 +19,7 @@ class AnnouncedCardRenderer {
 		const disabledOverlaySprite = announcedCard.cardDisabledOverlay
 
 		sprite.alpha = 1
-		sprite.tint = 0xFFFFFF
+		sprite.tint = 0xffffff
 		sprite.scale.set(Core.renderer.superSamplingLevel)
 		container.visible = true
 		container.zIndex = ANNOUNCED_CARD_ZINDEX
@@ -30,7 +29,7 @@ class AnnouncedCardRenderer {
 		sprite.height = cardHeight
 
 		if (announcedCard.displayMode !== CardDisplayMode.ANNOUNCED) {
-			container.position.x = -sprite.width / 2 * Core.renderer.superSamplingLevel
+			container.position.x = (-sprite.width / 2) * Core.renderer.superSamplingLevel
 			container.position.y = getScreenHeight() / 2
 			container.alpha = 0
 			announcedCard.setDisplayMode(CardDisplayMode.ANNOUNCED)

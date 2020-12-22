@@ -21,17 +21,14 @@ export default class SpellCrystalBarrage extends ServerCard {
 			features: [CardFeature.HERO_POWER],
 			relatedCards: [UnitVolatileCrystal],
 			stats: {
-				cost: 6
+				cost: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets()
-			.target(TargetType.BOARD_ROW)
-			.requireOpponentsRow()
+		this.createDeployEffectTargets().target(TargetType.BOARD_ROW).requireOpponentsRow()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW)
-			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 
 	private onTargetSelected(target: ServerBoardRow): void {

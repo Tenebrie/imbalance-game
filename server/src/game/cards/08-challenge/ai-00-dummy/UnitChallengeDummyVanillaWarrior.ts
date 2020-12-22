@@ -15,7 +15,7 @@ export default class UnitChallengeDummyVanillaWarrior extends ServerCard {
 				power: 11,
 			},
 			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true
+			hiddenFromLibrary: true,
 		})
 	}
 }

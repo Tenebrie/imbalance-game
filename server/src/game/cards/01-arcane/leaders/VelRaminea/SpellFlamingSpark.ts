@@ -26,22 +26,19 @@ export default class SpellFlamingSpark extends ServerCard {
 			tribes: [CardTribe.SPARK],
 			features: [CardFeature.HERO_POWER],
 			stats: {
-				cost: 2
+				cost: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
 			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			damage: () => this.damage,
-			damagePerWeave: this.damagePerWeave
+			damagePerWeave: this.damagePerWeave,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireEnemyUnit()
+		this.createDeployEffectTargets().target(TargetType.UNIT).requireEnemyUnit()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	get damage(): number {
@@ -49,8 +46,7 @@ export default class SpellFlamingSpark extends ServerCard {
 		if (!owner) {
 			return 0
 		}
-		return this.baseDamage
-			+ this.game.getTotalBuffIntensityForPlayer(BuffVelRamineaWeave, owner, [CardLocation.LEADER])
+		return this.baseDamage + this.game.getTotalBuffIntensityForPlayer(BuffVelRamineaWeave, owner, [CardLocation.LEADER])
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
