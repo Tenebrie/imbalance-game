@@ -6,11 +6,11 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffStrength from '../../../buffs/BuffStrength'
-import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
 import CardLocation from '@shared/enums/CardLocation'
 
 export default class HeroNoekana extends ServerCard {
-	strengthGiven = asMassBuffPotency(1)
+	strengthGiven = asSplashBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {

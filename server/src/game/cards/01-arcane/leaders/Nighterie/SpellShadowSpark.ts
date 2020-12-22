@@ -12,10 +12,10 @@ import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloSpellDamage} from '../../../../../utils/LeaderStats'
+import {asDirectSpellDamage} from '../../../../../utils/LeaderStats'
 
 export default class SpellShadowSpark extends ServerCard {
-	baseDamage = asSoloSpellDamage(2)
+	baseDamage = asDirectSpellDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {

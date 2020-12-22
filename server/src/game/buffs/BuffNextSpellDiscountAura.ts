@@ -8,29 +8,22 @@ import ServerCard from '../models/ServerCard'
 import ServerAnimation from '../models/ServerAnimation'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import BuffNextSpellDiscount from './BuffNextSpellDiscount'
+import BuffSpellDiscount from './BuffSpellDiscount'
+import BuffHiddenSpellDiscount from './BuffHiddenSpellDiscount'
 
 export default class BuffNextSpellDiscountAura extends ServerBuff {
 	constructor(game: ServerGame) {
-		super(game, BuffStackType.ADD_INTENSITY)
+		super(game, BuffStackType.OVERLAY)
 		this.alignment = BuffAlignment.POSITIVE
 
-		this.createCallback<CardPlayedEventArgs>(GameEventType.CARD_PLAYED)
-			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
+		this.createCallback<CardPlayedEventArgs>(GameEventType.SPELL_DEPLOYED)
 			.require(({ triggeringCard }) => triggeringCard.owner === this.card.owner)
-			.perform(() => this.onAlliedSpellPlayed())
+			.perform(() => this.card.buffs.removeByReference(this))
 
-		this.createCallback<CardDrawnEventArgs>(GameEventType.CARD_DRAWN)
-			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
-			.require(({ triggeringCard }) => triggeringCard.owner === this.card.owner)
-			.perform(({ triggeringCard }) => this.onNewCardDrawn(triggeringCard))
-	}
-
-	private onAlliedSpellPlayed(): void {
-		this.card.buffs.removeByReference(this)
-	}
-
-	private onNewCardDrawn(card: ServerCard): void {
-		card.buffs.addMultiple(BuffNextSpellDiscount, this.intensity, this.source)
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff([card], BuffAlignment.POSITIVE))
+		this.createSelector()
+			.requireTarget(({ target }) => target.type === CardType.SPELL)
+			.requireTarget(({ target }) => target.ownerInGame === this.card.ownerInGame)
+			.onSelected(({ target }) => target.buffs.add(BuffHiddenSpellDiscount, this.card))
+			.onReleased(({ target }) => target.buffs.remove(BuffHiddenSpellDiscount, 1))
 	}
 }

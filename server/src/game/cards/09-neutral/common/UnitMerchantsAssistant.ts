@@ -11,10 +11,10 @@ import BuffNextSpellDiscountAura from '../../../buffs/BuffNextSpellDiscountAura'
 import CardFeature from '@shared/enums/CardFeature'
 import Utils from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
+import {asDirectBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitMerchantsAssistant extends ServerCard {
-	spellDiscount = asSoloBuffPotency(3)
+	spellDiscount = asDirectBuffPotency(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -40,10 +40,10 @@ export default class UnitMerchantsAssistant extends ServerCard {
 		const player = this.ownerInGame
 		const alliedSpells = Utils.sortCards(player.cardHand.spellCards)
 		player.leader.buffs.addMultiple(BuffNextSpellDiscountAura, this.spellDiscount, this, BuffDuration.INFINITY)
-		alliedSpells.forEach(spell => {
-			this.game.animation.createAnimationThread()
-			spell.buffs.addMultiple(BuffNextSpellDiscount, this.spellDiscount, this, BuffDuration.INFINITY)
-			this.game.animation.commitAnimationThread()
-		})
+		// alliedSpells.forEach(spell => {
+		// 	this.game.animation.createAnimationThread()
+		// 	spell.buffs.addMultiple(BuffNextSpellDiscount, this.spellDiscount, this, BuffDuration.INFINITY)
+		// 	this.game.animation.commitAnimationThread()
+		// })
 	}
 }

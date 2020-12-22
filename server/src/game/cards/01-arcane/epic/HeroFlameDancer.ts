@@ -10,10 +10,10 @@ import BuffBurning from '../../../buffs/BuffBurning'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassEffectDuration} from '../../../../utils/LeaderStats'
+import {asSplashEffectDuration} from '../../../../utils/LeaderStats'
 
 export default class HeroFlameDancer extends ServerCard {
-	burnDuration = asMassEffectDuration(3)
+	burnDuration = asSplashEffectDuration(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

@@ -9,10 +9,10 @@ import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloSpellDamage} from '../../../../utils/LeaderStats'
+import {asDirectSpellDamage} from '../../../../utils/LeaderStats'
 
 export default class SpellFleetingSpark extends ServerCard {
-	damage = asSoloSpellDamage(2)
+	damage = asDirectSpellDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {

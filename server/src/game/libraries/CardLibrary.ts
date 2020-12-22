@@ -6,6 +6,9 @@ import ServerGame from '../models/ServerGame'
 import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
 import {colorize} from '../../utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardColor from '@shared/enums/CardColor'
+import CardType from '@shared/enums/CardType'
 
 export interface CardConstructor {
 	new (game: ServerGame): ServerCard
@@ -77,6 +80,42 @@ class CardLibrary {
 		if (cardPrototypes.length === 0) {
 			return
 		}
+
+		console.info('Card library breakdown:')
+		const nonTestingCards = this.cards.filter(card => !card.class.startsWith('testing'))
+		console.table({
+			'Human': {
+				'Leaders': nonTestingCards.filter(card => card.faction === CardFaction.HUMAN && card.isCollectible && card.color === CardColor.LEADER).length,
+				'Units': nonTestingCards.filter(card => card.faction === CardFaction.HUMAN && card.isCollectible && card.color !== CardColor.LEADER).length,
+				'Spells': nonTestingCards.filter(card => card.faction === CardFaction.HUMAN && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN).length,
+				'Tokens': nonTestingCards.filter(card => card.faction === CardFaction.HUMAN && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)).length,
+				'Total': nonTestingCards.filter(card => card.faction === CardFaction.HUMAN).length,
+			},
+			'Arcane': {
+				'Leaders': nonTestingCards.filter(card => card.faction === CardFaction.ARCANE && card.isCollectible && card.color === CardColor.LEADER).length,
+				'Units': nonTestingCards.filter(card => card.faction === CardFaction.ARCANE && card.isCollectible && card.color !== CardColor.LEADER).length,
+				'Spells': nonTestingCards.filter(card => card.faction === CardFaction.ARCANE && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN).length,
+				'Tokens': nonTestingCards.filter(card => card.faction === CardFaction.ARCANE && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)).length,
+				'Total': nonTestingCards.filter(card => card.faction === CardFaction.ARCANE).length,
+			},
+			'Wild': {
+				'Leaders': nonTestingCards.filter(card => card.faction === CardFaction.WILD && card.isCollectible && card.color === CardColor.LEADER).length,
+				'Units': nonTestingCards.filter(card => card.faction === CardFaction.WILD && card.isCollectible && card.color !== CardColor.LEADER).length,
+				'Spells': nonTestingCards.filter(card => card.faction === CardFaction.WILD && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN).length,
+				'Tokens': nonTestingCards.filter(card => card.faction === CardFaction.WILD && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)).length,
+				'Total': nonTestingCards.filter(card => card.faction === CardFaction.WILD).length,
+			},
+			'Neutral': {
+				'Leaders': nonTestingCards.filter(card => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color === CardColor.LEADER).length,
+				'Units': nonTestingCards.filter(card => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color !== CardColor.LEADER).length,
+				'Spells': nonTestingCards.filter(card => card.faction === CardFaction.NEUTRAL && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN).length,
+				'Tokens': nonTestingCards.filter(card => card.faction === CardFaction.NEUTRAL && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)).length,
+				'Total': nonTestingCards.filter(card => card.faction === CardFaction.NEUTRAL).length,
+			},
+			'Testing': {
+				'Total': this.cards.filter(card => card.class.startsWith('testing')).length,
+			},
+		})
 
 		const oldestTimestamp = upToDateModules.sort((a, b) => a.timestamp - b.timestamp)[0].timestamp
 		const newModules = upToDateModules.filter(module => (module.timestamp - oldestTimestamp) > 1000000)

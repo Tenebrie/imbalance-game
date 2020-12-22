@@ -11,11 +11,11 @@ import GameEventType from '@shared/enums/GameEventType'
 import {CardTargetValidatorArguments} from '../../../../../types/TargetValidatorArguments'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassSpellDamage, asSoloSpellDamage} from '../../../../../utils/LeaderStats'
+import {asSplashSpellDamage, asDirectSpellDamage} from '../../../../../utils/LeaderStats'
 
 export default class SpellSteelSpark extends ServerCard {
-	baseDamage = asSoloSpellDamage(2)
-	baseSideDamage = asMassSpellDamage(1)
+	baseDamage = asDirectSpellDamage(2)
+	baseSideDamage = asSplashSpellDamage(1)
 
 	constructor(game: ServerGame) {
 		super(game, {

@@ -10,12 +10,12 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import {ServerCardTargetCard, ServerCardTargetUnit} from '../../../models/ServerCardTarget'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFeature from '@shared/enums/CardFeature'
-import {asSoloUnitDamage} from '../../../../utils/LeaderStats'
+import {asDirectUnitDamage} from '../../../../utils/LeaderStats'
 import BuffCanAttack from '../../../buffs/BuffCanAttack'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitArcheryTower extends ServerCard {
-	damage = asSoloUnitDamage(2)
+	damage = asDirectUnitDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -24,7 +24,7 @@ export default class UnitArcheryTower extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.BUILDING],
 			stats: {
-				power: 3,
+				power: 0,
 				armor: 7
 			},
 			expansionSet: ExpansionSet.BASE,

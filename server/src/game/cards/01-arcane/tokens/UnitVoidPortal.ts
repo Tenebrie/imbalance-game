@@ -11,10 +11,10 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitVoidPortal extends ServerCard {
-	powerPerSpell = asMassBuffPotency(1)
+	powerPerSpell = asSplashBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {

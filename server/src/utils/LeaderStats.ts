@@ -11,43 +11,43 @@ const asSingleUnitStat = (value: number, mapper: (unit: ServerUnit) => number): 
 	}
 }
 
-export const asSoloUnitDamage = (baseDamage: number): LeaderStatValueGetter => {
+export const asDirectUnitDamage = (baseDamage: number): LeaderStatValueGetter => {
 	return asSingleUnitStat(baseDamage, (unit => unit.card.stats.soloUnitDamage))
 }
 
-export const asMassUnitDamage = (baseDamage: number): LeaderStatValueGetter => {
+export const asSplashUnitDamage = (baseDamage: number): LeaderStatValueGetter => {
 	return asSingleUnitStat(baseDamage, (unit => unit.card.stats.massUnitDamage))
 }
 
-export const asSoloSpellDamage = (baseDamage: number): LeaderStatValueGetter => {
+export const asDirectSpellDamage = (baseDamage: number): LeaderStatValueGetter => {
 	return asSingleUnitStat(baseDamage, (unit => unit.card.stats.soloSpellDamage))
 }
 
-export const asMassSpellDamage = (baseDamage: number): LeaderStatValueGetter => {
+export const asSplashSpellDamage = (baseDamage: number): LeaderStatValueGetter => {
 	return asSingleUnitStat(baseDamage, (unit => unit.card.stats.massSpellDamage))
 }
 
-export const asSoloHealingPotency = (potency: number): LeaderStatValueGetter => {
+export const asDirectHealingPotency = (potency: number): LeaderStatValueGetter => {
 	return asSingleUnitStat(potency, (unit => unit.card.stats.soloHealingPotency))
 }
 
-export const asMassHealingPotency = (potency: number): LeaderStatValueGetter => {
+export const asSplashHealingPotency = (potency: number): LeaderStatValueGetter => {
 	return asSingleUnitStat(potency, (unit => unit.card.stats.massHealingPotency))
 }
 
-export const asSoloBuffPotency = (potency: number): LeaderStatValueGetter => {
+export const asDirectBuffPotency = (potency: number): LeaderStatValueGetter => {
 	return asSingleUnitStat(potency, (unit => unit.card.stats.soloBuffPotency))
 }
 
-export const asMassBuffPotency = (potency: number): LeaderStatValueGetter => {
+export const asSplashBuffPotency = (potency: number): LeaderStatValueGetter => {
 	return asSingleUnitStat(potency, (unit => unit.card.stats.massBuffPotency))
 }
 
-export const asSoloEffectDuration = (duration: number): LeaderStatValueGetter => {
+export const asDirectEffectDuration = (duration: number): LeaderStatValueGetter => {
 	return asSingleUnitStat(duration, (unit => unit.card.stats.soloEffectDuration))
 }
 
-export const asMassEffectDuration = (duration: number): LeaderStatValueGetter => {
+export const asSplashEffectDuration = (duration: number): LeaderStatValueGetter => {
 	return asSingleUnitStat(duration, (unit => unit.card.stats.massEffectDuration))
 }
 

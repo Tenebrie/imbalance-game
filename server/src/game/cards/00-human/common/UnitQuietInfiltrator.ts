@@ -6,11 +6,11 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassUnitDamage} from '../../../../utils/LeaderStats'
+import {asSplashUnitDamage} from '../../../../utils/LeaderStats'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 
 export default class UnitQuietInfiltrator extends ServerCard {
-	damage = asMassUnitDamage(3)
+	damage = asSplashUnitDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

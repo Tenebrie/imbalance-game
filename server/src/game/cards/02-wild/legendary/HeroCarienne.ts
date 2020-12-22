@@ -8,10 +8,10 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassUnitDamage} from '../../../../utils/LeaderStats'
+import {asSplashUnitDamage} from '../../../../utils/LeaderStats'
 
 export default class HeroCarienne extends ServerCard {
-	damagePerWave = asMassUnitDamage(1)
+	damagePerWave = asSplashUnitDamage(1)
 
 	constructor(game: ServerGame) {
 		super(game, {

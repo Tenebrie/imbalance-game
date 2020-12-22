@@ -90,6 +90,14 @@ export class CardSelector {
 		})
 		this.selectedCards = []
 	}
+
+	private __markedForRemoval = false
+	public markForRemoval(): void {
+		this.__markedForRemoval = true
+	}
+	public get markedForRemoval(): boolean {
+		return this.__markedForRemoval
+	}
 }
 
 export class CardSelectorBuilder {

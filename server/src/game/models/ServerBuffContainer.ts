@@ -101,8 +101,7 @@ export default class ServerBuffContainer implements BuffContainer {
 			this.game.events.postEvent(GameEventCreators.buffRemoved({
 				triggeringBuff: existingBuff
 			}))
-			this.buffs.splice(this.buffs.indexOf(existingBuff), 1)
-			OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(this.card, existingBuff)
+			this.removeByReference(existingBuff)
 			this.buffs.push(newBuff)
 			OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
 		}

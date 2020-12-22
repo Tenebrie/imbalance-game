@@ -12,10 +12,10 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
-import {asSoloUnitDamage} from '../../../../utils/LeaderStats'
+import {asDirectUnitDamage} from '../../../../utils/LeaderStats'
 
 export default class UnitStoneElemental extends ServerCard {
-	damage = asSoloUnitDamage(2)
+	damage = asDirectUnitDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {

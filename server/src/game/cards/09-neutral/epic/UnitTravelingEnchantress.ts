@@ -9,11 +9,11 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffStrength from '../../../buffs/BuffStrength'
-import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
+import {asDirectBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitTravelingEnchantress extends ServerCard {
-	baseStrengthGiven = asSoloBuffPotency(1)
-	extraStrengthGiven = asSoloBuffPotency(7)
+	baseStrengthGiven = asDirectBuffPotency(1)
+	extraStrengthGiven = asDirectBuffPotency(7)
 
 	constructor(game: ServerGame) {
 		super(game, {

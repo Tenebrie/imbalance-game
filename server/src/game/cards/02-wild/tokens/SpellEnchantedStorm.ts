@@ -11,12 +11,12 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassBuffPotency, asTargetCount} from '../../../../utils/LeaderStats'
+import {asSplashBuffPotency, asTargetCount} from '../../../../utils/LeaderStats'
 
 export default class SpellEnchantedStorm extends ServerCard {
-	baseBuffPower = asMassBuffPotency(1)
+	baseBuffPower = asSplashBuffPotency(1)
 	targetCount = asTargetCount(3)
-	powerPerStorm = asMassBuffPotency(1)
+	powerPerStorm = asSplashBuffPotency(1)
 	targetsHit: ServerCard[] = []
 
 	constructor(game: ServerGame) {

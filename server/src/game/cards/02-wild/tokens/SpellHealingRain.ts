@@ -7,11 +7,11 @@ import CardTribe from '@shared/enums/CardTribe'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassHealingPotency} from '../../../../utils/LeaderStats'
+import {asSplashHealingPotency} from '../../../../utils/LeaderStats'
 
 export default class SpellHealingRain extends ServerCard {
-	baseHealing = asMassHealingPotency(3)
-	healingPerStorm = asMassHealingPotency(1)
+	baseHealing = asSplashHealingPotency(3)
+	healingPerStorm = asSplashHealingPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {

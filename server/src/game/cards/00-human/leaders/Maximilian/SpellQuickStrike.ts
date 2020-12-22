@@ -11,10 +11,10 @@ import GameEventType from '@shared/enums/GameEventType'
 import {CardTargetValidatorArguments} from '../../../../../types/TargetValidatorArguments'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassSpellDamage, asSoloSpellDamage} from '../../../../../utils/LeaderStats'
+import {asSplashSpellDamage, asDirectSpellDamage} from '../../../../../utils/LeaderStats'
 
 export default class SpellQuickStrike extends ServerCard {
-	baseDamage = asSoloSpellDamage(2)
+	baseDamage = asDirectSpellDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {

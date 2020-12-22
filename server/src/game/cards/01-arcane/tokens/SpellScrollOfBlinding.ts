@@ -11,10 +11,10 @@ import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloEffectDuration} from '../../../../utils/LeaderStats'
+import {asDirectEffectDuration} from '../../../../utils/LeaderStats'
 
 export default class SpellScrollOfBlinding extends ServerCard {
-	buffDuration = asSoloEffectDuration(3)
+	buffDuration = asDirectEffectDuration(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

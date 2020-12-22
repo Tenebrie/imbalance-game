@@ -1,5 +1,5 @@
 import ServerGame from './ServerGame'
-import Utils from '../../utils/Utils'
+import Utils, {colorizeClass, colorizeId} from '../../utils/Utils'
 import ServerCard from './ServerCard'
 import CardLocation from '@shared/enums/CardLocation'
 import {cardPerform, cardRequire} from '../utils/CardEventHandlers'
@@ -71,6 +71,9 @@ export default class ServerGameEvents {
 	}
 
 	public unsubscribe(targetSubscriber: EventSubscriber): void {
+		this.cardSelectors
+			.filter(selector => selector.subscriber === targetSubscriber)
+			.forEach(selector => selector.markForRemoval())
 		Utils.forEachInStringEnum(GameEventType, eventType => {
 			const subscriptions = this.eventSubscriptions.get(eventType)!
 			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
@@ -177,7 +180,7 @@ export default class ServerGameEvents {
 			const callbackWrapper = currentCallbacks.shift()!
 
 			if (callbackWrapper.subscriber instanceof ServerCard) {
-				console.info(`Executing callback on ${callbackWrapper.rawEvent.type} for ${callbackWrapper.subscriber.class}:${callbackWrapper.subscriber.id}`)
+				console.info(`[${colorizeId(this.game.id)}] Executing callback on ${colorizeClass(callbackWrapper.rawEvent.type)} for ${colorizeClass(callbackWrapper.subscriber.class)}:${colorizeId(callbackWrapper.subscriber.id)}`)
 			}
 			callbackWrapper.callback(callbackWrapper.args, callbackWrapper.preparedState)
 			this.game.animation.syncAnimationThreads()
@@ -207,12 +210,15 @@ export default class ServerGameEvents {
 		allGameCards = new Array(...new Set(allGameCards))
 
 		this.cardSelectors.forEach(selector => {
-			if (this.subscriberSuspended(selector.subscriber)) {
+			if (this.subscriberSuspended(selector.subscriber) || selector.markedForRemoval) {
 				selector.clearSelection()
 			} else {
 				selector.evaluate(allGameCards)
 			}
 		})
+
+		this.cardSelectors = this.cardSelectors.filter(selector => !selector.markedForRemoval)
+
 		this.evaluatingSelectors = false
 	}
 

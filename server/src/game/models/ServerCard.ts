@@ -396,6 +396,19 @@ export default class ServerCard implements Card {
 		this.stats.power = Math.min(this.stats.maxPower, this.stats.power + healingInstance.value)
 	}
 
+	restoreArmor(restorationInstance: ServerDamageInstance): void {
+		if (restorationInstance.value <= 0) {
+			return
+		}
+
+		if (restorationInstance.sourceCard) {
+			this.game.animation.play(ServerAnimation.cardHealsCards(restorationInstance.sourceCard, [this]))
+		} else {
+			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
+		}
+		this.stats.armor = Math.min(this.stats.maxArmor, this.stats.armor + restorationInstance.value)
+	}
+
 	/* Cleanse this card
 	 * -------------------------
 	 * Remove all active buffs from this card

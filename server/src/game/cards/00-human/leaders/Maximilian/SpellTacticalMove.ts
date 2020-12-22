@@ -8,14 +8,14 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloHealingPotency, asSoloSpellDamage} from '../../../../../utils/LeaderStats'
+import {asDirectHealingPotency, asDirectSpellDamage} from '../../../../../utils/LeaderStats'
 import ServerBoardRow from '../../../../models/ServerBoardRow'
 import MoveDirection from '@shared/enums/MoveDirection'
 import ServerDamageInstance from '../../../../models/ServerDamageSource'
 
 export default class SpellTacticalMove extends ServerCard {
-	damage = asSoloSpellDamage(1)
-	healing = asSoloHealingPotency(2)
+	damage = asDirectSpellDamage(1)
+	healing = asDirectHealingPotency(2)
 
 	movingUnit: ServerUnit | null = null
 

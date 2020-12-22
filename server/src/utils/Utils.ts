@@ -76,6 +76,10 @@ export const colorizeId = (text: string): string => {
 	return colorize(text, AsciiColor.CYAN)
 }
 
+export const colorizeClass = (text: string): string => {
+	return colorize(text, AsciiColor.YELLOW)
+}
+
 export const colorizePlayer = (text: string): string => {
 	return colorize(text, AsciiColor.RED)
 }

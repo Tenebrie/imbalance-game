@@ -8,16 +8,18 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class HeroForksmanshipInstructor extends ServerCard {
 	powerThreshold = 4
-	bonusPower = asMassBuffPotency(1)
+	bonusPower = asSplashBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
+			tribes: [CardTribe.PEASANT],
 			faction: CardFaction.HUMAN,
 			stats: {
 				power: 8,

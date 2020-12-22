@@ -8,11 +8,11 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import BuffStrength from '../../../buffs/BuffStrength'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
+import {asDirectBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitForestScout extends ServerCard {
-	boardPowerBonus = asSoloBuffPotency(7)
-	moralePowerBonus = asSoloBuffPotency(3)
+	boardPowerBonus = asDirectBuffPotency(7)
+	moralePowerBonus = asDirectBuffPotency(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

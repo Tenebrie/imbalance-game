@@ -10,10 +10,10 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import Utils from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
 
 export default class UnitMasterSwordsmith extends ServerCard {
-	bonusPower = asMassBuffPotency(1)
+	bonusPower = asSplashBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {

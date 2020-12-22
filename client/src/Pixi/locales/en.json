@@ -690,5 +690,20 @@
 	"card.unitGenerousBlacksmith.description": "Whenever a unit moves into adjacent position from another row, give it +{bonusArmor} Armor.",
 
 	"card.unitQuietInfiltrator.name": "Quiet Infiltrator",
-	"card.unitQuietInfiltrator.description": "*Deploy:*\nDeal {damage} Damage to adjacent units."
+	"card.unitQuietInfiltrator.description": "*Deploy:*\nDeal {damage} Damage to adjacent units.",
+
+	"card.unitCropField.name": "Crop Field",
+	"card.unitCropField.description": "*Turn end:*\nGive +{bonusPower} Power to an allied non-building unit with lowest Power value.\nRepeat once for every adjacent Peasant.",
+
+	"card.heroRobert.name": "Robert",
+	"card.heroRobert.title": "Building Instructor",
+	"card.heroRobert.description": "*Deploy:*\n*Summon* a Building and *Create* a copy of it with no armor.",
+	"card.heroRobert.flavor": "- \"And that's how you build it. Easy, right? Now, repeat after me.\"",
+
+	"card.heroThomas.name": "Thomas",
+	"card.heroThomas.title": "Master Builder",
+	"card.heroThomas.description": "*Deploy:*\n*Create* the *Grand Temple Building Site*.",
+
+	"card.unitHastyHandyman.name": "Hasty Handyman",
+	"card.unitHastyHandyman.description": "*Deploy:*\nRestore an allied Building to maximum Armor."
 }

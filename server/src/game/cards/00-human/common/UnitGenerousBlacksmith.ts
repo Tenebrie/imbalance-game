@@ -10,12 +10,12 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import Utils from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import {asSplashBuffPotency} from '../../../../utils/LeaderStats'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffExtraArmor from '../../../buffs/BuffExtraArmor'
 
 export default class UnitGenerousBlacksmith extends ServerCard {
-	bonusArmor = asMassBuffPotency(3)
+	bonusArmor = asSplashBuffPotency(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
