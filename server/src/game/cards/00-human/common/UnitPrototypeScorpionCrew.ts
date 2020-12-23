@@ -18,7 +18,7 @@ export default class UnitPrototypeScorpionCrew extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			stats: {
-				power: 7,
+				power: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -30,10 +30,10 @@ export default class UnitPrototypeScorpionCrew extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_ORDERED_UNIT).perform(({ targetCard }) => {
 			const damage = this.targetDamage(this)
-			this.game.animation.thread(() => {
+			this.game.animation.instantThread(() => {
 				targetCard.dealDamage(ServerDamageInstance.fromCard(damage, this))
 			})
-			this.game.animation.thread(() => {
+			this.game.animation.instantThread(() => {
 				this.dealDamage(ServerDamageInstance.fromCard(damage, this))
 			})
 		})
