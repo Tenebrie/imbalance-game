@@ -49,7 +49,7 @@ export default {
 		}
 		if (playerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(playerInGame.player, playerInGame)
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				playerInGame.player,
 				TargetMode.DEPLOY_EFFECT,
 				game.cardPlay.getValidTargets(),
@@ -60,7 +60,7 @@ export default {
 			const targets = Utils.sortCards(cardsToMulligan).map((card) =>
 				ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card)
 			)
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player, TargetMode.MULLIGAN, targets, null)
+			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, targets)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, playerInGame.isInvertedBoard())
@@ -107,7 +107,7 @@ export default {
 		}
 		if (spectatedPlayerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(spectator.player, spectatedPlayerInGame)
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				spectator.player,
 				TargetMode.DEPLOY_EFFECT,
 				game.cardPlay.getValidTargets(),
@@ -118,7 +118,7 @@ export default {
 			const targets = Utils.sortCards(cardsToMulligan).map((card) =>
 				ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card)
 			)
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(spectator.player, TargetMode.MULLIGAN, targets, null)
+			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(spectator.player, TargetMode.MULLIGAN, targets)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, spectatedPlayerInGame)
 		OutgoingMessageHandlers.notifyAboutGameStart(spectator.player, spectatedPlayerInGame.isInvertedBoard())

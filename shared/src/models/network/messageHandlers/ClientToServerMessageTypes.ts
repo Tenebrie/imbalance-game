@@ -2,6 +2,7 @@ export enum GenericActionMessageType {
 	CARD_PLAY = 'genericAction_cardPlay',
 	UNIT_ORDER = 'genericAction_unitOrder',
 	CARD_TARGET = 'genericAction_cardTarget',
+	ANONYMOUS_TARGET = 'genericAction_anonymousTarget',
 	CONFIRM_TARGETS = 'genericAction_confirmTargets',
 	REQUEST_PLAYERS_DECK = 'genericAction_requestPlayersDeck',
 	REQUEST_PLAYERS_GRAVEYARD = 'genericAction_requestPlayersGraveyard',

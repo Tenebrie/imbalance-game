@@ -714,5 +714,8 @@
 	"card.unitMistressOfSmoke.description": "*Deploy:*\n*Discard* {cardsToDiscard} left-most cards from your hand.\nThen, *Draw* as many cards as you have *Discarded*.<p>If your unit deck has no duplicates, *Discard* your entire hand instead.",
 
 	"card.unitMagiciansAssistant.name": "Magician's Assistant",
-	"card.unitMagiciansAssistant.description": "*Deploy:*\nPut a copy of an enemy unit to the top of your deck.<p>If your deck has no duplicates, you can also target allied units."
+	"card.unitMagiciansAssistant.description": "*Deploy:*\nPut a copy of an enemy unit to the top of your deck.<p>If your deck has no duplicates, you can also target allied units.",
+
+	"card.unitPrototypeScorpionCrew.name": "Prototype Scorpion Crew",
+	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and to itself."
 }

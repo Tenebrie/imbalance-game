@@ -10,16 +10,17 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetingLine from '@/Pixi/models/TargetingLine'
 import Core from '@/Pixi/Core'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 
 export default class ForcedTargetingMode {
 	readonly targetMode: TargetMode
-	readonly validTargets: CardTargetMessage[]
+	readonly validTargets: CardTargetMessage[] | AnonymousTargetMessage[]
 	readonly source: RenderedCard | null
-	selectedTarget: CardTargetMessage | null = null
+	selectedTarget: CardTargetMessage | AnonymousTargetMessage | null = null
 
 	readonly targetingLine: TargetingLine | null
 
-	constructor(targetMode: TargetMode, validTargets: CardTargetMessage[], source: RenderedCard | null) {
+	constructor(targetMode: TargetMode, validTargets: CardTargetMessage[] | AnonymousTargetMessage[], source: RenderedCard | null) {
 		this.targetMode = targetMode
 		this.validTargets = validTargets
 		this.source = source
@@ -86,7 +87,7 @@ export default class ForcedTargetingMode {
 				(Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
 			)
 		})
-		if (!hoveredTarget) {
+		if (!hoveredTarget || !('sourceCardId' in hoveredTarget)) {
 			return {}
 		}
 		const sourceCard = Core.game.findCardById(hoveredTarget.sourceCardId)
@@ -95,7 +96,11 @@ export default class ForcedTargetingMode {
 
 	public confirmTarget(): void {
 		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
-		OutgoingMessageHandlers.sendCardTarget(this.selectedTarget)
+		if ('sourceCardId' in this.selectedTarget) {
+			OutgoingMessageHandlers.sendCardTarget(this.selectedTarget)
+		} else {
+			OutgoingMessageHandlers.sendAnonymousTarget(this.selectedTarget)
+		}
 		this.selectedTarget = null
 	}
 

@@ -51,14 +51,12 @@ export default class ServerUnit implements Unit {
 		return this.card.isDead
 	}
 
-	getValidOrders(): (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] {
+	getValidOrders(): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] {
 		const targetDefinitions = this.card.targeting.getUnitOrderTargetDefinitions()
 		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
-		let targets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		let targets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 		targetDefinitions.forEach((targetDefinition) => {
 			targets = targets
-				.concat(this.card.targeting.getValidTargetsForUnits(TargetMode.UNIT_ORDER, targetDefinition, performedOrders))
-				.concat(this.card.targeting.getValidTargetsForRows(TargetMode.UNIT_ORDER, targetDefinition, performedOrders))
 				.concat(
 					this.card.targeting.getValidTargetsForCards(
 						TargetMode.UNIT_ORDER,
@@ -91,6 +89,8 @@ export default class ServerUnit implements Unit {
 						performedOrders
 					)
 				)
+				.concat(this.card.targeting.getValidTargetsForUnits(TargetMode.UNIT_ORDER, targetDefinition, performedOrders))
+				.concat(this.card.targeting.getValidTargetsForRows(TargetMode.UNIT_ORDER, targetDefinition, performedOrders))
 		})
 
 		return targets

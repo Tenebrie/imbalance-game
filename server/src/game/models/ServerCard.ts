@@ -48,6 +48,7 @@ import GameEventCreators, {
 	UnitMovedEventArgs,
 	UnitOrderedCardEventArgs,
 	UnitOrderedRowEventArgs,
+	UnitOrderedUnitEventArgs,
 } from './events/GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
 import Utils, { getClassFromConstructor } from '../../utils/Utils'
@@ -610,6 +611,7 @@ export default class ServerCard implements Card {
 	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_ROW): EventSubscription<CardTargetSelectedRowEventArgs>
 	protected createEffect(event: GameEventType.CARD_TARGETS_CONFIRMED): EventSubscription<CardTargetsConfirmedEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventSubscription<UnitOrderedCardEventArgs>
+	protected createEffect(event: GameEventType.UNIT_ORDERED_UNIT): EventSubscription<UnitOrderedUnitEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
 	protected createEffect<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events

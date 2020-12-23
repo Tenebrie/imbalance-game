@@ -21,6 +21,7 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import { isGrabbedCardPlayableToRow } from '@/Pixi/input/ValidActions'
 import CardLocation from '@shared/enums/CardLocation'
 import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -412,9 +413,12 @@ export default class Input {
 		}
 
 		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
-		OutgoingMessageHandlers.sendCardTarget(
-			this.forcedTargetingMode.validTargets.find((target) => target.targetCardData.id === selectedCard.id)
-		)
+		const message = this.forcedTargetingMode.validTargets.find((target) => target.targetCardData.id === selectedCard.id)
+		if ('sourceCardId' in message) {
+			OutgoingMessageHandlers.sendCardTarget(message)
+		} else {
+			OutgoingMessageHandlers.sendAnonymousTarget(message)
+		}
 	}
 
 	public restoreLimboCard(cardMessage: CardRefMessage): RenderedCard {
@@ -437,14 +441,14 @@ export default class Input {
 
 	public async enableForcedTargetingMode(
 		targetMode: TargetMode,
-		validTargets: CardTargetMessage[],
+		validTargets: CardTargetMessage[] | AnonymousTargetMessage[],
 		source: CardRefMessage | null
 	): Promise<void> {
 		if (this.forcedTargetingMode) {
 			this.forcedTargetingMode.destroy()
 		}
 
-		const sourceCard: RenderedCard | null = Core.game.findRenderedCardById(source?.id)
+		const sourceCard: RenderedCard | null = source ? Core.game.findRenderedCardById(source.id) : null
 		await this.createForcedTargetingCards(validTargets)
 		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets, this.forcedTargetingCards.length === 0 ? sourceCard : null)
 		this.forcedTargetingMode.validTargets
@@ -457,7 +461,7 @@ export default class Input {
 		store.commit.gameStateModule.setPopupTargetingCardsVisible(true)
 	}
 
-	public async createForcedTargetingCards(targets: CardTargetMessage[]): Promise<void> {
+	public async createForcedTargetingCards(targets: CardTargetMessage[] | AnonymousTargetMessage[]): Promise<void> {
 		const newCards = targets
 			.filter(
 				(target) =>

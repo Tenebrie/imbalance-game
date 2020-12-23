@@ -15,22 +15,19 @@ export default class CardTargetMessage {
 	constructor(order: CardTarget) {
 		this.targetMode = order.targetMode
 		this.targetType = order.targetType
-		this.sourceCardId = order.sourceCardId
-		this.targetCardId = ''
-		if ('targetCardId' in order) {
-			this.targetCardId = order.targetCardId
-		} else {
+		this.sourceCardId = order.sourceCard.id
+		if (order.targetType === TargetType.BOARD_ROW) {
 			this.targetCardId = ''
-		}
-		if ('targetCardData' in order) {
-			this.targetCardData = order.targetCardData
-		} else {
-			this.targetCardData = null
-		}
-		if ('targetRow' in order) {
 			this.targetRowIndex = order.targetRow.index
 		} else {
+			this.targetCardId = order.targetCard.id
 			this.targetRowIndex = -1
+		}
+
+		if (order.targetType !== TargetType.UNIT && order.targetType !== TargetType.BOARD_ROW) {
+			this.targetCardData = new OpenCardMessage(order.targetCard)
+		} else {
+			this.targetCardData = null
 		}
 		this.targetLabel = order.targetLabel
 	}

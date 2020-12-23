@@ -139,7 +139,7 @@ export default {
 			direction: args.direction,
 		},
 	}),
-	unitOrderedCard: (args: UnitOrderedCardEventArgs): GameEvent => ({
+	unitIssuedOrderTargetingCard: (args: UnitOrderedCardEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_ORDERED_CARD,
 		args: args,
 		effectSource: args.triggeringUnit.card,
@@ -149,7 +149,17 @@ export default {
 			targetCard: args.targetArguments.targetCard.id,
 		},
 	}),
-	unitOrderedRow: (args: UnitOrderedRowEventArgs): GameEvent => ({
+	unitIssuedOrderTargetingUnit: (args: UnitOrderedUnitEventArgs): GameEvent => ({
+		type: GameEventType.UNIT_ORDERED_UNIT,
+		args: args,
+		effectSource: args.triggeringUnit.card,
+		logSubtype: 'card',
+		logVariables: {
+			triggeringUnit: args.triggeringUnit.card.id,
+			targetCard: args.targetArguments.targetCard.id,
+		},
+	}),
+	unitIssuedOrderTargetingRow: (args: UnitOrderedRowEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_ORDERED_ROW,
 		args: args,
 		effectSource: args.triggeringUnit.card,
@@ -313,11 +323,20 @@ export interface UnitMovedEventArgs {
 export interface UnitOrderedCardEventArgs {
 	triggeringUnit: ServerUnit
 	targetType: TargetType
-	targetArguments: ServerCardTargetCard | ServerCardTargetUnit
+	targetCard: ServerCard
+	targetArguments: ServerCardTargetCard
+}
+export interface UnitOrderedUnitEventArgs {
+	triggeringUnit: ServerUnit
+	targetType: TargetType
+	targetCard: ServerCard
+	targetUnit: ServerUnit
+	targetArguments: ServerCardTargetCard
 }
 export interface UnitOrderedRowEventArgs {
 	triggeringUnit: ServerUnit
 	targetType: TargetType
+	targetRow: ServerBoardRow
 	targetArguments: ServerCardTargetRow
 }
 export interface UnitDestroyedEventArgs {

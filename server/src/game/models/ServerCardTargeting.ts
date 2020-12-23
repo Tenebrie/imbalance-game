@@ -40,8 +40,8 @@ export class ServerCardTargeting {
 	}
 
 	public getDeployEffectTargets(
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
-	): (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] {
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
+	): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] {
 		const targetDefinitions = this.getDeployEffectTargetDefinitions()
 		return targetDefinitions
 			.map((targetDefinition) => this.getDeployEffectTargetsForTargetDefinition(targetDefinition, previousTargets))
@@ -50,13 +50,13 @@ export class ServerCardTargeting {
 
 	private getDeployEffectTargetsForTargetDefinition(
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
-	): (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] {
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
+	): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] {
 		if (targetDefinition.getTargetCount(this.card) === 0) {
 			return []
 		}
 
-		let validTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		let validTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 
 		Utils.forEachInNumericEnum(TargetType, (targetType: TargetType) => {
 			if (targetType === TargetType.BOARD_ROW) {
@@ -76,7 +76,7 @@ export class ServerCardTargeting {
 		targetMode: TargetMode,
 		targetType: CardTargetTypes,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 	): ServerCardTargetCard[] {
 		let targets: ServerCardTargetCard[] = []
 		if (targetType === TargetType.CARD_IN_LIBRARY) {
@@ -97,7 +97,7 @@ export class ServerCardTargeting {
 	public getValidTargetsForUnits(
 		targetMode: TargetMode,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 	): ServerCardTargetUnit[] {
 		return this.getValidUnitTargets(targetMode, targetDefinition, previousTargets)
 	}
@@ -105,7 +105,7 @@ export class ServerCardTargeting {
 	public getValidTargetsForRows(
 		targetMode: TargetMode,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 	): ServerCardTargetRow[] {
 		return this.getValidRowTargets(targetMode, targetDefinition, previousTargets)
 	}
@@ -114,7 +114,7 @@ export class ServerCardTargeting {
 		targetMode: TargetMode,
 		targetType: TargetType,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[]
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[]
 	): boolean {
 		if (previousTargets.length >= targetDefinition.getTargetCount(this.card)) {
 			return true
@@ -127,7 +127,7 @@ export class ServerCardTargeting {
 	private getValidUnitTargets(
 		targetMode: TargetMode,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 	): ServerCardTargetUnit[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.UNIT, targetDefinition, previousTargets)) {
 			return []
@@ -160,7 +160,7 @@ export class ServerCardTargeting {
 	private getValidRowTargets(
 		targetMode: TargetMode,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 	): ServerCardTargetRow[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.BOARD_ROW, targetDefinition, previousTargets)) {
 			return []
@@ -180,7 +180,7 @@ export class ServerCardTargeting {
 	private getValidCardLibraryTargets(
 		targetMode: TargetMode,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 	): ServerCardTargetCard[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_LIBRARY, targetDefinition, previousTargets)) {
 			return []
@@ -202,7 +202,7 @@ export class ServerCardTargeting {
 	private getValidUnitHandTargets(
 		targetMode: TargetMode,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 	): ServerCardTargetCard[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_HAND, targetDefinition, previousTargets)) {
 			return []
@@ -226,7 +226,7 @@ export class ServerCardTargeting {
 	private getValidSpellHandTargets(
 		targetMode: TargetMode,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 	): ServerCardTargetCard[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_SPELL_HAND, targetDefinition, previousTargets)) {
 			return []
@@ -250,7 +250,7 @@ export class ServerCardTargeting {
 	private getValidUnitDeckTargets(
 		targetMode: TargetMode,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 	): ServerCardTargetCard[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_DECK, targetDefinition, previousTargets)) {
 			return []
@@ -273,7 +273,7 @@ export class ServerCardTargeting {
 	private getValidSpellDeckTargets(
 		targetMode: TargetMode,
 		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] = []
+		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
 	): ServerCardTargetCard[] {
 		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_SPELL_DECK, targetDefinition, previousTargets)) {
 			return []

@@ -49,7 +49,7 @@ export default class ServerResolveStack implements ResolveStack {
 		return this.entries[this.entries.length - 1]
 	}
 
-	public get currentTargets(): (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] | undefined {
+	public get currentTargets(): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] | undefined {
 		if (this.entries.length === 0) {
 			return undefined
 		}
@@ -67,7 +67,7 @@ export default class ServerResolveStack implements ResolveStack {
 		this.entries[this.entries.length - 1].onResumeResolving()
 	}
 
-	public pushTarget(target: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): void {
+	public pushTarget(target: ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow): void {
 		if (!this.currentTargets) {
 			return
 		}

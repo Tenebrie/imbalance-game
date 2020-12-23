@@ -1,20 +1,21 @@
 import ServerGame from './ServerGame'
 import ServerUnit from './ServerUnit'
 import { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from './ServerCardTarget'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import TargetMode from '@shared/enums/TargetMode'
 import GameEventCreators from './events/GameEventCreators'
+import TargetType from '@shared/enums/TargetType'
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 
 export default class ServerBoardOrders {
 	readonly game: ServerGame
-	readonly performedOrders: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[]
+	readonly performedOrders: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[]
 
 	constructor(game: ServerGame) {
 		this.game = game
 		this.performedOrders = []
 	}
 
-	public performUnitOrder(order: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): void {
+	public performUnitOrder(order: ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow): void {
 		if (!this.isOrderValid(order)) {
 			return
 		}
@@ -32,19 +33,33 @@ export default class ServerBoardOrders {
 			return
 		}
 
-		if (order instanceof ServerCardTargetCard || order instanceof ServerCardTargetUnit) {
+		if (order.targetType !== TargetType.BOARD_ROW) {
 			this.game.events.postEvent(
-				GameEventCreators.unitOrderedCard({
+				GameEventCreators.unitIssuedOrderTargetingCard({
 					triggeringUnit: orderedUnit,
 					targetType: order.targetType,
+					targetCard: order.targetCard,
 					targetArguments: order,
 				})
 			)
-		} else {
+		}
+		if (order.targetType === TargetType.UNIT) {
 			this.game.events.postEvent(
-				GameEventCreators.unitOrderedRow({
+				GameEventCreators.unitIssuedOrderTargetingUnit({
 					triggeringUnit: orderedUnit,
 					targetType: order.targetType,
+					targetCard: order.targetCard,
+					targetUnit: order.targetCard.unit!,
+					targetArguments: order,
+				})
+			)
+		}
+		if (order.targetType === TargetType.BOARD_ROW) {
+			this.game.events.postEvent(
+				GameEventCreators.unitIssuedOrderTargetingRow({
+					triggeringUnit: orderedUnit,
+					targetType: order.targetType,
+					targetRow: order.targetRow,
 					targetArguments: order,
 				})
 			)
@@ -53,11 +68,11 @@ export default class ServerBoardOrders {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
 	}
 
-	private isOrderValid(order: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow): boolean {
+	private isOrderValid(order: ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow): boolean {
 		return !!order.sourceCard?.unit?.getValidOrders().find((validOrder) => order.isEqual(validOrder))
 	}
 
-	public getOrdersPerformedByUnit(unit: ServerUnit): (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] {
+	public getOrdersPerformedByUnit(unit: ServerUnit): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] {
 		return this.performedOrders.filter((order) => order.sourceCard?.unit === unit)
 	}
 

@@ -66,8 +66,12 @@ export enum BoardUpdateMessageType {
 
 export enum ResolveStackMessageType {
 	ADD = 'resolveStack_add',
-	TARGETS = 'resolveStack_targets',
 	REMOVE = 'resolveStack_remove',
+}
+
+export enum TargetingMessageType {
+	CARD_PLAY = 'targeting_cardPlay',
+	ANONYMOUS = 'targeting_anonymous',
 }
 
 export enum CardUpdateMessageType {
@@ -86,4 +90,5 @@ export type ServerToClientMessageTypes =
 	| SystemMessageType
 	| BoardUpdateMessageType
 	| ResolveStackMessageType
+	| TargetingMessageType
 	| CardUpdateMessageType

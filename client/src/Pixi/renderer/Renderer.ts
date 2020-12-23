@@ -23,6 +23,8 @@ import { announcedCardRenderer } from '@/Pixi/renderer/AnnouncedCardRenderer'
 import { playQueueRenderer } from '@/Pixi/renderer/PlayQueueRenderer'
 import { isCardPlayable, isGrabbedCardPlayableToRow } from '@/Pixi/input/ValidActions'
 import store from '@/Vue/store'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -657,7 +659,8 @@ export default class Renderer {
 		let targetPosition = Core.input.mousePosition
 		if (Core.input.hoveredCard) {
 			const validTargetCards =
-				forcedTargeting?.validTargets.map((target) => target.targetCardId) || grabbedCard?.validTargetCards.map((card) => card.id)
+				(forcedTargeting?.validTargets as Array<CardTargetMessage | AnonymousTargetMessage>).map((target) => target.targetCardId) ||
+				grabbedCard?.validTargetCards.map((card) => card.id)
 			if (validTargetCards && validTargetCards.length > 0) {
 				const target = Core.game.findRenderedCardById(validTargetCards.find((id) => id === Core.input.hoveredCard.card.id))
 				if (target) {
@@ -667,7 +670,7 @@ export default class Renderer {
 			}
 		}
 
-		let color = 0xffff00
+		let color = 0xcccccc
 		if (snappingToTarget) {
 			color = 0x00ff00
 		}

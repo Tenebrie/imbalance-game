@@ -37,7 +37,7 @@ export default class UnitArcheryTower extends ServerCard {
 			.target(TargetType.UNIT, () => this.buffs.getIntensity(BuffCanAttack))
 			.requireEnemyUnit()
 
-		this.createEffect(GameEventType.UNIT_ORDERED_CARD).perform(({ targetArguments }) => this.onAttack(targetArguments))
+		this.createEffect(GameEventType.UNIT_ORDERED_UNIT).perform(({ targetArguments }) => this.onAttack(targetArguments))
 
 		this.createSelector()
 			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
@@ -46,7 +46,7 @@ export default class UnitArcheryTower extends ServerCard {
 			.provideSelf(BuffCanAttack)
 	}
 
-	private onAttack(targetArguments: ServerCardTargetCard | ServerCardTargetUnit): void {
+	private onAttack(targetArguments: ServerCardTargetUnit): void {
 		const targetCard = targetArguments.targetCard
 		targetCard.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 	}

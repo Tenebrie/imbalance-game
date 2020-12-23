@@ -1,6 +1,6 @@
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
-import { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from './ServerCardTarget'
+import { ServerAnonymousTargetCard, ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from './ServerCardTarget'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
 import CardType from '@shared/enums/CardType'
@@ -143,7 +143,7 @@ export default class ServerGameCardPlay {
 		if (validTargets.length === 0) {
 			this.cardResolveStack.finishResolving()
 		} else {
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				currentCard.owner.player,
 				TargetMode.DEPLOY_EFFECT,
 				Utils.shuffle(validTargets),
@@ -152,7 +152,7 @@ export default class ServerGameCardPlay {
 		}
 	}
 
-	public getValidTargets(): (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[] {
+	public getValidTargets(): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] {
 		const currentCard = this.cardResolveStack.currentCard
 		if (!currentCard) {
 			return []
@@ -164,7 +164,7 @@ export default class ServerGameCardPlay {
 
 	public selectCardTarget(
 		playerInGame: ServerPlayerInGame,
-		target: ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow
+		target: ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow
 	): void {
 		const currentResolvingCard = this.cardResolveStack.currentEntry
 		if (!currentResolvingCard) {
@@ -175,7 +175,7 @@ export default class ServerGameCardPlay {
 		let validTargets = this.getValidTargets()
 		const isValidTarget = !!validTargets.find((validTarget) => validTarget.isEqual(target))
 		if (!isValidTarget) {
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				playerInGame.player,
 				TargetMode.DEPLOY_EFFECT,
 				Utils.shuffle(validTargets),
@@ -188,7 +188,7 @@ export default class ServerGameCardPlay {
 
 		currentResolvingCard.onResumeResolving = () => {
 			validTargets = this.getValidTargets()
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				playerInGame.player,
 				TargetMode.DEPLOY_EFFECT,
 				Utils.shuffle(validTargets),
@@ -243,7 +243,7 @@ export default class ServerGameCardPlay {
 		}
 	}
 
-	public selectPlayerMulliganTarget(playerInGame: ServerPlayerInGame, target: ServerCardTargetCard): void {
+	public selectPlayerMulliganTarget(playerInGame: ServerPlayerInGame, target: ServerAnonymousTargetCard): void {
 		this.game.events.postEvent(
 			GameEventCreators.playerTargetSelectedCard({
 				targetMode: target.targetMode,
@@ -254,9 +254,10 @@ export default class ServerGameCardPlay {
 		)
 
 		const validTargets = this.getValidTargets()
+		console.log(validTargets.length)
 
 		if (validTargets.length > 0) {
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player, TargetMode.MULLIGAN, Utils.shuffle(validTargets), null)
+			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, Utils.shuffle(validTargets))
 			return
 		}
 	}

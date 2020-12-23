@@ -16,6 +16,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import Utils from '../../utils/Utils'
 import CardLibrary from '../libraries/CardLibrary'
 import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
@@ -65,7 +66,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		game.board.orders.performUnitOrder(ServerCardTarget.fromMessage(game, data))
+		game.board.orders.performUnitOrder(ServerCardTarget.fromCardMessage(game, data))
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
@@ -76,12 +77,20 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		const target = ServerCardTarget.fromMessage(game, data)
-		if (game.cardPlay.cardResolveStack.currentCard) {
-			game.cardPlay.selectCardTarget(playerInGame, target)
-		} else if (target instanceof ServerCardTargetCard) {
-			game.cardPlay.selectPlayerMulliganTarget(playerInGame, target)
+		const target = ServerCardTarget.fromCardMessage(game, data)
+		game.cardPlay.selectCardTarget(playerInGame, target)
+
+		onPlayerActionEnd(game, playerInGame)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
+	[GenericActionMessageType.ANONYMOUS_TARGET]: (data: AnonymousTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
+		if (!playerInGame.targetRequired) {
+			return
 		}
+
+		const target = ServerCardTarget.fromAnonymousMessage(game, data)
+		game.cardPlay.selectPlayerMulliganTarget(playerInGame, target)
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
@@ -91,7 +100,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 		if (data !== TargetMode.MULLIGAN && player.mulliganMode) {
 			player.showMulliganCards()
 		} else if (data === TargetMode.BROWSE) {
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, [], null)
+			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, [])
 		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
@@ -107,7 +116,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
+		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -117,7 +126,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
+		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -127,7 +136,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
+		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
