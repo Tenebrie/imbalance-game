@@ -25,17 +25,16 @@ export default class UnitElderHoundmaster extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
-	}
-
-	private onDeploy(): void {
-		const unit = this.unit!
-		const owner = unit.owner
-		const makeHound = () => CardLibrary.instantiateByConstructor(this.game, UnitTrainedHound)
-		const hounds = [makeHound(), makeHound()]
-		this.game.animation.createInstantAnimationThread()
-		this.game.board.createUnit(hounds[0], owner, unit.rowIndex, unit.unitIndex)
-		this.game.board.createUnit(hounds[1], owner, unit.rowIndex, unit.unitIndex + 1)
-		this.game.animation.commitAnimationThread()
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
+			const unit = triggeringUnit
+			const owner = unit.owner
+			const makeHound = () => CardLibrary.instantiateByConstructor(this.game, UnitTrainedHound)
+			this.game.animation.instantThread(() => {
+				this.game.board.createUnit(makeHound(), owner, unit.rowIndex, unit.unitIndex)
+			})
+			this.game.animation.instantThread(() => {
+				this.game.board.createUnit(makeHound(), owner, unit.rowIndex, unit.unitIndex + 1)
+			})
+		})
 	}
 }
