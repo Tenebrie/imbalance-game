@@ -6,10 +6,10 @@ import ServerGameEvents from './ServerGameEvents'
 import GameEventCreators, { GameStartedEventArgs } from './events/GameEventCreators'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import GameEventType from '../../../../shared/src/enums/GameEventType'
-import TestingUnitTargetsRow from '../cards/07-testing/TestingUnitTargetsRow'
-import TestingUnitNoTargeting from '../cards/07-testing/TestingUnitNoTargeting'
-import TestingSpellTacticalMove from '../cards/07-testing/TestingSpellTacticalMove'
-import TestingSpellQuickStrike from '../cards/07-testing/TestingSpellQuickStrike'
+import TestingUnitTargetsRow from '../cards/11-testing/TestingUnitTargetsRow'
+import TestingUnitNoTargeting from '../cards/11-testing/TestingUnitNoTargeting'
+import TestingSpellTacticalMove from '../cards/11-testing/TestingSpellTacticalMove'
+import TestingSpellQuickStrike from '../cards/11-testing/TestingSpellQuickStrike'
 import SpyInstance = jest.SpyInstance
 
 describe('ServerGameEvents', () => {

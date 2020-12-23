@@ -142,10 +142,10 @@ export class ServerCardTargeting {
 		return this.game.board
 			.getAllUnits()
 			.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
-			.filter((unit) => targetDefinition.require(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card }))
+			.filter((unit) => targetDefinition.require(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card, targetUnit: unit }))
 			.map((unit) => ({
 				unit: unit,
-				expectedValue: targetDefinition.evaluate(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card }),
+				expectedValue: targetDefinition.evaluate(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card, targetUnit: unit }),
 			}))
 			.map((tuple) => ({
 				unit: tuple.unit,

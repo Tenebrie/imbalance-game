@@ -25,6 +25,12 @@ export default class ServerDeck implements CardDeck {
 		return this.unitCards.slice().concat(this.spellCards)
 	}
 
+	public get hasDuplicates(): boolean {
+		return !!this.unitCards.find((outerCard) =>
+			this.unitCards.find((innerCard) => outerCard !== innerCard && outerCard.class === innerCard.class)
+		)
+	}
+
 	public getCardIndex(card: ServerCard): number {
 		const unitIndex = this.unitCards.indexOf(card)
 		const spellIndex = this.spellCards.indexOf(card)
@@ -32,8 +38,8 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public instantiateFrom(deck: ServerTemplateCardDeck): void {
-		deck.unitCards.forEach((card) => this.addUnitToTop(CardLibrary.instantiateByInstance(this.game, card)))
-		deck.spellCards.forEach((card) => this.addSpellToTop(CardLibrary.instantiateByInstance(this.game, card)))
+		deck.unitCards.forEach((card) => this.addUnitToTop(CardLibrary.instantiateByInstance(card)))
+		deck.spellCards.forEach((card) => this.addSpellToTop(CardLibrary.instantiateByInstance(card)))
 	}
 
 	public addUnitToTop(card: ServerCard): void {

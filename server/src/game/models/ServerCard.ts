@@ -211,7 +211,7 @@ export default class ServerCard implements Card {
 		} else {
 			this.baseRelatedCards = [props.relatedCards]
 		}
-		this.sortPriority = props.sortPriority ? props.sortPriority : 0
+		this.sortPriority = props.sortPriority !== undefined ? props.sortPriority : 99
 		this.expansionSet = props.expansionSet
 
 		this.isCollectible = props.hiddenFromLibrary

@@ -4,7 +4,7 @@ import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import UnitQuietInfiltrator from './UnitQuietInfiltrator'
-import TestingUnitNoTargeting from '../../07-testing/TestingUnitNoTargeting'
+import TestingUnitNoTargeting from '../../11-testing/TestingUnitNoTargeting'
 import ServerBoardRow from '../../../models/ServerBoardRow'
 
 describe('UnitQuietInfiltrator', () => {

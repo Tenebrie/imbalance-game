@@ -705,5 +705,14 @@
 	"card.heroThomas.description": "*Deploy:*\n*Create* the *Grand Temple Building Site*.",
 
 	"card.unitHastyHandyman.name": "Hasty Handyman",
-	"card.unitHastyHandyman.description": "*Deploy:*\nRestore an allied Building to maximum Armor."
+	"card.unitHastyHandyman.description": "*Deploy:*\nRestore an allied Building to maximum Armor.",
+
+	"card.unitMasterOfMirrors.name": "Master of Mirrors",
+	"card.unitMasterOfMirrors.description": "*Deploy:*\nIf your unit deck has no duplicates, *Clone* all the cards in your deck and shuffle it.<p>Otherwise, only shuffle your deck.",
+
+	"card.unitMistressOfSmoke.name": "Mistress of Smoke",
+	"card.unitMistressOfSmoke.description": "*Deploy:*\n*Discard* {cardsToDiscard} left-most cards from your hand.\nThen, *Draw* as many cards as you have *Discarded*.<p>If your unit deck has no duplicates, *Discard* your entire hand instead.",
+
+	"card.unitMagiciansAssistant.name": "Magician's Assistant",
+	"card.unitMagiciansAssistant.description": "*Deploy:*\nPut a copy of an enemy unit to the top of your deck.<p>If your deck has no duplicates, you can also target allied units."
 }

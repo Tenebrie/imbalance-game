@@ -184,9 +184,9 @@ class CardLibrary {
 		return card
 	}
 
-	public instantiateByInstance(game: ServerGame, card: ServerCard): ServerCard {
+	public instantiateByInstance(card: ServerCard): ServerCard {
 		const cardClass = card.constructor.name.substr(0, 1).toLowerCase() + card.constructor.name.substr(1)
-		return this.instantiateByClass(game, cardClass)
+		return this.instantiateByClass(card.game, cardClass)
 	}
 
 	public instantiateByConstructor(game: ServerGame, constructor: CardConstructor): ServerCard {

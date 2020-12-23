@@ -48,7 +48,7 @@ export default {
 			},
 
 			fromInstance: (instance: ServerCard): ServerCard => {
-				const newCard = CardLibrary.instantiateByInstance(card.game, instance)
+				const newCard = CardLibrary.instantiateByInstance(instance)
 				return addCardToHand(card.ownerInGame, newCard)
 			},
 
@@ -66,7 +66,7 @@ export default {
 			},
 
 			fromInstance: (instance: ServerCard): ServerCard => {
-				const newCard = CardLibrary.instantiateByInstance(player.game, instance)
+				const newCard = CardLibrary.instantiateByInstance(instance)
 				return addCardToHand(player, newCard)
 			},
 
@@ -86,7 +86,7 @@ export default {
 			},
 
 			fromInstance: (instance: ServerCard): ServerCard => {
-				const newCard = CardLibrary.instantiateByInstance(card.game, instance)
+				const newCard = CardLibrary.instantiateByInstance(instance)
 				return createCard(card.ownerInGame, newCard)
 			},
 
@@ -104,7 +104,7 @@ export default {
 			},
 
 			fromInstance: (instance: ServerCard): ServerCard => {
-				const newCard = CardLibrary.instantiateByInstance(player.game, instance)
+				const newCard = CardLibrary.instantiateByInstance(instance)
 				return createCard(player, newCard)
 			},
 

@@ -22,5 +22,5 @@ export interface RowTargetValidatorArguments {
 	previousTargets?: (ServerCardTargetUnit | ServerCardTargetCard | ServerCardTargetRow)[]
 }
 
-type TargetValidatorArguments = CardTargetValidatorArguments | RowTargetValidatorArguments
+type TargetValidatorArguments = CardTargetValidatorArguments | UnitTargetValidatorArguments | RowTargetValidatorArguments
 export default TargetValidatorArguments
