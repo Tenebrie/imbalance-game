@@ -8,10 +8,41 @@ import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateM
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
-import GameHookType from './events/GameHookType'
+import GameHookType, {
+	CardDestroyedHookArgs,
+	CardDestroyedHookValues,
+	CardTakesDamageHookArgs,
+	CardTakesDamageHookValues,
+	UnitDestroyedHookArgs,
+	UnitDestroyedHookValues,
+} from './events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffFeature from '@shared/enums/BuffFeature'
-import GameEventCreators, { TurnEndedEventArgs, TurnStartedEventArgs } from './events/GameEventCreators'
+import {
+	BuffCreatedEventArgs,
+	BuffRemovedEventArgs,
+	CardDestroyedEventArgs,
+	CardDrawnEventArgs,
+	CardPlayedEventArgs,
+	CardTakesDamageEventArgs,
+	CardTargetsConfirmedEventArgs,
+	CardTargetSelectedCardEventArgs,
+	CardTargetSelectedRowEventArgs,
+	CardTargetSelectedUnitEventArgs,
+	GameStartedEventArgs,
+	RoundEndedEventArgs,
+	RoundStartedEventArgs,
+	SpellDeployedEventArgs,
+	TurnEndedEventArgs,
+	TurnStartedEventArgs,
+	UnitCreatedEventArgs,
+	UnitDeployedEventArgs,
+	UnitDestroyedEventArgs,
+	UnitMovedEventArgs,
+	UnitOrderedCardEventArgs,
+	UnitOrderedRowEventArgs,
+	UnitOrderedUnitEventArgs,
+} from './events/GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import StandardTargetDefinitionBuilder from './targetDefinitions/StandardTargetDefinitionBuilder'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
@@ -71,12 +102,12 @@ export default class ServerBuff implements Buff {
 		const duration = params.duration !== 'default' ? params.duration : props.duration !== undefined ? props.duration : Infinity
 		this.__duration = this.baseDuration = duration
 
-		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
+		this.createCallback(GameEventType.TURN_STARTED)
 			.require(({ player }) => player === this.card.owner)
 			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
 
-		this.createCallback<TurnEndedEventArgs>(GameEventType.TURN_ENDED)
+		this.createCallback(GameEventType.TURN_ENDED)
 			.require(({ player }) => player === this.card.owner)
 			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
@@ -115,6 +146,22 @@ export default class ServerBuff implements Buff {
 	 * Subscribers must **NOT** modify the event that triggered the callback. See `createHook` for
 	 * event modifications.
 	 */
+	protected createCallback(event: GameEventType.GAME_STARTED): EventSubscription<GameStartedEventArgs>
+	protected createCallback(event: GameEventType.TURN_STARTED): EventSubscription<TurnStartedEventArgs>
+	protected createCallback(event: GameEventType.TURN_ENDED): EventSubscription<TurnEndedEventArgs>
+	protected createCallback(event: GameEventType.ROUND_STARTED): EventSubscription<RoundStartedEventArgs>
+	protected createCallback(event: GameEventType.ROUND_ENDED): EventSubscription<RoundEndedEventArgs>
+	protected createCallback(event: GameEventType.UNIT_MOVED): EventSubscription<UnitMovedEventArgs>
+	protected createCallback(event: GameEventType.CARD_TAKES_DAMAGE): EventSubscription<CardTakesDamageEventArgs>
+	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_CARD): EventSubscription<CardTargetSelectedCardEventArgs>
+	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_UNIT): EventSubscription<CardTargetSelectedUnitEventArgs>
+	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_ROW): EventSubscription<CardTargetSelectedRowEventArgs>
+	protected createCallback(event: GameEventType.UNIT_ORDERED_CARD): EventSubscription<UnitOrderedCardEventArgs>
+	protected createCallback(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
+	protected createCallback(event: GameEventType.UNIT_CREATED): EventSubscription<UnitCreatedEventArgs>
+	protected createCallback(event: GameEventType.CARD_DESTROYED): EventSubscription<CardDestroyedEventArgs>
+	protected createCallback(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
+	protected createCallback(event: GameEventType.CARD_PLAYED): EventSubscription<CardPlayedEventArgs>
 	protected createCallback<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events.createCallback(this, event)
 	}
@@ -124,10 +171,23 @@ export default class ServerBuff implements Buff {
 	 * `createEffect` is equivalent to `createCallback`, but it will only trigger when
 	 * the `effectSource` is set to the subscriber.
 	 */
+	protected createEffect(event: GameEventType.CARD_DRAWN): EventSubscription<CardDrawnEventArgs>
+	protected createEffect(event: GameEventType.UNIT_DEPLOYED): EventSubscription<UnitDeployedEventArgs>
+	protected createEffect(event: GameEventType.SPELL_DEPLOYED): EventSubscription<SpellDeployedEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_CARD): EventSubscription<CardTargetSelectedCardEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_UNIT): EventSubscription<CardTargetSelectedUnitEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_ROW): EventSubscription<CardTargetSelectedRowEventArgs>
+	protected createEffect(event: GameEventType.CARD_TARGETS_CONFIRMED): EventSubscription<CardTargetsConfirmedEventArgs>
+	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventSubscription<UnitOrderedCardEventArgs>
+	protected createEffect(event: GameEventType.UNIT_ORDERED_UNIT): EventSubscription<UnitOrderedUnitEventArgs>
+	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
+	protected createEffect(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
+	protected createEffect(event: GameEventType.BUFF_CREATED): EventSubscription<BuffCreatedEventArgs>
+	protected createEffect(event: GameEventType.BUFF_REMOVED): EventSubscription<BuffRemovedEventArgs>
 	protected createEffect<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events
 			.createCallback<ArgsType>(this, event)
-			.require((args, rawEvent) => !!rawEvent.effectSource && rawEvent.effectSource === this)
+			.require((args, rawEvent) => !!rawEvent.effectSource && (rawEvent.effectSource === this || rawEvent.effectSource === this.card))
 	}
 
 	/* Subscribe to a game hook
@@ -136,6 +196,9 @@ export default class ServerBuff implements Buff {
 	 * `GameHookType.CARD_TAKES_DAMAGE` hook it is possible to increase or decrease the damage a card
 	 * takes from any source.
 	 */
+	protected createHook(hookType: GameHookType.CARD_TAKES_DAMAGE): EventHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>
+	protected createHook(hookType: GameHookType.CARD_DESTROYED): EventHook<CardDestroyedHookValues, CardDestroyedHookArgs>
+	protected createHook(hookType: GameHookType.UNIT_DESTROYED): EventHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>
 	protected createHook<HookValues, HookArgs>(hook: GameHookType): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hook)
 	}

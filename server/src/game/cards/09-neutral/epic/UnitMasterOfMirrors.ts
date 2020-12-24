@@ -37,7 +37,6 @@ export default class UnitMasterOfMirrors extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.require(() => this.ownerInGame.cardDeck.hasDuplicates)
 			.perform(() => {
-				console.log('Shuffle')
 				this.ownerInGame.cardDeck.shuffle()
 			})
 	}

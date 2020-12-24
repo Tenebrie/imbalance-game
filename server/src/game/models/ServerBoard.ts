@@ -350,6 +350,7 @@ export default class ServerBoard implements Board {
 
 		this.game.events.postEvent(
 			GameEventCreators.unitDestroyed({
+				triggeringCard: unit.card,
 				triggeringUnit: unit,
 			})
 		)

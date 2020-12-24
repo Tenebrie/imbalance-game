@@ -567,35 +567,48 @@ export default class ServerCard implements Card {
 	 *
 	 * The callback will only trigger if the subscriber is located in one of the locations specified by `location` argument.
 	 */
-	protected createCallback(event: GameEventType.GAME_STARTED, location: CardLocation[]): EventSubscription<GameStartedEventArgs>
-	protected createCallback(event: GameEventType.TURN_STARTED, location: CardLocation[]): EventSubscription<TurnStartedEventArgs>
-	protected createCallback(event: GameEventType.TURN_ENDED, location: CardLocation[]): EventSubscription<TurnEndedEventArgs>
-	protected createCallback(event: GameEventType.ROUND_STARTED, location: CardLocation[]): EventSubscription<RoundStartedEventArgs>
-	protected createCallback(event: GameEventType.ROUND_ENDED, location: CardLocation[]): EventSubscription<RoundEndedEventArgs>
-	protected createCallback(event: GameEventType.UNIT_MOVED, location: CardLocation[]): EventSubscription<UnitMovedEventArgs>
-	protected createCallback(event: GameEventType.CARD_TAKES_DAMAGE, location: CardLocation[]): EventSubscription<CardTakesDamageEventArgs>
+	protected createCallback(event: GameEventType.GAME_STARTED, location: CardLocation[] | 'any'): EventSubscription<GameStartedEventArgs>
+	protected createCallback(event: GameEventType.TURN_STARTED, location: CardLocation[] | 'any'): EventSubscription<TurnStartedEventArgs>
+	protected createCallback(event: GameEventType.TURN_ENDED, location: CardLocation[] | 'any'): EventSubscription<TurnEndedEventArgs>
+	protected createCallback(event: GameEventType.ROUND_STARTED, location: CardLocation[] | 'any'): EventSubscription<RoundStartedEventArgs>
+	protected createCallback(event: GameEventType.ROUND_ENDED, location: CardLocation[] | 'any'): EventSubscription<RoundEndedEventArgs>
+	protected createCallback(event: GameEventType.UNIT_MOVED, location: CardLocation[] | 'any'): EventSubscription<UnitMovedEventArgs>
+	protected createCallback(
+		event: GameEventType.CARD_TAKES_DAMAGE,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardTakesDamageEventArgs>
 	protected createCallback(
 		event: GameEventType.CARD_TARGET_SELECTED_CARD,
-		location: CardLocation[]
+		location: CardLocation[] | 'any'
 	): EventSubscription<CardTargetSelectedCardEventArgs>
 	protected createCallback(
 		event: GameEventType.CARD_TARGET_SELECTED_UNIT,
-		location: CardLocation[]
+		location: CardLocation[] | 'any'
 	): EventSubscription<CardTargetSelectedUnitEventArgs>
 	protected createCallback(
 		event: GameEventType.CARD_TARGET_SELECTED_ROW,
-		location: CardLocation[]
+		location: CardLocation[] | 'any'
 	): EventSubscription<CardTargetSelectedRowEventArgs>
-	protected createCallback(event: GameEventType.UNIT_ORDERED_CARD, location: CardLocation[]): EventSubscription<UnitOrderedCardEventArgs>
-	protected createCallback(event: GameEventType.UNIT_ORDERED_ROW, location: CardLocation[]): EventSubscription<UnitOrderedRowEventArgs>
-	protected createCallback(event: GameEventType.UNIT_CREATED, location: CardLocation[]): EventSubscription<UnitCreatedEventArgs>
-	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[]): EventSubscription<CardDestroyedEventArgs>
-	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[]): EventSubscription<UnitDestroyedEventArgs>
-	protected createCallback(event: GameEventType.CARD_PLAYED, location: CardLocation[]): EventSubscription<CardPlayedEventArgs>
-	protected createCallback(event: GameEventType.BUFF_CREATED, location: CardLocation[]): EventSubscription<BuffCreatedEventArgs>
-	protected createCallback(event: GameEventType.BUFF_REMOVED, location: CardLocation[]): EventSubscription<BuffRemovedEventArgs>
-	protected createCallback<ArgsType>(event: GameEventType, location: CardLocation[]): EventSubscription<ArgsType> {
-		return this.game.events.createCallback<ArgsType>(this, event).require(() => location.includes(this.location))
+	protected createCallback(
+		event: GameEventType.UNIT_ORDERED_CARD,
+		location: CardLocation[] | 'any'
+	): EventSubscription<UnitOrderedCardEventArgs>
+	protected createCallback(
+		event: GameEventType.UNIT_ORDERED_ROW,
+		location: CardLocation[] | 'any'
+	): EventSubscription<UnitOrderedRowEventArgs>
+	protected createCallback(event: GameEventType.UNIT_CREATED, location: CardLocation[] | 'any'): EventSubscription<UnitCreatedEventArgs>
+	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<CardDestroyedEventArgs>
+	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<UnitDestroyedEventArgs>
+	protected createCallback(event: GameEventType.CARD_PLAYED, location: CardLocation[] | 'any'): EventSubscription<CardPlayedEventArgs>
+	protected createCallback(event: GameEventType.BUFF_CREATED, location: CardLocation[] | 'any'): EventSubscription<BuffCreatedEventArgs>
+	protected createCallback(event: GameEventType.BUFF_REMOVED, location: CardLocation[] | 'any'): EventSubscription<BuffRemovedEventArgs>
+	protected createCallback<ArgsType>(event: GameEventType, location: CardLocation[] | 'any'): EventSubscription<ArgsType> {
+		const callback = this.game.events.createCallback<ArgsType>(this, event)
+		if (location !== 'any') {
+			callback.require(() => location.includes(this.location))
+		}
+		return callback
 	}
 
 	/* Subscribe to a game event triggered by this buff
@@ -613,6 +626,7 @@ export default class ServerCard implements Card {
 	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventSubscription<UnitOrderedCardEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_UNIT): EventSubscription<UnitOrderedUnitEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
+	protected createEffect(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
 	protected createEffect<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events
 			.createCallback<ArgsType>(this, event)

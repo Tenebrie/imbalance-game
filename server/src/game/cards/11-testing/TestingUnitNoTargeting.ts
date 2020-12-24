@@ -9,7 +9,7 @@ export default class TestingUnitNoTargeting extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
 			stats: {
 				power: 10,

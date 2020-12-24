@@ -19,7 +19,7 @@ export default class UnitAbyssPortal extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			relatedCards: [UnitVoidspawn],
 			stats: {
@@ -27,6 +27,7 @@ export default class UnitAbyssPortal extends ServerCard {
 				armor: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
+			hiddenFromLibrary: true,
 		})
 		this.dynamicTextVariables = {
 			powerPerCard: this.powerPerCard,

@@ -28,7 +28,6 @@ export default class UnitMagiciansAssistant extends ServerCard {
 		this.createDeployEffectTargets()
 			.target(TargetType.UNIT)
 			.require(TargetType.UNIT, ({ targetUnit }) => {
-				console.log(targetUnit)
 				return !this.ownerInGame.cardDeck.hasDuplicates || targetUnit.owner === this.ownerInGame.opponent
 			})
 

@@ -1,5 +1,4 @@
 import ServerBuff, { BuffConstructorParams } from '../models/ServerBuff'
-import { TurnStartedEventArgs } from '../models/events/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffSpellDiscount from './BuffSpellDiscount'
@@ -13,7 +12,7 @@ export default class BuffSpellDiscountPerTurn extends ServerBuff {
 			features: [BuffFeature.SKIP_ANIMATION],
 		})
 
-		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
+		this.createCallback(GameEventType.TURN_STARTED)
 			.require(({ player }) => player === this.card.owner)
 			.perform(() => this.onTurnStart())
 	}

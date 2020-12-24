@@ -15,13 +15,14 @@ export default class UnitVolatileCrystal extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.CRYSTAL],
 			stats: {
 				power: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
+			hiddenFromLibrary: true,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,

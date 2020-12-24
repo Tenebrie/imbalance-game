@@ -9,12 +9,13 @@ export default class UnitVoidspawn extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			stats: {
 				power: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
+			hiddenFromLibrary: true,
 		})
 	}
 }

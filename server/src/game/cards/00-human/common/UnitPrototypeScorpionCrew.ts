@@ -8,6 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import { asDirectUnitDamage } from '../../../../utils/LeaderStats'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitPrototypeScorpionCrew extends ServerCard {
 	targetDamage = asDirectUnitDamage(3)
@@ -17,6 +18,7 @@ export default class UnitPrototypeScorpionCrew extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
+			features: [CardFeature.KEYWORD_ORDER],
 			stats: {
 				power: 6,
 			},

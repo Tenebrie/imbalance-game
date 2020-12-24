@@ -228,7 +228,7 @@ export default class RenderedCard implements Card {
 		this.buffs.buffs.forEach((buff) => {
 			tribes = tribes.concat(buff.cardTribes.slice())
 		})
-		return new Array(...new Set(tribes))
+		return [...new Set(tribes)]
 	}
 
 	public get features(): CardFeature[] {
@@ -236,7 +236,7 @@ export default class RenderedCard implements Card {
 		this.buffs.buffs.forEach((buff) => {
 			features = features.concat(buff.cardFeatures.slice())
 		})
-		return new Array(...new Set(features))
+		return [...new Set(features)]
 	}
 
 	public get displayedDescription(): string {

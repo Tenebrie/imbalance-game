@@ -1,5 +1,4 @@
 import ServerBuff, { BuffConstructorParams } from '../models/ServerBuff'
-import { TurnStartedEventArgs } from '../models/events/GameEventCreators'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BuffStrength from './BuffStrength'
@@ -11,7 +10,7 @@ export default class BuffGrowth extends ServerBuff {
 			alignment: BuffAlignment.POSITIVE,
 		})
 
-		this.createCallback<TurnStartedEventArgs>(GameEventType.TURN_STARTED)
+		this.createCallback(GameEventType.TURN_STARTED)
 			.require(({ player }) => player === this.card.owner)
 			.perform(() => this.onTurnStart())
 	}

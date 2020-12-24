@@ -149,6 +149,10 @@
 	"card.feature.keywordSummon.description": "Move a card from your deck into your hand until the end of your turn.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
+	"card.feature.keywordProtector.name": "Protector",
+	"card.feature.keywordProtector.description": "Whenever an allied unit behind this takes damage, intercept it.",
+	"card.feature.keywordNightwatch.name": "Nightwatch",
+	"card.feature.keywordNightwatch.description": "Stays on the board after the round end.",
 	"card.feature.keywordHeroPower.name": "Leader Power",
 	"card.feature.keywordHeroPower.description": "When played as spell or destroyed as unit, target card returns to your deck. It is also always revealed.",
 	"card.feature.keywordBuffStun.name": "Stun (Buff)",
@@ -162,6 +166,12 @@
 	"card.feature.building.name": "Building",
 	"card.feature.building.description": "Stays on the board after the round end.",
 	"card.feature.building.text": "*Building*",
+	"card.feature.protector.name": "Protector",
+	"card.feature.protector.description": "Whenever an allied unit behind this takes damage, intercept it.",
+	"card.feature.protector.text": "*Protector*",
+	"card.feature.nightwatch.name": "Nightwatch",
+	"card.feature.nightwatch.description": "Stays on the board after the round end.",
+	"card.feature.nightwatch.text": "<c=green>Nightwatch</c>",
 	"card.feature.spy.name": "Spy",
 	"card.feature.spy.description": "Played on your opponent's side of the board.",
 	"card.feature.spy.text": "*Spy*",
@@ -264,6 +274,9 @@
 
 	"buff.buffVelElleronEncouragement.name": "An Encouragement",
 	"buff.buffVelElleronEncouragement.description": "This card will receive bonus Power at the start of next turn.",
+
+	"buff.buffNightwatch.name": "Nightwatch",
+	"buff.buffNightwatch.description": "This card has Nightwatch.",
 
 	"card.hidden.name": "[Hidden card]",
 
@@ -403,7 +416,7 @@
 	"card.unitDarkTimewarper.description": "*Deploy:*\nTrigger a *Turn end* effect on all allied *Void Portals*.\nThen, *Create* a *Void Portal*.",
 
 	"card.unitTravelingEnchantress.name": "Traveling\nEnchantress",
-	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current Power is at least double their base Power, give +{extraStrengthGiven} Power more.",
+	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current Power is at least 11, give +{extraStrengthGiven} Power more.",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
 	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Peasant card from your deck",
@@ -684,7 +697,7 @@
 	"card.unitArcheryTower.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only attack once per adjacent Peasant.",
 
 	"card.unitWoodenPalisade.name": "Wooden Palisade",
-	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn a *Wooden Palisade* on either side.<p>Whenever an allied unit behind this takes damage, *Intercept* it.",
+	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn a *Wooden Palisade* on either side.",
 
 	"card.unitGenerousBlacksmith.name": "Generous Blacksmith",
 	"card.unitGenerousBlacksmith.description": "Whenever a unit moves into adjacent position from another row, give it +{bonusArmor} Armor.",
@@ -717,5 +730,8 @@
 	"card.unitMagiciansAssistant.description": "*Deploy:*\nPut a copy of an enemy unit to the top of your deck.<p>If your deck has no duplicates, you can also target allied units.",
 
 	"card.unitPrototypeScorpionCrew.name": "Prototype Scorpion Crew",
-	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and to itself."
+	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and to itself.",
+
+	"card.unitMakeshiftShelter.name": "Makeshift Shelter",
+	"card.unitMakeshiftShelter.description": "*Deploy:*\nChoose a Common allied unit.\nIt has *Nightwatch* until the end of this round, as long as this is on the board."
 }

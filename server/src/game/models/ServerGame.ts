@@ -308,6 +308,7 @@ export default class ServerGame implements Game {
 		this.board
 			.getAllUnits()
 			.filter((unit) => !unit.card.features.includes(CardFeature.BUILDING))
+			.filter((unit) => !unit.card.features.includes(CardFeature.NIGHTWATCH))
 			.forEach((unit) => {
 				this.board.destroyUnit(unit)
 			})

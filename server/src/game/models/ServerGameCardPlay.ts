@@ -254,7 +254,6 @@ export default class ServerGameCardPlay {
 		)
 
 		const validTargets = this.getValidTargets()
-		console.log(validTargets.length)
 
 		if (validTargets.length > 0) {
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, Utils.shuffle(validTargets))

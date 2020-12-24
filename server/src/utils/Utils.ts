@@ -8,6 +8,8 @@ import express, { Request } from 'express'
 import { sortCards } from '@shared/Utils'
 import { CardConstructor } from '../game/libraries/CardLibrary'
 
+export const AnyCardLocation = 'any'
+
 interface TryUntilArgs {
 	try: () => void | Promise<void>
 	until: () => boolean | Promise<boolean>

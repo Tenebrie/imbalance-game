@@ -22,7 +22,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			faction: CardFaction.WILD,
 			tribes: [CardTribe.STORM],
 			stats: {

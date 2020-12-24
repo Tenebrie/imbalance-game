@@ -39,15 +39,15 @@
 				</span>
 			</div>
 		</div>
-		<div class="card-info-section" v-if="this.inspectedCard.buffs.buffs.length > 0">
+		<div class="card-info-section" v-if="displayedBuffs.length > 0">
 			<div class="menu-separator" />
 			<div class="header">{{ $locale.get('card.inspect.buffs') }}:</div>
-			<div class="line" v-for="buff in inspectedCard.buffs.buffs" :key="buff.id">
+			<div class="line" v-for="buff in displayedBuffs" :key="buff.id">
 				<span v-if="buff.intensity > 1">{{ buff.intensity }} x </span>
-				<span class="object-name">{{ $locale.get(buff.name) }}: </span>
-				<span>{{ $locale.get(buff.description) }}</span>
-				<span v-if="buff.duration !== Infinity">
-					({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ buff.duration }})
+				<span class="object-name">{{ $locale.get(buff.buff.name) }}: </span>
+				<span>{{ $locale.get(buff.buff.description) }}</span>
+				<span v-if="buff.buff.duration !== Infinity">
+					({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ buff.buff.duration }})
 				</span>
 			</div>
 		</div>
@@ -86,6 +86,11 @@ import CardColor from '@shared/enums/CardColor'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
 import {RIGHT_MOUSE_BUTTON} from '@/Pixi/input/Input'
+import ClientBuff from '@/Pixi/models/ClientBuff'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
+import BuffFeature from '@shared/enums/BuffFeature'
+import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import HiddenCardMessage from '@shared/models/network/card/HiddenCardMessage'
 
 export default {
 	components: {
@@ -102,6 +107,33 @@ export default {
 			return (isInGame.value && cardInGame) || store.getters.inspectedCard.card as CardMessage | RenderedCard
 		})
 
+		const displayedBuffs = computed<({ buff: ClientBuff | BuffMessage, intensity: number})[]>(() => {
+			const buffs = (inspectedCard.value.buffs.buffs as (ClientBuff | BuffMessage)[]).filter(buff => !buff.buffFeatures.includes(BuffFeature.SERVICE_BUFF))
+			let stackedBuffs: ({ buff: ClientBuff | BuffMessage, intensity: number})[] = []
+
+			buffs.forEach(buff => {
+				if (stackedBuffs.length === 0) {
+					stackedBuffs.push({
+						buff: buff,
+						intensity: 1
+					})
+					return
+				}
+
+				const previousBuff = stackedBuffs[stackedBuffs.length - 1]
+				if (buff.class === previousBuff.buff.class && (buff.duration === Infinity || buff.duration === previousBuff.buff.duration)) {
+					previousBuff.intensity += 1
+					return
+				}
+				stackedBuffs.push({
+					buff: buff,
+					intensity: 1
+				})
+			})
+
+			return stackedBuffs
+		})
+
 		const displayArmor = computed<boolean>(() => {
 			return inspectedCard.value.stats.armor > 0 || inspectedCard.value.stats.maxArmor > 0 || inspectedCard.value.stats.baseArmor > 0
 		})
@@ -111,7 +143,13 @@ export default {
 		})
 
 		const displayedFeatures = computed<CardFeature[]>(() => {
-			const features = inspectedCard.value instanceof RenderedCard ? inspectedCard.value.features : inspectedCard.value.baseFeatures
+			let features = inspectedCard.value instanceof RenderedCard ? inspectedCard.value.features : inspectedCard.value.baseFeatures
+			if (!(inspectedCard.value instanceof RenderedCard)) {
+				inspectedCard.value.buffs.buffs.forEach(buff => {
+					features = features.concat(buff.cardFeatures)
+				})
+			}
+			features = [...new Set(features)]
 			return features.filter(feature => Localization.getValueOrNull(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`))
 		})
 
@@ -168,6 +206,7 @@ export default {
 			displayArmor,
 			displayManacost,
 			inspectedCard,
+			displayedBuffs,
 			editorModeOffset,
 			overlayDisplayed,
 			displayInGameStats,

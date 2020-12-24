@@ -25,6 +25,7 @@ export default class UnitTravelingEnchantress extends ServerCard {
 				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			baseStrengthGiven: this.baseStrengthGiven,

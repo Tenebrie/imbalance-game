@@ -25,8 +25,8 @@ export default class ClientBuff implements Buff {
 
 	public constructor(message: BuffMessage) {
 		this.id = message.id
-		this.card = Core.game.findRenderedCardById(message.cardId)
-		this.source = Core.game.findRenderedCardById(message.sourceId)
+		this.card = Core.game?.findRenderedCardById(message.cardId)
+		this.source = Core.game?.findRenderedCardById(message.sourceId)
 		this.class = message.class
 		this.alignment = message.alignment
 		this.cardTribes = (message.cardTribes || []).slice()

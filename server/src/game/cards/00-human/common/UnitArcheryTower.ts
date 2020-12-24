@@ -40,6 +40,7 @@ export default class UnitArcheryTower extends ServerCard {
 		this.createEffect(GameEventType.UNIT_ORDERED_UNIT).perform(({ targetArguments }) => this.onAttack(targetArguments))
 
 		this.createSelector()
+			.require(() => this.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.tribes.includes(CardTribe.PEASANT))
 			.requireTarget(({ target }) => this.game.board.isUnitAdjacent(this.unit, target.unit))

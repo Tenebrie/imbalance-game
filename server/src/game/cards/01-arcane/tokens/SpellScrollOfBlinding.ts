@@ -19,7 +19,7 @@ export default class SpellScrollOfBlinding extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.SCROLL],
 			features: [CardFeature.KEYWORD_BUFF_STUN],

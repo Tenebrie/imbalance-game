@@ -340,6 +340,7 @@ export interface UnitOrderedRowEventArgs {
 	targetArguments: ServerCardTargetRow
 }
 export interface UnitDestroyedEventArgs {
+	triggeringCard: ServerCard
 	triggeringUnit: ServerUnit
 }
 

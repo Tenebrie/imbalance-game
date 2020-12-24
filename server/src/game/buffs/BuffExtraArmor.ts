@@ -7,11 +7,9 @@ export default class BuffExtraArmor extends ServerBuff {
 		super(params, {
 			alignment: BuffAlignment.POSITIVE,
 		})
-		this.createEffect(GameEventType.BUFF_CREATED).perform(() => this.onCreated())
-	}
-
-	private onCreated(): void {
-		this.card.stats.armor = this.card.stats.armor + 1
+		this.createEffect(GameEventType.BUFF_CREATED).perform(() => {
+			this.card.stats.armor = this.card.stats.armor + 1
+		})
 	}
 
 	getMaxArmorOverride(baseValue: number): number {

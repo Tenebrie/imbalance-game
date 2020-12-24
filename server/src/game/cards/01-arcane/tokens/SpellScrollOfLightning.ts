@@ -17,7 +17,7 @@ export default class SpellScrollOfLightning extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.SCROLL],
 			stats: {

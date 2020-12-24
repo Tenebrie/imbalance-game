@@ -6,7 +6,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffDuration from '@shared/enums/BuffDuration'
-import BuffNextSpellDiscountAura from '../../../buffs/BuffNextSpellDiscountAura'
+import BuffNextSpellThisRoundDiscountAura from '../../../buffs/BuffNextSpellThisRoundDiscountAura'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
@@ -35,6 +35,6 @@ export default class UnitMerchantsAssistant extends ServerCard {
 
 	private onDeploy() {
 		const player = this.ownerInGame
-		player.leader.buffs.addMultiple(BuffNextSpellDiscountAura, this.spellDiscount, this, BuffDuration.INFINITY)
+		player.leader.buffs.addMultiple(BuffNextSpellThisRoundDiscountAura, this.spellDiscount, this, BuffDuration.INFINITY)
 	}
 }
