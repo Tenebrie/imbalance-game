@@ -30,6 +30,13 @@
 		<title>Not Gwent</title>
 	</head>
 	<body>
+		<script>
+			if (location.hostname === 'pure-chamber-21653.herokuapp.com') {
+				document.title += ' (Staging)'
+			} else if (location.hostname === 'localhost') {
+				document.title += ' (Dev)'
+			}
+		</script>
 		<noscript>
 			<strong>We're sorry but client doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
 		</noscript>
