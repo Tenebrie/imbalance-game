@@ -7,6 +7,7 @@ import {computed, defineComponent, onMounted} from '@vue/composition-api'
 import Notifications from '@/utils/Notifications'
 import axios from 'axios'
 import store from '@/Vue/store'
+import GoogleUser = gapi.auth2.GoogleUser
 
 export default defineComponent({
 	setup() {
@@ -24,9 +25,9 @@ export default defineComponent({
 				'onfailure': onGoogleSignInError,
 			})
 		})
-		const onGoogleSignInSuccess = async (googleUser): Promise<void> => {
+		const onGoogleSignInSuccess = async (googleUser: GoogleUser): Promise<void> => {
 			try {
-				await axios.post('/api/user/google', { token: googleUser.id_token })
+				await axios.post('/api/user/google', { token: googleUser.getAuthResponse().id_token })
 				const auth2 = gapi.auth2.getAuthInstance()
 				await auth2.signOut()
 				await store.dispatch.postLogin()
