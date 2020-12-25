@@ -28,6 +28,10 @@ export default class ServerBuffContainer implements BuffContainer {
 		return this.card.game
 	}
 
+	public get visible(): ServerBuff[] {
+		return this.buffs.filter((buff) => !buff.buffFeatures.includes(BuffFeature.SERVICE_BUFF))
+	}
+
 	public get dispellable(): ServerBuff[] {
 		return this.buffs.filter((buff) => !buff.protected)
 	}

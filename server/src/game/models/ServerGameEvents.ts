@@ -3,7 +3,7 @@ import Utils, { colorizeClass, colorizeId } from '../../utils/Utils'
 import ServerCard from './ServerCard'
 import { cardPerform, cardRequire } from '../utils/CardEventHandlers'
 import ServerBuff from './ServerBuff'
-import GameHookType from './events/GameHookType'
+import GameHookType, { CardTakesDamageHookArgs } from './events/GameHookType'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameEventType from '@shared/enums/GameEventType'
@@ -60,6 +60,12 @@ export default class ServerGameEvents {
 
 	public createHook<HookValues, HookArgs>(subscriber: EventSubscriber, hook: GameHookType): EventHook<HookValues, HookArgs> {
 		const eventHook = new EventHook<HookValues, HookArgs>(subscriber)
+		if (hook === GameHookType.CARD_TAKES_DAMAGE) {
+			eventHook.require((args) => {
+				const typedArgs = (args as unknown) as CardTakesDamageHookArgs
+				return !typedArgs.damageInstance.redirectHistory.find((entry) => entry.proxyCard === eventHook.subscriber)
+			})
+		}
 		this.eventHooks.get(hook)!.push(eventHook)
 		return eventHook
 	}

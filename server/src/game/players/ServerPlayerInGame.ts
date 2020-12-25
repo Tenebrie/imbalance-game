@@ -253,7 +253,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnEnd(): void {
-		// TODO: Move this to corresponding buffs
 		this.cardHand.unitCards
 			.filter((card) => card.features.includes(CardFeature.TEMPORARY_CARD))
 			.forEach((card) => {

@@ -748,5 +748,5 @@
 	"card.unitManaSilo.description": "*Deploy:* *Infuse* up to {maxInfuse} Mana.<p>*Round start:*\nRelease the *Infused* Mana.<if counterVisible><p><i>Mana stored: {manaInfused}.</i></if>",
 
 	"card.unitCleansingFlame.name": "Cleansing Flame",
-	"card.unitCleansingFlame.description": "*Deploy:*\n*Dispel* {dispelPower} from another unit."
+	"card.unitCleansingFlame.description": "*Deploy:*\n *Dispel* {dispelPower} from another unit."
 }

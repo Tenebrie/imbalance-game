@@ -16,6 +16,7 @@ export default class BuffProtector extends ServerBuff {
 
 		this.createHook(GameHookType.CARD_TAKES_DAMAGE)
 			.require(() => this.card.location === CardLocation.BOARD)
+			.require(({ targetCard }) => targetCard !== this.card)
 			.require(({ targetCard }) => targetCard.location === CardLocation.BOARD)
 			.require(({ targetCard }) => targetCard.owner === this.card.ownerInGame)
 			.require(({ targetCard }) => {

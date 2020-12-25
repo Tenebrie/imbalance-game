@@ -8,7 +8,7 @@ import ServerCard from '../game/models/ServerCard'
 import GameMode from '@shared/enums/GameMode'
 import ServerOwnedCard from '../game/models/ServerOwnedCard'
 import TestingLeader from '../game/cards/11-testing/TestingLeader'
-import { playerAction, startNextRound } from './TestGameUtils'
+import { playerAction, startNextRound, startNextTurn } from './TestGameUtils'
 
 const consoleInfo = console.info
 const consoleWarn = console.warn
@@ -28,6 +28,7 @@ export const resumeLogging = (): void => {
 
 interface CommonTemplateResult {
 	playerAction: (callback: () => void) => void
+	startNextTurn: () => void
 	startNextRound: () => void
 }
 
@@ -59,6 +60,7 @@ export default {
 		game.start()
 		game.players[0].startRound()
 		game.players[1].startRound()
+		game.advanceCurrentTurn()
 		return game
 	},
 
@@ -74,6 +76,7 @@ export default {
 		game.start()
 		game.players[0].startRound()
 		game.players[1].startRound()
+		game.advanceCurrentTurn()
 
 		const player = game.players[1]
 		const cardInHand = new card(game)
@@ -89,6 +92,7 @@ export default {
 				owner: player,
 			},
 			playerAction: playerAction(game),
+			startNextTurn: startNextTurn(game),
 			startNextRound: startNextRound(game),
 		}
 	},
@@ -105,6 +109,7 @@ export default {
 		game.start()
 		game.players[0].startRound()
 		game.players[1].startRound()
+		game.advanceCurrentTurn()
 
 		const player = game.players[1]
 		const playersCardInHand = new playersCard(game)
@@ -129,6 +134,7 @@ export default {
 				owner: player.opponentInGame,
 			},
 			playerAction: playerAction(game),
+			startNextTurn: startNextTurn(game),
 			startNextRound: startNextRound(game),
 		}
 	},

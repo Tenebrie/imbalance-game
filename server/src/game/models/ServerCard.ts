@@ -353,56 +353,52 @@ export default class ServerCard implements Card {
 		return owner.cardDeck.getCardIndex(this)
 	}
 
-	public dealDamage(originalDamageInstance: ServerDamageInstance): void {
+	public dealDamage(damageInstance: ServerDamageInstance): void {
+		if (damageInstance.proxyCard) {
+			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.proxyCard, [this]))
+		} else if (damageInstance.sourceCard) {
+			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.sourceCard, [this]))
+		} else {
+			this.game.animation.play(ServerAnimation.universeAttacksCards([this]))
+		}
+
 		const hookValues = this.game.events.applyHooks<CardTakesDamageHookArgs, CardTakesDamageHookValues>(GameHookType.CARD_TAKES_DAMAGE, {
 			targetCard: this,
-			damageInstance: originalDamageInstance,
+			damageInstance: damageInstance,
 		})
 
-		const { targetCard, damageInstance } = hookValues
-
-		if (damageInstance.value <= 0) {
+		if (hookValues.targetCard !== this) {
+			hookValues.targetCard.dealDamage(ServerDamageInstance.redirectedFrom(hookValues.damageInstance, this))
 			return
 		}
 
-		if (damageInstance.sourceCard) {
-			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.sourceCard, [this]))
-			if (targetCard !== this) {
-				this.game.animation.play(ServerAnimation.cardAttacksCards(this, [targetCard]))
-			}
-		} else {
-			this.game.animation.play(ServerAnimation.universeAttacksCards([this]))
-			if (targetCard !== this) {
-				this.game.animation.play(ServerAnimation.cardAttacksCards(this, [targetCard]))
-			}
-		}
-
+		damageInstance = hookValues.damageInstance
 		let damageToDeal = damageInstance.value
 
 		let armorDamageInstance: ServerDamageInstance | null = null
-		if (targetCard.stats.armor > 0) {
+		if (this.stats.armor > 0) {
 			armorDamageInstance = damageInstance.clone()
-			armorDamageInstance.value = Math.min(targetCard.stats.armor, damageToDeal)
+			armorDamageInstance.value = Math.min(this.stats.armor, damageToDeal)
 			damageToDeal -= armorDamageInstance.value
 		}
 
 		let powerDamageInstance: ServerDamageInstance | null = null
 		if (damageToDeal > 0) {
 			powerDamageInstance = damageInstance.clone()
-			powerDamageInstance.value = Math.min(targetCard.stats.power, damageToDeal)
+			powerDamageInstance.value = Math.min(this.stats.power, damageToDeal)
 		}
 
 		if (armorDamageInstance) {
-			targetCard.stats.armor = targetCard.stats.armor - armorDamageInstance.value
+			this.stats.armor = this.stats.armor - armorDamageInstance.value
 		}
 
 		if (powerDamageInstance) {
-			targetCard.stats.power = targetCard.stats.power - powerDamageInstance.value
+			this.stats.power = this.stats.power - powerDamageInstance.value
 		}
 
 		this.game.events.postEvent(
 			GameEventCreators.cardTakesDamage({
-				triggeringCard: targetCard,
+				triggeringCard: this,
 				damageInstance: damageInstance,
 				armorDamageInstance: armorDamageInstance,
 				powerDamageInstance: powerDamageInstance,
