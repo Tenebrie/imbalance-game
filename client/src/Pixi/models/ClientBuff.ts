@@ -23,6 +23,8 @@ export default class ClientBuff implements Buff {
 	duration: number
 	baseDuration: number
 
+	protected: boolean
+
 	public constructor(message: BuffMessage) {
 		this.id = message.id
 		this.card = Core.game?.findRenderedCardById(message.cardId)
@@ -38,5 +40,7 @@ export default class ClientBuff implements Buff {
 
 		this.duration = Number(message.duration)
 		this.baseDuration = Number(message.baseDuration)
+
+		this.protected = message.protected
 	}
 }

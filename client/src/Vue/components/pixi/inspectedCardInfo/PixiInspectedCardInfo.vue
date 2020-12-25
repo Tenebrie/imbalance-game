@@ -39,18 +39,7 @@
 				</span>
 			</div>
 		</div>
-		<div class="card-info-section" v-if="displayedBuffs.length > 0">
-			<div class="menu-separator" />
-			<div class="header">{{ $locale.get('card.inspect.buffs') }}:</div>
-			<div class="line" v-for="buff in displayedBuffs" :key="buff.id">
-				<span v-if="buff.intensity > 1">{{ buff.intensity }} x </span>
-				<span class="object-name">{{ $locale.get(buff.buff.name) }}: </span>
-				<span>{{ $locale.get(buff.buff.description) }}</span>
-				<span v-if="buff.buff.duration !== Infinity">
-					({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ buff.buff.duration }})
-				</span>
-			</div>
-		</div>
+		<InspectedCardBuffs :card="inspectedCard" />
 		<div class="card-info-section" v-if="displayedRelatedCards.length > 0">
 			<div class="menu-separator" v-if="displayInGameStats || displayedFeatures.length > 0" />
 			<div class="header" v-if="displayLeaderPowersLabel">
@@ -91,9 +80,11 @@ import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import BuffFeature from '@shared/enums/BuffFeature'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import HiddenCardMessage from '@shared/models/network/card/HiddenCardMessage'
+import InspectedCardBuffs from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
 
 export default {
 	components: {
+		InspectedCardBuffs,
 		PixiRelatedCard
 	},
 
@@ -105,33 +96,6 @@ export default {
 		const inspectedCard = computed<CardMessage | RenderedCard>(() => {
 			const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card.id) : null
 			return (isInGame.value && cardInGame) || store.getters.inspectedCard.card as CardMessage | RenderedCard
-		})
-
-		const displayedBuffs = computed<({ buff: ClientBuff | BuffMessage, intensity: number})[]>(() => {
-			const buffs = (inspectedCard.value.buffs.buffs as (ClientBuff | BuffMessage)[]).filter(buff => !buff.buffFeatures.includes(BuffFeature.SERVICE_BUFF))
-			let stackedBuffs: ({ buff: ClientBuff | BuffMessage, intensity: number})[] = []
-
-			buffs.forEach(buff => {
-				if (stackedBuffs.length === 0) {
-					stackedBuffs.push({
-						buff: buff,
-						intensity: 1
-					})
-					return
-				}
-
-				const previousBuff = stackedBuffs[stackedBuffs.length - 1]
-				if (buff.class === previousBuff.buff.class && (buff.duration === Infinity || buff.duration === previousBuff.buff.duration)) {
-					previousBuff.intensity += 1
-					return
-				}
-				stackedBuffs.push({
-					buff: buff,
-					intensity: 1
-				})
-			})
-
-			return stackedBuffs
 		})
 
 		const displayArmor = computed<boolean>(() => {
@@ -206,7 +170,6 @@ export default {
 			displayArmor,
 			displayManacost,
 			inspectedCard,
-			displayedBuffs,
 			editorModeOffset,
 			overlayDisplayed,
 			displayInGameStats,

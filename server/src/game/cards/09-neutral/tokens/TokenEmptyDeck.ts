@@ -15,6 +15,7 @@ export default class TokenEmptyDeck extends ServerCard {
 				power: 0,
 			},
 			expansionSet: ExpansionSet.BASE,
+			hiddenFromLibrary: true,
 		})
 	}
 }

@@ -21,6 +21,8 @@ export default class OpenBuffMessage implements BuffMessage {
 	duration: string
 	baseDuration: string
 
+	protected: boolean
+
 	constructor(buff: Buff) {
 		this.id = buff.id
 		this.cardId = buff.card.id
@@ -36,5 +38,7 @@ export default class OpenBuffMessage implements BuffMessage {
 
 		this.duration = buff.duration.toString()
 		this.baseDuration = buff.baseDuration.toString()
+
+		this.protected = buff.protected
 	}
 }

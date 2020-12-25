@@ -138,6 +138,12 @@ export default class ServerBuff implements Buff {
 		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
 	}
 
+	public get protected(): boolean {
+		return (
+			this.buffFeatures.includes(BuffFeature.SERVICE_BUFF) || this.buffFeatures.includes(BuffFeature.PROTECTED) || this.selector !== null
+		)
+	}
+
 	/* Subscribe to a game event
 	 * -------------------------
 	 * Create a callback for a global game event. By default, this callback will trigger regardless

@@ -2,6 +2,7 @@ enum CardTribe {
 	BIRD = 'bird',
 	LOOT = 'loot',
 	BEAST = 'beast',
+	DRYAD = 'dryad',
 	NOBLE = 'noble',
 	STORM = 'storm',
 	SPARK = 'spark',

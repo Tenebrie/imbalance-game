@@ -21,7 +21,7 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
-import PixiInspectedCardInfo from '@/Vue/components/pixi/PixiInspectedCardInfo.vue'
+import PixiInspectedCardInfo from '@/Vue/components/pixi/inspectedCardInfo/PixiInspectedCardInfo.vue'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import {computed, defineComponent} from '@vue/composition-api'

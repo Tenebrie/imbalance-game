@@ -8,8 +8,6 @@ import ServerAnimation from './ServerAnimation'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import BuffLeaderPower from '../buffs/BuffLeaderPower'
-import BuffUnitToSpellConversion from '../buffs/BuffUnitToSpellConversion'
 import { LeaderStatValueGetter } from '../../utils/LeaderStats'
 import { CardSelector } from './events/selectors/CardSelector'
 
@@ -28,6 +26,10 @@ export default class ServerBuffContainer implements BuffContainer {
 
 	public get game(): ServerGame {
 		return this.card.game
+	}
+
+	public get dispellable(): ServerBuff[] {
+		return this.buffs.filter((buff) => !buff.protected)
 	}
 
 	/*
@@ -133,6 +135,13 @@ export default class ServerBuffContainer implements BuffContainer {
 		return this.getBuffsByPrototype(prototype).filter((buff) => buff.selector === selector).length
 	}
 
+	public dispel(count: number): void {
+		this.dispellable
+			.reverse()
+			.slice(0, count)
+			.forEach((buff) => this.removeByReference(buff))
+	}
+
 	public removeByReference(buff: ServerBuff): void {
 		const index = this.buffs.indexOf(buff)
 		if (index === -1) {
@@ -177,10 +186,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		this.buffs.filter((buff) => buff.selector === selector).forEach((buff) => this.removeByReference(buff))
 	}
 
-	public removeCleansable(): void {
-		const buffsToRemove = this.buffs.filter(
-			(buff) => buff.constructor !== BuffLeaderPower && buff.constructor !== BuffUnitToSpellConversion
-		)
-		buffsToRemove.forEach((buff) => this.removeByReference(buff))
+	public removeAllDispellable(): void {
+		this.dispellable.forEach((buff) => this.removeByReference(buff))
 	}
 }

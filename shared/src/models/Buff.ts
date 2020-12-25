@@ -19,4 +19,6 @@ export default interface Buff {
 
 	duration: number
 	baseDuration: number
+
+	protected: boolean
 }

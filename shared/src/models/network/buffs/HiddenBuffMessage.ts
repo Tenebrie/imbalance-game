@@ -22,6 +22,8 @@ export default class HiddenBuffMessage implements BuffMessage {
 	duration = '0'
 	baseDuration = '0'
 
+	protected = true
+
 	constructor(buff: Buff) {
 		this.id = buff.id
 		this.cardId = buff.card.id

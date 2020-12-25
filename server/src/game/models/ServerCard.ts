@@ -441,7 +441,7 @@ export default class ServerCard implements Card {
 	 * Remove all active buffs from this card
 	 */
 	public cleanse(): void {
-		this.buffs.removeCleansable()
+		this.buffs.removeAllDispellable()
 	}
 
 	/* Destroy this card / unit

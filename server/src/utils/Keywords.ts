@@ -133,4 +133,14 @@ export default {
 		player.addSpellMana(manaToGenerate)
 		player.game.animation.play(ServerAnimation.cardGenerateMana(card))
 	},
+
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+	dispel: (count: number) => ({
+		from: (targetCard: ServerCard) => ({
+			withSourceAs: (sourceCard: ServerCard) => {
+				targetCard.game.animation.play(ServerAnimation.cardAffectsCards(sourceCard, [targetCard]))
+				targetCard.buffs.dispel(count)
+			},
+		}),
+	}),
 }

@@ -149,6 +149,8 @@
 	"card.feature.keywordSummon.description": "Move a card from your deck into your hand until the end of your turn.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
+	"card.feature.keywordDispelX.name": "Dispel X",
+	"card.feature.keywordDispelX.description": "Remove last X dispellable buffs from the target.",
 	"card.feature.keywordProtector.name": "Protector",
 	"card.feature.keywordProtector.description": "Whenever an allied unit behind this takes damage, intercept it.",
 	"card.feature.keywordNightwatch.name": "Nightwatch",
@@ -203,6 +205,7 @@
 	"card.tribe.bird": "Bird",
 	"card.tribe.loot": "Loot",
 	"card.tribe.beast": "Beast",
+	"card.tribe.dryad": "Dryad",
 	"card.tribe.noble": "Noble",
 	"card.tribe.storm": "Storm",
 	"card.tribe.spark": "Spark",
@@ -277,6 +280,9 @@
 
 	"buff.buffNightwatch.name": "Nightwatch",
 	"buff.buffNightwatch.description": "This card has Nightwatch.",
+
+	"buff.buffNoArmor.name": "No Armor",
+	"buff.buffNoArmor.description": "This unit's Armor has been removed.",
 
 	"card.hidden.name": "[Hidden card]",
 
@@ -733,5 +739,14 @@
 	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and to itself.",
 
 	"card.unitMakeshiftShelter.name": "Makeshift Shelter",
-	"card.unitMakeshiftShelter.description": "*Deploy:*\nChoose a Common allied unit.\nIt has *Nightwatch* until the end of this round, as long as this is on the board."
+	"card.unitMakeshiftShelter.description": "*Deploy:*\nChoose a Common allied unit.\nIt has *Nightwatch* until the end of this round, as long as this is on the board.",
+
+	"card.unitEldergroveTender.name": "Eldergrove Tender",
+	"card.unitEldergroveTender.description": "*Deploy:*\nGive +{bonusPower} Power and apply *Growth* to an allied unit.",
+
+	"card.unitManaSilo.name": "Mana Silo",
+	"card.unitManaSilo.description": "*Deploy:* *Infuse* up to {maxInfuse} Mana.<p>*Round start:*\nRelease the *Infused* Mana.<if counterVisible><p><i>Mana stored: {manaInfused}.</i></if>",
+
+	"card.unitCleansingFlame.name": "Cleansing Flame",
+	"card.unitCleansingFlame.description": "*Deploy:*\n*Dispel* {dispelPower} from another unit."
 }
