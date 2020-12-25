@@ -18,8 +18,9 @@ import LocalStorage from '@/utils/LocalStorage'
 import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 import axios from 'axios'
 import {electronHost, isElectron} from '@/utils/Utils'
+import {defineComponent} from '@vue/composition-api'
 
-export default {
+export default defineComponent({
 	components: { ThePopupView, TheNavigationBar },
 
 	async mounted() {
@@ -77,7 +78,7 @@ export default {
 			console.info('%cAlso, you can summon browser context menu by using Shift or Ctrl when right-clicking an element.', textStyle)
 		}
 	}
-}
+})
 </script>
 
 <style lang="scss">

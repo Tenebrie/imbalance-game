@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import {computed, PropType} from '@vue/composition-api'
+import {computed, defineComponent, PropType} from '@vue/composition-api'
 import {BuffWrapper} from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
@@ -19,7 +19,7 @@ interface Props {
 	buff: BuffWrapper
 }
 
-export default {
+export default defineComponent({
 	props: {
 		buff: Object as PropType<BuffWrapper>
 	},
@@ -35,7 +35,7 @@ export default {
 			style
 		}
 	}
-}
+})
 </script>
 
 <style scoped lang="scss">

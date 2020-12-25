@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import {computed, PropType} from '@vue/composition-api'
+import {computed, defineComponent, PropType} from '@vue/composition-api'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import ClientBuff from '@/Pixi/models/ClientBuff'
@@ -24,7 +24,7 @@ export interface BuffWrapper {
 	intensity: number
 }
 
-export default {
+export default defineComponent({
 	props: {
 		card: Object as PropType<RenderedCard | CardMessage>
 	},
@@ -70,7 +70,7 @@ export default {
 			displayedBuffs,
 		}
 	}
-}
+})
 </script>
 
 <style scoped lang="scss">

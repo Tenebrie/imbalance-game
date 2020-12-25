@@ -8,8 +8,9 @@
 
 <script lang="ts">
 import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
+import {defineComponent} from '@vue/composition-api'
 
-export default {
+export default defineComponent({
 	components: { TheVolumeSettings },
 
 	setup() {
@@ -21,7 +22,7 @@ export default {
 			onMenuClick
 		}
 	}
-}
+})
 </script>
 
 <style scoped lang="scss">

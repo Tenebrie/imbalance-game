@@ -21,8 +21,9 @@ import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
 import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
 import TheSimpleSettings from '@/Vue/components/popup/escapeMenu/TheSimpleSettings.vue'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import {defineComponent} from '@vue/composition-api'
 
-export default {
+export default defineComponent({
 	components: {
 		TenebrieLogo,
 	},
@@ -73,9 +74,8 @@ export default {
 			onShowOpponentsGraveyard,
 			onLeaveGame,
 		}
-	},
-
-}
+	}
+})
 </script>
 
 <style scoped lang="scss">

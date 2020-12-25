@@ -16,8 +16,9 @@ import GameMode from '@shared/enums/GameMode'
 import GameMessage from '@shared/models/network/GameMessage'
 import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
+import {defineComponent} from '@vue/composition-api'
 
-export default {
+export default defineComponent({
 	setup() {
 		const onMenuClick = (event: MouseEvent) => {
 			event.cancelBubble = true
@@ -50,9 +51,8 @@ export default {
 			onNormalSelected,
 			onDiscoveryLeagueSelected
 		}
-	},
-
-}
+	}
+})
 </script>
 
 <style scoped lang="scss">

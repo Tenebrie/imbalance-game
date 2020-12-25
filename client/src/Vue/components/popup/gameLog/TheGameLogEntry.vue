@@ -10,10 +10,10 @@ import Core from '@/Pixi/Core'
 import Localization from '@/Pixi/Localization'
 import GameEventType from '@shared/enums/GameEventType'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
-import {PropType} from '@vue/composition-api'
+import {defineComponent, PropType} from '@vue/composition-api'
 import store from '@/Vue/store'
 
-export default {
+export default defineComponent({
 	props: {
 		entry: {
 			type: Object as PropType<EventLogEntryMessage>,
@@ -102,7 +102,7 @@ export default {
 			return id
 		}
 	}
-}
+})
 </script>
 
 <style scoped lang="scss">

@@ -15,11 +15,11 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import {onMounted, onUnmounted, ref} from '@vue/composition-api'
+import {defineComponent, onMounted, onUnmounted, ref} from '@vue/composition-api'
 import TheGameLogEntry from '@/Vue/components/popup/gameLog/TheGameLogEntry.vue'
 import moment from 'moment'
 
-export default {
+export default defineComponent({
 	components: {
 		TheGameLogEntry
 	},
@@ -48,9 +48,8 @@ export default {
 			currentTime,
 			displayedEntryGroups,
 		}
-	},
-
-}
+	}
+})
 </script>
 
 <style scoped lang="scss">

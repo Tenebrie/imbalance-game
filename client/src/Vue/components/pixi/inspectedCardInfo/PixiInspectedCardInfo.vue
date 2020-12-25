@@ -63,7 +63,7 @@
 <script lang="ts">
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
-import {computed, ref} from '@vue/composition-api'
+import {computed, defineComponent, ref} from '@vue/composition-api'
 import Core from '@/Pixi/Core'
 import CardType from '@shared/enums/CardType'
 import {snakeToCamelCase} from '@/utils/Utils'
@@ -74,15 +74,9 @@ import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
 import CardColor from '@shared/enums/CardColor'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
-import {RIGHT_MOUSE_BUTTON} from '@/Pixi/input/Input'
-import ClientBuff from '@/Pixi/models/ClientBuff'
-import BuffMessage from '@shared/models/network/buffs/BuffMessage'
-import BuffFeature from '@shared/enums/BuffFeature'
-import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
-import HiddenCardMessage from '@shared/models/network/card/HiddenCardMessage'
 import InspectedCardBuffs from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
 
-export default {
+export default defineComponent({
 	components: {
 		InspectedCardBuffs,
 		PixiRelatedCard
@@ -183,7 +177,7 @@ export default {
 			snakeToCamelCase: snakeToCamelCase,
 		}
 	}
-}
+})
 </script>
 
 <style scoped lang="scss">
