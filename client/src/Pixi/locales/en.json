@@ -187,16 +187,16 @@
 	"card.feature.temporaryCard.description": "This card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.temporaryCard.text": "<c=orange>Temporary card</c>",
 
-	"card.stats.soloUnitDamage.text": "*Unit Damage +{value}*",
-	"card.stats.massUnitDamage.text": "*Mass Unit Damage +{value}*",
-	"card.stats.soloSpellDamage.text": "*Spell Damage +{value}*",
-	"card.stats.massSpellDamage.text": "*Mass Spell Damage +{value}*",
-	"card.stats.soloHealingPotency.text": "*Heal Potency +{value}*",
-	"card.stats.massHealingPotency.text": "*Mass Heal Potency +{value}*",
-	"card.stats.soloBuffPotency.text": "*Buff Potency +{value}*",
-	"card.stats.massBuffPotency.text": "*Mass Buff Potency +{value}*",
-	"card.stats.soloEffectDuration.text": "*Effect Duration +{value}*",
-	"card.stats.massEffectDuration.text": "*Mass Effect Duration +{value}*",
+	"card.stats.soloUnitDamage.text": "*Direct Unit Damage +{value}*",
+	"card.stats.massUnitDamage.text": "*Splash Unit Damage +{value}*",
+	"card.stats.soloSpellDamage.text": "*Direct Spell Damage +{value}*",
+	"card.stats.massSpellDamage.text": "*Splash Spell Damage +{value}*",
+	"card.stats.soloHealingPotency.text": "*Direct Heal Potency +{value}*",
+	"card.stats.massHealingPotency.text": "*Splash Heal Potency +{value}*",
+	"card.stats.soloBuffPotency.text": "*Direct Buff Potency +{value}*",
+	"card.stats.massBuffPotency.text": "*Splash Buff Potency +{value}*",
+	"card.stats.soloEffectDuration.text": "*Direct Effect Duration +{value}*",
+	"card.stats.massEffectDuration.text": "*Splash Effect Duration +{value}*",
 	"card.stats.targetCount.text": "*Card Target Count +{value}*",
 	"card.stats.criticalHitChance.text": "*Critical Hit Chance +{value}%*",
 	"card.stats.criticalBuffChance.text": "*Critical Buff Chance +{value}%*",
@@ -703,7 +703,7 @@
 	"card.unitArcheryTower.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only attack once per adjacent Peasant.",
 
 	"card.unitWoodenPalisade.name": "Wooden Palisade",
-	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn a *Wooden Palisade* on either side.",
+	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn another *Wooden Palisade* on the right.",
 
 	"card.unitGenerousBlacksmith.name": "Generous Blacksmith",
 	"card.unitGenerousBlacksmith.description": "Whenever a unit moves into adjacent position from another row, give it +{bonusArmor} Armor.",
@@ -736,10 +736,10 @@
 	"card.unitMagiciansAssistant.description": "*Deploy:*\nPut a copy of an enemy unit to the top of your deck.<p>If your deck has no duplicates, you can also target allied units.",
 
 	"card.unitPrototypeScorpionCrew.name": "Prototype Scorpion Crew",
-	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and to itself.",
+	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and to itself.<p><i>May perform unlimited number of attacks per turn.</i>",
 
 	"card.unitMakeshiftShelter.name": "Makeshift Shelter",
-	"card.unitMakeshiftShelter.description": "*Deploy:*\nChoose a Common allied unit.\nIt has *Nightwatch* until the end of this round, as long as this is on the board.",
+	"card.unitMakeshiftShelter.description": "*Deploy:*\nChoose a Common or Epic allied unit.\nIt has *Nightwatch* until the end of this round, as long as this is on the board.",
 
 	"card.unitEldergroveTender.name": "Eldergrove Tender",
 	"card.unitEldergroveTender.description": "*Deploy:*\nGive +{bonusPower} Power and apply *Growth* to an allied unit.",
@@ -748,5 +748,14 @@
 	"card.unitManaSilo.description": "*Deploy:* *Infuse* up to {maxInfuse} Mana.<p>*Round start:*\nRelease the *Infused* Mana.<if counterVisible><p><i>Mana stored: {manaInfused}.</i></if>",
 
 	"card.unitCleansingFlame.name": "Cleansing Flame",
-	"card.unitCleansingFlame.description": "*Deploy:*\n *Dispel* {dispelPower} from another unit."
+	"card.unitCleansingFlame.description": "*Deploy:*\n *Dispel* {dispelPower} from another unit.",
+
+	"card.unitFieldHospital.name": "Field Hospital",
+	"card.unitFieldHospital.description": "*Turn end:*\nRestore {healing} Power to adjacent units.",
+
+	"card.unitUrbanAmbusher.name": "Urban Ambusher",
+	"card.unitUrbanAmbusher.description": "Has +{bonusPower} Power for every Building on the same row.",
+
+	"card.unitUrbanTactician.name": "Urban Tactician",
+	"card.unitUrbanTactician.description": "Your other units that are directly adjacent to a Building have +{bonusPower} Power.<p><i>Doesn't work on buildings.</i>"
 }

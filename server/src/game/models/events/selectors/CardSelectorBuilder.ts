@@ -2,6 +2,7 @@ import { EventSubscriber } from '../../ServerGameEvents'
 import { CardSelectorProvideBuff } from './CardSelectorProvideBuff'
 import { CardSelector, CardSelectorArgs } from './CardSelector'
 import { BuffConstructor } from '../../ServerBuffContainer'
+import { LeaderStatValueGetter } from '../../../../utils/LeaderStats'
 
 export class CardSelectorBuilder {
 	private readonly __subscriber: EventSubscriber
@@ -66,7 +67,7 @@ export class CardSelectorBuilder {
 	 * While the selector is true, the target card will have the specified buff.
 	 * The buff will also be non-dispellable.
 	 */
-	public provide(buff: BuffConstructor, count = 1): CardSelectorBuilder {
+	public provide(buff: BuffConstructor, count: number | LeaderStatValueGetter = 1): CardSelectorBuilder {
 		this.__provideBuffs.push({ buff, count })
 		return this
 	}
@@ -76,7 +77,7 @@ export class CardSelectorBuilder {
 	 * While the selector is true, this card will have the specified buff.
 	 * The buff will also be non-dispellable.
 	 */
-	public provideSelf(buff: BuffConstructor, count = 1): CardSelectorBuilder {
+	public provideSelf(buff: BuffConstructor, count: number | LeaderStatValueGetter = 1): CardSelectorBuilder {
 		this.__provideSelfBuffs.push({ buff, count })
 		return this
 	}

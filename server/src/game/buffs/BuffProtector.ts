@@ -5,6 +5,7 @@ import GameHookType from '../models/events/GameHookType'
 import CardLocation from '@shared/enums/CardLocation'
 import MoveDirection from '@shared/enums/MoveDirection'
 import BuffFeature from '@shared/enums/BuffFeature'
+import DamageSource from '@shared/enums/DamageSource'
 
 export default class BuffProtector extends ServerBuff {
 	constructor(params: BuffConstructorParams) {
@@ -19,6 +20,11 @@ export default class BuffProtector extends ServerBuff {
 			.require(({ targetCard }) => targetCard !== this.card)
 			.require(({ targetCard }) => targetCard.location === CardLocation.BOARD)
 			.require(({ targetCard }) => targetCard.owner === this.card.ownerInGame)
+			.require(
+				({ damageInstance }) =>
+					damageInstance.source === DamageSource.UNIVERSE ||
+					(damageInstance.source === DamageSource.CARD && damageInstance.sourceCard?.ownerInGame !== this.card.ownerInGame)
+			)
 			.require(({ targetCard }) => {
 				const thisUnit = this.unit!
 				const targetUnit = targetCard.unit!

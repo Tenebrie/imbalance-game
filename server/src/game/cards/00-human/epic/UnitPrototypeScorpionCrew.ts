@@ -16,11 +16,11 @@ export default class UnitPrototypeScorpionCrew extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
-			color: CardColor.BRONZE,
+			color: CardColor.SILVER,
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.KEYWORD_ORDER],
 			stats: {
-				power: 6,
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

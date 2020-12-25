@@ -24,14 +24,8 @@ export default class UnitWoodenPalisade extends ServerCard {
 		this.buffs.add(BuffProtector, this)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
-			const leftPalisade = new UnitWoodenPalisade(this.game)
 			const rightPalisade = new UnitWoodenPalisade(this.game)
-			this.game.animation.instantThread(() => {
-				this.game.board.createUnit(leftPalisade, this.ownerInGame, triggeringUnit.rowIndex, triggeringUnit.unitIndex)
-			})
-			this.game.animation.instantThread(() => {
-				this.game.board.createUnit(rightPalisade, this.ownerInGame, triggeringUnit.rowIndex, triggeringUnit.unitIndex + 1)
-			})
+			this.game.board.createUnit(rightPalisade, this.ownerInGame, triggeringUnit.rowIndex, triggeringUnit.unitIndex + 1)
 		})
 	}
 }

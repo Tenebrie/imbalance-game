@@ -33,7 +33,7 @@ export default class UnitMakeshiftShelter extends ServerCard {
 
 		this.createDeployEffectTargets()
 			.target(TargetType.UNIT)
-			.require(TargetType.UNIT, ({ targetCard }) => targetCard.color === CardColor.BRONZE)
+			.require(TargetType.UNIT, ({ targetCard }) => targetCard.color === CardColor.BRONZE || targetCard.color === CardColor.SILVER)
 			.require(TargetType.UNIT, ({ targetCard }) => !targetCard.features.includes(CardFeature.BUILDING))
 			.requireAlliedUnit()
 
