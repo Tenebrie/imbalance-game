@@ -1,11 +1,11 @@
-import {createModule} from 'direct-vuex'
+import {defineModule} from 'direct-vuex'
 import Card from '@shared/models/Card'
 import store, {moduleActionContext} from '@/Vue/store'
 import Core from '@/Pixi/Core'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
-const InspectedCardModule = createModule({
+const InspectedCardModule = defineModule({
 	namespaced: true,
 
 	state: {

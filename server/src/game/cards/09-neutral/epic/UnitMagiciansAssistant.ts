@@ -32,7 +32,7 @@ export default class UnitMagiciansAssistant extends ServerCard {
 			})
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => {
-			const copy = CardLibrary.instantiateByInstance(targetUnit.card)
+			const copy = CardLibrary.instantiateByInstance(this.game, targetUnit.card)
 			this.ownerInGame.cardDeck.addUnitToTop(copy)
 		})
 	}

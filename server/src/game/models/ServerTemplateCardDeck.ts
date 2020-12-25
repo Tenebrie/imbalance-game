@@ -126,7 +126,7 @@ export default class ServerTemplateCardDeck implements CardDeck {
 	public static challengeDiscovery(game: ServerGame, leader: ServerCard): ServerTemplateCardDeck {
 		const cards = []
 
-		cards.push(CardLibrary.instantiateByInstance(leader))
+		cards.push(CardLibrary.instantiateByInstance(game, leader))
 
 		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeLegendaryExplorer0))
 		cards.push(CardLibrary.instantiateByConstructor(game, HeroChallengeLegendaryExplorer1))

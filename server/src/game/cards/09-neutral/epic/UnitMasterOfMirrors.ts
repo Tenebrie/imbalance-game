@@ -28,7 +28,7 @@ export default class UnitMasterOfMirrors extends ServerCard {
 			.require(() => !this.ownerInGame.cardDeck.hasDuplicates)
 			.perform(() => {
 				this.ownerInGame.cardDeck.unitCards.slice().forEach((card) => {
-					const copy = CardLibrary.instantiateByInstance(card)
+					const copy = CardLibrary.instantiateByInstance(this.game, card)
 					this.ownerInGame.cardDeck.addUnitToBottom(copy)
 				})
 				this.ownerInGame.cardDeck.shuffle()

@@ -1,8 +1,8 @@
 import {Component} from 'vue'
-import {createModule} from 'direct-vuex'
+import {defineModule} from 'direct-vuex'
 import {moduleActionContext} from '@/Vue/store'
 
-const PopupModule = createModule({
+const PopupModule = defineModule({
 	namespaced: true,
 	state: {
 		componentStack: [] as Component[]

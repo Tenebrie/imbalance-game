@@ -298,7 +298,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerPlayerInGame {
 		const playerInGame = new ServerPlayerInGame(game, player)
-		playerInGame.leader = CardLibrary.instantiateByInstance(cardDeck.leader)
+		playerInGame.leader = CardLibrary.instantiateByInstance(game, cardDeck.leader)
 		playerInGame.cardDeck.instantiateFrom(cardDeck)
 		return playerInGame
 	}

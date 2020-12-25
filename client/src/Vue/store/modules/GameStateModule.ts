@@ -1,5 +1,5 @@
 import ClientGameStatus from '../../../Pixi/enums/ClientGameStatus'
-import { createModule } from 'direct-vuex'
+import {defineModule} from 'direct-vuex'
 import Player from '@shared/models/Player'
 import {moduleActionContext, rootActionContext} from '../index'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
@@ -7,7 +7,7 @@ import Core from '@/Pixi/Core'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import TargetMode from '@shared/enums/TargetMode'
 
-const gameStateModule = createModule({
+const gameStateModule = defineModule({
 	namespaced: true,
 	state: {
 		turnPhase: GameTurnPhase.BEFORE_GAME as GameTurnPhase,
