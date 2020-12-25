@@ -1,5 +1,5 @@
 <template>
-	<img class="logo" src="../../assets/logo.png"  alt="Tenebrie Logo"/>
+	<img class="logo" src="../../assets/logo.svg" alt="Tenebrie Logo" />
 </template>
 
 <script lang="ts">
