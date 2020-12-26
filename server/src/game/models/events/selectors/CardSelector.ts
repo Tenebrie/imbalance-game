@@ -3,6 +3,7 @@ import ServerCard from '../../ServerCard'
 import ServerGame from '../../ServerGame'
 import { CardSelectorProvideBuff } from './CardSelectorProvideBuff'
 import ServerBuff from '../../ServerBuff'
+import { cardPerform } from '../../../utils/CardEventHandlers'
 
 export type CardSelectorArgs = {
 	target: ServerCard
@@ -67,7 +68,9 @@ export class CardSelector {
 
 		newSelectedCards.forEach((card) => {
 			this.game.animation.thread(() => {
-				this.onSelectCallbacks.forEach((callback) => callback({ target: card }))
+				this.onSelectCallbacks.forEach((callback) => {
+					cardPerform(() => callback({ target: card }))
+				})
 			})
 		})
 
@@ -128,7 +131,7 @@ export class CardSelector {
 	private deselectCards(cards: ServerCard[]): void {
 		cards.forEach((card) => {
 			this.game.animation.thread(() => {
-				this.onReleaseCallbacks.forEach((callback) => callback({ target: card }))
+				this.onReleaseCallbacks.forEach((callback) => cardPerform(() => callback({ target: card })))
 			})
 			this.game.animation.thread(() => {
 				card.buffs.removeAllByCardSelector(this)

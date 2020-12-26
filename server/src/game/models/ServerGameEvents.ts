@@ -108,7 +108,9 @@ export default class ServerGameEvents {
 			if (this.evaluatingSelectors || (event.effectSource && event.effectSource === subscription.subscriber)) {
 				subscription.callbacks.forEach((callback) => {
 					this.logEventExecution(event, subscription, true)
-					callback(event.args, preparedState)
+					cardPerform(() => {
+						callback(event.args, preparedState)
+					})
 				})
 				return
 			}
@@ -196,7 +198,9 @@ export default class ServerGameEvents {
 			const callbackWrapper = currentCallbacks.shift()!
 
 			this.logEventExecution(callbackWrapper.rawEvent, callbackWrapper.subscription, false)
-			callbackWrapper.callback(callbackWrapper.args, callbackWrapper.preparedState)
+			cardPerform(() => {
+				callbackWrapper.callback(callbackWrapper.args, callbackWrapper.preparedState)
+			})
 			this.game.animation.syncAnimationThreads()
 
 			filterOutEvents()

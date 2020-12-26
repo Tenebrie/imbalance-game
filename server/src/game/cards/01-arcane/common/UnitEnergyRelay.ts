@@ -33,6 +33,7 @@ export default class UnitEnergyRelay extends ServerCard {
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
+			.require(({ player }) => player.spellMana >= this.infuseCost)
 			.perform(() => Keywords.infuse(this, this.infuseCost))
 			.perform(() => this.onDealDamage())
 	}
