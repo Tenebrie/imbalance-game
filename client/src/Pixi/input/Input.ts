@@ -451,11 +451,6 @@ export default class Input {
 		const sourceCard: RenderedCard | null = source ? Core.game.findRenderedCardById(source.id) : null
 		await this.createForcedTargetingCards(validTargets)
 		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets, this.forcedTargetingCards.length === 0 ? sourceCard : null)
-		this.forcedTargetingMode.validTargets
-			.filter((target) => target.targetCardData && !target.targetCardId)
-			.forEach((target) => {
-				target.targetCardId = target.targetCardData.id
-			})
 		store.commit.gameStateModule.setPopupTargetingMode(targetMode)
 		store.commit.gameStateModule.setPopupTargetingCardCount(this.forcedTargetingCards.length)
 		store.commit.gameStateModule.setPopupTargetingCardsVisible(true)

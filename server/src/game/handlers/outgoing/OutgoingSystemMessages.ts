@@ -4,7 +4,15 @@ import ErrorCode from '@shared/enums/ErrorCode'
 import { SystemMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 export default {
-	notifyAboutSpectateMode: (player: ServerPlayer): void => {
+	notifyAboutMessageAcknowledged(player: ServerPlayer): void {
+		player.sendMessage({
+			type: SystemMessageType.MESSAGE_ACKNOWLEDGED,
+			data: null,
+			highPriority: true,
+		})
+	},
+
+	notifyAboutSpectateMode(player: ServerPlayer): void {
 		player.sendMessage({
 			type: SystemMessageType.MODE_SPECTATE,
 			data: null,

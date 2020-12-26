@@ -12,13 +12,11 @@ import GameLibrary from '../game/libraries/GameLibrary'
 import { colorizeId } from '../utils/Utils'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import IncomingSpectatorMessageHandlers from '../game/handlers/IncomingSpectatorMessageHandlers'
-import {
-	ClientToServerMessageTypes,
-	ClientToServerSpectatorMessageTypes,
-} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import { ClientToServerSpectatorMessageTypes } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import { Router as WebSocketRouter } from 'express-ws'
 import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
+import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 
 const router = express.Router() as WebSocketRouter
 
@@ -72,14 +70,15 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	currentPlayer.registerConnection(ws, currentGame)
 
 	ws.on('message', (rawMsg: string) => {
-		const msg = JSON.parse(rawMsg)
-		const messageType = msg.type as ClientToServerMessageTypes
+		const msg = JSON.parse(rawMsg) as ClientToServerJson
+		const messageType = msg.type
 		const handler = IncomingMessageHandlers[messageType]
 		if (!handler) {
 			OutgoingMessageHandlers.notifyAboutInvalidMessageType(ws, msg.type)
 			return
 		}
 
+		OutgoingMessageHandlers.notifyAboutMessageAcknowledged(currentPlayerInGame.player)
 		try {
 			handler(msg.data, currentGame, currentPlayerInGame)
 		} catch (e) {

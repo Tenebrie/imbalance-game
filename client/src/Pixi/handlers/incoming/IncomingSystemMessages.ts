@@ -5,6 +5,10 @@ import Core from '@/Pixi/Core'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 
 const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHandlerFunction } = {
+	[SystemMessageType.MESSAGE_ACKNOWLEDGED]: () => {
+		Core.performance.logServerResponse()
+	},
+
 	[SystemMessageType.MODE_SPECTATE]: () => {
 		store.commit.gameStateModule.setIsSpectating(true)
 	},

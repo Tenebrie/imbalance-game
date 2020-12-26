@@ -50,6 +50,7 @@ export enum GameSyncMessageType {
 }
 
 export enum SystemMessageType {
+	MESSAGE_ACKNOWLEDGED = 'system_ack',
 	MODE_SPECTATE = 'system_modeSpectate',
 	REQUEST_INIT = 'system_requestInit',
 	ERROR_GENERIC = 'system_errorGeneric',

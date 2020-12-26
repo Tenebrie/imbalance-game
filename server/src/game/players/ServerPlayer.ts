@@ -2,19 +2,11 @@ import * as ws from 'ws'
 import PlayerWebSocket from './PlayerWebSocket'
 import Player from '@shared/models/Player'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
-import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import ServerPlayerSpectator from './ServerPlayerSpectator'
 import ServerGame from '../models/ServerGame'
 import ServerPlayerInGame from './ServerPlayerInGame'
 import AccessLevel from '@shared/enums/AccessLevel'
-
-type MessageJson = {
-	type: ServerToClientMessageTypes
-	data: any
-	highPriority?: boolean
-	ignoreWorkerThreads?: boolean
-	allowBatching?: boolean
-}
+import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
 
 export default class ServerPlayer implements Player {
 	id: string
@@ -45,7 +37,7 @@ export default class ServerPlayer implements Player {
 		this.webSocket = PlayerWebSocket.newInstance(ws, game)
 	}
 
-	sendMessage(json: MessageJson): void {
+	sendMessage(json: ServerToClientJson): void {
 		if (!this.webSocket) {
 			return
 		}
