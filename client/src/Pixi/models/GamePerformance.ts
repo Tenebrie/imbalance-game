@@ -22,7 +22,7 @@ export default class GamePerformance {
 		const flushTimestamp = performance.now()
 		const actionToResponse = Math.round(this.responseTimestamp - this.actionTimestamp)
 		const actionToFlush = Math.round(flushTimestamp - this.responseTimestamp)
-		console.info(`[Perf] Ping: ${actionToResponse}ms; Load: ${actionToFlush}ms`)
+		console.info(`[Perf] Ping: ${actionToResponse}ms; Server load: ${actionToFlush}ms`)
 		this.actionTimestamp = null
 		this.responseTimestamp = null
 	}

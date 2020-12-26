@@ -448,7 +448,7 @@ export default class Input {
 			this.forcedTargetingMode.destroy()
 		}
 
-		const sourceCard: RenderedCard | null = source ? Core.game.findRenderedCardById(source.id) : null
+		const sourceCard: RenderedCard | null = source ? Core.game.findRenderedCardById(source.id, [CardLocation.STACK]) : null
 		await this.createForcedTargetingCards(validTargets)
 		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets, this.forcedTargetingCards.length === 0 ? sourceCard : null)
 		store.commit.gameStateModule.setPopupTargetingMode(targetMode)

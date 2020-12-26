@@ -23,6 +23,18 @@ export default {
 		})
 	},
 
+	notifyAboutRequestedCardTargetsForReconnect(
+		player: ServerPlayer,
+		targetMode: TargetMode,
+		validTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[],
+		source: ServerCard
+	): void {
+		player.sendMessage({
+			type: TargetingMessageType.CARD_PLAY,
+			data: new ResolvingCardTargetsMessage(targetMode, validTargets, source),
+		})
+	},
+
 	notifyAboutRequestedAnonymousTargets(player: ServerPlayer, targetMode: TargetMode, validTargets: ServerAnonymousTargetCard[]): void {
 		const highPriorityTargets = [TargetType.UNIT, TargetType.BOARD_ROW, TargetType.CARD_IN_UNIT_HAND, TargetType.CARD_IN_SPELL_HAND]
 		const highPriority = validTargets.every((target) => highPriorityTargets.includes(target.targetType))

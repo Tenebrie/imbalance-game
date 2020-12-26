@@ -12,6 +12,7 @@ import BoardMessage from '@shared/models/network/BoardMessage'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import PlayerInGameRefMessage from '@shared/models/network/playerInGame/PlayerInGameRefMessage'
+import ResolveStackMessage from '@shared/models/network/resolveStack/ResolveStackMessage'
 
 const IncomingGameSyncMessages: { [index in GameSyncMessageType]: IncomingMessageHandlerFunction } = {
 	[GameSyncMessageType.START]: (data: GameStartMessage) => {
@@ -50,8 +51,10 @@ const IncomingGameSyncMessages: { [index in GameSyncMessageType]: IncomingMessag
 		})
 	},
 
-	[GameSyncMessageType.STACK_STATE]: (data: BoardMessage) => {
-		// TODO: Copy stack state
+	[GameSyncMessageType.STACK_STATE]: (data: ResolveStackMessage) => {
+		data.entries.forEach((entry) => {
+			Core.resolveStack.addCard(RenderedCard.fromMessage(entry.ownedCard.card), Core.getPlayer(entry.ownedCard.owner.player.id))
+		})
 	},
 
 	[GameSyncMessageType.ACTIVE_PLAYER]: (data: PlayerInGameRefMessage) => {

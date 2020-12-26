@@ -49,7 +49,7 @@ export default {
 		}
 		if (playerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(playerInGame.player, playerInGame)
-			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargetsForReconnect(
 				playerInGame.player,
 				TargetMode.DEPLOY_EFFECT,
 				game.cardPlay.getValidTargets(),

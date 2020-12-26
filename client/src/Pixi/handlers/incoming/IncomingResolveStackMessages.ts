@@ -4,7 +4,6 @@ import { ResolveStackMessageType } from '@shared/models/network/messageHandlers/
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
-import ResolvingCardTargetsMessage from '@shared/models/network/ResolvingCardTargetsMessage'
 
 const IncomingResolveStackMessages: { [index in ResolveStackMessageType]: IncomingMessageHandlerFunction } = {
 	[ResolveStackMessageType.ADD]: (data: OwnedCardMessage) => {
