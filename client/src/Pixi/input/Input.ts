@@ -469,7 +469,7 @@ export default class Input {
 		const existingCards = this.forcedTargetingCards
 		const addedCardMessages = newCards.filter((card) => !existingCards.find((existingCard) => existingCard.id === card.id))
 
-		const cardsToAdd = await Utils.renderCardsAsynchronously(addedCardMessages)
+		const cardsToAdd = addedCardMessages.map((message) => RenderedCard.fromMessage(message))
 		const cardsToRemove = existingCards.filter((card) => newCards.every((newCard) => newCard.id !== card.id))
 		const result = existingCards
 			.reduce<RenderedCard[]>((result, existingCard) => {

@@ -121,23 +121,6 @@ export default {
 		return hash
 	},
 
-	async renderCardsAsynchronously(cardMessages: CardMessage[]): Promise<RenderedCard[]> {
-		const promises = []
-		let i = 0
-		cardMessages.forEach((message) => {
-			if (!message) {
-				throw new Error('')
-			}
-			promises.push(
-				new Promise((resolve) => {
-					setTimeout(() => resolve(RenderedCard.fromMessage(message)), i)
-				})
-			)
-			i += 5
-		})
-		return await Promise.all(promises)
-	},
-
 	splitArrayIntoChunks(inputArray: any[], chunkCount: number): any[] {
 		const length = inputArray.length
 		const chunks = []
