@@ -53,7 +53,7 @@ export default class ScalingText extends PIXI.Container {
 			},
 			set fill(value: number) {
 				parent.updateFill(value)
-			}
+			},
 		}
 	}
 
@@ -73,7 +73,9 @@ export default class ScalingText extends PIXI.Container {
 	}
 
 	private updateText(text: string): void {
-		if (text === this.currentText) { return }
+		if (text === this.currentText) {
+			return
+		}
 
 		this.currentText = text
 		while (this.texts.length > 0) {
@@ -83,24 +85,28 @@ export default class ScalingText extends PIXI.Container {
 	}
 
 	private updateFill(fill: number): void {
-		if (fill === this.style.fill) { return }
+		if (fill === this.style.fill) {
+			return
+		}
 
 		this.currentStyle.fill = fill
-		this.texts.forEach(text => {
+		this.texts.forEach((text) => {
 			text.style.fill = fill
 		})
 	}
 
 	public updateFont(fontSize: number, lineHeight: number): void {
-		if (fontSize === this.currentFontSize && lineHeight === this.currentLineHeight) { return }
+		if (fontSize === this.currentFontSize && lineHeight === this.currentLineHeight) {
+			return
+		}
 
 		this.currentFontSize = fontSize
 		this.currentLineHeight = lineHeight
-		this.texts.forEach(text => {
+		this.texts.forEach((text) => {
 			text.visible = false
 		})
 
-		const matchingText = this.texts.find(text => text.style.fontSize === fontSize && text.style.lineHeight === lineHeight)
+		const matchingText = this.texts.find((text) => text.style.fontSize === fontSize && text.style.lineHeight === lineHeight)
 		if (matchingText) {
 			matchingText.visible = true
 		} else {
@@ -109,10 +115,12 @@ export default class ScalingText extends PIXI.Container {
 	}
 
 	private updateAnchor(anchor: PIXI.Point): void {
-		if (anchor.equals(this.currentAnchor)) { return }
+		if (anchor.equals(this.currentAnchor)) {
+			return
+		}
 
 		this.currentAnchor = anchor
-		this.texts.forEach(text => {
+		this.texts.forEach((text) => {
 			text.anchor = anchor
 		})
 	}

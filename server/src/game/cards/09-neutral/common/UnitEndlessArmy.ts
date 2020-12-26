@@ -19,11 +19,10 @@ export default class UnitEndlessArmy extends ServerCard {
 				power: 11,
 			},
 			expansionSet: ExpansionSet.BASE,
-			relatedCards: [UnitEndlessArmy]
+			relatedCards: [UnitEndlessArmy],
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {

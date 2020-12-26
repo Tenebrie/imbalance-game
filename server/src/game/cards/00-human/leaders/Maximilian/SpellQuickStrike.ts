@@ -8,13 +8,12 @@ import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
-import {CardTargetValidatorArguments} from '../../../../../types/TargetValidatorArguments'
-import CardTribe from '@shared/enums/CardTribe'
+import { CardTargetValidatorArguments } from '../../../../../types/TargetValidatorArguments'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassSpellDamage, asSoloSpellDamage} from '../../../../../utils/LeaderStats'
+import { asDirectSpellDamage } from '../../../../../utils/LeaderStats'
 
 export default class SpellQuickStrike extends ServerCard {
-	baseDamage = asSoloSpellDamage(2)
+	baseDamage = asDirectSpellDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -23,7 +22,7 @@ export default class SpellQuickStrike extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.HERO_POWER],
 			stats: {
-				cost: 1
+				cost: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -34,10 +33,9 @@ export default class SpellQuickStrike extends ServerCard {
 		this.createDeployEffectTargets()
 			.target(TargetType.UNIT)
 			.requireEnemyUnit()
-			.evaluate(TargetType.UNIT, (args => this.evaluateTarget(args)))
+			.evaluate(TargetType.UNIT, (args) => this.evaluateTarget(args))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

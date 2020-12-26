@@ -2,6 +2,7 @@ export enum GenericActionMessageType {
 	CARD_PLAY = 'genericAction_cardPlay',
 	UNIT_ORDER = 'genericAction_unitOrder',
 	CARD_TARGET = 'genericAction_cardTarget',
+	ANONYMOUS_TARGET = 'genericAction_anonymousTarget',
 	CONFIRM_TARGETS = 'genericAction_confirmTargets',
 	REQUEST_PLAYERS_DECK = 'genericAction_requestPlayersDeck',
 	REQUEST_PLAYERS_GRAVEYARD = 'genericAction_requestPlayersGraveyard',
@@ -11,7 +12,7 @@ export enum GenericActionMessageType {
 
 export enum SystemMessageType {
 	INIT = 'system_init',
-	KEEPALIVE = 'system_keepAlive'
+	KEEPALIVE = 'system_keepAlive',
 }
 
 export type ClientToServerMessageTypes = GenericActionMessageType | SystemMessageType

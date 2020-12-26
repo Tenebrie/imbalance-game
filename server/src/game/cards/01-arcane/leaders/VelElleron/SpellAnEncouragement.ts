@@ -10,10 +10,10 @@ import BuffVelElleronEncouragement from '../../../../buffs/BuffVelElleronEncoura
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloBuffPotency} from '../../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '../../../../../utils/LeaderStats'
 
 export default class SpellAnEncouragement extends ServerCard {
-	public static bonusPower = asSoloBuffPotency(7)
+	public static bonusPower = asDirectBuffPotency(7)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -22,12 +22,12 @@ export default class SpellAnEncouragement extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.HERO_POWER],
 			stats: {
-				cost: 3
+				cost: 3,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			bonusPower: SpellAnEncouragement.bonusPower
+			bonusPower: SpellAnEncouragement.bonusPower,
 		}
 
 		this.createDeployEffectTargets()
@@ -35,8 +35,7 @@ export default class SpellAnEncouragement extends ServerCard {
 			.requireAlliedUnit()
 			.evaluate(TargetType.UNIT, () => this.stats.basePower)
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

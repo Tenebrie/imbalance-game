@@ -1,6 +1,6 @@
 enum GameEventType {
 	GAME_STARTED = 'gameStarted',
-	
+
 	ROUND_STARTED = 'roundStarted',
 	TURN_STARTED = 'turnStarted',
 
@@ -21,6 +21,7 @@ enum GameEventType {
 	UNIT_CREATED = 'unitCreated',
 	UNIT_MOVED = 'unitMoved',
 	UNIT_ORDERED_CARD = 'unitOrderedCard',
+	UNIT_ORDERED_UNIT = 'unitOrderedUnit',
 	UNIT_ORDERED_ROW = 'unitOrderedRow',
 	UNIT_DESTROYED = 'unitDestroyed',
 

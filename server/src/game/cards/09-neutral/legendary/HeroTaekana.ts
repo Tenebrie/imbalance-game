@@ -7,10 +7,10 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffStrength from '../../../buffs/BuffStrength'
-import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class HeroTaekana extends ServerCard {
-	strengthGiven = asMassBuffPotency(1)
+	strengthGiven = asSplashBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -24,16 +24,15 @@ export default class HeroTaekana extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			strengthGiven: this.strengthGiven
+			strengthGiven: this.strengthGiven,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {
-		const units = this.game.board.getAllUnits()
-		units.forEach(unit => {
+		const units = this.game.board.getAllUnits().filter((unit) => unit.buffs.visible.length === 0)
+		units.forEach((unit) => {
 			this.game.animation.createAnimationThread()
 			unit.buffs.addMultiple(BuffStrength, this.strengthGiven, this)
 			this.game.animation.commitAnimationThread()

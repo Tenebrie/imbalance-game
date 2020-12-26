@@ -7,7 +7,7 @@ export default class HiddenCardHandMessage implements CardHandMessage {
 	spellCards: HiddenCardMessage[]
 
 	constructor(cardHand: CardHand) {
-		this.unitCards = cardHand.unitCards.map(card => new HiddenCardMessage(card))
-		this.spellCards = cardHand.spellCards.map(card => new HiddenCardMessage(card))
+		this.unitCards = cardHand.unitCards.map((card) => new HiddenCardMessage(card))
+		this.spellCards = cardHand.spellCards.map((card) => new HiddenCardMessage(card))
 	}
 }

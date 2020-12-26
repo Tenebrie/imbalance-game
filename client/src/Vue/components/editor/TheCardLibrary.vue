@@ -20,10 +20,11 @@ import CardColor from '@shared/enums/CardColor'
 import CardType from '@shared/enums/CardType'
 import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
 import Localization from '@/Pixi/Localization'
-import {insertRichTextVariables} from '@/utils/Utils'
+import {insertRichTextVariables, snakeToCamelCase} from '@/utils/Utils'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
 import {computed, defineComponent, onMounted, onUnmounted} from '@vue/composition-api'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default defineComponent({
 	components: {
@@ -63,6 +64,13 @@ export default defineComponent({
 				return str.replace(/\*/g, '')
 			}
 
+			const mapLocalizedFeatures = (card: CardMessage, locale: 'current' | 'original'): string[] => {
+				return card.baseFeatures
+					.map(feature => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
+					.map(id => locale === 'current' ? Localization.getValueOrNull(id) : Localization.getOriginalOrNull(id))
+					.filter(string => string !== null)
+			}
+
 			const selectedColor = routeQuery.value.color
 			const selectedFaction = routeQuery.value.faction
 
@@ -74,11 +82,13 @@ export default defineComponent({
 					originalName: insertRichTextVariables(Localization.getOriginalOrNull(card.name), card.variables),
 					originalTitle: insertRichTextVariables(Localization.getOriginalOrNull(card.title) || '', card.variables),
 					originalTribes: card.baseTribes.map(tribe => Localization.getOriginalOrNull(`card.tribe.${tribe}`)).join(' '),
+					originalFeatures: mapLocalizedFeatures(card, 'original'),
 					originalFlavor: Localization.getOriginalOrNull(card.flavor),
 					originalDescription: stripFormatting(insertRichTextVariables(Localization.get(card.description), card.variables)),
 					localizedName: insertRichTextVariables(Localization.get(card.name), card.variables),
 					localizedTitle: insertRichTextVariables(Localization.getValueOrNull(card.title) || '', card.variables),
 					localizedTribes: card.baseTribes.map(tribe => Localization.get(`card.tribe.${tribe}`)).join(' '),
+					localizedFeatures: mapLocalizedFeatures(card, 'current'),
 					localizedFlavor: Localization.get(card.flavor),
 					localizedDescription: stripFormatting(insertRichTextVariables(Localization.get(card.description), card.variables)),
 				}))
@@ -108,6 +118,10 @@ export default defineComponent({
 						weight: 10
 					},
 					{
+						name: 'originalFeatures',
+						weight: 10
+					},
+					{
 						name: 'originalFlavor',
 						weight: 1
 					},
@@ -125,6 +139,10 @@ export default defineComponent({
 					},
 					{
 						name: 'localizedTribes',
+						weight: 10
+					},
+					{
+						name: 'localizedFeatures',
 						weight: 10
 					},
 					{

@@ -5,7 +5,7 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import BuffAlignment from '@shared/enums/BuffAlignment'
-import {EmitterConfig, OldEmitterConfig} from 'pixi-particles'
+import { EmitterConfig, OldEmitterConfig } from 'pixi-particles'
 
 interface ParticleEmitterHandle {
 	emitter: Particles.Emitter
@@ -26,10 +26,13 @@ export default class ParticleSystem {
 		this.container = emitterContainer
 	}
 
-	public tick(deltaTime: number, deltaFraction: number): void {
+	public tick(): void {
 		this.emitters
-			.filter(handle => !!handle.ownerCard && !!handle.container && !!handle.ownerCard.coreContainer && !!handle.ownerCard.coreContainer.transform)
-			.forEach(handle => {
+			.filter(
+				(handle) =>
+					!!handle.ownerCard && !!handle.container && !!handle.ownerCard.coreContainer && !!handle.ownerCard.coreContainer.transform
+			)
+			.forEach((handle) => {
 				handle.container.position.copyFrom(handle.ownerCard.coreContainer.position)
 			})
 	}
@@ -46,11 +49,7 @@ export default class ParticleSystem {
 		return emitterContainer
 	}
 	private createDefaultEmitter(container: PIXI.Container, config: EmitterConfig | OldEmitterConfig): Particles.Emitter {
-		return new Particles.Emitter(
-			container,
-			[TextureAtlas.getTexture('effects/particle')],
-			config
-		)
+		return new Particles.Emitter(container, [TextureAtlas.getTexture('effects/particle')], config)
 	}
 	private playEmitter(emitter: Particles.Emitter, container: PIXI.Container): void {
 		this.emitters.push({
@@ -58,7 +57,7 @@ export default class ParticleSystem {
 		})
 		emitter.emit = true
 		emitter.playOnceAndDestroy(() => {
-			this.emitters = this.emitters.filter(handle => handle.emitter !== emitter)
+			this.emitters = this.emitters.filter((handle) => handle.emitter !== emitter)
 			container.parent.removeChild(container)
 		})
 	}
@@ -66,12 +65,12 @@ export default class ParticleSystem {
 		this.emitters.push({
 			emitter: emitter,
 			container: container,
-			ownerCard: card
+			ownerCard: card,
 		})
 		container.position.copyFrom(card.coreContainer.position)
 		emitter.emit = true
 		emitter.playOnceAndDestroy(() => {
-			this.emitters = this.emitters.filter(handle => handle.emitter !== emitter)
+			this.emitters = this.emitters.filter((handle) => handle.emitter !== emitter)
 			container.parent.removeChild(container)
 		})
 	}
@@ -79,23 +78,21 @@ export default class ParticleSystem {
 	public createAttackImpactParticleEffect(card: RenderedCard): void {
 		const container = this.getCardEffectContainer(card)
 		const emitter = this.createDefaultEmitter(container, {
-			alpha: { start: 1.00, end: 0 },
+			alpha: { start: 1.0, end: 0 },
 			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
 			color: { start: 'ff002b', end: 'ff5ed1' },
-			speed: { start: 550,  end: 0 },
+			speed: { start: 550, end: 0 },
 			minimumSpeedMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },
 			lifetime: { min: 0.5, max: 0.5 },
-			ease: [
-				{ s: 0, cp: 0.1, e: 1 }
-			],
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
 			blendMode: 'screen',
 			frequency: 0.01,
 			emitterLifetime: 0.011,
 			maxParticles: 1000,
 			pos: {
 				x: card.getPosition().x,
-				y: card.getPosition().y
+				y: card.getPosition().y,
 			},
 			particlesPerWave: 500,
 			spawnType: 'point',
@@ -107,23 +104,21 @@ export default class ParticleSystem {
 		const container = this.getCardEffectContainer(card)
 
 		const emitter = this.createDefaultEmitter(container, {
-			alpha: { start: 1.00, end: 0 },
+			alpha: { start: 1.0, end: 0 },
 			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
 			color: { start: '00ff2b', end: '5ed1ff' },
-			speed: { start: 550,  end: 0 },
+			speed: { start: 550, end: 0 },
 			minimumSpeedMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },
 			lifetime: { min: 0.5, max: 0.5 },
-			ease: [
-				{ s: 0, cp: 0.1, e: 1 }
-			],
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
 			blendMode: 'screen',
 			frequency: 0.01,
 			emitterLifetime: 0.011,
 			maxParticles: 1000,
 			pos: {
 				x: card.getPosition().x,
-				y: card.getPosition().y
+				y: card.getPosition().y,
 			},
 			particlesPerWave: 500,
 			spawnType: 'point',
@@ -134,12 +129,12 @@ export default class ParticleSystem {
 	public createUnitDeployParticleEffect(unit: RenderedUnit): void {
 		let color = {
 			start: '55AAFF',
-			end: '0000FF'
+			end: '0000FF',
 		}
 		if (unit.owner === Core.opponent) {
 			color = {
 				start: 'FFAA55',
-				end: 'FF0000'
+				end: 'FF0000',
 			}
 		}
 
@@ -147,23 +142,21 @@ export default class ParticleSystem {
 		const container = this.getCardEffectContainer(card)
 
 		const emitter = this.createDefaultEmitter(container, {
-			alpha: {start: 1.00, end: 0},
-			scale: {start: 0.9 * Core.renderer.superSamplingLevel, end: 0.5 * Core.renderer.superSamplingLevel},
+			alpha: { start: 1.0, end: 0 },
+			scale: { start: 0.9 * Core.renderer.superSamplingLevel, end: 0.5 * Core.renderer.superSamplingLevel },
 			color: color,
-			speed: {start: 0, end: 0},
-			startRotation: {min: 0, max: 360},
-			rotationSpeed: {min: 0, max: 200},
-			lifetime: {min: 0.5, max: 1.5},
+			speed: { start: 0, end: 0 },
+			startRotation: { min: 0, max: 360 },
+			rotationSpeed: { min: 0, max: 200 },
+			lifetime: { min: 0.5, max: 1.5 },
 			blendMode: 'screen',
-			ease: [
-				{s: 0, cp: 0.1, e: 1}
-			],
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
 			frequency: 0.005,
 			emitterLifetime: 0.15,
 			maxParticles: 1000,
 			pos: {
 				x: 0,
-				y: 0
+				y: 0,
 			},
 			particlesPerWave: 25,
 			spawnType: 'rect',
@@ -171,8 +164,8 @@ export default class ParticleSystem {
 				x: -card.sprite.width / 2,
 				y: -card.sprite.height / 2,
 				w: card.sprite.width,
-				h: card.sprite.height
-			}
+				h: card.sprite.height,
+			},
 		})
 		this.playAttachedEmitter(emitter, container, card)
 	}
@@ -180,7 +173,7 @@ export default class ParticleSystem {
 	public createCardReceivedBuffParticleEffect(card: RenderedCard, alignment: BuffAlignment): void {
 		const config = {
 			color: { start: '00FF00', end: '55FF55' },
-			startRotation: { min: 270, max: 270 }
+			startRotation: { min: 270, max: 270 },
 		}
 
 		if (alignment === BuffAlignment.NEGATIVE) {
@@ -192,25 +185,23 @@ export default class ParticleSystem {
 
 		const container = this.getCardEffectContainer(card)
 		const emitter = this.createDefaultEmitter(container, {
-			alpha: { start: 1.00, end: 0 },
-			scale: { start: 0.20 * Core.renderer.superSamplingLevel, end: 0.20 * Core.renderer.superSamplingLevel },
+			alpha: { start: 1.0, end: 0 },
+			scale: { start: 0.2 * Core.renderer.superSamplingLevel, end: 0.2 * Core.renderer.superSamplingLevel },
 			color: config.color,
-			speed: { start: 50,  end: 50 },
+			speed: { start: 50, end: 50 },
 			minimumSpeedMultiplier: 0.1,
 			minimumScaleMultiplier: 0.1,
 			startRotation: config.startRotation,
 			rotationSpeed: { min: 0, max: 200 },
 			lifetime: { min: 0.5, max: 1.0 },
 			blendMode: 'screen',
-			ease: [
-				{ s: 0, cp: 0.1, e: 1 }
-			],
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
 			frequency: 0.001,
 			emitterLifetime: 0.05,
 			maxParticles: count,
 			pos: {
 				x: 0,
-				y: 0
+				y: 0,
 			},
 			particlesPerWave: 25,
 			spawnType: 'rect',
@@ -218,8 +209,8 @@ export default class ParticleSystem {
 				x: -card.sprite.width / 2,
 				y: -card.sprite.height / 2,
 				w: card.sprite.width,
-				h: card.sprite.height
-			}
+				h: card.sprite.height,
+			},
 		})
 
 		this.playAttachedEmitter(emitter, container, card)
@@ -228,23 +219,21 @@ export default class ParticleSystem {
 	public createInfuseParticleEffect(card: RenderedCard): void {
 		const container = this.getCardEffectContainer(card)
 		const emitter = this.createDefaultEmitter(container, {
-			alpha: { start: 1.00, end: 0 },
+			alpha: { start: 1.0, end: 0 },
 			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
 			color: { start: '002bff', end: '5ed1ff' },
-			speed: { start: 150,  end: 0 },
+			speed: { start: 150, end: 0 },
 			minimumSpeedMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },
 			lifetime: { min: 0.5, max: 0.5 },
-			ease: [
-				{ s: 0, cp: 0.1, e: 1 }
-			],
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
 			blendMode: 'screen',
 			frequency: 0.02,
 			emitterLifetime: 0.5,
 			maxParticles: 1000,
 			pos: {
 				x: card.getPosition().x,
-				y: card.getPosition().y
+				y: card.getPosition().y,
 			},
 			particlesPerWave: 20,
 			spawnType: 'ring',
@@ -253,7 +242,7 @@ export default class ParticleSystem {
 				x: 0,
 				y: 0,
 				r: 30,
-				minR: 20
+				minR: 20,
 			},
 		})
 		this.playEmitter(emitter, container)
@@ -264,25 +253,23 @@ export default class ParticleSystem {
 
 		const count = card.isUnitMode() ? 500 : 1000
 		const emitter = this.createDefaultEmitter(container, {
-			alpha: { start: 1.00, end: 0 },
-			scale: { start: 0.20 * Core.renderer.superSamplingLevel, end: 0.20 * Core.renderer.superSamplingLevel },
+			alpha: { start: 1.0, end: 0 },
+			scale: { start: 0.2 * Core.renderer.superSamplingLevel, end: 0.2 * Core.renderer.superSamplingLevel },
 			color: { start: '5555FF', end: '000055' },
-			speed: { start: 10,  end: 10 },
+			speed: { start: 10, end: 10 },
 			minimumSpeedMultiplier: 0.1,
 			minimumScaleMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },
 			rotationSpeed: { min: 0, max: 200 },
 			lifetime: { min: 0.8, max: 2.0 },
 			blendMode: 'screen',
-			ease: [
-				{ s: 0, cp: 0.1, e: 1 }
-			],
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
 			frequency: 0.001,
 			emitterLifetime: 0.05,
 			maxParticles: count,
 			pos: {
 				x: 0,
-				y: 0
+				y: 0,
 			},
 			particlesPerWave: 25,
 			spawnType: 'rect',
@@ -290,13 +277,13 @@ export default class ParticleSystem {
 				x: -card.sprite.width / 2,
 				y: -card.sprite.height / 2,
 				w: card.sprite.width,
-				h: card.sprite.height
-			}
+				h: card.sprite.height,
+			},
 		})
 		this.playAttachedEmitter(emitter, container, card)
 	}
 
 	public destroy(): void {
-		this.emitters.forEach(emitter => emitter.emitter.destroy())
+		this.emitters.forEach((emitter) => emitter.emitter.destroy())
 	}
 }

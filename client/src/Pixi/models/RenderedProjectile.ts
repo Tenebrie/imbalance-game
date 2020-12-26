@@ -25,7 +25,9 @@ export default class RenderedProjectile {
 		this.animationDuration = animationDuration
 		this.lifetime = lifetime
 		this.randomnessFactor = Math.random()
-		this.onImpact = () => { /* Empty */ }
+		this.onImpact = () => {
+			/* Empty */
+		}
 
 		this.impactPerformed = false
 	}
@@ -34,13 +36,25 @@ export default class RenderedProjectile {
 		return new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime)
 	}
 
-	public static targetCard(sprite: PIXI.Sprite, startingPoint: PIXI.Point, targetCard: RenderedCard, animationDuration: number, lifetime: number): RenderedProjectile {
+	public static targetCard(
+		sprite: PIXI.Sprite,
+		startingPoint: PIXI.Point,
+		targetCard: RenderedCard,
+		animationDuration: number,
+		lifetime: number
+	): RenderedProjectile {
 		const projectile = new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime)
 		projectile.targetCard = targetCard
 		return projectile
 	}
 
-	public static targetPoint(sprite: PIXI.Sprite, startingPoint: PIXI.Point, targetPoint: PIXI.Point, animationDuration: number, lifetime: number): RenderedProjectile {
+	public static targetPoint(
+		sprite: PIXI.Sprite,
+		startingPoint: PIXI.Point,
+		targetPoint: PIXI.Point,
+		animationDuration: number,
+		lifetime: number
+	): RenderedProjectile {
 		const projectile = new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime)
 		projectile.targetPoint = targetPoint
 		return projectile

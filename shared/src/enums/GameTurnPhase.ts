@@ -6,7 +6,7 @@ enum GameTurnPhase {
 	DEPLOY,
 	TURN_END,
 	ROUND_END,
-	AFTER_GAME
+	AFTER_GAME,
 }
 
 export default GameTurnPhase

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { createModule } from 'direct-vuex'
+import {defineModule} from 'direct-vuex'
 import Language from '@shared/enums/Language'
 import {moduleActionContext} from '@/Vue/store'
 import RenderQuality from '@shared/enums/RenderQuality'
@@ -7,7 +7,7 @@ import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 import {debounce} from 'throttle-debounce'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 
-const userPreferencesModule = createModule({
+const userPreferencesModule = defineModule({
 	namespaced: true,
 	state: {
 		userLanguage: 'en' as Language,

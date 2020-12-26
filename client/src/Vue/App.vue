@@ -16,11 +16,17 @@ import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
 import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
 import LocalStorage from '@/utils/LocalStorage'
 import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
+import axios from 'axios'
+import {electronHost, isElectron} from '@/utils/Utils'
+import {defineComponent} from '@vue/composition-api'
 
-export default {
+export default defineComponent({
 	components: { ThePopupView, TheNavigationBar },
 
 	async mounted() {
+		if (isElectron()) {
+			axios.defaults.baseURL = electronHost()
+		}
 		AudioSystem.setMode(AudioSystemMode.MENU)
 		window.addEventListener('contextmenu', this.onContextMenu)
 		this.printConsoleWelcomeMessage()
@@ -72,7 +78,7 @@ export default {
 			console.info('%cAlso, you can summon browser context menu by using Shift or Ctrl when right-clicking an element.', textStyle)
 		}
 	}
-}
+})
 </script>
 
 <style lang="scss">

@@ -7,16 +7,16 @@ import CardTribe from '@shared/enums/CardTribe'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassHealingPotency} from '../../../../utils/LeaderStats'
+import { asSplashHealingPotency } from '../../../../utils/LeaderStats'
 
 export default class SpellHealingRain extends ServerCard {
-	baseHealing = asMassHealingPotency(3)
-	healingPerStorm = asMassHealingPotency(1)
+	baseHealing = asSplashHealingPotency(3)
+	healingPerStorm = asSplashHealingPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			faction: CardFaction.WILD,
 			tribes: [CardTribe.STORM],
 			stats: {
@@ -26,12 +26,11 @@ export default class SpellHealingRain extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			healing: () => this.healing,
-			healingPerStorm: this.healingPerStorm
+			healingPerStorm: this.healingPerStorm,
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
-		this.createEffect(GameEventType.SPELL_DEPLOYED)
-			.perform(() => this.onPlay())
+		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => this.onPlay())
 	}
 
 	private get healing(): number {
@@ -44,10 +43,11 @@ export default class SpellHealingRain extends ServerCard {
 	}
 
 	private onPlay(): void {
-		const targets = this.game.board.getUnitsOwnedByPlayer(this.owner)
-			.filter(target => target.card.stats.power < target.card.stats.maxPower)
+		const targets = this.game.board
+			.getUnitsOwnedByPlayer(this.owner)
+			.filter((target) => target.card.stats.power < target.card.stats.maxPower)
 
-		targets.forEach(target => {
+		targets.forEach((target) => {
 			target.heal(ServerDamageInstance.fromCard(this.healing, this))
 		})
 	}

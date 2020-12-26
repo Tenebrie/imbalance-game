@@ -99,7 +99,7 @@ export default defineComponent({
 	@import "../../styles/generic";
 
 	.the-admin-player-view {
-
+		overflow-y: scroll;
 	}
 
 	.players-table {

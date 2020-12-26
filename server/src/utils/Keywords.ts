@@ -1,7 +1,7 @@
 import ServerCard from '../game/models/ServerCard'
 import BuffTutoredCard from '../game/buffs/BuffTutoredCard'
 import BuffDuration from '@shared/enums/BuffDuration'
-import CardLibrary, {CardConstructor} from '../game/libraries/CardLibrary'
+import CardLibrary, { CardConstructor } from '../game/libraries/CardLibrary'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import CardType from '@shared/enums/CardType'
 import ServerBuff from '../game/models/ServerBuff'
@@ -40,6 +40,7 @@ export default {
 	},
 
 	addCard: {
+		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(card.game, cardClass)
@@ -57,6 +58,7 @@ export default {
 			},
 		}),
 
+		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		for: (player: ServerPlayerInGame) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(player.game, cardClass)
@@ -72,10 +74,11 @@ export default {
 				const newCard = CardLibrary.instantiateByConstructor(player.game, prototype)
 				return addCardToHand(player, newCard)
 			},
-		})
+		}),
 	},
 
 	createCard: {
+		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(card.game, cardClass)
@@ -93,6 +96,7 @@ export default {
 			},
 		}),
 
+		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		for: (player: ServerPlayerInGame) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(player.game, cardClass)
@@ -108,13 +112,13 @@ export default {
 				const newCard = CardLibrary.instantiateByConstructor(player.game, prototype)
 				return createCard(player, newCard)
 			},
-		})
+		}),
 	},
 
 	infuse: (subscriber: ServerCard | ServerBuff, value: number | (() => number)): void => {
-		const card = (subscriber instanceof ServerBuff ? subscriber.card : subscriber)
+		const card = subscriber instanceof ServerBuff ? subscriber.card : subscriber
 		const player = card.ownerInGame
-		const manaToDrain = typeof(value) === 'function' ? value() : value
+		const manaToDrain = typeof value === 'function' ? value() : value
 		if (player.spellMana < manaToDrain) {
 			throw new Error('Player does not have enough mana!')
 		}
@@ -123,10 +127,20 @@ export default {
 	},
 
 	generateMana: (subscriber: ServerCard | ServerBuff, value: number | (() => number)): void => {
-		const card = (subscriber instanceof ServerBuff ? subscriber.card : subscriber)
+		const card = subscriber instanceof ServerBuff ? subscriber.card : subscriber
 		const player = card.ownerInGame
-		const manaToGenerate = typeof(value) === 'function' ? value() : value
+		const manaToGenerate = typeof value === 'function' ? value() : value
 		player.addSpellMana(manaToGenerate)
 		player.game.animation.play(ServerAnimation.cardGenerateMana(card))
-	}
+	},
+
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+	dispel: (count: number) => ({
+		from: (targetCard: ServerCard) => ({
+			withSourceAs: (sourceCard: ServerCard) => {
+				targetCard.game.animation.play(ServerAnimation.cardAffectsCards(sourceCard, [targetCard]))
+				targetCard.buffs.dispel(count)
+			},
+		}),
+	}),
 }

@@ -3,6 +3,11 @@
 		<div class="left-side-container">
 			<div class="link-container">
 				<router-link tag="span" :to="{ name: 'home' }" class="router-link" exact>
+					<tenebrie-logo class="logo" />
+				</router-link>
+			</div>
+			<div class="link-container">
+				<router-link tag="span" :to="{ name: 'home' }" class="router-link" exact>
 					{{ $locale.get('ui.navigation.home') }}
 				</router-link>
 			</div>
@@ -24,6 +29,7 @@
 		</div>
 		<div class="right-side-container">
 			<language-dropdown v-if="displayLanguageSelector" />
+			<the-discord-link />
 			<the-mini-user-profile />
 		</div>
 	</div>
@@ -35,9 +41,13 @@ import LanguageDropdown from '@/Vue/components/navigationbar/LanguageSelector.vu
 import {computed, defineComponent} from '@vue/composition-api'
 import store from '@/Vue/store'
 import AccessLevel from '@shared/enums/AccessLevel'
+import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
+import TheDiscordLink from '@/Vue/components/navigationbar/TheDiscordLink.vue'
 
 export default defineComponent({
 	components: {
+		TenebrieLogo,
+		TheDiscordLink,
 		TheMiniUserProfile,
 		LanguageDropdown,
 	},
@@ -104,5 +114,10 @@ export default defineComponent({
 			& > * {
 			}
 		}
+	}
+
+	.logo {
+		display: inline-block;
+		height: calc(#{$NAVIGATION-BAR-HEIGHT} - 8px);
 	}
 </style>

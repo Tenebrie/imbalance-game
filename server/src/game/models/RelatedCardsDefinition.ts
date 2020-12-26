@@ -2,8 +2,8 @@ import ServerCard from './ServerCard'
 import CardTribe from '@shared/enums/CardTribe'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import {CardConstructor} from '../libraries/CardLibrary'
-import {getClassFromConstructor} from '../../utils/Utils'
+import { getClassFromConstructor } from '../../utils/Utils'
+import { CardConstructor } from '../libraries/CardLibrary'
 
 export default class RelatedCardsDefinition {
 	private readonly __conditions: ((card: ServerCard) => boolean)[]

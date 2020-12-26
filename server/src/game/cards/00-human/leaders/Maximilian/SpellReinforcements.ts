@@ -17,7 +17,7 @@ export default class SpellReinforcements extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_SUMMON],
 			stats: {
-				cost: 8
+				cost: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

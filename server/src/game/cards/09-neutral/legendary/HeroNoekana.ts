@@ -6,11 +6,11 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffStrength from '../../../buffs/BuffStrength'
-import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 import CardLocation from '@shared/enums/CardLocation'
 
 export default class HeroNoekana extends ServerCard {
-	strengthGiven = asMassBuffPotency(1)
+	strengthGiven = asSplashBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -22,24 +22,15 @@ export default class HeroNoekana extends ServerCard {
 				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
-			isExperimental: true
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
-			strengthGiven: this.strengthGiven
+			strengthGiven: this.strengthGiven,
 		}
 
 		this.createSelector()
 			.require(() => this.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
-			.onSelected(({ target }) => this.onSelected(target))
-			.onReleased(({ target }) => this.onReleased(target))
-	}
-
-	private onSelected(card: ServerCard): void {
-		card.buffs.add(BuffStrength, this)
-	}
-
-	private onReleased(card: ServerCard): void {
-		card.buffs.remove(BuffStrength, 1)
+			.provide(BuffStrength)
 	}
 }

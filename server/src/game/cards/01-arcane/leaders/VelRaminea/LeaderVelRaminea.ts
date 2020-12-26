@@ -18,10 +18,10 @@ export default class LeaderVelRaminea extends ServerCard {
 			sortPriority: 1,
 			expansionSet: ExpansionSet.BASE,
 			isExperimental: true,
-			deckAddedCards: [SpellFlamingSpark, SpellFlameweave]
+			deckAddedCards: [SpellFlamingSpark, SpellFlameweave],
 		})
 		this.dynamicTextVariables = {
-			manaPerRound: this.manaPerRound
+			manaPerRound: this.manaPerRound,
 		}
 	}
 }

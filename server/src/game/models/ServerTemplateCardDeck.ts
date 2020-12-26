@@ -1,11 +1,10 @@
 import ServerCard from './ServerCard'
 import CardDeck from '@shared/models/CardDeck'
-import CardLibrary, {CardConstructor} from '../libraries/CardLibrary'
-import UnitForestScout from '../cards/00-human/common/UnitForestScout'
+import CardLibrary from '../libraries/CardLibrary'
+import UnitForestScout from '../cards/02-wild/common/UnitForestScout'
 import ServerGame from './ServerGame'
-import HeroZamarath from '../cards/00-human/legendary/HeroZamarath'
+import HeroZamarath from '../cards/01-arcane/legendary/HeroZamarath'
 import HeroSparklingSpirit from '../cards/01-arcane/epic/HeroSparklingSpirit'
-import HeroRagingElemental from '../cards/01-arcane/epic/HeroRagingElemental'
 import HeroKroLah from '../cards/01-arcane/legendary/HeroKroLah'
 import HeroGarellion from '../cards/01-arcane/legendary/HeroGarellion'
 import UnitPriestessOfAedine from '../cards/00-human/common/UnitPriestessOfAedine'
@@ -20,20 +19,20 @@ import HeroFlameDancer from '../cards/01-arcane/epic/HeroFlameDancer'
 import UnitArcaneElemental from '../cards/01-arcane/common/UnitArcaneElemental'
 import HeroLightOracle from '../cards/09-neutral/epic/HeroLightOracle'
 import CardType from '@shared/enums/CardType'
-import LeaderChallengeDummy from '../cards/08-challenge/ai-00-dummy/LeaderChallengeDummy'
-import HeroChallengeDummyWarrior0 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
-import HeroChallengeDummyWarrior1 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
-import HeroChallengeDummyWarrior2 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior2'
-import HeroChallengeDummyWarrior3 from '../cards/08-challenge/ai-00-dummy/HeroChallengeDummyWarrior3'
+import LeaderChallengeDummy from '../cards/10-challenge/ai-00-dummy/LeaderChallengeDummy'
+import HeroChallengeDummyWarrior0 from '../cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
+import HeroChallengeDummyWarrior1 from '../cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
+import HeroChallengeDummyWarrior2 from '../cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior2'
+import HeroChallengeDummyWarrior3 from '../cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior3'
 import Constants from '@shared/Constants'
-import UnitChallengeDummyRoyalWarrior from '../cards/08-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
-import UnitChallengeDummyVanillaWarrior from '../cards/08-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
-import HeroChallengeLegendaryExplorer0 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer0'
-import HeroChallengeLegendaryExplorer1 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer1'
-import HeroChallengeLegendaryExplorer2 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer2'
-import HeroChallengeLegendaryExplorer3 from '../cards/08-challenge/challenge-discovery/HeroChallengeLegendaryExplorer3'
-import UnitChallengeScarredExplorer from '../cards/08-challenge/challenge-discovery/UnitChallengeScarredExplorer'
-import UnitChallengeEagerExplorer from '../cards/08-challenge/challenge-discovery/UnitChallengeEagerExplorer'
+import UnitChallengeDummyRoyalWarrior from '../cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
+import UnitChallengeDummyVanillaWarrior from '../cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
+import HeroChallengeLegendaryExplorer0 from '../cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer0'
+import HeroChallengeLegendaryExplorer1 from '../cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer1'
+import HeroChallengeLegendaryExplorer2 from '../cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer2'
+import HeroChallengeLegendaryExplorer3 from '../cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer3'
+import UnitChallengeScarredExplorer from '../cards/10-challenge/challenge-discovery/UnitChallengeScarredExplorer'
+import UnitChallengeEagerExplorer from '../cards/10-challenge/challenge-discovery/UnitChallengeEagerExplorer'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	leader: ServerCard
@@ -58,12 +57,12 @@ export default class ServerTemplateCardDeck implements CardDeck {
 		let leader: ServerCard | undefined = undefined
 		const inflatedUnitDeck: ServerCard[] = []
 		const inflatedSpellDeck: ServerCard[] = []
-		cards.forEach(card => {
-			const inflatedCards = card.deckAddedCards.map(cardPrototype => CardLibrary.instantiateByConstructor(game, cardPrototype))
-			const inflatedUnitCards = inflatedCards.filter(card => card.type === CardType.UNIT)
-			const inflatedSpellCards = inflatedCards.filter(card => card.type === CardType.SPELL)
-			inflatedUnitCards.forEach(cardPrototype => inflatedUnitDeck.push(cardPrototype))
-			inflatedSpellCards.forEach(cardPrototype => inflatedSpellDeck.push(cardPrototype))
+		cards.forEach((card) => {
+			const inflatedCards = card.deckAddedCards.map((cardPrototype) => CardLibrary.instantiateByConstructor(game, cardPrototype))
+			const inflatedUnitCards = inflatedCards.filter((card) => card.type === CardType.UNIT)
+			const inflatedSpellCards = inflatedCards.filter((card) => card.type === CardType.SPELL)
+			inflatedUnitCards.forEach((cardPrototype) => inflatedUnitDeck.push(cardPrototype))
+			inflatedSpellCards.forEach((cardPrototype) => inflatedSpellDeck.push(cardPrototype))
 			if (card.color === CardColor.LEADER) {
 				leader = card
 			} else {
@@ -146,7 +145,7 @@ export default class ServerTemplateCardDeck implements CardDeck {
 
 	public static fromEditorDeck(game: ServerGame, editorDeck: ServerEditorDeck): ServerTemplateCardDeck {
 		const temporaryDeck: ServerCard[] = []
-		editorDeck.cards.forEach(card => {
+		editorDeck.cards.forEach((card) => {
 			for (let i = 0; i < card.count; i++) {
 				temporaryDeck.push(CardLibrary.instantiateByClass(game, card.class))
 			}

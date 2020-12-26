@@ -1,7 +1,7 @@
 enum BuffAlignment {
 	POSITIVE,
 	NEUTRAL,
-	NEGATIVE
+	NEGATIVE,
 }
 
 export default BuffAlignment

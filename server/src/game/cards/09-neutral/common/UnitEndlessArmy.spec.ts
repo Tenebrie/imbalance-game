@@ -11,12 +11,13 @@ describe('UnitEndlessArmy', () => {
 	let player: ServerPlayerInGame
 
 	beforeEach(() => {
-		({ game, cardInHand, player } = TestGameTemplates.singleCardTest(UnitEndlessArmy))
+		;({ game, cardInHand, player } = TestGameTemplates.singleCardTest(UnitEndlessArmy))
 	})
 
-	it('adds another endless army to the owner\'s deck', () => {
+	it("adds another endless army to the owner's deck", () => {
 		expect(player.cardDeck.unitCards.length).toEqual(0)
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+		game.events.resolveEvents()
 		expect(player.cardDeck.unitCards.length).toEqual(1)
 		expect(player.cardDeck.unitCards[0].class).toEqual(cardInHand.class)
 	})

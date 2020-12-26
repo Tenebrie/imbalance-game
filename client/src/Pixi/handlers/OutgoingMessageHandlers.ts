@@ -3,8 +3,9 @@ import Card from '@shared/models/Card'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import {GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import { GenericActionMessageType, SystemMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import TargetMode from '@shared/enums/TargetMode'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 
 export default {
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {
@@ -22,6 +23,10 @@ export default {
 
 	sendCardTarget(target: CardTargetMessage): void {
 		Core.sendMessage(GenericActionMessageType.CARD_TARGET, target)
+	},
+
+	sendAnonymousTarget(target: AnonymousTargetMessage): void {
+		Core.sendMessage(GenericActionMessageType.ANONYMOUS_TARGET, target)
 	},
 
 	sendConfirmTargets(targetMode: TargetMode): void {
@@ -50,5 +55,5 @@ export default {
 
 	sendKeepalive(): void {
 		Core.sendMessage(SystemMessageType.KEEPALIVE, null)
-	}
+	},
 }

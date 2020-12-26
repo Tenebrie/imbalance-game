@@ -4,7 +4,7 @@ import TokenManager from '../../services/TokenService'
 import { JwtTokenScope } from '../../enums/JwtTokenScope'
 import PlayerDatabase from '../../database/PlayerDatabase'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
-import {tryUntil} from '../../utils/Utils'
+import { tryUntil } from '../../utils/Utils'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import AccessLevel from '@shared/enums/AccessLevel'
 
@@ -20,7 +20,7 @@ const createNumberedUsername = (username: string): string => {
 		until: async () => {
 			return !existingPlayer
 		},
-		maxAttempts: 10
+		maxAttempts: 10,
 	})
 	if (!isUsernameAvailable || !numberedUsername) {
 		throw { status: 409, code: UserRegisterErrorCode.USERNAME_COLLISIONS, error: 'Username collision after 10 attempts' }
@@ -108,7 +108,7 @@ class PlayerLibrary {
 
 	public async doesPlayerExist(username: string): Promise<boolean> {
 		username = username.toLowerCase()
-		return !!await PlayerDatabase.selectPlayerByEmail(username)
+		return !!(await PlayerDatabase.selectPlayerByEmail(username))
 	}
 
 	private cachePlayer(playerDatabaseEntry: PlayerDatabaseEntry): ServerPlayer {
@@ -118,11 +118,11 @@ class PlayerLibrary {
 	}
 
 	public removeFromCache(player: ServerPlayer): void {
-		this.players = this.players.filter(playerInCache => playerInCache.id !== player.id)
+		this.players = this.players.filter((playerInCache) => playerInCache.id !== player.id)
 	}
 
 	public async getPlayerById(playerId: string): Promise<ServerPlayer | null> {
-		let player = this.players.find(player => player.id === playerId)
+		let player = this.players.find((player) => player.id === playerId)
 		if (!player) {
 			const playerDatabaseEntry = await PlayerDatabase.selectPlayerById(playerId)
 			if (!playerDatabaseEntry) {
@@ -147,7 +147,7 @@ class PlayerLibrary {
 		if (!result) {
 			return null
 		}
-		return result.map(entry => ServerPlayer.newInstance(entry))
+		return result.map((entry) => ServerPlayer.newInstance(entry))
 	}
 
 	public async deletePlayer(player: ServerPlayer): Promise<boolean> {

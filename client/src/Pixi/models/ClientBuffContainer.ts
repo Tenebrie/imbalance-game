@@ -11,7 +11,7 @@ export default class ClientBuffContainer implements BuffContainer {
 	public constructor(card: RenderedCard, buffsMessage: BuffContainerMessage) {
 		this.card = card
 		this.buffs = []
-		buffsMessage.buffs.forEach(buffMessage => this.buffs.push(new ClientBuff(buffMessage)))
+		buffsMessage.buffs.forEach((buffMessage) => this.buffs.push(new ClientBuff(buffMessage)))
 	}
 
 	public add(buff: ClientBuff): void {
@@ -23,7 +23,7 @@ export default class ClientBuffContainer implements BuffContainer {
 	}
 
 	public findBuffById(buffId: string): ClientBuff {
-		return this.buffs.find(buff => buff.id === buffId)
+		return this.buffs.find((buff) => buff.id === buffId)
 	}
 
 	public removeById(id: string): void {

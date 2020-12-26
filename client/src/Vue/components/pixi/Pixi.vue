@@ -11,6 +11,7 @@ import Vue from 'vue'
 import store from '@/Vue/store'
 import Core from '../../../Pixi/Core'
 import PixiUserInterface from '@/Vue/components/pixi/PixiUserInterface.vue'
+import {isMobile} from '@/utils/Utils'
 
 export default Vue.extend({
 	components: {
@@ -19,6 +20,11 @@ export default Vue.extend({
 
 	created(): void {
 		store.dispatch.gameStateModule.setGameLoading()
+		if (isMobile()) {
+			const elem = document.documentElement
+			// if (elem.requestFullscreen) {elem.requestFullscreen()}
+			// window.scrollTo(0, 1)
+		}
 	},
 
 	mounted(): void {
@@ -46,7 +52,7 @@ export default Vue.extend({
 <style scoped lang="scss">
 	.pixi {
 		min-width: 1366px;
-
+		
 		.background {
 			position: absolute;
 			top: 0;

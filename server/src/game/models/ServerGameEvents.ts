@@ -1,49 +1,71 @@
 import ServerGame from './ServerGame'
-import Utils from '../../utils/Utils'
+import Utils, { colorizeClass, colorizeId } from '../../utils/Utils'
 import ServerCard from './ServerCard'
-import CardLocation from '@shared/enums/CardLocation'
-import {cardPerform, cardRequire} from '../utils/CardEventHandlers'
+import { cardPerform, cardRequire } from '../utils/CardEventHandlers'
 import ServerBuff from './ServerBuff'
-import GameHookType from './events/GameHookType'
+import GameHookType, { CardTakesDamageHookArgs } from './events/GameHookType'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameEventType from '@shared/enums/GameEventType'
-import {GameEvent} from './events/GameEventCreators'
+import { GameEvent } from './events/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
-import {EventCallback} from './events/EventCallback'
-import {EventHook} from './events/EventHook'
-import {CardSelector, CardSelectorBuilder} from './events/CardSelector'
+import { EventSubscription } from './events/EventSubscription'
+import { EventHook } from './events/EventHook'
+import { CardSelector } from './events/selectors/CardSelector'
+import { CardSelectorBuilder } from './events/selectors/CardSelectorBuilder'
 
 export type EventSubscriber = ServerGame | ServerCard | ServerBuff
+
+type CallbackQueueEntry = {
+	subscription: EventSubscription<any>
+	callback: (args: Record<string, any>, preparedState: Record<string, any>) => void
+	args: Record<string, any>
+	rawEvent: GameEvent
+	subscriber: EventSubscriber
+	preparedState: Record<string, any>
+	immediateConditions: ((args: Record<string, any>, preparedState: Record<string, any>, rawEvent: GameEvent) => boolean)[]
+}
 
 export default class ServerGameEvents {
 	private readonly game: ServerGame
 	private readonly eventLog: EventLogEntryMessage[][]
-	private eventCallbacks: Map<GameEventType, EventCallback<any>[]>
+	private eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
 	private eventHooks: Map<GameHookType, EventHook<any, any>[]>
+
+	private evaluatingSelectors = false
+	private callbackQueue: CallbackQueueEntry[]
 	private cardSelectors: CardSelector[]
 	private cardSelectorBuilders: CardSelectorBuilder[]
 
 	constructor(game: ServerGame) {
 		this.game = game
-		this.eventCallbacks = new Map<GameEventType, EventCallback<any>[]>()
+		this.eventSubscriptions = new Map<GameEventType, EventSubscription<any>[]>()
 		this.eventHooks = new Map<GameHookType, EventHook<any, any>[]>()
+
+		this.callbackQueue = []
 		this.cardSelectors = []
 		this.cardSelectorBuilders = []
+
 		this.eventLog = []
 		this.eventLog.push([])
-		Utils.forEachInStringEnum(GameEventType, eventType => this.eventCallbacks.set(eventType, []))
-		Utils.forEachInStringEnum(GameHookType, hookType => this.eventHooks.set(hookType, []))
+		Utils.forEachInStringEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
+		Utils.forEachInStringEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
 	}
 
-	public createCallback<EventArgs>(subscriber: EventSubscriber, event: GameEventType): EventCallback<EventArgs> {
-		const eventCallback = new EventCallback<EventArgs>(subscriber)
-		this.eventCallbacks.get(event)!.push(eventCallback)
-		return eventCallback
+	public createCallback<EventArgs>(subscriber: EventSubscriber, event: GameEventType): EventSubscription<EventArgs> {
+		const eventSubscription = new EventSubscription<EventArgs>(subscriber)
+		this.eventSubscriptions.get(event)!.push(eventSubscription)
+		return eventSubscription
 	}
 
 	public createHook<HookValues, HookArgs>(subscriber: EventSubscriber, hook: GameHookType): EventHook<HookValues, HookArgs> {
 		const eventHook = new EventHook<HookValues, HookArgs>(subscriber)
+		if (hook === GameHookType.CARD_TAKES_DAMAGE) {
+			eventHook.require((args) => {
+				const typedArgs = (args as unknown) as CardTakesDamageHookArgs
+				return !typedArgs.damageInstance.redirectHistory.find((entry) => entry.proxyCard === eventHook.subscriber)
+			})
+		}
 		this.eventHooks.get(hook)!.push(eventHook)
 		return eventHook
 	}
@@ -55,106 +77,182 @@ export default class ServerGameEvents {
 	}
 
 	public unsubscribe(targetSubscriber: EventSubscriber): void {
-		Utils.forEachInStringEnum(GameEventType, eventType => {
-			const subscriptions = this.eventCallbacks.get(eventType)!
-			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
-			this.eventCallbacks.set(eventType, filteredSubscriptions)
+		this.cardSelectors.filter((selector) => selector.subscriber === targetSubscriber).forEach((selector) => selector.markForRemoval())
+		Utils.forEachInStringEnum(GameEventType, (eventType) => {
+			const subscriptions = this.eventSubscriptions.get(eventType)!
+			const filteredSubscriptions = subscriptions.filter((subscription) => subscription.subscriber !== targetSubscriber)
+			this.eventSubscriptions.set(eventType, filteredSubscriptions)
 		})
-		Utils.forEachInStringEnum(GameHookType, hookType => {
+		Utils.forEachInStringEnum(GameHookType, (hookType) => {
 			const subscriptions = this.eventHooks.get(hookType)!
-			const filteredSubscriptions = subscriptions.filter(subscription => subscription.subscriber !== targetSubscriber)
+			const filteredSubscriptions = subscriptions.filter((subscription) => subscription.subscriber !== targetSubscriber)
 			this.eventHooks.set(hookType, filteredSubscriptions)
 		})
 	}
 
-	public postEvent(event: GameEvent, args: { allowThreading?: boolean } = { allowThreading: false }): void {
+	public postEvent(event: GameEvent): void {
 		this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
 
-		const validCallbacks = this.eventCallbacks
+		const validSubscriptions = this.eventSubscriptions
 			.get(event.type)!
-			.filter(subscription => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
-			.filter(subscription => !subscription.conditions.find(condition => {
-				return cardRequire(() => !condition(event.args, event))
-			}))
-
-		const preparedCallbacks = validCallbacks.map(callback => ({
-			callback: callback,
-			subscriber: callback.subscriber,
-			preparedState: callback.prepares.reduce((state, preparator) => preparator(event.args, state), {}),
-		}))
-
-		preparedCallbacks
-			.forEach(preparedCallback => {
-				if (preparedCallback.callback.conditions.find((condition) => cardRequire(() => !condition(event.args, event)))) {
-					return
-				}
-
-				const failedSubscribers: EventSubscriber[] = []
-				preparedCallback.callback.callbacks.forEach(callback => {
-					if (failedSubscribers.includes(preparedCallback.subscriber)) {
-						return
-					}
-
-					if (args.allowThreading) {
-						this.game.animation.createAnimationThread()
-					}
-
-					try {
-						callback(event.args, preparedCallback.preparedState)
-					} catch (err) {
-						failedSubscribers.push(preparedCallback.subscriber)
-					}
-
-					if (args.allowThreading) {
-						this.game.animation.commitAnimationThread()
-					} else {
-						this.game.animation.syncAnimationThreads()
-					}
+			.filter((subscription) => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
+			.filter((subscription) =>
+				subscription.conditions.every((condition) => {
+					return cardRequire(() => condition(event.args, event))
 				})
-			})
+			)
+
+		validSubscriptions.forEach((subscription) => {
+			const preparedState = subscription.prepares.reduce((state, preparator) => preparator(event.args, state), {})
+
+			if (this.evaluatingSelectors || (event.effectSource && event.effectSource === subscription.subscriber)) {
+				subscription.callbacks.forEach((callback) => {
+					this.logEventExecution(event, subscription, true)
+					cardPerform(() => {
+						callback(event.args, preparedState)
+					})
+				})
+				return
+			}
+
+			this.callbackQueue = this.callbackQueue.concat(
+				subscription.callbacks.map((callbackFunction) => ({
+					callback: callbackFunction,
+					args: event.args,
+					rawEvent: event,
+					subscriber: subscription.subscriber,
+					preparedState: preparedState,
+					immediateConditions: subscription.immediateConditions,
+					subscription: subscription,
+				}))
+			)
+		})
 	}
 
 	public applyHooks<HookValues, HookArgs>(hook: GameHookType, values: HookValues, args?: HookArgs): HookValues {
 		const hookArgs = args ? args : values
 
-		const matchingHooks = this.eventHooks.get(hook)!
-			.filter(subscription => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
-			.filter(hook => !hook.conditions.find(condition => {
-				return cardRequire(() => !condition(hookArgs))
-			}))
+		const matchingHooks = this.eventHooks
+			.get(hook)!
+			.filter((subscription) => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
+			.filter(
+				(hook) =>
+					!hook.conditions.find((condition) => {
+						return cardRequire(() => !condition(hookArgs))
+					})
+			)
 
-		matchingHooks.forEach(hook => hook.callbacks.forEach(callback => {
-			cardPerform(() => callback(hookArgs))
-		}))
+		matchingHooks.forEach((hook) =>
+			hook.callbacks.forEach((callback) => {
+				cardPerform(() => callback(hookArgs))
+			})
+		)
 
-		return matchingHooks
-			.reduce((accOuter, subscription) => {
-				return subscription.hooks.reduce((accInner, replace) => {
-					return replace(accInner, hookArgs)
-				}, accOuter)
-			}, values)
+		return matchingHooks.reduce((accOuter, subscription) => {
+			return subscription.hooks.reduce((accInner, replace) => {
+				return replace(accInner, hookArgs)
+			}, accOuter)
+		}, values)
+	}
+
+	public resolveEvents(): void {
+		// TODO: Add sorting here
+		// 1. Current player > Opponent > System
+		// 2. Board > Hand > Deck > Graveyard
+		// 3. Front row > Center row > Back row
+		// 4. Unit on the left > Unit on the right
+		let currentCallbacks = this.callbackQueue.slice().sort(() => 0)
+
+		const resolveCards = () => {
+			while (
+				this.game.cardPlay.cardResolveStack.currentCard &&
+				!currentCallbacks.find(
+					(remainingCallback) => remainingCallback.subscriber === this.game.cardPlay.cardResolveStack.currentCard?.card
+				) &&
+				!this.callbackQueue.find(
+					(remainingCallback) => remainingCallback.subscriber === this.game.cardPlay.cardResolveStack.currentCard?.card
+				)
+			) {
+				if (this.game.cardPlay.getValidTargets().length === 0) {
+					this.game.cardPlay.cardResolveStack.resumeResolving()
+				} else {
+					this.game.cardPlay.updateResolvingCardTargetingStatus()
+					break
+				}
+			}
+		}
+		resolveCards()
+
+		const filterOutEvents = () => {
+			currentCallbacks = currentCallbacks.filter((callbackWrapper) => {
+				const failedCondition = callbackWrapper.immediateConditions.find((condition) => {
+					return cardRequire(() => !condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent))
+				})
+				return !failedCondition
+			})
+		}
+		filterOutEvents()
+
+		this.callbackQueue = []
+		while (currentCallbacks.length > 0) {
+			const callbackWrapper = currentCallbacks.shift()!
+
+			this.logEventExecution(callbackWrapper.rawEvent, callbackWrapper.subscription, false)
+			cardPerform(() => {
+				callbackWrapper.callback(callbackWrapper.args, callbackWrapper.preparedState)
+			})
+			this.game.animation.syncAnimationThreads()
+
+			filterOutEvents()
+			resolveCards()
+		}
+
+		/* New events have been added; perform those as well */
+		if (this.callbackQueue.length > 0) {
+			this.resolveEvents()
+		}
+	}
+
+	private logEventExecution(event: GameEvent, subscription: EventSubscription<any>, isImmediate: boolean): void {
+		const subscriber = subscription.subscriber
+		const subscriberId = subscriber instanceof ServerGame ? '' : `${subscriber.id}`
+		const subscriberClass =
+			subscriber instanceof ServerCard ? subscriber.class : subscriber instanceof ServerBuff ? subscriber.class : 'System'
+
+		const gameId = colorizeId(this.game.id)
+		const eventType = colorizeClass(event.type)
+		const eventTiming = isImmediate ? 'effect' : 'callback'
+
+		console.info(`[${gameId}] Executing ${eventTiming} on ${eventType} for ${colorizeClass(subscriberClass)}:${colorizeId(subscriberId)}`)
 	}
 
 	public evaluateSelectors(): void {
-		this.cardSelectors = this.cardSelectors.concat(this.cardSelectorBuilders.map(builder => builder.build()))
+		this.evaluatingSelectors = true
+		this.cardSelectors = this.cardSelectors.concat(this.cardSelectorBuilders.map((builder) => builder._build()))
 		this.cardSelectorBuilders = []
 
-		let allGameCards: ServerCard[] = this.game.board.getAllUnits().map(unit => unit.card)
-			.concat(this.game.cardPlay.cardResolveStack.entries.map(entry => entry.ownedCard.card))
-		this.game.players.forEach(player => {
+		let allGameCards: ServerCard[] = this.game.board
+			.getAllUnits()
+			.map((unit) => unit.card)
+			.concat(this.game.cardPlay.cardResolveStack.entries.map((entry) => entry.ownedCard.card))
+		this.game.players.forEach((player) => {
 			allGameCards = allGameCards.concat(player.cardHand.allCards)
 			allGameCards = allGameCards.concat(player.cardDeck.allCards)
 			allGameCards = allGameCards.concat(player.cardGraveyard.allCards)
 		})
 		allGameCards = new Array(...new Set(allGameCards))
 
-		this.cardSelectors.forEach(selector => {
-			if (this.subscriberSuspended(selector.subscriber)) {
+		this.cardSelectors.forEach((selector) => {
+			if ((!selector.ignoreControlEffects && this.subscriberSuspended(selector.subscriber)) || selector.markedForRemoval) {
 				selector.clearSelection()
 			} else {
 				selector.evaluate(allGameCards)
 			}
 		})
+
+		this.cardSelectors = this.cardSelectors.filter((selector) => !selector.markedForRemoval)
+
+		this.evaluatingSelectors = false
 	}
 
 	private subscriberSuspended(subscriber: EventSubscriber): boolean {
@@ -176,7 +274,7 @@ export default class ServerGameEvents {
 			event: eventType,
 			subtype: subtype,
 			timestamp: Number(new Date()),
-			args: args
+			args: args,
 		})
 	}
 

@@ -12,10 +12,10 @@ import UnitShadowspawn from '../../tokens/UnitShadowspawn'
 import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloSpellDamage} from '../../../../../utils/LeaderStats'
+import { asDirectSpellDamage } from '../../../../../utils/LeaderStats'
 
 export default class SpellShadowSpark extends ServerCard {
-	baseDamage = asSoloSpellDamage(2)
+	baseDamage = asDirectSpellDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -26,20 +26,17 @@ export default class SpellShadowSpark extends ServerCard {
 			features: [CardFeature.HERO_POWER],
 			relatedCards: [UnitShadowspawn],
 			stats: {
-				cost: 2
+				cost: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			damage: this.baseDamage
+			damage: this.baseDamage,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireEnemyUnit()
+		this.createDeployEffectTargets().target(TargetType.UNIT).requireEnemyUnit()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onTargetSelected(targetCard.unit!))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard.unit!))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

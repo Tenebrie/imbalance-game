@@ -9,19 +9,20 @@ import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import GameLibrary from '../game/libraries/GameLibrary'
-import {colorizeId} from '../utils/Utils'
+import { colorizeId } from '../utils/Utils'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import IncomingSpectatorMessageHandlers from '../game/handlers/IncomingSpectatorMessageHandlers'
-import {ClientToServerMessageTypes, ClientToServerSpectatorMessageTypes} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
-import {Router as WebSocketRouter} from 'express-ws'
+import { ClientToServerSpectatorMessageTypes } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import { Router as WebSocketRouter } from 'express-ws'
 import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
+import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 
 const router = express.Router() as WebSocketRouter
 
 // @ts-ignore
 router.ws('/:gameId', async (ws: ws, req: express.Request) => {
-	const currentGame: ServerGame | null = GameLibrary.games.find(game => game.id === req.params.gameId) || null
+	const currentGame: ServerGame | null = GameLibrary.games.find((game) => game.id === req.params.gameId) || null
 	const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
 	let currentPlayerInGame: ServerPlayerInGame
 	if (!currentGame || !currentPlayer) {
@@ -30,7 +31,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 		return
 	}
 
-	const connectedPlayer = currentGame.players.find(playerInGame => playerInGame.player === currentPlayer)
+	const connectedPlayer = currentGame.players.find((playerInGame) => playerInGame.player === currentPlayer)
 	if (currentGame.isStarted && (!connectedPlayer || (connectedPlayer && connectedPlayer.player.isInGame()))) {
 		OutgoingMessageHandlers.notifyAboutGameAlreadyStarted(ws)
 		ws.close()
@@ -39,7 +40,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 
 	// Reconnecting
 	if (connectedPlayer) {
-		currentPlayerInGame = currentGame.players.find(playerInGame => playerInGame.player === currentPlayer)!
+		currentPlayerInGame = currentGame.players.find((playerInGame) => playerInGame.player === currentPlayer)!
 	}
 
 	// Fresh connection
@@ -69,14 +70,15 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	currentPlayer.registerConnection(ws, currentGame)
 
 	ws.on('message', (rawMsg: string) => {
-		const msg = JSON.parse(rawMsg)
-		const messageType = msg.type as ClientToServerMessageTypes
+		const msg = JSON.parse(rawMsg) as ClientToServerJson
+		const messageType = msg.type
 		const handler = IncomingMessageHandlers[messageType]
 		if (!handler) {
 			OutgoingMessageHandlers.notifyAboutInvalidMessageType(ws, msg.type)
 			return
 		}
 
+		OutgoingMessageHandlers.notifyAboutMessageAcknowledged(currentPlayerInGame.player)
 		try {
 			handler(msg.data, currentGame, currentPlayerInGame)
 		} catch (e) {
@@ -98,7 +100,7 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 	const gameId = req.params.gameId as string
 	const playerId = req.params.playerId as string
 
-	const currentGame: ServerGame | null = GameLibrary.games.find(game => game.id === gameId) || null
+	const currentGame: ServerGame | null = GameLibrary.games.find((game) => game.id === gameId) || null
 	const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
 	if (!currentGame || !currentPlayer) {
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
@@ -106,14 +108,14 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 		return
 	}
 
-	const spectatedPlayer: ServerPlayerInGame | undefined = currentGame.players.find(player => player.player.id === playerId)
+	const spectatedPlayer: ServerPlayerInGame | undefined = currentGame.players.find((player) => player.player.id === playerId)
 	if (!spectatedPlayer) {
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
 		ws.close()
 		return
 	}
 
-	if (currentGame.spectators.find(spectator => spectator.player === currentPlayer)) {
+	if (currentGame.spectators.find((spectator) => spectator.player === currentPlayer)) {
 		OutgoingMessageHandlers.notifyAboutDuplicatedConnection(ws)
 		ws.close()
 		return

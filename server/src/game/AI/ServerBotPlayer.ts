@@ -7,7 +7,7 @@ export default class ServerBotPlayer extends ServerPlayer {
 		super(uuidv4(), 'bot@tenebrie.com', 'Bot', AccessLevel.NORMAL)
 	}
 
-	sendMessage(json: { type: string; data: any }): void {
+	sendMessage(): void {
 		return
 	}
 }

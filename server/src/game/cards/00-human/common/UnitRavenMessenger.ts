@@ -23,16 +23,15 @@ export default class UnitRavenMessenger extends ServerCard {
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
-		this.addRelatedCards().requireTribe(CardTribe.HUMAN).requireColor(CardColor.BRONZE)
+		this.addRelatedCards().requireTribe(CardTribe.PEASANT).requireColor(CardColor.BRONZE)
 
 		this.createDeployEffectTargets()
 			.target(TargetType.CARD_IN_UNIT_DECK)
 			.requireCardInPlayersDeck()
-			.require(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.color === CardColor.BRONZE))
-			.require(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.tribes.includes(CardTribe.HUMAN)))
+			.require(TargetType.CARD_IN_UNIT_DECK, (args) => args.targetCard.color === CardColor.BRONZE)
+			.require(TargetType.CARD_IN_UNIT_DECK, (args) => args.targetCard.tribes.includes(CardTribe.PEASANT))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {

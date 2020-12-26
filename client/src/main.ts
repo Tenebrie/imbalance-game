@@ -10,19 +10,19 @@ import GSignInButton from 'vue-google-signin-button'
 Vue.config.productionTip = false
 
 Vue.use(VueNoty, {
-	layout: 'bottomLeft'
+	layout: 'bottomLeft',
 })
 Vue.use(CompositionApi)
 Vue.use(GSignInButton)
 
 Vue.use({
-	install: (Vue1) => {
+	install: () => {
 		Vue.prototype.$locale = Localization
-	}
+	},
 })
 
 new Vue({
 	router,
 	store: store.original,
-	render: h => h(App)
+	render: (h) => h(App),
 }).$mount('#app')

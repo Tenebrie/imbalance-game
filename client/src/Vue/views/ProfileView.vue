@@ -6,12 +6,13 @@
 
 <script lang="ts">
 import TheUserProfile from '@/Vue/components/profile/TheUserProfile.vue'
+import {defineComponent} from '@vue/composition-api'
 
-export default {
+export default defineComponent({
 	components: {
 		TheUserProfile
 	}
-}
+})
 </script>
 
 <style scoped lang="scss">

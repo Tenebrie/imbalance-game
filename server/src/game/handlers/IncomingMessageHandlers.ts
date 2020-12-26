@@ -3,19 +3,32 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
-import ServerCardTarget, {ServerCardTargetCard} from '../models/ServerCardTarget'
+import ServerCardTarget from '../models/ServerCardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerOwnedCard from '../models/ServerOwnedCard'
-import {ClientToServerMessageTypes, GenericActionMessageType, SystemMessageType} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import {
+	ClientToServerMessageTypes,
+	GenericActionMessageType,
+	SystemMessageType,
+} from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import TargetMode from '@shared/enums/TargetMode'
 import Utils from '../../utils/Utils'
 import CardLibrary from '../libraries/CardLibrary'
 import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
-const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: IncomingMessageHandlerFunction } = {
+const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void => {
+	game.events.resolveEvents()
+	game.events.evaluateSelectors()
+	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
+	OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
+	game.events.flushLogEventGroup()
+}
+
+const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: IncomingMessageHandlerFunction } = {
 	[GenericActionMessageType.CARD_PLAY]: (data: CardPlayedMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		const card = playerInGame.cardHand.findCardById(data.id)
 		if (!card) {
@@ -23,8 +36,13 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		}
 
 		const validTargets = card.targeting.getValidCardPlayTargets(card.owner)
-		if (playerInGame.turnEnded || playerInGame.roundEnded || playerInGame.targetRequired ||
-			game.turnPhase !== GameTurnPhase.DEPLOY || !validTargets.find(target => data.rowIndex === target.targetRow.index)) {
+		if (
+			playerInGame.turnEnded ||
+			playerInGame.roundEnded ||
+			playerInGame.targetRequired ||
+			game.turnPhase !== GameTurnPhase.DEPLOY ||
+			!validTargets.find((target) => data.rowIndex === target.targetRow.index)
+		) {
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return
 		}
@@ -32,27 +50,25 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		const ownedCard = new ServerOwnedCard(card, playerInGame)
 		game.cardPlay.playCard(ownedCard, data.rowIndex, data.unitIndex)
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
-		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
-
-		game.events.evaluateSelectors()
-		game.events.flushLogEventGroup()
+		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
 	[GenericActionMessageType.UNIT_ORDER]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		const orderedUnit = game.board.findUnitById(data.sourceCardId)
-		if (playerInGame.turnEnded || playerInGame.targetRequired || game.turnPhase !== GameTurnPhase.DEPLOY || !orderedUnit || orderedUnit.owner !== playerInGame) {
+		if (
+			playerInGame.turnEnded ||
+			playerInGame.targetRequired ||
+			game.turnPhase !== GameTurnPhase.DEPLOY ||
+			!orderedUnit ||
+			orderedUnit.owner !== playerInGame
+		) {
 			return
 		}
 
-		game.board.orders.performUnitOrder(ServerCardTarget.fromMessage(game, data))
+		game.board.orders.performUnitOrder(ServerCardTarget.fromCardMessage(game, data))
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
-		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
-
-		game.events.evaluateSelectors()
-		game.events.flushLogEventGroup()
+		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -61,18 +77,22 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			return
 		}
 
-		const target = ServerCardTarget.fromMessage(game, data)
-		if (game.cardPlay.cardResolveStack.currentCard) {
-			game.cardPlay.selectCardTarget(playerInGame, target)
-		} else if (target instanceof ServerCardTargetCard) {
-			game.cardPlay.selectPlayerMulliganTarget(playerInGame, target)
+		const target = ServerCardTarget.fromCardMessage(game, data)
+		game.cardPlay.selectCardTarget(playerInGame, target)
+
+		onPlayerActionEnd(game, playerInGame)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
+	[GenericActionMessageType.ANONYMOUS_TARGET]: (data: AnonymousTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
+		if (!playerInGame.targetRequired) {
+			return
 		}
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
-		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
+		const target = ServerCardTarget.fromAnonymousMessage(game, data)
+		game.cardPlay.selectPlayerMulliganTarget(playerInGame, target)
 
-		game.events.evaluateSelectors()
-		game.events.flushLogEventGroup()
+		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -80,12 +100,11 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		if (data !== TargetMode.MULLIGAN && player.mulliganMode) {
 			player.showMulliganCards()
 		} else if (data === TargetMode.BROWSE) {
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, [], null)
+			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, [])
 		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
-			game.events.evaluateSelectors()
-			game.events.flushLogEventGroup()
+			onPlayerActionEnd(game, player)
 		}
 
 		OutgoingMessageHandlers.executeMessageQueue(game)
@@ -96,8 +115,8 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
-		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
+		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -106,8 +125,8 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
-		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
+		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -116,8 +135,8 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
-		const targets = cards.map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(player.player, TargetMode.BROWSE, targets, null)
+		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
+		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -133,8 +152,7 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 		}
 
 		game.advanceCurrentTurn()
-		game.events.evaluateSelectors()
-		game.events.flushLogEventGroup()
+		onPlayerActionEnd(game, player)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
@@ -143,12 +161,13 @@ const IncomingMessageHandlers: {[ index in ClientToServerMessageTypes ]: Incomin
 			return
 		}
 		player.initialized = true
+		game.events.resolveEvents()
 		ConnectionEstablishedHandler.onPlayerConnected(game, player)
 	},
 
-	[SystemMessageType.KEEPALIVE]: (): void => {
-		// No action needed
-	}
+	[SystemMessageType.KEEPALIVE]: (data: void, game: ServerGame): void => {
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
 }
 
 export default IncomingMessageHandlers

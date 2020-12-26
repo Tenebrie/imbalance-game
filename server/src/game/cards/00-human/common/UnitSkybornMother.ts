@@ -23,26 +23,19 @@ export default class UnitSkybornMother extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			powerGiven: this.powerGiven
+			powerGiven: this.powerGiven,
 		}
 
 		this.createSelector()
 			.require(() => this.location === CardLocation.HAND)
 			.requireTarget(({ target }) => target === getLastPlayedUnit())
 			.requireTarget(({ target }) => target.ownerInGame === this.ownerInGame)
-			.onSelected(({ target }) => onTargetSelected(target))
-			.onReleased(({ target }) => onTargetReleased(target))
+			.provide(BuffStrength, this.powerGiven)
 
-		const getLastPlayedUnit = () => game.cardPlay.playedCards
-			.filter(playedCard => playedCard.player === this.ownerInGame)
-			.filter(playedCard => playedCard.card.location === CardLocation.BOARD)
-			.reverse()[0]?.card
-
-		const onTargetSelected = (target: ServerCard) => {
-			target.buffs.addMultiple(BuffStrength, this.powerGiven, this)
-		}
-		const onTargetReleased = (target: ServerCard) => {
-			target.buffs.remove(BuffStrength, this.powerGiven)
-		}
+		const getLastPlayedUnit = () =>
+			game.cardPlay.playedCards
+				.filter((playedCard) => playedCard.player === this.ownerInGame)
+				.filter((playedCard) => playedCard.card.location === CardLocation.BOARD)
+				.reverse()[0]?.card
 	}
 }

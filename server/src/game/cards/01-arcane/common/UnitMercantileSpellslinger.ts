@@ -24,22 +24,21 @@ export default class UnitMercantileSpellslinger extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 3
+				power: 3,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			manaMarkup: this.manaMarkup,
-			discountPerTurn: this.discountPerTurn
+			discountPerTurn: this.discountPerTurn,
 		}
 		this.addRelatedCards().requireTribe(CardTribe.SCROLL)
 
 		this.createDeployEffectTargets()
 			.target(TargetType.CARD_IN_LIBRARY)
-			.require(TargetType.CARD_IN_LIBRARY, (args => args.targetCard.tribes.includes(CardTribe.SCROLL)))
+			.require(TargetType.CARD_IN_LIBRARY, (args) => args.targetCard.tribes.includes(CardTribe.SCROLL))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {

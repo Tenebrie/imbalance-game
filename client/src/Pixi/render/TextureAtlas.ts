@@ -4,7 +4,7 @@ import Notifications from '@/utils/Notifications'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default class TextureAtlas {
-	static textures: { [ index: string ]: PIXI.Texture }
+	static textures: { [index: string]: PIXI.Texture }
 
 	static hasPreloadedComponents = false
 	static isPreloadingComponents = false
@@ -62,13 +62,13 @@ export default class TextureAtlas {
 				'components/stat-health-armor',
 				'components/overlay-move',
 				'components/overlay-disabled',
-				'board/board-row'
+				'board/board-row',
 			]
 
 			await TextureAtlas.load(components, () => {
 				this.hasPreloadedComponents = true
 				this.isPreloadingComponents = false
-				this.preloadComponentsResolveFunctions.forEach(resolve => resolve())
+				this.preloadComponentsResolveFunctions.forEach((resolve) => resolve())
 			})
 		})
 	}
@@ -97,7 +97,7 @@ export default class TextureAtlas {
 		updateNotificationText(0, texturesToLoad.length)
 
 		const t0 = performance.now()
-		texturesToLoad.forEach(fileName => {
+		texturesToLoad.forEach((fileName) => {
 			const onLoaded = (loadedTexture: PIXI.Texture) => {
 				texturesLoaded += 1
 				TextureAtlas.textures[fileName.toLowerCase()] = loadedTexture

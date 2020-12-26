@@ -24,16 +24,15 @@ export default class HeroJom extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitVoidPortal, UnitAbyssPortal],
 			stats: {
-				power: 7
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			portalsNeeded: this.portalsNeeded
+			portalsNeeded: this.portalsNeeded,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
@@ -46,16 +45,14 @@ export default class HeroJom extends ServerCard {
 	}
 
 	private ownerControlsEnoughPortals(): boolean {
-		const portalsControlled = this.game.board.getUnitsOwnedByPlayer(this.owner)
-			.filter(unit => unit.card instanceof UnitVoidPortal)
+		const portalsControlled = this.game.board.getUnitsOwnedByPlayer(this.owner).filter((unit) => unit.card instanceof UnitVoidPortal)
 		return portalsControlled.length >= this.portalsNeeded
 	}
 
 	private onTurnEnded(): void {
-		const portalsControlled = this.game.board.getUnitsOwnedByPlayer(this.owner)
-			.filter(unit => unit.card instanceof UnitVoidPortal)
+		const portalsControlled = this.game.board.getUnitsOwnedByPlayer(this.owner).filter((unit) => unit.card instanceof UnitVoidPortal)
 
-		portalsControlled.forEach(portal => {
+		portalsControlled.forEach((portal) => {
 			this.game.animation.createAnimationThread()
 			this.game.animation.play(ServerAnimation.cardAffectsCards(this, [portal.card]))
 			portal.card.destroy()

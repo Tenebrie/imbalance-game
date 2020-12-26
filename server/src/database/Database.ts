@@ -1,6 +1,6 @@
 import pgMigrate from 'node-pg-migrate'
-import {Client, QueryResult} from 'pg'
-import {colorize} from '../utils/Utils'
+import { Client, QueryResult } from 'pg'
+import { colorize } from '../utils/Utils'
 import AsciiColor from '../enums/AsciiColor'
 
 class Database {
@@ -20,9 +20,11 @@ class Database {
 		console.info(`Connecting to database at ${colorize(databaseUrl, AsciiColor.CYAN)}`)
 		const client = new Client({
 			connectionString: databaseUrl,
-			ssl: databaseUrl.includes('dev-db') ? false : {
-				rejectUnauthorized: false
-			}
+			ssl: databaseUrl.includes('dev-db')
+				? false
+				: {
+						rejectUnauthorized: false,
+				  },
 		})
 		try {
 			await client.connect()
@@ -34,7 +36,7 @@ class Database {
 				migrationsTable: 'MIGRATIONS',
 				direction: 'up',
 				dir: 'migrations',
-				ignorePattern: ''
+				ignorePattern: '',
 			})
 
 			console.info('Database client ready')

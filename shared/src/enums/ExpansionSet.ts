@@ -1,5 +1,5 @@
 enum ExpansionSet {
-	BASE
+	BASE,
 }
 
 export default ExpansionSet

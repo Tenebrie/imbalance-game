@@ -28,8 +28,7 @@ export default class UnitYogaTeacher extends ServerCard {
 			.target(TargetType.CARD_IN_SPELL_HAND)
 			.requireCardInPlayersHand()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(targetCard: ServerCard): void {

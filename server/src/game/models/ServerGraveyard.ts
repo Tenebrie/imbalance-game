@@ -5,7 +5,7 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerOwnedCard from './ServerOwnedCard'
 import CardTribe from '@shared/enums/CardTribe'
-import {CardConstructor} from '../libraries/CardLibrary'
+import { CardConstructor } from '../libraries/CardLibrary'
 
 export default class ServerGraveyard implements CardDeck {
 	owner: ServerPlayerInGame
@@ -35,21 +35,21 @@ export default class ServerGraveyard implements CardDeck {
 	}
 
 	public findCardById(cardId: string): ServerCard | null {
-		return this.unitCards.find(card => card.id === cardId) || this.spellCards.find(card => card.id === cardId) || null
+		return this.unitCards.find((card) => card.id === cardId) || this.spellCards.find((card) => card.id === cardId) || null
 	}
 
 	public findCardsByConstructor(prototype: CardConstructor): ServerCard[] {
 		const cardClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
-		return this.unitCards.filter(card => card.class === cardClass).concat(this.spellCards.filter(card => card.class === cardClass))
+		return this.unitCards.filter((card) => card.class === cardClass).concat(this.spellCards.filter((card) => card.class === cardClass))
 	}
 
 	public findCardsByTribe(tribe: CardTribe): ServerCard[] {
-		return this.unitCards.concat(this.spellCards).filter(card => card.tribes.includes(tribe))
+		return this.unitCards.concat(this.spellCards).filter((card) => card.tribes.includes(tribe))
 	}
 
 	public removeCard(card: ServerCard): void {
-		this.unitCards = this.unitCards.filter(unitCard => unitCard !== card)
-		this.spellCards = this.spellCards.filter(unitCard => unitCard !== card)
+		this.unitCards = this.unitCards.filter((unitCard) => unitCard !== card)
+		this.spellCards = this.spellCards.filter((unitCard) => unitCard !== card)
 
 		OutgoingMessageHandlers.notifyAboutCardInGraveyardDestroyed(new ServerOwnedCard(card, this.owner))
 	}

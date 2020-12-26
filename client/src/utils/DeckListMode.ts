@@ -1,6 +1,6 @@
 enum DeckListMode {
 	SELECT,
-	EDIT
+	EDIT,
 }
 
 export default DeckListMode

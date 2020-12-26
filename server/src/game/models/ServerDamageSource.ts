@@ -6,7 +6,7 @@ import DamageSource from '@shared/enums/DamageSource'
 type NumberOrGetter = number | ((card: ServerCard) => number)
 
 const collapseValue = (value: NumberOrGetter, sourceCard: ServerCard) => {
-	if (typeof(value) === 'function') {
+	if (typeof value === 'function') {
 		return value(sourceCard)
 	}
 	return value
@@ -16,8 +16,10 @@ export default class ServerDamageInstance implements DamageInstance {
 	value: number
 	source: DamageSource | undefined
 	sourceCard: ServerCard | undefined
+	proxyCard: ServerCard | undefined
+	redirectHistory: ServerDamageInstance[] = []
 
-	constructor() {
+	private constructor() {
 		this.value = 0
 	}
 
@@ -26,6 +28,8 @@ export default class ServerDamageInstance implements DamageInstance {
 		clone.value = this.value
 		clone.source = this.source
 		clone.sourceCard = this.sourceCard
+		clone.proxyCard = this.proxyCard
+		clone.redirectHistory = this.redirectHistory.slice()
 		return clone
 	}
 
@@ -49,6 +53,13 @@ export default class ServerDamageInstance implements DamageInstance {
 		const damageInstance = new ServerDamageInstance()
 		damageInstance.value = value
 		damageInstance.source = DamageSource.UNIVERSE
+		return damageInstance
+	}
+
+	public static redirectedFrom(original: ServerDamageInstance, proxy: ServerCard): ServerDamageInstance {
+		const damageInstance = original.clone()
+		damageInstance.proxyCard = proxy
+		damageInstance.redirectHistory = original.redirectHistory.concat(damageInstance)
 		return damageInstance
 	}
 }

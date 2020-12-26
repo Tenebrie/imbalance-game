@@ -1,4 +1,4 @@
-import {IncomingMessageHandlerFunction} from '@/Pixi/handlers/IncomingMessageHandlers'
+import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
 import Core from '@/Pixi/Core'
 import GameStartMessage from '@shared/models/network/GameStartMessage'
 import store from '@/Vue/store'
@@ -7,13 +7,14 @@ import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
-import {GameSyncMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { GameSyncMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import BoardMessage from '@shared/models/network/BoardMessage'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import PlayerInGameRefMessage from '@shared/models/network/playerInGame/PlayerInGameRefMessage'
+import ResolveStackMessage from '@shared/models/network/resolveStack/ResolveStackMessage'
 
-const IncomingGameSyncMessages: {[ index in GameSyncMessageType ]: IncomingMessageHandlerFunction } = {
+const IncomingGameSyncMessages: { [index in GameSyncMessageType]: IncomingMessageHandlerFunction } = {
 	[GameSyncMessageType.START]: (data: GameStartMessage) => {
 		Core.board.setInverted(data.isBoardInverted)
 		store.dispatch.gameStateModule.startGame()
@@ -42,14 +43,18 @@ const IncomingGameSyncMessages: {[ index in GameSyncMessageType ]: IncomingMessa
 
 	[GameSyncMessageType.BOARD_STATE]: (data: BoardMessage) => {
 		Core.board.clearBoard()
-		data.rows.forEach(row => {
+		data.rows.forEach((row) => {
 			Core.board.rows[row.index].owner = Core.getPlayerOrNull(row.ownerId)
-			Core.board.rows[row.index].cards = row.cards.map(unit => new RenderedUnit(RenderedCard.fromMessage(unit.card), Core.getPlayer(unit.ownerId)))
+			Core.board.rows[row.index].cards = row.cards.map(
+				(unit) => new RenderedUnit(RenderedCard.fromMessage(unit.card), Core.getPlayer(unit.ownerId))
+			)
 		})
 	},
 
-	[GameSyncMessageType.STACK_STATE]: (data: BoardMessage) => {
-		// TODO: Copy stack state
+	[GameSyncMessageType.STACK_STATE]: (data: ResolveStackMessage) => {
+		data.entries.forEach((entry) => {
+			Core.resolveStack.addCard(RenderedCard.fromMessage(entry.ownedCard.card), Core.getPlayer(entry.ownedCard.owner.player.id))
+		})
 	},
 
 	[GameSyncMessageType.ACTIVE_PLAYER]: (data: PlayerInGameRefMessage) => {

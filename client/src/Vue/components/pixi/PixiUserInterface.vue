@@ -14,9 +14,21 @@
 			<div>Replace cards ({{ maxCardMulligans - cardsMulliganed }}/{{ maxCardMulligans }})</div>
 		</div>
 		<div class="confirm-targets-button-container" v-if="isConfirmTargetsButtonVisible">
-			<div>
-				<button @click="onConfirmTargets" class="primary game-button">Confirm</button>
-				<button @click="onSortCards" class="secondary game-button" v-if="mulliganMode">Sort cards</button>
+			<div :class="confirmTargetsButtonContainerClass">
+				<button @click="onConfirmTargets" class="primary game-button button">Confirm</button>
+				<button @click="onSortCards" class="secondary game-button button" v-if="mulliganMode">Sort cards</button>
+				<button @click="onToggleVisibility" class="secondary game-button button">
+					<span class="show-hide-button" v-if="!cardsVisible">Show</span>
+					<span class="show-hide-button" v-if="cardsVisible">Hide</span>
+				</button>
+			</div>
+		</div>
+		<div class="confirm-targets-button-container" v-if="isHideTargetsButtonVisible">
+			<div :class="confirmTargetsButtonContainerClass">
+				<button @click="onToggleVisibility" class="secondary game-button button">
+					<span class="show-hide-button" v-if="!cardsVisible">Show</span>
+					<span class="show-hide-button" v-if="cardsVisible">Hide</span>
+				</button>
 			</div>
 		</div>
 		<div class="inspected-card">
@@ -90,6 +102,13 @@ export default Vue.extend({
 			Core.input.forcedTargetingCards = Utils.sortCards(Core.input.forcedTargetingCards)
 		}
 
+		const onToggleVisibility = (): void => {
+			if (!Core.input || !Core.input.forcedTargetingMode) {
+				return
+			}
+			store.commit.gameStateModule.setPopupTargetingCardsVisible(!store.state.gameStateModule.popupTargetingCardsVisible)
+		}
+
 		const onShowGameLog = (): void => {
 			store.dispatch.popupModule.open({
 				component: TheGameLog
@@ -125,6 +144,15 @@ export default Vue.extend({
 		const isConfirmTargetsButtonVisible = computed(() => {
 			return isBrowsingDeck.value || mulliganMode.value
 		})
+		const isHideTargetsButtonVisible = computed(() => {
+			return !isConfirmTargetsButtonVisible.value &&
+				store.state.gameStateModule.popupTargetingMode !== null &&
+				store.state.gameStateModule.popupTargetingCardCount > 0
+		})
+		const cardsVisible = computed(() => store.state.gameStateModule.popupTargetingCardsVisible)
+		const confirmTargetsButtonContainerClass = computed(() => ({
+			backgrounded: !cardsVisible.value
+		}))
 
 		const isVictory = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY)
 		const isDefeat = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DEFEAT)
@@ -159,9 +187,13 @@ export default Vue.extend({
 			isEndRoundButtonVisible,
 			mulliganMode,
 			isConfirmTargetsButtonVisible,
+			isHideTargetsButtonVisible,
+			cardsVisible,
+			confirmTargetsButtonContainerClass,
 			onEndTurn,
 			onConfirmTargets,
 			onSortCards,
+			onToggleVisibility,
 			onShowGameLog,
 			onShowEscapeMenu,
 			fadeInOverlayClass,
@@ -304,7 +336,7 @@ export default Vue.extend({
 		.confirm-targets-button-container {
 			position: absolute;
 			right: 0;
-			height: calc(100% - 128px);
+			height: calc(100% - 92px);
 			display: flex;
 			padding: 64px;
 			min-width: 250px;
@@ -312,7 +344,24 @@ export default Vue.extend({
 			justify-content: center;
 
 			& > div {
-				width: 100%;
+				width: 250px;
+				pointer-events: all;
+				padding: 12px 14px;
+				border: 1px solid transparent;
+				border-radius: 8px;
+				background: rgba(black, 0);
+
+				$TRANSITION-DURATION: 1s;
+				transition: background-color $TRANSITION-DURATION,
+							border-top-color $TRANSITION-DURATION,
+							border-left-color $TRANSITION-DURATION,
+							border-right-color $TRANSITION-DURATION,
+							border-bottom-color $TRANSITION-DURATION;
+
+				&.backgrounded {
+					background: rgba(black, 0.75);
+					border: 1px solid $COLOR_BACKGROUND_GAME_MENU_BORDER;
+				}
 			}
 		}
 	}

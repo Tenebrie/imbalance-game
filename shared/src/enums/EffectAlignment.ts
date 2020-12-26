@@ -1,7 +1,7 @@
 enum EffectAlignment {
 	POSITIVE,
 	NEUTRAL,
-	NEGATIVE
+	NEGATIVE,
 }
 
 export default EffectAlignment

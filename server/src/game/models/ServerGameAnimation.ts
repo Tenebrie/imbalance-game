@@ -2,16 +2,31 @@ import ServerGame from './ServerGame'
 import OutgoingAnimationMessages from '../handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from './ServerAnimation'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
+import AnimationType from '@shared/enums/AnimationType'
 
 export default class ServerGameAnimation {
-	game: ServerGame
+	private readonly game: ServerGame
+	private lastAnimation: AnimationType | null = null
 
 	constructor(game: ServerGame) {
 		this.game = game
 	}
 
 	public play(animation: ServerAnimation): void {
+		this.lastAnimation = animation.type
 		OutgoingAnimationMessages.triggerAnimation(this.game, animation)
+	}
+
+	public thread(callback: () => void): void {
+		this.createAnimationThread()
+		callback()
+		this.commitAnimationThread()
+	}
+
+	public instantThread(callback: () => void): void {
+		this.createInstantAnimationThread()
+		callback()
+		this.commitAnimationThread()
 	}
 
 	public createAnimationThread(): void {
@@ -27,6 +42,9 @@ export default class ServerGameAnimation {
 	}
 
 	public syncAnimationThreads(): void {
+		if (this.lastAnimation === AnimationType.NULL) {
+			return
+		}
 		this.play(ServerAnimation.null())
 	}
 

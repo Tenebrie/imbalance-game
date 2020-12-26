@@ -4,7 +4,7 @@ import * as PIXI from 'pixi.js'
 import QueuedMessage from '@/Pixi/models/QueuedMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ProjectileSystem from '@/Pixi/vfx/ProjectileSystem'
-import {AnimationMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 class AnimationThread {
 	public id: string = uuidv4()
@@ -18,8 +18,11 @@ class AnimationThread {
 
 	protected __isStarted = false
 
-	constructor(parentThread: AnimationThread | null) {
+	public readonly isStaggered: boolean
+
+	constructor(parentThread: AnimationThread | null, isStaggered: boolean) {
 		this.__parentThread = parentThread
+		this.isStaggered = isStaggered
 	}
 
 	public start(): void {
@@ -43,9 +46,9 @@ class AnimationThread {
 			return
 		}
 
-		this.__workerThreads.forEach(thread => thread.tick(deltaTime))
+		this.__workerThreads.forEach((thread) => thread.tick(deltaTime))
 
-		const activeWorkerThreads = this.__workerThreads.filter(thread => thread.started)
+		const activeWorkerThreads = this.__workerThreads.filter((thread) => thread.started)
 		if (activeWorkerThreads.length > 0) {
 			return
 		}
@@ -55,7 +58,11 @@ class AnimationThread {
 			this.executeNextMessage()
 		}
 
-		if (this.messageCooldown === 0 && this.__workerThreads.filter(thread => thread.started).length === 0 && this.queuedMessages.length === 0) {
+		if (
+			this.messageCooldown === 0 &&
+			this.__workerThreads.filter((thread) => thread.started).length === 0 &&
+			this.queuedMessages.length === 0
+		) {
 			if (this === Core.mainHandler.mainAnimationThread) {
 				this.__isStarted = false
 			} else {
@@ -64,8 +71,8 @@ class AnimationThread {
 		}
 	}
 
-	public createAnimationThread(): AnimationThread {
-		const newThread = new AnimationThread(this)
+	public createAnimationThread(isStaggered: boolean): AnimationThread {
+		const newThread = new AnimationThread(this, isStaggered)
 		this.__workerThreads.push(newThread)
 		return newThread
 	}
@@ -84,7 +91,7 @@ class AnimationThread {
 	}
 
 	public killAnimationThread(id: string): void {
-		this.__workerThreads = this.__workerThreads.filter(thread => thread.id !== id)
+		this.__workerThreads = this.__workerThreads.filter((thread) => thread.id !== id)
 	}
 
 	public registerMessage(message: QueuedMessage): void {
@@ -97,8 +104,10 @@ class AnimationThread {
 	}
 
 	public hasAnimationMessages(): boolean {
-		return this.queuedMessages.filter(message => message.type === AnimationMessageType.PLAY).length > 0 ||
-			!!this.__workerThreads.find(thread => thread.hasAnimationMessages())
+		return (
+			this.queuedMessages.filter((message) => message.type === AnimationMessageType.PLAY).length > 0 ||
+			!!this.__workerThreads.find((thread) => thread.hasAnimationMessages())
+		)
 	}
 
 	public skipCooldown(): void {
@@ -122,7 +131,7 @@ class AnimationThread {
 	private executeMessage(message: QueuedMessage): void {
 		try {
 			message.handler(message.data, {
-				animationThreadId: this.id
+				animationThreadId: this.id,
 			})
 		} catch (e) {
 			console.error(e)
@@ -132,9 +141,12 @@ class AnimationThread {
 
 export default class MainHandler {
 	projectileSystem: ProjectileSystem = new ProjectileSystem()
-	announcedCard: RenderedCard | null = null
 
-	mainAnimationThread: AnimationThread = new AnimationThread(null)
+	announcedCard: RenderedCard | null = null
+	previousAnnouncedCard: RenderedCard | null = null
+	destroyPreviousAnnouncedCardTimer: number | null = null
+
+	mainAnimationThread: AnimationThread = new AnimationThread(null, false)
 	currentOpenAnimationThread: AnimationThread = this.mainAnimationThread
 
 	coreTicker: PIXI.Ticker
@@ -156,7 +168,7 @@ export default class MainHandler {
 			this.mainAnimationThread.tick(deltaTime)
 			this.projectileSystem.tick(deltaTime, deltaFraction)
 			Core.renderer.tick(deltaTime, deltaFraction)
-			Core.particleSystem.tick(deltaTime, deltaFraction)
+			Core.particleSystem.tick()
 			Core.input.tick()
 		})
 
@@ -176,24 +188,41 @@ export default class MainHandler {
 		targetThread.triggerCooldown(time)
 	}
 
-	public createAnimationThread(): void {
-		this.currentOpenAnimationThread = this.currentOpenAnimationThread.createAnimationThread()
+	public createAnimationThread(isStaggered: boolean): void {
+		this.currentOpenAnimationThread = this.currentOpenAnimationThread.createAnimationThread(isStaggered)
 	}
 
 	public commitAnimationThread(): void {
 		this.currentOpenAnimationThread = this.currentOpenAnimationThread.parentThread
 	}
 
-	public skipAnimation(): void {
+	public skipCardAnnounce(): void {
 		this.currentOpenAnimationThread.skipCooldown()
+		this.clearAnnouncedCard()
+		this.destroyPreviousAnnouncedCard()
 	}
 
 	public announceCard(card: RenderedCard): void {
 		this.announcedCard = card
+		this.destroyPreviousAnnouncedCard()
 	}
 
 	public clearAnnouncedCard(): void {
+		this.previousAnnouncedCard = this.announcedCard
 		this.announcedCard = null
+
+		this.destroyPreviousAnnouncedCardTimer = window.setTimeout(() => {
+			this.destroyPreviousAnnouncedCard()
+		}, 2000)
+	}
+
+	public destroyPreviousAnnouncedCard(): void {
+		if (this.previousAnnouncedCard) {
+			Core.destroyCard(this.previousAnnouncedCard)
+			window.clearTimeout(this.destroyPreviousAnnouncedCardTimer)
+			this.previousAnnouncedCard = null
+			this.destroyPreviousAnnouncedCardTimer = null
+		}
 	}
 
 	public static start(): MainHandler {

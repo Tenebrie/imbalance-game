@@ -1,5 +1,5 @@
 enum LocalStorageKey {
-	hasAuthCookie = 'isAuthCookiePresent'
+	hasAuthCookie = 'isAuthCookiePresent',
 }
 
 export default {
@@ -9,5 +9,5 @@ export default {
 
 	hasAuthCookie(): boolean {
 		return localStorage.getItem(LocalStorageKey.hasAuthCookie) === 'true'
-	}
+	},
 }

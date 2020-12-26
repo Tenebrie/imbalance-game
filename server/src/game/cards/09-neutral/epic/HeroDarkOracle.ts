@@ -20,21 +20,20 @@ export default class HeroDarkOracle extends ServerCard {
 			sortPriority: 2,
 			generatedArtworkMagicString: '2',
 			stats: {
-				power: 4
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			cardsToSee: this.cardsToSee
+			cardsToSee: this.cardsToSee,
 		}
 
 		this.createDeployEffectTargets()
 			.target(TargetType.CARD_IN_UNIT_DECK)
 			.requireCardInOpponentsDeck()
-			.require(TargetType.CARD_IN_UNIT_DECK, (args => args.targetCard.deckPosition < this.cardsToSee))
+			.require(TargetType.CARD_IN_UNIT_DECK, (args) => args.targetCard.deckPosition < this.cardsToSee)
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {

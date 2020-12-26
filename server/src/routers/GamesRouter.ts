@@ -1,11 +1,11 @@
-import express, {Request, Response} from 'express'
+import express, { Request, Response } from 'express'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import ServerGame from '../game/models/ServerGame'
 import ServerBotPlayer from '../game/AI/ServerBotPlayer'
 import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import GameLibrary from '../game/libraries/GameLibrary'
 import GameMessage from '@shared/models/network/GameMessage'
-import {getPlayerFromAuthenticatedRequest} from '../utils/Utils'
+import { getPlayerFromAuthenticatedRequest } from '../utils/Utils'
 import GameMode from '@shared/enums/GameMode'
 import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
@@ -16,14 +16,14 @@ router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req: Request, res: Response) => {
 	const currentPlayer = getPlayerFromAuthenticatedRequest(req)
-	const reconnect = req.query['reconnect'] || '' as string
+	const reconnect = req.query['reconnect'] || ('' as string)
 
-	let filteredGames: ServerGame[] = GameLibrary.games.filter(game => !game.isFinished)
+	let filteredGames: ServerGame[] = GameLibrary.games.filter((game) => !game.isFinished)
 	if (reconnect) {
-		filteredGames = filteredGames.filter(game => game.players.find(playerInGame => playerInGame.player.id === currentPlayer.id))
+		filteredGames = filteredGames.filter((game) => game.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id))
 	}
 
-	const gameMessages = filteredGames.map(game => new GameMessage(game))
+	const gameMessages = filteredGames.map((game) => new GameMessage(game))
 	res.json({ data: gameMessages })
 })
 
@@ -32,7 +32,7 @@ router.post('/', (req: Request, res: Response) => {
 	const gameName = req.body['name'] || ''
 	const gameMode = req.body['mode'] as GameMode
 	const difficulty = req.body['difficulty'] || ''
-	const level = req.body['level'] as ChallengeLevel || null
+	const level = (req.body['level'] as ChallengeLevel) || null
 
 	if (!gameMode) {
 		res.status(400)
@@ -40,14 +40,14 @@ router.post('/', (req: Request, res: Response) => {
 		return
 	}
 
-	const connectedGames = GameLibrary.games.filter(game => game.players.find(playerInGame => playerInGame.player === player))
-	connectedGames.forEach(game => {
-		const playerInGame = game.players.find(playerInGame => playerInGame.player === player)
+	const connectedGames = GameLibrary.games.filter((game) => game.players.find((playerInGame) => playerInGame.player === player))
+	connectedGames.forEach((game) => {
+		const playerInGame = game.players.find((playerInGame) => playerInGame.player === player)
 		game.finish(playerInGame?.opponent || null, 'Opponent created a new game')
 	})
 
 	const game = GameLibrary.createOwnedGame(player, gameName.trim(), gameMode, {
-		challengeLevel: level
+		challengeLevel: level,
 	})
 
 	if (gameMode === GameMode.VS_AI) {

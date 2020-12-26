@@ -21,17 +21,16 @@ export default class UnitArcaneElemental extends ServerCard {
 			tribes: [CardTribe.ELEMENTAL],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 7
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			manaGenerated: this.manaGenerated
+			manaGenerated: this.manaGenerated,
 		}
 		this.botEvaluation = new CustomBotEvaluation(this)
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy() {

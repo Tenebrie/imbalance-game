@@ -23,27 +23,25 @@ export default class SpellShadowArmy extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_CREATE],
 			stats: {
-				cost: 12
+				cost: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			powerThreshold: () => this.powerThreshold,
 			showPowerThreshold: () => this.powerThreshold > 0,
-			thresholdDecrease: this.thresholdDecrease
+			thresholdDecrease: this.thresholdDecrease,
 		}
 
 		this.createDeployEffectTargets()
 			.target(TargetType.UNIT, () => this.allowedTargets)
 			.requireAlliedUnit()
 			.label(TargetType.UNIT, 'card.spellShadowArmy.target')
-			.require(TargetType.UNIT, args => !this.copiedUnits.includes(args.targetCard.unit!))
+			.require(TargetType.UNIT, (args) => !this.copiedUnits.includes(args.targetCard.unit!))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 
-		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
-			.perform(() => this.resetState())
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED).perform(() => this.resetState())
 
 		this.resetState()
 	}

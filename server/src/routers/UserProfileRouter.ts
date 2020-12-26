@@ -1,25 +1,28 @@
-import express, {Request, Response} from 'express'
+import express, { Request, Response } from 'express'
 import PlayerDatabase from '../database/PlayerDatabase'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import AsyncHandler from '../utils/AsyncHandler'
 import RenderQuality from '@shared/enums/RenderQuality'
 import Language from '@shared/enums/Language'
-import Utils, {getPlayerFromAuthenticatedRequest, registerFormValidators} from '../utils/Utils'
+import Utils, { getPlayerFromAuthenticatedRequest, registerFormValidators } from '../utils/Utils'
 
 const router = express.Router()
 
-router.get('/', AsyncHandler(async(req: Request, res: Response) => {
-	const player = getPlayerFromAuthenticatedRequest(req)
-	const playerDatabaseEntry = await PlayerDatabase.selectPlayerById(player.id)
-	if (!playerDatabaseEntry) {
-		res.status(404)
-		res.send()
-		return
-	}
+router.get(
+	'/',
+	AsyncHandler(async (req: Request, res: Response) => {
+		const player = getPlayerFromAuthenticatedRequest(req)
+		const playerDatabaseEntry = await PlayerDatabase.selectPlayerById(player.id)
+		if (!playerDatabaseEntry) {
+			res.status(404)
+			res.send()
+			return
+		}
 
-	res.json({ data: new UserProfileMessage(playerDatabaseEntry) })
-}))
+		res.json({ data: new UserProfileMessage(playerDatabaseEntry) })
+	})
+)
 
 router.put('/', (req: Request, res: Response) => {
 	const player = getPlayerFromAuthenticatedRequest(req)
@@ -52,7 +55,7 @@ router.put('/', (req: Request, res: Response) => {
 		},
 		volumeLevel: (volume: number): boolean => {
 			return volume >= 0 && volume <= 1
-		}
+		},
 	}
 
 	const acceptedSettings: AcceptedUserSetting[] = [
@@ -103,16 +106,15 @@ router.put('/', (req: Request, res: Response) => {
 		},
 	]
 
-	const receivedSettings = acceptedSettings.filter(settingDefinition => typeof(req.body[settingDefinition.name]) !== 'undefined')
-	const validatorsFailedFor = receivedSettings
-		.filter(settingDefinition => !settingDefinition.validator(req.body[settingDefinition.name]))
+	const receivedSettings = acceptedSettings.filter((settingDefinition) => typeof req.body[settingDefinition.name] !== 'undefined')
+	const validatorsFailedFor = receivedSettings.filter((settingDefinition) => !settingDefinition.validator(req.body[settingDefinition.name]))
 
 	if (validatorsFailedFor.length > 0) {
-		const message = `Invalid values: ${validatorsFailedFor.map(definition => definition.name).join(', ')}`
+		const message = `Invalid values: ${validatorsFailedFor.map((definition) => definition.name).join(', ')}`
 		throw { status: 400, error: message }
 	}
 
-	receivedSettings.forEach(settingDefinition => {
+	receivedSettings.forEach((settingDefinition) => {
 		const value = req.body[settingDefinition.name]
 		settingDefinition.setter(player.id, value)
 	})

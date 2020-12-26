@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid'
-import {createModule} from 'direct-vuex'
+import {v4 as uuidv4} from 'uuid'
+import {defineModule} from 'direct-vuex'
 import axios from 'axios'
 import {moduleActionContext} from '@/Vue/store'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
@@ -9,11 +9,10 @@ import Constants from '@shared/Constants'
 import CardColor from '@shared/enums/CardColor'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
-import CardFaction from '@shared/enums/CardFaction'
 import HoveredDeckCardModule from '@/Vue/store/modules/HoveredDeckCardModule'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
-const editorModule = createModule({
+const editorModule = defineModule({
 	namespaced: true,
 
 	modules: {
@@ -26,8 +25,6 @@ const editorModule = createModule({
 		cardLibrary: [] as CardMessage[],
 		renderQueue: [] as string[],
 		renderedCards: [] as RenderedEditorCard[],
-		selectedFactionFilter: null as CardFaction | null,
-		selectedColorFilter: null as CardColor | null,
 		searchQuery: '' as string
 	},
 
@@ -64,14 +61,6 @@ const editorModule = createModule({
 		updateEditorDeck(state, newDeck: PopulatedEditorDeck): void {
 			const oldDeck = state.decks.find(deck => deck.id === newDeck.id)
 			state.decks[state.decks.indexOf(oldDeck)] = newDeck
-		},
-
-		setSelectedFactionFilter(state, faction: CardFaction | null): void {
-			state.selectedFactionFilter = faction
-		},
-
-		setSelectedColorFilter(state, color: CardColor | null): void {
-			state.selectedColorFilter = color
 		},
 
 		setSearchQuery(state, query: string): void {

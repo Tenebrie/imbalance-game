@@ -18,7 +18,7 @@ export default class UnitAulerianSongwriter extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.HUMAN],
+			tribes: [CardTribe.NOBLE],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 3,
@@ -29,17 +29,14 @@ export default class UnitAulerianSongwriter extends ServerCard {
 			bonusPower: this.bonusPower,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
+		this.createDeployEffectTargets().target(TargetType.UNIT)
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetCard }) => this.onDeploy(targetCard))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetCard }) => this.onDeploy(targetCard))
 	}
 
 	private onDeploy(targetCard: ServerCard): void {
 		this.createSelector()
 			.requireTarget(({ target }) => target.class === targetCard.class)
-			.onSelected(({ target }) => target.buffs.addMultiple(BuffStrength, this.bonusPower, null))
-			.onReleased(({ target }) => target.buffs.remove(BuffStrength, this.bonusPower))
+			.provide(BuffStrength, this.bonusPower)
 	}
 }

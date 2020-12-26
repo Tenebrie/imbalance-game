@@ -1,6 +1,5 @@
 import BuffContainer from '@shared/models/BuffContainer'
-import ServerBuff from './ServerBuff'
-import BuffStackType from '@shared/enums/BuffStackType'
+import ServerBuff, { BuffConstructorParams } from './ServerBuff'
 import ServerCard from './ServerCard'
 import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
 import ServerGame from './ServerGame'
@@ -9,12 +8,11 @@ import ServerAnimation from './ServerAnimation'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import BuffLeaderPower from '../buffs/BuffLeaderPower'
-import BuffUnitToSpellConversion from '../buffs/BuffUnitToSpellConversion'
-import {LeaderStatValueGetter} from '../../utils/LeaderStats'
+import { LeaderStatValueGetter } from '../../utils/LeaderStats'
+import { CardSelector } from './events/selectors/CardSelector'
 
 export interface BuffConstructor {
-	new (game: ServerGame): ServerBuff
+	new (params: BuffConstructorParams): ServerBuff
 }
 
 export default class ServerBuffContainer implements BuffContainer {
@@ -30,20 +28,12 @@ export default class ServerBuffContainer implements BuffContainer {
 		return this.card.game
 	}
 
-	private instantiate(prototype: BuffConstructor, source: ServerCard | null): ServerBuff {
-		const buff = new prototype(this.card.game)
-		const buffClass = buff.constructor.name.substr(0, 1).toLowerCase() + buff.constructor.name.substr(1)
+	public get visible(): ServerBuff[] {
+		return this.buffs.filter((buff) => !buff.buffFeatures.includes(BuffFeature.SERVICE_BUFF))
+	}
 
-		buff.name = `buff.${buffClass}.name`
-		buff.description = `buff.${buffClass}.description`
-		buff.card = this.card
-		buff.game = this.card.game
-		buff.source = source
-		buff.duration = buff.baseDuration
-		buff.intensity = buff.baseIntensity
-		buff.buffClass = buffClass
-
-		return buff
+	public get dispellable(): ServerBuff[] {
+		return this.buffs.filter((buff) => !buff.protected)
 	}
 
 	/*
@@ -53,20 +43,53 @@ export default class ServerBuffContainer implements BuffContainer {
 	 * Default value is Infinity, i.e. buffs never expire
 	 */
 	public add(prototype: BuffConstructor, source: ServerCard | null, duration: number | 'default' = 'default'): void {
-		const newBuff = this.instantiate(prototype, source)
-		this.addInstance(newBuff, source, duration)
+		const newBuff = new prototype({
+			card: this.card,
+			source,
+			duration,
+			selector: null,
+		})
+		this.addInstance(newBuff, source)
 	}
 
-	public addMultiple(prototype: BuffConstructor, count: number | LeaderStatValueGetter, source: ServerCard | null, duration: number | 'default' = 'default'): void {
-		if (typeof(count) === 'function') {
+	public addMultiple(
+		prototype: BuffConstructor,
+		count: number | LeaderStatValueGetter,
+		source: ServerCard | null,
+		duration: number | 'default' = 'default'
+	): void {
+		if (typeof count === 'function') {
 			count = count(source)
 		}
 		for (let i = 0; i < count; i++) {
-			const newBuff = this.instantiate(prototype, source)
+			const newBuff = new prototype({
+				card: this.card,
+				source,
+				duration,
+				selector: null,
+			})
 			if (!this.buffSkipsAnimation(newBuff)) {
 				this.game.animation.createAnimationThread()
 			}
-			this.addInstance(newBuff, source, duration)
+			this.addInstance(newBuff, source)
+			if (!this.buffSkipsAnimation(newBuff)) {
+				this.game.animation.commitAnimationThread()
+			}
+		}
+	}
+
+	public addForSelector(prototype: BuffConstructor, count: number, source: ServerCard | null, selector: CardSelector): void {
+		for (let i = 0; i < count; i++) {
+			const newBuff = new prototype({
+				card: this.card,
+				source,
+				selector,
+				duration: 'default',
+			})
+			if (!this.buffSkipsAnimation(newBuff)) {
+				this.game.animation.createAnimationThread()
+			}
+			this.addInstance(newBuff, source)
 			if (!this.buffSkipsAnimation(newBuff)) {
 				this.game.animation.commitAnimationThread()
 			}
@@ -77,74 +100,50 @@ export default class ServerBuffContainer implements BuffContainer {
 		return buff.buffFeatures.includes(BuffFeature.SKIP_ANIMATION) || this.card.location === CardLocation.UNKNOWN
 	}
 
-	private addInstance(newBuff: ServerBuff, source: ServerCard | null, duration: number | 'default' = 'default'): void {
-		if (duration !== 'default') {
-			newBuff.duration = duration
-		}
-
-		const playBuffReceivedAnimation = () => {
-			if (this.buffSkipsAnimation(newBuff)) {
-				return
-			}
-			this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.card], newBuff.alignment))
-		}
-
-		if (source && !this.buffSkipsAnimation(newBuff)) {
+	private addInstance(newBuff: ServerBuff, source: ServerCard | null): void {
+		if (source && !this.buffSkipsAnimation(newBuff) && this.card.isVisuallyRendered) {
 			this.game.animation.play(ServerAnimation.cardAffectsCards(source, [this.card]))
 		}
 
-		let invokedBuff = newBuff
-
-		const existingBuff = this.buffs.find(existingBuff => existingBuff.buffClass === newBuff.buffClass)
-
-		if (newBuff.stackType === BuffStackType.NONE && existingBuff && existingBuff.duration < newBuff.duration) {
-			this.game.events.postEvent(GameEventCreators.buffRemoved({
-				triggeringBuff: existingBuff
-			}))
-			this.buffs.splice(this.buffs.indexOf(existingBuff), 1)
-			OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(this.card, existingBuff)
-			this.buffs.push(newBuff)
-			OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
-		}
-
-		if (newBuff.stackType === BuffStackType.OVERLAY || !existingBuff) {
-			this.buffs.push(newBuff)
-			OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
-		}
-
-		if (existingBuff && newBuff.stackType === BuffStackType.ADD_DURATION) {
-			this.game.events.unsubscribe(newBuff)
-			existingBuff.setDuration(existingBuff.duration + newBuff.duration)
-			invokedBuff = existingBuff
-		}
-
-		if (existingBuff && newBuff.stackType === BuffStackType.ADD_INTENSITY) {
-			this.game.events.unsubscribe(newBuff)
-			existingBuff.setIntensity(existingBuff.intensity + newBuff.intensity)
-			playBuffReceivedAnimation()
-			return
-		}
+		this.buffs.push(newBuff)
+		OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
 
 		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
 
-		this.game.events.postEvent(GameEventCreators.buffCreated({
-			triggeringBuff: invokedBuff
-		}))
+		this.game.events.postEvent(
+			GameEventCreators.buffCreated({
+				triggeringBuff: newBuff,
+			})
+		)
 
-		playBuffReceivedAnimation()
+		if (this.buffSkipsAnimation(newBuff) || !this.card.isVisuallyRendered) {
+			return
+		}
+		this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.card], newBuff.alignment))
 	}
 
 	public getBuffsByPrototype(prototype: BuffConstructor): ServerBuff[] {
 		const buffClass = prototype.prototype.constructor.name.substr(0, 1).toLowerCase() + prototype.prototype.constructor.name.substr(1)
-		return this.buffs.filter(buff => buff.buffClass === buffClass)
+		return this.buffs.filter((buff) => buff.class === buffClass)
 	}
 
 	public has(prototype: BuffConstructor): boolean {
-		return this.getBuffsByPrototype(prototype).length > 0
+		return this.getIntensity(prototype) > 0
 	}
 
 	public getIntensity(prototype: BuffConstructor): number {
-		return this.getBuffsByPrototype(prototype).map(buff => buff.intensity).reduce((total, value) => total + value, 0)
+		return this.getBuffsByPrototype(prototype).length
+	}
+
+	public getIntensityForSelector(prototype: BuffConstructor, selector: CardSelector): number {
+		return this.getBuffsByPrototype(prototype).filter((buff) => buff.selector === selector).length
+	}
+
+	public dispel(count: number): void {
+		this.dispellable
+			.reverse()
+			.slice(0, count)
+			.forEach((buff) => this.removeByReference(buff))
 	}
 
 	public removeByReference(buff: ServerBuff): void {
@@ -154,40 +153,44 @@ export default class ServerBuffContainer implements BuffContainer {
 		}
 
 		this.buffs.splice(index, 1)
-		buff.setIntensity(0)
 		OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(this.card, buff)
+		OutgoingCardUpdateMessages.notifyAboutCardStatsChange(this.card)
 		this.game.events.unsubscribe(buff)
 	}
 
-	public remove(prototype: BuffConstructor, count = Infinity): void {
+	public removeBySelector(prototype: BuffConstructor, selector: CardSelector, count = Infinity): void {
 		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
 
 		let stacksLeftToRemove = count
-		let buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass).reverse()
+		let buffsOfType = this.buffs
+			.filter((buff) => buff.class === buffClass)
+			.filter((buff) => buff.selector === selector)
+			.reverse()
 		while (buffsOfType.length > 0 && stacksLeftToRemove > 0) {
 			const buff = buffsOfType[0]
-			if (buff.intensity <= stacksLeftToRemove) {
-				stacksLeftToRemove -= buff.intensity
-				this.removeByReference(buff)
-			} else {
-				buff.setIntensity(buff.intensity - stacksLeftToRemove)
-				stacksLeftToRemove = 0
-			}
+			stacksLeftToRemove -= 1
+			this.removeByReference(buff)
 
-			buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass).reverse()
+			buffsOfType = this.buffs
+				.filter((buff) => buff.class === buffClass)
+				.filter((buff) => buff.selector === selector)
+				.reverse()
 		}
 	}
 
 	public removeAll(prototype: BuffConstructor): void {
 		const buffClass = prototype.name.substr(0, 1).toLowerCase() + prototype.name.substr(1)
-		const buffsOfType = this.buffs.filter(buff => buff.buffClass === buffClass)
-		buffsOfType.forEach(buffToRemove => {
+		const buffsOfType = this.buffs.filter((buff) => buff.class === buffClass)
+		buffsOfType.forEach((buffToRemove) => {
 			this.removeByReference(buffToRemove)
 		})
 	}
 
-	public removeCleansable(): void {
-		const buffsToRemove = this.buffs.filter(buff => buff.constructor !== BuffLeaderPower && buff.constructor !== BuffUnitToSpellConversion)
-		buffsToRemove.forEach(buff => this.removeByReference(buff))
+	public removeAllByCardSelector(selector: CardSelector): void {
+		this.buffs.filter((buff) => buff.selector === selector).forEach((buff) => this.removeByReference(buff))
+	}
+
+	public removeAllDispellable(): void {
+		this.dispellable.forEach((buff) => this.removeByReference(buff))
 	}
 }

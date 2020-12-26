@@ -1,6 +1,6 @@
 import ServerPlayer from '../game/players/ServerPlayer'
 import jwt from 'jsonwebtoken'
-import {JwtTokenScope} from '../enums/JwtTokenScope'
+import { JwtTokenScope } from '../enums/JwtTokenScope'
 
 const jwtSecret = process.env.JWT_KEY || 'jwtSecret'
 
@@ -8,10 +8,10 @@ export default {
 	generateJwtToken(player: ServerPlayer): string {
 		const tokenPayload = {
 			scope: [JwtTokenScope.AUTH],
-			playerId: player.id
+			playerId: player.id,
 		}
 		return jwt.sign(tokenPayload, jwtSecret, {
-			issuer: 'TenebrieInteractive'
+			issuer: 'TenebrieInteractive',
 		})
 	},
 
@@ -23,15 +23,15 @@ export default {
 			return null
 		}
 
-		if (typeof (payload) === 'string') {
+		if (typeof payload === 'string') {
 			return null
 		}
 		// @ts-ignore
 		const tokenScope: JwtTokenScope[] = payload['scope']
-		const scopesMatch = expectedScope.every(scope => tokenScope.includes(scope))
+		const scopesMatch = expectedScope.every((scope) => tokenScope.includes(scope))
 		if (!scopesMatch) {
 			return null
 		}
 		return payload
-	}
+	},
 }

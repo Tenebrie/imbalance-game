@@ -36,7 +36,7 @@ export enum AnimationMessageType {
 	THREAD_CREATE = 'animation_threadCreate',
 	THREAD_START = 'animation_threadStart',
 	THREAD_COMMIT = 'animation_threadCommit',
-	EXECUTE_QUEUE = 'animation_executeQueue'
+	EXECUTE_QUEUE = 'animation_executeQueue',
 }
 
 export enum GameSyncMessageType {
@@ -50,6 +50,7 @@ export enum GameSyncMessageType {
 }
 
 export enum SystemMessageType {
+	MESSAGE_ACKNOWLEDGED = 'system_ack',
 	MODE_SPECTATE = 'system_modeSpectate',
 	REQUEST_INIT = 'system_requestInit',
 	ERROR_GENERIC = 'system_errorGeneric',
@@ -66,8 +67,12 @@ export enum BoardUpdateMessageType {
 
 export enum ResolveStackMessageType {
 	ADD = 'resolveStack_add',
-	TARGETS = 'resolveStack_targets',
 	REMOVE = 'resolveStack_remove',
+}
+
+export enum TargetingMessageType {
+	CARD_PLAY = 'targeting_cardPlay',
+	ANONYMOUS = 'targeting_anonymous',
 }
 
 export enum CardUpdateMessageType {
@@ -75,8 +80,16 @@ export enum CardUpdateMessageType {
 	VARIABLES = 'cardUpdate_variables',
 	BUFF_ADD = 'cardUpdate_buffAdd',
 	BUFF_DURATION = 'cardUpdate_buffDuration',
-	BUFF_INTENSITY = 'cardUpdate_buffIntensity',
 	BUFF_REMOVE = 'cardUpdate_buffRemove',
 }
 
-export type ServerToClientMessageTypes = PlayerUpdateMessageType | GameLogUpdateMessageType | AnimationMessageType | GameSyncMessageType | SystemMessageType | BoardUpdateMessageType | ResolveStackMessageType | CardUpdateMessageType
+export type ServerToClientMessageTypes =
+	| PlayerUpdateMessageType
+	| GameLogUpdateMessageType
+	| AnimationMessageType
+	| GameSyncMessageType
+	| SystemMessageType
+	| BoardUpdateMessageType
+	| ResolveStackMessageType
+	| TargetingMessageType
+	| CardUpdateMessageType

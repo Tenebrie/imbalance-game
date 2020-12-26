@@ -85,5 +85,5 @@ export default {
 	async deletePlayer(id: string): Promise<boolean> {
 		const query = `DELETE FROM players WHERE id = '${id}'`
 		return Database.deleteRows(query)
-	}
+	},
 }

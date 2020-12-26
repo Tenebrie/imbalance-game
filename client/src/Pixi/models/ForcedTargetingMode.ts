@@ -10,16 +10,17 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetingLine from '@/Pixi/models/TargetingLine'
 import Core from '@/Pixi/Core'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 
 export default class ForcedTargetingMode {
 	readonly targetMode: TargetMode
-	readonly validTargets: CardTargetMessage[]
+	readonly validTargets: CardTargetMessage[] | AnonymousTargetMessage[]
 	readonly source: RenderedCard | null
-	selectedTarget: CardTargetMessage | null = null
+	selectedTarget: CardTargetMessage | AnonymousTargetMessage | null = null
 
 	readonly targetingLine: TargetingLine | null
 
-	constructor(targetMode: TargetMode, validTargets: CardTargetMessage[], source: RenderedCard | null) {
+	constructor(targetMode: TargetMode, validTargets: CardTargetMessage[] | AnonymousTargetMessage[], source: RenderedCard | null) {
 		this.targetMode = targetMode
 		this.validTargets = validTargets
 		this.source = source
@@ -33,9 +34,10 @@ export default class ForcedTargetingMode {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
 
-		this.selectedTarget = this.validTargets.find(target => {
-			return (hoveredCard && target.targetCardId === hoveredCard.id) ||
-				(hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+		this.selectedTarget = this.validTargets.find((target) => {
+			return (
+				(hoveredCard && target.targetCardId === hoveredCard.id) || (hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+			)
 		})
 	}
 
@@ -47,24 +49,30 @@ export default class ForcedTargetingMode {
 		const target = this.selectedTarget
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
-		return (hoveredCard && target.targetCardId === hoveredCard.id) ||
-			(hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+		return (
+			(hoveredCard && target.targetCardId === hoveredCard.id) || (hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+		)
 	}
 
 	public isUnitPotentialTarget(unit: RenderedUnit): boolean {
-		return !!this.validTargets.find(target => target.targetCardId === unit.card.id)
+		return !!this.validTargets.find((target) => target.targetCardId === unit.card.id)
 	}
 
 	public isRowPotentialTarget(row: RenderedGameBoardRow): boolean {
-		return !!this.validTargets.find(target => Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === row)
+		return !!this.validTargets.find(
+			(target) => Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === row
+		)
 	}
 
 	public getDisplayedLabel(): string {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
 
-		const hoveredTarget = this.validTargets.find(target => {
-			return (hoveredCard && target.targetCardId === hoveredCard.id) || (Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+		const hoveredTarget = this.validTargets.find((target) => {
+			return (
+				(hoveredCard && target.targetCardId === hoveredCard.id) ||
+				(Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+			)
 		})
 		return hoveredTarget ? hoveredTarget.targetLabel : ''
 	}
@@ -73,10 +81,13 @@ export default class ForcedTargetingMode {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
 
-		const hoveredTarget = this.validTargets.find(target => {
-			return (hoveredCard && target.targetCardId === hoveredCard.id) || (Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+		const hoveredTarget = this.validTargets.find((target) => {
+			return (
+				(hoveredCard && target.targetCardId === hoveredCard.id) ||
+				(Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+			)
 		})
-		if (!hoveredTarget) {
+		if (!hoveredTarget || !('sourceCardId' in hoveredTarget)) {
 			return {}
 		}
 		const sourceCard = Core.game.findCardById(hoveredTarget.sourceCardId)
@@ -85,7 +96,11 @@ export default class ForcedTargetingMode {
 
 	public confirmTarget(): void {
 		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
-		OutgoingMessageHandlers.sendCardTarget(this.selectedTarget)
+		if ('sourceCardId' in this.selectedTarget) {
+			OutgoingMessageHandlers.sendCardTarget(this.selectedTarget)
+		} else {
+			OutgoingMessageHandlers.sendAnonymousTarget(this.selectedTarget)
+		}
 		this.selectedTarget = null
 	}
 

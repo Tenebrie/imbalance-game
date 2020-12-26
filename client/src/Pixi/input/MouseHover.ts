@@ -26,6 +26,6 @@ export default class MouseHover {
 	}
 
 	public static getHoveredRow(): RenderedGameBoardRow | null {
-		return Core.board.rows.find(row => row.isHovered())
+		return Core.board.rows.find((row) => row.isHovered())
 	}
 }

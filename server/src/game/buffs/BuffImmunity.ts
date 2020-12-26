@@ -1,22 +1,22 @@
-import ServerBuff from '../models/ServerBuff'
-import BuffStackType from '@shared/enums/BuffStackType'
+import ServerBuff, { BuffConstructorParams } from '../models/ServerBuff'
 import ServerDamageInstance from '../models/ServerDamageSource'
-import ServerGame from '../models/ServerGame'
-import GameHookType, {CardTakesDamageHookArgs, CardTakesDamageHookValues} from '../models/events/GameHookType'
+import GameHookType from '../models/events/GameHookType'
 import CardFeature from '@shared/enums/CardFeature'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class BuffImmunity extends ServerBuff {
-	constructor(game: ServerGame) {
-		super(game, BuffStackType.OVERLAY)
-		this.alignment = BuffAlignment.POSITIVE
-		this.cardFeatures = [CardFeature.UNTARGETABLE]
+	constructor(params: BuffConstructorParams) {
+		super(params, {
+			alignment: BuffAlignment.POSITIVE,
+			cardFeatures: [CardFeature.UNTARGETABLE],
+		})
 
-		this.createHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>(GameHookType.CARD_TAKES_DAMAGE)
+		// TODO: Fix it not working with intercepted damage
+		this.createHook(GameHookType.CARD_TAKES_DAMAGE)
 			.require(({ targetCard }) => targetCard === this.card)
 			.replace((args) => ({
 				...args,
-				damageInstance: this.getUpdatedDamageInstance(args.damageInstance)
+				damageInstance: this.getUpdatedDamageInstance(args.damageInstance),
 			}))
 	}
 

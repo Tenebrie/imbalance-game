@@ -8,11 +8,11 @@ import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class HeroStormDancer extends ServerCard {
-	normalPowerGiven = asMassBuffPotency(1)
-	stormPowerGiven = asMassBuffPotency(3)
+	normalPowerGiven = asSplashBuffPotency(1)
+	stormPowerGiven = asSplashBuffPotency(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -27,7 +27,7 @@ export default class HeroStormDancer extends ServerCard {
 
 		this.dynamicTextVariables = {
 			powerGiven: this.normalPowerGiven,
-			stormPowerGiven: this.stormPowerGiven
+			stormPowerGiven: this.stormPowerGiven,
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
@@ -41,7 +41,7 @@ export default class HeroStormDancer extends ServerCard {
 		const adjacentUnits = this.game.board.getAdjacentUnits(this.unit)
 		const isStorm = playedCard.tribes.includes(CardTribe.STORM)
 		const powerGiven = isStorm ? this.stormPowerGiven : this.normalPowerGiven
-		adjacentUnits.forEach(unit => {
+		adjacentUnits.forEach((unit) => {
 			unit.buffs.addMultiple(BuffStrength, powerGiven, this)
 		})
 	}

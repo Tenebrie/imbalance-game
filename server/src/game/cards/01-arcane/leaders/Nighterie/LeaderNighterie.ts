@@ -19,10 +19,10 @@ export default class LeaderNighterie extends ServerCard {
 			faction: CardFaction.ARCANE,
 			sortPriority: 2,
 			expansionSet: ExpansionSet.BASE,
-			deckAddedCards: [SpellShadowSpark, SpellNightmareDrain, SpellCrystalBarrage, SpellShadowArmy]
+			deckAddedCards: [SpellShadowSpark, SpellNightmareDrain, SpellCrystalBarrage, SpellShadowArmy],
 		})
 		this.dynamicTextVariables = {
-			manaPerRound: this.manaPerRound
+			manaPerRound: this.manaPerRound,
 		}
 	}
 }

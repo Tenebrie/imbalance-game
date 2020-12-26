@@ -1,4 +1,4 @@
-import {QueuedMessageSystemData} from '@/Pixi/models/QueuedMessage'
+import { QueuedMessageSystemData } from '@/Pixi/models/QueuedMessage'
 import IncomingPlayerUpdateMessages from '@/Pixi/handlers/incoming/IncomingPlayerUpdateMessages'
 import IncomingGameLogUpdateMessages from '@/Pixi/handlers/incoming/IncomingGameLogUpdateMessages'
 import IncomingAnimationMessages from '@/Pixi/handlers/incoming/IncomingAnimationMessages'
@@ -7,11 +7,12 @@ import IncomingSystemMessages from '@/Pixi/handlers/incoming/IncomingSystemMessa
 import IncomingBoardUpdateMessages from '@/Pixi/handlers/incoming/IncomingBoardUpdateMessages'
 import IncomingCardUpdateMessages from '@/Pixi/handlers/incoming/IncomingCardUpdateMessages'
 import IncomingResolveStackMessages from '@/Pixi/handlers/incoming/IncomingResolveStackMessages'
-import {ServerToClientMessageTypes} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import IncomingTargetingMessages from '@/Pixi/handlers/incoming/IncomingTargetingMessages'
 
 export type IncomingMessageHandlerFunction = (data: any, systemData: QueuedMessageSystemData) => void
 
-const IncomingMessageHandlers: {[ index in ServerToClientMessageTypes ]: IncomingMessageHandlerFunction } = {
+const IncomingMessageHandlers: { [index in ServerToClientMessageTypes]: IncomingMessageHandlerFunction } = {
 	...IncomingAnimationMessages,
 	...IncomingBoardUpdateMessages,
 	...IncomingCardUpdateMessages,
@@ -19,6 +20,7 @@ const IncomingMessageHandlers: {[ index in ServerToClientMessageTypes ]: Incomin
 	...IncomingGameSyncMessages,
 	...IncomingPlayerUpdateMessages,
 	...IncomingResolveStackMessages,
+	...IncomingTargetingMessages,
 	...IncomingSystemMessages,
 }
 

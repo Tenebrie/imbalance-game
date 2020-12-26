@@ -10,17 +10,17 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import Utils from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitMasterSwordsmith extends ServerCard {
-	bonusPower = asMassBuffPotency(1)
+	bonusPower = asSplashBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.HUMAN],
+			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 2,
@@ -28,17 +28,16 @@ export default class UnitMasterSwordsmith extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			bonusPower: this.bonusPower
+			bonusPower: this.bonusPower,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy(): void {
 		const owner = this.ownerInGame
 		const targets = Utils.sortCards(owner.cardHand.unitCards)
-		targets.forEach(card => {
+		targets.forEach((card) => {
 			this.game.animation.createAnimationThread()
 			card.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
 			this.game.animation.commitAnimationThread()

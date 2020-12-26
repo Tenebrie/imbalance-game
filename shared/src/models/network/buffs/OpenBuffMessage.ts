@@ -1,6 +1,5 @@
 import Buff from '../../Buff'
 import CardFeature from '../../../enums/CardFeature'
-import BuffStackType from '../../../enums/BuffStackType'
 import CardTribe from '../../../enums/CardTribe'
 import BuffFeature from '../../../enums/BuffFeature'
 import BuffAlignment from '../../../enums/BuffAlignment'
@@ -9,10 +8,9 @@ import BuffMessage from './BuffMessage'
 export default class OpenBuffMessage implements BuffMessage {
 	id: string
 	cardId: string
+	class: string
 	sourceId: string | null
-	buffClass: string
 	alignment: BuffAlignment
-	stackType: BuffStackType
 	cardTribes: CardTribe[]
 	buffFeatures: BuffFeature[]
 	cardFeatures: CardFeature[]
@@ -21,17 +19,16 @@ export default class OpenBuffMessage implements BuffMessage {
 	description: string
 
 	duration: string
-	intensity: string
 	baseDuration: string
-	baseIntensity: string
+
+	protected: boolean
 
 	constructor(buff: Buff) {
 		this.id = buff.id
 		this.cardId = buff.card.id
+		this.class = buff.class
 		this.sourceId = buff.source ? buff.source.id : null
-		this.buffClass = buff.buffClass
 		this.alignment = buff.alignment
-		this.stackType = buff.stackType
 		this.cardTribes = buff.cardTribes.slice()
 		this.buffFeatures = buff.buffFeatures.slice()
 		this.cardFeatures = buff.cardFeatures.slice()
@@ -40,8 +37,8 @@ export default class OpenBuffMessage implements BuffMessage {
 		this.description = buff.description
 
 		this.duration = buff.duration.toString()
-		this.intensity = buff.intensity.toString()
 		this.baseDuration = buff.baseDuration.toString()
-		this.baseIntensity = buff.baseIntensity.toString()
+
+		this.protected = buff.protected
 	}
 }

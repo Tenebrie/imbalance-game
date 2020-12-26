@@ -1,5 +1,5 @@
 enum DeckLeader {
-	DEFAULT = 'default'
+	DEFAULT = 'default',
 }
 
 export default DeckLeader

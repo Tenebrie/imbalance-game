@@ -12,5 +12,5 @@ export default {
 			console.error('HashManager: No password provided for comparison!')
 		}
 		return bcrypt.compare(plaintextPassword, hashedPassword)
-	}
+	},
 }

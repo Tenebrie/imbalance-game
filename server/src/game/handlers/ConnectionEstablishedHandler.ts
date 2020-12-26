@@ -1,11 +1,10 @@
 import ServerGame from '../models/ServerGame'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerPlayer from '../players/ServerPlayer'
-import ServerBotPlayer from '../AI/ServerBotPlayer'
 import Constants from '@shared/Constants'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
-import Utils, {colorizeId, colorizePlayer, isCardPublic} from '../../utils/Utils'
+import Utils, { colorizeId, colorizePlayer, isCardPublic } from '../../utils/Utils'
 import ServerCardTarget from '../models/ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import ServerBotPlayerInGame from '../AI/ServerBotPlayerInGame'
@@ -20,7 +19,7 @@ export default {
 	},
 
 	onPlayerConnectedInitially(game: ServerGame): void {
-		const initializedPlayers = game.players.filter(playerInGame => playerInGame.initialized)
+		const initializedPlayers = game.players.filter((playerInGame) => playerInGame.initialized)
 		if (initializedPlayers.length < Constants.PLAYERS_PER_GAME) {
 			return
 		}
@@ -36,9 +35,11 @@ export default {
 		const opponent = playerInGame.opponent
 		if (opponent) {
 			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, opponent)
-			opponent.cardHand.allCards.filter(card => isCardPublic(card)).forEach(card => {
-				OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(playerInGame.player, card)
-			})
+			opponent.cardHand.allCards
+				.filter((card) => isCardPublic(card))
+				.forEach((card) => {
+					OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(playerInGame.player, card)
+				})
 			OutgoingMessageHandlers.notifyAboutDeckLeader(playerInGame, opponent, playerInGame.leader)
 		}
 		OutgoingMessageHandlers.sendBoardState(playerInGame.player, game.board)
@@ -48,11 +49,18 @@ export default {
 		}
 		if (playerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(playerInGame.player, playerInGame)
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player, TargetMode.DEPLOY_EFFECT, game.cardPlay.getValidTargets(), game.cardPlay.cardResolveStack.currentCard.card)
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargetsForReconnect(
+				playerInGame.player,
+				TargetMode.DEPLOY_EFFECT,
+				game.cardPlay.getValidTargets(),
+				game.cardPlay.cardResolveStack.currentCard.card
+			)
 		} else if (playerInGame.mulliganMode) {
 			const cardsToMulligan = playerInGame.cardHand.unitCards
-			const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(playerInGame.player, TargetMode.MULLIGAN, targets, null)
+			const targets = Utils.sortCards(cardsToMulligan).map((card) =>
+				ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card)
+			)
+			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, targets)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
 		OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, playerInGame.isInvertedBoard())
@@ -62,9 +70,9 @@ export default {
 
 	onPlayerDisconnected(game: ServerGame, player: ServerPlayer): void {
 		console.info(`Player ${colorizePlayer(player.username)} has disconnected from game ${colorizeId(game.id)}.`)
-		player.spectators.forEach(spectator => spectator.player.disconnect())
+		player.spectators.forEach((spectator) => spectator.player.disconnect())
 
-		const connectedPlayers = game.players.filter(player => player.player.isInGame() || player instanceof ServerBotPlayerInGame)
+		const connectedPlayers = game.players.filter((player) => player.player.isInGame() || player instanceof ServerBotPlayerInGame)
 		if (connectedPlayers.length === 1) {
 			console.info(`Only one player left in game ${colorizeId(game.id)}. It will be shutdown in 60 seconds.`)
 			game.timers.playerLeaveTimeout.start()
@@ -86,9 +94,11 @@ export default {
 		OutgoingMessageHandlers.notifyAboutSpectateMode(spectator.player)
 		OutgoingMessageHandlers.sendPlayerSelf(spectator.player, spectatedPlayerInGame)
 		OutgoingMessageHandlers.sendPlayerOpponent(spectator.player, opponent)
-		opponent.cardHand.allCards.filter(card => isCardPublic(card)).forEach(card => {
-			OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(spectator.player, card)
-		})
+		opponent.cardHand.allCards
+			.filter((card) => isCardPublic(card))
+			.forEach((card) => {
+				OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(spectator.player, card)
+			})
 		OutgoingMessageHandlers.notifyAboutDeckLeader(spectator, opponent, spectatedPlayerInGame.leader)
 		OutgoingMessageHandlers.sendBoardState(spectator.player, game.board)
 		OutgoingMessageHandlers.sendStackState(spectator.player, game.cardPlay.cardResolveStack)
@@ -97,11 +107,18 @@ export default {
 		}
 		if (spectatedPlayerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(spectator.player, spectatedPlayerInGame)
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(spectator.player, TargetMode.DEPLOY_EFFECT, game.cardPlay.getValidTargets(), game.cardPlay.cardResolveStack.currentCard.card)
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
+				spectator.player,
+				TargetMode.DEPLOY_EFFECT,
+				game.cardPlay.getValidTargets(),
+				game.cardPlay.cardResolveStack.currentCard.card
+			)
 		} else if (spectatedPlayerInGame.mulliganMode) {
 			const cardsToMulligan = spectatedPlayerInGame.cardHand.unitCards
-			const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
-			OutgoingMessageHandlers.notifyAboutRequestedTargets(spectator.player, TargetMode.MULLIGAN, targets, null)
+			const targets = Utils.sortCards(cardsToMulligan).map((card) =>
+				ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card)
+			)
+			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(spectator.player, TargetMode.MULLIGAN, targets)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, spectatedPlayerInGame)
 		OutgoingMessageHandlers.notifyAboutGameStart(spectator.player, spectatedPlayerInGame.isInvertedBoard())

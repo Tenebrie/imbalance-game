@@ -1,10 +1,14 @@
 import store from '@/Vue/store'
-import {IncomingMessageHandlerFunction} from '@/Pixi/handlers/IncomingMessageHandlers'
-import {SystemMessageType} from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
+import { SystemMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import Core from '@/Pixi/Core'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 
-const IncomingSystemMessages: {[ index in SystemMessageType ]: IncomingMessageHandlerFunction } = {
+const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHandlerFunction } = {
+	[SystemMessageType.MESSAGE_ACKNOWLEDGED]: () => {
+		Core.performance.logServerResponse()
+	},
+
 	[SystemMessageType.MODE_SPECTATE]: () => {
 		store.commit.gameStateModule.setIsSpectating(true)
 	},
@@ -21,7 +25,7 @@ const IncomingSystemMessages: {[ index in SystemMessageType ]: IncomingMessageHa
 
 	[SystemMessageType.ERROR_GENERIC]: (data: string) => {
 		console.error('Server error:', data)
-	}
+	},
 }
 
 export default IncomingSystemMessages

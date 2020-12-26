@@ -68,8 +68,10 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		}
 
 		const currentResolvingCard = this.game.cardPlay.cardResolveStack.currentCard
-		return (this.game.turnPhase === GameTurnPhase.DEPLOY && currentResolvingCard && currentResolvingCard.owner === this) ||
+		return (
+			(this.game.turnPhase === GameTurnPhase.DEPLOY && currentResolvingCard && currentResolvingCard.owner === this) ||
 			this.game.turnPhase === GameTurnPhase.MULLIGAN
+		)
 	}
 
 	public get opponent(): ServerPlayerInGame | null {
@@ -150,7 +152,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public setUnitMana(value: number): void {
-		if (this.unitMana === value) { return }
+		if (this.unitMana === value) {
+			return
+		}
 
 		const delta = value - this.unitMana
 
@@ -164,7 +168,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public setSpellMana(value: number): void {
-		if (this.spellMana === value) { return }
+		if (this.spellMana === value) {
+			return
+		}
 
 		const delta = value - this.spellMana
 
@@ -183,13 +189,17 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public onRoundStart(): void {
 		if (this.game.roundIndex === 0) {
-			this.game.events.postEvent(GameEventCreators.gameStarted({
-				player: this
-			}))
+			this.game.events.postEvent(
+				GameEventCreators.gameStarted({
+					player: this,
+				})
+			)
 		}
-		this.game.events.postEvent(GameEventCreators.roundStarted({
-			player: this
-		}))
+		this.game.events.postEvent(
+			GameEventCreators.roundStarted({
+				player: this,
+			})
+		)
 	}
 
 	public startMulligan(): void {
@@ -200,14 +210,16 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public showMulliganCards(): void {
 		const cardsToMulligan = this.cardHand.unitCards
-		const targets = Utils.sortCards(cardsToMulligan).map(card => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card))
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(this.player, TargetMode.MULLIGAN, targets, null)
+		const targets = Utils.sortCards(cardsToMulligan).map((card) =>
+			ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card)
+		)
+		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(this.player, TargetMode.MULLIGAN, targets)
 	}
 
 	public finishMulligan(): void {
 		this.mulliganMode = false
 		this.cardsMulliganed = 0
-		OutgoingMessageHandlers.notifyAboutRequestedTargets(this.player, TargetMode.MULLIGAN, [], null)
+		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(this.player, TargetMode.MULLIGAN, [])
 	}
 
 	public startTurn(): void {
@@ -224,9 +236,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnStart(): void {
-		this.game.events.postEvent(GameEventCreators.turnStarted({
-			player: this
-		}), { allowThreading: false })
+		this.game.events.postEvent(
+			GameEventCreators.turnStarted({
+				player: this,
+			})
+		)
 	}
 
 	public endTurn(): void {
@@ -239,19 +253,24 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onTurnEnd(): void {
-		// TODO: Move this to corresponding buffs
-		this.cardHand.unitCards.filter(card => card.features.includes(CardFeature.TEMPORARY_CARD)).forEach(card => {
-			this.cardHand.discardCard(card)
-			this.cardGraveyard.addUnit(card)
-		})
-		this.cardHand.spellCards.filter(card => card.features.includes(CardFeature.TEMPORARY_CARD)).forEach(card => {
-			this.cardHand.discardCard(card)
-			this.cardGraveyard.addSpell(card)
-		})
+		this.cardHand.unitCards
+			.filter((card) => card.features.includes(CardFeature.TEMPORARY_CARD))
+			.forEach((card) => {
+				this.cardHand.discardCard(card)
+				this.cardGraveyard.addUnit(card)
+			})
+		this.cardHand.spellCards
+			.filter((card) => card.features.includes(CardFeature.TEMPORARY_CARD))
+			.forEach((card) => {
+				this.cardHand.discardCard(card)
+				this.cardGraveyard.addSpell(card)
+			})
 
-		this.game.events.postEvent(GameEventCreators.turnEnded({
-			player: this
-		}), { allowThreading: false })
+		this.game.events.postEvent(
+			GameEventCreators.turnEnded({
+				player: this,
+			})
+		)
 	}
 
 	public endRound(): void {
@@ -265,9 +284,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public onEndRound(): void {
-		this.game.events.postEvent(GameEventCreators.roundEnded({
-			player: this
-		}))
+		this.game.events.postEvent(
+			GameEventCreators.roundEnded({
+				player: this,
+			})
+		)
 	}
 
 	public disconnect(): void {

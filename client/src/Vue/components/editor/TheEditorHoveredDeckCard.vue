@@ -12,11 +12,11 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import * as PIXI from 'pixi.js'
-import {computed, ref} from '@vue/composition-api'
+import {computed, defineComponent, ref} from '@vue/composition-api'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
-export default {
+export default defineComponent({
 	components: {
 		PixiPreRenderedCard
 	},
@@ -50,8 +50,8 @@ export default {
 			editorModeOffset,
 			hoveredDeckCard,
 		}
-	},
-}
+	}
+})
 </script>
 
 <style scoped lang="scss">

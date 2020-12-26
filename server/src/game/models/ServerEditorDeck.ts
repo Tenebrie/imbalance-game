@@ -21,8 +21,8 @@ export default class ServerEditorDeck implements EditorDeck {
 	public static fromTemplate(template: CardDeck): ServerEditorDeck {
 		const cards: EditorCard[] = []
 
-		template.unitCards.forEach(card => {
-			const matchingCard = cards.find(testCard => testCard.class === card.class)
+		template.unitCards.forEach((card) => {
+			const matchingCard = cards.find((testCard) => testCard.class === card.class)
 			if (matchingCard) {
 				matchingCard.count += 1
 			} else {

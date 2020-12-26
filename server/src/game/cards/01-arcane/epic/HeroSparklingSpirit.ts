@@ -4,7 +4,7 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
-import GameHookType, {CardTakesDamageHookValues} from '../../../models/events/GameHookType'
+import GameHookType, { CardTakesDamageHookValues } from '../../../models/events/GameHookType'
 import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
 import SpellFleetingSpark from '../tokens/SpellFleetingSpark'
@@ -21,21 +21,20 @@ export default class HeroSparklingSpirit extends ServerCard {
 			faction: CardFaction.ARCANE,
 			relatedCards: [SpellFleetingSpark],
 			stats: {
-				power: 8
+				power: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.SPARK)
 		this.dynamicTextVariables = {
-			extraDamage: this.extraDamage
+			extraDamage: this.extraDamage,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 
 		this.createHook(GameHookType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
 			.require(({ damageInstance }) => !!damageInstance.sourceCard?.tribes.includes(CardTribe.SPARK))
-			.replace(values => this.onSparkDealsDamage(values))
+			.replace((values) => this.onSparkDealsDamage(values))
 	}
 
 	private onDeploy(): void {
@@ -48,7 +47,7 @@ export default class HeroSparklingSpirit extends ServerCard {
 		newDamageInstance.value = newDamageInstance.value + this.extraDamage
 		return {
 			...values,
-			damageInstance: newDamageInstance
+			damageInstance: newDamageInstance,
 		}
 	}
 }

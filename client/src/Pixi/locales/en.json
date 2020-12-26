@@ -149,18 +149,34 @@
 	"card.feature.keywordSummon.description": "Move a card from your deck into your hand until the end of your turn.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
+	"card.feature.keywordDispelX.name": "Dispel X",
+	"card.feature.keywordDispelX.description": "Remove last X dispellable buffs from the target.",
+	"card.feature.keywordProtector.name": "Protector",
+	"card.feature.keywordProtector.description": "Whenever an allied unit behind this takes damage, intercept it.",
+	"card.feature.keywordNightwatch.name": "Nightwatch",
+	"card.feature.keywordNightwatch.description": "Stays on the board after the round end.",
 	"card.feature.keywordHeroPower.name": "Leader Power",
 	"card.feature.keywordHeroPower.description": "When played as spell or destroyed as unit, target card returns to your deck. It is also always revealed.",
 	"card.feature.keywordBuffStun.name": "Stun (Buff)",
 	"card.feature.keywordBuffStun.description": "Target card is stunned and is temporarily disabled.",
 	"card.feature.keywordBuffGrowth.name": "Growth (Buff)",
 	"card.feature.keywordBuffGrowth.description": "Target card gets +1 Power at the start of its turn.",
-	"card.feature.keywordBuffStrength.name": "Strength (Buff)",
-	"card.feature.keywordBuffStrength.description": "Target card has 1 extra Power.",
 	"card.feature.keywordBuffImmunity.name": "Immunity (Buff)",
 	"card.feature.keywordBuffImmunity.description": "Target card is immune to damage and any effects.",
 	"card.feature.keywordBuffTemporaryCard.name": "Temporary card (Buff)",
 	"card.feature.keywordBuffTemporaryCard.description": "Target card can be played for free. It will be discarded at the end of the turn if not played.",
+	"card.feature.building.name": "Building",
+	"card.feature.building.description": "Stays on the board after the round end.",
+	"card.feature.building.text": "*Building*",
+	"card.feature.protector.name": "Protector",
+	"card.feature.protector.description": "Whenever an allied unit behind this takes damage, intercept it.",
+	"card.feature.protector.text": "*Protector*",
+	"card.feature.nightwatch.name": "Nightwatch",
+	"card.feature.nightwatch.description": "Stays on the board after the round end.",
+	"card.feature.nightwatch.text": "<c=green>Nightwatch</c>",
+	"card.feature.spy.name": "Spy",
+	"card.feature.spy.description": "Played on your opponent's side of the board.",
+	"card.feature.spy.text": "*Spy*",
 	"card.feature.heroPower.name": "Leader Power",
 	"card.feature.heroPower.description": "When played as spell or destroyed as unit, this card returns to your deck. It is also always revealed.",
 	"card.feature.heroPower.text": "*Leader Power*",
@@ -171,16 +187,16 @@
 	"card.feature.temporaryCard.description": "This card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.temporaryCard.text": "<c=orange>Temporary card</c>",
 
-	"card.stats.soloUnitDamage.text": "*Unit Damage +{value}*",
-	"card.stats.massUnitDamage.text": "*Mass Unit Damage +{value}*",
-	"card.stats.soloSpellDamage.text": "*Spell Damage +{value}*",
-	"card.stats.massSpellDamage.text": "*Mass Spell Damage +{value}*",
-	"card.stats.soloHealingPotency.text": "*Heal Potency +{value}*",
-	"card.stats.massHealingPotency.text": "*Mass Heal Potency +{value}*",
-	"card.stats.soloBuffPotency.text": "*Buff Potency +{value}*",
-	"card.stats.massBuffPotency.text": "*Mass Buff Potency +{value}*",
-	"card.stats.soloEffectDuration.text": "*Effect Duration +{value}*",
-	"card.stats.massEffectDuration.text": "*Mass Effect Duration +{value}*",
+	"card.stats.soloUnitDamage.text": "*Direct Unit Damage +{value}*",
+	"card.stats.massUnitDamage.text": "*Splash Unit Damage +{value}*",
+	"card.stats.soloSpellDamage.text": "*Direct Spell Damage +{value}*",
+	"card.stats.massSpellDamage.text": "*Splash Spell Damage +{value}*",
+	"card.stats.soloHealingPotency.text": "*Direct Heal Potency +{value}*",
+	"card.stats.massHealingPotency.text": "*Splash Heal Potency +{value}*",
+	"card.stats.soloBuffPotency.text": "*Direct Buff Potency +{value}*",
+	"card.stats.massBuffPotency.text": "*Splash Buff Potency +{value}*",
+	"card.stats.soloEffectDuration.text": "*Direct Effect Duration +{value}*",
+	"card.stats.massEffectDuration.text": "*Splash Effect Duration +{value}*",
 	"card.stats.targetCount.text": "*Card Target Count +{value}*",
 	"card.stats.criticalHitChance.text": "*Critical Hit Chance +{value}%*",
 	"card.stats.criticalBuffChance.text": "*Critical Buff Chance +{value}%*",
@@ -189,7 +205,8 @@
 	"card.tribe.bird": "Bird",
 	"card.tribe.loot": "Loot",
 	"card.tribe.beast": "Beast",
-	"card.tribe.human": "Human",
+	"card.tribe.dryad": "Dryad",
+	"card.tribe.noble": "Noble",
 	"card.tribe.storm": "Storm",
 	"card.tribe.spark": "Spark",
 	"card.tribe.undead": "Undead",
@@ -197,6 +214,7 @@
 	"card.tribe.dragon": "Dragon",
 	"card.tribe.crystal": "Crystal",
 	"card.tribe.cultist": "Cultist",
+	"card.tribe.peasant": "Peasant",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.merfolk": "Merfolk",
 	"card.tribe.building": "Building",
@@ -230,8 +248,11 @@
 	"buff.buffSpellExtraCost.name": "Spell markup",
 	"buff.buffSpellExtraCost.description": "This spell costs 1 Mana more.",
 
-	"buff.buffStrength.name": "Strength",
+	"buff.buffStrength.name": "Power",
 	"buff.buffStrength.description": "This card has 1 extra Power.",
+
+	"buff.buffExtraArmor.name": "Armor",
+	"buff.buffExtraArmor.description": "This card has 1 extra Armor.",
 
 	"buff.buffStun.name": "Stun",
 	"buff.buffStun.description": "This card is stunned and is temporarily disabled.",
@@ -256,6 +277,12 @@
 
 	"buff.buffVelElleronEncouragement.name": "An Encouragement",
 	"buff.buffVelElleronEncouragement.description": "This card will receive bonus Power at the start of next turn.",
+
+	"buff.buffNightwatch.name": "Nightwatch",
+	"buff.buffNightwatch.description": "This card has Nightwatch.",
+
+	"buff.buffNoArmor.name": "No Armor",
+	"buff.buffNoArmor.description": "This unit's Armor has been removed.",
 
 	"card.hidden.name": "[Hidden card]",
 
@@ -327,7 +354,7 @@
 
 	"card.heroTaekana.name": "Taekana",
 	"card.heroTaekana.title": "The Zookeeper",
-	"card.heroTaekana.description": "*Deploy:*\nGive +{strengthGiven} Power to ALL units.",
+	"card.heroTaekana.description": "*Deploy:*\nGive +{strengthGiven} Power to all units that do not have any buffs.",
 
 	"card.heroNoekana.name": "Noekana",
 	"card.heroNoekana.title": "The Zookeeper",
@@ -395,10 +422,10 @@
 	"card.unitDarkTimewarper.description": "*Deploy:*\nTrigger a *Turn end* effect on all allied *Void Portals*.\nThen, *Create* a *Void Portal*.",
 
 	"card.unitTravelingEnchantress.name": "Traveling\nEnchantress",
-	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current Power is at least double their base Power, give +{extraStrengthGiven} Power more.",
+	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current Power is at least 11, give +{extraStrengthGiven} Power more.",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
-	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Human card from your deck",
+	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Peasant card from your deck",
 
 	"card.unitForestScout.name": "Forest Scout",
 	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power\nIf you're losing on Morale, gain +{moralePowerBonus} Power",
@@ -452,6 +479,7 @@
 
 	"card.unitWingedShieldmaiden.name": "Winged Shieldmaiden",
 	"card.unitWingedShieldmaiden.description": "Whenever an allied unit takes damage, move the ally back, *Play* {name} in its' place and *Draw* a card.",
+	"card.unitWingedShieldmaiden.flavor": "- \"That girl? Not again. She's so much more trouble than she could ever be worth...\"",
 
 	"card.unitOceanicSeagull.name": "Oceanic Seagull",
 	"card.unitOceanicSeagull.description": "*Deploy:*\n*Summon* a Bronze Merfolk card from your deck.",
@@ -669,5 +697,65 @@
 	"card.unitChallengeScarredExplorer.description": "Choose one of {cardsToExplore} random Epic cards.\n*Create* a copy of it.",
 
 	"card.unitChallengeEagerExplorer.name": "Eager Explorer",
-	"card.unitChallengeEagerExplorer.description": "Choose one of {cardsToExplore} random Common cards.\n*Create* a copy of it."
+	"card.unitChallengeEagerExplorer.description": "Choose one of {cardsToExplore} random Common cards.\n*Create* a copy of it.",
+
+	"card.unitArcheryTower.name": "Archery Tower",
+	"card.unitArcheryTower.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only attack once per adjacent Peasant.",
+
+	"card.unitWoodenPalisade.name": "Wooden Palisade",
+	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn another *Wooden Palisade* on the right.",
+
+	"card.unitGenerousBlacksmith.name": "Generous Blacksmith",
+	"card.unitGenerousBlacksmith.description": "Whenever a unit moves into adjacent position from another row, give it +{bonusArmor} Armor.",
+
+	"card.unitQuietInfiltrator.name": "Quiet Infiltrator",
+	"card.unitQuietInfiltrator.description": "*Deploy:*\nDeal {damage} Damage to adjacent units.",
+
+	"card.unitCropField.name": "Crop Field",
+	"card.unitCropField.description": "*Turn end:*\nGive +{bonusPower} Power to an allied non-building unit with lowest Power value.\nRepeat once for every adjacent Peasant.",
+
+	"card.heroRobert.name": "Robert",
+	"card.heroRobert.title": "Building Instructor",
+	"card.heroRobert.description": "*Deploy:*\n*Summon* a Building and *Create* a copy of it with no armor.",
+	"card.heroRobert.flavor": "- \"And that's how you build it. Easy, right? Now, repeat after me.\"",
+
+	"card.heroThomas.name": "Thomas",
+	"card.heroThomas.title": "Master Builder",
+	"card.heroThomas.description": "*Deploy:*\n*Create* the *Grand Temple Building Site*.",
+
+	"card.unitHastyHandyman.name": "Hasty Handyman",
+	"card.unitHastyHandyman.description": "*Deploy:*\nRestore an allied Building to maximum Armor.",
+
+	"card.unitMasterOfMirrors.name": "Master of Mirrors",
+	"card.unitMasterOfMirrors.description": "*Deploy:*\nIf your unit deck has no duplicates, *Clone* all the cards in your deck and shuffle it.<p>Otherwise, only shuffle your deck.",
+
+	"card.unitMistressOfSmoke.name": "Mistress of Smoke",
+	"card.unitMistressOfSmoke.description": "*Deploy:*\n*Discard* {cardsToDiscard} left-most cards from your hand.\nThen, *Draw* as many cards as you have *Discarded*.<p>If your unit deck has no duplicates, *Discard* your entire hand instead.",
+
+	"card.unitMagiciansAssistant.name": "Magician's Assistant",
+	"card.unitMagiciansAssistant.description": "*Deploy:*\nPut a copy of an enemy unit to the top of your deck.<p>If your deck has no duplicates, you can also target allied units.",
+
+	"card.unitPrototypeScorpionCrew.name": "Prototype Scorpion Crew",
+	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and to itself.<p><i>May perform unlimited number of attacks per turn.</i>",
+
+	"card.unitMakeshiftShelter.name": "Makeshift Shelter",
+	"card.unitMakeshiftShelter.description": "*Deploy:*\nChoose a Common or Epic allied unit.\nIt has *Nightwatch* until the end of this round, as long as this is on the board.",
+
+	"card.unitEldergroveTender.name": "Eldergrove Tender",
+	"card.unitEldergroveTender.description": "*Deploy:*\nGive +{bonusPower} Power and apply *Growth* to an allied unit.",
+
+	"card.unitManaSilo.name": "Mana Silo",
+	"card.unitManaSilo.description": "*Deploy:* *Infuse* up to {maxInfuse} Mana.<p>*Round start:*\nRelease the *Infused* Mana.<if counterVisible><p><i>Mana stored: {manaInfused}.</i></if>",
+
+	"card.unitCleansingFlame.name": "Cleansing Flame",
+	"card.unitCleansingFlame.description": "*Deploy:*\n *Dispel* {dispelPower} from another unit.",
+
+	"card.unitFieldHospital.name": "Field Hospital",
+	"card.unitFieldHospital.description": "*Turn end:*\nRestore {healing} Power to adjacent units.",
+
+	"card.unitUrbanAmbusher.name": "Urban Ambusher",
+	"card.unitUrbanAmbusher.description": "Has +{bonusPower} Power for every Building on the same row.",
+
+	"card.unitUrbanTactician.name": "Urban Tactician",
+	"card.unitUrbanTactician.description": "Your other units that are directly adjacent to a Building have +{bonusPower} Power.<p><i>Doesn't work on buildings.</i>"
 }

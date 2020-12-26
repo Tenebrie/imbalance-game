@@ -9,10 +9,10 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitUndercityGambler extends ServerCard {
-	bonusPower = asSoloBuffPotency(5)
+	bonusPower = asDirectBuffPotency(5)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -28,16 +28,15 @@ export default class UnitUndercityGambler extends ServerCard {
 		})
 
 		this.dynamicTextVariables = {
-			bonusPower: this.bonusPower
+			bonusPower: this.bonusPower,
 		}
 
 		this.createDeployEffectTargets()
 			.target(TargetType.CARD_IN_UNIT_HAND)
-			.require(TargetType.CARD_IN_UNIT_HAND, args => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
+			.require(TargetType.CARD_IN_UNIT_HAND, (args) => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
 			.requireCardInPlayersHand()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD)
-			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {
@@ -48,7 +47,7 @@ export default class UnitUndercityGambler extends ServerCard {
 		if (drawnCards.length === 0) {
 			return
 		}
-		drawnCards.forEach(card => {
+		drawnCards.forEach((card) => {
 			card.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
 		})
 	}

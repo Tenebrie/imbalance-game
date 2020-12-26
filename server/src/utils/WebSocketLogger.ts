@@ -1,6 +1,6 @@
-import {NextFunction, Request, Response} from 'express'
+import { NextFunction, Request, Response } from 'express'
 
-export const wsLogger = () => (req: Request, res: Response, next: NextFunction) => {
+export const wsLogger = () => (req: Request, res: Response, next: NextFunction): void => {
 	next()
 	// @ts-ignore
 	if (req.ws) {

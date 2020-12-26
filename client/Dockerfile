@@ -14,6 +14,8 @@ ADD ./client /app/client
 ADD ./shared /app/shared
 COPY .eslintrc.json /app/client
 COPY .eslintrc.json /app/shared
+COPY .prettierrc.js /app/client
+COPY .prettierrc.js /app/shared
 
 WORKDIR /app/shared
 RUN yarn

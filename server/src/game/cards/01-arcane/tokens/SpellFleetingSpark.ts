@@ -9,15 +9,15 @@ import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloSpellDamage} from '../../../../utils/LeaderStats'
+import { asDirectSpellDamage } from '../../../../utils/LeaderStats'
 
 export default class SpellFleetingSpark extends ServerCard {
-	damage = asSoloSpellDamage(2)
+	damage = asDirectSpellDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.SPARK],
 			stats: {
@@ -26,15 +26,12 @@ export default class SpellFleetingSpark extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			damage: this.damage
+			damage: this.damage,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireEnemyUnit()
+		this.createDeployEffectTargets().target(TargetType.UNIT).requireEnemyUnit()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

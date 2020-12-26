@@ -8,14 +8,14 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asSoloHealingPotency, asSoloSpellDamage} from '../../../../../utils/LeaderStats'
+import { asDirectHealingPotency, asDirectSpellDamage } from '../../../../../utils/LeaderStats'
 import ServerBoardRow from '../../../../models/ServerBoardRow'
 import MoveDirection from '@shared/enums/MoveDirection'
 import ServerDamageInstance from '../../../../models/ServerDamageSource'
 
 export default class SpellTacticalMove extends ServerCard {
-	damage = asSoloSpellDamage(1)
-	healing = asSoloHealingPotency(2)
+	damage = asDirectSpellDamage(1)
+	healing = asDirectHealingPotency(2)
 
 	movingUnit: ServerUnit | null = null
 
@@ -26,13 +26,13 @@ export default class SpellTacticalMove extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.HERO_POWER],
 			stats: {
-				cost: 2
+				cost: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,
-			healing: this.healing
+			healing: this.healing,
 		}
 
 		this.createDeployEffectTargets()
@@ -49,14 +49,11 @@ export default class SpellTacticalMove extends ServerCard {
 			.require(TargetType.BOARD_ROW, ({ targetRow }) => Math.abs(targetRow.index - this.movingUnit!.rowIndex) <= 1)
 			.label(TargetType.BOARD_ROW, 'card.spellTacticalMove.target.label.row')
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetUnitSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetUnitSelected(targetUnit))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW)
-			.perform(({ targetRow }) => this.onTargetRowSelected(targetRow))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetRowSelected(targetRow))
 
-		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
-			.perform(() => this.onTargetsConfirmed())
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED).perform(() => this.onTargetsConfirmed())
 	}
 
 	private onTargetUnitSelected(target: ServerUnit): void {
@@ -67,9 +64,12 @@ export default class SpellTacticalMove extends ServerCard {
 		const movingUnit = this.movingUnit!
 		const moveDirection = this.game.board.getMoveDirection(this.ownerInGame, this.game.board.rows[movingUnit.rowIndex], target)
 		this.game.board.moveUnitToFarRight(movingUnit, target.index)
-		if (moveDirection === MoveDirection.FORWARD && this.game.board.getDistanceToDynamicFrontForPlayer(target.index, this.ownerInGame) === 0) {
+		if (
+			moveDirection === MoveDirection.FORWARD &&
+			this.game.board.getDistanceToDynamicFrontForPlayer(target.index, this.ownerInGame) === 0
+		) {
 			const targets = this.game.board.getClosestOpposingUnits(movingUnit)
-			targets.forEach(target => {
+			targets.forEach((target) => {
 				this.game.animation.createAnimationThread()
 				target.dealDamage(ServerDamageInstance.fromCard(this.damage, movingUnit.card))
 				this.game.animation.commitAnimationThread()

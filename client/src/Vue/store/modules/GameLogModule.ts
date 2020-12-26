@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid'
-import {createModule} from 'direct-vuex'
+import {v4 as uuidv4} from 'uuid'
+import {defineModule} from 'direct-vuex'
 import {moduleActionContext} from '@/Vue/store'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 
@@ -8,7 +8,7 @@ interface EventLogEntryGroup {
 	entries: EventLogEntryMessage[]
 }
 
-const GameLogModule = createModule({
+const GameLogModule = defineModule({
 	namespaced: true,
 	state: {
 		entryGroups: [] as EventLogEntryGroup[]

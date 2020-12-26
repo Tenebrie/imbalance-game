@@ -6,7 +6,9 @@
     },
 	"parser": "@typescript-eslint/parser",
 	"extends":  [
-		"plugin:@typescript-eslint/recommended"
+		"plugin:@typescript-eslint/recommended",
+		"prettier/@typescript-eslint",
+		"plugin:prettier/recommended"
 	],
     "globals": {
         "Atomics": "readonly",
@@ -17,35 +19,18 @@
         "sourceType": "module"
 	},
     "rules": {
-        "@typescript-eslint/indent": [
-            "error",
-            "tab",
-            {
-              "SwitchCase": 1
-            }
-        ],
         "linebreak-style": [
             "error",
             "unix"
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "never"
         ],
 		"no-tabs": "off",
 		"no-trailing-spaces": "off",
 		"object-curly-spacing": "off",
 		"space-before-function-paren": "off",
-		"no-mixed-spaces-and-tabs": "error",
 		"@typescript-eslint/no-namespace": "off",
 		"@typescript-eslint/member-delimiter-style": "off",
 		"@typescript-eslint/no-this-alias": "off",
 		"@typescript-eslint/no-var-requires": "off",
-		"@typescript-eslint/no-unused-vars": "off",
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/explicit-member-accessibility": "off",
 		"@typescript-eslint/explicit-function-return-type": "off",

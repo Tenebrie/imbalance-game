@@ -1,10 +1,10 @@
-import {createModule} from 'direct-vuex'
+import {defineModule} from 'direct-vuex'
 import * as PIXI from 'pixi.js'
 import Card from '@shared/models/Card'
 import store, {moduleActionContext} from '@/Vue/store'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
-const HoveredDeckCardModule = createModule({
+const HoveredDeckCardModule = defineModule({
 	namespaced: true,
 	mutations: {
 		setCard(state, inspectedCard: Card | null): void {

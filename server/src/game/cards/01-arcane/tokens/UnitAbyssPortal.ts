@@ -11,15 +11,15 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import {asMassBuffPotency} from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitAbyssPortal extends ServerCard {
-	powerPerCard = asMassBuffPotency(1)
+	powerPerCard = asSplashBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
-			color: CardColor.TOKEN,
+			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			relatedCards: [UnitVoidspawn],
 			stats: {
@@ -27,9 +27,10 @@ export default class UnitAbyssPortal extends ServerCard {
 				armor: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
+			hiddenFromLibrary: true,
 		})
 		this.dynamicTextVariables = {
-			powerPerCard: this.powerPerCard
+			powerPerCard: this.powerPerCard,
 		}
 		this.botEvaluation = new CustomBotEvaluation(this)
 
@@ -43,11 +44,9 @@ export default class UnitAbyssPortal extends ServerCard {
 		const owner = this.ownerInGame
 		const voidspawn = CardLibrary.instantiateByConstructor(this.game, UnitVoidspawn)
 		this.game.board.createUnit(voidspawn, this.ownerInGame, unit.rowIndex, unit.unitIndex + 1)
-		const uniqueCardsInBothDiscards = [...new Set(
-			owner.cardGraveyard.allCards
-				.concat(owner.opponent!.cardGraveyard.allCards)
-				.map(card => card.class)
-		)]
+		const uniqueCardsInBothDiscards = [
+			...new Set(owner.cardGraveyard.allCards.concat(owner.opponent!.cardGraveyard.allCards).map((card) => card.class)),
+		]
 		if (uniqueCardsInBothDiscards.length === 0) {
 			return
 		}

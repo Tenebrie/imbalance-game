@@ -21,16 +21,15 @@ export default class HeroElderElemental extends ServerCard {
 			tribes: [CardTribe.ELEMENTAL],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_TURN_START],
 			stats: {
-				power: 9
+				power: 9,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			manaGenerated: this.manaGenerated
+			manaGenerated: this.manaGenerated,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 
 		this.createCallback(GameEventType.TURN_STARTED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)

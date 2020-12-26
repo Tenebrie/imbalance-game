@@ -9,35 +9,32 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffStrength from '../../../buffs/BuffStrength'
-import {asSoloBuffPotency} from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
 
 export default class UnitTravelingEnchantress extends ServerCard {
-	baseStrengthGiven = asSoloBuffPotency(1)
-	extraStrengthGiven = asSoloBuffPotency(7)
+	baseStrengthGiven = asDirectBuffPotency(1)
+	extraStrengthGiven = asDirectBuffPotency(7)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.NEUTRAL,
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STRENGTH],
+			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			baseStrengthGiven: this.baseStrengthGiven,
-			extraStrengthGiven: this.extraStrengthGiven
+			extraStrengthGiven: this.extraStrengthGiven,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireAlliedUnit()
-			.requireNotSelf()
+		this.createDeployEffectTargets().target(TargetType.UNIT).requireAlliedUnit().requireNotSelf()
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
-			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

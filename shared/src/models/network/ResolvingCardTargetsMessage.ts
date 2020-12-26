@@ -7,13 +7,13 @@ import Card from '../Card'
 export default class ResolvingCardTargetsMessage {
 	targetMode: TargetMode
 	targets: CardTargetMessage[]
-	source: CardRefMessage | null
+	source: CardRefMessage
 
-	public constructor(targetMode: TargetMode, targets: CardTarget[], source: Card | null) {
-		const messages = targets.map(target => new CardTargetMessage(target))
+	public constructor(targetMode: TargetMode, targets: CardTarget[], source: Card) {
+		const messages = targets.map((target) => new CardTargetMessage(target))
 
 		this.targetMode = targetMode
 		this.targets = messages
-		this.source = source ? new CardRefMessage(source) : null
+		this.source = new CardRefMessage(source)
 	}
 }

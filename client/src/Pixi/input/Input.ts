@@ -4,8 +4,7 @@ import CardType from '@shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import {CardLocation} from '@/Pixi/enums/CardLocation'
-import {GrabbedCardMode} from '@/Pixi/enums/GrabbedCardMode'
+import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
@@ -19,6 +18,10 @@ import store from '@/Vue/store'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import TargetMode from '@shared/enums/TargetMode'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import { isGrabbedCardPlayableToRow } from '@/Pixi/input/ValidActions'
+import CardLocation from '@shared/enums/CardLocation'
+import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -58,9 +61,15 @@ export default class Input {
 		view.addEventListener('mousedown', (event: MouseEvent) => {
 			this.onMouseDown(event)
 		})
+		view.addEventListener('touchstart', (event: TouchEvent) => {
+			this.onTouchStart(event)
+		})
 
 		view.addEventListener('mouseup', (event: MouseEvent) => {
 			this.onMouseUp(event)
+		})
+		view.addEventListener('touchend', () => {
+			this.onTouchEnd()
 		})
 
 		view.addEventListener('mousemove', (event: MouseEvent) => {
@@ -70,17 +79,31 @@ export default class Input {
 				this.inspectCard()
 			}
 		})
+		view.addEventListener('touchmove', (event: TouchEvent) => {
+			this.onTouchMove(event)
+		})
 	}
 
 	public tick(): void {
 		this.updateCardHoverStatus()
 	}
 
+	public updateGrabbedCard(): void {
+		if (!this.grabbedCard || this.grabbedCard.card.location !== CardLocation.HAND || this.grabbedCard.card.owner !== Core.player) {
+			return
+		}
+
+		const validRows = this.playableCards
+			.filter((playableCard) => playableCard.sourceCardId === this.grabbedCard.card.id)
+			.map((playableCard) => Core.board.getRow(playableCard.targetRowIndex))
+		this.grabbedCard.updateValidTargetRows(validRows)
+	}
+
 	public updateCardHoverStatus(): void {
 		let hoveredCard: HoveredCard | null = null
 		const selectableCards = this.forcedTargetingCards.slice().reverse()
-		if (selectableCards.length > 0) {
-			const hoveredSelectableCard = selectableCards.find(card => card.isHovered()) || null
+		if (selectableCards.length > 0 && store.state.gameStateModule.popupTargetingCardsVisible) {
+			const hoveredSelectableCard = selectableCards.find((card) => card.isHovered()) || null
 			if (hoveredSelectableCard) {
 				hoveredCard = HoveredCard.fromSelectableCard(hoveredSelectableCard)
 			}
@@ -88,21 +111,21 @@ export default class Input {
 			return
 		}
 
-		const gameBoardCards = Core.board.rows.map(row => row.cards).flat()
+		const gameBoardCards = Core.board.rows.map((row) => row.cards).flat()
 		const playerHandCards = Core.player.cardHand.allCards.slice().reverse()
 		const opponentHandCards = Core.opponent ? Core.opponent.cardHand.allCards.slice().reverse() : []
 
-		const hoveredCardOnBoard = gameBoardCards.find(cardOnBoard => cardOnBoard.card.isHovered()) || null
+		const hoveredCardOnBoard = gameBoardCards.find((cardOnBoard) => cardOnBoard.card.isHovered()) || null
 		if (hoveredCardOnBoard) {
 			hoveredCard = HoveredCard.fromCardOnBoard(hoveredCardOnBoard)
 		}
 
-		const hoveredCardInPlayerHand = playerHandCards.find(card => card.isHovered()) || null
+		const hoveredCardInPlayerHand = playerHandCards.find((card) => card.isHovered()) || null
 		if (hoveredCardInPlayerHand) {
 			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInPlayerHand, Core.player)
 		}
 
-		const hoveredCardInOpponentHand = opponentHandCards.find(card => card.isHovered()) || null
+		const hoveredCardInOpponentHand = opponentHandCards.find((card) => card.isHovered()) || null
 		if (hoveredCardInOpponentHand) {
 			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInOpponentHand, Core.opponent)
 		}
@@ -114,15 +137,17 @@ export default class Input {
 		this.hoveredCard = hoveredCard
 
 		const hoveredRow = MouseHover.getHoveredRow()
-		if (hoveredRow && this.grabbedCard &&
+		if (
+			hoveredRow &&
+			this.grabbedCard &&
 			this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY &&
 			this.grabbedCard.validTargetRows.includes(hoveredRow) &&
-			this.grabbedCard.card.type === CardType.UNIT) {
-
+			this.grabbedCard.card.type === CardType.UNIT
+		) {
 			this.hoveredShadowUnit = {
 				card: this.grabbedCard.card,
 				rowIndex: hoveredRow.index,
-				unitIndex: this.getCardInsertIndex(hoveredRow)
+				unitIndex: this.getCardInsertIndex(hoveredRow),
 			}
 		} else {
 			this.hoveredShadowUnit = null
@@ -156,7 +181,7 @@ export default class Input {
 		}
 
 		if (event.button === LEFT_MOUSE_BUTTON && this.hoveredCard && this.hoveredCard.card === Core.mainHandler.announcedCard) {
-			Core.mainHandler.skipAnimation()
+			Core.mainHandler.skipCardAnnounce()
 			return
 		}
 
@@ -168,7 +193,7 @@ export default class Input {
 			return
 		}
 
-		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON) {
+		if (this.forcedTargetingMode && event.button === LEFT_MOUSE_BUTTON && store.state.gameStateModule.popupTargetingCardsVisible) {
 			this.forcedTargetingMode.selectTarget()
 			return
 		}
@@ -180,6 +205,48 @@ export default class Input {
 			this.rightMouseDown = true
 			this.inspectCardMode = InspectCardMode.HOLD
 		}
+	}
+
+	private onTouchStart(event: TouchEvent) {
+		// Notifications.info(`${}`)
+		this.onTouchMove(event)
+
+		if (this.inspectedCard) {
+			store.dispatch.inspectedCard.undoCard()
+			return
+		}
+
+		if (this.grabbedCard) {
+			this.useGrabbedCard()
+			return
+		}
+
+		if (this.hoveredCard && this.hoveredCard.card === Core.mainHandler.announcedCard) {
+			Core.mainHandler.skipCardAnnounce()
+			return
+		}
+
+		if (Core.isSpectating) {
+			return
+		}
+
+		if (this.forcedTargetingMode && this.forcedTargetingMode.targetMode === TargetMode.BROWSE) {
+			return
+		}
+
+		if (this.forcedTargetingMode && store.state.gameStateModule.popupTargetingCardsVisible) {
+			this.forcedTargetingMode.selectTarget()
+			return
+		}
+
+		this.leftMouseDown = true
+		this.grabCard()
+	}
+
+	private onTouchMove(event: TouchEvent) {
+		const view = Core.renderer.pixi.view
+		const clientRect = view.getBoundingClientRect()
+		this.mousePosition = new PIXI.Point(event.touches[0].clientX - clientRect.left, event.touches[0].clientY - clientRect.top)
 	}
 
 	private onMouseUp(event: MouseEvent) {
@@ -199,37 +266,55 @@ export default class Input {
 		}
 	}
 
+	private onTouchEnd() {
+		if (this.forcedTargetingMode && this.forcedTargetingMode.isSelectedTargetValid()) {
+			this.forcedTargetingMode.confirmTarget()
+			return
+		}
+
+		this.leftMouseDown = false
+		if (this.grabbedCard && !this.grabbedCard.shouldStick()) {
+			this.useGrabbedCard()
+		}
+	}
+
 	private onMouseMove(event: MouseEvent) {
 		const view = Core.renderer.pixi.view
 		const clientRect = view.getBoundingClientRect()
 		this.mousePosition = new PIXI.Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
 		this.mousePosition.x *= window.devicePixelRatio * Core.renderer.superSamplingLevel
 		this.mousePosition.y *= window.devicePixelRatio * Core.renderer.superSamplingLevel
-
-		const windowHeight = Core.renderer.pixi.view.height
-		const heightLimit = windowHeight * Core.renderer.PLAYER_HAND_WINDOW_FRACTION * 1.5
-		if (this.grabbedCard && this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && windowHeight - this.mousePosition.y > heightLimit && !this.playableCards.find(target => target.sourceCardId === this.grabbedCard.card.id)) {
-			this.releaseCard()
-		}
 	}
 
 	public grabCard(): void {
-		if (!Core.player.isTurnActive) { return }
-
 		const hoveredCard = this.hoveredCard
-		if (!hoveredCard || hoveredCard.owner !== Core.player) { return }
+		if (!hoveredCard || hoveredCard.owner !== Core.player) {
+			return
+		}
 
 		const card = hoveredCard.card
 
-		if (hoveredCard.location === CardLocation.HAND && hoveredCard.owner === Core.player) {
-			const validRows = this.playableCards.filter(playableCard => playableCard.sourceCardId === card.id).map(playableCard => Core.board.getRow(playableCard.targetRowIndex))
+		if (hoveredCard.location === HoveredCardLocation.HAND && hoveredCard.owner === Core.player) {
+			const validRows = this.playableCards
+				.filter((playableCard) => playableCard.sourceCardId === card.id)
+				.map((playableCard) => Core.board.getRow(playableCard.targetRowIndex))
 			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
-		} else if (hoveredCard.location === CardLocation.BOARD && hoveredCard.owner === Core.player && Core.game.turnPhase === GameTurnPhase.DEPLOY && Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0) {
+		} else if (
+			hoveredCard.location === HoveredCardLocation.BOARD &&
+			hoveredCard.owner === Core.player &&
+			Core.game.turnPhase === GameTurnPhase.DEPLOY &&
+			Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0
+		) {
 			const validOrders = Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id))
-			const validCards = validOrders.filter(order => order.targetType === TargetType.UNIT).map(order => order.targetCardId).map(id => Core.game.findRenderedCardById(id))
-			const validRows = validOrders.filter(order => order.targetType === TargetType.BOARD_ROW).map(order => Core.board.getRow(order.targetRowIndex))
+			const validCards = validOrders
+				.filter((order) => order.targetType === TargetType.UNIT)
+				.map((order) => order.targetCardId)
+				.map((id) => Core.game.findRenderedCardById(id))
+			const validRows = validOrders
+				.filter((order) => order.targetType === TargetType.BOARD_ROW)
+				.map((order) => Core.board.getRow(order.targetRowIndex))
 			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)
-		} else if (hoveredCard.location === CardLocation.SELECTABLE) {
+		} else if (hoveredCard.location === HoveredCardLocation.SELECTABLE) {
 			this.grabbedCard = GrabbedCard.cardSelect(card)
 		}
 	}
@@ -256,7 +341,7 @@ export default class Input {
 			return
 		}
 
-		if (this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY) {
+		if (this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && isGrabbedCardPlayableToRow(MouseHover.getHoveredRow())) {
 			this.onCardPlay(this.grabbedCard.card)
 		} else if (this.grabbedCard.mode === GrabbedCardMode.CARD_ORDER) {
 			this.onUnitOrder(this.grabbedCard.card)
@@ -299,7 +384,7 @@ export default class Input {
 			this.limboShadowUnit = {
 				card: card,
 				rowIndex: hoveredRow.index,
-				unitIndex: this.getCardInsertIndex(hoveredRow)
+				unitIndex: this.getCardInsertIndex(hoveredRow),
 			}
 		}
 		this.cardLimbo.push(card)
@@ -313,7 +398,9 @@ export default class Input {
 		const hoveredRow = MouseHover.getHoveredRow()
 
 		const validOrders = Core.board.getValidOrdersForUnit(orderedUnit)
-		const performedOrder = validOrders.find(order => (order.targetCardId === hoveredCard.id) || (hoveredRow && Core.board.getRow(order.targetRowIndex) === hoveredRow))
+		const performedOrder = validOrders.find(
+			(order) => order.targetCardId === hoveredCard.id || (hoveredRow && Core.board.getRow(order.targetRowIndex) === hoveredRow)
+		)
 		if (performedOrder) {
 			OutgoingMessageHandlers.sendUnitOrder(performedOrder)
 		}
@@ -326,11 +413,16 @@ export default class Input {
 		}
 
 		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
-		OutgoingMessageHandlers.sendCardTarget(this.forcedTargetingMode.validTargets.find(target => target.targetCardData.id === selectedCard.id))
+		const message = this.forcedTargetingMode.validTargets.find((target) => target.targetCardData.id === selectedCard.id)
+		if ('sourceCardId' in message) {
+			OutgoingMessageHandlers.sendCardTarget(message)
+		} else {
+			OutgoingMessageHandlers.sendAnonymousTarget(message)
+		}
 	}
 
 	public restoreLimboCard(cardMessage: CardRefMessage): RenderedCard {
-		const cardInLimbo = this.cardLimbo.find(card => card.id === cardMessage.id)
+		const cardInLimbo = this.cardLimbo.find((card) => card.id === cardMessage.id)
 		if (!cardInLimbo) {
 			return
 		}
@@ -340,60 +432,60 @@ export default class Input {
 		return cardInLimbo
 	}
 
-	public destroyLimboCard(cardId: string): void {
-		const cardInLimbo = this.cardLimbo.find(card => card.id === cardId)
-		if (cardInLimbo) {
-			Core.renderer.destroyCard(cardInLimbo)
-		}
-		this.evictCardFromLimbo(cardId)
-	}
-
 	private evictCardFromLimbo(cardId: string): void {
-		this.cardLimbo = this.cardLimbo.filter(card => card.id !== cardId)
+		this.cardLimbo = this.cardLimbo.filter((card) => card.id !== cardId)
 		if (this.limboShadowUnit && this.limboShadowUnit.card.id === cardId) {
 			this.limboShadowUnit = null
 		}
 	}
 
-	public async enableForcedTargetingMode(targetMode: TargetMode, validTargets: CardTargetMessage[], source: CardRefMessage | null): Promise<void> {
+	public async enableForcedTargetingMode(
+		targetMode: TargetMode,
+		validTargets: CardTargetMessage[] | AnonymousTargetMessage[],
+		source: CardRefMessage | null
+	): Promise<void> {
 		if (this.forcedTargetingMode) {
 			this.forcedTargetingMode.destroy()
 		}
 
-		const sourceCard: RenderedCard | null = Core.game.findRenderedCardById(source?.id)
+		const sourceCard: RenderedCard | null = source ? Core.game.findRenderedCardById(source.id, [CardLocation.STACK]) : null
 		await this.createForcedTargetingCards(validTargets)
 		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets, this.forcedTargetingCards.length === 0 ? sourceCard : null)
-		this.forcedTargetingMode.validTargets
-			.filter(target => target.targetCardData && !target.targetCardId)
-			.forEach(target => {
-				target.targetCardId = target.targetCardData.id
-			})
 		store.commit.gameStateModule.setPopupTargetingMode(targetMode)
+		store.commit.gameStateModule.setPopupTargetingCardCount(this.forcedTargetingCards.length)
+		store.commit.gameStateModule.setPopupTargetingCardsVisible(true)
 	}
 
-	public async createForcedTargetingCards(targets: CardTargetMessage[]): Promise<void> {
+	public async createForcedTargetingCards(targets: CardTargetMessage[] | AnonymousTargetMessage[]): Promise<void> {
 		const newCards = targets
-			.filter(target => target.targetType === TargetType.CARD_IN_LIBRARY || target.targetType === TargetType.CARD_IN_UNIT_DECK || target.targetType === TargetType.CARD_IN_SPELL_DECK)
-			.map(target => target.targetCardData)
+			.filter(
+				(target) =>
+					target.targetType === TargetType.CARD_IN_LIBRARY ||
+					target.targetType === TargetType.CARD_IN_UNIT_DECK ||
+					target.targetType === TargetType.CARD_IN_SPELL_DECK
+			)
+			.map((target) => target.targetCardData)
 
 		const existingCards = this.forcedTargetingCards
-		const addedCardMessages = newCards.filter(card => !existingCards.find(existingCard => existingCard.id === card.id))
+		const addedCardMessages = newCards.filter((card) => !existingCards.find((existingCard) => existingCard.id === card.id))
 
-		const cardsToAdd = await Utils.renderCardsAsynchronously(addedCardMessages)
-		const cardsToRemove = existingCards.filter(card => newCards.every(newCard => newCard.id !== card.id))
-		const result = existingCards.reduce<RenderedCard[]>((result, existingCard) => {
-			if (cardsToRemove.includes(existingCard) && cardsToAdd.length > 0) {
-				return result.concat(cardsToAdd.shift())
-			} else if (cardsToRemove.includes(existingCard)) {
-				return result
-			}
+		const cardsToAdd = addedCardMessages.map((message) => RenderedCard.fromMessage(message))
+		const cardsToRemove = existingCards.filter((card) => newCards.every((newCard) => newCard.id !== card.id))
+		const result = existingCards
+			.reduce<RenderedCard[]>((result, existingCard) => {
+				if (cardsToRemove.includes(existingCard) && cardsToAdd.length > 0) {
+					return result.concat(cardsToAdd.shift())
+				} else if (cardsToRemove.includes(existingCard)) {
+					return result
+				}
 
-			return result.concat(existingCard)
-		}, []).concat(cardsToAdd)
+				return result.concat(existingCard)
+			}, [])
+			.concat(cardsToAdd)
 
-		cardsToRemove.forEach(card => Core.destroyCard(card))
+		cardsToRemove.forEach((card) => Core.destroyCard(card))
 		PIXI.Ticker.shared.addOnce(() => {
-			result.forEach(card => card.resetDisplayMode())
+			result.forEach((card) => card.resetDisplayMode())
 		})
 
 		this.forcedTargetingCards = result
@@ -405,8 +497,9 @@ export default class Input {
 		}
 		this.forcedTargetingMode.destroy()
 		this.forcedTargetingMode = null
-		this.forcedTargetingCards.forEach(card => Core.destroyCard(card))
+		this.forcedTargetingCards.forEach((card) => Core.destroyCard(card))
 		this.forcedTargetingCards = []
 		store.commit.gameStateModule.setPopupTargetingMode(null)
+		store.commit.gameStateModule.setPopupTargetingCardCount(0)
 	}
 }

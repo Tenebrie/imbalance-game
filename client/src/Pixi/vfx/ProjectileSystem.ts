@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 import Core from '@/Pixi/Core'
 import RenderedProjectile from '@/Pixi/models/RenderedProjectile'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import {easeInQuad} from 'js-easing-functions'
+import { easeInQuad } from 'js-easing-functions'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
@@ -11,15 +11,15 @@ export default class ProjectileSystem {
 	private projectiles: RenderedProjectile[] = []
 
 	public tick(deltaTime: number, deltaFraction: number): void {
-		const endOfLifeProjectiles = this.projectiles.filter(projectile => projectile.currentTime >= projectile.lifetime)
-		endOfLifeProjectiles.forEach(projectile => {
+		const endOfLifeProjectiles = this.projectiles.filter((projectile) => projectile.currentTime >= projectile.lifetime)
+		endOfLifeProjectiles.forEach((projectile) => {
 			Core.renderer.rootContainer.removeChild(projectile.sprite)
 			Core.renderer.rootContainer.removeChild(projectile.trail.rope)
 		})
 
-		this.projectiles = this.projectiles.filter(projectile => projectile.currentTime < projectile.lifetime)
+		this.projectiles = this.projectiles.filter((projectile) => projectile.currentTime < projectile.lifetime)
 
-		this.projectiles.forEach(projectile => {
+		this.projectiles.forEach((projectile) => {
 			projectile.currentTime += deltaTime
 			const targetPoint = projectile.targetCard ? projectile.targetCard.getPosition() : projectile.targetPoint!
 
@@ -34,14 +34,14 @@ export default class ProjectileSystem {
 			}
 
 			if (projectile.startingPoint.y < targetPoint.y) {
-				targetPoint.y -= Math.cos(timePosition * Math.PI / 2) * (300 + projectile.randomnessFactor * 500)
+				targetPoint.y -= Math.cos((timePosition * Math.PI) / 2) * (300 + projectile.randomnessFactor * 500)
 			} else if (projectile.startingPoint.y >= targetPoint.y) {
-				targetPoint.y += Math.cos(timePosition * Math.PI / 2) * (300 + projectile.randomnessFactor * 500)
+				targetPoint.y += Math.cos((timePosition * Math.PI) / 2) * (300 + projectile.randomnessFactor * 500)
 			}
 
 			const distanceVector = {
 				x: targetPoint.x - projectile.startingPoint.x,
-				y: targetPoint.y - projectile.startingPoint.y
+				y: targetPoint.y - projectile.startingPoint.y,
 			}
 
 			if (projectile.currentTime < projectile.animationDuration) {
@@ -92,11 +92,15 @@ export default class ProjectileSystem {
 	}
 
 	public createCardAffectProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
-		return this.createAttackProjectile(sourceCard.getVisualPosition(), targetCard, () => { /* Empty */ })
+		return this.createAttackProjectile(sourceCard.getVisualPosition(), targetCard, () => {
+			/* Empty */
+		})
 	}
 
 	public createUniverseAffectProjectile(targetCard: RenderedCard): RenderedProjectile {
-		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => { /* Empty */ })
+		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => {
+			/* Empty */
+		})
 	}
 
 	public createCardHealProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {

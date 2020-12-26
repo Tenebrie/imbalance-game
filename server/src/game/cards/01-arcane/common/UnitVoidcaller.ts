@@ -18,13 +18,12 @@ export default class UnitVoidcaller extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			relatedCards: [UnitVoidPortal],
 			stats: {
-				power: 6
+				power: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.perform(() => this.onDeploy())
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
 
 	private onDeploy() {

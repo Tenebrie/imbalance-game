@@ -8,9 +8,9 @@ export default {
 		if (!instance) {
 			instance = new ServerGame({
 				name: 'Card Library Placeholder Game',
-				gameMode: GameMode.VS_AI
+				gameMode: GameMode.VS_AI,
 			})
 		}
 		return instance
-	}
+	},
 }

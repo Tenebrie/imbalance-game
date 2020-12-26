@@ -6,6 +6,7 @@ import StandardTargetDefinitionBuilder from './StandardTargetDefinitionBuilder'
 import CardType from '@shared/enums/CardType'
 import SimpleTargetDefinitionBuilder from './SimpleTargetDefinitionBuilder'
 import ServerCard from '../ServerCard'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class TargetDefinition {
 	private readonly game: ServerGame
@@ -15,12 +16,14 @@ export default class TargetDefinition {
 	private readonly conditions: ((args: TargetValidatorArguments) => boolean)[][][] = []
 	private readonly evaluators: ((args: TargetValidatorArguments) => number)[][][] = []
 
-	constructor(game: ServerGame,
+	constructor(
+		game: ServerGame,
 		totalTargetCountGetters: (number | ((card: ServerCard) => number))[],
 		orderLabels: string[][],
 		targetOfTypeCountGetters: (number | ((card: ServerCard) => number))[][][],
 		conditions: ((args: TargetValidatorArguments) => boolean)[][][],
-		evaluators: ((args: TargetValidatorArguments) => number)[][][]) {
+		evaluators: ((args: TargetValidatorArguments) => number)[][][]
+	) {
 		this.game = game
 		this.totalTargetCountGetters = totalTargetCountGetters
 		this.orderLabels = orderLabels
@@ -30,12 +33,14 @@ export default class TargetDefinition {
 	}
 
 	public getTargetCount(card: ServerCard): number {
-		return this.totalTargetCountGetters.map(value => {
-			if (typeof(value) === 'function') {
-				return value(card)
-			}
-			return value
-		}).reduce((acc, val) => acc + val, 0)
+		return this.totalTargetCountGetters
+			.map((value) => {
+				if (typeof value === 'function') {
+					return value(card)
+				}
+				return value
+			})
+			.reduce((acc, val) => acc + val, 0)
 	}
 
 	public getOrderLabel(reason: TargetMode, type: TargetType): string {
@@ -43,16 +48,18 @@ export default class TargetDefinition {
 	}
 
 	public getTargetOfTypeCount(card: ServerCard, targetMode: TargetMode, targetType: TargetType): number {
-		return this.targetOfTypeCountGetters[targetMode][targetType].map(value => {
-			if (typeof(value) === 'function') {
-				return value(card)
-			}
-			return value
-		}).reduce((acc, val) => acc + val, 0)
+		return this.targetOfTypeCountGetters[targetMode][targetType]
+			.map((value) => {
+				if (typeof value === 'function') {
+					return value(card)
+				}
+				return value
+			})
+			.reduce((acc, val) => acc + val, 0)
 	}
 
 	public require(reason: TargetMode, type: TargetType, args: TargetValidatorArguments): boolean {
-		return this.conditions[reason][type].every(condition => condition(args))
+		return this.conditions[reason][type].every((condition) => condition(args))
 	}
 
 	public evaluate(reason: TargetMode, type: TargetType, args: TargetValidatorArguments): number {
@@ -68,7 +75,11 @@ export default class TargetDefinition {
 			.target(TargetType.BOARD_ROW)
 			.require(TargetType.BOARD_ROW, ({ targetRow }) => !targetRow.isFull())
 			.require(TargetType.BOARD_ROW, (args) => {
-				return args.sourceCard.type === CardType.SPELL || args.targetRow.owner === args.sourceCard.owner
+				return (
+					args.sourceCard.type === CardType.SPELL ||
+					(!args.sourceCard.features.includes(CardFeature.SPY) && args.targetRow.owner === args.sourceCard.owner) ||
+					(args.sourceCard.features.includes(CardFeature.SPY) && args.targetRow.owner !== args.sourceCard.owner)
+				)
 			})
 	}
 }

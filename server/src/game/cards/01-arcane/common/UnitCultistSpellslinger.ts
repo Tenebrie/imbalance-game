@@ -45,7 +45,7 @@ export default class UnitCultistSpellslinger extends ServerCard {
 			.totalTargets(2)
 			.target(TargetType.CARD_IN_LIBRARY)
 			.require(TargetType.CARD_IN_LIBRARY, () => !!this.sacrificedUnit)
-			.require(TargetType.CARD_IN_LIBRARY, args => args.targetCard.tribes.includes(CardTribe.SCROLL))
+			.require(TargetType.CARD_IN_LIBRARY, (args) => args.targetCard.tribes.includes(CardTribe.SCROLL))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT)
 			.require(() => !this.sacrificedUnit)
@@ -55,8 +55,7 @@ export default class UnitCultistSpellslinger extends ServerCard {
 			.require(() => !!this.sacrificedUnit)
 			.perform(({ targetCard }) => this.onScrollSelected(targetCard))
 
-		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED)
-			.perform(() => this.onTargetsConfirmed())
+		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED).perform(() => this.onTargetsConfirmed())
 	}
 
 	private onScrollSelected(target: ServerCard): void {
@@ -67,7 +66,7 @@ export default class UnitCultistSpellslinger extends ServerCard {
 
 	private onSacrificeTargetSelected(target: ServerUnit): void {
 		this.sacrificedUnit = {
-			power: target.card.stats.power
+			power: target.card.stats.power,
 		}
 		this.game.board.destroyUnit(target, this)
 	}

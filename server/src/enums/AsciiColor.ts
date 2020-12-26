@@ -6,7 +6,7 @@ enum AsciiColor {
 	BLUE = '\u001b[34;1m',
 	MAGENTA = '\u001b[35;1m',
 	CYAN = '\u001b[36;1m',
-	WHITE = '\u001b[37;1m'
+	WHITE = '\u001b[37;1m',
 }
 
 export default AsciiColor
