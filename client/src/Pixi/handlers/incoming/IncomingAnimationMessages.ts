@@ -37,7 +37,7 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 	},
 
 	[AnimationMessageType.EXECUTE_QUEUE]: () => {
-		Core.performance.logQueueExecution()
+		Core.performance.logQueueFlush()
 		Core.mainHandler.mainAnimationThread.start()
 	},
 }

@@ -12,6 +12,14 @@ export default {
 		})
 	},
 
+	notifyAboutPerformanceMetrics(player: ServerPlayer, lastActionTiming: number): void {
+		player.sendMessage({
+			type: SystemMessageType.PERFORMANCE_METRICS,
+			data: lastActionTiming,
+			highPriority: true,
+		})
+	},
+
 	notifyAboutSpectateMode(player: ServerPlayer): void {
 		player.sendMessage({
 			type: SystemMessageType.MODE_SPECTATE,

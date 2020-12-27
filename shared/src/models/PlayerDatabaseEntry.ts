@@ -7,6 +7,7 @@ export default interface PlayerDatabaseEntry {
 	email: string
 	username: string
 	passwordHash: string
+	createdAt: string
 	accessLevel: AccessLevel
 	userLanguage: Language
 	renderQuality: RenderQuality

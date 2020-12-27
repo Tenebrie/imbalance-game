@@ -1,6 +1,7 @@
 export default class GamePerformance {
 	private actionTimestamp: number | null = null
-	private responseTimestamp: number | null = null
+	private acknowledgeTimestamp: number | null = null
+	private flushTimestamp: number | null = null
 
 	public logPlayerAction(): void {
 		if (this.actionTimestamp === null) {
@@ -8,22 +9,28 @@ export default class GamePerformance {
 		}
 	}
 
-	public logServerResponse(): void {
-		if (this.responseTimestamp === null && this.actionTimestamp !== null) {
-			this.responseTimestamp = performance.now()
+	public logMessageAcknowledge(): void {
+		if (this.acknowledgeTimestamp === null && this.actionTimestamp !== null) {
+			this.acknowledgeTimestamp = performance.now()
 		}
 	}
 
-	public logQueueExecution(): void {
-		if (this.actionTimestamp === null || this.responseTimestamp === null) {
+	public logQueueFlush(): void {
+		if (this.flushTimestamp === null && this.acknowledgeTimestamp !== null && this.actionTimestamp !== null) {
+			this.flushTimestamp = performance.now()
+		}
+	}
+
+	public logServerResponse(serverLoad: number): void {
+		if (this.actionTimestamp === null || this.acknowledgeTimestamp === null || this.flushTimestamp === null) {
 			return
 		}
 
-		const flushTimestamp = performance.now()
-		const actionToResponse = Math.round(this.responseTimestamp - this.actionTimestamp)
-		const actionToFlush = Math.round(flushTimestamp - this.responseTimestamp)
-		console.info(`[Perf] Ping: ${actionToResponse}ms; Server load: ${actionToFlush}ms`)
+		const actionToResponse = Math.round(this.acknowledgeTimestamp - this.actionTimestamp)
+		const actionToFlush = Math.round(this.flushTimestamp - this.acknowledgeTimestamp)
+		console.info(`[Perf] Ack in ${actionToResponse}ms | Flush in ${actionToFlush}ms | Server time: ${Math.round(serverLoad)}ms`)
 		this.actionTimestamp = null
-		this.responseTimestamp = null
+		this.acknowledgeTimestamp = null
+		this.flushTimestamp = null
 	}
 }

@@ -6,6 +6,7 @@
 				<th>ID</th>
 				<th>Email</th>
 				<th>Username</th>
+				<th>Created at</th>
 				<th>Access level</th>
 				<th>Actions</th>
 			</tr>
@@ -15,6 +16,7 @@
 					<td>{{ player.id.substr(0, 8) }}</td>
 					<td>{{ player.email }}</td>
 					<td>{{ player.username }}</td>
+					<td>{{ new Intl.DateTimeFormat('ru').format(new Date(player.createdAt)) }}</td>
 					<td>
 						<span v-if="player.id === currentPlayer.id">{{ player.accessLevel }}</span>
 						<label v-if="player.id !== currentPlayer.id">
@@ -45,15 +47,17 @@ import Player from '@shared/models/Player'
 import AccessLevel from '@shared/enums/AccessLevel'
 import Utils, {forEachInStringEnum} from '@/utils/Utils'
 import Notifications from '@/utils/Notifications'
+import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 
 export default defineComponent({
 	setup() {
-		const players = ref<PlayerMessage[]>([])
+		const players = ref<PlayerDatabaseEntry[]>([])
 		const currentPlayer = computed<Player>(() => store.state.player)
 
 		const loadData = async () => {
 			const response = await axios.get('/api/admin/players')
-			players.value = response.data as PlayerMessage[]
+			players.value = (response.data as PlayerDatabaseEntry[])
+				.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 		}
 
 		onMounted(() => {

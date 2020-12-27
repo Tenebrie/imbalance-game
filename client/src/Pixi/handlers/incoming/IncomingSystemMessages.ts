@@ -6,7 +6,11 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 
 const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHandlerFunction } = {
 	[SystemMessageType.MESSAGE_ACKNOWLEDGED]: () => {
-		Core.performance.logServerResponse()
+		Core.performance.logMessageAcknowledge()
+	},
+
+	[SystemMessageType.PERFORMANCE_METRICS]: (data: number) => {
+		Core.performance.logServerResponse(data)
 	},
 
 	[SystemMessageType.MODE_SPECTATE]: () => {
