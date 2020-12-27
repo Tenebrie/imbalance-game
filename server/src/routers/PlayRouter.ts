@@ -80,7 +80,10 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 
 		OutgoingMessageHandlers.notifyAboutMessageAcknowledged(currentPlayerInGame.player)
 		try {
+			const t1 = process.hrtime()
 			handler(msg.data, currentGame, currentPlayerInGame)
+			const t2 = process.hrtime(t1)
+			OutgoingMessageHandlers.notifyAboutPerformanceMetrics(currentPlayerInGame.player, t2[1] / 1000000)
 		} catch (e) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, e)
 			currentGame.forceShutdown('An error occurred')

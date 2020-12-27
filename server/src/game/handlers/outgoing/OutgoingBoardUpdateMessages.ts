@@ -10,11 +10,6 @@ export default {
 	notifyAboutUnitCreated(unit: ServerUnit): void {
 		unit.game.players.forEach((playerInGame) => {
 			playerInGame.player.sendMessage({
-				type: BoardUpdateMessageType.UNIT_CREATE,
-				data: new UnitMessage(unit),
-				highPriority: true,
-			})
-			playerInGame.player.sendMessage({
 				type: BoardUpdateMessageType.UNIT_INSERT,
 				data: new UnitMessage(unit),
 			})

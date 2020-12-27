@@ -73,6 +73,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.CARD_TARGET]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
+		console.time('CardTarget')
 		if (!playerInGame.targetRequired) {
 			return
 		}
@@ -82,6 +83,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
+		console.timeEnd('CardTarget')
 	},
 
 	[GenericActionMessageType.ANONYMOUS_TARGET]: (data: AnonymousTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {

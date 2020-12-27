@@ -2,12 +2,12 @@ import express, { Response } from 'express'
 import RequireAdminAccessLevelMiddleware from '../middleware/RequireAdminAccessLevelMiddleware'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import AsyncHandler from '../utils/AsyncHandler'
-import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
 import RequireSupportAccessLevelMiddleware from '../middleware/RequireSupportAccessLevelMiddleware'
 import RequireOriginalPlayerTokenMiddleware from '../middleware/RequireOriginalPlayerTokenMiddleware'
 import TokenManager from '../services/TokenService'
 import { getPlayerFromAuthenticatedRequest, setCookie } from '../utils/Utils'
 import AccessLevel from '@shared/enums/AccessLevel'
+import PlayerDatabase from '../database/PlayerDatabase'
 
 const router = express.Router()
 
@@ -17,9 +17,8 @@ router.use(RequireSupportAccessLevelMiddleware)
 router.get(
 	'/players',
 	AsyncHandler(async (req, res: Response) => {
-		const players = await PlayerLibrary.getAllPlayers()
-		const playerMessages = players?.map((player) => new OpenPlayerMessage(player)) || []
-		res.json(playerMessages)
+		const playerEntries = await PlayerDatabase.selectAllPlayers()
+		res.json(playerEntries)
 	})
 )
 
