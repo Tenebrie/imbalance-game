@@ -10,6 +10,7 @@
 		"serve-exec": "yarn tsc --incremental --tsBuildInfoFile dist/tsBuildInfo.json && mkdir -p dist/server/src/views && cp src/views/*.jade dist/server/src/views && node dist/server/src/app.js",
 		"watch": "babel --watch src --out-dir dist --extensions .ts,.tsx",
 		"lint": "yarn eslint src/ --ext .ts",
+		"lint-fix": "yarn eslint src/ --ext .ts --fix",
 		"test": "yarn jest"
 	},
 	"dependencies": {

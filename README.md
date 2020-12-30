@@ -35,6 +35,13 @@ After the build, you can access any of the apps:
 - Server: http://localhost:3000
 - Database: [postgres://localhost:5432](postgres://localhost:5432)
 
+### Linting
+The code is equipped with ESLint and Prettier. Use `yarn lint` inside the
+target project directory (client or server) to detect errors or `yarn lint-fix`
+to automatically fix what is fixable (currently only in server).
+
+If you're using an IDE, it should pick up all the linting rules automatically.
+
 ### Deploying to Heroku
 All the necessary build steps are built into the root `package.json` file, so for deployment it's enough to push
 the code to Heroku. Everything is automated after that point.
