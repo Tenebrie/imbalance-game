@@ -9,6 +9,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 
+/* Original design and implementation by Nenl */
 export default class HeroIllusionTwin extends ServerCard {
 	powerGiven = 3
 	powerLost = 1

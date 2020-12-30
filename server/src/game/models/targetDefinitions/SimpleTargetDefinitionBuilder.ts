@@ -124,6 +124,11 @@ export default class SimpleTargetDefinitionBuilder implements TargetDefinitionBu
 		return this
 	}
 
+	public preventSorting(): SimpleTargetDefinitionBuilder {
+		this.builder.preventSorting()
+		return this
+	}
+
 	public requireUnique(targetType: TargetType): SimpleTargetDefinitionBuilder {
 		return this.require(targetType, (args) => {
 			const applicablePreviousTargets =

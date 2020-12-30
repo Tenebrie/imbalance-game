@@ -66,13 +66,13 @@ This is a standard web application, with the frontend written in *Vue.js* and *P
 
 All the relevant code uses *TypeScript*.
 
-## <a name="making-cards"></a>Making cards
+# <a name="making-cards"></a>Making cards
 Adding custom cards is a relatively straight-forward process. While the stuff below may look intimidating, most of it
 is optional, and you can start by just copying an existing card that's close to what you're working on.
 
 However, to make a fully functional card from scratch, here are the required steps:
 
-### Basic card definition
+## Basic card definition
 - Create a new class anywhere under `server/src/game/cards` directory. The exact folder doesn't matter.
   - This class should extend `ServerCard` class.
   - Make sure that the class name matches the file name, otherwise it will be ignored by the loader.
@@ -144,7 +144,7 @@ However, to make a fully functional card from scratch, here are the required ste
       - Card won't appear in the library, and it won't be allowed in the deck.
       - Default: `false`.
     
-### Adding card text
+## Adding card text
 - Add card text to `client/src/Pixi/locales/en.json`
   - By default, any card requires the following entries:
     - `card.cardClass.name`
@@ -169,11 +169,11 @@ However, to make a fully functional card from scratch, here are the required ste
 - For any keywords you use in the description, add a corresponding keyword feature (such as
   `CardFeature.FEATURE_DEPLOY`) to the card definition to show when the card is inspected. 
 
-### Additional properties
+## Additional properties
 In addition to the properties described above, you may need some extra functionality.
 All the methods mentioned below will need to be invoked from the card constructor.
 
-#### Exporting variables
+### Exporting variables
 Instances of rich text attached to a card may utilize dynamic variables. A basic usage for **static values** looks
 as follows:
 ```
@@ -202,7 +202,7 @@ this.dynamicTextVariables = {
 
 Card variables are evaluated after every player or server action.
 
-#### <a name="related-cards"></a>Related cards
+### <a name="related-cards"></a>Related cards
 To add related cards that satisfy a certain condition, use `addRelatedCards` chaining method.
 
 For example, if a card is related to all Common Peasant cards from the Human faction, the call would look like this:
@@ -224,21 +224,28 @@ this.addRelatedCards()
     .requireFaction(CardFaction.HUMAN)
 ```
 
-### Adding card effects
-To be added later. For now, see the following methods in `ServerCard`: 
+## Implementing card effects
+To be refined later.
 
-- `createPlayTargets`
-- `createUnitOrderTargets`
-- `createDeployEffectTargets`
-  
+### Play targeting
+- `ServerCard::createPlayTargets`
+### Deploy effect targeting
+- `ServerCard::createDeployEffectTargets`
+### Unit order targeting
+- `ServerCard::createUnitOrderTargets`
+### Callbacks
+- `ServerCard::createCallback`
+### Effects
+- `ServerCard::createEffect`
+### Hooks
+- `ServerCard::createHook`
+### Selectors
+- `ServerCard::createSelector`
+### Animations and threading
+- `ServerGame::animation`
 
-- `createCallback`
-- `createEffect`
-- `createHook`
-- `createSelector`
 
-
-### <a name="rich-text"></a>Rich text
+## <a name="rich-text"></a>Rich text
 Rich text is supported in the following instances of text:
 - Card name
 - Card description

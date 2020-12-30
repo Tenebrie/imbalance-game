@@ -385,10 +385,10 @@
 	"card.heroRavenCaller.description": "*Deploy:*\n*Summon* a Bird from your deck",
 
 	"card.heroLightOracle.name": "Oracle of Light",
-	"card.heroLightOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your deck.\nChoose one to *Summon*.",
+	"card.heroLightOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your deck (in order).\nChoose one to *Summon*.",
 
 	"card.heroDarkOracle.name": "Oracle of Darkness",
-	"card.heroDarkOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your opponent's deck.\nChoose one to *Discard*.",
+	"card.heroDarkOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your opponent's deck (in order).\nChoose one to *Discard*.",
 
 	"card.heroCrystalWarrior.name": "Crystal Warrior",
 	"card.heroCrystalWarrior.description": "*Deploy:*\nDestroy an allied unit.\nThen, summon a *Crystal* in its place.",

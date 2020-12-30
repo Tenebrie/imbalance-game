@@ -58,7 +58,7 @@ export default {
 		} else if (playerInGame.mulliganMode) {
 			const cardsToMulligan = playerInGame.cardHand.unitCards
 			const targets = Utils.sortCards(cardsToMulligan).map((card) =>
-				ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card)
+				ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card)
 			)
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, targets)
 		}
@@ -116,7 +116,7 @@ export default {
 		} else if (spectatedPlayerInGame.mulliganMode) {
 			const cardsToMulligan = spectatedPlayerInGame.cardHand.unitCards
 			const targets = Utils.sortCards(cardsToMulligan).map((card) =>
-				ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card)
+				ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card)
 			)
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(spectator.player, TargetMode.MULLIGAN, targets)
 		}

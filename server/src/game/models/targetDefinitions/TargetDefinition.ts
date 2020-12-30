@@ -15,6 +15,7 @@ export default class TargetDefinition {
 	private readonly targetOfTypeCountGetters: (number | ((card: ServerCard) => number))[][][]
 	private readonly conditions: ((args: TargetValidatorArguments) => boolean)[][][] = []
 	private readonly evaluators: ((args: TargetValidatorArguments) => number)[][][] = []
+	private readonly preventSorting: boolean
 
 	constructor(
 		game: ServerGame,
@@ -22,7 +23,8 @@ export default class TargetDefinition {
 		orderLabels: string[][],
 		targetOfTypeCountGetters: (number | ((card: ServerCard) => number))[][][],
 		conditions: ((args: TargetValidatorArguments) => boolean)[][][],
-		evaluators: ((args: TargetValidatorArguments) => number)[][][]
+		evaluators: ((args: TargetValidatorArguments) => number)[][][],
+		preventSorting: boolean
 	) {
 		this.game = game
 		this.totalTargetCountGetters = totalTargetCountGetters
@@ -30,6 +32,7 @@ export default class TargetDefinition {
 		this.targetOfTypeCountGetters = targetOfTypeCountGetters
 		this.conditions = conditions
 		this.evaluators = evaluators
+		this.preventSorting = preventSorting
 	}
 
 	public getTargetCount(card: ServerCard): number {
@@ -56,6 +59,10 @@ export default class TargetDefinition {
 				return value
 			})
 			.reduce((acc, val) => acc + val, 0)
+	}
+
+	public shouldPreventSorting(): boolean {
+		return this.preventSorting
 	}
 
 	public require(reason: TargetMode, type: TargetType, args: TargetValidatorArguments): boolean {

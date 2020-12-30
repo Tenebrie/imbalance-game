@@ -211,7 +211,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public showMulliganCards(): void {
 		const cardsToMulligan = this.cardHand.unitCards
 		const targets = Utils.sortCards(cardsToMulligan).map((card) =>
-			ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card)
+			ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card)
 		)
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(this.player, TargetMode.MULLIGAN, targets)
 	}

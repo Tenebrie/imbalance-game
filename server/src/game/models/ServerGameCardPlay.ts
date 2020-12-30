@@ -1,6 +1,11 @@
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
-import { ServerAnonymousTargetCard, ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from './ServerCardTarget'
+import ServerCardTarget, {
+	ServerAnonymousTargetCard,
+	ServerCardTargetCard,
+	ServerCardTargetRow,
+	ServerCardTargetUnit,
+} from './ServerCardTarget'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerAnimation from './ServerAnimation'
 import CardType from '@shared/enums/CardType'
@@ -146,7 +151,7 @@ export default class ServerGameCardPlay {
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				currentCard.owner.player,
 				TargetMode.DEPLOY_EFFECT,
-				Utils.shuffle(validTargets),
+				validTargets,
 				currentCard.card
 			)
 		}
@@ -175,12 +180,7 @@ export default class ServerGameCardPlay {
 		let validTargets = this.getValidTargets()
 		const isValidTarget = !!validTargets.find((validTarget) => validTarget.isEqual(target))
 		if (!isValidTarget) {
-			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
-				playerInGame.player,
-				TargetMode.DEPLOY_EFFECT,
-				Utils.shuffle(validTargets),
-				currentCard
-			)
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(playerInGame.player, TargetMode.DEPLOY_EFFECT, validTargets, currentCard)
 			return
 		}
 
@@ -188,12 +188,7 @@ export default class ServerGameCardPlay {
 
 		currentResolvingCard.onResumeResolving = () => {
 			validTargets = this.getValidTargets()
-			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
-				playerInGame.player,
-				TargetMode.DEPLOY_EFFECT,
-				Utils.shuffle(validTargets),
-				currentCard
-			)
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(playerInGame.player, TargetMode.DEPLOY_EFFECT, validTargets, currentCard)
 
 			if (validTargets.length > 0) {
 				return
@@ -253,11 +248,8 @@ export default class ServerGameCardPlay {
 			})
 		)
 
-		const validTargets = this.getValidTargets()
-
-		if (validTargets.length > 0) {
-			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, Utils.shuffle(validTargets))
-			return
-		}
+		const cardsToMulligan = playerInGame.cardHand.unitCards
+		const targets = cardsToMulligan.map((card) => ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card))
+		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, targets)
 	}
 }

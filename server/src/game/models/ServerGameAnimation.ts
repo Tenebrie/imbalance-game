@@ -1,7 +1,6 @@
 import ServerGame from './ServerGame'
 import OutgoingAnimationMessages from '../handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from './ServerAnimation'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import AnimationType from '@shared/enums/AnimationType'
 
 export default class ServerGameAnimation {
@@ -46,9 +45,5 @@ export default class ServerGameAnimation {
 			return
 		}
 		this.play(ServerAnimation.null())
-	}
-
-	public playForPlayer(animation: ServerAnimation, targetPlayer: ServerPlayerInGame): void {
-		OutgoingAnimationMessages.triggerAnimationForPlayer(targetPlayer.player, animation)
 	}
 }

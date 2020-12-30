@@ -184,6 +184,11 @@ export default class ServerCardTarget {
 		return order
 	}
 
+	public static anonymousTargetCardInUnitHand(targetMode: TargetMode, targetCard: ServerCard): ServerAnonymousTargetCard {
+		// Intentionally sets target type to TargetType.CARD_IN_UNIT_DECK
+		return new ServerAnonymousTargetCard(targetMode, TargetType.CARD_IN_UNIT_DECK, targetCard)
+	}
+
 	public static anonymousTargetCardInUnitDeck(targetMode: TargetMode, targetCard: ServerCard): ServerAnonymousTargetCard {
 		return new ServerAnonymousTargetCard(targetMode, TargetType.CARD_IN_UNIT_DECK, targetCard)
 	}

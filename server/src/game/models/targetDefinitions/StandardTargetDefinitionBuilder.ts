@@ -13,6 +13,7 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 	private readonly targetOfTypeCountGetters: (number | ((card: ServerCard) => number))[][][]
 	private readonly conditions: ((args: TargetValidatorArguments) => boolean)[][][] = []
 	private readonly evaluators: ((args: TargetValidatorArguments) => number)[][][] = []
+	private __preventSorting = false
 
 	constructor(game: ServerGame) {
 		this.game = game
@@ -44,7 +45,8 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 			this.orderLabels,
 			this.targetOfTypeCountGetters,
 			this.conditions,
-			this.evaluators
+			this.evaluators,
+			this.__preventSorting
 		)
 	}
 
@@ -88,6 +90,11 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 		return this
 	}
 
+	public preventSorting(): StandardTargetDefinitionBuilder {
+		this.__preventSorting = true
+		return this
+	}
+
 	public merge(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
 		if (
 			(this.totalTargetCountGetters && this.totalTargetCountGetters.length > 0) ||
@@ -112,6 +119,7 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 				)
 			}
 		}
+		this.__preventSorting = this.__preventSorting || targetDefinition.__preventSorting
 		return this
 	}
 
@@ -128,6 +136,7 @@ export default class StandardTargetDefinitionBuilder implements TargetDefinition
 				clone.evaluators[targetingReason][targetType] = this.evaluators[targetingReason][targetType]
 			}
 		}
+		clone.__preventSorting = this.__preventSorting
 		return clone
 	}
 
