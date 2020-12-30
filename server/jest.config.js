@@ -1,6 +1,7 @@
 module.exports = {
 	setupFiles: ['<rootDir>/src/jest/global.ts'],
 	moduleNameMapper: {
+		'^@src(.*)$': '<rootDir>/src$1',
 		'^@shared(.*)$': '<rootDir>/../shared/src$1',
 	},
 	roots: ['<rootDir>/src'],
