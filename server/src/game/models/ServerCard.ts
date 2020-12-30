@@ -100,7 +100,7 @@ interface ServerCardLeaderProps extends ServerCardBaseProps {
 
 interface ServerCardUnitProps extends ServerCardBaseProps {
 	type: CardType.UNIT
-	color: CardColor.GOLDEN | CardColor.SILVER | CardColor.BRONZE | CardColor.TOKEN
+	color: CardColor.GOLDEN | CardColor.SILVER | CardColor.BRONZE
 	stats: {
 		power: number
 		armor?: number
