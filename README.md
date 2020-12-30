@@ -35,7 +35,7 @@ After the build, you can access any of the apps:
 - Server: http://localhost:3000
 - Database: [postgres://localhost:5432](postgres://localhost:5432)
 
-See the **Making cards** section below for info about, well, adding custom cards.
+See the [Making cards](#making-cards) section below for info about, well, adding custom cards.
 
 ### Linting
 The code is equipped with ESLint and Prettier. Use `yarn lint` inside the
@@ -66,7 +66,7 @@ This is a standard web application, with the frontend written in *Vue.js* and *P
 
 All the relevant code uses *TypeScript*.
 
-## Making cards
+## <a name="making-cards"></a>Making cards
 Adding custom cards is a relatively straight-forward process. While the stuff below may look intimidating, most of it
 is optional, and you can start by just copying an existing card that's close to what you're working on.
 
