@@ -89,7 +89,7 @@
 		"uuid": "^8.3.1"
 	},
 	"_moduleAliases": {
-		"@src": "src",
+		"@src": "dist/server/src",
 		"@shared": "dist/shared/src"
 	},
 	"babel": {
