@@ -44,6 +44,11 @@ to automatically fix what is fixable (currently only in `server`).
 
 If you're using an IDE, it should pick up all the linting rules automatically.
 
+### Admin access
+By default, the app will create an admin user with username `admin@localhost` and password `q`. When logged in as
+this user, you may elevate the permissions of other accounts. It's highly recommended that you create another admin
+user for yourself, and then disable the default account.
+
 ### Deploying to Heroku
 All the necessary build steps are built into the root `package.json` file, so for deployment it's enough to push
 the code to Heroku. Everything is automated after that point.
@@ -77,13 +82,15 @@ However, to make a fully functional card from scratch, here are the required ste
   - This class should extend `ServerCard` class.
   - Make sure that the class name matches the file name, otherwise it will be ignored by the loader.
   - Please follow the naming convention:
-    - Card class name should be in PascalCase;
+    - Card class name should be in PascalCase
     - Card class name should be prefixed:
-    - `Leader` for Leader cards
-    - `Hero` for Legendary units
-    - `Unit` for Epic and Common units
-    - `Spell` for Spells and Leader Powers
-    - `Token` for token spells (i.e. the ones that are never played in the game)
+      - `Leader` for Leader cards
+      - `Hero` for Legendary units
+      - `Unit` for Epic and Common units
+      - `Spell` for Spells and Leader Powers
+      - `Token` for token spells (i.e. the ones that are never played in the game)
+  
+
 - In the `super` call in the constructor, fill in the base parameters:
   - For **Units**:
     ```
@@ -129,13 +136,15 @@ However, to make a fully functional card from scratch, here are the required ste
         [Related cards](#related-cards) section.
       - Default: `[]`.
     - `sortPriority: number`
-      - Sorting priority. Comes after card color, type and power. Lower value means higher priority.
+      - Sorting priority. Lower value means higher priority.
+      - See [Card sorting](#card-sorting).
       - Default: `99`.
     - `isExperimental: boolean`
       - Marks the card as experimental.
       - Default: `false`.
     - `generatedArtworkMagicString: string`
       - Alters the generated card artwork. No effect if the proper artwork is provided.
+      - See [Artwork placeholders](#art-placeholders).
       - Default: `''`.
     - `deckAddedCards: CardConstructor[]`
       - List of cards added to the deck (units or spells) when the game starts.
@@ -282,3 +291,31 @@ The syntax for the rich text is a mix between Markdown and XML. See examples:
   
 
 - Additionally, you may use standard newlines and `<p></p>` tag for paragraphs.
+
+## Misc
+
+### <a name="card-sorting"></a>Card sorting
+On server-side, the cards are never sorted, and reside in their respective data structures in the order they were
+added. However, when sent to the client, by default, cards are sorted. Client is also able to sort cards itself
+when necessary.
+
+You may find the sorting algorithm in `shared/src/Utils.ts`, but the logic is as follows:
+- Card without `CardFeature.LOW_SORT_PRIORITY` > Card with `CardFeature.LOW_SORT_PRIORITY`
+- Units > Spells
+- Legendaries > Epics > Commons > Tokens
+- Unit Power or Spell Cost
+  - For units: Higher Base Power > Lower Base Power
+  - For spells: Lower Base Cost > Higher Base Cost
+- Lower `sortPriority` > Higher `sortPriority`
+- Then, `hashCode(card.class)` are compared
+- Lastly, `hashCode(card.id)` are compared
+
+### <a name="art-placeholders"></a>Artwork placeholders
+If a card definition doesn't have an artwork available (located in `client/public/assets/cards/cardClass.png`), a
+placeholder will be automatically generated. The random generator is seeded by the card's class name, meaning that
+if a card class is renamed, the artwork will change as well. However, the art will persist through server restarts,
+container rebuilds and environment changes.
+
+If the art generation has produced unsatisfactory results, you may use `generatedArtworkMagicString` param in the
+card constructor to augment it. The value provided to the parameter will be appended to the card's class name during
+the generation.

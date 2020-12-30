@@ -40,7 +40,6 @@ export default {
 	},
 
 	addCard: {
-		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(card.game, cardClass)
@@ -58,7 +57,6 @@ export default {
 			},
 		}),
 
-		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		for: (player: ServerPlayerInGame) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(player.game, cardClass)
@@ -78,7 +76,6 @@ export default {
 	},
 
 	createCard: {
-		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(card.game, cardClass)
@@ -96,7 +93,6 @@ export default {
 			},
 		}),
 
-		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		for: (player: ServerPlayerInGame) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(player.game, cardClass)
@@ -134,7 +130,6 @@ export default {
 		player.game.animation.play(ServerAnimation.cardGenerateMana(card))
 	},
 
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	dispel: (count: number) => ({
 		from: (targetCard: ServerCard) => ({
 			withSourceAs: (sourceCard: ServerCard) => {
@@ -144,3 +139,5 @@ export default {
 		}),
 	}),
 }
+
+/* eslint @typescript-eslint/explicit-module-boundary-types: 0 */
