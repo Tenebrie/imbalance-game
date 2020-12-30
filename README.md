@@ -121,7 +121,7 @@ However, to make a fully functional card from scratch, here are the required ste
       - Card tribes. See `shared/src/enums/CardTribe` for full list.
       - Default: `[]`.
     - `features: CardFeature | CardFeature[]`
-      - Card features. See `shared/src/enums/CardTribe` for full list.
+      - Card features. See `shared/src/enums/CardFeature` for full list.
       - Default: `[]`.
     - `relatedCards: CardConstructor | CardConstructor[]`
       - List of related cards. Use only for directly related tokens *that never change*.
