@@ -4,7 +4,7 @@ import {moduleActionContext} from '@/Vue/store'
 
 type ComponentInStack = {
 	component: Component
-	sticky: boolean
+	sticky?: boolean
 }
 
 const PopupModule = defineModule({
@@ -39,7 +39,7 @@ const PopupModule = defineModule({
 			if (state.componentStack.length === 0) {
 				return false
 			}
-			return state.componentStack[state.componentStack.length - 1].sticky
+			return !!state.componentStack[state.componentStack.length - 1].sticky
 		},
 	},
 
