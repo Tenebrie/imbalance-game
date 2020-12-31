@@ -82,6 +82,21 @@ export default {
 		return Database.updateRows(query)
 	},
 
+	async updatePlayerWelcomeModalSeenAt(id: string): Promise<boolean> {
+		const query = `UPDATE players SET "welcomeModalSeenAt" = current_timestamp WHERE id = '${id}'`
+		return Database.updateRows(query)
+	},
+
+	async updatePlayerMobileModalSeenAt(id: string): Promise<boolean> {
+		const query = `UPDATE players SET "mobileModalSeenAt" = current_timestamp WHERE id = '${id}'`
+		return Database.updateRows(query)
+	},
+
+	async updatePlayerAccessedAt(id: string): Promise<boolean> {
+		const query = `UPDATE players SET "accessedAt" = current_timestamp WHERE id = '${id}'`
+		return Database.updateRows(query)
+	},
+
 	async deletePlayer(id: string): Promise<boolean> {
 		const query = `DELETE FROM players WHERE id = '${id}'`
 		return Database.deleteRows(query)

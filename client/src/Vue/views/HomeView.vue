@@ -13,6 +13,8 @@ import TheGameList from '../components/home/TheGameList.vue'
 import TheChangelog from '@/Vue/components/home/TheChangelog.vue'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import TheDeckList from '@/Vue/components/editor/TheDeckList.vue'
+import TheSimpleSettings from '@/Vue/components/popup/escapeMenu/TheSimpleSettings.vue'
+import TheWelcomePopup from '@/Vue/components/popup/escapeMenu/TheWelcomePopup.vue'
 
 export default Vue.extend({
 	components: {
@@ -25,6 +27,14 @@ export default Vue.extend({
 		setTimeout(() => {
 			TextureAtlas.preloadComponents()
 		}, 500)
+
+		if (store.state.userPreferencesModule.welcomeModalSeenAt === null) {
+			store.dispatch.popupModule.open({
+				component: TheWelcomePopup,
+				sticky: true
+			})
+			store.dispatch.userPreferencesModule.markWelcomeModalAsSeen()
+		}
 	},
 
 	computed: {

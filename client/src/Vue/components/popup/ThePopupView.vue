@@ -23,7 +23,9 @@ export default defineComponent({
 		}
 
 		const onSmokeScreenClick = (): void => {
-			store.dispatch.popupModule.close()
+			if (!store.getters.popupModule.sticky) {
+				store.dispatch.popupModule.close()
+			}
 		}
 
 		return {

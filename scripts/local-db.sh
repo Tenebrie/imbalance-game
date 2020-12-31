@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker exec -it 158a8d9e09fb psql -Udocker db
+docker exec -it $(docker ps -aqf "name=notgwent-game_dev-db") psql -Udocker db

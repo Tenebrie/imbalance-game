@@ -7,22 +7,22 @@ exports.up = (pgm) => {
 		id: {
 			type: 'varchar(64)',
 			notNull: true,
-			unique: true
+			unique: true,
 		},
 		username: {
 			type: 'varchar(1024)',
 			notNull: true,
-			unique: true
+			unique: true,
 		},
 		passwordHash: {
 			type: 'varchar(1024)',
-			notNull: true
+			notNull: true,
 		},
 		createdAt: {
 			type: 'timestamp',
 			notNull: true,
-			default: pgm.func('current_timestamp')
-		}
+			default: pgm.func('current_timestamp'),
+		},
 	})
 }
 

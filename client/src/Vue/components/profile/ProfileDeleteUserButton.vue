@@ -22,9 +22,7 @@ export default Vue.extend({
 			this.requestInFlight = true
 
 			try {
-				await axios.delete('/api/user')
-				await store.dispatch.logout()
-				this.$noty.success('Profile deleted!')
+				await store.dispatch.deleteAccount()
 			} catch (e) {
 				this.$noty.error('Unable to delete your profile!')
 			}

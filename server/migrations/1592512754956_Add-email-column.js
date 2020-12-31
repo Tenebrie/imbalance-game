@@ -14,13 +14,13 @@ exports.up = async (pgm) => {
 		unique: ['email'],
 	})
 	pgm.alterColumn('players', 'email', {
-		notNull: true
+		notNull: true,
 	})
 }
 
 exports.down = (pgm) => {
 	pgm.createConstraint('players', 'players_username_key', {
-		unique: ['username']
+		unique: ['username'],
 	})
 
 	pgm.dropColumn('players', 'email')

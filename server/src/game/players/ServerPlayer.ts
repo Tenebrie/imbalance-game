@@ -15,6 +15,7 @@ export default class ServerPlayer implements Player {
 	accessLevel: AccessLevel
 	webSocket: PlayerWebSocket | null
 	spectators: ServerPlayerSpectator[]
+	public timestampUpdatedAt: Date = new Date()
 
 	constructor(id: string, email: string, username: string, accessLevel: AccessLevel) {
 		this.id = id

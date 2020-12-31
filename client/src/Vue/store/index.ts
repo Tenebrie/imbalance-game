@@ -99,6 +99,14 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			window.location.reload()
 		},
 
+		async deleteAccount(context): Promise<void> {
+			const { commit } = rootActionContext(context)
+			await axios.delete('/api/user')
+			LocalStorage.setHasAuthCookie(false)
+			commit.resetPlayerData()
+			window.location.reload()
+		},
+
 		joinGame(context, selectedGame: GameMessage): void {
 			const { commit } = rootActionContext(context)
 			commit.setSelectedGame(selectedGame)

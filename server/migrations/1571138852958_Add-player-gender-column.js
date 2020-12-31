@@ -8,8 +8,8 @@ exports.up = (pgm) => {
 		gender: {
 			type: 'gender_t',
 			notNull: true,
-			default: 'other'
-		}
+			default: 'other',
+		},
 	})
 }
 

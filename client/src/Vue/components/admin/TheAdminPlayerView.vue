@@ -7,6 +7,7 @@
 				<th>Email</th>
 				<th>Username</th>
 				<th>Created at</th>
+				<th>Accessed at</th>
 				<th>Access level</th>
 				<th>Actions</th>
 			</tr>
@@ -17,6 +18,7 @@
 					<td>{{ player.email }}</td>
 					<td>{{ player.username }}</td>
 					<td>{{ new Intl.DateTimeFormat('ru').format(new Date(player.createdAt)) }}</td>
+					<td>{{ new Intl.DateTimeFormat('ru').format(new Date(player.accessedAt)) }}</td>
 					<td>
 						<span v-if="player.id === currentPlayer.id">{{ player.accessLevel }}</span>
 						<label v-if="player.id !== currentPlayer.id">
@@ -57,7 +59,7 @@ export default defineComponent({
 		const loadData = async () => {
 			const response = await axios.get('/api/admin/players')
 			players.value = (response.data as PlayerDatabaseEntry[])
-				.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+				.sort((a, b) => new Date(b.accessedAt).getTime() - new Date(a.accessedAt).getTime())
 		}
 
 		onMounted(() => {

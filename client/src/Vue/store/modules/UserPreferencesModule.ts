@@ -17,6 +17,8 @@ const userPreferencesModule = defineModule({
 		effectsVolume: 0.50 as number,
 		ambienceVolume: 0.50 as number,
 		userInterfaceVolume: 0.50 as number,
+		welcomeModalSeenAt: null as Date | null,
+		mobileModalSeenAt: null as Date | null,
 	},
 
 	mutations: {
@@ -43,6 +45,13 @@ const userPreferencesModule = defineModule({
 		setUserInterfaceVolume(state, volume: number): void {
 			state.userInterfaceVolume = volume
 		},
+
+		setWelcomeModalSeenAt(state, timestamp: string): void {
+			state.welcomeModalSeenAt = timestamp ? new Date(timestamp) : null
+		},
+		setMobileModalSeenAt(state, timestamp: string): void {
+			state.mobileModalSeenAt = timestamp ? new Date(timestamp) : null
+		}
 	},
 
 	getters: {
@@ -62,6 +71,8 @@ const userPreferencesModule = defineModule({
 			commit.setEffectsVolume(profileMessage.effectsVolume)
 			commit.setAmbienceVolume(profileMessage.ambienceVolume)
 			commit.setUserInterfaceVolume(profileMessage.userInterfaceVolume)
+			commit.setWelcomeModalSeenAt(profileMessage.welcomeModalSeenAt)
+			commit.setMobileModalSeenAt(profileMessage.mobileModalSeenAt)
 		},
 
 		savePreferencesDebounced: debounce(1000, async (context) => {
@@ -82,6 +93,18 @@ const userPreferencesModule = defineModule({
 			const savePreferencesDebounced = dispatch.savePreferencesDebounced as (context) => Promise<void>
 			await savePreferencesDebounced(context)
 			AudioSystem.updateVolumeLevels()
+		},
+
+		async markWelcomeModalAsSeen(context): Promise<void> {
+			const { commit } = moduleActionContext(context, userPreferencesModule)
+			await axios.post('/api/user/modals/welcome')
+			commit.setWelcomeModalSeenAt(String(new Date().getTime()))
+		},
+
+		async markMobileModalAsSeen(context): Promise<void> {
+			const { commit } = moduleActionContext(context, userPreferencesModule)
+			await axios.post('/api/user/modals/mobile')
+			commit.setMobileModalSeenAt(String(new Date().getTime()))
 		}
 	}
 })

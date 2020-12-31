@@ -5,6 +5,7 @@ import PlayerLibrary from '../game/players/PlayerLibrary'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
 import { clearCookie, setCookie } from '../utils/Utils'
+import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
 
 const router = express.Router()
 
@@ -27,6 +28,8 @@ router.post(
 		res.json({ data: new OpenPlayerMessage(player) })
 	})
 )
+
+router.use(RequirePlayerTokenMiddleware)
 
 router.delete(
 	'/',

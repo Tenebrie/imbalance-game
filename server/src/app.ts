@@ -24,6 +24,7 @@ const AdminRouter = require('./routers/AdminRouter')
 const CardsRouter = require('./routers/CardsRouter')
 const DecksRouter = require('./routers/DecksRouter')
 const GamesRouter = require('./routers/GamesRouter')
+const ModalsRouter = require('./routers/ModalsRouter')
 const SessionRouter = require('./routers/SessionRouter')
 const UserProfileRouter = require('./routers/UserProfileRouter')
 
@@ -85,6 +86,7 @@ app.use('/api/decks', DecksRouter)
 app.use('/api/games', GamesRouter)
 app.use('/api/session', SessionRouter)
 app.use('/api/user', UserRouter)
+app.use('/api/user/modals', ModalsRouter)
 app.use('/api/user/profile', UserProfileRouter)
 
 /* Generic error handler */
