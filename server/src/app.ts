@@ -10,6 +10,7 @@ import expressWs from 'express-ws'
 import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import { wsLogger } from './utils/WebSocketLogger'
 import Database from './database/Database'
+import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 
 const app = express()
 expressWs(app)

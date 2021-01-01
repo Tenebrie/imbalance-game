@@ -69,7 +69,7 @@ export class CardSelector {
 		newSelectedCards.forEach((card) => {
 			this.game.animation.thread(() => {
 				this.onSelectCallbacks.forEach((callback) => {
-					cardPerform(() => callback({ target: card }))
+					cardPerform(this.game, () => callback({ target: card }))
 				})
 			})
 		})
@@ -131,7 +131,7 @@ export class CardSelector {
 	private deselectCards(cards: ServerCard[]): void {
 		cards.forEach((card) => {
 			this.game.animation.thread(() => {
-				this.onReleaseCallbacks.forEach((callback) => cardPerform(() => callback({ target: card })))
+				this.onReleaseCallbacks.forEach((callback) => cardPerform(this.game, () => callback({ target: card })))
 			})
 			this.game.animation.thread(() => {
 				card.buffs.removeAllByCardSelector(this)

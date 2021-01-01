@@ -1,5 +1,5 @@
 <template>
-	<div class="the-admin-player-view">
+	<div class="admin-player-view">
 		<table class="players-table">
 			<thead>
 			<tr>
@@ -14,13 +14,27 @@
 			</thead>
 			<tbody>
 				<tr v-for="(player) in players" :key="player.id">
-					<td>{{ player.id.substr(0, 8) }}</td>
-					<td>{{ player.email }}</td>
-					<td>{{ player.username }}</td>
+					<td><router-link :to="`/admin/users/${player.id}`">{{ player.id.substr(0, 8) }}</router-link></td>
+					<td><span class="user-input">{{ player.email }}</span></td>
+					<td><span class="user-input">{{ player.username }}</span></td>
 					<td>{{ new Intl.DateTimeFormat('ru').format(new Date(player.createdAt)) }}</td>
-					<td>{{ new Intl.DateTimeFormat('ru').format(new Date(player.accessedAt)) }}</td>
 					<td>
-						<span v-if="player.id === currentPlayer.id">{{ player.accessLevel }}</span>
+						{{
+							new Intl.DateTimeFormat('ru', {
+								year: 'numeric',
+								month: 'numeric',
+								day: 'numeric',
+								hour: 'numeric',
+								minute: 'numeric'
+							}).format(new Date(player.accessedAt))
+						}}
+					</td>
+					<td>
+						<span v-if="player.id === currentPlayer.id">
+							<select disabled>
+								<option>{{ player.accessLevel }}</option>
+							</select>
+						</span>
 						<label v-if="player.id !== currentPlayer.id">
 							<select @change="event => onAccessLevelChange(player, event)">
 								<option :selected="accessLevel === player.accessLevel" :key="accessLevel" v-for="accessLevel in accessLevels">{{ accessLevel }}</option>
@@ -31,7 +45,7 @@
 						<div v-if="player.id !== currentPlayer.id">
 							<a v-if="player.accessLevel !== AccessLevel.DISABLED" class="action-link" @click="onLogin(player)">Login</a>
 							<span v-if="player.accessLevel !== AccessLevel.DISABLED"> | </span>
-							<span>Delete</span>
+							<a class="action-link" @click="onDelete(player)">Delete</a>
 						</div>
 					</td>
 				</tr>
@@ -47,7 +61,7 @@ import PlayerMessage from '@shared/models/network/player/PlayerMessage'
 import store from '@/Vue/store'
 import Player from '@shared/models/Player'
 import AccessLevel from '@shared/enums/AccessLevel'
-import Utils, {forEachInStringEnum} from '@/utils/Utils'
+import {forEachInStringEnum} from '@/utils/Utils'
 import Notifications from '@/utils/Notifications'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 
@@ -59,7 +73,6 @@ export default defineComponent({
 		const loadData = async () => {
 			const response = await axios.get('/api/admin/players')
 			players.value = (response.data as PlayerDatabaseEntry[])
-				.sort((a, b) => new Date(b.accessedAt).getTime() - new Date(a.accessedAt).getTime())
 		}
 
 		onMounted(() => {
@@ -67,20 +80,29 @@ export default defineComponent({
 		})
 
 		const onLogin = async(player: PlayerMessage) => {
-			const response = await axios.post(`/api/admin/players/${player.id}/login`)
-			if (response.status !== 204) {
-				return
-			}
+			await axios.post(`/api/admin/players/${player.id}/login`)
 			window.location.href = '/'
 		}
 
-		const onAccessLevelChange = async(player: Player, event: Event & { target: { value: AccessLevel }}) => {
-			const response = await axios.post(`/api/admin/players/${player.id}/accessLevel`, { accessLevel: event.target.value })
-			if (response.status === 204) {
-				Notifications.success('Access level updated!')
-			} else {
-				Notifications.error('Unable to update user access level')
+		const onDelete = async(player: PlayerMessage) => {
+			if (!confirm(`Delete user?\n\nEmail: ${player.email}\nUsername: ${player.username}`)) {
+				return
 			}
+
+			await axios.delete(`/api/admin/players/${player.id}`)
+				.catch(() => {
+					Notifications.error('Unable to delete user')
+				})
+			Notifications.success('User deleted!')
+			await loadData()
+		}
+
+		const onAccessLevelChange = async(player: Player, event: Event & { target: { value: AccessLevel }}) => {
+			await axios.post(`/api/admin/players/${player.id}/accessLevel`, { accessLevel: event.target.value })
+				.catch(() => {
+					Notifications.error('Unable to update user access level')
+				})
+			Notifications.success('Access level updated!')
 			await loadData()
 		}
 
@@ -94,6 +116,7 @@ export default defineComponent({
 			players,
 			accessLevels,
 			onLogin,
+			onDelete,
 			onAccessLevelChange,
 			AccessLevel
 		}
@@ -104,7 +127,7 @@ export default defineComponent({
 <style scoped lang="scss">
 	@import "../../styles/generic";
 
-	.the-admin-player-view {
+	.admin-player-view {
 		overflow-y: scroll;
 	}
 
@@ -125,8 +148,23 @@ export default defineComponent({
 		background-color: rgba(white, 0.05);
 	}
 
+	table {
+	}
 	td, th {
-		padding: 12px 24px;
+		padding: 12px 12px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		width: auto;
+		white-space: nowrap;
+	}
+
+	.user-input {
+		vertical-align: bottom;
+		display: inline-block;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		max-width: 180px;
+		white-space: nowrap;
 	}
 
 	.action-link {

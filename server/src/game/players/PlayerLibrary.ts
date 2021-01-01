@@ -71,7 +71,7 @@ class PlayerLibrary {
 
 	public async login(email: string, password: string): Promise<ServerPlayer | null> {
 		email = email.toLowerCase()
-		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(email)
+		const playerDatabaseEntry = await PlayerDatabase.selectPlayerWithPasswordByEmail(email)
 
 		if (!playerDatabaseEntry) {
 			return null

@@ -10,6 +10,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 import CardLibrary from '../../../libraries/CardLibrary'
 import Utils from '../../../../utils/Utils'
+import GameError from '@src/errors/GameError'
 
 export default class UnitChallengeEagerExplorer extends ServerCard {
 	exploredCards: ServerCard[] = []
@@ -42,6 +43,7 @@ export default class UnitChallengeEagerExplorer extends ServerCard {
 	}
 
 	private onDeploy(): void {
+		throw new GameError('Testing error')
 		const commonCards = CardLibrary.cards
 			.filter((card) => card.color === CardColor.BRONZE)
 			.filter((card) => card.isCollectible)

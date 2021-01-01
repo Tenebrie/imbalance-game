@@ -3,7 +3,7 @@
 		<div class="container">
 			<div class="navigation">
 				<router-link :to="{ name: 'admin-games' }" class="router-link">
-					Active games
+					Game history
 				</router-link>
 				<router-link :to="{ name: 'admin-users' }" class="router-link">
 					Registered users

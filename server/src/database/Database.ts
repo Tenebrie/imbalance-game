@@ -2,6 +2,7 @@ import pgMigrate from 'node-pg-migrate'
 import { Client, QueryResult } from 'pg'
 import { colorize } from '../utils/Utils'
 import AsciiColor from '../enums/AsciiColor'
+import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 
 class Database {
 	private client: Client | undefined
@@ -41,6 +42,7 @@ class Database {
 
 			console.info('Database client ready')
 			this.client = client
+			GameHistoryDatabase.closeAbandonedGames().then()
 		} catch (e) {
 			console.error('[ERROR] Unable to connect to database!', e)
 		}

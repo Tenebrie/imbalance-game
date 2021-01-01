@@ -27,6 +27,7 @@ import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import CardFeature from '@shared/enums/CardFeature'
 import { BuffConstructor } from './ServerBuffContainer'
+import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 
 interface ServerGameProps extends OptionalGameProps {
 	gameMode: GameMode
@@ -151,6 +152,7 @@ export default class ServerGame implements Game {
 		this.events.flushLogEventGroup()
 		this.startMulliganPhase()
 
+		GameHistoryDatabase.startGame(this).then()
 		OutgoingMessageHandlers.executeMessageQueue(this)
 	}
 
@@ -364,6 +366,7 @@ export default class ServerGame implements Game {
 				`Game ${colorizeId(this.id)} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won! [${victoryReason}]`
 			)
 		}
+		GameHistoryDatabase.closeGame(this, victoryReason, victoriousPlayer instanceof ServerBotPlayerInGame ? null : victoriousPlayer).then()
 
 		setTimeout(() => {
 			this.forceShutdown('Cleanup')

@@ -135,12 +135,22 @@ const router = new VueRouter({
 				{
 					path: '/admin/games',
 					name: 'admin-games',
-					// component: () => import('@/Vue/components/editor/EditorDeckCardList.vue'),
+					component: () => import('@/Vue/components/admin/AdminGamesView.vue'),
+				},
+				{
+					path: '/admin/games/:gameId',
+					name: 'admin-game-details',
+					component: () => import('@/Vue/components/admin/AdminGameDetailsView.vue'),
 				},
 				{
 					path: '/admin/users',
 					name: 'admin-users',
-					component: () => import('@/Vue/components/admin/TheAdminPlayerView.vue'),
+					component: () => import('@/Vue/components/admin/AdminPlayerView.vue'),
+				},
+				{
+					path: '/admin/users/:playerId',
+					name: 'admin-player-details',
+					component: () => import('@/Vue/components/admin/AdminPlayerDetailsView.vue'),
 				},
 				{
 					path: '/admin/cards',

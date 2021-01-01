@@ -28,7 +28,7 @@ type CallbackQueueEntry = {
 
 export default class ServerGameEvents {
 	private readonly game: ServerGame
-	private readonly eventLog: EventLogEntryMessage[][]
+	public readonly eventLog: EventLogEntryMessage[][]
 	private eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
 	private eventHooks: Map<GameHookType, EventHook<any, any>[]>
 
@@ -98,7 +98,7 @@ export default class ServerGameEvents {
 			.filter((subscription) => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
 			.filter((subscription) =>
 				subscription.conditions.every((condition) => {
-					return cardRequire(() => condition(event.args, event))
+					return cardRequire(this.game, () => condition(event.args, event))
 				})
 			)
 
@@ -108,7 +108,7 @@ export default class ServerGameEvents {
 			if (this.evaluatingSelectors || (event.effectSource && event.effectSource === subscription.subscriber)) {
 				subscription.callbacks.forEach((callback) => {
 					this.logEventExecution(event, subscription, true)
-					cardPerform(() => {
+					cardPerform(this.game, () => {
 						callback(event.args, preparedState)
 					})
 				})
@@ -138,13 +138,13 @@ export default class ServerGameEvents {
 			.filter(
 				(hook) =>
 					!hook.conditions.find((condition) => {
-						return cardRequire(() => !condition(hookArgs))
+						return cardRequire(this.game, () => !condition(hookArgs))
 					})
 			)
 
 		matchingHooks.forEach((hook) =>
 			hook.callbacks.forEach((callback) => {
-				cardPerform(() => callback(hookArgs))
+				cardPerform(this.game, () => callback(hookArgs))
 			})
 		)
 
@@ -186,7 +186,7 @@ export default class ServerGameEvents {
 		const filterOutEvents = () => {
 			currentCallbacks = currentCallbacks.filter((callbackWrapper) => {
 				const failedCondition = callbackWrapper.immediateConditions.find((condition) => {
-					return cardRequire(() => !condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent))
+					return cardRequire(this.game, () => !condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent))
 				})
 				return !failedCondition
 			})
@@ -198,7 +198,7 @@ export default class ServerGameEvents {
 			const callbackWrapper = currentCallbacks.shift()!
 
 			this.logEventExecution(callbackWrapper.rawEvent, callbackWrapper.subscription, false)
-			cardPerform(() => {
+			cardPerform(this.game, () => {
 				callbackWrapper.callback(callbackWrapper.args, callbackWrapper.preparedState)
 			})
 			this.game.animation.syncAnimationThreads()

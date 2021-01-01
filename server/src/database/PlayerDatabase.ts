@@ -13,22 +13,27 @@ export default {
 	},
 
 	async selectPlayerById(id: string): Promise<PlayerDatabaseEntry | null> {
-		const query = `SELECT * FROM players WHERE id = '${id}'`
+		const query = `SELECT *, '[Redacted]' as "passwordHash" FROM players WHERE id = '${id}'`
 		return Database.selectRow<PlayerDatabaseEntry>(query)
 	},
 
 	async selectPlayerByEmail(email: string): Promise<PlayerDatabaseEntry | null> {
+		const query = `SELECT *, '[Redacted]' as "passwordHash" FROM players WHERE email = '${email}'`
+		return Database.selectRow<PlayerDatabaseEntry>(query)
+	},
+
+	async selectPlayerWithPasswordByEmail(email: string): Promise<PlayerDatabaseEntry | null> {
 		const query = `SELECT * FROM players WHERE email = '${email}'`
 		return Database.selectRow<PlayerDatabaseEntry>(query)
 	},
 
 	async selectPlayerByUsername(username: string): Promise<PlayerDatabaseEntry | null> {
-		const query = `SELECT * FROM players WHERE username = '${username}'`
+		const query = `SELECT *, '[Redacted]' as "passwordHash" FROM players WHERE username = '${username}'`
 		return Database.selectRow<PlayerDatabaseEntry>(query)
 	},
 
 	async selectAllPlayers(): Promise<PlayerDatabaseEntry[] | null> {
-		const query = 'SELECT * FROM players'
+		const query = 'SELECT *, \'[Redacted]\' as "passwordHash" FROM players ORDER BY players."accessedAt" DESC LIMIT 500'
 		return Database.selectRows<PlayerDatabaseEntry>(query)
 	},
 
