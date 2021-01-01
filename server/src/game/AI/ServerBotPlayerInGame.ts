@@ -32,6 +32,10 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		}, 0)
 	}
 
+	public get isBot(): boolean {
+		return true
+	}
+
 	private botTakesTheirTurn(): void {
 		const botTotalPower = this.game.board.getTotalPlayerPower(this)
 		const opponentTotalPower = this.opponent ? this.game.board.getTotalPlayerPower(this.opponent) : 0

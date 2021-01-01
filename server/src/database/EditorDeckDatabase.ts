@@ -6,32 +6,32 @@ export default {
 	async insertEditorDeck(owner: ServerPlayer, id: string, deck: EditorDeck): Promise<boolean> {
 		const cards = JSON.stringify(deck.cards)
 		const query = `
-		INSERT INTO editor_decks (id, "playerId", name, cards)
-		VALUES('${id}', '${owner.id}', '${deck.name}', '${cards}')
-		ON CONFLICT(id)
-		DO UPDATE
-			SET name = '${deck.name}', cards = '${cards}';
+			INSERT INTO editor_decks (id, "playerId", name, cards)
+			VALUES($1, $2, $3, $4)
+			ON CONFLICT(id)
+			DO UPDATE
+				SET name = $3, cards = $4;
 		`
-		return Database.insertRow(query)
+		return Database.insertRow(query, [id, owner.id, deck.name, cards])
 	},
 
 	async selectEditorDeckById(id: string): Promise<EditorDeck | null> {
-		const query = `SELECT * FROM editor_decks WHERE id = '${id}'`
-		return Database.selectRow<EditorDeck>(query)
+		const query = `SELECT * FROM editor_decks WHERE id = $1`
+		return Database.selectRow<EditorDeck>(query, [id])
 	},
 
 	async selectEditorDeckByIdForPlayer(id: string, player: ServerPlayer): Promise<EditorDeck | null> {
-		const query = `SELECT * FROM editor_decks WHERE id = '${id}' AND "playerId" = '${player.id}'`
-		return Database.selectRow<EditorDeck>(query)
+		const query = `SELECT * FROM editor_decks WHERE id = $1 AND "playerId" = $2`
+		return Database.selectRow<EditorDeck>(query, [id, player.id])
 	},
 
 	async selectEditorDecksForPlayer(player: ServerPlayer): Promise<EditorDeck[] | null> {
-		const query = `SELECT * FROM editor_decks WHERE "playerId" = '${player.id}'`
-		return Database.selectRows<EditorDeck>(query)
+		const query = `SELECT * FROM editor_decks WHERE "playerId" = $1`
+		return Database.selectRows<EditorDeck>(query, [player.id])
 	},
 
 	async deleteEditorDeck(id: string, player: ServerPlayer): Promise<boolean> {
-		const query = `DELETE FROM editor_decks WHERE id = '${id}' AND "playerId" = '${player.id}'`
-		return Database.deleteRows(query)
+		const query = `DELETE FROM editor_decks WHERE id = $1 AND "playerId" = $2`
+		return Database.deleteRows(query, [id, player.id])
 	},
 }

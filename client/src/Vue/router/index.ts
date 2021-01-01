@@ -130,7 +130,7 @@ const router = new VueRouter({
 				requireAuthentication(next)
 				requireAdminAccess(next)
 			},
-			redirect: { name: 'admin-users' },
+			redirect: { name: 'admin-games' },
 			children: [
 				{
 					path: '/admin/games',

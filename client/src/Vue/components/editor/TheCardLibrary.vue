@@ -22,7 +22,7 @@ import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.v
 import Localization from '@/Pixi/Localization'
 import {insertRichTextVariables, snakeToCamelCase} from '@/utils/Utils'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
+import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteQuery'
 import {computed, defineComponent, onMounted, onUnmounted} from '@vue/composition-api'
 import CardFeature from '@shared/enums/CardFeature'
 

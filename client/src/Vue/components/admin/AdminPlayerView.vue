@@ -1,5 +1,5 @@
 <template>
-	<div class="admin-player-view">
+	<div class="admin-player-view" v-if="hasLoaded">
 		<table class="players-table">
 			<thead>
 			<tr>
@@ -16,7 +16,7 @@
 				<tr v-for="(player) in players" :key="player.id">
 					<td><router-link :to="`/admin/users/${player.id}`">{{ player.id.substr(0, 8) }}</router-link></td>
 					<td><span class="user-input">{{ player.email }}</span></td>
-					<td><span class="user-input">{{ player.username }}</span></td>
+					<td><router-link :to="`/admin/users/${player.id}`">{{ player.username }}</router-link></td>
 					<td>{{ new Intl.DateTimeFormat('ru').format(new Date(player.createdAt)) }}</td>
 					<td>
 						{{
@@ -30,16 +30,7 @@
 						}}
 					</td>
 					<td>
-						<span v-if="player.id === currentPlayer.id">
-							<select disabled>
-								<option>{{ player.accessLevel }}</option>
-							</select>
-						</span>
-						<label v-if="player.id !== currentPlayer.id">
-							<select @change="event => onAccessLevelChange(player, event)">
-								<option :selected="accessLevel === player.accessLevel" :key="accessLevel" v-for="accessLevel in accessLevels">{{ accessLevel }}</option>
-							</select>
-						</label>
+						{{ player.accessLevel }}
 					</td>
 					<td>
 						<div v-if="player.id !== currentPlayer.id">
@@ -67,12 +58,14 @@ import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 
 export default defineComponent({
 	setup() {
+		const hasLoaded = ref(false)
 		const players = ref<PlayerDatabaseEntry[]>([])
 		const currentPlayer = computed<Player>(() => store.state.player)
 
 		const loadData = async () => {
 			const response = await axios.get('/api/admin/players')
 			players.value = (response.data as PlayerDatabaseEntry[])
+			hasLoaded.value = true
 		}
 
 		onMounted(() => {
@@ -97,28 +90,13 @@ export default defineComponent({
 			await loadData()
 		}
 
-		const onAccessLevelChange = async(player: Player, event: Event & { target: { value: AccessLevel }}) => {
-			await axios.post(`/api/admin/players/${player.id}/accessLevel`, { accessLevel: event.target.value })
-				.catch(() => {
-					Notifications.error('Unable to update user access level')
-				})
-			Notifications.success('Access level updated!')
-			await loadData()
-		}
-
-		const accessLevels: string[] = []
-		forEachInStringEnum(AccessLevel, level => {
-			accessLevels.push(level)
-		})
-
 		return {
+			hasLoaded,
 			currentPlayer,
 			players,
-			accessLevels,
 			onLogin,
 			onDelete,
-			onAccessLevelChange,
-			AccessLevel
+			AccessLevel,
 		}
 	}
 })
@@ -170,9 +148,5 @@ export default defineComponent({
 	.action-link {
 		cursor: pointer;
 		user-select: none;
-	}
-
-	select {
-		padding: 2px 4px;
 	}
 </style>

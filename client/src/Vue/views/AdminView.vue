@@ -2,16 +2,16 @@
 	<div class="admin-view">
 		<div class="container">
 			<div class="navigation">
-				<router-link :to="{ name: 'admin-games' }" class="router-link">
+				<router-link tag="span" :to="{ name: 'admin-games' }" class="router-link">
 					Game history
 				</router-link>
-				<router-link :to="{ name: 'admin-users' }" class="router-link">
+				<router-link tag="span" :to="{ name: 'admin-users' }" class="router-link">
 					Registered users
 				</router-link>
-				<router-link :to="{ name: 'admin-cards' }" class="router-link">
+				<router-link tag="span" :to="{ name: 'admin-cards' }" class="router-link">
 					Card library
 				</router-link>
-				<router-link :to="{ name: 'admin-stats' }" class="router-link">
+				<router-link tag="span" :to="{ name: 'admin-stats' }" class="router-link">
 					Statistics & Graphics
 				</router-link>
 			</div>
@@ -42,7 +42,7 @@ export default Vue.extend({
 		height: 100%;
 
 		.container {
-			max-width: 1366px;
+			max-width: 1800px;
 			display: flex;
 			align-items: flex-end;
 			flex-direction: row;
@@ -66,6 +66,18 @@ export default Vue.extend({
 				padding: 0 16px;
 				font-size: 1.5em;
 				line-height: 1.5em;
+
+				.router-link {
+					cursor: pointer;
+				}
+
+				.router-link:hover {
+					text-decoration: underline;
+				}
+
+				.router-link-active {
+					font-weight: bold;
+				}
 			}
 
 			.content {

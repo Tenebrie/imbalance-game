@@ -7,6 +7,7 @@ import ServerGame from '../models/ServerGame'
 import ServerPlayerInGame from './ServerPlayerInGame'
 import AccessLevel from '@shared/enums/AccessLevel'
 import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
+import ServerBotPlayerInGame from '@src/game/AI/ServerBotPlayerInGame'
 
 export default class ServerPlayer implements Player {
 	id: string

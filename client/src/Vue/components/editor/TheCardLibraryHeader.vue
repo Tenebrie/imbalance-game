@@ -60,7 +60,7 @@ import CardColor from '@shared/enums/CardColor'
 import {computed, defineComponent, ref} from '@vue/composition-api'
 import {debounce} from 'throttle-debounce'
 import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
-import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
+import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteQuery'
 import Localization from '@/Pixi/Localization'
 
 export default defineComponent({

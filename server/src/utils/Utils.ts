@@ -44,13 +44,13 @@ export const invalidUsernameCharacters = /[^a-zA-Zа-яА-Я0-9\-_.]/g
 
 export const registerFormValidators = {
 	email: (email: string): boolean => {
-		return email.length > 0 && !invalidEmailCharacters.exec(email)
+		return email.length > 0 && email.length <= 128 && !invalidEmailCharacters.exec(email)
 	},
 	username: (username: string): boolean => {
-		return username.length > 0 && !invalidUsernameCharacters.exec(username)
+		return username.length > 0 && username.length <= 16 && !invalidUsernameCharacters.exec(username)
 	},
 	password: (password: string): boolean => {
-		return password.length > 0
+		return password.length > 0 && password.length <= 128
 	},
 }
 

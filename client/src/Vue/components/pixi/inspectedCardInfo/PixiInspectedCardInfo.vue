@@ -73,7 +73,7 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
 import CardColor from '@shared/enums/CardColor'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
+import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteQuery'
 import InspectedCardBuffs from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
 
 export default defineComponent({

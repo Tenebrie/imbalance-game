@@ -6,4 +6,5 @@ export default interface GameHistoryDatabaseEntry {
 	victoriousPlayer: { id: string; username: string } | null
 	players: { id: string; username: string }[]
 	eventLog: any[]
+	errorCount: number
 }

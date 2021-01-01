@@ -1,101 +1,6 @@
 <template>
-	<div class="admin-games-view">
-		<div v-if="activeGames.length > 0">
-			<h2>Active games</h2>
-			<table class="games-table">
-				<thead>
-				<tr>
-					<th>ID</th>
-					<th>Started at</th>
-					<th>Players</th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr v-for="(game) in activeGames" :key="game.id">
-					<td>
-						<router-link :to="`/admin/games/${game.id}`">{{ game.id.substr(0, 8) }}</router-link>
-					</td>
-					<td>
-						{{
-							new Intl.DateTimeFormat('ru', {
-								year: 'numeric',
-								month: 'numeric',
-								day: 'numeric',
-								hour: 'numeric',
-								minute: 'numeric',
-								second: 'numeric'
-							})
-							.format(new Date(game.startedAt))
-						}}
-					</td>
-					<td>
-						<div v-for="(player) in game.players" :key="player.id">
-							<router-link class="user-input" :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
-						</div>
-					</td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
-
-		<h2>Closed games</h2>
-		<table class="games-table">
-			<thead>
-			<tr>
-				<th>ID</th>
-				<th>Started at</th>
-				<th>Players</th>
-				<th>Duration</th>
-				<th>Close reason</th>
-				<th>Victorious player</th>
-			</tr>
-			</thead>
-			<tbody>
-				<tr v-for="(game) in closedGames" :key="game.id">
-					<td>
-						<router-link :to="`/admin/games/${game.id}`">{{ game.id.substr(0, 8) }}</router-link>
-					</td>
-					<td>
-						{{
-							new Intl.DateTimeFormat('ru', {
-								year: 'numeric',
-								month: 'numeric',
-								day: 'numeric',
-								hour: 'numeric',
-								minute: 'numeric',
-								second: 'numeric'
-							})
-							.format(new Date(game.startedAt))
-						}}
-					</td>
-					<td>
-						<div v-for="(player) in game.players" :key="player.id">
-							<router-link class="user-input" :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
-						</div>
-					</td>
-					<td>
-						<div v-if="game.closedAt === game.startedAt">N/A</div>
-						<div v-if="game.closedAt !== game.startedAt">
-						{{
-							new Intl.DateTimeFormat('ru', {
-								hour: 'numeric',
-								minute: 'numeric',
-								second: 'numeric',
-								timeZone: 'GMT'
-							})
-							.format(new Date(new Date(game.closedAt).getTime() - new Date(game.startedAt)))
-						}}
-						</div>
-					</td>
-					<td>{{ game.closeReason }}</td>
-					<td>
-						<router-link class="user-input" v-if="game.victoriousPlayer" :to="`/admin/users/${game.victoriousPlayer.id}`">
-							{{ game.victoriousPlayer.username }}
-						</router-link>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+	<div class="admin-games-view" v-if="hasLoaded">
+		<admin-games-tables :games="allGames" />
 	</div>
 </template>
 
@@ -103,26 +8,31 @@
 import axios from 'axios'
 import {defineComponent, onMounted, ref} from '@vue/composition-api'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
+import AdminGamesTables from '@/Vue/components/admin/AdminGamesTables.vue'
 
 export default defineComponent({
+	components: { AdminGamesTables },
+
 	setup() {
-		const activeGames = ref<GameHistoryDatabaseEntry[]>([])
-		const closedGames = ref<GameHistoryDatabaseEntry[]>([])
+		const hasLoaded = ref(false)
+		const allGames = ref<GameHistoryDatabaseEntry[]>([])
 
 		const loadData = async () => {
 			const response = await axios.get('/api/admin/games')
-			const allGames = (response.data as GameHistoryDatabaseEntry[])
-			activeGames.value = allGames.filter(game => !game.closedAt)
-			closedGames.value = allGames.filter(game => !!game.closedAt)
+			allGames.value = (response.data as GameHistoryDatabaseEntry[])
+			hasLoaded.value = true
 		}
 
 		onMounted(() => {
 			loadData()
+			setInterval(() => {
+				loadData()
+			}, 30000)
 		})
 
 		return {
-			activeGames,
-			closedGames
+			hasLoaded,
+			allGames,
 		}
 	}
 })
@@ -169,6 +79,19 @@ export default defineComponent({
 	.action-link {
 		cursor: pointer;
 		user-select: none;
+	}
+
+	.no-errors {
+		color: lightgreen;
+	}
+	.has-errors {
+		color: lighten(red, 15);
+	}
+	.clickable-issues {
+		cursor: pointer;
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 
 	select {

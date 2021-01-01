@@ -18,7 +18,11 @@ router.use(RequireSupportAccessLevelMiddleware)
 router.get(
 	'/games',
 	AsyncHandler(async (req, res: Response) => {
-		const gameEntries = await GameHistoryDatabase.selectAllGames()
+		const targetPlayerId = req.query['player'] || null
+		let gameEntries = await GameHistoryDatabase.selectAllGames()
+		if (targetPlayerId && gameEntries) {
+			gameEntries = gameEntries.filter((entry) => entry.players.find(({ id }) => id === targetPlayerId))
+		}
 		res.json(gameEntries)
 	})
 )
@@ -76,6 +80,23 @@ router.get(
 		const response = await GameHistoryDatabase.selectGameById(targetGameId)
 		if (response === null) {
 			throw { status: 500, error: 'Unable to select game entry from database' }
+		}
+
+		res.json(response)
+	})
+)
+
+router.get(
+	'/games/:gameId/errors',
+	AsyncHandler(async (req, res: Response) => {
+		const targetGameId = req.params['gameId']
+		if (!targetGameId) {
+			throw { status: 400, error: 'Missing gameId' }
+		}
+
+		const response = await GameHistoryDatabase.selectGameErrors(targetGameId)
+		if (response === null) {
+			throw { status: 500, error: 'Unable to select game error entries from database' }
 		}
 
 		res.json(response)

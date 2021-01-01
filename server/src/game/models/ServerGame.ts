@@ -300,7 +300,13 @@ export default class ServerGame implements Game {
 		const survivingPlayer = this.players.find((player) => player.morale > 0) || null
 		const defeatedPlayer = this.players.find((player) => player.morale <= 0) || null
 		if (survivingPlayer && defeatedPlayer) {
-			this.finish(this.getOpponent(defeatedPlayer), 'Win condition')
+			let victoryReason = 'PvP win condition'
+			if (survivingPlayer.isBot) {
+				victoryReason = 'Player lost to AI'
+			} else if (defeatedPlayer.isBot) {
+				victoryReason = 'Player won vs AI'
+			}
+			this.finish(this.getOpponent(defeatedPlayer), victoryReason)
 			return
 		} else if (this.players.every((player) => player.morale <= 0)) {
 			this.finish(null, 'Draw')

@@ -16,6 +16,7 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Utils from '../../utils/Utils'
 import ServerCardTarget from '../models/ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
+import ServerBotPlayerInGame from '@src/game/AI/ServerBotPlayerInGame'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -88,6 +89,10 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public isInvertedBoard(): boolean {
 		return this.game.players.indexOf(this) === 1
+	}
+
+	public get isBot(): boolean {
+		return false
 	}
 
 	public drawUnitCards(count: number): ServerCard[] {

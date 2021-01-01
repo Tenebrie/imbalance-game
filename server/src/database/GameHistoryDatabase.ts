@@ -3,6 +3,7 @@ import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import ServerBotPlayerInGame from '@src/game/AI/ServerBotPlayerInGame'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
+import GameErrorDatabaseEntry from '@shared/models/GameErrorDatabaseEntry'
 
 export default {
 	async selectGameById(id: string): Promise<GameHistoryDatabaseEntry | null> {
@@ -21,15 +22,26 @@ export default {
 					) AS subplayers
 				) AS players,
 				(
+					SELECT count(*)
+					FROM (
+						SELECT id FROM error_in_game_history WHERE "gameId" = game_history.id
+					) as subplayers
+				) AS "errorCount",
+				(
 					SELECT row_to_json(subplayers)
 					FROM (
 						SELECT id, username FROM players WHERE players.id = game_history."victoriousPlayer"
 					) AS subplayers
 				) AS "victoriousPlayer"
 			FROM game_history
-			WHERE id = '${id}';
+			WHERE id = $1;
 		`
-		return Database.selectRow<GameHistoryDatabaseEntry>(query)
+		return Database.selectRow<GameHistoryDatabaseEntry>(query, [id])
+	},
+
+	async selectGameErrors(id: string): Promise<GameErrorDatabaseEntry[] | null> {
+		const query = `SELECT * FROM error_in_game_history WHERE "gameId" = $1`
+		return Database.selectRows<GameErrorDatabaseEntry>(query, [id])
 	},
 
 	async selectAllGames(): Promise<GameHistoryDatabaseEntry[] | null> {
@@ -47,6 +59,12 @@ export default {
 						)
 					) AS subplayers
 				) AS players,
+			    (
+			        SELECT count(*)
+			        FROM (
+			            SELECT id FROM error_in_game_history WHERE "gameId" = game_history.id
+					) as subplayers
+				) AS "errorCount",
 				(
 					SELECT row_to_json(subplayers)
 					FROM (
@@ -61,16 +79,16 @@ export default {
 	},
 
 	async startGame(game: ServerGame): Promise<boolean> {
-		let query = `INSERT INTO game_history (id) VALUES('${game.id}');`
-		let success = await Database.insertRow(query)
+		let query = `INSERT INTO game_history (id) VALUES($1);`
+		let success = await Database.insertRow(query, [game.id])
 		if (!success) {
 			return false
 		}
 
 		const players = game.players.filter((playerInGame) => !(playerInGame instanceof ServerBotPlayerInGame))
 		for (const playerInGame of players) {
-			query = `INSERT INTO player_in_game_history("gameId", "playerId") VALUES('${game.id}', '${playerInGame.player.id}')`
-			success = await Database.updateRows(query)
+			query = `INSERT INTO player_in_game_history("gameId", "playerId") VALUES($1, $2)`
+			success = await Database.updateRows(query, [game.id, playerInGame.player.id])
 			if (!success) {
 				return false
 			}
@@ -79,16 +97,28 @@ export default {
 	},
 
 	async closeGame(game: ServerGame, reason: string, victoriousPlayer: ServerPlayerInGame | null): Promise<boolean> {
+		const eventLog = JSON.stringify(game.events.eventLog)
+		if (!victoriousPlayer) {
+			const query = `
+				UPDATE game_history
+				SET
+					"closedAt" = current_timestamp,
+					"eventLog" = $2,
+					"closeReason" = $3
+				WHERE id = $1
+			`
+			return await Database.updateRows(query, [game.id, eventLog, reason])
+		}
 		const query = `
-			UPDATE game_history
-			SET
-				"closedAt" = current_timestamp,
-				"eventLog" = '${JSON.stringify(game.events.eventLog)}',
-				"closeReason" = '${reason}'
-				${victoriousPlayer ? `,"victoriousPlayer" = '${victoriousPlayer.player.id}'` : ''}
-			WHERE id = '${game.id}'
-		`
-		return await Database.updateRows(query)
+				UPDATE game_history
+				SET
+					"closedAt" = current_timestamp,
+					"eventLog" = $2,
+					"closeReason" = $3,
+					"victoriousPlayer" = $4
+				WHERE id = $1
+			`
+		return await Database.updateRows(query, [game.id, eventLog, reason, victoriousPlayer.player.id])
 	},
 
 	async closeAbandonedGames(): Promise<boolean> {
@@ -104,9 +134,7 @@ export default {
 	},
 
 	async logGameError(game: ServerGame, error: Error): Promise<boolean> {
-		const query = `INSERT INTO error_in_game_history ("gameId", message, stack) VALUES('${game.id}', '${error.message}', '${JSON.stringify(
-			error.stack
-		)}');`
-		return await Database.insertRow(query)
+		const query = `INSERT INTO error_in_game_history ("gameId", message, stack) VALUES($1, $2, $3);`
+		return await Database.insertRow(query, [game.id, error.message, JSON.stringify(error.stack)])
 	},
 }
