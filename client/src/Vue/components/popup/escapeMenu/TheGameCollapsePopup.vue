@@ -1,23 +1,29 @@
 <template>
-	<div class="the-welcome-popup">
-		<div class="the-welcome-popup-container">
-			<h1>Welcome!</h1>
+	<div class="the-game-collapse-popup">
+		<div class="the-game-collapse-popup-container">
+			<h1>Whoops...</h1>
 			<div class="menu-separator"></div>
-			<p>This is a little message from the dev team. Well, just me alone, really, but I am glad to see you here nonetheless!</p>
+			<p>It seems that an error has occurred, and the game has collapsed. Most likely that is because of a bug in the code.</p>
 			<p>
-				I have spent over a year working on this project, and it means a lot to finally get it out for people to see. It's still unfinished,
-				of course. Most of the art assets you see will be replaced, some features are missing for sure, and there is still a lot of content
-				to develop. However, I believe there is already fun to be had!
+				The details of the error have been recorded, but if you want to attract the dev's attention to this exact bug, please submit a bug
+				report on our <DiscordLink>Discord server</DiscordLink>, describing the action you have attempted to make, or the last thing that
+				happened.
 			</p>
-			<p>
-				If you're new, feel free to check out the ruleset description, it's in the navigation bar at the top (<b>Rules</b> section). After
-				that, you can jump straight into the AI games from this very page.
-			</p>
-			<p>
-				If you have questions, card ideas, have some feedback or just would like to chat, feel free to join our
-				<DiscordLink>Discord server</DiscordLink>.
-			</p>
-			<p>Have fun!<br />- Tenebrie</p>
+			<p>Please include the following:</p>
+			<table>
+				<tr>
+					<td class="header">Game ID:</td>
+					<td>{{ params.gameId }}</td>
+				</tr>
+				<tr>
+					<td class="header">Player ID:</td>
+					<td>{{ params.playerId }}</td>
+				</tr>
+				<tr>
+					<td class="header">Timestamp:</td>
+					<td>{{ params.timestamp }}</td>
+				</tr>
+			</table>
 			<div class="menu-separator"></div>
 			<div class="button-container">
 				<button @click="onConfirm" class="primary game-button">OK</button>
@@ -29,11 +35,14 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import { defineComponent } from '@vue/composition-api'
+import GameCollapseMessageData from '@shared/models/network/GameCollapseMessageData'
 import DiscordLink from '@/Vue/components/utils/DiscordLink.vue'
 
 export default defineComponent({
 	components: { DiscordLink },
 	setup() {
+		const params = store.getters.popupModule.params as GameCollapseMessageData
+
 		const onMenuClick = (event: MouseEvent) => {
 			event.cancelBubble = true
 		}
@@ -43,6 +52,7 @@ export default defineComponent({
 		}
 
 		return {
+			params,
 			onMenuClick,
 			onConfirm,
 		}
@@ -53,7 +63,7 @@ export default defineComponent({
 <style scoped lang="scss">
 @import 'src/Vue/styles/generic';
 
-.the-welcome-popup {
+.the-game-collapse-popup {
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -62,7 +72,7 @@ export default defineComponent({
 	justify-content: center;
 }
 
-.the-welcome-popup-container {
+.the-game-collapse-popup-container {
 	border-radius: 16px;
 	display: flex;
 	width: 600px;
@@ -98,6 +108,15 @@ a {
 }
 a:active {
 	color: darken(lightblue, 50);
+}
+
+table {
+	text-align: start;
+
+	td.header {
+		font-weight: bold;
+		min-width: 100px;
+	}
 }
 
 .menu-separator {

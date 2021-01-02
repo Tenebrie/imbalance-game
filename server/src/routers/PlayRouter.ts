@@ -86,9 +86,11 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			const t2 = process.hrtime(t1)
 			OutgoingMessageHandlers.notifyAboutPerformanceMetrics(currentPlayerInGame.player, t2[1] / 1000000)
 		} catch (error) {
-			// TODO: Send a notification to the client here!
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error)
+			currentGame.players.forEach((playerInGame) => {
+				OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
+			})
 			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Player action)', null)
 			currentGame.forceShutdown('Unhandled error (Player action)')
 		}
@@ -147,6 +149,9 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 		} catch (error) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error)
+			currentGame.players.forEach((playerInGame) => {
+				OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
+			})
 			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Spectator action)', null)
 			currentGame.forceShutdown('Unhandled error (Spectator action)')
 		}

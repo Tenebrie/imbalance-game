@@ -42,7 +42,7 @@ import { computed, defineComponent } from '@vue/composition-api'
 import store from '@/Vue/store'
 import AccessLevel from '@shared/enums/AccessLevel'
 import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
-import TheDiscordLink from '@/Vue/components/navigationbar/TheDiscordLink.vue'
+import TheDiscordLink from '@/Vue/components/navigationbar/TheNavigationBarDiscordLink.vue'
 
 export default defineComponent({
 	components: {

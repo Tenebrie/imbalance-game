@@ -5,6 +5,7 @@ import { moduleActionContext } from '@/Vue/store'
 type ComponentInStack = {
 	component: Component
 	sticky?: boolean
+	params?: Record<string, string> | undefined
 }
 
 const PopupModule = defineModule({
@@ -40,6 +41,13 @@ const PopupModule = defineModule({
 				return false
 			}
 			return !!state.componentStack[state.componentStack.length - 1].sticky
+		},
+
+		params: (state): Record<string, string> | undefined => {
+			if (state.componentStack.length === 0) {
+				return undefined
+			}
+			return state.componentStack[state.componentStack.length - 1].params
 		},
 	},
 

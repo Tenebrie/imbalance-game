@@ -1,8 +1,8 @@
 <template>
 	<div class="the-discord-link">
-		<a href="https://discord.gg/9fSWxMnBFa" target="_blank">
+		<DiscordLink>
 			<img src="https://discord.com/assets/f8389ca1a741a115313bede9ac02e2c0.svg" alt="Discord group link" height="100px" />
-		</a>
+		</DiscordLink>
 	</div>
 </template>
 
@@ -12,9 +12,10 @@ import store from '@/Vue/store'
 import router from '@/Vue/router'
 import Player from '@shared/models/Player'
 import Localization from '@/Pixi/Localization'
+import DiscordLink from '@/Vue/components/utils/DiscordLink.vue'
 
 export default Vue.extend({
-	components: {},
+	components: { DiscordLink },
 
 	computed: {
 		player(): Player | null {
