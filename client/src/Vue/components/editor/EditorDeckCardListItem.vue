@@ -1,12 +1,16 @@
 <template>
-	<div class="editor-deck-card-list-item"
-		 :class="colorClass"
-		 @click="onClick"
-		 @contextmenu="onRightClick"
-		 @mouseenter="onMouseEnter"
-		 @mouseleave="onMouseLeave">
+	<div
+		class="editor-deck-card-list-item"
+		:class="colorClass"
+		@click="onClick"
+		@contextmenu="onRightClick"
+		@mouseenter="onMouseEnter"
+		@mouseleave="onMouseLeave"
+	>
 		<span class="power" v-if="showPower">{{ card.stats.basePower }}</span>
-		<span class="name">{{ fullName }}<span class="count" v-if="displayCount">x{{ card.count }}</span></span>
+		<span class="name"
+			>{{ fullName }}<span class="count" v-if="displayCount">x{{ card.count }}</span></span
+		>
 	</div>
 </template>
 
@@ -22,8 +26,8 @@ export default Vue.extend({
 	props: {
 		card: {
 			type: Object,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	computed: {
@@ -46,12 +50,12 @@ export default Vue.extend({
 
 		colorClass(): any {
 			return {
-				'leader': this.card.color === CardColor.LEADER,
-				'golden': this.card.color === CardColor.GOLDEN,
-				'silver': this.card.color === CardColor.SILVER,
-				'bronze': this.card.color === CardColor.BRONZE
+				leader: this.card.color === CardColor.LEADER,
+				golden: this.card.color === CardColor.GOLDEN,
+				silver: this.card.color === CardColor.SILVER,
+				bronze: this.card.color === CardColor.BRONZE,
 			}
-		}
+		},
 	},
 
 	methods: {
@@ -59,9 +63,9 @@ export default Vue.extend({
 			const deckId = this.$route.params.deckId
 			store.dispatch.editor.removeCardFromDeck({
 				deckId: deckId,
-				cardToRemove: this.card
+				cardToRemove: this.card,
 			})
-			if (!store.getters.editor.deck(deckId).cards.find(card => card.id === this.card.id)) {
+			if (!store.getters.editor.deck(deckId).cards.find((card) => card.id === this.card.id)) {
 				store.commit.editor.hoveredDeckCard.setCard(null)
 			}
 		},
@@ -79,7 +83,7 @@ export default Vue.extend({
 			store.dispatch.editor.hoveredDeckCard.setCard({
 				card: this.card,
 				position: new PIXI.Point(boundingBox.left, boundingBox.top),
-				scrollCallback: () => this.onParentScroll()
+				scrollCallback: () => this.onParentScroll(),
 			})
 		},
 
@@ -89,51 +93,51 @@ export default Vue.extend({
 
 		onMouseLeave(): void {
 			store.commit.editor.hoveredDeckCard.setCard(null)
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.editor-deck-card-list-item {
-		width: calc(100% - 16px);
-		display: flex;
-		flex-direction: row;
-		padding: 4px 8px;
-		cursor: pointer;
-		user-select: none;
-		font-size: 1.3em;
+.editor-deck-card-list-item {
+	width: calc(100% - 16px);
+	display: flex;
+	flex-direction: row;
+	padding: 4px 8px;
+	cursor: pointer;
+	user-select: none;
+	font-size: 1.3em;
 
-		&:hover {
-			background: $COLOR-BACKGROUND-TRANSPARENT;
-		}
-
-		&.leader {
-			color: MediumAquamarine;
-		}
-
-		&.golden {
-			color: orange;
-		}
-
-		&.silver {
-			color: #BB20BB;
-		}
-
-		.power {
-			min-width: 25px;
-			margin-right: 20px;
-			text-align: right;
-		}
-
-		.name {
-			text-align: left;
-		}
-
-		.count {
-			margin-left: 4px;
-		}
+	&:hover {
+		background: $COLOR-BACKGROUND-TRANSPARENT;
 	}
+
+	&.leader {
+		color: MediumAquamarine;
+	}
+
+	&.golden {
+		color: orange;
+	}
+
+	&.silver {
+		color: #bb20bb;
+	}
+
+	.power {
+		min-width: 25px;
+		margin-right: 20px;
+		text-align: right;
+	}
+
+	.name {
+		text-align: left;
+	}
+
+	.count {
+		margin-left: 4px;
+	}
+}
 </style>

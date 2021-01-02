@@ -11,7 +11,7 @@ export default class TextureAtlas {
 	static preloadComponentsResolveFunctions: { (): void }[] = []
 
 	public static async preloadComponents(): Promise<void> {
-		return new Promise(async (resolve) => {
+		return new Promise((resolve) => {
 			if (TextureAtlas.hasPreloadedComponents) {
 				resolve()
 				return
@@ -65,7 +65,7 @@ export default class TextureAtlas {
 				'board/board-row',
 			]
 
-			await TextureAtlas.load(components, () => {
+			TextureAtlas.load(components, () => {
 				this.hasPreloadedComponents = true
 				this.isPreloadingComponents = false
 				this.preloadComponentsResolveFunctions.forEach((resolve) => resolve())

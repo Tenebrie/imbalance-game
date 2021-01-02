@@ -1,7 +1,7 @@
 import ClientGameStatus from '../../../Pixi/enums/ClientGameStatus'
-import {defineModule} from 'direct-vuex'
+import { defineModule } from 'direct-vuex'
 import Player from '@shared/models/Player'
-import {moduleActionContext, rootActionContext} from '../index'
+import { moduleActionContext, rootActionContext } from '../index'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
@@ -21,7 +21,7 @@ const gameStateModule = defineModule({
 		maxCardMulligans: 0 as number,
 		popupTargetingMode: null as TargetMode | null,
 		popupTargetingCardCount: 0 as number,
-		popupTargetingCardsVisible: true as boolean
+		popupTargetingCardsVisible: true as boolean,
 	},
 
 	mutations: {
@@ -71,7 +71,7 @@ const gameStateModule = defineModule({
 
 		setPopupTargetingCardsVisible(state, mode: boolean): void {
 			state.popupTargetingCardsVisible = mode
-		}
+		},
 	},
 
 	getters: {
@@ -81,7 +81,7 @@ const gameStateModule = defineModule({
 
 		inspectedCard: (state): RenderedCard | null => {
 			return state.inspectedCardId === null ? null : Core.game.findRenderedCardById(state.inspectedCardId)
-		}
+		},
 	},
 
 	actions: {
@@ -119,8 +119,8 @@ const gameStateModule = defineModule({
 			commit.setIsSpectating(false)
 			commit.setIsPlayersTurn(false)
 			rootDispatch.gameLogModule.clearLog()
-		}
-	}
+		},
+	},
 })
 
 export default gameStateModule

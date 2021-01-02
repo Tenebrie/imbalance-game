@@ -9,19 +9,17 @@
 <script lang="ts">
 import Vue from 'vue'
 
-export default Vue.extend({
-
-})
+export default Vue.extend({})
 </script>
 
 <style scoped lang="scss">
-	.k2d {
-		font-family: 'K2D', sans-serif;
-	}
-	.roboto {
-		font-family: 'Roboto', sans-serif;
-	}
-	.brushScript {
-		font-family: 'BrushScript', sans-serif;
-	}
+.k2d {
+	font-family: 'K2D', sans-serif;
+}
+.roboto {
+	font-family: 'Roboto', sans-serif;
+}
+.brushScript {
+	font-family: 'BrushScript', sans-serif;
+}
 </style>

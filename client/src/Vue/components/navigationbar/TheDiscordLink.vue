@@ -10,17 +10,11 @@
 import Vue from 'vue'
 import store from '@/Vue/store'
 import router from '@/Vue/router'
-import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
 import Player from '@shared/models/Player'
 import Localization from '@/Pixi/Localization'
 
 export default Vue.extend({
-	components: {
-	},
-
-	data: () => ({
-
-	}),
+	components: {},
 
 	computed: {
 		player(): Player | null {
@@ -32,7 +26,7 @@ export default Vue.extend({
 				return this.player.username
 			}
 			return Localization.get('ui.navigation.login')
-		}
+		},
 	},
 
 	methods: {
@@ -40,31 +34,31 @@ export default Vue.extend({
 			if (this.$route.name !== 'profile') {
 				router.push({ name: 'profile' })
 			}
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import './src/Vue/styles/generic';
+@import './src/Vue/styles/generic';
 
-	.the-discord-link {
+.the-discord-link {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	margin: 0 4px;
+
+	a {
 		display: flex;
+		height: 100%;
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-		height: 100%;
-		margin: 0 4px;
-
-		a {
-			display: flex;
-			height: 100%;
-			flex-direction: row;
-			align-items: center;
-			justify-content: center;
-		}
-		img {
-			height: 80%;
-		}
 	}
+	img {
+		height: 80%;
+	}
+}
 </style>

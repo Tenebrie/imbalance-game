@@ -10,15 +10,15 @@ import Core from '@/Pixi/Core'
 import Localization from '@/Pixi/Localization'
 import GameEventType from '@shared/enums/GameEventType'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
-import {defineComponent, PropType} from '@vue/composition-api'
+import { defineComponent, PropType } from '@vue/composition-api'
 import store from '@/Vue/store'
 
 export default defineComponent({
 	props: {
 		entry: {
 			type: Object as PropType<EventLogEntryMessage>,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	computed: {
@@ -30,7 +30,7 @@ export default defineComponent({
 			const entry = this.entry as EventLogEntryMessage
 			const subtype = entry.subtype ? `.${entry.subtype}` : this.getCustomSubtype(entry)
 			return this.populateTemplate(Localization.get(`log.entry.${entry.event}${subtype}`), entry.args)
-		}
+		},
 	},
 
 	methods: {
@@ -69,7 +69,7 @@ export default defineComponent({
 
 			const matches: string[] = []
 			let result
-			while (result = regexp.exec(template)) {
+			while ((result = regexp.exec(template))) {
 				const value = result[1]
 				matches.push(value)
 			}
@@ -91,7 +91,7 @@ export default defineComponent({
 			if (card) {
 				return `${Localization.get(card.name)}`
 			}
-			const cardInLibrary = store.state.editor.cardLibrary.find(card => card.id === id)
+			const cardInLibrary = store.state.editor.cardLibrary.find((card) => card.id === id)
 			if (cardInLibrary) {
 				return `${Localization.get(cardInLibrary.name)}`
 			}
@@ -100,17 +100,17 @@ export default defineComponent({
 				return `${Localization.get(buff.name)}`
 			}
 			return id
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "src/Vue/styles/generic";
+@import 'src/Vue/styles/generic';
 
-	.the-game-log-entry {
-		.timestamp {
-			font-weight: bold;
-		}
+.the-game-log-entry {
+	.timestamp {
+		font-weight: bold;
 	}
+}
 </style>

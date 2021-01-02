@@ -27,8 +27,7 @@
 								day: 'numeric',
 								hour: 'numeric',
 								minute: 'numeric',
-							})
-							.format(new Date(player.createdAt))
+							}).format(new Date(player.createdAt))
 						}}
 					</td>
 				</tr>
@@ -42,8 +41,7 @@
 								day: 'numeric',
 								hour: 'numeric',
 								minute: 'numeric',
-							})
-							.format(new Date(player.accessedAt))
+							}).format(new Date(player.accessedAt))
 						}}
 					</td>
 				</tr>
@@ -56,8 +54,10 @@
 							</select>
 						</span>
 						<label v-if="player.id !== currentPlayer.id">
-							<select @change="event => onAccessLevelChange(player, event)">
-								<option :selected="accessLevel === player.accessLevel" :key="accessLevel" v-for="accessLevel in accessLevels">{{ accessLevel }}</option>
+							<select @change="(event) => onAccessLevelChange(player, event)">
+								<option :selected="accessLevel === player.accessLevel" :key="accessLevel" v-for="accessLevel in accessLevels">
+									{{ accessLevel }}
+								</option>
 							</select>
 						</label>
 					</td>
@@ -70,13 +70,13 @@
 
 <script lang="ts">
 import axios from 'axios'
-import {computed, defineComponent, onMounted, ref, watch} from '@vue/composition-api'
+import { computed, defineComponent, onMounted, ref, watch } from '@vue/composition-api'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import AdminGamesTables from '@/Vue/components/admin/AdminGamesTables.vue'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
-import {useAdminRouteParams} from '@/Vue/components/editor/AdminRouteParams'
+import { useAdminRouteParams } from '@/Vue/components/editor/AdminRouteParams'
 import AccessLevel from '@shared/enums/AccessLevel'
-import {forEachInStringEnum} from '@/utils/Utils'
+import { forEachInStringEnum } from '@/utils/Utils'
 import Player from '@shared/models/Player'
 import store from '@/Vue/store'
 import Notifications from '@/utils/Notifications'
@@ -94,10 +94,10 @@ export default defineComponent({
 
 		const loadData = async () => {
 			const playerResponse = await axios.get(`/api/admin/players/${params.value.playerId}`)
-			player.value = (playerResponse.data as PlayerDatabaseEntry)
+			player.value = playerResponse.data as PlayerDatabaseEntry
 
 			const gamesResponse = await axios.get(`/api/admin/games?player=${params.value.playerId}`)
-			allGames.value = (gamesResponse.data as GameHistoryDatabaseEntry[])
+			allGames.value = gamesResponse.data as GameHistoryDatabaseEntry[]
 			hasLoaded.value = true
 		}
 
@@ -105,24 +105,26 @@ export default defineComponent({
 			loadData()
 		})
 
-		watch(() => [params.value.playerId], () => {
-			player.value = null
-			allGames.value = null
-			hasLoaded.value = false
-			loadData()
-		})
+		watch(
+			() => [params.value.playerId],
+			() => {
+				player.value = null
+				allGames.value = null
+				hasLoaded.value = false
+				loadData()
+			}
+		)
 
-		const onAccessLevelChange = async(player: PlayerDatabaseEntry, event: Event & { target: { value: AccessLevel }}) => {
-			await axios.post(`/api/admin/players/${player.id}/accessLevel`, { accessLevel: event.target.value })
-				.catch(() => {
-					Notifications.error('Unable to update user access level')
-				})
+		const onAccessLevelChange = async (player: PlayerDatabaseEntry, event: Event & { target: { value: AccessLevel } }) => {
+			await axios.post(`/api/admin/players/${player.id}/accessLevel`, { accessLevel: event.target.value }).catch(() => {
+				Notifications.error('Unable to update user access level')
+			})
 			Notifications.success('Access level updated!')
 			await loadData()
 		}
 
 		const accessLevels: string[] = []
-		forEachInStringEnum(AccessLevel, level => {
+		forEachInStringEnum(AccessLevel, (level) => {
 			accessLevels.push(level)
 		})
 
@@ -134,44 +136,44 @@ export default defineComponent({
 			currentPlayer,
 			onAccessLevelChange,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.admin-player-details-view {
-		overflow-y: scroll;
-		text-align: left;
-	}
+.admin-player-details-view {
+	overflow-y: scroll;
+	text-align: left;
+}
 
-	.info {
-		margin-left: 8px;
-		margin-top: 16px;
-		line-height: 1.4em;
-	}
+.info {
+	margin-left: 8px;
+	margin-top: 16px;
+	line-height: 1.4em;
+}
 
-	.header {
-		font-weight: bold;
-		min-width: 200px;
-	}
+.header {
+	font-weight: bold;
+	min-width: 200px;
+}
 
-	/deep/ h2 {
-		margin-left: 8px;
-	}
+/deep/ h2 {
+	margin-left: 8px;
+}
 
-	.textarea-container {
-		display: flex;
-		textarea {
-			resize: vertical;
-			width: 100%;
-			height: 512px;
-		}
+.textarea-container {
+	display: flex;
+	textarea {
+		resize: vertical;
+		width: 100%;
+		height: 512px;
 	}
+}
 
-	select {
-		padding: 2px 4px;
-		width: 100px;
-	}
+select {
+	padding: 2px 4px;
+	width: 100px;
+}
 </style>

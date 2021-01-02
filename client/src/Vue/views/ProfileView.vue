@@ -9,41 +9,41 @@
 
 <script lang="ts">
 import TheUserProfile from '@/Vue/components/profile/TheUserProfile.vue'
-import {defineComponent} from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
 	components: {
-		TheUserProfile
-	}
+		TheUserProfile,
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../styles/generic";
+@import '../styles/generic';
 
-	.profile-view {
+.profile-view {
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+
+	& > .user-profile {
+		display: flex;
+		flex-direction: column;
+		background: $COLOR-BACKGROUND-TRANSPARENT;
+	}
+
+	& > .profile-footer {
+		height: auto !important;
+		position: absolute;
 		display: flex;
 		align-items: flex-end;
-		justify-content: center;
+		justify-content: flex-end;
+		font-family: monospace, monospace;
 
-		& > .user-profile {
-			display: flex;
-			flex-direction: column;
-			background: $COLOR-BACKGROUND-TRANSPARENT;
-		}
-
-		& > .profile-footer {
-			height: auto !important;
-			position: absolute;
-			display: flex;
-			align-items: flex-end;
-			justify-content: flex-end;
-			font-family: monospace, monospace;
-
-			& > span {
-				color: gray;
-				padding: 4px;
-			}
+		& > span {
+			color: gray;
+			padding: 4px;
 		}
 	}
+}
 </style>

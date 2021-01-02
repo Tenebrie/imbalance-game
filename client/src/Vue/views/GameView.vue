@@ -11,7 +11,6 @@ import Pixi from '../components/pixi/Pixi.vue'
 export default Vue.extend({
 	components: { Pixi },
 
-	computed: {
-	}
+	computed: {},
 })
 </script>

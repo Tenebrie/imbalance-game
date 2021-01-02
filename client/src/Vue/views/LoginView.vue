@@ -11,8 +11,6 @@ import TheLoginForm from '../components/login/TheLoginForm.vue'
 export default Vue.extend({
 	components: { TheLoginForm },
 
-	computed: {
-
-	}
+	computed: {},
 })
 </script>

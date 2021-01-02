@@ -2,18 +2,36 @@
 	<div ref="rootRef" class="the-register-form">
 		<div class="form">
 			<div class="input">
-				<input id="tenebrieEmail" class="has-tooltip" type="text" :placeholder="Localization.get('ui.auth.email')" v-model="email" autofocus />
+				<input
+					id="tenebrieEmail"
+					class="has-tooltip"
+					type="text"
+					:placeholder="Localization.get('ui.auth.email')"
+					v-model="email"
+					autofocus
+				/>
 				<inline-tooltip class="tooltip">{{ $locale.get('ui.auth.emailTooltip') }}</inline-tooltip>
 			</div>
 			<div class="input">
 				<input id="tenebrieUsername" type="text" :placeholder="Localization.get('ui.auth.username')" v-model="username" />
 			</div>
 			<div class="input">
-				<input id="tenebriePassword" class="has-tooltip" type="password" :placeholder="Localization.get('ui.auth.password')" v-model="password" />
+				<input
+					id="tenebriePassword"
+					class="has-tooltip"
+					type="password"
+					:placeholder="Localization.get('ui.auth.password')"
+					v-model="password"
+				/>
 				<inline-tooltip class="tooltip"><the-password-policy /></inline-tooltip>
 			</div>
 			<div class="input">
-				<input id="tenebrieConfirmPassword" type="password" :placeholder="Localization.get('ui.auth.confirmPassword')" v-model="confirmPassword" />
+				<input
+					id="tenebrieConfirmPassword"
+					type="password"
+					:placeholder="Localization.get('ui.auth.confirmPassword')"
+					v-model="confirmPassword"
+				/>
 			</div>
 			<div class="status">
 				<span ref="messageRef"> </span>
@@ -31,7 +49,7 @@
 
 <script lang="ts">
 import axios from 'axios'
-import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import store from '@/Vue/store'
 import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
@@ -41,7 +59,7 @@ import Localization from '@/Pixi/Localization'
 export default defineComponent({
 	components: {
 		InlineTooltip,
-		ThePasswordPolicy
+		ThePasswordPolicy,
 	},
 	setup() {
 		const rootRef = ref<HTMLDivElement>()
@@ -60,9 +78,12 @@ export default defineComponent({
 			rootRef.value.removeEventListener('keydown', onKeyDown)
 		})
 
-		watch(() => [email.value, password.value, confirmPassword.value], () => {
-			clearMessage()
-		})
+		watch(
+			() => [email.value, password.value, confirmPassword.value],
+			() => {
+				clearMessage()
+			}
+		)
 
 		const onKeyDown = (event: KeyboardEvent): void => {
 			if (event.key === 'Enter') {
@@ -70,7 +91,7 @@ export default defineComponent({
 			}
 		}
 
-		const onRegister = async(): Promise<void> => {
+		const onRegister = async (): Promise<void> => {
 			if (password.value !== confirmPassword.value) {
 				setMessage('Passwords do not match')
 				return
@@ -83,7 +104,7 @@ export default defineComponent({
 				password: password.value,
 			}
 			const profileInformation = {
-				userLanguage: store.state.userPreferencesModule.userLanguage
+				userLanguage: store.state.userPreferencesModule.userLanguage,
 			}
 			try {
 				await axios.post('/api/user', credentials)
@@ -128,41 +149,41 @@ export default defineComponent({
 			password,
 			confirmPassword,
 			onRegister,
-			Localization
+			Localization,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "src/Vue/styles/generic";
-	@import "LoginFormShared";
+@import 'src/Vue/styles/generic';
+@import 'LoginFormShared';
 
-	.the-register-form {
-		@include login-form();
+.the-register-form {
+	@include login-form();
 
-		.form > .input {
-			position: relative;
-			display: flex;
-			flex-direction: row;
+	.form > .input {
+		position: relative;
+		display: flex;
+		flex-direction: row;
 
-			.tooltip {
-				position: absolute;
-				right: 0;
-				height: 100%;
-			}
-
-			input.has-tooltip {
-				padding-right: 2.5em;
-			}
+		.tooltip {
+			position: absolute;
+			right: 0;
+			height: 100%;
 		}
 
-		.info-text {
-			font-size: 0.8em;
-			color: gray;
-		}
-		.login-link {
-			font-size: 0.8em;
+		input.has-tooltip {
+			padding-right: 2.5em;
 		}
 	}
+
+	.info-text {
+		font-size: 0.8em;
+		color: gray;
+	}
+	.login-link {
+		font-size: 0.8em;
+	}
+}
 </style>

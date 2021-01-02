@@ -5,14 +5,14 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
-import {computed, defineComponent, onMounted, ref, watch} from '@vue/composition-api'
+import { computed, defineComponent, onMounted, ref, watch } from '@vue/composition-api'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default defineComponent({
 	props: {
 		card: {
 			type: Object as () => CardMessage | null,
-		}
+		},
 	},
 
 	setup(props) {
@@ -23,7 +23,7 @@ export default defineComponent({
 			if (!props.card) {
 				return null
 			}
-			return store.state.editor.renderedCards.find(renderedCard => renderedCard.class === props.card.class) || null
+			return store.state.editor.renderedCards.find((renderedCard) => renderedCard.class === props.card.class) || null
 		})
 
 		const isVisibleOnScreen = ref<boolean>(false)
@@ -42,17 +42,23 @@ export default defineComponent({
 			}
 		})
 
-		watch(() => [isVisibleOnScreen.value], () => {
-			if (props.card && !renderedCard.value && isVisibleOnScreen.value) {
-				store.dispatch.editor.requestRender({ card: props.card })
+		watch(
+			() => [isVisibleOnScreen.value],
+			() => {
+				if (props.card && !renderedCard.value && isVisibleOnScreen.value) {
+					store.dispatch.editor.requestRender({ card: props.card })
+				}
 			}
-		})
+		)
 
-		watch(() => [renderedCard.value, isVisibleOnScreen.value], () => {
-			if (!isImageAppended.value && renderedCard.value && isVisibleOnScreen.value) {
-				appendImageNode()
+		watch(
+			() => [renderedCard.value, isVisibleOnScreen.value],
+			() => {
+				if (!isImageAppended.value && renderedCard.value && isVisibleOnScreen.value) {
+					appendImageNode()
+				}
 			}
-		})
+		)
 
 		const appendImageNode = (): void => {
 			isImageAppended.value = true
@@ -84,5 +90,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 </style>

@@ -45,9 +45,7 @@
 				</button>
 			</div>
 			<div class="hide-filters-mobile">
-				<button class="primary" @click="() => toggleFilters()">
-					Toggle filters
-				</button>
+				<button class="primary" @click="() => toggleFilters()">Toggle filters</button>
 			</div>
 		</div>
 	</div>
@@ -57,15 +55,15 @@
 import store from '@/Vue/store'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
-import {computed, defineComponent, ref} from '@vue/composition-api'
-import {debounce} from 'throttle-debounce'
+import { computed, defineComponent, ref } from '@vue/composition-api'
+import { debounce } from 'throttle-debounce'
 import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
-import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteQuery'
+import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
 	components: {
-		InlineTooltip
+		InlineTooltip,
 	},
 	setup() {
 		const routeQuery = useDecksRouteQuery()
@@ -94,7 +92,7 @@ export default defineComponent({
 		}
 
 		const filtersHiddenClass = computed<Record<string, boolean>>(() => ({
-			'filters-hidden': !filtersVisible.value
+			'filters-hidden': !filtersVisible.value,
 		}))
 
 		const colorData = computed(() => [
@@ -125,9 +123,9 @@ export default defineComponent({
 			get(): boolean {
 				return routeQuery.value.experimental
 			},
-			set (value: boolean) {
+			set(value: boolean) {
 				routeQuery.value.experimental = value
-			}
+			},
 		})
 
 		const searchQuery = computed<string>({
@@ -136,7 +134,7 @@ export default defineComponent({
 			},
 			set(value: string) {
 				setSearchQueryDebounced(value)
-			}
+			},
 		})
 
 		return {
@@ -158,164 +156,164 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	$MOBILE_MODE_THRESHOLD: 1300px;
-	$COMPACT_MODE_THRESHOLD: 2050px;
+$MOBILE_MODE_THRESHOLD: 1300px;
+$COMPACT_MODE_THRESHOLD: 2050px;
 
-	.the-card-library-header {
+.the-card-library-header {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 0 8px;
+	height: calc(100% - 16px);
+	justify-content: space-between;
+
+	&.filters-hidden {
+		justify-content: flex-end;
+	}
+
+	button.selected {
+		color: black;
+		background: darkorange;
+		border-color: darkorange;
+		&:hover {
+			background: darken(darkorange, 5);
+			border-color: darken(darkorange, 5);
+		}
+		&:active {
+			background: darken(darkorange, 10);
+			border-color: darken(darkorange, 10);
+		}
+	}
+
+	.filters {
 		display: flex;
 		flex-wrap: wrap;
-		padding: 0 8px;
-		height: calc(100% - 16px);
-		justify-content: space-between;
+		justify-content: flex-start;
 
-		&.filters-hidden {
-			justify-content: flex-end;
+		& > * {
 		}
 
-		button.selected {
-			color: black;
-			background: darkorange;
-			border-color: darkorange;
-			&:hover {
-				background: darken(darkorange, 5);
-				border-color: darken(darkorange, 5);
-			}
-			&:active {
-				background: darken(darkorange, 10);
-				border-color: darken(darkorange, 10);
-			}
+		.tooltip {
+			font-size: 1.2em;
 		}
 
-		.filters {
+		.filter-buttons {
 			display: flex;
-			flex-wrap: wrap;
-			justify-content: flex-start;
+			margin: 8px 0;
+		}
 
-			& > * {
+		.separator {
+			flex-grow: 0;
+			flex-shrink: 0;
+			width: 1px;
+			margin: 0 8px;
+			background: white;
+		}
+
+		button {
+			margin: 0 4px;
+			min-width: fit-content;
+
+			&:nth-child(1) {
+				min-width: 50px;
 			}
+		}
 
-			.tooltip {
-				font-size: 1.2em;
+		.checkbox-container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 8px 0;
+
+			.checkbox {
+				display: flex;
 			}
+		}
 
+		@media (max-width: $MOBILE_MODE_THRESHOLD) {
+			flex-direction: row;
+			width: 100%;
+			justify-content: center;
+			margin-top: 8px;
 			.filter-buttons {
-				display: flex;
-				margin: 8px 0;
-			}
-
-			.separator {
-				flex-grow: 0;
-				flex-shrink: 0;
-				width: 1px;
-				margin: 0 8px;
-				background: white;
-			}
-
-			button {
-				margin: 0 4px;
-				min-width: fit-content;
-
-				&:nth-child(1) {
-					min-width: 50px;
-				}
-			}
-
-			.checkbox-container {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin: 8px 0;
-
-				.checkbox {
-					display: flex;
-				}
-			}
-
-			@media (max-width: $MOBILE_MODE_THRESHOLD) {
-				flex-direction: row;
-				width: 100%;
-				justify-content: center;
-				margin-top: 8px;
-				.filter-buttons {
-					flex-direction: column;
-					margin: 0 8px;
-					width: 100%;
-					button {
-						margin: 4px 0;
-					}
-				}
-			}
-		}
-
-		.right-side {
-			display: flex;
-			@media (max-width: $COMPACT_MODE_THRESHOLD) {
-				width: 100%;
-			}
-
-			@media (max-width: $MOBILE_MODE_THRESHOLD) {
-				width: 100%;
 				flex-direction: column;
-			}
-
-			.search {
-				position: relative;
-				display: flex;
-				min-height: 40px;
-				margin: 8px 0;
-				@media (max-width: $COMPACT_MODE_THRESHOLD) {
-					width: 100%;
-				}
-
-				.search-input-container {
-					flex: 5;
-					height: 100%;
-					display: flex;
-					flex-direction: column;
-					justify-content: center;
-
-					input {
-						margin: 0;
-						border: 1px solid darken($COLOR-TEXT, 10);
-						height: 100%;
-						border-radius: 0.25em 0 0 0.25em;
-						border-right: none;
-					}
-				}
-
-				button {
-					width: 40px;
-					margin: 0;
-					padding: 0;
-					border-radius: 0 0.25em 0.25em 0;
-				}
-
-				@media (max-width: $MOBILE_MODE_THRESHOLD) {
-					width: 100%;
-				}
-			}
-
-			.hide-filters-normal {
-				margin-top: 4px;
-				margin-left: 8px;
-				button {
-					height: calc(100% - 12px);
-				}
-				@media (max-width: $MOBILE_MODE_THRESHOLD) {
-					display: none;
-				}
-			}
-
-			.hide-filters-mobile {
-				display: none;
+				margin: 0 8px;
 				width: 100%;
-				margin: 8px 0;
-				@media (max-width: $MOBILE_MODE_THRESHOLD) {
-					display: block;
+				button {
+					margin: 4px 0;
 				}
 			}
 		}
 	}
+
+	.right-side {
+		display: flex;
+		@media (max-width: $COMPACT_MODE_THRESHOLD) {
+			width: 100%;
+		}
+
+		@media (max-width: $MOBILE_MODE_THRESHOLD) {
+			width: 100%;
+			flex-direction: column;
+		}
+
+		.search {
+			position: relative;
+			display: flex;
+			min-height: 40px;
+			margin: 8px 0;
+			@media (max-width: $COMPACT_MODE_THRESHOLD) {
+				width: 100%;
+			}
+
+			.search-input-container {
+				flex: 5;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+
+				input {
+					margin: 0;
+					border: 1px solid darken($COLOR-TEXT, 10);
+					height: 100%;
+					border-radius: 0.25em 0 0 0.25em;
+					border-right: none;
+				}
+			}
+
+			button {
+				width: 40px;
+				margin: 0;
+				padding: 0;
+				border-radius: 0 0.25em 0.25em 0;
+			}
+
+			@media (max-width: $MOBILE_MODE_THRESHOLD) {
+				width: 100%;
+			}
+		}
+
+		.hide-filters-normal {
+			margin-top: 4px;
+			margin-left: 8px;
+			button {
+				height: calc(100% - 12px);
+			}
+			@media (max-width: $MOBILE_MODE_THRESHOLD) {
+				display: none;
+			}
+		}
+
+		.hide-filters-mobile {
+			display: none;
+			width: 100%;
+			margin: 8px 0;
+			@media (max-width: $MOBILE_MODE_THRESHOLD) {
+				display: block;
+			}
+		}
+	}
+}
 </style>

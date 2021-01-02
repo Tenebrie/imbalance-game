@@ -6,34 +6,33 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import store from '@/Vue/store'
 import TheRulesList from '../components/rules/TheRulesList.vue'
 
 export default Vue.extend({
 	components: {
-		TheRulesList
-	}
+		TheRulesList,
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../styles/generic";
+@import '../styles/generic';
 
-	.rules-view {
+.rules-view {
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+
+	& > div {
+		flex-grow: 0;
 		display: flex;
-		align-items: flex-end;
-		justify-content: center;
+		flex-direction: column;
+		background: $COLOR-BACKGROUND-TRANSPARENT;
 
-		& > div {
-			flex-grow: 0;
-			display: flex;
-			flex-direction: column;
-			background: $COLOR-BACKGROUND-TRANSPARENT;
-
-			&.the-rules-list {
-				flex: 1;
-				max-width: 960px;
-			}
+		&.the-rules-list {
+			flex: 1;
+			max-width: 960px;
 		}
 	}
+}
 </style>

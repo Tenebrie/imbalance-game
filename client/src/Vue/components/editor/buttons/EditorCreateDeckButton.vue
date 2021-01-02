@@ -13,7 +13,7 @@ import store from '@/Vue/store'
 
 export default Vue.extend({
 	data: () => ({
-		requestInFlight: false
+		requestInFlight: false,
 	}),
 
 	methods: {
@@ -28,28 +28,28 @@ export default Vue.extend({
 			await this.$router.push({
 				name: 'single-deck',
 				params: {
-					deckId: response.deckId
-				}
+					deckId: response.deckId,
+				},
 			})
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../../styles/generic";
+@import '../../../styles/generic';
 
-	.button-container {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		button {
-			width: 80%;
-			max-width: 350px;
-			font-size: 1.2em;
-			margin-top: 32px;
-			margin-bottom: 32px;
-		}
+.button-container {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	button {
+		width: 80%;
+		max-width: 350px;
+		font-size: 1.2em;
+		margin-top: 32px;
+		margin-bottom: 32px;
 	}
+}
 </style>

@@ -49,7 +49,7 @@ export default Vue.extend({
 	},
 
 	data: () => ({
-		CardColor: CardColor
+		CardColor: CardColor,
 	}),
 
 	computed: {
@@ -58,24 +58,24 @@ export default Vue.extend({
 		},
 
 		deck(): PopulatedEditorDeck {
-			return store.state.editor.decks.find(deck => deck.id === this.deckId)
+			return store.state.editor.decks.find((deck) => deck.id === this.deckId)
 		},
 
 		leaderCards(): PopulatedEditorCard[] {
-			return this.deck.cards.filter(card => card.color === CardColor.LEADER)
+			return this.deck.cards.filter((card) => card.color === CardColor.LEADER)
 		},
 
 		goldenCards(): PopulatedEditorCard[] {
-			return this.deck.cards.filter(card => card.color === CardColor.GOLDEN)
+			return this.deck.cards.filter((card) => card.color === CardColor.GOLDEN)
 		},
 
 		silverCards(): PopulatedEditorCard[] {
-			return this.deck.cards.filter(card => card.color === CardColor.SILVER)
+			return this.deck.cards.filter((card) => card.color === CardColor.SILVER)
 		},
 
 		bronzeCards(): PopulatedEditorCard[] {
-			return this.deck.cards.filter(card => card.color === CardColor.BRONZE)
-		}
+			return this.deck.cards.filter((card) => card.color === CardColor.BRONZE)
+		},
 	},
 
 	created(): void {
@@ -92,56 +92,57 @@ export default Vue.extend({
 			if (store.state.editor.hoveredDeckCard.scrollCallback) {
 				store.state.editor.hoveredDeckCard.scrollCallback()
 			}
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.editor-deck-card-list {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		padding: 8px 8px 0 8px;
-		width: 100%;
-		height: 100%;
-		input[type="text"] {
-			display: block;
-			font-size: 1.4em;
-			font-family: 'Roboto', sans-serif;
-			background: none;
-			text-align: center;
-			width: calc(100% - 32px);
-			margin: 0 8px;
+.editor-deck-card-list {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 8px 8px 0 8px;
+	width: 100%;
+	height: 100%;
+	input[type='text'] {
+		display: block;
+		font-size: 1.4em;
+		font-family: 'Roboto', sans-serif;
+		background: none;
+		text-align: center;
+		width: calc(100% - 32px);
+		margin: 0 8px;
 
-			&:hover, &:focus {
-				background: rgba(white, 0.1);
-			}
-		}
-
-		.card-list {
-			width: 100%;
-			display: flex;
-			flex-direction: column;
-			overflow-y: auto;
-		}
-
-		.buttons {
-			width: calc(100% - 24px);
-			display: flex;
-			flex-wrap: wrap;
-			flex-direction: row;
-			justify-content: center;
-			margin: 24px 12px;
-
-			.button-container {
-				flex: 1;
-				margin: 4px 4px;
-				font-size: 1.2em;
-			}
+		&:hover,
+		&:focus {
+			background: rgba(white, 0.1);
 		}
 	}
+
+	.card-list {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		overflow-y: auto;
+	}
+
+	.buttons {
+		width: calc(100% - 24px);
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+		justify-content: center;
+		margin: 24px 12px;
+
+		.button-container {
+			flex: 1;
+			margin: 4px 4px;
+			font-size: 1.2em;
+		}
+	}
+}
 </style>

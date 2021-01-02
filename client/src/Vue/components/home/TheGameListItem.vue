@@ -20,7 +20,7 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
-import {defineComponent, PropType} from '@vue/composition-api'
+import { defineComponent, PropType } from '@vue/composition-api'
 
 interface Props {
 	game: GameMessage
@@ -28,7 +28,7 @@ interface Props {
 
 export default defineComponent({
 	props: {
-		game: Object as PropType<GameMessage>
+		game: Object as PropType<GameMessage>,
 	},
 
 	setup(props: Props) {
@@ -39,18 +39,18 @@ export default defineComponent({
 			thisGame: props.game,
 			onClick,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	.the-game-list-item {
-		padding: 2px;
-		cursor: pointer;
-		user-select: none;
+.the-game-list-item {
+	padding: 2px;
+	cursor: pointer;
+	user-select: none;
 
-		&:hover {
-			background: rgba(#36454f, 0.75);
-		}
+	&:hover {
+		background: rgba(#36454f, 0.75);
 	}
+}
 </style>

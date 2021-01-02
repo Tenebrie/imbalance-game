@@ -15,12 +15,10 @@ import Localization from '@/Pixi/Localization'
 
 export default Vue.extend({
 	components: {
-		UserAvatar
+		UserAvatar,
 	},
 
-	data: () => ({
-
-	}),
+	data: () => ({}),
 
 	computed: {
 		player(): Player | null {
@@ -32,7 +30,7 @@ export default Vue.extend({
 				return this.player.username
 			}
 			return Localization.get('ui.navigation.login')
-		}
+		},
 	},
 
 	methods: {
@@ -40,28 +38,28 @@ export default Vue.extend({
 			if (this.$route.name !== 'profile') {
 				router.push({ name: 'profile' })
 			}
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import './src/Vue/styles/generic';
+@import './src/Vue/styles/generic';
 
-	.the-mini-user-profile {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-		margin: 0 4px;
+.the-mini-user-profile {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	margin: 0 4px;
 
-		.username {
-			user-select: none;
-			cursor: pointer;
-		}
-		.avatar {
-			margin: 0 4px;
-		}
+	.username {
+		user-select: none;
+		cursor: pointer;
 	}
+	.avatar {
+		margin: 0 4px;
+	}
+}
 </style>

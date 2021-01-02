@@ -1,6 +1,6 @@
-import {Component} from 'vue'
-import {defineModule} from 'direct-vuex'
-import {moduleActionContext} from '@/Vue/store'
+import { Component } from 'vue'
+import { defineModule } from 'direct-vuex'
+import { moduleActionContext } from '@/Vue/store'
 
 type ComponentInStack = {
 	component: Component
@@ -10,7 +10,7 @@ type ComponentInStack = {
 const PopupModule = defineModule({
 	namespaced: true,
 	state: {
-		componentStack: [] as ComponentInStack[]
+		componentStack: [] as ComponentInStack[],
 	},
 
 	mutations: {
@@ -24,7 +24,7 @@ const PopupModule = defineModule({
 
 		clearComponents(state): void {
 			state.componentStack = []
-		}
+		},
 	},
 
 	getters: {
@@ -58,7 +58,7 @@ const PopupModule = defineModule({
 			const { commit } = moduleActionContext(context, PopupModule)
 			commit.clearComponents()
 		},
-	}
+	},
 })
 
 export default PopupModule

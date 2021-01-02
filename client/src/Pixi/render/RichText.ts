@@ -358,8 +358,7 @@ export default class RichText extends PIXI.Container {
 
 			switch (segment.type) {
 				case SegmentType.TEXT:
-					const text = segment.data!
-					insertText(text)
+					insertText(segment.data!)
 					break
 
 				case SegmentType.OPENING_TAG:

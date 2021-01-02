@@ -21,40 +21,40 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-	@import "../styles/generic";
+@import '../styles/generic';
 
-	.editor-view {
+.editor-view {
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+
+	.card-library {
+		flex: 1;
+		margin: 0 16px 0 32px;
 		display: flex;
-		align-items: flex-end;
+		align-items: center;
 		justify-content: center;
+		flex-direction: column;
+		height: 100%;
+		background: $COLOR-BACKGROUND-TRANSPARENT;
+	}
 
-		.card-library {
-			flex: 1;
-			margin: 0 16px 0 32px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-direction: column;
-			height: 100%;
-			background: $COLOR-BACKGROUND-TRANSPARENT;
-		}
+	$DECK-LIST-WIDTH: 410px;
+	.deck-list {
+		max-width: $DECK-LIST-WIDTH;
+		flex-grow: 0;
+		flex-shrink: 0;
+		margin: 0 32px 0 16px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		height: 100%;
+		background: $COLOR-BACKGROUND-TRANSPARENT;
 
-		$DECK-LIST-WIDTH: 410px;
-		.deck-list {
-			max-width: $DECK-LIST-WIDTH;
-			flex-grow: 0;
-			flex-shrink: 0;
-			margin: 0 32px 0 16px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-direction: column;
-			height: 100%;
-			background: $COLOR-BACKGROUND-TRANSPARENT;
-
-			@media screen and (max-width: calc(#{$DECK-LIST-WIDTH} * 2)) {
-				max-width: 50%;
-			}
+		@media screen and (max-width: calc(#{$DECK-LIST-WIDTH} * 2)) {
+			max-width: 50%;
 		}
 	}
+}
 </style>

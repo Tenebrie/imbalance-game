@@ -10,17 +10,14 @@
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
-import store from '@/Vue/store'
 import Notifications from '@/utils/Notifications'
 
 export default Vue.extend({
 	data: () => ({
-		requestInFlight: false
+		requestInFlight: false,
 	}),
 
-	computed: {
-
-	},
+	computed: {},
 
 	methods: {
 		async onClick(): Promise<void> {
@@ -46,11 +43,11 @@ export default Vue.extend({
 			el.select()
 			document.execCommand('copy')
 			document.body.removeChild(el)
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../../styles/generic";
+@import '../../../styles/generic';
 </style>

@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import {computed, defineComponent, onMounted, onUnmounted} from '@vue/composition-api'
+import { computed, defineComponent, onMounted, onUnmounted } from '@vue/composition-api'
 
 export default defineComponent({
 	setup() {
@@ -33,18 +33,18 @@ export default defineComponent({
 			popupComponent,
 			onSmokeScreenClick,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.the-popup-view {
-		z-index: 1000;
-		position: absolute;
-		width: 100vw;
-		height: 100vh;
-		background: rgba(0, 0, 0, 0.7);
-	}
+.the-popup-view {
+	z-index: 1000;
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.7);
+}
 </style>

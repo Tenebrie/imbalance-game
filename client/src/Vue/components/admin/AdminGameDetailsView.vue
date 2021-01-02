@@ -29,9 +29,8 @@
 							new Intl.DateTimeFormat('ru', {
 								hour: 'numeric',
 								minute: 'numeric',
-								second: 'numeric'
-							})
-							.format(new Date(game.startedAt))
+								second: 'numeric',
+							}).format(new Date(game.startedAt))
 						}}
 					</td>
 				</tr>
@@ -43,8 +42,7 @@
 								hour: 'numeric',
 								minute: 'numeric',
 								second: 'numeric',
-							})
-							.format(new Date(game.closedAt))
+							}).format(new Date(game.closedAt))
 						}}
 					</td>
 				</tr>
@@ -57,8 +55,7 @@
 								minute: 'numeric',
 								second: 'numeric',
 								timeZone: 'GMT',
-							})
-							.format(new Date(game.closedAt ? game.closedAt : currentTime).getTime() - new Date(game.startedAt).getTime())
+							}).format(new Date(game.closedAt ? game.closedAt : currentTime).getTime() - new Date(game.startedAt).getTime())
 						}}
 					</td>
 				</tr>
@@ -68,13 +65,15 @@
 				</tr>
 				<tr v-if="game.victoriousPlayer">
 					<td class="header">Victorious player:</td>
-					<td><router-link :to="`/admin/users/${game.victoriousPlayer.id}`">{{ game.victoriousPlayer.username }}</router-link></td>
+					<td>
+						<router-link :to="`/admin/users/${game.victoriousPlayer.id}`">{{ game.victoriousPlayer.username }}</router-link>
+					</td>
 				</tr>
 			</table>
 		</div>
 		<div v-if="errors.length > 0">
 			<h2>Errors</h2>
-			<div class="error-container" v-for="(error) in errors" :key="error.createdAt">
+			<div class="error-container" v-for="error in errors" :key="error.createdAt">
 				<div class="error-description">
 					<table>
 						<tr>
@@ -84,9 +83,8 @@
 									new Intl.DateTimeFormat('ru', {
 										hour: 'numeric',
 										minute: 'numeric',
-										second: 'numeric'
-									})
-									.format(new Date(error.createdAt))
+										second: 'numeric',
+									}).format(new Date(error.createdAt))
 								}}
 							</td>
 						</tr>
@@ -99,8 +97,7 @@
 										minute: 'numeric',
 										second: 'numeric',
 										timeZone: 'GMT',
-									})
-									.format(new Date(error.createdAt).getTime() - new Date(game.startedAt).getTime())
+									}).format(new Date(error.createdAt).getTime() - new Date(game.startedAt).getTime())
 								}}
 							</td>
 						</tr>
@@ -114,7 +111,7 @@
 
 <script lang="ts">
 import axios from 'axios'
-import {defineComponent, onMounted, ref} from '@vue/composition-api'
+import { defineComponent, onMounted, ref } from '@vue/composition-api'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import router from '@/Vue/router'
 import GameErrorDatabaseEntry from '@shared/models/GameErrorDatabaseEntry'
@@ -129,14 +126,14 @@ export default defineComponent({
 		const loadData = async () => {
 			const gameId = router.currentRoute.params.gameId
 			const gameResponse = await axios.get(`/api/admin/games/${gameId}`)
-			game.value = (gameResponse.data as GameHistoryDatabaseEntry)
+			game.value = gameResponse.data as GameHistoryDatabaseEntry
 
 			if (game.value.errorCount > 0) {
 				const errorsResponse = await axios(`/api/admin/games/${gameId}/errors`)
 
-				errors.value = (errorsResponse.data as GameErrorDatabaseEntry[]).map(error => ({
+				errors.value = (errorsResponse.data as GameErrorDatabaseEntry[]).map((error) => ({
 					...error,
-					stack: JSON.parse(error.stack)
+					stack: JSON.parse(error.stack),
 				}))
 			}
 			hasLoaded.value = true
@@ -155,87 +152,87 @@ export default defineComponent({
 			hasLoaded,
 			currentTime,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.admin-game-details-view {
-		overflow-y: scroll;
-		text-align: left;
+.admin-game-details-view {
+	overflow-y: scroll;
+	text-align: left;
+}
+
+h2 {
+	margin-left: 8px;
+}
+
+.header {
+	font-weight: bold;
+	min-width: 200px;
+}
+
+.info {
+	margin-left: 8px;
+	margin-top: 16px;
+	line-height: 1.4em;
+
+	.game-active {
+		color: darken(cyan, 10);
+	}
+	.game-closed {
+		color: green;
 	}
 
-	h2 {
+	.players {
+		& > *::after {
+			content: ', ';
+		}
+
+		& > *:last-child::after {
+			content: '';
+		}
+	}
+}
+
+.textarea-container {
+	display: flex;
+	textarea {
+		resize: vertical;
+		width: 100%;
+		height: 512px;
+	}
+}
+
+.error-container {
+	text-align: start;
+	margin-bottom: 16px;
+
+	.error-description {
 		margin-left: 8px;
-	}
+		margin-bottom: 2px;
+		font-size: 16px;
+		line-height: 1.5em;
 
-	.header {
-		font-weight: bold;
-		min-width: 200px;
-	}
-
-	.info {
-		margin-left: 8px;
-		margin-top: 16px;
-		line-height: 1.4em;
-
-		.game-active {
-			color: darken(cyan, 10);
-		}
-		.game-closed {
-			color: green;
-		}
-
-		.players {
-			& > *::after {
-				content: ', ';
-			}
-
-			& > *:last-child::after {
-				content: '';
-			}
+		.timestamp {
+			font-weight: bold;
 		}
 	}
 
-	.textarea-container {
-		display: flex;
-		textarea {
-			resize: vertical;
-			width: 100%;
-			height: 512px;
-		}
-	}
-
-	.error-container {
+	.stacktrace {
+		font-size: 14px;
+		white-space: pre;
 		text-align: start;
-		margin-bottom: 16px;
-
-		.error-description {
-			margin-left: 8px;
-			margin-bottom: 2px;
-			font-size: 16px;
-			line-height: 1.5em;
-
-			.timestamp {
-				font-weight: bold;
-			}
-		}
-
-		.stacktrace {
-			font-size: 14px;
-			white-space: pre;
-			text-align: start;
-			padding: 4px 8px;
-			font-family: monospace, monospace;
-			background: rgba(black, 0.5);
-		}
-
-		textarea {
-			resize: vertical;
-			width: 100%;
-			height: 512px;
-		}
+		padding: 4px 8px;
+		font-family: monospace, monospace;
+		background: rgba(black, 0.5);
 	}
+
+	textarea {
+		resize: vertical;
+		width: 100%;
+		height: 512px;
+	}
+}
 </style>

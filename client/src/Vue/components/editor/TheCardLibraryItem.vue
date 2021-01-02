@@ -12,25 +12,25 @@ import CardColor from '@shared/enums/CardColor'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import CardType from '@shared/enums/CardType'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import {RIGHT_MOUSE_BUTTON} from '@/Pixi/input/Input'
-import {computed, defineComponent, PropType, ref} from '@vue/composition-api'
+import { RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
+import { computed, defineComponent, PropType, ref } from '@vue/composition-api'
 import router from '@/Vue/router'
 
 export default defineComponent({
 	components: {
-		PixiPreRenderedCard
+		PixiPreRenderedCard,
 	},
 
 	props: {
 		card: {
 			type: Object as PropType<CardMessage | null>,
-			required: true
+			required: true,
 		},
 
 		mode: {
 			type: String as PropType<'library' | 'inspect'>,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	setup(props) {
@@ -42,7 +42,7 @@ export default defineComponent({
 			}
 			store.dispatch.editor.addCardToDeck({
 				deckId: deckId,
-				cardToAdd: props.card
+				cardToAdd: props.card,
 			})
 		}
 
@@ -51,7 +51,7 @@ export default defineComponent({
 		const onMouseDown = (event: MouseEvent) => {
 			if (event.button === RIGHT_MOUSE_BUTTON) {
 				isRightClicking.value = true
-				window.setTimeout(() => isRightClicking.value = false, 5000)
+				window.setTimeout(() => (isRightClicking.value = false), 5000)
 			}
 		}
 
@@ -74,7 +74,7 @@ export default defineComponent({
 		}
 
 		const renderedCard = computed<RenderedEditorCard | null>(() => {
-			return store.state.editor.renderedCards.find(renderedCard => renderedCard.class === props.card.class)
+			return store.state.editor.renderedCards.find((renderedCard) => renderedCard.class === props.card.class)
 		})
 
 		const isDisabled = computed<boolean>(() => {
@@ -87,13 +87,13 @@ export default defineComponent({
 		})
 
 		const customClass = computed<Record<string, boolean>>(() => ({
-			'disabled': isDisabled.value,
-			'leader': props.card.color === CardColor.LEADER,
-			'golden': props.card.color === CardColor.GOLDEN,
-			'silver': props.card.color === CardColor.SILVER,
-			'bronze': props.card.color === CardColor.BRONZE,
-			'token': props.card.color === CardColor.TOKEN,
-			'spell': props.card.type === CardType.SPELL
+			disabled: isDisabled.value,
+			leader: props.card.color === CardColor.LEADER,
+			golden: props.card.color === CardColor.GOLDEN,
+			silver: props.card.color === CardColor.SILVER,
+			bronze: props.card.color === CardColor.BRONZE,
+			token: props.card.color === CardColor.TOKEN,
+			spell: props.card.type === CardType.SPELL,
 		}))
 
 		return {
@@ -104,83 +104,82 @@ export default defineComponent({
 			onMouseDown,
 			onMouseUp,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.the-card-library-item {
-		position: relative;
-		width: calc(#{$CARD_WIDTH} / 2);
-		height: calc(#{$CARD_HEIGHT} / 2);
-		cursor: pointer;
-		user-select: none;
+.the-card-library-item {
+	position: relative;
+	width: calc(#{$CARD_WIDTH} / 2);
+	height: calc(#{$CARD_HEIGHT} / 2);
+	cursor: pointer;
+	user-select: none;
 
-		&.disabled {
-			filter: brightness(50%);
-			cursor: default;
-		}
+	&.disabled {
+		filter: brightness(50%);
+		cursor: default;
+	}
 
-		&:hover {
-			&::before {
-				opacity: 1;
-				transition: opacity 0s;
-			}
-		}
-
+	&:hover {
 		&::before {
-			position: absolute;
-			content: '';
-			top: 4px;
-			left: 4px;
-			width: calc(#{$CARD_WIDTH} / 2 - 8px);
-			height: calc(#{$CARD_HEIGHT} / 2 - 8px);
-			opacity: 0;
-			transition: opacity 1s;
-		}
-
-		&.leader {
-			&::before {
-				box-shadow: MediumAquamarine 0 0 8px 4px;
-			}
-		}
-
-		&.golden {
-			&::before {
-				box-shadow: darkorange 0 0 8px 4px;
-			}
-		}
-
-		&.silver {
-			&::before {
-				box-shadow: #BB20BB 0 0 8px 4px;
-			}
-		}
-
-		&.bronze {
-			&::before {
-				box-shadow: white 0 0 8px 4px;
-			}
-		}
-
-		&.token {
-			&::before {
-				box-shadow: gray 0 0 8px 4px;
-			}
-		}
-
-		&.spell {
-			&::before {
-				box-shadow: blue 0 0 8px 4px;
-			}
-		}
-
-		/deep/
-		img {
-			position: relative;
-			height: 100%;
+			opacity: 1;
+			transition: opacity 0s;
 		}
 	}
+
+	&::before {
+		position: absolute;
+		content: '';
+		top: 4px;
+		left: 4px;
+		width: calc(#{$CARD_WIDTH} / 2 - 8px);
+		height: calc(#{$CARD_HEIGHT} / 2 - 8px);
+		opacity: 0;
+		transition: opacity 1s;
+	}
+
+	&.leader {
+		&::before {
+			box-shadow: MediumAquamarine 0 0 8px 4px;
+		}
+	}
+
+	&.golden {
+		&::before {
+			box-shadow: darkorange 0 0 8px 4px;
+		}
+	}
+
+	&.silver {
+		&::before {
+			box-shadow: #bb20bb 0 0 8px 4px;
+		}
+	}
+
+	&.bronze {
+		&::before {
+			box-shadow: white 0 0 8px 4px;
+		}
+	}
+
+	&.token {
+		&::before {
+			box-shadow: gray 0 0 8px 4px;
+		}
+	}
+
+	&.spell {
+		&::before {
+			box-shadow: blue 0 0 8px 4px;
+		}
+	}
+
+	/deep/ img {
+		position: relative;
+		height: 100%;
+	}
+}
 </style>

@@ -1,6 +1,6 @@
-import {defineModule} from 'direct-vuex'
+import { defineModule } from 'direct-vuex'
 import Card from '@shared/models/Card'
-import store, {moduleActionContext} from '@/Vue/store'
+import store, { moduleActionContext } from '@/Vue/store'
 import Core from '@/Pixi/Core'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/card/CardMessage'
@@ -9,7 +9,7 @@ const InspectedCardModule = defineModule({
 	namespaced: true,
 
 	state: {
-		stack: [] as string[]
+		stack: [] as string[],
 	},
 
 	mutations: {
@@ -32,7 +32,7 @@ const InspectedCardModule = defineModule({
 				return null
 			}
 			const id = state.stack[state.stack.length - 1]
-			return (Core.game && Core.game.findRenderedCardById(id)) || store.state.editor.cardLibrary.find(card => card.id === id) || null
+			return (Core.game && Core.game.findRenderedCardById(id)) || store.state.editor.cardLibrary.find((card) => card.id === id) || null
 		},
 	},
 
@@ -65,8 +65,8 @@ const InspectedCardModule = defineModule({
 			const { commit } = moduleActionContext(context, InspectedCardModule)
 			commit.clearStack()
 			Core.input && Core.input.releaseInspectedCard()
-		}
-	}
+		},
+	},
 })
 
 export default InspectedCardModule
