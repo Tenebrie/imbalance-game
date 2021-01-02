@@ -82,7 +82,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		},
 
 		async postLogin(context): Promise<void> {
-			const { dispatch } = rootActionContext(context)
+			const {dispatch} = rootActionContext(context)
 
 			LocalStorage.setHasAuthCookie(true)
 			await dispatch.userPreferencesModule.fetchPreferences()

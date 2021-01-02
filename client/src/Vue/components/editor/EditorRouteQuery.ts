@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import router from '@/Vue/router'
-import { computed } from '@vue/composition-api'
+import {computed } from '@vue/composition-api'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 
