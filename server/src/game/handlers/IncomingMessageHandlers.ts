@@ -156,6 +156,16 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
+	[GenericActionMessageType.SURRENDER]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+		if (!game.isStarted || game.isFinished) {
+			return
+		}
+
+		game.finish(player.opponent, 'Player surrendered (Player action)')
+		onPlayerActionEnd(game, player)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
 	[SystemMessageType.INIT]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		if (player.initialized) {
 			return

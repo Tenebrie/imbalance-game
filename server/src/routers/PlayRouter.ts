@@ -88,8 +88,8 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 		} catch (error) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error)
-			GameHistoryDatabase.closeGame(currentGame, 'Game logic error', null)
-			currentGame.forceShutdown('Game logic error')
+			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Player action)', null)
+			currentGame.forceShutdown('Unhandled error (Player action)')
 		}
 	})
 
@@ -146,8 +146,8 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 		} catch (error) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error)
-			GameHistoryDatabase.closeGame(currentGame, 'Game logic error', null)
-			currentGame.forceShutdown('Game logic error')
+			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Spectator action)', null)
+			currentGame.forceShutdown('Unhandled error (Spectator action)')
 		}
 	})
 

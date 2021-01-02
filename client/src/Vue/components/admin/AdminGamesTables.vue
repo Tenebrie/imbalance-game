@@ -1,7 +1,7 @@
 <template>
 	<div class="admin-games-tables">
 		<div v-if="activeGames.length > 0">
-			<h2>Active games</h2>
+			<h2>Active Games</h2>
 			<table class="games-table">
 				<thead>
 				<tr>
@@ -59,7 +59,7 @@
 			</table>
 		</div>
 
-		<h2>Game history</h2>
+		<h2>Game History</h2>
 		<table class="games-table">
 			<thead>
 			<tr>
@@ -114,6 +114,7 @@
 						<router-link class="user-input" v-if="game.victoriousPlayer" :to="`/admin/users/${game.victoriousPlayer.id}`">
 							{{ game.victoriousPlayer.username }}
 						</router-link>
+						<span v-if="!game.victoriousPlayer">N/A</span>
 					</td>
 					<td>
 						<span v-if="Number(game.errorCount) === 0" class="no-errors">None</span>

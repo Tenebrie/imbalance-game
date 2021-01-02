@@ -309,7 +309,7 @@ export default class ServerGame implements Game {
 			this.finish(this.getOpponent(defeatedPlayer), victoryReason)
 			return
 		} else if (this.players.every((player) => player.morale <= 0)) {
-			this.finish(null, 'Draw')
+			this.finish(null, 'Game ended with a draw')
 			return
 		}
 

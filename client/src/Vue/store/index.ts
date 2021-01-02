@@ -15,6 +15,7 @@ import InspectedCardModule from '@/Vue/store/modules/InspectedCardModule'
 import LocalStorage from '@/utils/LocalStorage'
 import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
 import GameMessage from '@shared/models/network/GameMessage'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 
 Vue.use(Vuex)
 
@@ -116,6 +117,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		leaveGame(): void {
 			if (store.state.gameStateModule.gameStatus === ClientGameStatus.NOT_STARTED) { return }
 
+			OutgoingMessageHandlers.sendSurrender()
 			store.dispatch.gameStateModule.reset()
 			router.push({ name: 'home' })
 			Core.socket.close(1000, 'Player disconnect')

@@ -1,3 +1,4 @@
+import 'source-map-support/register'
 import AsyncHandler from './utils/AsyncHandler'
 import path from 'path'
 import logger from 'morgan'

@@ -13,6 +13,7 @@
 		// Import non-ES modules as default imports.
 		"esModuleInterop": true,
 		"jsx": "react",
+		"sourceMap": true,
 		"outDir": "./dist",
 		"baseUrl": "./src",
 		"types": ["jest"],

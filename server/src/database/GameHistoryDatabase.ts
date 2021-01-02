@@ -105,7 +105,7 @@ export default {
 					"closedAt" = current_timestamp,
 					"eventLog" = $2,
 					"closeReason" = $3
-				WHERE id = $1
+				WHERE id = $1 AND "closedAt" IS NULL
 			`
 			return await Database.updateRows(query, [game.id, eventLog, reason])
 		}
@@ -116,7 +116,7 @@ export default {
 					"eventLog" = $2,
 					"closeReason" = $3,
 					"victoriousPlayer" = $4
-				WHERE id = $1
+				WHERE id = $1 AND "closedAt" IS NULL
 			`
 		return await Database.updateRows(query, [game.id, eventLog, reason, victoriousPlayer.player.id])
 	},
@@ -127,8 +127,8 @@ export default {
 			SET
 				"closedAt" = "startedAt",
 				"eventLog" = '[]',
-				"closeReason" = 'Abandoned game cleanup'
-			WHERE "closedAt" is NULL
+				"closeReason" = 'Unexpected server shutdown'
+			WHERE "closedAt" IS NULL
 		`
 		return await Database.updateRows(query)
 	},

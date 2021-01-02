@@ -1,6 +1,6 @@
 <template>
 	<div class="admin-player-details-view">
-		<h2>Info</h2>
+		<h2>Player Information</h2>
 		<div class="info" v-if="hasLoaded">
 			<table>
 				<tr>
@@ -13,7 +13,9 @@
 				</tr>
 				<tr>
 					<td class="header">Username:</td>
-					<td>{{ player.username }}</td>
+					<td>
+						<router-link :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
+					</td>
 				</tr>
 				<tr>
 					<td class="header">Created at:</td>

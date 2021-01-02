@@ -10,7 +10,7 @@
 			<div class="menu-separator"></div>
 			<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>
 			<div class="menu-separator"></div>
-			<button @click="onLeaveGame" class="primary game-button destructive">Leave game</button>
+			<button @click="onLeaveGame" class="primary game-button destructive">Surrender</button>
 		</div>
 	</div>
 </template>

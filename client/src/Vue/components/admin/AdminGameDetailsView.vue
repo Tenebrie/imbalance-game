@@ -1,10 +1,10 @@
 <template>
 	<div class="admin-game-details-view" v-if="hasLoaded">
-		<h2>Info</h2>
+		<h2>Game Information</h2>
 		<div class="info">
 			<table>
 				<tr>
-					<td class="header">Game ID:</td>
+					<td class="header">ID:</td>
 					<td>{{ game.id }}</td>
 				</tr>
 				<tr>
