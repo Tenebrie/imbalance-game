@@ -484,7 +484,7 @@ export default class Input {
 
 		cardsToRemove.forEach((card) => Core.destroyCard(card))
 		PIXI.Ticker.shared.addOnce(() => {
-			result.forEach((card) => card.resetDisplayMode())
+			// result.forEach((card) => card.resetDisplayMode())
 		})
 
 		this.forcedTargetingCards = result

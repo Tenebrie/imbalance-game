@@ -35,7 +35,7 @@ describe('HeroZamarath', () => {
 
 		const targetUnit = new TestingUnitNoTargeting(game)
 		playerAction(() => {
-			game.board.createUnit(targetUnit, player, 0, 0)
+			game.board.createUnit(targetUnit, 0, 0)
 
 			const opponentsCard = new TestingSpellHeavyStrike(game)
 			player.opponentInGame.cardHand.addSpell(opponentsCard)
@@ -57,7 +57,7 @@ describe('HeroZamarath', () => {
 
 		const targetUnit = new TestingUnitNoTargeting(game)
 		playerAction(() => {
-			game.board.createUnit(targetUnit, player, 0, 0)
+			game.board.createUnit(targetUnit, 0, 0)
 
 			const opponentsCard = new TestingSpellHeavyStrike(game)
 			player.opponentInGame.cardHand.addSpell(opponentsCard)

@@ -164,7 +164,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('switches targeting to next card in queue', () => {
-				game.board.createUnit(new TestingUnitNoTargeting(game), player.opponentInGame, 4, 0)
+				game.board.createUnit(new TestingUnitNoTargeting(game), 4, 0)
 
 				const valkyrie = new TestingUnitTargetsRow(game)
 				player.cardHand.addUnit(valkyrie)
@@ -191,7 +191,7 @@ describe('ServerGameEvents', () => {
 				;({ game, player, ownedCard } = TestGameTemplates.singleCardTest(TestingSpellTacticalMove))
 				events = game.events
 				resolutionStackSpy = jest.spyOn(game.cardPlay.cardResolveStack, 'finishResolving')
-				game.board.createUnit(new TestingUnitNoTargeting(game), player, 0, 0)
+				game.board.createUnit(new TestingUnitNoTargeting(game), 0, 0)
 			})
 
 			it('keeps card resolving after first target', () => {

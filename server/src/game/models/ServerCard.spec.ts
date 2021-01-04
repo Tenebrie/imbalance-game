@@ -22,7 +22,7 @@ describe('ServerCard', () => {
 		it('handles infinite redirection', () => {
 			const protectors: ServerCard[] = new Array(10).fill(0).map(() => new TestingUnitUltraProtector(game))
 			protectors.forEach((protector) => {
-				game.board.createUnit(protector, player, 0, 0)
+				game.board.createUnit(protector, 0, 0)
 			})
 			playerAction(() => {
 				const opponentsCard = new TestingSpellHeavyStrike(game)

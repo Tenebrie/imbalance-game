@@ -49,6 +49,10 @@ export default class ServerBoard implements Board {
 		return this.rows.find((row) => !!row.cards.find((unit) => unit.card.id === targetUnit.card.id)) || null
 	}
 
+	public getControlledRows(player: ServerPlayerInGame | null): ServerBoardRow[] {
+		return this.rows.filter((row) => row.owner === player)
+	}
+
 	public getAdjacentRows(targetRow: ServerBoardRow): ServerBoardRow[] {
 		const adjacentRows = []
 		if (targetRow.index > 0) {
@@ -218,12 +222,9 @@ export default class ServerBoard implements Board {
 		return playerRows[Math.min(playerRows.length - 1, distance)]
 	}
 
-	public createUnit(card: ServerCard, owner: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit | null {
+	public createUnit(card: ServerCard, rowIndex: number, unitIndex: number): ServerUnit | null {
 		const targetRow = this.rows[rowIndex]
-		if (card.features.includes(CardFeature.SPY)) {
-			owner = owner.opponentInGame
-		}
-		return targetRow.createUnit(card, owner, unitIndex)
+		return targetRow.createUnit(card, unitIndex)
 	}
 
 	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number): void {

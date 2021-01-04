@@ -25,7 +25,7 @@ export default class UnitWoodenPalisade extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
 			const rightPalisade = new UnitWoodenPalisade(this.game)
-			this.game.board.createUnit(rightPalisade, this.ownerInGame, triggeringUnit.rowIndex, triggeringUnit.unitIndex + 1)
+			this.game.board.createUnit(rightPalisade, triggeringUnit.rowIndex, triggeringUnit.unitIndex + 1)
 		})
 	}
 }

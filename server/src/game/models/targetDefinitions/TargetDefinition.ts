@@ -80,7 +80,7 @@ export default class TargetDefinition {
 	public static defaultCardPlayTarget(game: ServerGame): SimpleTargetDefinitionBuilder {
 		return SimpleTargetDefinitionBuilder.base(game, TargetMode.CARD_PLAY)
 			.target(TargetType.BOARD_ROW)
-			.require(TargetType.BOARD_ROW, ({ targetRow }) => !targetRow.isFull())
+			.require(TargetType.BOARD_ROW, ({ sourceCard, targetRow }) => sourceCard.type === CardType.SPELL || !targetRow.isFull())
 			.require(TargetType.BOARD_ROW, (args) => {
 				return (
 					args.sourceCard.type === CardType.SPELL ||

@@ -230,6 +230,9 @@
 	"buff.buffImmunity.name": "Immunity",
 	"buff.buffImmunity.description": "This card is immune to damage and any effects.",
 
+	"buff.buffPermanentImmunity.name": "Permanent Immunity",
+	"buff.buffPermanentImmunity.description": "This card is immune to damage and any effects.",
+
 	"buff.buffSparksExtraDamage.name": "Extra Spark damage",
 	"buff.buffSparksExtraDamage.description": "Your Sparks deal extra damage.",
 
@@ -280,6 +283,9 @@
 
 	"buff.buffNightwatch.name": "Nightwatch",
 	"buff.buffNightwatch.description": "This card has Nightwatch.",
+
+	"buff.buffPermanentNightwatch.name": "Permanent Nightwatch",
+	"buff.buffPermanentNightwatch.description": "This card has Nightwatch.",
 
 	"buff.buffNoArmor.name": "No Armor",
 	"buff.buffNoArmor.description": "This unit's Armor has been removed.",
@@ -735,8 +741,8 @@
 	"card.unitMagiciansAssistant.name": "Magician's Assistant",
 	"card.unitMagiciansAssistant.description": "*Deploy:*\nPut a copy of an enemy unit to the top of your deck.<p>If your deck has no duplicates, you can also target allied units.",
 
-	"card.unitPrototypeScorpionCrew.name": "Prototype Scorpion Crew",
-	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and to itself.<p><i>May perform unlimited number of attacks per turn.</i>",
+	"card.unitPrototypeScorpionCrew.name": "Prototype\nScorpion Crew",
+	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and {selfDamage} Damage to itself.<p><i>May perform unlimited number of attacks per turn.</i>",
 
 	"card.unitMakeshiftShelter.name": "Makeshift Shelter",
 	"card.unitMakeshiftShelter.description": "*Deploy:*\nChoose a Common or Epic allied unit.\nIt has *Nightwatch* until the end of this round, as long as this is on the board.",
@@ -757,5 +763,11 @@
 	"card.unitUrbanAmbusher.description": "Has +{bonusPower} Power for every Building on the same row.",
 
 	"card.unitUrbanTactician.name": "Urban Tactician",
-	"card.unitUrbanTactician.description": "Your other units that are directly adjacent to a Building have +{bonusPower} Power.<p><i>Doesn't work on buildings.</i>"
+	"card.unitUrbanTactician.description": "Your other units that are directly adjacent to a Building have +{bonusPower} Power.<p><i>Doesn't work on buildings.</i>",
+
+	"card.unitMadnessIncarnate.name": "Madness Incarnate",
+	"card.unitMadnessIncarnate.description": "*Round start:*\nIf this is in your deck, *Shatter* {shatterPerRow} on every friendly row.",
+
+	"card.unitShatteredSpace.name": "Shattered Space",
+	"card.unitShatteredSpace.description": "*Immune*"
 }

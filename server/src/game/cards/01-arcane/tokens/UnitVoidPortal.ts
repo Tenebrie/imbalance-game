@@ -11,7 +11,7 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitVoidPortal extends ServerCard {
 	powerPerSpell = asSplashBuffPotency(1)
@@ -43,7 +43,7 @@ export default class UnitVoidPortal extends ServerCard {
 		const unit = this.unit!
 		const owner = this.ownerInGame
 		const voidspawn = CardLibrary.instantiateByConstructor(this.game, UnitVoidspawn)
-		this.game.board.createUnit(voidspawn, this.ownerInGame, unit.rowIndex, unit.unitIndex + 1)
+		this.game.board.createUnit(voidspawn, unit.rowIndex, unit.unitIndex + 1)
 		const uniqueSpellsInDiscard = [...new Set(owner.cardGraveyard.spellCards.map((card) => card.class))]
 		if (uniqueSpellsInDiscard.length === 0) {
 			return

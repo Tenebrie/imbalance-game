@@ -7,6 +7,9 @@ import CardType from '@shared/enums/CardType'
 import ServerBuff from '../game/models/ServerBuff'
 import ServerAnimation from '../game/models/ServerAnimation'
 import BuffUnitToSpellConversion from '../game/buffs/BuffUnitToSpellConversion'
+import ServerBoardRow from '@src/game/models/ServerBoardRow'
+import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
+import Constants from '@shared/Constants'
 
 const createCard = (player: ServerPlayerInGame, card: ServerCard): ServerCard => {
 	card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
@@ -137,6 +140,18 @@ export default {
 				targetCard.buffs.dispel(count)
 			},
 		}),
+	}),
+
+	shatter: (count: number) => ({
+		on: (targetRow: ServerBoardRow) => {
+			for (let i = 0; i < count; i++) {
+				targetRow.game.animation.thread(() => {
+					const shatteredSpaceCount = targetRow.cards.filter((unit) => unit.card instanceof UnitShatteredSpace).length
+					const unitIndex = shatteredSpaceCount % 2 === 0 ? 0 : Constants.MAX_CARDS_PER_ROW
+					targetRow.createUnit(new UnitShatteredSpace(targetRow.game), unitIndex)
+				})
+			}
+		},
 	}),
 }
 

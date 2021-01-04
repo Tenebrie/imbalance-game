@@ -30,10 +30,10 @@ export default class UnitElderHoundmaster extends ServerCard {
 			const owner = unit.owner
 			const makeHound = () => CardLibrary.instantiateByConstructor(this.game, UnitTrainedHound)
 			this.game.animation.instantThread(() => {
-				this.game.board.createUnit(makeHound(), owner, unit.rowIndex, unit.unitIndex)
+				this.game.board.createUnit(makeHound(), unit.rowIndex, unit.unitIndex)
 			})
 			this.game.animation.instantThread(() => {
-				this.game.board.createUnit(makeHound(), owner, unit.rowIndex, unit.unitIndex + 1)
+				this.game.board.createUnit(makeHound(), unit.rowIndex, unit.unitIndex + 1)
 			})
 		})
 	}

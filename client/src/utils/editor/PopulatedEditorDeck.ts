@@ -38,7 +38,7 @@ export default class PopulatedEditorDeck {
 		return (
 			!this.leader ||
 			this.cardCount !== Constants.CARD_LIMIT_TOTAL ||
-			!!this.cards.find((card) => card.count > Utils.getMaxCardCountForColor(card.color))
+			this.cards.some((card) => card.count > Utils.getMaxCardCountForColor(card.color))
 		)
 	}
 

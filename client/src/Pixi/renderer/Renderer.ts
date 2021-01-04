@@ -190,26 +190,20 @@ export default class Renderer {
 		const unitCards = Core.player.cardHand.unitCards
 		const sortedPlayerUnitCards = Core.player.cardHand.unitCards
 			.filter((card) => card !== Core.input.inspectedCard)
+			.filter((card) => !Core.input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
 			.slice()
 			.reverse()
 		sortedPlayerUnitCards.forEach((renderedCard) => {
-			if (renderedCard === Core.input.inspectedCard) {
-				return
-			}
-
 			this.renderCard(renderedCard, unitCards, false, false)
 		})
 
 		const spellCards = Core.player.cardHand.spellCards
 		const sortedPlayerSpellCards = Core.player.cardHand.spellCards
 			.filter((card) => card !== Core.input.inspectedCard)
+			.filter((card) => !Core.input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
 			.slice()
 			.reverse()
 		sortedPlayerSpellCards.forEach((renderedCard) => {
-			if (renderedCard === Core.input.inspectedCard) {
-				return
-			}
-
 			this.renderCard(renderedCard, spellCards, false, true)
 		})
 
@@ -793,6 +787,10 @@ export default class Renderer {
 		const sprite = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
 
+		if (Core.input.inspectedCard === renderedCard) {
+			return
+		}
+
 		let sizeMod = 1.0
 		if (renderedCard === MouseHover.getHoveredCard()) {
 			sizeMod = 1.05
@@ -822,7 +820,6 @@ export default class Renderer {
 
 		targetPosition.y = this.getScreenHeight() - targetPosition.y
 
-		renderedCard.setDisplayMode(CardDisplayMode.SELECTION)
 		if (renderedCard === MouseHover.getHoveredCard()) {
 			renderedCard.setDisplayMode(CardDisplayMode.SELECTION_HOVERED)
 		} else {

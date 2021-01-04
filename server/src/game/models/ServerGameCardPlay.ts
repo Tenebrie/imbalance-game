@@ -12,7 +12,6 @@ import CardType from '@shared/enums/CardType'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerResolveStack from './ServerResolveStack'
 import GameEventCreators from './events/GameEventCreators'
-import Utils from '../../utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
 import ServerCard from './ServerCard'
 
@@ -109,7 +108,7 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolving(ownedCard, () => this.updateResolvingCardTargetingStatus())
 
 		/* Insert the card into the board */
-		const unit = this.game.board.createUnit(card, owner, rowIndex, unitIndex)
+		const unit = this.game.board.createUnit(card, rowIndex, unitIndex)
 		if (unit === null) {
 			this.cardResolveStack.finishResolving()
 			return

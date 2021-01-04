@@ -3,11 +3,13 @@ import ServerDamageInstance from '../models/ServerDamageSource'
 import GameHookType from '../models/events/GameHookType'
 import CardFeature from '@shared/enums/CardFeature'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import BuffFeature from '@shared/enums/BuffFeature'
 
-export default class BuffImmunity extends ServerBuff {
+export default class BuffPermanentImmunity extends ServerBuff {
 	constructor(params: BuffConstructorParams) {
 		super(params, {
 			alignment: BuffAlignment.POSITIVE,
+			features: [BuffFeature.PROTECTED],
 			cardFeatures: [CardFeature.UNTARGETABLE],
 		})
 
