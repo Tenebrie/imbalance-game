@@ -33,7 +33,7 @@ export default class UnitChallengeEagerExplorer extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 
-		this.createDeployTargeting(TargetType.CARD_IN_LIBRARY)
+		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
 			.require((args) => args.targetCard.color === CardColor.BRONZE)
 			.require(({ targetCard }) => this.exploredCards.includes(targetCard))
 

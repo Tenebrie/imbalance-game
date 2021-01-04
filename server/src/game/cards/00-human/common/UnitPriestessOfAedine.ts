@@ -33,7 +33,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			healing: this.healing,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.targetCount(this.targets)
 			.requireAllied()
 			.requireNotSelf()

@@ -25,7 +25,7 @@ export default class HeroQidala extends ServerCard {
 		})
 		this.addRelatedCards().requireTribe(CardTribe.LOOT)
 
-		this.createDeployTargeting(TargetType.CARD_IN_UNIT_DECK)
+		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.requireAllied()
 			.require((args) => args.targetCard.color === CardColor.SILVER)
 

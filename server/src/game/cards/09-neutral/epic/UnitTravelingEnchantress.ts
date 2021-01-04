@@ -32,7 +32,7 @@ export default class UnitTravelingEnchantress extends ServerCard {
 			extraStrengthGiven: this.extraStrengthGiven,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT).requireAllied().requireNotSelf()
+		this.createDeployTargets(TargetType.UNIT).requireAllied().requireNotSelf()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

@@ -37,7 +37,7 @@ export default class HeroTroviar extends ServerCard {
 			powerGained: this.powerGained,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.targetCount(this.targetCount)
 			.requireEnemy()
 			.require((args) => !this.targetsHit.includes(args.targetCard))

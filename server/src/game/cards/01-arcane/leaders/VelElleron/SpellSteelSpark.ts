@@ -34,7 +34,7 @@ export default class SpellSteelSpark extends ServerCard {
 			sideDamage: this.baseSideDamage,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.evaluate((args) => this.evaluateTarget(args))
 

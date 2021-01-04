@@ -23,9 +23,9 @@ export default class TestingSpellTacticalMove extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargeting(TargetType.UNIT).require(() => this.movingUnit === null)
+		this.createDeployTargets(TargetType.UNIT).require(() => this.movingUnit === null)
 
-		this.createDeployTargeting(TargetType.BOARD_ROW)
+		this.createDeployTargets(TargetType.BOARD_ROW)
 			.requireAllied()
 			.require(() => !!this.movingUnit)
 			.require(({ targetRow }) => targetRow.index !== this.movingUnit!.rowIndex)

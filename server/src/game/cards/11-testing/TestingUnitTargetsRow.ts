@@ -19,6 +19,6 @@ export default class TestingUnitTargetsRow extends ServerCard {
 			hiddenFromLibrary: true,
 		})
 
-		this.createDeployTargeting(TargetType.BOARD_ROW)
+		this.createDeployTargets(TargetType.BOARD_ROW)
 	}
 }

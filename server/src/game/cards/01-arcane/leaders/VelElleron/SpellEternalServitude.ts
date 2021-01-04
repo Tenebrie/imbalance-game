@@ -30,7 +30,7 @@ export default class SpellEternalServitude extends ServerCard {
 			extraCost: this.extraCost,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.requireAllied()
 			.evaluate(() => this.stats.basePower)
 

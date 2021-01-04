@@ -29,7 +29,7 @@ export default class SpellFleetingSpark extends ServerCard {
 			damage: this.damage,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT).requireEnemy()
+		this.createDeployTargets(TargetType.UNIT).requireEnemy()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

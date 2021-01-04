@@ -28,7 +28,7 @@ export default class HeroLightOracle extends ServerCard {
 			cardsToSee: this.cardsToSee,
 		}
 
-		this.createDeployTargeting(TargetType.CARD_IN_UNIT_DECK)
+		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.requireAllied()
 			.require((args) => args.targetCard.deckPosition < this.cardsToSee)
 			.preventSorting()

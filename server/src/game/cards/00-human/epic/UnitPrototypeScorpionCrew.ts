@@ -30,7 +30,7 @@ export default class UnitPrototypeScorpionCrew extends ServerCard {
 			selfDamage: this.selfDamage,
 		}
 
-		this.createUnitOrderTargets(TargetType.UNIT).targetCount(Infinity).requireEnemy()
+		this.createOrderTargets(TargetType.UNIT).targetCount(Infinity).requireEnemy()
 
 		this.createEffect(GameEventType.UNIT_ORDERED_UNIT).perform(({ targetCard }) => {
 			const damage = this.targetDamage(this)

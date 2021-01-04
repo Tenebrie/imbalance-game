@@ -26,7 +26,7 @@ export default class SpellCrystalBarrage extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargeting(TargetType.BOARD_ROW).requireEnemy()
+		this.createDeployTargets(TargetType.BOARD_ROW).requireEnemy()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}

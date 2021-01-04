@@ -29,7 +29,7 @@ export default class UnitCleansingFlame extends ServerCard {
 			dispelPower: this.dispelPower,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.requireNotSelf()
 			.require(({ targetCard }) => targetCard.buffs.dispellable.length > 0)
 

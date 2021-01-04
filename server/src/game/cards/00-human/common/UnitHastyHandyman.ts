@@ -25,7 +25,7 @@ export default class UnitHastyHandyman extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.requireAllied()
 			.requireNotSelf()
 			.require((args) => args.targetCard.features.includes(CardFeature.BUILDING))

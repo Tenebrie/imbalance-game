@@ -36,7 +36,7 @@ export default class UnitHungrySpellslinger extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.SCROLL)
 
-		this.createDeployTargeting(TargetType.CARD_IN_LIBRARY)
+		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
 			.require(() => this.didInfuse)
 			.require((args) => args.targetCard.tribes.includes(CardTribe.SCROLL))
 

@@ -35,12 +35,12 @@ export default class SpellTacticalMove extends ServerCard {
 			healing: this.healing,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.requireAllied()
 			.require(() => this.movingUnit === null)
 			.label('card.spellTacticalMove.target.label.unit')
 
-		this.createDeployTargeting(TargetType.BOARD_ROW)
+		this.createDeployTargets(TargetType.BOARD_ROW)
 			.requireAllied()
 			.require(() => !!this.movingUnit)
 			.require(({ targetRow }) => targetRow.index !== this.movingUnit!.rowIndex)

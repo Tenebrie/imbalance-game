@@ -32,7 +32,7 @@ export default class SpellFireball extends ServerCard {
 			areaDamage: this.baseAreaDamage,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.evaluate((args) => this.evaluateTarget(args))
 

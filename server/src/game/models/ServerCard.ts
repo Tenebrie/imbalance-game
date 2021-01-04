@@ -539,9 +539,9 @@ export default class ServerCard implements Card {
 	 *
 	 * Multiple target definitions will be added as inclusive OR.
 	 */
-	protected createUnitOrderTargets(targetType: TargetType.UNIT): OrderTargetDefinitionBuilder<UnitTargetValidatorArguments>
-	protected createUnitOrderTargets(targetType: TargetType.BOARD_ROW): OrderTargetDefinitionBuilder<RowTargetValidatorArguments>
-	protected createUnitOrderTargets(targetType: TargetType): OrderTargetDefinitionBuilder<any> {
+	protected createOrderTargets(targetType: TargetType.UNIT): OrderTargetDefinitionBuilder<UnitTargetValidatorArguments>
+	protected createOrderTargets(targetType: TargetType.BOARD_ROW): OrderTargetDefinitionBuilder<RowTargetValidatorArguments>
+	protected createOrderTargets(targetType: TargetType): OrderTargetDefinitionBuilder<any> {
 		const builder = OrderTargetDefinitionBuilder.base(this, targetType)
 		this.targeting.orderTargetDefinitions.push(builder)
 		return builder
@@ -551,14 +551,14 @@ export default class ServerCard implements Card {
 	 * -----------------------------
 	 * Add a target definition specifying the required deploy effect targets.
 	 */
-	protected createDeployTargeting(targetType: TargetType.UNIT): DeployTargetDefinitionBuilder<UnitTargetValidatorArguments>
-	protected createDeployTargeting(targetType: TargetType.BOARD_ROW): DeployTargetDefinitionBuilder<RowTargetValidatorArguments>
-	protected createDeployTargeting(targetType: TargetType.CARD_IN_LIBRARY): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
-	protected createDeployTargeting(targetType: TargetType.CARD_IN_UNIT_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
-	protected createDeployTargeting(targetType: TargetType.CARD_IN_SPELL_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
-	protected createDeployTargeting(targetType: TargetType.CARD_IN_UNIT_DECK): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
-	protected createDeployTargeting(targetType: TargetType.CARD_IN_SPELL_DECK): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
-	protected createDeployTargeting(targetType: TargetType): DeployTargetDefinitionBuilder<any> {
+	protected createDeployTargets(targetType: TargetType.UNIT): DeployTargetDefinitionBuilder<UnitTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.BOARD_ROW): DeployTargetDefinitionBuilder<RowTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.CARD_IN_LIBRARY): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.CARD_IN_UNIT_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.CARD_IN_SPELL_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.CARD_IN_UNIT_DECK): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.CARD_IN_SPELL_DECK): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType): DeployTargetDefinitionBuilder<any> {
 		const builder = DeployTargetDefinitionBuilder.base(this, targetType)
 		this.targeting.deployTargetDefinitions.push(builder)
 		return builder

@@ -22,7 +22,7 @@ export default class HeroMetrearte extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargeting(TargetType.CARD_IN_LIBRARY)
+		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
 			.require(({ targetCard }) => !targetCard.isExperimental)
 			.require((args) => args.targetCard.features.includes(CardFeature.HERO_POWER) && args.targetCard.faction === CardFaction.ARCANE)
 

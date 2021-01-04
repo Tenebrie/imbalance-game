@@ -31,7 +31,7 @@ export default class UnitStoneElemental extends ServerCard {
 			damage: this.damage,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.require(({ targetUnit }) => targetUnit.owner !== this.ownerInGame)
 			.perform(({ targetUnit }) => {
 				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))

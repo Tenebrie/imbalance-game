@@ -29,7 +29,7 @@ export default class UnitAulerianSongwriter extends ServerCard {
 			bonusPower: this.bonusPower,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetCard }) => this.onDeploy(targetCard))
 	}

@@ -25,7 +25,7 @@ export default class UnitOceanicSeagull extends ServerCard {
 		})
 		this.addRelatedCards().requireTribe(CardTribe.MERFOLK).requireColor(CardColor.BRONZE)
 
-		this.createDeployTargeting(TargetType.CARD_IN_UNIT_DECK)
+		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.requireAllied()
 			.require((args) => args.targetCard.color === CardColor.BRONZE)
 			.require((args) => args.targetCard.tribes.includes(CardTribe.MERFOLK))

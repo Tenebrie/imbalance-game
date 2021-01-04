@@ -39,7 +39,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.targetCount(this.targetCount)
 			.requireAllied()
 			.require((args) => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))

@@ -27,7 +27,7 @@ export default class SpellScrollOfLightning extends ServerCard {
 			damage: this.damage,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
 				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))

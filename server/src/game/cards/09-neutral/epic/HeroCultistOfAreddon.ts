@@ -26,7 +26,7 @@ export default class HeroCultistOfAreddon extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.requireAllied()
 			.requireNotSelf()
 			.require(({ targetCard }) => !targetCard.tribes.includes(CardTribe.CULTIST))

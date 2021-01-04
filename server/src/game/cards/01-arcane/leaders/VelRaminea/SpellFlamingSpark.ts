@@ -36,7 +36,7 @@ export default class SpellFlamingSpark extends ServerCard {
 			damagePerWeave: this.damagePerWeave,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT).requireEnemy()
+		this.createDeployTargets(TargetType.UNIT).requireEnemy()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

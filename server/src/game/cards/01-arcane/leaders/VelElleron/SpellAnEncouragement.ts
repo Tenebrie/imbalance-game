@@ -30,7 +30,7 @@ export default class SpellAnEncouragement extends ServerCard {
 			bonusPower: SpellAnEncouragement.bonusPower,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.requireAllied()
 			.evaluate(() => this.stats.basePower)
 

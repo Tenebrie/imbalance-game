@@ -34,7 +34,7 @@ export default class UnitChargingKnight extends ServerCard {
 			damage: this.damage,
 		}
 
-		this.createUnitOrderTargets(TargetType.UNIT)
+		this.createOrderTargets(TargetType.UNIT)
 			.targetCount(() => this.movesForwardThisTurn)
 			.requireEnemy()
 			.perform(({ targetCard }) => {

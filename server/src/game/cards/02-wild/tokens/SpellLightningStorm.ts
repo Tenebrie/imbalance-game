@@ -38,7 +38,7 @@ export default class SpellLightningStorm extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.targetCount(() => this.targetCount)
 			.requireEnemy()
 			.require((args) => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))

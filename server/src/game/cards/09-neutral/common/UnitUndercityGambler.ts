@@ -30,7 +30,7 @@ export default class UnitUndercityGambler extends ServerCard {
 			bonusPower: this.bonusPower,
 		}
 
-		this.createDeployTargeting(TargetType.CARD_IN_UNIT_HAND)
+		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND)
 			.requireAllied()
 			.require((args) => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
 			.perform(({ targetCard }) => {

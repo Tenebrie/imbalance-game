@@ -26,7 +26,7 @@ export default class UnitNullMender extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargeting(TargetType.BOARD_ROW)
+		this.createDeployTargets(TargetType.BOARD_ROW)
 			.require(({ targetRow }) => targetRow.cards.some((unit) => unit.card instanceof UnitShatteredSpace))
 			.perform(({ targetRow }) => {
 				const shatteredSpace = targetRow.cards.find((unit) => unit.card instanceof UnitShatteredSpace)

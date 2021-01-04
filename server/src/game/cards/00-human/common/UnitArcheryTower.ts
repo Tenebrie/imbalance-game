@@ -33,7 +33,7 @@ export default class UnitArcheryTower extends ServerCard {
 			damage: this.damage,
 		}
 
-		this.createUnitOrderTargets(TargetType.UNIT)
+		this.createOrderTargets(TargetType.UNIT)
 			.targetCount(() => this.buffs.getIntensity(BuffCanAttack))
 			.requireEnemy()
 

@@ -27,7 +27,7 @@ export default class SpellNightmareDrain extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargeting(TargetType.UNIT).require((args) => args.targetCard.stats.power < args.targetCard.stats.basePower)
+		this.createDeployTargets(TargetType.UNIT).require((args) => args.targetCard.stats.power < args.targetCard.stats.basePower)
 
 		/* Create basic unit if no target available */
 		this.createEffect(GameEventType.SPELL_DEPLOYED)

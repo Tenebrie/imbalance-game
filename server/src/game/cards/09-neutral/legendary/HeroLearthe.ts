@@ -26,7 +26,7 @@ export default class HeroLearthe extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargeting(TargetType.BOARD_ROW).require((args) => !!args.targetRow.owner)
+		this.createDeployTargets(TargetType.BOARD_ROW).require((args) => !!args.targetRow.owner)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}

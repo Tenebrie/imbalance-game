@@ -28,7 +28,7 @@ export default class HeroDarkOracle extends ServerCard {
 			cardsToSee: this.cardsToSee,
 		}
 
-		this.createDeployTargeting(TargetType.CARD_IN_UNIT_DECK)
+		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.requireEnemy()
 			.require((args) => args.targetCard.deckPosition < this.cardsToSee)
 			.preventSorting()

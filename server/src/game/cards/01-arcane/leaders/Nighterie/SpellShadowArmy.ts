@@ -33,7 +33,7 @@ export default class SpellShadowArmy extends ServerCard {
 			thresholdDecrease: this.thresholdDecrease,
 		}
 
-		this.createDeployTargeting(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.targetCount(() => this.allowedTargets)
 			.requireAllied()
 			.label('card.spellShadowArmy.target')
