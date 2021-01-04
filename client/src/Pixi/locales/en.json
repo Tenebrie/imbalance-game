@@ -769,5 +769,8 @@
 	"card.unitMadnessIncarnate.description": "*Round start:*\nIf this is in your deck, *Shatter* {shatterPerRow} on every friendly row.",
 
 	"card.unitShatteredSpace.name": "Shattered Space",
-	"card.unitShatteredSpace.description": "*Immune*"
+	"card.unitShatteredSpace.description": "*Immune*",
+
+	"card.unitNullMender.name": "Null Mender",
+	"card.unitNullMender.description": "*Deploy:*\nChoose a row with *Shattered Space*. Destroy one copy of it on that row."
 }
