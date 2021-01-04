@@ -9,6 +9,6 @@ export default class ResolveStackEntryMessage {
 
 	constructor(entry: ResolveStackEntry) {
 		this.ownedCard = new OpenOwnedCardMessage(entry.ownedCard)
-		this.targetsSelected = entry.targetsSelected.map((target) => new CardTargetMessage(target))
+		this.targetsSelected = entry.previousTargets.map((target) => new CardTargetMessage(target.target))
 	}
 }

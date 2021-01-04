@@ -173,7 +173,7 @@ describe('ServerGameEvents', () => {
 				events.resolveEvents()
 				game.cardPlay.forcedPlayCardFromHand({ card: valkyrie, owner: player }, 0, 0)
 				events.resolveEvents()
-				game.cardPlay.selectCardTarget(player, game.cardPlay.getValidTargets()[0])
+				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0])
 				events.resolveEvents()
 
 				expect(resolutionStackSpy).toHaveBeenCalledTimes(1)
@@ -197,7 +197,7 @@ describe('ServerGameEvents', () => {
 			it('keeps card resolving after first target', () => {
 				game.cardPlay.forcedPlayCardFromHand(ownedCard, 0, 0)
 				events.resolveEvents()
-				game.cardPlay.selectCardTarget(player, game.cardPlay.getValidTargets()[0])
+				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0])
 				events.resolveEvents()
 
 				expect(resolutionStackSpy).toHaveBeenCalledTimes(0)
@@ -208,9 +208,9 @@ describe('ServerGameEvents', () => {
 			it('resolves card after second target', () => {
 				game.cardPlay.forcedPlayCardFromHand(ownedCard, 0, 0)
 				events.resolveEvents()
-				game.cardPlay.selectCardTarget(player, game.cardPlay.getValidTargets()[0])
+				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0])
 				events.resolveEvents()
-				game.cardPlay.selectCardTarget(player, game.cardPlay.getValidTargets()[0])
+				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0])
 				events.resolveEvents()
 
 				expect(resolutionStackSpy).toHaveBeenCalledTimes(1)

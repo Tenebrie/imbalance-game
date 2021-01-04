@@ -6,7 +6,6 @@ import ServerUnit from './ServerUnit'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerDamageInstance from './ServerDamageSource'
-import TargetMode from '@shared/enums/TargetMode'
 import CardColor from '@shared/enums/CardColor'
 import ServerBuffContainer from './ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
@@ -56,12 +55,19 @@ import ServerAnimation from './ServerAnimation'
 import RelatedCardsDefinition from './RelatedCardsDefinition'
 import ServerCardStats from './ServerCardStats'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import SimpleTargetDefinitionBuilder from './targetDefinitions/SimpleTargetDefinitionBuilder'
 import { ServerCardTargeting } from './ServerCardTargeting'
 import TargetType from '@shared/enums/TargetType'
 import { EventSubscription } from './events/EventSubscription'
 import { EventHook } from './events/EventHook'
 import { CardSelectorBuilder } from './events/selectors/CardSelectorBuilder'
+import PlayTargetDefinitionBuilder from '@src/game/models/targetDefinitions/PlayTargetDefinitionBuilder'
+import DeployTargetDefinitionBuilder from '@src/game/models/targetDefinitions/DeployTargetDefinitionBuilder'
+import {
+	CardTargetValidatorArguments,
+	RowTargetValidatorArguments,
+	UnitTargetValidatorArguments,
+} from '@src/types/TargetValidatorArguments'
+import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -521,11 +527,9 @@ export default class ServerCard implements Card {
 	 *
 	 * Multiple target definitions will be added as inclusive OR.
 	 */
-	protected createPlayTargets(): SimpleTargetDefinitionBuilder {
-		const builder = SimpleTargetDefinitionBuilder.base(this.game, TargetMode.CARD_PLAY)
-			.target(TargetType.BOARD_ROW)
-			.require(TargetType.BOARD_ROW, ({ targetRow }) => !targetRow.isFull())
-		this.targeting.cardPlayTargetDefinitions.push(builder)
+	protected createPlayTargets(): PlayTargetDefinitionBuilder {
+		const builder = PlayTargetDefinitionBuilder.base(this.game)
+		this.targeting.playTargetDefinitions.push(builder)
 		return builder
 	}
 
@@ -535,21 +539,28 @@ export default class ServerCard implements Card {
 	 *
 	 * Multiple target definitions will be added as inclusive OR.
 	 */
-	protected createUnitOrderTargets(): SimpleTargetDefinitionBuilder {
-		const builder = SimpleTargetDefinitionBuilder.base(this.game, TargetMode.UNIT_ORDER)
-		this.targeting.unitOrderTargetDefinitions.push(builder)
+	protected createUnitOrderTargets(targetType: TargetType.UNIT): OrderTargetDefinitionBuilder<UnitTargetValidatorArguments>
+	protected createUnitOrderTargets(targetType: TargetType.BOARD_ROW): OrderTargetDefinitionBuilder<RowTargetValidatorArguments>
+	protected createUnitOrderTargets(targetType: TargetType): OrderTargetDefinitionBuilder<any> {
+		const builder = OrderTargetDefinitionBuilder.base(this, targetType)
+		this.targeting.orderTargetDefinitions.push(builder)
 		return builder
 	}
 
 	/* Require deploy effect targets
 	 * -----------------------------
 	 * Add a target definition specifying the required deploy effect targets.
-	 *
-	 * Multiple target definitions will be added as inclusive OR.
 	 */
-	protected createDeployEffectTargets(): SimpleTargetDefinitionBuilder {
-		const builder = SimpleTargetDefinitionBuilder.base(this.game, TargetMode.DEPLOY_EFFECT)
-		this.targeting.deployEffectTargetDefinitions.push(builder)
+	protected createDeployTargeting(targetType: TargetType.UNIT): DeployTargetDefinitionBuilder<UnitTargetValidatorArguments>
+	protected createDeployTargeting(targetType: TargetType.BOARD_ROW): DeployTargetDefinitionBuilder<RowTargetValidatorArguments>
+	protected createDeployTargeting(targetType: TargetType.CARD_IN_LIBRARY): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargeting(targetType: TargetType.CARD_IN_UNIT_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargeting(targetType: TargetType.CARD_IN_SPELL_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargeting(targetType: TargetType.CARD_IN_UNIT_DECK): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargeting(targetType: TargetType.CARD_IN_SPELL_DECK): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargeting(targetType: TargetType): DeployTargetDefinitionBuilder<any> {
+		const builder = DeployTargetDefinitionBuilder.base(this, targetType)
+		this.targeting.deployTargetDefinitions.push(builder)
 		return builder
 	}
 

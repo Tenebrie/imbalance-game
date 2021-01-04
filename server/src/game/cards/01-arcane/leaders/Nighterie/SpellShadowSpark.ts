@@ -34,7 +34,7 @@ export default class SpellShadowSpark extends ServerCard {
 			damage: this.baseDamage,
 		}
 
-		this.createDeployEffectTargets().target(TargetType.UNIT).requireEnemyUnit()
+		this.createDeployTargeting(TargetType.UNIT).requireEnemy()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard.unit!))
 	}

@@ -173,16 +173,16 @@ export default {
 
 	notifyAboutValidActionsChanged(game: ServerGame, playerInGame: ServerPlayerInGame): void {
 		const cardsInHand = playerInGame.cardHand.allCards
-		const validPlayTargets = Utils.flat(cardsInHand.map((card) => card.targeting.getValidCardPlayTargets(playerInGame)))
+		const validPlayTargets = Utils.flat(cardsInHand.map((card) => card.targeting.getPlayTargets(playerInGame)))
 		const playTargetMessages = validPlayTargets.map((order) => new CardTargetMessage(order))
 		playerInGame.player.sendMessage({
 			type: PlayerUpdateMessageType.PLAY_TARGETS,
 			data: playTargetMessages,
 		})
 
-		const ownedUnits = game.board.getUnitsOwnedByPlayer(playerInGame)
-		const validOrders = Utils.flat(ownedUnits.map((unit) => unit.getValidOrders()))
-		const messages = validOrders.map((order) => new CardTargetMessage(order))
+		const messages = game.board.orders.validOrders
+			.filter((order) => order.target.sourceCard.owner === playerInGame)
+			.map((order) => new CardTargetMessage(order.target))
 
 		playerInGame.player.sendMessage({
 			type: PlayerUpdateMessageType.UNIT_ORDERS_SELF,

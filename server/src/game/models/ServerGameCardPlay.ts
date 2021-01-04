@@ -14,6 +14,15 @@ import ServerResolveStack from './ServerResolveStack'
 import GameEventCreators from './events/GameEventCreators'
 import TargetMode from '@shared/enums/TargetMode'
 import ServerCard from './ServerCard'
+import { DeployTarget } from '@src/game/models/ServerCardTargeting'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import TargetType from '@shared/enums/TargetType'
+import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
+import {
+	CardTargetValidatorArguments,
+	RowTargetValidatorArguments,
+	UnitTargetValidatorArguments,
+} from '@src/types/TargetValidatorArguments'
 
 type PlayedCard = {
 	card: ServerCard
@@ -26,11 +35,13 @@ export default class ServerGameCardPlay {
 	game: ServerGame
 	playedCards: PlayedCard[]
 	cardResolveStack: ServerResolveStack
+	requestedDeployTargets: DeployTarget[]
 
 	constructor(game: ServerGame) {
 		this.game = game
 		this.playedCards = []
 		this.cardResolveStack = new ServerResolveStack(game)
+		this.requestedDeployTargets = []
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
@@ -39,7 +50,7 @@ export default class ServerGameCardPlay {
 		 * This already includes the check for unit/spell mana
 		 * Player is prevented from playing cards on their opponent's turn in IncomingMessageHandlers
 		 */
-		if (!ownedCard.card.targeting.getValidCardPlayTargets(ownedCard.owner).find((target) => target.targetRow.index === rowIndex)) {
+		if (!ownedCard.card.targeting.getPlayTargets(ownedCard.owner).find((target) => target.targetRow.index === rowIndex)) {
 			return
 		}
 
@@ -102,7 +113,6 @@ export default class ServerGameCardPlay {
 
 	private playUnit(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
 		const card = ownedCard.card
-		const owner = ownedCard.owner
 
 		/* Start resolving */
 		this.cardResolveStack.startResolving(ownedCard, () => this.updateResolvingCardTargetingStatus())
@@ -142,7 +152,7 @@ export default class ServerGameCardPlay {
 			return
 		}
 
-		const validTargets = this.getValidTargets()
+		const validTargets = this.getDeployTargets()
 
 		if (validTargets.length === 0) {
 			this.cardResolveStack.finishResolving()
@@ -150,46 +160,55 @@ export default class ServerGameCardPlay {
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				currentCard.owner.player,
 				TargetMode.DEPLOY_EFFECT,
-				validTargets,
+				validTargets.map((deployTarget) => deployTarget.target),
 				currentCard.card
 			)
 		}
+		this.requestedDeployTargets = validTargets
 	}
 
-	public getValidTargets(): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] {
+	public getDeployTargets(): DeployTarget[] {
 		const currentCard = this.cardResolveStack.currentCard
 		if (!currentCard) {
 			return []
 		}
 		const card = currentCard?.card
 
-		return card.targeting.getDeployEffectTargets(this.cardResolveStack.currentTargets)
+		return card.targeting.getDeployTargets(this.cardResolveStack.previousTargets)
 	}
 
-	public selectCardTarget(
-		playerInGame: ServerPlayerInGame,
-		target: ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow
-	): void {
+	public selectCardTarget(playerInGame: ServerPlayerInGame, message: CardTargetMessage): void {
 		const currentResolvingCard = this.cardResolveStack.currentEntry
 		if (!currentResolvingCard) {
 			return
 		}
 
 		const currentCard = currentResolvingCard.ownedCard.card
-		let validTargets = this.getValidTargets()
-		const isValidTarget = !!validTargets.find((validTarget) => validTarget.isEqual(target))
-		if (!isValidTarget) {
-			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(playerInGame.player, TargetMode.DEPLOY_EFFECT, validTargets, currentCard)
+
+		const correspondingTarget = this.requestedDeployTargets.find((target) => target.target.id === message.id)
+
+		if (!correspondingTarget) {
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
+				playerInGame.player,
+				TargetMode.DEPLOY_EFFECT,
+				this.requestedDeployTargets.map((deployTarget) => deployTarget.target),
+				currentCard
+			)
 			return
 		}
 
-		this.cardResolveStack.pushTarget(target)
+		this.cardResolveStack.pushTarget(correspondingTarget)
 
 		currentResolvingCard.onResumeResolving = () => {
-			validTargets = this.getValidTargets()
-			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(playerInGame.player, TargetMode.DEPLOY_EFFECT, validTargets, currentCard)
+			this.requestedDeployTargets = this.getDeployTargets()
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
+				playerInGame.player,
+				TargetMode.DEPLOY_EFFECT,
+				this.requestedDeployTargets.map((deployTarget) => deployTarget.target),
+				currentCard
+			)
 
-			if (validTargets.length > 0) {
+			if (this.requestedDeployTargets.length > 0) {
 				return
 			}
 
@@ -200,6 +219,29 @@ export default class ServerGameCardPlay {
 				})
 			)
 			this.cardResolveStack.finishResolving()
+		}
+
+		const target = correspondingTarget.target
+		const targetType = correspondingTarget.definition.targetType
+		if (targetType === TargetType.BOARD_ROW && target instanceof ServerCardTargetRow) {
+			;(correspondingTarget.definition as DeployTargetDefinition<RowTargetValidatorArguments>).perform({
+				sourceCard: currentCard,
+				targetRow: target.targetRow,
+				previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+			})
+		} else if (targetType === TargetType.UNIT && target instanceof ServerCardTargetUnit) {
+			;(correspondingTarget.definition as DeployTargetDefinition<UnitTargetValidatorArguments>).perform({
+				sourceCard: currentCard,
+				targetCard: target.targetCard,
+				targetUnit: target.targetCard.unit!,
+				previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+			})
+		} else if (target instanceof ServerCardTargetCard) {
+			;(correspondingTarget.definition as DeployTargetDefinition<CardTargetValidatorArguments>).perform({
+				sourceCard: currentCard,
+				targetCard: target.targetCard,
+				previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+			})
 		}
 
 		if (target instanceof ServerCardTargetCard || target instanceof ServerCardTargetUnit) {

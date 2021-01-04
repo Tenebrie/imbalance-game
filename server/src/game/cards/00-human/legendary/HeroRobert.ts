@@ -25,10 +25,9 @@ export default class HeroRobert extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets()
-			.target(TargetType.CARD_IN_UNIT_DECK)
-			.requireCardInPlayersDeck()
-			.require(TargetType.CARD_IN_UNIT_DECK, ({ targetCard }) => targetCard.features.includes(CardFeature.BUILDING))
+		this.createDeployTargeting(TargetType.CARD_IN_UNIT_DECK)
+			.requireAllied()
+			.require(({ targetCard }) => targetCard.features.includes(CardFeature.BUILDING))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}

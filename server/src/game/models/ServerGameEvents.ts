@@ -173,7 +173,7 @@ export default class ServerGameEvents {
 					(remainingCallback) => remainingCallback.subscriber === this.game.cardPlay.cardResolveStack.currentCard?.card
 				)
 			) {
-				if (this.game.cardPlay.getValidTargets().length === 0) {
+				if (this.game.cardPlay.getDeployTargets().length === 0) {
 					this.game.cardPlay.cardResolveStack.resumeResolving()
 				} else {
 					this.game.cardPlay.updateResolvingCardTargetingStatus()

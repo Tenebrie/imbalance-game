@@ -25,11 +25,10 @@ export default class UnitOceanicSeagull extends ServerCard {
 		})
 		this.addRelatedCards().requireTribe(CardTribe.MERFOLK).requireColor(CardColor.BRONZE)
 
-		this.createDeployEffectTargets()
-			.target(TargetType.CARD_IN_UNIT_DECK)
-			.requireCardInPlayersDeck()
-			.require(TargetType.CARD_IN_UNIT_DECK, (args) => args.targetCard.color === CardColor.BRONZE)
-			.require(TargetType.CARD_IN_UNIT_DECK, (args) => args.targetCard.tribes.includes(CardTribe.MERFOLK))
+		this.createDeployTargeting(TargetType.CARD_IN_UNIT_DECK)
+			.requireAllied()
+			.require((args) => args.targetCard.color === CardColor.BRONZE)
+			.require((args) => args.targetCard.tribes.includes(CardTribe.MERFOLK))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}

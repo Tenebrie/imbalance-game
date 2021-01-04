@@ -32,10 +32,9 @@ export default class SpellFireball extends ServerCard {
 			areaDamage: this.baseAreaDamage,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireEnemyUnit()
-			.evaluate(TargetType.UNIT, (args) => this.evaluateTarget(args))
+		this.createDeployTargeting(TargetType.UNIT)
+			.requireEnemy()
+			.evaluate((args) => this.evaluateTarget(args))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

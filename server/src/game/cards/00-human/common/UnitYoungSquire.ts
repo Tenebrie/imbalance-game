@@ -26,7 +26,7 @@ export default class UnitYoungSquire extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets().target(TargetType.UNIT).requireAlliedUnit().requireNotSelf()
+		this.createDeployTargeting(TargetType.UNIT).requireAllied().requireNotSelf()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

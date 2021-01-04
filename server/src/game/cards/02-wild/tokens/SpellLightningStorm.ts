@@ -38,11 +38,11 @@ export default class SpellLightningStorm extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT, () => this.targetCount)
-			.requireEnemyUnit()
-			.require(TargetType.UNIT, (args) => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
-			.label(TargetType.UNIT, 'card.spellLightningStorm.target')
+		this.createDeployTargeting(TargetType.UNIT)
+			.targetCount(() => this.targetCount)
+			.requireEnemy()
+			.require((args) => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
+			.label('card.spellLightningStorm.target')
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 

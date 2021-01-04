@@ -3,5 +3,7 @@ import CardTarget from './CardTarget'
 
 export default interface ResolveStackEntry {
 	ownedCard: OwnedCard
-	targetsSelected: CardTarget[]
+	previousTargets: {
+		target: CardTarget
+	}[]
 }

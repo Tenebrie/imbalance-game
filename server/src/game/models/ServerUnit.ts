@@ -7,6 +7,7 @@ import { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from 
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import ServerBuffContainer from './ServerBuffContainer'
+import { OrderTarget } from '@src/game/models/ServerBoardOrders'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame
@@ -51,48 +52,7 @@ export default class ServerUnit implements Unit {
 		return this.card.isDead
 	}
 
-	getValidOrders(): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] {
-		const targetDefinitions = this.card.targeting.getUnitOrderTargetDefinitions()
-		const performedOrders = this.game.board.orders.getOrdersPerformedByUnit(this)
-		let targets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
-		targetDefinitions.forEach((targetDefinition) => {
-			targets = targets
-				.concat(
-					this.card.targeting.getValidTargetsForCards(
-						TargetMode.UNIT_ORDER,
-						TargetType.CARD_IN_UNIT_HAND,
-						targetDefinition,
-						performedOrders
-					)
-				)
-				.concat(
-					this.card.targeting.getValidTargetsForCards(
-						TargetMode.UNIT_ORDER,
-						TargetType.CARD_IN_SPELL_HAND,
-						targetDefinition,
-						performedOrders
-					)
-				)
-				.concat(
-					this.card.targeting.getValidTargetsForCards(
-						TargetMode.UNIT_ORDER,
-						TargetType.CARD_IN_UNIT_DECK,
-						targetDefinition,
-						performedOrders
-					)
-				)
-				.concat(
-					this.card.targeting.getValidTargetsForCards(
-						TargetMode.UNIT_ORDER,
-						TargetType.CARD_IN_SPELL_DECK,
-						targetDefinition,
-						performedOrders
-					)
-				)
-				.concat(this.card.targeting.getValidTargetsForUnits(TargetMode.UNIT_ORDER, targetDefinition, performedOrders))
-				.concat(this.card.targeting.getValidTargetsForRows(TargetMode.UNIT_ORDER, targetDefinition, performedOrders))
-		})
-
-		return targets
+	getValidOrders(): OrderTarget[] {
+		return this.card.targeting.getOrderTargets(this.game.board.orders.getOrdersPerformedByUnit(this))
 	}
 }

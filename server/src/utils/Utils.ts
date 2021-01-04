@@ -7,6 +7,7 @@ import ServerPlayer from '../game/players/ServerPlayer'
 import express, { Request } from 'express'
 import { sortCards } from '@shared/Utils'
 import { CardConstructor } from '../game/libraries/CardLibrary'
+import CardColor from '@shared/enums/CardColor'
 
 export const AnyCardLocation = 'any'
 

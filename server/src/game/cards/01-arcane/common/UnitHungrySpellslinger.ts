@@ -36,10 +36,9 @@ export default class UnitHungrySpellslinger extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.SCROLL)
 
-		this.createDeployEffectTargets()
-			.target(TargetType.CARD_IN_LIBRARY)
-			.require(TargetType.CARD_IN_LIBRARY, () => this.didInfuse)
-			.require(TargetType.CARD_IN_LIBRARY, (args) => args.targetCard.tribes.includes(CardTribe.SCROLL))
+		this.createDeployTargeting(TargetType.CARD_IN_LIBRARY)
+			.require(() => this.didInfuse)
+			.require((args) => args.targetCard.tribes.includes(CardTribe.SCROLL))
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
 			.require(() => this.ownerInGame.spellMana >= this.infuseCost)

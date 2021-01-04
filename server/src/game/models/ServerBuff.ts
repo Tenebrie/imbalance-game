@@ -3,7 +3,6 @@ import Buff from '@shared/models/Buff'
 import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
 import ServerUnit from './ServerUnit'
-import TargetDefinition from './targetDefinitions/TargetDefinition'
 import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
@@ -44,7 +43,6 @@ import {
 	UnitOrderedUnitEventArgs,
 } from './events/GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
-import StandardTargetDefinitionBuilder from './targetDefinitions/StandardTargetDefinitionBuilder'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import { EventSubscription } from './events/EventSubscription'
 import { EventHook } from './events/EventHook'
@@ -271,24 +269,5 @@ export default class ServerBuff implements Buff {
 	}
 	getCriticalHealChanceOverride(baseValue: number): number {
 		return baseValue
-	}
-
-	definePlayValidTargetsMod(): StandardTargetDefinitionBuilder {
-		return TargetDefinition.none(this.game)
-	}
-	defineValidOrderTargetsMod(): StandardTargetDefinitionBuilder {
-		return TargetDefinition.none(this.game)
-	}
-	definePostPlayRequiredTargetsMod(): StandardTargetDefinitionBuilder {
-		return TargetDefinition.none(this.game)
-	}
-	definePlayValidTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
-		return targetDefinition
-	}
-	defineValidOrderTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
-		return targetDefinition
-	}
-	definePostPlayRequiredTargetsOverride(targetDefinition: StandardTargetDefinitionBuilder): StandardTargetDefinitionBuilder {
-		return targetDefinition
 	}
 }

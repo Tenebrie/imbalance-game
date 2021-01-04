@@ -398,7 +398,7 @@ export default class Input {
 
 		const validOrders = Core.board.getValidOrdersForUnit(orderedUnit)
 		const performedOrder = validOrders.find(
-			(order) => order.targetCardId === hoveredCard.id || (hoveredRow && Core.board.getRow(order.targetRowIndex) === hoveredRow)
+			(order) => order.targetCardId === hoveredCard?.id || (hoveredRow && Core.board.getRow(order.targetRowIndex) === hoveredRow)
 		)
 		if (performedOrder) {
 			OutgoingMessageHandlers.sendUnitOrder(performedOrder)
@@ -483,9 +483,6 @@ export default class Input {
 			.concat(cardsToAdd)
 
 		cardsToRemove.forEach((card) => Core.destroyCard(card))
-		PIXI.Ticker.shared.addOnce(() => {
-			// result.forEach((card) => card.resetDisplayMode())
-		})
 
 		this.forcedTargetingCards = result
 	}

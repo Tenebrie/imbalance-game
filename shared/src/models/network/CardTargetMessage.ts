@@ -4,6 +4,7 @@ import TargetType from '../../enums/TargetType'
 import OpenCardMessage from './card/OpenCardMessage'
 
 export default class CardTargetMessage {
+	id: string
 	targetMode: TargetMode
 	targetType: TargetType
 	sourceCardId: string
@@ -13,6 +14,7 @@ export default class CardTargetMessage {
 	targetCardData: OpenCardMessage | null
 
 	constructor(order: CardTarget) {
+		this.id = order.id
 		this.targetMode = order.targetMode
 		this.targetType = order.targetType
 		this.sourceCardId = order.sourceCard.id

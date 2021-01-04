@@ -6,10 +6,9 @@ import CardFaction from '@shared/enums/CardFaction'
 import TargetType from '@shared/enums/TargetType'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitUndercityGambler extends ServerCard {
 	bonusPower = asDirectBuffPotency(5)
@@ -31,24 +30,20 @@ export default class UnitUndercityGambler extends ServerCard {
 			bonusPower: this.bonusPower,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.CARD_IN_UNIT_HAND)
-			.require(TargetType.CARD_IN_UNIT_HAND, (args) => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
-			.requireCardInPlayersHand()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
-	}
-
-	private onTargetSelected(target: ServerCard): void {
-		const owner = target.ownerInGame
-		owner.cardHand.discardCard(target)
-		owner.cardDeck.addUnitToBottom(target)
-		const drawnCards = owner.drawUnitCards(1)
-		if (drawnCards.length === 0) {
-			return
-		}
-		drawnCards.forEach((card) => {
-			card.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
-		})
+		this.createDeployTargeting(TargetType.CARD_IN_UNIT_HAND)
+			.requireAllied()
+			.require((args) => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
+			.perform(({ targetCard }) => {
+				const owner = targetCard.ownerInGame
+				owner.cardHand.discardCard(targetCard)
+				owner.cardDeck.addUnitToBottom(targetCard)
+				const drawnCards = owner.drawUnitCards(1)
+				if (drawnCards.length === 0) {
+					return
+				}
+				drawnCards.forEach((card) => {
+					card.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
+				})
+			})
 	}
 }

@@ -117,7 +117,7 @@ export default class Renderer {
 
 		/* Action label */
 		this.actionLabel = new RichText('Test text', 2000, {})
-		this.actionLabel.zIndex = 85
+		this.actionLabel.zIndex = TARGETING_ARROW_ZINDEX + 1
 		this.actionLabel.verticalAlign = RichTextAlign.END
 		this.actionLabel.setFont(24 * this.superSamplingLevel, 12 * this.superSamplingLevel)
 		this.actionLabel.style.dropShadow = true

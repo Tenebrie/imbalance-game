@@ -28,10 +28,9 @@ export default class HeroLightOracle extends ServerCard {
 			cardsToSee: this.cardsToSee,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.CARD_IN_UNIT_DECK)
-			.requireCardInPlayersDeck()
-			.require(TargetType.CARD_IN_UNIT_DECK, (args) => args.targetCard.deckPosition < this.cardsToSee)
+		this.createDeployTargeting(TargetType.CARD_IN_UNIT_DECK)
+			.requireAllied()
+			.require((args) => args.targetCard.deckPosition < this.cardsToSee)
 			.preventSorting()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))

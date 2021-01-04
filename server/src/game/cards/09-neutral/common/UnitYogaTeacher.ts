@@ -22,11 +22,8 @@ export default class UnitYogaTeacher extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets()
-			.totalTargets(1)
-			.target(TargetType.CARD_IN_UNIT_HAND)
-			.target(TargetType.CARD_IN_SPELL_HAND)
-			.requireCardInPlayersHand()
+		this.createDeployTargeting(TargetType.CARD_IN_UNIT_HAND).totalTargetCount(1).requireAllied()
+		this.createDeployTargeting(TargetType.CARD_IN_SPELL_HAND).totalTargetCount(1).requireAllied()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}

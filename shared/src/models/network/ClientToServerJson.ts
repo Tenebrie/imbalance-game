@@ -1,5 +1,5 @@
 import { ClientToServerMessageTypes } from './messageHandlers/ClientToServerMessageTypes'
-import TargetMode from '@shared/enums/TargetMode'
+import TargetMode from '../../enums/TargetMode'
 
 export type ClientToServerJson = {
 	type: ClientToServerMessageTypes

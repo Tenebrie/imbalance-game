@@ -35,19 +35,17 @@ export default class SpellTacticalMove extends ServerCard {
 			healing: this.healing,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireAlliedUnit()
-			.require(TargetType.UNIT, () => this.movingUnit === null)
-			.label(TargetType.UNIT, 'card.spellTacticalMove.target.label.unit')
+		this.createDeployTargeting(TargetType.UNIT)
+			.requireAllied()
+			.require(() => this.movingUnit === null)
+			.label('card.spellTacticalMove.target.label.unit')
 
-		this.createDeployEffectTargets()
-			.target(TargetType.BOARD_ROW)
-			.requirePlayersRow()
-			.require(TargetType.BOARD_ROW, () => !!this.movingUnit)
-			.require(TargetType.BOARD_ROW, ({ targetRow }) => targetRow.index !== this.movingUnit!.rowIndex)
-			.require(TargetType.BOARD_ROW, ({ targetRow }) => Math.abs(targetRow.index - this.movingUnit!.rowIndex) <= 1)
-			.label(TargetType.BOARD_ROW, 'card.spellTacticalMove.target.label.row')
+		this.createDeployTargeting(TargetType.BOARD_ROW)
+			.requireAllied()
+			.require(() => !!this.movingUnit)
+			.require(({ targetRow }) => targetRow.index !== this.movingUnit!.rowIndex)
+			.require(({ targetRow }) => Math.abs(targetRow.index - this.movingUnit!.rowIndex) <= 1)
+			.label('card.spellTacticalMove.target.label.row')
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetUnitSelected(targetUnit))
 

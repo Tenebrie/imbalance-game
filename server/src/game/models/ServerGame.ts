@@ -256,12 +256,12 @@ export default class ServerGame implements Game {
 	private startDeployPhase(): void {
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
 
+		this.advanceCurrentTurn()
+
 		this.players.forEach((player) => {
 			OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, player)
 			OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
 		})
-
-		this.advanceCurrentTurn()
 	}
 
 	private startNextTurn(): void {

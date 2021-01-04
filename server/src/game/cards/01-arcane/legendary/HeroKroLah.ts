@@ -24,7 +24,7 @@ export default class HeroKroLah extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets().target(TargetType.BOARD_ROW).requireOpponentsRow().requireNotEmptyRow()
+		this.createDeployTargeting(TargetType.BOARD_ROW).requireEnemy().requireNotEmptyRow()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}

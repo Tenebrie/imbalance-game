@@ -35,7 +35,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		const validTargets = card.targeting.getValidCardPlayTargets(card.owner)
+		const validTargets = card.targeting.getPlayTargets(card.owner)
 		if (
 			playerInGame.turnEnded ||
 			playerInGame.roundEnded ||
@@ -61,12 +61,13 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
 			!orderedUnit ||
-			orderedUnit.owner !== playerInGame
+			orderedUnit.owner !== playerInGame ||
+			!game.board.orders.validOrders.some((validOrder) => validOrder.target.id === data.id)
 		) {
 			return
 		}
 
-		game.board.orders.performUnitOrder(ServerCardTarget.fromCardMessage(game, data))
+		game.board.orders.performUnitOrder(data)
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
@@ -77,8 +78,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		const target = ServerCardTarget.fromCardMessage(game, data)
-		game.cardPlay.selectCardTarget(playerInGame, target)
+		game.cardPlay.selectCardTarget(playerInGame, data)
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
