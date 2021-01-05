@@ -8,7 +8,6 @@ import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
-import Keywords from '@src/utils/Keywords'
 import ServerAnimation from '@src/game/models/ServerAnimation'
 
 export default class UnitNullMender extends ServerCard {

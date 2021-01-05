@@ -19,6 +19,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import { electronWebsocketTarget, isElectron } from '@/utils/Utils'
 import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
+import lzutf8 from 'lzutf8'
 
 class Core {
 	public isReady = false
@@ -81,7 +82,11 @@ class Core {
 	}
 
 	private onMessage(event: MessageEvent): void {
-		const data = JSON.parse(event.data) as ServerToClientJson
+		const data = JSON.parse(
+			lzutf8.decompress(event.data, {
+				inputEncoding: 'BinaryString',
+			})
+		) as ServerToClientJson
 		const messageType = data.type
 		const messageData = data.data
 		const messageHighPriority = data.highPriority as boolean
