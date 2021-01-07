@@ -11,7 +11,7 @@ import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectEffectDuration } from '../../../../utils/LeaderStats'
+import { asDirectEffectDuration } from '@src/utils/LeaderStats'
 
 export default class SpellScrollOfBlinding extends ServerCard {
 	buffDuration = asDirectEffectDuration(3)
@@ -24,7 +24,7 @@ export default class SpellScrollOfBlinding extends ServerCard {
 			tribes: [CardTribe.SCROLL],
 			features: [CardFeature.KEYWORD_BUFF_STUN],
 			stats: {
-				cost: 4,
+				cost: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

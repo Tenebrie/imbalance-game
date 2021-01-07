@@ -20,6 +20,7 @@ import { electronWebsocketTarget, isElectron } from '@/utils/Utils'
 import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import lzutf8 from 'lzutf8'
+import Constants from '@shared/Constants'
 
 class Core {
 	public isReady = false
@@ -82,11 +83,13 @@ class Core {
 	}
 
 	private onMessage(event: MessageEvent): void {
-		const data = JSON.parse(
-			lzutf8.decompress(event.data, {
+		let data = event.data
+		if (Constants.COMPRESS_GAME_TRAFFIC) {
+			data = lzutf8.decompress(event.data, {
 				inputEncoding: 'BinaryString',
 			})
-		) as ServerToClientJson
+		}
+		data = JSON.parse(data) as ServerToClientJson
 		const messageType = data.type
 		const messageData = data.data
 		const messageHighPriority = data.highPriority as boolean

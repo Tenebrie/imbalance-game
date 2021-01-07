@@ -74,9 +74,9 @@
 		"engines": {
 				"node": "12.x"
 		},
-		"author": "Tenebrie Interactive",
+		"author": "Tenebrie",
 		"bugs": {
-				"url": "https://github.com/Kos94ok/notgwent-game/issues"
+				"url": "https://github.com/Tenebrie/notgwent-game/issues"
 		},
-		"homepage": "https://github.com/Kos94ok/notgwent-game#readme"
+		"homepage": "https://github.com/Tenebrie/notgwent-game#readme"
 }
