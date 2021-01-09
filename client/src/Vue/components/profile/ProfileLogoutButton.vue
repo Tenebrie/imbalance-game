@@ -18,22 +18,22 @@ export default Vue.extend({
 			} catch (e) {
 				this.$noty.error('Unable to logout', e)
 			}
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	.button-container {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		button {
-			width: 80%;
-			max-width: 350px;
-			font-size: 1.2em;
-			margin: 16px;
-		}
+.button-container {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	button {
+		width: 80%;
+		max-width: 350px;
+		font-size: 1.2em;
+		margin: 16px;
 	}
+}
 </style>

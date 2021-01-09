@@ -11,8 +11,6 @@ import TheRegisterForm from '../components/login/TheRegisterForm.vue'
 export default Vue.extend({
 	components: { TheRegisterForm },
 
-	computed: {
-
-	}
+	computed: {},
 })
 </script>

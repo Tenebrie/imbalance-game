@@ -9,8 +9,8 @@
 <script lang="ts">
 import Localization from '@/Pixi/Localization'
 import CardFaction from '@shared/enums/CardFaction'
-import {computed, defineComponent} from '@vue/composition-api'
-import {PropType} from 'vue'
+import { computed, defineComponent } from '@vue/composition-api'
+import { PropType } from 'vue'
 
 export default defineComponent({
 	props: {
@@ -22,7 +22,7 @@ export default defineComponent({
 		isExperimental: {
 			type: Boolean as PropType<boolean>,
 			required: true,
-		}
+		},
 	},
 
 	setup(props) {
@@ -63,73 +63,73 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.editor-deck-card-list-separator {
-		width: calc(100% - 16px);
-		display: flex;
-		flex-direction: row;
-		padding: 4px 8px;
-		user-select: none;
-		font-size: 1.1em;
+.editor-deck-card-list-separator {
+	width: calc(100% - 16px);
+	display: flex;
+	flex-direction: row;
+	padding: 4px 8px;
+	user-select: none;
+	font-size: 1.1em;
 
-		&.human {
-			color: darkgoldenrod;
+	&.human {
+		color: darkgoldenrod;
 
-			.line {
-				background: darkgoldenrod;
-			}
-		}
-
-		&.arcane {
-			color: teal;
-
-			.line {
-				background: teal;
-			}
-		}
-
-		&.wild {
-			color: green;
-
-			.line {
-				background: green;
-			}
-		}
-
-		&.neutral {
-			color: gray;
-
-			.line {
-				background: gray;
-			}
-		}
-
-		.text {
-			display: inline-block;
-			margin: 0 8px;
-		}
-
-		.line-container.left {
-			width: 30px;
-		}
-
-		.line-container.right {
-			flex: 1;
-		}
-
-		.line-container {
-			width: 100px;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-
-			.line {
-				width: 100%;
-				border-radius: 2px;
-				height: 4px;
-				display: block;
-			}
+		.line {
+			background: darkgoldenrod;
 		}
 	}
+
+	&.arcane {
+		color: teal;
+
+		.line {
+			background: teal;
+		}
+	}
+
+	&.wild {
+		color: green;
+
+		.line {
+			background: green;
+		}
+	}
+
+	&.neutral {
+		color: gray;
+
+		.line {
+			background: gray;
+		}
+	}
+
+	.text {
+		display: inline-block;
+		margin: 0 8px;
+	}
+
+	.line-container.left {
+		width: 30px;
+	}
+
+	.line-container.right {
+		flex: 1;
+	}
+
+	.line-container {
+		width: 100px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+
+		.line {
+			width: 100%;
+			border-radius: 2px;
+			height: 4px;
+			display: block;
+		}
+	}
+}
 </style>

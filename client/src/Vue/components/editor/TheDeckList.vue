@@ -31,7 +31,7 @@ import DeckListMode from '@/utils/DeckListMode'
 import EditorCreateDeckButton from '@/Vue/components/editor/buttons/EditorCreateDeckButton.vue'
 import EditorDecksButton from '@/Vue/components/editor/buttons/EditorDecksButton.vue'
 
-type FilteredDeck = { faction: CardFaction, experimental: boolean, decks: PopulatedEditorDeck[] }
+type FilteredDeck = { faction: CardFaction; experimental: boolean; decks: PopulatedEditorDeck[] }
 
 export default Vue.extend({
 	components: {
@@ -39,7 +39,7 @@ export default Vue.extend({
 		TheEditorDeckListSeparator,
 		TheEditorDeckListSeparatorUnfinished,
 		EditorCreateDeckButton,
-		EditorDecksButton
+		EditorDecksButton,
 	},
 
 	data: () => ({
@@ -63,78 +63,77 @@ export default Vue.extend({
 				const normalDeck = {
 					faction: faction,
 					experimental: false,
-					decks: this.decks.filter(deck => deck.faction === faction && !deck.isExperimental && !deck.isDraft)
+					decks: this.decks.filter((deck) => deck.faction === faction && !deck.isExperimental && !deck.isDraft),
 				}
 				const experimentalDeck = {
 					faction: faction,
 					experimental: true,
-					decks: this.decks.filter(deck => deck.faction === faction && deck.isExperimental && !deck.isDraft)
+					decks: this.decks.filter((deck) => deck.faction === faction && deck.isExperimental && !deck.isDraft),
 				}
 				return result.concat(normalDeck).concat(experimentalDeck)
 			}, [])
 		},
 
 		finishedDecks(): PopulatedEditorDeck[] {
-			return this.decks.filter(deck => !deck.isDraft)
+			return this.decks.filter((deck) => !deck.isDraft)
 		},
 
 		draftDecks(): PopulatedEditorDeck[] {
-			return this.decks.filter(deck => deck.isDraft)
+			return this.decks.filter((deck) => deck.isDraft)
 		},
 
 		isDeckListDisplayed(): boolean {
-			return (this.mode === DeckListMode.SELECT && this.finishedDecks.length > 0) ||
-				(this.mode === DeckListMode.EDIT && this.decks.length > 0)
-		}
+			return (
+				(this.mode === DeckListMode.SELECT && this.finishedDecks.length > 0) || (this.mode === DeckListMode.EDIT && this.decks.length > 0)
+			)
+		},
 	},
 
 	created(): void {
 		store.dispatch.editor.loadDecks()
 	},
 
-	methods: {
-
-	}
+	methods: {},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.the-editor-deck-list {
-		width: calc(100%);
+.the-editor-deck-list {
+	width: calc(100%);
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+
+	.deck-list {
 		height: 100%;
 		display: flex;
 		flex-direction: column;
-		justify-content: space-evenly;
+		padding-top: 16px;
+		overflow-y: auto;
 
-		.deck-list {
-			height: 100%;
+		.deck-list-segment {
 			display: flex;
 			flex-direction: column;
-			padding-top: 16px;
-			overflow-y: auto;
-
-			.deck-list-segment {
-				display: flex;
-				flex-direction: column;
-			}
-
-			.deck-link {
-				padding: 4px 16px;
-				text-align: start;
-				font-size: 1.4em;
-				cursor: pointer;
-
-				&:hover {
-					background: $COLOR-BACKGROUND-TRANSPARENT;
-				}
-			}
 		}
 
-		.buttons {
-			width: 100%;
-			display: flex;
+		.deck-link {
+			padding: 4px 16px;
+			text-align: start;
+			font-size: 1.4em;
+			cursor: pointer;
+
+			&:hover {
+				background: $COLOR-BACKGROUND-TRANSPARENT;
+			}
 		}
 	}
+
+	.buttons {
+		width: 100%;
+		display: flex;
+	}
+}
 </style>

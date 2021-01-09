@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onMounted} from '@vue/composition-api'
+import { computed, defineComponent, onMounted } from '@vue/composition-api'
 import Notifications from '@/utils/Notifications'
 import axios from 'axios'
 import store from '@/Vue/store'
@@ -17,12 +17,12 @@ export default defineComponent({
 			}
 
 			gapi.signin2.render('google-login', {
-				'width': 256,
-				'height': 38,
-				'longtitle': true,
-				'theme': 'dark',
-				'onsuccess': onGoogleSignInSuccess,
-				'onfailure': onGoogleSignInError,
+				width: 256,
+				height: 38,
+				longtitle: true,
+				theme: 'dark',
+				onsuccess: onGoogleSignInSuccess,
+				onfailure: onGoogleSignInError,
 			})
 		})
 		const onGoogleSignInSuccess = async (googleUser: GoogleUser): Promise<void> => {
@@ -47,20 +47,20 @@ export default defineComponent({
 		return {
 			isButtonDisplayed,
 			onGoogleSignInSuccess,
-			onGoogleSignInError
+			onGoogleSignInError,
 		}
 	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "src/Vue/styles/generic";
+@import 'src/Vue/styles/generic';
 
-	#google-login {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		margin-top: 16px;
-	}
+#google-login {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 16px;
+}
 </style>

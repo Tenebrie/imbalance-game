@@ -1,10 +1,10 @@
 <template>
 	<div class="the-editor-hovered-deck-card" :style="this.overlayPosition" ref="overlayRef">
 		<pixi-pre-rendered-card
-				class="card"
-				:key="this.hoveredDeckCard && this.hoveredDeckCard.class"
-				:card="this.hoveredDeckCard"
-				:vertical-offset="this.editorModeOffset.y"
+			class="card"
+			:key="this.hoveredDeckCard && this.hoveredDeckCard.class"
+			:card="this.hoveredDeckCard"
+			:vertical-offset="this.editorModeOffset.y"
 		/>
 	</div>
 </template>
@@ -12,13 +12,13 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import * as PIXI from 'pixi.js'
-import {computed, defineComponent, ref} from '@vue/composition-api'
+import { computed, defineComponent, ref } from '@vue/composition-api'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default defineComponent({
 	components: {
-		PixiPreRenderedCard
+		PixiPreRenderedCard,
 	},
 
 	setup() {
@@ -50,27 +50,27 @@ export default defineComponent({
 			editorModeOffset,
 			hoveredDeckCard,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.the-editor-hovered-deck-card {
-		position: absolute;
-		pointer-events: none;
+.the-editor-hovered-deck-card {
+	position: absolute;
+	pointer-events: none;
+	display: flex;
+	justify-content: center;
+	width: calc(#{$CARD_WIDTH} / 2);
+	height: calc(#{$CARD_HEIGHT} / 2);
+	right: 100%;
+	margin-top: -4px;
+
+	.card {
 		display: flex;
-		justify-content: center;
-		width: calc(#{$CARD_WIDTH} / 2);
-		height: calc(#{$CARD_HEIGHT} / 2);
-		right: 100%;
-		margin-top: -4px;
-
-		.card {
-			display: flex;
-			width: 100%;
-			height: 100%;
-		}
+		width: 100%;
+		height: 100%;
 	}
+}
 </style>

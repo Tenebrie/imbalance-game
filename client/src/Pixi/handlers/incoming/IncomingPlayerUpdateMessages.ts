@@ -13,11 +13,17 @@ import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
 
 const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: IncomingMessageHandlerFunction } = {
 	[PlayerUpdateMessageType.LEADER_SELF]: (data: CardMessage) => {
-		Core.player.leader = new RenderedCard(data)
+		if (Core.player.leader) {
+			return
+		}
+		Core.player.leader = RenderedCard.fromMessage(data)
 	},
 
 	[PlayerUpdateMessageType.LEADER_OPPONENT]: (data: CardMessage) => {
-		Core.opponent.leader = new RenderedCard(data)
+		if (Core.opponent.leader) {
+			return
+		}
+		Core.opponent.leader = RenderedCard.fromMessage(data)
 	},
 
 	[PlayerUpdateMessageType.MORALE]: (data: PlayerInGameMessage) => {
@@ -25,8 +31,8 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 	},
 
 	[PlayerUpdateMessageType.MANA]: (data: PlayerInGameMessage) => {
-		Core.getPlayer(data.player.id).setUnitMana(data.unitMana)
-		Core.getPlayer(data.player.id).setSpellMana(data.spellMana)
+		Core.getPlayer(data.player.id).unitMana = data.unitMana
+		Core.getPlayer(data.player.id).spellMana = data.spellMana
 	},
 
 	[PlayerUpdateMessageType.MULLIGANS]: (data: MulliganCountMessage) => {

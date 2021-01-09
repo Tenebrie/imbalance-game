@@ -25,12 +25,12 @@ export default class ServerBoardRow implements BoardRow {
 		return this.cards.length === Constants.MAX_CARDS_PER_ROW
 	}
 
-	public createUnit(card: ServerCard, owner: ServerPlayerInGame, unitIndex: number): ServerUnit | null {
+	public createUnit(card: ServerCard, unitIndex: number): ServerUnit | null {
 		if (this.cards.length >= Constants.MAX_CARDS_PER_ROW) {
 			return null
 		}
 
-		const unit = new ServerUnit(this.game, card, owner)
+		const unit = new ServerUnit(this.game, card, this.owner!)
 		this.insertUnit(unit, unitIndex)
 
 		/* Play deploy animation */

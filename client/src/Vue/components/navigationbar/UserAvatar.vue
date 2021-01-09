@@ -5,37 +5,24 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import store from '@/Vue/store'
+import { defineComponent } from '@vue/composition-api'
 
-export default Vue.extend({
-	data: () => ({
-
-	}),
-
-	computed: {
-
-	},
-
-	methods: {
-
-	}
-})
+export default defineComponent({})
 </script>
 
 <style scoped lang="scss">
-	.user-avatar {
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		user-select: none;
+.user-avatar {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	user-select: none;
 
-		.image {
-			cursor: pointer;
-			margin: 4px;
-			height: calc(100% - 8px);
-			border-radius: 100%;
-		}
+	.image {
+		cursor: pointer;
+		margin: 4px;
+		height: calc(100% - 8px);
+		border-radius: 100%;
 	}
+}
 </style>

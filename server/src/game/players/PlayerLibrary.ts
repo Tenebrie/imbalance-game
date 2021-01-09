@@ -1,10 +1,10 @@
 import ServerPlayer from './ServerPlayer'
 import HashManager from '../../services/HashService'
 import TokenManager from '../../services/TokenService'
-import { JwtTokenScope } from '../../enums/JwtTokenScope'
+import { JwtTokenScope } from '@src/enums/JwtTokenScope'
 import PlayerDatabase from '../../database/PlayerDatabase'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
-import { tryUntil } from '../../utils/Utils'
+import { tryUntil } from '@src/utils/Utils'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import AccessLevel from '@shared/enums/AccessLevel'
 
@@ -29,7 +29,7 @@ const createNumberedUsername = (username: string): string => {
 }
 
 class PlayerLibrary {
-	players: Array<ServerPlayer>
+	players: ServerPlayer[]
 
 	constructor() {
 		this.players = []
@@ -71,7 +71,7 @@ class PlayerLibrary {
 
 	public async login(email: string, password: string): Promise<ServerPlayer | null> {
 		email = email.toLowerCase()
-		const playerDatabaseEntry = await PlayerDatabase.selectPlayerByEmail(email)
+		const playerDatabaseEntry = await PlayerDatabase.selectPlayerWithPasswordByEmail(email)
 
 		if (!playerDatabaseEntry) {
 			return null
@@ -114,6 +114,7 @@ class PlayerLibrary {
 	private cachePlayer(playerDatabaseEntry: PlayerDatabaseEntry): ServerPlayer {
 		const player = ServerPlayer.newInstance(playerDatabaseEntry)
 		this.players.push(player)
+		this.updateAccessedAt(player).then()
 		return player
 	}
 
@@ -139,19 +140,24 @@ class PlayerLibrary {
 		if (!tokenPayload) {
 			return null
 		}
-		return this.getPlayerById(tokenPayload.playerId)
-	}
-
-	public async getAllPlayers(): Promise<ServerPlayer[] | null> {
-		const result = await PlayerDatabase.selectAllPlayers()
-		if (!result) {
-			return null
+		const player = await this.getPlayerById(tokenPayload.playerId)
+		if (player) {
+			this.updateAccessedAt(player).then()
 		}
-		return result.map((entry) => ServerPlayer.newInstance(entry))
+		return player
 	}
 
 	public async deletePlayer(player: ServerPlayer): Promise<boolean> {
 		return PlayerDatabase.deletePlayer(player.id)
+	}
+
+	private async updateAccessedAt(player: ServerPlayer): Promise<void> {
+		if (new Date().getTime() - player.timestampUpdatedAt.getTime() < 60000) {
+			return
+		}
+
+		player.timestampUpdatedAt = new Date()
+		await PlayerDatabase.updatePlayerAccessedAt(player.id)
 	}
 }
 

@@ -34,10 +34,9 @@ export default class SpellSteelSpark extends ServerCard {
 			sideDamage: this.baseSideDamage,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireEnemyUnit()
-			.evaluate(TargetType.UNIT, (args) => this.evaluateTarget(args))
+		this.createDeployTargets(TargetType.UNIT)
+			.requireEnemy()
+			.evaluate((args) => this.evaluateTarget(args))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

@@ -34,9 +34,7 @@ export default class UnitMercantileSpellslinger extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.SCROLL)
 
-		this.createDeployEffectTargets()
-			.target(TargetType.CARD_IN_LIBRARY)
-			.require(TargetType.CARD_IN_LIBRARY, (args) => args.targetCard.tribes.includes(CardTribe.SCROLL))
+		this.createDeployTargets(TargetType.CARD_IN_LIBRARY).require((args) => args.targetCard.tribes.includes(CardTribe.SCROLL))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}

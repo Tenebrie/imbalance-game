@@ -14,12 +14,10 @@ import router from '@/Vue/router'
 
 export default Vue.extend({
 	data: () => ({
-		requestInFlight: false
+		requestInFlight: false,
 	}),
 
-	computed: {
-
-	},
+	computed: {},
 
 	methods: {
 		async onClick(): Promise<void> {
@@ -33,11 +31,11 @@ export default Vue.extend({
 				this.$noty.error('An error occurred while deleting the deck')
 			}
 			this.requestInFlight = false
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../../styles/generic";
+@import '../../../styles/generic';
 </style>

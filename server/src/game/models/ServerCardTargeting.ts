@@ -1,151 +1,143 @@
 import ServerGame from './ServerGame'
-import SimpleTargetDefinitionBuilder from './targetDefinitions/SimpleTargetDefinitionBuilder'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCardTarget, { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from './ServerCardTarget'
-import TargetDefinition from './targetDefinitions/TargetDefinition'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType, { CardTargetTypes } from '@shared/enums/TargetType'
 import Utils from '../../utils/Utils'
 import CardFeature from '@shared/enums/CardFeature'
 import GameLibrary from '../libraries/CardLibrary'
 import ServerCard from './ServerCard'
+import PlayTargetDefinition from '@src/game/models/targetDefinitions/PlayTargetDefinition'
+import PlayTargetDefinitionBuilder from '@src/game/models/targetDefinitions/PlayTargetDefinitionBuilder'
+import DeployTargetDefinitionBuilder from '@src/game/models/targetDefinitions/DeployTargetDefinitionBuilder'
+import TargetValidatorArguments, { RowTargetValidatorArguments, UnitTargetValidatorArguments } from '@src/types/TargetValidatorArguments'
+import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
+import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
+import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTargetDefinition'
+import { OrderTarget } from '@src/game/models/ServerBoardOrders'
+
+export type ValidServerCardTarget = ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow
+
+export type DeployTarget = {
+	target: ValidServerCardTarget
+	definition: DeployTargetDefinition<any>
+}
 
 export class ServerCardTargeting {
 	private readonly card: ServerCard
 	private readonly game: ServerGame
 
-	public cardPlayTargetDefinitions: SimpleTargetDefinitionBuilder[] = []
-	public unitOrderTargetDefinitions: SimpleTargetDefinitionBuilder[] = []
-	public deployEffectTargetDefinitions: SimpleTargetDefinitionBuilder[] = []
+	public playTargetDefinitions: PlayTargetDefinitionBuilder[] = []
+	public deployTargetDefinitions: DeployTargetDefinitionBuilder<TargetValidatorArguments>[] = []
+	public orderTargetDefinitions: OrderTargetDefinitionBuilder<TargetValidatorArguments>[] = []
 
 	constructor(card: ServerCard) {
 		this.card = card
 		this.game = card.game
 	}
 
-	public getValidCardPlayTargets(cardOwner: ServerPlayerInGame | null): ServerCardTargetRow[] {
+	/*
+	 * ------------------------------------
+	 *            Play targets
+	 * ------------------------------------
+	 */
+	public getPlayTargets(cardOwner: ServerPlayerInGame | null): ServerCardTargetRow[] {
 		if (!cardOwner || cardOwner.unitMana < this.card.stats.unitCost || cardOwner.spellMana < this.card.stats.spellCost) {
 			return []
 		}
 
-		let targetDefinitions = this.getCardPlayTargetDefinitions()
+		let targetDefinitions = this.getPlayTargetDefinitions()
 		if (targetDefinitions.length === 0) {
-			targetDefinitions = [TargetDefinition.defaultCardPlayTarget(this.game).build()]
+			targetDefinitions = [PlayTargetDefinition.base(this.game)]
 		}
+
 		return targetDefinitions
 			.map((targetDefinition) => {
-				return this.getValidTargetsForRows(TargetMode.CARD_PLAY, targetDefinition)
+				return this.game.board.rows
+					.filter((row) =>
+						targetDefinition.require({
+							card: this.card,
+							owner: cardOwner,
+							targetRow: row,
+						})
+					)
+					.map((targetRow) => ServerCardTarget.cardTargetRow(targetDefinition.id, TargetMode.CARD_PLAY, this.card, targetRow))
 			})
 			.flat()
 	}
 
-	public getDeployEffectTargets(
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
-	): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] {
-		const targetDefinitions = this.getDeployEffectTargetDefinitions()
-		return targetDefinitions
-			.map((targetDefinition) => this.getDeployEffectTargetsForTargetDefinition(targetDefinition, previousTargets))
-			.flat()
-	}
-
-	private getDeployEffectTargetsForTargetDefinition(
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
-	): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] {
-		if (targetDefinition.getTargetCount(this.card) === 0) {
-			return []
-		}
-
-		let validTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
-
-		Utils.forEachInNumericEnum(TargetType, (targetType: TargetType) => {
-			if (targetType === TargetType.BOARD_ROW) {
-				validTargets = validTargets.concat(this.getValidTargetsForRows(TargetMode.DEPLOY_EFFECT, targetDefinition, previousTargets))
-			} else if (targetType === TargetType.UNIT) {
-				validTargets = validTargets.concat(this.getValidTargetsForUnits(TargetMode.DEPLOY_EFFECT, targetDefinition, previousTargets))
-			} else {
-				validTargets = validTargets.concat(
-					this.getValidTargetsForCards(TargetMode.DEPLOY_EFFECT, targetType, targetDefinition, previousTargets)
-				)
-			}
+	/*
+	 * ------------------------------------
+	 *          Deploy targets
+	 * ------------------------------------
+	 */
+	public getDeployTargets(previousTargets: DeployTarget[] = []): DeployTarget[] {
+		const mappedDefinitions = this.getDeployTargetDefinitions()
+			.filter((targetDefinition) => targetDefinition.totalTargetCount > previousTargets.length)
+			.map((targetDefinition) => ({
+				targets: this.getDeployTargetsForDefinition(targetDefinition, previousTargets),
+				definition: targetDefinition,
+			}))
+		const deployTargets: DeployTarget[] = []
+		mappedDefinitions.forEach((mappedDefinition) => {
+			mappedDefinition.targets.forEach((target) => {
+				deployTargets.push({
+					target: target,
+					definition: mappedDefinition.definition,
+				})
+			})
 		})
-		return validTargets
+		return deployTargets
 	}
 
-	public getValidTargetsForCards(
-		targetMode: TargetMode,
-		targetType: CardTargetTypes,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
-	): ServerCardTargetCard[] {
-		let targets: ServerCardTargetCard[] = []
-		if (targetType === TargetType.CARD_IN_LIBRARY) {
-			targets = this.getValidCardLibraryTargets(targetMode, targetDefinition, previousTargets)
-		} else if (targetType === TargetType.CARD_IN_UNIT_HAND) {
-			targets = this.getValidUnitHandTargets(targetMode, targetDefinition, previousTargets)
-		} else if (targetType === TargetType.CARD_IN_SPELL_HAND) {
-			targets = this.getValidSpellHandTargets(targetMode, targetDefinition, previousTargets)
-		} else if (targetType === TargetType.CARD_IN_UNIT_DECK) {
-			targets = this.getValidUnitDeckTargets(targetMode, targetDefinition, previousTargets)
-		} else if (targetType === TargetType.CARD_IN_SPELL_DECK) {
-			targets = this.getValidSpellDeckTargets(targetMode, targetDefinition, previousTargets)
-		}
+	private getDeployTargetsForDefinition(
+		targetDefinition: DeployTargetDefinition<TargetValidatorArguments>,
+		previousTargets: DeployTarget[] = []
+	): ValidServerCardTarget[] {
+		const applicableTargets = previousTargets.filter((previousTarget) => {
+			return previousTarget.definition.id === targetDefinition.id
+		})
 
-		return targets
-	}
-
-	public getValidTargetsForUnits(
-		targetMode: TargetMode,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
-	): ServerCardTargetUnit[] {
-		return this.getValidUnitTargets(targetMode, targetDefinition, previousTargets)
-	}
-
-	public getValidTargetsForRows(
-		targetMode: TargetMode,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
-	): ServerCardTargetRow[] {
-		return this.getValidRowTargets(targetMode, targetDefinition, previousTargets)
-	}
-
-	private isTargetLimitExceeded(
-		targetMode: TargetMode,
-		targetType: TargetType,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[]
-	): boolean {
-		if (previousTargets.length >= targetDefinition.getTargetCount(this.card)) {
-			return true
-		}
-
-		const previousTargetsOfType = previousTargets.filter((target) => target.targetMode === targetMode && target.targetType === targetType)
-		return previousTargetsOfType.length >= targetDefinition.getTargetOfTypeCount(this.card, targetMode, targetType)
-	}
-
-	private getValidUnitTargets(
-		targetMode: TargetMode,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
-	): ServerCardTargetUnit[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.UNIT, targetDefinition, previousTargets)) {
+		if (applicableTargets.length >= targetDefinition.targetCount) {
 			return []
 		}
 
-		const unitTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.UNIT)
-		const args = {
-			sourceCard: this.card,
-			previousTargets: previousTargets,
+		switch (targetDefinition.targetType) {
+			case TargetType.UNIT:
+				return this.getDeployTargetsForDefinitionAsUnits(targetDefinition, previousTargets)
+			case TargetType.BOARD_ROW:
+				return this.getDeployTargetsForDefinitionAsRows(targetDefinition, previousTargets)
+			default:
+				return this.getDeployTargetsForDefinitionAsCards(targetDefinition.targetType, targetDefinition, previousTargets)
 		}
+	}
 
+	private getDeployTargetsForDefinitionAsUnits(
+		targetDefinition: DeployTargetDefinition<UnitTargetValidatorArguments>,
+		previousTargets: DeployTarget[]
+	): ValidServerCardTarget[] {
 		return this.game.board
 			.getAllUnits()
 			.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
-			.filter((unit) => targetDefinition.require(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card, targetUnit: unit }))
+			.filter((unit) =>
+				targetDefinition.require({
+					sourceCard: this.card,
+					targetCard: unit.card,
+					targetUnit: unit,
+					previousTargets: previousTargets.map((wrapper) => wrapper.target),
+				})
+			)
 			.map((unit) => ({
 				unit: unit,
-				expectedValue: targetDefinition.evaluate(targetMode, TargetType.UNIT, { ...args, targetCard: unit.card, targetUnit: unit }),
+				expectedValue: targetDefinition.evaluate(
+					{
+						sourceCard: this.card,
+						targetCard: unit.card,
+						targetUnit: unit,
+						previousTargets: previousTargets.map((wrapper) => wrapper.target),
+					},
+					0
+				),
 			}))
 			.map((tuple) => ({
 				unit: tuple.unit,
@@ -154,175 +146,289 @@ export class ServerCardTargeting {
 					tuple.unit.card.botEvaluation.baseThreat
 				),
 			}))
-			.map((tuple) => ServerCardTarget.cardTargetUnit(targetMode, this.card, tuple.unit, tuple.expectedValue, unitTargetLabel))
+			.map((tuple) =>
+				ServerCardTarget.cardTargetUnit(
+					targetDefinition.id,
+					TargetMode.DEPLOY_EFFECT,
+					this.card,
+					tuple.unit,
+					tuple.expectedValue,
+					targetDefinition.label
+				)
+			)
 	}
 
-	private getValidRowTargets(
-		targetMode: TargetMode,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
+	public getDeployTargetsForDefinitionAsRows(
+		targetDefinition: DeployTargetDefinition<RowTargetValidatorArguments>,
+		previousTargets: DeployTarget[] = []
 	): ServerCardTargetRow[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.BOARD_ROW, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const rowTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.BOARD_ROW)
-		const args = {
-			sourceCard: this.card,
-			previousTargets: [],
-		}
-
 		return this.game.board.rows
-			.filter((row) => targetDefinition.require(targetMode, TargetType.BOARD_ROW, { ...args, targetRow: row }))
-			.map((targetRow) => ServerCardTarget.cardTargetRow(targetMode, this.card, targetRow, rowTargetLabel))
+			.filter((row) =>
+				targetDefinition.require({
+					sourceCard: this.card,
+					targetRow: row,
+					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
+				})
+			)
+			.map((targetRow) =>
+				ServerCardTarget.cardTargetRow(targetDefinition.id, TargetMode.DEPLOY_EFFECT, this.card, targetRow, targetDefinition.label)
+			)
+	}
+
+	public getDeployTargetsForDefinitionAsCards(
+		targetType: CardTargetTypes,
+		targetDefinition: DeployTargetDefinition<any>,
+		previousTargets: DeployTarget[]
+	): ServerCardTargetCard[] {
+		let targets: ServerCardTargetCard[] = []
+		if (targetType === TargetType.CARD_IN_LIBRARY) {
+			targets = this.getValidCardLibraryTargets(targetDefinition, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_UNIT_HAND) {
+			targets = this.getValidUnitHandTargets(targetDefinition, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_SPELL_HAND) {
+			targets = this.getValidSpellHandTargets(targetDefinition, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_UNIT_DECK) {
+			targets = this.getValidUnitDeckTargets(targetDefinition, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_SPELL_DECK) {
+			targets = this.getValidSpellDeckTargets(targetDefinition, previousTargets)
+		}
+
+		return targets
 	}
 
 	private getValidCardLibraryTargets(
-		targetMode: TargetMode,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
+		targetDefinition: DeployTargetDefinition<any>,
+		previousTargets: DeployTarget[] = []
 	): ServerCardTargetCard[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_LIBRARY, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const libraryCards = GameLibrary.cards as ServerCard[]
-		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_LIBRARY)
-		return libraryCards
-			.filter((card) =>
-				targetDefinition.require(targetMode, TargetType.CARD_IN_LIBRARY, {
+		return Utils.sortCards(
+			GameLibrary.cards.filter((card) =>
+				targetDefinition.require({
 					sourceCard: this.card,
 					targetCard: card,
-					previousTargets: previousTargets,
+					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
 				})
 			)
-			.map((targetCard) => ServerCardTarget.cardTargetCardInLibrary(targetMode, this.card, targetCard, cardTargetLabel))
+		).map((targetCard) =>
+			ServerCardTarget.cardTargetCardInLibrary(targetDefinition.id, TargetMode.DEPLOY_EFFECT, this.card, targetCard, targetDefinition.label)
+		)
 	}
 
 	private getValidUnitHandTargets(
-		targetMode: TargetMode,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
+		targetDefinition: DeployTargetDefinition<any>,
+		previousTargets: DeployTarget[] = []
 	): ServerCardTargetCard[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_HAND, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_UNIT_HAND)
-		return this.game.players
-			.map((player) => player.cardHand.unitCards)
-			.reduce((accumulator, cards) => accumulator.concat(cards))
-			.filter((unit) => !unit.features.includes(CardFeature.UNTARGETABLE))
-			.filter((card) =>
-				targetDefinition.require(targetMode, TargetType.CARD_IN_UNIT_HAND, {
-					sourceCard: this.card,
-					targetCard: card,
-					previousTargets: previousTargets,
-				})
+		return Utils.sortCards(
+			this.game.players
+				.map((player) => player.cardHand.unitCards)
+				.reduce((accumulator, cards) => accumulator.concat(cards))
+				.filter((unit) => !unit.features.includes(CardFeature.UNTARGETABLE))
+				.filter((card) =>
+					targetDefinition.require({
+						sourceCard: this.card,
+						targetCard: card,
+						previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
+					})
+				)
+		).map((targetCard) =>
+			ServerCardTarget.cardTargetCardInUnitHand(
+				targetDefinition.id,
+				TargetMode.DEPLOY_EFFECT,
+				this.card,
+				targetCard,
+				targetDefinition.label
 			)
-			.map((targetCard) => ServerCardTarget.cardTargetCardInUnitHand(targetMode, this.card, targetCard, cardTargetLabel))
+		)
 	}
 
 	private getValidSpellHandTargets(
-		targetMode: TargetMode,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
+		targetDefinition: DeployTargetDefinition<any>,
+		previousTargets: DeployTarget[] = []
 	): ServerCardTargetCard[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_SPELL_HAND, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_SPELL_HAND)
-		return this.game.players
-			.map((player) => player.cardHand.spellCards)
-			.reduce((accumulator, cards) => accumulator.concat(cards))
-			.filter((unit) => !unit.features.includes(CardFeature.UNTARGETABLE))
-			.filter((card) =>
-				targetDefinition.require(targetMode, TargetType.CARD_IN_SPELL_HAND, {
-					sourceCard: this.card,
-					targetCard: card,
-					previousTargets: previousTargets,
-				})
+		return Utils.sortCards(
+			this.game.players
+				.map((player) => player.cardHand.spellCards)
+				.reduce((accumulator, cards) => accumulator.concat(cards))
+				.filter((unit) => !unit.features.includes(CardFeature.UNTARGETABLE))
+				.filter((card) =>
+					targetDefinition.require({
+						sourceCard: this.card,
+						targetCard: card,
+						previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
+					})
+				)
+		).map((targetCard) =>
+			ServerCardTarget.cardTargetCardInSpellHand(
+				targetDefinition.id,
+				TargetMode.DEPLOY_EFFECT,
+				this.card,
+				targetCard,
+				targetDefinition.label
 			)
-			.map((targetCard) => ServerCardTarget.cardTargetCardInSpellHand(targetMode, this.card, targetCard, cardTargetLabel))
+		)
 	}
 
 	private getValidUnitDeckTargets(
-		targetMode: TargetMode,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
+		targetDefinition: DeployTargetDefinition<any>,
+		previousTargets: DeployTarget[] = []
 	): ServerCardTargetCard[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_UNIT_DECK, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_UNIT_DECK)
-		return this.game.players
+		let targetedCards = this.game.players
 			.map((player) => player.cardDeck.unitCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter((card) =>
-				targetDefinition.require(targetMode, TargetType.CARD_IN_UNIT_DECK, {
+				targetDefinition.require({
 					sourceCard: this.card,
 					targetCard: card,
-					previousTargets: previousTargets,
+					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
 				})
 			)
-			.map((targetCard) => ServerCardTarget.cardTargetCardInUnitDeck(targetMode, this.card, targetCard, cardTargetLabel))
+
+		if (!targetDefinition.shouldPreventSorting()) {
+			targetedCards = Utils.sortCards(targetedCards)
+		}
+
+		return targetedCards.map((targetCard) =>
+			ServerCardTarget.cardTargetCardInUnitDeck(
+				targetDefinition.id,
+				TargetMode.DEPLOY_EFFECT,
+				this.card,
+				targetCard,
+				targetDefinition.label
+			)
+		)
 	}
 
 	private getValidSpellDeckTargets(
-		targetMode: TargetMode,
-		targetDefinition: TargetDefinition,
-		previousTargets: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] = []
+		targetDefinition: DeployTargetDefinition<any>,
+		previousTargets: DeployTarget[] = []
 	): ServerCardTargetCard[] {
-		if (this.isTargetLimitExceeded(targetMode, TargetType.CARD_IN_SPELL_DECK, targetDefinition, previousTargets)) {
-			return []
-		}
-
-		const cardTargetLabel = targetDefinition.getOrderLabel(targetMode, TargetType.CARD_IN_SPELL_DECK)
-		return this.game.players
+		let targetedCards = this.game.players
 			.map((player) => player.cardDeck.spellCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter((card) =>
-				targetDefinition.require(targetMode, TargetType.CARD_IN_SPELL_DECK, {
+				targetDefinition.require({
 					sourceCard: this.card,
 					targetCard: card,
-					previousTargets: previousTargets,
+					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
 				})
 			)
-			.map((targetCard) => ServerCardTarget.cardTargetCardInSpellDeck(targetMode, this.card, targetCard, cardTargetLabel))
+
+		if (!targetDefinition.shouldPreventSorting()) {
+			targetedCards = Utils.sortCards(targetedCards)
+		}
+
+		return targetedCards.map((targetCard) =>
+			ServerCardTarget.cardTargetCardInSpellDeck(
+				targetDefinition.id,
+				TargetMode.DEPLOY_EFFECT,
+				this.card,
+				targetCard,
+				targetDefinition.label
+			)
+		)
 	}
 
-	public getCardPlayTargetDefinitions(): TargetDefinition[] {
-		return this.cardPlayTargetDefinitions.map((targetDefinition) => {
-			let clone = targetDefinition.commit().clone()
-			this.card.buffs.buffs.forEach((buff) => {
-				clone = clone.merge(buff.definePlayValidTargetsMod())
-				clone = buff.definePlayValidTargetsOverride(clone)
+	/*
+	 * ------------------------------------
+	 *           Order targets
+	 * ------------------------------------
+	 */
+	public getOrderTargets(previousTargets: OrderTarget[]): OrderTarget[] {
+		let targets: OrderTarget[] = []
+		this.getOrderTargetDefinitions()
+			.filter((targetDefinition) => targetDefinition.totalTargetCount > previousTargets.length)
+			.forEach((targetDefinition) => {
+				targets = targets
+					.concat(this.getOrderTargetsAsUnits(targetDefinition, previousTargets))
+					.concat(this.getOrderTargetsAsRows(targetDefinition, previousTargets))
 			})
-			return clone.build()
-		})
+
+		return targets
 	}
 
-	public getUnitOrderTargetDefinitions(): TargetDefinition[] {
-		return this.unitOrderTargetDefinitions.map((targetDefinition) => {
-			let clone = targetDefinition.commit().clone()
-			this.card.buffs.buffs.forEach((buff) => {
-				clone = clone.merge(buff.defineValidOrderTargetsMod())
-				clone = buff.defineValidOrderTargetsOverride(clone)
-			})
-			return clone.build()
-		})
+	public getOrderTargetsAsUnits(
+		targetDefinition: OrderTargetDefinition<UnitTargetValidatorArguments>,
+		previousTargets: OrderTarget[] = []
+	): OrderTarget[] {
+		const applicablePreviousTargets = previousTargets.filter((previousTarget) => previousTarget.definition.id === targetDefinition.id)
+		if (applicablePreviousTargets.length >= targetDefinition.targetCount) {
+			return []
+		}
+
+		return this.game.board
+			.getAllUnits()
+			.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
+			.filter((unit) =>
+				targetDefinition.require({
+					sourceCard: this.card,
+					previousTargets: applicablePreviousTargets.map((previousTarget) => previousTarget.target),
+					targetCard: unit.card,
+					targetUnit: unit,
+				})
+			)
+			.map((unit) => ({
+				unit: unit,
+				expectedValue: targetDefinition.evaluate(
+					{
+						sourceCard: this.card,
+						previousTargets: applicablePreviousTargets.map((previousTarget) => previousTarget.target),
+						targetCard: unit.card,
+						targetUnit: unit,
+					},
+					0
+				),
+			}))
+			.map((tuple) => ({
+				unit: tuple.unit,
+				expectedValue: Math.max(
+					tuple.expectedValue * tuple.unit.card.botEvaluation.threatMultiplier,
+					tuple.unit.card.botEvaluation.baseThreat
+				),
+			}))
+			.map((tuple) => ({
+				target: ServerCardTarget.cardTargetUnit(
+					targetDefinition.id,
+					TargetMode.UNIT_ORDER,
+					this.card,
+					tuple.unit,
+					tuple.expectedValue,
+					targetDefinition.label
+				),
+				definition: targetDefinition,
+			}))
 	}
 
-	public getDeployEffectTargetDefinitions(): TargetDefinition[] {
-		return this.deployEffectTargetDefinitions.map((targetDefinition) => {
-			let clone = targetDefinition.commit().clone()
-			this.card.buffs.buffs.forEach((buff) => {
-				clone = clone.merge(buff.definePostPlayRequiredTargetsMod())
-				clone = buff.definePostPlayRequiredTargetsOverride(clone)
-			})
-			return clone.build()
-		})
+	public getOrderTargetsAsRows(
+		targetDefinition: OrderTargetDefinition<RowTargetValidatorArguments>,
+		previousTargets: OrderTarget[] = []
+	): OrderTarget[] {
+		const applicablePreviousTargets = previousTargets.filter((previousTarget) => previousTarget.definition.id === targetDefinition.id)
+		if (applicablePreviousTargets.length >= targetDefinition.targetCount) {
+			return []
+		}
+
+		return this.game.board.rows
+			.filter((row) =>
+				targetDefinition.require({
+					sourceCard: this.card,
+					targetRow: row,
+					previousTargets: applicablePreviousTargets.map((previousTarget) => previousTarget.target),
+				})
+			)
+			.map((row) => ({
+				target: ServerCardTarget.cardTargetRow(targetDefinition.id, TargetMode.UNIT_ORDER, this.card, row, targetDefinition.label),
+				definition: targetDefinition,
+			}))
+	}
+
+	public getPlayTargetDefinitions(): PlayTargetDefinition[] {
+		return this.playTargetDefinitions.map((definition) => definition.__build())
+	}
+
+	public getDeployTargetDefinitions(): DeployTargetDefinition<TargetValidatorArguments>[] {
+		return this.deployTargetDefinitions.map((definition) => definition.__build())
+	}
+
+	public getOrderTargetDefinitions(): OrderTargetDefinition<TargetValidatorArguments>[] {
+		return this.orderTargetDefinitions.map((definition) => definition.__build())
 	}
 }

@@ -32,6 +32,10 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		}, 0)
 	}
 
+	public get isBot(): boolean {
+		return true
+	}
+
 	private botTakesTheirTurn(): void {
 		const botTotalPower = this.game.board.getTotalPlayerPower(this)
 		const opponentTotalPower = this.opponent ? this.game.board.getTotalPlayerPower(this.opponent) : 0
@@ -65,7 +69,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const baseCards = spellsOnly ? this.cardHand.spellCards : this.cardHand.allCards
 
 		const cards = Utils.sortCards(baseCards)
-			.filter((card) => card.targeting.getValidCardPlayTargets(this).length > 0)
+			.filter((card) => card.targeting.getPlayTargets(this).length > 0)
 			.map((card) => ({
 				card: card,
 				bestExpectedValue: this.getBestExpectedValue(card),
@@ -90,8 +94,8 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botChoosesTarget(): void {
-		const validTargets = this.game.cardPlay.getValidTargets().sort((a, b) => b.expectedValue - a.expectedValue)
-		const cardTargetMessage = new CardTargetMessage(validTargets[0])
+		const validTargets = this.game.cardPlay.getDeployTargets().sort((a, b) => b.target.expectedValue - a.target.expectedValue)
+		const cardTargetMessage = new CardTargetMessage(validTargets[0].target)
 		IncomingMessageHandlers[GenericActionMessageType.CARD_TARGET](cardTargetMessage, this.game, this)
 	}
 
@@ -100,7 +104,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private getBestExpectedValue(card: ServerCard): number {
-		const targets = card.targeting.getDeployEffectTargets()
+		const targets = card.targeting.getDeployTargets()
 
 		const cardBaseValue = card.type === CardType.SPELL ? card.stats.baseSpellCost * 2 : card.stats.basePower
 		const spellExtraValue = this.cardHand.unitCards.length <= 2 ? 1 : 0
@@ -108,7 +112,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		if (targets.length === 0) {
 			return card.botEvaluation.expectedValue - cardBaseValue + spellExtraValue
 		}
-		const bestTargetingValue = targets.sort((a, b) => b.expectedValue - a.expectedValue)[0].expectedValue || 0
+		const bestTargetingValue = targets.sort((a, b) => b.target.expectedValue - a.target.expectedValue)[0].target.expectedValue || 0
 		return bestTargetingValue + card.botEvaluation.expectedValue - cardBaseValue + spellExtraValue
 	}
 
@@ -119,7 +123,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	private hasHighValueSpellPlays(): boolean {
 		return (
 			Utils.sortCards(this.cardHand.spellCards)
-				.filter((card) => card.targeting.getValidCardPlayTargets(this).length > 0)
+				.filter((card) => card.targeting.getPlayTargets(this).length > 0)
 				.map((card) => ({
 					card: card,
 					bestExpectedValue: this.getBestExpectedValue(card),
@@ -129,7 +133,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private hasAnySpellPlays(): boolean {
-		return Utils.sortCards(this.cardHand.spellCards).filter((card) => card.targeting.getValidCardPlayTargets(this).length > 0).length > 0
+		return Utils.sortCards(this.cardHand.spellCards).filter((card) => card.targeting.getPlayTargets(this).length > 0).length > 0
 	}
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerBotPlayerInGame {

@@ -33,10 +33,9 @@ export default class UnitChallengeScarredExplorer extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 
-		this.createDeployEffectTargets()
-			.target(TargetType.CARD_IN_LIBRARY)
-			.require(TargetType.CARD_IN_LIBRARY, (args) => args.targetCard.color === CardColor.SILVER)
-			.require(TargetType.CARD_IN_LIBRARY, ({ targetCard }) => this.exploredCards.includes(targetCard))
+		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
+			.require((args) => args.targetCard.color === CardColor.SILVER)
+			.require(({ targetCard }) => this.exploredCards.includes(targetCard))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}

@@ -30,10 +30,9 @@ export default class SpellEternalServitude extends ServerCard {
 			extraCost: this.extraCost,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireAlliedUnit()
-			.evaluate(TargetType.UNIT, () => this.stats.basePower)
+		this.createDeployTargets(TargetType.UNIT)
+			.requireAllied()
+			.evaluate(() => this.stats.basePower)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

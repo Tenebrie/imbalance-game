@@ -82,7 +82,7 @@ describe('ServerGameCardPlay', () => {
 		describe('when the target row is full', () => {
 			beforeEach(() => {
 				for (let i = 0; i < Constants.MAX_CARDS_PER_ROW; i++) {
-					game.board.createUnit(CardLibrary.instantiateByConstructor(game, TokenEmptyDeck), game.players[0], 0, 0)
+					game.board.createUnit(CardLibrary.instantiateByConstructor(game, TokenEmptyDeck), 0, 0)
 				}
 			})
 

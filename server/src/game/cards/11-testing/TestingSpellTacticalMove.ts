@@ -23,15 +23,12 @@ export default class TestingSpellTacticalMove extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.require(TargetType.UNIT, () => this.movingUnit === null)
+		this.createDeployTargets(TargetType.UNIT).require(() => this.movingUnit === null)
 
-		this.createDeployEffectTargets()
-			.target(TargetType.BOARD_ROW)
-			.requirePlayersRow()
-			.require(TargetType.BOARD_ROW, () => !!this.movingUnit)
-			.require(TargetType.BOARD_ROW, ({ targetRow }) => targetRow.index !== this.movingUnit!.rowIndex)
+		this.createDeployTargets(TargetType.BOARD_ROW)
+			.requireAllied()
+			.require(() => !!this.movingUnit)
+			.require(({ targetRow }) => targetRow.index !== this.movingUnit!.rowIndex)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetUnitSelected(targetUnit))
 

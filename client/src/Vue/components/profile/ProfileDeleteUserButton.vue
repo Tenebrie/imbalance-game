@@ -9,12 +9,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import axios from 'axios'
 import store from '@/Vue/store'
 
 export default Vue.extend({
 	data: () => ({
-		requestInFlight: false
+		requestInFlight: false,
 	}),
 
 	methods: {
@@ -22,30 +21,28 @@ export default Vue.extend({
 			this.requestInFlight = true
 
 			try {
-				await axios.delete('/api/user')
-				await store.dispatch.logout()
-				this.$noty.success('Profile deleted!')
+				await store.dispatch.deleteAccount()
 			} catch (e) {
 				this.$noty.error('Unable to delete your profile!')
 			}
 
 			this.requestInFlight = false
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	.button-container {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		button {
-			width: 80%;
-			max-width: 350px;
-			font-size: 1.2em;
-			margin: 16px;
-		}
+.button-container {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	button {
+		width: 80%;
+		max-width: 350px;
+		font-size: 1.2em;
+		margin: 16px;
 	}
+}
 </style>

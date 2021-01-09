@@ -56,6 +56,7 @@ export default class RichText extends PIXI.Container {
 	private __horizontalAlign: RichTextAlign = RichTextAlign.CENTER
 	private __verticalAlign: RichTextAlign = RichTextAlign.END
 	private __textLineCount = 0
+	private __renderedText = ''
 
 	constructor(text: string, maxWidth: number, variables: RichTextVariables) {
 		super()
@@ -82,6 +83,10 @@ export default class RichText extends PIXI.Container {
 
 		this.source = value
 		this.renderText()
+	}
+
+	get renderedText(): string {
+		return this.__renderedText
 	}
 
 	get textVariables(): RichTextVariables {
@@ -238,6 +243,7 @@ export default class RichText extends PIXI.Container {
 
 		let currentState = SegmentType.TEXT
 		let currentData = ''
+		let resultingText = ''
 
 		const stateSegmentType: Map<SegmentType, SegmentType> = new Map<SegmentType, SegmentType>()
 		stateSegmentType.set(SegmentType.TEXT, SegmentType.TEXT)
@@ -304,7 +310,7 @@ export default class RichText extends PIXI.Container {
 		const contextConditionStack: boolean[] = []
 		let currentLine: { text: ScalingText; basePosition: PIXI.Point }[] = []
 
-		const newLine = () => {
+		const flushData = () => {
 			currentLine.forEach((renderedSegment) => {
 				if (this.__horizontalAlign === RichTextAlign.CENTER) {
 					renderedSegment.basePosition.x -= contextPosition.x / 2
@@ -314,9 +320,14 @@ export default class RichText extends PIXI.Container {
 			})
 
 			contextPosition.x = 0
-			contextPosition.y += this.lineHeight
 			currentLine = []
+		}
+
+		const newLine = () => {
+			flushData()
+			contextPosition.y += this.lineHeight
 			linesRendered += 1
+			resultingText += '\n'
 		}
 
 		const insertText = (text: string) => {
@@ -349,6 +360,7 @@ export default class RichText extends PIXI.Container {
 			this.addChild(renderedText)
 
 			contextPosition.x += measure.width
+			resultingText += text
 		}
 
 		segments.forEach((segment) => {
@@ -358,8 +370,7 @@ export default class RichText extends PIXI.Container {
 
 			switch (segment.type) {
 				case SegmentType.TEXT:
-					const text = segment.data!
-					insertText(text)
+					insertText(segment.data!)
 					break
 
 				case SegmentType.OPENING_TAG:
@@ -428,6 +439,7 @@ export default class RichText extends PIXI.Container {
 
 				case SegmentType.WORD_SEPARATOR:
 					contextPosition.x += 5 * SCALE_MODIFIER
+					resultingText += ' '
 					break
 
 				case SegmentType.LINE_SEPARATOR:
@@ -435,7 +447,7 @@ export default class RichText extends PIXI.Container {
 					break
 			}
 		})
-		newLine()
+		flushData()
 
 		this.segments.forEach((segment) => {
 			if (this.__verticalAlign === RichTextAlign.END) {
@@ -454,6 +466,7 @@ export default class RichText extends PIXI.Container {
 				new PIXI.Point(this.maxWidth, contextPosition.y * (this.baseFontSize / 18))
 			)
 		}
+		this.__renderedText = resultingText
 	}
 
 	getStateTransition(

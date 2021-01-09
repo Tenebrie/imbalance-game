@@ -1,9 +1,11 @@
+import 'source-map-support/register'
 import AsyncHandler from './utils/AsyncHandler'
 import path from 'path'
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
 import 'module-alias/register'
 import { cardImageGenerator } from './utils/CardImageGenerator'
+import listEndpoints from 'express-list-endpoints'
 
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
@@ -24,6 +26,7 @@ const AdminRouter = require('./routers/AdminRouter')
 const CardsRouter = require('./routers/CardsRouter')
 const DecksRouter = require('./routers/DecksRouter')
 const GamesRouter = require('./routers/GamesRouter')
+const ModalsRouter = require('./routers/ModalsRouter')
 const SessionRouter = require('./routers/SessionRouter')
 const UserProfileRouter = require('./routers/UserProfileRouter')
 
@@ -85,6 +88,7 @@ app.use('/api/decks', DecksRouter)
 app.use('/api/games', GamesRouter)
 app.use('/api/session', SessionRouter)
 app.use('/api/user', UserRouter)
+app.use('/api/user/modals', ModalsRouter)
 app.use('/api/user/profile', UserProfileRouter)
 
 /* Generic error handler */
@@ -92,6 +96,9 @@ app.use(GenericErrorMiddleware)
 
 /* WS routers */
 app.use('/api/game', PlayRouter)
+
+/* Print all routes */
+console.info('Registered routes:', listEndpoints(app))
 
 /* Index fallback */
 app.use('*', (req, res) => {

@@ -25,7 +25,7 @@ const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMe
 
 	[CardUpdateMessageType.VARIABLES]: (data: CardVariablesMessage[]) => {
 		data.forEach((message) => {
-			const matchingCard = Core.game.findRenderedCardById(message.cardId) || Core.board.findUnitById(message.cardId).card
+			const matchingCard = Core.game.findRenderedCardById(message.cardId) || Core.board.findUnitById(message.cardId)?.card
 			if (!matchingCard) {
 				return
 			}

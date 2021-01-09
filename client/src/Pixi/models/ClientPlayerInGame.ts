@@ -5,10 +5,10 @@ import PlayerInGame from '@shared/models/PlayerInGame'
 import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
 import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import ClientCardGraveyard from '@/Pixi/models/ClientCardGraveyard'
-import Card from '@shared/models/Card'
 import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
 import AccessLevel from '@shared/enums/AccessLevel'
 import PlayerMessage from '@shared/models/network/player/PlayerMessage'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 class ClientPlayer implements Player {
 	id: string
@@ -26,14 +26,14 @@ class ClientPlayer implements Player {
 
 export default class ClientPlayerInGame implements PlayerInGame {
 	player: ClientPlayer
-	leader: Card
+	leader: RenderedCard
 	cardHand: RenderedCardHand
 	cardDeck: ClientCardDeck
 	cardGraveyard: ClientCardGraveyard
 
-	morale = 0
-	unitMana = 0
-	spellMana = 0
+	private __morale = 0
+	private __unitMana = 0
+	private __spellMana = 0
 	isTurnActive = false
 
 	constructor(player: Player) {
@@ -43,15 +43,38 @@ export default class ClientPlayerInGame implements PlayerInGame {
 		this.cardGraveyard = new ClientCardGraveyard()
 	}
 
-	public setUnitMana(value: number): void {
-		this.unitMana = value
+	public get morale(): number {
+		return this.__morale
+	}
+	public set morale(value: number) {
+		this.__morale = value
+		if (this === Core.player) {
+			store.commit.gameStateModule.setPlayerMorale(value)
+		} else if (this === Core.opponent) {
+			store.commit.gameStateModule.setOpponentMorale(value)
+		}
+	}
+
+	public get unitMana(): number {
+		return this.__unitMana
+	}
+	public set unitMana(value: number) {
+		this.__unitMana = value
 		if (this === Core.player) {
 			store.commit.gameStateModule.setPlayerUnitMana(value)
 		}
 	}
 
-	public setSpellMana(value: number): void {
-		this.spellMana = value
+	public get spellMana(): number {
+		return this.__spellMana
+	}
+	public set spellMana(value: number) {
+		this.__spellMana = value
+		if (this === Core.player) {
+			store.commit.gameStateModule.setPlayerSpellMana(value)
+		} else if (this === Core.opponent) {
+			store.commit.gameStateModule.setOpponentSpellMana(value)
+		}
 	}
 
 	public startTurn(): void {

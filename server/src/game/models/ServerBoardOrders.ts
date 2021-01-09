@@ -1,79 +1,110 @@
 import ServerGame from './ServerGame'
 import ServerUnit from './ServerUnit'
-import { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from './ServerCardTarget'
-import TargetMode from '@shared/enums/TargetMode'
 import GameEventCreators from './events/GameEventCreators'
 import TargetType from '@shared/enums/TargetType'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import { ValidServerCardTarget } from '@src/game/models/ServerCardTargeting'
+import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTargetDefinition'
+import {
+	CardTargetValidatorArguments,
+	RowTargetValidatorArguments,
+	UnitTargetValidatorArguments,
+} from '@src/types/TargetValidatorArguments'
+
+export type OrderTarget = {
+	target: ValidServerCardTarget
+	definition: OrderTargetDefinition<any>
+}
 
 export default class ServerBoardOrders {
 	readonly game: ServerGame
-	readonly performedOrders: (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[]
+	readonly performedOrders: OrderTarget[]
 
 	constructor(game: ServerGame) {
 		this.game = game
 		this.performedOrders = []
 	}
 
-	public performUnitOrder(order: ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow): void {
-		if (!this.isOrderValid(order)) {
+	public get validOrders(): OrderTarget[] {
+		return this.game.board
+			.getAllUnits()
+			.map((unit) => unit.getValidOrders())
+			.flat()
+	}
+
+	public performUnitOrder(targetMessage: CardTargetMessage): void {
+		const order = this.validOrders.find((validOrder) => validOrder.target.id === targetMessage.id)
+		if (!order) {
 			return
 		}
 
-		this.performedOrders.push(order)
-
-		const sourceCard = order.sourceCard!
+		const sourceCard = order.target.sourceCard!
 		const orderedUnit = sourceCard.unit!
-		const previousTargets = this.getOrdersPerformedByUnit(orderedUnit)
-		const targetDefinitions = orderedUnit.card.targeting.getUnitOrderTargetDefinitions()
-		const isValid = targetDefinitions.every((targetDefinition) => {
-			return targetDefinition.require(TargetMode.UNIT_ORDER, order.targetType, { ...order, sourceCard: sourceCard, previousTargets })
-		})
-		if (!isValid) {
-			return
+
+		if (order.target.targetType === TargetType.UNIT) {
+			const definition = order.definition as OrderTargetDefinition<UnitTargetValidatorArguments>
+			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
+			definition.perform({
+				sourceCard: sourceCard,
+				targetCard: order.target.targetCard,
+				targetUnit: order.target.targetCard.unit!,
+				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),
+			})
+		} else if (order.target.targetType === TargetType.BOARD_ROW) {
+			const definition = order.definition as OrderTargetDefinition<RowTargetValidatorArguments>
+			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
+			definition.perform({
+				sourceCard: sourceCard,
+				targetRow: order.target.targetRow,
+				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),
+			})
+		} else {
+			const definition = order.definition as OrderTargetDefinition<CardTargetValidatorArguments>
+			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
+			definition.perform({
+				sourceCard: sourceCard,
+				targetCard: order.target.targetCard,
+				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),
+			})
 		}
 
-		if (order.targetType !== TargetType.BOARD_ROW) {
+		if (order.target.targetType !== TargetType.BOARD_ROW) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingCard({
 					triggeringUnit: orderedUnit,
-					targetType: order.targetType,
-					targetCard: order.targetCard,
-					targetArguments: order,
+					targetType: order.target.targetType,
+					targetCard: order.target.targetCard,
+					targetArguments: order.target,
 				})
 			)
 		}
-		if (order.targetType === TargetType.UNIT) {
+		if (order.target.targetType === TargetType.UNIT) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingUnit({
 					triggeringUnit: orderedUnit,
-					targetType: order.targetType,
-					targetCard: order.targetCard,
-					targetUnit: order.targetCard.unit!,
-					targetArguments: order,
+					targetType: order.target.targetType,
+					targetCard: order.target.targetCard,
+					targetUnit: order.target.targetCard.unit!,
+					targetArguments: order.target,
 				})
 			)
 		}
-		if (order.targetType === TargetType.BOARD_ROW) {
+		if (order.target.targetType === TargetType.BOARD_ROW) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingRow({
 					triggeringUnit: orderedUnit,
-					targetType: order.targetType,
-					targetRow: order.targetRow,
-					targetArguments: order,
+					targetType: order.target.targetType,
+					targetRow: order.target.targetRow,
+					targetArguments: order.target,
 				})
 			)
 		}
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, orderedUnit.owner)
+		this.performedOrders.push(order)
 	}
 
-	private isOrderValid(order: ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow): boolean {
-		return !!order.sourceCard?.unit?.getValidOrders().find((validOrder) => order.isEqual(validOrder))
-	}
-
-	public getOrdersPerformedByUnit(unit: ServerUnit): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] {
-		return this.performedOrders.filter((order) => order.sourceCard?.unit === unit)
+	public getOrdersPerformedByUnit(unit: ServerUnit): OrderTarget[] {
+		return this.performedOrders.filter((order) => order.target.sourceCard?.unit === unit)
 	}
 
 	public clearPerformedOrders(): void {

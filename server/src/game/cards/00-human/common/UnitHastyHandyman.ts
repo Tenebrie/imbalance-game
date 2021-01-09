@@ -25,13 +25,12 @@ export default class UnitHastyHandyman extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireAlliedUnit()
+		this.createDeployTargets(TargetType.UNIT)
+			.requireAllied()
 			.requireNotSelf()
-			.require(TargetType.UNIT, (args) => args.targetCard.features.includes(CardFeature.BUILDING))
-			.require(TargetType.UNIT, (args) => args.targetCard.stats.armor < args.targetCard.stats.maxArmor)
-			.evaluate(TargetType.UNIT, (args) => args.targetCard.stats.maxArmor - args.targetCard.stats.armor)
+			.require((args) => args.targetCard.features.includes(CardFeature.BUILDING))
+			.require((args) => args.targetCard.stats.armor < args.targetCard.stats.maxArmor)
+			.evaluate((args) => args.targetCard.stats.maxArmor - args.targetCard.stats.armor)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

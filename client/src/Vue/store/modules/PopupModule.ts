@@ -1,15 +1,21 @@
-import {Component} from 'vue'
-import {defineModule} from 'direct-vuex'
-import {moduleActionContext} from '@/Vue/store'
+import { Component } from 'vue'
+import { defineModule } from 'direct-vuex'
+import { moduleActionContext } from '@/Vue/store'
+
+type ComponentInStack = {
+	component: Component
+	sticky?: boolean
+	params?: Record<string, string> | undefined
+}
 
 const PopupModule = defineModule({
 	namespaced: true,
 	state: {
-		componentStack: [] as Component[]
+		componentStack: [] as ComponentInStack[],
 	},
 
 	mutations: {
-		pushComponent(state, component: Component): void {
+		pushComponent(state, component: ComponentInStack): void {
 			state.componentStack.push(component)
 		},
 
@@ -19,7 +25,7 @@ const PopupModule = defineModule({
 
 		clearComponents(state): void {
 			state.componentStack = []
-		}
+		},
 	},
 
 	getters: {
@@ -27,14 +33,28 @@ const PopupModule = defineModule({
 			if (state.componentStack.length === 0) {
 				return null
 			}
-			return state.componentStack[state.componentStack.length - 1]
-		}
+			return state.componentStack[state.componentStack.length - 1].component
+		},
+
+		sticky: (state): boolean => {
+			if (state.componentStack.length === 0) {
+				return false
+			}
+			return !!state.componentStack[state.componentStack.length - 1].sticky
+		},
+
+		params: (state): Record<string, string> | undefined => {
+			if (state.componentStack.length === 0) {
+				return undefined
+			}
+			return state.componentStack[state.componentStack.length - 1].params
+		},
 	},
 
 	actions: {
-		open(context, payload: { component: any }): void {
+		open(context, payload: ComponentInStack): void {
 			const { commit } = moduleActionContext(context, PopupModule)
-			commit.pushComponent(payload.component)
+			commit.pushComponent(payload)
 		},
 
 		close(context): void {
@@ -46,7 +66,7 @@ const PopupModule = defineModule({
 			const { commit } = moduleActionContext(context, PopupModule)
 			commit.clearComponents()
 		},
-	}
+	},
 })
 
 export default PopupModule

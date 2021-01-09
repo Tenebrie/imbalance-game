@@ -11,7 +11,6 @@ import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import TargetType from '@shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
-import Utils from '@/utils/Utils'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import store from '@/Vue/store'
@@ -22,6 +21,7 @@ import { isGrabbedCardPlayableToRow } from '@/Pixi/input/ValidActions'
 import CardLocation from '@shared/enums/CardLocation'
 import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
+import { normalizeBoardRowIndex } from '@/utils/Utils'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -111,9 +111,15 @@ export default class Input {
 			return
 		}
 
+		const leaderCards = [Core.player?.leader, Core.opponent?.leader]
 		const gameBoardCards = Core.board.rows.map((row) => row.cards).flat()
 		const playerHandCards = Core.player.cardHand.allCards.slice().reverse()
 		const opponentHandCards = Core.opponent ? Core.opponent.cardHand.allCards.slice().reverse() : []
+
+		const hoveredLeaderCard = leaderCards.find((leaderCard) => leaderCard?.isHovered()) || null
+		if (hoveredLeaderCard) {
+			hoveredCard = HoveredCard.fromCardInHand(hoveredLeaderCard, hoveredLeaderCard.owner)
+		}
 
 		const hoveredCardOnBoard = gameBoardCards.find((cardOnBoard) => cardOnBoard.card.isHovered()) || null
 		if (hoveredCardOnBoard) {
@@ -146,11 +152,16 @@ export default class Input {
 		) {
 			this.hoveredShadowUnit = {
 				card: this.grabbedCard.card,
-				rowIndex: hoveredRow.index,
+				rowIndex: normalizeBoardRowIndex(hoveredRow.index, 'player'),
 				unitIndex: this.getCardInsertIndex(hoveredRow),
 			}
 		} else {
 			this.hoveredShadowUnit = null
+		}
+		if (hoveredCard && hoveredCard.card.type === CardType.SPELL && !this.grabbedCard) {
+			store.commit.gameStateModule.setPlayerSpellManaInDanger(hoveredCard.card.stats.spellCost)
+		} else if (!this.grabbedCard) {
+			store.commit.gameStateModule.setPlayerSpellManaInDanger(0)
 		}
 	}
 
@@ -299,6 +310,9 @@ export default class Input {
 				.filter((playableCard) => playableCard.sourceCardId === card.id)
 				.map((playableCard) => Core.board.getRow(playableCard.targetRowIndex))
 			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
+			if (card.type === CardType.SPELL) {
+				store.commit.gameStateModule.setPlayerSpellManaInDanger(card.stats.spellCost)
+			}
 		} else if (
 			hoveredCard.location === HoveredCardLocation.BOARD &&
 			hoveredCard.owner === Core.player &&
@@ -356,6 +370,7 @@ export default class Input {
 		const grabbedCard = this.grabbedCard!
 		grabbedCard.targetingLine.destroy()
 		this.grabbedCard = null
+		store.commit.gameStateModule.setPlayerSpellManaInDanger(0)
 		this.updateCardHoverStatus()
 	}
 
@@ -383,7 +398,7 @@ export default class Input {
 			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, this.getCardInsertIndex(hoveredRow))
 			this.limboShadowUnit = {
 				card: card,
-				rowIndex: hoveredRow.index,
+				rowIndex: normalizeBoardRowIndex(hoveredRow.index, 'player'),
 				unitIndex: this.getCardInsertIndex(hoveredRow),
 			}
 		}
@@ -399,7 +414,7 @@ export default class Input {
 
 		const validOrders = Core.board.getValidOrdersForUnit(orderedUnit)
 		const performedOrder = validOrders.find(
-			(order) => order.targetCardId === hoveredCard.id || (hoveredRow && Core.board.getRow(order.targetRowIndex) === hoveredRow)
+			(order) => order.targetCardId === hoveredCard?.id || (hoveredRow && Core.board.getRow(order.targetRowIndex) === hoveredRow)
 		)
 		if (performedOrder) {
 			OutgoingMessageHandlers.sendUnitOrder(performedOrder)
@@ -484,9 +499,6 @@ export default class Input {
 			.concat(cardsToAdd)
 
 		cardsToRemove.forEach((card) => Core.destroyCard(card))
-		PIXI.Ticker.shared.addOnce(() => {
-			result.forEach((card) => card.resetDisplayMode())
-		})
 
 		this.forcedTargetingCards = result
 	}

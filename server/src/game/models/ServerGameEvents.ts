@@ -1,18 +1,18 @@
-import ServerGame from './ServerGame'
-import Utils, { colorizeClass, colorizeId } from '../../utils/Utils'
-import ServerCard from './ServerCard'
-import { cardPerform, cardRequire } from '../utils/CardEventHandlers'
-import ServerBuff from './ServerBuff'
-import GameHookType, { CardTakesDamageHookArgs } from './events/GameHookType'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameEventType from '@shared/enums/GameEventType'
-import { GameEvent } from './events/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
-import { EventSubscription } from './events/EventSubscription'
-import { EventHook } from './events/EventHook'
-import { CardSelector } from './events/selectors/CardSelector'
-import { CardSelectorBuilder } from './events/selectors/CardSelectorBuilder'
+import ServerGame from '@src/game/models/ServerGame'
+import ServerBuff from '@src/game/models/ServerBuff'
+import ServerCard from '@src/game/models/ServerCard'
+import { EventSubscription } from '@src/game/models/events/EventSubscription'
+import { GameEvent } from '@src/game/models/events/GameEventCreators'
+import GameHookType, { CardTakesDamageHookArgs } from '@src/game/models/events/GameHookType'
+import { EventHook } from '@src/game/models/events/EventHook'
+import { CardSelector } from '@src/game/models/events/selectors/CardSelector'
+import { CardSelectorBuilder } from '@src/game/models/events/selectors/CardSelectorBuilder'
+import Utils, { colorizeClass, colorizeId } from '@src/utils/Utils'
+import { cardPerform, cardRequire } from '@src/game/utils/CardEventHandlers'
+import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
 
 export type EventSubscriber = ServerGame | ServerCard | ServerBuff
 
@@ -28,7 +28,7 @@ type CallbackQueueEntry = {
 
 export default class ServerGameEvents {
 	private readonly game: ServerGame
-	private readonly eventLog: EventLogEntryMessage[][]
+	public readonly eventLog: EventLogEntryMessage[][]
 	private eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
 	private eventHooks: Map<GameHookType, EventHook<any, any>[]>
 
@@ -98,7 +98,7 @@ export default class ServerGameEvents {
 			.filter((subscription) => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
 			.filter((subscription) =>
 				subscription.conditions.every((condition) => {
-					return cardRequire(() => condition(event.args, event))
+					return cardRequire(this.game, () => condition(event.args, event))
 				})
 			)
 
@@ -108,7 +108,7 @@ export default class ServerGameEvents {
 			if (this.evaluatingSelectors || (event.effectSource && event.effectSource === subscription.subscriber)) {
 				subscription.callbacks.forEach((callback) => {
 					this.logEventExecution(event, subscription, true)
-					cardPerform(() => {
+					cardPerform(this.game, () => {
 						callback(event.args, preparedState)
 					})
 				})
@@ -138,13 +138,13 @@ export default class ServerGameEvents {
 			.filter(
 				(hook) =>
 					!hook.conditions.find((condition) => {
-						return cardRequire(() => !condition(hookArgs))
+						return cardRequire(this.game, () => !condition(hookArgs))
 					})
 			)
 
 		matchingHooks.forEach((hook) =>
 			hook.callbacks.forEach((callback) => {
-				cardPerform(() => callback(hookArgs))
+				cardPerform(this.game, () => callback(hookArgs))
 			})
 		)
 
@@ -173,7 +173,7 @@ export default class ServerGameEvents {
 					(remainingCallback) => remainingCallback.subscriber === this.game.cardPlay.cardResolveStack.currentCard?.card
 				)
 			) {
-				if (this.game.cardPlay.getValidTargets().length === 0) {
+				if (this.game.cardPlay.getDeployTargets().length === 0) {
 					this.game.cardPlay.cardResolveStack.resumeResolving()
 				} else {
 					this.game.cardPlay.updateResolvingCardTargetingStatus()
@@ -186,7 +186,7 @@ export default class ServerGameEvents {
 		const filterOutEvents = () => {
 			currentCallbacks = currentCallbacks.filter((callbackWrapper) => {
 				const failedCondition = callbackWrapper.immediateConditions.find((condition) => {
-					return cardRequire(() => !condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent))
+					return cardRequire(this.game, () => !condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent))
 				})
 				return !failedCondition
 			})
@@ -198,7 +198,7 @@ export default class ServerGameEvents {
 			const callbackWrapper = currentCallbacks.shift()!
 
 			this.logEventExecution(callbackWrapper.rawEvent, callbackWrapper.subscription, false)
-			cardPerform(() => {
+			cardPerform(this.game, () => {
 				callbackWrapper.callback(callbackWrapper.args, callbackWrapper.preparedState)
 			})
 			this.game.animation.syncAnimationThreads()

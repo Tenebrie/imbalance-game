@@ -4,15 +4,13 @@
 		<span v-if="buff.intensity > 1">{{ buff.intensity }}x </span>
 		<span class="object-name">{{ $locale.get(buff.buff.name) }}: </span>
 		<span>{{ $locale.get(buff.buff.description) }}</span>
-		<span v-if="buff.buff.duration !== Infinity">
-			({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ buff.buff.duration }})
-		</span>
+		<span v-if="buff.buff.duration !== Infinity"> ({{ $locale.get('card.inspect.buffs.turnsRemaining') }}: {{ buff.buff.duration }}) </span>
 	</div>
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, PropType} from '@vue/composition-api'
-import {BuffWrapper} from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
+import { computed, defineComponent, PropType } from '@vue/composition-api'
+import { BuffWrapper } from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
 interface Props {
@@ -21,7 +19,7 @@ interface Props {
 
 export default defineComponent({
 	props: {
-		buff: Object as PropType<BuffWrapper>
+		buff: Object as PropType<BuffWrapper>,
 	},
 
 	setup(props: Props) {
@@ -32,26 +30,26 @@ export default defineComponent({
 		}))
 
 		return {
-			style
+			style,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "src/Vue/styles/generic";
+@import 'src/Vue/styles/generic';
 
-	.list-item {
-		margin: 8px 0;
-	}
-	.object-name {
-		font-weight: bold;
-	}
+.list-item {
+	margin: 8px 0;
+}
+.object-name {
+	font-weight: bold;
+}
 
-	.positive {
-		color: lightgreen;
-	}
-	.negative {
-		color: palevioletred;
-	}
+.positive {
+	color: lightgreen;
+}
+.negative {
+	color: palevioletred;
+}
 </style>

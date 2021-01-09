@@ -34,6 +34,7 @@ export default class RenderedCard implements Card {
 	public readonly name: string
 	public readonly title: string
 	public readonly flavor: string
+	public readonly listName: string
 	public readonly description: string
 
 	public readonly stats: ClientCardStats
@@ -72,7 +73,7 @@ export default class RenderedCard implements Card {
 	public readonly powerText: ScalingText
 	public readonly armorText: ScalingText
 	private readonly cardNameText: RichText
-	private readonly cardTitleText: ScalingText
+	private readonly cardTitleText: RichText
 	private readonly cardTribeTexts: ScalingText[]
 	private readonly cardDescriptionText: RichText
 
@@ -85,6 +86,7 @@ export default class RenderedCard implements Card {
 		this.name = message.name
 		this.title = message.title
 		this.flavor = message.flavor
+		this.listName = message.listName
 		this.description = message.description
 
 		this.stats = new ClientCardStats(this, message.stats)
@@ -105,11 +107,14 @@ export default class RenderedCard implements Card {
 		const powerTextValue = this.type === CardType.UNIT ? this.stats.power : this.stats.spellCost
 		this.powerText = this.createBrushScriptText(powerTextValue.toString())
 		this.armorText = this.createBrushScriptText(this.stats.armor.toString())
-		this.cardNameText = new RichText(Localization.get(this.name), 200, {})
+		this.cardNameText = new RichText(Localization.get(this.name), 200, this.getDescriptionTextVariables())
 		this.cardNameText.style.fill = 0x000000
 		this.cardNameText.verticalAlign = RichTextAlign.CENTER
 		this.cardNameText.horizontalAlign = RichTextAlign.END
-		this.cardTitleText = this.createTitleText(Localization.getValueOrNull(this.title) || '')
+		this.cardTitleText = new RichText(Localization.getValueOrNull(this.title) || '', 200, this.getDescriptionTextVariables())
+		this.cardTitleText.style.fill = 0x000000
+		this.cardTitleText.verticalAlign = RichTextAlign.CENTER
+		this.cardTitleText.horizontalAlign = RichTextAlign.END
 		this.cardTribeTexts = this.tribes.map((tribe) => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
 		this.cardDescriptionText = new RichText(this.displayedDescription, 370, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
@@ -413,24 +418,27 @@ export default class RenderedCard implements Card {
 			this.armorTextBackground.visible = false
 		}
 
-		const name = Localization.get(this.name)
+		const name = this.cardNameText.renderedText
 		let nameFontSize = 26
+		let positionOffset = 0
 		if (name.length > 15) {
 			nameFontSize = 24
+			positionOffset = 0
 		}
 		if (name.length > 25) {
 			nameFontSize = 22
+			positionOffset = 2
 		}
-		this.cardNameText.position.set(-15, 67)
+		this.cardNameText.position.set(-15, 51 + positionOffset)
 		this.cardNameText.style.fontSize = nameFontSize
 		this.cardNameText.style.lineHeight = 20
 		if (name.includes('\n')) {
-			this.cardNameText.position.y += 4
+			this.cardNameText.position.y += 3
 		}
 
-		if (this.cardTitleText.text.length > 0) {
-			this.cardNameText.position.y -= 11
-			this.cardTitleText.position.set(-15, 81)
+		if (this.cardTitleText.renderedText.length > 0) {
+			this.cardNameText.position.y -= 13
+			this.cardTitleText.position.set(-15, 69)
 			this.cardTitleText.style.fontSize = 20
 		}
 
@@ -441,7 +449,7 @@ export default class RenderedCard implements Card {
 			cardTribeText.style.fontSize = 20
 		}
 
-		this.cardDescriptionText.position.set(0, -24)
+		this.cardDescriptionText.position.set(0, -54)
 
 		const description = Localization.get(this.description)
 		let fontSize = 26

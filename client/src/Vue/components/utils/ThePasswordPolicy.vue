@@ -6,20 +6,19 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
 
-export default defineComponent({
-})
+export default defineComponent({})
 </script>
 
 <style scoped lang="scss">
-	@import "src/Vue/styles/generic";
+@import 'src/Vue/styles/generic';
 
-	.the-password-policy {
-		text-align: left;
+.the-password-policy {
+	text-align: left;
 
-		.header {
-			font-weight: bold;
-		}
+	.header {
+		font-weight: bold;
 	}
+}
 </style>

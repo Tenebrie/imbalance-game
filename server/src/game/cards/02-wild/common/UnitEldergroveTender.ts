@@ -31,7 +31,7 @@ export default class UnitEldergroveTender extends ServerCard {
 			bonusPower: this.bonusPower,
 		}
 
-		this.createDeployEffectTargets().target(TargetType.UNIT).requireAlliedUnit().requireNotSelf()
+		this.createDeployTargets(TargetType.UNIT).requireAllied().requireNotSelf()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => {
 			targetUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this)

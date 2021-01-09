@@ -8,11 +8,24 @@ import TokenManager from '../services/TokenService'
 import { getPlayerFromAuthenticatedRequest, setCookie } from '../utils/Utils'
 import AccessLevel from '@shared/enums/AccessLevel'
 import PlayerDatabase from '../database/PlayerDatabase'
+import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 
 const router = express.Router()
 
 router.use(RequireOriginalPlayerTokenMiddleware)
 router.use(RequireSupportAccessLevelMiddleware)
+
+router.get(
+	'/games',
+	AsyncHandler(async (req, res: Response) => {
+		const targetPlayerId = req.query['player'] || null
+		let gameEntries = await GameHistoryDatabase.selectAllGames()
+		if (targetPlayerId && gameEntries) {
+			gameEntries = gameEntries.filter((entry) => entry.players.find(({ id }) => id === targetPlayerId))
+		}
+		res.json(gameEntries)
+	})
+)
 
 router.get(
 	'/players',
@@ -51,6 +64,71 @@ router.post(
 		setCookie(res, 'playerToken', playerToken)
 		setCookie(res, 'originalPlayerToken', originalPlayerToken)
 
+		res.status(204)
+		res.send()
+	})
+)
+
+router.get(
+	'/games/:gameId',
+	AsyncHandler(async (req, res: Response) => {
+		const targetGameId = req.params['gameId']
+		if (!targetGameId) {
+			throw { status: 400, error: 'Missing gameId' }
+		}
+
+		const response = await GameHistoryDatabase.selectGameById(targetGameId)
+		if (response === null) {
+			throw { status: 500, error: 'Unable to select game entry from database' }
+		}
+
+		res.json(response)
+	})
+)
+
+router.get(
+	'/games/:gameId/errors',
+	AsyncHandler(async (req, res: Response) => {
+		const targetGameId = req.params['gameId']
+		if (!targetGameId) {
+			throw { status: 400, error: 'Missing gameId' }
+		}
+
+		const response = await GameHistoryDatabase.selectGameErrors(targetGameId)
+		if (response === null) {
+			throw { status: 500, error: 'Unable to select game error entries from database' }
+		}
+
+		res.json(response)
+	})
+)
+
+router.get(
+	'/players/:playerId',
+	AsyncHandler(async (req, res: Response) => {
+		const targetPlayerId = req.params['playerId']
+		if (!targetPlayerId) {
+			throw { status: 400, error: 'Missing playerId' }
+		}
+
+		const response = await PlayerDatabase.selectPlayerById(targetPlayerId)
+		if (response === null) {
+			throw { status: 500, error: 'Unable to select player from database' }
+		}
+
+		res.json(response)
+	})
+)
+
+router.delete(
+	'/players/:playerId',
+	AsyncHandler(async (req, res: Response) => {
+		const targetPlayerId = req.params['playerId']
+		if (!targetPlayerId) {
+			throw { status: 400, error: 'Missing playerId' }
+		}
+
+		await PlayerDatabase.deletePlayer(targetPlayerId)
 		res.status(204)
 		res.send()
 	})

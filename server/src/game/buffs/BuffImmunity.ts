@@ -11,7 +11,6 @@ export default class BuffImmunity extends ServerBuff {
 			cardFeatures: [CardFeature.UNTARGETABLE],
 		})
 
-		// TODO: Fix it not working with intercepted damage
 		this.createHook(GameHookType.CARD_TAKES_DAMAGE)
 			.require(({ targetCard }) => targetCard === this.card)
 			.replace((args) => ({

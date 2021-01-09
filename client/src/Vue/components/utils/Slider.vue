@@ -1,5 +1,13 @@
 <template>
-	<div class="slider" @focus="onFocusReceived" @mousedown="onMouseDown" ref="sliderRef" tabindex="0" @keydown="onKeyDown" :class="showOutlineClass">
+	<div
+		class="slider"
+		@focus="onFocusReceived"
+		@mousedown="onMouseDown"
+		ref="sliderRef"
+		tabindex="0"
+		@keydown="onKeyDown"
+		:class="showOutlineClass"
+	>
 		<div ref="trackRef" class="track">
 			<div class="progress" :style="progressStyle" />
 		</div>
@@ -8,30 +16,30 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onMounted, ref, watch} from '@vue/composition-api'
+import { computed, defineComponent, onMounted, ref, watch } from '@vue/composition-api'
 
 export default defineComponent({
 	props: {
 		model: {
-			type: Number
+			type: Number,
 		},
 		min: {
 			type: Number,
-			default: 0
+			default: 0,
 		},
 		max: {
 			type: Number,
-			default: 100
+			default: 100,
 		},
 		step: {
 			type: Number,
-			default: 1
-		}
+			default: 1,
+		},
 	},
 
 	model: {
 		prop: 'model',
-		event: 'update-model'
+		event: 'update-model',
 	},
 
 	setup(props, { emit }) {
@@ -77,7 +85,7 @@ export default defineComponent({
 		}
 
 		const onMouseMove = (event: MouseEvent) => {
-			const mousePosition = (event.clientX - sliderPositionX.value) - thumbPadding
+			const mousePosition = event.clientX - sliderPositionX.value - thumbPadding
 			const sliderWidth = sliderRef.value.clientWidth - thumbPadding * 2
 
 			const min = props.min
@@ -106,7 +114,7 @@ export default defineComponent({
 		const useUpdateThumbValue = (baseValue: number) => {
 			const rawValue = (baseValue - props.min) / (props.max - props.min)
 			const sliderWidth = sliderRef.value.clientWidth - thumbPadding * 2
-			thumbValue.value = Math.min(sliderRef.value.clientWidth - thumbPadding, Math.max(thumbPadding, rawValue * (sliderWidth) + thumbPadding))
+			thumbValue.value = Math.min(sliderRef.value.clientWidth - thumbPadding, Math.max(thumbPadding, rawValue * sliderWidth + thumbPadding))
 		}
 
 		const isMounted = ref(false)
@@ -115,20 +123,23 @@ export default defineComponent({
 			useUpdateThumbValue(props.model)
 		})
 
-		watch(() => [props.model], () => {
-			useUpdateThumbValue(props.model)
-		})
+		watch(
+			() => [props.model],
+			() => {
+				useUpdateThumbValue(props.model)
+			}
+		)
 
 		const thumbStyle = computed(() => ({
-			'left': `${thumbValue.value}px`,
+			left: `${thumbValue.value}px`,
 		}))
 
 		const progressStyle = computed(() => ({
-			'width': `${thumbValue.value}px`,
+			width: `${thumbValue.value}px`,
 		}))
 
 		const showOutlineClass = computed(() => ({
-			'show-outline': showOutline.value
+			'show-outline': showOutline.value,
 		}))
 
 		return {
@@ -147,74 +158,74 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-	@import "src/Vue/styles/generic";
+@import 'src/Vue/styles/generic';
 
-	.slider {
-		cursor: pointer;
-		position: relative;
+.slider {
+	cursor: pointer;
+	position: relative;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	margin: 0 4px;
+
+	&:focus {
+		outline: none;
+	}
+	&.show-outline:focus {
+		outline: lighten($COLOR-PRIMARY, 10) solid 1px;
+	}
+
+	.track {
 		width: 100%;
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
-		margin: 0 4px;
+		height: 40%;
+		background: gray;
+		border-radius: 8px;
+	}
 
-		&:focus {
-			outline: none;
-		}
-		&.show-outline:focus {
-			outline: lighten($COLOR-PRIMARY, 10) solid 1px;
-		}
+	.thumb {
+		position: absolute;
+		height: 100%;
+		width: 20px;
+		margin-left: -10px;
+		border-radius: 50%;
+		background: lighten($COLOR-PRIMARY, 10);
+		pointer-events: none;
+	}
 
+	.progress {
+		height: 100%;
+		background: lighten($COLOR-PRIMARY, 10);
+		border-radius: 8px 0 0 8px;
+	}
+
+	&:hover {
 		.track {
-			width: 100%;
-			height: 40%;
-			background: gray;
-			border-radius: 8px;
+			background: lighten(gray, 5);
 		}
 
 		.thumb {
-			position: absolute;
-			height: 100%;
-			width: 20px;
-			margin-left: -10px;
-			border-radius: 50%;
-			background: lighten($COLOR-PRIMARY, 10);
-			pointer-events: none;
+			background: lighten($COLOR-PRIMARY, 15);
 		}
 
 		.progress {
-			height: 100%;
-			background: lighten($COLOR-PRIMARY, 10);
-			border-radius: 8px 0 0 8px;
-		}
-
-		&:hover {
-			.track {
-				background: lighten(gray, 5);
-			}
-
-			.thumb {
-				background: lighten($COLOR-PRIMARY, 15);
-			}
-
-			.progress {
-				background: lighten($COLOR-PRIMARY, 15);
-			}
-		}
-
-		&:active {
-			.track {
-				background: lighten(gray, 2.5);
-			}
-
-			.thumb {
-				background: lighten($COLOR-PRIMARY, 12.5);
-			}
-
-			.progress {
-				background: lighten($COLOR-PRIMARY, 12.5);
-			}
+			background: lighten($COLOR-PRIMARY, 15);
 		}
 	}
+
+	&:active {
+		.track {
+			background: lighten(gray, 2.5);
+		}
+
+		.thumb {
+			background: lighten($COLOR-PRIMARY, 12.5);
+		}
+
+		.progress {
+			background: lighten($COLOR-PRIMARY, 12.5);
+		}
+	}
+}
 </style>

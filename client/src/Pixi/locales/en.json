@@ -230,6 +230,9 @@
 	"buff.buffImmunity.name": "Immunity",
 	"buff.buffImmunity.description": "This card is immune to damage and any effects.",
 
+	"buff.buffPermanentImmunity.name": "Permanent Immunity",
+	"buff.buffPermanentImmunity.description": "This card is immune to damage and any effects.",
+
 	"buff.buffSparksExtraDamage.name": "Extra Spark damage",
 	"buff.buffSparksExtraDamage.description": "Your Sparks deal extra damage.",
 
@@ -281,23 +284,28 @@
 	"buff.buffNightwatch.name": "Nightwatch",
 	"buff.buffNightwatch.description": "This card has Nightwatch.",
 
+	"buff.buffPermanentNightwatch.name": "Permanent Nightwatch",
+	"buff.buffPermanentNightwatch.description": "This card has Nightwatch.",
+
 	"buff.buffNoArmor.name": "No Armor",
 	"buff.buffNoArmor.description": "This unit's Armor has been removed.",
 
 	"card.hidden.name": "[Hidden card]",
 
-	"card.leaderVelElleron.name": "Vel'Elleron",
-	"card.leaderVelElleron.title": "The Battlemage",
+	"card.leaderVelElleron.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Battlemage</if>",
+	"card.leaderVelElleron.title": "<if inGame>The Battlemage</if>",
+	"card.leaderVelElleron.listName": "The Battlemage",
 	"card.leaderVelElleron.description": "*Arcane Leader*<p>*Round start:*\nGain +{manaPerRound} Mana",
 
-	"card.leaderVelRaminea.name": "Vel'Raminea",
-	"card.leaderVelRaminea.title": "The Flameweaver",
+	"card.leaderVelRaminea.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Flameweaver</if>",
+	"card.leaderVelRaminea.title": "<if inGame>The Flameweaver</if>",
+	"card.leaderVelRaminea.listName": "The Flameweaver",
 	"card.leaderVelRaminea.description": "*Arcane Leader*<p>*Round start:*\nGain +{manaPerRound} Mana",
 
-	"card.leaderNighterie.name": "Nighterie",
-	"card.leaderNighterie.title": "The Keeper of Shadows",
+	"card.leaderNighterie.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Keeper of Shadows</if>",
+	"card.leaderNighterie.title": "<if inGame>The Keeper of Shadows</if>",
+	"card.leaderNighterie.listName": "The Keeper of Shadows",
 	"card.leaderNighterie.description": "*Arcane Leader*<p>*Round start:*\nGain +{manaPerRound} Mana",
-	"card.leaderNighterie.flavor": "...and the shadows bring her their shadowhoney.",
 
 	"card.heroZamarath.name": "Zamarath",
 	"card.heroZamarath.title": "The Protector",
@@ -317,7 +325,7 @@
 
 	"card.heroGarellion.name": "Garellion",
 	"card.heroGarellion.title": "The Conduit",
-	"card.heroGarellion.description": "On round end, *Infuse All*:\nGain {powerPerMana} Power per Mana *Infused*.",
+	"card.heroGarellion.description": "*Round end*:\n*Infuse All* to gain {powerPerMana} Power per Mana *Infused*.",
 
 	"card.heroAura.name": "Aura",
 	"card.heroAura.title": "The Golden Hawk",
@@ -385,10 +393,10 @@
 	"card.heroRavenCaller.description": "*Deploy:*\n*Summon* a Bird from your deck",
 
 	"card.heroLightOracle.name": "Oracle of Light",
-	"card.heroLightOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your deck.\nChoose one to *Summon*.",
+	"card.heroLightOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your deck (in order).\nChoose one to *Summon*.",
 
 	"card.heroDarkOracle.name": "Oracle of Darkness",
-	"card.heroDarkOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your opponent's deck.\nChoose one to *Discard*.",
+	"card.heroDarkOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your opponent's deck (in order).\nChoose one to *Discard*.",
 
 	"card.heroCrystalWarrior.name": "Crystal Warrior",
 	"card.heroCrystalWarrior.description": "*Deploy:*\nDestroy an allied unit.\nThen, summon a *Crystal* in its place.",
@@ -662,8 +670,9 @@
 	"card.tokenChallengeDummyTargetDummy.description": "<i>No effect</i>",
 	"card.tokenChallengeDummyTargetDummy.flavor": "- \"We have put all our Mana into our new creation. It is the most powerful Dummy of them all.\"",
 
-	"card.leaderMaximilian.name": "Maximilian",
-	"card.leaderMaximilian.title": "The Commander",
+	"card.leaderMaximilian.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Commander</if>",
+	"card.leaderMaximilian.title": "<if inGame>The Commander</if>",
+	"card.leaderMaximilian.listName": "The Commander",
 	"card.leaderMaximilian.description": "*Human Leader*<p>*Round start:*\nGain +{manaPerRound} Mana<p>Gets two copies of *Tactical Move*",
 
 	"card.spellQuickStrike.name": "Quick Strike",
@@ -735,8 +744,8 @@
 	"card.unitMagiciansAssistant.name": "Magician's Assistant",
 	"card.unitMagiciansAssistant.description": "*Deploy:*\nPut a copy of an enemy unit to the top of your deck.<p>If your deck has no duplicates, you can also target allied units.",
 
-	"card.unitPrototypeScorpionCrew.name": "Prototype Scorpion Crew",
-	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and to itself.<p><i>May perform unlimited number of attacks per turn.</i>",
+	"card.unitPrototypeScorpionCrew.name": "Prototype\nScorpion Crew",
+	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and {selfDamage} Damage to itself.<p><i>May perform unlimited number of attacks per turn.</i>",
 
 	"card.unitMakeshiftShelter.name": "Makeshift Shelter",
 	"card.unitMakeshiftShelter.description": "*Deploy:*\nChoose a Common or Epic allied unit.\nIt has *Nightwatch* until the end of this round, as long as this is on the board.",
@@ -757,5 +766,14 @@
 	"card.unitUrbanAmbusher.description": "Has +{bonusPower} Power for every Building on the same row.",
 
 	"card.unitUrbanTactician.name": "Urban Tactician",
-	"card.unitUrbanTactician.description": "Your other units that are directly adjacent to a Building have +{bonusPower} Power.<p><i>Doesn't work on buildings.</i>"
+	"card.unitUrbanTactician.description": "Your other units that are directly adjacent to a Building have +{bonusPower} Power.<p><i>Doesn't work on buildings.</i>",
+
+	"card.unitMadnessIncarnate.name": "Madness Incarnate",
+	"card.unitMadnessIncarnate.description": "*Round start:*\nIf this is in your deck, *Shatter* {shatterPerRow} on every friendly row.",
+
+	"card.unitShatteredSpace.name": "Shattered Space",
+	"card.unitShatteredSpace.description": "*Immune*",
+
+	"card.unitNullMender.name": "Null Mender",
+	"card.unitNullMender.description": "*Deploy:*\nChoose a row with *Shattered Space*. Destroy one copy of it on that row."
 }

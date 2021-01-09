@@ -33,14 +33,14 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			healing: this.healing,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT, this.targets)
-			.requireAlliedUnit()
+		this.createDeployTargets(TargetType.UNIT)
+			.targetCount(this.targets)
+			.requireAllied()
 			.requireNotSelf()
-			.requireUnique(TargetType.UNIT)
-			.label(TargetType.UNIT, 'card.unitPriestessOfAedine.heal.target')
-			.require(TargetType.UNIT, (args) => args.targetCard.stats.power < args.targetCard.stats.maxPower)
-			.evaluate(TargetType.UNIT, (args) => args.targetCard.stats.maxPower - args.targetCard.stats.power)
+			.requireUnique()
+			.label('card.unitPriestessOfAedine.heal.target')
+			.require((args) => args.targetCard.stats.power < args.targetCard.stats.maxPower)
+			.evaluate((args) => args.targetCard.stats.maxPower - args.targetCard.stats.power)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

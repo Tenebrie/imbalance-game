@@ -1,9 +1,10 @@
 <template>
-	<div class="the-editor-inspected-card"
-		 v-if="inspectedCard"
-		 @click="onSmokeScreenClick"
-		 @mouseup="onSmokeScreenRightClick"
-		 :class="customClass"
+	<div
+		class="the-editor-inspected-card"
+		v-if="inspectedCard"
+		@click="onSmokeScreenClick"
+		@mouseup="onSmokeScreenRightClick"
+		:class="customClass"
 	>
 		<div class="content">
 			<div class="card-container">
@@ -23,14 +24,14 @@ import store from '@/Vue/store'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import {computed, defineComponent} from '@vue/composition-api'
-import {RIGHT_MOUSE_BUTTON} from '@/Pixi/input/Input'
+import { computed, defineComponent } from '@vue/composition-api'
+import { RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 import PixiInspectedCardInfo from '@/Vue/components/pixi/inspectedCardInfo/PixiInspectedCardInfo.vue'
 
 export default defineComponent({
 	components: {
 		PixiPreRenderedCard,
-		PixiInspectedCardInfo
+		PixiInspectedCardInfo,
 	},
 
 	setup() {
@@ -47,8 +48,8 @@ export default defineComponent({
 		})
 
 		const customClass = computed<Record<string, boolean>>(() => ({
-			'game': store.getters.gameStateModule.isInGame,
-			'editor': !store.getters.gameStateModule.isInGame,
+			game: store.getters.gameStateModule.isInGame,
+			editor: !store.getters.gameStateModule.isInGame,
 		}))
 
 		const onSmokeScreenClick = () => {
@@ -73,74 +74,74 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.the-editor-inspected-card {
-		position: absolute;
+.the-editor-inspected-card {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	left: 0;
+	width: 100%;
+
+	&.game {
+		height: 100%;
+		pointer-events: none;
+	}
+
+	&.editor {
+		height: calc(100% - #{$NAVIGATION-BAR-HEIGHT});
+		background: rgba(black, 0.5);
+	}
+
+	.content {
 		display: flex;
-		align-items: center;
-		justify-content: center;
-		left: 0;
-		width: 100%;
+		max-width: 100%;
 
-		&.game {
-			height: 100%;
-			pointer-events: none;
-		}
-
-		&.editor {
-			height: calc(100% - #{$NAVIGATION-BAR-HEIGHT});
-			background: rgba(black, 0.5);
-		}
-
-		.content {
+		.card-container {
 			display: flex;
-			max-width: 100%;
+			justify-content: flex-end;
+			width: $INSPECTED-CARD-INFO-WINDOW-WIDTH;
+			.card {
+				position: relative;
+				width: calc(#{$CARD_WIDTH});
+				height: calc(#{$CARD_HEIGHT});
+				flex-grow: 0;
+				flex-shrink: 0;
+			}
+		}
 
+		.overlay-container {
+			position: relative;
+			margin: 0;
+			flex-grow: 0;
+			flex-shrink: 0;
+			width: $INSPECTED-CARD-INFO-WINDOW-WIDTH;
+		}
+
+		@media (max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} * 2 + 24px)) {
 			.card-container {
-				display: flex;
-				justify-content: flex-end;
-				width: $INSPECTED-CARD-INFO-WINDOW-WIDTH;
+				max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 2 + 24px);
+			}
+
+			.overlay-container {
+				max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 2 + 24px);
+			}
+		}
+
+		@media (max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} + 24px)) {
+			.card-container {
+				max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 4 + 24px);
 				.card {
-					position: relative;
-					width: calc(#{$CARD_WIDTH});
-					height: calc(#{$CARD_HEIGHT});
-					flex-grow: 0;
-					flex-shrink: 0;
+					width: calc(#{$CARD_WIDTH} / 1.5);
+					height: calc(#{$CARD_HEIGHT} / 1.5);
 				}
 			}
 
 			.overlay-container {
-				position: relative;
-				margin: 0;
-				flex-grow: 0;
-				flex-shrink: 0;
-				width: $INSPECTED-CARD-INFO-WINDOW-WIDTH;
-			}
-
-			@media (max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} * 2 + 24px)) {
-				.card-container {
-					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 2 + 24px);
-				}
-
-				.overlay-container {
-					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 2 + 24px);
-				}
-			}
-
-			@media (max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} + 24px)) {
-				.card-container {
-					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 4 + 24px);
-					.card {
-						width: calc(#{$CARD_WIDTH} / 1.5);
-						height: calc(#{$CARD_HEIGHT} / 1.5);
-					}
-				}
-
-				.overlay-container {
-					max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 4 + 24px);
-				}
+				max-width: calc(#{$INSPECTED-CARD-INFO-WINDOW-WIDTH} / 4 + 24px);
 			}
 		}
 	}
+}
 </style>

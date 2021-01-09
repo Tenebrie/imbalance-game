@@ -26,9 +26,7 @@ export default class HeroLearthe extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets()
-			.target(TargetType.BOARD_ROW)
-			.require(TargetType.BOARD_ROW, (args) => !!args.targetRow.owner)
+		this.createDeployTargets(TargetType.BOARD_ROW).require((args) => !!args.targetRow.owner)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
@@ -37,7 +35,7 @@ export default class HeroLearthe extends ServerCard {
 		for (let i = 0; i < Constants.MAX_CARDS_PER_ROW; i++) {
 			this.game.animation.createAnimationThread()
 			const livingShadow = CardLibrary.instantiateByConstructor(this.game, UnitLivingShadow)
-			this.game.board.createUnit(livingShadow, target.owner!, target.index, target.cards.length)
+			this.game.board.createUnit(livingShadow, target.index, target.cards.length)
 			this.game.animation.commitAnimationThread()
 		}
 	}

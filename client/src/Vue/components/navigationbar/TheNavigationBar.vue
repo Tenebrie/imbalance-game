@@ -38,11 +38,11 @@
 <script lang="ts">
 import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfile.vue'
 import LanguageDropdown from '@/Vue/components/navigationbar/LanguageSelector.vue'
-import {computed, defineComponent} from '@vue/composition-api'
+import { computed, defineComponent } from '@vue/composition-api'
 import store from '@/Vue/store'
 import AccessLevel from '@shared/enums/AccessLevel'
 import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
-import TheDiscordLink from '@/Vue/components/navigationbar/TheDiscordLink.vue'
+import TheDiscordLink from '@/Vue/components/navigationbar/TheNavigationBarDiscordLink.vue'
 
 export default defineComponent({
 	components: {
@@ -53,71 +53,71 @@ export default defineComponent({
 	},
 	setup() {
 		const displayLanguageSelector = computed<boolean>(() => !store.state.isLoggedIn)
-		const accessLevel = computed<AccessLevel>(() => store.state.player ? store.state.player.accessLevel : AccessLevel.NORMAL)
+		const accessLevel = computed<AccessLevel>(() => (store.state.player ? store.state.player.accessLevel : AccessLevel.NORMAL))
 		const showAdminView = computed<boolean>(() => accessLevel.value === AccessLevel.ADMIN || accessLevel.value === AccessLevel.SUPPORT)
 
 		return {
 			showAdminView,
-			displayLanguageSelector
+			displayLanguageSelector,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.the-navigation-bar {
-		position: fixed;
-		z-index: 1;
-		top: 0;
-		height: $NAVIGATION-BAR-HEIGHT;
-		width: 100%;
-		border-bottom: solid gray 1px;
+.the-navigation-bar {
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	height: $NAVIGATION-BAR-HEIGHT;
+	width: 100%;
+	border-bottom: solid gray 1px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: $COLOR-BACKGROUND-TRANSPARENT;
+
+	.left-side-container {
 		display: flex;
-		align-items: center;
+		flex-direction: row;
+		width: 100%;
+		height: 100%;
+		.link-container {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 8px;
+
+			.router-link {
+				cursor: pointer;
+			}
+
+			.router-link:hover {
+				text-decoration: underline;
+			}
+
+			.router-link-active {
+				font-weight: bold;
+			}
+		}
+	}
+
+	.right-side-container {
+		height: 100%;
+		display: flex;
+		flex-direction: row;
 		justify-content: space-between;
-		background: $COLOR-BACKGROUND-TRANSPARENT;
 
-		.left-side-container {
-			display: flex;
-			flex-direction: row;
-			width: 100%;
-			height: 100%;
-			.link-container {
-				height: 100%;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin: 0 8px;
-
-				.router-link {
-					cursor: pointer;
-				}
-
-				.router-link:hover {
-					text-decoration: underline;
-				}
-
-				.router-link-active {
-					font-weight: bold;
-				}
-			}
-		}
-
-		.right-side-container {
-			height: 100%;
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-
-			& > * {
-			}
+		& > * {
 		}
 	}
+}
 
-	.logo {
-		display: inline-block;
-		height: calc(#{$NAVIGATION-BAR-HEIGHT} - 8px);
-	}
+.logo {
+	display: inline-block;
+	height: calc(#{$NAVIGATION-BAR-HEIGHT} - 8px);
+}
 </style>

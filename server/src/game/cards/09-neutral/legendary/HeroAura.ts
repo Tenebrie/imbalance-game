@@ -5,7 +5,6 @@ import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
@@ -24,15 +23,12 @@ export default class HeroAura extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets()
-			.target(TargetType.CARD_IN_UNIT_DECK)
-			.requireCardInPlayersDeck()
-			.require(TargetType.CARD_IN_UNIT_DECK, (args) => args.targetCard.color === CardColor.GOLDEN)
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
-	}
-
-	private onTargetSelected(target: ServerCard): void {
-		Keywords.summonCard(target)
+		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
+			.targetCount(1)
+			.requireAllied()
+			.require((args) => args.targetCard.color === CardColor.GOLDEN)
+			.perform(({ targetCard }) => {
+				Keywords.summonCard(targetCard)
+			})
 	}
 }

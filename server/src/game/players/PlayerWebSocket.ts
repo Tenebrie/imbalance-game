@@ -1,5 +1,7 @@
 import * as ws from 'ws'
 import ServerGame from '../models/ServerGame'
+import lzutf8 from 'lzutf8'
+import Constants from '@shared/Constants'
 
 export default class PlayerWebSocket {
 	ws: ws
@@ -15,7 +17,13 @@ export default class PlayerWebSocket {
 			return
 		}
 
-		this.ws.send(JSON.stringify(json))
+		let data = JSON.stringify(json)
+		if (Constants.COMPRESS_GAME_TRAFFIC) {
+			data = lzutf8.compress(JSON.stringify(json), {
+				outputEncoding: 'BinaryString',
+			})
+		}
+		this.ws.send(data)
 	}
 
 	close(): void {

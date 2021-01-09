@@ -1,7 +1,7 @@
 import ClientGameStatus from '../../../Pixi/enums/ClientGameStatus'
-import {defineModule} from 'direct-vuex'
+import { defineModule } from 'direct-vuex'
 import Player from '@shared/models/Player'
-import {moduleActionContext, rootActionContext} from '../index'
+import { moduleActionContext, rootActionContext } from '../index'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
@@ -14,14 +14,19 @@ const gameStateModule = defineModule({
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
+		playerMorale: 0 as number,
 		playerUnitMana: 0 as number,
+		playerSpellMana: 0 as number,
+		playerSpellManaInDanger: 0 as number,
+		opponentMorale: 0 as number,
+		opponentSpellMana: 0 as number,
 		inspectedCardId: null as string | null,
 		isSpectating: false as boolean,
 		cardsMulliganed: 0 as number,
 		maxCardMulligans: 0 as number,
 		popupTargetingMode: null as TargetMode | null,
 		popupTargetingCardCount: 0 as number,
-		popupTargetingCardsVisible: true as boolean
+		popupTargetingCardsVisible: true as boolean,
 	},
 
 	mutations: {
@@ -41,8 +46,28 @@ const gameStateModule = defineModule({
 			state.gameStatus = gameStatus
 		},
 
+		setPlayerMorale(state, value: number): void {
+			state.playerMorale = value
+		},
+
 		setPlayerUnitMana(state, playerUnitMana: number): void {
 			state.playerUnitMana = playerUnitMana
+		},
+
+		setPlayerSpellMana(state, value: number): void {
+			state.playerSpellMana = value
+		},
+
+		setPlayerSpellManaInDanger(state, value: number): void {
+			state.playerSpellManaInDanger = value
+		},
+
+		setOpponentMorale(state, value: number): void {
+			state.opponentMorale = value
+		},
+
+		setOpponentSpellMana(state, value: number): void {
+			state.opponentSpellMana = value
 		},
 
 		setInspectedCard(state, inspectedCard: RenderedCard | null): void {
@@ -71,7 +96,7 @@ const gameStateModule = defineModule({
 
 		setPopupTargetingCardsVisible(state, mode: boolean): void {
 			state.popupTargetingCardsVisible = mode
-		}
+		},
 	},
 
 	getters: {
@@ -81,7 +106,7 @@ const gameStateModule = defineModule({
 
 		inspectedCard: (state): RenderedCard | null => {
 			return state.inspectedCardId === null ? null : Core.game.findRenderedCardById(state.inspectedCardId)
-		}
+		},
 	},
 
 	actions: {
@@ -119,8 +144,8 @@ const gameStateModule = defineModule({
 			commit.setIsSpectating(false)
 			commit.setIsPlayersTurn(false)
 			rootDispatch.gameLogModule.clearLog()
-		}
-	}
+		},
+	},
 })
 
 export default gameStateModule

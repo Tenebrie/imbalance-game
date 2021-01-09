@@ -27,6 +27,7 @@ import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import CardFeature from '@shared/enums/CardFeature'
 import { BuffConstructor } from './ServerBuffContainer'
+import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 
 interface ServerGameProps extends OptionalGameProps {
 	gameMode: GameMode
@@ -151,6 +152,7 @@ export default class ServerGame implements Game {
 		this.events.flushLogEventGroup()
 		this.startMulliganPhase()
 
+		GameHistoryDatabase.startGame(this).then()
 		OutgoingMessageHandlers.executeMessageQueue(this)
 	}
 
@@ -254,12 +256,12 @@ export default class ServerGame implements Game {
 	private startDeployPhase(): void {
 		this.setTurnPhase(GameTurnPhase.DEPLOY)
 
+		this.advanceCurrentTurn()
+
 		this.players.forEach((player) => {
 			OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, player)
 			OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
 		})
-
-		this.advanceCurrentTurn()
 	}
 
 	private startNextTurn(): void {
@@ -298,10 +300,16 @@ export default class ServerGame implements Game {
 		const survivingPlayer = this.players.find((player) => player.morale > 0) || null
 		const defeatedPlayer = this.players.find((player) => player.morale <= 0) || null
 		if (survivingPlayer && defeatedPlayer) {
-			this.finish(this.getOpponent(defeatedPlayer), 'Win condition')
+			let victoryReason = 'PvP win condition'
+			if (survivingPlayer.isBot) {
+				victoryReason = 'Player lost to AI'
+			} else if (defeatedPlayer.isBot) {
+				victoryReason = 'Player won vs AI'
+			}
+			this.finish(this.getOpponent(defeatedPlayer), victoryReason)
 			return
 		} else if (this.players.every((player) => player.morale <= 0)) {
-			this.finish(null, 'Draw')
+			this.finish(null, 'Game ended with a draw')
 			return
 		}
 
@@ -364,6 +372,7 @@ export default class ServerGame implements Game {
 				`Game ${colorizeId(this.id)} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won! [${victoryReason}]`
 			)
 		}
+		GameHistoryDatabase.closeGame(this, victoryReason, victoriousPlayer instanceof ServerBotPlayerInGame ? null : victoriousPlayer).then()
 
 		setTimeout(() => {
 			this.forceShutdown('Cleanup')

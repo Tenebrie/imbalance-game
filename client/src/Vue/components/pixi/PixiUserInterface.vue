@@ -5,10 +5,20 @@
 			<button @click="onShowEscapeMenu" class="primary borderless game-button"><i class="fas fa-cog"></i></button>
 		</div>
 		<div class="end-turn-button-container" v-if="isEndTurnButtonVisible">
-			<div>
-				<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
-				<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">End round</button>
+			<div class="player-name">
+				<span v-if="opponent">{{ opponent.username }}</span
+				><span v-if="!opponent">Opponent</span>
 			</div>
+			<PixiPointDisplay header="Mana" :value="opponentSpellMana" :limit="10" :in-danger="0" />
+			<PixiPointDisplay header="Round wins" :value="2 - playerMorale" :limit="2" :in-danger="0" />
+			<div class="button">
+				<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
+				<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">
+					End round
+				</button>
+			</div>
+			<PixiPointDisplay header="Round wins" :value="2 - opponentMorale" :limit="2" :in-danger="0" />
+			<PixiPointDisplay header="Mana" :value="playerSpellMana" :limit="10" :in-danger="playerSpellManaInDanger" />
 		</div>
 		<div class="mulligan-label-container" v-if="mulliganMode">
 			<div>Replace cards ({{ maxCardMulligans - cardsMulliganed }}/{{ maxCardMulligans }})</div>
@@ -37,7 +47,7 @@
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
 			<div class="overlay-message" v-if="!opponent">Connecting...</div>
 			<div class="overlay-message" v-if="opponent">
-				{{ player.username }} vs {{ opponent.username }}<br>
+				{{ player.username }} vs {{ opponent.username }}<br />
 				Starting the game...
 			</div>
 		</div>
@@ -46,9 +56,7 @@
 			<div class="defeat" v-if="isDefeat">Defeat</div>
 			<div class="draw" v-if="isDraw">Draw</div>
 		</div>
-		<div class="spectator-overlay" :class="spectatorOverlayClass">
-			Spectator mode
-		</div>
+		<div class="spectator-overlay" :class="spectatorOverlayClass">Spectator mode</div>
 	</div>
 </template>
 
@@ -61,14 +69,16 @@ import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
 import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 import TheEscapeMenu from '@/Vue/components/popup/escapeMenu/TheEscapeMenu.vue'
-import {computed, onMounted, onUnmounted} from '@vue/composition-api'
+import { computed, onMounted, onUnmounted } from '@vue/composition-api'
 import Core from '@/Pixi/Core'
 import Utils from '@/utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
+import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
 
 export default Vue.extend({
 	components: {
-		PixiInspectedCard
+		PixiPointDisplay,
+		PixiInspectedCard,
 	},
 	setup() {
 		onMounted(() => window.addEventListener('keydown', onKeyDown))
@@ -111,13 +121,13 @@ export default Vue.extend({
 
 		const onShowGameLog = (): void => {
 			store.dispatch.popupModule.open({
-				component: TheGameLog
+				component: TheGameLog,
 			})
 		}
 
 		const onShowEscapeMenu = (): void => {
 			store.dispatch.popupModule.open({
-				component: TheEscapeMenu
+				component: TheEscapeMenu,
 			})
 		}
 
@@ -127,10 +137,12 @@ export default Vue.extend({
 		})
 		const isGameStarted = computed(() => {
 			const status = store.state.gameStateModule.gameStatus
-			return status === ClientGameStatus.IN_PROGRESS ||
+			return (
+				status === ClientGameStatus.IN_PROGRESS ||
 				status === ClientGameStatus.VICTORY ||
 				status === ClientGameStatus.DEFEAT ||
 				status === ClientGameStatus.DRAW
+			)
 		})
 		const isEndTurnButtonVisible = computed(() => {
 			return store.state.gameStateModule.popupTargetingMode === null
@@ -145,13 +157,15 @@ export default Vue.extend({
 			return isBrowsingDeck.value || mulliganMode.value
 		})
 		const isHideTargetsButtonVisible = computed(() => {
-			return !isConfirmTargetsButtonVisible.value &&
+			return (
+				!isConfirmTargetsButtonVisible.value &&
 				store.state.gameStateModule.popupTargetingMode !== null &&
 				store.state.gameStateModule.popupTargetingCardCount > 0
+			)
 		})
 		const cardsVisible = computed(() => store.state.gameStateModule.popupTargetingCardsVisible)
 		const confirmTargetsButtonContainerClass = computed(() => ({
-			backgrounded: !cardsVisible.value
+			backgrounded: !cardsVisible.value,
 		}))
 
 		const isVictory = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY)
@@ -160,17 +174,23 @@ export default Vue.extend({
 		const isSpectating = computed(() => store.state.gameStateModule.isSpectating)
 
 		const fadeInOverlayClass = computed(() => ({
-			visible: !isGameStarted.value
+			visible: !isGameStarted.value,
 		}))
 		const gameEndScreenClass = computed(() => ({
-			visible: isVictory.value || isDefeat.value || isDraw.value
+			visible: isVictory.value || isDefeat.value || isDraw.value,
 		}))
 		const spectatorOverlayClass = computed(() => ({
-			visible: isSpectating.value
+			visible: isSpectating.value,
 		}))
 
 		const player = computed<Player>(() => store.state.player)
 		const opponent = computed<Player | null>(() => store.state.gameStateModule.opponent)
+
+		const playerMorale = computed<number>(() => store.state.gameStateModule.playerMorale)
+		const playerSpellMana = computed<number>(() => store.state.gameStateModule.playerSpellMana)
+		const playerSpellManaInDanger = computed<number>(() => store.state.gameStateModule.playerSpellManaInDanger)
+		const opponentMorale = computed<number>(() => store.state.gameStateModule.opponentMorale)
+		const opponentSpellMana = computed<number>(() => store.state.gameStateModule.opponentSpellMana)
 
 		const cardsMulliganed = computed(() => store.state.gameStateModule.cardsMulliganed)
 		const maxCardMulligans = computed(() => store.state.gameStateModule.maxCardMulligans)
@@ -201,197 +221,214 @@ export default Vue.extend({
 			spectatorOverlayClass,
 			cardsMulliganed,
 			maxCardMulligans,
+			playerMorale,
+			playerSpellMana,
+			playerSpellManaInDanger,
+			opponentMorale,
+			opponentSpellMana,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "src/Vue/styles/generic";
+@import 'src/Vue/styles/generic';
 
-	.pixi-user-interface {
+.pixi-user-interface {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	user-select: none;
+	pointer-events: none;
+	overflow: hidden;
+
+	&.non-interactive {
+	}
+
+	.fade-in-overlay {
 		position: absolute;
-		top: 0;
 		width: 100%;
 		height: 100%;
-		user-select: none;
-		pointer-events: none;
-		overflow: hidden;
+		background: black;
 
-		&.non-interactive {
+		opacity: 0;
+		transition: opacity 0.5s;
+		transition-delay: 0.25s;
 
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		font-size: 40px;
+		font-family: BrushScript, Roboto, sans-serif;
+
+		&.visible {
+			opacity: 1;
 		}
 
-		.fade-in-overlay {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			background: black;
+		.overlay-message {
+		}
+	}
 
-			opacity: 0;
-			transition: opacity 0.50s;
-			transition-delay: 0.25s;
+	.endgame-screen {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		color: $COLOR-TEXT;
+		font-family: BrushScript, sans-serif;
+		font-size: 8em;
+		background: rgba(black, 0.5);
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			color: white;
-			font-size: 40px;
-			font-family: BrushScript, Roboto, sans-serif;
+		opacity: 0;
+		transition: opacity 1s;
 
-			&.visible {
-				opacity: 1;
-			}
+		&.visible {
+			opacity: 1;
+		}
+	}
 
-			.overlay-message {
-			}
+	button.game-button {
+		outline: none;
+		pointer-events: auto;
+		max-width: 250px;
+
+		padding: 8px 16px;
+		font-size: 24px;
+		border-radius: 4px;
+
+		&.borderless {
+			border: none;
 		}
 
-		.endgame-screen {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			color: $COLOR-TEXT;
-			font-family: BrushScript, sans-serif;
-			font-size: 8em;
-			background: rgba(black, 0.5);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-
-			opacity: 0;
-			transition: opacity 1s;
-
-			&.visible {
-				opacity: 1;
-			}
+		&:disabled {
+			cursor: default;
+			background: gray;
 		}
-
-		button.game-button {
-			outline: none;
-			pointer-events: auto;
-			max-width: 250px;
-
-			padding: 8px 16px;
-			font-size: 24px;
-			border-radius: 4px;
-
-			&.borderless {
-				border: none;
+		&.destructive {
+			color: lighten(red, 15);
+			&:hover {
+				color: lighten(red, 10);
 			}
-
-			&:disabled {
-				cursor: default;
-				background: gray;
-			}
-			&.destructive {
-				color: lighten(red, 15);
-				&:hover {
-					color: lighten(red, 10);
-				}
-				&:active {
-					color: lighten(red, 5);
-				}
-			}
-		}
-
-		.inspected-card {
-			pointer-events: auto;
-		}
-
-		.settings-button-container {
-			position: absolute;
-			top: 0;
-			right: 0;
-			display: flex;
-			flex-direction: row;
-
-			& > button {
-				padding: 16px 24px;
-				margin: 0;
-				background: transparent;
-				color: white;
-				font-size: 32px;
-
-				&:hover {
-					color: darken(white, 10);
-				}
-				&:active {
-					color: darken(white, 20);
-				}
-			}
-		}
-
-		.end-turn-button-container {
-			position: absolute;
-			right: 0;
-			height: calc(100% - 128px);
-			display: flex;
-			padding: 64px;
-			align-items: center;
-			justify-content: center;
-		}
-
-		.confirm-targets-button-container {
-			position: absolute;
-			right: 0;
-			height: calc(100% - 92px);
-			display: flex;
-			padding: 64px;
-			min-width: 250px;
-			align-items: flex-end;
-			justify-content: center;
-
-			& > div {
-				width: 250px;
-				pointer-events: all;
-				padding: 12px 14px;
-				border: 1px solid transparent;
-				border-radius: 8px;
-				background: rgba(black, 0);
-
-				$TRANSITION-DURATION: 1s;
-				transition: background-color $TRANSITION-DURATION,
-							border-top-color $TRANSITION-DURATION,
-							border-left-color $TRANSITION-DURATION,
-							border-right-color $TRANSITION-DURATION,
-							border-bottom-color $TRANSITION-DURATION;
-
-				&.backgrounded {
-					background: rgba(black, 0.75);
-					border: 1px solid $COLOR_BACKGROUND_GAME_MENU_BORDER;
-				}
+			&:active {
+				color: lighten(red, 5);
 			}
 		}
 	}
 
-	.spectator-overlay {
+	.inspected-card {
+		pointer-events: auto;
+	}
+
+	.settings-button-container {
+		position: absolute;
+		top: 0;
+		right: 0;
+		display: flex;
+		flex-direction: row;
+
+		& > button {
+			padding: 16px 24px;
+			margin: 0;
+			background: transparent;
+			color: white;
+			font-size: 32px;
+
+			&:hover {
+				color: darken(white, 10);
+			}
+			&:active {
+				color: darken(white, 20);
+			}
+		}
+	}
+
+	.end-turn-button-container {
 		position: absolute;
 		right: 0;
-		bottom: 0;
-		padding: 8px 16px;
-		color: rgba(gray, 0.5);
-		font-size: 16px;
+		height: calc(100% - 128px);
+		display: flex;
+		flex-direction: column;
+		padding: 64px;
+		align-items: flex-end;
+		justify-content: center;
+		bottom: calc(9.5% + 16px);
 
-		display: none;
-		&.visible {
-			display: block;
+		.player-name {
+			font-weight: bold;
+			font-size: 30px;
+			margin: 24px 0;
+		}
+
+		.button {
+			margin: 24px 0;
+		}
+
+		& > div {
+			margin: 4px 0;
 		}
 	}
 
-	.mulligan-label-container {
+	.confirm-targets-button-container {
 		position: absolute;
-		width: 100%;
-		top: 128px;
-		font-size: 36px;
-		font-weight: bold;
-	}
+		right: 0;
+		height: calc(100% - 92px);
+		display: flex;
+		padding: 64px;
+		min-width: 250px;
+		align-items: flex-end;
+		justify-content: center;
 
-	.menu-separator {
-		width: 100%;
-		height: 1px;
-		background: black;
-		margin: 8px 0;
+		& > div {
+			width: 250px;
+			pointer-events: all;
+			padding: 12px 14px;
+			border: 1px solid transparent;
+			border-radius: 8px;
+			background: rgba(black, 0);
+
+			$TRANSITION-DURATION: 1s;
+			transition: background-color $TRANSITION-DURATION, border-top-color $TRANSITION-DURATION, border-left-color $TRANSITION-DURATION,
+				border-right-color $TRANSITION-DURATION, border-bottom-color $TRANSITION-DURATION;
+
+			&.backgrounded {
+				background: rgba(black, 0.75);
+				border: 1px solid $COLOR_BACKGROUND_GAME_MENU_BORDER;
+			}
+		}
 	}
+}
+
+.spectator-overlay {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	padding: 8px 16px;
+	color: rgba(gray, 0.5);
+	font-size: 16px;
+
+	display: none;
+	&.visible {
+		display: block;
+	}
+}
+
+.mulligan-label-container {
+	position: absolute;
+	width: 100%;
+	top: 128px;
+	font-size: 36px;
+	font-weight: bold;
+}
+
+.menu-separator {
+	width: 100%;
+	height: 1px;
+	background: black;
+	margin: 8px 0;
+}
 </style>

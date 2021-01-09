@@ -31,7 +31,7 @@ export default class UnitCultistBrute extends ServerCard {
 			bonusPower: this.bonusPower,
 		}
 
-		this.createDeployEffectTargets().target(TargetType.UNIT).requireAlliedUnit().requireNotSelf()
+		this.createDeployTargets(TargetType.UNIT).requireAllied().requireNotSelf()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onSacrificeTargetSelected(targetCard.unit!))
 	}

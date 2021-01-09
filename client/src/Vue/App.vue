@@ -12,13 +12,13 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
-import AudioSystem, {AudioSystemMode} from '@/Pixi/audio/AudioSystem'
-import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
+import AudioSystem, { AudioSystemMode } from '@/Pixi/audio/AudioSystem'
+import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import LocalStorage from '@/utils/LocalStorage'
 import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 import axios from 'axios'
-import {electronHost, isElectron} from '@/utils/Utils'
-import {defineComponent} from '@vue/composition-api'
+import { electronHost, isElectron } from '@/utils/Utils'
+import { defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
 	components: { ThePopupView, TheNavigationBar },
@@ -48,9 +48,9 @@ export default defineComponent({
 		rootClass() {
 			return {
 				'in-game': this.isInGame as boolean,
-				'navigation-bar-visible': !this.isInGame as boolean
+				'navigation-bar-visible': !this.isInGame as boolean,
 			}
-		}
+		},
 	},
 
 	methods: {
@@ -67,22 +67,26 @@ export default defineComponent({
 			const textStyle = 'color: #bada55; padding:4px; font-size: 14px'
 			const warningStyle = 'color: #daba55; padding:4px; font-size: 14px'
 
-			const message = 'If you DO know what you\'re doing, have fun hacking!\n'
-				+ 'This is an open-source project. You can find the code at https://github.com/Tenebrie/notgwent-game.'
-				+ ' If you find a bug or an exploit, or if you have a feature request, feel free to open an issue on GitHub.'
-				+ ' You can also make a pull request with a fix. Contributions are welcome!'
+			const message =
+				"If you DO know what you're doing, have fun hacking!\n" +
+				'This is an open-source project. You can find the code at https://github.com/Tenebrie/notgwent-game.' +
+				' If you find a bug or an exploit, or if you have a feature request, feel free to open an issue on GitHub.' +
+				' You can also make a pull request with a fix. Contributions are welcome!'
 
 			console.info('%cHowdy!', headerStyle)
-			console.info('%cIf you don\'t know what you\'re doing, be VERY careful! Don\'t paste here anything that you do not understand!', warningStyle)
+			console.info(
+				"%cIf you don't know what you're doing, be VERY careful! Don't paste here anything that you do not understand!",
+				warningStyle
+			)
 			console.info(`%c${message}`, textStyle)
 			console.info('%cAlso, you can summon browser context menu by using Shift or Ctrl when right-clicking an element.', textStyle)
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style lang="scss">
-@import "styles/generic";
+@import 'styles/generic';
 @import '~vuejs-noty/dist/vuejs-noty.css';
 
 body {
@@ -183,7 +187,9 @@ button {
 	cursor: pointer;
 }
 
-button.primary, .swal-button, .button-primary {
+button.primary,
+.swal-button,
+.button-primary {
 	border-radius: 0.25em;
 	width: 100%;
 	padding: 0.5em 1em;
@@ -218,7 +224,8 @@ button.primary, .swal-button, .button-primary {
 	}
 }
 
-button.secondary, .button-secondary {
+button.secondary,
+.button-secondary {
 	border-radius: 0.25em;
 	width: 100%;
 	padding: 0.5em 1em;
@@ -249,7 +256,8 @@ button.secondary, .button-secondary {
 	}
 }
 
-input[type="text"], input[type="password"] {
+input[type='text'],
+input[type='password'] {
 	font-family: Roboto, sans-serif;
 	color: $COLOR-TEXT;
 	outline: none;
@@ -269,7 +277,7 @@ span.info-text {
 
 .noty_body {
 	font-family: 'Roboto', sans-serif;
-	font-size: 1.0em !important;
+	font-size: 1em !important;
 }
 
 .noty_bar {

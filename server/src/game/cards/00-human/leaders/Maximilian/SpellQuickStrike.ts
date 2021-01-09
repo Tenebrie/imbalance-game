@@ -30,16 +30,12 @@ export default class SpellQuickStrike extends ServerCard {
 			damage: this.baseDamage,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireEnemyUnit()
-			.evaluate(TargetType.UNIT, (args) => this.evaluateTarget(args))
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	private onTargetSelected(target: ServerUnit): void {
-		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+		this.createDeployTargets(TargetType.UNIT)
+			.requireEnemy()
+			.evaluate((args) => this.evaluateTarget(args))
+			.perform(({ targetUnit }) => {
+				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+			})
 	}
 
 	private evaluateTarget(args: CardTargetValidatorArguments): number {

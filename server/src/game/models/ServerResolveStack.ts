@@ -7,16 +7,18 @@ import CardFeature from '@shared/enums/CardFeature'
 import GameEventCreators from './events/GameEventCreators'
 import ResolveStackEntry from '@shared/models/ResolveStackEntry'
 import ResolveStack from '@shared/models/ResolveStack'
+import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
+import { DeployTarget } from '@src/game/models/ServerCardTargeting'
 
 class ServerResolveStackEntry implements ResolveStackEntry {
 	public readonly ownedCard: ServerOwnedCard
-	public readonly targetsSelected: (ServerCardTargetCard | ServerCardTargetRow)[]
+	public readonly previousTargets: DeployTarget[]
 	public onResumeResolving: () => void
 
 	constructor(ownedCard: ServerOwnedCard, onResumeResolving: () => void) {
 		this.ownedCard = ownedCard
 		this.onResumeResolving = onResumeResolving
-		this.targetsSelected = []
+		this.previousTargets = []
 	}
 }
 
@@ -49,12 +51,12 @@ export default class ServerResolveStack implements ResolveStack {
 		return this.entries[this.entries.length - 1]
 	}
 
-	public get currentTargets(): (ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow)[] | undefined {
+	public get previousTargets(): DeployTarget[] {
 		if (this.entries.length === 0) {
-			return undefined
+			return []
 		}
 
-		return this.entries[this.entries.length - 1].targetsSelected
+		return this.entries[this.entries.length - 1].previousTargets
 	}
 
 	public startResolving(ownedCard: ServerOwnedCard, onResumeResolving: () => void): void {
@@ -67,11 +69,8 @@ export default class ServerResolveStack implements ResolveStack {
 		this.entries[this.entries.length - 1].onResumeResolving()
 	}
 
-	public pushTarget(target: ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow): void {
-		if (!this.currentTargets) {
-			return
-		}
-		this.currentTargets.push(target)
+	public pushTarget(target: DeployTarget): void {
+		this.previousTargets.push(target)
 	}
 
 	public findCardById(cardId: string): ServerOwnedCard | null {

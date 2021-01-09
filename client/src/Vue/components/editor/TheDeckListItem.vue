@@ -6,7 +6,12 @@
 			</keep-alive>
 			<span>{{ deck.name }}</span>
 		</span>
-		<router-link v-if="mode === DeckListMode.EDIT" tag="span" class="deck-link" :to="{ path: `/decks/${deck.id}`, query: getCurrentRouteQuery() }">
+		<router-link
+			v-if="mode === DeckListMode.EDIT"
+			tag="span"
+			class="deck-link"
+			:to="{ path: `/decks/${deck.id}`, query: getCurrentRouteQuery() }"
+		>
 			<keep-alive>
 				<img v-if="iconPath" :src="iconPath" alt="Deck icon" />
 			</keep-alive>
@@ -19,15 +24,15 @@
 import store from '@/Vue/store'
 import DeckListMode from '@/utils/DeckListMode'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
-import {defineComponent} from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
 import router from '@/Vue/router'
 
 export default defineComponent({
 	props: {
 		deck: {
 			type: Object,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	setup() {
@@ -35,7 +40,7 @@ export default defineComponent({
 
 		return {
 			getCurrentRouteQuery,
-			DeckListMode
+			DeckListMode,
 		}
 	},
 
@@ -50,7 +55,7 @@ export default defineComponent({
 
 		selectedClass(): any {
 			return {
-				'selected': this.isSelected
+				selected: this.isSelected,
 			}
 		},
 
@@ -60,7 +65,7 @@ export default defineComponent({
 				return null
 			}
 			return `/assets/icons/${deck.leader.class}.png`
-		}
+		},
 	},
 
 	methods: {
@@ -71,40 +76,40 @@ export default defineComponent({
 			} else {
 				store.commit.setSelectedDeckId(this.deck.id)
 			}
-		}
-	}
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.deck-link {
-		padding: 4px 16px;
-		text-align: start;
-		font-size: 1.4em;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		min-height: 1.4em;
+.deck-link {
+	padding: 4px 16px;
+	text-align: start;
+	font-size: 1.4em;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	min-height: 1.4em;
 
-		&.selected {
-			background: rgba(lighten(green, 20), 0.1);
-		}
-
-		&:hover {
-			background: $COLOR-BACKGROUND-TRANSPARENT;
-		}
-
-		&.selected:hover {
-			background: rgba(lighten(green, 50), 0.1);
-		}
+	&.selected {
+		background: rgba(lighten(green, 20), 0.1);
 	}
 
-	img {
-		height: 32px;
-		padding: 0 4px 0 0;
-		display: inline;
-		border-radius: 100%;
+	&:hover {
+		background: $COLOR-BACKGROUND-TRANSPARENT;
 	}
+
+	&.selected:hover {
+		background: rgba(lighten(green, 50), 0.1);
+	}
+}
+
+img {
+	height: 32px;
+	padding: 0 4px 0 0;
+	display: inline;
+	border-radius: 100%;
+}
 </style>

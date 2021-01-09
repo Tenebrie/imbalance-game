@@ -7,6 +7,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import SpellReinforcements from './SpellReinforcements'
 import SpellQuickStrike from './SpellQuickStrike'
 import SpellTacticalMove from './SpellTacticalMove'
+import { getLeaderTextVariables } from '@src/utils/Utils'
 
 export default class LeaderMaximilian extends ServerCard {
 	manaPerRound = 10
@@ -22,6 +23,7 @@ export default class LeaderMaximilian extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound,
+			...getLeaderTextVariables(this),
 		}
 	}
 }

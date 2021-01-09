@@ -3,7 +3,6 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
-import ServerCardTarget from '../models/ServerCardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 import ServerOwnedCard from '../models/ServerOwnedCard'
@@ -13,10 +12,11 @@ import {
 	SystemMessageType,
 } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import TargetMode from '@shared/enums/TargetMode'
-import Utils from '../../utils/Utils'
 import CardLibrary from '../libraries/CardLibrary'
 import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
+import ServerCardTarget from '@src/game/models/ServerCardTarget'
+import Utils from '@src/utils/Utils'
 
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
@@ -35,7 +35,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		const validTargets = card.targeting.getValidCardPlayTargets(card.owner)
+		const validTargets = card.targeting.getPlayTargets(card.owner)
 		if (
 			playerInGame.turnEnded ||
 			playerInGame.roundEnded ||
@@ -61,29 +61,27 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
 			!orderedUnit ||
-			orderedUnit.owner !== playerInGame
+			orderedUnit.owner !== playerInGame ||
+			!game.board.orders.validOrders.some((validOrder) => validOrder.target.id === data.id)
 		) {
 			return
 		}
 
-		game.board.orders.performUnitOrder(ServerCardTarget.fromCardMessage(game, data))
+		game.board.orders.performUnitOrder(data)
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
 	[GenericActionMessageType.CARD_TARGET]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
-		console.time('CardTarget')
 		if (!playerInGame.targetRequired) {
 			return
 		}
 
-		const target = ServerCardTarget.fromCardMessage(game, data)
-		game.cardPlay.selectCardTarget(playerInGame, target)
+		game.cardPlay.selectCardTarget(playerInGame, data)
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
-		console.timeEnd('CardTarget')
 	},
 
 	[GenericActionMessageType.ANONYMOUS_TARGET]: (data: AnonymousTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
@@ -154,6 +152,16 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 		}
 
 		game.advanceCurrentTurn()
+		onPlayerActionEnd(game, player)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
+	[GenericActionMessageType.SURRENDER]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
+		if (!game.isStarted || game.isFinished) {
+			return
+		}
+
+		game.finish(player.opponent, 'Player surrendered (Player action)')
 		onPlayerActionEnd(game, player)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},

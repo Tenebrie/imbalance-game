@@ -25,10 +25,9 @@ export default class HeroQidala extends ServerCard {
 		})
 		this.addRelatedCards().requireTribe(CardTribe.LOOT)
 
-		this.createDeployEffectTargets()
-			.target(TargetType.CARD_IN_UNIT_DECK)
-			.requireCardInPlayersDeck()
-			.require(TargetType.CARD_IN_UNIT_DECK, (args) => args.targetCard.color === CardColor.SILVER)
+		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
+			.requireAllied()
+			.require((args) => args.targetCard.color === CardColor.SILVER)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}

@@ -1,10 +1,10 @@
 import axios from 'axios'
-import {defineModule} from 'direct-vuex'
+import { defineModule } from 'direct-vuex'
 import Language from '@shared/enums/Language'
-import {moduleActionContext} from '@/Vue/store'
+import { moduleActionContext } from '@/Vue/store'
 import RenderQuality from '@shared/enums/RenderQuality'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
-import {debounce} from 'throttle-debounce'
+import { debounce } from 'throttle-debounce'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 
 const userPreferencesModule = defineModule({
@@ -12,11 +12,13 @@ const userPreferencesModule = defineModule({
 	state: {
 		userLanguage: 'en' as Language,
 		renderQuality: RenderQuality.DEFAULT as RenderQuality,
-		masterVolume: 1.00 as number,
-		musicVolume: 0.50 as number,
-		effectsVolume: 0.50 as number,
-		ambienceVolume: 0.50 as number,
-		userInterfaceVolume: 0.50 as number,
+		masterVolume: 1.0 as number,
+		musicVolume: 0.5 as number,
+		effectsVolume: 0.5 as number,
+		ambienceVolume: 0.5 as number,
+		userInterfaceVolume: 0.5 as number,
+		welcomeModalSeenAt: null as Date | null,
+		mobileModalSeenAt: null as Date | null,
 	},
 
 	mutations: {
@@ -43,11 +45,16 @@ const userPreferencesModule = defineModule({
 		setUserInterfaceVolume(state, volume: number): void {
 			state.userInterfaceVolume = volume
 		},
+
+		setWelcomeModalSeenAt(state, timestamp: string): void {
+			state.welcomeModalSeenAt = timestamp ? new Date(timestamp) : null
+		},
+		setMobileModalSeenAt(state, timestamp: string): void {
+			state.mobileModalSeenAt = timestamp ? new Date(timestamp) : null
+		},
 	},
 
-	getters: {
-
-	},
+	getters: {},
 
 	actions: {
 		async fetchPreferences(context): Promise<void> {
@@ -62,6 +69,8 @@ const userPreferencesModule = defineModule({
 			commit.setEffectsVolume(profileMessage.effectsVolume)
 			commit.setAmbienceVolume(profileMessage.ambienceVolume)
 			commit.setUserInterfaceVolume(profileMessage.userInterfaceVolume)
+			commit.setWelcomeModalSeenAt(profileMessage.welcomeModalSeenAt)
+			commit.setMobileModalSeenAt(profileMessage.mobileModalSeenAt)
 		},
 
 		savePreferencesDebounced: debounce(1000, async (context) => {
@@ -82,8 +91,20 @@ const userPreferencesModule = defineModule({
 			const savePreferencesDebounced = dispatch.savePreferencesDebounced as (context) => Promise<void>
 			await savePreferencesDebounced(context)
 			AudioSystem.updateVolumeLevels()
-		}
-	}
+		},
+
+		async markWelcomeModalAsSeen(context): Promise<void> {
+			const { commit } = moduleActionContext(context, userPreferencesModule)
+			await axios.post('/api/user/modals/welcome')
+			commit.setWelcomeModalSeenAt(String(new Date().getTime()))
+		},
+
+		async markMobileModalAsSeen(context): Promise<void> {
+			const { commit } = moduleActionContext(context, userPreferencesModule)
+			await axios.post('/api/user/modals/mobile')
+			commit.setMobileModalSeenAt(String(new Date().getTime()))
+		},
+	},
 })
 
 export default userPreferencesModule

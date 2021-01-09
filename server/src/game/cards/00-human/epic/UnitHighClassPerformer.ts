@@ -5,12 +5,10 @@ import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import TargetType from '@shared/enums/TargetType'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffStrength from '../../../buffs/BuffStrength'
 import CardFeature from '@shared/enums/CardFeature'
-import TargetDefinition from '../../../models/targetDefinitions/TargetDefinition'
-import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitHighClassPerformer extends ServerCard {
 	bonusPower = asSplashBuffPotency(1)
@@ -33,9 +31,7 @@ export default class UnitHighClassPerformer extends ServerCard {
 			cardsRequired: this.cardsRequired,
 		}
 
-		this.createPlayTargets()
-			.merge(TargetDefinition.defaultCardPlayTarget(this.game).commit())
-			.require(TargetType.BOARD_ROW, ({ targetRow }) => targetRow.cards.length >= this.cardsRequired)
+		this.createPlayTargets().require(({ targetRow }) => targetRow.cards.length >= this.cardsRequired)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}

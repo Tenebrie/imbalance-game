@@ -34,7 +34,7 @@ export default class SpellShadowSpark extends ServerCard {
 			damage: this.baseDamage,
 		}
 
-		this.createDeployEffectTargets().target(TargetType.UNIT).requireEnemyUnit()
+		this.createDeployTargets(TargetType.UNIT).requireEnemy()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard.unit!))
 	}
@@ -44,6 +44,6 @@ export default class SpellShadowSpark extends ServerCard {
 
 		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
 		const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 0)
-		this.game.board.createUnit(shadowspawn, this.ownerInGame, targetRow.index, targetRow.cards.length)
+		this.game.board.createUnit(shadowspawn, targetRow.index, targetRow.cards.length)
 	}
 }

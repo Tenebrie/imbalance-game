@@ -41,7 +41,7 @@ export default class ServerGameTimers {
 			game,
 			() => {
 				const victoriousPlayer = game.players.find((player) => player.player.isInGame() || player instanceof ServerBotPlayerInGame) || null
-				game.finish(victoriousPlayer, 'Opponent disconnected')
+				game.finish(victoriousPlayer, 'Player surrendered (Connection lost)')
 			},
 			60000
 		)

@@ -11,15 +11,14 @@ import Vue from 'vue'
 import store from '@/Vue/store'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
-import Constants from '@shared/Constants'
 import Utils from '@/utils/Utils'
 
 export default Vue.extend({
 	props: {
 		color: {
 			type: Number,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	computed: {
@@ -46,7 +45,7 @@ export default Vue.extend({
 			const deckId = this.$route.params.deckId
 			return store.getters.editor.cardsOfColor({
 				deckId: deckId,
-				color: this.color
+				color: this.color,
 			})
 		},
 
@@ -56,85 +55,83 @@ export default Vue.extend({
 
 		colorClass(): any {
 			return {
-				[this.colorAsString]: true
+				[this.colorAsString]: true,
 			}
-		}
+		},
 	},
 
-	methods: {
-
-	}
+	methods: {},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.editor-deck-card-list-separator {
-		width: calc(100% - 16px);
-		display: flex;
-		flex-direction: row;
-		padding: 4px 8px;
-		user-select: none;
-		font-size: 1.1em;
+.editor-deck-card-list-separator {
+	width: calc(100% - 16px);
+	display: flex;
+	flex-direction: row;
+	padding: 4px 8px;
+	user-select: none;
+	font-size: 1.1em;
 
-		&.leader {
-			color: MediumAquamarine;
+	&.leader {
+		color: MediumAquamarine;
 
-			.line {
-				background: MediumAquamarine;
-			}
-		}
-
-		&.golden {
-			color: orange;
-
-			.line {
-				background: orange;
-			}
-		}
-
-		&.silver {
-			color: #BB20BB;
-
-			.line {
-				background: #BB20BB;
-			}
-		}
-
-		&.bronze {
-			color: white;
-
-			.line {
-				background: white;
-			}
-		}
-
-		.text {
-			display: inline-block;
-			margin: 0 8px;
-		}
-
-		.line-container.left {
-			width: 30px;
-		}
-
-		.line-container.right {
-			flex: 1;
-		}
-
-		.line-container {
-			width: 100px;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-
-			.line {
-				width: 100%;
-				border-radius: 2px;
-				height: 4px;
-				display: block;
-			}
+		.line {
+			background: MediumAquamarine;
 		}
 	}
+
+	&.golden {
+		color: orange;
+
+		.line {
+			background: orange;
+		}
+	}
+
+	&.silver {
+		color: #bb20bb;
+
+		.line {
+			background: #bb20bb;
+		}
+	}
+
+	&.bronze {
+		color: white;
+
+		.line {
+			background: white;
+		}
+	}
+
+	.text {
+		display: inline-block;
+		margin: 0 8px;
+	}
+
+	.line-container.left {
+		width: 30px;
+	}
+
+	.line-container.right {
+		flex: 1;
+	}
+
+	.line-container {
+		width: 100px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+
+		.line {
+			width: 100%;
+			border-radius: 2px;
+			height: 4px;
+			display: block;
+		}
+	}
+}
 </style>

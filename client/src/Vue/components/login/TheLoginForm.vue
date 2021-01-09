@@ -25,13 +25,13 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
-import {defineComponent, onBeforeUnmount, onMounted, ref, watch} from '@vue/composition-api'
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api'
 import GoogleSingleSignOnButton from '@/Vue/components/login/GoogleSingleSignOnButton.vue'
 import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
 	components: {
-		GoogleSingleSignOnButton
+		GoogleSingleSignOnButton,
 	},
 
 	setup() {
@@ -41,9 +41,12 @@ export default defineComponent({
 		const email = ref<string>('')
 		const password = ref<string>('')
 
-		watch(() => [email.value, password.value], () => {
-			clearMessage()
-		})
+		watch(
+			() => [email.value, password.value],
+			() => {
+				clearMessage()
+			}
+		)
 
 		onMounted(() => {
 			rootRef.value.addEventListener('keydown', onKeyDown)
@@ -59,11 +62,11 @@ export default defineComponent({
 			}
 		}
 
-		const onLogin = async(): Promise<void> => {
+		const onLogin = async (): Promise<void> => {
 			clearMessage()
 			const credentials = {
 				email: email.value,
-				password: password.value
+				password: password.value,
 			}
 			try {
 				await store.dispatch.login(credentials)
@@ -110,26 +113,26 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-	@import "src/Vue/styles/generic";
-	@import "LoginFormShared";
+@import 'src/Vue/styles/generic';
+@import 'LoginFormShared';
 
-	.the-login-form {
-		@include login-form();
+.the-login-form {
+	@include login-form();
 
-		.form > .input {
-			position: relative;
-			display: flex;
-			flex-direction: row;
+	.form > .input {
+		position: relative;
+		display: flex;
+		flex-direction: row;
 
-			.tooltip {
-				position: absolute;
-				right: 0;
-				height: 100%;
-			}
-		}
-
-		.register-link {
-			font-size: 0.8em;
+		.tooltip {
+			position: absolute;
+			right: 0;
+			height: 100%;
 		}
 	}
+
+	.register-link {
+		font-size: 0.8em;
+	}
+}
 </style>

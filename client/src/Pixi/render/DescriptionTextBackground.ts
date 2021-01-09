@@ -11,7 +11,7 @@ export default class DescriptionTextBackground extends PIXI.Container implements
 		}
 
 		this.textHeight = dimensions.y
-		this.renderBackground(this.textHeight + 30)
+		this.renderBackground(this.textHeight + 60)
 	}
 
 	renderBackground(height: number): void {

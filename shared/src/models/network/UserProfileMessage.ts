@@ -12,6 +12,8 @@ export default class UserProfileMessage {
 	effectsVolume: number
 	ambienceVolume: number
 	userInterfaceVolume: number
+	welcomeModalSeenAt: string
+	mobileModalSeenAt: string
 
 	constructor(databaseEntry: PlayerDatabaseEntry) {
 		const splitEmail = databaseEntry.email.split('@')
@@ -27,5 +29,7 @@ export default class UserProfileMessage {
 		this.effectsVolume = databaseEntry.effectsVolume
 		this.ambienceVolume = databaseEntry.ambienceVolume
 		this.userInterfaceVolume = databaseEntry.userInterfaceVolume
+		this.welcomeModalSeenAt = databaseEntry.welcomeModalSeenAt
+		this.mobileModalSeenAt = databaseEntry.mobileModalSeenAt
 	}
 }

@@ -29,10 +29,9 @@ export default class UnitCleansingFlame extends ServerCard {
 			dispelPower: this.dispelPower,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
+		this.createDeployTargets(TargetType.UNIT)
 			.requireNotSelf()
-			.require(TargetType.UNIT, ({ targetCard }) => targetCard.buffs.dispellable.length > 0)
+			.require(({ targetCard }) => targetCard.buffs.dispellable.length > 0)
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetCard }) => {
 			Keywords.dispel(this.dispelPower).from(targetCard).withSourceAs(this)

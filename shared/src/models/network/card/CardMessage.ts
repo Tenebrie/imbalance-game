@@ -18,6 +18,7 @@ export default interface CardMessage {
 	name: string
 	title: string
 	flavor: string
+	listName: string
 	description: string
 
 	stats: CardStatsMessage

@@ -17,7 +17,7 @@ export default Vue.extend({
 		},
 
 		deck(): PopulatedEditorDeck {
-			return store.state.editor.decks.find(deck => deck.id === this.deckId)
+			return store.state.editor.decks.find((deck) => deck.id === this.deckId)
 		},
 
 		deckName: {
@@ -27,41 +27,42 @@ export default Vue.extend({
 			set(name: string): void {
 				const deckId = this.$route.params.deckId
 				store.dispatch.editor.renameDeck({ deckId, name })
-			}
+			},
 		},
 	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.editor-deck-name {
-		position: relative;
+.editor-deck-name {
+	position: relative;
 
-		input[type="text"] {
-			display: block;
-			font-size: 1.4em;
-			font-family: 'Roboto', sans-serif;
-			background: none;
-			text-align: center;
-			width: calc(100% - 32px);
-			margin: 0 8px;
+	input[type='text'] {
+		display: block;
+		font-size: 1.4em;
+		font-family: 'Roboto', sans-serif;
+		background: none;
+		text-align: center;
+		width: calc(100% - 32px);
+		margin: 0 8px;
 
-			&:hover, &:focus {
-				background: rgba(white, 0.1);
-			}
-		}
-
-		.edit-icon {
-			position: absolute;
-			height: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			top: 0;
-			right: 16px;
-			opacity: 0.5;
+		&:hover,
+		&:focus {
+			background: rgba(white, 0.1);
 		}
 	}
+
+	.edit-icon {
+		position: absolute;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		top: 0;
+		right: 16px;
+		opacity: 0.5;
+	}
+}
 </style>

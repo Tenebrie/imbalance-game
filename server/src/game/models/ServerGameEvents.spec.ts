@@ -164,7 +164,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('switches targeting to next card in queue', () => {
-				game.board.createUnit(new TestingUnitNoTargeting(game), player.opponentInGame, 4, 0)
+				game.board.createUnit(new TestingUnitNoTargeting(game), 4, 0)
 
 				const valkyrie = new TestingUnitTargetsRow(game)
 				player.cardHand.addUnit(valkyrie)
@@ -173,7 +173,7 @@ describe('ServerGameEvents', () => {
 				events.resolveEvents()
 				game.cardPlay.forcedPlayCardFromHand({ card: valkyrie, owner: player }, 0, 0)
 				events.resolveEvents()
-				game.cardPlay.selectCardTarget(player, game.cardPlay.getValidTargets()[0])
+				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0])
 				events.resolveEvents()
 
 				expect(resolutionStackSpy).toHaveBeenCalledTimes(1)
@@ -191,13 +191,13 @@ describe('ServerGameEvents', () => {
 				;({ game, player, ownedCard } = TestGameTemplates.singleCardTest(TestingSpellTacticalMove))
 				events = game.events
 				resolutionStackSpy = jest.spyOn(game.cardPlay.cardResolveStack, 'finishResolving')
-				game.board.createUnit(new TestingUnitNoTargeting(game), player, 0, 0)
+				game.board.createUnit(new TestingUnitNoTargeting(game), 0, 0)
 			})
 
 			it('keeps card resolving after first target', () => {
 				game.cardPlay.forcedPlayCardFromHand(ownedCard, 0, 0)
 				events.resolveEvents()
-				game.cardPlay.selectCardTarget(player, game.cardPlay.getValidTargets()[0])
+				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0])
 				events.resolveEvents()
 
 				expect(resolutionStackSpy).toHaveBeenCalledTimes(0)
@@ -208,9 +208,9 @@ describe('ServerGameEvents', () => {
 			it('resolves card after second target', () => {
 				game.cardPlay.forcedPlayCardFromHand(ownedCard, 0, 0)
 				events.resolveEvents()
-				game.cardPlay.selectCardTarget(player, game.cardPlay.getValidTargets()[0])
+				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0])
 				events.resolveEvents()
-				game.cardPlay.selectCardTarget(player, game.cardPlay.getValidTargets()[0])
+				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0])
 				events.resolveEvents()
 
 				expect(resolutionStackSpy).toHaveBeenCalledTimes(1)

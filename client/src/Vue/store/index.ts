@@ -13,8 +13,9 @@ import PopupModule from '@/Vue/store/modules/PopupModule'
 import GameLogModule from '@/Vue/store/modules/GameLogModule'
 import InspectedCardModule from '@/Vue/store/modules/InspectedCardModule'
 import LocalStorage from '@/utils/LocalStorage'
-import {editorCardRenderer} from '@/utils/editor/EditorCardRenderer'
+import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import GameMessage from '@shared/models/network/GameMessage'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 
 Vue.use(Vuex)
 
@@ -32,7 +33,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		player: null as Player | null,
 		isLoggedIn: false as boolean,
 		selectedGame: null as GameMessage | null,
-		selectedDeckId: '' as string
+		selectedDeckId: '' as string,
 	},
 
 	mutations: {
@@ -52,7 +53,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		resetPlayerData(state): void {
 			state.isLoggedIn = false
 			state.player = null
-		}
+		},
 	},
 
 	getters: {
@@ -61,7 +62,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 				throw new Error('Player is not available!')
 			}
 			return state.player
-		}
+		},
 	},
 
 	actions: {
@@ -73,7 +74,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			commit.setPlayerData(player)
 		},
 
-		async login(context, payload: { email: string, password: string }): Promise<void> {
+		async login(context, payload: { email: string; password: string }): Promise<void> {
 			const { dispatch } = rootActionContext(context)
 
 			await axios.post('/api/session', payload)
@@ -99,6 +100,14 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			window.location.reload()
 		},
 
+		async deleteAccount(context): Promise<void> {
+			const { commit } = rootActionContext(context)
+			await axios.delete('/api/user')
+			LocalStorage.setHasAuthCookie(false)
+			commit.resetPlayerData()
+			window.location.reload()
+		},
+
 		joinGame(context, selectedGame: GameMessage): void {
 			const { commit } = rootActionContext(context)
 			commit.setSelectedGame(selectedGame)
@@ -106,14 +115,17 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		},
 
 		leaveGame(): void {
-			if (store.state.gameStateModule.gameStatus === ClientGameStatus.NOT_STARTED) { return }
+			if (store.state.gameStateModule.gameStatus === ClientGameStatus.NOT_STARTED) {
+				return
+			}
 
+			OutgoingMessageHandlers.sendSurrender()
 			store.dispatch.gameStateModule.reset()
 			router.push({ name: 'home' })
 			Core.socket.close(1000, 'Player disconnect')
 			Core.cleanUp()
-		}
-	}
+		},
+	},
 })
 
 // Export the direct-store instead of the classic Vuex store.
@@ -126,6 +138,7 @@ export { rootActionContext, moduleActionContext }
 // The following lines enable types in the injected store '$store'.
 export type AppStore = typeof store
 declare module 'vuex' {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	interface Store<S> {
 		direct: AppStore
 	}

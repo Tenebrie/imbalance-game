@@ -49,6 +49,10 @@ export default {
 		Core.sendMessage(GenericActionMessageType.TURN_END, null)
 	},
 
+	sendSurrender(): void {
+		Core.sendMessage(GenericActionMessageType.SURRENDER, null)
+	},
+
 	sendInit(): void {
 		Core.sendMessage(SystemMessageType.INIT, undefined)
 	},

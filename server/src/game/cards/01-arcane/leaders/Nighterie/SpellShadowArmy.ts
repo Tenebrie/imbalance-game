@@ -33,11 +33,11 @@ export default class SpellShadowArmy extends ServerCard {
 			thresholdDecrease: this.thresholdDecrease,
 		}
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT, () => this.allowedTargets)
-			.requireAlliedUnit()
-			.label(TargetType.UNIT, 'card.spellShadowArmy.target')
-			.require(TargetType.UNIT, (args) => !this.copiedUnits.includes(args.targetCard.unit!))
+		this.createDeployTargets(TargetType.UNIT)
+			.targetCount(() => this.allowedTargets)
+			.requireAllied()
+			.label('card.spellShadowArmy.target')
+			.require((args) => !this.copiedUnits.includes(args.targetCard.unit!))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 

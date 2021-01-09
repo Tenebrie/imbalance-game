@@ -6,8 +6,11 @@ import AsyncHandler from '../utils/AsyncHandler'
 import RenderQuality from '@shared/enums/RenderQuality'
 import Language from '@shared/enums/Language'
 import Utils, { getPlayerFromAuthenticatedRequest, registerFormValidators } from '../utils/Utils'
+import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
 
 const router = express.Router()
+
+router.use(RequirePlayerTokenMiddleware)
 
 router.get(
 	'/',

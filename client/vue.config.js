@@ -7,9 +7,9 @@ module.exports = {
 				'@shared': path.resolve(__dirname, '../shared/src/'),
 			},
 		},
-	},
-	chainWebpack: (config) => {
-		config.plugins.delete('progress')
+		output: {
+			pathinfo: false
+		}
 	},
 	devServer: {
 		publicPath: '/',

@@ -26,11 +26,10 @@ export default class HeroCultistOfAreddon extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.requireAlliedUnit()
+		this.createDeployTargets(TargetType.UNIT)
+			.requireAllied()
 			.requireNotSelf()
-			.require(TargetType.UNIT, ({ targetCard }) => !targetCard.tribes.includes(CardTribe.CULTIST))
+			.require(({ targetCard }) => !targetCard.tribes.includes(CardTribe.CULTIST))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

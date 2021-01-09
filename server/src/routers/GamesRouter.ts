@@ -43,7 +43,7 @@ router.post('/', (req: Request, res: Response) => {
 	const connectedGames = GameLibrary.games.filter((game) => game.players.find((playerInGame) => playerInGame.player === player))
 	connectedGames.forEach((game) => {
 		const playerInGame = game.players.find((playerInGame) => playerInGame.player === player)
-		game.finish(playerInGame?.opponent || null, 'Opponent created a new game')
+		game.finish(playerInGame?.opponent || null, 'Player surrendered (Started new game)')
 	})
 
 	const game = GameLibrary.createOwnedGame(player, gameName.trim(), gameMode, {
@@ -59,7 +59,7 @@ router.post('/', (req: Request, res: Response) => {
 		}
 
 		if (!deck) {
-			GameLibrary.destroyGame(game, 'Invalid AI difficulty')
+			GameLibrary.destroyGame(game, 'Failed to start: Invalid AI difficulty')
 			res.status(400)
 			res.send()
 			return

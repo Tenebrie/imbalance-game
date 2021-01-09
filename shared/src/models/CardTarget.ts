@@ -13,6 +13,7 @@ export type CardTargetCardAllowedTypes =
 	| TargetType.CARD_IN_SPELL_DECK
 
 export interface CardTargetCard {
+	id: string
 	targetMode: TargetMode
 	targetType: CardTargetCardAllowedTypes | TargetType.UNIT
 	sourceCard: Card
@@ -22,6 +23,7 @@ export interface CardTargetCard {
 }
 
 export interface CardTargetUnit {
+	id: string
 	targetMode: TargetMode
 	targetType: TargetType.UNIT
 	sourceCard: Card
@@ -30,6 +32,7 @@ export interface CardTargetUnit {
 }
 
 export interface CardTargetRow {
+	id: string
 	targetMode: TargetMode
 	targetType: TargetType.BOARD_ROW
 	sourceCard: Card

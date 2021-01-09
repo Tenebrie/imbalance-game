@@ -26,7 +26,7 @@ export default class SpellCrystalBarrage extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets().target(TargetType.BOARD_ROW).requireOpponentsRow()
+		this.createDeployTargets(TargetType.BOARD_ROW).requireEnemy()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
@@ -38,7 +38,7 @@ export default class SpellCrystalBarrage extends ServerCard {
 			}
 
 			const crystal = CardLibrary.instantiateByConstructor(this.game, UnitVolatileCrystal)
-			this.game.board.createUnit(crystal, this.ownerInGame, target.index, i)
+			this.game.board.createUnit(crystal, target.index, i)
 		}
 	}
 }

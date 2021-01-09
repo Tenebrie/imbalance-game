@@ -8,6 +8,7 @@ export enum GenericActionMessageType {
 	REQUEST_PLAYERS_GRAVEYARD = 'genericAction_requestPlayersGraveyard',
 	REQUEST_OPPONENTS_GRAVEYARD = 'genericAction_requestOpponentsGraveyard',
 	TURN_END = 'genericAction_turnEnd',
+	SURRENDER = 'genericAction_surrender',
 }
 
 export enum SystemMessageType {

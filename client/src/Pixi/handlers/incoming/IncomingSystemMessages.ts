@@ -3,6 +3,8 @@ import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageH
 import { SystemMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import Core from '@/Pixi/Core'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import GameCollapseMessageData from '@shared/models/network/GameCollapseMessageData'
+import TheGameCollapsePopup from '@/Vue/components/popup/escapeMenu/TheGameCollapsePopup.vue'
 
 const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHandlerFunction } = {
 	[SystemMessageType.MESSAGE_ACKNOWLEDGED]: () => {
@@ -11,6 +13,14 @@ const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHan
 
 	[SystemMessageType.PERFORMANCE_METRICS]: (data: number) => {
 		Core.performance.logServerResponse(data)
+	},
+
+	[SystemMessageType.GAME_COLLAPSED]: (data: GameCollapseMessageData) => {
+		store.dispatch.popupModule.open({
+			component: TheGameCollapsePopup,
+			sticky: true,
+			params: data,
+		})
 	},
 
 	[SystemMessageType.MODE_SPECTATE]: () => {

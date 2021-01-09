@@ -1,7 +1,7 @@
-import {defineModule} from 'direct-vuex'
+import { defineModule } from 'direct-vuex'
 import * as PIXI from 'pixi.js'
 import Card from '@shared/models/Card'
-import store, {moduleActionContext} from '@/Vue/store'
+import store, { moduleActionContext } from '@/Vue/store'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
 const HoveredDeckCardModule = defineModule({
@@ -22,7 +22,7 @@ const HoveredDeckCardModule = defineModule({
 
 	getters: {
 		card: (state): CardMessage | null => {
-			return store.state.editor.cardLibrary.find(card => card.class === state.class) || null
+			return store.state.editor.cardLibrary.find((card) => card.class === state.class) || null
 		},
 	},
 
@@ -33,13 +33,13 @@ const HoveredDeckCardModule = defineModule({
 	},
 
 	actions: {
-		setCard(context, payload: { card: Card, position: PIXI.Point, scrollCallback: () => void }): void {
+		setCard(context, payload: { card: Card; position: PIXI.Point; scrollCallback: () => void }): void {
 			const { commit } = moduleActionContext(context, HoveredDeckCardModule)
 			commit.setCard(payload.card)
 			commit.setPosition(payload.position)
 			commit.setScrollCallback(payload.scrollCallback)
-		}
-	}
+		},
+	},
 })
 
 export default HoveredDeckCardModule

@@ -13,13 +13,14 @@
 		// Import non-ES modules as default imports.
 		"esModuleInterop": true,
 		"jsx": "react",
+		"sourceMap": true,
 		"outDir": "./dist",
 		"baseUrl": "./src",
 		"types": ["jest"],
 		"typeRoots": ["node_modules/@types"],
 		"paths": {
 			"@src/*": [
-				"./src"
+				"./*"
 			],
 			"@shared/*": [
 				"../../shared/src/*"

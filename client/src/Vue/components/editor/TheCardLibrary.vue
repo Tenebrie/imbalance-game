@@ -16,14 +16,12 @@ import Fuse from 'fuse.js'
 import store from '@/Vue/store'
 import Language from '@shared/enums/Language'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
-import CardColor from '@shared/enums/CardColor'
-import CardType from '@shared/enums/CardType'
 import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
 import Localization from '@/Pixi/Localization'
-import {insertRichTextVariables, snakeToCamelCase} from '@/utils/Utils'
+import { insertRichTextVariables, snakeToCamelCase } from '@/utils/Utils'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import {useDecksRouteQuery} from '@/Vue/components/editor/EditorRouteParams'
-import {computed, defineComponent, onMounted, onUnmounted} from '@vue/composition-api'
+import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
+import { computed, defineComponent, onMounted, onUnmounted } from '@vue/composition-api'
 import CardFeature from '@shared/enums/CardFeature'
 
 export default defineComponent({
@@ -57,7 +55,7 @@ export default defineComponent({
 		const library = computed<CardMessage[]>(() => {
 			const routeQuery = useDecksRouteQuery()
 			const isCollectible = (card: CardMessage): boolean => {
-				return card.isCollectible && (card.isExperimental === routeQuery.value.experimental)
+				return card.isCollectible && card.isExperimental === routeQuery.value.experimental
 			}
 
 			const stripFormatting = (str: string): string => {
@@ -66,28 +64,29 @@ export default defineComponent({
 
 			const mapLocalizedFeatures = (card: CardMessage, locale: 'current' | 'original'): string[] => {
 				return card.baseFeatures
-					.map(feature => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
-					.map(id => locale === 'current' ? Localization.getValueOrNull(id) : Localization.getOriginalOrNull(id))
-					.filter(string => string !== null)
+					.map((feature) => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
+					.map((id) => (locale === 'current' ? Localization.getValueOrNull(id) : Localization.getOriginalOrNull(id)))
+					.filter((string) => string !== null)
 			}
 
 			const selectedColor = routeQuery.value.color
 			const selectedFaction = routeQuery.value.faction
 
-			const results = store.state.editor.cardLibrary.filter(card => isCollectible(card))
-				.filter(card => selectedColor === null || card.color === selectedColor)
-				.filter(card => selectedFaction === null || card.faction === selectedFaction)
-				.map(card => ({
+			const results = store.state.editor.cardLibrary
+				.filter((card) => isCollectible(card))
+				.filter((card) => selectedColor === null || card.color === selectedColor)
+				.filter((card) => selectedFaction === null || card.faction === selectedFaction)
+				.map((card) => ({
 					...card,
 					originalName: insertRichTextVariables(Localization.getOriginalOrNull(card.name), card.variables),
 					originalTitle: insertRichTextVariables(Localization.getOriginalOrNull(card.title) || '', card.variables),
-					originalTribes: card.baseTribes.map(tribe => Localization.getOriginalOrNull(`card.tribe.${tribe}`)).join(' '),
+					originalTribes: card.baseTribes.map((tribe) => Localization.getOriginalOrNull(`card.tribe.${tribe}`)).join(' '),
 					originalFeatures: mapLocalizedFeatures(card, 'original'),
 					originalFlavor: Localization.getOriginalOrNull(card.flavor),
 					originalDescription: stripFormatting(insertRichTextVariables(Localization.get(card.description), card.variables)),
 					localizedName: insertRichTextVariables(Localization.get(card.name), card.variables),
 					localizedTitle: insertRichTextVariables(Localization.getValueOrNull(card.title) || '', card.variables),
-					localizedTribes: card.baseTribes.map(tribe => Localization.get(`card.tribe.${tribe}`)).join(' '),
+					localizedTribes: card.baseTribes.map((tribe) => Localization.get(`card.tribe.${tribe}`)).join(' '),
 					localizedFeatures: mapLocalizedFeatures(card, 'current'),
 					localizedFlavor: Localization.get(card.flavor),
 					localizedDescription: stripFormatting(insertRichTextVariables(Localization.get(card.description), card.variables)),
@@ -111,23 +110,23 @@ export default defineComponent({
 					},
 					{
 						name: 'originalTitle',
-						weight: 10
+						weight: 10,
 					},
 					{
 						name: 'originalTribes',
-						weight: 10
+						weight: 10,
 					},
 					{
 						name: 'originalFeatures',
-						weight: 10
+						weight: 10,
 					},
 					{
 						name: 'originalFlavor',
-						weight: 1
+						weight: 1,
 					},
 					{
 						name: 'originalDescription',
-						weight: 9
+						weight: 9,
 					},
 					{
 						name: 'localizedName',
@@ -135,29 +134,29 @@ export default defineComponent({
 					},
 					{
 						name: 'localizedTitle',
-						weight: 10
+						weight: 10,
 					},
 					{
 						name: 'localizedTribes',
-						weight: 10
+						weight: 10,
 					},
 					{
 						name: 'localizedFeatures',
-						weight: 10
+						weight: 10,
 					},
 					{
 						name: 'localizedFlavor',
-						weight: 1
+						weight: 1,
 					},
 					{
 						name: 'localizedDescription',
-						weight: 9
-					}
-				]
+						weight: 9,
+					},
+				],
 			})
 
 			const searchResult = fuse.search(searchQuery)
-			return searchResult.map(result => result.item)
+			return searchResult.map((result) => result.item as CardMessage)
 		})
 
 		return {
@@ -169,37 +168,37 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.the-card-library {
-		position: relative;
+.the-card-library {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+
+	.header {
 		width: 100%;
-		height: 100%;
-		display: flex;
-		flex-direction: column;
+		background: rgba(white, 0.05);
+		border-bottom: 1px solid gray;
+	}
 
-		.header {
-			width: 100%;
-			background: rgba(white, 0.05);
-			border-bottom: 1px solid gray;
-		}
+	.cards {
+		width: calc(100% - 32px);
+		padding: 0 16px;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, 230px);
+		justify-content: space-between;
+		overflow-y: scroll;
 
-		.cards {
-			width: calc(100% - 32px);
-			padding: 0 16px;
-			display: grid;
-			grid-template-columns: repeat(auto-fill, 230px);
-			justify-content: space-between;
-			overflow-y: scroll;
-
-			.card {
-				margin: 16px;
-			}
-		}
-
-		.click-inspect {
-			width: 100%;
-			height: 100%;
+		.card {
+			margin: 16px;
 		}
 	}
+
+	.click-inspect {
+		width: 100%;
+		height: 100%;
+	}
+}
 </style>

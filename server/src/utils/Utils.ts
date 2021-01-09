@@ -26,6 +26,30 @@ export const tryUntil = (args: TryUntilArgs): boolean => {
 	return false
 }
 
+interface LeaderTextVariables {
+	inGame: () => boolean
+	playerName: () => string
+}
+
+export const getLeaderTextVariables = (leaderCard: ServerCard): LeaderTextVariables => {
+	const getPlayerName = () => {
+		const owner = leaderCard.owner
+		if (!owner) {
+			return ''
+		}
+		const name = owner.player.username
+		if (name.indexOf('#') === -1) {
+			return name
+		}
+		return name.slice(0, name.indexOf('#'))
+	}
+
+	return {
+		inGame: () => !!leaderCard.owner,
+		playerName: () => getPlayerName(),
+	}
+}
+
 export const setCookie = (res: express.Response, name: string, value: string): void => {
 	res.cookie(name, value, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
 }
@@ -44,13 +68,13 @@ export const invalidUsernameCharacters = /[^a-zA-Zа-яА-Я0-9\-_.]/g
 
 export const registerFormValidators = {
 	email: (email: string): boolean => {
-		return email.length > 0 && !invalidEmailCharacters.exec(email)
+		return email.length > 0 && email.length <= 128 && !invalidEmailCharacters.exec(email)
 	},
 	username: (username: string): boolean => {
-		return username.length > 0 && !invalidUsernameCharacters.exec(username)
+		return username.length > 0 && username.length <= 16 && !invalidUsernameCharacters.exec(username)
 	},
 	password: (password: string): boolean => {
-		return password.length > 0
+		return password.length > 0 && password.length <= 128
 	},
 }
 

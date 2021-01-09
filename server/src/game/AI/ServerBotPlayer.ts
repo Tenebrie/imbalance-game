@@ -4,7 +4,7 @@ import AccessLevel from '@shared/enums/AccessLevel'
 
 export default class ServerBotPlayer extends ServerPlayer {
 	constructor() {
-		super(uuidv4(), 'bot@tenebrie.com', 'Bot', AccessLevel.NORMAL)
+		super(uuidv4(), 'bot@tenebrie.com', 'AI', AccessLevel.NORMAL)
 	}
 
 	sendMessage(): void {

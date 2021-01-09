@@ -1,0 +1,39 @@
+import CardType from '@shared/enums/CardType'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import GameEventType from '@shared/enums/GameEventType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import CardLocation from '@shared/enums/CardLocation'
+import Keywords from '@src/utils/Keywords'
+
+export default class UnitMadnessIncarnate extends ServerCard {
+	shatterPerRow = 2
+
+	constructor(game: ServerGame) {
+		super(game, {
+			type: CardType.UNIT,
+			color: CardColor.SILVER,
+			faction: CardFaction.ARCANE,
+			stats: {
+				power: 25,
+			},
+			expansionSet: ExpansionSet.BASE,
+			generatedArtworkMagicString: '1',
+		})
+		this.dynamicTextVariables = {
+			shatterPerRow: this.shatterPerRow,
+		}
+
+		this.createCallback(GameEventType.ROUND_STARTED, [CardLocation.DECK])
+			.require(({ player }) => player === this.owner)
+			.perform(() => {
+				this.game.board.getControlledRows(this.owner).forEach((row) => {
+					this.game.animation.thread(() => {
+						Keywords.shatter(this.shatterPerRow).on(row)
+					})
+				})
+			})
+	}
+}

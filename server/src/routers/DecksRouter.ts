@@ -74,6 +74,7 @@ router.post(
 		const deckId = uuidv4()
 		if (sharedDeckId) {
 			deck = await SharedDeckDatabase.selectSharedDeckById(sharedDeckId)
+			await SharedDeckDatabase.updateSharedDeckTimestamp(sharedDeckId)
 		} else {
 			deck = ServerEditorDeck.newDeck()
 		}

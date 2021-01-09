@@ -2,6 +2,7 @@ import pgMigrate from 'node-pg-migrate'
 import { Client, QueryResult } from 'pg'
 import { colorize } from '../utils/Utils'
 import AsciiColor from '../enums/AsciiColor'
+import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 
 class Database {
 	private client: Client | undefined
@@ -11,7 +12,7 @@ class Database {
 	}
 
 	constructor() {
-		this.init()
+		this.init().then()
 	}
 
 	public async init(): Promise<void> {
@@ -41,14 +42,15 @@ class Database {
 
 			console.info('Database client ready')
 			this.client = client
+			GameHistoryDatabase.closeAbandonedGames().then()
 		} catch (e) {
 			console.error('[ERROR] Unable to connect to database!', e)
 		}
 	}
 
-	public async insertRow(query: string): Promise<boolean> {
+	public async insertRow(query: string, values: any[] = []): Promise<boolean> {
 		try {
-			await this.runQuery(query)
+			await this.runQuery(query, values)
 		} catch (err) {
 			console.error(err)
 			return false
@@ -57,9 +59,9 @@ class Database {
 		return true
 	}
 
-	public async selectRow<T>(query: string): Promise<T | null> {
+	public async selectRow<T>(query: string, values: any[] = []): Promise<T | null> {
 		try {
-			const result = await this.runQuery(query)
+			const result = await this.runQuery(query, values)
 			if (!result.rows[0]) {
 				return null
 			}
@@ -70,9 +72,9 @@ class Database {
 		}
 	}
 
-	public async selectRows<T>(query: string): Promise<T[] | null> {
+	public async selectRows<T>(query: string, values: any[] = []): Promise<T[] | null> {
 		try {
-			const result = await this.runQuery(query)
+			const result = await this.runQuery(query, values)
 			if (!result.rows) {
 				return []
 			}
@@ -83,9 +85,9 @@ class Database {
 		}
 	}
 
-	public async updateRows(query: string): Promise<boolean> {
+	public async updateRows(query: string, values: any[] = []): Promise<boolean> {
 		try {
-			await this.runQuery(query)
+			await this.runQuery(query, values)
 		} catch (err) {
 			console.error(err)
 			return false
@@ -94,9 +96,9 @@ class Database {
 		return true
 	}
 
-	public async deleteRows(query: string): Promise<boolean> {
+	public async deleteRows(query: string, values: any[] = []): Promise<boolean> {
 		try {
-			await this.runQuery(query)
+			await this.runQuery(query, values)
 		} catch (err) {
 			console.error(err)
 			return false
@@ -105,7 +107,7 @@ class Database {
 		return true
 	}
 
-	private async runQuery(query: string): Promise<QueryResult> {
+	private async runQuery(query: string, values: any[]): Promise<QueryResult> {
 		if (!this.client) {
 			throw { status: 503, message: 'Database client is not yet ready' }
 		}
@@ -116,13 +118,19 @@ class Database {
 				return
 			}
 
-			this.client.query(query, (err, res) => {
-				if (err) {
-					reject(err)
-					return
+			this.client.query(
+				{
+					text: query,
+					values: values,
+				},
+				(err, res) => {
+					if (err) {
+						reject(err)
+						return
+					}
+					resolve(res)
 				}
-				resolve(res)
-			})
+			)
 		})
 	}
 }

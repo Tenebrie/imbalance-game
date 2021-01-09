@@ -20,6 +20,7 @@ export default class OpenCardMessage implements CardMessage {
 	name: string
 	title: string
 	flavor: string
+	listName: string
 	description: string
 
 	stats: OpenCardStatsMessage
@@ -46,6 +47,7 @@ export default class OpenCardMessage implements CardMessage {
 		this.name = card.name
 		this.title = card.title
 		this.flavor = card.flavor
+		this.listName = card.listName
 		this.description = card.description
 
 		this.stats = new OpenCardStatsMessage(card.stats)

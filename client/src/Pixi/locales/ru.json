@@ -239,18 +239,11 @@
 
 	"card.hidden.name": "[Скрытая карта]",
 
-	"card.leaderVelElleron.name": "Вель'Эллерон",
-	"card.leaderVelElleron.title": "Боевой Маг",
 	"card.leaderVelElleron.description": "*Предводитель Аркана*<p>*Начало раунда:*\nПолучите +{manaPerRound} ед. Маны.",
 
-	"card.leaderVelRaminea.name": "Вель'Раминеа",
-	"card.leaderVelRaminea.title": "Заклинательница Пламени",
 	"card.leaderVelRaminea.description": "*Предводитель Аркана*<p>*Начало раунда:*\nПолучите +{manaPerRound} ед. Маны.",
 
-	"card.leaderNighterie.name": "Найтери",
-	"card.leaderNighterie.title": "Хранитель Теней",
 	"card.leaderNighterie.description": "*Предводитель Аркана*<p>*Начало раунда:*\nПолучите +{manaPerRound} ед. Маны.",
-
 
 	"card.heroZamarath.name": "Замарат",
 	"card.heroZamarath.title": "Защитник",
@@ -296,7 +289,6 @@
 	"card.heroMetrearte.title": "Кот-копирка",
 	"card.heroMetrearte.description": "*Вход в игру:*\nВыберите способность любого предводителя Аркана.\nПолучите ее копию.",
 
-
 	"card.heroPozoga.name": "Пожога",
 	"card.heroPozoga.title": "Поджигатель",
 	"card.heroPozoga.description": "*Вход в игру:*\nУничтожьте все карты с наибольшей Силой на столе.",
@@ -313,13 +305,11 @@
 	"card.heroJom.title": "Послушник Пустоты",
 	"card.heroJom.description": "*Вход в игру:*\n*Создайте* *Разлом Пустоты*.<p>*Начало хода:*\nЕсли у вас на столе есть как минимум {portalsNeeded} *Разлома Пустоты*, уничтожьте их и *создайте* *Разлом Бездны*.",
 
-
 	"card.heroSparklingSpirit.name": "Искрящийся дух",
 	"card.heroSparklingSpirit.description": "Ваши *Искры* наносят на {extraDamage} Урона больше.",
 
 	"card.heroRagingElemental.name": "Беснующийся\nэлементаль",
 	"card.heroRagingElemental.description": "Получив урон, {name} атакует ближайших вражеских юнитов, нанося урон, равный собственной Силе.<p>Затем, он уничтожает себя.",
-
 
 	"card.heroStormDancer.name": "Танцующий c бурей",
 	"card.heroStormDancer.description": "Когда вы используете заклинание, дает +{powerGiven} Силы соседним юнитам.\nЕсли это *Буря*, вместо этого дает им +{stormPowerGiven} Силы.",
@@ -345,21 +335,17 @@
 	"card.unitCultistBrute.name": "Культист-бугай",
 	"card.unitCultistBrute.description": "*Вход в игру:*\nУничтожьте союзного юнита.\nЗатем, дайте +{bonusPower} ед. Силы этой карте.",
 
-
 	"card.unitCultistSpellslinger.name": "Культист-заклинатель",
 	"card.unitCultistSpellslinger.description": "*Вход в игру:*\nУничтожьте союзного юнита.\nЗатем, *Создайте* *Свиток*.\nОн стоит на 1 ед. Маны дешевле за каждую единицу Силы цели.",
 
-
 	"card.heroCultistOfAreddon.name": "Культист Ареддона",
 	"card.heroCultistOfAreddon.description": "*Вход в игру:*\nУничтожьте союзного юнита, который не является культистом.\nЗатем, *Создайте* его копию.",
-
 
 	"card.heroAdventuringGuildMaster.name": "Глава гильдии\nприключений",
 	"card.heroAdventuringGuildMaster.description": "*Вход в игру:*\nПолучает +{powerPerCard} Силы за каждого другого юнита, сыгранного в этот ход.",
 
 	"card.heroForksmanshipInstructor.name": "Инструктор\nвилования",
 	"card.heroForksmanshipInstructor.description": "Когда вы играете юнита с {powerThreshold} ед. Силы или меньше, дайте ему +{bonusPower} ед. Силы.",
-
 
 	"card.heroTribeShaman.name": "Племенной шаман",
 	"card.heroTribeShaman.description": "*Вход в игру:*\n*Создайте* *Целебный дождь*",
@@ -381,10 +367,8 @@
 	"card.unitChargingKnight.name": "Несущийся рыцарь",
 	"card.unitChargingKnight.description": "*Приказ*:\nНанесите {damage} ед. Урона вражескому юниту.<p>Может совершать *Приказы* только если передвинулся на ряд вперед в этот ход.",
 
-
 	"card.unitPriestessOfAedine.name": "Жрица Аедин",
 	"card.unitPriestessOfAedine.description": "*Вход в игру:*\nВосстановите {healing} Силы повреждённому союзному юниту.",
-
 
 	"card.unitSupplyWagon.name": "Военная повозка",
 	"card.unitSupplyWagon.description": "*Вход в игру:*\nДайте +{extraPower} ед. Силы соседним юнитам.\nЗатем, *Оттолкните* их {pushDistance} ряд вперед.",
@@ -440,7 +424,6 @@
 	"card.unitHighClassPerformer.name": "Профессиональный\nисполнитель",
 	"card.unitHighClassPerformer.description": "*Вход в игру:*\nДайте +{bonusPower} ед. Силы всем союзным юнитам на других рядах.<p>Эта карта может быть сыграна только на ряд как минимум с {cardsRequired} союзными юнитами.",
 
-
 	"card.unitHungrySpellslinger.name": "Голодный\nзаклинатель",
 	"card.unitHungrySpellslinger.description": "*Поглощение *{infuseCost}*:*\nДобавьте Свиток в вашу руку.\nОн стоит на {spellDiscount} ед. Маны дешевле.",
 
@@ -449,7 +432,6 @@
 
 	"card.unitTrainedHound.name": "Прирученная гончая",
 	"card.unitTrainedHound.description": "<i>Нет эффекта</i>",
-
 
 	"card.unitEnergyRelay.name": "Энергетический узел",
 	"card.unitEnergyRelay.description": "В *Конце хода*, *Поглощение *{infuseCost}*:*\nНанесите {damageDealt} ед. Урона противостоящим вражеским юнитам.",
@@ -460,7 +442,6 @@
 	"card.unitVoidcaller.name": "Зовущий Пустоту",
 	"card.unitVoidcaller.description": "*Вход в игру:*\n*Создайте* *Разлом Пустоты*",
 
-
 	"card.unitVoidPortal.name": "Разлом Пустоты",
 	"card.unitVoidPortal.description": "*Конец хода:*\nДобавьте *Зверя Пустоты* на стол рядом с этим юнитом.\nОн получает +{powerPerSpell} ед. Силы за каждое уникальное заклинание в вашем сбросе.",
 
@@ -470,20 +451,14 @@
 	"card.unitVoidspawn.name": "Зверь Пустоты",
 	"card.unitVoidspawn.description": "<i>Нет эффекта</i>",
 
-
 	"card.unitLivingShadow.name": "Ожившая тень",
 	"card.unitLivingShadow.description": "<i>Нет эффекта</i>",
-
 
 	"card.unitShadowspawn.name": "Теневой зверь",
 	"card.unitShadowspawn.description": "<i>Нет эффекта</i>",
 
-
 	"card.unitTinySparkling.name": "Искрящаяся кроха",
 	"card.unitTinySparkling.description": "<i>Нет эффекта</i>",
-
-
-
 
 	"card.tokenPlayerDeck.name": "Ваша колода",
 	"card.tokenPlayerDeck.description": "Выберите вашу колоду",
@@ -494,10 +469,8 @@
 	"card.spellLightningStorm.name": "Грозовая буря",
 	"card.spellLightningStorm.description": "<ifn isUpgraded>Нанесите {damage} ед. урона {targetCount} цели(ям).</if><if isUpgraded>Нанесите {damage} ед. урона вражескому юниту. Повторите этот эффект {targetCount} раз(а).</if><p><i>Количество целей увеличивается на {targetsPerStorm} за каждую *Бурю* в вашем сбросе.</i>",
 
-
 	"card.spellEnchantedStorm.name": "Зачарованная буря",
 	"card.spellEnchantedStorm.description": "<ifn isUpgraded>Добавьте +{buffPower} ед. силы {targetCount} союзным юнитам.</if><if isUpgraded>Добавьте +{buffPower} ед. силы союзному юниту. Повторите этот эффект {targetCount} раз.</if><p><i>Бонус силы увеличивается на {powerPerStorm} за каждую *Бурю* в вашем сбросе.</i>",
-
 
 	"card.spellHealingRain.name": "Целебный дождь",
 	"card.spellHealingRain.description": "Восстановите {healing} ед. силы всем союзным юнитам.<p><i>Объем исцеления увеличивается на {healingPerStorm} за каждую *Бурю* в вашем сбросе.</i>",
@@ -522,9 +495,6 @@
 
 	"card.spellSteelSpark.name": "Стальная Искра",
 	"card.spellSteelSpark.description": "Наносит {damage} Урона противнику.<p>Наносит {sideDamage} Урона всем ближайшим к цели юнитам.",
-
-
-
 
 	"card.spellAnEncouragement.name": "Воодушевление",
 	"card.spellAnEncouragement.description": "Выберите союзника.\nВ следующем раунде он получит {bonusPower} Силы.",

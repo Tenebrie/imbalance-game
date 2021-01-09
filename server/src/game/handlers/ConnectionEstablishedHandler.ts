@@ -41,6 +41,7 @@ export default {
 					OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(playerInGame.player, card)
 				})
 			OutgoingMessageHandlers.notifyAboutDeckLeader(playerInGame, opponent, playerInGame.leader)
+			OutgoingMessageHandlers.notifyAboutDeckLeader(opponent, playerInGame, opponent.leader)
 		}
 		OutgoingMessageHandlers.sendBoardState(playerInGame.player, game.board)
 		OutgoingMessageHandlers.sendStackState(playerInGame.player, game.cardPlay.cardResolveStack)
@@ -48,17 +49,18 @@ export default {
 			OutgoingMessageHandlers.sendActivePlayer(playerInGame.player, game.activePlayer)
 		}
 		if (playerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
-			OutgoingMessageHandlers.notifyAboutCardsMulliganed(playerInGame.player, playerInGame)
+			game.cardPlay.requestedDeployTargets = game.cardPlay.getDeployTargets()
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargetsForReconnect(
 				playerInGame.player,
 				TargetMode.DEPLOY_EFFECT,
-				game.cardPlay.getValidTargets(),
+				game.cardPlay.requestedDeployTargets.map((deployTarget) => deployTarget.target),
 				game.cardPlay.cardResolveStack.currentCard.card
 			)
 		} else if (playerInGame.mulliganMode) {
+			OutgoingMessageHandlers.notifyAboutCardsMulliganed(playerInGame.player, playerInGame)
 			const cardsToMulligan = playerInGame.cardHand.unitCards
 			const targets = Utils.sortCards(cardsToMulligan).map((card) =>
-				ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card)
+				ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card)
 			)
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, targets)
 		}
@@ -100,23 +102,25 @@ export default {
 				OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(spectator.player, card)
 			})
 		OutgoingMessageHandlers.notifyAboutDeckLeader(spectator, opponent, spectatedPlayerInGame.leader)
+		OutgoingMessageHandlers.notifyAboutDeckLeader(opponent, spectatedPlayerInGame, opponent.leader)
 		OutgoingMessageHandlers.sendBoardState(spectator.player, game.board)
 		OutgoingMessageHandlers.sendStackState(spectator.player, game.cardPlay.cardResolveStack)
 		if (game.activePlayer) {
 			OutgoingMessageHandlers.sendActivePlayer(spectator.player, game.activePlayer)
 		}
 		if (spectatedPlayerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
-			OutgoingMessageHandlers.notifyAboutCardsMulliganed(spectator.player, spectatedPlayerInGame)
+			game.cardPlay.requestedDeployTargets = game.cardPlay.getDeployTargets()
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				spectator.player,
 				TargetMode.DEPLOY_EFFECT,
-				game.cardPlay.getValidTargets(),
+				game.cardPlay.requestedDeployTargets.map((deployTarget) => deployTarget.target),
 				game.cardPlay.cardResolveStack.currentCard.card
 			)
 		} else if (spectatedPlayerInGame.mulliganMode) {
+			OutgoingMessageHandlers.notifyAboutCardsMulliganed(spectator.player, spectatedPlayerInGame)
 			const cardsToMulligan = spectatedPlayerInGame.cardHand.unitCards
 			const targets = Utils.sortCards(cardsToMulligan).map((card) =>
-				ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.MULLIGAN, card)
+				ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card)
 			)
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(spectator.player, TargetMode.MULLIGAN, targets)
 		}

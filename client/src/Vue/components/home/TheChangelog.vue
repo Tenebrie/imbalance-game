@@ -13,23 +13,21 @@ export default Vue.extend({})
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 
-	.the-changelog {
+.the-changelog {
+	.iframe-container {
+		width: calc(100% - 64px);
+		height: 100%;
+		padding: 32px;
 
-		.iframe-container {
-			width: calc(100% - 64px);
+		iframe {
+			width: 100%;
 			height: 100%;
-			padding: 32px;
+			border: none;
 
-			iframe {
-				width: 100%;
-				height: 100%;
-				border: none;
-
-				color: red !important;
-			}
-
+			color: red !important;
 		}
 	}
+}
 </style>

@@ -17,6 +17,7 @@ import { Router as WebSocketRouter } from 'express-ws'
 import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
+import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 
 const router = express.Router() as WebSocketRouter
 
@@ -84,9 +85,14 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			handler(msg.data, currentGame, currentPlayerInGame)
 			const t2 = process.hrtime(t1)
 			OutgoingMessageHandlers.notifyAboutPerformanceMetrics(currentPlayerInGame.player, t2[1] / 1000000)
-		} catch (e) {
-			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, e)
-			currentGame.forceShutdown('An error occurred')
+		} catch (error) {
+			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
+			GameHistoryDatabase.logGameError(currentGame, error)
+			currentGame.players.forEach((playerInGame) => {
+				OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
+			})
+			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Player action)', null)
+			currentGame.forceShutdown('Unhandled error (Player action)')
 		}
 	})
 
@@ -140,9 +146,14 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 
 		try {
 			handler(msg.data, currentGame, currentSpectator)
-		} catch (e) {
-			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, e)
-			currentGame.forceShutdown('An error occurred')
+		} catch (error) {
+			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
+			GameHistoryDatabase.logGameError(currentGame, error)
+			currentGame.players.forEach((playerInGame) => {
+				OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
+			})
+			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Spectator action)', null)
+			currentGame.forceShutdown('Unhandled error (Spectator action)')
 		}
 	})
 

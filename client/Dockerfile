@@ -12,8 +12,8 @@ RUN apt-get install --yes build-essential yarn
 
 ADD ./client /app/client
 ADD ./shared /app/shared
-COPY .eslintrc.json /app/client
-COPY .eslintrc.json /app/shared
+# COPY .eslintrc.js /app/client
+COPY .eslintrc.js /app/shared
 COPY .prettierrc.js /app/client
 COPY .prettierrc.js /app/shared
 

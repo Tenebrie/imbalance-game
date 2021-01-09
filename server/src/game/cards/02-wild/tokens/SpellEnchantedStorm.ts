@@ -39,11 +39,11 @@ export default class SpellEnchantedStorm extends ServerCard {
 		}
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT, this.targetCount)
-			.requireAlliedUnit()
-			.require(TargetType.UNIT, (args) => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
-			.label(TargetType.UNIT, 'card.spellEnchantedStorm.target')
+		this.createDeployTargets(TargetType.UNIT)
+			.targetCount(this.targetCount)
+			.requireAllied()
+			.require((args) => this.isUpgraded() || !this.targetsHit.includes(args.targetCard))
+			.label('card.spellEnchantedStorm.target')
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 

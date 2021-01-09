@@ -26,7 +26,7 @@ export default class SpellScrollOfGrowth extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets().target(TargetType.UNIT).requireAlliedUnit()
+		this.createDeployTargets(TargetType.UNIT).requireAllied()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}

@@ -27,17 +27,15 @@ export default class SpellNightmareDrain extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployEffectTargets()
-			.target(TargetType.UNIT)
-			.require(TargetType.UNIT, (args) => args.targetCard.stats.power < args.targetCard.stats.basePower)
+		this.createDeployTargets(TargetType.UNIT).require((args) => args.targetCard.stats.power < args.targetCard.stats.basePower)
 
 		/* Create basic unit if no target available */
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
-			.require(() => this.game.cardPlay.getValidTargets().length === 0)
+			.require(() => this.game.cardPlay.getDeployTargets().length === 0)
 			.perform(() => {
 				const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
 				const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 0)
-				this.game.board.createUnit(shadowspawn, this.ownerInGame, targetRow.index, targetRow.cards.length)
+				this.game.board.createUnit(shadowspawn, targetRow.index, targetRow.cards.length)
 			})
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard.unit!))
@@ -46,7 +44,7 @@ export default class SpellNightmareDrain extends ServerCard {
 	private onTargetSelected(target: ServerUnit): void {
 		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
 		const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 0)
-		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, this.ownerInGame, targetRow.index, targetRow.cards.length)
+		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, targetRow.index, targetRow.cards.length)
 		if (!shadowspawnUnit) {
 			return
 		}

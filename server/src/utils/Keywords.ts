@@ -7,6 +7,9 @@ import CardType from '@shared/enums/CardType'
 import ServerBuff from '../game/models/ServerBuff'
 import ServerAnimation from '../game/models/ServerAnimation'
 import BuffUnitToSpellConversion from '../game/buffs/BuffUnitToSpellConversion'
+import ServerBoardRow from '@src/game/models/ServerBoardRow'
+import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
+import Constants from '@shared/Constants'
 
 const createCard = (player: ServerPlayerInGame, card: ServerCard): ServerCard => {
 	card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
@@ -40,7 +43,6 @@ export default {
 	},
 
 	addCard: {
-		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(card.game, cardClass)
@@ -58,7 +60,6 @@ export default {
 			},
 		}),
 
-		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		for: (player: ServerPlayerInGame) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(player.game, cardClass)
@@ -78,7 +79,6 @@ export default {
 	},
 
 	createCard: {
-		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(card.game, cardClass)
@@ -96,7 +96,6 @@ export default {
 			},
 		}),
 
-		// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 		for: (player: ServerPlayerInGame) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(player.game, cardClass)
@@ -134,7 +133,6 @@ export default {
 		player.game.animation.play(ServerAnimation.cardGenerateMana(card))
 	},
 
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	dispel: (count: number) => ({
 		from: (targetCard: ServerCard) => ({
 			withSourceAs: (sourceCard: ServerCard) => {
@@ -143,4 +141,18 @@ export default {
 			},
 		}),
 	}),
+
+	shatter: (count: number) => ({
+		on: (targetRow: ServerBoardRow) => {
+			for (let i = 0; i < count; i++) {
+				targetRow.game.animation.thread(() => {
+					const shatteredSpaceCount = targetRow.cards.filter((unit) => unit.card instanceof UnitShatteredSpace).length
+					const unitIndex = shatteredSpaceCount % 2 === 0 ? 0 : Constants.MAX_CARDS_PER_ROW
+					targetRow.createUnit(new UnitShatteredSpace(targetRow.game), unitIndex)
+				})
+			}
+		},
+	}),
 }
+
+/* eslint @typescript-eslint/explicit-module-boundary-types: 0 */

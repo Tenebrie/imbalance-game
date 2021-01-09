@@ -3,31 +3,31 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import { defineComponent } from '@vue/composition-api'
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
-		TheCardLibraryItem
+		TheCardLibraryItem,
 	},
 
 	props: {
 		cardClass: {
 			type: String,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	computed: {
 		card(): CardMessage | null {
-			return store.state.editor.cardLibrary.find(card => card.class === this.cardClass)
-		}
-	}
+			return store.state.editor.cardLibrary.find((card) => card.class === this.cardClass)
+		},
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "../../styles/generic";
+@import '../../styles/generic';
 </style>

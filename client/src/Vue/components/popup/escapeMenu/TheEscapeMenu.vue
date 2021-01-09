@@ -10,7 +10,7 @@
 			<div class="menu-separator"></div>
 			<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>
 			<div class="menu-separator"></div>
-			<button @click="onLeaveGame" class="primary game-button destructive">Leave game</button>
+			<button @click="onLeaveGame" class="primary game-button destructive">Surrender</button>
 		</div>
 	</div>
 </template>
@@ -21,7 +21,7 @@ import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
 import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
 import TheSimpleSettings from '@/Vue/components/popup/escapeMenu/TheSimpleSettings.vue'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-import {defineComponent} from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
 	components: {
@@ -35,13 +35,13 @@ export default defineComponent({
 
 		const onShowSettings = (): void => {
 			store.dispatch.popupModule.open({
-				component: TheSimpleSettings
+				component: TheSimpleSettings,
 			})
 		}
 
 		const onShowGameLog = (): void => {
 			store.dispatch.popupModule.open({
-				component: TheGameLog
+				component: TheGameLog,
 			})
 		}
 
@@ -74,46 +74,46 @@ export default defineComponent({
 			onShowOpponentsGraveyard,
 			onLeaveGame,
 		}
-	}
+	},
 })
 </script>
 
 <style scoped lang="scss">
-	@import "src/Vue/styles/generic";
+@import 'src/Vue/styles/generic';
 
-	.the-escape-menu {
-		position: absolute;
+.the-escape-menu {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.the-escape-menu-container {
+	border-radius: 16px;
+	width: 300px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: $COLOR_BACKGROUND_GAME_MENU_BORDER;
+	padding: 16px 32px;
+
+	button {
 		width: 100%;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		margin: 8px;
 	}
+}
 
-	.the-escape-menu-container {
-		border-radius: 16px;
-		width: 300px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		background: $COLOR_BACKGROUND_GAME_MENU_BORDER;
-		padding: 16px 32px;
+.menu-separator {
+	width: 100%;
+	height: 1px;
+	margin: 8px 0;
+	background: rgba(black, 0.7);
+}
 
-		button {
-			width: 100%;
-			margin: 8px;
-		}
-	}
-
-	.menu-separator {
-		width: 100%;
-		height: 1px;
-		margin: 8px 0;
-		background: rgba(black, 0.7);
-	}
-
-	.logo {
-		height: 170px;
-	}
+.logo {
+	height: 170px;
+}
 </style>
