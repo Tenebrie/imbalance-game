@@ -4,6 +4,7 @@ import { CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas'
 import CardLibrary from '../game/libraries/CardLibrary'
 import createSeededRandom from 'seedrandom'
 import rgb2hex from 'rgb-hex'
+import sharp from 'sharp'
 
 enum ImageMode {
 	SINGLE_PATH,
@@ -25,7 +26,7 @@ class CardImageGenerator {
 		const placeholderDir = path.join(__dirname, '../../../../client/generated/assets/cards')
 
 		const targetCardClasses = CardLibrary.cards.filter(
-			(card) => !fs.existsSync(`${productionDir}/${card.class}.png`) && !fs.existsSync(`${placeholderDir}/${card.class}.png`)
+			(card) => !fs.existsSync(`${productionDir}/${card.class}.webp`) && !fs.existsSync(`${placeholderDir}/${card.class}.webp`)
 		)
 		if (targetCardClasses.length === 0) {
 			return
@@ -46,7 +47,7 @@ class CardImageGenerator {
 		ctx.translate(0.5, 0.5)
 
 		const filepath = path.join(__dirname, '../../../../assets/bg-clean.png')
-		loadImage(filepath).then((image) => {
+		loadImage(filepath).then(async (image) => {
 			ctx.drawImage(image, 0, 0, width, height)
 
 			ctx.globalCompositeOperation = 'source-atop'
@@ -90,7 +91,7 @@ class CardImageGenerator {
 			const dir = path.join(__dirname, '../../../../client/generated/assets/cards')
 			fs.mkdirSync(dir, { recursive: true })
 
-			fs.writeFileSync(`${dir}/${cardClass}.png`, buffer)
+			await sharp(buffer).webp({ nearLossless: true }).toFile(`${dir}/${cardClass}.webp`)
 		})
 	}
 

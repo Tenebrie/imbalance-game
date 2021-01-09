@@ -4,6 +4,7 @@ dist/
 client/.idea/*
 server/.idea/*
 shared/.idea/*
+asset-converter/.idea/*
 server/client/
 tsBuildInfo.json
 client/src/*.js
@@ -12,5 +13,6 @@ server/src/*.js
 server/src/*.js.map
 shared/src/*.js
 shared/src/*.js.map
+asset-converter/input/*
 yarn-error.log
 
