@@ -166,7 +166,7 @@
 	"card.feature.keywordBuffTemporaryCard.name": "Temporary card (Buff)",
 	"card.feature.keywordBuffTemporaryCard.description": "Target card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.building.name": "Building",
-	"card.feature.building.description": "Stays on the board after the round end.",
+	"card.feature.building.description": "Always has 0 Power and permanent Nightwatch.",
 	"card.feature.building.text": "*Building*",
 	"card.feature.protector.name": "Protector",
 	"card.feature.protector.description": "Whenever an allied unit behind this takes damage, intercept it.",
@@ -573,7 +573,7 @@
 	"card.spellScrollOfGrowth.description": "Apply *Growth* to an allied unit.",
 
 	"card.spellScrollOfImmunity.name": "Scroll of Immunity",
-	"card.spellScrollOfImmunity.description": "Apply *Immunity* to an allied unit the start of your next turn.",
+	"card.spellScrollOfImmunity.description": "Apply *Immunity* to an allied unit until the start of your next turn.",
 
 	"card.spellScrollOfBlinding.name": "Scroll of Blinding",
 	"card.spellScrollOfBlinding.description": "Choose an enemy unit.\nApply *Stun* to target and adjacent units for {buffDuration} turns.",
@@ -766,7 +766,7 @@
 	"card.unitUrbanAmbusher.description": "Has +{bonusPower} Power for every Building on the same row.",
 
 	"card.unitUrbanTactician.name": "Urban Tactician",
-	"card.unitUrbanTactician.description": "Your other units that are directly adjacent to a Building have +{bonusPower} Power.<p><i>Doesn't work on buildings.</i>",
+	"card.unitUrbanTactician.description": "Your other units that are directly adjacent to a Building have +{bonusPower} Power.",
 
 	"card.unitMadnessIncarnate.name": "Madness Incarnate",
 	"card.unitMadnessIncarnate.description": "*Round start:*\nIf this is in your deck, *Shatter* {shatterPerRow} on every friendly row.",

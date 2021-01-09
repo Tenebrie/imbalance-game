@@ -38,7 +38,9 @@ export default class SpellCrystalBarrage extends ServerCard {
 			}
 
 			const crystal = CardLibrary.instantiateByConstructor(this.game, UnitVolatileCrystal)
-			this.game.board.createUnit(crystal, target.index, i)
+			this.game.animation.thread(() => {
+				this.game.board.createUnit(crystal, target.index, i)
+			})
 		}
 	}
 }

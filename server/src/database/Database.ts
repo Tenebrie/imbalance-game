@@ -17,6 +17,9 @@ class Database {
 
 	public async init(): Promise<void> {
 		const databaseUrl = process.env.DATABASE_URL || ''
+		if (!databaseUrl) {
+			return
+		}
 
 		console.info(`Connecting to database at ${colorize(databaseUrl, AsciiColor.CYAN)}`)
 		const client = new Client({

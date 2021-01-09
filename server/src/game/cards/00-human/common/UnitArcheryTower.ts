@@ -7,10 +7,10 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { ServerCardTargetCard, ServerCardTargetUnit } from '../../../models/ServerCardTarget'
+import { ServerCardTargetUnit } from '../../../models/ServerCardTarget'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFeature from '@shared/enums/CardFeature'
-import { asDirectUnitDamage } from '../../../../utils/LeaderStats'
+import { asDirectUnitDamage } from '@src/utils/LeaderStats'
 import BuffCanAttack from '../../../buffs/BuffCanAttack'
 import CardTribe from '@shared/enums/CardTribe'
 
@@ -25,7 +25,7 @@ export default class UnitArcheryTower extends ServerCard {
 			features: [CardFeature.BUILDING],
 			stats: {
 				power: 0,
-				armor: 7,
+				armor: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

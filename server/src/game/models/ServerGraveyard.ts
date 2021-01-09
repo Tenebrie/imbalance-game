@@ -6,6 +6,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerOwnedCard from './ServerOwnedCard'
 import CardTribe from '@shared/enums/CardTribe'
 import { CardConstructor } from '../libraries/CardLibrary'
+import CardType from '@shared/enums/CardType'
 
 export default class ServerGraveyard implements CardDeck {
 	owner: ServerPlayerInGame
@@ -22,6 +23,14 @@ export default class ServerGraveyard implements CardDeck {
 
 	public get allCards(): ServerCard[] {
 		return this.unitCards.slice().concat(this.spellCards)
+	}
+
+	public addCard(card: ServerCard): void {
+		if (card.type === CardType.UNIT) {
+			this.addUnit(card)
+		} else if (card.type === CardType.SPELL) {
+			this.addSpell(card)
+		}
 	}
 
 	public addUnit(card: ServerCard): void {

@@ -6,11 +6,11 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashUnitDamage } from '../../../../utils/LeaderStats'
+import { asSplashUnitDamage } from '@src/utils/LeaderStats'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 
 export default class UnitQuietInfiltrator extends ServerCard {
-	damage = asSplashUnitDamage(3)
+	damage = asSplashUnitDamage(5)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -19,7 +19,7 @@ export default class UnitQuietInfiltrator extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.SPY],
 			stats: {
-				power: 6,
+				power: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -27,27 +27,13 @@ export default class UnitQuietInfiltrator extends ServerCard {
 			damage: this.damage,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
-	}
-
-	private onDeploy(): void {
-		const adjacentUnits = this.game.board.getAdjacentUnits(this.unit!)
-		adjacentUnits.forEach((unit) => {
-			this.game.animation.createInstantAnimationThread()
-			unit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
-			this.game.animation.commitAnimationThread()
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
+			const adjacentUnits = this.game.board.getAdjacentUnits(this.unit!)
+			adjacentUnits.forEach((unit) => {
+				this.game.animation.createInstantAnimationThread()
+				unit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+				this.game.animation.commitAnimationThread()
+			})
 		})
-		// adjacentUnits = adjacentUnits.filter(unit => unit.isAlive())
-		// if (adjacentUnits.length === 0) {
-		// 	return
-		// }
-		//
-		// this.game.animation.syncAnimationThreads()
-		// adjacentUnits.forEach(unit => {
-		// 	this.game.animation.createInstantAnimationThread()
-		// 	this.game.board.moveUnitForward(unit, this.pushDistance)
-		// 	this.game.animation.commitAnimationThread()
-		// })
-		// this.game.animation.play(ServerAnimation.unitMove())
 	}
 }
