@@ -20,7 +20,7 @@ COPY .eslintrc.js /app/server
 COPY .eslintrc.js /app/shared
 COPY .prettierrc.js /app/server
 COPY .prettierrc.js /app/shared
-RUN yarn add canvas@2.6.1
+RUN yarn
 
 # Expose server
 EXPOSE 3000

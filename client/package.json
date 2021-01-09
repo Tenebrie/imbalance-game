@@ -11,8 +11,6 @@
 		"lint": "node_modules/.bin/vue-cli-service lint"
 	},
 	"dependencies": {
-		"@babel/plugin-proposal-optional-chaining": "^7.12.7",
-		"@babel/plugin-syntax-dynamic-import": "^7.8.3",
 		"@types/gapi": "0.0.39",
 		"@types/gapi.auth2": "0.0.52",
 		"@types/howler": "^2.2.1",
@@ -30,18 +28,7 @@
 		"@vue/eslint-config-standard": "^6.0.0",
 		"@vue/eslint-config-typescript": "^7.0.0",
 		"axios": "^0.21.1",
-		"camelcase": "^6.0.0",
-		"core-js": "^3.8.1",
 		"direct-vuex": "^0.12.0",
-		"eslint": "^7.16.0",
-		"eslint-config-prettier": "^7.1.0",
-		"eslint-plugin-import": "^2.20.2",
-		"eslint-plugin-node": "^11.1.0",
-		"eslint-plugin-prettier": "^3.3.0",
-		"eslint-plugin-prettier-vue": "^2.1.1",
-		"eslint-plugin-promise": "^4.2.1",
-		"eslint-plugin-standard": "^5.0.0",
-		"eslint-plugin-vue": "^7.4.0",
 		"fuse.js": "^6.4.5",
 		"howler": "^2.2.0",
 		"js-easing-functions": "^1.0.3",
@@ -50,11 +37,7 @@
 		"node-sass": "^5.0.0",
 		"pixi-particles": "^4.2.1",
 		"pixi.js": "^5.3.7",
-		"prettier": "^2.2.1",
-		"prettier-eslint": "^12.0.0",
 		"sass-loader": "^10.1.0",
-		"simple-progress-webpack-plugin": "^1.1.2",
-		"sweetalert": "^2.1.2",
 		"throttle-debounce": "^3.0.1",
 		"typescript": "^4.0.5",
 		"uuid": "^8.3.2",
@@ -76,6 +59,18 @@
 		"last 2 versions"
 	],
 	"devDependencies": {
-		"electron": "^11.1.1"
+		"@babel/plugin-proposal-optional-chaining": "^7.12.7",
+		"@babel/plugin-syntax-dynamic-import": "^7.8.3",
+		"eslint": "^7.16.0",
+		"eslint-config-prettier": "^7.1.0",
+		"eslint-plugin-import": "^2.20.2",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-prettier": "^3.3.0",
+		"eslint-plugin-prettier-vue": "^2.1.1",
+		"eslint-plugin-promise": "^4.2.1",
+		"eslint-plugin-standard": "^5.0.0",
+		"eslint-plugin-vue": "^7.4.0",
+		"prettier": "^2.2.1",
+		"prettier-eslint": "^12.0.0"
 	}
 }
