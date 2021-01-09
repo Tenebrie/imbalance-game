@@ -36,6 +36,7 @@ export default {
 			const cardsToNotify = game.board
 				.getUnitsOwnedByPlayer(playerInGame)
 				.map((unit) => unit.card)
+				.concat(playerInGame.leader)
 				.concat(playerInGame.cardHand.allCards)
 			const messages = cardsToNotify.map((card) => new CardVariablesMessage(card))
 			playerInGame.player.sendMessage({

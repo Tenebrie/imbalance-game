@@ -12,7 +12,7 @@ export default class OrderTargetDefinitionBuilder<EventArgs extends TargetValida
 	private readonly targetType: TargetType
 
 	private __targetCount: number | LeaderStatValueGetter = 1
-	private __totalTargetCount: number | LeaderStatValueGetter = 1
+	private __totalTargetCount: number | LeaderStatValueGetter = Infinity
 	private __conditions: ((args: EventArgs) => boolean)[] = []
 	private __performCallbacks: ((args: EventArgs) => void)[] = []
 	private __evaluator: ((args: EventArgs) => number) | null = null

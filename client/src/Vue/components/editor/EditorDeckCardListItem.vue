@@ -15,23 +15,28 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
 import Utils from '@/utils/Utils'
+import { defineComponent, PropType } from '@vue/composition-api'
+import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 
-export default Vue.extend({
+export default defineComponent({
 	props: {
 		card: {
-			type: Object,
+			type: Object as PropType<PopulatedEditorCard>,
 			required: true,
 		},
 	},
 
 	computed: {
 		fullName(): string {
+			const listName = Localization.getValueOrNull(this.card.listName)
+			if (listName) {
+				return listName
+			}
 			let name = Localization.get(this.card.name)
 			const title = Localization.getValueOrNull(this.card.title)
 			if (title) {

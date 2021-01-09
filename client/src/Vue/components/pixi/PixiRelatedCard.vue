@@ -3,12 +3,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import { defineComponent } from '@vue/composition-api'
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
 		TheCardLibraryItem,
 	},

@@ -7,6 +7,7 @@ import store from '@/Vue/store'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { sortCards } from '@shared/Utils'
+import Core from '@/Pixi/Core'
 
 export const forEachInNumericEnum = (enumeration: { [s: number]: number }, handler: (val: number) => any): void => {
 	for (const value in enumeration) {
@@ -20,6 +21,10 @@ export const forEachInStringEnum = (enumeration: { [s: number]: string }, handle
 	for (const value in enumeration) {
 		handler(enumeration[value])
 	}
+}
+
+export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
+	return Core.board.isInverted && player === 'player' ? Constants.GAME_BOARD_ROW_COUNT - index - 1 : index
 }
 
 export const snakeToCamelCase = (str: string): string =>

@@ -43,9 +43,12 @@
 				</span>
 			</div>
 		</div>
-		<InspectedCardBuffs :card="inspectedCard" />
+		<div v-if="displayBuffs">
+			<div class="menu-separator" v-if="displayedFeatures.length > 0 || displayInGameStats" />
+			<InspectedCardBuffs :card="inspectedCard" />
+		</div>
 		<div class="card-info-section" v-if="displayedRelatedCards.length > 0">
-			<div class="menu-separator" v-if="displayInGameStats || displayedFeatures.length > 0" />
+			<div class="menu-separator" v-if="displayInGameStats || displayedFeatures.length > 0 || displayBuffs" />
 			<div class="header" v-if="displayLeaderPowersLabel">{{ $locale.get('card.inspect.leaderPowers') }}:</div>
 			<div class="card-section">
 				<div class="related-card" v-for="relatedCardClass in displayedRelatedCards" :key="relatedCardClass">
@@ -54,7 +57,10 @@
 			</div>
 		</div>
 		<div class="card-info-section flavor-section" v-if="flavorTextLines.length > 0">
-			<div class="menu-separator" v-if="displayInGameStats || displayedFeatures.length > 0 || inspectedCard.relatedCards.length > 0" />
+			<div
+				class="menu-separator"
+				v-if="displayInGameStats || displayedFeatures.length > 0 || inspectedCard.relatedCards.length > 0 || displayBuffs"
+			/>
 			<div v-for="textLine in this.flavorTextLines" :key="textLine">
 				{{ textLine }}
 			</div>
@@ -77,6 +83,9 @@ import CardColor from '@shared/enums/CardColor'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import InspectedCardBuffs from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
+import ClientBuff from '@/Pixi/models/ClientBuff'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
+import BuffFeature from '@shared/enums/BuffFeature'
 
 export default defineComponent({
 	components: {
@@ -135,7 +144,14 @@ export default defineComponent({
 		})
 
 		const displayInGameStats = computed<boolean>(() => {
-			return isInGame && inspectedCard.value && inspectedCard.value instanceof RenderedCard
+			return (
+				isInGame && inspectedCard.value && inspectedCard.value instanceof RenderedCard && inspectedCard.value.color !== CardColor.LEADER
+			)
+		})
+
+		const displayBuffs = computed<boolean>(() => {
+			const buffs = inspectedCard.value.buffs.buffs as (ClientBuff | BuffMessage)[]
+			return buffs.some((buff) => !buff.buffFeatures.includes(BuffFeature.SERVICE_BUFF))
 		})
 
 		const overlayDisplayed = computed<boolean>(() => {
@@ -172,6 +188,7 @@ export default defineComponent({
 			inspectedCard,
 			editorModeOffset,
 			overlayDisplayed,
+			displayBuffs,
 			displayInGameStats,
 			displayedFeatures,
 			displayedRelatedCards,

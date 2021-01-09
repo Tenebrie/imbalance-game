@@ -7,6 +7,9 @@ module.exports = {
 				'@shared': path.resolve(__dirname, '../shared/src/'),
 			},
 		},
+		output: {
+			pathinfo: false
+		}
 	},
 	devServer: {
 		publicPath: '/',

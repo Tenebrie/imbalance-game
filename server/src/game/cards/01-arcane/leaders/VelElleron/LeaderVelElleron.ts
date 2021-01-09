@@ -8,6 +8,7 @@ import SpellFireball from './SpellFireball'
 import SpellAnEncouragement from './SpellAnEncouragement'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import SpellEternalServitude from './SpellEternalServitude'
+import { getLeaderTextVariables } from '@src/utils/Utils'
 
 export default class LeaderVelElleron extends ServerCard {
 	manaPerRound = 10
@@ -23,6 +24,7 @@ export default class LeaderVelElleron extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound,
+			...getLeaderTextVariables(this),
 		}
 	}
 }

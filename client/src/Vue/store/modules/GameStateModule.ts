@@ -14,7 +14,12 @@ const gameStateModule = defineModule({
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
+		playerMorale: 0 as number,
 		playerUnitMana: 0 as number,
+		playerSpellMana: 0 as number,
+		playerSpellManaInDanger: 0 as number,
+		opponentMorale: 0 as number,
+		opponentSpellMana: 0 as number,
 		inspectedCardId: null as string | null,
 		isSpectating: false as boolean,
 		cardsMulliganed: 0 as number,
@@ -41,8 +46,28 @@ const gameStateModule = defineModule({
 			state.gameStatus = gameStatus
 		},
 
+		setPlayerMorale(state, value: number): void {
+			state.playerMorale = value
+		},
+
 		setPlayerUnitMana(state, playerUnitMana: number): void {
 			state.playerUnitMana = playerUnitMana
+		},
+
+		setPlayerSpellMana(state, value: number): void {
+			state.playerSpellMana = value
+		},
+
+		setPlayerSpellManaInDanger(state, value: number): void {
+			state.playerSpellManaInDanger = value
+		},
+
+		setOpponentMorale(state, value: number): void {
+			state.opponentMorale = value
+		},
+
+		setOpponentSpellMana(state, value: number): void {
+			state.opponentSpellMana = value
 		},
 
 		setInspectedCard(state, inspectedCard: RenderedCard | null): void {

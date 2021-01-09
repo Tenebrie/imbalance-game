@@ -6,6 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import SpellFlamingSpark from './SpellFlamingSpark'
 import SpellFlameweave from './SpellFlameweave'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import { getLeaderTextVariables } from '@src/utils/Utils'
 
 export default class LeaderVelRaminea extends ServerCard {
 	manaPerRound = 10
@@ -22,6 +23,7 @@ export default class LeaderVelRaminea extends ServerCard {
 		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound,
+			...getLeaderTextVariables(this),
 		}
 	}
 }

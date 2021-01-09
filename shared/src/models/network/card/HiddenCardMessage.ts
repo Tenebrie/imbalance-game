@@ -31,6 +31,7 @@ export default class HiddenCardMessage implements CardMessage {
 	name = 'card.hidden.name'
 	title = ''
 	flavor = ''
+	listName = ''
 	description = ''
 
 	isHidden = true

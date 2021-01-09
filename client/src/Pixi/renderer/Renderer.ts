@@ -46,8 +46,6 @@ export default class Renderer {
 
 	timeLabel: PIXI.Text
 	actionLabel: RichText
-	playerNameLabel: PIXI.Text
-	opponentNameLabel: PIXI.Text
 	playerPowerLabel: PIXI.Text
 	playerPowerLabelContainer: PIXI.Container
 	opponentPowerLabel: PIXI.Text
@@ -124,26 +122,6 @@ export default class Renderer {
 		this.actionLabel.style.dropShadowBlur = 4
 		this.rootContainer.addChild(this.actionLabel)
 
-		/* Player name label */
-		this.playerNameLabel = new PIXI.Text('', {
-			fontFamily: 'Arial',
-			fontSize: 24 * this.superSamplingLevel,
-			fill: 0xffffff,
-		})
-		this.playerNameLabel.anchor.set(0, 1)
-		this.playerNameLabel.position.set(10, this.getScreenHeight() - 10)
-		this.rootContainer.addChild(this.playerNameLabel)
-
-		/* Opponent player name */
-		this.opponentNameLabel = new PIXI.Text('', {
-			fontFamily: 'Arial',
-			fontSize: 24 * this.superSamplingLevel,
-			fill: 0xffffff,
-		})
-
-		this.opponentNameLabel.position.set(10, 10)
-		this.rootContainer.addChild(this.opponentNameLabel)
-
 		/* Power labels */
 		this.playerPowerLabel = new PIXI.Text('', {
 			fontFamily: 'Roboto',
@@ -187,6 +165,16 @@ export default class Renderer {
 		this.deltaTime = deltaTime
 		this.deltaTimeFraction = deltaTimeFraction
 
+		const playerLeaderCard = Core.player?.leader
+		if (playerLeaderCard && Core.input.inspectedCard !== playerLeaderCard) {
+			this.renderCard(playerLeaderCard, [playerLeaderCard], 'player', 'leader')
+		}
+
+		const opponentLeaderCard = Core.opponent?.leader
+		if (opponentLeaderCard && Core.input.inspectedCard !== opponentLeaderCard) {
+			this.renderCard(opponentLeaderCard, [opponentLeaderCard], 'opponent', 'leader')
+		}
+
 		const unitCards = Core.player.cardHand.unitCards
 		const sortedPlayerUnitCards = Core.player.cardHand.unitCards
 			.filter((card) => card !== Core.input.inspectedCard)
@@ -194,7 +182,7 @@ export default class Renderer {
 			.slice()
 			.reverse()
 		sortedPlayerUnitCards.forEach((renderedCard) => {
-			this.renderCard(renderedCard, unitCards, false, false)
+			this.renderCard(renderedCard, unitCards, 'player', 'unit')
 		})
 
 		const spellCards = Core.player.cardHand.spellCards
@@ -204,7 +192,7 @@ export default class Renderer {
 			.slice()
 			.reverse()
 		sortedPlayerSpellCards.forEach((renderedCard) => {
-			this.renderCard(renderedCard, spellCards, false, true)
+			this.renderCard(renderedCard, spellCards, 'player', 'spell')
 		})
 
 		if (Core.opponent) {
@@ -215,7 +203,7 @@ export default class Renderer {
 					return
 				}
 
-				this.renderCard(renderedCard, opponentsUnitCards, true, false)
+				this.renderCard(renderedCard, opponentsUnitCards, 'opponent', 'unit')
 			})
 
 			const opponentsSpellCards = Core.opponent.cardHand.spellCards
@@ -225,7 +213,7 @@ export default class Renderer {
 					return
 				}
 
-				this.renderCard(renderedCard, opponentsSpellCards, true, true)
+				this.renderCard(renderedCard, opponentsSpellCards, 'opponent', 'spell')
 			})
 		}
 
@@ -238,17 +226,17 @@ export default class Renderer {
 		this.renderTargetingArrow()
 	}
 
-	private renderCard(card: RenderedCard, cardArray: RenderedCard[], isOpponent: boolean, isSpellHand: boolean): void {
+	private renderCard(card: RenderedCard, cardArray: RenderedCard[], owner: 'player' | 'opponent', hand: 'leader' | 'unit' | 'spell'): void {
 		if (Core.input.grabbedCard && card === Core.input.grabbedCard.card) {
-			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
+			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
 			const displayMode = this.renderGrabbedCard(card, Core.input.mousePosition)
 			card.setDisplayMode(displayMode)
 		} else if (!Core.input.grabbedCard && Core.input.hoveredCard && card === Core.input.hoveredCard.card) {
-			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
-			this.renderHoveredCardInHand(card, isOpponent)
+			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
+			this.renderHoveredCardInHand(card, owner)
 			card.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
 		} else {
-			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, isOpponent, isSpellHand)
+			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
 			card.setDisplayMode(CardDisplayMode.IN_HAND)
 		}
 	}
@@ -303,46 +291,52 @@ export default class Renderer {
 		renderedCard: RenderedCard,
 		handPosition: number,
 		handSize: number,
-		isOpponent: boolean,
-		isSpellHand: boolean
+		owner: 'player' | 'opponent',
+		hand: 'leader' | 'unit' | 'spell'
 	): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
 		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
 
-		const windowFraction = isOpponent ? this.OPPONENT_HAND_WINDOW_FRACTION : this.PLAYER_HAND_WINDOW_FRACTION
+		const windowFraction = owner === 'player' ? this.PLAYER_HAND_WINDOW_FRACTION : this.OPPONENT_HAND_WINDOW_FRACTION
 		const cardHeight = this.getScreenHeight() * windowFraction
+		const screenWidth = this.getScreenWidth()
 
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
+		const leaderHandFraction = 0.1
 		const unitHandFraction = 0.5
-		const spellHandFraction = 0.2
+		const spellHandFraction = 0.3
+		const handPaddingFraction = 0.02
+		const handsOffsetFraction = 0.1
 
-		const containerFraction = isSpellHand ? spellHandFraction : unitHandFraction
-		const containerWidth = Math.min(this.getScreenWidth() * containerFraction, cardHeight * this.CARD_ASPECT_RATIO * handSize)
+		const containerFraction = hand === 'unit' ? unitHandFraction : hand === 'spell' ? spellHandFraction : leaderHandFraction
+		const singleCardWidth = (screenWidth * containerFraction) / handSize
+		const singleCardOverflow = Math.max(0, cardHeight * this.CARD_ASPECT_RATIO - singleCardWidth)
+		const containerWidth = Math.min(screenWidth * containerFraction - singleCardOverflow, cardHeight * this.CARD_ASPECT_RATIO * handSize)
 
-		const screenCenter = this.getScreenWidth() / 2
+		const screenCenter = screenWidth / 2
 		const cardWidth = containerWidth / handSize
 		const distanceToCenter = handPosition - (handSize - 1) / 2
 
 		container.visible = true
 		const targetPosition = {
-			x: distanceToCenter * cardWidth + screenCenter,
+			x: distanceToCenter * cardWidth + screenCenter - handsOffsetFraction * screenWidth,
 			y: cardHeight * 0.5,
 		}
 
-		if (isOpponent) {
-			targetPosition.y += this.getScreenHeight() * this.OPPONENT_HAND_OFFSET_FRACTION
-		} else {
+		if (owner === 'player') {
 			targetPosition.y = this.getScreenHeight() - targetPosition.y
+		} else {
+			targetPosition.y += this.getScreenHeight() * this.OPPONENT_HAND_OFFSET_FRACTION
 		}
 
-		if (isSpellHand) {
-			targetPosition.x += (this.getScreenWidth() * 0.5) / 2 + 125
-		} else {
-			targetPosition.x -= (this.getScreenWidth() * 0.2) / 2 + 125
+		if (hand === 'spell') {
+			targetPosition.x += (screenWidth * unitHandFraction) / 2 + (screenWidth * spellHandFraction) / 2 + screenWidth * handPaddingFraction
+		} else if (hand === 'leader') {
+			targetPosition.x += -(screenWidth * unitHandFraction) / 2 - (screenWidth * leaderHandFraction) / 2 - screenWidth * handPaddingFraction
 		}
 
 		const isForcedTarget =
@@ -357,7 +351,7 @@ export default class Renderer {
 			container.position.y += (targetPosition.y - container.position.y) * this.deltaTimeFraction * 7
 		} else {
 			container.position.x = targetPosition.x
-			container.position.y = targetPosition.y - (cardHeight / 2) * (isOpponent ? -1 : 1)
+			container.position.y = targetPosition.y - (cardHeight / 2) * (owner === 'opponent' ? -1 : 1)
 		}
 		container.zIndex = HAND_CARD_ZINDEX + (handPosition + 1) * 2
 
@@ -370,7 +364,7 @@ export default class Renderer {
 		disabledOverlaySprite.zIndex = container.zIndex + 1
 	}
 
-	public renderHoveredCardInHand(renderedCard: RenderedCard, isOpponent: boolean): void {
+	public renderHoveredCardInHand(renderedCard: RenderedCard, owner: 'player' | 'opponent'): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
@@ -379,10 +373,10 @@ export default class Renderer {
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		if (isOpponent) {
-			container.position.y = cardHeight * 0.5
-		} else {
+		if (owner === 'player') {
 			container.position.y = this.getScreenHeight() - cardHeight * 0.5
+		} else {
+			container.position.y = cardHeight * 0.5
 		}
 
 		container.zIndex = HOVERED_CARD_ZINDEX
@@ -420,14 +414,6 @@ export default class Renderer {
 	}
 
 	public renderTextLabels(): void {
-		/* Player name labels */
-		const username = Core.player.player.username.split('#')[0]
-		this.playerNameLabel.text = `${username}\n- Morale: ${Core.player.morale}\n- Mana: ${Core.player.spellMana}`
-		if (Core.opponent) {
-			const opponentUsername = Core.opponent.player.username.split('#')[0]
-			this.opponentNameLabel.text = `${opponentUsername}\n- Morale: ${Core.opponent.morale}\n- Mana: ${Core.opponent.spellMana}`
-		}
-
 		/* Power labels */
 		const getPowerFontSize = (value: number): number => {
 			const string = value.toString()

@@ -292,18 +292,20 @@
 
 	"card.hidden.name": "[Hidden card]",
 
-	"card.leaderVelElleron.name": "Vel'Elleron",
-	"card.leaderVelElleron.title": "The Battlemage",
+	"card.leaderVelElleron.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Battlemage</if>",
+	"card.leaderVelElleron.title": "<if inGame>The Battlemage</if>",
+	"card.leaderVelElleron.listName": "The Battlemage",
 	"card.leaderVelElleron.description": "*Arcane Leader*<p>*Round start:*\nGain +{manaPerRound} Mana",
 
-	"card.leaderVelRaminea.name": "Vel'Raminea",
-	"card.leaderVelRaminea.title": "The Flameweaver",
+	"card.leaderVelRaminea.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Flameweaver</if>",
+	"card.leaderVelRaminea.title": "<if inGame>The Flameweaver</if>",
+	"card.leaderVelRaminea.listName": "The Flameweaver",
 	"card.leaderVelRaminea.description": "*Arcane Leader*<p>*Round start:*\nGain +{manaPerRound} Mana",
 
-	"card.leaderNighterie.name": "Nighterie",
-	"card.leaderNighterie.title": "The Keeper of Shadows",
+	"card.leaderNighterie.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Keeper of Shadows</if>",
+	"card.leaderNighterie.title": "<if inGame>The Keeper of Shadows</if>",
+	"card.leaderNighterie.listName": "The Keeper of Shadows",
 	"card.leaderNighterie.description": "*Arcane Leader*<p>*Round start:*\nGain +{manaPerRound} Mana",
-	"card.leaderNighterie.flavor": "...and the shadows bring her their shadowhoney.",
 
 	"card.heroZamarath.name": "Zamarath",
 	"card.heroZamarath.title": "The Protector",
@@ -323,7 +325,7 @@
 
 	"card.heroGarellion.name": "Garellion",
 	"card.heroGarellion.title": "The Conduit",
-	"card.heroGarellion.description": "On round end, *Infuse All*:\nGain {powerPerMana} Power per Mana *Infused*.",
+	"card.heroGarellion.description": "*Round end*:\n*Infuse All* to gain {powerPerMana} Power per Mana *Infused*.",
 
 	"card.heroAura.name": "Aura",
 	"card.heroAura.title": "The Golden Hawk",
@@ -668,8 +670,9 @@
 	"card.tokenChallengeDummyTargetDummy.description": "<i>No effect</i>",
 	"card.tokenChallengeDummyTargetDummy.flavor": "- \"We have put all our Mana into our new creation. It is the most powerful Dummy of them all.\"",
 
-	"card.leaderMaximilian.name": "Maximilian",
-	"card.leaderMaximilian.title": "The Commander",
+	"card.leaderMaximilian.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Commander</if>",
+	"card.leaderMaximilian.title": "<if inGame>The Commander</if>",
+	"card.leaderMaximilian.listName": "The Commander",
 	"card.leaderMaximilian.description": "*Human Leader*<p>*Round start:*\nGain +{manaPerRound} Mana<p>Gets two copies of *Tactical Move*",
 
 	"card.spellQuickStrike.name": "Quick Strike",

@@ -136,6 +136,7 @@ export default class ServerCard implements Card {
 	public readonly name: string
 	public readonly title: string
 	public readonly flavor: string
+	public readonly listName: string
 	public readonly description: string
 
 	public readonly stats: ServerCardStats
@@ -193,6 +194,7 @@ export default class ServerCard implements Card {
 		this.name = `card.${this.class}.name`
 		this.title = `card.${this.class}.title`
 		this.flavor = `card.${this.class}.flavor`
+		this.listName = `card.${this.class}.listName`
 		this.description = `card.${this.class}.description`
 
 		if (props.tribes === undefined) {

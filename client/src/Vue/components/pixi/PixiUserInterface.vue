@@ -5,12 +5,20 @@
 			<button @click="onShowEscapeMenu" class="primary borderless game-button"><i class="fas fa-cog"></i></button>
 		</div>
 		<div class="end-turn-button-container" v-if="isEndTurnButtonVisible">
-			<div>
+			<div class="player-name">
+				<span v-if="opponent">{{ opponent.username }}</span
+				><span v-if="!opponent">Opponent</span>
+			</div>
+			<PixiPointDisplay header="Mana" :value="opponentSpellMana" :limit="10" :in-danger="0" />
+			<PixiPointDisplay header="Round wins" :value="2 - playerMorale" :limit="2" :in-danger="0" />
+			<div class="button">
 				<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
 				<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">
 					End round
 				</button>
 			</div>
+			<PixiPointDisplay header="Round wins" :value="2 - opponentMorale" :limit="2" :in-danger="0" />
+			<PixiPointDisplay header="Mana" :value="playerSpellMana" :limit="10" :in-danger="playerSpellManaInDanger" />
 		</div>
 		<div class="mulligan-label-container" v-if="mulliganMode">
 			<div>Replace cards ({{ maxCardMulligans - cardsMulliganed }}/{{ maxCardMulligans }})</div>
@@ -65,9 +73,11 @@ import { computed, onMounted, onUnmounted } from '@vue/composition-api'
 import Core from '@/Pixi/Core'
 import Utils from '@/utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
+import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
 
 export default Vue.extend({
 	components: {
+		PixiPointDisplay,
 		PixiInspectedCard,
 	},
 	setup() {
@@ -176,6 +186,12 @@ export default Vue.extend({
 		const player = computed<Player>(() => store.state.player)
 		const opponent = computed<Player | null>(() => store.state.gameStateModule.opponent)
 
+		const playerMorale = computed<number>(() => store.state.gameStateModule.playerMorale)
+		const playerSpellMana = computed<number>(() => store.state.gameStateModule.playerSpellMana)
+		const playerSpellManaInDanger = computed<number>(() => store.state.gameStateModule.playerSpellManaInDanger)
+		const opponentMorale = computed<number>(() => store.state.gameStateModule.opponentMorale)
+		const opponentSpellMana = computed<number>(() => store.state.gameStateModule.opponentSpellMana)
+
 		const cardsMulliganed = computed(() => store.state.gameStateModule.cardsMulliganed)
 		const maxCardMulligans = computed(() => store.state.gameStateModule.maxCardMulligans)
 
@@ -205,6 +221,11 @@ export default Vue.extend({
 			spectatorOverlayClass,
 			cardsMulliganed,
 			maxCardMulligans,
+			playerMorale,
+			playerSpellMana,
+			playerSpellManaInDanger,
+			opponentMorale,
+			opponentSpellMana,
 		}
 	},
 })
@@ -331,9 +352,25 @@ export default Vue.extend({
 		right: 0;
 		height: calc(100% - 128px);
 		display: flex;
+		flex-direction: column;
 		padding: 64px;
-		align-items: center;
+		align-items: flex-end;
 		justify-content: center;
+		bottom: calc(9.5% + 16px);
+
+		.player-name {
+			font-weight: bold;
+			font-size: 30px;
+			margin: 24px 0;
+		}
+
+		.button {
+			margin: 24px 0;
+		}
+
+		& > div {
+			margin: 4px 0;
+		}
 	}
 
 	.confirm-targets-button-container {

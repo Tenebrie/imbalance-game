@@ -239,16 +239,10 @@
 
 	"card.hidden.name": "[Скрытая карта]",
 
-	"card.leaderVelElleron.name": "Вель'Эллерон",
-	"card.leaderVelElleron.title": "Боевой Маг",
 	"card.leaderVelElleron.description": "*Предводитель Аркана*<p>*Начало раунда:*\nПолучите +{manaPerRound} ед. Маны.",
 
-	"card.leaderVelRaminea.name": "Вель'Раминеа",
-	"card.leaderVelRaminea.title": "Заклинательница Пламени",
 	"card.leaderVelRaminea.description": "*Предводитель Аркана*<p>*Начало раунда:*\nПолучите +{manaPerRound} ед. Маны.",
 
-	"card.leaderNighterie.name": "Найтери",
-	"card.leaderNighterie.title": "Хранитель Теней",
 	"card.leaderNighterie.description": "*Предводитель Аркана*<p>*Начало раунда:*\nПолучите +{manaPerRound} ед. Маны.",
 
 	"card.heroZamarath.name": "Замарат",

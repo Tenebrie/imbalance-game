@@ -7,7 +7,6 @@ import ServerPlayer from '../game/players/ServerPlayer'
 import express, { Request } from 'express'
 import { sortCards } from '@shared/Utils'
 import { CardConstructor } from '../game/libraries/CardLibrary'
-import CardColor from '@shared/enums/CardColor'
 
 export const AnyCardLocation = 'any'
 
@@ -25,6 +24,30 @@ export const tryUntil = (args: TryUntilArgs): boolean => {
 		}
 	}
 	return false
+}
+
+interface LeaderTextVariables {
+	inGame: () => boolean
+	playerName: () => string
+}
+
+export const getLeaderTextVariables = (leaderCard: ServerCard): LeaderTextVariables => {
+	const getPlayerName = () => {
+		const owner = leaderCard.owner
+		if (!owner) {
+			return ''
+		}
+		const name = owner.player.username
+		if (name.indexOf('#') === -1) {
+			return name
+		}
+		return name.slice(0, name.indexOf('#'))
+	}
+
+	return {
+		inGame: () => !!leaderCard.owner,
+		playerName: () => getPlayerName(),
+	}
 }
 
 export const setCookie = (res: express.Response, name: string, value: string): void => {

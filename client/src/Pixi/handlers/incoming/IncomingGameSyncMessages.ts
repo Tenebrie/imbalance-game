@@ -31,14 +31,16 @@ const IncomingGameSyncMessages: { [index in GameSyncMessageType]: IncomingMessag
 		Core.player.cardDeck = ClientCardDeck.fromMessage(data.cardDeck)
 		Core.player.cardGraveyard = ClientCardDeck.fromMessage(data.cardGraveyard)
 		Core.player.morale = data.morale
-		Core.player.setUnitMana(data.unitMana)
-		Core.player.setSpellMana(data.spellMana)
+		Core.player.unitMana = data.unitMana
+		Core.player.spellMana = data.spellMana
 	},
 
 	[GameSyncMessageType.PLAYER_OPPONENT]: (data: PlayerInGameMessage) => {
 		const playerInGame = ClientPlayerInGame.fromMessage(data)
 		Core.registerOpponent(playerInGame)
 		store.commit.gameStateModule.setOpponentData(playerInGame.player)
+		store.commit.gameStateModule.setOpponentMorale(playerInGame.morale)
+		store.commit.gameStateModule.setOpponentSpellMana(playerInGame.spellMana)
 	},
 
 	[GameSyncMessageType.BOARD_STATE]: (data: BoardMessage) => {

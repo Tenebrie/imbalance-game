@@ -1,6 +1,5 @@
 <template>
 	<div class="card-info-section" v-if="displayedBuffs.length > 0">
-		<div class="menu-separator" />
 		<div class="header">{{ $locale.get('card.inspect.buffs') }}:</div>
 		<InspectedCardBuffListItem v-for="buff in displayedBuffs" :key="buff.buff.id" :buff="buff" />
 	</div>

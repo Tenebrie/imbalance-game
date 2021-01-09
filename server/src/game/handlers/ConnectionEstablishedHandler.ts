@@ -41,6 +41,7 @@ export default {
 					OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(playerInGame.player, card)
 				})
 			OutgoingMessageHandlers.notifyAboutDeckLeader(playerInGame, opponent, playerInGame.leader)
+			OutgoingMessageHandlers.notifyAboutDeckLeader(opponent, playerInGame, opponent.leader)
 		}
 		OutgoingMessageHandlers.sendBoardState(playerInGame.player, game.board)
 		OutgoingMessageHandlers.sendStackState(playerInGame.player, game.cardPlay.cardResolveStack)
@@ -101,6 +102,7 @@ export default {
 				OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(spectator.player, card)
 			})
 		OutgoingMessageHandlers.notifyAboutDeckLeader(spectator, opponent, spectatedPlayerInGame.leader)
+		OutgoingMessageHandlers.notifyAboutDeckLeader(opponent, spectatedPlayerInGame, opponent.leader)
 		OutgoingMessageHandlers.sendBoardState(spectator.player, game.board)
 		OutgoingMessageHandlers.sendStackState(spectator.player, game.cardPlay.cardResolveStack)
 		if (game.activePlayer) {
