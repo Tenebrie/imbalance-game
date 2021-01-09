@@ -36,6 +36,7 @@ export default class UnitVoidPortal extends ServerCard {
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
+			.require(() => !!this.unit)
 			.perform(() => this.onTurnEnded())
 	}
 
