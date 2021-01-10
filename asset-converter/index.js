@@ -17,13 +17,13 @@ const colorize = (text, color) => {
     return `${color}${text}\u001b[0m`
 }
 
-glob("**/*.png", async (er, files) => {
+glob("**/*.@(png|jpg|jpeg)", async (er, files) => {
     const promises = files.map(file => {
         const newFileName = file.substr(0, file.lastIndexOf('.')) + '.webp'
         console.info(`Converting ${colorize(file, AsciiColor.MAGENTA)} -> ${colorize(newFileName, AsciiColor.CYAN)}`)
         return sharp(file)
             .webp({
-                nearLossless: true
+                quality: 80
             })
             .toFile(newFileName)
     })

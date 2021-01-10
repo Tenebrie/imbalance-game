@@ -166,7 +166,7 @@ body {
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('./assets/background-menu.jpg');
+		background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('./assets/background-menu.webp');
 		background-size: cover;
 		filter: blur(8px);
 	}
