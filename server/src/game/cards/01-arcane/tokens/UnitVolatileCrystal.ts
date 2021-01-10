@@ -30,15 +30,14 @@ export default class UnitVolatileCrystal extends ServerCard {
 
 		this.createCallback(GameEventType.UNIT_DESTROYED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card === this)
-			.perform(() => this.onDestroy())
-	}
+			.perform(({ triggeringUnit }) => {
+				const damageTargets = this.game.board.getAdjacentUnits(triggeringUnit)
 
-	private onDestroy(): void {
-		const unit = this.unit
-		const damageTargets = this.game.board.getAdjacentUnits(unit).filter((unit) => unit.rowIndex === unit.rowIndex)
-
-		damageTargets.forEach((unit) => {
-			unit.dealDamage(ServerDamageInstance.fromUnit(this.damage, unit))
-		})
+				damageTargets.forEach((unit) => {
+					this.game.animation.thread(() => {
+						unit.dealDamage(ServerDamageInstance.fromUnit(this.damage, triggeringUnit))
+					})
+				})
+			})
 	}
 }

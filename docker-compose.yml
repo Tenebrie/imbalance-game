@@ -11,7 +11,7 @@ services:
       - server
     ports:
       - 8080:8080
-    command: bash -c "npm run serve"
+    command: bash -c "yarn serve"
     volumes:
       - ./client/src:/app/client/src:cached
       - ./client/public:/app/client/public:cached
@@ -31,7 +31,7 @@ services:
       - dev-db
     ports:
       - 3000:3000
-    command: npm run serve
+    command: yarn serve
     volumes:
       - ./server/src:/app/server/src:cached
       - ./shared/src:/app/shared/src:cached

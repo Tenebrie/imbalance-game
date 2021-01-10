@@ -23,6 +23,7 @@ import {
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
+import CardTarget from '@shared/models/CardTarget'
 
 type PlayedCard = {
 	card: ServerCard
@@ -177,7 +178,7 @@ export default class ServerGameCardPlay {
 		return card.targeting.getDeployTargets(this.cardResolveStack.previousTargets)
 	}
 
-	public selectCardTarget(playerInGame: ServerPlayerInGame, message: CardTargetMessage): void {
+	public selectCardTarget(playerInGame: ServerPlayerInGame, message: CardTargetMessage | CardTarget): void {
 		const currentResolvingCard = this.cardResolveStack.currentEntry
 		if (!currentResolvingCard) {
 			return

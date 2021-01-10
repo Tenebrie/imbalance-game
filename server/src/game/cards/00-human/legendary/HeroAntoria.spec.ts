@@ -22,7 +22,7 @@ describe('HeroAntoria', () => {
 	it('intercepts damage', () => {
 		const damageTarget = game.board.createUnit(new TestingUnitNoTargeting(game), 4, 0)!
 		game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
-		game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0])
+		game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
 		game.events.resolveEvents()
 		expect(damageTarget.card.stats.power).toEqual(10)
 		expect(opponentsCard.stats.power).toEqual(14)
@@ -38,7 +38,7 @@ describe('HeroAntoria', () => {
 
 			game.board.createUnit(new TestingUnitNoTargeting(game), 4, 0)
 			game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
-			game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0])
+			game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
 			game.events.resolveEvents()
 		})
 

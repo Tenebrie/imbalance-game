@@ -172,6 +172,7 @@ export default {
 	unitDestroyed: (args: UnitDestroyedEventArgs): GameEvent => ({
 		type: GameEventType.UNIT_DESTROYED,
 		args: args,
+		effectSource: args.triggeringCard,
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
 		},

@@ -4,13 +4,9 @@
 		"module": "commonjs",
 		"target": "es2019",
 		"lib": ["es2019"],
-		// Search under node_modules for non-relative imports.
 		"moduleResolution": "node",
-		// Process & infer types from .js files.
 		"allowJs": true,
-		// Don't emit; allow Babel to transform files.
 		"noEmit": false,
-		// Import non-ES modules as default imports.
 		"esModuleInterop": true,
 		"jsx": "react",
 		"sourceMap": true,

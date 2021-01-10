@@ -59,7 +59,7 @@ export default Vue.extend({
 		left: 0;
 		width: 100vw;
 		height: 100vh;
-		background: url('../../assets/background-game.jpg');
+		background: url('../../assets/background-game.webp');
 		background-size: cover;
 		background-position-x: center;
 		background-position-y: bottom;

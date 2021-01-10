@@ -64,7 +64,7 @@ export default defineComponent({
 			if (!deck.leader) {
 				return null
 			}
-			return `/assets/icons/${deck.leader.class}.png`
+			return `/assets/icons/${deck.leader.class}.webp`
 		},
 	},
 

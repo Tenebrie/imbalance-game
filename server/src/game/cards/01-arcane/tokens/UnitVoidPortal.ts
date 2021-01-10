@@ -36,12 +36,14 @@ export default class UnitVoidPortal extends ServerCard {
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ player }) => player === this.owner)
-			.require(() => !!this.unit)
 			.perform(() => this.onTurnEnded())
 	}
 
 	public onTurnEnded(): void {
-		const unit = this.unit!
+		const unit = this.unit
+		if (!unit) {
+			return
+		}
 		const owner = this.ownerInGame
 		const voidspawn = CardLibrary.instantiateByConstructor(this.game, UnitVoidspawn)
 		this.game.board.createUnit(voidspawn, unit.rowIndex, unit.unitIndex + 1)

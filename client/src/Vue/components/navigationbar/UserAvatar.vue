@@ -1,6 +1,6 @@
 <template>
 	<div class="user-avatar">
-		<img @click="$emit('click')" class="image" src="../../assets/avatar-placeholder.jpg" alt="User avatar" />
+		<img @click="$emit('click')" class="image" src="../../assets/avatar-placeholder.webp" alt="User avatar" />
 	</div>
 </template>
 

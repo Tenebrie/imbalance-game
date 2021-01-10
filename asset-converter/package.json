@@ -1,0 +1,11 @@
+{
+  "name": "asset-converter",
+  "version": "1.0.0",
+  "description": "Utility project for asset optimization",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "glob": "^7.1.6",
+    "sharp": "^0.27.0"
+  }
+}

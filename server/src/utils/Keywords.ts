@@ -40,6 +40,7 @@ export default {
 
 	discardCard: (card: ServerCard): void => {
 		card.ownerInGame.cardHand.discardCard(card)
+		card.ownerInGame.cardGraveyard.addCard(card)
 	},
 
 	addCard: {

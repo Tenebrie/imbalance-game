@@ -119,7 +119,7 @@ export default class TextureAtlas {
 				return
 			}
 
-			const newTexture = PIXI.Texture.from(`/assets/${fileName}.png`)
+			const newTexture = PIXI.Texture.from(`/assets/${fileName}.webp`)
 			if (newTexture.valid) {
 				onLoaded(newTexture)
 			}
@@ -141,7 +141,7 @@ export default class TextureAtlas {
 	}
 
 	private static loadTextureOnDemand(path: string): PIXI.Texture {
-		const loadedTexture = PIXI.Texture.from(`/assets/${path}.png`)
+		const loadedTexture = PIXI.Texture.from(`/assets/${path}.webp`)
 		if (loadedTexture.valid) {
 			return loadedTexture
 		}
