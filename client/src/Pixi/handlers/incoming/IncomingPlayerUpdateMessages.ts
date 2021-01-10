@@ -124,11 +124,19 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 	},
 
 	[PlayerUpdateMessageType.ROUND_START]: (player: PlayerInGameMessage) => {
-		console.warn(`${player.player.username} has started their round, but it was not properly handled!`)
+		if (player.player.id === Core.player?.player.id) {
+			store.commit.gameStateModule.setIsPlayerInRound(true)
+		} else if (player.player.id === Core.opponent?.player.id) {
+			store.commit.gameStateModule.setIsOpponentInRound(true)
+		}
 	},
 
 	[PlayerUpdateMessageType.ROUND_END]: (player: PlayerInGameMessage) => {
-		console.warn(`${player.player.username} has ended their round, but it was not properly handled!`)
+		if (player.player.id === Core.player?.player.id) {
+			store.commit.gameStateModule.setIsPlayerInRound(false)
+		} else if (player.player.id === Core.opponent?.player.id) {
+			store.commit.gameStateModule.setIsOpponentInRound(false)
+		}
 	},
 
 	[PlayerUpdateMessageType.GAME_END_VICTORY]: () => {

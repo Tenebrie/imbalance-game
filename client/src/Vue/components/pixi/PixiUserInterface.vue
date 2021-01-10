@@ -1,5 +1,8 @@
 <template>
 	<div class="pixi-user-interface">
+		<div class="opponent-smokescreen-container" :class="opponentRoundEndOverlayClass">
+			<span>Round finished</span>
+		</div>
 		<div class="settings-button-container">
 			<button @click="onShowGameLog" class="primary borderless game-button"><i class="fas fa-history"></i></button>
 			<button @click="onShowEscapeMenu" class="primary borderless game-button"><i class="fas fa-cog"></i></button>
@@ -11,12 +14,7 @@
 			</div>
 			<PixiPointDisplay header="Mana" :value="opponentSpellMana" :limit="10" :in-danger="0" />
 			<PixiPointDisplay header="Round wins" :value="2 - playerMorale" :limit="2" :in-danger="0" />
-			<div class="button">
-				<button @click="onEndTurn" class="primary game-button" v-if="!isEndRoundButtonVisible" :disabled="!isPlayersTurn">End turn</button>
-				<button @click="onEndTurn" class="primary game-button destructive" v-if="isEndRoundButtonVisible" :disabled="!isPlayersTurn">
-					End round
-				</button>
-			</div>
+			<PixiEndTurnArea />
 			<PixiPointDisplay header="Round wins" :value="2 - opponentMorale" :limit="2" :in-danger="0" />
 			<PixiPointDisplay header="Mana" :value="playerSpellMana" :limit="10" :in-danger="playerSpellManaInDanger" />
 		</div>
@@ -74,9 +72,11 @@ import Core from '@/Pixi/Core'
 import Utils from '@/utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
 import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
+import PixiEndTurnArea from '@/Vue/components/pixi/PixiEndTurnArea.vue'
 
 export default Vue.extend({
 	components: {
+		PixiEndTurnArea,
 		PixiPointDisplay,
 		PixiInspectedCard,
 	},
@@ -95,10 +95,6 @@ export default Vue.extend({
 				}
 				onShowEscapeMenu()
 			}
-		}
-
-		const onEndTurn = (): void => {
-			OutgoingMessageHandlers.sendEndTurn()
 		}
 
 		const onConfirmTargets = (): void => {
@@ -131,10 +127,6 @@ export default Vue.extend({
 			})
 		}
 
-		const isEndRoundButtonVisible = computed(() => store.state.gameStateModule.playerUnitMana > 0)
-		const isPlayersTurn = computed(() => {
-			return store.state.gameStateModule.isPlayersTurn && store.state.gameStateModule.gameStatus === ClientGameStatus.IN_PROGRESS
-		})
 		const isGameStarted = computed(() => {
 			const status = store.state.gameStateModule.gameStatus
 			return (
@@ -143,9 +135,6 @@ export default Vue.extend({
 				status === ClientGameStatus.DEFEAT ||
 				status === ClientGameStatus.DRAW
 			)
-		})
-		const isEndTurnButtonVisible = computed(() => {
-			return store.state.gameStateModule.popupTargetingMode === null
 		})
 		const isBrowsingDeck = computed(() => {
 			return store.state.gameStateModule.popupTargetingMode === TargetMode.BROWSE
@@ -167,11 +156,21 @@ export default Vue.extend({
 		const confirmTargetsButtonContainerClass = computed(() => ({
 			backgrounded: !cardsVisible.value,
 		}))
+		const isEndTurnButtonVisible = computed(() => {
+			return store.state.gameStateModule.popupTargetingMode === null
+		})
+
+		const hasOpponentFinishedRound = computed(() => {
+			return !store.state.gameStateModule.isOpponentInRound
+		})
 
 		const isVictory = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY)
 		const isDefeat = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DEFEAT)
 		const isDraw = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DRAW)
 		const isSpectating = computed(() => store.state.gameStateModule.isSpectating)
+		const isOpponentFinishedRound = computed(
+			() => !store.state.gameStateModule.isOpponentInRound && store.state.gameStateModule.isPlayerInRound
+		)
 
 		const fadeInOverlayClass = computed(() => ({
 			visible: !isGameStarted.value,
@@ -181,6 +180,9 @@ export default Vue.extend({
 		}))
 		const spectatorOverlayClass = computed(() => ({
 			visible: isSpectating.value,
+		}))
+		const opponentRoundEndOverlayClass = computed(() => ({
+			visible: isOpponentFinishedRound.value,
 		}))
 
 		const player = computed<Player>(() => store.state.player)
@@ -202,15 +204,13 @@ export default Vue.extend({
 			isVictory,
 			isDefeat,
 			isDraw,
-			isPlayersTurn,
-			isEndTurnButtonVisible,
-			isEndRoundButtonVisible,
 			mulliganMode,
 			isConfirmTargetsButtonVisible,
 			isHideTargetsButtonVisible,
+			isEndTurnButtonVisible,
+			hasOpponentFinishedRound,
 			cardsVisible,
 			confirmTargetsButtonContainerClass,
-			onEndTurn,
 			onConfirmTargets,
 			onSortCards,
 			onToggleVisibility,
@@ -219,6 +219,7 @@ export default Vue.extend({
 			fadeInOverlayClass,
 			gameEndScreenClass,
 			spectatorOverlayClass,
+			opponentRoundEndOverlayClass,
 			cardsMulliganed,
 			maxCardMulligans,
 			playerMorale,
@@ -269,6 +270,25 @@ export default Vue.extend({
 		}
 
 		.overlay-message {
+		}
+	}
+
+	.opponent-smokescreen-container {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		background: rgba(black, 0.6);
+		box-shadow: 0 0 100px 100px rgba(black, 0.6);
+		opacity: 0;
+		transition: opacity 1s;
+
+		&.visible {
+			opacity: 1;
+		}
+
+		span {
+			font-family: BrushScript, Roboto, sans-serif;
+			font-size: 48px;
 		}
 	}
 
@@ -351,6 +371,7 @@ export default Vue.extend({
 		position: absolute;
 		right: 0;
 		height: calc(100% - 128px);
+		max-width: 160px;
 		display: flex;
 		flex-direction: column;
 		padding: 64px;
@@ -361,10 +382,6 @@ export default Vue.extend({
 		.player-name {
 			font-weight: bold;
 			font-size: 30px;
-			margin: 24px 0;
-		}
-
-		.button {
 			margin: 24px 0;
 		}
 

@@ -769,7 +769,7 @@
 	"card.unitUrbanTactician.description": "Your other units that are directly adjacent to a Building have +{bonusPower} Power.",
 
 	"card.unitMadnessIncarnate.name": "Madness Incarnate",
-	"card.unitMadnessIncarnate.description": "*Round start:*\nIf this is in your deck, *Shatter* {shatterPerRow} on every friendly row.",
+	"card.unitMadnessIncarnate.description": "*Game start:*\n*Shatter* {shatterPerRow} on every friendly row.",
 
 	"card.unitShatteredSpace.name": "Shattered Space",
 	"card.unitShatteredSpace.description": "*Immune*",
