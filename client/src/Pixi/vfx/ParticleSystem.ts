@@ -1,11 +1,12 @@
 import * as PIXI from 'pixi.js'
 import * as Particles from 'pixi-particles'
+import { EmitterConfig, OldEmitterConfig } from 'pixi-particles'
 import Core from '@/Pixi/Core'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import BuffAlignment from '@shared/enums/BuffAlignment'
-import { EmitterConfig, OldEmitterConfig } from 'pixi-particles'
+import { getBoopColor } from '@/utils/Utils'
 
 interface ParticleEmitterHandle {
 	emitter: Particles.Emitter
@@ -73,6 +74,116 @@ export default class ParticleSystem {
 			this.emitters = this.emitters.filter((handle) => handle.emitter !== emitter)
 			container.parent.removeChild(container)
 		})
+	}
+	public destroyEmitter(emitter: Particles.Emitter, container: PIXI.Container): void {
+		emitter.emit = false
+		setTimeout(() => {
+			this.emitters = this.emitters.filter((handle) => handle.emitter !== emitter)
+			container.parent.removeChild(emitter.parent)
+		}, 1000)
+	}
+
+	private createBoardContainer(): PIXI.Container {
+		const container = new PIXI.Container()
+		Core.renderer.boardEffectsContainer.addChild(container)
+		return container
+	}
+
+	public createSmallBoardBoopEffect(position: PIXI.Point, mouseEvent: MouseEvent): void {
+		const boopContainer = this.createBoardContainer()
+
+		const projectileCount = 10
+		const projectileSpeed = 500
+
+		const emitter = this.createDefaultEmitter(boopContainer, {
+			alpha: { start: 1.0, end: 0 },
+			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			color: getBoopColor(mouseEvent),
+			speed: { start: projectileSpeed, end: 0 },
+			minimumSpeedMultiplier: 0.75,
+			minimumScaleMultiplier: 0.5,
+			startRotation: {
+				min: 0,
+				max: 360,
+			},
+			lifetime: { min: 0.5, max: 0.5 },
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
+			blendMode: 'screen',
+			frequency: 0.049,
+			emitterLifetime: 0.05,
+			maxParticles: 100,
+			pos: position,
+			particlesPerWave: projectileCount,
+			spawnType: 'point',
+		})
+		this.playEmitter(emitter, boopContainer)
+	}
+
+	public createBoardBoopEffect(
+		position: PIXI.Point,
+		mouseEvent: MouseEvent,
+		angle: number,
+		power: number,
+		forcedColor: { start: string; end: string } | null = null
+	): void {
+		const boopContainer = this.createBoardContainer()
+
+		const projectileCount = 400 + 250 * Math.pow(power, 1.5)
+		const projectileSpeed = 500 * Math.pow(power, 1.5)
+
+		const emitter = this.createDefaultEmitter(boopContainer, {
+			alpha: { start: 1.0, end: 0 },
+			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			color: forcedColor || getBoopColor(mouseEvent),
+			speed: { start: projectileSpeed, end: 0 },
+			minimumSpeedMultiplier: 0.01,
+			minimumScaleMultiplier: 0.75 / Math.pow(Math.max(1, power), 2),
+			startRotation: {
+				min: angle - 180 / Math.max(1, power),
+				max: angle + 180 / Math.max(1, power),
+			},
+			lifetime: { min: 0.5 * Math.max(1, power), max: 0.5 * Math.max(1, power) },
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
+			blendMode: 'screen',
+			frequency: 0.049,
+			emitterLifetime: 0.05 + Math.random() * 0.1 * (Math.max(1, power) - 1),
+			maxParticles: 15000,
+			pos: position,
+			particlesPerWave: projectileCount / 5,
+			spawnType: 'point',
+		})
+		this.playEmitter(emitter, boopContainer)
+	}
+
+	public createBoardBoopPrepareEffect(position: PIXI.Point, mouseEvent: MouseEvent): Particles.Emitter {
+		const boopContainer = this.createBoardContainer()
+
+		const emitter = this.createDefaultEmitter(boopContainer, {
+			alpha: { start: 1.0, end: 0 },
+			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			color: getBoopColor(mouseEvent),
+			speed: { start: 150, end: 0 },
+			minimumSpeedMultiplier: 0.1,
+			startRotation: { min: 0, max: 360 },
+			lifetime: { min: 0.5, max: 0.5 },
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
+			blendMode: 'screen',
+			frequency: 0.1,
+			emitterLifetime: 1000,
+			maxParticles: 1000,
+			pos: position,
+			particlesPerWave: 20,
+			spawnType: 'ring',
+			particleSpacing: 10,
+			spawnCircle: {
+				x: 0,
+				y: 0,
+				r: 30,
+				minR: 20,
+			},
+		})
+		this.playEmitter(emitter, boopContainer)
+		return emitter
 	}
 
 	public createAttackImpactParticleEffect(card: RenderedCard): void {

@@ -8,15 +8,17 @@ export default class RenderedProjectile {
 	startingPoint: PIXI.Point
 	targetCard: RenderedCard | null
 	targetPoint: PIXI.Point | null
+	targetMouse = false
 	currentTime: number
 	animationDuration: number
 	lifetime: number
 	randomnessFactor: number
+	curve: number
 	onImpact: () => void
 
 	impactPerformed: boolean
 
-	private constructor(sprite: PIXI.Sprite, startingPoint: PIXI.Point, animationDuration: number, lifetime: number) {
+	private constructor(sprite: PIXI.Sprite, startingPoint: PIXI.Point, animationDuration: number, lifetime: number, curve: number) {
 		this.sprite = sprite
 		this.trail = new ObjectTrail(new PIXI.Point(sprite.position.x, sprite.position.y))
 		this.sprite.addChild(this.trail.rope)
@@ -25,6 +27,7 @@ export default class RenderedProjectile {
 		this.animationDuration = animationDuration
 		this.lifetime = lifetime
 		this.randomnessFactor = Math.random()
+		this.curve = curve
 		this.onImpact = () => {
 			/* Empty */
 		}
@@ -32,8 +35,14 @@ export default class RenderedProjectile {
 		this.impactPerformed = false
 	}
 
-	public static inPlace(sprite: PIXI.Sprite, startingPoint: PIXI.Point, animationDuration: number, lifetime: number): RenderedProjectile {
-		return new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime)
+	public static inPlace(
+		sprite: PIXI.Sprite,
+		startingPoint: PIXI.Point,
+		animationDuration: number,
+		lifetime: number,
+		curve = 1
+	): RenderedProjectile {
+		return new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime, curve)
 	}
 
 	public static targetCard(
@@ -41,9 +50,10 @@ export default class RenderedProjectile {
 		startingPoint: PIXI.Point,
 		targetCard: RenderedCard,
 		animationDuration: number,
-		lifetime: number
+		lifetime: number,
+		curve = 1
 	): RenderedProjectile {
-		const projectile = new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime)
+		const projectile = new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime, curve)
 		projectile.targetCard = targetCard
 		return projectile
 	}
@@ -53,10 +63,23 @@ export default class RenderedProjectile {
 		startingPoint: PIXI.Point,
 		targetPoint: PIXI.Point,
 		animationDuration: number,
-		lifetime: number
+		lifetime: number,
+		curve = 1
 	): RenderedProjectile {
-		const projectile = new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime)
-		projectile.targetPoint = targetPoint
+		const projectile = new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime, curve)
+		projectile.targetPoint = targetPoint.clone()
+		return projectile
+	}
+
+	public static targetMouse(
+		sprite: PIXI.Sprite,
+		startingPoint: PIXI.Point,
+		animationDuration: number,
+		lifetime: number,
+		curve = 1
+	): RenderedProjectile {
+		const projectile = new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime, curve)
+		projectile.targetMouse = true
 		return projectile
 	}
 }
