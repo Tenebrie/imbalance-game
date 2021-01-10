@@ -5,27 +5,16 @@ import UnitMessage from '@shared/models/network/UnitMessage'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import BoardRowMessage from '@shared/models/network/BoardRowMessage'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 const IncomingBoardUpdateMessages: { [index in BoardUpdateMessageType]: IncomingMessageHandlerFunction } = {
-	[BoardUpdateMessageType.UNIT_CREATE]: (data: UnitMessage) => {
-		if (Core.board.findUnitById(data.card.id)) {
-			return
-		}
-
-		// const cardInLimbo = Core.input.cardLimbo.find(card => card.id === data.card.id)
-		// Core.input.restoreLimboCard(data.card)
-		// const card = cardInLimbo ? new RenderedUnit(cardInLimbo, Core.getPlayer(data.ownerId)) : RenderedUnit.fromMessage(data)
-		// Core.board.unitsOnHold.push(card)
-	},
-
 	[BoardUpdateMessageType.UNIT_INSERT]: (data: UnitMessage) => {
 		if (Core.board.findInsertedById(data.card.id)) {
 			return
 		}
 
-		const cardInLimbo = Core.input.cardLimbo.find((card) => card.id === data.card.id)
-		Core.input.restoreLimboCard(data.card)
-		const card = cardInLimbo ? new RenderedUnit(cardInLimbo, Core.getPlayer(data.ownerId)) : RenderedUnit.fromMessage(data)
+		const card = new RenderedUnit(RenderedCard.fromMessage(data.card), Core.getPlayer(data.ownerId))
+		Core.input.destroyLimboCard(data.card)
 		Core.board.insertUnit(card, data.rowIndex, data.unitIndex)
 	},
 

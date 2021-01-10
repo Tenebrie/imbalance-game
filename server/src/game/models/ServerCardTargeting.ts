@@ -349,6 +349,10 @@ export class ServerCardTargeting {
 		targetDefinition: OrderTargetDefinition<UnitTargetValidatorArguments>,
 		previousTargets: OrderTarget[] = []
 	): OrderTarget[] {
+		if (targetDefinition.targetType !== TargetType.UNIT) {
+			return []
+		}
+
 		const applicablePreviousTargets = previousTargets.filter((previousTarget) => previousTarget.definition.id === targetDefinition.id)
 		if (applicablePreviousTargets.length >= targetDefinition.targetCount) {
 			return []
@@ -401,6 +405,10 @@ export class ServerCardTargeting {
 		targetDefinition: OrderTargetDefinition<RowTargetValidatorArguments>,
 		previousTargets: OrderTarget[] = []
 	): OrderTarget[] {
+		if (targetDefinition.targetType !== TargetType.BOARD_ROW) {
+			return []
+		}
+
 		const applicablePreviousTargets = previousTargets.filter((previousTarget) => previousTarget.definition.id === targetDefinition.id)
 		if (applicablePreviousTargets.length >= targetDefinition.targetCount) {
 			return []

@@ -60,7 +60,6 @@ export enum SystemMessageType {
 }
 
 export enum BoardUpdateMessageType {
-	UNIT_CREATE = 'boardUpdate_unitCreate',
 	UNIT_INSERT = 'boardUpdate_unitInsert',
 	UNIT_MOVE = 'boardUpdate_unitMove',
 	UNIT_DESTROY = 'boardUpdate_unitDestroy',

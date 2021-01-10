@@ -107,6 +107,13 @@ export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point, directi
 	}
 }
 
+export const flushBoardPreps = (): void => {
+	boopPrepPoints.forEach((prep) => {
+		Core.particleSystem.destroyEmitter(prep.emitter, Core.renderer.boardEffectsContainer)
+	})
+	boopPrepPoints = []
+}
+
 export const getBoopColor = (mouseEvent: MouseEvent): { start: string; end: string } => {
 	let color = {
 		start: '55AAFF',

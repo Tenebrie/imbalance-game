@@ -2,12 +2,10 @@ import ServerOwnedCard from './ServerOwnedCard'
 import CardType from '@shared/enums/CardType'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerGame from './ServerGame'
-import { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from './ServerCardTarget'
 import CardFeature from '@shared/enums/CardFeature'
 import GameEventCreators from './events/GameEventCreators'
 import ResolveStackEntry from '@shared/models/ResolveStackEntry'
 import ResolveStack from '@shared/models/ResolveStack'
-import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
 import { DeployTarget } from '@src/game/models/ServerCardTargeting'
 
 class ServerResolveStackEntry implements ResolveStackEntry {
@@ -24,7 +22,7 @@ class ServerResolveStackEntry implements ResolveStackEntry {
 
 export default class ServerResolveStack implements ResolveStack {
 	game: ServerGame
-	entries: ServerResolveStackEntry[]
+	public readonly entries: ServerResolveStackEntry[]
 
 	constructor(game: ServerGame) {
 		this.game = game

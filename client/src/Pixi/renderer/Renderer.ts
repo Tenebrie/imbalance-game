@@ -451,6 +451,7 @@ export default class Renderer {
 
 		/* Action label */
 		const labelPosition = Core.input.mousePosition.clone()
+		labelPosition.y -= 54
 		this.actionLabel.position.copyFrom(labelPosition)
 		this.actionLabel.style.lineHeight = 24
 	}

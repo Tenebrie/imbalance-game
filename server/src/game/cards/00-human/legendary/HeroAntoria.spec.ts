@@ -14,16 +14,20 @@ describe('HeroAntoria', () => {
 	let playersCard: ServerCard
 	let opponentsCard: ServerCard
 	let player: ServerPlayerInGame
+	let playerAction: (callback: () => void) => void
 
 	beforeEach(() => {
-		;({ game, playersCard, opponentsCard, player } = TestGameTemplates.opponentCardTest(TestingSpellQuickStrike, HeroAntoria))
+		;({ game, playersCard, opponentsCard, player, playerAction } = TestGameTemplates.opponentCardTest(TestingSpellQuickStrike, HeroAntoria))
 	})
 
 	it('intercepts damage', () => {
 		const damageTarget = game.board.createUnit(new TestingUnitNoTargeting(game), 4, 0)!
-		game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
-		game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
-		game.events.resolveEvents()
+		playerAction(() => {
+			game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
+		})
+		playerAction(() => {
+			game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
+		})
 		expect(damageTarget.card.stats.power).toEqual(10)
 		expect(opponentsCard.stats.power).toEqual(14)
 	})
@@ -37,9 +41,12 @@ describe('HeroAntoria', () => {
 			player.opponentInGame.cardDeck.addUnitToTop(unitInDeck)
 
 			game.board.createUnit(new TestingUnitNoTargeting(game), 4, 0)
-			game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
-			game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
-			game.events.resolveEvents()
+			playerAction(() => {
+				game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
+			})
+			playerAction(() => {
+				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
+			})
 		})
 
 		it('gets destroyed', () => {

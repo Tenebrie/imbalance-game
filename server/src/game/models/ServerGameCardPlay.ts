@@ -84,7 +84,6 @@ export default class ServerGameCardPlay {
 		} else if (source === 'deck' && owner.cardDeck.findCardById(card.id)) {
 			owner.cardDeck.removeCard(card)
 		}
-
 		/* Trigger card played event */
 		this.game.events.postEvent(
 			GameEventCreators.cardPlayed({
@@ -186,6 +185,7 @@ export default class ServerGameCardPlay {
 
 		const currentCard = currentResolvingCard.ownedCard.card
 
+		this.updateResolvingCardTargetingStatus()
 		const correspondingTarget = this.requestedDeployTargets.find((target) => target.target.id === message.id)
 
 		if (!correspondingTarget) {

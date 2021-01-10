@@ -8,7 +8,7 @@ import ServerBoardRow from '../ServerBoardRow'
 import ServerBuff from '../ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
-import { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from '../ServerCardTarget'
+import { ServerCardTargetCard, ServerCardTargetRow } from '../ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 
 export default {
@@ -38,6 +38,7 @@ export default {
 	cardDrawn: (args: CardDrawnEventArgs): GameEvent => ({
 		type: GameEventType.CARD_DRAWN,
 		args: args,
+		effectSource: args.triggeringCard,
 		logVariables: {
 			owner: args.owner.player.id,
 			triggeringCard: args.triggeringCard.id,
@@ -46,6 +47,7 @@ export default {
 	cardPlayed: (args: CardPlayedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_PLAYED,
 		args: args,
+		effectSource: args.triggeringCard,
 		logVariables: {
 			owner: args.owner.player.id,
 			triggeringCard: args.triggeringCard.id,
@@ -54,6 +56,7 @@ export default {
 	cardResolved: (args: CardResolvedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_RESOLVED,
 		args: args,
+		effectSource: args.triggeringCard,
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
 		},
@@ -61,6 +64,7 @@ export default {
 	cardTakesDamage: (args: CardTakesDamageEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TAKES_DAMAGE,
 		args: args,
+		effectSource: args.triggeringCard,
 		logSubtype: args.damageInstance.source === DamageSource.CARD ? 'fromCard' : 'fromUniverse',
 		logVariables: {
 			damage: args.damageInstance.value,
@@ -71,6 +75,7 @@ export default {
 	cardDestroyed: (args: CardDestroyedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_DESTROYED,
 		args: args,
+		effectSource: args.triggeringCard,
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
 		},

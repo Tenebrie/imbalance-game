@@ -22,7 +22,7 @@ import { isGrabbedCardPlayableToRow } from '@/Pixi/input/ValidActions'
 import CardLocation from '@shared/enums/CardLocation'
 import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
-import { boopTheBoard, getDistance, normalizeBoardRowIndex } from '@/utils/Utils'
+import { boopTheBoard, flushBoardPreps, getDistance, normalizeBoardRowIndex } from '@/utils/Utils'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -86,6 +86,15 @@ export default class Input {
 		})
 		view.addEventListener('touchmove', (event: TouchEvent) => {
 			this.onTouchMove(event)
+		})
+
+		view.addEventListener('mouseleave', () => {
+			this.onMouseLeave()
+			if (this.grabbedCard) {
+				this.releaseCard()
+			}
+			this.leftMouseDown = false
+			this.rightMouseDown = false
 		})
 	}
 
@@ -278,7 +287,7 @@ export default class Input {
 			return
 		}
 
-		if (event.button === LEFT_MOUSE_BUTTON && this.leftMouseDown && (!this.grabbedCard || this.grabbedCard.shouldStick())) {
+		if (event.button === LEFT_MOUSE_BUTTON && this.leftMouseDown && !this.grabbedCard) {
 			boopTheBoard(event, this.boardBoopStartedAt, 'up')
 		} else if (
 			event.button === RIGHT_MOUSE_BUTTON &&
@@ -334,6 +343,14 @@ export default class Input {
 			this.boopTrailLastSeenAt = this.mousePosition.clone()
 			Core.particleSystem.createSmallBoardBoopEffect(this.mousePosition, event)
 		}
+
+		if (this.rightMouseDown && this.hoveredCard !== null) {
+			flushBoardPreps()
+		}
+	}
+
+	private onMouseLeave() {
+		flushBoardPreps()
 	}
 
 	public grabCard(): void {
@@ -484,6 +501,15 @@ export default class Input {
 		Core.renderer.showCard(cardInLimbo)
 		this.evictCardFromLimbo(cardMessage.id)
 		return cardInLimbo
+	}
+
+	public destroyLimboCard(cardMessage: CardRefMessage): void {
+		const cardInLimbo = this.cardLimbo.find((card) => card.id === cardMessage.id)
+		if (!cardInLimbo) {
+			return
+		}
+		Core.renderer.destroyCard(cardInLimbo)
+		this.evictCardFromLimbo(cardMessage.id)
 	}
 
 	private evictCardFromLimbo(cardId: string): void {

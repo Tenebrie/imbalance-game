@@ -65,6 +65,7 @@ export default {
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, targets)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
+		OutgoingMessageHandlers.notifyAboutGamePhaseAdvance(game, game.turnPhase)
 		OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, playerInGame.isInvertedBoard())
 		game.events.flushLogEventGroup()
 		OutgoingMessageHandlers.executeMessageQueueForPlayer(game, playerInGame.player)
