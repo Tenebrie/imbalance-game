@@ -53,6 +53,7 @@
 			<div class="victory" v-if="isVictory">Victory!</div>
 			<div class="defeat" v-if="isDefeat">Defeat</div>
 			<div class="draw" v-if="isDraw">Draw</div>
+			<button class="secondary game-button" @click="onLeaveGame">Continue</button>
 		</div>
 		<div class="spectator-overlay" :class="spectatorOverlayClass">Spectator mode</div>
 	</div>
@@ -197,6 +198,11 @@ export default Vue.extend({
 		const cardsMulliganed = computed(() => store.state.gameStateModule.cardsMulliganed)
 		const maxCardMulligans = computed(() => store.state.gameStateModule.maxCardMulligans)
 
+		const onLeaveGame = (): void => {
+			store.dispatch.leaveGame()
+			store.dispatch.popupModule.closeAll()
+		}
+
 		return {
 			store,
 			player,
@@ -227,6 +233,7 @@ export default Vue.extend({
 			playerSpellManaInDanger,
 			opponentMorale,
 			opponentSpellMana,
+			onLeaveGame,
 		}
 	},
 })
@@ -303,6 +310,7 @@ export default Vue.extend({
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		flex-direction: column;
 
 		opacity: 0;
 		transition: opacity 1s;
