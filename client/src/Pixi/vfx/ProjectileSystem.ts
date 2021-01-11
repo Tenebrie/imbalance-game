@@ -2,13 +2,12 @@ import * as PIXI from 'pixi.js'
 import Core from '@/Pixi/Core'
 import RenderedProjectile from '@/Pixi/models/RenderedProjectile'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import { easeInOutQuad, easeInQuad } from 'js-easing-functions'
+import { easeInQuad } from 'js-easing-functions'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import Utils, { getDistance } from '@/utils/Utils'
 import RenderedVelocityProjectile from '@/Pixi/models/RenderedVelocityProjectile'
-import { PI_2 } from 'pixi.js'
 
 export default class ProjectileSystem {
 	private projectiles: RenderedProjectile[] = []

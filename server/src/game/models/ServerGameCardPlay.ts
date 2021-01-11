@@ -36,13 +36,11 @@ export default class ServerGameCardPlay {
 	game: ServerGame
 	playedCards: PlayedCard[]
 	cardResolveStack: ServerResolveStack
-	requestedDeployTargets: DeployTarget[]
 
 	constructor(game: ServerGame) {
 		this.game = game
 		this.playedCards = []
 		this.cardResolveStack = new ServerResolveStack(game)
-		this.requestedDeployTargets = []
 	}
 
 	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
@@ -164,7 +162,6 @@ export default class ServerGameCardPlay {
 				currentCard.card
 			)
 		}
-		this.requestedDeployTargets = validTargets
 	}
 
 	public getDeployTargets(): DeployTarget[] {
@@ -185,14 +182,14 @@ export default class ServerGameCardPlay {
 
 		const currentCard = currentResolvingCard.ownedCard.card
 
-		this.updateResolvingCardTargetingStatus()
-		const correspondingTarget = this.requestedDeployTargets.find((target) => target.target.id === message.id)
+		const deployTargets = this.getDeployTargets()
+		const correspondingTarget = deployTargets.find((target) => target.target.id === message.id)
 
 		if (!correspondingTarget) {
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				playerInGame.player,
 				TargetMode.DEPLOY_EFFECT,
-				this.requestedDeployTargets.map((deployTarget) => deployTarget.target),
+				deployTargets.map((deployTarget) => deployTarget.target),
 				currentCard
 			)
 			return
@@ -201,15 +198,15 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.pushTarget(correspondingTarget)
 
 		currentResolvingCard.onResumeResolving = () => {
-			this.requestedDeployTargets = this.getDeployTargets()
+			const updatedDeployTargets = this.getDeployTargets()
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				playerInGame.player,
 				TargetMode.DEPLOY_EFFECT,
-				this.requestedDeployTargets.map((deployTarget) => deployTarget.target),
+				updatedDeployTargets.map((deployTarget) => deployTarget.target),
 				currentCard
 			)
 
-			if (this.requestedDeployTargets.length > 0) {
+			if (updatedDeployTargets.length > 0) {
 				return
 			}
 
