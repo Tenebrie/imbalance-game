@@ -21,6 +21,7 @@ import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import lzutf8 from 'lzutf8'
 import Constants from '@shared/Constants'
+import { compressGameTraffic } from '@shared/Utils'
 
 class Core {
 	public isReady = false
@@ -84,7 +85,7 @@ class Core {
 
 	private onMessage(event: MessageEvent): void {
 		let data = event.data
-		if (Constants.COMPRESS_GAME_TRAFFIC) {
+		if (compressGameTraffic()) {
 			data = lzutf8.decompress(event.data, {
 				inputEncoding: 'BinaryString',
 			})
