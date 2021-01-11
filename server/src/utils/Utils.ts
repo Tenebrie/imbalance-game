@@ -7,6 +7,15 @@ import ServerPlayer from '../game/players/ServerPlayer'
 import express, { Request } from 'express'
 import { sortCards } from '@shared/Utils'
 import { CardConstructor } from '../game/libraries/CardLibrary'
+import { v4 as getRandomId } from 'uuid'
+
+export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
+	return `${type}:${prefix}:${getRandomId()}`
+}
+
+export const createRandomGameId = (): string => {
+	return `game:${getRandomId()}`
+}
 
 export const AnyCardLocation = 'any'
 

@@ -2,16 +2,13 @@ import ServerUnit from './ServerUnit'
 import ServerBoardRow from './ServerBoardRow'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
-import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
-import CardLibrary from '../libraries/CardLibrary'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import { CardTargetCard, CardTargetCardAllowedTypes, CardTargetRow } from '@shared/models/CardTarget'
 import AnonymousTargetCard from '@shared/models/AnonymousTarget'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
-import { v4 as getRandomId } from 'uuid'
 
 export class ServerCardTargetCard implements CardTargetCard {
 	public readonly id: string

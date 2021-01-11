@@ -16,7 +16,7 @@ import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
-import { colorizeId, colorizePlayer } from '../../utils/Utils'
+import { colorizeId, colorizePlayer, createRandomGameId, createRandomId } from '../../utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
@@ -59,7 +59,7 @@ export default class ServerGame implements Game {
 	public challengeLevel: ChallengeLevel | null
 
 	constructor(props: ServerGameProps) {
-		this.id = uuidv4()
+		this.id = createRandomGameId()
 		this.name = props.name || this.generateName(props.owner)
 		this.isStarted = false
 		this.turnIndex = -1

@@ -216,14 +216,12 @@ export default class ServerGameEvents {
 	private logEventExecution(event: GameEvent, subscription: EventSubscription<any>, isImmediate: boolean): void {
 		const subscriber = subscription.subscriber
 		const subscriberId = subscriber instanceof ServerGame ? '' : `${subscriber.id}`
-		const subscriberClass =
-			subscriber instanceof ServerCard ? subscriber.class : subscriber instanceof ServerBuff ? subscriber.class : 'System'
 
 		const gameId = colorizeId(this.game.id)
 		const eventType = colorizeClass(event.type)
 		const eventTiming = isImmediate ? 'effect' : 'callback'
 
-		console.info(`[${gameId}] Executing ${eventTiming} on ${eventType} for ${colorizeClass(subscriberClass)}:${colorizeId(subscriberId)}`)
+		console.info(`[${gameId}] Executing ${eventTiming} on ${eventType} for ${colorizeId(subscriberId)}`)
 	}
 
 	public evaluateSelectors(): void {
