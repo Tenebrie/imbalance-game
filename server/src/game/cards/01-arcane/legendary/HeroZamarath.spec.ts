@@ -6,7 +6,7 @@ import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import HeroZamarath from './HeroZamarath'
 import CardLocation from '../../../../../../shared/src/enums/CardLocation'
 import CardFeature from '../../../../../../shared/src/enums/CardFeature'
-import TestingUnitNoTargeting from '../../11-testing/TestingUnitNoTargeting'
+import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
 import TestingSpellHeavyStrike from '../../11-testing/TestingSpellHeavyStrike'
 
 describe('HeroZamarath', () => {
@@ -33,7 +33,7 @@ describe('HeroZamarath', () => {
 			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 1, 0)
 		})
 
-		const targetUnit = new TestingUnitNoTargeting(game)
+		const targetUnit = new TestingUnitNoEffect(game)
 		playerAction(() => {
 			game.board.createUnit(targetUnit, 0, 0)
 
@@ -55,7 +55,7 @@ describe('HeroZamarath', () => {
 
 		startNextTurn()
 
-		const targetUnit = new TestingUnitNoTargeting(game)
+		const targetUnit = new TestingUnitNoEffect(game)
 		playerAction(() => {
 			game.board.createUnit(targetUnit, 0, 0)
 

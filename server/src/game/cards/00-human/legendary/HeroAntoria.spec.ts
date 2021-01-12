@@ -5,7 +5,7 @@ import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import HeroAntoria from './HeroAntoria'
 import TestingSpellQuickStrike from '../../11-testing/TestingSpellQuickStrike'
-import TestingUnitNoTargeting from '../../11-testing/TestingUnitNoTargeting'
+import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
 import TestingSpellHeavyStrike from '../../11-testing/TestingSpellHeavyStrike'
 import CardLocation from '../../../../../../shared/src/enums/CardLocation'
 
@@ -21,7 +21,7 @@ describe('HeroAntoria', () => {
 	})
 
 	it('intercepts damage', () => {
-		const damageTarget = game.board.createUnit(new TestingUnitNoTargeting(game), 4, 0)!
+		const damageTarget = game.board.createUnit(new TestingUnitNoEffect(game), 4, 0)!
 		playerAction(() => {
 			game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
 		})
@@ -37,10 +37,10 @@ describe('HeroAntoria', () => {
 
 		beforeEach(() => {
 			;({ game, playersCard, opponentsCard, player } = TestGameTemplates.opponentCardTest(TestingSpellHeavyStrike, HeroAntoria))
-			unitInDeck = new TestingUnitNoTargeting(game)
+			unitInDeck = new TestingUnitNoEffect(game)
 			player.opponentInGame.cardDeck.addUnitToTop(unitInDeck)
 
-			game.board.createUnit(new TestingUnitNoTargeting(game), 4, 0)
+			game.board.createUnit(new TestingUnitNoEffect(game), 4, 0)
 			playerAction(() => {
 				game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
 			})

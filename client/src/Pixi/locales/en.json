@@ -97,7 +97,9 @@
 	"log.entry.buffRemoved": "Buff {triggeringBuff} has been removed from {ownerCard}",
 	"log.entry.playerTargetSelectedCard.mulligan": "{triggeringPlayer} has mulliganed {targetCard}",
 	"log.entry.turnEnded": "{player} has finished their turn",
-	"log.entry.roundEnded": "{player} has finished their turn",
+	"log.entry.roundEnded": "{player} has finished their round",
+	"log.entry.gameFinished.victory": "The game has finished. {victoriousPlayer} has won.",
+	"log.entry.gameFinished.draw": "The game has finished in a draw.",
 
 	"target.generic.unit": "Target",
 	"target.generic.row": "Target row",

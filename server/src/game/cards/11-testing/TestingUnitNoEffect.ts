@@ -5,7 +5,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
 
-export default class TestingUnitNoTargeting extends ServerCard {
+export default class TestingUnitNoEffect extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,

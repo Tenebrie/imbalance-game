@@ -7,7 +7,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardFeature from '@shared/enums/CardFeature'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
-import { asSplashHealingPotency } from '../../../../utils/LeaderStats'
+import { asSplashHealingPotency } from '@src/utils/LeaderStats'
 import CardLocation from '@shared/enums/CardLocation'
 
 export default class UnitFieldHospital extends ServerCard {

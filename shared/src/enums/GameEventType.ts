@@ -34,6 +34,8 @@ enum GameEventType {
 
 	TURN_ENDED = 'turnEnded',
 	ROUND_ENDED = 'roundEnded',
+
+	GAME_FINISHED = 'gameFinished',
 }
 
 export default GameEventType

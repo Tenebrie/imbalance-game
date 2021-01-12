@@ -4,7 +4,7 @@ import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import UnitQuietInfiltrator from './UnitQuietInfiltrator'
-import TestingUnitNoTargeting from '../../11-testing/TestingUnitNoTargeting'
+import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
 import ServerBoardRow from '../../../models/ServerBoardRow'
 
 describe('UnitQuietInfiltrator', () => {
@@ -26,8 +26,8 @@ describe('UnitQuietInfiltrator', () => {
 
 	it('deals damage to enemies', () => {
 		const enemyRow = game.board.rows.find((row) => row.owner === player.opponentInGame)!
-		game.board.createUnit(new TestingUnitNoTargeting(game), enemyRow.index, 0)
-		game.board.createUnit(new TestingUnitNoTargeting(game), enemyRow.index, 1)
+		game.board.createUnit(new TestingUnitNoEffect(game), enemyRow.index, 0)
+		game.board.createUnit(new TestingUnitNoEffect(game), enemyRow.index, 1)
 		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), enemyRow.index, 1)
 		game.events.resolveEvents()
 		expect(enemyRow.cards[0].card.stats.power).toEqual(5)

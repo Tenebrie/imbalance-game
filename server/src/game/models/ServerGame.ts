@@ -20,7 +20,7 @@ import ServerGameEvents from './ServerGameEvents'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
 import GameEventType from '@shared/enums/GameEventType'
-import { PlayerTargetCardSelectedEventArgs } from './events/GameEventCreators'
+import GameEventCreators, { PlayerTargetCardSelectedEventArgs } from './events/GameEventCreators'
 import ServerGameTimers from './ServerGameTimers'
 import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
@@ -37,6 +37,7 @@ export interface OptionalGameProps {
 	name?: string
 	owner?: ServerPlayer
 	challengeLevel?: ChallengeLevel
+	playerMoveOrderReversed?: boolean
 }
 
 export default class ServerGame implements Game {
@@ -47,6 +48,8 @@ export default class ServerGame implements Game {
 	public turnPhase: GameTurnPhase
 	public roundIndex: number
 	public playersToMove: ServerPlayerInGame[]
+	public lastRoundWonBy: ServerPlayerInGame | null
+	public playerMoveOrderReversed: boolean
 	readonly owner: ServerPlayer | undefined
 	readonly board: ServerBoard
 	readonly index: ServerGameIndex
@@ -73,6 +76,9 @@ export default class ServerGame implements Game {
 		this.timers = new ServerGameTimers(this)
 		this.players = []
 		this.playersToMove = []
+		this.lastRoundWonBy = null
+		this.playerMoveOrderReversed =
+			props.playerMoveOrderReversed !== undefined ? props.playerMoveOrderReversed : Math.floor(Math.random() * 2) === 0
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
 		this.gameMode = props.gameMode
@@ -271,6 +277,9 @@ export default class ServerGame implements Game {
 		this.setTurnPhase(GameTurnPhase.TURN_START)
 
 		this.playersToMove = this.players.slice()
+		if (this.lastRoundWonBy === this.players[1] || (this.lastRoundWonBy === null && this.playerMoveOrderReversed)) {
+			this.playersToMove.reverse()
+		}
 
 		this.board.orders.clearPerformedOrders()
 		this.advancePhase()
@@ -292,8 +301,10 @@ export default class ServerGame implements Game {
 			.reduce((total, value) => total + value, 0)
 		if (playerOneTotalPower > playerTwoTotalPower) {
 			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+			this.lastRoundWonBy = playerOne
 		} else if (playerTwoTotalPower > playerOneTotalPower) {
 			playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+			this.lastRoundWonBy = playerTwo
 		} else {
 			playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
 			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
@@ -362,6 +373,12 @@ export default class ServerGame implements Game {
 		}
 
 		this.setTurnPhase(GameTurnPhase.AFTER_GAME)
+
+		this.events.postEvent(
+			GameEventCreators.gameFinished({
+				victoriousPlayer: victoriousPlayer,
+			})
+		)
 
 		if (victoriousPlayer === null) {
 			OutgoingMessageHandlers.notifyAboutDraw(this)

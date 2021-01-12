@@ -243,6 +243,15 @@ export default {
 			player: args.player.player.id,
 		},
 	}),
+
+	gameFinished: (args: GameFinishedEventArgs): GameEvent => ({
+		type: GameEventType.GAME_FINISHED,
+		args: args,
+		logSubtype: args.victoriousPlayer ? 'victory' : 'draw',
+		logVariables: {
+			victoriousPlayer: args.victoriousPlayer?.player.id,
+		},
+	}),
 }
 
 export interface GameEvent {
@@ -379,4 +388,8 @@ export interface TurnEndedEventArgs {
 }
 export interface RoundEndedEventArgs {
 	player: ServerPlayerInGame
+}
+
+export interface GameFinishedEventArgs {
+	victoriousPlayer: ServerPlayerInGame | null
 }
