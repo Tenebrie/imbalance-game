@@ -1,6 +1,7 @@
 import ServerBuff from '@src/game/models/ServerBuff'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
+import CardLibrary from '@src/game/libraries/CardLibrary'
 
 export default class ServerGameIndex {
 	public readonly game: ServerGame
@@ -9,6 +10,9 @@ export default class ServerGameIndex {
 
 	constructor(game: ServerGame) {
 		this.game = game
+		CardLibrary?.cards.forEach((card) => {
+			this.addCard(card)
+		})
 	}
 
 	public addBuff(buff: ServerBuff): void {
