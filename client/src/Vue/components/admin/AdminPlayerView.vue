@@ -15,7 +15,7 @@
 			<tbody>
 				<tr v-for="player in players" :key="player.id">
 					<td>
-						<router-link :to="`/admin/users/${player.id}`">{{ player.id.substr(0, 8) }}</router-link>
+						<router-link :to="`/admin/users/${player.id}`">{{ player.id.substr(7, 8) }}</router-link>
 					</td>
 					<td>
 						<span class="user-input">{{ player.email }}</span>
@@ -23,17 +23,11 @@
 					<td>
 						<router-link :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
 					</td>
-					<td>{{ new Intl.DateTimeFormat('ru').format(new Date(player.createdAt)) }}</td>
 					<td>
-						{{
-							new Intl.DateTimeFormat('ru', {
-								year: 'numeric',
-								month: 'numeric',
-								day: 'numeric',
-								hour: 'numeric',
-								minute: 'numeric',
-							}).format(new Date(player.accessedAt))
-						}}
+						{{ moment(player.createdAt).format('DD.MM.yyyy') }}
+					</td>
+					<td>
+						{{ moment(player.accessedAt).format('DD.MM.yyyy, HH:mm:ss') }}
 					</td>
 					<td>
 						{{ player.accessLevel }}
@@ -60,6 +54,7 @@ import Player from '@shared/models/Player'
 import AccessLevel from '@shared/enums/AccessLevel'
 import Notifications from '@/utils/Notifications'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
+import moment from 'moment'
 
 export default defineComponent({
 	setup() {
@@ -95,6 +90,7 @@ export default defineComponent({
 		}
 
 		return {
+			moment,
 			hasLoaded,
 			currentPlayer,
 			players,

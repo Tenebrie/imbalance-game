@@ -4,10 +4,11 @@ import ServerUnit from '../game/models/ServerUnit'
 import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerPlayer from '../game/players/ServerPlayer'
-import express, { Request } from 'express'
+import express, { raw, Request } from 'express'
 import { sortCards } from '@shared/Utils'
 import { CardConstructor } from '../game/libraries/CardLibrary'
 import { v4 as getRandomId } from 'uuid'
+import ServerGame from '@src/game/models/ServerGame'
 
 export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
 	return `${type}:${prefix}:${getRandomId()}`
@@ -17,7 +18,39 @@ export const createRandomGameId = (): string => {
 	return `game:${getRandomId()}`
 }
 
+export const createRandomPlayerId = (): string => {
+	return `player:${getRandomId()}`
+}
+
+export const createRandomEditorDeckId = (): string => {
+	return `deck:${getRandomId()}`
+}
+
+export const createRandomSharedDeckId = (): string => {
+	return `share:${getRandomId()}`
+}
+
 export const AnyCardLocation = 'any'
+
+export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {
+	let value = rawJson.replace(/card:redacted:([a-zA-Z0-9-]+)/g, (match, capture) => {
+		const card = game.index.findCard(capture)
+		if (!card) {
+			console.warn(`No card found with id ${capture}`)
+			return match
+		}
+		return card.id
+	})
+	value = value.replace(/buff:redacted:([a-zA-Z0-9-]+)/g, (match, capture) => {
+		const buff = game.index.findBuff(capture)
+		if (!buff) {
+			console.warn(`No buff found with id ${capture}`)
+			return match
+		}
+		return buff.id
+	})
+	return value
+}
 
 interface TryUntilArgs {
 	try: () => void | Promise<void>

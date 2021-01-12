@@ -1,13 +1,13 @@
-import { v4 as uuidv4 } from 'uuid'
 import Database from './Database'
 import Language from '@shared/enums/Language'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import RenderQuality from '@shared/enums/RenderQuality'
 import AccessLevel from '@shared/enums/AccessLevel'
+import { createRandomPlayerId } from '@src/utils/Utils'
 
 export default {
 	async insertPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {
-		const playerId = uuidv4()
+		const playerId = createRandomPlayerId()
 		const query = `INSERT INTO players (id, email, username, "passwordHash") VALUES($1, $2, $3, $4);`
 		return Database.insertRow(query, [playerId, email, username, passwordHash])
 	},

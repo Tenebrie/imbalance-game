@@ -53,7 +53,7 @@
 			<div class="victory" v-if="isVictory">Victory!</div>
 			<div class="defeat" v-if="isDefeat">Defeat</div>
 			<div class="draw" v-if="isDraw">Draw</div>
-			<button class="secondary game-button" @click="onLeaveGame">Continue</button>
+			<button v-if="isVictory || isDefeat || isDraw" class="secondary game-button" @click="onLeaveGame">Continue</button>
 		</div>
 		<div class="spectator-overlay" :class="spectatorOverlayClass">Spectator mode</div>
 	</div>

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
 import Game from '@shared/models/Game'
 import ServerBoard from './ServerBoard'
 import ServerPlayer from '../players/ServerPlayer'
@@ -16,7 +15,7 @@ import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
-import { colorizeId, colorizePlayer, createRandomGameId, createRandomId } from '../../utils/Utils'
+import { colorizeId, colorizePlayer, createRandomGameId } from '@src/utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
@@ -28,6 +27,7 @@ import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import CardFeature from '@shared/enums/CardFeature'
 import { BuffConstructor } from './ServerBuffContainer'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import ServerGameIndex from '@src/game/models/ServerGameIndex'
 
 interface ServerGameProps extends OptionalGameProps {
 	gameMode: GameMode
@@ -49,6 +49,7 @@ export default class ServerGame implements Game {
 	public playersToMove: ServerPlayerInGame[]
 	readonly owner: ServerPlayer | undefined
 	readonly board: ServerBoard
+	readonly index: ServerGameIndex
 	readonly events: ServerGameEvents
 	readonly timers: ServerGameTimers
 	readonly players: ServerPlayerInGame[]
@@ -66,6 +67,7 @@ export default class ServerGame implements Game {
 		this.roundIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.owner = props.owner
+		this.index = new ServerGameIndex(this)
 		this.board = new ServerBoard(this)
 		this.events = new ServerGameEvents(this)
 		this.timers = new ServerGameTimers(this)
@@ -387,8 +389,8 @@ export default class ServerGame implements Game {
 		GameLibrary.destroyGame(this, reason)
 	}
 
-	public findCardById(cardId: string): ServerCard | undefined {
-		return this.findOwnedCardById(cardId)?.card
+	public findCardById(cardId: string): ServerCard | null {
+		return this.index.findCard(cardId)
 	}
 
 	public findOwnedCardById(cardId: string): ServerOwnedCard | null {

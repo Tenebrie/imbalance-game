@@ -64,6 +64,12 @@ export default class ServerHand {
 	}
 
 	public discardCard(card: ServerCard): void {
+		this.game.events.postEvent(
+			GameEventCreators.cardDiscarded({
+				owner: this.owner,
+				triggeringCard: card,
+			})
+		)
 		this.removeCard(card)
 	}
 

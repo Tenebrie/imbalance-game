@@ -279,7 +279,7 @@ export default class ServerGameCardPlay {
 
 	public selectPlayerMulliganTarget(playerInGame: ServerPlayerInGame, target: ServerAnonymousTargetCard): void {
 		this.game.events.postEvent(
-			GameEventCreators.playerTargetSelectedCard({
+			GameEventCreators.playerMulliganedCard({
 				targetMode: target.targetMode,
 				targetType: target.targetType,
 				triggeringPlayer: playerInGame,

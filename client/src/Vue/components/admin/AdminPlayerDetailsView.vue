@@ -20,29 +20,13 @@
 				<tr>
 					<td class="header">Created at:</td>
 					<td>
-						{{
-							new Intl.DateTimeFormat('ru', {
-								year: 'numeric',
-								month: 'numeric',
-								day: 'numeric',
-								hour: 'numeric',
-								minute: 'numeric',
-							}).format(new Date(player.createdAt))
-						}}
+						{{ moment(player.createdAt).format('DD.MM.yyyy, HH:mm:ss') }}
 					</td>
 				</tr>
 				<tr>
 					<td class="header">Accessed at:</td>
 					<td>
-						{{
-							new Intl.DateTimeFormat('ru', {
-								year: 'numeric',
-								month: 'numeric',
-								day: 'numeric',
-								hour: 'numeric',
-								minute: 'numeric',
-							}).format(new Date(player.accessedAt))
-						}}
+						{{ moment(player.accessedAt).format('DD.MM.yyyy, HH:mm:ss') }}
 					</td>
 				</tr>
 				<tr>
@@ -80,6 +64,7 @@ import { forEachInStringEnum } from '@/utils/Utils'
 import Player from '@shared/models/Player'
 import store from '@/Vue/store'
 import Notifications from '@/utils/Notifications'
+import moment from 'moment'
 
 export default defineComponent({
 	components: { AdminGamesTables },
@@ -129,6 +114,7 @@ export default defineComponent({
 		})
 
 		return {
+			moment,
 			player,
 			allGames,
 			hasLoaded,

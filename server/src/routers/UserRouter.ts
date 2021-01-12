@@ -8,8 +8,7 @@ import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import PlayerDatabase from '../database/PlayerDatabase'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import TokenManager from '../services/TokenService'
-import { v4 as uuidv4 } from 'uuid'
-import { registerFormValidators, setCookie } from '../utils/Utils'
+import { createRandomPlayerId, registerFormValidators, setCookie } from '../utils/Utils'
 import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
 
 const router = express.Router()
@@ -73,7 +72,7 @@ router.post(
 		const email = payload.email!
 		if (!(await PlayerLibrary.doesPlayerExist(email))) {
 			const username = payload.given_name!.toLowerCase() + '.' + payload.family_name!.toLowerCase()
-			const success = await PlayerLibrary.register(email, username, uuidv4())
+			const success = await PlayerLibrary.register(email, username, createRandomPlayerId())
 			if (!success) {
 				throw { status: 500, error: 'General database error' }
 			}

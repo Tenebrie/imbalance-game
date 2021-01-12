@@ -111,6 +111,8 @@ export default class ServerBuff implements Buff {
 			.require(({ player }) => player === this.card.owner)
 			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
+
+		this.game.index.addBuff(this)
 	}
 
 	public get duration(): number {

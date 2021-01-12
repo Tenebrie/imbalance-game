@@ -101,7 +101,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawTopUnit()
 			if (!card) {
-				// TODO: Fatigue damage?
 				continue
 			}
 
@@ -117,7 +116,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawTopSpell()
 			if (!card) {
-				// TODO: Fatigue damage?
 				continue
 			}
 
@@ -136,6 +134,12 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			return
 		}
 		this.cardHand.addUnit(cardToAdd, cardIndex)
+		this.game.events.postEvent(
+			GameEventCreators.cardDrawn({
+				owner: this,
+				triggeringCard: cardToAdd,
+			})
+		)
 	}
 
 	public refillSpellHand(): void {

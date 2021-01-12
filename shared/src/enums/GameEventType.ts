@@ -8,6 +8,7 @@ enum GameEventType {
 	CARD_PLAYED = 'cardPlayed',
 	CARD_RESOLVED = 'cardResolved',
 	CARD_TAKES_DAMAGE = 'cardTakesDamage',
+	CARD_DISCARDED = 'cardDiscarded',
 	CARD_DESTROYED = 'cardDestroyed',
 
 	CARD_TARGET_SELECTED_CARD = 'cardTargetSelectedCard',

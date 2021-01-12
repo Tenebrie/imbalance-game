@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import ServerGame from './ServerGame'
@@ -249,6 +248,8 @@ export default class ServerCard implements Card {
 					(powerDamageInstance && powerDamageInstance.value > 0) || triggeringCard.stats.armor === 0
 			)
 			.perform(() => this.destroy())
+
+		game.index.addCard(this)
 	}
 
 	public get tribes(): CardTribe[] {
@@ -505,6 +506,9 @@ export default class ServerCard implements Card {
 		} else if (location === CardLocation.GRAVEYARD) {
 			owner.cardGraveyard.removeCard(this)
 		}
+
+		this.game.events.unsubscribe(this)
+		this.game.index.removeCard(this)
 	}
 
 	public reveal(): void {
