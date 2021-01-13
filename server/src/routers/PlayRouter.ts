@@ -18,8 +18,11 @@ import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
 
 const router = express.Router() as WebSocketRouter
+
+router.use(RequirePlayerTokenMiddleware)
 
 // @ts-ignore
 router.ws('/:gameId', async (ws: ws, req: express.Request) => {

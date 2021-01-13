@@ -20,7 +20,6 @@ import { electronWebsocketTarget, isElectron } from '@/utils/Utils'
 import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import lzutf8 from 'lzutf8'
-import Constants from '@shared/Constants'
 import { compressGameTraffic } from '@shared/Utils'
 
 class Core {

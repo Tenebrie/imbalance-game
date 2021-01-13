@@ -1,6 +1,5 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import * as Particles from 'pixi-particles'
 import CardType from '@shared/enums/CardType'
 import HoveredCard from '@/Pixi/models/HoveredCard'
 import GrabbedCard from '@/Pixi/models/GrabbedCard'

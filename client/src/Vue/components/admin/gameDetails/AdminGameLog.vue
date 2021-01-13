@@ -10,11 +10,6 @@ import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import AdminGameLogGroup from '@/Vue/components/admin/gameDetails/AdminGameLogGroup.vue'
 import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
 
-interface Props {
-	log: EventLogEntryMessage[][]
-	players: GameHistoryPlayerDatabaseEntry[]
-}
-
 export default defineComponent({
 	components: { AdminGameLogGroup },
 	props: {
@@ -28,7 +23,7 @@ export default defineComponent({
 		},
 	},
 
-	setup(props: Props) {
+	setup() {
 		return {}
 	},
 })
