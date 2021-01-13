@@ -26,10 +26,6 @@ export const createRandomEditorDeckId = (): string => {
 	return `deck:${getRandomId()}`
 }
 
-export const createRandomSharedDeckId = (): string => {
-	return `share:${getRandomId()}`
-}
-
 export const AnyCardLocation = 'any'
 
 export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {

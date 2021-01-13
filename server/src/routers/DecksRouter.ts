@@ -7,7 +7,7 @@ import EditorDeckDatabase from '../database/EditorDeckDatabase'
 import AsyncHandler from '../utils/AsyncHandler'
 import DeckUtils from '../utils/DeckUtils'
 import SharedDeckDatabase from '../database/SharedDeckDatabase'
-import { createRandomSharedDeckId, generateShortId } from '../utils/Utils'
+import { createRandomEditorDeckId, generateShortId } from '../utils/Utils'
 
 const router = express.Router()
 
@@ -70,7 +70,7 @@ router.post(
 		const player = req['player'] as ServerPlayer
 		const sharedDeckId = req.body.sharedCode
 		let deck
-		const deckId = createRandomSharedDeckId()
+		const deckId = createRandomEditorDeckId()
 		if (sharedDeckId) {
 			deck = await SharedDeckDatabase.selectSharedDeckById(sharedDeckId)
 			await SharedDeckDatabase.updateSharedDeckTimestamp(sharedDeckId)
