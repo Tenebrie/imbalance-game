@@ -98,7 +98,7 @@ export default class ParticleSystem {
 		const emitter = this.createDefaultEmitter(boopContainer, {
 			alpha: { start: 1.0, end: 0 },
 			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
-			color: getBoopColor(mouseEvent),
+			color: getBoopColor(),
 			speed: { start: projectileSpeed, end: 0 },
 			minimumSpeedMultiplier: 0.75,
 			minimumScaleMultiplier: 0.5,
@@ -124,23 +124,24 @@ export default class ParticleSystem {
 		mouseEvent: MouseEvent,
 		angle: number,
 		power: number,
-		forcedColor: { start: string; end: string } | null = null
+		forcedColor: { start: string; end: string } | null = null,
+		limitAngle = true
 	): void {
 		const boopContainer = this.createBoardContainer()
 
-		const projectileCount = 400 + 250 * Math.pow(power, 1.5)
+		const projectileCount = 400 + 250 * Math.pow(power, 2)
 		const projectileSpeed = 500 * Math.pow(power, 1.5)
 
 		const emitter = this.createDefaultEmitter(boopContainer, {
 			alpha: { start: 1.0, end: 0 },
 			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
-			color: forcedColor || getBoopColor(mouseEvent),
+			color: forcedColor || getBoopColor(),
 			speed: { start: projectileSpeed, end: 0 },
 			minimumSpeedMultiplier: 0.01,
 			minimumScaleMultiplier: 0.75 / Math.pow(Math.max(1, power), 2),
 			startRotation: {
-				min: angle - 180 / Math.max(1, power),
-				max: angle + 180 / Math.max(1, power),
+				min: angle - 180 / Math.max(1, limitAngle ? power : 1),
+				max: angle + 180 / Math.max(1, limitAngle ? power : 1),
 			},
 			lifetime: { min: 0.5 * Math.max(1, power), max: 0.5 * Math.max(1, power) },
 			ease: [{ s: 0, cp: 0.1, e: 1 }],
@@ -161,7 +162,7 @@ export default class ParticleSystem {
 		const emitter = this.createDefaultEmitter(boopContainer, {
 			alpha: { start: 1.0, end: 0 },
 			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
-			color: getBoopColor(mouseEvent),
+			color: getBoopColor(),
 			speed: { start: 150, end: 0 },
 			minimumSpeedMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },

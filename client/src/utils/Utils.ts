@@ -71,15 +71,34 @@ export const getDistance = (a: AnyPoint, b: AnyPoint): number => {
 	return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
 }
 
+const boopColors = [
+	{
+		start: '55AAFF',
+		end: '0000FF',
+	},
+	{
+		start: 'FFAAFF',
+		end: 'FF00FF',
+	},
+	{
+		start: 'FFAA55',
+		end: 'FF0000',
+	},
+	{
+		start: '8A0303',
+		end: 'dc143c',
+	},
+]
+let currentBoopColor = 0
 let boopPrepPoints: { emitter: Particles.Emitter; color: { start: string; end: string } }[] = []
 export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point, direction: 'down' | 'up'): void => {
 	const mousePos = Core.input.mousePosition
 	if (event.button === LEFT_MOUSE_BUTTON) {
-		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 1)
+		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 	} else if (event.button === RIGHT_MOUSE_BUTTON && direction === 'down') {
 		boopPrepPoints.push({
 			emitter: Core.particleSystem.createBoardBoopPrepareEffect(mousePos, event),
-			color: getBoopColor(event),
+			color: getBoopColor(),
 		})
 		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 1)
 	} else if (event.button === RIGHT_MOUSE_BUTTON && direction === 'up') {
@@ -95,16 +114,28 @@ export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point, directi
 			})
 		boopPrepPoints = []
 	} else if (event.button === MIDDLE_MOUSE_BUTTON && direction === 'down') {
-		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 1)
+		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 		if (boopPrepPoints.length > 0 && boopPrepPoints.length < 16) {
 			boopPrepPoints.push({
 				emitter: Core.particleSystem.createBoardBoopPrepareEffect(mousePos, event),
-				color: getBoopColor(event),
+				color: getBoopColor(),
 			})
+		} else {
+			const vector = legacyExport.getPointWithOffset(mousePos, Math.random() * 360, 300 + Math.random() * 400)
+			const randomColor = Math.floor(Math.random() * 16777215).toString(16)
+			Core.mainHandler.projectileSystem.createBoardBoopFireworkProjectile(mousePos, vector, event, { start: randomColor, end: 'FFFFFF' })
 		}
-	} else if (event.button === MIDDLE_MOUSE_BUTTON && direction === 'up') {
-		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 1)
 	}
+}
+export const scrollBoopColor = (event: MouseEvent, direction: number): void => {
+	currentBoopColor += direction
+	if (currentBoopColor < 0) {
+		currentBoopColor = 0
+	} else if (currentBoopColor >= boopColors.length) {
+		currentBoopColor = boopColors.length - 1
+	}
+	const mousePos = Core.input.mousePosition
+	Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 }
 
 export const flushBoardPreps = (): void => {
@@ -114,28 +145,8 @@ export const flushBoardPreps = (): void => {
 	boopPrepPoints = []
 }
 
-export const getBoopColor = (mouseEvent: MouseEvent): { start: string; end: string } => {
-	let color = {
-		start: '55AAFF',
-		end: '0000FF',
-	}
-	if (mouseEvent.shiftKey && !mouseEvent.altKey) {
-		color = {
-			start: 'FFAAFF',
-			end: 'FF00FF',
-		}
-	} else if (mouseEvent.shiftKey && mouseEvent.altKey) {
-		color = {
-			start: 'FFAA55',
-			end: 'FF0000',
-		}
-	} else if (mouseEvent.altKey && !mouseEvent.shiftKey) {
-		color = {
-			start: '8A0303',
-			end: 'dc143c',
-		}
-	}
-	return color
+export const getBoopColor = (): { start: string; end: string } => {
+	return boopColors[currentBoopColor]
 }
 
 export const isMobile = (): boolean => {

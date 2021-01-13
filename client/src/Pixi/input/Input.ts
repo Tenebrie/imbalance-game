@@ -21,7 +21,7 @@ import { isGrabbedCardPlayableToRow } from '@/Pixi/input/ValidActions'
 import CardLocation from '@shared/enums/CardLocation'
 import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
-import { boopTheBoard, flushBoardPreps, getDistance, normalizeBoardRowIndex } from '@/utils/Utils'
+import { boopTheBoard, flushBoardPreps, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -85,6 +85,14 @@ export default class Input {
 		})
 		view.addEventListener('touchmove', (event: TouchEvent) => {
 			this.onTouchMove(event)
+		})
+
+		view.addEventListener('wheel', (event: WheelEvent) => {
+			if (event.deltaY > 0) {
+				this.onScrollDown(event)
+			} else if (event.deltaY < 0) {
+				this.onScrollUp(event)
+			}
 		})
 
 		view.addEventListener('mouseleave', () => {
@@ -323,6 +331,14 @@ export default class Input {
 		if (this.grabbedCard && !this.grabbedCard.shouldStick()) {
 			this.useGrabbedCard()
 		}
+	}
+
+	private onScrollDown(event: WheelEvent) {
+		scrollBoopColor(event, 1)
+	}
+
+	private onScrollUp(event: WheelEvent) {
+		scrollBoopColor(event, -1)
 	}
 
 	private onMouseMove(event: MouseEvent) {

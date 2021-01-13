@@ -147,6 +147,28 @@ export default class ProjectileSystem {
 		return projectile
 	}
 
+	public createBoardBoopFireworkProjectile(
+		sourcePoint: PIXI.Point,
+		targetPoint: PIXI.Point,
+		mouseEvent: MouseEvent,
+		color: { start: string; end: string }
+	): RenderedProjectile {
+		const sprite = new PIXI.Sprite(TextureAtlas.getTexture('effects/fireball-static'))
+		sprite.zIndex = 100
+		sprite.scale.set(0.4)
+		sprite.anchor.set(0.5, 0.5)
+		const projectile = RenderedProjectile.targetPoint(sprite, sourcePoint, targetPoint, 500, 1200)
+		projectile.onImpact = () => {
+			Core.particleSystem.createBoardBoopEffect(targetPoint, mouseEvent, 0, 1.5 + Math.random(), color, false)
+		}
+		projectile.trail.rope.zIndex = 99
+		Core.renderer.rootContainer.addChild(projectile.sprite)
+		Core.renderer.rootContainer.addChild(projectile.trail.rope)
+		Core.mainHandler.projectileSystem.projectiles.push(projectile)
+		// AudioSystem.playEffect(AudioEffectCategory.PROJECTILE)
+		return projectile
+	}
+
 	public createCardAttackProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
 		return this.createAttackProjectile(sourceCard.getVisualPosition(), targetCard, () => {
 			Core.particleSystem.createAttackImpactParticleEffect(targetCard)
