@@ -74,11 +74,13 @@ class CardLibrary {
 			outdatedModules.forEach((module) => fs.unlinkSync(module.path))
 		}
 
-		const cardPrototypes = upToDateModules.map((module) => module.prototypeFunction)
+		const cardPrototypes = upToDateModules
+			.filter((module) => !module.filename.toLowerCase().startsWith('testing'))
+			.map((module) => module.prototypeFunction)
 
 		this.forceLoadCards(cardPrototypes)
 
-		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions.`)
+		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions`)
 		if (cardPrototypes.length === 0) {
 			return
 		}
@@ -152,9 +154,6 @@ class CardLibrary {
 				).length,
 				Total: nonTestingCards.filter((card) => card.faction === CardFaction.NEUTRAL).length,
 			},
-			Testing: {
-				Total: this.cards.filter((card) => card.class.startsWith('testing')).length,
-			},
 		})
 
 		const oldestTimestamp = upToDateModules.sort((a, b) => a.timestamp - b.timestamp)[0].timestamp
@@ -162,7 +161,10 @@ class CardLibrary {
 		if (newModules.length === 0) {
 			return
 		}
-		const sortedNewModules = newModules.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5)
+		const sortedNewModules = newModules
+			.filter((module) => !module.filename.toLowerCase().startsWith('testing'))
+			.sort((a, b) => b.timestamp - a.timestamp)
+			.slice(0, 5)
 		console.info(
 			'Latest updated card definitions:',
 			sortedNewModules.map((module) => module.filename)
