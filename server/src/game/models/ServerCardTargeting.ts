@@ -201,13 +201,15 @@ export class ServerCardTargeting {
 		previousTargets: DeployTarget[] = []
 	): ServerCardTargetCard[] {
 		return Utils.sortCards(
-			GameLibrary.cards.filter((card) =>
-				targetDefinition.require({
-					sourceCard: this.card,
-					targetCard: card,
-					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
-				})
-			)
+			GameLibrary.cards
+				.filter((card) => this.card.isExperimental || card.isExperimental === this.card.isExperimental)
+				.filter((card) =>
+					targetDefinition.require({
+						sourceCard: this.card,
+						targetCard: card,
+						previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
+					})
+				)
 		).map((targetCard) =>
 			ServerCardTarget.cardTargetCardInLibrary(targetDefinition.id, TargetMode.DEPLOY_EFFECT, this.card, targetCard, targetDefinition.label)
 		)

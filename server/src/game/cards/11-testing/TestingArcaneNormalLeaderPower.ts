@@ -1,26 +1,22 @@
 import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import ServerDamageInstance from '../../models/ServerDamageSource'
+import CardFeature from '@shared/enums/CardFeature'
 
-export default class TestingSpellHeavyStrike extends ServerCard {
+export default class TestingArcaneNormalLeaderPower extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
-			faction: CardFaction.NEUTRAL,
+			faction: CardFaction.ARCANE,
+			features: [CardFeature.HERO_POWER],
 			stats: {
-				cost: 0,
+				cost: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
-		})
-
-		this.createDeployTargets(TargetType.UNIT).perform(({ targetCard }) => {
-			targetCard.dealDamage(ServerDamageInstance.fromCard(100, this))
 		})
 	}
 }

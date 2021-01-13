@@ -25,10 +25,8 @@ export default class HeroZamarath extends ServerCard {
 		})
 
 		this.buffs.add(BuffProtector, this)
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
-	}
-
-	private onDeploy(): void {
-		this.buffs.add(BuffImmunity, this, BuffDuration.START_OF_NEXT_TURN)
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
+			this.buffs.add(BuffImmunity, this, BuffDuration.START_OF_NEXT_TURN)
+		})
 	}
 }

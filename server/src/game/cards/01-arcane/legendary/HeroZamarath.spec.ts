@@ -20,6 +20,10 @@ describe('HeroZamarath', () => {
 		;({ game, cardInHand, player, playerAction, startNextTurn } = TestGameTemplates.singleCardTest(HeroZamarath))
 	})
 
+	it('always has protector', () => {
+		expect(cardInHand.features.includes(CardFeature.PROTECTOR)).toBeTruthy()
+	})
+
 	it('gets untargetable when played', () => {
 		playerAction(() => {
 			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
@@ -58,7 +62,8 @@ describe('HeroZamarath', () => {
 		const targetUnit = new TestingUnitNoEffect(game)
 		playerAction(() => {
 			game.board.createUnit(targetUnit, 0, 0)
-
+		})
+		playerAction(() => {
 			const opponentsCard = new TestingSpellHeavyStrike(game)
 			player.opponentInGame.cardHand.addSpell(opponentsCard)
 			game.cardPlay.forcedPlayCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame), 0, 0)

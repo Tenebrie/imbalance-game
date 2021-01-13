@@ -43,7 +43,7 @@ export default class HeroChallengeLegendaryExplorer0 extends ServerCard {
 	private onDeploy(): void {
 		const legendaryCards = CardLibrary.cards
 			.filter((card) => card.color === CardColor.GOLDEN)
-			.filter((card) => card.isCollectible && !card.isExperimental)
+			.filter((card) => card.isCollectible)
 			.slice()
 		this.exploredCards = Utils.shuffle(legendaryCards).slice(0, this.cardsToExplore)
 	}

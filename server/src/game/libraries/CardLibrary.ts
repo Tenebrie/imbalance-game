@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
-import { colorize } from '../../utils/Utils'
+import { colorize } from '@src/utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
@@ -22,7 +22,7 @@ type CardModule = {
 }
 
 class CardLibrary {
-	cards: ServerCard[]
+	public cards: ServerCard[] = []
 
 	constructor() {
 		// Do not load cards if running tests
@@ -76,9 +76,7 @@ class CardLibrary {
 
 		const cardPrototypes = upToDateModules.map((module) => module.prototypeFunction)
 
-		this.cards = cardPrototypes.map((prototype) => {
-			return new prototype(CardLibraryPlaceholderGame.get())
-		})
+		this.forceLoadCards(cardPrototypes)
 
 		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions.`)
 		if (cardPrototypes.length === 0) {
@@ -171,12 +169,17 @@ class CardLibrary {
 		)
 	}
 
-	public findPrototypeById(id: string): ServerCard | undefined {
-		return this.cards.find((card) => card.id === id)
+	public forceLoadCards(cards: CardConstructor[]): void {
+		const newCards = cards.filter((card) => !this.cards.some((existingCard) => existingCard.class === this.getClassFromConstructor(card)))
+		this.cards = this.cards.concat(newCards.map((prototype) => new prototype(CardLibraryPlaceholderGame.get())))
+	}
+
+	public getClassFromConstructor(constructor: CardConstructor): string {
+		return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
 	}
 
 	public findPrototypeByConstructor(constructor: CardConstructor): ServerCard {
-		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
+		const cardClass = this.getClassFromConstructor(constructor)
 		const card = this.cards.find((card) => card.class === cardClass)
 		if (!card) {
 			throw new Error(`Unable to find card ${cardClass}`)
@@ -185,14 +188,14 @@ class CardLibrary {
 	}
 
 	public instantiateByInstance(game: ServerGame, card: ServerCard): ServerCard {
-		const cardClass = card.constructor.name.substr(0, 1).toLowerCase() + card.constructor.name.substr(1)
+		const cardClass = this.getClassFromConstructor(card.constructor as CardConstructor)
 		return this.instantiateByClass(game, cardClass)
 	}
 
 	public instantiateByConstructor(game: ServerGame, constructor: CardConstructor): ServerCard {
-		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
+		const cardClass = this.getClassFromConstructor(constructor)
 		if (!this.cards.find((card) => card.class === cardClass)) {
-			this.cards.push(new constructor(CardLibraryPlaceholderGame.get()))
+			this.forceLoadCards([constructor])
 		}
 		return this.instantiateByClass(game, cardClass)
 	}
