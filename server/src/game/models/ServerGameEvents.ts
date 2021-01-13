@@ -13,6 +13,8 @@ import { CardSelectorBuilder } from '@src/game/models/events/selectors/CardSelec
 import Utils, { colorizeClass, colorizeId } from '@src/utils/Utils'
 import { cardPerform, cardRequire } from '@src/game/utils/CardEventHandlers'
 import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
+import CardLocation from '@shared/enums/CardLocation'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export type EventSubscriber = ServerGame | ServerCard | ServerBuff
 
@@ -156,12 +158,89 @@ export default class ServerGameEvents {
 	}
 
 	public resolveEvents(): void {
-		// TODO: Add sorting here
-		// 1. Current player > Opponent > System
-		// 2. Board > Hand > Deck > Graveyard
-		// 3. Front row > Center row > Back row
-		// 4. Unit on the left > Unit on the right
-		let currentCallbacks = this.callbackQueue.slice().sort(() => 0)
+		let currentCallbacks = this.callbackQueue.slice().sort((a, b) => {
+			// Player > System
+			if (a.subscriber instanceof ServerGame && b.subscriber instanceof ServerGame) {
+				return 0
+			} else if (a.subscriber instanceof ServerGame) {
+				return 1
+			} else if (b.subscriber instanceof ServerGame) {
+				return -1
+			}
+
+			// Current player > Opponent
+			const ownerOfA = a.subscriber instanceof ServerCard ? a.subscriber.ownerInGame : a.subscriber.card.ownerInGame
+			const ownerOfB = b.subscriber instanceof ServerCard ? b.subscriber.ownerInGame : b.subscriber.card.ownerInGame
+			if (ownerOfA !== ownerOfB) {
+				if (ownerOfA === this.game.activePlayer) {
+					return -1
+				} else if (ownerOfB === this.game.activePlayer) {
+					return 1
+				}
+			}
+
+			// Board > Hand > Deck > Graveyard > Other locations
+			const cardOfA = a.subscriber instanceof ServerCard ? a.subscriber : a.subscriber.card
+			const cardOfB = b.subscriber instanceof ServerCard ? b.subscriber : b.subscriber.card
+			const locationToNumber = (cardLocation: CardLocation): number => {
+				switch (cardLocation) {
+					case CardLocation.BOARD:
+						return 0
+					case CardLocation.HAND:
+						return 1
+					case CardLocation.DECK:
+						return 2
+					case CardLocation.GRAVEYARD:
+						return 3
+					default:
+						return 100
+				}
+			}
+			const locationOfA = cardOfA.location
+			const locationOfB = cardOfB.location
+			const numericLocationOfA = locationToNumber(locationOfA)
+			const numericLocationOfB = locationToNumber(locationOfB)
+			if (numericLocationOfA !== numericLocationOfB) {
+				return numericLocationOfA - numericLocationOfB
+			}
+
+			// Card on the left > Card on the right
+			const getCardIndex = (card: ServerCard, owner: ServerPlayerInGame, location: CardLocation): number => {
+				switch (location) {
+					case CardLocation.HAND:
+						return Utils.sortCards(owner.cardHand.allCards).indexOf(card)
+					case CardLocation.DECK:
+						return owner.cardDeck.allCards.indexOf(card)
+					case CardLocation.GRAVEYARD:
+						return owner.cardGraveyard.allCards.indexOf(card)
+					default:
+						return 100
+				}
+			}
+			if (locationOfA === locationOfB && locationOfA !== CardLocation.BOARD && locationOfB !== CardLocation.BOARD) {
+				const indexOfA = getCardIndex(cardOfA, ownerOfA, locationOfA)
+				const indexOfB = getCardIndex(cardOfB, ownerOfB, locationOfB)
+				return indexOfA - indexOfB
+			}
+
+			const unitOfA = cardOfA.unit
+			const unitOfB = cardOfB.unit
+			if (unitOfA && unitOfB) {
+				const rowIndexOfA = unitOfA.rowIndex
+				const rowIndexOfB = unitOfB.rowIndex
+				// Unit at the front > Unit at the back
+				if (rowIndexOfA !== rowIndexOfB) {
+					const distanceOfA = this.game.board.getDistanceToStaticFront(rowIndexOfA)
+					const distanceOfB = this.game.board.getDistanceToStaticFront(rowIndexOfB)
+					return distanceOfA - distanceOfB
+				}
+
+				// Unit on the left > Unit on the right
+				return unitOfA.unitIndex - unitOfB.unitIndex
+			}
+
+			return 0
+		})
 
 		const resolveCards = () => {
 			while (

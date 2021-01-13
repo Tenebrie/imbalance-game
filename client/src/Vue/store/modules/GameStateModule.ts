@@ -153,6 +153,9 @@ const gameStateModule = defineModule({
 			commit.setOpponentData(null)
 			commit.setIsSpectating(false)
 			commit.setIsPlayersTurn(false)
+			commit.setPlayerMorale(0)
+			commit.setOpponentMorale(0)
+			commit.setIsOpponentInRound(true)
 			rootDispatch.gameLogModule.clearLog()
 		},
 	},

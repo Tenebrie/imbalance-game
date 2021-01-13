@@ -9,10 +9,10 @@ import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import Utils from '../../utils/Utils'
 
 export default class ServerDeck implements CardDeck {
+	game: ServerGame
+	owner: ServerPlayerInGame
 	unitCards: ServerCard[]
 	spellCards: ServerCard[]
-	owner: ServerPlayerInGame
-	game: ServerGame
 
 	constructor(game: ServerGame, owner: ServerPlayerInGame, unitCards: ServerCard[], spellCards: ServerCard[]) {
 		this.game = game

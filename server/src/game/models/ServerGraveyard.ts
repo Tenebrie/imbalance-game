@@ -9,10 +9,10 @@ import { CardConstructor } from '../libraries/CardLibrary'
 import CardType from '@shared/enums/CardType'
 
 export default class ServerGraveyard implements CardDeck {
+	game: ServerGame
 	owner: ServerPlayerInGame
 	unitCards: ServerCard[]
 	spellCards: ServerCard[]
-	game: ServerGame
 
 	constructor(owner: ServerPlayerInGame) {
 		this.game = owner.game

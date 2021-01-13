@@ -28,6 +28,7 @@ export const resumeLogging = (): void => {
 
 interface CommonTemplateResult {
 	game: ServerGame
+	player: ServerPlayerInGame
 	playerAction: (callback: () => void) => void
 	startNextTurn: () => void
 	startNextRound: () => void
@@ -35,12 +36,10 @@ interface CommonTemplateResult {
 
 type SingleCardTestGameTemplateResult = {
 	cardInHand: ServerCard
-	player: ServerPlayerInGame
 	ownedCard: ServerOwnedCard
 } & CommonTemplateResult
 
 type OpponentCardTestGameTemplateResult = {
-	player: ServerPlayerInGame
 	playersCard: ServerCard
 	playersOwnedCard: ServerOwnedCard
 	opponentsCard: ServerCard
@@ -88,6 +87,7 @@ export default {
 
 		return {
 			game,
+			player: game.players[1],
 			playerAction: playerAction(game),
 			startNextTurn: startNextTurn(game),
 			startNextRound: startNextRound(game),
