@@ -20,6 +20,16 @@ export const hashCode = (targetString: string): number => {
 
 export const sortCards = (inputArray: Card[] | CardMessage[]): Card[] | CardMessage[] => {
 	return inputArray.slice().sort((a: Card | CardMessage, b: Card | CardMessage) => {
+		if ('features' in a && 'features' in b) {
+			if (a.features.includes(CardFeature.TEMPORARY_CARD) && !b.features.includes(CardFeature.TEMPORARY_CARD)) {
+				return 1
+			} else if (!a.features.includes(CardFeature.TEMPORARY_CARD) && b.features.includes(CardFeature.TEMPORARY_CARD)) {
+				return -1
+			} else if (a.features.includes(CardFeature.TEMPORARY_CARD) && b.features.includes(CardFeature.TEMPORARY_CARD)) {
+				return 0
+			}
+		}
+
 		return (
 			('features' in a &&
 				'features' in b &&

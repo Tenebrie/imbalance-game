@@ -12,7 +12,6 @@
 			<editor-deck-card-list-item :card="card" v-for="card in bronzeCards" :key="card.id" />
 		</div>
 		<div class="buttons">
-			<editor-save-deck-button />
 			<editor-export-deck-button />
 			<editor-delete-deck-button />
 			<editor-leave-deck-button />
@@ -30,7 +29,6 @@ import EditorDeckCardListItem from '@/Vue/components/editor/EditorDeckCardListIt
 import EditorDeckCardListSeparator from '@/Vue/components/editor/EditorDeckCardListSeparator.vue'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import EditorDeckName from '@/Vue/components/editor/EditorDeckName.vue'
-import EditorSaveDeckButton from '@/Vue/components/editor/buttons/EditorSaveDeckButton.vue'
 import EditorExportDeckButton from '@/Vue/components/editor/buttons/EditorExportDeckButton.vue'
 import EditorDeleteDeckButton from '@/Vue/components/editor/buttons/EditorDeleteDeckButton.vue'
 import EditorLeaveDeckButton from '@/Vue/components/editor/buttons/EditorLeaveDeckButton.vue'
@@ -39,7 +37,6 @@ import TheEditorHoveredDeckCard from '@/Vue/components/editor/TheEditorHoveredDe
 export default Vue.extend({
 	components: {
 		EditorDeckName,
-		EditorSaveDeckButton,
 		EditorExportDeckButton,
 		EditorDeleteDeckButton,
 		EditorLeaveDeckButton,

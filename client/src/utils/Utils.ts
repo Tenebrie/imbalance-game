@@ -97,7 +97,7 @@ export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point, directi
 		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 	} else if (event.button === RIGHT_MOUSE_BUTTON && direction === 'down') {
 		boopPrepPoints.push({
-			emitter: Core.particleSystem.createBoardBoopPrepareEffect(mousePos, event),
+			emitter: Core.particleSystem.createBoardBoopPrepareEffect(mousePos),
 			color: getBoopColor(),
 		})
 		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 1)
@@ -117,7 +117,7 @@ export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point, directi
 		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 		if (boopPrepPoints.length > 0 && boopPrepPoints.length < 16) {
 			boopPrepPoints.push({
-				emitter: Core.particleSystem.createBoardBoopPrepareEffect(mousePos, event),
+				emitter: Core.particleSystem.createBoardBoopPrepareEffect(mousePos),
 				color: getBoopColor(),
 			})
 		} else {

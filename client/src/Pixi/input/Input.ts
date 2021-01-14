@@ -356,7 +356,7 @@ export default class Input {
 			getDistance(this.boopTrailLastSeenAt || { x: 0, y: 0 }, this.mousePosition) > 5
 		) {
 			this.boopTrailLastSeenAt = this.mousePosition.clone()
-			Core.particleSystem.createSmallBoardBoopEffect(this.mousePosition, event)
+			Core.particleSystem.createSmallBoardBoopEffect(this.mousePosition)
 		}
 
 		if (this.rightMouseDown && this.hoveredCard !== null) {

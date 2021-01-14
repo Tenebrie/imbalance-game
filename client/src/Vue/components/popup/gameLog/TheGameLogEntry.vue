@@ -1,5 +1,5 @@
 <template>
-	<div class="the-game-log-entry">
+	<div class="the-game-log-entry" v-if="message !== '<no-content>'">
 		<span class="timestamp">{{ timestamp }}</span> - <span v-html="message" />
 	</div>
 </template>

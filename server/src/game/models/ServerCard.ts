@@ -675,10 +675,18 @@ export default class ServerCard implements Card {
 
 	/* Create an aura effect
 	 * ------------------------
-	 * Description
+	 * The selector is evaluated for every card in the game.
 	 */
 	protected createSelector(): CardSelectorBuilder {
 		return this.game.events.createSelector(this)
+	}
+
+	/* Create an aura effect for this card only
+	 * ----------------------------------------
+	 * The selector will be evaluated for this card only. Otherwise works exactly as `createSelector`.
+	 */
+	protected createSelfSelector(): CardSelectorBuilder {
+		return this.game.events.createSelector(this).requireTarget(({ target }) => target === this)
 	}
 
 	protected addRelatedCards(): RelatedCardsDefinition {

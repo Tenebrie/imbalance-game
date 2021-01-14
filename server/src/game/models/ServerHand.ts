@@ -43,7 +43,7 @@ export default class ServerHand {
 		}
 	}
 
-	public onUnitDrawn(card: ServerCard): void {
+	public drawUnit(card: ServerCard): void {
 		this.addUnit(card)
 		this.game.events.postEvent(
 			GameEventCreators.cardDrawn({
@@ -53,7 +53,7 @@ export default class ServerHand {
 		)
 	}
 
-	public onSpellDrawn(card: ServerCard): void {
+	public drawSpell(card: ServerCard): void {
 		this.addSpell(card)
 		this.game.events.postEvent(
 			GameEventCreators.cardDrawn({

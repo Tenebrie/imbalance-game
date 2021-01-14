@@ -260,9 +260,12 @@ export default class RenderedCard implements Card {
 			.filter((object) => object.text !== null)
 			.map((object) => object.text.replace(/{value}/g, this.stats[object.key]))
 
-		for (const index in featureStrings) {
-			description = `${featureStrings[index]}<p>${description}`
+		if (featureStrings.length > 0) {
+			description = `${featureStrings.join(' | ')}<p>${description}`
 		}
+		// for (const index in featureStrings) {
+		// 	description = `${featureStrings[index]}<p>${description}`
+		// }
 		for (const index in leaderStatsStrings.reverse()) {
 			const delimiter = Number(index) === 0 ? '<p>' : '\n'
 			description = `${leaderStatsStrings[index]}${delimiter}${description}`

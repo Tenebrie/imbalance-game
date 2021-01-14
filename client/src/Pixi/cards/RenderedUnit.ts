@@ -2,11 +2,11 @@ import Core from '@/Pixi/Core'
 import Unit from '@shared/models/Unit'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import UnitMessage from '@shared/models/network/UnitMessage'
 
 export default class RenderedUnit implements Unit {
 	public card: RenderedCard
 	public owner: ClientPlayerInGame
+	public isFadingOut = false
 
 	public constructor(card: RenderedCard, owner: ClientPlayerInGame) {
 		this.card = card
@@ -21,9 +21,9 @@ export default class RenderedUnit implements Unit {
 		return Core.board.rows[this.rowIndex].cards.indexOf(this)
 	}
 
-	public static fromMessage(message: UnitMessage): RenderedUnit {
-		const renderedCard = RenderedCard.fromMessage(message.card)
-		const owner = Core.getPlayer(message.ownerId)
-		return new RenderedUnit(renderedCard, owner)
+	public fadeOut(): void {
+		setTimeout(() => {
+			this.isFadingOut = true
+		}, 100)
 	}
 }

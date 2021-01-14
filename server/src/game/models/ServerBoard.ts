@@ -356,6 +356,7 @@ export default class ServerBoard implements Board {
 			})
 		)
 
+		this.game.animation.play(ServerAnimation.unitDestroy(card))
 		card.cleanse()
 		this.removeUnit(unit)
 

@@ -12,6 +12,7 @@ enum CardTribe {
 	CRYSTAL = 'crystal',
 	CULTIST = 'cultist',
 	PEASANT = 'peasant',
+	SOLDIER = 'soldier',
 	VAMPIRE = 'vampire',
 	MERFOLK = 'merfolk',
 	BUILDING = 'building',

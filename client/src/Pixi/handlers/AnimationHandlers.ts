@@ -126,7 +126,8 @@ const handlers: { [index in AnimationType]: (AnimationMessage, any) => Animation
 
 	[AnimationType.UNIT_DESTROY]: (message: AnimationMessage) => {
 		const targetUnit = Core.board.findUnitById(message.targetCardId)
-		// TODO: Create unit destruction animation
+		Core.particleSystem.createUnitIncapacitateParticleEffect(targetUnit)
+		targetUnit.fadeOut()
 	},
 
 	[AnimationType.UNIT_MOVE]: () => {

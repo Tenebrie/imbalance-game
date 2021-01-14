@@ -8,8 +8,8 @@ export default class BuffTutoredCard extends ServerBuff {
 	constructor(params: BuffConstructorParams) {
 		super(params, {
 			alignment: BuffAlignment.NEUTRAL,
-			features: [BuffFeature.SKIP_ANIMATION],
-			cardFeatures: [CardFeature.LOW_SORT_PRIORITY, CardFeature.TEMPORARY_CARD],
+			features: [BuffFeature.SKIP_ANIMATION, BuffFeature.PROTECTED],
+			cardFeatures: [CardFeature.TEMPORARY_CARD],
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onCardPlayed())

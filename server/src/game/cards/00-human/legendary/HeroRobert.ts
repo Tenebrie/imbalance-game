@@ -33,8 +33,11 @@ export default class HeroRobert extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerCard): void {
+		target.buffs.add(BuffNoArmor, this)
 		Keywords.summonCard(target)
-		const copy = Keywords.createCard.forOwnerOf(this).fromInstance(target)
-		copy.buffs.add(BuffNoArmor, this)
+		Keywords.createCard
+			.forOwnerOf(this)
+			.with((card) => card.buffs.add(BuffNoArmor, this))
+			.fromInstance(target)
 	}
 }

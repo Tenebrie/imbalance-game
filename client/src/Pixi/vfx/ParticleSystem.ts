@@ -89,7 +89,7 @@ export default class ParticleSystem {
 		return container
 	}
 
-	public createSmallBoardBoopEffect(position: PIXI.Point, mouseEvent: MouseEvent): void {
+	public createSmallBoardBoopEffect(position: PIXI.Point): void {
 		const boopContainer = this.createBoardContainer()
 
 		const projectileCount = 10
@@ -156,7 +156,7 @@ export default class ParticleSystem {
 		this.playEmitter(emitter, boopContainer)
 	}
 
-	public createBoardBoopPrepareEffect(position: PIXI.Point, mouseEvent: MouseEvent): Particles.Emitter {
+	public createBoardBoopPrepareEffect(position: PIXI.Point): Particles.Emitter {
 		const boopContainer = this.createBoardContainer()
 
 		const emitter = this.createDefaultEmitter(boopContainer, {
@@ -265,6 +265,52 @@ export default class ParticleSystem {
 			ease: [{ s: 0, cp: 0.1, e: 1 }],
 			frequency: 0.005,
 			emitterLifetime: 0.15,
+			maxParticles: 1000,
+			pos: {
+				x: 0,
+				y: 0,
+			},
+			particlesPerWave: 25,
+			spawnType: 'rect',
+			spawnRect: {
+				x: -card.sprite.width / 2,
+				y: -card.sprite.height / 2,
+				w: card.sprite.width,
+				h: card.sprite.height,
+			},
+		})
+		this.playAttachedEmitter(emitter, container, card)
+	}
+
+	public createUnitIncapacitateParticleEffect(unit: RenderedUnit): void {
+		let color = {
+			start: '55AAFF',
+			end: '0000FF',
+		}
+		if (unit.owner === Core.opponent) {
+			color = {
+				start: 'FFAA55',
+				end: 'FF0000',
+			}
+		}
+
+		const card = unit.card
+		const container = this.getCardEffectContainer(card)
+
+		const emitter = this.createDefaultEmitter(container, {
+			alpha: { start: 1.0, end: 0 },
+			scale: { start: 0.9 * Core.renderer.superSamplingLevel, end: 0.5 * Core.renderer.superSamplingLevel },
+			color: color,
+			speed: { start: 150, end: 0 },
+			minimumSpeedMultiplier: 0.1,
+			minimumScaleMultiplier: 0.1,
+			startRotation: { min: 0, max: 360 },
+			rotationSpeed: { min: 0, max: 200 },
+			lifetime: { min: 1.25, max: 1.25 },
+			blendMode: 'screen',
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
+			frequency: 0.02,
+			emitterLifetime: 0.4,
 			maxParticles: 1000,
 			pos: {
 				x: 0,

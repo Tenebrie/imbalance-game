@@ -171,6 +171,10 @@ export const limitValueToInterval = (min: number, value: number, max: number): n
 	return Math.max(min, Math.min(value, max))
 }
 
+export const EmptyFunction = (): void => {
+	/* Empty */
+}
+
 export default {
 	flat(array: any[], depth = 1): any[] {
 		return array.reduce((flat, toFlatten) => {

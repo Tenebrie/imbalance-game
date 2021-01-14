@@ -104,7 +104,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 				continue
 			}
 
-			this.cardHand.onUnitDrawn(card)
+			this.cardHand.drawUnit(card)
 			drawnCards.push(card)
 		}
 		return drawnCards
@@ -119,7 +119,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 				continue
 			}
 
-			this.cardHand.onSpellDrawn(card)
+			this.cardHand.drawSpell(card)
 			drawnCards.push(card)
 		}
 		return drawnCards

@@ -1,5 +1,5 @@
 import { BuffConstructor } from '../../ServerBuffContainer'
-import { LeaderStatValueGetter } from '../../../../utils/LeaderStats'
+import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
 
 export type CardSelectorProvideBuff = {
 	buff: BuffConstructor
