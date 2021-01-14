@@ -28,6 +28,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import { BuffConstructor } from './ServerBuffContainer'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import ServerGameIndex from '@src/game/models/ServerGameIndex'
+import ServerAnimation from '@src/game/models/ServerAnimation'
 
 interface ServerGameProps extends OptionalGameProps {
 	gameMode: GameMode
@@ -331,8 +332,14 @@ export default class ServerGame implements Game {
 			.filter((unit) => !unit.card.features.includes(CardFeature.BUILDING))
 			.filter((unit) => !unit.card.features.includes(CardFeature.NIGHTWATCH))
 			.forEach((unit) => {
-				this.board.destroyUnit(unit)
+				this.animation.thread(() => {
+					this.board.destroyUnit(unit)
+				})
 			})
+		this.animation.syncAnimationThreads()
+		this.animation.play(ServerAnimation.delay())
+		this.animation.play(ServerAnimation.delay())
+		this.animation.play(ServerAnimation.delay())
 
 		for (let i = 0; i < 3; i++) {
 			this.board.rows[i].setOwner(playerTwo)
