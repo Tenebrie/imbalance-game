@@ -89,7 +89,7 @@ export const getLeaderTextVariables = (leaderCard: ServerCard): LeaderTextVariab
 }
 
 export const setCookie = (res: express.Response, name: string, value: string): void => {
-	res.cookie(name, value, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
+	res.cookie(name, value, { maxAge: 6 * 30 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
 }
 
 export const clearCookie = (res: express.Response, name: string, value: string): void => {
