@@ -2,7 +2,7 @@
 	<div class="profile-view">
 		<the-user-profile class="user-profile" />
 		<div class="profile-footer">
-			<span>State of Imbalance v0.13.1 (10.01.2021)</span>
+			<span>State of Imbalance v0.14 (15.01.2021)</span>
 		</div>
 	</div>
 </template>

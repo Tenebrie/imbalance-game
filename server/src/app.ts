@@ -11,13 +11,6 @@ import expressWs from 'express-ws'
 import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import { wsLogger } from './utils/WebSocketLogger'
 import Database from './database/Database'
-import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
-import RequireSupportAccessLevelMiddleware from '@src/middleware/RequireSupportAccessLevelMiddleware'
-import RequireAdminAccessLevelMiddleware from '@src/middleware/RequireAdminAccessLevelMiddleware'
-import AccessLevel from '@shared/enums/AccessLevel'
-import { colorize, colorizeId } from '@src/utils/Utils'
-import AsciiColor from '@src/enums/AsciiColor'
-import listEndpoints from 'express-list-endpoints'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
 
 const app = express()
