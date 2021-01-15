@@ -167,7 +167,7 @@ export default defineComponent({
 
 		const onOverlayClick = (event: MouseEvent) => {
 			event.cancelBubble = true
-			if (!event.ctrlKey && !event.shiftKey) {
+			if (!event.ctrlKey) {
 				event.preventDefault()
 			}
 		}

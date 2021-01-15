@@ -8,6 +8,8 @@ import RichTextVariables from '@shared/models/RichTextVariables'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { sortCards } from '@shared/Utils'
 import Core from '@/Pixi/Core'
+import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
+import * as Particles from 'pixi-particles'
 
 export const forEachInNumericEnum = (enumeration: { [s: number]: number }, handler: (val: number) => any): void => {
 	for (const value in enumeration) {
@@ -60,6 +62,93 @@ export const isElectron = (): boolean => {
 	}
 }
 
+type AnyPoint = {
+	x: number
+	y: number
+}
+
+export const getDistance = (a: AnyPoint, b: AnyPoint): number => {
+	return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
+}
+
+const boopColors = [
+	{
+		start: '55AAFF',
+		end: '0000FF',
+	},
+	{
+		start: 'FFAAFF',
+		end: 'FF00FF',
+	},
+	{
+		start: 'FFAA55',
+		end: 'FF0000',
+	},
+	{
+		start: '8A0303',
+		end: 'dc143c',
+	},
+]
+let currentBoopColor = 0
+let boopPrepPoints: { emitter: Particles.Emitter; color: { start: string; end: string } }[] = []
+export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point, direction: 'down' | 'up'): void => {
+	const mousePos = Core.input.mousePosition
+	if (event.button === LEFT_MOUSE_BUTTON) {
+		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
+	} else if (event.button === RIGHT_MOUSE_BUTTON && direction === 'down') {
+		boopPrepPoints.push({
+			emitter: Core.particleSystem.createBoardBoopPrepareEffect(mousePos),
+			color: getBoopColor(),
+		})
+		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 1)
+	} else if (event.button === RIGHT_MOUSE_BUTTON && direction === 'up') {
+		const shortPreps = boopPrepPoints.filter((prep) => getDistance(mousePos, prep.emitter.spawnPos) < 10)
+		shortPreps.forEach((prep) => {
+			Core.particleSystem.destroyEmitter(prep.emitter, Core.renderer.boardEffectsContainer)
+		})
+		boopPrepPoints
+			.filter((prep) => !shortPreps.includes(prep))
+			.forEach((prep) => {
+				Core.mainHandler.projectileSystem.createBoardBoopProjectile(prep.emitter.spawnPos, mousePos, event, prep.color)
+				Core.particleSystem.destroyEmitter(prep.emitter, Core.renderer.boardEffectsContainer)
+			})
+		boopPrepPoints = []
+	} else if (event.button === MIDDLE_MOUSE_BUTTON && direction === 'down') {
+		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
+		if (boopPrepPoints.length > 0 && boopPrepPoints.length < 16) {
+			boopPrepPoints.push({
+				emitter: Core.particleSystem.createBoardBoopPrepareEffect(mousePos),
+				color: getBoopColor(),
+			})
+		} else {
+			const vector = legacyExport.getPointWithOffset(mousePos, Math.random() * 360, 300 + Math.random() * 400)
+			const randomColor = Math.floor(Math.random() * 16777215).toString(16)
+			Core.mainHandler.projectileSystem.createBoardBoopFireworkProjectile(mousePos, vector, event, { start: randomColor, end: 'FFFFFF' })
+		}
+	}
+}
+export const scrollBoopColor = (event: MouseEvent, direction: number): void => {
+	currentBoopColor += direction
+	if (currentBoopColor < 0) {
+		currentBoopColor = 0
+	} else if (currentBoopColor >= boopColors.length) {
+		currentBoopColor = boopColors.length - 1
+	}
+	const mousePos = Core.input.mousePosition
+	Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
+}
+
+export const flushBoardPreps = (): void => {
+	boopPrepPoints.forEach((prep) => {
+		Core.particleSystem.destroyEmitter(prep.emitter, Core.renderer.boardEffectsContainer)
+	})
+	boopPrepPoints = []
+}
+
+export const getBoopColor = (): { start: string; end: string } => {
+	return boopColors[currentBoopColor]
+}
+
 export const isMobile = (): boolean => {
 	let check = false
 	;(function (a) {
@@ -84,7 +173,7 @@ export const electronWebsocketTarget = (): string => {
 	return 'localhost:3000'
 }
 
-export default {
+const legacyExport = {
 	getFont(text: string): string {
 		let font = 'Roboto'
 		const cyrillic = /[а-яА-Я]/g.exec(text)
@@ -94,20 +183,20 @@ export default {
 		return font
 	},
 
-	getVectorAngleAsDegrees(point: PIXI.Point): number {
+	getVectorAngleAsDegrees(point: AnyPoint): number {
 		const angle = Math.atan2(point.y, point.x)
 		const degrees = (180 * angle) / Math.PI
 		return 360 + Math.round(degrees)
 	},
 
-	getVectorAngleAsRadians(point: PIXI.Point): number {
+	getVectorAngleAsRadians(point: AnyPoint): number {
 		return Math.atan2(point.y, point.x)
 	},
 
-	getPointWithOffset(point: PIXI.Point, angle: number, distance: number): PIXI.Point {
+	getPointWithOffset(point: AnyPoint, angle: number, distance: number): PIXI.Point {
 		const offsetPoint = new PIXI.Point()
 		offsetPoint.x = point.x + Math.cos(angle) * distance
-		offsetPoint.y = point.y - Math.sin(angle) * distance
+		offsetPoint.y = point.y + Math.sin(angle) * distance
 		return offsetPoint
 	},
 
@@ -206,3 +295,5 @@ export default {
 		return !cardToModify || cardToModify.count < maxCount
 	},
 }
+
+export default legacyExport

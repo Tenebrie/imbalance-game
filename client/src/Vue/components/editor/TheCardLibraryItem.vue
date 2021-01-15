@@ -62,7 +62,7 @@ export default defineComponent({
 		}
 
 		const onRightClick = (event: MouseEvent): void => {
-			if (event && (event.shiftKey || event.ctrlKey)) {
+			if (event && event.ctrlKey) {
 				return
 			}
 

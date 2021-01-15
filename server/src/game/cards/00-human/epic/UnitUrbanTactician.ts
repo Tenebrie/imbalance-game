@@ -4,7 +4,7 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '@src/utils/LeaderStats'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import CardFeature from '@shared/enums/CardFeature'
@@ -17,7 +17,7 @@ export default class UnitUrbanTactician extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
-			tribes: [CardTribe.NOBLE],
+			tribes: [CardTribe.NOBLE, CardTribe.SOLDIER],
 			faction: CardFaction.HUMAN,
 			stats: {
 				power: 2,
@@ -30,7 +30,6 @@ export default class UnitUrbanTactician extends ServerCard {
 
 		this.createSelector()
 			.require(() => this.location === CardLocation.BOARD)
-			.requireTarget(({ target }) => target !== this)
 			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => !target.features.includes(CardFeature.BUILDING))
 			.requireTarget(({ target }) => {

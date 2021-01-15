@@ -49,11 +49,11 @@ export default {
 			OutgoingMessageHandlers.sendActivePlayer(playerInGame.player, game.activePlayer)
 		}
 		if (playerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
-			game.cardPlay.requestedDeployTargets = game.cardPlay.getDeployTargets()
+			const deployTargets = game.cardPlay.getDeployTargets()
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargetsForReconnect(
 				playerInGame.player,
 				TargetMode.DEPLOY_EFFECT,
-				game.cardPlay.requestedDeployTargets.map((deployTarget) => deployTarget.target),
+				deployTargets.map((deployTarget) => deployTarget.target),
 				game.cardPlay.cardResolveStack.currentCard.card
 			)
 		} else if (playerInGame.mulliganMode) {
@@ -65,6 +65,7 @@ export default {
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, targets)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
+		OutgoingMessageHandlers.notifyAboutGamePhaseAdvance(game, game.turnPhase)
 		OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, playerInGame.isInvertedBoard())
 		game.events.flushLogEventGroup()
 		OutgoingMessageHandlers.executeMessageQueueForPlayer(game, playerInGame.player)
@@ -109,11 +110,11 @@ export default {
 			OutgoingMessageHandlers.sendActivePlayer(spectator.player, game.activePlayer)
 		}
 		if (spectatedPlayerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
-			game.cardPlay.requestedDeployTargets = game.cardPlay.getDeployTargets()
+			const deployTargets = game.cardPlay.getDeployTargets()
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				spectator.player,
 				TargetMode.DEPLOY_EFFECT,
-				game.cardPlay.requestedDeployTargets.map((deployTarget) => deployTarget.target),
+				deployTargets.map((deployTarget) => deployTarget.target),
 				game.cardPlay.cardResolveStack.currentCard.card
 			)
 		} else if (spectatedPlayerInGame.mulliganMode) {

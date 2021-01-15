@@ -5,13 +5,13 @@ import logger from 'morgan'
 import cookieParser from 'cookie-parser'
 import 'module-alias/register'
 import { cardImageGenerator } from './utils/CardImageGenerator'
-import listEndpoints from 'express-list-endpoints'
 
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
 import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import { wsLogger } from './utils/WebSocketLogger'
 import Database from './database/Database'
+import { printAllRoutes } from '@src/utils/RoutePrinter'
 
 const app = express()
 expressWs(app)
@@ -91,14 +91,13 @@ app.use('/api/user', UserRouter)
 app.use('/api/user/modals', ModalsRouter)
 app.use('/api/user/profile', UserProfileRouter)
 
-/* Generic error handler */
-app.use(GenericErrorMiddleware)
-
 /* WS routers */
 app.use('/api/game', PlayRouter)
 
-/* Print all routes */
-console.info('Registered routes:', listEndpoints(app))
+/* Generic error handler */
+app.use(GenericErrorMiddleware)
+
+console.info('Registered routes:', printAllRoutes(app))
 
 /* Index fallback */
 app.use('*', (req, res) => {

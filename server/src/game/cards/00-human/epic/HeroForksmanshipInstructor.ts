@@ -8,33 +8,31 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class HeroForksmanshipInstructor extends ServerCard {
-	powerThreshold = 4
-	bonusPower = asDirectBuffPotency(1)
+	bonusPower = asDirectBuffPotency(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
-			tribes: [CardTribe.PEASANT],
+			tribes: [CardTribe.NOBLE, CardTribe.SOLDIER],
 			faction: CardFaction.HUMAN,
 			stats: {
-				power: 8,
+				power: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			powerThreshold: this.powerThreshold,
 			bonusPower: this.bonusPower,
 		}
 
 		this.createCallback(GameEventType.UNIT_CREATED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card !== this)
 			.require(({ triggeringUnit }) => triggeringUnit.owner === this.owner)
-			.require(({ triggeringUnit }) => triggeringUnit.card.stats.power <= this.powerThreshold)
+			.require(({ triggeringUnit }) => triggeringUnit.card.tribes.includes(CardTribe.PEASANT))
 			.perform(({ triggeringUnit }) => {
 				triggeringUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
 			})

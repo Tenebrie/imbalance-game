@@ -7,8 +7,50 @@ import ServerPlayer from '../game/players/ServerPlayer'
 import express, { Request } from 'express'
 import { sortCards } from '@shared/Utils'
 import { CardConstructor } from '../game/libraries/CardLibrary'
+import { v4 as getRandomId } from 'uuid'
+import ServerGame from '@src/game/models/ServerGame'
+
+export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
+	return `${type}:${prefix}:${getRandomId()}`
+}
+
+export const createRandomGameId = (): string => {
+	return `game:${getRandomId()}`
+}
+
+export const createRandomPlayerId = (): string => {
+	return `player:${getRandomId()}`
+}
+
+export const createBotPlayerId = (): string => {
+	return `ai:${getRandomId()}`
+}
+
+export const createRandomEditorDeckId = (): string => {
+	return `deck:${getRandomId()}`
+}
 
 export const AnyCardLocation = 'any'
+
+export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {
+	let value = rawJson.replace(/card:redacted:([a-zA-Z0-9-]+)/g, (match, capture) => {
+		const card = game.index.findCard(capture)
+		if (!card) {
+			console.warn(`No card found with id ${capture}`)
+			return match
+		}
+		return card.id
+	})
+	value = value.replace(/buff:redacted:([a-zA-Z0-9-]+)/g, (match, capture) => {
+		const buff = game.index.findBuff(capture)
+		if (!buff) {
+			console.warn(`No buff found with id ${capture}`)
+			return match
+		}
+		return buff.id
+	})
+	return value
+}
 
 interface TryUntilArgs {
 	try: () => void | Promise<void>
@@ -51,7 +93,7 @@ export const getLeaderTextVariables = (leaderCard: ServerCard): LeaderTextVariab
 }
 
 export const setCookie = (res: express.Response, name: string, value: string): void => {
-	res.cookie(name, value, { maxAge: 7 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
+	res.cookie(name, value, { maxAge: 6 * 30 * 24 * 3600 * 1000, httpOnly: true, sameSite: true })
 }
 
 export const clearCookie = (res: express.Response, name: string, value: string): void => {
@@ -131,6 +173,10 @@ export const getClassFromConstructor = (constructor: CardConstructor): string =>
 
 export const limitValueToInterval = (min: number, value: number, max: number): number => {
 	return Math.max(min, Math.min(value, max))
+}
+
+export const EmptyFunction = (): void => {
+	/* Empty */
 }
 
 export default {

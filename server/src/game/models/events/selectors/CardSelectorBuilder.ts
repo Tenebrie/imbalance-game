@@ -2,7 +2,7 @@ import { EventSubscriber } from '../../ServerGameEvents'
 import { CardSelectorProvideBuff } from './CardSelectorProvideBuff'
 import { CardSelector, CardSelectorArgs } from './CardSelector'
 import { BuffConstructor } from '../../ServerBuffContainer'
-import { LeaderStatValueGetter } from '../../../../utils/LeaderStats'
+import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
 
 export class CardSelectorBuilder {
 	private readonly __subscriber: EventSubscriber

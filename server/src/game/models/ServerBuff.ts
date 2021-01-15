@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
 import Buff from '@shared/models/Buff'
 import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
@@ -48,6 +47,7 @@ import { EventSubscription } from './events/EventSubscription'
 import { EventHook } from './events/EventHook'
 import { CardSelectorBuilder } from './events/selectors/CardSelectorBuilder'
 import { CardSelector } from './events/selectors/CardSelector'
+import { createRandomId } from '@src/utils/Utils'
 
 export type ServerBuffProps = {
 	alignment: BuffAlignment
@@ -83,10 +83,12 @@ export default class ServerBuff implements Buff {
 	private __duration: number
 
 	constructor(params: BuffConstructorParams, props: ServerBuffProps) {
-		this.id = uuidv4()
+		const buffClass = this.constructor.name.substr(0, 1).toLowerCase() + this.constructor.name.substr(1)
+
+		this.id = createRandomId('buff', buffClass)
 		this.game = params.card.game
 		this.card = params.card
-		this.class = this.constructor.name.substr(0, 1).toLowerCase() + this.constructor.name.substr(1)
+		this.class = buffClass
 		this.source = params.source
 		this.selector = params.selector
 		this.alignment = props.alignment
@@ -109,6 +111,8 @@ export default class ServerBuff implements Buff {
 			.require(({ player }) => player === this.card.owner)
 			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
+
+		this.game.index.addBuff(this)
 	}
 
 	public get duration(): number {

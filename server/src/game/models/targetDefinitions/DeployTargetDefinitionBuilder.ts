@@ -21,7 +21,7 @@ export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValid
 	private __preventSorting = false
 
 	private constructor(card: ServerCard, targetType: TargetType) {
-		this.id = getRandomId()
+		this.id = `tdef:${getRandomId()}`
 		this.card = card
 		this.targetType = targetType
 	}

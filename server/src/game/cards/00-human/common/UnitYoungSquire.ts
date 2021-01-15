@@ -16,12 +16,12 @@ export default class UnitYoungSquire extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
+			tribes: [CardTribe.NOBLE, CardTribe.SOLDIER],
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 6,
-				soloUnitDamage: 2,
+				power: 4,
+				soloUnitDamage: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

@@ -84,9 +84,9 @@
 	"log.entry.unitDestroyed": "Юнит {triggeringUnit} уничтожается",
 	"log.entry.unitDeployed": "Юнит {triggeringUnit} входит в игру",
 	"log.entry.spellDeployed": "Заклинание {triggeringCard} входит в игру",
-	"log.entry.buffCreated.fromCard": "Карта {sourceCard} создает статус {triggeringBuffName} на карте {ownerCard}",
-	"log.entry.buffCreated.fromUniverse": "Статус {triggeringBuffName} создается на карте {ownerCard}",
-	"log.entry.buffRemoved": "Статус {triggeringBuffName} удаляется с карты {ownerCard}",
+	"log.entry.buffCreated.fromCard": "Карта {sourceCard} создает статус {triggeringBuff} на карте {ownerCard}",
+	"log.entry.buffCreated.fromUniverse": "Статус {triggeringBuff} создается на карте {ownerCard}",
+	"log.entry.buffRemoved": "Статус {triggeringBuff} удаляется с карты {ownerCard}",
 	"log.entry.turnEnded": "{player} завершает ход",
 	"log.entry.roundEnded": "{player} завершает ход",
 
@@ -345,7 +345,6 @@
 	"card.heroAdventuringGuildMaster.description": "*Вход в игру:*\nПолучает +{powerPerCard} Силы за каждого другого юнита, сыгранного в этот ход.",
 
 	"card.heroForksmanshipInstructor.name": "Инструктор\nвилования",
-	"card.heroForksmanshipInstructor.description": "Когда вы играете юнита с {powerThreshold} ед. Силы или меньше, дайте ему +{bonusPower} ед. Силы.",
 
 	"card.heroTribeShaman.name": "Племенной шаман",
 	"card.heroTribeShaman.description": "*Вход в игру:*\n*Создайте* *Целебный дождь*",

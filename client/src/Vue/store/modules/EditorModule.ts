@@ -11,6 +11,7 @@ import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import HoveredDeckCardModule from '@/Vue/store/modules/HoveredDeckCardModule'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import { debounce } from 'throttle-debounce'
 
 const editorModule = defineModule({
 	namespaced: true,
@@ -107,6 +108,21 @@ const editorModule = defineModule({
 			}
 		},
 
+		asyncSave: debounce(250, (context, payload: { deckId: string }) => {
+			const { state } = moduleActionContext(context, editorModule)
+
+			const deck = state.decks.find((deck) => deck.id === payload.deckId)
+			const deckMessage = {
+				...deck,
+				cards: deck.cards.map((card) => ({
+					class: card.class,
+					count: card.count,
+				})),
+			}
+
+			axios.put(`/api/decks/${payload.deckId}`, deckMessage)
+		}),
+
 		async saveDeck(context, payload: { deckId: string }): Promise<number> {
 			const { state } = moduleActionContext(context, editorModule)
 
@@ -157,7 +173,7 @@ const editorModule = defineModule({
 		},
 
 		async addCardToDeck(context, payload: { deckId: string; cardToAdd: CardMessage }): Promise<void> {
-			const { state, commit } = moduleActionContext(context, editorModule)
+			const { state, commit, dispatch } = moduleActionContext(context, editorModule)
 
 			const deckToModify = state.decks.find((deck) => deck.id === payload.deckId)
 			const totalCardCount = deckToModify.cards
@@ -187,10 +203,11 @@ const editorModule = defineModule({
 			deckToModify.cards = Utils.sortEditorCards(deckToModify.cards)
 
 			commit.updateEditorDeck(deckToModify)
+			await dispatch.asyncSave(payload)
 		},
 
 		async removeCardFromDeck(context, payload: { deckId: string; cardToRemove: CardMessage }): Promise<void> {
-			const { state, commit } = moduleActionContext(context, editorModule)
+			const { state, commit, dispatch } = moduleActionContext(context, editorModule)
 
 			const newDeck = state.decks.find((deck) => deck.id === payload.deckId)
 			const oldCard = newDeck.cards.find((card) => card.class === payload.cardToRemove.class)
@@ -200,14 +217,16 @@ const editorModule = defineModule({
 				oldCard.count -= 1
 			}
 			commit.updateEditorDeck(newDeck)
+			await dispatch.asyncSave(payload)
 		},
 
 		async renameDeck(context, payload: { deckId: string; name: string }): Promise<void> {
-			const { state, commit } = moduleActionContext(context, editorModule)
+			const { state, commit, dispatch } = moduleActionContext(context, editorModule)
 			const deck = state.decks.find((deck) => deck.id === payload.deckId)
 			deck.name = payload.name
 
 			commit.updateEditorDeck(deck)
+			await dispatch.asyncSave(payload)
 		},
 
 		async requestRender(context, payload: { card: CardMessage }): Promise<void> {

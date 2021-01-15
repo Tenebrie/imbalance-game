@@ -7,7 +7,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import CardLibrary from '../../../libraries/CardLibrary'
 import UnitTrainedHound from '../tokens/UnitTrainedHound'
 
 export default class UnitElderHoundmaster extends ServerCard {
@@ -16,7 +15,7 @@ export default class UnitElderHoundmaster extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.PEASANT],
+			tribes: [CardTribe.PEASANT, CardTribe.SOLDIER],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitTrainedHound],
 			stats: {
@@ -25,15 +24,13 @@ export default class UnitElderHoundmaster extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
-			const unit = triggeringUnit
-			const owner = unit.owner
-			const makeHound = () => CardLibrary.instantiateByConstructor(this.game, UnitTrainedHound)
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
+			const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 0)
 			this.game.animation.instantThread(() => {
-				this.game.board.createUnit(makeHound(), unit.rowIndex, unit.unitIndex)
+				this.game.board.createUnit(new UnitTrainedHound(game), targetRow.index, targetRow.farRightUnitIndex)
 			})
 			this.game.animation.instantThread(() => {
-				this.game.board.createUnit(makeHound(), unit.rowIndex, unit.unitIndex + 1)
+				this.game.board.createUnit(new UnitTrainedHound(game), targetRow.index, targetRow.farRightUnitIndex)
 			})
 		})
 	}

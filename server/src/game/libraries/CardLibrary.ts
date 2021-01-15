@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
-import { colorize } from '../../utils/Utils'
+import { colorize } from '@src/utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
@@ -22,7 +22,7 @@ type CardModule = {
 }
 
 class CardLibrary {
-	cards: ServerCard[]
+	public cards: ServerCard[] = []
 
 	constructor() {
 		// Do not load cards if running tests
@@ -74,13 +74,13 @@ class CardLibrary {
 			outdatedModules.forEach((module) => fs.unlinkSync(module.path))
 		}
 
-		const cardPrototypes = upToDateModules.map((module) => module.prototypeFunction)
+		const cardPrototypes = upToDateModules
+			.filter((module) => !module.filename.toLowerCase().startsWith('testing'))
+			.map((module) => module.prototypeFunction)
 
-		this.cards = cardPrototypes.map((prototype) => {
-			return new prototype(CardLibraryPlaceholderGame.get())
-		})
+		this.forceLoadCards(cardPrototypes)
 
-		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions.`)
+		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions`)
 		if (cardPrototypes.length === 0) {
 			return
 		}
@@ -154,9 +154,6 @@ class CardLibrary {
 				).length,
 				Total: nonTestingCards.filter((card) => card.faction === CardFaction.NEUTRAL).length,
 			},
-			Testing: {
-				Total: this.cards.filter((card) => card.class.startsWith('testing')).length,
-			},
 		})
 
 		const oldestTimestamp = upToDateModules.sort((a, b) => a.timestamp - b.timestamp)[0].timestamp
@@ -164,19 +161,27 @@ class CardLibrary {
 		if (newModules.length === 0) {
 			return
 		}
-		const sortedNewModules = newModules.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5)
+		const sortedNewModules = newModules
+			.filter((module) => !module.filename.toLowerCase().startsWith('testing'))
+			.sort((a, b) => b.timestamp - a.timestamp)
+			.slice(0, 5)
 		console.info(
 			'Latest updated card definitions:',
 			sortedNewModules.map((module) => module.filename)
 		)
 	}
 
-	public findPrototypeById(id: string): ServerCard | undefined {
-		return this.cards.find((card) => card.id === id)
+	public forceLoadCards(cards: CardConstructor[]): void {
+		const newCards = cards.filter((card) => !this.cards.some((existingCard) => existingCard.class === this.getClassFromConstructor(card)))
+		this.cards = this.cards.concat(newCards.map((prototype) => new prototype(CardLibraryPlaceholderGame.get())))
+	}
+
+	public getClassFromConstructor(constructor: CardConstructor): string {
+		return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
 	}
 
 	public findPrototypeByConstructor(constructor: CardConstructor): ServerCard {
-		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
+		const cardClass = this.getClassFromConstructor(constructor)
 		const card = this.cards.find((card) => card.class === cardClass)
 		if (!card) {
 			throw new Error(`Unable to find card ${cardClass}`)
@@ -185,14 +190,14 @@ class CardLibrary {
 	}
 
 	public instantiateByInstance(game: ServerGame, card: ServerCard): ServerCard {
-		const cardClass = card.constructor.name.substr(0, 1).toLowerCase() + card.constructor.name.substr(1)
+		const cardClass = this.getClassFromConstructor(card.constructor as CardConstructor)
 		return this.instantiateByClass(game, cardClass)
 	}
 
 	public instantiateByConstructor(game: ServerGame, constructor: CardConstructor): ServerCard {
-		const cardClass = constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
+		const cardClass = this.getClassFromConstructor(constructor)
 		if (!this.cards.find((card) => card.class === cardClass)) {
-			this.cards.push(new constructor(CardLibraryPlaceholderGame.get()))
+			this.forceLoadCards([constructor])
 		}
 		return this.instantiateByClass(game, cardClass)
 	}

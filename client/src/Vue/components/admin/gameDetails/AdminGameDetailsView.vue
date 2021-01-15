@@ -13,6 +13,7 @@
 						<span v-for="player in game.players" :key="player.id" :to="`/admin/users/${player.id}`">
 							<router-link :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
 						</span>
+						<span v-if="game.players.length === 0">[No data]</span>
 					</td>
 				</tr>
 				<tr>
@@ -25,37 +26,22 @@
 				<tr>
 					<td class="header">Started at:</td>
 					<td>
-						{{
-							new Intl.DateTimeFormat('ru', {
-								hour: 'numeric',
-								minute: 'numeric',
-								second: 'numeric',
-							}).format(new Date(game.startedAt))
-						}}
+						{{ moment(game.startedAt).format('DD.MM.yyyy, HH:mm:ss') }}
 					</td>
 				</tr>
 				<tr v-if="game.closedAt">
 					<td class="header">Closed at:</td>
 					<td>
-						{{
-							new Intl.DateTimeFormat('ru', {
-								hour: 'numeric',
-								minute: 'numeric',
-								second: 'numeric',
-							}).format(new Date(game.closedAt))
-						}}
+						{{ moment(game.closedAt).format('DD.MM.yyyy, HH:mm:ss') }}
 					</td>
 				</tr>
 				<tr>
 					<td class="header">Duration:</td>
 					<td>
 						{{
-							new Intl.DateTimeFormat('ru', {
-								hour: 'numeric',
-								minute: 'numeric',
-								second: 'numeric',
-								timeZone: 'GMT',
-							}).format(new Date(game.closedAt ? game.closedAt : currentTime).getTime() - new Date(game.startedAt).getTime())
+							moment(new Date(game.closedAt ? game.closedAt : currentTime) - new Date(game.startedAt))
+								.utcOffset(0)
+								.format('HH:mm:ss')
 						}}
 					</td>
 				</tr>
@@ -106,6 +92,10 @@
 				<div class="stacktrace" v-html="error.stack"></div>
 			</div>
 		</div>
+		<div>
+			<h2>Game log</h2>
+			<AdminGameLog :log="game.eventLog" :players="game.players" />
+		</div>
 	</div>
 </template>
 
@@ -115,8 +105,11 @@ import { defineComponent, onMounted, ref } from '@vue/composition-api'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import router from '@/Vue/router'
 import GameErrorDatabaseEntry from '@shared/models/GameErrorDatabaseEntry'
+import AdminGameLog from '@/Vue/components/admin/gameDetails/AdminGameLog.vue'
+import moment from 'moment'
 
 export default defineComponent({
+	components: { AdminGameLog },
 	setup() {
 		const game = ref<GameHistoryDatabaseEntry | null>(null)
 		const errors = ref<GameErrorDatabaseEntry[]>([])
@@ -147,6 +140,7 @@ export default defineComponent({
 		})
 
 		return {
+			moment,
 			game,
 			errors,
 			hasLoaded,
@@ -157,7 +151,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../../styles/generic';
+@import 'src/Vue/styles/generic';
 
 .admin-game-details-view {
 	overflow-y: scroll;

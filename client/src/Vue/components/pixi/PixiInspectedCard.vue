@@ -57,7 +57,7 @@ export default defineComponent({
 		}
 
 		const onSmokeScreenRightClick = (event: MouseEvent) => {
-			if (event.button === RIGHT_MOUSE_BUTTON && !store.getters.gameStateModule.isInGame && !event.shiftKey && !event.ctrlKey) {
+			if (event.button === RIGHT_MOUSE_BUTTON && !store.getters.gameStateModule.isInGame && !event.ctrlKey) {
 				onSmokeScreenClick()
 			}
 		}

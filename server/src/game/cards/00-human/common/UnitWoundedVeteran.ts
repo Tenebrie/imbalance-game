@@ -17,7 +17,7 @@ export default class UnitWoundedVeteran extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.PEASANT],
+			tribes: [CardTribe.PEASANT, CardTribe.SOLDIER],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 20,

@@ -5,8 +5,8 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import CardLocation from '@shared/enums/CardLocation'
 import Keywords from '@src/utils/Keywords'
+import { AnyCardLocation } from '@src/utils/Utils'
 
 export default class UnitMadnessIncarnate extends ServerCard {
 	shatterPerRow = 2
@@ -17,7 +17,7 @@ export default class UnitMadnessIncarnate extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
 			stats: {
-				power: 25,
+				power: 21,
 			},
 			expansionSet: ExpansionSet.BASE,
 			generatedArtworkMagicString: '1',
@@ -26,7 +26,7 @@ export default class UnitMadnessIncarnate extends ServerCard {
 			shatterPerRow: this.shatterPerRow,
 		}
 
-		this.createCallback(GameEventType.ROUND_STARTED, [CardLocation.DECK])
+		this.createCallback(GameEventType.GAME_STARTED, AnyCardLocation)
 			.require(({ player }) => player === this.owner)
 			.perform(() => {
 				this.game.board.getControlledRows(this.owner).forEach((row) => {

@@ -16,7 +16,8 @@ class Localization {
 	}
 
 	public get(id: string): string {
-		return this.getValueOrNull(id) || id
+		const value = this.getValueOrNull(id)
+		return value === null ? id : value
 	}
 
 	public getOriginalOrNull(id: string): string {

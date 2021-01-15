@@ -101,11 +101,10 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawTopUnit()
 			if (!card) {
-				// TODO: Fatigue damage?
 				continue
 			}
 
-			this.cardHand.onUnitDrawn(card)
+			this.cardHand.drawUnit(card)
 			drawnCards.push(card)
 		}
 		return drawnCards
@@ -117,11 +116,10 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawTopSpell()
 			if (!card) {
-				// TODO: Fatigue damage?
 				continue
 			}
 
-			this.cardHand.onSpellDrawn(card)
+			this.cardHand.drawSpell(card)
 			drawnCards.push(card)
 		}
 		return drawnCards
@@ -136,6 +134,12 @@ export default class ServerPlayerInGame implements PlayerInGame {
 			return
 		}
 		this.cardHand.addUnit(cardToAdd, cardIndex)
+		this.game.events.postEvent(
+			GameEventCreators.cardDrawn({
+				owner: this,
+				triggeringCard: cardToAdd,
+			})
+		)
 	}
 
 	public refillSpellHand(): void {
@@ -303,7 +307,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerPlayerInGame {
 		const playerInGame = new ServerPlayerInGame(game, player)
-		playerInGame.leader = CardLibrary.instantiateByInstance(game, cardDeck.leader)
+		playerInGame.leader = cardDeck.leader
 		playerInGame.cardDeck.instantiateFrom(cardDeck)
 		return playerInGame
 	}

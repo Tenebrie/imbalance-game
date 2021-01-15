@@ -28,7 +28,7 @@ export default class UnitRavenMessenger extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.requireAllied()
 			.require((args) => args.targetCard.color === CardColor.BRONZE)
-			.require((args) => args.targetCard.tribes.includes(CardTribe.PEASANT))
+			.require((args) => args.targetCard.tribes.includes(CardTribe.SOLDIER))
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}

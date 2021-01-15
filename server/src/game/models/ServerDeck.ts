@@ -9,10 +9,10 @@ import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import Utils from '../../utils/Utils'
 
 export default class ServerDeck implements CardDeck {
+	game: ServerGame
+	owner: ServerPlayerInGame
 	unitCards: ServerCard[]
 	spellCards: ServerCard[]
-	owner: ServerPlayerInGame
-	game: ServerGame
 
 	constructor(game: ServerGame, owner: ServerPlayerInGame, unitCards: ServerCard[], spellCards: ServerCard[]) {
 		this.game = game
@@ -38,8 +38,8 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public instantiateFrom(deck: ServerTemplateCardDeck): void {
-		deck.unitCards.forEach((card) => this.addUnitToTop(CardLibrary.instantiateByInstance(this.game, card)))
-		deck.spellCards.forEach((card) => this.addSpellToTop(CardLibrary.instantiateByInstance(this.game, card)))
+		deck.unitCards.forEach((card) => this.addUnitToTop(card))
+		deck.spellCards.forEach((card) => this.addSpellToTop(card))
 	}
 
 	public addUnitToTop(card: ServerCard): void {

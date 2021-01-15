@@ -42,7 +42,7 @@ export default class UnitArcheryTower extends ServerCard {
 		this.createSelector()
 			.require(() => this.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
-			.requireTarget(({ target }) => target.tribes.includes(CardTribe.PEASANT))
+			.requireTarget(({ target }) => target.tribes.includes(CardTribe.SOLDIER))
 			.requireTarget(({ target }) => this.game.board.isUnitAdjacent(this.unit, target.unit))
 			.provideSelf(BuffCanAttack)
 	}

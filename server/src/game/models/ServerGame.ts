@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
 import Game from '@shared/models/Game'
 import ServerBoard from './ServerBoard'
 import ServerPlayer from '../players/ServerPlayer'
@@ -16,18 +15,20 @@ import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
-import { colorizeId, colorizePlayer } from '../../utils/Utils'
+import { colorizeId, colorizePlayer, createRandomGameId } from '@src/utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
 import GameEventType from '@shared/enums/GameEventType'
-import { PlayerTargetCardSelectedEventArgs } from './events/GameEventCreators'
+import GameEventCreators, { PlayerTargetCardSelectedEventArgs } from './events/GameEventCreators'
 import ServerGameTimers from './ServerGameTimers'
 import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import CardFeature from '@shared/enums/CardFeature'
 import { BuffConstructor } from './ServerBuffContainer'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import ServerGameIndex from '@src/game/models/ServerGameIndex'
+import ServerAnimation from '@src/game/models/ServerAnimation'
 
 interface ServerGameProps extends OptionalGameProps {
 	gameMode: GameMode
@@ -37,6 +38,7 @@ export interface OptionalGameProps {
 	name?: string
 	owner?: ServerPlayer
 	challengeLevel?: ChallengeLevel
+	playerMoveOrderReversed?: boolean
 }
 
 export default class ServerGame implements Game {
@@ -47,8 +49,11 @@ export default class ServerGame implements Game {
 	public turnPhase: GameTurnPhase
 	public roundIndex: number
 	public playersToMove: ServerPlayerInGame[]
+	public lastRoundWonBy: ServerPlayerInGame | null
+	public playerMoveOrderReversed: boolean
 	readonly owner: ServerPlayer | undefined
 	readonly board: ServerBoard
+	readonly index: ServerGameIndex
 	readonly events: ServerGameEvents
 	readonly timers: ServerGameTimers
 	readonly players: ServerPlayerInGame[]
@@ -59,18 +64,22 @@ export default class ServerGame implements Game {
 	public challengeLevel: ChallengeLevel | null
 
 	constructor(props: ServerGameProps) {
-		this.id = uuidv4()
+		this.id = createRandomGameId()
 		this.name = props.name || this.generateName(props.owner)
 		this.isStarted = false
 		this.turnIndex = -1
 		this.roundIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.owner = props.owner
+		this.index = new ServerGameIndex(this)
 		this.board = new ServerBoard(this)
 		this.events = new ServerGameEvents(this)
 		this.timers = new ServerGameTimers(this)
 		this.players = []
 		this.playersToMove = []
+		this.lastRoundWonBy = null
+		this.playerMoveOrderReversed =
+			props.playerMoveOrderReversed !== undefined ? props.playerMoveOrderReversed : Math.floor(Math.random() * 2) === 0
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
 		this.gameMode = props.gameMode
@@ -269,6 +278,9 @@ export default class ServerGame implements Game {
 		this.setTurnPhase(GameTurnPhase.TURN_START)
 
 		this.playersToMove = this.players.slice()
+		if (this.lastRoundWonBy === this.players[1] || (this.lastRoundWonBy === null && this.playerMoveOrderReversed)) {
+			this.playersToMove.reverse()
+		}
 
 		this.board.orders.clearPerformedOrders()
 		this.advancePhase()
@@ -290,8 +302,10 @@ export default class ServerGame implements Game {
 			.reduce((total, value) => total + value, 0)
 		if (playerOneTotalPower > playerTwoTotalPower) {
 			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+			this.lastRoundWonBy = playerOne
 		} else if (playerTwoTotalPower > playerOneTotalPower) {
 			playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+			this.lastRoundWonBy = playerTwo
 		} else {
 			playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
 			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
@@ -318,8 +332,14 @@ export default class ServerGame implements Game {
 			.filter((unit) => !unit.card.features.includes(CardFeature.BUILDING))
 			.filter((unit) => !unit.card.features.includes(CardFeature.NIGHTWATCH))
 			.forEach((unit) => {
-				this.board.destroyUnit(unit)
+				this.animation.thread(() => {
+					this.board.destroyUnit(unit)
+				})
 			})
+		this.animation.syncAnimationThreads()
+		this.animation.play(ServerAnimation.delay())
+		this.animation.play(ServerAnimation.delay())
+		this.animation.play(ServerAnimation.delay())
 
 		for (let i = 0; i < 3; i++) {
 			this.board.rows[i].setOwner(playerTwo)
@@ -361,6 +381,12 @@ export default class ServerGame implements Game {
 
 		this.setTurnPhase(GameTurnPhase.AFTER_GAME)
 
+		this.events.postEvent(
+			GameEventCreators.gameFinished({
+				victoriousPlayer: victoriousPlayer,
+			})
+		)
+
 		if (victoriousPlayer === null) {
 			OutgoingMessageHandlers.notifyAboutDraw(this)
 			console.info(`Game ${colorizeId(this.id)} finished with a draw. [${victoryReason}]`)
@@ -387,8 +413,8 @@ export default class ServerGame implements Game {
 		GameLibrary.destroyGame(this, reason)
 	}
 
-	public findCardById(cardId: string): ServerCard | undefined {
-		return this.findOwnedCardById(cardId)?.card
+	public findCardById(cardId: string): ServerCard | null {
+		return this.index.findCard(cardId)
 	}
 
 	public findOwnedCardById(cardId: string): ServerOwnedCard | null {

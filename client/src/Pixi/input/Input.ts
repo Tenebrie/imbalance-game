@@ -21,10 +21,11 @@ import { isGrabbedCardPlayableToRow } from '@/Pixi/input/ValidActions'
 import CardLocation from '@shared/enums/CardLocation'
 import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
-import { normalizeBoardRowIndex } from '@/utils/Utils'
+import { boopTheBoard, flushBoardPreps, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
+export const MIDDLE_MOUSE_BUTTON = 1
 
 enum InspectCardMode {
 	CLICK,
@@ -55,6 +56,9 @@ export default class Input {
 
 	inspectCardMode: InspectCardMode = InspectCardMode.CLICK
 
+	boardBoopStartedAt: PIXI.Point | null = null
+	boopTrailLastSeenAt: PIXI.Point | null = null
+
 	constructor() {
 		const view = Core.renderer.pixi.view
 
@@ -81,6 +85,23 @@ export default class Input {
 		})
 		view.addEventListener('touchmove', (event: TouchEvent) => {
 			this.onTouchMove(event)
+		})
+
+		view.addEventListener('wheel', (event: WheelEvent) => {
+			if (event.deltaY > 0) {
+				this.onScrollDown(event)
+			} else if (event.deltaY < 0) {
+				this.onScrollUp(event)
+			}
+		})
+
+		view.addEventListener('mouseleave', () => {
+			this.onMouseLeave()
+			if (this.grabbedCard) {
+				this.releaseCard()
+			}
+			this.leftMouseDown = false
+			this.rightMouseDown = false
 		})
 	}
 
@@ -166,7 +187,7 @@ export default class Input {
 	}
 
 	private onMouseDown(event: MouseEvent) {
-		if (event.button === RIGHT_MOUSE_BUTTON && (event.ctrlKey || event.shiftKey)) {
+		if (event.button === RIGHT_MOUSE_BUTTON && event.ctrlKey) {
 			return
 		}
 
@@ -214,12 +235,19 @@ export default class Input {
 			this.grabCard()
 		} else if (event.button === RIGHT_MOUSE_BUTTON) {
 			this.rightMouseDown = true
-			this.inspectCardMode = InspectCardMode.HOLD
 		}
+
+		if (event.button === LEFT_MOUSE_BUTTON && !this.grabbedCard && !this.hoveredCard) {
+			boopTheBoard(event, this.mousePosition, 'down')
+		} else if (event.button === RIGHT_MOUSE_BUTTON && !this.grabbedCard && !this.hoveredCard) {
+			boopTheBoard(event, this.mousePosition, 'down')
+		} else if (event.button === MIDDLE_MOUSE_BUTTON) {
+			boopTheBoard(event, this.mousePosition, 'down')
+		}
+		this.boardBoopStartedAt = this.mousePosition.clone()
 	}
 
 	private onTouchStart(event: TouchEvent) {
-		// Notifications.info(`${}`)
 		this.onTouchMove(event)
 
 		if (this.inspectedCard) {
@@ -266,14 +294,30 @@ export default class Input {
 			return
 		}
 
+		if (event.button === LEFT_MOUSE_BUTTON && this.leftMouseDown && !this.grabbedCard) {
+			boopTheBoard(event, this.boardBoopStartedAt, 'up')
+		} else if (
+			event.button === RIGHT_MOUSE_BUTTON &&
+			this.rightMouseDown &&
+			!this.inspectedCard &&
+			!this.hoveredCard &&
+			!this.grabbedCard
+		) {
+			boopTheBoard(event, this.boardBoopStartedAt, 'up')
+		} else if (event.button === MIDDLE_MOUSE_BUTTON) {
+			boopTheBoard(event, this.boardBoopStartedAt, 'up')
+		}
+
+		if (event.button === LEFT_MOUSE_BUTTON && this.grabbedCard && !this.grabbedCard.shouldStick()) {
+			this.useGrabbedCard()
+		} else if (event.button === RIGHT_MOUSE_BUTTON && this.rightMouseDown) {
+			this.inspectCard()
+		}
+
 		if (event.button === LEFT_MOUSE_BUTTON) {
 			this.leftMouseDown = false
-			if (this.grabbedCard && !this.grabbedCard.shouldStick()) {
-				this.useGrabbedCard()
-			}
-		} else if (event.button === RIGHT_MOUSE_BUTTON && this.rightMouseDown) {
+		} else if (event.button === RIGHT_MOUSE_BUTTON) {
 			this.rightMouseDown = false
-			this.inspectCard()
 		}
 	}
 
@@ -289,12 +333,39 @@ export default class Input {
 		}
 	}
 
+	private onScrollDown(event: WheelEvent) {
+		scrollBoopColor(event, 1)
+	}
+
+	private onScrollUp(event: WheelEvent) {
+		scrollBoopColor(event, -1)
+	}
+
 	private onMouseMove(event: MouseEvent) {
 		const view = Core.renderer.pixi.view
 		const clientRect = view.getBoundingClientRect()
 		this.mousePosition = new PIXI.Point(event.clientX - clientRect.left, event.clientY - clientRect.top)
 		this.mousePosition.x *= window.devicePixelRatio * Core.renderer.superSamplingLevel
 		this.mousePosition.y *= window.devicePixelRatio * Core.renderer.superSamplingLevel
+
+		if (
+			this.boardBoopStartedAt &&
+			this.leftMouseDown &&
+			!this.grabbedCard &&
+			!this.hoveredCard &&
+			getDistance(this.boopTrailLastSeenAt || { x: 0, y: 0 }, this.mousePosition) > 5
+		) {
+			this.boopTrailLastSeenAt = this.mousePosition.clone()
+			Core.particleSystem.createSmallBoardBoopEffect(this.mousePosition)
+		}
+
+		if (this.rightMouseDown && this.hoveredCard !== null) {
+			flushBoardPreps()
+		}
+	}
+
+	private onMouseLeave() {
+		flushBoardPreps()
 	}
 
 	public grabCard(): void {
@@ -445,6 +516,15 @@ export default class Input {
 		Core.renderer.showCard(cardInLimbo)
 		this.evictCardFromLimbo(cardMessage.id)
 		return cardInLimbo
+	}
+
+	public destroyLimboCard(cardMessage: CardRefMessage): void {
+		const cardInLimbo = this.cardLimbo.find((card) => card.id === cardMessage.id)
+		if (!cardInLimbo) {
+			return
+		}
+		Core.renderer.destroyCard(cardInLimbo)
+		this.evictCardFromLimbo(cardMessage.id)
 	}
 
 	private evictCardFromLimbo(cardId: string): void {

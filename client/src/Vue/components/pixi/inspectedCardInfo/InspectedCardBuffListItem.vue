@@ -49,6 +49,9 @@ export default defineComponent({
 .positive {
 	color: lightgreen;
 }
+.neutral {
+	color: lightgoldenrodyellow;
+}
 .negative {
 	color: palevioletred;
 }

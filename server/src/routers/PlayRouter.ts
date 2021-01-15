@@ -9,7 +9,7 @@ import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import GameLibrary from '../game/libraries/GameLibrary'
-import { colorizeId } from '../utils/Utils'
+import { colorizeId, restoreObjectIDs } from '../utils/Utils'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import IncomingSpectatorMessageHandlers from '../game/handlers/IncomingSpectatorMessageHandlers'
 import { ClientToServerSpectatorMessageTypes } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
@@ -18,8 +18,11 @@ import GameMode from '@shared/enums/GameMode'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
 
 const router = express.Router() as WebSocketRouter
+
+router.use(RequirePlayerTokenMiddleware)
 
 // @ts-ignore
 router.ws('/:gameId', async (ws: ws, req: express.Request) => {
@@ -71,7 +74,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	currentPlayer.registerConnection(ws, currentGame)
 
 	ws.on('message', (rawMsg: string) => {
-		const msg = JSON.parse(rawMsg) as ClientToServerJson
+		const msg = JSON.parse(restoreObjectIDs(currentGame, rawMsg)) as ClientToServerJson
 		const messageType = msg.type
 		const handler = IncomingMessageHandlers[messageType]
 		if (!handler) {
@@ -136,7 +139,7 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 	const currentSpectator = spectatedPlayer.player.spectate(currentGame, currentPlayer)
 
 	ws.on('message', (rawMsg: string) => {
-		const msg = JSON.parse(rawMsg)
+		const msg = JSON.parse(restoreObjectIDs(currentGame, rawMsg))
 		const messageType = msg.type as ClientToServerSpectatorMessageTypes
 		const handler = IncomingSpectatorMessageHandlers[messageType]
 		if (!handler) {

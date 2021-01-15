@@ -8,7 +8,7 @@ import ServerBoardRow from '../ServerBoardRow'
 import ServerBuff from '../ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
-import { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from '../ServerCardTarget'
+import { ServerCardTargetCard, ServerCardTargetRow } from '../ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 
 export default {
@@ -38,6 +38,7 @@ export default {
 	cardDrawn: (args: CardDrawnEventArgs): GameEvent => ({
 		type: GameEventType.CARD_DRAWN,
 		args: args,
+		effectSource: args.triggeringCard,
 		logVariables: {
 			owner: args.owner.player.id,
 			triggeringCard: args.triggeringCard.id,
@@ -46,6 +47,7 @@ export default {
 	cardPlayed: (args: CardPlayedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_PLAYED,
 		args: args,
+		effectSource: args.triggeringCard,
 		logVariables: {
 			owner: args.owner.player.id,
 			triggeringCard: args.triggeringCard.id,
@@ -54,6 +56,7 @@ export default {
 	cardResolved: (args: CardResolvedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_RESOLVED,
 		args: args,
+		effectSource: args.triggeringCard,
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
 		},
@@ -61,6 +64,7 @@ export default {
 	cardTakesDamage: (args: CardTakesDamageEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TAKES_DAMAGE,
 		args: args,
+		effectSource: args.triggeringCard,
 		logSubtype: args.damageInstance.source === DamageSource.CARD ? 'fromCard' : 'fromUniverse',
 		logVariables: {
 			damage: args.damageInstance.value,
@@ -68,9 +72,19 @@ export default {
 			triggeringCard: args.triggeringCard.id,
 		},
 	}),
+	cardDiscarded: (args: CardDrawnEventArgs): GameEvent => ({
+		type: GameEventType.CARD_DISCARDED,
+		args: args,
+		effectSource: args.triggeringCard,
+		logVariables: {
+			owner: args.owner.player.id,
+			triggeringCard: args.triggeringCard.id,
+		},
+	}),
 	cardDestroyed: (args: CardDestroyedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_DESTROYED,
 		args: args,
+		effectSource: args.triggeringCard,
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
 		},
@@ -112,10 +126,10 @@ export default {
 		},
 	}),
 
-	playerTargetSelectedCard: (args: PlayerTargetCardSelectedEventArgs): GameEvent => ({
+	playerMulliganedCard: (args: PlayerTargetCardSelectedEventArgs): GameEvent => ({
 		type: GameEventType.PLAYER_TARGET_SELECTED_CARD,
 		args: args,
-		logSubtype: 'card',
+		logSubtype: 'mulligan',
 		logVariables: {
 			triggeringPlayer: args.triggeringPlayer.player.id,
 			targetCard: args.targetCard.id,
@@ -143,7 +157,6 @@ export default {
 		type: GameEventType.UNIT_ORDERED_CARD,
 		args: args,
 		effectSource: args.triggeringUnit.card,
-		logSubtype: 'card',
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
 			targetCard: args.targetArguments.targetCard.id,
@@ -153,7 +166,6 @@ export default {
 		type: GameEventType.UNIT_ORDERED_UNIT,
 		args: args,
 		effectSource: args.triggeringUnit.card,
-		logSubtype: 'card',
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
 			targetCard: args.targetArguments.targetCard.id,
@@ -163,7 +175,6 @@ export default {
 		type: GameEventType.UNIT_ORDERED_ROW,
 		args: args,
 		effectSource: args.triggeringUnit.card,
-		logSubtype: 'row',
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
 			targetRow: args.targetArguments.targetRow.index,
@@ -203,7 +214,7 @@ export default {
 		effectSource: args.triggeringBuff,
 		logSubtype: args.triggeringBuff.source ? 'fromCard' : 'fromUniverse',
 		logVariables: {
-			triggeringBuffName: args.triggeringBuff.name,
+			triggeringBuff: args.triggeringBuff.id,
 			ownerCard: args.triggeringBuff.card.id,
 			sourceCard: args.triggeringBuff.source ? args.triggeringBuff.source.id : undefined,
 		},
@@ -213,7 +224,7 @@ export default {
 		args: args,
 		effectSource: args.triggeringBuff,
 		logVariables: {
-			triggeringBuffName: args.triggeringBuff.name,
+			triggeringBuff: args.triggeringBuff.id,
 			ownerCard: args.triggeringBuff.card.id,
 		},
 	}),
@@ -230,6 +241,15 @@ export default {
 		args: args,
 		logVariables: {
 			player: args.player.player.id,
+		},
+	}),
+
+	gameFinished: (args: GameFinishedEventArgs): GameEvent => ({
+		type: GameEventType.GAME_FINISHED,
+		args: args,
+		logSubtype: args.victoriousPlayer ? 'victory' : 'draw',
+		logVariables: {
+			victoriousPlayer: args.victoriousPlayer?.player.id,
 		},
 	}),
 }
@@ -269,6 +289,10 @@ export interface CardTakesDamageEventArgs {
 	damageInstance: ServerDamageInstance
 	armorDamageInstance: ServerDamageInstance | null
 	powerDamageInstance: ServerDamageInstance | null
+}
+export interface CardDiscardedEventArgs {
+	owner: ServerPlayerInGame
+	triggeringCard: ServerCard
 }
 export interface CardDestroyedEventArgs {
 	triggeringCard: ServerCard
@@ -364,4 +388,8 @@ export interface TurnEndedEventArgs {
 }
 export interface RoundEndedEventArgs {
 	player: ServerPlayerInGame
+}
+
+export interface GameFinishedEventArgs {
+	victoriousPlayer: ServerPlayerInGame | null
 }

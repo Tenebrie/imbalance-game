@@ -13,7 +13,7 @@ import TheGameList from '../components/home/TheGameList.vue'
 import TheChangelog from '@/Vue/components/home/TheChangelog.vue'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import TheDeckList from '@/Vue/components/editor/TheDeckList.vue'
-import TheWelcomePopup from '@/Vue/components/popup/escapeMenu/TheWelcomePopup.vue'
+import TheWelcomePopup from '@/Vue/components/popup/TheWelcomePopup.vue'
 
 export default Vue.extend({
 	components: {

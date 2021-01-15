@@ -21,7 +21,7 @@
 				<li>{{ silverCardsLimit }} Epic cards</li>
 				<li>{{ bronzeCardsLimit }} Common cards</li>
 			</ul>
-			<p>Only one copy of a Legendary or an Epic card may be included. Commons, however, may have up to 3 copies.</p>
+			<p>Only one copy of a Legendary card may be included. Epic, however, may have up to 2 copies and commons - up to 3.</p>
 
 			<h2>Cards & Game board</h2>
 			<p>
@@ -31,7 +31,7 @@
 			</p>
 			<p>
 				When played, Units take space on the game board. The board is split into 6 rows, with each player owning 3 closest to them. Each row
-				may hold up to 10 units. Row positioning is important to some of the card effects.
+				may hold up to {{ unitsPerRow }} units. Row positioning is important to some of the card effects.
 			</p>
 			<p>
 				Units have a certain Power value, represented by the number in the top left corner of the card. This is the value that is used to
@@ -41,7 +41,7 @@
 			<p>
 				Spells, on the other hand, are resolved immediately after being played and go into graveyard. Spells also require some Mana to play,
 				represented by the number in the top left corner of the card. Player has 10 Mana to spend during the round, and some cards may
-				generate more Mana.
+				generate more.
 			</p>
 			<p>
 				Generally, player's spell hand contains a number of Leader Powers, determined by the leader selected. Unlike other spells, Leader
@@ -64,13 +64,13 @@
 			</p>
 			<p>On top of the basic action, player may also do the following during their turn:</p>
 			<ul>
-				<li>Play any cards that have been <b>Summoned</b></li>
+				<li>Play any <b>Temporary</b> cards</li>
 				<li>Play spell cards as long as they have mana to pay the cost</li>
-				<li>Issue orders to cards on the board that have <b>Attack</b> or <b>Support</b> keywords</li>
+				<li>Issue orders to cards on the board that have the <b>Order</b> keyword</li>
 			</ul>
 
 			<h2>Footnotes</h2>
-			<p>In the current version, players have access to all available cards.</p>
+			<p>In the current version, players have access to all available cards, regardless of the faction.</p>
 		</div>
 	</div>
 </template>
@@ -86,6 +86,7 @@ export default defineComponent({
 			goldenCardsLimit: Constants.CARD_LIMIT_GOLDEN,
 			silverCardsLimit: Constants.CARD_LIMIT_SILVER,
 			bronzeCardsLimit: Constants.CARD_LIMIT_BRONZE,
+			unitsPerRow: Constants.MAX_CARDS_PER_ROW,
 		}
 	},
 })

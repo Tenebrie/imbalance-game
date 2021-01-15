@@ -6,7 +6,7 @@ import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
 import HeroZamarath from './HeroZamarath'
 import CardLocation from '../../../../../../shared/src/enums/CardLocation'
 import CardFeature from '../../../../../../shared/src/enums/CardFeature'
-import TestingUnitNoTargeting from '../../11-testing/TestingUnitNoTargeting'
+import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
 import TestingSpellHeavyStrike from '../../11-testing/TestingSpellHeavyStrike'
 
 describe('HeroZamarath', () => {
@@ -18,6 +18,10 @@ describe('HeroZamarath', () => {
 
 	beforeEach(() => {
 		;({ game, cardInHand, player, playerAction, startNextTurn } = TestGameTemplates.singleCardTest(HeroZamarath))
+	})
+
+	it('always has protector', () => {
+		expect(cardInHand.features.includes(CardFeature.PROTECTOR)).toBeTruthy()
 	})
 
 	it('gets untargetable when played', () => {
@@ -33,7 +37,7 @@ describe('HeroZamarath', () => {
 			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 1, 0)
 		})
 
-		const targetUnit = new TestingUnitNoTargeting(game)
+		const targetUnit = new TestingUnitNoEffect(game)
 		playerAction(() => {
 			game.board.createUnit(targetUnit, 0, 0)
 
@@ -55,10 +59,11 @@ describe('HeroZamarath', () => {
 
 		startNextTurn()
 
-		const targetUnit = new TestingUnitNoTargeting(game)
+		const targetUnit = new TestingUnitNoEffect(game)
 		playerAction(() => {
 			game.board.createUnit(targetUnit, 0, 0)
-
+		})
+		playerAction(() => {
 			const opponentsCard = new TestingSpellHeavyStrike(game)
 			player.opponentInGame.cardHand.addSpell(opponentsCard)
 			game.cardPlay.forcedPlayCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame), 0, 0)

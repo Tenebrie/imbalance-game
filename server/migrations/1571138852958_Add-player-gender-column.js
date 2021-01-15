@@ -14,6 +14,6 @@ exports.up = (pgm) => {
 }
 
 exports.down = (pgm) => {
-	pgm.dropType('gender_t')
 	pgm.dropColumn('players', 'gender')
+	pgm.dropType('gender_t')
 }

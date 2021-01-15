@@ -143,7 +143,7 @@ const router = new VueRouter({
 				{
 					path: '/admin/games/:gameId',
 					name: 'admin-game-details',
-					component: () => import('@/Vue/components/admin/AdminGameDetailsView.vue'),
+					component: () => import('@/Vue/components/admin/gameDetails/AdminGameDetailsView.vue'),
 				},
 				{
 					path: '/admin/users',

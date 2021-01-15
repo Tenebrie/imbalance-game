@@ -1,16 +1,14 @@
 import CardType from '@shared/enums/CardType'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import ServerUnit from '../../../../models/ServerUnit'
 import ServerDamageInstance from '../../../../models/ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
-import { CardTargetValidatorArguments } from '../../../../../types/TargetValidatorArguments'
+import { CardTargetValidatorArguments } from '@src/types/TargetValidatorArguments'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectSpellDamage } from '../../../../../utils/LeaderStats'
+import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 export default class SpellQuickStrike extends ServerCard {
 	baseDamage = asDirectSpellDamage(2)

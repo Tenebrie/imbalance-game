@@ -1,6 +1,6 @@
 <template>
 	<div class="the-welcome-popup">
-		<div class="the-welcome-popup-container">
+		<div class="the-welcome-popup-container" @click="onMenuClick">
 			<h1>Welcome!</h1>
 			<div class="menu-separator"></div>
 			<p>This is a little message from the dev team. Well, just me alone, really, but I am glad to see you here nonetheless!</p>

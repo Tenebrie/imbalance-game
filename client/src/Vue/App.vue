@@ -55,7 +55,7 @@ export default defineComponent({
 
 	methods: {
 		onContextMenu(event: MouseEvent): boolean {
-			if (!event.ctrlKey && !event.shiftKey) {
+			if (!event.ctrlKey) {
 				event.preventDefault()
 				return false
 			}

@@ -19,9 +19,9 @@ export default {
 		return Database.updateRows(query, [id])
 	},
 
-	async selectSharedDeckById(id: string): Promise<EditorDeck | null> {
-		const query = `SELECT * FROM shared_decks WHERE id = $1`
-		return Database.selectRow<EditorDeck>(query, [id])
+	async selectSharedDeckById(id: string, newId: string): Promise<EditorDeck | null> {
+		const query = `SELECT *, $2 as id FROM shared_decks WHERE id = $1`
+		return Database.selectRow<EditorDeck>(query, [id, newId])
 	},
 
 	async deleteSharedDeck(id: string): Promise<boolean> {

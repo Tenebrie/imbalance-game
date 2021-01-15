@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from 'uuid'
 import EditorDeck from '@shared/models/EditorDeck'
 import CardDeck from '@shared/models/CardDeck'
 import EditorCard from '@shared/models/EditorCard'
+import { createRandomEditorDeckId } from '@src/utils/Utils'
 
 export default class ServerEditorDeck implements EditorDeck {
 	id: string
@@ -9,7 +9,7 @@ export default class ServerEditorDeck implements EditorDeck {
 	cards: EditorCard[]
 
 	private constructor(name: string, cards: EditorCard[]) {
-		this.id = uuidv4()
+		this.id = createRandomEditorDeckId()
 		this.name = name
 		this.cards = cards
 	}

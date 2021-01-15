@@ -138,7 +138,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerBotPlayerInGame {
 		const playerInGame = new ServerBotPlayerInGame(game, player)
-		playerInGame.leader = CardLibrary.instantiateByInstance(game, cardDeck.leader)
+		playerInGame.leader = cardDeck.leader
 		playerInGame.cardDeck.instantiateFrom(cardDeck)
 		return playerInGame
 	}

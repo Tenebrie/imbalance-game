@@ -6,6 +6,7 @@ type ComponentInStack = {
 	component: Component
 	sticky?: boolean
 	params?: Record<string, string> | undefined
+	onConfirm?: () => void
 }
 
 const PopupModule = defineModule({
@@ -48,6 +49,13 @@ const PopupModule = defineModule({
 				return undefined
 			}
 			return state.componentStack[state.componentStack.length - 1].params
+		},
+
+		onConfirm: (state): (() => void | undefined) => {
+			if (state.componentStack.length === 0) {
+				return undefined
+			}
+			return state.componentStack[state.componentStack.length - 1].onConfirm
 		},
 	},
 

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
 import Card from '@shared/models/Card'
 import CardType from '@shared/enums/CardType'
 import ServerGame from './ServerGame'
@@ -50,7 +49,7 @@ import GameEventCreators, {
 	UnitOrderedUnitEventArgs,
 } from './events/GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
-import Utils, { getClassFromConstructor } from '../../utils/Utils'
+import Utils, { createRandomId, getClassFromConstructor } from '../../utils/Utils'
 import ServerAnimation from './ServerAnimation'
 import RelatedCardsDefinition from './RelatedCardsDefinition'
 import ServerCardStats from './ServerCardStats'
@@ -124,7 +123,7 @@ interface ServerCardSpellProps extends ServerCardBaseProps {
 export type ServerCardProps = ServerCardLeaderProps | ServerCardUnitProps | ServerCardSpellProps
 
 export default class ServerCard implements Card {
-	public readonly id: string = uuidv4()
+	public readonly id: string
 	public readonly game: ServerGame
 	public readonly targeting: ServerCardTargeting
 
@@ -162,9 +161,12 @@ export default class ServerCard implements Card {
 	public readonly deckAddedCards: CardConstructor[] = []
 
 	constructor(game: ServerGame, props: ServerCardProps) {
+		const cardClass = getClassFromConstructor(this.constructor as CardConstructor)
+
+		this.id = createRandomId('card', cardClass)
 		this.game = game
 		this.targeting = new ServerCardTargeting(this)
-		this.class = getClassFromConstructor(this.constructor as CardConstructor)
+		this.class = cardClass
 
 		this.type = props.color === CardColor.LEADER ? CardType.UNIT : props.type
 		this.color = props.color
@@ -246,6 +248,8 @@ export default class ServerCard implements Card {
 					(powerDamageInstance && powerDamageInstance.value > 0) || triggeringCard.stats.armor === 0
 			)
 			.perform(() => this.destroy())
+
+		game.index.addCard(this)
 	}
 
 	public get tribes(): CardTribe[] {
@@ -502,6 +506,9 @@ export default class ServerCard implements Card {
 		} else if (location === CardLocation.GRAVEYARD) {
 			owner.cardGraveyard.removeCard(this)
 		}
+
+		this.game.events.unsubscribe(this)
+		this.game.index.removeCard(this)
 	}
 
 	public reveal(): void {
@@ -668,10 +675,18 @@ export default class ServerCard implements Card {
 
 	/* Create an aura effect
 	 * ------------------------
-	 * Description
+	 * The selector is evaluated for every card in the game.
 	 */
 	protected createSelector(): CardSelectorBuilder {
 		return this.game.events.createSelector(this)
+	}
+
+	/* Create an aura effect for this card only
+	 * ----------------------------------------
+	 * The selector will be evaluated for this card only. Otherwise works exactly as `createSelector`.
+	 */
+	protected createSelfSelector(): CardSelectorBuilder {
+		return this.game.events.createSelector(this).requireTarget(({ target }) => target === this)
 	}
 
 	protected addRelatedCards(): RelatedCardsDefinition {

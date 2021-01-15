@@ -7,10 +7,14 @@ import GameEventCreators, { GameStartedEventArgs } from './events/GameEventCreat
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import GameEventType from '../../../../shared/src/enums/GameEventType'
 import TestingUnitTargetsRow from '../cards/11-testing/TestingUnitTargetsRow'
-import TestingUnitNoTargeting from '../cards/11-testing/TestingUnitNoTargeting'
+import TestingUnitNoEffect from '../cards/11-testing/TestingUnitNoEffect'
 import TestingSpellTacticalMove from '../cards/11-testing/TestingSpellTacticalMove'
 import TestingSpellQuickStrike from '../cards/11-testing/TestingSpellQuickStrike'
 import SpyInstance = jest.SpyInstance
+import TestingUnitTurnEndEffectProbe from '../cards/11-testing/TestingUnitTurnEndEffectProbe'
+import Utils from '../../utils/Utils'
+import Constants from '@shared/Constants'
+import TestingUnitTurnEndEffectProbeRight from '../cards/11-testing/TestingUnitTurnEndEffectProbeRight'
 
 describe('ServerGameEvents', () => {
 	let game: ServerGame
@@ -95,13 +99,312 @@ describe('ServerGameEvents', () => {
 			expect(callbackSpy).toHaveBeenCalledTimes(1)
 		})
 
+		describe('card resolution order', () => {
+			let startNextTurn: () => void
+
+			beforeEach(() => {
+				;({ game, player, startNextTurn } = TestGameTemplates.normalGameFlow())
+				events = game.events
+			})
+
+			it('prioritizes units at the front (for normal board)', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
+
+				startNextTurn()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+
+			it('prioritizes units at the front (for reversed board)', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 - 2, 0)
+
+				startNextTurn()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+
+			it('prioritizes units of active player', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
+
+				startNextTurn()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+
+			it('prioritizes for active player', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.board.createUnit(probeCards.shift()!, 0, 0)
+				game.board.createUnit(probeCards.shift()!, 0, 1)
+
+				startNextTurn()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+
+			it('prioritizes units on the left before units on the right', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.board.createUnit(probeCards.shift()!, 0, 0)
+				game.board.createUnit(probeCards.shift()!, 0, 1)
+
+				startNextTurn()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+
+			it('prioritizes Board > Hand > Deck > Graveyard', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(4).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.players[1].cardHand.addUnit(probeCards.shift()!)
+				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
+
+				startNextTurn()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+
+			describe('prioritizes left card in unit hand', () => {
+				it('in normal order', () => {
+					const a = new TestingUnitTurnEndEffectProbe(game)
+					const b = new TestingUnitTurnEndEffectProbeRight(game)
+					const spyOfA = jest.spyOn(a, 'onTurnEnd')
+					const spyOfB = jest.spyOn(b, 'onTurnEnd')
+
+					game.players[1].cardHand.addUnit(a)
+					game.players[1].cardHand.addUnit(b)
+
+					startNextTurn()
+
+					expect(spyOfA.mock.invocationCallOrder[0]).toBeLessThan(spyOfB.mock.invocationCallOrder[0])
+				})
+
+				it('when created in reverse order', () => {
+					const b = new TestingUnitTurnEndEffectProbeRight(game)
+					const a = new TestingUnitTurnEndEffectProbe(game)
+					const spyOfA = jest.spyOn(a, 'onTurnEnd')
+					const spyOfB = jest.spyOn(b, 'onTurnEnd')
+
+					game.players[1].cardHand.addUnit(a)
+					game.players[1].cardHand.addUnit(b)
+
+					startNextTurn()
+
+					expect(spyOfA.mock.invocationCallOrder[0]).toBeLessThan(spyOfB.mock.invocationCallOrder[0])
+				})
+
+				it('when added to hand in reverse order', () => {
+					const a = new TestingUnitTurnEndEffectProbe(game)
+					const b = new TestingUnitTurnEndEffectProbeRight(game)
+					const spyOfA = jest.spyOn(a, 'onTurnEnd')
+					const spyOfB = jest.spyOn(b, 'onTurnEnd')
+
+					game.players[1].cardHand.addUnit(b)
+					game.players[1].cardHand.addUnit(a)
+
+					startNextTurn()
+
+					expect(spyOfA.mock.invocationCallOrder[0]).toBeLessThan(spyOfB.mock.invocationCallOrder[0])
+				})
+			})
+
+			describe('prioritizes left card in spell hand', () => {
+				it('in normal order', () => {
+					const a = new TestingUnitTurnEndEffectProbe(game)
+					const b = new TestingUnitTurnEndEffectProbeRight(game)
+					const spyOfA = jest.spyOn(a, 'onTurnEnd')
+					const spyOfB = jest.spyOn(b, 'onTurnEnd')
+
+					game.players[1].cardHand.addSpell(a)
+					game.players[1].cardHand.addSpell(b)
+
+					startNextTurn()
+
+					expect(spyOfA.mock.invocationCallOrder[0]).toBeLessThan(spyOfB.mock.invocationCallOrder[0])
+				})
+
+				it('when created in reverse order', () => {
+					const b = new TestingUnitTurnEndEffectProbeRight(game)
+					const a = new TestingUnitTurnEndEffectProbe(game)
+					const spyOfA = jest.spyOn(a, 'onTurnEnd')
+					const spyOfB = jest.spyOn(b, 'onTurnEnd')
+
+					game.players[1].cardHand.addSpell(a)
+					game.players[1].cardHand.addSpell(b)
+
+					startNextTurn()
+
+					expect(spyOfA.mock.invocationCallOrder[0]).toBeLessThan(spyOfB.mock.invocationCallOrder[0])
+				})
+
+				it('when added to hand in reverse order', () => {
+					const a = new TestingUnitTurnEndEffectProbe(game)
+					const b = new TestingUnitTurnEndEffectProbeRight(game)
+					const spyOfA = jest.spyOn(a, 'onTurnEnd')
+					const spyOfB = jest.spyOn(b, 'onTurnEnd')
+
+					game.players[1].cardHand.addSpell(b)
+					game.players[1].cardHand.addSpell(a)
+
+					startNextTurn()
+
+					expect(spyOfA.mock.invocationCallOrder[0]).toBeLessThan(spyOfB.mock.invocationCallOrder[0])
+				})
+			})
+
+			it('prioritizes top card in deck', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
+
+				startNextTurn()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+
+			it('prioritizes deck units over spells', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[1].cardDeck.addSpellToBottom(probeCards.shift()!)
+
+				game.players[0].endTurn()
+				game.events.resolveEvents()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+
+			it('prioritizes top card in graveyard', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
+				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
+
+				startNextTurn()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+
+			it('prioritizes graveyard units over spells', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
+				game.players[1].cardGraveyard.addSpell(probeCards.shift()!)
+
+				startNextTurn()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+
+			it('sorts many event callbacks correctly', () => {
+				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+					new Array(24).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
+				)
+				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
+
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 2, 0)
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 2, 1)
+				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 2, 2)
+				game.players[0].cardHand.addUnit(probeCards.shift()!)
+				game.players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[0].cardGraveyard.addUnit(probeCards.shift()!)
+				game.players[0].cardGraveyard.addUnit(probeCards.shift()!)
+				game.players[0].cardGraveyard.addSpell(probeCards.shift()!)
+				game.players[0].cardGraveyard.addSpell(probeCards.shift()!)
+
+				game.board.createUnit(probeCards.shift()!, 2, 0)
+				game.board.createUnit(probeCards.shift()!, 1, 0)
+				game.board.createUnit(probeCards.shift()!, 0, 0)
+				game.board.createUnit(probeCards.shift()!, 0, 1)
+				game.board.createUnit(probeCards.shift()!, 0, 2)
+				game.players[1].cardHand.addUnit(probeCards.shift()!)
+				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
+				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
+				game.players[1].cardGraveyard.addSpell(probeCards.shift()!)
+				game.players[1].cardGraveyard.addSpell(probeCards.shift()!)
+
+				startNextTurn()
+
+				for (let i = 0; i < spies.length - 1; i++) {
+					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
+				}
+			})
+		})
+
 		describe('card resolution without targeting', () => {
 			let cardInHand: ServerCard
 			let resolutionStackSpy: SpyInstance
 			let ownedCard: ServerOwnedCard
 
 			beforeEach(() => {
-				;({ game, cardInHand, player, ownedCard } = TestGameTemplates.singleCardTest(TestingUnitNoTargeting))
+				;({ game, cardInHand, player, ownedCard } = TestGameTemplates.singleCardTest(TestingUnitNoEffect))
 				events = game.events
 				resolutionStackSpy = jest.spyOn(game.cardPlay.cardResolveStack, 'finishResolving')
 			})
@@ -122,23 +425,23 @@ describe('ServerGameEvents', () => {
 						owner: player,
 					},
 					{
-						card: new TestingUnitNoTargeting(game),
+						card: new TestingUnitNoEffect(game),
 						owner: player,
 					},
 					{
-						card: new TestingUnitNoTargeting(game),
+						card: new TestingUnitNoEffect(game),
 						owner: player,
 					},
 					{
-						card: new TestingUnitNoTargeting(game),
+						card: new TestingUnitNoEffect(game),
 						owner: player,
 					},
 					{
-						card: new TestingUnitNoTargeting(game),
+						card: new TestingUnitNoEffect(game),
 						owner: player,
 					},
 					{
-						card: new TestingUnitNoTargeting(game),
+						card: new TestingUnitNoEffect(game),
 						owner: player,
 					},
 				]
@@ -164,7 +467,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('switches targeting to next card in queue', () => {
-				game.board.createUnit(new TestingUnitNoTargeting(game), 4, 0)
+				game.board.createUnit(new TestingUnitNoEffect(game), 4, 0)
 
 				const valkyrie = new TestingUnitTargetsRow(game)
 				player.cardHand.addUnit(valkyrie)
@@ -191,7 +494,7 @@ describe('ServerGameEvents', () => {
 				;({ game, player, ownedCard } = TestGameTemplates.singleCardTest(TestingSpellTacticalMove))
 				events = game.events
 				resolutionStackSpy = jest.spyOn(game.cardPlay.cardResolveStack, 'finishResolving')
-				game.board.createUnit(new TestingUnitNoTargeting(game), 0, 0)
+				game.board.createUnit(new TestingUnitNoEffect(game), 0, 0)
 			})
 
 			it('keeps card resolving after first target', () => {

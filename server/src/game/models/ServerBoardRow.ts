@@ -25,6 +25,10 @@ export default class ServerBoardRow implements BoardRow {
 		return this.cards.length === Constants.MAX_CARDS_PER_ROW
 	}
 
+	public get farRightUnitIndex(): number {
+		return this.cards.length
+	}
+
 	public createUnit(card: ServerCard, unitIndex: number): ServerUnit | null {
 		if (this.cards.length >= Constants.MAX_CARDS_PER_ROW) {
 			return null
@@ -72,5 +76,9 @@ export default class ServerBoardRow implements BoardRow {
 		this.game.players.forEach((playerInGame) => {
 			OutgoingMessageHandlers.notifyAboutRowOwnershipChanged(playerInGame.player, this)
 		})
+	}
+
+	public getUnitsWithinHorizontalDistance(from: ServerUnit, distance: number): ServerUnit[] {
+		return this.cards.filter((potentialTarget) => this.game.board.getHorizontalUnitDistance(potentialTarget, from) < distance)
 	}
 }

@@ -76,6 +76,7 @@
 	"log.entry.cardResolved": "Card {triggeringCard} has finished resolving",
 	"log.entry.cardTakesDamage.fromCard": "Card {triggeringCard} has taken {damage} damage from {sourceCard}",
 	"log.entry.cardTakesDamage.fromUniverse": "Card {triggeringCard} has taken {damage} damage",
+	"log.entry.cardDiscarded": "{owner} has discarded card {triggeringCard}",
 	"log.entry.cardDestroyed": "Card {triggeringCard} has been destroyed",
 	"log.entry.cardTargetSelectedCard": "Card {triggeringCard} has targeted {targetCard}",
 	"log.entry.cardTargetSelectedUnit": "Card {triggeringCard} has targeted {targetUnit}",
@@ -85,14 +86,20 @@
 	"log.entry.unitMoved.forward": "Unit {triggeringUnit} has moved {distance} row(s) forward",
 	"log.entry.unitMoved.sameRow": "Unit {triggeringUnit} has moved to a different position in the same row",
 	"log.entry.unitMoved.backward": "Unit {triggeringUnit} has moved {distance} row(s) back",
+	"log.entry.unitOrderedCard": "Unit {triggeringUnit} has been issued an order targeting card {targetCard}",
+	"log.entry.unitOrderedUnit": "<no-content>",
+	"log.entry.unitOrderedRow": "Unit {triggeringUnit} has been issued an order targeting row {targetRow}",
 	"log.entry.unitDestroyed": "Unit {triggeringUnit} has been destroyed",
 	"log.entry.unitDeployed": "Unit {triggeringUnit} has been deployed",
 	"log.entry.spellDeployed": "Spell {triggeringCard} has been deployed",
-	"log.entry.buffCreated.fromCard": "Card {sourceCard} has created buff {triggeringBuffName} on {ownerCard}",
-	"log.entry.buffCreated.fromUniverse": "Buff {triggeringBuffName} has been created on {ownerCard}",
-	"log.entry.buffRemoved": "Buff {triggeringBuffName} has been removed from {ownerCard}",
+	"log.entry.buffCreated.fromCard": "Card {sourceCard} has created buff {triggeringBuff} on {ownerCard}",
+	"log.entry.buffCreated.fromUniverse": "Buff {triggeringBuff} has been created on {ownerCard}",
+	"log.entry.buffRemoved": "Buff {triggeringBuff} has been removed from {ownerCard}",
+	"log.entry.playerTargetSelectedCard.mulligan": "{triggeringPlayer} has mulliganed {targetCard}",
 	"log.entry.turnEnded": "{player} has finished their turn",
-	"log.entry.roundEnded": "{player} has finished their turn",
+	"log.entry.roundEnded": "{player} has finished their round",
+	"log.entry.gameFinished.victory": "The game has finished. {victoriousPlayer} has won.",
+	"log.entry.gameFinished.draw": "The game has finished in a draw.",
 
 	"target.generic.unit": "Target",
 	"target.generic.row": "Target row",
@@ -163,7 +170,7 @@
 	"card.feature.keywordBuffGrowth.description": "Target card gets +1 Power at the start of its turn.",
 	"card.feature.keywordBuffImmunity.name": "Immunity (Buff)",
 	"card.feature.keywordBuffImmunity.description": "Target card is immune to damage and any effects.",
-	"card.feature.keywordBuffTemporaryCard.name": "Temporary card (Buff)",
+	"card.feature.keywordBuffTemporaryCard.name": "Temporary (Buff)",
 	"card.feature.keywordBuffTemporaryCard.description": "Target card can be played for free. It will be discarded at the end of the turn if not played.",
 	"card.feature.building.name": "Building",
 	"card.feature.building.description": "Always has 0 Power and permanent Nightwatch.",
@@ -183,9 +190,9 @@
 	"card.feature.heroArtifact.name": "Leader Artifact",
 	"card.feature.heroArtifact.description": "This card is always revealed.",
 	"card.feature.heroArtifact.text": "*Leader Artifact*",
-	"card.feature.temporaryCard.name": "Temporary card",
+	"card.feature.temporaryCard.name": "Temporary",
 	"card.feature.temporaryCard.description": "This card can be played for free. It will be discarded at the end of the turn if not played.",
-	"card.feature.temporaryCard.text": "<c=orange>Temporary card</c>",
+	"card.feature.temporaryCard.text": "<c=orange>Temporary</c>",
 
 	"card.stats.soloUnitDamage.text": "*Direct Unit Damage +{value}*",
 	"card.stats.massUnitDamage.text": "*Splash Unit Damage +{value}*",
@@ -215,11 +222,15 @@
 	"card.tribe.crystal": "Crystal",
 	"card.tribe.cultist": "Cultist",
 	"card.tribe.peasant": "Peasant",
+	"card.tribe.soldier": "Soldier",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.merfolk": "Merfolk",
 	"card.tribe.building": "Building",
 	"card.tribe.valkyrie": "Valkyrie",
 	"card.tribe.elemental": "Elemental",
+
+	"buff.buffProtector.name": "Protector (Service buff)",
+	"buff.buffProtector.description": "This card is a protector.",
 
 	"buff.buffBurning.name": "Burning",
 	"buff.buffBurning.description": "This card takes damage every turn.",
@@ -345,7 +356,7 @@
 
 	"card.heroTroviar.name": "Troviar",
 	"card.heroTroviar.title": "The Torturer",
-	"card.heroTroviar.description": "*Deploy:*\nDeal {deployDamage} Damage to {targetCount} enemy units.<p>Whenever another unit takes damage, gain +{powerGained} Power.",
+	"card.heroTroviar.description": "*Deploy:*\nDeal {selfDamage} Damage to self.<p>Whenever another unit takes damage, restore {powerRestored} Power.",
 
 	"card.heroMetrearte.name": "Metrearte",
 	"card.heroMetrearte.title": "The Copycat",
@@ -417,7 +428,7 @@
 	"card.heroAdventuringGuildMaster.description": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
 
 	"card.heroForksmanshipInstructor.name": "Forksmanship\nInstructor",
-	"card.heroForksmanshipInstructor.description": "Whenever you play a unit with {powerThreshold} Power or less, give it +{bonusPower} Power.",
+	"card.heroForksmanshipInstructor.description": "Whenever you play a Peasant, give it +{bonusPower} Power.",
 	"card.heroForksmanshipInstructor.flavor": "When swords are not an option, you just have to rely on your own trusty pitchfork.",
 
 	"card.heroTribeShaman.name": "Tribal Shaman",
@@ -433,13 +444,13 @@
 	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current Power is at least 11, give +{extraStrengthGiven} Power more.",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
-	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Peasant card from your deck",
+	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Soldier card from your deck",
 
 	"card.unitForestScout.name": "Forest Scout",
 	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power\nIf you're losing on Morale, gain +{moralePowerBonus} Power",
 
 	"card.unitChargingKnight.name": "Charging Knight",
-	"card.unitChargingKnight.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only perform *Orders* if it has moved forward this turn",
+	"card.unitChargingKnight.description": "*Order:*\nDeal {damage} Damage to an enemy unit.<p>May only attack after moving forward on the same turn.",
 	"card.unitChargingKnight.flavor": "The card that has been reworked way too many times.",
 
 	"card.unitPriestessOfAedine.name": "Priestess of Aedine",
@@ -463,6 +474,9 @@
 
 	"card.unitStoneElemental.name": "Stone Elemental",
 	"card.unitStoneElemental.description": "*Deploy:*\nDeal {damage} Damage to an enemy unit.\nApply *Stun* for 1 turn.",
+
+	"card.unitEagleEyeArcher.name": "Eagle Eye Archer",
+	"card.unitEagleEyeArcher.description": "*Deploy:*\nDeal {damage} Damage to an enemy unit.",
 
 	"card.unitMerfolkStormcaller.name": "Merfolk Stormcaller",
 	"card.unitMerfolkStormcaller.description": "*Deploy:*\n*Create* a *Lightning Storm*",
@@ -506,7 +520,7 @@
 	"card.unitHungrySpellslinger.description": "*Infuse *{infuseCost}*:*\nAdd a Scroll to your hand.\nIt costs {spellDiscount} Mana less.",
 
 	"card.unitElderHoundmaster.name": "Elder Houndmaster",
-	"card.unitElderHoundmaster.description": "*Deploy:*\nSpawn two *Trained Hounds*.",
+	"card.unitElderHoundmaster.description": "*Deploy:*\nSpawn two *Trained Hounds* on the front row.",
 
 	"card.unitTrainedHound.name": "Trained Hound",
 	"card.unitTrainedHound.description": "<i>No effect</i>",
@@ -709,7 +723,10 @@
 	"card.unitChallengeEagerExplorer.description": "Choose one of {cardsToExplore} random Common cards.\n*Create* a copy of it.",
 
 	"card.unitArcheryTower.name": "Archery Tower",
-	"card.unitArcheryTower.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only attack once per adjacent Peasant.",
+	"card.unitArcheryTower.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only attack once per adjacent Soldier.",
+
+	"card.unitBloodyTrebuchet.name": "Bloody Trebuchet",
+	"card.unitBloodyTrebuchet.description": "*Order:*\nDeal {damage} Damage to an enemy unit and {splashDamage} Damage to units directly behind.<p>May only attack if adjacent to at least two Soldiers.",
 
 	"card.unitWoodenPalisade.name": "Wooden Palisade",
 	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn another *Wooden Palisade* on the right.",
@@ -721,11 +738,11 @@
 	"card.unitQuietInfiltrator.description": "*Deploy:*\nDeal {damage} Damage to adjacent units.",
 
 	"card.unitCropField.name": "Crop Field",
-	"card.unitCropField.description": "*Turn end:*\nGive +{bonusPower} Power to an allied non-building unit with lowest Power value.\nRepeat once for every adjacent Peasant.",
+	"card.unitCropField.description": "*Turn end:*\nGive +{bonusPower} Power to an allied unit with lowest Power value.<p>Repeat once for every adjacent Peasant.",
 
 	"card.heroRobert.name": "Robert",
 	"card.heroRobert.title": "Building Instructor",
-	"card.heroRobert.description": "*Deploy:*\n*Summon* a Building and *Create* a copy of it with no armor.",
+	"card.heroRobert.description": "*Deploy:*\n*Summon* a Building and *Create* a copy of it.\nBoth copies have no Armor.",
 	"card.heroRobert.flavor": "- \"And that's how you build it. Easy, right? Now, repeat after me.\"",
 
 	"card.heroThomas.name": "Thomas",
@@ -766,14 +783,17 @@
 	"card.unitUrbanAmbusher.description": "Has +{bonusPower} Power for every Building on the same row.",
 
 	"card.unitUrbanTactician.name": "Urban Tactician",
-	"card.unitUrbanTactician.description": "Your other units that are directly adjacent to a Building have +{bonusPower} Power.",
+	"card.unitUrbanTactician.description": "Your units that are directly adjacent to a Building have +{bonusPower} Power.",
 
 	"card.unitMadnessIncarnate.name": "Madness Incarnate",
-	"card.unitMadnessIncarnate.description": "*Round start:*\nIf this is in your deck, *Shatter* {shatterPerRow} on every friendly row.",
+	"card.unitMadnessIncarnate.description": "*Game start:*\n*Shatter* {shatterPerRow} on every friendly row.",
 
 	"card.unitShatteredSpace.name": "Shattered Space",
 	"card.unitShatteredSpace.description": "*Immune*",
 
 	"card.unitNullMender.name": "Null Mender",
-	"card.unitNullMender.description": "*Deploy:*\nChoose a row with *Shattered Space*. Destroy one copy of it on that row."
+	"card.unitNullMender.description": "*Deploy:*\nChoose a row with *Shattered Space*. Destroy one copy of it on that row.",
+
+	"card.unitAulerianInquisitor.name": "Aulerian Inquisitor",
+	"card.unitAulerianInquisitor.description": "*Deploy:*\nDestroy an enemy unit that has at least {buffsRequired} buffs."
 }

@@ -15,33 +15,22 @@
 				<tbody>
 					<tr v-for="game in activeGames" :key="game.id">
 						<td>
-							<router-link :to="`/admin/games/${game.id}`">{{ game.id.substr(0, 8) }}</router-link>
+							<router-link :to="`/admin/games/${game.id}`">{{ game.id.substr(5, 8) }}</router-link>
 						</td>
 						<td>
-							{{
-								new Intl.DateTimeFormat('ru', {
-									year: 'numeric',
-									month: 'numeric',
-									day: 'numeric',
-									hour: 'numeric',
-									minute: 'numeric',
-									second: 'numeric',
-								}).format(new Date(game.startedAt))
-							}}
+							{{ moment(game.startedAt).format('DD.MM.yyyy, HH:mm:ss') }}
 						</td>
 						<td>
 							<div v-for="player in game.players" :key="player.id">
 								<router-link class="user-input" :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
 							</div>
+							<div v-if="game.players.length === 0">[No data]</div>
 						</td>
 						<td>
 							{{
-								new Intl.DateTimeFormat('ru', {
-									hour: 'numeric',
-									minute: 'numeric',
-									second: 'numeric',
-									timeZone: 'GMT',
-								}).format(new Date(currentTime.getTime() - new Date(game.startedAt)))
+								moment(currentTime - new Date(game.startedAt))
+									.utcOffset(0)
+									.format('HH:mm:ss')
 							}}
 						</td>
 						<td>
@@ -73,35 +62,24 @@
 			<tbody>
 				<tr v-for="game in closedGames" :key="game.id">
 					<td>
-						<router-link :to="`/admin/games/${game.id}`">{{ game.id.substr(0, 8) }}</router-link>
+						<router-link :to="`/admin/games/${game.id}`">{{ game.id.substr(5, 8) }}</router-link>
 					</td>
 					<td>
-						{{
-							new Intl.DateTimeFormat('ru', {
-								year: 'numeric',
-								month: 'numeric',
-								day: 'numeric',
-								hour: 'numeric',
-								minute: 'numeric',
-								second: 'numeric',
-							}).format(new Date(game.startedAt))
-						}}
+						{{ moment(game.startedAt).format('DD.MM.yyyy, HH:mm:ss') }}
 					</td>
 					<td>
 						<div v-for="player in game.players" :key="player.id">
 							<router-link class="user-input" :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
 						</div>
+						<div v-if="game.players.length === 0">[No data]</div>
 					</td>
 					<td>
 						<div v-if="game.closedAt === game.startedAt">N/A</div>
 						<div v-if="game.closedAt !== game.startedAt">
 							{{
-								new Intl.DateTimeFormat('ru', {
-									hour: 'numeric',
-									minute: 'numeric',
-									second: 'numeric',
-									timeZone: 'GMT',
-								}).format(new Date(new Date(game.closedAt).getTime() - new Date(game.startedAt)))
+								moment(new Date(game.closedAt) - new Date(game.startedAt))
+									.utcOffset(0)
+									.format('HH:mm:ss')
 							}}
 						</div>
 					</td>
@@ -129,6 +107,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, PropType, ref, watch } from '@vue/composition-api'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
+import moment from 'moment'
 
 interface Props {
 	games: GameHistoryDatabaseEntry[]
@@ -165,6 +144,7 @@ export default defineComponent({
 		)
 
 		return {
+			moment,
 			hasLoaded,
 			activeGames,
 			closedGames,

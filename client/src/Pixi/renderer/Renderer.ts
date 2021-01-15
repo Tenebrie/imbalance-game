@@ -451,6 +451,7 @@ export default class Renderer {
 
 		/* Action label */
 		const labelPosition = Core.input.mousePosition.clone()
+		labelPosition.y -= 54
 		this.actionLabel.position.copyFrom(labelPosition)
 		this.actionLabel.style.lineHeight = 24
 	}
@@ -543,12 +544,16 @@ export default class Renderer {
 			}
 		}
 
-		if (unit.card.displayMode === CardDisplayMode.ON_BOARD) {
+		if (unit.card.displayMode === CardDisplayMode.ON_BOARD && !unit.isFadingOut) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 2
 			unit.card.powerText.alpha = sprite.alpha
 			unit.card.armorText.alpha = sprite.alpha
 			container.position.x += (targetPositionX - container.position.x + shadowUnitOffsetX) * this.deltaTimeFraction * 7
 			container.position.y += (targetPositionY - container.position.y) * this.deltaTimeFraction * 7
+		} else if (unit.isFadingOut) {
+			sprite.alpha = Math.max(0, sprite.alpha - this.deltaTimeFraction * 3)
+			unit.card.powerText.alpha = sprite.alpha
+			unit.card.armorText.alpha = sprite.alpha
 		} else {
 			container.visible = true
 			container.position.x = targetPositionX

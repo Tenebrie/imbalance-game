@@ -11,26 +11,46 @@
 import Vue from 'vue'
 import store from '@/Vue/store'
 import router from '@/Vue/router'
+import TheDeckDeletePopup from '@/Vue/components/popup/TheDeckDeletePopup.vue'
+import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 
 export default Vue.extend({
 	data: () => ({
 		requestInFlight: false,
 	}),
 
-	computed: {},
+	computed: {
+		deckId(): string {
+			return this.$route.params.deckId
+		},
+
+		deck(): PopulatedEditorDeck {
+			return store.state.editor.decks.find((deck) => deck.id === this.deckId)
+		},
+	},
 
 	methods: {
-		async onClick(): Promise<void> {
-			this.requestInFlight = true
-			const deckId = this.$route.params.deckId
-			const statusCode = await store.dispatch.editor.deleteDeck({ deckId })
-			if (statusCode === 204) {
-				this.$noty.success('Deck deleted!')
-				await this.$router.push({ name: 'decks', query: router.currentRoute.query })
-			} else {
-				this.$noty.error('An error occurred while deleting the deck')
+		onClick(): void {
+			const onConfirm = async () => {
+				this.requestInFlight = true
+				const deckId = this.$route.params.deckId
+				const statusCode = await store.dispatch.editor.deleteDeck({ deckId })
+				if (statusCode === 204) {
+					this.$noty.success('Deck deleted!')
+					await this.$router.push({ name: 'decks', query: router.currentRoute.query })
+				} else {
+					this.$noty.error('An error occurred while deleting the deck')
+				}
+				this.requestInFlight = false
 			}
-			this.requestInFlight = false
+
+			store.dispatch.popupModule.open({
+				component: TheDeckDeletePopup,
+				params: {
+					deckName: this.deck.name,
+				},
+				onConfirm,
+			})
 		},
 	},
 })
