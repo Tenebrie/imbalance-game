@@ -103,7 +103,12 @@ export default {
 	},
 
 	async deletePlayer(id: string): Promise<boolean> {
-		const query = `DELETE FROM players WHERE id = $1`
-		return Database.deleteRows(query, [id])
+		const firstQuery = `
+			UPDATE game_history SET "victoriousPlayer"=null WHERE "victoriousPlayer"=$1;
+		`
+		const secondQuery = `
+			DELETE FROM players WHERE id = $1;
+		`
+		return (await Database.updateRows(firstQuery, [id])) && (await Database.deleteRows(secondQuery, [id]))
 	},
 }

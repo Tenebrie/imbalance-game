@@ -22,6 +22,10 @@ export const createRandomPlayerId = (): string => {
 	return `player:${getRandomId()}`
 }
 
+export const createBotPlayerId = (): string => {
+	return `ai:${getRandomId()}`
+}
+
 export const createRandomEditorDeckId = (): string => {
 	return `deck:${getRandomId()}`
 }

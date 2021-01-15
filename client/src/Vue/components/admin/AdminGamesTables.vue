@@ -24,6 +24,7 @@
 							<div v-for="player in game.players" :key="player.id">
 								<router-link class="user-input" :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
 							</div>
+							<div v-if="game.players.length === 0">[No data]</div>
 						</td>
 						<td>
 							{{
@@ -70,6 +71,7 @@
 						<div v-for="player in game.players" :key="player.id">
 							<router-link class="user-input" :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
 						</div>
+						<div v-if="game.players.length === 0">[No data]</div>
 					</td>
 					<td>
 						<div v-if="game.closedAt === game.startedAt">N/A</div>

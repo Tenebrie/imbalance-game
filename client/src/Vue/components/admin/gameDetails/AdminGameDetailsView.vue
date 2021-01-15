@@ -13,6 +13,7 @@
 						<span v-for="player in game.players" :key="player.id" :to="`/admin/users/${player.id}`">
 							<router-link :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
 						</span>
+						<span v-if="game.players.length === 0">[No data]</span>
 					</td>
 				</tr>
 				<tr>

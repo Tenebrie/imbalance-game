@@ -10,6 +10,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import store from '@/Vue/store'
+import TheAccountDeletePopup from '@/Vue/components/popup/TheAccountDeletePopup.vue'
 
 export default Vue.extend({
 	data: () => ({
@@ -18,15 +19,20 @@ export default Vue.extend({
 
 	methods: {
 		async onClick(): Promise<void> {
-			this.requestInFlight = true
-
-			try {
-				await store.dispatch.deleteAccount()
-			} catch (e) {
-				this.$noty.error('Unable to delete your profile!')
+			const onConfirm = async () => {
+				this.requestInFlight = true
+				try {
+					await store.dispatch.deleteAccount()
+				} catch (e) {
+					this.$noty.error('Unable to delete your profile!')
+				}
+				this.requestInFlight = false
 			}
 
-			this.requestInFlight = false
+			store.dispatch.popupModule.open({
+				component: TheAccountDeletePopup,
+				onConfirm,
+			})
 		},
 	},
 })

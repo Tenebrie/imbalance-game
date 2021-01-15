@@ -43,6 +43,8 @@ export default defineComponent({
 					if (value.startsWith('player:') && props.players.find((player) => player.id === value)) {
 						value = `<b>${props.players.find((player) => player.id === value).username}</b>`
 					} else if (value.startsWith('player:')) {
+						value = `<b>Player#${value.substr(7, 8)}</b>`
+					} else if (value.startsWith('ai:')) {
 						value = `<b>AI</b>`
 					} else if (value.startsWith('card:')) {
 						value = `<b>${Localization.get(`card.${value.split(':')[1]}.name`)} [${value.split(':')[2].substr(0, 8)}]</b>`
