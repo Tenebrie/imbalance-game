@@ -8,8 +8,12 @@ import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import PlayerDatabase from '../database/PlayerDatabase'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import TokenManager from '../services/TokenService'
-import { createRandomPlayerId, registerFormValidators, setCookie } from '../utils/Utils'
+import { createRandomEditorDeckId, createRandomPlayerId, registerFormValidators, setCookie } from '../utils/Utils'
 import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
+import SharedDeckDatabase from '@src/database/SharedDeckDatabase'
+import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
+import EditorDeckDatabase from '@src/database/EditorDeckDatabase'
+import StartingDecks from '@src/game/utils/StartingDecks'
 
 const router = express.Router()
 
@@ -40,10 +44,22 @@ router.post(
 			throw { status: 400, error: 'Password value invalid' }
 		}
 
+		// Insert the user
 		const success = await PlayerLibrary.register(email, username, password)
 		if (!success) {
 			throw { status: 500, error: 'General database error' }
 		}
+
+		// Insert the starting deck
+		const registeredPlayer = await PlayerDatabase.selectPlayerByEmail(email)
+		if (registeredPlayer) {
+			await Promise.all(
+				StartingDecks.getStartingDecks().map((startingDeck) => {
+					return EditorDeckDatabase.insertEditorDeck(registeredPlayer, startingDeck)
+				})
+			)
+		}
+
 		res.status(204)
 		res.send()
 	})

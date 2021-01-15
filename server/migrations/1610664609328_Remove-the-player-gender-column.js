@@ -3,6 +3,11 @@
 exports.shorthands = undefined
 
 exports.up = (pgm) => {
+	pgm.dropColumn('players', 'gender')
+	pgm.dropType('gender_t')
+}
+
+exports.down = (pgm) => {
 	pgm.createType('gender_t', ['male', 'female', 'other'])
 	pgm.addColumns('players', {
 		gender: {
@@ -11,9 +16,4 @@ exports.up = (pgm) => {
 			default: 'other',
 		},
 	})
-}
-
-exports.down = (pgm) => {
-	pgm.dropColumn('players', 'gender')
-	pgm.dropType('gender_t')
 }

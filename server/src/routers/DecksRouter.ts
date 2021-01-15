@@ -70,19 +70,15 @@ router.post(
 		const player = req['player'] as ServerPlayer
 		const sharedDeckId = req.body.sharedCode
 		let deck
-		const deckId = createRandomEditorDeckId()
 		if (sharedDeckId) {
-			deck = await SharedDeckDatabase.selectSharedDeckById(sharedDeckId)
+			deck = await SharedDeckDatabase.selectSharedDeckById(sharedDeckId, createRandomEditorDeckId())
 			await SharedDeckDatabase.updateSharedDeckTimestamp(sharedDeckId)
 		} else {
 			deck = ServerEditorDeck.newDeck()
 		}
-		const success = deck ? await EditorDeckDatabase.insertEditorDeck(player, deckId, deck) : false
+		const success = deck ? await EditorDeckDatabase.insertEditorDeck(player, deck) : false
 
 		res.status(success ? 200 : 400)
-		if (deck) {
-			deck.id = deckId
-		}
 		res.json({
 			deck: success ? deck : undefined,
 		})
@@ -92,11 +88,10 @@ router.post(
 router.put(
 	'/:deckId',
 	AsyncHandler(async (req, res: Response) => {
-		const deckId = req.params.deckId
 		const deckData = req.body as EditorDeck
 		const player = req['player'] as ServerPlayer
 
-		const success = await EditorDeckDatabase.insertEditorDeck(player, deckId, deckData)
+		const success = await EditorDeckDatabase.insertEditorDeck(player, deckData)
 
 		res.status(success ? 204 : 400)
 		res.send()

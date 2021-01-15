@@ -1,6 +1,7 @@
 <template>
 	<div class="admin-game-log">
 		<AdminGameLogGroup v-for="(group, index) in log" :key="index" :group="group" :players="players" />
+		<div v-if="log.length === 0">No data available :(</div>
 	</div>
 </template>
 

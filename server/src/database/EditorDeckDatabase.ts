@@ -1,9 +1,10 @@
 import Database from './Database'
 import ServerPlayer from '../game/players/ServerPlayer'
 import EditorDeck from '@shared/models/EditorDeck'
+import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 
 export default {
-	async insertEditorDeck(owner: ServerPlayer, id: string, deck: EditorDeck): Promise<boolean> {
+	async insertEditorDeck(owner: ServerPlayer | PlayerDatabaseEntry, deck: EditorDeck): Promise<boolean> {
 		const cards = JSON.stringify(deck.cards)
 		const query = `
 			INSERT INTO editor_decks (id, "playerId", name, cards)
@@ -12,7 +13,7 @@ export default {
 			DO UPDATE
 				SET name = $3, cards = $4;
 		`
-		return Database.insertRow(query, [id, owner.id, deck.name, cards])
+		return Database.insertRow(query, [deck.id, owner.id, deck.name, cards])
 	},
 
 	async selectEditorDeckById(id: string): Promise<EditorDeck | null> {
