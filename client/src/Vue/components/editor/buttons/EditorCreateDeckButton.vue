@@ -8,10 +8,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	data: () => ({
 		requestInFlight: false,
 	}),

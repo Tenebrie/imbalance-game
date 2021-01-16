@@ -1,10 +1,10 @@
 <template>
-	<div class="the-editor-hovered-deck-card" :style="this.overlayPosition" ref="overlayRef">
+	<div class="the-editor-hovered-deck-card" :style="overlayPosition" ref="overlayRef">
 		<pixi-pre-rendered-card
 			class="card"
-			:key="this.hoveredDeckCard && this.hoveredDeckCard.class"
-			:card="this.hoveredDeckCard"
-			:vertical-offset="this.editorModeOffset.y"
+			:key="hoveredDeckCard && hoveredDeckCard.class"
+			:card="hoveredDeckCard"
+			:vertical-offset="editorModeOffset.y"
 		/>
 	</div>
 </template>
@@ -12,7 +12,7 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import * as PIXI from 'pixi.js'
-import { computed, defineComponent, ref } from '@vue/composition-api'
+import { computed, defineComponent, ref } from 'vue'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
 

@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import * as PIXI from 'pixi.js'
-import { computed, defineComponent, onMounted, Ref, ref, watch } from '@vue/composition-api'
+import { computed, defineComponent, onMounted, Ref, ref, watch } from 'vue'
 import WorkshopCardPreview from '@/Vue/components/workshop/WorkshopCardPreview.vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import CardType from '@shared/enums/CardType'

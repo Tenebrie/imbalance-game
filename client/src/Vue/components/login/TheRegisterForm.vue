@@ -49,7 +49,7 @@
 
 <script lang="ts">
 import axios from 'axios'
-import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api'
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import store from '@/Vue/store'
 import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'

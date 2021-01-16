@@ -8,13 +8,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import router from '@/Vue/router'
 import TheDeckDeletePopup from '@/Vue/components/popup/TheDeckDeletePopup.vue'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	data: () => ({
 		requestInFlight: false,
 	}),
@@ -37,7 +37,7 @@ export default Vue.extend({
 				const statusCode = await store.dispatch.editor.deleteDeck({ deckId })
 				if (statusCode === 204) {
 					this.$noty.success('Deck deleted!')
-					await this.$router.push({ name: 'decks', query: router.currentRoute.query })
+					await this.$router.push({ name: 'decks', query: router.currentRoute.value.query })
 				} else {
 					this.$noty.error('An error occurred while deleting the deck')
 				}

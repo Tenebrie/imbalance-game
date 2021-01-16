@@ -5,10 +5,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import TheLoginForm from '../components/login/TheLoginForm.vue'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	components: { TheLoginForm },
 
 	computed: {},

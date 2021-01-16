@@ -16,7 +16,7 @@ import GameMode from '@shared/enums/GameMode'
 import GameMessage from '@shared/models/network/GameMessage'
 import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
 	setup() {

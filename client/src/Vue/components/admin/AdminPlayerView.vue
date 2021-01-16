@@ -47,7 +47,7 @@
 
 <script lang="ts">
 import axios from 'axios'
-import { computed, defineComponent, onMounted, ref } from '@vue/composition-api'
+import { computed, defineComponent, onMounted, ref } from 'vue'
 import PlayerMessage from '@shared/models/network/player/PlayerMessage'
 import store from '@/Vue/store'
 import Player from '@shared/models/Player'

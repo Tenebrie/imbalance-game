@@ -7,13 +7,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
 import Utils from '@/utils/Utils'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	props: {
 		color: {
 			type: Number,

@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import axios from 'axios'
-import { defineComponent, onMounted, ref } from '@vue/composition-api'
+import { defineComponent, onMounted, ref } from 'vue'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import AdminGamesTables from '@/Vue/components/admin/AdminGamesTables.vue'
 

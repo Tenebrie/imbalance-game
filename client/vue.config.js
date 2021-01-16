@@ -8,8 +8,8 @@ module.exports = {
 			},
 		},
 		output: {
-			pathinfo: false
-		}
+			pathinfo: false,
+		},
 	},
 	devServer: {
 		publicPath: '/',

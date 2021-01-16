@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import TheUserProfile from '@/Vue/components/profile/TheUserProfile.vue'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
 	components: {

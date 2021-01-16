@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import GameCollapseMessageData from '@shared/models/network/GameCollapseMessageData'
 import DiscordLink from '@/Vue/components/utils/DiscordLink.vue'
 

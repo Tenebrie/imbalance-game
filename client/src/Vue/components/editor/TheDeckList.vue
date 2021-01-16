@@ -20,7 +20,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import CardFaction from '@shared/enums/CardFaction'
 import TheEditorDeckListItem from '@/Vue/components/editor/TheDeckListItem.vue'
@@ -30,10 +29,11 @@ import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import DeckListMode from '@/utils/DeckListMode'
 import EditorCreateDeckButton from '@/Vue/components/editor/buttons/EditorCreateDeckButton.vue'
 import EditorDecksButton from '@/Vue/components/editor/buttons/EditorDecksButton.vue'
+import { defineComponent } from 'vue'
 
 type FilteredDeck = { faction: CardFaction; experimental: boolean; decks: PopulatedEditorDeck[] }
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
 		TheEditorDeckListItem,
 		TheEditorDeckListSeparator,

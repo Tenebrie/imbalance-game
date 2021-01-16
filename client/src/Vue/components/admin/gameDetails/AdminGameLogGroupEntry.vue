@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import moment from 'moment'
-import { computed, defineComponent, PropType } from '@vue/composition-api'
+import { computed, defineComponent, PropType } from 'vue'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import Localization from '@/Pixi/Localization'
 import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'

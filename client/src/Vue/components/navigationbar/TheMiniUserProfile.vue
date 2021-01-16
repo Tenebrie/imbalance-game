@@ -10,14 +10,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import router from '@/Vue/router'
 import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
 import Player from '@shared/models/Player'
 import Localization from '@/Pixi/Localization'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
 		UserAvatar,
 	},

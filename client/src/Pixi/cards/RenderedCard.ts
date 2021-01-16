@@ -23,7 +23,12 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardLocation from '@shared/enums/CardLocation'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import { WorkshopCardProps } from '@/Vue/components/workshop/WorkshopView.vue'
+
+type WorkshopCardProps = {
+	workshopTitle: string
+	workshopImage: PIXI.Texture
+	workshopTribes: string[]
+}
 
 export default class RenderedCard implements Card {
 	public readonly id: string

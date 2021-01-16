@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@vue/composition-api'
+import { defineComponent, PropType } from 'vue'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import AdminGameLogGroupEntry from '@/Vue/components/admin/gameDetails/AdminGameLogGroupEntry.vue'
 import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'

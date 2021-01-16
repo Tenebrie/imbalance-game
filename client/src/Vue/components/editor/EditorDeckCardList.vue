@@ -21,7 +21,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import CardColor from '@shared/enums/CardColor'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
@@ -33,8 +32,9 @@ import EditorExportDeckButton from '@/Vue/components/editor/buttons/EditorExport
 import EditorDeleteDeckButton from '@/Vue/components/editor/buttons/EditorDeleteDeckButton.vue'
 import EditorLeaveDeckButton from '@/Vue/components/editor/buttons/EditorLeaveDeckButton.vue'
 import TheEditorHoveredDeckCard from '@/Vue/components/editor/TheEditorHoveredDeckCard.vue'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
 		EditorDeckName,
 		EditorExportDeckButton,
@@ -80,7 +80,7 @@ export default Vue.extend({
 		store.commit.editor.setCurrentDeckId(this.deckId)
 	},
 
-	beforeDestroy(): void {
+	beforeUnmount(): void {
 		store.commit.editor.setCurrentDeckId(null)
 	},
 

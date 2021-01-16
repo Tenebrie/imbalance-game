@@ -20,7 +20,7 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
-import { defineComponent, PropType } from '@vue/composition-api'
+import { defineComponent, PropType } from 'vue'
 
 interface Props {
 	game: GameMessage

@@ -18,7 +18,7 @@ import LocalStorage from '@/utils/LocalStorage'
 import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 import axios from 'axios'
 import { electronHost, isElectron } from '@/utils/Utils'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
 	components: { ThePopupView, TheNavigationBar },
@@ -36,7 +36,7 @@ export default defineComponent({
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		window.removeEventListener('contextmenu', this.onContextMenu)
 	},
 

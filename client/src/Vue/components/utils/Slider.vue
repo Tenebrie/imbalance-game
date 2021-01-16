@@ -16,11 +16,11 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from '@vue/composition-api'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 
 export default defineComponent({
 	props: {
-		model: {
+		modelValue: {
 			type: Number,
 		},
 		min: {
@@ -37,10 +37,7 @@ export default defineComponent({
 		},
 	},
 
-	model: {
-		prop: 'model',
-		event: 'update-model',
-	},
+	emits: ['update:modelValue'],
 
 	setup(props, { emit }) {
 		const thumbRef = ref<HTMLDivElement>()
@@ -63,14 +60,14 @@ export default defineComponent({
 		}
 
 		const onKeyDown = (event: KeyboardEvent) => {
-			let value = props.model
+			let value = props.modelValue
 			if (event.key === 'ArrowRight') {
 				value += props.step
 			} else if (event.key === 'ArrowLeft') {
 				value -= props.step
 			}
 			value = Math.max(props.min, Math.min(props.max, value))
-			emit('update-model', value)
+			emit('update:modelValue', value)
 			showOutline.value = true
 		}
 
@@ -103,7 +100,7 @@ export default defineComponent({
 			tempValue = Math.round(min + tempValue * (max - min))
 
 			// Flush value
-			emit('update-model', tempValue)
+			emit('update:modelValue', tempValue)
 		}
 
 		const onMouseUp = () => {
@@ -120,13 +117,13 @@ export default defineComponent({
 		const isMounted = ref(false)
 		onMounted(() => {
 			isMounted.value = true
-			useUpdateThumbValue(props.model)
+			useUpdateThumbValue(props.modelValue)
 		})
 
 		watch(
-			() => [props.model],
+			() => [props.modelValue],
 			() => {
-				useUpdateThumbValue(props.model)
+				useUpdateThumbValue(props.modelValue)
 			}
 		)
 

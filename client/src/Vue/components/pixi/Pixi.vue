@@ -1,50 +1,53 @@
 <template>
 	<div class="pixi">
 		<div class="background" />
-		<div ref="game" class="game-container"></div>
+		<div ref="gameContainer" class="game-container"></div>
 		<pixi-user-interface class="pixi-user-interface" />
 	</div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import Core from '../../../Pixi/Core'
 import PixiUserInterface from '@/Vue/components/pixi/PixiUserInterface.vue'
 import { isMobile } from '@/utils/Utils'
+import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
 		PixiUserInterface,
 	},
 
-	created(): void {
+	setup() {
 		store.dispatch.gameStateModule.setGameLoading()
 		if (isMobile()) {
 			// const elem = document.documentElement
 			// if (elem.requestFullscreen) {elem.requestFullscreen()}
 			// window.scrollTo(0, 1)
 		}
-	},
 
-	mounted(): void {
-		window.addEventListener('resize', this.onWindowResize)
+		const gameContainer = ref<HTMLElement>()
+		onMounted(() => {
+			window.addEventListener('resize', onWindowResize)
 
-		const container = this.$refs.game as HTMLElement
-		Core.init(store.state.selectedGame, store.state.selectedDeckId, container)
-	},
+			Core.init(store.state.selectedGame, store.state.selectedDeckId, gameContainer.value)
+		})
 
-	beforeDestroy(): void {
-		window.removeEventListener('resize', this.onWindowResize)
-		if (Core.socket) {
-			Core.socket.close()
-		}
-	},
+		onBeforeUnmount(() => {
+			window.removeEventListener('resize', onWindowResize)
+			if (Core.socket) {
+				Core.socket.close()
+			}
+		})
 
-	methods: {
-		onWindowResize() {
+		const onWindowResize = (): void => {
 			Core.renderer.resize()
-		},
+		}
+
+		return {
+			gameContainer,
+			onWindowResize,
+		}
 	},
 })
 </script>

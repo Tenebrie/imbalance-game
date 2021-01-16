@@ -25,7 +25,7 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
-import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api'
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import GoogleSingleSignOnButton from '@/Vue/components/login/GoogleSingleSignOnButton.vue'
 import Localization from '@/Pixi/Localization'
 

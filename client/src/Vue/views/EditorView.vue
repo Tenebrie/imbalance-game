@@ -11,11 +11,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import TheCardLibrary from '@/Vue/components/editor/TheCardLibrary.vue'
 import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	components: { TheCardLibrary, PixiInspectedCard },
 })
 </script>

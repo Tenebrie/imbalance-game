@@ -1,7 +1,7 @@
 <template>
 	<div class="the-game-list-container">
 		<div class="the-game-list">
-			<div v-if="this.reconnectGames.length > 0">
+			<div v-if="reconnectGames.length > 0">
 				<h2>{{ $locale.get('ui.browser.reconnect.header') }}</h2>
 				<button @click="onReconnect" class="primary">{{ $locale.get('ui.browser.reconnect.button') }}</button>
 			</div>
@@ -24,7 +24,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import axios from 'axios'
 import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
@@ -32,8 +31,9 @@ import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
 import Localization from '@/Pixi/Localization'
 import TheChallengeAISelection from '@/Vue/components/popup/escapeMenu/TheChallengeAISelection.vue'
 import GameMode from '@shared/enums/GameMode'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
 		GameListItem,
 	},
@@ -51,7 +51,7 @@ export default Vue.extend({
 		}, 30000)
 	},
 
-	beforeDestroy(): void {
+	beforeUnmount(): void {
 		clearInterval(this.updateTimer)
 	},
 

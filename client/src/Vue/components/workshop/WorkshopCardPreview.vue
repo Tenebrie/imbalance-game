@@ -3,16 +3,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, ref, watch } from '@vue/composition-api'
+import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { WorkshopCardProps } from '@/Vue/components/workshop/WorkshopView.vue'
 import { throttle } from 'throttle-debounce'
-
-interface Props {
-	card: CardMessage & WorkshopCardProps
-}
 
 export default defineComponent({
 	props: {
@@ -22,7 +18,7 @@ export default defineComponent({
 		},
 	},
 
-	setup(props: Props) {
+	setup(props) {
 		onMounted(async () => {
 			await TextureAtlas.loadCard(props.card, () => {
 				renderCard()

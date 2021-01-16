@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from '@vue/composition-api'
+import { computed, defineComponent, onMounted } from 'vue'
 import Notifications from '@/utils/Notifications'
 import axios from 'axios'
 import store from '@/Vue/store'

@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@vue/composition-api'
+import { defineComponent, PropType } from 'vue'
 import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { WorkshopCardProps } from '@/Vue/components/workshop/WorkshopView.vue'

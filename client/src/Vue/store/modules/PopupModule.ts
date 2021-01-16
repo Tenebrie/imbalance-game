@@ -1,6 +1,7 @@
 import { Component } from 'vue'
 import { defineModule } from 'direct-vuex'
 import { moduleActionContext } from '@/Vue/store'
+import { markRaw } from 'vue'
 
 type ComponentInStack = {
 	component: Component
@@ -62,7 +63,10 @@ const PopupModule = defineModule({
 	actions: {
 		open(context, payload: ComponentInStack): void {
 			const { commit } = moduleActionContext(context, PopupModule)
-			commit.pushComponent(payload)
+			commit.pushComponent({
+				...payload,
+				component: markRaw(payload.component),
+			})
 		},
 
 		close(context): void {

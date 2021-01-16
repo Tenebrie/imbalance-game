@@ -6,11 +6,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	computed: {
 		deckId(): string {
 			return this.$route.params.deckId
