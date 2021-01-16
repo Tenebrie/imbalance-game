@@ -55,3 +55,41 @@ export const sortCards = (inputArray: Card[] | CardMessage[]): Card[] | CardMess
 export const compressGameTraffic = (): boolean => {
 	return process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
 }
+
+export const getRandomName = (): string => {
+	const nameVowels = 'aaaeeeiiooouy'
+	const nameConsonants = 'bbccddfgghhjkkllmmnpqrssttvwxz'
+	let name = ''
+	for (let i = 0; i < 2 + Math.floor(Math.random() * 2); i++) {
+		const sylTypeRoll = Math.random()
+		const sylType =
+			sylTypeRoll < 0.25
+				? 'cv'
+				: sylTypeRoll < 0.3
+				? 'ccv'
+				: sylTypeRoll < 0.5
+				? 'vc'
+				: sylTypeRoll < 0.75
+				? 'vc'
+				: sylTypeRoll < 0.9
+				? 'cvc'
+				: 'vcv'
+
+		let syl = ''
+		for (let i = 0; i < sylType.length; i++) {
+			if (sylType[i] === 'c') {
+				syl += nameConsonants[Math.floor(Math.random() * nameConsonants.length)]
+			} else if (sylType[i] === 'v') {
+				syl += nameVowels[Math.floor(Math.random() * nameVowels.length)]
+			}
+		}
+		name += syl
+	}
+	if (nameConsonants.includes(name[name.length - 1])) {
+		const endingRoll = Math.random()
+		const ending =
+			endingRoll < 0.08 ? 'us' : endingRoll < 0.2 ? 'a' : endingRoll < 0.3 ? 'ea' : endingRoll < 0.4 ? 'ia' : endingRoll < 0.5 ? 'as' : ''
+		name += ending
+	}
+	return name
+}

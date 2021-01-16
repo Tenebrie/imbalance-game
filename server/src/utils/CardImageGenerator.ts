@@ -33,12 +33,12 @@ class CardImageGenerator {
 		}
 
 		targetCardClasses.forEach((card) => {
-			this.generatePlaceholderImage(card.class, card.generatedArtworkMagicString)
+			this.generateStaticPlaceholderImage(card.class, card.generatedArtworkMagicString)
 		})
 		console.info(`Generated ${targetCardClasses.length} placeholder card image(s)`)
 	}
 
-	public generatePlaceholderImage(cardClass: string, magicString: string): void {
+	private async generatePlaceholderImage(cardClass: string, magicString: string, reason: 'placeholder' | 'workshop'): Promise<Buffer> {
 		const width = 408
 		const height = 584
 		const canvas = createCanvas(width, height)
@@ -47,52 +47,61 @@ class CardImageGenerator {
 		ctx.translate(0.5, 0.5)
 
 		const filepath = path.join(__dirname, '../../../../assets/bg-clean.png')
-		loadImage(filepath).then(async (image) => {
-			ctx.drawImage(image, 0, 0, width, height)
+		const image = await loadImage(filepath)
+		ctx.drawImage(image, 0, 0, width, height)
 
-			ctx.globalCompositeOperation = 'source-atop'
-			ctx.strokeStyle = 'transparent'
+		ctx.globalCompositeOperation = 'source-atop'
+		ctx.strokeStyle = 'transparent'
 
-			const seededRandom = createSeededRandom(`${cardClass}${magicString}`)
+		const seededRandom = createSeededRandom(`${cardClass}${magicString}`)
 
-			const imageMode = this.getImageMode(seededRandom)
+		const imageMode = this.getImageMode(seededRandom)
 
-			const baseColor: RenderColor = {
-				r: 20 + seededRandom() * 180,
-				g: 20 + seededRandom() * 180,
-				b: 20 + seededRandom() * 180,
-			}
+		const baseColor: RenderColor = {
+			r: 20 + seededRandom() * 180,
+			g: 20 + seededRandom() * 180,
+			b: 20 + seededRandom() * 180,
+		}
 
-			if (imageMode === ImageMode.SINGLE_PATH) {
-				this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width, height)
-			} else if (imageMode === ImageMode.DOUBLE_PATH_SPLIT_X) {
-				this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width, height / 2 + 50)
-				this.renderSimplePath(ctx, seededRandom, baseColor, 0, height / 2 - 50, width, height / 2 + 50)
-			} else if (imageMode === ImageMode.DOUBLE_PATH_SPLIT_Y) {
-				this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width / 2 + 30, height)
-				this.renderSimplePath(ctx, seededRandom, baseColor, width / 2 - 30, 0, width / 2 + 30, height)
-			} else if (imageMode === ImageMode.TRIPLE_PATH_SPLIT) {
-				this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width, height / 2 + 50)
-				this.renderSimplePath(ctx, seededRandom, baseColor, 0, height / 2 - 50, width / 2 + 30, height / 2 + 50)
-				this.renderSimplePath(ctx, seededRandom, baseColor, width / 2 - 30, height / 2 - 50, width / 2 + 30, height / 2 + 50)
-			} else if (imageMode === ImageMode.TRIPLE_PATH_SPLIT_REVERSE) {
-				this.renderSimplePath(ctx, seededRandom, baseColor, 0, height / 2 - 50, width, height / 2 + 50)
-				this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width / 2 + 30, height / 2 + 50)
-				this.renderSimplePath(ctx, seededRandom, baseColor, width / 2 - 30, 0, width / 2 + 30, height / 2 + 50)
-			}
+		if (imageMode === ImageMode.SINGLE_PATH) {
+			this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width, height)
+		} else if (imageMode === ImageMode.DOUBLE_PATH_SPLIT_X) {
+			this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width, height / 2 + 50)
+			this.renderSimplePath(ctx, seededRandom, baseColor, 0, height / 2 - 50, width, height / 2 + 50)
+		} else if (imageMode === ImageMode.DOUBLE_PATH_SPLIT_Y) {
+			this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width / 2 + 30, height)
+			this.renderSimplePath(ctx, seededRandom, baseColor, width / 2 - 30, 0, width / 2 + 30, height)
+		} else if (imageMode === ImageMode.TRIPLE_PATH_SPLIT) {
+			this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width, height / 2 + 50)
+			this.renderSimplePath(ctx, seededRandom, baseColor, 0, height / 2 - 50, width / 2 + 30, height / 2 + 50)
+			this.renderSimplePath(ctx, seededRandom, baseColor, width / 2 - 30, height / 2 - 50, width / 2 + 30, height / 2 + 50)
+		} else if (imageMode === ImageMode.TRIPLE_PATH_SPLIT_REVERSE) {
+			this.renderSimplePath(ctx, seededRandom, baseColor, 0, height / 2 - 50, width, height / 2 + 50)
+			this.renderSimplePath(ctx, seededRandom, baseColor, 0, 0, width / 2 + 30, height / 2 + 50)
+			this.renderSimplePath(ctx, seededRandom, baseColor, width / 2 - 30, 0, width / 2 + 30, height / 2 + 50)
+		}
 
+		if (reason === 'placeholder') {
 			ctx.fillStyle = '#FFFFFF80'
 			ctx.font = '24px Roboto'
 			const textMetrics = ctx.measureText('Placeholder artwork')
 			ctx.fillText('Placeholder artwork', width / 2 - textMetrics.width / 2, height / 2 - 24 / 2)
+		}
 
-			const buffer = canvas.toBuffer('image/png')
+		return canvas.toBuffer('image/png')
+	}
 
-			const dir = path.join(__dirname, '../../../../client/generated/assets/cards')
-			fs.mkdirSync(dir, { recursive: true })
+	public async generateStaticPlaceholderImage(cardClass: string, magicString: string): Promise<void> {
+		const buffer = await this.generatePlaceholderImage(cardClass, magicString, 'placeholder')
 
-			await sharp(buffer).webp({ nearLossless: true }).toFile(`${dir}/${cardClass}.webp`)
-		})
+		const dir = path.join(__dirname, '../../../../client/generated/assets/cards')
+		fs.mkdirSync(dir, { recursive: true })
+
+		await sharp(buffer).webp({ nearLossless: true }).toFile(`${dir}/${cardClass}.webp`)
+	}
+
+	public async generateInMemoryPlaceholderImage(cardClass: string, magicString: string): Promise<Buffer> {
+		return await this.generatePlaceholderImage(cardClass, magicString, 'workshop')
 	}
 
 	private renderSimplePath(

@@ -52,7 +52,7 @@ class EditorCardRenderer {
 		}, 0)
 	}
 
-	private doRender(card: CardMessage): HTMLCanvasElement {
+	public doRender(card: CardMessage): HTMLCanvasElement {
 		const renderedCard = new RenderedCard(card)
 		renderedCard.setDisplayMode(CardDisplayMode.IN_EDITOR)
 

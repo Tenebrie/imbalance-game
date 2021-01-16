@@ -98,7 +98,7 @@ export default class ServerGameCardPlay {
 		}
 
 		/* Play animation */
-		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent!.player, ServerAnimation.delay())
+		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent!.player, ServerAnimation.delay(500))
 
 		/* Remember played card */
 		this.playedCards.push({

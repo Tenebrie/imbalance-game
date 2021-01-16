@@ -4,7 +4,7 @@ import Notifications from '@/utils/Notifications'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default class TextureAtlas {
-	static textures: { [index: string]: PIXI.Texture }
+	static textures: { [index: string]: PIXI.Texture } = {}
 
 	static hasPreloadedComponents = false
 	static isPreloadingComponents = false

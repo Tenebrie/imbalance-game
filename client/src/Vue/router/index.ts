@@ -3,6 +3,7 @@ import store from '@/Vue/store'
 import VueRouter, { NavigationGuardNext, Route } from 'vue-router'
 import LocalStorage from '@/utils/LocalStorage'
 import AccessLevel from '@shared/enums/AccessLevel'
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 Vue.use(VueRouter)
 
@@ -44,6 +45,12 @@ const requireNoAuthentication = async (next: NavigationGuardNext): Promise<void>
 		next({ name: 'home' })
 		return
 	}
+	next()
+}
+
+const requireCardLibrary = async (next: NavigationGuardNext): Promise<void> => {
+	await store.dispatch.editor.loadCardLibrary()
+	await TextureAtlas.preloadComponents()
 	next()
 }
 
@@ -104,6 +111,15 @@ const router = new VueRouter({
 			component: () => import('@/Vue/views/ProfileView.vue'),
 			beforeEnter: (to: Route, from: Route, next: NavigationGuardNext) => {
 				requireAuthentication(next)
+			},
+		},
+		{
+			path: '/workshop',
+			name: 'workshop',
+			component: () => import('@/Vue/components/workshop/WorkshopView.vue'),
+			beforeEnter: (to: Route, from: Route, next: NavigationGuardNext) => {
+				requireAuthentication(next)
+				requireCardLibrary(next)
 			},
 		},
 		{

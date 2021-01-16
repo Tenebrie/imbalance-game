@@ -258,7 +258,10 @@ export default Vue.extend({
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		background: black;
+		background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../assets/background-game.webp');
+		background-size: cover;
+		background-position-x: center;
+		background-position-y: bottom;
 
 		opacity: 0;
 		transition: opacity 0.5s;

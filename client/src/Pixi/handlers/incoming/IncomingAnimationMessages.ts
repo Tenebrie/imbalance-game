@@ -13,7 +13,8 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 		const handler = AnimationHandlers[data.type]
 		const handlerResponse = handler(data, data.params)
 		if (!handlerResponse || !handlerResponse.skip) {
-			Core.mainHandler.triggerAnimation(AnimationDuration[data.type], systemData.animationThreadId)
+			const extraDuration = (handlerResponse && handlerResponse.extraDelay) || 0
+			Core.mainHandler.triggerAnimation(AnimationDuration[data.type] + extraDuration, systemData.animationThreadId)
 		}
 	},
 

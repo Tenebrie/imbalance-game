@@ -1,6 +1,10 @@
 <template>
 	<div class="the-mini-user-profile">
-		<div @click="onClick" class="username">{{ displayedUsername }}</div>
+		<div class="link-container">
+			<router-link :to="{ name: 'profile' }" class="router-link">
+				{{ displayedUsername }}
+			</router-link>
+		</div>
 		<user-avatar @click="onClick" class="avatar" />
 	</div>
 </template>
