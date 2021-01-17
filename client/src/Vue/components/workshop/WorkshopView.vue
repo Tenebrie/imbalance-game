@@ -91,7 +91,7 @@ export default defineComponent({
 	setup() {
 		const cardClass = ref<string>('')
 		const loadImage = () => {
-			const texture = PIXI.Texture.from(`/api/workshop/artwork?seed=${cardClass.value}`)
+			const texture = PIXI.Texture.from(`/api/workshop/artwork?seed=${encodeURIComponent(cardClass.value)}`)
 
 			texture.baseTexture.on('loaded', () => {
 				imageLoaded.value = true

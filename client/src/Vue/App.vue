@@ -79,7 +79,7 @@ export default defineComponent({
 				warningStyle
 			)
 			console.info(`%c${message}`, textStyle)
-			console.info('%cAlso, you can summon browser context menu by using Shift or Ctrl when right-clicking an element.', textStyle)
+			console.info('%cAlso, you can summon browser context menu by using Ctrl when right-clicking an element.', textStyle)
 		},
 	},
 })

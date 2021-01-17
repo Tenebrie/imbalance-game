@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import axios from 'axios'
 import Core from '@/Pixi/Core'
 import router from '@/Vue/router'
