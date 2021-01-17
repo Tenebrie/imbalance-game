@@ -7,9 +7,11 @@ import AudioSystem from '@/Pixi/audio/AudioSystem'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
+import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
 
 export type AnimationHandlerResponse = {
-	skip: boolean
+	skip?: boolean
+	extraDelay?: number
 }
 
 const handlers: { [index in AnimationType]: (AnimationMessage, any) => AnimationHandlerResponse | void } = {
@@ -17,8 +19,10 @@ const handlers: { [index in AnimationType]: (AnimationMessage, any) => Animation
 		// Empty
 	},
 
-	[AnimationType.DELAY]: () => {
-		// Empty
+	[AnimationType.DELAY]: (message: AnimationMessage, params: DelayAnimParams) => {
+		return {
+			extraDelay: params.delay,
+		}
 	},
 
 	[AnimationType.CARD_DRAW]: () => {

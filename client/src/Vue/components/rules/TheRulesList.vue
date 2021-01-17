@@ -77,7 +77,7 @@
 
 <script lang="ts">
 import Constants from '@shared/Constants'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
 	setup() {

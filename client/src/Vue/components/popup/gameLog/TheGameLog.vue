@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api'
+import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
 import TheGameLogEntry from '@/Vue/components/popup/gameLog/TheGameLogEntry.vue'
 import moment from 'moment'
 

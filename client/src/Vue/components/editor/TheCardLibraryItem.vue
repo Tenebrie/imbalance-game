@@ -13,7 +13,7 @@ import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import CardType from '@shared/enums/CardType'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
-import { computed, defineComponent, PropType, ref } from '@vue/composition-api'
+import { computed, defineComponent, PropType, ref } from 'vue'
 import router from '@/Vue/router'
 
 export default defineComponent({
@@ -35,7 +35,10 @@ export default defineComponent({
 
 	setup(props) {
 		const onLeftClick = (event: MouseEvent): void => {
-			const deckId = router.currentRoute.params.deckId
+			let deckId = router.currentRoute.value.params.deckId
+			if (typeof deckId === 'object') {
+				deckId = deckId[0]
+			}
 			if (props.mode === 'inspect' || !deckId) {
 				onRightClick(event)
 				return

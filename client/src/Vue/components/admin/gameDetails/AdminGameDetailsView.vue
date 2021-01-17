@@ -101,7 +101,7 @@
 
 <script lang="ts">
 import axios from 'axios'
-import { defineComponent, onMounted, ref } from '@vue/composition-api'
+import { defineComponent, onMounted, ref } from 'vue'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import router from '@/Vue/router'
 import GameErrorDatabaseEntry from '@shared/models/GameErrorDatabaseEntry'
@@ -117,7 +117,7 @@ export default defineComponent({
 		const currentTime = ref(new Date())
 
 		const loadData = async () => {
-			const gameId = router.currentRoute.params.gameId
+			const gameId = router.currentRoute.value.params.gameId
 			const gameResponse = await axios.get(`/api/admin/games/${gameId}`)
 			game.value = gameResponse.data as GameHistoryDatabaseEntry
 

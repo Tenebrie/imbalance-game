@@ -5,10 +5,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import Pixi from '../components/pixi/Pixi.vue'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	components: { Pixi },
 
 	computed: {},

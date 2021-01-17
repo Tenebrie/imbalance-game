@@ -1,11 +1,8 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
 import axios from 'axios'
 import Core from '@/Pixi/Core'
 import router from '@/Vue/router'
 import Player from '@shared/models/Player'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
-import { createDirectStore } from 'direct-vuex'
 import EditorModule from '@/Vue/store/modules/EditorModule'
 import GameStateModule from '@/Vue/store/modules/GameStateModule'
 import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
@@ -16,8 +13,7 @@ import LocalStorage from '@/utils/LocalStorage'
 import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import GameMessage from '@shared/models/network/GameMessage'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-
-Vue.use(Vuex)
+import { createDirectStore } from 'direct-vuex'
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {

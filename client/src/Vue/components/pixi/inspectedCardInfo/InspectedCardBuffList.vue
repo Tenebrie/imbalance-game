@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from '@vue/composition-api'
+import { computed, defineComponent, PropType } from 'vue'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import ClientBuff from '@/Pixi/models/ClientBuff'

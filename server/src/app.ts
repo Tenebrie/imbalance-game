@@ -29,6 +29,7 @@ const GamesRouter = require('./routers/GamesRouter')
 const ModalsRouter = require('./routers/ModalsRouter')
 const SessionRouter = require('./routers/SessionRouter')
 const UserProfileRouter = require('./routers/UserProfileRouter')
+const WorkshopRouter = require('./routers/WorkshopRouter')
 
 /* Templating engine */
 app.set('views', path.join(__dirname, 'views'))
@@ -90,6 +91,7 @@ app.use('/api/session', SessionRouter)
 app.use('/api/user', UserRouter)
 app.use('/api/user/modals', ModalsRouter)
 app.use('/api/user/profile', UserProfileRouter)
+app.use('/api/workshop', WorkshopRouter)
 
 /* WS routers */
 app.use('/api/game', PlayRouter)

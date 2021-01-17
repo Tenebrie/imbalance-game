@@ -1,15 +1,14 @@
-import Vue from 'vue'
 import router from '@/Vue/router'
-import { computed, ComputedRef } from '@vue/composition-api'
+import { computed, ComputedRef, ref } from 'vue'
 
-const routeData = Vue.observable({
+const routeData = ref({
 	params: {},
 	query: {},
 })
 
 router.afterEach((route) => {
-	routeData.params = route.params
-	routeData.query = route.query
+	routeData.value.params = route.params
+	routeData.value.query = route.query
 })
 
 interface Params {
@@ -21,17 +20,17 @@ export const useAdminRouteParams = (): ComputedRef => {
 	return computed(
 		(): Params => ({
 			get gameId(): string {
-				if (routeData.params['gameId'] === undefined) {
+				if (routeData.value.params['gameId'] === undefined) {
 					return null
 				}
-				return routeData.params['gameId']
+				return routeData.value.params['gameId']
 			},
 
 			get playerId(): string | null {
-				if (routeData.params['playerId'] === undefined) {
+				if (routeData.value.params['playerId'] === undefined) {
 					return null
 				}
-				return routeData.params['playerId']
+				return routeData.value.params['playerId']
 			},
 		})
 	)

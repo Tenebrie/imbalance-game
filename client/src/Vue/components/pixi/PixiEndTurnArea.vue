@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from '@vue/composition-api'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import store from '@/Vue/store'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'

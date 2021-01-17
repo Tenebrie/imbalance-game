@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import { computed, defineComponent } from '@vue/composition-api'
+import { computed, defineComponent } from 'vue'
 
 export default defineComponent({
 	setup() {

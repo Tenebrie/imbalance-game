@@ -24,6 +24,12 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardLocation from '@shared/enums/CardLocation'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
+type WorkshopCardProps = {
+	workshopTitle: string
+	workshopImage: PIXI.Texture
+	workshopTribes: string[]
+}
+
 export default class RenderedCard implements Card {
 	public readonly id: string
 	public readonly type: CardType
@@ -77,7 +83,7 @@ export default class RenderedCard implements Card {
 	private readonly cardTribeTexts: ScalingText[]
 	private readonly cardDescriptionText: RichText
 
-	public constructor(message: CardMessage) {
+	public constructor(message: CardMessage & Partial<WorkshopCardProps>) {
 		this.id = message.id
 		this.type = message.type
 		this.class = message.class
@@ -103,7 +109,8 @@ export default class RenderedCard implements Card {
 
 		this.isHidden = message.isHidden
 
-		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture(`cards/${this.class}`))
+		const spriteTexture = message.workshopImage ? message.workshopImage : TextureAtlas.getTexture(`cards/${this.class}`)
+		this.sprite = new PIXI.Sprite(spriteTexture)
 		const powerTextValue = this.type === CardType.UNIT ? this.stats.power : this.stats.spellCost
 		this.powerText = this.createBrushScriptText(powerTextValue.toString())
 		this.armorText = this.createBrushScriptText(this.stats.armor.toString())
@@ -111,11 +118,14 @@ export default class RenderedCard implements Card {
 		this.cardNameText.style.fill = 0x000000
 		this.cardNameText.verticalAlign = RichTextAlign.CENTER
 		this.cardNameText.horizontalAlign = RichTextAlign.END
-		this.cardTitleText = new RichText(Localization.getValueOrNull(this.title) || '', 200, this.getDescriptionTextVariables())
+		const titleText = message.workshopTitle || Localization.getValueOrNull(this.title) || ''
+		this.cardTitleText = new RichText(titleText, 200, this.getDescriptionTextVariables())
 		this.cardTitleText.style.fill = 0x000000
 		this.cardTitleText.verticalAlign = RichTextAlign.CENTER
 		this.cardTitleText.horizontalAlign = RichTextAlign.END
-		this.cardTribeTexts = this.tribes.map((tribe) => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
+		this.cardTribeTexts = this.tribes
+			.map((tribe) => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
+			.concat((message.workshopTribes || []).map((tribe) => this.createTitleText(tribe)))
 		this.cardDescriptionText = new RichText(this.displayedDescription, 370, this.getDescriptionTextVariables())
 		this.hitboxSprite = this.createHitboxSprite(this.sprite)
 
@@ -157,7 +167,8 @@ export default class RenderedCard implements Card {
 			this.cardDescriptionText.setBackground(this.descriptionTextBackground)
 			this.cardModeContainer.addChild(this.descriptionTextBackground)
 		}
-		for (let i = 0; i < this.tribes.length; i++) {
+		const tribeCount = this.tribes.length + (message.workshopTribes || []).length
+		for (let i = 0; i < tribeCount; i++) {
 			const tribeBackgroundSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-tribe'))
 			tribeBackgroundSprite.position.y += i * 40
 			this.cardModeContainer.addChild(tribeBackgroundSprite)
@@ -263,9 +274,6 @@ export default class RenderedCard implements Card {
 		if (featureStrings.length > 0) {
 			description = `${featureStrings.join(' | ')}<p>${description}`
 		}
-		// for (const index in featureStrings) {
-		// 	description = `${featureStrings[index]}<p>${description}`
-		// }
 		for (const index in leaderStatsStrings.reverse()) {
 			const delimiter = Number(index) === 0 ? '<p>' : '\n'
 			description = `${leaderStatsStrings[index]}${delimiter}${description}`
@@ -400,8 +408,12 @@ export default class RenderedCard implements Card {
 		this.powerText.position.set(60, 45)
 		if (powerTextValue < 10) {
 			this.powerText.style.fontSize = 85
-		} else {
+		} else if (powerTextValue < 100) {
 			this.powerText.style.fontSize = 71
+		} else if (powerTextValue < 1000) {
+			this.powerText.style.fontSize = 54
+		} else {
+			this.powerText.style.fontSize = 40
 		}
 
 		if (this.type === CardType.SPELL) {

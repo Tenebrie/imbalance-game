@@ -24,7 +24,7 @@
 import store from '@/Vue/store'
 import DeckListMode from '@/utils/DeckListMode'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import router from '@/Vue/router'
 
 export default defineComponent({
@@ -36,7 +36,7 @@ export default defineComponent({
 	},
 
 	setup() {
-		const getCurrentRouteQuery = () => router.currentRoute.query
+		const getCurrentRouteQuery = () => router.currentRoute.value.query
 
 		return {
 			getCurrentRouteQuery,
@@ -92,6 +92,7 @@ export default defineComponent({
 	display: flex;
 	align-items: center;
 	min-height: 1.4em;
+	color: darken(white, 0) !important;
 
 	&.selected {
 		background: rgba(lighten(green, 20), 0.1);

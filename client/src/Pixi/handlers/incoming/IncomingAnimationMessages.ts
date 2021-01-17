@@ -6,13 +6,15 @@ import AnimationHandlers from '@/Pixi/handlers/AnimationHandlers'
 import Core from '@/Pixi/Core'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
 import AnimationDuration from '@shared/enums/AnimationDuration'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 
 const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMessageHandlerFunction } = {
 	[AnimationMessageType.PLAY]: (data: AnimationMessage, systemData: QueuedMessageSystemData) => {
 		const handler = AnimationHandlers[data.type]
 		const handlerResponse = handler(data, data.params)
 		if (!handlerResponse || !handlerResponse.skip) {
-			Core.mainHandler.triggerAnimation(AnimationDuration[data.type], systemData.animationThreadId)
+			const extraDuration = (handlerResponse && handlerResponse.extraDelay) || 0
+			Core.mainHandler.triggerAnimation(AnimationDuration[data.type] + extraDuration, systemData.animationThreadId)
 		}
 	},
 
@@ -31,7 +33,8 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 			(thread) => thread.started && thread.isStaggered && thread.hasAnimationMessages()
 		).length
 		if (data.isStaggered && targetThread.hasAnimationMessages()) {
-			targetThread.triggerCooldown(activeStaggeredWorkerThreadCount * 150)
+			const animationCooldown = Core.game.turnPhase === GameTurnPhase.ROUND_END ? 50 : 150
+			targetThread.triggerCooldown(activeStaggeredWorkerThreadCount * animationCooldown)
 		}
 		targetThread.start()
 	},

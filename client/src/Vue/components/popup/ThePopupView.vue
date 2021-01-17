@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import { computed, defineComponent, onMounted, onUnmounted } from '@vue/composition-api'
+import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
 
 export default defineComponent({
 	setup() {

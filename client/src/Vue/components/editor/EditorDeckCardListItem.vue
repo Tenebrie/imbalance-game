@@ -20,7 +20,7 @@ import store from '@/Vue/store'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
 import Utils from '@/utils/Utils'
-import { defineComponent, PropType } from '@vue/composition-api'
+import { defineComponent, PropType } from 'vue'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 
 export default defineComponent({

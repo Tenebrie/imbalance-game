@@ -1,19 +1,23 @@
 <template>
 	<div class="the-mini-user-profile">
-		<div @click="onClick" class="username">{{ displayedUsername }}</div>
+		<div class="link-container">
+			<router-link :to="{ name: 'profile' }" class="router-link">
+				{{ displayedUsername }}
+			</router-link>
+		</div>
 		<user-avatar @click="onClick" class="avatar" />
 	</div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import router from '@/Vue/router'
 import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
 import Player from '@shared/models/Player'
 import Localization from '@/Pixi/Localization'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
 		UserAvatar,
 	},

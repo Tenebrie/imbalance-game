@@ -8,11 +8,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import axios from 'axios'
 import Notifications from '@/utils/Notifications'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	data: () => ({
 		requestInFlight: false,
 	}),

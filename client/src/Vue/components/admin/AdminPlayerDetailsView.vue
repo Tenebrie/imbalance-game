@@ -54,7 +54,7 @@
 
 <script lang="ts">
 import axios from 'axios'
-import { computed, defineComponent, onMounted, ref, watch } from '@vue/composition-api'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import AdminGamesTables from '@/Vue/components/admin/AdminGamesTables.vue'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'

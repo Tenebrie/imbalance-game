@@ -18,7 +18,7 @@ import LocalStorage from '@/utils/LocalStorage'
 import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 import axios from 'axios'
 import { electronHost, isElectron } from '@/utils/Utils'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
 	components: { ThePopupView, TheNavigationBar },
@@ -36,7 +36,7 @@ export default defineComponent({
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		window.removeEventListener('contextmenu', this.onContextMenu)
 	},
 
@@ -79,7 +79,7 @@ export default defineComponent({
 				warningStyle
 			)
 			console.info(`%c${message}`, textStyle)
-			console.info('%cAlso, you can summon browser context menu by using Shift or Ctrl when right-clicking an element.', textStyle)
+			console.info('%cAlso, you can summon browser context menu by using Ctrl when right-clicking an element.', textStyle)
 		},
 	},
 })
@@ -155,10 +155,6 @@ body {
 			&:hover {
 				text-decoration: underline;
 			}
-
-			&.router-link-exact-active {
-				color: #42b983;
-			}
 		}
 	}
 
@@ -166,9 +162,14 @@ body {
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('./assets/background-menu.webp');
+		background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('./assets/background-game.webp');
 		background-size: cover;
+		background-position-x: center;
+		background-position-y: bottom;
 		filter: blur(8px);
+		// Chrome issue with large backgrounds killing performance
+		// https://stackoverflow.com/questions/7033979/my-fixed-background-made-scrolling-the-site-very-slow-what-can-i-do-to-improve
+		-webkit-transform: translate3d(0, 0, 0);
 	}
 }
 
@@ -257,7 +258,9 @@ button.secondary,
 }
 
 input[type='text'],
-input[type='password'] {
+input[type='number'],
+input[type='password'],
+textarea {
 	font-family: Roboto, sans-serif;
 	color: $COLOR-TEXT;
 	outline: none;
@@ -268,6 +271,10 @@ input[type='password'] {
 	border: none;
 	border-radius: 4px;
 	background: rgba(white, 0.1);
+}
+
+input:invalid {
+	border: 1px red !important;
 }
 
 span.info-text {

@@ -3,14 +3,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import axios from 'axios'
 import router from '@/Vue/router'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import Notifications from '@/utils/Notifications'
-import { onMounted } from '@vue/composition-api'
+import { defineComponent, onMounted } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	setup() {
 		onMounted(async () => {
 			try {
@@ -23,7 +22,7 @@ export default Vue.extend({
 
 		const importDeck = async (): Promise<void> => {
 			const response = await axios.post('/api/decks', {
-				sharedCode: router.currentRoute.params.deckId,
+				sharedCode: router.currentRoute.value.params.deckId,
 			})
 
 			const deck = response.data.deck as PopulatedEditorDeck

@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import { supportedLanguages } from '@/Pixi/Localization'
 import Language from '@shared/enums/Language'
 import store from '@/Vue/store'

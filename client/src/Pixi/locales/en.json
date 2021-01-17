@@ -5,6 +5,7 @@
 	"ui.navigation.home": "Home",
 	"ui.navigation.decks": "Decks",
 	"ui.navigation.rules": "Rules",
+	"ui.navigation.workshop": "Workshop",
 	"ui.navigation.admin": "Admin",
 	"ui.navigation.login": "Login",
 
@@ -111,10 +112,21 @@
 	"filter.all": "All",
 	"filter.experimental": "Experimental",
 
+	"card.type.unit": "Unit",
+	"card.type.spell": "Spell",
+	"card.type.0": "Unit",
+	"card.type.1": "Spell",
+
 	"card.color.leader": "Leader",
 	"card.color.golden": "Legendary",
 	"card.color.silver": "Epic",
 	"card.color.bronze": "Common",
+	"card.color.token": "Token",
+	"card.color.0": "Leader",
+	"card.color.1": "Legendary",
+	"card.color.2": "Epic",
+	"card.color.3": "Common",
+	"card.color.4": "Token",
 
 	"card.faction.human": "Human",
 	"card.faction.arcane": "Arcane",

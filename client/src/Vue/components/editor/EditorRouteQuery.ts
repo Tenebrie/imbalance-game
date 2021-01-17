@@ -1,17 +1,16 @@
-import Vue from 'vue'
 import router from '@/Vue/router'
-import { computed, ComputedRef } from '@vue/composition-api'
+import { computed, ComputedRef, ref } from 'vue'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 
-const routeData = Vue.observable({
+const routeData = ref({
 	params: {},
 	query: {},
 })
 
 router.afterEach((route) => {
-	routeData.params = route.params
-	routeData.query = route.query
+	routeData.value.params = route.params
+	routeData.value.query = route.query
 })
 
 interface Query {
@@ -24,32 +23,32 @@ export const useDecksRouteQuery = (): ComputedRef => {
 	return computed(
 		(): Query => ({
 			get color(): CardColor | null {
-				if (routeData.query['color'] === undefined) {
+				if (routeData.value.query['color'] === undefined) {
 					return null
 				}
-				return Number(routeData.query['color'])
+				return Number(routeData.value.query['color'])
 			},
 			set color(value: CardColor | null) {
 				const color = value === null ? undefined : String(value)
-				router.push({ query: { ...router.currentRoute.query, color: color } })
+				router.push({ query: { ...router.currentRoute.value.query, color: color } })
 			},
 
 			get faction(): CardFaction | null {
-				if (routeData.query['faction'] === undefined) {
+				if (routeData.value.query['faction'] === undefined) {
 					return null
 				}
-				return Number(routeData.query['faction'])
+				return Number(routeData.value.query['faction'])
 			},
 			set faction(value: CardFaction | null) {
 				const faction = value === null ? undefined : String(value)
-				router.push({ query: { ...router.currentRoute.query, faction: faction } })
+				router.push({ query: { ...router.currentRoute.value.query, faction: faction } })
 			},
 
 			get experimental(): boolean {
-				return !!routeData.query['experimental']
+				return !!routeData.value.query['experimental']
 			},
 			set experimental(value: boolean) {
-				router.push({ query: { ...router.currentRoute.query, experimental: value ? 'true' : undefined } })
+				router.push({ query: { ...router.currentRoute.value.query, experimental: value ? 'true' : undefined } })
 			},
 		})
 	)

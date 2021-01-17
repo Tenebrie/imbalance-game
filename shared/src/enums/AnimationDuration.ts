@@ -2,7 +2,7 @@ import AnimationType from './AnimationType'
 
 const AnimationDuration: { [index in AnimationType]: number } = {
 	[AnimationType.NULL]: 0,
-	[AnimationType.DELAY]: 500,
+	[AnimationType.DELAY]: 0,
 	[AnimationType.CARD_DRAW]: 500,
 	[AnimationType.CARD_ANNOUNCE]: 2000,
 	[AnimationType.CARD_ATTACK]: 500,

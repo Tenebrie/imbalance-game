@@ -18,7 +18,7 @@
 					<div class="info-field">
 						<span class="label">{{ $locale.get('ui.profile.changePassword.label') }}:</span>
 						<span class="input">
-							<input type="password" v-model="password" :placeholder="this.$locale.get('ui.profile.changePassword.placeholder')" />
+							<input type="password" v-model="password" :placeholder="$locale.get('ui.profile.changePassword.placeholder')" />
 							<button class="primary" @click="onChangePassword">{{ $locale.get('ui.profile.changePassword.button') }}</button>
 						</span>
 					</div>
@@ -58,7 +58,7 @@
 <script lang="ts">
 import axios from 'axios'
 import store from '@/Vue/store'
-import { computed, defineComponent, onMounted, ref, watch } from '@vue/composition-api'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 import ProfileLogoutButton from '@/Vue/components/profile/ProfileLogoutButton.vue'

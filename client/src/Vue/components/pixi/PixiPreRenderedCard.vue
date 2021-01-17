@@ -5,7 +5,7 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
-import { computed, defineComponent, onMounted, ref, watch } from '@vue/composition-api'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default defineComponent({

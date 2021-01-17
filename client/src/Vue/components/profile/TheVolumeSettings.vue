@@ -2,45 +2,45 @@
 	<div class="the-volume-settings">
 		<div>
 			<h4>{{ $locale.get('ui.volume.master') }}</h4>
-			<span
-				><h4>{{ masterVolume }}%</h4>
-				<slider v-model="masterVolume" :step="5"
-			/></span>
+			<span>
+				<h4>{{ masterVolume }}%</h4>
+				<slider v-model="masterVolume" :step="5" />
+			</span>
 		</div>
 		<div>
 			<h4>{{ $locale.get('ui.volume.music') }}</h4>
-			<span
-				><h4>{{ musicVolume }}%</h4>
-				<slider v-model="musicVolume" :step="5"
-			/></span>
+			<span>
+				<h4>{{ musicVolume }}%</h4>
+				<slider v-model="musicVolume" :step="5" />
+			</span>
 		</div>
 		<div>
 			<h4>{{ $locale.get('ui.volume.effects') }}</h4>
-			<span
-				><h4>{{ effectsVolume }}%</h4>
-				<slider v-model="effectsVolume" :step="5"
-			/></span>
+			<span>
+				<h4>{{ effectsVolume }}%</h4>
+				<slider v-model="effectsVolume" :step="5" />
+			</span>
 		</div>
 		<div>
 			<h4>{{ $locale.get('ui.volume.ambience') }}</h4>
-			<span
-				><h4>{{ ambienceVolume }}%</h4>
-				<slider v-model="ambienceVolume" :step="5"
-			/></span>
+			<span>
+				<h4>{{ ambienceVolume }}%</h4>
+				<slider v-model="ambienceVolume" :step="5" />
+			</span>
 		</div>
 		<div>
 			<h4>{{ $locale.get('ui.volume.userInterface') }}</h4>
-			<span
-				><h4>{{ userInterfaceVolume }}%</h4>
-				<slider v-model="userInterfaceVolume" :step="5"
-			/></span>
+			<span>
+				<h4>{{ userInterfaceVolume }}%</h4>
+				<slider v-model="userInterfaceVolume" :step="5" />
+			</span>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
 import store from '@/Vue/store'
-import { computed, defineComponent, watch } from '@vue/composition-api'
+import { computed, defineComponent, watch } from 'vue'
 import Slider from '@/Vue/components/utils/Slider.vue'
 
 export default defineComponent({

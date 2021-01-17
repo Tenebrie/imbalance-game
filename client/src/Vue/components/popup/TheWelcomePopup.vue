@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import store from '@/Vue/store'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import DiscordLink from '@/Vue/components/utils/DiscordLink.vue'
 
 export default defineComponent({

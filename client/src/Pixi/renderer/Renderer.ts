@@ -25,6 +25,7 @@ import { isCardPlayable, isGrabbedCardPlayableToRow } from '@/Pixi/input/ValidAc
 import store from '@/Vue/store'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -548,8 +549,10 @@ export default class Renderer {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 2
 			unit.card.powerText.alpha = sprite.alpha
 			unit.card.armorText.alpha = sprite.alpha
-			container.position.x += (targetPositionX - container.position.x + shadowUnitOffsetX) * this.deltaTimeFraction * 7
-			container.position.y += (targetPositionY - container.position.y) * this.deltaTimeFraction * 7
+			if (Core.game.turnPhase !== GameTurnPhase.ROUND_END && Core.game.turnPhase !== GameTurnPhase.AFTER_GAME) {
+				container.position.x += (targetPositionX - container.position.x + shadowUnitOffsetX) * this.deltaTimeFraction * 7
+				container.position.y += (targetPositionY - container.position.y) * this.deltaTimeFraction * 7
+			}
 		} else if (unit.isFadingOut) {
 			sprite.alpha = Math.max(0, sprite.alpha - this.deltaTimeFraction * 3)
 			unit.card.powerText.alpha = sprite.alpha

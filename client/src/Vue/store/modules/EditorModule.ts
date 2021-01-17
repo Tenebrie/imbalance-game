@@ -164,7 +164,11 @@ const editorModule = defineModule({
 		},
 
 		async loadCardLibrary(context): Promise<void> {
-			const { commit } = moduleActionContext(context, editorModule)
+			const { state, commit } = moduleActionContext(context, editorModule)
+
+			if (state.cardLibrary.length > 0) {
+				return
+			}
 
 			const response = await axios.get('/api/cards', { params: { collectible: false } })
 			const cardMessages = response.data as CardMessage[]

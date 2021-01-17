@@ -2,27 +2,32 @@
 	<div class="the-navigation-bar">
 		<div class="left-side-container">
 			<div class="link-container">
-				<router-link tag="span" :to="{ name: 'home' }" class="router-link" exact>
+				<router-link :to="{ name: 'home' }" class="router-link" exact>
 					<tenebrie-logo class="logo" />
 				</router-link>
 			</div>
 			<div class="link-container">
-				<router-link tag="span" :to="{ name: 'home' }" class="router-link" exact>
+				<router-link :to="{ name: 'home' }" class="router-link" exact>
 					{{ $locale.get('ui.navigation.home') }}
 				</router-link>
 			</div>
 			<div class="link-container">
-				<router-link tag="span" :to="{ name: 'decks' }" class="router-link">
+				<router-link :to="{ name: 'decks' }" class="router-link">
 					{{ $locale.get('ui.navigation.decks') }}
 				</router-link>
 			</div>
 			<div class="link-container">
-				<router-link tag="span" :to="{ name: 'rules' }" class="router-link">
+				<router-link :to="{ name: 'rules' }" class="router-link">
 					{{ $locale.get('ui.navigation.rules') }}
 				</router-link>
 			</div>
+			<div class="link-container">
+				<router-link :to="{ name: 'workshop' }" class="router-link">
+					{{ $locale.get('ui.navigation.workshop') }}
+				</router-link>
+			</div>
 			<div class="link-container" v-if="showAdminView">
-				<router-link tag="span" :to="{ name: 'admin' }" class="router-link">
+				<router-link :to="{ name: 'admin' }" class="router-link">
 					{{ $locale.get('ui.navigation.admin') }}
 				</router-link>
 			</div>
@@ -38,7 +43,7 @@
 <script lang="ts">
 import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfile.vue'
 import LanguageDropdown from '@/Vue/components/navigationbar/LanguageSelector.vue'
-import { computed, defineComponent } from '@vue/composition-api'
+import { computed, defineComponent } from 'vue'
 import store from '@/Vue/store'
 import AccessLevel from '@shared/enums/AccessLevel'
 import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
@@ -77,7 +82,7 @@ export default defineComponent({
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	background: $COLOR-BACKGROUND-TRANSPARENT;
+	background: darken($COLOR-BACKGROUND-TRANSPARENT, 30);
 
 	.left-side-container {
 		display: flex;

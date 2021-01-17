@@ -8,6 +8,7 @@ import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimPa
 import Card from '@shared/models/Card'
 import Unit from '@shared/models/Unit'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
 
 export default class ServerAnimation implements Animation {
 	type: AnimationType
@@ -30,8 +31,9 @@ export default class ServerAnimation implements Animation {
 		return new ServerAnimation(AnimationType.NULL, {})
 	}
 
-	public static delay(): ServerAnimation {
-		return new ServerAnimation(AnimationType.DELAY, {})
+	public static delay(ms: number): ServerAnimation {
+		const params: DelayAnimParams = { delay: ms }
+		return new ServerAnimation(AnimationType.DELAY, params)
 	}
 
 	public static cardDraw(): ServerAnimation {

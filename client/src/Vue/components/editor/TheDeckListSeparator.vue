@@ -9,7 +9,7 @@
 <script lang="ts">
 import Localization from '@/Pixi/Localization'
 import CardFaction from '@shared/enums/CardFaction'
-import { computed, defineComponent } from '@vue/composition-api'
+import { computed, defineComponent } from 'vue'
 import { PropType } from 'vue'
 
 export default defineComponent({

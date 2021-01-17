@@ -1,12 +1,12 @@
 <template>
-	<the-card-library-item :card="this.card" :mode="'inspect'" />
+	<the-card-library-item :card="card" :mode="'inspect'" />
 </template>
 
 <script lang="ts">
 import store from '@/Vue/store'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
 	components: {

@@ -10,7 +10,7 @@ import Core from '@/Pixi/Core'
 import Localization from '@/Pixi/Localization'
 import GameEventType from '@shared/enums/GameEventType'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
-import { defineComponent, PropType } from '@vue/composition-api'
+import { defineComponent, PropType } from 'vue'
 import store from '@/Vue/store'
 
 export default defineComponent({

@@ -337,9 +337,7 @@ export default class ServerGame implements Game {
 				})
 			})
 		this.animation.syncAnimationThreads()
-		this.animation.play(ServerAnimation.delay())
-		this.animation.play(ServerAnimation.delay())
-		this.animation.play(ServerAnimation.delay())
+		this.animation.play(ServerAnimation.delay(1250))
 
 		for (let i = 0; i < 3; i++) {
 			this.board.rows[i].setOwner(playerTwo)
@@ -399,6 +397,12 @@ export default class ServerGame implements Game {
 			)
 		}
 		GameHistoryDatabase.closeGame(this, victoryReason, victoriousPlayer instanceof ServerBotPlayerInGame ? null : victoriousPlayer).then()
+
+		this.board.getAllUnits().forEach((unit) => {
+			this.animation.thread(() => {
+				this.board.destroyUnit(unit)
+			})
+		})
 
 		setTimeout(() => {
 			this.forceShutdown('Cleanup')

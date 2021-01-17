@@ -3,7 +3,7 @@
 		<div class="filters" v-if="filtersVisible">
 			<div class="filter-buttons">
 				<button
-					v-for="data in this.factionData"
+					v-for="data in factionData"
 					:key="`faction-button-${data.faction}`"
 					class="primary"
 					:class="{ selected: data.faction === selectedFaction }"
@@ -15,7 +15,7 @@
 			</div>
 			<div class="filter-buttons">
 				<button
-					v-for="data in this.colorData"
+					v-for="data in colorData"
 					:key="`color-button-${data.color}`"
 					class="primary"
 					:class="{ selected: data.color === selectedColor }"
@@ -34,9 +34,9 @@
 		<div class="right-side">
 			<div class="search">
 				<div class="search-input-container">
-					<input type="text" :placeholder="this.$locale.get('ui.editor.library.search.placeholder')" v-model="searchQuery" />
+					<input type="text" :placeholder="$locale.get('ui.editor.library.search.placeholder')" v-model="searchQuery" />
 				</div>
-				<button class="secondary" @click="this.clearSearch"><i class="fas fa-times"></i></button>
+				<button class="secondary" @click="clearSearch"><i class="fas fa-times"></i></button>
 			</div>
 			<div class="hide-filters-normal">
 				<button class="primary" @click="() => toggleFilters()">
@@ -55,7 +55,7 @@
 import store from '@/Vue/store'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
-import { computed, defineComponent, ref } from '@vue/composition-api'
+import { computed, defineComponent, ref } from 'vue'
 import { debounce } from 'throttle-debounce'
 import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'

@@ -7,10 +7,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import Localization from '@/Pixi/Localization'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	computed: {
 		separatorText(): string {
 			return Localization.get('editor.faction.unfinished')

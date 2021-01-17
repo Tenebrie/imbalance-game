@@ -1,36 +1,30 @@
 <template>
-	<div
-		class="pixi-inspected-card-info-overlay"
-		v-if="this.overlayDisplayed"
-		ref="overlayRef"
-		@click="onOverlayClick"
-		@mouseup="onOverlayClick"
-	>
+	<div class="pixi-inspected-card-info-overlay" v-if="overlayDisplayed" ref="overlayRef" @click="onOverlayClick" @mouseup="onOverlayClick">
 		<div class="card-info-section card-base-stats" v-if="displayInGameStats">
-			<div v-if="this.inspectedCard.type === CardType.UNIT" class="stats-line">
+			<div v-if="inspectedCard.type === CardType.UNIT" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.power') }}:</div>
 				<span>{{ $locale.get('card.inspect.stat.base') }}: </span>
-				<b>{{ this.inspectedCard.stats.basePower }}</b> |
+				<b>{{ inspectedCard.stats.basePower }}</b> |
 				<span>{{ $locale.get('card.inspect.stat.current') }}: </span>
-				<b>{{ this.inspectedCard.stats.power }}</b> |
+				<b>{{ inspectedCard.stats.power }}</b> |
 				<span>{{ $locale.get('card.inspect.stat.maximum') }}: </span>
-				<b>{{ this.inspectedCard.stats.maxPower }}</b>
+				<b>{{ inspectedCard.stats.maxPower }}</b>
 			</div>
-			<div v-if="this.inspectedCard.type === CardType.UNIT && displayArmor" class="stats-line">
+			<div v-if="inspectedCard.type === CardType.UNIT && displayArmor" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.armor') }}:</div>
 				<span>{{ $locale.get('card.inspect.stat.base') }}: </span>
-				<b>{{ this.inspectedCard.stats.baseArmor }}</b> |
+				<b>{{ inspectedCard.stats.baseArmor }}</b> |
 				<span>{{ $locale.get('card.inspect.stat.current') }}: </span>
-				<b>{{ this.inspectedCard.stats.armor }}</b> |
+				<b>{{ inspectedCard.stats.armor }}</b> |
 				<span>{{ $locale.get('card.inspect.stat.maximum') }}: </span>
-				<b>{{ this.inspectedCard.stats.maxArmor }}</b>
+				<b>{{ inspectedCard.stats.maxArmor }}</b>
 			</div>
 			<div v-if="displayManacost" class="stats-line">
 				<div class="header">{{ $locale.get('card.inspect.manacost') }}:</div>
 				<span>{{ $locale.get('card.inspect.stat.base') }}: </span>
-				<b>{{ this.inspectedCard.stats.baseSpellCost }}</b> |
+				<b>{{ inspectedCard.stats.baseSpellCost }}</b> |
 				<span>{{ $locale.get('card.inspect.stat.current') }}: </span>
-				<b>{{ this.inspectedCard.stats.spellCost }}</b>
+				<b>{{ inspectedCard.stats.spellCost }}</b>
 			</div>
 		</div>
 		<div class="card-info-section" v-if="displayedFeatures.length > 0">
@@ -61,7 +55,7 @@
 				class="menu-separator"
 				v-if="displayInGameStats || displayedFeatures.length > 0 || inspectedCard.relatedCards.length > 0 || displayBuffs"
 			/>
-			<div v-for="textLine in this.flavorTextLines" :key="textLine">
+			<div v-for="textLine in flavorTextLines" :key="textLine">
 				{{ textLine }}
 			</div>
 		</div>
@@ -71,7 +65,7 @@
 <script lang="ts">
 import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
-import { computed, defineComponent, ref } from '@vue/composition-api'
+import { computed, defineComponent, ref } from 'vue'
 import Core from '@/Pixi/Core'
 import CardType from '@shared/enums/CardType'
 import { snakeToCamelCase } from '@/utils/Utils'
@@ -145,7 +139,10 @@ export default defineComponent({
 
 		const displayInGameStats = computed<boolean>(() => {
 			return (
-				isInGame && inspectedCard.value && inspectedCard.value instanceof RenderedCard && inspectedCard.value.color !== CardColor.LEADER
+				isInGame.value &&
+				inspectedCard.value &&
+				inspectedCard.value instanceof RenderedCard &&
+				inspectedCard.value.color !== CardColor.LEADER
 			)
 		})
 

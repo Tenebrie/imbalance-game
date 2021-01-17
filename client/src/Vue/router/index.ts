@@ -1,10 +1,8 @@
-import Vue from 'vue'
 import store from '@/Vue/store'
-import VueRouter, { NavigationGuardNext, Route } from 'vue-router'
+import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 import LocalStorage from '@/utils/LocalStorage'
 import AccessLevel from '@shared/enums/AccessLevel'
-
-Vue.use(VueRouter)
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 const fetchProfile = async (): Promise<boolean> => {
 	if (!LocalStorage.hasAuthCookie()) {
@@ -20,8 +18,11 @@ const fetchProfile = async (): Promise<boolean> => {
 	return true
 }
 
-const requireAuthentication = async (next: NavigationGuardNext): Promise<void> => {
+const requireAuthentication = async (next: NavigationGuardNext, beforeContinue?: () => void): Promise<void> => {
 	if (store.state.isLoggedIn || (await fetchProfile())) {
+		if (beforeContinue) {
+			beforeContinue()
+		}
 		next()
 		return
 	}
@@ -47,14 +48,14 @@ const requireNoAuthentication = async (next: NavigationGuardNext): Promise<void>
 	next()
 }
 
-const router = new VueRouter({
-	mode: 'history',
+const router = createRouter({
+	history: createWebHistory(),
 	routes: [
 		{
 			path: '/login',
 			name: 'login',
 			component: () => import('@/Vue/views/LoginView.vue'),
-			beforeEnter: (to: Route, from: Route, next: NavigationGuardNext) => {
+			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 				requireNoAuthentication(next)
 			},
 		},
@@ -62,7 +63,7 @@ const router = new VueRouter({
 			path: '/register',
 			name: 'register',
 			component: () => import('@/Vue/views/RegisterView.vue'),
-			beforeEnter: (to: Route, from: Route, next: NavigationGuardNext) => {
+			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 				requireNoAuthentication(next)
 			},
 		},
@@ -70,14 +71,14 @@ const router = new VueRouter({
 			path: '/',
 			name: 'home',
 			component: () => import('@/Vue/views/HomeView.vue'),
-			beforeEnter: (to: Route, from: Route, next: NavigationGuardNext) => {
+			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 				requireAuthentication(next)
 			},
 		},
 		{
 			path: '/decks',
 			component: () => import('@/Vue/views/EditorView.vue'),
-			beforeEnter: (to: Route, from: Route, next: NavigationGuardNext) => {
+			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 				requireAuthentication(next)
 			},
 			children: [
@@ -102,15 +103,26 @@ const router = new VueRouter({
 			path: '/profile',
 			name: 'profile',
 			component: () => import('@/Vue/views/ProfileView.vue'),
-			beforeEnter: (to: Route, from: Route, next: NavigationGuardNext) => {
+			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 				requireAuthentication(next)
+			},
+		},
+		{
+			path: '/workshop',
+			name: 'workshop',
+			component: () => import('@/Vue/components/workshop/WorkshopView.vue'),
+			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+				requireAuthentication(next, async () => {
+					await store.dispatch.editor.loadCardLibrary()
+					await TextureAtlas.preloadComponents()
+				})
 			},
 		},
 		{
 			path: '/game',
 			name: 'game',
 			component: () => import('@/Vue/views/GameView.vue'),
-			beforeEnter: (to: Route, from: Route, next: NavigationGuardNext) => {
+			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 				if (!store.state.selectedGame) {
 					next('/')
 					return
@@ -121,7 +133,7 @@ const router = new VueRouter({
 		{
 			path: '/ds/:deckId',
 			component: () => import('@/Vue/components/editor/SharedDeckImporter.vue'),
-			beforeEnter: (to: Route, from: Route, next: NavigationGuardNext) => {
+			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 				requireAuthentication(next)
 			},
 		},
@@ -129,8 +141,7 @@ const router = new VueRouter({
 			path: '/admin',
 			name: 'admin',
 			component: () => import('@/Vue/views/AdminView.vue'),
-			beforeEnter: (to: Route, from: Route, next: NavigationGuardNext) => {
-				requireAuthentication(next)
+			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 				requireAdminAccess(next)
 			},
 			redirect: { name: 'admin-games' },
@@ -158,12 +169,12 @@ const router = new VueRouter({
 				{
 					path: '/admin/cards',
 					name: 'admin-cards',
-					// component: () => import('@/Vue/components/editor/EditorDeckCardList.vue'),
+					component: () => import('@/Vue/components/admin/AdminPlayerView.vue'),
 				},
 				{
 					path: '/admin/stats',
 					name: 'admin-stats',
-					// component: () => import('@/Vue/components/editor/EditorDeckCardList.vue'),
+					component: () => import('@/Vue/components/admin/AdminPlayerView.vue'),
 				},
 			],
 		},

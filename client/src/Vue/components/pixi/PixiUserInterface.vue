@@ -60,7 +60,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import store from '@/Vue/store'
 import Player from '@shared/models/Player'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
@@ -68,14 +67,14 @@ import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
 import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 import TheEscapeMenu from '@/Vue/components/popup/escapeMenu/TheEscapeMenu.vue'
-import { computed, onMounted, onUnmounted } from '@vue/composition-api'
+import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
 import Core from '@/Pixi/Core'
 import Utils from '@/utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
 import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
 import PixiEndTurnArea from '@/Vue/components/pixi/PixiEndTurnArea.vue'
 
-export default Vue.extend({
+export default defineComponent({
 	components: {
 		PixiEndTurnArea,
 		PixiPointDisplay,
@@ -90,7 +89,7 @@ export default Vue.extend({
 				return
 			}
 			if (event.key === 'Escape') {
-				if (isConfirmTargetsButtonVisible.value && !mulliganMode) {
+				if (isConfirmTargetsButtonVisible.value && !mulliganMode.value) {
 					onConfirmTargets()
 					return
 				}
@@ -258,7 +257,10 @@ export default Vue.extend({
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		background: black;
+		background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../../assets/background-game.webp');
+		background-size: cover;
+		background-position-x: center;
+		background-position-y: bottom;
 
 		opacity: 0;
 		transition: opacity 0.5s;

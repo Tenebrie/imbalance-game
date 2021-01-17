@@ -7,13 +7,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import router from '@/Vue/router'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
 	methods: {
 		onClick(): void {
-			this.$router.push({ name: 'decks', query: router.currentRoute.query })
+			this.$router.push({ name: 'decks', query: router.currentRoute.value.query })
 		},
 	},
 })

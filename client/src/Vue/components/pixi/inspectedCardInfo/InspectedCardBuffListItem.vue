@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from '@vue/composition-api'
+import { computed, defineComponent, PropType } from 'vue'
 import { BuffWrapper } from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
