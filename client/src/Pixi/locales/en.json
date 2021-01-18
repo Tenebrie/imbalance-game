@@ -652,7 +652,7 @@
 
 	"card.unitYogaTeacher.name": "Yoga Teacher",
 	"card.unitYogaTeacher.description": "*Deploy:*\n*Discard* a card from your hand.\nThen, add a copy of that card to your hand.",
-	"card.unitYogaTeacher.flavor": "- \"Trust in yoga, train your body and soul, and one day you will awaken a new man.\"",
+	"card.unitYogaTeacher.flavor": "- \"Trust in yoga, train your body and soul, and one day you will awaken a new person.\"",
 
 	"card.unitSkybornMother.name": "Skyborn Mother",
 	"card.unitSkybornMother.description": "While you hold this in your hand, the last unit you have played has +{powerGiven} Power.",
