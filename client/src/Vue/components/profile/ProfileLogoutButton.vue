@@ -9,6 +9,7 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import { defineComponent } from 'vue'
+import Notifications from '@/utils/Notifications'
 
 export default defineComponent({
 	methods: {
@@ -16,7 +17,8 @@ export default defineComponent({
 			try {
 				await store.dispatch.logout()
 			} catch (e) {
-				this.$noty.error('Unable to logout', e)
+				const error = e as Error
+				Notifications.error(`Unable to logout: ${error.name}: ${error.message}`)
 			}
 		},
 	},

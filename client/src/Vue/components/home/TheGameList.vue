@@ -32,6 +32,7 @@ import Localization from '@/Pixi/Localization'
 import TheChallengeAISelection from '@/Vue/components/popup/escapeMenu/TheChallengeAISelection.vue'
 import GameMode from '@shared/enums/GameMode'
 import { defineComponent } from 'vue'
+import Notifications from '@/utils/Notifications'
 
 export default defineComponent({
 	components: {
@@ -67,7 +68,7 @@ export default defineComponent({
 
 		async onCreateSinglePlayer(): Promise<void> {
 			if (!store.state.selectedDeckId) {
-				this.$noty.error(Localization.get('ui.noty.deckRequired'))
+				Notifications.error(Localization.get('ui.noty.deckRequired'))
 				return
 			}
 
@@ -78,7 +79,7 @@ export default defineComponent({
 
 		async onCreateMultiPlayer(): Promise<void> {
 			if (!store.state.selectedDeckId) {
-				this.$noty.error(Localization.get('ui.noty.deckRequired'))
+				Notifications.error(Localization.get('ui.noty.deckRequired'))
 				return
 			}
 

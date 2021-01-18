@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts">
+import Notifications from '@/utils/Notifications'
 import store from '@/Vue/store'
 import { defineComponent } from 'vue'
 
@@ -21,7 +22,7 @@ export default defineComponent({
 			this.requestInFlight = true
 			const response = await store.dispatch.editor.createDeck()
 			if (response.status !== 200) {
-				this.$noty.error('An error occurred while creating the deck')
+				Notifications.error('An error occurred while creating the deck')
 				return
 			}
 
