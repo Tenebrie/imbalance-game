@@ -11,6 +11,7 @@
 import store from '@/Vue/store'
 import TheAccountDeletePopup from '@/Vue/components/popup/TheAccountDeletePopup.vue'
 import { defineComponent } from 'vue'
+import Notifications from '@/utils/Notifications'
 
 export default defineComponent({
 	data: () => ({
@@ -24,7 +25,7 @@ export default defineComponent({
 				try {
 					await store.dispatch.deleteAccount()
 				} catch (e) {
-					this.$noty.error('Unable to delete your profile!')
+					Notifications.error('Unable to delete your profile!')
 				}
 				this.requestInFlight = false
 			}

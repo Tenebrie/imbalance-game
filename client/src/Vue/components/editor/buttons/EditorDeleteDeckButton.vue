@@ -13,6 +13,7 @@ import router from '@/Vue/router'
 import TheDeckDeletePopup from '@/Vue/components/popup/TheDeckDeletePopup.vue'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import { defineComponent } from 'vue'
+import Notifications from '@/utils/Notifications'
 
 export default defineComponent({
 	data: () => ({
@@ -36,10 +37,10 @@ export default defineComponent({
 				const deckId = this.$route.params.deckId
 				const statusCode = await store.dispatch.editor.deleteDeck({ deckId })
 				if (statusCode === 204) {
-					this.$noty.success('Deck deleted!')
+					Notifications.success('Deck deleted!')
 					await this.$router.push({ name: 'decks', query: router.currentRoute.value.query })
 				} else {
-					this.$noty.error('An error occurred while deleting the deck')
+					Notifications.error('An error occurred while deleting the deck')
 				}
 				this.requestInFlight = false
 			}
