@@ -20,6 +20,7 @@ export default defineComponent({
 
 	setup() {
 		store.dispatch.gameStateModule.setGameLoading()
+		store.dispatch.gameStateModule.setGameMode(store.state.selectedGame.gameMode)
 		if (isMobile()) {
 			// const elem = document.documentElement
 			// if (elem.requestFullscreen) {elem.requestFullscreen()}

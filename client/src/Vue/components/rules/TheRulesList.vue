@@ -3,9 +3,9 @@
 		<div class="rules-container">
 			<h1>Game rules</h1>
 			<p>
-				Not Gwent (temporary name) is a 1v1 Player versus Player (or Player versus AI) card collecting game. Each players enters the game
-				with a deck they build using the cards they own (see <b>Decks</b>). Players take turns playing cards and interacting with the board
-				with the goal of maximizing the total Power of their cards. Player with the highest combined Power wins the round.
+				State of Imbalance is a 1v1 Player versus Player (or Player versus AI) card collecting game. Each players enters the game with a
+				deck they build using the cards they own (see <b>Decks</b>). Players take turns playing cards and interacting with the board with
+				the goal of maximizing the total Power of their cards. Player with the highest combined Power wins the round.
 			</p>
 			<p>A player wins the game after gaining 2 round wins.</p>
 
@@ -100,7 +100,7 @@ export default defineComponent({
 		width: calc(100% - 64px);
 		height: 100%;
 		padding: 32px;
-		overflow-y: scroll;
+		overflow-y: auto;
 
 		p {
 			text-indent: 2em;

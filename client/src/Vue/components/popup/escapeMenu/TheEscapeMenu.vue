@@ -2,6 +2,11 @@
 	<div class="the-escape-menu">
 		<div class="the-escape-menu-container" @click="onMenuClick">
 			<tenebrie-logo class="logo" />
+			<button @click="onShowDiscord" class="primary game-button">
+				<span class="image"><img src="https://discord.com/assets/f8389ca1a741a115313bede9ac02e2c0.svg" alt="Discord group link" /></span>
+				Discord
+			</button>
+			<button @click="onShowRules" class="primary game-button">Rules</button>
 			<button @click="onShowSettings" class="primary game-button">Settings</button>
 			<button @click="onShowGameLog" class="primary game-button">Game history</button>
 			<div class="menu-separator"></div>
@@ -22,6 +27,7 @@ import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
 import TheSimpleSettings from '@/Vue/components/popup/escapeMenu/TheSimpleSettings.vue'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import { defineComponent } from 'vue'
+import TheRulesetPopup from '@/Vue/components/popup/escapeMenu/TheRulesetPopup.vue'
 
 export default defineComponent({
 	components: {
@@ -31,6 +37,17 @@ export default defineComponent({
 	setup() {
 		const onMenuClick = (event: MouseEvent) => {
 			event.cancelBubble = true
+		}
+
+		const onShowDiscord = (): void => {
+			const win = window.open('https://discord.gg/9fSWxMnBFa', '_blank')
+			win.focus()
+		}
+
+		const onShowRules = (): void => {
+			store.dispatch.popupModule.open({
+				component: TheRulesetPopup,
+			})
 		}
 
 		const onShowSettings = (): void => {
@@ -62,11 +79,12 @@ export default defineComponent({
 
 		const onLeaveGame = (): void => {
 			store.dispatch.leaveGame()
-			store.dispatch.popupModule.closeAll()
 		}
 
 		return {
+			onShowDiscord,
 			onMenuClick,
+			onShowRules,
 			onShowSettings,
 			onShowGameLog,
 			onShowPlayersDeck,
@@ -103,6 +121,17 @@ export default defineComponent({
 	button {
 		width: 100%;
 		margin: 8px;
+
+		span.image {
+			display: inline-block;
+			position: relative;
+			img {
+				position: absolute;
+				width: 30px;
+				right: 0;
+				top: -20px;
+			}
+		}
 	}
 }
 
