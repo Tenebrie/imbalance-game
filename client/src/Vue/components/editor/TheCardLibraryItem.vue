@@ -180,7 +180,7 @@ export default defineComponent({
 		}
 	}
 
-	/deep/ img {
+	img {
 		position: relative;
 		height: 100%;
 	}

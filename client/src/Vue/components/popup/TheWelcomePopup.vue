@@ -99,11 +99,4 @@ a {
 a:active {
 	color: darken(lightblue, 50);
 }
-
-.menu-separator {
-	width: 100%;
-	height: 1px;
-	margin: 8px 0;
-	background: $COLOR_BACKGROUND_GAME_MENU_BORDER;
-}
 </style>

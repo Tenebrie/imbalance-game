@@ -43,7 +43,11 @@
 			<pixi-inspected-card />
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
-			<div class="overlay-message" v-if="!opponent">Connecting...</div>
+			<div class="overlay-message" v-if="!opponent && isPlayingVersusAI">Connecting...</div>
+			<div class="overlay-message" v-if="!opponent && isPlayingVersusPlayer">
+				<span>Waiting for another player to connect...<br />You may also choose to play vs AI from the main menu</span>
+				<button class="secondary game-button" @click="onLeaveGame">Leave game</button>
+			</div>
 			<div class="overlay-message" v-if="opponent">
 				{{ player.username }} vs {{ opponent.username }}<br />
 				Starting the game...
@@ -73,6 +77,7 @@ import Utils from '@/utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
 import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
 import PixiEndTurnArea from '@/Vue/components/pixi/PixiEndTurnArea.vue'
+import GameMode from '@shared/enums/GameMode'
 
 export default defineComponent({
 	components: {
@@ -197,6 +202,9 @@ export default defineComponent({
 		const cardsMulliganed = computed(() => store.state.gameStateModule.cardsMulliganed)
 		const maxCardMulligans = computed(() => store.state.gameStateModule.maxCardMulligans)
 
+		const isPlayingVersusAI = computed(() => store.state.gameStateModule.gameMode !== GameMode.VS_PLAYER)
+		const isPlayingVersusPlayer = computed(() => store.state.gameStateModule.gameMode === GameMode.VS_PLAYER)
+
 		const onLeaveGame = (): void => {
 			store.dispatch.leaveGame()
 			store.dispatch.popupModule.closeAll()
@@ -232,6 +240,8 @@ export default defineComponent({
 			playerSpellManaInDanger,
 			opponentMorale,
 			opponentSpellMana,
+			isPlayingVersusAI,
+			isPlayingVersusPlayer,
 			onLeaveGame,
 		}
 	},
@@ -279,6 +289,10 @@ export default defineComponent({
 		}
 
 		.overlay-message {
+			span {
+				display: block;
+				margin-bottom: 32px;
+			}
 		}
 	}
 

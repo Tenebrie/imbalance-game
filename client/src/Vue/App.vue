@@ -282,6 +282,13 @@ span.info-text {
 	color: gray;
 }
 
+div.menu-separator {
+	width: 100%;
+	height: 1px;
+	margin: 8px 0;
+	background: $COLOR_BACKGROUND_GAME_MENU_BORDER;
+}
+
 .noty_body {
 	font-family: 'Roboto', sans-serif;
 	font-size: 1em !important;

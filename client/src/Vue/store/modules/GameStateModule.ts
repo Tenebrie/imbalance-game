@@ -6,12 +6,14 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import TargetMode from '@shared/enums/TargetMode'
+import GameMode from '@shared/enums/GameMode'
 
 const gameStateModule = defineModule({
 	namespaced: true,
 	state: {
 		turnPhase: GameTurnPhase.BEFORE_GAME as GameTurnPhase,
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
+		gameMode: GameMode.VS_PLAYER as GameMode,
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
 		isPlayerInRound: true as boolean,
@@ -50,6 +52,10 @@ const gameStateModule = defineModule({
 
 		setGameStatus(state, gameStatus: ClientGameStatus): void {
 			state.gameStatus = gameStatus
+		},
+
+		setGameMode(state, value: GameMode): void {
+			state.gameMode = value
 		},
 
 		setPlayerMorale(state, value: number): void {
@@ -123,6 +129,11 @@ const gameStateModule = defineModule({
 		setGameLoading(context): void {
 			const { commit } = moduleActionContext(context, gameStateModule)
 			commit.setGameStatus(ClientGameStatus.LOADING)
+		},
+
+		setGameMode(context, payload: GameMode): void {
+			const { commit } = moduleActionContext(context, gameStateModule)
+			commit.setGameMode(payload)
 		},
 
 		startGame(context): void {
