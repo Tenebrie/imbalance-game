@@ -26,6 +26,17 @@ const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void =
 	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
 	OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 	game.events.flushLogEventGroup()
+
+	if (player.unitMana === 0 && game.cardPlay.cardResolveStack.currentCard === null) {
+		player.endTurn()
+		game.advanceCurrentTurn()
+
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
+		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
+		game.events.flushLogEventGroup()
+	}
 }
 
 const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: IncomingMessageHandlerFunction } = {
