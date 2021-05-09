@@ -63,6 +63,7 @@ import PlayTargetDefinitionBuilder from '@src/game/models/targetDefinitions/Play
 import DeployTargetDefinitionBuilder from '@src/game/models/targetDefinitions/DeployTargetDefinitionBuilder'
 import {
 	CardTargetValidatorArguments,
+	PositionTargetValidatorArguments,
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
@@ -550,6 +551,7 @@ export default class ServerCard implements Card {
 	 */
 	protected createOrderTargets(targetType: TargetType.UNIT): OrderTargetDefinitionBuilder<UnitTargetValidatorArguments>
 	protected createOrderTargets(targetType: TargetType.BOARD_ROW): OrderTargetDefinitionBuilder<RowTargetValidatorArguments>
+	protected createOrderTargets(targetType: TargetType.BOARD_POSITION): OrderTargetDefinitionBuilder<PositionTargetValidatorArguments>
 	protected createOrderTargets(targetType: TargetType): OrderTargetDefinitionBuilder<any> {
 		const builder = OrderTargetDefinitionBuilder.base(this, targetType)
 		this.targeting.orderTargetDefinitions.push(builder)
@@ -562,6 +564,7 @@ export default class ServerCard implements Card {
 	 */
 	protected createDeployTargets(targetType: TargetType.UNIT): DeployTargetDefinitionBuilder<UnitTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.BOARD_ROW): DeployTargetDefinitionBuilder<RowTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.BOARD_POSITION): DeployTargetDefinitionBuilder<PositionTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.CARD_IN_LIBRARY): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.CARD_IN_UNIT_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.CARD_IN_SPELL_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>

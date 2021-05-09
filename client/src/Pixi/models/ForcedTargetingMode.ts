@@ -11,6 +11,8 @@ import TargetingLine from '@/Pixi/models/TargetingLine'
 import Core from '@/Pixi/Core'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
+import TargetType from '@shared/enums/TargetType'
+import { getCardInsertIndex } from '@/utils/Utils'
 
 export default class ForcedTargetingMode {
 	readonly targetMode: TargetMode
@@ -36,7 +38,12 @@ export default class ForcedTargetingMode {
 
 		this.selectedTarget = this.validTargets.find((target) => {
 			return (
-				(hoveredCard && target.targetCardId === hoveredCard.id) || (hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
+				(target.targetType === TargetType.BOARD_POSITION &&
+					hoveredRow &&
+					hoveredRow.index === target.targetRowIndex &&
+					getCardInsertIndex(hoveredRow) === target.targetPosition) ||
+				(hoveredCard && target.targetCardId === hoveredCard.id) ||
+				(target.targetType === TargetType.BOARD_ROW && hoveredRow && hoveredRow.index === target.targetRowIndex)
 			)
 		})
 	}

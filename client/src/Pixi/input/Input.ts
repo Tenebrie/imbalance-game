@@ -7,7 +7,6 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import TargetType from '@shared/enums/TargetType'
 import ForcedTargetingMode from '@/Pixi/models/ForcedTargetingMode'
 import MouseHover from '@/Pixi/input/MouseHover'
@@ -21,7 +20,7 @@ import { isGrabbedCardPlayableToRow } from '@/Pixi/input/ValidActions'
 import CardLocation from '@shared/enums/CardLocation'
 import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
-import { boopTheBoard, flushBoardPreps, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
+import { boopTheBoard, flushBoardPreps, getCardInsertIndex, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -164,17 +163,32 @@ export default class Input {
 		this.hoveredCard = hoveredCard
 
 		const hoveredRow = MouseHover.getHoveredRow()
-		if (
-			hoveredRow &&
-			this.grabbedCard &&
-			this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY &&
-			this.grabbedCard.validTargetRows.includes(hoveredRow) &&
-			this.grabbedCard.card.type === CardType.UNIT
-		) {
-			this.hoveredShadowUnit = {
-				card: this.grabbedCard.card,
-				rowIndex: normalizeBoardRowIndex(hoveredRow.index, 'player'),
-				unitIndex: this.getCardInsertIndex(hoveredRow),
+		if (hoveredRow) {
+			const cardInsertIndex = getCardInsertIndex(hoveredRow)
+			const isGrabbingCard =
+				hoveredRow &&
+				this.grabbedCard &&
+				this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY &&
+				this.grabbedCard.validTargetRows.includes(hoveredRow) &&
+				this.grabbedCard.card.type === CardType.UNIT
+			const isTargetingPosition =
+				hoveredRow &&
+				this.forcedTargetingMode &&
+				this.forcedTargetingMode.validTargets.some(
+					(target) =>
+						target.targetType === TargetType.BOARD_POSITION &&
+						hoveredRow.index === target.targetRowIndex &&
+						cardInsertIndex === target.targetPosition
+				)
+
+			if (isGrabbingCard || isTargetingPosition) {
+				this.hoveredShadowUnit = {
+					card: this.grabbedCard?.card,
+					rowIndex: normalizeBoardRowIndex(hoveredRow.index, 'player'),
+					unitIndex: cardInsertIndex,
+				}
+			} else {
+				this.hoveredShadowUnit = null
 			}
 		} else {
 			this.hoveredShadowUnit = null
@@ -445,18 +459,6 @@ export default class Input {
 		this.updateCardHoverStatus()
 	}
 
-	private getCardInsertIndex(hoveredRow: RenderedGameBoardRow): number {
-		const hoveredUnit = this.hoveredCard
-		if (!hoveredUnit || !hoveredRow.includesCard(hoveredUnit.card)) {
-			return this.mousePosition.x > hoveredRow.container.position.x ? hoveredRow.cards.length : 0
-		}
-		let index = hoveredRow.getCardIndex(hoveredUnit.card)
-		if (this.mousePosition.x > hoveredUnit.card.hitboxSprite.position.x) {
-			index += 1
-		}
-		return index
-	}
-
 	private onCardPlay(card: RenderedCard): void {
 		const hoveredRow = MouseHover.getHoveredRow()
 		if (!hoveredRow) {
@@ -466,11 +468,11 @@ export default class Input {
 		if (card.type === CardType.SPELL) {
 			OutgoingMessageHandlers.sendSpellCardPlayed(card)
 		} else if (card.type === CardType.UNIT) {
-			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, this.getCardInsertIndex(hoveredRow))
+			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, getCardInsertIndex(hoveredRow))
 			this.limboShadowUnit = {
 				card: card,
 				rowIndex: normalizeBoardRowIndex(hoveredRow.index, 'player'),
-				unitIndex: this.getCardInsertIndex(hoveredRow),
+				unitIndex: getCardInsertIndex(hoveredRow),
 			}
 		}
 		this.cardLimbo.push(card)

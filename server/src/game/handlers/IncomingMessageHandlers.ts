@@ -27,7 +27,7 @@ const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void =
 	OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 	game.events.flushLogEventGroup()
 
-	if (player.unitMana === 0 && game.cardPlay.cardResolveStack.currentCard === null) {
+	if (game.turnPhase === GameTurnPhase.DEPLOY && player.unitMana === 0 && game.cardPlay.cardResolveStack.currentCard === null) {
 		player.endTurn()
 		game.advanceCurrentTurn()
 

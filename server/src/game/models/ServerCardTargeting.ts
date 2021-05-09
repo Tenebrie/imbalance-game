@@ -1,6 +1,11 @@
 import ServerGame from './ServerGame'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import ServerCardTarget, { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from './ServerCardTarget'
+import ServerCardTarget, {
+	ServerCardTargetCard,
+	ServerCardTargetPosition,
+	ServerCardTargetRow,
+	ServerCardTargetUnit,
+} from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType, { CardTargetTypes } from '@shared/enums/TargetType'
 import Utils from '../../utils/Utils'
@@ -10,13 +15,17 @@ import ServerCard from './ServerCard'
 import PlayTargetDefinition from '@src/game/models/targetDefinitions/PlayTargetDefinition'
 import PlayTargetDefinitionBuilder from '@src/game/models/targetDefinitions/PlayTargetDefinitionBuilder'
 import DeployTargetDefinitionBuilder from '@src/game/models/targetDefinitions/DeployTargetDefinitionBuilder'
-import TargetValidatorArguments, { RowTargetValidatorArguments, UnitTargetValidatorArguments } from '@src/types/TargetValidatorArguments'
+import TargetValidatorArguments, {
+	PositionTargetValidatorArguments,
+	RowTargetValidatorArguments,
+	UnitTargetValidatorArguments,
+} from '@src/types/TargetValidatorArguments'
 import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
 import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
 import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTargetDefinition'
 import { OrderTarget } from '@src/game/models/ServerBoardOrders'
 
-export type ValidServerCardTarget = ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow
+export type ValidServerCardTarget = ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow | ServerCardTargetPosition
 
 export type DeployTarget = {
 	target: ValidServerCardTarget
@@ -107,6 +116,8 @@ export class ServerCardTargeting {
 				return this.getDeployTargetsForDefinitionAsUnits(targetDefinition, previousTargets)
 			case TargetType.BOARD_ROW:
 				return this.getDeployTargetsForDefinitionAsRows(targetDefinition, previousTargets)
+			case TargetType.BOARD_POSITION:
+				return this.getDeployTargetsForDefinitionAsPositions(targetDefinition, previousTargets)
 			default:
 				return this.getDeployTargetsForDefinitionAsCards(targetDefinition.targetType, targetDefinition, previousTargets)
 		}
@@ -172,6 +183,39 @@ export class ServerCardTargeting {
 			)
 			.map((targetRow) =>
 				ServerCardTarget.cardTargetRow(targetDefinition.id, TargetMode.DEPLOY_EFFECT, this.card, targetRow, targetDefinition.label)
+			)
+	}
+
+	public getDeployTargetsForDefinitionAsPositions(
+		targetDefinition: DeployTargetDefinition<PositionTargetValidatorArguments>,
+		previousTargets: DeployTarget[] = []
+	): ServerCardTargetPosition[] {
+		return this.game.board.rows
+			.flatMap((row, index) => {
+				const positions = [...Array(row.cards.length + 1).keys()]
+				return positions.map((pos) => ({
+					row: row,
+					position: pos,
+					rowIndex: index,
+				}))
+			})
+			.filter((rowPosition) =>
+				targetDefinition.require({
+					sourceCard: this.card,
+					targetRow: rowPosition.row,
+					targetPosition: rowPosition.position,
+					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
+				})
+			)
+			.map((target) =>
+				ServerCardTarget.cardTargetPosition(
+					targetDefinition.id,
+					TargetMode.DEPLOY_EFFECT,
+					this.card,
+					target.row,
+					target.position,
+					targetDefinition.label
+				)
 			)
 	}
 

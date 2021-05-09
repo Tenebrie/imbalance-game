@@ -10,7 +10,7 @@ import BuffUnitToSpellConversion from '../game/buffs/BuffUnitToSpellConversion'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
 import Constants from '@shared/Constants'
-import { EmptyFunction } from '@src/utils/Utils'
+import { EmptyFunction } from './Utils'
 import ServerUnit from '@src/game/models/ServerUnit'
 
 const createCard = (player: ServerPlayerInGame, card: ServerCard, callback: (card: ServerCard) => void): ServerCard => {

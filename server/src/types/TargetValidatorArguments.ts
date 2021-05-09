@@ -22,5 +22,16 @@ export interface RowTargetValidatorArguments {
 	previousTargets: ValidServerCardTarget[]
 }
 
-type TargetValidatorArguments = CardTargetValidatorArguments | UnitTargetValidatorArguments | RowTargetValidatorArguments
+export interface PositionTargetValidatorArguments {
+	sourceCard: ServerCard
+	targetRow: ServerBoardRow
+	targetPosition: number
+	previousTargets: ValidServerCardTarget[]
+}
+
+type TargetValidatorArguments =
+	| CardTargetValidatorArguments
+	| UnitTargetValidatorArguments
+	| RowTargetValidatorArguments
+	| PositionTargetValidatorArguments
 export default TargetValidatorArguments

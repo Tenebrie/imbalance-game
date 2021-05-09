@@ -8,7 +8,7 @@ import ServerBoardRow from '../ServerBoardRow'
 import ServerBuff from '../ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
-import { ServerCardTargetCard, ServerCardTargetRow } from '../ServerCardTarget'
+import { ServerCardTargetCard, ServerCardTargetPosition, ServerCardTargetRow } from '../ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 
 export default {
@@ -117,6 +117,16 @@ export default {
 			targetRow: args.targetRow.index,
 		},
 	}),
+	cardTargetPositionSelected: (args: CardTargetSelectedPositionEventArgs): GameEvent => ({
+		type: GameEventType.CARD_TARGET_SELECTED_POSITION,
+		args: args,
+		effectSource: args.triggeringCard,
+		logVariables: {
+			triggeringCard: args.triggeringCard.id,
+			targetRow: args.targetRow.index,
+			targetPosition: args.targetPosition,
+		},
+	}),
 	cardTargetsConfirmed: (args: CardTargetsConfirmedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGETS_CONFIRMED,
 		args: args,
@@ -178,6 +188,16 @@ export default {
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
 			targetRow: args.targetArguments.targetRow.index,
+		},
+	}),
+	unitIssuedOrderTargetingPosition: (args: UnitOrderedPositionEventArgs): GameEvent => ({
+		type: GameEventType.UNIT_ORDERED_POSITION,
+		args: args,
+		effectSource: args.triggeringUnit.card,
+		logVariables: {
+			triggeringUnit: args.triggeringUnit.card.id,
+			targetRow: args.targetArguments.targetRow.index,
+			targetPosition: args.targetArguments.targetPosition,
 		},
 	}),
 	unitDestroyed: (args: UnitDestroyedEventArgs): GameEvent => ({
@@ -321,6 +341,14 @@ export interface CardTargetSelectedRowEventArgs {
 	triggeringPlayer: ServerPlayerInGame
 	targetRow: ServerBoardRow
 }
+export interface CardTargetSelectedPositionEventArgs {
+	targetMode: TargetMode
+	targetType: TargetType
+	triggeringCard: ServerCard
+	triggeringPlayer: ServerPlayerInGame
+	targetRow: ServerBoardRow
+	targetPosition: number
+}
 export interface CardTargetsConfirmedEventArgs {
 	triggeringCard: ServerCard
 	triggeringPlayer: ServerPlayerInGame
@@ -363,6 +391,13 @@ export interface UnitOrderedRowEventArgs {
 	targetType: TargetType
 	targetRow: ServerBoardRow
 	targetArguments: ServerCardTargetRow
+}
+export interface UnitOrderedPositionEventArgs {
+	triggeringUnit: ServerUnit
+	targetType: TargetType
+	targetRow: ServerBoardRow
+	targetPosition: number
+	targetArguments: ServerCardTargetPosition
 }
 export interface UnitDestroyedEventArgs {
 	triggeringCard: ServerCard

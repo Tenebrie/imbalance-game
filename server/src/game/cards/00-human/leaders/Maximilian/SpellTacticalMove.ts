@@ -6,7 +6,6 @@ import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectHealingPotency, asDirectSpellDamage } from '../../../../../utils/LeaderStats'
 import ServerBoardRow from '../../../../models/ServerBoardRow'
@@ -39,33 +38,28 @@ export default class SpellTacticalMove extends ServerCard {
 			.requireAllied()
 			.require(() => this.movingUnit === null)
 			.label('card.spellTacticalMove.target.label.unit')
+			.perform(({ targetUnit }) => this.onTargetUnitSelected(targetUnit))
 
-		this.createDeployTargets(TargetType.BOARD_ROW)
+		this.createDeployTargets(TargetType.BOARD_POSITION)
 			.requireAllied()
 			.require(() => !!this.movingUnit)
 			.require(({ targetRow }) => targetRow.index !== this.movingUnit!.rowIndex)
 			.require(({ targetRow }) => Math.abs(targetRow.index - this.movingUnit!.rowIndex) <= 1)
 			.label('card.spellTacticalMove.target.label.row')
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetUnitSelected(targetUnit))
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetRowSelected(targetRow))
-
-		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED).perform(() => this.onTargetsConfirmed())
+			.perform(({ targetRow, targetPosition }) => this.onTargetRowSelected(targetRow, targetPosition))
+			.finalize(() => this.onTargetsConfirmed())
 	}
 
 	private onTargetUnitSelected(target: ServerUnit): void {
 		this.movingUnit = target
 	}
 
-	private onTargetRowSelected(target: ServerBoardRow): void {
+	private onTargetRowSelected(row: ServerBoardRow, position: number): void {
+		const rowIndex = row.index
 		const movingUnit = this.movingUnit!
-		const moveDirection = this.game.board.getMoveDirection(this.ownerInGame, this.game.board.rows[movingUnit.rowIndex], target)
-		this.game.board.moveUnitToFarRight(movingUnit, target.index)
-		if (
-			moveDirection === MoveDirection.FORWARD &&
-			this.game.board.getDistanceToDynamicFrontForPlayer(target.index, this.ownerInGame) === 0
-		) {
+		const moveDirection = this.game.board.getMoveDirection(this.ownerInGame, this.game.board.rows[movingUnit.rowIndex], row)
+		this.game.board.moveUnit(movingUnit, rowIndex, position)
+		if (moveDirection === MoveDirection.FORWARD && this.game.board.getDistanceToDynamicFrontForPlayer(rowIndex, this.ownerInGame) === 0) {
 			const targets = this.game.board.getClosestOpposingUnits(movingUnit)
 			targets.forEach((target) => {
 				this.game.animation.createAnimationThread()

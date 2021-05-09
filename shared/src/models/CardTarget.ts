@@ -40,5 +40,15 @@ export interface CardTargetRow {
 	targetLabel: string
 }
 
-type CardTarget = CardTargetCard | CardTargetUnit | CardTargetRow
+export interface CardTargetPosition {
+	id: string
+	targetMode: TargetMode
+	targetType: TargetType.BOARD_POSITION
+	sourceCard: Card
+	targetRow: BoardRow
+	targetPosition: number
+	targetLabel: string
+}
+
+type CardTarget = CardTargetCard | CardTargetUnit | CardTargetRow | CardTargetPosition
 export default CardTarget

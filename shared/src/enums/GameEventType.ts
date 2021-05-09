@@ -14,6 +14,7 @@ enum GameEventType {
 	CARD_TARGET_SELECTED_CARD = 'cardTargetSelectedCard',
 	CARD_TARGET_SELECTED_UNIT = 'cardTargetSelectedUnit',
 	CARD_TARGET_SELECTED_ROW = 'cardTargetSelectedRow',
+	CARD_TARGET_SELECTED_POSITION = 'cardTargetSelectedPosition',
 	CARD_TARGETS_CONFIRMED = 'cardTargetsConfirmed',
 
 	PLAYER_TARGET_SELECTED_CARD = 'playerTargetSelectedCard',
@@ -24,6 +25,7 @@ enum GameEventType {
 	UNIT_ORDERED_CARD = 'unitOrderedCard',
 	UNIT_ORDERED_UNIT = 'unitOrderedUnit',
 	UNIT_ORDERED_ROW = 'unitOrderedRow',
+	UNIT_ORDERED_POSITION = 'unitOrderedPosition',
 	UNIT_DESTROYED = 'unitDestroyed',
 
 	UNIT_DEPLOYED = 'unitDeployed',

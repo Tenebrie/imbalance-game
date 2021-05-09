@@ -7,6 +7,7 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTargetDefinition'
 import {
 	CardTargetValidatorArguments,
+	PositionTargetValidatorArguments,
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
@@ -58,6 +59,15 @@ export default class ServerBoardOrders {
 				targetRow: order.target.targetRow,
 				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),
 			})
+		} else if (order.target.targetType === TargetType.BOARD_POSITION) {
+			const definition = order.definition as OrderTargetDefinition<PositionTargetValidatorArguments>
+			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
+			definition.perform({
+				sourceCard: sourceCard,
+				targetRow: order.target.targetRow,
+				targetPosition: targetMessage.targetPosition,
+				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),
+			})
 		} else {
 			const definition = order.definition as OrderTargetDefinition<CardTargetValidatorArguments>
 			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
@@ -68,7 +78,7 @@ export default class ServerBoardOrders {
 			})
 		}
 
-		if (order.target.targetType !== TargetType.BOARD_ROW) {
+		if (order.target.targetType !== TargetType.BOARD_ROW && order.target.targetType !== TargetType.BOARD_POSITION) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingCard({
 					triggeringUnit: orderedUnit,
@@ -95,6 +105,17 @@ export default class ServerBoardOrders {
 					triggeringUnit: orderedUnit,
 					targetType: order.target.targetType,
 					targetRow: order.target.targetRow,
+					targetArguments: order.target,
+				})
+			)
+		}
+		if (order.target.targetType === TargetType.BOARD_POSITION) {
+			this.game.events.postEvent(
+				GameEventCreators.unitIssuedOrderTargetingPosition({
+					triggeringUnit: orderedUnit,
+					targetType: order.target.targetType,
+					targetRow: order.target.targetRow,
+					targetPosition: order.target.targetPosition,
 					targetArguments: order.target,
 				})
 			)

@@ -3,6 +3,7 @@ import ServerOwnedCard from './ServerOwnedCard'
 import ServerCardTarget, {
 	ServerAnonymousTargetCard,
 	ServerCardTargetCard,
+	ServerCardTargetPosition,
 	ServerCardTargetRow,
 	ServerCardTargetUnit,
 } from './ServerCardTarget'
@@ -20,6 +21,7 @@ import TargetType from '@shared/enums/TargetType'
 import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
 import {
 	CardTargetValidatorArguments,
+	PositionTargetValidatorArguments,
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
@@ -197,34 +199,19 @@ export default class ServerGameCardPlay {
 
 		this.cardResolveStack.pushTarget(correspondingTarget)
 
-		currentResolvingCard.onResumeResolving = () => {
-			const updatedDeployTargets = this.getDeployTargets()
-			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
-				playerInGame.player,
-				TargetMode.DEPLOY_EFFECT,
-				updatedDeployTargets.map((deployTarget) => deployTarget.target),
-				currentCard
-			)
-
-			if (updatedDeployTargets.length > 0) {
-				return
-			}
-
-			this.game.events.postEvent(
-				GameEventCreators.cardTargetsConfirmed({
-					triggeringCard: currentCard,
-					triggeringPlayer: playerInGame,
-				})
-			)
-			this.cardResolveStack.finishResolving()
-		}
-
 		const target = correspondingTarget.target
 		const targetType = correspondingTarget.definition.targetType
 		if (targetType === TargetType.BOARD_ROW && target instanceof ServerCardTargetRow) {
 			;(correspondingTarget.definition as DeployTargetDefinition<RowTargetValidatorArguments>).perform({
 				sourceCard: currentCard,
 				targetRow: target.targetRow,
+				previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+			})
+		} else if (targetType === TargetType.BOARD_POSITION && target instanceof ServerCardTargetPosition) {
+			;(correspondingTarget.definition as DeployTargetDefinition<PositionTargetValidatorArguments>).perform({
+				sourceCard: currentCard,
+				targetRow: target.targetRow,
+				targetPosition: target.targetPosition,
 				previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
 			})
 		} else if (targetType === TargetType.UNIT && target instanceof ServerCardTargetUnit) {
@@ -264,7 +251,9 @@ export default class ServerGameCardPlay {
 					})
 				)
 			}
-		} else {
+		}
+
+		if (target instanceof ServerCardTargetRow || target instanceof ServerCardTargetPosition) {
 			this.game.events.postEvent(
 				GameEventCreators.cardTargetRowSelected({
 					targetMode: target.targetMode,
@@ -274,6 +263,70 @@ export default class ServerGameCardPlay {
 					targetRow: target.targetRow,
 				})
 			)
+			if (target instanceof ServerCardTargetPosition) {
+				this.game.events.postEvent(
+					GameEventCreators.cardTargetPositionSelected({
+						targetMode: target.targetMode,
+						targetType: target.targetType,
+						triggeringCard: currentCard,
+						triggeringPlayer: playerInGame,
+						targetRow: target.targetRow,
+						targetPosition: target.targetPosition,
+					})
+				)
+			}
+		}
+
+		currentResolvingCard.onResumeResolving = () => {
+			const updatedDeployTargets = this.getDeployTargets()
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
+				playerInGame.player,
+				TargetMode.DEPLOY_EFFECT,
+				updatedDeployTargets.map((deployTarget) => deployTarget.target),
+				currentCard
+			)
+
+			if (updatedDeployTargets.length > 0) {
+				return
+			}
+
+			const target = correspondingTarget.target
+			const targetType = correspondingTarget.definition.targetType
+			if (targetType === TargetType.BOARD_ROW && target instanceof ServerCardTargetRow) {
+				;(correspondingTarget.definition as DeployTargetDefinition<RowTargetValidatorArguments>).finalize({
+					sourceCard: currentCard,
+					targetRow: target.targetRow,
+					previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+				})
+			} else if (targetType === TargetType.BOARD_POSITION && target instanceof ServerCardTargetPosition) {
+				;(correspondingTarget.definition as DeployTargetDefinition<PositionTargetValidatorArguments>).finalize({
+					sourceCard: currentCard,
+					targetRow: target.targetRow,
+					targetPosition: target.targetPosition,
+					previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+				})
+			} else if (targetType === TargetType.UNIT && target instanceof ServerCardTargetUnit) {
+				;(correspondingTarget.definition as DeployTargetDefinition<UnitTargetValidatorArguments>).finalize({
+					sourceCard: currentCard,
+					targetCard: target.targetCard,
+					targetUnit: target.targetCard.unit!,
+					previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+				})
+			} else if (target instanceof ServerCardTargetCard) {
+				;(correspondingTarget.definition as DeployTargetDefinition<CardTargetValidatorArguments>).finalize({
+					sourceCard: currentCard,
+					targetCard: target.targetCard,
+					previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+				})
+			}
+
+			this.game.events.postEvent(
+				GameEventCreators.cardTargetsConfirmed({
+					triggeringCard: currentCard,
+					triggeringPlayer: playerInGame,
+				})
+			)
+			this.cardResolveStack.finishResolving()
 		}
 	}
 

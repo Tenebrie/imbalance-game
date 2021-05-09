@@ -16,6 +16,7 @@ import GameHookType, { UnitDestroyedHookArgs, UnitDestroyedHookValues } from './
 import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
+import { PositionTargetValidatorArguments } from '@src/types/TargetValidatorArguments'
 
 export default class ServerBoard implements Board {
 	readonly game: ServerGame
@@ -107,14 +108,26 @@ export default class ServerBoard implements Board {
 		if (!first || !second) {
 			return false
 		}
-		return this.getHorizontalUnitDistance(first, second) <= 1 && first.rowIndex === second.rowIndex && first !== second
+		// return this.getHorizontalUnitDistance(first, second) <= 1 && first.rowIndex === second.rowIndex && first !== second
+		return first.rowIndex === second.rowIndex && Math.abs(first.unitIndex - second.unitIndex) === 1
 	}
 
-	public getAdjacentUnits(centerUnit: ServerUnit | null): ServerUnit[] {
-		if (!centerUnit) {
+	public getAdjacentUnits(reference: ServerUnit | { targetRow: ServerBoardRow; targetPosition: number } | null): ServerUnit[] {
+		if (!reference) {
 			return []
 		}
-		return this.getAllUnits().filter((unit) => this.isUnitAdjacent(centerUnit, unit))
+
+		let row: ServerBoardRow
+		let unitIndex: number
+
+		if (reference instanceof ServerUnit) {
+			row = this.rows[reference.rowIndex]
+			unitIndex = reference.unitIndex
+		} else {
+			row = reference.targetRow
+			unitIndex = reference.targetPosition
+		}
+		return row.cards.filter((card) => Math.abs(card.unitIndex - unitIndex) === 1)
 	}
 
 	public getOpposingUnits(thisUnit: ServerUnit): ServerUnit[] {

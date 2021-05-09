@@ -10,6 +10,7 @@ import { sortCards } from '@shared/Utils'
 import Core from '@/Pixi/Core'
 import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 import * as Particles from 'pixi-particles'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 
 export const forEachInNumericEnum = (enumeration: { [s: number]: number }, handler: (val: number) => any): void => {
 	for (const value in enumeration) {
@@ -171,6 +172,21 @@ export const electronHost = (): string => {
 
 export const electronWebsocketTarget = (): string => {
 	return 'localhost:3000'
+}
+
+export const getCardInsertIndex = (hoveredRow: RenderedGameBoardRow | null): number => {
+	if (!hoveredRow) {
+		return -1
+	}
+	const hoveredUnit = Core.input.hoveredCard
+	if (!hoveredUnit || !hoveredRow.includesCard(hoveredUnit.card)) {
+		return Core.input.mousePosition.x > hoveredRow.container.position.x ? hoveredRow.cards.length : 0
+	}
+	let index = hoveredRow.getCardIndex(hoveredUnit.card)
+	if (Core.input.mousePosition.x > hoveredUnit.card.hitboxSprite.position.x) {
+		index += 1
+	}
+	return index
 }
 
 const legacyExport = {
