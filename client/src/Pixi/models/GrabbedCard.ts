@@ -1,8 +1,8 @@
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import TargetingLine from '@/Pixi/models/TargetingLine'
 import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
-import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import Core from '@/Pixi/Core'
+import RenderedGameBoardPosition from '../cards/RenderedGameBoardPosition'
 
 export default class GrabbedCard {
 	card: RenderedCard
@@ -11,7 +11,7 @@ export default class GrabbedCard {
 	grabPosition: PIXI.Point
 	targetingLine: TargetingLine
 	validTargetCards?: RenderedCard[]
-	validTargetRows?: RenderedGameBoardRow[]
+	validTargetPositions?: RenderedGameBoardPosition[]
 
 	constructor(card: RenderedCard, mode: GrabbedCardMode) {
 		this.card = card
@@ -29,27 +29,27 @@ export default class GrabbedCard {
 		return distance <= 15 && performance.now() - this.grabTimestamp <= 150
 	}
 
-	public updateValidTargetRows(rows: RenderedGameBoardRow[]): void {
-		this.validTargetRows = rows
+	public updateValidTargetRows(rows: RenderedGameBoardPosition[]): void {
+		this.validTargetPositions = rows
 	}
 
-	public static cardPlay(card: RenderedCard, validTargetRows: RenderedGameBoardRow[]): GrabbedCard {
+	public static cardPlay(card: RenderedCard, validTargetRows: RenderedGameBoardPosition[]): GrabbedCard {
 		const grabbedCard = new GrabbedCard(card, GrabbedCardMode.CARD_PLAY)
-		grabbedCard.validTargetRows = validTargetRows
+		grabbedCard.validTargetPositions = validTargetRows
 		return grabbedCard
 	}
 
-	public static cardOrder(card: RenderedCard, validTargetCards: RenderedCard[], validTargetRows: RenderedGameBoardRow[]): GrabbedCard {
+	public static cardOrder(card: RenderedCard, validTargetCards: RenderedCard[], validTargetRows: RenderedGameBoardPosition[]): GrabbedCard {
 		const grabbedCard = new GrabbedCard(card, GrabbedCardMode.CARD_ORDER)
 		grabbedCard.validTargetCards = validTargetCards
-		grabbedCard.validTargetRows = validTargetRows
+		grabbedCard.validTargetPositions = validTargetRows
 		return grabbedCard
 	}
 
 	public static cardSelect(card: RenderedCard): GrabbedCard {
 		const grabbedCard = new GrabbedCard(card, GrabbedCardMode.CARD_SELECT)
 		grabbedCard.validTargetCards = [card]
-		grabbedCard.validTargetRows = []
+		grabbedCard.validTargetPositions = []
 		return grabbedCard
 	}
 }

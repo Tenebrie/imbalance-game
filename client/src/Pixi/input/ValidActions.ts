@@ -1,6 +1,8 @@
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import Core from '@/Pixi/Core'
+import { getCardInsertIndex } from '@/utils/Utils'
+import MouseHover from './MouseHover'
 
 export const isCardPlayable = (card: RenderedCard): boolean => {
 	return (
@@ -12,6 +14,20 @@ export const isCardPlayable = (card: RenderedCard): boolean => {
 
 export const isGrabbedCardPlayableToRow = (row: RenderedGameBoardRow | null): boolean => {
 	return (
-		Core.input.grabbedCard && row && isCardPlayable(Core.input.grabbedCard.card) && Core.input.grabbedCard.validTargetRows.includes(row)
+		Core.input.grabbedCard &&
+		row &&
+		isCardPlayable(Core.input.grabbedCard.card) &&
+		Core.input.grabbedCard.validTargetPositions.some((target) => target.row === row)
+	)
+}
+
+export const isGrabbedCardPlayableToHoveredPosition = (): boolean => {
+	const row = MouseHover.getHoveredRow()
+	const insertIndex = getCardInsertIndex(row)
+	return (
+		Core.input.grabbedCard &&
+		row &&
+		isCardPlayable(Core.input.grabbedCard.card) &&
+		Core.input.grabbedCard.validTargetPositions.some((target) => target.row === row && target.position === insertIndex)
 	)
 }

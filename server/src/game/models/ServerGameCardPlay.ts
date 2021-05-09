@@ -51,7 +51,11 @@ export default class ServerGameCardPlay {
 		 * This already includes the check for unit/spell mana
 		 * Player is prevented from playing cards on their opponent's turn in IncomingMessageHandlers
 		 */
-		if (!ownedCard.card.targeting.getPlayTargets(ownedCard.owner).find((target) => target.targetRow.index === rowIndex)) {
+		if (
+			!ownedCard.card.targeting
+				.getPlayTargets(ownedCard.owner)
+				.find(({ targetRow, targetPosition }) => targetRow.index === rowIndex && targetPosition === unitIndex)
+		) {
 			return
 		}
 

@@ -10,7 +10,7 @@ import BuffUnitToSpellConversion from '../game/buffs/BuffUnitToSpellConversion'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
 import Constants from '@shared/Constants'
-import { EmptyFunction } from './Utils'
+import { EmptyFunction, toRowIndex } from './Utils'
 import ServerUnit from '@src/game/models/ServerUnit'
 
 const createCard = (player: ServerPlayerInGame, card: ServerCard, callback: (card: ServerCard) => void): ServerCard => {
@@ -34,6 +34,14 @@ const addCardToHand = (player: ServerPlayerInGame, card: ServerCard): ServerCard
 }
 
 export default {
+	move: {
+		unit: (unit: ServerUnit) => ({
+			toPosition: (rowOrIndex: number | ServerBoardRow, unitIndex: number): void => {
+				unit.game.board.moveUnit(unit, toRowIndex(rowOrIndex), unitIndex)
+			},
+		}),
+	},
+
 	summonCard: (card: ServerCard): void => {
 		const cardOwner = card.ownerInGame
 		card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)

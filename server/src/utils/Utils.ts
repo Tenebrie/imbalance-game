@@ -9,6 +9,7 @@ import { sortCards } from '@shared/Utils'
 import { CardConstructor } from '../game/libraries/CardLibrary'
 import { v4 as getRandomId } from 'uuid'
 import ServerGame from '@src/game/models/ServerGame'
+import ServerBoardRow from '@src/game/models/ServerBoardRow'
 
 export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
 	return `${type}:${prefix}:${getRandomId()}`
@@ -28,6 +29,10 @@ export const createBotPlayerId = (): string => {
 
 export const createRandomEditorDeckId = (): string => {
 	return `deck:${getRandomId()}`
+}
+
+export const toRowIndex = (rowOrIndex: number | ServerBoardRow): number => {
+	return typeof rowOrIndex === 'number' ? rowOrIndex : rowOrIndex.index
 }
 
 export const AnyCardLocation = 'any'

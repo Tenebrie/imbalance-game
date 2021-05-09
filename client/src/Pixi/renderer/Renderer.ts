@@ -507,7 +507,7 @@ export default class Renderer {
 		}
 
 		if (
-			(Core.input.grabbedCard && !Core.input.grabbedCard.validTargetRows.includes(row)) ||
+			(Core.input.grabbedCard && !Core.input.grabbedCard.validTargetPositions.some((target) => target.row === row)) ||
 			(Core.input.forcedTargetingMode && !Core.input.forcedTargetingMode.isRowPotentialTarget(row))
 		) {
 			return BoardRowTint.INVALID_TARGET

@@ -638,9 +638,25 @@ export default class ServerCard implements Card {
 	protected createEffect(event: GameEventType.CARD_DRAWN): EventSubscription<CardDrawnEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DEPLOYED): EventSubscription<UnitDeployedEventArgs>
 	protected createEffect(event: GameEventType.SPELL_DEPLOYED): EventSubscription<SpellDeployedEventArgs>
+	/**
+	 * @deprecated
+	 * Use `createDeployTargets(...).perform` instead
+	 */
 	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_CARD): EventSubscription<CardTargetSelectedCardEventArgs>
+	/**
+	 * @deprecated
+	 * Use `createDeployTargets(...).perform` instead
+	 */
 	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_UNIT): EventSubscription<CardTargetSelectedUnitEventArgs>
+	/**
+	 * @deprecated
+	 * Use `createDeployTargets(...).perform` instead
+	 */
 	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_ROW): EventSubscription<CardTargetSelectedRowEventArgs>
+	/**
+	 * @deprecated
+	 * Use `createDeployTargets(...).finalize` instead
+	 */
 	protected createEffect(event: GameEventType.CARD_TARGETS_CONFIRMED): EventSubscription<CardTargetsConfirmedEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventSubscription<UnitOrderedCardEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_UNIT): EventSubscription<UnitOrderedUnitEventArgs>

@@ -50,7 +50,7 @@ export class ServerCardTargeting {
 	 *            Play targets
 	 * ------------------------------------
 	 */
-	public getPlayTargets(cardOwner: ServerPlayerInGame | null): ServerCardTargetRow[] {
+	public getPlayTargets(cardOwner: ServerPlayerInGame | null): ServerCardTargetPosition[] {
 		if (!cardOwner || cardOwner.unitMana < this.card.stats.unitCost || cardOwner.spellMana < this.card.stats.spellCost) {
 			return []
 		}
@@ -63,14 +63,25 @@ export class ServerCardTargeting {
 		return targetDefinitions
 			.map((targetDefinition) => {
 				return this.game.board.rows
-					.filter((row) =>
+					.flatMap((row, index) => {
+						const positions = [...Array(row.cards.length + 1).keys()]
+						return positions.map((pos) => ({
+							row: row,
+							position: pos,
+							rowIndex: index,
+						}))
+					})
+					.filter((rowPosition) =>
 						targetDefinition.require({
 							card: this.card,
 							owner: cardOwner,
-							targetRow: row,
+							targetRow: rowPosition.row,
+							targetPosition: rowPosition.position,
 						})
 					)
-					.map((targetRow) => ServerCardTarget.cardTargetRow(targetDefinition.id, TargetMode.CARD_PLAY, this.card, targetRow))
+					.map((target) =>
+						ServerCardTarget.cardTargetPosition(targetDefinition.id, TargetMode.CARD_PLAY, this.card, target.row, target.position)
+					)
 			})
 			.flat()
 	}

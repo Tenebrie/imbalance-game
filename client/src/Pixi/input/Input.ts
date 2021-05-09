@@ -115,7 +115,10 @@ export default class Input {
 
 		const validRows = this.playableCards
 			.filter((playableCard) => playableCard.sourceCardId === this.grabbedCard.card.id)
-			.map((playableCard) => Core.board.getRow(playableCard.targetRowIndex))
+			.map((playableCard) => ({
+				row: Core.board.getRow(playableCard.targetRowIndex),
+				position: playableCard.targetPosition,
+			}))
 		this.grabbedCard.updateValidTargetRows(validRows)
 	}
 
@@ -169,7 +172,9 @@ export default class Input {
 				hoveredRow &&
 				this.grabbedCard &&
 				this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY &&
-				this.grabbedCard.validTargetRows.includes(hoveredRow) &&
+				this.grabbedCard.validTargetPositions.find(
+					(targetPosition) => targetPosition.row === hoveredRow && targetPosition.position === cardInsertIndex
+				) &&
 				this.grabbedCard.card.type === CardType.UNIT
 			const isTargetingPosition =
 				hoveredRow &&
@@ -391,10 +396,13 @@ export default class Input {
 		const card = hoveredCard.card
 
 		if (hoveredCard.location === HoveredCardLocation.HAND && hoveredCard.owner === Core.player) {
-			const validRows = this.playableCards
+			const validPositions = this.playableCards
 				.filter((playableCard) => playableCard.sourceCardId === card.id)
-				.map((playableCard) => Core.board.getRow(playableCard.targetRowIndex))
-			this.grabbedCard = GrabbedCard.cardPlay(card, validRows)
+				.map((playableCard) => ({
+					row: Core.board.getRow(playableCard.targetRowIndex),
+					position: playableCard.targetPosition,
+				}))
+			this.grabbedCard = GrabbedCard.cardPlay(card, validPositions)
 			if (card.type === CardType.SPELL) {
 				store.commit.gameStateModule.setPlayerSpellManaInDanger(card.stats.spellCost)
 			}
@@ -409,10 +417,13 @@ export default class Input {
 				.filter((order) => order.targetType === TargetType.UNIT)
 				.map((order) => order.targetCardId)
 				.map((id) => Core.game.findRenderedCardById(id))
-			const validRows = validOrders
+			const validPositions = validOrders
 				.filter((order) => order.targetType === TargetType.BOARD_ROW)
-				.map((order) => Core.board.getRow(order.targetRowIndex))
-			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validRows)
+				.map((order) => ({
+					row: Core.board.getRow(order.targetRowIndex),
+					position: order.targetPosition,
+				}))
+			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validPositions)
 		} else if (hoveredCard.location === HoveredCardLocation.SELECTABLE) {
 			this.grabbedCard = GrabbedCard.cardSelect(card)
 		}

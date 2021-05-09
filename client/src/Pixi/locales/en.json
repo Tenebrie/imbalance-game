@@ -567,7 +567,7 @@
 	"card.unitShadowspawn.flavor": "Likes to cuddle with her little sister, Voidspawn.",
 
 	"card.unitYoungSquire.name": "Young Squire",
-	"card.unitYoungSquire.description": "*Deploy:*\n*Push* an allied unit forward.",
+	"card.unitYoungSquire.description": "*Deploy:*\n*Move 1* another allied unit.",
 
 	"card.unitTinySparkling.name": "Tiny Sparkling",
 	"card.unitTinySparkling.description": "<i>No effect</i>",
@@ -705,7 +705,7 @@
 	"card.spellQuickStrike.description": "Deal {damage} Damage to an enemy unit.",
 
 	"card.spellTacticalMove.name": "Tactical Move",
-	"card.spellTacticalMove.description": "Move an allied unit to an adjacent allied row.<p>If it moved to the front row,\ndeal {damage} Damage to opposing enemy units.\nOtherwise, restore {healing} Power.",
+	"card.spellTacticalMove.description": "*Move 1* an allied unit.<p>If it moved to the front row,\ndeal {damage} Damage to opposing enemy units.\nOtherwise, restore {healing} Power.",
 	"card.spellTacticalMove.target.label.unit": "Choose a unit",
 	"card.spellTacticalMove.target.label.row": "Move here",
 

@@ -52,7 +52,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			playerInGame.roundEnded ||
 			playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
-			!validTargets.find((target) => data.rowIndex === target.targetRow.index)
+			!validTargets.find(({ targetRow, targetPosition }) => targetRow.index === data.rowIndex && targetPosition === data.unitIndex)
 		) {
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return

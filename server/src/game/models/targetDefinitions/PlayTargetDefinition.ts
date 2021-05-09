@@ -8,6 +8,7 @@ export interface PlayTargetValidatorArguments {
 	card: ServerCard
 	owner: ServerPlayerInGame
 	targetRow: ServerBoardRow
+	targetPosition: number
 }
 
 export default class PlayTargetDefinition {

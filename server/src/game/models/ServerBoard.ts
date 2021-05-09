@@ -7,7 +7,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerBoardOrders from './ServerBoardOrders'
 import ServerCard from './ServerCard'
-import Utils from '../../utils/Utils'
+import Utils, { toRowIndex } from '../../utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
@@ -210,7 +210,8 @@ export default class ServerBoard implements Board {
 		return playerRows.indexOf(targetRow)
 	}
 
-	public getDistanceToDynamicFrontForPlayer(rowIndex: number, player: ServerPlayerInGame): number {
+	public getDistanceToDynamicFrontForPlayer(rowOrIndex: number | ServerBoardRow, player: ServerPlayerInGame): number {
+		const rowIndex = toRowIndex(rowOrIndex)
 		const targetRow = this.rows[rowIndex]
 		const distanceToStaticFront = this.getDistanceToStaticFront(rowIndex)
 		if (player !== targetRow.owner) {

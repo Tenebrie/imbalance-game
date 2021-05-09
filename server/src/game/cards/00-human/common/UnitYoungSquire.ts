@@ -6,12 +6,13 @@ import ServerUnit from '../../../models/ServerUnit'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import ServerAnimation from '../../../models/ServerAnimation'
+import Keywords from '@src/utils/Keywords'
 
 export default class UnitYoungSquire extends ServerCard {
+	movingUnit: ServerUnit | null = null
+
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
@@ -26,13 +27,22 @@ export default class UnitYoungSquire extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargets(TargetType.UNIT).requireAllied().requireNotSelf()
+		this.createDeployTargets(TargetType.UNIT)
+			.requireAllied()
+			.requireNotSelf()
+			.require(() => !this.movingUnit)
+			.label('card.spellTacticalMove.target.label.unit')
+			.perform(({ targetUnit }) => (this.movingUnit = targetUnit))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-	}
-
-	private onTargetSelected(target: ServerUnit): void {
-		this.game.animation.play(ServerAnimation.cardAffectsCards(this, [target.card]))
-		this.game.board.moveUnitForward(target, 1)
+		this.createDeployTargets(TargetType.BOARD_POSITION)
+			.requireAllied()
+			.require(() => !!this.movingUnit)
+			.require(({ targetRow }) => targetRow.index !== this.movingUnit!.rowIndex)
+			.require(({ targetRow }) => Math.abs(targetRow.index - this.movingUnit!.rowIndex) <= 1)
+			.label('card.spellTacticalMove.target.label.row')
+			.perform(({ targetRow, targetPosition }) => {
+				Keywords.move.unit(this.movingUnit!).toPosition(targetRow, targetPosition)
+			})
+			.finalize(() => (this.movingUnit = null))
 	}
 }
