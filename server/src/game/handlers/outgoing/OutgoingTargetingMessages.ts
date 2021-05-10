@@ -15,7 +15,13 @@ export default {
 		validTargets: ValidServerCardTarget[],
 		source: ServerCard
 	): void {
-		const highPriorityTargets = [TargetType.UNIT, TargetType.BOARD_ROW, TargetType.CARD_IN_UNIT_HAND, TargetType.CARD_IN_SPELL_HAND]
+		const highPriorityTargets = [
+			TargetType.UNIT,
+			TargetType.BOARD_ROW,
+			TargetType.BOARD_POSITION,
+			TargetType.CARD_IN_UNIT_HAND,
+			TargetType.CARD_IN_SPELL_HAND,
+		]
 		const highPriority = validTargets.every((target) => highPriorityTargets.includes(target.targetType))
 		player.sendMessage({
 			type: TargetingMessageType.CARD_PLAY,
@@ -37,7 +43,13 @@ export default {
 	},
 
 	notifyAboutRequestedAnonymousTargets(player: ServerPlayer, targetMode: TargetMode, validTargets: ServerAnonymousTargetCard[]): void {
-		const highPriorityTargets = [TargetType.UNIT, TargetType.BOARD_ROW, TargetType.CARD_IN_UNIT_HAND, TargetType.CARD_IN_SPELL_HAND]
+		const highPriorityTargets = [
+			TargetType.UNIT,
+			TargetType.BOARD_ROW,
+			TargetType.BOARD_POSITION,
+			TargetType.CARD_IN_UNIT_HAND,
+			TargetType.CARD_IN_SPELL_HAND,
+		]
 		const highPriority = validTargets.every((target) => highPriorityTargets.includes(target.targetType))
 		player.sendMessage({
 			type: TargetingMessageType.ANONYMOUS,

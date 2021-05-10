@@ -6,14 +6,19 @@ import CardFeature from '@shared/enums/CardFeature'
 import GameEventCreators from './events/GameEventCreators'
 import ResolveStackEntry from '@shared/models/ResolveStackEntry'
 import ResolveStack from '@shared/models/ResolveStack'
-import { DeployTarget } from '@src/game/models/ServerCardTargeting'
+import { DeployTarget, PlayTarget } from '@src/game/models/ServerCardTargeting'
+import TargetMode from '@src/../../shared/src/enums/TargetMode'
+
+export type ResolutionStackTarget = PlayTarget | DeployTarget
 
 class ServerResolveStackEntry implements ResolveStackEntry {
+	public readonly targetMode: TargetMode
 	public readonly ownedCard: ServerOwnedCard
-	public readonly previousTargets: DeployTarget[]
+	public readonly previousTargets: ResolutionStackTarget[]
 	public onResumeResolving: () => void
 
-	constructor(ownedCard: ServerOwnedCard, onResumeResolving: () => void) {
+	constructor(ownedCard: ServerOwnedCard, targetMode: TargetMode, onResumeResolving: () => void) {
+		this.targetMode = targetMode
 		this.ownedCard = ownedCard
 		this.onResumeResolving = onResumeResolving
 		this.previousTargets = []
@@ -49,7 +54,7 @@ export default class ServerResolveStack implements ResolveStack {
 		return this.entries[this.entries.length - 1]
 	}
 
-	public get previousTargets(): DeployTarget[] {
+	public get previousTargets(): ResolutionStackTarget[] {
 		if (this.entries.length === 0) {
 			return []
 		}
@@ -57,9 +62,15 @@ export default class ServerResolveStack implements ResolveStack {
 		return this.entries[this.entries.length - 1].previousTargets
 	}
 
-	public startResolving(ownedCard: ServerOwnedCard, onResumeResolving: () => void): void {
+	public startResolving(ownedCard: ServerOwnedCard, targetMode: TargetMode, onResumeResolving: () => void): void {
 		/* Create card in stack */
-		this.entries.unshift(new ServerResolveStackEntry(ownedCard, onResumeResolving))
+		this.entries.unshift(new ServerResolveStackEntry(ownedCard, targetMode, onResumeResolving))
+		OutgoingMessageHandlers.notifyAboutCardResolving(ownedCard)
+	}
+
+	public startResolvingImmediately(ownedCard: ServerOwnedCard, targetMode: TargetMode, onResumeResolving: () => void): void {
+		/* Create card in stack */
+		this.entries.push(new ServerResolveStackEntry(ownedCard, targetMode, onResumeResolving))
 		OutgoingMessageHandlers.notifyAboutCardResolving(ownedCard)
 	}
 
@@ -67,7 +78,7 @@ export default class ServerResolveStack implements ResolveStack {
 		this.entries[this.entries.length - 1].onResumeResolving()
 	}
 
-	public pushTarget(target: DeployTarget): void {
+	public pushTarget(target: ResolutionStackTarget): void {
 		this.previousTargets.push(target)
 	}
 

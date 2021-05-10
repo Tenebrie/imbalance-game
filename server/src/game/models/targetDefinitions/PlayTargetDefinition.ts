@@ -3,6 +3,7 @@ import ServerCard from '../ServerCard'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import PlayTargetDefinitionBuilder from '@src/game/models/targetDefinitions/PlayTargetDefinitionBuilder'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import TargetType from '@src/../../shared/src/enums/TargetType'
 
 export interface PlayTargetValidatorArguments {
 	card: ServerCard
@@ -27,6 +28,10 @@ export default class PlayTargetDefinition {
 		this.game = game
 		this.conditions = conditions
 		this.evaluator = evaluator
+	}
+
+	public get targetType(): TargetType {
+		return TargetType.BOARD_POSITION
 	}
 
 	public require(args: PlayTargetValidatorArguments): boolean {

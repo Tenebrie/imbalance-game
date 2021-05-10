@@ -27,7 +27,9 @@ export default class SpellReinforcements extends ServerCard {
 			.require(() => this.ownerInGame.cardDeck.unitCards.length > 0)
 			.perform(() => {
 				const owner = this.ownerInGame
-				Keywords.summonCard(owner.cardDeck.unitCards[0])
+				while (owner.cardDeck.unitCards.length > 0) {
+					Keywords.summonCard(owner.cardDeck.unitCards[0])
+				}
 			})
 	}
 }

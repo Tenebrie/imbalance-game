@@ -169,7 +169,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 		this.unitMana = value
 		OutgoingMessageHandlers.notifyAboutManaChange(this, delta)
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this)
 	}
 
 	public addSpellMana(value: number): void {

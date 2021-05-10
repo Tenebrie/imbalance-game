@@ -267,8 +267,7 @@ export default class ServerGame implements Game {
 
 		this.advanceCurrentTurn()
 
-		this.players.forEach((player) => {
-			OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, player)
+		this.players.forEach(() => {
 			OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(this)
 		})
 	}

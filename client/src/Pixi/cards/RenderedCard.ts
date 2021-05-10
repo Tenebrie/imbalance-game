@@ -232,11 +232,12 @@ export default class RenderedCard implements Card {
 	}
 
 	public getVisualPosition(): PIXI.Point {
-		if (!this.sprite || !this.sprite.position) {
-			console.warn('No visual sprite available')
+		try {
+			return new PIXI.Point(this.coreContainer.position.x + this.sprite.position.x, this.coreContainer.position.y + this.sprite.position.y)
+		} catch (err) {
+			console.error(err)
 			return new PIXI.Point(0, 0)
 		}
-		return new PIXI.Point(this.coreContainer.position.x + this.sprite.position.x, this.coreContainer.position.y + this.sprite.position.y)
 	}
 
 	public get tribes(): CardTribe[] {

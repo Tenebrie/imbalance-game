@@ -15,7 +15,7 @@ import ServerResolveStack from './ServerResolveStack'
 import GameEventCreators from './events/GameEventCreators'
 import TargetMode from '@shared/enums/TargetMode'
 import ServerCard from './ServerCard'
-import { DeployTarget } from '@src/game/models/ServerCardTargeting'
+import { DeployTarget, PlayTarget } from '@src/game/models/ServerCardTargeting'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import TargetType from '@shared/enums/TargetType'
 import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
@@ -45,7 +45,7 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack = new ServerResolveStack(game)
 	}
 
-	public playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
+	public playCardAsPlayerAction(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
 		/*
 		 * Check if the card can be played to specified row.
 		 * This already includes the check for unit/spell mana
@@ -54,6 +54,7 @@ export default class ServerGameCardPlay {
 		if (
 			!ownedCard.card.targeting
 				.getPlayTargets(ownedCard.owner)
+				.map((playTarget) => playTarget.target)
 				.find(({ targetRow, targetPosition }) => targetRow.index === rowIndex && targetPosition === unitIndex)
 		) {
 			return
@@ -64,18 +65,23 @@ export default class ServerGameCardPlay {
 		ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.stats.spellCost))
 
 		/* Resolve card */
-		this.forcedPlayCard(ownedCard, rowIndex, unitIndex, 'hand')
+		this.playCard(ownedCard, rowIndex, unitIndex, 'hand')
 	}
 
-	public forcedPlayCardFromHand(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
+	public playCardFromHand(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
 		if (!this.game.board.isExtraUnitPlayableToRow(rowIndex)) {
 			return
 		}
 
-		this.forcedPlayCard(ownedCard, rowIndex, unitIndex, 'hand')
+		this.playCard(ownedCard, rowIndex, unitIndex, 'hand')
 	}
 
-	private forcedPlayCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number, source: 'hand' | 'deck'): void {
+	public playCardToResolutionStack(ownedCard: ServerOwnedCard): void {
+		/* Start resolving */
+		this.cardResolveStack.startResolvingImmediately(ownedCard, TargetMode.CARD_PLAY, () => this.updateResolvingCardTargetingStatus())
+	}
+
+	private playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number, source: 'hand' | 'deck' | 'aether'): void {
 		const card = ownedCard.card
 		const owner = ownedCard.owner
 
@@ -119,7 +125,7 @@ export default class ServerGameCardPlay {
 		const card = ownedCard.card
 
 		/* Start resolving */
-		this.cardResolveStack.startResolving(ownedCard, () => this.updateResolvingCardTargetingStatus())
+		this.cardResolveStack.startResolvingImmediately(ownedCard, TargetMode.DEPLOY_EFFECT, () => this.updateResolvingCardTargetingStatus())
 
 		/* Insert the card into the board */
 		const unit = this.game.board.createUnit(card, rowIndex, unitIndex)
@@ -140,7 +146,7 @@ export default class ServerGameCardPlay {
 		const card = ownedCard.card
 
 		/* Start resolving */
-		this.cardResolveStack.startResolving(ownedCard, () => this.updateResolvingCardTargetingStatus())
+		this.cardResolveStack.startResolvingImmediately(ownedCard, TargetMode.DEPLOY_EFFECT, () => this.updateResolvingCardTargetingStatus())
 
 		/* Invoke the card onPlay effect */
 		this.game.events.postEvent(
@@ -151,23 +157,47 @@ export default class ServerGameCardPlay {
 	}
 
 	public updateResolvingCardTargetingStatus(): void {
-		const currentCard = this.cardResolveStack.currentCard
-		if (!currentCard) {
+		const currentEntry = this.cardResolveStack.currentEntry
+		if (!currentEntry) {
 			return
 		}
 
-		const validTargets = this.getDeployTargets()
+		const validTargets = this.getResolvingCardTargets()
 
 		if (validTargets.length === 0) {
 			this.cardResolveStack.finishResolving()
-		} else {
-			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
-				currentCard.owner.player,
-				TargetMode.DEPLOY_EFFECT,
-				validTargets.map((deployTarget) => deployTarget.target),
-				currentCard.card
-			)
 		}
+		OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
+			currentEntry.ownedCard.owner.player,
+			currentEntry.targetMode,
+			validTargets.map((wrapper) => wrapper.target),
+			currentEntry.ownedCard.card
+		)
+	}
+
+	public getResolvingCardTargets(): (PlayTarget | DeployTarget)[] {
+		const currentEntry = this.cardResolveStack.currentEntry
+		if (!currentEntry) {
+			return []
+		}
+
+		if (currentEntry.targetMode === TargetMode.CARD_PLAY) {
+			return this.getPlayTargets()
+		} else if (currentEntry.targetMode === TargetMode.DEPLOY_EFFECT) {
+			return this.getDeployTargets()
+		}
+		console.error(`Unable to resolve card with mode ${currentEntry.targetMode}. It will be skipped.`, currentEntry)
+		return []
+	}
+
+	public getPlayTargets(): PlayTarget[] {
+		const currentCard = this.cardResolveStack.currentCard
+		if (!currentCard) {
+			return []
+		}
+		const card = currentCard?.card
+
+		return card.targeting.getPlayTargets(card.ownerInGame)
 	}
 
 	public getDeployTargets(): DeployTarget[] {
@@ -181,21 +211,21 @@ export default class ServerGameCardPlay {
 	}
 
 	public selectCardTarget(playerInGame: ServerPlayerInGame, message: CardTargetMessage | CardTarget): void {
-		const currentResolvingCard = this.cardResolveStack.currentEntry
-		if (!currentResolvingCard) {
+		const currentEntry = this.cardResolveStack.currentEntry
+		if (!currentEntry) {
 			return
 		}
 
-		const currentCard = currentResolvingCard.ownedCard.card
+		const currentCard = currentEntry.ownedCard.card
 
-		const deployTargets = this.getDeployTargets()
-		const correspondingTarget = deployTargets.find((target) => target.target.id === message.id)
+		const validTargets = this.getResolvingCardTargets()
+		const correspondingTarget = validTargets.find((wrapper) => wrapper.target.id === message.id)
 
 		if (!correspondingTarget) {
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				playerInGame.player,
-				TargetMode.DEPLOY_EFFECT,
-				deployTargets.map((deployTarget) => deployTarget.target),
+				currentEntry.targetMode,
+				validTargets.map((wrapper) => wrapper.target),
 				currentCard
 			)
 			return
@@ -204,132 +234,141 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.pushTarget(correspondingTarget)
 
 		const target = correspondingTarget.target
+		const targetMode = correspondingTarget.target.targetMode
 		const targetType = correspondingTarget.definition.targetType
-		if (targetType === TargetType.BOARD_ROW && target instanceof ServerCardTargetRow) {
-			;(correspondingTarget.definition as DeployTargetDefinition<RowTargetValidatorArguments>).perform({
-				sourceCard: currentCard,
-				targetRow: target.targetRow,
-				previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
-			})
-		} else if (targetType === TargetType.BOARD_POSITION && target instanceof ServerCardTargetPosition) {
-			;(correspondingTarget.definition as DeployTargetDefinition<PositionTargetValidatorArguments>).perform({
-				sourceCard: currentCard,
-				targetRow: target.targetRow,
-				targetPosition: target.targetPosition,
-				previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
-			})
-		} else if (targetType === TargetType.UNIT && target instanceof ServerCardTargetUnit) {
-			;(correspondingTarget.definition as DeployTargetDefinition<UnitTargetValidatorArguments>).perform({
-				sourceCard: currentCard,
-				targetCard: target.targetCard,
-				targetUnit: target.targetCard.unit!,
-				previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
-			})
-		} else if (target instanceof ServerCardTargetCard) {
-			;(correspondingTarget.definition as DeployTargetDefinition<CardTargetValidatorArguments>).perform({
-				sourceCard: currentCard,
-				targetCard: target.targetCard,
-				previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
-			})
-		}
-
-		if (target instanceof ServerCardTargetCard || target instanceof ServerCardTargetUnit) {
-			this.game.events.postEvent(
-				GameEventCreators.cardTargetCardSelected({
-					targetMode: target.targetMode,
-					targetType: target.targetType,
-					triggeringCard: currentCard,
-					triggeringPlayer: playerInGame,
-					targetCard: target.targetCard,
-				})
-			)
-			if (target instanceof ServerCardTargetUnit) {
-				this.game.events.postEvent(
-					GameEventCreators.cardTargetUnitSelected({
-						targetMode: target.targetMode,
-						targetType: target.targetType,
-						triggeringCard: currentCard,
-						triggeringPlayer: playerInGame,
-						targetCard: target.targetCard,
-						targetUnit: target.targetCard.unit!,
-					})
-				)
-			}
-		}
-
-		if (target instanceof ServerCardTargetRow || target instanceof ServerCardTargetPosition) {
-			this.game.events.postEvent(
-				GameEventCreators.cardTargetRowSelected({
-					targetMode: target.targetMode,
-					targetType: target.targetType,
-					triggeringCard: currentCard,
-					triggeringPlayer: playerInGame,
-					targetRow: target.targetRow,
-				})
-			)
-			if (target instanceof ServerCardTargetPosition) {
-				this.game.events.postEvent(
-					GameEventCreators.cardTargetPositionSelected({
-						targetMode: target.targetMode,
-						targetType: target.targetType,
-						triggeringCard: currentCard,
-						triggeringPlayer: playerInGame,
-						targetRow: target.targetRow,
-						targetPosition: target.targetPosition,
-					})
-				)
-			}
-		}
-
-		currentResolvingCard.onResumeResolving = () => {
-			const updatedDeployTargets = this.getDeployTargets()
-			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
-				playerInGame.player,
-				TargetMode.DEPLOY_EFFECT,
-				updatedDeployTargets.map((deployTarget) => deployTarget.target),
-				currentCard
-			)
-
-			if (updatedDeployTargets.length > 0) {
-				return
-			}
-
-			const target = correspondingTarget.target
-			const targetType = correspondingTarget.definition.targetType
+		if (targetMode === TargetMode.CARD_PLAY && target instanceof ServerCardTargetPosition) {
+			this.cardResolveStack.finishResolving()
+			this.playCard(currentEntry.ownedCard, target.targetRow.index, target.targetPosition, 'aether')
+		} else if (targetMode === TargetMode.DEPLOY_EFFECT) {
 			if (targetType === TargetType.BOARD_ROW && target instanceof ServerCardTargetRow) {
-				;(correspondingTarget.definition as DeployTargetDefinition<RowTargetValidatorArguments>).finalize({
+				;(correspondingTarget.definition as DeployTargetDefinition<RowTargetValidatorArguments>).perform({
 					sourceCard: currentCard,
 					targetRow: target.targetRow,
 					previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
 				})
 			} else if (targetType === TargetType.BOARD_POSITION && target instanceof ServerCardTargetPosition) {
-				;(correspondingTarget.definition as DeployTargetDefinition<PositionTargetValidatorArguments>).finalize({
+				;(correspondingTarget.definition as DeployTargetDefinition<PositionTargetValidatorArguments>).perform({
 					sourceCard: currentCard,
 					targetRow: target.targetRow,
 					targetPosition: target.targetPosition,
 					previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
 				})
 			} else if (targetType === TargetType.UNIT && target instanceof ServerCardTargetUnit) {
-				;(correspondingTarget.definition as DeployTargetDefinition<UnitTargetValidatorArguments>).finalize({
+				;(correspondingTarget.definition as DeployTargetDefinition<UnitTargetValidatorArguments>).perform({
 					sourceCard: currentCard,
 					targetCard: target.targetCard,
 					targetUnit: target.targetCard.unit!,
 					previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
 				})
 			} else if (target instanceof ServerCardTargetCard) {
-				;(correspondingTarget.definition as DeployTargetDefinition<CardTargetValidatorArguments>).finalize({
+				;(correspondingTarget.definition as DeployTargetDefinition<CardTargetValidatorArguments>).perform({
 					sourceCard: currentCard,
 					targetCard: target.targetCard,
 					previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
 				})
 			}
 
-			this.game.events.postEvent(
-				GameEventCreators.cardTargetsConfirmed({
-					triggeringCard: currentCard,
-					triggeringPlayer: playerInGame,
-				})
+			if (target instanceof ServerCardTargetCard || target instanceof ServerCardTargetUnit) {
+				this.game.events.postEvent(
+					GameEventCreators.cardTargetCardSelected({
+						targetMode: target.targetMode,
+						targetType: target.targetType,
+						triggeringCard: currentCard,
+						triggeringPlayer: playerInGame,
+						targetCard: target.targetCard,
+					})
+				)
+				if (target instanceof ServerCardTargetUnit) {
+					this.game.events.postEvent(
+						GameEventCreators.cardTargetUnitSelected({
+							targetMode: target.targetMode,
+							targetType: target.targetType,
+							triggeringCard: currentCard,
+							triggeringPlayer: playerInGame,
+							targetCard: target.targetCard,
+							targetUnit: target.targetCard.unit!,
+						})
+					)
+				}
+			}
+
+			if (target instanceof ServerCardTargetRow || target instanceof ServerCardTargetPosition) {
+				this.game.events.postEvent(
+					GameEventCreators.cardTargetRowSelected({
+						targetMode: target.targetMode,
+						targetType: target.targetType,
+						triggeringCard: currentCard,
+						triggeringPlayer: playerInGame,
+						targetRow: target.targetRow,
+					})
+				)
+				if (target instanceof ServerCardTargetPosition) {
+					this.game.events.postEvent(
+						GameEventCreators.cardTargetPositionSelected({
+							targetMode: target.targetMode,
+							targetType: target.targetType,
+							triggeringCard: currentCard,
+							triggeringPlayer: playerInGame,
+							targetRow: target.targetRow,
+							targetPosition: target.targetPosition,
+						})
+					)
+				}
+			}
+		}
+
+		currentEntry.onResumeResolving = () => {
+			const updatedTargets = this.getResolvingCardTargets()
+			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
+				playerInGame.player,
+				currentEntry.targetMode,
+				updatedTargets.map((wrapper) => wrapper.target),
+				currentCard
 			)
+
+			if (updatedTargets.length > 0) {
+				return
+			}
+
+			const target = correspondingTarget.target
+			const targetMode = correspondingTarget.target.targetMode
+			const targetType = correspondingTarget.definition.targetType
+			if (targetMode === TargetMode.DEPLOY_EFFECT) {
+				if (targetType === TargetType.BOARD_ROW && target instanceof ServerCardTargetRow) {
+					;(correspondingTarget.definition as DeployTargetDefinition<RowTargetValidatorArguments>).finalize({
+						sourceCard: currentCard,
+						targetRow: target.targetRow,
+						previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+					})
+				} else if (targetType === TargetType.BOARD_POSITION && target instanceof ServerCardTargetPosition) {
+					;(correspondingTarget.definition as DeployTargetDefinition<PositionTargetValidatorArguments>).finalize({
+						sourceCard: currentCard,
+						targetRow: target.targetRow,
+						targetPosition: target.targetPosition,
+						previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+					})
+				} else if (targetType === TargetType.UNIT && target instanceof ServerCardTargetUnit) {
+					;(correspondingTarget.definition as DeployTargetDefinition<UnitTargetValidatorArguments>).finalize({
+						sourceCard: currentCard,
+						targetCard: target.targetCard,
+						targetUnit: target.targetCard.unit!,
+						previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+					})
+				} else if (target instanceof ServerCardTargetCard) {
+					;(correspondingTarget.definition as DeployTargetDefinition<CardTargetValidatorArguments>).finalize({
+						sourceCard: currentCard,
+						targetCard: target.targetCard,
+						previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
+					})
+				}
+
+				this.game.events.postEvent(
+					GameEventCreators.cardTargetsConfirmed({
+						triggeringCard: currentCard,
+						triggeringPlayer: playerInGame,
+					})
+				)
+			}
 			this.cardResolveStack.finishResolving()
 		}
 	}

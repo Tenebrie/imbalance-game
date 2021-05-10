@@ -11,7 +11,7 @@ export default class PlayTargetDefinitionBuilder {
 	private __evaluator: ((args: PlayTargetValidatorArguments) => number) | null = null
 
 	private constructor(game: ServerGame) {
-		this.id = getRandomId()
+		this.id = `tdef:${getRandomId()}`
 		this.game = game
 	}
 

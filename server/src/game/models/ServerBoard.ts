@@ -16,7 +16,6 @@ import GameHookType, { UnitDestroyedHookArgs, UnitDestroyedHookValues } from './
 import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
-import { PositionTargetValidatorArguments } from '@src/types/TargetValidatorArguments'
 
 export default class ServerBoard implements Board {
 	readonly game: ServerGame
@@ -35,7 +34,7 @@ export default class ServerBoard implements Board {
 	}
 
 	public findUnitById(cardId: string): ServerUnit | undefined {
-		const cards = Utils.flat(this.rows.map((row) => row.cards))
+		const cards = this.rows.flatMap((row) => row.cards)
 		return cards.find((cardOnBoard) => cardOnBoard.card.id === cardId)
 	}
 
@@ -101,7 +100,7 @@ export default class ServerBoard implements Board {
 	}
 
 	public getAllUnits(): ServerUnit[] {
-		return Utils.flat(this.rows.map((row) => row.cards))
+		return this.rows.flatMap((row) => row.cards)
 	}
 
 	public isUnitAdjacent(first: ServerUnit | null, second: ServerUnit | null): boolean {

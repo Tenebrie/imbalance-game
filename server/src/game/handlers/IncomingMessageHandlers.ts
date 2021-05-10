@@ -23,8 +23,6 @@ export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playe
 const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void => {
 	game.events.resolveEvents()
 	game.events.evaluateSelectors()
-	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
-	OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 	game.events.flushLogEventGroup()
 
 	if (game.turnPhase === GameTurnPhase.DEPLOY && player.unitMana === 0 && game.cardPlay.cardResolveStack.currentCard === null) {
@@ -33,10 +31,11 @@ const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void =
 
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
-		OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
-		game.events.flushLogEventGroup()
 	}
+
+	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
+	OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
+	game.events.flushLogEventGroup()
 }
 
 const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: IncomingMessageHandlerFunction } = {
@@ -52,14 +51,14 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			playerInGame.roundEnded ||
 			playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
-			!validTargets.find(({ targetRow, targetPosition }) => targetRow.index === data.rowIndex && targetPosition === data.unitIndex)
+			!validTargets.some((wrapper) => wrapper.target.targetRow.index === data.rowIndex && wrapper.target.targetPosition === data.unitIndex)
 		) {
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return
 		}
 
 		const ownedCard = new ServerOwnedCard(card, playerInGame)
-		game.cardPlay.playCard(ownedCard, data.rowIndex, data.unitIndex)
+		game.cardPlay.playCardAsPlayerAction(ownedCard, data.rowIndex, data.unitIndex)
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)

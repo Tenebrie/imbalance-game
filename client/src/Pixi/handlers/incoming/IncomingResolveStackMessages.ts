@@ -7,7 +7,7 @@ import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
 
 const IncomingResolveStackMessages: { [index in ResolveStackMessageType]: IncomingMessageHandlerFunction } = {
 	[ResolveStackMessageType.ADD]: (data: OwnedCardMessage) => {
-		Core.resolveStack.addCard(RenderedCard.fromMessage(data.card), Core.getPlayer(data.owner.player.id))
+		Core.resolveStack.addCard(RenderedCard.fromMessage(data.card), Core.getPlayer(data.owner.playerId))
 	},
 
 	[ResolveStackMessageType.REMOVE]: (data: CardRefMessage) => {

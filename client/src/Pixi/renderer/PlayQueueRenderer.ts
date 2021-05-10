@@ -10,7 +10,7 @@ class PlayQueueRenderer {
 	}
 
 	public renderPlayQueue(): void {
-		const invertedStack = Core.resolveStack.cards.slice().reverse()
+		const invertedStack = Core.resolveStack.cards.slice()
 		const playersStack = invertedStack.filter((card) => card.owner === Core.player)
 		for (let i = 0; i < playersStack.length; i++) {
 			const ownedCard = playersStack[i]

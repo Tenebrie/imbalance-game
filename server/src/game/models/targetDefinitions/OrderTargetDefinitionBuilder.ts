@@ -19,7 +19,7 @@ export default class OrderTargetDefinitionBuilder<EventArgs extends TargetValida
 	private __label = 'target.generic.unit'
 
 	private constructor(card: ServerCard, targetType: TargetType) {
-		this.id = getRandomId()
+		this.id = `tdef:${getRandomId()}`
 		this.card = card
 		this.targetType = targetType
 	}

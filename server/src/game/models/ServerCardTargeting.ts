@@ -24,8 +24,14 @@ import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTar
 import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
 import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTargetDefinition'
 import { OrderTarget } from '@src/game/models/ServerBoardOrders'
+import { ResolutionStackTarget } from './ServerResolveStack'
 
 export type ValidServerCardTarget = ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow | ServerCardTargetPosition
+
+export type PlayTarget = {
+	target: ServerCardTargetPosition
+	definition: PlayTargetDefinition
+}
 
 export type DeployTarget = {
 	target: ValidServerCardTarget
@@ -50,15 +56,15 @@ export class ServerCardTargeting {
 	 *            Play targets
 	 * ------------------------------------
 	 */
-	public getPlayTargets(cardOwner: ServerPlayerInGame | null): ServerCardTargetPosition[] {
+	public getPlayTargets(cardOwner: ServerPlayerInGame | null): PlayTarget[] {
 		if (!cardOwner || cardOwner.unitMana < this.card.stats.unitCost || cardOwner.spellMana < this.card.stats.spellCost) {
 			return []
 		}
 
-		let targetDefinitions = this.getPlayTargetDefinitions()
-		if (targetDefinitions.length === 0) {
-			targetDefinitions = [PlayTargetDefinition.base(this.game)]
+		if (this.playTargetDefinitions.length === 0) {
+			this.playTargetDefinitions = [PlayTargetDefinitionBuilder.base(this.game)]
 		}
+		const targetDefinitions = this.getPlayTargetDefinitions()
 
 		return targetDefinitions
 			.map((targetDefinition) => {
@@ -79,9 +85,10 @@ export class ServerCardTargeting {
 							targetPosition: rowPosition.position,
 						})
 					)
-					.map((target) =>
-						ServerCardTarget.cardTargetPosition(targetDefinition.id, TargetMode.CARD_PLAY, this.card, target.row, target.position)
-					)
+					.map((target) => ({
+						target: ServerCardTarget.cardTargetPosition(targetDefinition.id, TargetMode.CARD_PLAY, this.card, target.row, target.position),
+						definition: targetDefinition,
+					}))
 			})
 			.flat()
 	}
@@ -91,7 +98,7 @@ export class ServerCardTargeting {
 	 *          Deploy targets
 	 * ------------------------------------
 	 */
-	public getDeployTargets(previousTargets: DeployTarget[] = []): DeployTarget[] {
+	public getDeployTargets(previousTargets: ResolutionStackTarget[] = []): DeployTarget[] {
 		const mappedDefinitions = this.getDeployTargetDefinitions()
 			.filter((targetDefinition) => targetDefinition.totalTargetCount > previousTargets.length)
 			.map((targetDefinition) => ({
@@ -112,7 +119,7 @@ export class ServerCardTargeting {
 
 	private getDeployTargetsForDefinition(
 		targetDefinition: DeployTargetDefinition<TargetValidatorArguments>,
-		previousTargets: DeployTarget[] = []
+		previousTargets: ResolutionStackTarget[] = []
 	): ValidServerCardTarget[] {
 		const applicableTargets = previousTargets.filter((previousTarget) => {
 			return previousTarget.definition.id === targetDefinition.id
@@ -136,7 +143,7 @@ export class ServerCardTargeting {
 
 	private getDeployTargetsForDefinitionAsUnits(
 		targetDefinition: DeployTargetDefinition<UnitTargetValidatorArguments>,
-		previousTargets: DeployTarget[]
+		previousTargets: ResolutionStackTarget[]
 	): ValidServerCardTarget[] {
 		return this.game.board
 			.getAllUnits()
@@ -182,7 +189,7 @@ export class ServerCardTargeting {
 
 	public getDeployTargetsForDefinitionAsRows(
 		targetDefinition: DeployTargetDefinition<RowTargetValidatorArguments>,
-		previousTargets: DeployTarget[] = []
+		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetRow[] {
 		return this.game.board.rows
 			.filter((row) =>
@@ -199,7 +206,7 @@ export class ServerCardTargeting {
 
 	public getDeployTargetsForDefinitionAsPositions(
 		targetDefinition: DeployTargetDefinition<PositionTargetValidatorArguments>,
-		previousTargets: DeployTarget[] = []
+		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetPosition[] {
 		return this.game.board.rows
 			.flatMap((row, index) => {
@@ -233,7 +240,7 @@ export class ServerCardTargeting {
 	public getDeployTargetsForDefinitionAsCards(
 		targetType: CardTargetTypes,
 		targetDefinition: DeployTargetDefinition<any>,
-		previousTargets: DeployTarget[]
+		previousTargets: ResolutionStackTarget[]
 	): ServerCardTargetCard[] {
 		let targets: ServerCardTargetCard[] = []
 		if (targetType === TargetType.CARD_IN_LIBRARY) {
@@ -253,7 +260,7 @@ export class ServerCardTargeting {
 
 	private getValidCardLibraryTargets(
 		targetDefinition: DeployTargetDefinition<any>,
-		previousTargets: DeployTarget[] = []
+		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		return Utils.sortCards(
 			GameLibrary.cards
@@ -272,7 +279,7 @@ export class ServerCardTargeting {
 
 	private getValidUnitHandTargets(
 		targetDefinition: DeployTargetDefinition<any>,
-		previousTargets: DeployTarget[] = []
+		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		return Utils.sortCards(
 			this.game.players
@@ -299,7 +306,7 @@ export class ServerCardTargeting {
 
 	private getValidSpellHandTargets(
 		targetDefinition: DeployTargetDefinition<any>,
-		previousTargets: DeployTarget[] = []
+		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		return Utils.sortCards(
 			this.game.players
@@ -326,7 +333,7 @@ export class ServerCardTargeting {
 
 	private getValidUnitDeckTargets(
 		targetDefinition: DeployTargetDefinition<any>,
-		previousTargets: DeployTarget[] = []
+		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		let targetedCards = this.game.players
 			.map((player) => player.cardDeck.unitCards)
@@ -356,7 +363,7 @@ export class ServerCardTargeting {
 
 	private getValidSpellDeckTargets(
 		targetDefinition: DeployTargetDefinition<any>,
-		previousTargets: DeployTarget[] = []
+		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		let targetedCards = this.game.players
 			.map((player) => player.cardDeck.spellCards)

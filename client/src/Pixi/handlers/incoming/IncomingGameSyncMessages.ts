@@ -55,7 +55,7 @@ const IncomingGameSyncMessages: { [index in GameSyncMessageType]: IncomingMessag
 
 	[GameSyncMessageType.STACK_STATE]: (data: ResolveStackMessage) => {
 		data.entries.forEach((entry) => {
-			Core.resolveStack.addCard(RenderedCard.fromMessage(entry.ownedCard.card), Core.getPlayer(entry.ownedCard.owner.player.id))
+			Core.resolveStack.addCard(RenderedCard.fromMessage(entry.ownedCard.card), Core.getPlayer(entry.ownedCard.owner.playerId))
 		})
 	},
 

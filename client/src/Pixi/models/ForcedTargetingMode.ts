@@ -17,7 +17,7 @@ import { getCardInsertIndex } from '@/utils/Utils'
 export default class ForcedTargetingMode {
 	readonly targetMode: TargetMode
 	readonly validTargets: CardTargetMessage[] | AnonymousTargetMessage[]
-	readonly source: RenderedCard | null
+	readonly sourceCardId: string | null
 	selectedTarget: CardTargetMessage | AnonymousTargetMessage | null = null
 
 	readonly targetingLine: TargetingLine | null
@@ -25,18 +25,25 @@ export default class ForcedTargetingMode {
 	constructor(targetMode: TargetMode, validTargets: CardTargetMessage[] | AnonymousTargetMessage[], source: RenderedCard | null) {
 		this.targetMode = targetMode
 		this.validTargets = validTargets
-		this.source = source
+		this.sourceCardId = source ? source.id : null
 		if (source) {
 			this.targetingLine = new TargetingLine()
 			this.targetingLine.create()
 		}
 	}
 
+	public get source(): RenderedCard | null {
+		return this.sourceCardId ? Core.game.findRenderedCardById(this.sourceCardId) : null
+	}
+
 	public selectTarget(): void {
+		this.selectedTarget = this.findValidTarget()
+	}
+
+	private findValidTarget(): CardTargetMessage | AnonymousTargetMessage | null {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
-
-		this.selectedTarget = this.validTargets.find((target) => {
+		return this.validTargets.find((target) => {
 			return (
 				(target.targetType === TargetType.BOARD_POSITION &&
 					hoveredRow &&
@@ -53,12 +60,7 @@ export default class ForcedTargetingMode {
 			return false
 		}
 
-		const target = this.selectedTarget
-		const hoveredCard = MouseHover.getHoveredCard()
-		const hoveredRow = MouseHover.getHoveredRow()
-		return (
-			(hoveredCard && target.targetCardId === hoveredCard.id) || (hoveredRow && Core.board.getRow(target.targetRowIndex) === hoveredRow)
-		)
+		return this.findValidTarget() === this.selectedTarget
 	}
 
 	public isUnitPotentialTarget(unit: RenderedUnit): boolean {
@@ -72,28 +74,12 @@ export default class ForcedTargetingMode {
 	}
 
 	public getDisplayedLabel(): string {
-		const hoveredCard = MouseHover.getHoveredCard()
-		const hoveredRow = MouseHover.getHoveredRow()
-
-		const hoveredTarget = this.validTargets.find((target) => {
-			return (
-				(hoveredCard && target.targetCardId === hoveredCard.id) ||
-				(Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
-			)
-		})
-		return hoveredTarget ? hoveredTarget.targetLabel : ''
+		const hoveredTarget = this.findValidTarget()
+		return hoveredTarget ? (hoveredTarget.targetMode === TargetMode.CARD_PLAY ? 'card.play' : hoveredTarget.targetLabel) : ''
 	}
 
 	public getDisplayedLabelVariables(): RichTextVariables {
-		const hoveredCard = MouseHover.getHoveredCard()
-		const hoveredRow = MouseHover.getHoveredRow()
-
-		const hoveredTarget = this.validTargets.find((target) => {
-			return (
-				(hoveredCard && target.targetCardId === hoveredCard.id) ||
-				(Core.board.getRow(target.targetRowIndex) && Core.board.getRow(target.targetRowIndex) === hoveredRow)
-			)
-		})
+		const hoveredTarget = this.findValidTarget()
 		if (!hoveredTarget || !('sourceCardId' in hoveredTarget)) {
 			return {}
 		}

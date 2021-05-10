@@ -48,13 +48,13 @@ export default {
 		if (game.activePlayer) {
 			OutgoingMessageHandlers.sendActivePlayer(playerInGame.player, game.activePlayer)
 		}
-		if (playerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
-			const deployTargets = game.cardPlay.getDeployTargets()
+		if (playerInGame.targetRequired && game.cardPlay.cardResolveStack.currentEntry) {
+			const cardTargets = game.cardPlay.getResolvingCardTargets()
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargetsForReconnect(
 				playerInGame.player,
-				TargetMode.DEPLOY_EFFECT,
-				deployTargets.map((deployTarget) => deployTarget.target),
-				game.cardPlay.cardResolveStack.currentCard.card
+				game.cardPlay.cardResolveStack.currentEntry.targetMode,
+				cardTargets.map((deployTarget) => deployTarget.target),
+				game.cardPlay.cardResolveStack.currentEntry.ownedCard.card
 			)
 		} else if (playerInGame.mulliganMode) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(playerInGame.player, playerInGame)
@@ -109,13 +109,13 @@ export default {
 		if (game.activePlayer) {
 			OutgoingMessageHandlers.sendActivePlayer(spectator.player, game.activePlayer)
 		}
-		if (spectatedPlayerInGame.targetRequired && game.cardPlay.cardResolveStack.currentCard) {
-			const deployTargets = game.cardPlay.getDeployTargets()
+		if (spectatedPlayerInGame.targetRequired && game.cardPlay.cardResolveStack.currentEntry) {
+			const cardTargets = game.cardPlay.getResolvingCardTargets()
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				spectator.player,
-				TargetMode.DEPLOY_EFFECT,
-				deployTargets.map((deployTarget) => deployTarget.target),
-				game.cardPlay.cardResolveStack.currentCard.card
+				game.cardPlay.cardResolveStack.currentEntry.targetMode,
+				cardTargets.map((target) => target.target),
+				game.cardPlay.cardResolveStack.currentEntry.ownedCard.card
 			)
 		} else if (spectatedPlayerInGame.mulliganMode) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(spectator.player, spectatedPlayerInGame)

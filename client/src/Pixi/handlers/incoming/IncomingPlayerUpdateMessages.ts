@@ -4,12 +4,13 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
 import { PlayerUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
 import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMessage'
 import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
 import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
+import PlayerInGameRefMessage from '@shared/models/network/playerInGame/PlayerInGameRefMessage'
+import PlayerInGameManaMessage from '@shared/models/network/playerInGame/PlayerInGameManaMessage'
 
 const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: IncomingMessageHandlerFunction } = {
 	[PlayerUpdateMessageType.LEADER_SELF]: (data: CardMessage) => {
@@ -26,13 +27,13 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 		Core.opponent.leader = RenderedCard.fromMessage(data)
 	},
 
-	[PlayerUpdateMessageType.MORALE]: (data: PlayerInGameMessage) => {
-		Core.getPlayer(data.player.id).morale = data.morale
+	[PlayerUpdateMessageType.MORALE]: (data: PlayerInGameManaMessage) => {
+		Core.getPlayer(data.playerId).morale = data.morale
 	},
 
-	[PlayerUpdateMessageType.MANA]: (data: PlayerInGameMessage) => {
-		Core.getPlayer(data.player.id).unitMana = data.unitMana
-		Core.getPlayer(data.player.id).spellMana = data.spellMana
+	[PlayerUpdateMessageType.MANA]: (data: PlayerInGameManaMessage) => {
+		Core.getPlayer(data.playerId).unitMana = data.unitMana
+		Core.getPlayer(data.playerId).spellMana = data.spellMana
 	},
 
 	[PlayerUpdateMessageType.MULLIGANS]: (data: MulliganCountMessage) => {
@@ -41,32 +42,32 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 	},
 
 	[PlayerUpdateMessageType.CARD_ADD_HAND_UNIT]: (data: OwnedCardMessage) => {
-		const player = Core.getPlayer(data.owner.player.id)
+		const player = Core.getPlayer(data.owner.playerId)
 		player.cardHand.addUnit(RenderedCard.fromMessage(data.card))
 	},
 
 	[PlayerUpdateMessageType.CARD_ADD_HAND_SPELL]: (data: OwnedCardMessage) => {
-		const player = Core.getPlayer(data.owner.player.id)
+		const player = Core.getPlayer(data.owner.playerId)
 		player.cardHand.addSpell(RenderedCard.fromMessage(data.card))
 	},
 
 	[PlayerUpdateMessageType.CARD_ADD_DECK_UNIT]: (data: OwnedCardMessage) => {
-		const player = Core.getPlayer(data.owner.player.id)
+		const player = Core.getPlayer(data.owner.playerId)
 		player.cardDeck.addUnit(data.card)
 	},
 
 	[PlayerUpdateMessageType.CARD_ADD_DECK_SPELL]: (data: OwnedCardMessage) => {
-		const player = Core.getPlayer(data.owner.player.id)
+		const player = Core.getPlayer(data.owner.playerId)
 		player.cardDeck.addSpell(data.card)
 	},
 
 	[PlayerUpdateMessageType.CARD_ADD_GRAVE_UNIT]: (data: OwnedCardMessage) => {
-		const player = Core.getPlayer(data.owner.player.id)
+		const player = Core.getPlayer(data.owner.playerId)
 		player.cardGraveyard.addUnit(data.card)
 	},
 
 	[PlayerUpdateMessageType.CARD_ADD_GRAVE_SPELL]: (data: OwnedCardMessage) => {
-		const player = Core.getPlayer(data.owner.player.id)
+		const player = Core.getPlayer(data.owner.playerId)
 		player.cardGraveyard.addSpell(data.card)
 	},
 
@@ -115,26 +116,26 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 		Core.board.validOpponentOrders = data
 	},
 
-	[PlayerUpdateMessageType.TURN_START]: (player: PlayerInGameMessage) => {
-		Core.getPlayer(player.player.id).startTurn()
+	[PlayerUpdateMessageType.TURN_START]: (player: PlayerInGameRefMessage) => {
+		Core.getPlayer(player.playerId).startTurn()
 	},
 
-	[PlayerUpdateMessageType.TURN_END]: (player: PlayerInGameMessage) => {
-		Core.getPlayer(player.player.id).endTurn()
+	[PlayerUpdateMessageType.TURN_END]: (player: PlayerInGameRefMessage) => {
+		Core.getPlayer(player.playerId).endTurn()
 	},
 
-	[PlayerUpdateMessageType.ROUND_START]: (player: PlayerInGameMessage) => {
-		if (player.player.id === Core.player?.player.id) {
+	[PlayerUpdateMessageType.ROUND_START]: (player: PlayerInGameRefMessage) => {
+		if (player.playerId === Core.player?.player.id) {
 			store.commit.gameStateModule.setIsPlayerInRound(true)
-		} else if (player.player.id === Core.opponent?.player.id) {
+		} else if (player.playerId === Core.opponent?.player.id) {
 			store.commit.gameStateModule.setIsOpponentInRound(true)
 		}
 	},
 
-	[PlayerUpdateMessageType.ROUND_END]: (player: PlayerInGameMessage) => {
-		if (player.player.id === Core.player?.player.id) {
+	[PlayerUpdateMessageType.ROUND_END]: (player: PlayerInGameRefMessage) => {
+		if (player.playerId === Core.player?.player.id) {
 			store.commit.gameStateModule.setIsPlayerInRound(false)
-		} else if (player.player.id === Core.opponent?.player.id) {
+		} else if (player.playerId === Core.opponent?.player.id) {
 			store.commit.gameStateModule.setIsOpponentInRound(false)
 		}
 	},

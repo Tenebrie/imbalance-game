@@ -56,7 +56,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 					return
 				}
 
-				this.game.cardPlay.forcedPlayCardFromHand(ownedCard, preparedState.playTargetRowIndex, preparedState.playTargetUnitIndex)
+				this.game.cardPlay.playCardFromHand(ownedCard, preparedState.playTargetRowIndex, preparedState.playTargetUnitIndex)
 				this.ownerInGame.drawUnitCards(1)
 			})
 	}

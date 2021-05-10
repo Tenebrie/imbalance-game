@@ -5,9 +5,7 @@ import ServerCard from '../../models/ServerCard'
 import ServerOwnedCard from '../../models/ServerOwnedCard'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
-import OpenPlayerInGameMessage from '@shared/models/network/playerInGame/OpenPlayerInGameMessage'
-import HiddenPlayerInGameMessage from '@shared/models/network/playerInGame/HiddenPlayerInGameMessage'
-import Utils, { isCardPublic } from '../../../utils/Utils'
+import { isCardPublic } from '../../../utils/Utils'
 import { PlayerUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMessage'
 import OpenOwnedCardMessage from '@shared/models/network/ownedCard/OpenOwnedCardMessage'
@@ -15,6 +13,8 @@ import HiddenOwnedCardMessage from '@shared/models/network/ownedCard/HiddenOwned
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import ServerPlayerSpectator from '../../players/ServerPlayerSpectator'
 import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
+import PlayerInGameRefMessage from '@shared/models/network/playerInGame/PlayerInGameRefMessage'
+import PlayerInGameManaMessage from '@shared/models/network/playerInGame/PlayerInGameManaMessage'
 
 export default {
 	notifyAboutDeckLeader(playerInGame: ServerPlayerInGame | ServerPlayerSpectator, opponent: ServerPlayerInGame, card: ServerCard): void {
@@ -32,19 +32,19 @@ export default {
 	notifyAboutMoraleChange: (player: ServerPlayer, playerInGame: ServerPlayerInGame): void => {
 		player.sendMessage({
 			type: PlayerUpdateMessageType.MORALE,
-			data: new OpenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameManaMessage(playerInGame),
 		})
 	},
 
 	notifyAboutManaChange: (playerInGame: ServerPlayerInGame, delta: number): void => {
 		playerInGame.player.sendMessage({
 			type: PlayerUpdateMessageType.MANA,
-			data: new OpenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameManaMessage(playerInGame),
 			highPriority: delta < 0,
 		})
 		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.MANA,
-			data: new HiddenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameManaMessage(playerInGame),
 		})
 	},
 
@@ -173,8 +173,8 @@ export default {
 
 	notifyAboutValidActionsChanged(game: ServerGame, playerInGame: ServerPlayerInGame): void {
 		const cardsInHand = playerInGame.cardHand.allCards
-		const validPlayTargets = Utils.flat(cardsInHand.map((card) => card.targeting.getPlayTargets(playerInGame)))
-		const playTargetMessages = validPlayTargets.map((order) => new CardTargetMessage(order))
+		const validPlayTargets = cardsInHand.flatMap((card) => card.targeting.getPlayTargets(playerInGame))
+		const playTargetMessages = validPlayTargets.map((order) => new CardTargetMessage(order.target))
 		playerInGame.player.sendMessage({
 			type: PlayerUpdateMessageType.PLAY_TARGETS,
 			data: playTargetMessages,
@@ -236,46 +236,46 @@ export default {
 	notifyAboutRoundStarted: (playerInGame: ServerPlayerInGame): void => {
 		playerInGame.player.sendMessage({
 			type: PlayerUpdateMessageType.ROUND_START,
-			data: new OpenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameRefMessage(playerInGame),
 		})
 		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.ROUND_START,
-			data: new HiddenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameRefMessage(playerInGame),
 		})
 	},
 
 	notifyAboutTurnStarted: (playerInGame: ServerPlayerInGame): void => {
 		playerInGame.player.sendMessage({
 			type: PlayerUpdateMessageType.TURN_START,
-			data: new OpenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameRefMessage(playerInGame),
 		})
 		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.TURN_START,
-			data: new HiddenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameRefMessage(playerInGame),
 		})
 	},
 
 	notifyAboutTurnEnded: (playerInGame: ServerPlayerInGame): void => {
 		playerInGame.player.sendMessage({
 			type: PlayerUpdateMessageType.TURN_END,
-			data: new OpenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameRefMessage(playerInGame),
 			highPriority: true,
 		})
 		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.TURN_END,
-			data: new HiddenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameRefMessage(playerInGame),
 		})
 	},
 
 	notifyAboutRoundEnded: (playerInGame: ServerPlayerInGame): void => {
 		playerInGame.player.sendMessage({
 			type: PlayerUpdateMessageType.ROUND_END,
-			data: new OpenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameRefMessage(playerInGame),
 			highPriority: true,
 		})
 		playerInGame.opponent?.player.sendMessage({
 			type: PlayerUpdateMessageType.ROUND_END,
-			data: new HiddenPlayerInGameMessage(playerInGame),
+			data: new PlayerInGameRefMessage(playerInGame),
 		})
 	},
 }

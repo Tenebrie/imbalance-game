@@ -12,15 +12,12 @@ import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSp
 import Constants from '@shared/Constants'
 import { EmptyFunction, toRowIndex } from './Utils'
 import ServerUnit from '@src/game/models/ServerUnit'
+import ServerOwnedCard from '@src/game/models/ServerOwnedCard'
 
 const createCard = (player: ServerPlayerInGame, card: ServerCard, callback: (card: ServerCard) => void): ServerCard => {
 	callback(card)
 	card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
-	if (card.type === CardType.UNIT) {
-		player.cardHand.addUnit(card)
-	} else if (card.type === CardType.SPELL) {
-		player.cardHand.addSpell(card)
-	}
+	card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, player))
 	return card
 }
 
@@ -46,7 +43,7 @@ export default {
 		const cardOwner = card.ownerInGame
 		card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
 		cardOwner.cardDeck.removeCard(card)
-		cardOwner.cardHand.drawUnit(card)
+		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner))
 	},
 
 	discardCard: (card: ServerCard): void => {

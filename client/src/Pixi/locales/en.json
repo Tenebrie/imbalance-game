@@ -313,6 +313,7 @@
 	"buff.buffNoArmor.name": "No Armor",
 	"buff.buffNoArmor.description": "This unit's Armor has been removed.",
 
+	"card.play": "Play card",
 	"card.hidden.name": "[Hidden card]",
 
 	"card.leaderVelElleron.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Battlemage</if>",
@@ -710,7 +711,7 @@
 	"card.spellTacticalMove.target.label.row": "Move here",
 
 	"card.spellReinforcements.name": "Reinforcements",
-	"card.spellReinforcements.description": "*Summon* a top card from your deck.",
+	"card.spellReinforcements.description": "*Play* your entire deck.",
 
 	"card.heroChallengeLegendaryExplorer0.name": "Jeno Rackson",
 	"card.heroChallengeLegendaryExplorer0.title": "One-of-Many",

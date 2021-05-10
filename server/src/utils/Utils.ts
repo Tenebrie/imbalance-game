@@ -185,12 +185,6 @@ export const EmptyFunction = (): void => {
 }
 
 export default {
-	flat(array: any[], depth = 1): any[] {
-		return array.reduce((flat, toFlatten) => {
-			return flat.concat(Array.isArray(toFlatten) && depth > 1 ? flat(toFlatten, depth - 1) : toFlatten)
-		}, [])
-	},
-
 	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	forEachInNumericEnum(enumeration: any, handler: (val: any) => any): void {
 		for (const value in enumeration) {
