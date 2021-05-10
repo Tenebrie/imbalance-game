@@ -15,6 +15,7 @@ import TestingUnitTurnEndEffectProbe from '../cards/11-testing/TestingUnitTurnEn
 import Utils from '../../utils/Utils'
 import Constants from '@shared/Constants'
 import TestingUnitTurnEndEffectProbeRight from '../cards/11-testing/TestingUnitTurnEndEffectProbeRight'
+import TargetMode from '../../../../shared/src/enums/TargetMode'
 
 describe('ServerGameEvents', () => {
 	let game: ServerGame
@@ -410,7 +411,9 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('pops card resolution stack', () => {
-				game.cardPlay.cardResolveStack.startResolving(ownedCard, () => game.cardPlay.updateResolvingCardTargetingStatus())
+				game.cardPlay.cardResolveStack.startResolving(ownedCard, TargetMode.DEPLOY_EFFECT, () =>
+					game.cardPlay.updateResolvingCardTargetingStatus()
+				)
 
 				events.resolveEvents()
 
@@ -446,7 +449,9 @@ describe('ServerGameEvents', () => {
 					},
 				]
 				ownedCards.forEach((card) => {
-					game.cardPlay.cardResolveStack.startResolving(card, () => game.cardPlay.updateResolvingCardTargetingStatus())
+					game.cardPlay.cardResolveStack.startResolving(card, TargetMode.DEPLOY_EFFECT, () =>
+						game.cardPlay.updateResolvingCardTargetingStatus()
+					)
 				})
 
 				events.resolveEvents()
@@ -472,9 +477,9 @@ describe('ServerGameEvents', () => {
 				const valkyrie = new TestingUnitTargetsRow(game)
 				player.cardHand.addUnit(valkyrie)
 
-				game.cardPlay.forcedPlayCardFromHand(ownedCard, 0, 0)
+				game.cardPlay.playCardFromHand(ownedCard, 0, 0)
 				events.resolveEvents()
-				game.cardPlay.forcedPlayCardFromHand({ card: valkyrie, owner: player }, 0, 0)
+				game.cardPlay.playCardFromHand({ card: valkyrie, owner: player }, 0, 0)
 				events.resolveEvents()
 				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
 				events.resolveEvents()
@@ -482,7 +487,7 @@ describe('ServerGameEvents', () => {
 				expect(resolutionStackSpy).toHaveBeenCalledTimes(1)
 				expect(game.board.getAllUnits().length).toEqual(2)
 				expect(game.cardPlay.cardResolveStack.cards.length).toEqual(1)
-				expect(game.cardPlay.cardResolveStack.cards[0].card.class).toEqual('testingUnitTargetsRow')
+				expect(game.cardPlay.cardResolveStack.cards[0].card.class).toEqual('testingSpellQuickStrike')
 			})
 		})
 
@@ -498,7 +503,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('keeps card resolving after first target', () => {
-				game.cardPlay.forcedPlayCardFromHand(ownedCard, 0, 0)
+				game.cardPlay.playCardFromHand(ownedCard, 0, 0)
 				events.resolveEvents()
 				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
 				events.resolveEvents()
@@ -509,7 +514,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('resolves card after second target', () => {
-				game.cardPlay.forcedPlayCardFromHand(ownedCard, 0, 0)
+				game.cardPlay.playCardFromHand(ownedCard, 0, 0)
 				events.resolveEvents()
 				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
 				events.resolveEvents()

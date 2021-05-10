@@ -78,7 +78,8 @@ export default class ServerGameCardPlay {
 
 	public playCardToResolutionStack(ownedCard: ServerOwnedCard): void {
 		/* Start resolving */
-		this.cardResolveStack.startResolvingImmediately(ownedCard, TargetMode.CARD_PLAY, () => this.updateResolvingCardTargetingStatus())
+		const targetMode = ownedCard.card.type === CardType.UNIT ? TargetMode.CARD_PLAY : TargetMode.DEPLOY_EFFECT
+		this.cardResolveStack.startResolvingImmediately(ownedCard, targetMode, () => this.updateResolvingCardTargetingStatus())
 	}
 
 	private playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number, source: 'hand' | 'deck' | 'aether'): void {

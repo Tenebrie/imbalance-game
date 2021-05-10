@@ -27,30 +27,30 @@ describe('ServerGameCardPlay', () => {
 		})
 		;[0, 1, 2].forEach((index: number) =>
 			it(`player 0 can not play the card on row ${index}`, () => {
-				game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), index, 0)
+				game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, game.players[0]), index, 0)
 				expect(game.board.rows[index].cards.length).toEqual(0)
 			})
 		)
 		;[3, 4, 5].forEach((index: number) =>
 			it(`player 0 can play the card on row ${index}`, () => {
-				game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), index, 0)
+				game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, game.players[0]), index, 0)
 				expect(game.board.rows[index].cards.length).toEqual(1)
 				expect(game.board.rows[index].cards[0].card).toEqual(cardInHand)
 			})
 		)
 
 		it('deducts unit mana after playing', () => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 4, 0)
+			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, game.players[0]), 4, 0)
 			expect(game.players[0].unitMana).toEqual(3 - cardInHand.stats.unitCost)
 		})
 
 		it('removes the card from hand', () => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 4, 0)
+			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, game.players[0]), 4, 0)
 			expect(game.players[0].cardHand.unitCards.length).toEqual(0)
 		})
 
 		it('posts valid events', () => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 4, 0)
+			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, game.players[0]), 4, 0)
 			game.events.resolveEvents()
 			expect(eventSpy).toBeCalledTimes(4)
 			expect(eventSpy).nthCalledWith(
@@ -87,18 +87,18 @@ describe('ServerGameCardPlay', () => {
 			})
 
 			it('does not remove the card', () => {
-				game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 0, 0)
+				game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, game.players[0]), 0, 0)
 				expect(game.players[0].cardHand.unitCards.length).toEqual(1)
 				expect(game.players[0].cardHand.unitCards[0]).toEqual(cardInHand)
 			})
 
 			it('does not reduce the unit mana', () => {
-				game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 0, 0)
+				game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, game.players[0]), 0, 0)
 				expect(game.players[0].unitMana).toEqual(3)
 			})
 
 			it('does not create the unit', () => {
-				game.cardPlay.playCard(new ServerOwnedCard(cardInHand, game.players[0]), 0, 0)
+				game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, game.players[0]), 0, 0)
 				expect(game.board.rows[0].cards.length).toEqual(Constants.MAX_CARDS_PER_ROW)
 				expect(game.board.rows[0].cards.find((unit) => unit.card === cardInHand)).toBeFalsy()
 			})

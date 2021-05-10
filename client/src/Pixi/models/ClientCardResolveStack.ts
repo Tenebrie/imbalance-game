@@ -1,17 +1,23 @@
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import OwnedRenderedCard from '@/Pixi/cards/OwnedRenderedCard'
 
-type DiscardedResolveStackCard = {
+type ActiveResolutionStackCard = {
+	card: RenderedCard
+	owner: ClientPlayerInGame
+	protected: boolean
+}
+
+type DiscardedResolutionStackCard = {
 	card: RenderedCard
 	owner: ClientPlayerInGame
 	index: number
+	timeout: number
 }
 
 export default class ClientCardResolveStack {
-	cards: OwnedRenderedCard[]
-	discardedCards: DiscardedResolveStackCard[]
+	cards: ActiveResolutionStackCard[]
+	discardedCards: DiscardedResolutionStackCard[]
 
 	constructor() {
 		this.cards = []
@@ -19,18 +25,18 @@ export default class ClientCardResolveStack {
 	}
 
 	public addCard(card: RenderedCard, owner: ClientPlayerInGame): void {
-		this.cards.push({ card, owner })
+		this.cards.push({ card, owner, protected: false })
 	}
 
 	public isEmpty(): boolean {
 		return this.cards.length === 0
 	}
 
-	public findCardById(cardId: string): OwnedRenderedCard | null {
+	public findCardById(cardId: string): ActiveResolutionStackCard | null {
 		return this.cards.find((ownedCard) => ownedCard.card.id === cardId) || null
 	}
 
-	public findDiscardedCardById(cardId: string): DiscardedResolveStackCard | null {
+	public findDiscardedCardById(cardId: string): DiscardedResolutionStackCard | null {
 		return this.discardedCards.find((discardedCard) => discardedCard.card.id === cardId) || null
 	}
 
@@ -40,15 +46,21 @@ export default class ClientCardResolveStack {
 			return
 		}
 
+		if (ownedCard.protected) {
+			ownedCard.protected = false
+			return
+		}
+
 		const index = this.cards.indexOf(ownedCard)
 		this.cards.splice(index, 1)
-		setTimeout(() => {
+		const timeout = setTimeout(() => {
 			this.destroyCardById(cardId)
 		}, 2000)
 
 		this.discardedCards.push({
 			...ownedCard,
 			index: index,
+			timeout,
 		})
 	}
 

@@ -27,7 +27,7 @@ describe('ServerCard', () => {
 			playerAction(() => {
 				const opponentsCard = new TestingSpellHeavyStrike(game)
 				player.opponentInGame.cardHand.addSpell(opponentsCard)
-				game.cardPlay.forcedPlayCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame), 0, 0)
+				game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame), 0, 0)
 				game.cardPlay.selectCardTarget(player.opponentInGame, game.cardPlay.getDeployTargets()[0].target)
 			})
 			expect(hookSpy).toBeCalledTimes(11)

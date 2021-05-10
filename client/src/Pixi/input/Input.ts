@@ -310,6 +310,9 @@ export default class Input {
 	private onMouseUp(event: MouseEvent) {
 		if (this.forcedTargetingMode && this.forcedTargetingMode.isSelectedTargetValid() && event.button === LEFT_MOUSE_BUTTON) {
 			this.forcedTargetingMode.confirmTarget()
+			if (this.forcedTargetingMode.targetMode === TargetMode.CARD_PLAY) {
+				this.enableForcedTargetingMode(TargetMode.CARD_PLAY, [], null)
+			}
 			return
 		}
 

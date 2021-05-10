@@ -26,7 +26,7 @@ describe('HeroZamarath', () => {
 
 	it('gets untargetable when played', () => {
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, player), 0, 0)
 		})
 		expect(cardInHand.location).toEqual(CardLocation.BOARD)
 		expect(cardInHand.features.includes(CardFeature.UNTARGETABLE)).toBeTruthy()
@@ -34,7 +34,7 @@ describe('HeroZamarath', () => {
 
 	it('intercepts damage and survives with immunity', () => {
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 1, 0)
+			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, player), 1, 0)
 		})
 
 		const targetUnit = new TestingUnitNoEffect(game)
@@ -43,7 +43,7 @@ describe('HeroZamarath', () => {
 
 			const opponentsCard = new TestingSpellHeavyStrike(game)
 			player.opponentInGame.cardHand.addSpell(opponentsCard)
-			game.cardPlay.forcedPlayCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame), 0, 0)
 			game.cardPlay.selectCardTarget(player.opponentInGame, game.cardPlay.getDeployTargets()[0].target)
 		})
 
@@ -54,7 +54,7 @@ describe('HeroZamarath', () => {
 
 	it('intercepts damage and dies without immunity', () => {
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 1, 0)
+			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, player), 1, 0)
 		})
 
 		startNextTurn()
@@ -66,7 +66,7 @@ describe('HeroZamarath', () => {
 		playerAction(() => {
 			const opponentsCard = new TestingSpellHeavyStrike(game)
 			player.opponentInGame.cardHand.addSpell(opponentsCard)
-			game.cardPlay.forcedPlayCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame), 0, 0)
 			game.cardPlay.selectCardTarget(player.opponentInGame, game.cardPlay.getDeployTargets()[0].target)
 		})
 

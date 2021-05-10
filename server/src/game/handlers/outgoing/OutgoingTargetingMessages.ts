@@ -22,7 +22,16 @@ export default {
 			TargetType.CARD_IN_UNIT_HAND,
 			TargetType.CARD_IN_SPELL_HAND,
 		]
-		const highPriority = validTargets.every((target) => highPriorityTargets.includes(target.targetType))
+		const highPriority =
+			validTargets.every((target) => highPriorityTargets.includes(target.targetType)) &&
+			!validTargets.some((target) => target.targetMode === TargetMode.CARD_PLAY)
+		if (!highPriority) {
+			player.sendMessage({
+				type: TargetingMessageType.CARD_PLAY,
+				data: new ResolvingCardTargetsMessage(targetMode, [], source),
+				highPriority: true,
+			})
+		}
 		player.sendMessage({
 			type: TargetingMessageType.CARD_PLAY,
 			data: new ResolvingCardTargetsMessage(targetMode, validTargets, source),
@@ -50,7 +59,9 @@ export default {
 			TargetType.CARD_IN_UNIT_HAND,
 			TargetType.CARD_IN_SPELL_HAND,
 		]
-		const highPriority = validTargets.every((target) => highPriorityTargets.includes(target.targetType))
+		const highPriority =
+			validTargets.every((target) => highPriorityTargets.includes(target.targetType)) &&
+			!validTargets.some((target) => target.targetMode === TargetMode.CARD_PLAY)
 		player.sendMessage({
 			type: TargetingMessageType.ANONYMOUS,
 			data: new AnonymousTargetsMessage(targetMode, validTargets),

@@ -53,7 +53,7 @@ export const sortCards = (inputArray: Card[] | CardMessage[]): Card[] | CardMess
 }
 
 export const compressGameTraffic = (): boolean => {
-	return true
+	return process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
 }
 
 export const getRandomName = (): string => {
