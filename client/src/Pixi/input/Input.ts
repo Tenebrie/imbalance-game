@@ -48,6 +48,7 @@ export default class Input {
 
 	limboShadowUnit: ShadowUnit | null = null
 	hoveredShadowUnit: ShadowUnit | null = null
+	tutoredShadowUnit: ShadowUnit | null = null
 
 	playableCards: CardTargetMessage[] = []
 	forcedTargetingMode: ForcedTargetingMode | null = null
@@ -309,6 +310,13 @@ export default class Input {
 
 	private onMouseUp(event: MouseEvent) {
 		if (this.forcedTargetingMode && this.forcedTargetingMode.isSelectedTargetValid() && event.button === LEFT_MOUSE_BUTTON) {
+			if (this.forcedTargetingMode.targetMode === TargetMode.CARD_PLAY) {
+				this.tutoredShadowUnit = {
+					card: this.forcedTargetingMode.source,
+					rowIndex: normalizeBoardRowIndex(this.forcedTargetingMode.selectedTarget.targetRowIndex, 'player'),
+					unitIndex: getCardInsertIndex(Core.board.rows[this.forcedTargetingMode.selectedTarget.targetRowIndex]),
+				}
+			}
 			this.forcedTargetingMode.confirmTarget()
 			if (this.forcedTargetingMode.targetMode === TargetMode.CARD_PLAY) {
 				this.enableForcedTargetingMode(TargetMode.CARD_PLAY, [], null)
@@ -535,6 +543,9 @@ export default class Input {
 	}
 
 	public destroyLimboCard(cardMessage: CardRefMessage): void {
+		if (Core.input.tutoredShadowUnit && Core.input.tutoredShadowUnit.card.id === cardMessage.id) {
+			Core.input.tutoredShadowUnit = null
+		}
 		const cardInLimbo = this.cardLimbo.find((card) => card.id === cardMessage.id)
 		if (!cardInLimbo) {
 			return
@@ -562,7 +573,7 @@ export default class Input {
 		const sourceCard: RenderedCard | null = source ? Core.game.findRenderedCardById(source.id, [CardLocation.STACK]) : null
 		await this.createForcedTargetingCards(validTargets)
 		this.forcedTargetingMode = new ForcedTargetingMode(targetMode, validTargets, this.forcedTargetingCards.length === 0 ? sourceCard : null)
-		store.commit.gameStateModule.setPopupTargetingMode(targetMode)
+		store.commit.gameStateModule.setTargetingMode(targetMode)
 		store.commit.gameStateModule.setPopupTargetingCardCount(this.forcedTargetingCards.length)
 		store.commit.gameStateModule.setPopupTargetingCardsVisible(true)
 	}
@@ -607,7 +618,7 @@ export default class Input {
 		this.forcedTargetingMode = null
 		this.forcedTargetingCards.forEach((card) => Core.destroyCard(card))
 		this.forcedTargetingCards = []
-		store.commit.gameStateModule.setPopupTargetingMode(null)
+		store.commit.gameStateModule.setTargetingMode(null)
 		store.commit.gameStateModule.setPopupTargetingCardCount(0)
 	}
 }

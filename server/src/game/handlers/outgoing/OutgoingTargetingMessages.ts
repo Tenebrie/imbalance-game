@@ -3,6 +3,7 @@ import { ServerAnonymousTargetCard } from '../../models/ServerCardTarget'
 import TargetType from '@shared/enums/TargetType'
 import { TargetingMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import ResolvingCardTargetsMessage from '@shared/models/network/ResolvingCardTargetsMessage'
+import InvalidCardTargetMessage from '@shared/models/network/InvalidCardTargetMessage'
 import TargetMode from '@shared/enums/TargetMode'
 import ServerCard from '../../models/ServerCard'
 import AnonymousTargetsMessage from '@shared/models/network/AnonymousTargetsMessage'
@@ -66,6 +67,14 @@ export default {
 			type: TargetingMessageType.ANONYMOUS,
 			data: new AnonymousTargetsMessage(targetMode, validTargets),
 			highPriority: highPriority,
+		})
+	},
+
+	notifyAboutInvalidTarget(player: ServerPlayer, targetMode: TargetMode, source: ServerCard): void {
+		player.sendMessage({
+			type: TargetingMessageType.INVALID,
+			data: new InvalidCardTargetMessage(targetMode, source),
+			highPriority: true,
 		})
 	},
 }

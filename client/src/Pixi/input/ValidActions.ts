@@ -8,7 +8,8 @@ export const isCardPlayable = (card: RenderedCard): boolean => {
 	return (
 		Core.player.isTurnActive &&
 		!Core.input.forcedTargetingMode &&
-		!!Core.input.playableCards.find((target) => card && target.sourceCardId === card.id)
+		!!Core.input.playableCards.find((target) => card && target.sourceCardId === card.id) &&
+		Core.resolveStack.cards.length === 0
 	)
 }
 

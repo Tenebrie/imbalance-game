@@ -223,6 +223,7 @@ export default class ServerGameCardPlay {
 		const correspondingTarget = validTargets.find((wrapper) => wrapper.target.id === message.id)
 
 		if (!correspondingTarget) {
+			OutgoingMessageHandlers.notifyAboutInvalidTarget(playerInGame.player, currentEntry.targetMode, currentCard)
 			OutgoingMessageHandlers.notifyAboutRequestedCardTargets(
 				playerInGame.player,
 				currentEntry.targetMode,

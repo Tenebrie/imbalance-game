@@ -340,11 +340,11 @@ export default class Renderer {
 			targetPosition.x += -(screenWidth * unitHandFraction) / 2 - (screenWidth * leaderHandFraction) / 2 - screenWidth * handPaddingFraction
 		}
 
-		const isForcedTarget =
+		const isValidTarget =
 			Core.input.forcedTargetingMode &&
 			!!Core.input.forcedTargetingMode.validTargets.find((forcedCard) => forcedCard.targetCardId === renderedCard.id)
 
-		renderedCard.cardDisabledOverlay.visible = !isCardPlayable(renderedCard) && !isForcedTarget
+		renderedCard.cardDisabledOverlay.visible = !isCardPlayable(renderedCard) && !isValidTarget
 
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
@@ -508,7 +508,8 @@ export default class Renderer {
 
 		if (
 			(Core.input.grabbedCard && !Core.input.grabbedCard.validTargetPositions.some((target) => target.row === row)) ||
-			(Core.input.forcedTargetingMode && !Core.input.forcedTargetingMode.isRowPotentialTarget(row))
+			(Core.input.forcedTargetingMode && !Core.input.forcedTargetingMode.isRowPotentialTarget(row)) ||
+			Core.resolveStack.cards.length > 0
 		) {
 			return BoardRowTint.INVALID_TARGET
 		}
@@ -536,7 +537,7 @@ export default class Renderer {
 		const targetPositionY = rowY
 
 		let shadowUnitOffsetX = 0
-		const shadowUnit = Core.input.limboShadowUnit || Core.input.hoveredShadowUnit
+		const shadowUnit = Core.input.limboShadowUnit || Core.input.hoveredShadowUnit || Core.input.tutoredShadowUnit
 		if (shadowUnit && rowIndex === shadowUnit.rowIndex) {
 			if (shadowUnit.unitIndex <= unitIndex) {
 				shadowUnitOffsetX = cardWidth / 2

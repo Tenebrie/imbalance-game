@@ -74,6 +74,7 @@ export enum ResolveStackMessageType {
 export enum TargetingMessageType {
 	CARD_PLAY = 'targeting_cardPlay',
 	ANONYMOUS = 'targeting_anonymous',
+	INVALID = 'targeting_invalid',
 }
 
 export enum CardUpdateMessageType {

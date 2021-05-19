@@ -28,7 +28,7 @@ const gameStateModule = defineModule({
 		isSpectating: false as boolean,
 		cardsMulliganed: 0 as number,
 		maxCardMulligans: 0 as number,
-		popupTargetingMode: null as TargetMode | null,
+		targetingMode: null as TargetMode | null,
 		popupTargetingCardCount: 0 as number,
 		popupTargetingCardsVisible: true as boolean,
 	},
@@ -102,8 +102,8 @@ const gameStateModule = defineModule({
 			state.maxCardMulligans = number
 		},
 
-		setPopupTargetingMode(state, mode: TargetMode | null): void {
-			state.popupTargetingMode = mode
+		setTargetingMode(state, mode: TargetMode | null): void {
+			state.targetingMode = mode
 		},
 
 		setPopupTargetingCardCount(state, count: number): void {

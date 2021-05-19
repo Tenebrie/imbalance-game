@@ -142,10 +142,10 @@ export default defineComponent({
 			)
 		})
 		const isBrowsingDeck = computed(() => {
-			return store.state.gameStateModule.popupTargetingMode === TargetMode.BROWSE
+			return store.state.gameStateModule.targetingMode === TargetMode.BROWSE
 		})
 		const mulliganMode = computed(() => {
-			return store.state.gameStateModule.popupTargetingMode === TargetMode.MULLIGAN
+			return store.state.gameStateModule.targetingMode === TargetMode.MULLIGAN
 		})
 		const isConfirmTargetsButtonVisible = computed(() => {
 			return isBrowsingDeck.value || mulliganMode.value
@@ -153,7 +153,7 @@ export default defineComponent({
 		const isHideTargetsButtonVisible = computed(() => {
 			return (
 				!isConfirmTargetsButtonVisible.value &&
-				store.state.gameStateModule.popupTargetingMode !== null &&
+				store.state.gameStateModule.targetingMode !== null &&
 				store.state.gameStateModule.popupTargetingCardCount > 0
 			)
 		})
@@ -162,7 +162,7 @@ export default defineComponent({
 			backgrounded: !cardsVisible.value,
 		}))
 		const isEndTurnButtonVisible = computed(() => {
-			return store.state.gameStateModule.popupTargetingMode === null
+			return store.state.gameStateModule.targetingMode === null
 		})
 
 		const hasOpponentFinishedRound = computed(() => {
@@ -259,9 +259,6 @@ export default defineComponent({
 	user-select: none;
 	pointer-events: none;
 	overflow: hidden;
-
-	&.non-interactive {
-	}
 
 	.fade-in-overlay {
 		position: absolute;
