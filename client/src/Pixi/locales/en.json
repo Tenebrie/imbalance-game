@@ -711,7 +711,7 @@
 	"card.spellTacticalMove.target.label.row": "Move here",
 
 	"card.spellReinforcements.name": "Reinforcements",
-	"card.spellReinforcements.description": "*Play* your entire deck.",
+	"card.spellReinforcements.description": "*Play* a top card of your deck.",
 
 	"card.heroChallengeLegendaryExplorer0.name": "Jeno Rackson",
 	"card.heroChallengeLegendaryExplorer0.title": "One-of-Many",
