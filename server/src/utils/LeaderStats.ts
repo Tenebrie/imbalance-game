@@ -17,51 +17,51 @@ const asSingleUnitStat = (value: number, mapper: (unit: ServerUnit) => number): 
 }
 
 export const asDirectUnitDamage = (baseDamage: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.soloUnitDamage)
+	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.directUnitDamage)
 }
 
 export const asSplashUnitDamage = (baseDamage: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.massUnitDamage)
+	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.splashUnitDamage)
 }
 
 export const asDirectSpellDamage = (baseDamage: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.soloSpellDamage)
+	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.directSpellDamage)
 }
 
 export const asSplashSpellDamage = (baseDamage: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.massSpellDamage)
+	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.splashSpellDamage)
 }
 
 export const asDirectHealingPotency = (potency: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(potency, (unit) => unit.card.stats.soloHealingPotency)
+	return asSingleUnitStat(potency, (unit) => unit.card.stats.directHealingPotency)
 }
 
 export const asSplashHealingPotency = (potency: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(potency, (unit) => unit.card.stats.massHealingPotency)
+	return asSingleUnitStat(potency, (unit) => unit.card.stats.splashHealingPotency)
 }
 
 export const asDirectBuffPotency = (potency: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(potency, (unit) => unit.card.stats.soloBuffPotency)
+	return asSingleUnitStat(potency, (unit) => unit.card.stats.directBuffPotency)
 }
 
 export const asSplashBuffPotency = (potency: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(potency, (unit) => unit.card.stats.massBuffPotency)
+	return asSingleUnitStat(potency, (unit) => unit.card.stats.splashBuffPotency)
 }
 
 export const asDirectEffectDuration = (duration: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(duration, (unit) => unit.card.stats.soloEffectDuration)
+	return asSingleUnitStat(duration, (unit) => unit.card.stats.directEffectDuration)
 }
 
 export const asSplashEffectDuration = (duration: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(duration, (unit) => unit.card.stats.massEffectDuration)
+	return asSingleUnitStat(duration, (unit) => unit.card.stats.splashEffectDuration)
 }
 
 export const asTargetCount = (count: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(count, (unit) => unit.card.stats.targetCount)
+	return asSingleUnitStat(count, (unit) => unit.card.stats.directTargetCount)
 }
 
-export const asCriticalHitChance = (value: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(value, (unit) => unit.card.stats.criticalHitChance)
+export const asCriticalDamageChance = (value: number): LeaderStatValueGetter => {
+	return asSingleUnitStat(value, (unit) => unit.card.stats.criticalDamageChance)
 }
 
 export const asCriticalBuffChance = (value: number): LeaderStatValueGetter => {

@@ -83,18 +83,18 @@ interface ServerCardBaseProps {
 }
 
 interface LeaderStatsCardProps {
-	soloUnitDamage?: number
-	massUnitDamage?: number
-	soloSpellDamage?: number
-	massSpellDamage?: number
-	soloHealingPotency?: number
-	massHealingPotency?: number
-	soloBuffPotency?: number
-	massBuffPotency?: number
-	soloEffectDuration?: number
-	massEffectDuration?: number
-	targetCount?: number
-	criticalHitChance?: number
+	directUnitDamage?: number
+	splashUnitDamage?: number
+	directSpellDamage?: number
+	splashSpellDamage?: number
+	directHealingPotency?: number
+	splashHealingPotency?: number
+	directBuffPotency?: number
+	splashBuffPotency?: number
+	directEffectDuration?: number
+	splashEffectDuration?: number
+	directTargetCount?: number
+	criticalDamageChance?: number
 	criticalBuffChance?: number
 	criticalHealChance?: number
 }
@@ -178,18 +178,18 @@ export default class ServerCard implements Card {
 			armor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
 			spellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0,
 
-			soloUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloUnitDamage || 0 : 0,
-			massUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massUnitDamage || 0 : 0,
-			soloSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloSpellDamage || 0 : 0,
-			massSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massSpellDamage || 0 : 0,
-			soloHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloHealingPotency || 0 : 0,
-			massHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massHealingPotency || 0 : 0,
-			soloBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloBuffPotency || 0 : 0,
-			massBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massBuffPotency || 0 : 0,
-			soloEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloEffectDuration || 0 : 0,
-			massEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massEffectDuration || 0 : 0,
-			targetCount: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.targetCount || 0 : 0,
-			criticalHitChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHitChance || 0 : 0,
+			directUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directUnitDamage || 0 : 0,
+			splashUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashUnitDamage || 0 : 0,
+			directSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directSpellDamage || 0 : 0,
+			splashSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashSpellDamage || 0 : 0,
+			directHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directHealingPotency || 0 : 0,
+			splashHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashHealingPotency || 0 : 0,
+			directBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directBuffPotency || 0 : 0,
+			splashBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashBuffPotency || 0 : 0,
+			directEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directEffectDuration || 0 : 0,
+			splashEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashEffectDuration || 0 : 0,
+			directTargetCount: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directTargetCount || 0 : 0,
+			criticalDamageChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalDamageChance || 0 : 0,
 			criticalBuffChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalBuffChance || 0 : 0,
 			criticalHealChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHealChance || 0 : 0,
 		})

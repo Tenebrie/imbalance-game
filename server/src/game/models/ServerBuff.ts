@@ -232,40 +232,40 @@ export default class ServerBuff implements Buff {
 		return baseValue
 	}
 
-	getSoloUnitDamageOverride(baseValue: number): number {
+	getDirectUnitDamageOverride(baseValue: number): number {
 		return baseValue
 	}
-	getMassUnitDamageOverride(baseValue: number): number {
+	getSplashUnitDamageOverride(baseValue: number): number {
 		return baseValue
 	}
-	getSoloSpellDamageOverride(baseValue: number): number {
+	getDirectSpellDamageOverride(baseValue: number): number {
 		return baseValue
 	}
-	getMassSpellDamageOverride(baseValue: number): number {
+	getSplashSpellDamageOverride(baseValue: number): number {
 		return baseValue
 	}
-	getSoloHealingPotencyOverride(baseValue: number): number {
+	getDirectHealingPotencyOverride(baseValue: number): number {
 		return baseValue
 	}
-	getMassHealingPotencyOverride(baseValue: number): number {
+	getSplashHealingPotencyOverride(baseValue: number): number {
 		return baseValue
 	}
-	getSoloBuffPotencyOverride(baseValue: number): number {
+	getDirectBuffPotencyOverride(baseValue: number): number {
 		return baseValue
 	}
-	getMassBuffPotencyOverride(baseValue: number): number {
+	getSplashBuffPotencyOverride(baseValue: number): number {
 		return baseValue
 	}
-	getSoloEffectDurationOverride(baseValue: number): number {
+	getDirectEffectDurationOverride(baseValue: number): number {
 		return baseValue
 	}
-	getMassEffectDurationOverride(baseValue: number): number {
+	getSplashEffectDurationOverride(baseValue: number): number {
 		return baseValue
 	}
-	getTargetCountOverride(baseValue: number): number {
+	getDirectTargetCountOverride(baseValue: number): number {
 		return baseValue
 	}
-	getCriticalHitChanceOverride(baseValue: number): number {
+	getCriticalDamageChanceOverride(baseValue: number): number {
 		return baseValue
 	}
 	getCriticalBuffChanceOverride(baseValue: number): number {

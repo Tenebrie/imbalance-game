@@ -5,11 +5,18 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerPlayer from '../game/players/ServerPlayer'
 import express, { Request } from 'express'
-import { sortCards } from '@shared/Utils'
+import { getMaxCardCopiesForColor, getMaxCardCountForColor, sortCards } from '@shared/Utils'
 import { CardConstructor } from '../game/libraries/CardLibrary'
 import { v4 as getRandomId } from 'uuid'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
+import EditorDeck from '@src/../../shared/src/models/EditorDeck'
+import EditorCard from '@src/../../shared/src/models/EditorCard'
+import DeckUtils from './DeckUtils'
+import PopulatedEditorCard from '@src/../../shared/src/models/PopulatedEditorCard'
+import CardFaction from '@src/../../shared/src/enums/CardFaction'
+import PopulatedEditorDeck from '@src/../../shared/src/models/PopulatedEditorDeck'
+import CardColor from '@src/../../shared/src/enums/CardColor'
 
 export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
 	return `${type}:${prefix}:${getRandomId()}`
@@ -182,6 +189,47 @@ export const limitValueToInterval = (min: number, value: number, max: number): n
 
 export const EmptyFunction = (): void => {
 	/* Empty */
+}
+
+export const getDeckLeader = (deck: PopulatedEditorDeck): PopulatedEditorCard | null => {
+	return deck.cards.find((card) => card.color === CardColor.LEADER) || null
+}
+
+export const getDeckFaction = (deck: PopulatedEditorDeck): CardFaction => {
+	const leader = getDeckLeader(deck)
+	if (leader) {
+		return leader.faction
+	}
+	const factionCard = deck.cards.find((card) => card.faction !== CardFaction.NEUTRAL)
+	if (factionCard) {
+		return factionCard.faction
+	}
+	return CardFaction.NEUTRAL
+}
+
+export const validateEditorDeck = (unpopulatedDeck: EditorDeck): { valid: boolean; badCards: EditorCard[] } => {
+	const deck = DeckUtils.populateDeck(unpopulatedDeck)
+	const deckFaction = getDeckFaction(deck)
+	const invalidCards = deck.cards.filter((card: PopulatedEditorCard) => {
+		const cardOfColorCount = deck.cards.filter((filteredCard) => filteredCard.color === card.color).length
+		if (cardOfColorCount > getMaxCardCountForColor(card.color)) {
+			return true
+		}
+
+		if (card.faction !== CardFaction.NEUTRAL && card.faction !== deckFaction) {
+			return true
+		}
+
+		const maxCount = getMaxCardCopiesForColor(card.color)
+		return card.count > maxCount
+	})
+	return {
+		valid: invalidCards.length === 0,
+		badCards: invalidCards.map((card) => ({
+			count: card.count,
+			class: card.class,
+		})),
+	}
 }
 
 export default {

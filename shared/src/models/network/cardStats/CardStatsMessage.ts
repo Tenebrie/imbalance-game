@@ -15,18 +15,18 @@ export default interface CardStatsMessage {
 	spellCost: number
 	baseSpellCost: number
 
-	soloUnitDamage: number
-	massUnitDamage: number
-	soloSpellDamage: number
-	massSpellDamage: number
-	soloHealingPotency: number
-	massHealingPotency: number
-	soloBuffPotency: number
-	massBuffPotency: number
-	soloEffectDuration: number
-	massEffectDuration: number
-	targetCount: number
-	criticalHitChance: number
+	directUnitDamage: number
+	splashUnitDamage: number
+	directSpellDamage: number
+	splashSpellDamage: number
+	directHealingPotency: number
+	splashHealingPotency: number
+	directBuffPotency: number
+	splashBuffPotency: number
+	directEffectDuration: number
+	splashEffectDuration: number
+	directTargetCount: number
+	criticalDamageChance: number
 	criticalBuffChance: number
 	criticalHealChance: number
 }

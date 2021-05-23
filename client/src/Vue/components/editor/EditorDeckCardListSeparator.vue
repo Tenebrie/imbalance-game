@@ -10,8 +10,8 @@
 import store from '@/Vue/store'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
-import Utils from '@/utils/Utils'
 import { defineComponent } from 'vue'
+import { getMaxCardCountForColor } from '@shared/Utils'
 
 export default defineComponent({
 	props: {
@@ -50,7 +50,7 @@ export default defineComponent({
 		},
 
 		cardLimitTotal(): number {
-			return Utils.getMaxCardCountForColor(this.color)
+			return getMaxCardCountForColor(this.color)
 		},
 
 		colorClass(): any {

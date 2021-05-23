@@ -11,7 +11,7 @@
 				>
 					{{ data.text }}
 				</button>
-				<inline-tooltip class="tooltip">{{ $locale.get('ui.editor.header.factions.tooltip') }}</inline-tooltip>
+				<div class="vertical-separator" />
 			</div>
 			<div class="filter-buttons">
 				<button
@@ -23,6 +23,7 @@
 				>
 					{{ data.text }}
 				</button>
+				<div class="vertical-separator" />
 				<div class="checkbox-container">
 					<div class="checkbox">
 						<input id="checkbox-experimental" type="checkbox" value="Test" v-model="experimentalToggle" />
@@ -57,14 +58,10 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
 import { computed, defineComponent, ref } from 'vue'
 import { debounce } from 'throttle-debounce'
-import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
-	components: {
-		InlineTooltip,
-	},
 	setup() {
 		const routeQuery = useDecksRouteQuery()
 		const selectedColor = computed<CardColor>(() => routeQuery.value.color)
@@ -313,6 +310,19 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 			@media (max-width: $MOBILE_MODE_THRESHOLD) {
 				display: block;
 			}
+		}
+	}
+
+	.vertical-separator {
+		display: block;
+		flex: none;
+		width: 1px;
+		height: 100%;
+		margin: 0 8px;
+		background-color: $COLOR-TEXT;
+
+		@media (max-width: $MOBILE_MODE_THRESHOLD) {
+			display: none;
 		}
 	}
 }

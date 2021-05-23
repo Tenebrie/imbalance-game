@@ -18,18 +18,18 @@ export default class OpenCardStatsMessage implements CardStatsMessage {
 	spellCost: number
 	baseSpellCost: number
 
-	soloUnitDamage: number
-	massUnitDamage: number
-	soloSpellDamage: number
-	massSpellDamage: number
-	soloHealingPotency: number
-	massHealingPotency: number
-	soloBuffPotency: number
-	massBuffPotency: number
-	soloEffectDuration: number
-	massEffectDuration: number
-	targetCount: number
-	criticalHitChance: number
+	directUnitDamage: number
+	splashUnitDamage: number
+	directSpellDamage: number
+	splashSpellDamage: number
+	directHealingPotency: number
+	splashHealingPotency: number
+	directBuffPotency: number
+	splashBuffPotency: number
+	directEffectDuration: number
+	splashEffectDuration: number
+	directTargetCount: number
+	criticalDamageChance: number
 	criticalBuffChance: number
 	criticalHealChance: number
 
@@ -50,18 +50,18 @@ export default class OpenCardStatsMessage implements CardStatsMessage {
 		this.spellCost = stats.spellCost
 		this.baseSpellCost = stats.baseSpellCost
 
-		this.soloUnitDamage = stats.soloUnitDamage
-		this.massUnitDamage = stats.massUnitDamage
-		this.soloSpellDamage = stats.soloSpellDamage
-		this.massSpellDamage = stats.massSpellDamage
-		this.soloHealingPotency = stats.soloHealingPotency
-		this.massHealingPotency = stats.massHealingPotency
-		this.soloBuffPotency = stats.soloBuffPotency
-		this.massBuffPotency = stats.massBuffPotency
-		this.soloEffectDuration = stats.soloEffectDuration
-		this.massEffectDuration = stats.massEffectDuration
-		this.targetCount = stats.targetCount
-		this.criticalHitChance = stats.criticalHitChance
+		this.directUnitDamage = stats.directUnitDamage
+		this.splashUnitDamage = stats.splashUnitDamage
+		this.directSpellDamage = stats.directSpellDamage
+		this.splashSpellDamage = stats.splashSpellDamage
+		this.directHealingPotency = stats.directHealingPotency
+		this.splashHealingPotency = stats.splashHealingPotency
+		this.directBuffPotency = stats.directBuffPotency
+		this.splashBuffPotency = stats.splashBuffPotency
+		this.directEffectDuration = stats.directEffectDuration
+		this.splashEffectDuration = stats.splashEffectDuration
+		this.directTargetCount = stats.directTargetCount
+		this.criticalDamageChance = stats.criticalDamageChance
 		this.criticalBuffChance = stats.criticalBuffChance
 		this.criticalHealChance = stats.criticalHealChance
 	}

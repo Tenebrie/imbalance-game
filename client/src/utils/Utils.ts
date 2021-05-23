@@ -1,16 +1,16 @@
 import * as PIXI from 'pixi.js'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Card from '@shared/models/Card'
-import CardColor from '@shared/enums/CardColor'
 import Constants from '@shared/Constants'
 import store from '@/Vue/store'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import { sortCards } from '@shared/Utils'
+import { sortCards, getMaxCardCountForColor, getMaxCardCopiesForColor } from '@shared/Utils'
 import Core from '@/Pixi/Core'
 import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 import * as Particles from 'pixi-particles'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import CardFaction from '@shared/enums/CardFaction'
 
 export const forEachInNumericEnum = (enumeration: { [s: number]: number }, handler: (val: number) => any): void => {
 	for (const value in enumeration) {
@@ -265,39 +265,9 @@ const legacyExport = {
 		return sortCards(inputArray) as CardMessage[]
 	},
 
-	getMaxCardCountForColor(color: CardColor): number {
-		switch (color) {
-			case CardColor.LEADER:
-				return Constants.CARD_LIMIT_LEADER
-			case CardColor.GOLDEN:
-				return Constants.CARD_LIMIT_GOLDEN
-			case CardColor.SILVER:
-				return Constants.CARD_LIMIT_SILVER
-			case CardColor.BRONZE:
-				return Constants.CARD_LIMIT_BRONZE
-			default:
-				return 0
-		}
-	},
-
-	getMaxCardCopiesForColor(color: CardColor): number {
-		switch (color) {
-			case CardColor.LEADER:
-				return Constants.CARD_COPIES_LIMIT_LEADER
-			case CardColor.GOLDEN:
-				return Constants.CARD_COPIES_LIMIT_GOLDEN
-			case CardColor.SILVER:
-				return Constants.CARD_COPIES_LIMIT_SILVER
-			case CardColor.BRONZE:
-				return Constants.CARD_COPIES_LIMIT_BRONZE
-			default:
-				return 0
-		}
-	},
-
 	canAddCardToDeck(deckId: string, cardToAdd: Card | CardMessage): boolean {
 		const cardOfColorCount = store.getters.editor.cardsOfColor({ deckId: deckId, color: cardToAdd.color })
-		if (cardOfColorCount >= this.getMaxCardCountForColor(cardToAdd.color)) {
+		if (cardOfColorCount >= getMaxCardCountForColor(cardToAdd.color)) {
 			return false
 		}
 
@@ -306,7 +276,11 @@ const legacyExport = {
 			return false
 		}
 
-		const maxCount = this.getMaxCardCopiesForColor(cardToAdd.color)
+		if (cardToAdd.faction !== CardFaction.NEUTRAL && cardToAdd.faction !== deckToModify.faction) {
+			return false
+		}
+
+		const maxCount = getMaxCardCopiesForColor(cardToAdd.color)
 		const cardToModify = deckToModify.cards.find((card) => card.class === cardToAdd.class)
 		return !cardToModify || cardToModify.count < maxCount
 	},

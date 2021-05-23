@@ -12,18 +12,18 @@ interface ServerCardStatsProps {
 	armor: number
 	spellCost: number
 
-	soloUnitDamage: number
-	massUnitDamage: number
-	soloSpellDamage: number
-	massSpellDamage: number
-	soloHealingPotency: number
-	massHealingPotency: number
-	soloBuffPotency: number
-	massBuffPotency: number
-	soloEffectDuration: number
-	massEffectDuration: number
-	targetCount: number
-	criticalHitChance: number
+	directUnitDamage: number
+	splashUnitDamage: number
+	directSpellDamage: number
+	splashSpellDamage: number
+	directHealingPotency: number
+	splashHealingPotency: number
+	directBuffPotency: number
+	splashBuffPotency: number
+	directEffectDuration: number
+	splashEffectDuration: number
+	directTargetCount: number
+	criticalDamageChance: number
 	criticalBuffChance: number
 	criticalHealChance: number
 }
@@ -46,18 +46,18 @@ export default class ServerCardStats implements CardStats {
 	private __spellCost: number
 	private readonly __baseSpellCost: number
 
-	private readonly __baseSoloUnitDamage: number
-	private readonly __baseMassUnitDamage: number
-	private readonly __baseSoloSpellDamage: number
-	private readonly __baseMassSpellDamage: number
-	private readonly __baseSoloHealingPotency: number
-	private readonly __baseMassHealingPotency: number
-	private readonly __baseSoloBuffPotency: number
-	private readonly __baseMassBuffPotency: number
-	private readonly __baseSoloEffectDuration: number
-	private readonly __baseMassEffectDuration: number
-	private readonly __baseTargetCount: number
-	private readonly __baseCriticalHitChance: number
+	private readonly __baseDirectUnitDamage: number
+	private readonly __baseSplashUnitDamage: number
+	private readonly __baseDirectSpellDamage: number
+	private readonly __baseSplashSpellDamage: number
+	private readonly __baseDirectHealingPotency: number
+	private readonly __baseSplashHealingPotency: number
+	private readonly __baseDirectBuffPotency: number
+	private readonly __baseSplashBuffPotency: number
+	private readonly __baseDirectEffectDuration: number
+	private readonly __baseSplashEffectDuration: number
+	private readonly __baseDirectTargetCount: number
+	private readonly __baseCriticalDamageChance: number
 	private readonly __baseCriticalBuffChance: number
 	private readonly __baseCriticalHealChance: number
 
@@ -77,18 +77,18 @@ export default class ServerCardStats implements CardStats {
 		this.__baseUnitCost = card.type === CardType.UNIT ? 1 : 0
 		this.__baseSpellCost = props.spellCost
 
-		this.__baseSoloUnitDamage = props.soloUnitDamage
-		this.__baseMassUnitDamage = props.massUnitDamage
-		this.__baseSoloSpellDamage = props.soloSpellDamage
-		this.__baseMassSpellDamage = props.massSpellDamage
-		this.__baseSoloHealingPotency = props.soloHealingPotency
-		this.__baseMassHealingPotency = props.massHealingPotency
-		this.__baseSoloBuffPotency = props.soloBuffPotency
-		this.__baseMassBuffPotency = props.massBuffPotency
-		this.__baseSoloEffectDuration = props.soloEffectDuration
-		this.__baseMassEffectDuration = props.massEffectDuration
-		this.__baseTargetCount = props.targetCount
-		this.__baseCriticalHitChance = props.criticalHitChance
+		this.__baseDirectUnitDamage = props.directUnitDamage
+		this.__baseSplashUnitDamage = props.splashUnitDamage
+		this.__baseDirectSpellDamage = props.directSpellDamage
+		this.__baseSplashSpellDamage = props.splashSpellDamage
+		this.__baseDirectHealingPotency = props.directHealingPotency
+		this.__baseSplashHealingPotency = props.splashHealingPotency
+		this.__baseDirectBuffPotency = props.directBuffPotency
+		this.__baseSplashBuffPotency = props.splashBuffPotency
+		this.__baseDirectEffectDuration = props.directEffectDuration
+		this.__baseSplashEffectDuration = props.splashEffectDuration
+		this.__baseDirectTargetCount = props.directTargetCount
+		this.__baseCriticalDamageChance = props.criticalDamageChance
 		this.__baseCriticalBuffChance = props.criticalBuffChance
 		this.__baseCriticalHealChance = props.criticalHealChance
 	}
@@ -159,98 +159,98 @@ export default class ServerCardStats implements CardStats {
 	}
 
 	/* Other */
-	public get soloUnitDamage(): number {
+	public get directUnitDamage(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getSoloUnitDamageOverride(value),
-			this.__baseSoloUnitDamage
+			(value: number, buff: ServerBuff) => buff.getDirectUnitDamageOverride(value),
+			this.__baseDirectUnitDamage
 		)
 		return Math.max(value, 0)
 	}
 
-	public get massUnitDamage(): number {
+	public get splashUnitDamage(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getMassUnitDamageOverride(value),
-			this.__baseMassUnitDamage
+			(value: number, buff: ServerBuff) => buff.getSplashUnitDamageOverride(value),
+			this.__baseSplashUnitDamage
 		)
 		return Math.max(value, 0)
 	}
 
-	public get soloSpellDamage(): number {
+	public get directSpellDamage(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getSoloSpellDamageOverride(value),
-			this.__baseSoloSpellDamage
+			(value: number, buff: ServerBuff) => buff.getDirectSpellDamageOverride(value),
+			this.__baseDirectSpellDamage
 		)
 		return Math.max(value, 0)
 	}
 
-	public get massSpellDamage(): number {
+	public get splashSpellDamage(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getMassSpellDamageOverride(value),
-			this.__baseMassSpellDamage
+			(value: number, buff: ServerBuff) => buff.getSplashSpellDamageOverride(value),
+			this.__baseSplashSpellDamage
 		)
 		return Math.max(value, 0)
 	}
 
-	public get soloHealingPotency(): number {
+	public get directHealingPotency(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getSoloHealingPotencyOverride(value),
-			this.__baseSoloHealingPotency
+			(value: number, buff: ServerBuff) => buff.getDirectHealingPotencyOverride(value),
+			this.__baseDirectHealingPotency
 		)
 		return Math.max(value, 0)
 	}
 
-	public get massHealingPotency(): number {
+	public get splashHealingPotency(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getMassHealingPotencyOverride(value),
-			this.__baseMassHealingPotency
+			(value: number, buff: ServerBuff) => buff.getSplashHealingPotencyOverride(value),
+			this.__baseSplashHealingPotency
 		)
 		return Math.max(value, 0)
 	}
 
-	public get soloBuffPotency(): number {
+	public get directBuffPotency(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getSoloBuffPotencyOverride(value),
-			this.__baseSoloBuffPotency
+			(value: number, buff: ServerBuff) => buff.getDirectBuffPotencyOverride(value),
+			this.__baseDirectBuffPotency
 		)
 		return Math.max(value, 0)
 	}
 
-	public get massBuffPotency(): number {
+	public get splashBuffPotency(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getMassBuffPotencyOverride(value),
-			this.__baseMassBuffPotency
+			(value: number, buff: ServerBuff) => buff.getSplashBuffPotencyOverride(value),
+			this.__baseSplashBuffPotency
 		)
 		return Math.max(value, 0)
 	}
 
-	public get soloEffectDuration(): number {
+	public get directEffectDuration(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getSoloEffectDurationOverride(value),
-			this.__baseSoloEffectDuration
+			(value: number, buff: ServerBuff) => buff.getDirectEffectDurationOverride(value),
+			this.__baseDirectEffectDuration
 		)
 		return Math.max(value, 0)
 	}
 
-	public get massEffectDuration(): number {
+	public get splashEffectDuration(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getMassEffectDurationOverride(value),
-			this.__baseMassEffectDuration
+			(value: number, buff: ServerBuff) => buff.getSplashEffectDurationOverride(value),
+			this.__baseSplashEffectDuration
 		)
 		return Math.max(value, 0)
 	}
 
-	public get targetCount(): number {
+	public get directTargetCount(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getTargetCountOverride(value),
-			this.__baseTargetCount
+			(value: number, buff: ServerBuff) => buff.getDirectTargetCountOverride(value),
+			this.__baseDirectTargetCount
 		)
 		return Math.max(value, 0)
 	}
 
-	public get criticalHitChance(): number {
+	public get criticalDamageChance(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getCriticalHitChanceOverride(value),
-			this.__baseCriticalHitChance
+			(value: number, buff: ServerBuff) => buff.getCriticalDamageChanceOverride(value),
+			this.__baseCriticalDamageChance
 		)
 		return Math.max(value, 0)
 	}
@@ -266,7 +266,7 @@ export default class ServerCardStats implements CardStats {
 	public get criticalHealChance(): number {
 		const value = this.card.buffs.buffs.reduce(
 			(value: number, buff: ServerBuff) => buff.getCriticalHealChanceOverride(value),
-			this.__baseCriticalHitChance
+			this.__baseCriticalDamageChance
 		)
 		return Math.max(value, 0)
 	}

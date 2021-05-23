@@ -18,18 +18,18 @@ export default class HiddenCardStatsMessage implements CardStatsMessage {
 	spellCost = 0
 	baseSpellCost = 0
 
-	soloUnitDamage = 0
-	massUnitDamage = 0
-	soloSpellDamage = 0
-	massSpellDamage = 0
-	soloHealingPotency = 0
-	massHealingPotency = 0
-	soloBuffPotency = 0
-	massBuffPotency = 0
-	soloEffectDuration = 0
-	massEffectDuration = 0
-	targetCount = 0
-	criticalHitChance = 0
+	directUnitDamage = 0
+	splashUnitDamage = 0
+	directSpellDamage = 0
+	splashSpellDamage = 0
+	directHealingPotency = 0
+	splashHealingPotency = 0
+	directBuffPotency = 0
+	splashBuffPotency = 0
+	directEffectDuration = 0
+	splashEffectDuration = 0
+	directTargetCount = 0
+	criticalDamageChance = 0
 	criticalBuffChance = 0
 	criticalHealChance = 0
 

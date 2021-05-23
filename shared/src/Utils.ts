@@ -2,6 +2,8 @@ import CardType from './enums/CardType'
 import Card from './models/Card'
 import CardFeature from './enums/CardFeature'
 import CardMessage from './models/network/card/CardMessage'
+import CardColor from './enums/CardColor'
+import Constants from './Constants'
 
 export const hashCode = (targetString: string): number => {
 	let i
@@ -92,4 +94,34 @@ export const getRandomName = (): string => {
 		name += ending
 	}
 	return name
+}
+
+export const getMaxCardCountForColor = (color: CardColor): number => {
+	switch (color) {
+		case CardColor.LEADER:
+			return Constants.CARD_LIMIT_LEADER
+		case CardColor.GOLDEN:
+			return Constants.CARD_LIMIT_GOLDEN
+		case CardColor.SILVER:
+			return Constants.CARD_LIMIT_SILVER
+		case CardColor.BRONZE:
+			return Constants.CARD_LIMIT_BRONZE
+		default:
+			return 0
+	}
+}
+
+export const getMaxCardCopiesForColor = (color: CardColor): number => {
+	switch (color) {
+		case CardColor.LEADER:
+			return Constants.CARD_COPIES_LIMIT_LEADER
+		case CardColor.GOLDEN:
+			return Constants.CARD_COPIES_LIMIT_GOLDEN
+		case CardColor.SILVER:
+			return Constants.CARD_COPIES_LIMIT_SILVER
+		case CardColor.BRONZE:
+			return Constants.CARD_COPIES_LIMIT_BRONZE
+		default:
+			return 0
+	}
 }

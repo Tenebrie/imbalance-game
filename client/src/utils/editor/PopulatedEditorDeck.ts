@@ -3,6 +3,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import Utils from '@/utils/Utils'
 import Constants from '@shared/Constants'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
+import { getMaxCardCountForColor } from '@shared/Utils'
 
 export default class PopulatedEditorDeck {
 	public id: string
@@ -38,7 +39,7 @@ export default class PopulatedEditorDeck {
 		return (
 			!this.leader ||
 			this.cardCount !== Constants.CARD_LIMIT_TOTAL ||
-			this.cards.some((card) => card.count > Utils.getMaxCardCountForColor(card.color))
+			this.cards.some((card) => card.count > getMaxCardCountForColor(card.color))
 		)
 	}
 

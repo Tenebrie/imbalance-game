@@ -19,7 +19,7 @@ import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
-import Utils from '@/utils/Utils'
+import { getMaxCardCopiesForColor } from '@shared/Utils'
 import { defineComponent, PropType } from 'vue'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 
@@ -50,7 +50,7 @@ export default defineComponent({
 		},
 
 		displayCount(): boolean {
-			return Utils.getMaxCardCopiesForColor(this.card.color) > 1
+			return getMaxCardCopiesForColor(this.card.color) > 1
 		},
 
 		colorClass(): any {
