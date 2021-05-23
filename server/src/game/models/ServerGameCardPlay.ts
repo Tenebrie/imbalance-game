@@ -80,6 +80,22 @@ export default class ServerGameCardPlay {
 		/* Start resolving */
 		const targetMode = ownedCard.card.type === CardType.UNIT ? TargetMode.CARD_PLAY : TargetMode.DEPLOY_EFFECT
 		this.cardResolveStack.startResolvingImmediately(ownedCard, targetMode, () => this.updateResolvingCardTargetingStatus())
+
+		if (ownedCard.card.type === CardType.UNIT && ownedCard.card.unit) {
+			/* Invoke the card Deploy effect */
+			this.game.events.postEvent(
+				GameEventCreators.unitDeployed({
+					triggeringUnit: ownedCard.card.unit,
+				})
+			)
+		} else if (ownedCard.card.type === CardType.SPELL) {
+			/* Invoke the card onPlay effect */
+			this.game.events.postEvent(
+				GameEventCreators.spellDeployed({
+					triggeringCard: ownedCard.card,
+				})
+			)
+		}
 	}
 
 	private playCard(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number, source: 'hand' | 'deck' | 'aether'): void {

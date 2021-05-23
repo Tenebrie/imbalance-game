@@ -16,7 +16,6 @@ import ServerOwnedCard from '@src/game/models/ServerOwnedCard'
 
 const createCard = (player: ServerPlayerInGame, card: ServerCard, callback: (card: ServerCard) => void): ServerCard => {
 	callback(card)
-	card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
 	card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, player))
 	return card
 }
@@ -41,8 +40,11 @@ export default {
 
 	summonCard: (card: ServerCard): void => {
 		const cardOwner = card.ownerInGame
-		card.buffs.add(BuffTutoredCard, null, BuffDuration.END_OF_THIS_TURN)
-		cardOwner.cardDeck.removeCard(card)
+		if (cardOwner.cardDeck.allCards.includes(card)) {
+			cardOwner.cardDeck.removeCard(card)
+		} else if (cardOwner.cardGraveyard.allCards.includes(card)) {
+			cardOwner.cardGraveyard.removeCard(card)
+		}
 		card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, cardOwner))
 	},
 
@@ -190,9 +192,10 @@ export default {
 	},
 
 	dispel: (count: number) => ({
-		from: (targetCard: ServerCard) => ({
+		from: (targetCard: ServerCard | ServerUnit) => ({
 			withSourceAs: (sourceCard: ServerCard) => {
-				targetCard.game.animation.play(ServerAnimation.cardAffectsCards(sourceCard, [targetCard]))
+				const card = targetCard instanceof ServerCard ? targetCard : targetCard.card
+				targetCard.game.animation.play(ServerAnimation.cardAffectsCards(sourceCard, [card]))
 				targetCard.buffs.dispel(count)
 			},
 		}),

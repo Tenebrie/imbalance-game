@@ -197,7 +197,7 @@ export const getDeckLeader = (deck: PopulatedEditorDeck): PopulatedEditorCard | 
 
 export const getDeckFaction = (deck: PopulatedEditorDeck): CardFaction => {
 	const leader = getDeckLeader(deck)
-	if (leader) {
+	if (leader && leader.faction !== CardFaction.NEUTRAL) {
 		return leader.faction
 	}
 	const factionCard = deck.cards.find((card) => card.faction !== CardFaction.NEUTRAL)

@@ -253,6 +253,10 @@ export class ServerCardTargeting {
 			targets = this.getValidUnitDeckTargets(targetDefinition, previousTargets)
 		} else if (targetType === TargetType.CARD_IN_SPELL_DECK) {
 			targets = this.getValidSpellDeckTargets(targetDefinition, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_UNIT_GRAVEYARD) {
+			targets = this.getValidUnitGraveyardTargets(targetDefinition, previousTargets)
+		} else if (targetType === TargetType.CARD_IN_SPELL_GRAVEYARD) {
+			targets = this.getValidSpellGraveyardTargets(targetDefinition, previousTargets)
 		}
 
 		return targets
@@ -382,6 +386,58 @@ export class ServerCardTargeting {
 
 		return targetedCards.map((targetCard) =>
 			ServerCardTarget.cardTargetCardInSpellDeck(
+				targetDefinition.id,
+				TargetMode.DEPLOY_EFFECT,
+				this.card,
+				targetCard,
+				targetDefinition.label
+			)
+		)
+	}
+
+	private getValidUnitGraveyardTargets(
+		targetDefinition: DeployTargetDefinition<any>,
+		previousTargets: ResolutionStackTarget[] = []
+	): ServerCardTargetCard[] {
+		const targetedCards = this.game.players
+			.map((player) => player.cardGraveyard.unitCards)
+			.reduce((accumulator, cards) => accumulator.concat(cards))
+			.filter((card) =>
+				targetDefinition.require({
+					sourceCard: this.card,
+					targetCard: card,
+					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
+				})
+			)
+
+		return targetedCards.map((targetCard) =>
+			ServerCardTarget.cardTargetCardInUnitGraveyard(
+				targetDefinition.id,
+				TargetMode.DEPLOY_EFFECT,
+				this.card,
+				targetCard,
+				targetDefinition.label
+			)
+		)
+	}
+
+	private getValidSpellGraveyardTargets(
+		targetDefinition: DeployTargetDefinition<any>,
+		previousTargets: ResolutionStackTarget[] = []
+	): ServerCardTargetCard[] {
+		const targetedCards = this.game.players
+			.map((player) => player.cardGraveyard.spellCards)
+			.reduce((accumulator, cards) => accumulator.concat(cards))
+			.filter((card) =>
+				targetDefinition.require({
+					sourceCard: this.card,
+					targetCard: card,
+					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
+				})
+			)
+
+		return targetedCards.map((targetCard) =>
+			ServerCardTarget.cardTargetCardInSpellGraveyard(
 				targetDefinition.id,
 				TargetMode.DEPLOY_EFFECT,
 				this.card,

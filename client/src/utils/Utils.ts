@@ -276,7 +276,11 @@ const legacyExport = {
 			return false
 		}
 
-		if (cardToAdd.faction !== CardFaction.NEUTRAL && cardToAdd.faction !== deckToModify.faction) {
+		if (
+			cardToAdd.faction !== CardFaction.NEUTRAL &&
+			cardToAdd.faction !== deckToModify.faction &&
+			deckToModify.faction !== CardFaction.NEUTRAL
+		) {
 			return false
 		}
 

@@ -8,7 +8,8 @@ import SpellNightmareDrain from './SpellNightmareDrain'
 import SpellCrystalBarrage from './SpellCrystalBarrage'
 import SpellShadowArmy from './SpellShadowArmy'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { getLeaderTextVariables } from '@src/utils/Utils'
+import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
+import GameEventType from '@src/../../shared/src/enums/GameEventType'
 
 export default class LeaderNighterie extends ServerCard {
 	manaPerRound = 10
@@ -26,5 +27,8 @@ export default class LeaderNighterie extends ServerCard {
 			manaPerRound: this.manaPerRound,
 			...getLeaderTextVariables(this),
 		}
+		this.createCallback(GameEventType.ROUND_STARTED, AnyCardLocation)
+			.require(({ player }) => player === this.ownerInGame)
+			.perform(({ player }) => player.addSpellMana(this.manaPerRound))
 	}
 }

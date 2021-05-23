@@ -29,6 +29,8 @@ import GameEventCreators, {
 	CardDestroyedEventArgs,
 	CardDrawnEventArgs,
 	CardPlayedEventArgs,
+	CardPreResolvedEventArgs,
+	CardResolvedEventArgs,
 	CardTakesDamageEventArgs,
 	CardTargetsConfirmedEventArgs,
 	CardTargetSelectedCardEventArgs,
@@ -570,6 +572,8 @@ export default class ServerCard implements Card {
 	protected createDeployTargets(targetType: TargetType.CARD_IN_SPELL_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.CARD_IN_UNIT_DECK): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.CARD_IN_SPELL_DECK): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.CARD_IN_UNIT_GRAVEYARD): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.CARD_IN_SPELL_GRAVEYARD): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType): DeployTargetDefinitionBuilder<any> {
 		const builder = DeployTargetDefinitionBuilder.base(this, targetType)
 		this.targeting.deployTargetDefinitions.push(builder)
@@ -658,6 +662,8 @@ export default class ServerCard implements Card {
 	 * Use `createDeployTargets(...).finalize` instead
 	 */
 	protected createEffect(event: GameEventType.CARD_TARGETS_CONFIRMED): EventSubscription<CardTargetsConfirmedEventArgs>
+	protected createEffect(event: GameEventType.CARD_PRE_RESOLVED): EventSubscription<CardPreResolvedEventArgs>
+	protected createEffect(event: GameEventType.CARD_RESOLVED): EventSubscription<CardResolvedEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventSubscription<UnitOrderedCardEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_UNIT): EventSubscription<UnitOrderedUnitEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>

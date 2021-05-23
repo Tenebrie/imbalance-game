@@ -7,6 +7,8 @@ enum TargetType {
 	CARD_IN_SPELL_HAND,
 	CARD_IN_UNIT_DECK,
 	CARD_IN_SPELL_DECK,
+	CARD_IN_UNIT_GRAVEYARD,
+	CARD_IN_SPELL_GRAVEYARD,
 }
 
 export default TargetType
@@ -17,3 +19,5 @@ export type CardTargetTypes =
 	| TargetType.CARD_IN_SPELL_DECK
 	| TargetType.CARD_IN_UNIT_HAND
 	| TargetType.CARD_IN_SPELL_HAND
+	| TargetType.CARD_IN_UNIT_GRAVEYARD
+	| TargetType.CARD_IN_SPELL_GRAVEYARD

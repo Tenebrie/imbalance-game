@@ -92,19 +92,27 @@ export default class ServerResolveStack implements ResolveStack {
 	}
 
 	public finishResolving(): void {
+		if (this.entries.length === 0) {
+			return
+		}
+
+		this.game.events.postEvent(
+			GameEventCreators.cardPreResolved({
+				triggeringCard: this.entries[this.entries.length - 1].ownedCard.card,
+			})
+		)
+
 		const resolvedEntry = this.entries.pop()
 		if (!resolvedEntry) {
 			return
 		}
 
-		OutgoingMessageHandlers.notifyAboutCardResolved(resolvedEntry.ownedCard)
-
 		const resolvedCard = resolvedEntry.ownedCard
+		OutgoingMessageHandlers.notifyAboutCardResolved(resolvedCard)
+
 		if (resolvedCard.card.type === CardType.SPELL && resolvedCard.card.features.includes(CardFeature.HERO_POWER)) {
-			resolvedCard.card.cleanse()
 			resolvedCard.owner.cardDeck.addSpellToTop(resolvedCard.card)
 		} else if (resolvedCard.card.type === CardType.SPELL) {
-			resolvedCard.card.cleanse()
 			resolvedCard.owner.cardGraveyard.addSpell(resolvedCard.card)
 		}
 

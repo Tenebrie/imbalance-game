@@ -180,6 +180,30 @@ export default class ServerCardTarget {
 		return order
 	}
 
+	public static cardTargetCardInUnitGraveyard(
+		rootId: string,
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetCard: ServerCard,
+		targetLabel = ''
+	): ServerCardTargetCard {
+		const order = new ServerCardTargetCard(rootId, targetMode, TargetType.CARD_IN_UNIT_GRAVEYARD, sourceCard, targetCard)
+		order.targetLabel = targetLabel
+		return order
+	}
+
+	public static cardTargetCardInSpellGraveyard(
+		rootId: string,
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetCard: ServerCard,
+		targetLabel = ''
+	): ServerCardTargetCard {
+		const order = new ServerCardTargetCard(rootId, targetMode, TargetType.CARD_IN_SPELL_GRAVEYARD, sourceCard, targetCard)
+		order.targetLabel = targetLabel
+		return order
+	}
+
 	public static cardTargetUnit(
 		rootId: string,
 		targetMode: TargetMode,

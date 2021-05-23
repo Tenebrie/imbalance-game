@@ -9,14 +9,12 @@ import ServerDamageInstance from '../models/ServerDamageSource'
 import ServerGraveyard from '../models/ServerGraveyard'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import Constants from '@shared/Constants'
-import CardLibrary from '../libraries/CardLibrary'
 import GameEventCreators from '../models/events/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import Utils from '../../utils/Utils'
 import ServerCardTarget from '../models/ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
-import ServerBotPlayerInGame from '@src/game/AI/ServerBotPlayerInGame'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false

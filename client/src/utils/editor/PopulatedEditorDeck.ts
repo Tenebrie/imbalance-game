@@ -21,7 +21,7 @@ export default class PopulatedEditorDeck {
 	}
 
 	public get faction(): CardFaction {
-		if (this.leader) {
+		if (this.leader && this.leader.faction !== CardFaction.NEUTRAL) {
 			return this.leader.faction
 		}
 		const factionCard = this.cards.find((card) => card.faction !== CardFaction.NEUTRAL)

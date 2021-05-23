@@ -74,6 +74,7 @@
 	"log.entry.turnStarted": "{player} has started a new turn",
 	"log.entry.cardDrawn": "{owner} has drawn {triggeringCard}",
 	"log.entry.cardPlayed": "{owner} has played card {triggeringCard}",
+	"log.entry.cardPreResolved": "Card {triggeringCard} is finishing resolving",
 	"log.entry.cardResolved": "Card {triggeringCard} has finished resolving",
 	"log.entry.cardTakesDamage.fromCard": "Card {triggeringCard} has taken {damage} damage from {sourceCard}",
 	"log.entry.cardTakesDamage.fromUniverse": "Card {triggeringCard} has taken {damage} damage",
@@ -168,6 +169,8 @@
 	"card.feature.keywordSummon.description": "Move a card from your deck into your hand until the end of your turn.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
+	"card.feature.keywordExile.name": "Exile",
+	"card.feature.keywordExile.description": "Remove a card from the game.",
 	"card.feature.keywordDispelX.name": "Dispel X",
 	"card.feature.keywordDispelX.description": "Remove last X dispellable buffs from the target.",
 	"card.feature.keywordProtector.name": "Protector",
@@ -234,6 +237,7 @@
 	"card.tribe.crystal": "Crystal",
 	"card.tribe.cultist": "Cultist",
 	"card.tribe.peasant": "Peasant",
+	"card.tribe.salvage": "Salvage",
 	"card.tribe.soldier": "Soldier",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.merfolk": "Merfolk",
@@ -808,5 +812,47 @@
 	"card.unitNullMender.description": "*Deploy:*\nChoose a row with *Shattered Space*. Destroy one copy of it on that row.",
 
 	"card.unitAulerianInquisitor.name": "Aulerian Inquisitor",
-	"card.unitAulerianInquisitor.description": "*Deploy:*\nDestroy an enemy unit that has at least {buffsRequired} buffs."
+	"card.unitAulerianInquisitor.description": "*Deploy:*\nDestroy an enemy unit that has at least {buffsRequired} buffs.",
+
+	"card.leaderTheScavenger.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Scavenger</if>",
+	"card.leaderTheScavenger.title": "<if inGame>The Scavenger</if>",
+	"card.leaderTheScavenger.listName": "The Scavenger",
+	"card.leaderTheScavenger.description": "*Neutral Leader*<p>*Game start:*\nAdd one of each Salvage spells to your Graveyard.<p>*Round start:*\nGain +{manaPerRound} Mana",
+
+	"card.spellPokeTheSalvage.name": "Poke The Salvage",
+	"card.spellPokeTheSalvage.description": "*Play* a Salvage Spell that costs {targetSpellCost} or less from your Graveyard.",
+
+	"card.spellScourTheSalvage.name": "Scour The Salvage",
+	"card.spellScourTheSalvage.description": "*Play* a Spell that costs {targetSpellCost} or less from your Graveyard.",
+
+	"card.spellDiveTheSalvage.name": "Dive The Salvage",
+	"card.spellDiveTheSalvage.description": "*Play* a Spell that costs {targetSpellCost} or less from your Graveyard.\nIf it's a Salvage Spell, also *Create* a copy of it.",
+
+	"card.spellBecomeTheSalvage.name": "Become The Salvage",
+	"card.spellBecomeTheSalvage.description": "*Exile* a Salvage Spell from your Graveyard.\nGain Mana equal to its' cost.",
+
+	"card.spellRustedAxe.name": "Rusted Axe",
+	"card.spellRustedAxe.description": "Deal {damage} Damage to an enemy unit.<p>This card costs *1* more this round.",
+
+	"card.spellRustedChalice.name": "Rusted Chalice",
+	"card.spellRustedChalice.description": "Restore {healPower} Power to an allied unit.<p>This card costs *1* more this round.",
+
+	"card.spellRustedWagon.name": "Rusted Wagon",
+	"card.spellRustedWagon.description": "*Move* {moveDistance} an allied unit.<p>This card costs *1* more this round.",
+	"card.spellRustedWagon.target.label.unit": "Choose a unit",
+	"card.spellRustedWagon.target.label.row": "Move here",
+
+	"card.spellRustedWand.name": "Rusted Wand",
+	"card.spellRustedWand.description": "*Dispel* {dispelPower} from an enemy unit.<p>This card costs *1* more this round.",
+
+	"card.spellRustedWhistle.name": "Rusted Whistle",
+	"card.spellRustedWhistle.description": "*Create* a *Stray Dog*.<p>This card costs *1* more this round.",
+
+	"card.spellRustedHorn.name": "Rusted Horn",
+	"card.spellRustedHorn.description": "Give +{extraPower} Power to an allied unit.<p>This card costs *1* more this round.",
+	"card.spellRustedHorn.target.label": "Give +{extraPower} Power",
+
+	"card.unitStrayDog.name": "Stray Dog",
+	"card.unitStrayDog.description": "<i>No effect</i>",
+	"card.unitStrayDog.flavor": "(Who, who, who, who)"
 }

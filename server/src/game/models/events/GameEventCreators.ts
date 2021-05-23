@@ -53,6 +53,14 @@ export default {
 			triggeringCard: args.triggeringCard.id,
 		},
 	}),
+	cardPreResolved: (args: CardPreResolvedEventArgs): GameEvent => ({
+		type: GameEventType.CARD_PRE_RESOLVED,
+		args: args,
+		effectSource: args.triggeringCard,
+		logVariables: {
+			triggeringCard: args.triggeringCard.id,
+		},
+	}),
 	cardResolved: (args: CardResolvedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_RESOLVED,
 		args: args,
@@ -299,6 +307,9 @@ export interface CardDrawnEventArgs {
 }
 export interface CardPlayedEventArgs {
 	owner: ServerPlayerInGame
+	triggeringCard: ServerCard
+}
+export interface CardPreResolvedEventArgs {
 	triggeringCard: ServerCard
 }
 export interface CardResolvedEventArgs {

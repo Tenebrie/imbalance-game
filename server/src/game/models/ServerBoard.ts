@@ -370,7 +370,7 @@ export default class ServerBoard implements Board {
 		)
 
 		this.game.animation.play(ServerAnimation.unitDestroy(card))
-		card.cleanse()
+		// card.cleanse()
 		this.removeUnit(unit)
 
 		if (card.features.includes(CardFeature.HERO_POWER)) {

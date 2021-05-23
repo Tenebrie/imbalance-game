@@ -584,7 +584,9 @@ export default class Input {
 				(target) =>
 					target.targetType === TargetType.CARD_IN_LIBRARY ||
 					target.targetType === TargetType.CARD_IN_UNIT_DECK ||
-					target.targetType === TargetType.CARD_IN_SPELL_DECK
+					target.targetType === TargetType.CARD_IN_SPELL_DECK ||
+					target.targetType === TargetType.CARD_IN_UNIT_GRAVEYARD ||
+					target.targetType === TargetType.CARD_IN_SPELL_GRAVEYARD
 			)
 			.map((target) => target.targetCardData)
 
