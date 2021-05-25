@@ -56,8 +56,8 @@ export class ServerCardTargeting {
 	 *            Play targets
 	 * ------------------------------------
 	 */
-	public getPlayTargets(cardOwner: ServerPlayerInGame | null): PlayTarget[] {
-		if (!cardOwner || cardOwner.unitMana < this.card.stats.unitCost || cardOwner.spellMana < this.card.stats.spellCost) {
+	public getPlayTargets(cardOwner: ServerPlayerInGame, attrs: { checkMana: boolean }): PlayTarget[] {
+		if (attrs.checkMana && (cardOwner.unitMana < this.card.stats.unitCost || cardOwner.spellMana < this.card.stats.spellCost)) {
 			return []
 		}
 

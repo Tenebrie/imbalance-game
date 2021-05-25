@@ -173,7 +173,7 @@ export default {
 
 	notifyAboutValidActionsChanged(game: ServerGame, playerInGame: ServerPlayerInGame): void {
 		const cardsInHand = playerInGame.cardHand.allCards
-		const validPlayTargets = cardsInHand.flatMap((card) => card.targeting.getPlayTargets(playerInGame))
+		const validPlayTargets = cardsInHand.flatMap((card) => card.targeting.getPlayTargets(playerInGame, { checkMana: true }))
 		const playTargetMessages = validPlayTargets.map((order) => new CardTargetMessage(order.target))
 		playerInGame.player.sendMessage({
 			type: PlayerUpdateMessageType.PLAY_TARGETS,

@@ -45,7 +45,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		const validTargets = card.targeting.getPlayTargets(card.owner)
+		const validTargets = card.targeting.getPlayTargets(playerInGame, { checkMana: true })
 		if (
 			playerInGame.turnEnded ||
 			playerInGame.roundEnded ||

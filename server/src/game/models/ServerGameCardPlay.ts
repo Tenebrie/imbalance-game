@@ -51,9 +51,10 @@ export default class ServerGameCardPlay {
 		 * This already includes the check for unit/spell mana
 		 * Player is prevented from playing cards on their opponent's turn in IncomingMessageHandlers
 		 */
+		const owner = ownedCard.owner
 		if (
 			!ownedCard.card.targeting
-				.getPlayTargets(ownedCard.owner)
+				.getPlayTargets(owner, { checkMana: true })
 				.map((playTarget) => playTarget.target)
 				.find(({ targetRow, targetPosition }) => targetRow.index === rowIndex && targetPosition === unitIndex)
 		) {
@@ -214,7 +215,7 @@ export default class ServerGameCardPlay {
 		}
 		const card = currentCard?.card
 
-		return card.targeting.getPlayTargets(card.ownerInGame)
+		return card.targeting.getPlayTargets(card.ownerInGame, { checkMana: false })
 	}
 
 	public getDeployTargets(): DeployTarget[] {
@@ -387,6 +388,7 @@ export default class ServerGameCardPlay {
 					})
 				)
 			}
+
 			this.cardResolveStack.finishResolving()
 		}
 	}

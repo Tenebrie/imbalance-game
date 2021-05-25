@@ -69,7 +69,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const baseCards = spellsOnly ? this.cardHand.spellCards : this.cardHand.allCards
 
 		const cards = Utils.sortCards(baseCards)
-			.filter((card) => card.targeting.getPlayTargets(this).length > 0)
+			.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
 			.map((card) => ({
 				card: card,
 				bestExpectedValue: this.getBestExpectedValue(card),
@@ -123,7 +123,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	private hasHighValueSpellPlays(): boolean {
 		return (
 			Utils.sortCards(this.cardHand.spellCards)
-				.filter((card) => card.targeting.getPlayTargets(this).length > 0)
+				.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
 				.map((card) => ({
 					card: card,
 					bestExpectedValue: this.getBestExpectedValue(card),
@@ -133,7 +133,10 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private hasAnySpellPlays(): boolean {
-		return Utils.sortCards(this.cardHand.spellCards).filter((card) => card.targeting.getPlayTargets(this).length > 0).length > 0
+		return (
+			Utils.sortCards(this.cardHand.spellCards).filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
+				.length > 0
+		)
 	}
 
 	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerBotPlayerInGame {
