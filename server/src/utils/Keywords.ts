@@ -49,8 +49,9 @@ export default {
 	},
 
 	discardCard: (card: ServerCard): void => {
-		card.ownerInGame.cardHand.discardCard(card)
-		card.ownerInGame.cardGraveyard.addCard(card)
+		const owner = card.ownerInGame
+		owner.cardHand.discardCard(card)
+		owner.cardGraveyard.addCard(card)
 	},
 
 	destroy: {

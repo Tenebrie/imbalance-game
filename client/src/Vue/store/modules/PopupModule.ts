@@ -6,6 +6,7 @@ import { markRaw } from 'vue'
 type ComponentInStack = {
 	component: Component
 	sticky?: boolean
+	debug?: boolean
 	params?: Record<string, string> | undefined
 	onConfirm?: () => void
 }
@@ -26,7 +27,7 @@ const PopupModule = defineModule({
 		},
 
 		clearComponents(state): void {
-			state.componentStack = []
+			state.componentStack = state.componentStack.filter((component) => component.debug)
 		},
 	},
 

@@ -19,6 +19,7 @@ const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHan
 		store.dispatch.popupModule.open({
 			component: TheGameCollapsePopup,
 			sticky: true,
+			debug: true,
 			params: data,
 		})
 	},
