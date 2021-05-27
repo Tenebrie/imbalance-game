@@ -9,6 +9,7 @@ import GameMode from '@shared/enums/GameMode'
 import ServerOwnedCard from '../game/models/ServerOwnedCard'
 import TestingLeader from '../game/cards/11-testing/TestingLeader'
 import { playerAction, startNextRound, startNextTurn } from './TestGameUtils'
+import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRuleset'
 
 const consoleInfo = console.info
 const consoleWarn = console.warn
@@ -49,7 +50,9 @@ type OpponentCardTestGameTemplateResult = {
 export default {
 	emptyDecks(): ServerGame {
 		silenceLogging()
-		const game = new ServerGame({ gameMode: GameMode.VS_AI, playerMoveOrderReversed: false })
+
+		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.VS_AI }).__build()
+		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
 		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
 		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
 		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
@@ -69,7 +72,8 @@ export default {
 
 	normalGameFlow(props?: OptionalGameProps): CommonTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({ gameMode: GameMode.VS_AI, playerMoveOrderReversed: false, ...props })
+		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.VS_AI }).__build()
+		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false, ...props })
 		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
 		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
 		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
@@ -96,7 +100,8 @@ export default {
 
 	singleCardTest(card: CardConstructor): SingleCardTestGameTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({ gameMode: GameMode.VS_AI, playerMoveOrderReversed: false })
+		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.VS_AI }).__build()
+		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
 		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
 		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
 		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
@@ -133,7 +138,8 @@ export default {
 
 	opponentCardTest(playersCard: CardConstructor, opponentsCard: CardConstructor): OpponentCardTestGameTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({ gameMode: GameMode.VS_AI, playerMoveOrderReversed: false })
+		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.VS_AI }).__build()
+		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
 		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
 		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
 		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])

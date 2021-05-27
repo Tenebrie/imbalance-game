@@ -10,6 +10,7 @@ export type CardSelectorArgs = {
 }
 
 export class CardSelector {
+	public readonly game: ServerGame
 	public readonly subscriber: EventSubscriber
 	public readonly ignoreControlEffects
 
@@ -23,6 +24,7 @@ export class CardSelector {
 	private selectedCards: ServerCard[] = []
 
 	constructor(
+		game: ServerGame,
 		subscriber: EventSubscriber,
 		selfConditions: (() => boolean)[],
 		targetConditions: ((args: CardSelectorArgs) => boolean)[],
@@ -32,6 +34,7 @@ export class CardSelector {
 		onReleaseCallbacks: ((args: CardSelectorArgs) => void)[],
 		ignoreControlEffects: boolean
 	) {
+		this.game = game
 		this.subscriber = subscriber
 		this.selfConditions = selfConditions
 		this.targetConditions = targetConditions
@@ -40,10 +43,6 @@ export class CardSelector {
 		this.onSelectCallbacks = onSelectCallbacks
 		this.onReleaseCallbacks = onReleaseCallbacks
 		this.ignoreControlEffects = ignoreControlEffects
-	}
-
-	private get game(): ServerGame {
-		return this.subscriber instanceof ServerGame ? this.subscriber : this.subscriber.game
 	}
 
 	private get card(): ServerCard | null {

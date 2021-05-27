@@ -19,6 +19,7 @@ import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
+import CardLibrary from '@src/game/libraries/CardLibrary'
 
 const router = express.Router() as WebSocketRouter
 
@@ -63,9 +64,11 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			return
 		}
 
-		let inflatedDeck = ServerTemplateCardDeck.fromEditorDeck(currentGame, deck)
-		if (currentGame.gameMode === GameMode.CHALLENGE && currentGame.challengeLevel === ChallengeLevel.DISCOVERY_LEAGUE) {
-			inflatedDeck = ServerTemplateCardDeck.challengeDiscovery(currentGame, inflatedDeck.leader)
+		let inflatedDeck
+		if (currentGame.ruleset.deck && currentGame.ruleset.deck.fixedDeck) {
+			inflatedDeck = ServerTemplateCardDeck.fromEditorDeck(currentGame, currentGame.ruleset.deck.fixedDeck)
+		} else {
+			inflatedDeck = ServerTemplateCardDeck.fromEditorDeck(currentGame, deck)
 		}
 		currentPlayerInGame = currentGame.addPlayer(currentPlayer, inflatedDeck)
 	}

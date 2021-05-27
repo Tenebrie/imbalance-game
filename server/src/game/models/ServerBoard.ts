@@ -232,7 +232,11 @@ export default class ServerBoard implements Board {
 		if (player.isInvertedBoard()) {
 			playerRows = playerRows.reverse()
 		}
-		return playerRows[Math.min(playerRows.length - 1, distance)]
+		const targetRow = playerRows[Math.min(playerRows.length - 1, distance)]
+		if (!targetRow) {
+			throw new Error(`No row owned by player ${player.player.id} at distance ${distance}!`)
+		}
+		return targetRow
 	}
 
 	public createUnit(card: ServerCard, rowIndex: number, unitIndex: number): ServerUnit | null {

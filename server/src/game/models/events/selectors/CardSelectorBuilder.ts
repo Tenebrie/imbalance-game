@@ -3,6 +3,7 @@ import { CardSelectorProvideBuff } from './CardSelectorProvideBuff'
 import { CardSelector, CardSelectorArgs } from './CardSelector'
 import { BuffConstructor } from '../../ServerBuffContainer'
 import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import ServerGame from '../../ServerGame'
 
 export class CardSelectorBuilder {
 	private readonly __subscriber: EventSubscriber
@@ -24,8 +25,9 @@ export class CardSelectorBuilder {
 		this.__onReleaseCallbacks = []
 	}
 
-	public _build(): CardSelector {
+	public _build(game: ServerGame): CardSelector {
 		return new CardSelector(
+			game,
 			this.__subscriber,
 			this.__selfConditions,
 			this.__targetConditions,

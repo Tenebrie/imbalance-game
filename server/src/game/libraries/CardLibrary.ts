@@ -1,6 +1,3 @@
-import path from 'path'
-import glob from 'glob'
-import * as fs from 'fs'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
@@ -9,79 +6,25 @@ import AsciiColor from '../../enums/AsciiColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
 import CardType from '@shared/enums/CardType'
+import { loadModules } from './ModuleLoader'
 
-export interface CardConstructor {
+export interface CardConstructor extends Function {
 	new (game: ServerGame): ServerCard
-}
-
-type CardModule = {
-	path: string
-	filename: string
-	timestamp: number
-	prototypeFunction: CardConstructor
 }
 
 class CardLibrary {
 	public cards: ServerCard[] = []
 
 	constructor() {
-		// Do not load cards if running tests
-		if (process.env.JEST_WORKER_ID !== undefined) {
-			this.cards = []
-			return
-		}
+		const { prototypes, upToDateModules, outdatedModules } = loadModules<CardConstructor>({
+			path: '../cards',
+			objectLogName: 'card',
+		})
 
-		const normalizedPath = path.join(__dirname, '../cards')
-		const cardDefinitionFiles = glob.sync(`${normalizedPath}/**/*.js`)
+		this.forceLoadCards(prototypes)
 
-		const cardModules: CardModule[] = cardDefinitionFiles.map((path) => ({
-			path: path,
-			filename: path.substring(path.lastIndexOf('/') + 1, path.indexOf('.js')),
-			timestamp: fs.statSync(path).mtimeMs,
-			prototypeFunction: require(path).default,
-		}))
-		console.info(`Found ${colorize(cardModules.length, AsciiColor.CYAN)} card definition files`)
-
-		const nameMismatchModules = cardModules.filter((module) => module.filename !== module.prototypeFunction.name)
-		if (nameMismatchModules.length > 0) {
-			const errorArray = nameMismatchModules.map((module) => ({
-				file: module.filename,
-				prototype: module.prototypeFunction.name,
-			}))
-			console.warn(
-				colorize(`Clearing ${nameMismatchModules.length} card module(s) due to class name mismatch:`, AsciiColor.YELLOW),
-				errorArray
-			)
-			nameMismatchModules.forEach((module) => fs.unlinkSync(module.path))
-		}
-
-		const upToDateModules = cardModules
-			.filter((module) => module.filename === module.prototypeFunction.name)
-			.reduce((acc: CardModule[], obj) => {
-				const updatedArray = acc.slice()
-				const savedObject = updatedArray.find((savedObject) => savedObject.filename === obj.filename)
-				if (!savedObject) {
-					updatedArray.push(obj)
-				} else if (obj.timestamp > savedObject.timestamp) {
-					updatedArray.splice(updatedArray.indexOf(savedObject), 1, obj)
-				}
-				return updatedArray
-			}, [])
-
-		const outdatedModules = cardModules.filter((module) => !upToDateModules.includes(module) && !nameMismatchModules.includes(module))
-		if (outdatedModules.length > 0) {
-			console.info(colorize(`Clearing ${outdatedModules.length} outdated card module(s)`, AsciiColor.YELLOW))
-			outdatedModules.forEach((module) => fs.unlinkSync(module.path))
-		}
-
-		const cardPrototypes = upToDateModules
-			.filter((module) => !module.filename.toLowerCase().startsWith('testing'))
-			.map((module) => module.prototypeFunction)
-
-		this.forceLoadCards(cardPrototypes)
-
-		console.info(`Loaded ${colorize(cardPrototypes.length, AsciiColor.CYAN)} card definitions`)
-		if (cardPrototypes.length === 0) {
+		console.info(`Loaded ${colorize(prototypes.length, AsciiColor.CYAN)} card definitions`)
+		if (prototypes.length === 0) {
 			return
 		}
 

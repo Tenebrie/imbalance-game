@@ -29,15 +29,16 @@ import { BuffConstructor } from './ServerBuffContainer'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import ServerGameIndex from '@src/game/models/ServerGameIndex'
 import ServerAnimation from '@src/game/models/ServerAnimation'
+import { ServerRuleset, ServerRulesetTemplate } from './rulesets/ServerRuleset'
+import CardLibrary from '../libraries/CardLibrary'
 
 interface ServerGameProps extends OptionalGameProps {
-	gameMode: GameMode
+	ruleset: ServerRulesetTemplate
 }
 
 export interface OptionalGameProps {
 	name?: string
 	owner?: ServerPlayer
-	challengeLevel?: ChallengeLevel
 	playerMoveOrderReversed?: boolean
 }
 
@@ -60,8 +61,7 @@ export default class ServerGame implements Game {
 	readonly cardPlay: ServerGameCardPlay
 	readonly animation: ServerGameAnimation
 
-	public gameMode: GameMode
-	public challengeLevel: ChallengeLevel | null
+	public ruleset: ServerRuleset
 
 	constructor(props: ServerGameProps) {
 		this.id = createRandomGameId()
@@ -82,13 +82,18 @@ export default class ServerGame implements Game {
 			props.playerMoveOrderReversed !== undefined ? props.playerMoveOrderReversed : Math.floor(Math.random() * 2) === 0
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
-		this.gameMode = props.gameMode
-		this.challengeLevel = props.challengeLevel || null
+		this.ruleset = props.ruleset.__build()
+
+		props.ruleset.__applyAmplifiers(this)
 
 		this.events
-			.createCallback<PlayerTargetCardSelectedEventArgs>(this, GameEventType.PLAYER_TARGET_SELECTED_CARD)
+			.createCallback<PlayerTargetCardSelectedEventArgs>(null, GameEventType.PLAYER_TARGET_SELECTED_CARD)
 			.require(({ targetMode }) => targetMode === TargetMode.MULLIGAN)
 			.perform(({ triggeringPlayer, targetCard }) => this.mulliganCard(triggeringPlayer, targetCard))
+	}
+
+	public get gameMode(): GameMode {
+		return this.ruleset.gameMode
 	}
 
 	public get activePlayer(): ServerPlayerInGame | null {
@@ -158,15 +163,63 @@ export default class ServerGame implements Game {
 			playerInGame.drawSpellCards(Constants.SPELL_HAND_SIZE_MINIMUM)
 			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
 		})
+
+		if (this.ruleset.board) {
+			const boardState = this.ruleset.board
+			const symmetricBoardState = boardState.symmetricBoardState
+			if (symmetricBoardState) {
+				this.players.forEach((player) => {
+					symmetricBoardState.forEach((row, rowIndex) => {
+						row.forEach((card, cardIndex) => {
+							const targetRow = this.board.getRowWithDistanceToFront(player, rowIndex)
+							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiateByConstructor(this, card), cardIndex))
+						})
+					})
+				})
+			}
+			if (this.ruleset.ai) {
+				const humanPlayer = this.getHumanPlayer()
+				const playerBoardState = boardState.playerBoardState
+				if (playerBoardState && humanPlayer) {
+					playerBoardState.forEach((row, rowIndex) => {
+						row.forEach((card, cardIndex) => {
+							const targetRow = this.board.getRowWithDistanceToFront(humanPlayer, rowIndex)
+							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiateByConstructor(this, card), cardIndex))
+						})
+					})
+				}
+
+				const botPlayer = this.getBotPlayer()
+				const opponentBoardState = boardState.opponentBoardState
+				if (opponentBoardState && botPlayer) {
+					opponentBoardState.forEach((row, rowIndex) => {
+						row.forEach((card, cardIndex) => {
+							const targetRow = this.board.getRowWithDistanceToFront(botPlayer, rowIndex)
+							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiateByConstructor(this, card), cardIndex))
+						})
+					})
+				}
+			}
+		}
+
 		this.events.flushLogEventGroup()
 		this.startMulliganPhase()
 
 		GameHistoryDatabase.startGame(this).then()
+		this.events.resolveEvents()
 		OutgoingMessageHandlers.executeMessageQueue(this)
 	}
 
 	public getOpponent(player: ServerPlayerInGame | null): ServerPlayerInGame | null {
 		return this.players.find((otherPlayer) => otherPlayer !== player) || null
+	}
+
+	public getHumanPlayer(): ServerPlayerInGame | null {
+		return this.players.find((playerInGame) => !(playerInGame instanceof ServerBotPlayerInGame)) || null
+	}
+
+	public getBotPlayer(): ServerPlayerInGame | null {
+		return this.players.find((playerInGame) => playerInGame instanceof ServerBotPlayerInGame) || null
 	}
 
 	public isBotGame(): boolean {
@@ -468,12 +521,12 @@ export default class ServerGame implements Game {
 		return viableCards.map((card) => card.buffs.getIntensity(buffPrototype)).reduce((total, value) => total + value, 0)
 	}
 
-	static newOwnedInstance(owner: ServerPlayer, name: string, gameMode: GameMode, props: OptionalGameProps): ServerGame {
+	static newOwnedInstance(owner: ServerPlayer, name: string, ruleset: ServerRulesetTemplate, props: OptionalGameProps): ServerGame {
 		return new ServerGame({
 			...props,
 			name,
 			owner,
-			gameMode,
+			ruleset,
 		})
 	}
 }

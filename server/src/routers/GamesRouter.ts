@@ -9,6 +9,9 @@ import { getPlayerFromAuthenticatedRequest } from '../utils/Utils'
 import GameMode from '@shared/enums/GameMode'
 import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
 import ChallengeLevel from '@shared/enums/ChallengeLevel'
+import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
+import { ServerRulesetTemplate } from '@src/game/models/rulesets/ServerRuleset'
+import CardLibrary from '@src/game/libraries/CardLibrary'
 
 const router = express.Router()
 
@@ -30,14 +33,10 @@ router.get('/', (req: Request, res: Response) => {
 router.post('/', (req: Request, res: Response) => {
 	const player = getPlayerFromAuthenticatedRequest(req)
 	const gameName = req.body['name'] || ''
-	const gameMode = req.body['mode'] as GameMode
-	const difficulty = req.body['difficulty'] || ''
-	const level = (req.body['level'] as ChallengeLevel) || null
+	const rulesetClass = req.body['ruleset'] as string
 
-	if (!gameMode) {
-		res.status(400)
-		res.send()
-		return
+	if (!rulesetClass) {
+		throw { status: 400, error: '"ruleset" param not provided' }
 	}
 
 	const connectedGames = GameLibrary.games.filter((game) => game.players.find((playerInGame) => playerInGame.player === player))
@@ -46,28 +45,17 @@ router.post('/', (req: Request, res: Response) => {
 		game.finish(playerInGame?.opponent || null, 'Player surrendered (Started new game)')
 	})
 
-	const game = GameLibrary.createOwnedGame(player, gameName.trim(), gameMode, {
-		challengeLevel: level,
-	})
+	let ruleset: ServerRulesetTemplate
+	try {
+		ruleset = RulesetLibrary.findPrototypeByClass(rulesetClass)
+	} catch (err) {
+		throw { status: 400, error: 'Invalid ruleset class' }
+	}
+	const game = GameLibrary.createOwnedGame(player, gameName.trim(), ruleset, {})
 
-	if (gameMode === GameMode.VS_AI) {
-		let deck: ServerTemplateCardDeck | null = null
-		if (difficulty === ChallengeAIDifficulty.EASY) {
-			deck = ServerTemplateCardDeck.challengeAI00(game)
-		} else if (difficulty === ChallengeAIDifficulty.NORMAL) {
-			deck = ServerTemplateCardDeck.challengeAI01(game)
-		}
-
-		if (!deck) {
-			GameLibrary.destroyGame(game, 'Failed to start: Invalid AI difficulty')
-			res.status(400)
-			res.send()
-			return
-		}
-
-		game.addPlayer(new ServerBotPlayer(), deck)
-	} else if (gameMode === GameMode.CHALLENGE && level === ChallengeLevel.DISCOVERY_LEAGUE) {
-		game.addPlayer(new ServerBotPlayer(), ServerTemplateCardDeck.challengeAI00(game))
+	if (ruleset.ai) {
+		const deck = ruleset.ai.deck
+		game.addPlayer(new ServerBotPlayer(), ServerTemplateCardDeck.fromEditorDeck(game, deck))
 	}
 
 	res.json({ data: new GameMessage(game) })

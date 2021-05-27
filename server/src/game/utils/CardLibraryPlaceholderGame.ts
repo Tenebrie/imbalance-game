@@ -1,5 +1,6 @@
 import ServerGame from '../models/ServerGame'
 import GameMode from '@shared/enums/GameMode'
+import { ServerRulesetBuilder } from '../models/rulesets/ServerRuleset'
 
 let instance: ServerGame | null = null
 
@@ -8,7 +9,7 @@ export default {
 		if (!instance) {
 			instance = new ServerGame({
 				name: 'Card Library Placeholder Game',
-				gameMode: GameMode.VS_AI,
+				ruleset: new ServerRulesetBuilder({ gameMode: GameMode.VS_AI }).__build(),
 			})
 		}
 		return instance

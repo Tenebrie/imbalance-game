@@ -15,7 +15,6 @@ import axios from 'axios'
 import GameMode from '@shared/enums/GameMode'
 import GameMessage from '@shared/models/network/GameMessage'
 import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
-import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -26,7 +25,7 @@ export default defineComponent({
 
 		const onEasySelected = async (): Promise<void> => {
 			store.dispatch.popupModule.close()
-			const response = await axios.post('/api/games', { mode: GameMode.VS_AI, difficulty: ChallengeAIDifficulty.EASY })
+			const response = await axios.post('/api/games', { ruleset: 'rulesetChallengeDummy', difficulty: ChallengeAIDifficulty.EASY })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
 		}
@@ -39,10 +38,10 @@ export default defineComponent({
 		}
 
 		const onDiscoveryLeagueSelected = async (): Promise<void> => {
-			store.dispatch.popupModule.close()
-			const response = await axios.post('/api/games', { mode: GameMode.CHALLENGE, level: ChallengeLevel.DISCOVERY_LEAGUE })
-			const gameMessage: GameMessage = response.data.data
-			await store.dispatch.joinGame(gameMessage)
+			// store.dispatch.popupModule.close()
+			// const response = await axios.post('/api/games', { mode: GameMode.CHALLENGE, level: ChallengeLevel.DISCOVERY_LEAGUE })
+			// const gameMessage: GameMessage = response.data.data
+			// await store.dispatch.joinGame(gameMessage)
 		}
 
 		return {

@@ -73,7 +73,7 @@ export class EventHook<HookValues, HookArgs> {
 	 * Add a new condition to the require chain. Card location must match any of the specified values.
 	 */
 	requireLocations(locations: CardLocation[]): EventHook<HookValues, HookArgs> {
-		return this.require(() => !(this.__subscriber instanceof ServerGame) && locations.includes(this.__subscriber.location))
+		return this.require(() => !!this.__subscriber && locations.includes(this.__subscriber.location))
 	}
 
 	/* Ignore control effects

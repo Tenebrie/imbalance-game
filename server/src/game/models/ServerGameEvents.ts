@@ -16,7 +16,7 @@ import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
 import CardLocation from '@shared/enums/CardLocation'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
-export type EventSubscriber = ServerGame | ServerCard | ServerBuff
+export type EventSubscriber = ServerCard | ServerBuff | null
 
 type CallbackQueueEntry = {
 	subscription: EventSubscription<any>
@@ -92,6 +92,22 @@ export default class ServerGameEvents {
 		})
 	}
 
+	public insertCallbacks(subscriptions: Map<GameEventType, EventSubscription<any>[]>): void {
+		subscriptions.forEach((value, key) => {
+			this.eventSubscriptions.set(key, this.eventSubscriptions.get(key)!.concat(value))
+		})
+	}
+
+	public insertHooks(hooks: Map<GameHookType, EventHook<any, any>[]>): void {
+		hooks.forEach((value, key) => {
+			this.eventHooks.set(key, this.eventHooks.get(key)!.concat(value))
+		})
+	}
+
+	public insertSelectors(selectors: CardSelectorBuilder[]): void {
+		this.cardSelectors = this.cardSelectors.concat(selectors.map((selector) => selector._build(this.game)))
+	}
+
 	public postEvent(event: GameEvent): void {
 		this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
 
@@ -160,7 +176,7 @@ export default class ServerGameEvents {
 	public resolveEvents(): void {
 		let currentCallbacks = this.callbackQueue.slice().sort((a, b) => {
 			// Player > System
-			if (a.subscriber instanceof ServerGame && b.subscriber instanceof ServerGame) {
+			if (!a.subscriber || !b.subscriber) {
 				return 0
 			} else if (a.subscriber instanceof ServerGame) {
 				return 1
@@ -294,7 +310,7 @@ export default class ServerGameEvents {
 
 	private logEventExecution(event: GameEvent, subscription: EventSubscription<any>, isImmediate: boolean): void {
 		const subscriber = subscription.subscriber
-		const subscriberId = subscriber instanceof ServerGame ? '' : `${subscriber.id}`
+		const subscriberId = !subscriber ? this.game.id : `${subscriber.id}`
 
 		const gameId = colorizeId(this.game.id)
 		const eventType = colorizeClass(event.type)
@@ -305,7 +321,7 @@ export default class ServerGameEvents {
 
 	public evaluateSelectors(): void {
 		this.evaluatingSelectors = true
-		this.cardSelectors = this.cardSelectors.concat(this.cardSelectorBuilders.map((builder) => builder._build()))
+		this.cardSelectors = this.cardSelectors.concat(this.cardSelectorBuilders.map((builder) => builder._build(this.game)))
 		this.cardSelectorBuilders = []
 
 		let allGameCards: ServerCard[] = this.game.board
@@ -333,7 +349,7 @@ export default class ServerGameEvents {
 	}
 
 	private subscriberSuspended(subscriber: EventSubscriber): boolean {
-		if (subscriber instanceof ServerGame) {
+		if (subscriber instanceof ServerGame || !subscriber) {
 			return false
 		}
 		if (subscriber instanceof ServerBuff) {

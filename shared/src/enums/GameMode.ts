@@ -1,7 +1,6 @@
 enum GameMode {
-	VS_AI = 'sp_ai',
-	VS_PLAYER = 'mp',
-	CHALLENGE = 'ch',
+	VS_AI,
+	VS_PLAYER,
 }
 
 export default GameMode

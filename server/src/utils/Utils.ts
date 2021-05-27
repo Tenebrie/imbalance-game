@@ -17,6 +17,7 @@ import PopulatedEditorCard from '@src/../../shared/src/models/PopulatedEditorCar
 import CardFaction from '@src/../../shared/src/enums/CardFaction'
 import PopulatedEditorDeck from '@src/../../shared/src/models/PopulatedEditorDeck'
 import CardColor from '@src/../../shared/src/enums/CardColor'
+import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 
 export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
 	return `${type}:${prefix}:${getRandomId()}`
@@ -179,7 +180,7 @@ export const mapRelatedCards = (constructors: CardConstructor[]): string[] => {
 	return constructors.map((constructor) => getClassFromConstructor(constructor))
 }
 
-export const getClassFromConstructor = (constructor: CardConstructor): string => {
+export const getClassFromConstructor = (constructor: CardConstructor | RulesetConstructor): string => {
 	return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
 }
 
