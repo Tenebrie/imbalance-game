@@ -14,7 +14,7 @@
 			</div>
 			<div class="controls">
 				<div class="button-container">
-					<button @click="onCreateSinglePlayer" class="primary">{{ $locale.get('ui.play.ai.normal') }}</button>
+					<button @click="onCreateSinglePlayer" class="primary">{{ $locale.get('ui.play.pve.normal') }}</button>
 					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp.normal') }}</button>
 					<button @click="onRefreshGames" class="secondary">{{ $locale.get('ui.play.refresh') }}</button>
 				</div>
@@ -83,7 +83,7 @@ export default defineComponent({
 				return
 			}
 
-			const response = await axios.post('/api/games', { mode: GameMode.VS_PLAYER })
+			const response = await axios.post('/api/games', { mode: GameMode.PVE })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
 		},

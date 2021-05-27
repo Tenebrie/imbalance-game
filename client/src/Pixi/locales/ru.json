@@ -20,8 +20,8 @@
 	"ui.browser.header": "Список игр",
 	"ui.browser.empty": "Сейчас никто не играет :(",
 
-	"ui.play.ai.normal": "Играть против ИИ",
-	"ui.play.pvp.normal": "Создать игру",
+	"ui.play.pve.normal": "Играть против ИИ",
+	"ui.play.pvp.normal": "Играть против игрока",
 	"ui.play.refresh": "Обновить",
 
 	"ui.noty.deckRequired": "Вам нужно выбрать колоду!",

@@ -14,10 +14,12 @@ import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import GameMessage from '@shared/models/network/GameMessage'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import { createDirectStore } from 'direct-vuex'
+import RulesetsModule from './modules/RulesetsModule'
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {
 		editor: EditorModule,
+		rulesets: RulesetsModule,
 		gameLogModule: GameLogModule,
 		gameStateModule: GameStateModule,
 		popupModule: PopupModule,
@@ -83,6 +85,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			LocalStorage.setHasAuthCookie(true)
 			await dispatch.userPreferencesModule.fetchPreferences()
 			await router.push({ name: 'home' })
+			await store.dispatch.rulesets.loadLibrary()
 			await store.dispatch.editor.loadCardLibrary()
 			editorCardRenderer.startRenderingService()
 		},

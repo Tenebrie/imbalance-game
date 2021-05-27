@@ -9,7 +9,7 @@ export default {
 		if (!instance) {
 			instance = new ServerGame({
 				name: 'Card Library Placeholder Game',
-				ruleset: new ServerRulesetBuilder({ gameMode: GameMode.VS_AI }).__build(),
+				ruleset: new ServerRulesetBuilder({ gameMode: GameMode.PVE }).__build(),
 			})
 		}
 		return instance

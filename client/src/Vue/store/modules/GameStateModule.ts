@@ -13,7 +13,7 @@ const gameStateModule = defineModule({
 	state: {
 		turnPhase: GameTurnPhase.BEFORE_GAME as GameTurnPhase,
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
-		gameMode: GameMode.VS_PLAYER as GameMode,
+		gameMode: GameMode.PVE as GameMode,
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
 		isPlayerInRound: true as boolean,

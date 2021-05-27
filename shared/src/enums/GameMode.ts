@@ -1,6 +1,6 @@
 enum GameMode {
-	VS_AI,
-	VS_PLAYER,
+	PVP,
+	PVE,
 }
 
 export default GameMode

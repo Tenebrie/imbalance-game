@@ -24,8 +24,8 @@
 	"ui.browser.list.header": "Game browser",
 	"ui.browser.empty": "Nobody is playing right now :(",
 
-	"ui.play.ai.normal": "Play vs AI",
-	"ui.play.pvp.normal": "Create game",
+	"ui.play.pve.normal": "Play vs AI",
+	"ui.play.pvp.normal": "Play PvP",
 	"ui.play.refresh": "Refresh",
 
 	"ui.noty.deckRequired": "Select a deck first!",
@@ -112,6 +112,9 @@
 
 	"filter.all": "All",
 	"filter.experimental": "Experimental",
+
+	"ruleset.rulesetChallengeDummy.label": "Target Dummy",
+	"ruleset.rulesetBrawlDiscovery.label": "Brawl: Discovery League",
 
 	"card.type.unit": "Unit",
 	"card.type.spell": "Spell",

@@ -7,6 +7,7 @@ import { EventSubscription } from '../events/EventSubscription'
 import GameHookType from '../events/GameHookType'
 import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
 import { RulesetAI, RulesetAIBuilder } from './RulesetAI'
+import Ruleset from '@shared/models/Ruleset'
 import {
 	BuffCreatedEventArgs,
 	BuffRemovedEventArgs,
@@ -32,37 +33,25 @@ import { RulesetDeck, RulesetDeckBuilder } from './RulesetDeck'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { RulesetBoard, RulesetBoardBuilder } from './RulesetBoard'
-
-type RulesetConstants = {
-	STARTING_PLAYER_MORALE: number
-	UNIT_HAND_SIZE_LIMIT: number
-	UNIT_HAND_SIZE_STARTING: number
-	UNIT_HAND_SIZE_PER_ROUND: number
-	SPELL_HAND_SIZE_MINIMUM: number
-	SPELL_HAND_SIZE_LIMIT: number
-	SPELL_MANA_PER_ROUND: number
-	GAME_BOARD_ROW_COUNT: number
-	MULLIGAN_INITIAL_CARD_COUNT: number
-	MULLIGAN_ROUND_CARD_COUNT: number
-}
+import { RulesetConstants } from '@shared/models/RulesetConstants'
 
 export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; count: number })[]
 
 export type ServerRulesetProps = {
 	class: string
 	gameMode: GameMode
-	rulesetConstants: Partial<RulesetConstants>
+	constants: Partial<RulesetConstants>
 
 	ai: RulesetAI | null
 	deck: RulesetDeck | null
 	board: RulesetBoard | null
 }
 
-export class ServerRuleset {
+export class ServerRuleset implements Ruleset {
 	public readonly class: string
 	public readonly gameMode: GameMode
 
-	public readonly rulesetConstants: RulesetConstants
+	public readonly constants: RulesetConstants
 
 	public readonly ai: RulesetAI | null = null
 	public readonly deck: RulesetDeck | null = null
@@ -76,7 +65,7 @@ export class ServerRuleset {
 		this.deck = props.deck
 		this.board = props.board
 
-		this.rulesetConstants = {
+		this.constants = {
 			STARTING_PLAYER_MORALE: Constants.STARTING_PLAYER_MORALE,
 			UNIT_HAND_SIZE_LIMIT: Constants.UNIT_HAND_SIZE_LIMIT,
 			UNIT_HAND_SIZE_STARTING: Constants.UNIT_HAND_SIZE_STARTING,
@@ -87,7 +76,7 @@ export class ServerRuleset {
 			GAME_BOARD_ROW_COUNT: Constants.GAME_BOARD_ROW_COUNT,
 			MULLIGAN_INITIAL_CARD_COUNT: Constants.MULLIGAN_INITIAL_CARD_COUNT,
 			MULLIGAN_ROUND_CARD_COUNT: Constants.MULLIGAN_ROUND_CARD_COUNT,
-			...props.rulesetConstants,
+			...props.constants,
 		}
 	}
 }
@@ -109,7 +98,7 @@ export class ServerRulesetTemplate {
 	public readonly class: string
 	public readonly gameMode: GameMode
 
-	public readonly rulesetConstants: Partial<RulesetConstants>
+	public readonly constants: Partial<RulesetConstants>
 
 	public readonly eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
 	public readonly eventHooks: Map<GameHookType, EventHook<any, any>[]>
@@ -143,14 +132,14 @@ export class ServerRulesetTemplate {
 		})
 		this.cardSelectorBuilders = props.cardSelectorBuilders
 
-		this.rulesetConstants = props.rulesetConstants
+		this.constants = props.rulesetConstants
 	}
 
 	public __build(): ServerRuleset {
 		return new ServerRuleset({
 			class: this.class,
 			gameMode: this.gameMode,
-			rulesetConstants: this.rulesetConstants,
+			constants: this.constants,
 			ai: this.ai,
 			deck: this.deck,
 			board: this.board,

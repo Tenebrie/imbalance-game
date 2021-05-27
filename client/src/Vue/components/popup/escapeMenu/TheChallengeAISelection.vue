@@ -2,9 +2,14 @@
 	<div class="the-challenge-ai-selection">
 		<div class="container" @click="onMenuClick">
 			<h2>AI Difficulty</h2>
-			<button @click="onEasySelected" class="primary game-button">Easy: <b>Dummy</b></button>
-			<button @click="onNormalSelected" class="primary game-button">Normal: <b>Vel'Elleron</b></button>
-			<button @click="onDiscoveryLeagueSelected" class="primary game-button">Brawl #1: <b>Discovery League</b></button>
+			<button
+				v-for="ruleset in availableRulesets"
+				:key="ruleset.class"
+				class="primary game-button"
+				@click="() => onRulesetSelected(ruleset)"
+			>
+				{{ $locale.get(`ruleset.${ruleset.class}.label`) }}
+			</button>
 		</div>
 	</div>
 </template>
@@ -12,10 +17,9 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import axios from 'axios'
-import GameMode from '@shared/enums/GameMode'
 import GameMessage from '@shared/models/network/GameMessage'
-import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
+import RulesetRefMessage from '@shared/models/network/ruleset/RulesetRefMessage'
 
 export default defineComponent({
 	setup() {
@@ -23,32 +27,20 @@ export default defineComponent({
 			event.cancelBubble = true
 		}
 
-		const onEasySelected = async (): Promise<void> => {
+		const availableRulesets = computed<RulesetRefMessage[]>(() => store.state.rulesets.pveRulesets)
+		console.log(availableRulesets)
+
+		const onRulesetSelected = async (ruleset: RulesetRefMessage): Promise<void> => {
 			store.dispatch.popupModule.close()
-			const response = await axios.post('/api/games', { ruleset: 'rulesetChallengeDummy', difficulty: ChallengeAIDifficulty.EASY })
+			const response = await axios.post('/api/games', { ruleset: ruleset.class })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
-		}
-
-		const onNormalSelected = async (): Promise<void> => {
-			store.dispatch.popupModule.close()
-			const response = await axios.post('/api/games', { mode: GameMode.VS_AI, difficulty: ChallengeAIDifficulty.NORMAL })
-			const gameMessage: GameMessage = response.data.data
-			await store.dispatch.joinGame(gameMessage)
-		}
-
-		const onDiscoveryLeagueSelected = async (): Promise<void> => {
-			// store.dispatch.popupModule.close()
-			// const response = await axios.post('/api/games', { mode: GameMode.CHALLENGE, level: ChallengeLevel.DISCOVERY_LEAGUE })
-			// const gameMessage: GameMessage = response.data.data
-			// await store.dispatch.joinGame(gameMessage)
 		}
 
 		return {
 			onMenuClick,
-			onEasySelected,
-			onNormalSelected,
-			onDiscoveryLeagueSelected,
+			onRulesetSelected,
+			availableRulesets,
 		}
 	},
 })

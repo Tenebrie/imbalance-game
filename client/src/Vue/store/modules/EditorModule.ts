@@ -170,8 +170,8 @@ const editorModule = defineModule({
 				return
 			}
 
-			const response = await axios.get('/api/cards', { params: { collectible: false } })
-			const cardMessages = response.data as CardMessage[]
+			const cardsResponse = await axios.get('/api/cards', { params: { collectible: false } })
+			const cardMessages = cardsResponse.data as CardMessage[]
 			const sortedMessages = Utils.sortEditorCards(cardMessages)
 			commit.setCardLibrary(sortedMessages)
 		},

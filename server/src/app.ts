@@ -12,7 +12,6 @@ import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import { wsLogger } from './utils/WebSocketLogger'
 import Database from './database/Database'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
-import RulesetLibrary from './game/libraries/RulesetLibrary'
 
 const app = express()
 expressWs(app)
@@ -25,6 +24,7 @@ const UserRouter = require('./routers/UserRouter')
 const PlayRouter = require('./routers/PlayRouter')
 const AdminRouter = require('./routers/AdminRouter')
 const CardsRouter = require('./routers/CardsRouter')
+const RulesetsRouter = require('./routers/RulesetsRouter')
 const DecksRouter = require('./routers/DecksRouter')
 const GamesRouter = require('./routers/GamesRouter')
 const ModalsRouter = require('./routers/ModalsRouter')
@@ -86,6 +86,7 @@ app.use('/changelog', ChangelogRouter)
 /* API HTTP routers */
 app.use('/api/admin', AdminRouter)
 app.use('/api/cards', CardsRouter)
+app.use('/api/rulesets', RulesetsRouter)
 app.use('/api/decks', DecksRouter)
 app.use('/api/games', GamesRouter)
 app.use('/api/session', SessionRouter)

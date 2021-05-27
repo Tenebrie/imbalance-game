@@ -31,6 +31,7 @@ export default defineComponent({
 		window.addEventListener('contextmenu', this.onContextMenu)
 		this.printConsoleWelcomeMessage()
 		if (LocalStorage.hasAuthCookie()) {
+			await store.dispatch.rulesets.loadLibrary()
 			await store.dispatch.editor.loadCardLibrary()
 			editorCardRenderer.startRenderingService()
 		}
