@@ -16,11 +16,11 @@ import { getCardInsertIndex } from '@/utils/Utils'
 
 export default class ForcedTargetingMode {
 	readonly targetMode: TargetMode
-	readonly validTargets: CardTargetMessage[] | AnonymousTargetMessage[]
+	readonly validTargets: (CardTargetMessage | AnonymousTargetMessage)[]
 	readonly sourceCardId: string | null
 	selectedTarget: CardTargetMessage | AnonymousTargetMessage | null = null
 
-	readonly targetingLine: TargetingLine | null
+	readonly targetingLine: TargetingLine | null = null
 
 	constructor(targetMode: TargetMode, validTargets: CardTargetMessage[] | AnonymousTargetMessage[], source: RenderedCard | null) {
 		this.targetMode = targetMode
@@ -43,16 +43,18 @@ export default class ForcedTargetingMode {
 	private findValidTarget(): CardTargetMessage | AnonymousTargetMessage | null {
 		const hoveredCard = MouseHover.getHoveredCard()
 		const hoveredRow = MouseHover.getHoveredRow()
-		return this.validTargets.find((target) => {
-			return (
-				(target.targetType === TargetType.BOARD_POSITION &&
-					hoveredRow &&
-					hoveredRow.index === target.targetRowIndex &&
-					getCardInsertIndex(hoveredRow) === target.targetPosition) ||
-				(hoveredCard && target.targetCardId === hoveredCard.id) ||
-				(target.targetType === TargetType.BOARD_ROW && hoveredRow && hoveredRow.index === target.targetRowIndex)
-			)
-		})
+		return (
+			this.validTargets.find((target) => {
+				return (
+					(target.targetType === TargetType.BOARD_POSITION &&
+						hoveredRow &&
+						hoveredRow.index === target.targetRowIndex &&
+						(target instanceof AnonymousTargetMessage || getCardInsertIndex(hoveredRow) === target.targetPosition)) ||
+					(hoveredCard && target.targetCardId === hoveredCard.id) ||
+					(target.targetType === TargetType.BOARD_ROW && hoveredRow && hoveredRow.index === target.targetRowIndex)
+				)
+			}) || null
+		)
 	}
 
 	public isSelectedTargetValid(): boolean {
@@ -88,6 +90,10 @@ export default class ForcedTargetingMode {
 	}
 
 	public confirmTarget(): void {
+		if (!this.selectedTarget) {
+			return
+		}
+
 		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
 		if ('sourceCardId' in this.selectedTarget) {
 			OutgoingMessageHandlers.sendCardTarget(this.selectedTarget)

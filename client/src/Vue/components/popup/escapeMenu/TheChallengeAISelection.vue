@@ -28,7 +28,6 @@ export default defineComponent({
 		}
 
 		const availableRulesets = computed<RulesetRefMessage[]>(() => store.state.rulesets.pveRulesets)
-		console.log(availableRulesets)
 
 		const onRulesetSelected = async (ruleset: RulesetRefMessage): Promise<void> => {
 			store.dispatch.popupModule.close()

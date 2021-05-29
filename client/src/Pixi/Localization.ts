@@ -12,6 +12,7 @@ class Localization {
 		} else {
 			localizationJson = ru
 		}
+		// @ts-ignore
 		return localizationJson[id] || en[id] || null
 	}
 
@@ -22,6 +23,7 @@ class Localization {
 
 	public getOriginalOrNull(id: string): string {
 		const localizationJson: { [index: string]: string } = en
+		// @ts-ignore
 		return localizationJson[id] || null
 	}
 }

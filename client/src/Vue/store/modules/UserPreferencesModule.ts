@@ -6,6 +6,7 @@ import RenderQuality from '@shared/enums/RenderQuality'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 import { debounce } from 'throttle-debounce'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
+import { ActionContext } from 'vuex'
 
 const userPreferencesModule = defineModule({
 	namespaced: true,
@@ -88,7 +89,7 @@ const userPreferencesModule = defineModule({
 
 		async savePreferences(context): Promise<void> {
 			const { dispatch } = moduleActionContext(context, userPreferencesModule)
-			const savePreferencesDebounced = dispatch.savePreferencesDebounced as (context) => Promise<void>
+			const savePreferencesDebounced = dispatch.savePreferencesDebounced as (context: ActionContext<any, any>) => Promise<void>
 			await savePreferencesDebounced(context)
 			AudioSystem.updateVolumeLevels()
 		},

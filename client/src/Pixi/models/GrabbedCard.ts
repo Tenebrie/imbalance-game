@@ -10,8 +10,8 @@ export default class GrabbedCard {
 	grabTimestamp: number
 	grabPosition: PIXI.Point
 	targetingLine: TargetingLine
-	validTargetCards?: RenderedCard[]
-	validTargetPositions?: RenderedGameBoardPosition[]
+	validTargetCards: RenderedCard[] = []
+	validTargetPositions: RenderedGameBoardPosition[] = []
 
 	constructor(card: RenderedCard, mode: GrabbedCardMode) {
 		this.card = card

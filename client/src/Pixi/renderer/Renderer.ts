@@ -3,7 +3,6 @@ import * as PIXI from 'pixi.js'
 import Constants from '@shared/Constants'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
-import RenderedGameBoard from '@/Pixi/cards/RenderedGameBoard'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardType from '@shared/enums/CardType'
@@ -54,8 +53,8 @@ export default class Renderer {
 
 	selectableCardsSmokescreen: PIXI.Sprite
 
-	deltaTime: number
-	deltaTimeFraction: number
+	deltaTime = 0
+	deltaTimeFraction = 1
 
 	CARD_ASPECT_RATIO = 408 / 584
 	GAME_BOARD_WINDOW_FRACTION = 0.7
@@ -101,7 +100,7 @@ export default class Renderer {
 		this.pixi.view.style.maxWidth = '100vw'
 		this.pixi.view.style.maxHeight = '100vh'
 		container.appendChild(this.pixi.view)
-		this.pixi.view.style['min-width'] = '1366px'
+		this.pixi.view.style.minWidth = '1366px'
 		this.container = container
 
 		/* Time label */
@@ -166,20 +165,26 @@ export default class Renderer {
 		this.deltaTime = deltaTime
 		this.deltaTimeFraction = deltaTimeFraction
 
+		const input = Core.input
+		const mainHandler = Core.mainHandler
+		if (!input || !Core.player || !mainHandler) {
+			return
+		}
+
 		const playerLeaderCard = Core.player?.leader
-		if (playerLeaderCard && Core.input.inspectedCard !== playerLeaderCard) {
+		if (playerLeaderCard && input.inspectedCard !== playerLeaderCard) {
 			this.renderCard(playerLeaderCard, [playerLeaderCard], 'player', 'leader')
 		}
 
 		const opponentLeaderCard = Core.opponent?.leader
-		if (opponentLeaderCard && Core.input.inspectedCard !== opponentLeaderCard) {
+		if (opponentLeaderCard && input.inspectedCard !== opponentLeaderCard) {
 			this.renderCard(opponentLeaderCard, [opponentLeaderCard], 'opponent', 'leader')
 		}
 
 		const unitCards = Core.player.cardHand.unitCards
 		const sortedPlayerUnitCards = Core.player.cardHand.unitCards
-			.filter((card) => card !== Core.input.inspectedCard)
-			.filter((card) => !Core.input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
+			.filter((card) => card !== input.inspectedCard)
+			.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
 			.slice()
 			.reverse()
 		sortedPlayerUnitCards.forEach((renderedCard) => {
@@ -188,8 +193,8 @@ export default class Renderer {
 
 		const spellCards = Core.player.cardHand.spellCards
 		const sortedPlayerSpellCards = Core.player.cardHand.spellCards
-			.filter((card) => card !== Core.input.inspectedCard)
-			.filter((card) => !Core.input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
+			.filter((card) => card !== input.inspectedCard)
+			.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
 			.slice()
 			.reverse()
 		sortedPlayerSpellCards.forEach((renderedCard) => {
@@ -200,7 +205,7 @@ export default class Renderer {
 			const opponentsUnitCards = Core.opponent.cardHand.unitCards
 			const sortedOpponentUnitCards = Core.opponent.cardHand.unitCards.slice().reverse()
 			sortedOpponentUnitCards.forEach((renderedCard) => {
-				if (renderedCard === Core.input.inspectedCard || renderedCard === Core.mainHandler.announcedCard) {
+				if (renderedCard === input.inspectedCard || renderedCard === mainHandler.announcedCard) {
 					return
 				}
 
@@ -210,7 +215,7 @@ export default class Renderer {
 			const opponentsSpellCards = Core.opponent.cardHand.spellCards
 			const sortedOpponentSpellCards = Core.opponent.cardHand.spellCards.slice().reverse()
 			sortedOpponentSpellCards.forEach((renderedCard) => {
-				if (renderedCard === Core.input.inspectedCard || renderedCard === Core.mainHandler.announcedCard) {
+				if (renderedCard === input.inspectedCard || renderedCard === mainHandler.announcedCard) {
 					return
 				}
 
@@ -219,7 +224,7 @@ export default class Renderer {
 		}
 
 		this.renderTextLabels()
-		this.renderGameBoard(Core.board)
+		this.renderGameBoard()
 		this.renderSelectableCards()
 		playQueueRenderer.tick()
 		inspectedCardRenderer.tick()
@@ -228,11 +233,16 @@ export default class Renderer {
 	}
 
 	private renderCard(card: RenderedCard, cardArray: RenderedCard[], owner: 'player' | 'opponent', hand: 'leader' | 'unit' | 'spell'): void {
-		if (Core.input.grabbedCard && card === Core.input.grabbedCard.card) {
+		const input = Core.input
+		if (!input) {
+			return
+		}
+
+		if (input.grabbedCard && card === input.grabbedCard.card) {
 			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
-			const displayMode = this.renderGrabbedCard(card, Core.input.mousePosition)
+			const displayMode = this.renderGrabbedCard(card, input.mousePosition)
 			card.setDisplayMode(displayMode)
-		} else if (!Core.input.grabbedCard && Core.input.hoveredCard && card === Core.input.hoveredCard.card) {
+		} else if (!input.grabbedCard && input.hoveredCard && card === input.hoveredCard.card) {
 			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
 			this.renderHoveredCardInHand(card, owner)
 			card.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
@@ -341,6 +351,7 @@ export default class Renderer {
 		}
 
 		const isValidTarget =
+			Core.input &&
 			Core.input.forcedTargetingMode &&
 			!!Core.input.forcedTargetingMode.validTargets.find((forcedCard) => forcedCard.targetCardId === renderedCard.id)
 
@@ -391,7 +402,7 @@ export default class Renderer {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
-		const hoveredRow = Core.board.rows.find((row) => row.isHovered())
+		const hoveredRow = Core.board && Core.board.rows.find((row) => row.isHovered())
 
 		let cardDisplayMode: CardDisplayMode
 		if (renderedCard.type === CardType.UNIT && hoveredRow) {
@@ -431,10 +442,12 @@ export default class Renderer {
 			.getInsertedUnitsOwnedByPlayer(Core.player)
 			.map((unit) => unit.card.stats.power)
 			.reduce((accumulator, value) => accumulator + value, 0)
-		const opponentPower = Core.board
-			.getInsertedUnitsOwnedByPlayer(Core.opponent)
-			.map((unit) => unit.card.stats.power)
-			.reduce((accumulator, value) => accumulator + value, 0)
+		const opponentPower = Core.opponent
+			? Core.board
+					.getInsertedUnitsOwnedByPlayer(Core.opponent)
+					.map((unit) => unit.card.stats.power)
+					.reduce((accumulator, value) => accumulator + value, 0)
+			: 0
 		this.playerPowerLabel.text = power.toString()
 		this.opponentPowerLabel.text = opponentPower.toString()
 		this.playerPowerLabel.style.fontSize = getPowerFontSize(power)
@@ -457,7 +470,12 @@ export default class Renderer {
 		this.actionLabel.style.lineHeight = 24
 	}
 
-	public renderGameBoard(gameBoard: RenderedGameBoard): void {
+	public renderGameBoard(): void {
+		const gameBoard = Core.board
+		if (!gameBoard) {
+			return
+		}
+
 		let rows = gameBoard.rows.slice()
 		const playerPowerLabelRow = Constants.GAME_BOARD_ROW_COUNT - 2
 		const opponentPowerLabelRow = 1
@@ -608,6 +626,7 @@ export default class Renderer {
 			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
 		}
 		if (
+			Core.opponent &&
 			Core.opponent.isTurnActive &&
 			!Core.input.grabbedCard &&
 			unit.owner === Core.opponent &&
@@ -651,7 +670,7 @@ export default class Renderer {
 				(forcedTargeting?.validTargets as Array<CardTargetMessage | AnonymousTargetMessage>).map((target) => target.targetCardId) ||
 				grabbedCard?.validTargetCards.map((card) => card.id)
 			if (validTargetCards && validTargetCards.length > 0) {
-				const target = Core.game.findRenderedCardById(validTargetCards.find((id) => id === Core.input.hoveredCard.card.id))
+				const target = Core.game.findRenderedCardById(validTargetCards.find((id) => id === Core.input.hoveredCard?.card.id) || '')
 				if (target) {
 					targetPosition = target.getVisualPosition()
 					snappingToTarget = true
@@ -662,6 +681,10 @@ export default class Renderer {
 		let color = 0xcccccc
 		if (snappingToTarget) {
 			color = 0x00ff00
+		}
+
+		if (!targetingArrow) {
+			return
 		}
 
 		targetingArrow.startingPoint.position.copyFrom(startingPosition)

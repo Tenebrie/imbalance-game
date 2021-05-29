@@ -32,7 +32,7 @@ enum InspectCardMode {
 }
 
 interface ShadowUnit {
-	card: RenderedCard
+	card: RenderedCard | null
 	rowIndex: number
 	unitIndex: number
 }
@@ -110,17 +110,19 @@ export default class Input {
 	}
 
 	public updateGrabbedCard(): void {
-		if (!this.grabbedCard || this.grabbedCard.card.location !== CardLocation.HAND || this.grabbedCard.card.owner !== Core.player) {
+		const grabbedCard = this.grabbedCard
+		if (!grabbedCard || grabbedCard.card.location !== CardLocation.HAND || grabbedCard.card.owner !== Core.player) {
 			return
 		}
 
 		const validRows = this.playableCards
-			.filter((playableCard) => playableCard.sourceCardId === this.grabbedCard.card.id)
+			.filter((playableCard) => playableCard.sourceCardId === grabbedCard.card.id)
 			.map((playableCard) => ({
-				row: Core.board.getRow(playableCard.targetRowIndex),
+				row: Core.board.getRow(playableCard.targetRowIndex)!,
 				position: playableCard.targetPosition,
 			}))
-		this.grabbedCard.updateValidTargetRows(validRows)
+			.filter((rowWrapper) => !!rowWrapper.row)
+		grabbedCard.updateValidTargetRows(validRows)
 	}
 
 	public updateCardHoverStatus(): void {
@@ -142,7 +144,7 @@ export default class Input {
 
 		const hoveredLeaderCard = leaderCards.find((leaderCard) => leaderCard?.isHovered()) || null
 		if (hoveredLeaderCard) {
-			hoveredCard = HoveredCard.fromCardInHand(hoveredLeaderCard, hoveredLeaderCard.owner)
+			hoveredCard = HoveredCard.fromCardInHand(hoveredLeaderCard, hoveredLeaderCard.owner!)
 		}
 
 		const hoveredCardOnBoard = gameBoardCards.find((cardOnBoard) => cardOnBoard.card.isHovered()) || null
@@ -156,7 +158,7 @@ export default class Input {
 		}
 
 		const hoveredCardInOpponentHand = opponentHandCards.find((card) => card.isHovered()) || null
-		if (hoveredCardInOpponentHand) {
+		if (Core.opponent && hoveredCardInOpponentHand) {
 			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInOpponentHand, Core.opponent)
 		}
 
@@ -184,12 +186,12 @@ export default class Input {
 					(target) =>
 						target.targetType === TargetType.BOARD_POSITION &&
 						hoveredRow.index === target.targetRowIndex &&
-						cardInsertIndex === target.targetPosition
+						(target instanceof AnonymousTargetMessage || cardInsertIndex === target.targetPosition)
 				)
 
 			if (isGrabbingCard || isTargetingPosition) {
 				this.hoveredShadowUnit = {
-					card: this.grabbedCard?.card,
+					card: null,
 					rowIndex: normalizeBoardRowIndex(hoveredRow.index, 'player'),
 					unitIndex: cardInsertIndex,
 				}
@@ -310,7 +312,11 @@ export default class Input {
 
 	private onMouseUp(event: MouseEvent) {
 		if (this.forcedTargetingMode && this.forcedTargetingMode.isSelectedTargetValid() && event.button === LEFT_MOUSE_BUTTON) {
-			if (this.forcedTargetingMode.targetMode === TargetMode.CARD_PLAY) {
+			if (
+				this.forcedTargetingMode.targetMode === TargetMode.CARD_PLAY &&
+				this.forcedTargetingMode.source &&
+				this.forcedTargetingMode.selectedTarget
+			) {
 				this.tutoredShadowUnit = {
 					card: this.forcedTargetingMode.source,
 					rowIndex: normalizeBoardRowIndex(this.forcedTargetingMode.selectedTarget.targetRowIndex, 'player'),
@@ -410,9 +416,10 @@ export default class Input {
 			const validPositions = this.playableCards
 				.filter((playableCard) => playableCard.sourceCardId === card.id)
 				.map((playableCard) => ({
-					row: Core.board.getRow(playableCard.targetRowIndex),
+					row: Core.board.getRow(playableCard.targetRowIndex)!,
 					position: playableCard.targetPosition,
 				}))
+				.filter((positionWrapper) => !!positionWrapper.row)
 			this.grabbedCard = GrabbedCard.cardPlay(card, validPositions)
 			if (card.type === CardType.SPELL) {
 				store.commit.gameStateModule.setPlayerSpellManaInDanger(card.stats.spellCost)
@@ -427,13 +434,14 @@ export default class Input {
 			const validCards = validOrders
 				.filter((order) => order.targetType === TargetType.UNIT)
 				.map((order) => order.targetCardId)
-				.map((id) => Core.game.findRenderedCardById(id))
+				.map((id) => Core.game.findRenderedCardById(id)!)
 			const validPositions = validOrders
 				.filter((order) => order.targetType === TargetType.BOARD_ROW)
 				.map((order) => ({
-					row: Core.board.getRow(order.targetRowIndex),
+					row: Core.board.getRow(order.targetRowIndex)!,
 					position: order.targetPosition,
 				}))
+				.filter((positionWrapper) => !!positionWrapper.row)
 			this.grabbedCard = GrabbedCard.cardOrder(card, validCards, validPositions)
 		} else if (hoveredCard.location === HoveredCardLocation.SELECTABLE) {
 			this.grabbedCard = GrabbedCard.cardSelect(card)
@@ -518,23 +526,23 @@ export default class Input {
 
 	private onCardSelect(selectedCard: RenderedCard): void {
 		const hoveredCard = MouseHover.getHoveredCard()
-		if (hoveredCard !== selectedCard) {
+		if (hoveredCard !== selectedCard || !this.forcedTargetingMode) {
 			return
 		}
 
 		AudioSystem.playEffect(AudioEffectCategory.TARGETING_CONFIRM)
-		const message = this.forcedTargetingMode.validTargets.find((target) => target.targetCardData.id === selectedCard.id)
-		if ('sourceCardId' in message) {
+		const message = this.forcedTargetingMode.validTargets.find((target) => target.targetCardData!.id === selectedCard.id)
+		if (message && 'sourceCardId' in message) {
 			OutgoingMessageHandlers.sendCardTarget(message)
-		} else {
+		} else if (message) {
 			OutgoingMessageHandlers.sendAnonymousTarget(message)
 		}
 	}
 
-	public restoreLimboCard(cardMessage: CardRefMessage): RenderedCard {
+	public restoreLimboCard(cardMessage: CardRefMessage): RenderedCard | null {
 		const cardInLimbo = this.cardLimbo.find((card) => card.id === cardMessage.id)
 		if (!cardInLimbo) {
-			return
+			return null
 		}
 
 		Core.renderer.showCard(cardInLimbo)
@@ -543,7 +551,7 @@ export default class Input {
 	}
 
 	public destroyLimboCard(cardMessage: CardRefMessage): void {
-		if (Core.input.tutoredShadowUnit && Core.input.tutoredShadowUnit.card.id === cardMessage.id) {
+		if (Core.input.tutoredShadowUnit && Core.input.tutoredShadowUnit.card && Core.input.tutoredShadowUnit.card.id === cardMessage.id) {
 			Core.input.tutoredShadowUnit = null
 		}
 		const cardInLimbo = this.cardLimbo.find((card) => card.id === cardMessage.id)
@@ -556,7 +564,7 @@ export default class Input {
 
 	private evictCardFromLimbo(cardId: string): void {
 		this.cardLimbo = this.cardLimbo.filter((card) => card.id !== cardId)
-		if (this.limboShadowUnit && this.limboShadowUnit.card.id === cardId) {
+		if (this.limboShadowUnit && this.limboShadowUnit.card && this.limboShadowUnit.card.id === cardId) {
 			this.limboShadowUnit = null
 		}
 	}
@@ -588,7 +596,7 @@ export default class Input {
 					target.targetType === TargetType.CARD_IN_UNIT_GRAVEYARD ||
 					target.targetType === TargetType.CARD_IN_SPELL_GRAVEYARD
 			)
-			.map((target) => target.targetCardData)
+			.map((target) => target.targetCardData!)
 
 		const existingCards = this.forcedTargetingCards
 		const addedCardMessages = newCards.filter((card) => !existingCards.find((existingCard) => existingCard.id === card.id))
@@ -598,7 +606,7 @@ export default class Input {
 		const result = existingCards
 			.reduce<RenderedCard[]>((result, existingCard) => {
 				if (cardsToRemove.includes(existingCard) && cardsToAdd.length > 0) {
-					return result.concat(cardsToAdd.shift())
+					return result.concat(cardsToAdd.shift()!)
 				} else if (cardsToRemove.includes(existingCard)) {
 					return result
 				}

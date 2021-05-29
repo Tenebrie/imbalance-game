@@ -7,9 +7,9 @@ import RichText from '@/Pixi/render/RichText'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
 
 class InspectedCardRenderer {
-	public container: PIXI.Container
+	public container!: PIXI.Container
 
-	private richText: RichText
+	private richText!: RichText
 
 	public init(): void {
 		this.container = new PIXI.Container()

@@ -62,7 +62,7 @@ export default defineComponent({
 		iconPath(): string {
 			const deck = this.deck as PopulatedEditorDeck
 			if (!deck.leader) {
-				return null
+				return ''
 			}
 			return `/assets/icons/${deck.leader.class}.webp`
 		},

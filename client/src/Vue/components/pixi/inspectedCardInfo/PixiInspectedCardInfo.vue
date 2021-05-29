@@ -93,7 +93,7 @@ export default defineComponent({
 		const displayExperimentalCards = computed<boolean>(() => !isInGame.value && routeQuery.value.experimental)
 
 		const inspectedCard = computed<CardMessage | RenderedCard>(() => {
-			const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card.id) : null
+			const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card!.id) : null
 			return (isInGame.value && cardInGame) || (store.getters.inspectedCard.card as CardMessage | RenderedCard)
 		})
 
@@ -119,7 +119,7 @@ export default defineComponent({
 		const displayedRelatedCards = computed<string[]>(() => {
 			return new Array(...new Set(inspectedCard.value.relatedCards)).filter((cardClass) => {
 				const populatedCard = store.state.editor.cardLibrary.find((card) => card.class === cardClass)
-				return !populatedCard.isExperimental || inspectedCard.value.isExperimental || displayExperimentalCards.value
+				return !populatedCard?.isExperimental || inspectedCard.value.isExperimental || displayExperimentalCards.value
 			})
 		})
 

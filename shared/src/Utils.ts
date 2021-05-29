@@ -125,3 +125,7 @@ export const getMaxCardCopiesForColor = (color: CardColor): number => {
 			return 0
 	}
 }
+
+export const EmptyFunction = (): void => {
+	/* Empty */
+}

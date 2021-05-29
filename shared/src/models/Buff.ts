@@ -6,7 +6,7 @@ import BuffAlignment from '../enums/BuffAlignment'
 
 export default interface Buff {
 	id: string
-	card: Card
+	card: Card | null
 	class: string
 	source: Card | null
 	alignment: BuffAlignment

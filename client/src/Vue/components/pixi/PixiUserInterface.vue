@@ -103,7 +103,9 @@ export default defineComponent({
 		}
 
 		const onConfirmTargets = (): void => {
-			OutgoingMessageHandlers.sendConfirmTargets(Core.input.forcedTargetingMode.targetMode)
+			if (Core.input.forcedTargetingMode) {
+				OutgoingMessageHandlers.sendConfirmTargets(Core.input.forcedTargetingMode.targetMode)
+			}
 		}
 
 		const onSortCards = (): void => {
@@ -190,7 +192,7 @@ export default defineComponent({
 			visible: isOpponentFinishedRound.value,
 		}))
 
-		const player = computed<Player>(() => store.state.player)
+		const player = computed<Player | null>(() => store.state.player)
 		const opponent = computed<Player | null>(() => store.state.gameStateModule.opponent)
 
 		const playerMorale = computed<number>(() => store.state.gameStateModule.playerMorale)

@@ -28,7 +28,15 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 
 	[AnimationMessageType.THREAD_START]: (data: AnimationThreadStartMessage, systemData: QueuedMessageSystemData) => {
 		const parentThread = Core.mainHandler.mainAnimationThread.findThread(systemData.animationThreadId)
+		if (!parentThread) {
+			console.error('No parent animation thread found')
+			return
+		}
 		const targetThread = parentThread.workerThreads.find((thread) => !thread.started)
+		if (!targetThread) {
+			console.error('No queued animation threads found')
+			return
+		}
 		const activeStaggeredWorkerThreadCount = parentThread.workerThreads.filter(
 			(thread) => thread.started && thread.isStaggered && thread.hasAnimationMessages()
 		).length

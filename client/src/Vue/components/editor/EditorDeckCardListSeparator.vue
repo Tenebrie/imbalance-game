@@ -42,7 +42,7 @@ export default defineComponent({
 		},
 
 		cardLimitUsed(): number {
-			const deckId = this.$route.params.deckId
+			const deckId = this.$route.params.deckId as string
 			return store.getters.editor.cardsOfColor({
 				deckId: deckId,
 				color: this.color,

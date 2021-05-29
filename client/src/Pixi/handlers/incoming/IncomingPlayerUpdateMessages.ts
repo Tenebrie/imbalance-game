@@ -21,7 +21,7 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 	},
 
 	[PlayerUpdateMessageType.LEADER_OPPONENT]: (data: CardMessage) => {
-		if (Core.opponent.leader) {
+		if (!Core.opponent || Core.opponent.leader) {
 			return
 		}
 		Core.opponent.leader = RenderedCard.fromMessage(data)
@@ -98,13 +98,16 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 	},
 
 	[PlayerUpdateMessageType.CARD_REVEALED]: (data: CardMessage) => {
-		Core.opponent.cardHand.reveal(data)
-		Core.opponent.cardHand.sortCards()
+		Core.opponent?.cardHand.reveal(data)
+		Core.opponent?.cardHand.sortCards()
 	},
 
 	[PlayerUpdateMessageType.PLAY_DECLINED]: (data: CardRefMessage) => {
 		console.info('Card play declined', data)
 		const cardInLimbo = Core.input.restoreLimboCard(data)
+		if (!cardInLimbo) {
+			return
+		}
 		Core.player.cardHand.addCard(cardInLimbo)
 	},
 

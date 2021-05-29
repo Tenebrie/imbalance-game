@@ -88,6 +88,7 @@ export default class RenderedCard implements Card {
 		this.type = message.type
 		this.class = message.class
 		this.color = message.color
+		this.faction = message.faction
 
 		this.name = message.name
 		this.title = message.title
@@ -161,8 +162,8 @@ export default class RenderedCard implements Card {
 		if (Localization.get(this.name)) {
 			this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
 		}
+		this.descriptionTextBackground = new DescriptionTextBackground()
 		if (Localization.get(this.description)) {
-			this.descriptionTextBackground = new DescriptionTextBackground()
 			this.descriptionTextBackground.position.set(0, this.sprite.texture.height)
 			this.cardDescriptionText.setBackground(this.descriptionTextBackground)
 			this.cardModeContainer.addChild(this.descriptionTextBackground)
@@ -264,13 +265,15 @@ export default class RenderedCard implements Card {
 			.filter((string) => string !== null)
 
 		const leaderStatsStrings = Object.keys(this.stats)
+			// @ts-ignore
 			.filter((key) => typeof this.stats[key] === 'number' && this.stats[key] > 0)
 			.map((key) => ({
 				key: key,
 				text: Localization.getValueOrNull(`card.stats.${key}.text`),
 			}))
 			.filter((object) => object.text !== null)
-			.map((object) => object.text.replace(/{value}/g, this.stats[object.key]))
+			// @ts-ignore
+			.map((object) => (object.text || '').replace(/{value}/g, this.stats[object.key]))
 
 		if (featureStrings.length > 0) {
 			description = `${featureStrings.join(' | ')}<p>${description}`

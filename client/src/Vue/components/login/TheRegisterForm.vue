@@ -71,11 +71,11 @@ export default defineComponent({
 		const confirmPassword = ref<string>('')
 
 		onMounted(() => {
-			rootRef.value.addEventListener('keydown', onKeyDown)
+			rootRef.value!.addEventListener('keydown', onKeyDown)
 		})
 
 		onBeforeUnmount(() => {
-			rootRef.value.removeEventListener('keydown', onKeyDown)
+			rootRef.value!.removeEventListener('keydown', onKeyDown)
 		})
 
 		watch(
@@ -134,11 +134,11 @@ export default defineComponent({
 		}
 
 		const setMessage = (message: string): void => {
-			messageRef.value.innerHTML = message
+			messageRef.value!.innerHTML = message
 		}
 
 		const clearMessage = (): void => {
-			messageRef.value.innerHTML = ''
+			messageRef.value!.innerHTML = ''
 		}
 
 		return {

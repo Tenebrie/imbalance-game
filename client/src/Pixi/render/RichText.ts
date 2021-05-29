@@ -52,7 +52,7 @@ export default class RichText extends PIXI.Container {
 
 	private variables: RichTextVariables
 	segments: { text: ScalingText; basePosition: PIXI.Point; lineIndex: number }[]
-	background: RichTextBackground
+	background!: RichTextBackground
 	private __horizontalAlign: RichTextAlign = RichTextAlign.CENTER
 	private __verticalAlign: RichTextAlign = RichTextAlign.END
 	private __textLineCount = 0
@@ -478,7 +478,7 @@ export default class RichText extends PIXI.Container {
 		while (!key.done) {
 			const recordedTrigger = key.value
 			if (recordedTrigger.state === trigger.state && recordedTrigger.token === trigger.token) {
-				return stateTransitions.get(recordedTrigger)
+				return stateTransitions.get(recordedTrigger) || null
 			}
 			key = keys.next()
 		}

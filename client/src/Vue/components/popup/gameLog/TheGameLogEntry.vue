@@ -37,7 +37,7 @@ export default defineComponent({
 		getCustomSubtype(entry: EventLogEntryMessage): string {
 			if (entry.event === GameEventType.CARD_DRAWN) {
 				const card = Core.game.findCardById(entry.args.triggeringCard)
-				if (!card.name) {
+				if (card && !card.name) {
 					return '.hidden'
 				}
 			}

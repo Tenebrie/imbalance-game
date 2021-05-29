@@ -209,7 +209,7 @@ export default defineComponent({
 			isHidden: false,
 
 			workshopTitle: cardTitle.value,
-			workshopImage: currentImage.value,
+			workshopImage: currentImage.value!,
 			workshopTribes: cardTribes.value.length > 0 ? cardTribes.value.split(';') : [],
 		}))
 		const unescapeValue = (ref: Ref<string>): string => {

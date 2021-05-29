@@ -206,9 +206,6 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 		flex-wrap: wrap;
 		justify-content: flex-start;
 
-		& > * {
-		}
-
 		.tooltip {
 			font-size: 1.2em;
 		}

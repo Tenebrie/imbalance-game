@@ -33,7 +33,7 @@ class Database {
 		try {
 			await client.connect()
 
-			console.info('Connection established. Running migrations')
+			console.info('Database connection established. Running migrations')
 			await pgMigrate({
 				count: 10000,
 				dbClient: client,

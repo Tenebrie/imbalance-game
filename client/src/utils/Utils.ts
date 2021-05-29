@@ -48,11 +48,13 @@ export const insertRichTextVariables = (str: string | null | undefined, variable
 }
 
 export const isElectron = (): boolean => {
+	// @ts-ignore
 	if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process['type'] === 'renderer') {
 		return true
 	}
 
 	// Main process
+	// @ts-ignore
 	if (typeof process !== 'undefined' && typeof process['versions'] === 'object' && !!process['versions'].electron) {
 		return true
 	}
@@ -61,6 +63,7 @@ export const isElectron = (): boolean => {
 	if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
 		return true
 	}
+	return false
 }
 
 type AnyPoint = {
@@ -92,7 +95,7 @@ const boopColors = [
 ]
 let currentBoopColor = 0
 let boopPrepPoints: { emitter: Particles.Emitter; color: { start: string; end: string } }[] = []
-export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point, direction: 'down' | 'up'): void => {
+export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point | null, direction: 'down' | 'up'): void => {
 	const mousePos = Core.input.mousePosition
 	if (event.button === LEFT_MOUSE_BUTTON) {
 		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
@@ -162,6 +165,7 @@ export const isMobile = (): boolean => {
 			)
 		)
 			check = true
+		// @ts-ignore
 	})(navigator.userAgent || navigator.vendor || window['opera'])
 	return check
 }

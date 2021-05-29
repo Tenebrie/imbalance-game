@@ -86,8 +86,8 @@ export default class RenderedGameBoard implements Board {
 		return this.getAllUnits().filter((unit) => unit.owner === owner)
 	}
 
-	public getValidOrdersForUnit(unit: RenderedUnit): CardTargetMessage[] {
-		return this.validOrders.concat(this.validOpponentOrders).filter((order) => order.sourceCardId === unit.card.id)
+	public getValidOrdersForUnit(unit: RenderedUnit | null): CardTargetMessage[] {
+		return this.validOrders.concat(this.validOpponentOrders).filter((order) => order.sourceCardId === unit?.card.id)
 	}
 
 	public clearBoard(): void {

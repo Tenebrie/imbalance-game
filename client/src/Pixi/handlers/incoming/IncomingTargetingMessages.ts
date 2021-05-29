@@ -28,6 +28,7 @@ const IncomingResolveStackMessages: { [index in TargetingMessageType]: IncomingM
 		if (
 			data.targetMode === TargetMode.CARD_PLAY &&
 			Core.input.tutoredShadowUnit &&
+			Core.input.tutoredShadowUnit.card &&
 			Core.input.tutoredShadowUnit.card.id === data.source.id
 		) {
 			Core.input.tutoredShadowUnit = null

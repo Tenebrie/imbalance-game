@@ -53,10 +53,10 @@ export default class RenderedCardHand implements CardHand {
 		)
 	}
 
-	public reveal(data: OpenCardMessage): RenderedCard {
+	public reveal(data: OpenCardMessage): RenderedCard | null {
 		const card = this.findCardById(data.id)
 		if (!card) {
-			return
+			return null
 		}
 
 		const revealedCard = new RenderedCard(data)

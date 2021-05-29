@@ -20,7 +20,7 @@ export default defineComponent({
 
 	setup() {
 		store.dispatch.gameStateModule.setGameLoading()
-		store.dispatch.gameStateModule.setGameMode(store.state.selectedGame.gameMode)
+		store.dispatch.gameStateModule.setGameMode(store.state.selectedGame!.gameMode)
 		if (isMobile()) {
 			// const elem = document.documentElement
 			// if (elem.requestFullscreen) {elem.requestFullscreen()}
@@ -31,7 +31,7 @@ export default defineComponent({
 		onMounted(() => {
 			window.addEventListener('resize', onWindowResize)
 
-			Core.init(store.state.selectedGame, store.state.selectedDeckId, gameContainer.value)
+			Core.init(store.state.selectedGame!, store.state.selectedDeckId, gameContainer.value!)
 		})
 
 		onBeforeUnmount(() => {

@@ -34,7 +34,7 @@ export default class ParticleSystem {
 					!!handle.ownerCard && !!handle.container && !!handle.ownerCard.coreContainer && !!handle.ownerCard.coreContainer.transform
 			)
 			.forEach((handle) => {
-				handle.container.position.copyFrom(handle.ownerCard.coreContainer.position)
+				handle.container!.position.copyFrom(handle.ownerCard!.coreContainer.position)
 			})
 	}
 

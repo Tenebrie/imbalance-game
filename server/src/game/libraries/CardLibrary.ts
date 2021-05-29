@@ -16,7 +16,12 @@ class CardLibrary {
 	public cards: ServerCard[] = []
 
 	constructor() {
-		const { prototypes, upToDateModules, outdatedModules } = loadModules<CardConstructor>({
+		// Do not load files if running tests
+		if (process.env.JEST_WORKER_ID !== undefined) {
+			return
+		}
+
+		const { prototypes, upToDateModules } = loadModules<CardConstructor>({
 			path: '../cards',
 			objectLogName: 'card',
 		})

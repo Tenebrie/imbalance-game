@@ -73,7 +73,7 @@ export default defineComponent({
 		const hasLoaded = ref(false)
 		const allGames = ref<GameHistoryDatabaseEntry[]>([])
 		const player = ref<PlayerDatabaseEntry | null>(null)
-		const currentPlayer = computed<Player>(() => store.state.player)
+		const currentPlayer = computed<Player | null>(() => store.state.player)
 
 		const params = useAdminRouteParams()
 
@@ -94,7 +94,7 @@ export default defineComponent({
 			() => [params.value.playerId],
 			() => {
 				player.value = null
-				allGames.value = null
+				allGames.value = []
 				hasLoaded.value = false
 				loadData()
 			}

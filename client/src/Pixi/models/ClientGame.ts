@@ -89,7 +89,7 @@ export default class ClientGame {
 
 		const players = [Core.player, Core.opponent]
 		for (let i = 0; i < players.length; i++) {
-			const player = players[i]
+			const player = players[i]!
 			const cardAsLeader = player.leader
 			if (cardAsLeader && cardAsLeader.id === cardId) {
 				return { card: cardAsLeader, owner: player }
@@ -119,19 +119,19 @@ export default class ClientGame {
 			.concat(Core.resolveStack.cards.map((ownedCard) => ownedCard.card))
 
 		for (let i = 0; i < players.length; i++) {
-			const player = players[i]
+			const player = players[i]!
 			cards = cards.concat(player.leader)
 			cards = cards.concat(player.cardHand.allCards)
 			cards = cards.concat(player.cardDeck.allCards)
 			cards = cards.concat(player.cardGraveyard.allCards)
 		}
 
-		const buffs = cards.reduce((acc, value) => acc.concat(value.buffs.buffs), [])
-		return buffs.find((buff) => buff.id === buffId)
+		const buffs = cards.reduce<(Buff | BuffMessage)[]>((acc, value) => acc.concat(value.buffs.buffs), [])
+		return buffs.find((buff) => buff.id === buffId) || null
 	}
 
 	public findRenderedCardById(cardId: string, priority: CardLocation[] = []): RenderedCard | null {
-		if (!cardId) {
+		if (!cardId || !Core.isReady) {
 			return null
 		}
 		const card = this.findCardById(cardId, priority)

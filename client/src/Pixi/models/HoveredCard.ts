@@ -9,7 +9,7 @@ export default class HoveredCard {
 	location: HoveredCardLocation
 	owner: ClientPlayerInGame | null
 
-	constructor(card: RenderedCard, location: HoveredCardLocation, owner: ClientPlayerInGame) {
+	constructor(card: RenderedCard, location: HoveredCardLocation, owner: ClientPlayerInGame | null) {
 		this.card = card
 		this.location = location
 		this.owner = owner
@@ -24,7 +24,7 @@ export default class HoveredCard {
 	}
 
 	public static fromAnnouncedCard(card: RenderedCard): HoveredCard {
-		return new HoveredCard(card, HoveredCardLocation.ANNOUNCED, Core.opponent)
+		return new HoveredCard(card, HoveredCardLocation.ANNOUNCED, Core.opponent!)
 	}
 
 	public static fromSelectableCard(card: RenderedCard): HoveredCard {

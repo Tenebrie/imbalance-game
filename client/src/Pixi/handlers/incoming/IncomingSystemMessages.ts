@@ -17,6 +17,7 @@ const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHan
 
 	[SystemMessageType.GAME_COLLAPSED]: (data: GameCollapseMessageData) => {
 		store.dispatch.popupModule.open({
+			// @ts-ignore
 			component: TheGameCollapsePopup,
 			sticky: true,
 			debug: true,

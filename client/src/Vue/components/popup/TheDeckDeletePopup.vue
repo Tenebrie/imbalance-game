@@ -31,7 +31,7 @@ export default defineComponent({
 			store.dispatch.popupModule.close()
 		}
 
-		const deckName = computed<string>(() => store.getters.popupModule.params.deckName)
+		const deckName = computed<string>(() => store.getters.popupModule.params?.deckName || '')
 
 		return {
 			deckName,

@@ -11,6 +11,11 @@ class RulesetLibrary {
 	public rulesets: ServerRulesetTemplate[] = []
 
 	constructor() {
+		// Do not load files if running tests
+		if (process.env.JEST_WORKER_ID !== undefined) {
+			return
+		}
+
 		const { prototypes } = loadModules<RulesetConstructor>({
 			path: '../rulesets',
 			objectLogName: 'ruleset',

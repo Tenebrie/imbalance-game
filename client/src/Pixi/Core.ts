@@ -21,22 +21,23 @@ import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import lzutf8 from 'lzutf8'
 import { compressGameTraffic } from '@shared/Utils'
+import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 class Core {
 	public isReady = false
 
-	public input?: Input
-	public socket?: WebSocket
-	public renderer?: Renderer
-	public mainHandler?: MainHandler
-	public particleSystem?: ParticleSystem
-	public keepaliveTimer: number
+	public input!: Input
+	public socket!: WebSocket
+	public renderer!: Renderer
+	public mainHandler!: MainHandler
+	public particleSystem!: ParticleSystem
+	public keepaliveTimer: number | undefined
 
-	public game?: ClientGame
-	public board?: RenderedGameBoard
-	public player?: ClientPlayerInGame
+	public game: ClientGame = new ClientGame()
+	public board!: RenderedGameBoard
+	public player!: ClientPlayerInGame
 	public opponent?: ClientPlayerInGame
-	public resolveStack?: ClientCardResolveStack
+	public resolveStack!: ClientCardResolveStack
 
 	public performance: GamePerformance = new GamePerformance()
 
@@ -47,7 +48,7 @@ class Core {
 		if (game.players.length >= 2) {
 			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}/spectate/${game.players[0].player.id}`
 		}
-		if (game.players.find((playerInGame) => playerInGame.player.id === store.state.player.id)) {
+		if (game.players.find((playerInGame) => playerInGame.player.id === store.state.player?.id)) {
 			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}`
 		}
 		const socket = new WebSocket(targetUrl)
@@ -90,7 +91,7 @@ class Core {
 			})
 		}
 		data = JSON.parse(data) as ServerToClientJson
-		const messageType = data.type
+		const messageType = data.type as ServerToClientMessageTypes
 		const messageData = data.data
 		const messageHighPriority = data.highPriority as boolean
 		const messageAllowBatching = data.allowBatching as boolean
@@ -188,7 +189,6 @@ class Core {
 		this.mainHandler.stop()
 		this.opponent = undefined
 		this.renderer.destroy()
-		this.game = undefined
 
 		if (this.socket) {
 			this.socket.close()

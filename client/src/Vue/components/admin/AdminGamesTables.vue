@@ -109,16 +109,15 @@ import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import moment from 'moment'
 
-interface Props {
-	games: GameHistoryDatabaseEntry[]
-}
-
 export default defineComponent({
 	props: {
-		games: Array as PropType<GameHistoryDatabaseEntry[]>,
+		games: {
+			type: Array as PropType<GameHistoryDatabaseEntry[]>,
+			required: true,
+		},
 	},
 
-	setup(props: Props) {
+	setup(props) {
 		const hasLoaded = ref(false)
 		const activeGames = ref<GameHistoryDatabaseEntry[]>([])
 		const closedGames = ref<GameHistoryDatabaseEntry[]>([])

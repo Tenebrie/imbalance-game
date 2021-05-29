@@ -22,12 +22,16 @@ export default class ClientBuffContainer implements BuffContainer {
 		}
 	}
 
-	public findBuffById(buffId: string): ClientBuff {
-		return this.buffs.find((buff) => buff.id === buffId)
+	public findBuffById(buffId: string): ClientBuff | null {
+		return this.buffs.find((buff) => buff.id === buffId) || null
 	}
 
 	public removeById(id: string): void {
-		this.buffs.splice(this.buffs.indexOf(this.findBuffById(id)), 1)
+		const buff = this.findBuffById(id)
+		if (!buff) {
+			return
+		}
+		this.buffs.splice(this.buffs.indexOf(buff), 1)
 		this.card.updateCardDescription()
 		if (Core.player.cardHand.unitCards.includes(this.card)) {
 			Core.player.cardHand.sortCards()

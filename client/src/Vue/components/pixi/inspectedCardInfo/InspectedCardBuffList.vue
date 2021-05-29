@@ -14,10 +14,6 @@ import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import BuffFeature from '@shared/enums/BuffFeature'
 import InspectedCardBuffListItem from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffListItem.vue'
 
-interface Props {
-	card: RenderedCard | CardMessage
-}
-
 export interface BuffWrapper {
 	buff: ClientBuff | BuffMessage
 	intensity: number
@@ -25,14 +21,17 @@ export interface BuffWrapper {
 
 export default defineComponent({
 	props: {
-		card: Object as PropType<RenderedCard | CardMessage>,
+		card: {
+			type: Object as PropType<RenderedCard | CardMessage>,
+			required: true,
+		},
 	},
 
 	components: {
 		InspectedCardBuffListItem,
 	},
 
-	setup(props: Props) {
+	setup(props) {
 		const visibleBuffs = computed<BuffWrapper[]>(() => {
 			const originalBuffs = props.card.buffs.buffs as (ClientBuff | BuffMessage)[]
 			return originalBuffs

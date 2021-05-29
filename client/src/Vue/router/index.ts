@@ -32,6 +32,7 @@ const requireAuthentication = async (next: NavigationGuardNext, beforeContinue?:
 const requireAdminAccess = async (next: NavigationGuardNext): Promise<void> => {
 	if (
 		(store.state.isLoggedIn || (await fetchProfile())) &&
+		store.state.player &&
 		(store.state.player.accessLevel === AccessLevel.ADMIN || store.state.player.accessLevel === AccessLevel.SUPPORT)
 	) {
 		next()

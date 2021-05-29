@@ -65,12 +65,12 @@ export default defineComponent({
 
 	methods: {
 		onClick(): void {
-			const deckId = this.$route.params.deckId
+			const deckId = this.$route.params.deckId as string
 			store.dispatch.editor.removeCardFromDeck({
 				deckId: deckId,
 				cardToRemove: this.card,
 			})
-			if (!store.getters.editor.deck(deckId).cards.find((card) => card.id === this.card.id)) {
+			if (!store.getters.editor.deck(deckId)!.cards.find((card) => card.id === this.card.id)) {
 				store.commit.editor.hoveredDeckCard.setCard(null)
 			}
 		},

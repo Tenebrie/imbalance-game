@@ -22,16 +22,15 @@ import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
 import { defineComponent, PropType } from 'vue'
 
-interface Props {
-	game: GameMessage
-}
-
 export default defineComponent({
 	props: {
-		game: Object as PropType<GameMessage>,
+		game: {
+			type: Object as PropType<GameMessage>,
+			required: true,
+		},
 	},
 
-	setup(props: Props) {
+	setup(props) {
 		const onClick = () => {
 			store.dispatch.joinGame(props.game)
 		}

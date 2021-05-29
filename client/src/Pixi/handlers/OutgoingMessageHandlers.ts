@@ -54,7 +54,7 @@ export default {
 	},
 
 	sendInit(): void {
-		Core.sendMessage(SystemMessageType.INIT, undefined)
+		Core.sendMessage(SystemMessageType.INIT, null)
 	},
 
 	sendKeepalive(): void {

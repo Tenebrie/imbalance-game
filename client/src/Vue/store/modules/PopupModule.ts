@@ -2,6 +2,7 @@ import { Component } from 'vue'
 import { defineModule } from 'direct-vuex'
 import { moduleActionContext } from '@/Vue/store'
 import { markRaw } from 'vue'
+import { EmptyFunction } from '@shared/Utils'
 
 type ComponentInStack = {
 	component: Component
@@ -53,11 +54,11 @@ const PopupModule = defineModule({
 			return state.componentStack[state.componentStack.length - 1].params
 		},
 
-		onConfirm: (state): (() => void | undefined) => {
+		onConfirm: (state): (() => void) => {
 			if (state.componentStack.length === 0) {
-				return undefined
+				return EmptyFunction
 			}
-			return state.componentStack[state.componentStack.length - 1].onConfirm
+			return state.componentStack[state.componentStack.length - 1].onConfirm || EmptyFunction
 		},
 	},
 

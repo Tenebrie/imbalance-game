@@ -22,11 +22,11 @@ export default defineComponent({
 
 	computed: {
 		deckId(): string {
-			return this.$route.params.deckId
+			return this.$route.params.deckId as string
 		},
 
 		deck(): PopulatedEditorDeck {
-			return store.state.editor.decks.find((deck) => deck.id === this.deckId)
+			return store.state.editor.decks.find((deck) => deck.id === this.deckId)!
 		},
 	},
 
@@ -34,7 +34,7 @@ export default defineComponent({
 		onClick(): void {
 			const onConfirm = async () => {
 				this.requestInFlight = true
-				const deckId = this.$route.params.deckId
+				const deckId = this.deckId
 				const statusCode = await store.dispatch.editor.deleteDeck({ deckId })
 				if (statusCode === 204) {
 					Notifications.success('Deck deleted!')

@@ -4,13 +4,13 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 
 const routeData = ref({
-	params: {},
-	query: {},
+	params: {} as Record<string, string>,
+	query: {} as Record<string, string>,
 })
 
 router.afterEach((route) => {
-	routeData.value.params = route.params
-	routeData.value.query = route.query
+	routeData.value.params = route.params as Record<string, string>
+	routeData.value.query = route.query as Record<string, string>
 })
 
 interface Query {

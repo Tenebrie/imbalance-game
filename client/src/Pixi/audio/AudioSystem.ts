@@ -68,6 +68,10 @@ class EffectsTrack {
 		}
 
 		const categoryEffects = this.audioEffects.get(category)
+		if (!categoryEffects) {
+			return
+		}
+
 		const selectedEffect = categoryEffects[Math.floor(Math.random() * categoryEffects.length)]
 		const audioHandle = new Howl({
 			src: selectedEffect.src,
@@ -93,10 +97,10 @@ enum MusicTrackCategory {
 }
 
 class MusicTrack {
-	private mode: AudioSystemMode
+	private mode: AudioSystemMode = AudioSystemMode.MENU
 	private ostFiles: Map<MusicTrackCategory, AudioFile[]>
 
-	private primaryTrack: Howl
+	private primaryTrack: Howl | null = null
 	private primaryTrackDelayTimeout: number | null = null
 
 	constructor() {
@@ -133,8 +137,11 @@ class MusicTrack {
 
 	private playPrimarySong(category: MusicTrackCategory, excludedIndex = -1): void {
 		let validFiles = this.ostFiles.get(category)
+		if (!validFiles) {
+			return
+		}
 		if (excludedIndex >= 0) {
-			validFiles = validFiles.filter((file) => file !== this.ostFiles.get(category)[excludedIndex])
+			validFiles = validFiles.filter((file, _index, original) => file !== original[excludedIndex])
 		}
 		const fileIndex = Math.floor(Math.random() * validFiles.length)
 
@@ -173,7 +180,7 @@ class MusicTrack {
 }
 
 class AmbienceTrack {
-	primaryTrack: Howl
+	primaryTrack: Howl | null = null
 
 	public start(): void {
 		this.primaryTrack = new Howl({
@@ -203,7 +210,7 @@ class AmbienceTrack {
 }
 
 class AudioSystem {
-	private currentMode: AudioSystemMode
+	private currentMode: AudioSystemMode = AudioSystemMode.MENU
 	private musicTrack: MusicTrack = new MusicTrack()
 	private effectsTrack: EffectsTrack = new EffectsTrack()
 	private ambienceTrack: AmbienceTrack = new AmbienceTrack()

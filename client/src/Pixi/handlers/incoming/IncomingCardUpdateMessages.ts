@@ -34,7 +34,7 @@ const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMe
 	},
 
 	[CardUpdateMessageType.BUFF_ADD]: (data: BuffMessage) => {
-		const card = Core.game.findRenderedCardById(data.cardId)
+		const card = Core.game.findRenderedCardById(data.cardId!)
 		if (!card) {
 			return
 		}
@@ -43,7 +43,7 @@ const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMe
 	},
 
 	[CardUpdateMessageType.BUFF_DURATION]: (data: BuffMessage) => {
-		const card = Core.game.findRenderedCardById(data.cardId)
+		const card = Core.game.findRenderedCardById(data.cardId!)
 		if (!card) {
 			return
 		}
@@ -60,7 +60,7 @@ const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMe
 	},
 
 	[CardUpdateMessageType.BUFF_REMOVE]: (data: BuffRefMessage) => {
-		const card = Core.game.findRenderedCardById(data.cardId)
+		const card = Core.game.findRenderedCardById(data.cardId!)
 		if (!card) {
 			return
 		}

@@ -6,8 +6,8 @@ export default class RenderedProjectile {
 	sprite: PIXI.Sprite
 	trail: ObjectTrail
 	startingPoint: PIXI.Point
-	targetCard: RenderedCard | null
-	targetPoint: PIXI.Point | null
+	targetCard: RenderedCard | null = null
+	targetPoint: PIXI.Point | null = null
 	targetMouse = false
 	currentTime: number
 	animationDuration: number

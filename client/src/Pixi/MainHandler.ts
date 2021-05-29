@@ -65,7 +65,7 @@ class AnimationThread {
 		) {
 			if (this === Core.mainHandler.mainAnimationThread) {
 				this.__isStarted = false
-			} else {
+			} else if (this.__parentThread) {
 				this.__parentThread.killAnimationThread(this.id)
 			}
 		}
@@ -116,11 +116,14 @@ class AnimationThread {
 
 	private executeNextMessage(): void {
 		const message = this.queuedMessages.shift()
+		if (!message) {
+			return
+		}
 		this.executeMessage(message)
 
 		if (message.allowBatching) {
 			while (this.queuedMessages.length > 0 && this.queuedMessages[0].handler === message.handler) {
-				const nextMessage = this.queuedMessages.shift()
+				const nextMessage = this.queuedMessages.shift()!
 				this.executeMessage(nextMessage)
 			}
 		} else if (this.messageCooldown === 0 && this.queuedMessages.length > 0) {
@@ -177,7 +180,7 @@ export default class MainHandler {
 
 	public registerMessage(message: QueuedMessage): void {
 		let targetThread = this.currentOpenAnimationThread
-		if (message.ignoreWorkerThreads) {
+		if (message.ignoreWorkerThreads && this.currentOpenAnimationThread.parentThread) {
 			targetThread = this.currentOpenAnimationThread.parentThread
 		}
 		targetThread.registerMessage(message)
@@ -185,7 +188,9 @@ export default class MainHandler {
 
 	public triggerAnimation(time: number, threadId: string): void {
 		const targetThread = this.mainAnimationThread.findThread(threadId)
-		targetThread.triggerCooldown(time)
+		if (targetThread) {
+			targetThread.triggerCooldown(time)
+		}
 	}
 
 	public createAnimationThread(isStaggered: boolean): void {
@@ -193,7 +198,7 @@ export default class MainHandler {
 	}
 
 	public commitAnimationThread(): void {
-		this.currentOpenAnimationThread = this.currentOpenAnimationThread.parentThread
+		this.currentOpenAnimationThread = this.currentOpenAnimationThread.parentThread!
 	}
 
 	public skipCardAnnounce(): void {
@@ -219,7 +224,9 @@ export default class MainHandler {
 	public destroyPreviousAnnouncedCard(): void {
 		if (this.previousAnnouncedCard) {
 			Core.destroyCard(this.previousAnnouncedCard)
-			window.clearTimeout(this.destroyPreviousAnnouncedCardTimer)
+			if (this.destroyPreviousAnnouncedCardTimer) {
+				window.clearTimeout(this.destroyPreviousAnnouncedCardTimer)
+			}
 			this.previousAnnouncedCard = null
 			this.destroyPreviousAnnouncedCardTimer = null
 		}

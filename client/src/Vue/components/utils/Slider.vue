@@ -22,6 +22,7 @@ export default defineComponent({
 	props: {
 		modelValue: {
 			type: Number,
+			required: true,
 		},
 		min: {
 			type: Number,
@@ -82,6 +83,10 @@ export default defineComponent({
 		}
 
 		const onMouseMove = (event: MouseEvent) => {
+			if (!sliderRef.value) {
+				return
+			}
+
 			const mousePosition = event.clientX - sliderPositionX.value - thumbPadding
 			const sliderWidth = sliderRef.value.clientWidth - thumbPadding * 2
 
@@ -109,6 +114,9 @@ export default defineComponent({
 		}
 
 		const useUpdateThumbValue = (baseValue: number) => {
+			if (!sliderRef.value) {
+				return
+			}
 			const rawValue = (baseValue - props.min) / (props.max - props.min)
 			const sliderWidth = sliderRef.value.clientWidth - thumbPadding * 2
 			thumbValue.value = Math.min(sliderRef.value.clientWidth - thumbPadding, Math.max(thumbPadding, rawValue * sliderWidth + thumbPadding))

@@ -29,7 +29,9 @@ export default class ProjectileSystem {
 				? projectile.targetCard.getPosition()
 				: projectile.targetMouse
 				? Core.input.mousePosition.clone()
-				: projectile.targetPoint.clone()
+				: projectile.targetPoint
+				? projectile.targetPoint.clone()
+				: new PIXI.Point(0, 0)
 
 			const currentTime = Math.min(projectile.currentTime, projectile.animationDuration)
 			const timePosition = currentTime / projectile.animationDuration

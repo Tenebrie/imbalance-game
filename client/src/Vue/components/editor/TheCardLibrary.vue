@@ -46,7 +46,7 @@ export default defineComponent({
 				return
 			}
 			if (event.key === 'Escape' && store.state.editor.searchQuery) {
-				store.commit.editor.setSearchQuery(null)
+				store.commit.editor.setSearchQuery('')
 			}
 		}
 
@@ -66,7 +66,7 @@ export default defineComponent({
 				return card.baseFeatures
 					.map((feature) => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
 					.map((id) => (locale === 'current' ? Localization.getValueOrNull(id) : Localization.getOriginalOrNull(id)))
-					.filter((string) => string !== null)
+					.filter((string) => string !== null) as string[]
 			}
 
 			const selectedColor = routeQuery.value.color

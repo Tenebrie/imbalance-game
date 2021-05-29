@@ -14,7 +14,7 @@ export type AnimationHandlerResponse = {
 	extraDelay?: number
 }
 
-const handlers: { [index in AnimationType]: (AnimationMessage, any) => AnimationHandlerResponse | void } = {
+const handlers: { [index in AnimationType]: (message: AnimationMessage, params: any) => AnimationHandlerResponse | void } = {
 	[AnimationType.NULL]: () => {
 		// Empty
 	},
@@ -32,17 +32,22 @@ const handlers: { [index in AnimationType]: (AnimationMessage, any) => Animation
 	[AnimationType.CARD_ANNOUNCE]: (message: AnimationMessage, params: CardAnnounceAnimParams) => {
 		const cardMessage = params.cardMessage
 		AudioSystem.playEffect(AudioEffectCategory.CARD_ANNOUNCE)
+		if (!Core.opponent) {
+			return
+		}
 		const revealedCard = Core.opponent.cardHand.reveal(cardMessage)
-		Core.mainHandler.announceCard(revealedCard)
+		if (revealedCard) {
+			Core.mainHandler.announceCard(revealedCard)
+		}
 	},
 
 	[AnimationType.CARD_ATTACK]: (message: AnimationMessage) => {
-		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
+		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId!)
 		if (!sourceCard) {
 			return { skip: true }
 		}
 		let projectilesSpawned = 0
-		message.targetCardIDs.forEach((targetCardId) => {
+		message.targetCardIDs!.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			if (!targetCard) {
 				return
@@ -56,12 +61,12 @@ const handlers: { [index in AnimationType]: (AnimationMessage, any) => Animation
 	},
 
 	[AnimationType.CARD_AFFECT]: (message: AnimationMessage) => {
-		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
+		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId!)
 		if (!sourceCard) {
 			return { skip: true }
 		}
 		let projectilesSpawned = 0
-		message.targetCardIDs.forEach((targetCardId) => {
+		message.targetCardIDs!.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			if (!targetCard) {
 				return
@@ -75,12 +80,12 @@ const handlers: { [index in AnimationType]: (AnimationMessage, any) => Animation
 	},
 
 	[AnimationType.CARD_HEAL]: (message: AnimationMessage) => {
-		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId)
+		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId!)
 		if (!sourceCard) {
 			return { skip: true }
 		}
 		let projectilesSpawned = 0
-		message.targetCardIDs.forEach((targetCardId) => {
+		message.targetCardIDs!.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			if (!targetCard) {
 				return
@@ -94,22 +99,31 @@ const handlers: { [index in AnimationType]: (AnimationMessage, any) => Animation
 	},
 
 	[AnimationType.UNIVERSE_ATTACK]: (message: AnimationMessage) => {
-		message.targetCardIDs.forEach((targetCardId) => {
+		message.targetCardIDs!.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
+			if (!targetCard) {
+				return
+			}
 			Core.mainHandler.projectileSystem.createUniverseAttackProjectile(targetCard)
 		})
 	},
 
 	[AnimationType.UNIVERSE_AFFECT]: (message: AnimationMessage) => {
-		message.targetCardIDs.forEach((targetCardId) => {
+		message.targetCardIDs!.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
+			if (!targetCard) {
+				return
+			}
 			Core.mainHandler.projectileSystem.createUniverseAffectProjectile(targetCard)
 		})
 	},
 
 	[AnimationType.UNIVERSE_HEAL]: (message: AnimationMessage) => {
-		message.targetCardIDs.forEach((targetCardId) => {
+		message.targetCardIDs!.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
+			if (!targetCard) {
+				return
+			}
 			Core.mainHandler.projectileSystem.createUniverseHealProjectile(targetCard)
 		})
 	},
@@ -119,8 +133,11 @@ const handlers: { [index in AnimationType]: (AnimationMessage, any) => Animation
 	},
 
 	[AnimationType.UNIT_DEPLOY]: (message: AnimationMessage) => {
-		const targetUnit = Core.board.findUnitById(message.targetCardId)
+		const targetUnit = Core.board.findUnitById(message.targetCardId!)
 		AudioSystem.playEffect(AudioEffectCategory.UNIT_DEPLOY)
+		if (!targetUnit) {
+			return
+		}
 		PIXI.Ticker.shared.addOnce(() => {
 			PIXI.Ticker.shared.addOnce(() => {
 				Core.particleSystem.createUnitDeployParticleEffect(targetUnit)
@@ -129,7 +146,10 @@ const handlers: { [index in AnimationType]: (AnimationMessage, any) => Animation
 	},
 
 	[AnimationType.UNIT_DESTROY]: (message: AnimationMessage) => {
-		const targetUnit = Core.board.findUnitById(message.targetCardId)
+		const targetUnit = Core.board.findUnitById(message.targetCardId!)
+		if (!targetUnit) {
+			return
+		}
 		Core.particleSystem.createUnitIncapacitateParticleEffect(targetUnit)
 		targetUnit.fadeOut()
 	},
@@ -140,7 +160,7 @@ const handlers: { [index in AnimationType]: (AnimationMessage, any) => Animation
 
 	[AnimationType.CARD_RECEIVED_BUFF]: (message: AnimationMessage, params: CardReceivedBuffAnimParams) => {
 		let buffsReceived = 0
-		message.targetCardIDs.forEach((targetCardId) => {
+		message.targetCardIDs!.forEach((targetCardId) => {
 			const targetCard = Core.game.findRenderedCardById(targetCardId)
 			if (!targetCard) {
 				return
@@ -157,12 +177,18 @@ const handlers: { [index in AnimationType]: (AnimationMessage, any) => Animation
 	},
 
 	[AnimationType.CARD_INFUSE]: (message: AnimationMessage) => {
-		const targetCard = Core.game.findRenderedCardById(message.targetCardId)
+		const targetCard = Core.game.findRenderedCardById(message.targetCardId!)
+		if (!targetCard) {
+			return
+		}
 		Core.particleSystem.createInfuseParticleEffect(targetCard)
 	},
 
 	[AnimationType.CARD_GENERATE_MANA]: (message: AnimationMessage) => {
-		const targetCard = Core.game.findRenderedCardById(message.targetCardId)
+		const targetCard = Core.game.findRenderedCardById(message.targetCardId!)
+		if (!targetCard) {
+			return
+		}
 		Core.particleSystem.createManaGeneratedParticleEffect(targetCard)
 	},
 }

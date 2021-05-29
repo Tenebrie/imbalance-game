@@ -129,7 +129,7 @@ export default defineComponent({
 					username: value,
 				})
 				await store.dispatch.fetchUser()
-				currentUsername.value = store.state.player.username
+				currentUsername.value = username.value
 				Notifications.success('Username updated!')
 			} catch (error) {
 				Notifications.error('Username update failed!')

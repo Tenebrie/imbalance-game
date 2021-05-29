@@ -3,7 +3,7 @@ import RichTextBackground from '@/Pixi/render/RichTextBackground'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 export default class DescriptionTextBackground extends PIXI.Container implements RichTextBackground {
-	textHeight: number
+	textHeight = 24
 
 	onTextRendered(position: PIXI.Point, dimensions: PIXI.Point): void {
 		if (dimensions.y === this.textHeight) {

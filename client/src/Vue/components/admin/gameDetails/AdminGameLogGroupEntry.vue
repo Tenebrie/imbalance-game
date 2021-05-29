@@ -41,7 +41,7 @@ export default defineComponent({
 				let value = props.entry.args[key] as string
 				if (typeof value === 'string') {
 					if (value.startsWith('player:') && props.players.find((player) => player.id === value)) {
-						value = `<b>${props.players.find((player) => player.id === value).username}</b>`
+						value = `<b>${props.players.find((player) => player.id === value)?.username}</b>`
 					} else if (value.startsWith('player:')) {
 						value = `<b>Player#${value.substr(7, 8)}</b>`
 					} else if (value.startsWith('ai:')) {

@@ -26,7 +26,7 @@ class ClientPlayer implements Player {
 
 export default class ClientPlayerInGame implements PlayerInGame {
 	player: ClientPlayer
-	leader: RenderedCard
+	leader!: RenderedCard
 	cardHand: RenderedCardHand
 	cardDeck: ClientCardDeck
 	cardGraveyard: ClientCardGraveyard

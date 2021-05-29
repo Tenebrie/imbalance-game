@@ -40,7 +40,7 @@ export default defineComponent({
 		}
 
 		const onShowDiscord = (): void => {
-			const win = window.open('https://discord.gg/9fSWxMnBFa', '_blank')
+			const win = window.open('https://discord.gg/9fSWxMnBFa', '_blank')!
 			win.focus()
 		}
 

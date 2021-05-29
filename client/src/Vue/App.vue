@@ -48,8 +48,8 @@ export default defineComponent({
 
 		rootClass() {
 			return {
-				'in-game': this.isInGame as boolean,
-				'navigation-bar-visible': !this.isInGame as boolean,
+				'in-game': store.getters.gameStateModule.isInGame,
+				'navigation-bar-visible': !store.getters.gameStateModule.isInGame,
 			}
 		},
 	},

@@ -15,10 +15,11 @@ export const isCardPlayable = (card: RenderedCard): boolean => {
 
 export const isGrabbedCardPlayableToRow = (row: RenderedGameBoardRow | null): boolean => {
 	return (
-		Core.input.grabbedCard &&
-		row &&
-		isCardPlayable(Core.input.grabbedCard.card) &&
-		Core.input.grabbedCard.validTargetPositions.some((target) => target.row === row)
+		(Core.input.grabbedCard &&
+			row &&
+			isCardPlayable(Core.input.grabbedCard.card) &&
+			Core.input.grabbedCard.validTargetPositions.some((target) => target.row === row)) ||
+		false
 	)
 }
 
@@ -26,9 +27,10 @@ export const isGrabbedCardPlayableToHoveredPosition = (): boolean => {
 	const row = MouseHover.getHoveredRow()
 	const insertIndex = getCardInsertIndex(row)
 	return (
-		Core.input.grabbedCard &&
-		row &&
-		isCardPlayable(Core.input.grabbedCard.card) &&
-		Core.input.grabbedCard.validTargetPositions.some((target) => target.row === row && target.position === insertIndex)
+		(Core.input.grabbedCard &&
+			row &&
+			isCardPlayable(Core.input.grabbedCard.card) &&
+			Core.input.grabbedCard.validTargetPositions.some((target) => target.row === row && target.position === insertIndex)) ||
+		false
 	)
 }

@@ -35,6 +35,10 @@ export default defineComponent({
 
 	setup(props) {
 		const onLeftClick = (event: MouseEvent): void => {
+			if (!props.card) {
+				return
+			}
+
 			let deckId = router.currentRoute.value.params.deckId
 			if (typeof deckId === 'object') {
 				deckId = deckId[0]
@@ -65,7 +69,7 @@ export default defineComponent({
 		}
 
 		const onRightClick = (event: MouseEvent): void => {
-			if (event && event.ctrlKey) {
+			if ((event && event.ctrlKey) || !props.card) {
 				return
 			}
 
@@ -77,27 +81,49 @@ export default defineComponent({
 		}
 
 		const renderedCard = computed<RenderedEditorCard | null>(() => {
-			return store.state.editor.renderedCards.find((renderedCard) => renderedCard.class === props.card.class)
+			const card = props.card
+			if (!card) {
+				return null
+			}
+			return store.state.editor.renderedCards.find((renderedCard) => renderedCard.class === card.class) || null
 		})
 
 		const isDisabled = computed<boolean>(() => {
+			const card = props.card
+			if (!card) {
+				return false
+			}
 			const currentDeckId = store.state.editor.currentDeckId
 			if (!currentDeckId || props.mode === 'inspect') {
 				return false
 			}
 
-			return !Utils.canAddCardToDeck(currentDeckId, props.card)
+			return !Utils.canAddCardToDeck(currentDeckId, card)
 		})
 
-		const customClass = computed<Record<string, boolean>>(() => ({
-			disabled: isDisabled.value,
-			leader: props.card.color === CardColor.LEADER,
-			golden: props.card.color === CardColor.GOLDEN,
-			silver: props.card.color === CardColor.SILVER,
-			bronze: props.card.color === CardColor.BRONZE,
-			token: props.card.color === CardColor.TOKEN,
-			spell: props.card.type === CardType.SPELL,
-		}))
+		const customClass = computed<Record<string, boolean>>(() => {
+			const card = props.card
+			if (!card) {
+				return {
+					disabled: false,
+					leader: false,
+					golden: false,
+					silver: false,
+					bronze: false,
+					token: false,
+					spell: false,
+				}
+			}
+			return {
+				disabled: isDisabled.value,
+				leader: card.color === CardColor.LEADER,
+				golden: card.color === CardColor.GOLDEN,
+				silver: card.color === CardColor.SILVER,
+				bronze: card.color === CardColor.BRONZE,
+				token: card.color === CardColor.TOKEN,
+				spell: card.type === CardType.SPELL,
+			}
+		})
 
 		return {
 			renderedCard,

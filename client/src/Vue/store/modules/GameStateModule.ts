@@ -121,6 +121,9 @@ const gameStateModule = defineModule({
 		},
 
 		inspectedCard: (state): RenderedCard | null => {
+			if (!Core.game) {
+				return null
+			}
 			return state.inspectedCardId === null ? null : Core.game.findRenderedCardById(state.inspectedCardId)
 		},
 	},

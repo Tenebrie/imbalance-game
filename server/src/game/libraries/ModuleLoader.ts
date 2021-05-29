@@ -23,15 +23,6 @@ type ReturnValue<T> = {
 }
 
 export function loadModules<T extends { name: string }>(props: Props): ReturnValue<T> {
-	// Do not load files if running tests
-	if (process.env.JEST_WORKER_ID !== undefined) {
-		return {
-			prototypes: [],
-			upToDateModules: [],
-			outdatedModules: [],
-		}
-	}
-
 	const normalizedPath = path.join(__dirname, props.path)
 	const rulesetDefinitionFiles = glob.sync(`${normalizedPath}/**/*.js`)
 
