@@ -36,7 +36,7 @@ describe('ServerGameEvents', () => {
 
 	describe('event resolution', () => {
 		it('does not resolve events immediately', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 
@@ -44,7 +44,7 @@ describe('ServerGameEvents', () => {
 		})
 
 		it('does not trigger callbacks for another event', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.ROUND_STARTED).perform(() => callbackSpy())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 			events.resolveEvents()
@@ -53,7 +53,7 @@ describe('ServerGameEvents', () => {
 		})
 
 		it('resolves single event from the queue', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 			events.resolveEvents()
@@ -62,9 +62,9 @@ describe('ServerGameEvents', () => {
 		})
 
 		it('resolves multiple callbacks for the same event', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpyB())
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpyC())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpyB())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpyC())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 			events.resolveEvents()
@@ -75,7 +75,7 @@ describe('ServerGameEvents', () => {
 		})
 
 		it('resolves multiple events from the queue', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 			events.postEvent(GameEventCreators.gameStarted({ player }))
@@ -87,12 +87,12 @@ describe('ServerGameEvents', () => {
 
 		it('resolves chaining events', () => {
 			events
-				.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED)
+				.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED)
 				.perform(() => events.postEvent(GameEventCreators.roundStarted({ player })))
 			events
-				.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_STARTED)
+				.createCallback<GameStartedEventArgs>(null, GameEventType.ROUND_STARTED)
 				.perform(() => events.postEvent(GameEventCreators.roundEnded({ player })))
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_ENDED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.ROUND_ENDED).perform(() => callbackSpy())
 
 			events.postEvent(GameEventCreators.gameStarted({ player }))
 			events.resolveEvents()

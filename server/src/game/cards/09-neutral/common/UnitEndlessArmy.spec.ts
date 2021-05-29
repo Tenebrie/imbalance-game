@@ -16,7 +16,7 @@ describe('UnitEndlessArmy', () => {
 
 	it("adds another endless army to the owner's deck", () => {
 		expect(player.cardDeck.unitCards.length).toEqual(0)
-		game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+		game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
 		game.events.resolveEvents()
 		expect(player.cardDeck.unitCards.length).toEqual(1)
 		expect(player.cardDeck.unitCards[0].class).toEqual(cardInHand.class)

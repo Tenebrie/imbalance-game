@@ -23,7 +23,7 @@ describe('HeroMetrearte', () => {
 		CardLibrary.forceLoadCards([TestingArcaneNormalLeaderPower])
 		const normalCardClass = CardLibrary.getClassFromConstructor(TestingArcaneNormalLeaderPower)
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
 		})
 		playerAction(() => {
 			const validDeployTargets = game.cardPlay
@@ -39,7 +39,7 @@ describe('HeroMetrearte', () => {
 	it('does not offer experimental cards', () => {
 		CardLibrary.forceLoadCards([TestingArcaneNormalLeaderPower, TestingArcaneExperimentalLeaderPower])
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
 		})
 
 		const normalCardClass = CardLibrary.getClassFromConstructor(TestingArcaneNormalLeaderPower)

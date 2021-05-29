@@ -23,7 +23,7 @@ describe('HeroAntoria', () => {
 	it('intercepts damage', () => {
 		const damageTarget = game.board.createUnit(new TestingUnitNoEffect(game), 4, 0)!
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(playersCard, player), 0, 0)
 		})
 		playerAction(() => {
 			game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
@@ -42,7 +42,7 @@ describe('HeroAntoria', () => {
 
 			game.board.createUnit(new TestingUnitNoEffect(game), 4, 0)
 			playerAction(() => {
-				game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
+				game.cardPlay.playCardFromHand(new ServerOwnedCard(playersCard, player), 0, 0)
 			})
 			playerAction(() => {
 				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
