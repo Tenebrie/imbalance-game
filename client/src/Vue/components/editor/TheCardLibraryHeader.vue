@@ -6,7 +6,7 @@
 					v-for="data in factionData"
 					:key="`faction-button-${data.faction}`"
 					class="primary"
-					:class="{ selected: data.faction === selectedFaction }"
+					:class="{ selected: selectedFaction?.includes(data.faction) || selectedFaction === data.faction }"
 					@click="() => toggleFaction(data.faction)"
 				>
 					{{ data.text }}
@@ -18,7 +18,7 @@
 					v-for="data in colorData"
 					:key="`color-button-${data.color}`"
 					class="primary"
-					:class="{ selected: data.color === selectedColor }"
+					:class="{ selected: selectedColor?.includes(data.color) || selectedColor === data.color }"
 					@click="() => toggleColor(data.color)"
 				>
 					{{ data.text }}
@@ -64,22 +64,40 @@ import Localization from '@/Pixi/Localization'
 export default defineComponent({
 	setup() {
 		const routeQuery = useDecksRouteQuery()
-		const selectedColor = computed<CardColor>(() => routeQuery.value.color)
-		const selectedFaction = computed<CardFaction>(() => routeQuery.value.faction)
+		const selectedColor = computed<Array<CardColor>>(() => routeQuery.value.color)
+		const selectedFaction = computed<Array<CardFaction>>(() => routeQuery.value.faction)
 
-		const toggleColor = (color: CardColor) => {
-			if (selectedColor.value === color) {
+		const toggleColor = (color: CardColor | null) => {
+			if (color === null) {
 				routeQuery.value.color = null
+			} else if (selectedColor.value !== null) {
+				if (selectedColor.value.includes(color)) {
+					if (selectedColor.value.length === 1) {
+						routeQuery.value.color = null
+					} else {
+						routeQuery.value.color = selectedColor.value.filter((c) => c !== color)
+					}
+				} else {
+					routeQuery.value.color = selectedColor.value.concat(color)
+				}
 			} else {
-				routeQuery.value.color = color
+				routeQuery.value.color = [color]
 			}
 		}
 
-		const toggleFaction = (faction: CardFaction) => {
-			if (selectedFaction.value === faction) {
+		const toggleFaction = (faction: CardFaction | null) => {
+			if (faction === null) {
 				routeQuery.value.faction = null
+			} else if (selectedFaction.value !== null) {
+				if (selectedFaction.value.includes(faction)) {
+					if (selectedFaction.value.length === 1) {
+						routeQuery.value.faction = null
+					} else routeQuery.value.faction = selectedFaction.value.filter((f) => f !== faction)
+				} else {
+					routeQuery.value.faction = selectedFaction.value.concat(faction)
+				}
 			} else {
-				routeQuery.value.faction = faction
+				routeQuery.value.faction = [faction]
 			}
 		}
 

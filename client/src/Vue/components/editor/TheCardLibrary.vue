@@ -74,8 +74,8 @@ export default defineComponent({
 
 			const results = store.state.editor.cardLibrary
 				.filter((card) => isCollectible(card))
-				.filter((card) => selectedColor === null || card.color === selectedColor)
-				.filter((card) => selectedFaction === null || card.faction === selectedFaction)
+				.filter((card) => selectedColor === null || selectedColor.includes(card.color))
+				.filter((card) => selectedFaction === null || selectedFaction.includes(card.faction))
 				.map((card) => ({
 					...card,
 					originalName: insertRichTextVariables(Localization.getOriginalOrNull(card.name), card.variables),
