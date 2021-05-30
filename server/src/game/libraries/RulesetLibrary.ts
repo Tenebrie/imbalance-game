@@ -4,7 +4,7 @@ import { ServerRulesetBuilder, ServerRulesetTemplate } from '../models/rulesets/
 import { loadModules } from './ModuleLoader'
 
 export interface RulesetConstructor extends ObjectConstructor {
-	new (): ServerRulesetBuilder
+	new (): ServerRulesetBuilder<any>
 }
 
 class RulesetLibrary {

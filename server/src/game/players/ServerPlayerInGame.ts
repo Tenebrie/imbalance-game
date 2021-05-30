@@ -32,7 +32,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	roundEnded: boolean
 	cardsMulliganed: number
 
-	__leader: ServerCard | null
+	private __leader: ServerCard | null
 
 	constructor(game: ServerGame, player: ServerPlayer) {
 		this.game = game
@@ -93,11 +93,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		return false
 	}
 
-	public drawUnitCards(count: number): ServerCard[] {
+	public drawUnitCards(count: number, drawFromBottom = false): ServerCard[] {
 		const actualCount = Math.min(count, Constants.UNIT_HAND_SIZE_LIMIT - this.cardHand.unitCards.length)
 		const drawnCards = []
 		for (let i = 0; i < actualCount; i++) {
-			const card = this.cardDeck.drawTopUnit()
+			const card = drawFromBottom ? this.cardDeck.drawBottomUnit() : this.cardDeck.drawTopUnit()
 			if (!card) {
 				continue
 			}
@@ -134,6 +134,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.cardHand.addUnit(cardToAdd, cardIndex)
 		this.game.events.postEvent(
 			GameEventCreators.cardDrawn({
+				game: this.game,
 				owner: this,
 				triggeringCard: cardToAdd,
 			})
@@ -197,12 +198,14 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		if (this.game.roundIndex === 0) {
 			this.game.events.postEvent(
 				GameEventCreators.gameStarted({
+					game: this.game,
 					player: this,
 				})
 			)
 		}
 		this.game.events.postEvent(
 			GameEventCreators.roundStarted({
+				game: this.game,
 				player: this,
 			})
 		)
@@ -244,6 +247,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public onTurnStart(): void {
 		this.game.events.postEvent(
 			GameEventCreators.turnStarted({
+				game: this.game,
 				player: this,
 			})
 		)
@@ -274,6 +278,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 		this.game.events.postEvent(
 			GameEventCreators.turnEnded({
+				game: this.game,
 				player: this,
 			})
 		)
@@ -292,6 +297,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public onEndRound(): void {
 		this.game.events.postEvent(
 			GameEventCreators.roundEnded({
+				game: this.game,
 				player: this,
 			})
 		)

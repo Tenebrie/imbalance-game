@@ -6,6 +6,7 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import { GenericActionMessageType, SystemMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import TargetMode from '@shared/enums/TargetMode'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
+import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
 
 export default {
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {
@@ -43,6 +44,10 @@ export default {
 
 	requestShowOpponentsGraveyard(): void {
 		Core.sendMessage(GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD, null)
+	},
+
+	sendNovelReply(reply: NovelReplyMessage): void {
+		Core.sendMessage(GenericActionMessageType.NOVEL_REPLY, reply)
 	},
 
 	sendEndTurn(): void {

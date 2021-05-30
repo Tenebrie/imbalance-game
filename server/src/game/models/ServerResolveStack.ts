@@ -98,6 +98,7 @@ export default class ServerResolveStack implements ResolveStack {
 
 		this.game.events.postEvent(
 			GameEventCreators.cardPreResolved({
+				game: this.game,
 				triggeringCard: this.entries[this.entries.length - 1].ownedCard.card,
 			})
 		)
@@ -118,6 +119,7 @@ export default class ServerResolveStack implements ResolveStack {
 
 		this.game.events.postEvent(
 			GameEventCreators.cardResolved({
+				game: this.game,
 				triggeringCard: resolvedCard.card,
 			})
 		)

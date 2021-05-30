@@ -69,6 +69,9 @@
 	"ui.decks.deleteDeck.progress": "Deleting...",
 	"ui.decks.leaveDeck": "Back",
 
+	"story.character.narrator": "Narrator",
+	"story.character.notNessa": "Not Nessa",
+
 	"log.entry.gameStarted": "The game has started for {player}",
 	"log.entry.roundStarted": "{player} has started a new round",
 	"log.entry.turnStarted": "{player} has started a new turn",
@@ -115,6 +118,7 @@
 
 	"ruleset.rulesetChallengeDummy.label": "Target Dummy",
 	"ruleset.rulesetBrawlDiscovery.label": "Brawl: Discovery League",
+	"ruleset.rulesetNessadventure.label": "<b>The Nessadventure</b>",
 
 	"card.type.unit": "Unit",
 	"card.type.spell": "Spell",
@@ -202,6 +206,9 @@
 	"card.feature.spy.name": "Spy",
 	"card.feature.spy.description": "Played on your opponent's side of the board.",
 	"card.feature.spy.text": "*Spy*",
+	"card.feature.quick.name": "Quick",
+	"card.feature.quick.description": "Does not end your turn when played.",
+	"card.feature.quick.text": "*Quick*",
 	"card.feature.heroPower.name": "Leader Power",
 	"card.feature.heroPower.description": "When played as spell or destroyed as unit, this card returns to your deck. It is also always revealed.",
 	"card.feature.heroPower.text": "*Leader Power*",
@@ -694,6 +701,9 @@
 	"card.heroChallengeDummyWarrior3.title": "Dummy of Temperance",
 	"card.heroChallengeDummyWarrior3.description": "<i>No effect</i>",
 
+	"card.unitChallengeDummyOPWarrior.name": "Overcharged Dummy",
+	"card.unitChallengeDummyOPWarrior.description": "<i>No effect, just overpowered</i>",
+
 	"card.unitChallengeDummyRoyalWarrior.name": "Royal Dummy",
 	"card.unitChallengeDummyRoyalWarrior.description": "<i>No effect</i>",
 
@@ -857,5 +867,26 @@
 
 	"card.unitStrayDog.name": "Stray Dog",
 	"card.unitStrayDog.description": "<i>No effect</i>",
-	"card.unitStrayDog.flavor": "(Who, who, who, who)"
+	"card.unitStrayDog.flavor": "(Who, who, who, who)",
+
+	"card.heroNotNessaHidden.name": "Not Nessa",
+	"card.heroNotNessaHidden.title": "???",
+	"card.heroNotNessaHidden.description": "???",
+
+	"card.heroNotEleyas.name": "Not Ele'yas",
+	"card.heroNotEleyas.title": "The Indecisive",
+	"card.heroNotEleyas.description": "Whenever you draw this unit or return it to your deck, boost self by 2.",
+	"card.heroNotEleyas.flavor": "If nobody is there to complain, is it copyright infringement?",
+
+	"card.unitEleyasDoppelganger.name": "Ele'yas Doppelganger",
+	"card.unitEleyasDoppelganger.description": "Gets bonus Power equal to original Ele'yas (wherever he is).",
+	"card.unitEleyasDoppelganger.flavor": "What is better than 1 Ele'yas?",
+
+	"card.unitDryadSmuggler.name": "Dryad Smuggler",
+	"card.unitDryadSmuggler.description": "*Deploy:*\n*Draw* a card from the bottom of your deck.",
+	"card.unitDryadSmuggler.flavor": "But who smuggled the smugglers?",
+
+	"card.unitCorgiGravedigger.name": "Corgi Gravedigger",
+	"card.unitCorgiGravedigger.description": "*Deploy:*\nChoose a card in your Graveyard to return to your hand.",
+	"card.unitCorgiGravedigger.flavor": "And he works in the cutest graveyard you'll ever visit!"
 }

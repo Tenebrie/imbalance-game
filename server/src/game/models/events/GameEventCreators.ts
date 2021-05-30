@@ -10,6 +10,7 @@ import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
 import { ServerCardTargetCard, ServerCardTargetPosition, ServerCardTargetRow } from '../ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
+import ServerGame from '../ServerGame'
 
 export default {
 	gameStarted: (args: GameStartedEventArgs): GameEvent => ({
@@ -37,6 +38,15 @@ export default {
 
 	cardDrawn: (args: CardDrawnEventArgs): GameEvent => ({
 		type: GameEventType.CARD_DRAWN,
+		args: args,
+		effectSource: args.triggeringCard,
+		logVariables: {
+			owner: args.owner.player.id,
+			triggeringCard: args.triggeringCard.id,
+		},
+	}),
+	cardReturned: (args: CardReturnedEventArgs): GameEvent => ({
+		type: GameEventType.CARD_RETURNED,
 		args: args,
 		effectSource: args.triggeringCard,
 		logVariables: {
@@ -290,54 +300,62 @@ export interface GameEvent {
 	logVariables?: Record<string, string | number | undefined>
 }
 
-export interface GameStartedEventArgs {
+interface SharedEventArgs {
+	game: ServerGame
+}
+
+export interface GameStartedEventArgs extends SharedEventArgs {
 	player: ServerPlayerInGame
 }
 
-export interface RoundStartedEventArgs {
+export interface RoundStartedEventArgs extends SharedEventArgs {
 	player: ServerPlayerInGame
 }
-export interface TurnStartedEventArgs {
+export interface TurnStartedEventArgs extends SharedEventArgs {
 	player: ServerPlayerInGame
 }
 
-export interface CardDrawnEventArgs {
+export interface CardDrawnEventArgs extends SharedEventArgs {
 	owner: ServerPlayerInGame
 	triggeringCard: ServerCard
 }
-export interface CardPlayedEventArgs {
+export interface CardReturnedEventArgs extends SharedEventArgs {
 	owner: ServerPlayerInGame
 	triggeringCard: ServerCard
 }
-export interface CardPreResolvedEventArgs {
+export interface CardPlayedEventArgs extends SharedEventArgs {
+	owner: ServerPlayerInGame
 	triggeringCard: ServerCard
 }
-export interface CardResolvedEventArgs {
+export interface CardPreResolvedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 }
-export interface CardTakesDamageEventArgs {
+export interface CardResolvedEventArgs extends SharedEventArgs {
+	triggeringCard: ServerCard
+}
+export interface CardTakesDamageEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 	damageInstance: ServerDamageInstance
 	armorDamageInstance: ServerDamageInstance | null
 	powerDamageInstance: ServerDamageInstance | null
 }
-export interface CardDiscardedEventArgs {
+export interface CardDiscardedEventArgs extends SharedEventArgs {
 	owner: ServerPlayerInGame
 	triggeringCard: ServerCard
 }
-export interface CardDestroyedEventArgs {
+export interface CardDestroyedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 	formerOwner: ServerPlayerInGame
 }
 
-export interface CardTargetSelectedCardEventArgs {
+export interface CardTargetSelectedCardEventArgs extends SharedEventArgs {
 	targetMode: TargetMode
 	targetType: TargetType
 	triggeringCard: ServerCard
 	triggeringPlayer: ServerPlayerInGame
 	targetCard: ServerCard
 }
-export interface CardTargetSelectedUnitEventArgs {
+export interface CardTargetSelectedUnitEventArgs extends SharedEventArgs {
 	targetMode: TargetMode
 	targetType: TargetType
 	triggeringCard: ServerCard
@@ -345,14 +363,14 @@ export interface CardTargetSelectedUnitEventArgs {
 	targetCard: ServerCard
 	targetUnit: ServerUnit
 }
-export interface CardTargetSelectedRowEventArgs {
+export interface CardTargetSelectedRowEventArgs extends SharedEventArgs {
 	targetMode: TargetMode
 	targetType: TargetType
 	triggeringCard: ServerCard
 	triggeringPlayer: ServerPlayerInGame
 	targetRow: ServerBoardRow
 }
-export interface CardTargetSelectedPositionEventArgs {
+export interface CardTargetSelectedPositionEventArgs extends SharedEventArgs {
 	targetMode: TargetMode
 	targetType: TargetType
 	triggeringCard: ServerCard
@@ -360,22 +378,22 @@ export interface CardTargetSelectedPositionEventArgs {
 	targetRow: ServerBoardRow
 	targetPosition: number
 }
-export interface CardTargetsConfirmedEventArgs {
+export interface CardTargetsConfirmedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 	triggeringPlayer: ServerPlayerInGame
 }
 
-export interface PlayerTargetCardSelectedEventArgs {
+export interface PlayerTargetCardSelectedEventArgs extends SharedEventArgs {
 	targetMode: TargetMode
 	targetType: TargetType
 	triggeringPlayer: ServerPlayerInGame
 	targetCard: ServerCard
 }
 
-export interface UnitCreatedEventArgs {
+export interface UnitCreatedEventArgs extends SharedEventArgs {
 	triggeringUnit: ServerUnit
 }
-export interface UnitMovedEventArgs {
+export interface UnitMovedEventArgs extends SharedEventArgs {
 	triggeringUnit: ServerUnit
 	fromRow: ServerBoardRow
 	fromIndex: number
@@ -384,58 +402,58 @@ export interface UnitMovedEventArgs {
 	distance: number
 	direction: MoveDirection
 }
-export interface UnitOrderedCardEventArgs {
+export interface UnitOrderedCardEventArgs extends SharedEventArgs {
 	triggeringUnit: ServerUnit
 	targetType: TargetType
 	targetCard: ServerCard
 	targetArguments: ServerCardTargetCard
 }
-export interface UnitOrderedUnitEventArgs {
+export interface UnitOrderedUnitEventArgs extends SharedEventArgs {
 	triggeringUnit: ServerUnit
 	targetType: TargetType
 	targetCard: ServerCard
 	targetUnit: ServerUnit
 	targetArguments: ServerCardTargetCard
 }
-export interface UnitOrderedRowEventArgs {
+export interface UnitOrderedRowEventArgs extends SharedEventArgs {
 	triggeringUnit: ServerUnit
 	targetType: TargetType
 	targetRow: ServerBoardRow
 	targetArguments: ServerCardTargetRow
 }
-export interface UnitOrderedPositionEventArgs {
+export interface UnitOrderedPositionEventArgs extends SharedEventArgs {
 	triggeringUnit: ServerUnit
 	targetType: TargetType
 	targetRow: ServerBoardRow
 	targetPosition: number
 	targetArguments: ServerCardTargetPosition
 }
-export interface UnitDestroyedEventArgs {
+export interface UnitDestroyedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 	triggeringUnit: ServerUnit
 }
 
-export interface UnitDeployedEventArgs {
+export interface UnitDeployedEventArgs extends SharedEventArgs {
 	triggeringUnit: ServerUnit
 }
-export interface SpellDeployedEventArgs {
+export interface SpellDeployedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 }
 
-export interface BuffCreatedEventArgs {
+export interface BuffCreatedEventArgs extends SharedEventArgs {
 	triggeringBuff: ServerBuff
 }
-export interface BuffRemovedEventArgs {
+export interface BuffRemovedEventArgs extends SharedEventArgs {
 	triggeringBuff: ServerBuff
 }
 
-export interface TurnEndedEventArgs {
+export interface TurnEndedEventArgs extends SharedEventArgs {
 	player: ServerPlayerInGame
 }
-export interface RoundEndedEventArgs {
+export interface RoundEndedEventArgs extends SharedEventArgs {
 	player: ServerPlayerInGame
 }
 
-export interface GameFinishedEventArgs {
+export interface GameFinishedEventArgs extends SharedEventArgs {
 	victoriousPlayer: ServerPlayerInGame | null
 }

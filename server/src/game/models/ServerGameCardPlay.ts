@@ -86,6 +86,7 @@ export default class ServerGameCardPlay {
 			/* Invoke the card Deploy effect */
 			this.game.events.postEvent(
 				GameEventCreators.unitDeployed({
+					game: this.game,
 					triggeringUnit: ownedCard.card.unit,
 				})
 			)
@@ -93,6 +94,7 @@ export default class ServerGameCardPlay {
 			/* Invoke the card onPlay effect */
 			this.game.events.postEvent(
 				GameEventCreators.spellDeployed({
+					game: this.game,
 					triggeringCard: ownedCard.card,
 				})
 			)
@@ -115,6 +117,7 @@ export default class ServerGameCardPlay {
 		/* Trigger card played event */
 		this.game.events.postEvent(
 			GameEventCreators.cardPlayed({
+				game: this.game,
 				owner: owner,
 				triggeringCard: card,
 			})
@@ -155,6 +158,7 @@ export default class ServerGameCardPlay {
 		/* Invoke the card Deploy effect */
 		this.game.events.postEvent(
 			GameEventCreators.unitDeployed({
+				game: this.game,
 				triggeringUnit: unit,
 			})
 		)
@@ -169,6 +173,7 @@ export default class ServerGameCardPlay {
 		/* Invoke the card onPlay effect */
 		this.game.events.postEvent(
 			GameEventCreators.spellDeployed({
+				game: this.game,
 				triggeringCard: card,
 			})
 		)
@@ -290,6 +295,7 @@ export default class ServerGameCardPlay {
 			if (target instanceof ServerCardTargetCard || target instanceof ServerCardTargetUnit) {
 				this.game.events.postEvent(
 					GameEventCreators.cardTargetCardSelected({
+						game: this.game,
 						targetMode: target.targetMode,
 						targetType: target.targetType,
 						triggeringCard: currentCard,
@@ -300,6 +306,7 @@ export default class ServerGameCardPlay {
 				if (target instanceof ServerCardTargetUnit) {
 					this.game.events.postEvent(
 						GameEventCreators.cardTargetUnitSelected({
+							game: this.game,
 							targetMode: target.targetMode,
 							targetType: target.targetType,
 							triggeringCard: currentCard,
@@ -314,6 +321,7 @@ export default class ServerGameCardPlay {
 			if (target instanceof ServerCardTargetRow || target instanceof ServerCardTargetPosition) {
 				this.game.events.postEvent(
 					GameEventCreators.cardTargetRowSelected({
+						game: this.game,
 						targetMode: target.targetMode,
 						targetType: target.targetType,
 						triggeringCard: currentCard,
@@ -324,6 +332,7 @@ export default class ServerGameCardPlay {
 				if (target instanceof ServerCardTargetPosition) {
 					this.game.events.postEvent(
 						GameEventCreators.cardTargetPositionSelected({
+							game: this.game,
 							targetMode: target.targetMode,
 							targetType: target.targetType,
 							triggeringCard: currentCard,
@@ -383,6 +392,7 @@ export default class ServerGameCardPlay {
 
 				this.game.events.postEvent(
 					GameEventCreators.cardTargetsConfirmed({
+						game: this.game,
 						triggeringCard: currentCard,
 						triggeringPlayer: playerInGame,
 					})
@@ -396,6 +406,7 @@ export default class ServerGameCardPlay {
 	public selectPlayerMulliganTarget(playerInGame: ServerPlayerInGame, target: ServerAnonymousTargetCard): void {
 		this.game.events.postEvent(
 			GameEventCreators.playerMulliganedCard({
+				game: this.game,
 				targetMode: target.targetMode,
 				targetType: target.targetType,
 				triggeringPlayer: playerInGame,

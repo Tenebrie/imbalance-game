@@ -31,6 +31,7 @@ import GameEventCreators, {
 	CardPlayedEventArgs,
 	CardPreResolvedEventArgs,
 	CardResolvedEventArgs,
+	CardReturnedEventArgs,
 	CardTakesDamageEventArgs,
 	CardTargetsConfirmedEventArgs,
 	CardTargetSelectedCardEventArgs,
@@ -413,6 +414,7 @@ export default class ServerCard implements Card {
 
 		this.game.events.postEvent(
 			GameEventCreators.cardTakesDamage({
+				game: this.game,
 				triggeringCard: this,
 				damageInstance: damageInstance,
 				armorDamageInstance: armorDamageInstance,
@@ -496,6 +498,7 @@ export default class ServerCard implements Card {
 
 		this.game.events.postEvent(
 			GameEventCreators.cardDestroyed({
+				game: this.game,
 				triggeringCard: this,
 				formerOwner: owner,
 			})
@@ -640,6 +643,7 @@ export default class ServerCard implements Card {
 	 * the `effectSource` is set to the subscriber.
 	 */
 	protected createEffect(event: GameEventType.CARD_DRAWN): EventSubscription<CardDrawnEventArgs>
+	protected createEffect(event: GameEventType.CARD_RETURNED): EventSubscription<CardReturnedEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DEPLOYED): EventSubscription<UnitDeployedEventArgs>
 	protected createEffect(event: GameEventType.SPELL_DEPLOYED): EventSubscription<SpellDeployedEventArgs>
 	/**

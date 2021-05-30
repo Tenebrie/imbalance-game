@@ -85,6 +85,17 @@ export enum CardUpdateMessageType {
 	BUFF_REMOVE = 'cardUpdate_buffRemove',
 }
 
+export enum NovelMessageType {
+	START = 'novel_start',
+	SAY = 'novel_say',
+	CLEAR = 'novel_clear',
+	ADD_REPLY = 'novel_reply',
+	ADD_CHARACTER = 'novel_addCharacter',
+	ACTIVATE_CHARACTER = 'novel_activateCharacter',
+	REMOVE_CHARACTER = 'novel_removeCharacter',
+	FINISH = 'novel_finish',
+}
+
 export type ServerToClientMessageTypes =
 	| PlayerUpdateMessageType
 	| GameLogUpdateMessageType
@@ -95,3 +106,4 @@ export type ServerToClientMessageTypes =
 	| ResolveStackMessageType
 	| TargetingMessageType
 	| CardUpdateMessageType
+	| NovelMessageType

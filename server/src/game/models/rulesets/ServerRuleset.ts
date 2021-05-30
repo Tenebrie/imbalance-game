@@ -12,11 +12,13 @@ import {
 	BuffCreatedEventArgs,
 	BuffRemovedEventArgs,
 	CardDestroyedEventArgs,
+	CardDrawnEventArgs,
 	CardPlayedEventArgs,
 	CardTakesDamageEventArgs,
 	CardTargetSelectedCardEventArgs,
 	CardTargetSelectedRowEventArgs,
 	CardTargetSelectedUnitEventArgs,
+	GameFinishedEventArgs,
 	GameStartedEventArgs,
 	RoundEndedEventArgs,
 	RoundStartedEventArgs,
@@ -40,6 +42,8 @@ export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; co
 export type ServerRulesetProps = {
 	class: string
 	gameMode: GameMode
+
+	state: Record<string, any>
 	constants: Partial<RulesetConstants>
 
 	ai: RulesetAI | null
@@ -51,6 +55,7 @@ export class ServerRuleset implements Ruleset {
 	public readonly class: string
 	public readonly gameMode: GameMode
 
+	public state: any
 	public readonly constants: RulesetConstants
 
 	public readonly ai: RulesetAI | null = null
@@ -64,6 +69,10 @@ export class ServerRuleset implements Ruleset {
 		this.ai = props.ai
 		this.deck = props.deck
 		this.board = props.board
+
+		this.state = {
+			...props.state,
+		}
 
 		this.constants = {
 			STARTING_PLAYER_MORALE: Constants.STARTING_PLAYER_MORALE,
@@ -81,7 +90,7 @@ export class ServerRuleset implements Ruleset {
 	}
 }
 
-export type ServerRulesetTemplateProps = ServerRulesetBuilderProps & {
+export type ServerRulesetTemplateProps = ServerRulesetBuilderProps<any> & {
 	class: string
 	rulesetConstants: Partial<RulesetConstants>
 
@@ -98,6 +107,7 @@ export class ServerRulesetTemplate {
 	public readonly class: string
 	public readonly gameMode: GameMode
 
+	public readonly state: Record<string, any>
 	public readonly constants: Partial<RulesetConstants>
 
 	public readonly eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
@@ -112,6 +122,8 @@ export class ServerRulesetTemplate {
 		this.class = props.class
 		this.gameMode = props.gameMode
 
+		this.state = props.state
+
 		this.eventSubscriptions = props.eventSubscriptions
 		this.eventHooks = props.eventHooks
 		this.cardSelectorBuilders = props.cardSelectorBuilders
@@ -124,10 +136,10 @@ export class ServerRulesetTemplate {
 		this.eventHooks = new Map<GameHookType, EventHook<any, any>[]>()
 		Utils.forEachInStringEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
 		Utils.forEachInStringEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
-		props.eventSubscriptions.forEach((value, key) => {
+		props.eventSubscriptions.forEach((value: EventSubscription<any>[], key: GameEventType) => {
 			this.eventSubscriptions.set(key, this.eventSubscriptions.get(key)!.concat(value))
 		})
-		props.eventHooks.forEach((value, key) => {
+		props.eventHooks.forEach((value: EventHook<any, any>[], key: GameHookType) => {
 			this.eventHooks.set(key, this.eventHooks.get(key)!.concat(value))
 		})
 		this.cardSelectorBuilders = props.cardSelectorBuilders
@@ -143,6 +155,9 @@ export class ServerRulesetTemplate {
 			ai: this.ai,
 			deck: this.deck,
 			board: this.board,
+			state: {
+				...this.state,
+			},
 		})
 	}
 
@@ -153,13 +168,14 @@ export class ServerRulesetTemplate {
 	}
 }
 
-export type ServerRulesetBuilderProps = {
+export type ServerRulesetBuilderProps<T> = {
 	gameMode: GameMode
+	state?: T
 }
 
-export class ServerRulesetBuilder {
+export class ServerRulesetBuilder<T> {
 	private readonly class: string
-	private readonly props: ServerRulesetBuilderProps
+	private readonly props: ServerRulesetBuilderProps<T>
 
 	private eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
 	private eventHooks: Map<GameHookType, EventHook<any, any>[]>
@@ -171,7 +187,7 @@ export class ServerRulesetBuilder {
 
 	private rulesetConstants: Partial<RulesetConstants> = {}
 
-	constructor(props: ServerRulesetBuilderProps) {
+	constructor(props: ServerRulesetBuilderProps<T>) {
 		this.props = props
 		this.class = getClassFromConstructor(this.constructor as RulesetConstructor)
 
@@ -209,6 +225,7 @@ export class ServerRulesetBuilder {
 	protected createCallback(event: GameEventType.ROUND_STARTED): EventSubscription<RoundStartedEventArgs>
 	protected createCallback(event: GameEventType.ROUND_ENDED): EventSubscription<RoundEndedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_MOVED): EventSubscription<UnitMovedEventArgs>
+	protected createCallback(event: GameEventType.CARD_DRAWN): EventSubscription<CardDrawnEventArgs>
 	protected createCallback(event: GameEventType.CARD_TAKES_DAMAGE): EventSubscription<CardTakesDamageEventArgs>
 	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_CARD): EventSubscription<CardTargetSelectedCardEventArgs>
 	protected createCallback(event: GameEventType.CARD_TARGET_SELECTED_UNIT): EventSubscription<CardTargetSelectedUnitEventArgs>
@@ -221,6 +238,7 @@ export class ServerRulesetBuilder {
 	protected createCallback(event: GameEventType.CARD_PLAYED): EventSubscription<CardPlayedEventArgs>
 	protected createCallback(event: GameEventType.BUFF_CREATED): EventSubscription<BuffCreatedEventArgs>
 	protected createCallback(event: GameEventType.BUFF_REMOVED): EventSubscription<BuffRemovedEventArgs>
+	protected createCallback(event: GameEventType.GAME_FINISHED): EventSubscription<GameFinishedEventArgs>
 	protected createCallback<EventArgs>(event: GameEventType): EventSubscription<EventArgs> {
 		const eventSubscription = new EventSubscription<EventArgs>(null)
 		this.eventSubscriptions.get(event)!.push(eventSubscription)
@@ -237,6 +255,17 @@ export class ServerRulesetBuilder {
 		const cardSelector = new CardSelectorBuilder(null)
 		this.cardSelectorBuilders.push(cardSelector)
 		return cardSelector
+	}
+
+	protected getState(game: ServerGame): T {
+		return game.ruleset.state as T
+	}
+
+	protected setState(game: ServerGame, state: Partial<T>): void {
+		game.ruleset.state = {
+			...game.ruleset.state,
+			...state,
+		}
 	}
 
 	public __build(): ServerRulesetTemplate {

@@ -9,6 +9,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectBuffPotency } from '@src/utils/LeaderStats'
+import Keywords from '@src/utils/Keywords'
 
 export default class UnitUndercityGambler extends ServerCard {
 	bonusPower = asDirectBuffPotency(5)
@@ -35,8 +36,7 @@ export default class UnitUndercityGambler extends ServerCard {
 			.require((args) => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
 			.perform(({ targetCard }) => {
 				const owner = targetCard.ownerInGame
-				owner.cardHand.discardCard(targetCard)
-				owner.cardDeck.addUnitToBottom(targetCard)
+				Keywords.returnCard(targetCard)
 				const drawnCards = owner.drawUnitCards(1)
 				if (drawnCards.length === 0) {
 					return

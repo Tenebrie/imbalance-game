@@ -23,7 +23,6 @@ import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, { PlayerTargetCardSelectedEventArgs } from './events/GameEventCreators'
 import ServerGameTimers from './ServerGameTimers'
 import GameMode from '@shared/enums/GameMode'
-import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import CardFeature from '@shared/enums/CardFeature'
 import { BuffConstructor } from './ServerBuffContainer'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
@@ -31,6 +30,7 @@ import ServerGameIndex from '@src/game/models/ServerGameIndex'
 import ServerAnimation from '@src/game/models/ServerAnimation'
 import { ServerRuleset, ServerRulesetTemplate } from './rulesets/ServerRuleset'
 import CardLibrary from '../libraries/CardLibrary'
+import ServerGameNovel from './ServerGameNovel'
 
 interface ServerGameProps extends OptionalGameProps {
 	ruleset: ServerRulesetTemplate
@@ -54,6 +54,7 @@ export default class ServerGame implements Game {
 	public playerMoveOrderReversed: boolean
 	readonly owner: ServerPlayer | undefined
 	readonly board: ServerBoard
+	readonly novel: ServerGameNovel
 	readonly index: ServerGameIndex
 	readonly events: ServerGameEvents
 	readonly timers: ServerGameTimers
@@ -73,6 +74,7 @@ export default class ServerGame implements Game {
 		this.owner = props.owner
 		this.index = new ServerGameIndex(this)
 		this.board = new ServerBoard(this)
+		this.novel = new ServerGameNovel(this)
 		this.events = new ServerGameEvents(this)
 		this.timers = new ServerGameTimers(this)
 		this.players = []
@@ -433,6 +435,7 @@ export default class ServerGame implements Game {
 
 		this.events.postEvent(
 			GameEventCreators.gameFinished({
+				game: this,
 				victoriousPlayer: victoriousPlayer,
 			})
 		)
@@ -458,7 +461,7 @@ export default class ServerGame implements Game {
 
 		setTimeout(() => {
 			this.forceShutdown('Cleanup')
-		}, 60000)
+		}, 300000)
 	}
 
 	public get isFinished(): boolean {

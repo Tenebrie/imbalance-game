@@ -9,6 +9,7 @@ import IncomingCardUpdateMessages from '@/Pixi/handlers/incoming/IncomingCardUpd
 import IncomingResolveStackMessages from '@/Pixi/handlers/incoming/IncomingResolveStackMessages'
 import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import IncomingTargetingMessages from '@/Pixi/handlers/incoming/IncomingTargetingMessages'
+import IncomingNovelMessages from '@/Pixi/handlers/incoming/IncomingNovelMessages'
 
 export type IncomingMessageHandlerFunction = (data: any, systemData: QueuedMessageSystemData) => void
 
@@ -18,6 +19,7 @@ const IncomingMessageHandlers: { [index in ServerToClientMessageTypes]: Incoming
 	...IncomingCardUpdateMessages,
 	...IncomingGameLogUpdateMessages,
 	...IncomingGameSyncMessages,
+	...IncomingNovelMessages,
 	...IncomingPlayerUpdateMessages,
 	...IncomingResolveStackMessages,
 	...IncomingTargetingMessages,

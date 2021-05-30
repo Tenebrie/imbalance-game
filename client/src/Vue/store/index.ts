@@ -15,9 +15,11 @@ import GameMessage from '@shared/models/network/GameMessage'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import { createDirectStore } from 'direct-vuex'
 import RulesetsModule from './modules/RulesetsModule'
+import NovelModule from './modules/NovelModule'
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {
+		novel: NovelModule,
 		editor: EditorModule,
 		rulesets: RulesetsModule,
 		gameLogModule: GameLogModule,
@@ -121,6 +123,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			OutgoingMessageHandlers.sendSurrender()
 			store.dispatch.gameStateModule.reset()
 			store.dispatch.popupModule.closeAll()
+			store.dispatch.novel.clear()
 			router.push({ name: 'home' })
 			Core.socket?.close(1000, 'Player disconnect')
 			Core.cleanUp()

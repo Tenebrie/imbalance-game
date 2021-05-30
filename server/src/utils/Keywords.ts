@@ -1,6 +1,4 @@
 import ServerCard from '../game/models/ServerCard'
-import BuffTutoredCard from '../game/buffs/BuffTutoredCard'
-import BuffDuration from '@shared/enums/BuffDuration'
 import CardLibrary, { CardConstructor } from '../game/libraries/CardLibrary'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import CardType from '@shared/enums/CardType'
@@ -13,6 +11,7 @@ import Constants from '@shared/Constants'
 import { EmptyFunction, toRowIndex } from './Utils'
 import ServerUnit from '@src/game/models/ServerUnit'
 import ServerOwnedCard from '@src/game/models/ServerOwnedCard'
+import GameEventCreators from '@src/game/models/events/GameEventCreators'
 
 const createCard = (player: ServerPlayerInGame, card: ServerCard, callback: (card: ServerCard) => void): ServerCard => {
 	callback(card)
@@ -52,6 +51,23 @@ export default {
 		const owner = card.ownerInGame
 		owner.cardHand.discardCard(card)
 		owner.cardGraveyard.addCard(card)
+	},
+
+	returnCard: (card: ServerCard): void => {
+		const owner = card.ownerInGame
+		owner.cardHand.discardCard(card)
+		if (card.type === CardType.UNIT) {
+			owner.cardDeck.addUnitToBottom(card)
+		} else {
+			owner.cardDeck.addSpellToBottom(card)
+		}
+		card.game.events.postEvent(
+			GameEventCreators.cardReturned({
+				game: card.game,
+				owner: owner,
+				triggeringCard: card,
+			})
+		)
 	},
 
 	destroy: {

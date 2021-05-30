@@ -77,23 +77,23 @@ export const getDistance = (a: AnyPoint, b: AnyPoint): number => {
 
 const boopColors = [
 	{
-		start: '55AAFF',
-		end: '0000FF',
+		start: '55FFFF',
+		end: '00FFFF',
 	},
 	{
 		start: 'FFAAFF',
 		end: 'FF00FF',
 	},
 	{
-		start: 'FFAA55',
+		start: 'FF5555',
 		end: 'FF0000',
 	},
 	{
-		start: '8A0303',
-		end: 'dc143c',
+		start: 'AAFFAA',
+		end: '00FF00',
 	},
 ]
-let currentBoopColor = 0
+let currentBoopColor = Math.floor(Math.random() * boopColors.length)
 let boopPrepPoints: { emitter: Particles.Emitter; color: { start: string; end: string } }[] = []
 export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point | null, direction: 'down' | 'up'): void => {
 	const mousePos = Core.input.mousePosition

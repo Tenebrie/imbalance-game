@@ -81,6 +81,7 @@ export default class ServerBoardOrders {
 		if (order.target.targetType !== TargetType.BOARD_ROW && order.target.targetType !== TargetType.BOARD_POSITION) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingCard({
+					game: this.game,
 					triggeringUnit: orderedUnit,
 					targetType: order.target.targetType,
 					targetCard: order.target.targetCard,
@@ -91,6 +92,7 @@ export default class ServerBoardOrders {
 		if (order.target.targetType === TargetType.UNIT) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingUnit({
+					game: this.game,
 					triggeringUnit: orderedUnit,
 					targetType: order.target.targetType,
 					targetCard: order.target.targetCard,
@@ -102,6 +104,7 @@ export default class ServerBoardOrders {
 		if (order.target.targetType === TargetType.BOARD_ROW) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingRow({
+					game: this.game,
 					triggeringUnit: orderedUnit,
 					targetType: order.target.targetType,
 					targetRow: order.target.targetRow,
@@ -112,6 +115,7 @@ export default class ServerBoardOrders {
 		if (order.target.targetType === TargetType.BOARD_POSITION) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingPosition({
+					game: this.game,
 					triggeringUnit: orderedUnit,
 					targetType: order.target.targetType,
 					targetRow: order.target.targetRow,

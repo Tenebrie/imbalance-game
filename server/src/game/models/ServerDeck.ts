@@ -71,6 +71,15 @@ export default class ServerDeck implements CardDeck {
 		return card
 	}
 
+	public drawBottomUnit(): ServerCard | null {
+		if (this.unitCards.length === 0) {
+			return null
+		}
+		const card = this.unitCards[this.unitCards.length - 1]
+		this.removeCard(card)
+		return card
+	}
+
 	public drawTopSpell(): ServerCard | null {
 		if (this.spellCards.length === 0) {
 			return null

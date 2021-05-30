@@ -7,9 +7,8 @@
 				:key="ruleset.class"
 				class="primary game-button"
 				@click="() => onRulesetSelected(ruleset)"
-			>
-				{{ $locale.get(`ruleset.${ruleset.class}.label`) }}
-			</button>
+				v-html="$locale.get(`ruleset.${ruleset.class}.label`)"
+			/>
 		</div>
 	</div>
 </template>

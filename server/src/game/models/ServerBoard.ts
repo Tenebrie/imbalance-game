@@ -7,7 +7,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerBoardOrders from './ServerBoardOrders'
 import ServerCard from './ServerCard'
-import Utils, { toRowIndex } from '../../utils/Utils'
+import { toRowIndex } from '../../utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
@@ -268,6 +268,7 @@ export default class ServerBoard implements Board {
 		this.game.animation.play(ServerAnimation.unitMove())
 		this.game.events.postEvent(
 			GameEventCreators.unitMoved({
+				game: this.game,
 				triggeringUnit: unit,
 				fromRow: fromRow,
 				fromIndex: fromIndex,
@@ -368,6 +369,7 @@ export default class ServerBoard implements Board {
 
 		this.game.events.postEvent(
 			GameEventCreators.unitDestroyed({
+				game: this.game,
 				triggeringCard: unit.card,
 				triggeringUnit: unit,
 			})

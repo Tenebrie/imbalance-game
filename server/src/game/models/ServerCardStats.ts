@@ -140,6 +140,9 @@ export default class ServerCardStats implements CardStats {
 
 	/* Unit cost */
 	public get baseUnitCost(): number {
+		if (this.card.features.includes(CardFeature.QUICK)) {
+			return 0
+		}
 		return this.__baseUnitCost
 	}
 

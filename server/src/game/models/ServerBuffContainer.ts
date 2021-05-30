@@ -112,6 +112,7 @@ export default class ServerBuffContainer implements BuffContainer {
 
 		this.game.events.postEvent(
 			GameEventCreators.buffCreated({
+				game: this.game,
 				triggeringBuff: newBuff,
 			})
 		)
@@ -154,6 +155,7 @@ export default class ServerBuffContainer implements BuffContainer {
 
 		this.game.events.postEvent(
 			GameEventCreators.buffRemoved({
+				game: this.game,
 				triggeringBuff: buff,
 			})
 		)

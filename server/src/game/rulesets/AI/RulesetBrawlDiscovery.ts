@@ -16,7 +16,7 @@ import UnitChallengeEagerExplorer from '@src/game/cards/10-challenge/challenge-d
 import UnitChallengeScarredExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeScarredExplorer'
 import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRuleset'
 
-export default class RulesetBrawlDiscovery extends ServerRulesetBuilder {
+export default class RulesetBrawlDiscovery extends ServerRulesetBuilder<void> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,

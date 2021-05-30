@@ -3,6 +3,7 @@
 		<div class="background" />
 		<div ref="gameContainer" class="game-container"></div>
 		<pixi-user-interface class="pixi-user-interface" />
+		<pixi-novel-overlay />
 	</div>
 </template>
 
@@ -12,10 +13,12 @@ import Core from '../../../Pixi/Core'
 import PixiUserInterface from '@/Vue/components/pixi/PixiUserInterface.vue'
 import { isMobile } from '@/utils/Utils'
 import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue'
+import PixiNovelOverlay from './PixiNovelOverlay.vue'
 
 export default defineComponent({
 	components: {
 		PixiUserInterface,
+		PixiNovelOverlay,
 	},
 
 	setup() {

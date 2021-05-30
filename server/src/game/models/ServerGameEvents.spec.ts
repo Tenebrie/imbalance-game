@@ -38,7 +38,7 @@ describe('ServerGameEvents', () => {
 		it('does not resolve events immediately', () => {
 			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, player }))
 
 			expect(callbackSpy).toHaveBeenCalledTimes(0)
 		})
@@ -46,7 +46,7 @@ describe('ServerGameEvents', () => {
 		it('does not trigger callbacks for another event', () => {
 			events.createCallback<GameStartedEventArgs>(null, GameEventType.ROUND_STARTED).perform(() => callbackSpy())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, player }))
 			events.resolveEvents()
 
 			expect(callbackSpy).toHaveBeenCalledTimes(0)
@@ -55,7 +55,7 @@ describe('ServerGameEvents', () => {
 		it('resolves single event from the queue', () => {
 			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, player }))
 			events.resolveEvents()
 
 			expect(callbackSpy).toHaveBeenCalledTimes(1)
@@ -66,7 +66,7 @@ describe('ServerGameEvents', () => {
 			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpyB())
 			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpyC())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, player }))
 			events.resolveEvents()
 
 			expect(callbackSpy).toHaveBeenCalledTimes(1)
@@ -77,9 +77,9 @@ describe('ServerGameEvents', () => {
 		it('resolves multiple events from the queue', () => {
 			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
-			events.postEvent(GameEventCreators.gameStarted({ player }))
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, player }))
 			events.resolveEvents()
 
 			expect(callbackSpy).toHaveBeenCalledTimes(3)
@@ -88,13 +88,13 @@ describe('ServerGameEvents', () => {
 		it('resolves chaining events', () => {
 			events
 				.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED)
-				.perform(() => events.postEvent(GameEventCreators.roundStarted({ player })))
+				.perform(() => events.postEvent(GameEventCreators.roundStarted({ game, player })))
 			events
 				.createCallback<GameStartedEventArgs>(null, GameEventType.ROUND_STARTED)
-				.perform(() => events.postEvent(GameEventCreators.roundEnded({ player })))
+				.perform(() => events.postEvent(GameEventCreators.roundEnded({ game, player })))
 			events.createCallback<GameStartedEventArgs>(null, GameEventType.ROUND_ENDED).perform(() => callbackSpy())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, player }))
 			events.resolveEvents()
 
 			expect(callbackSpy).toHaveBeenCalledTimes(1)

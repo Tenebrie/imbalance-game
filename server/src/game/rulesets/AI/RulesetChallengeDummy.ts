@@ -9,7 +9,7 @@ import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-d
 import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
 import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRuleset'
 
-export default class RulesetChallengeDummy extends ServerRulesetBuilder {
+export default class RulesetChallengeDummy extends ServerRulesetBuilder<void> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,

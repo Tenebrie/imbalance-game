@@ -17,6 +17,7 @@ import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import ServerCardTarget from '@src/game/models/ServerCardTarget'
 import Utils from '@src/utils/Utils'
+import NovelReplyMessage from '@src/../../shared/src/models/novel/NovelReplyMessage'
 
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
@@ -147,6 +148,12 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
+	[GenericActionMessageType.NOVEL_REPLY]: (data: NovelReplyMessage, game: ServerGame, player: ServerPlayerInGame): void => {
+		game.novel.executeReply(data.id)
+		onPlayerActionEnd(game, player)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
