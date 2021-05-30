@@ -25,7 +25,6 @@ glob("**/*.@(webp)", async (er, files) => {
             .png({
                 quality: 80
             })
-			.resize(4096)
             .toFile(newFileName)
     })
     console.info(`Waiting for ${promises.length} files to convert...`)

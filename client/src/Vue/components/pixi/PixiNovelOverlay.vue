@@ -1,11 +1,16 @@
 <template>
-	<div class="pixi-novel-overlay" v-if="isDisplayed" @click="showNextCue">
+	<div class="pixi-novel-overlay" :class="overlayClass" @click="showNextCue">
 		<div class="bottom-smokescreen" />
-		<div class="character-art" :class="characterArtClass" />
+		<div
+			class="character-art"
+			v-for="key in Object.keys(characterStatus)"
+			:class="{ [key]: true, invisible: !characterStatus[key] }"
+			:key="key"
+		/>
 		<div class="controls">
 			<div class="character-name">
-				<span v-if="activeCharacter">{{ $locale.get(`story.character.${activeCharacter}`) }}</span>
-				<span v-if="!activeCharacter">???</span>
+				<span v-if="lastActiveCharacter">{{ $locale.get(`story.character.${lastActiveCharacter}`) }}</span>
+				<span v-if="!lastActiveCharacter">???</span>
 			</div>
 			<div class="cue-container">
 				<div class="cue"><span v-html="displayedCueText" /></div>
@@ -19,10 +24,11 @@
 
 <script lang="ts">
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import { forEachInStringEnum } from '@/utils/Utils'
 import store from '@/Vue/store'
 import StoryCharacter from '@shared/enums/StoryCharacter'
 import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
-import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
+import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
 
 export default defineComponent({
 	setup() {
@@ -46,9 +52,37 @@ export default defineComponent({
 		})
 
 		const activeCharacter = computed<StoryCharacter | null>(() => store.state.novel.activeCharacter)
+		const lastActiveCharacter = ref<StoryCharacter | null>(null)
+
+		watch(
+			() => [activeCharacter.value],
+			() => {
+				if (activeCharacter.value !== null) {
+					lastActiveCharacter.value = activeCharacter.value
+				}
+			}
+		)
+
+		const characterStatus = computed<Record<string, boolean>>(() => {
+			let values: Record<string, boolean> = {}
+			forEachInStringEnum(StoryCharacter, (val) => {
+				values[val] = false
+			})
+			if (activeCharacter.value) {
+				values[activeCharacter.value] = true
+			}
+			console.log(values)
+			return values
+		})
+
+		const overlayClass = computed<Record<string, boolean>>(() => ({
+			visible: !!currentCue.value,
+		}))
 
 		const characterArtClass = computed<Record<string, boolean>>(() => {
-			let value: Record<string, boolean> = {}
+			let value: Record<string, boolean> = {
+				invisible: !activeCharacter.value,
+			}
 			if (!activeCharacter.value) {
 				return value
 			}
@@ -79,7 +113,10 @@ export default defineComponent({
 			showNextCue,
 			onReply,
 			activeCharacter,
+			lastActiveCharacter,
 			characterArtClass,
+			overlayClass,
+			characterStatus,
 		}
 	},
 })
@@ -99,6 +136,14 @@ export default defineComponent({
 	background: rgba(black, 0.5);
 	display: flex;
 	align-items: flex-end;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.5s;
+
+	&.visible {
+		pointer-events: all;
+		opacity: 1;
+	}
 
 	.bottom-smokescreen {
 		position: absolute;
@@ -116,6 +161,14 @@ export default defineComponent({
 		bottom: 0;
 		width: 450px;
 		height: 800px;
+		opacity: 1;
+		margin-left: 0;
+		transition: margin 0.5s, opacity 0.4s;
+
+		&.invisible {
+			opacity: 0;
+			margin-left: -250px;
+		}
 
 		&.narrator {
 			background-image: url('../../assets/novel/nessadventure-dragon.webp');
@@ -125,7 +178,6 @@ export default defineComponent({
 			bottom: 0;
 			width: 1200px;
 			height: 1200px;
-			-webkit-transform: translate3d(0, 0, 0);
 		}
 
 		&.notNessa {
