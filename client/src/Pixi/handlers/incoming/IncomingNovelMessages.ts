@@ -24,7 +24,7 @@ const IncomingNovelMessages: { [index in NovelMessageType]: IncomingMessageHandl
 	[NovelMessageType.ACTIVATE_CHARACTER]: (character: StoryCharacter | null) => {
 		store.dispatch.novel.addToQueue({ type: 'character_active', character })
 	},
-	[NovelMessageType.REMOVE_CHARACTER]: (character: StoryCharacter) => {
+	[NovelMessageType.REMOVE_CHARACTER]: () => {
 		// Empty
 	},
 	[NovelMessageType.FINISH]: () => {

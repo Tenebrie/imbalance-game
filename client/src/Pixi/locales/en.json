@@ -71,6 +71,7 @@
 
 	"story.character.narrator": "Narrator",
 	"story.character.notNessa": "Not Nessa",
+	"story.character.unknown": "???",
 
 	"log.entry.gameStarted": "The game has started for {player}",
 	"log.entry.roundStarted": "{player} has started a new round",

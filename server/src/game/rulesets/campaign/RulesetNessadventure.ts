@@ -53,8 +53,9 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 			.perform(({ game }) =>
 				game.novel
 					.startDialog()
-					.setCharacter(StoryCharacter.NARRATOR)
+					.setCharacter(StoryCharacter.UNKNOWN)
 					.say('Welcome, to State of Imbalance!')
+					.setCharacter(StoryCharacter.NARRATOR)
 					.say('Our story today begins, as all things should, with a mulligan.')
 					.say('...')
 					.say('A mulligan that I might have been a tiny bit late to, granted, yet the mulligan is the one that starts every game.')
@@ -89,7 +90,7 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 			.perform(({ game }) =>
 				game.novel
 					.startDialog()
-					.setCharacter(StoryCharacter.NOT_NESSA)
+					.setCharacter(StoryCharacter.UNKNOWN)
 					.say("Psst. Take these. Don't tell her you've seen me.")
 					.reply('Who are you?', () => onNessaGiftAccepted(game))
 					.reply('Uhm... thanks?', () => onNessaGiftAccepted(game))
@@ -209,9 +210,12 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 			game.getBotPlayer()!.leader.buffs.add(BuffImmuneDummies, null)
 			game.novel
 				.startDialog()
-				.setCharacter(StoryCharacter.NOT_NESSA)
+				.setCharacter(StoryCharacter.UNKNOWN)
 				.say('That is just not very nice!')
+				.setCharacter(StoryCharacter.UNKNOWN)
 				.say("Don't mind me, I'll just make myself comfortable right here.")
+				.setCharacter(StoryCharacter.NOT_NESSA)
+				.say("Name's... definitely not Nessa, by the way.")
 				.reply('[Continue]', () => {
 					const player = game.getHumanPlayer()!
 					player.cardHand.unitCards.forEach((card) => player.cardHand.discardCard(card))

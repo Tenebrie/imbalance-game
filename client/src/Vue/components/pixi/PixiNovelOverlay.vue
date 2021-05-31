@@ -181,7 +181,13 @@ export default defineComponent({
 		}
 
 		&.notNessa {
-			background: gray;
+			background-image: url('../../assets/novel/not-nessa.webp');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 0;
+			bottom: 0;
+			width: 1200px;
+			height: 1200px;
 		}
 	}
 
@@ -197,6 +203,7 @@ export default defineComponent({
 			justify-content: flex-start;
 			padding: 8px 450px;
 			font-size: 32px;
+			text-shadow: 1px 1px 8px black;
 		}
 
 		.cue-container {
