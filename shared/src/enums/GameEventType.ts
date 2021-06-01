@@ -1,4 +1,5 @@
 enum GameEventType {
+	GAME_SETUP = 'gameSetup',
 	GAME_STARTED = 'gameStarted',
 
 	ROUND_STARTED = 'roundStarted',

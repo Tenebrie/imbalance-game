@@ -4,16 +4,17 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerGame from './ServerGame'
 import { v4 as uuid } from 'uuid'
 import NovelReply from '@shared/models/novel/NovelReply'
+import ServerGameNovelScriptParser from './ServerGameScriptParser'
 
 class ServerNovelReply implements NovelReply {
 	public readonly id: string
 	public readonly text: string
-	public readonly callback: () => void
+	public readonly callbackOrTagName: ((dialog: ServerGameNovelCreator) => void) | string
 
-	constructor(text: string, callback: () => void) {
+	constructor(text: string, callbackOrTagName: ((dialog: ServerGameNovelCreator) => void) | string) {
 		this.id = `reply:${uuid()}`
 		this.text = text
-		this.callback = callback
+		this.callbackOrTagName = callbackOrTagName
 	}
 }
 
@@ -22,6 +23,7 @@ export default class ServerGameNovel {
 	private creator: ServerGameNovelCreator
 
 	private validReplies: ServerNovelReply[] = []
+	private tags: Record<string, (dialog: ServerGameNovelCreator) => void> = {}
 
 	constructor(game: ServerGame) {
 		this.game = game
@@ -50,6 +52,10 @@ export default class ServerGameNovel {
 		this.validReplies.push(reply)
 	}
 
+	public registerTag(name: string, callback: (dialog: ServerGameNovelCreator) => void): void {
+		this.tags[name] = callback
+	}
+
 	public executeReply(id: string): void {
 		const targetReply = this.validReplies.find((reply) => reply.id === id)
 		if (!targetReply) {
@@ -58,7 +64,22 @@ export default class ServerGameNovel {
 
 		OutgoingNovelMessages.notifyAboutDialogCuesCleared(this.player)
 		this.validReplies = []
-		targetReply.callback()
+
+		const callbackOrTagName = targetReply.callbackOrTagName
+		if (typeof callbackOrTagName === 'string') {
+			callbackOrTagName
+				.split(',')
+				.map((tag) => tag.trim())
+				.forEach((tag) => {
+					const callback = this.tags[tag]
+					if (!callback) {
+						throw new Error(`Story tag named ${tag} does not exist.`)
+					}
+					callback(this.creator)
+				})
+		} else {
+			callbackOrTagName(this.creator)
+		}
 	}
 }
 
@@ -86,8 +107,8 @@ export class ServerGameNovelCreator {
 		return this
 	}
 
-	public reply(text: string, callback: () => void): ServerGameNovelCreator {
-		const reply = new ServerNovelReply(text, callback)
+	public reply(text: string, callbackOrTagName: ((dialog: ServerGameNovelCreator) => void) | string): ServerGameNovelCreator {
+		const reply = new ServerNovelReply(text, callbackOrTagName)
 		this.game.novel.registerReply(reply)
 		OutgoingNovelMessages.notifyAboutDialogReply(this.player, reply)
 		return this
@@ -106,6 +127,19 @@ export class ServerGameNovelCreator {
 
 	public removeCharacter(character: StoryCharacter): ServerGameNovelCreator {
 		OutgoingNovelMessages.notifyAboutRemovedDialogCharacter(this.player, character)
+		return this
+	}
+
+	public parse(script: string): ServerGameNovelCreator {
+		const parser = new ServerGameNovelScriptParser(script)
+		const tags = parser.tags
+		Object.keys(tags).forEach((key) => this.game.novel.registerTag(key, tags[key]))
+		parser.exec(this)
+		return this
+	}
+
+	public createTag(tag: string, callback: (dialog: ServerGameNovelCreator) => void | string): ServerGameNovelCreator {
+		this.game.novel.registerTag(tag, callback)
 		return this
 	}
 

@@ -72,6 +72,10 @@
 	"story.character.narrator": "Narrator",
 	"story.character.notNessa": "Not Nessa",
 	"story.character.unknown": "???",
+	"story.character.elsa": "Elsa",
+	"story.character.bodge": "Bodge",
+	"story.character.nira": "Nira",
+	"story.character.protagonist": "You",
 
 	"log.entry.gameStarted": "The game has started for {player}",
 	"log.entry.roundStarted": "{player} has started a new round",
@@ -118,8 +122,10 @@
 	"filter.experimental": "Experimental",
 
 	"ruleset.rulesetChallengeDummy.label": "Target Dummy",
-	"ruleset.rulesetBrawlDiscovery.label": "Brawl: Discovery League",
+	"ruleset.rulesetEpicDummyFight.label": "<b>Brawl:</b> Epic Dummy Fight",
+	"ruleset.rulesetBrawlDiscovery.label": "<b>Brawl:</b> Discovery League",
 	"ruleset.rulesetNessadventure.label": "<b>The Nessadventure</b>",
+	"ruleset.rulesetCampfire.label": "<b>Experiment:</b> The Camp",
 
 	"card.type.unit": "Unit",
 	"card.type.spell": "Spell",
@@ -889,5 +895,41 @@
 
 	"card.unitCorgiGravedigger.name": "Corgi Gravedigger",
 	"card.unitCorgiGravedigger.description": "*Deploy:*\nChoose a card in your Graveyard to return to your hand.",
-	"card.unitCorgiGravedigger.flavor": "And he works in the cutest graveyard you'll ever visit!"
+	"card.unitCorgiGravedigger.flavor": "And he works in the cutest graveyard you'll ever visit!",
+
+	"card.leaderCampfireThePlayer.name": "<c=black>*{playerName}*</c>",
+	"card.leaderCampfireThePlayer.title": "The Player",
+	"card.leaderCampfireThePlayer.description": "-",
+
+	"card.heroCampfireProtagonist.name": "The Protagonist",
+	"card.heroCampfireProtagonist.title": "Your very own person",
+	"card.heroCampfireProtagonist.description": "<i>Where are you going to sit tonight?</i>",
+
+	"card.leaderCampfireTheMother.name": "The Mother",
+	"card.leaderCampfireTheMother.title": "An Antagonist",
+	"card.leaderCampfireTheMother.description": "<i>You can feel its' presence from very, very far away.</i>",
+
+	"card.heroCampfireNira.name": "Niraveronienne",
+	"card.heroCampfireNira.title": "The First Daughter",
+	"card.heroCampfireNira.description": "<i>Being loud and cheeky as usual, Nira is telling Bodge a fascinating story about twigs and birbs.</i>",
+
+	"card.heroCampfireBodge.name": "Bodge",
+	"card.heroCampfireBodge.title": "The Dark One",
+	"card.heroCampfireBodge.description": "<i>Being completely preoccupied with cleaning bits of dirt off his axe, Bodge is most affuredly ignoring the dryad chirping into his ear.</i>",
+
+	"card.heroCampfireElsa.name": "Elsa",
+	"card.heroCampfireElsa.title": "The Queen of Ravens",
+	"card.heroCampfireElsa.description": "<i>The most mysterious of your companions is sitting with her arms crossed. She is calmly looking north, towards the approaching Scourge.</i>",
+
+	"card.unitCampfireBlackChair.name": "Black Chair",
+	"card.unitCampfireBlackChair.description": "<i>A chair of pure blackness.</i>",
+
+	"card.unitCampfireTree.name": "Tree",
+	"card.unitCampfireTree.description": "<i>One of Nira's best friends.</i>",
+
+	"card.unitCampfireFire.name": "Campfire",
+	"card.unitCampfireFire.description": "<i>Brings warmth and feeling of safety at night.</i>",
+
+	"card.unitCampfireEmptySpace.name": "Empty Space",
+	"card.unitCampfireEmptySpace.description": "<i>Soft and warm ground next to the campfire.</i>"
 }

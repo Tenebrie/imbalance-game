@@ -1,6 +1,5 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import Constants from '@shared/Constants'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
@@ -66,7 +65,10 @@ export default class Renderer {
 	ANNOUNCED_CARD_WINDOW_FRACTION = 0.4
 	SELECTABLE_CARD_DECK_WINDOW_FRACTION = 0.2
 	SELECTABLE_CARD_DISCOVER_WINDOW_FRACTION = 0.3
-	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
+
+	public get GAME_BOARD_ROW_WINDOW_FRACTION(): number {
+		return this.GAME_BOARD_WINDOW_FRACTION / Core.constants.GAME_BOARD_ROW_COUNT
+	}
 
 	constructor(container: HTMLElement) {
 		this.superSamplingLevel = getRenderScale().superSamplingLevel
@@ -477,7 +479,7 @@ export default class Renderer {
 		}
 
 		let rows = gameBoard.rows.slice()
-		const playerPowerLabelRow = Constants.GAME_BOARD_ROW_COUNT - 2
+		const playerPowerLabelRow = Core.constants.GAME_BOARD_ROW_COUNT - 2
 		const opponentPowerLabelRow = 1
 		if (gameBoard.isInverted) {
 			rows = rows.reverse()
@@ -490,8 +492,8 @@ export default class Renderer {
 		const screenCenterX = this.getScreenWidth() / 2
 		const screenCenterY = this.getScreenHeight() / 2
 
-		const playerLabelTargetRowDistanceToCenter = playerPowerLabelRow - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
-		const opponentLabelTargetRowDistanceToCenter = opponentPowerLabelRow - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
+		const playerLabelTargetRowDistanceToCenter = playerPowerLabelRow - Core.constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
+		const opponentLabelTargetRowDistanceToCenter = opponentPowerLabelRow - Core.constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
 		const playerLabelRowY =
 			screenCenterY + playerLabelTargetRowDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 		const opponentLabelRowY =
@@ -507,7 +509,7 @@ export default class Renderer {
 
 		const screenCenterX = this.getScreenWidth() / 2
 		const screenCenterY = this.getScreenHeight() / 2
-		const verticalDistanceToCenter = rowIndex - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
+		const verticalDistanceToCenter = rowIndex - Core.constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
 		const rowY = screenCenterY + verticalDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 
 		container.position.set(screenCenterX, rowY)

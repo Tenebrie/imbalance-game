@@ -1,5 +1,4 @@
 import GameMode from '@shared/enums/GameMode'
-import Constants from '@src/../../shared/src/Constants'
 import GameEventType from '@src/../../shared/src/enums/GameEventType'
 import Utils, { getClassFromConstructor } from '@src/utils/Utils'
 import { EventHook } from '../events/EventHook'
@@ -19,6 +18,7 @@ import {
 	CardTargetSelectedRowEventArgs,
 	CardTargetSelectedUnitEventArgs,
 	GameFinishedEventArgs,
+	GameSetupEventArgs,
 	GameStartedEventArgs,
 	RoundEndedEventArgs,
 	RoundStartedEventArgs,
@@ -36,6 +36,7 @@ import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { RulesetBoard, RulesetBoardBuilder } from './RulesetBoard'
 import { RulesetConstants } from '@shared/models/RulesetConstants'
+import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 
 export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; count: number })[]
 
@@ -75,16 +76,17 @@ export class ServerRuleset implements Ruleset {
 		}
 
 		this.constants = {
-			STARTING_PLAYER_MORALE: Constants.STARTING_PLAYER_MORALE,
-			UNIT_HAND_SIZE_LIMIT: Constants.UNIT_HAND_SIZE_LIMIT,
-			UNIT_HAND_SIZE_STARTING: Constants.UNIT_HAND_SIZE_STARTING,
-			UNIT_HAND_SIZE_PER_ROUND: Constants.UNIT_HAND_SIZE_PER_ROUND,
-			SPELL_HAND_SIZE_MINIMUM: Constants.SPELL_HAND_SIZE_MINIMUM,
-			SPELL_HAND_SIZE_LIMIT: Constants.SPELL_HAND_SIZE_LIMIT,
-			SPELL_MANA_PER_ROUND: Constants.SPELL_MANA_PER_ROUND,
-			GAME_BOARD_ROW_COUNT: Constants.GAME_BOARD_ROW_COUNT,
-			MULLIGAN_INITIAL_CARD_COUNT: Constants.MULLIGAN_INITIAL_CARD_COUNT,
-			MULLIGAN_ROUND_CARD_COUNT: Constants.MULLIGAN_ROUND_CARD_COUNT,
+			STARTING_PLAYER_MORALE: 2,
+			UNIT_HAND_SIZE_LIMIT: 35,
+			UNIT_HAND_SIZE_STARTING: 10,
+			UNIT_HAND_SIZE_PER_ROUND: 5,
+			SPELL_HAND_SIZE_MINIMUM: 10,
+			SPELL_HAND_SIZE_LIMIT: 10,
+			SPELL_MANA_PER_ROUND: 0,
+			MULLIGAN_INITIAL_CARD_COUNT: 5,
+			MULLIGAN_ROUND_CARD_COUNT: 3,
+			GAME_BOARD_ROW_COUNT: 6,
+			GAME_BOARD_ROW_SPLIT_MODE: BoardSplitMode.SPLIT_IN_HALF,
 			...props.constants,
 		}
 	}
@@ -219,6 +221,7 @@ export class ServerRulesetBuilder<T> {
 		return builder
 	}
 
+	protected createCallback(event: GameEventType.GAME_SETUP): EventSubscription<GameSetupEventArgs>
 	protected createCallback(event: GameEventType.GAME_STARTED): EventSubscription<GameStartedEventArgs>
 	protected createCallback(event: GameEventType.TURN_STARTED): EventSubscription<TurnStartedEventArgs>
 	protected createCallback(event: GameEventType.TURN_ENDED): EventSubscription<TurnEndedEventArgs>

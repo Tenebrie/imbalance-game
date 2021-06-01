@@ -233,6 +233,9 @@ export const validateEditorDeck = (unpopulatedDeck: EditorDeck): { valid: boolea
 	}
 }
 
+export const snakeToCamelCase = (str: string): string =>
+	str.toLowerCase().replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
+
 export default {
 	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	forEachInNumericEnum(enumeration: any, handler: (val: any) => any): void {

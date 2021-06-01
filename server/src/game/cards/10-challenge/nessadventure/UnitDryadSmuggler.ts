@@ -18,6 +18,7 @@ export default class UnitDryadSmuggler extends ServerCard {
 				power: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
+			hiddenFromLibrary: true,
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {

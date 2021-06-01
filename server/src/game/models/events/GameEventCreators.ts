@@ -13,6 +13,11 @@ import TargetMode from '@shared/enums/TargetMode'
 import ServerGame from '../ServerGame'
 
 export default {
+	gameSetup: (args: GameSetupEventArgs): GameEvent => ({
+		type: GameEventType.GAME_SETUP,
+		args: args,
+		hiddenFromLogs: true,
+	}),
 	gameStarted: (args: GameStartedEventArgs): GameEvent => ({
 		type: GameEventType.GAME_STARTED,
 		args: args,
@@ -298,12 +303,14 @@ export interface GameEvent {
 	effectSource?: ServerCard | ServerBuff
 	logSubtype?: string
 	logVariables?: Record<string, string | number | undefined>
+	hiddenFromLogs?: boolean
 }
 
 interface SharedEventArgs {
 	game: ServerGame
 }
 
+export type GameSetupEventArgs = SharedEventArgs
 export interface GameStartedEventArgs extends SharedEventArgs {
 	player: ServerPlayerInGame
 }

@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Card from '@shared/models/Card'
-import Constants from '@shared/Constants'
 import store from '@/Vue/store'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import CardMessage from '@shared/models/network/card/CardMessage'
@@ -27,7 +26,7 @@ export const forEachInStringEnum = (enumeration: { [s: number]: string }, handle
 }
 
 export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
-	return Core.board.isInverted && player === 'player' ? Constants.GAME_BOARD_ROW_COUNT - index - 1 : index
+	return Core.board.isInverted && player === 'player' ? Core.constants.GAME_BOARD_ROW_COUNT - index - 1 : index
 }
 
 export const snakeToCamelCase = (str: string): string =>

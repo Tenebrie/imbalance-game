@@ -8,7 +8,6 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerDamageInstance from '../models/ServerDamageSource'
 import ServerGraveyard from '../models/ServerGraveyard'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
-import Constants from '@shared/Constants'
 import GameEventCreators from '../models/events/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
@@ -41,7 +40,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.cardHand = new ServerHand(game, this, [], [])
 		this.cardDeck = new ServerDeck(game, this, [], [])
 		this.cardGraveyard = new ServerGraveyard(this)
-		this.morale = Constants.STARTING_PLAYER_MORALE
+		this.morale = game.ruleset.constants.STARTING_PLAYER_MORALE
 		this.unitMana = 0
 		this.spellMana = 0
 		this.mulliganMode = false
@@ -94,7 +93,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public drawUnitCards(count: number, drawFromBottom = false): ServerCard[] {
-		const actualCount = Math.min(count, Constants.UNIT_HAND_SIZE_LIMIT - this.cardHand.unitCards.length)
+		const actualCount = Math.min(count, this.game.ruleset.constants.UNIT_HAND_SIZE_LIMIT - this.cardHand.unitCards.length)
 		const drawnCards = []
 		for (let i = 0; i < actualCount; i++) {
 			const card = drawFromBottom ? this.cardDeck.drawBottomUnit() : this.cardDeck.drawTopUnit()
@@ -109,7 +108,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public drawSpellCards(count: number): ServerCard[] {
-		const actualCount = Math.min(count, Constants.SPELL_HAND_SIZE_LIMIT - this.cardHand.spellCards.length)
+		const actualCount = Math.min(count, this.game.ruleset.constants.SPELL_HAND_SIZE_LIMIT - this.cardHand.spellCards.length)
 		const drawnCards = []
 		for (let i = 0; i < actualCount; i++) {
 			const card = this.cardDeck.drawTopSpell()
@@ -142,7 +141,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public refillSpellHand(): void {
-		const cardsMissing = Constants.SPELL_HAND_SIZE_MINIMUM - this.cardHand.spellCards.length
+		const cardsMissing = this.game.ruleset.constants.SPELL_HAND_SIZE_MINIMUM - this.cardHand.spellCards.length
 		if (cardsMissing > 0) {
 			this.drawSpellCards(cardsMissing)
 		}

@@ -146,8 +146,6 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 									.say('In that case, I guess, good luck?')
 							})
 					})
-					.reply('Uhm... thanks?', () => onNessaGiftAccepted(game))
-					.reply('[Keep silent]', () => onNessaGiftAccepted(game))
 			)
 
 		this.createCallback(GameEventType.CARD_PLAYED)

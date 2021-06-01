@@ -22,6 +22,7 @@ import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import lzutf8 from 'lzutf8'
 import { compressGameTraffic } from '@shared/Utils'
 import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { RulesetConstants } from '@shared/models/RulesetConstants'
 
 class Core {
 	public isReady = false
@@ -51,6 +52,7 @@ class Core {
 		if (game.players.find((playerInGame) => playerInGame.player.id === store.state.player?.id)) {
 			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}`
 		}
+		this.__rulesetConstants = game.ruleset.constants
 		const socket = new WebSocket(targetUrl)
 		socket.onopen = () => this.onConnect(container)
 		socket.onmessage = (event) => this.onMessage(event)
@@ -143,6 +145,12 @@ class Core {
 
 	public registerOpponent(opponent: ClientPlayerInGame): void {
 		this.opponent = opponent
+	}
+
+	private __rulesetConstants!: RulesetConstants
+
+	public get constants(): RulesetConstants {
+		return { ...this.__rulesetConstants }
 	}
 
 	public getPlayer(playerId: string): ClientPlayerInGame {

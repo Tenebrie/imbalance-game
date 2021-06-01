@@ -10,11 +10,18 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerCard from '../models/ServerCard'
 import CardType from '@shared/enums/CardType'
 import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import AIBehaviour from '@src/../../shared/src/enums/AIBehaviour'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
+	behaviour: AIBehaviour = AIBehaviour.DEFAULT
+
 	constructor(game: ServerGame, player: ServerPlayer) {
 		super(game, player)
 		this.initialized = true
+	}
+
+	public setBehaviour(behaviour: AIBehaviour): void {
+		this.behaviour = behaviour
 	}
 
 	public startMulligan(): void {
@@ -43,23 +50,25 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const botLostRound = opponentTotalPower > botTotalPower + 30 && this.morale > 1
 		const botHasGoodLead = botTotalPower > opponentTotalPower + 15 && this.morale > 1
 
-		if (botHasGoodLead && !botWonRound) {
-			while (this.hasAnySpellPlays()) {
-				this.botPlaysCard(true)
+		if (this.behaviour === AIBehaviour.DEFAULT) {
+			if (botHasGoodLead && !botWonRound) {
+				while (this.hasAnySpellPlays()) {
+					this.botPlaysCard(true)
+				}
 			}
-		}
 
-		if (botWonRound || botLostRound || botHasGoodLead) {
-			this.botEndsTurn()
-			return
-		}
-
-		try {
-			while (this.canPlayUnitCard() || (this.hasHighValueSpellPlays() && this.game.turnPhase === GameTurnPhase.DEPLOY)) {
-				this.botPlaysCard(false)
+			if (botWonRound || botLostRound || botHasGoodLead) {
+				this.botEndsTurn()
+				return
 			}
-		} catch (e) {
-			console.error('Unknown AI error', e)
+
+			try {
+				while (this.canPlayUnitCard() || (this.hasHighValueSpellPlays() && this.game.turnPhase === GameTurnPhase.DEPLOY)) {
+					this.botPlaysCard(false)
+				}
+			} catch (e) {
+				console.error('Unknown AI error', e)
+			}
 		}
 		this.botEndsTurn()
 	}

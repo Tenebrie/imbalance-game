@@ -28,7 +28,7 @@ export default class ServerBoard implements Board {
 		this.rows = []
 		this.orders = new ServerBoardOrders(game)
 		this.unitsBeingDestroyed = []
-		for (let i = 0; i < Constants.GAME_BOARD_ROW_COUNT; i++) {
+		for (let i = 0; i < game.ruleset.constants.GAME_BOARD_ROW_COUNT; i++) {
 			this.rows.push(new ServerBoardRow(game, i))
 		}
 	}
@@ -39,7 +39,8 @@ export default class ServerBoard implements Board {
 	}
 
 	public isExtraUnitPlayableToRow(rowIndex: number): boolean {
-		if (rowIndex < 0 || rowIndex >= Constants.GAME_BOARD_ROW_COUNT) {
+		const rulesetConstants = this.game.ruleset.constants
+		if (rowIndex < 0 || rowIndex >= rulesetConstants.GAME_BOARD_ROW_COUNT) {
 			return false
 		}
 		return this.rows[rowIndex].cards.length < Constants.MAX_CARDS_PER_ROW
@@ -58,7 +59,8 @@ export default class ServerBoard implements Board {
 		if (targetRow.index > 0) {
 			adjacentRows.push(this.game.board.rows[targetRow.index - 1])
 		}
-		if (targetRow.index < Constants.GAME_BOARD_ROW_COUNT - 1) {
+		const rulesetConstants = this.game.ruleset.constants
+		if (targetRow.index < rulesetConstants.GAME_BOARD_ROW_COUNT - 1) {
 			adjacentRows.push(this.game.board.rows[targetRow.index + 1])
 		}
 		return adjacentRows
@@ -118,15 +120,18 @@ export default class ServerBoard implements Board {
 
 		let row: ServerBoardRow
 		let unitIndex: number
+		let requiredDistances: number[]
 
 		if (reference instanceof ServerUnit) {
 			row = this.rows[reference.rowIndex]
 			unitIndex = reference.unitIndex
+			requiredDistances = [1]
 		} else {
 			row = reference.targetRow
 			unitIndex = reference.targetPosition
+			requiredDistances = [0, 1]
 		}
-		return row.cards.filter((card) => Math.abs(card.unitIndex - unitIndex) === 1)
+		return row.cards.filter((card) => requiredDistances.includes(Math.abs(card.unitIndex - unitIndex)))
 	}
 
 	public getOpposingUnits(thisUnit: ServerUnit): ServerUnit[] {
@@ -192,7 +197,8 @@ export default class ServerBoard implements Board {
 			scalar *= -1
 		}
 
-		return Math.max(0, Math.min(fromRowIndex + distance * scalar, Constants.GAME_BOARD_ROW_COUNT - 1))
+		const rulesetConstants = this.game.ruleset.constants
+		return Math.max(0, Math.min(fromRowIndex + distance * scalar, rulesetConstants.GAME_BOARD_ROW_COUNT - 1))
 	}
 
 	public getRowDistance(rowA: ServerBoardRow, rowB: ServerBoardRow): number {
@@ -249,7 +255,8 @@ export default class ServerBoard implements Board {
 			return
 		}
 
-		if (rowIndex < 0 || rowIndex >= Constants.GAME_BOARD_ROW_COUNT) {
+		const rulesetConstants = this.game.ruleset.constants
+		if (rowIndex < 0 || rowIndex >= rulesetConstants.GAME_BOARD_ROW_COUNT) {
 			return
 		}
 

@@ -6,7 +6,6 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameLibrary from '../libraries/GameLibrary'
 import ServerDamageInstance from './ServerDamageSource'
-import Constants from '@shared/Constants'
 import ServerBotPlayer from '../AI/ServerBotPlayer'
 import ServerBotPlayerInGame from '../AI/ServerBotPlayerInGame'
 import ServerCard from './ServerCard'
@@ -22,7 +21,6 @@ import TargetMode from '@shared/enums/TargetMode'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, { PlayerTargetCardSelectedEventArgs } from './events/GameEventCreators'
 import ServerGameTimers from './ServerGameTimers'
-import GameMode from '@shared/enums/GameMode'
 import CardFeature from '@shared/enums/CardFeature'
 import { BuffConstructor } from './ServerBuffContainer'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
@@ -31,6 +29,7 @@ import ServerAnimation from '@src/game/models/ServerAnimation'
 import { ServerRuleset, ServerRulesetTemplate } from './rulesets/ServerRuleset'
 import CardLibrary from '../libraries/CardLibrary'
 import ServerGameNovel from './ServerGameNovel'
+import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 
 interface ServerGameProps extends OptionalGameProps {
 	ruleset: ServerRulesetTemplate
@@ -67,6 +66,7 @@ export default class ServerGame implements Game {
 	constructor(props: ServerGameProps) {
 		this.id = createRandomGameId()
 		this.name = props.name || this.generateName(props.owner)
+		this.ruleset = props.ruleset.__build()
 		this.isStarted = false
 		this.turnIndex = -1
 		this.roundIndex = -1
@@ -84,7 +84,6 @@ export default class ServerGame implements Game {
 			props.playerMoveOrderReversed !== undefined ? props.playerMoveOrderReversed : Math.floor(Math.random() * 2) === 0
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
-		this.ruleset = props.ruleset.__build()
 
 		props.ruleset.__applyAmplifiers(this)
 
@@ -92,10 +91,6 @@ export default class ServerGame implements Game {
 			.createCallback<PlayerTargetCardSelectedEventArgs>(null, GameEventType.PLAYER_TARGET_SELECTED_CARD)
 			.require(({ targetMode }) => targetMode === TargetMode.MULLIGAN)
 			.perform(({ triggeringPlayer, targetCard }) => this.mulliganCard(triggeringPlayer, targetCard))
-	}
-
-	public get gameMode(): GameMode {
-		return this.ruleset.gameMode
 	}
 
 	public get activePlayer(): ServerPlayerInGame | null {
@@ -114,7 +109,11 @@ export default class ServerGame implements Game {
 	public addPlayer(targetPlayer: ServerPlayer, deck: ServerTemplateCardDeck): ServerPlayerInGame {
 		let serverPlayerInGame: ServerPlayerInGame
 		if (targetPlayer instanceof ServerBotPlayer) {
-			serverPlayerInGame = ServerBotPlayerInGame.newInstance(this, targetPlayer, deck)
+			const bot = ServerBotPlayerInGame.newInstance(this, targetPlayer, deck)
+			if (this.ruleset.ai) {
+				bot.setBehaviour(this.ruleset.ai.behaviour)
+			}
+			serverPlayerInGame = bot
 		} else {
 			serverPlayerInGame = ServerPlayerInGame.newInstance(this, targetPlayer, deck)
 		}
@@ -154,16 +153,14 @@ export default class ServerGame implements Game {
 			OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, this.players.indexOf(playerInGame) === 1)
 		})
 
-		for (let i = 0; i < 3; i++) {
-			this.board.rows[i].setOwner(playerTwo)
-			this.board.rows[Constants.GAME_BOARD_ROW_COUNT - i - 1].setOwner(playerOne)
-		}
+		this.resetBoardOwnership()
 
+		const constants = this.ruleset.constants
 		this.players.forEach((playerInGame) => {
 			playerInGame.cardDeck.shuffle()
-			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_STARTING)
-			playerInGame.drawSpellCards(Constants.SPELL_HAND_SIZE_MINIMUM)
-			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
+			playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_STARTING)
+			playerInGame.drawSpellCards(constants.SPELL_HAND_SIZE_MINIMUM)
+			playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND)
 		})
 
 		if (this.ruleset.board) {
@@ -204,12 +201,33 @@ export default class ServerGame implements Game {
 			}
 		}
 
+		this.events.postEvent(
+			GameEventCreators.gameSetup({
+				game: this,
+			})
+		)
+
 		this.events.flushLogEventGroup()
 		this.startMulliganPhase()
 
 		GameHistoryDatabase.startGame(this).then()
 		this.events.resolveEvents()
 		OutgoingMessageHandlers.executeMessageQueue(this)
+	}
+
+	private resetBoardOwnership(): void {
+		const constants = this.ruleset.constants
+		if (constants.GAME_BOARD_ROW_SPLIT_MODE === BoardSplitMode.SPLIT_IN_HALF) {
+			for (let i = 0; i < constants.GAME_BOARD_ROW_COUNT / 2; i++) {
+				this.board.rows[i].setOwner(this.players[1])
+				this.board.rows[constants.GAME_BOARD_ROW_COUNT - i - 1].setOwner(this.players[0])
+			}
+		} else if (constants.GAME_BOARD_ROW_SPLIT_MODE === BoardSplitMode.ALL_FOR_PLAYER) {
+			const player = this.getHumanPlayer()!
+			for (let i = 0; i < constants.GAME_BOARD_ROW_COUNT; i++) {
+				this.board.rows[i].setOwner(player)
+			}
+		}
 	}
 
 	public getOpponent(player: ServerPlayerInGame | null): ServerPlayerInGame | null {
@@ -253,14 +271,8 @@ export default class ServerGame implements Game {
 	}
 
 	public advanceCurrentTurn(): void {
-		const playerOne = this.players[0]
-		const playerTwo = this.players[1]
-		const rowsOwnedByPlayerOne = this.board.rows.filter((row) => row.owner === playerOne).length
-		const rowsOwnedByPlayerTwo = this.board.rows.filter((row) => row.owner === playerTwo).length
-		const hasPlayerWonBoard =
-			rowsOwnedByPlayerOne === Constants.GAME_BOARD_ROW_COUNT || rowsOwnedByPlayerTwo === Constants.GAME_BOARD_ROW_COUNT
 		const notFinishedPlayers = this.players.filter((player) => !player.roundEnded)
-		if (hasPlayerWonBoard || notFinishedPlayers.length === 0) {
+		if (notFinishedPlayers.length === 0) {
 			this.endCurrentRound()
 			return
 		}
@@ -393,14 +405,12 @@ export default class ServerGame implements Game {
 		this.animation.syncAnimationThreads()
 		this.animation.play(ServerAnimation.delay(1250))
 
-		for (let i = 0; i < 3; i++) {
-			this.board.rows[i].setOwner(playerTwo)
-			this.board.rows[Constants.GAME_BOARD_ROW_COUNT - i - 1].setOwner(playerOne)
-		}
+		this.resetBoardOwnership()
 
+		const constants = this.ruleset.constants
 		this.players.forEach((playerInGame) => {
-			playerInGame.drawUnitCards(Constants.UNIT_HAND_SIZE_PER_ROUND)
-			playerInGame.setSpellMana(Constants.SPELL_MANA_PER_ROUND)
+			playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_PER_ROUND)
+			playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND)
 		})
 
 		this.advancePhase()
@@ -412,7 +422,8 @@ export default class ServerGame implements Game {
 	}
 
 	public get maxMulligans(): number {
-		return this.turnIndex === -1 ? Constants.MULLIGAN_INITIAL_CARD_COUNT : Constants.MULLIGAN_ROUND_CARD_COUNT
+		const constants = this.ruleset.constants
+		return this.turnIndex === -1 ? constants.MULLIGAN_INITIAL_CARD_COUNT : constants.MULLIGAN_ROUND_CARD_COUNT
 	}
 
 	public mulliganCard(player: ServerPlayerInGame, card: ServerCard): void {

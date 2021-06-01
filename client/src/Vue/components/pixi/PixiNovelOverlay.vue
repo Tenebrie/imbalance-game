@@ -71,7 +71,6 @@ export default defineComponent({
 			if (activeCharacter.value) {
 				values[activeCharacter.value] = true
 			}
-			console.log(values)
 			return values
 		})
 
@@ -186,6 +185,36 @@ export default defineComponent({
 			background-repeat: no-repeat;
 			left: 0;
 			bottom: 0;
+			width: 1200px;
+			height: 1200px;
+		}
+
+		&.elsa {
+			background-image: url('../../assets/novel/elsa.webp');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 0;
+			bottom: 0;
+			width: 1000px;
+			height: 1000px;
+		}
+
+		&.bodge {
+			background-image: url('../../assets/novel/bodge.webp');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 0;
+			bottom: 0;
+			width: 1200px;
+			height: 1200px;
+		}
+
+		&.nira {
+			background-image: url('../../assets/novel/nira.webp');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: -300px;
+			bottom: -200px;
 			width: 1200px;
 			height: 1200px;
 		}

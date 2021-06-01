@@ -18,6 +18,7 @@ export default class UnitCorgiGravedigger extends ServerCard {
 				power: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
+			hiddenFromLibrary: true,
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_GRAVEYARD)

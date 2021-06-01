@@ -170,9 +170,15 @@ export default class MainHandler {
 
 			this.mainAnimationThread.tick(deltaTime)
 			this.projectileSystem.tick(deltaTime, deltaFraction)
-			Core.renderer.tick(deltaTime, deltaFraction)
-			Core.particleSystem.tick()
-			Core.input.tick()
+			if (Core.renderer) {
+				Core.renderer.tick(deltaTime, deltaFraction)
+			}
+			if (Core.particleSystem) {
+				Core.particleSystem.tick()
+			}
+			if (Core.input) {
+				Core.input.tick()
+			}
 		})
 
 		this.coreTicker.start()
