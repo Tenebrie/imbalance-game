@@ -5,6 +5,7 @@ import RequireAdminAccessLevelMiddleware from '@src/middleware/RequireAdminAcces
 import { colorize, colorizeId } from '@src/utils/Utils'
 import AsciiColor from '@src/enums/AsciiColor'
 import AccessLevel from '@shared/enums/AccessLevel'
+import RequireDevAdminAccessLevelMiddleware from '@src/middleware/RequireDevAdminAccessLevelMiddleware'
 
 /*
  * Hey there, thanks for coming over.
@@ -37,6 +38,7 @@ export const printAllRoutes = (app: Application): string => {
 		PLAYER_TOKEN = 'player_token',
 		SUPPORT_TOKEN = 'support_token',
 		ADMIN_TOKEN = 'admin_token',
+		DEVELOPER_TOKEN = 'developer_token',
 		UNKNOWN = 'unknown',
 	}
 
@@ -60,6 +62,8 @@ export const printAllRoutes = (app: Application): string => {
 									return MiddlewareType.SUPPORT_TOKEN
 								case RequireAdminAccessLevelMiddleware:
 									return MiddlewareType.ADMIN_TOKEN
+								case RequireDevAdminAccessLevelMiddleware:
+									return MiddlewareType.DEVELOPER_TOKEN
 								default:
 									return MiddlewareType.UNKNOWN
 							}
@@ -67,14 +71,18 @@ export const printAllRoutes = (app: Application): string => {
 						.filter((middleware) => middleware !== MiddlewareType.UNKNOWN)
 					return {
 						path: layer.route.path.length > 1 ? `${router.path}${layer.route.path}` : router.path,
-						accessLevelString: middleware.includes(MiddlewareType.ADMIN_TOKEN)
+						accessLevelString: middleware.includes(MiddlewareType.DEVELOPER_TOKEN)
+							? `[${colorize('Developer', AsciiColor.MAGENTA)}]`
+							: middleware.includes(MiddlewareType.ADMIN_TOKEN)
 							? `[${colorize('Admin', AsciiColor.RED)}]`
 							: middleware.includes(MiddlewareType.SUPPORT_TOKEN)
-							? `[${colorize('Support', AsciiColor.MAGENTA)}]`
+							? `[${colorize('Support', AsciiColor.YELLOW)}]`
 							: middleware.includes(MiddlewareType.PLAYER_TOKEN)
 							? `[${colorize('Player', AsciiColor.BLUE)}]`
 							: `[${colorize('Any', AsciiColor.WHITE)}]`,
-						accessLevel: middleware.includes(MiddlewareType.ADMIN_TOKEN)
+						accessLevel: middleware.includes(MiddlewareType.DEVELOPER_TOKEN)
+							? AccessLevel.DEVELOPER
+							: middleware.includes(MiddlewareType.ADMIN_TOKEN)
 							? AccessLevel.ADMIN
 							: middleware.includes(MiddlewareType.SUPPORT_TOKEN)
 							? AccessLevel.SUPPORT

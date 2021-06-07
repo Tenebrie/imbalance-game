@@ -20,7 +20,7 @@ export default class SpellRustedWagon extends ServerCard {
 		super(game, {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
-			faction: CardFaction.HUMAN,
+			faction: CardFaction.NEUTRAL,
 			tribes: [CardTribe.SALVAGE],
 			sortPriority: 2,
 			stats: {

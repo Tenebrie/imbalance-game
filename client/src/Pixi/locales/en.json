@@ -147,6 +147,10 @@
 	"card.faction.arcane": "Arcane",
 	"card.faction.wild": "Wild",
 	"card.faction.neutral": "Neutral",
+	"card.faction.0": "Human",
+	"card.faction.1": "Arcane",
+	"card.faction.2": "Wild",
+	"card.faction.3": "Neutral",
 	"card.faction.human.experimental": "Human (Experimental)",
 	"card.faction.arcane.experimental": "Arcane (Experimental)",
 	"card.faction.wild.experimental": "Wild (Experimental)",
@@ -897,8 +901,8 @@
 	"card.unitCorgiGravedigger.description": "*Deploy:*\nChoose a card in your Graveyard to return to your hand.",
 	"card.unitCorgiGravedigger.flavor": "And he works in the cutest graveyard you'll ever visit!",
 
-	"card.leaderCampfireThePlayer.name": "<c=black>*{playerName}*</c>",
-	"card.leaderCampfireThePlayer.title": "The Player",
+	"card.leaderCampfireThePlayer.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Player</if>",
+	"card.leaderCampfireThePlayer.title": "<if inGame>The Player</if>",
 	"card.leaderCampfireThePlayer.description": "-",
 
 	"card.heroCampfireProtagonist.name": "The Protagonist",

@@ -170,7 +170,7 @@ const router = createRouter({
 				{
 					path: '/admin/cards',
 					name: 'admin-cards',
-					component: () => import('@/Vue/components/admin/AdminPlayerView.vue'),
+					component: () => import('@/Vue/components/admin/AdminCardsView.vue'),
 				},
 				{
 					path: '/admin/stats',

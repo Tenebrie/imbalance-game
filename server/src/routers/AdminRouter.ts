@@ -9,11 +9,21 @@ import { getPlayerFromAuthenticatedRequest, setCookie } from '../utils/Utils'
 import AccessLevel from '@shared/enums/AccessLevel'
 import PlayerDatabase from '../database/PlayerDatabase'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import CardLibrary from '@src/game/libraries/CardLibrary'
+import OpenCardMessage from '@src/../../shared/src/models/network/card/OpenCardMessage'
 
 const router = express.Router()
 
 router.use(RequireOriginalPlayerTokenMiddleware)
 router.use(RequireSupportAccessLevelMiddleware)
+
+router.get(
+	'/cards',
+	AsyncHandler(async (req, res: Response) => {
+		const cardEntries = CardLibrary.cards.map((card) => new OpenCardMessage(card))
+		res.json(cardEntries)
+	})
+)
 
 router.get(
 	'/games',

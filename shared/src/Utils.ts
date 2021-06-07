@@ -4,6 +4,48 @@ import CardFeature from './enums/CardFeature'
 import CardMessage from './models/network/card/CardMessage'
 import CardColor from './enums/CardColor'
 import Constants from './Constants'
+import CardFaction from './enums/CardFaction'
+
+export const cardTypeToString = (type: CardType): string => {
+	switch (type) {
+		case CardType.UNIT:
+			return 'unit'
+		case CardType.SPELL:
+			return 'spell'
+		default:
+			throw new Error(`No string specified for type ${type}`)
+	}
+}
+
+export const cardColorToString = (color: CardColor): string => {
+	switch (color) {
+		case CardColor.LEADER:
+			return 'leader'
+		case CardColor.GOLDEN:
+			return 'golden'
+		case CardColor.SILVER:
+			return 'silver'
+		case CardColor.BRONZE:
+			return 'bronze'
+		default:
+			throw new Error(`No string specified for color ${color}`)
+	}
+}
+
+export const cardFactionToString = (faction: CardFaction): string => {
+	switch (faction) {
+		case CardFaction.HUMAN:
+			return 'human'
+		case CardFaction.ARCANE:
+			return 'arcane'
+		case CardFaction.WILD:
+			return 'wild'
+		case CardFaction.NEUTRAL:
+			return 'neutral'
+		default:
+			throw new Error(`No string specified for faction ${faction}`)
+	}
+}
 
 export const hashCode = (targetString: string): number => {
 	let i
