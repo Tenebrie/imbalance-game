@@ -48,7 +48,6 @@ export default defineComponent({
 			const image = new Image()
 			image.onload = function () {
 				renderFrame()
-				console.log('render!')
 			}
 			image.src = '/assets/masks/card-bg.png'
 
@@ -114,7 +113,6 @@ export default defineComponent({
 		}
 
 		const onDragStart = (event: MouseEvent) => {
-			console.log('start')
 			dragStartPoint.value = {
 				x: event.clientX,
 				y: event.clientY,
@@ -134,7 +132,7 @@ export default defineComponent({
 			renderFrame()
 		}
 
-		const onDragEnd = (event: MouseEvent) => {
+		const onDragEnd = () => {
 			if (!dragStartPoint.value || !dragMousePoint.value) {
 				return
 			}

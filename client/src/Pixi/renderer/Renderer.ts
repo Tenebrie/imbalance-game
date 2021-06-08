@@ -314,7 +314,6 @@ export default class Renderer {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
-		const disabledOverlaySprite = renderedCard.cardFullTintOverlay
 
 		const windowFraction = owner === 'player' ? this.PLAYER_HAND_WINDOW_FRACTION : this.OPPONENT_HAND_WINDOW_FRACTION
 		const cardHeight = this.getScreenHeight() * windowFraction
@@ -369,10 +368,6 @@ export default class Renderer {
 		hitboxSprite.position.set(targetPosition.x + sprite.position.x, targetPosition.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
-
-		disabledOverlaySprite.position.set(sprite.position.x, sprite.position.y)
-		disabledOverlaySprite.scale = sprite.scale
-		disabledOverlaySprite.zIndex = container.zIndex + 1
 	}
 
 	private updateCardTintOverlay(card: RenderedCard): void {
@@ -385,6 +380,7 @@ export default class Renderer {
 		} else {
 			card.cardTintOverlay.alpha += (cardTint.alpha - card.cardTintOverlay.alpha) * this.deltaTimeFraction * 5
 		}
+		card.cardTintOverlay.alpha = Math.max(0, Math.min(card.cardTintOverlay.alpha, 1))
 
 		const fullCardTint = this.getFullCardTintOverlayColor(card)
 		if (fullCardTint.alpha > card.cardFullTintOverlay.alpha) {
@@ -392,6 +388,7 @@ export default class Renderer {
 		} else {
 			card.cardFullTintOverlay.alpha += (fullCardTint.alpha - card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 5
 		}
+		card.cardFullTintOverlay.alpha = Math.max(0, Math.min(card.cardFullTintOverlay.alpha, 1))
 	}
 
 	private getCardTintOverlayColor(card: RenderedCard): { color: number | null; alpha: number } {
@@ -422,7 +419,6 @@ export default class Renderer {
 	public renderHoveredCardInHand(renderedCard: RenderedCard, owner: 'player' | 'opponent'): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
-		const disabledOverlaySprite = renderedCard.cardFullTintOverlay
 
 		const cardHeight = this.getScreenHeight() * this.HOVERED_HAND_WINDOW_FRACTION
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
@@ -435,16 +431,11 @@ export default class Renderer {
 		}
 
 		container.zIndex = HOVERED_CARD_ZINDEX
-
-		disabledOverlaySprite.position.set(sprite.position.x, sprite.position.y)
-		disabledOverlaySprite.scale = sprite.scale
-		disabledOverlaySprite.zIndex = container.zIndex + 1
 	}
 
 	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): CardDisplayMode {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
-		const disabledOverlaySprite = renderedCard.cardFullTintOverlay
 		const hoveredRow = Core.board && Core.board.rows.find((row) => row.isHovered())
 
 		let cardDisplayMode: CardDisplayMode
@@ -460,10 +451,6 @@ export default class Renderer {
 		container.position.x = mousePosition.x
 		container.position.y = mousePosition.y
 		container.zIndex = GRABBED_CARD_ZINDEX
-
-		disabledOverlaySprite.position.set(sprite.position.x, sprite.position.y)
-		disabledOverlaySprite.scale = sprite.scale
-		disabledOverlaySprite.zIndex = container.zIndex + 1
 
 		return cardDisplayMode
 	}
@@ -649,6 +636,7 @@ export default class Renderer {
 		} else {
 			unit.card.cardTintOverlay.alpha += (cardTint.alpha - unit.card.cardTintOverlay.alpha) * this.deltaTimeFraction * 5
 		}
+		unit.card.cardTintOverlay.alpha = Math.max(0, Math.min(unit.card.cardTintOverlay.alpha, 1))
 
 		const fullCardTint = this.getFullUnitTint(unit)
 		if (fullCardTint.alpha > unit.card.cardTintOverlay.alpha) {
@@ -656,6 +644,7 @@ export default class Renderer {
 		} else {
 			unit.card.cardFullTintOverlay.alpha += (fullCardTint.alpha - unit.card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 5
 		}
+		unit.card.cardFullTintOverlay.alpha = Math.max(0, Math.min(unit.card.cardFullTintOverlay.alpha, 1))
 	}
 
 	private getUnitTint(unit: RenderedUnit): { color: number | null; alpha: number } {

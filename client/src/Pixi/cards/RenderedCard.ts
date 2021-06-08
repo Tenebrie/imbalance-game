@@ -213,12 +213,12 @@ export default class RenderedCard implements Card {
 
 		/* Card tint overlays */
 		this.cardTintOverlay = new PIXI.Sprite(TextureAtlas.getTexture('components/tint-overlay'))
-		this.cardTintOverlay.alpha = 1
+		this.cardTintOverlay.alpha = 0
 		this.cardTintOverlay.anchor = new PIXI.Point(0.5, 0.5)
 		this.coreContainer.addChild(this.cardTintOverlay)
 
 		this.cardFullTintOverlay = new PIXI.Sprite(TextureAtlas.getTexture('components/tint-overlay-full'))
-		this.cardFullTintOverlay.alpha = 1
+		this.cardFullTintOverlay.alpha = 0
 		this.cardFullTintOverlay.tint = 0x000000
 		this.cardFullTintOverlay.anchor = new PIXI.Point(0.5, 0.5)
 		this.coreContainer.addChild(this.cardFullTintOverlay)

@@ -470,7 +470,7 @@ export default class Input {
 			return
 		}
 
-		if (this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY && isGrabbedCardPlayableToRow(MouseHover.getHoveredRow())) {
+		if (this.grabbedCard.mode === GrabbedCardMode.CARD_PLAY) {
 			this.onCardPlay(this.grabbedCard.card)
 		} else if (this.grabbedCard.mode === GrabbedCardMode.CARD_ORDER) {
 			this.onUnitOrder(this.grabbedCard.card)
@@ -491,19 +491,19 @@ export default class Input {
 
 	private onCardPlay(card: RenderedCard): void {
 		const hoveredRow = MouseHover.getHoveredRow()
-		if (!hoveredRow) {
-			return
-		}
+		const spellScreenPositionThreshold = Core.renderer.pixi.screen.height * (1 - Core.renderer.PLAYER_HAND_WINDOW_FRACTION)
 
-		if (card.type === CardType.SPELL) {
+		if (card.type === CardType.SPELL && this.mousePosition.y < spellScreenPositionThreshold) {
 			OutgoingMessageHandlers.sendSpellCardPlayed(card)
-		} else if (card.type === CardType.UNIT) {
+		} else if (card.type === CardType.UNIT && hoveredRow && isGrabbedCardPlayableToRow(hoveredRow)) {
 			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, getCardInsertIndex(hoveredRow))
 			this.limboShadowUnit = {
 				card: card,
 				rowIndex: normalizeBoardRowIndex(hoveredRow.index, 'player'),
 				unitIndex: getCardInsertIndex(hoveredRow),
 			}
+		} else {
+			return
 		}
 		this.cardLimbo.push(card)
 		Core.player.cardHand.removeCard(card)

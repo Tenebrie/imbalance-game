@@ -14,13 +14,6 @@ export const isCardPlayable = (card: RenderedCard): boolean => {
 }
 
 export const isGrabbedCardPlayableToRow = (row: RenderedGameBoardRow | null): boolean => {
-	console.log(
-		(Core.input.grabbedCard &&
-			row &&
-			isCardPlayable(Core.input.grabbedCard.card) &&
-			Core.input.grabbedCard.validTargetPositions.some((target) => target.row === row)) ||
-			false
-	)
 	return (
 		(Core.input.grabbedCard &&
 			row &&
