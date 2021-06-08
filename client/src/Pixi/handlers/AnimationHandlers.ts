@@ -166,6 +166,11 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 				return
 			}
 			Core.particleSystem.createCardReceivedBuffParticleEffect(targetCard, params.alignment)
+
+			const color = params.alignment === BuffAlignment.NEGATIVE ? 0xff0000 : 0x00ff00
+			targetCard.cardTintOverlay.tint = color
+			targetCard.cardTintOverlay.alpha = 1
+
 			const audioEffectCategory =
 				params.alignment === BuffAlignment.NEGATIVE ? AudioEffectCategory.BUFF_NEGATIVE : AudioEffectCategory.BUFF_POSITIVE
 			AudioSystem.playEffect(audioEffectCategory)
@@ -190,6 +195,8 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 			return
 		}
 		Core.particleSystem.createManaGeneratedParticleEffect(targetCard)
+		targetCard.cardTintOverlay.tint = 0x0000ff
+		targetCard.cardTintOverlay.alpha = 1
 	},
 }
 

@@ -175,6 +175,8 @@ export default class ProjectileSystem {
 		return this.createAttackProjectile(sourceCard.getVisualPosition(), targetCard, () => {
 			Core.particleSystem.createAttackImpactParticleEffect(targetCard)
 			AudioSystem.playEffect(AudioEffectCategory.IMPACT_GENERIC)
+			targetCard.cardTintOverlay.tint = 0xff0000
+			targetCard.cardTintOverlay.alpha = 1
 		})
 	}
 
@@ -182,6 +184,8 @@ export default class ProjectileSystem {
 		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => {
 			Core.particleSystem.createAttackImpactParticleEffect(targetCard)
 			AudioSystem.playEffect(AudioEffectCategory.IMPACT_GENERIC)
+			targetCard.cardTintOverlay.tint = 0xff0000
+			targetCard.cardTintOverlay.alpha = 1
 		})
 	}
 
@@ -201,6 +205,8 @@ export default class ProjectileSystem {
 		return this.createAttackProjectile(sourceCard.getVisualPosition(), targetCard, () => {
 			Core.particleSystem.createHealImpactParticleEffect(targetCard)
 			AudioSystem.playEffect(AudioEffectCategory.IMPACT_HEAL)
+			targetCard.cardTintOverlay.tint = 0x00ff00
+			targetCard.cardTintOverlay.alpha = 1
 		})
 	}
 
@@ -208,6 +214,8 @@ export default class ProjectileSystem {
 		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => {
 			Core.particleSystem.createHealImpactParticleEffect(targetCard)
 			AudioSystem.playEffect(AudioEffectCategory.IMPACT_HEAL)
+			targetCard.cardTintOverlay.tint = 0x00ff00
+			targetCard.cardTintOverlay.alpha = 1
 		})
 	}
 }

@@ -699,13 +699,10 @@ export default class Renderer {
 		/* Targeting mode, but the unit is not a valid target */
 		if (
 			(Core.input.forcedTargetingMode && !Core.input.forcedTargetingMode.isUnitPotentialTarget(unit)) ||
-			(Core.input.grabbedCard && !Core.input.grabbedCard.validTargetCards.includes(unit.card))
+			(Core.input.grabbedCard &&
+				!Core.input.grabbedCard.validTargetCards.includes(unit.card) &&
+				Core.input.grabbedCard.mode !== GrabbedCardMode.CARD_PLAY)
 		) {
-			return { alpha: 0.5 }
-		}
-
-		/* There is a grabbed card, but it's not the current one */
-		if (Core.input.grabbedCard && unit.card !== Core.input.grabbedCard.card) {
 			return { alpha: 0.5 }
 		}
 
