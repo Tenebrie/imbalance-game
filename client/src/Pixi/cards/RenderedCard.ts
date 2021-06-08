@@ -74,7 +74,8 @@ export default class RenderedCard implements Card {
 	private readonly manacostTextBackground: PIXI.Sprite
 	private readonly descriptionTextBackground: DescriptionTextBackground
 
-	public readonly cardDisabledOverlay: PIXI.Sprite
+	public readonly cardTintOverlay: PIXI.Sprite
+	public readonly cardFullTintOverlay: PIXI.Sprite
 
 	public readonly powerText: ScalingText
 	public readonly armorText: ScalingText
@@ -164,7 +165,7 @@ export default class RenderedCard implements Card {
 		}
 		this.descriptionTextBackground = new DescriptionTextBackground()
 		if (Localization.get(this.description)) {
-			this.descriptionTextBackground.position.set(0, this.sprite.texture.height)
+			this.descriptionTextBackground.position.set(0, this.sprite.texture.height + 1)
 			this.cardDescriptionText.setBackground(this.descriptionTextBackground)
 			this.cardModeContainer.addChild(this.descriptionTextBackground)
 		}
@@ -210,11 +211,17 @@ export default class RenderedCard implements Card {
 		this.cardModeTextContainer.addChild(this.cardDescriptionText)
 		this.coreContainer.addChild(this.cardModeTextContainer)
 
-		/* Card disabled overlay */
-		this.cardDisabledOverlay = new PIXI.Sprite(TextureAtlas.getTexture('components/overlay-disabled'))
-		this.cardDisabledOverlay.visible = false
-		this.cardDisabledOverlay.anchor = new PIXI.Point(0.5, 0.5)
-		this.coreContainer.addChild(this.cardDisabledOverlay)
+		/* Card tint overlays */
+		this.cardTintOverlay = new PIXI.Sprite(TextureAtlas.getTexture('components/tint-overlay'))
+		this.cardTintOverlay.alpha = 1
+		this.cardTintOverlay.anchor = new PIXI.Point(0.5, 0.5)
+		this.coreContainer.addChild(this.cardTintOverlay)
+
+		this.cardFullTintOverlay = new PIXI.Sprite(TextureAtlas.getTexture('components/tint-overlay-full'))
+		this.cardFullTintOverlay.alpha = 1
+		this.cardFullTintOverlay.tint = 0x000000
+		this.cardFullTintOverlay.anchor = new PIXI.Point(0.5, 0.5)
+		this.coreContainer.addChild(this.cardFullTintOverlay)
 	}
 
 	public getDescriptionTextVariables(): RichTextVariables {
@@ -356,6 +363,10 @@ export default class RenderedCard implements Card {
 		} else if (this.isHidden) {
 			this.switchToHiddenMode()
 		}
+		this.cardTintOverlay.width = this.sprite.width
+		this.cardTintOverlay.height = this.sprite.height
+		this.cardFullTintOverlay.width = this.sprite.width
+		this.cardFullTintOverlay.height = this.sprite.height
 
 		texts = texts.filter((text) => text.text.length > 0)
 
@@ -505,7 +516,6 @@ export default class RenderedCard implements Card {
 			this.armorText.visible = false
 			this.armorTextZoomBackground.visible = false
 		}
-		this.cardDisabledOverlay.visible = false
 	}
 
 	public switchToHiddenMode(): void {

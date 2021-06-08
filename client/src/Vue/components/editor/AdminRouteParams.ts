@@ -12,6 +12,7 @@ router.afterEach((route) => {
 })
 
 interface Params {
+	cardId: string | null
 	gameId: string | null
 	playerId: string | null
 }
@@ -19,6 +20,13 @@ interface Params {
 export const useAdminRouteParams = (): ComputedRef => {
 	return computed(
 		(): Params => ({
+			get cardId(): string | null {
+				if (routeData.value.params['cardId'] === undefined) {
+					return null
+				}
+				return routeData.value.params['cardId']
+			},
+
 			get gameId(): string | null {
 				if (routeData.value.params['gameId'] === undefined) {
 					return null

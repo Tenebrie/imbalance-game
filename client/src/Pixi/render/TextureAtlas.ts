@@ -62,6 +62,8 @@ export default class TextureAtlas {
 				'components/stat-health-armor',
 				'components/overlay-move',
 				'components/overlay-disabled',
+				'components/tint-overlay',
+				'components/tint-overlay-full',
 				'board/board-row',
 			]
 

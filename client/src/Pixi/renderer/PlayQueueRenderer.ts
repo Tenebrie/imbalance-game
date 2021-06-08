@@ -66,6 +66,9 @@ class PlayQueueRenderer {
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
+
+		card.cardTintOverlay.alpha = 0
+		card.cardFullTintOverlay.alpha = 0
 	}
 
 	public renderDiscardedPlayQueueCard(card: RenderedCard, owner: ClientPlayerInGame, index: number): void {
@@ -86,6 +89,9 @@ class PlayQueueRenderer {
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
+
+		card.cardTintOverlay.alpha = 0
+		card.cardFullTintOverlay.alpha = 0
 	}
 }
 

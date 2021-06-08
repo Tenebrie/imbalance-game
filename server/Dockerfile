@@ -14,6 +14,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --yes msttcorefonts
 # Setting working directory. All the path will be relative to WORKDIR
 WORKDIR /app/server
 
+ADD ./client /app/client
 ADD ./server /app/server
 ADD ./shared /app/shared
 COPY .eslintrc.js /app/server

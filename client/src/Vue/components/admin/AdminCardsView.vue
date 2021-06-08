@@ -3,11 +3,11 @@
 		<table class="cards-table">
 			<thead>
 				<tr>
-					<th @click="onSortByName">Name</th>
-					<th @click="onSortByType">Type</th>
-					<th @click="onSortByColor">Color</th>
-					<th @click="onSortByFaction">Faction</th>
-					<th @click="onSortByCollectible">Collectible</th>
+					<th @click="() => sortBy('name')">Name</th>
+					<th @click="() => sortBy('type')">Type</th>
+					<th @click="() => sortBy('color')">Color</th>
+					<th @click="() => sortBy('faction')">Faction</th>
+					<th @click="() => sortBy('collectible')">Collectible</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
@@ -57,12 +57,17 @@ import Localization from '@/Pixi/Localization'
 import store from '@/Vue/store'
 import TheCardPreviewPopup from '../popup/escapeMenu/TheCardPreviewPopup.vue'
 
+type FilterType = 'name' | 'type' | 'color' | 'faction' | 'collectible'
+
 type ExtendedCardMessage = CardMessage & {
 	parsedName: string
 	parsedTitle: string
 	readableType: string
 	readableColor: string
 	readableFaction: string
+	localizedType: string
+	localizedColor: string
+	localizedFaction: string
 }
 
 export default defineComponent({
@@ -106,7 +111,7 @@ export default defineComponent({
 		}
 
 		type SortStackEntry = {
-			type: 'name' | 'type' | 'color' | 'faction' | 'collectible'
+			type: FilterType
 			isReversed: boolean
 		}
 		const sortStack = ref<SortStackEntry[]>([
@@ -132,7 +137,7 @@ export default defineComponent({
 			},
 		])
 
-		const modifyFilter = (type: 'name' | 'type' | 'color' | 'faction' | 'collectible'): void => {
+		const modifyFilter = (type: FilterType): void => {
 			const last = sortStack.value[sortStack.value.length - 1]
 			if (last.type === type) {
 				last.isReversed = !last.isReversed
@@ -145,28 +150,8 @@ export default defineComponent({
 			}
 		}
 
-		const onSortByName = () => {
-			modifyFilter('name')
-			sortCards()
-		}
-
-		const onSortByType = () => {
-			modifyFilter('type')
-			sortCards()
-		}
-
-		const onSortByColor = () => {
-			modifyFilter('color')
-			sortCards()
-		}
-
-		const onSortByFaction = () => {
-			modifyFilter('faction')
-			sortCards()
-		}
-
-		const onSortByCollectible = () => {
-			modifyFilter('collectible')
+		const sortBy = (type: FilterType) => {
+			modifyFilter(type)
 			sortCards()
 		}
 
@@ -203,11 +188,7 @@ export default defineComponent({
 			onPreview,
 			onUpdateArtwork,
 			AccessLevel,
-			onSortByName,
-			onSortByType,
-			onSortByColor,
-			onSortByFaction,
-			onSortByCollectible,
+			sortBy,
 		}
 	},
 })

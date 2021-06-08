@@ -24,6 +24,7 @@ import store from '@/Vue/store'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import { render } from '@vue/runtime-dom'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -82,7 +83,7 @@ export default class Renderer {
 		this.pixi = new PIXI.Application({
 			width,
 			height,
-			antialias: false,
+			antialias: true,
 			autoDensity: true,
 			transparent: true,
 			resolution: 1,
@@ -252,6 +253,9 @@ export default class Renderer {
 			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
 			card.setDisplayMode(CardDisplayMode.IN_HAND)
 		}
+		this.updateCardTintOverlay(card)
+		card.cardTintOverlay.visible = true
+		card.cardFullTintOverlay.visible = true
 	}
 
 	public resize(): void {
@@ -310,7 +314,7 @@ export default class Renderer {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
-		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
+		const disabledOverlaySprite = renderedCard.cardFullTintOverlay
 
 		const windowFraction = owner === 'player' ? this.PLAYER_HAND_WINDOW_FRACTION : this.OPPONENT_HAND_WINDOW_FRACTION
 		const cardHeight = this.getScreenHeight() * windowFraction
@@ -352,13 +356,6 @@ export default class Renderer {
 			targetPosition.x += -(screenWidth * unitHandFraction) / 2 - (screenWidth * leaderHandFraction) / 2 - screenWidth * handPaddingFraction
 		}
 
-		const isValidTarget =
-			Core.input &&
-			Core.input.forcedTargetingMode &&
-			!!Core.input.forcedTargetingMode.validTargets.find((forcedCard) => forcedCard.targetCardId === renderedCard.id)
-
-		renderedCard.cardDisabledOverlay.visible = !isCardPlayable(renderedCard) && !isValidTarget
-
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
 			container.position.x += (targetPosition.x - container.position.x) * this.deltaTimeFraction * 7
@@ -378,10 +375,54 @@ export default class Renderer {
 		disabledOverlaySprite.zIndex = container.zIndex + 1
 	}
 
+	private updateCardTintOverlay(card: RenderedCard): void {
+		const cardTint = this.getCardTintOverlayColor(card)
+		if (cardTint.color !== null) {
+			card.cardTintOverlay.tint = cardTint.color
+		}
+		if (cardTint.alpha > card.cardTintOverlay.alpha) {
+			card.cardTintOverlay.alpha += (cardTint.alpha - card.cardTintOverlay.alpha) * this.deltaTimeFraction * 40
+		} else {
+			card.cardTintOverlay.alpha += (cardTint.alpha - card.cardTintOverlay.alpha) * this.deltaTimeFraction * 5
+		}
+
+		const fullCardTint = this.getFullCardTintOverlayColor(card)
+		if (fullCardTint.alpha > card.cardFullTintOverlay.alpha) {
+			card.cardFullTintOverlay.alpha += (fullCardTint.alpha - card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 40
+		} else {
+			card.cardFullTintOverlay.alpha += (fullCardTint.alpha - card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 5
+		}
+	}
+
+	private getCardTintOverlayColor(card: RenderedCard): { color: number | null; alpha: number } {
+		/* Targeting mode, and the current unit is a valid target */
+		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
+		if (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isCardPotentialTarget(card)) {
+			if (card.owner === Core.opponent) {
+				return hoveredCard === card ? { color: 0xff0000, alpha: 0.75 } : { color: 0xff0000, alpha: 0.5 }
+			} else {
+				return hoveredCard === card ? { color: 0x00ff00, alpha: 0.75 } : { color: 0x00ff00, alpha: 0.5 }
+			}
+		}
+		return { color: null, alpha: 0 }
+	}
+
+	private getFullCardTintOverlayColor(card: RenderedCard): { alpha: number } {
+		const isValidTarget =
+			Core.input &&
+			Core.input.forcedTargetingMode &&
+			!!Core.input.forcedTargetingMode.validTargets.find((forcedCard) => forcedCard.targetCardId === card.id)
+
+		if (!isCardPlayable(card) && !isValidTarget) {
+			return { alpha: 0.5 }
+		}
+		return { alpha: 0 }
+	}
+
 	public renderHoveredCardInHand(renderedCard: RenderedCard, owner: 'player' | 'opponent'): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
-		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
+		const disabledOverlaySprite = renderedCard.cardFullTintOverlay
 
 		const cardHeight = this.getScreenHeight() * this.HOVERED_HAND_WINDOW_FRACTION
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
@@ -403,7 +444,7 @@ export default class Renderer {
 	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): CardDisplayMode {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
-		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
+		const disabledOverlaySprite = renderedCard.cardFullTintOverlay
 		const hoveredRow = Core.board && Core.board.rows.find((row) => row.isHovered())
 
 		let cardDisplayMode: CardDisplayMode
@@ -545,7 +586,6 @@ export default class Renderer {
 		const container = unit.card.coreContainer
 		const sprite = unit.card.sprite
 		const hitboxSprite = unit.card.hitboxSprite
-		const disabledOverlaySprite = unit.card.cardDisabledOverlay
 
 		const screenCenterX = this.getScreenWidth() / 2
 		const distanceToCenter = unitIndex - unitCount / 2 + 0.5
@@ -588,8 +628,9 @@ export default class Renderer {
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		sprite.tint = this.getUnitTint(unit)
-		disabledOverlaySprite.visible = false
+		this.updateUnitTintOverlay(unit)
+		unit.card.cardTintOverlay.visible = true
+		unit.card.cardFullTintOverlay.visible = true
 
 		hitboxSprite.position.set(targetPositionX, targetPositionY)
 		hitboxSprite.scale = sprite.scale
@@ -598,46 +639,88 @@ export default class Renderer {
 		unit.card.setDisplayMode(CardDisplayMode.ON_BOARD)
 	}
 
-	private getUnitTint(unit: RenderedUnit): CardTint {
+	private updateUnitTintOverlay(unit: RenderedUnit): void {
+		const cardTint = this.getUnitTint(unit)
+		if (cardTint.color !== null) {
+			unit.card.cardTintOverlay.tint = cardTint.color
+		}
+		if (cardTint.alpha > unit.card.cardTintOverlay.alpha) {
+			unit.card.cardTintOverlay.alpha += (cardTint.alpha - unit.card.cardTintOverlay.alpha) * this.deltaTimeFraction * 40
+		} else {
+			unit.card.cardTintOverlay.alpha += (cardTint.alpha - unit.card.cardTintOverlay.alpha) * this.deltaTimeFraction * 5
+		}
+
+		const fullCardTint = this.getFullUnitTint(unit)
+		if (fullCardTint.alpha > unit.card.cardTintOverlay.alpha) {
+			unit.card.cardFullTintOverlay.alpha += (fullCardTint.alpha - unit.card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 40
+		} else {
+			unit.card.cardFullTintOverlay.alpha += (fullCardTint.alpha - unit.card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 5
+		}
+	}
+
+	private getUnitTint(unit: RenderedUnit): { color: number | null; alpha: number } {
 		const card = unit.card
 		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
 		if (Core.input.grabbedCard && Core.input.grabbedCard.card === unit.card) {
-			return CardTint.GRABBED
+			return { color: null, alpha: 0.25 }
 		}
 
-		/* Current unit is a valid target for some order */
+		/* Targeting mode, and the current unit is a valid target */
 		if (
 			(Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isUnitPotentialTarget(unit)) ||
-			(Core.input.grabbedCard &&
-				Core.input.grabbedCard.mode === GrabbedCardMode.CARD_ORDER &&
-				Core.input.grabbedCard.validTargetCards.includes(unit.card))
+			(Core.input.grabbedCard && Core.input.grabbedCard.validTargetCards.includes(unit.card))
 		) {
 			if (unit.owner === Core.opponent) {
-				return hoveredCard === card ? CardTint.VALID_ENEMY_TARGET_HOVERED : CardTint.VALID_ENEMY_TARGET
+				return hoveredCard === card ? { color: 0xff0000, alpha: 0.75 } : { color: 0xff0000, alpha: 0.5 }
 			} else {
-				return hoveredCard === card ? CardTint.VALID_ALLY_TARGET_HOVERED : CardTint.VALID_ALLY_TARGET
+				return hoveredCard === card ? { color: 0x00ff00, alpha: 0.75 } : { color: 0x00ff00, alpha: 0.5 }
 			}
 		}
 
+		/* Unit has a valid order */
 		if (
-			Core.player.isTurnActive &&
+			!Core.input.forcedTargetingMode &&
 			!Core.input.grabbedCard &&
 			unit.owner === Core.player &&
 			Core.board.getValidOrdersForUnit(unit).length > 0
 		) {
-			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
-		}
-		if (
-			Core.opponent &&
-			Core.opponent.isTurnActive &&
-			!Core.input.grabbedCard &&
-			unit.owner === Core.opponent &&
-			Core.board.getValidOrdersForUnit(unit).length > 0
-		) {
-			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
+			if (hoveredCard === card) {
+				return { color: 0x00ff00, alpha: 0.75 }
+			} else {
+				return { color: 0x00ff00, alpha: 0.5 }
+			}
 		}
 
-		return CardTint.INACTIVE
+		return { color: null, alpha: 0 }
+	}
+
+	private getFullUnitTint(unit: RenderedUnit): { alpha: number } {
+		if (Core.input.grabbedCard && Core.input.grabbedCard.card === unit.card) {
+			return { alpha: 0.0 }
+		}
+
+		/* Targeting mode, and the current unit is a valid target */
+		if (
+			(Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isUnitPotentialTarget(unit)) ||
+			(Core.input.grabbedCard && Core.input.grabbedCard.validTargetCards.includes(unit.card))
+		) {
+			return { alpha: 0 }
+		}
+
+		/* Targeting mode, but the unit is not a valid target */
+		if (
+			(Core.input.forcedTargetingMode && !Core.input.forcedTargetingMode.isUnitPotentialTarget(unit)) ||
+			(Core.input.grabbedCard && !Core.input.grabbedCard.validTargetCards.includes(unit.card))
+		) {
+			return { alpha: 0.5 }
+		}
+
+		/* There is a grabbed card, but it's not the current one */
+		if (Core.input.grabbedCard && unit.card !== Core.input.grabbedCard.card) {
+			return { alpha: 0.5 }
+		}
+
+		return { alpha: 0 }
 	}
 
 	public renderTargetingArrow(): void {
@@ -850,10 +933,17 @@ export default class Renderer {
 		container.position.x = targetPosition.x
 		container.position.y = targetPosition.y - cardHeight / 2 + levelOffset
 		container.zIndex = SELECTABLE_CARD_ZINDEX + handPosition * 2
+		if (renderedCard === MouseHover.getHoveredCard()) {
+			container.zIndex += 100
+		}
 
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
+
+		renderedCard.sprite.alpha = 1
+		renderedCard.cardTintOverlay.alpha = 0
+		renderedCard.cardFullTintOverlay.alpha = 0
 	}
 
 	public destroy(): void {

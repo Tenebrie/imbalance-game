@@ -65,6 +65,10 @@ export default class ForcedTargetingMode {
 		return this.findValidTarget() === this.selectedTarget
 	}
 
+	public isCardPotentialTarget(card: RenderedCard): boolean {
+		return !!this.validTargets.find((target) => target.targetCardId === card.id)
+	}
+
 	public isUnitPotentialTarget(unit: RenderedUnit): boolean {
 		return !!this.validTargets.find((target) => target.targetCardId === unit.card.id)
 	}

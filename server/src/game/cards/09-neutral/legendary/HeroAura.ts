@@ -16,7 +16,7 @@ export default class HeroAura extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.NEUTRAL,
 			tribes: [CardTribe.BIRD],
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
+			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 1,
 			},

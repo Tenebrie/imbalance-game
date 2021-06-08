@@ -16,7 +16,6 @@ class AnnouncedCardRenderer {
 	public renderAnnouncedCard(announcedCard: RenderedCard, mode: 'current' | 'previous'): void {
 		const container = announcedCard.coreContainer
 		const sprite = announcedCard.sprite
-		const disabledOverlaySprite = announcedCard.cardDisabledOverlay
 
 		sprite.alpha = 1
 		sprite.tint = 0xffffff
@@ -53,7 +52,8 @@ class AnnouncedCardRenderer {
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
 
-		disabledOverlaySprite.visible = false
+		announcedCard.cardTintOverlay.visible = false
+		announcedCard.cardFullTintOverlay.visible = false
 	}
 }
 

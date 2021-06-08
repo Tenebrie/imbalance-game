@@ -378,7 +378,7 @@
 
 	"card.heroAura.name": "Aura",
 	"card.heroAura.title": "The Golden Hawk",
-	"card.heroAura.description": "*Deploy:*\n*Summon* a Legendary card from your deck.",
+	"card.heroAura.description": "*Deploy:*\n*Play* a Legendary card from your deck.",
 
 	"card.heroArgenta.name": "Argenta",
 	"card.heroArgenta.title": "The Silver Falcon",
@@ -482,10 +482,10 @@
 	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current Power is at least 11, give +{extraStrengthGiven} Power more.",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
-	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Soldier card from your deck",
+	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Soldier card from your deck.",
 
 	"card.unitForestScout.name": "Forest Scout",
-	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power\nIf you're losing on Morale, gain +{moralePowerBonus} Power",
+	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power\nIf you're losing on Morale, gain +{moralePowerBonus} Power.",
 
 	"card.unitChargingKnight.name": "Charging Knight",
 	"card.unitChargingKnight.description": "*Order:*\nDeal {damage} Damage to an enemy unit.<p>May only attack after moving forward on the same turn.",
