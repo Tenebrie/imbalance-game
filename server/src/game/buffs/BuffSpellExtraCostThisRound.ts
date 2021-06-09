@@ -8,7 +8,10 @@ export default class BuffSpellExtraCostThisRound extends ServerBuff {
 			alignment: BuffAlignment.NEGATIVE,
 		})
 		this.createCallback(GameEventType.ROUND_ENDED)
-			.require(({ player }) => player === this.card.ownerInGame)
+			.require(({ player }) => {
+				const owner = this.card.owner
+				return !!owner && player === owner
+			})
 			.perform(() => this.card.buffs.removeByReference(this))
 	}
 

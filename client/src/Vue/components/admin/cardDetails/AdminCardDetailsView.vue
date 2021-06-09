@@ -4,6 +4,18 @@
 		<div class="info" v-if="hasLoaded">
 			<table>
 				<tr>
+					<td class="header">Name:</td>
+					<td>{{ card.parsedName }}</td>
+				</tr>
+				<tr v-if="card.parsedTitle">
+					<td class="header">Title:</td>
+					<td>{{ card.parsedTitle }}</td>
+				</tr>
+				<tr>
+					<td class="header">Description:</td>
+					<td>{{ card.parsedDescription }}</td>
+				</tr>
+				<tr>
 					<td class="header">Class:</td>
 					<td>{{ card.class }}</td>
 				</tr>
@@ -18,18 +30,6 @@
 				<tr>
 					<td class="header">Faction:</td>
 					<td :class="`card-faction ${card.readableFaction}`">{{ card.localizedFaction }}</td>
-				</tr>
-				<tr>
-					<td class="header">Name:</td>
-					<td>{{ card.parsedName }}</td>
-				</tr>
-				<tr v-if="card.parsedTitle">
-					<td class="header">Title:</td>
-					<td>{{ card.parsedTitle }}</td>
-				</tr>
-				<tr>
-					<td class="header">Description:</td>
-					<td>{{ card.parsedDescription }}</td>
 				</tr>
 			</table>
 			<div class="card-previews">

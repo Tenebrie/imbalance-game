@@ -189,9 +189,12 @@ button {
 	cursor: pointer;
 }
 
+label.button.primary,
 button.primary,
 .swal-button,
 .button-primary {
+	text-align: center;
+	cursor: pointer;
 	border-radius: 0.25em;
 	width: 100%;
 	padding: 0.5em 1em;
@@ -202,6 +205,7 @@ button.primary,
 	background-color: $COLOR-PRIMARY;
 	border: 1px solid $COLOR-PRIMARY;
 	outline: none;
+	box-sizing: border-box;
 
 	&.destructive {
 		color: lighten(red, 15);

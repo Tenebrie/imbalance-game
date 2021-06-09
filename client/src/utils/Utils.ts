@@ -10,8 +10,6 @@ import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pi
 import * as Particles from 'pixi-particles'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardFaction from '@shared/enums/CardFaction'
-import CardColor from '@shared/enums/CardColor'
-import Localization from '@/Pixi/Localization'
 
 export const forEachInNumericEnum = (enumeration: { [s: number]: number }, handler: (val: number) => any): void => {
 	for (const value in enumeration) {

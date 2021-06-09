@@ -2,10 +2,9 @@
 	<div class="admin-view">
 		<div class="container">
 			<div class="navigation">
+				<router-link tag="span" :to="{ name: 'admin-cards' }" class="router-link"> Card library </router-link>
 				<router-link tag="span" :to="{ name: 'admin-games' }" class="router-link"> Game history </router-link>
 				<router-link tag="span" :to="{ name: 'admin-users' }" class="router-link"> Registered users </router-link>
-				<router-link tag="span" :to="{ name: 'admin-cards' }" class="router-link"> Card library </router-link>
-				<router-link tag="span" :to="{ name: 'admin-stats' }" class="router-link"> Statistics & Graphics </router-link>
 			</div>
 			<div class="content">
 				<router-view />

@@ -6,7 +6,6 @@ import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardType from '@shared/enums/CardType'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
-import CardTint from '@/Pixi/enums/CardTint'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import MouseHover from '@/Pixi/input/MouseHover'
@@ -24,7 +23,6 @@ import store from '@/Vue/store'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import { render } from '@vue/runtime-dom'
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5

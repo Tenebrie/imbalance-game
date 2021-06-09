@@ -8,7 +8,6 @@
 					<th @click="() => sortBy('color')">Color</th>
 					<th @click="() => sortBy('faction')">Faction</th>
 					<th @click="() => sortBy('collectible')">Collectible</th>
-					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -30,13 +29,6 @@
 					<td>
 						{{ card.isCollectible }}
 					</td>
-					<td>
-						<div>
-							<a class="action-link" @click="onPreview(card)">Preview</a>
-							<span> | </span>
-							<a class="action-link" @click="onUpdateArtwork(player)">Artwork</a>
-						</div>
-					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -47,7 +39,6 @@
 import axios from 'axios'
 import { defineComponent, onMounted, ref } from 'vue'
 import AccessLevel from '@shared/enums/AccessLevel'
-import Notifications from '@/utils/Notifications'
 import moment from 'moment'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
@@ -104,10 +95,6 @@ export default defineComponent({
 					cardClass: card.class,
 				},
 			})
-		}
-
-		const onUpdateArtwork = async (card: ExtendedCardMessage) => {
-			Notifications.success('WIP Update Artwork')
 		}
 
 		type SortStackEntry = {
@@ -186,7 +173,6 @@ export default defineComponent({
 			hasLoaded,
 			cards,
 			onPreview,
-			onUpdateArtwork,
 			AccessLevel,
 			sortBy,
 		}
