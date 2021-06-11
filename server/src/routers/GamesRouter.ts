@@ -6,12 +6,8 @@ import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import GameLibrary from '../game/libraries/GameLibrary'
 import GameMessage from '@shared/models/network/GameMessage'
 import { getPlayerFromAuthenticatedRequest } from '../utils/Utils'
-import GameMode from '@shared/enums/GameMode'
-import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
-import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
 import { ServerRulesetTemplate } from '@src/game/models/rulesets/ServerRuleset'
-import CardLibrary from '@src/game/libraries/CardLibrary'
 
 const router = express.Router()
 
@@ -24,6 +20,8 @@ router.get('/', (req: Request, res: Response) => {
 	let filteredGames: ServerGame[] = GameLibrary.games.filter((game) => !game.isFinished)
 	if (reconnect) {
 		filteredGames = filteredGames.filter((game) => game.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id))
+	} else {
+		filteredGames = filteredGames.filter((game) => !game.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id))
 	}
 
 	const gameMessages = filteredGames.map((game) => new GameMessage(game))

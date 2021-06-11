@@ -6,6 +6,7 @@
 	"ui.navigation.decks": "Decks",
 	"ui.navigation.rules": "Rules",
 	"ui.navigation.workshop": "Workshop",
+	"ui.navigation.profile": "Profile",
 	"ui.navigation.admin": "Admin",
 	"ui.navigation.login": "Login",
 
@@ -23,9 +24,11 @@
 	"ui.browser.reconnect.button": "Reconnect",
 	"ui.browser.list.header": "Game browser",
 	"ui.browser.empty": "Nobody is playing right now :(",
+	"ui.browser.almostEmpty": "Nobody else is playing right now :(",
 
-	"ui.play.pve.normal": "Play vs AI",
-	"ui.play.pvp.normal": "Play PvP",
+	"ui.play.pve": "Play vs AI",
+	"ui.play.pvp": "Play PvP",
+	"ui.play.prototypes": "Play Prototypes",
 	"ui.play.refresh": "Refresh",
 
 	"ui.noty.deckRequired": "Select a deck first!",
@@ -64,7 +67,7 @@
 	"ui.decks.saveDeck": "Save",
 	"ui.decks.saveDeck.progress": "Saving...",
 	"ui.decks.shareDeck": "Share",
-	"ui.decks.shareDeck.progress": "Loading...",
+	"ui.decks.shareDeck.progress": "Sharing...",
 	"ui.decks.deleteDeck": "Delete",
 	"ui.decks.deleteDeck.progress": "Deleting...",
 	"ui.decks.leaveDeck": "Back",
@@ -121,11 +124,11 @@
 	"filter.all": "All",
 	"filter.experimental": "Experimental",
 
-	"ruleset.rulesetChallengeDummy.label": "Target Dummy",
-	"ruleset.rulesetEpicDummyFight.label": "<b>Brawl:</b> Epic Dummy Fight",
-	"ruleset.rulesetBrawlDiscovery.label": "<b>Brawl:</b> Discovery League",
-	"ruleset.rulesetNessadventure.label": "<b>The Nessadventure</b>",
-	"ruleset.rulesetCampfire.label": "<b>Experiment:</b> The Camp",
+	"ruleset.rulesetChallengeDummy.label": "<b>AI:</b> Target Dummy",
+	"ruleset.rulesetEpicDummyFight.label": "<b>Special:</b> Epic Dummy Fight",
+	"ruleset.rulesetBrawlDiscovery.label": "<b>Special:</b> Discovery League",
+	"ruleset.rulesetNessadventure.label": "<b>Scenario:</b> The Nessadventure",
+	"ruleset.rulesetCampfire.label": "The Camp Module",
 
 	"card.type.unit": "Unit",
 	"card.type.spell": "Spell",

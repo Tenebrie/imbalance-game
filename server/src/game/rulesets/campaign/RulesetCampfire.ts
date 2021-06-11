@@ -1,4 +1,5 @@
 import GameMode from '@src/../../shared/src/enums/GameMode'
+import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
 import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRuleset'
 import UnitChallengeDummyOPWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyOPWarrior'
 import AIBehaviour from '@src/../../shared/src/enums/AIBehaviour'
@@ -16,7 +17,6 @@ import UnitCampfireEmptySpace from '@src/game/cards/10-challenge/test-campfire/U
 import GameEventType from '@src/../../shared/src/enums/GameEventType'
 import Keywords from '@src/utils/Keywords'
 import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
-import { ServerGameNovelCreator } from '@src/game/models/ServerGameNovel'
 import ServerGame from '@src/game/models/ServerGame'
 
 interface State {
@@ -27,6 +27,7 @@ export default class RulesetCampfire extends ServerRulesetBuilder<State> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,
+			category: RulesetCategory.PROTOTYPES,
 			state: {
 				bunniesEaten: 0,
 			},

@@ -37,12 +37,15 @@ import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { RulesetBoard, RulesetBoardBuilder } from './RulesetBoard'
 import { RulesetConstants } from '@shared/models/RulesetConstants'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
+import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
 
 export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; count: number })[]
 
 export type ServerRulesetProps = {
 	class: string
 	gameMode: GameMode
+	category: RulesetCategory
+	sortPriority: number
 
 	state: Record<string, any>
 	constants: Partial<RulesetConstants>
@@ -52,9 +55,12 @@ export type ServerRulesetProps = {
 	board: RulesetBoard | null
 }
 
+/* Ruleset representation for an active ServerGame object and client communications */
 export class ServerRuleset implements Ruleset {
 	public readonly class: string
 	public readonly gameMode: GameMode
+	public readonly category: RulesetCategory
+	public readonly sortPriority: number
 
 	public state: any
 	public readonly constants: RulesetConstants
@@ -66,6 +72,8 @@ export class ServerRuleset implements Ruleset {
 	constructor(props: ServerRulesetProps) {
 		this.class = props.class
 		this.gameMode = props.gameMode
+		this.category = props.category
+		this.sortPriority = props.sortPriority
 
 		this.ai = props.ai
 		this.deck = props.deck
@@ -90,6 +98,10 @@ export class ServerRuleset implements Ruleset {
 			...props.constants,
 		}
 	}
+
+	public get playerDeckRequired(): boolean {
+		return this.deck === null
+	}
 }
 
 export type ServerRulesetTemplateProps = ServerRulesetBuilderProps<any> & {
@@ -105,9 +117,12 @@ export type ServerRulesetTemplateProps = ServerRulesetBuilderProps<any> & {
 	cardSelectorBuilders: CardSelectorBuilder[]
 }
 
+/* Ruleset representation stored in RulesetLibrary */
 export class ServerRulesetTemplate {
 	public readonly class: string
 	public readonly gameMode: GameMode
+	public readonly category: RulesetCategory
+	public readonly sortPriority: number
 
 	public readonly state: Record<string, any>
 	public readonly constants: Partial<RulesetConstants>
@@ -123,6 +138,8 @@ export class ServerRulesetTemplate {
 	constructor(props: ServerRulesetTemplateProps) {
 		this.class = props.class
 		this.gameMode = props.gameMode
+		this.category = props.category
+		this.sortPriority = props.sortPriority || 0
 
 		this.state = props.state
 
@@ -153,6 +170,8 @@ export class ServerRulesetTemplate {
 		return new ServerRuleset({
 			class: this.class,
 			gameMode: this.gameMode,
+			category: this.category,
+			sortPriority: this.sortPriority,
 			constants: this.constants,
 			ai: this.ai,
 			deck: this.deck,
@@ -172,9 +191,12 @@ export class ServerRulesetTemplate {
 
 export type ServerRulesetBuilderProps<T> = {
 	gameMode: GameMode
+	category: RulesetCategory
+	sortPriority?: number
 	state?: T
 }
 
+/* Ruleset representation used in the definition files */
 export class ServerRulesetBuilder<T> {
 	private readonly class: string
 	private readonly props: ServerRulesetBuilderProps<T>

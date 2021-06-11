@@ -3,18 +3,23 @@
 		<div class="deck-list" v-if="isDeckListDisplayed">
 			<div class="deck-list-segment" v-for="deckFilter in deckFilters" :key="String(deckFilter.faction) + deckFilter.experimental">
 				<div v-if="deckFilter.decks.length > 0">
-					<the-editor-deck-list-separator :faction="deckFilter.faction" :is-experimental="deckFilter.experimental" />
-					<the-editor-deck-list-item v-for="deck in deckFilter.decks" :key="deck.id" :deck="deck" />
+					<the-deck-list-separator :faction="deckFilter.faction" :is-experimental="deckFilter.experimental" />
+					<the-deck-list-item v-for="deck in deckFilter.decks" :key="deck.id" :deck="deck" />
 				</div>
 			</div>
 			<div class="deck-list-segment" v-if="draftDecks.length > 0 && mode === DeckListMode.EDIT">
-				<the-editor-deck-list-separator-unfinished />
-				<the-editor-deck-list-item v-for="deck in draftDecks" :key="deck.id" :deck="deck" />
+				<the-deck-list-separator-unfinished />
+				<the-deck-list-item v-for="deck in draftDecks" :key="deck.id" :deck="deck" />
 			</div>
+			<the-deck-list-separator-actions v-if="mode === DeckListMode.EDIT" />
+			<the-deck-list-item-create-new v-if="mode === DeckListMode.EDIT" />
 		</div>
 		<div class="buttons">
-			<editor-create-deck-button v-if="mode === DeckListMode.EDIT || decks.length === 0" />
-			<editor-decks-button v-if="mode === DeckListMode.SELECT && finishedDecks.length === 0 && decks.length > 0" />
+			<editor-create-deck-button v-if="decks.length === 0 && mode === DeckListMode.SELECT" />
+			<div class="create-button-sizer" v-if="decks.length === 0 && mode === DeckListMode.EDIT">
+				<editor-create-deck-button />
+			</div>
+			<editor-decks-button v-if="mode === DeckListMode.SELECT && finishedDecks.length === 0" />
 		</div>
 	</div>
 </template>
@@ -22,9 +27,11 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import CardFaction from '@shared/enums/CardFaction'
-import TheEditorDeckListItem from '@/Vue/components/editor/TheDeckListItem.vue'
-import TheEditorDeckListSeparator from '@/Vue/components/editor/TheDeckListSeparator.vue'
-import TheEditorDeckListSeparatorUnfinished from '@/Vue/components/editor/TheDeckListSeparatorUnfinished.vue'
+import TheDeckListItem from '@/Vue/components/editor/TheDeckListItem.vue'
+import TheDeckListItemCreateNew from '@/Vue/components/editor/TheDeckListItemCreateNew.vue'
+import TheDeckListSeparator from '@/Vue/components/editor/TheDeckListSeparator.vue'
+import TheDeckListSeparatorActions from '@/Vue/components/editor/TheDeckListSeparatorActions.vue'
+import TheDeckListSeparatorUnfinished from '@/Vue/components/editor/TheDeckListSeparatorUnfinished.vue'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import DeckListMode from '@/utils/DeckListMode'
 import EditorCreateDeckButton from '@/Vue/components/editor/buttons/EditorCreateDeckButton.vue'
@@ -35,9 +42,11 @@ type FilteredDeck = { faction: CardFaction; experimental: boolean; decks: Popula
 
 export default defineComponent({
 	components: {
-		TheEditorDeckListItem,
-		TheEditorDeckListSeparator,
-		TheEditorDeckListSeparatorUnfinished,
+		TheDeckListItem,
+		TheDeckListItemCreateNew,
+		TheDeckListSeparator,
+		TheDeckListSeparatorActions,
+		TheDeckListSeparatorUnfinished,
 		EditorCreateDeckButton,
 		EditorDecksButton,
 	},
@@ -50,10 +59,6 @@ export default defineComponent({
 	computed: {
 		mode(): DeckListMode {
 			return this.$route.matched.some(({ name }) => name === 'home') ? DeckListMode.SELECT : DeckListMode.EDIT
-		},
-
-		decks(): PopulatedEditorDeck[] {
-			return store.state.editor.decks
 		},
 
 		deckFilters(): FilteredDeck[] {
@@ -72,6 +77,10 @@ export default defineComponent({
 				}
 				return result.concat(normalDeck).concat(experimentalDeck)
 			}, [])
+		},
+
+		decks(): PopulatedEditorDeck[] {
+			return store.state.editor.decks
 		},
 
 		finishedDecks(): PopulatedEditorDeck[] {
@@ -134,6 +143,16 @@ export default defineComponent({
 	.buttons {
 		width: 100%;
 		display: flex;
+		flex-direction: column;
+		margin: 16px 0;
+
+		.create-button-sizer {
+			width: calc(100% - 32px);
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			padding: 0 16px;
+		}
 	}
 }
 </style>

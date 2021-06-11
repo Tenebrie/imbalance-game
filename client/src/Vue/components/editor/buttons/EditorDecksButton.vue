@@ -1,17 +1,19 @@
 <template>
 	<div class="button-container">
-		<button class="primary" @click="onClick">
-			<span>Edit your decks</span>
+		<button class="secondary" @click="onClick">
+			<span><i class="fas fa-list-ul" /> Manage your decks</span>
 		</button>
 	</div>
 </template>
 
 <script lang="ts">
+import store from '@/Vue/store'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
 	methods: {
 		onClick(): void {
+			store.dispatch.popupModule.closeAll()
 			this.$router.push({ name: 'decks' })
 		},
 	},
@@ -27,11 +29,8 @@ export default defineComponent({
 	align-items: center;
 	justify-content: center;
 	button {
-		width: 80%;
-		max-width: 350px;
+		width: 100%;
 		font-size: 1.2em;
-		margin-top: 32px;
-		margin-bottom: 32px;
 	}
 }
 </style>

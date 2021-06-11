@@ -1,8 +1,8 @@
 <template>
 	<div class="button-container">
 		<button class="primary" @click="onClick">
-			<span v-if="!requestInFlight">{{ $locale.get('ui.decks.shareDeck') }}</span>
-			<span v-if="requestInFlight">{{ $locale.get('ui.decks.shareDeck.progress') }}</span>
+			<span v-if="!requestInFlight"><i class="fas fa-external-link-alt" /> {{ $locale.get('ui.decks.shareDeck') }}</span>
+			<span v-if="requestInFlight"><progress-spinner /> {{ $locale.get('ui.decks.shareDeck.progress') }}</span>
 		</button>
 	</div>
 </template>
@@ -11,10 +11,12 @@
 import axios from 'axios'
 import Notifications from '@/utils/Notifications'
 import { defineComponent } from 'vue'
+import ProgressSpinner from '../../utils/ProgressSpinner.vue'
 
 export default defineComponent({
 	data: () => ({
 		requestInFlight: false,
+		ProgressSpinner,
 	}),
 
 	computed: {},

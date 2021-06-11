@@ -20,6 +20,7 @@ import UnitChallengeEagerExplorer from '@src/game/cards/10-challenge/challenge-d
 import UnitChallengeScarredExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeScarredExplorer'
 import HeroChallengeLegendaryExplorer0 from '@src/game/cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer0'
 import UnitCorgiGravedigger from '@src/game/cards/10-challenge/nessadventure/UnitCorgiGravedigger'
+import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
 
 type State = {
 	opCardsPlayed: number
@@ -35,6 +36,7 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,
+			category: RulesetCategory.PROTOTYPES,
 			state: {
 				opCardsPlayed: 0,
 				pozogaPlayed: false,

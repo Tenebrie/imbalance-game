@@ -1,10 +1,10 @@
 <template>
 	<div class="editor-view">
-		<div class="card-library">
-			<the-card-library />
-		</div>
 		<div class="deck-list">
 			<router-view />
+		</div>
+		<div class="card-library">
+			<the-card-library />
 		</div>
 		<pixi-inspected-card />
 	</div>
@@ -27,10 +27,11 @@ export default defineComponent({
 	display: flex;
 	align-items: flex-end;
 	justify-content: center;
+	max-width: $CONTENT_WIDTH;
 
 	.card-library {
 		flex: 1;
-		margin: 0 16px 0 32px;
+		margin: 0 0 0 16px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -44,7 +45,7 @@ export default defineComponent({
 		max-width: $DECK-LIST-WIDTH;
 		flex-grow: 0;
 		flex-shrink: 0;
-		margin: 0 32px 0 16px;
+		margin: 0 16px 0 0;
 		display: flex;
 		align-items: center;
 		justify-content: center;

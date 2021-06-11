@@ -49,7 +49,14 @@ export default defineComponent({
 	align-items: center;
 	justify-content: center;
 	height: 100%;
-	margin: 0 4px;
+	padding: 0 8px;
+
+	&:hover {
+		background: $COLOR-BACKGROUND-TRANSPARENT;
+	}
+	&:hover:active {
+		background: darken($COLOR-BACKGROUND-TRANSPARENT, 30);
+	}
 
 	a {
 		display: flex;

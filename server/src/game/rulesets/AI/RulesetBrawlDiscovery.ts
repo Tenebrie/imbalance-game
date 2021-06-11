@@ -1,5 +1,6 @@
 import Constants from '@src/../../shared/src/Constants'
 import GameMode from '@src/../../shared/src/enums/GameMode'
+import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
 import LeaderTheScavenger from '@src/game/cards/09-neutral/leaders/TheScavenger/LeaderTheScavenger'
 import HeroChallengeDummyWarrior0 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
 import HeroChallengeDummyWarrior1 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
@@ -20,6 +21,8 @@ export default class RulesetBrawlDiscovery extends ServerRulesetBuilder<void> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,
+			category: RulesetCategory.PVE,
+			sortPriority: 1,
 		})
 
 		this.createAI([

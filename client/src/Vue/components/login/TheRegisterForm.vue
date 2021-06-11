@@ -183,6 +183,7 @@ export default defineComponent({
 		color: gray;
 	}
 	.login-link {
+		margin-left: 3px;
 		font-size: 0.8em;
 	}
 }

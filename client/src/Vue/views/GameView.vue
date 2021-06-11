@@ -14,3 +14,9 @@ export default defineComponent({
 	computed: {},
 })
 </script>
+
+<style scoped lang="scss">
+.game-view {
+	width: 100%;
+}
+</style>

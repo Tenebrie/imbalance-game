@@ -126,6 +126,8 @@ body {
 		position: absolute;
 		width: 100%;
 		height: 100%;
+		display: flex;
+		justify-content: center;
 
 		&.in-game {
 			overflow-y: hidden;

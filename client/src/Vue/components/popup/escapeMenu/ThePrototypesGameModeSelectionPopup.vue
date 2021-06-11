@@ -1,7 +1,7 @@
 <template>
-	<div class="the-challenge-ai-selection">
+	<div class="the-prototypes-game-mode-selection">
 		<div class="container" @click="onMenuClick">
-			<h2>AI Difficulty</h2>
+			<h2>Prototype Game Modes</h2>
 			<button
 				v-for="ruleset in availableRulesets"
 				:key="ruleset.class"
@@ -19,6 +19,7 @@ import axios from 'axios'
 import GameMessage from '@shared/models/network/GameMessage'
 import { computed, defineComponent } from 'vue'
 import RulesetRefMessage from '@shared/models/network/ruleset/RulesetRefMessage'
+import TheDeckSelectionPopup from './TheDeckSelectionPopup.vue'
 
 export default defineComponent({
 	setup() {
@@ -26,13 +27,25 @@ export default defineComponent({
 			event.cancelBubble = true
 		}
 
-		const availableRulesets = computed<RulesetRefMessage[]>(() => store.state.rulesets.pveRulesets)
+		const availableRulesets = computed<RulesetRefMessage[]>(() => store.state.rulesets.prototypeRulesets)
 
 		const onRulesetSelected = async (ruleset: RulesetRefMessage): Promise<void> => {
-			store.dispatch.popupModule.close()
-			const response = await axios.post('/api/games', { ruleset: ruleset.class })
-			const gameMessage: GameMessage = response.data.data
-			await store.dispatch.joinGame(gameMessage)
+			if (ruleset.playerDeckRequired) {
+				store.dispatch.popupModule.open({
+					component: TheDeckSelectionPopup,
+					onConfirm: async () => {
+						store.dispatch.popupModule.close()
+						const response = await axios.post('/api/games', { ruleset: ruleset.class })
+						const gameMessage: GameMessage = response.data.data
+						await store.dispatch.joinGame(gameMessage)
+					},
+				})
+			} else {
+				store.dispatch.popupModule.close()
+				const response = await axios.post('/api/games', { ruleset: ruleset.class })
+				const gameMessage: GameMessage = response.data.data
+				await store.dispatch.joinGame(gameMessage)
+			}
 		}
 
 		return {
@@ -47,7 +60,7 @@ export default defineComponent({
 <style scoped lang="scss">
 @import 'src/Vue/styles/generic';
 
-.the-challenge-ai-selection {
+.the-prototypes-game-mode-selection {
 	position: absolute;
 	width: 100%;
 	height: 100%;

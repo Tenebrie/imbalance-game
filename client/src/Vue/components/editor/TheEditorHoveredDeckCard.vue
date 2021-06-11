@@ -1,11 +1,6 @@
 <template>
 	<div class="the-editor-hovered-deck-card" :style="overlayPosition" ref="overlayRef">
-		<pixi-pre-rendered-card
-			class="card"
-			:key="hoveredDeckCard && hoveredDeckCard.class"
-			:card="hoveredDeckCard"
-			:vertical-offset="editorModeOffset.y"
-		/>
+		<pixi-pre-rendered-card class="card" :key="hoveredDeckCard && hoveredDeckCard.class" :card="hoveredDeckCard" />
 	</div>
 </template>
 
@@ -26,7 +21,7 @@ export default defineComponent({
 
 		const overlayPosition = computed(() => {
 			return {
-				top: `calc(${store.state.editor.hoveredDeckCard.position.y}px - 48px)`,
+				top: `calc(${store.state.editor.hoveredDeckCard.position.y}px - ${584 / 3}px + ${editorModeOffset.value.y}px)`,
 			}
 		})
 
@@ -34,10 +29,15 @@ export default defineComponent({
 			const offset = new PIXI.Point(0, 0)
 
 			if (overlayRef.value) {
-				offset.set(
-					Math.min(0, window.innerWidth - overlayRef.value.offsetLeft),
-					Math.min(window.innerHeight - store.state.editor.hoveredDeckCard.position.y - overlayRef.value.clientHeight, 0)
-				)
+				const topClipping = store.state.editor.hoveredDeckCard.position.y - overlayRef.value.clientHeight / 2 - 4
+				if (topClipping < 0) {
+					offset.y = -topClipping
+				}
+
+				const bottomClipping = window.innerHeight - (store.state.editor.hoveredDeckCard.position.y + overlayRef.value.clientHeight / 2 + 48)
+				if (bottomClipping < 0) {
+					offset.y = bottomClipping
+				}
 			}
 			return offset
 		})
@@ -62,10 +62,11 @@ export default defineComponent({
 	pointer-events: none;
 	display: flex;
 	justify-content: center;
-	width: calc(#{$CARD_WIDTH} / 2);
-	height: calc(#{$CARD_HEIGHT} / 2);
-	right: 100%;
-	margin-top: -4px;
+	width: calc(#{$CARD_WIDTH} / 1.5);
+	height: calc(#{$CARD_HEIGHT} / 1.5);
+	left: 100%;
+	margin-top: -3px;
+	z-index: 1;
 
 	.card {
 		display: flex;

@@ -93,6 +93,11 @@ export default defineComponent({
 	align-items: center;
 	min-height: 1.4em;
 	color: darken(white, 0) !important;
+	text-decoration-line: none !important;
+
+	& > span {
+		text-decoration: none;
+	}
 
 	&.selected {
 		background: rgba(lighten(green, 20), 0.1);

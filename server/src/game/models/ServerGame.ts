@@ -14,7 +14,7 @@ import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
 import CardLocation from '@shared/enums/CardLocation'
-import { colorizeId, colorizePlayer, createRandomGameId } from '@src/utils/Utils'
+import { colorizeConsoleText, colorizeId, colorizePlayer, createRandomGameId } from '@src/utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
@@ -453,13 +453,15 @@ export default class ServerGame implements Game {
 
 		if (victoriousPlayer === null) {
 			OutgoingMessageHandlers.notifyAboutDraw(this)
-			console.info(`Game ${colorizeId(this.id)} finished with a draw. [${victoryReason}]`)
+			console.info(`Game ${colorizeId(this.id)} finished with a draw: ${colorizeConsoleText(victoryReason)}.`)
 		} else {
 			const defeatedPlayer = this.getOpponent(victoriousPlayer)!
 			OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
 			OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
 			console.info(
-				`Game ${colorizeId(this.id)} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won! [${victoryReason}]`
+				`Game ${colorizeId(this.id)} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won: ${colorizeConsoleText(
+					victoryReason
+				)}.`
 			)
 		}
 		GameHistoryDatabase.closeGame(this, victoryReason, victoriousPlayer instanceof ServerBotPlayerInGame ? null : victoriousPlayer).then()

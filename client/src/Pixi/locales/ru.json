@@ -58,11 +58,11 @@
 	"ui.profile.delete.progress": "Удаление...",
 
 	"ui.decks.saveDeck": "Сохранить",
-	"ui.decks.saveDeck.progress": "Сохранение...",
+	"ui.decks.saveDeck.progress": "Сохраняем...",
 	"ui.decks.shareDeck": "Поделиться",
-	"ui.decks.shareDeck.progress": "Загрузка...",
+	"ui.decks.shareDeck.progress": "Делимся...",
 	"ui.decks.deleteDeck": "Удалить",
-	"ui.decks.deleteDeck.progress": "Удаление...",
+	"ui.decks.deleteDeck.progress": "Удаляем...",
 	"ui.decks.leaveDeck": "Назад",
 
 	"log.entry.roundStarted": "{player} начинает новый раунд",

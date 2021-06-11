@@ -1,6 +1,7 @@
 import Constants from '@src/../../shared/src/Constants'
 import GameEventType from '@src/../../shared/src/enums/GameEventType'
 import GameMode from '@src/../../shared/src/enums/GameMode'
+import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
 import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
 import HeroChallengeDummyWarrior0 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
 import HeroChallengeDummyWarrior1 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
@@ -15,6 +16,8 @@ export default class RulesetEpicDummyFight extends ServerRulesetBuilder<void> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,
+			category: RulesetCategory.PVE,
+			sortPriority: 1,
 		})
 
 		this.updateConstants({

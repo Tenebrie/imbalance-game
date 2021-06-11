@@ -10,7 +10,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 
 export default class HeroLightOracle extends ServerCard {
-	cardsToSee = 5
+	cardsToSee = 3
 
 	constructor(game: ServerGame) {
 		super(game, {

@@ -1,6 +1,6 @@
 <template>
 	<div class="home-view">
-		<the-deck-list class="deck-list" />
+		<the-home-action-list class="action-list" />
 		<the-game-list class="game-list" />
 		<the-changelog class="changelog" />
 	</div>
@@ -11,15 +11,15 @@ import store from '@/Vue/store'
 import TheGameList from '../components/home/TheGameList.vue'
 import TheChangelog from '@/Vue/components/home/TheChangelog.vue'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import TheDeckList from '@/Vue/components/editor/TheDeckList.vue'
 import TheWelcomePopup from '@/Vue/components/popup/TheWelcomePopup.vue'
 import { defineComponent } from 'vue'
+import TheHomeActionList from '../components/home/TheHomeActionList.vue'
 
 export default defineComponent({
 	components: {
-		TheDeckList,
 		TheGameList,
 		TheChangelog,
+		TheHomeActionList,
 	},
 
 	mounted(): void {
@@ -51,6 +51,7 @@ export default defineComponent({
 	display: flex;
 	align-items: flex-end;
 	justify-content: center;
+	max-width: $CONTENT_WIDTH;
 
 	& > div {
 		height: 100%;
@@ -58,17 +59,17 @@ export default defineComponent({
 		flex-direction: column;
 		background: $COLOR-BACKGROUND-TRANSPARENT;
 
-		&.deck-list {
-			flex: 1;
-			margin: 0 16px 0 32px;
+		&.action-list {
+			flex: 3;
+			margin: 0 16px 0 0;
 		}
 		&.game-list {
-			flex: 2;
+			flex: 4;
 			margin: 0 16px 0 16px;
 		}
 		&.changelog {
-			flex: 1;
-			margin: 0 32px 0 16px;
+			flex: 3;
+			margin: 0 0 0 16px;
 		}
 	}
 }

@@ -51,15 +51,8 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	// Fresh connection
 	if (!connectedPlayer) {
 		const deckId = req.query.deckId as string
-		if (!deckId) {
+		if (!deckId && currentGame.ruleset.playerDeckRequired) {
 			OutgoingMessageHandlers.notifyAboutMissingDeckId(ws)
-			ws.close()
-			return
-		}
-
-		const deck = await EditorDeckDatabase.selectEditorDeckByIdForPlayer(deckId, currentPlayer)
-		if (!deck) {
-			OutgoingMessageHandlers.notifyAboutInvalidDeck(ws)
 			ws.close()
 			return
 		}
@@ -68,6 +61,12 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 		if (currentGame.ruleset.deck && currentGame.ruleset.deck.fixedDeck) {
 			inflatedDeck = ServerTemplateCardDeck.fromEditorDeck(currentGame, currentGame.ruleset.deck.fixedDeck)
 		} else {
+			const deck = await EditorDeckDatabase.selectEditorDeckByIdForPlayer(deckId, currentPlayer)
+			if (!deck) {
+				OutgoingMessageHandlers.notifyAboutInvalidDeck(ws)
+				ws.close()
+				return
+			}
 			inflatedDeck = ServerTemplateCardDeck.fromEditorDeck(currentGame, deck)
 		}
 		currentPlayerInGame = currentGame.addPlayer(currentPlayer, inflatedDeck)

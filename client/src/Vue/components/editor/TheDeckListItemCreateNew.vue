@@ -1,17 +1,17 @@
 <template>
-	<div class="button-container">
-		<button class="primary" @click="onClick">
-			<span v-if="!requestInFlight"><i class="fas fa-plus-circle" /> {{ $locale.get('ui.editor.deck.create') }}</span>
+	<span>
+		<button class="deck-link" @click="onClick">
+			<span v-if="!requestInFlight"><i class="fas fa-plus" /> Create New Deck...</span>
 			<span v-if="requestInFlight"><progress-spinner /> {{ $locale.get('ui.editor.deck.create.progress') }}</span>
 		</button>
-	</div>
+	</span>
 </template>
 
 <script lang="ts">
 import Notifications from '@/utils/Notifications'
 import store from '@/Vue/store'
 import { defineComponent } from 'vue'
-import ProgressSpinner from '../../utils/ProgressSpinner.vue'
+import ProgressSpinner from '@/Vue/components/utils/ProgressSpinner.vue'
 
 export default defineComponent({
 	components: { ProgressSpinner },
@@ -43,16 +43,24 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../../../styles/generic';
+@import '../../styles/generic';
 
-.button-container {
-	width: 100%;
+.deck-link {
+	padding: 8px 16px;
+	text-align: start;
+	cursor: pointer;
 	display: flex;
 	align-items: center;
+	min-height: 1.4em;
+	background: none;
+	border: none;
+	font-size: 1.4em;
+	color: darken(white, 0);
+	width: 100%;
 	justify-content: center;
-	button {
-		width: 100%;
-		font-size: 1.2em;
+
+	&:hover {
+		background: $COLOR-BACKGROUND-TRANSPARENT;
 	}
 }
 </style>
