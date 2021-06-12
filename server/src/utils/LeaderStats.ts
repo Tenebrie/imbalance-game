@@ -1,17 +1,23 @@
-import ServerCard from '../game/models/ServerCard'
 import ServerUnit from '../game/models/ServerUnit'
+import { EventSubscriber } from '@src/game/models/ServerGameEvents'
+import ServerCard from '@src/game/models/ServerCard'
+import { ServerBuffSource } from '@src/game/models/buffs/ServerBuffContainer'
+import ServerBuff from '@src/game/models/buffs/ServerBuff'
 
-export type LeaderStatValueGetter = (card: ServerCard | null) => number
+export type LeaderStatValueGetter = (card: EventSubscriber | ServerBuffSource) => number
 
 const asSingleUnitStat = (value: number, mapper: (unit: ServerUnit) => number): LeaderStatValueGetter => {
-	return (card: ServerCard | null) => {
-		const totalBoardStat =
-			card === null
-				? 0
-				: card.game.board
-						.getUnitsOwnedByPlayer(card.owner)
-						.map(mapper)
-						.reduce((acc, val) => acc + val, 0)
+	return (subscriber: EventSubscriber | ServerBuffSource) => {
+		if (subscriber === null) {
+			return value
+		}
+
+		const owner =
+			subscriber instanceof ServerCard ? subscriber.owner : subscriber instanceof ServerBuff ? subscriber.parent.owner : subscriber.owner
+		const totalBoardStat = subscriber.game.board
+			.getUnitsOwnedByPlayer(owner)
+			.map(mapper)
+			.reduce((acc, val) => acc + val, 0)
 		return value + totalBoardStat
 	}
 }

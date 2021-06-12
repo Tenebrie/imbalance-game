@@ -7,13 +7,11 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerBoardOrders from './ServerBoardOrders'
 import ServerCard from './ServerCard'
-import { toRowIndex } from '../../utils/Utils'
+import { toRowIndex } from '@src/utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
-import BuffDuration from '@shared/enums/BuffDuration'
 import GameHookType, { UnitDestroyedHookArgs, UnitDestroyedHookValues } from './events/GameHookType'
-import BuffTutoredCard from '../buffs/BuffTutoredCard'
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 
@@ -308,23 +306,6 @@ export default class ServerBoard implements Board {
 
 	public moveUnitToFarRight(unit: ServerUnit, rowIndex: number): void {
 		return this.moveUnit(unit, rowIndex, this.rows[rowIndex].cards.length)
-	}
-
-	public sapUnit(target: ServerUnit, sapper: ServerCard): void {
-		const targetCard = target.card
-		const cardOwner = target.card.owner
-		if (!cardOwner) {
-			return
-		}
-
-		this.rows[target.rowIndex].removeUnit(target)
-		cardOwner.cardHand.addUnit(targetCard)
-		if (cardOwner !== sapper.owner) {
-			targetCard.isRevealed = false
-			targetCard.reveal()
-		}
-		const buffDuration = cardOwner === sapper.owner ? BuffDuration.END_OF_THIS_TURN : BuffDuration.END_OF_NEXT_TURN
-		targetCard.buffs.add(BuffTutoredCard, sapper, buffDuration)
 	}
 
 	/* Remove this unit from the board

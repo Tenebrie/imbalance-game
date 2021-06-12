@@ -22,8 +22,8 @@ export default class UnitLoneLooter extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createCallback(GameEventType.BUFF_CREATED, [CardLocation.DECK])
-			.require(({ triggeringBuff }) => triggeringBuff.card.owner !== this.owner)
+		this.createCallback(GameEventType.CARD_BUFF_CREATED, [CardLocation.DECK])
+			.require(({ triggeringBuff }) => triggeringBuff.parent.owner !== this.owner)
 			.require(({ triggeringBuff }) => triggeringBuff.source?.owner === this.owner)
 			.prepare(() => ({
 				index: this.ownerInGame.cardDeck.unitCards.filter((unit) => unit.class === this.class),

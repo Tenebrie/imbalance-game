@@ -62,7 +62,7 @@ export const hashCode = (targetString: string): number => {
 	return hash
 }
 
-export const sortCards = (inputArray: Card[] | CardMessage[]): Card[] | CardMessage[] => {
+export function sortCards<T extends Card | CardMessage>(inputArray: T[]): T[] {
 	return inputArray.slice().sort((a: Card | CardMessage, b: Card | CardMessage) => {
 		if ('features' in a && 'features' in b) {
 			if (a.features.includes(CardFeature.TEMPORARY_CARD) && !b.features.includes(CardFeature.TEMPORARY_CARD)) {

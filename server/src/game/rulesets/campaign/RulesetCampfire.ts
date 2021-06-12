@@ -19,18 +19,11 @@ import Keywords from '@src/utils/Keywords'
 import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
 import ServerGame from '@src/game/models/ServerGame'
 
-interface State {
-	bunniesEaten: number
-}
-
-export default class RulesetCampfire extends ServerRulesetBuilder<State> {
+export default class RulesetCampfire extends ServerRulesetBuilder<void> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.PROTOTYPES,
-			state: {
-				bunniesEaten: 0,
-			},
 		})
 
 		this.updateConstants({

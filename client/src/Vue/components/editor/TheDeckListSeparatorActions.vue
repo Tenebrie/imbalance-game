@@ -7,7 +7,6 @@
 </template>
 
 <script lang="ts">
-import Localization from '@/Pixi/Localization'
 import { defineComponent } from 'vue'
 
 export default defineComponent({

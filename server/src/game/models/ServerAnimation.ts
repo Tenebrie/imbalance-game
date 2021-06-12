@@ -9,13 +9,17 @@ import Card from '@shared/models/Card'
 import Unit from '@shared/models/Unit'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
+import ServerBoardRow from './ServerBoardRow'
+import BoardRow from '@src/../../shared/src/models/BoardRow'
 
 export default class ServerAnimation implements Animation {
 	type: AnimationType
 	sourceCard: Card | null
 	sourceUnit: Unit | null
+	sourceRow: BoardRow | null
 	targetCard: Card | null
 	targetCards: Card[] | null
+	targetRows: BoardRow[] | null
 	params: any
 
 	constructor(type: AnimationType, params: Record<string, any>) {
@@ -23,8 +27,10 @@ export default class ServerAnimation implements Animation {
 		this.params = params
 		this.sourceCard = null
 		this.sourceUnit = null
+		this.sourceRow = null
 		this.targetCard = null
 		this.targetCards = null
+		this.targetRows = null
 	}
 
 	public static null(): ServerAnimation {
@@ -56,6 +62,13 @@ export default class ServerAnimation implements Animation {
 		return animation
 	}
 
+	public static rowAttacksCards(sourceRow: ServerBoardRow, targetCards: ServerCard[]): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.ROW_ATTACK, {})
+		animation.sourceRow = sourceRow
+		animation.targetCards = targetCards
+		return animation
+	}
+
 	public static cardAffectsCards(sourceCard: ServerCard, targetCards: ServerCard[]): ServerAnimation {
 		const animation = new ServerAnimation(AnimationType.CARD_AFFECT, {})
 		animation.sourceCard = sourceCard
@@ -67,6 +80,27 @@ export default class ServerAnimation implements Animation {
 		const animation = new ServerAnimation(AnimationType.CARD_HEAL, {})
 		animation.sourceCard = sourceCard
 		animation.targetCards = targetCards
+		return animation
+	}
+
+	public static cardAffectsRows(sourceCard: ServerCard, targetRows: ServerBoardRow[]): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.CARD_AFFECTS_ROWS, {})
+		animation.sourceCard = sourceCard
+		animation.targetRows = targetRows
+		return animation
+	}
+
+	public static rowAffectsCards(sourceRow: ServerBoardRow, targetCards: ServerCard[]): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.ROW_AFFECTS_CARDS, {})
+		animation.sourceRow = sourceRow
+		animation.targetCards = targetCards
+		return animation
+	}
+
+	public static rowAffectsRows(sourceRow: ServerBoardRow, targetRows: ServerBoardRow[]): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.ROW_AFFECTS_ROWS, {})
+		animation.sourceRow = sourceRow
+		animation.targetRows = targetRows
 		return animation
 	}
 
@@ -116,6 +150,15 @@ export default class ServerAnimation implements Animation {
 		}
 		const animation = new ServerAnimation(AnimationType.CARD_RECEIVED_BUFF, params)
 		animation.targetCards = targetCards
+		return animation
+	}
+
+	public static rowsReceivedBuff(targetRows: ServerBoardRow[], alignment: BuffAlignment): ServerAnimation {
+		const params: CardReceivedBuffAnimParams = {
+			alignment: alignment,
+		}
+		const animation = new ServerAnimation(AnimationType.ROWS_RECEIVED_BUFF, params)
+		animation.targetRows = targetRows
 		return animation
 	}
 

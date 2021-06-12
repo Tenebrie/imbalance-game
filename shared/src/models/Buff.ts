@@ -3,12 +3,13 @@ import CardTribe from '../enums/CardTribe'
 import CardFeature from '../enums/CardFeature'
 import BuffFeature from '../enums/BuffFeature'
 import BuffAlignment from '../enums/BuffAlignment'
+import BoardRow from './BoardRow'
+
+export type BuffSource = Card | BoardRow | null
 
 export default interface Buff {
 	id: string
-	card: Card | null
 	class: string
-	source: Card | null
 	alignment: BuffAlignment
 	cardTribes: CardTribe[]
 	buffFeatures: BuffFeature[]
@@ -21,4 +22,12 @@ export default interface Buff {
 	baseDuration: number
 
 	protected: boolean
+}
+
+export interface CardBuff extends Buff {
+	parent: Card | null
+}
+
+export interface RowBuff extends Buff {
+	parent: BoardRow | null
 }

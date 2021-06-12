@@ -6,7 +6,7 @@ import ServerDamageInstance from './ServerDamageSource'
 import { ServerCardTargetCard, ServerCardTargetRow, ServerCardTargetUnit } from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
-import ServerBuffContainer from './ServerBuffContainer'
+import ServerBuffContainer from './buffs/ServerBuffContainer'
 import { OrderTarget } from '@src/game/models/ServerBoardOrders'
 
 export default class ServerUnit implements Unit {

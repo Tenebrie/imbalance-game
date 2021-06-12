@@ -2,7 +2,7 @@ import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerGame from '@src/game/models/ServerGame'
-import ServerBuff from '@src/game/models/ServerBuff'
+import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import ServerCard from '@src/game/models/ServerCard'
 import { EventSubscription } from '@src/game/models/events/EventSubscription'
 import { GameEvent } from '@src/game/models/events/GameEventCreators'
@@ -10,11 +10,12 @@ import GameHookType, { CardTakesDamageHookArgs } from '@src/game/models/events/G
 import { EventHook } from '@src/game/models/events/EventHook'
 import { CardSelector } from '@src/game/models/events/selectors/CardSelector'
 import { CardSelectorBuilder } from '@src/game/models/events/selectors/CardSelectorBuilder'
-import Utils, { colorizeClass, colorizeId } from '@src/utils/Utils'
+import Utils, { colorizeClass, colorizeId, getOwner } from '@src/utils/Utils'
 import { cardPerform, cardRequire } from '@src/game/utils/CardEventHandlers'
 import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
 import CardLocation from '@shared/enums/CardLocation'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import ServerBoardRow from '@src/game/models/ServerBoardRow'
 
 export type EventSubscriber = ServerCard | ServerBuff | null
 
@@ -113,10 +114,10 @@ export default class ServerGameEvents {
 
 		const validSubscriptions = this.eventSubscriptions
 			.get(event.type)!
-			.filter((subscription) => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
+			.filter((subscription) => subscription.ignoreControlEffects || !ServerGameEvents.subscriberSuspended(subscription.subscriber))
 			.filter((subscription) =>
 				subscription.conditions.every((condition) => {
-					return cardRequire(this.game, () => condition(event.args, event))
+					return cardRequire(this.game, subscription.subscriber, () => condition(event.args, event))
 				})
 			)
 
@@ -126,7 +127,7 @@ export default class ServerGameEvents {
 			if (this.evaluatingSelectors || (event.effectSource && event.effectSource === subscription.subscriber)) {
 				subscription.callbacks.forEach((callback) => {
 					this.logEventExecution(event, subscription, true)
-					cardPerform(this.game, () => {
+					cardPerform(this.game, subscription.subscriber, () => {
 						callback(event.args, preparedState)
 					})
 				})
@@ -152,17 +153,17 @@ export default class ServerGameEvents {
 
 		const matchingHooks = this.eventHooks
 			.get(hook)!
-			.filter((subscription) => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
+			.filter((hook) => hook.ignoreControlEffects || !ServerGameEvents.subscriberSuspended(hook.subscriber))
 			.filter(
 				(hook) =>
 					!hook.conditions.find((condition) => {
-						return cardRequire(this.game, () => !condition(hookArgs))
+						return cardRequire(this.game, hook.subscriber, () => !condition(hookArgs))
 					})
 			)
 
 		matchingHooks.forEach((hook) =>
 			hook.callbacks.forEach((callback) => {
-				cardPerform(this.game, () => callback(hookArgs))
+				cardPerform(this.game, hook.subscriber, () => callback(hookArgs))
 			})
 		)
 
@@ -176,17 +177,17 @@ export default class ServerGameEvents {
 	public resolveEvents(): void {
 		let currentCallbacks = this.callbackQueue.slice().sort((a, b) => {
 			// Player > System
-			if (!a.subscriber || !b.subscriber) {
-				return 0
-			} else if (a.subscriber instanceof ServerGame) {
+			if (a.subscriber === null && b.subscriber !== null) {
 				return 1
-			} else if (b.subscriber instanceof ServerGame) {
+			} else if (b.subscriber === null && a.subscriber !== null) {
 				return -1
+			} else if (a.subscriber === null || b.subscriber === null) {
+				return 0
 			}
 
 			// Current player > Opponent
-			const ownerOfA = a.subscriber instanceof ServerCard ? a.subscriber.ownerInGame : a.subscriber.card.ownerInGame
-			const ownerOfB = b.subscriber instanceof ServerCard ? b.subscriber.ownerInGame : b.subscriber.card.ownerInGame
+			const ownerOfA = getOwner(a.subscriber)
+			const ownerOfB = getOwner(b.subscriber)
 			if (ownerOfA !== ownerOfB) {
 				if (ownerOfA === this.game.activePlayer) {
 					return -1
@@ -195,9 +196,29 @@ export default class ServerGameEvents {
 				}
 			}
 
+			// Card effects > Row effects
+			if (a.subscriber instanceof ServerCard && b.subscriber instanceof ServerBuff && b.subscriber.parent instanceof ServerBoardRow) {
+				return -1
+			} else if (
+				b.subscriber instanceof ServerCard &&
+				a.subscriber instanceof ServerBuff &&
+				a.subscriber.parent instanceof ServerBoardRow
+			) {
+				return 1
+			} else if (
+				a.subscriber instanceof ServerBuff &&
+				b.subscriber instanceof ServerBuff &&
+				a.subscriber.parent instanceof ServerBoardRow &&
+				b.subscriber.parent instanceof ServerBoardRow
+			) {
+				const distanceOfA = this.game.board.getDistanceToStaticFront(a.subscriber.parent.index)
+				const distanceOfB = this.game.board.getDistanceToStaticFront(b.subscriber.parent.index)
+				return distanceOfA - distanceOfB
+			}
+
 			// Board > Hand > Deck > Graveyard > Other locations
-			const cardOfA = a.subscriber instanceof ServerCard ? a.subscriber : a.subscriber.card
-			const cardOfB = b.subscriber instanceof ServerCard ? b.subscriber : b.subscriber.card
+			const cardOfA = a.subscriber instanceof ServerCard ? a.subscriber : (a.subscriber.parent as ServerCard)
+			const cardOfB = b.subscriber instanceof ServerCard ? b.subscriber : (b.subscriber.parent as ServerCard)
 			const locationToNumber = (cardLocation: CardLocation): number => {
 				switch (cardLocation) {
 					case CardLocation.BOARD:
@@ -233,7 +254,7 @@ export default class ServerGameEvents {
 						return 100
 				}
 			}
-			if (locationOfA === locationOfB && locationOfA !== CardLocation.BOARD && locationOfB !== CardLocation.BOARD) {
+			if (locationOfA === locationOfB && locationOfA !== CardLocation.BOARD && locationOfB !== CardLocation.BOARD && ownerOfA && ownerOfB) {
 				const indexOfA = getCardIndex(cardOfA, ownerOfA, locationOfA)
 				const indexOfB = getCardIndex(cardOfB, ownerOfB, locationOfB)
 				return indexOfA - indexOfB
@@ -281,7 +302,11 @@ export default class ServerGameEvents {
 		const filterOutEvents = () => {
 			currentCallbacks = currentCallbacks.filter((callbackWrapper) => {
 				const failedCondition = callbackWrapper.immediateConditions.find((condition) => {
-					return cardRequire(this.game, () => !condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent))
+					return cardRequire(
+						this.game,
+						callbackWrapper.subscriber,
+						() => !condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent)
+					)
 				})
 				return !failedCondition
 			})
@@ -293,7 +318,7 @@ export default class ServerGameEvents {
 			const callbackWrapper = currentCallbacks.shift()!
 
 			this.logEventExecution(callbackWrapper.rawEvent, callbackWrapper.subscription, false)
-			cardPerform(this.game, () => {
+			cardPerform(this.game, callbackWrapper.subscriber, () => {
 				callbackWrapper.callback(callbackWrapper.args, callbackWrapper.preparedState)
 			})
 			this.game.animation.syncAnimationThreads()
@@ -336,7 +361,7 @@ export default class ServerGameEvents {
 		allGameCards = new Array(...new Set(allGameCards))
 
 		this.cardSelectors.forEach((selector) => {
-			if ((!selector.ignoreControlEffects && this.subscriberSuspended(selector.subscriber)) || selector.markedForRemoval) {
+			if ((!selector.ignoreControlEffects && ServerGameEvents.subscriberSuspended(selector.subscriber)) || selector.markedForRemoval) {
 				selector.clearSelection()
 			} else {
 				selector.evaluate(allGameCards)
@@ -348,12 +373,14 @@ export default class ServerGameEvents {
 		this.evaluatingSelectors = false
 	}
 
-	private subscriberSuspended(subscriber: EventSubscriber): boolean {
-		if (subscriber instanceof ServerGame || !subscriber) {
+	private static subscriberSuspended(subscriber: EventSubscriber): boolean {
+		if (!subscriber) {
 			return false
 		}
-		if (subscriber instanceof ServerBuff) {
-			return subscriber.card.features.includes(CardFeature.SUSPENDED)
+		if (subscriber instanceof ServerBuff && subscriber.parent instanceof ServerCard) {
+			return subscriber.parent.features.includes(CardFeature.SUSPENDED)
+		} else if (subscriber instanceof ServerBuff) {
+			return false
 		}
 		return subscriber.features.includes(CardFeature.STUNNED)
 	}

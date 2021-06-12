@@ -14,12 +14,10 @@ import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import IncomingSpectatorMessageHandlers from '../game/handlers/IncomingSpectatorMessageHandlers'
 import { ClientToServerSpectatorMessageTypes } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import { Router as WebSocketRouter } from 'express-ws'
-import GameMode from '@shared/enums/GameMode'
-import ChallengeLevel from '@shared/enums/ChallengeLevel'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
-import CardLibrary from '@src/game/libraries/CardLibrary'
+import EventContext from '@src/game/models/EventContext'
 
 const router = express.Router() as WebSocketRouter
 
@@ -76,6 +74,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	currentPlayer.registerConnection(ws, currentGame)
 
 	ws.on('message', (rawMsg: string) => {
+		EventContext.setGame(currentGame)
 		const msg = JSON.parse(restoreObjectIDs(currentGame, rawMsg)) as ClientToServerJson
 		const messageType = msg.type
 		const handler = IncomingMessageHandlers[messageType]
@@ -99,6 +98,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Player action)', null)
 			currentGame.forceShutdown('Unhandled error (Player action)')
 		}
+		EventContext.clear()
 	})
 
 	ws.on('close', () => {

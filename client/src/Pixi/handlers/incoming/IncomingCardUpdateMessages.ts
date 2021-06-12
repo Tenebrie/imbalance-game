@@ -2,10 +2,9 @@ import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageH
 import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 import Core from '@/Pixi/Core'
-import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import ClientBuff from '@/Pixi/models/ClientBuff'
-import BuffRefMessage from '@shared/models/network/buffs/BuffRefMessage'
 import CardStatsMessage from '@shared/models/network/cardStats/CardStatsMessage'
+import OpenCardBuffMessage from '@shared/models/network/buffs/OpenCardBuffMessage'
 
 const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMessageHandlerFunction } = {
 	[CardUpdateMessageType.STATS]: (data: CardStatsMessage) => {
@@ -33,8 +32,8 @@ const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMe
 		})
 	},
 
-	[CardUpdateMessageType.BUFF_ADD]: (data: BuffMessage) => {
-		const card = Core.game.findRenderedCardById(data.cardId!)
+	[CardUpdateMessageType.CARD_BUFF_ADD]: (data: OpenCardBuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.parentId)
 		if (!card) {
 			return
 		}
@@ -42,8 +41,8 @@ const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMe
 		card.buffs.add(new ClientBuff(data))
 	},
 
-	[CardUpdateMessageType.BUFF_DURATION]: (data: BuffMessage) => {
-		const card = Core.game.findRenderedCardById(data.cardId!)
+	[CardUpdateMessageType.CARD_BUFF_DURATION]: (data: OpenCardBuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.parentId)
 		if (!card) {
 			return
 		}
@@ -59,8 +58,8 @@ const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMe
 		}
 	},
 
-	[CardUpdateMessageType.BUFF_REMOVE]: (data: BuffRefMessage) => {
-		const card = Core.game.findRenderedCardById(data.cardId!)
+	[CardUpdateMessageType.CARD_BUFF_REMOVE]: (data: OpenCardBuffMessage) => {
+		const card = Core.game.findRenderedCardById(data.parentId)
 		if (!card) {
 			return
 		}

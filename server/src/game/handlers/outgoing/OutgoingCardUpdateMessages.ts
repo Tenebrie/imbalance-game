@@ -1,18 +1,16 @@
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
-import { isCardPublic } from '../../../utils/Utils'
-import ServerBuff from '../../models/ServerBuff'
-import CardLibraryPlaceholderGame from '../../utils/CardLibraryPlaceholderGame'
+import { isCardPublic } from '@src/utils/Utils'
+import { ServerCardBuff } from '../../models/buffs/ServerBuff'
 import OpenCardStatsMessage from '@shared/models/network/cardStats/OpenCardStatsMessage'
 import HiddenCardStatsMessage from '@shared/models/network/cardStats/HiddenCardStatsMessage'
-import OpenBuffMessage from '@shared/models/network/buffs/OpenBuffMessage'
-import BuffRefMessage from '@shared/models/network/buffs/BuffRefMessage'
+import OpenCardBuffMessage from '@shared/models/network/buffs/OpenCardBuffMessage'
 import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 export default {
 	notifyAboutCardStatsChange(card: ServerCard): void {
-		if (card.game === CardLibraryPlaceholderGame.get()) {
+		if (card.game.name === 'Card Library Placeholder Game') {
 			return
 		}
 
@@ -56,59 +54,62 @@ export default {
 		})
 	},
 
-	notifyAboutCardBuffAdded(card: ServerCard, buff: ServerBuff): void {
+	notifyAboutCardBuffAdded(buff: ServerCardBuff): void {
+		const card = buff.parent
 		if (!card.owner || !card.owner.opponent) {
 			return
 		}
 
 		const owner = card.owner.player
 		const opponent = card.owner.opponent.player
-		const message = new OpenBuffMessage(buff)
+		const message = new OpenCardBuffMessage(buff)
 
 		owner.sendMessage({
-			type: CardUpdateMessageType.BUFF_ADD,
+			type: CardUpdateMessageType.CARD_BUFF_ADD,
 			data: message,
 		})
 		opponent.sendMessage({
-			type: CardUpdateMessageType.BUFF_ADD,
+			type: CardUpdateMessageType.CARD_BUFF_ADD,
 			data: message,
 		})
 	},
 
-	notifyAboutCardBuffDurationChanged(card: ServerCard, buff: ServerBuff): void {
+	notifyAboutCardBuffDurationChanged(buff: ServerCardBuff): void {
+		const card = buff.parent
 		if (!card.owner || !card.owner.opponent) {
 			return
 		}
 
 		const owner = card.owner.player
 		const opponent = card.owner.opponent.player
-		const message = new OpenBuffMessage(buff)
+		const message = new OpenCardBuffMessage(buff)
 
 		owner.sendMessage({
-			type: CardUpdateMessageType.BUFF_DURATION,
+			type: CardUpdateMessageType.CARD_BUFF_DURATION,
 			data: message,
 		})
 		opponent.sendMessage({
-			type: CardUpdateMessageType.BUFF_DURATION,
+			type: CardUpdateMessageType.CARD_BUFF_DURATION,
 			data: message,
 		})
 	},
 
-	notifyAboutCardBuffRemoved(card: ServerCard, buff: ServerBuff): void {
+	notifyAboutCardBuffRemoved(buff: ServerCardBuff): void {
+		const card = buff.parent
 		if (!card.owner || !card.owner.opponent) {
 			return
 		}
 
 		const owner = card.owner.player
 		const opponent = card.owner.opponent.player
-		const message = new BuffRefMessage(buff)
+		const message = new OpenCardBuffMessage(buff)
 
 		owner.sendMessage({
-			type: CardUpdateMessageType.BUFF_REMOVE,
+			type: CardUpdateMessageType.CARD_BUFF_REMOVE,
 			data: message,
 		})
 		opponent.sendMessage({
-			type: CardUpdateMessageType.BUFF_REMOVE,
+			type: CardUpdateMessageType.CARD_BUFF_REMOVE,
 			data: message,
 		})
 	},

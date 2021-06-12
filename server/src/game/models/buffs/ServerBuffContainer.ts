@@ -1,31 +1,36 @@
 import BuffContainer from '@shared/models/BuffContainer'
-import ServerBuff, { BuffConstructorParams } from './ServerBuff'
-import ServerCard from './ServerCard'
-import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
-import ServerGame from './ServerGame'
-import GameEventCreators from './events/GameEventCreators'
-import ServerAnimation from './ServerAnimation'
+import ServerBuff, { BuffConstructorParams, ServerCardBuff, ServerRowBuff } from './ServerBuff'
+import ServerCard from '../ServerCard'
+import OutgoingCardUpdateMessages from '../../handlers/outgoing/OutgoingCardUpdateMessages'
+import ServerGame from '../ServerGame'
+import GameEventCreators from '../events/GameEventCreators'
+import ServerAnimation from '../ServerAnimation'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardLocation from '@shared/enums/CardLocation'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import { LeaderStatValueGetter } from '../../utils/LeaderStats'
-import { CardSelector } from './events/selectors/CardSelector'
+import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
+import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { CardSelector } from '../events/selectors/CardSelector'
+import ServerBoardRow from '../ServerBoardRow'
+import OutgoingBoardUpdateMessages from '@src/game/handlers/outgoing/OutgoingBoardUpdateMessages'
 
 export interface BuffConstructor {
 	new (params: BuffConstructorParams): ServerBuff
 }
 
+export type ServerBuffParent = ServerCard | ServerBoardRow
+export type ServerBuffSource = ServerCard | ServerBoardRow | null
+
 export default class ServerBuffContainer implements BuffContainer {
-	readonly card: ServerCard
+	readonly parent: ServerBuffParent
 	readonly buffs: ServerBuff[]
 
-	constructor(card: ServerCard) {
-		this.card = card
+	constructor(owner: ServerCard | ServerBoardRow) {
+		this.parent = owner
 		this.buffs = []
 	}
 
 	public get game(): ServerGame {
-		return this.card.game
+		return this.parent.game
 	}
 
 	public get visible(): ServerBuff[] {
@@ -44,7 +49,7 @@ export default class ServerBuffContainer implements BuffContainer {
 	 */
 	public add(prototype: BuffConstructor, source: ServerCard | null, duration: number | 'default' = 'default'): void {
 		const newBuff = new prototype({
-			card: this.card,
+			parent: this.parent,
 			source,
 			duration,
 			selector: null,
@@ -55,7 +60,7 @@ export default class ServerBuffContainer implements BuffContainer {
 	public addMultiple(
 		prototype: BuffConstructor,
 		count: number | LeaderStatValueGetter,
-		source: ServerCard | null,
+		source: ServerBuffSource | null,
 		duration: number | 'default' = 'default'
 	): void {
 		if (typeof count === 'function') {
@@ -63,7 +68,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		}
 		for (let i = 0; i < count; i++) {
 			const newBuff = new prototype({
-				card: this.card,
+				parent: this.parent,
 				source,
 				duration,
 				selector: null,
@@ -78,10 +83,10 @@ export default class ServerBuffContainer implements BuffContainer {
 		}
 	}
 
-	public addForSelector(prototype: BuffConstructor, count: number, source: ServerCard | null, selector: CardSelector): void {
+	public addForSelector(prototype: BuffConstructor, count: number, source: ServerBuffParent | null, selector: CardSelector): void {
 		for (let i = 0; i < count; i++) {
 			const newBuff = new prototype({
-				card: this.card,
+				parent: this.parent,
 				source,
 				selector,
 				duration: 'default',
@@ -97,30 +102,56 @@ export default class ServerBuffContainer implements BuffContainer {
 	}
 
 	private buffSkipsAnimation(buff: ServerBuff): boolean {
-		return buff.buffFeatures.includes(BuffFeature.SKIP_ANIMATION) || this.card.location === CardLocation.UNKNOWN
+		return (
+			buff.buffFeatures.includes(BuffFeature.SKIP_ANIMATION) ||
+			(this.parent instanceof ServerCard && this.parent.location === CardLocation.UNKNOWN)
+		)
 	}
 
-	private addInstance(newBuff: ServerBuff, source: ServerCard | null): void {
-		if (source && !this.buffSkipsAnimation(newBuff) && this.card.isVisuallyRendered) {
-			this.game.animation.play(ServerAnimation.cardAffectsCards(source, [this.card]))
+	private addInstance(newBuff: ServerBuff, source: ServerBuffSource): void {
+		if (source && !this.buffSkipsAnimation(newBuff)) {
+			if (this.parent instanceof ServerCard && source instanceof ServerCard && this.parent.isVisuallyRendered) {
+				this.game.animation.play(ServerAnimation.cardAffectsCards(source, [this.parent]))
+			} else if (this.parent instanceof ServerBoardRow && source instanceof ServerCard) {
+				this.game.animation.play(ServerAnimation.cardAffectsRows(source, [this.parent]))
+			} else if (this.parent instanceof ServerCard && source instanceof ServerBoardRow && this.parent.isVisuallyRendered) {
+				this.game.animation.play(ServerAnimation.rowAffectsCards(source, [this.parent]))
+			} else if (this.parent instanceof ServerBoardRow && source instanceof ServerBoardRow) {
+				this.game.animation.play(ServerAnimation.rowAffectsRows(source, [this.parent]))
+			}
 		}
 
 		this.buffs.push(newBuff)
-		OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(this.card, newBuff)
 
-		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
-
-		this.game.events.postEvent(
-			GameEventCreators.buffCreated({
-				game: this.game,
-				triggeringBuff: newBuff,
-			})
-		)
-
-		if (this.buffSkipsAnimation(newBuff) || !this.card.isVisuallyRendered) {
-			return
+		if (newBuff instanceof ServerCardBuff) {
+			OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(newBuff)
+			this.game.events.postEvent(
+				GameEventCreators.cardBuffCreated({
+					game: this.game,
+					triggeringBuff: newBuff,
+				})
+			)
+		} else if (newBuff instanceof ServerRowBuff) {
+			OutgoingBoardUpdateMessages.notifyAboutRowBuffAdded(newBuff)
+			this.game.events.postEvent(
+				GameEventCreators.rowBuffCreated({
+					game: this.game,
+					triggeringBuff: newBuff,
+				})
+			)
 		}
-		this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.card], newBuff.alignment))
+
+		if (this.parent instanceof ServerCard) {
+			OutgoingMessageHandlers.notifyAboutCardStatsChange(this.parent)
+		}
+
+		if (!this.buffSkipsAnimation(newBuff)) {
+			if (this.parent instanceof ServerCard && this.parent.isVisuallyRendered) {
+				this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.parent], newBuff.alignment))
+			} else if (this.parent instanceof ServerBoardRow) {
+				this.game.animation.play(ServerAnimation.rowsReceivedBuff([this.parent], newBuff.alignment))
+			}
+		}
 	}
 
 	public getBuffsByPrototype(prototype: BuffConstructor): ServerBuff[] {
@@ -153,15 +184,29 @@ export default class ServerBuffContainer implements BuffContainer {
 			return
 		}
 
-		this.game.events.postEvent(
-			GameEventCreators.buffRemoved({
+		if (buff instanceof ServerCardBuff) {
+			GameEventCreators.cardBuffRemoved({
 				game: this.game,
 				triggeringBuff: buff,
 			})
-		)
+		} else if (buff instanceof ServerRowBuff) {
+			this.game.events.postEvent(
+				GameEventCreators.rowBuffRemoved({
+					game: this.game,
+					triggeringBuff: buff,
+				})
+			)
+		}
+
 		this.buffs.splice(index, 1)
-		OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(this.card, buff)
-		OutgoingCardUpdateMessages.notifyAboutCardStatsChange(this.card)
+		if (buff instanceof ServerCardBuff) {
+			OutgoingCardUpdateMessages.notifyAboutCardBuffRemoved(buff)
+		} else if (buff instanceof ServerRowBuff) {
+			OutgoingBoardUpdateMessages.notifyAboutRowBuffRemoved(buff)
+		}
+		if (this.parent instanceof ServerCard) {
+			OutgoingCardUpdateMessages.notifyAboutCardStatsChange(this.parent)
+		}
 		this.game.events.unsubscribe(buff)
 		this.game.index.removeBuff(buff)
 	}

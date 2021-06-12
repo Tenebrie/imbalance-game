@@ -2,7 +2,7 @@ import ServerCard from '../game/models/ServerCard'
 import CardLibrary, { CardConstructor } from '../game/libraries/CardLibrary'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import CardType from '@shared/enums/CardType'
-import ServerBuff from '../game/models/ServerBuff'
+import ServerBuff from '../game/models/buffs/ServerBuff'
 import ServerAnimation from '../game/models/ServerAnimation'
 import BuffUnitToSpellConversion from '../game/buffs/BuffUnitToSpellConversion'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
@@ -190,8 +190,14 @@ export default {
 	},
 
 	infuse: (subscriber: ServerCard | ServerBuff, value: number | (() => number)): void => {
-		const card = subscriber instanceof ServerBuff ? subscriber.card : subscriber
+		if (subscriber instanceof ServerBuff && subscriber.parent instanceof ServerBoardRow) {
+			throw new Error('Trying to infuse a board row')
+		}
+		const card = subscriber instanceof ServerBuff ? (subscriber.parent as ServerCard) : subscriber
 		const player = card.ownerInGame
+		if (!player) {
+			throw new Error('No owner for card')
+		}
 		const manaToDrain = typeof value === 'function' ? value() : value
 		if (player.spellMana < manaToDrain) {
 			throw new Error('Player does not have enough mana!')
@@ -201,7 +207,10 @@ export default {
 	},
 
 	generateMana: (subscriber: ServerCard | ServerBuff, value: number | (() => number)): void => {
-		const card = subscriber instanceof ServerBuff ? subscriber.card : subscriber
+		if (subscriber instanceof ServerBuff && subscriber.parent instanceof ServerBoardRow) {
+			throw new Error('Trying to infuse a board row')
+		}
+		const card = subscriber instanceof ServerBuff ? (subscriber.parent as ServerCard) : subscriber
 		const player = card.ownerInGame
 		const manaToGenerate = typeof value === 'function' ? value() : value
 		player.addSpellMana(manaToGenerate)

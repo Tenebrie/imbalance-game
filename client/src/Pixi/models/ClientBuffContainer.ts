@@ -3,22 +3,27 @@ import ClientBuff from '@/Pixi/models/ClientBuff'
 import BuffContainer from '@shared/models/BuffContainer'
 import Core from '@/Pixi/Core'
 import BuffContainerMessage from '@shared/models/network/buffContainer/BuffContainerMessage'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 
 export default class ClientBuffContainer implements BuffContainer {
-	card: RenderedCard
+	parent: RenderedCard | RenderedGameBoardRow
 	buffs: ClientBuff[]
 
-	public constructor(card: RenderedCard, buffsMessage: BuffContainerMessage) {
-		this.card = card
+	public constructor(parent: RenderedCard | RenderedGameBoardRow, buffsMessage: BuffContainerMessage | null) {
+		this.parent = parent
 		this.buffs = []
-		buffsMessage.buffs.forEach((buffMessage) => this.buffs.push(new ClientBuff(buffMessage)))
+		if (buffsMessage) {
+			buffsMessage.buffs.forEach((buffMessage) => this.buffs.push(new ClientBuff(buffMessage)))
+		}
 	}
 
 	public add(buff: ClientBuff): void {
 		this.buffs.push(buff)
-		this.card.updateCardDescription()
-		if (Core.player.cardHand.unitCards.includes(this.card)) {
-			Core.player.cardHand.sortCards()
+		if (this.parent instanceof RenderedCard) {
+			this.parent.updateCardDescription()
+			if (Core.player.cardHand.unitCards.includes(this.parent)) {
+				Core.player.cardHand.sortCards()
+			}
 		}
 	}
 
@@ -32,9 +37,11 @@ export default class ClientBuffContainer implements BuffContainer {
 			return
 		}
 		this.buffs.splice(this.buffs.indexOf(buff), 1)
-		this.card.updateCardDescription()
-		if (Core.player.cardHand.unitCards.includes(this.card)) {
-			Core.player.cardHand.sortCards()
+		if (this.parent instanceof RenderedCard) {
+			this.parent.updateCardDescription()
+			if (Core.player.cardHand.unitCards.includes(this.parent)) {
+				Core.player.cardHand.sortCards()
+			}
 		}
 	}
 }

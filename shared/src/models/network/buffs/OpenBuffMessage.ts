@@ -8,8 +8,6 @@ import BuffMessage from './BuffMessage'
 export default class OpenBuffMessage implements BuffMessage {
 	id: string
 	class: string
-	cardId: string | null
-	sourceId: string | null
 	alignment: BuffAlignment
 	cardTribes: CardTribe[]
 	buffFeatures: BuffFeature[]
@@ -26,8 +24,6 @@ export default class OpenBuffMessage implements BuffMessage {
 	constructor(buff: Buff) {
 		this.id = buff.id
 		this.class = buff.class
-		this.cardId = buff.card ? buff.card.id : null
-		this.sourceId = buff.source ? buff.source.id : null
 		this.alignment = buff.alignment
 		this.cardTribes = buff.cardTribes.slice()
 		this.buffFeatures = buff.buffFeatures.slice()

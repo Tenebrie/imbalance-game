@@ -11,6 +11,7 @@ import PlayerDatabase from '../database/PlayerDatabase'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import OpenCardMessage from '@src/../../shared/src/models/network/card/OpenCardMessage'
+import GameHistoryDatabaseEntry from '@src/../../shared/src/models/GameHistoryDatabaseEntry'
 
 const router = express.Router()
 
@@ -43,7 +44,15 @@ router.get(
 	AsyncHandler(async (req, res: Response) => {
 		const targetPlayerId = req.query['player'] || null
 		let gameEntries = await GameHistoryDatabase.selectAllGames()
-		if (targetPlayerId && gameEntries) {
+		if (!gameEntries) {
+			throw { status: 500, error: `Unable to fetch game records from the database` }
+		}
+
+		gameEntries = gameEntries.map<GameHistoryDatabaseEntry>((entry) => ({
+			...entry,
+			eventLog: [],
+		}))
+		if (targetPlayerId) {
 			gameEntries = gameEntries.filter((entry) => entry.players.find(({ id }) => id === targetPlayerId))
 		}
 		res.json(gameEntries)

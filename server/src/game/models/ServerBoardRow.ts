@@ -7,12 +7,15 @@ import Constants from '@shared/Constants'
 import ServerCard from './ServerCard'
 import ServerAnimation from './ServerAnimation'
 import ServerGameEventCreators from './events/GameEventCreators'
+import ServerBuffContainer from './buffs/ServerBuffContainer'
 
 export default class ServerBoardRow implements BoardRow {
-	index: number
-	game: ServerGame
-	owner: ServerPlayerInGame | null
-	cards: ServerUnit[]
+	public readonly index: number
+	public readonly game: ServerGame
+
+	public owner: ServerPlayerInGame | null
+	public cards: ServerUnit[]
+	public readonly buffs: ServerBuffContainer = new ServerBuffContainer(this)
 
 	constructor(game: ServerGame, index: number) {
 		this.index = index

@@ -10,6 +10,9 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '@src/utils/Keywords'
+import BuffSappedCard from '@src/game/buffs/BuffSappedCard'
+import BuffDuration from '@src/../../shared/src/enums/BuffDuration'
 
 export default class SpellScrollOfSapping extends ServerCard {
 	constructor(game: ServerGame) {
@@ -32,6 +35,7 @@ export default class SpellScrollOfSapping extends ServerCard {
 
 	private onTargetSelected(target: ServerUnit): void {
 		this.game.animation.play(ServerAnimation.universeAffectsCards([target.card]))
-		this.game.board.sapUnit(target, this)
+		Keywords.returnCard(target.card)
+		target.card.buffs.add(BuffSappedCard, this, BuffDuration.END_OF_NEXT_TURN)
 	}
 }

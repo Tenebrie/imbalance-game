@@ -2,6 +2,7 @@ import ServerCard from './ServerCard'
 import ServerUnit from './ServerUnit'
 import DamageInstance from '@shared/models/DamageInstance'
 import DamageSource from '@shared/enums/DamageSource'
+import ServerBoardRow from '@src/game/models/ServerBoardRow'
 
 type NumberOrGetter = number | ((card: ServerCard) => number)
 
@@ -16,6 +17,7 @@ export default class ServerDamageInstance implements DamageInstance {
 	value: number
 	source: DamageSource | undefined
 	sourceCard: ServerCard | undefined
+	sourceRow: ServerBoardRow | undefined
 	proxyCard: ServerCard | undefined
 	redirectHistory: ServerDamageInstance[] = []
 
@@ -46,6 +48,14 @@ export default class ServerDamageInstance implements DamageInstance {
 		damageInstance.value = collapseValue(value, sourceUnit.card)
 		damageInstance.source = DamageSource.CARD
 		damageInstance.sourceCard = sourceUnit.card
+		return damageInstance
+	}
+
+	public static fromRow(value: number, sourceRow: ServerBoardRow): ServerDamageInstance {
+		const damageInstance = new ServerDamageInstance()
+		damageInstance.value = value
+		damageInstance.source = DamageSource.BOARD_ROW
+		damageInstance.sourceRow = sourceRow
 		return damageInstance
 	}
 

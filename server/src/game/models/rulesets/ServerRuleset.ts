@@ -8,8 +8,8 @@ import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
 import { RulesetAI, RulesetAIBuilder } from './RulesetAI'
 import Ruleset from '@shared/models/Ruleset'
 import {
-	BuffCreatedEventArgs,
-	BuffRemovedEventArgs,
+	CardBuffCreatedEventArgs,
+	CardBuffRemovedEventArgs,
 	CardDestroyedEventArgs,
 	CardDrawnEventArgs,
 	CardPlayedEventArgs,
@@ -22,6 +22,8 @@ import {
 	GameStartedEventArgs,
 	RoundEndedEventArgs,
 	RoundStartedEventArgs,
+	RowBuffCreatedEventArgs,
+	RowBuffRemovedEventArgs,
 	TurnEndedEventArgs,
 	TurnStartedEventArgs,
 	UnitCreatedEventArgs,
@@ -261,8 +263,10 @@ export class ServerRulesetBuilder<T> {
 	protected createCallback(event: GameEventType.CARD_DESTROYED): EventSubscription<CardDestroyedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
 	protected createCallback(event: GameEventType.CARD_PLAYED): EventSubscription<CardPlayedEventArgs>
-	protected createCallback(event: GameEventType.BUFF_CREATED): EventSubscription<BuffCreatedEventArgs>
-	protected createCallback(event: GameEventType.BUFF_REMOVED): EventSubscription<BuffRemovedEventArgs>
+	protected createCallback(event: GameEventType.CARD_BUFF_CREATED): EventSubscription<CardBuffCreatedEventArgs>
+	protected createCallback(event: GameEventType.CARD_BUFF_REMOVED): EventSubscription<CardBuffRemovedEventArgs>
+	protected createCallback(event: GameEventType.ROW_BUFF_CREATED): EventSubscription<RowBuffCreatedEventArgs>
+	protected createCallback(event: GameEventType.ROW_BUFF_REMOVED): EventSubscription<RowBuffRemovedEventArgs>
 	protected createCallback(event: GameEventType.GAME_FINISHED): EventSubscription<GameFinishedEventArgs>
 	protected createCallback<EventArgs>(event: GameEventType): EventSubscription<EventArgs> {
 		const eventSubscription = new EventSubscription<EventArgs>(null)

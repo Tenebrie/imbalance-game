@@ -2,7 +2,6 @@ import { EventSubscriber } from '../../ServerGameEvents'
 import ServerCard from '../../ServerCard'
 import ServerGame from '../../ServerGame'
 import { CardSelectorProvideBuff } from './CardSelectorProvideBuff'
-import ServerBuff from '../../ServerBuff'
 import { cardPerform } from '../../../utils/CardEventHandlers'
 
 export type CardSelectorArgs = {
@@ -45,10 +44,6 @@ export class CardSelector {
 		this.ignoreControlEffects = ignoreControlEffects
 	}
 
-	private get card(): ServerCard | null {
-		return this.subscriber instanceof ServerCard ? this.subscriber : this.subscriber instanceof ServerBuff ? this.subscriber.card : null
-	}
-
 	public evaluate(allGameCards: ServerCard[]): void {
 		this.game.animation.syncAnimationThreads()
 
@@ -68,7 +63,7 @@ export class CardSelector {
 		newSelectedCards.forEach((card) => {
 			this.game.animation.thread(() => {
 				this.onSelectCallbacks.forEach((callback) => {
-					cardPerform(this.game, () => callback({ target: card }))
+					cardPerform(this.game, card, () => callback({ target: card }))
 				})
 			})
 		})
@@ -78,7 +73,7 @@ export class CardSelector {
 		this.provideBuffs.forEach((provideBuff) => {
 			let intensityRequired: number
 			if (typeof provideBuff.count === 'function') {
-				intensityRequired = provideBuff.count(this.card)
+				intensityRequired = provideBuff.count(this.subscriber)
 			} else {
 				intensityRequired = provideBuff.count
 			}
@@ -87,7 +82,8 @@ export class CardSelector {
 				.filter((card) => card.buffs.getIntensityForSelector(provideBuff.buff, this) < intensityRequired)
 				.forEach((card) => {
 					const currentIntensity = card.buffs.getIntensityForSelector(provideBuff.buff, this)
-					card.buffs.addForSelector(provideBuff.buff, intensityRequired - currentIntensity, this.card, this)
+					const source = this.subscriber === null ? null : this.subscriber instanceof ServerCard ? this.subscriber : this.subscriber.parent
+					card.buffs.addForSelector(provideBuff.buff, intensityRequired - currentIntensity, source, this)
 				})
 			// Too many stacks
 			this.selectedCards
@@ -98,22 +94,23 @@ export class CardSelector {
 				})
 		})
 
-		const self = this.card
-		if (!self) {
+		const self = this.subscriber
+		if (!self || !(self instanceof ServerCard)) {
 			return
 		}
 
 		this.provideSelfBuffs.forEach((provideBuff) => {
 			let intensityRequired: number
 			if (typeof provideBuff.count === 'function') {
-				intensityRequired = provideBuff.count(this.card)
+				intensityRequired = provideBuff.count(self)
 			} else {
 				intensityRequired = provideBuff.count
 			}
 			intensityRequired *= this.selectedCards.length
 			const currentIntensity = self.buffs.getIntensityForSelector(provideBuff.buff, this)
 			if (currentIntensity < intensityRequired) {
-				self.buffs.addForSelector(provideBuff.buff, intensityRequired - currentIntensity, this.card, this)
+				const source = this.subscriber === null ? null : this.subscriber instanceof ServerCard ? this.subscriber : this.subscriber.parent
+				self.buffs.addForSelector(provideBuff.buff, intensityRequired - currentIntensity, source, this)
 			} else if (currentIntensity > intensityRequired) {
 				self.buffs.removeBySelector(provideBuff.buff, this, currentIntensity - intensityRequired)
 			}
@@ -130,7 +127,7 @@ export class CardSelector {
 	private deselectCards(cards: ServerCard[]): void {
 		cards.forEach((card) => {
 			this.game.animation.thread(() => {
-				this.onReleaseCallbacks.forEach((callback) => cardPerform(this.game, () => callback({ target: card })))
+				this.onReleaseCallbacks.forEach((callback) => cardPerform(this.game, card, () => callback({ target: card })))
 			})
 			this.game.animation.thread(() => {
 				card.buffs.removeAllByCardSelector(this)

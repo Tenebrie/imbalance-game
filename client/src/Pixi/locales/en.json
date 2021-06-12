@@ -412,14 +412,6 @@
 	"card.heroLearthe.title": "The Death Speaker",
 	"card.heroLearthe.description": "*Deploy:*\nChoose a row.\nFill it with *Living Shadows*.",
 
-	"card.heroTaekana.name": "Taekana",
-	"card.heroTaekana.title": "The Zookeeper",
-	"card.heroTaekana.description": "*Deploy:*\nGive +{strengthGiven} Power to all units that do not have any buffs.",
-
-	"card.heroNoekana.name": "Noekana",
-	"card.heroNoekana.title": "The Zookeeper",
-	"card.heroNoekana.description": "ALL units have +{strengthGiven} Power.",
-
 	"card.heroJom.name": "Jom",
 	"card.heroJom.title": "Acolyte of the Void",
 	"card.heroJom.description": "*Deploy:*\n*Create* a *Void portal*.<p>*Turn End:*\nIf you control at least {portalsNeeded} *Void portals*, destroy them and *Create* an *Abyss Portal*.",
@@ -427,10 +419,6 @@
 
 	"card.heroSparklingSpirit.name": "Sparkling Spirit",
 	"card.heroSparklingSpirit.description": "*Deploy:*\nAdd a *Fleeting Spark* into your hand<p>Your *Sparks* deal {extraDamage} extra Damage",
-
-	"card.heroRagingElemental.name": "Raging Elemental",
-	"card.heroRagingElemental.description": "*Enrage:*\nDeal {power} Damage to opposing enemy units.\nThen, destroy this unit.<p><i>Damage dealt is equal to this card's power.",
-	"card.heroRagingElemental.flavor": "The lightest touch, and it WILL explode.",
 
 	"card.heroStormDancer.name": "Storm Dancer",
 	"card.heroStormDancer.description": "Whenever you cast a spell, give +{powerGiven} Power to adjacent units.\nIf it's a *Storm*, give them +{stormPowerGiven} Power instead.",
@@ -446,9 +434,6 @@
 
 	"card.heroLightOracle.name": "Oracle of Light",
 	"card.heroLightOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your deck (in order).\nChoose one to *Summon*.",
-
-	"card.heroDarkOracle.name": "Oracle of Darkness",
-	"card.heroDarkOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your opponent's deck (in order).\nChoose one to *Discard*.",
 
 	"card.heroCrystalWarrior.name": "Crystal Warrior",
 	"card.heroCrystalWarrior.description": "*Deploy:*\nDestroy an allied unit.\nThen, summon a *Crystal* in its place.",
@@ -938,5 +923,8 @@
 	"card.unitCampfireFire.description": "<i>Brings warmth and feeling of safety at night.</i>",
 
 	"card.unitCampfireEmptySpace.name": "Empty Space",
-	"card.unitCampfireEmptySpace.description": "<i>Soft and warm ground next to the campfire.</i>"
+	"card.unitCampfireEmptySpace.description": "<i>Soft and warm ground next to the campfire.</i>",
+
+	"card.unitMerfolkSkygazer.name": "Merfolk Skygazer",
+	"card.unitMerfolkSkygazer.description": "*Deploy:*\nApply *Healing Rain* to an allied row."
 }

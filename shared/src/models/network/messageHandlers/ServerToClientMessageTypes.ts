@@ -64,6 +64,9 @@ export enum BoardUpdateMessageType {
 	UNIT_MOVE = 'boardUpdate_unitMove',
 	UNIT_DESTROY = 'boardUpdate_unitDestroy',
 	ROW_OWNER = 'boardUpdate_rowOwner',
+	ROW_BUFF_ADD = 'boardUpdate_buffAdd',
+	ROW_BUFF_DURATION = 'boardUpdate_buffDuration',
+	ROW_BUFF_REMOVE = 'boardUpdate_buffRemove',
 }
 
 export enum ResolveStackMessageType {
@@ -80,9 +83,9 @@ export enum TargetingMessageType {
 export enum CardUpdateMessageType {
 	STATS = 'cardUpdate_stats',
 	VARIABLES = 'cardUpdate_variables',
-	BUFF_ADD = 'cardUpdate_buffAdd',
-	BUFF_DURATION = 'cardUpdate_buffDuration',
-	BUFF_REMOVE = 'cardUpdate_buffRemove',
+	CARD_BUFF_ADD = 'cardUpdate_buffAdd',
+	CARD_BUFF_DURATION = 'cardUpdate_buffDuration',
+	CARD_BUFF_REMOVE = 'cardUpdate_buffRemove',
 }
 
 export enum NovelMessageType {

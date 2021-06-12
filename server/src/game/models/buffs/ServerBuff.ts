@@ -1,8 +1,8 @@
-import Buff from '@shared/models/Buff'
-import ServerGame from './ServerGame'
-import ServerCard from './ServerCard'
-import ServerUnit from './ServerUnit'
-import OutgoingCardUpdateMessages from '../handlers/outgoing/OutgoingCardUpdateMessages'
+import Buff, { CardBuff, RowBuff } from '@shared/models/Buff'
+import ServerGame from '../ServerGame'
+import ServerCard from '../ServerCard'
+import ServerUnit from '../ServerUnit'
+import OutgoingCardUpdateMessages from '../../handlers/outgoing/OutgoingCardUpdateMessages'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
@@ -13,12 +13,12 @@ import GameHookType, {
 	CardTakesDamageHookValues,
 	UnitDestroyedHookArgs,
 	UnitDestroyedHookValues,
-} from './events/GameHookType'
+} from '../events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffFeature from '@shared/enums/BuffFeature'
 import {
-	BuffCreatedEventArgs,
-	BuffRemovedEventArgs,
+	CardBuffCreatedEventArgs,
+	CardBuffRemovedEventArgs,
 	CardDestroyedEventArgs,
 	CardDrawnEventArgs,
 	CardPlayedEventArgs,
@@ -30,6 +30,8 @@ import {
 	GameStartedEventArgs,
 	RoundEndedEventArgs,
 	RoundStartedEventArgs,
+	RowBuffCreatedEventArgs,
+	RowBuffRemovedEventArgs,
 	SpellDeployedEventArgs,
 	TurnEndedEventArgs,
 	TurnStartedEventArgs,
@@ -40,14 +42,19 @@ import {
 	UnitOrderedCardEventArgs,
 	UnitOrderedRowEventArgs,
 	UnitOrderedUnitEventArgs,
-} from './events/GameEventCreators'
+} from '../events/GameEventCreators'
 import BuffAlignment from '@shared/enums/BuffAlignment'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import { EventSubscription } from './events/EventSubscription'
-import { EventHook } from './events/EventHook'
-import { CardSelectorBuilder } from './events/selectors/CardSelectorBuilder'
-import { CardSelector } from './events/selectors/CardSelector'
+import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'
+import { EventSubscription } from '../events/EventSubscription'
+import { EventHook } from '../events/EventHook'
+import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
+import { CardSelector } from '../events/selectors/CardSelector'
 import { createRandomId } from '@src/utils/Utils'
+import ServerBoardRow from '../ServerBoardRow'
+import LeaderStatType from '@src/../../shared/src/enums/LeaderStatType'
+import { StatOverride, StatOverrideBuilder } from './StatOverride'
+import { ServerBuffParent, ServerBuffSource } from '@src/game/models/buffs/ServerBuffContainer'
+import OutgoingBoardUpdateMessages from '@src/game/handlers/outgoing/OutgoingBoardUpdateMessages'
 
 export type ServerBuffProps = {
 	alignment: BuffAlignment
@@ -58,8 +65,8 @@ export type ServerBuffProps = {
 }
 
 export type BuffConstructorParams = {
-	card: ServerCard
-	source: ServerCard | null
+	parent: ServerBuffParent
+	source: ServerBuffParent | null
 	selector: CardSelector | null
 	duration: number | 'default'
 }
@@ -67,14 +74,25 @@ export type BuffConstructorParams = {
 export default class ServerBuff implements Buff {
 	public readonly id: string
 	public readonly game: ServerGame
-	public readonly card: ServerCard
+	public readonly parent: ServerCard | ServerBoardRow
 	public readonly class: string
-	public readonly source: ServerCard | null
+	public readonly source: ServerBuffSource
 	public readonly selector: CardSelector | null
 	public readonly alignment: BuffAlignment
 	public readonly cardTribes: CardTribe[]
 	public readonly buffFeatures: BuffFeature[]
 	public readonly cardFeatures: CardFeature[]
+
+	private maxPowerOverride: StatOverride | null = null
+	private maxArmorOverride: StatOverride | null = null
+	private unitCostOverride: StatOverride | null = null
+	private spellCostOverride: StatOverride | null = null
+	private leaderStatOverrides: Map<LeaderStatType, StatOverride | null> = new Map<LeaderStatType, StatOverride | null>()
+	private maxPowerOverrideBuilder: StatOverrideBuilder | null = null
+	private maxArmorOverrideBuilder: StatOverrideBuilder | null = null
+	private unitCostOverrideBuilder: StatOverrideBuilder | null = null
+	private spellCostOverrideBuilder: StatOverrideBuilder | null = null
+	private leaderStatOverrideBuilders: { leaderStat: LeaderStatType; builder: StatOverrideBuilder }[] = []
 
 	public readonly name: string
 	public readonly description: string
@@ -86,8 +104,8 @@ export default class ServerBuff implements Buff {
 		const buffClass = this.constructor.name.substr(0, 1).toLowerCase() + this.constructor.name.substr(1)
 
 		this.id = createRandomId('buff', buffClass)
-		this.game = params.card.game
-		this.card = params.card
+		this.game = params.parent.game
+		this.parent = params.parent
 		this.class = buffClass
 		this.source = params.source
 		this.selector = params.selector
@@ -103,12 +121,12 @@ export default class ServerBuff implements Buff {
 		this.__duration = this.baseDuration = duration
 
 		this.createCallback(GameEventType.TURN_STARTED)
-			.require(({ player }) => player === this.card.owner)
+			.require(({ player }) => player === this.parent.owner)
 			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
 
 		this.createCallback(GameEventType.TURN_ENDED)
-			.require(({ player }) => player === this.card.owner)
+			.require(({ player }) => player === this.parent.owner)
 			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
 
@@ -123,21 +141,41 @@ export default class ServerBuff implements Buff {
 		this.setDuration(this.duration - 1)
 	}
 
+	// public get card(): ServerCard {
+	// 	if (this.parent instanceof ServerBoardRow) {
+	// 		throw new Error('The card parent requested on board buff')
+	// 	}
+	// 	return this.parent
+	// }
+
 	protected get unit(): ServerUnit | undefined {
-		return this.game.board.findUnitById(this.card.id)
+		if (this.parent instanceof ServerBoardRow) {
+			return undefined
+		}
+		return this.game.board.findUnitById(this.parent.id)
 	}
 
 	public get location(): CardLocation {
-		return this.card.location
+		if (this.parent instanceof ServerBoardRow) {
+			return CardLocation.UNKNOWN
+		}
+		return this.parent.location
 	}
 
 	public setDuration(value: number): void {
 		this.__duration = value
-		OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this.card, this)
-		if (this.__duration <= 0) {
-			this.card.buffs.removeByReference(this)
+		if (this instanceof ServerCardBuff) {
+			OutgoingCardUpdateMessages.notifyAboutCardBuffDurationChanged(this)
+		} else if (this instanceof ServerRowBuff) {
+			OutgoingBoardUpdateMessages.notifyAboutRowBuffDurationChanged(this)
 		}
-		OutgoingMessageHandlers.notifyAboutCardStatsChange(this.card)
+		if (this.__duration <= 0) {
+			this.parent.buffs.removeByReference(this)
+		}
+
+		if (this.parent instanceof ServerCard) {
+			OutgoingMessageHandlers.notifyAboutCardStatsChange(this.parent)
+		}
 	}
 
 	public get protected(): boolean {
@@ -190,12 +228,18 @@ export default class ServerBuff implements Buff {
 	protected createEffect(event: GameEventType.UNIT_ORDERED_UNIT): EventSubscription<UnitOrderedUnitEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
-	protected createEffect(event: GameEventType.BUFF_CREATED): EventSubscription<BuffCreatedEventArgs>
-	protected createEffect(event: GameEventType.BUFF_REMOVED): EventSubscription<BuffRemovedEventArgs>
+	protected createEffect(event: GameEventType.CARD_BUFF_CREATED): EventSubscription<CardBuffCreatedEventArgs>
+	protected createEffect(event: GameEventType.CARD_BUFF_REMOVED): EventSubscription<CardBuffRemovedEventArgs>
+	protected createEffect(event: GameEventType.ROW_BUFF_CREATED): EventSubscription<RowBuffCreatedEventArgs>
+	protected createEffect(event: GameEventType.ROW_BUFF_REMOVED): EventSubscription<RowBuffRemovedEventArgs>
 	protected createEffect<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events
 			.createCallback<ArgsType>(this, event)
-			.require((args, rawEvent) => !!rawEvent.effectSource && (rawEvent.effectSource === this || rawEvent.effectSource === this.card))
+			.require(
+				(args, rawEvent) =>
+					!!rawEvent.effectSource &&
+					(rawEvent.effectSource === this || (this.parent instanceof ServerCard && rawEvent.effectSource === this.parent))
+			)
 	}
 
 	/* Subscribe to a game hook
@@ -219,59 +263,116 @@ export default class ServerBuff implements Buff {
 		return this.game.events.createSelector(this)
 	}
 
-	getMaxPowerOverride(baseValue: number): number {
-		return baseValue
+	protected createMaxPowerOverride(): StatOverrideBuilder {
+		const builder = new StatOverrideBuilder()
+		this.maxPowerOverrideBuilder = builder
+		return builder
 	}
-	getMaxArmorOverride(baseValue: number): number {
-		return baseValue
+	protected createMaxArmorOverride(): StatOverrideBuilder {
+		const builder = new StatOverrideBuilder()
+		this.maxArmorOverrideBuilder = builder
+		return builder
 	}
-	getUnitCostOverride(baseValue: number): number {
-		return baseValue
+	protected createUnitCostOverride(): StatOverrideBuilder {
+		const builder = new StatOverrideBuilder()
+		this.unitCostOverrideBuilder = builder
+		return builder
 	}
-	getSpellCostOverride(baseValue: number): number {
-		return baseValue
+	protected createSpellCostOverride(): StatOverrideBuilder {
+		const builder = new StatOverrideBuilder()
+		this.spellCostOverrideBuilder = builder
+		return builder
+	}
+	protected createLeaderStatOverride(leaderStat: LeaderStatType): StatOverrideBuilder {
+		const builder = new StatOverrideBuilder()
+		this.leaderStatOverrideBuilders.push({
+			leaderStat,
+			builder,
+		})
+		return builder
 	}
 
-	getDirectUnitDamageOverride(baseValue: number): number {
-		return baseValue
+	public getMaxPowerOverride(baseValue: number): number {
+		if (this.maxPowerOverrideBuilder) {
+			this.maxPowerOverride = this.maxPowerOverrideBuilder.__build()
+			this.maxPowerOverrideBuilder = null
+		}
+		if (!this.maxPowerOverride) {
+			return baseValue
+		}
+
+		return this.maxPowerOverride.apply(baseValue)
 	}
-	getSplashUnitDamageOverride(baseValue: number): number {
-		return baseValue
+	public getMaxArmorOverride(baseValue: number): number {
+		if (this.maxArmorOverrideBuilder) {
+			this.maxArmorOverride = this.maxArmorOverrideBuilder.__build()
+			this.maxArmorOverrideBuilder = null
+		}
+		if (!this.maxArmorOverride) {
+			return baseValue
+		}
+
+		return this.maxArmorOverride.apply(baseValue)
 	}
-	getDirectSpellDamageOverride(baseValue: number): number {
-		return baseValue
+	public getUnitCostOverride(baseValue: number): number {
+		if (this.unitCostOverrideBuilder) {
+			this.unitCostOverride = this.unitCostOverrideBuilder.__build()
+			this.unitCostOverrideBuilder = null
+		}
+		if (!this.unitCostOverride) {
+			return baseValue
+		}
+
+		return this.unitCostOverride.apply(baseValue)
 	}
-	getSplashSpellDamageOverride(baseValue: number): number {
-		return baseValue
+	public getSpellCostOverride(baseValue: number): number {
+		if (this.spellCostOverrideBuilder) {
+			this.spellCostOverride = this.spellCostOverrideBuilder.__build()
+			this.spellCostOverrideBuilder = null
+		}
+		if (!this.spellCostOverride) {
+			return baseValue
+		}
+
+		return this.spellCostOverride.apply(baseValue)
 	}
-	getDirectHealingPotencyOverride(baseValue: number): number {
-		return baseValue
+	public getLeaderStatOverride(leaderStat: LeaderStatType, baseValue: number): number {
+		if (this.leaderStatOverrideBuilders.length > 0) {
+			this.leaderStatOverrideBuilders.forEach((builderWrapper) => {
+				this.leaderStatOverrides.set(builderWrapper.leaderStat, builderWrapper.builder.__build())
+			})
+			this.leaderStatOverrideBuilders = []
+		}
+
+		const override = this.leaderStatOverrides.get(leaderStat)
+		if (!override) {
+			return baseValue
+		}
+
+		return override.apply(baseValue)
 	}
-	getSplashHealingPotencyOverride(baseValue: number): number {
-		return baseValue
+}
+
+export class ServerCardBuff extends ServerBuff implements CardBuff {
+	parent: ServerCard
+
+	constructor(params: BuffConstructorParams, props: ServerBuffProps) {
+		super(params, props)
+		if (params.parent instanceof ServerBoardRow) {
+			throw new Error('Trying to apply card buff to row')
+		}
+		this.parent = params.parent
 	}
-	getDirectBuffPotencyOverride(baseValue: number): number {
-		return baseValue
-	}
-	getSplashBuffPotencyOverride(baseValue: number): number {
-		return baseValue
-	}
-	getDirectEffectDurationOverride(baseValue: number): number {
-		return baseValue
-	}
-	getSplashEffectDurationOverride(baseValue: number): number {
-		return baseValue
-	}
-	getDirectTargetCountOverride(baseValue: number): number {
-		return baseValue
-	}
-	getCriticalDamageChanceOverride(baseValue: number): number {
-		return baseValue
-	}
-	getCriticalBuffChanceOverride(baseValue: number): number {
-		return baseValue
-	}
-	getCriticalHealChanceOverride(baseValue: number): number {
-		return baseValue
+}
+
+export class ServerRowBuff extends ServerBuff implements RowBuff {
+	parent: ServerBoardRow
+
+	constructor(params: BuffConstructorParams, props: ServerBuffProps) {
+		super(params, props)
+		if (params.parent instanceof ServerCard) {
+			throw new Error('Trying to apply row buff to card')
+		}
+		this.parent = params.parent
 	}
 }

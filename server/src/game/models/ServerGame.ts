@@ -22,7 +22,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, { PlayerTargetCardSelectedEventArgs } from './events/GameEventCreators'
 import ServerGameTimers from './ServerGameTimers'
 import CardFeature from '@shared/enums/CardFeature'
-import { BuffConstructor } from './ServerBuffContainer'
+import { BuffConstructor } from './buffs/ServerBuffContainer'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import ServerGameIndex from '@src/game/models/ServerGameIndex'
 import ServerAnimation from '@src/game/models/ServerAnimation'
@@ -402,6 +402,7 @@ export default class ServerGame implements Game {
 					this.board.destroyUnit(unit)
 				})
 			})
+		this.board.rows.forEach((row) => row.buffs.removeAllDispellable())
 		this.animation.syncAnimationThreads()
 		this.animation.play(ServerAnimation.delay(1250))
 

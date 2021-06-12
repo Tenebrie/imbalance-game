@@ -10,7 +10,7 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerCard from '../models/ServerCard'
 import CardType from '@shared/enums/CardType'
 import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
-import AIBehaviour from '@src/../../shared/src/enums/AIBehaviour'
+import AIBehaviour from '@shared/enums/AIBehaviour'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	behaviour: AIBehaviour = AIBehaviour.DEFAULT
@@ -48,7 +48,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 		const botWonRound = botTotalPower > opponentTotalPower && this.opponent && this.opponent.roundEnded
 		const botLostRound = opponentTotalPower > botTotalPower + 30 && this.morale > 1
-		const botHasGoodLead = botTotalPower > opponentTotalPower + 15 && this.morale > 1
+		const botHasGoodLead = botTotalPower > opponentTotalPower + 150 && this.morale > 1
 
 		if (this.behaviour === AIBehaviour.DEFAULT) {
 			if (botHasGoodLead && !botWonRound) {

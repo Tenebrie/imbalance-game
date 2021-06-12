@@ -13,7 +13,6 @@ import TestingSpellQuickStrike from '../cards/11-testing/TestingSpellQuickStrike
 import SpyInstance = jest.SpyInstance
 import TestingUnitTurnEndEffectProbe from '../cards/11-testing/TestingUnitTurnEndEffectProbe'
 import Utils from '../../utils/Utils'
-import Constants from '@shared/Constants'
 import TestingUnitTurnEndEffectProbeRight from '../cards/11-testing/TestingUnitTurnEndEffectProbeRight'
 import TargetMode from '../../../../shared/src/enums/TargetMode'
 
@@ -114,8 +113,8 @@ describe('ServerGameEvents', () => {
 				)
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
 
 				startNextTurn()
 
@@ -130,8 +129,8 @@ describe('ServerGameEvents', () => {
 				)
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 - 2, 0)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 - 2, 0)
 
 				startNextTurn()
 
@@ -146,8 +145,8 @@ describe('ServerGameEvents', () => {
 				)
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
 
 				startNextTurn()
 
@@ -194,7 +193,7 @@ describe('ServerGameEvents', () => {
 				)
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
 				game.players[1].cardHand.addUnit(probeCards.shift()!)
 				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
 				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
@@ -365,11 +364,11 @@ describe('ServerGameEvents', () => {
 				)
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 2, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 2, 1)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 2, 2)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 0)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 1)
+				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 2)
 				game.players[0].cardHand.addUnit(probeCards.shift()!)
 				game.players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
 				game.players[0].cardDeck.addUnitToBottom(probeCards.shift()!)

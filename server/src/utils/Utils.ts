@@ -18,6 +18,9 @@ import CardFaction from '@src/../../shared/src/enums/CardFaction'
 import PopulatedEditorDeck from '@src/../../shared/src/models/PopulatedEditorDeck'
 import CardColor from '@src/../../shared/src/enums/CardColor'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import ServerBuff from '@src/game/models/buffs/ServerBuff'
 
 export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
 	return `${type}:${prefix}:${getRandomId()}`
@@ -41,6 +44,14 @@ export const createRandomEditorDeckId = (): string => {
 
 export const toRowIndex = (rowOrIndex: number | ServerBoardRow): number => {
 	return typeof rowOrIndex === 'number' ? rowOrIndex : rowOrIndex.index
+}
+
+export const getOwner = (entity: ServerCard | ServerBuff | ServerBoardRow): ServerPlayerInGame | null => {
+	if (entity instanceof ServerCard || entity instanceof ServerBoardRow) {
+		return entity.owner
+	} else {
+		return entity.parent.owner
+	}
 }
 
 export const AnyCardLocation = 'any'
@@ -180,7 +191,7 @@ export const mapRelatedCards = (constructors: CardConstructor[]): string[] => {
 	return constructors.map((constructor) => getClassFromConstructor(constructor))
 }
 
-export const getClassFromConstructor = (constructor: CardConstructor | RulesetConstructor): string => {
+export const getClassFromConstructor = (constructor: BuffConstructor | CardConstructor | RulesetConstructor): string => {
 	return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
 }
 
@@ -269,6 +280,6 @@ export default {
 	},
 
 	sortCards(inputArray: ServerCard[]): ServerCard[] {
-		return sortCards(inputArray) as ServerCard[]
+		return sortCards<ServerCard>(inputArray)
 	},
 }

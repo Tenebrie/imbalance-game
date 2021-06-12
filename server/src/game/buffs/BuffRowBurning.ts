@@ -1,9 +1,9 @@
-import ServerBuff, { BuffConstructorParams } from '../models/ServerBuff'
+import { BuffConstructorParams, ServerRowBuff } from '../models/buffs/ServerBuff'
 import ServerDamageInstance from '../models/ServerDamageSource'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
-export default class BuffBurning extends ServerBuff {
+export default class BuffRowBurning extends ServerRowBuff {
 	burnDamage = 1
 
 	constructor(params: BuffConstructorParams) {
@@ -12,13 +12,15 @@ export default class BuffBurning extends ServerBuff {
 		})
 
 		this.createCallback(GameEventType.TURN_STARTED)
-			.require(({ player }) => player === this.card.owner)
+			.require(({ player }) => player === this.parent.owner)
 			.perform(() => this.onTurnStarted())
 	}
 
 	private onTurnStarted(): void {
-		this.game.animation.createAnimationThread()
-		this.card.dealDamage(ServerDamageInstance.fromCard(this.burnDamage, this.card))
-		this.game.animation.commitAnimationThread()
+		this.parent.cards.forEach((unit) => {
+			this.game.animation.thread(() => {
+				unit.card.dealDamage(ServerDamageInstance.fromRow(this.burnDamage, this.parent))
+			})
+		})
 	}
 }

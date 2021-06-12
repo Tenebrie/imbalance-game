@@ -34,8 +34,10 @@ enum GameEventType {
 	UNIT_DEPLOYED = 'unitDeployed',
 	SPELL_DEPLOYED = 'spellDeployed',
 
-	BUFF_CREATED = 'buffCreated',
-	BUFF_REMOVED = 'buffRemoved',
+	CARD_BUFF_CREATED = 'cardBuffCreated',
+	CARD_BUFF_REMOVED = 'cardBuffRemoved',
+	ROW_BUFF_CREATED = 'rowBuffCreated',
+	ROW_BUFF_REMOVED = 'rowBuffRemoved',
 
 	TURN_ENDED = 'turnEnded',
 	ROUND_ENDED = 'roundEnded',

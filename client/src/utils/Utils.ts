@@ -261,7 +261,7 @@ const legacyExport = {
 	},
 
 	sortCards(inputArray: RenderedCard[]): RenderedCard[] {
-		return sortCards(inputArray) as RenderedCard[]
+		return sortCards<RenderedCard>(inputArray)
 	},
 
 	sortEditorCards(inputArray: CardMessage[]): any[] {

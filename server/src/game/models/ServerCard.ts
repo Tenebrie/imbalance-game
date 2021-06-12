@@ -6,7 +6,7 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerDamageInstance from './ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
-import ServerBuffContainer from './ServerBuffContainer'
+import ServerBuffContainer from './buffs/ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import CardLibrary, { CardConstructor } from '../libraries/CardLibrary'
@@ -24,8 +24,8 @@ import GameHookType, {
 } from './events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {
-	BuffCreatedEventArgs,
-	BuffRemovedEventArgs,
+	CardBuffCreatedEventArgs,
+	CardBuffRemovedEventArgs,
 	CardDestroyedEventArgs,
 	CardDrawnEventArgs,
 	CardPlayedEventArgs,
@@ -40,6 +40,8 @@ import GameEventCreators, {
 	GameStartedEventArgs,
 	RoundEndedEventArgs,
 	RoundStartedEventArgs,
+	RowBuffCreatedEventArgs,
+	RowBuffRemovedEventArgs,
 	SpellDeployedEventArgs,
 	TurnEndedEventArgs,
 	TurnStartedEventArgs,
@@ -374,6 +376,8 @@ export default class ServerCard implements Card {
 			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.proxyCard, [this]))
 		} else if (damageInstance.sourceCard) {
 			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.sourceCard, [this]))
+		} else if (damageInstance.sourceRow) {
+			this.game.animation.play(ServerAnimation.rowAttacksCards(damageInstance.sourceRow, [this]))
 		} else {
 			this.game.animation.play(ServerAnimation.universeAttacksCards([this]))
 		}
@@ -627,8 +631,22 @@ export default class ServerCard implements Card {
 	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<CardDestroyedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<UnitDestroyedEventArgs>
 	protected createCallback(event: GameEventType.CARD_PLAYED, location: CardLocation[] | 'any'): EventSubscription<CardPlayedEventArgs>
-	protected createCallback(event: GameEventType.BUFF_CREATED, location: CardLocation[] | 'any'): EventSubscription<BuffCreatedEventArgs>
-	protected createCallback(event: GameEventType.BUFF_REMOVED, location: CardLocation[] | 'any'): EventSubscription<BuffRemovedEventArgs>
+	protected createCallback(
+		event: GameEventType.CARD_BUFF_CREATED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardBuffCreatedEventArgs>
+	protected createCallback(
+		event: GameEventType.CARD_BUFF_REMOVED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardBuffRemovedEventArgs>
+	protected createCallback(
+		event: GameEventType.ROW_BUFF_CREATED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<RowBuffCreatedEventArgs>
+	protected createCallback(
+		event: GameEventType.ROW_BUFF_REMOVED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<RowBuffRemovedEventArgs>
 	protected createCallback<ArgsType>(event: GameEventType, location: CardLocation[] | 'any'): EventSubscription<ArgsType> {
 		const callback = this.game.events.createCallback<ArgsType>(this, event)
 		if (location !== 'any') {

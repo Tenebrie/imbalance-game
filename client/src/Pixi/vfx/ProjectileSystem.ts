@@ -8,6 +8,7 @@ import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import Utils, { getDistance } from '@/utils/Utils'
 import RenderedVelocityProjectile from '@/Pixi/models/RenderedVelocityProjectile'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 
 export default class ProjectileSystem {
 	private projectiles: RenderedProjectile[] = []
@@ -123,6 +124,21 @@ export default class ProjectileSystem {
 		return projectile
 	}
 
+	private createRowAttackProjectile(sourcePosition: PIXI.Point, targetRow: RenderedGameBoardRow, onImpact: () => void): RenderedProjectile {
+		const sprite = new PIXI.Sprite(TextureAtlas.getTexture('effects/fireball-static'))
+		sprite.zIndex = 100
+		sprite.scale.set(0.4)
+		sprite.anchor.set(0.5, 0.5)
+		const projectile = RenderedProjectile.targetPoint(sprite, sourcePosition, targetRow.sprite.position, 500, 1200)
+		projectile.onImpact = onImpact
+		projectile.trail.rope.zIndex = 99
+		Core.renderer.rootContainer.addChild(projectile.sprite)
+		Core.renderer.rootContainer.addChild(projectile.trail.rope)
+		Core.mainHandler.projectileSystem.projectiles.push(projectile)
+		AudioSystem.playEffect(AudioEffectCategory.PROJECTILE)
+		return projectile
+	}
+
 	public createBoardBoopProjectile(
 		sourcePoint: PIXI.Point,
 		targetPoint: PIXI.Point,
@@ -180,6 +196,16 @@ export default class ProjectileSystem {
 		})
 	}
 
+	public createRowAttackCardProjectile(sourceRow: RenderedGameBoardRow, targetCard: RenderedCard): RenderedProjectile {
+		// TODO: Set row attack position
+		return this.createAttackProjectile(new PIXI.Point(100, 500), targetCard, () => {
+			Core.particleSystem.createAttackImpactParticleEffect(targetCard)
+			AudioSystem.playEffect(AudioEffectCategory.IMPACT_GENERIC)
+			targetCard.cardTintOverlay.tint = 0xff0000
+			targetCard.cardTintOverlay.alpha = 1
+		})
+	}
+
 	public createUniverseAttackProjectile(targetCard: RenderedCard): RenderedProjectile {
 		return this.createAttackProjectile(new PIXI.Point(0, 0), targetCard, () => {
 			Core.particleSystem.createAttackImpactParticleEffect(targetCard)
@@ -191,6 +217,26 @@ export default class ProjectileSystem {
 
 	public createCardAffectProjectile(sourceCard: RenderedCard, targetCard: RenderedCard): RenderedProjectile {
 		return this.createAttackProjectile(sourceCard.getVisualPosition(), targetCard, () => {
+			/* Empty */
+		})
+	}
+
+	public createCardAffectsRowProjectile(sourceCard: RenderedCard, targetRow: RenderedGameBoardRow): RenderedProjectile {
+		return this.createRowAttackProjectile(sourceCard.getVisualPosition(), targetRow, () => {
+			/* Empty */
+		})
+	}
+
+	public createRowAffectCardProjectile(sourceRow: RenderedGameBoardRow, targetCard: RenderedCard): RenderedProjectile {
+		// TODO: Set row attack position
+		return this.createAttackProjectile(sourceRow.sprite.position, targetCard, () => {
+			/* Empty */
+		})
+	}
+
+	public createRowAffectRowProjectile(sourceRow: RenderedGameBoardRow, targetRow: RenderedGameBoardRow): RenderedProjectile {
+		// TODO: Set row attack position
+		return this.createRowAttackProjectile(sourceRow.sprite.position, targetRow, () => {
 			/* Empty */
 		})
 	}

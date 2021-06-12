@@ -5,11 +5,13 @@ import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import ClientBuffContainer from '@/Pixi/models/ClientBuffContainer'
 
 export default class RenderedGameBoardRow implements BoardRow {
 	public readonly index: number
 	public cards: RenderedUnit[]
 	public container: PIXI.Container
+	public buffs: ClientBuffContainer
 	private __owner: ClientPlayerInGame | null
 
 	public readonly sprite: PIXI.Sprite
@@ -17,6 +19,7 @@ export default class RenderedGameBoardRow implements BoardRow {
 	public constructor(index: number) {
 		this.index = index
 		this.cards = []
+		this.buffs = new ClientBuffContainer(this, null)
 		this.__owner = null
 
 		this.sprite = new PIXI.Sprite(TextureAtlas.getTexture('board/row-allied'))

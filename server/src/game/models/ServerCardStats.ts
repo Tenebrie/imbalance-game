@@ -2,10 +2,11 @@ import ServerCard from './ServerCard'
 import ServerGame from './ServerGame'
 import CardStats from '@shared/models/CardStats'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import { limitValueToInterval } from '../../utils/Utils'
-import ServerBuff from './ServerBuff'
+import Utils, { limitValueToInterval } from '../../utils/Utils'
+import ServerBuff from './buffs/ServerBuff'
 import CardType from '@shared/enums/CardType'
 import CardFeature from '@shared/enums/CardFeature'
+import LeaderStatType from '@src/../../shared/src/enums/LeaderStatType'
 
 interface ServerCardStatsProps {
 	power: number
@@ -164,7 +165,7 @@ export default class ServerCardStats implements CardStats {
 	/* Other */
 	public get directUnitDamage(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getDirectUnitDamageOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.DIRECT_UNIT_DAMAGE, value),
 			this.__baseDirectUnitDamage
 		)
 		return Math.max(value, 0)
@@ -172,7 +173,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get splashUnitDamage(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getSplashUnitDamageOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.SPLASH_UNIT_DAMAGE, value),
 			this.__baseSplashUnitDamage
 		)
 		return Math.max(value, 0)
@@ -180,7 +181,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get directSpellDamage(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getDirectSpellDamageOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.DIRECT_SPELL_DAMAGE, value),
 			this.__baseDirectSpellDamage
 		)
 		return Math.max(value, 0)
@@ -188,7 +189,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get splashSpellDamage(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getSplashSpellDamageOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.SPLASH_SPELL_DAMAGE, value),
 			this.__baseSplashSpellDamage
 		)
 		return Math.max(value, 0)
@@ -196,7 +197,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get directHealingPotency(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getDirectHealingPotencyOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.DIRECT_HEALING_POTENCY, value),
 			this.__baseDirectHealingPotency
 		)
 		return Math.max(value, 0)
@@ -204,7 +205,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get splashHealingPotency(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getSplashHealingPotencyOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.SPLASH_HEALING_POTENCY, value),
 			this.__baseSplashHealingPotency
 		)
 		return Math.max(value, 0)
@@ -212,7 +213,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get directBuffPotency(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getDirectBuffPotencyOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.DIRECT_BUFF_POTENCY, value),
 			this.__baseDirectBuffPotency
 		)
 		return Math.max(value, 0)
@@ -220,7 +221,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get splashBuffPotency(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getSplashBuffPotencyOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.SPLASH_BUFF_POTENCY, value),
 			this.__baseSplashBuffPotency
 		)
 		return Math.max(value, 0)
@@ -228,7 +229,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get directEffectDuration(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getDirectEffectDurationOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.DIRECT_EFFECT_DURATION, value),
 			this.__baseDirectEffectDuration
 		)
 		return Math.max(value, 0)
@@ -236,7 +237,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get splashEffectDuration(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getSplashEffectDurationOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.SPLASH_EFFECT_DURATION, value),
 			this.__baseSplashEffectDuration
 		)
 		return Math.max(value, 0)
@@ -244,7 +245,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get directTargetCount(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getDirectTargetCountOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.DIRECT_TARGET_COUNT, value),
 			this.__baseDirectTargetCount
 		)
 		return Math.max(value, 0)
@@ -252,7 +253,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get criticalDamageChance(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getCriticalDamageChanceOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.CRITICAL_DAMAGE_CHANCE, value),
 			this.__baseCriticalDamageChance
 		)
 		return Math.max(value, 0)
@@ -260,7 +261,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get criticalBuffChance(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getCriticalBuffChanceOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.CRITICAL_BUFF_CHANCE, value),
 			this.__baseCriticalBuffChance
 		)
 		return Math.max(value, 0)
@@ -268,7 +269,7 @@ export default class ServerCardStats implements CardStats {
 
 	public get criticalHealChance(): number {
 		const value = this.card.buffs.buffs.reduce(
-			(value: number, buff: ServerBuff) => buff.getCriticalHealChanceOverride(value),
+			(value: number, buff: ServerBuff) => buff.getLeaderStatOverride(LeaderStatType.CRITICAL_HEAL_CHANCE, value),
 			this.__baseCriticalDamageChance
 		)
 		return Math.max(value, 0)

@@ -1,7 +1,7 @@
 import { EventSubscriber } from '../../ServerGameEvents'
 import { CardSelectorProvideBuff } from './CardSelectorProvideBuff'
 import { CardSelector, CardSelectorArgs } from './CardSelector'
-import { BuffConstructor } from '../../ServerBuffContainer'
+import { BuffConstructor } from '../../buffs/ServerBuffContainer'
 import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
 import ServerGame from '../../ServerGame'
 

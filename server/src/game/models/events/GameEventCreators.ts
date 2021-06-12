@@ -5,7 +5,7 @@ import ServerUnit from '../ServerUnit'
 import ServerDamageInstance from '../ServerDamageSource'
 import DamageSource from '@shared/enums/DamageSource'
 import ServerBoardRow from '../ServerBoardRow'
-import ServerBuff from '../ServerBuff'
+import ServerBuff, { ServerCardBuff, ServerRowBuff } from '../buffs/ServerBuff'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetType from '@shared/enums/TargetType'
 import { ServerCardTargetCard, ServerCardTargetPosition, ServerCardTargetRow } from '../ServerCardTarget'
@@ -251,24 +251,56 @@ export default {
 		},
 	}),
 
-	buffCreated: (args: BuffCreatedEventArgs): GameEvent => ({
-		type: GameEventType.BUFF_CREATED,
+	cardBuffCreated: (args: CardBuffCreatedEventArgs): GameEvent => ({
+		type: GameEventType.CARD_BUFF_CREATED,
 		args: args,
 		effectSource: args.triggeringBuff,
-		logSubtype: args.triggeringBuff.source ? 'fromCard' : 'fromUniverse',
+		logSubtype:
+			args.triggeringBuff.source instanceof ServerCard
+				? 'fromCard'
+				: args.triggeringBuff.source instanceof ServerBoardRow
+				? 'fromRow'
+				: 'fromUniverse',
 		logVariables: {
 			triggeringBuff: args.triggeringBuff.id,
-			ownerCard: args.triggeringBuff.card.id,
-			sourceCard: args.triggeringBuff.source ? args.triggeringBuff.source.id : undefined,
+			parentCard: args.triggeringBuff.parent.id,
+			sourceCard: args.triggeringBuff.source instanceof ServerCard ? args.triggeringBuff.source.id : undefined,
+			sourceRow: args.triggeringBuff.source instanceof ServerBoardRow ? args.triggeringBuff.source.index : undefined,
 		},
 	}),
-	buffRemoved: (args: BuffRemovedEventArgs): GameEvent => ({
-		type: GameEventType.BUFF_REMOVED,
+	cardBuffRemoved: (args: CardBuffRemovedEventArgs): GameEvent => ({
+		type: GameEventType.CARD_BUFF_REMOVED,
 		args: args,
 		effectSource: args.triggeringBuff,
 		logVariables: {
 			triggeringBuff: args.triggeringBuff.id,
-			ownerCard: args.triggeringBuff.card.id,
+			parentCard: args.triggeringBuff.parent.id,
+		},
+	}),
+	rowBuffCreated: (args: RowBuffCreatedEventArgs): GameEvent => ({
+		type: GameEventType.ROW_BUFF_CREATED,
+		args: args,
+		effectSource: args.triggeringBuff,
+		logSubtype:
+			args.triggeringBuff.source instanceof ServerCard
+				? 'fromCard'
+				: args.triggeringBuff.source instanceof ServerBoardRow
+				? 'fromRow'
+				: 'fromUniverse',
+		logVariables: {
+			triggeringBuff: args.triggeringBuff.id,
+			parentRow: args.triggeringBuff.parent.index,
+			sourceCard: args.triggeringBuff.source instanceof ServerCard ? args.triggeringBuff.source.id : undefined,
+			sourceRow: args.triggeringBuff.source instanceof ServerBoardRow ? args.triggeringBuff.source.index : undefined,
+		},
+	}),
+	rowBuffRemoved: (args: RowBuffRemovedEventArgs): GameEvent => ({
+		type: GameEventType.ROW_BUFF_REMOVED,
+		args: args,
+		effectSource: args.triggeringBuff,
+		logVariables: {
+			triggeringBuff: args.triggeringBuff.id,
+			parentRow: args.triggeringBuff.parent.index,
 		},
 	}),
 
@@ -447,11 +479,17 @@ export interface SpellDeployedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 }
 
-export interface BuffCreatedEventArgs extends SharedEventArgs {
-	triggeringBuff: ServerBuff
+export interface CardBuffCreatedEventArgs extends SharedEventArgs {
+	triggeringBuff: ServerCardBuff
 }
-export interface BuffRemovedEventArgs extends SharedEventArgs {
-	triggeringBuff: ServerBuff
+export interface RowBuffCreatedEventArgs extends SharedEventArgs {
+	triggeringBuff: ServerRowBuff
+}
+export interface CardBuffRemovedEventArgs extends SharedEventArgs {
+	triggeringBuff: ServerCardBuff
+}
+export interface RowBuffRemovedEventArgs extends SharedEventArgs {
+	triggeringBuff: ServerRowBuff
 }
 
 export interface TurnEndedEventArgs extends SharedEventArgs {

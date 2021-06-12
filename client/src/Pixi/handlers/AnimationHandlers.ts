@@ -60,6 +60,25 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 		}
 	},
 
+	[AnimationType.ROW_ATTACK]: (message: AnimationMessage) => {
+		const sourceRow = Core.board.getRow(message.sourceRowIndex!)
+		if (!sourceRow) {
+			return { skip: true }
+		}
+		let projectilesSpawned = 0
+		message.targetCardIDs!.forEach((targetCardId) => {
+			const targetCard = Core.game.findRenderedCardById(targetCardId)
+			if (!targetCard) {
+				return
+			}
+			Core.mainHandler.projectileSystem.createRowAttackCardProjectile(sourceRow, targetCard)
+			projectilesSpawned += 1
+		})
+		return {
+			skip: projectilesSpawned === 0,
+		}
+	},
+
 	[AnimationType.CARD_AFFECT]: (message: AnimationMessage) => {
 		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId!)
 		if (!sourceCard) {
@@ -91,6 +110,63 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 				return
 			}
 			Core.mainHandler.projectileSystem.createCardHealProjectile(sourceCard, targetCard)
+			projectilesSpawned += 1
+		})
+		return {
+			skip: projectilesSpawned === 0,
+		}
+	},
+
+	[AnimationType.CARD_AFFECTS_ROWS]: (message: AnimationMessage) => {
+		const sourceCard = Core.game.findRenderedCardById(message.sourceCardId!)
+		if (!sourceCard) {
+			return { skip: true }
+		}
+		let projectilesSpawned = 0
+		message.targetRowIndices!.forEach((targetRowIndex) => {
+			const targetRow = Core.board.getRow(targetRowIndex)
+			if (!targetRow) {
+				return
+			}
+			Core.mainHandler.projectileSystem.createCardAffectsRowProjectile(sourceCard, targetRow)
+			projectilesSpawned += 1
+		})
+		return {
+			skip: projectilesSpawned === 0,
+		}
+	},
+
+	[AnimationType.ROW_AFFECTS_CARDS]: (message: AnimationMessage) => {
+		const sourceRow = Core.board.getRow(message.sourceRowIndex!)
+		if (!sourceRow) {
+			return { skip: true }
+		}
+		let projectilesSpawned = 0
+		message.targetCardIDs!.forEach((targetCardId) => {
+			const targetCard = Core.game.findRenderedCardById(targetCardId)
+			if (!targetCard) {
+				return
+			}
+			Core.mainHandler.projectileSystem.createRowAffectCardProjectile(sourceRow, targetCard)
+			projectilesSpawned += 1
+		})
+		return {
+			skip: projectilesSpawned === 0,
+		}
+	},
+
+	[AnimationType.ROW_AFFECTS_ROWS]: (message: AnimationMessage) => {
+		const sourceRow = Core.board.getRow(message.sourceRowIndex!)
+		if (!sourceRow) {
+			return { skip: true }
+		}
+		let projectilesSpawned = 0
+		message.targetRowIndices!.forEach((targetRowIndex) => {
+			const targetRow = Core.board.getRow(targetRowIndex)
+			if (!targetRow) {
+				return
+			}
+			Core.mainHandler.projectileSystem.createRowAffectRowProjectile(sourceRow, targetRow)
 			projectilesSpawned += 1
 		})
 		return {
@@ -178,6 +254,13 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 		})
 		return {
 			skip: buffsReceived === 0,
+		}
+	},
+
+	[AnimationType.ROWS_RECEIVED_BUFF]: (message: AnimationMessage, params: CardReceivedBuffAnimParams) => {
+		// TODO: Add animation
+		return {
+			skip: true,
 		}
 	},
 
