@@ -22,7 +22,8 @@ export default class UnitArcheryTower extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.BUILDING],
+			tribes: [CardTribe.BUILDING],
+			features: [CardFeature.NIGHTWATCH],
 			stats: {
 				power: 0,
 				armor: 4,

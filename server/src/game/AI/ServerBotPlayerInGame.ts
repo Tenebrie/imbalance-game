@@ -48,7 +48,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 		const botWonRound = botTotalPower > opponentTotalPower && this.opponent && this.opponent.roundEnded
 		const botLostRound = opponentTotalPower > botTotalPower + 30 && this.morale > 1
-		const botHasGoodLead = botTotalPower > opponentTotalPower + 150 && this.morale > 1
+		const botHasGoodLead = botTotalPower > opponentTotalPower + 21 && this.morale > 1
 
 		if (this.behaviour === AIBehaviour.DEFAULT) {
 			if (botHasGoodLead && !botWonRound) {

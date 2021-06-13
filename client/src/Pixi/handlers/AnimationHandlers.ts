@@ -243,8 +243,7 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 			}
 			Core.particleSystem.createCardReceivedBuffParticleEffect(targetCard, params.alignment)
 
-			const color = params.alignment === BuffAlignment.NEGATIVE ? 0xff0000 : 0x00ff00
-			targetCard.cardTintOverlay.tint = color
+			targetCard.cardTintOverlay.tint = params.alignment === BuffAlignment.NEGATIVE ? 0xff0000 : 0x00ff00
 			targetCard.cardTintOverlay.alpha = 1
 
 			const audioEffectCategory =
@@ -257,7 +256,7 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 		}
 	},
 
-	[AnimationType.ROWS_RECEIVED_BUFF]: (message: AnimationMessage, params: CardReceivedBuffAnimParams) => {
+	[AnimationType.ROWS_RECEIVED_BUFF]: () => {
 		// TODO: Add animation
 		return {
 			skip: true,

@@ -37,6 +37,16 @@ export default {
 		}),
 	},
 
+	draw: {
+		topUnitCard: (player: ServerPlayerInGame): void => {
+			const card = player.cardDeck.drawTopUnit()
+			if (!card) {
+				return
+			}
+			player.cardHand.addUnit(card)
+		},
+	},
+
 	summonCard: (card: ServerCard): void => {
 		const cardOwner = card.ownerInGame
 		if (cardOwner.cardDeck.allCards.includes(card)) {

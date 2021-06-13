@@ -23,6 +23,8 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardLocation from '@shared/enums/CardLocation'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import { forEachInEnum } from '@shared/Utils'
+import LeaderStatType from '@shared/enums/LeaderStatType'
 
 type WorkshopCardProps = {
 	workshopTitle: string
@@ -271,23 +273,27 @@ export default class RenderedCard implements Card {
 			.map((feature) => Localization.getValueOrNull(feature))
 			.filter((string) => string !== null)
 
-		const leaderStatsStrings = Object.keys(this.stats)
-			// @ts-ignore
-			.filter((key) => typeof this.stats[key] === 'number' && this.stats[key] > 0)
-			.map((key) => ({
-				key: key,
-				text: Localization.getValueOrNull(`card.stats.${key}.text`),
-			}))
-			.filter((object) => object.text !== null)
-			// @ts-ignore
-			.map((object) => (object.text || '').replace(/{value}/g, this.stats[object.key]))
+		const leaderStatsStrings: string[] = []
+		forEachInEnum(LeaderStatType, (value, key) => {
+			if (this.stats.leaderStats[value] === 0) {
+				return
+			}
+			const text = Localization.getValueOrNull(`card.stats.${snakeToCamelCase(key.toLowerCase())}.text`)
+			if (text === null) {
+				return
+			}
+
+			leaderStatsStrings.push(text.replace(/{value}/g, String(this.stats.leaderStats[value])))
+		})
+
+		for (const index in leaderStatsStrings.reverse()) {
+			const delimiter = Number(index) === 0 ? (description.trim().length > 0 ? '<p>' : '') : '\n'
+			description = `${leaderStatsStrings[index]}${delimiter}${description}`
+		}
 
 		if (featureStrings.length > 0) {
-			description = `${featureStrings.join(' | ')}<p>${description}`
-		}
-		for (const index in leaderStatsStrings.reverse()) {
-			const delimiter = Number(index) === 0 ? '<p>' : '\n'
-			description = `${leaderStatsStrings[index]}${delimiter}${description}`
+			const delimiter = description.trim().length > 0 ? '<p>' : ''
+			description = `${featureStrings.join(' | ')}${delimiter}${description}`
 		}
 		return description
 	}
@@ -333,7 +339,7 @@ export default class RenderedCard implements Card {
 			new PIXI.TextStyle({
 				fontFamily: Utils.getFont(text),
 				fill: 0x000000,
-				padding: 16,
+				padding: 32,
 				align: 'right',
 			})
 		)

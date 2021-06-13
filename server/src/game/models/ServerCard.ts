@@ -24,11 +24,13 @@ import GameHookType, {
 } from './events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {
+	CardArmorRestoredEventArgs,
 	CardBuffCreatedEventArgs,
 	CardBuffRemovedEventArgs,
 	CardDestroyedEventArgs,
 	CardDrawnEventArgs,
 	CardPlayedEventArgs,
+	CardPowerRestoredEventArgs,
 	CardPreResolvedEventArgs,
 	CardResolvedEventArgs,
 	CardReturnedEventArgs,
@@ -73,6 +75,7 @@ import {
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
 import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
+import LeaderStatType from '@shared/enums/LeaderStatType'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -94,8 +97,10 @@ interface LeaderStatsCardProps {
 	splashSpellDamage?: number
 	directHealingPotency?: number
 	splashHealingPotency?: number
+	recurringHealingPotency?: number
 	directBuffPotency?: number
 	splashBuffPotency?: number
+	recurringBuffPotency?: number
 	directEffectDuration?: number
 	splashEffectDuration?: number
 	directTargetCount?: number
@@ -182,21 +187,40 @@ export default class ServerCard implements Card {
 			power: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
 			armor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
 			spellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0,
-
-			directUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directUnitDamage || 0 : 0,
-			splashUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashUnitDamage || 0 : 0,
-			directSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directSpellDamage || 0 : 0,
-			splashSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashSpellDamage || 0 : 0,
-			directHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directHealingPotency || 0 : 0,
-			splashHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashHealingPotency || 0 : 0,
-			directBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directBuffPotency || 0 : 0,
-			splashBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashBuffPotency || 0 : 0,
-			directEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directEffectDuration || 0 : 0,
-			splashEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashEffectDuration || 0 : 0,
-			directTargetCount: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directTargetCount || 0 : 0,
-			criticalDamageChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalDamageChance || 0 : 0,
-			criticalBuffChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalBuffChance || 0 : 0,
-			criticalHealChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHealChance || 0 : 0,
+			leaderStats: {
+				[LeaderStatType.DIRECT_UNIT_DAMAGE]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directUnitDamage || 0 : 0,
+				[LeaderStatType.SPLASH_UNIT_DAMAGE]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashUnitDamage || 0 : 0,
+				[LeaderStatType.DIRECT_SPELL_DAMAGE]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directSpellDamage || 0 : 0,
+				[LeaderStatType.SPLASH_SPELL_DAMAGE]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashSpellDamage || 0 : 0,
+				[LeaderStatType.DIRECT_HEALING_POTENCY]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directHealingPotency || 0 : 0,
+				[LeaderStatType.SPLASH_HEALING_POTENCY]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashHealingPotency || 0 : 0,
+				[LeaderStatType.RECURRING_HEALING_POTENCY]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.recurringHealingPotency || 0 : 0,
+				[LeaderStatType.DIRECT_BUFF_POTENCY]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directBuffPotency || 0 : 0,
+				[LeaderStatType.SPLASH_BUFF_POTENCY]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashBuffPotency || 0 : 0,
+				[LeaderStatType.RECURRING_BUFF_POTENCY]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.recurringBuffPotency || 0 : 0,
+				[LeaderStatType.DIRECT_EFFECT_DURATION]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directEffectDuration || 0 : 0,
+				[LeaderStatType.SPLASH_EFFECT_DURATION]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashEffectDuration || 0 : 0,
+				[LeaderStatType.DIRECT_TARGET_COUNT]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directTargetCount || 0 : 0,
+				[LeaderStatType.CRITICAL_DAMAGE_CHANCE]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalDamageChance || 0 : 0,
+				[LeaderStatType.CRITICAL_BUFF_CHANCE]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalBuffChance || 0 : 0,
+				[LeaderStatType.CRITICAL_HEAL_CHANCE]:
+					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHealChance || 0 : 0,
+			},
 		})
 
 		this.name = `card.${this.class}.name`
@@ -420,9 +444,9 @@ export default class ServerCard implements Card {
 			GameEventCreators.cardTakesDamage({
 				game: this.game,
 				triggeringCard: this,
-				damageInstance: damageInstance,
-				armorDamageInstance: armorDamageInstance,
-				powerDamageInstance: powerDamageInstance,
+				damageInstance,
+				armorDamageInstance,
+				powerDamageInstance,
 			})
 		)
 	}
@@ -438,6 +462,13 @@ export default class ServerCard implements Card {
 			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
 		}
 		this.stats.power = Math.min(this.stats.maxPower, this.stats.power + healingInstance.value)
+		this.game.events.postEvent(
+			GameEventCreators.cardPowerRestored({
+				game: this.game,
+				triggeringCard: this,
+				healingInstance,
+			})
+		)
 	}
 
 	restoreArmor(restorationInstance: ServerDamageInstance): void {
@@ -451,6 +482,13 @@ export default class ServerCard implements Card {
 			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
 		}
 		this.stats.armor = Math.min(this.stats.maxArmor, this.stats.armor + restorationInstance.value)
+		this.game.events.postEvent(
+			GameEventCreators.cardArmorRestored({
+				game: this.game,
+				triggeringCard: this,
+				restorationInstance,
+			})
+		)
 	}
 
 	/* Cleanse this card
@@ -607,6 +645,14 @@ export default class ServerCard implements Card {
 		event: GameEventType.CARD_TAKES_DAMAGE,
 		location: CardLocation[] | 'any'
 	): EventSubscription<CardTakesDamageEventArgs>
+	protected createCallback(
+		event: GameEventType.CARD_POWER_RESTORED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardPowerRestoredEventArgs>
+	protected createCallback(
+		event: GameEventType.CARD_ARMOR_RESTORED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardArmorRestoredEventArgs>
 	protected createCallback(
 		event: GameEventType.CARD_TARGET_SELECTED_CARD,
 		location: CardLocation[] | 'any'

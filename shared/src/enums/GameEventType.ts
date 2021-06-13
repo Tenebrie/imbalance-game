@@ -11,6 +11,8 @@ enum GameEventType {
 	CARD_PRE_RESOLVED = 'cardPreResolved',
 	CARD_RESOLVED = 'cardResolved',
 	CARD_TAKES_DAMAGE = 'cardTakesDamage',
+	CARD_POWER_RESTORED = 'cardPowerRestored',
+	CARD_ARMOR_RESTORED = 'cardArmorRestored',
 	CARD_DISCARDED = 'cardDiscarded',
 	CARD_DESTROYED = 'cardDestroyed',
 

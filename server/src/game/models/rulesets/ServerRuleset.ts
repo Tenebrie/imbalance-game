@@ -203,8 +203,8 @@ export class ServerRulesetBuilder<T> {
 	private readonly class: string
 	private readonly props: ServerRulesetBuilderProps<T>
 
-	private eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
-	private eventHooks: Map<GameHookType, EventHook<any, any>[]>
+	private readonly eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
+	private readonly eventHooks: Map<GameHookType, EventHook<any, any>[]>
 	private cardSelectorBuilders: CardSelectorBuilder[] = []
 
 	private aiBuilder: RulesetAIBuilder | null = null

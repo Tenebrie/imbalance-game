@@ -1,3 +1,4 @@
+import LeaderStatType from '../enums/LeaderStatType'
 import Card from './Card'
 
 export default interface CardStats {
@@ -17,18 +18,5 @@ export default interface CardStats {
 	spellCost: number
 	baseSpellCost: number
 
-	directUnitDamage: number
-	splashUnitDamage: number
-	directSpellDamage: number
-	splashSpellDamage: number
-	directHealingPotency: number
-	splashHealingPotency: number
-	directBuffPotency: number
-	splashBuffPotency: number
-	directEffectDuration: number
-	splashEffectDuration: number
-	directTargetCount: number
-	criticalDamageChance: number
-	criticalBuffChance: number
-	criticalHealChance: number
+	leaderStats: { [index in LeaderStatType]: number }
 }

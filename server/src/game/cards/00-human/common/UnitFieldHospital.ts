@@ -4,11 +4,12 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import CardFeature from '@shared/enums/CardFeature'
 import GameEventType from '@shared/enums/GameEventType'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import { asSplashHealingPotency } from '@src/utils/LeaderStats'
 import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitFieldHospital extends ServerCard {
 	healing = asSplashHealingPotency(2)
@@ -18,7 +19,8 @@ export default class UnitFieldHospital extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.BUILDING],
+			tribes: [CardTribe.BUILDING],
+			features: [CardFeature.NIGHTWATCH],
 			stats: {
 				power: 0,
 				armor: 6,

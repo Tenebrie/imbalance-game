@@ -216,7 +216,7 @@
 	"card.feature.protector.text": "*Protector*",
 	"card.feature.nightwatch.name": "Nightwatch",
 	"card.feature.nightwatch.description": "Stays on the board after the round end.",
-	"card.feature.nightwatch.text": "<c=green>Nightwatch</c>",
+	"card.feature.nightwatch.text": "*Nightwatch*",
 	"card.feature.spy.name": "Spy",
 	"card.feature.spy.description": "Played on your opponent's side of the board.",
 	"card.feature.spy.text": "*Spy*",
@@ -239,8 +239,10 @@
 	"card.stats.splashSpellDamage.text": "*Splash Spell Damage +{value}*",
 	"card.stats.directHealingPotency.text": "*Direct Heal Potency +{value}*",
 	"card.stats.splashHealingPotency.text": "*Splash Heal Potency +{value}*",
+	"card.stats.recurringHealingPotency.text": "*Recurring Heal Potency +{value}*",
 	"card.stats.directBuffPotency.text": "*Direct Buff Potency +{value}*",
 	"card.stats.splashBuffPotency.text": "*Splash Buff Potency +{value}*",
+	"card.stats.recurringBuffPotency.text": "*Recurring Buff Potency +{value}*",
 	"card.stats.directEffectDuration.text": "*Direct Effect Duration +{value}*",
 	"card.stats.splashEffectDuration.text": "*Splash Effect Duration +{value}*",
 	"card.stats.directTargetCount.text": "*Card Target Count +{value}*",
@@ -397,7 +399,7 @@
 
 	"card.heroTroviar.name": "Troviar",
 	"card.heroTroviar.title": "The Torturer",
-	"card.heroTroviar.description": "*Deploy:*\nDeal {selfDamage} Damage to self.<p>Whenever another unit takes damage, restore {powerRestored} Power.",
+	"card.heroTroviar.description": "Whenever another unit takes damage, *Heal* {powerRestored} to self.<p>*Deploy:*\nDeal {selfDamage} Damage to self.",
 
 	"card.heroMetrearte.name": "Metrearte",
 	"card.heroMetrearte.title": "The Copycat",
@@ -447,7 +449,7 @@
 	"card.unitCultistSpellslinger.flavor": "- \"So say we all\"",
 
 	"card.heroCultistOfAreddon.name": "Cultist of Areddon",
-	"card.heroCultistOfAreddon.description": "*Deploy:*\nDestroy an allied non-cultist unit.\nThen, *Create* a copy of it.",
+	"card.heroCultistOfAreddon.description": "*Deploy:* Destroy an allied non-cultist unit.\nThen, *Create* a copy of it.",
 	"card.heroCultistOfAreddon.flavor": "- \"So say we all\"",
 
 	"card.heroAdventuringGuildMaster.name": "Adventuring\nGuild Master",
@@ -480,7 +482,7 @@
 	"card.unitChargingKnight.flavor": "The card that has been reworked way too many times.",
 
 	"card.unitPriestessOfAedine.name": "Priestess of Aedine",
-	"card.unitPriestessOfAedine.description": "*Deploy:*\nRestore {healing} Power to a damaged allied unit",
+	"card.unitPriestessOfAedine.description": "*Deploy:*\nPerform a *Heal* {healing} on a damaged allied unit.",
 	"card.unitPriestessOfAedine.heal.target": "Restore {healing} Power",
 
 	"card.unitSupplyWagon.name": "Supply Wagon",
@@ -488,15 +490,6 @@
 
 	"card.unitArcaneElemental.name": "Arcane Elemental",
 	"card.unitArcaneElemental.description": "*Deploy:*\nGenerate {manaGenerated} Mana",
-
-	"card.unitArcaneCrystal.name": "Arcane Crystal",
-	"card.unitArcaneCrystal.description": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Generate {manaGenerated} Mana for every {chargesForMana} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill generate {potentialMana} Mana</i></if>",
-
-	"card.unitFlameTouchCrystal.name": "Flame Touch Crystal",
-	"card.unitFlameTouchCrystal.description": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Create a *Tiny Sparkling* for each *Charge* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}</i></if>",
-
-	"card.unitIceSkinCrystal.name": "Ice Skin Crystal",
-	"card.unitIceSkinCrystal.description": "Generates {chargePerMana} *Charge* for every Mana you spend.<p>*Deathrattle:* Give all adjacent allies {armorGranted} Decaying Armor for every {chargesForArmor} *Charges* accumulated.<if chargesVisible><p><i>Charges accumulated: {charges}\nWill grant {potentialArmor} Decaying Armor</i></if>",
 
 	"card.unitStoneElemental.name": "Stone Elemental",
 	"card.unitStoneElemental.description": "*Deploy:*\nDeal {damage} Damage to an enemy unit.\nApply *Stun* for 1 turn.",
@@ -727,7 +720,7 @@
 	"card.spellTacticalMove.target.label.row": "Move here",
 
 	"card.spellReinforcements.name": "Reinforcements",
-	"card.spellReinforcements.description": "*Play* a top card of your deck.",
+	"card.spellReinforcements.description": "*Draw* a card.<p>You can play an extra unit card this turn.",
 
 	"card.heroChallengeLegendaryExplorer0.name": "Jeno Rackson",
 	"card.heroChallengeLegendaryExplorer0.title": "One-of-Many",
@@ -771,7 +764,7 @@
 
 	"card.heroRobert.name": "Robert",
 	"card.heroRobert.title": "Building Instructor",
-	"card.heroRobert.description": "*Deploy:*\n*Summon* a Building and *Create* a copy of it.\nBoth copies have no Armor.",
+	"card.heroRobert.description": "*Deploy:*\n*Play* a Building from your deck and *Create* a copy of it.\nBoth copies have no Armor.",
 	"card.heroRobert.flavor": "- \"And that's how you build it. Easy, right? Now, repeat after me.\"",
 
 	"card.heroThomas.name": "Thomas",
@@ -926,5 +919,21 @@
 	"card.unitCampfireEmptySpace.description": "<i>Soft and warm ground next to the campfire.</i>",
 
 	"card.unitMerfolkSkygazer.name": "Merfolk Skygazer",
-	"card.unitMerfolkSkygazer.description": "*Deploy:*\nApply *Healing Rain* to an allied row."
+	"card.unitMerfolkSkygazer.description": "*Deploy:*\nApply *Healing Rain* to an allied row.",
+
+	"card.heroMelissea.name": "Melissea",
+	"card.heroMelissea.title": "The High Priestess",
+	"card.heroMelissea.description": "Whenever you *Heal* an allied unit, also give it +{extraPower} Power.<p>*Deploy:*\n*Heal* an allied unit {healing}.",
+
+	"card.unitArmorMender.name": "Armor Mender",
+	"card.unitArmorMender.description": "The first time an allied unit takes damage during a turn, give them +{bonusArmor} Armor.<if isReady><p><i>Ready to activate</i></if><if isNotReady><p><i>Already activated this turn.</i></if>",
+
+	"card.unitShieldbearer.name": "Shieldbearer",
+	"card.unitShieldbearer.description": " ",
+
+	"card.unitAedineShrine.name": "Shrine to Aedine",
+	"card.unitAedineShrine.description": " ",
+
+	"card.unitRoyalArmory.name": "Royal Armory",
+	"card.unitRoyalArmory.description": " "
 }

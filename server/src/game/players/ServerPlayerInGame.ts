@@ -158,6 +158,10 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutMoraleChange(opponent.player, this)
 	}
 
+	public addUnitMana(value: number): void {
+		this.setUnitMana(this.unitMana + value)
+	}
+
 	public setUnitMana(value: number): void {
 		if (this.unitMana === value) {
 			return

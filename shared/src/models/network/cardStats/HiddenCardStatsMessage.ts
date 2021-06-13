@@ -1,5 +1,7 @@
 import CardStats from '../../CardStats'
 import CardStatsMessage from './CardStatsMessage'
+import LeaderStatType from '../../../enums/LeaderStatType'
+import { forEachInEnum } from '../../../Utils'
 
 export default class HiddenCardStatsMessage implements CardStatsMessage {
 	cardId: string
@@ -18,22 +20,15 @@ export default class HiddenCardStatsMessage implements CardStatsMessage {
 	spellCost = 0
 	baseSpellCost = 0
 
-	directUnitDamage = 0
-	splashUnitDamage = 0
-	directSpellDamage = 0
-	splashSpellDamage = 0
-	directHealingPotency = 0
-	splashHealingPotency = 0
-	directBuffPotency = 0
-	splashBuffPotency = 0
-	directEffectDuration = 0
-	splashEffectDuration = 0
-	directTargetCount = 0
-	criticalDamageChance = 0
-	criticalBuffChance = 0
-	criticalHealChance = 0
+	leaderStats: { [index in LeaderStatType]: number }
 
 	constructor(stats: CardStats) {
 		this.cardId = stats.card.id
+		this.leaderStats = {
+			...stats.leaderStats,
+		}
+		forEachInEnum(LeaderStatType, (val) => {
+			this.leaderStats[val] = 0
+		})
 	}
 }

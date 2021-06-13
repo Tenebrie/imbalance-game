@@ -22,9 +22,9 @@ export default class UnitBloodyTrebuchet extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.BUILDING, CardFeature.KEYWORD_ORDER],
+			features: [CardFeature.KEYWORD_ORDER],
 			stats: {
-				power: 0,
+				power: 6,
 				armor: 4,
 			},
 			expansionSet: ExpansionSet.BASE,

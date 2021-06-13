@@ -95,6 +95,28 @@ export default {
 			triggeringCard: args.triggeringCard.id,
 		},
 	}),
+	cardPowerRestored: (args: CardPowerRestoredEventArgs): GameEvent => ({
+		type: GameEventType.CARD_POWER_RESTORED,
+		args: args,
+		effectSource: args.triggeringCard,
+		logSubtype: args.healingInstance.source === DamageSource.CARD ? 'fromCard' : 'fromUniverse',
+		logVariables: {
+			healing: args.healingInstance.value,
+			sourceCard: args.healingInstance.sourceCard ? args.healingInstance.sourceCard.id : '',
+			triggeringCard: args.triggeringCard.id,
+		},
+	}),
+	cardArmorRestored: (args: CardArmorRestoredEventArgs): GameEvent => ({
+		type: GameEventType.CARD_ARMOR_RESTORED,
+		args: args,
+		effectSource: args.triggeringCard,
+		logSubtype: args.restorationInstance.source === DamageSource.CARD ? 'fromCard' : 'fromUniverse',
+		logVariables: {
+			healing: args.restorationInstance.value,
+			sourceCard: args.restorationInstance.sourceCard ? args.restorationInstance.sourceCard.id : '',
+			triggeringCard: args.triggeringCard.id,
+		},
+	}),
 	cardDiscarded: (args: CardDrawnEventArgs): GameEvent => ({
 		type: GameEventType.CARD_DISCARDED,
 		args: args,
@@ -377,6 +399,14 @@ export interface CardTakesDamageEventArgs extends SharedEventArgs {
 	damageInstance: ServerDamageInstance
 	armorDamageInstance: ServerDamageInstance | null
 	powerDamageInstance: ServerDamageInstance | null
+}
+export interface CardPowerRestoredEventArgs extends SharedEventArgs {
+	triggeringCard: ServerCard
+	healingInstance: ServerDamageInstance
+}
+export interface CardArmorRestoredEventArgs extends SharedEventArgs {
+	triggeringCard: ServerCard
+	restorationInstance: ServerDamageInstance
 }
 export interface CardDiscardedEventArgs extends SharedEventArgs {
 	owner: ServerPlayerInGame

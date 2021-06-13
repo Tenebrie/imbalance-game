@@ -7,8 +7,9 @@ import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardFeature from '@shared/enums/CardFeature'
 import GameEventType from '@shared/enums/GameEventType'
-import { AnyCardLocation } from '../../../../utils/Utils'
+import { AnyCardLocation } from '@src/utils/Utils'
 import BuffNightwatch from '../../../buffs/BuffNightwatch'
+import CardTribe from '@shared/enums/CardTribe'
 
 type SelectedUnit = {
 	card: ServerCard
@@ -23,7 +24,8 @@ export default class UnitMakeshiftShelter extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.BUILDING, CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_NIGHTWATCH],
+			tribes: [CardTribe.BUILDING],
+			features: [CardFeature.NIGHTWATCH, CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 0,
 				armor: 3,

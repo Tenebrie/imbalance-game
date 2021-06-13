@@ -249,7 +249,7 @@ export default class RichText extends PIXI.Container {
 				fontSize: this.fontSize,
 				fontStyle: contextItalic ? 'italic' : 'normal',
 				padding: contextItalic ? 8 : 0,
-				fill: contextHighlight ? 0xffffff : contextColor,
+				fill: contextHighlight ? 0xd69747 : contextColor,
 				dropShadow: this.dropShadow,
 				dropShadowBlur: this.dropShadowBlur,
 			})

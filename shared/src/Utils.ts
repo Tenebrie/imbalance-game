@@ -171,3 +171,13 @@ export const getMaxCardCopiesForColor = (color: CardColor): number => {
 export const EmptyFunction = (): void => {
 	/* Empty */
 }
+
+export function enumKeys<O extends Record<string, any>, K extends keyof O = keyof O>(obj: O): K[] {
+	return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[]
+}
+
+export function forEachInEnum<O extends Record<string, any>>(enumeration: O, handler: (val: O[keyof O], key: keyof O) => any): void {
+	for (const value of enumKeys(enumeration)) {
+		handler(enumeration[value], value)
+	}
+}
