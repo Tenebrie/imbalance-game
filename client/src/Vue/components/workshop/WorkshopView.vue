@@ -77,7 +77,7 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import { debounce } from 'throttle-debounce'
-import { forEachInEnum, getRandomName } from '@shared/Utils'
+import { getRandomName, initializeEnumRecord } from '@shared/Utils'
 import WorkshopDownloadButton from '@/Vue/components/workshop/WorkshopDownloadButton.vue'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 
@@ -149,10 +149,6 @@ export default defineComponent({
 		const cardTribes = ref<string>('')
 		const cardDescription = ref<string>('')
 
-		const leaderStats: { [index in LeaderStatType]?: number } = {}
-		forEachInEnum(LeaderStatType, (val) => {
-			leaderStats[val] = 0
-		})
 		const cardPreview = computed<CardMessage & WorkshopCardProps>(() => ({
 			id: '',
 			type: cardType.value,
@@ -182,7 +178,7 @@ export default defineComponent({
 				spellCost: convertNumericValue(cardSpellCost),
 				baseSpellCost: convertNumericValue(cardSpellCost),
 
-				leaderStats: leaderStats as { [index in LeaderStatType]: number },
+				leaderStats: initializeEnumRecord(LeaderStatType, () => 0),
 			},
 			buffs: {
 				cardId: '',

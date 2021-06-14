@@ -24,11 +24,11 @@
 
 <script lang="ts">
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-import { forEachInStringEnum } from '@/utils/Utils'
 import store from '@/Vue/store'
 import StoryCharacter from '@shared/enums/StoryCharacter'
 import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
 import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
+import { initializeEnumRecord } from '@shared/Utils'
 
 export default defineComponent({
 	setup() {
@@ -63,15 +63,8 @@ export default defineComponent({
 			}
 		)
 
-		const characterStatus = computed<Record<string, boolean>>(() => {
-			let values: Record<string, boolean> = {}
-			forEachInStringEnum(StoryCharacter, (val) => {
-				values[val] = false
-			})
-			if (activeCharacter.value) {
-				values[activeCharacter.value] = true
-			}
-			return values
+		const characterStatus = computed(() => {
+			return initializeEnumRecord(StoryCharacter, (val) => !!activeCharacter.value && val === activeCharacter.value)
 		})
 
 		const overlayClass = computed<Record<string, boolean>>(() => ({

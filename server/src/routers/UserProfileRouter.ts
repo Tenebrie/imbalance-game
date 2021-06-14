@@ -5,8 +5,9 @@ import PlayerLibrary from '../game/players/PlayerLibrary'
 import AsyncHandler from '../utils/AsyncHandler'
 import RenderQuality from '@shared/enums/RenderQuality'
 import Language from '@shared/enums/Language'
-import Utils, { getPlayerFromAuthenticatedRequest, registerFormValidators } from '../utils/Utils'
+import { getPlayerFromAuthenticatedRequest, registerFormValidators } from '../utils/Utils'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
+import { enumToArray, forEachInEnum } from '@shared/Utils'
 
 const router = express.Router()
 
@@ -39,22 +40,10 @@ router.put('/', (req: Request, res: Response) => {
 	const validateInput = {
 		...registerFormValidators,
 		userLanguage: (userLanguage: string): boolean => {
-			let result = false
-			Utils.forEachInStringEnum(Language, (value: Language) => {
-				if (value === userLanguage) {
-					result = true
-				}
-			})
-			return result
+			return enumToArray(Language).some((value) => value === userLanguage)
 		},
 		renderQuality: (renderQuality: string): boolean => {
-			let result = false
-			Utils.forEachInStringEnum(RenderQuality, (value: RenderQuality) => {
-				if (value === renderQuality) {
-					result = true
-				}
-			})
-			return result
+			return enumToArray(RenderQuality).some((value) => value === renderQuality)
 		},
 		volumeLevel: (volume: number): boolean => {
 			return volume >= 0 && volume <= 1

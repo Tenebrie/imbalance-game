@@ -11,9 +11,9 @@ import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import GameEventCreators from '../models/events/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import Utils from '../../utils/Utils'
 import ServerCardTarget from '../models/ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
+import { sortCards } from '@shared/Utils'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -222,9 +222,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	public showMulliganCards(): void {
 		const cardsToMulligan = this.cardHand.unitCards
-		const targets = Utils.sortCards(cardsToMulligan).map((card) =>
-			ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card)
-		)
+		const targets = sortCards(cardsToMulligan).map((card) => ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(this.player, TargetMode.MULLIGAN, targets)
 	}
 

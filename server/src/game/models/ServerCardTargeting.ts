@@ -8,7 +8,6 @@ import ServerCardTarget, {
 } from './ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType, { CardTargetTypes } from '@shared/enums/TargetType'
-import Utils from '../../utils/Utils'
 import CardFeature from '@shared/enums/CardFeature'
 import GameLibrary from '../libraries/CardLibrary'
 import ServerCard from './ServerCard'
@@ -25,6 +24,7 @@ import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/Ord
 import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTargetDefinition'
 import { OrderTarget } from '@src/game/models/ServerBoardOrders'
 import { ResolutionStackTarget } from './ServerResolveStack'
+import { sortCards } from '@shared/Utils'
 
 export type ValidServerCardTarget = ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow | ServerCardTargetPosition
 
@@ -266,7 +266,7 @@ export class ServerCardTargeting {
 		targetDefinition: DeployTargetDefinition<any>,
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
-		return Utils.sortCards(
+		return sortCards(
 			GameLibrary.cards
 				.filter((card) => this.card.isExperimental || card.isExperimental === this.card.isExperimental)
 				.filter((card) =>
@@ -285,7 +285,7 @@ export class ServerCardTargeting {
 		targetDefinition: DeployTargetDefinition<any>,
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
-		return Utils.sortCards(
+		return sortCards(
 			this.game.players
 				.map((player) => player.cardHand.unitCards)
 				.reduce((accumulator, cards) => accumulator.concat(cards))
@@ -312,7 +312,7 @@ export class ServerCardTargeting {
 		targetDefinition: DeployTargetDefinition<any>,
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
-		return Utils.sortCards(
+		return sortCards(
 			this.game.players
 				.map((player) => player.cardHand.spellCards)
 				.reduce((accumulator, cards) => accumulator.concat(cards))
@@ -351,7 +351,7 @@ export class ServerCardTargeting {
 			)
 
 		if (!targetDefinition.shouldPreventSorting()) {
-			targetedCards = Utils.sortCards(targetedCards)
+			targetedCards = sortCards(targetedCards)
 		}
 
 		return targetedCards.map((targetCard) =>
@@ -381,7 +381,7 @@ export class ServerCardTargeting {
 			)
 
 		if (!targetDefinition.shouldPreventSorting()) {
-			targetedCards = Utils.sortCards(targetedCards)
+			targetedCards = sortCards(targetedCards)
 		}
 
 		return targetedCards.map((targetCard) =>

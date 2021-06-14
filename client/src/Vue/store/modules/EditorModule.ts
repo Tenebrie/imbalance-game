@@ -12,6 +12,7 @@ import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import HoveredDeckCardModule from '@/Vue/store/modules/HoveredDeckCardModule'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { debounce } from 'throttle-debounce'
+import { sortCards } from '@shared/Utils'
 
 const editorModule = defineModule({
 	namespaced: true,
@@ -183,7 +184,7 @@ const editorModule = defineModule({
 
 			const cardsResponse = await axios.get('/api/cards', { params: { collectible: false } })
 			const cardMessages = cardsResponse.data as CardMessage[]
-			const sortedMessages = Utils.sortEditorCards(cardMessages)
+			const sortedMessages = sortCards(cardMessages)
 			commit.setCardLibrary(sortedMessages)
 		},
 
@@ -219,7 +220,7 @@ const editorModule = defineModule({
 				cardToModify.count += 1
 			}
 
-			deckToModify.cards = Utils.sortEditorCards(deckToModify.cards)
+			deckToModify.cards = sortCards(deckToModify.cards)
 
 			commit.updateEditorDeck(deckToModify)
 			await dispatch.asyncSave(payload)

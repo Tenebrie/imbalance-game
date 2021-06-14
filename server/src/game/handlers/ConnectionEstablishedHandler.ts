@@ -4,10 +4,11 @@ import ServerPlayer from '../players/ServerPlayer'
 import Constants from '@shared/Constants'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import OutgoingMessageHandlers from './OutgoingMessageHandlers'
-import Utils, { colorizeId, colorizePlayer, isCardPublic } from '../../utils/Utils'
+import { colorizeId, colorizePlayer, isCardPublic } from '@src/utils/Utils'
 import ServerCardTarget from '../models/ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import ServerBotPlayerInGame from '../AI/ServerBotPlayerInGame'
+import { sortCards } from '@shared/Utils'
 
 export default {
 	onPlayerConnected(game: ServerGame, playerInGame: ServerPlayerInGame): void {
@@ -59,9 +60,7 @@ export default {
 		} else if (playerInGame.mulliganMode) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(playerInGame.player, playerInGame)
 			const cardsToMulligan = playerInGame.cardHand.unitCards
-			const targets = Utils.sortCards(cardsToMulligan).map((card) =>
-				ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card)
-			)
+			const targets = sortCards(cardsToMulligan).map((card) => ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card))
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(playerInGame.player, TargetMode.MULLIGAN, targets)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, playerInGame)
@@ -123,9 +122,7 @@ export default {
 		} else if (spectatedPlayerInGame.mulliganMode) {
 			OutgoingMessageHandlers.notifyAboutCardsMulliganed(spectator.player, spectatedPlayerInGame)
 			const cardsToMulligan = spectatedPlayerInGame.cardHand.unitCards
-			const targets = Utils.sortCards(cardsToMulligan).map((card) =>
-				ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card)
-			)
+			const targets = sortCards(cardsToMulligan).map((card) => ServerCardTarget.anonymousTargetCardInUnitHand(TargetMode.MULLIGAN, card))
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(spectator.player, TargetMode.MULLIGAN, targets)
 		}
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, spectatedPlayerInGame)

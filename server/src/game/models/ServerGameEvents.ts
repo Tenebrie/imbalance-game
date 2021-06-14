@@ -10,12 +10,13 @@ import GameHookType, { CardTakesDamageHookArgs } from '@src/game/models/events/G
 import { EventHook } from '@src/game/models/events/EventHook'
 import { CardSelector } from '@src/game/models/events/selectors/CardSelector'
 import { CardSelectorBuilder } from '@src/game/models/events/selectors/CardSelectorBuilder'
-import Utils, { colorizeClass, colorizeId, getOwner } from '@src/utils/Utils'
+import { colorizeClass, colorizeId, getOwner } from '@src/utils/Utils'
 import { cardPerform, cardRequire } from '@src/game/utils/CardEventHandlers'
 import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
 import CardLocation from '@shared/enums/CardLocation'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
+import { forEachInEnum, sortCards } from '@shared/Utils'
 
 export type EventSubscriber = ServerCard | ServerBuff | null
 
@@ -51,8 +52,8 @@ export default class ServerGameEvents {
 
 		this.eventLog = []
 		this.eventLog.push([])
-		Utils.forEachInStringEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
-		Utils.forEachInStringEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
+		forEachInEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
+		forEachInEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
 	}
 
 	public createCallback<EventArgs>(subscriber: EventSubscriber, event: GameEventType): EventSubscription<EventArgs> {
@@ -81,12 +82,12 @@ export default class ServerGameEvents {
 
 	public unsubscribe(targetSubscriber: EventSubscriber): void {
 		this.cardSelectors.filter((selector) => selector.subscriber === targetSubscriber).forEach((selector) => selector.markForRemoval())
-		Utils.forEachInStringEnum(GameEventType, (eventType) => {
+		forEachInEnum(GameEventType, (eventType) => {
 			const subscriptions = this.eventSubscriptions.get(eventType)!
 			const filteredSubscriptions = subscriptions.filter((subscription) => subscription.subscriber !== targetSubscriber)
 			this.eventSubscriptions.set(eventType, filteredSubscriptions)
 		})
-		Utils.forEachInStringEnum(GameHookType, (hookType) => {
+		forEachInEnum(GameHookType, (hookType) => {
 			const subscriptions = this.eventHooks.get(hookType)!
 			const filteredSubscriptions = subscriptions.filter((subscription) => subscription.subscriber !== targetSubscriber)
 			this.eventHooks.set(hookType, filteredSubscriptions)
@@ -245,7 +246,7 @@ export default class ServerGameEvents {
 			const getCardIndex = (card: ServerCard, owner: ServerPlayerInGame, location: CardLocation): number => {
 				switch (location) {
 					case CardLocation.HAND:
-						return Utils.sortCards(owner.cardHand.allCards).indexOf(card)
+						return sortCards(owner.cardHand.allCards).indexOf(card)
 					case CardLocation.DECK:
 						return owner.cardDeck.allCards.indexOf(card)
 					case CardLocation.GRAVEYARD:

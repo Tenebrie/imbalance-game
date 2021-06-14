@@ -1,12 +1,11 @@
 import ServerCard from './ServerCard'
 import CardDeck from '@shared/models/CardDeck'
 import ServerGame from './ServerGame'
-import CardLibrary from '../libraries/CardLibrary'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerOwnedCard from './ServerOwnedCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
-import Utils from '../../utils/Utils'
+import { shuffle } from '@src/utils/Utils'
 
 export default class ServerDeck implements CardDeck {
 	game: ServerGame
@@ -106,8 +105,8 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public shuffle(): void {
-		this.unitCards = Utils.shuffle(this.unitCards)
-		this.spellCards = Utils.shuffle(this.spellCards)
+		this.unitCards = shuffle(this.unitCards)
+		this.spellCards = shuffle(this.spellCards)
 	}
 
 	public removeCard(card: ServerCard): void {

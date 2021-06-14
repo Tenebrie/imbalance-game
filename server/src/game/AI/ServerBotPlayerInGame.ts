@@ -4,13 +4,13 @@ import ServerPlayer from '../players/ServerPlayer'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import Utils from '../../utils/Utils'
 import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerCard from '../models/ServerCard'
 import CardType from '@shared/enums/CardType'
 import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import AIBehaviour from '@shared/enums/AIBehaviour'
+import { sortCards } from '@shared/Utils'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	behaviour: AIBehaviour = AIBehaviour.DEFAULT
@@ -76,7 +76,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	private botPlaysCard(spellsOnly: boolean): void {
 		const baseCards = spellsOnly ? this.cardHand.spellCards : this.cardHand.allCards
 
-		const cards = Utils.sortCards(baseCards)
+		const cards = sortCards(baseCards)
 			.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
 			.map((card) => ({
 				card: card,
@@ -130,7 +130,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private hasHighValueSpellPlays(): boolean {
 		return (
-			Utils.sortCards(this.cardHand.spellCards)
+			sortCards(this.cardHand.spellCards)
 				.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
 				.map((card) => ({
 					card: card,
@@ -142,8 +142,7 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private hasAnySpellPlays(): boolean {
 		return (
-			Utils.sortCards(this.cardHand.spellCards).filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
-				.length > 0
+			sortCards(this.cardHand.spellCards).filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0).length > 0
 		)
 	}
 

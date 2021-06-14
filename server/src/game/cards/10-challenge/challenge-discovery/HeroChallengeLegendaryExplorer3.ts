@@ -9,7 +9,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 import CardLibrary from '../../../libraries/CardLibrary'
-import Utils from '../../../../utils/Utils'
+import { shuffle } from '@src/utils/Utils'
 
 export default class HeroChallengeLegendaryExplorer3 extends ServerCard {
 	exploredCards: ServerCard[] = []
@@ -45,7 +45,7 @@ export default class HeroChallengeLegendaryExplorer3 extends ServerCard {
 			.filter((card) => card.color === CardColor.GOLDEN)
 			.filter((card) => card.isCollectible)
 			.slice()
-		this.exploredCards = Utils.shuffle(legendaryCards).slice(0, this.cardsToExplore)
+		this.exploredCards = shuffle(legendaryCards).slice(0, this.cardsToExplore)
 	}
 
 	private onTargetSelected(target: ServerCard): void {

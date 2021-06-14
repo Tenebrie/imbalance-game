@@ -16,8 +16,8 @@ import CardLibrary from '../libraries/CardLibrary'
 import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import ServerCardTarget from '@src/game/models/ServerCardTarget'
-import Utils from '@src/utils/Utils'
 import NovelReplyMessage from '@src/../../shared/src/models/novel/NovelReplyMessage'
+import { sortCards } from '@shared/Utils'
 
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
@@ -122,7 +122,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.REQUEST_PLAYERS_DECK]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		const cards = Utils.sortCards(player.cardDeck.unitCards.concat(player.cardDeck.spellCards))
+		const cards = sortCards(player.cardDeck.unitCards.concat(player.cardDeck.spellCards))
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
@@ -132,7 +132,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		const cards = Utils.sortCards(player.cardGraveyard.unitCards.concat(player.cardGraveyard.spellCards))
+		const cards = sortCards(player.cardGraveyard.unitCards.concat(player.cardGraveyard.spellCards))
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}
@@ -142,7 +142,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		const cards = Utils.sortCards(player.opponent!.cardGraveyard.unitCards.concat(player.opponent!.cardGraveyard.spellCards))
+		const cards = sortCards(player.opponent!.cardGraveyard.unitCards.concat(player.opponent!.cardGraveyard.spellCards))
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
 		}

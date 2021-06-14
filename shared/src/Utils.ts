@@ -176,6 +176,23 @@ export function enumKeys<O extends Record<string, any>, K extends keyof O = keyo
 	return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[]
 }
 
+export function enumToArray<O extends Record<string, any>>(enumeration: O): O[keyof O][] {
+	return enumKeys(enumeration).map((key) => enumeration[key])
+}
+
+export function initializeEnumRecord<O extends Record<string, any>, K>(
+	enumeration: O,
+	valueGetter: (value: O[keyof O]) => K
+): Record<O[keyof O], K> {
+	return enumToArray(enumeration).reduce(
+		(acc, val) => ({
+			...acc,
+			[val]: valueGetter(enumeration[val]),
+		}),
+		{} as Record<O[keyof O], K>
+	)
+}
+
 export function forEachInEnum<O extends Record<string, any>>(enumeration: O, handler: (val: O[keyof O], key: keyof O) => any): void {
 	for (const value of enumKeys(enumeration)) {
 		handler(enumeration[value], value)

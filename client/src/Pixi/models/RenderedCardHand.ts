@@ -1,10 +1,10 @@
 import Core from '@/Pixi/Core'
-import Utils from '@/utils/Utils'
 import CardHand from '@shared/models/CardHand'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardType from '@shared/enums/CardType'
 import CardHandMessage from '@shared/models/network/cardHand/CardHandMessage'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import { sortCards } from '@shared/Utils'
 
 export default class RenderedCardHand implements CardHand {
 	unitCards: RenderedCard[]
@@ -32,17 +32,17 @@ export default class RenderedCardHand implements CardHand {
 
 	public addUnit(card: RenderedCard): void {
 		this.unitCards.push(card)
-		this.unitCards = Utils.sortCards(this.unitCards)
+		this.unitCards = sortCards(this.unitCards)
 	}
 
 	public addSpell(card: RenderedCard): void {
 		this.spellCards.push(card)
-		this.spellCards = Utils.sortCards(this.spellCards)
+		this.spellCards = sortCards(this.spellCards)
 	}
 
 	public sortCards(): void {
-		this.unitCards = Utils.sortCards(this.unitCards)
-		this.spellCards = Utils.sortCards(this.spellCards)
+		this.unitCards = sortCards(this.unitCards)
+		this.spellCards = sortCards(this.spellCards)
 	}
 
 	public findCardById(cardId: string): RenderedCard | null {

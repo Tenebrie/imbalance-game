@@ -1,6 +1,6 @@
 import GameMode from '@shared/enums/GameMode'
 import GameEventType from '@src/../../shared/src/enums/GameEventType'
-import Utils, { getClassFromConstructor } from '@src/utils/Utils'
+import { getClassFromConstructor } from '@src/utils/Utils'
 import { EventHook } from '../events/EventHook'
 import { EventSubscription } from '../events/EventSubscription'
 import GameHookType from '../events/GameHookType'
@@ -40,6 +40,7 @@ import { RulesetBoard, RulesetBoardBuilder } from './RulesetBoard'
 import { RulesetConstants } from '@shared/models/RulesetConstants'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
+import { forEachInEnum } from '@shared/Utils'
 
 export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; count: number })[]
 
@@ -155,8 +156,8 @@ export class ServerRulesetTemplate {
 
 		this.eventSubscriptions = new Map<GameEventType, EventSubscription<any>[]>()
 		this.eventHooks = new Map<GameHookType, EventHook<any, any>[]>()
-		Utils.forEachInStringEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
-		Utils.forEachInStringEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
+		forEachInEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
+		forEachInEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
 		props.eventSubscriptions.forEach((value: EventSubscription<any>[], key: GameEventType) => {
 			this.eventSubscriptions.set(key, this.eventSubscriptions.get(key)!.concat(value))
 		})
@@ -219,8 +220,8 @@ export class ServerRulesetBuilder<T> {
 
 		this.eventSubscriptions = new Map<GameEventType, EventSubscription<any>[]>()
 		this.eventHooks = new Map<GameHookType, EventHook<any, any>[]>()
-		Utils.forEachInStringEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
-		Utils.forEachInStringEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
+		forEachInEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
+		forEachInEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
 	}
 
 	protected updateConstants(values: Partial<RulesetConstants>): void {

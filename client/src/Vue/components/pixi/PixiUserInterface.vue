@@ -73,11 +73,11 @@ import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 import TheEscapeMenu from '@/Vue/components/popup/escapeMenu/TheEscapeMenu.vue'
 import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
 import Core from '@/Pixi/Core'
-import Utils from '@/utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
 import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
 import PixiEndTurnArea from '@/Vue/components/pixi/PixiEndTurnArea.vue'
 import GameMode from '@shared/enums/GameMode'
+import { sortCards } from '@shared/Utils'
 
 export default defineComponent({
 	components: {
@@ -112,7 +112,7 @@ export default defineComponent({
 			if (!Core.input) {
 				return
 			}
-			Core.input.forcedTargetingCards = Utils.sortCards(Core.input.forcedTargetingCards)
+			Core.input.forcedTargetingCards = sortCards(Core.input.forcedTargetingCards)
 		}
 
 		const onToggleVisibility = (): void => {

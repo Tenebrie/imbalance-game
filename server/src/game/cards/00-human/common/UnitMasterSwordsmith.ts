@@ -8,9 +8,9 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
-import Utils from '../../../../utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency } from '@src/utils/LeaderStats'
+import { sortCards } from '@shared/Utils'
 
 export default class UnitMasterSwordsmith extends ServerCard {
 	bonusPower = asSplashBuffPotency(1)
@@ -36,7 +36,7 @@ export default class UnitMasterSwordsmith extends ServerCard {
 
 	private onDeploy(): void {
 		const owner = this.ownerInGame
-		const targets = Utils.sortCards(owner.cardHand.unitCards)
+		const targets = sortCards(owner.cardHand.unitCards)
 		targets.forEach((card) => {
 			this.game.animation.createAnimationThread()
 			card.buffs.add(BuffStrength, this, BuffDuration.INFINITY)

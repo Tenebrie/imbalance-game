@@ -1,29 +1,14 @@
 import * as PIXI from 'pixi.js'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Card from '@shared/models/Card'
 import store from '@/Vue/store'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import { sortCards, getMaxCardCountForColor, getMaxCardCopiesForColor } from '@shared/Utils'
+import { getMaxCardCountForColor, getMaxCardCopiesForColor } from '@shared/Utils'
 import Core from '@/Pixi/Core'
 import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 import * as Particles from 'pixi-particles'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardFaction from '@shared/enums/CardFaction'
-
-export const forEachInNumericEnum = (enumeration: { [s: number]: number }, handler: (val: number) => any): void => {
-	for (const value in enumeration) {
-		if (!isNaN(Number(value))) {
-			handler(Number(value))
-		}
-	}
-}
-
-export const forEachInStringEnum = (enumeration: { [s: number]: string }, handler: (val: string) => any): void => {
-	for (const value in enumeration) {
-		handler(enumeration[value])
-	}
-}
 
 export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
 	return Core.board.isInverted && player === 'player' ? Core.constants.GAME_BOARD_ROW_COUNT - index - 1 : index
@@ -258,14 +243,6 @@ const legacyExport = {
 			itemsProcessed += itemsPerChunk
 		}
 		return chunks
-	},
-
-	sortCards(inputArray: RenderedCard[]): RenderedCard[] {
-		return sortCards<RenderedCard>(inputArray)
-	},
-
-	sortEditorCards(inputArray: CardMessage[]): any[] {
-		return sortCards(inputArray) as CardMessage[]
 	},
 
 	canAddCardToDeck(deckId: string, cardToAdd: Card | CardMessage): boolean {

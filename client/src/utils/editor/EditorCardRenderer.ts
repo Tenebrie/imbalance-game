@@ -4,7 +4,6 @@ import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import store from '@/Vue/store'
 import { CARD_HEIGHT, CARD_WIDTH } from '@/Pixi/renderer/RendererUtils'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import SCALE_MODE = PIXI.settings.SCALE_MODE
 import { SCALE_MODES } from 'pixi.js'
 
 class EditorCardRenderer {

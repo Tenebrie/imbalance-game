@@ -56,7 +56,7 @@ import GameEventCreators, {
 	UnitOrderedUnitEventArgs,
 } from './events/GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
-import Utils, { createRandomId, getClassFromConstructor } from '../../utils/Utils'
+import { createRandomId, getClassFromConstructor } from '@src/utils/Utils'
 import ServerAnimation from './ServerAnimation'
 import RelatedCardsDefinition from './RelatedCardsDefinition'
 import ServerCardStats from './ServerCardStats'
@@ -76,6 +76,7 @@ import {
 } from '@src/types/TargetValidatorArguments'
 import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import { sortCards } from '@shared/Utils'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -373,7 +374,7 @@ export default class ServerCard implements Card {
 	}
 
 	public get relatedCards(): string[] {
-		const customRelatedCards = Utils.sortCards(
+		const customRelatedCards = sortCards(
 			this.customRelatedCards
 				.map((relatedCardsDefinition) =>
 					CardLibrary.cards.filter((card) => relatedCardsDefinition.conditions.every((condition) => condition(card)))

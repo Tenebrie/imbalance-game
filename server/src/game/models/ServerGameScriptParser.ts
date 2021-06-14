@@ -1,7 +1,8 @@
 import { v4 as uuid } from 'uuid'
 import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
-import Utils, { colorizeClass, colorizeConsoleText, colorizeId, snakeToCamelCase } from '@src/utils/Utils'
+import { colorizeClass, colorizeConsoleText, colorizeId, snakeToCamelCase } from '@src/utils/Utils'
 import { ServerGameNovelCreator } from './ServerGameNovel'
+import { enumToArray, forEachInEnum } from '@shared/Utils'
 
 type TagHandle = {
 	name: string
@@ -18,7 +19,7 @@ export default class ServerGameNovelScriptParser {
 		const lines = script.split('\n')
 		let statements: ParserStatement[] = []
 
-		Utils.forEachInStringEnum(StoryCharacter, (char) => {
+		forEachInEnum(StoryCharacter, (char) => {
 			const str = snakeToCamelCase(char)
 			this.activeCharacterStatements.push(str.substr(0, 1).toUpperCase() + str.substr(1) + ':')
 		})
@@ -133,7 +134,7 @@ interface ParserStatement {
 }
 
 class SayStatement implements ParserStatement {
-	private text: string
+	private readonly text: string
 
 	constructor(line: string) {
 		this.text = line.substr(1).trim()
@@ -141,10 +142,6 @@ class SayStatement implements ParserStatement {
 
 	public get type(): StatementType {
 		return StatementType.SAY
-	}
-
-	public append(text: string): void {
-		this.text += text
 	}
 
 	public exec(dialog: ServerGameNovelCreator): void {
@@ -157,9 +154,9 @@ class SayStatement implements ParserStatement {
 }
 
 class ReplyStatement implements ParserStatement {
-	private text: string
+	private readonly text: string
 	private conditionExpression: string | null
-	private actionExpression: string | null
+	private readonly actionExpression: string | null
 	private anonymousActionName: string | null = null
 
 	constructor(line: string) {
@@ -205,7 +202,7 @@ class ReplyStatement implements ParserStatement {
 }
 
 class SetCharacterStatement implements ParserStatement {
-	private character: StoryCharacter
+	private readonly character: StoryCharacter
 
 	constructor(line: string) {
 		this.character = this.parseCharacter(line)
@@ -213,12 +210,7 @@ class SetCharacterStatement implements ParserStatement {
 
 	private parseCharacter(line: string): StoryCharacter {
 		const charName = snakeToCamelCase(line.substr(0, line.length - 1).replace(' ', ''))
-		let foundCharacter: StoryCharacter | null = null
-		Utils.forEachInStringEnum(StoryCharacter, (char) => {
-			if (char === charName) {
-				foundCharacter = char
-			}
-		})
+		const foundCharacter: StoryCharacter | null = enumToArray(StoryCharacter).find((char) => char === charName) || null
 		if (foundCharacter === null) {
 			throw new Error(`Unable to obtain character type for ${StatementType.SET_CHARACTER} statement`)
 		}
@@ -239,10 +231,10 @@ class SetCharacterStatement implements ParserStatement {
 }
 
 class CreateTagStatement implements ParserStatement {
-	private name: string
+	private readonly name: string
 
 	constructor(line: string) {
-		this.name = line.replace(/[\(\)\[\]{}=]/g, '').trim()
+		this.name = line.replace(/[()\[\]{}=]/g, '').trim()
 	}
 
 	public get type(): StatementType {
@@ -259,7 +251,7 @@ class CreateTagStatement implements ParserStatement {
 }
 
 class CreateAnonymousTagStatement implements ParserStatement {
-	private name: string
+	private readonly name: string
 
 	constructor() {
 		this.name = uuid()

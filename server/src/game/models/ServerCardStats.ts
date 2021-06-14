@@ -2,11 +2,12 @@ import ServerCard from './ServerCard'
 import ServerGame from './ServerGame'
 import CardStats from '@shared/models/CardStats'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import Utils, { limitValueToInterval } from '@src/utils/Utils'
+import { limitValueToInterval } from '@src/utils/Utils'
 import ServerBuff from './buffs/ServerBuff'
 import CardType from '@shared/enums/CardType'
 import CardFeature from '@shared/enums/CardFeature'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import { forEachInEnum } from '@shared/Utils'
 
 interface ServerCardStatsProps {
 	power: number
@@ -129,7 +130,7 @@ export default class ServerCardStats implements CardStats {
 	/* Other */
 	public get leaderStats(): { [index in LeaderStatType]: number } {
 		const stats: { [index in LeaderStatType]?: number } = {}
-		Utils.forEachInNumericEnum(LeaderStatType, (value) => {
+		forEachInEnum(LeaderStatType, (value) => {
 			const typedValue = value as LeaderStatType
 			stats[typedValue] = this.getLeaderStat(value)
 		})

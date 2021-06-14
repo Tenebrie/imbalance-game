@@ -247,39 +247,17 @@ export const validateEditorDeck = (unpopulatedDeck: EditorDeck): { valid: boolea
 export const snakeToCamelCase = (str: string): string =>
 	str.toLowerCase().replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
 
-export default {
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-	forEachInNumericEnum(enumeration: any, handler: (val: any) => any): void {
-		for (const value in enumeration) {
-			if (!isNaN(Number(value))) {
-				handler(Number(value))
-			}
-		}
-	},
+export function shuffle<T>(inputArray: T[]): T[] {
+	const array = inputArray.slice()
+	let currentIndex = array.length
 
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-	forEachInStringEnum(enumeration: any, handler: (val: any) => any): void {
-		for (const value in enumeration) {
-			handler(enumeration[value])
-		}
-	},
+	while (currentIndex > 0) {
+		const randomIndex = Math.floor(Math.random() * currentIndex)
+		currentIndex -= 1
+		const temporaryValue = array[currentIndex]
+		array[currentIndex] = array[randomIndex]
+		array[randomIndex] = temporaryValue
+	}
 
-	shuffle(inputArray: any[]): any[] {
-		const array = inputArray.slice()
-		let currentIndex = array.length
-
-		while (currentIndex > 0) {
-			const randomIndex = Math.floor(Math.random() * currentIndex)
-			currentIndex -= 1
-			const temporaryValue = array[currentIndex]
-			array[currentIndex] = array[randomIndex]
-			array[randomIndex] = temporaryValue
-		}
-
-		return array
-	},
-
-	sortCards(inputArray: ServerCard[]): ServerCard[] {
-		return sortCards<ServerCard>(inputArray)
-	},
+	return array
 }

@@ -9,7 +9,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 import CardLibrary from '../../../libraries/CardLibrary'
-import Utils from '../../../../utils/Utils'
+import { shuffle } from '../../../../utils/Utils'
 
 export default class UnitChallengeEagerExplorer extends ServerCard {
 	exploredCards: ServerCard[] = []
@@ -45,7 +45,7 @@ export default class UnitChallengeEagerExplorer extends ServerCard {
 			.filter((card) => card.color === CardColor.BRONZE)
 			.filter((card) => card.isCollectible)
 			.slice()
-		this.exploredCards = Utils.shuffle(commonCards).slice(0, this.cardsToExplore)
+		this.exploredCards = shuffle(commonCards).slice(0, this.cardsToExplore)
 	}
 
 	private onTargetSelected(target: ServerCard): void {
