@@ -9,7 +9,7 @@ export default class BuffRowHealingRain extends ServerRowBuff {
 			alignment: BuffAlignment.POSITIVE,
 		})
 
-		this.createCallback(GameEventType.TURN_STARTED)
+		this.createCallback(GameEventType.TURN_ENDED)
 			.require(({ player }) => player === this.parent.owner)
 			.perform(() => this.onTurnStarted())
 	}

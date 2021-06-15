@@ -114,6 +114,7 @@ export default defineComponent({
 
 img {
 	height: 32px;
+	width: 32px;
 	padding: 0 4px 0 0;
 	display: inline;
 	border-radius: 100%;

@@ -9,7 +9,6 @@ import CardFeature from '@shared/enums/CardFeature'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerDamageInstance from '@src/game/models/ServerDamageSource'
-import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitPrototypeScorpionCrew extends ServerCard {
 	targetDamage = asDirectUnitDamage(3)
@@ -20,8 +19,7 @@ export default class UnitPrototypeScorpionCrew extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.BUILDING],
-			features: [CardFeature.NIGHTWATCH, CardFeature.KEYWORD_ORDER],
+			features: [CardFeature.KEYWORD_ORDER],
 			stats: {
 				power: 5,
 				armor: 2,

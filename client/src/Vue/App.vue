@@ -33,6 +33,7 @@ export default defineComponent({
 		if (LocalStorage.hasAuthCookie()) {
 			await store.dispatch.rulesets.loadLibrary()
 			await store.dispatch.editor.loadCardLibrary()
+			await store.dispatch.editor.loadDecks()
 			editorCardRenderer.startRenderingService()
 		}
 	},

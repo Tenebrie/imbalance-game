@@ -8,6 +8,7 @@ import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
 import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
+import RowReceivedBuffAnimParams from '@shared/models/animations/RowReceivedBuffAnimParams'
 
 export type AnimationHandlerResponse = {
 	skip?: boolean
@@ -155,6 +156,25 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 		}
 	},
 
+	[AnimationType.ROW_HEALS_CARDS]: (message: AnimationMessage) => {
+		const sourceRow = Core.board.getRow(message.sourceRowIndex!)
+		if (!sourceRow) {
+			return { skip: true }
+		}
+		let projectilesSpawned = 0
+		message.targetCardIDs!.forEach((targetCardId) => {
+			const targetCard = Core.game.findRenderedCardById(targetCardId)
+			if (!targetCard) {
+				return
+			}
+			Core.mainHandler.projectileSystem.createRowHealProjectile(sourceRow, targetCard)
+			projectilesSpawned += 1
+		})
+		return {
+			skip: projectilesSpawned === 0,
+		}
+	},
+
 	[AnimationType.ROW_AFFECTS_ROWS]: (message: AnimationMessage) => {
 		const sourceRow = Core.board.getRow(message.sourceRowIndex!)
 		if (!sourceRow) {
@@ -256,10 +276,22 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 		}
 	},
 
-	[AnimationType.ROWS_RECEIVED_BUFF]: () => {
-		// TODO: Add animation
+	[AnimationType.ROWS_RECEIVED_BUFF]: (message: AnimationMessage, params: RowReceivedBuffAnimParams) => {
+		let buffsReceived = 0
+		message.targetRowIndices!.forEach((targetRowIndex) => {
+			const targetRow = Core.board.getRow(targetRowIndex)
+			if (!targetRow) {
+				return
+			}
+			Core.particleSystem.createRowBuffCreateParticleEffect(targetRow, params.alignment)
+
+			const audioEffectCategory =
+				params.alignment === BuffAlignment.NEGATIVE ? AudioEffectCategory.BUFF_NEGATIVE : AudioEffectCategory.BUFF_POSITIVE
+			AudioSystem.playEffect(audioEffectCategory)
+			buffsReceived += 1
+		})
 		return {
-			skip: true,
+			skip: buffsReceived === 0,
 		}
 	},
 

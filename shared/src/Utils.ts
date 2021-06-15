@@ -187,7 +187,7 @@ export function initializeEnumRecord<O extends Record<string, any>, K>(
 	return enumToArray(enumeration).reduce(
 		(acc, val) => ({
 			...acc,
-			[val]: valueGetter(enumeration[val]),
+			[val]: valueGetter(val),
 		}),
 		{} as Record<O[keyof O], K>
 	)

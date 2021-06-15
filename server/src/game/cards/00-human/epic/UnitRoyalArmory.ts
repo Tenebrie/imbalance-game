@@ -6,6 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFeature from '@shared/enums/CardFeature'
+import LeaderStatType from '@shared/enums/LeaderStatType'
 
 export default class UnitRoyalArmory extends ServerCard {
 	constructor(game: ServerGame) {
@@ -18,8 +19,8 @@ export default class UnitRoyalArmory extends ServerCard {
 			stats: {
 				power: 0,
 				armor: 6,
-				directUnitDamage: 3,
-				splashUnitDamage: 1,
+				[LeaderStatType.DIRECT_UNIT_DAMAGE]: 3,
+				[LeaderStatType.SPLASH_UNIT_DAMAGE]: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

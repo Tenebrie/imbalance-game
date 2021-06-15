@@ -8,6 +8,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitManaSilo extends ServerCard {
 	maxInfuse = 3
@@ -18,7 +19,8 @@ export default class UnitManaSilo extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.BUILDING, CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_INFUSE_X],
+			tribes: [CardTribe.BUILDING],
+			features: [CardFeature.NIGHTWATCH, CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_INFUSE_X],
 			stats: {
 				power: 0,
 				armor: 5,

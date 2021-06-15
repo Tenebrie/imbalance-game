@@ -6,6 +6,7 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import ClientBuffContainer from '@/Pixi/models/ClientBuffContainer'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 export default class RenderedGameBoardRow implements BoardRow {
 	public readonly index: number
@@ -15,6 +16,8 @@ export default class RenderedGameBoardRow implements BoardRow {
 	private __owner: ClientPlayerInGame | null
 
 	public readonly sprite: PIXI.Sprite
+	public readonly buffContainer: PIXI.Container
+	public readonly buffContainerBackground: PIXI.Sprite
 
 	public constructor(index: number) {
 		this.index = index
@@ -28,11 +31,26 @@ export default class RenderedGameBoardRow implements BoardRow {
 		this.container = new PIXI.Container()
 		this.container.addChild(this.sprite)
 
+		this.buffContainer = new PIXI.Container()
+		this.buffContainer.position.set(-this.sprite.width / 2 - 50 * getRenderScale().superSamplingLevel, 0)
+		this.container.addChild(this.buffContainer)
+
+		this.buffContainerBackground = new PIXI.Sprite(TextureAtlas.getTexture('board/power-allied'))
+		this.buffContainerBackground.anchor.set(0.5, 0.5)
+		this.buffContainer.addChild(this.buffContainerBackground)
+
 		Core.renderer.registerGameBoardRow(this)
 	}
 
 	public getHeight(): number {
 		return this.sprite.texture.height
+	}
+
+	public getInteractionVisualPosition(): PIXI.Point {
+		return new PIXI.Point(
+			this.container.position.x + this.buffContainer.position.x - 25 * getRenderScale().superSamplingLevel,
+			this.container.position.y + this.buffContainer.position.y
+		)
 	}
 
 	public insertUnit(card: RenderedUnit, unitIndex: number): void {

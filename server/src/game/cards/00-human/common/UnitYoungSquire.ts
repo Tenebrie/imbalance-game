@@ -9,6 +9,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '@src/utils/Keywords'
+import LeaderStatType from '@shared/enums/LeaderStatType'
 
 export default class UnitYoungSquire extends ServerCard {
 	movingUnit: ServerUnit | null = null
@@ -22,7 +23,7 @@ export default class UnitYoungSquire extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 4,
-				directUnitDamage: 1,
+				[LeaderStatType.DIRECT_UNIT_DAMAGE]: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

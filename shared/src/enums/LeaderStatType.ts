@@ -15,6 +15,7 @@ enum LeaderStatType {
 	CRITICAL_DAMAGE_CHANCE,
 	CRITICAL_BUFF_CHANCE,
 	CRITICAL_HEAL_CHANCE,
+	SPARK_DAMAGE,
 }
 
 export default LeaderStatType

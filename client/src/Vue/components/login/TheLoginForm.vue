@@ -135,5 +135,15 @@ export default defineComponent({
 		margin-left: 3px;
 		font-size: 0.8em;
 	}
+
+	.guest-login-button {
+		background: none;
+		border: none;
+		color: $COLOR-SECONDARY;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }
 </style>

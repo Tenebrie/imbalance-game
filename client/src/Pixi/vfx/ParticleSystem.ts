@@ -7,6 +7,8 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import { getBoopColor } from '@/utils/Utils'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 interface ParticleEmitterHandle {
 	emitter: Particles.Emitter
@@ -43,6 +45,14 @@ export default class ParticleSystem {
 		if (Core.board.findUnitById(card.id)) {
 			effectContainer = Core.renderer.boardEffectsContainer
 		}
+
+		const emitterContainer = new PIXI.Container()
+		effectContainer.addChild(emitterContainer)
+
+		return emitterContainer
+	}
+	private getRowBuffControllerEffectContainer(): PIXI.Container {
+		const effectContainer = Core.renderer.boardEffectsContainer
 
 		const emitterContainer = new PIXI.Container()
 		effectContainer.addChild(emitterContainer)
@@ -280,6 +290,49 @@ export default class ParticleSystem {
 			},
 		})
 		this.playAttachedEmitter(emitter, container, card)
+	}
+
+	public createRowBuffCreateParticleEffect(row: RenderedGameBoardRow, alignment: BuffAlignment): void {
+		let color = {
+			start: '55AAFF',
+			end: '0000FF',
+		}
+		if (alignment === BuffAlignment.NEGATIVE) {
+			color = {
+				start: 'FFAA55',
+				end: 'FF0000',
+			}
+		}
+
+		const container = this.getRowBuffControllerEffectContainer()
+		const rowPosition = row.getInteractionVisualPosition()
+
+		const emitter = this.createDefaultEmitter(container, {
+			alpha: { start: 1.0, end: 0 },
+			scale: { start: 0.9 * Core.renderer.superSamplingLevel, end: 0.5 * Core.renderer.superSamplingLevel },
+			color: color,
+			speed: { start: 0, end: 0 },
+			startRotation: { min: 0, max: 360 },
+			rotationSpeed: { min: 0, max: 200 },
+			lifetime: { min: 0.5, max: 1.5 },
+			blendMode: 'screen',
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
+			frequency: 0.005,
+			emitterLifetime: 0.15,
+			maxParticles: 1000,
+			pos: {
+				x: 0,
+				y: 0,
+			},
+			particlesPerWave: 25,
+			spawnType: 'circle',
+			spawnCircle: {
+				x: rowPosition.x,
+				y: rowPosition.y,
+				r: 30 * getRenderScale().superSamplingLevel,
+			},
+		})
+		this.playEmitter(emitter, container)
 	}
 
 	public createUnitIncapacitateParticleEffect(unit: RenderedUnit): void {

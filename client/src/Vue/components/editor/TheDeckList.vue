@@ -97,12 +97,6 @@ export default defineComponent({
 			)
 		},
 	},
-
-	created(): void {
-		store.dispatch.editor.loadDecks()
-	},
-
-	methods: {},
 })
 </script>
 

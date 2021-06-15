@@ -7,15 +7,13 @@ import ServerBuff from './buffs/ServerBuff'
 import CardType from '@shared/enums/CardType'
 import CardFeature from '@shared/enums/CardFeature'
 import LeaderStatType from '@shared/enums/LeaderStatType'
-import { forEachInEnum } from '@shared/Utils'
+import { initializeEnumRecord } from '@shared/Utils'
 
 interface ServerCardStatsProps {
 	power: number
 	armor: number
 	spellCost: number
-	leaderStats: {
-		[index in LeaderStatType]: number
-	}
+	leaderStats: Record<LeaderStatType, number>
 }
 
 export default class ServerCardStats implements CardStats {
@@ -128,13 +126,8 @@ export default class ServerCardStats implements CardStats {
 	}
 
 	/* Other */
-	public get leaderStats(): { [index in LeaderStatType]: number } {
-		const stats: { [index in LeaderStatType]?: number } = {}
-		forEachInEnum(LeaderStatType, (value) => {
-			const typedValue = value as LeaderStatType
-			stats[typedValue] = this.getLeaderStat(value)
-		})
-		return stats as { [index in LeaderStatType]: number }
+	public get leaderStats(): Record<LeaderStatType, number> {
+		return initializeEnumRecord(LeaderStatType, (value) => this.getLeaderStat(value))
 	}
 
 	public getLeaderStat(leaderStat: LeaderStatType): number {
@@ -143,5 +136,9 @@ export default class ServerCardStats implements CardStats {
 			this.__baseLeaderStatValue[leaderStat]
 		)
 		return Math.max(value, 0)
+	}
+
+	public getLeaderStats(leaderStats: LeaderStatType[]): number {
+		return leaderStats.reduce((acc, val) => acc + this.getLeaderStat(val), 0)
 	}
 }

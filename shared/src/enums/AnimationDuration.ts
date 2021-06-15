@@ -11,6 +11,7 @@ const AnimationDuration: { [index in AnimationType]: number } = {
 	[AnimationType.CARD_HEAL]: 500,
 	[AnimationType.CARD_AFFECTS_ROWS]: 500,
 	[AnimationType.ROW_AFFECTS_CARDS]: 500,
+	[AnimationType.ROW_HEALS_CARDS]: 500,
 	[AnimationType.ROW_AFFECTS_ROWS]: 500,
 	[AnimationType.POST_CARD_ATTACK]: 100,
 	[AnimationType.UNIVERSE_ATTACK]: 500,

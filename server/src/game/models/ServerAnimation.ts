@@ -97,6 +97,13 @@ export default class ServerAnimation implements Animation {
 		return animation
 	}
 
+	public static rowHealsCards(sourceRow: ServerBoardRow, targetCards: ServerCard[]): ServerAnimation {
+		const animation = new ServerAnimation(AnimationType.ROW_HEALS_CARDS, {})
+		animation.sourceRow = sourceRow
+		animation.targetCards = targetCards
+		return animation
+	}
+
 	public static rowAffectsRows(sourceRow: ServerBoardRow, targetRows: ServerBoardRow[]): ServerAnimation {
 		const animation = new ServerAnimation(AnimationType.ROW_AFFECTS_ROWS, {})
 		animation.sourceRow = sourceRow

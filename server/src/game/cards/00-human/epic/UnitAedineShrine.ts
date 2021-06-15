@@ -6,6 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
+import LeaderStatType from '@shared/enums/LeaderStatType'
 
 export default class UnitAedineShrine extends ServerCard {
 	constructor(game: ServerGame) {
@@ -18,9 +19,9 @@ export default class UnitAedineShrine extends ServerCard {
 			stats: {
 				power: 0,
 				armor: 6,
-				directHealingPotency: 3,
-				splashHealingPotency: 1,
-				recurringHealingPotency: 1,
+				[LeaderStatType.DIRECT_HEALING_POTENCY]: 3,
+				[LeaderStatType.SPLASH_HEALING_POTENCY]: 1,
+				[LeaderStatType.RECURRING_HEALING_POTENCY]: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

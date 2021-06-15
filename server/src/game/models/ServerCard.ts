@@ -76,7 +76,7 @@ import {
 } from '@src/types/TargetValidatorArguments'
 import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
 import LeaderStatType from '@shared/enums/LeaderStatType'
-import { sortCards } from '@shared/Utils'
+import { enumToArray, initializeEnumRecord, sortCards } from '@shared/Utils'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -91,24 +91,7 @@ interface ServerCardBaseProps {
 	hiddenFromLibrary?: boolean
 }
 
-interface LeaderStatsCardProps {
-	directUnitDamage?: number
-	splashUnitDamage?: number
-	directSpellDamage?: number
-	splashSpellDamage?: number
-	directHealingPotency?: number
-	splashHealingPotency?: number
-	recurringHealingPotency?: number
-	directBuffPotency?: number
-	splashBuffPotency?: number
-	recurringBuffPotency?: number
-	directEffectDuration?: number
-	splashEffectDuration?: number
-	directTargetCount?: number
-	criticalDamageChance?: number
-	criticalBuffChance?: number
-	criticalHealChance?: number
-}
+type LeaderStatsCardProps = Partial<Record<LeaderStatType, number>>
 
 interface ServerCardLeaderProps extends ServerCardBaseProps {
 	color: CardColor.LEADER
@@ -188,40 +171,12 @@ export default class ServerCard implements Card {
 			power: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
 			armor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
 			spellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0,
-			leaderStats: {
-				[LeaderStatType.DIRECT_UNIT_DAMAGE]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directUnitDamage || 0 : 0,
-				[LeaderStatType.SPLASH_UNIT_DAMAGE]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashUnitDamage || 0 : 0,
-				[LeaderStatType.DIRECT_SPELL_DAMAGE]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directSpellDamage || 0 : 0,
-				[LeaderStatType.SPLASH_SPELL_DAMAGE]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashSpellDamage || 0 : 0,
-				[LeaderStatType.DIRECT_HEALING_POTENCY]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directHealingPotency || 0 : 0,
-				[LeaderStatType.SPLASH_HEALING_POTENCY]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashHealingPotency || 0 : 0,
-				[LeaderStatType.RECURRING_HEALING_POTENCY]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.recurringHealingPotency || 0 : 0,
-				[LeaderStatType.DIRECT_BUFF_POTENCY]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directBuffPotency || 0 : 0,
-				[LeaderStatType.SPLASH_BUFF_POTENCY]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashBuffPotency || 0 : 0,
-				[LeaderStatType.RECURRING_BUFF_POTENCY]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.recurringBuffPotency || 0 : 0,
-				[LeaderStatType.DIRECT_EFFECT_DURATION]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directEffectDuration || 0 : 0,
-				[LeaderStatType.SPLASH_EFFECT_DURATION]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.splashEffectDuration || 0 : 0,
-				[LeaderStatType.DIRECT_TARGET_COUNT]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.directTargetCount || 0 : 0,
-				[LeaderStatType.CRITICAL_DAMAGE_CHANCE]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalDamageChance || 0 : 0,
-				[LeaderStatType.CRITICAL_BUFF_CHANCE]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalBuffChance || 0 : 0,
-				[LeaderStatType.CRITICAL_HEAL_CHANCE]:
-					props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHealChance || 0 : 0,
-			},
+			leaderStats: initializeEnumRecord(LeaderStatType, (value) => {
+				if (props.stats && (props.color === CardColor.LEADER || props.type === CardType.UNIT)) {
+					return props.stats[value] || 0
+				}
+				return 0
+			}),
 		})
 
 		this.name = `card.${this.class}.name`
@@ -459,10 +414,17 @@ export default class ServerCard implements Card {
 
 		if (healingInstance.sourceCard) {
 			this.game.animation.play(ServerAnimation.cardHealsCards(healingInstance.sourceCard, [this]))
+		} else if (healingInstance.sourceRow) {
+			this.game.animation.play(ServerAnimation.rowHealsCards(healingInstance.sourceRow, [this]))
 		} else {
 			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
 		}
+
+		if (this.stats.power === this.stats.maxPower) {
+			return
+		}
 		this.stats.power = Math.min(this.stats.maxPower, this.stats.power + healingInstance.value)
+
 		this.game.events.postEvent(
 			GameEventCreators.cardPowerRestored({
 				game: this.game,
@@ -479,8 +441,14 @@ export default class ServerCard implements Card {
 
 		if (restorationInstance.sourceCard) {
 			this.game.animation.play(ServerAnimation.cardHealsCards(restorationInstance.sourceCard, [this]))
+		} else if (restorationInstance.sourceRow) {
+			this.game.animation.play(ServerAnimation.rowHealsCards(restorationInstance.sourceRow, [this]))
 		} else {
 			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
+		}
+
+		if (this.stats.armor === this.stats.maxArmor) {
+			return
 		}
 		this.stats.armor = Math.min(this.stats.maxArmor, this.stats.armor + restorationInstance.value)
 		this.game.events.postEvent(

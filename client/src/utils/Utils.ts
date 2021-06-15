@@ -102,16 +102,17 @@ export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point | null, 
 			})
 		boopPrepPoints = []
 	} else if (event.button === MIDDLE_MOUSE_BUTTON && direction === 'down') {
-		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 		if (boopPrepPoints.length > 0 && boopPrepPoints.length < 16) {
+			Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 			boopPrepPoints.push({
 				emitter: Core.particleSystem.createBoardBoopPrepareEffect(mousePos),
 				color: getBoopColor(),
 			})
 		} else {
+			const randomColor = boopColors[Math.floor(Math.random() * boopColors.length)]
+			Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75, randomColor)
 			const vector = legacyExport.getPointWithOffset(mousePos, Math.random() * 360, 300 + Math.random() * 400)
-			const randomColor = Math.floor(Math.random() * 16777215).toString(16)
-			Core.mainHandler.projectileSystem.createBoardBoopFireworkProjectile(mousePos, vector, event, { start: randomColor, end: 'FFFFFF' })
+			Core.mainHandler.projectileSystem.createBoardBoopFireworkProjectile(mousePos, vector, event, randomColor)
 		}
 	}
 }

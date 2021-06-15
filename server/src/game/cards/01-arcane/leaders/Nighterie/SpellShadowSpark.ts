@@ -9,13 +9,12 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitShadowspawn from '../../tokens/UnitShadowspawn'
-import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectSpellDamage } from '../../../../../utils/LeaderStats'
+import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
 export default class SpellShadowSpark extends ServerCard {
-	baseDamage = asDirectSpellDamage(2)
+	baseDamage = asDirectSparkDamage(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -34,9 +33,9 @@ export default class SpellShadowSpark extends ServerCard {
 			damage: this.baseDamage,
 		}
 
-		this.createDeployTargets(TargetType.UNIT).requireEnemy()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard.unit!))
+		this.createDeployTargets(TargetType.UNIT)
+			.requireEnemy()
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

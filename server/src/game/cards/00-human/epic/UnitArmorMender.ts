@@ -43,6 +43,8 @@ export default class UnitArmorMender extends ServerCard {
 				triggeringCard.buffs.addMultiple(BuffExtraArmor, this.bonusArmor, this)
 				this.activationsThisTurn += 1
 			})
-		this.createCallback(GameEventType.TURN_ENDED, AnyCardLocation).perform(() => (this.activationsThisTurn = 0))
+		this.createCallback(GameEventType.TURN_ENDED, AnyCardLocation)
+			.require(() => this.activationsThisTurn > 0)
+			.perform(() => (this.activationsThisTurn = 0))
 	}
 }
