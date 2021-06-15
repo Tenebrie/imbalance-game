@@ -120,7 +120,7 @@ export default defineComponent({
 			if ((delta > 0 && imageScaleRef.value < 0.05) || (delta < 0 && imageScaleRef.value > 2)) {
 				return
 			}
-			imageScaleRef.value -= delta / 2000
+			imageScaleRef.value -= delta / 2500
 			console.log(imageScaleRef.value)
 			renderFrame()
 		}
