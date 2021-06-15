@@ -13,15 +13,17 @@ export default class ServerPlayer implements Player {
 	email: string
 	username: string
 	accessLevel: AccessLevel
+	isGuest: boolean
 	webSocket: PlayerWebSocket | null
 	spectators: ServerPlayerSpectator[]
 	public timestampUpdatedAt: Date = new Date()
 
-	constructor(id: string, email: string, username: string, accessLevel: AccessLevel) {
+	constructor(id: string, email: string, username: string, accessLevel: AccessLevel, isGuest: boolean) {
 		this.id = id
 		this.email = email
 		this.username = username
 		this.accessLevel = accessLevel
+		this.isGuest = isGuest
 		this.webSocket = null
 		this.spectators = []
 	}
@@ -74,7 +76,8 @@ export default class ServerPlayer implements Player {
 			playerDatabaseEntry.id,
 			playerDatabaseEntry.email,
 			playerDatabaseEntry.username,
-			playerDatabaseEntry.accessLevel
+			playerDatabaseEntry.accessLevel,
+			playerDatabaseEntry.isGuest
 		)
 	}
 }

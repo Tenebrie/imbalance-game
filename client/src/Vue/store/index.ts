@@ -81,6 +81,13 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			await dispatch.postLogin()
 		},
 
+		async guestLogin(context): Promise<void> {
+			const { dispatch } = rootActionContext(context)
+
+			await axios.post('/api/session/guest')
+			await dispatch.postLogin()
+		},
+
 		async postLogin(context): Promise<void> {
 			const { dispatch } = rootActionContext(context)
 
@@ -89,6 +96,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			await router.push({ name: 'home' })
 			await store.dispatch.rulesets.loadLibrary()
 			await store.dispatch.editor.loadCardLibrary()
+			await store.dispatch.editor.loadDecks()
 			editorCardRenderer.startRenderingService()
 		},
 

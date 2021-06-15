@@ -5,4 +5,5 @@ export default interface Player {
 	email: string
 	username: string
 	accessLevel: AccessLevel
+	isGuest: boolean
 }

@@ -8,8 +8,14 @@ import { createRandomPlayerId } from '@src/utils/Utils'
 export default {
 	async insertPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {
 		const playerId = createRandomPlayerId()
-		const query = `INSERT INTO players (id, email, username, "passwordHash") VALUES($1, $2, $3, $4);`
-		return Database.insertRow(query, [playerId, email, username, passwordHash])
+		const query = `INSERT INTO players (id, email, username, "passwordHash", "isGuest") VALUES($1, $2, $3, $4, $5);`
+		return Database.insertRow(query, [playerId, email, username, passwordHash, false])
+	},
+
+	async insertGuestPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {
+		const playerId = createRandomPlayerId()
+		const query = `INSERT INTO players (id, email, username, "passwordHash", "isGuest") VALUES($1, $2, $3, $4, $5);`
+		return Database.insertRow(query, [playerId, email, username, passwordHash, true])
 	},
 
 	async selectPlayerById(id: string): Promise<PlayerDatabaseEntry | null> {
@@ -110,5 +116,21 @@ export default {
 			DELETE FROM players WHERE id = $1;
 		`
 		return (await Database.updateRows(firstQuery, [id])) && (await Database.deleteRows(secondQuery, [id]))
+	},
+
+	async deleteAllGuestPlayers(): Promise<boolean> {
+		const query = 'SELECT * FROM players WHERE "isGuest"=TRUE'
+		const allGuestPlayers = await Database.selectRows<PlayerDatabaseEntry>(query)
+		if (allGuestPlayers === null) {
+			return false
+		}
+		console.info(`Clearing out ${allGuestPlayers.length} guest player accounts...`)
+
+		const firstQuery = `
+			UPDATE game_history SET "victoriousPlayer"=null WHERE "victoriousPlayer"=$1;
+		`
+		const promises = allGuestPlayers.map((player) => Database.updateRows(firstQuery, [player.id]))
+		await Promise.all(promises)
+		return Database.deleteRows(`DELETE FROM players WHERE "isGuest"=TRUE`)
 	},
 }

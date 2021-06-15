@@ -12,6 +12,7 @@ import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import { wsLogger } from './utils/WebSocketLogger'
 import Database from './database/Database'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
+import PlayerDatabase from '@src/database/PlayerDatabase'
 
 const app = express()
 expressWs(app)

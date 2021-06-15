@@ -48,14 +48,22 @@ type OpponentCardTestGameTemplateResult = {
 	opponentsOwnedCard: ServerOwnedCard
 } & CommonTemplateResult
 
+const getPlayers = () => {
+	const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL, false)
+	const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL, false)
+	return {
+		playerOne,
+		playerTwo,
+	}
+}
+
 export default {
 	emptyDecks(): ServerGame {
 		silenceLogging()
 
 		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVE, category: RulesetCategory.PVE }).__build()
 		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
-		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
-		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
+		const { playerOne, playerTwo } = getPlayers()
 		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
 		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
 		game.addPlayer(playerOne, templateOne)
@@ -75,8 +83,7 @@ export default {
 		silenceLogging()
 		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVE, category: RulesetCategory.PVE }).__build()
 		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false, ...props })
-		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
-		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
+		const { playerOne, playerTwo } = getPlayers()
 		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
 		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
 		game.addPlayer(playerOne, templateOne)
@@ -103,8 +110,7 @@ export default {
 		silenceLogging()
 		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVE, category: RulesetCategory.PVE }).__build()
 		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
-		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
-		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
+		const { playerOne, playerTwo } = getPlayers()
 		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
 		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
 		game.addPlayer(playerOne, templateOne)
@@ -141,8 +147,7 @@ export default {
 		silenceLogging()
 		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVE, category: RulesetCategory.PVE }).__build()
 		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
-		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
-		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
+		const { playerOne, playerTwo } = getPlayers()
 		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
 		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
 		game.addPlayer(playerOne, templateOne)

@@ -6,7 +6,7 @@ import { easeInQuad } from 'js-easing-functions'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
-import Utils, { getBoopColor, getDistance } from '@/utils/Utils'
+import Utils, { getDistance } from '@/utils/Utils'
 import RenderedVelocityProjectile from '@/Pixi/models/RenderedVelocityProjectile'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 

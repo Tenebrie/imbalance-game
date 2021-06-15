@@ -17,6 +17,10 @@
 				<span class="info-text">{{ $locale.get('ui.auth.moveToRegister') }} </span>
 				<router-link class="register-link" :to="{ name: 'register' }">{{ $locale.get('ui.auth.createAccount') }}</router-link>
 			</div>
+			<div class="guest-login">
+				<span class="info-text">Alternatively, you can</span>
+				<button @click="onGuestLogin" class="guest-login-button">Login as Guest</button>
+			</div>
 			<google-single-sign-on-button />
 		</div>
 	</div>
@@ -76,6 +80,16 @@ export default defineComponent({
 			}
 		}
 
+		const onGuestLogin = async (): Promise<void> => {
+			clearMessage()
+			try {
+				await store.dispatch.guestLogin()
+			} catch (error) {
+				console.error(error)
+				setMessage(getErrorMessage(error.response.status, error.response.data.code))
+			}
+		}
+
 		const getErrorMessage = (statusCode: number, errorCode: number): string => {
 			if (errorCode === UserLoginErrorCode.MISSING_CREDENTIALS) {
 				return 'Missing email or password'
@@ -104,6 +118,7 @@ export default defineComponent({
 			rootRef,
 			messageRef,
 			onLogin,
+			onGuestLogin,
 			email,
 			password,
 			Localization,

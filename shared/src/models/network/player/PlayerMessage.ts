@@ -5,4 +5,5 @@ export default interface PlayerMessage {
 	email: string
 	username: string
 	accessLevel: AccessLevel
+	isGuest: boolean
 }

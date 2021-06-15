@@ -8,14 +8,14 @@
 						<span class="label">{{ $locale.get('ui.profile.email') }}:</span>
 						<span class="input">{{ email }}</span>
 					</div>
-					<div class="info-field">
+					<div class="info-field" v-if="player && !isGuest">
 						<span class="label">{{ $locale.get('ui.profile.changeUsername.label') }}:</span>
 						<span class="input">
 							<input type="text" v-model="username" :placeholder="currentUsername" />
 							<button class="primary" @click="onChangeUsername">{{ $locale.get('ui.profile.changeUsername.button') }}</button>
 						</span>
 					</div>
-					<div class="info-field">
+					<div class="info-field" v-if="player && !isGuest">
 						<span class="label">{{ $locale.get('ui.profile.changePassword.label') }}:</span>
 						<span class="input">
 							<input type="password" v-model="password" :placeholder="$locale.get('ui.profile.changePassword.placeholder')" />
@@ -68,6 +68,7 @@ import Language from '@shared/enums/Language'
 import Notifications from '@/utils/Notifications'
 import RenderQuality from '@shared/enums/RenderQuality'
 import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
+import Player from '@shared/models/Player'
 
 export default defineComponent({
 	components: {
@@ -108,6 +109,9 @@ export default defineComponent({
 				store.commit.userPreferencesModule.setRenderQuality(value)
 			},
 		})
+
+		const player = computed<Player | null>(() => store.state.player)
+		const isGuest = computed<boolean>(() => !!store.state.player && store.state.player.isGuest)
 
 		watch(
 			() => [userLanguage.value, renderQuality.value],
@@ -158,6 +162,8 @@ export default defineComponent({
 			email,
 			username,
 			password,
+			player,
+			isGuest,
 			currentUsername,
 			userLanguage,
 			renderQuality,

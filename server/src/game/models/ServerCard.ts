@@ -76,7 +76,7 @@ import {
 } from '@src/types/TargetValidatorArguments'
 import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
 import LeaderStatType from '@shared/enums/LeaderStatType'
-import { enumToArray, initializeEnumRecord, sortCards } from '@shared/Utils'
+import { initializeEnumRecord, sortCards } from '@shared/Utils'
 
 interface ServerCardBaseProps {
 	faction: CardFaction

@@ -19,4 +19,5 @@ export default interface PlayerDatabaseEntry {
 	userInterfaceVolume: number
 	welcomeModalSeenAt: string
 	mobileModalSeenAt: string
+	isGuest: boolean
 }
