@@ -14,6 +14,8 @@ import PixiUserInterface from '@/Vue/components/pixi/PixiUserInterface.vue'
 import { isMobile } from '@/utils/Utils'
 import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 import PixiNovelOverlay from './PixiNovelOverlay.vue'
+import axios from 'axios'
+import GameMessage from '@shared/models/network/GameMessage'
 
 export default defineComponent({
 	components: {
@@ -23,7 +25,7 @@ export default defineComponent({
 
 	setup() {
 		store.dispatch.gameStateModule.setGameLoading()
-		store.dispatch.gameStateModule.setGameMode(store.state.selectedGame!.ruleset.gameMode)
+		store.dispatch.gameStateModule.setGameData(store.state.currentGame!)
 		if (isMobile()) {
 			// const elem = document.documentElement
 			// if (elem.requestFullscreen) {elem.requestFullscreen()}
@@ -33,12 +35,14 @@ export default defineComponent({
 		const gameContainer = ref<HTMLElement>()
 		onMounted(() => {
 			window.addEventListener('resize', onWindowResize)
+			window.addEventListener('keydown', onHotkey)
 
-			Core.init(store.state.selectedGame!, store.state.selectedDeckId, gameContainer.value!)
+			Core.init(store.state.currentGame!, store.state.selectedDeckId, gameContainer.value!)
 		})
 
 		onBeforeUnmount(() => {
 			window.removeEventListener('resize', onWindowResize)
+			window.removeEventListener('keydown', onHotkey)
 			if (Core.socket) {
 				Core.socket.close()
 			}
@@ -46,6 +50,36 @@ export default defineComponent({
 
 		const onWindowResize = (): void => {
 			Core.renderer.resize()
+		}
+
+		const onHotkey = async (event: KeyboardEvent): Promise<void> => {
+			if (process.env.NODE_ENV !== 'development' || !event.shiftKey || !event.altKey) {
+				return
+			}
+			// Restart
+			if (event.code === 'KeyQ') {
+				await store.dispatch.leaveGame()
+				const response = await axios.post('/api/games', { ruleset: store.state.gameStateModule.ruleset!.class })
+				const gameMessage: GameMessage = response.data.data
+				await store.dispatch.joinGame(gameMessage)
+			}
+			// Reconnect
+			if (event.code === 'KeyR') {
+				const currentGame = store.state.currentGame
+				const selectedDeck = store.state.selectedDeckId
+				Core.socket.close(1000, 'Forced disconnect (testing purposes)')
+				Core.cleanUp()
+				store.commit.setCurrentGame(currentGame!)
+				Core.init(currentGame!, selectedDeck, gameContainer.value!)
+			}
+			// Disconnect
+			if (event.code === 'KeyD') {
+				Core.socket.close(1000, 'Forced disconnect (testing purposes)')
+			}
+			// Surrender
+			if (event.code === 'KeyS') {
+				await store.dispatch.leaveGame()
+			}
 		}
 
 		return {

@@ -204,8 +204,8 @@ export default defineComponent({
 		const cardsMulliganed = computed(() => store.state.gameStateModule.cardsMulliganed)
 		const maxCardMulligans = computed(() => store.state.gameStateModule.maxCardMulligans)
 
-		const isPlayingVersusAI = computed(() => store.state.gameStateModule.gameMode === GameMode.PVE)
-		const isPlayingVersusPlayer = computed(() => store.state.gameStateModule.gameMode === GameMode.PVP)
+		const isPlayingVersusAI = computed(() => store.state.gameStateModule.ruleset?.gameMode === GameMode.PVE)
+		const isPlayingVersusPlayer = computed(() => store.state.gameStateModule.ruleset?.gameMode === GameMode.PVP)
 
 		const onLeaveGame = (): void => {
 			store.dispatch.leaveGame()

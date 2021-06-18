@@ -7,7 +7,7 @@ import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import BoardRowMessage from '@shared/models/network/BoardRowMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import OpenRowBuffMessage from '@shared/models/network/buffs/OpenRowBuffMessage'
-import ClientBuff from '@/Pixi/models/ClientBuff'
+import RenderedBuff from '@/Pixi/models/buffs/RenderedBuff'
 
 const IncomingBoardUpdateMessages: { [index in BoardUpdateMessageType]: IncomingMessageHandlerFunction } = {
 	[BoardUpdateMessageType.UNIT_INSERT]: (data: UnitMessage) => {
@@ -49,7 +49,7 @@ const IncomingBoardUpdateMessages: { [index in BoardUpdateMessageType]: Incoming
 			return
 		}
 
-		row.buffs.add(new ClientBuff(data))
+		row.buffs.add(new RenderedBuff(row.buffs, data))
 	},
 
 	[BoardUpdateMessageType.ROW_BUFF_DURATION]: (data: OpenRowBuffMessage) => {

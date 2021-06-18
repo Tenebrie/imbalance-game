@@ -13,6 +13,7 @@ import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import PlayerInGameRefMessage from '@shared/models/network/playerInGame/PlayerInGameRefMessage'
 import ResolveStackMessage from '@shared/models/network/resolveStack/ResolveStackMessage'
+import RenderedBuff from '@/Pixi/models/buffs/RenderedBuff'
 
 const IncomingGameSyncMessages: { [index in GameSyncMessageType]: IncomingMessageHandlerFunction } = {
 	[GameSyncMessageType.START]: (data: GameStartMessage) => {
@@ -45,11 +46,13 @@ const IncomingGameSyncMessages: { [index in GameSyncMessageType]: IncomingMessag
 
 	[GameSyncMessageType.BOARD_STATE]: (data: BoardMessage) => {
 		Core.board.clearBoard()
-		data.rows.forEach((row) => {
-			Core.board.rows[row.index].owner = Core.getPlayerOrNull(row.ownerId)
-			Core.board.rows[row.index].cards = row.cards.map(
-				(unit) => new RenderedUnit(RenderedCard.fromMessage(unit.card), Core.getPlayer(unit.ownerId))
-			)
+		data.rows.forEach((rowMessage) => {
+			const row = Core.board.rows[rowMessage.index]
+			row.owner = Core.getPlayerOrNull(rowMessage.ownerId)
+			row.cards = rowMessage.cards.map((unit) => new RenderedUnit(RenderedCard.fromMessage(unit.card), Core.getPlayer(unit.ownerId)))
+			rowMessage.buffs.buffs.forEach((buffMessage) => {
+				row.buffs.add(new RenderedBuff(row.buffs, buffMessage))
+			})
 		})
 	},
 

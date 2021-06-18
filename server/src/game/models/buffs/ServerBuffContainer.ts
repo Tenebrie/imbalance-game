@@ -121,6 +121,10 @@ export default class ServerBuffContainer implements BuffContainer {
 			}
 		}
 
+		if (this.parent instanceof ServerBoardRow) {
+			this.removeAllDispellable({ skipAnimation: true })
+		}
+
 		this.buffs.push(newBuff)
 
 		if (newBuff instanceof ServerCardBuff) {
@@ -178,10 +182,18 @@ export default class ServerBuffContainer implements BuffContainer {
 			.forEach((buff) => this.removeByReference(buff))
 	}
 
-	public removeByReference(buff: ServerBuff): void {
+	public removeByReference(buff: ServerBuff, args: { skipAnimation: boolean } = { skipAnimation: false }): void {
 		const index = this.buffs.indexOf(buff)
 		if (index === -1) {
 			return
+		}
+
+		if (!this.buffSkipsAnimation(buff) && !args.skipAnimation) {
+			if (this.parent instanceof ServerCard && this.parent.isVisuallyRendered) {
+				this.game.animation.play(ServerAnimation.cardsLostBuff([this.parent], buff.alignment))
+			} else if (this.parent instanceof ServerBoardRow) {
+				this.game.animation.play(ServerAnimation.rowsLostBuff([this.parent], buff.alignment))
+			}
 		}
 
 		if (buff instanceof ServerCardBuff) {
@@ -243,7 +255,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		this.buffs.filter((buff) => buff.selector === selector).forEach((buff) => this.removeByReference(buff))
 	}
 
-	public removeAllDispellable(): void {
-		this.dispellable.forEach((buff) => this.removeByReference(buff))
+	public removeAllDispellable(args: { skipAnimation: boolean } = { skipAnimation: false }): void {
+		this.dispellable.forEach((buff) => this.removeByReference(buff, args))
 	}
 }

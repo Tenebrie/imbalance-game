@@ -317,9 +317,6 @@
 	"card.heroCoralScribe.name": "Коралловый писарь",
 	"card.heroCoralScribe.description": "*Вход в игру:*\nПоложите копию *Надвигающейся бури* в вашу руку за каждую копию бури в вашем сбросе.",
 
-	"card.heroFlameDancer.name": "Танцующая\nс пламенем",
-	"card.heroFlameDancer.description": "*Вход в игру:*\nНакладывает *Горение* на {burnDuration} хода всем юнитам на вражеском ряду.",
-
 	"card.heroRavenCaller.name": "Говорящий с воронами",
 	"card.heroRavenCaller.description": "*Вход в игру:*\n*Призывает* птицу из вашей колоды.",
 

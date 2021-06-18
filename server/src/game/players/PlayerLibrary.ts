@@ -7,6 +7,7 @@ import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import { tryUntil } from '@src/utils/Utils'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import AccessLevel from '@shared/enums/AccessLevel'
+import GameLibrary from '@src/game/libraries/GameLibrary'
 
 const createNumberedUsername = (username: string): string => {
 	let existingPlayer: PlayerDatabaseEntry | null
@@ -173,7 +174,9 @@ class PlayerLibrary {
 		}
 
 		this.playerCache = this.playerCache.filter(
-			(cachedPlayer) => cachedPlayer.player.isInGame() || currentTime - cachedPlayer.timestamp < 60000
+			(cachedPlayer) =>
+				GameLibrary.games.some((game) => game.players.find((playerInGame) => playerInGame.player === cachedPlayer.player)) ||
+				currentTime - cachedPlayer.timestamp < 60000
 		)
 		this.playerCache.filter((player) => player.player.isInGame()).forEach((player) => (player.timestamp = currentTime))
 		this.cachePrunedAt = currentTime

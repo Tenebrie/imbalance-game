@@ -2,7 +2,7 @@ import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageH
 import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 import Core from '@/Pixi/Core'
-import ClientBuff from '@/Pixi/models/ClientBuff'
+import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 import CardStatsMessage from '@shared/models/network/cardStats/CardStatsMessage'
 import OpenCardBuffMessage from '@shared/models/network/buffs/OpenCardBuffMessage'
 

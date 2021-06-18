@@ -69,8 +69,9 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 			} catch (e) {
 				console.error('Unknown AI error', e)
 			}
+		} else {
+			this.botEndsTurn()
 		}
-		this.botEndsTurn()
 	}
 
 	private botPlaysCard(spellsOnly: boolean): void {

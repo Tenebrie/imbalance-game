@@ -29,7 +29,9 @@ export default class HeroFlameDancer extends ServerCard {
 			burnDuration: this.burnDuration,
 		}
 
-		this.createDeployTargets(TargetType.BOARD_ROW).perform(({ targetRow }) => onTargetSelected(targetRow))
+		this.createDeployTargets(TargetType.BOARD_ROW)
+			.requireEnemy()
+			.perform(({ targetRow }) => onTargetSelected(targetRow))
 
 		const onTargetSelected = (target: ServerBoardRow): void => {
 			target.buffs.add(BuffRowBurning, this)

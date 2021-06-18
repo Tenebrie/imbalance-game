@@ -6,14 +6,16 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import TargetMode from '@shared/enums/TargetMode'
-import GameMode from '@shared/enums/GameMode'
+import Ruleset from '@shared/models/Ruleset'
+import GameMessage from '@shared/models/network/GameMessage'
 
 const gameStateModule = defineModule({
 	namespaced: true,
 	state: {
+		gameId: null as string | null,
 		turnPhase: GameTurnPhase.BEFORE_GAME as GameTurnPhase,
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
-		gameMode: GameMode.PVE as GameMode,
+		ruleset: null as Ruleset | null,
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
 		isPlayerInRound: true as boolean,
@@ -34,6 +36,10 @@ const gameStateModule = defineModule({
 	},
 
 	mutations: {
+		setGameId(state, id: string | null): void {
+			state.gameId = id
+		},
+
 		setTurnPhase(state, turnPhase: GameTurnPhase): void {
 			state.turnPhase = turnPhase
 		},
@@ -54,8 +60,8 @@ const gameStateModule = defineModule({
 			state.gameStatus = gameStatus
 		},
 
-		setGameMode(state, value: GameMode): void {
-			state.gameMode = value
+		setRuleset(state, value: Ruleset): void {
+			state.ruleset = value
 		},
 
 		setPlayerMorale(state, value: number): void {
@@ -134,9 +140,10 @@ const gameStateModule = defineModule({
 			commit.setGameStatus(ClientGameStatus.LOADING)
 		},
 
-		setGameMode(context, payload: GameMode): void {
+		setGameData(context, payload: GameMessage): void {
 			const { commit } = moduleActionContext(context, gameStateModule)
-			commit.setGameMode(payload)
+			commit.setGameId(payload.id)
+			commit.setRuleset(payload.ruleset)
 		},
 
 		startGame(context): void {

@@ -1,9 +1,10 @@
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import ClientBuff from '@/Pixi/models/ClientBuff'
+import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 import BuffContainer from '@shared/models/BuffContainer'
 import Core from '@/Pixi/Core'
 import BuffContainerMessage from '@shared/models/network/buffContainer/BuffContainerMessage'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import RenderedBuff from '@/Pixi/models/buffs/RenderedBuff'
 
 export default class ClientBuffContainer implements BuffContainer {
 	parent: RenderedCard | RenderedGameBoardRow
@@ -35,6 +36,9 @@ export default class ClientBuffContainer implements BuffContainer {
 		const buff = this.findBuffById(id)
 		if (!buff) {
 			return
+		}
+		if (buff instanceof RenderedBuff) {
+			buff.destroySprite()
 		}
 		this.buffs.splice(this.buffs.indexOf(buff), 1)
 		if (this.parent instanceof RenderedCard) {

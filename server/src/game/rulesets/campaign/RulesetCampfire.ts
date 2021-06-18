@@ -27,6 +27,8 @@ export default class RulesetCampfire extends ServerRulesetBuilder<void> {
 		})
 
 		this.updateConstants({
+			SKIP_MULLIGAN: true,
+			PLAYER_MOVES_FIRST: true,
 			UNIT_HAND_SIZE_STARTING: 25,
 			GAME_BOARD_ROW_SPLIT_MODE: BoardSplitMode.ALL_FOR_PLAYER,
 		})

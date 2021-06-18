@@ -8,6 +8,11 @@ export type RulesetConstants = {
 	SPELL_HAND_SIZE_MINIMUM: number
 	SPELL_HAND_SIZE_LIMIT: number
 	SPELL_MANA_PER_ROUND: number
+
+	PLAYER_MOVES_FIRST: boolean
+	AI_MOVES_FIRST: boolean
+
+	SKIP_MULLIGAN: boolean
 	MULLIGAN_INITIAL_CARD_COUNT: number
 	MULLIGAN_ROUND_CARD_COUNT: number
 

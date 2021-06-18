@@ -10,6 +10,8 @@
 					<span class="action-explanation">Create a game and wait for an opponent to challenge you.</span>
 					<button @click="onCreatePrototypes" class="primary">{{ $locale.get('ui.play.prototypes') }}</button>
 					<span class="action-explanation">See early concepts, modules and gamemode prototypes.</span>
+					<button @click="onCreateDevRuleset" class="primary" v-if="devRulesetVisible">{{ $locale.get('ui.play.dev') }}</button>
+					<span class="action-explanation" v-if="devRulesetVisible">Play special ruleset defined in RulesetDev.ts (server-side).</span>
 					<div class="separator" />
 					<editor-decks-button />
 				</div>
@@ -58,17 +60,27 @@ export default defineComponent({
 			})
 		}
 
+		const onCreateDevRuleset = async (): Promise<void> => {
+			const response = await axios.post('/api/games', { ruleset: 'rulesetDev' })
+			const gameMessage: GameMessage = response.data.data
+			await store.dispatch.joinGame(gameMessage)
+		}
+
 		const onManageDecks = async (): Promise<void> => {
 			await router.push({
 				name: 'decks',
 			})
 		}
 
+		const devRulesetVisible = process.env.NODE_ENV === 'development'
+
 		return {
 			onCreateSinglePlayer,
 			onCreateMultiPlayer,
 			onCreatePrototypes,
+			onCreateDevRuleset,
 			onManageDecks,
+			devRulesetVisible,
 		}
 	},
 })
@@ -130,6 +142,10 @@ export default defineComponent({
 		width: 100%;
 		color: gray;
 		font-style: italic;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
 	}
 	.separator {
 		width: 100%;

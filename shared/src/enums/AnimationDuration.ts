@@ -22,6 +22,8 @@ const AnimationDuration: { [index in AnimationType]: number } = {
 	[AnimationType.UNIT_MOVE]: 750,
 	[AnimationType.CARD_RECEIVED_BUFF]: 500,
 	[AnimationType.ROWS_RECEIVED_BUFF]: 500,
+	[AnimationType.CARDS_LOST_BUFF]: 0,
+	[AnimationType.ROWS_LOST_BUFF]: 250,
 	[AnimationType.CARD_INFUSE]: 500,
 	[AnimationType.CARD_GENERATE_MANA]: 500,
 }

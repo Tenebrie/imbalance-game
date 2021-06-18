@@ -48,6 +48,11 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 			},
 		})
 
+		this.updateConstants({
+			SKIP_MULLIGAN: true,
+			PLAYER_MOVES_FIRST: true,
+		})
+
 		this.createAI([LeaderChallengeDummy, { card: UnitChallengeDummyOPWarrior, count: Constants.CARD_LIMIT_BRONZE }])
 
 		this.createCallback(GameEventType.GAME_STARTED)

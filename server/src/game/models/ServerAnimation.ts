@@ -11,6 +11,7 @@ import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
 import ServerBoardRow from './ServerBoardRow'
 import BoardRow from '@src/../../shared/src/models/BoardRow'
+import RowReceivedBuffAnimParams from '@shared/models/animations/RowReceivedBuffAnimParams'
 
 export default class ServerAnimation implements Animation {
 	type: AnimationType
@@ -161,10 +162,28 @@ export default class ServerAnimation implements Animation {
 	}
 
 	public static rowsReceivedBuff(targetRows: ServerBoardRow[], alignment: BuffAlignment): ServerAnimation {
-		const params: CardReceivedBuffAnimParams = {
+		const params: RowReceivedBuffAnimParams = {
 			alignment: alignment,
 		}
 		const animation = new ServerAnimation(AnimationType.ROWS_RECEIVED_BUFF, params)
+		animation.targetRows = targetRows
+		return animation
+	}
+
+	public static cardsLostBuff(targetCards: ServerCard[], alignment: BuffAlignment): ServerAnimation {
+		const params: CardReceivedBuffAnimParams = {
+			alignment: alignment,
+		}
+		const animation = new ServerAnimation(AnimationType.CARDS_LOST_BUFF, params)
+		animation.targetCards = targetCards
+		return animation
+	}
+
+	public static rowsLostBuff(targetRows: ServerBoardRow[], alignment: BuffAlignment): ServerAnimation {
+		const params: RowReceivedBuffAnimParams = {
+			alignment: alignment,
+		}
+		const animation = new ServerAnimation(AnimationType.ROWS_LOST_BUFF, params)
 		animation.targetRows = targetRows
 		return animation
 	}

@@ -33,7 +33,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 		return
 	}
 
-	const connectedPlayer = currentGame.players.find((playerInGame) => playerInGame.player === currentPlayer)
+	const connectedPlayer = currentGame.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id)
 	if (currentGame.isStarted && (!connectedPlayer || (connectedPlayer && connectedPlayer.player.isInGame()))) {
 		OutgoingMessageHandlers.notifyAboutGameAlreadyStarted(ws)
 		ws.close()
@@ -43,7 +43,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	// Reconnecting
 	let currentPlayerInGame: ServerPlayerInGame
 	if (connectedPlayer) {
-		const reconnectingPlayer = currentGame.players.find((playerInGame) => playerInGame.player === currentPlayer)
+		const reconnectingPlayer = currentGame.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id)
 		if (!reconnectingPlayer) {
 			throw new Error('Unable to find reconnecting player in game.')
 		}

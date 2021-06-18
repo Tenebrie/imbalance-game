@@ -77,7 +77,7 @@ import CardColor from '@shared/enums/CardColor'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import InspectedCardBuffs from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
-import ClientBuff from '@/Pixi/models/ClientBuff'
+import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import BuffFeature from '@shared/enums/BuffFeature'
 

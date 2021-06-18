@@ -295,6 +295,28 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 		}
 	},
 
+	[AnimationType.CARDS_LOST_BUFF]: () => {
+		/* Empty */
+		return {
+			skip: true,
+		}
+	},
+
+	[AnimationType.ROWS_LOST_BUFF]: (message: AnimationMessage, params: RowReceivedBuffAnimParams) => {
+		let buffsLost = 0
+		message.targetRowIndices!.forEach((targetRowIndex) => {
+			const targetRow = Core.board.getRow(targetRowIndex)
+			if (!targetRow) {
+				return
+			}
+			Core.particleSystem.createRowBuffCreateParticleEffect(targetRow, params.alignment)
+			buffsLost += 1
+		})
+		return {
+			skip: buffsLost === 0,
+		}
+	},
+
 	[AnimationType.CARD_INFUSE]: (message: AnimationMessage) => {
 		const targetCard = Core.game.findRenderedCardById(message.targetCardId!)
 		if (!targetCard) {

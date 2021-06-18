@@ -124,7 +124,7 @@ const router = createRouter({
 			name: 'game',
 			component: () => import('@/Vue/views/GameView.vue'),
 			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-				if (!store.state.selectedGame) {
+				if (!store.state.currentGame) {
 					next('/')
 					return
 				}

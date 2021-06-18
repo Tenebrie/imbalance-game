@@ -26,7 +26,12 @@ const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void =
 	game.events.evaluateSelectors()
 	game.events.flushLogEventGroup()
 
-	if (game.turnPhase === GameTurnPhase.DEPLOY && player.unitMana === 0 && game.cardPlay.cardResolveStack.currentCard === null) {
+	if (
+		game.turnPhase === GameTurnPhase.DEPLOY &&
+		player.unitMana === 0 &&
+		game.cardPlay.cardResolveStack.currentCard === null &&
+		!player.turnEnded
+	) {
 		player.endTurn()
 		game.advanceCurrentTurn()
 
@@ -162,8 +167,9 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		player.endTurn()
-		if (player.unitMana > 0) {
+		if (player.unitMana === 0) {
+			player.endTurn()
+		} else if (player.unitMana > 0) {
 			player.setUnitMana(0)
 			player.endRound()
 		}

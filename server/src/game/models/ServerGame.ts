@@ -65,7 +65,7 @@ export default class ServerGame implements Game {
 
 	constructor(props: ServerGameProps) {
 		this.id = createRandomGameId()
-		this.name = props.name || this.generateName(props.owner)
+		this.name = props.name || ServerGame.generateName(props.owner)
 		this.ruleset = props.ruleset.__build()
 		this.isStarted = false
 		this.turnIndex = -1
@@ -80,10 +80,18 @@ export default class ServerGame implements Game {
 		this.players = []
 		this.playersToMove = []
 		this.lastRoundWonBy = null
-		this.playerMoveOrderReversed =
-			props.playerMoveOrderReversed !== undefined ? props.playerMoveOrderReversed : Math.floor(Math.random() * 2) === 0
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
+
+		if (props.playerMoveOrderReversed !== undefined) {
+			this.playerMoveOrderReversed = props.playerMoveOrderReversed
+		} else if (this.ruleset.constants.PLAYER_MOVES_FIRST && this.ruleset.ai) {
+			this.playerMoveOrderReversed = false
+		} else if (this.ruleset.constants.AI_MOVES_FIRST && this.ruleset.ai) {
+			this.playerMoveOrderReversed = true
+		} else {
+			this.playerMoveOrderReversed = Math.floor(Math.random() * 2) === 0
+		}
 
 		props.ruleset.__applyAmplifiers(this)
 
@@ -101,7 +109,7 @@ export default class ServerGame implements Game {
 		return this.players.map((playerInGame) => playerInGame.player.spectators).flat()
 	}
 
-	private generateName(owner?: ServerPlayer): string {
+	private static generateName(owner?: ServerPlayer): string {
 		const randomNumber = Math.floor(1000 + Math.random() * 9000)
 		return owner ? owner.username + `'s game #${randomNumber}` : `Game #${randomNumber}`
 	}
@@ -208,7 +216,11 @@ export default class ServerGame implements Game {
 		)
 
 		this.events.flushLogEventGroup()
-		this.startMulliganPhase()
+		if (!this.ruleset.constants.SKIP_MULLIGAN) {
+			this.startMulliganPhase()
+		} else {
+			this.startNextRound()
+		}
 
 		GameHistoryDatabase.startGame(this).then()
 		this.events.resolveEvents()
@@ -402,7 +414,11 @@ export default class ServerGame implements Game {
 					this.board.destroyUnit(unit)
 				})
 			})
-		this.board.rows.forEach((row) => row.buffs.removeAllDispellable())
+		this.board.rows.forEach((row) => {
+			this.animation.thread(() => {
+				row.buffs.removeAllDispellable()
+			})
+		})
 		this.animation.syncAnimationThreads()
 		this.animation.play(ServerAnimation.delay(1250))
 
@@ -470,6 +486,11 @@ export default class ServerGame implements Game {
 		this.board.getAllUnits().forEach((unit) => {
 			this.animation.thread(() => {
 				this.board.destroyUnit(unit)
+			})
+		})
+		this.board.rows.forEach((row) => {
+			this.animation.thread(() => {
+				row.buffs.removeAllDispellable()
 			})
 		})
 

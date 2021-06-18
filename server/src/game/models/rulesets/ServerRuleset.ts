@@ -94,8 +94,14 @@ export class ServerRuleset implements Ruleset {
 			SPELL_HAND_SIZE_MINIMUM: 10,
 			SPELL_HAND_SIZE_LIMIT: 10,
 			SPELL_MANA_PER_ROUND: 0,
+
+			PLAYER_MOVES_FIRST: false,
+			AI_MOVES_FIRST: false,
+
+			SKIP_MULLIGAN: false,
 			MULLIGAN_INITIAL_CARD_COUNT: 5,
 			MULLIGAN_ROUND_CARD_COUNT: 3,
+
 			GAME_BOARD_ROW_COUNT: 6,
 			GAME_BOARD_ROW_SPLIT_MODE: BoardSplitMode.SPLIT_IN_HALF,
 			...props.constants,

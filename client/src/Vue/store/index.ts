@@ -32,7 +32,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	state: {
 		player: null as Player | null,
 		isLoggedIn: false as boolean,
-		selectedGame: null as GameMessage | null,
+		currentGame: null as GameMessage | null,
 		selectedDeckId: '' as string,
 	},
 
@@ -42,8 +42,8 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			state.player = player
 		},
 
-		setSelectedGame(state, selectedGame: GameMessage): void {
-			state.selectedGame = selectedGame
+		setCurrentGame(state, currentGame: GameMessage): void {
+			state.currentGame = currentGame
 		},
 
 		setSelectedDeckId(state, selectedDeckId: string): void {
@@ -119,7 +119,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 
 		joinGame(context, selectedGame: GameMessage): void {
 			const { commit } = rootActionContext(context)
-			commit.setSelectedGame(selectedGame)
+			commit.setCurrentGame(selectedGame)
 			router.push({ name: 'game' })
 		},
 

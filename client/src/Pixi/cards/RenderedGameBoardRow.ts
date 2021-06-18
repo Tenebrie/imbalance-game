@@ -5,7 +5,7 @@ import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
-import ClientBuffContainer from '@/Pixi/models/ClientBuffContainer'
+import ClientBuffContainer from '@/Pixi/models/buffs/ClientBuffContainer'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 export default class RenderedGameBoardRow implements BoardRow {
@@ -48,9 +48,7 @@ export default class RenderedGameBoardRow implements BoardRow {
 
 	public getInteractionVisualPosition(): PIXI.Point {
 		return new PIXI.Point(
-			this.container.position.x / getRenderScale().superSamplingLevel +
-				this.buffContainer.position.x -
-				25 * getRenderScale().superSamplingLevel,
+			this.container.position.x - this.container.width / 2 - 5 * getRenderScale().superSamplingLevel,
 			this.container.position.y + this.buffContainer.position.y
 		)
 	}
@@ -96,8 +94,10 @@ export default class RenderedGameBoardRow implements BoardRow {
 		this.__owner = owner
 		if (owner === Core.player) {
 			this.sprite.texture = TextureAtlas.getTexture('board/row-allied')
+			this.buffContainerBackground.texture = TextureAtlas.getTexture('board/power-allied')
 		} else if (owner === Core.opponent) {
 			this.sprite.texture = TextureAtlas.getTexture('board/row-enemy')
+			this.buffContainerBackground.texture = TextureAtlas.getTexture('board/power-enemy')
 		}
 	}
 

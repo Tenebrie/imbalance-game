@@ -29,6 +29,7 @@
 	"ui.play.pve": "Play vs AI",
 	"ui.play.pvp": "Play PvP",
 	"ui.play.prototypes": "Play Prototypes",
+	"ui.play.dev": "Play Development Ruleset",
 	"ui.play.refresh": "Refresh",
 
 	"ui.noty.deckRequired": "Select a deck first!",
@@ -430,7 +431,7 @@
 	"card.heroCoralScribe.description": "*Deploy:*\nFor each different *Storm* in your Graveyard, *Create* a copy of it.",
 
 	"card.heroFlameDancer.name": "Flame Dancer",
-	"card.heroFlameDancer.description": "*Deploy:*\nApply *Burning* for {burnDuration} turns to all units on an enemy row.",
+	"card.heroFlameDancer.description": "*Deploy:*\nApply *Burning* to an enemy row.",
 
 	"card.heroRavenCaller.name": "Raven Caller",
 	"card.heroRavenCaller.description": "*Deploy:*\n*Summon* a Bird from your deck",
