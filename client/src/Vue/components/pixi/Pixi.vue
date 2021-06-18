@@ -35,14 +35,16 @@ export default defineComponent({
 		const gameContainer = ref<HTMLElement>()
 		onMounted(() => {
 			window.addEventListener('resize', onWindowResize)
-			window.addEventListener('keydown', onHotkey)
+			window.addEventListener('keydown', onHotkeyPress)
+			window.addEventListener('keyup', onHotkeyRelease)
 
 			Core.init(store.state.currentGame!, store.state.selectedDeckId, gameContainer.value!)
 		})
 
 		onBeforeUnmount(() => {
 			window.removeEventListener('resize', onWindowResize)
-			window.removeEventListener('keydown', onHotkey)
+			window.removeEventListener('keydown', onHotkeyPress)
+			window.removeEventListener('keyup', onHotkeyRelease)
 			if (Core.socket) {
 				Core.socket.close()
 			}
@@ -52,15 +54,27 @@ export default defineComponent({
 			Core.renderer.resize()
 		}
 
-		const onHotkey = async (event: KeyboardEvent): Promise<void> => {
+		const onHotkeyPress = async (event: KeyboardEvent): Promise<void> => {
+			if (event.code === 'Space' && !event.shiftKey) {
+				store.commit.hotkeysModule.setFastAnimation(true)
+			} else if (event.code === 'ShiftLeft' && store.state.hotkeysModule.fastAnimation) {
+				store.commit.hotkeysModule.setFastAnimation(false)
+				store.commit.hotkeysModule.setUltraFastAnimation(true)
+			} else if (event.code === 'Space' && event.shiftKey) {
+				store.commit.hotkeysModule.setUltraFastAnimation(true)
+			}
+
+			/* Development-only shortcuts */
 			if (process.env.NODE_ENV !== 'development' || !event.shiftKey || !event.altKey) {
 				return
 			}
 			// Restart
 			if (event.code === 'KeyQ') {
+				const selectedDeck = store.state.selectedDeckId
 				await store.dispatch.leaveGame()
 				const response = await axios.post('/api/games', { ruleset: store.state.gameStateModule.ruleset!.class })
 				const gameMessage: GameMessage = response.data.data
+				store.commit.setSelectedDeckId(selectedDeck)
 				await store.dispatch.joinGame(gameMessage)
 			}
 			// Reconnect
@@ -79,6 +93,13 @@ export default defineComponent({
 			// Surrender
 			if (event.code === 'KeyS') {
 				await store.dispatch.leaveGame()
+			}
+		}
+
+		const onHotkeyRelease = async (event: KeyboardEvent): Promise<void> => {
+			if (event.code === 'Space') {
+				store.commit.hotkeysModule.setFastAnimation(false)
+				store.commit.hotkeysModule.setUltraFastAnimation(false)
 			}
 		}
 

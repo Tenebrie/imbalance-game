@@ -21,6 +21,7 @@
 import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
 import { defineComponent, PropType } from 'vue'
+import TheDeckSelectionPopup from '@/Vue/components/popup/escapeMenu/TheDeckSelectionPopup.vue'
 
 export default defineComponent({
 	props: {
@@ -31,8 +32,19 @@ export default defineComponent({
 	},
 
 	setup(props) {
-		const onClick = () => {
-			store.dispatch.joinGame(props.game)
+		const onClick = async () => {
+			const ruleset = props.game.ruleset
+			console.log(ruleset)
+			if (ruleset.playerDeckRequired) {
+				store.dispatch.popupModule.open({
+					component: TheDeckSelectionPopup,
+					onConfirm: async () => {
+						await store.dispatch.joinGame(props.game)
+					},
+				})
+			} else {
+				await store.dispatch.joinGame(props.game)
+			}
 		}
 		return {
 			thisGame: props.game,

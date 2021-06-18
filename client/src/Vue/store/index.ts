@@ -16,16 +16,18 @@ import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import { createDirectStore } from 'direct-vuex'
 import RulesetsModule from './modules/RulesetsModule'
 import NovelModule from './modules/NovelModule'
+import HotkeysModule from '@/Vue/store/modules/HotkeysModule'
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {
-		novel: NovelModule,
 		editor: EditorModule,
-		rulesets: RulesetsModule,
 		gameLogModule: GameLogModule,
 		gameStateModule: GameStateModule,
-		popupModule: PopupModule,
+		hotkeysModule: HotkeysModule,
 		inspectedCard: InspectedCardModule,
+		novel: NovelModule,
+		popupModule: PopupModule,
+		rulesets: RulesetsModule,
 		userPreferencesModule: UserPreferencesModule,
 	},
 

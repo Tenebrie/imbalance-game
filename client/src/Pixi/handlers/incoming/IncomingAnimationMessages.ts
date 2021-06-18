@@ -7,6 +7,7 @@ import Core from '@/Pixi/Core'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
 import AnimationDuration from '@shared/enums/AnimationDuration'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import store from '@/Vue/store'
 
 const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMessageHandlerFunction } = {
 	[AnimationMessageType.PLAY]: (data: AnimationMessage, systemData: QueuedMessageSystemData) => {
@@ -14,7 +15,14 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 		const handlerResponse = handler(data, data.params)
 		if (!handlerResponse || !handlerResponse.skip) {
 			const extraDuration = (handlerResponse && handlerResponse.extraDelay) || 0
-			Core.mainHandler.triggerAnimation(AnimationDuration[data.type] + extraDuration, systemData.animationThreadId)
+			let speedModifier = 1
+			if (store.state.hotkeysModule.fastAnimation) {
+				speedModifier = 5
+			} else if (store.state.hotkeysModule.ultraFastAnimation) {
+				speedModifier = 25
+			}
+			const time = (AnimationDuration[data.type] + extraDuration) / speedModifier
+			Core.mainHandler.triggerAnimation(time, systemData.animationThreadId)
 		}
 	},
 

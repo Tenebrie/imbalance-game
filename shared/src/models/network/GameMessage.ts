@@ -1,7 +1,7 @@
 import Game from '../Game'
 import HiddenPlayerMessage from './player/HiddenPlayerMessage'
 import HiddenPlayerInGameMessage from '../network/playerInGame/HiddenPlayerInGameMessage'
-import Ruleset from '../Ruleset'
+import RulesetMessage from './ruleset/RulesetMessage'
 
 export default class GameMessage {
 	id: string
@@ -9,7 +9,7 @@ export default class GameMessage {
 	isStarted: boolean
 	owner: HiddenPlayerMessage | null
 	players: HiddenPlayerInGameMessage[]
-	ruleset: Ruleset
+	ruleset: RulesetMessage
 
 	constructor(game: Game) {
 		this.id = game.id
@@ -17,6 +17,6 @@ export default class GameMessage {
 		this.owner = game.owner ? new HiddenPlayerMessage(game.owner) : null
 		this.isStarted = game.isStarted
 		this.players = game.players.map((player) => new HiddenPlayerInGameMessage(player))
-		this.ruleset = game.ruleset
+		this.ruleset = new RulesetMessage(game.ruleset)
 	}
 }

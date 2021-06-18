@@ -1,21 +1,43 @@
 <template>
 	<div class="the-escape-menu">
-		<div class="the-escape-menu-container" @click="onMenuClick">
-			<tenebrie-logo class="logo" />
-			<button @click="onShowDiscord" class="primary game-button">
-				<span class="image"><img src="https://discord.com/assets/f8389ca1a741a115313bede9ac02e2c0.svg" alt="Discord group link" /></span>
-				Discord
-			</button>
-			<button @click="onShowRules" class="primary game-button">Rules</button>
-			<button @click="onShowSettings" class="primary game-button">Settings</button>
-			<button @click="onShowGameLog" class="primary game-button">Game history</button>
-			<div class="menu-separator"></div>
-			<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>
-			<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>
-			<div class="menu-separator"></div>
-			<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>
-			<div class="menu-separator"></div>
-			<button @click="onLeaveGame" class="primary game-button destructive">Surrender</button>
+		<div class="the-escape-menu-container">
+			<div class="menu-section left" @click="onMenuClick">
+				<tenebrie-logo class="logo" />
+				<button @click="onShowDiscord" class="primary game-button">
+					<span class="image"><img src="https://discord.com/assets/f8389ca1a741a115313bede9ac02e2c0.svg" alt="Discord group link" /></span>
+					Discord
+				</button>
+				<button @click="onShowRules" class="primary game-button">Rules</button>
+				<button @click="onShowGameLog" class="primary game-button">Game history</button>
+				<div class="menu-separator"></div>
+				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>
+				<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>
+				<div class="menu-separator"></div>
+				<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>
+				<div class="menu-separator"></div>
+				<button @click="onLeaveGame" class="primary game-button destructive">Surrender</button>
+			</div>
+			<div class="menu-section right" @click="onMenuClick">
+				<div class="hotkeys">
+					<h2>Hotkeys:</h2>
+					<div class="hotkey"><span class="header">(Hold) Space:</span> Faster animations (x5)</div>
+					<div class="hotkey"><span class="header">(Hold) Shift+Space:</span> Much faster animations (x25)</div>
+					<div v-if="showDevHotkeys">
+						<div class="hotkey">
+							<span class="prefix">(Dev)</span> <span class="header">Ctrl+Alt+Q:</span> Create a new game with current ruleset
+						</div>
+						<div class="hotkey">
+							<span class="prefix">(Dev)</span> <span class="header">Ctrl+Alt+R:</span> Reconnect to the current game
+						</div>
+						<div class="hotkey">
+							<span class="prefix">(Dev)</span> <span class="header">Ctrl+Alt+D:</span> Force close connection to server
+						</div>
+						<div class="hotkey"><span class="prefix">(Dev)</span> <span class="header">Ctrl+Alt+S:</span> Surrender and leave</div>
+					</div>
+				</div>
+				<div class="menu-separator"></div>
+				<the-simple-settings />
+			</div>
 		</div>
 	</div>
 </template>
@@ -31,6 +53,7 @@ import TheRulesetPopup from '@/Vue/components/popup/escapeMenu/TheRulesetPopup.v
 
 export default defineComponent({
 	components: {
+		TheSimpleSettings,
 		TenebrieLogo,
 	},
 
@@ -47,12 +70,6 @@ export default defineComponent({
 		const onShowRules = (): void => {
 			store.dispatch.popupModule.open({
 				component: TheRulesetPopup,
-			})
-		}
-
-		const onShowSettings = (): void => {
-			store.dispatch.popupModule.open({
-				component: TheSimpleSettings,
 			})
 		}
 
@@ -81,16 +98,18 @@ export default defineComponent({
 			store.dispatch.leaveGame()
 		}
 
+		const showDevHotkeys = process.env.NODE_ENV === 'development'
+
 		return {
 			onShowDiscord,
 			onMenuClick,
 			onShowRules,
-			onShowSettings,
 			onShowGameLog,
 			onShowPlayersDeck,
 			onShowPlayersGraveyard,
 			onShowOpponentsGraveyard,
 			onLeaveGame,
+			showDevHotkeys,
 		}
 	},
 })
@@ -109,13 +128,20 @@ export default defineComponent({
 }
 
 .the-escape-menu-container {
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	& > * {
+		margin: 4px;
+	}
+}
+
+.menu-section {
+	width: 100%;
 	border-radius: 16px;
-	width: 300px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	background: $COLOR_BACKGROUND_GAME_MENU_BORDER;
 	padding: 16px 32px;
 
 	button {
@@ -132,6 +158,42 @@ export default defineComponent({
 				top: -20px;
 			}
 		}
+	}
+
+	&.left {
+		flex: 1;
+		max-width: 300px;
+		background: $COLOR_BACKGROUND_GAME_MENU_BORDER;
+		border: 2px solid $COLOR_BACKGROUND_GAME_MENU_BORDER;
+	}
+
+	&.right {
+		height: fit-content;
+		flex: 2;
+		padding-top: 0;
+		max-width: 600px;
+		background: darken($COLOR_BACKGROUND_GAME_MENU, 100);
+		border: 2px solid $COLOR_BACKGROUND_GAME_MENU_BORDER;
+
+		.menu-separator {
+			background: rgba(white, 0.7);
+		}
+	}
+}
+
+.hotkeys {
+	width: 100%;
+	text-align: start;
+	.hotkey {
+		width: 100%;
+		margin-bottom: 4px;
+	}
+	.prefix {
+		color: gray;
+	}
+	.header {
+		color: $COLOR-SECONDARY;
+		font-weight: bold;
 	}
 }
 
