@@ -86,6 +86,8 @@ export default class Renderer {
 			transparent: true,
 			resolution: 1,
 		})
+		PIXI.settings.TARGET_FPMS = 0.12
+		PIXI.Ticker.shared.maxFPS = 144
 
 		this.rootContainer = new PIXI.Container()
 		this.rootContainer.sortableChildren = true
@@ -369,7 +371,7 @@ export default class Renderer {
 	}
 
 	private updateCardTintOverlay(card: RenderedCard): void {
-		const cardTint = this.getCardTintOverlayColor(card)
+		const cardTint = Renderer.getCardTintOverlayColor(card)
 		if (cardTint.color !== null) {
 			card.cardTintOverlay.tint = cardTint.color
 		}
@@ -389,7 +391,7 @@ export default class Renderer {
 		card.cardFullTintOverlay.alpha = Math.max(0, Math.min(card.cardFullTintOverlay.alpha, 1))
 	}
 
-	private getCardTintOverlayColor(card: RenderedCard): { color: number | null; alpha: number } {
+	private static getCardTintOverlayColor(card: RenderedCard): { color: number | null; alpha: number } {
 		/* Targeting mode, and the current unit is a valid target */
 		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
 		if (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isCardPotentialTarget(card)) {
@@ -625,7 +627,7 @@ export default class Renderer {
 	}
 
 	private updateUnitTintOverlay(unit: RenderedUnit): void {
-		const cardTint = this.getUnitTint(unit)
+		const cardTint = Renderer.getUnitTint(unit)
 		if (cardTint.color !== null) {
 			unit.card.cardTintOverlay.tint = cardTint.color
 		}
@@ -636,7 +638,7 @@ export default class Renderer {
 		}
 		unit.card.cardTintOverlay.alpha = Math.max(0, Math.min(unit.card.cardTintOverlay.alpha, 1))
 
-		const fullCardTint = this.getFullUnitTint(unit)
+		const fullCardTint = Renderer.getFullUnitTint(unit)
 		if (fullCardTint.alpha > unit.card.cardTintOverlay.alpha) {
 			unit.card.cardFullTintOverlay.alpha += (fullCardTint.alpha - unit.card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 40
 		} else {
@@ -645,7 +647,7 @@ export default class Renderer {
 		unit.card.cardFullTintOverlay.alpha = Math.max(0, Math.min(unit.card.cardFullTintOverlay.alpha, 1))
 	}
 
-	private getUnitTint(unit: RenderedUnit): { color: number | null; alpha: number } {
+	private static getUnitTint(unit: RenderedUnit): { color: number | null; alpha: number } {
 		const card = unit.card
 		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
 		if (Core.input.grabbedCard && Core.input.grabbedCard.card === unit.card) {
@@ -681,7 +683,7 @@ export default class Renderer {
 		return { color: null, alpha: 0 }
 	}
 
-	private getFullUnitTint(unit: RenderedUnit): { alpha: number } {
+	private static getFullUnitTint(unit: RenderedUnit): { alpha: number } {
 		if (Core.input.grabbedCard && Core.input.grabbedCard.card === unit.card) {
 			return { alpha: 0.0 }
 		}

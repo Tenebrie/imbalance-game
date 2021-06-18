@@ -39,8 +39,11 @@ class EditorCardRenderer {
 		}
 
 		this.mainTimer = window.setInterval(() => {
-			const nextCardClass = store.state.editor.renderQueue[0]
+			if (store.state.editor.renderQueue.length === 0) {
+				return
+			}
 
+			const nextCardClass = store.state.editor.renderQueue[0]
 			store.commit.editor.shiftRenderQueue()
 			const nextCard = store.state.editor.cardLibrary.find((card) => card.class === nextCardClass)
 			if (!nextCard) {

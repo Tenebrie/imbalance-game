@@ -172,7 +172,10 @@ class PlayerLibrary {
 			return
 		}
 
-		this.playerCache = this.playerCache.filter((cachedPlayer) => currentTime - cachedPlayer.timestamp < 60000)
+		this.playerCache = this.playerCache.filter(
+			(cachedPlayer) => cachedPlayer.player.isInGame() || currentTime - cachedPlayer.timestamp < 60000
+		)
+		this.playerCache.filter((player) => player.player.isInGame()).forEach((player) => (player.timestamp = currentTime))
 		this.cachePrunedAt = currentTime
 	}
 

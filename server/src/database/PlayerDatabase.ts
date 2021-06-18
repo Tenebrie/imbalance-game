@@ -124,6 +124,9 @@ export default {
 		if (allGuestPlayers === null) {
 			return false
 		}
+		if (allGuestPlayers.length === 0) {
+			return true
+		}
 		console.info(`Clearing out ${allGuestPlayers.length} guest player accounts...`)
 
 		const firstQuery = `

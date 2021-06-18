@@ -27,7 +27,6 @@ router.use(RequirePlayerTokenMiddleware)
 router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	const currentGame: ServerGame | null = GameLibrary.games.find((game) => game.id === req.params.gameId) || null
 	const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
-	let currentPlayerInGame: ServerPlayerInGame
 	if (!currentGame || !currentPlayer) {
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
 		ws.close()
@@ -42,8 +41,13 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	}
 
 	// Reconnecting
+	let currentPlayerInGame: ServerPlayerInGame
 	if (connectedPlayer) {
-		currentPlayerInGame = currentGame.players.find((playerInGame) => playerInGame.player === currentPlayer)!
+		const reconnectingPlayer = currentGame.players.find((playerInGame) => playerInGame.player === currentPlayer)
+		if (!reconnectingPlayer) {
+			throw new Error('Unable to find reconnecting player in game.')
+		}
+		currentPlayerInGame = reconnectingPlayer
 	}
 
 	// Fresh connection
@@ -83,8 +87,8 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			return
 		}
 
-		OutgoingMessageHandlers.notifyAboutMessageAcknowledged(currentPlayerInGame.player)
 		try {
+			OutgoingMessageHandlers.notifyAboutMessageAcknowledged(currentPlayerInGame.player)
 			const t1 = process.hrtime()
 			handler(msg.data, currentGame, currentPlayerInGame)
 			const t2 = process.hrtime(t1)

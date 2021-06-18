@@ -32,7 +32,7 @@ export default class RenderedGameBoardRow implements BoardRow {
 		this.container.addChild(this.sprite)
 
 		this.buffContainer = new PIXI.Container()
-		this.buffContainer.position.set(-this.sprite.width / 2 - 50 * getRenderScale().superSamplingLevel, 0)
+		this.buffContainer.position.set(-this.sprite.width / 2 - 100, 0)
 		this.container.addChild(this.buffContainer)
 
 		this.buffContainerBackground = new PIXI.Sprite(TextureAtlas.getTexture('board/power-allied'))
@@ -48,7 +48,9 @@ export default class RenderedGameBoardRow implements BoardRow {
 
 	public getInteractionVisualPosition(): PIXI.Point {
 		return new PIXI.Point(
-			this.container.position.x + this.buffContainer.position.x - 25 * getRenderScale().superSamplingLevel,
+			this.container.position.x / getRenderScale().superSamplingLevel +
+				this.buffContainer.position.x -
+				25 * getRenderScale().superSamplingLevel,
 			this.container.position.y + this.buffContainer.position.y
 		)
 	}
