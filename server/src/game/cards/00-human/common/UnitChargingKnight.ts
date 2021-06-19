@@ -23,7 +23,7 @@ export default class UnitChargingKnight extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.NOBLE, CardTribe.BEAST],
+			tribes: [CardTribe.BEAST],
 			features: [CardFeature.KEYWORD_ORDER],
 			stats: {
 				power: 8,

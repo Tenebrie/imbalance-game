@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 export default class ObjectTrail {
 	public readonly rope: PIXI.SimpleRope
@@ -11,7 +12,9 @@ export default class ObjectTrail {
 		for (let i = 0; i < 50; i++) {
 			this.points.push(startingPosition.clone())
 		}
-		this.rope = new PIXI.SimpleRope(TextureAtlas.getTexture('effects/trail'), this.points)
+		const scale = getRenderScale().superSamplingLevel
+		const texture = scale >= 2 ? 'trail-large' : 'trail-normal'
+		this.rope = new PIXI.SimpleRope(TextureAtlas.getTexture(`effects/${texture}`), this.points)
 		this.rope.blendMode = PIXI.BLEND_MODES.ADD
 	}
 

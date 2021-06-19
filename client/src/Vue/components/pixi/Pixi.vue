@@ -70,6 +70,7 @@ export default defineComponent({
 			}
 			// Restart
 			if (event.code === 'KeyQ') {
+				event.preventDefault()
 				const selectedDeck = store.state.selectedDeckId
 				await store.dispatch.leaveGame()
 				const response = await axios.post('/api/games', { ruleset: store.state.gameStateModule.ruleset!.class })
@@ -79,6 +80,7 @@ export default defineComponent({
 			}
 			// Reconnect
 			if (event.code === 'KeyR') {
+				event.preventDefault()
 				const currentGame = store.state.currentGame
 				const selectedDeck = store.state.selectedDeckId
 				Core.socket.close(1000, 'Forced disconnect (testing purposes)')
@@ -88,10 +90,12 @@ export default defineComponent({
 			}
 			// Disconnect
 			if (event.code === 'KeyD') {
+				event.preventDefault()
 				Core.socket.close(1000, 'Forced disconnect (testing purposes)')
 			}
 			// Surrender
 			if (event.code === 'KeyS') {
+				event.preventDefault()
 				await store.dispatch.leaveGame()
 			}
 		}

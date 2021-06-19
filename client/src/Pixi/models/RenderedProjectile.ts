@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ObjectTrail from '@/Pixi/vfx/ObjectTrail'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 export default class RenderedProjectile {
 	sprite: PIXI.Sprite

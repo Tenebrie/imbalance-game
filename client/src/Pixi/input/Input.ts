@@ -389,7 +389,7 @@ export default class Input {
 			this.leftMouseDown &&
 			!this.grabbedCard &&
 			!this.hoveredCard &&
-			getDistance(this.boopTrailLastSeenAt || { x: 0, y: 0 }, this.mousePosition) > 5
+			getDistance(this.boopTrailLastSeenAt || { x: 0, y: 0 }, this.mousePosition) > 4
 		) {
 			this.boopTrailLastSeenAt = this.mousePosition.clone()
 			Core.particleSystem.createSmallBoardBoopEffect(this.mousePosition)

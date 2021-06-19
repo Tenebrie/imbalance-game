@@ -24,7 +24,7 @@ export const insertRichTextVariables = (str: string | null | undefined, variable
 
 	let replacedText = str
 	for (const variableName in variables) {
-		const variableValue = variables[variableName] || ''
+		const variableValue = variables[variableName] === undefined ? '' : variables[variableName]
 		const regexp = new RegExp('{' + variableName + '}', 'g')
 		replacedText = replacedText.replace(regexp, '*' + variableValue.toString() + '*')
 	}

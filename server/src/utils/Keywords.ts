@@ -130,6 +130,9 @@ export default {
 	},
 
 	createCard: {
+		fromExisting: (card: ServerCard, owner: ServerPlayerInGame) => {
+			card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, owner))
+		},
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateByClass(card.game, cardClass)

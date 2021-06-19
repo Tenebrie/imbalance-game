@@ -758,10 +758,11 @@ export default class Renderer {
 			return
 		}
 
+		const scale = this.superSamplingLevel
 		targetingArrow.startingPoint.position.copyFrom(startingPosition)
 		targetingArrow.startingPoint.clear()
 		targetingArrow.startingPoint.beginFill(color, 1.0)
-		targetingArrow.startingPoint.drawCircle(0, 0, 5)
+		targetingArrow.startingPoint.drawCircle(0, 0, 3 * scale)
 		targetingArrow.startingPoint.endFill()
 		targetingArrow.startingPoint.zIndex = TARGETING_ARROW_ZINDEX
 
@@ -774,7 +775,7 @@ export default class Renderer {
 		}
 		targetingArrow.targetPoint.clear()
 		targetingArrow.targetPoint.beginFill(color, 1.0)
-		targetingArrow.targetPoint.drawCircle(0, 0, 5)
+		targetingArrow.targetPoint.drawCircle(0, 0, 3 * scale)
 		targetingArrow.targetPoint.endFill()
 		targetingArrow.targetPoint.zIndex = TARGETING_ARROW_ZINDEX
 
@@ -782,7 +783,7 @@ export default class Renderer {
 		targetingArrow.arrowLine.clear()
 		const iterations = 5
 		for (let i = 0; i < iterations; i++) {
-			targetingArrow.arrowLine.lineStyle(i + 1, color, (iterations + 1 - i) / (iterations + 1))
+			targetingArrow.arrowLine.lineStyle(((i + 1) / 2) * scale, color, (iterations + 1 - i) / (iterations + 1))
 			const targetX = targetingArrow.targetPoint.position.x - startingPosition.x
 			const targetY = targetingArrow.targetPoint.position.y - startingPosition.y
 			const distance = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2))

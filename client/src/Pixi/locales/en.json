@@ -312,6 +312,9 @@
 	"buff.buffExtraArmor.name": "Armor",
 	"buff.buffExtraArmor.description": "This card has 1 extra Armor.",
 
+	"buff.buffWeakness.name": "Weakness",
+	"buff.buffWeakness.description": "This card has 1 less Power.",
+
 	"buff.buffStun.name": "Stun",
 	"buff.buffStun.description": "This card is stunned and is temporarily disabled.",
 
@@ -931,5 +934,17 @@
 	"card.unitAedineShrine.description": " ",
 
 	"card.unitRoyalArmory.name": "Royal Armory",
-	"card.unitRoyalArmory.description": " "
+	"card.unitRoyalArmory.description": " ",
+
+	"card.unitWolfpack.name": "Wolfpack",
+	"card.unitWolfpack.description": "*Deploy:*\nDeal {damage} Damage to an enemy.<p>If it kills the target, *Play* another *Wolfpack*. It deals {damagePenaltyPerWolf} Damage less.",
+
+	"card.unitDryadWolfspeaker.name": "Dryad Wolfspeaker",
+	"card.unitDryadWolfspeaker.description": "While you control at least {beastsRequired} Beasts, increases your *Direct Unit Damage* by {bonusDamage}.",
+
+	"card.unitRoyalTaxCollector.name": "Royal Tax Collector",
+	"card.unitRoyalTaxCollector.description": "*Deploy:*\nGive all allied Nobles *-*{debuffPotency} Power to add a *Royal Tithe* to your hand for every affected Noble.",
+
+	"card.spellGoldTithe.name": "Gold Tithe",
+	"card.spellGoldTithe.description": "Give an allied unit *+*{bonusPower} Power.<p><i>You can only play one copy of this card per turn.</i>"
 }

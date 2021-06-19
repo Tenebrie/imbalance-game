@@ -9,6 +9,7 @@ import AudioSystem from '@/Pixi/audio/AudioSystem'
 import Utils, { getDistance } from '@/utils/Utils'
 import RenderedVelocityProjectile from '@/Pixi/models/RenderedVelocityProjectile'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 export default class ProjectileSystem {
 	private projectiles: RenderedProjectile[] = []
@@ -107,9 +108,10 @@ export default class ProjectileSystem {
 	}
 
 	private static createProjectileSprite(): PIXI.Sprite {
+		const scale = getRenderScale().superSamplingLevel
 		const sprite = new PIXI.Sprite(TextureAtlas.getTexture('effects/fireball-static'))
 		sprite.zIndex = 100
-		sprite.scale.set(0.4)
+		sprite.scale.set(0.2 * scale)
 		sprite.anchor.set(0.5, 0.5)
 		return sprite
 	}
@@ -150,7 +152,7 @@ export default class ProjectileSystem {
 	): RenderedVelocityProjectile {
 		const sprite = ProjectileSystem.createProjectileSprite()
 		sprite.tint = Number(`0x${color.start.toLowerCase()}`)
-		const projectile = RenderedVelocityProjectile.targetMouse(sprite, sourcePoint, 3500, 3000, 10000)
+		const projectile = RenderedVelocityProjectile.targetMouse(sprite, sourcePoint, 1750, 1500, 10000)
 		projectile.onImpact = () => {
 			const angle = Utils.getVectorAngleAsDegrees({
 				x: Core.input.mousePosition.x - projectile.sprite.position.x,
