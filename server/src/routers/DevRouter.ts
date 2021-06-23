@@ -30,7 +30,7 @@ router.put(
 		const targetFileName = `/app/client/public/assets/cards/${targetCardClass}.webp`
 		await sharp(req.file.path)
 			.webp({
-				quality: 80,
+				quality: 90,
 			})
 			.toFile(targetFileName)
 

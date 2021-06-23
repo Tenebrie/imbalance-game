@@ -23,7 +23,7 @@ glob("**/*.@(png|jpg|jpeg)", async (er, files) => {
         console.info(`Converting ${colorize(file, AsciiColor.MAGENTA)} -> ${colorize(newFileName, AsciiColor.CYAN)}`)
         return sharp(file)
             .webp({
-                quality: 80
+                quality: 90
             })
             .toFile(newFileName)
     })

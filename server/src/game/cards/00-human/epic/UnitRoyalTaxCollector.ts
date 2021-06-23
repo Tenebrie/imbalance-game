@@ -9,6 +9,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import BuffWeakness from '@src/game/buffs/BuffWeakness'
 import Keywords from '@src/utils/Keywords'
 import SpellGoldTithe from '@src/game/cards/00-human/spells/SpellGoldTithe'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitRoyalTaxCollector extends ServerCard {
 	private static readonly DEBUFF_POTENCY = 3
@@ -19,6 +20,8 @@ export default class UnitRoyalTaxCollector extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.NOBLE],
+			features: [CardFeature.KEYWORD_DEPLOY],
+			relatedCards: [SpellGoldTithe],
 			stats: {
 				power: 4,
 				armor: 2,

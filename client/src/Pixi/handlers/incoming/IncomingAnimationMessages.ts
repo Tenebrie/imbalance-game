@@ -7,7 +7,7 @@ import Core from '@/Pixi/Core'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
 import AnimationDuration from '@shared/enums/AnimationDuration'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import store from '@/Vue/store'
+import { getAnimDurationMod } from '@/utils/Utils'
 
 const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMessageHandlerFunction } = {
 	[AnimationMessageType.PLAY]: (data: AnimationMessage, systemData: QueuedMessageSystemData) => {
@@ -15,13 +15,8 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 		const handlerResponse = handler(data, data.params)
 		if (!handlerResponse || !handlerResponse.skip) {
 			const extraDuration = (handlerResponse && handlerResponse.extraDelay) || 0
-			let speedModifier = 1
-			if (store.state.hotkeysModule.fastAnimation) {
-				speedModifier = 5
-			} else if (store.state.hotkeysModule.ultraFastAnimation) {
-				speedModifier = 25
-			}
-			const time = (AnimationDuration[data.type] + extraDuration) / speedModifier
+			const speedModifier = getAnimDurationMod()
+			const time = (AnimationDuration[data.type] + extraDuration) * speedModifier
 			Core.mainHandler.triggerAnimation(time, systemData.animationThreadId)
 		}
 	},
@@ -49,8 +44,9 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 			(thread) => thread.started && thread.isStaggered && thread.hasAnimationMessages()
 		).length
 		if (data.isStaggered && targetThread.hasAnimationMessages()) {
+			const speedModifier = getAnimDurationMod()
 			const animationCooldown = Core.game.turnPhase === GameTurnPhase.ROUND_END ? 50 : 150
-			targetThread.triggerCooldown(activeStaggeredWorkerThreadCount * animationCooldown)
+			targetThread.triggerCooldown(activeStaggeredWorkerThreadCount * animationCooldown * speedModifier)
 		}
 		targetThread.start()
 	},

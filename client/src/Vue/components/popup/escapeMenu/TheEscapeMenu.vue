@@ -20,8 +20,8 @@
 			<div class="menu-section right" @click="onMenuClick">
 				<div class="hotkeys">
 					<h2>Hotkeys:</h2>
-					<div class="hotkey"><span class="header">(Hold) Space:</span> Faster animations (x5)</div>
-					<div class="hotkey"><span class="header">(Hold) Shift+Space:</span> Much faster animations (x25)</div>
+					<div class="hotkey"><span class="header">(Hold) Space:</span> Faster animations</div>
+					<div class="hotkey"><span class="header">(Hold) Shift+Space:</span> Much faster animations</div>
 					<div v-if="showDevHotkeys">
 						<div class="hotkey">
 							<span class="prefix">(Dev)</span> <span class="header">Ctrl+Alt+Q:</span> Create a new game with current ruleset

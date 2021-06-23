@@ -6,10 +6,11 @@ import { easeInQuad } from 'js-easing-functions'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
-import Utils, { getDistance } from '@/utils/Utils'
+import Utils, { getAnimDurationMod, getDistance } from '@/utils/Utils'
 import RenderedVelocityProjectile from '@/Pixi/models/RenderedVelocityProjectile'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
+import store from '@/Vue/store'
 
 export default class ProjectileSystem {
 	private projectiles: RenderedProjectile[] = []
@@ -118,7 +119,7 @@ export default class ProjectileSystem {
 
 	private static createAttackProjectile(sourcePosition: PIXI.Point, targetCard: RenderedCard, onImpact: () => void): RenderedProjectile {
 		const sprite = ProjectileSystem.createProjectileSprite()
-		const projectile = RenderedProjectile.targetCard(sprite, sourcePosition, targetCard, 500, 1200)
+		const projectile = RenderedProjectile.targetCard(sprite, sourcePosition, targetCard, 500 * getAnimDurationMod(), 1200)
 		ProjectileSystem.registerProjectile(projectile, onImpact)
 		AudioSystem.playEffect(AudioEffectCategory.PROJECTILE)
 		return projectile
@@ -130,13 +131,24 @@ export default class ProjectileSystem {
 		onImpact: () => void
 	): RenderedProjectile {
 		const sprite = ProjectileSystem.createProjectileSprite()
-		const projectile = RenderedProjectile.targetPoint(sprite, sourcePosition, targetRow.getInteractionVisualPosition(), 500, 1200)
+		const projectile = RenderedProjectile.targetPoint(
+			sprite,
+			sourcePosition,
+			targetRow.getInteractionVisualPosition(),
+			500 * getAnimDurationMod(),
+			1200
+		)
 		ProjectileSystem.registerProjectile(projectile, onImpact)
 		AudioSystem.playEffect(AudioEffectCategory.PROJECTILE)
 		return projectile
 	}
 
 	private static registerProjectile(projectile: RenderedProjectile, onImpact: () => void): void {
+		if (store.state.hotkeysModule.ultraFastAnimation) {
+			Core.mainHandler.projectileSystem.projectiles.push(projectile)
+			onImpact()
+			return
+		}
 		projectile.onImpact = onImpact
 		projectile.trail.rope.zIndex = 99
 		Core.renderer.rootContainer.addChild(projectile.sprite)

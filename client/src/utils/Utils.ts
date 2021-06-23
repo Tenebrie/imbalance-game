@@ -59,6 +59,16 @@ export const getDistance = (a: AnyPoint, b: AnyPoint): number => {
 	return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
 }
 
+export const getAnimDurationMod = (): number => {
+	let value = 1
+	if (store.state.hotkeysModule.fastAnimation) {
+		value = 1 / 3
+	} else if (store.state.hotkeysModule.ultraFastAnimation) {
+		value = 1 / 10
+	}
+	return value
+}
+
 const boopColors = [
 	{
 		start: '55FFFF',
