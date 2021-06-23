@@ -46,6 +46,8 @@ export default class ServerBoardRow implements BoardRow {
 		this.game.events.postEvent(
 			ServerGameEventCreators.unitCreated({
 				game: this.game,
+				owner: this.owner!,
+				triggeringCard: unit.card,
 				triggeringUnit: unit,
 			})
 		)

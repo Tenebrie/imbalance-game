@@ -186,9 +186,9 @@
 	"card.feature.keywordOrder.name": "Order",
 	"card.feature.keywordOrder.description": "While this unit is on the board, choose a target and trigger an effect once a turn.",
 	"card.feature.keywordCreate.name": "Create",
-	"card.feature.keywordCreate.description": "Add a card into your hand until the end of your turn.",
+	"card.feature.keywordCreate.description": "Add a new copy of a card into the game and play it.",
 	"card.feature.keywordSummon.name": "Summon",
-	"card.feature.keywordSummon.description": "Move a card from your deck into your hand until the end of your turn.",
+	"card.feature.keywordSummon.description": "Play a card from your deck.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
 	"card.feature.keywordExile.name": "Exile",
@@ -937,7 +937,7 @@
 	"card.unitRoyalArmory.description": " ",
 
 	"card.unitWolfpack.name": "Wolfpack",
-	"card.unitWolfpack.description": "*Deploy:*\nDeal {damage} Damage to an enemy.<p>If it kills the target, *Play* another *Wolfpack*. It deals {damagePenaltyPerWolf} Damage less.",
+	"card.unitWolfpack.description": "*Deploy:*\nDeal {damage} Damage to an enemy.<p>If it kills the target, *Create* another *Wolfpack*. It deals {damagePenaltyPerWolf} Damage less.",
 
 	"card.unitDryadWolfspeaker.name": "Dryad Wolfspeaker",
 	"card.unitDryadWolfspeaker.description": "While you control at least {beastsRequired} Beasts, increases your *Direct Unit Damage* by {bonusDamage}.",
@@ -946,5 +946,9 @@
 	"card.unitRoyalTaxCollector.description": "*Deploy:*\nGive all allied Nobles *-*{debuffPotency} Power to add a *Royal Tithe* to your hand for every affected Noble.",
 
 	"card.spellGoldTithe.name": "Gold Tithe",
-	"card.spellGoldTithe.description": "Give an allied unit *+*{bonusPower} Power.<p><i>You can only play one copy of this card per turn.</i>"
+	"card.spellGoldTithe.description": "Give an allied unit *+*{bonusPower} Power.<p><i>You can only play one copy of this card per turn.</i>",
+
+	"card.unitTheMinisterOfLand.name": "Corniak II",
+	"card.unitTheMinisterOfLand.title": "The Minister of Land",
+	"card.unitTheMinisterOfLand.description": "*Summon* this on your back row if you control at least {peasantsRequired} Peasants.<p>Your Peasants have *-*{weaknessPotency} Power."
 }

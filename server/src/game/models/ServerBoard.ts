@@ -14,6 +14,8 @@ import ServerAnimation from './ServerAnimation'
 import GameHookType, { UnitDestroyedHookArgs, UnitDestroyedHookValues } from './events/GameHookType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
+import CardTribe from '@shared/enums/CardTribe'
+import ServerPlayer from '@src/game/players/ServerPlayer'
 
 export default class ServerBoard implements Board {
 	readonly game: ServerGame
@@ -49,7 +51,14 @@ export default class ServerBoard implements Board {
 	}
 
 	public getControlledRows(player: ServerPlayerInGame | null): ServerBoardRow[] {
-		return this.rows.filter((row) => row.owner === player)
+		if (!player) {
+			return []
+		}
+		const rows = this.rows.filter((row) => row.owner === player)
+		if (player.isInvertedBoard()) {
+			rows.reverse()
+		}
+		return rows
 	}
 
 	public getAdjacentRows(targetRow: ServerBoardRow): ServerBoardRow[] {
@@ -166,6 +175,10 @@ export default class ServerBoard implements Board {
 			return []
 		}
 		return this.getUnitsOwnedByPlayer(player.opponent)
+	}
+
+	public getUnitsOfTribe(tribe: CardTribe, player: ServerPlayerInGame | null): ServerUnit[] {
+		return this.getUnitsOwnedByPlayer(player).filter((unit) => unit.card.tribes.includes(tribe))
 	}
 
 	public getMoveDirection(player: ServerPlayerInGame, from: ServerBoardRow, to: ServerBoardRow): MoveDirection {

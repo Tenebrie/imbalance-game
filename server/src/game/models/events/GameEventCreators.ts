@@ -460,6 +460,8 @@ export interface PlayerTargetCardSelectedEventArgs extends SharedEventArgs {
 }
 
 export interface UnitCreatedEventArgs extends SharedEventArgs {
+	owner: ServerPlayerInGame
+	triggeringCard: ServerCard
 	triggeringUnit: ServerUnit
 }
 export interface UnitMovedEventArgs extends SharedEventArgs {
