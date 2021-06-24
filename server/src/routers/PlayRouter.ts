@@ -18,6 +18,8 @@ import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
 import EventContext from '@src/game/models/EventContext'
+import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
+import LeaderMaximilian from '@src/game/cards/00-human/leaders/Maximilian/LeaderMaximilian'
 
 const router = express.Router() as WebSocketRouter
 
@@ -61,19 +63,17 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			return
 		}
 
-		let inflatedDeck
-		if (currentGame.ruleset.deck && currentGame.ruleset.deck.fixedDeck) {
-			inflatedDeck = ServerTemplateCardDeck.fromEditorDeck(currentGame, currentGame.ruleset.deck.fixedDeck)
-		} else {
+		let templateDeck = ServerEditorDeck.fromConstructors([LeaderMaximilian])
+		if (!currentGame.ruleset.deck || !currentGame.ruleset.deck.fixedDeck) {
 			const deck = await EditorDeckDatabase.selectEditorDeckByIdForPlayer(deckId, currentPlayer)
 			if (!deck) {
 				OutgoingMessageHandlers.notifyAboutInvalidDeck(ws)
 				ws.close()
 				return
 			}
-			inflatedDeck = ServerTemplateCardDeck.fromEditorDeck(currentGame, deck)
+			templateDeck = deck
 		}
-		currentPlayerInGame = currentGame.addPlayer(currentPlayer, inflatedDeck)
+		currentPlayerInGame = currentGame.addPlayer(currentPlayer, templateDeck)
 	}
 
 	currentPlayer.disconnect()

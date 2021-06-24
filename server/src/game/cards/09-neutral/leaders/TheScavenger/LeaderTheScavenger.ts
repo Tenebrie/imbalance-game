@@ -38,7 +38,7 @@ export default class LeaderTheScavenger extends ServerCard {
 			.require(({ player }) => player === this.ownerInGame)
 			.perform(() => {
 				const cardsToAdd = CardLibrary.cards.filter((card) => card.tribes.includes(CardTribe.SALVAGE))
-				cardsToAdd.forEach((card) => this.ownerInGame.cardGraveyard.addSpell(CardLibrary.instantiateByInstance(this.game, card)))
+				cardsToAdd.forEach((card) => this.ownerInGame.cardGraveyard.addSpell(CardLibrary.instantiateFromInstance(this.game, card)))
 			})
 	}
 }

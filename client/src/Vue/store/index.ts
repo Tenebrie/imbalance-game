@@ -123,9 +123,10 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			const { commit } = rootActionContext(context)
 			commit.setCurrentGame(selectedGame)
 			router.push({ name: 'game' })
+			console.log(`Joining ${selectedGame.id}`)
 		},
 
-		leaveGame(): void {
+		async leaveGame(): Promise<void> {
 			if (store.state.gameStateModule.gameStatus === ClientGameStatus.NOT_STARTED) {
 				return
 			}
@@ -134,9 +135,21 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			store.dispatch.gameStateModule.reset()
 			store.dispatch.popupModule.closeAll()
 			store.dispatch.novel.clear()
-			router.push({ name: 'home' })
+			await router.push({ name: 'home' })
 			Core.socket?.close(1000, 'Player disconnect')
 			Core.cleanUp()
+		},
+
+		async leaveAndContinue(context): Promise<void> {
+			const { dispatch } = rootActionContext(context)
+
+			const reconnectGamesResponse = await axios.get('/api/games', { params: { reconnect: '1' } })
+			const reconnectGames = reconnectGamesResponse.data.data as GameMessage[]
+
+			await dispatch.leaveGame()
+			if (reconnectGames.length > 0) {
+				dispatch.joinGame(reconnectGames[0])
+			}
 		},
 	},
 })

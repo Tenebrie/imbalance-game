@@ -4,19 +4,19 @@ import ServerPlayer from '../players/ServerPlayer'
 import IncomingMessageHandlers from '../handlers/IncomingMessageHandlers'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import ServerTemplateCardDeck from '../models/ServerTemplateCardDeck'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerCard from '../models/ServerCard'
 import CardType from '@shared/enums/CardType'
 import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import { sortCards } from '@shared/Utils'
+import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 
 export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	behaviour: AIBehaviour = AIBehaviour.DEFAULT
 
-	constructor(game: ServerGame, player: ServerPlayer) {
-		super(game, player)
+	constructor(game: ServerGame, player: ServerPlayer, deck: ServerEditorDeck) {
+		super(game, player, deck, deck)
 		this.initialized = true
 	}
 
@@ -145,12 +145,5 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 		return (
 			sortCards(this.cardHand.spellCards).filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0).length > 0
 		)
-	}
-
-	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerBotPlayerInGame {
-		const playerInGame = new ServerBotPlayerInGame(game, player)
-		playerInGame.leader = cardDeck.leader
-		playerInGame.cardDeck.instantiateFrom(cardDeck)
-		return playerInGame
 	}
 }

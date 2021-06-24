@@ -33,7 +33,7 @@ export default class SpellNightmareDrain extends ServerCard {
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.require(() => this.game.cardPlay.getDeployTargets().length === 0)
 			.perform(() => {
-				const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
+				const shadowspawn = CardLibrary.instantiate(this.game, UnitShadowspawn)
 				const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 0)
 				this.game.board.createUnit(shadowspawn, targetRow.index, targetRow.cards.length)
 			})
@@ -42,7 +42,7 @@ export default class SpellNightmareDrain extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		const shadowspawn = CardLibrary.instantiateByConstructor(this.game, UnitShadowspawn)
+		const shadowspawn = CardLibrary.instantiate(this.game, UnitShadowspawn)
 		const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 0)
 		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, targetRow.index, targetRow.cards.length)
 		if (!shadowspawnUnit) {

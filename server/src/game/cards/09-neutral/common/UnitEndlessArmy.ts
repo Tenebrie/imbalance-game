@@ -26,7 +26,7 @@ export default class UnitEndlessArmy extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		const copy = CardLibrary.instantiateByConstructor(this.game, UnitEndlessArmy)
+		const copy = CardLibrary.instantiate(this.game, UnitEndlessArmy)
 		this.ownerInGame.cardDeck.addUnitToBottom(copy)
 	}
 }

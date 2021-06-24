@@ -198,3 +198,5 @@ export function forEachInEnum<O extends Record<string, any>>(enumeration: O, han
 		handler(enumeration[value], value)
 	}
 }
+
+export type Void = never

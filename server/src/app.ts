@@ -12,7 +12,8 @@ import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import { wsLogger } from './utils/WebSocketLogger'
 import Database from './database/Database'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
-import PlayerDatabase from '@src/database/PlayerDatabase'
+import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
+import CardLibrary from '@src/game/libraries/CardLibrary'
 
 const app = express()
 expressWs(app)
@@ -123,5 +124,8 @@ app.use((err: any, req: Request, res: Response, next: () => void) => {
 
 /* Generate placeholder images */
 cardImageGenerator.generatePlaceholderImages()
+
+CardLibrary.ensureLibraryLoaded()
+RulesetLibrary.ensureLibraryLoaded()
 
 app.listen(process.env.PORT || 3000)

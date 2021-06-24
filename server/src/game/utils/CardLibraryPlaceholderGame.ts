@@ -1,6 +1,6 @@
 import ServerGame from '../models/ServerGame'
 import GameMode from '@shared/enums/GameMode'
-import { ServerRulesetBuilder } from '../models/rulesets/ServerRuleset'
+import { ServerRulesetBuilder } from '../models/rulesets/ServerRulesetBuilder'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
 
 let instance: ServerGame | null = null

@@ -96,34 +96,34 @@ export default {
 	addCardToHand: {
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
-				const newCard = CardLibrary.instantiateByClass(card.game, cardClass)
+				const newCard = CardLibrary.instantiateFromClass(card.game, cardClass)
 				return addCardToHand(card.ownerInGame, newCard)
 			},
 
 			fromInstance: (instance: ServerCard): ServerCard => {
-				const newCard = CardLibrary.instantiateByInstance(card.game, instance)
+				const newCard = CardLibrary.instantiateFromInstance(card.game, instance)
 				return addCardToHand(card.ownerInGame, newCard)
 			},
 
 			fromConstructor: (prototype: CardConstructor): ServerCard => {
-				const newCard = CardLibrary.instantiateByConstructor(card.game, prototype)
+				const newCard = CardLibrary.instantiate(card.game, prototype)
 				return addCardToHand(card.ownerInGame, newCard)
 			},
 		}),
 
 		for: (player: ServerPlayerInGame) => ({
 			fromClass: (cardClass: string): ServerCard => {
-				const newCard = CardLibrary.instantiateByClass(player.game, cardClass)
+				const newCard = CardLibrary.instantiateFromClass(player.game, cardClass)
 				return addCardToHand(player, newCard)
 			},
 
 			fromInstance: (instance: ServerCard): ServerCard => {
-				const newCard = CardLibrary.instantiateByInstance(player.game, instance)
+				const newCard = CardLibrary.instantiateFromInstance(player.game, instance)
 				return addCardToHand(player, newCard)
 			},
 
 			fromConstructor: (prototype: CardConstructor): ServerCard => {
-				const newCard = CardLibrary.instantiateByConstructor(player.game, prototype)
+				const newCard = CardLibrary.instantiate(player.game, prototype)
 				return addCardToHand(player, newCard)
 			},
 		}),
@@ -135,33 +135,33 @@ export default {
 		},
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
-				const newCard = CardLibrary.instantiateByClass(card.game, cardClass)
+				const newCard = CardLibrary.instantiateFromClass(card.game, cardClass)
 				return createCard(card.ownerInGame, newCard, EmptyFunction)
 			},
 
 			fromInstance: (instance: ServerCard): ServerCard => {
-				const newCard = CardLibrary.instantiateByInstance(card.game, instance)
+				const newCard = CardLibrary.instantiateFromInstance(card.game, instance)
 				return createCard(card.ownerInGame, newCard, EmptyFunction)
 			},
 
 			fromConstructor: (prototype: CardConstructor): ServerCard => {
-				const newCard = CardLibrary.instantiateByConstructor(card.game, prototype)
+				const newCard = CardLibrary.instantiate(card.game, prototype)
 				return createCard(card.ownerInGame, newCard, EmptyFunction)
 			},
 
 			with: (callback: (card: ServerCard) => void) => ({
 				fromClass: (cardClass: string): ServerCard => {
-					const newCard = CardLibrary.instantiateByClass(card.game, cardClass)
+					const newCard = CardLibrary.instantiateFromClass(card.game, cardClass)
 					return createCard(card.ownerInGame, newCard, callback)
 				},
 
 				fromInstance: (instance: ServerCard): ServerCard => {
-					const newCard = CardLibrary.instantiateByInstance(card.game, instance)
+					const newCard = CardLibrary.instantiateFromInstance(card.game, instance)
 					return createCard(card.ownerInGame, newCard, callback)
 				},
 
 				fromConstructor: (prototype: CardConstructor): ServerCard => {
-					const newCard = CardLibrary.instantiateByConstructor(card.game, prototype)
+					const newCard = CardLibrary.instantiate(card.game, prototype)
 					return createCard(card.ownerInGame, newCard, callback)
 				},
 			}),
@@ -169,33 +169,33 @@ export default {
 
 		for: (player: ServerPlayerInGame) => ({
 			fromClass: (cardClass: string): ServerCard => {
-				const newCard = CardLibrary.instantiateByClass(player.game, cardClass)
+				const newCard = CardLibrary.instantiateFromClass(player.game, cardClass)
 				return createCard(player, newCard, EmptyFunction)
 			},
 
 			fromInstance: (instance: ServerCard): ServerCard => {
-				const newCard = CardLibrary.instantiateByInstance(player.game, instance)
+				const newCard = CardLibrary.instantiateFromInstance(player.game, instance)
 				return createCard(player, newCard, EmptyFunction)
 			},
 
 			fromConstructor: (prototype: CardConstructor): ServerCard => {
-				const newCard = CardLibrary.instantiateByConstructor(player.game, prototype)
+				const newCard = CardLibrary.instantiate(player.game, prototype)
 				return createCard(player, newCard, EmptyFunction)
 			},
 
 			with: (callback: (card: ServerCard) => void) => ({
 				fromClass: (cardClass: string): ServerCard => {
-					const newCard = CardLibrary.instantiateByClass(player.game, cardClass)
+					const newCard = CardLibrary.instantiateFromClass(player.game, cardClass)
 					return createCard(player, newCard, callback)
 				},
 
 				fromInstance: (instance: ServerCard): ServerCard => {
-					const newCard = CardLibrary.instantiateByInstance(player.game, instance)
+					const newCard = CardLibrary.instantiateFromInstance(player.game, instance)
 					return createCard(player, newCard, callback)
 				},
 
 				fromConstructor: (prototype: CardConstructor): ServerCard => {
-					const newCard = CardLibrary.instantiateByConstructor(player.game, prototype)
+					const newCard = CardLibrary.instantiate(player.game, prototype)
 					return createCard(player, newCard, callback)
 				},
 			}),

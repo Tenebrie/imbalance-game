@@ -45,7 +45,7 @@ export default class UnitVoidPortal extends ServerCard {
 			return
 		}
 		const owner = this.ownerInGame
-		const voidspawn = CardLibrary.instantiateByConstructor(this.game, UnitVoidspawn)
+		const voidspawn = CardLibrary.instantiate(this.game, UnitVoidspawn)
 		this.game.board.createUnit(voidspawn, unit.rowIndex, unit.unitIndex + 1)
 		const uniqueSpellsInDiscard = [...new Set(owner.cardGraveyard.spellCards.map((card) => card.class))]
 		if (uniqueSpellsInDiscard.length === 0) {

@@ -1,6 +1,6 @@
 import GameMode from '@src/../../shared/src/enums/GameMode'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRuleset'
+import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 import UnitChallengeDummyOPWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyOPWarrior'
 import AIBehaviour from '@src/../../shared/src/enums/AIBehaviour'
 import LeaderCampfireTheMother from '@src/game/cards/10-challenge/test-campfire/LeaderCampfireTheMother'

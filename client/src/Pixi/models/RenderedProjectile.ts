@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ObjectTrail from '@/Pixi/vfx/ObjectTrail'
-import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 export default class RenderedProjectile {
 	sprite: PIXI.Sprite
@@ -34,16 +33,6 @@ export default class RenderedProjectile {
 		}
 
 		this.impactPerformed = false
-	}
-
-	public static inPlace(
-		sprite: PIXI.Sprite,
-		startingPoint: PIXI.Point,
-		animationDuration: number,
-		lifetime: number,
-		curve = 1
-	): RenderedProjectile {
-		return new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime, curve)
 	}
 
 	public static targetCard(

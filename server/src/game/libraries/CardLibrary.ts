@@ -1,7 +1,7 @@
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
-import { colorize } from '@src/utils/Utils'
+import { colorize, getClassFromConstructor } from '@src/utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
@@ -12,10 +12,10 @@ export interface CardConstructor extends Function {
 	new (game: ServerGame): ServerCard
 }
 
-class CardLibrary {
+class InternalCardLibrary {
 	public cards: ServerCard[] = []
 
-	constructor() {
+	public loadFromFilesystem() {
 		// Do not load files if running tests
 		if (process.env.JEST_WORKER_ID !== undefined) {
 			return
@@ -120,16 +120,12 @@ class CardLibrary {
 	}
 
 	public forceLoadCards(cards: CardConstructor[]): void {
-		const newCards = cards.filter((card) => !this.cards.some((existingCard) => existingCard.class === this.getClassFromConstructor(card)))
+		const newCards = cards.filter((card) => !this.cards.some((existingCard) => existingCard.class === getClassFromConstructor(card)))
 		this.cards = this.cards.concat(newCards.map((prototype) => new prototype(CardLibraryPlaceholderGame.get())))
 	}
 
-	public getClassFromConstructor(constructor: CardConstructor): string {
-		return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
-	}
-
 	public findPrototypeByConstructor(constructor: CardConstructor): ServerCard {
-		const cardClass = this.getClassFromConstructor(constructor)
+		const cardClass = getClassFromConstructor(constructor)
 		const card = this.cards.find((card) => card.class === cardClass)
 		if (!card) {
 			throw new Error(`Unable to find card ${cardClass}`)
@@ -137,20 +133,20 @@ class CardLibrary {
 		return card
 	}
 
-	public instantiateByInstance(game: ServerGame, card: ServerCard): ServerCard {
-		const cardClass = this.getClassFromConstructor(card.constructor as CardConstructor)
-		return this.instantiateByClass(game, cardClass)
-	}
-
-	public instantiateByConstructor(game: ServerGame, constructor: CardConstructor): ServerCard {
-		const cardClass = this.getClassFromConstructor(constructor)
+	public instantiate(game: ServerGame, constructor: CardConstructor): ServerCard {
+		const cardClass = getClassFromConstructor(constructor)
 		if (!this.cards.find((card) => card.class === cardClass)) {
 			this.forceLoadCards([constructor])
 		}
-		return this.instantiateByClass(game, cardClass)
+		return this.instantiateFromClass(game, cardClass)
 	}
 
-	public instantiateByClass(game: ServerGame, cardClass: string): ServerCard {
+	public instantiateFromInstance(game: ServerGame, card: ServerCard): ServerCard {
+		const cardClass = getClassFromConstructor(card.constructor as CardConstructor)
+		return this.instantiateFromClass(game, cardClass)
+	}
+
+	public instantiateFromClass(game: ServerGame, cardClass: string): ServerCard {
 		const reference = this.cards.find((card) => {
 			return card.class === cardClass
 		})
@@ -161,6 +157,47 @@ class CardLibrary {
 
 		const referenceConstructor = reference.constructor as CardConstructor
 		return new referenceConstructor(game)
+	}
+}
+
+class CardLibrary {
+	private library: InternalCardLibrary | null = null
+
+	public ensureLibraryLoaded(): void {
+		if (this.library === null) {
+			this.library = new InternalCardLibrary()
+			this.library.loadFromFilesystem()
+		}
+	}
+
+	public get cards(): ServerCard[] {
+		this.ensureLibraryLoaded()
+		return this.library!.cards.slice()
+	}
+
+	public forceLoadCards(cards: CardConstructor[]): void {
+		this.ensureLibraryLoaded()
+		this.library!.forceLoadCards(cards)
+	}
+
+	public findPrototypeFromConstructor(constructor: CardConstructor): ServerCard {
+		this.ensureLibraryLoaded()
+		return this.library!.findPrototypeByConstructor(constructor)
+	}
+
+	public instantiate(game: ServerGame, constructor: CardConstructor): ServerCard {
+		this.ensureLibraryLoaded()
+		return this.library!.instantiate(game, constructor)
+	}
+
+	public instantiateFromInstance(game: ServerGame, card: ServerCard): ServerCard {
+		this.ensureLibraryLoaded()
+		return this.library!.instantiateFromInstance(game, card)
+	}
+
+	public instantiateFromClass(game: ServerGame, cardClass: string): ServerCard {
+		this.ensureLibraryLoaded()
+		return this.library!.instantiateFromClass(game, cardClass)
 	}
 }
 

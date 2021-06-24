@@ -1,7 +1,7 @@
 import ServerGame, { OptionalGameProps } from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import { colorizeConsoleText, colorizeId, colorizePlayer } from '../../utils/Utils'
+import { colorizeConsoleText, colorizeId, colorizePlayer } from '@src/utils/Utils'
 import { ServerRulesetTemplate } from '../models/rulesets/ServerRuleset'
 
 class GameLibrary {
@@ -17,6 +17,13 @@ class GameLibrary {
 
 		this.games.push(game)
 		return game
+	}
+
+	public createChainGame(fromGame: ServerGame): ServerGame {
+		const newGame = ServerGame.newOwnedInstance(fromGame.owner!, fromGame.name, fromGame.ruleset.chain!.get(), {})
+		this.games.push(newGame)
+		fromGame.players.forEach((player) => newGame.addPlayer(player.player, player.startingDeck))
+		return newGame
 	}
 
 	public destroyGame(game: ServerGame, reason: string): void {

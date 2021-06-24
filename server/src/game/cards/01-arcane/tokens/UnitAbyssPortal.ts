@@ -45,7 +45,7 @@ export default class UnitAbyssPortal extends ServerCard {
 			return
 		}
 		const owner = this.ownerInGame
-		const voidspawn = CardLibrary.instantiateByConstructor(this.game, UnitVoidspawn)
+		const voidspawn = CardLibrary.instantiate(this.game, UnitVoidspawn)
 		this.game.board.createUnit(voidspawn, unit.rowIndex, unit.unitIndex + 1)
 		const uniqueCardsInBothDiscards = [
 			...new Set(owner.cardGraveyard.allCards.concat(owner.opponent!.cardGraveyard.allCards).map((card) => card.class)),

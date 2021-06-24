@@ -14,6 +14,7 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import ServerCardTarget from '../models/ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import { sortCards } from '@shared/Utils'
+import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
@@ -30,10 +31,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	turnEnded: boolean
 	roundEnded: boolean
 	cardsMulliganed: number
+	startingDeck: ServerEditorDeck
 
 	private __leader: ServerCard | null
 
-	constructor(game: ServerGame, player: ServerPlayer) {
+	constructor(game: ServerGame, player: ServerPlayer, actualDeck: ServerEditorDeck, selectedDeck: ServerEditorDeck) {
 		this.game = game
 		this.player = player
 		this.__leader = null
@@ -47,6 +49,11 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.turnEnded = true
 		this.roundEnded = true
 		this.cardsMulliganed = 0
+		this.startingDeck = selectedDeck
+
+		const templateDeck = ServerTemplateCardDeck.fromEditorDeck(game, actualDeck)
+		this.cardDeck.instantiateFrom(templateDeck)
+		this.leader = templateDeck.leader
 	}
 
 	public get leader(): ServerCard {
@@ -307,12 +314,5 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	public disconnect(): void {
 		this.player.disconnect()
 		this.initialized = false
-	}
-
-	static newInstance(game: ServerGame, player: ServerPlayer, cardDeck: ServerTemplateCardDeck): ServerPlayerInGame {
-		const playerInGame = new ServerPlayerInGame(game, player)
-		playerInGame.leader = cardDeck.leader
-		playerInGame.cardDeck.instantiateFrom(cardDeck)
-		return playerInGame
 	}
 }

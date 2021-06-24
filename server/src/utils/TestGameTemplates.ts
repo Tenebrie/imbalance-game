@@ -9,8 +9,9 @@ import GameMode from '@shared/enums/GameMode'
 import ServerOwnedCard from '../game/models/ServerOwnedCard'
 import TestingLeader from '../game/cards/11-testing/TestingLeader'
 import { playerAction, startNextRound, startNextTurn } from './TestGameUtils'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRuleset'
+import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
+import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 
 const consoleInfo = console.info
 const consoleWarn = console.warn
@@ -64,10 +65,9 @@ export default {
 		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVE, category: RulesetCategory.PVE }).__build()
 		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
 		const { playerOne, playerTwo } = getPlayers()
-		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		game.addPlayer(playerOne, templateOne)
-		game.addPlayer(playerTwo, templateTwo)
+		const template = ServerEditorDeck.fromConstructors([TestingLeader])
+		game.addPlayer(playerOne, template)
+		game.addPlayer(playerTwo, template)
 		game.start()
 		game.players[0].startRound()
 		game.players[1].startRound()
@@ -84,10 +84,9 @@ export default {
 		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVE, category: RulesetCategory.PVE }).__build()
 		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false, ...props })
 		const { playerOne, playerTwo } = getPlayers()
-		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		game.addPlayer(playerOne, templateOne)
-		game.addPlayer(playerTwo, templateTwo)
+		const template = ServerEditorDeck.fromConstructors([TestingLeader])
+		game.addPlayer(playerOne, template)
+		game.addPlayer(playerTwo, template)
 
 		game.start()
 		game.players[0].startRound()
@@ -111,10 +110,9 @@ export default {
 		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVE, category: RulesetCategory.PVE }).__build()
 		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
 		const { playerOne, playerTwo } = getPlayers()
-		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		game.addPlayer(playerOne, templateOne)
-		game.addPlayer(playerTwo, templateTwo)
+		const template = ServerEditorDeck.fromConstructors([TestingLeader])
+		game.addPlayer(playerOne, template)
+		game.addPlayer(playerTwo, template)
 
 		game.start()
 		game.players[0].startRound()
@@ -148,10 +146,9 @@ export default {
 		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVE, category: RulesetCategory.PVE }).__build()
 		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
 		const { playerOne, playerTwo } = getPlayers()
-		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		game.addPlayer(playerOne, templateOne)
-		game.addPlayer(playerTwo, templateTwo)
+		const template = ServerEditorDeck.fromConstructors([TestingLeader])
+		game.addPlayer(playerOne, template)
+		game.addPlayer(playerTwo, template)
 
 		game.start()
 		game.players[0].startRound()

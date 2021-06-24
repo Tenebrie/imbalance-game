@@ -1,16 +1,17 @@
 import { colorize } from '@src/utils/Utils'
 import AsciiColor from '../../enums/AsciiColor'
-import { ServerRulesetBuilder, ServerRulesetTemplate } from '../models/rulesets/ServerRuleset'
+import { ServerRulesetTemplate } from '../models/rulesets/ServerRuleset'
 import { loadModules } from './ModuleLoader'
+import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 
-export interface RulesetConstructor extends ObjectConstructor {
+export interface RulesetConstructor extends Function {
 	new (): ServerRulesetBuilder<any>
 }
 
-class RulesetLibrary {
+class InternalRulesetLibrary {
 	public rulesets: ServerRulesetTemplate[] = []
 
-	constructor() {
+	public loadFromFilesystem() {
 		// Do not load files if running tests
 		if (process.env.JEST_WORKER_ID !== undefined) {
 			return
@@ -21,7 +22,7 @@ class RulesetLibrary {
 			objectLogName: 'ruleset',
 		})
 
-		this.forceLoadCards(prototypes)
+		this.forceLoadRulesets(prototypes)
 
 		console.info(`Loaded ${colorize(prototypes.length, AsciiColor.CYAN)} ruleset definitions`)
 		if (prototypes.length === 0) {
@@ -29,11 +30,11 @@ class RulesetLibrary {
 		}
 	}
 
-	public forceLoadCards(cards: RulesetConstructor[]): void {
-		const newCards = cards.filter(
-			(card) => !this.rulesets.some((existingCard) => existingCard.class === this.getClassFromConstructor(card))
+	public forceLoadRulesets(rulesets: RulesetConstructor[]): void {
+		const newRulesets = rulesets.filter(
+			(card) => !this.rulesets.some((existingRuleset) => existingRuleset.class === this.getClassFromConstructor(card))
 		)
-		this.rulesets = this.rulesets.concat(newCards.map((prototype) => new prototype().__build()))
+		this.rulesets = this.rulesets.concat(newRulesets.map((prototype) => new prototype().__build()))
 	}
 
 	public getClassFromConstructor(constructor: RulesetConstructor): string {
@@ -48,8 +49,34 @@ class RulesetLibrary {
 		return card
 	}
 
-	public findPrototypeByConstructor(constructor: RulesetConstructor): ServerRulesetTemplate {
+	public findTemplate(constructor: RulesetConstructor): ServerRulesetTemplate {
 		return this.findPrototypeByClass(this.getClassFromConstructor(constructor))
+	}
+}
+
+class RulesetLibrary {
+	private library: InternalRulesetLibrary | null = null
+
+	public ensureLibraryLoaded(): void {
+		if (this.library === null) {
+			this.library = new InternalRulesetLibrary()
+			this.library.loadFromFilesystem()
+		}
+	}
+
+	public get rulesets(): ServerRulesetTemplate[] {
+		this.ensureLibraryLoaded()
+		return this.library!.rulesets.slice()
+	}
+
+	public findTemplateByClass(rulesetClass: string): ServerRulesetTemplate {
+		this.ensureLibraryLoaded()
+		return this.library!.findPrototypeByClass(rulesetClass)
+	}
+
+	public findTemplate(constructor: RulesetConstructor): ServerRulesetTemplate {
+		this.ensureLibraryLoaded()
+		return this.library!.findTemplate(constructor)
 	}
 }
 

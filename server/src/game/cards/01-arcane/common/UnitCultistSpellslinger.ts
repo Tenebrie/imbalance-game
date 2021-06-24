@@ -55,7 +55,7 @@ export default class UnitCultistSpellslinger extends ServerCard {
 	}
 
 	private onScrollSelected(target: ServerCard): void {
-		const newCard = CardLibrary.instantiateByInstance(this.game, target)
+		const newCard = CardLibrary.instantiateFromInstance(this.game, target)
 		this.ownerInGame.cardHand.addSpell(newCard)
 		newCard.buffs.addMultiple(BuffSpellDiscount, this.sacrificedUnit!.power, this, BuffDuration.INFINITY)
 	}

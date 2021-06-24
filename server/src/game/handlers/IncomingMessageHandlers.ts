@@ -129,7 +129,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	[GenericActionMessageType.REQUEST_PLAYERS_DECK]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		const cards = sortCards(player.cardDeck.unitCards.concat(player.cardDeck.spellCards))
 		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+			cards.push(CardLibrary.findPrototypeFromConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
@@ -139,7 +139,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	[GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		const cards = sortCards(player.cardGraveyard.unitCards.concat(player.cardGraveyard.spellCards))
 		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+			cards.push(CardLibrary.findPrototypeFromConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
@@ -149,7 +149,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	[GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		const cards = sortCards(player.opponent!.cardGraveyard.unitCards.concat(player.opponent!.cardGraveyard.spellCards))
 		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+			cards.push(CardLibrary.findPrototypeFromConstructor(TokenEmptyDeck))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)

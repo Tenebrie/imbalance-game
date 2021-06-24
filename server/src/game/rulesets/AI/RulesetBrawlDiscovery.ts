@@ -1,6 +1,6 @@
-import Constants from '@src/../../shared/src/Constants'
-import GameMode from '@src/../../shared/src/enums/GameMode'
-import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
+import Constants from '@shared/Constants'
+import GameMode from '@shared/enums/GameMode'
+import RulesetCategory from '@shared/enums/RulesetCategory'
 import LeaderTheScavenger from '@src/game/cards/09-neutral/leaders/TheScavenger/LeaderTheScavenger'
 import HeroChallengeDummyWarrior0 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
 import HeroChallengeDummyWarrior1 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
@@ -15,9 +15,9 @@ import HeroChallengeLegendaryExplorer2 from '@src/game/cards/10-challenge/challe
 import HeroChallengeLegendaryExplorer3 from '@src/game/cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer3'
 import UnitChallengeEagerExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeEagerExplorer'
 import UnitChallengeScarredExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeScarredExplorer'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRuleset'
+import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 
-export default class RulesetBrawlDiscovery extends ServerRulesetBuilder<void> {
+export default class RulesetBrawlDiscovery extends ServerRulesetBuilder<never> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,

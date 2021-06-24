@@ -8,6 +8,7 @@ import CardLibrary from '../../../libraries/CardLibrary'
 import TestingArcaneNormalLeaderPower from '../../11-testing/TestingArcaneNormalLeaderPower'
 import TestingArcaneExperimentalLeaderPower from '../../11-testing/TestingArcaneExperimentalLeaderPower'
 import TargetType from '../../../../../../shared/src/enums/TargetType'
+import { getClassFromConstructor } from '../../../../utils/Utils'
 
 describe('HeroMetrearte', () => {
 	let game: ServerGame
@@ -21,7 +22,7 @@ describe('HeroMetrearte', () => {
 
 	it('adds selected card to hand', () => {
 		CardLibrary.forceLoadCards([TestingArcaneNormalLeaderPower])
-		const normalCardClass = CardLibrary.getClassFromConstructor(TestingArcaneNormalLeaderPower)
+		const normalCardClass = getClassFromConstructor(TestingArcaneNormalLeaderPower)
 		playerAction(() => {
 			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
 		})
@@ -33,7 +34,7 @@ describe('HeroMetrearte', () => {
 			game.cardPlay.selectCardTarget(player, validDeployTargets[0])
 		})
 		expect(player.cardHand.spellCards.length).toEqual(1)
-		expect(player.cardHand.spellCards[0].class).toEqual(CardLibrary.getClassFromConstructor(TestingArcaneNormalLeaderPower))
+		expect(player.cardHand.spellCards[0].class).toEqual(getClassFromConstructor(TestingArcaneNormalLeaderPower))
 	})
 
 	it('does not offer experimental cards', () => {
@@ -42,8 +43,8 @@ describe('HeroMetrearte', () => {
 			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
 		})
 
-		const normalCardClass = CardLibrary.getClassFromConstructor(TestingArcaneNormalLeaderPower)
-		const experimentalCardClass = CardLibrary.getClassFromConstructor(TestingArcaneExperimentalLeaderPower)
+		const normalCardClass = getClassFromConstructor(TestingArcaneNormalLeaderPower)
+		const experimentalCardClass = getClassFromConstructor(TestingArcaneExperimentalLeaderPower)
 		const validDeployTargets = game.cardPlay
 			.getDeployTargets()
 			.map((target) => target.target)

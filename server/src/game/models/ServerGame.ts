@@ -13,7 +13,6 @@ import ServerGameCardPlay from './ServerGameCardPlay'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
-import CardLocation from '@shared/enums/CardLocation'
 import { colorizeConsoleText, colorizeId, colorizePlayer, createRandomGameId } from '@src/utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
@@ -22,7 +21,6 @@ import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, { PlayerTargetCardSelectedEventArgs } from './events/GameEventCreators'
 import ServerGameTimers from './ServerGameTimers'
 import CardFeature from '@shared/enums/CardFeature'
-import { BuffConstructor } from './buffs/ServerBuffContainer'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import ServerGameIndex from '@src/game/models/ServerGameIndex'
 import ServerAnimation from '@src/game/models/ServerAnimation'
@@ -30,6 +28,7 @@ import { ServerRuleset, ServerRulesetTemplate } from './rulesets/ServerRuleset'
 import CardLibrary from '../libraries/CardLibrary'
 import ServerGameNovel from './ServerGameNovel'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
+import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 
 interface ServerGameProps extends OptionalGameProps {
 	ruleset: ServerRulesetTemplate
@@ -44,40 +43,43 @@ export interface OptionalGameProps {
 export default class ServerGame implements Game {
 	public readonly id: string
 	public readonly name: string
-	public isStarted: boolean
-	public turnIndex: number
-	public turnPhase: GameTurnPhase
-	public roundIndex: number
-	public playersToMove: ServerPlayerInGame[]
-	public lastRoundWonBy: ServerPlayerInGame | null
-	public playerMoveOrderReversed: boolean
-	readonly owner: ServerPlayer | undefined
-	readonly board: ServerBoard
-	readonly novel: ServerGameNovel
-	readonly index: ServerGameIndex
-	readonly events: ServerGameEvents
-	readonly timers: ServerGameTimers
-	readonly players: ServerPlayerInGame[]
-	readonly cardPlay: ServerGameCardPlay
-	readonly animation: ServerGameAnimation
+	public readonly owner: ServerPlayer | undefined
+	public players: ServerPlayerInGame[]
+	public isStarted!: boolean
+	public turnIndex!: number
+	public turnPhase!: GameTurnPhase
+	public roundIndex!: number
+	public playersToMove!: ServerPlayerInGame[]
+	public lastRoundWonBy!: ServerPlayerInGame | null
+	public playerMoveOrderReversed!: boolean
+	public index!: ServerGameIndex
+	public board!: ServerBoard
+	public novel!: ServerGameNovel
+	public events!: ServerGameEvents
+	public timers!: ServerGameTimers
+	public cardPlay!: ServerGameCardPlay
+	public animation!: ServerGameAnimation
+	public ruleset!: ServerRuleset
 
-	public ruleset: ServerRuleset
-
-	constructor(props: ServerGameProps) {
+	public constructor(props: ServerGameProps) {
 		this.id = createRandomGameId()
 		this.name = props.name || ServerGame.generateName(props.owner)
+		this.owner = props.owner
+		this.players = []
+		this.load(props)
+	}
+
+	private load(props: ServerGameProps) {
 		this.ruleset = props.ruleset.__build()
 		this.isStarted = false
 		this.turnIndex = -1
 		this.roundIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
-		this.owner = props.owner
 		this.index = new ServerGameIndex(this)
 		this.board = new ServerBoard(this)
 		this.novel = new ServerGameNovel(this)
 		this.events = new ServerGameEvents(this)
 		this.timers = new ServerGameTimers(this)
-		this.players = []
 		this.playersToMove = []
 		this.lastRoundWonBy = null
 		this.animation = new ServerGameAnimation(this)
@@ -114,16 +116,20 @@ export default class ServerGame implements Game {
 		return owner ? owner.username + `'s game #${randomNumber}` : `Game #${randomNumber}`
 	}
 
-	public addPlayer(targetPlayer: ServerPlayer, deck: ServerTemplateCardDeck): ServerPlayerInGame {
+	public addPlayer(targetPlayer: ServerPlayer, selectedDeck: ServerEditorDeck): ServerPlayerInGame {
 		let serverPlayerInGame: ServerPlayerInGame
 		if (targetPlayer instanceof ServerBotPlayer) {
-			const bot = ServerBotPlayerInGame.newInstance(this, targetPlayer, deck)
+			const bot = new ServerBotPlayerInGame(this, targetPlayer, selectedDeck)
 			if (this.ruleset.ai) {
 				bot.setBehaviour(this.ruleset.ai.behaviour)
 			}
 			serverPlayerInGame = bot
 		} else {
-			serverPlayerInGame = ServerPlayerInGame.newInstance(this, targetPlayer, deck)
+			let actualDeck = selectedDeck
+			if (this.ruleset.deck) {
+				actualDeck = this.ruleset.deck.fixedDeck!
+			}
+			serverPlayerInGame = new ServerPlayerInGame(this, targetPlayer, actualDeck, selectedDeck)
 		}
 
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
@@ -179,7 +185,7 @@ export default class ServerGame implements Game {
 					symmetricBoardState.forEach((row, rowIndex) => {
 						row.forEach((card, cardIndex) => {
 							const targetRow = this.board.getRowWithDistanceToFront(player, rowIndex)
-							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiateByConstructor(this, card), cardIndex))
+							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiate(this, card), cardIndex))
 						})
 					})
 				})
@@ -191,7 +197,7 @@ export default class ServerGame implements Game {
 					playerBoardState.forEach((row, rowIndex) => {
 						row.forEach((card, cardIndex) => {
 							const targetRow = this.board.getRowWithDistanceToFront(humanPlayer, rowIndex)
-							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiateByConstructor(this, card), cardIndex))
+							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiate(this, card), cardIndex))
 						})
 					})
 				}
@@ -202,7 +208,7 @@ export default class ServerGame implements Game {
 					opponentBoardState.forEach((row, rowIndex) => {
 						row.forEach((card, cardIndex) => {
 							const targetRow = this.board.getRowWithDistanceToFront(botPlayer, rowIndex)
-							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiateByConstructor(this, card), cardIndex))
+							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiate(this, card), cardIndex))
 						})
 					})
 				}
@@ -256,15 +262,6 @@ export default class ServerGame implements Game {
 
 	public isBotGame(): boolean {
 		return !!this.players.find((playerInGame) => playerInGame instanceof ServerBotPlayerInGame)
-	}
-
-	public removePlayer(targetPlayer: ServerPlayer): void {
-		const registeredPlayer = this.players.find((playerInGame) => playerInGame.player.id === targetPlayer.id)
-		if (!registeredPlayer) {
-			return
-		}
-
-		this.players.splice(this.players.indexOf(registeredPlayer), 1)
 	}
 
 	private setTurnPhase(turnPhase: GameTurnPhase): void {
@@ -497,6 +494,10 @@ export default class ServerGame implements Game {
 		setTimeout(() => {
 			this.forceShutdown('Cleanup')
 		}, 300000)
+
+		if (this.ruleset.chain) {
+			GameLibrary.createChainGame(this)
+		}
 	}
 
 	public get isFinished(): boolean {
@@ -540,23 +541,6 @@ export default class ServerGame implements Game {
 			}
 		}
 		return null
-	}
-
-	public getTotalBuffIntensityForPlayer(
-		buffPrototype: BuffConstructor,
-		player: ServerPlayerInGame,
-		allowedLocations: CardLocation[] | 'any' = 'any'
-	): number {
-		let viableCards = this.board.getUnitsOwnedByPlayer(player).map((unit) => unit.card)
-		if (player && player.leader) {
-			viableCards.push(player.leader)
-		}
-
-		if (allowedLocations !== 'any') {
-			viableCards = viableCards.filter((card) => allowedLocations.includes(card.location))
-		}
-
-		return viableCards.map((card) => card.buffs.getIntensity(buffPrototype)).reduce((total, value) => total + value, 0)
 	}
 
 	static newOwnedInstance(owner: ServerPlayer, name: string, ruleset: ServerRulesetTemplate, props: OptionalGameProps): ServerGame {

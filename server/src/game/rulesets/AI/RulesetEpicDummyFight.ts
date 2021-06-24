@@ -10,7 +10,7 @@ import HeroChallengeDummyWarrior3 from '@src/game/cards/10-challenge/ai-00-dummy
 import LeaderChallengeDummy from '@src/game/cards/10-challenge/ai-00-dummy/LeaderChallengeDummy'
 import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
 import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRuleset'
+import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 
 export default class RulesetEpicDummyFight extends ServerRulesetBuilder<void> {
 	constructor() {
