@@ -61,10 +61,10 @@ export const getDistance = (a: AnyPoint, b: AnyPoint): number => {
 
 export const getAnimDurationMod = (): number => {
 	let value = 1
-	if (store.state.hotkeysModule.fastAnimation) {
-		value = 1 / 3
-	} else if (store.state.hotkeysModule.ultraFastAnimation) {
+	if (store.state.hotkeysModule.ultraFastAnimation) {
 		value = 1 / 10
+	} else if (store.state.hotkeysModule.fastAnimation || store.state.userPreferencesModule.fastMode) {
+		value = 1 / 3
 	}
 	return value
 }

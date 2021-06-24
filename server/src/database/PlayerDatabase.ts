@@ -58,6 +58,11 @@ export default {
 		return Database.updateRows(query, [id, accessLevel])
 	},
 
+	async updatePlayerFastMode(id: string, fastMode: boolean): Promise<boolean> {
+		const query = `UPDATE players SET "fastMode" = $2 WHERE id = $1`
+		return Database.updateRows(query, [id, fastMode])
+	},
+
 	async updatePlayerUserLanguage(id: string, userLanguage: Language): Promise<boolean> {
 		const query = `UPDATE players SET "userLanguage" = $2 WHERE id = $1`
 		return Database.updateRows(query, [id, userLanguage])

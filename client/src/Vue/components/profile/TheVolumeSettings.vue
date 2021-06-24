@@ -1,39 +1,39 @@
 <template>
 	<div class="the-volume-settings">
-		<div>
-			<h4>{{ $locale.get('ui.volume.master') }}</h4>
-			<span>
-				<h4>{{ masterVolume }}%</h4>
-				<slider v-model="masterVolume" :step="5" />
-			</span>
+		<div class="element">
+			<h4 class="header">{{ $locale.get('ui.volume.master') }}</h4>
+			<h4 class="value">{{ masterVolume }}%</h4>
+			<div class="toggle-container">
+				<slider class="slider" v-model="masterVolume" :step="5" />
+			</div>
 		</div>
-		<div>
-			<h4>{{ $locale.get('ui.volume.music') }}</h4>
-			<span>
-				<h4>{{ musicVolume }}%</h4>
-				<slider v-model="musicVolume" :step="5" />
-			</span>
+		<div class="element">
+			<h4 class="header">{{ $locale.get('ui.volume.music') }}</h4>
+			<h4 class="value">{{ musicVolume }}%</h4>
+			<div class="toggle-container">
+				<slider class="slider" v-model="musicVolume" :step="5" />
+			</div>
 		</div>
-		<div>
-			<h4>{{ $locale.get('ui.volume.effects') }}</h4>
-			<span>
-				<h4>{{ effectsVolume }}%</h4>
-				<slider v-model="effectsVolume" :step="5" />
-			</span>
+		<div class="element">
+			<h4 class="header">{{ $locale.get('ui.volume.effects') }}</h4>
+			<h4 class="value">{{ effectsVolume }}%</h4>
+			<div class="toggle-container">
+				<slider class="slider" v-model="effectsVolume" :step="5" />
+			</div>
 		</div>
-		<div>
-			<h4>{{ $locale.get('ui.volume.ambience') }}</h4>
-			<span>
-				<h4>{{ ambienceVolume }}%</h4>
-				<slider v-model="ambienceVolume" :step="5" />
-			</span>
+		<div class="element">
+			<h4 class="header">{{ $locale.get('ui.volume.ambience') }}</h4>
+			<h4 class="value">{{ ambienceVolume }}%</h4>
+			<div class="toggle-container">
+				<slider class="slider" v-model="ambienceVolume" :step="5" />
+			</div>
 		</div>
-		<div>
-			<h4>{{ $locale.get('ui.volume.userInterface') }}</h4>
-			<span>
-				<h4>{{ userInterfaceVolume }}%</h4>
-				<slider v-model="userInterfaceVolume" :step="5" />
-			</span>
+		<div class="element">
+			<h4 class="header">{{ $locale.get('ui.volume.userInterface') }}</h4>
+			<h4 class="value">{{ userInterfaceVolume }}%</h4>
+			<div class="toggle-container">
+				<slider class="slider" v-model="userInterfaceVolume" :step="5" />
+			</div>
 		</div>
 	</div>
 </template>
@@ -117,89 +117,30 @@ export default defineComponent({
 	text-align: start;
 	padding-top: 8px;
 
-	& > div {
-		padding: 8px 0;
+	h4 {
+		margin: 0;
+	}
+
+	.element {
 		width: 100%;
 		display: flex;
 		justify-content: space-between;
+		margin: 12px 0;
 
-		h4 {
-			display: inline;
-			margin: 0;
+		.header {
+			flex-shrink: 1;
 		}
 
-		span {
-			width: 50%;
-			display: flex;
-
-			h4 {
-				width: 50px;
-				text-align: right;
-				margin-right: 8px;
-			}
+		.value {
+			text-align: end;
+			flex-grow: 1;
+			margin-right: 4px;
 		}
-		input[type='range'] {
-			display: inline;
-			width: 100%;
-			height: 20px;
-			overflow-x: hidden;
-			background-color: transparent;
-			-webkit-appearance: none;
-			border-radius: 16px;
-			cursor: pointer;
 
-			// Webkit
-			&::-webkit-slider-runnable-track {
-				height: 20px;
-				background-color: transparent;
-			}
-
-			&::-webkit-slider-container {
-				background-color: gray;
-				max-height: 20px;
-			}
-
-			&::-webkit-slider-thumb {
-				-webkit-appearance: none;
-				background: lighten($COLOR-PRIMARY, 10);
-				border-radius: 50%;
-				box-shadow: -210px 0 0 200px lighten($COLOR-PRIMARY, 5);
-				cursor: pointer;
-				height: 20px;
-				width: 20px;
-				border: 0;
-			}
-
-			// Firefox
-			&::-moz-range-thumb {
-				background: lighten($COLOR-PRIMARY, 10);
-				border-radius: 50%;
-
-				height: 20px;
-				width: 20px;
-				border: 0;
-			}
-			&::-moz-range-track {
-				background-color: gray;
-				height: 8px;
-				border-radius: 8px;
-			}
-			&::-moz-range-progress {
-				background-color: lighten($COLOR-PRIMARY, 10);
-				height: 8px;
-				border-radius: 8px;
-			}
-			&:hover {
-				&::-moz-range-thumb {
-					background: lighten($COLOR-PRIMARY, 15);
-				}
-				&::-moz-range-track {
-					background-color: lighten(gray, 5);
-				}
-				&::-moz-range-progress {
-					background-color: lighten($COLOR-PRIMARY, 15);
-				}
-			}
+		.toggle-container {
+			flex-grow: 0;
+			flex-shrink: 0;
+			width: 40%;
 		}
 	}
 }

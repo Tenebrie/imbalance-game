@@ -11,6 +11,7 @@ import { ActionContext } from 'vuex'
 const userPreferencesModule = defineModule({
 	namespaced: true,
 	state: {
+		fastMode: false as boolean,
 		userLanguage: 'en' as Language,
 		renderQuality: RenderQuality.DEFAULT as RenderQuality,
 		masterVolume: 1.0 as number,
@@ -23,6 +24,10 @@ const userPreferencesModule = defineModule({
 	},
 
 	mutations: {
+		setFastMode(state, value: boolean): void {
+			state.fastMode = value
+		},
+
 		setUserLanguage(state, language: Language): void {
 			state.userLanguage = language
 		},
@@ -63,6 +68,7 @@ const userPreferencesModule = defineModule({
 			const response = await axios.get('/api/user/profile')
 			const profileMessage = response.data.data as UserProfileMessage
 
+			commit.setFastMode(profileMessage.fastMode)
 			commit.setUserLanguage(profileMessage.userLanguage)
 			commit.setRenderQuality(profileMessage.renderQuality)
 			commit.setMasterVolume(profileMessage.masterVolume)
@@ -77,6 +83,7 @@ const userPreferencesModule = defineModule({
 		savePreferencesDebounced: debounce(1000, async (context) => {
 			const { state } = moduleActionContext(context, userPreferencesModule)
 			await axios.put('/api/user/profile', {
+				fastMode: state.fastMode,
 				userLanguage: state.userLanguage,
 				renderQuality: state.renderQuality,
 				masterVolume: state.masterVolume,

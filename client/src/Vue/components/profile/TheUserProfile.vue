@@ -45,6 +45,9 @@
 				</div>
 			</div>
 			<div class="section">
+				<the-gameplay-settings />
+			</div>
+			<div class="section">
 				<the-volume-settings />
 			</div>
 			<div class="section button-section">
@@ -69,9 +72,11 @@ import Notifications from '@/utils/Notifications'
 import RenderQuality from '@shared/enums/RenderQuality'
 import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
 import Player from '@shared/models/Player'
+import TheGameplaySettings from '@/Vue/components/profile/TheGameplaySettings.vue'
 
 export default defineComponent({
 	components: {
+		TheGameplaySettings,
 		TheVolumeSettings,
 		UserAvatar,
 		ProfileLogoutButton,

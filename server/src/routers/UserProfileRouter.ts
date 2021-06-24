@@ -7,7 +7,7 @@ import RenderQuality from '@shared/enums/RenderQuality'
 import Language from '@shared/enums/Language'
 import { getPlayerFromAuthenticatedRequest, registerFormValidators } from '../utils/Utils'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
-import { enumToArray, forEachInEnum } from '@shared/Utils'
+import { enumToArray } from '@shared/Utils'
 
 const router = express.Router()
 
@@ -39,6 +39,9 @@ router.put('/', (req: Request, res: Response) => {
 
 	const validateInput = {
 		...registerFormValidators,
+		fastMode: (): boolean => {
+			return true
+		},
 		userLanguage: (userLanguage: string): boolean => {
 			return enumToArray(Language).some((value) => value === userLanguage)
 		},
@@ -60,6 +63,11 @@ router.put('/', (req: Request, res: Response) => {
 			name: 'password',
 			validator: validateInput.password,
 			setter: (id: string, value: string) => PlayerLibrary.updatePassword(id, value),
+		},
+		{
+			name: 'fastMode',
+			validator: validateInput.fastMode,
+			setter: (id: string, value: boolean) => PlayerDatabase.updatePlayerFastMode(id, value),
 		},
 		{
 			name: 'userLanguage',

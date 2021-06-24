@@ -1,17 +1,19 @@
 <template>
-	<div
-		class="slider"
-		@focus="onFocusReceived"
-		@mousedown="onMouseDown"
-		ref="sliderRef"
-		tabindex="0"
-		@keydown="onKeyDown"
-		:class="showOutlineClass"
-	>
-		<div ref="trackRef" class="track">
-			<div class="progress" :style="progressStyle" />
+	<div class="container">
+		<div
+			class="slider"
+			@focus="onFocusReceived"
+			@mousedown="onMouseDown"
+			ref="sliderRef"
+			tabindex="0"
+			@keydown="onKeyDown"
+			:class="showOutlineClass"
+		>
+			<div ref="trackRef" class="track">
+				<div class="progress" :style="progressStyle" />
+			</div>
+			<div ref="thumbRef" class="thumb" :style="thumbStyle" />
 		</div>
-		<div ref="thumbRef" class="thumb" :style="thumbStyle" />
 	</div>
 </template>
 
@@ -165,7 +167,13 @@ export default defineComponent({
 <style scoped lang="scss">
 @import 'src/Vue/styles/generic';
 
+.container {
+	width: 100%;
+	height: 100%;
+}
+
 .slider {
+	height: 20px;
 	cursor: pointer;
 	position: relative;
 	width: 100%;

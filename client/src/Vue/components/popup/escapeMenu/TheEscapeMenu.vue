@@ -163,7 +163,7 @@ export default defineComponent({
 	&.left {
 		flex: 1;
 		max-width: 300px;
-		background: $COLOR_BACKGROUND_GAME_MENU_BORDER;
+		background: rgba(white, 0.5);
 		border: 2px solid $COLOR_BACKGROUND_GAME_MENU_BORDER;
 	}
 
@@ -172,8 +172,9 @@ export default defineComponent({
 		flex: 2;
 		padding-top: 0;
 		max-width: 600px;
-		background: darken($COLOR_BACKGROUND_GAME_MENU, 100);
+		background: darken($COLOR_BACKGROUND_GAME_MENU, 50);
 		border: 2px solid $COLOR_BACKGROUND_GAME_MENU_BORDER;
+		backdrop-filter: blur(1px);
 
 		.menu-separator {
 			background: rgba(white, 0.7);
