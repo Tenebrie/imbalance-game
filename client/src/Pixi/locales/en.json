@@ -209,6 +209,12 @@
 	"card.feature.keywordBuffImmunity.description": "Target card is immune to damage and any effects.",
 	"card.feature.keywordBuffTemporaryCard.name": "Temporary (Buff)",
 	"card.feature.keywordBuffTemporaryCard.description": "Target card can be played for free. It will be discarded at the end of the turn if not played.",
+	"card.feature.keywordBuffRowBurning.name": "Burning (Row effect)",
+	"card.feature.keywordBuffRowBurning.description": "At the end of the turn, deal 1 Damage to all units.",
+	"card.feature.keywordBuffRowBloodMoon.name": "Blood Moon (Row effect)",
+	"card.feature.keywordBuffRowBloodMoon.description": "At the end of the turn, give 3 random Beasts, Birds or Merfolks +1 Power.",
+	"card.feature.keywordBuffRowHealingRain.name": "Healing Rain (Row effect)",
+	"card.feature.keywordBuffRowHealingRain.description": "At the end of the turn, restore 3 Power to 3 weakest allies.",
 	"card.feature.building.name": "Building",
 	"card.feature.building.description": "Always has 0 Power and permanent Nightwatch.",
 	"card.feature.building.text": "*Building*",
@@ -950,5 +956,14 @@
 
 	"card.unitTheMinisterOfLand.name": "Corniak II",
 	"card.unitTheMinisterOfLand.title": "The Minister of Land",
-	"card.unitTheMinisterOfLand.description": "*Summon* this on your back row if you control at least {peasantsRequired} Peasants.<p>Your Peasants have *-*{weaknessPotency} Power."
+	"card.unitTheMinisterOfLand.description": "*Summon* this on your back row if you control at least {peasantsRequired} Peasants.<p>Your Peasants have *-*{weaknessPotency} Power.",
+
+	"card.unitSirenEnchantress.name": "Siren Enchantress",
+	"card.unitSirenEnchantress.description": "*Deploy:*\n*Infuse* {cost} to apply *Blood Moon* to a target row.",
+
+	"card.unitAfflictedPeasant.name": "Afflicted Peasant",
+	"card.unitAfflictedPeasant.description": "If this unit is affected by *Blood Moon*, *Transform* it into an *Afflicted Werewolf*.",
+
+	"card.unitAfflictedWerewolf.name": "Afflicted Werewolf",
+	"card.unitAfflictedWerewolf.description": "<i>No effect</i>"
 }

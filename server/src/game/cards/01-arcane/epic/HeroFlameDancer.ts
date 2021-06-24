@@ -18,7 +18,7 @@ export default class HeroFlameDancer extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_DEPLOY],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_ROW_BURNING],
 			generatedArtworkMagicString: '2',
 			stats: {
 				power: 5,

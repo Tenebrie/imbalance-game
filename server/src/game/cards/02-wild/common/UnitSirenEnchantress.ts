@@ -8,28 +8,36 @@ import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import TargetType from '@src/../../shared/src/enums/TargetType'
-import BuffRowHealingRain from '@src/game/buffs/BuffRowHealingRain'
+import BuffRowBloodMoon from '@src/game/buffs/BuffRowBloodMoon'
+import Keywords from '@src/utils/Keywords'
 
-export default class UnitMerfolkSkygazer extends ServerCard {
+export default class UnitSirenEnchantress extends ServerCard {
+	public static readonly INFUSE_COST = 2
+
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
-			faction: CardFaction.HUMAN,
+			faction: CardFaction.WILD,
 			tribes: [CardTribe.MERFOLK],
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_ROW_HEALING_RAIN],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_INFUSE_X, CardFeature.KEYWORD_BUFF_ROW_BLOOD_MOON],
 			stats: {
-				power: 7,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
+		this.dynamicTextVariables = {
+			cost: UnitSirenEnchantress.INFUSE_COST,
+		}
 
 		this.createDeployTargets(TargetType.BOARD_ROW)
+			.require(() => this.ownerInGame.spellMana >= UnitSirenEnchantress.INFUSE_COST)
 			.require(({ targetRow }) => targetRow.owner === this.owner)
 			.perform(({ targetRow }) => onTargetSelected(targetRow))
 
 		const onTargetSelected = (target: ServerBoardRow): void => {
-			target.buffs.add(BuffRowHealingRain, this)
+			Keywords.infuse(this, UnitSirenEnchantress.INFUSE_COST)
+			target.buffs.add(BuffRowBloodMoon, this)
 		}
 	}
 }

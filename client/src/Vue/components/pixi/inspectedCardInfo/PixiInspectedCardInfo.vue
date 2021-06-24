@@ -208,7 +208,8 @@ export default defineComponent({
 	z-index: 10;
 	background: black;
 	padding: 8px 16px;
-	background: rgba(#000000, 0.8);
+	background: rgba(#000000, 0.5);
+	backdrop-filter: blur(4px);
 	border-radius: 10px;
 	font-size: 20px;
 	margin-top: 4px;

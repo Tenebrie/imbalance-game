@@ -80,6 +80,16 @@ export default {
 		)
 	},
 
+	transformUnit: (unit: ServerUnit | null | undefined, targetCard: CardConstructor): void => {
+		if (!unit) {
+			return
+		}
+		const rowIndex = unit.rowIndex
+		const unitIndex = unit.unitIndex
+		unit.game.board.removeUnit(unit)
+		unit.game.board.createUnit(CardLibrary.instantiate(unit.game, targetCard), rowIndex, unitIndex)
+	},
+
 	destroy: {
 		unit: (unit: ServerUnit) => ({
 			withSource: (source: ServerCard) => {

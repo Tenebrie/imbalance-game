@@ -47,7 +47,7 @@ export default class ServerBuffContainer implements BuffContainer {
 	 * - Duration 2 = 'until the start of your next turn'
 	 * Default value is Infinity, i.e. buffs never expire
 	 */
-	public add(prototype: BuffConstructor, source: ServerCard | null, duration: number | 'default' = 'default'): void {
+	public add(prototype: BuffConstructor, source: ServerBuffSource | null, duration: number | 'default' = 'default'): void {
 		const newBuff = new prototype({
 			parent: this.parent,
 			source,

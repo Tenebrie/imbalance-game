@@ -34,8 +34,7 @@ export default defineComponent({
 	setup(props) {
 		const onClick = async () => {
 			const ruleset = props.game.ruleset
-			console.log(ruleset)
-			if (ruleset.playerDeckRequired) {
+			if (ruleset.playerDeckRequired && !props.game.isStarted) {
 				store.dispatch.popupModule.open({
 					component: TheDeckSelectionPopup,
 					onConfirm: async () => {
