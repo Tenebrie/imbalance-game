@@ -57,7 +57,7 @@ class LabyrinthProgression {
 			...this.state,
 			run: LabyrinthProgression.getDefaultRunState(),
 		}
-		this.save()
+		await this.save()
 	}
 
 	private static async createDefaultState(player: ServerPlayer): Promise<LabyrinthProgressionState> {
@@ -158,8 +158,8 @@ class LabyrinthProgression {
 		this.save()
 	}
 
-	private save(): void {
-		PlayerDatabase.updatePlayerLabyrinthProgression(this.player.id, this.state)
+	private save(): Promise<boolean> {
+		return PlayerDatabase.updatePlayerLabyrinthProgression(this.player.id, this.state)
 	}
 }
 
