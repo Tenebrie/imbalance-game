@@ -38,7 +38,6 @@ export default defineComponent({
 			window.addEventListener('keydown', onHotkeyPress)
 			window.addEventListener('keyup', onHotkeyRelease)
 
-			console.log('Init!')
 			Core.init(store.state.currentGame!, store.state.selectedDeckId, gameContainer.value!)
 		})
 

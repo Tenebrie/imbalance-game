@@ -131,7 +131,6 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		joinGame(context, selectedGame: GameMessage): void {
 			const { commit } = rootActionContext(context)
 			commit.setCurrentGame(selectedGame)
-			console.log('Pushing!')
 			router.push({ name: 'game' })
 		},
 

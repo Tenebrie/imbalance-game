@@ -44,9 +44,8 @@ export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<never
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthStartRun)
 			.perform(({ game }) => {
-				game.progression.labyrinth.resetRunState().then(() => {
-					game.finish(game.getHumanPlayer(), 'Starting new run', true)
-				})
+				game.progression.labyrinth.resetRunState()
+				game.finish(game.getHumanPlayer(), 'Starting new run', true)
 			})
 
 		this.createCallback(GameEventType.CARD_PLAYED)

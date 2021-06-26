@@ -29,7 +29,6 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	const currentGame: ServerGame | null = GameLibrary.games.find((game) => game.id === req.params.gameId) || null
 	const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
 	if (!currentGame || !currentPlayer) {
-		console.log('Invalid game ID')
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
 		ws.close()
 		return
@@ -37,7 +36,6 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 
 	const connectedPlayer = currentGame.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id)
 	if (currentGame.isStarted && !connectedPlayer) {
-		console.log('Game already started')
 		OutgoingMessageHandlers.notifyAboutGameAlreadyStarted(ws)
 		ws.close()
 		return
