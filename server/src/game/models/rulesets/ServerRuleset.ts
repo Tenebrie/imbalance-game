@@ -1,47 +1,20 @@
 import GameMode from '@shared/enums/GameMode'
 import GameEventType from '@src/../../shared/src/enums/GameEventType'
-import { getClassFromConstructor } from '@src/utils/Utils'
 import { EventHook } from '../events/EventHook'
 import { EventSubscription } from '../events/EventSubscription'
 import GameHookType from '../events/GameHookType'
 import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
-import { RulesetAI, RulesetAIBuilder } from './RulesetAI'
+import { RulesetAI } from './RulesetAI'
 import Ruleset from '@shared/models/Ruleset'
-import {
-	CardBuffCreatedEventArgs,
-	CardBuffRemovedEventArgs,
-	CardDestroyedEventArgs,
-	CardDrawnEventArgs,
-	CardPlayedEventArgs,
-	CardTakesDamageEventArgs,
-	CardTargetSelectedCardEventArgs,
-	CardTargetSelectedRowEventArgs,
-	CardTargetSelectedUnitEventArgs,
-	GameFinishedEventArgs,
-	GameSetupEventArgs,
-	GameStartedEventArgs,
-	RoundEndedEventArgs,
-	RoundStartedEventArgs,
-	RowBuffCreatedEventArgs,
-	RowBuffRemovedEventArgs,
-	TurnEndedEventArgs,
-	TurnStartedEventArgs,
-	UnitCreatedEventArgs,
-	UnitDestroyedEventArgs,
-	UnitMovedEventArgs,
-	UnitOrderedCardEventArgs,
-	UnitOrderedRowEventArgs,
-} from '../events/GameEventCreators'
 import ServerGame from '../ServerGame'
-import { RulesetDeck, RulesetDeckBuilder } from './RulesetDeck'
-import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { RulesetDeck } from './RulesetDeck'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
-import { RulesetBoard, RulesetBoardBuilder } from './RulesetBoard'
+import { RulesetBoard } from './RulesetBoard'
 import { RulesetConstants } from '@shared/models/RulesetConstants'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
 import { forEachInEnum } from '@shared/Utils'
-import { RulesetChain, RulesetChainBuilder } from '@src/game/models/rulesets/RulesetChain'
+import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
 import { ServerRulesetBuilderProps } from '@src/game/models/rulesets/ServerRulesetBuilder'
 
 export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; count: number })[]
@@ -58,7 +31,7 @@ export type ServerRulesetProps = {
 	ai: RulesetAI | null
 	deck: RulesetDeck | null
 	board: RulesetBoard | null
-	chain: RulesetChain | null
+	chains: RulesetChain[]
 }
 
 /* Ruleset representation for an active ServerGame object and client communications */
@@ -74,7 +47,7 @@ export class ServerRuleset implements Ruleset {
 	public readonly ai: RulesetAI | null = null
 	public readonly deck: RulesetDeck | null = null
 	public readonly board: RulesetBoard | null = null
-	public readonly chain: RulesetChain | null = null
+	public readonly chains: RulesetChain[] = []
 
 	constructor(props: ServerRulesetProps) {
 		this.class = props.class
@@ -85,7 +58,7 @@ export class ServerRuleset implements Ruleset {
 		this.ai = props.ai
 		this.deck = props.deck
 		this.board = props.board
-		this.chain = props.chain
+		this.chains = props.chains
 
 		this.state = {
 			...props.state,
@@ -125,7 +98,7 @@ export type ServerRulesetTemplateProps = ServerRulesetBuilderProps<any> & {
 	ai: RulesetAI | null
 	deck: RulesetDeck | null
 	board: RulesetBoard | null
-	chain: RulesetChain | null
+	chains: RulesetChain[]
 
 	eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
 	eventHooks: Map<GameHookType, EventHook<any, any>[]>
@@ -149,7 +122,7 @@ export class ServerRulesetTemplate {
 	public readonly ai: RulesetAI | null = null
 	public readonly deck: RulesetDeck | null = null
 	public readonly board: RulesetBoard | null = null
-	public readonly chain: RulesetChain | null = null
+	public readonly chains: RulesetChain[] = []
 
 	constructor(props: ServerRulesetTemplateProps) {
 		this.class = props.class
@@ -166,7 +139,7 @@ export class ServerRulesetTemplate {
 		this.ai = props.ai
 		this.deck = props.deck
 		this.board = props.board
-		this.chain = props.chain
+		this.chains = props.chains
 
 		this.eventSubscriptions = new Map<GameEventType, EventSubscription<any>[]>()
 		this.eventHooks = new Map<GameHookType, EventHook<any, any>[]>()
@@ -193,7 +166,7 @@ export class ServerRulesetTemplate {
 			ai: this.ai,
 			deck: this.deck,
 			board: this.board,
-			chain: this.chain,
+			chains: this.chains,
 			state: {
 				...this.state,
 			},

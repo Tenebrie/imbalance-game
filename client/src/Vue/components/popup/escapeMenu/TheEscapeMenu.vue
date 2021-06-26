@@ -15,7 +15,7 @@
 				<div class="menu-separator"></div>
 				<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>
 				<div class="menu-separator"></div>
-				<button @click="onLeaveGame" class="primary game-button destructive">Surrender</button>
+				<button @click="onSurrender" class="primary game-button destructive">Surrender</button>
 			</div>
 			<div class="menu-section right" @click="onMenuClick">
 				<div class="hotkeys">
@@ -94,8 +94,8 @@ export default defineComponent({
 			OutgoingMessageHandlers.requestShowOpponentsGraveyard()
 		}
 
-		const onLeaveGame = (): void => {
-			store.dispatch.leaveGame()
+		const onSurrender = (): void => {
+			store.dispatch.surrenderGame()
 		}
 
 		const showDevHotkeys = process.env.NODE_ENV === 'development'
@@ -108,7 +108,7 @@ export default defineComponent({
 			onShowPlayersDeck,
 			onShowPlayersGraveyard,
 			onShowOpponentsGraveyard,
-			onLeaveGame,
+			onSurrender,
 			showDevHotkeys,
 		}
 	},

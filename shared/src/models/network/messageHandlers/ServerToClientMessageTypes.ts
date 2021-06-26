@@ -25,6 +25,8 @@ export enum PlayerUpdateMessageType {
 	GAME_END_VICTORY = 'playerUpdate_gameEndAsVictory',
 	GAME_END_DEFEAT = 'playerUpdate_gameEndAsDefeat',
 	GAME_END_DRAW = 'playerUpdate_gameEndAsDraw',
+	LINKED_GAME = 'playerUpdate_linkedGame',
+	COMMAND_JOIN_LINKED_GAME = 'playerUpdate_commandJoinLinkedGame',
 }
 
 export enum GameLogUpdateMessageType {

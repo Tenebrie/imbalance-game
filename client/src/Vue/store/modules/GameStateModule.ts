@@ -15,6 +15,7 @@ const gameStateModule = defineModule({
 		gameId: null as string | null,
 		turnPhase: GameTurnPhase.BEFORE_GAME as GameTurnPhase,
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
+		endScreenSuppressed: false as boolean,
 		ruleset: null as Ruleset | null,
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
@@ -58,6 +59,10 @@ const gameStateModule = defineModule({
 
 		setGameStatus(state, gameStatus: ClientGameStatus): void {
 			state.gameStatus = gameStatus
+		},
+
+		setEndScreenSuppressed(state, value: boolean): void {
+			state.endScreenSuppressed = value
 		},
 
 		setRuleset(state, value: Ruleset): void {
@@ -171,6 +176,7 @@ const gameStateModule = defineModule({
 			const { commit } = moduleActionContext(context, gameStateModule)
 			const { rootDispatch } = rootActionContext(context)
 			commit.setGameStatus(ClientGameStatus.NOT_STARTED)
+			commit.setEndScreenSuppressed(false)
 			commit.setOpponentData(null)
 			commit.setIsSpectating(false)
 			commit.setIsPlayersTurn(false)

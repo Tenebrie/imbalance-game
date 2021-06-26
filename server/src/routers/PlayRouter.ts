@@ -5,7 +5,6 @@ import ServerPlayer from '../game/players/ServerPlayer'
 import IncomingMessageHandlers from '../game/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '../game/handlers/OutgoingMessageHandlers'
 import ConnectionEstablishedHandler from '../game/handlers/ConnectionEstablishedHandler'
-import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import GameLibrary from '../game/libraries/GameLibrary'
@@ -20,16 +19,17 @@ import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMidd
 import EventContext from '@src/game/models/EventContext'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import LeaderMaximilian from '@src/game/cards/00-human/leaders/Maximilian/LeaderMaximilian'
+import GameMode from '@shared/enums/GameMode'
 
 const router = express.Router() as WebSocketRouter
 
 router.use(RequirePlayerTokenMiddleware)
 
-// @ts-ignore
 router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	const currentGame: ServerGame | null = GameLibrary.games.find((game) => game.id === req.params.gameId) || null
 	const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
 	if (!currentGame || !currentPlayer) {
+		console.log('Invalid game ID')
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
 		ws.close()
 		return
@@ -37,6 +37,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 
 	const connectedPlayer = currentGame.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id)
 	if (currentGame.isStarted && !connectedPlayer) {
+		console.log('Game already started')
 		OutgoingMessageHandlers.notifyAboutGameAlreadyStarted(ws)
 		ws.close()
 		return
@@ -74,6 +75,10 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			templateDeck = deck
 		}
 		currentPlayerInGame = currentGame.addPlayer(currentPlayer, templateDeck)
+
+		if (currentGame.ruleset.gameMode === GameMode.PVE) {
+			await currentGame.progression.loadStates()
+		}
 	}
 
 	currentPlayer.disconnect()
@@ -115,7 +120,6 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	OutgoingMessageHandlers.notifyAboutInitRequested(currentPlayer)
 })
 
-// @ts-ignore
 router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) => {
 	const gameId = req.params.gameId as string
 	const playerId = req.params.playerId as string

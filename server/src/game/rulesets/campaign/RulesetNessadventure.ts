@@ -105,7 +105,7 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 			)
 
 		const onNessaGiftAccepted = (game: ServerGame): void => {
-			const player = game.getHumanPlayer()!
+			const player = game.getHumanPlayer()
 			Keywords.addCardToHand.for(player).fromConstructor(HeroPozoga)
 			Keywords.addCardToHand.for(player).fromConstructor(HeroPozoga)
 			Keywords.addCardToHand.for(player).fromConstructor(HeroPozoga)
@@ -201,7 +201,7 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 							.setCharacter(StoryCharacter.NARRATOR)
 							.say(
 								`Just as unfair as you having ${
-									game.getHumanPlayer()!.cardHand.unitCards.filter((card) => card instanceof HeroPozoga).length + 1
+									game.getHumanPlayer().cardHand.unitCards.filter((card) => card instanceof HeroPozoga).length + 1
 								} copies of Pozoga in your hand!`
 							)
 							.say("Here, I'll let you choose your poison today. Feeling generous, you know.")
@@ -222,7 +222,7 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 				.setCharacter(StoryCharacter.NOT_NESSA)
 				.say("Name's... definitely not Nessa, by the way.")
 				.reply('[Continue]', () => {
-					const player = game.getHumanPlayer()!
+					const player = game.getHumanPlayer()
 					player.cardHand.unitCards.forEach((card) => player.cardHand.discardCard(card))
 					Keywords.addCardToHand.for(player).fromConstructor(HeroNotNessaHidden)
 					game.novel
@@ -375,12 +375,12 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 					.say('...')
 					.say(
 						`And so ends the fierce battle of ${
-							game.getHumanPlayer()!.player.username
+							game.getHumanPlayer().player.username
 						}, definitely-not-Nessa, and the Overcharged Target Dummy.`
 					)
 					.say('Hope you enjoyed this little adventure!')
 
-				if (game.getHumanPlayer()!.player.username.includes('Nenl') && new Date().getDate() === 31 && new Date().getMonth() === 4) {
+				if (game.getHumanPlayer().player.username.includes('Nenl') && new Date().getDate() === 31 && new Date().getMonth() === 4) {
 					game.novel
 						.startDialog()
 						.setCharacter(StoryCharacter.NARRATOR)

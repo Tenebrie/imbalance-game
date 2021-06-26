@@ -62,7 +62,6 @@ export default defineComponent({
 		const onFileSelected = (event: any) => {
 			const files = event.target.files
 
-			console.log(files[0])
 			imageScaleRef.value = 1
 			imageOffsetRef.value = { x: 0, y: 0 }
 
@@ -121,7 +120,6 @@ export default defineComponent({
 				return
 			}
 			imageScaleRef.value -= delta / 2500
-			console.log(imageScaleRef.value)
 			renderFrame()
 		}
 

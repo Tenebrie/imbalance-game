@@ -11,6 +11,7 @@ import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageH
 import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
 import PlayerInGameRefMessage from '@shared/models/network/playerInGame/PlayerInGameRefMessage'
 import PlayerInGameManaMessage from '@shared/models/network/playerInGame/PlayerInGameManaMessage'
+import GameLinkMessage from '@shared/models/network/GameLinkMessage'
 
 const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: IncomingMessageHandlerFunction } = {
 	[PlayerUpdateMessageType.LEADER_SELF]: (data: CardMessage) => {
@@ -153,6 +154,15 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 
 	[PlayerUpdateMessageType.GAME_END_DRAW]: () => {
 		store.dispatch.gameStateModule.drawGame()
+	},
+
+	[PlayerUpdateMessageType.LINKED_GAME]: (data: GameLinkMessage) => {
+		store.commit.setNextLinkedGame(data.game)
+		store.commit.gameStateModule.setEndScreenSuppressed(data.suppressEndScreen)
+	},
+
+	[PlayerUpdateMessageType.COMMAND_JOIN_LINKED_GAME]: () => {
+		store.dispatch.leaveAndContinue()
 	},
 }
 

@@ -26,6 +26,7 @@ const AnimationDuration: { [index in AnimationType]: number } = {
 	[AnimationType.ROWS_LOST_BUFF]: 250,
 	[AnimationType.CARD_INFUSE]: 500,
 	[AnimationType.CARD_GENERATE_MANA]: 500,
+	[AnimationType.SWITCHING_GAMES]: 0,
 }
 
 export default AnimationDuration

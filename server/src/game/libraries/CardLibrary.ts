@@ -124,13 +124,16 @@ class InternalCardLibrary {
 		this.cards = this.cards.concat(newCards.map((prototype) => new prototype(CardLibraryPlaceholderGame.get())))
 	}
 
-	public findPrototypeByConstructor(constructor: CardConstructor): ServerCard {
-		const cardClass = getClassFromConstructor(constructor)
+	public findPrototypeByClass(cardClass: string): ServerCard {
 		const card = this.cards.find((card) => card.class === cardClass)
 		if (!card) {
 			throw new Error(`Unable to find card ${cardClass}`)
 		}
 		return card
+	}
+
+	public findPrototypeByConstructor(constructor: CardConstructor): ServerCard {
+		return this.findPrototypeByClass(getClassFromConstructor(constructor))
 	}
 
 	public instantiate(game: ServerGame, constructor: CardConstructor): ServerCard {
@@ -178,6 +181,11 @@ class CardLibrary {
 	public forceLoadCards(cards: CardConstructor[]): void {
 		this.ensureLibraryLoaded()
 		this.library!.forceLoadCards(cards)
+	}
+
+	public findPrototypeFromClass(cardClass: string): ServerCard {
+		this.ensureLibraryLoaded()
+		return this.library!.findPrototypeByClass(cardClass)
 	}
 
 	public findPrototypeFromConstructor(constructor: CardConstructor): ServerCard {

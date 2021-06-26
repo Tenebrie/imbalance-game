@@ -35,6 +35,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		player: null as Player | null,
 		isLoggedIn: false as boolean,
 		currentGame: null as GameMessage | null,
+		nextLinkedGame: null as GameMessage | null,
 		selectedDeckId: '' as string,
 	},
 
@@ -46,6 +47,14 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 
 		setCurrentGame(state, currentGame: GameMessage): void {
 			state.currentGame = currentGame
+		},
+
+		setNextLinkedGame(state, linkedGame: GameMessage): void {
+			state.nextLinkedGame = linkedGame
+		},
+
+		clearNextLinkedGame(state): void {
+			state.nextLinkedGame = null
 		},
 
 		setSelectedDeckId(state, selectedDeckId: string): void {
@@ -122,33 +131,35 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		joinGame(context, selectedGame: GameMessage): void {
 			const { commit } = rootActionContext(context)
 			commit.setCurrentGame(selectedGame)
+			console.log('Pushing!')
 			router.push({ name: 'game' })
-			console.log(`Joining ${selectedGame.id}`)
 		},
 
 		async leaveGame(): Promise<void> {
-			if (store.state.gameStateModule.gameStatus === ClientGameStatus.NOT_STARTED) {
-				return
-			}
-
-			OutgoingMessageHandlers.sendSurrender()
 			store.dispatch.gameStateModule.reset()
 			store.dispatch.popupModule.closeAll()
 			store.dispatch.novel.clear()
 			await router.push({ name: 'home' })
-			Core.socket?.close(1000, 'Player disconnect')
+			if (Core.socket && Core.socket.readyState === WebSocket.OPEN) {
+				Core.socket.close(1000, 'Player disconnect')
+			}
 			Core.cleanUp()
 		},
 
-		async leaveAndContinue(context): Promise<void> {
+		async surrenderGame(context): Promise<void> {
 			const { dispatch } = rootActionContext(context)
 
-			const reconnectGamesResponse = await axios.get('/api/games', { params: { reconnect: '1' } })
-			const reconnectGames = reconnectGamesResponse.data.data as GameMessage[]
+			OutgoingMessageHandlers.sendSurrender()
+			await dispatch.leaveGame()
+		},
+
+		async leaveAndContinue(context): Promise<void> {
+			const { state, commit, dispatch } = rootActionContext(context)
 
 			await dispatch.leaveGame()
-			if (reconnectGames.length > 0) {
-				dispatch.joinGame(reconnectGames[0])
+			if (state.nextLinkedGame) {
+				dispatch.joinGame(state.nextLinkedGame)
+				commit.clearNextLinkedGame()
 			}
 		},
 	},

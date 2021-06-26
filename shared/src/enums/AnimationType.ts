@@ -24,6 +24,7 @@ enum AnimationType {
 	ROWS_LOST_BUFF,
 	CARD_INFUSE,
 	CARD_GENERATE_MANA,
+	SWITCHING_GAMES,
 }
 
 export default AnimationType

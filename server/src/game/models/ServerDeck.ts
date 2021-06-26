@@ -5,7 +5,8 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerOwnedCard from './ServerOwnedCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
-import { shuffle } from '@src/utils/Utils'
+import { getClassFromConstructor, shuffle } from '@src/utils/Utils'
+import { CardConstructor } from '@src/game/libraries/CardLibrary'
 
 export default class ServerDeck implements CardDeck {
 	game: ServerGame
@@ -86,6 +87,10 @@ export default class ServerDeck implements CardDeck {
 		const card = this.spellCards[0]
 		this.removeCard(card)
 		return card
+	}
+
+	public findCard(cardConstructor: CardConstructor): ServerCard | null {
+		return this.findCardByClass(getClassFromConstructor(cardConstructor))
 	}
 
 	public findCardByClass(cardClass: string): ServerCard | null {

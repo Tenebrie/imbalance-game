@@ -1,8 +1,11 @@
 enum GameEventType {
+	GAME_CREATED = 'gameCreated',
 	GAME_SETUP = 'gameSetup',
+	POST_GAME_SETUP = 'postGameSetup',
 	GAME_STARTED = 'gameStarted',
 
 	ROUND_STARTED = 'roundStarted',
+	POST_ROUND_STARTED = 'postRoundStarted',
 	TURN_STARTED = 'turnStarted',
 
 	CARD_DRAWN = 'cardDrawn',

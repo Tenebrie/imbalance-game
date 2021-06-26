@@ -38,6 +38,7 @@ export default defineComponent({
 			window.addEventListener('keydown', onHotkeyPress)
 			window.addEventListener('keyup', onHotkeyRelease)
 
+			console.log('Init!')
 			Core.init(store.state.currentGame!, store.state.selectedDeckId, gameContainer.value!)
 		})
 
@@ -45,8 +46,8 @@ export default defineComponent({
 			window.removeEventListener('resize', onWindowResize)
 			window.removeEventListener('keydown', onHotkeyPress)
 			window.removeEventListener('keyup', onHotkeyRelease)
-			if (Core.socket) {
-				Core.socket.close()
+			if (Core.socket && Core.socket.readyState === Core.socket.OPEN) {
+				Core.socket.close(1000, 'Pixi unmount')
 			}
 		})
 
@@ -72,7 +73,7 @@ export default defineComponent({
 			if (event.code === 'KeyQ') {
 				event.preventDefault()
 				const selectedDeck = store.state.selectedDeckId
-				await store.dispatch.leaveGame()
+				await store.dispatch.surrenderGame()
 				const response = await axios.post('/api/games', { ruleset: store.state.gameStateModule.ruleset!.class })
 				const gameMessage: GameMessage = response.data.data
 				store.commit.setSelectedDeckId(selectedDeck)
@@ -96,7 +97,7 @@ export default defineComponent({
 			// Surrender
 			if (event.code === 'KeyS') {
 				event.preventDefault()
-				await store.dispatch.leaveGame()
+				await store.dispatch.surrenderGame()
 			}
 		}
 

@@ -55,9 +55,9 @@ class Core {
 		this.__rulesetConstants = game.ruleset.constants
 		const socket = new WebSocket(targetUrl)
 		socket.onopen = () => this.onConnect(container)
-		socket.onmessage = (event) => this.onMessage(event)
-		socket.onclose = (event) => this.onDisconnect(event)
-		socket.onerror = (event) => this.onError(event)
+		socket.onmessage = (event) => this.onMessage(event, socket)
+		socket.onclose = (event) => this.onDisconnect(event, socket)
+		socket.onerror = (event) => this.onError(event, socket)
 		this.socket = socket
 
 		this.player = ClientPlayerInGame.fromPlayer(store.getters.player)
@@ -85,7 +85,11 @@ class Core {
 		OutgoingMessageHandlers.sendInit()
 	}
 
-	private onMessage(event: MessageEvent): void {
+	private onMessage(event: MessageEvent, socket: WebSocket): void {
+		if (socket !== this.socket) {
+			return
+		}
+
 		let data = event.data
 		if (compressGameTraffic()) {
 			data = lzutf8.decompress(event.data, {
@@ -127,15 +131,23 @@ class Core {
 		})
 	}
 
-	private onDisconnect(event: CloseEvent): void {
+	private onDisconnect(event: CloseEvent, socket: WebSocket): void {
+		if (socket !== this.socket) {
+			return
+		}
+
 		if (!event.wasClean) {
-			console.error(`Connection closed. Reason: ${event.reason}`)
+			console.error(`Connection closed. Reason: ${event.reason}`, event)
 		}
 
 		store.dispatch.leaveGame()
 	}
 
-	private onError(event: Event): void {
+	private onError(event: Event, socket: WebSocket): void {
+		if (socket !== this.socket) {
+			return
+		}
+
 		console.error('Unknown error occurred', event)
 	}
 
@@ -192,6 +204,10 @@ class Core {
 	}
 
 	public cleanUp(): void {
+		if (!this.isReady) {
+			return
+		}
+		this.isReady = false
 		clearInterval(this.keepaliveTimer)
 		AudioSystem.setMode(AudioSystemMode.MENU)
 		this.mainHandler.stop()
@@ -199,7 +215,7 @@ class Core {
 		this.renderer.destroy()
 
 		if (this.socket) {
-			this.socket.close()
+			this.socket.close(1000, 'Clean up')
 		}
 		this.isReady = false
 	}

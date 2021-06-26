@@ -23,7 +23,6 @@ export default class HeroQidala extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 			isExperimental: true,
 		})
-		this.addRelatedCards().requireTribe(CardTribe.LOOT)
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.requireAllied()

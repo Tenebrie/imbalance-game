@@ -16,7 +16,11 @@ export default class ServerBotPlayerInGame extends ServerPlayerInGame {
 	behaviour: AIBehaviour = AIBehaviour.DEFAULT
 
 	constructor(game: ServerGame, player: ServerPlayer, deck: ServerEditorDeck) {
-		super(game, player, deck, deck)
+		super(game, {
+			player,
+			actualDeck: deck,
+			selectedDeck: deck,
+		})
 		this.initialized = true
 	}
 

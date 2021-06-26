@@ -15,6 +15,7 @@ import ServerPlayerSpectator from '../../players/ServerPlayerSpectator'
 import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
 import PlayerInGameRefMessage from '@shared/models/network/playerInGame/PlayerInGameRefMessage'
 import PlayerInGameManaMessage from '@shared/models/network/playerInGame/PlayerInGameManaMessage'
+import GameLinkMessage from '@shared/models/network/GameLinkMessage'
 
 export default {
 	notifyAboutDeckLeader(playerInGame: ServerPlayerInGame | ServerPlayerSpectator, opponent: ServerPlayerInGame, card: ServerCard): void {
@@ -222,6 +223,20 @@ export default {
 				type: PlayerUpdateMessageType.GAME_END_DRAW,
 				data: null,
 			})
+		})
+	},
+
+	notifyAboutLinkedGame: (player: ServerPlayer, linkedGame: ServerGame, suppressEndScreen: boolean): void => {
+		player.sendMessage({
+			type: PlayerUpdateMessageType.LINKED_GAME,
+			data: new GameLinkMessage(linkedGame, suppressEndScreen),
+		})
+	},
+
+	commandJoinLinkedGame: (player: ServerPlayer): void => {
+		player.sendMessage({
+			type: PlayerUpdateMessageType.COMMAND_JOIN_LINKED_GAME,
+			data: null,
 		})
 	},
 

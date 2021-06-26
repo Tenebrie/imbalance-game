@@ -468,16 +468,25 @@ export default class Renderer {
 			return returnValue * this.superSamplingLevel
 		}
 
-		const power = Core.board
-			.getInsertedUnitsOwnedByPlayer(Core.player)
-			.map((unit) => unit.card.stats.power)
-			.reduce((accumulator, value) => accumulator + value, 0)
-		const opponentPower = Core.opponent
-			? Core.board
+		const leaderPower = Core.player.leader ? Core.player.leader.stats.power : 0
+		const power =
+			leaderPower +
+			Core.board
+				.getInsertedUnitsOwnedByPlayer(Core.player)
+				.map((unit) => unit.card.stats.power)
+				.reduce((accumulator, value) => accumulator + value, 0)
+
+		let opponentPower = 0
+		if (Core.opponent) {
+			const opponentLeaderPower = Core.opponent.leader ? Core.opponent.leader.stats.power : 0
+			opponentPower =
+				opponentLeaderPower +
+				Core.board
 					.getInsertedUnitsOwnedByPlayer(Core.opponent)
 					.map((unit) => unit.card.stats.power)
 					.reduce((accumulator, value) => accumulator + value, 0)
-			: 0
+		}
+
 		this.playerPowerLabel.text = power.toString()
 		this.opponentPowerLabel.text = opponentPower.toString()
 		this.playerPowerLabel.style.fontSize = getPowerFontSize(power)

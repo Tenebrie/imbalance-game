@@ -1,6 +1,6 @@
 enum CardTribe {
 	BIRD = 'bird',
-	LOOT = 'loot',
+	LOST = 'lost',
 	BEAST = 'beast',
 	DRYAD = 'dryad',
 	NOBLE = 'noble',
@@ -19,6 +19,11 @@ enum CardTribe {
 	BUILDING = 'building',
 	VALKYRIE = 'valkyrie',
 	ELEMENTAL = 'elemental',
+	WEAPON = 'weapon',
+	ARMOR = 'armor',
+	GLOVES = 'gloves',
+	BOOTS = 'boots',
+	TREASURE = 'treasure',
 }
 
 export default CardTribe

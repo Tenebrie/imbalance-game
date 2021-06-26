@@ -14,9 +14,13 @@ router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req: Request, res: Response) => {
 	const currentPlayer = getPlayerFromAuthenticatedRequest(req)
+	const privateGame = req.query['private'] || ('' as string)
 	const reconnect = req.query['reconnect'] || ('' as string)
 
 	let filteredGames: ServerGame[] = GameLibrary.games.filter((game) => !game.isFinished)
+	if (privateGame) {
+		filteredGames = filteredGames.filter((game) => !!game.owner && game.owner.id === currentPlayer.id)
+	}
 	if (reconnect) {
 		filteredGames = filteredGames.filter((game) => game.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id))
 	} else {
@@ -29,7 +33,6 @@ router.get('/', (req: Request, res: Response) => {
 
 router.post('/', (req: Request, res: Response) => {
 	const player = getPlayerFromAuthenticatedRequest(req)
-	const gameName = req.body['name'] || ''
 	const rulesetClass = req.body['ruleset'] as string
 
 	if (!rulesetClass) {
@@ -48,7 +51,7 @@ router.post('/', (req: Request, res: Response) => {
 	} catch (err) {
 		throw { status: 400, error: 'Invalid ruleset class' }
 	}
-	const game = GameLibrary.createOwnedGame(player, gameName.trim(), ruleset, {})
+	const game = GameLibrary.createPublicGame(player, ruleset, {})
 
 	if (ruleset.ai) {
 		game.addPlayer(new ServerBotPlayer(), ruleset.ai.deck)

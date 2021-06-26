@@ -29,6 +29,7 @@
 	"ui.play.pve": "Play vs AI",
 	"ui.play.pvp": "Play PvP",
 	"ui.play.prototypes": "Play Prototypes",
+	"ui.play.labyrinth": "Play Labyrinth",
 	"ui.play.dev": "Play Development Ruleset",
 	"ui.play.refresh": "Refresh",
 
@@ -230,6 +231,9 @@
 	"card.feature.quick.name": "Quick",
 	"card.feature.quick.description": "Does not end your turn when played.",
 	"card.feature.quick.text": "*Quick*",
+	"card.feature.passive.name": "Passive",
+	"card.feature.passive.description": "Can't be played.",
+	"card.feature.passive.text": "*Passive*",
 	"card.feature.heroPower.name": "Leader Power",
 	"card.feature.heroPower.description": "When played as spell or destroyed as unit, this card returns to your deck. It is also always revealed.",
 	"card.feature.heroPower.text": "*Leader Power*",
@@ -259,7 +263,7 @@
 	"card.stats.sparkDamage.text": "Your *Sparks* deal *+{value}* Damage.",
 
 	"card.tribe.bird": "Bird",
-	"card.tribe.loot": "Loot",
+	"card.tribe.lost": "Lost",
 	"card.tribe.beast": "Beast",
 	"card.tribe.dryad": "Dryad",
 	"card.tribe.noble": "Noble",
@@ -278,6 +282,11 @@
 	"card.tribe.building": "Building",
 	"card.tribe.valkyrie": "Valkyrie",
 	"card.tribe.elemental": "Elemental",
+	"card.tribe.weapon": "Weapon",
+	"card.tribe.armor": "Armor",
+	"card.tribe.gloves": "Gloves",
+	"card.tribe.boots": "Boots",
+	"card.tribe.treasure": "Treasure",
 
 	"buff.buffProtector.name": "Protector (Service buff)",
 	"buff.buffProtector.description": "This card is a protector.",
@@ -315,8 +324,14 @@
 	"buff.buffStrength.name": "Power",
 	"buff.buffStrength.description": "This card has 1 extra Power.",
 
+	"buff.buffHiddenStrength.name": "Power",
+	"buff.buffHiddenStrength.description": "This card has 1 extra Power.",
+
 	"buff.buffExtraArmor.name": "Armor",
 	"buff.buffExtraArmor.description": "This card has 1 extra Armor.",
+
+	"buff.buffExtraStartingHandSize.name": "Starting hand size",
+	"buff.buffExtraStartingHandSize.description": "Starting hand size is increased by 1.",
 
 	"buff.buffWeakness.name": "Weakness",
 	"buff.buffWeakness.description": "This card has 1 less Power.",
@@ -398,7 +413,7 @@
 
 	"card.heroArgenta.name": "Argenta",
 	"card.heroArgenta.title": "The Silver Falcon",
-	"card.heroArgenta.description": "*Deploy:*\n*Summon* an Epic card from your deck.",
+	"card.heroArgenta.description": "*Deploy:*\n*Play* an Epic card from your deck.",
 
 	"card.heroAntoria.name": "Antoria",
 	"card.heroAntoria.title": "The Martyr",
@@ -443,13 +458,10 @@
 	"card.heroFlameDancer.description": "*Deploy:*\nApply *Burning* to an enemy row.",
 
 	"card.heroRavenCaller.name": "Raven Caller",
-	"card.heroRavenCaller.description": "*Deploy:*\n*Summon* a Bird from your deck",
+	"card.heroRavenCaller.description": "*Deploy:*\n*Play* a Bird from your deck",
 
 	"card.heroLightOracle.name": "Oracle of Light",
-	"card.heroLightOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your deck (in order).\nChoose one to *Summon*.",
-
-	"card.heroCrystalWarrior.name": "Crystal Warrior",
-	"card.heroCrystalWarrior.description": "*Deploy:*\nDestroy an allied unit.\nThen, summon a *Crystal* in its place.",
+	"card.heroLightOracle.description": "*Deploy:*\nLook at top {cardsToSee} cards from your deck (in order).\nChoose one to *Play*.",
 
 	"card.unitCultistBrute.name": "Cultist Brute",
 	"card.unitCultistBrute.description": "*Deploy:*\nDestroy an allied unit.\nThen, gain +{bonusPower} Power.",
@@ -483,7 +495,7 @@
 	"card.unitTravelingEnchantress.description": "*Deploy:*\nGive +{baseStrengthGiven} Power to an allied unit.\nThen, if their current Power is at least 11, give +{extraStrengthGiven} Power more.",
 
 	"card.unitRavenMessenger.name": "Raven Messenger",
-	"card.unitRavenMessenger.description": "*Deploy:*\n*Summon* a Bronze Soldier card from your deck.",
+	"card.unitRavenMessenger.description": "*Deploy:*\n*Play* a Bronze Soldier card from your deck.",
 
 	"card.unitForestScout.name": "Forest Scout",
 	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power\nIf you're losing on Morale, gain +{moralePowerBonus} Power.",
@@ -518,7 +530,7 @@
 	"card.unitCrystalMiner.description": "*Deploy:*\n*Create* an Arcane crystal",
 
 	"card.unitLoneLooter.name": "Lone Looter",
-	"card.unitLoneLooter.description": "Whenever you apply a *Status effect* to an enemy unit, *Summon* one {name} from your deck.",
+	"card.unitLoneLooter.description": "Whenever you apply a *Status effect* to an enemy unit, *Play* one {name} from your deck.",
 
 	"card.unitMasterSwordsmith.name": "Master Swordsmith",
 	"card.unitMasterSwordsmith.description": "*Deploy:*\nGive +{bonusPower} Power to all unit cards in your hand.",
@@ -534,7 +546,7 @@
 	"card.unitWingedShieldmaiden.flavor": "- \"That girl? Not again. She's so much more trouble than she could ever be worth...\"",
 
 	"card.unitOceanicSeagull.name": "Oceanic Seagull",
-	"card.unitOceanicSeagull.description": "*Deploy:*\n*Summon* a Bronze Merfolk card from your deck.",
+	"card.unitOceanicSeagull.description": "*Deploy:*\n*Play* a Bronze Merfolk card from your deck.",
 
 	"card.unitMerchantsAssistant.name": "Merchants Assistant",
 	"card.unitMerchantsAssistant.description": "*Deploy:*\nNext spell you cast this round costs {spellDiscount} Mana less.",
@@ -965,5 +977,116 @@
 	"card.unitAfflictedPeasant.description": "If this unit is affected by *Blood Moon*, *Transform* it into an *Afflicted Werewolf*.",
 
 	"card.unitAfflictedWerewolf.name": "Afflicted Werewolf",
-	"card.unitAfflictedWerewolf.description": "<i>No effect</i>"
+	"card.unitAfflictedWerewolf.description": "<i>No effect</i>",
+
+	"card.leaderLabyrinthPlayer.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Adventurer</if>",
+	"card.leaderLabyrinthPlayer.title": "<if inGame>The Adventurer</if>",
+	"card.leaderLabyrinthPlayer.description": "*Labyrinth Leader*",
+
+	"card.leaderLabyrinthOpponent.name": "The Watcher",
+	"card.leaderLabyrinthOpponent.title": "The Labyrinth Watcher",
+	"card.leaderLabyrinthOpponent.description": "<i>Watching your every move...</i>",
+
+	"card.spellLabyrinthStartRun.name": "New Run",
+	"card.spellLabyrinthStartRun.title": "Action",
+	"card.spellLabyrinthStartRun.description": "Start a new *Labyrinth of the Shapeshifter* run.",
+
+	"card.spellLabyrinthContinueRun.name": "Continue Run",
+	"card.spellLabyrinthContinueRun.title": "Action",
+	"card.spellLabyrinthContinueRun.description": "Continue your existing run.<p><i>Encounters completed: {encounters}.</i>",
+
+	"card.spellLabyrinthPreviousRun.name": "Your Previous Run",
+	"card.spellLabyrinthPreviousRun.description": "<i>It had to end eventually.</i><p><i>Died at depth: {encounters}.</i>",
+
+	"card.spellLabyrinthNextEncounter.name": "Next Encounter",
+	"card.spellLabyrinthNextEncounter.title": "Action",
+	"card.spellLabyrinthNextEncounter.description": "Start the next encounter.",
+
+	"card.spellLabyrinthRewardCommonCard.name": "Claim Common Cards",
+	"card.spellLabyrinthRewardCommonCard.title": "Action",
+	"card.spellLabyrinthRewardCommonCard.description": "Choose a common card and add 3 copies to your deck.",
+
+	"card.spellLabyrinthRewardEpicCard.name": "Claim Epic Cards",
+	"card.spellLabyrinthRewardEpicCard.title": "Action",
+	"card.spellLabyrinthRewardEpicCard.description": "Choose an epic card and add 2 copies to your deck.",
+
+	"card.spellLabyrinthRewardLegendaryCard.name": "Claim Legendary Card",
+	"card.spellLabyrinthRewardLegendaryCard.title": "Action",
+	"card.spellLabyrinthRewardLegendaryCard.description": "Choose a legendary card and add a copy to your deck.",
+
+	"card.spellLabyrinthRewardTreasureT1.name": "Claim Item",
+	"card.spellLabyrinthRewardTreasureT1.title": "Action",
+	"card.spellLabyrinthRewardTreasureT1.description": "Claim an item reward.",
+
+	"card.spellLabyrinthRewardTreasureT2.name": "Claim Item",
+	"card.spellLabyrinthRewardTreasureT2.title": "Action",
+	"card.spellLabyrinthRewardTreasureT2.description": "Claim an item reward.",
+
+	"card.spellLabyrinthRewardTreasureT3.name": "Claim Item",
+	"card.spellLabyrinthRewardTreasureT3.title": "Action",
+	"card.spellLabyrinthRewardTreasureT3.description": "Claim an item reward.",
+
+	"card.spellLabyrinthRewardTreasureT4.name": "Claim Item",
+	"card.spellLabyrinthRewardTreasureT4.title": "Action",
+	"card.spellLabyrinthRewardTreasureT4.description": "Claim an item reward.",
+
+	"card.itemLabyrinthRustedSword.name": "Rusted Sword",
+	"card.itemLabyrinthRustedSword.description": "Deal {damage} Damage to an enemy unit.",
+
+	"card.itemLabyrinthSteelSword.name": "Rusted Sword",
+	"card.itemLabyrinthSteelSword.description": "Deal {damage} Damage to an enemy unit.",
+
+	"card.itemLabyrinthObsidianSword.name": "Obsidian Sword",
+	"card.itemLabyrinthObsidianSword.description": "Deal {damage} Damage to an enemy unit.",
+
+	"card.itemLabyrinthDragonsteelSword.name": "Dragonsteel Sword",
+	"card.itemLabyrinthDragonsteelSword.description": "Deal {damage} Damage to an enemy unit.\nApply *Burning* to the target row.",
+
+	"card.itemLabyrinthTatteredRags.name": "Tattered Rags",
+	"card.itemLabyrinthTatteredRags.description": "*+*{bonusPower} Leader Power\n*+*{bonusRegen} Mana Regen",
+
+	"card.itemLabyrinthPracticalClothes.name": "Practical Clothes",
+	"card.itemLabyrinthPracticalClothes.description": "*+*{bonusPower} Leader Power\n*+*{bonusRegen} Mana Regen",
+
+	"card.itemLabyrinthSimpleRobe.name": "Simple Robe",
+	"card.itemLabyrinthSimpleRobe.description": "*+*{bonusPower} Leader Power\n*+*{bonusRegen} Mana Regen",
+
+	"card.itemLabyrinthSimpleDress.name": "Simple Dress",
+	"card.itemLabyrinthSimpleDress.description": "*+*{bonusRegen} Mana Regen\nYour units have *+*{bonusUnitPower} Power.",
+
+	"card.itemLabyrinthOldGloves.name": "Old Gloves",
+	"card.itemLabyrinthOldGloves.description": "*+*{bonusPower} Leader Power\n*+*{bonusHandSize} Hand Size",
+
+	"card.itemLabyrinthCombatGloves.name": "Combat Gloves",
+	"card.itemLabyrinthCombatGloves.description": "*+*{bonusPower} Leader Power\n*+*{bonusHandSize} Hand Size",
+
+	"card.itemLabyrinthVelvetGloves.name": "Velvet Gloves",
+	"card.itemLabyrinthVelvetGloves.description": "*+*{bonusRegen} Mana Regen\n*+*{bonusHandSize} Hand Size",
+
+	"card.itemLabyrinthOldBoots.name": "Old Boots",
+	"card.itemLabyrinthOldBoots.description": "*+*{bonusPower} Leader Power\n*+*{bonusPowerPerGame} Leader Power per game played this run.",
+
+	"card.itemLabyrinthWarBanner.name": "War Banner",
+	"card.itemLabyrinthWarBanner.description": "*+*{bonusHandSize} Hand Size",
+
+	"card.unitLabyrinthLostArcher.name": "Lost Archer",
+	"card.unitLabyrinthLostArcher.description": "*Deploy:*\nDeal {damage} Damage to an enemy unit.",
+
+	"card.unitLabyrinthLostHound.name": "Lost Hound",
+	"card.unitLabyrinthLostHound.description": "*Deploy:*\n*Play* a *Lost Hound* from your deck.",
+
+	"card.unitLabyrinthLostMage.name": "Lost Mage",
+	"card.unitLabyrinthLostMage.description": "*Deploy:*\n*Infuse* {infuseCost} to *Play* {cardsCreated} copies of *Magic Arrow*.",
+
+	"card.unitLabyrinthLostRaven.name": "Lost Raven",
+	"card.unitLabyrinthLostRaven.description": "*Deploy:*\n*Play* a Lost card from your deck.",
+
+	"card.unitLabyrinthLostRogue.name": "Lost Rogue",
+	"card.unitLabyrinthLostRogue.description": "*Deploy:*\nDeal {damage} Damage to adjacent units.",
+
+	"card.unitLabyrinthLostShieldbearer.name": "Lost Shieldbearer",
+	"card.unitLabyrinthLostShieldbearer.description": " ",
+
+	"card.spellLabyrinthMagicArrow.name": "Magic Arrow",
+	"card.spellLabyrinthMagicArrow.description": "Deal {damage} Damage to an enemy unit."
 }

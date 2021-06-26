@@ -112,7 +112,7 @@ interface ServerCardSpellProps extends ServerCardBaseProps {
 	color: CardColor.GOLDEN | CardColor.SILVER | CardColor.BRONZE | CardColor.TOKEN
 	stats: {
 		cost: number
-	}
+	} & LeaderStatsCardProps
 }
 
 export type ServerCardProps = ServerCardLeaderProps | ServerCardUnitProps | ServerCardSpellProps
@@ -172,7 +172,7 @@ export default class ServerCard implements Card {
 			armor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
 			spellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0,
 			leaderStats: initializeEnumRecord(LeaderStatType, (value) => {
-				if (props.stats && (props.color === CardColor.LEADER || props.type === CardType.UNIT)) {
+				if (props.stats) {
 					return props.stats[value] || 0
 				}
 				return 0
@@ -212,6 +212,8 @@ export default class ServerCard implements Card {
 		this.expansionSet = props.expansionSet
 
 		this.isCollectible = props.hiddenFromLibrary
+			? false
+			: this.expansionSet === ExpansionSet.LABYRINTH
 			? false
 			: props.color === CardColor.LEADER || (props.color !== CardColor.TOKEN && props.type === CardType.UNIT)
 		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false

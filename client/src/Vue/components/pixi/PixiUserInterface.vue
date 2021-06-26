@@ -43,12 +43,12 @@
 			<pixi-inspected-card />
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
-			<div class="overlay-message" v-if="!opponent && isPlayingVersusAI">Connecting...</div>
+			<div class="overlay-message" v-if="isPlayingVersusAI && !isChainingGameMode">Connecting...</div>
 			<div class="overlay-message" v-if="!opponent && isPlayingVersusPlayer">
 				<span>Waiting for another player to connect...<br />You may also choose to play vs AI from the main menu</span>
 				<button class="secondary game-button" @click="onLeaveGame">Leave game</button>
 			</div>
-			<div class="overlay-message" v-if="opponent">
+			<div class="overlay-message" v-if="opponent && isPlayingVersusPlayer">
 				{{ player.username }} vs {{ opponent.username }}<br />
 				Starting the game...
 			</div>
@@ -78,6 +78,7 @@ import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
 import PixiEndTurnArea from '@/Vue/components/pixi/PixiEndTurnArea.vue'
 import GameMode from '@shared/enums/GameMode'
 import { sortCards } from '@shared/Utils'
+import RulesetCategory from '@shared/enums/RulesetCategory'
 
 export default defineComponent({
 	components: {
@@ -134,6 +135,16 @@ export default defineComponent({
 			})
 		}
 
+		const isSwitchingGames = computed(() => {
+			return !!store.state.nextLinkedGame
+		})
+		const endScreenSuppressed = computed(() => {
+			return store.state.gameStateModule.endScreenSuppressed
+		})
+		const isChainingGameMode = computed(() => {
+			return store.state.gameStateModule.ruleset && store.state.gameStateModule.ruleset.category === RulesetCategory.LABYRINTH
+		})
+
 		const isGameStarted = computed(() => {
 			const status = store.state.gameStateModule.gameStatus
 			return (
@@ -180,10 +191,11 @@ export default defineComponent({
 		)
 
 		const fadeInOverlayClass = computed(() => ({
-			visible: !isGameStarted.value,
+			visible: !isGameStarted.value || isSwitchingGames.value,
 		}))
 		const gameEndScreenClass = computed(() => ({
-			visible: isVictory.value || isDefeat.value || isDraw.value,
+			visible: (isVictory.value || isDefeat.value || isDraw.value) && !endScreenSuppressed.value,
+			noSmokescreen: isChainingGameMode.value,
 		}))
 		const spectatorOverlayClass = computed(() => ({
 			visible: isSpectating.value,
@@ -226,6 +238,7 @@ export default defineComponent({
 			isConfirmTargetsButtonVisible,
 			isHideTargetsButtonVisible,
 			isEndTurnButtonVisible,
+			isChainingGameMode,
 			hasOpponentFinishedRound,
 			cardsVisible,
 			confirmTargetsButtonContainerClass,
@@ -336,6 +349,9 @@ export default defineComponent({
 
 		&.visible {
 			opacity: 1;
+		}
+		&.noSmokescreen {
+			background: rgba(black, 0);
 		}
 	}
 

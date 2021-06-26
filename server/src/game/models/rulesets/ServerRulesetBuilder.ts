@@ -50,7 +50,7 @@ export type ServerRulesetBuilderProps<T> = {
 
 /* Ruleset representation used in the definition files */
 export class ServerRulesetBuilder<T> {
-	private readonly class: string
+	protected readonly class: string
 	private readonly props: ServerRulesetBuilderProps<T>
 
 	private readonly eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
@@ -60,7 +60,7 @@ export class ServerRulesetBuilder<T> {
 	private aiBuilder: RulesetAIBuilder | null = null
 	private deckBuilder: RulesetDeckBuilder | null = null
 	private boardBuilder: RulesetBoardBuilder | null = null
-	private chainBuilder: RulesetChainBuilder | null = null
+	private chainBuilders: RulesetChainBuilder[] = []
 
 	private rulesetConstants: Partial<RulesetConstants> = {}
 
@@ -75,7 +75,10 @@ export class ServerRulesetBuilder<T> {
 	}
 
 	protected updateConstants(values: Partial<RulesetConstants>): void {
-		this.rulesetConstants = values
+		this.rulesetConstants = {
+			...this.rulesetConstants,
+			...values,
+		}
 	}
 
 	protected createAI(cards: RulesetDeckTemplate): RulesetAIBuilder {
@@ -98,10 +101,11 @@ export class ServerRulesetBuilder<T> {
 
 	protected createChain(): RulesetChainBuilder {
 		const builder = new RulesetChainBuilder()
-		this.chainBuilder = builder
+		this.chainBuilders.push(builder)
 		return builder
 	}
 
+	protected createCallback(event: GameEventType.GAME_CREATED): EventSubscription<GameSetupEventArgs>
 	protected createCallback(event: GameEventType.GAME_SETUP): EventSubscription<GameSetupEventArgs>
 	protected createCallback(event: GameEventType.GAME_STARTED): EventSubscription<GameStartedEventArgs>
 	protected createCallback(event: GameEventType.TURN_STARTED): EventSubscription<TurnStartedEventArgs>
@@ -164,7 +168,7 @@ export class ServerRulesetBuilder<T> {
 			ai: this.aiBuilder ? this.aiBuilder.__build() : null,
 			deck: this.deckBuilder ? this.deckBuilder.__build() : null,
 			board: this.boardBuilder ? this.boardBuilder.__build() : null,
-			chain: this.chainBuilder ? this.chainBuilder.__build() : null,
+			chains: this.chainBuilders.map((chain) => chain.__build()),
 
 			eventSubscriptions: this.eventSubscriptions,
 			eventHooks: this.eventHooks,

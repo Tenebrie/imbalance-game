@@ -5,7 +5,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerPlayer from '../game/players/ServerPlayer'
 import express, { Request } from 'express'
-import { getMaxCardCopiesForColor, getMaxCardCountForColor, sortCards } from '@shared/Utils'
+import { getMaxCardCopiesForColor, getMaxCardCountForColor } from '@shared/Utils'
 import { CardConstructor } from '../game/libraries/CardLibrary'
 import { v4 as getRandomId } from 'uuid'
 import ServerGame from '@src/game/models/ServerGame'
@@ -21,6 +21,8 @@ import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import ServerBuff from '@src/game/models/buffs/ServerBuff'
+import LeaderStatType from '@shared/enums/LeaderStatType'
+import CardTribe from '@shared/enums/CardTribe'
 
 export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
 	return `${type}:${prefix}:${getRandomId()}`
@@ -74,6 +76,36 @@ export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {
 		return buff.id
 	})
 	return value
+}
+
+export const getTotalLeaderStat = (player: ServerPlayerInGame | null, type: LeaderStatType): number => {
+	if (!player) {
+		return 0
+	}
+	const validCards = player.game.board
+		.getUnitsOwnedByPlayer(player)
+		.map((unit) => unit.card)
+		.concat([player.leader])
+		.concat(player.cardHand.allCards.filter((card) => card.features.includes(CardFeature.PASSIVE)))
+	return validCards.map((card) => card.stats.getLeaderStat(type)).reduce((acc, val) => acc + val, 0)
+}
+
+export type LabyrinthItemSlot = 'weapon' | 'armor' | 'gloves' | 'boots'
+export const getLabyrinthItemSlots = (card: ServerCard): LabyrinthItemSlot[] => {
+	const cardSlots: LabyrinthItemSlot[] = []
+	if (card.tribes.includes(CardTribe.WEAPON)) {
+		cardSlots.push('weapon')
+	}
+	if (card.tribes.includes(CardTribe.ARMOR)) {
+		cardSlots.push('armor')
+	}
+	if (card.tribes.includes(CardTribe.GLOVES)) {
+		cardSlots.push('gloves')
+	}
+	if (card.tribes.includes(CardTribe.BOOTS)) {
+		cardSlots.push('boots')
+	}
+	return cardSlots
 }
 
 interface TryUntilArgs {

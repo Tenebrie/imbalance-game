@@ -117,15 +117,24 @@ export default class ServerGameEvents {
 			.get(event.type)!
 			.filter((subscription) => subscription.ignoreControlEffects || !ServerGameEvents.subscriberSuspended(subscription.subscriber))
 			.filter((subscription) =>
-				subscription.conditions.every((condition) => {
-					return cardRequire(this.game, subscription.subscriber, () => condition(event.args, event))
-				})
+				subscription.conditions.every((condition) => cardRequire(this.game, subscription.subscriber, () => condition(event.args, event)))
+			)
+			.filter((subscription) =>
+				subscription.immediateConditions.every((condition) =>
+					cardRequire(this.game, subscription.subscriber, () => condition(event.args, event, event))
+				)
 			)
 
 		validSubscriptions.forEach((subscription) => {
 			const preparedState = subscription.prepares.reduce((state, preparator) => preparator(event.args, state), {})
 
-			if (this.evaluatingSelectors || (event.effectSource && event.effectSource === subscription.subscriber)) {
+			if (
+				this.evaluatingSelectors ||
+				event.type === GameEventType.GAME_CREATED ||
+				event.type === GameEventType.GAME_SETUP ||
+				event.type === GameEventType.POST_GAME_SETUP ||
+				(event.effectSource && event.effectSource === subscription.subscriber)
+			) {
 				subscription.callbacks.forEach((callback) => {
 					this.logEventExecution(event, subscription, true)
 					cardPerform(this.game, subscription.subscriber, () => {
@@ -301,16 +310,13 @@ export default class ServerGameEvents {
 		resolveCards()
 
 		const filterOutEvents = () => {
-			currentCallbacks = currentCallbacks.filter((callbackWrapper) => {
-				const failedCondition = callbackWrapper.immediateConditions.find((condition) => {
-					return cardRequire(
-						this.game,
-						callbackWrapper.subscriber,
-						() => !condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent)
+			currentCallbacks = currentCallbacks.filter((callbackWrapper) =>
+				callbackWrapper.immediateConditions.every((condition) =>
+					cardRequire(this.game, callbackWrapper.subscriber, () =>
+						condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent)
 					)
-				})
-				return !failedCondition
-			})
+				)
+			)
 		}
 		filterOutEvents()
 
@@ -355,6 +361,7 @@ export default class ServerGameEvents {
 			.map((unit) => unit.card)
 			.concat(this.game.cardPlay.cardResolveStack.entries.map((entry) => entry.ownedCard.card))
 		this.game.players.forEach((player) => {
+			allGameCards = allGameCards.concat([player.leader])
 			allGameCards = allGameCards.concat(player.cardHand.allCards)
 			allGameCards = allGameCards.concat(player.cardDeck.allCards)
 			allGameCards = allGameCards.concat(player.cardGraveyard.allCards)

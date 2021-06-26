@@ -15,7 +15,6 @@ import GameHookType, { UnitDestroyedHookArgs, UnitDestroyedHookValues } from './
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import CardTribe from '@shared/enums/CardTribe'
-import ServerPlayer from '@src/game/players/ServerPlayer'
 
 export default class ServerBoard implements Board {
 	readonly game: ServerGame
@@ -77,9 +76,12 @@ export default class ServerBoard implements Board {
 		if (!playerInGame) {
 			return 0
 		}
-		return this.getUnitsOwnedByPlayer(playerInGame)
-			.map((unit) => unit.card.stats.power)
-			.reduce((total, value) => total + value, 0)
+		return (
+			playerInGame.leader.stats.power +
+			this.getUnitsOwnedByPlayer(playerInGame)
+				.map((unit) => unit.card.stats.power)
+				.reduce((total, value) => total + value, 0)
+		)
 	}
 
 	public getHorizontalUnitDistance(first: ServerUnit, second: ServerUnit): number {

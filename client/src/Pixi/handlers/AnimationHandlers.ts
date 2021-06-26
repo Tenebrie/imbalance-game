@@ -9,6 +9,7 @@ import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
 import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
 import RowReceivedBuffAnimParams from '@shared/models/animations/RowReceivedBuffAnimParams'
+import { getAnimDurationMod } from '@/utils/Utils'
 
 export type AnimationHandlerResponse = {
 	skip?: boolean
@@ -333,6 +334,12 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 		Core.particleSystem.createManaGeneratedParticleEffect(targetCard)
 		targetCard.cardTintOverlay.tint = 0x0000ff
 		targetCard.cardTintOverlay.alpha = 1
+	},
+
+	[AnimationType.SWITCHING_GAMES]: () => {
+		return {
+			extraDelay: 1000 / getAnimDurationMod(),
+		}
 	},
 }
 

@@ -13,8 +13,18 @@ import TargetMode from '@shared/enums/TargetMode'
 import ServerGame from '../ServerGame'
 
 export default {
+	gameCreated: (args: GameSetupEventArgs): GameEvent => ({
+		type: GameEventType.GAME_CREATED,
+		args: args,
+		hiddenFromLogs: true,
+	}),
 	gameSetup: (args: GameSetupEventArgs): GameEvent => ({
 		type: GameEventType.GAME_SETUP,
+		args: args,
+		hiddenFromLogs: true,
+	}),
+	postGameSetup: (args: GameSetupEventArgs): GameEvent => ({
+		type: GameEventType.POST_GAME_SETUP,
 		args: args,
 		hiddenFromLogs: true,
 	}),
@@ -28,6 +38,13 @@ export default {
 
 	roundStarted: (args: RoundStartedEventArgs): GameEvent => ({
 		type: GameEventType.ROUND_STARTED,
+		args: args,
+		logVariables: {
+			player: args.player.player.id,
+		},
+	}),
+	postRoundStarted: (args: RoundStartedEventArgs): GameEvent => ({
+		type: GameEventType.POST_ROUND_STARTED,
 		args: args,
 		logVariables: {
 			player: args.player.player.id,

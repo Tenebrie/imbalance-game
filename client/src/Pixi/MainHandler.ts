@@ -193,6 +193,7 @@ export default class MainHandler {
 	}
 
 	public triggerAnimation(time: number, threadId: string): void {
+		console.log(`Animation ${time}ms`)
 		const targetThread = this.mainAnimationThread.findThread(threadId)
 		if (targetThread) {
 			targetThread.triggerCooldown(time)
@@ -243,6 +244,8 @@ export default class MainHandler {
 	}
 
 	public stop(): void {
-		this.coreTicker.destroy()
+		if (this.coreTicker && this.coreTicker.started) {
+			this.coreTicker.destroy()
+		}
 	}
 }

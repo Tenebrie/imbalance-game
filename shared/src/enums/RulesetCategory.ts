@@ -3,6 +3,7 @@ enum RulesetCategory {
 	PVE,
 	CAMPAIGN,
 	PROTOTYPES,
+	LABYRINTH,
 	OTHER,
 }
 

@@ -78,6 +78,9 @@ export function sortCards<T extends Card | CardMessage>(inputArray: T[]): T[] {
 			('features' in a &&
 				'features' in b &&
 				Number(a.features.includes(CardFeature.LOW_SORT_PRIORITY)) - Number(b.features.includes(CardFeature.LOW_SORT_PRIORITY))) ||
+			('features' in a &&
+				'features' in b &&
+				Number(a.features.includes(CardFeature.PASSIVE)) - Number(b.features.includes(CardFeature.PASSIVE))) ||
 			a.type - b.type ||
 			(a.type === CardType.UNIT &&
 				(a.color - b.color ||

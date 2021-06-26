@@ -10,15 +10,14 @@ import ServerBotPlayer from '../AI/ServerBotPlayer'
 import ServerBotPlayerInGame from '../AI/ServerBotPlayerInGame'
 import ServerCard from './ServerCard'
 import ServerGameCardPlay from './ServerGameCardPlay'
-import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 import ServerGameAnimation from './ServerGameAnimation'
 import ServerOwnedCard from './ServerOwnedCard'
-import { colorizeConsoleText, colorizeId, colorizePlayer, createRandomGameId } from '@src/utils/Utils'
+import { colorizeConsoleText, colorizeId, colorizePlayer, createRandomGameId, getTotalLeaderStat } from '@src/utils/Utils'
 import ServerGameEvents from './ServerGameEvents'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import TargetMode from '@shared/enums/TargetMode'
 import GameEventType from '@shared/enums/GameEventType'
-import GameEventCreators, { PlayerTargetCardSelectedEventArgs } from './events/GameEventCreators'
+import GameEventCreators, { GameSetupEventArgs, PlayerTargetCardSelectedEventArgs } from './events/GameEventCreators'
 import ServerGameTimers from './ServerGameTimers'
 import CardFeature from '@shared/enums/CardFeature'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
@@ -29,12 +28,15 @@ import CardLibrary from '../libraries/CardLibrary'
 import ServerGameNovel from './ServerGameNovel'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
+import ServerGameProgression from '@src/game/models/ServerGameProgression'
+import LeaderStatType from '@shared/enums/LeaderStatType'
 
 interface ServerGameProps extends OptionalGameProps {
 	ruleset: ServerRulesetTemplate
 }
 
 export interface OptionalGameProps {
+	id?: string
 	name?: string
 	owner?: ServerPlayer
 	playerMoveOrderReversed?: boolean
@@ -60,9 +62,10 @@ export default class ServerGame implements Game {
 	public cardPlay!: ServerGameCardPlay
 	public animation!: ServerGameAnimation
 	public ruleset!: ServerRuleset
+	public progression!: ServerGameProgression
 
 	public constructor(props: ServerGameProps) {
-		this.id = createRandomGameId()
+		this.id = props.id ? props.id : createRandomGameId()
 		this.name = props.name || ServerGame.generateName(props.owner)
 		this.owner = props.owner
 		this.players = []
@@ -84,6 +87,7 @@ export default class ServerGame implements Game {
 		this.lastRoundWonBy = null
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
+		this.progression = new ServerGameProgression(this)
 
 		if (props.playerMoveOrderReversed !== undefined) {
 			this.playerMoveOrderReversed = props.playerMoveOrderReversed
@@ -101,6 +105,14 @@ export default class ServerGame implements Game {
 			.createCallback<PlayerTargetCardSelectedEventArgs>(null, GameEventType.PLAYER_TARGET_SELECTED_CARD)
 			.require(({ targetMode }) => targetMode === TargetMode.MULLIGAN)
 			.perform(({ triggeringPlayer, targetCard }) => this.mulliganCard(triggeringPlayer, targetCard))
+
+		this.events.createCallback<GameSetupEventArgs>(null, GameEventType.POST_GAME_SETUP).perform(() => {
+			this.players.forEach((player) => OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, player))
+		})
+		this.events.createCallback<GameSetupEventArgs>(null, GameEventType.POST_ROUND_STARTED).perform(() => {
+			this.players.forEach((player) => OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, player))
+			this.events.evaluateSelectors()
+		})
 	}
 
 	public get activePlayer(): ServerPlayerInGame | null {
@@ -129,7 +141,11 @@ export default class ServerGame implements Game {
 			if (this.ruleset.deck) {
 				actualDeck = this.ruleset.deck.fixedDeck!
 			}
-			serverPlayerInGame = new ServerPlayerInGame(this, targetPlayer, actualDeck, selectedDeck)
+			serverPlayerInGame = new ServerPlayerInGame(this, {
+				player: targetPlayer,
+				actualDeck: actualDeck,
+				selectedDeck: selectedDeck,
+			})
 		}
 
 		this.players.forEach((playerInGame: ServerPlayerInGame) => {
@@ -169,10 +185,18 @@ export default class ServerGame implements Game {
 
 		this.resetBoardOwnership()
 
+		this.events.postEvent(
+			GameEventCreators.gameCreated({
+				game: this,
+			})
+		)
+
 		const constants = this.ruleset.constants
 		this.players.forEach((playerInGame) => {
+			const extraStartingHandSize = getTotalLeaderStat(playerInGame, LeaderStatType.STARTING_HAND_SIZE)
+
 			playerInGame.cardDeck.shuffle()
-			playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_STARTING)
+			playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_STARTING + extraStartingHandSize)
 			playerInGame.drawSpellCards(constants.SPELL_HAND_SIZE_MINIMUM)
 			playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND)
 		})
@@ -220,6 +244,11 @@ export default class ServerGame implements Game {
 				game: this,
 			})
 		)
+		this.events.postEvent(
+			GameEventCreators.postGameSetup({
+				game: this,
+			})
+		)
 
 		this.events.flushLogEventGroup()
 		if (!this.ruleset.constants.SKIP_MULLIGAN) {
@@ -227,6 +256,8 @@ export default class ServerGame implements Game {
 		} else {
 			this.startNextRound()
 		}
+
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, this.getHumanPlayer())
 
 		GameHistoryDatabase.startGame(this).then()
 		this.events.resolveEvents()
@@ -241,7 +272,7 @@ export default class ServerGame implements Game {
 				this.board.rows[constants.GAME_BOARD_ROW_COUNT - i - 1].setOwner(this.players[0])
 			}
 		} else if (constants.GAME_BOARD_ROW_SPLIT_MODE === BoardSplitMode.ALL_FOR_PLAYER) {
-			const player = this.getHumanPlayer()!
+			const player = this.getHumanPlayer()
 			for (let i = 0; i < constants.GAME_BOARD_ROW_COUNT; i++) {
 				this.board.rows[i].setOwner(player)
 			}
@@ -252,8 +283,8 @@ export default class ServerGame implements Game {
 		return this.players.find((otherPlayer) => otherPlayer !== player) || null
 	}
 
-	public getHumanPlayer(): ServerPlayerInGame | null {
-		return this.players.find((playerInGame) => !(playerInGame instanceof ServerBotPlayerInGame)) || null
+	public getHumanPlayer(): ServerPlayerInGame {
+		return this.players.find((playerInGame) => !(playerInGame instanceof ServerBotPlayerInGame))!
 	}
 
 	public getBotPlayer(): ServerPlayerInGame | null {
@@ -367,14 +398,8 @@ export default class ServerGame implements Game {
 		const playerOne = this.players[0]
 		const playerTwo = this.players[1]
 
-		const playerOneTotalPower = this.board
-			.getUnitsOwnedByPlayer(playerOne)
-			.map((unit) => unit.card.stats.power)
-			.reduce((total, value) => total + value, 0)
-		const playerTwoTotalPower = this.board
-			.getUnitsOwnedByPlayer(playerTwo)
-			.map((unit) => unit.card.stats.power)
-			.reduce((total, value) => total + value, 0)
+		const playerOneTotalPower = this.board.getTotalPlayerPower(playerOne)
+		const playerTwoTotalPower = this.board.getTotalPlayerPower(playerTwo)
 		if (playerOneTotalPower > playerTwoTotalPower) {
 			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
 			this.lastRoundWonBy = playerOne
@@ -451,7 +476,7 @@ export default class ServerGame implements Game {
 		player.showMulliganCards()
 	}
 
-	public finish(victoriousPlayer: ServerPlayerInGame | null, victoryReason: string): void {
+	public finish(victoriousPlayer: ServerPlayerInGame | null, victoryReason: string, chainImmediately = false): void {
 		if (this.turnPhase === GameTurnPhase.AFTER_GAME) {
 			return
 		}
@@ -495,8 +520,21 @@ export default class ServerGame implements Game {
 			this.forceShutdown('Cleanup')
 		}, 300000)
 
-		if (this.ruleset.chain) {
-			GameLibrary.createChainGame(this)
+		const validChain = this.ruleset.chains.find((chain) =>
+			chain.isValid({
+				game: this,
+				victoriousPlayer,
+			})
+		)
+		if (validChain) {
+			const linkedGame = GameLibrary.createChainGame(this, validChain)
+			this.players.forEach((playerInGame) => {
+				OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, chainImmediately)
+				if (chainImmediately) {
+					this.animation.play(ServerAnimation.switchingGames())
+					OutgoingMessageHandlers.commandJoinLinkedGame(playerInGame.player)
+				}
+			})
 		}
 	}
 
@@ -543,10 +581,16 @@ export default class ServerGame implements Game {
 		return null
 	}
 
-	static newOwnedInstance(owner: ServerPlayer, name: string, ruleset: ServerRulesetTemplate, props: OptionalGameProps): ServerGame {
+	static newPublicInstance(ruleset: ServerRulesetTemplate, props: OptionalGameProps): ServerGame {
 		return new ServerGame({
 			...props,
-			name,
+			ruleset,
+		})
+	}
+
+	static newOwnedInstance(owner: ServerPlayer, ruleset: ServerRulesetTemplate, props: OptionalGameProps): ServerGame {
+		return new ServerGame({
+			...props,
 			owner,
 			ruleset,
 		})

@@ -4,6 +4,9 @@ import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import RenderQuality from '@shared/enums/RenderQuality'
 import AccessLevel from '@shared/enums/AccessLevel'
 import { createRandomPlayerId } from '@src/utils/Utils'
+import PlayerProgressionType from '@shared/enums/PlayerProgressionType'
+import PlayerProgressionDatabaseEntry from '@shared/models/PlayerProgressionDatabaseEntry'
+import { LabyrinthProgressionState } from '@shared/models/progression/LabyrinthProgressionState'
 
 export default {
 	async insertPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {
@@ -39,8 +42,13 @@ export default {
 	},
 
 	async selectAllPlayers(): Promise<PlayerDatabaseEntry[] | null> {
-		const query = 'SELECT *, \'[Redacted]\' as "passwordHash" FROM players ORDER BY players."accessedAt" DESC LIMIT 500'
+		const query = `SELECT *, '[Redacted]' as "passwordHash" FROM players ORDER BY players."accessedAt" DESC LIMIT 500`
 		return Database.selectRows<PlayerDatabaseEntry>(query)
+	},
+
+	async selectPlayerLabyrinthProgression(id: string): Promise<PlayerProgressionDatabaseEntry | null> {
+		const query = `SELECT data FROM player_progression WHERE "playerId" = $1 AND "type" = $2`
+		return Database.selectRow<PlayerProgressionDatabaseEntry>(query, [id, PlayerProgressionType.LABYRINTH])
 	},
 
 	async updatePlayerUsername(id: string, username: string): Promise<boolean> {
@@ -111,6 +119,11 @@ export default {
 	async updatePlayerAccessedAt(id: string): Promise<boolean> {
 		const query = `UPDATE players SET "accessedAt" = current_timestamp WHERE id = $1`
 		return Database.updateRows(query, [id])
+	},
+
+	async updatePlayerLabyrinthProgression(playerId: string, state: LabyrinthProgressionState): Promise<boolean> {
+		const query = `INSERT INTO player_progression("playerId", "type", "data") VALUES ($1, $2, $3) ON CONFLICT("playerId", "type") DO UPDATE SET "data" = $3`
+		return Database.insertRow(query, [playerId, PlayerProgressionType.LABYRINTH, state])
 	},
 
 	async deletePlayer(id: string): Promise<boolean> {

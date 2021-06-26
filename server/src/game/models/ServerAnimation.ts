@@ -199,4 +199,8 @@ export default class ServerAnimation implements Animation {
 		animation.targetCard = targetCard
 		return animation
 	}
+
+	public static switchingGames(): ServerAnimation {
+		return new ServerAnimation(AnimationType.SWITCHING_GAMES, {})
+	}
 }

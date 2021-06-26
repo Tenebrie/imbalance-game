@@ -16,6 +16,12 @@ import TargetMode from '@shared/enums/TargetMode'
 import { sortCards } from '@shared/Utils'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 
+type Props = {
+	player: ServerPlayer
+	actualDeck: ServerEditorDeck
+	selectedDeck: ServerEditorDeck
+}
+
 export default class ServerPlayerInGame implements PlayerInGame {
 	initialized = false
 
@@ -35,9 +41,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 
 	private __leader: ServerCard | null
 
-	constructor(game: ServerGame, player: ServerPlayer, actualDeck: ServerEditorDeck, selectedDeck: ServerEditorDeck) {
+	constructor(game: ServerGame, props: Props) {
 		this.game = game
-		this.player = player
+		this.player = props.player
 		this.__leader = null
 		this.cardHand = new ServerHand(game, this, [], [])
 		this.cardDeck = new ServerDeck(game, this, [], [])
@@ -49,9 +55,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.turnEnded = true
 		this.roundEnded = true
 		this.cardsMulliganed = 0
-		this.startingDeck = selectedDeck
+		this.startingDeck = props.selectedDeck
 
-		const templateDeck = ServerTemplateCardDeck.fromEditorDeck(game, actualDeck)
+		const templateDeck = ServerTemplateCardDeck.fromEditorDeck(game, props.actualDeck)
 		this.cardDeck.instantiateFrom(templateDeck)
 		this.leader = templateDeck.leader
 	}
@@ -215,6 +221,12 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		}
 		this.game.events.postEvent(
 			GameEventCreators.roundStarted({
+				game: this.game,
+				player: this,
+			})
+		)
+		this.game.events.postEvent(
+			GameEventCreators.postRoundStarted({
 				game: this.game,
 				player: this,
 			})

@@ -57,6 +57,10 @@ export class ServerCardTargeting {
 	 * ------------------------------------
 	 */
 	public getPlayTargets(cardOwner: ServerPlayerInGame, attrs: { checkMana: boolean }): PlayTarget[] {
+		if (this.card.features.includes(CardFeature.PASSIVE)) {
+			return []
+		}
+
 		if (attrs.checkMana && (cardOwner.unitMana < this.card.stats.unitCost || cardOwner.spellMana < this.card.stats.spellCost)) {
 			return []
 		}
