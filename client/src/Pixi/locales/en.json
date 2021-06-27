@@ -602,6 +602,10 @@
 	"card.unitTinySparkling.name": "Tiny Sparkling",
 	"card.unitTinySparkling.description": "<i>No effect</i>",
 
+	"card.unitHelplessPeasants.name": "Helpless Peasants",
+	"card.unitHelplessPeasants.description": "*Deploy:*\nSpawn a copy of itself to the right.<p>If covered by *Protector* at the end of your turn, gain +{selfBuff} Power.",
+	"card.unitHelplessPeasants.flavor": "Somebody please, we are getting attacked!.",
+
 	"card.tokenEmptyDeck.name": "Cricket",
 	"card.tokenEmptyDeck.description": "<i><star>Cricket noises<star>\n(No cards here)</i>",
 
