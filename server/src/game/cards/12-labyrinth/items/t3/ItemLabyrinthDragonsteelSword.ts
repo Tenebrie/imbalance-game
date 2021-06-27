@@ -23,7 +23,7 @@ export default class ItemLabyrinthDragonsteelSword extends ServerCard {
 			tribes: [CardTribe.WEAPON],
 			features: [CardFeature.HERO_POWER, CardFeature.LABYRINTH_ITEM_T3],
 			stats: {
-				cost: 1,
+				cost: 3,
 			},
 			expansionSet: ExpansionSet.LABYRINTH,
 		})
@@ -37,7 +37,8 @@ export default class ItemLabyrinthDragonsteelSword extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
+		const targetRowIndex = target.rowIndex
 		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
-		this.game.board.rows[target.rowIndex].buffs.add(BuffRowBurning, this)
+		this.game.board.rows[targetRowIndex].buffs.add(BuffRowBurning, this)
 	}
 }

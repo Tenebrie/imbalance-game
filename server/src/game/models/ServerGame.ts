@@ -526,7 +526,7 @@ export default class ServerGame implements Game {
 				victoriousPlayer,
 			})
 		)
-		if (validChain) {
+		if (validChain && this.getHumanPlayer()) {
 			const linkedGame = GameLibrary.createChainGame(this, validChain)
 			this.players.forEach((playerInGame) => {
 				OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, chainImmediately)
