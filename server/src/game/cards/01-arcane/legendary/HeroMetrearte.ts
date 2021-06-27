@@ -17,7 +17,7 @@ export default class HeroMetrearte extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 5,
+				power: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

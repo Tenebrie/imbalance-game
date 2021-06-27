@@ -11,10 +11,10 @@ import CardLocation from '@shared/enums/CardLocation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFeature from '@shared/enums/CardFeature'
-import { asDirectUnitDamage } from '@src/utils/LeaderStats'
+import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 
 export default class UnitChargingKnight extends ServerCard {
-	damage = asDirectUnitDamage(3)
+	damage = asRecurringUnitDamage(5)
 	movesForwardThisTurn = 0
 	maximumMovesThisTurn = 1
 
@@ -26,8 +26,8 @@ export default class UnitChargingKnight extends ServerCard {
 			tribes: [CardTribe.BEAST],
 			features: [CardFeature.KEYWORD_ORDER],
 			stats: {
-				power: 8,
-				armor: 2,
+				power: 16,
+				armor: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

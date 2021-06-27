@@ -18,7 +18,7 @@ export default class UnitLabyrinthLostRaven extends ServerCard {
 			tribes: [CardTribe.LOST, CardTribe.BIRD],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 2,
+				power: 3,
 			},
 			expansionSet: ExpansionSet.LABYRINTH,
 		})

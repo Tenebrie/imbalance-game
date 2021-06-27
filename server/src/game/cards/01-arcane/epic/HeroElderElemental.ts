@@ -21,7 +21,7 @@ export default class HeroElderElemental extends ServerCard {
 			tribes: [CardTribe.ELEMENTAL],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_TURN_START],
 			stats: {
-				power: 9,
+				power: 17,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

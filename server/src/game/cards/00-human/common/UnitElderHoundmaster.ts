@@ -19,7 +19,7 @@ export default class UnitElderHoundmaster extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitTrainedHound],
 			stats: {
-				power: 3,
+				power: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

@@ -11,7 +11,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
 export default class SpellFleetingSpark extends ServerCard {
-	damage = asDirectSparkDamage(2)
+	damage = asDirectSparkDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

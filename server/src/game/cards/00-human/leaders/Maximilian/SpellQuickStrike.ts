@@ -11,7 +11,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 export default class SpellQuickStrike extends ServerCard {
-	baseDamage = asDirectSpellDamage(2)
+	baseDamage = asDirectSpellDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

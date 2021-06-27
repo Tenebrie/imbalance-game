@@ -13,7 +13,7 @@ import ServerDamageInstance from '../../../models/ServerDamageSource'
 import { asDirectUnitDamage } from '@src/utils/LeaderStats'
 
 export default class UnitStoneElemental extends ServerCard {
-	damage = asDirectUnitDamage(2)
+	damage = asDirectUnitDamage(4)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -23,7 +23,7 @@ export default class UnitStoneElemental extends ServerCard {
 			tribes: [CardTribe.ELEMENTAL],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN],
 			stats: {
-				power: 7,
+				power: 14,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

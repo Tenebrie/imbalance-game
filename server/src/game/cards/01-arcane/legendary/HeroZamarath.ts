@@ -18,8 +18,8 @@ export default class HeroZamarath extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_IMMUNITY],
 			stats: {
-				power: 12,
-				armor: 5,
+				power: 24,
+				armor: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

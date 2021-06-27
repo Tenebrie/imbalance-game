@@ -11,7 +11,7 @@ import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitLabyrinthLostRogue extends ServerCard {
-	damage = asSplashUnitDamage(4)
+	damage = asSplashUnitDamage(8)
 
 	constructor(game: ServerGame) {
 		super(game, {

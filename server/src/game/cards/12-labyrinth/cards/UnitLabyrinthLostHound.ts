@@ -18,7 +18,7 @@ export default class UnitLabyrinthLostHound extends ServerCard {
 			tribes: [CardTribe.LOST, CardTribe.BEAST],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 4,
+				power: 8,
 			},
 			expansionSet: ExpansionSet.LABYRINTH,
 			relatedCards: [UnitLabyrinthLostHound],

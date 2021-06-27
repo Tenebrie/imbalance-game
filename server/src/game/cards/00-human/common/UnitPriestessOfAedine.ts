@@ -10,11 +10,11 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectHealingPotency } from '../../../../utils/LeaderStats'
+import { asDirectHealingPotency } from '@src/utils/LeaderStats'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1
-	healing = asDirectHealingPotency(5)
+	healing = asDirectHealingPotency(10)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -24,7 +24,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			tribes: [CardTribe.NOBLE],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 8,
+				power: 15,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

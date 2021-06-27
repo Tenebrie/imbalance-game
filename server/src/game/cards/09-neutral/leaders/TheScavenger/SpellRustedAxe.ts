@@ -11,7 +11,7 @@ import CardTribe from '@src/../../shared/src/enums/CardTribe'
 import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisRound'
 
 export default class SpellRustedAxe extends ServerCard {
-	baseDamage = asDirectSpellDamage(2)
+	baseDamage = asDirectSpellDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

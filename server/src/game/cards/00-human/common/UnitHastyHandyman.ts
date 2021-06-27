@@ -20,7 +20,7 @@ export default class UnitHastyHandyman extends ServerCard {
 			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 4,
+				power: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

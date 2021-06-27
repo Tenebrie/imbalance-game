@@ -24,7 +24,7 @@ export default class UnitMercantileSpellslinger extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 3,
+				power: 5,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

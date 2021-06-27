@@ -20,7 +20,7 @@ export default class UnitLabyrinthLostMage extends ServerCard {
 			faction: CardFaction.ARCANE,
 			relatedCards: [SpellLabyrinthMagicArrow],
 			stats: {
-				power: 2,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.LABYRINTH,
 		})

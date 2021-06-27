@@ -9,7 +9,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 import CardLibrary from '../../../libraries/CardLibrary'
-import { shuffle } from '../../../../utils/Utils'
+import { shuffle } from '@src/utils/Utils'
 
 export default class UnitChallengeEagerExplorer extends ServerCard {
 	exploredCards: ServerCard[] = []

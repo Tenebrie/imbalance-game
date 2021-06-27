@@ -8,13 +8,13 @@ import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
-import { CardTargetValidatorArguments } from '../../../../../types/TargetValidatorArguments'
+import { CardTargetValidatorArguments } from '@src/types/TargetValidatorArguments'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashSpellDamage, asDirectSpellDamage } from '../../../../../utils/LeaderStats'
+import { asSplashSpellDamage, asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 export default class SpellFireball extends ServerCard {
-	baseDamage = asDirectSpellDamage(4)
-	baseAreaDamage = asSplashSpellDamage(2)
+	baseDamage = asDirectSpellDamage(8)
+	baseAreaDamage = asSplashSpellDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

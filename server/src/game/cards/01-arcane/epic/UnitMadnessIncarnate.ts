@@ -17,7 +17,7 @@ export default class UnitMadnessIncarnate extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
 			stats: {
-				power: 21,
+				power: 40,
 			},
 			expansionSet: ExpansionSet.BASE,
 			generatedArtworkMagicString: '1',

@@ -16,7 +16,7 @@ export default class UnitEndlessArmy extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 11,
+				power: 22,
 			},
 			expansionSet: ExpansionSet.BASE,
 			relatedCards: [UnitEndlessArmy],

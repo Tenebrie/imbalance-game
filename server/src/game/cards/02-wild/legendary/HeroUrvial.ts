@@ -19,7 +19,7 @@ export default class HeroUrvial extends ServerCard {
 			tribes: [CardTribe.MERFOLK],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 8,
+				power: 15,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

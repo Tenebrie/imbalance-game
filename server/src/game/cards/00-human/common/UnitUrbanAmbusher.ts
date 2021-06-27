@@ -11,7 +11,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitUrbanAmbusher extends ServerCard {
-	bonusPower = asDirectBuffPotency(2)
+	bonusPower = asDirectBuffPotency(4)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -20,8 +20,8 @@ export default class UnitUrbanAmbusher extends ServerCard {
 			tribes: [CardTribe.SOLDIER],
 			faction: CardFaction.HUMAN,
 			stats: {
-				power: 5,
-				armor: 2,
+				power: 10,
+				armor: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

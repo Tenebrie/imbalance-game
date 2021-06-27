@@ -19,6 +19,9 @@ export default class LeaderVelElleron extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.LEADER,
 			faction: CardFaction.ARCANE,
+			stats: {
+				power: 10,
+			},
 			sortPriority: 0,
 			expansionSet: ExpansionSet.BASE,
 			deckAddedCards: [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellEternalServitude],

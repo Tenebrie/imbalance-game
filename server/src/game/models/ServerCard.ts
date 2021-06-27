@@ -95,7 +95,9 @@ type LeaderStatsCardProps = Partial<Record<LeaderStatType, number>>
 
 interface ServerCardLeaderProps extends ServerCardBaseProps {
 	color: CardColor.LEADER
-	stats?: LeaderStatsCardProps
+	stats?: {
+		power: number
+	} & LeaderStatsCardProps
 }
 
 interface ServerCardUnitProps extends ServerCardBaseProps {
@@ -168,7 +170,7 @@ export default class ServerCard implements Card {
 		this.faction = props.faction
 
 		this.stats = new ServerCardStats(this, {
-			power: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
+			power: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.power || 0 : 0,
 			armor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
 			spellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0,
 			leaderStats: initializeEnumRecord(LeaderStatType, (value) => {

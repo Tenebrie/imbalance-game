@@ -3,17 +3,16 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 import BuffStrength from '../../../buffs/BuffStrength'
-import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitCultistBrute extends ServerCard {
-	bonusPower = asDirectBuffPotency(3)
+	bonusPower = asDirectBuffPotency(6)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -23,7 +22,7 @@ export default class UnitCultistBrute extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 11,
+				power: 22,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -31,9 +30,10 @@ export default class UnitCultistBrute extends ServerCard {
 			bonusPower: this.bonusPower,
 		}
 
-		this.createDeployTargets(TargetType.UNIT).requireAllied().requireNotSelf()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onSacrificeTargetSelected(targetCard.unit!))
+		this.createDeployTargets(TargetType.UNIT)
+			.requireAllied()
+			.requireNotSelf()
+			.perform(({ targetCard }) => this.onSacrificeTargetSelected(targetCard.unit!))
 	}
 
 	private onSacrificeTargetSelected(target: ServerUnit): void {

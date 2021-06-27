@@ -13,7 +13,7 @@ import { asSplashBuffPotency } from '@src/utils/LeaderStats'
 import { sortCards } from '@shared/Utils'
 
 export default class UnitMasterSwordsmith extends ServerCard {
-	bonusPower = asSplashBuffPotency(1)
+	bonusPower = asSplashBuffPotency(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -23,7 +23,7 @@ export default class UnitMasterSwordsmith extends ServerCard {
 			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 2,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

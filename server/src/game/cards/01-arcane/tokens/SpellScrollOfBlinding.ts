@@ -5,7 +5,6 @@ import ServerUnit from '../../../models/ServerUnit'
 import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffStun from '../../../buffs/BuffStun'
 import BuffDuration from '@shared/enums/BuffDuration'
@@ -32,9 +31,9 @@ export default class SpellScrollOfBlinding extends ServerCard {
 			buffDuration: this.buffDuration,
 		}
 
-		this.createDeployTargets(TargetType.UNIT).requireEnemy()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createDeployTargets(TargetType.UNIT)
+			.requireEnemy()
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(selectedTarget: ServerUnit): void {

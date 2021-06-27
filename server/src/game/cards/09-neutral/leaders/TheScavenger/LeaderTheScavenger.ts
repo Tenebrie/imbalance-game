@@ -21,6 +21,9 @@ export default class LeaderTheScavenger extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.LEADER,
 			faction: CardFaction.NEUTRAL,
+			stats: {
+				power: 10,
+			},
 			expansionSet: ExpansionSet.BASE,
 			deckAddedCards: [SpellPokeTheSalvage, SpellScourTheSalvage, SpellDiveTheSalvage, SpellBecomeTheSalvage],
 		})

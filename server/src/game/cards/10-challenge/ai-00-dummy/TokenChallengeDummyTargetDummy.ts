@@ -12,7 +12,7 @@ export default class TokenChallengeDummyTargetDummy extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 20,
+				power: 40,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,

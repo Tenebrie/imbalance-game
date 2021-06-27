@@ -5,7 +5,6 @@ import ServerUnit from '../../../models/ServerUnit'
 import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffGrowth from '../../../buffs/BuffGrowth'
 import BuffDuration from '@shared/enums/BuffDuration'
@@ -26,9 +25,9 @@ export default class SpellScrollOfGrowth extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargets(TargetType.UNIT).requireAllied()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createDeployTargets(TargetType.UNIT)
+			.requireAllied()
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

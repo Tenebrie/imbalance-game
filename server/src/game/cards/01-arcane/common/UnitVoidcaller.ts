@@ -18,7 +18,7 @@ export default class UnitVoidcaller extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			relatedCards: [UnitVoidPortal],
 			stats: {
-				power: 6,
+				power: 11,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

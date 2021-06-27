@@ -13,7 +13,7 @@ export default class UnitLabyrinthLostShieldbearer extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			stats: {
-				power: 7,
+				power: 15,
 				armor: 3,
 			},
 			expansionSet: ExpansionSet.LABYRINTH,

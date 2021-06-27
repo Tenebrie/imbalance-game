@@ -9,7 +9,6 @@ import ServerBoardRow from '../../../../models/ServerBoardRow'
 import Constants from '@shared/Constants'
 import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitVolatileCrystal from '../../tokens/UnitVolatileCrystal'
-import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellCrystalBarrage extends ServerCard {
@@ -26,9 +25,9 @@ export default class SpellCrystalBarrage extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargets(TargetType.BOARD_ROW).requireEnemy()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
+		this.createDeployTargets(TargetType.BOARD_ROW)
+			.requireEnemy()
+			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
 	}
 
 	private onTargetSelected(target: ServerBoardRow): void {

@@ -20,7 +20,7 @@ export default class HeroGarellion extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_INFUSE_ALL],
 			stats: {
-				power: 12,
+				power: 20,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

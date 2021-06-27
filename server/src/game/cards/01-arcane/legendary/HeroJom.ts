@@ -24,7 +24,7 @@ export default class HeroJom extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitVoidPortal, UnitAbyssPortal],
 			stats: {
-				power: 7,
+				power: 14,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

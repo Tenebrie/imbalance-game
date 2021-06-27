@@ -22,7 +22,7 @@ export default class UnitSirenEnchantress extends ServerCard {
 			tribes: [CardTribe.MERFOLK],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_INFUSE_X, CardFeature.KEYWORD_BUFF_ROW_BLOOD_MOON],
 			stats: {
-				power: 4,
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

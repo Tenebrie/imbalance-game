@@ -10,7 +10,7 @@ import { asSplashUnitDamage } from '@src/utils/LeaderStats'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 
 export default class UnitQuietInfiltrator extends ServerCard {
-	damage = asSplashUnitDamage(5)
+	damage = asSplashUnitDamage(10)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -19,7 +19,7 @@ export default class UnitQuietInfiltrator extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.SPY],
 			stats: {
-				power: 2,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

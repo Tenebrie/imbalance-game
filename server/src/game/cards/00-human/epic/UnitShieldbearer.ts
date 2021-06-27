@@ -13,8 +13,8 @@ export default class UnitShieldbearer extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.HUMAN,
 			stats: {
-				power: 11,
-				armor: 3,
+				power: 20,
+				armor: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

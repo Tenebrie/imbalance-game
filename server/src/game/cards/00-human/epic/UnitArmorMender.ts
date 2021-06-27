@@ -12,7 +12,7 @@ import { AnyCardLocation } from '@src/utils/Utils'
 import BuffExtraArmor from '@src/game/buffs/BuffExtraArmor'
 
 export default class UnitArmorMender extends ServerCard {
-	bonusArmor = asRecurringBuffPotency(2)
+	bonusArmor = asRecurringBuffPotency(4)
 	activationsThisTurn = 0
 
 	constructor(game: ServerGame) {
@@ -22,7 +22,7 @@ export default class UnitArmorMender extends ServerCard {
 			tribes: [CardTribe.PEASANT],
 			faction: CardFaction.HUMAN,
 			stats: {
-				power: 10,
+				power: 20,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

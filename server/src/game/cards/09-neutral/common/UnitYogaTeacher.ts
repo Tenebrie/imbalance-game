@@ -16,7 +16,7 @@ export default class UnitYogaTeacher extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DISCARD],
 			stats: {
-				power: 11,
+				power: 21,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

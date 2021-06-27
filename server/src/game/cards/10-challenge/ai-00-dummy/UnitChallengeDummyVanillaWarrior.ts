@@ -12,7 +12,7 @@ export default class UnitChallengeDummyVanillaWarrior extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 11,
+				power: 21,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,

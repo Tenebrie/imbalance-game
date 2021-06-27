@@ -9,7 +9,7 @@ import SpellCrystalBarrage from './SpellCrystalBarrage'
 import SpellShadowArmy from './SpellShadowArmy'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
-import GameEventType from '@src/../../shared/src/enums/GameEventType'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class LeaderNighterie extends ServerCard {
 	manaPerRound = 10
@@ -19,6 +19,9 @@ export default class LeaderNighterie extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.LEADER,
 			faction: CardFaction.ARCANE,
+			stats: {
+				power: 10,
+			},
 			sortPriority: 2,
 			expansionSet: ExpansionSet.BASE,
 			deckAddedCards: [SpellShadowSpark, SpellNightmareDrain, SpellCrystalBarrage, SpellShadowArmy],

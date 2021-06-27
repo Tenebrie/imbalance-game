@@ -15,6 +15,9 @@ export default class LeaderChallengeDummy extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.LEADER,
 			faction: CardFaction.NEUTRAL,
+			stats: {
+				power: 10,
+			},
 			expansionSet: ExpansionSet.BASE,
 			deckAddedCards: [],
 			hiddenFromLibrary: true,

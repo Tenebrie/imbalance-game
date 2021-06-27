@@ -11,7 +11,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectHealingPotency } from '@src/utils/LeaderStats'
 
 export default class HeroTroviar extends ServerCard {
-	selfDamage = 20
+	selfDamage = 40
 	powerRestored = asDirectHealingPotency(1)
 
 	constructor(game: ServerGame) {
@@ -21,7 +21,7 @@ export default class HeroTroviar extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 25,
+				power: 50,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

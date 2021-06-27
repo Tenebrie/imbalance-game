@@ -12,7 +12,7 @@ import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 import Keywords from '@src/utils/Keywords'
 
 export default class UnitUndercityGambler extends ServerCard {
-	bonusPower = asDirectBuffPotency(5)
+	bonusPower = asDirectBuffPotency(10)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -22,7 +22,7 @@ export default class UnitUndercityGambler extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			generatedArtworkMagicString: '2',
 			stats: {
-				power: 4,
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

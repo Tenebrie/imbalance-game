@@ -9,7 +9,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import BuffNextSpellThisRoundDiscountAura from '../../../buffs/BuffNextSpellThisRoundDiscountAura'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitMerchantsAssistant extends ServerCard {
 	spellDiscount = asDirectBuffPotency(3)
@@ -22,7 +22,7 @@ export default class UnitMerchantsAssistant extends ServerCard {
 			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 5,
+				power: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

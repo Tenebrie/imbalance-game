@@ -12,7 +12,7 @@ export default class UnitStrayDog extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 1,
+				power: 2,
 				armor: 1,
 			},
 			expansionSet: ExpansionSet.BASE,

@@ -18,7 +18,7 @@ export default class HeroAntoria extends ServerCard {
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.VALKYRIE],
 			stats: {
-				power: 15,
+				power: 25,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

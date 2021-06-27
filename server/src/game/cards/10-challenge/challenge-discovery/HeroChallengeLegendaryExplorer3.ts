@@ -22,7 +22,7 @@ export default class HeroChallengeLegendaryExplorer3 extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			stats: {
-				power: 3,
+				power: 5,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,

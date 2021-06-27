@@ -11,7 +11,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 
 export default class UnitCleansingFlame extends ServerCard {
-	dispelPower = 3
+	dispelPower = 5
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -21,7 +21,7 @@ export default class UnitCleansingFlame extends ServerCard {
 			tribes: [CardTribe.ELEMENTAL],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_DISPEL_X],
 			stats: {
-				power: 6,
+				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

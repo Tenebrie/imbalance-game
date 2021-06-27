@@ -7,15 +7,15 @@ import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectHealingPotency, asDirectSpellDamage } from '../../../../../utils/LeaderStats'
+import { asDirectHealingPotency, asDirectSpellDamage } from '@src/utils/LeaderStats'
 import ServerBoardRow from '../../../../models/ServerBoardRow'
 import MoveDirection from '@shared/enums/MoveDirection'
 import ServerDamageInstance from '../../../../models/ServerDamageSource'
 import Keywords from '@src/utils/Keywords'
 
 export default class SpellTacticalMove extends ServerCard {
-	damage = asDirectSpellDamage(1)
-	healing = asDirectHealingPotency(2)
+	damage = asDirectSpellDamage(2)
+	healing = asDirectHealingPotency(3)
 
 	movingUnit: ServerUnit | null = null
 

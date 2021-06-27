@@ -15,7 +15,7 @@ export default class UnitDryadSmuggler extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.QUICK],
 			stats: {
-				power: 2,
+				power: 3,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,

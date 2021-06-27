@@ -12,7 +12,7 @@ export default class UnitEleyasDoppelganger extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 10,
+				power: 21,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,

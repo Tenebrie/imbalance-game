@@ -11,7 +11,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import { AnyCardLocation } from '@src/utils/Utils'
 
 export default class SpellGoldTithe extends ServerCard {
-	public static readonly BONUS_POWER = asDirectBuffPotency(3)
+	public static readonly BONUS_POWER = asDirectBuffPotency(4)
 
 	private canBePlayed = true
 

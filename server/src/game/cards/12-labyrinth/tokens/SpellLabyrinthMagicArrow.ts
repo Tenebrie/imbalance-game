@@ -10,7 +10,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 export default class SpellLabyrinthMagicArrow extends ServerCard {
-	damage = asDirectSpellDamage(4)
+	damage = asDirectSpellDamage(6)
 
 	constructor(game: ServerGame) {
 		super(game, {

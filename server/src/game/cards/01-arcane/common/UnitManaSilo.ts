@@ -23,7 +23,7 @@ export default class UnitManaSilo extends ServerCard {
 			features: [CardFeature.NIGHTWATCH, CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_INFUSE_X],
 			stats: {
 				power: 0,
-				armor: 5,
+				armor: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

@@ -19,7 +19,7 @@ export default class HeroAurienne extends ServerCard {
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.VALKYRIE],
 			stats: {
-				power: 11,
+				power: 22,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

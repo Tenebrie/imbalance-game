@@ -11,7 +11,7 @@ import { asDirectUnitDamage } from '@src/utils/LeaderStats'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitLabyrinthLostArcher extends ServerCard {
-	damage = asDirectUnitDamage(3)
+	damage = asDirectUnitDamage(7)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -21,7 +21,7 @@ export default class UnitLabyrinthLostArcher extends ServerCard {
 			tribes: [CardTribe.LOST],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 4,
+				power: 8,
 			},
 			expansionSet: ExpansionSet.LABYRINTH,
 		})

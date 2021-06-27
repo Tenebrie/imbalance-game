@@ -21,14 +21,14 @@ export default class SpellScrollOfImmunity extends ServerCard {
 			tribes: [CardTribe.SCROLL],
 			features: [CardFeature.KEYWORD_BUFF_IMMUNITY],
 			stats: {
-				cost: 3,
+				cost: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargets(TargetType.UNIT).requireAllied()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+		this.createDeployTargets(TargetType.UNIT)
+			.requireAllied()
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

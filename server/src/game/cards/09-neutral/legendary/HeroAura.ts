@@ -18,7 +18,7 @@ export default class HeroAura extends ServerCard {
 			tribes: [CardTribe.BIRD],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 1,
+				power: 3,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

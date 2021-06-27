@@ -8,7 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashUnitDamage } from '../../../../utils/LeaderStats'
+import { asSplashUnitDamage } from '@src/utils/LeaderStats'
 
 export default class HeroCarienne extends ServerCard {
 	damagePerWave = asSplashUnitDamage(1)
@@ -20,7 +20,7 @@ export default class HeroCarienne extends ServerCard {
 			faction: CardFaction.WILD,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 6,
+				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

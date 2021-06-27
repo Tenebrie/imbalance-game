@@ -15,14 +15,14 @@ export default class HeroNotEleyas extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 10,
+				power: 20,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,
 		})
 
-		this.createEffect(GameEventType.CARD_DRAWN).perform(() => this.buffs.addMultiple(BuffStrength, 2, this))
-		this.createEffect(GameEventType.CARD_RETURNED).perform(() => this.buffs.addMultiple(BuffStrength, 2, this))
+		this.createEffect(GameEventType.CARD_DRAWN).perform(() => this.buffs.addMultiple(BuffStrength, 3, this))
+		this.createEffect(GameEventType.CARD_RETURNED).perform(() => this.buffs.addMultiple(BuffStrength, 3, this))
 
 		this.createSelector()
 			.requireTarget(({ target }) => target instanceof UnitEleyasDoppelganger)

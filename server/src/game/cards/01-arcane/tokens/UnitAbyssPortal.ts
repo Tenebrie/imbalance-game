@@ -11,10 +11,10 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashBuffPotency } from '@src/utils/LeaderStats'
+import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitAbyssPortal extends ServerCard {
-	powerPerCard = asSplashBuffPotency(1)
+	powerPerCard = asRecurringBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -24,7 +24,7 @@ export default class UnitAbyssPortal extends ServerCard {
 			relatedCards: [UnitVoidspawn],
 			stats: {
 				power: 0,
-				armor: 10,
+				armor: 20,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,

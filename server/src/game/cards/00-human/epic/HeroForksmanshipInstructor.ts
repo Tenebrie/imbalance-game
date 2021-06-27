@@ -8,11 +8,11 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectBuffPotency } from '@src/utils/LeaderStats'
+import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class HeroForksmanshipInstructor extends ServerCard {
-	bonusPower = asDirectBuffPotency(3)
+	bonusPower = asRecurringBuffPotency(6)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -21,7 +21,7 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 			tribes: [CardTribe.NOBLE, CardTribe.SOLDIER],
 			faction: CardFaction.HUMAN,
 			stats: {
-				power: 6,
+				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

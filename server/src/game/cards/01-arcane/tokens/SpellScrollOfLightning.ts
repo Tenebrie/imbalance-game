@@ -10,7 +10,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 export default class SpellScrollOfLightning extends ServerCard {
-	damage = asDirectSpellDamage(8)
+	damage = asDirectSpellDamage(15)
 
 	constructor(game: ServerGame) {
 		super(game, {

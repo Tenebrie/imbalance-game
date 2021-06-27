@@ -18,7 +18,7 @@ export default class UnitRoyalArmory extends ServerCard {
 			features: [CardFeature.NIGHTWATCH],
 			stats: {
 				power: 0,
-				armor: 6,
+				armor: 12,
 				[LeaderStatType.DIRECT_UNIT_DAMAGE]: 3,
 				[LeaderStatType.SPLASH_UNIT_DAMAGE]: 1,
 			},

@@ -18,7 +18,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.VALKYRIE],
 			stats: {
-				power: 4,
+				power: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

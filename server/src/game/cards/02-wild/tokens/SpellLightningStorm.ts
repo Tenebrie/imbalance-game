@@ -10,10 +10,10 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashSpellDamage, asTargetCount } from '../../../../utils/LeaderStats'
+import { asSplashSpellDamage, asTargetCount } from '@src/utils/LeaderStats'
 
 export default class SpellLightningStorm extends ServerCard {
-	damage = asSplashSpellDamage(3)
+	damage = asSplashSpellDamage(5)
 	baseTargets = asTargetCount(1)
 	targetsPerStorm = asSplashSpellDamage(1)
 	targetsHit: ServerCard[] = []

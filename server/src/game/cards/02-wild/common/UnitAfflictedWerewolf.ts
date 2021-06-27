@@ -15,7 +15,7 @@ export default class UnitAfflictedWerewolf extends ServerCard {
 			faction: CardFaction.WILD,
 			tribes: [CardTribe.BEAST],
 			stats: {
-				power: 13,
+				power: 25,
 			},
 			expansionSet: ExpansionSet.BASE,
 			relatedCards: [UnitAfflictedPeasant],

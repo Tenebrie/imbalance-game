@@ -11,7 +11,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import { asSplashBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitHighClassPerformer extends ServerCard {
-	bonusPower = asSplashBuffPotency(1)
+	bonusPower = asSplashBuffPotency(2)
 	cardsRequired = 7
 
 	constructor(game: ServerGame) {
@@ -22,7 +22,7 @@ export default class UnitHighClassPerformer extends ServerCard {
 			tribes: [CardTribe.NOBLE],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 5,
+				power: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

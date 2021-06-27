@@ -19,7 +19,7 @@ export default class UnitDryadWolfspeaker extends ServerCard {
 			tribes: [CardTribe.DRYAD],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 6,
+				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

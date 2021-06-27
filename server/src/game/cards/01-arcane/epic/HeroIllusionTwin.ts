@@ -21,7 +21,7 @@ export default class HeroIllusionTwin extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
 			stats: {
-				power: 9,
+				power: 17,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

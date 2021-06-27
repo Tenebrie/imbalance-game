@@ -28,7 +28,7 @@ export default class UnitMakeshiftShelter extends ServerCard {
 			features: [CardFeature.NIGHTWATCH, CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 0,
-				armor: 3,
+				armor: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

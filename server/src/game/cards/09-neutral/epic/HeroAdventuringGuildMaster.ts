@@ -8,7 +8,7 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 export default class HeroAdventuringGuildMaster extends ServerCard {
 	powerPerCard = asDirectBuffPotency(5)
@@ -20,7 +20,7 @@ export default class HeroAdventuringGuildMaster extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 10,
+				power: 20,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

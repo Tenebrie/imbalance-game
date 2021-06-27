@@ -10,7 +10,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import Keywords from '@src/utils/Keywords'
 
 export default class UnitAulerianInquisitor extends ServerCard {
-	buffsRequired = 15
+	buffsRequired = 20
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -20,7 +20,7 @@ export default class UnitAulerianInquisitor extends ServerCard {
 			tribes: [CardTribe.NOBLE],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 4,
+				power: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

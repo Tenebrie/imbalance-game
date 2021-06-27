@@ -18,6 +18,9 @@ export default class LeaderMaximilian extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.LEADER,
 			faction: CardFaction.HUMAN,
+			stats: {
+				power: 10,
+			},
 			sortPriority: 0,
 			expansionSet: ExpansionSet.BASE,
 			deckAddedCards: [SpellQuickStrike, SpellTacticalMove, SpellTacticalMove, SpellReinforcements],

@@ -19,7 +19,7 @@ export default class UnitWoodenPalisade extends ServerCard {
 			features: [CardFeature.NIGHTWATCH],
 			stats: {
 				power: 0,
-				armor: 5,
+				armor: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

@@ -20,7 +20,7 @@ export default class HeroSparklingSpirit extends ServerCard {
 			faction: CardFaction.ARCANE,
 			relatedCards: [SpellFleetingSpark],
 			stats: {
-				power: 8,
+				power: 16,
 				[LeaderStatType.SPARK_DAMAGE]: 1,
 			},
 			expansionSet: ExpansionSet.BASE,

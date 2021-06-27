@@ -18,7 +18,7 @@ export default class UnitAedineShrine extends ServerCard {
 			features: [CardFeature.NIGHTWATCH],
 			stats: {
 				power: 0,
-				armor: 6,
+				armor: 12,
 				[LeaderStatType.DIRECT_HEALING_POTENCY]: 3,
 				[LeaderStatType.SPLASH_HEALING_POTENCY]: 1,
 				[LeaderStatType.RECURRING_HEALING_POTENCY]: 1,

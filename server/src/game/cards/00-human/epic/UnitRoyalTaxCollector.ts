@@ -12,7 +12,7 @@ import SpellGoldTithe from '@src/game/cards/00-human/spells/SpellGoldTithe'
 import CardFeature from '@shared/enums/CardFeature'
 
 export default class UnitRoyalTaxCollector extends ServerCard {
-	private static readonly DEBUFF_POTENCY = 3
+	private static readonly DEBUFF_POTENCY = 5
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -23,8 +23,8 @@ export default class UnitRoyalTaxCollector extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [SpellGoldTithe],
 			stats: {
-				power: 4,
-				armor: 2,
+				power: 8,
+				armor: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

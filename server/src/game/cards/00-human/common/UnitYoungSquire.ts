@@ -22,7 +22,7 @@ export default class UnitYoungSquire extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 4,
+				power: 8,
 				[LeaderStatType.DIRECT_UNIT_DAMAGE]: 1,
 			},
 			expansionSet: ExpansionSet.BASE,

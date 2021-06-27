@@ -21,7 +21,7 @@ export default class UnitMerfolkEnchantress extends ServerCard {
 			relatedCards: [SpellEnchantedStorm],
 			sortPriority: 1,
 			stats: {
-				power: 4,
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

@@ -8,7 +8,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffGrowth from '../../../buffs/BuffGrowth'
 
@@ -23,7 +23,7 @@ export default class UnitEldergroveTender extends ServerCard {
 			tribes: [CardTribe.DRYAD],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_GROWTH],
 			stats: {
-				power: 6,
+				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -31,11 +31,12 @@ export default class UnitEldergroveTender extends ServerCard {
 			bonusPower: this.bonusPower,
 		}
 
-		this.createDeployTargets(TargetType.UNIT).requireAllied().requireNotSelf()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => {
-			targetUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this)
-			targetUnit.buffs.add(BuffGrowth, this)
-		})
+		this.createDeployTargets(TargetType.UNIT)
+			.requireAllied()
+			.requireNotSelf()
+			.perform(({ targetUnit }) => {
+				targetUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this)
+				targetUnit.buffs.add(BuffGrowth, this)
+			})
 	}
 }

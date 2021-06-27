@@ -11,7 +11,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import BuffWeakness from '@src/game/buffs/BuffWeakness'
 
 export default class UnitTheMinisterOfLand extends ServerCard {
-	public static readonly WEAKNESS_POTENCY = 2
+	public static readonly WEAKNESS_POTENCY = 4
 	public static readonly PEASANTS_REQUIRED = 5
 
 	constructor(game: ServerGame) {
@@ -22,7 +22,7 @@ export default class UnitTheMinisterOfLand extends ServerCard {
 			tribes: [CardTribe.NOBLE],
 			features: [CardFeature.KEYWORD_SUMMON],
 			stats: {
-				power: 15,
+				power: 30,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

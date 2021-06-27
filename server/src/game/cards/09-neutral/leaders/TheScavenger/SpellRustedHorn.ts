@@ -11,7 +11,7 @@ import BuffStrength from '@src/game/buffs/BuffStrength'
 import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 export default class SpellRustedHorn extends ServerCard {
-	extraPower = asDirectBuffPotency(2)
+	extraPower = asDirectBuffPotency(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

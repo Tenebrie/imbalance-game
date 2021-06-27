@@ -21,7 +21,7 @@ export default class UnitAfflictedPeasant extends ServerCard {
 			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_BUFF_ROW_BLOOD_MOON],
 			stats: {
-				power: 8,
+				power: 16,
 			},
 			expansionSet: ExpansionSet.BASE,
 			relatedCards: [UnitAfflictedWerewolf],

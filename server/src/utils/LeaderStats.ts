@@ -37,6 +37,10 @@ export const asSplashUnitDamage = (baseDamage: number): LeaderStatValueGetter =>
 	return asScalingStat(baseDamage, (card) => card.stats.getLeaderStat(LeaderStatType.SPLASH_UNIT_DAMAGE))
 }
 
+export const asRecurringUnitDamage = (baseDamage: number): LeaderStatValueGetter => {
+	return asScalingStat(baseDamage, (card) => card.stats.getLeaderStat(LeaderStatType.RECURRING_UNIT_DAMAGE))
+}
+
 export const asDirectSpellDamage = (baseDamage: number): LeaderStatValueGetter => {
 	return asScalingStat(baseDamage, (card) => card.stats.getLeaderStat(LeaderStatType.DIRECT_SPELL_DAMAGE))
 }

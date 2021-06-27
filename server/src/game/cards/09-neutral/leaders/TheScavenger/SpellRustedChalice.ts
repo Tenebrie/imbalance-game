@@ -11,7 +11,7 @@ import CardTribe from '@src/../../shared/src/enums/CardTribe'
 import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisRound'
 
 export default class SpellRustedChalice extends ServerCard {
-	healPower = asDirectHealingPotency(4)
+	healPower = asDirectHealingPotency(5)
 
 	constructor(game: ServerGame) {
 		super(game, {

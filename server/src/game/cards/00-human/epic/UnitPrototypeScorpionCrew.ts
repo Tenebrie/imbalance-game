@@ -4,15 +4,15 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectUnitDamage } from '@src/utils/LeaderStats'
+import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerDamageInstance from '@src/game/models/ServerDamageSource'
 
 export default class UnitPrototypeScorpionCrew extends ServerCard {
-	targetDamage = asDirectUnitDamage(3)
-	selfDamage = 2
+	targetDamage = asRecurringUnitDamage(5)
+	selfDamage = 4
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -21,8 +21,8 @@ export default class UnitPrototypeScorpionCrew extends ServerCard {
 			faction: CardFaction.HUMAN,
 			features: [CardFeature.KEYWORD_ORDER],
 			stats: {
-				power: 5,
-				armor: 2,
+				power: 10,
+				armor: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

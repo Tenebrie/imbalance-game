@@ -15,8 +15,8 @@ import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '@src/game/buffs/BuffStrength'
 
 export default class HeroMelissea extends ServerCard {
-	healing = asDirectHealingPotency(3)
-	extraPower = asRecurringBuffPotency(1)
+	healing = asDirectHealingPotency(6)
+	extraPower = asRecurringBuffPotency(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -26,7 +26,7 @@ export default class HeroMelissea extends ServerCard {
 			tribes: [CardTribe.NOBLE],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 11,
+				power: 22,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

@@ -11,7 +11,7 @@ import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisR
 import CardFeature from '@src/../../shared/src/enums/CardFeature'
 
 export default class SpellRustedWand extends ServerCard {
-	dispelPower = 1
+	dispelPower = 3
 
 	constructor(game: ServerGame) {
 		super(game, {

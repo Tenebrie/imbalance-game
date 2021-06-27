@@ -12,7 +12,7 @@ export default class UnitTrainedHound extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			stats: {
-				power: 4,
+				power: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,

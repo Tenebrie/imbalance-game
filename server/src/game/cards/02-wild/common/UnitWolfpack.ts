@@ -14,8 +14,8 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 
 export default class UnitWolfpack extends ServerCard {
-	private static readonly baseDamage = asDirectUnitDamage(3)
-	private static readonly damagePenaltyPerWolf = 1
+	private static readonly baseDamage = asDirectUnitDamage(6)
+	private static readonly damagePenaltyPerWolf = 2
 
 	private chainIndex = 0
 
@@ -27,7 +27,7 @@ export default class UnitWolfpack extends ServerCard {
 			tribes: [CardTribe.BEAST],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 3,
+				power: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
