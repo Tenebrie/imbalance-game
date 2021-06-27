@@ -8,7 +8,8 @@ type Module<T> = {
 	path: string
 	filename: string
 	timestamp: number
-	prototypeFunction: T
+	defaultExport: T | null
+	exports: T[]
 }
 
 type Props = {
@@ -25,20 +26,27 @@ type ReturnValue<T> = {
 export function loadModules<T extends { name: string }>(props: Props): ReturnValue<T> {
 	const normalizedPath = path.join(__dirname, props.path)
 	const rulesetDefinitionFiles = glob.sync(`${normalizedPath}/**/*.js`)
+	rulesetDefinitionFiles.forEach((file) => console.log(file))
 
-	const cardModules: Module<T>[] = rulesetDefinitionFiles.map((path) => ({
-		path: path,
-		filename: path.substring(path.lastIndexOf('/') + 1, path.indexOf('.js')),
-		timestamp: fs.statSync(path).mtimeMs,
-		prototypeFunction: require(path).default,
-	}))
+	const cardModules: Module<T>[] = rulesetDefinitionFiles
+		.map((path) => ({
+			path,
+			importedModule: require(path),
+		}))
+		.map((wrapper) => ({
+			path: wrapper.path,
+			filename: wrapper.path.substring(wrapper.path.lastIndexOf('/') + 1, wrapper.path.indexOf('.js')),
+			timestamp: fs.statSync(wrapper.path).mtimeMs,
+			defaultExport: wrapper.importedModule.default || null,
+			exports: Object.values(wrapper.importedModule),
+		}))
 	console.info(`Found ${colorize(cardModules.length, AsciiColor.CYAN)} ${props.objectLogName} definition files`)
 
-	const nameMismatchModules = cardModules.filter((module) => module.filename !== module.prototypeFunction.name)
+	const nameMismatchModules = cardModules.filter((module) => !!module.defaultExport && module.filename !== module.defaultExport.name)
 	if (nameMismatchModules.length > 0) {
 		const errorArray = nameMismatchModules.map((module) => ({
 			file: module.filename,
-			prototype: module.prototypeFunction.name,
+			prototype: module.defaultExport!.name,
 		}))
 		console.warn(
 			colorize(`Clearing ${nameMismatchModules.length} ${props.objectLogName} module(s) due to class name mismatch:`, AsciiColor.YELLOW),
@@ -48,7 +56,7 @@ export function loadModules<T extends { name: string }>(props: Props): ReturnVal
 	}
 
 	const upToDateModules = cardModules
-		.filter((module) => module.filename === module.prototypeFunction.name)
+		.filter((module) => (module.defaultExport && module.filename === module.defaultExport.name) || !module.defaultExport)
 		.reduce((acc: Module<T>[], obj) => {
 			const updatedArray = acc.slice()
 			const savedObject = updatedArray.find((savedObject) => savedObject.filename === obj.filename)
@@ -68,11 +76,11 @@ export function loadModules<T extends { name: string }>(props: Props): ReturnVal
 
 	const prototypes = upToDateModules
 		.filter((module) => !module.filename.toLowerCase().startsWith('testing'))
-		.map((module) => module.prototypeFunction)
+		.flatMap((module) => module.exports)
 
 	return {
 		prototypes,
-		upToDateModules,
-		outdatedModules,
+		upToDateModules: cardModules,
+		outdatedModules: [],
 	}
 }

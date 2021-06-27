@@ -47,9 +47,9 @@ describe('HeroZamarath', () => {
 			game.cardPlay.selectCardTarget(player.opponentInGame, game.cardPlay.getDeployTargets()[0].target)
 		})
 
-		expect(targetUnit.stats.power).toEqual(10)
-		expect(cardInHand.stats.power).toEqual(12)
-		expect(cardInHand.stats.armor).toEqual(5)
+		expect(targetUnit.stats.power).toEqual(20)
+		expect(cardInHand.stats.power).toEqual(24)
+		expect(cardInHand.stats.armor).toEqual(10)
 	})
 
 	it('intercepts damage and dies without immunity', () => {
@@ -70,7 +70,7 @@ describe('HeroZamarath', () => {
 			game.cardPlay.selectCardTarget(player.opponentInGame, game.cardPlay.getDeployTargets()[0].target)
 		})
 
-		expect(targetUnit.stats.power).toEqual(10)
+		expect(targetUnit.stats.power).toEqual(20)
 		expect(cardInHand.stats.power).toEqual(0)
 		expect(cardInHand.stats.armor).toEqual(0)
 	})

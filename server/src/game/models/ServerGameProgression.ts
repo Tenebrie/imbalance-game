@@ -3,19 +3,18 @@ import { LabyrinthProgressionRunState, LabyrinthProgressionState } from '@shared
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import PlayerDatabase from '@src/database/PlayerDatabase'
 import ServerPlayer from '@src/game/players/ServerPlayer'
-import { getClassFromConstructor, getLabyrinthItemSlots, LabyrinthItemSlot } from '@src/utils/Utils'
-import ItemLabyrinthRustedSword from '@src/game/cards/12-labyrinth/items/t0/ItemLabyrinthRustedSword'
-import ItemLabyrinthTatteredRags from '@src/game/cards/12-labyrinth/items/t0/ItemLabyrinthTatteredRags'
-import ItemLabyrinthOldGloves from '@src/game/cards/12-labyrinth/items/t0/ItemLabyrinthOldGloves'
-import ItemLabyrinthOldBoots from '@src/game/cards/12-labyrinth/items/t0/ItemLabyrinthOldBoots'
-import UnitLabyrinthLostArcher from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostArcher'
-import UnitLabyrinthLostHound from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostHound'
-import UnitLabyrinthLostMage from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostMage'
-import UnitLabyrinthLostRaven from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostRaven'
-import UnitLabyrinthLostRogue from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostRogue'
-import UnitLabyrinthLostShieldbearer from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostShieldbearer'
-import CardLibrary, { CardConstructor } from '@src/game/libraries/CardLibrary'
-import CardTribe from '@shared/enums/CardTribe'
+import { getClassFromConstructor, getLabyrinthItemSlots } from '@src/utils/Utils'
+// import ItemLabyrinthRustedSword from '@src/game/cards/12-labyrinth/items/t0/ItemLabyrinthRustedSword'
+// import ItemLabyrinthTatteredRags from '@src/game/cards/12-labyrinth/items/t0/ItemLabyrinthTatteredRags'
+// import ItemLabyrinthOldGloves from '@src/game/cards/12-labyrinth/items/t0/ItemLabyrinthOldGloves'
+// import ItemLabyrinthOldBoots from '@src/game/cards/12-labyrinth/items/t0/ItemLabyrinthOldBoots'
+// import UnitLabyrinthLostArcher from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostArcher'
+// import UnitLabyrinthLostHound from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostHound'
+// import UnitLabyrinthLostMage from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostMage'
+// import UnitLabyrinthLostRaven from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostRaven'
+// import UnitLabyrinthLostRogue from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostRogue'
+// import UnitLabyrinthLostShieldbearer from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostShieldbearer'
+import CardLibrary from '@src/game/libraries/CardLibrary'
 
 const CURRENT_VERSION = 2
 
@@ -75,46 +74,48 @@ class LabyrinthProgression {
 
 	private static getDefaultRunState(): LabyrinthProgressionRunState {
 		return {
-			cards: [
-				{
-					class: getClassFromConstructor(UnitLabyrinthLostArcher),
-					count: 3,
-				},
-				{
-					class: getClassFromConstructor(UnitLabyrinthLostHound),
-					count: 3,
-				},
-				{
-					class: getClassFromConstructor(UnitLabyrinthLostMage),
-					count: 2,
-				},
-				{
-					class: getClassFromConstructor(UnitLabyrinthLostRaven),
-					count: 2,
-				},
-				{
-					class: getClassFromConstructor(UnitLabyrinthLostRogue),
-					count: 3,
-				},
-				{
-					class: getClassFromConstructor(UnitLabyrinthLostShieldbearer),
-					count: 3,
-				},
-			],
-			items: [
-				{
-					cardClass: getClassFromConstructor(ItemLabyrinthRustedSword),
-				},
-				{
-					cardClass: getClassFromConstructor(ItemLabyrinthTatteredRags),
-				},
-				{
-					cardClass: getClassFromConstructor(ItemLabyrinthOldGloves),
-				},
-				{
-					cardClass: getClassFromConstructor(ItemLabyrinthOldBoots),
-				},
-			],
+			// cards: [
+			// 	{
+			// 		class: getClassFromConstructor(UnitLabyrinthLostArcher),
+			// 		count: 3,
+			// 	},
+			// 	{
+			// 		class: getClassFromConstructor(UnitLabyrinthLostHound),
+			// 		count: 3,
+			// 	},
+			// 	{
+			// 		class: getClassFromConstructor(UnitLabyrinthLostMage),
+			// 		count: 2,
+			// 	},
+			// 	{
+			// 		class: getClassFromConstructor(UnitLabyrinthLostRaven),
+			// 		count: 2,
+			// 	},
+			// 	{
+			// 		class: getClassFromConstructor(UnitLabyrinthLostRogue),
+			// 		count: 3,
+			// 	},
+			// 	{
+			// 		class: getClassFromConstructor(UnitLabyrinthLostShieldbearer),
+			// 		count: 3,
+			// 	},
+			// ],
+			cards: [],
+			// items: [
+			// 	{
+			// 		cardClass: getClassFromConstructor(ItemLabyrinthRustedSword),
+			// 	},
+			// 	{
+			// 		cardClass: getClassFromConstructor(ItemLabyrinthTatteredRags),
+			// 	},
+			// 	{
+			// 		cardClass: getClassFromConstructor(ItemLabyrinthOldGloves),
+			// 	},
+			// 	{
+			// 		cardClass: getClassFromConstructor(ItemLabyrinthOldBoots),
+			// 	},
+			// ],
+			items: [],
 			encounterHistory: [],
 		}
 	}

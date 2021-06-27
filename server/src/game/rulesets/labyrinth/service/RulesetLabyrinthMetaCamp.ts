@@ -10,7 +10,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import Keywords from '@src/utils/Keywords'
 import SpellLabyrinthContinueRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthContinueRun'
 import SpellLabyrinthPreviousRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthPreviousRun'
-import SpellLabyrinthRewardTreasureT1 from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthRewardTreasureT1'
+import SpellLabyrinthRewardTreasureT1 from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardTreasureT1'
 
 export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<never> {
 	constructor() {

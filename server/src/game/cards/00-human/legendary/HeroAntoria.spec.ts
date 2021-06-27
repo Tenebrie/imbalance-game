@@ -29,7 +29,7 @@ describe('HeroAntoria', () => {
 			game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
 		})
 		expect(damageTarget.card.stats.power).toEqual(20)
-		expect(opponentsCard.stats.power).toEqual(29)
+		expect(opponentsCard.stats.power).toEqual(24)
 	})
 
 	describe('when it takes fatal damage', () => {

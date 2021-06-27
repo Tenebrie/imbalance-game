@@ -164,48 +164,48 @@ class InternalCardLibrary {
 }
 
 class CardLibrary {
-	private library: InternalCardLibrary | null = null
+	private library: InternalCardLibrary = new InternalCardLibrary()
+	private libraryLoaded = false
 
 	public ensureLibraryLoaded(): void {
-		if (this.library === null) {
-			this.library = new InternalCardLibrary()
+		if (!this.libraryLoaded) {
+			this.libraryLoaded = true
 			this.library.loadFromFilesystem()
 		}
 	}
 
 	public get cards(): ServerCard[] {
 		this.ensureLibraryLoaded()
-		return this.library!.cards.slice()
+		return this.library.cards.slice()
 	}
 
 	public forceLoadCards(cards: CardConstructor[]): void {
-		this.ensureLibraryLoaded()
-		this.library!.forceLoadCards(cards)
+		this.library.forceLoadCards(cards)
 	}
 
 	public findPrototypeFromClass(cardClass: string): ServerCard {
 		this.ensureLibraryLoaded()
-		return this.library!.findPrototypeByClass(cardClass)
+		return this.library.findPrototypeByClass(cardClass)
 	}
 
 	public findPrototypeFromConstructor(constructor: CardConstructor): ServerCard {
 		this.ensureLibraryLoaded()
-		return this.library!.findPrototypeByConstructor(constructor)
+		return this.library.findPrototypeByConstructor(constructor)
 	}
 
 	public instantiate(game: ServerGame, constructor: CardConstructor): ServerCard {
 		this.ensureLibraryLoaded()
-		return this.library!.instantiate(game, constructor)
+		return this.library.instantiate(game, constructor)
 	}
 
 	public instantiateFromInstance(game: ServerGame, card: ServerCard): ServerCard {
 		this.ensureLibraryLoaded()
-		return this.library!.instantiateFromInstance(game, card)
+		return this.library.instantiateFromInstance(game, card)
 	}
 
 	public instantiateFromClass(game: ServerGame, cardClass: string): ServerCard {
 		this.ensureLibraryLoaded()
-		return this.library!.instantiateFromClass(game, cardClass)
+		return this.library.instantiateFromClass(game, cardClass)
 	}
 }
 

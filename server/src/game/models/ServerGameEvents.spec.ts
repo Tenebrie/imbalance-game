@@ -12,9 +12,9 @@ import TestingSpellTacticalMove from '../cards/11-testing/TestingSpellTacticalMo
 import TestingSpellQuickStrike from '../cards/11-testing/TestingSpellQuickStrike'
 import SpyInstance = jest.SpyInstance
 import TestingUnitTurnEndEffectProbe from '../cards/11-testing/TestingUnitTurnEndEffectProbe'
-import Utils from '../../utils/Utils'
 import TestingUnitTurnEndEffectProbeRight from '../cards/11-testing/TestingUnitTurnEndEffectProbeRight'
 import TargetMode from '../../../../shared/src/enums/TargetMode'
+import { shuffle } from '../../utils/Utils'
 
 describe('ServerGameEvents', () => {
 	let game: ServerGame
@@ -108,9 +108,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes units at the front (for normal board)', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
 				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
@@ -124,9 +122,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes units at the front (for reversed board)', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
 				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
@@ -140,9 +136,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes units of active player', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
 				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
@@ -156,9 +150,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes for active player', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
 				game.board.createUnit(probeCards.shift()!, 0, 0)
@@ -172,9 +164,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes units on the left before units on the right', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
 				game.board.createUnit(probeCards.shift()!, 0, 0)
@@ -188,9 +178,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes Board > Hand > Deck > Graveyard', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(4).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(4).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
 				game.board.createUnit(probeCards.shift()!, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
@@ -294,9 +282,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes top card in deck', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
 				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
@@ -310,9 +296,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes deck units over spells', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
 				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
@@ -327,9 +311,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes top card in graveyard', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
 				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
@@ -343,9 +325,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes graveyard units over spells', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
 				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
@@ -359,7 +339,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('sorts many event callbacks correctly', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(
 					new Array(24).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
 				)
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
