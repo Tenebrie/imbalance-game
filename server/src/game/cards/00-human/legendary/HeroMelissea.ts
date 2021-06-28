@@ -24,7 +24,7 @@ export default class HeroMelissea extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.NOBLE],
-			features: [CardFeature.KEYWORD_DEPLOY],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_HEAL],
 			stats: {
 				power: 22,
 			},

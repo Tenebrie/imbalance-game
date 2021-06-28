@@ -19,7 +19,7 @@ export default class HeroTroviar extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.KEYWORD_DEPLOY],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_HEAL],
 			stats: {
 				power: 50,
 			},

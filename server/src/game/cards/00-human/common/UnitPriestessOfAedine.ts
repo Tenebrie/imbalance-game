@@ -22,7 +22,7 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.NOBLE],
-			features: [CardFeature.KEYWORD_DEPLOY],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_HEAL],
 			stats: {
 				power: 15,
 			},

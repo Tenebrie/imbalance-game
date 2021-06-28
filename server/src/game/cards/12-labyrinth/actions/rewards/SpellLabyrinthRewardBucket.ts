@@ -2,7 +2,7 @@ import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import ServerCard from '../../../../models/ServerCard'
+import ServerCard, { ServerCardProps } from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 import GameEventType from '@shared/enums/GameEventType'
 import { AnyCardLocation, shuffle } from '@src/utils/Utils'
@@ -10,6 +10,7 @@ import CardLibrary from '@src/game/libraries/CardLibrary'
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
 import { sortCards } from '@shared/Utils'
+import CardFeature from '@shared/enums/CardFeature'
 
 const isCardVisibleInLabyrinth = (card: ServerCard): boolean => {
 	return (
@@ -23,8 +24,9 @@ const isCardVisibleInLabyrinth = (card: ServerCard): boolean => {
 abstract class BaseSpellLabyrinthRewardBucket extends ServerCard {
 	cardsToChooseFrom: ServerCard[] = []
 
-	protected constructor(game: ServerGame) {
+	protected constructor(game: ServerGame, props: Partial<ServerCardProps> = {}) {
 		super(game, {
+			...props,
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
@@ -115,7 +117,7 @@ export class SpellLabyrinthRewardBucketArmored extends BaseSpellLabyrinthRewardB
 export class SpellLabyrinthRewardBucketMerfolk extends BaseSpellLabyrinthRewardBucket {
 	constructor(game: ServerGame) {
 		super(game)
-		this.addRelatedCards().requireTribe(CardTribe.MERFOLK)
+		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireTribe(CardTribe.MERFOLK)
 	}
 
 	public readonly rewardsOffered = 5
@@ -127,7 +129,7 @@ export class SpellLabyrinthRewardBucketMerfolk extends BaseSpellLabyrinthRewardB
 export class SpellLabyrinthRewardBucketBirds extends BaseSpellLabyrinthRewardBucket {
 	constructor(game: ServerGame) {
 		super(game)
-		this.addRelatedCards().requireTribe(CardTribe.BIRD)
+		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireTribe(CardTribe.BIRD)
 	}
 
 	public readonly rewardsOffered = 5
@@ -139,7 +141,7 @@ export class SpellLabyrinthRewardBucketBirds extends BaseSpellLabyrinthRewardBuc
 export class SpellLabyrinthRewardBucketPeasants extends BaseSpellLabyrinthRewardBucket {
 	constructor(game: ServerGame) {
 		super(game)
-		this.addRelatedCards().requireTribe(CardTribe.PEASANT)
+		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireTribe(CardTribe.PEASANT)
 	}
 
 	public readonly rewardsOffered = 5
@@ -151,7 +153,7 @@ export class SpellLabyrinthRewardBucketPeasants extends BaseSpellLabyrinthReward
 export class SpellLabyrinthRewardBucketNobles extends BaseSpellLabyrinthRewardBucket {
 	constructor(game: ServerGame) {
 		super(game)
-		this.addRelatedCards().requireTribe(CardTribe.NOBLE)
+		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireTribe(CardTribe.NOBLE)
 	}
 
 	public readonly rewardsOffered = 5
@@ -163,7 +165,7 @@ export class SpellLabyrinthRewardBucketNobles extends BaseSpellLabyrinthRewardBu
 export class SpellLabyrinthRewardBucketForest extends BaseSpellLabyrinthRewardBucket {
 	constructor(game: ServerGame) {
 		super(game)
-		this.addRelatedCards().requireAnyTribe([CardTribe.BEAST, CardTribe.DRYAD])
+		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireAnyTribe([CardTribe.BEAST, CardTribe.DRYAD])
 	}
 
 	public readonly rewardsOffered = 5
@@ -175,12 +177,26 @@ export class SpellLabyrinthRewardBucketForest extends BaseSpellLabyrinthRewardBu
 export class SpellLabyrinthRewardBucketLost extends BaseSpellLabyrinthRewardBucket {
 	constructor(game: ServerGame) {
 		super(game)
-		this.addRelatedCards().requireTribe(CardTribe.LOST)
+		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireTribe(CardTribe.LOST)
 	}
 
 	public readonly rewardsOffered = 6
 	protected isCardValidReward(card: ServerCard): boolean {
 		return card.tribes.includes(CardTribe.LOST)
+	}
+}
+
+export class SpellLabyrinthRewardBucketHeals extends BaseSpellLabyrinthRewardBucket {
+	constructor(game: ServerGame) {
+		super(game, {
+			features: [CardFeature.KEYWORD_HEAL],
+		})
+		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireFeature(CardFeature.KEYWORD_HEAL)
+	}
+
+	public readonly rewardsOffered = 3
+	protected isCardValidReward(card: ServerCard): boolean {
+		return card.features.includes(CardFeature.KEYWORD_HEAL)
 	}
 }
 

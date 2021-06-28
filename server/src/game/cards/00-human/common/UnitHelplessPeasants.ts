@@ -11,6 +11,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffStrength from '../../../buffs/BuffStrength'
 import BuffProtector from '@src/game/buffs/BuffProtector'
 import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
+
 /* Original design and implementation by Nenl */
 export default class UnitHelplessPeasants extends ServerCard {
 	selfBuff = asRecurringBuffPotency(1)

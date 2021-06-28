@@ -20,7 +20,7 @@ export default class UnitFieldHospital extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.BUILDING],
-			features: [CardFeature.NIGHTWATCH],
+			features: [CardFeature.NIGHTWATCH, CardFeature.KEYWORD_HEAL],
 			stats: {
 				power: 0,
 				armor: 12,

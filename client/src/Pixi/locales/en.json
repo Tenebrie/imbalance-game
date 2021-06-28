@@ -178,6 +178,8 @@
 	"card.feature.keywordDeploy.description": "Trigger an effect after this unit is played.",
 	"card.feature.keywordTurnStart.name": "Turn start",
 	"card.feature.keywordTurnStart.description": "Trigger an effect at the start of your turn.",
+	"card.feature.keywordHeal.name": "Heal X",
+	"card.feature.keywordHeal.description": "Restore X Power, but not higher than max Power.",
 	"card.feature.keywordEnrage.name": "Enrage",
 	"card.feature.keywordEnrage.description": "Trigger an effect after this card takes damage as a unit.",
 	"card.feature.keywordInfuseX.name": "Infuse X",
@@ -215,7 +217,7 @@
 	"card.feature.keywordBuffRowBloodMoon.name": "Blood Moon (Row effect)",
 	"card.feature.keywordBuffRowBloodMoon.description": "At the end of the turn, give 3 random Beasts, Birds or Merfolks +1 Power.",
 	"card.feature.keywordBuffRowHealingRain.name": "Healing Rain (Row effect)",
-	"card.feature.keywordBuffRowHealingRain.description": "At the end of the turn, restore 3 Power to 3 weakest allies.",
+	"card.feature.keywordBuffRowHealingRain.description": "At the end of the turn, Heal 3 on 3 weakest allies.",
 	"card.feature.building.name": "Building",
 	"card.feature.building.description": "Always has 0 Power and permanent Nightwatch.",
 	"card.feature.building.text": "*Building*",
@@ -507,7 +509,7 @@
 
 	"card.unitPriestessOfAedine.name": "Priestess of Aedine",
 	"card.unitPriestessOfAedine.description": "*Deploy:*\n*Heal* {healing} an allied unit.",
-	"card.unitPriestessOfAedine.heal.target": "Restore {healing} Power",
+	"card.unitPriestessOfAedine.heal.target": "*Heal* {healing}",
 
 	"card.unitSupplyWagon.name": "Supply Wagon",
 	"card.unitSupplyWagon.description": "*Deploy:*\nGive +{extraPower} Power to adjacent units\nThen, *Push* them {pushDistance} row forward",
@@ -623,9 +625,6 @@
 	"card.spellEnchantedStorm.name": "Enchanted Storm",
 	"card.spellEnchantedStorm.description": "<ifn isUpgraded>Give +{buffPower} Power to {targetCount} allied units.</if><if isUpgraded>Give +{buffPower} Power to an allied unit. Repeat this {targetCount} times.</if><p><i>Bonus Power increases by {powerPerStorm} for every *Storm* card in your Graveyard.</i>",
 	"card.spellEnchantedStorm.target": "Give +{buffPower} Power\nTargets remaining: {targetsRemaining}",
-
-	"card.spellHealingRain.name": "Healing Rain",
-	"card.spellHealingRain.description": "Restore {healing} Power to all allied units.<p><i>Healing increases by {healingPerStorm} for every *Storm* card in your Graveyard.</i>",
 
 	"card.spellScrollOfLightning.name": "Scroll of Lightning",
 	"card.spellScrollOfLightning.description": "Deal {damage} Damage to an enemy unit.",
@@ -743,7 +742,7 @@
 	"card.spellQuickStrike.description": "Deal {damage} Damage to an enemy unit.",
 
 	"card.spellTacticalMove.name": "Tactical Move",
-	"card.spellTacticalMove.description": "*Move 1* an allied unit.<p>If it moved to the front row,\ndeal {damage} Damage to opposing enemy units.\nOtherwise, restore {healing} Power.",
+	"card.spellTacticalMove.description": "*Move 1* an allied unit.<p>If it moved to the front row,\ndeal {damage} Damage to opposing enemy units.\nOtherwise, *Heal* {healing}.",
 	"card.spellTacticalMove.target.label.unit": "Choose a unit",
 	"card.spellTacticalMove.target.label.row": "Move here",
 
@@ -821,7 +820,7 @@
 	"card.unitCleansingFlame.description": "*Deploy:*\n *Dispel* {dispelPower} from another unit.",
 
 	"card.unitFieldHospital.name": "Field Hospital",
-	"card.unitFieldHospital.description": "*Turn end:*\nRestore {healing} Power to adjacent units.",
+	"card.unitFieldHospital.description": "*Turn end:*\n*Heal* {healing} adjacent units.",
 
 	"card.unitUrbanAmbusher.name": "Urban Ambusher",
 	"card.unitUrbanAmbusher.description": "Has +{bonusPower} Power for every Building on the same row.",
@@ -862,7 +861,7 @@
 	"card.spellRustedAxe.description": "Deal {damage} Damage to an enemy unit.<p>This card costs *1* more this round.",
 
 	"card.spellRustedChalice.name": "Rusted Chalice",
-	"card.spellRustedChalice.description": "Restore {healPower} Power to an allied unit.<p>This card costs *1* more this round.",
+	"card.spellRustedChalice.description": "*Heal* {healPower} an allied unit.<p>This card costs *1* more this round.",
 
 	"card.spellRustedWagon.name": "Rusted Wagon",
 	"card.spellRustedWagon.description": "*Move* {moveDistance} an allied unit.<p>This card costs *1* more this round.",
@@ -1037,6 +1036,9 @@
 
 	"card.spellLabyrinthRewardBucketLost.name": "Lost Cards",
 	"card.spellLabyrinthRewardBucketLost.description": "Cards from the Lost tribe.<p><i>Cards offered: {rewardsOffered}.</i>",
+
+	"card.spellLabyrinthRewardBucketHeals.name": "Healing Cards",
+	"card.spellLabyrinthRewardBucketHeals.description": "Cards with *Heal* keyword.<p><i>Cards offered: {rewardsOffered}.</i>",
 
 	"card.spellLabyrinthRewardBucketRandom.name": "Random Cards",
 	"card.spellLabyrinthRewardBucketRandom.description": "Completely random set of cards.<p><i>Cards offered: {rewardsOffered}.</i>",

@@ -17,7 +17,7 @@ export default class UnitMerfolkSkygazer extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.MERFOLK],
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_ROW_HEALING_RAIN],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_ROW_HEALING_RAIN, CardFeature.KEYWORD_HEAL],
 			stats: {
 				power: 14,
 			},
