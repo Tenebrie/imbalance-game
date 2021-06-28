@@ -13,7 +13,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import BuffRowBurning from '@src/game/buffs/BuffRowBurning'
 
 export default class ItemLabyrinthDragonsteelSword extends ServerCard {
-	baseDamage = asDirectSpellDamage(3)
+	baseDamage = asDirectSpellDamage(5)
 
 	constructor(game: ServerGame) {
 		super(game, {

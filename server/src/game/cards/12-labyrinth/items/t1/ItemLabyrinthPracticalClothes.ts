@@ -13,7 +13,7 @@ import CardTribe from '@shared/enums/CardTribe'
 
 export default class ItemLabyrinthPracticalClothes extends ServerCard {
 	public static readonly BONUS_POWER = 10
-	public static readonly BONUS_REGEN = 3
+	public static readonly BONUS_REGEN = 5
 
 	constructor(game: ServerGame) {
 		super(game, {

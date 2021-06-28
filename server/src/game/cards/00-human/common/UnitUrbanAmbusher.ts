@@ -7,7 +7,6 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
-import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitUrbanAmbusher extends ServerCard {
@@ -32,7 +31,6 @@ export default class UnitUrbanAmbusher extends ServerCard {
 		this.createSelector()
 			.require(() => this.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
-			.requireTarget(({ target }) => target.features.includes(CardFeature.BUILDING))
 			.requireTarget(({ target }) => target.unit!.rowIndex === this.unit!.rowIndex)
 			.provideSelf(BuffStrength, this.bonusPower)
 	}

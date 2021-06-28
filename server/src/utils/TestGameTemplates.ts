@@ -112,7 +112,7 @@ export default {
 		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVE, category: RulesetCategory.PVE }).__build()
 		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
 		const { playerOne, playerTwo } = getPlayers()
-		CardLibrary.forceLoadCards([TestingLeader])
+		CardLibrary.forceLoadCards([TestingLeader, card])
 		const template = ServerEditorDeck.fromConstructors([TestingLeader])
 		game.addPlayer(playerOne, template)
 		game.addPlayer(playerTwo, template)
@@ -184,6 +184,34 @@ export default {
 				card: opponentsCardInHand,
 				owner: player.opponentInGame,
 			},
+			playerAction: playerAction(game),
+			startNextTurn: startNextTurn(game),
+			startNextRound: startNextRound(game),
+		}
+	},
+
+	leaderTest(playerLeader: CardConstructor, opponentLeader: CardConstructor, props?: OptionalGameProps): CommonTemplateResult {
+		silenceLogging()
+		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVE, category: RulesetCategory.PVE }).__build()
+		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false, ...props })
+		const { playerOne, playerTwo } = getPlayers()
+		CardLibrary.forceLoadCards([playerLeader, opponentLeader])
+		const playerTemplate = ServerEditorDeck.fromConstructors([playerLeader])
+		const opponentTemplate = ServerEditorDeck.fromConstructors([opponentLeader])
+		game.addPlayer(playerOne, playerTemplate)
+		game.addPlayer(playerTwo, opponentTemplate)
+
+		game.start()
+		game.players[0].startRound()
+		game.players[1].startRound()
+		game.advanceCurrentTurn()
+
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+
+		return {
+			game,
+			player: game.players[1],
 			playerAction: playerAction(game),
 			startNextTurn: startNextTurn(game),
 			startNextRound: startNextRound(game),

@@ -18,6 +18,7 @@ export default class UnitLabyrinthLostMage extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.LOST],
 			relatedCards: [SpellLabyrinthMagicArrow],
 			stats: {
 				power: 4,

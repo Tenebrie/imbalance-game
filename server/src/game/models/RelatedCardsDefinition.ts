@@ -37,6 +37,11 @@ export default class RelatedCardsDefinition {
 		return this
 	}
 
+	requireAnyTribe(tribes: CardTribe[]): RelatedCardsDefinition {
+		this.__conditions.push((card) => card.tribes.some((tribe) => tribes.includes(tribe)))
+		return this
+	}
+
 	requireColor(color: CardColor): RelatedCardsDefinition {
 		this.__conditions.push((card) => card.color === color)
 		return this

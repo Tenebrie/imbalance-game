@@ -24,6 +24,7 @@ enum CardTribe {
 	GLOVES = 'gloves',
 	BOOTS = 'boots',
 	TREASURE = 'treasure',
+	LABYRINTH_BUCKET = 'labyrinth_bucket',
 }
 
 export default CardTribe

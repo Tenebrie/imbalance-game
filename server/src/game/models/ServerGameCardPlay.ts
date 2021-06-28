@@ -82,6 +82,13 @@ export default class ServerGameCardPlay {
 		const targetMode = ownedCard.card.type === CardType.UNIT ? TargetMode.CARD_PLAY : TargetMode.DEPLOY_EFFECT
 		this.cardResolveStack.startResolvingImmediately(ownedCard, targetMode, () => this.updateResolvingCardTargetingStatus())
 
+		this.game.events.postEvent(
+			GameEventCreators.cardPlayed({
+				game: this.game,
+				owner: ownedCard.owner,
+				triggeringCard: ownedCard.card,
+			})
+		)
 		if (ownedCard.card.type === CardType.UNIT && ownedCard.card.unit) {
 			/* Invoke the card Deploy effect */
 			this.game.events.postEvent(

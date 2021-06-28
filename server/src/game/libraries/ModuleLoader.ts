@@ -26,7 +26,6 @@ type ReturnValue<T> = {
 export function loadModules<T extends { name: string }>(props: Props): ReturnValue<T> {
 	const normalizedPath = path.join(__dirname, props.path)
 	const rulesetDefinitionFiles = glob.sync(`${normalizedPath}/**/*.js`)
-	rulesetDefinitionFiles.forEach((file) => console.log(file))
 
 	const cardModules: Module<T>[] = rulesetDefinitionFiles
 		.map((path) => ({

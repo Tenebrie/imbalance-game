@@ -35,7 +35,6 @@ export default class UnitMakeshiftShelter extends ServerCard {
 
 		this.createDeployTargets(TargetType.UNIT)
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE || targetCard.color === CardColor.SILVER)
-			.require(({ targetCard }) => !targetCard.features.includes(CardFeature.BUILDING))
 			.requireAllied()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => {

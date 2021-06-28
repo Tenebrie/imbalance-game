@@ -18,7 +18,7 @@ export default class RulesetLabyrinthDummies extends RulesetLabyrinthBase {
 
 		this.createBoard().opponent([
 			[UnitChallengeDummyVanillaWarrior],
-			[UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior],
+			[UnitChallengeDummyVanillaWarrior],
 			[UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior],
 		])
 

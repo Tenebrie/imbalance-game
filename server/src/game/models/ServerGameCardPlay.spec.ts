@@ -7,6 +7,7 @@ import Constants from '@shared/Constants'
 import CardLibrary from '../libraries/CardLibrary'
 import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
 import SpyInstance = jest.SpyInstance
+import TestingSpellCastsAnotherSpell from '../cards/11-testing/TestingSpellCastsAnotherSpell'
 
 describe('ServerGameCardPlay', () => {
 	let game: ServerGame
@@ -15,6 +16,27 @@ describe('ServerGameCardPlay', () => {
 	beforeEach(() => {
 		game = TestGameTemplates.emptyDecks()
 		eventSpy = jest.spyOn(game.events, 'postEvent')
+	})
+
+	describe('when card deploy target choice effect plays a card', () => {
+		let ownedCard: ServerOwnedCard
+
+		beforeEach(() => {
+			;({ game, ownedCard } = TestGameTemplates.singleCardTest(TestingSpellCastsAnotherSpell))
+		})
+
+		it('waits for target', () => {
+			game.cardPlay.playCardAsPlayerAction(ownedCard, 0, 0)
+			expect(game.cardPlay.cardResolveStack.currentEntry).toBeDefined()
+			expect(game.cardPlay.cardResolveStack.cards.length).toEqual(1)
+		})
+
+		it('when target selected, adds another copy to stack', () => {
+			game.cardPlay.playCardAsPlayerAction(ownedCard, 0, 0)
+			game.cardPlay.selectCardTarget(game.players[0], game.cardPlay.getDeployTargets()[0].target)
+			expect(game.cardPlay.cardResolveStack.currentEntry).toBeDefined()
+			expect(game.cardPlay.cardResolveStack.cards.length).toEqual(2)
+		})
 	})
 
 	describe('when a player plays a unit card', () => {

@@ -75,9 +75,6 @@ export default class ServerCardStats implements CardStats {
 	}
 
 	public get maxPower(): number {
-		if (this.card.features.includes(CardFeature.BUILDING)) {
-			return 0
-		}
 		return this.card.buffs.buffs.reduce((value: number, buff: ServerBuff) => buff.getMaxPowerOverride(value), this.basePower)
 	}
 

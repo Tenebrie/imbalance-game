@@ -12,7 +12,7 @@ import Keywords from '@src/utils/Keywords'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class ItemLabyrinthSimpleDress extends ServerCard {
-	public static readonly BONUS_REGEN = 3
+	public static readonly BONUS_REGEN = 5
 	public static readonly BONUS_UNIT_POWER = 1
 
 	constructor(game: ServerGame) {

@@ -13,13 +13,13 @@ import { sortCards } from '@shared/Utils'
 export default {
 	onPlayerConnected(game: ServerGame, playerInGame: ServerPlayerInGame): void {
 		if (!game.isStarted) {
-			this.onPlayerConnectedInitially(game, playerInGame)
+			this.onPlayerConnectedInitially(game)
 		} else {
 			this.onPlayerReconnected(game, playerInGame)
 		}
 	},
 
-	onPlayerConnectedInitially(game: ServerGame, playerInGame: ServerPlayerInGame): void {
+	onPlayerConnectedInitially(game: ServerGame): void {
 		const initializedPlayers = game.players.filter((playerInGame) => playerInGame.initialized)
 		if (initializedPlayers.length < Constants.PLAYERS_PER_GAME) {
 			return

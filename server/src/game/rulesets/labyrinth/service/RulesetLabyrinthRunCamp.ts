@@ -8,15 +8,13 @@ import SpellLabyrinthNextEncounter from '@src/game/cards/12-labyrinth/actions/Sp
 import RulesetLabyrinthDummies from '@src/game/rulesets/labyrinth/RulesetLabyrinthDummies'
 import GameEventType from '@shared/enums/GameEventType'
 import Keywords from '@src/utils/Keywords'
-import SpellLabyrinthContinueRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthContinueRun'
-import SpellLabyrinthPreviousRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthPreviousRun'
-import SpellLabyrinthRewardTreasureT1 from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardTreasureT1'
-import SpellLabyrinthRewardCommonCard from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardCommonCard'
-import SpellLabyrinthRewardTreasureT2 from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardTreasureT2'
-import SpellLabyrinthRewardEpicCard from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardEpicCard'
-import SpellLabyrinthRewardTreasureT3 from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardTreasureT3'
-import SpellLabyrinthRewardLegendaryCard from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardLegendaryCard'
 import ServerGame from '@src/game/models/ServerGame'
+import SpellLabyrinthRewardCard from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardCard'
+import {
+	SpellLabyrinthRewardTreasureT1,
+	SpellLabyrinthRewardTreasureT2,
+	SpellLabyrinthRewardTreasureT3,
+} from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardTreasure'
 
 export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never> {
 	constructor() {
@@ -31,7 +29,9 @@ export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never>
 			STARTING_PLAYER_MORALE: 1,
 		})
 
-		this.createChain().setFixedLink(RulesetLabyrinthDummies)
+		this.createChain()
+			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanPlayer())
+			.setFixedLink(RulesetLabyrinthDummies)
 		this.createDeck().fixed([LeaderLabyrinthPlayer, SpellLabyrinthNextEncounter])
 		this.createAI([LeaderLabyrinthOpponent]).behave(AIBehaviour.PASSIVE)
 
@@ -40,7 +40,12 @@ export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never>
 			.perform(({ game }) => game.finish(game.getHumanPlayer(), 'Continue to next encounter', true))
 
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
-			if (game.progression.labyrinth.state.run.encounterHistory.length === 1) {
+			if (game.progression.labyrinth.state.run.encounterHistory.length === 0 && game.progression.labyrinth.state.meta.runCount === 0) {
+				// No reward in the beginning
+			} else if (game.progression.labyrinth.state.run.encounterHistory.length === 0 && game.progression.labyrinth.state.meta.runCount > 0) {
+				addCardReward(game, 1)
+				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardTreasureT1)
+			} else if (game.progression.labyrinth.state.run.encounterHistory.length === 1) {
 				addCardReward(game, 3)
 				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardTreasureT1)
 			} else if (game.progression.labyrinth.state.run.encounterHistory.length === 2) {
@@ -58,14 +63,7 @@ export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never>
 
 		const addCardReward = (game: ServerGame, count: number): void => {
 			for (let i = 0; i < count; i++) {
-				const roll = Math.random()
-				if (roll <= 0.5) {
-					Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardCommonCard)
-				} else if (roll <= 0.8) {
-					Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardEpicCard)
-				} else {
-					Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardLegendaryCard)
-				}
+				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardCard)
 			}
 		}
 	}

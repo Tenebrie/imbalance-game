@@ -133,6 +133,17 @@ export default {
 		return await Database.updateRows(query)
 	},
 
+	async pruneOldestRecords(): Promise<boolean> {
+		const query = `
+			DELETE FROM game_history WHERE id = ANY(
+				ARRAY(
+					SELECT id FROM game_history ORDER BY "startedAt" DESC OFFSET 1000
+					)
+				)
+		`
+		return await Database.deleteRows(query)
+	},
+
 	async logGameError(game: ServerGame, error: Error): Promise<boolean> {
 		const query = `INSERT INTO error_in_game_history ("gameId", message, stack) VALUES($1, $2, $3);`
 		return await Database.insertRow(query, [game.id, error.message, JSON.stringify(error.stack)])

@@ -8,11 +8,14 @@ import GameEventType from '@shared/enums/GameEventType'
 import { AnyCardLocation, shuffle } from '@src/utils/Utils'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import TargetType from '@shared/enums/TargetType'
+import CardTribe from '@shared/enums/CardTribe'
+import Keywords from '@src/utils/Keywords'
+import { sortCards } from '@shared/Utils'
 
-export default class SpellLabyrinthRewardCommonCard extends ServerCard {
-	public static readonly REWARDS_OFFERED = 4
+export default class SpellLabyrinthRewardCard extends ServerCard {
+	public static readonly REWARDS_OFFERED = 50
 
-	cardsChosen: ServerCard[] = []
+	cardsToChooseFrom: ServerCard[] = []
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -30,15 +33,15 @@ export default class SpellLabyrinthRewardCommonCard extends ServerCard {
 			.perform(() => chooseRewards())
 
 		const chooseRewards = () => {
-			this.cardsChosen = shuffle(
-				CardLibrary.cards.filter((card) => card.color === CardColor.BRONZE).filter((card) => card.isCollectible)
-			).slice(0, SpellLabyrinthRewardCommonCard.REWARDS_OFFERED)
+			const validCards = CardLibrary.cards.filter((card) => card.tribes.includes(CardTribe.LABYRINTH_BUCKET))
+			this.cardsToChooseFrom = sortCards(shuffle(validCards).slice(0, SpellLabyrinthRewardCard.REWARDS_OFFERED))
 		}
 
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
-			.require(({ targetCard }) => this.cardsChosen.includes(targetCard))
+			.require(({ targetCard }) => this.cardsToChooseFrom.includes(targetCard))
+			.preventSorting()
 			.perform(({ targetCard }) => {
-				this.game.progression.labyrinth.addCardToDeck(targetCard.class, 3)
+				Keywords.createCard.forOwnerOf(this).fromInstance(targetCard)
 			})
 	}
 }

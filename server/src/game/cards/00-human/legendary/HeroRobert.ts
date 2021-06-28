@@ -26,7 +26,7 @@ export default class HeroRobert extends ServerCard {
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.requireAllied()
-			.require(({ targetCard }) => targetCard.features.includes(CardFeature.BUILDING))
+			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.BUILDING))
 			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 

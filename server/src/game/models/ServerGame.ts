@@ -30,6 +30,7 @@ import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import ServerGameProgression from '@src/game/models/ServerGameProgression'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import RulesetCategory from '@shared/enums/RulesetCategory'
 
 interface ServerGameProps extends OptionalGameProps {
 	ruleset: ServerRulesetTemplate
@@ -429,7 +430,6 @@ export default class ServerGame implements Game {
 
 		this.board
 			.getAllUnits()
-			.filter((unit) => !unit.card.features.includes(CardFeature.BUILDING))
 			.filter((unit) => !unit.card.features.includes(CardFeature.NIGHTWATCH))
 			.forEach((unit) => {
 				this.animation.thread(() => {

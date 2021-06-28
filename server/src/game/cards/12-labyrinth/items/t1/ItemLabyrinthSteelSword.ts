@@ -12,7 +12,7 @@ import ServerDamageInstance from '@src/game/models/ServerDamageSource'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class ItemLabyrinthSteelSword extends ServerCard {
-	baseDamage = asDirectSpellDamage(2)
+	baseDamage = asDirectSpellDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {

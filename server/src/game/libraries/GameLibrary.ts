@@ -21,7 +21,7 @@ class GameLibrary {
 	}
 
 	public createChainGame(fromGame: ServerGame, chain: RulesetChain): ServerGame {
-		const newGame = ServerGame.newOwnedInstance(fromGame.getHumanPlayer().player, chain.get(), {})
+		const newGame = ServerGame.newOwnedInstance(fromGame.getHumanPlayer().player, chain.get(fromGame), {})
 		this.games.push(newGame)
 		fromGame.players.filter((player) => player.isBot).forEach((player) => newGame.addPlayer(player.player, player.startingDeck))
 		return newGame

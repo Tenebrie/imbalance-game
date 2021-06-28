@@ -14,6 +14,7 @@ import Database from './database/Database'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
 import CardLibrary from '@src/game/libraries/CardLibrary'
+import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 
 const app = express()
 expressWs(app)
@@ -127,5 +128,10 @@ cardImageGenerator.generatePlaceholderImages()
 
 CardLibrary.ensureLibraryLoaded()
 RulesetLibrary.ensureLibraryLoaded()
+
+/* Clear our old DB data every hour */
+setInterval(async () => {
+	await GameHistoryDatabase.pruneOldestRecords()
+}, 60 * 60 * 1000)
 
 app.listen(process.env.PORT || 3000)
