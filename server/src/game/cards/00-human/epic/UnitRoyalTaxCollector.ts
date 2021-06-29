@@ -32,16 +32,16 @@ export default class UnitRoyalTaxCollector extends ServerCard {
 			debuffPotency: UnitRoyalTaxCollector.DEBUFF_POTENCY,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
 			const alliedNobles = game.board
-				.getUnitsOwnedByPlayer(this.owner)
+				.getUnitsOwnedByGroup(owner.group)
 				.filter((unit) => unit.card.stats.power >= UnitRoyalTaxCollector.DEBUFF_POTENCY)
 				.filter((unit) => unit.card !== this)
 				.filter((unit) => unit.card.tribes.includes(CardTribe.NOBLE))
 			alliedNobles.forEach((noble) => {
 				game.animation.thread(() => {
 					noble.buffs.addMultiple(BuffWeakness, UnitRoyalTaxCollector.DEBUFF_POTENCY, this)
-					Keywords.addCardToHand.forOwnerOf(this).fromConstructor(SpellGoldTithe)
+					Keywords.addCardToHand.for(owner).fromConstructor(SpellGoldTithe)
 				})
 			})
 			game.animation.syncAnimationThreads()

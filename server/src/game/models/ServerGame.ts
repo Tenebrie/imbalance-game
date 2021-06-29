@@ -1,13 +1,11 @@
-import Game from '@shared/models/Game'
+import { SourceGame } from '@shared/models/Game'
 import ServerBoard from './ServerBoard'
 import ServerPlayer from '../players/ServerPlayer'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
+import ServerPlayerInGame, { ServerBotPlayerInGame } from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameLibrary from '../libraries/GameLibrary'
-import ServerDamageInstance from './ServerDamageSource'
 import ServerBotPlayer from '../AI/ServerBotPlayer'
-import ServerBotPlayerInGame from '../AI/ServerBotPlayerInGame'
 import ServerCard from './ServerCard'
 import ServerGameCardPlay from './ServerGameCardPlay'
 import ServerGameAnimation from './ServerGameAnimation'
@@ -30,7 +28,8 @@ import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import ServerGameProgression from '@src/game/models/ServerGameProgression'
 import LeaderStatType from '@shared/enums/LeaderStatType'
-import RulesetCategory from '@shared/enums/RulesetCategory'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import ServerGroupOwnedCard from '@src/game/models/ServerGroupOwnedCard'
 
 interface ServerGameProps extends OptionalGameProps {
 	ruleset: ServerRulesetTemplate
@@ -43,17 +42,17 @@ export interface OptionalGameProps {
 	playerMoveOrderReversed?: boolean
 }
 
-export default class ServerGame implements Game {
+export default class ServerGame implements SourceGame {
 	public readonly id: string
 	public readonly name: string
 	public readonly owner: ServerPlayer | undefined
-	public players: ServerPlayerInGame[]
+	public players: ServerPlayerGroup[]
 	public isStarted!: boolean
 	public turnIndex!: number
 	public turnPhase!: GameTurnPhase
 	public roundIndex!: number
-	public playersToMove!: ServerPlayerInGame[]
-	public lastRoundWonBy!: ServerPlayerInGame | null
+	public playersToMove!: ServerPlayerGroup[]
+	public lastRoundWonBy!: ServerPlayerGroup | null
 	public playerMoveOrderReversed!: boolean
 	public index!: ServerGameIndex
 	public board!: ServerBoard
@@ -89,6 +88,10 @@ export default class ServerGame implements Game {
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
 		this.progression = new ServerGameProgression(this)
+		this.ruleset.slots.groups.forEach((groupDefinition) => {
+			const group = new ServerPlayerGroup(this, groupDefinition)
+			this.players.push(group)
+		})
 
 		if (props.playerMoveOrderReversed !== undefined) {
 			this.playerMoveOrderReversed = props.playerMoveOrderReversed
@@ -108,20 +111,24 @@ export default class ServerGame implements Game {
 			.perform(({ triggeringPlayer, targetCard }) => this.mulliganCard(triggeringPlayer, targetCard))
 
 		this.events.createCallback<GameSetupEventArgs>(null, GameEventType.POST_GAME_SETUP).perform(() => {
-			this.players.forEach((player) => OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, player))
+			this.players.forEach((group) => OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, group.players))
 		})
 		this.events.createCallback<GameSetupEventArgs>(null, GameEventType.POST_ROUND_STARTED).perform(() => {
-			this.players.forEach((player) => OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, player))
+			this.players.forEach((group) => OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, group.players))
 			this.events.evaluateSelectors()
 		})
 	}
 
-	public get activePlayer(): ServerPlayerInGame | null {
+	public get activePlayer(): ServerPlayerGroup | null {
 		return this.players.find((player) => !player.turnEnded && !player.roundEnded) || null
 	}
 
 	public get spectators(): ServerPlayerSpectator[] {
-		return this.players.map((playerInGame) => playerInGame.player.spectators).flat()
+		return this.players.flatMap((playerGroup) => playerGroup.players).flatMap((playerInGame) => playerInGame.player.spectators)
+	}
+
+	public get allPlayers(): ServerPlayerInGame[] {
+		return this.players.flatMap((playerGroup) => playerGroup.players)
 	}
 
 	private static generateName(owner?: ServerPlayer): string {
@@ -129,59 +136,65 @@ export default class ServerGame implements Game {
 		return owner ? owner.username + `'s game #${randomNumber}` : `Game #${randomNumber}`
 	}
 
-	public addPlayer(targetPlayer: ServerPlayer, selectedDeck: ServerEditorDeck): ServerPlayerInGame {
-		let serverPlayerInGame: ServerPlayerInGame
+	public addPlayer(targetPlayer: ServerPlayer, targetGroup: ServerPlayerGroup, selectedDeck: ServerEditorDeck): ServerPlayerInGame {
+		let playerInGame: ServerPlayerInGame
 		if (targetPlayer instanceof ServerBotPlayer) {
-			const bot = new ServerBotPlayerInGame(this, targetPlayer, selectedDeck)
-			if (this.ruleset.ai) {
-				bot.setBehaviour(this.ruleset.ai.behaviour)
-			}
-			serverPlayerInGame = bot
+			playerInGame = this.addBotPlayer(targetPlayer, targetGroup, selectedDeck)
 		} else {
-			let actualDeck = selectedDeck
-			if (this.ruleset.deck) {
-				actualDeck = this.ruleset.deck.fixedDeck!
-			}
-			serverPlayerInGame = new ServerPlayerInGame(this, {
-				player: targetPlayer,
-				actualDeck: actualDeck,
-				selectedDeck: selectedDeck,
-			})
+			playerInGame = this.addHumanPlayer(targetPlayer, targetGroup, selectedDeck)
 		}
 
-		this.players.forEach((playerInGame: ServerPlayerInGame) => {
-			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, serverPlayerInGame)
+		return playerInGame
+	}
+
+	private addHumanPlayer(targetPlayer: ServerPlayer, targetGroup: ServerPlayerGroup, selectedDeck: ServerEditorDeck): ServerPlayerInGame {
+		let actualDeck = selectedDeck
+		if (this.ruleset.deck) {
+			actualDeck = this.ruleset.deck.fixedDeck!
+		}
+		const player = new ServerPlayerInGame(this, {
+			player: targetPlayer,
+			actualDeck: actualDeck,
+			selectedDeck: selectedDeck,
 		})
-
-		if (this.isBotGame()) {
-			this.players.splice(0, 0, serverPlayerInGame)
-		} else {
-			this.players.push(serverPlayerInGame)
+		if (targetGroup.openHumanSlots <= 0) {
+			throw new Error('Unable to add human player: No slots available!')
 		}
-		return serverPlayerInGame
+		targetGroup.players.push(player)
+		return player
+	}
+
+	private addBotPlayer(targetPlayer: ServerBotPlayer, targetGroup: ServerPlayerGroup, selectedDeck: ServerEditorDeck): ServerPlayerInGame {
+		const bot = new ServerBotPlayerInGame(this, targetPlayer, selectedDeck)
+		if (this.ruleset.ai) {
+			bot.setBehaviour(this.ruleset.ai.behaviour)
+		}
+		if (targetGroup.openBotSlots <= 0) {
+			throw new Error('Unable to add bot player: No AI slots available!')
+		}
+		targetGroup.players.push(bot)
+		return bot
 	}
 
 	public start(): void {
 		this.isStarted = true
 
-		const playerOne = this.players[0]
-		const playerTwo = this.players[1]
+		const playerGroupOne = this.players[0]
+		const playerGroupTwo = this.players[1]
+
 		console.info(
-			`Starting game ${colorizeId(this.id)}: ` +
-				`${colorizePlayer(playerOne.player.username)} vs ${colorizePlayer(playerTwo.player.username)}`
+			`Starting game ${colorizeId(this.id)}: ` + `${colorizePlayer(playerGroupOne.username)} vs ${colorizePlayer(playerGroupTwo.username)}`
 		)
 
-		this.players.forEach((playerInGame) => {
-			OutgoingMessageHandlers.sendPlayerSelf(playerInGame.player, playerInGame)
-			OutgoingMessageHandlers.sendPlayerOpponent(playerInGame.player, this.getOpponent(playerInGame)!)
-		})
+		this.players
+			.flatMap((playerGroup) => playerGroup.players)
+			.forEach((playerInGame) => {
+				OutgoingMessageHandlers.sendPlayers(playerInGame.player, playerInGame)
+				OutgoingMessageHandlers.notifyAboutLeaders(playerInGame)
+			})
 
-		this.players.forEach((playerInGame) => {
-			OutgoingMessageHandlers.notifyAboutDeckLeader(playerInGame, playerInGame.opponent!, playerInGame.leader)
-		})
-
-		this.players.forEach((playerInGame) => {
-			OutgoingMessageHandlers.notifyAboutGameStart(playerInGame.player, this.players.indexOf(playerInGame) === 1)
+		this.players.forEach((playerGroup) => {
+			OutgoingMessageHandlers.notifyAboutGameStart(playerGroup, this.players.indexOf(playerGroup) === 1)
 		})
 
 		this.resetBoardOwnership()
@@ -193,13 +206,15 @@ export default class ServerGame implements Game {
 		)
 
 		const constants = this.ruleset.constants
-		this.players.forEach((playerInGame) => {
-			const extraStartingHandSize = getTotalLeaderStat(playerInGame, LeaderStatType.STARTING_HAND_SIZE)
+		this.players.forEach((playerGroup) => {
+			const extraStartingHandSize = getTotalLeaderStat(playerGroup, [LeaderStatType.STARTING_HAND_SIZE])
 
-			playerInGame.cardDeck.shuffle()
-			playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_STARTING + extraStartingHandSize)
-			playerInGame.drawSpellCards(constants.SPELL_HAND_SIZE_MINIMUM)
-			playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND)
+			playerGroup.players.forEach((playerInGame) => {
+				playerInGame.cardDeck.shuffle()
+				playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_STARTING + extraStartingHandSize)
+				playerInGame.drawSpellCards(constants.SPELL_HAND_SIZE_MINIMUM)
+				playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND)
+			})
 		})
 
 		if (this.ruleset.board) {
@@ -210,30 +225,34 @@ export default class ServerGame implements Game {
 					symmetricBoardState.forEach((row, rowIndex) => {
 						row.forEach((card, cardIndex) => {
 							const targetRow = this.board.getRowWithDistanceToFront(player, rowIndex)
-							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiate(this, card), cardIndex))
+							this.animation.instantThread(() =>
+								targetRow.createUnit(CardLibrary.instantiate(this, card), targetRow.owner!.players[0], cardIndex)
+							)
 						})
 					})
 				})
 			}
 			if (this.ruleset.ai) {
-				const humanPlayer = this.getHumanPlayer()
+				const humanGroup = this.getHumanGroup()
 				const playerBoardState = boardState.playerBoardState
-				if (playerBoardState && humanPlayer) {
+				if (playerBoardState) {
 					playerBoardState.forEach((row, rowIndex) => {
 						row.forEach((card, cardIndex) => {
-							const targetRow = this.board.getRowWithDistanceToFront(humanPlayer, rowIndex)
-							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiate(this, card), cardIndex))
+							const targetRow = this.board.getRowWithDistanceToFront(humanGroup, rowIndex)
+							this.animation.instantThread(() =>
+								targetRow.createUnit(CardLibrary.instantiate(this, card), humanGroup.players[0], cardIndex)
+							)
 						})
 					})
 				}
 
-				const botPlayer = this.getBotPlayer()
 				const opponentBoardState = boardState.opponentBoardState
-				if (opponentBoardState && botPlayer) {
+				if (opponentBoardState && this.isBotGame()) {
+					const botPlayer = this.getBotPlayer()
 					opponentBoardState.forEach((row, rowIndex) => {
 						row.forEach((card, cardIndex) => {
 							const targetRow = this.board.getRowWithDistanceToFront(botPlayer, rowIndex)
-							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiate(this, card), cardIndex))
+							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiate(this, card), botPlayer, cardIndex))
 						})
 					})
 				}
@@ -258,7 +277,7 @@ export default class ServerGame implements Game {
 			this.startNextRound()
 		}
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, this.getHumanPlayer())
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, this.getHumanGroup().players)
 
 		GameHistoryDatabase.startGame(this).then()
 		this.events.resolveEvents()
@@ -273,27 +292,43 @@ export default class ServerGame implements Game {
 				this.board.rows[constants.GAME_BOARD_ROW_COUNT - i - 1].setOwner(this.players[0])
 			}
 		} else if (constants.GAME_BOARD_ROW_SPLIT_MODE === BoardSplitMode.ALL_FOR_PLAYER) {
-			const player = this.getHumanPlayer()
+			const player = this.getHumanGroup()
 			for (let i = 0; i < constants.GAME_BOARD_ROW_COUNT; i++) {
 				this.board.rows[i].setOwner(player)
 			}
 		}
 	}
 
-	public getOpponent(player: ServerPlayerInGame | null): ServerPlayerInGame | null {
-		return this.players.find((otherPlayer) => otherPlayer !== player) || null
+	public getOpponent(playerGroup: ServerPlayerGroup): ServerPlayerGroup {
+		const opponent = this.players.find((otherGroup) => otherGroup !== playerGroup)
+		if (!opponent) {
+			throw new Error('No opponent group!')
+		}
+		return opponent
 	}
 
-	public getHumanPlayer(): ServerPlayerInGame {
-		return this.players.find((playerInGame) => !(playerInGame instanceof ServerBotPlayerInGame))!
+	public getSinglePlayer(): ServerPlayerInGame {
+		return this.getHumanGroup().players[0]
 	}
 
-	public getBotPlayer(): ServerPlayerInGame | null {
-		return this.players.find((playerInGame) => playerInGame instanceof ServerBotPlayerInGame) || null
+	public getHumanGroup(): ServerPlayerGroup {
+		const group = this.players.find((playerGroup) => playerGroup.slots.totalHumanSlots > 0)
+		if (!group) {
+			throw new Error('No human group present!')
+		}
+		return group
+	}
+
+	public getBotPlayer(): ServerPlayerInGame {
+		const group = this.players.find((playerGroup) => playerGroup.slots.totalBotSlots > 0)
+		if (!group) {
+			throw new Error('No bot group present!')
+		}
+		return group.players[0]
 	}
 
 	public isBotGame(): boolean {
-		return !!this.players.find((playerInGame) => playerInGame instanceof ServerBotPlayerInGame)
+		return this.players.some((playerGroup) => playerGroup.isBot)
 	}
 
 	private setTurnPhase(turnPhase: GameTurnPhase): void {
@@ -302,7 +337,7 @@ export default class ServerGame implements Game {
 	}
 
 	private isPhaseFinished(): boolean {
-		return this.players.filter((playerInGame) => !playerInGame.turnEnded).length === 0
+		return this.players.every((playerInGame) => playerInGame.turnEnded)
 	}
 
 	public advanceMulliganPhase(): void {
@@ -402,28 +437,29 @@ export default class ServerGame implements Game {
 		const playerOneTotalPower = this.board.getTotalPlayerPower(playerOne)
 		const playerTwoTotalPower = this.board.getTotalPlayerPower(playerTwo)
 		if (playerOneTotalPower > playerTwoTotalPower) {
-			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+			playerOne.addRoundWin()
 			this.lastRoundWonBy = playerOne
 		} else if (playerTwoTotalPower > playerOneTotalPower) {
-			playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+			playerTwo.addRoundWin()
 			this.lastRoundWonBy = playerTwo
 		} else {
-			playerOne.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
-			playerTwo.dealMoraleDamage(ServerDamageInstance.fromUniverse(1))
+			playerOne.addRoundWin()
+			playerTwo.addRoundWin()
 		}
 
-		const survivingPlayer = this.players.find((player) => player.morale > 0) || null
-		const defeatedPlayer = this.players.find((player) => player.morale <= 0) || null
-		if (survivingPlayer && defeatedPlayer) {
+		const roundWinsRequired = this.ruleset.constants.STARTING_PLAYER_MORALE
+		const victoriousPlayer = this.players.find((player) => player.roundWins >= roundWinsRequired) || null
+		const defeatedPlayer = this.players.find((player) => player.roundWins < roundWinsRequired) || null
+		if (victoriousPlayer && defeatedPlayer) {
 			let victoryReason = 'PvP win condition'
-			if (survivingPlayer.isBot) {
+			if (victoriousPlayer.isBot) {
 				victoryReason = 'Player lost to AI'
 			} else if (defeatedPlayer.isBot) {
 				victoryReason = 'Player won vs AI'
 			}
 			this.finish(this.getOpponent(defeatedPlayer), victoryReason)
 			return
-		} else if (this.players.every((player) => player.morale <= 0)) {
+		} else if (this.players.every((player) => player.roundWins >= roundWinsRequired)) {
 			this.finish(null, 'Game ended with a draw')
 			return
 		}
@@ -447,9 +483,11 @@ export default class ServerGame implements Game {
 		this.resetBoardOwnership()
 
 		const constants = this.ruleset.constants
-		this.players.forEach((playerInGame) => {
-			playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_PER_ROUND)
-			playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND)
+		this.players.forEach((playerGroup) => {
+			playerGroup.players.forEach((playerInGame) => {
+				playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_PER_ROUND)
+				playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND)
+			})
 		})
 
 		this.advancePhase()
@@ -476,7 +514,7 @@ export default class ServerGame implements Game {
 		player.showMulliganCards()
 	}
 
-	public finish(victoriousPlayer: ServerPlayerInGame | null, victoryReason: string, chainImmediately = false): void {
+	public finish(victoriousPlayer: ServerPlayerGroup | null, victoryReason: string, chainImmediately = false): void {
 		if (this.turnPhase === GameTurnPhase.AFTER_GAME) {
 			return
 		}
@@ -495,15 +533,15 @@ export default class ServerGame implements Game {
 			console.info(`Game ${colorizeId(this.id)} finished with a draw: ${colorizeConsoleText(victoryReason)}.`)
 		} else {
 			const defeatedPlayer = this.getOpponent(victoriousPlayer)!
-			OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer.player)
-			OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer.player)
+			OutgoingMessageHandlers.notifyAboutVictory(victoriousPlayer)
+			OutgoingMessageHandlers.notifyAboutDefeat(defeatedPlayer)
 			console.info(
-				`Game ${colorizeId(this.id)} has finished. Player ${colorizePlayer(victoriousPlayer.player.username)} won: ${colorizeConsoleText(
+				`Game ${colorizeId(this.id)} has finished. Player ${colorizePlayer(victoriousPlayer.username)} won: ${colorizeConsoleText(
 					victoryReason
 				)}.`
 			)
 		}
-		GameHistoryDatabase.closeGame(this, victoryReason, victoriousPlayer instanceof ServerBotPlayerInGame ? null : victoriousPlayer).then()
+		GameHistoryDatabase.closeGame(this, victoryReason, victoriousPlayer?.isBot ? null : victoriousPlayer).then()
 
 		this.board.getAllUnits().forEach((unit) => {
 			this.animation.thread(() => {
@@ -516,9 +554,11 @@ export default class ServerGame implements Game {
 			})
 		})
 
-		setTimeout(() => {
-			this.forceShutdown('Cleanup')
-		}, 300000)
+		if (process.env.JEST_WORKER_ID === undefined) {
+			setTimeout(() => {
+				this.forceShutdown('Cleanup')
+			}, 300000)
+		}
 
 		const validChain = this.ruleset.chains.find((chain) =>
 			chain.isValid({
@@ -526,15 +566,17 @@ export default class ServerGame implements Game {
 				victoriousPlayer,
 			})
 		)
-		if (validChain && this.getHumanPlayer()) {
+		if (validChain && this.getHumanGroup()) {
 			const linkedGame = GameLibrary.createChainGame(this, validChain)
-			this.players.forEach((playerInGame) => {
-				OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, chainImmediately)
-				if (chainImmediately) {
-					this.animation.play(ServerAnimation.switchingGames())
-					OutgoingMessageHandlers.commandJoinLinkedGame(playerInGame.player)
-				}
-			})
+			this.players
+				.flatMap((playerGroup) => playerGroup.players)
+				.forEach((playerInGame) => {
+					OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, chainImmediately)
+					if (chainImmediately) {
+						this.animation.play(ServerAnimation.switchingGames())
+						OutgoingMessageHandlers.commandJoinLinkedGame(playerInGame.player)
+					}
+				})
 		}
 	}
 
@@ -550,7 +592,7 @@ export default class ServerGame implements Game {
 		return this.index.findCard(cardId)
 	}
 
-	public findOwnedCardById(cardId: string): ServerOwnedCard | null {
+	public findOwnedCardById(cardId: string): ServerOwnedCard | ServerGroupOwnedCard | null {
 		const cardOnBoard = this.board.findUnitById(cardId)
 		if (cardOnBoard) {
 			return cardOnBoard
@@ -559,23 +601,27 @@ export default class ServerGame implements Game {
 		if (cardInStack) {
 			return cardInStack
 		}
-		for (let i = 0; i < this.players.length; i++) {
-			const player = this.players[i]
-			const cardAsLeader = player.leader
-			if (cardAsLeader && cardAsLeader.id === cardId) {
-				return new ServerOwnedCard(cardAsLeader, player)
-			}
-			const cardInHand = player.cardHand.findCardById(cardId)
-			if (cardInHand) {
-				return new ServerOwnedCard(cardInHand, player)
-			}
-			const cardInDeck = player.cardDeck.findCardById(cardId)
-			if (cardInDeck) {
-				return new ServerOwnedCard(cardInDeck, player)
-			}
-			const cardInGraveyard = player.cardGraveyard.findCardById(cardId)
-			if (cardInGraveyard) {
-				return new ServerOwnedCard(cardInGraveyard, player)
+		for (let g = 0; g < this.players.length; g++) {
+			const playerGroup = this.players[g]
+
+			for (let i = 0; i < playerGroup.players.length; i++) {
+				const player = playerGroup.players[i]
+				const cardAsLeader = player.leader
+				if (cardAsLeader && cardAsLeader.id === cardId) {
+					return new ServerOwnedCard(cardAsLeader, player)
+				}
+				const cardInHand = player.cardHand.findCardById(cardId)
+				if (cardInHand) {
+					return new ServerOwnedCard(cardInHand, player)
+				}
+				const cardInDeck = player.cardDeck.findCardById(cardId)
+				if (cardInDeck) {
+					return new ServerOwnedCard(cardInDeck, player)
+				}
+				const cardInGraveyard = player.cardGraveyard.findCardById(cardId)
+				if (cardInGraveyard) {
+					return new ServerOwnedCard(cardInGraveyard, player)
+				}
 			}
 		}
 		return null

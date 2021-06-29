@@ -108,7 +108,25 @@ export default {
 		ws.send(
 			JSON.stringify({
 				type: SystemMessageType.COMMAND_DISCONNECT,
-				data: { reason: 'Duplicated connection' },
+				data: { reason: 'Missing required param: deckId' },
+				highPriority: true,
+			})
+		)
+	},
+
+	notifyAboutMissingGroupId(ws: ws): void {
+		ws.send(
+			JSON.stringify({
+				type: SystemMessageType.ERROR_GENERIC,
+				data: 'Missing required param: groupId',
+				code: ErrorCode.NO_GROUP_SELECTED,
+				highPriority: true,
+			})
+		)
+		ws.send(
+			JSON.stringify({
+				type: SystemMessageType.COMMAND_DISCONNECT,
+				data: { reason: 'Missing required param: groupId' },
 				highPriority: true,
 			})
 		)
@@ -126,7 +144,25 @@ export default {
 		ws.send(
 			JSON.stringify({
 				type: SystemMessageType.COMMAND_DISCONNECT,
-				data: { reason: 'Duplicated connection' },
+				data: { reason: 'Invalid deck' },
+				highPriority: true,
+			})
+		)
+	},
+
+	notifyAboutInvalidGroupId(ws: ws): void {
+		ws.send(
+			JSON.stringify({
+				type: SystemMessageType.ERROR_GENERIC,
+				data: 'Invalid group ID provided',
+				code: ErrorCode.INVALID_GROUP_ID,
+				highPriority: true,
+			})
+		)
+		ws.send(
+			JSON.stringify({
+				type: SystemMessageType.COMMAND_DISCONNECT,
+				data: { reason: 'Invalid group ID provided' },
 				highPriority: true,
 			})
 		)

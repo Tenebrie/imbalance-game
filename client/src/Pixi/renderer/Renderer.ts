@@ -170,22 +170,27 @@ export default class Renderer {
 
 		const input = Core.input
 		const mainHandler = Core.mainHandler
-		if (!input || !Core.player || !mainHandler) {
+		const totalSlots = store.state.gameStateModule.ruleset!.slots.groups.reduce((total, group) => total + group.players.length, 0)
+		if (!input || Core.allPlayers.length < totalSlots || !mainHandler) {
 			return
 		}
 
-		const playerLeaderCard = Core.player?.leader
-		if (playerLeaderCard && input.inspectedCard !== playerLeaderCard) {
-			this.renderCard(playerLeaderCard, [playerLeaderCard], 'player', 'leader')
-		}
+		const playerLeaderCards = Core.player.players.map((player) => player.leader)
+		playerLeaderCards.forEach((leaderCard) => {
+			if (input.inspectedCard !== leaderCard) {
+				this.renderCard(leaderCard, playerLeaderCards, 'player', 'leader')
+			}
+		})
 
-		const opponentLeaderCard = Core.opponent?.leader
-		if (opponentLeaderCard && input.inspectedCard !== opponentLeaderCard) {
-			this.renderCard(opponentLeaderCard, [opponentLeaderCard], 'opponent', 'leader')
-		}
+		const opponentLeaderCards = Core.opponent.players.map((player) => player.leader)
+		opponentLeaderCards.forEach((leaderCard) => {
+			if (input.inspectedCard !== leaderCard) {
+				this.renderCard(leaderCard, opponentLeaderCards, 'opponent', 'leader')
+			}
+		})
 
-		const unitCards = Core.player.cardHand.unitCards
-		const sortedPlayerUnitCards = Core.player.cardHand.unitCards
+		const unitCards = Core.player.players[0].cardHand.unitCards
+		const sortedPlayerUnitCards = Core.player.players[0].cardHand.unitCards
 			.filter((card) => card !== input.inspectedCard)
 			.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
 			.slice()
@@ -194,8 +199,8 @@ export default class Renderer {
 			this.renderCard(renderedCard, unitCards, 'player', 'unit')
 		})
 
-		const spellCards = Core.player.cardHand.spellCards
-		const sortedPlayerSpellCards = Core.player.cardHand.spellCards
+		const spellCards = Core.player.players[0].cardHand.spellCards
+		const sortedPlayerSpellCards = Core.player.players[0].cardHand.spellCards
 			.filter((card) => card !== input.inspectedCard)
 			.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
 			.slice()
@@ -204,9 +209,9 @@ export default class Renderer {
 			this.renderCard(renderedCard, spellCards, 'player', 'spell')
 		})
 
-		if (Core.opponent) {
-			const opponentsUnitCards = Core.opponent.cardHand.unitCards
-			const sortedOpponentUnitCards = Core.opponent.cardHand.unitCards.slice().reverse()
+		if (Core.opponent.players.length > 0) {
+			const opponentsUnitCards = Core.opponent.players[0].cardHand.unitCards
+			const sortedOpponentUnitCards = Core.opponent.players[0].cardHand.unitCards.slice().reverse()
 			sortedOpponentUnitCards.forEach((renderedCard) => {
 				if (renderedCard === input.inspectedCard || renderedCard === mainHandler.announcedCard) {
 					return
@@ -215,8 +220,8 @@ export default class Renderer {
 				this.renderCard(renderedCard, opponentsUnitCards, 'opponent', 'unit')
 			})
 
-			const opponentsSpellCards = Core.opponent.cardHand.spellCards
-			const sortedOpponentSpellCards = Core.opponent.cardHand.spellCards.slice().reverse()
+			const opponentsSpellCards = Core.opponent.players[0].cardHand.spellCards
+			const sortedOpponentSpellCards = Core.opponent.players[0].cardHand.spellCards.slice().reverse()
 			sortedOpponentSpellCards.forEach((renderedCard) => {
 				if (renderedCard === input.inspectedCard || renderedCard === mainHandler.announcedCard) {
 					return
@@ -468,7 +473,9 @@ export default class Renderer {
 			return returnValue * this.superSamplingLevel
 		}
 
-		const leaderPower = Core.player.leader ? Core.player.leader.stats.power : 0
+		const leaderPower = Core.player.players
+			.map((player) => player.leader)
+			.reduce((totalPower, leader) => totalPower + leader.stats.power, 0)
 		const power =
 			leaderPower +
 			Core.board
@@ -476,16 +483,15 @@ export default class Renderer {
 				.map((unit) => unit.card.stats.power)
 				.reduce((accumulator, value) => accumulator + value, 0)
 
-		let opponentPower = 0
-		if (Core.opponent) {
-			const opponentLeaderPower = Core.opponent.leader ? Core.opponent.leader.stats.power : 0
-			opponentPower =
-				opponentLeaderPower +
-				Core.board
-					.getInsertedUnitsOwnedByPlayer(Core.opponent)
-					.map((unit) => unit.card.stats.power)
-					.reduce((accumulator, value) => accumulator + value, 0)
-		}
+		const opponentLeaderPower = Core.opponent.players
+			.map((player) => player.leader)
+			.reduce((totalPower, leader) => totalPower + leader.stats.power, 0)
+		const opponentPower =
+			opponentLeaderPower +
+			Core.board
+				.getInsertedUnitsOwnedByPlayer(Core.opponent)
+				.map((unit) => unit.card.stats.power)
+				.reduce((accumulator, value) => accumulator + value, 0)
 
 		this.playerPowerLabel.text = power.toString()
 		this.opponentPowerLabel.text = opponentPower.toString()

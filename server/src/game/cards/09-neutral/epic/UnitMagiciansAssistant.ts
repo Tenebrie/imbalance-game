@@ -26,11 +26,11 @@ export default class UnitMagiciansAssistant extends ServerCard {
 
 		this.createDeployTargets(TargetType.UNIT)
 			.require(({ targetUnit }) => {
-				return !this.ownerInGame.cardDeck.hasDuplicates || targetUnit.owner === this.ownerInGame.opponent
+				return !this.ownerPlayerInGame.cardDeck.hasDuplicates || targetUnit.owner === this.ownerInGame.opponent
 			})
 			.perform(({ targetUnit }) => {
 				const copy = CardLibrary.instantiateFromInstance(this.game, targetUnit.card)
-				this.ownerInGame.cardDeck.addUnitToTop(copy)
+				this.ownerPlayerInGame.cardDeck.addUnitToTop(copy)
 			})
 	}
 }

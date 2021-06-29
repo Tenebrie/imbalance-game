@@ -21,11 +21,11 @@ export default class RulesetLabyrinthBase extends ServerRulesetBuilder<never> {
 		})
 
 		this.createChain()
-			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanPlayer())
+			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
 			.setFixedLink(RulesetLabyrinthRunCamp)
 
 		this.createChain()
-			.require(({ game, victoriousPlayer }) => victoriousPlayer !== game.getHumanPlayer())
+			.require(({ game, victoriousPlayer }) => victoriousPlayer !== game.getHumanGroup())
 			.setFixedLink(RulesetLabyrinthMetaCamp)
 
 		this.createDeck().fixed([LeaderLabyrinthPlayer])
@@ -34,20 +34,22 @@ export default class RulesetLabyrinthBase extends ServerRulesetBuilder<never> {
 
 		this.createCallback(GameEventType.GAME_CREATED).perform(({ game }) => {
 			const state = game.progression.labyrinth.state.run
-			const player = game.getHumanPlayer()
-			state.cards.forEach((card) => {
-				for (let i = 0; i < card.count; i++) {
-					player.cardDeck.addUnitToBottom(CardLibrary.instantiateFromClass(game, card.class))
-				}
-			})
-			state.items.forEach((card) => {
-				player.cardHand.addSpell(CardLibrary.instantiateFromClass(game, card.cardClass))
+			const playerGroup = game.getHumanGroup()
+			playerGroup.players.forEach((player) => {
+				state.cards.forEach((card) => {
+					for (let i = 0; i < card.count; i++) {
+						player.cardDeck.addUnitToBottom(CardLibrary.instantiateFromClass(game, card.class))
+					}
+				})
+				state.items.forEach((card) => {
+					player.cardHand.addSpell(CardLibrary.instantiateFromClass(game, card.cardClass))
+				})
 			})
 		})
 
 		this.createCallback(GameEventType.GAME_FINISHED).perform(({ game, victoriousPlayer }) => {
 			game.progression.labyrinth.addEncounterToHistory(this.class)
-			if (victoriousPlayer !== game.getHumanPlayer()) {
+			if (victoriousPlayer !== game.getHumanGroup()) {
 				game.progression.labyrinth.failRun()
 			}
 		})

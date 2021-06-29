@@ -1,12 +1,16 @@
 import Player from './Player'
-import PlayerInGame from './PlayerInGame'
-import Ruleset from './Ruleset'
+import Ruleset from './ruleset/Ruleset'
+import PlayerGroup, { SourcePlayerGroup } from './PlayerGroup'
 
 export default interface Game {
 	id: string
 	name: string
 	isStarted: boolean
 	owner: Player | undefined
-	players: PlayerInGame[]
+	players: PlayerGroup[]
 	ruleset: Ruleset
+}
+
+export interface SourceGame extends Game {
+	players: SourcePlayerGroup[]
 }

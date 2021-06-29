@@ -48,7 +48,7 @@ export default class HeroChallengeLegendaryExplorer0 extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		Keywords.createCard.for(this.ownerInGame).fromInstance(target)
+		Keywords.createCard.for(this.ownerPlayerInGame).fromInstance(target)
 		this.exploredCards = []
 	}
 }

@@ -10,4 +10,8 @@ export default class ServerBotPlayer extends ServerPlayer {
 	sendMessage(): void {
 		return
 	}
+
+	isInGame(): boolean {
+		return true
+	}
 }

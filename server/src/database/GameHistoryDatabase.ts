@@ -1,9 +1,8 @@
 import Database from './Database'
 import ServerGame from '@src/game/models/ServerGame'
-import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
-import ServerBotPlayerInGame from '@src/game/AI/ServerBotPlayerInGame'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import GameErrorDatabaseEntry from '@shared/models/GameErrorDatabaseEntry'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 export default {
 	async selectGameById(id: string): Promise<GameHistoryDatabaseEntry | null> {
@@ -85,10 +84,10 @@ export default {
 			return false
 		}
 
-		const players = game.players.filter((playerInGame) => !(playerInGame instanceof ServerBotPlayerInGame))
-		for (const playerInGame of players) {
+		const players = game.players.filter((playerGroup) => playerGroup.isHuman)
+		for (const playerGroup of players) {
 			query = `INSERT INTO player_in_game_history("gameId", "playerId") VALUES($1, $2)`
-			success = await Database.updateRows(query, [game.id, playerInGame.player.id])
+			success = await Database.updateRows(query, [game.id, playerGroup.id])
 			if (!success) {
 				return false
 			}
@@ -96,7 +95,7 @@ export default {
 		return true
 	},
 
-	async closeGame(game: ServerGame, reason: string, victoriousPlayer: ServerPlayerInGame | null): Promise<boolean> {
+	async closeGame(game: ServerGame, reason: string, victoriousPlayer: ServerPlayerGroup | null): Promise<boolean> {
 		const eventLog = JSON.stringify(game.events.eventLog)
 		if (!victoriousPlayer) {
 			const query = `
@@ -118,7 +117,7 @@ export default {
 					"victoriousPlayer" = $4
 				WHERE id = $1 AND "closedAt" IS NULL
 			`
-		return await Database.updateRows(query, [game.id, eventLog, reason, victoriousPlayer.player.id])
+		return await Database.updateRows(query, [game.id, eventLog, reason, victoriousPlayer.id])
 	},
 
 	async closeAbandonedGames(): Promise<boolean> {

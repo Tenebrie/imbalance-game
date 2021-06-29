@@ -1,6 +1,4 @@
 export default {
-	PLAYERS_PER_GAME: 2,
-
 	MAX_CARDS_PER_ROW: 11,
 
 	CARD_LIMIT_LEADER: 1,

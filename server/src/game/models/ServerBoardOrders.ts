@@ -11,6 +11,7 @@ import {
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export type OrderTarget = {
 	target: ValidServerCardTarget
@@ -33,7 +34,7 @@ export default class ServerBoardOrders {
 			.flat()
 	}
 
-	public performUnitOrder(targetMessage: CardTargetMessage): void {
+	public performUnitOrder(targetMessage: CardTargetMessage, player: ServerPlayerInGame): void {
 		const order = this.validOrders.find((validOrder) => validOrder.target.id === targetMessage.id)
 		if (!order) {
 			return
@@ -46,6 +47,7 @@ export default class ServerBoardOrders {
 			const definition = order.definition as OrderTargetDefinition<UnitTargetValidatorArguments>
 			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
 			definition.perform({
+				player,
 				sourceCard: sourceCard,
 				targetCard: order.target.targetCard,
 				targetUnit: order.target.targetCard.unit!,
@@ -55,6 +57,7 @@ export default class ServerBoardOrders {
 			const definition = order.definition as OrderTargetDefinition<RowTargetValidatorArguments>
 			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
 			definition.perform({
+				player,
 				sourceCard: sourceCard,
 				targetRow: order.target.targetRow,
 				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),
@@ -63,6 +66,7 @@ export default class ServerBoardOrders {
 			const definition = order.definition as OrderTargetDefinition<PositionTargetValidatorArguments>
 			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
 			definition.perform({
+				player,
 				sourceCard: sourceCard,
 				targetRow: order.target.targetRow,
 				targetPosition: targetMessage.targetPosition,
@@ -72,6 +76,7 @@ export default class ServerBoardOrders {
 			const definition = order.definition as OrderTargetDefinition<CardTargetValidatorArguments>
 			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
 			definition.perform({
+				player,
 				sourceCard: sourceCard,
 				targetCard: order.target.targetCard,
 				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),

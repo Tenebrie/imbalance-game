@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
-import RulesetRefMessage from '@shared/models/network/ruleset/RulesetRefMessage'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
+import RulesetRefMessage from '@shared/models/ruleset/messages/RulesetRefMessage'
 
 const router = express.Router()
 

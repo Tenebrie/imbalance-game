@@ -4,12 +4,14 @@ import { GameLogUpdateMessageType } from '@shared/models/network/messageHandlers
 
 export default {
 	sendLogMessageGroup: (game: ServerGame, messages: EventLogEntryMessage[]): void => {
-		game.players.forEach((playerInGame) => {
-			playerInGame.player.sendMessage({
-				type: GameLogUpdateMessageType.ENTRY,
-				data: messages,
-				highPriority: true,
+		game.players
+			.flatMap((playerGroup) => playerGroup.players)
+			.forEach((playerInGame) => {
+				playerInGame.player.sendMessage({
+					type: GameLogUpdateMessageType.ENTRY,
+					data: messages,
+					highPriority: true,
+				})
 			})
-		})
 	},
 }

@@ -34,14 +34,15 @@ export default class UnitTheMinisterOfLand extends ServerCard {
 		this.createCallback(GameEventType.UNIT_CREATED, [CardLocation.DECK])
 			.require(({ owner }) => owner === this.owner)
 			.require(({ triggeringCard }) => triggeringCard.tribes.includes(CardTribe.PEASANT))
-			.require(() => game.board.getUnitsOfTribe(CardTribe.PEASANT, this.owner).length >= UnitTheMinisterOfLand.PEASANTS_REQUIRED)
+			.require(() => game.board.getUnitsOfTribe(CardTribe.PEASANT, this.ownerGroup).length >= UnitTheMinisterOfLand.PEASANTS_REQUIRED)
 			.perform(() => {
 				const controlledRows = game.board.getControlledRows(this.owner).reverse()
 				if (controlledRows[0].isFull()) {
 					return
 				}
-				this.ownerInGame.cardDeck.removeCard(this)
-				game.board.createUnit(this, controlledRows[0].index, controlledRows[0].cards.length)
+				const owner = this.ownerPlayerInGame
+				owner.cardDeck.removeCard(this)
+				game.board.createUnit(this, owner, controlledRows[0].index, controlledRows[0].cards.length)
 			})
 
 		this.createSelector()

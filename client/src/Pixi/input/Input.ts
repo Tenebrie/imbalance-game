@@ -20,7 +20,7 @@ import { isGrabbedCardPlayableToRow } from '@/Pixi/input/ValidActions'
 import CardLocation from '@shared/enums/CardLocation'
 import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
-import { boopTheBoard, flushBoardPreps, getCardInsertIndex, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
+import { boopTheBoard, flushBoardBoopPreps, getCardInsertIndex, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -89,14 +89,14 @@ export default class Input {
 
 		view.addEventListener('wheel', (event: WheelEvent) => {
 			if (event.deltaY > 0) {
-				this.onScrollDown(event)
+				Input.onScrollDown(event)
 			} else if (event.deltaY < 0) {
-				this.onScrollUp(event)
+				Input.onScrollUp(event)
 			}
 		})
 
 		view.addEventListener('mouseleave', () => {
-			this.onMouseLeave()
+			Input.onMouseLeave()
 			if (this.grabbedCard) {
 				this.releaseCard()
 			}
@@ -137,14 +137,16 @@ export default class Input {
 			return
 		}
 
-		const leaderCards = [Core.player?.leader, Core.opponent?.leader]
+		const leaderCards = Core.allPlayers.map((player) => player.leader)
 		const gameBoardCards = Core.board.rows.map((row) => row.cards).flat()
-		const playerHandCards = Core.player.cardHand.allCards.slice().reverse()
-		const opponentHandCards = Core.opponent ? Core.opponent.cardHand.allCards.slice().reverse() : []
+		const playerHandCards = Core.allPlayers
+			.flatMap((player) => player.cardHand.allCards)
+			.slice()
+			.reverse()
 
 		const hoveredLeaderCard = leaderCards.find((leaderCard) => leaderCard?.isHovered()) || null
 		if (hoveredLeaderCard) {
-			hoveredCard = HoveredCard.fromCardInHand(hoveredLeaderCard, hoveredLeaderCard.owner!)
+			hoveredCard = HoveredCard.fromCardInHand(hoveredLeaderCard, hoveredLeaderCard.ownerPlayer)
 		}
 
 		const hoveredCardOnBoard = gameBoardCards.find((cardOnBoard) => cardOnBoard.card.isHovered()) || null
@@ -154,12 +156,7 @@ export default class Input {
 
 		const hoveredCardInPlayerHand = playerHandCards.find((card) => card.isHovered()) || null
 		if (hoveredCardInPlayerHand) {
-			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInPlayerHand, Core.player)
-		}
-
-		const hoveredCardInOpponentHand = opponentHandCards.find((card) => card.isHovered()) || null
-		if (Core.opponent && hoveredCardInOpponentHand) {
-			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInOpponentHand, Core.opponent)
+			hoveredCard = HoveredCard.fromCardInHand(hoveredCardInPlayerHand, hoveredCardInPlayerHand.ownerPlayer)
 		}
 
 		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.isHovered()) {
@@ -369,11 +366,11 @@ export default class Input {
 		}
 	}
 
-	private onScrollDown(event: WheelEvent) {
+	private static onScrollDown(event: WheelEvent) {
 		scrollBoopColor(event, 1)
 	}
 
-	private onScrollUp(event: WheelEvent) {
+	private static onScrollUp(event: WheelEvent) {
 		scrollBoopColor(event, -1)
 	}
 
@@ -396,23 +393,23 @@ export default class Input {
 		}
 
 		if (this.rightMouseDown && this.hoveredCard !== null) {
-			flushBoardPreps()
+			flushBoardBoopPreps()
 		}
 	}
 
-	private onMouseLeave() {
-		flushBoardPreps()
+	private static onMouseLeave() {
+		flushBoardBoopPreps()
 	}
 
 	public grabCard(): void {
 		const hoveredCard = this.hoveredCard
-		if (!hoveredCard || hoveredCard.owner !== Core.player) {
+		if (!hoveredCard || !hoveredCard.owner || hoveredCard.owner !== Core.player.players[0]) {
 			return
 		}
 
 		const card = hoveredCard.card
 
-		if (hoveredCard.location === HoveredCardLocation.HAND && hoveredCard.owner === Core.player) {
+		if (hoveredCard.location === HoveredCardLocation.HAND) {
 			const validPositions = this.playableCards
 				.filter((playableCard) => playableCard.sourceCardId === card.id)
 				.map((playableCard) => ({
@@ -426,7 +423,6 @@ export default class Input {
 			}
 		} else if (
 			hoveredCard.location === HoveredCardLocation.BOARD &&
-			hoveredCard.owner === Core.player &&
 			Core.game.turnPhase === GameTurnPhase.DEPLOY &&
 			Core.board.getValidOrdersForUnit(Core.board.findUnitById(card.id)).length > 0
 		) {
@@ -506,7 +502,7 @@ export default class Input {
 			return
 		}
 		this.cardLimbo.push(card)
-		Core.player.cardHand.removeCard(card)
+		card.ownerPlayer.cardHand.removeCard(card)
 		Core.renderer.hideCard(card)
 	}
 

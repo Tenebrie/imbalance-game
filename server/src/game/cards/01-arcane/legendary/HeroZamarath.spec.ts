@@ -39,12 +39,12 @@ describe('HeroZamarath', () => {
 
 		const targetUnit = new TestingUnitNoEffect(game)
 		playerAction(() => {
-			game.board.createUnit(targetUnit, 0, 0)
+			game.board.createUnit(targetUnit, player, 0, 0)
 
 			const opponentsCard = new TestingSpellHeavyStrike(game)
-			player.opponentInGame.cardHand.addSpell(opponentsCard)
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame), 0, 0)
-			game.cardPlay.selectCardTarget(player.opponentInGame, game.cardPlay.getDeployTargets()[0].target)
+			player.opponentInGame.players[0].cardHand.addSpell(opponentsCard)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame.players[0]), 0, 0)
+			game.cardPlay.selectCardTarget(player.opponentInGame.players[0], game.cardPlay.getDeployTargets()[0].target)
 		})
 
 		expect(targetUnit.stats.power).toEqual(20)
@@ -61,13 +61,13 @@ describe('HeroZamarath', () => {
 
 		const targetUnit = new TestingUnitNoEffect(game)
 		playerAction(() => {
-			game.board.createUnit(targetUnit, 0, 0)
+			game.board.createUnit(targetUnit, player, 0, 0)
 		})
 		playerAction(() => {
 			const opponentsCard = new TestingSpellHeavyStrike(game)
-			player.opponentInGame.cardHand.addSpell(opponentsCard)
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame), 0, 0)
-			game.cardPlay.selectCardTarget(player.opponentInGame, game.cardPlay.getDeployTargets()[0].target)
+			player.opponentInGame.players[0].cardHand.addSpell(opponentsCard)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame.players[0]), 0, 0)
+			game.cardPlay.selectCardTarget(player.opponentInGame.players[0], game.cardPlay.getDeployTargets()[0].target)
 		})
 
 		expect(targetUnit.stats.power).toEqual(20)

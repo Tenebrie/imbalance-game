@@ -35,11 +35,12 @@ import ServerGame from '../ServerGame'
 import { RulesetDeckBuilder } from './RulesetDeck'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { RulesetBoardBuilder } from './RulesetBoard'
-import { RulesetConstants } from '@shared/models/RulesetConstants'
+import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
 import { forEachInEnum } from '@shared/Utils'
 import { RulesetChainBuilder } from '@src/game/models/rulesets/RulesetChain'
 import { RulesetDeckTemplate, ServerRulesetTemplate } from '@src/game/models/rulesets/ServerRuleset'
+import { RulesetSlotsBuilder } from '@src/game/models/rulesets/ServerRulesetSlots'
 
 export type ServerRulesetBuilderProps<T> = {
 	gameMode: GameMode
@@ -60,6 +61,7 @@ export class ServerRulesetBuilder<T> {
 	private aiBuilder: RulesetAIBuilder | null = null
 	private deckBuilder: RulesetDeckBuilder | null = null
 	private boardBuilder: RulesetBoardBuilder | null = null
+	private slotsBuilder: RulesetSlotsBuilder | null = null
 	private chainBuilders: RulesetChainBuilder[] = []
 
 	private rulesetConstants: Partial<RulesetConstants> = {}
@@ -96,6 +98,12 @@ export class ServerRulesetBuilder<T> {
 	protected createBoard(): RulesetBoardBuilder {
 		const builder = new RulesetBoardBuilder()
 		this.boardBuilder = builder
+		return builder
+	}
+
+	protected createSlots(): RulesetSlotsBuilder {
+		const builder = new RulesetSlotsBuilder()
+		this.slotsBuilder = builder
 		return builder
 	}
 
@@ -168,6 +176,7 @@ export class ServerRulesetBuilder<T> {
 			ai: this.aiBuilder ? this.aiBuilder.__build() : null,
 			deck: this.deckBuilder ? this.deckBuilder.__build() : null,
 			board: this.boardBuilder ? this.boardBuilder.__build() : null,
+			slots: this.slotsBuilder ? this.slotsBuilder.__build() : null,
 			chains: this.chainBuilders.map((chain) => chain.__build()),
 
 			eventSubscriptions: this.eventSubscriptions,

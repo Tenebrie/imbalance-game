@@ -1,14 +1,14 @@
 import Core from '@/Pixi/Core'
 import Unit from '@shared/models/Unit'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
-import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 
 export default class RenderedUnit implements Unit {
 	public card: RenderedCard
-	public owner: ClientPlayerInGame
+	public owner: ClientPlayerGroup
 	public isFadingOut = false
 
-	public constructor(card: RenderedCard, owner: ClientPlayerInGame) {
+	public constructor(card: RenderedCard, owner: ClientPlayerGroup) {
 		this.card = card
 		this.owner = owner
 	}

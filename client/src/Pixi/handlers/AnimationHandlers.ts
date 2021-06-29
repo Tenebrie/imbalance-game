@@ -34,10 +34,11 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 	[AnimationType.CARD_ANNOUNCE]: (message: AnimationMessage, params: CardAnnounceAnimParams) => {
 		const cardMessage = params.cardMessage
 		AudioSystem.playEffect(AudioEffectCategory.CARD_ANNOUNCE)
-		if (!Core.opponent) {
+		const playerWithCard = Core.opponent.players.find((player) => player.cardHand.allCards.find((card) => card.id === message.targetCardId))
+		if (!playerWithCard) {
 			return
 		}
-		const revealedCard = Core.opponent.cardHand.reveal(cardMessage)
+		const revealedCard = playerWithCard.cardHand.reveal(cardMessage)
 		if (revealedCard) {
 			Core.mainHandler.announceCard(revealedCard)
 		}

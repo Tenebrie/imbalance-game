@@ -25,6 +25,7 @@ import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTarge
 import { OrderTarget } from '@src/game/models/ServerBoardOrders'
 import { ResolutionStackTarget } from './ServerResolveStack'
 import { sortCards } from '@shared/Utils'
+import { getOwnerPlayer } from '@src/utils/Utils'
 
 export type ValidServerCardTarget = ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow | ServerCardTargetPosition
 
@@ -154,6 +155,7 @@ export class ServerCardTargeting {
 			.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
 			.filter((unit) =>
 				targetDefinition.require({
+					player: this.card.ownerPlayerInGame,
 					sourceCard: this.card,
 					targetCard: unit.card,
 					targetUnit: unit,
@@ -164,6 +166,7 @@ export class ServerCardTargeting {
 				unit: unit,
 				expectedValue: targetDefinition.evaluate(
 					{
+						player: this.card.ownerPlayerInGame,
 						sourceCard: this.card,
 						targetCard: unit.card,
 						targetUnit: unit,
@@ -198,6 +201,7 @@ export class ServerCardTargeting {
 		return this.game.board.rows
 			.filter((row) =>
 				targetDefinition.require({
+					player: this.card.ownerPlayerInGame,
 					sourceCard: this.card,
 					targetRow: row,
 					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
@@ -223,6 +227,7 @@ export class ServerCardTargeting {
 			})
 			.filter((rowPosition) =>
 				targetDefinition.require({
+					player: this.card.ownerPlayerInGame,
 					sourceCard: this.card,
 					targetRow: rowPosition.row,
 					targetPosition: rowPosition.position,
@@ -291,6 +296,7 @@ export class ServerCardTargeting {
 	): ServerCardTargetCard[] {
 		return sortCards(
 			this.game.players
+				.flatMap((player) => player.players)
 				.map((player) => player.cardHand.unitCards)
 				.reduce((accumulator, cards) => accumulator.concat(cards))
 				.filter((unit) => !unit.features.includes(CardFeature.UNTARGETABLE))
@@ -318,6 +324,7 @@ export class ServerCardTargeting {
 	): ServerCardTargetCard[] {
 		return sortCards(
 			this.game.players
+				.flatMap((player) => player.players)
 				.map((player) => player.cardHand.spellCards)
 				.reduce((accumulator, cards) => accumulator.concat(cards))
 				.filter((unit) => !unit.features.includes(CardFeature.UNTARGETABLE))
@@ -344,6 +351,7 @@ export class ServerCardTargeting {
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		let targetedCards = this.game.players
+			.flatMap((player) => player.players)
 			.map((player) => player.cardDeck.unitCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter((card) =>
@@ -374,6 +382,7 @@ export class ServerCardTargeting {
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		let targetedCards = this.game.players
+			.flatMap((player) => player.players)
 			.map((player) => player.cardDeck.spellCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter((card) =>
@@ -404,6 +413,7 @@ export class ServerCardTargeting {
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		const targetedCards = this.game.players
+			.flatMap((player) => player.players)
 			.map((player) => player.cardGraveyard.unitCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter((card) =>
@@ -430,6 +440,7 @@ export class ServerCardTargeting {
 		previousTargets: ResolutionStackTarget[] = []
 	): ServerCardTargetCard[] {
 		const targetedCards = this.game.players
+			.flatMap((player) => player.players)
 			.map((player) => player.cardGraveyard.spellCards)
 			.reduce((accumulator, cards) => accumulator.concat(cards))
 			.filter((card) =>
@@ -487,6 +498,7 @@ export class ServerCardTargeting {
 			.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
 			.filter((unit) =>
 				targetDefinition.require({
+					player: this.card.unit!.originalOwner,
 					sourceCard: this.card,
 					previousTargets: applicablePreviousTargets.map((previousTarget) => previousTarget.target),
 					targetCard: unit.card,
@@ -497,6 +509,7 @@ export class ServerCardTargeting {
 				unit: unit,
 				expectedValue: targetDefinition.evaluate(
 					{
+						player: this.card.unit!.originalOwner,
 						sourceCard: this.card,
 						previousTargets: applicablePreviousTargets.map((previousTarget) => previousTarget.target),
 						targetCard: unit.card,
@@ -541,6 +554,7 @@ export class ServerCardTargeting {
 		return this.game.board.rows
 			.filter((row) =>
 				targetDefinition.require({
+					player: this.card.unit!.originalOwner,
 					sourceCard: this.card,
 					targetRow: row,
 					previousTargets: applicablePreviousTargets.map((previousTarget) => previousTarget.target),

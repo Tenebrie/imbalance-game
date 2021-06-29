@@ -31,7 +31,7 @@ export default class UnitDryadWolfspeaker extends ServerCard {
 		this.createSelector()
 			.require(
 				() =>
-					game.board.getUnitsOwnedByPlayer(this.owner).filter((unit) => {
+					game.board.getUnitsOwnedByGroup(this.ownerGroup).filter((unit) => {
 						return unit.card.tribes.includes(CardTribe.BEAST)
 					}).length >= UnitDryadWolfspeaker.BEASTS_REQUIRED
 			)

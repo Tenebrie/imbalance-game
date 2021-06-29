@@ -15,6 +15,7 @@ import {
 	SpellLabyrinthRewardTreasureT2,
 	SpellLabyrinthRewardTreasureT3,
 } from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardTreasure'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never> {
 	constructor() {
@@ -30,40 +31,45 @@ export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never>
 		})
 
 		this.createChain()
-			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanPlayer())
+			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
 			.setFixedLink(RulesetLabyrinthDummies)
 		this.createDeck().fixed([LeaderLabyrinthPlayer, SpellLabyrinthNextEncounter])
 		this.createAI([LeaderLabyrinthOpponent]).behave(AIBehaviour.PASSIVE)
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthNextEncounter)
-			.perform(({ game }) => game.finish(game.getHumanPlayer(), 'Continue to next encounter', true))
+			.perform(({ game }) => game.finish(game.getHumanGroup(), 'Continue to next encounter', true))
 
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
-			if (game.progression.labyrinth.state.run.encounterHistory.length === 0 && game.progression.labyrinth.state.meta.runCount === 0) {
-				// No reward in the beginning
-			} else if (game.progression.labyrinth.state.run.encounterHistory.length === 0 && game.progression.labyrinth.state.meta.runCount > 0) {
-				addCardReward(game, 1)
-				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardTreasureT1)
-			} else if (game.progression.labyrinth.state.run.encounterHistory.length === 1) {
-				addCardReward(game, 3)
-				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardTreasureT1)
-			} else if (game.progression.labyrinth.state.run.encounterHistory.length === 2) {
-				addCardReward(game, 3)
-				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardTreasureT1)
-				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardTreasureT2)
-			} else if (game.progression.labyrinth.state.run.encounterHistory.length === 3) {
-				addCardReward(game, 3)
-				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardTreasureT1)
-				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardTreasureT3)
-			} else {
-				addCardReward(game, 4)
-			}
+			game.getHumanGroup().players.forEach((playerInGame) => {
+				if (game.progression.labyrinth.state.run.encounterHistory.length === 0 && game.progression.labyrinth.state.meta.runCount === 0) {
+					// No reward in the beginning
+				} else if (
+					game.progression.labyrinth.state.run.encounterHistory.length === 0 &&
+					game.progression.labyrinth.state.meta.runCount > 0
+				) {
+					addCardReward(game, playerInGame, 1)
+					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT1)
+				} else if (game.progression.labyrinth.state.run.encounterHistory.length === 1) {
+					addCardReward(game, playerInGame, 3)
+					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT1)
+				} else if (game.progression.labyrinth.state.run.encounterHistory.length === 2) {
+					addCardReward(game, playerInGame, 3)
+					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT1)
+					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT2)
+				} else if (game.progression.labyrinth.state.run.encounterHistory.length === 3) {
+					addCardReward(game, playerInGame, 3)
+					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT1)
+					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT3)
+				} else {
+					addCardReward(game, playerInGame, 4)
+				}
+			})
 		})
 
-		const addCardReward = (game: ServerGame, count: number): void => {
+		const addCardReward = (game: ServerGame, player: ServerPlayerInGame, count: number): void => {
 			for (let i = 0; i < count; i++) {
-				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthRewardCard)
+				Keywords.addCardToHand.for(player).fromConstructor(SpellLabyrinthRewardCard)
 			}
 		}
 	}

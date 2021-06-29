@@ -9,27 +9,24 @@ import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
 import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMessage'
 import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
 import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
-import PlayerInGameRefMessage from '@shared/models/network/playerInGame/PlayerInGameRefMessage'
 import PlayerInGameManaMessage from '@shared/models/network/playerInGame/PlayerInGameManaMessage'
 import GameLinkMessage from '@shared/models/network/GameLinkMessage'
+import PlayerGroupResourcesMessage from '@shared/models/network/playerInGame/PlayerGroupResourcesMessage'
+import PlayerGroupRefMessage from '@shared/models/network/playerGroup/PlayerGroupRefMessage'
 
 const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: IncomingMessageHandlerFunction } = {
-	[PlayerUpdateMessageType.LEADER_SELF]: (data: CardMessage) => {
-		if (Core.player.leader) {
-			return
-		}
-		Core.player.leader = RenderedCard.fromMessage(data)
+	[PlayerUpdateMessageType.LEADERS]: (data: OwnedCardMessage[]) => {
+		data.forEach((message) => {
+			const targetPlayer = Core.allPlayers.find((player) => player.player.id === message.owner.playerId)
+			if (!targetPlayer) {
+				throw new Error(`Unable to find player with id ${message.owner.playerId}`)
+			}
+			targetPlayer.leader = RenderedCard.fromMessage(message.card)
+		})
 	},
 
-	[PlayerUpdateMessageType.LEADER_OPPONENT]: (data: CardMessage) => {
-		if (!Core.opponent || Core.opponent.leader) {
-			return
-		}
-		Core.opponent.leader = RenderedCard.fromMessage(data)
-	},
-
-	[PlayerUpdateMessageType.MORALE]: (data: PlayerInGameManaMessage) => {
-		Core.getPlayer(data.playerId).morale = data.morale
+	[PlayerUpdateMessageType.MORALE]: (data: PlayerGroupResourcesMessage) => {
+		Core.getPlayerGroup(data.playerGroupId).roundWins = data.roundWins
 	},
 
 	[PlayerUpdateMessageType.MANA]: (data: PlayerInGameManaMessage) => {
@@ -99,8 +96,12 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 	},
 
 	[PlayerUpdateMessageType.CARD_REVEALED]: (data: CardMessage) => {
-		Core.opponent?.cardHand.reveal(data)
-		Core.opponent?.cardHand.sortCards()
+		const playerWithCard = Core.opponent.players.find((player) => player.cardHand.allCards.find((card) => card.id === data.id))
+		if (!playerWithCard) {
+			return
+		}
+		playerWithCard.cardHand.reveal(data)
+		playerWithCard.cardHand.sortCards()
 	},
 
 	[PlayerUpdateMessageType.PLAY_DECLINED]: (data: CardRefMessage) => {
@@ -109,7 +110,7 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 		if (!cardInLimbo) {
 			return
 		}
-		Core.player.cardHand.addCard(cardInLimbo)
+		Core.player.players[0].cardHand.addCard(cardInLimbo)
 	},
 
 	[PlayerUpdateMessageType.UNIT_ORDERS_SELF]: (data: CardTargetMessage[]) => {
@@ -120,26 +121,26 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 		Core.board.validOpponentOrders = data
 	},
 
-	[PlayerUpdateMessageType.TURN_START]: (player: PlayerInGameRefMessage) => {
-		Core.getPlayer(player.playerId).startTurn()
+	[PlayerUpdateMessageType.TURN_START]: (group: PlayerGroupRefMessage) => {
+		Core.getPlayerGroup(group.id).startTurn()
 	},
 
-	[PlayerUpdateMessageType.TURN_END]: (player: PlayerInGameRefMessage) => {
-		Core.getPlayer(player.playerId).endTurn()
+	[PlayerUpdateMessageType.TURN_END]: (group: PlayerGroupRefMessage) => {
+		Core.getPlayerGroup(group.id).endTurn()
 	},
 
-	[PlayerUpdateMessageType.ROUND_START]: (player: PlayerInGameRefMessage) => {
-		if (player.playerId === Core.player?.player.id) {
+	[PlayerUpdateMessageType.ROUND_START]: (group: PlayerGroupRefMessage) => {
+		if (group.id === Core.player.id) {
 			store.commit.gameStateModule.setIsPlayerInRound(true)
-		} else if (player.playerId === Core.opponent?.player.id) {
+		} else if (group.id === Core.opponent.id) {
 			store.commit.gameStateModule.setIsOpponentInRound(true)
 		}
 	},
 
-	[PlayerUpdateMessageType.ROUND_END]: (player: PlayerInGameRefMessage) => {
-		if (player.playerId === Core.player?.player.id) {
+	[PlayerUpdateMessageType.ROUND_END]: (group: PlayerGroupRefMessage) => {
+		if (group.id === Core.player.id) {
 			store.commit.gameStateModule.setIsPlayerInRound(false)
-		} else if (player.playerId === Core.opponent?.player.id) {
+		} else if (group.id === Core.opponent.id) {
 			store.commit.gameStateModule.setIsOpponentInRound(false)
 		}
 	},

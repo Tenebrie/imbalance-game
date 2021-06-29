@@ -34,7 +34,9 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 		return
 	}
 
-	const connectedPlayer = currentGame.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id)
+	const connectedPlayer: ServerPlayerInGame | undefined = currentGame.players
+		.flatMap((playerGroup) => playerGroup.players)
+		.find((playerInGame) => playerInGame.player.id === currentPlayer.id)
 	if (currentGame.isStarted && !connectedPlayer) {
 		OutgoingMessageHandlers.notifyAboutGameAlreadyStarted(ws)
 		ws.close()
@@ -44,7 +46,9 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	// Reconnecting
 	let currentPlayerInGame: ServerPlayerInGame
 	if (connectedPlayer) {
-		const reconnectingPlayer = currentGame.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id)
+		const reconnectingPlayer = currentGame.players
+			.flatMap((playerGroup) => playerGroup.players)
+			.find((playerInGame) => playerInGame.player.id === currentPlayer.id)
 		if (!reconnectingPlayer) {
 			throw new Error('Unable to find reconnecting player in game.')
 		}
@@ -56,8 +60,22 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	// Fresh connection
 	if (!connectedPlayer) {
 		const deckId = req.query.deckId as string
+		const groupId = req.query.groupId as string
 		if (!deckId && currentGame.ruleset.playerDeckRequired) {
 			OutgoingMessageHandlers.notifyAboutMissingDeckId(ws)
+			ws.close()
+			return
+		}
+
+		if (!groupId) {
+			OutgoingMessageHandlers.notifyAboutMissingGroupId(ws)
+			ws.close()
+			return
+		}
+
+		const targetGroup = currentGame.players.find((group) => group.id === groupId)
+		if (!targetGroup) {
+			OutgoingMessageHandlers.notifyAboutInvalidGroupId(ws)
 			ws.close()
 			return
 		}
@@ -72,7 +90,8 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			}
 			templateDeck = deck
 		}
-		currentPlayerInGame = currentGame.addPlayer(currentPlayer, templateDeck)
+
+		currentPlayerInGame = currentGame.addPlayer(currentPlayer, targetGroup, templateDeck)
 
 		if (currentGame.ruleset.gameMode === GameMode.PVE) {
 			await currentGame.progression.loadStates()
@@ -101,9 +120,11 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 		} catch (error) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error)
-			currentGame.players.forEach((playerInGame) => {
-				OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
-			})
+			currentGame.players
+				.flatMap((playerGroup) => playerGroup.players)
+				.forEach((playerInGame) => {
+					OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
+				})
 			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Player action)', null)
 			currentGame.forceShutdown('Unhandled error (Player action)')
 		}
@@ -130,7 +151,9 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 		return
 	}
 
-	const spectatedPlayer: ServerPlayerInGame | undefined = currentGame.players.find((player) => player.player.id === playerId)
+	const spectatedPlayer: ServerPlayerInGame | undefined = currentGame.players
+		.flatMap((playerGroup) => playerGroup.players)
+		.find((player) => player.player.id === playerId)
 	if (!spectatedPlayer) {
 		OutgoingMessageHandlers.notifyAboutInvalidGameID(ws)
 		ws.close()
@@ -162,9 +185,11 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 		} catch (error) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error)
-			currentGame.players.forEach((playerInGame) => {
-				OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
-			})
+			currentGame.players
+				.flatMap((playerGroup) => playerGroup.players)
+				.forEach((playerInGame) => {
+					OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
+				})
 			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Spectator action)', null)
 			currentGame.forceShutdown('Unhandled error (Spectator action)')
 		}

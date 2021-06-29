@@ -6,7 +6,7 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import TargetMode from '@shared/enums/TargetMode'
-import Ruleset from '@shared/models/Ruleset'
+import Ruleset from '@shared/models/ruleset/Ruleset'
 import GameMessage from '@shared/models/network/GameMessage'
 
 const gameStateModule = defineModule({
@@ -69,7 +69,7 @@ const gameStateModule = defineModule({
 			state.ruleset = value
 		},
 
-		setPlayerMorale(state, value: number): void {
+		setPlayerGroupMorale(state, value: number): void {
 			state.playerMorale = value
 		},
 
@@ -89,7 +89,7 @@ const gameStateModule = defineModule({
 			state.isOpponentInRound = value
 		},
 
-		setOpponentMorale(state, value: number): void {
+		setOpponentGroupMorale(state, value: number): void {
 			state.opponentMorale = value
 		},
 
@@ -180,8 +180,8 @@ const gameStateModule = defineModule({
 			commit.setOpponentData(null)
 			commit.setIsSpectating(false)
 			commit.setIsPlayersTurn(false)
-			commit.setPlayerMorale(0)
-			commit.setOpponentMorale(0)
+			commit.setPlayerGroupMorale(0)
+			commit.setOpponentGroupMorale(0)
 			commit.setIsOpponentInRound(true)
 			rootDispatch.gameLogModule.clearLog()
 		},

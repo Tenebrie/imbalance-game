@@ -1,5 +1,4 @@
 import ServerGame from './ServerGame'
-import ServerBotPlayerInGame from '../AI/ServerBotPlayerInGame'
 
 class ReusableTimeout {
 	game: ServerGame
@@ -40,7 +39,7 @@ export default class ServerGameTimers {
 		this.playerLeaveTimeout = new ReusableTimeout(
 			game,
 			() => {
-				const victoriousPlayer = game.players.find((player) => player.player.isInGame() || player instanceof ServerBotPlayerInGame) || null
+				const victoriousPlayer = game.players.find((playerGroup) => playerGroup.players.every((player) => player.player.isInGame())) || null
 				game.finish(victoriousPlayer, 'Player surrendered (Connection lost)')
 			},
 			60000

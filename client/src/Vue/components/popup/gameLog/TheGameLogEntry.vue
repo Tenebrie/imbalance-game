@@ -81,12 +81,13 @@ export default defineComponent({
 			if (localizedString && localizedString !== id) {
 				return localizedString
 			}
-			if (Core.player.player.id === id) {
-				return Core.player.player.username
-			}
-			if (Core.opponent && Core.opponent.player.id === id) {
-				return Core.opponent.player.username
-			}
+			// TODO: Figure out entity names
+			// if (Core.player.player.id === id) {
+			// 	return Core.player.player.username
+			// }
+			// if (Core.opponent && Core.opponent.player.id === id) {
+			// 	return Core.opponent.player.username
+			// }
 			const card = Core.game.findCardById(id)
 			if (card) {
 				return `${Localization.get(card.name)}`

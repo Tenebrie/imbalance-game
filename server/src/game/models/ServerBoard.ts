@@ -15,6 +15,7 @@ import GameHookType, { UnitDestroyedHookArgs, UnitDestroyedHookValues } from './
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import CardTribe from '@shared/enums/CardTribe'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 export default class ServerBoard implements Board {
 	readonly game: ServerGame
@@ -49,11 +50,15 @@ export default class ServerBoard implements Board {
 		return this.rows.find((row) => !!row.cards.find((unit) => unit.card.id === targetUnit.card.id)) || null
 	}
 
-	public getControlledRows(player: ServerPlayerInGame | null): ServerBoardRow[] {
+	public getControlledRows(player: ServerPlayerInGame | ServerPlayerGroup | null): ServerBoardRow[] {
 		if (!player) {
 			return []
 		}
-		const rows = this.rows.filter((row) => row.owner === player)
+		const rows = this.rows.filter(
+			(row) =>
+				(player instanceof ServerPlayerGroup && row.owner === player) ||
+				(player instanceof ServerPlayerInGame && row.owner && row.owner.players.includes(player))
+		)
 		if (player.isInvertedBoard()) {
 			rows.reverse()
 		}
@@ -72,16 +77,18 @@ export default class ServerBoard implements Board {
 		return adjacentRows
 	}
 
-	public getTotalPlayerPower(playerInGame: ServerPlayerInGame | null): number {
-		if (!playerInGame) {
+	public getTotalPlayerPower(playerGroup: ServerPlayerGroup | null): number {
+		if (!playerGroup) {
 			return 0
 		}
-		return (
-			playerInGame.leader.stats.power +
-			this.getUnitsOwnedByPlayer(playerInGame)
-				.map((unit) => unit.card.stats.power)
-				.reduce((total, value) => total + value, 0)
-		)
+		const leaderPower = playerGroup.players
+			.map((player) => player.leader)
+			.map((card) => card.stats.power)
+			.reduce((total, value) => total + value, 0)
+		const boardPower = this.getUnitsOwnedByGroup(playerGroup)
+			.map((unit) => unit.card.stats.power)
+			.reduce((total, value) => total + value, 0)
+		return leaderPower + boardPower
 	}
 
 	public getHorizontalUnitDistance(first: ServerUnit, second: ServerUnit): number {
@@ -161,29 +168,27 @@ export default class ServerBoard implements Board {
 		return opposingEnemies.filter((unit) => this.getVerticalUnitDistance(unit, thisUnit) === shortestDistance)
 	}
 
-	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame | null): ServerUnit[] {
+	public getUnitsOwnedByGroup(owner: ServerPlayerGroup | null): ServerUnit[] {
 		if (!owner) {
 			return []
 		}
 		return this.getAllUnits().filter((unit) => unit.owner === owner)
 	}
 
-	public getUnitsOwnedByOpponent(context: ServerCard | ServerPlayerInGame | null): ServerUnit[] {
+	public getUnitsOwnedByOpponent(context: ServerCard | ServerPlayerInGame | ServerPlayerGroup | null): ServerUnit[] {
 		if (!context) {
 			return []
 		}
-		const player = context instanceof ServerCard ? context.ownerInGame : context
-		if (!player) {
-			return []
-		}
-		return this.getUnitsOwnedByPlayer(player.opponent)
+		const playerGroup: ServerPlayerGroup =
+			context instanceof ServerPlayerGroup ? context : context instanceof ServerCard ? context.ownerGroupInGame : context.group
+		return this.getUnitsOwnedByGroup(playerGroup.opponent)
 	}
 
-	public getUnitsOfTribe(tribe: CardTribe, player: ServerPlayerInGame | null): ServerUnit[] {
-		return this.getUnitsOwnedByPlayer(player).filter((unit) => unit.card.tribes.includes(tribe))
+	public getUnitsOfTribe(tribe: CardTribe, player: ServerPlayerGroup | null): ServerUnit[] {
+		return this.getUnitsOwnedByGroup(player).filter((unit) => unit.card.tribes.includes(tribe))
 	}
 
-	public getMoveDirection(player: ServerPlayerInGame, from: ServerBoardRow, to: ServerBoardRow): MoveDirection {
+	public getMoveDirection(player: ServerPlayerGroup, from: ServerBoardRow, to: ServerBoardRow): MoveDirection {
 		let direction = from.index - to.index
 		if (player.isInvertedBoard()) {
 			direction *= -1
@@ -197,7 +202,7 @@ export default class ServerBoard implements Board {
 		}
 	}
 
-	public rowMove(player: ServerPlayerInGame, fromRowIndex: number, direction: MoveDirection, distance: number): number {
+	public rowMove(player: ServerPlayerGroup, fromRowIndex: number, direction: MoveDirection, distance: number): number {
 		if (direction === MoveDirection.SIDE) {
 			return fromRowIndex
 		}
@@ -228,7 +233,7 @@ export default class ServerBoard implements Board {
 		return playerRows.indexOf(targetRow)
 	}
 
-	public getDistanceToDynamicFrontForPlayer(rowOrIndex: number | ServerBoardRow, player: ServerPlayerInGame): number {
+	public getDistanceToDynamicFrontForPlayer(rowOrIndex: number | ServerBoardRow, player: ServerPlayerGroup): number {
 		const rowIndex = toRowIndex(rowOrIndex)
 		const targetRow = this.rows[rowIndex]
 		const distanceToStaticFront = this.getDistanceToStaticFront(rowIndex)
@@ -246,21 +251,24 @@ export default class ServerBoard implements Board {
 		return result
 	}
 
-	public getRowWithDistanceToFront(player: ServerPlayerInGame, distance: number): ServerBoardRow {
+	public getRowWithDistanceToFront(player: ServerPlayerInGame | ServerPlayerGroup, distance: number): ServerBoardRow {
+		if (player instanceof ServerPlayerInGame) {
+			player = player.group
+		}
 		let playerRows = this.rows.filter((row) => row.owner === player)
 		if (player.isInvertedBoard()) {
 			playerRows = playerRows.reverse()
 		}
 		const targetRow = playerRows[Math.min(playerRows.length - 1, distance)]
 		if (!targetRow) {
-			throw new Error(`No row owned by player ${player.player.id} at distance ${distance}!`)
+			throw new Error(`No row owned by player at distance ${distance}!`)
 		}
 		return targetRow
 	}
 
-	public createUnit(card: ServerCard, rowIndex: number, unitIndex: number): ServerUnit | null {
+	public createUnit(card: ServerCard, createdBy: ServerPlayerInGame, rowIndex: number, unitIndex: number): ServerUnit | null {
 		const targetRow = this.rows[rowIndex]
-		return targetRow.createUnit(card, unitIndex)
+		return targetRow.createUnit(card, createdBy, unitIndex)
 	}
 
 	public moveUnit(unit: ServerUnit, rowIndex: number, unitIndex: number): void {
@@ -385,11 +393,11 @@ export default class ServerBoard implements Board {
 		if (card.features.includes(CardFeature.HERO_POWER)) {
 			card.cleanse()
 			// card.stats.power = card.stats.basePower
-			unit.owner.cardDeck.addSpellToTop(card)
+			unit.originalOwner.cardDeck.addSpellToTop(card)
 		} else if (card.type === CardType.UNIT) {
-			unit.owner.cardGraveyard.addUnit(card)
+			unit.originalOwner.cardGraveyard.addUnit(card)
 		} else if (card.type === CardType.SPELL) {
-			unit.owner.cardGraveyard.addSpell(card)
+			unit.originalOwner.cardGraveyard.addSpell(card)
 		}
 
 		this.unitsBeingDestroyed.splice(this.unitsBeingDestroyed.indexOf(unit), 1)

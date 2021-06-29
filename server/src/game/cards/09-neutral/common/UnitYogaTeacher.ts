@@ -33,6 +33,6 @@ export default class UnitYogaTeacher extends ServerCard {
 
 	private onTargetSelected(targetCard: ServerCard): void {
 		Keywords.discardCard(targetCard)
-		Keywords.addCardToHand.for(this.ownerInGame).fromInstance(targetCard)
+		Keywords.addCardToHand.for(this.ownerPlayerInGame).fromInstance(targetCard)
 	}
 }

@@ -4,6 +4,7 @@ import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import Core from '../Core'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 
 export default class RenderedGameBoard implements Board {
 	public rows: RenderedGameBoardRow[]
@@ -78,11 +79,11 @@ export default class RenderedGameBoard implements Board {
 		return this.getInsertedUnits().concat(this.unitsOnHold)
 	}
 
-	public getInsertedUnitsOwnedByPlayer(owner: ClientPlayerInGame): RenderedUnit[] {
+	public getInsertedUnitsOwnedByPlayer(owner: ClientPlayerGroup): RenderedUnit[] {
 		return this.getInsertedUnits().filter((unit) => unit.owner === owner)
 	}
 
-	public getUnitsOwnedByPlayer(owner: ClientPlayerInGame): RenderedUnit[] {
+	public getUnitsOwnedByPlayer(owner: ClientPlayerGroup): RenderedUnit[] {
 		return this.getAllUnits().filter((unit) => unit.owner === owner)
 	}
 

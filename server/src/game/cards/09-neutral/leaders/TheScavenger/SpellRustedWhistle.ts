@@ -27,7 +27,7 @@ export default class SpellRustedWhistle extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => Keywords.createCard.forOwnerOf(this).fromConstructor(UnitStrayDog))
+		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(({ owner }) => Keywords.createCard.for(owner).fromConstructor(UnitStrayDog))
 		this.createEffect(GameEventType.CARD_PRE_RESOLVED).perform(() => {
 			this.buffs.add(BuffSpellExtraCostThisRound, this)
 		})

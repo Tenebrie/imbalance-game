@@ -38,19 +38,21 @@ export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<State
 			return this.getState(game).nextEncounter!
 		}
 		this.createChain()
-			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanPlayer())
+			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
 			.setLinkGetter(getNextRuleset)
 
 		this.createDeck().fixed([LeaderLabyrinthPlayer, SpellLabyrinthStartRun])
 		this.createAI([LeaderLabyrinthOpponent]).behave(AIBehaviour.PASSIVE)
 
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
-			if (game.progression.labyrinth.state.run.encounterHistory.length > 0) {
-				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthContinueRun)
-			}
-			if (game.progression.labyrinth.state.lastRun) {
-				Keywords.addCardToHand.for(game.getHumanPlayer()).fromConstructor(SpellLabyrinthPreviousRun)
-			}
+			game.getHumanGroup().players.forEach((playerInGame) => {
+				if (game.progression.labyrinth.state.run.encounterHistory.length > 0) {
+					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthContinueRun)
+				}
+				if (game.progression.labyrinth.state.lastRun) {
+					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthPreviousRun)
+				}
+			})
 		})
 
 		this.createCallback(GameEventType.CARD_PLAYED)
@@ -62,7 +64,7 @@ export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<State
 				} else {
 					this.getState(game).nextEncounter = RulesetLabyrinthRunCamp
 				}
-				game.finish(game.getHumanPlayer(), 'Starting new run', true)
+				game.finish(game.getHumanGroup(), 'Starting new run', true)
 				OutgoingMessageHandlers.executeMessageQueue(game)
 			})
 
@@ -70,7 +72,7 @@ export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<State
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthContinueRun)
 			.perform(({ game }) => {
 				this.getState(game).nextEncounter = RulesetLabyrinthRunCamp
-				game.finish(game.getHumanPlayer(), 'Continuing existing run', true)
+				game.finish(game.getHumanGroup(), 'Continuing existing run', true)
 			})
 	}
 }

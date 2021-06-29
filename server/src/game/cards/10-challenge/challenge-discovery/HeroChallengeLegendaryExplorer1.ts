@@ -36,8 +36,7 @@ export default class HeroChallengeLegendaryExplorer1 extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
 			.require((args) => args.targetCard.color === CardColor.GOLDEN)
 			.require(({ targetCard }) => this.exploredCards.includes(targetCard))
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onDeploy(): void {
@@ -49,7 +48,7 @@ export default class HeroChallengeLegendaryExplorer1 extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		Keywords.createCard.for(this.ownerInGame).fromInstance(target)
+		Keywords.createCard.for(this.ownerPlayerInGame).fromInstance(target)
 		this.exploredCards = []
 	}
 }

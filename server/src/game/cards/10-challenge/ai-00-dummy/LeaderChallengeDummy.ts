@@ -24,13 +24,13 @@ export default class LeaderChallengeDummy extends ServerCard {
 		})
 
 		this.createCallback(GameEventType.ROUND_STARTED, [CardLocation.LEADER])
-			.require(({ player }) => player === this.ownerInGame)
+			.require(({ group }) => group.owns(this))
 			.perform(() => this.onRoundStart())
 	}
 
 	private onRoundStart(): void {
 		const middleRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 1)
 		const targetDummyCard = CardLibrary.instantiate(this.game, TokenChallengeDummyTargetDummy)
-		middleRow.createUnit(targetDummyCard, 0)
+		middleRow.createUnit(targetDummyCard, this.ownerPlayerInGame, 0)
 	}
 }

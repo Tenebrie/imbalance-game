@@ -13,7 +13,7 @@ export default class BuffSpellDiscountPerTurn extends ServerCardBuff {
 		})
 
 		this.createCallback(GameEventType.TURN_STARTED)
-			.require(({ player }) => player === this.parent.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => onTurnStart())
 
 		const onTurnStart = () => {

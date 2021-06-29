@@ -9,7 +9,6 @@ export default class HiddenPlayerInGameMessage implements PlayerInGameMessage {
 	cardHand: HiddenCardHandMessage
 	cardDeck: HiddenCardDeckMessage
 	cardGraveyard: HiddenCardDeckMessage
-	morale: number
 	unitMana: number
 	spellMana: number
 
@@ -18,7 +17,6 @@ export default class HiddenPlayerInGameMessage implements PlayerInGameMessage {
 		this.cardHand = new HiddenCardHandMessage(playerInGame.cardHand)
 		this.cardDeck = new HiddenCardDeckMessage(playerInGame.cardDeck)
 		this.cardGraveyard = new HiddenCardDeckMessage(playerInGame.cardGraveyard)
-		this.morale = playerInGame.morale
 		this.unitMana = playerInGame.unitMana
 		this.spellMana = playerInGame.spellMana
 	}

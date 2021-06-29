@@ -32,7 +32,7 @@ export default class HeroSparklingSpirit extends ServerCard {
 		}
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.requireImmediate(({ triggeringUnit }) => triggeringUnit.owner.spellMana >= this.infuseCost)
+			.requireImmediate(({ owner }) => owner.spellMana >= this.infuseCost)
 			.perform(() => onDeploy())
 		const onDeploy = (): void => {
 			Keywords.infuse(this, this.infuseCost)

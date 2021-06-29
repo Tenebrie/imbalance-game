@@ -33,11 +33,11 @@ export default class ItemLabyrinthSimpleRobe extends ServerCard {
 		}
 
 		this.createSelector()
-			.requireTarget(({ target }) => target.owner === this.owner && target === this.ownerInGame.leader)
+			.requireTarget(({ target }) => target.ownerGroupInGame.owns(this) && target === this.ownerPlayerInGame.leader)
 			.provide(BuffHiddenStrength, ItemLabyrinthSimpleRobe.BONUS_POWER)
 
 		this.createCallback(GameEventType.ROUND_STARTED, [CardLocation.HAND])
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => Keywords.generateMana(this, ItemLabyrinthSimpleRobe.BONUS_REGEN))
 	}
 }

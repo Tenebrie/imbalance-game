@@ -4,6 +4,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import { colorizeConsoleText, colorizeId, colorizePlayer } from '@src/utils/Utils'
 import { ServerRulesetTemplate } from '../models/rulesets/ServerRuleset'
 import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
+import ServerBotPlayer from '@src/game/AI/ServerBotPlayer'
 
 class GameLibrary {
 	games: ServerGame[]
@@ -21,9 +22,18 @@ class GameLibrary {
 	}
 
 	public createChainGame(fromGame: ServerGame, chain: RulesetChain): ServerGame {
-		const newGame = ServerGame.newOwnedInstance(fromGame.getHumanPlayer().player, chain.get(fromGame), {})
+		const nextRuleset = chain.get(fromGame)
+		const newGame = ServerGame.newOwnedInstance(fromGame.getSinglePlayer().player, chain.get(fromGame), {})
 		this.games.push(newGame)
-		fromGame.players.filter((player) => player.isBot).forEach((player) => newGame.addPlayer(player.player, player.startingDeck))
+
+		if (nextRuleset.ai) {
+			const botGroup = newGame.players.find((group) => group.openBotSlots > 0)
+			if (!botGroup) {
+				throw { stack: 500, error: 'No bot slots available for an AI game' }
+			}
+			newGame.addPlayer(new ServerBotPlayer(), botGroup, nextRuleset.ai.deck)
+		}
+
 		return newGame
 	}
 
@@ -41,6 +51,7 @@ class GameLibrary {
 				spectator.player.disconnect()
 			})
 		game.players
+			.flatMap((playerGroup) => playerGroup.players)
 			.filter((playerInGame) => playerInGame.player.webSocket && playerInGame.player.webSocket.game === game)
 			.forEach((playerInGame) => {
 				OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player)

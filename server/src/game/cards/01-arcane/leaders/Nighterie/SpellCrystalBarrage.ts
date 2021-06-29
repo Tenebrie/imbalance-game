@@ -10,6 +10,7 @@ import Constants from '@shared/Constants'
 import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitVolatileCrystal from '../../tokens/UnitVolatileCrystal'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export default class SpellCrystalBarrage extends ServerCard {
 	constructor(game: ServerGame) {
@@ -27,10 +28,10 @@ export default class SpellCrystalBarrage extends ServerCard {
 
 		this.createDeployTargets(TargetType.BOARD_ROW)
 			.requireEnemy()
-			.perform(({ targetRow }) => this.onTargetSelected(targetRow))
+			.perform(({ player, targetRow }) => this.onTargetSelected(player, targetRow))
 	}
 
-	private onTargetSelected(target: ServerBoardRow): void {
+	private onTargetSelected(player: ServerPlayerInGame, target: ServerBoardRow): void {
 		for (let i = 0; i <= target.cards.length; i += 2) {
 			if (target.cards.length >= Constants.MAX_CARDS_PER_ROW) {
 				break
@@ -38,7 +39,7 @@ export default class SpellCrystalBarrage extends ServerCard {
 
 			const crystal = CardLibrary.instantiate(this.game, UnitVolatileCrystal)
 			this.game.animation.thread(() => {
-				this.game.board.createUnit(crystal, target.index, i)
+				this.game.board.createUnit(crystal, player, target.index, i)
 			})
 		}
 	}

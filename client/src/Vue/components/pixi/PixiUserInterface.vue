@@ -43,7 +43,7 @@
 			<pixi-inspected-card />
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
-			<div class="overlay-message" v-if="isPlayingVersusAI && !isChainingGameMode">Connecting...</div>
+			<div class="overlay-message" v-if="isPlayingVersusAI && !isChainingGameMode && !isAnyVictoryCondition">Connecting...</div>
 			<div class="overlay-message" v-if="!opponent && isPlayingVersusPlayer">
 				<span>Waiting for another player to connect...<br />You may also choose to play vs AI from the main menu</span>
 				<button class="secondary game-button" @click="onLeaveGame">Leave game</button>
@@ -185,6 +185,7 @@ export default defineComponent({
 		const isVictory = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY)
 		const isDefeat = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DEFEAT)
 		const isDraw = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DRAW)
+		const isAnyVictoryCondition = computed(() => isVictory.value || isDraw.value || isDefeat.value)
 		const isSpectating = computed(() => store.state.gameStateModule.isSpectating)
 		const isOpponentFinishedRound = computed(
 			() => !store.state.gameStateModule.isOpponentInRound && store.state.gameStateModule.isPlayerInRound
@@ -234,6 +235,7 @@ export default defineComponent({
 			isVictory,
 			isDefeat,
 			isDraw,
+			isAnyVictoryCondition,
 			mulliganMode,
 			isConfirmTargetsButtonVisible,
 			isHideTargetsButtonVisible,

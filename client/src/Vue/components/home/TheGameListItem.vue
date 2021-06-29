@@ -1,17 +1,38 @@
 <template>
 	<div class="the-game-list-item" @click="onClick">
-		<span v-if="thisGame.isStarted">
+		<span v-if="!hasOpenSlots">
 			<i>
 				Spectate:
-				<b>{{ thisGame.players[0].player.username }}</b>
+				<b>{{ thisGame.players[0].username }}</b>
 				vs
-				<b>{{ thisGame.players[1].player.username }}</b>
+				<b>{{ thisGame.players[1].username }}</b>
 			</i>
 		</span>
-		<span v-if="!thisGame.isStarted">
+		<span v-if="hasOpenSlots && thisGame.players[0].openHumanSlots === 0 && thisGame.players[1].players.length === 0">
 			<i>
 				Challenge:
-				<b>{{ thisGame.players[0].player.username }}</b>
+				<b>{{ thisGame.players[0].username }}</b>
+			</i>
+		</span>
+		<span v-if="hasOpenSlots && thisGame.players[1].openHumanSlots === 0 && thisGame.players[0].players.length === 0">
+			<i>
+				Challenge:
+				<b>{{ thisGame.players[1].username }}</b>
+			</i>
+		</span>
+		<span
+			v-if="
+				hasOpenSlots &&
+				thisGame.players[0].openHumanSlots > 0 &&
+				thisGame.players[0].players.length > 0 &&
+				thisGame.players[1].players.length === 1
+			"
+		>
+			<i>
+				Join cooperative game:
+				<b>{{ thisGame.players[0].username }}</b>
+				vs
+				<b>{{ thisGame.players[1].username }}</b>
 			</i>
 		</span>
 	</div>
@@ -20,7 +41,7 @@
 <script lang="ts">
 import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
-import { defineComponent, PropType } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
 import TheDeckSelectionPopup from '@/Vue/components/popup/escapeMenu/TheDeckSelectionPopup.vue'
 
 export default defineComponent({
@@ -45,8 +66,14 @@ export default defineComponent({
 				await store.dispatch.joinGame(props.game)
 			}
 		}
+
+		const hasOpenSlots = computed<boolean>(() => {
+			return props.game.players.some((group) => group.openHumanSlots > 0)
+		})
+
 		return {
 			thisGame: props.game,
+			hasOpenSlots,
 			onClick,
 		}
 	},

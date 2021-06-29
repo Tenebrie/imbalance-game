@@ -26,20 +26,21 @@ const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void =
 	game.events.evaluateSelectors()
 	game.events.flushLogEventGroup()
 
+	const allPlayersHaveNoUnitMana = player.group.players.every((player) => player.unitMana === 0)
 	if (
 		game.turnPhase === GameTurnPhase.DEPLOY &&
-		player.unitMana === 0 &&
+		allPlayersHaveNoUnitMana &&
 		game.cardPlay.cardResolveStack.currentCard === null &&
-		!player.turnEnded
+		!player.group.turnEnded
 	) {
-		player.endTurn()
+		player.group.endTurn()
 		game.advanceCurrentTurn()
 
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
 	}
 
-	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
+	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, [player])
 	OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 	game.events.flushLogEventGroup()
 }
@@ -53,8 +54,8 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 
 		const validTargets = card.targeting.getPlayTargets(playerInGame, { checkMana: true })
 		if (
-			playerInGame.turnEnded ||
-			playerInGame.roundEnded ||
+			playerInGame.group.turnEnded ||
+			playerInGame.group.roundEnded ||
 			playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
 			!validTargets.some((wrapper) => wrapper.target.targetRow.index === data.rowIndex && wrapper.target.targetPosition === data.unitIndex)
@@ -73,17 +74,17 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	[GenericActionMessageType.UNIT_ORDER]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		const orderedUnit = game.board.findUnitById(data.sourceCardId)
 		if (
-			playerInGame.turnEnded ||
+			playerInGame.group.turnEnded ||
 			playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
 			!orderedUnit ||
-			orderedUnit.owner !== playerInGame ||
+			orderedUnit.owner !== playerInGame.group ||
 			!game.board.orders.validOrders.some((validOrder) => validOrder.target.id === data.id)
 		) {
 			return
 		}
 
-		game.board.orders.performUnitOrder(data)
+		game.board.orders.performUnitOrder(data, playerInGame)
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
@@ -113,11 +114,11 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.CONFIRM_TARGETS]: (data: TargetMode, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (data !== TargetMode.MULLIGAN && player.mulliganMode) {
+		if (data !== TargetMode.MULLIGAN && player.group.mulliganMode) {
 			player.showMulliganCards()
 		} else if (data === TargetMode.BROWSE) {
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, [])
-		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
+		} else if (data === TargetMode.MULLIGAN && player.group.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
 			onPlayerActionEnd(game, player)
@@ -147,7 +148,9 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		const cards = sortCards(player.opponent!.cardGraveyard.unitCards.concat(player.opponent!.cardGraveyard.spellCards))
+		const cards = sortCards(
+			player.opponent!.players[0].cardGraveyard.unitCards.concat(player.opponent!.players[0].cardGraveyard.spellCards)
+		)
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeFromConstructor(TokenEmptyDeck))
 		}
@@ -163,15 +166,15 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.TURN_END]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (player.turnEnded || player.targetRequired) {
+		if (player.group.turnEnded || player.targetRequired) {
 			return
 		}
 
 		if (player.unitMana === 0) {
-			player.endTurn()
+			player.group.endTurn()
 		} else if (player.unitMana > 0) {
 			player.setUnitMana(0)
-			player.endRound()
+			player.group.endRound()
 		}
 
 		game.advanceCurrentTurn()

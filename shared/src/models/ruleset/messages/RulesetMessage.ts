@@ -1,7 +1,8 @@
 import GameMode from '../../../enums/GameMode'
 import RulesetCategory from '../../../enums/RulesetCategory'
-import Ruleset from '../../Ruleset'
-import { RulesetConstants } from '../../RulesetConstants'
+import Ruleset from '../Ruleset'
+import { RulesetConstants } from '../RulesetConstants'
+import RulesetSlots from '../RulesetSlots'
 
 export default class RulesetMessage {
 	class: string
@@ -9,6 +10,7 @@ export default class RulesetMessage {
 	category: RulesetCategory
 	sortPriority: number
 	playerDeckRequired: boolean
+	slots: RulesetSlots
 
 	constants: RulesetConstants
 
@@ -18,6 +20,7 @@ export default class RulesetMessage {
 		this.category = ruleset.category
 		this.sortPriority = ruleset.sortPriority
 		this.playerDeckRequired = ruleset.playerDeckRequired
+		this.slots = ruleset.slots
 		this.constants = {
 			...ruleset.constants,
 		}

@@ -48,7 +48,7 @@ export default class UnitChargingKnight extends ServerCard {
 			.perform(() => this.onUnitMove())
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => this.onTurnEnded())
 	}
 

@@ -11,7 +11,7 @@ export default class BuffVelElleronEncouragement extends ServerCardBuff {
 		})
 
 		this.createCallback(GameEventType.TURN_STARTED)
-			.require(({ player }) => player === this.parent.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => this.onTurnStarted())
 	}
 

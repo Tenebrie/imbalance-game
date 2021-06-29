@@ -9,7 +9,6 @@ export default class OpenPlayerInGameMessage implements PlayerInGameMessage {
 	cardHand: OpenCardHandMessage
 	cardDeck: OpenCardDeckMessage
 	cardGraveyard: OpenCardDeckMessage
-	morale: number
 	unitMana: number
 	spellMana: number
 
@@ -18,7 +17,6 @@ export default class OpenPlayerInGameMessage implements PlayerInGameMessage {
 		this.cardHand = new OpenCardHandMessage(playerInGame.cardHand)
 		this.cardDeck = new OpenCardDeckMessage(playerInGame.cardDeck)
 		this.cardGraveyard = new OpenCardDeckMessage(playerInGame.cardGraveyard)
-		this.morale = playerInGame.morale
 		this.unitMana = playerInGame.unitMana
 		this.spellMana = playerInGame.spellMana
 	}

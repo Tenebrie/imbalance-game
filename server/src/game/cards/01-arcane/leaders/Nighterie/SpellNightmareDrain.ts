@@ -12,6 +12,7 @@ import BuffStrength from '../../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export default class SpellNightmareDrain extends ServerCard {
 	constructor(game: ServerGame) {
@@ -27,24 +28,24 @@ export default class SpellNightmareDrain extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargets(TargetType.UNIT).require((args) => args.targetCard.stats.power < args.targetCard.stats.basePower)
+		this.createDeployTargets(TargetType.UNIT)
+			.require((args) => args.targetCard.stats.power < args.targetCard.stats.basePower)
+			.perform(({ player, targetCard }) => this.onTargetSelected(player, targetCard.unit!))
 
 		/* Create basic unit if no target available */
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.require(() => this.game.cardPlay.getDeployTargets().length === 0)
-			.perform(() => {
+			.perform(({ owner }) => {
 				const shadowspawn = CardLibrary.instantiate(this.game, UnitShadowspawn)
 				const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 0)
-				this.game.board.createUnit(shadowspawn, targetRow.index, targetRow.cards.length)
+				this.game.board.createUnit(shadowspawn, owner, targetRow.index, targetRow.cards.length)
 			})
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard.unit!))
 	}
 
-	private onTargetSelected(target: ServerUnit): void {
+	private onTargetSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
 		const shadowspawn = CardLibrary.instantiate(this.game, UnitShadowspawn)
 		const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 0)
-		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, targetRow.index, targetRow.cards.length)
+		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, owner, targetRow.index, targetRow.cards.length)
 		if (!shadowspawnUnit) {
 			return
 		}

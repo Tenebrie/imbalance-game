@@ -94,6 +94,7 @@ export default class ServerGameCardPlay {
 			this.game.events.postEvent(
 				GameEventCreators.unitDeployed({
 					game: this.game,
+					owner: ownedCard.owner,
 					triggeringUnit: ownedCard.card.unit,
 				})
 			)
@@ -102,6 +103,7 @@ export default class ServerGameCardPlay {
 			this.game.events.postEvent(
 				GameEventCreators.spellDeployed({
 					game: this.game,
+					owner: ownedCard.owner,
 					triggeringCard: ownedCard.card,
 				})
 			)
@@ -113,7 +115,9 @@ export default class ServerGameCardPlay {
 		const owner = ownedCard.owner
 
 		/* Announce card to opponent */
-		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent!.player, ServerAnimation.cardAnnounce(card))
+		if (owner.opponent) {
+			OutgoingMessageHandlers.triggerAnimationForPlayerGroup(owner.opponent, ServerAnimation.cardAnnounce(card))
+		}
 
 		/* Remove card from source */
 		if (source === 'hand' && owner.cardHand.findCardById(card.id)) {
@@ -138,7 +142,9 @@ export default class ServerGameCardPlay {
 		}
 
 		/* Play animation */
-		OutgoingMessageHandlers.triggerAnimationForPlayer(owner.opponent!.player, ServerAnimation.delay(500))
+		if (owner.opponent) {
+			OutgoingMessageHandlers.triggerAnimationForPlayerGroup(owner.opponent, ServerAnimation.delay(500))
+		}
 
 		/* Remember played card */
 		this.playedCards.push({
@@ -156,7 +162,7 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack.startResolvingImmediately(ownedCard, TargetMode.DEPLOY_EFFECT, () => this.updateResolvingCardTargetingStatus())
 
 		/* Insert the card into the board */
-		const unit = this.game.board.createUnit(card, rowIndex, unitIndex)
+		const unit = this.game.board.createUnit(card, ownedCard.owner, rowIndex, unitIndex)
 		if (unit === null) {
 			this.cardResolveStack.finishResolving()
 			return
@@ -167,6 +173,7 @@ export default class ServerGameCardPlay {
 			GameEventCreators.unitDeployed({
 				game: this.game,
 				triggeringUnit: unit,
+				owner: ownedCard.owner,
 			})
 		)
 	}
@@ -182,6 +189,7 @@ export default class ServerGameCardPlay {
 			GameEventCreators.spellDeployed({
 				game: this.game,
 				triggeringCard: card,
+				owner: ownedCard.owner,
 			})
 		)
 	}
@@ -225,9 +233,9 @@ export default class ServerGameCardPlay {
 		if (!currentCard) {
 			return []
 		}
-		const card = currentCard?.card
+		const card = currentCard.card
 
-		return card.targeting.getPlayTargets(card.ownerInGame, { checkMana: false })
+		return card.targeting.getPlayTargets(card.ownerPlayerInGame, { checkMana: false })
 	}
 
 	public getDeployTargets(): DeployTarget[] {
@@ -273,12 +281,14 @@ export default class ServerGameCardPlay {
 		} else if (targetMode === TargetMode.DEPLOY_EFFECT) {
 			if (targetType === TargetType.BOARD_ROW && target instanceof ServerCardTargetRow) {
 				;(correspondingTarget.definition as DeployTargetDefinition<RowTargetValidatorArguments>).perform({
+					player: playerInGame,
 					sourceCard: currentCard,
 					targetRow: target.targetRow,
 					previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
 				})
 			} else if (targetType === TargetType.BOARD_POSITION && target instanceof ServerCardTargetPosition) {
 				;(correspondingTarget.definition as DeployTargetDefinition<PositionTargetValidatorArguments>).perform({
+					player: playerInGame,
 					sourceCard: currentCard,
 					targetRow: target.targetRow,
 					targetPosition: target.targetPosition,
@@ -286,6 +296,7 @@ export default class ServerGameCardPlay {
 				})
 			} else if (targetType === TargetType.UNIT && target instanceof ServerCardTargetUnit) {
 				;(correspondingTarget.definition as DeployTargetDefinition<UnitTargetValidatorArguments>).perform({
+					player: playerInGame,
 					sourceCard: currentCard,
 					targetCard: target.targetCard,
 					targetUnit: target.targetCard.unit!,
@@ -293,6 +304,7 @@ export default class ServerGameCardPlay {
 				})
 			} else if (target instanceof ServerCardTargetCard) {
 				;(correspondingTarget.definition as DeployTargetDefinition<CardTargetValidatorArguments>).perform({
+					player: playerInGame,
 					sourceCard: currentCard,
 					targetCard: target.targetCard,
 					previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
@@ -371,12 +383,14 @@ export default class ServerGameCardPlay {
 			if (targetMode === TargetMode.DEPLOY_EFFECT) {
 				if (targetType === TargetType.BOARD_ROW && target instanceof ServerCardTargetRow) {
 					;(correspondingTarget.definition as DeployTargetDefinition<RowTargetValidatorArguments>).finalize({
+						player: playerInGame,
 						sourceCard: currentCard,
 						targetRow: target.targetRow,
 						previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),
 					})
 				} else if (targetType === TargetType.BOARD_POSITION && target instanceof ServerCardTargetPosition) {
 					;(correspondingTarget.definition as DeployTargetDefinition<PositionTargetValidatorArguments>).finalize({
+						player: playerInGame,
 						sourceCard: currentCard,
 						targetRow: target.targetRow,
 						targetPosition: target.targetPosition,
@@ -384,6 +398,7 @@ export default class ServerGameCardPlay {
 					})
 				} else if (targetType === TargetType.UNIT && target instanceof ServerCardTargetUnit) {
 					;(correspondingTarget.definition as DeployTargetDefinition<UnitTargetValidatorArguments>).finalize({
+						player: playerInGame,
 						sourceCard: currentCard,
 						targetCard: target.targetCard,
 						targetUnit: target.targetCard.unit!,
@@ -391,6 +406,7 @@ export default class ServerGameCardPlay {
 					})
 				} else if (target instanceof ServerCardTargetCard) {
 					;(correspondingTarget.definition as DeployTargetDefinition<CardTargetValidatorArguments>).finalize({
+						player: playerInGame,
 						sourceCard: currentCard,
 						targetCard: target.targetCard,
 						previousTargets: this.cardResolveStack.previousTargets.map((deployTarget) => deployTarget.target),

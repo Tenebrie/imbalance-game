@@ -22,7 +22,8 @@ import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import lzutf8 from 'lzutf8'
 import { compressGameTraffic } from '@shared/Utils'
 import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
-import { RulesetConstants } from '@shared/models/RulesetConstants'
+import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 
 class Core {
 	public isReady = false
@@ -36,8 +37,8 @@ class Core {
 
 	public game: ClientGame = new ClientGame()
 	public board!: RenderedGameBoard
-	public player!: ClientPlayerInGame
-	public opponent?: ClientPlayerInGame
+	public player!: ClientPlayerGroup
+	public opponent!: ClientPlayerGroup
 	public resolveStack!: ClientCardResolveStack
 
 	public performance: GamePerformance = new GamePerformance()
@@ -45,11 +46,25 @@ class Core {
 	public init(game: GameMessage, deckId: string, container: HTMLElement): void {
 		const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
 		const urlHost = isElectron() ? electronWebsocketTarget() : window.location.host
-		let targetUrl = `${protocol}//${urlHost}/api/game/${game.id}?deckId=${deckId}`
-		if (game.players.length >= 2) {
-			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}/spectate/${game.players[0].player.id}`
+
+		let targetGroupIndex = game.players[0].openHumanSlots > 0 ? 0 : game.players[1].openHumanSlots > 0 ? 1 : null
+		// No slots available -> spectating
+		const isSpectating = targetGroupIndex === null
+		if (isSpectating || targetGroupIndex === null) {
+			targetGroupIndex = 0
 		}
-		if (game.players.find((playerInGame) => playerInGame.player.id === store.state.player?.id)) {
+		const opponentGroupIndex = targetGroupIndex === 0 ? 1 : 0
+
+		const targetGroupId = game.players[targetGroupIndex].id
+		const opponentGroupId = game.players[opponentGroupIndex].id
+		let targetUrl = `${protocol}//${urlHost}/api/game/${game.id}?deckId=${deckId}&groupId=${targetGroupId}`
+		if (isSpectating) {
+			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}/spectate/${targetGroupId}`
+		}
+		// Reconnecting
+		if (
+			game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === store.state.player?.id)
+		) {
 			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}`
 		}
 		this.__rulesetConstants = game.ruleset.constants
@@ -60,7 +75,8 @@ class Core {
 		socket.onerror = (event) => this.onError(event, socket)
 		this.socket = socket
 
-		this.player = ClientPlayerInGame.fromPlayer(store.getters.player)
+		this.player = new ClientPlayerGroup(targetGroupId)
+		this.opponent = new ClientPlayerGroup(opponentGroupId)
 	}
 
 	private async onConnect(container: HTMLElement): Promise<void> {
@@ -155,32 +171,47 @@ class Core {
 		return store.state.gameStateModule.isSpectating
 	}
 
-	public registerOpponent(opponent: ClientPlayerInGame): void {
-		this.opponent = opponent
-	}
-
 	private __rulesetConstants!: RulesetConstants
 
 	public get constants(): RulesetConstants {
 		return { ...this.__rulesetConstants }
 	}
 
-	public getPlayer(playerId: string): ClientPlayerInGame {
-		if (this.player && this.player.player.id === playerId) {
-			return this.player
-		} else if (this.opponent && this.opponent.player.id === playerId) {
-			return this.opponent
-		}
-		throw new Error(`Player ${playerId} does not exist! Existing players: ${this.player?.player.id}, ${this.opponent?.player.id}`)
+	public get allPlayers(): ClientPlayerInGame[] {
+		return [this.player, this.opponent].flatMap((playerGroup) => playerGroup.players)
 	}
 
-	public getPlayerOrNull(playerId: string): ClientPlayerInGame | null {
-		if (this.player && this.player.player.id === playerId) {
+	public getPlayerGroup(groupId: string): ClientPlayerGroup {
+		const group = this.getPlayerGroupOrNull(groupId)
+		if (!group) {
+			throw new Error(`Player group ${groupId} does not exist!`)
+		}
+		return group
+	}
+
+	public getPlayerGroupOrNull(groupId: string): ClientPlayerGroup | null {
+		if (this.player.id === groupId) {
 			return this.player
-		} else if (this.opponent && this.opponent.player.id === playerId) {
+		} else if (this.opponent.id === groupId) {
 			return this.opponent
 		}
 		return null
+	}
+
+	public getPlayer(playerId: string): ClientPlayerInGame {
+		const player = this.getPlayerOrNull(playerId)
+		if (!player) {
+			throw new Error(`Player ${playerId} does not exist!`)
+		}
+		return player
+	}
+
+	public getPlayerOrNull(playerId: string): ClientPlayerInGame | null {
+		return (
+			this.player.players.find((player) => player.player.id === playerId) ||
+			this.opponent.players.find((player) => player.player.id === playerId) ||
+			null
+		)
 	}
 
 	public sendMessage(type: ClientToServerMessageTypes, data: Record<string, any> | TargetMode | null): void {
@@ -211,7 +242,8 @@ class Core {
 		clearInterval(this.keepaliveTimer)
 		AudioSystem.setMode(AudioSystemMode.MENU)
 		this.mainHandler.stop()
-		this.opponent = undefined
+		this.player = new ClientPlayerGroup('emptyGroup')
+		this.opponent = new ClientPlayerGroup('emptyGroup')
 		this.renderer.destroy()
 
 		if (this.socket) {

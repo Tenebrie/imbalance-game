@@ -32,7 +32,7 @@ export default class UnitLabyrinthLostMage extends ServerCard {
 		}
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.requireImmediate(({ triggeringUnit }) => triggeringUnit.owner.spellMana >= UnitLabyrinthLostMage.INFUSE_COST)
+			.requireImmediate(({ owner }) => owner.spellMana >= UnitLabyrinthLostMage.INFUSE_COST)
 			.perform(() => onDeploy())
 
 		const onDeploy = (): void => {

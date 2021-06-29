@@ -11,12 +11,12 @@ class PlayQueueRenderer {
 
 	public renderPlayQueue(): void {
 		const invertedStack = Core.resolveStack.cards.slice()
-		const playersStack = invertedStack.filter((card) => card.owner === Core.player)
+		const playersStack = invertedStack.filter((card) => Core.player.includes(card.owner))
 		for (let i = 0; i < playersStack.length; i++) {
 			const ownedCard = playersStack[i]
 			this.renderPlayQueueCard(ownedCard.card, ownedCard.owner, i)
 		}
-		const opponentsStack = invertedStack.filter((card) => card.owner !== Core.player)
+		const opponentsStack = invertedStack.filter((card) => !Core.player.includes(card.owner))
 		for (let i = 0; i < opponentsStack.length; i++) {
 			const ownedCard = opponentsStack[i]
 			this.renderPlayQueueCard(ownedCard.card, ownedCard.owner, i)
@@ -42,7 +42,7 @@ class PlayQueueRenderer {
 		const horizontalOffset = 50 * Core.renderer.superSamplingLevel * index
 
 		let verticalOffset = getScreenHeight() * 0.2
-		if (owner === Core.opponent) {
+		if (Core.opponent.includes(owner)) {
 			verticalOffset *= -1
 		}
 

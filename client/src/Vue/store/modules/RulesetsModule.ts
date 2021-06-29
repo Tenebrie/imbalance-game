@@ -1,8 +1,8 @@
 import { defineModule } from 'direct-vuex'
 import axios from 'axios'
 import { moduleActionContext } from '@/Vue/store'
-import RulesetRefMessage from '@shared/models/network/ruleset/RulesetRefMessage'
 import RulesetCategory from '@shared/enums/RulesetCategory'
+import RulesetRefMessage from '@shared/models/ruleset/messages/RulesetRefMessage'
 
 const rulesetsModule = defineModule({
 	namespaced: true,

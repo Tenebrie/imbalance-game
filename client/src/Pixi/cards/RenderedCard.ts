@@ -25,6 +25,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import { forEachInEnum } from '@shared/Utils'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 
 type WorkshopCardProps = {
 	workshopTitle: string
@@ -588,9 +589,20 @@ export default class RenderedCard implements Card {
 		return !this.isHidden && [CardDisplayMode.ON_BOARD].includes(this.displayMode)
 	}
 
-	public get owner(): ClientPlayerInGame | null {
+	public get owner(): ClientPlayerInGame | ClientPlayerGroup | null {
 		const thisCardInGame = Core.game.findOwnedCardById(this.id)
 		return thisCardInGame ? thisCardInGame.owner : null
+	}
+
+	public get ownerPlayer(): ClientPlayerInGame {
+		const owner = this.owner
+		if (owner instanceof ClientPlayerInGame) {
+			return owner
+		}
+		if (!owner) {
+			throw new Error('Card has no owner!')
+		}
+		throw new Error('Card is owned by a group!')
 	}
 
 	public get location(): CardLocation {
@@ -599,28 +611,32 @@ export default class RenderedCard implements Card {
 			return CardLocation.UNKNOWN
 		}
 
-		if (owner.leader === this) {
-			return CardLocation.LEADER
-		}
-		const cardInDeck = owner.cardDeck.findCardById(this.id)
-		if (cardInDeck) {
-			return CardLocation.DECK
-		}
-		const cardInHand = owner.cardHand.findCardById(this.id)
-		if (cardInHand) {
-			return CardLocation.HAND
-		}
-		const cardInStack = Core.resolveStack.findCardById(this.id)
-		if (cardInStack) {
-			return CardLocation.STACK
+		if (owner instanceof ClientPlayerInGame) {
+			if (owner.leader === this) {
+				return CardLocation.LEADER
+			}
+			const cardInDeck = owner.cardDeck.findCardById(this.id)
+			if (cardInDeck) {
+				return CardLocation.DECK
+			}
+			const cardInHand = owner.cardHand.findCardById(this.id)
+			if (cardInHand) {
+				return CardLocation.HAND
+			}
+			const cardInStack = Core.resolveStack.findCardById(this.id)
+			if (cardInStack) {
+				return CardLocation.STACK
+			}
 		}
 		const cardOnBoard = Core.board.findUnitById(this.id)
 		if (cardOnBoard) {
 			return CardLocation.BOARD
 		}
-		const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
-		if (cardInGraveyard) {
-			return CardLocation.GRAVEYARD
+		if (owner instanceof ClientPlayerInGame) {
+			const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
+			if (cardInGraveyard) {
+				return CardLocation.GRAVEYARD
+			}
 		}
 		return CardLocation.UNKNOWN
 	}

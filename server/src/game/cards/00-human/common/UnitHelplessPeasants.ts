@@ -34,13 +34,13 @@ export default class UnitHelplessPeasants extends ServerCard {
 			selfBuff: this.selfBuff,
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner, triggeringUnit }) => {
 			const secondWeakling = new UnitHelplessPeasants(this.game)
-			this.game.board.createUnit(secondWeakling, triggeringUnit.rowIndex, triggeringUnit.unitIndex + 1)
+			this.game.board.createUnit(secondWeakling, owner, triggeringUnit.rowIndex, triggeringUnit.unitIndex + 1)
 		})
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.ownerInGame)
+			.require(({ group }) => group.owns(this))
 			.perform(() => this.onTurnEnded())
 	}
 
@@ -48,7 +48,7 @@ export default class UnitHelplessPeasants extends ServerCard {
 		const thisUnit = this.unit!
 		const unitDistance = this.game.board.getDistanceToStaticFront(thisUnit.rowIndex)
 		const isProtected = this.game.board
-			.getUnitsOwnedByPlayer(thisUnit.owner)
+			.getUnitsOwnedByGroup(thisUnit.owner)
 			.some(
 				(anotherUnit) =>
 					this.game.board.getDistanceToStaticFront(anotherUnit.rowIndex) < unitDistance &&

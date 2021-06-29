@@ -32,7 +32,7 @@ export default class HeroElderElemental extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 
 		this.createCallback(GameEventType.TURN_STARTED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => this.onDeploy())
 	}
 

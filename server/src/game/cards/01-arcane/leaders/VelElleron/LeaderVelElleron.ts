@@ -9,7 +9,7 @@ import SpellAnEncouragement from './SpellAnEncouragement'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import SpellEternalServitude from './SpellEternalServitude'
 import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
-import GameEventType from '@src/../../shared/src/enums/GameEventType'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class LeaderVelElleron extends ServerCard {
 	manaPerRound = 10
@@ -31,7 +31,7 @@ export default class LeaderVelElleron extends ServerCard {
 			...getLeaderTextVariables(this),
 		}
 		this.createCallback(GameEventType.ROUND_STARTED, AnyCardLocation)
-			.require(({ player }) => player === this.ownerInGame)
-			.perform(({ player }) => player.addSpellMana(this.manaPerRound))
+			.require(({ group }) => group.owns(this))
+			.perform(() => this.ownerPlayerInGame.addSpellMana(this.manaPerRound))
 	}
 }

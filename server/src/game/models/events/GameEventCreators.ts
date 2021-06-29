@@ -11,6 +11,7 @@ import TargetType from '@shared/enums/TargetType'
 import { ServerCardTargetCard, ServerCardTargetPosition, ServerCardTargetRow } from '../ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import ServerGame from '../ServerGame'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 export default {
 	gameCreated: (args: GameSetupEventArgs): GameEvent => ({
@@ -32,7 +33,7 @@ export default {
 		type: GameEventType.GAME_STARTED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id,
+			player: args.group.id,
 		},
 	}),
 
@@ -40,21 +41,21 @@ export default {
 		type: GameEventType.ROUND_STARTED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id,
+			player: args.group.id,
 		},
 	}),
 	postRoundStarted: (args: RoundStartedEventArgs): GameEvent => ({
 		type: GameEventType.POST_ROUND_STARTED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id,
+			player: args.group.id,
 		},
 	}),
 	turnStarted: (args: TurnStartedEventArgs): GameEvent => ({
 		type: GameEventType.TURN_STARTED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id,
+			player: args.group.id,
 		},
 	}),
 
@@ -277,7 +278,7 @@ export default {
 		args: args,
 		logVariables: {
 			triggeringUnit: args.triggeringUnit.card.id,
-			owner: args.triggeringUnit.owner.player.id,
+			owner: args.owner.player.id,
 		},
 	}),
 	spellDeployed: (args: SpellDeployedEventArgs): GameEvent => ({
@@ -286,7 +287,7 @@ export default {
 		args: args,
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
-			owner: args.triggeringCard.ownerInGame.player.id,
+			owner: args.owner.player.id,
 		},
 	}),
 
@@ -347,14 +348,14 @@ export default {
 		type: GameEventType.TURN_ENDED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id,
+			player: args.group.id,
 		},
 	}),
 	roundEnded: (args: RoundEndedEventArgs): GameEvent => ({
 		type: GameEventType.ROUND_ENDED,
 		args: args,
 		logVariables: {
-			player: args.player.player.id,
+			player: args.group.id,
 		},
 	}),
 
@@ -363,7 +364,7 @@ export default {
 		args: args,
 		logSubtype: args.victoriousPlayer ? 'victory' : 'draw',
 		logVariables: {
-			victoriousPlayer: args.victoriousPlayer?.player.id,
+			victoriousPlayer: args.victoriousPlayer?.id,
 		},
 	}),
 }
@@ -383,14 +384,14 @@ interface SharedEventArgs {
 
 export type GameSetupEventArgs = SharedEventArgs
 export interface GameStartedEventArgs extends SharedEventArgs {
-	player: ServerPlayerInGame
+	group: ServerPlayerGroup
 }
 
 export interface RoundStartedEventArgs extends SharedEventArgs {
-	player: ServerPlayerInGame
+	group: ServerPlayerGroup
 }
 export interface TurnStartedEventArgs extends SharedEventArgs {
-	player: ServerPlayerInGame
+	group: ServerPlayerGroup
 }
 
 export interface CardDrawnEventArgs extends SharedEventArgs {
@@ -477,7 +478,7 @@ export interface PlayerTargetCardSelectedEventArgs extends SharedEventArgs {
 }
 
 export interface UnitCreatedEventArgs extends SharedEventArgs {
-	owner: ServerPlayerInGame
+	owner: ServerPlayerGroup
 	triggeringCard: ServerCard
 	triggeringUnit: ServerUnit
 }
@@ -522,9 +523,11 @@ export interface UnitDestroyedEventArgs extends SharedEventArgs {
 }
 
 export interface UnitDeployedEventArgs extends SharedEventArgs {
+	owner: ServerPlayerInGame
 	triggeringUnit: ServerUnit
 }
 export interface SpellDeployedEventArgs extends SharedEventArgs {
+	owner: ServerPlayerInGame
 	triggeringCard: ServerCard
 }
 
@@ -542,12 +545,12 @@ export interface RowBuffRemovedEventArgs extends SharedEventArgs {
 }
 
 export interface TurnEndedEventArgs extends SharedEventArgs {
-	player: ServerPlayerInGame
+	group: ServerPlayerGroup
 }
 export interface RoundEndedEventArgs extends SharedEventArgs {
-	player: ServerPlayerInGame
+	group: ServerPlayerGroup
 }
 
 export interface GameFinishedEventArgs extends SharedEventArgs {
-	victoriousPlayer: ServerPlayerInGame | null
+	victoriousPlayer: ServerPlayerGroup | null
 }

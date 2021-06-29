@@ -1,6 +1,5 @@
 export enum PlayerUpdateMessageType {
-	LEADER_SELF = 'playerUpdate_leaderSelf',
-	LEADER_OPPONENT = 'playerUpdate_leaderOpponent',
+	LEADERS = 'playerUpdate_leaders',
 	MORALE = 'playerUpdate_morale',
 	MANA = 'playerUpdate_mana',
 	MULLIGANS = 'playerUpdate_mulligans',
@@ -45,7 +44,8 @@ export enum GameSyncMessageType {
 	START = 'gameSync_start',
 	PHASE_ADVANCE = 'gameSync_phaseAdvance',
 	PLAYER_SELF = 'gameSync_playerSelf',
-	PLAYER_OPPONENT = 'gameSync_playerOpponent',
+	PLAYER_ALLIES = 'gameSync_playerAllies',
+	PLAYER_OPPONENTS = 'gameSync_playerOpponents',
 	BOARD_STATE = 'gameSync_boardState',
 	STACK_STATE = 'gameSync_stackState',
 	ACTIVE_PLAYER = 'gameSync_activePlayer',

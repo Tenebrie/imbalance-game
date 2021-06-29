@@ -11,6 +11,7 @@ import Constants from '@shared/Constants'
 import CardLibrary from '../../../libraries/CardLibrary'
 import UnitLivingShadow from '../tokens/UnitLivingShadow'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export default class HeroLearthe extends ServerCard {
 	constructor(game: ServerGame) {
@@ -26,16 +27,16 @@ export default class HeroLearthe extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargets(TargetType.BOARD_ROW).require((args) => !!args.targetRow.owner)
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
+		this.createDeployTargets(TargetType.BOARD_ROW)
+			.require((args) => !!args.targetRow.owner)
+			.perform(({ player, targetRow }) => this.onTargetSelected(player, targetRow))
 	}
 
-	private onTargetSelected(target: ServerBoardRow): void {
+	private onTargetSelected(player: ServerPlayerInGame, target: ServerBoardRow): void {
 		for (let i = 0; i < Constants.MAX_CARDS_PER_ROW; i++) {
 			this.game.animation.createAnimationThread()
 			const livingShadow = CardLibrary.instantiate(this.game, UnitLivingShadow)
-			this.game.board.createUnit(livingShadow, target.index, target.cards.length)
+			this.game.board.createUnit(livingShadow, player, target.index, target.cards.length)
 			this.game.animation.commitAnimationThread()
 		}
 	}

@@ -1,4 +1,4 @@
-import { RulesetConstants } from '../RulesetConstants'
+import { RulesetConstants } from '../ruleset/RulesetConstants'
 
 export default class GameRulesetMessage {
 	constants: RulesetConstants

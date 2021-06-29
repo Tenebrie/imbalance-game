@@ -8,18 +8,26 @@ import BuffUnitToSpellConversion from '../game/buffs/BuffUnitToSpellConversion'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
 import Constants from '@shared/Constants'
-import { EmptyFunction, toRowIndex } from './Utils'
+import { EmptyFunction, getOwnerPlayer, toRowIndex } from './Utils'
 import ServerUnit from '@src/game/models/ServerUnit'
 import ServerOwnedCard from '@src/game/models/ServerOwnedCard'
 import GameEventCreators from '@src/game/models/events/GameEventCreators'
 
-const createCard = (player: ServerPlayerInGame, card: ServerCard, callback: (card: ServerCard) => void): ServerCard => {
+const createCard = (player: ServerPlayerInGame | null, card: ServerCard, callback: (card: ServerCard) => void): ServerCard => {
+	if (!player) {
+		throw new Error('Trying to create card for null player')
+	}
+
 	callback(card)
 	card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, player))
 	return card
 }
 
-const addCardToHand = (player: ServerPlayerInGame, card: ServerCard): ServerCard => {
+const addCardToHand = (player: ServerPlayerInGame | null, card: ServerCard): ServerCard => {
+	if (!player) {
+		throw new Error('Trying to add card to null player')
+	}
+
 	if (card.type === CardType.UNIT && !card.buffs.has(BuffUnitToSpellConversion)) {
 		player.cardHand.addUnit(card)
 	} else {
@@ -48,7 +56,7 @@ export default {
 	},
 
 	summonCard: (card: ServerCard): void => {
-		const cardOwner = card.ownerInGame
+		const cardOwner = card.ownerPlayerInGame
 		if (cardOwner.cardDeck.allCards.includes(card)) {
 			cardOwner.cardDeck.removeCard(card)
 		} else if (cardOwner.cardGraveyard.allCards.includes(card)) {
@@ -58,13 +66,13 @@ export default {
 	},
 
 	discardCard: (card: ServerCard): void => {
-		const owner = card.ownerInGame
+		const owner = card.ownerPlayerInGame
 		owner.cardHand.discardCard(card)
 		owner.cardGraveyard.addCard(card)
 	},
 
-	returnCard: (card: ServerCard): void => {
-		const owner = card.ownerInGame
+	returnCardToDeck: (card: ServerCard): void => {
+		const owner = card.ownerPlayerInGame
 		owner.cardHand.discardCard(card)
 		if (card.type === CardType.UNIT) {
 			owner.cardDeck.addUnitToBottom(card)
@@ -87,7 +95,7 @@ export default {
 		const rowIndex = unit.rowIndex
 		const unitIndex = unit.unitIndex
 		unit.game.board.removeUnit(unit)
-		unit.game.board.createUnit(CardLibrary.instantiate(unit.game, targetCard), rowIndex, unitIndex)
+		unit.game.board.createUnit(CardLibrary.instantiate(unit.game, targetCard), unit.originalOwner, rowIndex, unitIndex)
 	},
 
 	destroy: {
@@ -107,17 +115,17 @@ export default {
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateFromClass(card.game, cardClass)
-				return addCardToHand(card.ownerInGame, newCard)
+				return addCardToHand(getOwnerPlayer(card), newCard)
 			},
 
 			fromInstance: (instance: ServerCard): ServerCard => {
 				const newCard = CardLibrary.instantiateFromInstance(card.game, instance)
-				return addCardToHand(card.ownerInGame, newCard)
+				return addCardToHand(getOwnerPlayer(card), newCard)
 			},
 
 			fromConstructor: (prototype: CardConstructor): ServerCard => {
 				const newCard = CardLibrary.instantiate(card.game, prototype)
-				return addCardToHand(card.ownerInGame, newCard)
+				return addCardToHand(getOwnerPlayer(card), newCard)
 			},
 		}),
 
@@ -146,33 +154,33 @@ export default {
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateFromClass(card.game, cardClass)
-				return createCard(card.ownerInGame, newCard, EmptyFunction)
+				return createCard(card.ownerPlayer, newCard, EmptyFunction)
 			},
 
 			fromInstance: (instance: ServerCard): ServerCard => {
 				const newCard = CardLibrary.instantiateFromInstance(card.game, instance)
-				return createCard(card.ownerInGame, newCard, EmptyFunction)
+				return createCard(card.ownerPlayer, newCard, EmptyFunction)
 			},
 
 			fromConstructor: (prototype: CardConstructor): ServerCard => {
 				const newCard = CardLibrary.instantiate(card.game, prototype)
-				return createCard(card.ownerInGame, newCard, EmptyFunction)
+				return createCard(card.ownerPlayer, newCard, EmptyFunction)
 			},
 
 			with: (callback: (card: ServerCard) => void) => ({
 				fromClass: (cardClass: string): ServerCard => {
 					const newCard = CardLibrary.instantiateFromClass(card.game, cardClass)
-					return createCard(card.ownerInGame, newCard, callback)
+					return createCard(card.ownerPlayer, newCard, callback)
 				},
 
 				fromInstance: (instance: ServerCard): ServerCard => {
 					const newCard = CardLibrary.instantiateFromInstance(card.game, instance)
-					return createCard(card.ownerInGame, newCard, callback)
+					return createCard(card.ownerPlayer, newCard, callback)
 				},
 
 				fromConstructor: (prototype: CardConstructor): ServerCard => {
 					const newCard = CardLibrary.instantiate(card.game, prototype)
-					return createCard(card.ownerInGame, newCard, callback)
+					return createCard(card.ownerPlayer, newCard, callback)
 				},
 			}),
 		}),
@@ -217,7 +225,7 @@ export default {
 			throw new Error('Trying to infuse a board row')
 		}
 		const card = subscriber instanceof ServerBuff ? (subscriber.parent as ServerCard) : subscriber
-		const player = card.ownerInGame
+		const player = getOwnerPlayer(subscriber)!
 		if (!player) {
 			throw new Error('No owner for card')
 		}
@@ -234,7 +242,7 @@ export default {
 			throw new Error('Trying to infuse a board row')
 		}
 		const card = subscriber instanceof ServerBuff ? (subscriber.parent as ServerCard) : subscriber
-		const player = card.ownerInGame
+		const player = getOwnerPlayer(subscriber)!
 		const manaToGenerate = typeof value === 'function' ? value() : value
 		player.addSpellMana(manaToGenerate)
 		player.game.animation.play(ServerAnimation.cardGenerateMana(card))
@@ -250,13 +258,13 @@ export default {
 		}),
 	}),
 
-	shatter: (count: number) => ({
+	shatter: (count: number, owner: ServerPlayerInGame) => ({
 		on: (targetRow: ServerBoardRow) => {
 			for (let i = 0; i < count; i++) {
 				targetRow.game.animation.thread(() => {
 					const shatteredSpaceCount = targetRow.cards.filter((unit) => unit.card instanceof UnitShatteredSpace).length
 					const unitIndex = shatteredSpaceCount % 2 === 0 ? 0 : Constants.MAX_CARDS_PER_ROW
-					targetRow.createUnit(new UnitShatteredSpace(targetRow.game), unitIndex)
+					targetRow.createUnit(new UnitShatteredSpace(targetRow.game), owner, unitIndex)
 				})
 			}
 		},

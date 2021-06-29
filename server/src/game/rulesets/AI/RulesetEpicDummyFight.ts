@@ -37,7 +37,7 @@ export default class RulesetEpicDummyFight extends ServerRulesetBuilder<void> {
 		])
 
 		this.createCallback(GameEventType.GAME_STARTED)
-			.require(({ game, player }) => player === game.getHumanPlayer())
+			.require(({ game, group }) => group === game.getHumanGroup())
 			.perform(({ game }) =>
 				game.novel
 					.startDialog()

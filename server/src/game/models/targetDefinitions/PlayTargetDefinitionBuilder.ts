@@ -45,8 +45,8 @@ export default class PlayTargetDefinitionBuilder {
 			.require(({ card, owner, targetRow }) => {
 				return (
 					card.type === CardType.SPELL ||
-					(!card.features.includes(CardFeature.SPY) && targetRow.owner === owner) ||
-					(card.features.includes(CardFeature.SPY) && targetRow.owner !== owner)
+					(!card.features.includes(CardFeature.SPY) && targetRow.owner === owner.group) ||
+					(card.features.includes(CardFeature.SPY) && targetRow.owner !== owner.group)
 				)
 			})
 	}

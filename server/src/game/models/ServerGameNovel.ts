@@ -5,6 +5,7 @@ import ServerGame from './ServerGame'
 import { v4 as uuid } from 'uuid'
 import NovelReply from '@shared/models/novel/NovelReply'
 import ServerGameNovelScriptParser from './ServerGameScriptParser'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 class ServerNovelReply implements NovelReply {
 	public readonly id: string
@@ -30,8 +31,8 @@ export default class ServerGameNovel {
 		this.creator = new ServerGameNovelCreator(game)
 	}
 
-	private get player(): ServerPlayerInGame {
-		const player = this.game.getHumanPlayer()
+	private get player(): ServerPlayerGroup {
+		const player = this.game.getHumanGroup()
 		if (!player) {
 			throw new Error(`No human player in game ${this.game.id}!`)
 		}
@@ -91,8 +92,8 @@ export class ServerGameNovelCreator {
 		this.game = game
 	}
 
-	private get player(): ServerPlayerInGame {
-		const player = this.game.getHumanPlayer()
+	private get player(): ServerPlayerGroup {
+		const player = this.game.getHumanGroup()
 		if (!player) {
 			throw new Error(`No human player in game ${this.game.id}!`)
 		}

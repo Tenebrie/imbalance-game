@@ -6,7 +6,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardLibrary from '../../../libraries/CardLibrary'
-import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroMetrearte extends ServerCard {
@@ -22,17 +21,16 @@ export default class HeroMetrearte extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
+		this.addRelatedCards().requireColor(CardColor.LEADER).requireFaction(CardFaction.ARCANE)
+
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
 			.require(({ targetCard }) => targetCard.faction === CardFaction.ARCANE)
 			.require(({ targetCard }) => targetCard.features.includes(CardFeature.HERO_POWER))
-
-		this.addRelatedCards().requireColor(CardColor.LEADER).requireFaction(CardFaction.ARCANE)
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {
 		const cardCopy = CardLibrary.instantiateFromClass(this.game, target.class)
-		this.ownerInGame.cardHand.addSpell(cardCopy)
+		this.ownerPlayerInGame.cardHand.addSpell(cardCopy)
 	}
 }

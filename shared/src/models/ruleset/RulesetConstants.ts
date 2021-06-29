@@ -1,4 +1,4 @@
-import BoardSplitMode from '../enums/BoardSplitMode'
+import BoardSplitMode from '../../enums/BoardSplitMode'
 
 export type RulesetConstants = {
 	STARTING_PLAYER_MORALE: number

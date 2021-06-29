@@ -10,7 +10,7 @@ import GameHookType, { CardTakesDamageHookArgs } from '@src/game/models/events/G
 import { EventHook } from '@src/game/models/events/EventHook'
 import { CardSelector } from '@src/game/models/events/selectors/CardSelector'
 import { CardSelectorBuilder } from '@src/game/models/events/selectors/CardSelectorBuilder'
-import { colorizeClass, colorizeId, getOwner } from '@src/utils/Utils'
+import { colorizeClass, colorizeId, getOwnerGroup, getOwnerPlayer } from '@src/utils/Utils'
 import { cardPerform, cardRequire } from '@src/game/utils/CardEventHandlers'
 import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
 import CardLocation from '@shared/enums/CardLocation'
@@ -196,8 +196,8 @@ export default class ServerGameEvents {
 			}
 
 			// Current player > Opponent
-			const ownerOfA = getOwner(a.subscriber)
-			const ownerOfB = getOwner(b.subscriber)
+			const ownerOfA = getOwnerGroup(a.subscriber)
+			const ownerOfB = getOwnerGroup(b.subscriber)
 			if (ownerOfA !== ownerOfB) {
 				if (ownerOfA === this.game.activePlayer) {
 					return -1
@@ -264,9 +264,18 @@ export default class ServerGameEvents {
 						return 100
 				}
 			}
-			if (locationOfA === locationOfB && locationOfA !== CardLocation.BOARD && locationOfB !== CardLocation.BOARD && ownerOfA && ownerOfB) {
-				const indexOfA = getCardIndex(cardOfA, ownerOfA, locationOfA)
-				const indexOfB = getCardIndex(cardOfB, ownerOfB, locationOfB)
+
+			const playerOwnerOfA = getOwnerPlayer(a.subscriber)
+			const playerOwnerOfB = getOwnerPlayer(b.subscriber)
+			if (
+				locationOfA === locationOfB &&
+				locationOfA !== CardLocation.BOARD &&
+				locationOfB !== CardLocation.BOARD &&
+				playerOwnerOfA &&
+				playerOwnerOfB
+			) {
+				const indexOfA = getCardIndex(cardOfA, playerOwnerOfA, locationOfA)
+				const indexOfB = getCardIndex(cardOfB, playerOwnerOfB, locationOfB)
 				return indexOfA - indexOfB
 			}
 
@@ -360,12 +369,14 @@ export default class ServerGameEvents {
 			.getAllUnits()
 			.map((unit) => unit.card)
 			.concat(this.game.cardPlay.cardResolveStack.entries.map((entry) => entry.ownedCard.card))
-		this.game.players.forEach((player) => {
-			allGameCards = allGameCards.concat([player.leader])
-			allGameCards = allGameCards.concat(player.cardHand.allCards)
-			allGameCards = allGameCards.concat(player.cardDeck.allCards)
-			allGameCards = allGameCards.concat(player.cardGraveyard.allCards)
-		})
+		this.game.players
+			.flatMap((playerGroup) => playerGroup.players)
+			.forEach((player) => {
+				allGameCards = allGameCards.concat([player.leader])
+				allGameCards = allGameCards.concat(player.cardHand.allCards)
+				allGameCards = allGameCards.concat(player.cardDeck.allCards)
+				allGameCards = allGameCards.concat(player.cardGraveyard.allCards)
+			})
 		allGameCards = new Array(...new Set(allGameCards))
 
 		this.cardSelectors.forEach((selector) => {

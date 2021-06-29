@@ -139,15 +139,15 @@ export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValid
 
 	public requireAllied(): DeployTargetDefinitionBuilder<EventArgs> {
 		return this.require((args: TargetValidatorArguments) => {
-			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.owner
-			return targetOwner === args.sourceCard.owner
+			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerGroup
+			return targetOwner === args.sourceCard.ownerGroup
 		})
 	}
 
 	public requireEnemy(): DeployTargetDefinitionBuilder<EventArgs> {
 		return this.require((args: TargetValidatorArguments) => {
-			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.owner
-			return targetOwner !== args.sourceCard.owner
+			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerGroup
+			return targetOwner !== args.sourceCard.ownerGroup
 		})
 	}
 

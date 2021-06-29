@@ -7,13 +7,15 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import ClientBuffContainer from '@/Pixi/models/buffs/ClientBuffContainer'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
+import PlayerGroup from '@shared/models/PlayerGroup'
 
 export default class RenderedGameBoardRow implements BoardRow {
 	public readonly index: number
 	public cards: RenderedUnit[]
 	public container: PIXI.Container
 	public buffs: ClientBuffContainer
-	private __owner: ClientPlayerInGame | null
+	private __owner: ClientPlayerGroup | null
 
 	public readonly sprite: PIXI.Sprite
 	public readonly buffContainer: PIXI.Container
@@ -86,11 +88,11 @@ export default class RenderedGameBoardRow implements BoardRow {
 		this.cards = []
 	}
 
-	public get owner(): ClientPlayerInGame | null {
+	public get owner(): ClientPlayerGroup | null {
 		return this.__owner
 	}
 
-	public set owner(owner: ClientPlayerInGame | null) {
+	public set owner(owner: ClientPlayerGroup | null) {
 		this.__owner = owner
 		if (owner === Core.player) {
 			this.sprite.texture = TextureAtlas.getTexture('board/row-allied')

@@ -121,12 +121,12 @@ export default class ServerBuff implements Buff {
 		this.__duration = this.baseDuration = duration
 
 		this.createCallback(GameEventType.TURN_STARTED)
-			.require(({ player }) => player === this.parent.owner)
+			.require(({ group }) => group === this.parent.owner)
 			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
 
 		this.createCallback(GameEventType.TURN_ENDED)
-			.require(({ player }) => player === this.parent.owner)
+			.require(({ group }) => group === this.parent.owner)
 			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
 

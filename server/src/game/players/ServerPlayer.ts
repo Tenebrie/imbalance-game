@@ -33,7 +33,7 @@ export default class ServerPlayer implements Player {
 	}
 
 	public get playerInGame(): ServerPlayerInGame | null {
-		return this.game?.players.find((playerInGame) => playerInGame.player === this) || null
+		return this.game?.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === this) || null
 	}
 
 	registerConnection(ws: ws, game: ServerGame): void {

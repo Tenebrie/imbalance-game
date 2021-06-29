@@ -12,11 +12,17 @@ export default {
 			data: data,
 			highPriority: true,
 		})
-		ownedCard.owner.opponent?.player.sendMessage({
-			type: ResolveStackMessageType.ADD,
-			data: data,
-			highPriority: ownedCard.card.game.activePlayer === ownedCard.owner.opponent,
-		})
+
+		const opponentGroup = ownedCard.owner.opponent
+		if (opponentGroup) {
+			opponentGroup.players.forEach((playerInGame) =>
+				playerInGame.player.sendMessage({
+					type: ResolveStackMessageType.ADD,
+					data: data,
+					highPriority: ownedCard.card.game.activePlayer === ownedCard.owner.opponent,
+				})
+			)
+		}
 	},
 
 	notifyAboutCardResolved(ownedCard: ServerOwnedCard): void {
@@ -26,9 +32,15 @@ export default {
 			type: ResolveStackMessageType.REMOVE,
 			data: data,
 		})
-		ownedCard.owner.opponent?.player.sendMessage({
-			type: ResolveStackMessageType.REMOVE,
-			data: data,
-		})
+
+		const opponentGroup = ownedCard.owner.opponent
+		if (opponentGroup) {
+			opponentGroup.players.forEach((playerInGame) =>
+				playerInGame.player.sendMessage({
+					type: ResolveStackMessageType.REMOVE,
+					data: data,
+				})
+			)
+		}
 	},
 }

@@ -41,7 +41,7 @@ export default class SpellGoldTithe extends ServerCard {
 			.perform(() => (this.canBePlayed = false))
 
 		this.createCallback(GameEventType.TURN_STARTED, AnyCardLocation)
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => (this.canBePlayed = true))
 	}
 }

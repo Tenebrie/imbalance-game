@@ -1,20 +1,23 @@
 import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
 import Unit from '@shared/models/Unit'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerDamageInstance from './ServerDamageSource'
 import ServerBuffContainer from './buffs/ServerBuffContainer'
 import { OrderTarget } from '@src/game/models/ServerBoardOrders'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame
 	card: ServerCard
-	owner: ServerPlayerInGame
+	owner: ServerPlayerGroup
+	originalOwner: ServerPlayerInGame
 
-	constructor(game: ServerGame, card: ServerCard, owner: ServerPlayerInGame) {
+	constructor(game: ServerGame, card: ServerCard, owner: ServerPlayerGroup, originalOwner: ServerPlayerInGame) {
 		this.game = game
 		this.card = card
 		this.owner = owner
+		this.originalOwner = originalOwner
 	}
 
 	get rowIndex(): number {

@@ -31,7 +31,7 @@ export default class LeaderNighterie extends ServerCard {
 			...getLeaderTextVariables(this),
 		}
 		this.createCallback(GameEventType.ROUND_STARTED, AnyCardLocation)
-			.require(({ player }) => player === this.ownerInGame)
-			.perform(({ player }) => player.addSpellMana(this.manaPerRound))
+			.require(({ group }) => group.owns(this))
+			.perform(() => this.ownerPlayerInGame.addSpellMana(this.manaPerRound))
 	}
 }

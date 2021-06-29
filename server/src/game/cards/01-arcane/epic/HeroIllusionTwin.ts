@@ -31,9 +31,9 @@ export default class HeroIllusionTwin extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.owner)
-			.perform(({ player }) => {
-				const unitCards = sortCards(player.cardHand.unitCards) as ServerCard[]
+			.require(({ group }) => group.owns(this))
+			.perform(() => {
+				const unitCards = sortCards(this.ownerPlayerInGame.cardHand.unitCards) as ServerCard[]
 				const copyInHand = unitCards.find((u) => u.class === this.class)
 				if (copyInHand) {
 					this.dealDamage(ServerDamageInstance.fromCard(this.powerLost, this))

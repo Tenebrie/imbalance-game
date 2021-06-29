@@ -32,7 +32,7 @@ export default class UnitFieldHospital extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.ownerInGame)
+			.require(({ group }) => group.owns(this))
 			.perform(() => {
 				const adjacentDamagedUnits = this.game.board
 					.getAdjacentUnits(this.unit)

@@ -1,3 +1,4 @@
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerGame from './ServerGame'
 import TestGameTemplates from '../../utils/TestGameTemplates'
 import TestingUnitNoEffect from '../cards/11-testing/TestingUnitNoEffect'
@@ -6,10 +7,11 @@ import TestingLeader from '../cards/11-testing/TestingLeader'
 
 describe('ServerGameEvents', () => {
 	let game: ServerGame
+	let player: ServerPlayerInGame
 	let startNextRound: () => void
 
 	beforeEach(() => {
-		;({ game, startNextRound } = TestGameTemplates.normalGameFlow())
+		;({ game, player, startNextRound } = TestGameTemplates.normalGameFlow())
 	})
 
 	describe('player move order', () => {
@@ -33,7 +35,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it("starts player 0's move first if they win", () => {
-				game.board.createUnit(new TestingUnitNoEffect(game), 5, 0)
+				game.board.createUnit(new TestingUnitNoEffect(game), player, 5, 0)
 				startNextRound()
 
 				expect(game.players[0].turnEnded).toBeFalsy()
@@ -41,7 +43,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it("starts player 1's move first if they win", () => {
-				game.board.createUnit(new TestingUnitNoEffect(game), 0, 0)
+				game.board.createUnit(new TestingUnitNoEffect(game), player, 0, 0)
 				startNextRound()
 
 				expect(game.players[0].turnEnded).toBeTruthy()
@@ -69,7 +71,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it("starts player 0's move first if they win", () => {
-				game.board.createUnit(new TestingUnitNoEffect(game), 5, 0)
+				game.board.createUnit(new TestingUnitNoEffect(game), player, 5, 0)
 				startNextRound()
 
 				expect(game.players[0].turnEnded).toBeFalsy()
@@ -77,7 +79,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it("starts player 1's move first if they win", () => {
-				game.board.createUnit(new TestingUnitNoEffect(game), 0, 0)
+				game.board.createUnit(new TestingUnitNoEffect(game), player, 0, 0)
 				startNextRound()
 
 				expect(game.players[0].turnEnded).toBeTruthy()

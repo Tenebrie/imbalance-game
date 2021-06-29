@@ -53,9 +53,11 @@ const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMe
 		}
 
 		buff.duration = Number(data.duration)
-		if (Core.player.cardHand.unitCards.includes(card)) {
-			Core.player.cardHand.sortCards()
-		}
+		Core.player.players.forEach((player) => {
+			if (player.cardHand.unitCards.includes(card)) {
+				player.cardHand.sortCards()
+			}
+		})
 	},
 
 	[CardUpdateMessageType.CARD_BUFF_REMOVE]: (data: OpenCardBuffMessage) => {

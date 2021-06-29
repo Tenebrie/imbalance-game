@@ -8,6 +8,7 @@ import OwnedClientCard from '@/Pixi/cards/OwnedClientCard'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import store from '@/Vue/store'
 import CardLocation from '@shared/enums/CardLocation'
+import GroupOwnedClientCard from '@/Pixi/cards/GroupOwnedClientCard'
 
 export default class ClientGame {
 	public get turnPhase(): GameTurnPhase {
@@ -32,7 +33,7 @@ export default class ClientGame {
 			result.push({ card: cardInRequiredTargets, location: CardLocation.UNKNOWN })
 		}
 
-		const players = [Core.player, Core.opponent]
+		const players = Core.allPlayers
 		for (let i = 0; i < players.length; i++) {
 			const player = players[i]
 			if (!player) {
@@ -77,7 +78,7 @@ export default class ClientGame {
 			.map((result) => result.card)[0]
 	}
 
-	public findOwnedCardById(cardId: string): OwnedClientCard | null {
+	public findOwnedCardById(cardId: string): OwnedClientCard | GroupOwnedClientCard | null {
 		const cardOnBoard = Core.board.findUnitById(cardId)
 		if (cardOnBoard) {
 			return cardOnBoard
@@ -89,22 +90,25 @@ export default class ClientGame {
 
 		const players = [Core.player, Core.opponent]
 		for (let i = 0; i < players.length; i++) {
-			const player = players[i]!
-			const cardAsLeader = player.leader
-			if (cardAsLeader && cardAsLeader.id === cardId) {
-				return { card: cardAsLeader, owner: player }
-			}
-			const cardInHand = player.cardHand.findCardById(cardId)
-			if (cardInHand) {
-				return { card: cardInHand, owner: player }
-			}
-			const cardInDeck = player.cardDeck.findCardById(cardId)
-			if (cardInDeck) {
-				return { card: cardInDeck, owner: player }
-			}
-			const cardInGraveyard = player.cardGraveyard.findCardById(cardId)
-			if (cardInGraveyard) {
-				return { card: cardInGraveyard, owner: player }
+			const playerGroup = players[i]
+			for (let u = 0; u < playerGroup.players.length; u++) {
+				const player = playerGroup.players[u]
+				const cardAsLeader = player.leader
+				if (cardAsLeader && cardAsLeader.id === cardId) {
+					return { card: cardAsLeader, owner: player }
+				}
+				const cardInHand = player.cardHand.findCardById(cardId)
+				if (cardInHand) {
+					return { card: cardInHand, owner: player }
+				}
+				const cardInDeck = player.cardDeck.findCardById(cardId)
+				if (cardInDeck) {
+					return { card: cardInDeck, owner: player }
+				}
+				const cardInGraveyard = player.cardGraveyard.findCardById(cardId)
+				if (cardInGraveyard) {
+					return { card: cardInGraveyard, owner: player }
+				}
 			}
 		}
 		return null
@@ -119,11 +123,13 @@ export default class ClientGame {
 			.concat(Core.resolveStack.cards.map((ownedCard) => ownedCard.card))
 
 		for (let i = 0; i < players.length; i++) {
-			const player = players[i]!
-			cards = cards.concat(player.leader)
-			cards = cards.concat(player.cardHand.allCards)
-			cards = cards.concat(player.cardDeck.allCards)
-			cards = cards.concat(player.cardGraveyard.allCards)
+			const playerGroup = players[i]!
+			playerGroup.players.forEach((player) => {
+				cards = cards.concat(player.leader)
+				cards = cards.concat(player.cardHand.allCards)
+				cards = cards.concat(player.cardDeck.allCards)
+				cards = cards.concat(player.cardGraveyard.allCards)
+			})
 		}
 
 		const buffs = cards.reduce<(Buff | BuffMessage)[]>((acc, value) => acc.concat(value.buffs.buffs), [])

@@ -9,6 +9,7 @@ import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pi
 import * as Particles from 'pixi-particles'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardFaction from '@shared/enums/CardFaction'
+import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 
 export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
 	return Core.board.isInverted && player === 'player' ? Core.constants.GAME_BOARD_ROW_COUNT - index - 1 : index
@@ -137,7 +138,7 @@ export const scrollBoopColor = (event: MouseEvent, direction: number): void => {
 	Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 }
 
-export const flushBoardPreps = (): void => {
+export const flushBoardBoopPreps = (): void => {
 	boopPrepPoints.forEach((prep) => {
 		Core.particleSystem.destroyEmitter(prep.emitter, Core.renderer.boardEffectsContainer)
 	})

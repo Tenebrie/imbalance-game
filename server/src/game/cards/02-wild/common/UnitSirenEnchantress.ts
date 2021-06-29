@@ -31,7 +31,7 @@ export default class UnitSirenEnchantress extends ServerCard {
 		}
 
 		this.createDeployTargets(TargetType.BOARD_ROW)
-			.require(() => this.ownerInGame.spellMana >= UnitSirenEnchantress.INFUSE_COST)
+			.require(() => this.ownerPlayerInGame.spellMana >= UnitSirenEnchantress.INFUSE_COST)
 			.require(({ targetRow }) => targetRow.owner === this.owner)
 			.perform(({ targetRow }) => onTargetSelected(targetRow))
 

@@ -22,9 +22,14 @@ router.get('/', (req: Request, res: Response) => {
 		filteredGames = filteredGames.filter((game) => !!game.owner && game.owner.id === currentPlayer.id)
 	}
 	if (reconnect) {
-		filteredGames = filteredGames.filter((game) => game.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id))
+		filteredGames = filteredGames.filter((game) =>
+			game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === currentPlayer.id)
+		)
 	} else {
-		filteredGames = filteredGames.filter((game) => !game.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id))
+		filteredGames = filteredGames.filter(
+			(game) =>
+				!game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === currentPlayer.id)
+		)
 	}
 
 	const gameMessages = filteredGames.map((game) => new GameMessage(game))
@@ -39,9 +44,11 @@ router.post('/', (req: Request, res: Response) => {
 		throw { status: 400, error: '"ruleset" param not provided' }
 	}
 
-	const connectedGames = GameLibrary.games.filter((game) => game.players.find((playerInGame) => playerInGame.player === player))
+	const connectedGames = GameLibrary.games.filter((game) =>
+		game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === player)
+	)
 	connectedGames.forEach((game) => {
-		const playerInGame = game.players.find((playerInGame) => playerInGame.player === player)
+		const playerInGame = game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === player)
 		game.finish(playerInGame?.opponent || null, 'Player surrendered (Started new game)')
 	})
 
@@ -54,7 +61,11 @@ router.post('/', (req: Request, res: Response) => {
 	const game = GameLibrary.createPublicGame(player, ruleset, {})
 
 	if (ruleset.ai) {
-		game.addPlayer(new ServerBotPlayer(), ruleset.ai.deck)
+		const botGroup = game.players.find((group) => group.openBotSlots > 0)
+		if (!botGroup) {
+			throw { stack: 500, error: 'No bot slots available for an AI game' }
+		}
+		game.addPlayer(new ServerBotPlayer(), botGroup, ruleset.ai.deck)
 	}
 
 	res.json({ data: new GameMessage(game) })

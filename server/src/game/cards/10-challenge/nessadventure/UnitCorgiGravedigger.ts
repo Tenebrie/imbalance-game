@@ -25,7 +25,7 @@ export default class UnitCorgiGravedigger extends ServerCard {
 			.requireAllied()
 			.require(({ targetCard }) => targetCard.type === CardType.UNIT)
 			.perform(({ targetCard }) => {
-				const owner = targetCard.ownerInGame
+				const owner = targetCard.ownerPlayerInGame
 				owner.cardGraveyard.removeCard(targetCard)
 				owner.cardHand.addUnit(targetCard)
 			})

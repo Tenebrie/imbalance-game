@@ -18,8 +18,8 @@ import store from '@/Vue/store'
 import axios from 'axios'
 import GameMessage from '@shared/models/network/GameMessage'
 import { computed, defineComponent } from 'vue'
-import RulesetRefMessage from '@shared/models/network/ruleset/RulesetRefMessage'
 import TheDeckSelectionPopup from './TheDeckSelectionPopup.vue'
+import RulesetRefMessage from '@shared/models/ruleset/messages/RulesetRefMessage'
 
 export default defineComponent({
 	setup() {

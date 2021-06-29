@@ -34,7 +34,7 @@ export default class ItemLabyrinthVelvetGloves extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.ROUND_STARTED, [CardLocation.HAND])
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => Keywords.generateMana(this, ItemLabyrinthVelvetGloves.BONUS_REGEN))
 	}
 }

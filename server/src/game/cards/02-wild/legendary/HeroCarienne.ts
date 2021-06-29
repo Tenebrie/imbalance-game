@@ -35,8 +35,9 @@ export default class HeroCarienne extends ServerCard {
 
 	get waveCount(): number {
 		let stormsPlayed = 0
-		if (this.owner) {
-			stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
+		const owner = this.ownerPlayer
+		if (owner) {
+			stormsPlayed = owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
 
 		return stormsPlayed + 1

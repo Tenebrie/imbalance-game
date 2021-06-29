@@ -77,6 +77,7 @@ import {
 import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import { initializeEnumRecord, sortCards } from '@shared/Utils'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -275,7 +276,7 @@ export default class ServerCard implements Card {
 		return this.game.board.findUnitById(this.id) || null
 	}
 
-	public get owner(): ServerPlayerInGame | null {
+	public get owner(): ServerPlayerInGame | ServerPlayerGroup | null {
 		const thisCardInGame = this.game.findOwnedCardById(this.id)
 		if (!thisCardInGame) {
 			return null
@@ -283,8 +284,41 @@ export default class ServerCard implements Card {
 		return thisCardInGame.owner
 	}
 
-	public get ownerInGame(): ServerPlayerInGame {
+	public get ownerInGame(): ServerPlayerInGame | ServerPlayerGroup {
 		const owner = this.owner
+		if (!owner) {
+			throw new Error('Card has no owner while in the game!')
+		}
+		return owner
+	}
+
+	public get ownerPlayer(): ServerPlayerInGame | null {
+		const owner = this.owner
+		if (owner instanceof ServerPlayerGroup) {
+			const unit = this.unit
+			if (!unit) {
+				throw new Error('Card is owned by group, but does not have a unit')
+			}
+			return unit.originalOwner
+		}
+		return owner
+	}
+
+	public get ownerPlayerInGame(): ServerPlayerInGame {
+		const owner = this.ownerPlayer
+		if (!owner) {
+			throw new Error('Card has no owner while in the game!')
+		}
+		return owner
+	}
+
+	public get ownerGroup(): ServerPlayerGroup | null {
+		const owner = this.owner
+		return owner instanceof ServerPlayerGroup ? owner : owner?.group || null
+	}
+
+	public get ownerGroupInGame(): ServerPlayerGroup {
+		const owner = this.ownerGroup
 		if (!owner) {
 			throw new Error('Card has no owner while in the game!')
 		}
@@ -297,16 +331,18 @@ export default class ServerCard implements Card {
 			return CardLocation.UNKNOWN
 		}
 
-		if (owner.leader === this) {
-			return CardLocation.LEADER
-		}
-		const cardInDeck = owner.cardDeck.findCardById(this.id)
-		if (cardInDeck) {
-			return CardLocation.DECK
-		}
-		const cardInHand = owner.cardHand.findCardById(this.id)
-		if (cardInHand) {
-			return CardLocation.HAND
+		if (owner instanceof ServerPlayerInGame) {
+			if (owner.leader === this) {
+				return CardLocation.LEADER
+			}
+			const cardInDeck = owner.cardDeck.findCardById(this.id)
+			if (cardInDeck) {
+				return CardLocation.DECK
+			}
+			const cardInHand = owner.cardHand.findCardById(this.id)
+			if (cardInHand) {
+				return CardLocation.HAND
+			}
 		}
 		const cardInStack = this.game.cardPlay.cardResolveStack.findCardById(this.id)
 		if (cardInStack) {
@@ -316,9 +352,11 @@ export default class ServerCard implements Card {
 		if (cardOnBoard) {
 			return CardLocation.BOARD
 		}
-		const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
-		if (cardInGraveyard) {
-			return CardLocation.GRAVEYARD
+		if (owner instanceof ServerPlayerInGame) {
+			const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
+			if (cardInGraveyard) {
+				return CardLocation.GRAVEYARD
+			}
 		}
 		return CardLocation.UNKNOWN
 	}
@@ -348,7 +386,7 @@ export default class ServerCard implements Card {
 	}
 
 	public get deckPosition(): number {
-		const owner = this.owner
+		const owner = this.ownerPlayer
 		if (!owner) {
 			return -1
 		}
@@ -506,7 +544,7 @@ export default class ServerCard implements Card {
 			return
 		}
 
-		const owner = this.owner
+		const owner = this.ownerPlayer
 		if (!owner) {
 			return
 		}
@@ -547,7 +585,7 @@ export default class ServerCard implements Card {
 		}
 
 		this.isRevealed = true
-		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(opponent.player, this)
+		OutgoingMessageHandlers.notifyAboutCardRevealed(opponent, this)
 	}
 
 	/* Create card play targets

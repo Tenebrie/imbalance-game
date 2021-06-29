@@ -12,8 +12,10 @@
 				"postinstall": "subpkg install",
 				"build": "cd client && yarn build && cd .. && rm -rf server/client && mkdir server/client && cp -r client/dist/* server/client && cd server && yarn build",
 				"start": "(cd server && yarn start)",
+				"docker": "yarn docker:start",
 				"docker:start": "docker-compose up --force-recreate",
 				"docker:clear": "docker container kill $(docker ps -q)",
+				"docker:cold": "docker container kill $(docker ps -q) && docker-compose up --force-recreate",
 				"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)",
 				"test": "(cd server && yarn test)"
 		},

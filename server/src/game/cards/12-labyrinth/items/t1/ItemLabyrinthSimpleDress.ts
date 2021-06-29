@@ -33,11 +33,11 @@ export default class ItemLabyrinthSimpleDress extends ServerCard {
 		}
 
 		this.createSelector()
-			.requireTarget(({ target }) => target.owner === this.owner && target.location === CardLocation.BOARD)
+			.requireTarget(({ target }) => target.ownerGroupInGame.owns(this) && target.location === CardLocation.BOARD)
 			.provide(BuffHiddenStrength, ItemLabyrinthSimpleDress.BONUS_UNIT_POWER)
 
 		this.createCallback(GameEventType.ROUND_STARTED, [CardLocation.HAND])
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => Keywords.generateMana(this, ItemLabyrinthSimpleDress.BONUS_REGEN))
 	}
 }

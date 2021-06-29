@@ -9,7 +9,6 @@ export default interface PlayerInGame {
 	cardHand: CardHand
 	cardDeck: CardDeck
 	cardGraveyard: CardDeck
-	morale: number
 	unitMana: number
 	spellMana: number
 }

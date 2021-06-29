@@ -52,7 +52,7 @@ export default class UnitWolfpack extends ServerCard {
 			})
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => (this.chainIndex = 0))
 	}
 

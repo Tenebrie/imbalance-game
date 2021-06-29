@@ -7,7 +7,6 @@ export default interface PlayerInGameMessage {
 	cardHand: CardHandMessage
 	cardDeck: CardDeckMessage
 	cardGraveyard: CardDeckMessage
-	morale: number
 	unitMana: number
 	spellMana: number
 }

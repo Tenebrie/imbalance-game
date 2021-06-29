@@ -34,14 +34,14 @@ export default class LeaderTheScavenger extends ServerCard {
 		this.addRelatedCards().requireTribe(CardTribe.SALVAGE)
 
 		this.createCallback(GameEventType.ROUND_STARTED, AnyCardLocation)
-			.require(({ player }) => player === this.ownerInGame)
-			.perform(({ player }) => player.addSpellMana(this.manaPerRound))
+			.require(({ group }) => group.owns(this))
+			.perform(() => this.ownerPlayerInGame.addSpellMana(this.manaPerRound))
 
 		this.createCallback(GameEventType.GAME_STARTED, AnyCardLocation)
-			.require(({ player }) => player === this.ownerInGame)
+			.require(({ group }) => group.owns(this))
 			.perform(() => {
 				const cardsToAdd = CardLibrary.cards.filter((card) => card.tribes.includes(CardTribe.SALVAGE))
-				cardsToAdd.forEach((card) => this.ownerInGame.cardGraveyard.addSpell(CardLibrary.instantiateFromInstance(this.game, card)))
+				cardsToAdd.forEach((card) => this.ownerPlayerInGame.cardGraveyard.addSpell(CardLibrary.instantiateFromInstance(this.game, card)))
 			})
 	}
 }

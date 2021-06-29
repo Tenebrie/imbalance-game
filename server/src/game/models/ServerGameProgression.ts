@@ -29,11 +29,11 @@ class LabyrinthProgression {
 	}
 
 	private get player(): ServerPlayer {
-		return this.game.getHumanPlayer().player
+		return this.game.getHumanGroup().players[0].player
 	}
 
 	public async loadState(): Promise<void> {
-		const player = this.game.getHumanPlayer().player
+		const player = this.player
 		const entry = await PlayerDatabase.selectPlayerLabyrinthProgression(player.id)
 		if (!entry || entry.data.version !== CURRENT_VERSION) {
 			this.__state = await LabyrinthProgression.createDefaultState(player)

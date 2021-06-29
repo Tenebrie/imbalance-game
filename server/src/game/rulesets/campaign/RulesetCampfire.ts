@@ -55,9 +55,8 @@ export default class RulesetCampfire extends ServerRulesetBuilder<void> {
 				return !!adjacentUnits.find((unit) => unit.card instanceof UnitCampfireBlackChair)
 			})
 			.perform(({ game, triggeringUnit }) => {
-				const owner = triggeringUnit.owner
 				game.board.destroyUnit(triggeringUnit)
-				Keywords.addCardToHand.for(owner).fromConstructor(HeroCampfireProtagonist)
+				Keywords.addCardToHand.for(triggeringUnit.originalOwner).fromConstructor(HeroCampfireProtagonist)
 			})
 			.perform(({ game }) => {
 				game.novel
@@ -655,7 +654,7 @@ export default class RulesetCampfire extends ServerRulesetBuilder<void> {
 					>>> [End] -> Ending
 					`
 				)
-				.createTag('Ending', () => game.finish(game.getHumanPlayer(), 'Story trigger'))
+				.createTag('Ending', () => game.finish(game.getHumanGroup(), 'Story trigger'))
 		}
 	}
 }

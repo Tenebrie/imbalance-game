@@ -23,6 +23,7 @@ import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import CardTribe from '@shared/enums/CardTribe'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
 	return `${type}:${prefix}:${getRandomId()}`
@@ -48,11 +49,32 @@ export const toRowIndex = (rowOrIndex: number | ServerBoardRow): number => {
 	return typeof rowOrIndex === 'number' ? rowOrIndex : rowOrIndex.index
 }
 
-export const getOwner = (entity: ServerCard | ServerBuff | ServerBoardRow): ServerPlayerInGame | null => {
-	if (entity instanceof ServerCard || entity instanceof ServerBoardRow) {
-		return entity.owner
+export const getOwnerPlayer = (entity: ServerCard | ServerBuff | ServerUnit): ServerPlayerInGame | null => {
+	const parent = entity instanceof ServerBuff ? entity.parent : entity
+	if (parent instanceof ServerUnit) {
+		return parent.originalOwner
+	} else if (parent instanceof ServerBoardRow) {
+		return null
+	}
+	const ownerPlayer = parent.ownerPlayer
+	if (ownerPlayer) {
+		return ownerPlayer
+	}
+
+	const unit = parent.unit
+	if (!unit) {
+		return null
+	}
+	return unit.originalOwner
+}
+
+export const getOwnerGroup = (entity: ServerCard | ServerUnit | ServerBuff | ServerBoardRow): ServerPlayerGroup | null => {
+	const parent = entity instanceof ServerBuff ? entity.parent : entity
+
+	if (parent instanceof ServerCard) {
+		return parent.ownerGroup
 	} else {
-		return entity.parent.owner
+		return parent.owner
 	}
 }
 
@@ -78,16 +100,17 @@ export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {
 	return value
 }
 
-export const getTotalLeaderStat = (player: ServerPlayerInGame | null, type: LeaderStatType): number => {
-	if (!player) {
+export const getTotalLeaderStat = (playerGroup: ServerPlayerGroup | null, types: LeaderStatType[]): number => {
+	if (!playerGroup) {
 		return 0
 	}
-	const validCards = player.game.board
-		.getUnitsOwnedByPlayer(player)
-		.map((unit) => unit.card)
-		.concat([player.leader])
-		.concat(player.cardHand.allCards.filter((card) => card.features.includes(CardFeature.PASSIVE)))
-	return validCards.map((card) => card.stats.getLeaderStat(type)).reduce((acc, val) => acc + val, 0)
+	const validCards = playerGroup.game.board.getUnitsOwnedByGroup(playerGroup).map((unit) => unit.card)
+	playerGroup.players.forEach((player) => {
+		validCards.push(player.leader)
+		const extraCards = player.cardHand.allCards.filter((card) => card.features.includes(CardFeature.PASSIVE))
+		extraCards.forEach((card) => validCards.push(card))
+	})
+	return validCards.map((card) => card.stats.getLeaderStats(types)).reduce((acc, val) => acc + val, 0)
 }
 
 export type LabyrinthItemSlot = 'weapon' | 'armor' | 'gloves' | 'boots'
@@ -131,7 +154,7 @@ interface LeaderTextVariables {
 
 export const getLeaderTextVariables = (leaderCard: ServerCard): LeaderTextVariables => {
 	const getPlayerName = () => {
-		const owner = leaderCard.owner
+		const owner = leaderCard.ownerPlayer
 		if (!owner) {
 			return ''
 		}
@@ -217,10 +240,6 @@ export const colorizeConsoleText = (text: string): string => {
 
 export const mapUnitsToCards = (units: ServerUnit[]): ServerCard[] => {
 	return units.map((unit) => unit.card)
-}
-
-export const mapRelatedCards = (constructors: CardConstructor[]): string[] => {
-	return constructors.map((constructor) => getClassFromConstructor(constructor))
 }
 
 export const getClassFromConstructor = (constructor: BuffConstructor | CardConstructor | RulesetConstructor): string => {

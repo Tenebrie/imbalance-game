@@ -2,6 +2,7 @@ import { ServerRulesetTemplate } from './ServerRuleset'
 import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 export class RulesetChain {
 	public readonly conditions: ((args: RulesetChainRequireArguments) => boolean)[]
@@ -61,5 +62,5 @@ export class RulesetChainBuilder {
 
 type RulesetChainRequireArguments = {
 	game: ServerGame
-	victoriousPlayer: ServerPlayerInGame | null
+	victoriousPlayer: ServerPlayerGroup | null
 }

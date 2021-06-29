@@ -175,8 +175,9 @@ class PlayerLibrary {
 
 		this.playerCache = this.playerCache.filter(
 			(cachedPlayer) =>
-				GameLibrary.games.some((game) => game.players.find((playerInGame) => playerInGame.player === cachedPlayer.player)) ||
-				currentTime - cachedPlayer.timestamp < 60000
+				GameLibrary.games.some((game) =>
+					game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === cachedPlayer.player)
+				) || currentTime - cachedPlayer.timestamp < 60000
 		)
 		this.playerCache.filter((player) => player.player.isInGame()).forEach((player) => (player.timestamp = currentTime))
 		this.cachePrunedAt = currentTime

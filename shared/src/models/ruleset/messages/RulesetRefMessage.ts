@@ -1,6 +1,6 @@
 import GameMode from '../../../enums/GameMode'
 import RulesetCategory from '../../../enums/RulesetCategory'
-import Ruleset from '../../Ruleset'
+import Ruleset from '../Ruleset'
 
 export default class RulesetRefMessage {
 	class: string

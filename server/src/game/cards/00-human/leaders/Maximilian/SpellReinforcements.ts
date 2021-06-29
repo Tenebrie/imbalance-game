@@ -24,7 +24,7 @@ export default class SpellReinforcements extends ServerCard {
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => {
-			const owner = this.ownerInGame
+			const owner = this.ownerPlayerInGame
 			Keywords.draw.topUnitCard(owner)
 			owner.addUnitMana(1)
 		})

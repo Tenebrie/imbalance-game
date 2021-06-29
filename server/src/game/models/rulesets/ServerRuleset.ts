@@ -5,17 +5,18 @@ import { EventSubscription } from '../events/EventSubscription'
 import GameHookType from '../events/GameHookType'
 import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
 import { RulesetAI } from './RulesetAI'
-import Ruleset from '@shared/models/Ruleset'
+import Ruleset from '@shared/models/ruleset/Ruleset'
 import ServerGame from '../ServerGame'
 import { RulesetDeck } from './RulesetDeck'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { RulesetBoard } from './RulesetBoard'
-import { RulesetConstants } from '@shared/models/RulesetConstants'
+import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
 import { forEachInEnum } from '@shared/Utils'
 import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
 import { ServerRulesetBuilderProps } from '@src/game/models/rulesets/ServerRulesetBuilder'
+import { ServerRulesetSlots, RulesetSlotsBuilder } from '@src/game/models/rulesets/ServerRulesetSlots'
 
 export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; count: number })[]
 
@@ -31,6 +32,7 @@ export type ServerRulesetProps = {
 	ai: RulesetAI | null
 	deck: RulesetDeck | null
 	board: RulesetBoard | null
+	slots: ServerRulesetSlots | null
 	chains: RulesetChain[]
 }
 
@@ -47,6 +49,7 @@ export class ServerRuleset implements Ruleset {
 	public readonly ai: RulesetAI | null = null
 	public readonly deck: RulesetDeck | null = null
 	public readonly board: RulesetBoard | null = null
+	public readonly slots: ServerRulesetSlots
 	public readonly chains: RulesetChain[] = []
 
 	constructor(props: ServerRulesetProps) {
@@ -62,6 +65,23 @@ export class ServerRuleset implements Ruleset {
 
 		this.state = {
 			...props.state,
+		}
+
+		if (props.slots) {
+			this.slots = props.slots
+		} else {
+			this.slots = new RulesetSlotsBuilder()
+				.addGroup([
+					{
+						type: 'player',
+					},
+				])
+				.addGroup([
+					{
+						type: this.gameMode === GameMode.PVP ? 'player' : 'ai',
+					},
+				])
+				.__build()
 		}
 
 		this.constants = {
@@ -98,6 +118,7 @@ export type ServerRulesetTemplateProps = ServerRulesetBuilderProps<any> & {
 	ai: RulesetAI | null
 	deck: RulesetDeck | null
 	board: RulesetBoard | null
+	slots: ServerRulesetSlots | null
 	chains: RulesetChain[]
 
 	eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
@@ -122,6 +143,7 @@ export class ServerRulesetTemplate {
 	public readonly ai: RulesetAI | null = null
 	public readonly deck: RulesetDeck | null = null
 	public readonly board: RulesetBoard | null = null
+	public readonly slots: ServerRulesetSlots | null = null
 	public readonly chains: RulesetChain[] = []
 
 	constructor(props: ServerRulesetTemplateProps) {
@@ -139,6 +161,7 @@ export class ServerRulesetTemplate {
 		this.ai = props.ai
 		this.deck = props.deck
 		this.board = props.board
+		this.slots = props.slots
 		this.chains = props.chains
 
 		this.eventSubscriptions = new Map<GameEventType, EventSubscription<any>[]>()
@@ -166,6 +189,7 @@ export class ServerRulesetTemplate {
 			ai: this.ai,
 			deck: this.deck,
 			board: this.board,
+			slots: this.slots,
 			chains: this.chains,
 			state: {
 				...this.state,

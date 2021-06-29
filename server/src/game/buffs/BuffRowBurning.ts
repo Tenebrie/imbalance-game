@@ -12,7 +12,7 @@ export default class BuffRowBurning extends ServerRowBuff {
 		})
 
 		this.createCallback(GameEventType.TURN_ENDED)
-			.require(({ player }) => player === this.parent.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => this.onTurnStarted())
 	}
 

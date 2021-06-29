@@ -22,9 +22,11 @@ export default class ClientBuffContainer implements BuffContainer {
 		this.buffs.push(buff)
 		if (this.parent instanceof RenderedCard) {
 			this.parent.updateCardDescription()
-			if (Core.player.cardHand.unitCards.includes(this.parent)) {
-				Core.player.cardHand.sortCards()
-			}
+			Core.player.players.forEach((player) => {
+				if (this.parent instanceof RenderedCard && player.cardHand.unitCards.includes(this.parent)) {
+					player.cardHand.sortCards()
+				}
+			})
 		}
 	}
 
@@ -43,9 +45,11 @@ export default class ClientBuffContainer implements BuffContainer {
 		this.buffs.splice(this.buffs.indexOf(buff), 1)
 		if (this.parent instanceof RenderedCard) {
 			this.parent.updateCardDescription()
-			if (Core.player.cardHand.unitCards.includes(this.parent)) {
-				Core.player.cardHand.sortCards()
-			}
+			Core.player.players.forEach((player) => {
+				if (this.parent instanceof RenderedCard && player.cardHand.unitCards.includes(this.parent)) {
+					player.cardHand.sortCards()
+				}
+			})
 		}
 	}
 }
