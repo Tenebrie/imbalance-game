@@ -16,12 +16,17 @@ import {
 	SpellLabyrinthRewardTreasureT3,
 } from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardTreasure'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import { SharedLabyrinthState } from '@src/game/rulesets/labyrinth/service/RulesetLabyrinthBase'
+import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
 
-export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never> {
+export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<SharedLabyrinthState> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.LABYRINTH,
+			state: {
+				playersExpected: 1,
+			},
 		})
 
 		this.updateConstants({
@@ -35,17 +40,38 @@ export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never>
 			.setFixedLink(RulesetLabyrinthDummies)
 
 		this.createSlots()
-			.addGroup({ type: 'player', deck: [LeaderLabyrinthPlayer, SpellLabyrinthNextEncounter] })
+			.addGroup([
+				{ type: 'player', deck: [LeaderLabyrinthPlayer] },
+				{ type: 'player', deck: [LeaderLabyrinthPlayer], require: (game) => this.getState(game).playersExpected > 1 },
+			])
 			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.PASSIVE })
+
+		this.onLifecycle(RulesetLifecycleHook.PROGRESSION_LOADED, (game: ServerGame) => {
+			this.setState(game, {
+				playersExpected: game.progression.labyrinth.state.run.playersExpected,
+			})
+		})
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthNextEncounter)
 			.perform(({ game }) => game.finish(game.getHumanGroup(), 'Continue to next encounter', true))
 
+		this.createCallback(GameEventType.GAME_CREATED).perform(({ game }) => {
+			const registeredPlayers = game.progression.labyrinth.state.run.players
+			const newPlayers = game.allPlayers
+				.filter((player) => player.isHuman)
+				.filter((playerInGame) => !registeredPlayers.some((registeredPlayer) => registeredPlayer.id === playerInGame.player.id))
+			newPlayers.forEach((newPlayer) => {
+				game.progression.labyrinth.addPlayer(newPlayer.player)
+			})
+		})
+
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
-			game.getHumanGroup().players.forEach((playerInGame) => {
+			game.owner!.playerInGame!.cardHand.addUnit(new SpellLabyrinthNextEncounter(game))
+			game.humanPlayers.forEach((playerInGame) => {
 				if (game.progression.labyrinth.state.run.encounterHistory.length === 0 && game.progression.labyrinth.state.meta.runCount === 0) {
 					// No reward in the beginning
+					console.log('No reward!')
 				} else if (
 					game.progression.labyrinth.state.run.encounterHistory.length === 0 &&
 					game.progression.labyrinth.state.meta.runCount > 0

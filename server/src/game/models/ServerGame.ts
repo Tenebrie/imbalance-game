@@ -31,16 +31,17 @@ import LeaderStatType from '@shared/enums/LeaderStatType'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerGroupOwnedCard from '@src/game/models/ServerGroupOwnedCard'
 import AIBehaviour from '@shared/enums/AIBehaviour'
+import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
 
-interface ServerGameProps extends OptionalGameProps {
+interface ServerGameProps extends Partial<OptionalGameProps> {
 	ruleset: ServerRulesetTemplate
 }
 
 export interface OptionalGameProps {
-	id?: string
-	name?: string
-	owner?: ServerPlayer
-	playerMoveOrderReversed?: boolean
+	id: string
+	name: string
+	owner: ServerPlayer
+	playerMoveOrderReversed: boolean
 }
 
 export default class ServerGame implements SourceGame {
@@ -118,6 +119,7 @@ export default class ServerGame implements SourceGame {
 			this.players.forEach((group) => OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, group.players))
 			this.events.evaluateSelectors()
 		})
+		this.ruleset.lifecycleCallback(RulesetLifecycleHook.CREATED, this)
 	}
 
 	public get activePlayer(): ServerPlayerGroup | null {
@@ -130,6 +132,10 @@ export default class ServerGame implements SourceGame {
 
 	public get allPlayers(): ServerPlayerInGame[] {
 		return this.players.flatMap((playerGroup) => playerGroup.players)
+	}
+
+	public get humanPlayers(): ServerPlayerInGame[] {
+		return this.allPlayers.filter((player) => player.isHuman)
 	}
 
 	private static generateName(owner?: ServerPlayer): string {
@@ -193,9 +199,8 @@ export default class ServerGame implements SourceGame {
 
 		const constants = this.ruleset.constants
 		this.players.forEach((playerGroup) => {
-			const extraStartingHandSize = getTotalLeaderStat(playerGroup, [LeaderStatType.STARTING_HAND_SIZE])
-
 			playerGroup.players.forEach((playerInGame) => {
+				const extraStartingHandSize = getTotalLeaderStat(playerInGame, [LeaderStatType.STARTING_HAND_SIZE])
 				playerInGame.cardDeck.shuffle()
 				playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_STARTING + extraStartingHandSize)
 				playerInGame.drawSpellCards(constants.SPELL_HAND_SIZE_MINIMUM)
@@ -604,7 +609,7 @@ export default class ServerGame implements SourceGame {
 		return null
 	}
 
-	static newPublicInstance(ruleset: ServerRulesetTemplate, props: OptionalGameProps): ServerGame {
+	static newPublicInstance(ruleset: ServerRulesetTemplate, props: Partial<OptionalGameProps>): ServerGame {
 		const game = new ServerGame({
 			...props,
 			ruleset,
@@ -613,13 +618,16 @@ export default class ServerGame implements SourceGame {
 		return game
 	}
 
-	static newOwnedInstance(owner: ServerPlayer, ruleset: ServerRulesetTemplate, props: OptionalGameProps): ServerGame {
+	static newOwnedInstance(owner: ServerPlayer, ruleset: ServerRulesetTemplate, props: Partial<OptionalGameProps>): ServerGame {
 		const game = new ServerGame({
 			...props,
 			owner,
 			ruleset,
 		})
 		game.initializeAIPlayers()
+		game.progression.loadStates().then(() => {
+			game.ruleset.lifecycleCallback(RulesetLifecycleHook.PROGRESSION_LOADED, game)
+		})
 		return game
 	}
 

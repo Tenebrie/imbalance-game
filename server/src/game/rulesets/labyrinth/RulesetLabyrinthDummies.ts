@@ -16,11 +16,11 @@ export default class RulesetLabyrinthDummies extends RulesetLabyrinthBase {
 			ROUND_WINS_REQUIRED: 1,
 		})
 
-		this.createBoard().bot([
-			[UnitChallengeDummyVanillaWarrior],
-			[UnitChallengeDummyVanillaWarrior],
-			[UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior],
-		])
+		// this.createBoard().bot([
+		// 	[UnitChallengeDummyVanillaWarrior],
+		// 	[UnitChallengeDummyVanillaWarrior],
+		// 	[UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior],
+		// ])
 
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
 			const state = game.progression.labyrinth.state.run

@@ -170,8 +170,7 @@ export default class Renderer {
 
 		const input = Core.input
 		const mainHandler = Core.mainHandler
-		const totalSlots = store.state.gameStateModule.ruleset!.slots.groups.reduce((total, group) => total + group.players.length, 0)
-		if (!input || Core.allPlayers.length < totalSlots || !mainHandler) {
+		if (!input || !mainHandler) {
 			return
 		}
 
@@ -189,25 +188,27 @@ export default class Renderer {
 			}
 		})
 
-		const unitCards = Core.player.players[0].cardHand.unitCards
-		const sortedPlayerUnitCards = Core.player.players[0].cardHand.unitCards
-			.filter((card) => card !== input.inspectedCard)
-			.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
-			.slice()
-			.reverse()
-		sortedPlayerUnitCards.forEach((renderedCard) => {
-			this.renderCard(renderedCard, unitCards, 'player', 'unit')
-		})
+		if (Core.player.players.length > 0) {
+			const unitCards = Core.player.players[0].cardHand.unitCards
+			const sortedPlayerUnitCards = Core.player.players[0].cardHand.unitCards
+				.filter((card) => card !== input.inspectedCard)
+				.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
+				.slice()
+				.reverse()
+			sortedPlayerUnitCards.forEach((renderedCard) => {
+				this.renderCard(renderedCard, unitCards, 'player', 'unit')
+			})
 
-		const spellCards = Core.player.players[0].cardHand.spellCards
-		const sortedPlayerSpellCards = Core.player.players[0].cardHand.spellCards
-			.filter((card) => card !== input.inspectedCard)
-			.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
-			.slice()
-			.reverse()
-		sortedPlayerSpellCards.forEach((renderedCard) => {
-			this.renderCard(renderedCard, spellCards, 'player', 'spell')
-		})
+			const spellCards = Core.player.players[0].cardHand.spellCards
+			const sortedPlayerSpellCards = Core.player.players[0].cardHand.spellCards
+				.filter((card) => card !== input.inspectedCard)
+				.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
+				.slice()
+				.reverse()
+			sortedPlayerSpellCards.forEach((renderedCard) => {
+				this.renderCard(renderedCard, spellCards, 'player', 'spell')
+			})
+		}
 
 		if (Core.opponent.players.length > 0) {
 			const opponentsUnitCards = Core.opponent.players[0].cardHand.unitCards

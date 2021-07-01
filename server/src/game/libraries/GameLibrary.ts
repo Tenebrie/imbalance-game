@@ -4,6 +4,7 @@ import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import { colorizeConsoleText, colorizeId, colorizePlayer } from '@src/utils/Utils'
 import { ServerRulesetTemplate } from '../models/rulesets/ServerRuleset'
 import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
+import RulesetCategory from '@shared/enums/RulesetCategory'
 
 class GameLibrary {
 	games: ServerGame[]
@@ -12,16 +13,22 @@ class GameLibrary {
 		this.games = []
 	}
 
-	public createPublicGame(owner: ServerPlayer, ruleset: ServerRulesetTemplate, props: OptionalGameProps): ServerGame {
-		const game = ServerGame.newPublicInstance(ruleset, props)
-		console.info(`Player ${colorizePlayer(owner.username)} created public game ${colorizeId(game.id)}`)
+	public createGame(owner: ServerPlayer, ruleset: ServerRulesetTemplate, props: Partial<OptionalGameProps> = {}): ServerGame {
+		let game: ServerGame
+		if (ruleset.category === RulesetCategory.LABYRINTH) {
+			game = ServerGame.newOwnedInstance(owner, ruleset, props)
+			console.info(`Player ${colorizePlayer(owner.username)} created owned game ${colorizeId(game.id)}`)
+		} else {
+			game = ServerGame.newPublicInstance(ruleset, props)
+			console.info(`Player ${colorizePlayer(owner.username)} created public game ${colorizeId(game.id)}`)
+		}
 
 		this.games.push(game)
 		return game
 	}
 
 	public createChainGame(fromGame: ServerGame, chain: RulesetChain): ServerGame {
-		const newGame = ServerGame.newOwnedInstance(fromGame.getSinglePlayer().player, chain.get(fromGame), {})
+		const newGame = ServerGame.newOwnedInstance(fromGame.owner!, chain.get(fromGame), {})
 		this.games.push(newGame)
 
 		return newGame

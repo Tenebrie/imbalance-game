@@ -25,7 +25,7 @@ export default class UnitLabyrinthLostRaven extends ServerCard {
 		this.addRelatedCards().requireTribe(CardTribe.LOST)
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
-			.requireAllied()
+			.requireSamePlayer()
 			.require((args) => args.targetCard.tribes.includes(CardTribe.LOST))
 			.perform(({ targetCard }) => UnitLabyrinthLostRaven.onTargetSelected(targetCard))
 	}

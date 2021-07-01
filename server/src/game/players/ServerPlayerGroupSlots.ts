@@ -17,7 +17,10 @@ export default class ServerPlayerGroupSlots implements RulesetSlotGroup {
 	}
 
 	public grabOpenHumanSlot(): ServerRulesetSlotHumanPlayer {
-		const slots = this.players.filter((slot) => slot.type === 'player')
+		const game = this.group.game
+		const slots = this.players
+			.filter((playerSlot) => !playerSlot.require || playerSlot.require(game))
+			.filter((playerSlot) => playerSlot.type === 'player')
 		const slotsTaken = this.group.players.filter((player) => player.isHuman).length
 		const slot = slots[slotsTaken]
 		if (!slot) {
@@ -27,7 +30,10 @@ export default class ServerPlayerGroupSlots implements RulesetSlotGroup {
 	}
 
 	public grabOpenBotSlot(): ServerRulesetSlotAIPlayer {
-		const slots = this.players.filter((slot) => slot.type === 'ai')
+		const game = this.group.game
+		const slots = this.players
+			.filter((playerSlot) => !playerSlot.require || playerSlot.require(game))
+			.filter((playerSlot) => playerSlot.type === 'ai')
 		const slotsTaken = this.group.players.filter((player) => player.isBot).length
 		const slot = slots[slotsTaken]
 		if (!slot) {
@@ -37,22 +43,34 @@ export default class ServerPlayerGroupSlots implements RulesetSlotGroup {
 	}
 
 	public get totalHumanSlots(): number {
-		return this.players.filter((playerSlot) => playerSlot.type === 'player').length
+		const game = this.group.game
+		return this.players
+			.filter((playerSlot) => !playerSlot.require || playerSlot.require(game))
+			.filter((playerSlot) => playerSlot.type === 'player').length
 	}
 
 	public get totalBotSlots(): number {
-		return this.players.filter((playerSlot) => playerSlot.type === 'ai').length
+		const game = this.group.game
+		return this.players
+			.filter((playerSlot) => !playerSlot.require || playerSlot.require(game))
+			.filter((playerSlot) => playerSlot.type === 'ai').length
 	}
 
 	public get openHumanSlots(): number {
+		const game = this.group.game
 		const playersConnected = this.group.players.filter((player) => player.isHuman).length
-		const slotsAvailable = this.players.filter((playerSlot) => playerSlot.type === 'player').length
+		const slotsAvailable = this.players
+			.filter((playerSlot) => !playerSlot.require || playerSlot.require(game))
+			.filter((playerSlot) => playerSlot.type === 'player').length
 		return slotsAvailable - playersConnected
 	}
 
 	public get openBotSlots(): number {
+		const game = this.group.game
 		const playersConnected = this.group.players.filter((player) => player.isBot).length
-		const slotsAvailable = this.players.filter((playerSlot) => playerSlot.type === 'ai').length
+		const slotsAvailable = this.players
+			.filter((playerSlot) => !playerSlot.require || playerSlot.require(game))
+			.filter((playerSlot) => playerSlot.type === 'ai').length
 		return slotsAvailable - playersConnected
 	}
 }

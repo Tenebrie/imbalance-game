@@ -516,7 +516,7 @@ export default defineComponent({
 	margin-top: 8px;
 	font-size: 0.8em;
 
-	span {
+	.span {
 		margin-bottom: 0 !important;
 	}
 }

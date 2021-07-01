@@ -11,11 +11,12 @@ import { RulesetBoard } from './RulesetBoard'
 import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
-import { enumToArray, forEachInEnum } from '@shared/Utils'
+import { enumToArray } from '@shared/Utils'
 import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
 import { ServerRulesetBuilderProps } from '@src/game/models/rulesets/ServerRulesetBuilder'
 import { ServerRulesetSlots } from '@src/game/models/rulesets/ServerRulesetSlots'
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
+import RulesetLifecycleHook, { RulesetLifecycleCallback } from '@src/game/models/rulesets/RulesetLifecycleHook'
 
 export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; count: number })[]
 
@@ -27,6 +28,7 @@ export type ServerRulesetProps = {
 
 	state: Record<string, any>
 	constants: Partial<RulesetConstants>
+	lifecycleCallbacks: Map<RulesetLifecycleHook, RulesetLifecycleCallback[]>
 
 	board: RulesetBoard | null
 	slots: ServerRulesetSlots
@@ -47,6 +49,8 @@ export class ServerRuleset implements Ruleset {
 	public readonly slots: ServerRulesetSlots
 	public readonly chains: RulesetChain[] = []
 
+	private readonly lifecycleCallbacks: Map<RulesetLifecycleHook, RulesetLifecycleCallback[]>
+
 	constructor(props: ServerRulesetProps) {
 		this.class = props.class
 		this.gameMode = props.gameMode
@@ -57,12 +61,10 @@ export class ServerRuleset implements Ruleset {
 		this.slots = props.slots
 		this.chains = props.chains
 
+		this.lifecycleCallbacks = props.lifecycleCallbacks
+
 		this.state = {
 			...props.state,
-		}
-
-		if (!props.slots) {
-			throw new Error(`No player slots created for ruleset ${this.class}`)
 		}
 
 		this.constants = {
@@ -87,6 +89,11 @@ export class ServerRuleset implements Ruleset {
 		}
 	}
 
+	public lifecycleCallback(hook: RulesetLifecycleHook, game: ServerGame): void {
+		const callbacks = this.lifecycleCallbacks.get(hook) || []
+		callbacks.forEach((callback) => callback(game))
+	}
+
 	public get playerDeckRequired(): boolean {
 		const deckRulesValues = enumToArray(CustomDeckRules)
 		return this.slots.groups
@@ -103,6 +110,7 @@ export type ServerRulesetTemplateProps = ServerRulesetBuilderProps<any> & {
 	slots: ServerRulesetSlots
 	chains: RulesetChain[]
 
+	lifecycleCallbacks: Map<RulesetLifecycleHook, RulesetLifecycleCallback[]>
 	eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
 	eventHooks: Map<GameHookType, EventHook<any, any>[]>
 	cardSelectorBuilders: CardSelectorBuilder[]
@@ -118,6 +126,7 @@ export class ServerRulesetTemplate {
 	public readonly state: Record<string, any>
 	public readonly constants: Partial<RulesetConstants>
 
+	public readonly lifecycleCallbacks: Map<RulesetLifecycleHook, RulesetLifecycleCallback[]>
 	public readonly eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
 	public readonly eventHooks: Map<GameHookType, EventHook<any, any>[]>
 	public readonly cardSelectorBuilders: CardSelectorBuilder[] = []
@@ -134,6 +143,7 @@ export class ServerRulesetTemplate {
 
 		this.state = props.state
 
+		this.lifecycleCallbacks = props.lifecycleCallbacks
 		this.eventSubscriptions = props.eventSubscriptions
 		this.eventHooks = props.eventHooks
 		this.cardSelectorBuilders = props.cardSelectorBuilders
@@ -142,16 +152,6 @@ export class ServerRulesetTemplate {
 		this.slots = props.slots
 		this.chains = props.chains
 
-		this.eventSubscriptions = new Map<GameEventType, EventSubscription<any>[]>()
-		this.eventHooks = new Map<GameHookType, EventHook<any, any>[]>()
-		forEachInEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
-		forEachInEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
-		props.eventSubscriptions.forEach((value: EventSubscription<any>[], key: GameEventType) => {
-			this.eventSubscriptions.set(key, this.eventSubscriptions.get(key)!.concat(value))
-		})
-		props.eventHooks.forEach((value: EventHook<any, any>[], key: GameHookType) => {
-			this.eventHooks.set(key, this.eventHooks.get(key)!.concat(value))
-		})
 		this.cardSelectorBuilders = props.cardSelectorBuilders
 
 		this.constants = props.rulesetConstants
@@ -167,6 +167,7 @@ export class ServerRulesetTemplate {
 			board: this.board,
 			slots: this.slots,
 			chains: this.chains,
+			lifecycleCallbacks: this.lifecycleCallbacks,
 			state: {
 				...this.state,
 			},

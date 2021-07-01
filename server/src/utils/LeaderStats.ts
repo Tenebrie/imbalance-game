@@ -1,7 +1,8 @@
 import { EventSubscriber } from '@src/game/models/ServerGameEvents'
 import { ServerBuffSource } from '@src/game/models/buffs/ServerBuffContainer'
 import LeaderStatType from '@src/../../shared/src/enums/LeaderStatType'
-import { getOwnerGroup, getTotalLeaderStat } from '@src/utils/Utils'
+import { getOwnerGroup, getOwnerPlayer, getTotalLeaderStat } from '@src/utils/Utils'
+import ServerCard from '@src/game/models/ServerCard'
 
 export type LeaderStatValueGetter = (card: EventSubscriber | ServerBuffSource) => number
 
@@ -11,7 +12,8 @@ const asScalingStat = (value: number, stats: LeaderStatType[]): LeaderStatValueG
 			return value
 		}
 
-		const owner = getOwnerGroup(subscriber)
+		const owner =
+			subscriber instanceof ServerCard && subscriber.unit ? subscriber.ownerGroup : getOwnerPlayer(subscriber) || getOwnerGroup(subscriber)
 		if (!owner) {
 			return value
 		}

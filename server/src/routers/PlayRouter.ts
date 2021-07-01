@@ -102,8 +102,6 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 		}
 
 		currentPlayerInGame = currentGame.addHumanPlayer(currentPlayer, targetGroup, templateDeck)
-
-		await currentGame.progression.loadStates()
 	}
 
 	currentPlayer.disconnect()

@@ -22,7 +22,7 @@ export default class UnitCorgiGravedigger extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_GRAVEYARD)
-			.requireAllied()
+			.requireSamePlayer()
 			.require(({ targetCard }) => targetCard.type === CardType.UNIT)
 			.perform(({ targetCard }) => {
 				const owner = targetCard.ownerPlayerInGame

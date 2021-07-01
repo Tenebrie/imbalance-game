@@ -58,7 +58,7 @@ router.post('/', (req: Request, res: Response) => {
 	} catch (err) {
 		throw { status: 400, error: 'Invalid ruleset class' }
 	}
-	const game = GameLibrary.createPublicGame(player, ruleset, {})
+	const game = GameLibrary.createGame(player, ruleset)
 
 	res.json({ data: new GameMessage(game) })
 })

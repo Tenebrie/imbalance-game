@@ -40,6 +40,7 @@ import { RulesetChainBuilder } from '@src/game/models/rulesets/RulesetChain'
 import { ServerRulesetTemplate } from '@src/game/models/rulesets/ServerRuleset'
 import { RulesetSlotsBuilder } from '@src/game/models/rulesets/ServerRulesetSlots'
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
+import RulesetLifecycleHook, { RulesetLifecycleCallback } from '@src/game/models/rulesets/RulesetLifecycleHook'
 
 export type ServerRulesetBuilderProps<T> = {
 	gameMode: GameMode
@@ -53,6 +54,7 @@ export class ServerRulesetBuilder<T> {
 	protected readonly class: string
 	private readonly props: ServerRulesetBuilderProps<T>
 
+	private readonly lifecycleCallbacks: Map<RulesetLifecycleHook, RulesetLifecycleCallback[]>
 	private readonly eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
 	private readonly eventHooks: Map<GameHookType, EventHook<any, any>[]>
 	private cardSelectorBuilders: CardSelectorBuilder[] = []
@@ -67,8 +69,10 @@ export class ServerRulesetBuilder<T> {
 		this.props = props
 		this.class = getClassFromConstructor(this.constructor as RulesetConstructor)
 
+		this.lifecycleCallbacks = new Map<RulesetLifecycleHook, RulesetLifecycleCallback[]>()
 		this.eventSubscriptions = new Map<GameEventType, EventSubscription<any>[]>()
 		this.eventHooks = new Map<GameHookType, EventHook<any, any>[]>()
+		forEachInEnum(RulesetLifecycleHook, (hook) => this.lifecycleCallbacks.set(hook, []))
 		forEachInEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
 		forEachInEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
 
@@ -82,6 +86,10 @@ export class ServerRulesetBuilder<T> {
 			...this.rulesetConstants,
 			...values,
 		}
+	}
+
+	protected onLifecycle(hook: RulesetLifecycleHook, callback: RulesetLifecycleCallback): void {
+		this.lifecycleCallbacks.get(hook)!.push(callback)
 	}
 
 	protected createBoard(): RulesetBoardBuilder {
@@ -166,6 +174,7 @@ export class ServerRulesetBuilder<T> {
 			slots: this.slotsBuilder.__build(),
 			chains: this.chainBuilders.map((chain) => chain.__build()),
 
+			lifecycleCallbacks: this.lifecycleCallbacks,
 			eventSubscriptions: this.eventSubscriptions,
 			eventHooks: this.eventHooks,
 			cardSelectorBuilders: this.cardSelectorBuilders,

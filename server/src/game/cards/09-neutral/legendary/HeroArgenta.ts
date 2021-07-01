@@ -24,7 +24,7 @@ export default class HeroArgenta extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
-			.require(({ targetCard }) => targetCard.ownerInGame === this.ownerInGame)
+			.requireSamePlayer()
 			.require(({ targetCard }) => targetCard.color === CardColor.SILVER)
 			.perform(({ targetCard }) => {
 				Keywords.summonCard(targetCard)

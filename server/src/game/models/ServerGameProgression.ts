@@ -1,69 +1,88 @@
 import ServerGame from './ServerGame'
-import { LabyrinthProgressionRunState, LabyrinthProgressionState } from '@shared/models/progression/LabyrinthProgressionState'
+import {
+	LabyrinthProgressionRunState,
+	LabyrinthProgressionRunStatePlayer,
+	LabyrinthProgressionState,
+} from '@shared/models/progression/LabyrinthProgressionState'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import PlayerDatabase from '@src/database/PlayerDatabase'
 import ServerPlayer from '@src/game/players/ServerPlayer'
 import { getLabyrinthItemSlots } from '@src/utils/Utils'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
+import HiddenPlayerMessage from '@shared/models/network/player/HiddenPlayerMessage'
 
-const CURRENT_VERSION = 2
+const CURRENT_VERSION = 3
 
 class LabyrinthProgression {
 	game: ServerGame
-	private __state: LabyrinthProgressionState | null = null
+	private internalState: LabyrinthProgressionState | null = null
 
 	constructor(game: ServerGame) {
 		this.game = game
 	}
 
 	public get isLoaded(): boolean {
-		return !!this.__state
+		return !!this.internalState
 	}
 
 	public get state(): LabyrinthProgressionState {
-		if (!this.__state) {
+		if (!this.internalState) {
 			throw new Error('Trying to fetch Labyrinth state which is not set!')
 		}
-		return this.__state
+		return this.internalState
 	}
 
 	private get player(): ServerPlayer {
-		return this.game.getHumanGroup().players[0].player
+		if (!this.game.owner) {
+			throw new Error('Trying to fetch state in a public game!')
+		}
+		return this.game.owner
 	}
 
 	public async loadState(): Promise<void> {
 		const player = this.player
 		const entry = await PlayerDatabase.selectPlayerLabyrinthProgression(player.id)
 		if (!entry || entry.data.version !== CURRENT_VERSION) {
-			this.__state = await LabyrinthProgression.createDefaultState(player)
+			this.internalState = this.createDefaultState()
+			await this.save()
 			return
 		}
-		this.__state = entry.data
+		this.internalState = entry.data
 	}
 
 	public async resetRunState(): Promise<void> {
-		this.__state = {
+		this.internalState = {
 			...this.state,
-			run: LabyrinthProgression.getDefaultRunState(),
+			run: this.getDefaultRunState(),
 		}
 		await this.save()
 	}
 
-	private static async createDefaultState(player: ServerPlayer): Promise<LabyrinthProgressionState> {
-		const state: LabyrinthProgressionState = {
+	private createDefaultState(): LabyrinthProgressionState {
+		return {
 			version: CURRENT_VERSION,
-			run: LabyrinthProgression.getDefaultRunState(),
+			run: this.getDefaultRunState(),
 			lastRun: null,
 			meta: {
 				runCount: 0,
 			},
 		}
-		await PlayerDatabase.updatePlayerLabyrinthProgression(player.id, state)
-		return state
 	}
 
-	private static getDefaultRunState(): LabyrinthProgressionRunState {
+	private getDefaultRunState(): LabyrinthProgressionRunState {
+		const player = this.player
+		return {
+			playersExpected: 1,
+			players: [new HiddenPlayerMessage(player)],
+			playerStates: {
+				[player.id]: this.getDefaultPlayerState(),
+			},
+			encounterHistory: [],
+		}
+	}
+
+	private getDefaultPlayerState(): LabyrinthProgressionRunStatePlayer {
 		return {
 			cards: [
 				{
@@ -96,51 +115,67 @@ class LabyrinthProgression {
 				.map((card) => ({
 					cardClass: card.class,
 				})),
-			encounterHistory: [],
 		}
 	}
 
-	public addCardToDeck(card: string, count: number): void {
-		this.state.run.cards.push({
+	public setExpectedPlayers(playerCount: number): void {
+		this.state.run.playersExpected = playerCount
+		this.saveInBackground()
+	}
+
+	public addPlayer(player: ServerPlayer): void {
+		this.state.run.players.push(new HiddenPlayerMessage(player))
+		this.state.run.playerStates[player.id] = this.getDefaultPlayerState()
+		this.saveInBackground()
+	}
+
+	public addCardToDeck(player: ServerPlayer, card: string, count: number): void {
+		this.state.run.playerStates[player.id].cards.push({
 			class: card,
 			count,
 		})
-		this.save()
+		this.saveInBackground()
 	}
 
-	public addItemToDeck(cardClass: string): void {
+	public addItemToDeck(player: ServerPlayer, cardClass: string): void {
 		const card = CardLibrary.findPrototypeFromClass(cardClass)
 		const cardSlots = getLabyrinthItemSlots(card)
 
-		this.state.run.items = this.state.run.items.filter((oldItem) => {
+		this.state.run.playerStates[player.id].items = this.state.run.playerStates[player.id].items.filter((oldItem) => {
 			const oldItemCard = CardLibrary.findPrototypeFromClass(oldItem.cardClass)
 			const oldItemSlots = getLabyrinthItemSlots(oldItemCard)
 			const isBlocking = oldItemSlots.some((slot) => cardSlots.includes(slot))
 			return !isBlocking
 		})
 
-		this.state.run.items.push({
+		this.state.run.playerStates[player.id].items.push({
 			cardClass: cardClass,
 		})
-		this.save()
+		this.saveInBackground()
 	}
 
 	public addEncounterToHistory(encounterClass: string): void {
 		this.state.run.encounterHistory.push({
 			class: encounterClass,
 		})
-		this.save()
+		this.saveInBackground()
 	}
 
 	public failRun(): void {
 		this.state.meta.runCount += 1
 		this.state.lastRun = this.state.run
-		this.state.run = LabyrinthProgression.getDefaultRunState()
-		this.save()
+		this.state.run = this.getDefaultRunState()
+		this.saveInBackground()
 	}
 
 	private save(): Promise<boolean> {
+		console.log('Saving', this.state)
+		console.log('', new Error())
 		return PlayerDatabase.updatePlayerLabyrinthProgression(this.player.id, this.state)
+	}
+
+	private saveInBackground(): void {
+		this.save().then()
 	}
 }
 

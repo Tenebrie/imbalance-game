@@ -1,3 +1,5 @@
+import PlayerMessage from '../network/player/PlayerMessage'
+
 type LabyrinthCard = {
 	class: string
 	count: number
@@ -11,9 +13,15 @@ type LabyrinthEncounter = {
 	class: string
 }
 
-export type LabyrinthProgressionRunState = {
+export type LabyrinthProgressionRunStatePlayer = {
 	cards: LabyrinthCard[]
 	items: LabyrinthItem[]
+}
+
+export type LabyrinthProgressionRunState = {
+	playersExpected: number
+	players: PlayerMessage[]
+	playerStates: Record<string, LabyrinthProgressionRunStatePlayer>
 	encounterHistory: LabyrinthEncounter[]
 }
 

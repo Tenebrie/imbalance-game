@@ -23,11 +23,11 @@ export default class UnitYogaTeacher extends ServerCard {
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND)
 			.totalTargetCount(1)
-			.requireAllied()
+			.requireSamePlayer()
 			.finalize(({ targetCard }) => this.onTargetSelected(targetCard))
 		this.createDeployTargets(TargetType.CARD_IN_SPELL_HAND)
 			.totalTargetCount(1)
-			.requireAllied()
+			.requireSamePlayer()
 			.finalize(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 

@@ -999,6 +999,10 @@
 	"card.spellLabyrinthStartRun.title": "Action",
 	"card.spellLabyrinthStartRun.description": "Start a new *Labyrinth of the Shapeshifter* run.",
 
+	"card.spellLabyrinthStartCoopRun.name": "New Cooperative Run",
+	"card.spellLabyrinthStartCoopRun.title": "Action",
+	"card.spellLabyrinthStartCoopRun.description": "Start a new *Labyrinth of the Shapeshifter* run with a friend.",
+
 	"card.spellLabyrinthContinueRun.name": "Continue Run",
 	"card.spellLabyrinthContinueRun.title": "Action",
 	"card.spellLabyrinthContinueRun.description": "Continue your existing run.<p><i>Encounters completed: {encounters}.</i>",

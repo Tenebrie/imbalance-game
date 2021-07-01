@@ -52,8 +52,8 @@ abstract class BaseSpellLabyrinthRewardBucket extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
 			.require(({ targetCard }) => this.cardsToChooseFrom.includes(targetCard))
 			.preventSorting()
-			.perform(({ targetCard }) => {
-				this.game.progression.labyrinth.addCardToDeck(targetCard.class, 1)
+			.perform(({ player, targetCard }) => {
+				this.game.progression.labyrinth.addCardToDeck(player.player, targetCard.class, 1)
 			})
 	}
 

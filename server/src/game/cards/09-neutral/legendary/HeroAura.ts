@@ -25,7 +25,7 @@ export default class HeroAura extends ServerCard {
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.targetCount(1)
-			.requireAllied()
+			.requireSamePlayer()
 			.require((args) => args.targetCard.color === CardColor.GOLDEN)
 			.perform(({ targetCard }) => {
 				Keywords.summonCard(targetCard)

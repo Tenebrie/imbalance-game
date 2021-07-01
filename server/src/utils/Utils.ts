@@ -49,7 +49,7 @@ export const toRowIndex = (rowOrIndex: number | ServerBoardRow): number => {
 	return typeof rowOrIndex === 'number' ? rowOrIndex : rowOrIndex.index
 }
 
-export const getOwnerPlayer = (entity: ServerCard | ServerBuff | ServerUnit): ServerPlayerInGame | null => {
+export const getOwnerPlayer = (entity: ServerCard | ServerBuff | ServerUnit | ServerBoardRow): ServerPlayerInGame | null => {
 	const parent = entity instanceof ServerBuff ? entity.parent : entity
 	if (parent instanceof ServerUnit) {
 		return parent.originalOwner
@@ -100,16 +100,19 @@ export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {
 	return value
 }
 
-export const getTotalLeaderStat = (playerGroup: ServerPlayerGroup | null, types: LeaderStatType[]): number => {
-	if (!playerGroup) {
+export const getTotalLeaderStat = (player: ServerPlayerInGame | ServerPlayerGroup | null, types: LeaderStatType[]): number => {
+	if (!player) {
 		return 0
 	}
-	const validCards = playerGroup.game.board.getUnitsOwnedByGroup(playerGroup).map((unit) => unit.card)
-	playerGroup.players.forEach((player) => {
+
+	const playerGroup = player instanceof ServerPlayerGroup ? player : player.group
+	const validCards = player.game.board.getUnitsOwnedByGroup(playerGroup).map((unit) => unit.card)
+
+	if (player instanceof ServerPlayerInGame) {
 		validCards.push(player.leader)
 		const extraCards = player.cardHand.allCards.filter((card) => card.features.includes(CardFeature.PASSIVE))
 		extraCards.forEach((card) => validCards.push(card))
-	})
+	}
 	return validCards.map((card) => card.stats.getLeaderStats(types)).reduce((acc, val) => acc + val, 0)
 }
 

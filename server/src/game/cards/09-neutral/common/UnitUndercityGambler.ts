@@ -32,7 +32,7 @@ export default class UnitUndercityGambler extends ServerCard {
 		}
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND)
-			.requireAllied()
+			.requireSamePlayer()
 			.require((args) => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
 			.perform(({ targetCard }) => {
 				const owner = targetCard.ownerPlayerInGame

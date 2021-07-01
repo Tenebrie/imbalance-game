@@ -29,7 +29,13 @@ export default {
 				(
 					SELECT row_to_json(subplayers)
 					FROM (
-						SELECT id, username FROM players WHERE players.id = game_history."victoriousPlayer"
+						SELECT id, username FROM players WHERE players.id = ANY(
+							array(
+								SELECT "playerId"
+								FROM victorious_player_in_game_history
+								WHERE victorious_player_in_game_history."gameId" = game_history.id
+							)
+						)
 					) AS subplayers
 				) AS "victoriousPlayer"
 			FROM game_history
@@ -67,7 +73,13 @@ export default {
 				(
 					SELECT row_to_json(subplayers)
 					FROM (
-						SELECT id, username FROM players WHERE players.id = game_history."victoriousPlayer"
+						 SELECT id, username FROM players WHERE players.id = ANY(
+							 array(
+								 SELECT "playerId"
+								 FROM victorious_player_in_game_history
+								 WHERE victorious_player_in_game_history."gameId" = game_history.id
+							 )
+					    )
 					) AS subplayers
 				) AS "victoriousPlayer"
 			FROM game_history
@@ -84,10 +96,10 @@ export default {
 			return false
 		}
 
-		const players = game.players.filter((playerGroup) => playerGroup.isHuman)
-		for (const playerGroup of players) {
+		const humanPlayers = game.allPlayers.filter((player) => player.isHuman)
+		for (const playerInGame of humanPlayers) {
 			query = `INSERT INTO player_in_game_history("gameId", "playerId") VALUES($1, $2)`
-			success = await Database.updateRows(query, [game.id, playerGroup.id])
+			success = await Database.updateRows(query, [game.id, playerInGame.player.id])
 			if (!success) {
 				return false
 			}
@@ -97,8 +109,7 @@ export default {
 
 	async closeGame(game: ServerGame, reason: string, victoriousPlayer: ServerPlayerGroup | null): Promise<boolean> {
 		const eventLog = JSON.stringify(game.events.eventLog)
-		if (!victoriousPlayer) {
-			const query = `
+		let query = `
 				UPDATE game_history
 				SET
 					"closedAt" = current_timestamp,
@@ -106,18 +117,22 @@ export default {
 					"closeReason" = $3
 				WHERE id = $1 AND "closedAt" IS NULL
 			`
-			return await Database.updateRows(query, [game.id, eventLog, reason])
+		let success = await Database.updateRows(query, [game.id, eventLog, reason])
+		if (!success) {
+			return false
 		}
-		const query = `
-				UPDATE game_history
-				SET
-					"closedAt" = current_timestamp,
-					"eventLog" = $2,
-					"closeReason" = $3,
-					"victoriousPlayer" = $4
-				WHERE id = $1 AND "closedAt" IS NULL
-			`
-		return await Database.updateRows(query, [game.id, eventLog, reason, victoriousPlayer.id])
+
+		if (victoriousPlayer) {
+			const players = victoriousPlayer.players.filter((playerInGame) => playerInGame.isHuman)
+			for (const playerInGame of players) {
+				query = `INSERT INTO victorious_player_in_game_history("gameId", "playerId") VALUES($1, $2)`
+				success = await Database.updateRows(query, [game.id, playerInGame.player.id])
+				if (!success) {
+					return false
+				}
+			}
+		}
+		return true
 	},
 
 	async closeAbandonedGames(): Promise<boolean> {

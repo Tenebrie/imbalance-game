@@ -18,9 +18,8 @@ export default {
 	},
 
 	onPlayerConnectedInitially(game: ServerGame): void {
-		const initializedPlayers = game.players.flatMap((playerGroup) => playerGroup.players).filter((playerInGame) => playerInGame.initialized)
-		const playersExpected = game.ruleset.slots.groups.flatMap((group) => group.players).length
-		if (initializedPlayers.length < playersExpected) {
+		const openPlayerSlots = game.ruleset.slots.openPlayerSlots(game)
+		if (openPlayerSlots > 0) {
 			return
 		}
 

@@ -10,13 +10,14 @@ import GameEventType from '@shared/enums/GameEventType'
 import Keywords from '@src/utils/Keywords'
 import SpellLabyrinthContinueRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthContinueRun'
 import SpellLabyrinthPreviousRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthPreviousRun'
-import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import ServerGame from '@src/game/models/ServerGame'
 import RulesetLabyrinthRunCamp from '@src/game/rulesets/labyrinth/service/RulesetLabyrinthRunCamp'
 import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
+import RulesetLabyrinthBase from '@src/game/rulesets/labyrinth/service/RulesetLabyrinthBase'
+import SpellLabyrinthStartCoopRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthStartCoopRun'
 
 type State = {
-	nextEncounter: RulesetConstructor | null
+	nextEncounter: typeof RulesetLabyrinthRunCamp | typeof RulesetLabyrinthBase | null
 }
 
 export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<State> {
@@ -34,7 +35,7 @@ export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<State
 			FIRST_GROUP_MOVES_FIRST: true,
 		})
 
-		const getNextRuleset = (game: ServerGame): RulesetConstructor => {
+		const getNextRuleset = (game: ServerGame) => {
 			return this.getState(game).nextEncounter!
 		}
 		this.createChain()
@@ -42,7 +43,7 @@ export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<State
 			.setLinkGetter(getNextRuleset)
 
 		this.createSlots()
-			.addGroup({ type: 'player', deck: [LeaderLabyrinthPlayer, SpellLabyrinthStartRun] })
+			.addGroup({ type: 'player', deck: [LeaderLabyrinthPlayer, SpellLabyrinthStartRun, SpellLabyrinthStartCoopRun] })
 			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.PASSIVE })
 
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
@@ -59,15 +60,29 @@ export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<State
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthStartRun)
 			.perform(async ({ game }) => {
-				await game.progression.labyrinth.resetRunState()
-				if (game.progression.labyrinth.state.meta.runCount === 0) {
-					this.getState(game).nextEncounter = RulesetLabyrinthDummies
-				} else {
-					this.getState(game).nextEncounter = RulesetLabyrinthRunCamp
-				}
-				game.finish(game.getHumanGroup(), 'Starting new run', true)
-				OutgoingMessageHandlers.executeMessageQueue(game)
+				await startRun(game, false)
 			})
+
+		this.createCallback(GameEventType.CARD_PLAYED)
+			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthStartCoopRun)
+			.perform(async ({ game }) => {
+				await startRun(game, true)
+			})
+
+		const startRun = async (game: ServerGame, isCoop: boolean) => {
+			await game.progression.labyrinth.resetRunState()
+			if (isCoop) {
+				game.progression.labyrinth.setExpectedPlayers(2)
+			}
+
+			if (game.progression.labyrinth.state.meta.runCount === 0) {
+				this.getState(game).nextEncounter = RulesetLabyrinthDummies
+			} else {
+				this.getState(game).nextEncounter = RulesetLabyrinthRunCamp
+			}
+			game.finish(game.getHumanGroup(), 'Starting new run', true)
+			OutgoingMessageHandlers.executeMessageQueue(game)
+		}
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthContinueRun)

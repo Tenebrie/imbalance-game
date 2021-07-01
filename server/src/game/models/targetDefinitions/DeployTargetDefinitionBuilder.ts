@@ -144,6 +144,16 @@ export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValid
 		})
 	}
 
+	public requireSamePlayer(): DeployTargetDefinitionBuilder<EventArgs> {
+		return this.require((args: TargetValidatorArguments) => {
+			const targetOwner = 'targetRow' in args ? null : args.targetCard.ownerPlayer
+			if (!targetOwner) {
+				return false
+			}
+			return targetOwner === args.sourceCard.ownerPlayer
+		})
+	}
+
 	public requireEnemy(): DeployTargetDefinitionBuilder<EventArgs> {
 		return this.require((args: TargetValidatorArguments) => {
 			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerGroup
