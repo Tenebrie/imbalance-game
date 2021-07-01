@@ -16,6 +16,7 @@ import HeroChallengeLegendaryExplorer3 from '@src/game/cards/10-challenge/challe
 import UnitChallengeEagerExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeEagerExplorer'
 import UnitChallengeScarredExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeScarredExplorer'
 import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
+import AIBehaviour from '@shared/enums/AIBehaviour'
 
 export default class RulesetBrawlDiscovery extends ServerRulesetBuilder<never> {
 	constructor() {
@@ -25,24 +26,31 @@ export default class RulesetBrawlDiscovery extends ServerRulesetBuilder<never> {
 			sortPriority: 1,
 		})
 
-		this.createAI([
-			LeaderChallengeDummy,
-			HeroChallengeDummyWarrior0,
-			HeroChallengeDummyWarrior1,
-			HeroChallengeDummyWarrior2,
-			HeroChallengeDummyWarrior3,
-			{ card: UnitChallengeDummyRoyalWarrior, count: Constants.CARD_LIMIT_SILVER },
-			{ card: UnitChallengeDummyVanillaWarrior, count: Constants.CARD_LIMIT_BRONZE },
-		])
-
-		this.createDeck().fixed([
-			LeaderTheScavenger,
-			HeroChallengeLegendaryExplorer0,
-			HeroChallengeLegendaryExplorer1,
-			HeroChallengeLegendaryExplorer2,
-			HeroChallengeLegendaryExplorer3,
-			{ card: UnitChallengeScarredExplorer, count: Constants.CARD_LIMIT_SILVER },
-			{ card: UnitChallengeEagerExplorer, count: Constants.CARD_LIMIT_BRONZE },
-		])
+		this.createSlots()
+			.addGroup({
+				type: 'player',
+				deck: [
+					LeaderTheScavenger,
+					HeroChallengeLegendaryExplorer0,
+					HeroChallengeLegendaryExplorer1,
+					HeroChallengeLegendaryExplorer2,
+					HeroChallengeLegendaryExplorer3,
+					{ card: UnitChallengeScarredExplorer, count: Constants.CARD_LIMIT_SILVER },
+					{ card: UnitChallengeEagerExplorer, count: Constants.CARD_LIMIT_BRONZE },
+				],
+			})
+			.addGroup({
+				type: 'ai',
+				behaviour: AIBehaviour.DEFAULT,
+				deck: [
+					LeaderChallengeDummy,
+					HeroChallengeDummyWarrior0,
+					HeroChallengeDummyWarrior1,
+					HeroChallengeDummyWarrior2,
+					HeroChallengeDummyWarrior3,
+					{ card: UnitChallengeDummyRoyalWarrior, count: Constants.CARD_LIMIT_SILVER },
+					{ card: UnitChallengeDummyVanillaWarrior, count: Constants.CARD_LIMIT_BRONZE },
+				],
+			})
 	}
 }

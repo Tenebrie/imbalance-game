@@ -14,8 +14,24 @@ import PlayerGroupRefMessage from '@shared/models/network/playerGroup/PlayerGrou
 import { isCardPublic } from '@src/utils/Utils'
 import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
 import HiddenPlayerInGameMessage from '@shared/models/network/playerInGame/HiddenPlayerInGameMessage'
+import PlayersInLobbyMessage from '@shared/models/network/PlayersInLobbyMessage'
 
 export default {
+	broadcastPlayersInLobby(game: ServerGame): void {
+		const slotsOpen = game.players.reduce((total, playerGroup) => total + playerGroup.openHumanSlots, 0)
+		const slotsTotal = game.ruleset.slots.groups.flatMap((group) => group.players).filter((player) => player.type === 'player').length
+		const allPlayers = game.allPlayers.filter((player) => player.isHuman).map((playerInGame) => playerInGame.player)
+		const message = new PlayersInLobbyMessage(slotsOpen, slotsTotal, allPlayers)
+
+		allPlayers.forEach((player) => {
+			player.sendMessage({
+				type: GameSyncMessageType.PLAYER_SLOTS,
+				data: message,
+				highPriority: true,
+			})
+		})
+	},
+
 	notifyAboutGameStart(playerGroup: ServerPlayerGroup, isBoardInverted: boolean): void {
 		playerGroup.players.forEach((playerInGame) =>
 			playerInGame.player.sendMessage({

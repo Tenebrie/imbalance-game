@@ -4,19 +4,18 @@ import { EventHook } from '../events/EventHook'
 import { EventSubscription } from '../events/EventSubscription'
 import GameHookType from '../events/GameHookType'
 import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
-import { RulesetAI } from './RulesetAI'
 import Ruleset from '@shared/models/ruleset/Ruleset'
 import ServerGame from '../ServerGame'
-import { RulesetDeck } from './RulesetDeck'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { RulesetBoard } from './RulesetBoard'
 import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
-import { forEachInEnum } from '@shared/Utils'
+import { enumToArray, forEachInEnum } from '@shared/Utils'
 import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
 import { ServerRulesetBuilderProps } from '@src/game/models/rulesets/ServerRulesetBuilder'
-import { ServerRulesetSlots, RulesetSlotsBuilder } from '@src/game/models/rulesets/ServerRulesetSlots'
+import { ServerRulesetSlots } from '@src/game/models/rulesets/ServerRulesetSlots'
+import CustomDeckRules from '@shared/enums/CustomDeckRules'
 
 export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; count: number })[]
 
@@ -29,10 +28,8 @@ export type ServerRulesetProps = {
 	state: Record<string, any>
 	constants: Partial<RulesetConstants>
 
-	ai: RulesetAI | null
-	deck: RulesetDeck | null
 	board: RulesetBoard | null
-	slots: ServerRulesetSlots | null
+	slots: ServerRulesetSlots
 	chains: RulesetChain[]
 }
 
@@ -46,8 +43,6 @@ export class ServerRuleset implements Ruleset {
 	public state: any
 	public readonly constants: RulesetConstants
 
-	public readonly ai: RulesetAI | null = null
-	public readonly deck: RulesetDeck | null = null
 	public readonly board: RulesetBoard | null = null
 	public readonly slots: ServerRulesetSlots
 	public readonly chains: RulesetChain[] = []
@@ -58,34 +53,20 @@ export class ServerRuleset implements Ruleset {
 		this.category = props.category
 		this.sortPriority = props.sortPriority
 
-		this.ai = props.ai
-		this.deck = props.deck
 		this.board = props.board
+		this.slots = props.slots
 		this.chains = props.chains
 
 		this.state = {
 			...props.state,
 		}
 
-		if (props.slots) {
-			this.slots = props.slots
-		} else {
-			this.slots = new RulesetSlotsBuilder()
-				.addGroup([
-					{
-						type: 'player',
-					},
-				])
-				.addGroup([
-					{
-						type: this.gameMode === GameMode.PVP ? 'player' : 'ai',
-					},
-				])
-				.__build()
+		if (!props.slots) {
+			throw new Error(`No player slots created for ruleset ${this.class}`)
 		}
 
 		this.constants = {
-			STARTING_PLAYER_MORALE: 2,
+			ROUND_WINS_REQUIRED: 2,
 			UNIT_HAND_SIZE_LIMIT: 35,
 			UNIT_HAND_SIZE_STARTING: 10,
 			UNIT_HAND_SIZE_PER_ROUND: 5,
@@ -93,8 +74,8 @@ export class ServerRuleset implements Ruleset {
 			SPELL_HAND_SIZE_LIMIT: 35,
 			SPELL_MANA_PER_ROUND: 0,
 
-			PLAYER_MOVES_FIRST: false,
-			AI_MOVES_FIRST: false,
+			FIRST_GROUP_MOVES_FIRST: false,
+			SECOND_GROUP_MOVES_FIRST: false,
 
 			SKIP_MULLIGAN: false,
 			MULLIGAN_INITIAL_CARD_COUNT: 5,
@@ -107,7 +88,10 @@ export class ServerRuleset implements Ruleset {
 	}
 
 	public get playerDeckRequired(): boolean {
-		return this.deck === null
+		const deckRulesValues = enumToArray(CustomDeckRules)
+		return this.slots.groups
+			.flatMap((group) => group.players)
+			.some((player) => player.type === 'player' && !Array.isArray(player.deck) && deckRulesValues.includes(player.deck))
 	}
 }
 
@@ -115,10 +99,8 @@ export type ServerRulesetTemplateProps = ServerRulesetBuilderProps<any> & {
 	class: string
 	rulesetConstants: Partial<RulesetConstants>
 
-	ai: RulesetAI | null
-	deck: RulesetDeck | null
 	board: RulesetBoard | null
-	slots: ServerRulesetSlots | null
+	slots: ServerRulesetSlots
 	chains: RulesetChain[]
 
 	eventSubscriptions: Map<GameEventType, EventSubscription<any>[]>
@@ -140,10 +122,8 @@ export class ServerRulesetTemplate {
 	public readonly eventHooks: Map<GameHookType, EventHook<any, any>[]>
 	public readonly cardSelectorBuilders: CardSelectorBuilder[] = []
 
-	public readonly ai: RulesetAI | null = null
-	public readonly deck: RulesetDeck | null = null
 	public readonly board: RulesetBoard | null = null
-	public readonly slots: ServerRulesetSlots | null = null
+	public readonly slots: ServerRulesetSlots
 	public readonly chains: RulesetChain[] = []
 
 	constructor(props: ServerRulesetTemplateProps) {
@@ -158,8 +138,6 @@ export class ServerRulesetTemplate {
 		this.eventHooks = props.eventHooks
 		this.cardSelectorBuilders = props.cardSelectorBuilders
 
-		this.ai = props.ai
-		this.deck = props.deck
 		this.board = props.board
 		this.slots = props.slots
 		this.chains = props.chains
@@ -186,8 +164,6 @@ export class ServerRulesetTemplate {
 			category: this.category,
 			sortPriority: this.sortPriority,
 			constants: this.constants,
-			ai: this.ai,
-			deck: this.deck,
 			board: this.board,
 			slots: this.slots,
 			chains: this.chains,

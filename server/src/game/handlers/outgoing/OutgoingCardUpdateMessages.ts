@@ -64,11 +64,6 @@ export default {
 	},
 
 	notifyAboutCardBuffAdded(buff: ServerCardBuff): void {
-		const card = buff.parent
-		if (!card.owner || !card.owner.opponent) {
-			return
-		}
-
 		const message = new OpenCardBuffMessage(buff)
 
 		buff.game.players
@@ -82,11 +77,6 @@ export default {
 	},
 
 	notifyAboutCardBuffDurationChanged(buff: ServerCardBuff): void {
-		const card = buff.parent
-		if (!card.owner || !card.owner.opponent) {
-			return
-		}
-
 		const message = new OpenCardBuffMessage(buff)
 
 		buff.game.players
@@ -100,11 +90,6 @@ export default {
 	},
 
 	notifyAboutCardBuffRemoved(buff: ServerCardBuff): void {
-		const card = buff.parent
-		if (!card.owner || !card.owner.opponent) {
-			return
-		}
-
 		const message = new OpenCardBuffMessage(buff)
 
 		buff.game.players

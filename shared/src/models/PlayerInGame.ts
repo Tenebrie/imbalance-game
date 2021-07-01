@@ -5,7 +5,7 @@ import CardDeck from './CardDeck'
 
 export default interface PlayerInGame {
 	player: Player
-	leader: Card | null
+	leader: Card
 	cardHand: CardHand
 	cardDeck: CardDeck
 	cardGraveyard: CardDeck

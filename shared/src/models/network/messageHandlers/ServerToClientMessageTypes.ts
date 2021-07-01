@@ -1,5 +1,4 @@
 export enum PlayerUpdateMessageType {
-	LEADERS = 'playerUpdate_leaders',
 	MORALE = 'playerUpdate_morale',
 	MANA = 'playerUpdate_mana',
 	MULLIGANS = 'playerUpdate_mulligans',
@@ -41,6 +40,7 @@ export enum AnimationMessageType {
 }
 
 export enum GameSyncMessageType {
+	PLAYER_SLOTS = 'gameSync_playerSlots',
 	START = 'gameSync_start',
 	PHASE_ADVANCE = 'gameSync_phaseAdvance',
 	PLAYER_SELF = 'gameSync_playerSelf',

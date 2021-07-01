@@ -20,12 +20,12 @@ const gameStateModule = defineModule({
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
 		isPlayerInRound: true as boolean,
-		playerMorale: 0 as number,
+		playerRoundWins: 0 as number,
 		playerUnitMana: 0 as number,
 		playerSpellMana: 0 as number,
 		playerSpellManaInDanger: 0 as number,
 		isOpponentInRound: true as boolean,
-		opponentMorale: 0 as number,
+		opponentRoundWins: 0 as number,
 		opponentSpellMana: 0 as number,
 		inspectedCardId: null as string | null,
 		isSpectating: false as boolean,
@@ -69,8 +69,8 @@ const gameStateModule = defineModule({
 			state.ruleset = value
 		},
 
-		setPlayerGroupMorale(state, value: number): void {
-			state.playerMorale = value
+		setPlayerRoundWins(state, value: number): void {
+			state.playerRoundWins = value
 		},
 
 		setPlayerUnitMana(state, playerUnitMana: number): void {
@@ -89,8 +89,8 @@ const gameStateModule = defineModule({
 			state.isOpponentInRound = value
 		},
 
-		setOpponentGroupMorale(state, value: number): void {
-			state.opponentMorale = value
+		setOpponentRoundWins(state, value: number): void {
+			state.opponentRoundWins = value
 		},
 
 		setOpponentSpellMana(state, value: number): void {
@@ -180,8 +180,8 @@ const gameStateModule = defineModule({
 			commit.setOpponentData(null)
 			commit.setIsSpectating(false)
 			commit.setIsPlayersTurn(false)
-			commit.setPlayerGroupMorale(0)
-			commit.setOpponentGroupMorale(0)
+			commit.setPlayerRoundWins(0)
+			commit.setOpponentRoundWins(0)
 			commit.setIsOpponentInRound(true)
 			rootDispatch.gameLogModule.clearLog()
 		},

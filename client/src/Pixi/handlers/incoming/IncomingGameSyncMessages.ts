@@ -11,8 +11,13 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ResolveStackMessage from '@shared/models/network/resolveStack/ResolveStackMessage'
 import RenderedBuff from '@/Pixi/models/buffs/RenderedBuff'
 import PlayerGroupRefMessage from '@shared/models/network/playerGroup/PlayerGroupRefMessage'
+import PlayersInLobbyMessage from '@shared/models/network/PlayersInLobbyMessage'
 
 const IncomingGameSyncMessages: { [index in GameSyncMessageType]: IncomingMessageHandlerFunction } = {
+	[GameSyncMessageType.PLAYER_SLOTS]: (data: PlayersInLobbyMessage) => {
+		store.dispatch.gameLobbyModule.setData(data)
+	},
+
 	[GameSyncMessageType.START]: (data: GameStartMessage) => {
 		Core.board.setInverted(data.isBoardInverted)
 		store.dispatch.gameStateModule.startGame()
@@ -35,6 +40,7 @@ const IncomingGameSyncMessages: { [index in GameSyncMessageType]: IncomingMessag
 	[GameSyncMessageType.PLAYER_OPPONENTS]: (data: PlayerInGameMessage[]) => {
 		data.forEach((player) => {
 			Core.opponent.addPlayer(player)
+			// TODO: Add actual support for multiple opponents
 			store.commit.gameStateModule.setOpponentData(player.player)
 			store.commit.gameStateModule.setOpponentSpellMana(player.spellMana)
 		})

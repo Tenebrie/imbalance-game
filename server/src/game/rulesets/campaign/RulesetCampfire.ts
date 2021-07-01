@@ -18,6 +18,15 @@ import GameEventType from '@src/../../shared/src/enums/GameEventType'
 import Keywords from '@src/utils/Keywords'
 import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
 import ServerGame from '@src/game/models/ServerGame'
+import CustomDeckRules from '@shared/enums/CustomDeckRules'
+import LeaderChallengeDummy from '@src/game/cards/10-challenge/ai-00-dummy/LeaderChallengeDummy'
+import HeroChallengeDummyWarrior0 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
+import HeroChallengeDummyWarrior1 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
+import HeroChallengeDummyWarrior2 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior2'
+import HeroChallengeDummyWarrior3 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior3'
+import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
+import Constants from '@shared/Constants'
+import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
 
 export default class RulesetCampfire extends ServerRulesetBuilder<void> {
 	constructor() {
@@ -28,13 +37,21 @@ export default class RulesetCampfire extends ServerRulesetBuilder<void> {
 
 		this.updateConstants({
 			SKIP_MULLIGAN: true,
-			PLAYER_MOVES_FIRST: true,
+			FIRST_GROUP_MOVES_FIRST: true,
 			UNIT_HAND_SIZE_STARTING: 25,
 			GAME_BOARD_ROW_SPLIT_MODE: BoardSplitMode.ALL_FOR_PLAYER,
 		})
 
-		this.createAI([LeaderCampfireTheMother, { card: UnitChallengeDummyOPWarrior, count: 25 }]).behave(AIBehaviour.PASSIVE)
-		this.createDeck().fixed([LeaderCampfireThePlayer, HeroCampfireProtagonist])
+		this.createSlots()
+			.addGroup({
+				type: 'player',
+				deck: [LeaderCampfireThePlayer, HeroCampfireProtagonist],
+			})
+			.addGroup({
+				type: 'ai',
+				behaviour: AIBehaviour.PASSIVE,
+				deck: [LeaderCampfireTheMother, { card: UnitChallengeDummyOPWarrior, count: 25 }],
+			})
 
 		this.createBoard().player([
 			[HeroCampfireElsa, UnitCampfireBlackChair],

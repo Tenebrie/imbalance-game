@@ -13,10 +13,10 @@ export default class RulesetLabyrinthDummies extends RulesetLabyrinthBase {
 		super()
 
 		this.updateConstants({
-			STARTING_PLAYER_MORALE: 1,
+			ROUND_WINS_REQUIRED: 1,
 		})
 
-		this.createBoard().opponent([
+		this.createBoard().bot([
 			[UnitChallengeDummyVanillaWarrior],
 			[UnitChallengeDummyVanillaWarrior],
 			[UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior],

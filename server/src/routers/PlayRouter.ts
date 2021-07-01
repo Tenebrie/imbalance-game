@@ -20,6 +20,8 @@ import EventContext from '@src/game/models/EventContext'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import LeaderMaximilian from '@src/game/cards/00-human/leaders/Maximilian/LeaderMaximilian'
 import GameMode from '@shared/enums/GameMode'
+import { enumToArray } from '@shared/Utils'
+import CustomDeckRules from '@shared/enums/CustomDeckRules'
 
 const router = express.Router() as WebSocketRouter
 
@@ -61,11 +63,6 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	if (!connectedPlayer) {
 		const deckId = req.query.deckId as string
 		const groupId = req.query.groupId as string
-		if (!deckId && currentGame.ruleset.playerDeckRequired) {
-			OutgoingMessageHandlers.notifyAboutMissingDeckId(ws)
-			ws.close()
-			return
-		}
 
 		if (!groupId) {
 			OutgoingMessageHandlers.notifyAboutMissingGroupId(ws)
@@ -80,8 +77,17 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			return
 		}
 
-		let templateDeck = ServerEditorDeck.fromConstructors([LeaderMaximilian])
-		if (!currentGame.ruleset.deck || !currentGame.ruleset.deck.fixedDeck) {
+		const targetSlot = targetGroup.slots.grabOpenHumanSlot()
+		const deckRulesValues = enumToArray(CustomDeckRules)
+		const deckRequired = !Array.isArray(targetSlot.deck) && deckRulesValues.includes(targetSlot.deck)
+		if (!deckId && deckRequired) {
+			OutgoingMessageHandlers.notifyAboutMissingDeckId(ws)
+			ws.close()
+			return
+		}
+
+		let templateDeck
+		if (deckRequired) {
 			const deck = await EditorDeckDatabase.selectEditorDeckByIdForPlayer(deckId, currentPlayer)
 			if (!deck) {
 				OutgoingMessageHandlers.notifyAboutInvalidDeck(ws)
@@ -89,13 +95,15 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 				return
 			}
 			templateDeck = deck
+		} else if (Array.isArray(targetSlot.deck)) {
+			templateDeck = ServerEditorDeck.fromConstructors(targetSlot.deck)
+		} else {
+			throw new Error("Unknown error while trying to find player's deck.")
 		}
 
-		currentPlayerInGame = currentGame.addPlayer(currentPlayer, targetGroup, templateDeck)
+		currentPlayerInGame = currentGame.addHumanPlayer(currentPlayer, targetGroup, templateDeck)
 
-		if (currentGame.ruleset.gameMode === GameMode.PVE) {
-			await currentGame.progression.loadStates()
-		}
+		await currentGame.progression.loadStates()
 	}
 
 	currentPlayer.disconnect()
@@ -137,6 +145,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 	})
 
 	OutgoingMessageHandlers.notifyAboutInitRequested(currentPlayer)
+	OutgoingMessageHandlers.broadcastPlayersInLobby(currentGame)
 })
 
 router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) => {

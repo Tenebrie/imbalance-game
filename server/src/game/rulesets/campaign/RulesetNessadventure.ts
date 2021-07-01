@@ -21,6 +21,9 @@ import UnitChallengeScarredExplorer from '@src/game/cards/10-challenge/challenge
 import HeroChallengeLegendaryExplorer0 from '@src/game/cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer0'
 import UnitCorgiGravedigger from '@src/game/cards/10-challenge/nessadventure/UnitCorgiGravedigger'
 import RulesetCategory from '@shared/enums/RulesetCategory'
+import AIBehaviour from '@shared/enums/AIBehaviour'
+import LeaderCampfireTheMother from '@src/game/cards/10-challenge/test-campfire/LeaderCampfireTheMother'
+import CustomDeckRules from '@shared/enums/CustomDeckRules'
 
 type State = {
 	opCardsPlayed: number
@@ -50,10 +53,19 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 
 		this.updateConstants({
 			SKIP_MULLIGAN: true,
-			PLAYER_MOVES_FIRST: true,
+			FIRST_GROUP_MOVES_FIRST: true,
 		})
 
-		this.createAI([LeaderChallengeDummy, { card: UnitChallengeDummyOPWarrior, count: Constants.CARD_LIMIT_BRONZE }])
+		this.createSlots()
+			.addGroup({
+				type: 'player',
+				deck: CustomDeckRules.STANDARD,
+			})
+			.addGroup({
+				type: 'ai',
+				behaviour: AIBehaviour.PASSIVE,
+				deck: [LeaderChallengeDummy, { card: UnitChallengeDummyOPWarrior, count: Constants.CARD_LIMIT_BRONZE }],
+			})
 
 		this.createCallback(GameEventType.GAME_STARTED)
 			.require(({ group }) => group.isHuman)

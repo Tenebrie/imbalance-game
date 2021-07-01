@@ -31,7 +31,7 @@ export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<State
 
 		this.updateConstants({
 			SKIP_MULLIGAN: true,
-			PLAYER_MOVES_FIRST: true,
+			FIRST_GROUP_MOVES_FIRST: true,
 		})
 
 		const getNextRuleset = (game: ServerGame): RulesetConstructor => {
@@ -41,8 +41,9 @@ export default class RulesetLabyrinthMetaCamp extends ServerRulesetBuilder<State
 			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
 			.setLinkGetter(getNextRuleset)
 
-		this.createDeck().fixed([LeaderLabyrinthPlayer, SpellLabyrinthStartRun])
-		this.createAI([LeaderLabyrinthOpponent]).behave(AIBehaviour.PASSIVE)
+		this.createSlots()
+			.addGroup({ type: 'player', deck: [LeaderLabyrinthPlayer, SpellLabyrinthStartRun] })
+			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.PASSIVE })
 
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
 			game.getHumanGroup().players.forEach((playerInGame) => {

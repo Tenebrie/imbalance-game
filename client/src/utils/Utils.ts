@@ -130,9 +130,9 @@ export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point | null, 
 export const scrollBoopColor = (event: MouseEvent, direction: number): void => {
 	currentBoopColor += direction
 	if (currentBoopColor < 0) {
-		currentBoopColor = 0
+		currentBoopColor += boopColors.length
 	} else if (currentBoopColor >= boopColors.length) {
-		currentBoopColor = boopColors.length - 1
+		currentBoopColor -= boopColors.length
 	}
 	const mousePos = Core.input.mousePosition
 	Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)

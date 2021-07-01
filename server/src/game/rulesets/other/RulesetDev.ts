@@ -6,6 +6,8 @@ import LeaderMaximilian from '@src/game/cards/00-human/leaders/Maximilian/Leader
 import UnitStrayDog from '@src/game/cards/09-neutral/tokens/UnitStrayDog'
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import UnitYogaTeacher from '@src/game/cards/09-neutral/common/UnitYogaTeacher'
+import LeaderNighterie from '@src/game/cards/01-arcane/leaders/Nighterie/LeaderNighterie'
+import UnitDryadWolfspeaker from '@src/game/cards/02-wild/common/UnitDryadWolfspeaker'
 
 export default class RulesetDev extends ServerRulesetBuilder<void> {
 	constructor() {
@@ -18,26 +20,25 @@ export default class RulesetDev extends ServerRulesetBuilder<void> {
 			.addGroup([
 				{
 					type: 'player',
+					deck: [LeaderNighterie, { card: UnitDryadWolfspeaker, count: 30 }],
 				},
 				{
 					type: 'player',
+					deck: [LeaderMaximilian, { card: UnitYogaTeacher, count: 30 }],
 				},
 			])
 			.addGroup([
 				{
 					type: 'ai',
+					behaviour: AIBehaviour.PASSIVE,
+					deck: [LeaderChallengeDummy, { card: UnitStrayDog, count: 30 }],
 				},
 			])
 
 		this.updateConstants({
-			SKIP_MULLIGAN: true,
-			PLAYER_MOVES_FIRST: true,
-			STARTING_PLAYER_MORALE: 1,
+			ROUND_WINS_REQUIRED: 1,
+			FIRST_GROUP_MOVES_FIRST: true,
 			GAME_BOARD_ROW_COUNT: 6,
 		})
-
-		this.createDeck().fixed([LeaderMaximilian, { card: UnitYogaTeacher, count: 30 }])
-
-		this.createAI([LeaderChallengeDummy, { card: UnitStrayDog, count: 30 }]).behave(AIBehaviour.PASSIVE)
 	}
 }

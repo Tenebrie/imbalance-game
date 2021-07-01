@@ -26,15 +26,17 @@ export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never>
 
 		this.updateConstants({
 			SKIP_MULLIGAN: true,
-			PLAYER_MOVES_FIRST: true,
-			STARTING_PLAYER_MORALE: 1,
+			FIRST_GROUP_MOVES_FIRST: true,
+			ROUND_WINS_REQUIRED: 1,
 		})
 
 		this.createChain()
 			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
 			.setFixedLink(RulesetLabyrinthDummies)
-		this.createDeck().fixed([LeaderLabyrinthPlayer, SpellLabyrinthNextEncounter])
-		this.createAI([LeaderLabyrinthOpponent]).behave(AIBehaviour.PASSIVE)
+
+		this.createSlots()
+			.addGroup({ type: 'player', deck: [LeaderLabyrinthPlayer, SpellLabyrinthNextEncounter] })
+			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.PASSIVE })
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthNextEncounter)

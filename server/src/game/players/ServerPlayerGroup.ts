@@ -6,9 +6,9 @@ import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import PlayerGroup from '@shared/models/PlayerGroup'
 import GameEventCreators from '@src/game/models/events/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
-import { RulesetSlotGroup } from '@shared/models/ruleset/RulesetSlots'
 import ServerPlayerGroupSlots from '@src/game/players/ServerPlayerGroupSlots'
 import { ServerCardBuff, ServerRowBuff } from '@src/game/models/buffs/ServerBuff'
+import { ServerRulesetSlotGroup } from '@src/game/models/rulesets/ServerRulesetSlots'
 
 export default class ServerPlayerGroup implements PlayerGroup {
 	id: string
@@ -19,7 +19,7 @@ export default class ServerPlayerGroup implements PlayerGroup {
 	turnEnded: boolean
 	roundEnded: boolean
 
-	constructor(game: ServerGame, slots: RulesetSlotGroup) {
+	constructor(game: ServerGame, slots: ServerRulesetSlotGroup) {
 		this.id = getRandomId()
 		this.game = game
 		this.slots = new ServerPlayerGroupSlots(this, slots)
@@ -92,6 +92,7 @@ export default class ServerPlayerGroup implements PlayerGroup {
 			return
 		}
 		this.roundEnded = false
+		this.players.forEach((player) => player.resetMulliganState())
 		OutgoingMessageHandlers.notifyAboutRoundStarted(this)
 		this.onRoundStart()
 	}
@@ -195,6 +196,7 @@ export default class ServerPlayerGroup implements PlayerGroup {
 	}
 
 	public onEndRound(): void {
+		this.players.forEach((player) => player.setUnitMana(0))
 		this.game.events.postEvent(
 			GameEventCreators.roundEnded({
 				game: this.game,

@@ -32,7 +32,6 @@ export default {
 		game.timers.playerLeaveTimeout.stop()
 
 		OutgoingMessageHandlers.sendPlayers(playerInGame.player, playerInGame)
-		OutgoingMessageHandlers.notifyAboutLeaders(playerInGame)
 		OutgoingMessageHandlers.sendBoardState(playerInGame.player, game.board)
 		OutgoingMessageHandlers.sendStackState(playerInGame.player, game.cardPlay.cardResolveStack)
 		if (game.activePlayer) {
@@ -87,7 +86,6 @@ export default {
 
 		OutgoingMessageHandlers.notifyAboutSpectateMode(spectator.player)
 		OutgoingMessageHandlers.sendPlayers(spectator.player, spectatedPlayerInGame)
-		OutgoingMessageHandlers.notifyAboutLeaders(spectator)
 		OutgoingMessageHandlers.sendBoardState(spectator.player, game.board)
 		OutgoingMessageHandlers.sendStackState(spectator.player, game.cardPlay.cardResolveStack)
 		if (game.activePlayer) {

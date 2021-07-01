@@ -10,6 +10,7 @@ const rulesetsModule = defineModule({
 	state: {
 		pvpRulesets: [] as RulesetRefMessage[],
 		pveRulesets: [] as RulesetRefMessage[],
+		coopRulesets: [] as RulesetRefMessage[],
 		campaignRulesets: [] as RulesetRefMessage[],
 		prototypeRulesets: [] as RulesetRefMessage[],
 	},
@@ -21,6 +22,10 @@ const rulesetsModule = defineModule({
 
 		setRulesetsPVE(state, value: RulesetRefMessage[]): void {
 			state.pveRulesets = value.sort((a, b) => a.sortPriority - b.sortPriority)
+		},
+
+		setRulesetsCoop(state, value: RulesetRefMessage[]): void {
+			state.coopRulesets = value.sort((a, b) => a.sortPriority - b.sortPriority)
 		},
 
 		setRulesetsCampaign(state, value: RulesetRefMessage[]): void {
@@ -40,6 +45,7 @@ const rulesetsModule = defineModule({
 			const messages = response.data as RulesetRefMessage[]
 			commit.setRulesetsPVP(messages.filter((message) => message.category === RulesetCategory.PVP))
 			commit.setRulesetsPVE(messages.filter((message) => message.category === RulesetCategory.PVE))
+			commit.setRulesetsCoop(messages.filter((message) => message.category === RulesetCategory.COOP))
 			commit.setRulesetsCampaign(messages.filter((message) => message.category === RulesetCategory.CAMPAIGN))
 			commit.setRulesetsPrototype(messages.filter((message) => message.category === RulesetCategory.PROTOTYPES))
 		},

@@ -13,7 +13,6 @@ import {
 } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import TargetMode from '@shared/enums/TargetMode'
 import CardLibrary from '../libraries/CardLibrary'
-import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import ServerCardTarget from '@src/game/models/ServerCardTarget'
 import NovelReplyMessage from '@src/../../shared/src/models/novel/NovelReplyMessage'
@@ -130,7 +129,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	[GenericActionMessageType.REQUEST_PLAYERS_DECK]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		const cards = sortCards(player.cardDeck.unitCards.concat(player.cardDeck.spellCards))
 		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeFromConstructor(TokenEmptyDeck))
+			cards.push(CardLibrary.findPrototypeFromClass('tokenEmptyDeck'))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
@@ -140,7 +139,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	[GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		const cards = sortCards(player.cardGraveyard.unitCards.concat(player.cardGraveyard.spellCards))
 		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeFromConstructor(TokenEmptyDeck))
+			cards.push(CardLibrary.findPrototypeFromClass('tokenEmptyDeck'))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
@@ -152,7 +151,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			player.opponent!.players[0].cardGraveyard.unitCards.concat(player.opponent!.players[0].cardGraveyard.spellCards)
 		)
 		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeFromConstructor(TokenEmptyDeck))
+			cards.push(CardLibrary.findPrototypeFromClass('tokenEmptyDeck'))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
@@ -170,12 +169,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		if (player.unitMana === 0) {
-			player.group.endTurn()
-		} else if (player.unitMana > 0) {
-			player.setUnitMana(0)
-			player.group.endRound()
-		}
+		player.group.endRound()
 
 		game.advanceCurrentTurn()
 		onPlayerActionEnd(game, player)

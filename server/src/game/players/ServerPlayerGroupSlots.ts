@@ -1,13 +1,39 @@
-import { RulesetSlotGroup, RulesetSlotPlayer } from '@shared/models/ruleset/RulesetSlots'
+import { RulesetSlotGroup } from '@shared/models/ruleset/RulesetSlots'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import {
+	ServerRulesetSlotAIPlayer,
+	ServerRulesetSlotGroup,
+	ServerRulesetSlotHumanPlayer,
+	ServerRulesetSlotPlayer,
+} from '@src/game/models/rulesets/ServerRulesetSlots'
 
 export default class ServerPlayerGroupSlots implements RulesetSlotGroup {
 	group: ServerPlayerGroup
-	players: RulesetSlotPlayer[]
+	players: ServerRulesetSlotPlayer[]
 
-	constructor(group: ServerPlayerGroup, slots: RulesetSlotGroup) {
+	constructor(group: ServerPlayerGroup, slots: ServerRulesetSlotGroup) {
 		this.group = group
 		this.players = slots.players
+	}
+
+	public grabOpenHumanSlot(): ServerRulesetSlotHumanPlayer {
+		const slots = this.players.filter((slot) => slot.type === 'player')
+		const slotsTaken = this.group.players.filter((player) => player.isHuman).length
+		const slot = slots[slotsTaken]
+		if (!slot) {
+			throw new Error('No open human slot available!')
+		}
+		return slot as ServerRulesetSlotHumanPlayer
+	}
+
+	public grabOpenBotSlot(): ServerRulesetSlotAIPlayer {
+		const slots = this.players.filter((slot) => slot.type === 'ai')
+		const slotsTaken = this.group.players.filter((player) => player.isBot).length
+		const slot = slots[slotsTaken]
+		if (!slot) {
+			throw new Error('No open bot slot available!')
+		}
+		return slot as ServerRulesetSlotAIPlayer
 	}
 
 	public get totalHumanSlots(): number {

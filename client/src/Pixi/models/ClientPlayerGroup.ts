@@ -6,6 +6,7 @@ import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
 import PlayerGroup from '@shared/models/PlayerGroup'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 export default class ClientPlayerGroup implements PlayerGroup {
 	id: string
@@ -30,9 +31,9 @@ export default class ClientPlayerGroup implements PlayerGroup {
 	public set roundWins(value: number) {
 		this.__roundWins = value
 		if (this === Core.player) {
-			store.commit.gameStateModule.setPlayerGroupMorale(value)
+			store.commit.gameStateModule.setPlayerRoundWins(value)
 		} else if (this === Core.opponent) {
-			store.commit.gameStateModule.setOpponentGroupMorale(value)
+			store.commit.gameStateModule.setOpponentRoundWins(value)
 		}
 	}
 
@@ -47,6 +48,7 @@ export default class ClientPlayerGroup implements PlayerGroup {
 		const player = this.players.find((player) => player.player.id === message.player.id) || new ClientPlayerInGame(message.player)
 		player.player.id = message.player.id
 		player.player.username = message.player.username
+		player.leader = RenderedCard.fromMessage(message.leader)
 		player.cardHand = RenderedCardHand.fromMessage(message.cardHand)
 		player.cardDeck = ClientCardDeck.fromMessage(message.cardDeck)
 		player.cardGraveyard = ClientCardDeck.fromMessage(message.cardGraveyard)

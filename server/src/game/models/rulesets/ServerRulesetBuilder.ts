@@ -5,7 +5,6 @@ import { EventHook } from '../events/EventHook'
 import { EventSubscription } from '../events/EventSubscription'
 import GameHookType from '../events/GameHookType'
 import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
-import { RulesetAIBuilder } from './RulesetAI'
 import {
 	CardBuffCreatedEventArgs,
 	CardBuffRemovedEventArgs,
@@ -32,15 +31,15 @@ import {
 	UnitOrderedRowEventArgs,
 } from '../events/GameEventCreators'
 import ServerGame from '../ServerGame'
-import { RulesetDeckBuilder } from './RulesetDeck'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { RulesetBoardBuilder } from './RulesetBoard'
 import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
 import { forEachInEnum } from '@shared/Utils'
 import { RulesetChainBuilder } from '@src/game/models/rulesets/RulesetChain'
-import { RulesetDeckTemplate, ServerRulesetTemplate } from '@src/game/models/rulesets/ServerRuleset'
+import { ServerRulesetTemplate } from '@src/game/models/rulesets/ServerRuleset'
 import { RulesetSlotsBuilder } from '@src/game/models/rulesets/ServerRulesetSlots'
+import CustomDeckRules from '@shared/enums/CustomDeckRules'
 
 export type ServerRulesetBuilderProps<T> = {
 	gameMode: GameMode
@@ -58,10 +57,8 @@ export class ServerRulesetBuilder<T> {
 	private readonly eventHooks: Map<GameHookType, EventHook<any, any>[]>
 	private cardSelectorBuilders: CardSelectorBuilder[] = []
 
-	private aiBuilder: RulesetAIBuilder | null = null
-	private deckBuilder: RulesetDeckBuilder | null = null
 	private boardBuilder: RulesetBoardBuilder | null = null
-	private slotsBuilder: RulesetSlotsBuilder | null = null
+	private slotsBuilder: RulesetSlotsBuilder
 	private chainBuilders: RulesetChainBuilder[] = []
 
 	private rulesetConstants: Partial<RulesetConstants> = {}
@@ -74,6 +71,10 @@ export class ServerRulesetBuilder<T> {
 		this.eventHooks = new Map<GameHookType, EventHook<any, any>[]>()
 		forEachInEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
 		forEachInEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
+
+		this.slotsBuilder = new RulesetSlotsBuilder()
+			.addGroup({ type: 'player', deck: CustomDeckRules.STANDARD })
+			.addGroup({ type: 'player', deck: CustomDeckRules.STANDARD })
 	}
 
 	protected updateConstants(values: Partial<RulesetConstants>): void {
@@ -81,18 +82,6 @@ export class ServerRulesetBuilder<T> {
 			...this.rulesetConstants,
 			...values,
 		}
-	}
-
-	protected createAI(cards: RulesetDeckTemplate): RulesetAIBuilder {
-		const builder = new RulesetAIBuilder(cards)
-		this.aiBuilder = builder
-		return builder
-	}
-
-	protected createDeck(): RulesetDeckBuilder {
-		const builder = new RulesetDeckBuilder()
-		this.deckBuilder = builder
-		return builder
 	}
 
 	protected createBoard(): RulesetBoardBuilder {
@@ -173,10 +162,8 @@ export class ServerRulesetBuilder<T> {
 
 			rulesetConstants: this.rulesetConstants,
 
-			ai: this.aiBuilder ? this.aiBuilder.__build() : null,
-			deck: this.deckBuilder ? this.deckBuilder.__build() : null,
 			board: this.boardBuilder ? this.boardBuilder.__build() : null,
-			slots: this.slotsBuilder ? this.slotsBuilder.__build() : null,
+			slots: this.slotsBuilder.__build(),
 			chains: this.chainBuilders.map((chain) => chain.__build()),
 
 			eventSubscriptions: this.eventSubscriptions,

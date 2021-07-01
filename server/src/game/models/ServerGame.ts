@@ -30,6 +30,7 @@ import ServerGameProgression from '@src/game/models/ServerGameProgression'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerGroupOwnedCard from '@src/game/models/ServerGroupOwnedCard'
+import AIBehaviour from '@shared/enums/AIBehaviour'
 
 interface ServerGameProps extends OptionalGameProps {
 	ruleset: ServerRulesetTemplate
@@ -95,9 +96,9 @@ export default class ServerGame implements SourceGame {
 
 		if (props.playerMoveOrderReversed !== undefined) {
 			this.playerMoveOrderReversed = props.playerMoveOrderReversed
-		} else if (this.ruleset.constants.PLAYER_MOVES_FIRST && this.ruleset.ai) {
+		} else if (this.ruleset.constants.FIRST_GROUP_MOVES_FIRST) {
 			this.playerMoveOrderReversed = false
-		} else if (this.ruleset.constants.AI_MOVES_FIRST && this.ruleset.ai) {
+		} else if (this.ruleset.constants.SECOND_GROUP_MOVES_FIRST) {
 			this.playerMoveOrderReversed = true
 		} else {
 			this.playerMoveOrderReversed = Math.floor(Math.random() * 2) === 0
@@ -136,26 +137,10 @@ export default class ServerGame implements SourceGame {
 		return owner ? owner.username + `'s game #${randomNumber}` : `Game #${randomNumber}`
 	}
 
-	public addPlayer(targetPlayer: ServerPlayer, targetGroup: ServerPlayerGroup, selectedDeck: ServerEditorDeck): ServerPlayerInGame {
-		let playerInGame: ServerPlayerInGame
-		if (targetPlayer instanceof ServerBotPlayer) {
-			playerInGame = this.addBotPlayer(targetPlayer, targetGroup, selectedDeck)
-		} else {
-			playerInGame = this.addHumanPlayer(targetPlayer, targetGroup, selectedDeck)
-		}
-
-		return playerInGame
-	}
-
-	private addHumanPlayer(targetPlayer: ServerPlayer, targetGroup: ServerPlayerGroup, selectedDeck: ServerEditorDeck): ServerPlayerInGame {
-		let actualDeck = selectedDeck
-		if (this.ruleset.deck) {
-			actualDeck = this.ruleset.deck.fixedDeck!
-		}
+	public addHumanPlayer(targetPlayer: ServerPlayer, targetGroup: ServerPlayerGroup, selectedDeck: ServerEditorDeck): ServerPlayerInGame {
 		const player = new ServerPlayerInGame(this, {
 			player: targetPlayer,
-			actualDeck: actualDeck,
-			selectedDeck: selectedDeck,
+			deck: selectedDeck,
 		})
 		if (targetGroup.openHumanSlots <= 0) {
 			throw new Error('Unable to add human player: No slots available!')
@@ -164,11 +149,13 @@ export default class ServerGame implements SourceGame {
 		return player
 	}
 
-	private addBotPlayer(targetPlayer: ServerBotPlayer, targetGroup: ServerPlayerGroup, selectedDeck: ServerEditorDeck): ServerPlayerInGame {
-		const bot = new ServerBotPlayerInGame(this, targetPlayer, selectedDeck)
-		if (this.ruleset.ai) {
-			bot.setBehaviour(this.ruleset.ai.behaviour)
-		}
+	public addBotPlayer(
+		targetPlayer: ServerBotPlayer,
+		targetGroup: ServerPlayerGroup,
+		selectedDeck: ServerEditorDeck,
+		behaviour: AIBehaviour
+	): ServerPlayerInGame {
+		const bot = new ServerBotPlayerInGame(this, targetPlayer, selectedDeck, behaviour)
 		if (targetGroup.openBotSlots <= 0) {
 			throw new Error('Unable to add bot player: No AI slots available!')
 		}
@@ -190,7 +177,6 @@ export default class ServerGame implements SourceGame {
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) => {
 				OutgoingMessageHandlers.sendPlayers(playerInGame.player, playerInGame)
-				OutgoingMessageHandlers.notifyAboutLeaders(playerInGame)
 			})
 
 		this.players.forEach((playerGroup) => {
@@ -232,30 +218,25 @@ export default class ServerGame implements SourceGame {
 					})
 				})
 			}
-			if (this.ruleset.ai) {
-				const humanGroup = this.getHumanGroup()
-				const playerBoardState = boardState.playerBoardState
-				if (playerBoardState) {
-					playerBoardState.forEach((row, rowIndex) => {
-						row.forEach((card, cardIndex) => {
-							const targetRow = this.board.getRowWithDistanceToFront(humanGroup, rowIndex)
-							this.animation.instantThread(() =>
-								targetRow.createUnit(CardLibrary.instantiate(this, card), humanGroup.players[0], cardIndex)
-							)
-						})
+			const firstGroupBoardState = boardState.firstGroupBoardState
+			if (firstGroupBoardState) {
+				const group = this.players[0]
+				firstGroupBoardState.forEach((row, rowIndex) => {
+					row.forEach((card, cardIndex) => {
+						const targetRow = this.board.getRowWithDistanceToFront(group, rowIndex)
+						this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiate(this, card), group.players[0], cardIndex))
 					})
-				}
-
-				const opponentBoardState = boardState.opponentBoardState
-				if (opponentBoardState && this.isBotGame()) {
-					const botPlayer = this.getBotPlayer()
-					opponentBoardState.forEach((row, rowIndex) => {
-						row.forEach((card, cardIndex) => {
-							const targetRow = this.board.getRowWithDistanceToFront(botPlayer, rowIndex)
-							this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiate(this, card), botPlayer, cardIndex))
-						})
+				})
+			}
+			const secondGroupBoardState = boardState.secondGroupBoardState
+			if (secondGroupBoardState) {
+				const group = this.players[1]
+				secondGroupBoardState.forEach((row, rowIndex) => {
+					row.forEach((card, cardIndex) => {
+						const targetRow = this.board.getRowWithDistanceToFront(group, rowIndex)
+						this.animation.instantThread(() => targetRow.createUnit(CardLibrary.instantiate(this, card), group.players[0], cardIndex))
 					})
-				}
+				})
 			}
 		}
 
@@ -325,10 +306,6 @@ export default class ServerGame implements SourceGame {
 			throw new Error('No bot group present!')
 		}
 		return group.players[0]
-	}
-
-	public isBotGame(): boolean {
-		return this.players.some((playerGroup) => playerGroup.isBot)
 	}
 
 	private setTurnPhase(turnPhase: GameTurnPhase): void {
@@ -447,7 +424,7 @@ export default class ServerGame implements SourceGame {
 			playerTwo.addRoundWin()
 		}
 
-		const roundWinsRequired = this.ruleset.constants.STARTING_PLAYER_MORALE
+		const roundWinsRequired = this.ruleset.constants.ROUND_WINS_REQUIRED
 		const victoriousPlayer = this.players.find((player) => player.roundWins >= roundWinsRequired) || null
 		const defeatedPlayer = this.players.find((player) => player.roundWins < roundWinsRequired) || null
 		if (victoriousPlayer && defeatedPlayer) {
@@ -628,17 +605,32 @@ export default class ServerGame implements SourceGame {
 	}
 
 	static newPublicInstance(ruleset: ServerRulesetTemplate, props: OptionalGameProps): ServerGame {
-		return new ServerGame({
+		const game = new ServerGame({
 			...props,
 			ruleset,
 		})
+		game.initializeAIPlayers()
+		return game
 	}
 
 	static newOwnedInstance(owner: ServerPlayer, ruleset: ServerRulesetTemplate, props: OptionalGameProps): ServerGame {
-		return new ServerGame({
+		const game = new ServerGame({
 			...props,
 			owner,
 			ruleset,
 		})
+		game.initializeAIPlayers()
+		return game
+	}
+
+	public initializeAIPlayers(): void {
+		this.players
+			.filter((playerGroup) => playerGroup.openBotSlots > 0)
+			.forEach((playerGroup) => {
+				const slot = playerGroup.slots.grabOpenBotSlot()
+				const deck = slot.deck
+				const behaviour = slot.behaviour
+				this.addBotPlayer(new ServerBotPlayer(), playerGroup, ServerEditorDeck.fromConstructors(deck), behaviour)
+			})
 	}
 }

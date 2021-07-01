@@ -60,14 +60,6 @@ router.post('/', (req: Request, res: Response) => {
 	}
 	const game = GameLibrary.createPublicGame(player, ruleset, {})
 
-	if (ruleset.ai) {
-		const botGroup = game.players.find((group) => group.openBotSlots > 0)
-		if (!botGroup) {
-			throw { stack: 500, error: 'No bot slots available for an AI game' }
-		}
-		game.addPlayer(new ServerBotPlayer(), botGroup, ruleset.ai.deck)
-	}
-
 	res.json({ data: new GameMessage(game) })
 })
 

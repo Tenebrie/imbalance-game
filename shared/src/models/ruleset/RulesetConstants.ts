@@ -1,7 +1,7 @@
 import BoardSplitMode from '../../enums/BoardSplitMode'
 
 export type RulesetConstants = {
-	STARTING_PLAYER_MORALE: number
+	ROUND_WINS_REQUIRED: number
 	UNIT_HAND_SIZE_LIMIT: number
 	UNIT_HAND_SIZE_STARTING: number
 	UNIT_HAND_SIZE_PER_ROUND: number
@@ -9,8 +9,8 @@ export type RulesetConstants = {
 	SPELL_HAND_SIZE_LIMIT: number
 	SPELL_MANA_PER_ROUND: number
 
-	PLAYER_MOVES_FIRST: boolean
-	AI_MOVES_FIRST: boolean
+	FIRST_GROUP_MOVES_FIRST: boolean
+	SECOND_GROUP_MOVES_FIRST: boolean
 
 	SKIP_MULLIGAN: boolean
 	MULLIGAN_INITIAL_CARD_COUNT: number

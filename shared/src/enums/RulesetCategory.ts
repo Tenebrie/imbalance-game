@@ -1,6 +1,7 @@
 enum RulesetCategory {
 	PVP,
 	PVE,
+	COOP,
 	CAMPAIGN,
 	PROTOTYPES,
 	LABYRINTH,

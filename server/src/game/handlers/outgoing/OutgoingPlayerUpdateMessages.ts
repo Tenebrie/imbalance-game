@@ -11,7 +11,6 @@ import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMe
 import OpenOwnedCardMessage from '@shared/models/network/ownedCard/OpenOwnedCardMessage'
 import HiddenOwnedCardMessage from '@shared/models/network/ownedCard/HiddenOwnedCardMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import ServerPlayerSpectator from '../../players/ServerPlayerSpectator'
 import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
 import PlayerInGameManaMessage from '@shared/models/network/playerInGame/PlayerInGameManaMessage'
 import GameLinkMessage from '@shared/models/network/GameLinkMessage'
@@ -20,23 +19,8 @@ import PlayerGroupResourcesMessage from '@shared/models/network/playerInGame/Pla
 import PlayerGroupRefMessage from '@shared/models/network/playerGroup/PlayerGroupRefMessage'
 
 export default {
-	notifyAboutLeaders(playerInGame: ServerPlayerInGame | ServerPlayerSpectator): void {
-		const leaders = playerInGame.game.allPlayers.map((player) => player.leader)
-		const messages = leaders.map((card) => new OpenOwnedCardMessage(new ServerOwnedCard(card, card.ownerPlayerInGame)))
-		playerInGame.player.sendMessage({
-			type: PlayerUpdateMessageType.LEADERS,
-			data: messages,
-		})
-	},
-
 	notifyAboutRoundWins: (playerGroup: ServerPlayerGroup): void => {
-		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
-				type: PlayerUpdateMessageType.MORALE,
-				data: new PlayerGroupResourcesMessage(playerGroup),
-			})
-		)
-		playerGroup.opponent?.players.forEach((playerInGame) =>
+		playerGroup.game.allPlayers.forEach((playerInGame) =>
 			playerInGame.player.sendMessage({
 				type: PlayerUpdateMessageType.MORALE,
 				data: new PlayerGroupResourcesMessage(playerGroup),

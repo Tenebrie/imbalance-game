@@ -16,12 +16,14 @@ import { createDirectStore } from 'direct-vuex'
 import RulesetsModule from './modules/RulesetsModule'
 import NovelModule from './modules/NovelModule'
 import HotkeysModule from '@/Vue/store/modules/HotkeysModule'
+import GameLobbyModule from '@/Vue/store/modules/GameLobbyModule'
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {
 		editor: EditorModule,
 		gameLogModule: GameLogModule,
 		gameStateModule: GameStateModule,
+		gameLobbyModule: GameLobbyModule,
 		hotkeysModule: HotkeysModule,
 		inspectedCard: InspectedCardModule,
 		novel: NovelModule,

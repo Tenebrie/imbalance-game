@@ -11,6 +11,8 @@ import LeaderChallengeDummy from '@src/game/cards/10-challenge/ai-00-dummy/Leade
 import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
 import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
 import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
+import CustomDeckRules from '@shared/enums/CustomDeckRules'
+import AIBehaviour from '@shared/enums/AIBehaviour'
 
 export default class RulesetEpicDummyFight extends ServerRulesetBuilder<void> {
 	constructor() {
@@ -23,18 +25,27 @@ export default class RulesetEpicDummyFight extends ServerRulesetBuilder<void> {
 		this.updateConstants({
 			GAME_BOARD_ROW_COUNT: 8,
 			UNIT_HAND_SIZE_STARTING: 35,
-			STARTING_PLAYER_MORALE: 1,
+			ROUND_WINS_REQUIRED: 1,
 		})
 
-		this.createAI([
-			LeaderChallengeDummy,
-			HeroChallengeDummyWarrior0,
-			HeroChallengeDummyWarrior1,
-			HeroChallengeDummyWarrior2,
-			HeroChallengeDummyWarrior3,
-			{ card: UnitChallengeDummyRoyalWarrior, count: Constants.CARD_LIMIT_SILVER },
-			{ card: UnitChallengeDummyVanillaWarrior, count: Constants.CARD_LIMIT_BRONZE },
-		])
+		this.createSlots()
+			.addGroup({
+				type: 'player',
+				deck: CustomDeckRules.STANDARD,
+			})
+			.addGroup({
+				type: 'ai',
+				behaviour: AIBehaviour.DEFAULT,
+				deck: [
+					LeaderChallengeDummy,
+					HeroChallengeDummyWarrior0,
+					HeroChallengeDummyWarrior1,
+					HeroChallengeDummyWarrior2,
+					HeroChallengeDummyWarrior3,
+					{ card: UnitChallengeDummyRoyalWarrior, count: Constants.CARD_LIMIT_SILVER },
+					{ card: UnitChallengeDummyVanillaWarrior, count: Constants.CARD_LIMIT_BRONZE },
+				],
+			})
 
 		this.createCallback(GameEventType.GAME_STARTED)
 			.require(({ game, group }) => group === game.getHumanGroup())

@@ -34,6 +34,7 @@ export default class GrabbedCard {
 	}
 
 	public static cardPlay(card: RenderedCard, validTargetRows: RenderedGameBoardPosition[]): GrabbedCard {
+		console.log('Grabbing card for play')
 		const grabbedCard = new GrabbedCard(card, GrabbedCardMode.CARD_PLAY)
 		grabbedCard.validTargetPositions = validTargetRows
 		return grabbedCard

@@ -23,8 +23,7 @@ import CardType from '@shared/enums/CardType'
 
 type Props = {
 	player: ServerPlayer
-	actualDeck: ServerEditorDeck
-	selectedDeck: ServerEditorDeck
+	deck: ServerEditorDeck
 }
 
 export default class ServerPlayerInGame implements PlayerInGame {
@@ -39,7 +38,6 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	spellMana: number
 	isMulliganMode: boolean
 	cardsMulliganed: number
-	startingDeck: ServerEditorDeck
 
 	private __leader: ServerCard | null
 
@@ -54,9 +52,8 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		this.spellMana = 0
 		this.isMulliganMode = false
 		this.cardsMulliganed = 0
-		this.startingDeck = props.selectedDeck
 
-		const templateDeck = ServerTemplateCardDeck.fromEditorDeck(game, props.actualDeck)
+		const templateDeck = ServerTemplateCardDeck.fromEditorDeck(game, props.deck)
 		this.cardDeck.instantiateFrom(templateDeck)
 		this.leader = templateDeck.leader
 	}
@@ -229,19 +226,15 @@ export default class ServerPlayerInGame implements PlayerInGame {
 }
 
 export class ServerBotPlayerInGame extends ServerPlayerInGame {
-	behaviour: AIBehaviour = AIBehaviour.DEFAULT
+	public readonly behaviour: AIBehaviour
 
-	constructor(game: ServerGame, player: ServerPlayer, deck: ServerEditorDeck) {
+	constructor(game: ServerGame, player: ServerPlayer, deck: ServerEditorDeck, behaviour: AIBehaviour) {
 		super(game, {
 			player,
-			actualDeck: deck,
-			selectedDeck: deck,
+			deck,
 		})
-		this.initialized = true
-	}
-
-	public setBehaviour(behaviour: AIBehaviour): void {
 		this.behaviour = behaviour
+		this.initialized = true
 	}
 
 	public startMulligan(): void {

@@ -111,7 +111,7 @@ export default class Input {
 
 	public updateGrabbedCard(): void {
 		const grabbedCard = this.grabbedCard
-		if (!grabbedCard || grabbedCard.card.location !== CardLocation.HAND || grabbedCard.card.owner !== Core.player) {
+		if (!grabbedCard || grabbedCard.card.location !== CardLocation.HAND || grabbedCard.card.owner !== Core.player.players[0]) {
 			return
 		}
 

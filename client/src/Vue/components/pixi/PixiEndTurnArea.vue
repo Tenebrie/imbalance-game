@@ -16,7 +16,7 @@ import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 export default defineComponent({
 	setup() {
 		const willEndRound = computed<boolean>(() => {
-			return store.state.gameStateModule.playerUnitMana > 0
+			return true
 		})
 		const isButtonDisabled = computed<boolean>(() => {
 			return !store.state.gameStateModule.isPlayersTurn || store.state.gameStateModule.gameStatus !== ClientGameStatus.IN_PROGRESS

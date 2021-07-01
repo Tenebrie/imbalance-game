@@ -8,10 +8,12 @@
 					<span class="action-explanation">Play against normal AI, or a special challenge scenario.</span>
 					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp') }}</button>
 					<span class="action-explanation">Create a game and wait for an opponent to challenge you.</span>
+					<button @click="onCreateCooperative" class="primary">{{ $locale.get('ui.play.coop') }}</button>
+					<span class="action-explanation">Invite a friend to play against AI opponent.</span>
+					<button @click="onCreateLabyrinth" class="primary">{{ $locale.get('ui.play.labyrinth') }}</button>
+					<span class="action-explanation">Delve into the rogue-lite Labyrinth mode.</span>
 					<button @click="onCreatePrototypes" class="primary">{{ $locale.get('ui.play.prototypes') }}</button>
 					<span class="action-explanation">See early concepts, modules and gamemode prototypes.</span>
-					<button @click="onCreateLabyrinth" class="primary">{{ $locale.get('ui.play.labyrinth') }}</button>
-					<span class="action-explanation">Play Labyrinth game mode.</span>
 					<button @click="onCreateDevRuleset" class="primary" v-if="devRulesetVisible">{{ $locale.get('ui.play.dev') }}</button>
 					<span class="action-explanation" v-if="devRulesetVisible">Play special ruleset defined in RulesetDev.ts (server-side).</span>
 					<div class="separator" />
@@ -32,6 +34,7 @@ import { defineComponent } from 'vue'
 import TheDeckSelectionPopup from '../../../Vue/components/popup/escapeMenu/TheDeckSelectionPopup.vue'
 import router from '@/Vue/router'
 import EditorDecksButton from '@/Vue/components/editor/buttons/EditorDecksButton.vue'
+import TheCoopGameModeSelectionPopup from '@/Vue/components/popup/escapeMenu/TheCoopGameModeSelectionPopup.vue'
 
 export default defineComponent({
 	components: {
@@ -53,6 +56,12 @@ export default defineComponent({
 					const gameMessage: GameMessage = response.data.data
 					await store.dispatch.joinGame(gameMessage)
 				},
+			})
+		}
+
+		const onCreateCooperative = async (): Promise<void> => {
+			store.dispatch.popupModule.open({
+				component: TheCoopGameModeSelectionPopup,
 			})
 		}
 
@@ -85,6 +94,7 @@ export default defineComponent({
 		return {
 			onCreateSinglePlayer,
 			onCreateMultiPlayer,
+			onCreateCooperative,
 			onCreatePrototypes,
 			onCreateLabyrinth,
 			onCreateDevRuleset,

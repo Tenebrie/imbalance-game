@@ -28,6 +28,7 @@
 
 	"ui.play.pve": "Play vs AI",
 	"ui.play.pvp": "Play PvP",
+	"ui.play.coop": "Play Co-op",
 	"ui.play.prototypes": "Play Prototypes",
 	"ui.play.labyrinth": "Play Labyrinth",
 	"ui.play.dev": "Play Development Ruleset",
@@ -129,8 +130,11 @@
 	"ruleset.rulesetChallengeDummy.label": "<b>AI:</b> Target Dummy",
 	"ruleset.rulesetEpicDummyFight.label": "<b>Special:</b> Epic Dummy Fight",
 	"ruleset.rulesetBrawlDiscovery.label": "<b>Special:</b> Discovery League",
-	"ruleset.rulesetNessadventure.label": "<b>Scenario:</b> The Nessadventure",
+
 	"ruleset.rulesetCampfire.label": "The Camp Module",
+	"ruleset.rulesetNessadventure.label": "<b>Scenario:</b> The Nessadventure",
+
+	"ruleset.rulesetCoopChallengeDummy.label": "<b>AI Opponent:</b> Target Dummy",
 
 	"card.type.unit": "Unit",
 	"card.type.spell": "Spell",

@@ -15,16 +15,6 @@ import PlayerGroupResourcesMessage from '@shared/models/network/playerInGame/Pla
 import PlayerGroupRefMessage from '@shared/models/network/playerGroup/PlayerGroupRefMessage'
 
 const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: IncomingMessageHandlerFunction } = {
-	[PlayerUpdateMessageType.LEADERS]: (data: OwnedCardMessage[]) => {
-		data.forEach((message) => {
-			const targetPlayer = Core.allPlayers.find((player) => player.player.id === message.owner.playerId)
-			if (!targetPlayer) {
-				throw new Error(`Unable to find player with id ${message.owner.playerId}`)
-			}
-			targetPlayer.leader = RenderedCard.fromMessage(message.card)
-		})
-	},
-
 	[PlayerUpdateMessageType.MORALE]: (data: PlayerGroupResourcesMessage) => {
 		Core.getPlayerGroup(data.playerGroupId).roundWins = data.roundWins
 	},
