@@ -94,6 +94,7 @@ export default defineComponent({
 	min-height: 1.4em;
 	color: darken(white, 0) !important;
 	text-decoration-line: none !important;
+	transition: background-color 0.3s;
 
 	& > span {
 		text-decoration: none;
@@ -105,6 +106,7 @@ export default defineComponent({
 
 	&:hover {
 		background: $COLOR-BACKGROUND-TRANSPARENT;
+		transition: background-color 0s;
 	}
 
 	&.selected:hover {

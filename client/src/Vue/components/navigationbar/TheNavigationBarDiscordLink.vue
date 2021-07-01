@@ -50,9 +50,11 @@ export default defineComponent({
 	justify-content: center;
 	height: 100%;
 	padding: 0 8px;
+	transition: background-color 0.3s;
 
 	&:hover {
 		background: $COLOR-BACKGROUND-TRANSPARENT;
+		transition: background-color 0s;
 	}
 	&:hover:active {
 		background: darken($COLOR-BACKGROUND-TRANSPARENT, 30);

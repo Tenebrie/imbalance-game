@@ -114,9 +114,11 @@ export default defineComponent({
 	cursor: pointer;
 	user-select: none;
 	font-size: 1.3em;
+	transition: background-color 0.3s;
 
 	&:hover {
 		background: $COLOR-BACKGROUND-TRANSPARENT;
+		transition: background-color 0s;
 	}
 
 	&.leader {

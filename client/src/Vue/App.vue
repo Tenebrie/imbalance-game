@@ -209,6 +209,7 @@ button.primary,
 	border: 1px solid $COLOR-PRIMARY;
 	outline: none;
 	box-sizing: border-box;
+	transition: background-color 0.3s, border 0.3s;
 
 	&.destructive {
 		color: lighten(red, 15);
@@ -224,6 +225,7 @@ button.primary,
 		color: darken($COLOR-TEXT, 5);
 		border-color: darken($COLOR-PRIMARY, 5);
 		background-color: darken($COLOR-PRIMARY, 5);
+		transition: background-color 0s, border 0s;
 	}
 
 	&:active {
@@ -245,6 +247,7 @@ button.secondary,
 	background-color: transparent;
 	border: 1px solid $COLOR-TEXT;
 	outline: none;
+	transition: background-color 0.3s;
 
 	&.destructive {
 		color: lighten(red, 15);
@@ -258,6 +261,7 @@ button.secondary,
 
 	&:hover {
 		background-color: rgba(white, 0.05);
+		transition: background-color 0s;
 	}
 
 	&:active {

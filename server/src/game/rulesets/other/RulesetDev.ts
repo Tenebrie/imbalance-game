@@ -12,7 +12,7 @@ import UnitDryadWolfspeaker from '@src/game/cards/02-wild/common/UnitDryadWolfsp
 export default class RulesetDev extends ServerRulesetBuilder<void> {
 	constructor() {
 		super({
-			gameMode: GameMode.PVE,
+			gameMode: GameMode.COOP,
 			category: RulesetCategory.OTHER,
 		})
 
@@ -21,6 +21,10 @@ export default class RulesetDev extends ServerRulesetBuilder<void> {
 				{
 					type: 'player',
 					deck: [LeaderNighterie, { card: UnitDryadWolfspeaker, count: 30 }],
+				},
+				{
+					type: 'player',
+					deck: [LeaderMaximilian, { card: UnitYogaTeacher, count: 30 }],
 				},
 				{
 					type: 'player',

@@ -113,6 +113,7 @@ export default defineComponent({
 				align-items: center;
 				justify-content: center;
 				padding: 0 12px;
+				transition: background-color 0.3s;
 
 				i {
 					margin-right: 4px;
@@ -121,6 +122,7 @@ export default defineComponent({
 				&:hover {
 					text-decoration: none !important;
 					background: $COLOR-BACKGROUND-TRANSPARENT;
+					transition: background-color 0s;
 				}
 
 				&:hover:active {

@@ -50,10 +50,12 @@ export default defineComponent({
 		text-align: center;
 		width: calc(100% - 32px);
 		margin: 0 8px;
+		transition: background-color 0.3s;
 
 		&:hover,
 		&:focus {
 			background: rgba(white, 0.1);
+			transition: background-color 0s;
 		}
 	}
 
@@ -66,6 +68,7 @@ export default defineComponent({
 		top: 0;
 		right: 16px;
 		opacity: 0.5;
+		pointer-events: none;
 	}
 }
 </style>

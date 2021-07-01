@@ -58,9 +58,11 @@ export default defineComponent({
 	color: darken(white, 0);
 	width: 100%;
 	justify-content: center;
+	transition: background-color 0.3s;
 
 	&:hover {
 		background: $COLOR-BACKGROUND-TRANSPARENT;
+		transition: background-color 0s;
 	}
 }
 </style>

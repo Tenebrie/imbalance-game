@@ -515,6 +515,10 @@ export default defineComponent({
 .player-list {
 	margin-top: 8px;
 	font-size: 0.8em;
+
+	span {
+		margin-bottom: 0 !important;
+	}
 }
 
 .menu-separator {

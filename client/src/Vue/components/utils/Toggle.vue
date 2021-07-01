@@ -144,6 +144,7 @@ export default defineComponent({
 		height: 40%;
 		background: gray;
 		border-radius: 8px;
+		transition: background-color 0.3s;
 	}
 
 	.thumb {
@@ -154,25 +155,30 @@ export default defineComponent({
 		border-radius: 50%;
 		background: lighten($COLOR-PRIMARY, 10);
 		pointer-events: none;
+		transition: background-color 0.3s;
 	}
 
 	.progress {
 		height: 100%;
 		background: lighten($COLOR-PRIMARY, 10);
 		border-radius: 8px 0 0 8px;
+		transition: background-color 0.3s;
 	}
 
 	&:hover {
 		.track {
 			background: lighten(gray, 5);
+			transition: background-color 0s;
 		}
 
 		.thumb {
 			background: lighten($COLOR-PRIMARY, 15);
+			transition: background-color 0s;
 		}
 
 		.progress {
 			background: lighten($COLOR-PRIMARY, 15);
+			transition: background-color 0s;
 		}
 	}
 
