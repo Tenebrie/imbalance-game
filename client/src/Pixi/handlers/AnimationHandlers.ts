@@ -10,6 +10,7 @@ import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimPa
 import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
 import RowReceivedBuffAnimParams from '@shared/models/animations/RowReceivedBuffAnimParams'
 import { getAnimDurationMod } from '@/utils/Utils'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 export type AnimationHandlerResponse = {
 	skip?: boolean
@@ -34,14 +35,19 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 	[AnimationType.CARD_ANNOUNCE]: (message: AnimationMessage, params: CardAnnounceAnimParams) => {
 		const cardMessage = params.cardMessage
 		AudioSystem.playEffect(AudioEffectCategory.CARD_ANNOUNCE)
-		const playerWithCard = Core.opponent.players.find((player) => player.cardHand.allCards.find((card) => card.id === message.targetCardId))
-		if (!playerWithCard) {
-			return
+		const playerWithCard = Core.allPlayers.find((player) => player.cardHand.allCards.find((card) => card.id === message.targetCardId))
+
+		let revealedCard
+		if (playerWithCard) {
+			revealedCard = playerWithCard.cardHand.reveal(cardMessage)!
+		} else {
+			revealedCard = RenderedCard.fromMessage(cardMessage)
 		}
-		const revealedCard = playerWithCard.cardHand.reveal(cardMessage)
-		if (revealedCard) {
-			Core.mainHandler.announceCard(revealedCard)
-		}
+		Core.mainHandler.announceCard(revealedCard)
+	},
+
+	[AnimationType.CARD_ANNOUNCE_CLEAR]: () => {
+		Core.mainHandler.clearAnnouncedCard()
 	},
 
 	[AnimationType.CARD_ATTACK]: (message: AnimationMessage) => {

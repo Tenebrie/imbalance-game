@@ -237,6 +237,7 @@ export default defineComponent({
 
 		const onLeaveGame = (): void => {
 			store.dispatch.leaveGame()
+			store.commit.clearNextLinkedGame()
 		}
 
 		const onLeaveAndContinue = (): void => {
@@ -516,7 +517,7 @@ export default defineComponent({
 	margin-top: 8px;
 	font-size: 0.8em;
 
-	.span {
+	span {
 		margin-bottom: 0 !important;
 	}
 }

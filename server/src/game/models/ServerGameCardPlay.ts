@@ -114,10 +114,10 @@ export default class ServerGameCardPlay {
 		const card = ownedCard.card
 		const owner = ownedCard.owner
 
-		/* Announce card to opponent */
-		if (owner.opponent) {
-			OutgoingMessageHandlers.triggerAnimationForPlayerGroup(owner.opponent, ServerAnimation.cardAnnounce(card))
-		}
+		/* Announce card to other players */
+		const otherPlayers = this.game.allPlayers.filter((player) => player !== ownedCard.owner)
+		OutgoingMessageHandlers.triggerAnimationForPlayers(otherPlayers, ServerAnimation.cardAnnounce(card))
+		OutgoingMessageHandlers.triggerAnimationForPlayers(otherPlayers, ServerAnimation.clearAnnouncedCard(card))
 
 		/* Remove card from source */
 		if (source === 'hand' && owner.cardHand.findCardById(card.id)) {
@@ -143,7 +143,7 @@ export default class ServerGameCardPlay {
 
 		/* Play animation */
 		if (owner.opponent) {
-			OutgoingMessageHandlers.triggerAnimationForPlayerGroup(owner.opponent, ServerAnimation.delay(500))
+			OutgoingMessageHandlers.triggerAnimationForPlayers(owner.opponent.players, ServerAnimation.delay(500))
 		}
 
 		/* Remember played card */

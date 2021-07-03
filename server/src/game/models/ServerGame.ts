@@ -550,15 +550,16 @@ export default class ServerGame implements SourceGame {
 		)
 		if (validChain && this.getHumanGroup()) {
 			const linkedGame = GameLibrary.createChainGame(this, validChain)
-			this.players
-				.flatMap((playerGroup) => playerGroup.players)
-				.forEach((playerInGame) => {
-					OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, chainImmediately)
-					if (chainImmediately) {
-						this.animation.play(ServerAnimation.switchingGames())
-						OutgoingMessageHandlers.commandJoinLinkedGame(playerInGame.player)
-					}
+			this.allPlayers.forEach((playerInGame) => {
+				OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, chainImmediately)
+			})
+
+			if (chainImmediately) {
+				this.animation.play(ServerAnimation.switchingGames())
+				this.allPlayers.forEach((playerInGame) => {
+					OutgoingMessageHandlers.commandJoinLinkedGame(playerInGame.player)
 				})
+			}
 		}
 	}
 

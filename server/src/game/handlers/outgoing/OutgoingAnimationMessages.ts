@@ -5,11 +5,12 @@ import ServerGame from '../../models/ServerGame'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
 import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export default {
 	triggerAnimation(game: ServerGame, animation: ServerAnimation): void {
 		game.players.forEach((playerGroup) => {
-			this.triggerAnimationForPlayerGroup(playerGroup, animation)
+			this.triggerAnimationForPlayers(playerGroup.players, animation)
 		})
 	},
 
@@ -31,8 +32,8 @@ export default {
 		})
 	},
 
-	triggerAnimationForPlayerGroup(playerGroup: ServerPlayerGroup, animation: ServerAnimation): void {
-		playerGroup.players.forEach((playerInGame) =>
+	triggerAnimationForPlayers(players: ServerPlayerInGame[], animation: ServerAnimation): void {
+		players.forEach((playerInGame) =>
 			playerInGame.player.sendMessage({
 				type: AnimationMessageType.PLAY,
 				data: new AnimationMessage(animation),

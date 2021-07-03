@@ -83,6 +83,10 @@ export default class ClientGame {
 		if (cardOnBoard) {
 			return cardOnBoard
 		}
+		return this.findOwnedPlayerCardById(cardId)
+	}
+
+	public findOwnedPlayerCardById(cardId: string): OwnedClientCard | null {
 		const cardInStack = Core.resolveStack.findCardById(cardId)
 		if (cardInStack) {
 			return cardInStack

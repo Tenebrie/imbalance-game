@@ -595,14 +595,11 @@ export default class RenderedCard implements Card {
 	}
 
 	public get ownerPlayer(): ClientPlayerInGame {
-		const owner = this.owner
-		if (owner instanceof ClientPlayerInGame) {
-			return owner
+		const thisCardInGame = Core.game.findOwnedPlayerCardById(this.id)
+		if (!thisCardInGame) {
+			throw new Error('This card has no player owner!')
 		}
-		if (!owner) {
-			throw new Error('Card has no owner!')
-		}
-		throw new Error('Card is owned by a group!')
+		return thisCardInGame.owner
 	}
 
 	public get location(): CardLocation {

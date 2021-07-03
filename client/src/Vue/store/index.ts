@@ -147,10 +147,11 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		},
 
 		async surrenderGame(context): Promise<void> {
-			const { dispatch } = rootActionContext(context)
+			const { commit, dispatch } = rootActionContext(context)
 
 			OutgoingMessageHandlers.sendSurrender()
 			await dispatch.leaveGame()
+			commit.clearNextLinkedGame()
 		},
 
 		async leaveAndContinue(context): Promise<void> {

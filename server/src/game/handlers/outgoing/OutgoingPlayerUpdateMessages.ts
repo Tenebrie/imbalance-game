@@ -290,7 +290,7 @@ export default {
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) =>
 				playerInGame.player.sendMessage({
-					type: PlayerUpdateMessageType.GAME_END_DEFEAT,
+					type: PlayerUpdateMessageType.GAME_END_DRAW,
 					data: null,
 				})
 			)

@@ -5,6 +5,7 @@ const AnimationDuration: { [index in AnimationType]: number } = {
 	[AnimationType.DELAY]: 0,
 	[AnimationType.CARD_DRAW]: 500,
 	[AnimationType.CARD_ANNOUNCE]: 2000,
+	[AnimationType.CARD_ANNOUNCE_CLEAR]: 0,
 	[AnimationType.CARD_ATTACK]: 500,
 	[AnimationType.ROW_ATTACK]: 500,
 	[AnimationType.CARD_AFFECT]: 500,

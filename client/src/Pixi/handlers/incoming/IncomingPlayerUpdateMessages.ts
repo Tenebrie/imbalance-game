@@ -62,8 +62,10 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 	[PlayerUpdateMessageType.CARD_DESTROY_IN_HAND]: (data: OwnedCardRefMessage) => {
 		const player = Core.getPlayer(data.ownerId)
 
-		if (Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.id === data.cardId) {
-			Core.mainHandler.clearAnnouncedCard()
+		if (
+			(Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.id === data.cardId) ||
+			(Core.mainHandler.previousAnnouncedCard && Core.mainHandler.previousAnnouncedCard.id === data.cardId)
+		) {
 			player.cardHand.removeCardById(data.cardId)
 		} else {
 			player.cardHand.destroyCardById(data.cardId)

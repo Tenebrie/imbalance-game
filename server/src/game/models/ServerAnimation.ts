@@ -56,6 +56,15 @@ export default class ServerAnimation implements Animation {
 		return animation
 	}
 
+	public static clearAnnouncedCard(targetCard: ServerCard): ServerAnimation {
+		const params: CardAnnounceAnimParams = {
+			cardMessage: new OpenCardMessage(targetCard),
+		}
+		const animation = new ServerAnimation(AnimationType.CARD_ANNOUNCE_CLEAR, params)
+		animation.targetCard = targetCard
+		return animation
+	}
+
 	public static cardAttacksCards(sourceCard: ServerCard, targetCards: ServerCard[]): ServerAnimation {
 		const animation = new ServerAnimation(AnimationType.CARD_ATTACK, {})
 		animation.sourceCard = sourceCard

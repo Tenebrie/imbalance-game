@@ -183,6 +183,7 @@ const gameStateModule = defineModule({
 			commit.setPlayerRoundWins(0)
 			commit.setOpponentRoundWins(0)
 			commit.setIsOpponentInRound(true)
+			commit.setTargetingMode(null)
 			rootDispatch.gameLogModule.clearLog()
 		},
 	},
