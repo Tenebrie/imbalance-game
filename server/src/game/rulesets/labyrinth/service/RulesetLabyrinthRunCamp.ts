@@ -14,18 +14,11 @@ import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook
 import { getReward } from '@src/game/rulesets/labyrinth/service/LabyrinthRewards'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 
-type State = {
-	playersExpected: number
-}
-
-export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<State> {
+export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.LABYRINTH,
-			state: {
-				playersExpected: 1,
-			},
 		})
 
 		this.updateConstants({
@@ -38,19 +31,22 @@ export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<State>
 			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
 			.setFixedLink(RulesetLabyrinthDummies)
 
+		/**
+		 * Player count handling
+		 */
+		const [getPlayersExpected, setPlayersExpected] = this.useState(1)
+
+		this.onLifecycle(RulesetLifecycleHook.PROGRESSION_LOADED, (game: ServerGame) => {
+			setPlayersExpected(game, game.progression.labyrinth.state.run.playersExpected)
+		})
+
 		this.createSlots()
 			.addGroup([
 				{ type: 'player', deck: [LeaderLabyrinthPlayer] },
-				{ type: 'player', deck: [LeaderLabyrinthPlayer], require: (game) => this.getState(game).playersExpected > 1 },
+				{ type: 'player', deck: [LeaderLabyrinthPlayer], require: (game) => getPlayersExpected(game) > 1 },
 			])
 			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.PASSIVE })
-
-		this.onLifecycle(RulesetLifecycleHook.PROGRESSION_LOADED, (game: ServerGame) => {
-			this.setState(game, {
-				playersExpected: game.progression.labyrinth.state.run.playersExpected,
-			})
-			console.log(`State loaded: ${game.progression.labyrinth.state.run.encounterHistory.length}`)
-		})
+		// End of player count
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthNextEncounter)

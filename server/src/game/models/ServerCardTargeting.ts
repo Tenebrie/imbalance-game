@@ -25,7 +25,6 @@ import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTarge
 import { OrderTarget } from '@src/game/models/ServerBoardOrders'
 import { ResolutionStackTarget } from './ServerResolveStack'
 import { sortCards } from '@shared/Utils'
-import { getOwnerPlayer } from '@src/utils/Utils'
 
 export type ValidServerCardTarget = ServerCardTargetCard | ServerCardTargetUnit | ServerCardTargetRow | ServerCardTargetPosition
 

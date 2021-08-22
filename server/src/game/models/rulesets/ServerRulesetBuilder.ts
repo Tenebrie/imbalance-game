@@ -1,6 +1,6 @@
 import GameMode from '@shared/enums/GameMode'
 import GameEventType from '@src/../../shared/src/enums/GameEventType'
-import { getClassFromConstructor } from '@src/utils/Utils'
+import { createRandomGuid, getClassFromConstructor } from '@src/utils/Utils'
 import { EventHook } from '../events/EventHook'
 import { EventSubscription } from '../events/EventSubscription'
 import GameHookType, {
@@ -46,7 +46,6 @@ import { ServerRulesetTemplate } from '@src/game/models/rulesets/ServerRuleset'
 import { RulesetSlotsBuilder } from '@src/game/models/rulesets/ServerRulesetSlots'
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
 import RulesetLifecycleHook, { RulesetLifecycleCallback } from '@src/game/models/rulesets/RulesetLifecycleHook'
-import CardLocation from '@shared/enums/CardLocation'
 
 export type ServerRulesetBuilderProps<T> = {
 	gameMode: GameMode
@@ -168,6 +167,29 @@ export class ServerRulesetBuilder<T> {
 			...game.ruleset.state,
 			...state,
 		}
+	}
+
+	protected useState<StateType>(
+		defaultValue: StateType
+	): [getValue: (game: ServerGame) => StateType, setValue: (game: ServerGame, value: StateType) => void] {
+		let defaultValueSet = false
+		const anonValueId = createRandomGuid()
+		const getValue = (game: ServerGame) => {
+			if (!defaultValueSet) {
+				setValue(game, defaultValue)
+				defaultValueSet = true
+			}
+			const state = game.ruleset.state as T & Record<string, any>
+			return state[anonValueId]
+		}
+		const setValue = (game: ServerGame, value: StateType) => {
+			const state = game.ruleset.state as T & Record<string, any>
+			game.ruleset.state = {
+				...state,
+				[anonValueId]: value,
+			}
+		}
+		return [getValue, setValue]
 	}
 
 	public __build(): ServerRulesetTemplate {

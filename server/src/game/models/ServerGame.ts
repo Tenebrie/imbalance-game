@@ -505,7 +505,7 @@ export default class ServerGame implements SourceGame {
 		const hookValues = this.events.applyHooks(
 			GameHookType.GAME_FINISHED,
 			{
-				victoryReason: '',
+				victoryReason,
 				finishPrevented: false,
 				chainImmediately,
 				victoriousPlayer,

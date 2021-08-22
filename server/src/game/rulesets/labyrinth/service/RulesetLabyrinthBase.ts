@@ -12,20 +12,11 @@ import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook
 import ServerGame from '@src/game/models/ServerGame'
 import GameHookType from '@src/game/models/events/GameHookType'
 
-type State = {
-	playersExpected: number
-	postGameSavingState: 'not_saved' | 'saving' | 'saved'
-}
-
-export default class RulesetLabyrinthBase extends ServerRulesetBuilder<State> {
+export default class RulesetLabyrinthBase extends ServerRulesetBuilder<never> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.LABYRINTH,
-			state: {
-				playersExpected: 1,
-				postGameSavingState: 'not_saved',
-			},
 		})
 
 		this.updateConstants({
@@ -41,18 +32,18 @@ export default class RulesetLabyrinthBase extends ServerRulesetBuilder<State> {
 			.require(({ game, victoriousPlayer }) => victoriousPlayer !== game.getHumanGroup())
 			.setFixedLink(RulesetLabyrinthMetaCamp)
 
+		const [getPlayersExpected, setPlayersExpected] = this.useState(1)
+
+		this.onLifecycle(RulesetLifecycleHook.PROGRESSION_LOADED, (game: ServerGame) => {
+			setPlayersExpected(game, game.progression.labyrinth.state.run.playersExpected)
+		})
+
 		this.createSlots()
 			.addGroup([
 				{ type: 'player', deck: [LeaderLabyrinthPlayer] },
-				{ type: 'player', deck: [LeaderLabyrinthPlayer], require: (game) => this.getState(game).playersExpected > 1 },
+				{ type: 'player', deck: [LeaderLabyrinthPlayer], require: (game) => getPlayersExpected(game) > 1 },
 			])
 			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.DEFAULT })
-
-		this.onLifecycle(RulesetLifecycleHook.PROGRESSION_LOADED, (game: ServerGame) => {
-			this.setState(game, {
-				playersExpected: game.progression.labyrinth.state.run.playersExpected,
-			})
-		})
 
 		this.createCallback(GameEventType.GAME_CREATED).perform(({ game }) => {
 			const registeredPlayers = game.progression.labyrinth.state.run.players
@@ -83,27 +74,22 @@ export default class RulesetLabyrinthBase extends ServerRulesetBuilder<State> {
 			})
 		})
 
+		const [getSavingState, setSavingState] = this.useState<'not_saved' | 'saving' | 'saved'>('not_saved')
+
 		this.createHook(GameHookType.GAME_FINISHED).replace((editableValues, fixedValues) => {
 			const { game, victoriousPlayer, victoryReason, chainImmediately } = fixedValues
-			const state = this.getState(game)
-			if (state.postGameSavingState === 'saving' || state.postGameSavingState === 'saved') {
+			const savingState = getSavingState(game)
+			if (savingState === 'saving' || savingState === 'saved') {
 				return {
 					...editableValues,
-					finishPrevented: state.postGameSavingState === 'saving',
+					finishPrevented: savingState === 'saving',
 				}
 			}
 
-			this.setState(game, {
-				...state,
-				postGameSavingState: 'saving',
-			})
+			setSavingState(game, 'saving')
 
 			const onSave = () => {
-				this.setState(game, {
-					...state,
-					postGameSavingState: 'saved',
-				})
-
+				setSavingState(game, 'saved')
 				game.finish(victoriousPlayer, victoryReason, chainImmediately)
 			}
 			if (victoriousPlayer === game.getHumanGroup()) {

@@ -25,6 +25,10 @@ import LeaderStatType from '@shared/enums/LeaderStatType'
 import CardTribe from '@shared/enums/CardTribe'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
+export const createRandomGuid = (): string => {
+	return getRandomId()
+}
+
 export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
 	return `${type}:${prefix}:${getRandomId()}`
 }
