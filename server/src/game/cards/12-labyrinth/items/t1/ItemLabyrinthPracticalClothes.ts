@@ -20,7 +20,7 @@ export default class ItemLabyrinthPracticalClothes extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.ARMOR],
+			tribes: [CardTribe.LABYRINTH_ARMOR],
 			features: [CardFeature.PASSIVE, CardFeature.LABYRINTH_ITEM_T1],
 			stats: {
 				cost: 0,

@@ -50,8 +50,8 @@ export default defineComponent({
 			if (!card.value) {
 				return ''
 			}
-			const parsedName = parseRichText(Localization.get(card.value.name), card.value.variables).humanReadableText
-			const parsedTitle = parseRichText(Localization.getValueOrNull(card.value.title) || '', card.value.variables).humanReadableText
+			const parsedName = parseRichText(Localization.getCardName(card.value), card.value.variables).humanReadableText
+			const parsedTitle = parseRichText(Localization.getCardTitle(card.value) || '', card.value.variables).humanReadableText
 			if (parsedTitle.length === 0) {
 				return parsedName
 			}

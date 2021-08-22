@@ -28,79 +28,80 @@ class InternalCardLibrary {
 
 		this.forceLoadCards(prototypes)
 
-		console.info(`Loaded ${colorize(prototypes.length, AsciiColor.CYAN)} card definitions`)
+		console.info(`Loaded ${colorize(prototypes.length, AsciiColor.CYAN)} card definitions, including:`)
 		if (prototypes.length === 0) {
 			return
 		}
 
+		const filteredCards = this.cards.filter((card) => !card.class.startsWith('testing')).filter((card) => !card.class.startsWith('base'))
+		console.info(`- ${colorize(filteredCards.length, AsciiColor.CYAN)} valid definitions`)
+		if (prototypes.length - filteredCards.length > 0) {
+			console.info(`- ${colorize(prototypes.length - filteredCards.length, AsciiColor.CYAN)} ignored definitions`)
+		}
+
 		console.info('Card library breakdown:')
-		const nonTestingCards = this.cards.filter((card) => !card.class.startsWith('testing'))
 		console.table({
 			Human: {
-				Leaders: nonTestingCards.filter(
-					(card) => card.faction === CardFaction.HUMAN && card.isCollectible && card.color === CardColor.LEADER
-				).length,
-				Units: nonTestingCards.filter((card) => card.faction === CardFaction.HUMAN && card.isCollectible && card.color !== CardColor.LEADER)
+				Leaders: filteredCards.filter((card) => card.faction === CardFaction.HUMAN && card.isCollectible && card.color === CardColor.LEADER)
 					.length,
-				Spells: nonTestingCards.filter(
+				Units: filteredCards.filter((card) => card.faction === CardFaction.HUMAN && card.isCollectible && card.color !== CardColor.LEADER)
+					.length,
+				Spells: filteredCards.filter(
 					(card) =>
 						card.faction === CardFaction.HUMAN && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
 				).length,
-				Tokens: nonTestingCards.filter(
+				Tokens: filteredCards.filter(
 					(card) =>
 						card.faction === CardFaction.HUMAN && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
 				).length,
-				Total: nonTestingCards.filter((card) => card.faction === CardFaction.HUMAN).length,
+				Total: filteredCards.filter((card) => card.faction === CardFaction.HUMAN).length,
 			},
 			Arcane: {
-				Leaders: nonTestingCards.filter(
+				Leaders: filteredCards.filter(
 					(card) => card.faction === CardFaction.ARCANE && card.isCollectible && card.color === CardColor.LEADER
 				).length,
-				Units: nonTestingCards.filter(
-					(card) => card.faction === CardFaction.ARCANE && card.isCollectible && card.color !== CardColor.LEADER
-				).length,
-				Spells: nonTestingCards.filter(
+				Units: filteredCards.filter((card) => card.faction === CardFaction.ARCANE && card.isCollectible && card.color !== CardColor.LEADER)
+					.length,
+				Spells: filteredCards.filter(
 					(card) =>
 						card.faction === CardFaction.ARCANE && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
 				).length,
-				Tokens: nonTestingCards.filter(
+				Tokens: filteredCards.filter(
 					(card) =>
 						card.faction === CardFaction.ARCANE && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
 				).length,
-				Total: nonTestingCards.filter((card) => card.faction === CardFaction.ARCANE).length,
+				Total: filteredCards.filter((card) => card.faction === CardFaction.ARCANE).length,
 			},
 			Wild: {
-				Leaders: nonTestingCards.filter(
-					(card) => card.faction === CardFaction.WILD && card.isCollectible && card.color === CardColor.LEADER
-				).length,
-				Units: nonTestingCards.filter((card) => card.faction === CardFaction.WILD && card.isCollectible && card.color !== CardColor.LEADER)
+				Leaders: filteredCards.filter((card) => card.faction === CardFaction.WILD && card.isCollectible && card.color === CardColor.LEADER)
 					.length,
-				Spells: nonTestingCards.filter(
+				Units: filteredCards.filter((card) => card.faction === CardFaction.WILD && card.isCollectible && card.color !== CardColor.LEADER)
+					.length,
+				Spells: filteredCards.filter(
 					(card) =>
 						card.faction === CardFaction.WILD && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
 				).length,
-				Tokens: nonTestingCards.filter(
+				Tokens: filteredCards.filter(
 					(card) =>
 						card.faction === CardFaction.WILD && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
 				).length,
-				Total: nonTestingCards.filter((card) => card.faction === CardFaction.WILD).length,
+				Total: filteredCards.filter((card) => card.faction === CardFaction.WILD).length,
 			},
 			Neutral: {
-				Leaders: nonTestingCards.filter(
+				Leaders: filteredCards.filter(
 					(card) => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color === CardColor.LEADER
 				).length,
-				Units: nonTestingCards.filter(
-					(card) => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color !== CardColor.LEADER
-				).length,
-				Spells: nonTestingCards.filter(
+				Units: filteredCards.filter((card) => card.faction === CardFaction.NEUTRAL && card.isCollectible && card.color !== CardColor.LEADER)
+					.length,
+				Spells: filteredCards.filter(
 					(card) =>
 						card.faction === CardFaction.NEUTRAL && !card.isCollectible && card.type === CardType.SPELL && card.color !== CardColor.TOKEN
 				).length,
-				Tokens: nonTestingCards.filter(
+				Tokens: filteredCards.filter(
 					(card) =>
 						card.faction === CardFaction.NEUTRAL && !card.isCollectible && (card.type !== CardType.SPELL || card.color === CardColor.TOKEN)
 				).length,
-				Total: nonTestingCards.filter((card) => card.faction === CardFaction.NEUTRAL).length,
+				Total: filteredCards.filter((card) => card.faction === CardFaction.NEUTRAL).length,
 			},
 		})
 

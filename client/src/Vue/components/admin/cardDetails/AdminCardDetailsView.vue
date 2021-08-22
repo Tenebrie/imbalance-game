@@ -88,9 +88,9 @@ export default defineComponent({
 			const responseCard = cardResponse.data as CardMessage
 			card.value = {
 				...responseCard,
-				parsedName: parseRichText(Localization.get(responseCard.name), responseCard.variables).humanReadableText,
-				parsedTitle: parseRichText(Localization.getValueOrNull(responseCard.title) || '', responseCard.variables).humanReadableText,
-				parsedDescription: parseRichText(Localization.get(responseCard.description), responseCard.variables).humanReadableText,
+				parsedName: parseRichText(Localization.getCardName(responseCard), responseCard.variables).humanReadableText,
+				parsedTitle: parseRichText(Localization.getCardTitle(responseCard) || '', responseCard.variables).humanReadableText,
+				parsedDescription: parseRichText(Localization.getCardDescription(responseCard), responseCard.variables).humanReadableText,
 				readableType: cardTypeToString(responseCard.type),
 				readableColor: cardColorToString(responseCard.color),
 				readableFaction: cardFactionToString(responseCard.faction),

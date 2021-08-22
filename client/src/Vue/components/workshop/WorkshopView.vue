@@ -156,12 +156,6 @@ export default defineComponent({
 			color: cardColor.value,
 			faction: CardFaction.HUMAN,
 
-			name: unescapeValue(cardName),
-			title: '',
-			flavor: '',
-			listName: '',
-			description: unescapeValue(cardDescription),
-
 			stats: {
 				cardId: '',
 				power: convertNumericValue(cardPower),
@@ -183,6 +177,22 @@ export default defineComponent({
 			buffs: {
 				cardId: '',
 				buffs: [],
+			},
+			localization: {
+				en: {
+					name: unescapeValue(cardName),
+					title: '',
+					flavor: '',
+					listName: '',
+					description: unescapeValue(cardDescription),
+				},
+				ru: {
+					name: unescapeValue(cardName),
+					title: '',
+					flavor: '',
+					listName: '',
+					description: unescapeValue(cardDescription),
+				},
 			},
 			baseTribes: [],
 			baseFeatures: [],

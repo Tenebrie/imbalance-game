@@ -71,8 +71,8 @@ export default defineComponent({
 			const responseCards = response.data as OpenCardMessage[]
 			cards.value = responseCards.map((card) => ({
 				...card,
-				parsedName: parseRichText(Localization.get(card.name), card.variables).humanReadableText,
-				parsedTitle: parseRichText(Localization.getValueOrNull(card.title) || '', card.variables).humanReadableText,
+				parsedName: parseRichText(Localization.getCardName(card), card.variables).humanReadableText,
+				parsedTitle: parseRichText(Localization.getCardTitle(card) || '', card.variables).humanReadableText,
 				readableType: cardTypeToString(card.type),
 				readableColor: cardColorToString(card.color),
 				readableFaction: cardFactionToString(card.faction),

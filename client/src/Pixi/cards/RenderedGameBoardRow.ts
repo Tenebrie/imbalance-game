@@ -4,11 +4,9 @@ import BoardRow from '@shared/models/BoardRow'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import ClientBuffContainer from '@/Pixi/models/buffs/ClientBuffContainer'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
-import PlayerGroup from '@shared/models/PlayerGroup'
 
 export default class RenderedGameBoardRow implements BoardRow {
 	public readonly index: number

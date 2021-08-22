@@ -20,7 +20,7 @@ export default class ItemLabyrinthSimpleDress extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.ARMOR],
+			tribes: [CardTribe.LABYRINTH_ARMOR],
 			features: [CardFeature.PASSIVE, CardFeature.LABYRINTH_ITEM_T1],
 			stats: {
 				cost: 0,
@@ -31,10 +31,6 @@ export default class ItemLabyrinthSimpleDress extends ServerCard {
 			bonusRegen: ItemLabyrinthSimpleDress.BONUS_REGEN,
 			bonusUnitPower: ItemLabyrinthSimpleDress.BONUS_UNIT_POWER,
 		}
-
-		this.createSelector()
-			.requireTarget(({ target }) => target.ownerGroupInGame.owns(this) && target.location === CardLocation.BOARD)
-			.provide(BuffHiddenStrength, ItemLabyrinthSimpleDress.BONUS_UNIT_POWER)
 
 		this.createCallback(GameEventType.ROUND_STARTED, [CardLocation.HAND])
 			.require(({ group }) => group.owns(this))

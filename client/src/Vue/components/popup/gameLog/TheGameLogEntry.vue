@@ -37,7 +37,7 @@ export default defineComponent({
 		getCustomSubtype(entry: EventLogEntryMessage): string {
 			if (entry.event === GameEventType.CARD_DRAWN) {
 				const card = Core.game.findCardById(entry.args.triggeringCard)
-				if (card && !card.name) {
+				if (card && !Localization.getCardName(card)) {
 					return '.hidden'
 				}
 			}
@@ -90,11 +90,11 @@ export default defineComponent({
 			// }
 			const card = Core.game.findCardById(id)
 			if (card) {
-				return `${Localization.get(card.name)}`
+				return `${Localization.getCardName(card)}`
 			}
 			const cardInLibrary = store.state.editor.cardLibrary.find((card) => card.id === id)
 			if (cardInLibrary) {
-				return `${Localization.get(cardInLibrary.name)}`
+				return `${Localization.getCardName(cardInLibrary)}`
 			}
 			const buff = Core.game.findBuffById(id)
 			if (buff) {

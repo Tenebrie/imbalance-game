@@ -1079,9 +1079,6 @@
 	"card.itemLabyrinthDragonsteelSword.name": "Dragonsteel Sword",
 	"card.itemLabyrinthDragonsteelSword.description": "Deal {damage} Damage to an enemy unit.\nApply *Burning* to the target row.",
 
-	"card.itemLabyrinthTatteredRags.name": "Tattered Rags",
-	"card.itemLabyrinthTatteredRags.description": "*+*{bonusPower} Leader Power\n*+*{bonusRegen} Mana Regen",
-
 	"card.itemLabyrinthPracticalClothes.name": "Practical Clothes",
 	"card.itemLabyrinthPracticalClothes.description": "*+*{bonusPower} Leader Power\n*+*{bonusRegen} Mana Regen",
 
@@ -1091,20 +1088,11 @@
 	"card.itemLabyrinthSimpleDress.name": "Simple Dress",
 	"card.itemLabyrinthSimpleDress.description": "*+*{bonusRegen} Mana Regen\nYour units have *+*{bonusUnitPower} Power.",
 
-	"card.itemLabyrinthOldGloves.name": "Old Gloves",
-	"card.itemLabyrinthOldGloves.description": "*+*{bonusPower} Leader Power\n*+*{bonusHandSize} Hand Size",
-
 	"card.itemLabyrinthCombatGloves.name": "Combat Gloves",
 	"card.itemLabyrinthCombatGloves.description": "*+*{bonusPower} Leader Power\n*+*{bonusHandSize} Hand Size",
 
 	"card.itemLabyrinthVelvetGloves.name": "Velvet Gloves",
 	"card.itemLabyrinthVelvetGloves.description": "*+*{bonusRegen} Mana Regen\n*+*{bonusHandSize} Hand Size",
-
-	"card.itemLabyrinthOldBoots.name": "Old Boots",
-	"card.itemLabyrinthOldBoots.description": "*+*{bonusPower} Leader Power\n*+*{bonusPowerPerGame} Leader Power per game played this run.",
-
-	"card.itemLabyrinthWarBanner.name": "War Banner",
-	"card.itemLabyrinthWarBanner.description": "*+*{bonusHandSize} Hand Size",
 
 	"card.unitLabyrinthLostArcher.name": "Lost Archer",
 	"card.unitLabyrinthLostArcher.description": "*Deploy:*\nDeal {damage} Damage to an enemy unit.",

@@ -33,12 +33,12 @@ export default defineComponent({
 
 	computed: {
 		fullName(): string {
-			const listName = Localization.getValueOrNull(this.card.listName)
+			const listName = Localization.getCardListName(this.card)
 			if (listName) {
 				return listName
 			}
-			let name = Localization.get(this.card.name)
-			const title = Localization.getValueOrNull(this.card.title)
+			let name = Localization.getCardName(this.card)
+			const title = Localization.getCardTitle(this.card)
 			if (title) {
 				name = `${name}, ${title}`
 			}

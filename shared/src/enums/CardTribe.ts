@@ -19,12 +19,12 @@ enum CardTribe {
 	BUILDING = 'building',
 	VALKYRIE = 'valkyrie',
 	ELEMENTAL = 'elemental',
-	WEAPON = 'weapon',
-	ARMOR = 'armor',
-	GLOVES = 'gloves',
-	BOOTS = 'boots',
-	TREASURE = 'treasure',
-	LABYRINTH_BUCKET = 'labyrinth_bucket',
+	LABYRINTH_WEAPON = 'lab_weapon',
+	LABYRINTH_ARMOR = 'lab_armor',
+	LABYRINTH_GLOVES = 'lab_gloves',
+	LABYRINTH_BOOTS = 'lab_boots',
+	LABYRINTH_TREASURE = 'lab_treasure',
+	LABYRINTH_BUCKET = 'lab_bucket',
 }
 
 export default CardTribe

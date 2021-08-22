@@ -1,7 +1,6 @@
 import Board from '@shared/models/Board'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
-import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import Core from '../Core'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'

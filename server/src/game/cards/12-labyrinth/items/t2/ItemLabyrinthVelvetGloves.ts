@@ -20,7 +20,7 @@ export default class ItemLabyrinthVelvetGloves extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.GLOVES],
+			tribes: [CardTribe.LABYRINTH_GLOVES],
 			features: [CardFeature.PASSIVE, CardFeature.LABYRINTH_ITEM_T2],
 			stats: {
 				cost: 0,

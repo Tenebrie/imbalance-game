@@ -113,7 +113,7 @@ export default defineComponent({
 				})
 			}
 			features = [...new Set(features)]
-			return features.filter((feature) => Localization.getValueOrNull(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`))
+			return features.filter((feature) => Localization.get(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`, 'null'))
 		})
 
 		const displayedRelatedCards = computed<string[]>(() => {
@@ -170,7 +170,7 @@ export default defineComponent({
 		}
 
 		const flavorTextLines = computed<string[]>(() => {
-			const value = Localization.getValueOrNull(inspectedCard.value.flavor)
+			const value = Localization.getCardFlavor(inspectedCard.value)
 			if (value === null) {
 				return []
 			}

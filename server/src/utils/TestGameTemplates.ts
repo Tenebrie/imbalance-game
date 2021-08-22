@@ -80,7 +80,7 @@ export default {
 		return game
 	},
 
-	normalGameFlow(props?: OptionalGameProps): CommonTemplateResult {
+	normalGameFlow(props?: Partial<OptionalGameProps>): CommonTemplateResult {
 		silenceLogging()
 		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVP, category: RulesetCategory.PVE }).__build()
 		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false, ...props })

@@ -26,6 +26,7 @@ import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import { forEachInEnum } from '@shared/Utils'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
+import { CardLocalization } from '@shared/models/cardLocalization/CardLocalization'
 
 type WorkshopCardProps = {
 	workshopTitle: string
@@ -40,14 +41,9 @@ export default class RenderedCard implements Card {
 	public readonly color: CardColor
 	public readonly faction: CardFaction
 
-	public readonly name: string
-	public readonly title: string
-	public readonly flavor: string
-	public readonly listName: string
-	public readonly description: string
-
 	public readonly stats: ClientCardStats
 	public readonly buffs: ClientBuffContainer
+	public readonly localization: CardLocalization
 	public readonly baseTribes: CardTribe[]
 	public readonly baseFeatures: CardFeature[]
 	public readonly relatedCards: string[]
@@ -94,14 +90,9 @@ export default class RenderedCard implements Card {
 		this.color = message.color
 		this.faction = message.faction
 
-		this.name = message.name
-		this.title = message.title
-		this.flavor = message.flavor
-		this.listName = message.listName
-		this.description = message.description
-
 		this.stats = new ClientCardStats(this, message.stats)
 		this.buffs = new ClientBuffContainer(this, message.buffs)
+		this.localization = message.localization
 		this.baseTribes = (message.baseTribes || []).slice()
 		this.baseFeatures = (message.baseFeatures || []).slice()
 		this.relatedCards = (message.relatedCards || []).slice()
@@ -119,11 +110,11 @@ export default class RenderedCard implements Card {
 		const powerTextValue = this.type === CardType.UNIT ? this.stats.power : this.stats.spellCost
 		this.powerText = this.createBrushScriptText(powerTextValue.toString())
 		this.armorText = this.createBrushScriptText(this.stats.armor.toString())
-		this.cardNameText = new RichText(Localization.get(this.name), 200, this.getDescriptionTextVariables())
+		this.cardNameText = new RichText(this.name, 200, this.getDescriptionTextVariables())
 		this.cardNameText.style.fill = 0x000000
 		this.cardNameText.verticalAlign = RichTextAlign.CENTER
 		this.cardNameText.horizontalAlign = RichTextAlign.END
-		const titleText = message.workshopTitle || Localization.getValueOrNull(this.title) || ''
+		const titleText = message.workshopTitle || Localization.getCardTitle(this) || ''
 		this.cardTitleText = new RichText(titleText, 200, this.getDescriptionTextVariables())
 		this.cardTitleText.style.fill = 0x000000
 		this.cardTitleText.verticalAlign = RichTextAlign.CENTER
@@ -163,11 +154,9 @@ export default class RenderedCard implements Card {
 
 		/* Card mode container */
 		this.cardModeContainer = new PIXI.Container()
-		if (Localization.get(this.name)) {
-			this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
-		}
+		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
 		this.descriptionTextBackground = new DescriptionTextBackground()
-		if (Localization.get(this.description)) {
+		if (Localization.getCardDescription(this)) {
 			this.descriptionTextBackground.position.set(0, this.sprite.texture.height + 1)
 			this.cardDescriptionText.setBackground(this.descriptionTextBackground)
 			this.cardModeContainer.addChild(this.descriptionTextBackground)
@@ -227,10 +216,30 @@ export default class RenderedCard implements Card {
 		this.coreContainer.addChild(this.cardFullTintOverlay)
 	}
 
+	public get name(): string {
+		return Localization.getCardName(this)
+	}
+
+	public get title(): string | null {
+		return Localization.getCardTitle(this)
+	}
+
+	public get flavor(): string | null {
+		return Localization.getCardFlavor(this)
+	}
+
+	public get listName(): string | null {
+		return Localization.getCardListName(this)
+	}
+
+	public get description(): string {
+		return Localization.getCardDescription(this)
+	}
+
 	public getDescriptionTextVariables(): RichTextVariables {
 		return {
 			...this.variables,
-			name: Localization.get(this.name),
+			name: this.name,
 		}
 	}
 
@@ -268,10 +277,9 @@ export default class RenderedCard implements Card {
 	}
 
 	public get displayedDescription(): string {
-		let description = Localization.get(this.description)
 		const featureStrings = this.features
 			.map((feature) => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
-			.map((feature) => Localization.getValueOrNull(feature))
+			.map((feature) => Localization.get(feature, 'null'))
 			.filter((string) => string !== null)
 
 		const leaderStatsStrings: string[] = []
@@ -279,7 +287,7 @@ export default class RenderedCard implements Card {
 			if (this.stats.leaderStats[value] === 0) {
 				return
 			}
-			const text = Localization.getValueOrNull(`card.stats.${snakeToCamelCase(key.toLowerCase())}.text`)
+			const text = Localization.get(`card.stats.${snakeToCamelCase(key.toLowerCase())}.text`, 'null')
 			if (text === null) {
 				return
 			}
@@ -287,6 +295,7 @@ export default class RenderedCard implements Card {
 			leaderStatsStrings.push(text.replace(/{value}/g, String(this.stats.leaderStats[value])))
 		})
 
+		let description = this.description
 		for (const index in leaderStatsStrings.reverse()) {
 			const delimiter = Number(index) === 0 ? (description.trim().length > 0 ? '<p>' : '') : '\n'
 			description = `${leaderStatsStrings[index]}${delimiter}${description}`
@@ -488,7 +497,7 @@ export default class RenderedCard implements Card {
 
 		this.cardDescriptionText.position.set(0, -54)
 
-		const description = Localization.get(this.description)
+		const description = Localization.getCardDescription(this)
 		let fontSize = 26
 		if (description.length > 150) {
 			fontSize = 24

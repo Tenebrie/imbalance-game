@@ -78,6 +78,7 @@ import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/Ord
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import { initializeEnumRecord, sortCards } from '@shared/Utils'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import { CardLocalization, CardLocalizationEntry, PartialCardLocalization } from '@shared/models/cardLocalization/CardLocalization'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
@@ -130,12 +131,6 @@ export default class ServerCard implements Card {
 	public readonly color: CardColor
 	public readonly faction: CardFaction
 
-	public readonly name: string
-	public readonly title: string
-	public readonly flavor: string
-	public readonly listName: string
-	public readonly description: string
-
 	public readonly stats: ServerCardStats
 	public readonly buffs: ServerBuffContainer = new ServerBuffContainer(this)
 	public readonly baseTribes: CardTribe[]
@@ -146,6 +141,7 @@ export default class ServerCard implements Card {
 	public readonly isCollectible: boolean
 	public readonly isExperimental: boolean
 
+	public localization: CardLocalization
 	public dynamicTextVariables: ServerRichTextVariables = {}
 	public botEvaluation: BotCardEvaluation = new BotCardEvaluation(this)
 	public readonly generatedArtworkMagicString: string
@@ -182,11 +178,17 @@ export default class ServerCard implements Card {
 			}),
 		})
 
-		this.name = `card.${this.class}.name`
-		this.title = `card.${this.class}.title`
-		this.flavor = `card.${this.class}.flavor`
-		this.listName = `card.${this.class}.listName`
-		this.description = `card.${this.class}.description`
+		const defaultLocalization: CardLocalizationEntry = {
+			name: `card.${this.class}.name`,
+			title: `card.${this.class}.title`,
+			flavor: `card.${this.class}.flavor`,
+			listName: `card.${this.class}.listName`,
+			description: `card.${this.class}.description`,
+		}
+		this.localization = {
+			en: defaultLocalization,
+			ru: defaultLocalization,
+		}
 
 		if (props.tribes === undefined) {
 			this.baseTribes = []
@@ -791,6 +793,19 @@ export default class ServerCard implements Card {
 	 */
 	protected createSelfSelector(): CardSelectorBuilder {
 		return this.game.events.createSelector(this).requireTarget(({ target }) => target === this)
+	}
+
+	protected createLocalization(localization: PartialCardLocalization): void {
+		this.localization = {
+			en: {
+				...this.localization.en,
+				...localization.en,
+			},
+			ru: {
+				...this.localization.ru,
+				...localization.ru,
+			},
+		}
 	}
 
 	protected addRelatedCards(): RelatedCardsDefinition {

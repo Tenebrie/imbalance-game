@@ -20,7 +20,7 @@ export default class ItemLabyrinthDragonsteelSword extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.WEAPON],
+			tribes: [CardTribe.LABYRINTH_WEAPON],
 			features: [CardFeature.HERO_POWER, CardFeature.LABYRINTH_ITEM_T3],
 			stats: {
 				cost: 3,
