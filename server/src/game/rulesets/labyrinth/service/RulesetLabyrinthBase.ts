@@ -10,18 +10,21 @@ import RulesetLabyrinthMetaCamp from '@src/game/rulesets/labyrinth/service/Rules
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
 import ServerGame from '@src/game/models/ServerGame'
+import GameHookType from '@src/game/models/events/GameHookType'
 
-export type SharedLabyrinthState = {
+type State = {
 	playersExpected: number
+	postGameSavingState: 'not_saved' | 'saving' | 'saved'
 }
 
-export default class RulesetLabyrinthBase extends ServerRulesetBuilder<SharedLabyrinthState> {
+export default class RulesetLabyrinthBase extends ServerRulesetBuilder<State> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.LABYRINTH,
 			state: {
 				playersExpected: 1,
+				postGameSavingState: 'not_saved',
 			},
 		})
 
@@ -80,11 +83,37 @@ export default class RulesetLabyrinthBase extends ServerRulesetBuilder<SharedLab
 			})
 		})
 
-		this.createCallback(GameEventType.GAME_FINISHED).perform(({ game, victoriousPlayer }) => {
-			game.progression.labyrinth.addEncounterToHistory(this.class)
-			if (victoriousPlayer !== game.getHumanGroup()) {
-				console.log('Failing the run!')
-				game.progression.labyrinth.failRun()
+		this.createHook(GameHookType.GAME_FINISHED).replace((editableValues, fixedValues) => {
+			const { game, victoriousPlayer, victoryReason, chainImmediately } = fixedValues
+			const state = this.getState(game)
+			if (state.postGameSavingState === 'saving' || state.postGameSavingState === 'saved') {
+				return {
+					...editableValues,
+					finishPrevented: state.postGameSavingState === 'saving',
+				}
+			}
+
+			this.setState(game, {
+				...state,
+				postGameSavingState: 'saving',
+			})
+
+			const onSave = () => {
+				this.setState(game, {
+					...state,
+					postGameSavingState: 'saved',
+				})
+
+				game.finish(victoriousPlayer, victoryReason, chainImmediately)
+			}
+			if (victoriousPlayer === game.getHumanGroup()) {
+				game.progression.labyrinth.addEncounterToHistory(this.class).then(onSave)
+			} else {
+				game.progression.labyrinth.failRun().then(onSave)
+			}
+			return {
+				...editableValues,
+				finishPrevented: true,
 			}
 		})
 	}

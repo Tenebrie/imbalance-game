@@ -3,7 +3,12 @@ import GameEventType from '@src/../../shared/src/enums/GameEventType'
 import { getClassFromConstructor } from '@src/utils/Utils'
 import { EventHook } from '../events/EventHook'
 import { EventSubscription } from '../events/EventSubscription'
-import GameHookType from '../events/GameHookType'
+import GameHookType, {
+	CardTakesDamageHookFixedValues,
+	CardTakesDamageHookEditableValues,
+	GameFinishedHookEditableValues,
+	GameFinishedHookFixedValues,
+} from '../events/GameHookType'
 import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
 import {
 	CardBuffCreatedEventArgs,
@@ -41,6 +46,7 @@ import { ServerRulesetTemplate } from '@src/game/models/rulesets/ServerRuleset'
 import { RulesetSlotsBuilder } from '@src/game/models/rulesets/ServerRulesetSlots'
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
 import RulesetLifecycleHook, { RulesetLifecycleCallback } from '@src/game/models/rulesets/RulesetLifecycleHook'
+import CardLocation from '@shared/enums/CardLocation'
 
 export type ServerRulesetBuilderProps<T> = {
 	gameMode: GameMode
@@ -140,13 +146,14 @@ export class ServerRulesetBuilder<T> {
 		return eventSubscription
 	}
 
-	public createHook<HookValues, HookArgs>(hook: GameHookType): EventHook<HookValues, HookArgs> {
+	protected createHook(hookType: GameHookType.GAME_FINISHED): EventHook<GameFinishedHookEditableValues, GameFinishedHookFixedValues>
+	protected createHook<HookValues, HookArgs>(hook: GameHookType): EventHook<HookValues, HookArgs> {
 		const eventHook = new EventHook<HookValues, HookArgs>(null)
 		this.eventHooks.get(hook)!.push(eventHook)
 		return eventHook
 	}
 
-	public createSelector(): CardSelectorBuilder {
+	protected createSelector(): CardSelectorBuilder {
 		const cardSelector = new CardSelectorBuilder(null)
 		this.cardSelectorBuilders.push(cardSelector)
 		return cardSelector

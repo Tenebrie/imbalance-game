@@ -10,6 +10,7 @@ import CardLibrary from '@src/game/libraries/CardLibrary'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import { sortCards } from '@shared/Utils'
+import CardTribe from '@shared/enums/CardTribe'
 
 abstract class BaseSpellLabyrinthRewardTreasure extends ServerCard {
 	cardsChosen: ServerCard[] = []
@@ -49,27 +50,27 @@ abstract class BaseSpellLabyrinthRewardTreasure extends ServerCard {
 export class SpellLabyrinthRewardTreasureT1 extends BaseSpellLabyrinthRewardTreasure {
 	public readonly rewardsOffered = 4
 	protected isCardValidTreasure(card: ServerCard): boolean {
-		return card.features.includes(CardFeature.LABYRINTH_ITEM_T1)
+		return card.features.includes(CardFeature.LABYRINTH_ITEM_T1) && card.tribes.includes(CardTribe.LABYRINTH_TREASURE)
 	}
 }
 
 export class SpellLabyrinthRewardTreasureT2 extends BaseSpellLabyrinthRewardTreasure {
 	public readonly rewardsOffered = 4
 	protected isCardValidTreasure(card: ServerCard): boolean {
-		return card.features.includes(CardFeature.LABYRINTH_ITEM_T2)
+		return card.features.includes(CardFeature.LABYRINTH_ITEM_T2) && card.tribes.includes(CardTribe.LABYRINTH_TREASURE)
 	}
 }
 
 export class SpellLabyrinthRewardTreasureT3 extends BaseSpellLabyrinthRewardTreasure {
 	public readonly rewardsOffered = 4
 	protected isCardValidTreasure(card: ServerCard): boolean {
-		return card.features.includes(CardFeature.LABYRINTH_ITEM_T3)
+		return card.features.includes(CardFeature.LABYRINTH_ITEM_T3) && card.tribes.includes(CardTribe.LABYRINTH_TREASURE)
 	}
 }
 
 export class SpellLabyrinthRewardTreasureT4 extends BaseSpellLabyrinthRewardTreasure {
 	public readonly rewardsOffered = 4
 	protected isCardValidTreasure(card: ServerCard): boolean {
-		return card.features.includes(CardFeature.LABYRINTH_ITEM_T4)
+		return card.features.includes(CardFeature.LABYRINTH_ITEM_T4) && card.tribes.includes(CardTribe.LABYRINTH_TREASURE)
 	}
 }

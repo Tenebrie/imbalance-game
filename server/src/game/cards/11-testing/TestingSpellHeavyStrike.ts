@@ -16,7 +16,7 @@ export default class TestingSpellHeavyStrike extends ServerCard {
 			stats: {
 				cost: 0,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TESTING,
 		})
 
 		this.createDeployTargets(TargetType.UNIT).perform(({ targetCard }) => {

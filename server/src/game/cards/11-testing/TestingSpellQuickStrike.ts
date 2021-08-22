@@ -2,7 +2,6 @@ import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
@@ -18,7 +17,7 @@ export default class TestingSpellQuickStrike extends ServerCard {
 			stats: {
 				cost: 0,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TESTING,
 		})
 
 		this.createDeployTargets(TargetType.UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))

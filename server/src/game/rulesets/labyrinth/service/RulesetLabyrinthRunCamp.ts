@@ -9,17 +9,16 @@ import RulesetLabyrinthDummies from '@src/game/rulesets/labyrinth/RulesetLabyrin
 import GameEventType from '@shared/enums/GameEventType'
 import Keywords from '@src/utils/Keywords'
 import ServerGame from '@src/game/models/ServerGame'
-import SpellLabyrinthRewardCard from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardCard'
-import {
-	SpellLabyrinthRewardTreasureT1,
-	SpellLabyrinthRewardTreasureT2,
-	SpellLabyrinthRewardTreasureT3,
-} from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardTreasure'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
-import { SharedLabyrinthState } from '@src/game/rulesets/labyrinth/service/RulesetLabyrinthBase'
 import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
+import { getReward } from '@src/game/rulesets/labyrinth/service/LabyrinthRewards'
+import { CardConstructor } from '@src/game/libraries/CardLibrary'
 
-export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<SharedLabyrinthState> {
+type State = {
+	playersExpected: number
+}
+
+export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<State> {
 	constructor() {
 		super({
 			gameMode: GameMode.PVE,
@@ -50,6 +49,7 @@ export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<Shared
 			this.setState(game, {
 				playersExpected: game.progression.labyrinth.state.run.playersExpected,
 			})
+			console.log(`State loaded: ${game.progression.labyrinth.state.run.encounterHistory.length}`)
 		})
 
 		this.createCallback(GameEventType.CARD_PLAYED)
@@ -68,36 +68,18 @@ export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<Shared
 
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
 			game.owner!.playerInGame!.cardHand.addUnit(new SpellLabyrinthNextEncounter(game))
+
+			const reward = getReward(game.progression.labyrinth.state)
 			game.humanPlayers.forEach((playerInGame) => {
-				if (game.progression.labyrinth.state.run.encounterHistory.length === 0 && game.progression.labyrinth.state.meta.runCount === 0) {
-					// No reward in the beginning
-					console.log('No reward!')
-				} else if (
-					game.progression.labyrinth.state.run.encounterHistory.length === 0 &&
-					game.progression.labyrinth.state.meta.runCount > 0
-				) {
-					addCardReward(game, playerInGame, 1)
-					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT1)
-				} else if (game.progression.labyrinth.state.run.encounterHistory.length === 1) {
-					addCardReward(game, playerInGame, 3)
-					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT1)
-				} else if (game.progression.labyrinth.state.run.encounterHistory.length === 2) {
-					addCardReward(game, playerInGame, 3)
-					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT1)
-					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT2)
-				} else if (game.progression.labyrinth.state.run.encounterHistory.length === 3) {
-					addCardReward(game, playerInGame, 3)
-					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT1)
-					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthRewardTreasureT3)
-				} else {
-					addCardReward(game, playerInGame, 4)
-				}
+				reward.cardsInHand.forEach((card) => {
+					addCardReward(game, playerInGame, card.card, card.count)
+				})
 			})
 		})
 
-		const addCardReward = (game: ServerGame, player: ServerPlayerInGame, count: number): void => {
+		const addCardReward = (game: ServerGame, player: ServerPlayerInGame, card: CardConstructor, count: number): void => {
 			for (let i = 0; i < count; i++) {
-				Keywords.addCardToHand.for(player).fromConstructor(SpellLabyrinthRewardCard)
+				Keywords.addCardToHand.for(player).fromConstructor(card)
 			}
 		}
 	}

@@ -15,12 +15,12 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
 import GameHookType, {
-	CardDestroyedHookArgs,
-	CardDestroyedHookValues,
-	CardTakesDamageHookArgs,
-	CardTakesDamageHookValues,
-	UnitDestroyedHookArgs,
-	UnitDestroyedHookValues,
+	CardDestroyedHookFixedValues,
+	CardDestroyedHookEditableValues,
+	CardTakesDamageHookFixedValues,
+	CardTakesDamageHookEditableValues,
+	UnitDestroyedHookFixedValues,
+	UnitDestroyedHookEditableValues,
 } from './events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {
@@ -85,6 +85,7 @@ interface ServerCardBaseProps {
 	tribes?: CardTribe | CardTribe[]
 	features?: CardFeature | CardFeature[]
 	relatedCards?: CardConstructor | CardConstructor[]
+	upgrades?: CardConstructor[]
 	sortPriority?: number
 	expansionSet: ExpansionSet
 	isExperimental?: boolean
@@ -148,6 +149,8 @@ export default class ServerCard implements Card {
 
 	public readonly baseRelatedCards: CardConstructor[] = []
 	public readonly customRelatedCards: RelatedCardsDefinition[] = []
+
+	public readonly upgrades: CardConstructor[] = []
 
 	public isRevealed = false
 	public isDead = false
@@ -218,13 +221,14 @@ export default class ServerCard implements Card {
 
 		this.isCollectible = props.hiddenFromLibrary
 			? false
-			: this.expansionSet === ExpansionSet.LABYRINTH
+			: this.expansionSet !== ExpansionSet.BASE
 			? false
 			: props.color === CardColor.LEADER || (props.color !== CardColor.TOKEN && props.type === CardType.UNIT)
 		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
 
 		this.generatedArtworkMagicString = props.generatedArtworkMagicString ? props.generatedArtworkMagicString : ''
 
+		this.upgrades = props.upgrades || []
 		this.deckAddedCards = props.deckAddedCards || []
 
 		if (!this.game) {
@@ -406,10 +410,17 @@ export default class ServerCard implements Card {
 			this.game.animation.play(ServerAnimation.universeAttacksCards([this]))
 		}
 
-		const hookValues = this.game.events.applyHooks<CardTakesDamageHookArgs, CardTakesDamageHookValues>(GameHookType.CARD_TAKES_DAMAGE, {
-			targetCard: this,
-			damageInstance: damageInstance,
-		})
+		const hookValues = this.game.events.applyHooks(
+			GameHookType.CARD_TAKES_DAMAGE,
+			{
+				targetCard: this,
+				damageInstance: damageInstance,
+			},
+			{
+				targetCard: this,
+				damageInstance: damageInstance,
+			}
+		)
 
 		if (hookValues.targetCard !== this) {
 			hookValues.targetCard.dealDamage(ServerDamageInstance.redirectedFrom(hookValues.damageInstance, this))
@@ -530,7 +541,7 @@ export default class ServerCard implements Card {
 
 		this.isDead = true
 
-		const hookValues = this.game.events.applyHooks<CardDestroyedHookValues, CardDestroyedHookArgs>(
+		const hookValues = this.game.events.applyHooks(
 			GameHookType.CARD_DESTROYED,
 			{
 				destructionPrevented: false,
@@ -766,15 +777,15 @@ export default class ServerCard implements Card {
 	protected createHook(
 		hookType: GameHookType.CARD_TAKES_DAMAGE,
 		location: CardLocation[]
-	): EventHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>
+	): EventHook<CardTakesDamageHookEditableValues, CardTakesDamageHookFixedValues>
 	protected createHook(
 		hookType: GameHookType.CARD_DESTROYED,
 		location: CardLocation[]
-	): EventHook<CardDestroyedHookValues, CardDestroyedHookArgs>
+	): EventHook<CardDestroyedHookEditableValues, CardDestroyedHookFixedValues>
 	protected createHook(
 		hookType: GameHookType.UNIT_DESTROYED,
 		location: CardLocation[]
-	): EventHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>
+	): EventHook<UnitDestroyedHookEditableValues, UnitDestroyedHookFixedValues>
 	protected createHook<HookValues, HookArgs>(hookType: GameHookType, location: CardLocation[]): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hookType).requireLocations(location)
 	}

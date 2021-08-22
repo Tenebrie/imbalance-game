@@ -16,7 +16,7 @@ export default class TestingSpellCastsAnotherSpell extends ServerCard {
 			stats: {
 				cost: 0,
 			},
-			expansionSet: ExpansionSet.LABYRINTH,
+			expansionSet: ExpansionSet.TESTING,
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)

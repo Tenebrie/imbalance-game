@@ -10,6 +10,7 @@ export class LabyrinthItemApprenticeRobes extends BaseLabyrinthPassiveItem {
 		super(game, {
 			tier: 1,
 			slot: CardTribe.LABYRINTH_ARMOR,
+			upgrades: [LabyrinthItemAdeptRobes],
 		})
 		this.dynamicTextVariables = {
 			bonusPower: this.BONUS_POWER,
@@ -42,7 +43,7 @@ export class LabyrinthItemAdeptRobes extends BaseLabyrinthPassiveItem {
 		}
 		this.createLocalization({
 			en: {
-				name: 'Apprentice Robes',
+				name: 'Adept Robes',
 				description: '*+*{bonusPower} Leader Power\n*+*{bonusRegen} Mana Regen',
 			},
 		})

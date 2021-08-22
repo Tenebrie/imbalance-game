@@ -7,12 +7,12 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardLocation from '@shared/enums/CardLocation'
 import GameHookType, {
-	CardDestroyedHookArgs,
-	CardDestroyedHookValues,
-	CardTakesDamageHookArgs,
-	CardTakesDamageHookValues,
-	UnitDestroyedHookArgs,
-	UnitDestroyedHookValues,
+	CardDestroyedHookFixedValues,
+	CardDestroyedHookEditableValues,
+	CardTakesDamageHookFixedValues,
+	CardTakesDamageHookEditableValues,
+	UnitDestroyedHookFixedValues,
+	UnitDestroyedHookEditableValues,
 } from '../events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffFeature from '@shared/enums/BuffFeature'
@@ -248,9 +248,11 @@ export default class ServerBuff implements Buff {
 	 * `GameHookType.CARD_TAKES_DAMAGE` hook it is possible to increase or decrease the damage a card
 	 * takes from any source.
 	 */
-	protected createHook(hookType: GameHookType.CARD_TAKES_DAMAGE): EventHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>
-	protected createHook(hookType: GameHookType.CARD_DESTROYED): EventHook<CardDestroyedHookValues, CardDestroyedHookArgs>
-	protected createHook(hookType: GameHookType.UNIT_DESTROYED): EventHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>
+	protected createHook(
+		hookType: GameHookType.CARD_TAKES_DAMAGE
+	): EventHook<CardTakesDamageHookEditableValues, CardTakesDamageHookFixedValues>
+	protected createHook(hookType: GameHookType.CARD_DESTROYED): EventHook<CardDestroyedHookEditableValues, CardDestroyedHookFixedValues>
+	protected createHook(hookType: GameHookType.UNIT_DESTROYED): EventHook<UnitDestroyedHookEditableValues, UnitDestroyedHookFixedValues>
 	protected createHook<HookValues, HookArgs>(hook: GameHookType): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hook)
 	}

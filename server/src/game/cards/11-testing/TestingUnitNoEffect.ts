@@ -14,8 +14,7 @@ export default class TestingUnitNoEffect extends ServerCard {
 			stats: {
 				power: 20,
 			},
-			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true,
+			expansionSet: ExpansionSet.TESTING,
 		})
 	}
 }

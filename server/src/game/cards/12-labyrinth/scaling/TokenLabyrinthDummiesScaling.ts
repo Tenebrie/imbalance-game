@@ -6,7 +6,6 @@ import CardFeature from '@shared/enums/CardFeature'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import BuffHiddenStrength from '@src/game/buffs/BuffHiddenStrength'
-import CardTribe from '@shared/enums/CardTribe'
 
 export default class TokenLabyrinthDummiesScaling extends ServerCard {
 	constructor(game: ServerGame) {
@@ -14,8 +13,7 @@ export default class TokenLabyrinthDummiesScaling extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.LABYRINTH_BOOTS],
-			features: [CardFeature.PASSIVE, CardFeature.LABYRINTH_ITEM_T0],
+			features: [CardFeature.PASSIVE],
 			stats: {
 				cost: 0,
 			},

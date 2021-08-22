@@ -76,6 +76,7 @@ export function loadModules<T extends { name: string }>(props: Props): ReturnVal
 	const prototypes = upToDateModules
 		.filter((module) => !module.filename.toLowerCase().startsWith('testing'))
 		.flatMap((module) => module.exports)
+		.filter((prototype) => prototype.toString().startsWith('class'))
 
 	return {
 		prototypes,

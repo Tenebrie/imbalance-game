@@ -12,8 +12,7 @@ export default class TestingLeader extends ServerCard {
 			color: CardColor.LEADER,
 			faction: CardFaction.NEUTRAL,
 			sortPriority: 0,
-			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true,
+			expansionSet: ExpansionSet.TESTING,
 		})
 	}
 }

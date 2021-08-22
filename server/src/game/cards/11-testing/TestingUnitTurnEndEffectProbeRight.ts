@@ -16,8 +16,7 @@ export default class TestingUnitTurnEndEffectProbeRight extends ServerCard {
 			stats: {
 				power: 10,
 			},
-			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true,
+			expansionSet: ExpansionSet.TESTING,
 			sortPriority: 1,
 		})
 

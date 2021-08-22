@@ -32,6 +32,7 @@ import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerGroupOwnedCard from '@src/game/models/ServerGroupOwnedCard'
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
+import GameHookType, { CardTakesDamageHookFixedValues, CardTakesDamageHookEditableValues } from '@src/game/models/events/GameHookType'
 
 interface ServerGameProps extends Partial<OptionalGameProps> {
 	ruleset: ServerRulesetTemplate
@@ -500,6 +501,29 @@ export default class ServerGame implements SourceGame {
 		if (this.turnPhase === GameTurnPhase.AFTER_GAME) {
 			return
 		}
+
+		const hookValues = this.events.applyHooks(
+			GameHookType.GAME_FINISHED,
+			{
+				victoryReason: '',
+				finishPrevented: false,
+				chainImmediately,
+				victoriousPlayer,
+			},
+			{
+				game: this,
+				victoryReason,
+				victoriousPlayer,
+				chainImmediately,
+			}
+		)
+
+		if (hookValues.finishPrevented) {
+			return
+		}
+		victoriousPlayer = hookValues.victoriousPlayer
+		victoryReason = hookValues.victoryReason
+		chainImmediately = hookValues.chainImmediately
 
 		this.setTurnPhase(GameTurnPhase.AFTER_GAME)
 

@@ -14,7 +14,7 @@ export default class TestingSpell10Mana extends ServerCard {
 			stats: {
 				cost: 10,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TESTING,
 		})
 	}
 }

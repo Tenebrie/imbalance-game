@@ -1,6 +1,10 @@
 import ServerGame from '@src/game/models/ServerGame'
 import CardTribe from '@shared/enums/CardTribe'
 import { BaseLabyrinthPassiveItem } from '@src/game/cards/12-labyrinth/items/ItemLabyrinthBase'
+import { LabyrinthItemChainmail } from '@src/game/cards/12-labyrinth/items/armor/LabyrinthArmor_Chainmail'
+import { LabyrinthItemShadyCloak } from '@src/game/cards/12-labyrinth/items/armor/LabyrinthArmor_Cloak'
+import { LabyrinthItemCasualDress } from '@src/game/cards/12-labyrinth/items/armor/LabyrinthArmor_Dress'
+import { LabyrinthItemApprenticeRobes } from '@src/game/cards/12-labyrinth/items/armor/LabyrinthArmor_Robes'
 
 export class LabyrinthItemTatteredRags extends BaseLabyrinthPassiveItem {
 	public readonly BONUS_POWER = 5
@@ -10,6 +14,7 @@ export class LabyrinthItemTatteredRags extends BaseLabyrinthPassiveItem {
 		super(game, {
 			tier: 0,
 			slot: CardTribe.LABYRINTH_ARMOR,
+			upgrades: [LabyrinthItemChainmail, LabyrinthItemShadyCloak, LabyrinthItemCasualDress, LabyrinthItemApprenticeRobes],
 		})
 		this.dynamicTextVariables = {
 			bonusPower: this.BONUS_POWER,
@@ -26,10 +31,3 @@ export class LabyrinthItemTatteredRags extends BaseLabyrinthPassiveItem {
 		this.addManaRegen(this.BONUS_REGEN)
 	}
 }
-
-/**
- * Upgrade Branch 1 (Armor): {@link LabyrinthItemChainmail}
- * Upgrade Branch 2 (Cloak): {@link LabyrinthItemShadyCloak}
- * Upgrade Branch 3 (Dress): {@link LabyrinthItemCasualDress}
- * Upgrade Branch 4 (Robes): {@link LabyrinthItemApprenticeRobes}
- */

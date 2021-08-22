@@ -10,6 +10,7 @@ export class LabyrinthItemOldBoots extends BaseLabyrinthPassiveItem {
 		super(game, {
 			tier: 0,
 			slot: CardTribe.LABYRINTH_BOOTS,
+			upgrades: [LabyrinthItemWornBoots],
 		})
 		this.dynamicTextVariables = {
 			bonusPower: this.BONUS_POWER,

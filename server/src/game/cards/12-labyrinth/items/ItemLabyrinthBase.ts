@@ -11,6 +11,11 @@ import LeaderStatType from '@shared/enums/LeaderStatType'
 import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import Keywords from '@src/utils/Keywords'
+import { CardConstructor } from '@src/game/libraries/CardLibrary'
+import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import TargetType from '@shared/enums/TargetType'
+import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
 
 const tierToFeature = (tier: number): CardFeature => {
 	switch (tier) {
@@ -30,10 +35,11 @@ const tierToFeature = (tier: number): CardFeature => {
 }
 
 const propsToFeatures = (props?: LabyrinthPassiveItemProps): CardFeature[] => {
+	const features = [CardFeature.LABYRINTH_ITEM]
 	if (!props) {
-		return []
+		return features
 	}
-	return [tierToFeature(props.tier)]
+	return features.concat(tierToFeature(props.tier))
 }
 
 type LabyrinthPassiveItemProps = {
@@ -45,6 +51,7 @@ type LabyrinthPassiveItemProps = {
 		| CardTribe.LABYRINTH_TREASURE
 	tier: number
 	stats?: Partial<Record<LeaderStatType, number>>
+	upgrades?: CardConstructor[]
 }
 
 type LabyrinthActiveItemProps = LabyrinthPassiveItemProps & {
@@ -111,6 +118,37 @@ export class BaseLabyrinthActiveItem extends ItemLabyrinthBase {
 			},
 			expansionSet: ExpansionSet.LABYRINTH,
 		})
+	}
+
+	public addSingleTargetDamage(damage: number | LeaderStatValueGetter): void {
+		this.createDeployTargets(TargetType.UNIT)
+			.requireEnemy()
+			.perform(({ targetUnit }) => targetUnit.dealDamage(ServerDamageInstance.fromCard(damage, this)))
+	}
+
+	public addSingleTargetDamageWithSplash(damage: number | LeaderStatValueGetter, splashDamage: number | LeaderStatValueGetter): void {
+		this.createDeployTargets(TargetType.UNIT)
+			.requireEnemy()
+			.perform(({ targetUnit }) => {
+				const adjacentUnits = this.game.board.getAdjacentUnits(targetUnit)
+				targetUnit.dealDamage(ServerDamageInstance.fromCard(damage, this))
+				adjacentUnits.forEach((unit) => {
+					this.game.animation.thread(() => {
+						unit.dealDamage(ServerDamageInstance.fromCard(splashDamage, this))
+					})
+				})
+				this.game.animation.syncAnimationThreads()
+			})
+	}
+
+	public addSingleTargetDamageWithEffect(damage: number | LeaderStatValueGetter, effect: BuffConstructor): void {
+		this.createDeployTargets(TargetType.UNIT)
+			.requireEnemy()
+			.perform(({ targetUnit }) => {
+				const targetRow = targetUnit.rowIndex
+				targetUnit.dealDamage(ServerDamageInstance.fromCard(damage, this))
+				this.game.board.rows[targetRow].buffs.add(effect, this)
+			})
 	}
 }
 

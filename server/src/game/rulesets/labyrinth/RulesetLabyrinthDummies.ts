@@ -17,9 +17,9 @@ export default class RulesetLabyrinthDummies extends RulesetLabyrinthBase {
 		})
 
 		this.createBoard().bot([
-			[UnitChallengeDummyVanillaWarrior],
-			[UnitChallengeDummyVanillaWarrior],
-			[UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior],
+			// [UnitChallengeDummyVanillaWarrior],
+			// [UnitChallengeDummyVanillaWarrior],
+			// [UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior],
 		])
 
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {

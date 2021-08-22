@@ -11,7 +11,7 @@ import { toRowIndex } from '@src/utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
-import GameHookType, { UnitDestroyedHookArgs, UnitDestroyedHookValues } from './events/GameHookType'
+import GameHookType, { UnitDestroyedHookFixedValues, UnitDestroyedHookEditableValues } from './events/GameHookType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import CardTribe from '@shared/enums/CardTribe'
@@ -359,7 +359,7 @@ export default class ServerBoard implements Board {
 
 		const card = unit.card
 
-		const hookValues = this.game.events.applyHooks<UnitDestroyedHookValues, UnitDestroyedHookArgs>(
+		const hookValues = this.game.events.applyHooks(
 			GameHookType.UNIT_DESTROYED,
 			{
 				destructionPrevented: false,

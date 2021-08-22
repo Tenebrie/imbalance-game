@@ -16,8 +16,7 @@ export default class TestingUnitUltraProtector extends ServerCard {
 			stats: {
 				power: 10,
 			},
-			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true,
+			expansionSet: ExpansionSet.TESTING,
 		})
 
 		this.createHook(GameHookType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])

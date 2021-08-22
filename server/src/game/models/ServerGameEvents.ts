@@ -6,7 +6,16 @@ import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import ServerCard from '@src/game/models/ServerCard'
 import { EventSubscription } from '@src/game/models/events/EventSubscription'
 import { GameEvent } from '@src/game/models/events/GameEventCreators'
-import GameHookType, { CardTakesDamageHookArgs } from '@src/game/models/events/GameHookType'
+import GameHookType, {
+	CardDestroyedHookFixedValues,
+	CardDestroyedHookEditableValues,
+	CardTakesDamageHookFixedValues,
+	CardTakesDamageHookEditableValues,
+	GameFinishedHookFixedValues,
+	GameFinishedHookEditableValues,
+	UnitDestroyedHookFixedValues,
+	UnitDestroyedHookEditableValues,
+} from '@src/game/models/events/GameHookType'
 import { EventHook } from '@src/game/models/events/EventHook'
 import { CardSelector } from '@src/game/models/events/selectors/CardSelector'
 import { CardSelectorBuilder } from '@src/game/models/events/selectors/CardSelectorBuilder'
@@ -66,7 +75,7 @@ export default class ServerGameEvents {
 		const eventHook = new EventHook<HookValues, HookArgs>(subscriber)
 		if (hook === GameHookType.CARD_TAKES_DAMAGE) {
 			eventHook.require((args) => {
-				const typedArgs = (args as unknown) as CardTakesDamageHookArgs
+				const typedArgs = (args as unknown) as CardTakesDamageHookFixedValues
 				return !typedArgs.damageInstance.redirectHistory.find((entry) => entry.proxyCard === eventHook.subscriber)
 			})
 		}
@@ -158,30 +167,52 @@ export default class ServerGameEvents {
 		})
 	}
 
-	public applyHooks<HookValues, HookArgs>(hook: GameHookType, values: HookValues, args?: HookArgs): HookValues {
-		const hookArgs = args ? args : values
-
+	public applyHooks(
+		hook: GameHookType.CARD_TAKES_DAMAGE,
+		editableValues: CardTakesDamageHookEditableValues,
+		fixedValues: CardTakesDamageHookFixedValues
+	): CardTakesDamageHookEditableValues
+	public applyHooks(
+		hook: GameHookType.CARD_DESTROYED,
+		editableValues: CardDestroyedHookEditableValues,
+		fixedValues: CardDestroyedHookFixedValues
+	): CardDestroyedHookEditableValues
+	public applyHooks(
+		hook: GameHookType.UNIT_DESTROYED,
+		editableValues: UnitDestroyedHookEditableValues,
+		fixedValues: UnitDestroyedHookFixedValues
+	): UnitDestroyedHookEditableValues
+	public applyHooks(
+		hook: GameHookType.GAME_FINISHED,
+		editableValues: GameFinishedHookEditableValues,
+		fixedValues: GameFinishedHookFixedValues
+	): GameFinishedHookEditableValues
+	public applyHooks<EditableValues, FixedValues>(
+		hook: GameHookType,
+		editableValues: EditableValues,
+		fixedValues: FixedValues
+	): EditableValues {
 		const matchingHooks = this.eventHooks
 			.get(hook)!
 			.filter((hook) => hook.ignoreControlEffects || !ServerGameEvents.subscriberSuspended(hook.subscriber))
 			.filter(
 				(hook) =>
 					!hook.conditions.find((condition) => {
-						return cardRequire(this.game, hook.subscriber, () => !condition(hookArgs))
+						return cardRequire(this.game, hook.subscriber, () => !condition(fixedValues))
 					})
 			)
 
 		matchingHooks.forEach((hook) =>
 			hook.callbacks.forEach((callback) => {
-				cardPerform(this.game, hook.subscriber, () => callback(hookArgs))
+				cardPerform(this.game, hook.subscriber, () => callback(fixedValues))
 			})
 		)
 
 		return matchingHooks.reduce((accOuter, subscription) => {
 			return subscription.hooks.reduce((accInner, replace) => {
-				return replace(accInner, hookArgs)
+				return replace(accInner, fixedValues)
 			}, accOuter)
-		}, values)
+		}, editableValues)
 	}
 
 	public resolveEvents(): void {

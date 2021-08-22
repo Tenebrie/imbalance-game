@@ -154,18 +154,19 @@ class LabyrinthProgression {
 		this.saveInBackground()
 	}
 
-	public addEncounterToHistory(encounterClass: string): void {
+	public addEncounterToHistory(encounterClass: string): Promise<boolean> {
 		this.state.run.encounterHistory.push({
 			class: encounterClass,
 		})
-		this.saveInBackground()
+		console.log(`Pushing new encounter. New length: ${this.state.run.encounterHistory.length}`)
+		return this.save()
 	}
 
-	public failRun(): void {
+	public failRun(): Promise<boolean> {
 		this.state.meta.runCount += 1
 		this.state.lastRun = this.state.run
 		this.state.run = this.getDefaultRunState()
-		this.saveInBackground()
+		return this.save()
 	}
 
 	private save(): Promise<boolean> {

@@ -15,8 +15,7 @@ export default class TestingLeaderWithPower extends ServerCard {
 				power: 100,
 			},
 			sortPriority: 0,
-			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true,
+			expansionSet: ExpansionSet.TESTING,
 		})
 	}
 }

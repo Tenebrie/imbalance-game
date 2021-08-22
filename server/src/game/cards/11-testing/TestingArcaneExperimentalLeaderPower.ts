@@ -16,7 +16,7 @@ export default class TestingArcaneExperimentalLeaderPower extends ServerCard {
 			stats: {
 				cost: 10,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TESTING,
 			isExperimental: true,
 		})
 	}

@@ -10,6 +10,7 @@ export class LabyrinthItemCasualDress extends BaseLabyrinthPassiveItem {
 		super(game, {
 			tier: 1,
 			slot: CardTribe.LABYRINTH_ARMOR,
+			upgrades: [LabyrinthItemNobleDress],
 		})
 		this.dynamicTextVariables = {
 			bonusRegen: this.BONUS_REGEN,
