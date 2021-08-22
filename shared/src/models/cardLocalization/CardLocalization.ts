@@ -8,5 +8,5 @@ export type CardLocalizationEntry = {
 	description: string
 }
 
-export type CardLocalization = Record<Language, Partial<CardLocalizationEntry>>
+export type CardLocalization = Record<Language, CardLocalizationEntry>
 export type PartialCardLocalization = Partial<Record<Language, Partial<CardLocalizationEntry>>>
