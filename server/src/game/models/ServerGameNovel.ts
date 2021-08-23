@@ -1,6 +1,5 @@
 import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
 import OutgoingNovelMessages from '../handlers/outgoing/OutgoingNovelMessages'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerGame from './ServerGame'
 import { v4 as uuid } from 'uuid'
 import NovelReply from '@shared/models/novel/NovelReply'
@@ -37,10 +36,6 @@ export default class ServerGameNovel {
 			throw new Error(`No human player in game ${this.game.id}!`)
 		}
 		return player
-	}
-
-	public getState<T>(): T {
-		return this.game.ruleset.state
 	}
 
 	public startDialog(): ServerGameNovelCreator {

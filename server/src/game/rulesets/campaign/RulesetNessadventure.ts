@@ -2,7 +2,6 @@ import Constants from '@shared/Constants'
 import GameEventType from '@shared/enums/GameEventType'
 import GameMode from '@shared/enums/GameMode'
 import LeaderChallengeDummy from '@src/game/cards/10-challenge/ai-00-dummy/LeaderChallengeDummy'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 import StoryCharacter from '@shared/enums/StoryCharacter'
 import UnitChallengeDummyOPWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyOPWarrior'
 import Keywords from '@src/utils/Keywords'
@@ -22,38 +21,26 @@ import HeroChallengeLegendaryExplorer0 from '@src/game/cards/10-challenge/challe
 import UnitCorgiGravedigger from '@src/game/cards/10-challenge/nessadventure/UnitCorgiGravedigger'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import AIBehaviour from '@shared/enums/AIBehaviour'
-import LeaderCampfireTheMother from '@src/game/cards/10-challenge/test-campfire/LeaderCampfireTheMother'
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
+import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 
-type State = {
-	opCardsPlayed: number
-	pozogaPlayed: boolean
-	extraPozogaPlayed: boolean
-	nessaPlayed: boolean
-	eleyasBuffed: boolean
-	handReplenished: boolean
-	handNotReplenishedAgain: boolean
-}
+export default class RulesetNessadventure extends ServerRuleset {
+	opCardsPlayed = 0
+	pozogaPlayed = false
+	extraPozogaPlayed = false
+	nessaPlayed = false
+	eleyasBuffed = false
+	handReplenished = false
+	handNotReplenishedAgain = false
 
-export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
-	constructor() {
-		super({
+	constructor(game: ServerGame) {
+		super(game, {
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.PROTOTYPES,
-			state: {
-				opCardsPlayed: 0,
-				pozogaPlayed: false,
-				extraPozogaPlayed: false,
-				nessaPlayed: false,
-				eleyasBuffed: false,
-				handReplenished: false,
-				handNotReplenishedAgain: false,
+			constants: {
+				SKIP_MULLIGAN: true,
+				FIRST_GROUP_MOVES_FIRST: true,
 			},
-		})
-
-		this.updateConstants({
-			SKIP_MULLIGAN: true,
-			FIRST_GROUP_MOVES_FIRST: true,
 		})
 
 		this.createSlots()
@@ -89,11 +76,11 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ owner }) => owner.isBot)
 			.require(({ triggeringCard }) => triggeringCard instanceof UnitChallengeDummyOPWarrior)
-			.perform(({ game }) => this.setState(game, { opCardsPlayed: this.getState(game).opCardsPlayed + 1 }))
+			.perform(() => (this.opCardsPlayed += 1))
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ owner }) => owner.isBot)
-			.require(({ game }) => this.getState(game).opCardsPlayed === 0)
+			.require(() => this.opCardsPlayed === 0)
 			.perform(({ game }) =>
 				game.novel
 					.startDialog()
@@ -105,7 +92,7 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ owner }) => owner.isBot)
-			.require(({ game }) => this.getState(game).opCardsPlayed === 2)
+			.require(() => this.opCardsPlayed === 2)
 			.perform(({ game }) =>
 				game.novel
 					.startDialog()
@@ -125,8 +112,8 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ owner }) => owner.isBot)
-			.require(({ game }) => this.getState(game).opCardsPlayed === 6)
-			.require(({ game }) => !this.getState(game).pozogaPlayed)
+			.require(() => this.opCardsPlayed === 6)
+			.require(() => !this.pozogaPlayed)
 			.perform(({ game }) =>
 				game.novel
 					.startDialog()
@@ -170,9 +157,9 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ owner }) => owner.isHuman)
 			.require(({ triggeringCard }) => triggeringCard instanceof HeroPozoga)
-			.require(({ game }) => this.getState(game).opCardsPlayed < 3)
-			.require(({ game }) => !this.getState(game).extraPozogaPlayed)
-			.perform(({ game }) => this.setState(game, { extraPozogaPlayed: true }))
+			.require(() => this.opCardsPlayed < 3)
+			.require(() => !this.extraPozogaPlayed)
+			.perform(() => (this.extraPozogaPlayed = true))
 			.perform(({ game }) =>
 				game.novel
 					.startDialog()
@@ -195,16 +182,16 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ owner }) => owner.isHuman)
 			.require(({ triggeringCard }) => triggeringCard instanceof HeroPozoga)
-			.require(({ game }) => this.getState(game).opCardsPlayed >= 3)
-			.require(({ game }) => !this.getState(game).pozogaPlayed)
-			.perform(({ game }) => this.setState(game, { pozogaPlayed: true }))
+			.require(() => this.opCardsPlayed >= 3)
+			.require(() => !this.pozogaPlayed)
+			.perform(() => (this.pozogaPlayed = true))
 			.perform(({ game }) =>
 				game.novel
 					.startDialog()
 					.setCharacter(StoryCharacter.NARRATOR)
 					.say(
 						`Oh no, ${
-							this.getState(game).extraPozogaPlayed ? '<b>another</b> ' : ''
+							this.extraPozogaPlayed ? '<b>another</b> ' : ''
 						} Pozoga has been played! I suppose it would be a shame if the Dummy amps up their game!`
 					)
 					.reply("That's unfair!", () => {
@@ -248,8 +235,8 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ owner }) => owner.isHuman)
 			.require(({ triggeringCard }) => triggeringCard instanceof HeroNotNessaHidden)
-			.require(({ game }) => !this.getState(game).nessaPlayed)
-			.perform(({ game }) => this.setState(game, { nessaPlayed: true }))
+			.require(() => !this.nessaPlayed)
+			.perform(() => (this.nessaPlayed = true))
 			.perform(({ game, owner }) =>
 				game.novel
 					.startDialog()
@@ -277,8 +264,8 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 		this.createCallback(GameEventType.CARD_DRAWN)
 			.require(({ owner }) => owner.isHuman)
 			.require(({ triggeringCard }) => triggeringCard instanceof HeroNotEleyas)
-			.require(({ game }) => !this.getState(game).eleyasBuffed)
-			.perform(({ game }) => this.setState(game, { eleyasBuffed: true }))
+			.require(() => !this.eleyasBuffed)
+			.perform(() => (this.eleyasBuffed = true))
 			.perform(({ game, owner }) =>
 				game.novel
 					.startDialog()
@@ -295,9 +282,9 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ owner }) => owner.isHuman)
 			.require(({ owner }) => owner.cardHand.unitCards.length === 0)
-			.require(({ game }) => this.getState(game).nessaPlayed)
-			.require(({ game }) => !this.getState(game).handReplenished)
-			.perform(({ game }) => this.setState(game, { handReplenished: true }))
+			.require(() => this.nessaPlayed)
+			.require(() => !this.handReplenished)
+			.perform(() => (this.handReplenished = true))
 			.perform(({ game, owner }) =>
 				game.novel
 					.startDialog()
@@ -316,8 +303,8 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ owner }) => owner.isHuman)
 			.require(({ owner }) => owner.cardHand.unitCards.length === 0)
-			.require(({ game }) => this.getState(game).handReplenished && !this.getState(game).handNotReplenishedAgain)
-			.perform(({ game }) => this.setState(game, { handNotReplenishedAgain: true }))
+			.require(() => this.handReplenished && !this.handNotReplenishedAgain)
+			.perform(() => (this.handNotReplenishedAgain = true))
 			.perform(({ game, owner }) =>
 				game.novel
 					.startDialog()
@@ -364,7 +351,7 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 
 		this.createCallback(GameEventType.GAME_FINISHED)
 			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
-			.require(({ game }) => this.getState(game).nessaPlayed)
+			.require(() => this.nessaPlayed)
 			.perform(({ game }) => {
 				game.novel
 					.startDialog()
@@ -405,7 +392,7 @@ export default class RulesetNessadventure extends ServerRulesetBuilder<State> {
 
 		this.createCallback(GameEventType.GAME_FINISHED)
 			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
-			.require(({ game }) => !this.getState(game).nessaPlayed)
+			.require(() => !this.nessaPlayed)
 			.perform(({ game }) => {
 				game.novel
 					.startDialog()

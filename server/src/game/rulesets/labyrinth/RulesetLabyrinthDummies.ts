@@ -7,13 +7,14 @@ import HeroChallengeDummyWarrior1 from '@src/game/cards/10-challenge/ai-00-dummy
 import HeroChallengeDummyWarrior3 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior3'
 import HeroChallengeDummyWarrior2 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior2'
 import UnitChallengeDummyOPWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyOPWarrior'
+import ServerGame from '@src/game/models/ServerGame'
 
 export default class RulesetLabyrinthDummies extends RulesetLabyrinthBase {
-	constructor() {
-		super()
-
-		this.updateConstants({
-			ROUND_WINS_REQUIRED: 1,
+	constructor(game: ServerGame) {
+		super(game, {
+			constants: {
+				ROUND_WINS_REQUIRED: 1,
+			},
 		})
 
 		this.createBoard().bot([

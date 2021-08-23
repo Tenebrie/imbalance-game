@@ -15,12 +15,13 @@ import HeroChallengeLegendaryExplorer2 from '@src/game/cards/10-challenge/challe
 import HeroChallengeLegendaryExplorer3 from '@src/game/cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer3'
 import UnitChallengeEagerExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeEagerExplorer'
 import UnitChallengeScarredExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeScarredExplorer'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 import AIBehaviour from '@shared/enums/AIBehaviour'
+import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
+import ServerGame from '@src/game/models/ServerGame'
 
-export default class RulesetBrawlDiscovery extends ServerRulesetBuilder<never> {
-	constructor() {
-		super({
+export default class RulesetBrawlDiscovery extends ServerRuleset {
+	constructor(game: ServerGame) {
+		super(game, {
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.PVE,
 			sortPriority: 1,

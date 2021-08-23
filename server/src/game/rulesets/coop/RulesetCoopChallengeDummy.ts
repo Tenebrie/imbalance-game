@@ -1,7 +1,6 @@
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import LeaderChallengeDummy from '@src/game/cards/10-challenge/ai-00-dummy/LeaderChallengeDummy'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
 import HeroChallengeDummyWarrior0 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
@@ -11,13 +10,19 @@ import HeroChallengeDummyWarrior3 from '@src/game/cards/10-challenge/ai-00-dummy
 import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
 import Constants from '@shared/Constants'
 import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
+import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
+import ServerGame from '@src/game/models/ServerGame'
 
-export default class RulesetCoopChallengeDummy extends ServerRulesetBuilder<void> {
-	constructor() {
-		super({
+export default class RulesetCoopChallengeDummy extends ServerRuleset {
+	constructor(game: ServerGame) {
+		super(game, {
 			gameMode: GameMode.COOP,
 			category: RulesetCategory.COOP,
 			sortPriority: 2,
+			constants: {
+				ROUND_WINS_REQUIRED: 2,
+				GAME_BOARD_ROW_COUNT: 6,
+			},
 		})
 
 		this.createSlots()
@@ -44,10 +49,5 @@ export default class RulesetCoopChallengeDummy extends ServerRulesetBuilder<void
 					{ card: UnitChallengeDummyVanillaWarrior, count: Constants.CARD_LIMIT_BRONZE },
 				],
 			})
-
-		this.updateConstants({
-			ROUND_WINS_REQUIRED: 2,
-			GAME_BOARD_ROW_COUNT: 6,
-		})
 	}
 }

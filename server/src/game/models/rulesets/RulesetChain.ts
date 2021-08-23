@@ -1,5 +1,4 @@
-import { ServerRulesetTemplate } from './ServerRuleset'
-import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
@@ -22,7 +21,7 @@ export class RulesetChain {
 		return this.conditions.every((condition) => condition(args))
 	}
 
-	public get(game: ServerGame): ServerRulesetTemplate {
+	public get(game: ServerGame): RulesetConstructor {
 		let link
 		if (this.fixedLink) {
 			link = this.fixedLink
@@ -32,7 +31,7 @@ export class RulesetChain {
 		if (!link) {
 			throw new Error('No valid link for ruleset chain.')
 		}
-		return RulesetLibrary.findTemplate(link)
+		return link
 	}
 }
 
@@ -50,7 +49,7 @@ export class RulesetChainBuilder {
 		this.fixedLink = ruleset
 	}
 
-	public setLinkGetter(getter: (game: ServerGame) => RulesetConstructor): void {
+	public setLinkGetter(getter: () => RulesetConstructor): void {
 		this.linkGetter = getter
 	}
 

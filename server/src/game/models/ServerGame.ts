@@ -21,7 +21,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import ServerGameIndex from '@src/game/models/ServerGameIndex'
 import ServerAnimation from '@src/game/models/ServerAnimation'
-import { ServerRuleset, ServerRulesetTemplate } from './rulesets/ServerRuleset'
+import { ServerRuleset } from './rulesets/ServerRuleset'
 import CardLibrary from '../libraries/CardLibrary'
 import ServerGameNovel from './ServerGameNovel'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
@@ -32,10 +32,11 @@ import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerGroupOwnedCard from '@src/game/models/ServerGroupOwnedCard'
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
-import GameHookType, { CardTakesDamageHookFixedValues, CardTakesDamageHookEditableValues } from '@src/game/models/events/GameHookType'
+import GameHookType from '@src/game/models/events/GameHookType'
+import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 
 interface ServerGameProps extends Partial<OptionalGameProps> {
-	ruleset: ServerRulesetTemplate
+	ruleset: RulesetConstructor
 }
 
 export interface OptionalGameProps {
@@ -72,12 +73,7 @@ export default class ServerGame implements SourceGame {
 		this.name = props.name || ServerGame.generateName(props.owner)
 		this.owner = props.owner
 		this.players = []
-		this.load(props)
-	}
-
-	private load(props: ServerGameProps) {
-		this.ruleset = props.ruleset.__build()
-		this.isStarted = false
+		this.ruleset = new props.ruleset(this)
 		this.turnIndex = -1
 		this.roundIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
@@ -105,8 +101,6 @@ export default class ServerGame implements SourceGame {
 		} else {
 			this.playerMoveOrderReversed = Math.floor(Math.random() * 2) === 0
 		}
-
-		props.ruleset.__applyAmplifiers(this)
 
 		this.events
 			.createCallback<PlayerTargetCardSelectedEventArgs>(null, GameEventType.PLAYER_TARGET_SELECTED_CARD)
@@ -634,7 +628,7 @@ export default class ServerGame implements SourceGame {
 		return null
 	}
 
-	static newPublicInstance(ruleset: ServerRulesetTemplate, props: Partial<OptionalGameProps>): ServerGame {
+	static newPublicInstance(ruleset: RulesetConstructor, props: Partial<OptionalGameProps>): ServerGame {
 		const game = new ServerGame({
 			...props,
 			ruleset,
@@ -643,7 +637,7 @@ export default class ServerGame implements SourceGame {
 		return game
 	}
 
-	static newOwnedInstance(owner: ServerPlayer, ruleset: ServerRulesetTemplate, props: Partial<OptionalGameProps>): ServerGame {
+	static newOwnedInstance(owner: ServerPlayer, ruleset: RulesetConstructor, props: Partial<OptionalGameProps>): ServerGame {
 		const game = new ServerGame({
 			...props,
 			owner,

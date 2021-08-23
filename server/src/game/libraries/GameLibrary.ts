@@ -2,9 +2,9 @@ import ServerGame, { OptionalGameProps } from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import { colorizeConsoleText, colorizeId, colorizePlayer } from '@src/utils/Utils'
-import { ServerRulesetTemplate } from '../models/rulesets/ServerRuleset'
 import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
 import RulesetCategory from '@shared/enums/RulesetCategory'
+import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 
 class GameLibrary {
 	games: ServerGame[]
@@ -13,9 +13,10 @@ class GameLibrary {
 		this.games = []
 	}
 
-	public createGame(owner: ServerPlayer, ruleset: ServerRulesetTemplate, props: Partial<OptionalGameProps> = {}): ServerGame {
+	public createGame(owner: ServerPlayer, ruleset: RulesetConstructor, props: Partial<OptionalGameProps> = {}): ServerGame {
 		let game: ServerGame
-		if (ruleset.category === RulesetCategory.LABYRINTH) {
+		const rulesetTemplate = RulesetLibrary.findTemplate(ruleset)
+		if (rulesetTemplate.category === RulesetCategory.LABYRINTH) {
 			game = ServerGame.newOwnedInstance(owner, ruleset, props)
 			console.info(`Player ${colorizePlayer(owner.username)} created owned game ${colorizeId(game.id)}`)
 		} else {

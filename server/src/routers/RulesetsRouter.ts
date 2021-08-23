@@ -9,7 +9,7 @@ router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req: Request, res: Response) => {
 	const rulesets = RulesetLibrary.rulesets
-	const rulesetMessages = rulesets.map((ruleset) => new RulesetRefMessage(ruleset.__build()))
+	const rulesetMessages = rulesets.map((ruleset) => new RulesetRefMessage(ruleset))
 
 	res.json(rulesetMessages)
 })

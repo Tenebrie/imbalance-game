@@ -4,13 +4,11 @@ import AccessLevel from '@shared/enums/AccessLevel'
 import CardLibrary, { CardConstructor } from '../game/libraries/CardLibrary'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import ServerCard from '../game/models/ServerCard'
-import GameMode from '@shared/enums/GameMode'
 import ServerOwnedCard from '../game/models/ServerOwnedCard'
 import TestingLeader from '../game/cards/11-testing/TestingLeader'
 import { playerAction, startNextRound, startNextTurn } from './TestGameUtils'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
-import RulesetCategory from '@shared/enums/RulesetCategory'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
+import TestingRulesetPVP from '@src/game/rulesets/testing/TestingRulesetPVP'
 
 const consoleInfo = console.info
 const consoleWarn = console.warn
@@ -62,8 +60,7 @@ export default {
 	emptyDecks(): ServerGame {
 		silenceLogging()
 
-		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVP, category: RulesetCategory.PVE }).__build()
-		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
+		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false })
 		const { playerOne, playerTwo } = getPlayers()
 		CardLibrary.forceLoadCards([TestingLeader])
 		const template = ServerEditorDeck.fromConstructors([TestingLeader])
@@ -82,8 +79,7 @@ export default {
 
 	normalGameFlow(props?: Partial<OptionalGameProps>): CommonTemplateResult {
 		silenceLogging()
-		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVP, category: RulesetCategory.PVE }).__build()
-		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false, ...props })
+		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false, ...props })
 		const { playerOne, playerTwo } = getPlayers()
 		CardLibrary.forceLoadCards([TestingLeader])
 		const template = ServerEditorDeck.fromConstructors([TestingLeader])
@@ -110,8 +106,7 @@ export default {
 
 	singleCardTest(card: CardConstructor): SingleCardTestGameTemplateResult {
 		silenceLogging()
-		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVP, category: RulesetCategory.PVE }).__build()
-		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
+		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false })
 		const { playerOne, playerTwo } = getPlayers()
 		CardLibrary.forceLoadCards([TestingLeader, card])
 		const template = ServerEditorDeck.fromConstructors([TestingLeader])
@@ -150,8 +145,7 @@ export default {
 
 	opponentCardTest(playersCard: CardConstructor, opponentsCard: CardConstructor): OpponentCardTestGameTemplateResult {
 		silenceLogging()
-		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVP, category: RulesetCategory.PVE }).__build()
-		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
+		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false })
 		const { playerOne, playerTwo } = getPlayers()
 		CardLibrary.forceLoadCards([TestingLeader])
 		const template = ServerEditorDeck.fromConstructors([TestingLeader])
@@ -197,8 +191,7 @@ export default {
 
 	leaderTest(playerLeader: CardConstructor, opponentLeader: CardConstructor, props?: OptionalGameProps): CommonTemplateResult {
 		silenceLogging()
-		const ruleset = new ServerRulesetBuilder({ gameMode: GameMode.PVP, category: RulesetCategory.PVE }).__build()
-		const game = new ServerGame({ ruleset, playerMoveOrderReversed: false, ...props })
+		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false, ...props })
 		const { playerOne, playerTwo } = getPlayers()
 		CardLibrary.forceLoadCards([playerLeader, opponentLeader])
 		const playerTemplate = ServerEditorDeck.fromConstructors([playerLeader])

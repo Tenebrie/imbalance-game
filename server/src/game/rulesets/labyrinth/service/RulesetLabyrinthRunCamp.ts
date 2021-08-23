@@ -1,6 +1,5 @@
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import LeaderLabyrinthPlayer from '@src/game/cards/12-labyrinth/LeaderLabyrinthPlayer'
 import LeaderLabyrinthOpponent from '@src/game/cards/12-labyrinth/LeaderLabyrinthOpponent'
@@ -13,40 +12,36 @@ import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
 import { getReward } from '@src/game/rulesets/labyrinth/service/LabyrinthRewards'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
+import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 
-export default class RulesetLabyrinthRunCamp extends ServerRulesetBuilder<never> {
-	constructor() {
-		super({
+export default class RulesetLabyrinthRunCamp extends ServerRuleset {
+	constructor(game: ServerGame) {
+		super(game, {
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.LABYRINTH,
-		})
-
-		this.updateConstants({
-			SKIP_MULLIGAN: true,
-			FIRST_GROUP_MOVES_FIRST: true,
-			ROUND_WINS_REQUIRED: 1,
+			constants: {
+				SKIP_MULLIGAN: true,
+				FIRST_GROUP_MOVES_FIRST: true,
+				ROUND_WINS_REQUIRED: 1,
+			},
 		})
 
 		this.createChain()
 			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
 			.setFixedLink(RulesetLabyrinthDummies)
 
-		/**
-		 * Player count handling
-		 */
 		const [getPlayersExpected, setPlayersExpected] = this.useState(1)
 
-		this.onLifecycle(RulesetLifecycleHook.PROGRESSION_LOADED, (game: ServerGame) => {
-			setPlayersExpected(game, game.progression.labyrinth.state.run.playersExpected)
+		this.onLifecycle(RulesetLifecycleHook.PROGRESSION_LOADED, () => {
+			setPlayersExpected(game.progression.labyrinth.state.run.playersExpected)
 		})
 
 		this.createSlots()
 			.addGroup([
 				{ type: 'player', deck: [LeaderLabyrinthPlayer] },
-				{ type: 'player', deck: [LeaderLabyrinthPlayer], require: (game) => getPlayersExpected(game) > 1 },
+				{ type: 'player', deck: [LeaderLabyrinthPlayer], require: () => getPlayersExpected() > 1 },
 			])
 			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.PASSIVE })
-		// End of player count
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthNextEncounter)

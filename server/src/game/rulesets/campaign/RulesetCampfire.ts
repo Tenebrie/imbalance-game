@@ -1,6 +1,5 @@
 import GameMode from '@src/../../shared/src/enums/GameMode'
 import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 import UnitChallengeDummyOPWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyOPWarrior'
 import AIBehaviour from '@src/../../shared/src/enums/AIBehaviour'
 import LeaderCampfireTheMother from '@src/game/cards/10-challenge/test-campfire/LeaderCampfireTheMother'
@@ -18,28 +17,19 @@ import GameEventType from '@src/../../shared/src/enums/GameEventType'
 import Keywords from '@src/utils/Keywords'
 import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
 import ServerGame from '@src/game/models/ServerGame'
-import CustomDeckRules from '@shared/enums/CustomDeckRules'
-import LeaderChallengeDummy from '@src/game/cards/10-challenge/ai-00-dummy/LeaderChallengeDummy'
-import HeroChallengeDummyWarrior0 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
-import HeroChallengeDummyWarrior1 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
-import HeroChallengeDummyWarrior2 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior2'
-import HeroChallengeDummyWarrior3 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior3'
-import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
-import Constants from '@shared/Constants'
-import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
+import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 
-export default class RulesetCampfire extends ServerRulesetBuilder<void> {
-	constructor() {
-		super({
+export default class RulesetCampfire extends ServerRuleset {
+	constructor(game: ServerGame) {
+		super(game, {
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.PROTOTYPES,
-		})
-
-		this.updateConstants({
-			SKIP_MULLIGAN: true,
-			FIRST_GROUP_MOVES_FIRST: true,
-			UNIT_HAND_SIZE_STARTING: 25,
-			GAME_BOARD_ROW_SPLIT_MODE: BoardSplitMode.ALL_FOR_PLAYER,
+			constants: {
+				SKIP_MULLIGAN: true,
+				FIRST_GROUP_MOVES_FIRST: true,
+				UNIT_HAND_SIZE_STARTING: 25,
+				GAME_BOARD_ROW_SPLIT_MODE: BoardSplitMode.ALL_FOR_PLAYER,
+			},
 		})
 
 		this.createSlots()

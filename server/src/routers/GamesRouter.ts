@@ -1,12 +1,11 @@
 import express, { Request, Response } from 'express'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import ServerGame from '../game/models/ServerGame'
-import ServerBotPlayer from '../game/AI/ServerBotPlayer'
 import GameLibrary from '../game/libraries/GameLibrary'
 import GameMessage from '@shared/models/network/GameMessage'
 import { getPlayerFromAuthenticatedRequest } from '../utils/Utils'
-import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
-import { ServerRulesetTemplate } from '@src/game/models/rulesets/ServerRuleset'
+import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 
 const router = express.Router()
 
@@ -52,13 +51,13 @@ router.post('/', (req: Request, res: Response) => {
 		game.finish(playerInGame?.opponent || null, 'Player surrendered (Started new game)')
 	})
 
-	let ruleset: ServerRulesetTemplate
+	let ruleset: ServerRuleset
 	try {
 		ruleset = RulesetLibrary.findTemplateByClass(rulesetClass)
 	} catch (err) {
 		throw { status: 400, error: 'Invalid ruleset class' }
 	}
-	const game = GameLibrary.createGame(player, ruleset)
+	const game = GameLibrary.createGame(player, ruleset.constructor as RulesetConstructor)
 
 	res.json({ data: new GameMessage(game) })
 })

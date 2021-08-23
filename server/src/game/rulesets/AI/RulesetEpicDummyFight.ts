@@ -10,22 +10,22 @@ import HeroChallengeDummyWarrior3 from '@src/game/cards/10-challenge/ai-00-dummy
 import LeaderChallengeDummy from '@src/game/cards/10-challenge/ai-00-dummy/LeaderChallengeDummy'
 import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
 import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
-import { ServerRulesetBuilder } from '@src/game/models/rulesets/ServerRulesetBuilder'
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
 import AIBehaviour from '@shared/enums/AIBehaviour'
+import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
+import ServerGame from '@src/game/models/ServerGame'
 
-export default class RulesetEpicDummyFight extends ServerRulesetBuilder<void> {
-	constructor() {
-		super({
+export default class RulesetEpicDummyFight extends ServerRuleset {
+	constructor(game: ServerGame) {
+		super(game, {
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.PVE,
 			sortPriority: 1,
-		})
-
-		this.updateConstants({
-			GAME_BOARD_ROW_COUNT: 8,
-			UNIT_HAND_SIZE_STARTING: 35,
-			ROUND_WINS_REQUIRED: 1,
+			constants: {
+				GAME_BOARD_ROW_COUNT: 8,
+				UNIT_HAND_SIZE_STARTING: 35,
+				ROUND_WINS_REQUIRED: 1,
+			},
 		})
 
 		this.createSlots()
