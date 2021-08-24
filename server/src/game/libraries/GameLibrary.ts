@@ -5,6 +5,7 @@ import { colorizeConsoleText, colorizeId, colorizePlayer } from '@src/utils/Util
 import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { Time } from '@shared/Utils'
 
 class GameLibrary {
 	games: ServerGame[]
@@ -25,12 +26,14 @@ class GameLibrary {
 		}
 
 		this.games.push(game)
+		this.startGameTimeoutTimer(game)
 		return game
 	}
 
 	public createChainGame(fromGame: ServerGame, chain: RulesetChain): ServerGame {
 		const newGame = ServerGame.newOwnedInstance(fromGame.owner!, chain.get(fromGame), {})
 		this.games.push(newGame)
+		this.startGameTimeoutTimer(newGame)
 
 		return newGame
 	}
@@ -69,6 +72,26 @@ class GameLibrary {
 		}
 
 		this.destroyGame(game, reason)
+	}
+
+	private static MAXIMUM_GAME_DURATION = Time.minutes.toMilliseconds(60)
+	private startGameTimeoutTimer(game: ServerGame): void {
+		if (process.env.JEST_WORKER_ID !== undefined) {
+			return
+		}
+		setTimeout(() => {
+			this.destroyGame(game, `Game duration exceeded ${Time.milliseconds.toMinutes(GameLibrary.MAXIMUM_GAME_DURATION)} minutes.`)
+		}, GameLibrary.MAXIMUM_GAME_DURATION)
+	}
+
+	private static GAME_CLEANUP_DELAY = Time.minutes.toMilliseconds(5)
+	public startGameCleanupTimer(game: ServerGame): void {
+		if (process.env.JEST_WORKER_ID !== undefined) {
+			return
+		}
+		setTimeout(() => {
+			this.destroyGame(game, 'Cleanup')
+		}, GameLibrary.GAME_CLEANUP_DELAY)
 	}
 }
 

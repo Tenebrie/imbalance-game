@@ -6,6 +6,19 @@ import CardColor from './enums/CardColor'
 import Constants from './Constants'
 import CardFaction from './enums/CardFaction'
 
+export const Time = {
+	minutes: {
+		toMilliseconds: (minutes: number): number => {
+			return minutes * 60000
+		},
+	},
+	milliseconds: {
+		toMinutes: (milliseconds: number): number => {
+			return milliseconds / 60000
+		},
+	},
+}
+
 export const cardTypeToString = (type: CardType): string => {
 	switch (type) {
 		case CardType.UNIT:

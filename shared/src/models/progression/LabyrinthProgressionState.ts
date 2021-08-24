@@ -27,6 +27,8 @@ export type LabyrinthProgressionRunState = {
 
 export type LabyrinthProgressionMetaState = {
 	runCount: number
+	gatekeeperEncounters: number
+	lastGatekeeperOutcome: 'win' | 'lose' | 'kill' | 'none'
 }
 
 export type LabyrinthProgressionState = {

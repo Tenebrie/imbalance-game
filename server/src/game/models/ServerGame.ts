@@ -73,12 +73,10 @@ export default class ServerGame implements SourceGame {
 		this.name = props.name || ServerGame.generateName(props.owner)
 		this.owner = props.owner
 		this.players = []
-		this.ruleset = new props.ruleset(this)
 		this.turnIndex = -1
 		this.roundIndex = -1
 		this.turnPhase = GameTurnPhase.BEFORE_GAME
 		this.index = new ServerGameIndex(this)
-		this.board = new ServerBoard(this)
 		this.novel = new ServerGameNovel(this)
 		this.events = new ServerGameEvents(this)
 		this.timers = new ServerGameTimers(this)
@@ -87,10 +85,14 @@ export default class ServerGame implements SourceGame {
 		this.animation = new ServerGameAnimation(this)
 		this.cardPlay = new ServerGameCardPlay(this)
 		this.progression = new ServerGameProgression(this)
+
+		this.ruleset = new props.ruleset(this)
 		this.ruleset.slots.groups.forEach((groupDefinition) => {
 			const group = new ServerPlayerGroup(this, groupDefinition)
 			this.players.push(group)
 		})
+
+		this.board = new ServerBoard(this)
 
 		if (props.playerMoveOrderReversed !== undefined) {
 			this.playerMoveOrderReversed = props.playerMoveOrderReversed
@@ -554,11 +556,7 @@ export default class ServerGame implements SourceGame {
 			})
 		})
 
-		if (process.env.JEST_WORKER_ID === undefined) {
-			setTimeout(() => {
-				this.forceShutdown('Cleanup')
-			}, 300000)
-		}
+		GameLibrary.startGameCleanupTimer(this)
 
 		const validChain = this.ruleset.chains.find((chain) =>
 			chain.isValid({
@@ -566,27 +564,26 @@ export default class ServerGame implements SourceGame {
 				victoriousPlayer,
 			})
 		)
-		if (validChain && this.getHumanGroup()) {
-			const linkedGame = GameLibrary.createChainGame(this, validChain)
-			this.allPlayers.forEach((playerInGame) => {
-				OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, chainImmediately)
-			})
 
-			if (chainImmediately) {
-				this.animation.play(ServerAnimation.switchingGames())
+		this.progression.saveStates().then(() => {
+			if (validChain && this.getHumanGroup()) {
+				const linkedGame = GameLibrary.createChainGame(this, validChain)
 				this.allPlayers.forEach((playerInGame) => {
-					OutgoingMessageHandlers.commandJoinLinkedGame(playerInGame.player)
+					OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, chainImmediately)
 				})
+
+				if (chainImmediately) {
+					this.animation.play(ServerAnimation.switchingGames())
+					this.allPlayers.forEach((playerInGame) => {
+						OutgoingMessageHandlers.commandJoinLinkedGame(playerInGame.player)
+					})
+				}
 			}
-		}
+		})
 	}
 
 	public get isFinished(): boolean {
 		return this.turnPhase === GameTurnPhase.AFTER_GAME
-	}
-
-	public forceShutdown(reason: string): void {
-		GameLibrary.destroyGame(this, reason)
 	}
 
 	public findCardById(cardId: string): ServerCard | null {
@@ -643,9 +640,9 @@ export default class ServerGame implements SourceGame {
 			owner,
 			ruleset,
 		})
-		game.initializeAIPlayers()
 		game.progression.loadStates().then(() => {
 			game.ruleset.lifecycleCallback(RulesetLifecycleHook.PROGRESSION_LOADED, game)
+			game.initializeAIPlayers()
 		})
 		return game
 	}

@@ -4,7 +4,6 @@ import AIBehaviour from '@shared/enums/AIBehaviour'
 import LeaderLabyrinthPlayer from '@src/game/cards/12-labyrinth/LeaderLabyrinthPlayer'
 import LeaderLabyrinthOpponent from '@src/game/cards/12-labyrinth/LeaderLabyrinthOpponent'
 import SpellLabyrinthNextEncounter from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthNextEncounter'
-import RulesetLabyrinthDummies from '@src/game/rulesets/labyrinth/RulesetLabyrinthDummies'
 import GameEventType from '@shared/enums/GameEventType'
 import Keywords from '@src/utils/Keywords'
 import ServerGame from '@src/game/models/ServerGame'
@@ -13,6 +12,7 @@ import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook
 import { getReward } from '@src/game/rulesets/labyrinth/service/LabyrinthRewards'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
+import RulesetFeature from '@shared/enums/RulesetFeature'
 
 export default class RulesetLabyrinthRunCamp extends ServerRuleset {
 	constructor(game: ServerGame) {
@@ -28,7 +28,7 @@ export default class RulesetLabyrinthRunCamp extends ServerRuleset {
 
 		this.createChain()
 			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
-			.setFixedLink(RulesetLabyrinthDummies)
+			.setFeatureLink(RulesetFeature.LABYRINTH_ENCOUNTER)
 
 		const [getPlayersExpected, setPlayersExpected] = this.useState(1)
 

@@ -25,16 +25,16 @@ class InternalRulesetLibrary {
 
 		this.forceLoadRulesets(prototypes)
 
-		console.info(`Loaded ${colorize(prototypes.length, AsciiColor.CYAN)} ruleset definitions`)
+		console.info(`Loaded ${colorize(this.rulesets.length, AsciiColor.CYAN)} ruleset definitions`)
 		if (prototypes.length === 0) {
 			return
 		}
 	}
 
 	public forceLoadRulesets(rulesets: RulesetConstructor[]): void {
-		const newRulesets = rulesets.filter(
-			(card) => !this.rulesets.some((existingRuleset) => existingRuleset.class === this.getClassFromConstructor(card))
-		)
+		const newRulesets = rulesets
+			.filter((ruleset) => !this.rulesets.some((existingRuleset) => existingRuleset.class === this.getClassFromConstructor(ruleset)))
+			.filter((ruleset) => !getClassFromConstructor(ruleset).startsWith('base') && !getClassFromConstructor(ruleset).startsWith('testing'))
 		this.rulesets = this.rulesets.concat(newRulesets.map((prototype) => new prototype(CardLibraryPlaceholderGame.get())))
 	}
 

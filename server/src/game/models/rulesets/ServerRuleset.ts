@@ -43,21 +43,24 @@ import {
 	UnitOrderedCardEventArgs,
 	UnitOrderedRowEventArgs,
 } from '@src/game/models/events/GameEventCreators'
+import RulesetFeature from '@shared/enums/RulesetFeature'
 
 export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; count: number })[]
 
 export type ServerRulesetProps = {
 	gameMode: GameMode
 	category: RulesetCategory
+	features?: RulesetFeature[]
 	sortPriority?: number
 	constants?: Partial<RulesetConstants>
 }
 
-export class ServerRuleset implements Ruleset {
+export abstract class ServerRuleset implements Ruleset {
 	public readonly game: ServerGame
 	public readonly class: string
 	public readonly gameMode: GameMode
 	public readonly category: RulesetCategory
+	public readonly features: RulesetFeature[]
 	public readonly sortPriority: number
 
 	public state: Record<string, any> = {}
@@ -69,11 +72,12 @@ export class ServerRuleset implements Ruleset {
 
 	private readonly lifecycleCallbacks: Map<RulesetLifecycleHook, RulesetLifecycleCallback[]>
 
-	constructor(game: ServerGame, props: ServerRulesetProps) {
+	protected constructor(game: ServerGame, props: ServerRulesetProps) {
 		this.game = game
 		this.class = getClassFromConstructor(this.constructor as RulesetConstructor)
 		this.gameMode = props.gameMode
 		this.category = props.category
+		this.features = props.features || []
 		this.sortPriority = props.sortPriority || 0
 
 		this.constants = {
@@ -115,6 +119,10 @@ export class ServerRuleset implements Ruleset {
 
 	public get chains(): RulesetChain[] {
 		return this.chainBuilders.map((chainBuilder) => chainBuilder.__build())
+	}
+
+	public isValidChainFrom(game: ServerGame): boolean {
+		return true
 	}
 
 	public lifecycleCallback(hook: RulesetLifecycleHook, game: ServerGame): void {

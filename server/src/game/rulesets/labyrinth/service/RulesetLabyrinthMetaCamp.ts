@@ -4,7 +4,6 @@ import AIBehaviour from '@shared/enums/AIBehaviour'
 import LeaderLabyrinthPlayer from '@src/game/cards/12-labyrinth/LeaderLabyrinthPlayer'
 import LeaderLabyrinthOpponent from '@src/game/cards/12-labyrinth/LeaderLabyrinthOpponent'
 import SpellLabyrinthStartRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthStartRun'
-import RulesetLabyrinthDummies from '@src/game/rulesets/labyrinth/RulesetLabyrinthDummies'
 import GameEventType from '@shared/enums/GameEventType'
 import Keywords from '@src/utils/Keywords'
 import SpellLabyrinthContinueRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthContinueRun'
@@ -15,10 +14,9 @@ import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
 import SpellLabyrinthStartCoopRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthStartCoopRun'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import RulesetFeature from '@shared/enums/RulesetFeature'
 
 export default class RulesetLabyrinthMetaCamp extends ServerRuleset {
-	nextEncounter: RulesetConstructor | null = null
-
 	constructor(game: ServerGame) {
 		super(game, {
 			gameMode: GameMode.PVE,
@@ -29,15 +27,24 @@ export default class RulesetLabyrinthMetaCamp extends ServerRuleset {
 			},
 		})
 
+		const getNextEncounter = (): RulesetConstructor | RulesetFeature[] => {
+			const state = game.progression.labyrinth.state
+			if (state.meta.runCount === 0) {
+				return [RulesetFeature.LABYRINTH_ENCOUNTER]
+			} else {
+				return RulesetLabyrinthRunCamp
+			}
+		}
+
 		this.createChain()
 			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
-			.setLinkGetter(() => this.nextEncounter!)
+			.setLinkGetter(getNextEncounter)
 
 		this.createSlots()
 			.addGroup({ type: 'player', deck: [LeaderLabyrinthPlayer, SpellLabyrinthStartRun, SpellLabyrinthStartCoopRun] })
 			.addGroup({ type: 'ai', deck: [LeaderLabyrinthOpponent], behaviour: AIBehaviour.PASSIVE })
 
-		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
+		this.createCallback(GameEventType.GAME_SETUP).perform(() => {
 			game.getHumanGroup().players.forEach((playerInGame) => {
 				if (game.progression.labyrinth.state.run.encounterHistory.length > 0) {
 					Keywords.addCardToHand.for(playerInGame).fromConstructor(SpellLabyrinthContinueRun)
@@ -66,11 +73,6 @@ export default class RulesetLabyrinthMetaCamp extends ServerRuleset {
 				game.progression.labyrinth.setExpectedPlayers(2)
 			}
 
-			if (game.progression.labyrinth.state.meta.runCount === 0) {
-				this.nextEncounter = RulesetLabyrinthDummies
-			} else {
-				this.nextEncounter = RulesetLabyrinthRunCamp
-			}
 			game.finish(game.getHumanGroup(), 'Starting new run', true)
 			OutgoingMessageHandlers.executeMessageQueue(game)
 		}
@@ -78,7 +80,6 @@ export default class RulesetLabyrinthMetaCamp extends ServerRuleset {
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthContinueRun)
 			.perform(({ game }) => {
-				this.nextEncounter = RulesetLabyrinthRunCamp
 				game.finish(game.getHumanGroup(), 'Continuing existing run', true)
 			})
 	}

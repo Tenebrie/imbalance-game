@@ -132,7 +132,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 					OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
 				})
 			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Player action)', null)
-			currentGame.forceShutdown('Unhandled error (Player action)')
+			GameLibrary.destroyGame(currentGame, 'Unhandled error (Player action)')
 		}
 		EventContext.clear()
 	})
@@ -198,7 +198,7 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 					OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
 				})
 			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Spectator action)', null)
-			currentGame.forceShutdown('Unhandled error (Spectator action)')
+			GameLibrary.destroyGame(currentGame, 'Unhandled error (Spectator action)')
 		}
 	})
 

@@ -12,7 +12,7 @@ import CardLibrary from '@src/game/libraries/CardLibrary'
 import CardFeature from '@shared/enums/CardFeature'
 import HiddenPlayerMessage from '@shared/models/network/player/HiddenPlayerMessage'
 
-const CURRENT_VERSION = 3
+const CURRENT_VERSION = 5
 
 class LabyrinthProgression {
 	game: ServerGame
@@ -45,10 +45,13 @@ class LabyrinthProgression {
 		const entry = await PlayerDatabase.selectPlayerLabyrinthProgression(player.id)
 		if (!entry || entry.data.version !== CURRENT_VERSION) {
 			this.internalState = this.createDefaultState()
-			await this.save()
 			return
 		}
 		this.internalState = entry.data
+	}
+
+	public async saveState(): Promise<boolean> {
+		return PlayerDatabase.updatePlayerLabyrinthProgression(this.player.id, this.state)
 	}
 
 	public async resetRunState(): Promise<void> {
@@ -56,7 +59,6 @@ class LabyrinthProgression {
 			...this.state,
 			run: this.getDefaultRunState(),
 		}
-		await this.save()
 	}
 
 	private createDefaultState(): LabyrinthProgressionState {
@@ -66,6 +68,8 @@ class LabyrinthProgression {
 			lastRun: null,
 			meta: {
 				runCount: 0,
+				gatekeeperEncounters: 0,
+				lastGatekeeperOutcome: 'none',
 			},
 		}
 	}
@@ -120,13 +124,11 @@ class LabyrinthProgression {
 
 	public setExpectedPlayers(playerCount: number): void {
 		this.state.run.playersExpected = playerCount
-		this.saveInBackground()
 	}
 
 	public addPlayer(player: ServerPlayer): void {
 		this.state.run.players.push(new HiddenPlayerMessage(player))
 		this.state.run.playerStates[player.id] = this.getDefaultPlayerState()
-		this.saveInBackground()
 	}
 
 	public addCardToDeck(player: ServerPlayer, card: string, count: number): void {
@@ -134,7 +136,6 @@ class LabyrinthProgression {
 			class: card,
 			count,
 		})
-		this.saveInBackground()
 	}
 
 	public addItemToDeck(player: ServerPlayer, cardClass: string): void {
@@ -151,32 +152,22 @@ class LabyrinthProgression {
 		this.state.run.playerStates[player.id].items.push({
 			cardClass: cardClass,
 		})
-		this.saveInBackground()
 	}
 
-	public addEncounterToHistory(encounterClass: string): Promise<boolean> {
+	public addEncounterToHistory(encounterClass: string): void {
 		this.state.run.encounterHistory.push({
 			class: encounterClass,
 		})
-		console.log(`Pushing new encounter. New length: ${this.state.run.encounterHistory.length}`)
-		return this.save()
 	}
 
-	public failRun(): Promise<boolean> {
+	public addGatekeeperEvent(outcome: string): void {
+		this.state.meta.gatekeeperEncounters
+	}
+
+	public failRun(): void {
 		this.state.meta.runCount += 1
 		this.state.lastRun = this.state.run
 		this.state.run = this.getDefaultRunState()
-		return this.save()
-	}
-
-	private save(): Promise<boolean> {
-		console.log('Saving', this.state)
-		console.log('', new Error())
-		return PlayerDatabase.updatePlayerLabyrinthProgression(this.player.id, this.state)
-	}
-
-	private saveInBackground(): void {
-		this.save().then()
 	}
 }
 
@@ -192,6 +183,12 @@ export default class ServerGameProgression {
 	public async loadStates(): Promise<void> {
 		if (this.game.ruleset.category === RulesetCategory.LABYRINTH) {
 			await this.labyrinth.loadState()
+		}
+	}
+
+	public async saveStates(): Promise<void> {
+		if (this.game.ruleset.category === RulesetCategory.LABYRINTH) {
+			await this.labyrinth.saveState()
 		}
 	}
 }

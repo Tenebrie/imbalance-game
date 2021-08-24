@@ -1,4 +1,4 @@
-import RulesetLabyrinthBase from '@src/game/rulesets/labyrinth/service/RulesetLabyrinthBase'
+import BaseRulesetLabyrinthEncounter from '@src/game/rulesets/labyrinth/service/BaseRulesetLabyrinthEncounter'
 import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
 import GameEventType from '@shared/enums/GameEventType'
 import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
@@ -8,8 +8,9 @@ import HeroChallengeDummyWarrior3 from '@src/game/cards/10-challenge/ai-00-dummy
 import HeroChallengeDummyWarrior2 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior2'
 import UnitChallengeDummyOPWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyOPWarrior'
 import ServerGame from '@src/game/models/ServerGame'
+import { LabyrinthProgressionRunState } from '@shared/models/progression/LabyrinthProgressionState'
 
-export default class RulesetLabyrinthDummies extends RulesetLabyrinthBase {
+export default class RulesetLabyrinthDummies extends BaseRulesetLabyrinthEncounter {
 	constructor(game: ServerGame) {
 		super(game, {
 			constants: {
@@ -18,9 +19,9 @@ export default class RulesetLabyrinthDummies extends RulesetLabyrinthBase {
 		})
 
 		this.createBoard().bot([
-			// [UnitChallengeDummyVanillaWarrior],
-			// [UnitChallengeDummyVanillaWarrior],
-			// [UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior],
+			[UnitChallengeDummyVanillaWarrior],
+			[UnitChallengeDummyVanillaWarrior],
+			[UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior, UnitChallengeDummyVanillaWarrior],
 		])
 
 		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
@@ -60,5 +61,9 @@ export default class RulesetLabyrinthDummies extends RulesetLabyrinthBase {
 				botRows[0].createUnit(new UnitChallengeDummyOPWarrior(game), bot, 2)
 			}
 		})
+	}
+
+	isValidEncounter(state: LabyrinthProgressionRunState): boolean {
+		return state.encounterHistory.length > 0
 	}
 }

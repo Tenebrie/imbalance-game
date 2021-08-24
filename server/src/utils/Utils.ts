@@ -319,3 +319,7 @@ export function shuffle<T>(inputArray: T[]): T[] {
 
 	return array
 }
+
+export const getRandomArrayValue = <T>(array: T[]): T => {
+	return array[Math.floor(Math.random() * array.length)]
+}

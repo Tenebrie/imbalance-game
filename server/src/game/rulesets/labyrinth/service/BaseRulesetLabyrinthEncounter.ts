@@ -11,20 +11,23 @@ import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook
 import ServerGame from '@src/game/models/ServerGame'
 import GameHookType from '@src/game/models/events/GameHookType'
 import { ServerRuleset, ServerRulesetProps } from '@src/game/models/rulesets/ServerRuleset'
+import { LabyrinthProgressionMetaState, LabyrinthProgressionRunState } from '@shared/models/progression/LabyrinthProgressionState'
+import RulesetFeature from '@shared/enums/RulesetFeature'
 
-export default class RulesetLabyrinthBase extends ServerRuleset {
+export default abstract class BaseRulesetLabyrinthEncounter extends ServerRuleset {
 	playersExpected = 1
 
-	constructor(game: ServerGame, props?: Partial<ServerRulesetProps>) {
+	protected constructor(game: ServerGame, props?: Partial<ServerRulesetProps>) {
 		super(game, {
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.LABYRINTH,
+			features: [RulesetFeature.LABYRINTH_ENCOUNTER].concat(props?.features || []),
+			sortPriority: props?.sortPriority || 0,
 			constants: {
 				FIRST_GROUP_MOVES_FIRST: true,
 				UNIT_HAND_SIZE_STARTING: 0,
 				...props?.constants,
 			},
-			...(props ? props : {}),
 		})
 
 		this.createChain()
@@ -63,7 +66,6 @@ export default class RulesetLabyrinthBase extends ServerRuleset {
 				if (!playerState) {
 					throw new Error(`Player ${playerInGame.player.username} has no state available!`)
 				}
-				console.log(playerState.cards)
 				playerState.cards.forEach((card) => {
 					for (let i = 0; i < card.count; i++) {
 						playerInGame.cardDeck.addUnitToBottom(CardLibrary.instantiateFromClass(game, card.class))
@@ -75,33 +77,21 @@ export default class RulesetLabyrinthBase extends ServerRuleset {
 			})
 		})
 
-		const [getSavingState, setSavingState] = this.useState<'not_saved' | 'saving' | 'saved'>('not_saved')
-
-		this.createHook(GameHookType.GAME_FINISHED).replace((editableValues, fixedValues) => {
-			const { game, victoriousPlayer, victoryReason, chainImmediately } = fixedValues
-			const savingState = getSavingState()
-			if (savingState === 'saving' || savingState === 'saved') {
-				return {
-					...editableValues,
-					finishPrevented: savingState === 'saving',
-				}
-			}
-
-			setSavingState('saving')
-
-			const onSave = () => {
-				setSavingState('saved')
-				game.finish(victoriousPlayer, victoryReason, chainImmediately)
-			}
+		this.createCallback(GameEventType.GAME_FINISHED).perform((args) => {
+			const { game, victoriousPlayer } = args
 			if (victoriousPlayer === game.getHumanGroup()) {
-				game.progression.labyrinth.addEncounterToHistory(this.class).then(onSave)
+				game.progression.labyrinth.addEncounterToHistory(this.class)
 			} else {
-				game.progression.labyrinth.failRun().then(onSave)
-			}
-			return {
-				...editableValues,
-				finishPrevented: true,
+				game.progression.labyrinth.failRun()
 			}
 		})
 	}
+
+	public isValidChainFrom(game: ServerGame): boolean {
+		const state = game.progression.labyrinth.state.run
+		const meta = game.progression.labyrinth.state.meta
+		return this.isValidEncounter(state, meta)
+	}
+
+	public abstract isValidEncounter(state: LabyrinthProgressionRunState, meta: LabyrinthProgressionMetaState): boolean
 }

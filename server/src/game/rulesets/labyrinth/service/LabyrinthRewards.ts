@@ -28,7 +28,6 @@ const cardsInHand = (cards: (CardConstructor | { card: CardConstructor; count: n
 }
 
 export const getReward = (state: Props): ReturnValue => {
-	console.log(`Getting reward for ${state.run.encounterHistory.length} games`)
 	// Starting cards
 	if (state.meta.runCount > 0 && state.run.encounterHistory.length === 0) {
 		return cardsInHand([SpellLabyrinthRewardCard])

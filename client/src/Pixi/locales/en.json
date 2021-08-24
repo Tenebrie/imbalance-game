@@ -1067,33 +1067,6 @@
 	"card.spellLabyrinthRewardTreasureT4.title": "Action",
 	"card.spellLabyrinthRewardTreasureT4.description": "Claim an item reward.",
 
-	"card.itemLabyrinthRustedSword.name": "Rusted Sword",
-	"card.itemLabyrinthRustedSword.description": "Deal {damage} Damage to an enemy unit.",
-
-	"card.itemLabyrinthSteelSword.name": "Rusted Sword",
-	"card.itemLabyrinthSteelSword.description": "Deal {damage} Damage to an enemy unit.",
-
-	"card.itemLabyrinthObsidianSword.name": "Obsidian Sword",
-	"card.itemLabyrinthObsidianSword.description": "Deal {damage} Damage to an enemy unit.",
-
-	"card.itemLabyrinthDragonsteelSword.name": "Dragonsteel Sword",
-	"card.itemLabyrinthDragonsteelSword.description": "Deal {damage} Damage to an enemy unit.\nApply *Burning* to the target row.",
-
-	"card.itemLabyrinthPracticalClothes.name": "Practical Clothes",
-	"card.itemLabyrinthPracticalClothes.description": "*+*{bonusPower} Leader Power\n*+*{bonusRegen} Mana Regen",
-
-	"card.itemLabyrinthSimpleRobe.name": "Simple Robe",
-	"card.itemLabyrinthSimpleRobe.description": "*+*{bonusPower} Leader Power\n*+*{bonusRegen} Mana Regen",
-
-	"card.itemLabyrinthSimpleDress.name": "Simple Dress",
-	"card.itemLabyrinthSimpleDress.description": "*+*{bonusRegen} Mana Regen\nYour units have *+*{bonusUnitPower} Power.",
-
-	"card.itemLabyrinthCombatGloves.name": "Combat Gloves",
-	"card.itemLabyrinthCombatGloves.description": "*+*{bonusPower} Leader Power\n*+*{bonusHandSize} Hand Size",
-
-	"card.itemLabyrinthVelvetGloves.name": "Velvet Gloves",
-	"card.itemLabyrinthVelvetGloves.description": "*+*{bonusRegen} Mana Regen\n*+*{bonusHandSize} Hand Size",
-
 	"card.unitLabyrinthLostArcher.name": "Lost Archer",
 	"card.unitLabyrinthLostArcher.description": "*Deploy:*\nDeal {damage} Damage to an enemy unit.",
 
