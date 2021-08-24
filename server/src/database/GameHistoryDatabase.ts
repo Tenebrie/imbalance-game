@@ -11,13 +11,9 @@ export default {
 				array(
 					SELECT row_to_json(subplayers)
 					FROM (
-						SELECT id, username FROM players WHERE players.id = ANY(
-							array(
-								SELECT "playerId"
-								FROM player_in_game_history
-								WHERE player_in_game_history."gameId" = game_history.id
-							)
-						)
+						SELECT id, username, "groupId"
+						FROM player_in_game_history JOIN players players ON player_in_game_history."playerId" = players.id
+						WHERE player_in_game_history."gameId" = game_history.id
 					) AS subplayers
 				) AS players,
 				(
@@ -27,16 +23,18 @@ export default {
 					) as subplayers
 				) AS "errorCount",
 				(
-					SELECT row_to_json(subplayers)
-					FROM (
-						SELECT id, username FROM players WHERE players.id = ANY(
-							array(
-								SELECT "playerId"
-								FROM victorious_player_in_game_history
-								WHERE victorious_player_in_game_history."gameId" = game_history.id
+					SELECT array(
+						SELECT row_to_json(subplayers)
+						FROM (
+							SELECT id, username FROM players WHERE players.id = ANY(
+								array(
+									SELECT "playerId"
+									FROM victorious_player_in_game_history
+									WHERE victorious_player_in_game_history."gameId" = game_history.id
+								)
 							)
-						)
-					) AS subplayers
+						) AS subplayers
+					)
 				) AS "victoriousPlayer"
 			FROM game_history
 			WHERE id = $1;
@@ -55,13 +53,9 @@ export default {
 				array(
 					SELECT row_to_json(subplayers)
 					FROM (
-						SELECT id, username FROM players WHERE players.id = ANY(
-							array(
-								SELECT "playerId"
-								FROM player_in_game_history
-								WHERE player_in_game_history."gameId" = game_history.id
-							)
-						)
+						 SELECT "playerId"
+						 FROM player_in_game_history JOIN players players ON player_in_game_history."playerId" = players.id
+						 WHERE player_in_game_history."gameId" = game_history.id
 					) AS subplayers
 				) AS players,
 			    (
@@ -71,16 +65,18 @@ export default {
 					) as subplayers
 				) AS "errorCount",
 				(
-					SELECT row_to_json(subplayers)
-					FROM (
-						 SELECT id, username FROM players WHERE players.id = ANY(
-							 array(
-								 SELECT "playerId"
-								 FROM victorious_player_in_game_history
-								 WHERE victorious_player_in_game_history."gameId" = game_history.id
-							 )
-					    )
-					) AS subplayers
+					SELECT array(
+					    SELECT row_to_json(subplayers)
+						FROM (
+							 SELECT id, username FROM players WHERE players.id = ANY(
+								 array(
+									 SELECT "playerId"
+									 FROM victorious_player_in_game_history
+									 WHERE victorious_player_in_game_history."gameId" = game_history.id
+								 )
+							)
+						) AS subplayers
+					)
 				) AS "victoriousPlayer"
 			FROM game_history
 			ORDER BY "startedAt" DESC
@@ -90,16 +86,16 @@ export default {
 	},
 
 	async startGame(game: ServerGame): Promise<boolean> {
-		let query = `INSERT INTO game_history (id) VALUES($1);`
-		let success = await Database.insertRow(query, [game.id])
+		let query = `INSERT INTO game_history (id, "eventLog") VALUES($1, $2);`
+		let success = await Database.insertRow(query, [game.id, JSON.stringify([])])
 		if (!success) {
 			return false
 		}
 
 		const humanPlayers = game.allPlayers.filter((player) => player.isHuman)
 		for (const playerInGame of humanPlayers) {
-			query = `INSERT INTO player_in_game_history("gameId", "playerId") VALUES($1, $2)`
-			success = await Database.updateRows(query, [game.id, playerInGame.player.id])
+			query = `INSERT INTO player_in_game_history("gameId", "playerId", "groupId") VALUES($1, $2, $3)`
+			success = await Database.updateRows(query, [game.id, playerInGame.player.id, playerInGame.group.id])
 			if (!success) {
 				return false
 			}

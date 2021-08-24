@@ -120,6 +120,7 @@ export default defineComponent({
 			const gameId = router.currentRoute.value.params.gameId
 			const gameResponse = await axios.get(`/api/admin/games/${gameId}`)
 			game.value = gameResponse.data as GameHistoryDatabaseEntry
+			console.log(gameResponse.data)
 
 			if (game.value.errorCount > 0) {
 				const errorsResponse = await axios(`/api/admin/games/${gameId}/errors`)

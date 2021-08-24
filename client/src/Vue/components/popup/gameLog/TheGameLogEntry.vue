@@ -11,7 +11,8 @@ import Localization from '@/Pixi/Localization'
 import GameEventType from '@shared/enums/GameEventType'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import { defineComponent, PropType } from 'vue'
-import store from '@/Vue/store'
+import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
+import { getEntityName } from '@/utils/Utils'
 
 export default defineComponent({
 	props: {
@@ -36,7 +37,7 @@ export default defineComponent({
 	methods: {
 		getCustomSubtype(entry: EventLogEntryMessage): string {
 			if (entry.event === GameEventType.CARD_DRAWN) {
-				const card = Core.game.findCardById(entry.args.triggeringCard)
+				const card = Core.game.findCardById(entry.args.triggeringCard as string)
 				if (card && !Localization.getCardName(card)) {
 					return '.hidden'
 				}
@@ -54,7 +55,16 @@ export default defineComponent({
 				let variableValue = entityId || `{${variableName}}`
 
 				if (entityId) {
-					variableValue = this.getEntityName(entityId)
+					const players: GameHistoryPlayerDatabaseEntry[] = Core.allPlayers.map((playerInGame) => ({
+						id: playerInGame.player.id,
+						groupId: playerInGame.group.id,
+						username: playerInGame.player.username,
+					}))
+					if (typeof entityId === 'string') {
+						variableValue = getEntityName(entityId, players, 'game')
+					} else {
+						variableValue = entityId
+					}
 				}
 
 				const regexp = new RegExp('{' + variableName + '}', 'g')
@@ -74,33 +84,6 @@ export default defineComponent({
 				matches.push(value)
 			}
 			return matches
-		},
-
-		getEntityName(id: string): string {
-			const localizedString = Localization.get(id)
-			if (localizedString && localizedString !== id) {
-				return localizedString
-			}
-			// TODO: Figure out entity names
-			// if (Core.player.player.id === id) {
-			// 	return Core.player.player.username
-			// }
-			// if (Core.opponent && Core.opponent.player.id === id) {
-			// 	return Core.opponent.player.username
-			// }
-			const card = Core.game.findCardById(id)
-			if (card) {
-				return `${Localization.getCardName(card)}`
-			}
-			const cardInLibrary = store.state.editor.cardLibrary.find((card) => card.id === id)
-			if (cardInLibrary) {
-				return `${Localization.getCardName(cardInLibrary)}`
-			}
-			const buff = Core.game.findBuffById(id)
-			if (buff) {
-				return `${Localization.get(buff.name)}`
-			}
-			return id
 		},
 	},
 })

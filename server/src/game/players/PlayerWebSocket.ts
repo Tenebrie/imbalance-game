@@ -18,8 +18,8 @@ export default class PlayerWebSocket {
 		}
 
 		let data = JSON.stringify(json)
-		data = data.replace(/buff:[a-zA-Z_0-9]+:/g, 'buff:redacted:')
-		data = data.replace(/card:[a-zA-Z_0-9]+:/g, 'card:redacted:')
+		data = data.replace(/buff:[a-zA-Z_0-9]+:/g, 'buff::')
+		data = data.replace(/card:[a-zA-Z_0-9]+:/g, 'card::')
 		if (compressGameTraffic()) {
 			data = lzutf8.compress(JSON.stringify(json), {
 				outputEncoding: 'BinaryString',

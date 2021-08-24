@@ -9,6 +9,8 @@ import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pi
 import * as Particles from 'pixi-particles'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardFaction from '@shared/enums/CardFaction'
+import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
+import Localization from '@/Pixi/Localization'
 
 export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
 	return Core.board.isInverted && player === 'player' ? Core.constants.GAME_BOARD_ROW_COUNT - index - 1 : index
@@ -67,6 +69,45 @@ export const getAnimDurationMod = (): number => {
 		value = 1 / 3
 	}
 	return value
+}
+
+export const getEntityName = (id: string, players: GameHistoryPlayerDatabaseEntry[], mode: 'game' | 'admin'): string => {
+	if (id.startsWith('player:') && players.find((player) => player.id === id)) {
+		return `${players.find((player) => player.id === id)?.username}`
+	} else if (id.startsWith('player:')) {
+		return `Player#${id.substr(7, 8)}`
+	} else if (id.startsWith('group:') && players.find((player) => player.groupId === id)) {
+		const playersInGroup = players
+			.filter((player) => player.groupId === id)
+			.map((player) => player.username)
+			.join(', ')
+		return `[${playersInGroup}]`
+	} else if (id.startsWith('group:')) {
+		return `[AI Player]`
+	} else if (id.startsWith('ai:')) {
+		return `AI Player`
+	} else if (id.startsWith('card:') && mode === 'admin') {
+		return `${Localization.get(`card.${id.split(':')[1]}.name`)} [${id.split(':')[2].substr(0, 8)}]`
+	} else if (id.startsWith('buff:') && mode === 'admin') {
+		return `${Localization.get(`buff.${id.split(':')[1]}.name`)} [${id.split(':')[2].substr(0, 8)}]`
+	} else if (id.startsWith('card:') && mode === 'game') {
+		const card = Core.game.findCardById(id)
+		if (card) {
+			return `${Localization.getCardName(card)}`
+		}
+		const cardInLibrary = store.state.editor.cardLibrary.find((card) => card.id === id)
+		if (cardInLibrary) {
+			return `${Localization.getCardName(cardInLibrary)}`
+		}
+		return id
+	} else if (id.startsWith('buff:') && mode === 'game') {
+		const buff = Core.game.findBuffById(id)
+		if (buff) {
+			return `${Localization.get(buff.name)}`
+		}
+		return id
+	}
+	return id
 }
 
 const boopColors = [

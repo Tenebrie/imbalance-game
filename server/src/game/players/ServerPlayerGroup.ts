@@ -1,4 +1,3 @@
-import { v4 as getRandomId } from 'uuid'
 import ServerGame from '../models/ServerGame'
 import ServerCard from '../models/ServerCard'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
@@ -9,6 +8,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import ServerPlayerGroupSlots from '@src/game/players/ServerPlayerGroupSlots'
 import { ServerCardBuff, ServerRowBuff } from '@src/game/models/buffs/ServerBuff'
 import { ServerRulesetSlotGroup } from '@src/game/models/rulesets/ServerRulesetSlots'
+import { createHumanGroupId } from '@src/utils/Utils'
 
 export default class ServerPlayerGroup implements PlayerGroup {
 	id: string
@@ -20,7 +20,7 @@ export default class ServerPlayerGroup implements PlayerGroup {
 	roundEnded: boolean
 
 	constructor(game: ServerGame, slots: ServerRulesetSlotGroup) {
-		this.id = getRandomId()
+		this.id = createHumanGroupId()
 		this.game = game
 		this.slots = new ServerPlayerGroupSlots(this, slots)
 		this.players = []
@@ -55,6 +55,10 @@ export default class ServerPlayerGroup implements PlayerGroup {
 
 	public get isBot(): boolean {
 		return this.players.some((player) => player.isBot)
+	}
+
+	public get playerIDs(): string[] {
+		return this.players.map((playerInGame) => playerInGame.player.id)
 	}
 
 	public owns(card: ServerCard | ServerCardBuff | ServerRowBuff): boolean {

@@ -17,7 +17,6 @@ export default {
 	gameCreated: (args: GameSetupEventArgs): GameEvent => ({
 		type: GameEventType.GAME_CREATED,
 		args: args,
-		hiddenFromLogs: true,
 	}),
 	gameSetup: (args: GameSetupEventArgs): GameEvent => ({
 		type: GameEventType.GAME_SETUP,
@@ -33,7 +32,7 @@ export default {
 		type: GameEventType.GAME_STARTED,
 		args: args,
 		logVariables: {
-			player: args.group.id,
+			group: args.group.id,
 		},
 	}),
 
@@ -41,21 +40,19 @@ export default {
 		type: GameEventType.ROUND_STARTED,
 		args: args,
 		logVariables: {
-			player: args.group.id,
+			group: args.group.id,
 		},
 	}),
 	postRoundStarted: (args: RoundStartedEventArgs): GameEvent => ({
 		type: GameEventType.POST_ROUND_STARTED,
 		args: args,
-		logVariables: {
-			player: args.group.id,
-		},
+		hiddenFromLogs: true,
 	}),
 	turnStarted: (args: TurnStartedEventArgs): GameEvent => ({
 		type: GameEventType.TURN_STARTED,
 		args: args,
 		logVariables: {
-			player: args.group.id,
+			group: args.group.id,
 		},
 	}),
 
@@ -93,6 +90,7 @@ export default {
 		logVariables: {
 			triggeringCard: args.triggeringCard.id,
 		},
+		hiddenFromLogs: true,
 	}),
 	cardResolved: (args: CardResolvedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_RESOLVED,
@@ -161,6 +159,7 @@ export default {
 			triggeringCard: args.triggeringCard.id,
 			targetCard: args.targetCard.id,
 		},
+		hiddenFromLogs: true,
 	}),
 	cardTargetUnitSelected: (args: CardTargetSelectedUnitEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGET_SELECTED_UNIT,
@@ -170,6 +169,7 @@ export default {
 			triggeringCard: args.triggeringCard.id,
 			targetUnit: args.targetCard.id,
 		},
+		hiddenFromLogs: true,
 	}),
 	cardTargetRowSelected: (args: CardTargetSelectedRowEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGET_SELECTED_ROW,
@@ -179,6 +179,7 @@ export default {
 			triggeringCard: args.triggeringCard.id,
 			targetRow: args.targetRow.index,
 		},
+		hiddenFromLogs: true,
 	}),
 	cardTargetPositionSelected: (args: CardTargetSelectedPositionEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGET_SELECTED_POSITION,
@@ -189,6 +190,7 @@ export default {
 			targetRow: args.targetRow.index,
 			targetPosition: args.targetPosition,
 		},
+		hiddenFromLogs: true,
 	}),
 	cardTargetsConfirmed: (args: CardTargetsConfirmedEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TARGETS_CONFIRMED,
@@ -197,6 +199,7 @@ export default {
 		logVariables: {
 			triggeringCard: args.triggeringCard?.id,
 		},
+		hiddenFromLogs: true,
 	}),
 
 	playerMulliganedCard: (args: PlayerTargetCardSelectedEventArgs): GameEvent => ({
@@ -348,14 +351,14 @@ export default {
 		type: GameEventType.TURN_ENDED,
 		args: args,
 		logVariables: {
-			player: args.group.id,
+			group: args.group.id,
 		},
 	}),
 	roundEnded: (args: RoundEndedEventArgs): GameEvent => ({
 		type: GameEventType.ROUND_ENDED,
 		args: args,
 		logVariables: {
-			player: args.group.id,
+			group: args.group.id,
 		},
 	}),
 
@@ -364,7 +367,7 @@ export default {
 		args: args,
 		logSubtype: args.victoriousPlayer ? 'victory' : 'draw',
 		logVariables: {
-			victoriousPlayer: args.victoriousPlayer?.id,
+			victoriousGroup: args.victoriousPlayer?.id,
 		},
 	}),
 }
@@ -374,7 +377,7 @@ export interface GameEvent {
 	args: Record<string, any>
 	effectSource?: ServerCard | ServerBuff
 	logSubtype?: string
-	logVariables?: Record<string, string | number | undefined>
+	logVariables?: Record<string, string | string[] | number | number[] | undefined>
 	hiddenFromLogs?: boolean
 }
 

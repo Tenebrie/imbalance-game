@@ -136,7 +136,9 @@ export default class ClientGame {
 			})
 		}
 
-		const buffs = cards.reduce<(Buff | BuffMessage)[]>((acc, value) => acc.concat(value.buffs.buffs), [])
+		const cardBuffs = cards.reduce<(Buff | BuffMessage)[]>((acc, value) => acc.concat(value.buffs.buffs), [])
+		const rowBuffs = Core.board.rows.reduce<Buff[]>((acc, value) => acc.concat(value.buffs.buffs), [])
+		const buffs = [cardBuffs, rowBuffs].flat()
 		return buffs.find((buff) => buff.id === buffId) || null
 	}
 

@@ -24,6 +24,7 @@ import { compressGameTraffic } from '@shared/Utils'
 import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 class Core {
 	public isReady = false

@@ -103,24 +103,10 @@ export default class ServerGameEvents {
 		})
 	}
 
-	public insertCallbacks(subscriptions: Map<GameEventType, EventSubscription<any>[]>): void {
-		subscriptions.forEach((value, key) => {
-			this.eventSubscriptions.set(key, this.eventSubscriptions.get(key)!.concat(value))
-		})
-	}
-
-	public insertHooks(hooks: Map<GameHookType, EventHook<any, any>[]>): void {
-		hooks.forEach((value, key) => {
-			this.eventHooks.set(key, this.eventHooks.get(key)!.concat(value))
-		})
-	}
-
-	public insertSelectors(selectors: CardSelectorBuilder[]): void {
-		this.cardSelectors = this.cardSelectors.concat(selectors.map((selector) => selector._build(this.game)))
-	}
-
 	public postEvent(event: GameEvent): void {
-		this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
+		if (!event.hiddenFromLogs) {
+			this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
+		}
 
 		const validSubscriptions = this.eventSubscriptions
 			.get(event.type)!
@@ -444,7 +430,7 @@ export default class ServerGameEvents {
 			event: eventType,
 			subtype: subtype,
 			timestamp: Number(new Date()),
-			args: args,
+			args: args || {},
 		})
 	}
 

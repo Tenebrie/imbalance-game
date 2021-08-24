@@ -3,20 +3,20 @@ import Language from '@shared/enums/Language'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import RenderQuality from '@shared/enums/RenderQuality'
 import AccessLevel from '@shared/enums/AccessLevel'
-import { createRandomPlayerId } from '@src/utils/Utils'
+import { createHumanPlayerId } from '@src/utils/Utils'
 import PlayerProgressionType from '@shared/enums/PlayerProgressionType'
 import PlayerProgressionDatabaseEntry from '@shared/models/PlayerProgressionDatabaseEntry'
 import { LabyrinthProgressionState } from '@shared/models/progression/LabyrinthProgressionState'
 
 export default {
 	async insertPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {
-		const playerId = createRandomPlayerId()
+		const playerId = createHumanPlayerId()
 		const query = `INSERT INTO players (id, email, username, "passwordHash", "isGuest") VALUES($1, $2, $3, $4, $5);`
 		return Database.insertRow(query, [playerId, email, username, passwordHash, false])
 	},
 
 	async insertGuestPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {
-		const playerId = createRandomPlayerId()
+		const playerId = createHumanPlayerId()
 		const query = `INSERT INTO players (id, email, username, "passwordHash", "isGuest") VALUES($1, $2, $3, $4, $5);`
 		return Database.insertRow(query, [playerId, email, username, passwordHash, true])
 	},

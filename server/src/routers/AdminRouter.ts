@@ -64,6 +64,7 @@ router.get(
 	AsyncHandler(async (req, res: Response) => {
 		const targetGameId = req.params['gameId']
 		const response = await GameHistoryDatabase.selectGameById(targetGameId)
+		console.log(response)
 		if (response === null) {
 			throw { status: 500, error: 'Unable to select game entry from database' }
 		}

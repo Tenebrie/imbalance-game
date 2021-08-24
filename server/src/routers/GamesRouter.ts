@@ -19,7 +19,10 @@ router.get('/', (req: Request, res: Response) => {
 	let filteredGames: ServerGame[] = GameLibrary.games.filter((game) => !game.isFinished)
 	if (privateGame) {
 		filteredGames = filteredGames.filter((game) => !!game.owner && game.owner.id === currentPlayer.id)
+	} else if (!reconnect) {
+		filteredGames = filteredGames.filter((game) => !game.owner)
 	}
+
 	if (reconnect) {
 		filteredGames = filteredGames.filter((game) =>
 			game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === currentPlayer.id)

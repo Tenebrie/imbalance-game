@@ -37,8 +37,12 @@ export const createRandomGameId = (): string => {
 	return `game:${getRandomId()}`
 }
 
-export const createRandomPlayerId = (): string => {
+export const createHumanPlayerId = (): string => {
 	return `player:${getRandomId()}`
+}
+
+export const createHumanGroupId = (): string => {
+	return `group:${getRandomId()}`
 }
 
 export const createBotPlayerId = (): string => {
@@ -85,7 +89,7 @@ export const getOwnerGroup = (entity: ServerCard | ServerUnit | ServerBuff | Ser
 export const AnyCardLocation = 'any'
 
 export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {
-	let value = rawJson.replace(/card:redacted:([a-zA-Z0-9-]+)/g, (match, capture) => {
+	let value = rawJson.replace(/card::([a-zA-Z0-9-]+)/g, (match, capture) => {
 		const card = game.index.findCard(capture)
 		if (!card) {
 			console.warn(`No card found with id ${capture}`)
@@ -93,7 +97,7 @@ export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {
 		}
 		return card.id
 	})
-	value = value.replace(/buff:redacted:([a-zA-Z0-9-]+)/g, (match, capture) => {
+	value = value.replace(/buff::([a-zA-Z0-9-]+)/g, (match, capture) => {
 		const buff = game.index.findBuff(capture)
 		if (!buff) {
 			console.warn(`No buff found with id ${capture}`)
