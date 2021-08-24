@@ -160,8 +160,9 @@ class LabyrinthProgression {
 		})
 	}
 
-	public addGatekeeperEvent(outcome: string): void {
-		this.state.meta.gatekeeperEncounters
+	public addGatekeeperEvent(outcome: 'win' | 'lose' | 'kill' | 'none'): void {
+		this.state.meta.gatekeeperEncounters += 1
+		this.state.meta.lastGatekeeperOutcome = outcome
 	}
 
 	public failRun(): void {

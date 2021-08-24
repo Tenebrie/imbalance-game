@@ -50,7 +50,7 @@ export default class RulesetNessadventure extends ServerRuleset {
 			})
 			.addGroup({
 				type: 'ai',
-				behaviour: AIBehaviour.PASSIVE,
+				behaviour: AIBehaviour.DEFAULT,
 				deck: [LeaderChallengeDummy, { card: UnitChallengeDummyOPWarrior, count: Constants.CARD_LIMIT_BRONZE }],
 			})
 

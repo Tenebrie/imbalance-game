@@ -61,7 +61,7 @@ export default {
 		console.info(`Player ${colorizePlayer(player.username)} has disconnected from game ${colorizeId(game.id)}.`)
 		player.spectators.forEach((spectator) => spectator.player.disconnect())
 
-		const connectedPlayers = game.players.flatMap((playerGroup) => playerGroup.players).filter((player) => player.player.isInGame())
+		const connectedPlayers = game.humanPlayers.filter((player) => player.player.isInGame())
 		if (connectedPlayers.length === 1) {
 			console.info(`Only one player left in game ${colorizeId(game.id)}. It will be shutdown in 60 seconds.`)
 			game.timers.playerLeaveTimeout.start()

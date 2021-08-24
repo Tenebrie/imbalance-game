@@ -15,7 +15,7 @@ export default class HeroNotEleyas extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 20,
+				power: 30,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,

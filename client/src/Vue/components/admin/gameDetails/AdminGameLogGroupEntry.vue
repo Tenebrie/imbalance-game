@@ -33,7 +33,6 @@ export default defineComponent({
 		})
 
 		const localizedString = computed<string>(() => {
-			console.log(props.players)
 			let id = `log.entry.${props.entry.event}`
 			if (props.entry.subtype) {
 				id += `.${props.entry.subtype}`
