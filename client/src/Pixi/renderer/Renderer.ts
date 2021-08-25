@@ -57,6 +57,7 @@ export default class Renderer {
 	opponentPowerLabelContainer: PIXI.Container
 
 	selectableCardsSmokescreen: PIXI.Sprite
+	selectableCardsSmokescreenTargetAlpha = 0
 
 	deltaTime = 0
 	deltaTimeFraction = 1
@@ -165,6 +166,7 @@ export default class Renderer {
 		/* Smoke screen */
 		this.selectableCardsSmokescreen = new PIXI.Sprite(TextureAtlas.getTexture('masks/black'))
 		this.selectableCardsSmokescreen.zIndex = SELECTABLE_CARD_ZINDEX - 1
+		this.selectableCardsSmokescreen.alpha = 0
 		this.rootContainer.addChild(this.selectableCardsSmokescreen)
 
 		/* Modular initializations */
@@ -879,12 +881,12 @@ export default class Renderer {
 		}
 
 		if (selectableCards.length > 0 && store.state.gameStateModule.popupTargetingCardsVisible) {
-			this.selectableCardsSmokescreen.visible = true
+			// this.selectableCardsSmokescreen.visible = true
 			this.selectableCardsSmokescreen.width = this.getScreenWidth()
 			this.selectableCardsSmokescreen.height = this.getScreenHeight()
-			this.selectableCardsSmokescreen.alpha = 0.75
+			this.updateSelectableCardsSmokescreen(0.75)
 		} else {
-			this.selectableCardsSmokescreen.visible = false
+			this.updateSelectableCardsSmokescreen(0)
 		}
 
 		for (let level = 0; level < chunks.length; level++) {
@@ -893,6 +895,20 @@ export default class Renderer {
 				this.renderSelectableCard(card, i, chunks[level].length, level, chunks.length, selectableCards.length, windowFraction)
 			}
 		}
+	}
+
+	private updateSelectableCardsSmokescreen(targetAlpha: number): void {
+		if (this.selectableCardsSmokescreenTargetAlpha === targetAlpha) {
+			return
+		}
+		this.selectableCardsSmokescreenTargetAlpha = targetAlpha
+		gsap.to(this.selectableCardsSmokescreen, {
+			duration: 0.3,
+			overwrite: true,
+			pixi: {
+				alpha: targetAlpha,
+			},
+		})
 	}
 
 	public renderSelectableCard(
