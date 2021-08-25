@@ -21,6 +21,8 @@ import CardLocation from '@shared/enums/CardLocation'
 import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import { boopTheBoard, flushBoardBoopPreps, getCardInsertIndex, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
+import gsap from 'gsap'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -53,6 +55,7 @@ export default class Input {
 	playableCards: CardTargetMessage[] = []
 	forcedTargetingMode: ForcedTargetingMode | null = null
 	forcedTargetingCards: RenderedCard[] = []
+	discardedForcedTargetingCards: RenderedCard[] = []
 
 	inspectCardMode: InspectCardMode = InspectCardMode.CLICK
 
@@ -206,6 +209,12 @@ export default class Input {
 	}
 
 	private onMouseDown(event: MouseEvent) {
+		if (event.button === LEFT_MOUSE_BUTTON) {
+			this.leftMouseDown = true
+		} else if (event.button === RIGHT_MOUSE_BUTTON) {
+			this.rightMouseDown = true
+		}
+
 		if (event.button === RIGHT_MOUSE_BUTTON && event.ctrlKey) {
 			return
 		}
@@ -249,11 +258,9 @@ export default class Input {
 			return
 		}
 
-		if (event.button === LEFT_MOUSE_BUTTON) {
-			this.leftMouseDown = true
+		if (event.button === LEFT_MOUSE_BUTTON && this.hoveredCard) {
 			this.grabCard()
-		} else if (event.button === RIGHT_MOUSE_BUTTON) {
-			this.rightMouseDown = true
+			return
 		}
 
 		if (event.button === LEFT_MOUSE_BUTTON && !this.grabbedCard && !this.hoveredCard) {
@@ -308,6 +315,12 @@ export default class Input {
 	}
 
 	private onMouseUp(event: MouseEvent) {
+		if (event.button === LEFT_MOUSE_BUTTON) {
+			this.leftMouseDown = false
+		} else if (event.button === RIGHT_MOUSE_BUTTON) {
+			this.rightMouseDown = false
+		}
+
 		if (this.forcedTargetingMode && this.forcedTargetingMode.isSelectedTargetValid() && event.button === LEFT_MOUSE_BUTTON) {
 			if (
 				this.forcedTargetingMode.targetMode === TargetMode.CARD_PLAY &&
@@ -327,15 +340,9 @@ export default class Input {
 			return
 		}
 
-		if (event.button === LEFT_MOUSE_BUTTON && this.leftMouseDown && !this.grabbedCard) {
+		if (event.button === LEFT_MOUSE_BUTTON && !this.grabbedCard && this.boardBoopStartedAt) {
 			boopTheBoard(event, this.boardBoopStartedAt, 'up')
-		} else if (
-			event.button === RIGHT_MOUSE_BUTTON &&
-			this.rightMouseDown &&
-			!this.inspectedCard &&
-			!this.hoveredCard &&
-			!this.grabbedCard
-		) {
+		} else if (event.button === RIGHT_MOUSE_BUTTON && !this.inspectedCard && !this.hoveredCard && !this.grabbedCard) {
 			boopTheBoard(event, this.boardBoopStartedAt, 'up')
 		} else if (event.button === MIDDLE_MOUSE_BUTTON) {
 			boopTheBoard(event, this.boardBoopStartedAt, 'up')
@@ -346,12 +353,7 @@ export default class Input {
 		} else if (event.button === RIGHT_MOUSE_BUTTON && this.rightMouseDown) {
 			this.inspectCard()
 		}
-
-		if (event.button === LEFT_MOUSE_BUTTON) {
-			this.leftMouseDown = false
-		} else if (event.button === RIGHT_MOUSE_BUTTON) {
-			this.rightMouseDown = false
-		}
+		this.boardBoopStartedAt = null
 	}
 
 	private onTouchEnd() {
@@ -611,8 +613,7 @@ export default class Input {
 			}, [])
 			.concat(cardsToAdd)
 
-		cardsToRemove.forEach((card) => Core.destroyCard(card))
-
+		this.discardForcedTargetingCards(cardsToRemove)
 		this.forcedTargetingCards = result
 	}
 
@@ -622,9 +623,27 @@ export default class Input {
 		}
 		this.forcedTargetingMode.destroy()
 		this.forcedTargetingMode = null
-		this.forcedTargetingCards.forEach((card) => Core.destroyCard(card))
+
+		this.discardForcedTargetingCards(this.forcedTargetingCards)
 		this.forcedTargetingCards = []
 		store.commit.gameStateModule.setTargetingMode(null)
 		store.commit.gameStateModule.setPopupTargetingCardCount(0)
+	}
+
+	private discardForcedTargetingCards(cards: RenderedCard[]): void {
+		this.discardedForcedTargetingCards = this.discardedForcedTargetingCards.concat(cards)
+		cards.forEach((card) => {
+			setTimeout(() => {
+				Core.destroyCard(card)
+				this.discardedForcedTargetingCards = this.discardedForcedTargetingCards.filter((discardedCard) => discardedCard !== card)
+			}, 1000)
+			gsap.to(card.coreContainer, {
+				duration: 0.3,
+				pixi: {
+					alpha: 0,
+					positionX: card.coreContainer.position.x + 75 * getRenderScale().superSamplingLevel,
+				},
+			})
+		})
 	}
 }

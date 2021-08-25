@@ -121,7 +121,7 @@ export default class ScalingText extends PIXI.Container {
 
 		this.currentAnchor = anchor
 		this.texts.forEach((text) => {
-			text.anchor = anchor
+			text.anchor.copyFrom(anchor)
 		})
 	}
 
@@ -131,7 +131,7 @@ export default class ScalingText extends PIXI.Container {
 		}
 
 		const newText = new PIXI.Text(this.currentText, new PIXI.TextStyle(this.currentStyle))
-		newText.anchor = this.currentAnchor
+		newText.anchor.copyFrom(this.currentAnchor)
 		this.texts.push(newText)
 		this.addChild(newText)
 	}

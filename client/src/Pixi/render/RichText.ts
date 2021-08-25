@@ -26,7 +26,7 @@ export default class RichText extends PIXI.Container {
 	private dropShadowBlur: number
 
 	private variables: RichTextVariables
-	segments: { text: ScalingText; basePosition: PIXI.Point; lineIndex: number }[]
+	segments: { text: ScalingText; basePosition: Point; lineIndex: number }[]
 	background!: RichTextBackground
 	private __horizontalAlign: RichTextAlign = RichTextAlign.CENTER
 	private __verticalAlign: RichTextAlign = RichTextAlign.END
@@ -215,14 +215,14 @@ export default class RichText extends PIXI.Container {
 		this.__renderedText = parsedText.humanReadableText
 		const segments = parsedText.segments
 
-		const contextPosition = new PIXI.Point(0, 0)
+		const contextPosition = { x: 0, y: 0 }
 		let contextHighlight = false
 		let contextItalic = false
 		let contextColor = this.fill
 		const contextColorStack: number[] = []
 		let contextConditionStatus = true
 		const contextConditionStack: boolean[] = []
-		let currentLine: { text: ScalingText; basePosition: PIXI.Point }[] = []
+		let currentLine: { text: ScalingText; basePosition: Point }[] = []
 
 		const flushData = () => {
 			currentLine.forEach((renderedSegment) => {
@@ -262,10 +262,10 @@ export default class RichText extends PIXI.Container {
 			}
 
 			const renderedText = new ScalingText(text, style)
-			renderedText.position = contextPosition
+			renderedText.position.set(contextPosition.x, contextPosition.y)
 			const renderedSegment = {
 				text: renderedText,
-				basePosition: contextPosition.clone(),
+				basePosition: { ...contextPosition },
 				lineIndex: linesRendered,
 			}
 			currentLine.push(renderedSegment)

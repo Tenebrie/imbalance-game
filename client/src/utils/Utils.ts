@@ -11,6 +11,8 @@ import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardFaction from '@shared/enums/CardFaction'
 import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
 import Localization from '@/Pixi/Localization'
+import CardColor from '@shared/enums/CardColor'
+import { Color } from 'pixi-particles'
 
 export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
 	return Core.board.isInverted && player === 'player' ? Core.constants.GAME_BOARD_ROW_COUNT - index - 1 : index
@@ -50,6 +52,21 @@ export const isElectron = (): boolean => {
 		return true
 	}
 	return false
+}
+
+export const rarityToColor = (rarity: CardColor): number => {
+	switch (rarity) {
+		case CardColor.LEADER:
+			return 0x66cdaa
+		case CardColor.GOLDEN:
+			return 0xff8c00
+		case CardColor.SILVER:
+			return 0xbb20bb
+		case CardColor.BRONZE:
+			return 0xffffff
+		case CardColor.TOKEN:
+			return 0xbbbbbb
+	}
 }
 
 type AnyPoint = {

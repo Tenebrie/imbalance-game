@@ -74,9 +74,11 @@ const editorModule = defineModule({
 	},
 
 	getters: {
-		deck: (state) => (id: string): PopulatedEditorDeck | null => {
-			return state.decks.find((deck) => deck.id === id) || null
-		},
+		deck:
+			(state) =>
+			(id: string): PopulatedEditorDeck | null => {
+				return state.decks.find((deck) => deck.id === id) || null
+			},
 
 		currentDeck: (state): PopulatedEditorDeck | null => {
 			if (state.currentDeckId === null) {
@@ -85,16 +87,18 @@ const editorModule = defineModule({
 			return state.decks.find((deck) => deck.id === state.currentDeckId) || null
 		},
 
-		cardsOfColor: (state) => (payload: { deckId: string; color: CardColor }): number => {
-			const deck = state.decks.find((deck) => deck.id === payload.deckId) as PopulatedEditorDeck
-			if (!deck) {
-				return 0
-			}
-			return deck.cards
-				.filter((card) => card.color === payload.color)
-				.map((card) => card.count)
-				.reduce((previousValue, currentValue) => previousValue + currentValue, 0)
-		},
+		cardsOfColor:
+			(state) =>
+			(payload: { deckId: string; color: CardColor }): number => {
+				const deck = state.decks.find((deck) => deck.id === payload.deckId) as PopulatedEditorDeck
+				if (!deck) {
+					return 0
+				}
+				return deck.cards
+					.filter((card) => card.color === payload.color)
+					.map((card) => card.count)
+					.reduce((previousValue, currentValue) => previousValue + currentValue, 0)
+			},
 	},
 
 	actions: {

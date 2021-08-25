@@ -7,6 +7,8 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import ClientBuffContainer from '@/Pixi/models/buffs/ClientBuffContainer'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
+import gsap from 'gsap'
+import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 
 export default class RenderedGameBoardRow implements BoardRow {
 	public readonly index: number
@@ -14,6 +16,7 @@ export default class RenderedGameBoardRow implements BoardRow {
 	public container: PIXI.Container
 	public buffs: ClientBuffContainer
 	private __owner: ClientPlayerGroup | null
+	private __currentTintTarget: BoardRowTint = BoardRowTint.INVALID_TARGET
 
 	public readonly sprite: PIXI.Sprite
 	public readonly buffContainer: PIXI.Container
@@ -99,6 +102,28 @@ export default class RenderedGameBoardRow implements BoardRow {
 			this.sprite.texture = TextureAtlas.getTexture('board/row-enemy')
 			this.buffContainerBackground.texture = TextureAtlas.getTexture('board/power-enemy')
 		}
+	}
+
+	public set tint(value: BoardRowTint) {
+		if (value === this.__currentTintTarget) return
+
+		let duration = 0.3
+		if (this.__currentTintTarget === BoardRowTint.VALID_TARGET && value === BoardRowTint.VALID_TARGET_HOVERED) {
+			duration = 0
+		}
+
+		this.__currentTintTarget = value
+
+		if (duration === 0) {
+			this.sprite.tint = value
+		}
+		gsap.to(this.sprite, {
+			duration,
+			overwrite: true,
+			pixi: {
+				tint: value,
+			},
+		})
 	}
 
 	public isHovered(): boolean {

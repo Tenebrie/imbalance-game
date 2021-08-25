@@ -10,7 +10,7 @@ import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
-import Utils, { isMobile } from '@/utils/Utils'
+import Utils, { isMobile, rarityToColor } from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { inspectedCardRenderer } from './InspectedCardRenderer'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
@@ -23,6 +23,13 @@ import store from '@/Vue/store'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import gsap from 'gsap'
+import PixiPlugin from 'gsap/PixiPlugin'
+import CardLocation from '@shared/enums/CardLocation'
+import TargetMode from '@shared/enums/TargetMode'
+
+gsap.registerPlugin(PixiPlugin)
+PixiPlugin.registerPIXI(PIXI)
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -50,6 +57,7 @@ export default class Renderer {
 	opponentPowerLabelContainer: PIXI.Container
 
 	selectableCardsSmokescreen: PIXI.Sprite
+	selectableCardsSmokescreenTargetAlpha = 0
 
 	deltaTime = 0
 	deltaTimeFraction = 1
@@ -88,6 +96,7 @@ export default class Renderer {
 		})
 		PIXI.settings.TARGET_FPMS = 0.12
 		PIXI.Ticker.shared.maxFPS = 144
+		// PixiPlugin.registerPIXI(PIXI)
 
 		this.rootContainer = new PIXI.Container()
 		this.rootContainer.sortableChildren = true
@@ -157,6 +166,7 @@ export default class Renderer {
 		/* Smoke screen */
 		this.selectableCardsSmokescreen = new PIXI.Sprite(TextureAtlas.getTexture('masks/black'))
 		this.selectableCardsSmokescreen.zIndex = SELECTABLE_CARD_ZINDEX - 1
+		this.selectableCardsSmokescreen.alpha = 0
 		this.rootContainer.addChild(this.selectableCardsSmokescreen)
 
 		/* Modular initializations */
@@ -398,9 +408,20 @@ export default class Renderer {
 	}
 
 	private static getCardTintOverlayColor(card: RenderedCard): { color: number | null; alpha: number } {
-		/* Targeting mode, and the current unit is a valid target */
+		const targeting = Core.input.forcedTargetingMode
+		if (!targeting) {
+			return { color: null, alpha: 0 }
+		}
+
 		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
-		if (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isCardPotentialTarget(card)) {
+
+		/* Card is a selectable option card */
+		if (targeting.isCardPotentialTarget(card) && Core.input.forcedTargetingCards.includes(card)) {
+			return hoveredCard === card ? { color: rarityToColor(card.color), alpha: 0.5 } : { color: rarityToColor(card.color), alpha: 0 }
+		}
+
+		/* Targeting mode, and the current unit is a valid target */
+		if (targeting.isCardPotentialTarget(card)) {
 			if (card.owner === Core.opponent) {
 				return hoveredCard === card ? { color: 0xff0000, alpha: 0.75 } : { color: 0xff0000, alpha: 0.5 }
 			} else {
@@ -411,10 +432,14 @@ export default class Renderer {
 	}
 
 	private getFullCardTintOverlayColor(card: RenderedCard): { alpha: number } {
-		const isValidTarget =
-			Core.input &&
-			Core.input.forcedTargetingMode &&
-			!!Core.input.forcedTargetingMode.validTargets.find((forcedCard) => forcedCard.targetCardId === card.id)
+		const targeting = Core.input?.forcedTargetingMode
+		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
+		/* Card is a selectable option card */
+		if (targeting && targeting.isCardPotentialTarget(card) && Core.input.forcedTargetingCards.includes(card) && Core.input.leftMouseDown) {
+			return hoveredCard === card ? { alpha: 0.2 } : { alpha: 0 }
+		}
+
+		const isValidTarget = targeting && targeting.validTargets.some((forcedCard) => forcedCard.targetCardId === card.id)
 
 		if (!isCardPlayable(card) && !isValidTarget) {
 			return { alpha: 0.5 }
@@ -557,7 +582,8 @@ export default class Renderer {
 		const rowY = screenCenterY + verticalDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 
 		container.position.set(screenCenterX, rowY)
-		gameBoardRow.sprite.tint = this.getBoardRowTint(gameBoardRow)
+
+		gameBoardRow.tint = this.getBoardRowTint(gameBoardRow)
 
 		for (let i = 0; i < gameBoardRow.cards.length; i++) {
 			const unit = gameBoardRow.cards[i]
@@ -696,6 +722,11 @@ export default class Renderer {
 			}
 		}
 
+		/* Fallback tint */
+		if (!Core.input.forcedTargetingMode && Core.board.getValidOrdersForUnit(unit).length === 0 && hoveredCard === card) {
+			return { color: 0xffffff, alpha: 0.25 }
+		}
+
 		return { color: null, alpha: 0 }
 	}
 
@@ -740,10 +771,16 @@ export default class Renderer {
 		}
 
 		let startingPosition
+		const sourceCard = forcedTargeting?.source
 		if (grabbedCard) {
 			startingPosition = grabbedCard.card.getVisualPosition()
-		} else if (forcedTargeting && forcedTargeting.source) {
-			startingPosition = forcedTargeting.source.getVisualPosition()
+		} else if (
+			sourceCard &&
+			(sourceCard.type === CardType.SPELL ||
+				sourceCard.location !== CardLocation.STACK ||
+				forcedTargeting?.targetMode === TargetMode.CARD_PLAY)
+		) {
+			startingPosition = sourceCard.getVisualPosition()
 		}
 
 		if (!startingPosition) {
@@ -864,12 +901,11 @@ export default class Renderer {
 		}
 
 		if (selectableCards.length > 0 && store.state.gameStateModule.popupTargetingCardsVisible) {
-			this.selectableCardsSmokescreen.visible = true
 			this.selectableCardsSmokescreen.width = this.getScreenWidth()
 			this.selectableCardsSmokescreen.height = this.getScreenHeight()
-			this.selectableCardsSmokescreen.alpha = 0.75
+			this.updateSelectableCardsSmokescreen(0.75)
 		} else {
-			this.selectableCardsSmokescreen.visible = false
+			this.updateSelectableCardsSmokescreen(0)
 		}
 
 		for (let level = 0; level < chunks.length; level++) {
@@ -878,6 +914,20 @@ export default class Renderer {
 				this.renderSelectableCard(card, i, chunks[level].length, level, chunks.length, selectableCards.length, windowFraction)
 			}
 		}
+	}
+
+	private updateSelectableCardsSmokescreen(targetAlpha: number): void {
+		if (this.selectableCardsSmokescreenTargetAlpha === targetAlpha) {
+			return
+		}
+		this.selectableCardsSmokescreenTargetAlpha = targetAlpha
+		gsap.to(this.selectableCardsSmokescreen, {
+			duration: 0.3,
+			overwrite: true,
+			pixi: {
+				alpha: targetAlpha,
+			},
+		})
 	}
 
 	public renderSelectableCard(
@@ -897,15 +947,10 @@ export default class Renderer {
 			return
 		}
 
-		let sizeMod = 1.0
-		if (renderedCard === MouseHover.getHoveredCard()) {
-			sizeMod = 1.05
-		}
-
 		const cardHeight = this.getScreenHeight() * windowFraction
 
-		sprite.width = cardHeight * this.CARD_ASPECT_RATIO * sizeMod
-		sprite.height = cardHeight * sizeMod
+		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
+		sprite.height = cardHeight
 
 		const containerFraction = 0.8
 		const containerWidth = Math.min(this.getScreenWidth() * containerFraction, cardHeight * this.CARD_ASPECT_RATIO * handSize * 1.2)
@@ -916,25 +961,32 @@ export default class Renderer {
 
 		container.visible = Core.input.forcedTargetingMode ? store.state.gameStateModule.popupTargetingCardsVisible : true
 
-		const targetPosition = {
-			x: distanceToCenter * cardWidth + screenCenter,
-			y: this.getScreenHeight() / 2 - cardHeight / 2,
-		}
-
 		const effectiveLevel = level - Math.min(levelCount - 1, 4) / 2
 		const levelOffset = effectiveLevel * (cardHeight * 1.1)
 
+		const targetPosition = {
+			x: distanceToCenter * cardWidth + screenCenter,
+			y: this.getScreenHeight() / 2 + levelOffset,
+		}
+
 		targetPosition.y = this.getScreenHeight() - targetPosition.y
 
+		const startAnimation = renderedCard.displayMode === CardDisplayMode.UNDEFINED
 		if (renderedCard === MouseHover.getHoveredCard()) {
 			renderedCard.setDisplayMode(CardDisplayMode.SELECTION_HOVERED)
 		} else {
 			renderedCard.setDisplayMode(CardDisplayMode.SELECTION)
 		}
 
-		sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
-		container.position.x = targetPosition.x
-		container.position.y = targetPosition.y - cardHeight / 2 + levelOffset
+		if (startAnimation) {
+			container.alpha = 0
+			container.position.x = targetPosition.x - 75 * this.superSamplingLevel
+			container.position.y = targetPosition.y
+		}
+
+		container.alpha += (1 - container.alpha) * this.deltaTimeFraction * 7
+		container.position.x += (targetPosition.x - container.position.x) * this.deltaTimeFraction * 7
+		container.position.y += (targetPosition.y - container.position.y) * this.deltaTimeFraction * 7
 		container.zIndex = SELECTABLE_CARD_ZINDEX + handPosition * 2
 		if (renderedCard === MouseHover.getHoveredCard()) {
 			container.zIndex += 100
@@ -945,8 +997,8 @@ export default class Renderer {
 		hitboxSprite.zIndex = container.zIndex - 1
 
 		renderedCard.sprite.alpha = 1
-		renderedCard.cardTintOverlay.alpha = 0
-		renderedCard.cardFullTintOverlay.alpha = 0
+
+		this.updateCardTintOverlay(renderedCard)
 	}
 
 	public destroy(): void {
