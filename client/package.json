@@ -15,6 +15,7 @@
     "@types/gapi.auth2": "0.0.55",
     "@types/howler": "^2.2.1",
     "@types/throttle-debounce": "^2.1.0",
+    "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^4.11.1",
     "@typescript-eslint/parser": "^4.11.1",
     "@vue/cli-plugin-babel": "^4.5.9",
@@ -50,7 +51,6 @@
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.12.7",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@types/uuid": "^8.3.1",
     "@vue/compiler-sfc": "^3.0.0-beta.1",
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^8.3.0",
