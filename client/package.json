@@ -6,7 +6,8 @@
     "serve": "CHOKIDAR_USEPOLLING=true node_modules/.bin/vue-cli-service serve",
     "build": "node_modules/.bin/vue-cli-service build",
     "lint": "node_modules/.bin/vue-cli-service lint",
-    "build:electron": "node_modules/.bin/vue-cli-service build --baseUrl ./ && cp electron/main.js dist && cp ./package.json dist"
+    "build:electron": "node_modules/.bin/vue-cli-service build --baseUrl ./ && cp electron/main.js dist && cp ./package.json dist",
+    "nuke": "rm -rf node_modules"
   },
   "main": "main.js",
   "dependencies": {

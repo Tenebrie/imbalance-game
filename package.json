@@ -17,7 +17,8 @@
 				"docker:clear": "docker container kill $(docker ps -q)",
 				"docker:cold": "docker container kill $(docker ps -q) && docker-compose up --force-recreate",
 				"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)",
-				"test": "(cd server && yarn test)"
+				"test": "(cd server && yarn test)",
+				"nuke": "rm -rf node_modules && (cd client && yarn nuke) && (cd server && yarn nuke) && (cd shared && yarn nuke)"
 		},
 		"dependencies": {
 				"@babel/cli": "^7.6.4",

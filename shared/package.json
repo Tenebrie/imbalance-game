@@ -4,7 +4,8 @@
 	"license": "GPL-3.0-or-later",
 	"private": true,
 	"scripts": {
-		"lint": "yarn eslint src/ --ext .ts"
+		"lint": "yarn eslint src/ --ext .ts",
+		"nuke": "rm -rf node_modules"
 	},
 	"dependencies": {
 		"@typescript-eslint/eslint-plugin": "^2.3.3",
