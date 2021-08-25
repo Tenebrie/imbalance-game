@@ -206,6 +206,12 @@ export default class Input {
 	}
 
 	private onMouseDown(event: MouseEvent) {
+		if (event.button === LEFT_MOUSE_BUTTON) {
+			this.leftMouseDown = true
+		} else if (event.button === RIGHT_MOUSE_BUTTON) {
+			this.rightMouseDown = true
+		}
+
 		if (event.button === RIGHT_MOUSE_BUTTON && event.ctrlKey) {
 			return
 		}
@@ -250,10 +256,7 @@ export default class Input {
 		}
 
 		if (event.button === LEFT_MOUSE_BUTTON) {
-			this.leftMouseDown = true
 			this.grabCard()
-		} else if (event.button === RIGHT_MOUSE_BUTTON) {
-			this.rightMouseDown = true
 		}
 
 		if (event.button === LEFT_MOUSE_BUTTON && !this.grabbedCard && !this.hoveredCard) {
@@ -308,6 +311,12 @@ export default class Input {
 	}
 
 	private onMouseUp(event: MouseEvent) {
+		if (event.button === LEFT_MOUSE_BUTTON) {
+			this.leftMouseDown = false
+		} else if (event.button === RIGHT_MOUSE_BUTTON) {
+			this.rightMouseDown = false
+		}
+
 		if (this.forcedTargetingMode && this.forcedTargetingMode.isSelectedTargetValid() && event.button === LEFT_MOUSE_BUTTON) {
 			if (
 				this.forcedTargetingMode.targetMode === TargetMode.CARD_PLAY &&
@@ -345,12 +354,6 @@ export default class Input {
 			this.useGrabbedCard()
 		} else if (event.button === RIGHT_MOUSE_BUTTON && this.rightMouseDown) {
 			this.inspectCard()
-		}
-
-		if (event.button === LEFT_MOUSE_BUTTON) {
-			this.leftMouseDown = false
-		} else if (event.button === RIGHT_MOUSE_BUTTON) {
-			this.rightMouseDown = false
 		}
 	}
 

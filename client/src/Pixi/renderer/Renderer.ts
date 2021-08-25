@@ -10,7 +10,7 @@ import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import MouseHover from '@/Pixi/input/MouseHover'
 import RichText from '@/Pixi/render/RichText'
-import Utils, { isMobile } from '@/utils/Utils'
+import Utils, { isMobile, rarityToColor } from '@/utils/Utils'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { inspectedCardRenderer } from './InspectedCardRenderer'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
@@ -408,9 +408,20 @@ export default class Renderer {
 	}
 
 	private static getCardTintOverlayColor(card: RenderedCard): { color: number | null; alpha: number } {
-		/* Targeting mode, and the current unit is a valid target */
+		const targeting = Core.input.forcedTargetingMode
+		if (!targeting) {
+			return { color: null, alpha: 0 }
+		}
+
 		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
-		if (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isCardPotentialTarget(card)) {
+
+		/* Card is a selectable option card */
+		if (targeting.isCardPotentialTarget(card) && Core.input.forcedTargetingCards.includes(card)) {
+			return hoveredCard === card ? { color: rarityToColor(card.color), alpha: 0.5 } : { color: rarityToColor(card.color), alpha: 0 }
+		}
+
+		/* Targeting mode, and the current unit is a valid target */
+		if (targeting.isCardPotentialTarget(card)) {
 			if (card.owner === Core.opponent) {
 				return hoveredCard === card ? { color: 0xff0000, alpha: 0.75 } : { color: 0xff0000, alpha: 0.5 }
 			} else {
@@ -421,10 +432,14 @@ export default class Renderer {
 	}
 
 	private getFullCardTintOverlayColor(card: RenderedCard): { alpha: number } {
-		const isValidTarget =
-			Core.input &&
-			Core.input.forcedTargetingMode &&
-			!!Core.input.forcedTargetingMode.validTargets.find((forcedCard) => forcedCard.targetCardId === card.id)
+		const targeting = Core.input?.forcedTargetingMode
+		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
+		/* Card is a selectable option card */
+		if (targeting && targeting.isCardPotentialTarget(card) && Core.input.forcedTargetingCards.includes(card) && Core.input.leftMouseDown) {
+			return hoveredCard === card ? { alpha: 0.2 } : { alpha: 0 }
+		}
+
+		const isValidTarget = targeting && targeting.validTargets.some((forcedCard) => forcedCard.targetCardId === card.id)
 
 		if (!isCardPlayable(card) && !isValidTarget) {
 			return { alpha: 0.5 }
@@ -881,7 +896,6 @@ export default class Renderer {
 		}
 
 		if (selectableCards.length > 0 && store.state.gameStateModule.popupTargetingCardsVisible) {
-			// this.selectableCardsSmokescreen.visible = true
 			this.selectableCardsSmokescreen.width = this.getScreenWidth()
 			this.selectableCardsSmokescreen.height = this.getScreenHeight()
 			this.updateSelectableCardsSmokescreen(0.75)
@@ -928,15 +942,10 @@ export default class Renderer {
 			return
 		}
 
-		let sizeMod = 1.0
-		if (renderedCard === MouseHover.getHoveredCard()) {
-			sizeMod = 1.05
-		}
-
 		const cardHeight = this.getScreenHeight() * windowFraction
 
-		sprite.width = cardHeight * this.CARD_ASPECT_RATIO * sizeMod
-		sprite.height = cardHeight * sizeMod
+		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
+		sprite.height = cardHeight
 
 		const containerFraction = 0.8
 		const containerWidth = Math.min(this.getScreenWidth() * containerFraction, cardHeight * this.CARD_ASPECT_RATIO * handSize * 1.2)
@@ -976,8 +985,10 @@ export default class Renderer {
 		hitboxSprite.zIndex = container.zIndex - 1
 
 		renderedCard.sprite.alpha = 1
-		renderedCard.cardTintOverlay.alpha = 0
-		renderedCard.cardFullTintOverlay.alpha = 0
+
+		this.updateCardTintOverlay(renderedCard)
+		// renderedCard.cardTintOverlay.alpha = 0
+		// renderedCard.cardFullTintOverlay.alpha = 0
 	}
 
 	public destroy(): void {
