@@ -23,6 +23,13 @@ import store from '@/Vue/store'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import gsap from 'gsap'
+import PixiPlugin from 'gsap/PixiPlugin'
+import CardLocation from '@shared/enums/CardLocation'
+import TargetMode from '@shared/enums/TargetMode'
+
+gsap.registerPlugin(PixiPlugin)
+PixiPlugin.registerPIXI(PIXI)
 
 const UNIT_ZINDEX = 2
 const UNIT_EFFECT_ZINDEX = 5
@@ -88,6 +95,7 @@ export default class Renderer {
 		})
 		PIXI.settings.TARGET_FPMS = 0.12
 		PIXI.Ticker.shared.maxFPS = 144
+		// PixiPlugin.registerPIXI(PIXI)
 
 		this.rootContainer = new PIXI.Container()
 		this.rootContainer.sortableChildren = true
@@ -557,7 +565,8 @@ export default class Renderer {
 		const rowY = screenCenterY + verticalDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 
 		container.position.set(screenCenterX, rowY)
-		gameBoardRow.sprite.tint = this.getBoardRowTint(gameBoardRow)
+
+		gameBoardRow.tint = this.getBoardRowTint(gameBoardRow)
 
 		for (let i = 0; i < gameBoardRow.cards.length; i++) {
 			const unit = gameBoardRow.cards[i]
@@ -740,10 +749,16 @@ export default class Renderer {
 		}
 
 		let startingPosition
+		const sourceCard = forcedTargeting?.source
 		if (grabbedCard) {
 			startingPosition = grabbedCard.card.getVisualPosition()
-		} else if (forcedTargeting && forcedTargeting.source) {
-			startingPosition = forcedTargeting.source.getVisualPosition()
+		} else if (
+			sourceCard &&
+			(sourceCard.type === CardType.SPELL ||
+				sourceCard.location !== CardLocation.STACK ||
+				forcedTargeting?.targetMode === TargetMode.CARD_PLAY)
+		) {
+			startingPosition = sourceCard.getVisualPosition()
 		}
 
 		if (!startingPosition) {
