@@ -4,7 +4,7 @@
 			<div class="menu-section left" @click="onMenuClick">
 				<tenebrie-logo class="logo" />
 				<button @click="onShowDiscord" class="primary game-button">
-					<span class="image"><img src="https://discord.com/assets/f8389ca1a741a115313bede9ac02e2c0.svg" alt="Discord group link" /></span>
+					<span class="image"><img src="../../../assets/discord.svg" alt="Discord group link" /></span>
 					Discord
 				</button>
 				<button @click="onShowRules" class="primary game-button">Rules</button>
