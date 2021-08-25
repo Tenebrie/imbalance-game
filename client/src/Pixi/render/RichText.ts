@@ -296,6 +296,10 @@ export default class RichText extends PIXI.Container {
 							contextColorStack.push(contextColor)
 							contextColor = this.standardizeColor(openingTag.args)
 							break
+						case 'n':
+						case 'br':
+							newLine()
+							break
 						case 'p':
 						case 'para':
 							newLine()

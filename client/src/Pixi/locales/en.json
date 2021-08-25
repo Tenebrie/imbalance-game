@@ -141,6 +141,9 @@
 	"ruleset.rulesetNessadventure.label": "<b>Scenario:</b> The Nessadventure",
 
 	"ruleset.rulesetCoopChallengeDummy.label": "<b>AI Opponent:</b> Target Dummy",
+	"ruleset.rulesetCoopBrawlDiscovery.label": "<b>AI Opponent:</b> Discovery Dummy",
+
+	"card.play": "Play card",
 
 	"card.type.unit": "Unit",
 	"card.type.spell": "Spell",

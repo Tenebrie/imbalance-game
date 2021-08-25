@@ -10,8 +10,8 @@
 					<span class="action-explanation">Create a game and wait for an opponent to challenge you.</span>
 					<button @click="onCreateCooperative" class="primary">{{ $locale.get('ui.play.coop') }}</button>
 					<span class="action-explanation">Invite a friend to play against AI opponent.</span>
-					<button @click="onCreateLabyrinth" class="primary">{{ $locale.get('ui.play.labyrinth') }}</button>
-					<span class="action-explanation">Delve into the rogue-lite Labyrinth mode.</span>
+					<!--					<button @click="onCreateLabyrinth" class="primary">{{ $locale.get('ui.play.labyrinth') }}</button>-->
+					<!--					<span class="action-explanation">Delve into the rogue-lite Labyrinth mode.</span>-->
 					<button @click="onCreatePrototypes" class="primary">{{ $locale.get('ui.play.prototypes') }}</button>
 					<span class="action-explanation">See early concepts, modules and gamemode prototypes.</span>
 					<button @click="onCreateDevRuleset" class="primary" v-if="devRulesetVisible">{{ $locale.get('ui.play.dev') }}</button>

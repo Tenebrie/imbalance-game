@@ -317,9 +317,16 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private botChoosesTarget(): void {
-		const validTargets = this.game.cardPlay.getDeployTargets().sort((a, b) => b.target.expectedValue - a.target.expectedValue)
-		const cardTargetMessage = new CardTargetMessage(validTargets[0].target)
-		IncomingMessageHandlers[GenericActionMessageType.CARD_TARGET](cardTargetMessage, this.game, this)
+		const validDeployTargets = this.game.cardPlay.getDeployTargets().sort((a, b) => b.target.expectedValue - a.target.expectedValue)
+		if (validDeployTargets.length > 0) {
+			const cardTargetMessage = new CardTargetMessage(validDeployTargets[0].target)
+			IncomingMessageHandlers[GenericActionMessageType.CARD_TARGET](cardTargetMessage, this.game, this)
+		}
+		const validPlayTargets = this.game.cardPlay.getPlayTargets().sort((a, b) => b.target.expectedValue - a.target.expectedValue)
+		if (validPlayTargets.length > 0) {
+			const cardTargetMessage = new CardTargetMessage(validPlayTargets[0].target)
+			IncomingMessageHandlers[GenericActionMessageType.CARD_TARGET](cardTargetMessage, this.game, this)
+		}
 	}
 
 	private botEndsTurn(): void {

@@ -7,8 +7,11 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardTribe from '@src/../../shared/src/enums/CardTribe'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class SpellBecomeTheSalvage extends ServerCard {
+	charges = 3
+
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,
@@ -21,11 +24,32 @@ export default class SpellBecomeTheSalvage extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
+		const maxCharges = this.charges
+		this.dynamicTextVariables = {
+			charges: () => this.charges,
+			maxCharges: maxCharges,
+		}
+
+		this.createLocalization({
+			en: {
+				name: 'Become the Salvage',
+				description: "Charges: {charges}/{maxCharges}<p>*Exile* a Salvage Spell from your Graveyard.<br>Gain Mana equal to its' cost.",
+			},
+		})
+
 		this.createDeployTargets(TargetType.CARD_IN_SPELL_GRAVEYARD)
+			.require(() => this.charges > 0)
 			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.SALVAGE))
 			.perform(({ targetCard }) => {
 				this.ownerPlayerInGame.addSpellMana(targetCard.stats.spellCost)
 				this.ownerPlayerInGame.cardGraveyard.removeCard(targetCard)
 			})
+
+		this.createEffect(GameEventType.CARD_RESOLVED).perform(() => {
+			this.charges -= 1
+			if (this.charges <= 0) {
+				this.ownerPlayerInGame.cardDeck.removeCard(this)
+			}
+		})
 	}
 }

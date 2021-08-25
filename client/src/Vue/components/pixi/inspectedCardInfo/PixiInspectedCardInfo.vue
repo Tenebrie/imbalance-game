@@ -102,7 +102,11 @@ export default defineComponent({
 		})
 
 		const displayManacost = computed<boolean>(() => {
-			return inspectedCard.value.stats.baseSpellCost > 0 || inspectedCard.value.stats.spellCost > 0
+			return (
+				inspectedCard.value.type === CardType.SPELL ||
+				inspectedCard.value.stats.baseSpellCost > 0 ||
+				inspectedCard.value.stats.spellCost > 0
+			)
 		})
 
 		const displayedFeatures = computed<CardFeature[]>(() => {

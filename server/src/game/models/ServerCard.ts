@@ -701,6 +701,7 @@ export default class ServerCard implements Card {
 	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<CardDestroyedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<UnitDestroyedEventArgs>
 	protected createCallback(event: GameEventType.CARD_PLAYED, location: CardLocation[] | 'any'): EventSubscription<CardPlayedEventArgs>
+	protected createCallback(event: GameEventType.CARD_RESOLVED, location: CardLocation[] | 'any'): EventSubscription<CardResolvedEventArgs>
 	protected createCallback(
 		event: GameEventType.CARD_BUFF_CREATED,
 		location: CardLocation[] | 'any'
