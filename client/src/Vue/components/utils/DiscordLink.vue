@@ -1,5 +1,5 @@
 <template>
-	<a href="https://discord.gg/9fSWxMnBFa" target="_blank"><slot></slot></a>
+	<a href="/assets/discord.svg" target="_blank"><slot></slot></a>
 </template>
 
 <script lang="ts">
