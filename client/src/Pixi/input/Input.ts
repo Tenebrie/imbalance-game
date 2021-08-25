@@ -258,8 +258,9 @@ export default class Input {
 			return
 		}
 
-		if (event.button === LEFT_MOUSE_BUTTON) {
+		if (event.button === LEFT_MOUSE_BUTTON && this.hoveredCard) {
 			this.grabCard()
+			return
 		}
 
 		if (event.button === LEFT_MOUSE_BUTTON && !this.grabbedCard && !this.hoveredCard) {
@@ -339,15 +340,9 @@ export default class Input {
 			return
 		}
 
-		if (event.button === LEFT_MOUSE_BUTTON && this.leftMouseDown && !this.grabbedCard) {
+		if (event.button === LEFT_MOUSE_BUTTON && !this.grabbedCard && this.boardBoopStartedAt) {
 			boopTheBoard(event, this.boardBoopStartedAt, 'up')
-		} else if (
-			event.button === RIGHT_MOUSE_BUTTON &&
-			this.rightMouseDown &&
-			!this.inspectedCard &&
-			!this.hoveredCard &&
-			!this.grabbedCard
-		) {
+		} else if (event.button === RIGHT_MOUSE_BUTTON && !this.inspectedCard && !this.hoveredCard && !this.grabbedCard) {
 			boopTheBoard(event, this.boardBoopStartedAt, 'up')
 		} else if (event.button === MIDDLE_MOUSE_BUTTON) {
 			boopTheBoard(event, this.boardBoopStartedAt, 'up')
@@ -358,6 +353,7 @@ export default class Input {
 		} else if (event.button === RIGHT_MOUSE_BUTTON && this.rightMouseDown) {
 			this.inspectCard()
 		}
+		this.boardBoopStartedAt = null
 	}
 
 	private onTouchEnd() {
@@ -617,19 +613,7 @@ export default class Input {
 			}, [])
 			.concat(cardsToAdd)
 
-		cardsToRemove.forEach((card) => Core.destroyCard(card))
-
-		cardsToAdd.forEach((card) => {
-			// gsap.from(card.coreContainer, {
-			// 	duration: 0.3,
-			// 	pixi: {
-			// 		alpha: 0,
-			// 		positionX: card.coreContainer.position.x - 75 * getRenderScale().superSamplingLevel,
-			// 	},
-			// })
-			console.log(card.displayMode)
-		})
-
+		this.discardForcedTargetingCards(cardsToRemove)
 		this.forcedTargetingCards = result
 	}
 
@@ -640,8 +624,15 @@ export default class Input {
 		this.forcedTargetingMode.destroy()
 		this.forcedTargetingMode = null
 
-		this.discardedForcedTargetingCards = this.discardedForcedTargetingCards.concat(this.forcedTargetingCards)
-		this.forcedTargetingCards.forEach((card) => {
+		this.discardForcedTargetingCards(this.forcedTargetingCards)
+		this.forcedTargetingCards = []
+		store.commit.gameStateModule.setTargetingMode(null)
+		store.commit.gameStateModule.setPopupTargetingCardCount(0)
+	}
+
+	private discardForcedTargetingCards(cards: RenderedCard[]): void {
+		this.discardedForcedTargetingCards = this.discardedForcedTargetingCards.concat(cards)
+		cards.forEach((card) => {
 			setTimeout(() => {
 				Core.destroyCard(card)
 				this.discardedForcedTargetingCards = this.discardedForcedTargetingCards.filter((discardedCard) => discardedCard !== card)
@@ -654,8 +645,5 @@ export default class Input {
 				},
 			})
 		})
-		this.forcedTargetingCards = []
-		store.commit.gameStateModule.setTargetingMode(null)
-		store.commit.gameStateModule.setPopupTargetingCardCount(0)
 	}
 }
