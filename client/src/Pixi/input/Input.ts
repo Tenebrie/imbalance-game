@@ -21,6 +21,8 @@ import CardLocation from '@shared/enums/CardLocation'
 import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import { boopTheBoard, flushBoardBoopPreps, getCardInsertIndex, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
+import gsap from 'gsap'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -53,6 +55,7 @@ export default class Input {
 	playableCards: CardTargetMessage[] = []
 	forcedTargetingMode: ForcedTargetingMode | null = null
 	forcedTargetingCards: RenderedCard[] = []
+	discardedForcedTargetingCards: RenderedCard[] = []
 
 	inspectCardMode: InspectCardMode = InspectCardMode.CLICK
 
@@ -616,6 +619,17 @@ export default class Input {
 
 		cardsToRemove.forEach((card) => Core.destroyCard(card))
 
+		cardsToAdd.forEach((card) => {
+			// gsap.from(card.coreContainer, {
+			// 	duration: 0.3,
+			// 	pixi: {
+			// 		alpha: 0,
+			// 		positionX: card.coreContainer.position.x - 75 * getRenderScale().superSamplingLevel,
+			// 	},
+			// })
+			console.log(card.displayMode)
+		})
+
 		this.forcedTargetingCards = result
 	}
 
@@ -625,7 +639,21 @@ export default class Input {
 		}
 		this.forcedTargetingMode.destroy()
 		this.forcedTargetingMode = null
-		this.forcedTargetingCards.forEach((card) => Core.destroyCard(card))
+
+		this.discardedForcedTargetingCards = this.discardedForcedTargetingCards.concat(this.forcedTargetingCards)
+		this.forcedTargetingCards.forEach((card) => {
+			setTimeout(() => {
+				Core.destroyCard(card)
+				this.discardedForcedTargetingCards = this.discardedForcedTargetingCards.filter((discardedCard) => discardedCard !== card)
+			}, 1000)
+			gsap.to(card.coreContainer, {
+				duration: 0.3,
+				pixi: {
+					alpha: 0,
+					positionX: card.coreContainer.position.x + 75 * getRenderScale().superSamplingLevel,
+				},
+			})
+		})
 		this.forcedTargetingCards = []
 		store.commit.gameStateModule.setTargetingMode(null)
 		store.commit.gameStateModule.setPopupTargetingCardCount(0)

@@ -956,25 +956,32 @@ export default class Renderer {
 
 		container.visible = Core.input.forcedTargetingMode ? store.state.gameStateModule.popupTargetingCardsVisible : true
 
-		const targetPosition = {
-			x: distanceToCenter * cardWidth + screenCenter,
-			y: this.getScreenHeight() / 2 - cardHeight / 2,
-		}
-
 		const effectiveLevel = level - Math.min(levelCount - 1, 4) / 2
 		const levelOffset = effectiveLevel * (cardHeight * 1.1)
 
+		const targetPosition = {
+			x: distanceToCenter * cardWidth + screenCenter,
+			y: this.getScreenHeight() / 2 + levelOffset,
+		}
+
 		targetPosition.y = this.getScreenHeight() - targetPosition.y
 
+		const startAnimation = renderedCard.displayMode === CardDisplayMode.UNDEFINED
 		if (renderedCard === MouseHover.getHoveredCard()) {
 			renderedCard.setDisplayMode(CardDisplayMode.SELECTION_HOVERED)
 		} else {
 			renderedCard.setDisplayMode(CardDisplayMode.SELECTION)
 		}
 
-		sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
-		container.position.x = targetPosition.x
-		container.position.y = targetPosition.y - cardHeight / 2 + levelOffset
+		if (startAnimation) {
+			container.alpha = 0
+			container.position.x = targetPosition.x - 75 * this.superSamplingLevel
+			container.position.y = targetPosition.y
+		}
+
+		container.alpha += (1 - container.alpha) * this.deltaTimeFraction * 7
+		container.position.x += (targetPosition.x - container.position.x) * this.deltaTimeFraction * 7
+		container.position.y += (targetPosition.y - container.position.y) * this.deltaTimeFraction * 7
 		container.zIndex = SELECTABLE_CARD_ZINDEX + handPosition * 2
 		if (renderedCard === MouseHover.getHoveredCard()) {
 			container.zIndex += 100
@@ -987,8 +994,6 @@ export default class Renderer {
 		renderedCard.sprite.alpha = 1
 
 		this.updateCardTintOverlay(renderedCard)
-		// renderedCard.cardTintOverlay.alpha = 0
-		// renderedCard.cardFullTintOverlay.alpha = 0
 	}
 
 	public destroy(): void {
