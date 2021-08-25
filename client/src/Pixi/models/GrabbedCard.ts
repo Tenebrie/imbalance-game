@@ -2,6 +2,7 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import TargetingLine from '@/Pixi/models/TargetingLine'
 import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
 import Core from '@/Pixi/Core'
+import * as PIXI from 'pixi.js'
 import RenderedGameBoardPosition from '../cards/RenderedGameBoardPosition'
 
 export default class GrabbedCard {
