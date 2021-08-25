@@ -11,7 +11,7 @@
 		"lint": "yarn eslint src/ --ext .ts",
 		"lint-fix": "yarn eslint src/ --ext .ts --fix",
 		"test": "yarn jest",
-    		"nuke": "rm -rf node_modules"
+		"nuke": "rm -rf node_modules"
 	},
 	"dependencies": {
 		"@types/bcrypt": "^3.0.0",
