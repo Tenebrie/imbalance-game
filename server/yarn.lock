@@ -682,13 +682,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/console-stamp@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/console-stamp/-/console-stamp-3.0.0.tgz#47068b11b29aad9e753b8a2894bcada877578d7d"
-  integrity sha512-zL36qqTSN6okIIefoLtZFQVu4jpJ0Po7EfYI+ryDzwaHy1jgHSuBb1ZU8PmNhWKWMXvXNYPtMZD7rTLPINKi1A==
-  dependencies:
-    console-stamp "*"
-
 "@types/continuation-local-storage@*":
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/@types/continuation-local-storage/-/continuation-local-storage-3.2.3.tgz#e4d5b5fddae1a432b78d19d48875c7e297f566e2"
@@ -2127,7 +2120,7 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
-console-stamp@*, console-stamp@^3.0.3:
+console-stamp@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/console-stamp/-/console-stamp-3.0.3.tgz#a7a47427ffab893c20d30407199bc4b40346a7ba"
   integrity sha512-6ltMcMEVDHb1bqb+qaVfCX7Vf3vEkfZEeKyReG1ny45Rv6YJynCcdv94j7whNVfxj/4/3Ji/QBHY6p4JI51Ucw==
@@ -5817,10 +5810,10 @@ revalidator@0.1.x:
   resolved "https://registry.yarnpkg.com/revalidator/-/revalidator-0.1.8.tgz#fece61bfa0c1b52a206bd6b18198184bdd523a3b"
   integrity sha1-/s5hv6DBtSoga9axgZgYS91SOjs=
 
-rgb-hex@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/rgb-hex/-/rgb-hex-4.0.0.tgz#02fb1e215e3fe5d070501579a3d2e4fa3c0acec8"
-  integrity sha512-Eg2ev5CiMBnQ9Gpflmqbwbso0CCdISqtVIow7OpYSLN1ULUv2jTB9YieS1DSSn/17AD7KkPWDPzSFzI4GSuu/Q==
+rgb-hex@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/rgb-hex/-/rgb-hex-3.0.0.tgz#eab0168cc1279563b18a14605315389142e2e487"
+  integrity sha512-8h7ZcwxCBDKvchSWbWngJuSCqJGQ6nDuLLg+QcRyQDbX9jMWt+PpPeXAhSla0GOooEomk3lCprUpGkMdsLjKyg==
 
 right-align@^0.1.1:
   version "0.1.3"
