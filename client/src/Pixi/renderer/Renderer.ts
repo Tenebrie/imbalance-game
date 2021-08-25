@@ -722,6 +722,11 @@ export default class Renderer {
 			}
 		}
 
+		/* Fallback tint */
+		if (!Core.input.forcedTargetingMode && Core.board.getValidOrdersForUnit(unit).length === 0 && hoveredCard === card) {
+			return { color: 0xffffff, alpha: 0.25 }
+		}
+
 		return { color: null, alpha: 0 }
 	}
 
