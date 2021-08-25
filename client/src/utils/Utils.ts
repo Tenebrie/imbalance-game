@@ -12,7 +12,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
-import { Color } from 'pixi-particles'
 
 export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
 	return Core.board.isInverted && player === 'player' ? Core.constants.GAME_BOARD_ROW_COUNT - index - 1 : index

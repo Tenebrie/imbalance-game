@@ -1,7 +1,7 @@
 <template>
 	<div class="the-discord-link">
 		<DiscordLink>
-			<img src="https://discord.com/assets/f8389ca1a741a115313bede9ac02e2c0.svg" alt="Discord server link" height="100px" />
+			<img src="../../assets/discord.svg" alt="Discord server link" height="100px" />
 		</DiscordLink>
 	</div>
 </template>
