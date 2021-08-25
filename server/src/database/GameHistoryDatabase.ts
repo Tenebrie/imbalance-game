@@ -53,7 +53,7 @@ export default {
 				array(
 					SELECT row_to_json(subplayers)
 					FROM (
-						 SELECT "playerId"
+						 SELECT id, username, "groupId"
 						 FROM player_in_game_history JOIN players players ON player_in_game_history."playerId" = players.id
 						 WHERE player_in_game_history."gameId" = game_history.id
 					) AS subplayers
