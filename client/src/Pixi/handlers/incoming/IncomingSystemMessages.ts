@@ -17,8 +17,10 @@ const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHan
 
 	[SystemMessageType.GAME_COLLAPSED]: (data: GameCollapseMessageData) => {
 		store.dispatch.popupModule.open({
+			// @ts-ignore
 			component: TheGameCollapsePopup,
 			sticky: true,
+			debug: true,
 			params: data,
 		})
 	},
@@ -35,6 +37,7 @@ const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHan
 
 	[SystemMessageType.COMMAND_DISCONNECT]: () => {
 		store.dispatch.leaveGame()
+		store.commit.clearNextLinkedGame()
 	},
 
 	[SystemMessageType.ERROR_GENERIC]: (data: string) => {

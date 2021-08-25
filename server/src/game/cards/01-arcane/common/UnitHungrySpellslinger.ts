@@ -26,7 +26,7 @@ export default class UnitHungrySpellslinger extends ServerCard {
 			tribes: [CardTribe.ELEMENTAL],
 			features: [CardFeature.KEYWORD_INFUSE_X],
 			stats: {
-				power: 5,
+				power: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -41,7 +41,7 @@ export default class UnitHungrySpellslinger extends ServerCard {
 			.require((args) => args.targetCard.tribes.includes(CardTribe.SCROLL))
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.require(() => this.ownerInGame.spellMana >= this.infuseCost)
+			.require(() => this.ownerPlayerInGame.spellMana >= this.infuseCost)
 			.perform(() => Keywords.infuse(this, this.infuseCost))
 			.perform(() => (this.didInfuse = true))
 
@@ -51,9 +51,9 @@ export default class UnitHungrySpellslinger extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		const newCard = CardLibrary.instantiateByInstance(this.game, target)
+		const newCard = CardLibrary.instantiateFromInstance(this.game, target)
 		newCard.buffs.addMultiple(BuffSpellDiscount, this.spellDiscount, this, BuffDuration.INFINITY)
-		this.ownerInGame.cardHand.addSpell(newCard)
+		this.ownerPlayerInGame.cardHand.addSpell(newCard)
 	}
 
 	private onTargetsConfirmed(): void {

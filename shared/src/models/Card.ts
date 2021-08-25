@@ -7,6 +7,7 @@ import CardFeature from '../enums/CardFeature'
 import CardFaction from '../enums/CardFaction'
 import CardStats from './CardStats'
 import ExpansionSet from '../enums/ExpansionSet'
+import { CardLocalization } from './cardLocalization/CardLocalization'
 
 export default interface Card {
 	id: string
@@ -15,14 +16,9 @@ export default interface Card {
 	color: CardColor
 	faction: CardFaction
 
-	name: string
-	title: string
-	flavor: string
-	listName: string
-	description: string
-
 	stats: CardStats
 	buffs: BuffContainer
+	localization: CardLocalization
 	baseTribes: CardTribe[]
 	baseFeatures: CardFeature[]
 	relatedCards: string[]

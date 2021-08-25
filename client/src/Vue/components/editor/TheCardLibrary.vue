@@ -46,7 +46,7 @@ export default defineComponent({
 				return
 			}
 			if (event.key === 'Escape' && store.state.editor.searchQuery) {
-				store.commit.editor.setSearchQuery(null)
+				store.commit.editor.setSearchQuery('')
 			}
 		}
 
@@ -65,8 +65,8 @@ export default defineComponent({
 			const mapLocalizedFeatures = (card: CardMessage, locale: 'current' | 'original'): string[] => {
 				return card.baseFeatures
 					.map((feature) => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
-					.map((id) => (locale === 'current' ? Localization.getValueOrNull(id) : Localization.getOriginalOrNull(id)))
-					.filter((string) => string !== null)
+					.map((id) => (locale === 'current' ? Localization.get(id) : Localization.getOriginal(id)))
+					.filter((string) => string !== null) as string[]
 			}
 
 			const selectedColor = routeQuery.value.color
@@ -74,22 +74,24 @@ export default defineComponent({
 
 			const results = store.state.editor.cardLibrary
 				.filter((card) => isCollectible(card))
-				.filter((card) => selectedColor === null || card.color === selectedColor)
-				.filter((card) => selectedFaction === null || card.faction === selectedFaction)
+				.filter((card) => selectedColor === null || selectedColor.includes(card.color))
+				.filter((card) => selectedFaction === null || selectedFaction.includes(card.faction))
 				.map((card) => ({
 					...card,
-					originalName: insertRichTextVariables(Localization.getOriginalOrNull(card.name), card.variables),
-					originalTitle: insertRichTextVariables(Localization.getOriginalOrNull(card.title) || '', card.variables),
-					originalTribes: card.baseTribes.map((tribe) => Localization.getOriginalOrNull(`card.tribe.${tribe}`)).join(' '),
+					originalName: insertRichTextVariables(Localization.get(card.localization.en.name, 'key'), card.variables),
+					originalTitle: insertRichTextVariables(Localization.get(card.localization.en.title, 'null'), card.variables),
+					originalTribes: card.baseTribes.map((tribe) => Localization.getOriginal(`card.tribe.${tribe}`)).join(' '),
 					originalFeatures: mapLocalizedFeatures(card, 'original'),
-					originalFlavor: Localization.getOriginalOrNull(card.flavor),
-					originalDescription: stripFormatting(insertRichTextVariables(Localization.get(card.description), card.variables)),
-					localizedName: insertRichTextVariables(Localization.get(card.name), card.variables),
-					localizedTitle: insertRichTextVariables(Localization.getValueOrNull(card.title) || '', card.variables),
-					localizedTribes: card.baseTribes.map((tribe) => Localization.get(`card.tribe.${tribe}`)).join(' '),
+					originalFlavor: Localization.get(card.localization.en.flavor, 'null'),
+					originalDescription: stripFormatting(
+						insertRichTextVariables(Localization.get(card.localization.en.description, 'key'), card.variables)
+					),
+					localizedName: insertRichTextVariables(Localization.getCardName(card), card.variables),
+					localizedTitle: insertRichTextVariables(Localization.getCardTitle(card) || '', card.variables),
+					localizedTribes: card.baseTribes.map((tribe) => Localization.get(`card.tribe.${tribe}`, 'key')).join(' '),
 					localizedFeatures: mapLocalizedFeatures(card, 'current'),
-					localizedFlavor: Localization.get(card.flavor),
-					localizedDescription: stripFormatting(insertRichTextVariables(Localization.get(card.description), card.variables)),
+					localizedFlavor: Localization.getCardFlavor(card),
+					localizedDescription: stripFormatting(insertRichTextVariables(Localization.getCardDescription(card), card.variables)),
 				}))
 
 			const searchQuery = store.state.editor.searchQuery

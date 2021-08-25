@@ -7,6 +7,8 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import { getBoopColor } from '@/utils/Utils'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 interface ParticleEmitterHandle {
 	emitter: Particles.Emitter
@@ -34,11 +36,11 @@ export default class ParticleSystem {
 					!!handle.ownerCard && !!handle.container && !!handle.ownerCard.coreContainer && !!handle.ownerCard.coreContainer.transform
 			)
 			.forEach((handle) => {
-				handle.container.position.copyFrom(handle.ownerCard.coreContainer.position)
+				handle.container!.position.copyFrom(handle.ownerCard!.coreContainer.position)
 			})
 	}
 
-	private getCardEffectContainer(card: RenderedCard): PIXI.Container {
+	private static getCardEffectContainer(card: RenderedCard): PIXI.Container {
 		let effectContainer = Core.renderer.handEffectsContainer
 		if (Core.board.findUnitById(card.id)) {
 			effectContainer = Core.renderer.boardEffectsContainer
@@ -49,7 +51,15 @@ export default class ParticleSystem {
 
 		return emitterContainer
 	}
-	private createDefaultEmitter(container: PIXI.Container, config: EmitterConfig | OldEmitterConfig): Particles.Emitter {
+	private static getRowBuffControllerEffectContainer(): PIXI.Container {
+		const effectContainer = Core.renderer.boardEffectsContainer
+
+		const emitterContainer = new PIXI.Container()
+		effectContainer.addChild(emitterContainer)
+
+		return emitterContainer
+	}
+	private static createDefaultEmitter(container: PIXI.Container, config: EmitterConfig | OldEmitterConfig): Particles.Emitter {
 		return new Particles.Emitter(container, [TextureAtlas.getTexture('effects/particle')], config)
 	}
 	private playEmitter(emitter: Particles.Emitter, container: PIXI.Container): void {
@@ -83,23 +93,24 @@ export default class ParticleSystem {
 		}, 1000)
 	}
 
-	private createBoardContainer(): PIXI.Container {
+	private static createBoardContainer(): PIXI.Container {
 		const container = new PIXI.Container()
 		Core.renderer.boardEffectsContainer.addChild(container)
 		return container
 	}
 
 	public createSmallBoardBoopEffect(position: PIXI.Point): void {
-		const boopContainer = this.createBoardContainer()
+		const boopContainer = ParticleSystem.createBoardContainer()
 
 		const projectileCount = 10
-		const projectileSpeed = 500
+		const projectileSpeed = 250
+		const scale = getRenderScale().superSamplingLevel
 
-		const emitter = this.createDefaultEmitter(boopContainer, {
+		const emitter = ParticleSystem.createDefaultEmitter(boopContainer, {
 			alpha: { start: 1.0, end: 0 },
-			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			scale: { start: 0.2 * scale, end: 0 },
 			color: getBoopColor(),
-			speed: { start: projectileSpeed, end: 0 },
+			speed: { start: projectileSpeed * scale, end: 0 },
 			minimumSpeedMultiplier: 0.75,
 			minimumScaleMultiplier: 0.5,
 			startRotation: {
@@ -127,16 +138,17 @@ export default class ParticleSystem {
 		forcedColor: { start: string; end: string } | null = null,
 		limitAngle = true
 	): void {
-		const boopContainer = this.createBoardContainer()
+		const boopContainer = ParticleSystem.createBoardContainer()
 
 		const projectileCount = 400 + 250 * Math.pow(power, 2)
-		const projectileSpeed = 500 * Math.pow(power, 1.5)
+		const projectileSpeed = 250 * Math.pow(power, 1.5)
+		const scale = getRenderScale().superSamplingLevel
 
-		const emitter = this.createDefaultEmitter(boopContainer, {
+		const emitter = ParticleSystem.createDefaultEmitter(boopContainer, {
 			alpha: { start: 1.0, end: 0 },
-			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			scale: { start: 0.2 * scale, end: 0 },
 			color: forcedColor || getBoopColor(),
-			speed: { start: projectileSpeed, end: 0 },
+			speed: { start: projectileSpeed * scale, end: 0 },
 			minimumSpeedMultiplier: 0.01,
 			minimumScaleMultiplier: 0.75 / Math.pow(Math.max(1, power), 2),
 			startRotation: {
@@ -157,13 +169,14 @@ export default class ParticleSystem {
 	}
 
 	public createBoardBoopPrepareEffect(position: PIXI.Point): Particles.Emitter {
-		const boopContainer = this.createBoardContainer()
+		const boopContainer = ParticleSystem.createBoardContainer()
+		const scale = getRenderScale().superSamplingLevel
 
-		const emitter = this.createDefaultEmitter(boopContainer, {
+		const emitter = ParticleSystem.createDefaultEmitter(boopContainer, {
 			alpha: { start: 1.0, end: 0 },
-			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			scale: { start: 0.2 * scale, end: 0 },
 			color: getBoopColor(),
-			speed: { start: 150, end: 0 },
+			speed: { start: 150 * scale, end: 0 },
 			minimumSpeedMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },
 			lifetime: { min: 0.5, max: 0.5 },
@@ -179,8 +192,8 @@ export default class ParticleSystem {
 			spawnCircle: {
 				x: 0,
 				y: 0,
-				r: 30,
-				minR: 20,
+				r: 15 * scale,
+				minR: 10 * scale,
 			},
 		})
 		this.playEmitter(emitter, boopContainer)
@@ -188,12 +201,14 @@ export default class ParticleSystem {
 	}
 
 	public createAttackImpactParticleEffect(card: RenderedCard): void {
-		const container = this.getCardEffectContainer(card)
-		const emitter = this.createDefaultEmitter(container, {
+		const scale = getRenderScale().superSamplingLevel
+		const container = ParticleSystem.getCardEffectContainer(card)
+
+		const emitter = ParticleSystem.createDefaultEmitter(container, {
 			alpha: { start: 1.0, end: 0 },
-			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			scale: { start: 0.3 * scale, end: 0 },
 			color: { start: 'ff002b', end: 'ff5ed1' },
-			speed: { start: 550, end: 0 },
+			speed: { start: 200 * scale, end: 0 },
 			minimumSpeedMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },
 			lifetime: { min: 0.5, max: 0.5 },
@@ -213,13 +228,14 @@ export default class ParticleSystem {
 	}
 
 	public createHealImpactParticleEffect(card: RenderedCard): void {
-		const container = this.getCardEffectContainer(card)
+		const scale = getRenderScale().superSamplingLevel
+		const container = ParticleSystem.getCardEffectContainer(card)
 
-		const emitter = this.createDefaultEmitter(container, {
+		const emitter = ParticleSystem.createDefaultEmitter(container, {
 			alpha: { start: 1.0, end: 0 },
-			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			scale: { start: 0.3 * scale, end: 0 },
 			color: { start: '00ff2b', end: '5ed1ff' },
-			speed: { start: 550, end: 0 },
+			speed: { start: 275 * scale, end: 0 },
 			minimumSpeedMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },
 			lifetime: { min: 0.5, max: 0.5 },
@@ -249,13 +265,14 @@ export default class ParticleSystem {
 				end: 'FF0000',
 			}
 		}
+		const scale = getRenderScale().superSamplingLevel
 
 		const card = unit.card
-		const container = this.getCardEffectContainer(card)
+		const container = ParticleSystem.getCardEffectContainer(card)
 
-		const emitter = this.createDefaultEmitter(container, {
+		const emitter = ParticleSystem.createDefaultEmitter(container, {
 			alpha: { start: 1.0, end: 0 },
-			scale: { start: 0.9 * Core.renderer.superSamplingLevel, end: 0.5 * Core.renderer.superSamplingLevel },
+			scale: { start: 0.9 * scale, end: 0.5 * scale },
 			color: color,
 			speed: { start: 0, end: 0 },
 			startRotation: { min: 0, max: 360 },
@@ -282,6 +299,49 @@ export default class ParticleSystem {
 		this.playAttachedEmitter(emitter, container, card)
 	}
 
+	public createRowBuffCreateParticleEffect(row: RenderedGameBoardRow, alignment: BuffAlignment): void {
+		let color = {
+			start: '55AAFF',
+			end: '0000FF',
+		}
+		if (alignment === BuffAlignment.NEGATIVE) {
+			color = {
+				start: 'FFAA55',
+				end: 'FF0000',
+			}
+		}
+
+		const container = ParticleSystem.getRowBuffControllerEffectContainer()
+		const rowPosition = row.getInteractionVisualPosition()
+
+		const emitter = ParticleSystem.createDefaultEmitter(container, {
+			alpha: { start: 1.0, end: 0 },
+			scale: { start: 0.9 * Core.renderer.superSamplingLevel, end: 0.5 * Core.renderer.superSamplingLevel },
+			color: color,
+			speed: { start: 0, end: 0 },
+			startRotation: { min: 0, max: 360 },
+			rotationSpeed: { min: 0, max: 200 },
+			lifetime: { min: 0.5, max: 1.5 },
+			blendMode: 'screen',
+			ease: [{ s: 0, cp: 0.1, e: 1 }],
+			frequency: 0.005,
+			emitterLifetime: 0.15,
+			maxParticles: 1000,
+			pos: {
+				x: 0,
+				y: 0,
+			},
+			particlesPerWave: 25,
+			spawnType: 'circle',
+			spawnCircle: {
+				x: rowPosition.x,
+				y: rowPosition.y,
+				r: 30 * getRenderScale().superSamplingLevel,
+			},
+		})
+		this.playEmitter(emitter, container)
+	}
+
 	public createUnitIncapacitateParticleEffect(unit: RenderedUnit): void {
 		let color = {
 			start: '55AAFF',
@@ -295,9 +355,9 @@ export default class ParticleSystem {
 		}
 
 		const card = unit.card
-		const container = this.getCardEffectContainer(card)
+		const container = ParticleSystem.getCardEffectContainer(card)
 
-		const emitter = this.createDefaultEmitter(container, {
+		const emitter = ParticleSystem.createDefaultEmitter(container, {
 			alpha: { start: 1.0, end: 0 },
 			scale: { start: 0.9 * Core.renderer.superSamplingLevel, end: 0.5 * Core.renderer.superSamplingLevel },
 			color: color,
@@ -339,14 +399,15 @@ export default class ParticleSystem {
 			config.startRotation = { min: 90, max: 90 }
 		}
 
+		const scale = getRenderScale().superSamplingLevel
 		const count = card.isUnitMode() ? 500 : 1000
 
-		const container = this.getCardEffectContainer(card)
-		const emitter = this.createDefaultEmitter(container, {
+		const container = ParticleSystem.getCardEffectContainer(card)
+		const emitter = ParticleSystem.createDefaultEmitter(container, {
 			alpha: { start: 1.0, end: 0 },
 			scale: { start: 0.2 * Core.renderer.superSamplingLevel, end: 0.2 * Core.renderer.superSamplingLevel },
 			color: config.color,
-			speed: { start: 50, end: 50 },
+			speed: { start: 50 * scale, end: 50 * scale },
 			minimumSpeedMultiplier: 0.1,
 			minimumScaleMultiplier: 0.1,
 			startRotation: config.startRotation,
@@ -375,12 +436,13 @@ export default class ParticleSystem {
 	}
 
 	public createInfuseParticleEffect(card: RenderedCard): void {
-		const container = this.getCardEffectContainer(card)
-		const emitter = this.createDefaultEmitter(container, {
+		const scale = getRenderScale().superSamplingLevel
+		const container = ParticleSystem.getCardEffectContainer(card)
+		const emitter = ParticleSystem.createDefaultEmitter(container, {
 			alpha: { start: 1.0, end: 0 },
-			scale: { start: 0.15 * Core.renderer.superSamplingLevel, end: 0 },
+			scale: { start: 0.3, end: 0 },
 			color: { start: '002bff', end: '5ed1ff' },
-			speed: { start: 150, end: 0 },
+			speed: { start: 100 * scale, end: 0 },
 			minimumSpeedMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },
 			lifetime: { min: 0.5, max: 0.5 },
@@ -407,14 +469,15 @@ export default class ParticleSystem {
 	}
 
 	public createManaGeneratedParticleEffect(card: RenderedCard): void {
-		const container = this.getCardEffectContainer(card)
+		const scale = getRenderScale().superSamplingLevel
+		const container = ParticleSystem.getCardEffectContainer(card)
 
 		const count = card.isUnitMode() ? 500 : 1000
-		const emitter = this.createDefaultEmitter(container, {
+		const emitter = ParticleSystem.createDefaultEmitter(container, {
 			alpha: { start: 1.0, end: 0 },
 			scale: { start: 0.2 * Core.renderer.superSamplingLevel, end: 0.2 * Core.renderer.superSamplingLevel },
 			color: { start: '5555FF', end: '000055' },
-			speed: { start: 10, end: 10 },
+			speed: { start: 10 * scale, end: 10 * scale },
 			minimumSpeedMultiplier: 0.1,
 			minimumScaleMultiplier: 0.1,
 			startRotation: { min: 0, max: 360 },

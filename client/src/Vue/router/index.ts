@@ -32,6 +32,7 @@ const requireAuthentication = async (next: NavigationGuardNext, beforeContinue?:
 const requireAdminAccess = async (next: NavigationGuardNext): Promise<void> => {
 	if (
 		(store.state.isLoggedIn || (await fetchProfile())) &&
+		store.state.player &&
 		(store.state.player.accessLevel === AccessLevel.ADMIN || store.state.player.accessLevel === AccessLevel.SUPPORT)
 	) {
 		next()
@@ -123,7 +124,7 @@ const router = createRouter({
 			name: 'game',
 			component: () => import('@/Vue/views/GameView.vue'),
 			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-				if (!store.state.selectedGame) {
+				if (!store.state.currentGame) {
 					next('/')
 					return
 				}
@@ -169,7 +170,12 @@ const router = createRouter({
 				{
 					path: '/admin/cards',
 					name: 'admin-cards',
-					component: () => import('@/Vue/components/admin/AdminPlayerView.vue'),
+					component: () => import('@/Vue/components/admin/AdminCardsView.vue'),
+				},
+				{
+					path: '/admin/cards/:cardId',
+					name: 'admin-card-details',
+					component: () => import('@/Vue/components/admin/cardDetails/AdminCardDetailsView.vue'),
 				},
 				{
 					path: '/admin/stats',

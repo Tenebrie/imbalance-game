@@ -9,6 +9,7 @@ import CardFaction from '../../../enums/CardFaction'
 import OpenCardStatsMessage from '../cardStats/OpenCardStatsMessage'
 import CardMessage from './CardMessage'
 import ExpansionSet from '../../../enums/ExpansionSet'
+import { CardLocalization } from '../../cardLocalization/CardLocalization'
 
 export default class OpenCardMessage implements CardMessage {
 	id: string
@@ -17,14 +18,9 @@ export default class OpenCardMessage implements CardMessage {
 	color: CardColor
 	faction: CardFaction
 
-	name: string
-	title: string
-	flavor: string
-	listName: string
-	description: string
-
 	stats: OpenCardStatsMessage
 	buffs: OpenBuffContainerMessage
+	localization: CardLocalization
 	baseTribes: CardTribe[]
 	baseFeatures: CardFeature[]
 	relatedCards: string[]
@@ -44,14 +40,9 @@ export default class OpenCardMessage implements CardMessage {
 		this.color = card.color
 		this.faction = card.faction
 
-		this.name = card.name
-		this.title = card.title
-		this.flavor = card.flavor
-		this.listName = card.listName
-		this.description = card.description
-
 		this.stats = new OpenCardStatsMessage(card.stats)
 		this.buffs = new OpenBuffContainerMessage(card.buffs)
+		this.localization = card.localization
 		this.baseTribes = card.baseTribes.slice()
 		this.baseFeatures = card.baseFeatures.slice()
 		this.relatedCards = card.relatedCards.slice()

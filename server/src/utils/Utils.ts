@@ -5,10 +5,29 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerPlayer from '../game/players/ServerPlayer'
 import express, { Request } from 'express'
-import { sortCards } from '@shared/Utils'
+import { getMaxCardCopiesForColor, getMaxCardCountForColor } from '@shared/Utils'
 import { CardConstructor } from '../game/libraries/CardLibrary'
 import { v4 as getRandomId } from 'uuid'
 import ServerGame from '@src/game/models/ServerGame'
+import ServerBoardRow from '@src/game/models/ServerBoardRow'
+import EditorDeck from '@src/../../shared/src/models/EditorDeck'
+import EditorCard from '@src/../../shared/src/models/EditorCard'
+import DeckUtils from './DeckUtils'
+import PopulatedEditorCard from '@src/../../shared/src/models/PopulatedEditorCard'
+import CardFaction from '@src/../../shared/src/enums/CardFaction'
+import PopulatedEditorDeck from '@src/../../shared/src/models/PopulatedEditorDeck'
+import CardColor from '@src/../../shared/src/enums/CardColor'
+import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import ServerBuff from '@src/game/models/buffs/ServerBuff'
+import LeaderStatType from '@shared/enums/LeaderStatType'
+import CardTribe from '@shared/enums/CardTribe'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+
+export const createRandomGuid = (): string => {
+	return getRandomId()
+}
 
 export const createRandomId = (type: 'card' | 'buff', prefix: string): string => {
 	return `${type}:${prefix}:${getRandomId()}`
@@ -18,8 +37,12 @@ export const createRandomGameId = (): string => {
 	return `game:${getRandomId()}`
 }
 
-export const createRandomPlayerId = (): string => {
+export const createHumanPlayerId = (): string => {
 	return `player:${getRandomId()}`
+}
+
+export const createHumanGroupId = (): string => {
+	return `group:${getRandomId()}`
 }
 
 export const createBotPlayerId = (): string => {
@@ -30,10 +53,43 @@ export const createRandomEditorDeckId = (): string => {
 	return `deck:${getRandomId()}`
 }
 
+export const toRowIndex = (rowOrIndex: number | ServerBoardRow): number => {
+	return typeof rowOrIndex === 'number' ? rowOrIndex : rowOrIndex.index
+}
+
+export const getOwnerPlayer = (entity: ServerCard | ServerBuff | ServerUnit | ServerBoardRow): ServerPlayerInGame | null => {
+	const parent = entity instanceof ServerBuff ? entity.parent : entity
+	if (parent instanceof ServerUnit) {
+		return parent.originalOwner
+	} else if (parent instanceof ServerBoardRow) {
+		return null
+	}
+	const ownerPlayer = parent.ownerPlayer
+	if (ownerPlayer) {
+		return ownerPlayer
+	}
+
+	const unit = parent.unit
+	if (!unit) {
+		return null
+	}
+	return unit.originalOwner
+}
+
+export const getOwnerGroup = (entity: ServerCard | ServerUnit | ServerBuff | ServerBoardRow): ServerPlayerGroup | null => {
+	const parent = entity instanceof ServerBuff ? entity.parent : entity
+
+	if (parent instanceof ServerCard) {
+		return parent.ownerGroup
+	} else {
+		return parent.owner
+	}
+}
+
 export const AnyCardLocation = 'any'
 
 export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {
-	let value = rawJson.replace(/card:redacted:([a-zA-Z0-9-]+)/g, (match, capture) => {
+	let value = rawJson.replace(/card::([a-zA-Z0-9-]+)/g, (match, capture) => {
 		const card = game.index.findCard(capture)
 		if (!card) {
 			console.warn(`No card found with id ${capture}`)
@@ -41,7 +97,7 @@ export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {
 		}
 		return card.id
 	})
-	value = value.replace(/buff:redacted:([a-zA-Z0-9-]+)/g, (match, capture) => {
+	value = value.replace(/buff::([a-zA-Z0-9-]+)/g, (match, capture) => {
 		const buff = game.index.findBuff(capture)
 		if (!buff) {
 			console.warn(`No buff found with id ${capture}`)
@@ -50,6 +106,40 @@ export const restoreObjectIDs = (game: ServerGame, rawJson: string): string => {
 		return buff.id
 	})
 	return value
+}
+
+export const getTotalLeaderStat = (player: ServerPlayerInGame | ServerPlayerGroup | null, types: LeaderStatType[]): number => {
+	if (!player) {
+		return 0
+	}
+
+	const playerGroup = player instanceof ServerPlayerGroup ? player : player.group
+	const validCards = player.game.board.getUnitsOwnedByGroup(playerGroup).map((unit) => unit.card)
+
+	if (player instanceof ServerPlayerInGame) {
+		validCards.push(player.leader)
+		const extraCards = player.cardHand.allCards.filter((card) => card.features.includes(CardFeature.PASSIVE))
+		extraCards.forEach((card) => validCards.push(card))
+	}
+	return validCards.map((card) => card.stats.getLeaderStats(types)).reduce((acc, val) => acc + val, 0)
+}
+
+export type LabyrinthItemSlot = 'weapon' | 'armor' | 'gloves' | 'boots'
+export const getLabyrinthItemSlots = (card: ServerCard): LabyrinthItemSlot[] => {
+	const cardSlots: LabyrinthItemSlot[] = []
+	if (card.tribes.includes(CardTribe.LABYRINTH_WEAPON)) {
+		cardSlots.push('weapon')
+	}
+	if (card.tribes.includes(CardTribe.LABYRINTH_ARMOR)) {
+		cardSlots.push('armor')
+	}
+	if (card.tribes.includes(CardTribe.LABYRINTH_GLOVES)) {
+		cardSlots.push('gloves')
+	}
+	if (card.tribes.includes(CardTribe.LABYRINTH_BOOTS)) {
+		cardSlots.push('boots')
+	}
+	return cardSlots
 }
 
 interface TryUntilArgs {
@@ -75,7 +165,7 @@ interface LeaderTextVariables {
 
 export const getLeaderTextVariables = (leaderCard: ServerCard): LeaderTextVariables => {
 	const getPlayerName = () => {
-		const owner = leaderCard.owner
+		const owner = leaderCard.ownerPlayer
 		if (!owner) {
 			return ''
 		}
@@ -163,11 +253,7 @@ export const mapUnitsToCards = (units: ServerUnit[]): ServerCard[] => {
 	return units.map((unit) => unit.card)
 }
 
-export const mapRelatedCards = (constructors: CardConstructor[]): string[] => {
-	return constructors.map((constructor) => getClassFromConstructor(constructor))
-}
-
-export const getClassFromConstructor = (constructor: CardConstructor): string => {
+export const getClassFromConstructor = (constructor: BuffConstructor | CardConstructor | RulesetConstructor): string => {
 	return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
 }
 
@@ -179,45 +265,65 @@ export const EmptyFunction = (): void => {
 	/* Empty */
 }
 
-export default {
-	flat(array: any[], depth = 1): any[] {
-		return array.reduce((flat, toFlatten) => {
-			return flat.concat(Array.isArray(toFlatten) && depth > 1 ? flat(toFlatten, depth - 1) : toFlatten)
-		}, [])
-	},
+export const getDeckLeader = (deck: PopulatedEditorDeck): PopulatedEditorCard | null => {
+	return deck.cards.find((card) => card.color === CardColor.LEADER) || null
+}
 
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-	forEachInNumericEnum(enumeration: any, handler: (val: any) => any): void {
-		for (const value in enumeration) {
-			if (!isNaN(Number(value))) {
-				handler(Number(value))
-			}
-		}
-	},
+export const getDeckFaction = (deck: PopulatedEditorDeck): CardFaction => {
+	const leader = getDeckLeader(deck)
+	if (leader && leader.faction !== CardFaction.NEUTRAL) {
+		return leader.faction
+	}
+	const factionCard = deck.cards.find((card) => card.faction !== CardFaction.NEUTRAL)
+	if (factionCard) {
+		return factionCard.faction
+	}
+	return CardFaction.NEUTRAL
+}
 
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-	forEachInStringEnum(enumeration: any, handler: (val: any) => any): void {
-		for (const value in enumeration) {
-			handler(enumeration[value])
-		}
-	},
-
-	shuffle(inputArray: any[]): any[] {
-		const array = inputArray.slice()
-		let currentIndex = array.length
-
-		while (currentIndex > 0) {
-			const randomIndex = Math.floor(Math.random() * currentIndex)
-			currentIndex -= 1
-			const temporaryValue = array[currentIndex]
-			array[currentIndex] = array[randomIndex]
-			array[randomIndex] = temporaryValue
+export const validateEditorDeck = (unpopulatedDeck: EditorDeck): { valid: boolean; badCards: EditorCard[] } => {
+	const deck = DeckUtils.populateDeck(unpopulatedDeck)
+	const deckFaction = getDeckFaction(deck)
+	const invalidCards = deck.cards.filter((card: PopulatedEditorCard) => {
+		const cardOfColorCount = deck.cards.filter((filteredCard) => filteredCard.color === card.color).length
+		if (cardOfColorCount > getMaxCardCountForColor(card.color)) {
+			return true
 		}
 
-		return array
-	},
+		if (card.faction !== CardFaction.NEUTRAL && card.faction !== deckFaction) {
+			return true
+		}
 
-	sortCards(inputArray: ServerCard[]): ServerCard[] {
-		return sortCards(inputArray) as ServerCard[]
-	},
+		const maxCount = getMaxCardCopiesForColor(card.color)
+		return card.count > maxCount
+	})
+	return {
+		valid: invalidCards.length === 0,
+		badCards: invalidCards.map((card) => ({
+			count: card.count,
+			class: card.class,
+		})),
+	}
+}
+
+export const snakeToCamelCase = (str: string): string =>
+	str.toLowerCase().replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
+
+export function shuffle<T>(inputArray: T[]): T[] {
+	const array = inputArray.slice()
+	let currentIndex = array.length
+
+	while (currentIndex > 0) {
+		const randomIndex = Math.floor(Math.random() * currentIndex)
+		currentIndex -= 1
+		const temporaryValue = array[currentIndex]
+		array[currentIndex] = array[randomIndex]
+		array[randomIndex] = temporaryValue
+	}
+
+	return array
+}
+
+export const getRandomArrayValue = <T>(array: T[]): T => {
+	return array[Math.floor(Math.random() * array.length)]
 }

@@ -9,7 +9,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffStrength from '../../../buffs/BuffStrength'
 
 export default class UnitSkybornMother extends ServerCard {
-	powerGiven = 2
+	powerGiven = 3
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -18,7 +18,7 @@ export default class UnitSkybornMother extends ServerCard {
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.VALKYRIE],
 			stats: {
-				power: 9,
+				power: 13,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

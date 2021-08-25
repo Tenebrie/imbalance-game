@@ -1,12 +1,12 @@
 import ServerCard from './ServerCard'
 import CardDeck from '@shared/models/CardDeck'
 import ServerGame from './ServerGame'
-import CardLibrary from '../libraries/CardLibrary'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerOwnedCard from './ServerOwnedCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerTemplateCardDeck from './ServerTemplateCardDeck'
-import Utils from '../../utils/Utils'
+import { getClassFromConstructor, shuffle } from '@src/utils/Utils'
+import { CardConstructor } from '@src/game/libraries/CardLibrary'
 
 export default class ServerDeck implements CardDeck {
 	game: ServerGame
@@ -71,6 +71,15 @@ export default class ServerDeck implements CardDeck {
 		return card
 	}
 
+	public drawBottomUnit(): ServerCard | null {
+		if (this.unitCards.length === 0) {
+			return null
+		}
+		const card = this.unitCards[this.unitCards.length - 1]
+		this.removeCard(card)
+		return card
+	}
+
 	public drawTopSpell(): ServerCard | null {
 		if (this.spellCards.length === 0) {
 			return null
@@ -78,6 +87,10 @@ export default class ServerDeck implements CardDeck {
 		const card = this.spellCards[0]
 		this.removeCard(card)
 		return card
+	}
+
+	public findCard(cardConstructor: CardConstructor): ServerCard | null {
+		return this.findCardByClass(getClassFromConstructor(cardConstructor))
 	}
 
 	public findCardByClass(cardClass: string): ServerCard | null {
@@ -97,8 +110,8 @@ export default class ServerDeck implements CardDeck {
 	}
 
 	public shuffle(): void {
-		this.unitCards = Utils.shuffle(this.unitCards)
-		this.spellCards = Utils.shuffle(this.spellCards)
+		this.unitCards = shuffle(this.unitCards)
+		this.spellCards = shuffle(this.spellCards)
 	}
 
 	public removeCard(card: ServerCard): void {

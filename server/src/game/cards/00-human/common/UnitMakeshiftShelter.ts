@@ -7,8 +7,9 @@ import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardFeature from '@shared/enums/CardFeature'
 import GameEventType from '@shared/enums/GameEventType'
-import { AnyCardLocation } from '../../../../utils/Utils'
+import { AnyCardLocation } from '@src/utils/Utils'
 import BuffNightwatch from '../../../buffs/BuffNightwatch'
+import CardTribe from '@shared/enums/CardTribe'
 
 type SelectedUnit = {
 	card: ServerCard
@@ -23,17 +24,17 @@ export default class UnitMakeshiftShelter extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.BUILDING, CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_NIGHTWATCH],
+			tribes: [CardTribe.BUILDING],
+			features: [CardFeature.NIGHTWATCH, CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 0,
-				armor: 3,
+				armor: 6,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createDeployTargets(TargetType.UNIT)
 			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE || targetCard.color === CardColor.SILVER)
-			.require(({ targetCard }) => !targetCard.features.includes(CardFeature.BUILDING))
 			.requireAllied()
 
 		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => {

@@ -5,7 +5,6 @@ import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
@@ -19,21 +18,20 @@ export default class UnitOceanicSeagull extends ServerCard {
 			tribes: [CardTribe.BIRD],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
 			stats: {
-				power: 2,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.MERFOLK).requireColor(CardColor.BRONZE)
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
-			.requireAllied()
+			.requireSamePlayer()
 			.require((args) => args.targetCard.color === CardColor.BRONZE)
 			.require((args) => args.targetCard.tribes.includes(CardTribe.MERFOLK))
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
+			.perform(({ targetCard }) => UnitOceanicSeagull.onTargetSelected(targetCard))
 	}
 
-	private onTargetSelected(target: ServerCard): void {
+	private static onTargetSelected(target: ServerCard): void {
 		Keywords.summonCard(target)
 	}
 }

@@ -21,15 +21,15 @@ describe('HeroAntoria', () => {
 	})
 
 	it('intercepts damage', () => {
-		const damageTarget = game.board.createUnit(new TestingUnitNoEffect(game), 4, 0)!
+		const damageTarget = game.board.createUnit(new TestingUnitNoEffect(game), player, 4, 0)!
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(playersCard, player), 0, 0)
 		})
 		playerAction(() => {
 			game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
 		})
-		expect(damageTarget.card.stats.power).toEqual(10)
-		expect(opponentsCard.stats.power).toEqual(14)
+		expect(damageTarget.card.stats.power).toEqual(20)
+		expect(opponentsCard.stats.power).toEqual(24)
 	})
 
 	describe('when it takes fatal damage', () => {
@@ -38,11 +38,11 @@ describe('HeroAntoria', () => {
 		beforeEach(() => {
 			;({ game, playersCard, opponentsCard, player } = TestGameTemplates.opponentCardTest(TestingSpellHeavyStrike, HeroAntoria))
 			unitInDeck = new TestingUnitNoEffect(game)
-			player.opponentInGame.cardDeck.addUnitToTop(unitInDeck)
+			player.opponentInGame.players[0].cardDeck.addUnitToTop(unitInDeck)
 
-			game.board.createUnit(new TestingUnitNoEffect(game), 4, 0)
+			game.board.createUnit(new TestingUnitNoEffect(game), player, 4, 0)
 			playerAction(() => {
-				game.cardPlay.playCard(new ServerOwnedCard(playersCard, player), 0, 0)
+				game.cardPlay.playCardFromHand(new ServerOwnedCard(playersCard, player), 0, 0)
 			})
 			playerAction(() => {
 				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
@@ -51,14 +51,14 @@ describe('HeroAntoria', () => {
 
 		it('gets destroyed', () => {
 			expect(opponentsCard.location).toEqual(CardLocation.UNKNOWN)
-			expect(player.opponentInGame.cardHand.allCards.indexOf(opponentsCard)).toEqual(-1)
+			expect(player.opponentInGame.players[0].cardHand.allCards.indexOf(opponentsCard)).toEqual(-1)
 		})
 
 		it('draws a card', () => {
 			expect(opponentsCard.location).toEqual(CardLocation.UNKNOWN)
-			expect(player.opponentInGame.cardHand.allCards.length).toEqual(1)
-			expect(player.opponentInGame.cardDeck.allCards.length).toEqual(0)
-			expect(player.opponentInGame.cardHand.allCards.indexOf(unitInDeck)).toEqual(0)
+			expect(player.opponentInGame.players[0].cardHand.allCards.length).toEqual(1)
+			expect(player.opponentInGame.players[0].cardDeck.allCards.length).toEqual(0)
+			expect(player.opponentInGame.players[0].cardHand.allCards.indexOf(unitInDeck)).toEqual(0)
 		})
 	})
 })

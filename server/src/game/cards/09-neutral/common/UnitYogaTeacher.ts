@@ -3,7 +3,6 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
@@ -17,19 +16,23 @@ export default class UnitYogaTeacher extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DISCARD],
 			stats: {
-				power: 11,
+				power: 21,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND).totalTargetCount(1).requireAllied()
-		this.createDeployTargets(TargetType.CARD_IN_SPELL_HAND).totalTargetCount(1).requireAllied()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
+		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND)
+			.totalTargetCount(1)
+			.requireSamePlayer()
+			.finalize(({ targetCard }) => this.onTargetSelected(targetCard))
+		this.createDeployTargets(TargetType.CARD_IN_SPELL_HAND)
+			.totalTargetCount(1)
+			.requireSamePlayer()
+			.finalize(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(targetCard: ServerCard): void {
 		Keywords.discardCard(targetCard)
-		Keywords.addCardToHand.for(this.ownerInGame).fromInstance(targetCard)
+		Keywords.addCardToHand.for(this.ownerPlayerInGame).fromInstance(targetCard)
 	}
 }

@@ -20,10 +20,11 @@ export default defineComponent({
 		const isImageAppended = ref<boolean>(false)
 
 		const renderedCard = computed<RenderedEditorCard | null>(() => {
-			if (!props.card) {
+			const card = props.card
+			if (!card) {
 				return null
 			}
-			return store.state.editor.renderedCards.find((renderedCard) => renderedCard.class === props.card.class) || null
+			return store.state.editor.renderedCards.find((renderedCard) => renderedCard.class === card.class) || null
 		})
 
 		const isVisibleOnScreen = ref<boolean>(false)
@@ -38,7 +39,7 @@ export default defineComponent({
 						o.disconnect()
 					}
 				})
-				o.observe(containerRef.value)
+				o.observe(containerRef.value!)
 			}
 		})
 
@@ -62,17 +63,17 @@ export default defineComponent({
 
 		const appendImageNode = (): void => {
 			isImageAppended.value = true
-			const node = cloneCanvas(renderedCard.value.render)
+			const node = cloneCanvas(renderedCard.value!.render)
 			node.style.position = 'absolute'
 			node.style.width = '100%'
 			node.style.height = '100%'
 			node.style.left = '0'
-			containerRef.value.appendChild(node)
+			containerRef.value!.appendChild(node)
 		}
 
 		const cloneCanvas = (original: HTMLCanvasElement): HTMLCanvasElement => {
 			const newCanvas = document.createElement('canvas')
-			const context = newCanvas.getContext('2d')
+			const context = newCanvas.getContext('2d')!
 
 			newCanvas.width = original.width
 			newCanvas.height = original.height

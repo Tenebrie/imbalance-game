@@ -13,9 +13,9 @@
 				><span v-if="!opponent">Opponent</span>
 			</div>
 			<PixiPointDisplay header="Mana" :value="opponentSpellMana" :limit="10" :in-danger="0" />
-			<PixiPointDisplay header="Round wins" :value="2 - playerMorale" :limit="2" :in-danger="0" />
+			<PixiPointDisplay header="Round wins" :value="opponentRoundWins" :limit="roundWinsRequired" :in-danger="0" />
 			<PixiEndTurnArea />
-			<PixiPointDisplay header="Round wins" :value="2 - opponentMorale" :limit="2" :in-danger="0" />
+			<PixiPointDisplay header="Round wins" :value="playerRoundWins" :limit="roundWinsRequired" :in-danger="0" />
 			<PixiPointDisplay header="Mana" :value="playerSpellMana" :limit="10" :in-danger="playerSpellManaInDanger" />
 		</div>
 		<div class="mulligan-label-container" v-if="mulliganMode">
@@ -43,12 +43,21 @@
 			<pixi-inspected-card />
 		</div>
 		<div class="fade-in-overlay" :class="fadeInOverlayClass">
-			<div class="overlay-message" v-if="!opponent && isPlayingVersusAI">Connecting...</div>
+			<div class="overlay-message" v-if="isPlayingVersusAI && !isChainingGameMode && !isAnyVictoryCondition">Connecting...</div>
+			<div class="overlay-message" v-if="isPlayingCoop && !isChainingGameMode && !isAnyVictoryCondition">
+				<p>Waiting for players...</p>
+				<p class="waiting-for-players">
+					Players in lobby (<b>{{ playerSlotsFilled }}</b> / <b>{{ totalPlayerSlots }}):</b>
+				</p>
+				<p class="player-list">
+					<span v-for="player in playersInLobby" :key="player.id">{{ player.username }}</span>
+				</p>
+			</div>
 			<div class="overlay-message" v-if="!opponent && isPlayingVersusPlayer">
 				<span>Waiting for another player to connect...<br />You may also choose to play vs AI from the main menu</span>
 				<button class="secondary game-button" @click="onLeaveGame">Leave game</button>
 			</div>
-			<div class="overlay-message" v-if="opponent">
+			<div class="overlay-message" v-if="opponent && isPlayingVersusPlayer">
 				{{ player.username }} vs {{ opponent.username }}<br />
 				Starting the game...
 			</div>
@@ -57,7 +66,7 @@
 			<div class="victory" v-if="isVictory">Victory!</div>
 			<div class="defeat" v-if="isDefeat">Defeat</div>
 			<div class="draw" v-if="isDraw">Draw</div>
-			<button v-if="isVictory || isDefeat || isDraw" class="secondary game-button" @click="onLeaveGame">Continue</button>
+			<button v-if="isVictory || isDefeat || isDraw" class="secondary game-button" @click="onLeaveAndContinue">Continue</button>
 		</div>
 		<div class="spectator-overlay" :class="spectatorOverlayClass">Spectator mode</div>
 	</div>
@@ -73,11 +82,12 @@ import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 import TheEscapeMenu from '@/Vue/components/popup/escapeMenu/TheEscapeMenu.vue'
 import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
 import Core from '@/Pixi/Core'
-import Utils from '@/utils/Utils'
 import TargetMode from '@shared/enums/TargetMode'
 import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
 import PixiEndTurnArea from '@/Vue/components/pixi/PixiEndTurnArea.vue'
 import GameMode from '@shared/enums/GameMode'
+import { sortCards } from '@shared/Utils'
+import RulesetCategory from '@shared/enums/RulesetCategory'
 
 export default defineComponent({
 	components: {
@@ -103,14 +113,16 @@ export default defineComponent({
 		}
 
 		const onConfirmTargets = (): void => {
-			OutgoingMessageHandlers.sendConfirmTargets(Core.input.forcedTargetingMode.targetMode)
+			if (Core.input.forcedTargetingMode) {
+				OutgoingMessageHandlers.sendConfirmTargets(Core.input.forcedTargetingMode.targetMode)
+			}
 		}
 
 		const onSortCards = (): void => {
 			if (!Core.input) {
 				return
 			}
-			Core.input.forcedTargetingCards = Utils.sortCards(Core.input.forcedTargetingCards)
+			Core.input.forcedTargetingCards = sortCards(Core.input.forcedTargetingCards)
 		}
 
 		const onToggleVisibility = (): void => {
@@ -132,6 +144,16 @@ export default defineComponent({
 			})
 		}
 
+		const isSwitchingGames = computed(() => {
+			return !!store.state.nextLinkedGame
+		})
+		const endScreenSuppressed = computed(() => {
+			return store.state.gameStateModule.endScreenSuppressed
+		})
+		const isChainingGameMode = computed(() => {
+			return store.state.gameStateModule.ruleset && store.state.gameStateModule.ruleset.category === RulesetCategory.LABYRINTH
+		})
+
 		const isGameStarted = computed(() => {
 			const status = store.state.gameStateModule.gameStatus
 			return (
@@ -142,10 +164,10 @@ export default defineComponent({
 			)
 		})
 		const isBrowsingDeck = computed(() => {
-			return store.state.gameStateModule.popupTargetingMode === TargetMode.BROWSE
+			return store.state.gameStateModule.targetingMode === TargetMode.BROWSE
 		})
 		const mulliganMode = computed(() => {
-			return store.state.gameStateModule.popupTargetingMode === TargetMode.MULLIGAN
+			return store.state.gameStateModule.targetingMode === TargetMode.MULLIGAN
 		})
 		const isConfirmTargetsButtonVisible = computed(() => {
 			return isBrowsingDeck.value || mulliganMode.value
@@ -153,7 +175,7 @@ export default defineComponent({
 		const isHideTargetsButtonVisible = computed(() => {
 			return (
 				!isConfirmTargetsButtonVisible.value &&
-				store.state.gameStateModule.popupTargetingMode !== null &&
+				store.state.gameStateModule.targetingMode !== null &&
 				store.state.gameStateModule.popupTargetingCardCount > 0
 			)
 		})
@@ -162,7 +184,7 @@ export default defineComponent({
 			backgrounded: !cardsVisible.value,
 		}))
 		const isEndTurnButtonVisible = computed(() => {
-			return store.state.gameStateModule.popupTargetingMode === null
+			return store.state.gameStateModule.targetingMode === null
 		})
 
 		const hasOpponentFinishedRound = computed(() => {
@@ -172,16 +194,18 @@ export default defineComponent({
 		const isVictory = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.VICTORY)
 		const isDefeat = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DEFEAT)
 		const isDraw = computed(() => store.state.gameStateModule.gameStatus === ClientGameStatus.DRAW)
+		const isAnyVictoryCondition = computed(() => isVictory.value || isDraw.value || isDefeat.value)
 		const isSpectating = computed(() => store.state.gameStateModule.isSpectating)
 		const isOpponentFinishedRound = computed(
 			() => !store.state.gameStateModule.isOpponentInRound && store.state.gameStateModule.isPlayerInRound
 		)
 
 		const fadeInOverlayClass = computed(() => ({
-			visible: !isGameStarted.value,
+			visible: !isGameStarted.value || isSwitchingGames.value,
 		}))
 		const gameEndScreenClass = computed(() => ({
-			visible: isVictory.value || isDefeat.value || isDraw.value,
+			visible: (isVictory.value || isDefeat.value || isDraw.value) && !endScreenSuppressed.value,
+			noSmokescreen: isChainingGameMode.value,
 		}))
 		const spectatorOverlayClass = computed(() => ({
 			visible: isSpectating.value,
@@ -190,24 +214,34 @@ export default defineComponent({
 			visible: isOpponentFinishedRound.value,
 		}))
 
-		const player = computed<Player>(() => store.state.player)
+		const player = computed<Player | null>(() => store.state.player)
 		const opponent = computed<Player | null>(() => store.state.gameStateModule.opponent)
 
-		const playerMorale = computed<number>(() => store.state.gameStateModule.playerMorale)
+		const roundWinsRequired = computed<number>(() => store.state.gameStateModule.ruleset?.constants.ROUND_WINS_REQUIRED || 0)
+		const playerRoundWins = computed<number>(() => store.state.gameStateModule.playerRoundWins)
 		const playerSpellMana = computed<number>(() => store.state.gameStateModule.playerSpellMana)
 		const playerSpellManaInDanger = computed<number>(() => store.state.gameStateModule.playerSpellManaInDanger)
-		const opponentMorale = computed<number>(() => store.state.gameStateModule.opponentMorale)
+		const opponentRoundWins = computed<number>(() => store.state.gameStateModule.opponentRoundWins)
 		const opponentSpellMana = computed<number>(() => store.state.gameStateModule.opponentSpellMana)
 
 		const cardsMulliganed = computed(() => store.state.gameStateModule.cardsMulliganed)
 		const maxCardMulligans = computed(() => store.state.gameStateModule.maxCardMulligans)
 
-		const isPlayingVersusAI = computed(() => store.state.gameStateModule.gameMode !== GameMode.VS_PLAYER)
-		const isPlayingVersusPlayer = computed(() => store.state.gameStateModule.gameMode === GameMode.VS_PLAYER)
+		const isPlayingVersusAI = computed(() => store.state.gameStateModule.ruleset?.gameMode === GameMode.PVE)
+		const isPlayingVersusPlayer = computed(() => store.state.gameStateModule.ruleset?.gameMode === GameMode.PVP)
+		const isPlayingCoop = computed(() => store.state.gameStateModule.ruleset?.gameMode === GameMode.COOP)
+
+		const playerSlotsFilled = computed(() => store.state.gameLobbyModule.totalPlayerSlots - store.state.gameLobbyModule.openPlayerSlots)
+		const totalPlayerSlots = computed(() => store.state.gameLobbyModule.totalPlayerSlots)
+		const playersInLobby = computed(() => store.state.gameLobbyModule.players)
 
 		const onLeaveGame = (): void => {
 			store.dispatch.leaveGame()
-			store.dispatch.popupModule.closeAll()
+			store.commit.clearNextLinkedGame()
+		}
+
+		const onLeaveAndContinue = (): void => {
+			store.dispatch.leaveAndContinue()
 		}
 
 		return {
@@ -217,10 +251,12 @@ export default defineComponent({
 			isVictory,
 			isDefeat,
 			isDraw,
+			isAnyVictoryCondition,
 			mulliganMode,
 			isConfirmTargetsButtonVisible,
 			isHideTargetsButtonVisible,
 			isEndTurnButtonVisible,
+			isChainingGameMode,
 			hasOpponentFinishedRound,
 			cardsVisible,
 			confirmTargetsButtonContainerClass,
@@ -235,14 +271,20 @@ export default defineComponent({
 			opponentRoundEndOverlayClass,
 			cardsMulliganed,
 			maxCardMulligans,
-			playerMorale,
+			roundWinsRequired,
+			playerRoundWins,
 			playerSpellMana,
 			playerSpellManaInDanger,
-			opponentMorale,
+			opponentRoundWins,
 			opponentSpellMana,
 			isPlayingVersusAI,
 			isPlayingVersusPlayer,
+			isPlayingCoop,
+			playerSlotsFilled,
+			totalPlayerSlots,
+			playersInLobby,
 			onLeaveGame,
+			onLeaveAndContinue,
 		}
 	},
 })
@@ -259,9 +301,6 @@ export default defineComponent({
 	user-select: none;
 	pointer-events: none;
 	overflow: hidden;
-
-	&.non-interactive {
-	}
 
 	.fade-in-overlay {
 		position: absolute;
@@ -333,6 +372,9 @@ export default defineComponent({
 
 		&.visible {
 			opacity: 1;
+		}
+		&.noSmokescreen {
+			background: rgba(black, 0);
 		}
 	}
 
@@ -464,6 +506,20 @@ export default defineComponent({
 	top: 128px;
 	font-size: 36px;
 	font-weight: bold;
+}
+
+.waiting-for-players {
+	margin-bottom: 0;
+	font-size: 0.8em;
+}
+
+.player-list {
+	margin-top: 8px;
+	font-size: 0.8em;
+
+	span {
+		margin-bottom: 0 !important;
+	}
 }
 
 .menu-separator {

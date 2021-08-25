@@ -11,7 +11,7 @@ import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import DescriptionTextBackground from '@/Pixi/render/DescriptionTextBackground'
 import CardColor from '@shared/enums/CardColor'
-import ClientBuffContainer from '@/Pixi/models/ClientBuffContainer'
+import ClientBuffContainer from '@/Pixi/models/buffs/ClientBuffContainer'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import store from '@/Vue/store'
@@ -23,6 +23,10 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardLocation from '@shared/enums/CardLocation'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import { forEachInEnum } from '@shared/Utils'
+import LeaderStatType from '@shared/enums/LeaderStatType'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
+import { CardLocalization } from '@shared/models/cardLocalization/CardLocalization'
 
 type WorkshopCardProps = {
 	workshopTitle: string
@@ -37,14 +41,9 @@ export default class RenderedCard implements Card {
 	public readonly color: CardColor
 	public readonly faction: CardFaction
 
-	public readonly name: string
-	public readonly title: string
-	public readonly flavor: string
-	public readonly listName: string
-	public readonly description: string
-
 	public readonly stats: ClientCardStats
 	public readonly buffs: ClientBuffContainer
+	public readonly localization: CardLocalization
 	public readonly baseTribes: CardTribe[]
 	public readonly baseFeatures: CardFeature[]
 	public readonly relatedCards: string[]
@@ -74,7 +73,8 @@ export default class RenderedCard implements Card {
 	private readonly manacostTextBackground: PIXI.Sprite
 	private readonly descriptionTextBackground: DescriptionTextBackground
 
-	public readonly cardDisabledOverlay: PIXI.Sprite
+	public readonly cardTintOverlay: PIXI.Sprite
+	public readonly cardFullTintOverlay: PIXI.Sprite
 
 	public readonly powerText: ScalingText
 	public readonly armorText: ScalingText
@@ -88,15 +88,11 @@ export default class RenderedCard implements Card {
 		this.type = message.type
 		this.class = message.class
 		this.color = message.color
-
-		this.name = message.name
-		this.title = message.title
-		this.flavor = message.flavor
-		this.listName = message.listName
-		this.description = message.description
+		this.faction = message.faction
 
 		this.stats = new ClientCardStats(this, message.stats)
 		this.buffs = new ClientBuffContainer(this, message.buffs)
+		this.localization = message.localization
 		this.baseTribes = (message.baseTribes || []).slice()
 		this.baseFeatures = (message.baseFeatures || []).slice()
 		this.relatedCards = (message.relatedCards || []).slice()
@@ -114,11 +110,11 @@ export default class RenderedCard implements Card {
 		const powerTextValue = this.type === CardType.UNIT ? this.stats.power : this.stats.spellCost
 		this.powerText = this.createBrushScriptText(powerTextValue.toString())
 		this.armorText = this.createBrushScriptText(this.stats.armor.toString())
-		this.cardNameText = new RichText(Localization.get(this.name), 200, this.getDescriptionTextVariables())
+		this.cardNameText = new RichText(this.name, 200, this.getDescriptionTextVariables())
 		this.cardNameText.style.fill = 0x000000
 		this.cardNameText.verticalAlign = RichTextAlign.CENTER
 		this.cardNameText.horizontalAlign = RichTextAlign.END
-		const titleText = message.workshopTitle || Localization.getValueOrNull(this.title) || ''
+		const titleText = message.workshopTitle || Localization.getCardTitle(this) || ''
 		this.cardTitleText = new RichText(titleText, 200, this.getDescriptionTextVariables())
 		this.cardTitleText.style.fill = 0x000000
 		this.cardTitleText.verticalAlign = RichTextAlign.CENTER
@@ -158,12 +154,10 @@ export default class RenderedCard implements Card {
 
 		/* Card mode container */
 		this.cardModeContainer = new PIXI.Container()
-		if (Localization.get(this.name)) {
-			this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
-		}
-		if (Localization.get(this.description)) {
-			this.descriptionTextBackground = new DescriptionTextBackground()
-			this.descriptionTextBackground.position.set(0, this.sprite.texture.height)
+		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
+		this.descriptionTextBackground = new DescriptionTextBackground()
+		if (Localization.getCardDescription(this)) {
+			this.descriptionTextBackground.position.set(0, this.sprite.texture.height + 1)
 			this.cardDescriptionText.setBackground(this.descriptionTextBackground)
 			this.cardModeContainer.addChild(this.descriptionTextBackground)
 		}
@@ -209,17 +203,43 @@ export default class RenderedCard implements Card {
 		this.cardModeTextContainer.addChild(this.cardDescriptionText)
 		this.coreContainer.addChild(this.cardModeTextContainer)
 
-		/* Card disabled overlay */
-		this.cardDisabledOverlay = new PIXI.Sprite(TextureAtlas.getTexture('components/overlay-disabled'))
-		this.cardDisabledOverlay.visible = false
-		this.cardDisabledOverlay.anchor = new PIXI.Point(0.5, 0.5)
-		this.coreContainer.addChild(this.cardDisabledOverlay)
+		/* Card tint overlays */
+		this.cardTintOverlay = new PIXI.Sprite(TextureAtlas.getTexture('components/tint-overlay'))
+		this.cardTintOverlay.alpha = 0
+		this.cardTintOverlay.anchor = new PIXI.Point(0.5, 0.5)
+		this.coreContainer.addChild(this.cardTintOverlay)
+
+		this.cardFullTintOverlay = new PIXI.Sprite(TextureAtlas.getTexture('components/tint-overlay-full'))
+		this.cardFullTintOverlay.alpha = 0
+		this.cardFullTintOverlay.tint = 0x000000
+		this.cardFullTintOverlay.anchor = new PIXI.Point(0.5, 0.5)
+		this.coreContainer.addChild(this.cardFullTintOverlay)
+	}
+
+	public get name(): string {
+		return Localization.getCardName(this)
+	}
+
+	public get title(): string | null {
+		return Localization.getCardTitle(this)
+	}
+
+	public get flavor(): string | null {
+		return Localization.getCardFlavor(this)
+	}
+
+	public get listName(): string | null {
+		return Localization.getCardListName(this)
+	}
+
+	public get description(): string {
+		return Localization.getCardDescription(this)
 	}
 
 	public getDescriptionTextVariables(): RichTextVariables {
 		return {
 			...this.variables,
-			name: Localization.get(this.name),
+			name: this.name,
 		}
 	}
 
@@ -232,11 +252,12 @@ export default class RenderedCard implements Card {
 	}
 
 	public getVisualPosition(): PIXI.Point {
-		if (!this.sprite || !this.sprite.position) {
-			console.warn('No visual sprite available')
+		try {
+			return new PIXI.Point(this.coreContainer.position.x + this.sprite.position.x, this.coreContainer.position.y + this.sprite.position.y)
+		} catch (err) {
+			console.error(err)
 			return new PIXI.Point(0, 0)
 		}
-		return new PIXI.Point(this.coreContainer.position.x + this.sprite.position.x, this.coreContainer.position.y + this.sprite.position.y)
 	}
 
 	public get tribes(): CardTribe[] {
@@ -256,27 +277,33 @@ export default class RenderedCard implements Card {
 	}
 
 	public get displayedDescription(): string {
-		let description = Localization.get(this.description)
 		const featureStrings = this.features
 			.map((feature) => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
-			.map((feature) => Localization.getValueOrNull(feature))
+			.map((feature) => Localization.get(feature, 'null'))
 			.filter((string) => string !== null)
 
-		const leaderStatsStrings = Object.keys(this.stats)
-			.filter((key) => typeof this.stats[key] === 'number' && this.stats[key] > 0)
-			.map((key) => ({
-				key: key,
-				text: Localization.getValueOrNull(`card.stats.${key}.text`),
-			}))
-			.filter((object) => object.text !== null)
-			.map((object) => object.text.replace(/{value}/g, this.stats[object.key]))
+		const leaderStatsStrings: string[] = []
+		forEachInEnum(LeaderStatType, (value, key) => {
+			if (this.stats.leaderStats[value] === 0) {
+				return
+			}
+			const text = Localization.get(`card.stats.${snakeToCamelCase(key.toLowerCase())}.text`, 'null')
+			if (text === null) {
+				return
+			}
+
+			leaderStatsStrings.push(text.replace(/{value}/g, String(this.stats.leaderStats[value])))
+		})
+
+		let description = this.description
+		for (const index in leaderStatsStrings.reverse()) {
+			const delimiter = Number(index) === 0 ? (description.trim().length > 0 ? '<p>' : '') : '\n'
+			description = `${leaderStatsStrings[index]}${delimiter}${description}`
+		}
 
 		if (featureStrings.length > 0) {
-			description = `${featureStrings.join(' | ')}<p>${description}`
-		}
-		for (const index in leaderStatsStrings.reverse()) {
-			const delimiter = Number(index) === 0 ? '<p>' : '\n'
-			description = `${leaderStatsStrings[index]}${delimiter}${description}`
+			const delimiter = description.trim().length > 0 ? '<p>' : ''
+			description = `${featureStrings.join(' | ')}${delimiter}${description}`
 		}
 		return description
 	}
@@ -322,7 +349,7 @@ export default class RenderedCard implements Card {
 			new PIXI.TextStyle({
 				fontFamily: Utils.getFont(text),
 				fill: 0x000000,
-				padding: 16,
+				padding: 32,
 				align: 'right',
 			})
 		)
@@ -352,6 +379,10 @@ export default class RenderedCard implements Card {
 		} else if (this.isHidden) {
 			this.switchToHiddenMode()
 		}
+		this.cardTintOverlay.width = this.sprite.width
+		this.cardTintOverlay.height = this.sprite.height
+		this.cardFullTintOverlay.width = this.sprite.width
+		this.cardFullTintOverlay.height = this.sprite.height
 
 		texts = texts.filter((text) => text.text.length > 0)
 
@@ -466,7 +497,7 @@ export default class RenderedCard implements Card {
 
 		this.cardDescriptionText.position.set(0, -54)
 
-		const description = Localization.get(this.description)
+		const description = Localization.getCardDescription(this)
 		let fontSize = 26
 		if (description.length > 150) {
 			fontSize = 24
@@ -501,7 +532,6 @@ export default class RenderedCard implements Card {
 			this.armorText.visible = false
 			this.armorTextZoomBackground.visible = false
 		}
-		this.cardDisabledOverlay.visible = false
 	}
 
 	public switchToHiddenMode(): void {
@@ -568,9 +598,17 @@ export default class RenderedCard implements Card {
 		return !this.isHidden && [CardDisplayMode.ON_BOARD].includes(this.displayMode)
 	}
 
-	public get owner(): ClientPlayerInGame | null {
+	public get owner(): ClientPlayerInGame | ClientPlayerGroup | null {
 		const thisCardInGame = Core.game.findOwnedCardById(this.id)
 		return thisCardInGame ? thisCardInGame.owner : null
+	}
+
+	public get ownerPlayer(): ClientPlayerInGame {
+		const thisCardInGame = Core.game.findOwnedPlayerCardById(this.id)
+		if (!thisCardInGame) {
+			throw new Error('This card has no player owner!')
+		}
+		return thisCardInGame.owner
 	}
 
 	public get location(): CardLocation {
@@ -579,28 +617,32 @@ export default class RenderedCard implements Card {
 			return CardLocation.UNKNOWN
 		}
 
-		if (owner.leader === this) {
-			return CardLocation.LEADER
-		}
-		const cardInDeck = owner.cardDeck.findCardById(this.id)
-		if (cardInDeck) {
-			return CardLocation.DECK
-		}
-		const cardInHand = owner.cardHand.findCardById(this.id)
-		if (cardInHand) {
-			return CardLocation.HAND
-		}
-		const cardInStack = Core.resolveStack.findCardById(this.id)
-		if (cardInStack) {
-			return CardLocation.STACK
+		if (owner instanceof ClientPlayerInGame) {
+			if (owner.leader === this) {
+				return CardLocation.LEADER
+			}
+			const cardInDeck = owner.cardDeck.findCardById(this.id)
+			if (cardInDeck) {
+				return CardLocation.DECK
+			}
+			const cardInHand = owner.cardHand.findCardById(this.id)
+			if (cardInHand) {
+				return CardLocation.HAND
+			}
+			const cardInStack = Core.resolveStack.findCardById(this.id)
+			if (cardInStack) {
+				return CardLocation.STACK
+			}
 		}
 		const cardOnBoard = Core.board.findUnitById(this.id)
 		if (cardOnBoard) {
 			return CardLocation.BOARD
 		}
-		const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
-		if (cardInGraveyard) {
-			return CardLocation.GRAVEYARD
+		if (owner instanceof ClientPlayerInGame) {
+			const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
+			if (cardInGraveyard) {
+				return CardLocation.GRAVEYARD
+			}
 		}
 		return CardLocation.UNKNOWN
 	}

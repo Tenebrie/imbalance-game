@@ -11,10 +11,10 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashBuffPotency, asTargetCount } from '../../../../utils/LeaderStats'
+import { asSplashBuffPotency, asTargetCount } from '@src/utils/LeaderStats'
 
 export default class SpellEnchantedStorm extends ServerCard {
-	baseBuffPower = asSplashBuffPotency(1)
+	baseBuffPower = asSplashBuffPotency(3)
 	targetCount = asTargetCount(3)
 	powerPerStorm = asSplashBuffPotency(1)
 	targetsHit: ServerCard[] = []
@@ -52,8 +52,9 @@ export default class SpellEnchantedStorm extends ServerCard {
 
 	get buffPower(): number {
 		let stormsPlayed = 0
-		if (this.owner) {
-			stormsPlayed = this.owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
+		const owner = this.ownerPlayer
+		if (owner) {
+			stormsPlayed = owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
 		return this.baseBuffPower(this) + this.powerPerStorm(this) * stormsPlayed
 	}
@@ -68,6 +69,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 	}
 
 	private isUpgraded(): boolean {
-		return !!this.owner && this.owner.leader.buffs.has(BuffUpgradedStorms)
+		const owner = this.ownerPlayer
+		return !!owner && owner.leader.buffs.has(BuffUpgradedStorms)
 	}
 }

@@ -46,5 +46,6 @@ export default defineComponent({
 	width: 100vw;
 	height: 100vh;
 	background: rgba(0, 0, 0, 0.7);
+	backdrop-filter: blur(4px);
 }
 </style>

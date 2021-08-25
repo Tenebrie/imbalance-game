@@ -19,7 +19,7 @@ import * as PIXI from 'pixi.js'
 import store from '@/Vue/store'
 import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
-import Utils from '@/utils/Utils'
+import { getMaxCardCopiesForColor } from '@shared/Utils'
 import { defineComponent, PropType } from 'vue'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 
@@ -33,12 +33,12 @@ export default defineComponent({
 
 	computed: {
 		fullName(): string {
-			const listName = Localization.getValueOrNull(this.card.listName)
+			const listName = Localization.getCardListName(this.card)
 			if (listName) {
 				return listName
 			}
-			let name = Localization.get(this.card.name)
-			const title = Localization.getValueOrNull(this.card.title)
+			let name = Localization.getCardName(this.card)
+			const title = Localization.getCardTitle(this.card)
 			if (title) {
 				name = `${name}, ${title}`
 			}
@@ -50,7 +50,7 @@ export default defineComponent({
 		},
 
 		displayCount(): boolean {
-			return Utils.getMaxCardCopiesForColor(this.card.color) > 1
+			return getMaxCardCopiesForColor(this.card.color) > 1
 		},
 
 		colorClass(): any {
@@ -65,12 +65,12 @@ export default defineComponent({
 
 	methods: {
 		onClick(): void {
-			const deckId = this.$route.params.deckId
+			const deckId = this.$route.params.deckId as string
 			store.dispatch.editor.removeCardFromDeck({
 				deckId: deckId,
 				cardToRemove: this.card,
 			})
-			if (!store.getters.editor.deck(deckId).cards.find((card) => card.id === this.card.id)) {
+			if (!store.getters.editor.deck(deckId)!.cards.find((card) => card.id === this.card.id)) {
 				store.commit.editor.hoveredDeckCard.setCard(null)
 			}
 		},
@@ -114,9 +114,11 @@ export default defineComponent({
 	cursor: pointer;
 	user-select: none;
 	font-size: 1.3em;
+	transition: background-color 0.3s;
 
 	&:hover {
 		background: $COLOR-BACKGROUND-TRANSPARENT;
+		transition: background-color 0s;
 	}
 
 	&.leader {

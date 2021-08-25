@@ -8,26 +8,37 @@
 			</div>
 			<div class="link-container">
 				<router-link :to="{ name: 'home' }" class="router-link" exact>
+					<i class="fas fa-home" />
 					{{ $locale.get('ui.navigation.home') }}
 				</router-link>
 			</div>
 			<div class="link-container">
 				<router-link :to="{ name: 'decks' }" class="router-link">
+					<i class="fas fa-list" />
 					{{ $locale.get('ui.navigation.decks') }}
 				</router-link>
 			</div>
 			<div class="link-container">
 				<router-link :to="{ name: 'rules' }" class="router-link">
+					<i class="fas fa-check" />
 					{{ $locale.get('ui.navigation.rules') }}
 				</router-link>
 			</div>
 			<div class="link-container">
 				<router-link :to="{ name: 'workshop' }" class="router-link">
+					<i class="fas fa-wrench" />
 					{{ $locale.get('ui.navigation.workshop') }}
+				</router-link>
+			</div>
+			<div class="link-container">
+				<router-link :to="{ name: 'profile' }" class="router-link">
+					<i class="fas fa-user" />
+					{{ $locale.get('ui.navigation.profile') }}
 				</router-link>
 			</div>
 			<div class="link-container" v-if="showAdminView">
 				<router-link :to="{ name: 'admin' }" class="router-link">
+					<i class="fas fa-hammer" />
 					{{ $locale.get('ui.navigation.admin') }}
 				</router-link>
 			</div>
@@ -94,18 +105,33 @@ export default defineComponent({
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			margin: 0 8px;
 
 			.router-link {
+				height: 100%;
 				cursor: pointer;
-			}
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 0 12px;
+				transition: background-color 0.3s;
 
-			.router-link:hover {
-				text-decoration: underline;
-			}
+				i {
+					margin-right: 4px;
+				}
 
-			.router-link-active {
-				font-weight: bold;
+				&:hover {
+					text-decoration: none !important;
+					background: $COLOR-BACKGROUND-TRANSPARENT;
+					transition: background-color 0s;
+				}
+
+				&:hover:active {
+					background: darken($COLOR-BACKGROUND-TRANSPARENT, 30);
+				}
+
+				&.router-link-active {
+					font-weight: bold;
+				}
 			}
 		}
 	}
@@ -115,9 +141,6 @@ export default defineComponent({
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-
-		& > * {
-		}
 	}
 }
 

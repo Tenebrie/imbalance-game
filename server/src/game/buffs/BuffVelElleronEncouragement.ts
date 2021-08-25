@@ -1,23 +1,23 @@
-import ServerBuff, { BuffConstructorParams } from '../models/ServerBuff'
+import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
 import SpellAnEncouragement from '../cards/01-arcane/leaders/VelElleron/SpellAnEncouragement'
 import BuffStrength from './BuffStrength'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
-export default class BuffVelElleronEncouragement extends ServerBuff {
+export default class BuffVelElleronEncouragement extends ServerCardBuff {
 	constructor(params: BuffConstructorParams) {
 		super(params, {
 			alignment: BuffAlignment.POSITIVE,
 		})
 
 		this.createCallback(GameEventType.TURN_STARTED)
-			.require(({ player }) => player === this.card.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => this.onTurnStarted())
 	}
 
 	private onTurnStarted(): void {
 		const bonusPower = SpellAnEncouragement.bonusPower
-		this.card.buffs.addMultiple(BuffStrength, bonusPower, this.source)
-		this.card.buffs.removeByReference(this)
+		this.parent.buffs.addMultiple(BuffStrength, bonusPower, this.source)
+		this.parent.buffs.removeByReference(this)
 	}
 }

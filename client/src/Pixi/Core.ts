@@ -21,43 +21,63 @@ import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
 import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import lzutf8 from 'lzutf8'
 import { compressGameTraffic } from '@shared/Utils'
+import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
+import CardMessage from '@shared/models/network/card/CardMessage'
 
 class Core {
 	public isReady = false
 
-	public input?: Input
-	public socket?: WebSocket
-	public renderer?: Renderer
-	public mainHandler?: MainHandler
-	public particleSystem?: ParticleSystem
-	public keepaliveTimer: number
+	public input!: Input
+	public socket!: WebSocket
+	public renderer!: Renderer
+	public mainHandler!: MainHandler
+	public particleSystem!: ParticleSystem
+	public keepaliveTimer: number | undefined
 
-	public game?: ClientGame
-	public board?: RenderedGameBoard
-	public player?: ClientPlayerInGame
-	public opponent?: ClientPlayerInGame
-	public resolveStack?: ClientCardResolveStack
+	public game: ClientGame = new ClientGame()
+	public board!: RenderedGameBoard
+	public player!: ClientPlayerGroup
+	public opponent!: ClientPlayerGroup
+	public resolveStack!: ClientCardResolveStack
 
 	public performance: GamePerformance = new GamePerformance()
 
 	public init(game: GameMessage, deckId: string, container: HTMLElement): void {
 		const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
 		const urlHost = isElectron() ? electronWebsocketTarget() : window.location.host
-		let targetUrl = `${protocol}//${urlHost}/api/game/${game.id}?deckId=${deckId}`
-		if (game.players.length >= 2) {
-			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}/spectate/${game.players[0].player.id}`
+
+		let targetGroupIndex = game.players[0].openHumanSlots > 0 ? 0 : game.players[1].openHumanSlots > 0 ? 1 : null
+		// No slots available -> spectating
+		const isSpectating = targetGroupIndex === null
+		if (isSpectating || targetGroupIndex === null) {
+			targetGroupIndex = 0
 		}
-		if (game.players.find((playerInGame) => playerInGame.player.id === store.state.player.id)) {
+		const opponentGroupIndex = targetGroupIndex === 0 ? 1 : 0
+
+		const targetGroupId = game.players[targetGroupIndex].id
+		const opponentGroupId = game.players[opponentGroupIndex].id
+		let targetUrl = `${protocol}//${urlHost}/api/game/${game.id}?deckId=${deckId}&groupId=${targetGroupId}`
+		if (isSpectating) {
+			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}/spectate/${targetGroupId}`
+		}
+		// Reconnecting
+		if (
+			game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === store.state.player?.id)
+		) {
 			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}`
 		}
+		this.__rulesetConstants = game.ruleset.constants
 		const socket = new WebSocket(targetUrl)
 		socket.onopen = () => this.onConnect(container)
-		socket.onmessage = (event) => this.onMessage(event)
-		socket.onclose = (event) => this.onDisconnect(event)
-		socket.onerror = (event) => this.onError(event)
+		socket.onmessage = (event) => this.onMessage(event, socket)
+		socket.onclose = (event) => this.onDisconnect(event, socket)
+		socket.onerror = (event) => this.onError(event, socket)
 		this.socket = socket
 
-		this.player = ClientPlayerInGame.fromPlayer(store.getters.player)
+		this.player = new ClientPlayerGroup(targetGroupId)
+		this.opponent = new ClientPlayerGroup(opponentGroupId)
 	}
 
 	private async onConnect(container: HTMLElement): Promise<void> {
@@ -82,7 +102,11 @@ class Core {
 		OutgoingMessageHandlers.sendInit()
 	}
 
-	private onMessage(event: MessageEvent): void {
+	private onMessage(event: MessageEvent, socket: WebSocket): void {
+		if (socket !== this.socket) {
+			return
+		}
+
 		let data = event.data
 		if (compressGameTraffic()) {
 			data = lzutf8.decompress(event.data, {
@@ -90,7 +114,7 @@ class Core {
 			})
 		}
 		data = JSON.parse(data) as ServerToClientJson
-		const messageType = data.type
+		const messageType = data.type as ServerToClientMessageTypes
 		const messageData = data.data
 		const messageHighPriority = data.highPriority as boolean
 		const messageAllowBatching = data.allowBatching as boolean
@@ -124,15 +148,23 @@ class Core {
 		})
 	}
 
-	private onDisconnect(event: CloseEvent): void {
+	private onDisconnect(event: CloseEvent, socket: WebSocket): void {
+		if (socket !== this.socket) {
+			return
+		}
+
 		if (!event.wasClean) {
-			console.error(`Connection closed. Reason: ${event.reason}`)
+			console.error(`Connection closed. Reason: ${event.reason}`, event)
 		}
 
 		store.dispatch.leaveGame()
 	}
 
-	private onError(event: Event): void {
+	private onError(event: Event, socket: WebSocket): void {
+		if (socket !== this.socket) {
+			return
+		}
+
 		console.error('Unknown error occurred', event)
 	}
 
@@ -140,26 +172,47 @@ class Core {
 		return store.state.gameStateModule.isSpectating
 	}
 
-	public registerOpponent(opponent: ClientPlayerInGame): void {
-		this.opponent = opponent
+	private __rulesetConstants!: RulesetConstants
+
+	public get constants(): RulesetConstants {
+		return { ...this.__rulesetConstants }
 	}
 
-	public getPlayer(playerId: string): ClientPlayerInGame {
-		if (this.player && this.player.player.id === playerId) {
-			return this.player
-		} else if (this.opponent && this.opponent.player.id === playerId) {
-			return this.opponent
+	public get allPlayers(): ClientPlayerInGame[] {
+		return [this.player, this.opponent].flatMap((playerGroup) => playerGroup.players)
+	}
+
+	public getPlayerGroup(groupId: string): ClientPlayerGroup {
+		const group = this.getPlayerGroupOrNull(groupId)
+		if (!group) {
+			throw new Error(`Player group ${groupId} does not exist!`)
 		}
-		throw new Error(`Player ${playerId} does not exist! Existing players: ${this.player?.player.id}, ${this.opponent?.player.id}`)
+		return group
 	}
 
-	public getPlayerOrNull(playerId: string): ClientPlayerInGame | null {
-		if (this.player && this.player.player.id === playerId) {
+	public getPlayerGroupOrNull(groupId: string): ClientPlayerGroup | null {
+		if (this.player.id === groupId) {
 			return this.player
-		} else if (this.opponent && this.opponent.player.id === playerId) {
+		} else if (this.opponent.id === groupId) {
 			return this.opponent
 		}
 		return null
+	}
+
+	public getPlayer(playerId: string): ClientPlayerInGame {
+		const player = this.getPlayerOrNull(playerId)
+		if (!player) {
+			throw new Error(`Player ${playerId} does not exist!`)
+		}
+		return player
+	}
+
+	public getPlayerOrNull(playerId: string): ClientPlayerInGame | null {
+		return (
+			this.player.players.find((player) => player.player.id === playerId) ||
+			this.opponent.players.find((player) => player.player.id === playerId) ||
+			null
+		)
 	}
 
 	public sendMessage(type: ClientToServerMessageTypes, data: Record<string, any> | TargetMode | null): void {
@@ -183,15 +236,19 @@ class Core {
 	}
 
 	public cleanUp(): void {
+		if (!this.isReady) {
+			return
+		}
+		this.isReady = false
 		clearInterval(this.keepaliveTimer)
 		AudioSystem.setMode(AudioSystemMode.MENU)
 		this.mainHandler.stop()
-		this.opponent = undefined
+		this.player = new ClientPlayerGroup('emptyGroup')
+		this.opponent = new ClientPlayerGroup('emptyGroup')
 		this.renderer.destroy()
-		this.game = undefined
 
 		if (this.socket) {
-			this.socket.close()
+			this.socket.close(1000, 'Clean up')
 		}
 		this.isReady = false
 	}

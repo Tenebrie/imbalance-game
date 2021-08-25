@@ -1,14 +1,11 @@
 import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import Constants from '@shared/Constants'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
-import RenderedGameBoard from '@/Pixi/cards/RenderedGameBoard'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardType from '@shared/enums/CardType'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
-import CardTint from '@/Pixi/enums/CardTint'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
 import Localization from '@/Pixi/Localization'
 import MouseHover from '@/Pixi/input/MouseHover'
@@ -54,8 +51,8 @@ export default class Renderer {
 
 	selectableCardsSmokescreen: PIXI.Sprite
 
-	deltaTime: number
-	deltaTimeFraction: number
+	deltaTime = 0
+	deltaTimeFraction = 1
 
 	CARD_ASPECT_RATIO = 408 / 584
 	GAME_BOARD_WINDOW_FRACTION = 0.7
@@ -67,7 +64,10 @@ export default class Renderer {
 	ANNOUNCED_CARD_WINDOW_FRACTION = 0.4
 	SELECTABLE_CARD_DECK_WINDOW_FRACTION = 0.2
 	SELECTABLE_CARD_DISCOVER_WINDOW_FRACTION = 0.3
-	GAME_BOARD_ROW_WINDOW_FRACTION = this.GAME_BOARD_WINDOW_FRACTION / Constants.GAME_BOARD_ROW_COUNT
+
+	public get GAME_BOARD_ROW_WINDOW_FRACTION(): number {
+		return this.GAME_BOARD_WINDOW_FRACTION / Core.constants.GAME_BOARD_ROW_COUNT
+	}
 
 	constructor(container: HTMLElement) {
 		this.superSamplingLevel = getRenderScale().superSamplingLevel
@@ -81,11 +81,13 @@ export default class Renderer {
 		this.pixi = new PIXI.Application({
 			width,
 			height,
-			antialias: false,
+			antialias: true,
 			autoDensity: true,
 			transparent: true,
 			resolution: 1,
 		})
+		PIXI.settings.TARGET_FPMS = 0.12
+		PIXI.Ticker.shared.maxFPS = 144
 
 		this.rootContainer = new PIXI.Container()
 		this.rootContainer.sortableChildren = true
@@ -101,7 +103,7 @@ export default class Renderer {
 		this.pixi.view.style.maxWidth = '100vw'
 		this.pixi.view.style.maxHeight = '100vh'
 		container.appendChild(this.pixi.view)
-		this.pixi.view.style['min-width'] = '1366px'
+		this.pixi.view.style.minWidth = '1366px'
 		this.container = container
 
 		/* Time label */
@@ -166,51 +168,63 @@ export default class Renderer {
 		this.deltaTime = deltaTime
 		this.deltaTimeFraction = deltaTimeFraction
 
-		const playerLeaderCard = Core.player?.leader
-		if (playerLeaderCard && Core.input.inspectedCard !== playerLeaderCard) {
-			this.renderCard(playerLeaderCard, [playerLeaderCard], 'player', 'leader')
+		const input = Core.input
+		const mainHandler = Core.mainHandler
+		if (!input || !mainHandler) {
+			return
 		}
 
-		const opponentLeaderCard = Core.opponent?.leader
-		if (opponentLeaderCard && Core.input.inspectedCard !== opponentLeaderCard) {
-			this.renderCard(opponentLeaderCard, [opponentLeaderCard], 'opponent', 'leader')
+		const playerLeaderCards = Core.player.players.map((player) => player.leader)
+		playerLeaderCards.forEach((leaderCard) => {
+			if (input.inspectedCard !== leaderCard) {
+				this.renderCard(leaderCard, playerLeaderCards, 'player', 'leader')
+			}
+		})
+
+		const opponentLeaderCards = Core.opponent.players.map((player) => player.leader)
+		opponentLeaderCards.forEach((leaderCard) => {
+			if (input.inspectedCard !== leaderCard) {
+				this.renderCard(leaderCard, opponentLeaderCards, 'opponent', 'leader')
+			}
+		})
+
+		if (Core.player.players.length > 0) {
+			const unitCards = Core.player.players[0].cardHand.unitCards
+			const sortedPlayerUnitCards = Core.player.players[0].cardHand.unitCards
+				.filter((card) => card !== input.inspectedCard)
+				.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
+				.slice()
+				.reverse()
+			sortedPlayerUnitCards.forEach((renderedCard) => {
+				this.renderCard(renderedCard, unitCards, 'player', 'unit')
+			})
+
+			const spellCards = Core.player.players[0].cardHand.spellCards
+			const sortedPlayerSpellCards = Core.player.players[0].cardHand.spellCards
+				.filter((card) => card !== input.inspectedCard)
+				.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
+				.slice()
+				.reverse()
+			sortedPlayerSpellCards.forEach((renderedCard) => {
+				this.renderCard(renderedCard, spellCards, 'player', 'spell')
+			})
 		}
 
-		const unitCards = Core.player.cardHand.unitCards
-		const sortedPlayerUnitCards = Core.player.cardHand.unitCards
-			.filter((card) => card !== Core.input.inspectedCard)
-			.filter((card) => !Core.input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
-			.slice()
-			.reverse()
-		sortedPlayerUnitCards.forEach((renderedCard) => {
-			this.renderCard(renderedCard, unitCards, 'player', 'unit')
-		})
-
-		const spellCards = Core.player.cardHand.spellCards
-		const sortedPlayerSpellCards = Core.player.cardHand.spellCards
-			.filter((card) => card !== Core.input.inspectedCard)
-			.filter((card) => !Core.input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
-			.slice()
-			.reverse()
-		sortedPlayerSpellCards.forEach((renderedCard) => {
-			this.renderCard(renderedCard, spellCards, 'player', 'spell')
-		})
-
-		if (Core.opponent) {
-			const opponentsUnitCards = Core.opponent.cardHand.unitCards
-			const sortedOpponentUnitCards = Core.opponent.cardHand.unitCards.slice().reverse()
+		if (Core.opponent.players.length > 0) {
+			const opponentsUnitCards = Core.opponent.players[0].cardHand.unitCards
+			const sortedOpponentUnitCards = Core.opponent.players[0].cardHand.unitCards.slice().reverse()
 			sortedOpponentUnitCards.forEach((renderedCard) => {
-				if (renderedCard === Core.input.inspectedCard || renderedCard === Core.mainHandler.announcedCard) {
+				if (renderedCard === input.inspectedCard || renderedCard === mainHandler.announcedCard) {
 					return
 				}
 
 				this.renderCard(renderedCard, opponentsUnitCards, 'opponent', 'unit')
 			})
 
-			const opponentsSpellCards = Core.opponent.cardHand.spellCards
-			const sortedOpponentSpellCards = Core.opponent.cardHand.spellCards.slice().reverse()
+			const opponentsSpellCards = Core.opponent.players[0].cardHand.spellCards
+			const sortedOpponentSpellCards = Core.opponent.players[0].cardHand.spellCards.slice().reverse()
 			sortedOpponentSpellCards.forEach((renderedCard) => {
-				if (renderedCard === Core.input.inspectedCard || renderedCard === Core.mainHandler.announcedCard) {
+				if (renderedCard === input.inspectedCard || renderedCard === mainHandler.announcedCard) {
 					return
 				}
 
@@ -219,7 +233,7 @@ export default class Renderer {
 		}
 
 		this.renderTextLabels()
-		this.renderGameBoard(Core.board)
+		this.renderGameBoard()
 		this.renderSelectableCards()
 		playQueueRenderer.tick()
 		inspectedCardRenderer.tick()
@@ -228,11 +242,16 @@ export default class Renderer {
 	}
 
 	private renderCard(card: RenderedCard, cardArray: RenderedCard[], owner: 'player' | 'opponent', hand: 'leader' | 'unit' | 'spell'): void {
-		if (Core.input.grabbedCard && card === Core.input.grabbedCard.card) {
+		const input = Core.input
+		if (!input) {
+			return
+		}
+
+		if (input.grabbedCard && card === input.grabbedCard.card) {
 			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
-			const displayMode = this.renderGrabbedCard(card, Core.input.mousePosition)
+			const displayMode = this.renderGrabbedCard(card, input.mousePosition)
 			card.setDisplayMode(displayMode)
-		} else if (!Core.input.grabbedCard && Core.input.hoveredCard && card === Core.input.hoveredCard.card) {
+		} else if (!input.grabbedCard && input.hoveredCard && card === input.hoveredCard.card) {
 			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
 			this.renderHoveredCardInHand(card, owner)
 			card.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
@@ -240,6 +259,9 @@ export default class Renderer {
 			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
 			card.setDisplayMode(CardDisplayMode.IN_HAND)
 		}
+		this.updateCardTintOverlay(card)
+		card.cardTintOverlay.visible = true
+		card.cardFullTintOverlay.visible = true
 	}
 
 	public resize(): void {
@@ -298,7 +320,6 @@ export default class Renderer {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
-		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
 
 		const windowFraction = owner === 'player' ? this.PLAYER_HAND_WINDOW_FRACTION : this.OPPONENT_HAND_WINDOW_FRACTION
 		const cardHeight = this.getScreenHeight() * windowFraction
@@ -340,12 +361,6 @@ export default class Renderer {
 			targetPosition.x += -(screenWidth * unitHandFraction) / 2 - (screenWidth * leaderHandFraction) / 2 - screenWidth * handPaddingFraction
 		}
 
-		const isForcedTarget =
-			Core.input.forcedTargetingMode &&
-			!!Core.input.forcedTargetingMode.validTargets.find((forcedCard) => forcedCard.targetCardId === renderedCard.id)
-
-		renderedCard.cardDisabledOverlay.visible = !isCardPlayable(renderedCard) && !isForcedTarget
-
 		if (renderedCard.displayMode === CardDisplayMode.IN_HAND || renderedCard.displayMode === CardDisplayMode.IN_HAND_HOVERED) {
 			sprite.alpha += (1 - sprite.alpha) * this.deltaTimeFraction * 7
 			container.position.x += (targetPosition.x - container.position.x) * this.deltaTimeFraction * 7
@@ -359,16 +374,57 @@ export default class Renderer {
 		hitboxSprite.position.set(targetPosition.x + sprite.position.x, targetPosition.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
+	}
 
-		disabledOverlaySprite.position.set(sprite.position.x, sprite.position.y)
-		disabledOverlaySprite.scale = sprite.scale
-		disabledOverlaySprite.zIndex = container.zIndex + 1
+	private updateCardTintOverlay(card: RenderedCard): void {
+		const cardTint = Renderer.getCardTintOverlayColor(card)
+		if (cardTint.color !== null) {
+			card.cardTintOverlay.tint = cardTint.color
+		}
+		if (cardTint.alpha > card.cardTintOverlay.alpha) {
+			card.cardTintOverlay.alpha += (cardTint.alpha - card.cardTintOverlay.alpha) * this.deltaTimeFraction * 40
+		} else {
+			card.cardTintOverlay.alpha += (cardTint.alpha - card.cardTintOverlay.alpha) * this.deltaTimeFraction * 5
+		}
+		card.cardTintOverlay.alpha = Math.max(0, Math.min(card.cardTintOverlay.alpha, 1))
+
+		const fullCardTint = this.getFullCardTintOverlayColor(card)
+		if (fullCardTint.alpha > card.cardFullTintOverlay.alpha) {
+			card.cardFullTintOverlay.alpha += (fullCardTint.alpha - card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 40
+		} else {
+			card.cardFullTintOverlay.alpha += (fullCardTint.alpha - card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 5
+		}
+		card.cardFullTintOverlay.alpha = Math.max(0, Math.min(card.cardFullTintOverlay.alpha, 1))
+	}
+
+	private static getCardTintOverlayColor(card: RenderedCard): { color: number | null; alpha: number } {
+		/* Targeting mode, and the current unit is a valid target */
+		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
+		if (Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isCardPotentialTarget(card)) {
+			if (card.owner === Core.opponent) {
+				return hoveredCard === card ? { color: 0xff0000, alpha: 0.75 } : { color: 0xff0000, alpha: 0.5 }
+			} else {
+				return hoveredCard === card ? { color: 0x00ff00, alpha: 0.75 } : { color: 0x00ff00, alpha: 0.5 }
+			}
+		}
+		return { color: null, alpha: 0 }
+	}
+
+	private getFullCardTintOverlayColor(card: RenderedCard): { alpha: number } {
+		const isValidTarget =
+			Core.input &&
+			Core.input.forcedTargetingMode &&
+			!!Core.input.forcedTargetingMode.validTargets.find((forcedCard) => forcedCard.targetCardId === card.id)
+
+		if (!isCardPlayable(card) && !isValidTarget) {
+			return { alpha: 0.5 }
+		}
+		return { alpha: 0 }
 	}
 
 	public renderHoveredCardInHand(renderedCard: RenderedCard, owner: 'player' | 'opponent'): void {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
-		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
 
 		const cardHeight = this.getScreenHeight() * this.HOVERED_HAND_WINDOW_FRACTION
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
@@ -381,17 +437,12 @@ export default class Renderer {
 		}
 
 		container.zIndex = HOVERED_CARD_ZINDEX
-
-		disabledOverlaySprite.position.set(sprite.position.x, sprite.position.y)
-		disabledOverlaySprite.scale = sprite.scale
-		disabledOverlaySprite.zIndex = container.zIndex + 1
 	}
 
 	public renderGrabbedCard(renderedCard: RenderedCard, mousePosition: Point): CardDisplayMode {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
-		const disabledOverlaySprite = renderedCard.cardDisabledOverlay
-		const hoveredRow = Core.board.rows.find((row) => row.isHovered())
+		const hoveredRow = Core.board && Core.board.rows.find((row) => row.isHovered())
 
 		let cardDisplayMode: CardDisplayMode
 		if (renderedCard.type === CardType.UNIT && hoveredRow) {
@@ -406,10 +457,6 @@ export default class Renderer {
 		container.position.x = mousePosition.x
 		container.position.y = mousePosition.y
 		container.zIndex = GRABBED_CARD_ZINDEX
-
-		disabledOverlaySprite.position.set(sprite.position.x, sprite.position.y)
-		disabledOverlaySprite.scale = sprite.scale
-		disabledOverlaySprite.zIndex = container.zIndex + 1
 
 		return cardDisplayMode
 	}
@@ -427,14 +474,26 @@ export default class Renderer {
 			return returnValue * this.superSamplingLevel
 		}
 
-		const power = Core.board
-			.getInsertedUnitsOwnedByPlayer(Core.player)
-			.map((unit) => unit.card.stats.power)
-			.reduce((accumulator, value) => accumulator + value, 0)
-		const opponentPower = Core.board
-			.getInsertedUnitsOwnedByPlayer(Core.opponent)
-			.map((unit) => unit.card.stats.power)
-			.reduce((accumulator, value) => accumulator + value, 0)
+		const leaderPower = Core.player.players
+			.map((player) => player.leader)
+			.reduce((totalPower, leader) => totalPower + leader.stats.power, 0)
+		const power =
+			leaderPower +
+			Core.board
+				.getInsertedUnitsOwnedByPlayer(Core.player)
+				.map((unit) => unit.card.stats.power)
+				.reduce((accumulator, value) => accumulator + value, 0)
+
+		const opponentLeaderPower = Core.opponent.players
+			.map((player) => player.leader)
+			.reduce((totalPower, leader) => totalPower + leader.stats.power, 0)
+		const opponentPower =
+			opponentLeaderPower +
+			Core.board
+				.getInsertedUnitsOwnedByPlayer(Core.opponent)
+				.map((unit) => unit.card.stats.power)
+				.reduce((accumulator, value) => accumulator + value, 0)
+
 		this.playerPowerLabel.text = power.toString()
 		this.opponentPowerLabel.text = opponentPower.toString()
 		this.playerPowerLabel.style.fontSize = getPowerFontSize(power)
@@ -457,9 +516,14 @@ export default class Renderer {
 		this.actionLabel.style.lineHeight = 24
 	}
 
-	public renderGameBoard(gameBoard: RenderedGameBoard): void {
+	public renderGameBoard(): void {
+		const gameBoard = Core.board
+		if (!gameBoard) {
+			return
+		}
+
 		let rows = gameBoard.rows.slice()
-		const playerPowerLabelRow = Constants.GAME_BOARD_ROW_COUNT - 2
+		const playerPowerLabelRow = Core.constants.GAME_BOARD_ROW_COUNT - 2
 		const opponentPowerLabelRow = 1
 		if (gameBoard.isInverted) {
 			rows = rows.reverse()
@@ -472,8 +536,8 @@ export default class Renderer {
 		const screenCenterX = this.getScreenWidth() / 2
 		const screenCenterY = this.getScreenHeight() / 2
 
-		const playerLabelTargetRowDistanceToCenter = playerPowerLabelRow - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
-		const opponentLabelTargetRowDistanceToCenter = opponentPowerLabelRow - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
+		const playerLabelTargetRowDistanceToCenter = playerPowerLabelRow - Core.constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
+		const opponentLabelTargetRowDistanceToCenter = opponentPowerLabelRow - Core.constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
 		const playerLabelRowY =
 			screenCenterY + playerLabelTargetRowDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 		const opponentLabelRowY =
@@ -489,7 +553,7 @@ export default class Renderer {
 
 		const screenCenterX = this.getScreenWidth() / 2
 		const screenCenterY = this.getScreenHeight() / 2
-		const verticalDistanceToCenter = rowIndex - Constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
+		const verticalDistanceToCenter = rowIndex - Core.constants.GAME_BOARD_ROW_COUNT / 2 + 0.5
 		const rowY = screenCenterY + verticalDistanceToCenter * rowHeight + this.getScreenHeight() * this.GAME_BOARD_OFFSET_FRACTION
 
 		container.position.set(screenCenterX, rowY)
@@ -507,8 +571,9 @@ export default class Renderer {
 		}
 
 		if (
-			(Core.input.grabbedCard && !Core.input.grabbedCard.validTargetRows.includes(row)) ||
-			(Core.input.forcedTargetingMode && !Core.input.forcedTargetingMode.isRowPotentialTarget(row))
+			(Core.input.grabbedCard && !Core.input.grabbedCard.validTargetPositions.some((target) => target.row === row)) ||
+			(Core.input.forcedTargetingMode && !Core.input.forcedTargetingMode.isRowPotentialTarget(row)) ||
+			Core.resolveStack.cards.length > 0
 		) {
 			return BoardRowTint.INVALID_TARGET
 		}
@@ -524,7 +589,6 @@ export default class Renderer {
 		const container = unit.card.coreContainer
 		const sprite = unit.card.sprite
 		const hitboxSprite = unit.card.hitboxSprite
-		const disabledOverlaySprite = unit.card.cardDisabledOverlay
 
 		const screenCenterX = this.getScreenWidth() / 2
 		const distanceToCenter = unitIndex - unitCount / 2 + 0.5
@@ -536,7 +600,7 @@ export default class Renderer {
 		const targetPositionY = rowY
 
 		let shadowUnitOffsetX = 0
-		const shadowUnit = Core.input.limboShadowUnit || Core.input.hoveredShadowUnit
+		const shadowUnit = Core.input.limboShadowUnit || Core.input.hoveredShadowUnit || Core.input.tutoredShadowUnit
 		if (shadowUnit && rowIndex === shadowUnit.rowIndex) {
 			if (shadowUnit.unitIndex <= unitIndex) {
 				shadowUnitOffsetX = cardWidth / 2
@@ -567,8 +631,9 @@ export default class Renderer {
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO
 		sprite.height = cardHeight
 
-		sprite.tint = this.getUnitTint(unit)
-		disabledOverlaySprite.visible = false
+		this.updateUnitTintOverlay(unit)
+		unit.card.cardTintOverlay.visible = true
+		unit.card.cardFullTintOverlay.visible = true
 
 		hitboxSprite.position.set(targetPositionX, targetPositionY)
 		hitboxSprite.scale = sprite.scale
@@ -577,45 +642,87 @@ export default class Renderer {
 		unit.card.setDisplayMode(CardDisplayMode.ON_BOARD)
 	}
 
-	private getUnitTint(unit: RenderedUnit): CardTint {
+	private updateUnitTintOverlay(unit: RenderedUnit): void {
+		const cardTint = Renderer.getUnitTint(unit)
+		if (cardTint.color !== null) {
+			unit.card.cardTintOverlay.tint = cardTint.color
+		}
+		if (cardTint.alpha > unit.card.cardTintOverlay.alpha) {
+			unit.card.cardTintOverlay.alpha += (cardTint.alpha - unit.card.cardTintOverlay.alpha) * this.deltaTimeFraction * 40
+		} else {
+			unit.card.cardTintOverlay.alpha += (cardTint.alpha - unit.card.cardTintOverlay.alpha) * this.deltaTimeFraction * 5
+		}
+		unit.card.cardTintOverlay.alpha = Math.max(0, Math.min(unit.card.cardTintOverlay.alpha, 1))
+
+		const fullCardTint = Renderer.getFullUnitTint(unit)
+		if (fullCardTint.alpha > unit.card.cardTintOverlay.alpha) {
+			unit.card.cardFullTintOverlay.alpha += (fullCardTint.alpha - unit.card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 40
+		} else {
+			unit.card.cardFullTintOverlay.alpha += (fullCardTint.alpha - unit.card.cardFullTintOverlay.alpha) * this.deltaTimeFraction * 5
+		}
+		unit.card.cardFullTintOverlay.alpha = Math.max(0, Math.min(unit.card.cardFullTintOverlay.alpha, 1))
+	}
+
+	private static getUnitTint(unit: RenderedUnit): { color: number | null; alpha: number } {
 		const card = unit.card
 		const hoveredCard = Core.input.hoveredCard ? Core.input.hoveredCard.card : null
 		if (Core.input.grabbedCard && Core.input.grabbedCard.card === unit.card) {
-			return CardTint.GRABBED
+			return { color: null, alpha: 0.25 }
 		}
 
-		/* Current unit is a valid target for some order */
+		/* Targeting mode, and the current unit is a valid target */
 		if (
 			(Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isUnitPotentialTarget(unit)) ||
-			(Core.input.grabbedCard &&
-				Core.input.grabbedCard.mode === GrabbedCardMode.CARD_ORDER &&
-				Core.input.grabbedCard.validTargetCards.includes(unit.card))
+			(Core.input.grabbedCard && Core.input.grabbedCard.validTargetCards.includes(unit.card))
 		) {
 			if (unit.owner === Core.opponent) {
-				return hoveredCard === card ? CardTint.VALID_ENEMY_TARGET_HOVERED : CardTint.VALID_ENEMY_TARGET
+				return hoveredCard === card ? { color: 0xff0000, alpha: 0.75 } : { color: 0xff0000, alpha: 0.5 }
 			} else {
-				return hoveredCard === card ? CardTint.VALID_ALLY_TARGET_HOVERED : CardTint.VALID_ALLY_TARGET
+				return hoveredCard === card ? { color: 0x00ff00, alpha: 0.75 } : { color: 0x00ff00, alpha: 0.5 }
 			}
 		}
 
+		/* Unit has a valid order */
 		if (
-			Core.player.isTurnActive &&
+			!Core.input.forcedTargetingMode &&
 			!Core.input.grabbedCard &&
 			unit.owner === Core.player &&
 			Core.board.getValidOrdersForUnit(unit).length > 0
 		) {
-			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
-		}
-		if (
-			Core.opponent.isTurnActive &&
-			!Core.input.grabbedCard &&
-			unit.owner === Core.opponent &&
-			Core.board.getValidOrdersForUnit(unit).length > 0
-		) {
-			return hoveredCard === card ? CardTint.HOVERED : CardTint.NORMAL
+			if (hoveredCard === card) {
+				return { color: 0x00ff00, alpha: 0.75 }
+			} else {
+				return { color: 0x00ff00, alpha: 0.5 }
+			}
 		}
 
-		return CardTint.INACTIVE
+		return { color: null, alpha: 0 }
+	}
+
+	private static getFullUnitTint(unit: RenderedUnit): { alpha: number } {
+		if (Core.input.grabbedCard && Core.input.grabbedCard.card === unit.card) {
+			return { alpha: 0.0 }
+		}
+
+		/* Targeting mode, and the current unit is a valid target */
+		if (
+			(Core.input.forcedTargetingMode && Core.input.forcedTargetingMode.isUnitPotentialTarget(unit)) ||
+			(Core.input.grabbedCard && Core.input.grabbedCard.validTargetCards.includes(unit.card))
+		) {
+			return { alpha: 0 }
+		}
+
+		/* Targeting mode, but the unit is not a valid target */
+		if (
+			(Core.input.forcedTargetingMode && !Core.input.forcedTargetingMode.isUnitPotentialTarget(unit)) ||
+			(Core.input.grabbedCard &&
+				!Core.input.grabbedCard.validTargetCards.includes(unit.card) &&
+				Core.input.grabbedCard.mode !== GrabbedCardMode.CARD_PLAY)
+		) {
+			return { alpha: 0.5 }
+		}
+
+		return { alpha: 0 }
 	}
 
 	public renderTargetingArrow(): void {
@@ -650,7 +757,7 @@ export default class Renderer {
 				(forcedTargeting?.validTargets as Array<CardTargetMessage | AnonymousTargetMessage>).map((target) => target.targetCardId) ||
 				grabbedCard?.validTargetCards.map((card) => card.id)
 			if (validTargetCards && validTargetCards.length > 0) {
-				const target = Core.game.findRenderedCardById(validTargetCards.find((id) => id === Core.input.hoveredCard.card.id))
+				const target = Core.game.findRenderedCardById(validTargetCards.find((id) => id === Core.input.hoveredCard?.card.id) || '')
 				if (target) {
 					targetPosition = target.getVisualPosition()
 					snappingToTarget = true
@@ -663,10 +770,15 @@ export default class Renderer {
 			color = 0x00ff00
 		}
 
+		if (!targetingArrow) {
+			return
+		}
+
+		const scale = this.superSamplingLevel
 		targetingArrow.startingPoint.position.copyFrom(startingPosition)
 		targetingArrow.startingPoint.clear()
 		targetingArrow.startingPoint.beginFill(color, 1.0)
-		targetingArrow.startingPoint.drawCircle(0, 0, 5)
+		targetingArrow.startingPoint.drawCircle(0, 0, 3 * scale)
 		targetingArrow.startingPoint.endFill()
 		targetingArrow.startingPoint.zIndex = TARGETING_ARROW_ZINDEX
 
@@ -679,7 +791,7 @@ export default class Renderer {
 		}
 		targetingArrow.targetPoint.clear()
 		targetingArrow.targetPoint.beginFill(color, 1.0)
-		targetingArrow.targetPoint.drawCircle(0, 0, 5)
+		targetingArrow.targetPoint.drawCircle(0, 0, 3 * scale)
 		targetingArrow.targetPoint.endFill()
 		targetingArrow.targetPoint.zIndex = TARGETING_ARROW_ZINDEX
 
@@ -687,7 +799,7 @@ export default class Renderer {
 		targetingArrow.arrowLine.clear()
 		const iterations = 5
 		for (let i = 0; i < iterations; i++) {
-			targetingArrow.arrowLine.lineStyle(i + 1, color, (iterations + 1 - i) / (iterations + 1))
+			targetingArrow.arrowLine.lineStyle(((i + 1) / 2) * scale, color, (iterations + 1 - i) / (iterations + 1))
 			const targetX = targetingArrow.targetPoint.position.x - startingPosition.x
 			const targetY = targetingArrow.targetPoint.position.y - startingPosition.y
 			const distance = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY, 2))
@@ -824,10 +936,17 @@ export default class Renderer {
 		container.position.x = targetPosition.x
 		container.position.y = targetPosition.y - cardHeight / 2 + levelOffset
 		container.zIndex = SELECTABLE_CARD_ZINDEX + handPosition * 2
+		if (renderedCard === MouseHover.getHoveredCard()) {
+			container.zIndex += 100
+		}
 
 		hitboxSprite.position.set(container.position.x + sprite.position.x, container.position.y + sprite.position.y)
 		hitboxSprite.scale = sprite.scale
 		hitboxSprite.zIndex = container.zIndex - 1
+
+		renderedCard.sprite.alpha = 1
+		renderedCard.cardTintOverlay.alpha = 0
+		renderedCard.cardFullTintOverlay.alpha = 0
 	}
 
 	public destroy(): void {

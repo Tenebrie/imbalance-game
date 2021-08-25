@@ -23,12 +23,11 @@ export default class SpellReinforcements extends ServerCard {
 		})
 		this.botEvaluation = new CustomBotEvaluation(this)
 
-		this.createEffect(GameEventType.SPELL_DEPLOYED)
-			.require(() => this.ownerInGame.cardDeck.unitCards.length > 0)
-			.perform(() => {
-				const owner = this.ownerInGame
-				Keywords.summonCard(owner.cardDeck.unitCards[0])
-			})
+		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => {
+			const owner = this.ownerPlayerInGame
+			Keywords.draw.topUnitCard(owner)
+			owner.addUnitMana(1)
+		})
 	}
 }
 

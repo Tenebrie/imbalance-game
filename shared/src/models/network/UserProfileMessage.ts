@@ -5,6 +5,7 @@ import PlayerDatabaseEntry from '../PlayerDatabaseEntry'
 export default class UserProfileMessage {
 	email: string
 	username: string
+	fastMode: boolean
 	userLanguage: Language
 	renderQuality: RenderQuality
 	masterVolume: number
@@ -22,6 +23,7 @@ export default class UserProfileMessage {
 			this.email = this.email + '@' + splitEmail[1]
 		}
 		this.username = databaseEntry.username
+		this.fastMode = databaseEntry.fastMode
 		this.userLanguage = databaseEntry.userLanguage
 		this.renderQuality = databaseEntry.renderQuality
 		this.masterVolume = databaseEntry.masterVolume

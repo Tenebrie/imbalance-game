@@ -17,6 +17,10 @@
 				<span class="info-text">{{ $locale.get('ui.auth.moveToRegister') }} </span>
 				<router-link class="register-link" :to="{ name: 'register' }">{{ $locale.get('ui.auth.createAccount') }}</router-link>
 			</div>
+			<div class="guest-login">
+				<span class="info-text">Alternatively, you can</span>
+				<button @click="onGuestLogin" class="guest-login-button">Login as Guest</button>
+			</div>
 			<google-single-sign-on-button />
 		</div>
 	</div>
@@ -49,11 +53,11 @@ export default defineComponent({
 		)
 
 		onMounted(() => {
-			rootRef.value.addEventListener('keydown', onKeyDown)
+			rootRef.value!.addEventListener('keydown', onKeyDown)
 		})
 
 		onBeforeUnmount(() => {
-			rootRef.value.removeEventListener('keydown', onKeyDown)
+			rootRef.value!.removeEventListener('keydown', onKeyDown)
 		})
 
 		const onKeyDown = (event: KeyboardEvent): void => {
@@ -70,6 +74,16 @@ export default defineComponent({
 			}
 			try {
 				await store.dispatch.login(credentials)
+			} catch (error) {
+				console.error(error)
+				setMessage(getErrorMessage(error.response.status, error.response.data.code))
+			}
+		}
+
+		const onGuestLogin = async (): Promise<void> => {
+			clearMessage()
+			try {
+				await store.dispatch.guestLogin()
 			} catch (error) {
 				console.error(error)
 				setMessage(getErrorMessage(error.response.status, error.response.data.code))
@@ -93,17 +107,18 @@ export default defineComponent({
 		}
 
 		const setMessage = (message: string): void => {
-			messageRef.value.innerHTML = message
+			messageRef.value!.innerHTML = message
 		}
 
 		const clearMessage = (): void => {
-			messageRef.value.innerHTML = ''
+			messageRef.value!.innerHTML = ''
 		}
 
 		return {
 			rootRef,
 			messageRef,
 			onLogin,
+			onGuestLogin,
 			email,
 			password,
 			Localization,
@@ -132,7 +147,18 @@ export default defineComponent({
 	}
 
 	.register-link {
+		margin-left: 3px;
 		font-size: 0.8em;
+	}
+
+	.guest-login-button {
+		background: none;
+		border: none;
+		color: $COLOR-SECONDARY;
+
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 }
 </style>

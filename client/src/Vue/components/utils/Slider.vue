@@ -1,17 +1,19 @@
 <template>
-	<div
-		class="slider"
-		@focus="onFocusReceived"
-		@mousedown="onMouseDown"
-		ref="sliderRef"
-		tabindex="0"
-		@keydown="onKeyDown"
-		:class="showOutlineClass"
-	>
-		<div ref="trackRef" class="track">
-			<div class="progress" :style="progressStyle" />
+	<div class="container">
+		<div
+			class="slider"
+			@focus="onFocusReceived"
+			@mousedown="onMouseDown"
+			ref="sliderRef"
+			tabindex="0"
+			@keydown="onKeyDown"
+			:class="showOutlineClass"
+		>
+			<div ref="trackRef" class="track">
+				<div class="progress" :style="progressStyle" />
+			</div>
+			<div ref="thumbRef" class="thumb" :style="thumbStyle" />
 		</div>
-		<div ref="thumbRef" class="thumb" :style="thumbStyle" />
 	</div>
 </template>
 
@@ -22,6 +24,7 @@ export default defineComponent({
 	props: {
 		modelValue: {
 			type: Number,
+			required: true,
 		},
 		min: {
 			type: Number,
@@ -82,6 +85,10 @@ export default defineComponent({
 		}
 
 		const onMouseMove = (event: MouseEvent) => {
+			if (!sliderRef.value) {
+				return
+			}
+
 			const mousePosition = event.clientX - sliderPositionX.value - thumbPadding
 			const sliderWidth = sliderRef.value.clientWidth - thumbPadding * 2
 
@@ -109,6 +116,9 @@ export default defineComponent({
 		}
 
 		const useUpdateThumbValue = (baseValue: number) => {
+			if (!sliderRef.value) {
+				return
+			}
 			const rawValue = (baseValue - props.min) / (props.max - props.min)
 			const sliderWidth = sliderRef.value.clientWidth - thumbPadding * 2
 			thumbValue.value = Math.min(sliderRef.value.clientWidth - thumbPadding, Math.max(thumbPadding, rawValue * sliderWidth + thumbPadding))
@@ -157,7 +167,13 @@ export default defineComponent({
 <style scoped lang="scss">
 @import 'src/Vue/styles/generic';
 
+.container {
+	width: 100%;
+	height: 100%;
+}
+
 .slider {
+	height: 20px;
 	cursor: pointer;
 	position: relative;
 	width: 100%;
@@ -179,6 +195,7 @@ export default defineComponent({
 		height: 40%;
 		background: gray;
 		border-radius: 8px;
+		transition: background-color 0.3s;
 	}
 
 	.thumb {
@@ -189,25 +206,30 @@ export default defineComponent({
 		border-radius: 50%;
 		background: lighten($COLOR-PRIMARY, 10);
 		pointer-events: none;
+		transition: background-color 0.3s;
 	}
 
 	.progress {
 		height: 100%;
 		background: lighten($COLOR-PRIMARY, 10);
 		border-radius: 8px 0 0 8px;
+		transition: background-color 0.3s;
 	}
 
 	&:hover {
 		.track {
 			background: lighten(gray, 5);
+			transition: background-color 0s;
 		}
 
 		.thumb {
 			background: lighten($COLOR-PRIMARY, 15);
+			transition: background-color 0s;
 		}
 
 		.progress {
 			background: lighten($COLOR-PRIMARY, 15);
+			transition: background-color 0s;
 		}
 	}
 

@@ -11,7 +11,7 @@ export default class PlayTargetDefinitionBuilder {
 	private __evaluator: ((args: PlayTargetValidatorArguments) => number) | null = null
 
 	private constructor(game: ServerGame) {
-		this.id = getRandomId()
+		this.id = `tdef:${getRandomId()}`
 		this.game = game
 	}
 
@@ -45,8 +45,8 @@ export default class PlayTargetDefinitionBuilder {
 			.require(({ card, owner, targetRow }) => {
 				return (
 					card.type === CardType.SPELL ||
-					(!card.features.includes(CardFeature.SPY) && targetRow.owner === owner) ||
-					(card.features.includes(CardFeature.SPY) && targetRow.owner !== owner)
+					(!card.features.includes(CardFeature.SPY) && targetRow.owner === owner.group) ||
+					(card.features.includes(CardFeature.SPY) && targetRow.owner !== owner.group)
 				)
 			})
 	}

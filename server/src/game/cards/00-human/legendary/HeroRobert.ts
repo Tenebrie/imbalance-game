@@ -4,7 +4,6 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
-import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import Keywords from '../../../../utils/Keywords'
@@ -20,16 +19,15 @@ export default class HeroRobert extends ServerCard {
 			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE, CardFeature.KEYWORD_SUMMON],
 			stats: {
-				power: 2,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
-			.requireAllied()
-			.require(({ targetCard }) => targetCard.features.includes(CardFeature.BUILDING))
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
+			.requireSamePlayer()
+			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.BUILDING))
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onTargetSelected(target: ServerCard): void {

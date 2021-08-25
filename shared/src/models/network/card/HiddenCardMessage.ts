@@ -8,6 +8,15 @@ import CardColor from '../../../enums/CardColor'
 import CardTribe from '../../../enums/CardTribe'
 import CardFeature from '../../../enums/CardFeature'
 import ExpansionSet from '../../../enums/ExpansionSet'
+import { CardLocalization, CardLocalizationEntry } from '../../cardLocalization/CardLocalization'
+
+const defaultLocalization: CardLocalizationEntry = {
+	name: '',
+	title: '',
+	flavor: '',
+	listName: '',
+	description: '',
+}
 
 export default class HiddenCardMessage implements CardMessage {
 	id: string
@@ -18,6 +27,7 @@ export default class HiddenCardMessage implements CardMessage {
 
 	stats: HiddenCardStatsMessage
 	buffs: HiddenBuffContainerMessage
+	localization: CardLocalization
 	baseTribes: CardTribe[]
 	baseFeatures: CardFeature[]
 	relatedCards: string[]
@@ -28,23 +38,22 @@ export default class HiddenCardMessage implements CardMessage {
 	isCollectible: boolean
 	isExperimental: boolean
 
-	name = 'card.hidden.name'
-	title = ''
-	flavor = ''
-	listName = ''
-	description = ''
-
 	isHidden = true
 
 	constructor(card: Card) {
 		this.id = card.id
 		this.type = card.type
-		this.stats = new HiddenCardStatsMessage(card.stats)
-		this.buffs = new HiddenBuffContainerMessage(card.buffs)
 		if (card.type === CardType.UNIT) {
 			this.class = 'unitHidden'
 		} else {
 			this.class = 'spellHidden'
+		}
+
+		this.stats = new HiddenCardStatsMessage(card.stats)
+		this.buffs = new HiddenBuffContainerMessage(card.buffs)
+		this.localization = {
+			en: defaultLocalization,
+			ru: defaultLocalization,
 		}
 
 		this.baseTribes = []

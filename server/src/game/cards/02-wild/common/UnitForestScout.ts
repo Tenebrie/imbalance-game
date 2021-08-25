@@ -8,11 +8,11 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import BuffStrength from '../../../buffs/BuffStrength'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
+import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitForestScout extends ServerCard {
-	boardPowerBonus = asDirectBuffPotency(7)
-	moralePowerBonus = asDirectBuffPotency(3)
+	boardPowerBonus = asDirectBuffPotency(14)
+	moralePowerBonus = asDirectBuffPotency(6)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -22,7 +22,7 @@ export default class UnitForestScout extends ServerCard {
 			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 4,
+				power: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -35,13 +35,13 @@ export default class UnitForestScout extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		const owner = this.ownerInGame
-		const ownPower = this.game.board.getTotalPlayerPower(owner)
+		const owner = this.ownerPlayerInGame
+		const ownPower = this.game.board.getTotalPlayerPower(owner.group)
 		const opponentsPower = this.game.board.getTotalPlayerPower(owner.opponentInGame)
 		if (ownPower < opponentsPower) {
 			this.buffs.addMultiple(BuffStrength, this.boardPowerBonus, this)
 		}
-		if (owner.morale < owner.opponentInGame.morale) {
+		if (owner.group.roundWins > owner.opponentInGame.roundWins) {
 			this.buffs.addMultiple(BuffStrength, this.moralePowerBonus, this)
 		}
 	}

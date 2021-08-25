@@ -28,12 +28,12 @@ export default defineComponent({
 		const displayedEntryGroups = entryGroups.value.slice().reverse()
 		const currentTime = ref<string>('')
 
-		let updateCurrentTimeInterval
+		let updateCurrentTimeInterval: number | null = null
 		onMounted(() => {
 			updateCurrentTimeInterval = setInterval(updateCurrentTime, 500)
 			updateCurrentTime()
 		})
-		onUnmounted(() => clearInterval(updateCurrentTimeInterval))
+		onUnmounted(() => clearInterval(updateCurrentTimeInterval!))
 
 		const updateCurrentTime = () => {
 			currentTime.value = moment().format('HH:mm:ss')
@@ -93,8 +93,5 @@ export default defineComponent({
 	padding-top: 0.5em;
 
 	border-top: 1px solid rgba(white, 0.7);
-
-	.entry {
-	}
 }
 </style>

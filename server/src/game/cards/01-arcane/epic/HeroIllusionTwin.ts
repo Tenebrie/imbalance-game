@@ -8,6 +8,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
+import { sortCards } from '@src/../../shared/src/Utils'
 
 /* Original design and implementation by Nenl */
 export default class HeroIllusionTwin extends ServerCard {
@@ -20,7 +21,7 @@ export default class HeroIllusionTwin extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
 			stats: {
-				power: 9,
+				power: 17,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -30,9 +31,10 @@ export default class HeroIllusionTwin extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.owner)
-			.perform(({ player }) => {
-				const copyInHand = player.cardHand.unitCards.find((u) => u.class === this.class)
+			.require(({ group }) => group.owns(this))
+			.perform(() => {
+				const unitCards = sortCards(this.ownerPlayerInGame.cardHand.unitCards) as ServerCard[]
+				const copyInHand = unitCards.find((u) => u.class === this.class)
 				if (copyInHand) {
 					this.dealDamage(ServerDamageInstance.fromCard(this.powerLost, this))
 					copyInHand.buffs.addMultiple(BuffStrength, this.powerGiven, this)

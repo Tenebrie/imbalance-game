@@ -1,10 +1,10 @@
-import ServerBuff, { BuffConstructorParams } from '../models/ServerBuff'
+import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardFeature from '@shared/enums/CardFeature'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
-export default class BuffCreatedCard extends ServerBuff {
+export default class BuffCreatedCard extends ServerCardBuff {
 	constructor(params: BuffConstructorParams) {
 		super(params, {
 			alignment: BuffAlignment.NEUTRAL,
@@ -12,19 +12,14 @@ export default class BuffCreatedCard extends ServerBuff {
 			cardFeatures: [CardFeature.TEMPORARY_CARD],
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onCardPlayed())
-		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => this.onCardPlayed())
-	}
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => onCardPlayed())
+		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => onCardPlayed())
 
-	private onCardPlayed(): void {
-		this.card.buffs.removeByReference(this)
-	}
+		const onCardPlayed = () => {
+			this.parent.buffs.removeByReference(this)
+		}
 
-	getUnitCostOverride(): number {
-		return 0
-	}
-
-	getSpellCostOverride(): number {
-		return 0
+		this.createUnitCostOverride().setTo(0)
+		this.createSpellCostOverride().setTo(0)
 	}
 }

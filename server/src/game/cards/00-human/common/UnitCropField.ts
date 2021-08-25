@@ -7,22 +7,23 @@ import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardFeature from '@shared/enums/CardFeature'
-import { asDirectBuffPotency } from '../../../../utils/LeaderStats'
+import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
 import CardTribe from '@shared/enums/CardTribe'
 import BuffStrength from '../../../buffs/BuffStrength'
 
 export default class UnitCropField extends ServerCard {
-	bonusPower = asDirectBuffPotency(1)
+	bonusPower = asRecurringBuffPotency(2)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.BUILDING],
+			tribes: [CardTribe.BUILDING],
+			features: [CardFeature.NIGHTWATCH],
 			stats: {
 				power: 0,
-				armor: 7,
+				armor: 14,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -31,7 +32,7 @@ export default class UnitCropField extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.ownerInGame)
+			.require(({ group }) => group.owns(this))
 			.perform(() => this.onTurnStarted())
 	}
 
@@ -39,9 +40,7 @@ export default class UnitCropField extends ServerCard {
 		const adjacentUnits = this.game.board.getAdjacentUnits(this.unit)
 		const procCount = 1 + adjacentUnits.filter((unit) => unit.card.tribes.includes(CardTribe.PEASANT)).length
 		for (let i = 0; i < procCount; i++) {
-			const validUnits = this.game.board
-				.getUnitsOwnedByPlayer(this.owner)
-				.filter((unit) => !unit.card.features.includes(CardFeature.BUILDING))
+			const validUnits = this.game.board.getUnitsOwnedByGroup(this.ownerGroup)
 			if (validUnits.length === 0) {
 				return
 			}

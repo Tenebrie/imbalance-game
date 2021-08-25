@@ -13,17 +13,33 @@ import {
 } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import TargetMode from '@shared/enums/TargetMode'
 import CardLibrary from '../libraries/CardLibrary'
-import TokenEmptyDeck from '../cards/09-neutral/tokens/TokenEmptyDeck'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import ServerCardTarget from '@src/game/models/ServerCardTarget'
-import Utils from '@src/utils/Utils'
+import NovelReplyMessage from '@src/../../shared/src/models/novel/NovelReplyMessage'
+import { sortCards } from '@shared/Utils'
 
 export type IncomingMessageHandlerFunction = (data: any, game: ServerGame, playerInGame: ServerPlayerInGame) => void
 
 const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void => {
 	game.events.resolveEvents()
 	game.events.evaluateSelectors()
-	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, player)
+	game.events.flushLogEventGroup()
+
+	const allPlayersHaveNoUnitMana = player.group.players.every((player) => player.unitMana === 0)
+	if (
+		game.turnPhase === GameTurnPhase.DEPLOY &&
+		allPlayersHaveNoUnitMana &&
+		game.cardPlay.cardResolveStack.currentCard === null &&
+		!player.group.turnEnded
+	) {
+		player.group.endTurn()
+		game.advanceCurrentTurn()
+
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+	}
+
+	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, [player])
 	OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 	game.events.flushLogEventGroup()
 }
@@ -35,20 +51,20 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		const validTargets = card.targeting.getPlayTargets(card.owner)
+		const validTargets = card.targeting.getPlayTargets(playerInGame, { checkMana: true })
 		if (
-			playerInGame.turnEnded ||
-			playerInGame.roundEnded ||
+			playerInGame.group.turnEnded ||
+			playerInGame.group.roundEnded ||
 			playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
-			!validTargets.find((target) => data.rowIndex === target.targetRow.index)
+			!validTargets.some((wrapper) => wrapper.target.targetRow.index === data.rowIndex && wrapper.target.targetPosition === data.unitIndex)
 		) {
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(playerInGame.player, card)
 			return
 		}
 
 		const ownedCard = new ServerOwnedCard(card, playerInGame)
-		game.cardPlay.playCard(ownedCard, data.rowIndex, data.unitIndex)
+		game.cardPlay.playCardAsPlayerAction(ownedCard, data.rowIndex, data.unitIndex)
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
@@ -57,17 +73,17 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	[GenericActionMessageType.UNIT_ORDER]: (data: CardTargetMessage, game: ServerGame, playerInGame: ServerPlayerInGame): void => {
 		const orderedUnit = game.board.findUnitById(data.sourceCardId)
 		if (
-			playerInGame.turnEnded ||
+			playerInGame.group.turnEnded ||
 			playerInGame.targetRequired ||
 			game.turnPhase !== GameTurnPhase.DEPLOY ||
 			!orderedUnit ||
-			orderedUnit.owner !== playerInGame ||
+			orderedUnit.owner !== playerInGame.group ||
 			!game.board.orders.validOrders.some((validOrder) => validOrder.target.id === data.id)
 		) {
 			return
 		}
 
-		game.board.orders.performUnitOrder(data)
+		game.board.orders.performUnitOrder(data, playerInGame)
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)
@@ -97,11 +113,11 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.CONFIRM_TARGETS]: (data: TargetMode, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (data !== TargetMode.MULLIGAN && player.mulliganMode) {
+		if (data !== TargetMode.MULLIGAN && player.group.mulliganMode) {
 			player.showMulliganCards()
 		} else if (data === TargetMode.BROWSE) {
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, [])
-		} else if (data === TargetMode.MULLIGAN && player.mulliganMode) {
+		} else if (data === TargetMode.MULLIGAN && player.group.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
 			onPlayerActionEnd(game, player)
@@ -111,9 +127,9 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.REQUEST_PLAYERS_DECK]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		const cards = Utils.sortCards(player.cardDeck.unitCards.concat(player.cardDeck.spellCards))
+		const cards = sortCards(player.cardDeck.unitCards.concat(player.cardDeck.spellCards))
 		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+			cards.push(CardLibrary.findPrototypeFromClass('tokenEmptyDeck'))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
@@ -121,9 +137,9 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		const cards = Utils.sortCards(player.cardGraveyard.unitCards.concat(player.cardGraveyard.spellCards))
+		const cards = sortCards(player.cardGraveyard.unitCards.concat(player.cardGraveyard.spellCards))
 		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+			cards.push(CardLibrary.findPrototypeFromClass('tokenEmptyDeck'))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
@@ -131,25 +147,29 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 	},
 
 	[GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		const cards = Utils.sortCards(player.opponent!.cardGraveyard.unitCards.concat(player.opponent!.cardGraveyard.spellCards))
+		const cards = sortCards(
+			player.opponent!.players[0].cardGraveyard.unitCards.concat(player.opponent!.players[0].cardGraveyard.spellCards)
+		)
 		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeByConstructor(TokenEmptyDeck))
+			cards.push(CardLibrary.findPrototypeFromClass('tokenEmptyDeck'))
 		}
 		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},
 
+	[GenericActionMessageType.NOVEL_REPLY]: (data: NovelReplyMessage, game: ServerGame, player: ServerPlayerInGame): void => {
+		game.novel.executeReply(data.id)
+		onPlayerActionEnd(game, player)
+		OutgoingMessageHandlers.executeMessageQueue(game)
+	},
+
 	[GenericActionMessageType.TURN_END]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (player.turnEnded || player.targetRequired) {
+		if (player.group.turnEnded || player.targetRequired) {
 			return
 		}
 
-		player.endTurn()
-		if (player.unitMana > 0) {
-			player.setUnitMana(0)
-			player.endRound()
-		}
+		player.group.endRound()
 
 		game.advanceCurrentTurn()
 		onPlayerActionEnd(game, player)

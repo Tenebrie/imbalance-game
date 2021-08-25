@@ -1,14 +1,11 @@
 import express, { Request, Response } from 'express'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import ServerGame from '../game/models/ServerGame'
-import ServerBotPlayer from '../game/AI/ServerBotPlayer'
-import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import GameLibrary from '../game/libraries/GameLibrary'
 import GameMessage from '@shared/models/network/GameMessage'
 import { getPlayerFromAuthenticatedRequest } from '../utils/Utils'
-import GameMode from '@shared/enums/GameMode'
-import ChallengeAIDifficulty from '@shared/enums/ChallengeAIDifficulty'
-import ChallengeLevel from '@shared/enums/ChallengeLevel'
+import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 
 const router = express.Router()
 
@@ -16,11 +13,25 @@ router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req: Request, res: Response) => {
 	const currentPlayer = getPlayerFromAuthenticatedRequest(req)
+	const privateGame = req.query['private'] || ('' as string)
 	const reconnect = req.query['reconnect'] || ('' as string)
 
 	let filteredGames: ServerGame[] = GameLibrary.games.filter((game) => !game.isFinished)
+	if (privateGame) {
+		filteredGames = filteredGames.filter((game) => !!game.owner && game.owner.id === currentPlayer.id)
+	} else if (!reconnect) {
+		filteredGames = filteredGames.filter((game) => !game.owner)
+	}
+
 	if (reconnect) {
-		filteredGames = filteredGames.filter((game) => game.players.find((playerInGame) => playerInGame.player.id === currentPlayer.id))
+		filteredGames = filteredGames.filter((game) =>
+			game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === currentPlayer.id)
+		)
+	} else {
+		filteredGames = filteredGames.filter(
+			(game) =>
+				!game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === currentPlayer.id)
+		)
 	}
 
 	const gameMessages = filteredGames.map((game) => new GameMessage(game))
@@ -29,46 +40,27 @@ router.get('/', (req: Request, res: Response) => {
 
 router.post('/', (req: Request, res: Response) => {
 	const player = getPlayerFromAuthenticatedRequest(req)
-	const gameName = req.body['name'] || ''
-	const gameMode = req.body['mode'] as GameMode
-	const difficulty = req.body['difficulty'] || ''
-	const level = (req.body['level'] as ChallengeLevel) || null
+	const rulesetClass = req.body['ruleset'] as string
 
-	if (!gameMode) {
-		res.status(400)
-		res.send()
-		return
+	if (!rulesetClass) {
+		throw { status: 400, error: '"ruleset" param not provided' }
 	}
 
-	const connectedGames = GameLibrary.games.filter((game) => game.players.find((playerInGame) => playerInGame.player === player))
+	const connectedGames = GameLibrary.games.filter((game) =>
+		game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === player)
+	)
 	connectedGames.forEach((game) => {
-		const playerInGame = game.players.find((playerInGame) => playerInGame.player === player)
+		const playerInGame = game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === player)
 		game.finish(playerInGame?.opponent || null, 'Player surrendered (Started new game)')
 	})
 
-	const game = GameLibrary.createOwnedGame(player, gameName.trim(), gameMode, {
-		challengeLevel: level,
-	})
-
-	if (gameMode === GameMode.VS_AI) {
-		let deck: ServerTemplateCardDeck | null = null
-		if (difficulty === ChallengeAIDifficulty.EASY) {
-			deck = ServerTemplateCardDeck.challengeAI00(game)
-		} else if (difficulty === ChallengeAIDifficulty.NORMAL) {
-			deck = ServerTemplateCardDeck.challengeAI01(game)
-		}
-
-		if (!deck) {
-			GameLibrary.destroyGame(game, 'Failed to start: Invalid AI difficulty')
-			res.status(400)
-			res.send()
-			return
-		}
-
-		game.addPlayer(new ServerBotPlayer(), deck)
-	} else if (gameMode === GameMode.CHALLENGE && level === ChallengeLevel.DISCOVERY_LEAGUE) {
-		game.addPlayer(new ServerBotPlayer(), ServerTemplateCardDeck.challengeAI00(game))
+	let ruleset: ServerRuleset
+	try {
+		ruleset = RulesetLibrary.findTemplateByClass(rulesetClass)
+	} catch (err) {
+		throw { status: 400, error: 'Invalid ruleset class' }
 	}
+	const game = GameLibrary.createGame(player, ruleset.constructor as RulesetConstructor)
 
 	res.json({ data: new GameMessage(game) })
 })

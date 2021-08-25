@@ -10,22 +10,23 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import { ServerCardTargetUnit } from '../../../models/ServerCardTarget'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFeature from '@shared/enums/CardFeature'
-import { asDirectUnitDamage } from '@src/utils/LeaderStats'
+import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 import BuffCanAttack from '../../../buffs/BuffCanAttack'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitArcheryTower extends ServerCard {
-	damage = asDirectUnitDamage(2)
+	damage = asRecurringUnitDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.BUILDING],
+			tribes: [CardTribe.BUILDING],
+			features: [CardFeature.NIGHTWATCH],
 			stats: {
 				power: 0,
-				armor: 4,
+				armor: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

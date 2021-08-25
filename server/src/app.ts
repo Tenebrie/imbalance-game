@@ -12,6 +12,9 @@ import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import { wsLogger } from './utils/WebSocketLogger'
 import Database from './database/Database'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
+import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
+import CardLibrary from '@src/game/libraries/CardLibrary'
+import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 
 const app = express()
 expressWs(app)
@@ -24,7 +27,9 @@ const UserRouter = require('./routers/UserRouter')
 const PlayRouter = require('./routers/PlayRouter')
 const AdminRouter = require('./routers/AdminRouter')
 const CardsRouter = require('./routers/CardsRouter')
+const RulesetsRouter = require('./routers/RulesetsRouter')
 const DecksRouter = require('./routers/DecksRouter')
+const DevRouter = require('./routers/DevRouter')
 const GamesRouter = require('./routers/GamesRouter')
 const ModalsRouter = require('./routers/ModalsRouter')
 const SessionRouter = require('./routers/SessionRouter')
@@ -49,8 +54,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 app.use(wsLogger())
 app.use(cookieParser())
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(express.json({ limit: '50mb' }))
+app.use(express.urlencoded({ extended: false, limit: '50mb' }))
 
 /* Serve static files */
 app.use(express.static(path.join(__dirname, '../../../public')))
@@ -85,7 +90,9 @@ app.use('/changelog', ChangelogRouter)
 /* API HTTP routers */
 app.use('/api/admin', AdminRouter)
 app.use('/api/cards', CardsRouter)
+app.use('/api/rulesets', RulesetsRouter)
 app.use('/api/decks', DecksRouter)
+app.use('/api/dev', DevRouter)
 app.use('/api/games', GamesRouter)
 app.use('/api/session', SessionRouter)
 app.use('/api/user', UserRouter)
@@ -118,5 +125,13 @@ app.use((err: any, req: Request, res: Response, next: () => void) => {
 
 /* Generate placeholder images */
 cardImageGenerator.generatePlaceholderImages()
+
+CardLibrary.ensureLibraryLoaded()
+RulesetLibrary.ensureLibraryLoaded()
+
+/* Clear our old DB data every hour */
+setInterval(async () => {
+	await GameHistoryDatabase.pruneOldestRecords()
+}, 60 * 60 * 1000)
 
 app.listen(process.env.PORT || 3000)

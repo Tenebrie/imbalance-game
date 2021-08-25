@@ -4,6 +4,7 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import { getClassFromConstructor } from '@src/utils/Utils'
 import { CardConstructor } from '../libraries/CardLibrary'
+import CardFeature from '@shared/enums/CardFeature'
 
 export default class RelatedCardsDefinition {
 	private readonly __conditions: ((card: ServerCard) => boolean)[]
@@ -32,8 +33,18 @@ export default class RelatedCardsDefinition {
 		return this
 	}
 
+	requireFeature(feature: CardFeature): RelatedCardsDefinition {
+		this.__conditions.push((card) => card.features.includes(feature))
+		return this
+	}
+
 	requireTribe(tribe: CardTribe): RelatedCardsDefinition {
 		this.__conditions.push((card) => card.tribes.includes(tribe))
+		return this
+	}
+
+	requireAnyTribe(tribes: CardTribe[]): RelatedCardsDefinition {
+		this.__conditions.push((card) => card.tribes.some((tribe) => tribes.includes(tribe)))
 		return this
 	}
 

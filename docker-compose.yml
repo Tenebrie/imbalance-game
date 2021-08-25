@@ -33,6 +33,7 @@ services:
       - 3000:3000
     command: yarn serve
     volumes:
+      - ./client/public:/app/client/public:cached
       - ./server/src:/app/server/src:cached
       - ./shared/src:/app/shared/src:cached
     tty: true

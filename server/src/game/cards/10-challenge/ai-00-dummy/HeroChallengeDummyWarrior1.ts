@@ -13,7 +13,7 @@ export default class HeroChallengeDummyWarrior1 extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 15,
+				power: 30,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,

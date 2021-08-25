@@ -9,9 +9,10 @@ import BuffDuration from '@shared/enums/BuffDuration'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectBuffPotency } from '@src/utils/LeaderStats'
+import Keywords from '@src/utils/Keywords'
 
 export default class UnitUndercityGambler extends ServerCard {
-	bonusPower = asDirectBuffPotency(5)
+	bonusPower = asDirectBuffPotency(10)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -21,7 +22,7 @@ export default class UnitUndercityGambler extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			generatedArtworkMagicString: '2',
 			stats: {
-				power: 4,
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -31,12 +32,11 @@ export default class UnitUndercityGambler extends ServerCard {
 		}
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_HAND)
-			.requireAllied()
+			.requireSamePlayer()
 			.require((args) => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
 			.perform(({ targetCard }) => {
-				const owner = targetCard.ownerInGame
-				owner.cardHand.discardCard(targetCard)
-				owner.cardDeck.addUnitToBottom(targetCard)
+				const owner = targetCard.ownerPlayerInGame
+				Keywords.returnCardToDeck(targetCard)
 				const drawnCards = owner.drawUnitCards(1)
 				if (drawnCards.length === 0) {
 					return

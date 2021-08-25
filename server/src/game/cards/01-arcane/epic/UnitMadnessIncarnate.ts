@@ -17,7 +17,7 @@ export default class UnitMadnessIncarnate extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
 			stats: {
-				power: 21,
+				power: 40,
 			},
 			expansionSet: ExpansionSet.BASE,
 			generatedArtworkMagicString: '1',
@@ -27,11 +27,11 @@ export default class UnitMadnessIncarnate extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.GAME_STARTED, AnyCardLocation)
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => {
 				this.game.board.getControlledRows(this.owner).forEach((row) => {
 					this.game.animation.thread(() => {
-						Keywords.shatter(this.shatterPerRow).on(row)
+						Keywords.shatter(this.shatterPerRow, this.ownerPlayerInGame).on(row)
 					})
 				})
 			})

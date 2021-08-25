@@ -1,6 +1,6 @@
 enum CardTribe {
 	BIRD = 'bird',
-	LOOT = 'loot',
+	LOST = 'lost',
 	BEAST = 'beast',
 	DRYAD = 'dryad',
 	NOBLE = 'noble',
@@ -12,12 +12,19 @@ enum CardTribe {
 	CRYSTAL = 'crystal',
 	CULTIST = 'cultist',
 	PEASANT = 'peasant',
+	SALVAGE = 'salvage',
 	SOLDIER = 'soldier',
 	VAMPIRE = 'vampire',
 	MERFOLK = 'merfolk',
 	BUILDING = 'building',
 	VALKYRIE = 'valkyrie',
 	ELEMENTAL = 'elemental',
+	LABYRINTH_WEAPON = 'lab_weapon',
+	LABYRINTH_ARMOR = 'lab_armor',
+	LABYRINTH_GLOVES = 'lab_gloves',
+	LABYRINTH_BOOTS = 'lab_boots',
+	LABYRINTH_TREASURE = 'lab_treasure',
+	LABYRINTH_BUCKET = 'lab_bucket',
 }
 
 export default CardTribe

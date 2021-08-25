@@ -60,11 +60,11 @@ import AdminGamesTables from '@/Vue/components/admin/AdminGamesTables.vue'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import { useAdminRouteParams } from '@/Vue/components/editor/AdminRouteParams'
 import AccessLevel from '@shared/enums/AccessLevel'
-import { forEachInStringEnum } from '@/utils/Utils'
 import Player from '@shared/models/Player'
 import store from '@/Vue/store'
 import Notifications from '@/utils/Notifications'
 import moment from 'moment'
+import { enumToArray } from '@shared/Utils'
 
 export default defineComponent({
 	components: { AdminGamesTables },
@@ -73,7 +73,7 @@ export default defineComponent({
 		const hasLoaded = ref(false)
 		const allGames = ref<GameHistoryDatabaseEntry[]>([])
 		const player = ref<PlayerDatabaseEntry | null>(null)
-		const currentPlayer = computed<Player>(() => store.state.player)
+		const currentPlayer = computed<Player | null>(() => store.state.player)
 
 		const params = useAdminRouteParams()
 
@@ -94,7 +94,7 @@ export default defineComponent({
 			() => [params.value.playerId],
 			() => {
 				player.value = null
-				allGames.value = null
+				allGames.value = []
 				hasLoaded.value = false
 				loadData()
 			}
@@ -108,10 +108,7 @@ export default defineComponent({
 			await loadData()
 		}
 
-		const accessLevels: string[] = []
-		forEachInStringEnum(AccessLevel, (level) => {
-			accessLevels.push(level)
-		})
+		const accessLevels: string[] = enumToArray(AccessLevel)
 
 		return {
 			moment,

@@ -2,7 +2,6 @@ import axios from 'axios'
 import Core from '@/Pixi/Core'
 import router from '@/Vue/router'
 import Player from '@shared/models/Player'
-import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
 import EditorModule from '@/Vue/store/modules/EditorModule'
 import GameStateModule from '@/Vue/store/modules/GameStateModule'
 import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
@@ -14,21 +13,30 @@ import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import GameMessage from '@shared/models/network/GameMessage'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import { createDirectStore } from 'direct-vuex'
+import RulesetsModule from './modules/RulesetsModule'
+import NovelModule from './modules/NovelModule'
+import HotkeysModule from '@/Vue/store/modules/HotkeysModule'
+import GameLobbyModule from '@/Vue/store/modules/GameLobbyModule'
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {
 		editor: EditorModule,
 		gameLogModule: GameLogModule,
 		gameStateModule: GameStateModule,
-		popupModule: PopupModule,
+		gameLobbyModule: GameLobbyModule,
+		hotkeysModule: HotkeysModule,
 		inspectedCard: InspectedCardModule,
+		novel: NovelModule,
+		popupModule: PopupModule,
+		rulesets: RulesetsModule,
 		userPreferencesModule: UserPreferencesModule,
 	},
 
 	state: {
 		player: null as Player | null,
 		isLoggedIn: false as boolean,
-		selectedGame: null as GameMessage | null,
+		currentGame: null as GameMessage | null,
+		nextLinkedGame: null as GameMessage | null,
 		selectedDeckId: '' as string,
 	},
 
@@ -38,8 +46,16 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			state.player = player
 		},
 
-		setSelectedGame(state, selectedGame: GameMessage): void {
-			state.selectedGame = selectedGame
+		setCurrentGame(state, currentGame: GameMessage): void {
+			state.currentGame = currentGame
+		},
+
+		setNextLinkedGame(state, linkedGame: GameMessage): void {
+			state.nextLinkedGame = linkedGame
+		},
+
+		clearNextLinkedGame(state): void {
+			state.nextLinkedGame = null
 		},
 
 		setSelectedDeckId(state, selectedDeckId: string): void {
@@ -77,13 +93,22 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			await dispatch.postLogin()
 		},
 
+		async guestLogin(context): Promise<void> {
+			const { dispatch } = rootActionContext(context)
+
+			await axios.post('/api/session/guest')
+			await dispatch.postLogin()
+		},
+
 		async postLogin(context): Promise<void> {
 			const { dispatch } = rootActionContext(context)
 
 			LocalStorage.setHasAuthCookie(true)
 			await dispatch.userPreferencesModule.fetchPreferences()
 			await router.push({ name: 'home' })
+			await store.dispatch.rulesets.loadLibrary()
 			await store.dispatch.editor.loadCardLibrary()
+			await store.dispatch.editor.loadDecks()
 			editorCardRenderer.startRenderingService()
 		},
 
@@ -106,21 +131,37 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 
 		joinGame(context, selectedGame: GameMessage): void {
 			const { commit } = rootActionContext(context)
-			commit.setSelectedGame(selectedGame)
+			commit.setCurrentGame(selectedGame)
 			router.push({ name: 'game' })
 		},
 
-		leaveGame(): void {
-			if (store.state.gameStateModule.gameStatus === ClientGameStatus.NOT_STARTED) {
-				return
-			}
-
-			OutgoingMessageHandlers.sendSurrender()
+		async leaveGame(): Promise<void> {
 			store.dispatch.gameStateModule.reset()
 			store.dispatch.popupModule.closeAll()
-			router.push({ name: 'home' })
-			Core.socket.close(1000, 'Player disconnect')
+			store.dispatch.novel.clear()
+			await router.push({ name: 'home' })
+			if (Core.socket && Core.socket.readyState === WebSocket.OPEN) {
+				Core.socket.close(1000, 'Player disconnect')
+			}
 			Core.cleanUp()
+		},
+
+		async surrenderGame(context): Promise<void> {
+			const { commit, dispatch } = rootActionContext(context)
+
+			OutgoingMessageHandlers.sendSurrender()
+			await dispatch.leaveGame()
+			commit.clearNextLinkedGame()
+		},
+
+		async leaveAndContinue(context): Promise<void> {
+			const { state, commit, dispatch } = rootActionContext(context)
+
+			await dispatch.leaveGame()
+			if (state.nextLinkedGame) {
+				dispatch.joinGame(state.nextLinkedGame)
+				commit.clearNextLinkedGame()
+			}
 		},
 	},
 })

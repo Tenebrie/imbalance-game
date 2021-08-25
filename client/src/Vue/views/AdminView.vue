@@ -2,10 +2,9 @@
 	<div class="admin-view">
 		<div class="container">
 			<div class="navigation">
-				<router-link tag="span" :to="{ name: 'admin-games' }" class="router-link"> Game history </router-link>
-				<router-link tag="span" :to="{ name: 'admin-users' }" class="router-link"> Registered users </router-link>
-				<router-link tag="span" :to="{ name: 'admin-cards' }" class="router-link"> Card library </router-link>
-				<router-link tag="span" :to="{ name: 'admin-stats' }" class="router-link"> Statistics & Graphics </router-link>
+				<router-link tag="span" :to="{ name: 'admin-cards' }" class="router-link"><i class="fas fa-book" /> Card library </router-link>
+				<router-link tag="span" :to="{ name: 'admin-games' }" class="router-link"><i class="fas fa-history" /> Game history </router-link>
+				<router-link tag="span" :to="{ name: 'admin-users' }" class="router-link"><i class="fas fa-users" /> Registered users </router-link>
 			</div>
 			<div class="content">
 				<router-view />
@@ -29,11 +28,10 @@ export default defineComponent({
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 100%;
+	max-width: $CONTENT_WIDTH;
 	height: 100%;
 
 	.container {
-		max-width: 1800px;
 		display: flex;
 		align-items: flex-end;
 		flex-direction: row;
@@ -54,20 +52,23 @@ export default defineComponent({
 			min-width: 224px;
 			justify-content: center;
 			align-items: flex-start;
-			padding: 0 16px;
 			font-size: 1.5em;
 			line-height: 1.5em;
 
 			.router-link {
 				cursor: pointer;
-			}
+				width: calc(100% - 32px);
+				padding: 4px 16px;
+				text-align: start;
 
-			.router-link:hover {
-				text-decoration: underline;
-			}
+				&:hover {
+					text-decoration: none !important;
+					background: $COLOR-BACKGROUND-TRANSPARENT;
+				}
 
-			.router-link-active {
-				font-weight: bold;
+				&.router-link-active {
+					font-weight: bold;
+				}
 			}
 		}
 

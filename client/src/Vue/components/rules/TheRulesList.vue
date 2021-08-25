@@ -68,9 +68,6 @@
 				<li>Play spell cards as long as they have mana to pay the cost</li>
 				<li>Issue orders to cards on the board that have the <b>Order</b> keyword</li>
 			</ul>
-
-			<h2>Footnotes</h2>
-			<p>In the current version, players have access to all available cards, regardless of the faction.</p>
 		</div>
 	</div>
 </template>

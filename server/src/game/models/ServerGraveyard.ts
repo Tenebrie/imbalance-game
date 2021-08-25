@@ -58,7 +58,7 @@ export default class ServerGraveyard implements CardDeck {
 
 	public removeCard(card: ServerCard): void {
 		this.unitCards = this.unitCards.filter((unitCard) => unitCard !== card)
-		this.spellCards = this.spellCards.filter((unitCard) => unitCard !== card)
+		this.spellCards = this.spellCards.filter((spellCard) => spellCard !== card)
 
 		OutgoingMessageHandlers.notifyAboutCardInGraveyardDestroyed(new ServerOwnedCard(card, this.owner))
 	}

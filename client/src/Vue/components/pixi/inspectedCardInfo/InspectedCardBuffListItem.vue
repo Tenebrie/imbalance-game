@@ -13,16 +13,15 @@ import { computed, defineComponent, PropType } from 'vue'
 import { BuffWrapper } from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 
-interface Props {
-	buff: BuffWrapper
-}
-
 export default defineComponent({
 	props: {
-		buff: Object as PropType<BuffWrapper>,
+		buff: {
+			type: Object as PropType<BuffWrapper>,
+			required: true,
+		},
 	},
 
-	setup(props: Props) {
+	setup(props) {
 		const style = computed<Record<string, boolean>>(() => ({
 			positive: props.buff.buff.alignment === BuffAlignment.POSITIVE,
 			neutral: props.buff.buff.alignment === BuffAlignment.NEUTRAL,

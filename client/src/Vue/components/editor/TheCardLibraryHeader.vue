@@ -6,23 +6,24 @@
 					v-for="data in factionData"
 					:key="`faction-button-${data.faction}`"
 					class="primary"
-					:class="{ selected: data.faction === selectedFaction }"
+					:class="{ selected: selectedFaction?.includes(data.faction) || selectedFaction === data.faction }"
 					@click="() => toggleFaction(data.faction)"
 				>
 					{{ data.text }}
 				</button>
-				<inline-tooltip class="tooltip">{{ $locale.get('ui.editor.header.factions.tooltip') }}</inline-tooltip>
+				<div class="vertical-separator" />
 			</div>
 			<div class="filter-buttons">
 				<button
 					v-for="data in colorData"
 					:key="`color-button-${data.color}`"
 					class="primary"
-					:class="{ selected: data.color === selectedColor }"
+					:class="{ selected: selectedColor?.includes(data.color) || selectedColor === data.color }"
 					@click="() => toggleColor(data.color)"
 				>
 					{{ data.text }}
 				</button>
+				<div class="vertical-separator" />
 				<div class="checkbox-container">
 					<div class="checkbox">
 						<input id="checkbox-experimental" type="checkbox" value="Test" v-model="experimentalToggle" />
@@ -57,32 +58,46 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
 import { computed, defineComponent, ref } from 'vue'
 import { debounce } from 'throttle-debounce'
-import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
-	components: {
-		InlineTooltip,
-	},
 	setup() {
 		const routeQuery = useDecksRouteQuery()
-		const selectedColor = computed<CardColor>(() => routeQuery.value.color)
-		const selectedFaction = computed<CardFaction>(() => routeQuery.value.faction)
+		const selectedColor = computed<Array<CardColor>>(() => routeQuery.value.color)
+		const selectedFaction = computed<Array<CardFaction>>(() => routeQuery.value.faction)
 
-		const toggleColor = (color: CardColor) => {
-			if (selectedColor.value === color) {
+		const toggleColor = (color: CardColor | null) => {
+			if (color === null) {
 				routeQuery.value.color = null
+			} else if (selectedColor.value !== null) {
+				if (selectedColor.value.includes(color)) {
+					if (selectedColor.value.length === 1) {
+						routeQuery.value.color = null
+					} else {
+						routeQuery.value.color = selectedColor.value.filter((c) => c !== color)
+					}
+				} else {
+					routeQuery.value.color = selectedColor.value.concat(color)
+				}
 			} else {
-				routeQuery.value.color = color
+				routeQuery.value.color = [color]
 			}
 		}
 
-		const toggleFaction = (faction: CardFaction) => {
-			if (selectedFaction.value === faction) {
+		const toggleFaction = (faction: CardFaction | null) => {
+			if (faction === null) {
 				routeQuery.value.faction = null
+			} else if (selectedFaction.value !== null) {
+				if (selectedFaction.value.includes(faction)) {
+					if (selectedFaction.value.length === 1) {
+						routeQuery.value.faction = null
+					} else routeQuery.value.faction = selectedFaction.value.filter((f) => f !== faction)
+				} else {
+					routeQuery.value.faction = selectedFaction.value.concat(faction)
+				}
 			} else {
-				routeQuery.value.faction = faction
+				routeQuery.value.faction = [faction]
 			}
 		}
 
@@ -190,9 +205,6 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: flex-start;
-
-		& > * {
-		}
 
 		.tooltip {
 			font-size: 1.2em;
@@ -313,6 +325,19 @@ $COMPACT_MODE_THRESHOLD: 2050px;
 			@media (max-width: $MOBILE_MODE_THRESHOLD) {
 				display: block;
 			}
+		}
+	}
+
+	.vertical-separator {
+		display: block;
+		flex: none;
+		width: 1px;
+		height: 100%;
+		margin: 0 8px;
+		background-color: $COLOR-TEXT;
+
+		@media (max-width: $MOBILE_MODE_THRESHOLD) {
+			display: none;
 		}
 	}
 }

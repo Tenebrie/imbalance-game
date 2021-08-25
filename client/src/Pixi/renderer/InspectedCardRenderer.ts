@@ -7,9 +7,9 @@ import RichText from '@/Pixi/render/RichText'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
 
 class InspectedCardRenderer {
-	public container: PIXI.Container
+	public container!: PIXI.Container
 
-	private richText: RichText
+	private richText!: RichText
 
 	public init(): void {
 		this.container = new PIXI.Container()
@@ -32,7 +32,6 @@ class InspectedCardRenderer {
 	public renderInspectedCard(inspectedCard: RenderedCard): void {
 		const container = inspectedCard.coreContainer
 		const sprite = inspectedCard.sprite
-		const disabledOverlaySprite = inspectedCard.cardDisabledOverlay
 
 		sprite.tint = 0xffffff
 		sprite.alpha = 1
@@ -47,7 +46,8 @@ class InspectedCardRenderer {
 
 		inspectedCard.setDisplayMode(CardDisplayMode.INSPECTED)
 
-		disabledOverlaySprite.visible = false
+		inspectedCard.cardTintOverlay.visible = false
+		inspectedCard.cardFullTintOverlay.visible = false
 	}
 }
 

@@ -9,8 +9,8 @@ import ServerBoardRow from '../../../../models/ServerBoardRow'
 import Constants from '@shared/Constants'
 import CardLibrary from '../../../../libraries/CardLibrary'
 import UnitVolatileCrystal from '../../tokens/UnitVolatileCrystal'
-import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export default class SpellCrystalBarrage extends ServerCard {
 	constructor(game: ServerGame) {
@@ -26,20 +26,20 @@ export default class SpellCrystalBarrage extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargets(TargetType.BOARD_ROW).requireEnemy()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
+		this.createDeployTargets(TargetType.BOARD_ROW)
+			.requireEnemy()
+			.perform(({ player, targetRow }) => this.onTargetSelected(player, targetRow))
 	}
 
-	private onTargetSelected(target: ServerBoardRow): void {
+	private onTargetSelected(player: ServerPlayerInGame, target: ServerBoardRow): void {
 		for (let i = 0; i <= target.cards.length; i += 2) {
 			if (target.cards.length >= Constants.MAX_CARDS_PER_ROW) {
 				break
 			}
 
-			const crystal = CardLibrary.instantiateByConstructor(this.game, UnitVolatileCrystal)
+			const crystal = CardLibrary.instantiate(this.game, UnitVolatileCrystal)
 			this.game.animation.thread(() => {
-				this.game.board.createUnit(crystal, target.index, i)
+				this.game.board.createUnit(crystal, player, target.index, i)
 			})
 		}
 	}

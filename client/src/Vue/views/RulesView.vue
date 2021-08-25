@@ -22,6 +22,7 @@ export default defineComponent({
 	display: flex;
 	align-items: flex-end;
 	justify-content: center;
+	max-width: $CONTENT_WIDTH;
 
 	& > div {
 		flex-grow: 0;

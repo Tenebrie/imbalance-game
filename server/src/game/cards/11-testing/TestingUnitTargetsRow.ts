@@ -15,8 +15,7 @@ export default class TestingUnitTargetsRow extends ServerCard {
 			stats: {
 				power: 10,
 			},
-			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true,
+			expansionSet: ExpansionSet.TESTING,
 		})
 
 		this.createDeployTargets(TargetType.BOARD_ROW)

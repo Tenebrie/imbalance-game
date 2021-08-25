@@ -21,7 +21,7 @@ export default class UnitMerfolkStormcaller extends ServerCard {
 			relatedCards: [SpellLightningStorm],
 			sortPriority: 1,
 			stats: {
-				power: 4,
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

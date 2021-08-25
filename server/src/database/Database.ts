@@ -3,6 +3,7 @@ import { Client, QueryResult } from 'pg'
 import { colorize } from '../utils/Utils'
 import AsciiColor from '../enums/AsciiColor'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import PlayerDatabase from '@src/database/PlayerDatabase'
 
 class Database {
 	private client: Client | undefined
@@ -33,7 +34,7 @@ class Database {
 		try {
 			await client.connect()
 
-			console.info('Connection established. Running migrations')
+			console.info('Database connection established. Running migrations')
 			await pgMigrate({
 				count: 10000,
 				dbClient: client,
@@ -45,6 +46,7 @@ class Database {
 
 			console.info('Database client ready')
 			this.client = client
+			PlayerDatabase.deleteAllGuestPlayers().then()
 			GameHistoryDatabase.closeAbandonedGames().then()
 		} catch (e) {
 			console.error('[ERROR] Unable to connect to database!', e)

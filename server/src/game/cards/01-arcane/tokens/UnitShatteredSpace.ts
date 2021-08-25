@@ -4,7 +4,6 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import BuffImmunity from '@src/game/buffs/BuffImmunity'
 import BuffPermanentImmunity from '@src/game/buffs/BuffPermanentImmunity'
 import BuffPermanentNightwatch from '@src/game/buffs/BuffPermanentNightwatch'
 

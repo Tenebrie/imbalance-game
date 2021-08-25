@@ -10,7 +10,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class UnitVolatileCrystal extends ServerCard {
-	damage = 3
+	damage = 5
 
 	constructor(game: ServerGame) {
 		super(game, {

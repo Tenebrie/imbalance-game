@@ -7,7 +7,6 @@ import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
 import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
@@ -20,7 +19,7 @@ export default class UnitHastyHandyman extends ServerCard {
 			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 4,
+				power: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -28,11 +27,9 @@ export default class UnitHastyHandyman extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireAllied()
 			.requireNotSelf()
-			.require((args) => args.targetCard.features.includes(CardFeature.BUILDING))
 			.require((args) => args.targetCard.stats.armor < args.targetCard.stats.maxArmor)
 			.evaluate((args) => args.targetCard.stats.maxArmor - args.targetCard.stats.armor)
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

@@ -4,13 +4,12 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import TargetType from '@shared/enums/TargetType'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 
 export default class HeroLightOracle extends ServerCard {
-	cardsToSee = 5
+	cardsToSee = 3
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -20,7 +19,7 @@ export default class HeroLightOracle extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
 			sortPriority: 1,
 			stats: {
-				power: 4,
+				power: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -29,14 +28,13 @@ export default class HeroLightOracle extends ServerCard {
 		}
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
-			.requireAllied()
+			.requireSamePlayer()
 			.require((args) => args.targetCard.deckPosition < this.cardsToSee)
 			.preventSorting()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
+			.perform(({ targetCard }) => HeroLightOracle.onTargetSelected(targetCard))
 	}
 
-	private onTargetSelected(target: ServerCard): void {
+	private static onTargetSelected(target: ServerCard): void {
 		Keywords.summonCard(target)
 	}
 }

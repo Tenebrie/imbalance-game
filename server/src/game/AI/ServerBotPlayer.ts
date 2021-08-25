@@ -4,10 +4,14 @@ import { createBotPlayerId } from '@src/utils/Utils'
 
 export default class ServerBotPlayer extends ServerPlayer {
 	constructor() {
-		super(createBotPlayerId(), 'bot@tenebrie.com', 'AI', AccessLevel.NORMAL)
+		super(createBotPlayerId(), 'bot@tenebrie.com', 'AI', AccessLevel.NORMAL, false)
 	}
 
 	sendMessage(): void {
 		return
+	}
+
+	isInGame(): boolean {
+		return true
 	}
 }

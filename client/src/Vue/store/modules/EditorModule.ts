@@ -12,6 +12,7 @@ import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import HoveredDeckCardModule from '@/Vue/store/modules/HoveredDeckCardModule'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { debounce } from 'throttle-debounce'
+import { sortCards } from '@shared/Utils'
 
 const editorModule = defineModule({
 	namespaced: true,
@@ -61,6 +62,9 @@ const editorModule = defineModule({
 
 		updateEditorDeck(state, newDeck: PopulatedEditorDeck): void {
 			const oldDeck = state.decks.find((deck) => deck.id === newDeck.id)
+			if (!oldDeck) {
+				return
+			}
 			state.decks[state.decks.indexOf(oldDeck)] = newDeck
 		},
 
@@ -78,7 +82,7 @@ const editorModule = defineModule({
 			if (state.currentDeckId === null) {
 				return null
 			}
-			return state.decks.find((deck) => deck.id === state.currentDeckId)
+			return state.decks.find((deck) => deck.id === state.currentDeckId) || null
 		},
 
 		cardsOfColor: (state) => (payload: { deckId: string; color: CardColor }): number => {
@@ -112,6 +116,10 @@ const editorModule = defineModule({
 			const { state } = moduleActionContext(context, editorModule)
 
 			const deck = state.decks.find((deck) => deck.id === payload.deckId)
+			if (!deck) {
+				return
+			}
+
 			const deckMessage = {
 				...deck,
 				cards: deck.cards.map((card) => ({
@@ -127,6 +135,10 @@ const editorModule = defineModule({
 			const { state } = moduleActionContext(context, editorModule)
 
 			const deck = state.decks.find((deck) => deck.id === payload.deckId)
+			if (!deck) {
+				return 0
+			}
+
 			const deckMessage = {
 				...deck,
 				cards: deck.cards.map((card) => ({
@@ -157,7 +169,7 @@ const editorModule = defineModule({
 		async loadDecks(context): Promise<void> {
 			const { commit } = moduleActionContext(context, editorModule)
 
-			const decks = (await axios.get('/api/decks')).data
+			const decks = (await axios.get('/api/decks')).data as PopulatedEditorDeck[]
 
 			const sortedDecks = decks.map((deck) => new PopulatedEditorDeck(deck.id, deck.name, deck.cards))
 			commit.setDecks(sortedDecks)
@@ -170,9 +182,9 @@ const editorModule = defineModule({
 				return
 			}
 
-			const response = await axios.get('/api/cards', { params: { collectible: false } })
-			const cardMessages = response.data as CardMessage[]
-			const sortedMessages = Utils.sortEditorCards(cardMessages)
+			const cardsResponse = await axios.get('/api/cards', { params: { collectible: false } })
+			const cardMessages = cardsResponse.data as CardMessage[]
+			const sortedMessages = sortCards(cardMessages)
 			commit.setCardLibrary(sortedMessages)
 		},
 
@@ -180,6 +192,10 @@ const editorModule = defineModule({
 			const { state, commit, dispatch } = moduleActionContext(context, editorModule)
 
 			const deckToModify = state.decks.find((deck) => deck.id === payload.deckId)
+			if (!deckToModify) {
+				return
+			}
+
 			const totalCardCount = deckToModify.cards
 				.map((card) => card.count)
 				.reduce((previousValue, currentValue) => previousValue + currentValue, 0)
@@ -204,7 +220,7 @@ const editorModule = defineModule({
 				cardToModify.count += 1
 			}
 
-			deckToModify.cards = Utils.sortEditorCards(deckToModify.cards)
+			deckToModify.cards = sortCards(deckToModify.cards)
 
 			commit.updateEditorDeck(deckToModify)
 			await dispatch.asyncSave(payload)
@@ -214,7 +230,14 @@ const editorModule = defineModule({
 			const { state, commit, dispatch } = moduleActionContext(context, editorModule)
 
 			const newDeck = state.decks.find((deck) => deck.id === payload.deckId)
+			if (!newDeck) {
+				return
+			}
 			const oldCard = newDeck.cards.find((card) => card.class === payload.cardToRemove.class)
+			if (!oldCard) {
+				return
+			}
+
 			if (oldCard.count <= 1) {
 				newDeck.cards = newDeck.cards.filter((card) => card.class !== payload.cardToRemove.class)
 			} else {
@@ -227,6 +250,9 @@ const editorModule = defineModule({
 		async renameDeck(context, payload: { deckId: string; name: string }): Promise<void> {
 			const { state, commit, dispatch } = moduleActionContext(context, editorModule)
 			const deck = state.decks.find((deck) => deck.id === payload.deckId)
+			if (!deck) {
+				return
+			}
 			deck.name = payload.name
 
 			commit.updateEditorDeck(deck)

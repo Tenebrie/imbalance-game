@@ -35,13 +35,13 @@ export default defineComponent({
 		const previewContainerRef = ref<HTMLDivElement>()
 		const renderCard = throttle(50, () => {
 			const container = previewContainerRef.value
-			while (container.children.length > 0) {
+			while (container && container.children.length > 0) {
 				container.removeChild(container.children[0])
 			}
 
 			const image = editorCardRenderer.doRender(props.card)
 			image.id = 'workshop-image-preview'
-			container.appendChild(image)
+			container?.appendChild(image)
 		})
 
 		return {

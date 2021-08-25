@@ -4,7 +4,7 @@ interface EventLogEntryMessage {
 	event: GameEventType
 	timestamp: number
 	subtype: string | undefined
-	args: any
+	args: Record<string, string | string[] | number | number[]>
 }
 
 export default EventLogEntryMessage

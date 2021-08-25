@@ -6,7 +6,7 @@ import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerDamageInstance from './ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
-import ServerBuffContainer from './ServerBuffContainer'
+import ServerBuffContainer from './buffs/ServerBuffContainer'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import CardLibrary, { CardConstructor } from '../libraries/CardLibrary'
@@ -15,20 +15,25 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
 import GameHookType, {
-	CardDestroyedHookArgs,
-	CardDestroyedHookValues,
-	CardTakesDamageHookArgs,
-	CardTakesDamageHookValues,
-	UnitDestroyedHookArgs,
-	UnitDestroyedHookValues,
+	CardDestroyedHookFixedValues,
+	CardDestroyedHookEditableValues,
+	CardTakesDamageHookFixedValues,
+	CardTakesDamageHookEditableValues,
+	UnitDestroyedHookFixedValues,
+	UnitDestroyedHookEditableValues,
 } from './events/GameHookType'
 import GameEventType from '@shared/enums/GameEventType'
 import GameEventCreators, {
-	BuffCreatedEventArgs,
-	BuffRemovedEventArgs,
+	CardArmorRestoredEventArgs,
+	CardBuffCreatedEventArgs,
+	CardBuffRemovedEventArgs,
 	CardDestroyedEventArgs,
 	CardDrawnEventArgs,
 	CardPlayedEventArgs,
+	CardPowerRestoredEventArgs,
+	CardPreResolvedEventArgs,
+	CardResolvedEventArgs,
+	CardReturnedEventArgs,
 	CardTakesDamageEventArgs,
 	CardTargetsConfirmedEventArgs,
 	CardTargetSelectedCardEventArgs,
@@ -37,6 +42,8 @@ import GameEventCreators, {
 	GameStartedEventArgs,
 	RoundEndedEventArgs,
 	RoundStartedEventArgs,
+	RowBuffCreatedEventArgs,
+	RowBuffRemovedEventArgs,
 	SpellDeployedEventArgs,
 	TurnEndedEventArgs,
 	TurnStartedEventArgs,
@@ -49,7 +56,7 @@ import GameEventCreators, {
 	UnitOrderedUnitEventArgs,
 } from './events/GameEventCreators'
 import BotCardEvaluation from '../AI/BotCardEvaluation'
-import Utils, { createRandomId, getClassFromConstructor } from '../../utils/Utils'
+import { createRandomId, getClassFromConstructor } from '@src/utils/Utils'
 import ServerAnimation from './ServerAnimation'
 import RelatedCardsDefinition from './RelatedCardsDefinition'
 import ServerCardStats from './ServerCardStats'
@@ -63,16 +70,22 @@ import PlayTargetDefinitionBuilder from '@src/game/models/targetDefinitions/Play
 import DeployTargetDefinitionBuilder from '@src/game/models/targetDefinitions/DeployTargetDefinitionBuilder'
 import {
 	CardTargetValidatorArguments,
+	PositionTargetValidatorArguments,
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
 import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
+import LeaderStatType from '@shared/enums/LeaderStatType'
+import { initializeEnumRecord, sortCards } from '@shared/Utils'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import { CardLocalization, CardLocalizationEntry, PartialCardLocalization } from '@shared/models/cardLocalization/CardLocalization'
 
 interface ServerCardBaseProps {
 	faction: CardFaction
 	tribes?: CardTribe | CardTribe[]
 	features?: CardFeature | CardFeature[]
 	relatedCards?: CardConstructor | CardConstructor[]
+	upgrades?: CardConstructor[]
 	sortPriority?: number
 	expansionSet: ExpansionSet
 	isExperimental?: boolean
@@ -81,26 +94,13 @@ interface ServerCardBaseProps {
 	hiddenFromLibrary?: boolean
 }
 
-interface LeaderStatsCardProps {
-	soloUnitDamage?: number
-	massUnitDamage?: number
-	soloSpellDamage?: number
-	massSpellDamage?: number
-	soloHealingPotency?: number
-	massHealingPotency?: number
-	soloBuffPotency?: number
-	massBuffPotency?: number
-	soloEffectDuration?: number
-	massEffectDuration?: number
-	targetCount?: number
-	criticalHitChance?: number
-	criticalBuffChance?: number
-	criticalHealChance?: number
-}
+type LeaderStatsCardProps = Partial<Record<LeaderStatType, number>>
 
 interface ServerCardLeaderProps extends ServerCardBaseProps {
 	color: CardColor.LEADER
-	stats?: LeaderStatsCardProps
+	stats?: {
+		power: number
+	} & LeaderStatsCardProps
 }
 
 interface ServerCardUnitProps extends ServerCardBaseProps {
@@ -117,7 +117,7 @@ interface ServerCardSpellProps extends ServerCardBaseProps {
 	color: CardColor.GOLDEN | CardColor.SILVER | CardColor.BRONZE | CardColor.TOKEN
 	stats: {
 		cost: number
-	}
+	} & LeaderStatsCardProps
 }
 
 export type ServerCardProps = ServerCardLeaderProps | ServerCardUnitProps | ServerCardSpellProps
@@ -132,12 +132,6 @@ export default class ServerCard implements Card {
 	public readonly color: CardColor
 	public readonly faction: CardFaction
 
-	public readonly name: string
-	public readonly title: string
-	public readonly flavor: string
-	public readonly listName: string
-	public readonly description: string
-
 	public readonly stats: ServerCardStats
 	public readonly buffs: ServerBuffContainer = new ServerBuffContainer(this)
 	public readonly baseTribes: CardTribe[]
@@ -148,12 +142,15 @@ export default class ServerCard implements Card {
 	public readonly isCollectible: boolean
 	public readonly isExperimental: boolean
 
+	public localization: CardLocalization
 	public dynamicTextVariables: ServerRichTextVariables = {}
 	public botEvaluation: BotCardEvaluation = new BotCardEvaluation(this)
 	public readonly generatedArtworkMagicString: string
 
 	public readonly baseRelatedCards: CardConstructor[] = []
 	public readonly customRelatedCards: RelatedCardsDefinition[] = []
+
+	public readonly upgrades: CardConstructor[] = []
 
 	public isRevealed = false
 	public isDead = false
@@ -173,31 +170,28 @@ export default class ServerCard implements Card {
 		this.faction = props.faction
 
 		this.stats = new ServerCardStats(this, {
-			power: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.power || 0 : 0,
+			power: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.power || 0 : 0,
 			armor: props.color !== CardColor.LEADER && props.type === CardType.UNIT ? props.stats.armor || 0 : 0,
 			spellCost: props.color !== CardColor.LEADER && props.type === CardType.SPELL ? props.stats.cost || 0 : 0,
-
-			soloUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloUnitDamage || 0 : 0,
-			massUnitDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massUnitDamage || 0 : 0,
-			soloSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloSpellDamage || 0 : 0,
-			massSpellDamage: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massSpellDamage || 0 : 0,
-			soloHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloHealingPotency || 0 : 0,
-			massHealingPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massHealingPotency || 0 : 0,
-			soloBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloBuffPotency || 0 : 0,
-			massBuffPotency: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massBuffPotency || 0 : 0,
-			soloEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.soloEffectDuration || 0 : 0,
-			massEffectDuration: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.massEffectDuration || 0 : 0,
-			targetCount: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.targetCount || 0 : 0,
-			criticalHitChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHitChance || 0 : 0,
-			criticalBuffChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalBuffChance || 0 : 0,
-			criticalHealChance: props.color === CardColor.LEADER || props.type === CardType.UNIT ? props.stats?.criticalHealChance || 0 : 0,
+			leaderStats: initializeEnumRecord(LeaderStatType, (value) => {
+				if (props.stats) {
+					return props.stats[value] || 0
+				}
+				return 0
+			}),
 		})
 
-		this.name = `card.${this.class}.name`
-		this.title = `card.${this.class}.title`
-		this.flavor = `card.${this.class}.flavor`
-		this.listName = `card.${this.class}.listName`
-		this.description = `card.${this.class}.description`
+		const defaultLocalization: CardLocalizationEntry = {
+			name: `card.${this.class}.name`,
+			title: `card.${this.class}.title`,
+			flavor: `card.${this.class}.flavor`,
+			listName: `card.${this.class}.listName`,
+			description: `card.${this.class}.description`,
+		}
+		this.localization = {
+			en: defaultLocalization,
+			ru: defaultLocalization,
+		}
 
 		if (props.tribes === undefined) {
 			this.baseTribes = []
@@ -227,11 +221,14 @@ export default class ServerCard implements Card {
 
 		this.isCollectible = props.hiddenFromLibrary
 			? false
+			: this.expansionSet !== ExpansionSet.BASE
+			? false
 			: props.color === CardColor.LEADER || (props.color !== CardColor.TOKEN && props.type === CardType.UNIT)
 		this.isExperimental = props.isExperimental !== undefined ? props.isExperimental : false
 
 		this.generatedArtworkMagicString = props.generatedArtworkMagicString ? props.generatedArtworkMagicString : ''
 
+		this.upgrades = props.upgrades || []
 		this.deckAddedCards = props.deckAddedCards || []
 
 		if (!this.game) {
@@ -285,7 +282,7 @@ export default class ServerCard implements Card {
 		return this.game.board.findUnitById(this.id) || null
 	}
 
-	public get owner(): ServerPlayerInGame | null {
+	public get owner(): ServerPlayerInGame | ServerPlayerGroup | null {
 		const thisCardInGame = this.game.findOwnedCardById(this.id)
 		if (!thisCardInGame) {
 			return null
@@ -293,8 +290,41 @@ export default class ServerCard implements Card {
 		return thisCardInGame.owner
 	}
 
-	public get ownerInGame(): ServerPlayerInGame {
+	public get ownerInGame(): ServerPlayerInGame | ServerPlayerGroup {
 		const owner = this.owner
+		if (!owner) {
+			throw new Error('Card has no owner while in the game!')
+		}
+		return owner
+	}
+
+	public get ownerPlayer(): ServerPlayerInGame | null {
+		const owner = this.owner
+		if (owner instanceof ServerPlayerGroup) {
+			const unit = this.unit
+			if (!unit) {
+				throw new Error('Card is owned by group, but does not have a unit')
+			}
+			return unit.originalOwner
+		}
+		return owner
+	}
+
+	public get ownerPlayerInGame(): ServerPlayerInGame {
+		const owner = this.ownerPlayer
+		if (!owner) {
+			throw new Error('Card has no owner while in the game!')
+		}
+		return owner
+	}
+
+	public get ownerGroup(): ServerPlayerGroup | null {
+		const owner = this.owner
+		return owner instanceof ServerPlayerGroup ? owner : owner?.group || null
+	}
+
+	public get ownerGroupInGame(): ServerPlayerGroup {
+		const owner = this.ownerGroup
 		if (!owner) {
 			throw new Error('Card has no owner while in the game!')
 		}
@@ -307,16 +337,18 @@ export default class ServerCard implements Card {
 			return CardLocation.UNKNOWN
 		}
 
-		if (owner.leader === this) {
-			return CardLocation.LEADER
-		}
-		const cardInDeck = owner.cardDeck.findCardById(this.id)
-		if (cardInDeck) {
-			return CardLocation.DECK
-		}
-		const cardInHand = owner.cardHand.findCardById(this.id)
-		if (cardInHand) {
-			return CardLocation.HAND
+		if (owner instanceof ServerPlayerInGame) {
+			if (owner.leader === this) {
+				return CardLocation.LEADER
+			}
+			const cardInDeck = owner.cardDeck.findCardById(this.id)
+			if (cardInDeck) {
+				return CardLocation.DECK
+			}
+			const cardInHand = owner.cardHand.findCardById(this.id)
+			if (cardInHand) {
+				return CardLocation.HAND
+			}
 		}
 		const cardInStack = this.game.cardPlay.cardResolveStack.findCardById(this.id)
 		if (cardInStack) {
@@ -326,9 +358,11 @@ export default class ServerCard implements Card {
 		if (cardOnBoard) {
 			return CardLocation.BOARD
 		}
-		const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
-		if (cardInGraveyard) {
-			return CardLocation.GRAVEYARD
+		if (owner instanceof ServerPlayerInGame) {
+			const cardInGraveyard = owner.cardGraveyard.findCardById(this.id)
+			if (cardInGraveyard) {
+				return CardLocation.GRAVEYARD
+			}
 		}
 		return CardLocation.UNKNOWN
 	}
@@ -343,7 +377,7 @@ export default class ServerCard implements Card {
 	}
 
 	public get relatedCards(): string[] {
-		const customRelatedCards = Utils.sortCards(
+		const customRelatedCards = sortCards(
 			this.customRelatedCards
 				.map((relatedCardsDefinition) =>
 					CardLibrary.cards.filter((card) => relatedCardsDefinition.conditions.every((condition) => condition(card)))
@@ -358,7 +392,7 @@ export default class ServerCard implements Card {
 	}
 
 	public get deckPosition(): number {
-		const owner = this.owner
+		const owner = this.ownerPlayer
 		if (!owner) {
 			return -1
 		}
@@ -370,14 +404,23 @@ export default class ServerCard implements Card {
 			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.proxyCard, [this]))
 		} else if (damageInstance.sourceCard) {
 			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.sourceCard, [this]))
+		} else if (damageInstance.sourceRow) {
+			this.game.animation.play(ServerAnimation.rowAttacksCards(damageInstance.sourceRow, [this]))
 		} else {
 			this.game.animation.play(ServerAnimation.universeAttacksCards([this]))
 		}
 
-		const hookValues = this.game.events.applyHooks<CardTakesDamageHookArgs, CardTakesDamageHookValues>(GameHookType.CARD_TAKES_DAMAGE, {
-			targetCard: this,
-			damageInstance: damageInstance,
-		})
+		const hookValues = this.game.events.applyHooks(
+			GameHookType.CARD_TAKES_DAMAGE,
+			{
+				targetCard: this,
+				damageInstance: damageInstance,
+			},
+			{
+				targetCard: this,
+				damageInstance: damageInstance,
+			}
+		)
 
 		if (hookValues.targetCard !== this) {
 			hookValues.targetCard.dealDamage(ServerDamageInstance.redirectedFrom(hookValues.damageInstance, this))
@@ -410,10 +453,11 @@ export default class ServerCard implements Card {
 
 		this.game.events.postEvent(
 			GameEventCreators.cardTakesDamage({
+				game: this.game,
 				triggeringCard: this,
-				damageInstance: damageInstance,
-				armorDamageInstance: armorDamageInstance,
-				powerDamageInstance: powerDamageInstance,
+				damageInstance,
+				armorDamageInstance,
+				powerDamageInstance,
 			})
 		)
 	}
@@ -425,10 +469,24 @@ export default class ServerCard implements Card {
 
 		if (healingInstance.sourceCard) {
 			this.game.animation.play(ServerAnimation.cardHealsCards(healingInstance.sourceCard, [this]))
+		} else if (healingInstance.sourceRow) {
+			this.game.animation.play(ServerAnimation.rowHealsCards(healingInstance.sourceRow, [this]))
 		} else {
 			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
 		}
+
+		if (this.stats.power === this.stats.maxPower) {
+			return
+		}
 		this.stats.power = Math.min(this.stats.maxPower, this.stats.power + healingInstance.value)
+
+		this.game.events.postEvent(
+			GameEventCreators.cardPowerRestored({
+				game: this.game,
+				triggeringCard: this,
+				healingInstance,
+			})
+		)
 	}
 
 	restoreArmor(restorationInstance: ServerDamageInstance): void {
@@ -438,10 +496,23 @@ export default class ServerCard implements Card {
 
 		if (restorationInstance.sourceCard) {
 			this.game.animation.play(ServerAnimation.cardHealsCards(restorationInstance.sourceCard, [this]))
+		} else if (restorationInstance.sourceRow) {
+			this.game.animation.play(ServerAnimation.rowHealsCards(restorationInstance.sourceRow, [this]))
 		} else {
 			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
 		}
+
+		if (this.stats.armor === this.stats.maxArmor) {
+			return
+		}
 		this.stats.armor = Math.min(this.stats.maxArmor, this.stats.armor + restorationInstance.value)
+		this.game.events.postEvent(
+			GameEventCreators.cardArmorRestored({
+				game: this.game,
+				triggeringCard: this,
+				restorationInstance,
+			})
+		)
 	}
 
 	/* Cleanse this card
@@ -470,7 +541,7 @@ export default class ServerCard implements Card {
 
 		this.isDead = true
 
-		const hookValues = this.game.events.applyHooks<CardDestroyedHookValues, CardDestroyedHookArgs>(
+		const hookValues = this.game.events.applyHooks(
 			GameHookType.CARD_DESTROYED,
 			{
 				destructionPrevented: false,
@@ -486,13 +557,14 @@ export default class ServerCard implements Card {
 			return
 		}
 
-		const owner = this.owner
+		const owner = this.ownerPlayer
 		if (!owner) {
 			return
 		}
 
 		this.game.events.postEvent(
 			GameEventCreators.cardDestroyed({
+				game: this.game,
 				triggeringCard: this,
 				formerOwner: owner,
 			})
@@ -526,7 +598,7 @@ export default class ServerCard implements Card {
 		}
 
 		this.isRevealed = true
-		OutgoingMessageHandlers.notifyAboutOpponentCardRevealed(opponent.player, this)
+		OutgoingMessageHandlers.notifyAboutCardRevealed(opponent, this)
 	}
 
 	/* Create card play targets
@@ -550,6 +622,7 @@ export default class ServerCard implements Card {
 	 */
 	protected createOrderTargets(targetType: TargetType.UNIT): OrderTargetDefinitionBuilder<UnitTargetValidatorArguments>
 	protected createOrderTargets(targetType: TargetType.BOARD_ROW): OrderTargetDefinitionBuilder<RowTargetValidatorArguments>
+	protected createOrderTargets(targetType: TargetType.BOARD_POSITION): OrderTargetDefinitionBuilder<PositionTargetValidatorArguments>
 	protected createOrderTargets(targetType: TargetType): OrderTargetDefinitionBuilder<any> {
 		const builder = OrderTargetDefinitionBuilder.base(this, targetType)
 		this.targeting.orderTargetDefinitions.push(builder)
@@ -562,11 +635,14 @@ export default class ServerCard implements Card {
 	 */
 	protected createDeployTargets(targetType: TargetType.UNIT): DeployTargetDefinitionBuilder<UnitTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.BOARD_ROW): DeployTargetDefinitionBuilder<RowTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.BOARD_POSITION): DeployTargetDefinitionBuilder<PositionTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.CARD_IN_LIBRARY): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.CARD_IN_UNIT_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.CARD_IN_SPELL_HAND): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.CARD_IN_UNIT_DECK): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType.CARD_IN_SPELL_DECK): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.CARD_IN_UNIT_GRAVEYARD): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
+	protected createDeployTargets(targetType: TargetType.CARD_IN_SPELL_GRAVEYARD): DeployTargetDefinitionBuilder<CardTargetValidatorArguments>
 	protected createDeployTargets(targetType: TargetType): DeployTargetDefinitionBuilder<any> {
 		const builder = DeployTargetDefinitionBuilder.base(this, targetType)
 		this.targeting.deployTargetDefinitions.push(builder)
@@ -594,6 +670,14 @@ export default class ServerCard implements Card {
 		location: CardLocation[] | 'any'
 	): EventSubscription<CardTakesDamageEventArgs>
 	protected createCallback(
+		event: GameEventType.CARD_POWER_RESTORED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardPowerRestoredEventArgs>
+	protected createCallback(
+		event: GameEventType.CARD_ARMOR_RESTORED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardArmorRestoredEventArgs>
+	protected createCallback(
 		event: GameEventType.CARD_TARGET_SELECTED_CARD,
 		location: CardLocation[] | 'any'
 	): EventSubscription<CardTargetSelectedCardEventArgs>
@@ -617,8 +701,23 @@ export default class ServerCard implements Card {
 	protected createCallback(event: GameEventType.CARD_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<CardDestroyedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_DESTROYED, location: CardLocation[] | 'any'): EventSubscription<UnitDestroyedEventArgs>
 	protected createCallback(event: GameEventType.CARD_PLAYED, location: CardLocation[] | 'any'): EventSubscription<CardPlayedEventArgs>
-	protected createCallback(event: GameEventType.BUFF_CREATED, location: CardLocation[] | 'any'): EventSubscription<BuffCreatedEventArgs>
-	protected createCallback(event: GameEventType.BUFF_REMOVED, location: CardLocation[] | 'any'): EventSubscription<BuffRemovedEventArgs>
+	protected createCallback(event: GameEventType.CARD_RESOLVED, location: CardLocation[] | 'any'): EventSubscription<CardResolvedEventArgs>
+	protected createCallback(
+		event: GameEventType.CARD_BUFF_CREATED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardBuffCreatedEventArgs>
+	protected createCallback(
+		event: GameEventType.CARD_BUFF_REMOVED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<CardBuffRemovedEventArgs>
+	protected createCallback(
+		event: GameEventType.ROW_BUFF_CREATED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<RowBuffCreatedEventArgs>
+	protected createCallback(
+		event: GameEventType.ROW_BUFF_REMOVED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<RowBuffRemovedEventArgs>
 	protected createCallback<ArgsType>(event: GameEventType, location: CardLocation[] | 'any'): EventSubscription<ArgsType> {
 		const callback = this.game.events.createCallback<ArgsType>(this, event)
 		if (location !== 'any') {
@@ -633,12 +732,31 @@ export default class ServerCard implements Card {
 	 * the `effectSource` is set to the subscriber.
 	 */
 	protected createEffect(event: GameEventType.CARD_DRAWN): EventSubscription<CardDrawnEventArgs>
+	protected createEffect(event: GameEventType.CARD_RETURNED): EventSubscription<CardReturnedEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DEPLOYED): EventSubscription<UnitDeployedEventArgs>
 	protected createEffect(event: GameEventType.SPELL_DEPLOYED): EventSubscription<SpellDeployedEventArgs>
+	/**
+	 * @deprecated
+	 * Use `createDeployTargets(...).perform` instead
+	 */
 	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_CARD): EventSubscription<CardTargetSelectedCardEventArgs>
+	/**
+	 * @deprecated
+	 * Use `createDeployTargets(...).perform` instead
+	 */
 	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_UNIT): EventSubscription<CardTargetSelectedUnitEventArgs>
+	/**
+	 * @deprecated
+	 * Use `createDeployTargets(...).perform` instead
+	 */
 	protected createEffect(event: GameEventType.CARD_TARGET_SELECTED_ROW): EventSubscription<CardTargetSelectedRowEventArgs>
+	/**
+	 * @deprecated
+	 * Use `createDeployTargets(...).finalize` instead
+	 */
 	protected createEffect(event: GameEventType.CARD_TARGETS_CONFIRMED): EventSubscription<CardTargetsConfirmedEventArgs>
+	protected createEffect(event: GameEventType.CARD_PRE_RESOLVED): EventSubscription<CardPreResolvedEventArgs>
+	protected createEffect(event: GameEventType.CARD_RESOLVED): EventSubscription<CardResolvedEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventSubscription<UnitOrderedCardEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_UNIT): EventSubscription<UnitOrderedUnitEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
@@ -660,15 +778,15 @@ export default class ServerCard implements Card {
 	protected createHook(
 		hookType: GameHookType.CARD_TAKES_DAMAGE,
 		location: CardLocation[]
-	): EventHook<CardTakesDamageHookValues, CardTakesDamageHookArgs>
+	): EventHook<CardTakesDamageHookEditableValues, CardTakesDamageHookFixedValues>
 	protected createHook(
 		hookType: GameHookType.CARD_DESTROYED,
 		location: CardLocation[]
-	): EventHook<CardDestroyedHookValues, CardDestroyedHookArgs>
+	): EventHook<CardDestroyedHookEditableValues, CardDestroyedHookFixedValues>
 	protected createHook(
 		hookType: GameHookType.UNIT_DESTROYED,
 		location: CardLocation[]
-	): EventHook<UnitDestroyedHookValues, UnitDestroyedHookArgs>
+	): EventHook<UnitDestroyedHookEditableValues, UnitDestroyedHookFixedValues>
 	protected createHook<HookValues, HookArgs>(hookType: GameHookType, location: CardLocation[]): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook<HookValues, HookArgs>(this, hookType).requireLocations(location)
 	}
@@ -687,6 +805,19 @@ export default class ServerCard implements Card {
 	 */
 	protected createSelfSelector(): CardSelectorBuilder {
 		return this.game.events.createSelector(this).requireTarget(({ target }) => target === this)
+	}
+
+	protected createLocalization(localization: PartialCardLocalization): void {
+		this.localization = {
+			en: {
+				...this.localization.en,
+				...localization.en,
+			},
+			ru: {
+				...this.localization.ru,
+				...localization.ru,
+			},
+		}
 	}
 
 	protected addRelatedCards(): RelatedCardsDefinition {

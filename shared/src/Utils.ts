@@ -2,6 +2,63 @@ import CardType from './enums/CardType'
 import Card from './models/Card'
 import CardFeature from './enums/CardFeature'
 import CardMessage from './models/network/card/CardMessage'
+import CardColor from './enums/CardColor'
+import Constants from './Constants'
+import CardFaction from './enums/CardFaction'
+
+export const Time = {
+	minutes: {
+		toMilliseconds: (minutes: number): number => {
+			return minutes * 60000
+		},
+	},
+	milliseconds: {
+		toMinutes: (milliseconds: number): number => {
+			return milliseconds / 60000
+		},
+	},
+}
+
+export const cardTypeToString = (type: CardType): string => {
+	switch (type) {
+		case CardType.UNIT:
+			return 'unit'
+		case CardType.SPELL:
+			return 'spell'
+		default:
+			throw new Error(`No string specified for type ${type}`)
+	}
+}
+
+export const cardColorToString = (color: CardColor): string => {
+	switch (color) {
+		case CardColor.LEADER:
+			return 'leader'
+		case CardColor.GOLDEN:
+			return 'golden'
+		case CardColor.SILVER:
+			return 'silver'
+		case CardColor.BRONZE:
+			return 'bronze'
+		default:
+			throw new Error(`No string specified for color ${color}`)
+	}
+}
+
+export const cardFactionToString = (faction: CardFaction): string => {
+	switch (faction) {
+		case CardFaction.HUMAN:
+			return 'human'
+		case CardFaction.ARCANE:
+			return 'arcane'
+		case CardFaction.WILD:
+			return 'wild'
+		case CardFaction.NEUTRAL:
+			return 'neutral'
+		default:
+			throw new Error(`No string specified for faction ${faction}`)
+	}
+}
 
 export const hashCode = (targetString: string): number => {
 	let i
@@ -18,7 +75,7 @@ export const hashCode = (targetString: string): number => {
 	return hash
 }
 
-export const sortCards = (inputArray: Card[] | CardMessage[]): Card[] | CardMessage[] => {
+export function sortCards<T extends Card | CardMessage>(inputArray: T[]): T[] {
 	return inputArray.slice().sort((a: Card | CardMessage, b: Card | CardMessage) => {
 		if ('features' in a && 'features' in b) {
 			if (a.features.includes(CardFeature.TEMPORARY_CARD) && !b.features.includes(CardFeature.TEMPORARY_CARD)) {
@@ -34,6 +91,9 @@ export const sortCards = (inputArray: Card[] | CardMessage[]): Card[] | CardMess
 			('features' in a &&
 				'features' in b &&
 				Number(a.features.includes(CardFeature.LOW_SORT_PRIORITY)) - Number(b.features.includes(CardFeature.LOW_SORT_PRIORITY))) ||
+			('features' in a &&
+				'features' in b &&
+				Number(a.features.includes(CardFeature.PASSIVE)) - Number(b.features.includes(CardFeature.PASSIVE))) ||
 			a.type - b.type ||
 			(a.type === CardType.UNIT &&
 				(a.color - b.color ||
@@ -93,3 +153,66 @@ export const getRandomName = (): string => {
 	}
 	return name
 }
+
+export const getMaxCardCountForColor = (color: CardColor): number => {
+	switch (color) {
+		case CardColor.LEADER:
+			return Constants.CARD_LIMIT_LEADER
+		case CardColor.GOLDEN:
+			return Constants.CARD_LIMIT_GOLDEN
+		case CardColor.SILVER:
+			return Constants.CARD_LIMIT_SILVER
+		case CardColor.BRONZE:
+			return Constants.CARD_LIMIT_BRONZE
+		default:
+			return 0
+	}
+}
+
+export const getMaxCardCopiesForColor = (color: CardColor): number => {
+	switch (color) {
+		case CardColor.LEADER:
+			return Constants.CARD_COPIES_LIMIT_LEADER
+		case CardColor.GOLDEN:
+			return Constants.CARD_COPIES_LIMIT_GOLDEN
+		case CardColor.SILVER:
+			return Constants.CARD_COPIES_LIMIT_SILVER
+		case CardColor.BRONZE:
+			return Constants.CARD_COPIES_LIMIT_BRONZE
+		default:
+			return 0
+	}
+}
+
+export const EmptyFunction = (): void => {
+	/* Empty */
+}
+
+export function enumKeys<O extends Record<string, any>, K extends keyof O = keyof O>(obj: O): K[] {
+	return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[]
+}
+
+export function enumToArray<O extends Record<string, any>>(enumeration: O): O[keyof O][] {
+	return enumKeys(enumeration).map((key) => enumeration[key])
+}
+
+export function initializeEnumRecord<O extends Record<string, any>, K>(
+	enumeration: O,
+	valueGetter: (value: O[keyof O]) => K
+): Record<O[keyof O], K> {
+	return enumToArray(enumeration).reduce(
+		(acc, val) => ({
+			...acc,
+			[val]: valueGetter(val),
+		}),
+		{} as Record<O[keyof O], K>
+	)
+}
+
+export function forEachInEnum<O extends Record<string, any>>(enumeration: O, handler: (val: O[keyof O], key: keyof O) => any): void {
+	for (const value of enumKeys(enumeration)) {
+		handler(enumeration[value], value)
+	}
+}
+
+export type Void = never

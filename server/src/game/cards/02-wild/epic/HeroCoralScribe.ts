@@ -18,7 +18,7 @@ export default class HeroCoralScribe extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			generatedArtworkMagicString: '2',
 			stats: {
-				power: 7,
+				power: 14,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -28,7 +28,7 @@ export default class HeroCoralScribe extends ServerCard {
 	}
 
 	private onDeploy() {
-		const owner = this.ownerInGame
+		const owner = this.ownerPlayerInGame
 		const stormsPlayed = owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).map((card) => card.class)
 		const uniqueStorms = [...new Set(stormsPlayed)]
 

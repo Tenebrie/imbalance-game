@@ -19,7 +19,7 @@ export default class HeroAurienne extends ServerCard {
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.VALKYRIE],
 			stats: {
-				power: 11,
+				power: 22,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -35,19 +35,20 @@ export default class HeroAurienne extends ServerCard {
 	}
 
 	private onUnitDestroyedHook(targetUnit: ServerUnit): void {
+		const owner = this.ownerPlayerInGame
 		const ownedCard = {
 			card: this,
-			owner: this.ownerInGame,
+			owner,
 		}
 
-		const targetRowIndex = this.game.board.rowMove(this.ownerInGame, targetUnit.rowIndex, MoveDirection.BACK, 1)
+		const targetRowIndex = this.game.board.rowMove(this.ownerGroupInGame, targetUnit.rowIndex, MoveDirection.BACK, 1)
 		const targetUnitIndex = targetUnit.unitIndex
 
-		this.game.cardPlay.forcedPlayCardFromHand(ownedCard, targetUnit.rowIndex, targetUnit.unitIndex)
+		this.game.cardPlay.playCardFromHand(ownedCard, targetUnit.rowIndex, targetUnit.unitIndex)
 		if (targetUnit.isAlive()) {
 			this.game.board.moveUnit(targetUnit, targetRowIndex, targetUnitIndex)
 		}
-		this.ownerInGame.drawUnitCards(1)
+		owner.drawUnitCards(1)
 	}
 }
 

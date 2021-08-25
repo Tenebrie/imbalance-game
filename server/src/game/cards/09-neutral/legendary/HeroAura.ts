@@ -16,16 +16,16 @@ export default class HeroAura extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.NEUTRAL,
 			tribes: [CardTribe.BIRD],
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
+			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 1,
+				power: 3,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.targetCount(1)
-			.requireAllied()
+			.requireSamePlayer()
 			.require((args) => args.targetCard.color === CardColor.GOLDEN)
 			.perform(({ targetCard }) => {
 				Keywords.summonCard(targetCard)

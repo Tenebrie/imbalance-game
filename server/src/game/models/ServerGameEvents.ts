@@ -2,21 +2,32 @@ import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ServerGame from '@src/game/models/ServerGame'
-import ServerBuff from '@src/game/models/ServerBuff'
+import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import ServerCard from '@src/game/models/ServerCard'
 import { EventSubscription } from '@src/game/models/events/EventSubscription'
 import { GameEvent } from '@src/game/models/events/GameEventCreators'
-import GameHookType, { CardTakesDamageHookArgs } from '@src/game/models/events/GameHookType'
+import GameHookType, {
+	CardDestroyedHookFixedValues,
+	CardDestroyedHookEditableValues,
+	CardTakesDamageHookFixedValues,
+	CardTakesDamageHookEditableValues,
+	GameFinishedHookFixedValues,
+	GameFinishedHookEditableValues,
+	UnitDestroyedHookFixedValues,
+	UnitDestroyedHookEditableValues,
+} from '@src/game/models/events/GameHookType'
 import { EventHook } from '@src/game/models/events/EventHook'
 import { CardSelector } from '@src/game/models/events/selectors/CardSelector'
 import { CardSelectorBuilder } from '@src/game/models/events/selectors/CardSelectorBuilder'
-import Utils, { colorizeClass, colorizeId } from '@src/utils/Utils'
+import { colorizeClass, colorizeId, getOwnerGroup, getOwnerPlayer } from '@src/utils/Utils'
 import { cardPerform, cardRequire } from '@src/game/utils/CardEventHandlers'
 import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
 import CardLocation from '@shared/enums/CardLocation'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import ServerBoardRow from '@src/game/models/ServerBoardRow'
+import { forEachInEnum, sortCards } from '@shared/Utils'
 
-export type EventSubscriber = ServerGame | ServerCard | ServerBuff
+export type EventSubscriber = ServerCard | ServerBuff | null
 
 type CallbackQueueEntry = {
 	subscription: EventSubscription<any>
@@ -50,8 +61,8 @@ export default class ServerGameEvents {
 
 		this.eventLog = []
 		this.eventLog.push([])
-		Utils.forEachInStringEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
-		Utils.forEachInStringEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
+		forEachInEnum(GameEventType, (eventType) => this.eventSubscriptions.set(eventType, []))
+		forEachInEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
 	}
 
 	public createCallback<EventArgs>(subscriber: EventSubscriber, event: GameEventType): EventSubscription<EventArgs> {
@@ -64,7 +75,7 @@ export default class ServerGameEvents {
 		const eventHook = new EventHook<HookValues, HookArgs>(subscriber)
 		if (hook === GameHookType.CARD_TAKES_DAMAGE) {
 			eventHook.require((args) => {
-				const typedArgs = (args as unknown) as CardTakesDamageHookArgs
+				const typedArgs = (args as unknown) as CardTakesDamageHookFixedValues
 				return !typedArgs.damageInstance.redirectHistory.find((entry) => entry.proxyCard === eventHook.subscriber)
 			})
 		}
@@ -80,12 +91,12 @@ export default class ServerGameEvents {
 
 	public unsubscribe(targetSubscriber: EventSubscriber): void {
 		this.cardSelectors.filter((selector) => selector.subscriber === targetSubscriber).forEach((selector) => selector.markForRemoval())
-		Utils.forEachInStringEnum(GameEventType, (eventType) => {
+		forEachInEnum(GameEventType, (eventType) => {
 			const subscriptions = this.eventSubscriptions.get(eventType)!
 			const filteredSubscriptions = subscriptions.filter((subscription) => subscription.subscriber !== targetSubscriber)
 			this.eventSubscriptions.set(eventType, filteredSubscriptions)
 		})
-		Utils.forEachInStringEnum(GameHookType, (hookType) => {
+		forEachInEnum(GameHookType, (hookType) => {
 			const subscriptions = this.eventHooks.get(hookType)!
 			const filteredSubscriptions = subscriptions.filter((subscription) => subscription.subscriber !== targetSubscriber)
 			this.eventHooks.set(hookType, filteredSubscriptions)
@@ -93,24 +104,35 @@ export default class ServerGameEvents {
 	}
 
 	public postEvent(event: GameEvent): void {
-		this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
+		if (!event.hiddenFromLogs) {
+			this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
+		}
 
 		const validSubscriptions = this.eventSubscriptions
 			.get(event.type)!
-			.filter((subscription) => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
+			.filter((subscription) => subscription.ignoreControlEffects || !ServerGameEvents.subscriberSuspended(subscription.subscriber))
 			.filter((subscription) =>
-				subscription.conditions.every((condition) => {
-					return cardRequire(this.game, () => condition(event.args, event))
-				})
+				subscription.conditions.every((condition) => cardRequire(this.game, subscription.subscriber, () => condition(event.args, event)))
+			)
+			.filter((subscription) =>
+				subscription.immediateConditions.every((condition) =>
+					cardRequire(this.game, subscription.subscriber, () => condition(event.args, event, event))
+				)
 			)
 
 		validSubscriptions.forEach((subscription) => {
 			const preparedState = subscription.prepares.reduce((state, preparator) => preparator(event.args, state), {})
 
-			if (this.evaluatingSelectors || (event.effectSource && event.effectSource === subscription.subscriber)) {
+			if (
+				this.evaluatingSelectors ||
+				event.type === GameEventType.GAME_CREATED ||
+				event.type === GameEventType.GAME_SETUP ||
+				event.type === GameEventType.POST_GAME_SETUP ||
+				(event.effectSource && event.effectSource === subscription.subscriber)
+			) {
 				subscription.callbacks.forEach((callback) => {
 					this.logEventExecution(event, subscription, true)
-					cardPerform(this.game, () => {
+					cardPerform(this.game, subscription.subscriber, () => {
 						callback(event.args, preparedState)
 					})
 				})
@@ -131,46 +153,68 @@ export default class ServerGameEvents {
 		})
 	}
 
-	public applyHooks<HookValues, HookArgs>(hook: GameHookType, values: HookValues, args?: HookArgs): HookValues {
-		const hookArgs = args ? args : values
-
+	public applyHooks(
+		hook: GameHookType.CARD_TAKES_DAMAGE,
+		editableValues: CardTakesDamageHookEditableValues,
+		fixedValues: CardTakesDamageHookFixedValues
+	): CardTakesDamageHookEditableValues
+	public applyHooks(
+		hook: GameHookType.CARD_DESTROYED,
+		editableValues: CardDestroyedHookEditableValues,
+		fixedValues: CardDestroyedHookFixedValues
+	): CardDestroyedHookEditableValues
+	public applyHooks(
+		hook: GameHookType.UNIT_DESTROYED,
+		editableValues: UnitDestroyedHookEditableValues,
+		fixedValues: UnitDestroyedHookFixedValues
+	): UnitDestroyedHookEditableValues
+	public applyHooks(
+		hook: GameHookType.GAME_FINISHED,
+		editableValues: GameFinishedHookEditableValues,
+		fixedValues: GameFinishedHookFixedValues
+	): GameFinishedHookEditableValues
+	public applyHooks<EditableValues, FixedValues>(
+		hook: GameHookType,
+		editableValues: EditableValues,
+		fixedValues: FixedValues
+	): EditableValues {
 		const matchingHooks = this.eventHooks
 			.get(hook)!
-			.filter((subscription) => subscription.ignoreControlEffects || !this.subscriberSuspended(subscription.subscriber))
+			.filter((hook) => hook.ignoreControlEffects || !ServerGameEvents.subscriberSuspended(hook.subscriber))
 			.filter(
 				(hook) =>
 					!hook.conditions.find((condition) => {
-						return cardRequire(this.game, () => !condition(hookArgs))
+						return cardRequire(this.game, hook.subscriber, () => !condition(fixedValues))
 					})
 			)
 
 		matchingHooks.forEach((hook) =>
 			hook.callbacks.forEach((callback) => {
-				cardPerform(this.game, () => callback(hookArgs))
+				cardPerform(this.game, hook.subscriber, () => callback(fixedValues))
 			})
 		)
 
 		return matchingHooks.reduce((accOuter, subscription) => {
 			return subscription.hooks.reduce((accInner, replace) => {
-				return replace(accInner, hookArgs)
+				return replace(accInner, fixedValues)
 			}, accOuter)
-		}, values)
+		}, editableValues)
 	}
 
 	public resolveEvents(): void {
 		let currentCallbacks = this.callbackQueue.slice().sort((a, b) => {
 			// Player > System
-			if (a.subscriber instanceof ServerGame && b.subscriber instanceof ServerGame) {
-				return 0
-			} else if (a.subscriber instanceof ServerGame) {
+			if (a.subscriber === null && b.subscriber !== null) {
 				return 1
-			} else if (b.subscriber instanceof ServerGame) {
+			} else if (b.subscriber === null && a.subscriber !== null) {
 				return -1
+			} else if (a.subscriber === null || b.subscriber === null) {
+				return 0
 			}
 
 			// Current player > Opponent
-			const ownerOfA = a.subscriber instanceof ServerCard ? a.subscriber.ownerInGame : a.subscriber.card.ownerInGame
-			const ownerOfB = b.subscriber instanceof ServerCard ? b.subscriber.ownerInGame : b.subscriber.card.ownerInGame
+			const ownerOfA = getOwnerGroup(a.subscriber)
+			const ownerOfB = getOwnerGroup(b.subscriber)
 			if (ownerOfA !== ownerOfB) {
 				if (ownerOfA === this.game.activePlayer) {
 					return -1
@@ -179,9 +223,29 @@ export default class ServerGameEvents {
 				}
 			}
 
+			// Card effects > Row effects
+			if (a.subscriber instanceof ServerCard && b.subscriber instanceof ServerBuff && b.subscriber.parent instanceof ServerBoardRow) {
+				return -1
+			} else if (
+				b.subscriber instanceof ServerCard &&
+				a.subscriber instanceof ServerBuff &&
+				a.subscriber.parent instanceof ServerBoardRow
+			) {
+				return 1
+			} else if (
+				a.subscriber instanceof ServerBuff &&
+				b.subscriber instanceof ServerBuff &&
+				a.subscriber.parent instanceof ServerBoardRow &&
+				b.subscriber.parent instanceof ServerBoardRow
+			) {
+				const distanceOfA = this.game.board.getDistanceToStaticFront(a.subscriber.parent.index)
+				const distanceOfB = this.game.board.getDistanceToStaticFront(b.subscriber.parent.index)
+				return distanceOfA - distanceOfB
+			}
+
 			// Board > Hand > Deck > Graveyard > Other locations
-			const cardOfA = a.subscriber instanceof ServerCard ? a.subscriber : a.subscriber.card
-			const cardOfB = b.subscriber instanceof ServerCard ? b.subscriber : b.subscriber.card
+			const cardOfA = a.subscriber instanceof ServerCard ? a.subscriber : (a.subscriber.parent as ServerCard)
+			const cardOfB = b.subscriber instanceof ServerCard ? b.subscriber : (b.subscriber.parent as ServerCard)
 			const locationToNumber = (cardLocation: CardLocation): number => {
 				switch (cardLocation) {
 					case CardLocation.BOARD:
@@ -208,7 +272,7 @@ export default class ServerGameEvents {
 			const getCardIndex = (card: ServerCard, owner: ServerPlayerInGame, location: CardLocation): number => {
 				switch (location) {
 					case CardLocation.HAND:
-						return Utils.sortCards(owner.cardHand.allCards).indexOf(card)
+						return sortCards(owner.cardHand.allCards).indexOf(card)
 					case CardLocation.DECK:
 						return owner.cardDeck.allCards.indexOf(card)
 					case CardLocation.GRAVEYARD:
@@ -217,9 +281,18 @@ export default class ServerGameEvents {
 						return 100
 				}
 			}
-			if (locationOfA === locationOfB && locationOfA !== CardLocation.BOARD && locationOfB !== CardLocation.BOARD) {
-				const indexOfA = getCardIndex(cardOfA, ownerOfA, locationOfA)
-				const indexOfB = getCardIndex(cardOfB, ownerOfB, locationOfB)
+
+			const playerOwnerOfA = getOwnerPlayer(a.subscriber)
+			const playerOwnerOfB = getOwnerPlayer(b.subscriber)
+			if (
+				locationOfA === locationOfB &&
+				locationOfA !== CardLocation.BOARD &&
+				locationOfB !== CardLocation.BOARD &&
+				playerOwnerOfA &&
+				playerOwnerOfB
+			) {
+				const indexOfA = getCardIndex(cardOfA, playerOwnerOfA, locationOfA)
+				const indexOfB = getCardIndex(cardOfB, playerOwnerOfB, locationOfB)
 				return indexOfA - indexOfB
 			}
 
@@ -252,7 +325,7 @@ export default class ServerGameEvents {
 					(remainingCallback) => remainingCallback.subscriber === this.game.cardPlay.cardResolveStack.currentCard?.card
 				)
 			) {
-				if (this.game.cardPlay.getDeployTargets().length === 0) {
+				if (this.game.cardPlay.getResolvingCardTargets().length === 0) {
 					this.game.cardPlay.cardResolveStack.resumeResolving()
 				} else {
 					this.game.cardPlay.updateResolvingCardTargetingStatus()
@@ -263,12 +336,13 @@ export default class ServerGameEvents {
 		resolveCards()
 
 		const filterOutEvents = () => {
-			currentCallbacks = currentCallbacks.filter((callbackWrapper) => {
-				const failedCondition = callbackWrapper.immediateConditions.find((condition) => {
-					return cardRequire(this.game, () => !condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent))
-				})
-				return !failedCondition
-			})
+			currentCallbacks = currentCallbacks.filter((callbackWrapper) =>
+				callbackWrapper.immediateConditions.every((condition) =>
+					cardRequire(this.game, callbackWrapper.subscriber, () =>
+						condition(callbackWrapper.args, callbackWrapper.preparedState, callbackWrapper.rawEvent)
+					)
+				)
+			)
 		}
 		filterOutEvents()
 
@@ -277,7 +351,7 @@ export default class ServerGameEvents {
 			const callbackWrapper = currentCallbacks.shift()!
 
 			this.logEventExecution(callbackWrapper.rawEvent, callbackWrapper.subscription, false)
-			cardPerform(this.game, () => {
+			cardPerform(this.game, callbackWrapper.subscriber, () => {
 				callbackWrapper.callback(callbackWrapper.args, callbackWrapper.preparedState)
 			})
 			this.game.animation.syncAnimationThreads()
@@ -294,7 +368,7 @@ export default class ServerGameEvents {
 
 	private logEventExecution(event: GameEvent, subscription: EventSubscription<any>, isImmediate: boolean): void {
 		const subscriber = subscription.subscriber
-		const subscriberId = subscriber instanceof ServerGame ? '' : `${subscriber.id}`
+		const subscriberId = !subscriber ? this.game.id : `${subscriber.id}`
 
 		const gameId = colorizeId(this.game.id)
 		const eventType = colorizeClass(event.type)
@@ -305,22 +379,25 @@ export default class ServerGameEvents {
 
 	public evaluateSelectors(): void {
 		this.evaluatingSelectors = true
-		this.cardSelectors = this.cardSelectors.concat(this.cardSelectorBuilders.map((builder) => builder._build()))
+		this.cardSelectors = this.cardSelectors.concat(this.cardSelectorBuilders.map((builder) => builder._build(this.game)))
 		this.cardSelectorBuilders = []
 
 		let allGameCards: ServerCard[] = this.game.board
 			.getAllUnits()
 			.map((unit) => unit.card)
 			.concat(this.game.cardPlay.cardResolveStack.entries.map((entry) => entry.ownedCard.card))
-		this.game.players.forEach((player) => {
-			allGameCards = allGameCards.concat(player.cardHand.allCards)
-			allGameCards = allGameCards.concat(player.cardDeck.allCards)
-			allGameCards = allGameCards.concat(player.cardGraveyard.allCards)
-		})
+		this.game.players
+			.flatMap((playerGroup) => playerGroup.players)
+			.forEach((player) => {
+				allGameCards = allGameCards.concat([player.leader])
+				allGameCards = allGameCards.concat(player.cardHand.allCards)
+				allGameCards = allGameCards.concat(player.cardDeck.allCards)
+				allGameCards = allGameCards.concat(player.cardGraveyard.allCards)
+			})
 		allGameCards = new Array(...new Set(allGameCards))
 
 		this.cardSelectors.forEach((selector) => {
-			if ((!selector.ignoreControlEffects && this.subscriberSuspended(selector.subscriber)) || selector.markedForRemoval) {
+			if ((!selector.ignoreControlEffects && ServerGameEvents.subscriberSuspended(selector.subscriber)) || selector.markedForRemoval) {
 				selector.clearSelection()
 			} else {
 				selector.evaluate(allGameCards)
@@ -332,12 +409,14 @@ export default class ServerGameEvents {
 		this.evaluatingSelectors = false
 	}
 
-	private subscriberSuspended(subscriber: EventSubscriber): boolean {
-		if (subscriber instanceof ServerGame) {
+	private static subscriberSuspended(subscriber: EventSubscriber): boolean {
+		if (!subscriber) {
 			return false
 		}
-		if (subscriber instanceof ServerBuff) {
-			return subscriber.card.features.includes(CardFeature.SUSPENDED)
+		if (subscriber instanceof ServerBuff && subscriber.parent instanceof ServerCard) {
+			return subscriber.parent.features.includes(CardFeature.SUSPENDED)
+		} else if (subscriber instanceof ServerBuff) {
+			return false
 		}
 		return subscriber.features.includes(CardFeature.STUNNED)
 	}
@@ -351,7 +430,7 @@ export default class ServerGameEvents {
 			event: eventType,
 			subtype: subtype,
 			timestamp: Number(new Date()),
-			args: args,
+			args: args || {},
 		})
 	}
 

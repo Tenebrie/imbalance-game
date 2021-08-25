@@ -22,7 +22,7 @@ export default defineComponent({
 
 	computed: {
 		card(): CardMessage | null {
-			return store.state.editor.cardLibrary.find((card) => card.class === this.cardClass)
+			return store.state.editor.cardLibrary.find((card) => card.class === this.cardClass) || null
 		},
 	},
 })

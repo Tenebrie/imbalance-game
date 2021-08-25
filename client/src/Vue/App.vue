@@ -31,7 +31,9 @@ export default defineComponent({
 		window.addEventListener('contextmenu', this.onContextMenu)
 		this.printConsoleWelcomeMessage()
 		if (LocalStorage.hasAuthCookie()) {
+			await store.dispatch.rulesets.loadLibrary()
 			await store.dispatch.editor.loadCardLibrary()
+			await store.dispatch.editor.loadDecks()
 			editorCardRenderer.startRenderingService()
 		}
 	},
@@ -47,8 +49,8 @@ export default defineComponent({
 
 		rootClass() {
 			return {
-				'in-game': this.isInGame as boolean,
-				'navigation-bar-visible': !this.isInGame as boolean,
+				'in-game': store.getters.gameStateModule.isInGame,
+				'navigation-bar-visible': !store.getters.gameStateModule.isInGame,
 			}
 		},
 	},
@@ -125,6 +127,8 @@ body {
 		position: absolute;
 		width: 100%;
 		height: 100%;
+		display: flex;
+		justify-content: center;
 
 		&.in-game {
 			overflow-y: hidden;
@@ -188,9 +192,12 @@ button {
 	cursor: pointer;
 }
 
+label.button.primary,
 button.primary,
 .swal-button,
 .button-primary {
+	text-align: center;
+	cursor: pointer;
 	border-radius: 0.25em;
 	width: 100%;
 	padding: 0.5em 1em;
@@ -201,6 +208,8 @@ button.primary,
 	background-color: $COLOR-PRIMARY;
 	border: 1px solid $COLOR-PRIMARY;
 	outline: none;
+	box-sizing: border-box;
+	transition: background-color 0.3s, border 0.3s;
 
 	&.destructive {
 		color: lighten(red, 15);
@@ -216,6 +225,7 @@ button.primary,
 		color: darken($COLOR-TEXT, 5);
 		border-color: darken($COLOR-PRIMARY, 5);
 		background-color: darken($COLOR-PRIMARY, 5);
+		transition: background-color 0s, border 0s;
 	}
 
 	&:active {
@@ -237,6 +247,7 @@ button.secondary,
 	background-color: transparent;
 	border: 1px solid $COLOR-TEXT;
 	outline: none;
+	transition: background-color 0.3s;
 
 	&.destructive {
 		color: lighten(red, 15);
@@ -250,6 +261,7 @@ button.secondary,
 
 	&:hover {
 		background-color: rgba(white, 0.05);
+		transition: background-color 0s;
 	}
 
 	&:active {

@@ -1,6 +1,4 @@
 export enum PlayerUpdateMessageType {
-	LEADER_SELF = 'playerUpdate_leaderSelf',
-	LEADER_OPPONENT = 'playerUpdate_leaderOpponent',
 	MORALE = 'playerUpdate_morale',
 	MANA = 'playerUpdate_mana',
 	MULLIGANS = 'playerUpdate_mulligans',
@@ -25,6 +23,8 @@ export enum PlayerUpdateMessageType {
 	GAME_END_VICTORY = 'playerUpdate_gameEndAsVictory',
 	GAME_END_DEFEAT = 'playerUpdate_gameEndAsDefeat',
 	GAME_END_DRAW = 'playerUpdate_gameEndAsDraw',
+	LINKED_GAME = 'playerUpdate_linkedGame',
+	COMMAND_JOIN_LINKED_GAME = 'playerUpdate_commandJoinLinkedGame',
 }
 
 export enum GameLogUpdateMessageType {
@@ -40,10 +40,12 @@ export enum AnimationMessageType {
 }
 
 export enum GameSyncMessageType {
+	PLAYER_SLOTS = 'gameSync_playerSlots',
 	START = 'gameSync_start',
 	PHASE_ADVANCE = 'gameSync_phaseAdvance',
 	PLAYER_SELF = 'gameSync_playerSelf',
-	PLAYER_OPPONENT = 'gameSync_playerOpponent',
+	PLAYER_ALLIES = 'gameSync_playerAllies',
+	PLAYER_OPPONENTS = 'gameSync_playerOpponents',
 	BOARD_STATE = 'gameSync_boardState',
 	STACK_STATE = 'gameSync_stackState',
 	ACTIVE_PLAYER = 'gameSync_activePlayer',
@@ -64,6 +66,9 @@ export enum BoardUpdateMessageType {
 	UNIT_MOVE = 'boardUpdate_unitMove',
 	UNIT_DESTROY = 'boardUpdate_unitDestroy',
 	ROW_OWNER = 'boardUpdate_rowOwner',
+	ROW_BUFF_ADD = 'boardUpdate_buffAdd',
+	ROW_BUFF_DURATION = 'boardUpdate_buffDuration',
+	ROW_BUFF_REMOVE = 'boardUpdate_buffRemove',
 }
 
 export enum ResolveStackMessageType {
@@ -74,14 +79,26 @@ export enum ResolveStackMessageType {
 export enum TargetingMessageType {
 	CARD_PLAY = 'targeting_cardPlay',
 	ANONYMOUS = 'targeting_anonymous',
+	INVALID = 'targeting_invalid',
 }
 
 export enum CardUpdateMessageType {
 	STATS = 'cardUpdate_stats',
 	VARIABLES = 'cardUpdate_variables',
-	BUFF_ADD = 'cardUpdate_buffAdd',
-	BUFF_DURATION = 'cardUpdate_buffDuration',
-	BUFF_REMOVE = 'cardUpdate_buffRemove',
+	CARD_BUFF_ADD = 'cardUpdate_buffAdd',
+	CARD_BUFF_DURATION = 'cardUpdate_buffDuration',
+	CARD_BUFF_REMOVE = 'cardUpdate_buffRemove',
+}
+
+export enum NovelMessageType {
+	START = 'novel_start',
+	SAY = 'novel_say',
+	CLEAR = 'novel_clear',
+	ADD_REPLY = 'novel_reply',
+	ADD_CHARACTER = 'novel_addCharacter',
+	ACTIVATE_CHARACTER = 'novel_activateCharacter',
+	REMOVE_CHARACTER = 'novel_removeCharacter',
+	FINISH = 'novel_finish',
 }
 
 export type ServerToClientMessageTypes =
@@ -94,3 +111,4 @@ export type ServerToClientMessageTypes =
 	| ResolveStackMessageType
 	| TargetingMessageType
 	| CardUpdateMessageType
+	| NovelMessageType

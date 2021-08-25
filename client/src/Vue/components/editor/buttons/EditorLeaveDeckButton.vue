@@ -1,7 +1,7 @@
 <template>
 	<div class="button-container">
 		<button class="secondary" @click="onClick">
-			<span>{{ $locale.get('ui.decks.leaveDeck') }}</span>
+			<span><i class="fas fa-arrow-left" /> {{ $locale.get('ui.decks.leaveDeck') }}</span>
 		</button>
 	</div>
 </template>

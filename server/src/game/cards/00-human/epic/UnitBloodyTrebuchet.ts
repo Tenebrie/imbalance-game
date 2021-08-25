@@ -14,7 +14,7 @@ import BuffCanAttack from '../../../buffs/BuffCanAttack'
 import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitBloodyTrebuchet extends ServerCard {
-	damage = asDirectUnitDamage(3)
+	damage = asDirectUnitDamage(5)
 	splashDamage = asSplashUnitDamage(1)
 
 	constructor(game: ServerGame) {
@@ -22,10 +22,10 @@ export default class UnitBloodyTrebuchet extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.BUILDING, CardFeature.KEYWORD_ORDER],
+			features: [CardFeature.KEYWORD_ORDER],
 			stats: {
-				power: 0,
-				armor: 4,
+				power: 12,
+				armor: 8,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

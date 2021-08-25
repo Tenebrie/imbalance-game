@@ -1,5 +1,6 @@
 enum DamageSource {
 	CARD,
+	BOARD_ROW,
 	UNIVERSE,
 }
 

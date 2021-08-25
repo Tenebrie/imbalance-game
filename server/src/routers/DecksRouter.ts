@@ -7,7 +7,7 @@ import EditorDeckDatabase from '../database/EditorDeckDatabase'
 import AsyncHandler from '../utils/AsyncHandler'
 import DeckUtils from '../utils/DeckUtils'
 import SharedDeckDatabase from '../database/SharedDeckDatabase'
-import { createRandomEditorDeckId, generateShortId } from '../utils/Utils'
+import { createRandomEditorDeckId, generateShortId, validateEditorDeck } from '../utils/Utils'
 
 const router = express.Router()
 
@@ -90,6 +90,11 @@ router.put(
 	AsyncHandler(async (req, res: Response) => {
 		const deckData = req.body as EditorDeck
 		const player = req['player'] as ServerPlayer
+
+		const deckValidationStatus = validateEditorDeck(deckData)
+		if (!deckValidationStatus.valid) {
+			throw { status: 400, error: 'Invalid deck composition', badCards: deckValidationStatus.badCards }
+		}
 
 		const success = await EditorDeckDatabase.insertEditorDeck(player, deckData)
 

@@ -1,4 +1,4 @@
-import ServerBuff from '@src/game/models/ServerBuff'
+import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import CardLibrary from '@src/game/libraries/CardLibrary'

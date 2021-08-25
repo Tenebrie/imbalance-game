@@ -6,6 +6,8 @@ import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import BoardRowMessage from '@shared/models/network/BoardRowMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
+import OpenRowBuffMessage from '@shared/models/network/buffs/OpenRowBuffMessage'
+import RenderedBuff from '@/Pixi/models/buffs/RenderedBuff'
 
 const IncomingBoardUpdateMessages: { [index in BoardUpdateMessageType]: IncomingMessageHandlerFunction } = {
 	[BoardUpdateMessageType.UNIT_INSERT]: (data: UnitMessage) => {
@@ -13,7 +15,12 @@ const IncomingBoardUpdateMessages: { [index in BoardUpdateMessageType]: Incoming
 			return
 		}
 
-		const card = new RenderedUnit(RenderedCard.fromMessage(data.card), Core.getPlayer(data.ownerId))
+		const ownerGroup = Core.getPlayerGroupOrNull(data.ownerId)
+		if (!ownerGroup) {
+			throw new Error(`No player group with id ${data.ownerId}`)
+		}
+
+		const card = new RenderedUnit(RenderedCard.fromMessage(data.card), ownerGroup)
 		Core.input.destroyLimboCard(data.card)
 		Core.board.insertUnit(card, data.rowIndex, data.unitIndex)
 	},
@@ -38,7 +45,39 @@ const IncomingBoardUpdateMessages: { [index in BoardUpdateMessageType]: Incoming
 	},
 
 	[BoardUpdateMessageType.ROW_OWNER]: (data: BoardRowMessage) => {
-		Core.board.rows[data.index].owner = Core.getPlayerOrNull(data.ownerId)
+		Core.board.rows[data.index].owner = Core.getPlayerGroupOrNull(data.ownerId)
+	},
+
+	[BoardUpdateMessageType.ROW_BUFF_ADD]: (data: OpenRowBuffMessage) => {
+		const row = Core.board.getRow(data.parentIndex)
+		if (!row) {
+			return
+		}
+
+		row.buffs.add(new RenderedBuff(row.buffs, data))
+	},
+
+	[BoardUpdateMessageType.ROW_BUFF_DURATION]: (data: OpenRowBuffMessage) => {
+		const row = Core.board.getRow(data.parentIndex)
+		if (!row) {
+			return
+		}
+
+		const buff = row.buffs.findBuffById(data.id)
+		if (!buff) {
+			return
+		}
+
+		buff.duration = Number(data.duration)
+	},
+
+	[BoardUpdateMessageType.ROW_BUFF_REMOVE]: (data: OpenRowBuffMessage) => {
+		const row = Core.board.getRow(data.parentIndex)
+		if (!row) {
+			return
+		}
+
+		row.buffs.removeById(data.id)
 	},
 }
 

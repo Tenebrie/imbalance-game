@@ -27,7 +27,10 @@ export default class TextureAtlas {
 
 			const components = [
 				'masks/black',
-				'effects/trail',
+				'masks/circle',
+				'icons/question',
+				'effects/trail-large',
+				'effects/trail-normal',
 				'effects/fireball-static',
 				'effects/particle',
 				'board/row-allied',
@@ -62,7 +65,8 @@ export default class TextureAtlas {
 				'components/stat-health-armor',
 				'components/overlay-move',
 				'components/overlay-disabled',
-				'board/board-row',
+				'components/tint-overlay',
+				'components/tint-overlay-full',
 			]
 
 			TextureAtlas.load(components, () => {
@@ -132,22 +136,23 @@ export default class TextureAtlas {
 		})
 	}
 
-	public static getTexture(path: string): PIXI.Texture {
+	public static getTexture(path: string, placeholder: 'card' | 'buff' = 'card'): PIXI.Texture {
 		const texture = TextureAtlas.textures[path.toLowerCase()]
 		if (texture) {
 			return texture
 		}
-		return TextureAtlas.loadTextureOnDemand(path)
+		return TextureAtlas.loadTextureOnDemand(path, placeholder)
 	}
 
-	private static loadTextureOnDemand(path: string): PIXI.Texture {
+	private static loadTextureOnDemand(path: string, placeholder: 'card' | 'buff' = 'card'): PIXI.Texture {
 		const loadedTexture = PIXI.Texture.from(`/assets/${path}.webp`)
 		if (loadedTexture.valid) {
 			return loadedTexture
 		}
 
 		console.info(`Loading '${path}' on demand`)
-		const clone = this.textures['cards/tokenPlaceholder'.toLowerCase()].clone()
+		const placeholderPath = placeholder === 'buff' ? 'icons/question' : 'cards/tokenPlaceholder'
+		const clone = this.textures[placeholderPath.toLowerCase()].clone()
 		loadedTexture.on('update', () => {
 			clone.baseTexture = loadedTexture.baseTexture
 			this.textures[path.toLowerCase()] = loadedTexture

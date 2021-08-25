@@ -5,9 +5,7 @@ import BuffAlignment from '../../../enums/BuffAlignment'
 
 export default interface BuffMessage {
 	id: string
-	cardId: string
 	class: string
-	sourceId: string | null
 	alignment: BuffAlignment
 	cardTribes: CardTribe[]
 	buffFeatures: BuffFeature[]

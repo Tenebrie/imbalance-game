@@ -12,10 +12,9 @@ export default class TestingUnitNoEffect extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
 			stats: {
-				power: 10,
+				power: 20,
 			},
-			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true,
+			expansionSet: ExpansionSet.TESTING,
 		})
 	}
 }

@@ -10,6 +10,7 @@ export default interface PlayerDatabaseEntry {
 	createdAt: string
 	accessedAt: string
 	accessLevel: AccessLevel
+	fastMode: boolean
 	userLanguage: Language
 	renderQuality: RenderQuality
 	masterVolume: number
@@ -19,4 +20,5 @@ export default interface PlayerDatabaseEntry {
 	userInterfaceVolume: number
 	welcomeModalSeenAt: string
 	mobileModalSeenAt: string
+	isGuest: boolean
 }

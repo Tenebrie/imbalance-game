@@ -28,7 +28,7 @@ export default class UnitCultistSpellslinger extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			stats: {
-				power: 2,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -55,8 +55,8 @@ export default class UnitCultistSpellslinger extends ServerCard {
 	}
 
 	private onScrollSelected(target: ServerCard): void {
-		const newCard = CardLibrary.instantiateByInstance(this.game, target)
-		this.ownerInGame.cardHand.addSpell(newCard)
+		const newCard = CardLibrary.instantiateFromInstance(this.game, target)
+		this.ownerPlayerInGame.cardHand.addSpell(newCard)
 		newCard.buffs.addMultiple(BuffSpellDiscount, this.sacrificedUnit!.power, this, BuffDuration.INFINITY)
 	}
 

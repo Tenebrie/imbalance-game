@@ -1,5 +1,5 @@
 import ServerGame from '../models/ServerGame'
-import GameMode from '@shared/enums/GameMode'
+import RulesetCasualPVP from '@src/game/rulesets/pvp/RulesetCasualPVP'
 
 let instance: ServerGame | null = null
 
@@ -8,7 +8,7 @@ export default {
 		if (!instance) {
 			instance = new ServerGame({
 				name: 'Card Library Placeholder Game',
-				gameMode: GameMode.VS_AI,
+				ruleset: RulesetCasualPVP,
 			})
 		}
 		return instance

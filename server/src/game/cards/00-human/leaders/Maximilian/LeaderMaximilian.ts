@@ -7,7 +7,8 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import SpellReinforcements from './SpellReinforcements'
 import SpellQuickStrike from './SpellQuickStrike'
 import SpellTacticalMove from './SpellTacticalMove'
-import { getLeaderTextVariables } from '@src/utils/Utils'
+import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
+import GameEventType from '@src/../../shared/src/enums/GameEventType'
 
 export default class LeaderMaximilian extends ServerCard {
 	manaPerRound = 10
@@ -17,6 +18,9 @@ export default class LeaderMaximilian extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.LEADER,
 			faction: CardFaction.HUMAN,
+			stats: {
+				power: 10,
+			},
 			sortPriority: 0,
 			expansionSet: ExpansionSet.BASE,
 			deckAddedCards: [SpellQuickStrike, SpellTacticalMove, SpellTacticalMove, SpellReinforcements],
@@ -25,5 +29,8 @@ export default class LeaderMaximilian extends ServerCard {
 			manaPerRound: this.manaPerRound,
 			...getLeaderTextVariables(this),
 		}
+		this.createCallback(GameEventType.ROUND_STARTED, AnyCardLocation)
+			.require(({ group }) => group.owns(this))
+			.perform(() => this.ownerPlayerInGame.addSpellMana(this.manaPerRound))
 	}
 }

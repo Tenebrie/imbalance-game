@@ -4,15 +4,14 @@ import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
-import GameHookType, { CardTakesDamageHookValues } from '../../../models/events/GameHookType'
-import CardLocation from '@shared/enums/CardLocation'
 import GameEventType from '@shared/enums/GameEventType'
 import SpellFleetingSpark from '../tokens/SpellFleetingSpark'
-import CardLibrary from '../../../libraries/CardLibrary'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import Keywords from '@src/utils/Keywords'
+import LeaderStatType from '@shared/enums/LeaderStatType'
 
 export default class HeroSparklingSpirit extends ServerCard {
-	extraDamage = 1
+	infuseCost = 1
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -21,33 +20,23 @@ export default class HeroSparklingSpirit extends ServerCard {
 			faction: CardFaction.ARCANE,
 			relatedCards: [SpellFleetingSpark],
 			stats: {
-				power: 8,
+				power: 16,
+				[LeaderStatType.SPARK_DAMAGE]: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.SPARK)
 		this.dynamicTextVariables = {
-			extraDamage: this.extraDamage,
+			infuseCost: this.infuseCost,
+			extraDamage: this.stats.leaderStats[LeaderStatType.SPARK_DAMAGE],
 		}
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
-
-		this.createHook(GameHookType.CARD_TAKES_DAMAGE, [CardLocation.BOARD])
-			.require(({ damageInstance }) => !!damageInstance.sourceCard?.tribes.includes(CardTribe.SPARK))
-			.replace((values) => this.onSparkDealsDamage(values))
-	}
-
-	private onDeploy(): void {
-		const card = CardLibrary.instantiateByConstructor(this.game, SpellFleetingSpark)
-		this.ownerInGame.cardHand.addSpell(card)
-	}
-
-	private onSparkDealsDamage(values: CardTakesDamageHookValues): CardTakesDamageHookValues {
-		const newDamageInstance = values.damageInstance.clone()
-		newDamageInstance.value = newDamageInstance.value + this.extraDamage
-		return {
-			...values,
-			damageInstance: newDamageInstance,
+		this.createEffect(GameEventType.UNIT_DEPLOYED)
+			.requireImmediate(({ owner }) => owner.spellMana >= this.infuseCost)
+			.perform(() => onDeploy())
+		const onDeploy = (): void => {
+			Keywords.infuse(this, this.infuseCost)
+			Keywords.createCard.forOwnerOf(this).fromConstructor(SpellFleetingSpark)
 		}
 	}
 }

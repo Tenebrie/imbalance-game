@@ -8,11 +8,11 @@ import CardLocation from '@shared/enums/CardLocation'
 import BuffStrength from '../../../buffs/BuffStrength'
 import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
+import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
 
 export default class HeroStormDancer extends ServerCard {
-	normalPowerGiven = asSplashBuffPotency(1)
-	stormPowerGiven = asSplashBuffPotency(3)
+	normalPowerGiven = asRecurringBuffPotency(3)
+	stormPowerGiven = asRecurringBuffPotency(5)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -20,7 +20,7 @@ export default class HeroStormDancer extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.WILD,
 			stats: {
-				power: 5,
+				power: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

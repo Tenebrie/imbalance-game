@@ -1,8 +1,8 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import Utils from '@/utils/Utils'
 import Constants from '@shared/Constants'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
+import { getMaxCardCountForColor, sortCards } from '@shared/Utils'
 
 export default class PopulatedEditorDeck {
 	public id: string
@@ -12,7 +12,7 @@ export default class PopulatedEditorDeck {
 	public constructor(id: string, name: string, cards: PopulatedEditorCard[]) {
 		this.id = id
 		this.name = name
-		this.cards = Utils.sortEditorCards(cards)
+		this.cards = sortCards(cards)
 	}
 
 	public get leader(): PopulatedEditorCard | null {
@@ -20,7 +20,7 @@ export default class PopulatedEditorDeck {
 	}
 
 	public get faction(): CardFaction {
-		if (this.leader) {
+		if (this.leader && this.leader.faction !== CardFaction.NEUTRAL) {
 			return this.leader.faction
 		}
 		const factionCard = this.cards.find((card) => card.faction !== CardFaction.NEUTRAL)
@@ -38,7 +38,7 @@ export default class PopulatedEditorDeck {
 		return (
 			!this.leader ||
 			this.cardCount !== Constants.CARD_LIMIT_TOTAL ||
-			this.cards.some((card) => card.count > Utils.getMaxCardCountForColor(card.color))
+			this.cards.some((card) => card.count > getMaxCardCountForColor(card.color))
 		)
 	}
 

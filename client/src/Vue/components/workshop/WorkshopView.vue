@@ -77,8 +77,9 @@ import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import { debounce } from 'throttle-debounce'
-import { getRandomName } from '@shared/Utils'
+import { getRandomName, initializeEnumRecord } from '@shared/Utils'
 import WorkshopDownloadButton from '@/Vue/components/workshop/WorkshopDownloadButton.vue'
+import LeaderStatType from '@shared/enums/LeaderStatType'
 
 export type WorkshopCardProps = {
 	workshopTitle: string
@@ -155,12 +156,6 @@ export default defineComponent({
 			color: cardColor.value,
 			faction: CardFaction.HUMAN,
 
-			name: unescapeValue(cardName),
-			title: '',
-			flavor: '',
-			listName: '',
-			description: unescapeValue(cardDescription),
-
 			stats: {
 				cardId: '',
 				power: convertNumericValue(cardPower),
@@ -177,24 +172,27 @@ export default defineComponent({
 				spellCost: convertNumericValue(cardSpellCost),
 				baseSpellCost: convertNumericValue(cardSpellCost),
 
-				soloUnitDamage: 0,
-				massUnitDamage: 0,
-				soloSpellDamage: 0,
-				massSpellDamage: 0,
-				soloHealingPotency: 0,
-				massHealingPotency: 0,
-				soloBuffPotency: 0,
-				massBuffPotency: 0,
-				soloEffectDuration: 0,
-				massEffectDuration: 0,
-				targetCount: 0,
-				criticalHitChance: 0,
-				criticalBuffChance: 0,
-				criticalHealChance: 0,
+				leaderStats: initializeEnumRecord(LeaderStatType, () => 0),
 			},
 			buffs: {
 				cardId: '',
 				buffs: [],
+			},
+			localization: {
+				en: {
+					name: unescapeValue(cardName),
+					title: '',
+					flavor: '',
+					listName: '',
+					description: unescapeValue(cardDescription),
+				},
+				ru: {
+					name: unescapeValue(cardName),
+					title: '',
+					flavor: '',
+					listName: '',
+					description: unescapeValue(cardDescription),
+				},
 			},
 			baseTribes: [],
 			baseFeatures: [],
@@ -209,7 +207,7 @@ export default defineComponent({
 			isHidden: false,
 
 			workshopTitle: cardTitle.value,
-			workshopImage: currentImage.value,
+			workshopImage: currentImage.value!,
 			workshopTribes: cardTribes.value.length > 0 ? cardTribes.value.split(';') : [],
 		}))
 		const unescapeValue = (ref: Ref<string>): string => {

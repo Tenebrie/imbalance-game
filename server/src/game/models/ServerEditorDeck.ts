@@ -1,7 +1,7 @@
 import EditorDeck from '@shared/models/EditorDeck'
-import CardDeck from '@shared/models/CardDeck'
 import EditorCard from '@shared/models/EditorCard'
-import { createRandomEditorDeckId } from '@src/utils/Utils'
+import { createRandomEditorDeckId, getClassFromConstructor } from '@src/utils/Utils'
+import { CardConstructor } from '../libraries/CardLibrary'
 
 export default class ServerEditorDeck implements EditorDeck {
 	id: string
@@ -18,17 +18,23 @@ export default class ServerEditorDeck implements EditorDeck {
 		return new ServerEditorDeck('New deck', [])
 	}
 
-	public static fromTemplate(template: CardDeck): ServerEditorDeck {
-		const cards: EditorCard[] = []
+	public static fromConstructors(cards: (CardConstructor | { card: CardConstructor; count: number })[]): ServerEditorDeck {
+		const editorCards: EditorCard[] = []
 
-		template.unitCards.forEach((card) => {
-			const matchingCard = cards.find((testCard) => testCard.class === card.class)
-			if (matchingCard) {
-				matchingCard.count += 1
+		cards.forEach((cardConstructor) => {
+			if ('card' in cardConstructor) {
+				editorCards.push({
+					class: getClassFromConstructor(cardConstructor.card),
+					count: cardConstructor.count,
+				})
 			} else {
-				cards.push({ class: card.class, count: 1 })
+				editorCards.push({
+					class: getClassFromConstructor(cardConstructor),
+					count: 1,
+				})
 			}
 		})
-		return new ServerEditorDeck('Template deck', cards)
+
+		return new ServerEditorDeck('Template deck', editorCards)
 	}
 }

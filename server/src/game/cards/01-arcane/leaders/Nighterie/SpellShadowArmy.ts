@@ -12,7 +12,7 @@ import Keywords from '../../../../../utils/Keywords'
 
 export default class SpellShadowArmy extends ServerCard {
 	powerThreshold = 3
-	thresholdDecrease = 1
+	thresholdDecrease = 3
 	allowedTargets = 1
 	copiedUnits: ServerUnit[] = []
 

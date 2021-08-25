@@ -5,7 +5,7 @@
 			<p>Your deck "{{ deckName }}" will be deleted. This action really can't be reverted.</p>
 			<div class="menu-separator"></div>
 			<div class="button-container">
-				<button @click="onConfirm" class="primary game-button destructive">Delete</button>
+				<button @click="onConfirm" class="primary game-button destructive"><i class="fas fa-trash" /> Delete</button>
 				<button @click="onBack" class="secondary game-button">Cancel</button>
 			</div>
 		</div>
@@ -31,7 +31,7 @@ export default defineComponent({
 			store.dispatch.popupModule.close()
 		}
 
-		const deckName = computed<string>(() => store.getters.popupModule.params.deckName)
+		const deckName = computed<string>(() => store.getters.popupModule.params?.deckName || '')
 
 		return {
 			deckName,

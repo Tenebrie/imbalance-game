@@ -44,13 +44,12 @@ export const getRenderScale = (): CardRenderScale => {
 			descriptionGameFontRenderScale: 1.5,
 			descriptionEditorFontRenderScale: 1.2,
 		}
-	} else if (selectedQuality === RenderQuality.NORMAL) {
-		return {
-			superSamplingLevel: 1.0,
-			generalGameFontRenderScale: 1.0,
-			generalEditorFontRenderScale: 1.0,
-			descriptionGameFontRenderScale: 1.0,
-			descriptionEditorFontRenderScale: 1.0,
-		}
+	}
+	return {
+		superSamplingLevel: 1.0,
+		generalGameFontRenderScale: 1.0,
+		generalEditorFontRenderScale: 1.0,
+		descriptionGameFontRenderScale: 1.0,
+		descriptionEditorFontRenderScale: 1.0,
 	}
 }

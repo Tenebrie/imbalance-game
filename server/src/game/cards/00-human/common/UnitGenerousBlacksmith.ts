@@ -7,12 +7,12 @@ import CardFaction from '@shared/enums/CardFaction'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashBuffPotency } from '../../../../utils/LeaderStats'
+import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffExtraArmor from '../../../buffs/BuffExtraArmor'
 
 export default class UnitGenerousBlacksmith extends ServerCard {
-	bonusArmor = asSplashBuffPotency(3)
+	bonusArmor = asRecurringBuffPotency(6)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -22,7 +22,7 @@ export default class UnitGenerousBlacksmith extends ServerCard {
 			tribes: [CardTribe.PEASANT],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 7,
+				power: 14,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

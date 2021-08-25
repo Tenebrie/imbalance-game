@@ -16,7 +16,7 @@ export default class UnitEndlessArmy extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 11,
+				power: 22,
 			},
 			expansionSet: ExpansionSet.BASE,
 			relatedCards: [UnitEndlessArmy],
@@ -26,7 +26,7 @@ export default class UnitEndlessArmy extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		const copy = CardLibrary.instantiateByConstructor(this.game, UnitEndlessArmy)
-		this.ownerInGame.cardDeck.addUnitToBottom(copy)
+		const copy = CardLibrary.instantiate(this.game, UnitEndlessArmy)
+		this.ownerPlayerInGame.cardDeck.addUnitToBottom(copy)
 	}
 }

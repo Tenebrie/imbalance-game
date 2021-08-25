@@ -9,7 +9,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 import CardLibrary from '../../../libraries/CardLibrary'
-import Utils from '../../../../utils/Utils'
+import { shuffle } from '@src/utils/Utils'
 
 export default class UnitChallengeEagerExplorer extends ServerCard {
 	exploredCards: ServerCard[] = []
@@ -36,8 +36,7 @@ export default class UnitChallengeEagerExplorer extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
 			.require((args) => args.targetCard.color === CardColor.BRONZE)
 			.require(({ targetCard }) => this.exploredCards.includes(targetCard))
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onDeploy(): void {
@@ -45,11 +44,11 @@ export default class UnitChallengeEagerExplorer extends ServerCard {
 			.filter((card) => card.color === CardColor.BRONZE)
 			.filter((card) => card.isCollectible)
 			.slice()
-		this.exploredCards = Utils.shuffle(commonCards).slice(0, this.cardsToExplore)
+		this.exploredCards = shuffle(commonCards).slice(0, this.cardsToExplore)
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		Keywords.createCard.for(this.ownerInGame).fromInstance(target)
+		Keywords.createCard.for(this.ownerPlayerInGame).fromInstance(target)
 		this.exploredCards = []
 	}
 }

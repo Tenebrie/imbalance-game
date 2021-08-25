@@ -3,13 +3,22 @@ import Language from '@shared/enums/Language'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import RenderQuality from '@shared/enums/RenderQuality'
 import AccessLevel from '@shared/enums/AccessLevel'
-import { createRandomPlayerId } from '@src/utils/Utils'
+import { createHumanPlayerId } from '@src/utils/Utils'
+import PlayerProgressionType from '@shared/enums/PlayerProgressionType'
+import PlayerProgressionDatabaseEntry from '@shared/models/PlayerProgressionDatabaseEntry'
+import { LabyrinthProgressionState } from '@shared/models/progression/LabyrinthProgressionState'
 
 export default {
 	async insertPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {
-		const playerId = createRandomPlayerId()
-		const query = `INSERT INTO players (id, email, username, "passwordHash") VALUES($1, $2, $3, $4);`
-		return Database.insertRow(query, [playerId, email, username, passwordHash])
+		const playerId = createHumanPlayerId()
+		const query = `INSERT INTO players (id, email, username, "passwordHash", "isGuest") VALUES($1, $2, $3, $4, $5);`
+		return Database.insertRow(query, [playerId, email, username, passwordHash, false])
+	},
+
+	async insertGuestPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {
+		const playerId = createHumanPlayerId()
+		const query = `INSERT INTO players (id, email, username, "passwordHash", "isGuest") VALUES($1, $2, $3, $4, $5);`
+		return Database.insertRow(query, [playerId, email, username, passwordHash, true])
 	},
 
 	async selectPlayerById(id: string): Promise<PlayerDatabaseEntry | null> {
@@ -33,8 +42,13 @@ export default {
 	},
 
 	async selectAllPlayers(): Promise<PlayerDatabaseEntry[] | null> {
-		const query = 'SELECT *, \'[Redacted]\' as "passwordHash" FROM players ORDER BY players."accessedAt" DESC LIMIT 500'
+		const query = `SELECT *, '[Redacted]' as "passwordHash" FROM players ORDER BY players."accessedAt" DESC LIMIT 500`
 		return Database.selectRows<PlayerDatabaseEntry>(query)
+	},
+
+	async selectPlayerLabyrinthProgression(id: string): Promise<PlayerProgressionDatabaseEntry | null> {
+		const query = `SELECT data FROM player_progression WHERE "playerId" = $1 AND "type" = $2`
+		return Database.selectRow<PlayerProgressionDatabaseEntry>(query, [id, PlayerProgressionType.LABYRINTH])
 	},
 
 	async updatePlayerUsername(id: string, username: string): Promise<boolean> {
@@ -50,6 +64,11 @@ export default {
 	async updatePlayerAccessLevel(id: string, accessLevel: AccessLevel): Promise<boolean> {
 		const query = `UPDATE players SET "accessLevel" = $2 WHERE id = $1`
 		return Database.updateRows(query, [id, accessLevel])
+	},
+
+	async updatePlayerFastMode(id: string, fastMode: boolean): Promise<boolean> {
+		const query = `UPDATE players SET "fastMode" = $2 WHERE id = $1`
+		return Database.updateRows(query, [id, fastMode])
 	},
 
 	async updatePlayerUserLanguage(id: string, userLanguage: Language): Promise<boolean> {
@@ -102,6 +121,11 @@ export default {
 		return Database.updateRows(query, [id])
 	},
 
+	async updatePlayerLabyrinthProgression(playerId: string, state: LabyrinthProgressionState): Promise<boolean> {
+		const query = `INSERT INTO player_progression("playerId", "type", "data") VALUES ($1, $2, $3) ON CONFLICT("playerId", "type") DO UPDATE SET "data" = $3`
+		return Database.insertRow(query, [playerId, PlayerProgressionType.LABYRINTH, state])
+	},
+
 	async deletePlayer(id: string): Promise<boolean> {
 		const firstQuery = `
 			UPDATE game_history SET "victoriousPlayer"=null WHERE "victoriousPlayer"=$1;
@@ -110,5 +134,24 @@ export default {
 			DELETE FROM players WHERE id = $1;
 		`
 		return (await Database.updateRows(firstQuery, [id])) && (await Database.deleteRows(secondQuery, [id]))
+	},
+
+	async deleteAllGuestPlayers(): Promise<boolean> {
+		const query = 'SELECT * FROM players WHERE "isGuest"=TRUE'
+		const allGuestPlayers = await Database.selectRows<PlayerDatabaseEntry>(query)
+		if (allGuestPlayers === null) {
+			return false
+		}
+		if (allGuestPlayers.length === 0) {
+			return true
+		}
+		console.info(`Clearing out ${allGuestPlayers.length} guest player accounts...`)
+
+		const firstQuery = `
+			UPDATE game_history SET "victoriousPlayer"=null WHERE "victoriousPlayer"=$1;
+		`
+		const promises = allGuestPlayers.map((player) => Database.updateRows(firstQuery, [player.id]))
+		await Promise.all(promises)
+		return Database.deleteRows(`DELETE FROM players WHERE "isGuest"=TRUE`)
 	},
 }

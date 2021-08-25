@@ -1,32 +1,19 @@
 import * as PIXI from 'pixi.js'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Card from '@shared/models/Card'
-import CardColor from '@shared/enums/CardColor'
-import Constants from '@shared/Constants'
 import store from '@/Vue/store'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import { sortCards } from '@shared/Utils'
+import { getMaxCardCountForColor, getMaxCardCopiesForColor } from '@shared/Utils'
 import Core from '@/Pixi/Core'
 import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 import * as Particles from 'pixi-particles'
-
-export const forEachInNumericEnum = (enumeration: { [s: number]: number }, handler: (val: number) => any): void => {
-	for (const value in enumeration) {
-		if (!isNaN(Number(value))) {
-			handler(Number(value))
-		}
-	}
-}
-
-export const forEachInStringEnum = (enumeration: { [s: number]: string }, handler: (val: string) => any): void => {
-	for (const value in enumeration) {
-		handler(enumeration[value])
-	}
-}
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import CardFaction from '@shared/enums/CardFaction'
+import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
+import Localization from '@/Pixi/Localization'
 
 export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
-	return Core.board.isInverted && player === 'player' ? Constants.GAME_BOARD_ROW_COUNT - index - 1 : index
+	return Core.board.isInverted && player === 'player' ? Core.constants.GAME_BOARD_ROW_COUNT - index - 1 : index
 }
 
 export const snakeToCamelCase = (str: string): string =>
@@ -39,7 +26,7 @@ export const insertRichTextVariables = (str: string | null | undefined, variable
 
 	let replacedText = str
 	for (const variableName in variables) {
-		const variableValue = variables[variableName] || ''
+		const variableValue = variables[variableName] === undefined ? '' : variables[variableName]
 		const regexp = new RegExp('{' + variableName + '}', 'g')
 		replacedText = replacedText.replace(regexp, '*' + variableValue.toString() + '*')
 	}
@@ -47,11 +34,13 @@ export const insertRichTextVariables = (str: string | null | undefined, variable
 }
 
 export const isElectron = (): boolean => {
+	// @ts-ignore
 	if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process['type'] === 'renderer') {
 		return true
 	}
 
 	// Main process
+	// @ts-ignore
 	if (typeof process !== 'undefined' && typeof process['versions'] === 'object' && !!process['versions'].electron) {
 		return true
 	}
@@ -60,6 +49,7 @@ export const isElectron = (): boolean => {
 	if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
 		return true
 	}
+	return false
 }
 
 type AnyPoint = {
@@ -71,27 +61,76 @@ export const getDistance = (a: AnyPoint, b: AnyPoint): number => {
 	return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
 }
 
+export const getAnimDurationMod = (): number => {
+	let value = 1
+	if (store.state.hotkeysModule.ultraFastAnimation) {
+		value = 1 / 10
+	} else if (store.state.hotkeysModule.fastAnimation || store.state.userPreferencesModule.fastMode) {
+		value = 1 / 3
+	}
+	return value
+}
+
+export const getEntityName = (id: string, players: GameHistoryPlayerDatabaseEntry[], mode: 'game' | 'admin'): string => {
+	if (id.startsWith('player:') && players.find((player) => player.id === id)) {
+		return `${players.find((player) => player.id === id)?.username}`
+	} else if (id.startsWith('player:')) {
+		return `Player#${id.substr(7, 8)}`
+	} else if (id.startsWith('group:') && players.find((player) => player.groupId === id)) {
+		const playersInGroup = players
+			.filter((player) => player.groupId === id)
+			.map((player) => player.username)
+			.join(', ')
+		return `[${playersInGroup}]`
+	} else if (id.startsWith('group:')) {
+		return `[AI Player]`
+	} else if (id.startsWith('ai:')) {
+		return `AI Player`
+	} else if (id.startsWith('card:') && mode === 'admin') {
+		return `${Localization.get(`card.${id.split(':')[1]}.name`)} [${id.split(':')[2].substr(0, 8)}]`
+	} else if (id.startsWith('buff:') && mode === 'admin') {
+		return `${Localization.get(`buff.${id.split(':')[1]}.name`)} [${id.split(':')[2].substr(0, 8)}]`
+	} else if (id.startsWith('card:') && mode === 'game') {
+		const card = Core.game.findCardById(id)
+		if (card) {
+			return `${Localization.getCardName(card)}`
+		}
+		const cardInLibrary = store.state.editor.cardLibrary.find((card) => card.id === id)
+		if (cardInLibrary) {
+			return `${Localization.getCardName(cardInLibrary)}`
+		}
+		return id
+	} else if (id.startsWith('buff:') && mode === 'game') {
+		const buff = Core.game.findBuffById(id)
+		if (buff) {
+			return `${Localization.get(buff.name)}`
+		}
+		return id
+	}
+	return id
+}
+
 const boopColors = [
 	{
-		start: '55AAFF',
-		end: '0000FF',
+		start: '55FFFF',
+		end: '00FFFF',
 	},
 	{
 		start: 'FFAAFF',
 		end: 'FF00FF',
 	},
 	{
-		start: 'FFAA55',
+		start: 'FF5555',
 		end: 'FF0000',
 	},
 	{
-		start: '8A0303',
-		end: 'dc143c',
+		start: 'AAFFAA',
+		end: '00FF00',
 	},
 ]
-let currentBoopColor = 0
+let currentBoopColor = Math.floor(Math.random() * boopColors.length)
 let boopPrepPoints: { emitter: Particles.Emitter; color: { start: string; end: string } }[] = []
-export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point, direction: 'down' | 'up'): void => {
+export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point | null, direction: 'down' | 'up'): void => {
 	const mousePos = Core.input.mousePosition
 	if (event.button === LEFT_MOUSE_BUTTON) {
 		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
@@ -114,31 +153,32 @@ export const boopTheBoard = (event: MouseEvent, startingPos: PIXI.Point, directi
 			})
 		boopPrepPoints = []
 	} else if (event.button === MIDDLE_MOUSE_BUTTON && direction === 'down') {
-		Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 		if (boopPrepPoints.length > 0 && boopPrepPoints.length < 16) {
+			Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 			boopPrepPoints.push({
 				emitter: Core.particleSystem.createBoardBoopPrepareEffect(mousePos),
 				color: getBoopColor(),
 			})
 		} else {
+			const randomColor = boopColors[Math.floor(Math.random() * boopColors.length)]
+			Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75, randomColor)
 			const vector = legacyExport.getPointWithOffset(mousePos, Math.random() * 360, 300 + Math.random() * 400)
-			const randomColor = Math.floor(Math.random() * 16777215).toString(16)
-			Core.mainHandler.projectileSystem.createBoardBoopFireworkProjectile(mousePos, vector, event, { start: randomColor, end: 'FFFFFF' })
+			Core.mainHandler.projectileSystem.createBoardBoopFireworkProjectile(mousePos, vector, event, randomColor)
 		}
 	}
 }
 export const scrollBoopColor = (event: MouseEvent, direction: number): void => {
 	currentBoopColor += direction
 	if (currentBoopColor < 0) {
-		currentBoopColor = 0
+		currentBoopColor += boopColors.length
 	} else if (currentBoopColor >= boopColors.length) {
-		currentBoopColor = boopColors.length - 1
+		currentBoopColor -= boopColors.length
 	}
 	const mousePos = Core.input.mousePosition
 	Core.particleSystem.createBoardBoopEffect(mousePos, event, 0, 0.75)
 }
 
-export const flushBoardPreps = (): void => {
+export const flushBoardBoopPreps = (): void => {
 	boopPrepPoints.forEach((prep) => {
 		Core.particleSystem.destroyEmitter(prep.emitter, Core.renderer.boardEffectsContainer)
 	})
@@ -161,6 +201,7 @@ export const isMobile = (): boolean => {
 			)
 		)
 			check = true
+		// @ts-ignore
 	})(navigator.userAgent || navigator.vendor || window['opera'])
 	return check
 }
@@ -171,6 +212,21 @@ export const electronHost = (): string => {
 
 export const electronWebsocketTarget = (): string => {
 	return 'localhost:3000'
+}
+
+export const getCardInsertIndex = (hoveredRow: RenderedGameBoardRow | null): number => {
+	if (!hoveredRow) {
+		return -1
+	}
+	const hoveredUnit = Core.input.hoveredCard
+	if (!hoveredUnit || !hoveredRow.includesCard(hoveredUnit.card)) {
+		return Core.input.mousePosition.x > hoveredRow.container.position.x ? hoveredRow.cards.length : 0
+	}
+	let index = hoveredRow.getCardIndex(hoveredUnit.card)
+	if (Core.input.mousePosition.x > hoveredUnit.card.hitboxSprite.position.x) {
+		index += 1
+	}
+	return index
 }
 
 const legacyExport = {
@@ -241,47 +297,9 @@ const legacyExport = {
 		return chunks
 	},
 
-	sortCards(inputArray: RenderedCard[]): RenderedCard[] {
-		return sortCards(inputArray) as RenderedCard[]
-	},
-
-	sortEditorCards(inputArray: CardMessage[]): any[] {
-		return sortCards(inputArray) as CardMessage[]
-	},
-
-	getMaxCardCountForColor(color: CardColor): number {
-		switch (color) {
-			case CardColor.LEADER:
-				return Constants.CARD_LIMIT_LEADER
-			case CardColor.GOLDEN:
-				return Constants.CARD_LIMIT_GOLDEN
-			case CardColor.SILVER:
-				return Constants.CARD_LIMIT_SILVER
-			case CardColor.BRONZE:
-				return Constants.CARD_LIMIT_BRONZE
-			default:
-				return 0
-		}
-	},
-
-	getMaxCardCopiesForColor(color: CardColor): number {
-		switch (color) {
-			case CardColor.LEADER:
-				return Constants.CARD_COPIES_LIMIT_LEADER
-			case CardColor.GOLDEN:
-				return Constants.CARD_COPIES_LIMIT_GOLDEN
-			case CardColor.SILVER:
-				return Constants.CARD_COPIES_LIMIT_SILVER
-			case CardColor.BRONZE:
-				return Constants.CARD_COPIES_LIMIT_BRONZE
-			default:
-				return 0
-		}
-	},
-
 	canAddCardToDeck(deckId: string, cardToAdd: Card | CardMessage): boolean {
 		const cardOfColorCount = store.getters.editor.cardsOfColor({ deckId: deckId, color: cardToAdd.color })
-		if (cardOfColorCount >= this.getMaxCardCountForColor(cardToAdd.color)) {
+		if (cardOfColorCount >= getMaxCardCountForColor(cardToAdd.color)) {
 			return false
 		}
 
@@ -290,7 +308,15 @@ const legacyExport = {
 			return false
 		}
 
-		const maxCount = this.getMaxCardCopiesForColor(cardToAdd.color)
+		if (
+			cardToAdd.faction !== CardFaction.NEUTRAL &&
+			cardToAdd.faction !== deckToModify.faction &&
+			deckToModify.faction !== CardFaction.NEUTRAL
+		) {
+			return false
+		}
+
+		const maxCount = getMaxCardCopiesForColor(cardToAdd.color)
 		const cardToModify = deckToModify.cards.find((card) => card.class === cardToAdd.class)
 		return !cardToModify || cardToModify.count < maxCount
 	},

@@ -7,15 +7,14 @@ import CardColor from '@shared/enums/CardColor'
 import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
-import { CardTargetValidatorArguments } from '../../../../../types/TargetValidatorArguments'
+import { CardTargetValidatorArguments } from '@src/types/TargetValidatorArguments'
 import CardTribe from '@shared/enums/CardTribe'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashSpellDamage, asDirectSpellDamage } from '../../../../../utils/LeaderStats'
+import { asSplashSparkDamage, asDirectSparkDamage } from '@src/utils/LeaderStats'
 
 export default class SpellSteelSpark extends ServerCard {
-	baseDamage = asDirectSpellDamage(2)
-	baseSideDamage = asSplashSpellDamage(1)
+	baseDamage = asDirectSparkDamage(4)
+	baseSideDamage = asSplashSparkDamage(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -37,8 +36,7 @@ export default class SpellSteelSpark extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.evaluate((args) => this.evaluateTarget(args))
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

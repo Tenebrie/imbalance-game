@@ -11,10 +11,10 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import BuffDuration from '@shared/enums/BuffDuration'
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashBuffPotency } from '@src/utils/LeaderStats'
+import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitVoidPortal extends ServerCard {
-	powerPerSpell = asSplashBuffPotency(1)
+	powerPerSpell = asRecurringBuffPotency(1)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -24,7 +24,7 @@ export default class UnitVoidPortal extends ServerCard {
 			relatedCards: [UnitVoidspawn],
 			stats: {
 				power: 0,
-				armor: 5,
+				armor: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,
@@ -35,7 +35,7 @@ export default class UnitVoidPortal extends ServerCard {
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => this.onTurnEnded())
 	}
 
@@ -44,9 +44,9 @@ export default class UnitVoidPortal extends ServerCard {
 		if (!unit) {
 			return
 		}
-		const owner = this.ownerInGame
-		const voidspawn = CardLibrary.instantiateByConstructor(this.game, UnitVoidspawn)
-		this.game.board.createUnit(voidspawn, unit.rowIndex, unit.unitIndex + 1)
+		const owner = unit.originalOwner
+		const voidspawn = CardLibrary.instantiate(this.game, UnitVoidspawn)
+		this.game.board.createUnit(voidspawn, owner, unit.rowIndex, unit.unitIndex + 1)
 		const uniqueSpellsInDiscard = [...new Set(owner.cardGraveyard.spellCards.map((card) => card.class))]
 		if (uniqueSpellsInDiscard.length === 0) {
 			return

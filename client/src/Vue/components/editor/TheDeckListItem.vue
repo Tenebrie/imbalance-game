@@ -62,7 +62,7 @@ export default defineComponent({
 		iconPath(): string {
 			const deck = this.deck as PopulatedEditorDeck
 			if (!deck.leader) {
-				return null
+				return ''
 			}
 			return `/assets/icons/${deck.leader.class}.webp`
 		},
@@ -93,6 +93,12 @@ export default defineComponent({
 	align-items: center;
 	min-height: 1.4em;
 	color: darken(white, 0) !important;
+	text-decoration-line: none !important;
+	transition: background-color 0.3s;
+
+	& > span {
+		text-decoration: none;
+	}
 
 	&.selected {
 		background: rgba(lighten(green, 20), 0.1);
@@ -100,6 +106,7 @@ export default defineComponent({
 
 	&:hover {
 		background: $COLOR-BACKGROUND-TRANSPARENT;
+		transition: background-color 0s;
 	}
 
 	&.selected:hover {
@@ -109,6 +116,7 @@ export default defineComponent({
 
 img {
 	height: 32px;
+	width: 32px;
 	padding: 0 4px 0 0;
 	display: inline;
 	border-radius: 100%;

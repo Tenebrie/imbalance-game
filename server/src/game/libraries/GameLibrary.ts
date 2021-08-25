@@ -1,8 +1,11 @@
 import ServerGame, { OptionalGameProps } from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import { colorizeConsoleText, colorizeId, colorizePlayer } from '../../utils/Utils'
-import GameMode from '@shared/enums/GameMode'
+import { colorizeConsoleText, colorizeId, colorizePlayer } from '@src/utils/Utils'
+import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
+import RulesetCategory from '@shared/enums/RulesetCategory'
+import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { Time } from '@shared/Utils'
 
 class GameLibrary {
 	games: ServerGame[]
@@ -11,12 +14,28 @@ class GameLibrary {
 		this.games = []
 	}
 
-	public createOwnedGame(owner: ServerPlayer, name: string, gameMode: GameMode, props: OptionalGameProps): ServerGame {
-		const game = ServerGame.newOwnedInstance(owner, name, gameMode, props)
-		console.info(`Player ${colorizePlayer(owner.username)} created game ${colorizeId(game.id)}`)
+	public createGame(owner: ServerPlayer, ruleset: RulesetConstructor, props: Partial<OptionalGameProps> = {}): ServerGame {
+		let game: ServerGame
+		const rulesetTemplate = RulesetLibrary.findTemplate(ruleset)
+		if (rulesetTemplate.category === RulesetCategory.LABYRINTH) {
+			game = ServerGame.newOwnedInstance(owner, ruleset, props)
+			console.info(`Player ${colorizePlayer(owner.username)} created owned game ${colorizeId(game.id)}`)
+		} else {
+			game = ServerGame.newPublicInstance(ruleset, props)
+			console.info(`Player ${colorizePlayer(owner.username)} created public game ${colorizeId(game.id)}`)
+		}
 
 		this.games.push(game)
+		this.startGameTimeoutTimer(game)
 		return game
+	}
+
+	public createChainGame(fromGame: ServerGame, chain: RulesetChain): ServerGame {
+		const newGame = ServerGame.newOwnedInstance(fromGame.owner!, chain.get(fromGame), {})
+		this.games.push(newGame)
+		this.startGameTimeoutTimer(newGame)
+
+		return newGame
 	}
 
 	public destroyGame(game: ServerGame, reason: string): void {
@@ -33,6 +52,7 @@ class GameLibrary {
 				spectator.player.disconnect()
 			})
 		game.players
+			.flatMap((playerGroup) => playerGroup.players)
 			.filter((playerInGame) => playerInGame.player.webSocket && playerInGame.player.webSocket.game === game)
 			.forEach((playerInGame) => {
 				OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player)
@@ -52,6 +72,26 @@ class GameLibrary {
 		}
 
 		this.destroyGame(game, reason)
+	}
+
+	private static MAXIMUM_GAME_DURATION = Time.minutes.toMilliseconds(60)
+	private startGameTimeoutTimer(game: ServerGame): void {
+		if (process.env.JEST_WORKER_ID !== undefined) {
+			return
+		}
+		setTimeout(() => {
+			this.destroyGame(game, `Game duration exceeded ${Time.milliseconds.toMinutes(GameLibrary.MAXIMUM_GAME_DURATION)} minutes.`)
+		}, GameLibrary.MAXIMUM_GAME_DURATION)
+	}
+
+	private static GAME_CLEANUP_DELAY = Time.minutes.toMilliseconds(5)
+	public startGameCleanupTimer(game: ServerGame): void {
+		if (process.env.JEST_WORKER_ID !== undefined) {
+			return
+		}
+		setTimeout(() => {
+			this.destroyGame(game, 'Cleanup')
+		}, GameLibrary.GAME_CLEANUP_DELAY)
 	}
 }
 

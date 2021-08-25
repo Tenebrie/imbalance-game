@@ -6,7 +6,7 @@ import ServerGame from './ServerGame'
 import ServerCard from './ServerCard'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
-import { CardTargetCard, CardTargetCardAllowedTypes, CardTargetRow } from '@shared/models/CardTarget'
+import { CardTargetCard, CardTargetCardAllowedTypes, CardTargetPosition, CardTargetRow } from '@shared/models/CardTarget'
 import AnonymousTargetCard from '@shared/models/AnonymousTarget'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 
@@ -67,6 +67,35 @@ export class ServerCardTargetRow implements CardTargetRow {
 		this.targetType = targetType
 		this.sourceCard = sourceCard
 		this.targetRow = targetRow
+		this.targetLabel = ''
+		this.expectedValue = 0
+	}
+}
+
+export class ServerCardTargetPosition implements CardTargetPosition {
+	public readonly id: string
+	public readonly targetMode: TargetMode
+	public readonly targetType: TargetType.BOARD_POSITION
+	public readonly sourceCard: ServerCard
+	public readonly targetRow: ServerBoardRow
+	public readonly targetPosition: number
+	public targetLabel: string
+	public expectedValue: number
+
+	public constructor(
+		rootId: string,
+		targetMode: TargetMode,
+		targetType: TargetType.BOARD_POSITION,
+		sourceCard: ServerCard,
+		targetRow: ServerBoardRow,
+		targetPosition: number
+	) {
+		this.id = `${rootId}/row${targetRow.index}/${targetPosition}`
+		this.targetMode = targetMode
+		this.targetType = targetType
+		this.sourceCard = sourceCard
+		this.targetRow = targetRow
+		this.targetPosition = targetPosition
 		this.targetLabel = ''
 		this.expectedValue = 0
 	}
@@ -151,6 +180,30 @@ export default class ServerCardTarget {
 		return order
 	}
 
+	public static cardTargetCardInUnitGraveyard(
+		rootId: string,
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetCard: ServerCard,
+		targetLabel = ''
+	): ServerCardTargetCard {
+		const order = new ServerCardTargetCard(rootId, targetMode, TargetType.CARD_IN_UNIT_GRAVEYARD, sourceCard, targetCard)
+		order.targetLabel = targetLabel
+		return order
+	}
+
+	public static cardTargetCardInSpellGraveyard(
+		rootId: string,
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetCard: ServerCard,
+		targetLabel = ''
+	): ServerCardTargetCard {
+		const order = new ServerCardTargetCard(rootId, targetMode, TargetType.CARD_IN_SPELL_GRAVEYARD, sourceCard, targetCard)
+		order.targetLabel = targetLabel
+		return order
+	}
+
 	public static cardTargetUnit(
 		rootId: string,
 		targetMode: TargetMode,
@@ -178,6 +231,20 @@ export default class ServerCardTarget {
 		return order
 	}
 
+	public static cardTargetPosition(
+		rootId: string,
+		targetMode: TargetMode,
+		sourceCard: ServerCard,
+		targetRow: ServerBoardRow,
+		targetPosition: number,
+		targetLabel = ''
+	): ServerCardTargetPosition {
+		const order = new ServerCardTargetPosition(rootId, targetMode, TargetType.BOARD_POSITION, sourceCard, targetRow, targetPosition)
+		order.targetLabel = targetLabel
+		order.expectedValue = 0
+		return order
+	}
+
 	public static anonymousTargetCardInUnitHand(targetMode: TargetMode, targetCard: ServerCard): ServerAnonymousTargetCard {
 		// Intentionally sets target type to TargetType.CARD_IN_UNIT_DECK
 		return new ServerAnonymousTargetCard('game', targetMode, TargetType.CARD_IN_UNIT_DECK, targetCard)
@@ -188,7 +255,11 @@ export default class ServerCardTarget {
 	}
 
 	public static fromAnonymousMessage(game: ServerGame, message: AnonymousTargetMessage): ServerAnonymousTargetCard {
-		if (message.targetType === TargetType.UNIT || message.targetType === TargetType.BOARD_ROW) {
+		if (
+			message.targetType === TargetType.UNIT ||
+			message.targetType === TargetType.BOARD_ROW ||
+			message.targetType === TargetType.BOARD_POSITION
+		) {
 			throw new Error('Not supported')
 		}
 

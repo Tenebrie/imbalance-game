@@ -5,25 +5,23 @@ import TargetType from '@shared/enums/TargetType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerBoardRow from '../../../models/ServerBoardRow'
-import BuffDuration from '@shared/enums/BuffDuration'
-import BuffBurning from '../../../buffs/BuffBurning'
-import GameEventType from '@shared/enums/GameEventType'
+import BuffRowBurning from '../../../buffs/BuffRowBurning'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashEffectDuration } from '../../../../utils/LeaderStats'
+import { asSplashEffectDuration } from '@src/utils/LeaderStats'
 
 export default class HeroFlameDancer extends ServerCard {
-	burnDuration = asSplashEffectDuration(3)
+	burnDuration = asSplashEffectDuration(9)
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_DEPLOY],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_ROW_BURNING],
 			generatedArtworkMagicString: '2',
 			stats: {
-				power: 5,
+				power: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -31,20 +29,12 @@ export default class HeroFlameDancer extends ServerCard {
 			burnDuration: this.burnDuration,
 		}
 
-		this.createDeployTargets(TargetType.BOARD_ROW).require((args) => {
-			return args.targetRow.owner === args.sourceCard.ownerInGame.opponent && args.targetRow.cards.length > 0
-		})
+		this.createDeployTargets(TargetType.BOARD_ROW)
+			.requireEnemy()
+			.perform(({ targetRow }) => onTargetSelected(targetRow))
 
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_ROW).perform(({ targetRow }) => this.onTargetSelected(targetRow))
-	}
-
-	private onTargetSelected(target: ServerBoardRow): void {
-		const targetUnits = target.cards
-
-		targetUnits.forEach((targetUnit) => {
-			this.game.animation.createAnimationThread()
-			targetUnit.card.buffs.add(BuffBurning, this, BuffDuration.FULL_TURN * this.burnDuration(this) - 1)
-			this.game.animation.commitAnimationThread()
-		})
+		const onTargetSelected = (target: ServerBoardRow): void => {
+			target.buffs.add(BuffRowBurning, this)
+		}
 	}
 }

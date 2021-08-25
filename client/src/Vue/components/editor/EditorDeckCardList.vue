@@ -51,11 +51,11 @@ export default defineComponent({
 
 	computed: {
 		deckId(): string {
-			return this.$route.params.deckId
+			return this.$route.params.deckId as string
 		},
 
 		deck(): PopulatedEditorDeck {
-			return store.state.editor.decks.find((deck) => deck.id === this.deckId)
+			return store.state.editor.decks.find((deck) => deck.id === this.deckId)!
 		},
 
 		leaderCards(): PopulatedEditorCard[] {

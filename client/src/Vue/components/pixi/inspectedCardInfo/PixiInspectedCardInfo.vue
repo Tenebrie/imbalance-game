@@ -77,7 +77,7 @@ import CardColor from '@shared/enums/CardColor'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import InspectedCardBuffs from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
-import ClientBuff from '@/Pixi/models/ClientBuff'
+import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import BuffFeature from '@shared/enums/BuffFeature'
 
@@ -93,7 +93,7 @@ export default defineComponent({
 		const displayExperimentalCards = computed<boolean>(() => !isInGame.value && routeQuery.value.experimental)
 
 		const inspectedCard = computed<CardMessage | RenderedCard>(() => {
-			const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card.id) : null
+			const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card!.id) : null
 			return (isInGame.value && cardInGame) || (store.getters.inspectedCard.card as CardMessage | RenderedCard)
 		})
 
@@ -102,7 +102,11 @@ export default defineComponent({
 		})
 
 		const displayManacost = computed<boolean>(() => {
-			return inspectedCard.value.stats.baseSpellCost > 0 || inspectedCard.value.stats.spellCost > 0
+			return (
+				inspectedCard.value.type === CardType.SPELL ||
+				inspectedCard.value.stats.baseSpellCost > 0 ||
+				inspectedCard.value.stats.spellCost > 0
+			)
 		})
 
 		const displayedFeatures = computed<CardFeature[]>(() => {
@@ -113,13 +117,13 @@ export default defineComponent({
 				})
 			}
 			features = [...new Set(features)]
-			return features.filter((feature) => Localization.getValueOrNull(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`))
+			return features.filter((feature) => Localization.get(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`, 'null'))
 		})
 
 		const displayedRelatedCards = computed<string[]>(() => {
 			return new Array(...new Set(inspectedCard.value.relatedCards)).filter((cardClass) => {
 				const populatedCard = store.state.editor.cardLibrary.find((card) => card.class === cardClass)
-				return !populatedCard.isExperimental || inspectedCard.value.isExperimental || displayExperimentalCards.value
+				return !populatedCard?.isExperimental || inspectedCard.value.isExperimental || displayExperimentalCards.value
 			})
 		})
 
@@ -170,7 +174,7 @@ export default defineComponent({
 		}
 
 		const flavorTextLines = computed<string[]>(() => {
-			const value = Localization.getValueOrNull(inspectedCard.value.flavor)
+			const value = Localization.getCardFlavor(inspectedCard.value)
 			if (value === null) {
 				return []
 			}
@@ -208,7 +212,8 @@ export default defineComponent({
 	z-index: 10;
 	background: black;
 	padding: 8px 16px;
-	background: rgba(#000000, 0.8);
+	background: rgba(#000000, 0.5);
+	backdrop-filter: blur(4px);
 	border-radius: 10px;
 	font-size: 20px;
 	margin-top: 4px;

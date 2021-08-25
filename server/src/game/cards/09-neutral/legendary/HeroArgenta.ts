@@ -18,13 +18,13 @@ export default class HeroArgenta extends ServerCard {
 			tribes: [CardTribe.BIRD],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
 			stats: {
-				power: 4,
+				power: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
-			.require(({ targetCard }) => targetCard.ownerInGame === this.ownerInGame)
+			.requireSamePlayer()
 			.require(({ targetCard }) => targetCard.color === CardColor.SILVER)
 			.perform(({ targetCard }) => {
 				Keywords.summonCard(targetCard)

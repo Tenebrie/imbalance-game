@@ -6,8 +6,8 @@ export default class RenderedProjectile {
 	sprite: PIXI.Sprite
 	trail: ObjectTrail
 	startingPoint: PIXI.Point
-	targetCard: RenderedCard | null
-	targetPoint: PIXI.Point | null
+	targetCard: RenderedCard | null = null
+	targetPoint: PIXI.Point | null = null
 	targetMouse = false
 	currentTime: number
 	animationDuration: number
@@ -33,16 +33,6 @@ export default class RenderedProjectile {
 		}
 
 		this.impactPerformed = false
-	}
-
-	public static inPlace(
-		sprite: PIXI.Sprite,
-		startingPoint: PIXI.Point,
-		animationDuration: number,
-		lifetime: number,
-		curve = 1
-	): RenderedProjectile {
-		return new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime, curve)
 	}
 
 	public static targetCard(

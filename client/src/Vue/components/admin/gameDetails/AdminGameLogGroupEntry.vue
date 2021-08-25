@@ -8,6 +8,7 @@ import { computed, defineComponent, PropType } from 'vue'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import Localization from '@/Pixi/Localization'
 import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
+import { getEntityName } from '@/utils/Utils'
 
 interface Props {
 	entry: EventLogEntryMessage
@@ -38,22 +39,12 @@ export default defineComponent({
 			}
 			let template = Localization.get(id)
 			for (const key in props.entry.args) {
-				let value = props.entry.args[key] as string
+				let value = props.entry.args[key]
 				if (typeof value === 'string') {
-					if (value.startsWith('player:') && props.players.find((player) => player.id === value)) {
-						value = `<b>${props.players.find((player) => player.id === value).username}</b>`
-					} else if (value.startsWith('player:')) {
-						value = `<b>Player#${value.substr(7, 8)}</b>`
-					} else if (value.startsWith('ai:')) {
-						value = `<b>AI</b>`
-					} else if (value.startsWith('card:')) {
-						value = `<b>${Localization.get(`card.${value.split(':')[1]}.name`)} [${value.split(':')[2].substr(0, 8)}]</b>`
-					} else if (value.startsWith('buff:')) {
-						value = `<b>${Localization.get(`buff.${value.split(':')[1]}.name`)} [${value.split(':')[2].substr(0, 8)}]</b>`
-					}
+					value = `<b>${getEntityName(value, props.players, 'admin')}</b>`
 				}
 
-				template = template.replace(new RegExp(`{${key}}`, 'g'), value)
+				template = template.replace(new RegExp(`{${key}}`, 'g'), value.toString())
 			}
 			return template
 		})

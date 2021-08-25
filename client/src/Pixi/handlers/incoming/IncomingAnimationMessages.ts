@@ -7,6 +7,7 @@ import Core from '@/Pixi/Core'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
 import AnimationDuration from '@shared/enums/AnimationDuration'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import { getAnimDurationMod } from '@/utils/Utils'
 
 const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMessageHandlerFunction } = {
 	[AnimationMessageType.PLAY]: (data: AnimationMessage, systemData: QueuedMessageSystemData) => {
@@ -14,7 +15,9 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 		const handlerResponse = handler(data, data.params)
 		if (!handlerResponse || !handlerResponse.skip) {
 			const extraDuration = (handlerResponse && handlerResponse.extraDelay) || 0
-			Core.mainHandler.triggerAnimation(AnimationDuration[data.type] + extraDuration, systemData.animationThreadId)
+			const speedModifier = getAnimDurationMod()
+			const time = (AnimationDuration[data.type] + extraDuration) * speedModifier
+			Core.mainHandler.triggerAnimation(time, systemData.animationThreadId)
 		}
 	},
 
@@ -28,13 +31,22 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 
 	[AnimationMessageType.THREAD_START]: (data: AnimationThreadStartMessage, systemData: QueuedMessageSystemData) => {
 		const parentThread = Core.mainHandler.mainAnimationThread.findThread(systemData.animationThreadId)
+		if (!parentThread) {
+			console.error('No parent animation thread found')
+			return
+		}
 		const targetThread = parentThread.workerThreads.find((thread) => !thread.started)
+		if (!targetThread) {
+			console.error('No queued animation threads found')
+			return
+		}
 		const activeStaggeredWorkerThreadCount = parentThread.workerThreads.filter(
 			(thread) => thread.started && thread.isStaggered && thread.hasAnimationMessages()
 		).length
 		if (data.isStaggered && targetThread.hasAnimationMessages()) {
+			const speedModifier = getAnimDurationMod()
 			const animationCooldown = Core.game.turnPhase === GameTurnPhase.ROUND_END ? 50 : 150
-			targetThread.triggerCooldown(activeStaggeredWorkerThreadCount * animationCooldown)
+			targetThread.triggerCooldown(activeStaggeredWorkerThreadCount * animationCooldown * speedModifier)
 		}
 		targetThread.start()
 	},

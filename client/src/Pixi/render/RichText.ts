@@ -1,35 +1,10 @@
 import * as PIXI from 'pixi.js'
-import Utils, { insertRichTextVariables } from '@/utils/Utils'
+import Utils from '@/utils/Utils'
 import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import RichTextBackground from '@/Pixi/render/RichTextBackground'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
-
-enum SegmentType {
-	TEXT = 'TEXT',
-	ITALIC = 'ITALIC',
-	HIGHLIGHT = 'HIGHLIGHT',
-	OPENING_TAG = 'OPENING_TAG',
-	CLOSING_TAG = 'CLOSING_TAG',
-	WORD_SEPARATOR = 'WORD_SEPARATOR',
-	LINE_SEPARATOR = 'LINE_SEPARATOR',
-}
-
-interface ParsingStateTransitionTrigger {
-	state: SegmentType
-	token: string
-}
-
-interface ParsingStateTransitionAction {
-	state: SegmentType
-	insertedSegment?: SegmentType
-	postSegment?: SegmentType
-}
-
-interface Segment {
-	type: SegmentType
-	data?: string
-}
+import { parseRichText, SegmentType } from '@/utils/RichTextParser'
 
 interface RichTextStyle {
 	fill: number
@@ -52,7 +27,7 @@ export default class RichText extends PIXI.Container {
 
 	private variables: RichTextVariables
 	segments: { text: ScalingText; basePosition: PIXI.Point; lineIndex: number }[]
-	background: RichTextBackground
+	background!: RichTextBackground
 	private __horizontalAlign: RichTextAlign = RichTextAlign.CENTER
 	private __verticalAlign: RichTextAlign = RichTextAlign.END
 	private __textLineCount = 0
@@ -236,70 +211,9 @@ export default class RichText extends PIXI.Container {
 
 		const SCALE_MODIFIER = this.fontSize / this.baseFontSize
 
-		const replacedText = insertRichTextVariables(this.text || '', this.variables)
-		const chars = Array.from(replacedText)
-
-		const segments: Segment[] = []
-
-		let currentState = SegmentType.TEXT
-		let currentData = ''
-		let resultingText = ''
-
-		const stateSegmentType: Map<SegmentType, SegmentType> = new Map<SegmentType, SegmentType>()
-		stateSegmentType.set(SegmentType.TEXT, SegmentType.TEXT)
-		stateSegmentType.set(SegmentType.HIGHLIGHT, SegmentType.HIGHLIGHT)
-
-		const stateTransitions: Map<ParsingStateTransitionTrigger, ParsingStateTransitionAction> = new Map<
-			ParsingStateTransitionTrigger,
-			ParsingStateTransitionAction
-		>()
-
-		stateTransitions.set(
-			{ state: SegmentType.TEXT, token: ' ' },
-			{ state: SegmentType.TEXT, insertedSegment: SegmentType.TEXT, postSegment: SegmentType.WORD_SEPARATOR }
-		)
-		stateTransitions.set(
-			{ state: SegmentType.TEXT, token: '\n' },
-			{ state: SegmentType.TEXT, insertedSegment: SegmentType.TEXT, postSegment: SegmentType.LINE_SEPARATOR }
-		)
-		stateTransitions.set(
-			{ state: SegmentType.TEXT, token: '_' },
-			{ state: SegmentType.TEXT, insertedSegment: SegmentType.TEXT, postSegment: SegmentType.ITALIC }
-		)
-		stateTransitions.set(
-			{ state: SegmentType.TEXT, token: '*' },
-			{ state: SegmentType.TEXT, insertedSegment: SegmentType.TEXT, postSegment: SegmentType.HIGHLIGHT }
-		)
-		stateTransitions.set({ state: SegmentType.TEXT, token: '<' }, { state: SegmentType.OPENING_TAG, insertedSegment: SegmentType.TEXT })
-		stateTransitions.set({ state: SegmentType.OPENING_TAG, token: '/' }, { state: SegmentType.CLOSING_TAG })
-		stateTransitions.set(
-			{ state: SegmentType.OPENING_TAG, token: '>' },
-			{ state: SegmentType.TEXT, insertedSegment: SegmentType.OPENING_TAG }
-		)
-		stateTransitions.set(
-			{ state: SegmentType.CLOSING_TAG, token: '>' },
-			{ state: SegmentType.TEXT, insertedSegment: SegmentType.CLOSING_TAG }
-		)
-
-		for (let i = 0; i < chars.length; i++) {
-			const char = chars[i]
-			const trigger = { state: currentState, token: char }
-			const action = this.getStateTransition(stateTransitions, trigger)
-			if (!action) {
-				currentData += char
-				continue
-			}
-
-			if (action.insertedSegment && currentData) {
-				segments.push({ type: action.insertedSegment, data: currentData })
-			}
-			if (action.postSegment) {
-				segments.push({ type: action.postSegment })
-			}
-			currentState = action.state
-			currentData = ''
-		}
-		segments.push({ type: currentState, data: currentData || '' })
+		const parsedText = parseRichText(this.text || '', this.variables)
+		this.__renderedText = parsedText.humanReadableText
+		const segments = parsedText.segments
 
 		const contextPosition = new PIXI.Point(0, 0)
 		let contextHighlight = false
@@ -327,7 +241,6 @@ export default class RichText extends PIXI.Container {
 			flushData()
 			contextPosition.y += this.lineHeight
 			linesRendered += 1
-			resultingText += '\n'
 		}
 
 		const insertText = (text: string) => {
@@ -336,7 +249,7 @@ export default class RichText extends PIXI.Container {
 				fontSize: this.fontSize,
 				fontStyle: contextItalic ? 'italic' : 'normal',
 				padding: contextItalic ? 8 : 0,
-				fill: contextHighlight ? 0xffffff : contextColor,
+				fill: contextHighlight ? 0xd69747 : contextColor,
 				dropShadow: this.dropShadow,
 				dropShadowBlur: this.dropShadowBlur,
 			})
@@ -360,7 +273,6 @@ export default class RichText extends PIXI.Container {
 			this.addChild(renderedText)
 
 			contextPosition.x += measure.width
-			resultingText += text
 		}
 
 		segments.forEach((segment) => {
@@ -383,6 +295,10 @@ export default class RichText extends PIXI.Container {
 						case 'color':
 							contextColorStack.push(contextColor)
 							contextColor = this.standardizeColor(openingTag.args)
+							break
+						case 'n':
+						case 'br':
+							newLine()
 							break
 						case 'p':
 						case 'para':
@@ -439,7 +355,6 @@ export default class RichText extends PIXI.Container {
 
 				case SegmentType.WORD_SEPARATOR:
 					contextPosition.x += 5 * SCALE_MODIFIER
-					resultingText += ' '
 					break
 
 				case SegmentType.LINE_SEPARATOR:
@@ -466,23 +381,6 @@ export default class RichText extends PIXI.Container {
 				new PIXI.Point(this.maxWidth, contextPosition.y * (this.baseFontSize / 18))
 			)
 		}
-		this.__renderedText = resultingText
-	}
-
-	getStateTransition(
-		stateTransitions: Map<ParsingStateTransitionTrigger, ParsingStateTransitionAction>,
-		trigger: ParsingStateTransitionTrigger
-	): ParsingStateTransitionAction | null {
-		const keys = stateTransitions.keys()
-		let key = keys.next()
-		while (!key.done) {
-			const recordedTrigger = key.value
-			if (recordedTrigger.state === trigger.state && recordedTrigger.token === trigger.token) {
-				return stateTransitions.get(recordedTrigger)
-			}
-			key = keys.next()
-		}
-		return null
 	}
 
 	parseTag(tag: string): { name: string; args: string } {

@@ -7,9 +7,11 @@ import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTargetDefinition'
 import {
 	CardTargetValidatorArguments,
+	PositionTargetValidatorArguments,
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export type OrderTarget = {
 	target: ValidServerCardTarget
@@ -32,7 +34,7 @@ export default class ServerBoardOrders {
 			.flat()
 	}
 
-	public performUnitOrder(targetMessage: CardTargetMessage): void {
+	public performUnitOrder(targetMessage: CardTargetMessage, player: ServerPlayerInGame): void {
 		const order = this.validOrders.find((validOrder) => validOrder.target.id === targetMessage.id)
 		if (!order) {
 			return
@@ -45,6 +47,7 @@ export default class ServerBoardOrders {
 			const definition = order.definition as OrderTargetDefinition<UnitTargetValidatorArguments>
 			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
 			definition.perform({
+				player,
 				sourceCard: sourceCard,
 				targetCard: order.target.targetCard,
 				targetUnit: order.target.targetCard.unit!,
@@ -54,23 +57,36 @@ export default class ServerBoardOrders {
 			const definition = order.definition as OrderTargetDefinition<RowTargetValidatorArguments>
 			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
 			definition.perform({
+				player,
 				sourceCard: sourceCard,
 				targetRow: order.target.targetRow,
+				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),
+			})
+		} else if (order.target.targetType === TargetType.BOARD_POSITION) {
+			const definition = order.definition as OrderTargetDefinition<PositionTargetValidatorArguments>
+			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
+			definition.perform({
+				player,
+				sourceCard: sourceCard,
+				targetRow: order.target.targetRow,
+				targetPosition: targetMessage.targetPosition,
 				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),
 			})
 		} else {
 			const definition = order.definition as OrderTargetDefinition<CardTargetValidatorArguments>
 			const applicablePreviousOrders = this.performedOrders.filter((order) => order.definition === definition)
 			definition.perform({
+				player,
 				sourceCard: sourceCard,
 				targetCard: order.target.targetCard,
 				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),
 			})
 		}
 
-		if (order.target.targetType !== TargetType.BOARD_ROW) {
+		if (order.target.targetType !== TargetType.BOARD_ROW && order.target.targetType !== TargetType.BOARD_POSITION) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingCard({
+					game: this.game,
 					triggeringUnit: orderedUnit,
 					targetType: order.target.targetType,
 					targetCard: order.target.targetCard,
@@ -81,6 +97,7 @@ export default class ServerBoardOrders {
 		if (order.target.targetType === TargetType.UNIT) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingUnit({
+					game: this.game,
 					triggeringUnit: orderedUnit,
 					targetType: order.target.targetType,
 					targetCard: order.target.targetCard,
@@ -92,9 +109,22 @@ export default class ServerBoardOrders {
 		if (order.target.targetType === TargetType.BOARD_ROW) {
 			this.game.events.postEvent(
 				GameEventCreators.unitIssuedOrderTargetingRow({
+					game: this.game,
 					triggeringUnit: orderedUnit,
 					targetType: order.target.targetType,
 					targetRow: order.target.targetRow,
+					targetArguments: order.target,
+				})
+			)
+		}
+		if (order.target.targetType === TargetType.BOARD_POSITION) {
+			this.game.events.postEvent(
+				GameEventCreators.unitIssuedOrderTargetingPosition({
+					game: this.game,
+					triggeringUnit: orderedUnit,
+					targetType: order.target.targetType,
+					targetRow: order.target.targetRow,
+					targetPosition: order.target.targetPosition,
 					targetArguments: order.target,
 				})
 			)

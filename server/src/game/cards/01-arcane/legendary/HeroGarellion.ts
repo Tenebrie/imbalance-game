@@ -20,7 +20,7 @@ export default class HeroGarellion extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_INFUSE_ALL],
 			stats: {
-				power: 12,
+				power: 20,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -29,13 +29,13 @@ export default class HeroGarellion extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.ROUND_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.perform(() => this.onRoundEnded())
 	}
 
 	private onRoundEnded(): void {
-		const consumedMana = this.ownerInGame.spellMana
-		this.ownerInGame.setSpellMana(0)
+		const consumedMana = this.ownerPlayerInGame.spellMana
+		this.ownerPlayerInGame.setSpellMana(0)
 		for (let i = 0; i < consumedMana * this.powerPerMana; i++) {
 			this.game.animation.createAnimationThread()
 			this.buffs.add(BuffStrength, this, BuffDuration.INFINITY)

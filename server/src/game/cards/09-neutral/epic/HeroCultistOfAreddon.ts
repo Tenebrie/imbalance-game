@@ -5,7 +5,6 @@ import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import ServerUnit from '../../../models/ServerUnit'
 import TargetType from '@shared/enums/TargetType'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardTribe from '@shared/enums/CardTribe'
@@ -20,7 +19,7 @@ export default class HeroCultistOfAreddon extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			stats: {
-				power: 2,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -29,8 +28,7 @@ export default class HeroCultistOfAreddon extends ServerCard {
 			.requireAllied()
 			.requireNotSelf()
 			.require(({ targetCard }) => !targetCard.tribes.includes(CardTribe.CULTIST))
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {

@@ -13,11 +13,15 @@ import { defineComponent } from 'vue'
 export default defineComponent({
 	computed: {
 		deckId(): string {
-			return this.$route.params.deckId
+			const id = this.$route.params.deckId
+			if (id instanceof Array) {
+				return id[0]
+			}
+			return id
 		},
 
 		deck(): PopulatedEditorDeck {
-			return store.state.editor.decks.find((deck) => deck.id === this.deckId)
+			return store.state.editor.decks.find((deck) => deck.id === this.deckId)!
 		},
 
 		deckName: {
@@ -25,8 +29,7 @@ export default defineComponent({
 				return this.deck.name
 			},
 			set(name: string): void {
-				const deckId = this.$route.params.deckId
-				store.dispatch.editor.renameDeck({ deckId, name })
+				store.dispatch.editor.renameDeck({ deckId: this.deckId, name })
 			},
 		},
 	},
@@ -47,10 +50,12 @@ export default defineComponent({
 		text-align: center;
 		width: calc(100% - 32px);
 		margin: 0 8px;
+		transition: background-color 0.3s;
 
 		&:hover,
 		&:focus {
 			background: rgba(white, 0.1);
+			transition: background-color 0s;
 		}
 	}
 
@@ -63,6 +68,7 @@ export default defineComponent({
 		top: 0;
 		right: 16px;
 		opacity: 0.5;
+		pointer-events: none;
 	}
 }
 </style>

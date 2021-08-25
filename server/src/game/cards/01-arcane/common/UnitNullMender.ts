@@ -20,7 +20,7 @@ export default class UnitNullMender extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitShatteredSpace],
 			stats: {
-				power: 9,
+				power: 17,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

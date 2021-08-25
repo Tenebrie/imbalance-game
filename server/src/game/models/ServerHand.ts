@@ -29,7 +29,6 @@ export default class ServerHand {
 		this.unitCards.splice(index, 0, card)
 		OutgoingMessageHandlers.notifyAboutCardAddedToUnitHand(this.owner, card)
 		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
-			OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this.owner)
 			this.game.animation.play(ServerAnimation.cardDraw())
 		}
 	}
@@ -38,7 +37,6 @@ export default class ServerHand {
 		this.spellCards.push(card)
 		OutgoingMessageHandlers.notifyAboutCardAddedToSpellHand(this.owner, card)
 		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
-			OutgoingMessageHandlers.notifyAboutValidActionsChanged(this.game, this.owner)
 			this.game.animation.play(ServerAnimation.cardDraw())
 		}
 	}
@@ -47,6 +45,7 @@ export default class ServerHand {
 		this.addUnit(card)
 		this.game.events.postEvent(
 			GameEventCreators.cardDrawn({
+				game: this.game,
 				owner: this.owner,
 				triggeringCard: card,
 			})
@@ -57,6 +56,7 @@ export default class ServerHand {
 		this.addSpell(card)
 		this.game.events.postEvent(
 			GameEventCreators.cardDrawn({
+				game: this.game,
 				owner: this.owner,
 				triggeringCard: card,
 			})
@@ -66,6 +66,7 @@ export default class ServerHand {
 	public discardCard(card: ServerCard): void {
 		this.game.events.postEvent(
 			GameEventCreators.cardDiscarded({
+				game: this.game,
 				owner: this.owner,
 				triggeringCard: card,
 			})

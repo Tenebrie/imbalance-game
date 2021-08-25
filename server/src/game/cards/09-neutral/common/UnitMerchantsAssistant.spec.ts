@@ -23,7 +23,7 @@ describe('UnitMerchantsAssistant', () => {
 		player.cardHand.addSpell(new TestingSpell10Mana(game))
 
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
 		})
 
 		expect(player.cardHand.spellCards[0].stats.spellCost).toEqual(7)
@@ -33,7 +33,7 @@ describe('UnitMerchantsAssistant', () => {
 
 	it('makes spells cheaper when they get into the hand', () => {
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
 		})
 
 		playerAction(() => {
@@ -54,10 +54,10 @@ describe('UnitMerchantsAssistant', () => {
 			player.cardHand.addSpell(new TestingSpell10Mana(game))
 		})
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
 		})
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(player.cardHand.spellCards[0], player), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(player.cardHand.spellCards[0], player), 0, 0)
 		})
 
 		expect(player.cardHand.spellCards[0].stats.spellCost).toEqual(10)
@@ -71,7 +71,7 @@ describe('UnitMerchantsAssistant', () => {
 			player.cardHand.addSpell(new TestingSpell10Mana(game))
 		})
 		playerAction(() => {
-			game.cardPlay.playCard(new ServerOwnedCard(cardInHand, player), 0, 0)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
 		})
 
 		startNextRound()

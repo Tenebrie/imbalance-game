@@ -11,6 +11,8 @@ export type CardTargetCardAllowedTypes =
 	| TargetType.CARD_IN_SPELL_HAND
 	| TargetType.CARD_IN_UNIT_DECK
 	| TargetType.CARD_IN_SPELL_DECK
+	| TargetType.CARD_IN_UNIT_GRAVEYARD
+	| TargetType.CARD_IN_SPELL_GRAVEYARD
 
 export interface CardTargetCard {
 	id: string
@@ -40,5 +42,15 @@ export interface CardTargetRow {
 	targetLabel: string
 }
 
-type CardTarget = CardTargetCard | CardTargetUnit | CardTargetRow
+export interface CardTargetPosition {
+	id: string
+	targetMode: TargetMode
+	targetType: TargetType.BOARD_POSITION
+	sourceCard: Card
+	targetRow: BoardRow
+	targetPosition: number
+	targetLabel: string
+}
+
+type CardTarget = CardTargetCard | CardTargetUnit | CardTargetRow | CardTargetPosition
 export default CardTarget

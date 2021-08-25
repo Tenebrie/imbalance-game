@@ -1,7 +1,7 @@
 enum GameMode {
-	VS_AI = 'sp_ai',
-	VS_PLAYER = 'mp',
-	CHALLENGE = 'ch',
+	PVP,
+	PVE,
+	COOP,
 }
 
 export default GameMode

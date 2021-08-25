@@ -1,18 +1,22 @@
 import ServerGame from './ServerGame'
 import BoardRow from '@shared/models/BoardRow'
 import ServerUnit from './ServerUnit'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import Constants from '@shared/Constants'
 import ServerCard from './ServerCard'
 import ServerAnimation from './ServerAnimation'
 import ServerGameEventCreators from './events/GameEventCreators'
+import ServerBuffContainer from './buffs/ServerBuffContainer'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export default class ServerBoardRow implements BoardRow {
-	index: number
-	game: ServerGame
-	owner: ServerPlayerInGame | null
-	cards: ServerUnit[]
+	public readonly index: number
+	public readonly game: ServerGame
+
+	public owner: ServerPlayerGroup | null
+	public cards: ServerUnit[]
+	public readonly buffs: ServerBuffContainer = new ServerBuffContainer(this)
 
 	constructor(game: ServerGame, index: number) {
 		this.index = index
@@ -29,12 +33,12 @@ export default class ServerBoardRow implements BoardRow {
 		return this.cards.length
 	}
 
-	public createUnit(card: ServerCard, unitIndex: number): ServerUnit | null {
+	public createUnit(card: ServerCard, createdBy: ServerPlayerInGame, unitIndex: number): ServerUnit | null {
 		if (this.cards.length >= Constants.MAX_CARDS_PER_ROW) {
 			return null
 		}
 
-		const unit = new ServerUnit(this.game, card, this.owner!)
+		const unit = new ServerUnit(this.game, card, this.owner!, createdBy)
 		this.insertUnit(unit, unitIndex)
 
 		/* Play deploy animation */
@@ -42,6 +46,9 @@ export default class ServerBoardRow implements BoardRow {
 
 		this.game.events.postEvent(
 			ServerGameEventCreators.unitCreated({
+				game: this.game,
+				owner: this.owner!,
+				triggeringCard: unit.card,
 				triggeringUnit: unit,
 			})
 		)
@@ -67,14 +74,14 @@ export default class ServerBoardRow implements BoardRow {
 		OutgoingMessageHandlers.notifyAboutUnitDestroyed(unit)
 	}
 
-	public setOwner(player: ServerPlayerInGame | null): void {
+	public setOwner(player: ServerPlayerGroup | null): void {
 		if (this.owner === player) {
 			return
 		}
 
 		this.owner = player
-		this.game.players.forEach((playerInGame) => {
-			OutgoingMessageHandlers.notifyAboutRowOwnershipChanged(playerInGame.player, this)
+		this.game.players.forEach(() => {
+			OutgoingMessageHandlers.notifyAboutRowOwnershipChanged(this)
 		})
 	}
 

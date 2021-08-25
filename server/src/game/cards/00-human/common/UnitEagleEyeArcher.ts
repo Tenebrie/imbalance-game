@@ -11,7 +11,7 @@ import ServerDamageInstance from '../../../models/ServerDamageSource'
 import { asDirectUnitDamage } from '@src/utils/LeaderStats'
 
 export default class UnitEagleEyeArcher extends ServerCard {
-	damage = asDirectUnitDamage(1)
+	damage = asDirectUnitDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -21,7 +21,7 @@ export default class UnitEagleEyeArcher extends ServerCard {
 			tribes: [CardTribe.PEASANT, CardTribe.SOLDIER],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 9,
+				power: 18,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

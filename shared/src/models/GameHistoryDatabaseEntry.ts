@@ -13,5 +13,6 @@ export default interface GameHistoryDatabaseEntry {
 
 export interface GameHistoryPlayerDatabaseEntry {
 	id: string
+	groupId: string
 	username: string
 }

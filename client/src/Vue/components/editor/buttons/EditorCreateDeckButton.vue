@@ -1,8 +1,8 @@
 <template>
 	<div class="button-container">
 		<button class="primary" @click="onClick">
-			<span v-if="!requestInFlight">{{ $locale.get('ui.editor.deck.create') }}</span>
-			<span v-if="requestInFlight">{{ $locale.get('ui.editor.deck.create.progress') }}</span>
+			<span v-if="!requestInFlight"><i class="fas fa-plus-circle" /> {{ $locale.get('ui.editor.deck.create') }}</span>
+			<span v-if="requestInFlight"><progress-spinner /> {{ $locale.get('ui.editor.deck.create.progress') }}</span>
 		</button>
 	</div>
 </template>
@@ -11,8 +11,11 @@
 import Notifications from '@/utils/Notifications'
 import store from '@/Vue/store'
 import { defineComponent } from 'vue'
+import ProgressSpinner from '../../utils/ProgressSpinner.vue'
 
 export default defineComponent({
+	components: { ProgressSpinner },
+
 	data: () => ({
 		requestInFlight: false,
 	}),
@@ -25,6 +28,8 @@ export default defineComponent({
 				Notifications.error('An error occurred while creating the deck')
 				return
 			}
+
+			store.dispatch.popupModule.closeAll()
 
 			await this.$router.push({
 				name: 'single-deck',
@@ -46,11 +51,8 @@ export default defineComponent({
 	align-items: center;
 	justify-content: center;
 	button {
-		width: 80%;
-		max-width: 350px;
+		width: 100%;
 		font-size: 1.2em;
-		margin-top: 32px;
-		margin-bottom: 32px;
 	}
 }
 </style>

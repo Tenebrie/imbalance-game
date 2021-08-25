@@ -9,7 +9,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 import CardLibrary from '../../../libraries/CardLibrary'
-import Utils from '../../../../utils/Utils'
+import { shuffle } from '@src/utils/Utils'
 
 export default class HeroChallengeLegendaryExplorer1 extends ServerCard {
 	exploredCards: ServerCard[] = []
@@ -22,7 +22,7 @@ export default class HeroChallengeLegendaryExplorer1 extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
 			stats: {
-				power: 3,
+				power: 5,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,
@@ -36,8 +36,7 @@ export default class HeroChallengeLegendaryExplorer1 extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_LIBRARY)
 			.require((args) => args.targetCard.color === CardColor.GOLDEN)
 			.require(({ targetCard }) => this.exploredCards.includes(targetCard))
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => this.onTargetSelected(targetCard))
+			.perform(({ targetCard }) => this.onTargetSelected(targetCard))
 	}
 
 	private onDeploy(): void {
@@ -45,11 +44,11 @@ export default class HeroChallengeLegendaryExplorer1 extends ServerCard {
 			.filter((card) => card.color === CardColor.GOLDEN)
 			.filter((card) => card.isCollectible)
 			.slice()
-		this.exploredCards = Utils.shuffle(legendaryCards).slice(0, this.cardsToExplore)
+		this.exploredCards = shuffle(legendaryCards).slice(0, this.cardsToExplore)
 	}
 
 	private onTargetSelected(target: ServerCard): void {
-		Keywords.createCard.for(this.ownerInGame).fromInstance(target)
+		Keywords.createCard.for(this.ownerPlayerInGame).fromInstance(target)
 		this.exploredCards = []
 	}
 }

@@ -6,34 +6,41 @@ import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import TargetMode from '@shared/enums/TargetMode'
-import GameMode from '@shared/enums/GameMode'
+import Ruleset from '@shared/models/ruleset/Ruleset'
+import GameMessage from '@shared/models/network/GameMessage'
 
 const gameStateModule = defineModule({
 	namespaced: true,
 	state: {
+		gameId: null as string | null,
 		turnPhase: GameTurnPhase.BEFORE_GAME as GameTurnPhase,
 		gameStatus: ClientGameStatus.NOT_STARTED as ClientGameStatus,
-		gameMode: GameMode.VS_PLAYER as GameMode,
+		endScreenSuppressed: false as boolean,
+		ruleset: null as Ruleset | null,
 		opponent: null as Player | null,
 		isPlayersTurn: false as boolean,
 		isPlayerInRound: true as boolean,
-		playerMorale: 0 as number,
+		playerRoundWins: 0 as number,
 		playerUnitMana: 0 as number,
 		playerSpellMana: 0 as number,
 		playerSpellManaInDanger: 0 as number,
 		isOpponentInRound: true as boolean,
-		opponentMorale: 0 as number,
+		opponentRoundWins: 0 as number,
 		opponentSpellMana: 0 as number,
 		inspectedCardId: null as string | null,
 		isSpectating: false as boolean,
 		cardsMulliganed: 0 as number,
 		maxCardMulligans: 0 as number,
-		popupTargetingMode: null as TargetMode | null,
+		targetingMode: null as TargetMode | null,
 		popupTargetingCardCount: 0 as number,
 		popupTargetingCardsVisible: true as boolean,
 	},
 
 	mutations: {
+		setGameId(state, id: string | null): void {
+			state.gameId = id
+		},
+
 		setTurnPhase(state, turnPhase: GameTurnPhase): void {
 			state.turnPhase = turnPhase
 		},
@@ -54,12 +61,16 @@ const gameStateModule = defineModule({
 			state.gameStatus = gameStatus
 		},
 
-		setGameMode(state, value: GameMode): void {
-			state.gameMode = value
+		setEndScreenSuppressed(state, value: boolean): void {
+			state.endScreenSuppressed = value
 		},
 
-		setPlayerMorale(state, value: number): void {
-			state.playerMorale = value
+		setRuleset(state, value: Ruleset): void {
+			state.ruleset = value
+		},
+
+		setPlayerRoundWins(state, value: number): void {
+			state.playerRoundWins = value
 		},
 
 		setPlayerUnitMana(state, playerUnitMana: number): void {
@@ -78,8 +89,8 @@ const gameStateModule = defineModule({
 			state.isOpponentInRound = value
 		},
 
-		setOpponentMorale(state, value: number): void {
-			state.opponentMorale = value
+		setOpponentRoundWins(state, value: number): void {
+			state.opponentRoundWins = value
 		},
 
 		setOpponentSpellMana(state, value: number): void {
@@ -102,8 +113,8 @@ const gameStateModule = defineModule({
 			state.maxCardMulligans = number
 		},
 
-		setPopupTargetingMode(state, mode: TargetMode | null): void {
-			state.popupTargetingMode = mode
+		setTargetingMode(state, mode: TargetMode | null): void {
+			state.targetingMode = mode
 		},
 
 		setPopupTargetingCardCount(state, count: number): void {
@@ -121,6 +132,9 @@ const gameStateModule = defineModule({
 		},
 
 		inspectedCard: (state): RenderedCard | null => {
+			if (!Core.game) {
+				return null
+			}
 			return state.inspectedCardId === null ? null : Core.game.findRenderedCardById(state.inspectedCardId)
 		},
 	},
@@ -131,9 +145,10 @@ const gameStateModule = defineModule({
 			commit.setGameStatus(ClientGameStatus.LOADING)
 		},
 
-		setGameMode(context, payload: GameMode): void {
+		setGameData(context, payload: GameMessage): void {
 			const { commit } = moduleActionContext(context, gameStateModule)
-			commit.setGameMode(payload)
+			commit.setGameId(payload.id)
+			commit.setRuleset(payload.ruleset)
 		},
 
 		startGame(context): void {
@@ -161,12 +176,14 @@ const gameStateModule = defineModule({
 			const { commit } = moduleActionContext(context, gameStateModule)
 			const { rootDispatch } = rootActionContext(context)
 			commit.setGameStatus(ClientGameStatus.NOT_STARTED)
+			commit.setEndScreenSuppressed(false)
 			commit.setOpponentData(null)
 			commit.setIsSpectating(false)
 			commit.setIsPlayersTurn(false)
-			commit.setPlayerMorale(0)
-			commit.setOpponentMorale(0)
+			commit.setPlayerRoundWins(0)
+			commit.setOpponentRoundWins(0)
 			commit.setIsOpponentInRound(true)
+			commit.setTargetingMode(null)
 			rootDispatch.gameLogModule.clearLog()
 		},
 	},

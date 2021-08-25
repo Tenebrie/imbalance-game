@@ -4,6 +4,7 @@ import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import store from '@/Vue/store'
 import { CARD_HEIGHT, CARD_WIDTH } from '@/Pixi/renderer/RendererUtils'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import { SCALE_MODES } from 'pixi.js'
 
 class EditorCardRenderer {
 	pixi: PIXI.Renderer
@@ -17,6 +18,7 @@ class EditorCardRenderer {
 		this.renderTexture = PIXI.RenderTexture.create({
 			width: CARD_WIDTH,
 			height: CARD_HEIGHT,
+			scaleMode: SCALE_MODES.LINEAR,
 		})
 		this.preloadFonts()
 	}
@@ -37,8 +39,11 @@ class EditorCardRenderer {
 		}
 
 		this.mainTimer = window.setInterval(() => {
-			const nextCardClass = store.state.editor.renderQueue[0]
+			if (store.state.editor.renderQueue.length === 0) {
+				return
+			}
 
+			const nextCardClass = store.state.editor.renderQueue[0]
 			store.commit.editor.shiftRenderQueue()
 			const nextCard = store.state.editor.cardLibrary.find((card) => card.class === nextCardClass)
 			if (!nextCard) {

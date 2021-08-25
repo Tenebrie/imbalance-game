@@ -8,14 +8,14 @@
 						<span class="label">{{ $locale.get('ui.profile.email') }}:</span>
 						<span class="input">{{ email }}</span>
 					</div>
-					<div class="info-field">
+					<div class="info-field" v-if="player && !isGuest">
 						<span class="label">{{ $locale.get('ui.profile.changeUsername.label') }}:</span>
 						<span class="input">
 							<input type="text" v-model="username" :placeholder="currentUsername" />
 							<button class="primary" @click="onChangeUsername">{{ $locale.get('ui.profile.changeUsername.button') }}</button>
 						</span>
 					</div>
-					<div class="info-field">
+					<div class="info-field" v-if="player && !isGuest">
 						<span class="label">{{ $locale.get('ui.profile.changePassword.label') }}:</span>
 						<span class="input">
 							<input type="password" v-model="password" :placeholder="$locale.get('ui.profile.changePassword.placeholder')" />
@@ -45,6 +45,9 @@
 				</div>
 			</div>
 			<div class="section">
+				<the-gameplay-settings />
+			</div>
+			<div class="section">
 				<the-volume-settings />
 			</div>
 			<div class="section button-section">
@@ -68,9 +71,12 @@ import Language from '@shared/enums/Language'
 import Notifications from '@/utils/Notifications'
 import RenderQuality from '@shared/enums/RenderQuality'
 import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
+import Player from '@shared/models/Player'
+import TheGameplaySettings from '@/Vue/components/profile/TheGameplaySettings.vue'
 
 export default defineComponent({
 	components: {
+		TheGameplaySettings,
 		TheVolumeSettings,
 		UserAvatar,
 		ProfileLogoutButton,
@@ -109,6 +115,9 @@ export default defineComponent({
 			},
 		})
 
+		const player = computed<Player | null>(() => store.state.player)
+		const isGuest = computed<boolean>(() => !!store.state.player && store.state.player.isGuest)
+
 		watch(
 			() => [userLanguage.value, renderQuality.value],
 			() => {
@@ -129,7 +138,7 @@ export default defineComponent({
 					username: value,
 				})
 				await store.dispatch.fetchUser()
-				currentUsername.value = store.state.player.username
+				currentUsername.value = username.value
 				Notifications.success('Username updated!')
 			} catch (error) {
 				Notifications.error('Username update failed!')
@@ -158,6 +167,8 @@ export default defineComponent({
 			email,
 			username,
 			password,
+			player,
+			isGuest,
 			currentUsername,
 			userLanguage,
 			renderQuality,

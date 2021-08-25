@@ -1,9 +1,8 @@
 import Database from './Database'
 import ServerGame from '@src/game/models/ServerGame'
-import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
-import ServerBotPlayerInGame from '@src/game/AI/ServerBotPlayerInGame'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import GameErrorDatabaseEntry from '@shared/models/GameErrorDatabaseEntry'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 export default {
 	async selectGameById(id: string): Promise<GameHistoryDatabaseEntry | null> {
@@ -12,13 +11,9 @@ export default {
 				array(
 					SELECT row_to_json(subplayers)
 					FROM (
-						SELECT id, username FROM players WHERE players.id = ANY(
-							array(
-								SELECT "playerId"
-								FROM player_in_game_history
-								WHERE player_in_game_history."gameId" = game_history.id
-							)
-						)
+						SELECT id, username, "groupId"
+						FROM player_in_game_history JOIN players players ON player_in_game_history."playerId" = players.id
+						WHERE player_in_game_history."gameId" = game_history.id
 					) AS subplayers
 				) AS players,
 				(
@@ -28,10 +23,18 @@ export default {
 					) as subplayers
 				) AS "errorCount",
 				(
-					SELECT row_to_json(subplayers)
-					FROM (
-						SELECT id, username FROM players WHERE players.id = game_history."victoriousPlayer"
-					) AS subplayers
+					SELECT array(
+						SELECT row_to_json(subplayers)
+						FROM (
+							SELECT id, username FROM players WHERE players.id = ANY(
+								array(
+									SELECT "playerId"
+									FROM victorious_player_in_game_history
+									WHERE victorious_player_in_game_history."gameId" = game_history.id
+								)
+							)
+						) AS subplayers
+					)
 				) AS "victoriousPlayer"
 			FROM game_history
 			WHERE id = $1;
@@ -50,13 +53,9 @@ export default {
 				array(
 					SELECT row_to_json(subplayers)
 					FROM (
-						SELECT id, username FROM players WHERE players.id = ANY(
-							array(
-								SELECT "playerId"
-								FROM player_in_game_history
-								WHERE player_in_game_history."gameId" = game_history.id
-							)
-						)
+						 SELECT "playerId"
+						 FROM player_in_game_history JOIN players players ON player_in_game_history."playerId" = players.id
+						 WHERE player_in_game_history."gameId" = game_history.id
 					) AS subplayers
 				) AS players,
 			    (
@@ -66,10 +65,18 @@ export default {
 					) as subplayers
 				) AS "errorCount",
 				(
-					SELECT row_to_json(subplayers)
-					FROM (
-						SELECT id, username FROM players WHERE players.id = game_history."victoriousPlayer"
-					) AS subplayers
+					SELECT array(
+					    SELECT row_to_json(subplayers)
+						FROM (
+							 SELECT id, username FROM players WHERE players.id = ANY(
+								 array(
+									 SELECT "playerId"
+									 FROM victorious_player_in_game_history
+									 WHERE victorious_player_in_game_history."gameId" = game_history.id
+								 )
+							)
+						) AS subplayers
+					)
 				) AS "victoriousPlayer"
 			FROM game_history
 			ORDER BY "startedAt" DESC
@@ -79,16 +86,16 @@ export default {
 	},
 
 	async startGame(game: ServerGame): Promise<boolean> {
-		let query = `INSERT INTO game_history (id) VALUES($1);`
-		let success = await Database.insertRow(query, [game.id])
+		let query = `INSERT INTO game_history (id, "eventLog") VALUES($1, $2);`
+		let success = await Database.insertRow(query, [game.id, JSON.stringify([])])
 		if (!success) {
 			return false
 		}
 
-		const players = game.players.filter((playerInGame) => !(playerInGame instanceof ServerBotPlayerInGame))
-		for (const playerInGame of players) {
-			query = `INSERT INTO player_in_game_history("gameId", "playerId") VALUES($1, $2)`
-			success = await Database.updateRows(query, [game.id, playerInGame.player.id])
+		const humanPlayers = game.allPlayers.filter((player) => player.isHuman)
+		for (const playerInGame of humanPlayers) {
+			query = `INSERT INTO player_in_game_history("gameId", "playerId", "groupId") VALUES($1, $2, $3)`
+			success = await Database.updateRows(query, [game.id, playerInGame.player.id, playerInGame.group.id])
 			if (!success) {
 				return false
 			}
@@ -96,10 +103,9 @@ export default {
 		return true
 	},
 
-	async closeGame(game: ServerGame, reason: string, victoriousPlayer: ServerPlayerInGame | null): Promise<boolean> {
+	async closeGame(game: ServerGame, reason: string, victoriousPlayer: ServerPlayerGroup | null): Promise<boolean> {
 		const eventLog = JSON.stringify(game.events.eventLog)
-		if (!victoriousPlayer) {
-			const query = `
+		let query = `
 				UPDATE game_history
 				SET
 					"closedAt" = current_timestamp,
@@ -107,18 +113,22 @@ export default {
 					"closeReason" = $3
 				WHERE id = $1 AND "closedAt" IS NULL
 			`
-			return await Database.updateRows(query, [game.id, eventLog, reason])
+		let success = await Database.updateRows(query, [game.id, eventLog, reason])
+		if (!success) {
+			return false
 		}
-		const query = `
-				UPDATE game_history
-				SET
-					"closedAt" = current_timestamp,
-					"eventLog" = $2,
-					"closeReason" = $3,
-					"victoriousPlayer" = $4
-				WHERE id = $1 AND "closedAt" IS NULL
-			`
-		return await Database.updateRows(query, [game.id, eventLog, reason, victoriousPlayer.player.id])
+
+		if (victoriousPlayer) {
+			const players = victoriousPlayer.players.filter((playerInGame) => playerInGame.isHuman)
+			for (const playerInGame of players) {
+				query = `INSERT INTO victorious_player_in_game_history("gameId", "playerId") VALUES($1, $2)`
+				success = await Database.updateRows(query, [game.id, playerInGame.player.id])
+				if (!success) {
+					return false
+				}
+			}
+		}
+		return true
 	},
 
 	async closeAbandonedGames(): Promise<boolean> {
@@ -131,6 +141,17 @@ export default {
 			WHERE "closedAt" IS NULL
 		`
 		return await Database.updateRows(query)
+	},
+
+	async pruneOldestRecords(): Promise<boolean> {
+		const query = `
+			DELETE FROM game_history WHERE id = ANY(
+				ARRAY(
+					SELECT id FROM game_history ORDER BY "startedAt" DESC OFFSET 1000
+					)
+				)
+		`
+		return await Database.deleteRows(query)
 	},
 
 	async logGameError(game: ServerGame, error: Error): Promise<boolean> {

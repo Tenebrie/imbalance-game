@@ -1,11 +1,9 @@
 <template>
-	<div class="the-mini-user-profile">
+	<div class="the-mini-user-profile" @click="onClick">
 		<div class="link-container">
-			<router-link :to="{ name: 'profile' }" class="router-link">
-				{{ displayedUsername }}
-			</router-link>
+			<span>{{ displayedUsername }}</span>
 		</div>
-		<user-avatar @click="onClick" class="avatar" />
+		<user-avatar class="avatar" />
 	</div>
 </template>
 
@@ -56,7 +54,19 @@ export default defineComponent({
 	align-items: center;
 	justify-content: center;
 	height: 100%;
-	margin: 0 4px;
+	padding: 0 8px;
+	cursor: pointer;
+	user-select: none;
+	color: $COLOR-SECONDARY;
+	transition: background-color 0.3s;
+
+	&:hover {
+		background: $COLOR-BACKGROUND-TRANSPARENT;
+		transition: background-color 0s;
+	}
+	&:hover:active {
+		background: darken($COLOR-BACKGROUND-TRANSPARENT, 30);
+	}
 
 	.username {
 		user-select: none;

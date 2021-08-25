@@ -1,9 +1,9 @@
-import Constants from '@shared/Constants'
 import Board from '@shared/models/Board'
 import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
-import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import Core from '../Core'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 
 export default class RenderedGameBoard implements Board {
 	public rows: RenderedGameBoardRow[]
@@ -17,7 +17,7 @@ export default class RenderedGameBoard implements Board {
 		this.unitsOnHold = []
 		this.validOrders = []
 		this.validOpponentOrders = []
-		for (let i = 0; i < Constants.GAME_BOARD_ROW_COUNT; i++) {
+		for (let i = 0; i < Core.constants.GAME_BOARD_ROW_COUNT; i++) {
 			this.rows.push(new RenderedGameBoardRow(i))
 		}
 	}
@@ -60,7 +60,7 @@ export default class RenderedGameBoard implements Board {
 	}
 
 	public getRow(index: number): RenderedGameBoardRow | null {
-		if (index < 0 || index >= Constants.GAME_BOARD_ROW_COUNT) {
+		if (index < 0 || index >= Core.constants.GAME_BOARD_ROW_COUNT) {
 			return null
 		}
 		return this.rows[index]
@@ -78,16 +78,16 @@ export default class RenderedGameBoard implements Board {
 		return this.getInsertedUnits().concat(this.unitsOnHold)
 	}
 
-	public getInsertedUnitsOwnedByPlayer(owner: ClientPlayerInGame): RenderedUnit[] {
+	public getInsertedUnitsOwnedByPlayer(owner: ClientPlayerGroup): RenderedUnit[] {
 		return this.getInsertedUnits().filter((unit) => unit.owner === owner)
 	}
 
-	public getUnitsOwnedByPlayer(owner: ClientPlayerInGame): RenderedUnit[] {
+	public getUnitsOwnedByPlayer(owner: ClientPlayerGroup): RenderedUnit[] {
 		return this.getAllUnits().filter((unit) => unit.owner === owner)
 	}
 
-	public getValidOrdersForUnit(unit: RenderedUnit): CardTargetMessage[] {
-		return this.validOrders.concat(this.validOpponentOrders).filter((order) => order.sourceCardId === unit.card.id)
+	public getValidOrdersForUnit(unit: RenderedUnit | null): CardTargetMessage[] {
+		return this.validOrders.concat(this.validOpponentOrders).filter((order) => order.sourceCardId === unit?.card.id)
 	}
 
 	public clearBoard(): void {

@@ -1,22 +1,22 @@
-import Game from '../Game'
-import HiddenPlayerInGameMessage from '../network/playerInGame/HiddenPlayerInGameMessage'
+import { SourceGame } from '../Game'
 import HiddenPlayerMessage from './player/HiddenPlayerMessage'
-import GameMode from "../../enums/GameMode";
+import RulesetMessage from '../ruleset/messages/RulesetMessage'
+import HiddenPlayerGroupMessage from './playerGroup/HiddenPlayerGroupMessage'
 
 export default class GameMessage {
 	id: string
 	name: string
 	isStarted: boolean
-	gameMode: GameMode
 	owner: HiddenPlayerMessage | null
-	players: HiddenPlayerInGameMessage[]
+	players: HiddenPlayerGroupMessage[]
+	ruleset: RulesetMessage
 
-	constructor(game: Game) {
+	constructor(game: SourceGame) {
 		this.id = game.id
 		this.name = game.name
 		this.owner = game.owner ? new HiddenPlayerMessage(game.owner) : null
-		this.gameMode = game.gameMode
 		this.isStarted = game.isStarted
-		this.players = game.players.map((player) => new HiddenPlayerInGameMessage(player))
+		this.players = game.players.map((player) => new HiddenPlayerGroupMessage(player))
+		this.ruleset = new RulesetMessage(game.ruleset)
 	}
 }

@@ -2,7 +2,9 @@ import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageH
 import Core from '@/Pixi/Core'
 import { TargetingMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import ResolvingCardTargetsMessage from '@shared/models/network/ResolvingCardTargetsMessage'
+import InvalidCardTargetMessage from '@shared/models/network/InvalidCardTargetMessage'
 import AnonymousTargetsMessage from '@shared/models/network/AnonymousTargetsMessage'
+import TargetMode from '@shared/enums/TargetMode'
 
 const IncomingResolveStackMessages: { [index in TargetingMessageType]: IncomingMessageHandlerFunction } = {
 	[TargetingMessageType.CARD_PLAY]: (data: ResolvingCardTargetsMessage) => {
@@ -19,6 +21,17 @@ const IncomingResolveStackMessages: { [index in TargetingMessageType]: IncomingM
 			Core.input.enableForcedTargetingMode(data.targetMode, data.targets, null)
 		} else {
 			Core.input.disableForcedTargetingMode()
+		}
+	},
+
+	[TargetingMessageType.INVALID]: (data: InvalidCardTargetMessage) => {
+		if (
+			data.targetMode === TargetMode.CARD_PLAY &&
+			Core.input.tutoredShadowUnit &&
+			Core.input.tutoredShadowUnit.card &&
+			Core.input.tutoredShadowUnit.card.id === data.source.id
+		) {
+			Core.input.tutoredShadowUnit = null
 		}
 	},
 }

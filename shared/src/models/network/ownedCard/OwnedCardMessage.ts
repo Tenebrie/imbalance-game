@@ -1,7 +1,7 @@
 import CardMessage from '../card/CardMessage'
-import PlayerInGameMessage from '../playerInGame/PlayerInGameMessage'
+import PlayerInGameRefMessage from '../playerInGame/PlayerInGameRefMessage'
 
 export default interface OwnedCardMessage {
 	card: CardMessage
-	owner: PlayerInGameMessage
+	owner: PlayerInGameRefMessage
 }

@@ -11,7 +11,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
 
 export default class UnitArcaneElemental extends ServerCard {
-	manaGenerated = 2
+	manaGenerated = 3
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -21,7 +21,7 @@ export default class UnitArcaneElemental extends ServerCard {
 			tribes: [CardTribe.ELEMENTAL],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 7,
+				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -41,6 +41,6 @@ export default class UnitArcaneElemental extends ServerCard {
 class CustomBotEvaluation extends BotCardEvaluation {
 	get expectedValue(): number {
 		const card = this.card as UnitArcaneElemental
-		return card.stats.power + card.manaGenerated * 2
+		return card.stats.power + card.manaGenerated * 3
 	}
 }

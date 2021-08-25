@@ -1,10 +1,9 @@
 import CardLocation from '@shared/enums/CardLocation'
-import ServerGame from '../ServerGame'
 import { EventSubscriber } from '../ServerGameEvents'
 
 export class EventHook<HookValues, HookArgs> {
 	private readonly __subscriber: EventSubscriber
-	private readonly __hooks: ((values: HookValues, args?: HookArgs) => HookValues)[]
+	private readonly __hooks: ((values: HookValues, args: HookArgs) => HookValues)[]
 	private readonly __callbacks: ((args: HookArgs) => void)[]
 	private readonly __conditions: ((args: HookArgs) => boolean)[]
 	private __ignoreControlEffects = false
@@ -20,7 +19,7 @@ export class EventHook<HookValues, HookArgs> {
 		return this.__subscriber
 	}
 
-	public get hooks(): ((values: HookValues, args?: HookArgs) => HookValues)[] {
+	public get hooks(): ((values: HookValues, args: HookArgs) => HookValues)[] {
 		return this.__hooks
 	}
 
@@ -43,7 +42,7 @@ export class EventHook<HookValues, HookArgs> {
 	 *
 	 * Replace function must return a modified `values` object.
 	 */
-	replace(func: (values: HookValues, args?: HookArgs) => HookValues): EventHook<HookValues, HookArgs> {
+	replace(func: (values: HookValues, args: HookArgs) => HookValues): EventHook<HookValues, HookArgs> {
 		this.__hooks.push(func)
 		return this
 	}
@@ -73,7 +72,7 @@ export class EventHook<HookValues, HookArgs> {
 	 * Add a new condition to the require chain. Card location must match any of the specified values.
 	 */
 	requireLocations(locations: CardLocation[]): EventHook<HookValues, HookArgs> {
-		return this.require(() => !(this.__subscriber instanceof ServerGame) && locations.includes(this.__subscriber.location))
+		return this.require(() => !!this.__subscriber && locations.includes(this.__subscriber.location))
 	}
 
 	/* Ignore control effects

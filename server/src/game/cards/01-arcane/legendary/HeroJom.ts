@@ -24,7 +24,7 @@ export default class HeroJom extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitVoidPortal, UnitAbyssPortal],
 			stats: {
-				power: 7,
+				power: 14,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -35,7 +35,7 @@ export default class HeroJom extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.owner)
+			.require(({ group }) => group.owns(this))
 			.require(() => this.ownerControlsEnoughPortals())
 			.perform(() => this.onTurnEnded())
 	}
@@ -45,12 +45,12 @@ export default class HeroJom extends ServerCard {
 	}
 
 	private ownerControlsEnoughPortals(): boolean {
-		const portalsControlled = this.game.board.getUnitsOwnedByPlayer(this.owner).filter((unit) => unit.card instanceof UnitVoidPortal)
+		const portalsControlled = this.game.board.getUnitsOwnedByGroup(this.ownerGroup).filter((unit) => unit.card instanceof UnitVoidPortal)
 		return portalsControlled.length >= this.portalsNeeded
 	}
 
 	private onTurnEnded(): void {
-		const portalsControlled = this.game.board.getUnitsOwnedByPlayer(this.owner).filter((unit) => unit.card instanceof UnitVoidPortal)
+		const portalsControlled = this.game.board.getUnitsOwnedByGroup(this.ownerGroup).filter((unit) => unit.card instanceof UnitVoidPortal)
 
 		portalsControlled.forEach((portal) => {
 			this.game.animation.createAnimationThread()
@@ -59,9 +59,9 @@ export default class HeroJom extends ServerCard {
 			this.game.animation.commitAnimationThread()
 		})
 
-		const abyssPortal = CardLibrary.instantiateByConstructor(this.game, UnitAbyssPortal) as UnitAbyssPortal
+		const abyssPortal = CardLibrary.instantiate(this.game, UnitAbyssPortal) as UnitAbyssPortal
 		const unit = this.unit!
-		this.game.board.createUnit(abyssPortal, unit.rowIndex, unit.unitIndex + 1)
+		this.game.board.createUnit(abyssPortal, unit.originalOwner, unit.rowIndex, unit.unitIndex + 1)
 		abyssPortal.onTurnEnded()
 	}
 }

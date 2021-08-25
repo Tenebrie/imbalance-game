@@ -7,6 +7,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardFeature from '@shared/enums/CardFeature'
 import BuffProtector from '../../../buffs/BuffProtector'
+import CardTribe from '@shared/enums/CardTribe'
 
 export default class UnitWoodenPalisade extends ServerCard {
 	constructor(game: ServerGame) {
@@ -14,18 +15,19 @@ export default class UnitWoodenPalisade extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.BUILDING],
+			tribes: [CardTribe.BUILDING],
+			features: [CardFeature.NIGHTWATCH],
 			stats: {
 				power: 0,
-				armor: 5,
+				armor: 10,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.buffs.add(BuffProtector, this)
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ triggeringUnit }) => {
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner, triggeringUnit }) => {
 			const rightPalisade = new UnitWoodenPalisade(this.game)
-			this.game.board.createUnit(rightPalisade, triggeringUnit.rowIndex, triggeringUnit.unitIndex + 1)
+			this.game.board.createUnit(rightPalisade, owner, triggeringUnit.rowIndex, triggeringUnit.unitIndex + 1)
 		})
 	}
 }

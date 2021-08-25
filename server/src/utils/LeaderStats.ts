@@ -1,73 +1,99 @@
-import ServerCard from '../game/models/ServerCard'
-import ServerUnit from '../game/models/ServerUnit'
+import { EventSubscriber } from '@src/game/models/ServerGameEvents'
+import { ServerBuffSource } from '@src/game/models/buffs/ServerBuffContainer'
+import LeaderStatType from '@src/../../shared/src/enums/LeaderStatType'
+import { getOwnerGroup, getOwnerPlayer, getTotalLeaderStat } from '@src/utils/Utils'
+import ServerCard from '@src/game/models/ServerCard'
 
-export type LeaderStatValueGetter = (card: ServerCard | null) => number
+export type LeaderStatValueGetter = (card: EventSubscriber | ServerBuffSource) => number
 
-const asSingleUnitStat = (value: number, mapper: (unit: ServerUnit) => number): LeaderStatValueGetter => {
-	return (card: ServerCard | null) => {
-		const totalBoardStat =
-			card === null
-				? 0
-				: card.game.board
-						.getUnitsOwnedByPlayer(card.owner)
-						.map(mapper)
-						.reduce((acc, val) => acc + val, 0)
-		return value + totalBoardStat
+const asScalingStat = (value: number, stats: LeaderStatType[]): LeaderStatValueGetter => {
+	return (subscriber: EventSubscriber | ServerBuffSource) => {
+		if (subscriber === null) {
+			return value
+		}
+
+		const owner =
+			subscriber instanceof ServerCard && subscriber.unit ? subscriber.ownerGroup : getOwnerPlayer(subscriber) || getOwnerGroup(subscriber)
+		if (!owner) {
+			return value
+		}
+
+		return value + getTotalLeaderStat(owner, stats)
 	}
 }
 
 export const asDirectUnitDamage = (baseDamage: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.soloUnitDamage)
+	return asScalingStat(baseDamage, [LeaderStatType.DIRECT_UNIT_DAMAGE])
 }
 
 export const asSplashUnitDamage = (baseDamage: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.massUnitDamage)
+	return asScalingStat(baseDamage, [LeaderStatType.SPLASH_UNIT_DAMAGE])
+}
+
+export const asRecurringUnitDamage = (baseDamage: number): LeaderStatValueGetter => {
+	return asScalingStat(baseDamage, [LeaderStatType.RECURRING_UNIT_DAMAGE])
 }
 
 export const asDirectSpellDamage = (baseDamage: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.soloSpellDamage)
+	return asScalingStat(baseDamage, [LeaderStatType.DIRECT_SPELL_DAMAGE])
 }
 
 export const asSplashSpellDamage = (baseDamage: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(baseDamage, (unit) => unit.card.stats.massSpellDamage)
+	return asScalingStat(baseDamage, [LeaderStatType.SPLASH_SPELL_DAMAGE])
 }
 
 export const asDirectHealingPotency = (potency: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(potency, (unit) => unit.card.stats.soloHealingPotency)
+	return asScalingStat(potency, [LeaderStatType.DIRECT_HEALING_POTENCY])
 }
 
 export const asSplashHealingPotency = (potency: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(potency, (unit) => unit.card.stats.massHealingPotency)
+	return asScalingStat(potency, [LeaderStatType.SPLASH_HEALING_POTENCY])
+}
+
+export const asRecurringHealingPotency = (potency: number): LeaderStatValueGetter => {
+	return asScalingStat(potency, [LeaderStatType.RECURRING_HEALING_POTENCY])
 }
 
 export const asDirectBuffPotency = (potency: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(potency, (unit) => unit.card.stats.soloBuffPotency)
+	return asScalingStat(potency, [LeaderStatType.DIRECT_BUFF_POTENCY])
 }
 
 export const asSplashBuffPotency = (potency: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(potency, (unit) => unit.card.stats.massBuffPotency)
+	return asScalingStat(potency, [LeaderStatType.SPLASH_BUFF_POTENCY])
+}
+
+export const asRecurringBuffPotency = (potency: number): LeaderStatValueGetter => {
+	return asScalingStat(potency, [LeaderStatType.RECURRING_BUFF_POTENCY])
 }
 
 export const asDirectEffectDuration = (duration: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(duration, (unit) => unit.card.stats.soloEffectDuration)
+	return asScalingStat(duration, [LeaderStatType.DIRECT_EFFECT_DURATION])
 }
 
 export const asSplashEffectDuration = (duration: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(duration, (unit) => unit.card.stats.massEffectDuration)
+	return asScalingStat(duration, [LeaderStatType.SPLASH_EFFECT_DURATION])
 }
 
 export const asTargetCount = (count: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(count, (unit) => unit.card.stats.targetCount)
+	return asScalingStat(count, [LeaderStatType.DIRECT_TARGET_COUNT])
 }
 
-export const asCriticalHitChance = (value: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(value, (unit) => unit.card.stats.criticalHitChance)
+export const asCriticalDamageChance = (value: number): LeaderStatValueGetter => {
+	return asScalingStat(value, [LeaderStatType.CRITICAL_DAMAGE_CHANCE])
 }
 
 export const asCriticalBuffChance = (value: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(value, (unit) => unit.card.stats.criticalBuffChance)
+	return asScalingStat(value, [LeaderStatType.CRITICAL_BUFF_CHANCE])
 }
 
 export const asCriticalHealChance = (value: number): LeaderStatValueGetter => {
-	return asSingleUnitStat(value, (unit) => unit.card.stats.criticalHealChance)
+	return asScalingStat(value, [LeaderStatType.CRITICAL_DAMAGE_CHANCE])
+}
+
+export const asDirectSparkDamage = (value: number): LeaderStatValueGetter => {
+	return asScalingStat(value, [LeaderStatType.DIRECT_SPELL_DAMAGE, LeaderStatType.SPARK_DAMAGE])
+}
+
+export const asSplashSparkDamage = (value: number): LeaderStatValueGetter => {
+	return asScalingStat(value, [LeaderStatType.SPLASH_SPELL_DAMAGE, LeaderStatType.SPARK_DAMAGE])
 }

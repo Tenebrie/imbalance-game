@@ -8,7 +8,8 @@ import SpellFireball from './SpellFireball'
 import SpellAnEncouragement from './SpellAnEncouragement'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import SpellEternalServitude from './SpellEternalServitude'
-import { getLeaderTextVariables } from '@src/utils/Utils'
+import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
+import GameEventType from '@shared/enums/GameEventType'
 
 export default class LeaderVelElleron extends ServerCard {
 	manaPerRound = 10
@@ -18,6 +19,9 @@ export default class LeaderVelElleron extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.LEADER,
 			faction: CardFaction.ARCANE,
+			stats: {
+				power: 10,
+			},
 			sortPriority: 0,
 			expansionSet: ExpansionSet.BASE,
 			deckAddedCards: [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellEternalServitude],
@@ -26,5 +30,8 @@ export default class LeaderVelElleron extends ServerCard {
 			manaPerRound: this.manaPerRound,
 			...getLeaderTextVariables(this),
 		}
+		this.createCallback(GameEventType.ROUND_STARTED, AnyCardLocation)
+			.require(({ group }) => group.owns(this))
+			.perform(() => this.ownerPlayerInGame.addSpellMana(this.manaPerRound))
 	}
 }

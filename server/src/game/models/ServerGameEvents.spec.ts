@@ -1,10 +1,10 @@
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerGame from './ServerGame'
 import ServerOwnedCard from './ServerOwnedCard'
 import TestGameTemplates from '../../utils/TestGameTemplates'
 import ServerCard from './ServerCard'
 import ServerGameEvents from './ServerGameEvents'
 import GameEventCreators, { GameStartedEventArgs } from './events/GameEventCreators'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import GameEventType from '../../../../shared/src/enums/GameEventType'
 import TestingUnitTargetsRow from '../cards/11-testing/TestingUnitTargetsRow'
 import TestingUnitNoEffect from '../cards/11-testing/TestingUnitNoEffect'
@@ -12,14 +12,16 @@ import TestingSpellTacticalMove from '../cards/11-testing/TestingSpellTacticalMo
 import TestingSpellQuickStrike from '../cards/11-testing/TestingSpellQuickStrike'
 import SpyInstance = jest.SpyInstance
 import TestingUnitTurnEndEffectProbe from '../cards/11-testing/TestingUnitTurnEndEffectProbe'
-import Utils from '../../utils/Utils'
-import Constants from '@shared/Constants'
 import TestingUnitTurnEndEffectProbeRight from '../cards/11-testing/TestingUnitTurnEndEffectProbeRight'
+import TargetMode from '../../../../shared/src/enums/TargetMode'
+import { shuffle } from '../../utils/Utils'
+import ServerPlayerGroup from '../players/ServerPlayerGroup'
 
 describe('ServerGameEvents', () => {
 	let game: ServerGame
 	let events: ServerGameEvents
 	let player: ServerPlayerInGame
+	let playerGroup: ServerPlayerGroup
 	let callbackSpy: () => void
 	let callbackSpyB: () => void
 	let callbackSpyC: () => void
@@ -27,7 +29,8 @@ describe('ServerGameEvents', () => {
 	beforeEach(() => {
 		game = TestGameTemplates.emptyDecks()
 		events = game.events
-		player = game.players[0]
+		player = game.players[0].players[0]
+		playerGroup = game.players[0]
 		callbackSpy = jest.fn()
 		callbackSpyB = jest.fn()
 		callbackSpyC = jest.fn()
@@ -35,37 +38,37 @@ describe('ServerGameEvents', () => {
 
 	describe('event resolution', () => {
 		it('does not resolve events immediately', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, group: playerGroup }))
 
 			expect(callbackSpy).toHaveBeenCalledTimes(0)
 		})
 
 		it('does not trigger callbacks for another event', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.ROUND_STARTED).perform(() => callbackSpy())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, group: playerGroup }))
 			events.resolveEvents()
 
 			expect(callbackSpy).toHaveBeenCalledTimes(0)
 		})
 
 		it('resolves single event from the queue', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, group: playerGroup }))
 			events.resolveEvents()
 
 			expect(callbackSpy).toHaveBeenCalledTimes(1)
 		})
 
 		it('resolves multiple callbacks for the same event', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpyB())
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpyC())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpyB())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpyC())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, group: playerGroup }))
 			events.resolveEvents()
 
 			expect(callbackSpy).toHaveBeenCalledTimes(1)
@@ -74,11 +77,11 @@ describe('ServerGameEvents', () => {
 		})
 
 		it('resolves multiple events from the queue', () => {
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED).perform(() => callbackSpy())
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED).perform(() => callbackSpy())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
-			events.postEvent(GameEventCreators.gameStarted({ player }))
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, group: playerGroup }))
+			events.postEvent(GameEventCreators.gameStarted({ game, group: playerGroup }))
+			events.postEvent(GameEventCreators.gameStarted({ game, group: playerGroup }))
 			events.resolveEvents()
 
 			expect(callbackSpy).toHaveBeenCalledTimes(3)
@@ -86,14 +89,14 @@ describe('ServerGameEvents', () => {
 
 		it('resolves chaining events', () => {
 			events
-				.createCallback<GameStartedEventArgs>(game, GameEventType.GAME_STARTED)
-				.perform(() => events.postEvent(GameEventCreators.roundStarted({ player })))
+				.createCallback<GameStartedEventArgs>(null, GameEventType.GAME_STARTED)
+				.perform(() => events.postEvent(GameEventCreators.roundStarted({ game, group: playerGroup })))
 			events
-				.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_STARTED)
-				.perform(() => events.postEvent(GameEventCreators.roundEnded({ player })))
-			events.createCallback<GameStartedEventArgs>(game, GameEventType.ROUND_ENDED).perform(() => callbackSpy())
+				.createCallback<GameStartedEventArgs>(null, GameEventType.ROUND_STARTED)
+				.perform(() => events.postEvent(GameEventCreators.roundEnded({ game, group: playerGroup })))
+			events.createCallback<GameStartedEventArgs>(null, GameEventType.ROUND_ENDED).perform(() => callbackSpy())
 
-			events.postEvent(GameEventCreators.gameStarted({ player }))
+			events.postEvent(GameEventCreators.gameStarted({ game, group: playerGroup }))
 			events.resolveEvents()
 
 			expect(callbackSpy).toHaveBeenCalledTimes(1)
@@ -108,13 +111,11 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes units at the front (for normal board)', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
 
 				startNextTurn()
 
@@ -124,13 +125,11 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes units at the front (for reversed board)', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 - 2, 0)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 - 2, 0)
 
 				startNextTurn()
 
@@ -140,13 +139,11 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes units of active player', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
 
 				startNextTurn()
 
@@ -156,13 +153,11 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes for active player', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, 0, 0)
-				game.board.createUnit(probeCards.shift()!, 0, 1)
+				game.board.createUnit(probeCards.shift()!, player, 0, 0)
+				game.board.createUnit(probeCards.shift()!, player, 0, 1)
 
 				startNextTurn()
 
@@ -172,13 +167,11 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes units on the left before units on the right', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, 0, 0)
-				game.board.createUnit(probeCards.shift()!, 0, 1)
+				game.board.createUnit(probeCards.shift()!, player, 0, 0)
+				game.board.createUnit(probeCards.shift()!, player, 0, 1)
 
 				startNextTurn()
 
@@ -188,15 +181,13 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes Board > Hand > Deck > Graveyard', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(4).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(4).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
-				game.players[1].cardHand.addUnit(probeCards.shift()!)
-				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
-				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				player.cardHand.addUnit(probeCards.shift()!)
+				player.cardDeck.addUnitToBottom(probeCards.shift()!)
+				player.cardGraveyard.addUnit(probeCards.shift()!)
 
 				startNextTurn()
 
@@ -212,8 +203,8 @@ describe('ServerGameEvents', () => {
 					const spyOfA = jest.spyOn(a, 'onTurnEnd')
 					const spyOfB = jest.spyOn(b, 'onTurnEnd')
 
-					game.players[1].cardHand.addUnit(a)
-					game.players[1].cardHand.addUnit(b)
+					player.cardHand.addUnit(a)
+					player.cardHand.addUnit(b)
 
 					startNextTurn()
 
@@ -226,8 +217,8 @@ describe('ServerGameEvents', () => {
 					const spyOfA = jest.spyOn(a, 'onTurnEnd')
 					const spyOfB = jest.spyOn(b, 'onTurnEnd')
 
-					game.players[1].cardHand.addUnit(a)
-					game.players[1].cardHand.addUnit(b)
+					player.cardHand.addUnit(a)
+					player.cardHand.addUnit(b)
 
 					startNextTurn()
 
@@ -240,8 +231,8 @@ describe('ServerGameEvents', () => {
 					const spyOfA = jest.spyOn(a, 'onTurnEnd')
 					const spyOfB = jest.spyOn(b, 'onTurnEnd')
 
-					game.players[1].cardHand.addUnit(b)
-					game.players[1].cardHand.addUnit(a)
+					player.cardHand.addUnit(b)
+					player.cardHand.addUnit(a)
 
 					startNextTurn()
 
@@ -256,8 +247,8 @@ describe('ServerGameEvents', () => {
 					const spyOfA = jest.spyOn(a, 'onTurnEnd')
 					const spyOfB = jest.spyOn(b, 'onTurnEnd')
 
-					game.players[1].cardHand.addSpell(a)
-					game.players[1].cardHand.addSpell(b)
+					player.cardHand.addSpell(a)
+					player.cardHand.addSpell(b)
 
 					startNextTurn()
 
@@ -270,8 +261,8 @@ describe('ServerGameEvents', () => {
 					const spyOfA = jest.spyOn(a, 'onTurnEnd')
 					const spyOfB = jest.spyOn(b, 'onTurnEnd')
 
-					game.players[1].cardHand.addSpell(a)
-					game.players[1].cardHand.addSpell(b)
+					player.cardHand.addSpell(a)
+					player.cardHand.addSpell(b)
 
 					startNextTurn()
 
@@ -284,8 +275,8 @@ describe('ServerGameEvents', () => {
 					const spyOfA = jest.spyOn(a, 'onTurnEnd')
 					const spyOfB = jest.spyOn(b, 'onTurnEnd')
 
-					game.players[1].cardHand.addSpell(b)
-					game.players[1].cardHand.addSpell(a)
+					player.cardHand.addSpell(b)
+					player.cardHand.addSpell(a)
 
 					startNextTurn()
 
@@ -294,13 +285,11 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes top card in deck', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
-				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
+				player.cardDeck.addUnitToBottom(probeCards.shift()!)
+				player.cardDeck.addUnitToBottom(probeCards.shift()!)
 
 				startNextTurn()
 
@@ -310,13 +299,11 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes deck units over spells', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
-				game.players[1].cardDeck.addSpellToBottom(probeCards.shift()!)
+				player.cardDeck.addUnitToBottom(probeCards.shift()!)
+				player.cardDeck.addSpellToBottom(probeCards.shift()!)
 
 				game.players[0].endTurn()
 				game.events.resolveEvents()
@@ -327,13 +314,11 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes top card in graveyard', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
-				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
+				player.cardGraveyard.addUnit(probeCards.shift()!)
+				player.cardGraveyard.addUnit(probeCards.shift()!)
 
 				startNextTurn()
 
@@ -343,13 +328,11 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('prioritizes graveyard units over spells', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
-					new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
-				)
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
-				game.players[1].cardGraveyard.addSpell(probeCards.shift()!)
+				player.cardGraveyard.addUnit(probeCards.shift()!)
+				player.cardGraveyard.addSpell(probeCards.shift()!)
 
 				startNextTurn()
 
@@ -359,36 +342,36 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('sorts many event callbacks correctly', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = Utils.shuffle(
+				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(
 					new Array(24).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game))
 				)
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 2, 0)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 2, 1)
-				game.board.createUnit(probeCards.shift()!, Constants.GAME_BOARD_ROW_COUNT / 2 + 2, 2)
-				game.players[0].cardHand.addUnit(probeCards.shift()!)
-				game.players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
-				game.players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
-				game.players[0].cardGraveyard.addUnit(probeCards.shift()!)
-				game.players[0].cardGraveyard.addUnit(probeCards.shift()!)
-				game.players[0].cardGraveyard.addSpell(probeCards.shift()!)
-				game.players[0].cardGraveyard.addSpell(probeCards.shift()!)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 0)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 1)
+				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 2)
+				game.players[0].players[0].cardHand.addUnit(probeCards.shift()!)
+				game.players[0].players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[0].players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[0].players[0].cardGraveyard.addUnit(probeCards.shift()!)
+				game.players[0].players[0].cardGraveyard.addUnit(probeCards.shift()!)
+				game.players[0].players[0].cardGraveyard.addSpell(probeCards.shift()!)
+				game.players[0].players[0].cardGraveyard.addSpell(probeCards.shift()!)
 
-				game.board.createUnit(probeCards.shift()!, 2, 0)
-				game.board.createUnit(probeCards.shift()!, 1, 0)
-				game.board.createUnit(probeCards.shift()!, 0, 0)
-				game.board.createUnit(probeCards.shift()!, 0, 1)
-				game.board.createUnit(probeCards.shift()!, 0, 2)
-				game.players[1].cardHand.addUnit(probeCards.shift()!)
-				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
-				game.players[1].cardDeck.addUnitToBottom(probeCards.shift()!)
-				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
-				game.players[1].cardGraveyard.addUnit(probeCards.shift()!)
-				game.players[1].cardGraveyard.addSpell(probeCards.shift()!)
-				game.players[1].cardGraveyard.addSpell(probeCards.shift()!)
+				game.board.createUnit(probeCards.shift()!, player, 2, 0)
+				game.board.createUnit(probeCards.shift()!, player, 1, 0)
+				game.board.createUnit(probeCards.shift()!, player, 0, 0)
+				game.board.createUnit(probeCards.shift()!, player, 0, 1)
+				game.board.createUnit(probeCards.shift()!, player, 0, 2)
+				game.players[1].players[0].cardHand.addUnit(probeCards.shift()!)
+				game.players[1].players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[1].players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
+				game.players[1].players[0].cardGraveyard.addUnit(probeCards.shift()!)
+				game.players[1].players[0].cardGraveyard.addUnit(probeCards.shift()!)
+				game.players[1].players[0].cardGraveyard.addSpell(probeCards.shift()!)
+				game.players[1].players[0].cardGraveyard.addSpell(probeCards.shift()!)
 
 				startNextTurn()
 
@@ -410,7 +393,9 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('pops card resolution stack', () => {
-				game.cardPlay.cardResolveStack.startResolving(ownedCard, () => game.cardPlay.updateResolvingCardTargetingStatus())
+				game.cardPlay.cardResolveStack.startResolving(ownedCard, TargetMode.DEPLOY_EFFECT, () =>
+					game.cardPlay.updateResolvingCardTargetingStatus()
+				)
 
 				events.resolveEvents()
 
@@ -446,7 +431,9 @@ describe('ServerGameEvents', () => {
 					},
 				]
 				ownedCards.forEach((card) => {
-					game.cardPlay.cardResolveStack.startResolving(card, () => game.cardPlay.updateResolvingCardTargetingStatus())
+					game.cardPlay.cardResolveStack.startResolving(card, TargetMode.DEPLOY_EFFECT, () =>
+						game.cardPlay.updateResolvingCardTargetingStatus()
+					)
 				})
 
 				events.resolveEvents()
@@ -467,14 +454,14 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('switches targeting to next card in queue', () => {
-				game.board.createUnit(new TestingUnitNoEffect(game), 4, 0)
+				game.board.createUnit(new TestingUnitNoEffect(game), player, 4, 0)
 
 				const valkyrie = new TestingUnitTargetsRow(game)
 				player.cardHand.addUnit(valkyrie)
 
-				game.cardPlay.forcedPlayCardFromHand(ownedCard, 0, 0)
+				game.cardPlay.playCardFromHand(ownedCard, 0, 0)
 				events.resolveEvents()
-				game.cardPlay.forcedPlayCardFromHand({ card: valkyrie, owner: player }, 0, 0)
+				game.cardPlay.playCardFromHand({ card: valkyrie, owner: player }, 0, 0)
 				events.resolveEvents()
 				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
 				events.resolveEvents()
@@ -482,7 +469,7 @@ describe('ServerGameEvents', () => {
 				expect(resolutionStackSpy).toHaveBeenCalledTimes(1)
 				expect(game.board.getAllUnits().length).toEqual(2)
 				expect(game.cardPlay.cardResolveStack.cards.length).toEqual(1)
-				expect(game.cardPlay.cardResolveStack.cards[0].card.class).toEqual('testingUnitTargetsRow')
+				expect(game.cardPlay.cardResolveStack.cards[0].card.class).toEqual('testingSpellQuickStrike')
 			})
 		})
 
@@ -494,11 +481,11 @@ describe('ServerGameEvents', () => {
 				;({ game, player, ownedCard } = TestGameTemplates.singleCardTest(TestingSpellTacticalMove))
 				events = game.events
 				resolutionStackSpy = jest.spyOn(game.cardPlay.cardResolveStack, 'finishResolving')
-				game.board.createUnit(new TestingUnitNoEffect(game), 0, 0)
+				game.board.createUnit(new TestingUnitNoEffect(game), player, 0, 0)
 			})
 
 			it('keeps card resolving after first target', () => {
-				game.cardPlay.forcedPlayCardFromHand(ownedCard, 0, 0)
+				game.cardPlay.playCardFromHand(ownedCard, 0, 0)
 				events.resolveEvents()
 				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
 				events.resolveEvents()
@@ -509,7 +496,7 @@ describe('ServerGameEvents', () => {
 			})
 
 			it('resolves card after second target', () => {
-				game.cardPlay.forcedPlayCardFromHand(ownedCard, 0, 0)
+				game.cardPlay.playCardFromHand(ownedCard, 0, 0)
 				events.resolveEvents()
 				game.cardPlay.selectCardTarget(player, game.cardPlay.getDeployTargets()[0].target)
 				events.resolveEvents()

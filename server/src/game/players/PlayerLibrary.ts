@@ -7,6 +7,7 @@ import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import { tryUntil } from '@src/utils/Utils'
 import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import AccessLevel from '@shared/enums/AccessLevel'
+import GameLibrary from '@src/game/libraries/GameLibrary'
 
 const createNumberedUsername = (username: string): string => {
 	let existingPlayer: PlayerDatabaseEntry | null
@@ -29,10 +30,11 @@ const createNumberedUsername = (username: string): string => {
 }
 
 class PlayerLibrary {
-	players: ServerPlayer[]
+	cachePrunedAt: number = new Date().getTime()
+	playerCache: { player: ServerPlayer; timestamp: number }[]
 
 	constructor() {
-		this.players = []
+		this.playerCache = []
 	}
 
 	public async register(email: string, username: string, password: string): Promise<boolean> {
@@ -41,9 +43,14 @@ class PlayerLibrary {
 		return PlayerDatabase.insertPlayer(email, createNumberedUsername(username), passwordHash)
 	}
 
+	public async registerGuest(email: string, username: string): Promise<boolean> {
+		email = email.toLowerCase()
+		return PlayerDatabase.insertGuestPlayer(email, createNumberedUsername(username), '')
+	}
+
 	public async updateUsername(id: string, username: string): Promise<boolean> {
 		const player = await this.getPlayerById(id)
-		if (!player) {
+		if (!player || player.isGuest) {
 			return false
 		}
 		this.removeFromCache(player)
@@ -52,7 +59,7 @@ class PlayerLibrary {
 
 	public async updatePassword(id: string, password: string): Promise<boolean> {
 		const player = await this.getPlayerById(id)
-		if (!player) {
+		if (!player || player.isGuest) {
 			return false
 		}
 		this.removeFromCache(player)
@@ -62,7 +69,7 @@ class PlayerLibrary {
 
 	public async updateAccessLevel(id: string, accessLevel: AccessLevel): Promise<boolean> {
 		const player = await this.getPlayerById(id)
-		if (!player) {
+		if (!player || player.isGuest) {
 			return false
 		}
 		this.removeFromCache(player)
@@ -113,36 +120,45 @@ class PlayerLibrary {
 
 	private cachePlayer(playerDatabaseEntry: PlayerDatabaseEntry): ServerPlayer {
 		const player = ServerPlayer.newInstance(playerDatabaseEntry)
-		this.players.push(player)
-		this.updateAccessedAt(player).then()
+		this.playerCache = this.playerCache.filter((cachedPlayer) => cachedPlayer.player.id !== player.id)
+		this.playerCache.push({
+			player,
+			timestamp: new Date().getTime(),
+		})
+		PlayerLibrary.updateAccessedAt(player).then()
 		return player
 	}
 
 	public removeFromCache(player: ServerPlayer): void {
-		this.players = this.players.filter((playerInCache) => playerInCache.id !== player.id)
+		this.playerCache = this.playerCache.filter((cachedPlayer) => cachedPlayer.player.id !== player.id)
 	}
 
 	public async getPlayerById(playerId: string): Promise<ServerPlayer | null> {
-		let player = this.players.find((player) => player.id === playerId)
-		if (!player) {
+		this.pruneCache()
+		let cachedPlayer = this.playerCache.find((cachedPlayer) => cachedPlayer.player.id === playerId)
+		if (!cachedPlayer) {
 			const playerDatabaseEntry = await PlayerDatabase.selectPlayerById(playerId)
 			if (!playerDatabaseEntry) {
 				return null
 			}
-			player = ServerPlayer.newInstance(playerDatabaseEntry)
-			this.players.push(player)
+			cachedPlayer = {
+				player: ServerPlayer.newInstance(playerDatabaseEntry),
+				timestamp: new Date().getTime(),
+			}
+			this.playerCache.push(cachedPlayer)
 		}
-		return player
+		return cachedPlayer.player
 	}
 
 	public async getPlayerByJwtToken(token: string): Promise<ServerPlayer | null> {
+		this.pruneCache()
 		const tokenPayload = await TokenManager.verifyToken(token, [JwtTokenScope.AUTH])
 		if (!tokenPayload) {
 			return null
 		}
 		const player = await this.getPlayerById(tokenPayload.playerId)
 		if (player) {
-			this.updateAccessedAt(player).then()
+			PlayerLibrary.updateAccessedAt(player).then()
 		}
 		return player
 	}
@@ -151,7 +167,23 @@ class PlayerLibrary {
 		return PlayerDatabase.deletePlayer(player.id)
 	}
 
-	private async updateAccessedAt(player: ServerPlayer): Promise<void> {
+	private pruneCache(): void {
+		const currentTime = new Date().getTime()
+		if (currentTime - this.cachePrunedAt < 60000) {
+			return
+		}
+
+		this.playerCache = this.playerCache.filter(
+			(cachedPlayer) =>
+				GameLibrary.games.some((game) =>
+					game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === cachedPlayer.player)
+				) || currentTime - cachedPlayer.timestamp < 60000
+		)
+		this.playerCache.filter((player) => player.player.isInGame()).forEach((player) => (player.timestamp = currentTime))
+		this.cachePrunedAt = currentTime
+	}
+
+	private static async updateAccessedAt(player: ServerPlayer): Promise<void> {
 		if (new Date().getTime() - player.timestampUpdatedAt.getTime() < 60000) {
 			return
 		}

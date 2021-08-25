@@ -3,20 +3,23 @@
 		<div class="the-game-list">
 			<div v-if="reconnectGames.length > 0">
 				<h2>{{ $locale.get('ui.browser.reconnect.header') }}</h2>
-				<button @click="onReconnect" class="primary">{{ $locale.get('ui.browser.reconnect.button') }}</button>
+				<button @click="onReconnect" class="primary">
+					<i class="fas fa-arrow-alt-circle-left" /> {{ $locale.get('ui.browser.reconnect.button') }}
+				</button>
 			</div>
 			<h2>{{ $locale.get('ui.browser.list.header') }}</h2>
-			<div v-if="games.length === 0">
+			<div v-if="games.length === 0 && reconnectGames.length === 0">
 				<span class="info-text">{{ $locale.get('ui.browser.empty') }}</span>
+			</div>
+			<div v-if="games.length === 0 && reconnectGames.length > 0">
+				<span class="info-text">{{ $locale.get('ui.browser.almostEmpty') }}</span>
 			</div>
 			<div class="list">
 				<game-list-item class="list-item" v-for="game in games" :key="game.id" :game="game" />
 			</div>
 			<div class="controls">
 				<div class="button-container">
-					<button @click="onCreateSinglePlayer" class="primary">{{ $locale.get('ui.play.ai.normal') }}</button>
-					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp.normal') }}</button>
-					<button @click="onRefreshGames" class="secondary">{{ $locale.get('ui.play.refresh') }}</button>
+					<button @click="onRefreshGames" class="secondary"><i class="fas fa-sync" /> {{ $locale.get('ui.play.refresh') }}</button>
 				</div>
 			</div>
 		</div>
@@ -28,11 +31,7 @@ import axios from 'axios'
 import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
 import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
-import Localization from '@/Pixi/Localization'
-import TheChallengeAISelection from '@/Vue/components/popup/escapeMenu/TheChallengeAISelection.vue'
-import GameMode from '@shared/enums/GameMode'
 import { defineComponent } from 'vue'
-import Notifications from '@/utils/Notifications'
 
 export default defineComponent({
 	components: {
@@ -64,28 +63,6 @@ export default defineComponent({
 			const games = allGamesResponse.data.data as GameMessage[]
 			this.games = games.sort((a, b) => a.players.length - b.players.length)
 			this.reconnectGames = reconnectGamesResponse.data.data as GameMessage[]
-		},
-
-		async onCreateSinglePlayer(): Promise<void> {
-			if (!store.state.selectedDeckId) {
-				Notifications.error(Localization.get('ui.noty.deckRequired'))
-				return
-			}
-
-			store.dispatch.popupModule.open({
-				component: TheChallengeAISelection,
-			})
-		},
-
-		async onCreateMultiPlayer(): Promise<void> {
-			if (!store.state.selectedDeckId) {
-				Notifications.error(Localization.get('ui.noty.deckRequired'))
-				return
-			}
-
-			const response = await axios.post('/api/games', { mode: GameMode.VS_PLAYER })
-			const gameMessage: GameMessage = response.data.data
-			await store.dispatch.joinGame(gameMessage)
 		},
 
 		async onRefreshGames(): Promise<void> {

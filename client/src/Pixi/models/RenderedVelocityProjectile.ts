@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import ObjectTrail from '@/Pixi/vfx/ObjectTrail'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 export default class RenderedVelocityProjectile {
 	sprite: PIXI.Sprite
@@ -14,12 +15,13 @@ export default class RenderedVelocityProjectile {
 	impactPerformed: boolean
 
 	private constructor(sprite: PIXI.Sprite, startingPoint: PIXI.Point, velocity: number, acceleration: number, lifetime: number) {
+		const scale = getRenderScale().superSamplingLevel
 		this.sprite = sprite
 		this.trail = new ObjectTrail(new PIXI.Point(sprite.position.x, sprite.position.y))
 		this.sprite.addChild(this.trail.rope)
 		this.sprite.position.copyFrom(startingPoint)
-		this.velocity = velocity
-		this.acceleration = acceleration
+		this.velocity = velocity * scale
+		this.acceleration = acceleration * scale
 		this.lifetime = lifetime
 		this.onImpact = () => {
 			/* Empty */

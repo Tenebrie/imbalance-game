@@ -10,7 +10,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
 
 export default class UnitWoundedVeteran extends ServerCard {
-	damageToSelf = 10
+	damageToSelf = 20
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -20,7 +20,7 @@ export default class UnitWoundedVeteran extends ServerCard {
 			tribes: [CardTribe.PEASANT, CardTribe.SOLDIER],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 20,
+				power: 40,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

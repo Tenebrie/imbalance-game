@@ -60,7 +60,7 @@ export default defineComponent({
 	setup() {
 		const hasLoaded = ref(false)
 		const players = ref<PlayerDatabaseEntry[]>([])
-		const currentPlayer = computed<Player>(() => store.state.player)
+		const currentPlayer = computed<Player | null>(() => store.state.player)
 
 		const loadData = async () => {
 			const response = await axios.get('/api/admin/players')
@@ -126,8 +126,6 @@ tr:nth-child(even) {
 	background-color: rgba(white, 0.05);
 }
 
-table {
-}
 td,
 th {
 	padding: 12px 12px;

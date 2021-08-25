@@ -9,11 +9,11 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import Keywords from '../../../../utils/Keywords'
-import { asSplashUnitDamage } from '../../../../utils/LeaderStats'
+import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 
 export default class UnitEnergyRelay extends ServerCard {
 	infuseCost = 1
-	damageDealt = asSplashUnitDamage(3)
+	damageDealt = asRecurringUnitDamage(3)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -22,7 +22,7 @@ export default class UnitEnergyRelay extends ServerCard {
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_INFUSE_X],
 			stats: {
-				power: 7,
+				power: 11,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
@@ -32,8 +32,8 @@ export default class UnitEnergyRelay extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
-			.require(({ player }) => player === this.owner)
-			.require(({ player }) => player.spellMana >= this.infuseCost)
+			.require(({ group }) => group.owns(this))
+			.require(() => this.ownerPlayerInGame.spellMana >= this.infuseCost)
 			.perform(() => Keywords.infuse(this, this.infuseCost))
 			.perform(() => this.onDealDamage())
 	}

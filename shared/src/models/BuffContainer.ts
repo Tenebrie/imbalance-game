@@ -1,7 +1,8 @@
 import Card from './Card'
 import Buff from './Buff'
+import BoardRow from './BoardRow'
 
 export default interface BuffContainer {
-	card: Card
+	parent: Card | BoardRow
 	buffs: Buff[]
 }

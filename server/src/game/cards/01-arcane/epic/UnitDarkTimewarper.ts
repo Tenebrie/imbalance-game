@@ -19,7 +19,7 @@ export default class UnitDarkTimewarper extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitVoidPortal],
 			stats: {
-				power: 6,
+				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

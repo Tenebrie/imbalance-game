@@ -35,7 +35,7 @@ export default defineComponent({
 			store.dispatch.popupModule.close()
 		}
 
-		const username = computed<string>(() => store.state.player.username)
+		const username = computed<string>(() => store.state.player?.username || '')
 
 		return {
 			username,

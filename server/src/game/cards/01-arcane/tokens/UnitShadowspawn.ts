@@ -12,7 +12,7 @@ export default class UnitShadowspawn extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			stats: {
-				power: 2,
+				power: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,

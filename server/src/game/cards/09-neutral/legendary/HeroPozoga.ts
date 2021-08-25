@@ -6,7 +6,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import ServerAnimation from '../../../models/ServerAnimation'
 import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
-import { mapUnitsToCards } from '../../../../utils/Utils'
+import { mapUnitsToCards } from '@src/utils/Utils'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroPozoga extends ServerCard {
@@ -17,7 +17,7 @@ export default class HeroPozoga extends ServerCard {
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 3,
+				power: 5,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

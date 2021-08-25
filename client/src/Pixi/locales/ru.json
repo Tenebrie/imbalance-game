@@ -20,8 +20,8 @@
 	"ui.browser.header": "Список игр",
 	"ui.browser.empty": "Сейчас никто не играет :(",
 
-	"ui.play.ai.normal": "Играть против ИИ",
-	"ui.play.pvp.normal": "Создать игру",
+	"ui.play.pve.normal": "Играть против ИИ",
+	"ui.play.pvp.normal": "Играть против игрока",
 	"ui.play.refresh": "Обновить",
 
 	"ui.noty.deckRequired": "Вам нужно выбрать колоду!",
@@ -58,11 +58,11 @@
 	"ui.profile.delete.progress": "Удаление...",
 
 	"ui.decks.saveDeck": "Сохранить",
-	"ui.decks.saveDeck.progress": "Сохранение...",
+	"ui.decks.saveDeck.progress": "Сохраняем...",
 	"ui.decks.shareDeck": "Поделиться",
-	"ui.decks.shareDeck.progress": "Загрузка...",
+	"ui.decks.shareDeck.progress": "Делимся...",
 	"ui.decks.deleteDeck": "Удалить",
-	"ui.decks.deleteDeck.progress": "Удаление...",
+	"ui.decks.deleteDeck.progress": "Удаляем...",
 	"ui.decks.leaveDeck": "Назад",
 
 	"log.entry.roundStarted": "{player} начинает новый раунд",
@@ -316,9 +316,6 @@
 
 	"card.heroCoralScribe.name": "Коралловый писарь",
 	"card.heroCoralScribe.description": "*Вход в игру:*\nПоложите копию *Надвигающейся бури* в вашу руку за каждую копию бури в вашем сбросе.",
-
-	"card.heroFlameDancer.name": "Танцующая\nс пламенем",
-	"card.heroFlameDancer.description": "*Вход в игру:*\nНакладывает *Горение* на {burnDuration} хода всем юнитам на вражеском ряду.",
 
 	"card.heroRavenCaller.name": "Говорящий с воронами",
 	"card.heroRavenCaller.description": "*Вход в игру:*\n*Призывает* птицу из вашей колоды.",

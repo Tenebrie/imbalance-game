@@ -1,14 +1,14 @@
 import ServerGame, { OptionalGameProps } from '../game/models/ServerGame'
 import ServerPlayer from '../game/players/ServerPlayer'
 import AccessLevel from '@shared/enums/AccessLevel'
-import ServerTemplateCardDeck from '../game/models/ServerTemplateCardDeck'
 import CardLibrary, { CardConstructor } from '../game/libraries/CardLibrary'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
 import ServerCard from '../game/models/ServerCard'
-import GameMode from '@shared/enums/GameMode'
 import ServerOwnedCard from '../game/models/ServerOwnedCard'
 import TestingLeader from '../game/cards/11-testing/TestingLeader'
 import { playerAction, startNextRound, startNextTurn } from './TestGameUtils'
+import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
+import TestingRulesetPVP from '@src/game/rulesets/testing/TestingRulesetPVP'
 
 const consoleInfo = console.info
 const consoleWarn = console.warn
@@ -29,6 +29,7 @@ export const resumeLogging = (): void => {
 interface CommonTemplateResult {
 	game: ServerGame
 	player: ServerPlayerInGame
+	opponent: ServerPlayerInGame
 	playerAction: (callback: () => void) => void
 	startNextTurn: () => void
 	startNextRound: () => void
@@ -46,16 +47,25 @@ type OpponentCardTestGameTemplateResult = {
 	opponentsOwnedCard: ServerOwnedCard
 } & CommonTemplateResult
 
+const getPlayers = () => {
+	const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL, false)
+	const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL, false)
+	return {
+		playerOne,
+		playerTwo,
+	}
+}
+
 export default {
 	emptyDecks(): ServerGame {
 		silenceLogging()
-		const game = new ServerGame({ gameMode: GameMode.VS_AI, playerMoveOrderReversed: false })
-		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
-		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
-		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		game.addPlayer(playerOne, templateOne)
-		game.addPlayer(playerTwo, templateTwo)
+
+		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false })
+		const { playerOne, playerTwo } = getPlayers()
+		CardLibrary.forceLoadCards([TestingLeader])
+		const template = ServerEditorDeck.fromConstructors([TestingLeader])
+		game.addHumanPlayer(playerOne, game.players[0], template)
+		game.addHumanPlayer(playerTwo, game.players[1], template)
 		game.start()
 		game.players[0].startRound()
 		game.players[1].startRound()
@@ -67,15 +77,14 @@ export default {
 		return game
 	},
 
-	normalGameFlow(props?: OptionalGameProps): CommonTemplateResult {
+	normalGameFlow(props?: Partial<OptionalGameProps>): CommonTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({ gameMode: GameMode.VS_AI, playerMoveOrderReversed: false, ...props })
-		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
-		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
-		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		game.addPlayer(playerOne, templateOne)
-		game.addPlayer(playerTwo, templateTwo)
+		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false, ...props })
+		const { playerOne, playerTwo } = getPlayers()
+		CardLibrary.forceLoadCards([TestingLeader])
+		const template = ServerEditorDeck.fromConstructors([TestingLeader])
+		game.addHumanPlayer(playerOne, game.players[0], template)
+		game.addHumanPlayer(playerTwo, game.players[1], template)
 
 		game.start()
 		game.players[0].startRound()
@@ -87,7 +96,8 @@ export default {
 
 		return {
 			game,
-			player: game.players[1],
+			player: game.players[1].players[0],
+			opponent: game.players[0].players[0],
 			playerAction: playerAction(game),
 			startNextTurn: startNextTurn(game),
 			startNextRound: startNextRound(game),
@@ -96,20 +106,19 @@ export default {
 
 	singleCardTest(card: CardConstructor): SingleCardTestGameTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({ gameMode: GameMode.VS_AI, playerMoveOrderReversed: false })
-		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
-		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
-		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		game.addPlayer(playerOne, templateOne)
-		game.addPlayer(playerTwo, templateTwo)
+		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false })
+		const { playerOne, playerTwo } = getPlayers()
+		CardLibrary.forceLoadCards([TestingLeader, card])
+		const template = ServerEditorDeck.fromConstructors([TestingLeader])
+		game.addHumanPlayer(playerOne, game.players[0], template)
+		game.addHumanPlayer(playerTwo, game.players[1], template)
 
 		game.start()
 		game.players[0].startRound()
 		game.players[1].startRound()
 		game.advanceCurrentTurn()
 
-		const player = game.players[1]
+		const player = game.players[1].players[0]
 		const cardInHand = new card(game)
 		player.setUnitMana(1)
 		player.cardHand.addUnit(cardInHand)
@@ -117,9 +126,12 @@ export default {
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
 
+		const opponent = game.players[0].players[0]
+
 		return {
 			game,
 			player,
+			opponent,
 			cardInHand,
 			ownedCard: {
 				card: cardInHand,
@@ -133,34 +145,34 @@ export default {
 
 	opponentCardTest(playersCard: CardConstructor, opponentsCard: CardConstructor): OpponentCardTestGameTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({ gameMode: GameMode.VS_AI, playerMoveOrderReversed: false })
-		const playerOne = new ServerPlayer('player-one-id', '123', 'Teppo', AccessLevel.NORMAL)
-		const playerTwo = new ServerPlayer('player-two-id', '123', 'Jom', AccessLevel.NORMAL)
-		const templateOne = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		const templateTwo = new ServerTemplateCardDeck(CardLibrary.instantiateByConstructor(game, TestingLeader), [], [])
-		game.addPlayer(playerOne, templateOne)
-		game.addPlayer(playerTwo, templateTwo)
+		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false })
+		const { playerOne, playerTwo } = getPlayers()
+		CardLibrary.forceLoadCards([TestingLeader])
+		const template = ServerEditorDeck.fromConstructors([TestingLeader])
+		game.addHumanPlayer(playerOne, game.players[0], template)
+		game.addHumanPlayer(playerTwo, game.players[1], template)
 
 		game.start()
 		game.players[0].startRound()
 		game.players[1].startRound()
 		game.advanceCurrentTurn()
 
-		const player = game.players[1]
+		const player = game.players[1].players[0]
 		const playersCardInHand = new playersCard(game)
 		player.setUnitMana(1)
 		player.cardHand.addUnit(playersCardInHand)
 
 		const opponentsCardInHand = new opponentsCard(game)
-		player.opponentInGame.setUnitMana(1)
-		player.opponentInGame.cardHand.addUnit(opponentsCardInHand)
+		player.opponentInGame.players[0].setUnitMana(1)
+		player.opponentInGame.players[0].cardHand.addUnit(opponentsCardInHand)
 
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
 
 		return {
 			game,
-			player,
+			player: player,
+			opponent: game.players[0].players[0],
 			playersCard: playersCardInHand,
 			playersOwnedCard: {
 				card: playersCardInHand,
@@ -169,8 +181,36 @@ export default {
 			opponentsCard: opponentsCardInHand,
 			opponentsOwnedCard: {
 				card: opponentsCardInHand,
-				owner: player.opponentInGame,
+				owner: player.opponentInGame.players[0],
 			},
+			playerAction: playerAction(game),
+			startNextTurn: startNextTurn(game),
+			startNextRound: startNextRound(game),
+		}
+	},
+
+	leaderTest(playerLeader: CardConstructor, opponentLeader: CardConstructor, props?: OptionalGameProps): CommonTemplateResult {
+		silenceLogging()
+		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false, ...props })
+		const { playerOne, playerTwo } = getPlayers()
+		CardLibrary.forceLoadCards([playerLeader, opponentLeader])
+		const playerTemplate = ServerEditorDeck.fromConstructors([playerLeader])
+		const opponentTemplate = ServerEditorDeck.fromConstructors([opponentLeader])
+		game.addHumanPlayer(playerOne, game.players[0], playerTemplate)
+		game.addHumanPlayer(playerTwo, game.players[1], opponentTemplate)
+
+		game.start()
+		game.players[0].startRound()
+		game.players[1].startRound()
+		game.advanceCurrentTurn()
+
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+
+		return {
+			game,
+			player: game.players[1].players[0],
+			opponent: game.players[0].players[0],
 			playerAction: playerAction(game),
 			startNextTurn: startNextTurn(game),
 			startNextRound: startNextRound(game),

@@ -9,32 +9,33 @@ import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGam
 import AccessLevel from '@shared/enums/AccessLevel'
 import PlayerMessage from '@shared/models/network/player/PlayerMessage'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 
 class ClientPlayer implements Player {
 	id: string
 	email: string
 	username: string
 	accessLevel: AccessLevel
+	isGuest: boolean
 
 	constructor(player: PlayerMessage) {
 		this.id = player.id
 		this.email = player.email
 		this.username = player.username
 		this.accessLevel = player.accessLevel
+		this.isGuest = player.isGuest
 	}
 }
 
 export default class ClientPlayerInGame implements PlayerInGame {
 	player: ClientPlayer
-	leader: RenderedCard
+	leader!: RenderedCard
 	cardHand: RenderedCardHand
 	cardDeck: ClientCardDeck
 	cardGraveyard: ClientCardGraveyard
 
-	private __morale = 0
 	private __unitMana = 0
 	private __spellMana = 0
-	isTurnActive = false
 
 	constructor(player: Player) {
 		this.player = player
@@ -43,16 +44,8 @@ export default class ClientPlayerInGame implements PlayerInGame {
 		this.cardGraveyard = new ClientCardGraveyard()
 	}
 
-	public get morale(): number {
-		return this.__morale
-	}
-	public set morale(value: number) {
-		this.__morale = value
-		if (this === Core.player) {
-			store.commit.gameStateModule.setPlayerMorale(value)
-		} else if (this === Core.opponent) {
-			store.commit.gameStateModule.setOpponentMorale(value)
-		}
+	public get group(): ClientPlayerGroup {
+		return Core.opponent && Core.opponent.players.includes(this) ? Core.opponent : Core.player
 	}
 
 	public get unitMana(): number {
@@ -60,7 +53,7 @@ export default class ClientPlayerInGame implements PlayerInGame {
 	}
 	public set unitMana(value: number) {
 		this.__unitMana = value
-		if (this === Core.player) {
+		if (this.group === Core.player) {
 			store.commit.gameStateModule.setPlayerUnitMana(value)
 		}
 	}
@@ -70,24 +63,10 @@ export default class ClientPlayerInGame implements PlayerInGame {
 	}
 	public set spellMana(value: number) {
 		this.__spellMana = value
-		if (this === Core.player) {
+		if (this.group === Core.player) {
 			store.commit.gameStateModule.setPlayerSpellMana(value)
-		} else if (this === Core.opponent) {
+		} else if (this.group === Core.opponent) {
 			store.commit.gameStateModule.setOpponentSpellMana(value)
-		}
-	}
-
-	public startTurn(): void {
-		this.isTurnActive = true
-		if (this === Core.player) {
-			store.commit.gameStateModule.setIsPlayersTurn(true)
-		}
-	}
-
-	public endTurn(): void {
-		this.isTurnActive = false
-		if (this === Core.player) {
-			store.commit.gameStateModule.setIsPlayersTurn(false)
 		}
 	}
 
@@ -100,7 +79,6 @@ export default class ClientPlayerInGame implements PlayerInGame {
 		const clientPlayerInGame = new ClientPlayerInGame(player)
 		clientPlayerInGame.cardHand = RenderedCardHand.fromMessage(message.cardHand)
 		clientPlayerInGame.cardDeck = ClientCardDeck.fromMessage(message.cardDeck)
-		clientPlayerInGame.morale = message.morale
 		clientPlayerInGame.unitMana = message.unitMana
 		clientPlayerInGame.spellMana = message.spellMana
 		return clientPlayerInGame
