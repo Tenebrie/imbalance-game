@@ -111,6 +111,15 @@ export default {
 		}),
 	},
 
+	addCardToDeck: (player: ServerPlayerInGame, card: CardConstructor): void => {
+		const instance = new card(player.game)
+		if (instance.type === CardType.UNIT) {
+			player.cardDeck.addUnitToBottom(instance)
+		} else {
+			player.cardDeck.addSpellToBottom(instance)
+		}
+	},
+
 	addCardToHand: {
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {

@@ -4,6 +4,7 @@ import ServerUnit from '../game/models/ServerUnit'
 import { ValidServerCardTarget } from '@src/game/models/ServerCardTargeting'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
+// TODO: Figure out what the `player` is here
 export interface CardTargetValidatorArguments {
 	player: ServerPlayerInGame
 	sourceCard: ServerCard
