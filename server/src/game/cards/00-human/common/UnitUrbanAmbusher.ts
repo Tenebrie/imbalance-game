@@ -31,6 +31,7 @@ export default class UnitUrbanAmbusher extends ServerCard {
 		this.createSelector()
 			.require(() => this.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
+			.requireTarget(({ target }) => target.tribes.includes(CardTribe.BUILDING))
 			.requireTarget(({ target }) => target.unit!.rowIndex === this.unit!.rowIndex)
 			.provideSelf(BuffStrength, this.bonusPower)
 	}

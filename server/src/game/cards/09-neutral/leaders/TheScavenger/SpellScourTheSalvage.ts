@@ -26,6 +26,7 @@ export default class SpellScourTheSalvage extends ServerCard {
 
 		this.createDeployTargets(TargetType.CARD_IN_SPELL_GRAVEYARD)
 			.require(({ targetCard }) => targetCard.stats.spellCost <= this.stats.baseSpellCost)
+			.require(({ targetCard }) => this.ownerGroupInGame.owns(targetCard))
 			.perform(({ targetCard }) => Keywords.summonCard(targetCard))
 	}
 }

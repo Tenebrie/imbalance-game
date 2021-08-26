@@ -37,9 +37,11 @@ export default class SpellBecomeTheSalvage extends ServerCard {
 			},
 		})
 
+		// TODO: Write unit tests for this thing
 		this.createDeployTargets(TargetType.CARD_IN_SPELL_GRAVEYARD)
 			.require(() => this.charges > 0)
 			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.SALVAGE))
+			.require(({ targetCard }) => this.ownerGroupInGame.owns(targetCard))
 			.perform(({ targetCard }) => {
 				this.ownerPlayerInGame.addSpellMana(targetCard.stats.spellCost)
 				this.ownerPlayerInGame.cardGraveyard.removeCard(targetCard)
