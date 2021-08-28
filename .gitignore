@@ -14,5 +14,6 @@ server/src/*.js.map
 shared/src/*.js
 shared/src/*.js.map
 asset-converter/input/*
+server/src/game/rulesets/other/RulesetDev.ts
 yarn-error.log
 
