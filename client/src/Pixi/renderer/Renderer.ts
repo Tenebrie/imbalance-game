@@ -74,7 +74,7 @@ export default class Renderer {
 	SELECTABLE_CARD_DISCOVER_WINDOW_FRACTION = 0.3
 
 	public get GAME_BOARD_ROW_WINDOW_FRACTION(): number {
-		return this.GAME_BOARD_WINDOW_FRACTION / Core.constants.GAME_BOARD_ROW_COUNT
+		return this.GAME_BOARD_WINDOW_FRACTION / Math.max(4, Core.constants.GAME_BOARD_ROW_COUNT)
 	}
 
 	constructor(container: HTMLElement) {
