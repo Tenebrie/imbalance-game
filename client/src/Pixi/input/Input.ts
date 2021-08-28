@@ -203,7 +203,7 @@ export default class Input {
 		} else {
 			this.hoveredShadowUnit = null
 		}
-		if (hoveredCard && hoveredCard.card.type === CardType.SPELL && !this.grabbedCard) {
+		if (hoveredCard && !this.grabbedCard) {
 			store.commit.gameStateModule.setPlayerSpellManaInDanger(hoveredCard.card.stats.spellCost)
 		} else if (!this.grabbedCard) {
 			store.commit.gameStateModule.setPlayerSpellManaInDanger(0)

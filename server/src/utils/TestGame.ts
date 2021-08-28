@@ -16,8 +16,9 @@ import Keywords from '@src/utils/Keywords'
 import ServerUnit from '@src/game/models/ServerUnit'
 import AsciiColor from '@src/enums/AsciiColor'
 import ServerCardStats from '@src/game/models/ServerCardStats'
-import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
 import RichTextVariables from '@shared/models/RichTextVariables'
+import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
+import CardLocation from '@shared/enums/CardLocation'
 
 /**
  * Game wrapper
@@ -25,6 +26,7 @@ import RichTextVariables from '@shared/models/RichTextVariables'
 export type TestGame = {
 	handle: ServerGame
 	board: TestGameBoard
+	stack: TestGamePlayStack
 	player: TestGamePlayer
 	opponent: TestGamePlayer
 	allPlayers: TestGamePlayer[][]
@@ -35,6 +37,7 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 	const game = new ServerGame({ ruleset, playerMoveOrderReversed: false })
 
 	const boardWrapper = setupTestGameBoard(game)
+	const stackWrapper = setupCardPlayStack(game)
 	const playerWrappers = setupTestGamePlayers(game)
 
 	game.start()
@@ -44,6 +47,7 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 	return {
 		handle: game,
 		board: boardWrapper,
+		stack: stackWrapper,
 		player: playerWrappers[0][0],
 		opponent: playerWrappers[1][0],
 		allPlayers: playerWrappers,
@@ -54,15 +58,17 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
  * Board wrapper
  */
 type TestGameBoard = {
-	log: () => void
-	find: (card: CardConstructor) => TestGameUnit
-	count: (card: CardConstructor) => number
+	log(): void
+	find(card: CardConstructor): TestGameUnit
+	count(card: CardConstructor): number
+	countAll(): number
 }
 
 type TestGameUnit = {
 	stats: ServerCardStats
+	buffs: TestGameBuffs
 	variables: RichTextVariables
-	orderOnFirst: () => void
+	orderOnFirst(): void
 }
 
 const setupTestGameBoard = (game: ServerGame): TestGameBoard => {
@@ -80,18 +86,39 @@ const setupTestGameBoard = (game: ServerGame): TestGameBoard => {
 			const cardClass = getClassFromConstructor(cardConstructor)
 			return game.board.getAllUnits().filter((unit) => unit.card.class === cardClass).length
 		},
+		countAll: (): number => {
+			return game.board.getAllUnits().length
+		},
 	}
 }
 
 const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 	return {
 		stats: unit.card.stats,
+		buffs: wrapBuffs(game, unit.card),
 		variables: unit.card.variables,
 		orderOnFirst: () => {
 			const validOrders = game.board.orders.validOrders.filter((order) => order.definition.card === unit.card)
 			const chosenOrder = validOrders[0]
 			if (!chosenOrder) throw new Error('No valid orders to perform!')
 			game.board.orders.performUnitOrder(chosenOrder, unit.originalOwner)
+			game.events.resolveEvents()
+			game.events.evaluateSelectors()
+		},
+	}
+}
+
+/**
+ * Play stack wrapper
+ */
+type TestGamePlayStack = {
+	countAll(): number
+}
+
+const setupCardPlayStack = (game: ServerGame): TestGamePlayStack => {
+	return {
+		countAll: () => {
+			return game.cardPlay.cardResolveStack.cards.length
 		},
 	}
 }
@@ -101,11 +128,18 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
  */
 type TestGamePlayer = {
 	handle: ServerPlayerInGame
-	add: (card: CardConstructor) => ServerCard
-	play: (card: CardConstructor, row?: RowIndexWrapper) => void
-	spawn: (card: CardConstructor, row?: RowIndexWrapper) => TestGameUnit
+	add(card: CardConstructor): TestGameCard
+	spawn(card: CardConstructor, row?: RowIndexWrapper): TestGameUnit
+	addSpellMana(value: number): void
+	find(card: CardConstructor): TestGameCard
 }
 type RowIndexWrapper = 'front' | 'back'
+
+type TestGameCard = {
+	buffs: TestGameBuffs
+	location: CardLocation
+	play(row?: RowIndexWrapper): TestGameCardPlayActions
+}
 
 const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 	CardLibrary.forceLoadCards([TestingLeader])
@@ -122,21 +156,16 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		}
 	})
 
-	const add = (player: ServerPlayerInGame, cardConstructor: CardConstructor): ServerCard => {
-		return Keywords.addCardToHand.for(player).fromConstructor(cardConstructor)
+	const add = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
+		const card = Keywords.addCardToHand.for(player).fromConstructor(cardConstructor)
+		return wrapCard(game, card, player)
 	}
 
-	const play = (player: ServerPlayerInGame, cardConstructor: CardConstructor, row: RowIndexWrapper): void => {
-		const distance = row === 'front' ? 0 : game.board.getControlledRows(player).length - 1
-		const targetRow = game.board.getRowWithDistanceToFront(player, distance)
-		const card = player.cardHand.findCardByConstructor(cardConstructor)
-		if (!card) {
-			throw new Error(`No card of type ${getClassFromConstructor(cardConstructor)} in player's hand.`)
-		}
-		if (player.unitMana < card.stats.unitCost || player.spellMana < card.stats.spellCost) {
-			warn(`Attempting to play a card without enough mana. The action is likely to be ignored.`)
-		}
-		game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(card, player), targetRow.index, targetRow.cards.length)
+	const find = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
+		const allCards = player.cardHand.allCards.concat(player.cardDeck.allCards).concat(player.cardGraveyard.allCards)
+		const foundCard = allCards.find((card) => card.class === getClassFromConstructor(cardConstructor))
+		if (!foundCard) throw new Error(`Unable to find any card with class ${getClassFromConstructor(cardConstructor)}`)
+		return wrapCard(game, foundCard, player)
 	}
 
 	const spawn = (player: ServerPlayerInGame, cardConstructor: CardConstructor, row: RowIndexWrapper): TestGameUnit => {
@@ -144,18 +173,74 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		const targetRow = game.board.getRowWithDistanceToFront(player, distance)
 		const card = new cardConstructor(game)
 		const unit = targetRow.createUnit(card, player, targetRow.cards.length)
-		if (!unit) throw new Error('Unable to create the unit')
+		if (!unit) throw new Error(`Unable to create the unit with class ${getClassFromConstructor(cardConstructor)}`)
 		return wrapUnit(game, unit)
+	}
+
+	const addSpellMana = (player: ServerPlayerInGame, value: number): void => {
+		player.addSpellMana(value)
 	}
 
 	return game.players.map((playerGroup) =>
 		playerGroup.players.map((player) => ({
 			handle: player,
 			add: (card: CardConstructor) => add(player, card),
-			play: (card: CardConstructor, row: RowIndexWrapper = 'front') => play(player, card, row),
+			find: (card: CardConstructor) => find(player, card),
 			spawn: (card: CardConstructor, row: RowIndexWrapper = 'front') => spawn(player, card, row),
+			addSpellMana: (value: number) => addSpellMana(player, value),
 		}))
 	)
+}
+
+const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame): TestGameCard => {
+	return {
+		buffs: wrapBuffs(game, card),
+		location: card.location,
+		play: (row: RowIndexWrapper = 'front'): TestGameCardPlayActions => {
+			const distance = row === 'front' ? 0 : game.board.getControlledRows(player).length - 1
+			const targetRow = game.board.getRowWithDistanceToFront(player, distance)
+			if (player.unitMana < card.stats.unitCost || player.spellMana < card.stats.spellCost) {
+				warn(`Attempting to play a card without enough mana. The action is likely to be ignored.`)
+			}
+			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(card, player), targetRow.index, targetRow.cards.length)
+			return getCardPlayActions(game, player)
+		},
+	}
+}
+
+/**
+ * Card buff wrapper
+ */
+type TestGameBuffs = {
+	includes(buffConstructor: BuffConstructor): boolean
+}
+
+const wrapBuffs = (game: ServerGame, card: ServerCard): TestGameBuffs => {
+	return {
+		includes: (buffConstructor: BuffConstructor): boolean => card.buffs.has(buffConstructor),
+	}
+}
+
+/**
+ * Play stack action wrapper
+ */
+type TestGameCardPlayActions = {
+	targetFirst(): TestGameCardPlayActions
+}
+
+const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestGameCardPlayActions => {
+	const resolvingCard = {
+		targetFirst: () => {
+			const validTargets = game.cardPlay.getResolvingCardTargets()
+			const chosenTarget = validTargets[0]
+			if (!chosenTarget) throw new Error('No valid targets!')
+			game.cardPlay.selectCardTarget(player, chosenTarget.target)
+			game.events.resolveEvents()
+			game.events.evaluateSelectors()
+			return resolvingCard
+		},
+	}
+	return resolvingCard
 }
 
 /**

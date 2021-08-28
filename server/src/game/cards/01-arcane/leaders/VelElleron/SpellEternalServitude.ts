@@ -7,10 +7,10 @@ import TargetType from '@shared/enums/TargetType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardFaction from '@shared/enums/CardFaction'
 import BuffDuration from '@shared/enums/BuffDuration'
-import GameEventType from '@shared/enums/GameEventType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import BuffUnitToSpellConversion from '../../../../buffs/BuffUnitToSpellConversion'
 import BuffLeaderPower from '../../../../buffs/BuffLeaderPower'
+import Keywords from '@src/utils/Keywords'
 
 export default class SpellEternalServitude extends ServerCard {
 	public extraCost = 0
@@ -34,12 +34,12 @@ export default class SpellEternalServitude extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireAllied()
 			.evaluate(() => this.stats.basePower)
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
 		target.buffs.add(BuffUnitToSpellConversion, this, BuffDuration.INFINITY)
 		target.buffs.add(BuffLeaderPower, this, BuffDuration.INFINITY)
+		Keywords.destroy.unit(target).withSource(this)
 	}
 }

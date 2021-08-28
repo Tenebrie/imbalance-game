@@ -8,7 +8,7 @@ import ServerOwnedCard from '../game/models/ServerOwnedCard'
 import TestingLeader from '../game/cards/11-testing/TestingLeader'
 import { playerAction, startNextRound, startNextTurn } from './TestGameUtils'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
-import TestingRulesetPVP from '@src/game/rulesets/testing/TestingRulesetPVP'
+import TestingRulesetPVPLegacy from '@src/game/rulesets/testing/TestingRulesetPVPLegacy'
 
 const consoleInfo = console.info
 const consoleWarn = console.warn
@@ -60,7 +60,7 @@ export default {
 	emptyDecks(): ServerGame {
 		silenceLogging()
 
-		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false })
+		const game = new ServerGame({ ruleset: TestingRulesetPVPLegacy, playerMoveOrderReversed: false })
 		const { playerOne, playerTwo } = getPlayers()
 		CardLibrary.forceLoadCards([TestingLeader])
 		const template = ServerEditorDeck.fromConstructors([TestingLeader])
@@ -79,7 +79,7 @@ export default {
 
 	normalGameFlow(props?: Partial<OptionalGameProps>): CommonTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false, ...props })
+		const game = new ServerGame({ ruleset: TestingRulesetPVPLegacy, playerMoveOrderReversed: false, ...props })
 		const { playerOne, playerTwo } = getPlayers()
 		CardLibrary.forceLoadCards([TestingLeader])
 		const template = ServerEditorDeck.fromConstructors([TestingLeader])
@@ -106,7 +106,7 @@ export default {
 
 	singleCardTest(card: CardConstructor): SingleCardTestGameTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false })
+		const game = new ServerGame({ ruleset: TestingRulesetPVPLegacy, playerMoveOrderReversed: false })
 		const { playerOne, playerTwo } = getPlayers()
 		CardLibrary.forceLoadCards([TestingLeader, card])
 		const template = ServerEditorDeck.fromConstructors([TestingLeader])
@@ -145,7 +145,7 @@ export default {
 
 	opponentCardTest(playersCard: CardConstructor, opponentsCard: CardConstructor): OpponentCardTestGameTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false })
+		const game = new ServerGame({ ruleset: TestingRulesetPVPLegacy, playerMoveOrderReversed: false })
 		const { playerOne, playerTwo } = getPlayers()
 		CardLibrary.forceLoadCards([TestingLeader])
 		const template = ServerEditorDeck.fromConstructors([TestingLeader])
@@ -191,7 +191,7 @@ export default {
 
 	leaderTest(playerLeader: CardConstructor, opponentLeader: CardConstructor, props?: OptionalGameProps): CommonTemplateResult {
 		silenceLogging()
-		const game = new ServerGame({ ruleset: TestingRulesetPVP, playerMoveOrderReversed: false, ...props })
+		const game = new ServerGame({ ruleset: TestingRulesetPVPLegacy, playerMoveOrderReversed: false, ...props })
 		const { playerOne, playerTwo } = getPlayers()
 		CardLibrary.forceLoadCards([playerLeader, opponentLeader])
 		const playerTemplate = ServerEditorDeck.fromConstructors([playerLeader])

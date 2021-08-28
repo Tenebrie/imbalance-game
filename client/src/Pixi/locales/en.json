@@ -667,7 +667,7 @@
 	"card.spellFireball.description": "Deal {damage} Damage to an enemy unit.<p>Deal {areaDamage} Damage to all adjacent units.",
 
 	"card.spellEternalServitude.name": "Eternal Servitude",
-	"card.spellEternalServitude.description": "Transform an allied unit into a *Leader Power*.\nThis unit now costs Mana equal to it's base Power.",
+	"card.spellEternalServitude.description": "Transform an allied unit into a *Leader Power*.\nThis unit now costs Mana equal to it's base Power.<p>Then, *Destroy* this unit.",
 
 	"card.spellShadowSpark.name": "Shadow Spark",
 	"card.spellShadowSpark.description": "Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",
