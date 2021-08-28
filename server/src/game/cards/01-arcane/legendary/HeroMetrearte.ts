@@ -31,6 +31,6 @@ export default class HeroMetrearte extends ServerCard {
 
 	private onTargetSelected(target: ServerCard): void {
 		const cardCopy = CardLibrary.instantiateFromClass(this.game, target.class)
-		this.ownerPlayerInGame.cardHand.addSpell(cardCopy)
+		this.ownerPlayer.cardHand.addSpell(cardCopy)
 	}
 }

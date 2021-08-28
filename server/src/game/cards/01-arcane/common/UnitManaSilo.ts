@@ -34,9 +34,9 @@ export default class UnitManaSilo extends ServerCard {
 		}
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED)
-			.require(() => this.ownerPlayerInGame.spellMana > 0)
+			.require(() => this.ownerPlayer.spellMana > 0)
 			.perform(() => {
-				this.manaInfused = Math.min(this.maxInfuse, this.ownerPlayerInGame.spellMana)
+				this.manaInfused = Math.min(this.maxInfuse, this.ownerPlayer.spellMana)
 				Keywords.infuse(this, this.manaInfused)
 			})
 
@@ -44,7 +44,7 @@ export default class UnitManaSilo extends ServerCard {
 			.require(({ group }) => group.owns(this))
 			.require(() => this.manaInfused > 0)
 			.perform(() => {
-				this.ownerPlayerInGame.addSpellMana(this.manaInfused)
+				this.ownerPlayer.addSpellMana(this.manaInfused)
 				this.manaInfused = 0
 			})
 

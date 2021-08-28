@@ -33,7 +33,7 @@ export default class UnitEnergyRelay extends ServerCard {
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ group }) => group.owns(this))
-			.require(() => this.ownerPlayerInGame.spellMana >= this.infuseCost)
+			.require(() => this.ownerPlayer.spellMana >= this.infuseCost)
 			.perform(() => Keywords.infuse(this, this.infuseCost))
 			.perform(() => this.onDealDamage())
 	}
@@ -41,7 +41,7 @@ export default class UnitEnergyRelay extends ServerCard {
 	private onDealDamage(): void {
 		const triggeringUnit = this.unit!
 		const opposingEnemies = this.game.board
-			.getUnitsOwnedByOpponent(this.owner)
+			.getUnitsOwnedByOpponent(this.ownerNullable)
 			.filter((unit) => this.game.board.getHorizontalUnitDistance(unit, triggeringUnit) < 1)
 			.sort((a, b) => {
 				return this.game.board.getVerticalUnitDistance(a, triggeringUnit) - this.game.board.getVerticalUnitDistance(b, triggeringUnit)

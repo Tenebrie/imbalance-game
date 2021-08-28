@@ -21,7 +21,7 @@ export default class TokenLabyrinthDummiesScaling extends ServerCard {
 		})
 
 		this.createSelector()
-			.requireTarget(({ target }) => target.ownerGroupInGame.owns(this))
+			.requireTarget(({ target }) => target.ownerGroup.owns(this))
 			.provide(BuffHiddenStrength, () => 0)
 	}
 }

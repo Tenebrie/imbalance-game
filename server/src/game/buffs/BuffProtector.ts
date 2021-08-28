@@ -19,17 +19,17 @@ export default class BuffProtector extends ServerCardBuff {
 			.require(() => this.parent.location === CardLocation.BOARD)
 			.require(({ targetCard }) => targetCard !== this.parent)
 			.require(({ targetCard }) => targetCard.location === CardLocation.BOARD)
-			.require(({ targetCard }) => this.parent.ownerGroupInGame.owns(targetCard))
+			.require(({ targetCard }) => this.parent.ownerGroup.owns(targetCard))
 			.require(
 				({ damageInstance }) =>
 					damageInstance.source === DamageSource.UNIVERSE ||
-					(damageInstance.source === DamageSource.CARD && damageInstance.sourceCard?.ownerInGame !== this.parent.ownerInGame)
+					(damageInstance.source === DamageSource.CARD && damageInstance.sourceCard?.owner !== this.parent.owner)
 			)
 			.require(({ targetCard }) => {
 				const thisUnit = this.unit!
 				const targetUnit = targetCard.unit!
 				const direction = this.game.board.getMoveDirection(
-					this.parent.ownerGroupInGame,
+					this.parent.ownerGroup,
 					this.game.board.rows[thisUnit.rowIndex],
 					this.game.board.rows[targetUnit.rowIndex]
 				)

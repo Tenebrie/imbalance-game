@@ -154,7 +154,7 @@ export class ServerCardTargeting {
 			.filter((unit) => !unit.card.features.includes(CardFeature.UNTARGETABLE))
 			.filter((unit) =>
 				targetDefinition.require({
-					player: this.card.ownerPlayerInGame,
+					player: this.card.ownerPlayer,
 					sourceCard: this.card,
 					targetCard: unit.card,
 					targetUnit: unit,
@@ -165,7 +165,7 @@ export class ServerCardTargeting {
 				unit: unit,
 				expectedValue: targetDefinition.evaluate(
 					{
-						player: this.card.ownerPlayerInGame,
+						player: this.card.ownerPlayer,
 						sourceCard: this.card,
 						targetCard: unit.card,
 						targetUnit: unit,
@@ -200,7 +200,7 @@ export class ServerCardTargeting {
 		return this.game.board.rows
 			.filter((row) =>
 				targetDefinition.require({
-					player: this.card.ownerPlayerInGame,
+					player: this.card.ownerPlayer,
 					sourceCard: this.card,
 					targetRow: row,
 					previousTargets: previousTargets.map((previousTarget) => previousTarget.target),
@@ -226,7 +226,7 @@ export class ServerCardTargeting {
 			})
 			.filter((rowPosition) =>
 				targetDefinition.require({
-					player: this.card.ownerPlayerInGame,
+					player: this.card.ownerPlayer,
 					sourceCard: this.card,
 					targetRow: rowPosition.row,
 					targetPosition: rowPosition.position,

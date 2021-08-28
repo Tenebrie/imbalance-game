@@ -35,7 +35,7 @@ export default class UnitMasterSwordsmith extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		const owner = this.ownerPlayerInGame
+		const owner = this.ownerPlayer
 		const targets = sortCards(owner.cardHand.unitCards)
 		targets.forEach((card) => {
 			this.game.animation.createAnimationThread()

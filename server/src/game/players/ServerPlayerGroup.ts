@@ -66,7 +66,7 @@ export default class ServerPlayerGroup implements PlayerGroup {
 		if (card instanceof ServerCardBuff || card instanceof ServerRowBuff) {
 			owner = card.parent.owner
 		} else {
-			owner = card.owner
+			owner = card.ownerNullable
 		}
 
 		if (!owner) {

@@ -45,12 +45,16 @@ export default class HeroJom extends ServerCard {
 	}
 
 	private ownerControlsEnoughPortals(): boolean {
-		const portalsControlled = this.game.board.getUnitsOwnedByGroup(this.ownerGroup).filter((unit) => unit.card instanceof UnitVoidPortal)
+		const portalsControlled = this.game.board
+			.getUnitsOwnedByGroup(this.ownerGroupNullable)
+			.filter((unit) => unit.card instanceof UnitVoidPortal)
 		return portalsControlled.length >= this.portalsNeeded
 	}
 
 	private onTurnEnded(): void {
-		const portalsControlled = this.game.board.getUnitsOwnedByGroup(this.ownerGroup).filter((unit) => unit.card instanceof UnitVoidPortal)
+		const portalsControlled = this.game.board
+			.getUnitsOwnedByGroup(this.ownerGroupNullable)
+			.filter((unit) => unit.card instanceof UnitVoidPortal)
 
 		portalsControlled.forEach((portal) => {
 			this.game.animation.createAnimationThread()

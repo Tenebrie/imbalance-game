@@ -63,7 +63,7 @@ type LabyrinthActiveItemProps = LabyrinthPassiveItemProps & {
 class ItemLabyrinthBase extends ServerCard {
 	public addLeaderPower(value: number | (() => number)): void {
 		this.createSelector()
-			.requireTarget(({ target }) => target.ownerGroupInGame.owns(this) && target === this.ownerPlayerInGame.leader)
+			.requireTarget(({ target }) => target.ownerGroup.owns(this) && target === this.ownerPlayer.leader)
 			.provide(BuffHiddenStrength, value)
 	}
 
@@ -76,7 +76,7 @@ class ItemLabyrinthBase extends ServerCard {
 
 	public addBonusUnitPower(value: number | (() => number)): void {
 		this.createSelector()
-			.requireTarget(({ target }) => target.ownerGroupInGame.owns(this) && target.location === CardLocation.BOARD)
+			.requireTarget(({ target }) => target.ownerGroup.owns(this) && target.location === CardLocation.BOARD)
 			.provide(BuffHiddenStrength, value)
 	}
 

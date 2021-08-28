@@ -64,7 +64,7 @@ export const getOwnerPlayer = (entity: ServerCard | ServerBuff | ServerUnit | Se
 	} else if (parent instanceof ServerBoardRow) {
 		return null
 	}
-	const ownerPlayer = parent.ownerPlayer
+	const ownerPlayer = parent.ownerPlayerNullable
 	if (ownerPlayer) {
 		return ownerPlayer
 	}
@@ -80,7 +80,7 @@ export const getOwnerGroup = (entity: ServerCard | ServerUnit | ServerBuff | Ser
 	const parent = entity instanceof ServerBuff ? entity.parent : entity
 
 	if (parent instanceof ServerCard) {
-		return parent.ownerGroup
+		return parent.ownerGroupNullable
 	} else {
 		return parent.owner
 	}
@@ -165,7 +165,7 @@ interface LeaderTextVariables {
 
 export const getLeaderTextVariables = (leaderCard: ServerCard): LeaderTextVariables => {
 	const getPlayerName = () => {
-		const owner = leaderCard.ownerPlayer
+		const owner = leaderCard.ownerPlayerNullable
 		if (!owner) {
 			return ''
 		}
@@ -177,7 +177,7 @@ export const getLeaderTextVariables = (leaderCard: ServerCard): LeaderTextVariab
 	}
 
 	return {
-		inGame: () => !!leaderCard.owner,
+		inGame: () => !!leaderCard.ownerNullable,
 		playerName: () => getPlayerName(),
 	}
 }

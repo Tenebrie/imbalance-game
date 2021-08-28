@@ -26,7 +26,7 @@ export default class HeroUrvial extends ServerCard {
 		this.addRelatedCards().requireTribe(CardTribe.STORM)
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
-			this.ownerPlayerInGame.leader.buffs.add(BuffUpgradedStorms, this, BuffDuration.INFINITY)
+			this.ownerPlayer.leader.buffs.add(BuffUpgradedStorms, this, BuffDuration.INFINITY)
 		})
 	}
 }

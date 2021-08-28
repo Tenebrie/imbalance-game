@@ -230,7 +230,7 @@ export default {
 			})
 
 			const messages = game.board.orders.validOrders
-				.filter((order) => order.target.sourceCard.ownerGroupInGame.includes(playerInGame))
+				.filter((order) => order.target.sourceCard.ownerGroup.includes(playerInGame))
 				.map((order) => new CardTargetMessage(order.target))
 
 			playerInGame.player.sendMessage({

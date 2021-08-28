@@ -12,7 +12,7 @@ export default class BuffNextSpellThisRoundDiscountAura extends ServerCardBuff {
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard.type === CardType.SPELL)
-			.require(({ owner }) => owner === this.parent.ownerPlayer)
+			.require(({ owner }) => owner === this.parent.ownerPlayerNullable)
 			.perform(() => {
 				this.parent.buffs.removeByReference(this)
 			})
@@ -25,7 +25,7 @@ export default class BuffNextSpellThisRoundDiscountAura extends ServerCardBuff {
 
 		this.createSelector()
 			.requireTarget(({ target }) => target.type === CardType.SPELL)
-			.requireTarget(({ target }) => target.ownerInGame === this.parent.ownerInGame)
+			.requireTarget(({ target }) => target.owner === this.parent.owner)
 			.provide(BuffHiddenSpellDiscount)
 	}
 }

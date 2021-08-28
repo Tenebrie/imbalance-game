@@ -30,7 +30,7 @@ export default class UnitLabyrinthLostArcher extends ServerCard {
 		}
 
 		this.createDeployTargets(TargetType.UNIT)
-			.require(({ targetUnit }) => targetUnit.owner !== this.ownerInGame)
+			.require(({ targetUnit }) => targetUnit.owner !== this.owner)
 			.perform(({ targetUnit }) => {
 				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 			})

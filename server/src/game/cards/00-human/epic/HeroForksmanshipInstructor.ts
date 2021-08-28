@@ -31,7 +31,7 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 
 		this.createCallback(GameEventType.UNIT_CREATED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card !== this)
-			.require(({ triggeringUnit }) => triggeringUnit.owner === this.owner)
+			.require(({ triggeringUnit }) => triggeringUnit.owner === this.ownerNullable)
 			.require(({ triggeringUnit }) => triggeringUnit.card.tribes.includes(CardTribe.PEASANT))
 			.perform(({ triggeringUnit }) => {
 				triggeringUnit.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)

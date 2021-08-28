@@ -26,7 +26,7 @@ export default class HeroAntoria extends ServerCard {
 
 		this.createHook(GameHookType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
 			.require(({ targetCard }) => targetCard.location === CardLocation.BOARD)
-			.require(({ targetCard }) => this.ownerGroupInGame.owns(targetCard))
+			.require(({ targetCard }) => this.ownerGroup.owns(targetCard))
 			.replace((values) => ({
 				...values,
 				targetCard: this,

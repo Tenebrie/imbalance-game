@@ -27,7 +27,7 @@ export default class SpellDiveTheSalvage extends ServerCard {
 
 		this.createDeployTargets(TargetType.CARD_IN_SPELL_GRAVEYARD)
 			.require(({ targetCard }) => targetCard.stats.spellCost <= this.stats.baseSpellCost)
-			.require(({ targetCard }) => this.ownerGroupInGame.owns(targetCard))
+			.require(({ targetCard }) => this.ownerGroup.owns(targetCard))
 			.perform(({ targetCard }) => {
 				if (targetCard.tribes.includes(CardTribe.SALVAGE)) {
 					Keywords.createCard.forOwnerOf(this).fromInstance(targetCard)

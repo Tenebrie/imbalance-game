@@ -52,7 +52,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 
 	get buffPower(): number {
 		let stormsPlayed = 0
-		const owner = this.ownerPlayer
+		const owner = this.ownerPlayerNullable
 		if (owner) {
 			stormsPlayed = owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
@@ -69,7 +69,7 @@ export default class SpellEnchantedStorm extends ServerCard {
 	}
 
 	private isUpgraded(): boolean {
-		const owner = this.ownerPlayer
+		const owner = this.ownerPlayerNullable
 		return !!owner && owner.leader.buffs.has(BuffUpgradedStorms)
 	}
 }

@@ -35,7 +35,7 @@ export default class UnitUndercityGambler extends ServerCard {
 			.requireSamePlayer()
 			.require((args) => !args.targetCard.features.includes(CardFeature.TEMPORARY_CARD))
 			.perform(({ targetCard }) => {
-				const owner = targetCard.ownerPlayerInGame
+				const owner = targetCard.ownerPlayer
 				Keywords.returnCardToDeck(targetCard)
 				const drawnCards = owner.drawUnitCards(1)
 				if (drawnCards.length === 0) {

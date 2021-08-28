@@ -34,7 +34,7 @@ export default class UnitMerchantsAssistant extends ServerCard {
 	}
 
 	private onDeploy() {
-		const player = this.ownerPlayerInGame
+		const player = this.ownerPlayer
 		player.leader.buffs.addMultiple(BuffNextSpellThisRoundDiscountAura, this.spellDiscount, this, BuffDuration.INFINITY)
 	}
 }

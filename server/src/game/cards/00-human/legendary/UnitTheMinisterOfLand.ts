@@ -32,15 +32,17 @@ export default class UnitTheMinisterOfLand extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.UNIT_CREATED, [CardLocation.DECK])
-			.require(({ owner }) => owner === this.owner)
+			.require(({ owner }) => owner === this.ownerNullable)
 			.require(({ triggeringCard }) => triggeringCard.tribes.includes(CardTribe.PEASANT))
-			.require(() => game.board.getUnitsOfTribe(CardTribe.PEASANT, this.ownerGroup).length >= UnitTheMinisterOfLand.PEASANTS_REQUIRED)
+			.require(
+				() => game.board.getUnitsOfTribe(CardTribe.PEASANT, this.ownerGroupNullable).length >= UnitTheMinisterOfLand.PEASANTS_REQUIRED
+			)
 			.perform(() => {
-				const controlledRows = game.board.getControlledRows(this.owner).reverse()
+				const controlledRows = game.board.getControlledRows(this.ownerNullable).reverse()
 				if (controlledRows[0].isFull()) {
 					return
 				}
-				const owner = this.ownerPlayerInGame
+				const owner = this.ownerPlayer
 				owner.cardDeck.removeCard(this)
 				game.board.createUnit(this, owner, controlledRows[0].index, controlledRows[0].cards.length)
 			})
@@ -48,7 +50,7 @@ export default class UnitTheMinisterOfLand extends ServerCard {
 		this.createSelector()
 			.require(() => this.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.tribes.includes(CardTribe.PEASANT))
-			.requireTarget(({ target }) => target.owner === this.owner)
+			.requireTarget(({ target }) => target.ownerNullable === this.ownerNullable)
 			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
 			.provide(BuffWeakness, UnitTheMinisterOfLand.WEAKNESS_POTENCY)
 	}

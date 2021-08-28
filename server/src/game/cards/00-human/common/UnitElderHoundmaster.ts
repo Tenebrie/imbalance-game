@@ -25,7 +25,7 @@ export default class UnitElderHoundmaster extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(({ owner }) => {
-			const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerInGame, 0)
+			const targetRow = this.game.board.getRowWithDistanceToFront(this.owner, 0)
 			this.game.animation.instantThread(() => {
 				this.game.board.createUnit(new UnitTrainedHound(game), owner, targetRow.index, targetRow.farRightUnitIndex)
 			})

@@ -139,25 +139,25 @@ export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValid
 
 	public requireAllied(): DeployTargetDefinitionBuilder<EventArgs> {
 		return this.require((args: TargetValidatorArguments) => {
-			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerGroup
-			return targetOwner === args.sourceCard.ownerGroup
+			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerGroupNullable
+			return targetOwner === args.sourceCard.ownerGroupNullable
 		})
 	}
 
 	public requireSamePlayer(): DeployTargetDefinitionBuilder<EventArgs> {
 		return this.require((args: TargetValidatorArguments) => {
-			const targetOwner = 'targetRow' in args ? null : args.targetCard.ownerPlayer
+			const targetOwner = 'targetRow' in args ? null : args.targetCard.ownerPlayerNullable
 			if (!targetOwner) {
 				return false
 			}
-			return targetOwner === args.sourceCard.ownerPlayer
+			return targetOwner === args.sourceCard.ownerPlayerNullable
 		})
 	}
 
 	public requireEnemy(): DeployTargetDefinitionBuilder<EventArgs> {
 		return this.require((args: TargetValidatorArguments) => {
-			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerGroup
-			return targetOwner !== args.sourceCard.ownerGroup
+			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerGroupNullable
+			return targetOwner !== args.sourceCard.ownerGroupNullable
 		})
 	}
 

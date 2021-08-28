@@ -51,7 +51,7 @@ export default class SpellLightningStorm extends ServerCard {
 
 	get targetCount(): number {
 		let stormsPlayed = 0
-		const owner = this.ownerPlayer
+		const owner = this.ownerPlayerNullable
 		if (owner) {
 			stormsPlayed = owner.cardGraveyard.findCardsByTribe(CardTribe.STORM).length
 		}
@@ -68,7 +68,7 @@ export default class SpellLightningStorm extends ServerCard {
 	}
 
 	private isUpgraded(): boolean {
-		const owner = this.ownerPlayer
+		const owner = this.ownerPlayerNullable
 		return !!owner && owner.leader.buffs.has(BuffUpgradedStorms)
 	}
 }

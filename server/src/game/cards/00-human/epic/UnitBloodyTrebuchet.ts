@@ -47,7 +47,7 @@ export default class UnitBloodyTrebuchet extends ServerCard {
 
 		this.createEffect(GameEventType.UNIT_ORDERED_UNIT).perform(({ targetCard, targetUnit }) => {
 			const rowBehindTarget = this.game.board.getRowWithDistanceToFront(
-				targetCard.ownerInGame,
+				targetCard.owner,
 				this.game.board.getDistanceToStaticFront(targetUnit.rowIndex) + 1
 			)
 			const unitsBehind = rowBehindTarget.getUnitsWithinHorizontalDistance(targetUnit, 1)

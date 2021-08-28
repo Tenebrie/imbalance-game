@@ -152,7 +152,7 @@ export default class ServerBoard implements Board {
 
 	public getOpposingUnits(thisUnit: ServerUnit): ServerUnit[] {
 		return this.game.board
-			.getUnitsOwnedByOpponent(thisUnit.card.ownerInGame)
+			.getUnitsOwnedByOpponent(thisUnit.card.owner)
 			.filter((unit) => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
 			.sort((a, b) => {
 				return this.game.board.getVerticalUnitDistance(a, thisUnit) - this.game.board.getVerticalUnitDistance(b, thisUnit)
@@ -180,7 +180,7 @@ export default class ServerBoard implements Board {
 			return []
 		}
 		const playerGroup: ServerPlayerGroup =
-			context instanceof ServerPlayerGroup ? context : context instanceof ServerCard ? context.ownerGroupInGame : context.group
+			context instanceof ServerPlayerGroup ? context : context instanceof ServerCard ? context.ownerGroup : context.group
 		return this.getUnitsOwnedByGroup(playerGroup.opponent)
 	}
 

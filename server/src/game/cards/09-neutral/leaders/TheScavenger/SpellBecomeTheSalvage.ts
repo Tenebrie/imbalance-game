@@ -41,16 +41,16 @@ export default class SpellBecomeTheSalvage extends ServerCard {
 		this.createDeployTargets(TargetType.CARD_IN_SPELL_GRAVEYARD)
 			.require(() => this.charges > 0)
 			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.SALVAGE))
-			.require(({ targetCard }) => this.ownerGroupInGame.owns(targetCard))
+			.require(({ targetCard }) => this.ownerGroup.owns(targetCard))
 			.perform(({ targetCard }) => {
-				this.ownerPlayerInGame.addSpellMana(targetCard.stats.spellCost)
-				this.ownerPlayerInGame.cardGraveyard.removeCard(targetCard)
+				this.ownerPlayer.addSpellMana(targetCard.stats.spellCost)
+				this.ownerPlayer.cardGraveyard.removeCard(targetCard)
 			})
 
 		this.createEffect(GameEventType.CARD_RESOLVED).perform(() => {
 			this.charges -= 1
 			if (this.charges <= 0) {
-				this.ownerPlayerInGame.cardDeck.removeCard(this)
+				this.ownerPlayer.cardDeck.removeCard(this)
 			}
 		})
 	}

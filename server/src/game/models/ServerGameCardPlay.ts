@@ -235,7 +235,7 @@ export default class ServerGameCardPlay {
 		}
 		const card = currentCard.card
 
-		return card.targeting.getPlayTargets(card.ownerPlayerInGame, { checkMana: false })
+		return card.targeting.getPlayTargets(card.ownerPlayer, { checkMana: false })
 	}
 
 	public getDeployTargets(): DeployTarget[] {

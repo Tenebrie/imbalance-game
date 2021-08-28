@@ -13,7 +13,9 @@ const asScalingStat = (value: number, stats: LeaderStatType[]): LeaderStatValueG
 		}
 
 		const owner =
-			subscriber instanceof ServerCard && subscriber.unit ? subscriber.ownerGroup : getOwnerPlayer(subscriber) || getOwnerGroup(subscriber)
+			subscriber instanceof ServerCard && subscriber.unit
+				? subscriber.ownerGroupNullable
+				: getOwnerPlayer(subscriber) || getOwnerGroup(subscriber)
 		if (!owner) {
 			return value
 		}

@@ -282,7 +282,7 @@ export default class ServerCard implements Card {
 		return this.game.board.findUnitById(this.id) || null
 	}
 
-	public get owner(): ServerPlayerInGame | ServerPlayerGroup | null {
+	public get ownerNullable(): ServerPlayerInGame | ServerPlayerGroup | null {
 		const thisCardInGame = this.game.findOwnedCardById(this.id)
 		if (!thisCardInGame) {
 			return null
@@ -290,16 +290,16 @@ export default class ServerCard implements Card {
 		return thisCardInGame.owner
 	}
 
-	public get ownerInGame(): ServerPlayerInGame | ServerPlayerGroup {
-		const owner = this.owner
+	public get owner(): ServerPlayerInGame | ServerPlayerGroup {
+		const owner = this.ownerNullable
 		if (!owner) {
 			throw new Error('Card has no owner while in the game!')
 		}
 		return owner
 	}
 
-	public get ownerPlayer(): ServerPlayerInGame | null {
-		const owner = this.owner
+	public get ownerPlayerNullable(): ServerPlayerInGame | null {
+		const owner = this.ownerNullable
 		if (owner instanceof ServerPlayerGroup) {
 			const unit = this.unit
 			if (!unit) {
@@ -310,21 +310,21 @@ export default class ServerCard implements Card {
 		return owner
 	}
 
-	public get ownerPlayerInGame(): ServerPlayerInGame {
-		const owner = this.ownerPlayer
+	public get ownerPlayer(): ServerPlayerInGame {
+		const owner = this.ownerPlayerNullable
 		if (!owner) {
 			throw new Error('Card has no owner while in the game!')
 		}
 		return owner
 	}
 
-	public get ownerGroup(): ServerPlayerGroup | null {
-		const owner = this.owner
+	public get ownerGroupNullable(): ServerPlayerGroup | null {
+		const owner = this.ownerNullable
 		return owner instanceof ServerPlayerGroup ? owner : owner?.group || null
 	}
 
-	public get ownerGroupInGame(): ServerPlayerGroup {
-		const owner = this.ownerGroup
+	public get ownerGroup(): ServerPlayerGroup {
+		const owner = this.ownerGroupNullable
 		if (!owner) {
 			throw new Error('Card has no owner while in the game!')
 		}
@@ -332,7 +332,7 @@ export default class ServerCard implements Card {
 	}
 
 	public get location(): CardLocation {
-		const owner = this.owner
+		const owner = this.ownerNullable
 		if (!owner) {
 			return CardLocation.UNKNOWN
 		}
@@ -392,7 +392,7 @@ export default class ServerCard implements Card {
 	}
 
 	public get deckPosition(): number {
-		const owner = this.ownerPlayer
+		const owner = this.ownerPlayerNullable
 		if (!owner) {
 			return -1
 		}
@@ -557,7 +557,7 @@ export default class ServerCard implements Card {
 			return
 		}
 
-		const owner = this.ownerPlayer
+		const owner = this.ownerPlayerNullable
 		if (!owner) {
 			return
 		}
@@ -588,7 +588,7 @@ export default class ServerCard implements Card {
 			return
 		}
 
-		const owner = this.owner
+		const owner = this.ownerNullable
 		if (!owner) {
 			return
 		}

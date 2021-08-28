@@ -22,7 +22,7 @@ export default class UnitDryadSmuggler extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
-			const owner = this.ownerPlayerInGame
+			const owner = this.ownerPlayer
 			owner.drawUnitCards(1, true)
 		})
 	}

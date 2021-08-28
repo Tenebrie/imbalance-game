@@ -25,11 +25,11 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
-			.require(({ triggeringCard }) => triggeringCard.owner === this.owner)
+			.require(({ triggeringCard }) => triggeringCard.ownerNullable === this.ownerNullable)
 			.require(({ triggeringCard }) => !!triggeringCard.unit)
 			.prepare(({ triggeringCard }) => {
 				const targetUnit = triggeringCard.unit!
-				const moveTargetRowIndex = this.game.board.rowMove(this.ownerGroupInGame, targetUnit.rowIndex, MoveDirection.BACK, 1)
+				const moveTargetRowIndex = this.game.board.rowMove(this.ownerGroup, targetUnit.rowIndex, MoveDirection.BACK, 1)
 				const moveTargetUnitIndex = targetUnit.unitIndex
 				return {
 					playTargetRowIndex: targetUnit.rowIndex,
@@ -44,7 +44,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 				)
 			})
 			.perform(({ triggeringCard }, preparedState) => {
-				const owner = this.ownerPlayerInGame
+				const owner = this.ownerPlayer
 				const ownedCard = {
 					card: this,
 					owner,
