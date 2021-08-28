@@ -19,7 +19,7 @@ import PlayersInLobbyMessage from '@shared/models/network/PlayersInLobbyMessage'
 export default {
 	broadcastPlayersInLobby(game: ServerGame): void {
 		const slotsOpen = game.players.reduce((total, playerGroup) => total + playerGroup.openHumanSlots, 0)
-		const slotsTotal = game.ruleset.slots.totalPlayerSlots(game)
+		const slotsTotal = game.ruleset.slots.totalHumanSlots(game)
 		const allPlayers = game.allPlayers.filter((player) => player.isHuman).map((playerInGame) => playerInGame.player)
 		const message = new PlayersInLobbyMessage(slotsOpen, slotsTotal, allPlayers)
 

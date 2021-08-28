@@ -83,7 +83,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		game.board.orders.performUnitOrder(data, playerInGame)
+		game.board.orders.performUnitOrderFromMessage(data, playerInGame)
 
 		onPlayerActionEnd(game, playerInGame)
 		OutgoingMessageHandlers.executeMessageQueue(game)

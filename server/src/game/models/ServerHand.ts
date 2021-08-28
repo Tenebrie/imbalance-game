@@ -6,6 +6,8 @@ import ServerOwnedCard from './ServerOwnedCard'
 import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import { CardConstructor } from '@src/game/libraries/CardLibrary'
+import { getClassFromConstructor } from '@src/utils/Utils'
 
 export default class ServerHand {
 	game: ServerGame
@@ -76,6 +78,10 @@ export default class ServerHand {
 
 	public findCardById(cardId: string): ServerCard | null {
 		return this.unitCards.find((card) => card.id === cardId) || this.spellCards.find((card) => card.id === cardId) || null
+	}
+
+	public findCardByConstructor(cardConstructor: CardConstructor): ServerCard | null {
+		return this.allCards.find((card) => card.class === getClassFromConstructor(cardConstructor)) || null
 	}
 
 	public removeCard(card: ServerCard): void {

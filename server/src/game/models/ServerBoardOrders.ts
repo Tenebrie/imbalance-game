@@ -34,12 +34,15 @@ export default class ServerBoardOrders {
 			.flat()
 	}
 
-	public performUnitOrder(targetMessage: CardTargetMessage, player: ServerPlayerInGame): void {
+	public performUnitOrderFromMessage(targetMessage: CardTargetMessage, player: ServerPlayerInGame): void {
 		const order = this.validOrders.find((validOrder) => validOrder.target.id === targetMessage.id)
 		if (!order) {
 			return
 		}
+		this.performUnitOrder(order, player)
+	}
 
+	public performUnitOrder(order: OrderTarget, player: ServerPlayerInGame): void {
 		const sourceCard = order.target.sourceCard!
 		const orderedUnit = sourceCard.unit!
 
@@ -69,7 +72,7 @@ export default class ServerBoardOrders {
 				player,
 				sourceCard: sourceCard,
 				targetRow: order.target.targetRow,
-				targetPosition: targetMessage.targetPosition,
+				targetPosition: order.target.targetPosition,
 				previousTargets: applicablePreviousOrders.map((previousOrder) => previousOrder.target),
 			})
 		} else {

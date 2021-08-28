@@ -113,6 +113,17 @@ class Database {
 	}
 
 	private async runQuery(query: string, values: any[]): Promise<QueryResult> {
+		// Do not contact the database if running test
+		if (process.env.JEST_WORKER_ID !== undefined) {
+			return {
+				rows: [],
+				command: '',
+				rowCount: 0,
+				oid: 0,
+				fields: [],
+			}
+		}
+
 		if (!this.client) {
 			throw { status: 503, message: 'Database client is not yet ready' }
 		}

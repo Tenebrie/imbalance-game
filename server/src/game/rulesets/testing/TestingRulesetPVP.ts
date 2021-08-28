@@ -8,6 +8,9 @@ export default class TestingRulesetPVP extends ServerRuleset {
 		super(game, {
 			gameMode: GameMode.PVP,
 			category: RulesetCategory.PVP,
+			constants: {
+				SKIP_MULLIGAN: true,
+			},
 		})
 	}
 }

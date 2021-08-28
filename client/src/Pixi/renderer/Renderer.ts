@@ -96,7 +96,6 @@ export default class Renderer {
 		})
 		PIXI.settings.TARGET_FPMS = 0.12
 		PIXI.Ticker.shared.maxFPS = 144
-		// PixiPlugin.registerPIXI(PIXI)
 
 		this.rootContainer = new PIXI.Container()
 		this.rootContainer.sortableChildren = true
@@ -708,7 +707,7 @@ export default class Renderer {
 			}
 		}
 
-		/* Unit has a valid order */
+		/* Unit is allied and has a valid order */
 		if (
 			!Core.input.forcedTargetingMode &&
 			!Core.input.grabbedCard &&
@@ -721,6 +720,20 @@ export default class Renderer {
 				return { color: 0x00ff00, alpha: 0.5 }
 			}
 		}
+
+		// /* Unit is hostile and has a valid order */
+		// if (
+		// 	!Core.input.forcedTargetingMode &&
+		// 	!Core.input.grabbedCard &&
+		// 	unit.owner === Core.opponent &&
+		// 	Core.board.getValidOrdersForUnit(unit).length > 0
+		// ) {
+		// 	if (hoveredCard === card) {
+		// 		return { color: 0xff0000, alpha: 0.75 }
+		// 	} else {
+		// 		return { color: 0xff0000, alpha: 0.5 }
+		// 	}
+		// }
 
 		/* Fallback tint */
 		if (!Core.input.forcedTargetingMode && Core.board.getValidOrdersForUnit(unit).length === 0 && hoveredCard === card) {

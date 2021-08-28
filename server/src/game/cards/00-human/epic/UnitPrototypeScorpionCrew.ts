@@ -31,7 +31,6 @@ export default class UnitPrototypeScorpionCrew extends ServerCard {
 			selfDamage: this.selfDamage,
 		}
 
-		// TODO: Fixme please
 		this.createOrderTargets(TargetType.UNIT).targetCount(Infinity).requireEnemy()
 
 		this.createEffect(GameEventType.UNIT_ORDERED_UNIT).perform(({ targetCard }) => {

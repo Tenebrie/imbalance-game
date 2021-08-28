@@ -18,7 +18,7 @@ export default {
 	},
 
 	onPlayerConnectedInitially(game: ServerGame): void {
-		const openPlayerSlots = game.ruleset.slots.openPlayerSlots(game)
+		const openPlayerSlots = game.ruleset.slots.openHumanSlots(game)
 		if (openPlayerSlots > 0) {
 			return
 		}

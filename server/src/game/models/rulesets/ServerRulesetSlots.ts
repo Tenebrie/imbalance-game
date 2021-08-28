@@ -32,15 +32,19 @@ export class ServerRulesetSlots implements RulesetSlots {
 		this.groups = groups
 	}
 
-	public openPlayerSlots(game: ServerGame): number {
+	public openHumanSlots(game: ServerGame): number {
 		return game.players.reduce((total, playerGroup) => total + playerGroup.openHumanSlots, 0)
 	}
 
-	public totalPlayerSlots(game: ServerGame): number {
+	public totalHumanSlots(game: ServerGame): number {
 		return this.groups
 			.flatMap((group) => group.players)
 			.filter((player) => player.type === 'player')
 			.filter((player) => !player.require || player.require(game)).length
+	}
+
+	public openBotSlots(game: ServerGame): number {
+		return game.players.reduce((total, playerGroup) => total + playerGroup.openBotSlots, 0)
 	}
 }
 

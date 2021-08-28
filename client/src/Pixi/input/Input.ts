@@ -23,6 +23,8 @@ import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessag
 import { boopTheBoard, flushBoardBoopPreps, getCardInsertIndex, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
 import gsap from 'gsap'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
+import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -405,7 +407,15 @@ export default class Input {
 
 	public grabCard(): void {
 		const hoveredCard = this.hoveredCard
-		if (!hoveredCard || !hoveredCard.owner || hoveredCard.owner !== Core.player.players[0]) {
+		if (!hoveredCard) {
+			return
+		}
+		const owner = hoveredCard.owner
+		if (
+			!owner ||
+			(owner instanceof ClientPlayerInGame && owner !== Core.player.players[0]) ||
+			(owner instanceof ClientPlayerGroup && owner !== Core.player)
+		) {
 			return
 		}
 
