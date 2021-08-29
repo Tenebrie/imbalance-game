@@ -71,6 +71,10 @@ export default class ClientPlayerInGame implements PlayerInGame {
 		}
 	}
 
+	public destroyObject(): void {
+		this.cardHand.allCards.forEach((card) => this.cardHand.destroyCard(card))
+	}
+
 	public static fromPlayer(player: Player): ClientPlayerInGame {
 		return new ClientPlayerInGame(player)
 	}

@@ -9,7 +9,7 @@ import { compressGameTraffic } from '@shared/Utils'
 import lzutf8 from 'lzutf8'
 
 import AudioSystem, { AudioSystemMode } from '@/Pixi/audio/AudioSystem'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
+import RenderedCard, { renderedCards } from '@/Pixi/cards/RenderedCard'
 import RenderedGameBoard from '@/Pixi/cards/RenderedGameBoard'
 import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
@@ -20,6 +20,7 @@ import ClientGame from '@/Pixi/models/ClientGame'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import GamePerformance from '@/Pixi/models/GamePerformance'
+import { scalingTexts } from '@/Pixi/render/ScalingText'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import Renderer from '@/Pixi/renderer/Renderer'
 import ParticleSystem from '@/Pixi/vfx/ParticleSystem'
@@ -243,9 +244,12 @@ class Core {
 		clearInterval(this.keepaliveTimer)
 		AudioSystem.setMode(AudioSystemMode.MENU)
 		this.mainHandler.stop()
+		this.allPlayers.forEach((player) => player.destroyObject())
 		this.player = new ClientPlayerGroup('emptyGroup')
 		this.opponent = new ClientPlayerGroup('emptyGroup')
-		this.renderer.destroy()
+		this.board.destroyObject()
+		this.input.destroyObject()
+		this.renderer.destroyObject()
 
 		if (this.socket) {
 			this.socket.close(1000, 'Clean up')

@@ -130,4 +130,8 @@ export default class RenderedGameBoardRow implements BoardRow {
 	public isHovered(): boolean {
 		return this.sprite.containsPoint(Core.input.mousePosition)
 	}
+
+	public destroyObject(): void {
+		this.container.destroy(true)
+	}
 }

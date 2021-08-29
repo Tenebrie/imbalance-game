@@ -302,9 +302,7 @@ export default class Renderer {
 	}
 
 	public destroyCard(card: RenderedCard): void {
-		card.coreContainer.destroy({
-			children: true,
-		})
+		card.destroyObject()
 		this.rootContainer.removeChild(card.coreContainer)
 		this.rootContainer.removeChild(card.hitboxSprite)
 	}
@@ -1016,13 +1014,9 @@ export default class Renderer {
 		this.updateCardTintOverlay(renderedCard)
 	}
 
-	public destroy(): void {
+	public destroyObject(): void {
 		TextureAtlas.clear()
 		Core.particleSystem.destroy()
-		this.pixi.destroy(true, {
-			children: true,
-			texture: true,
-			baseTexture: true,
-		})
+		this.pixi.destroy(true, true)
 	}
 }

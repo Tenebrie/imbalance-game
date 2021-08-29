@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 export default class ScalingText extends PIXI.Container {
-	private texts: PIXI.Text[]
+	public texts: PIXI.Text[]
 	private currentText: string
 	private readonly currentStyle: PIXI.TextStyle
 	private currentAnchor: PIXI.Point
@@ -79,7 +79,9 @@ export default class ScalingText extends PIXI.Container {
 
 		this.currentText = text
 		while (this.texts.length > 0) {
-			this.removeChild(this.texts.shift()!)
+			const text = this.texts.shift()!
+			text.destroy(true)
+			this.removeChild(text)
 		}
 		this.createNewText()
 	}
@@ -127,12 +129,18 @@ export default class ScalingText extends PIXI.Container {
 
 	private createNewText(): void {
 		while (this.texts.length > 4) {
-			this.removeChild(this.texts.shift()!)
+			const textToDispose = this.texts.shift()!
+			textToDispose.destroy(true)
+			this.removeChild(textToDispose)
 		}
 
 		const newText = new PIXI.Text(this.currentText, new PIXI.TextStyle(this.currentStyle))
 		newText.anchor.copyFrom(this.currentAnchor)
 		this.texts.push(newText)
 		this.addChild(newText)
+	}
+
+	public destroy(): void {
+		super.destroy(true)
 	}
 }

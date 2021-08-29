@@ -199,9 +199,8 @@ export default class RichText extends PIXI.Container {
 	}
 
 	public renderText(): void {
-		while (this.children.length > 0) {
-			this.removeChildAt(0)
-		}
+		this.segments.forEach((segment) => segment.text.destroy())
+		this.segments = []
 
 		let linesRendered = 0
 		const oldFontSize = this.fontSize
@@ -397,5 +396,9 @@ export default class RichText extends PIXI.Container {
 		const ctx = document.createElement('canvas').getContext('2d')!
 		ctx.fillStyle = color
 		return parseInt(ctx.fillStyle.substr(1), 16)
+	}
+
+	public destroy(): void {
+		super.destroy(true)
 	}
 }

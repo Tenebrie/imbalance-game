@@ -99,4 +99,8 @@ export default class RenderedGameBoard implements Board {
 	public setInverted(isInverted: boolean): void {
 		this.isInverted = isInverted
 	}
+
+	public destroyObject(): void {
+		this.rows.forEach((row) => row.destroyObject())
+	}
 }

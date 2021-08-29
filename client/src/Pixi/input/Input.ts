@@ -657,4 +657,8 @@ export default class Input {
 			})
 		})
 	}
+
+	public destroyObject(): void {
+		this.forcedTargetingCards.forEach((card) => Core.destroyCard(card))
+	}
 }

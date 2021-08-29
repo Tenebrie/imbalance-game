@@ -163,6 +163,10 @@ export default class TextureAtlas {
 	}
 
 	public static clear(): void {
+		for (const name in TextureAtlas.textures) {
+			const texture = TextureAtlas.textures[name]
+			texture.destroy(true)
+		}
 		TextureAtlas.textures = {}
 		TextureAtlas.hasPreloadedComponents = false
 		TextureAtlas.isPreloadingComponents = false

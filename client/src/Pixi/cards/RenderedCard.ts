@@ -648,6 +648,12 @@ export default class RenderedCard implements Card {
 		return CardLocation.UNKNOWN
 	}
 
+	public destroyObject(): void {
+		this.coreContainer.destroy({
+			children: true,
+		})
+	}
+
 	public static fromMessage(message: CardMessage): RenderedCard {
 		const card = new RenderedCard(message)
 		Core.registerCard(card)
