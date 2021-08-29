@@ -68,7 +68,7 @@ class EditorCardRenderer {
 		renderedCard.coreContainer.visible = true
 		this.pixi.render(renderedCard.coreContainer, this.renderTexture)
 
-		return this.pixi.extract.canvas(this.renderTexture)
+		return this.pixi.plugins.extract.canvas(this.renderTexture)
 	}
 }
 
