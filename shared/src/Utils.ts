@@ -75,6 +75,10 @@ export const hashCode = (targetString: string): number => {
 	return hash
 }
 
+const hashCodeOfId = (id: string): number => {
+	return hashCode(id.substr(id.lastIndexOf(':')))
+}
+
 export function sortCards<T extends Card | CardMessage>(inputArray: T[]): T[] {
 	return inputArray.slice().sort((a: Card | CardMessage, b: Card | CardMessage) => {
 		if ('features' in a && 'features' in b) {
@@ -99,20 +103,21 @@ export function sortCards<T extends Card | CardMessage>(inputArray: T[]): T[] {
 				(a.color - b.color ||
 					b.stats.basePower - a.stats.basePower ||
 					a.sortPriority - b.sortPriority ||
-					hashCode(a.class) - hashCode(b.class) ||
-					hashCode(a.id) - hashCode(b.id))) ||
+					hashCodeOfId(a.class) - hashCodeOfId(b.class) ||
+					hashCodeOfId(a.id) - hashCodeOfId(b.id))) ||
 			(a.type === CardType.SPELL &&
 				(a.color - b.color ||
 					a.stats.baseSpellCost - b.stats.baseSpellCost ||
 					a.sortPriority - b.sortPriority ||
-					hashCode(a.class) - hashCode(b.class) ||
-					hashCode(a.id) - hashCode(b.id))) ||
+					hashCodeOfId(a.class) - hashCodeOfId(b.class) ||
+					hashCodeOfId(a.id) - hashCodeOfId(b.id))) ||
 			0
 		)
 	})
 }
 
 export const compressGameTraffic = (): boolean => {
+	// @ts-ignore
 	return process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
 }
 

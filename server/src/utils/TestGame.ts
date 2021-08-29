@@ -64,13 +64,6 @@ type TestGameBoard = {
 	countAll(): number
 }
 
-type TestGameUnit = {
-	stats: ServerCardStats
-	buffs: TestGameBuffs
-	variables: RichTextVariables
-	orderOnFirst(): void
-}
-
 const setupTestGameBoard = (game: ServerGame): TestGameBoard => {
 	return {
 		log: (): void => {
@@ -90,6 +83,13 @@ const setupTestGameBoard = (game: ServerGame): TestGameBoard => {
 			return game.board.getAllUnits().length
 		},
 	}
+}
+
+type TestGameUnit = {
+	stats: ServerCardStats
+	buffs: TestGameBuffs
+	variables: RichTextVariables
+	orderOnFirst(): void
 }
 
 const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {

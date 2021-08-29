@@ -39,7 +39,7 @@ export default class UnitMasterSwordsmith extends ServerCard {
 		const targets = sortCards(owner.cardHand.unitCards)
 		targets.forEach((card) => {
 			this.game.animation.createAnimationThread()
-			card.buffs.add(BuffStrength, this, BuffDuration.INFINITY)
+			card.buffs.addMultiple(BuffStrength, this.bonusPower, this, BuffDuration.INFINITY)
 			this.game.animation.commitAnimationThread()
 		})
 	}
