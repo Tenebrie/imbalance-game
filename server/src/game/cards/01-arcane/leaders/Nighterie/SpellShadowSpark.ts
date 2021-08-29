@@ -43,7 +43,7 @@ export default class SpellShadowSpark extends ServerCard {
 		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
 
 		const shadowspawn = CardLibrary.instantiate(this.game, UnitShadowspawn)
-		const targetRow = this.game.board.getRowWithDistanceToFront(this.owner, 0)
+		const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerPlayer, 0)
 		this.game.board.createUnit(shadowspawn, player, targetRow.index, targetRow.cards.length)
 	}
 }

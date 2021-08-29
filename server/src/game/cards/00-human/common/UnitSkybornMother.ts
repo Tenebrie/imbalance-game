@@ -29,12 +29,12 @@ export default class UnitSkybornMother extends ServerCard {
 		this.createSelector()
 			.require(() => this.location === CardLocation.HAND)
 			.requireTarget(({ target }) => target === getLastPlayedUnit())
-			.requireTarget(({ target }) => target.owner === this.owner)
+			.requireTarget(({ target }) => target.ownerPlayer === this.ownerPlayer)
 			.provide(BuffStrength, this.powerGiven)
 
 		const getLastPlayedUnit = () =>
 			game.cardPlay.playedCards
-				.filter((playedCard) => playedCard.player === this.owner)
+				.filter((playedCard) => playedCard.player === this.ownerPlayer)
 				.filter((playedCard) => playedCard.card.location === CardLocation.BOARD)
 				.reverse()[0]?.card
 	}

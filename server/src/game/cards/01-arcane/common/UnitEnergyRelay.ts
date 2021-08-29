@@ -41,7 +41,7 @@ export default class UnitEnergyRelay extends ServerCard {
 	private onDealDamage(): void {
 		const triggeringUnit = this.unit!
 		const opposingEnemies = this.game.board
-			.getUnitsOwnedByOpponent(this.ownerNullable)
+			.getUnitsOwnedByOpponent(this.ownerPlayerNullable)
 			.filter((unit) => this.game.board.getHorizontalUnitDistance(unit, triggeringUnit) < 1)
 			.sort((a, b) => {
 				return this.game.board.getVerticalUnitDistance(a, triggeringUnit) - this.game.board.getVerticalUnitDistance(b, triggeringUnit)

@@ -25,7 +25,7 @@ export default class UnitMerfolkSkygazer extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.BOARD_ROW)
-			.require(({ targetRow }) => targetRow.owner === this.ownerNullable)
+			.require(({ targetRow }) => targetRow.owner === this.ownerPlayerNullable)
 			.perform(({ targetRow }) => onTargetSelected(targetRow))
 
 		const onTargetSelected = (target: ServerBoardRow): void => {

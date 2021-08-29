@@ -38,7 +38,7 @@ export default class UnitHighClassPerformer extends ServerCard {
 
 	private onDeploy(): void {
 		const otherAlliedRows = this.game.board.rows
-			.filter((row) => row.owner === this.ownerNullable)
+			.filter((row) => row.owner === this.ownerPlayerNullable)
 			.filter((row) => row.index !== this.unit!.rowIndex)
 
 		const alliedUnitsOnTargetRows = otherAlliedRows.map((row) => row.cards).flat()

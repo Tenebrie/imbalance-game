@@ -21,6 +21,7 @@ describe('ServerGameEvents', () => {
 	let game: ServerGame
 	let events: ServerGameEvents
 	let player: ServerPlayerInGame
+	let opponent: ServerPlayerInGame
 	let playerGroup: ServerPlayerGroup
 	let callbackSpy: () => void
 	let callbackSpyB: () => void
@@ -106,7 +107,7 @@ describe('ServerGameEvents', () => {
 			let startNextTurn: () => void
 
 			beforeEach(() => {
-				;({ game, player, startNextTurn } = TestGameTemplates.normalGameFlow())
+				;({ game, player, opponent, startNextTurn } = TestGameTemplates.normalGameFlow())
 				events = game.events
 			})
 
@@ -142,22 +143,8 @@ describe('ServerGameEvents', () => {
 				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, opponent, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
 				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 - 1, 0)
-
-				startNextTurn()
-
-				for (let i = 0; i < spies.length - 1; i++) {
-					expect(spies[i].mock.invocationCallOrder[0]).toBeLessThan(spies[i + 1].mock.invocationCallOrder[0])
-				}
-			})
-
-			it('prioritizes for active player', () => {
-				const probeCards: TestingUnitTurnEndEffectProbe[] = shuffle(new Array(2).fill(0).map(() => new TestingUnitTurnEndEffectProbe(game)))
-				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
-
-				game.board.createUnit(probeCards.shift()!, player, 0, 0)
-				game.board.createUnit(probeCards.shift()!, player, 0, 1)
 
 				startNextTurn()
 
@@ -347,11 +334,11 @@ describe('ServerGameEvents', () => {
 				)
 				const spies = probeCards.map((card) => jest.spyOn(card, 'onTurnEnd'))
 
-				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
-				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
-				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 0)
-				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 1)
-				game.board.createUnit(probeCards.shift()!, player, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 2)
+				game.board.createUnit(probeCards.shift()!, opponent, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2, 0)
+				game.board.createUnit(probeCards.shift()!, opponent, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 1, 0)
+				game.board.createUnit(probeCards.shift()!, opponent, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 0)
+				game.board.createUnit(probeCards.shift()!, opponent, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 1)
+				game.board.createUnit(probeCards.shift()!, opponent, game.ruleset.constants.GAME_BOARD_ROW_COUNT / 2 + 2, 2)
 				game.players[0].players[0].cardHand.addUnit(probeCards.shift()!)
 				game.players[0].players[0].cardDeck.addUnitToBottom(probeCards.shift()!)
 				game.players[0].players[0].cardDeck.addUnitToBottom(probeCards.shift()!)

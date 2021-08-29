@@ -37,8 +37,8 @@ export default class UnitArmorMender extends ServerCard {
 			.require(({ powerDamageInstance }) => !!powerDamageInstance)
 			.require(({ triggeringCard }) => triggeringCard !== this)
 			.require(({ triggeringCard }) => triggeringCard.stats.power > 0)
-			.require(({ triggeringCard }) => triggeringCard.ownerNullable === this.ownerNullable)
-			.require(({ triggeringCard }) => triggeringCard.ownerNullable === this.ownerNullable)
+			.require(({ triggeringCard }) => triggeringCard.ownerPlayerNullable === this.ownerPlayerNullable)
+			.require(({ triggeringCard }) => triggeringCard.ownerPlayerNullable === this.ownerPlayerNullable)
 			.perform(({ triggeringCard }) => {
 				triggeringCard.buffs.addMultiple(BuffExtraArmor, this.bonusArmor, this)
 				this.activationsThisTurn += 1

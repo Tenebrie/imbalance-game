@@ -29,7 +29,7 @@ export default class UnitMadnessIncarnate extends ServerCard {
 		this.createCallback(GameEventType.GAME_STARTED, AnyCardLocation)
 			.require(({ group }) => group.owns(this))
 			.perform(() => {
-				this.game.board.getControlledRows(this.ownerNullable).forEach((row) => {
+				this.game.board.getControlledRows(this.ownerPlayerNullable).forEach((row) => {
 					this.game.animation.thread(() => {
 						Keywords.shatter(this.shatterPerRow, this.ownerPlayer).on(row)
 					})

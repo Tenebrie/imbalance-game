@@ -26,7 +26,7 @@ export default class HeroAurienne extends ServerCard {
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createHook(GameHookType.UNIT_DESTROYED, [CardLocation.HAND])
-			.require(({ targetUnit }) => targetUnit.owner === this.ownerNullable)
+			.require(({ targetUnit }) => targetUnit.owner === this.ownerGroup)
 			.replace((values) => ({
 				...values,
 				destructionPrevented: true,

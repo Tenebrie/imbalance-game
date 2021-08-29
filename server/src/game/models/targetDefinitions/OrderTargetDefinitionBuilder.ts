@@ -114,15 +114,15 @@ export default class OrderTargetDefinitionBuilder<EventArgs extends TargetValida
 
 	public requireAllied(): OrderTargetDefinitionBuilder<EventArgs> {
 		return this.require((args: TargetValidatorArguments) => {
-			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerNullable
-			return targetOwner === args.sourceCard.ownerNullable
+			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerPlayerNullable
+			return targetOwner === args.sourceCard.ownerPlayerNullable
 		})
 	}
 
 	public requireEnemy(): OrderTargetDefinitionBuilder<EventArgs> {
 		return this.require((args: TargetValidatorArguments) => {
-			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerNullable
-			return targetOwner !== args.sourceCard.ownerNullable
+			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerPlayerNullable
+			return targetOwner !== args.sourceCard.ownerPlayerNullable
 		})
 	}
 

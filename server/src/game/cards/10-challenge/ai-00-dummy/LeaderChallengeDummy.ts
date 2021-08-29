@@ -29,7 +29,7 @@ export default class LeaderChallengeDummy extends ServerCard {
 	}
 
 	private onRoundStart(): void {
-		const middleRow = this.game.board.getRowWithDistanceToFront(this.owner, 1)
+		const middleRow = this.game.board.getRowWithDistanceToFront(this.ownerPlayer, 1)
 		const targetDummyCard = CardLibrary.instantiate(this.game, TokenChallengeDummyTargetDummy)
 		middleRow.createUnit(targetDummyCard, this.ownerPlayer, 0)
 	}

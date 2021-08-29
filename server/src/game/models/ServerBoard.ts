@@ -11,7 +11,7 @@ import { toRowIndex } from '@src/utils/Utils'
 import MoveDirection from '@shared/enums/MoveDirection'
 import GameEventCreators from './events/GameEventCreators'
 import ServerAnimation from './ServerAnimation'
-import GameHookType, { UnitDestroyedHookFixedValues, UnitDestroyedHookEditableValues } from './events/GameHookType'
+import GameHookType from './events/GameHookType'
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import CardTribe from '@shared/enums/CardTribe'
@@ -152,7 +152,7 @@ export default class ServerBoard implements Board {
 
 	public getOpposingUnits(thisUnit: ServerUnit): ServerUnit[] {
 		return this.game.board
-			.getUnitsOwnedByOpponent(thisUnit.card.owner)
+			.getUnitsOwnedByOpponent(thisUnit.card.ownerPlayer)
 			.filter((unit) => this.game.board.getHorizontalUnitDistance(unit, thisUnit) < 1)
 			.sort((a, b) => {
 				return this.game.board.getVerticalUnitDistance(a, thisUnit) - this.game.board.getVerticalUnitDistance(b, thisUnit)

@@ -49,7 +49,7 @@ import { EventSubscription } from '../events/EventSubscription'
 import { EventHook } from '../events/EventHook'
 import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
 import { CardSelector } from '../events/selectors/CardSelector'
-import { createRandomId } from '@src/utils/Utils'
+import { createRandomId, getOwnerGroup } from '@src/utils/Utils'
 import ServerBoardRow from '../ServerBoardRow'
 import LeaderStatType from '@src/../../shared/src/enums/LeaderStatType'
 import { StatOverride, StatOverrideBuilder } from './StatOverride'
@@ -121,12 +121,12 @@ export default class ServerBuff implements Buff {
 		this.__duration = this.baseDuration = duration
 
 		this.createCallback(GameEventType.TURN_STARTED)
-			.require(({ group }) => group === this.parent.owner)
+			.require(({ group }) => getOwnerGroup(this) === group)
 			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
 
 		this.createCallback(GameEventType.TURN_ENDED)
-			.require(({ group }) => group === this.parent.owner)
+			.require(({ group }) => getOwnerGroup(this) === group)
 			.require(() => this.__duration < Infinity)
 			.perform(() => this.onTurnChanged())
 

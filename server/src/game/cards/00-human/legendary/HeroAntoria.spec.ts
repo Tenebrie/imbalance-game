@@ -14,14 +14,18 @@ describe('HeroAntoria', () => {
 	let playersCard: ServerCard
 	let opponentsCard: ServerCard
 	let player: ServerPlayerInGame
+	let opponent: ServerPlayerInGame
 	let playerAction: (callback: () => void) => void
 
 	beforeEach(() => {
-		;({ game, playersCard, opponentsCard, player, playerAction } = TestGameTemplates.opponentCardTest(TestingSpellQuickStrike, HeroAntoria))
+		;({ game, playersCard, opponentsCard, player, opponent, playerAction } = TestGameTemplates.opponentCardTest(
+			TestingSpellQuickStrike,
+			HeroAntoria
+		))
 	})
 
 	it('intercepts damage', () => {
-		const damageTarget = game.board.createUnit(new TestingUnitNoEffect(game), player, 4, 0)!
+		const damageTarget = game.board.createUnit(new TestingUnitNoEffect(game), opponent, 4, 0)!
 		playerAction(() => {
 			game.cardPlay.playCardFromHand(new ServerOwnedCard(playersCard, player), 0, 0)
 		})
@@ -36,11 +40,11 @@ describe('HeroAntoria', () => {
 		let unitInDeck: ServerCard
 
 		beforeEach(() => {
-			;({ game, playersCard, opponentsCard, player } = TestGameTemplates.opponentCardTest(TestingSpellHeavyStrike, HeroAntoria))
+			;({ game, playersCard, opponentsCard, player, opponent } = TestGameTemplates.opponentCardTest(TestingSpellHeavyStrike, HeroAntoria))
 			unitInDeck = new TestingUnitNoEffect(game)
 			player.opponentInGame.players[0].cardDeck.addUnitToTop(unitInDeck)
 
-			game.board.createUnit(new TestingUnitNoEffect(game), player, 4, 0)
+			game.board.createUnit(new TestingUnitNoEffect(game), opponent, 4, 0)
 			playerAction(() => {
 				game.cardPlay.playCardFromHand(new ServerOwnedCard(playersCard, player), 0, 0)
 			})

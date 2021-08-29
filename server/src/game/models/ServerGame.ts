@@ -590,10 +590,10 @@ export default class ServerGame implements SourceGame {
 		return this.index.findCard(cardId)
 	}
 
-	public findOwnedCardById(cardId: string): ServerOwnedCard | ServerGroupOwnedCard | null {
+	public findOwnedCardById(cardId: string): ServerOwnedCard | null {
 		const cardOnBoard = this.board.findUnitById(cardId)
 		if (cardOnBoard) {
-			return cardOnBoard
+			return new ServerOwnedCard(cardOnBoard.card, cardOnBoard.originalOwner)
 		}
 		const cardInStack = this.cardPlay.cardResolveStack.findCardById(cardId)
 		if (cardInStack) {

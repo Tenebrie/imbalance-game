@@ -8,7 +8,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import ServerPlayerGroupSlots from '@src/game/players/ServerPlayerGroupSlots'
 import { ServerCardBuff, ServerRowBuff } from '@src/game/models/buffs/ServerBuff'
 import { ServerRulesetSlotGroup } from '@src/game/models/rulesets/ServerRulesetSlots'
-import { createHumanGroupId } from '@src/utils/Utils'
+import { createHumanGroupId, getOwnerGroup } from '@src/utils/Utils'
 
 export default class ServerPlayerGroup implements PlayerGroup {
 	id: string
@@ -64,9 +64,9 @@ export default class ServerPlayerGroup implements PlayerGroup {
 	public owns(card: ServerCard | ServerCardBuff | ServerRowBuff): boolean {
 		let owner
 		if (card instanceof ServerCardBuff || card instanceof ServerRowBuff) {
-			owner = card.parent.owner
+			owner = getOwnerGroup(card.parent)
 		} else {
-			owner = card.ownerNullable
+			owner = card.ownerPlayerNullable
 		}
 
 		if (!owner) {

@@ -11,8 +11,7 @@ export default class BuffGrowth extends ServerCardBuff {
 		})
 
 		this.createCallback(GameEventType.TURN_STARTED)
-			// .require(({ group }) => group.owns(this.parent))
-			.require(({ group }) => group === this.parent.ownerNullable)
+			.require(({ group }) => group === this.parent.ownerGroup)
 			.perform(() => onTurnStart())
 
 		const onTurnStart = () => {

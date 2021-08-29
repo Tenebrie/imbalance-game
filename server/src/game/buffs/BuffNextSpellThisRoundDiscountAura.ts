@@ -25,7 +25,7 @@ export default class BuffNextSpellThisRoundDiscountAura extends ServerCardBuff {
 
 		this.createSelector()
 			.requireTarget(({ target }) => target.type === CardType.SPELL)
-			.requireTarget(({ target }) => target.owner === this.parent.owner)
+			.requireTarget(({ target }) => target.ownerPlayer === this.parent.ownerPlayer)
 			.provide(BuffHiddenSpellDiscount)
 	}
 }

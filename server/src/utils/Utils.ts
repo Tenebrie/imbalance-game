@@ -177,7 +177,7 @@ export const getLeaderTextVariables = (leaderCard: ServerCard): LeaderTextVariab
 	}
 
 	return {
-		inGame: () => !!leaderCard.ownerNullable,
+		inGame: () => !!leaderCard.ownerPlayerNullable,
 		playerName: () => getPlayerName(),
 	}
 }

@@ -32,7 +32,7 @@ export default class UnitStoneElemental extends ServerCard {
 		}
 
 		this.createDeployTargets(TargetType.UNIT)
-			.require(({ targetUnit }) => targetUnit.owner !== this.owner)
+			.require(({ targetUnit }) => targetUnit.owner !== this.ownerGroup)
 			.perform(({ targetUnit }) => {
 				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
 				targetUnit.buffs.add(BuffStun, this, BuffDuration.END_OF_NEXT_TURN)

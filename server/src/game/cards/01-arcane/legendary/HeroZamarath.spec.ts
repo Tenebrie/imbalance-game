@@ -13,11 +13,12 @@ describe('HeroZamarath', () => {
 	let game: ServerGame
 	let cardInHand: ServerCard
 	let player: ServerPlayerInGame
+	let opponent: ServerPlayerInGame
 	let playerAction: (callback: () => void) => void
 	let startNextTurn: () => void
 
 	beforeEach(() => {
-		;({ game, cardInHand, player, playerAction, startNextTurn } = TestGameTemplates.singleCardTest(HeroZamarath))
+		;({ game, cardInHand, player, opponent, playerAction, startNextTurn } = TestGameTemplates.singleCardTest(HeroZamarath))
 	})
 
 	it('always has protector', () => {
@@ -65,9 +66,9 @@ describe('HeroZamarath', () => {
 		})
 		playerAction(() => {
 			const opponentsCard = new TestingSpellHeavyStrike(game)
-			player.opponentInGame.players[0].cardHand.addSpell(opponentsCard)
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame.players[0]), 0, 0)
-			game.cardPlay.selectCardTarget(player.opponentInGame.players[0], game.cardPlay.getDeployTargets()[0].target)
+			opponent.cardHand.addSpell(opponentsCard)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, opponent), 0, 0)
+			game.cardPlay.selectCardTarget(opponent, game.cardPlay.getDeployTargets()[0].target)
 		})
 
 		expect(targetUnit.stats.power).toEqual(20)

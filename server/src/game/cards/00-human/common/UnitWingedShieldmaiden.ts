@@ -25,7 +25,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
-			.require(({ triggeringCard }) => triggeringCard.ownerNullable === this.ownerNullable)
+			.require(({ triggeringCard }) => triggeringCard.ownerPlayerNullable === this.ownerPlayerNullable)
 			.require(({ triggeringCard }) => !!triggeringCard.unit)
 			.prepare(({ triggeringCard }) => {
 				const targetUnit = triggeringCard.unit!

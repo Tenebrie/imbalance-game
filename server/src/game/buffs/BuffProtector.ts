@@ -23,7 +23,7 @@ export default class BuffProtector extends ServerCardBuff {
 			.require(
 				({ damageInstance }) =>
 					damageInstance.source === DamageSource.UNIVERSE ||
-					(damageInstance.source === DamageSource.CARD && damageInstance.sourceCard?.owner !== this.parent.owner)
+					(damageInstance.source === DamageSource.CARD && !this.parent.ownerGroup.owns(damageInstance.sourceCard!))
 			)
 			.require(({ targetCard }) => {
 				const thisUnit = this.unit!

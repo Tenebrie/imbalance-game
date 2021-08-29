@@ -32,13 +32,13 @@ export default class UnitTheMinisterOfLand extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.UNIT_CREATED, [CardLocation.DECK])
-			.require(({ owner }) => owner === this.ownerNullable)
+			.require(({ owner }) => owner === this.ownerGroup)
 			.require(({ triggeringCard }) => triggeringCard.tribes.includes(CardTribe.PEASANT))
 			.require(
 				() => game.board.getUnitsOfTribe(CardTribe.PEASANT, this.ownerGroupNullable).length >= UnitTheMinisterOfLand.PEASANTS_REQUIRED
 			)
 			.perform(() => {
-				const controlledRows = game.board.getControlledRows(this.ownerNullable).reverse()
+				const controlledRows = game.board.getControlledRows(this.ownerPlayerNullable).reverse()
 				if (controlledRows[0].isFull()) {
 					return
 				}
@@ -50,7 +50,7 @@ export default class UnitTheMinisterOfLand extends ServerCard {
 		this.createSelector()
 			.require(() => this.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.tribes.includes(CardTribe.PEASANT))
-			.requireTarget(({ target }) => target.ownerNullable === this.ownerNullable)
+			.requireTarget(({ target }) => target.ownerPlayerNullable === this.ownerPlayerNullable)
 			.requireTarget(({ target }) => target.location === CardLocation.BOARD)
 			.provide(BuffWeakness, UnitTheMinisterOfLand.WEAKNESS_POTENCY)
 	}

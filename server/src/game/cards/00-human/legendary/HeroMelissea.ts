@@ -48,7 +48,7 @@ export default class HeroMelissea extends ServerCard {
 		}
 
 		this.createCallback(GameEventType.CARD_POWER_RESTORED, [CardLocation.BOARD, CardLocation.STACK])
-			.require(({ triggeringCard }) => triggeringCard.ownerNullable === this.ownerNullable)
+			.require(({ triggeringCard }) => triggeringCard.ownerPlayerNullable === this.ownerPlayerNullable)
 			.perform(({ triggeringCard }) => triggeringCard.buffs.addMultiple(BuffStrength, this.extraPower, this))
 	}
 }
