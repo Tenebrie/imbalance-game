@@ -26,14 +26,10 @@ export default {
 					SELECT array(
 						SELECT row_to_json(subplayers)
 						FROM (
-							SELECT id, username FROM players WHERE players.id = ANY(
-								array(
-									SELECT "playerId"
-									FROM victorious_player_in_game_history
-									WHERE victorious_player_in_game_history."gameId" = game_history.id
-								)
-							)
-						) AS subplayers
+							 SELECT id, username
+							 FROM victorious_player_in_game_history JOIN players players ON victorious_player_in_game_history."playerId" = players.id
+							 WHERE victorious_player_in_game_history."gameId" = game_history.id
+						 ) AS subplayers
 					)
 				) AS "victoriousPlayer"
 			FROM game_history
@@ -68,14 +64,10 @@ export default {
 					SELECT array(
 					    SELECT row_to_json(subplayers)
 						FROM (
-							 SELECT id, username FROM players WHERE players.id = ANY(
-								 array(
-									 SELECT "playerId"
-									 FROM victorious_player_in_game_history
-									 WHERE victorious_player_in_game_history."gameId" = game_history.id
-								 )
-							)
-						) AS subplayers
+							 SELECT id, username
+							 FROM victorious_player_in_game_history JOIN players players ON victorious_player_in_game_history."playerId" = players.id
+							 WHERE victorious_player_in_game_history."gameId" = game_history.id
+						 ) AS subplayers
 					)
 				) AS "victoriousPlayer"
 			FROM game_history

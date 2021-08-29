@@ -107,7 +107,6 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 
 	[PlayerUpdateMessageType.UNIT_ORDERS_SELF]: (data: CardTargetMessage[]) => {
 		Core.board.validOrders = data
-		console.log(data)
 	},
 
 	[PlayerUpdateMessageType.UNIT_ORDERS_OPPONENT]: (data: CardTargetMessage[]) => {

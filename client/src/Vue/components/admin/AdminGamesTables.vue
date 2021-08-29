@@ -55,7 +55,7 @@
 					<th>Players</th>
 					<th>Duration</th>
 					<th>Close reason</th>
-					<th>Victorious player</th>
+					<th>Victorious players</th>
 					<th>Issues</th>
 				</tr>
 			</thead>
@@ -85,9 +85,13 @@
 					</td>
 					<td>{{ game.closeReason }}</td>
 					<td>
-						<router-link class="user-input" v-if="game.victoriousPlayer" :to="`/admin/users/${game.victoriousPlayer.id}`">
-							{{ game.victoriousPlayer.username }}
-						</router-link>
+						<div v-if="game.victoriousPlayer">
+							<div :key="player.id" v-for="player in game.victoriousPlayer">
+								<router-link class="user-input" :to="`/admin/users/${player.id}`">
+									{{ player.username }}
+								</router-link>
+							</div>
+						</div>
 						<span v-if="!game.victoriousPlayer">N/A</span>
 					</td>
 					<td>

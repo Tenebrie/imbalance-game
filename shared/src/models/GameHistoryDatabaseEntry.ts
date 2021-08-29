@@ -5,7 +5,7 @@ export default interface GameHistoryDatabaseEntry {
 	startedAt: string
 	closedAt: string | null
 	closeReason: string
-	victoriousPlayer: { id: string; username: string } | null
+	victoriousPlayer: { id: string; username: string }[]
 	players: GameHistoryPlayerDatabaseEntry[]
 	eventLog: EventLogEntryMessage[][]
 	errorCount: number

@@ -10,7 +10,7 @@
 				<tr>
 					<td class="header">Players:</td>
 					<td class="players">
-						<span v-for="player in game.players" :key="player.id" :to="`/admin/users/${player.id}`">
+						<span v-for="player in game.players" :key="player.id">
 							<router-link :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
 						</span>
 						<span v-if="game.players.length === 0">[No data]</span>
@@ -50,9 +50,13 @@
 					<td>{{ game.closeReason }}</td>
 				</tr>
 				<tr v-if="game.victoriousPlayer">
-					<td class="header">Victorious player:</td>
-					<td>
-						<router-link :to="`/admin/users/${game.victoriousPlayer.id}`">{{ game.victoriousPlayer.username }}</router-link>
+					<td class="header">Victorious players:</td>
+					<td class="players">
+						<span v-for="player in game.victoriousPlayer" :key="player.id">
+							<router-link class="user-input" :to="`/admin/users/${player.id}`">
+								{{ player.username }}
+							</router-link>
+						</span>
 					</td>
 				</tr>
 			</table>
