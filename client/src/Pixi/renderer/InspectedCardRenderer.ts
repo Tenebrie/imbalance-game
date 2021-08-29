@@ -1,10 +1,11 @@
-import Core from '@/Pixi/Core'
 import * as PIXI from 'pixi.js'
-import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
-import { CARD_ASPECT_RATIO, CARD_HEIGHT, getScreenHeight, getScreenWidth, INSPECTED_CARD_ZINDEX } from '@/Pixi/renderer/RendererUtils'
+
 import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import RichText from '@/Pixi/render/RichText'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
+import { CARD_ASPECT_RATIO, CARD_HEIGHT, getScreenHeight, getScreenWidth, INSPECTED_CARD_ZINDEX } from '@/Pixi/renderer/RendererUtils'
 
 class InspectedCardRenderer {
 	public container!: PIXI.Container

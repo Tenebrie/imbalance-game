@@ -1,6 +1,7 @@
+import RenderQuality from '@shared/enums/RenderQuality'
+
 import Core from '@/Pixi/Core'
 import store from '@/Vue/store'
-import RenderQuality from '@shared/enums/RenderQuality'
 
 export const CARD_WIDTH = 408
 export const CARD_HEIGHT = 584

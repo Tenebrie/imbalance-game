@@ -1,13 +1,13 @@
-import ServerGame from '../../../models/ServerGame'
+import CardLocation from '../../../../../../shared/src/enums/CardLocation'
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
-import HeroAntoria from './HeroAntoria'
+import TestingSpellHeavyStrike from '../../11-testing/TestingSpellHeavyStrike'
 import TestingSpellQuickStrike from '../../11-testing/TestingSpellQuickStrike'
 import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
-import TestingSpellHeavyStrike from '../../11-testing/TestingSpellHeavyStrike'
-import CardLocation from '../../../../../../shared/src/enums/CardLocation'
+import HeroAntoria from './HeroAntoria'
 
 describe('HeroAntoria', () => {
 	let game: ServerGame

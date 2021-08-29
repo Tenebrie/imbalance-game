@@ -1,5 +1,6 @@
-import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+
+import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
 
 export default class BuffWeakness extends ServerCardBuff {
 	constructor(params: BuffConstructorParams) {

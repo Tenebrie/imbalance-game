@@ -15,13 +15,14 @@
 </template>
 
 <script lang="ts">
-import * as PIXI from 'pixi.js'
-import store from '@/Vue/store'
-import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
-import { getMaxCardCopiesForColor } from '@shared/Utils'
-import { defineComponent, PropType } from 'vue'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
+import { getMaxCardCopiesForColor } from '@shared/Utils'
+import * as PIXI from 'pixi.js'
+import { defineComponent, PropType } from 'vue'
+
+import Localization from '@/Pixi/Localization'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	props: {

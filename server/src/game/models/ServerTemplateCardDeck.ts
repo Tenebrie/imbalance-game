@@ -1,10 +1,11 @@
-import ServerCard from './ServerCard'
-import CardDeck from '@shared/models/CardDeck'
-import CardLibrary from '../libraries/CardLibrary'
-import ServerGame from './ServerGame'
-import ServerEditorDeck from './ServerEditorDeck'
 import CardColor from '@shared/enums/CardColor'
 import CardType from '@shared/enums/CardType'
+import CardDeck from '@shared/models/CardDeck'
+
+import CardLibrary from '../libraries/CardLibrary'
+import ServerCard from './ServerCard'
+import ServerEditorDeck from './ServerEditorDeck'
+import ServerGame from './ServerGame'
 
 export default class ServerTemplateCardDeck implements CardDeck {
 	public leader: ServerCard

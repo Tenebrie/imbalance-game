@@ -7,12 +7,14 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import TheGameList from '../components/home/TheGameList.vue'
-import TheChangelog from '@/Vue/components/home/TheChangelog.vue'
-import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import TheWelcomePopup from '@/Vue/components/popup/TheWelcomePopup.vue'
 import { defineComponent } from 'vue'
+
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import TheChangelog from '@/Vue/components/home/TheChangelog.vue'
+import TheWelcomePopup from '@/Vue/components/popup/TheWelcomePopup.vue'
+import store from '@/Vue/store'
+
+import TheGameList from '../components/home/TheGameList.vue'
 import TheHomeActionList from '../components/home/TheHomeActionList.vue'
 
 export default defineComponent({

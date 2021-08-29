@@ -4,10 +4,11 @@
 
 <script lang="ts">
 import axios from 'axios'
-import router from '@/Vue/router'
+import { defineComponent, onMounted } from 'vue'
+
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import Notifications from '@/utils/Notifications'
-import { defineComponent, onMounted } from 'vue'
+import router from '@/Vue/router'
 
 export default defineComponent({
 	setup() {

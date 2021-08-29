@@ -1,9 +1,9 @@
 import { NovelMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
-import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
 import NovelCue from '@shared/models/novel/NovelCue'
-import NovelReply from '@shared/models/novel/NovelReply'
 import NovelCueMessage from '@shared/models/novel/NovelCueMessage'
+import NovelReply from '@shared/models/novel/NovelReply'
 import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
+import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 export default {

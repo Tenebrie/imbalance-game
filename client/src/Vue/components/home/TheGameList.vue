@@ -27,11 +27,12 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
-import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
-import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
+import axios from 'axios'
 import { defineComponent } from 'vue'
+
+import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

@@ -1,12 +1,13 @@
-import ServerGame from '../models/ServerGame'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import ServerPlayer from '../players/ServerPlayer'
-import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
-import OutgoingMessageHandlers from './OutgoingMessageHandlers'
-import { colorizeId, colorizePlayer } from '@src/utils/Utils'
-import ServerCardTarget from '../models/ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
 import { sortCards } from '@shared/Utils'
+import { colorizeId, colorizePlayer } from '@src/utils/Utils'
+
+import ServerCardTarget from '../models/ServerCardTarget'
+import ServerGame from '../models/ServerGame'
+import ServerPlayer from '../players/ServerPlayer'
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
+import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
+import OutgoingMessageHandlers from './OutgoingMessageHandlers'
 
 export default {
 	onPlayerConnected(game: ServerGame, playerInGame: ServerPlayerInGame): void {

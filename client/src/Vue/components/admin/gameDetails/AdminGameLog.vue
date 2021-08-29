@@ -6,10 +6,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
-import AdminGameLogGroup from '@/Vue/components/admin/gameDetails/AdminGameLogGroup.vue'
 import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
+import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
+import { defineComponent, PropType } from 'vue'
+
+import AdminGameLogGroup from '@/Vue/components/admin/gameDetails/AdminGameLogGroup.vue'
 
 export default defineComponent({
 	components: { AdminGameLogGroup },

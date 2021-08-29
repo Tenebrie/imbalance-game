@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
-import { asDirectUnitDamage } from '@src/utils/LeaderStats'
 import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+import { asDirectUnitDamage } from '@src/utils/LeaderStats'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitLabyrinthLostArcher extends ServerCard {
 	damage = asDirectUnitDamage(7)

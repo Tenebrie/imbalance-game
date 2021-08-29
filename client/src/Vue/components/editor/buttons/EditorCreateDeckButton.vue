@@ -8,9 +8,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
+
 import Notifications from '@/utils/Notifications'
 import store from '@/Vue/store'
-import { defineComponent } from 'vue'
+
 import ProgressSpinner from '../../utils/ProgressSpinner.vue'
 
 export default defineComponent({

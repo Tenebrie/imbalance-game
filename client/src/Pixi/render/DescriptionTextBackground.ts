@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+
 import RichTextBackground from '@/Pixi/render/RichTextBackground'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 

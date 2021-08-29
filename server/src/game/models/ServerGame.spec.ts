@@ -1,9 +1,9 @@
+import TestGameTemplates from '../../utils/TestGameTemplates'
+import TestingLeader from '../cards/11-testing/TestingLeader'
+import TestingLeaderWithPower from '../cards/11-testing/TestingLeaderWithPower'
+import TestingUnitNoEffect from '../cards/11-testing/TestingUnitNoEffect'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerGame from './ServerGame'
-import TestGameTemplates from '../../utils/TestGameTemplates'
-import TestingUnitNoEffect from '../cards/11-testing/TestingUnitNoEffect'
-import TestingLeaderWithPower from '../cards/11-testing/TestingLeaderWithPower'
-import TestingLeader from '../cards/11-testing/TestingLeader'
 
 describe('ServerGameEvents', () => {
 	let game: ServerGame

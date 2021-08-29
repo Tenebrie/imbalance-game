@@ -1,12 +1,13 @@
-import Core from '@/Pixi/Core'
-import store from '@/Vue/store'
-import Player from '@shared/models/Player'
-import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
-import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
 import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
+import Player from '@shared/models/Player'
 import PlayerGroup from '@shared/models/PlayerGroup'
-import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+
 import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
+import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
+import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
+import store from '@/Vue/store'
 
 export default class ClientPlayerGroup implements PlayerGroup {
 	id: string

@@ -1,8 +1,9 @@
-import { defineModule } from 'direct-vuex'
-import * as PIXI from 'pixi.js'
-import store, { moduleActionContext } from '@/Vue/store'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
+import { defineModule } from 'direct-vuex'
+import * as PIXI from 'pixi.js'
+
+import store, { moduleActionContext } from '@/Vue/store'
 
 const HoveredDeckCardModule = defineModule({
 	namespaced: true,

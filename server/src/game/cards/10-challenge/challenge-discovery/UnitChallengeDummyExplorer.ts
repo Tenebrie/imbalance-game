@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import { getRandomArrayValue } from '@src/utils/Utils'
+
 import Keywords from '../../../../utils/Keywords'
 import CardLibrary from '../../../libraries/CardLibrary'
-import { getRandomArrayValue } from '@src/utils/Utils'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitChallengeDummyExplorer extends ServerCard {
 	constructor(game: ServerGame) {

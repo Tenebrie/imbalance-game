@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+
 import TheRulesList from '@/Vue/components/rules/TheRulesList.vue'
 import store from '@/Vue/store'
 

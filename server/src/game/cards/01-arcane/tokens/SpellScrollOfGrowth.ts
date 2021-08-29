@@ -1,15 +1,16 @@
+import BuffDuration from '@shared/enums/BuffDuration'
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+
+import BuffGrowth from '../../../buffs/BuffGrowth'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
-import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
-import CardFaction from '@shared/enums/CardFaction'
-import CardTribe from '@shared/enums/CardTribe'
-import BuffGrowth from '../../../buffs/BuffGrowth'
-import BuffDuration from '@shared/enums/BuffDuration'
-import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class SpellScrollOfGrowth extends ServerCard {
 	constructor(game: ServerGame) {

@@ -1,12 +1,13 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+
 import ServerCard from '../../models/ServerCard'
+import ServerDamageInstance from '../../models/ServerDamageSource'
 import ServerGame from '../../models/ServerGame'
 import ServerUnit from '../../models/ServerUnit'
-import ServerDamageInstance from '../../models/ServerDamageSource'
 
 export default class TestingSpellQuickStrike extends ServerCard {
 	constructor(game: ServerGame) {

@@ -1,6 +1,7 @@
-import Core from '@/Pixi/Core'
 import Unit from '@shared/models/Unit'
+
 import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 
 export default class RenderedUnit implements Unit {

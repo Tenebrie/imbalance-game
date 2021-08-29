@@ -39,10 +39,11 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
 import { computed, defineComponent, PropType } from 'vue'
+
 import TheDeckSelectionPopup from '@/Vue/components/popup/escapeMenu/TheDeckSelectionPopup.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	props: {

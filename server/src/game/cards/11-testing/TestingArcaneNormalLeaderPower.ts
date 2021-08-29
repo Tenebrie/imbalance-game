@@ -1,10 +1,11 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import CardFeature from '@shared/enums/CardFeature'
 
 export default class TestingArcaneNormalLeaderPower extends ServerCard {
 	constructor(game: ServerGame) {

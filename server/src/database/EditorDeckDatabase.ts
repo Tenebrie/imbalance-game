@@ -1,7 +1,8 @@
-import Database from './Database'
-import ServerPlayer from '../game/players/ServerPlayer'
 import EditorDeck from '@shared/models/EditorDeck'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
+
+import ServerPlayer from '../game/players/ServerPlayer'
+import Database from './Database'
 
 export default {
 	async insertEditorDeck(owner: ServerPlayer | PlayerDatabaseEntry, deck: EditorDeck): Promise<boolean> {

@@ -21,11 +21,12 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
+import { defineComponent } from 'vue'
+
 import DeckListMode from '@/utils/DeckListMode'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
-import { defineComponent } from 'vue'
 import router from '@/Vue/router'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	props: {

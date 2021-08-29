@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import UnitEternalTruth from '@src/game/cards/01-arcane/epic/UnitEternalTruth'
-import UnitEternalDeceit from '@src/game/cards/01-arcane/epic/UnitEternalDeceit'
-import Keywords from '@src/utils/Keywords'
 import TargetType from '@shared/enums/TargetType'
+import UnitEternalDeceit from '@src/game/cards/01-arcane/epic/UnitEternalDeceit'
+import UnitEternalTruth from '@src/game/cards/01-arcane/epic/UnitEternalTruth'
+import Keywords from '@src/utils/Keywords'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class HeroEternalSeeker extends ServerCard {
 	constructor(game: ServerGame) {

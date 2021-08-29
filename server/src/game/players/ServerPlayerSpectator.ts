@@ -1,7 +1,8 @@
-import ServerPlayer from './ServerPlayer'
-import ServerGame from '../models/ServerGame'
 import PlayerSpectator from '@shared/models/PlayerSpectator'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+
+import ServerGame from '../models/ServerGame'
+import ServerPlayer from './ServerPlayer'
 
 export default class ServerPlayerSpectator implements PlayerSpectator {
 	initialized = false

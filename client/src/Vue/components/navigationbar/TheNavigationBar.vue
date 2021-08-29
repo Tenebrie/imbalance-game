@@ -52,13 +52,14 @@
 </template>
 
 <script lang="ts">
-import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfile.vue'
-import LanguageDropdown from '@/Vue/components/navigationbar/LanguageSelector.vue'
-import { computed, defineComponent } from 'vue'
-import store from '@/Vue/store'
 import AccessLevel from '@shared/enums/AccessLevel'
-import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
+import { computed, defineComponent } from 'vue'
+
+import LanguageDropdown from '@/Vue/components/navigationbar/LanguageSelector.vue'
+import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfile.vue'
 import TheDiscordLink from '@/Vue/components/navigationbar/TheNavigationBarDiscordLink.vue'
+import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

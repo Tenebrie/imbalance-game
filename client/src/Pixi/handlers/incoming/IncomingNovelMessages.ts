@@ -1,9 +1,10 @@
-import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
-import store from '@/Vue/store'
 import StoryCharacter from '@shared/enums/StoryCharacter'
 import { NovelMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import NovelCueMessage from '@shared/models/novel/NovelCueMessage'
 import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
+
+import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
+import store from '@/Vue/store'
 
 const IncomingNovelMessages: { [index in NovelMessageType]: IncomingMessageHandlerFunction } = {
 	[NovelMessageType.START]: () => {

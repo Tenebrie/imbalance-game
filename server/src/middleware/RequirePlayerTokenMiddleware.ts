@@ -1,6 +1,7 @@
-import AsyncHandler from '../utils/AsyncHandler'
-import PlayerLibrary from '../game/players/PlayerLibrary'
 import AccessLevel from '@shared/enums/AccessLevel'
+
+import PlayerLibrary from '../game/players/PlayerLibrary'
+import AsyncHandler from '../utils/AsyncHandler'
 import { setCookie } from '../utils/Utils'
 
 export default AsyncHandler(async (req, res, next) => {

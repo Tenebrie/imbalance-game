@@ -1,13 +1,14 @@
-import ServerPlayer from '../../players/ServerPlayer'
-import { ServerAnonymousTargetCard } from '../../models/ServerCardTarget'
+import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
+import AnonymousTargetsMessage from '@shared/models/network/AnonymousTargetsMessage'
+import InvalidCardTargetMessage from '@shared/models/network/InvalidCardTargetMessage'
 import { TargetingMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import ResolvingCardTargetsMessage from '@shared/models/network/ResolvingCardTargetsMessage'
-import InvalidCardTargetMessage from '@shared/models/network/InvalidCardTargetMessage'
-import TargetMode from '@shared/enums/TargetMode'
-import ServerCard from '../../models/ServerCard'
-import AnonymousTargetsMessage from '@shared/models/network/AnonymousTargetsMessage'
 import { ValidServerCardTarget } from '@src/game/models/ServerCardTargeting'
+
+import ServerCard from '../../models/ServerCard'
+import { ServerAnonymousTargetCard } from '../../models/ServerCardTarget'
+import ServerPlayer from '../../players/ServerPlayer'
 
 export default {
 	notifyAboutRequestedCardTargets(

@@ -1,8 +1,8 @@
+import RulesetFeature from '@shared/enums/RulesetFeature'
 import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
-import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
-import RulesetFeature from '@shared/enums/RulesetFeature'
 import { getRandomArrayValue } from '@src/utils/Utils'
 
 export class RulesetChain {

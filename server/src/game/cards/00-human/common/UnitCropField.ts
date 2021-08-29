@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
-import CardLocation from '@shared/enums/CardLocation'
-import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardFeature from '@shared/enums/CardFeature'
-import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
+import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
+
 import BuffStrength from '../../../buffs/BuffStrength'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitCropField extends ServerCard {
 	bonusPower = asRecurringBuffPotency(2)

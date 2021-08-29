@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts">
-import Pixi from '../components/pixi/Pixi.vue'
 import { defineComponent } from 'vue'
+
+import Pixi from '../components/pixi/Pixi.vue'
 
 export default defineComponent({
 	components: { Pixi },

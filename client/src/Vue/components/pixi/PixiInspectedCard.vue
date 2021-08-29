@@ -20,13 +20,14 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { computed, defineComponent } from 'vue'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import { RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 import PixiInspectedCardInfo from '@/Vue/components/pixi/inspectedCardInfo/PixiInspectedCardInfo.vue'
+import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

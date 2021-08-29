@@ -1,10 +1,11 @@
-import Core from '@/Pixi/Core'
-import CardHand from '@shared/models/CardHand'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
 import CardType from '@shared/enums/CardType'
-import CardHandMessage from '@shared/models/network/cardHand/CardHandMessage'
+import CardHand from '@shared/models/CardHand'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import CardHandMessage from '@shared/models/network/cardHand/CardHandMessage'
 import { sortCards } from '@shared/Utils'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
 
 export default class RenderedCardHand implements CardHand {
 	unitCards: RenderedCard[]

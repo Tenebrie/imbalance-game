@@ -1,16 +1,17 @@
-import AnimationMessage from '@shared/models/network/AnimationMessage'
 import AnimationType from '@shared/enums/AnimationType'
-import Core from '@/Pixi/Core'
-import * as PIXI from 'pixi.js'
-import CardReceivedBuffAnimParams from '@shared/models/animations/CardReceivedBuffAnimParams'
-import AudioSystem from '@/Pixi/audio/AudioSystem'
-import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
+import CardReceivedBuffAnimParams from '@shared/models/animations/CardReceivedBuffAnimParams'
 import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
 import RowReceivedBuffAnimParams from '@shared/models/animations/RowReceivedBuffAnimParams'
-import { getAnimDurationMod } from '@/utils/Utils'
+import AnimationMessage from '@shared/models/network/AnimationMessage'
+import * as PIXI from 'pixi.js'
+
+import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
+import AudioSystem from '@/Pixi/audio/AudioSystem'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
+import { getAnimDurationMod } from '@/utils/Utils'
 
 export type AnimationHandlerResponse = {
 	skip?: boolean

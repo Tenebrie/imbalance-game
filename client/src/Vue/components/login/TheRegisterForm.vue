@@ -48,13 +48,14 @@
 </template>
 
 <script lang="ts">
+import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import axios from 'axios'
 import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
-import store from '@/Vue/store'
+
+import Localization from '@/Pixi/Localization'
 import InlineTooltip from '@/Vue/components/utils/InlineTooltip.vue'
 import ThePasswordPolicy from '@/Vue/components/utils/ThePasswordPolicy.vue'
-import Localization from '@/Pixi/Localization'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

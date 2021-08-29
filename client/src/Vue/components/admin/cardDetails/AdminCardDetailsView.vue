@@ -47,17 +47,19 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
-import { defineComponent, onMounted, ref, watch } from 'vue'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
-import { useAdminRouteParams } from '@/Vue/components/editor/AdminRouteParams'
-import moment from 'moment'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import { parseRichText } from '@/utils/RichTextParser'
-import Localization from '@/Pixi/Localization'
 import { cardColorToString, cardFactionToString, cardTypeToString } from '@shared/Utils'
-import PixiPreRenderedCard from '../../pixi/PixiPreRenderedCard.vue'
+import axios from 'axios'
+import moment from 'moment'
+import { defineComponent, onMounted, ref, watch } from 'vue'
+
+import Localization from '@/Pixi/Localization'
+import { parseRichText } from '@/utils/RichTextParser'
+import { useAdminRouteParams } from '@/Vue/components/editor/AdminRouteParams'
 import store from '@/Vue/store'
+
+import PixiPreRenderedCard from '../../pixi/PixiPreRenderedCard.vue'
 import AdminCardArtEditor from './AdminCardArtEditor.vue'
 
 type ExtendedCardMessage = CardMessage & {

@@ -63,23 +63,24 @@
 </template>
 
 <script lang="ts">
-import * as PIXI from 'pixi.js'
-import store from '@/Vue/store'
-import { computed, defineComponent, ref } from 'vue'
-import Core from '@/Pixi/Core'
-import CardType from '@shared/enums/CardType'
-import { snakeToCamelCase } from '@/utils/Utils'
-import CardFeature from '@shared/enums/CardFeature'
-import Localization from '@/Pixi/Localization'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
+import BuffFeature from '@shared/enums/BuffFeature'
 import CardColor from '@shared/enums/CardColor'
+import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import * as PIXI from 'pixi.js'
+import { computed, defineComponent, ref } from 'vue'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
+import Localization from '@/Pixi/Localization'
+import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
+import { snakeToCamelCase } from '@/utils/Utils'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import InspectedCardBuffs from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
-import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
-import BuffMessage from '@shared/models/network/buffs/BuffMessage'
-import BuffFeature from '@shared/enums/BuffFeature'
+import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

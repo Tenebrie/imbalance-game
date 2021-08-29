@@ -1,17 +1,18 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
+import BuffDuration from '@shared/enums/BuffDuration'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
-import CardLibrary from '../../../libraries/CardLibrary'
-import UnitVoidspawn from './UnitVoidspawn'
-import BuffStrength from '../../../buffs/BuffStrength'
-import BuffDuration from '@shared/enums/BuffDuration'
-import BotCardEvaluation from '../../../AI/BotCardEvaluation'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
 import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
+
+import BotCardEvaluation from '../../../AI/BotCardEvaluation'
+import BuffStrength from '../../../buffs/BuffStrength'
+import CardLibrary from '../../../libraries/CardLibrary'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import UnitVoidspawn from './UnitVoidspawn'
 
 export default class UnitAbyssPortal extends ServerCard {
 	powerPerCard = asRecurringBuffPotency(1)

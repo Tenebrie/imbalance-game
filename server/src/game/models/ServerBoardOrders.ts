@@ -1,17 +1,18 @@
-import ServerGame from './ServerGame'
-import ServerUnit from './ServerUnit'
-import GameEventCreators from './events/GameEventCreators'
 import TargetType from '@shared/enums/TargetType'
-import { ValidServerCardTarget } from '@src/game/models/ServerCardTargeting'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import { ValidServerCardTarget } from '@src/game/models/ServerCardTargeting'
 import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTargetDefinition'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import {
 	CardTargetValidatorArguments,
 	PositionTargetValidatorArguments,
 	RowTargetValidatorArguments,
 	UnitTargetValidatorArguments,
 } from '@src/types/TargetValidatorArguments'
-import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+
+import GameEventCreators from './events/GameEventCreators'
+import ServerGame from './ServerGame'
+import ServerUnit from './ServerUnit'
 
 export type OrderTarget = {
 	target: ValidServerCardTarget

@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts">
-import TheLoginForm from '../components/login/TheLoginForm.vue'
 import { defineComponent } from 'vue'
+
+import TheLoginForm from '../components/login/TheLoginForm.vue'
 
 export default defineComponent({
 	components: { TheLoginForm },

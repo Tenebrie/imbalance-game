@@ -1,10 +1,11 @@
-import { v4 as uuidv4 } from 'uuid'
-import Core from '@/Pixi/Core'
-import * as PIXI from 'pixi.js'
-import QueuedMessage from '@/Pixi/models/QueuedMessage'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import ProjectileSystem from '@/Pixi/vfx/ProjectileSystem'
 import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import * as PIXI from 'pixi.js'
+import { v4 as uuidv4 } from 'uuid'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
+import QueuedMessage from '@/Pixi/models/QueuedMessage'
+import ProjectileSystem from '@/Pixi/vfx/ProjectileSystem'
 
 class AnimationThread {
 	public id: string = uuidv4()

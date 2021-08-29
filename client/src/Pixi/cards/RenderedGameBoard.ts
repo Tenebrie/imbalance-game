@@ -1,9 +1,11 @@
 import Board from '@shared/models/Board'
-import RenderedUnit from '@/Pixi/cards/RenderedUnit'
-import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import Core from '../Core'
+
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
+
+import Core from '../Core'
 
 export default class RenderedGameBoard implements Board {
 	public rows: RenderedGameBoardRow[]

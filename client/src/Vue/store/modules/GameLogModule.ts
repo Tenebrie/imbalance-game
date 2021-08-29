@@ -1,7 +1,8 @@
-import { v4 as uuidv4 } from 'uuid'
-import { defineModule } from 'direct-vuex'
-import { moduleActionContext } from '@/Vue/store'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
+import { defineModule } from 'direct-vuex'
+import { v4 as uuidv4 } from 'uuid'
+
+import { moduleActionContext } from '@/Vue/store'
 
 interface EventLogEntryGroup {
 	id: string

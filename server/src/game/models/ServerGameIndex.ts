@@ -1,7 +1,7 @@
+import CardLibrary from '@src/game/libraries/CardLibrary'
 import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
-import CardLibrary from '@src/game/libraries/CardLibrary'
 
 export default class ServerGameIndex {
 	public readonly game: ServerGame

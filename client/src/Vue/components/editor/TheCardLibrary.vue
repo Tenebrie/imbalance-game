@@ -12,17 +12,18 @@
 </template>
 
 <script lang="ts">
-import Fuse from 'fuse.js'
-import store from '@/Vue/store'
+import CardFeature from '@shared/enums/CardFeature'
 import Language from '@shared/enums/Language'
-import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
-import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
+import CardMessage from '@shared/models/network/card/CardMessage'
+import Fuse from 'fuse.js'
+import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
+
 import Localization from '@/Pixi/Localization'
 import { insertRichTextVariables, snakeToCamelCase } from '@/utils/Utils'
-import CardMessage from '@shared/models/network/card/CardMessage'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
-import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
-import CardFeature from '@shared/enums/CardFeature'
+import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
+import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

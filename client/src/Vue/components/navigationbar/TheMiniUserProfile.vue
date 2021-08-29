@@ -8,12 +8,13 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import router from '@/Vue/router'
-import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
 import Player from '@shared/models/Player'
-import Localization from '@/Pixi/Localization'
 import { defineComponent } from 'vue'
+
+import Localization from '@/Pixi/Localization'
+import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
+import router from '@/Vue/router'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

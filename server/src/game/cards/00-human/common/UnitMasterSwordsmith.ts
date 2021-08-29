@@ -1,16 +1,17 @@
+import BuffDuration from '@shared/enums/BuffDuration'
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import { sortCards } from '@shared/Utils'
+import { asSplashBuffPotency } from '@src/utils/LeaderStats'
+
+import BuffStrength from '../../../buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
-import CardFaction from '@shared/enums/CardFaction'
-import BuffStrength from '../../../buffs/BuffStrength'
-import BuffDuration from '@shared/enums/BuffDuration'
-import GameEventType from '@shared/enums/GameEventType'
-import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashBuffPotency } from '@src/utils/LeaderStats'
-import { sortCards } from '@shared/Utils'
 
 export default class UnitMasterSwordsmith extends ServerCard {
 	bonusPower = asSplashBuffPotency(2)

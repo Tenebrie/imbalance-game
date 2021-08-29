@@ -1,7 +1,7 @@
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import { ANNOUNCED_CARD_ZINDEX, CARD_ASPECT_RATIO, getScreenHeight } from '@/Pixi/renderer/RendererUtils'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 class AnnouncedCardRenderer {
 	public tick(): void {

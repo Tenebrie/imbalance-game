@@ -1,7 +1,8 @@
-import ServerGame from './ServerGame'
+import AnimationType from '@shared/enums/AnimationType'
+
 import OutgoingAnimationMessages from '../handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from './ServerAnimation'
-import AnimationType from '@shared/enums/AnimationType'
+import ServerGame from './ServerGame'
 
 export default class ServerGameAnimation {
 	private readonly game: ServerGame

@@ -1,8 +1,9 @@
-import { Component } from 'vue'
-import { defineModule } from 'direct-vuex'
-import { moduleActionContext } from '@/Vue/store'
-import { markRaw } from 'vue'
 import { EmptyFunction } from '@shared/Utils'
+import { defineModule } from 'direct-vuex'
+import { Component } from 'vue'
+import { markRaw } from 'vue'
+
+import { moduleActionContext } from '@/Vue/store'
 
 type ComponentInStack = {
 	component: Component

@@ -1,13 +1,14 @@
-import ServerCard from './ServerCard'
-import ServerGame from './ServerGame'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import ServerOwnedCard from './ServerOwnedCard'
-import GameEventCreators from './events/GameEventCreators'
-import ServerAnimation from './ServerAnimation'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { getClassFromConstructor } from '@src/utils/Utils'
+
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
+import GameEventCreators from './events/GameEventCreators'
+import ServerAnimation from './ServerAnimation'
+import ServerCard from './ServerCard'
+import ServerGame from './ServerGame'
+import ServerOwnedCard from './ServerOwnedCard'
 
 export default class ServerHand {
 	game: ServerGame

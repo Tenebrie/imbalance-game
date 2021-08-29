@@ -1,4 +1,5 @@
 import CardLocation from '@shared/enums/CardLocation'
+
 import { EventSubscriber } from '../ServerGameEvents'
 
 export class EventHook<HookValues, HookArgs> {

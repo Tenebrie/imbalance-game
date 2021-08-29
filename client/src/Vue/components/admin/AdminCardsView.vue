@@ -36,16 +36,18 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
-import { defineComponent, onMounted, ref } from 'vue'
 import AccessLevel from '@shared/enums/AccessLevel'
-import moment from 'moment'
-import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import { cardTypeToString, cardColorToString, cardFactionToString } from '@shared/Utils'
-import { parseRichText } from '@/utils/RichTextParser'
+import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import { cardColorToString, cardFactionToString, cardTypeToString } from '@shared/Utils'
+import axios from 'axios'
+import moment from 'moment'
+import { defineComponent, onMounted, ref } from 'vue'
+
 import Localization from '@/Pixi/Localization'
+import { parseRichText } from '@/utils/RichTextParser'
 import store from '@/Vue/store'
+
 import TheCardPreviewPopup from '../popup/escapeMenu/TheCardPreviewPopup.vue'
 
 type FilterType = 'name' | 'type' | 'color' | 'faction' | 'collectible'

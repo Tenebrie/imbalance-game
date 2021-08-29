@@ -1,17 +1,18 @@
-import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
-import Core from '@/Pixi/Core'
-import GameStartMessage from '@shared/models/network/GameStartMessage'
-import store from '@/Vue/store'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
-import { GameSyncMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import BoardMessage from '@shared/models/network/BoardMessage'
-import RenderedUnit from '@/Pixi/cards/RenderedUnit'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import ResolveStackMessage from '@shared/models/network/resolveStack/ResolveStackMessage'
-import RenderedBuff from '@/Pixi/models/buffs/RenderedBuff'
+import GameStartMessage from '@shared/models/network/GameStartMessage'
+import { GameSyncMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import PlayerGroupRefMessage from '@shared/models/network/playerGroup/PlayerGroupRefMessage'
+import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
 import PlayersInLobbyMessage from '@shared/models/network/PlayersInLobbyMessage'
+import ResolveStackMessage from '@shared/models/network/resolveStack/ResolveStackMessage'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
+import Core from '@/Pixi/Core'
+import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
+import RenderedBuff from '@/Pixi/models/buffs/RenderedBuff'
+import store from '@/Vue/store'
 
 const IncomingGameSyncMessages: { [index in GameSyncMessageType]: IncomingMessageHandlerFunction } = {
 	[GameSyncMessageType.PLAYER_SLOTS]: (data: PlayersInLobbyMessage) => {

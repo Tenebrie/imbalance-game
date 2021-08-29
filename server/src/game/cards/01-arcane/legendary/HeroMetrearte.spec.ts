@@ -1,14 +1,14 @@
-import ServerGame from '../../../models/ServerGame'
+import TargetType from '../../../../../../shared/src/enums/TargetType'
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
+import { getClassFromConstructor } from '../../../../utils/Utils'
+import CardLibrary from '../../../libraries/CardLibrary'
 import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
-import HeroMetrearte from './HeroMetrearte'
-import CardLibrary from '../../../libraries/CardLibrary'
-import TestingArcaneNormalLeaderPower from '../../11-testing/TestingArcaneNormalLeaderPower'
 import TestingArcaneExperimentalLeaderPower from '../../11-testing/TestingArcaneExperimentalLeaderPower'
-import TargetType from '../../../../../../shared/src/enums/TargetType'
-import { getClassFromConstructor } from '../../../../utils/Utils'
+import TestingArcaneNormalLeaderPower from '../../11-testing/TestingArcaneNormalLeaderPower'
+import HeroMetrearte from './HeroMetrearte'
 
 describe('HeroMetrearte', () => {
 	let game: ServerGame

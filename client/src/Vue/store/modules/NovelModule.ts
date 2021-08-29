@@ -1,8 +1,9 @@
-import { defineModule } from 'direct-vuex'
-import { moduleActionContext } from '@/Vue/store'
+import StoryCharacter from '@shared/enums/StoryCharacter'
 import NovelCueMessage from '@shared/models/novel/NovelCueMessage'
 import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
-import StoryCharacter from '@shared/enums/StoryCharacter'
+import { defineModule } from 'direct-vuex'
+
+import { moduleActionContext } from '@/Vue/store'
 
 type NovelQueueEvent =
 	| {

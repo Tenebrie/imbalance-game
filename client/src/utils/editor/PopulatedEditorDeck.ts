@@ -1,6 +1,6 @@
+import Constants from '@shared/Constants'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import Constants from '@shared/Constants'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import { getMaxCardCountForColor, sortCards } from '@shared/Utils'
 

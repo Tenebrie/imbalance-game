@@ -9,8 +9,10 @@
 
 <script lang="ts">
 import axios from 'axios'
-import Notifications from '@/utils/Notifications'
 import { defineComponent } from 'vue'
+
+import Notifications from '@/utils/Notifications'
+
 import ProgressSpinner from '../../utils/ProgressSpinner.vue'
 
 export default defineComponent({

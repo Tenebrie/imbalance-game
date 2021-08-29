@@ -5,16 +5,17 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
-import Utils from '@/utils/Utils'
 import CardColor from '@shared/enums/CardColor'
-import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import CardType from '@shared/enums/CardType'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import { RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 import { computed, defineComponent, PropType, ref } from 'vue'
+
+import { RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
+import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
+import Utils from '@/utils/Utils'
+import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import router from '@/Vue/router'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

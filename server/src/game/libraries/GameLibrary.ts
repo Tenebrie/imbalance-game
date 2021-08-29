@@ -1,11 +1,12 @@
+import RulesetCategory from '@shared/enums/RulesetCategory'
+import { Time } from '@shared/Utils'
+import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
+import { colorizeConsoleText, colorizeId, colorizePlayer } from '@src/utils/Utils'
+
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import ServerGame, { OptionalGameProps } from '../models/ServerGame'
 import ServerPlayer from '../players/ServerPlayer'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import { colorizeConsoleText, colorizeId, colorizePlayer } from '@src/utils/Utils'
-import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
-import RulesetCategory from '@shared/enums/RulesetCategory'
-import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
-import { Time } from '@shared/Utils'
 
 class GameLibrary {
 	games: ServerGame[]

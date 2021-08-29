@@ -7,8 +7,9 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import { defineComponent } from 'vue'
+
+import store from '@/Vue/store'
 
 export default defineComponent({
 	methods: {

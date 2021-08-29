@@ -1,9 +1,10 @@
-import * as ws from 'ws'
-import ServerPlayer from '../../players/ServerPlayer'
 import ErrorCode from '@shared/enums/ErrorCode'
-import { SystemMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import GameCollapseMessageData from '@shared/models/network/GameCollapseMessageData'
+import { SystemMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import ServerGame from '@src/game/models/ServerGame'
+import * as ws from 'ws'
+
+import ServerPlayer from '../../players/ServerPlayer'
 
 export default {
 	notifyAboutMessageAcknowledged(player: ServerPlayer): void {

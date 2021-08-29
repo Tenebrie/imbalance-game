@@ -1,8 +1,8 @@
-import ServerGame from '@src/game/models/ServerGame'
 import CardTribe from '@shared/enums/CardTribe'
-import { BaseLabyrinthActiveItem } from '@src/game/cards/12-labyrinth/items/ItemLabyrinthBase'
-import { asDirectSpellDamage, asSplashSpellDamage } from '@src/utils/LeaderStats'
 import BuffRowBurning from '@src/game/buffs/BuffRowBurning'
+import { BaseLabyrinthActiveItem } from '@src/game/cards/12-labyrinth/items/ItemLabyrinthBase'
+import ServerGame from '@src/game/models/ServerGame'
+import { asDirectSpellDamage, asSplashSpellDamage } from '@src/utils/LeaderStats'
 
 export class LabyrinthItemRustedSword extends BaseLabyrinthActiveItem {
 	damage = asDirectSpellDamage(1)

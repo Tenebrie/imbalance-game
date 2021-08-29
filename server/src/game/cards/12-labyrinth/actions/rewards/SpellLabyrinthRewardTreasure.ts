@@ -1,16 +1,17 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
+import { sortCards } from '@shared/Utils'
+import CardLibrary from '@src/game/libraries/CardLibrary'
+import { AnyCardLocation, shuffle } from '@src/utils/Utils'
+
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import GameEventType from '@shared/enums/GameEventType'
-import { AnyCardLocation, shuffle } from '@src/utils/Utils'
-import CardLibrary from '@src/game/libraries/CardLibrary'
-import TargetType from '@shared/enums/TargetType'
-import CardFeature from '@shared/enums/CardFeature'
-import { sortCards } from '@shared/Utils'
-import CardTribe from '@shared/enums/CardTribe'
 
 abstract class BaseSpellLabyrinthRewardTreasure extends ServerCard {
 	cardsChosen: ServerCard[] = []

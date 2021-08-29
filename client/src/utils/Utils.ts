@@ -1,17 +1,18 @@
-import * as PIXI from 'pixi.js'
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
 import Card from '@shared/models/Card'
-import store from '@/Vue/store'
-import RichTextVariables from '@shared/models/RichTextVariables'
+import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import { getMaxCardCountForColor, getMaxCardCopiesForColor } from '@shared/Utils'
+import RichTextVariables from '@shared/models/RichTextVariables'
+import { getMaxCardCopiesForColor, getMaxCardCountForColor } from '@shared/Utils'
+import * as PIXI from 'pixi.js'
+import * as Particles from 'pixi-particles'
+
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import Core from '@/Pixi/Core'
 import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
-import * as Particles from 'pixi-particles'
-import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
-import CardFaction from '@shared/enums/CardFaction'
-import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
 import Localization from '@/Pixi/Localization'
-import CardColor from '@shared/enums/CardColor'
+import store from '@/Vue/store'
 
 export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
 	return Core.board.isInverted && player === 'player' ? Core.constants.GAME_BOARD_ROW_COUNT - index - 1 : index

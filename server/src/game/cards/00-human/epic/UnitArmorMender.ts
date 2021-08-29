@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardLocation from '@shared/enums/CardLocation'
-import GameEventType from '@shared/enums/GameEventType'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
 import CardTribe from '@shared/enums/CardTribe'
-import { AnyCardLocation } from '@src/utils/Utils'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
 import BuffExtraArmor from '@src/game/buffs/BuffExtraArmor'
+import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
+import { AnyCardLocation } from '@src/utils/Utils'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitArmorMender extends ServerCard {
 	bonusArmor = asRecurringBuffPotency(4)

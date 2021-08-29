@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import ServerCard from '../../../../models/ServerCard'
-import ServerGame from '../../../../models/ServerGame'
 import GameEventType from '@shared/enums/GameEventType'
-import { AnyCardLocation, getClassFromConstructor, shuffle } from '@src/utils/Utils'
-import CardLibrary from '@src/game/libraries/CardLibrary'
 import TargetType from '@shared/enums/TargetType'
 import { sortCards } from '@shared/Utils'
-import CardFeature from '@shared/enums/CardFeature'
+import CardLibrary from '@src/game/libraries/CardLibrary'
+import { AnyCardLocation, getClassFromConstructor, shuffle } from '@src/utils/Utils'
+
+import ServerCard from '../../../../models/ServerCard'
+import ServerGame from '../../../../models/ServerGame'
 
 abstract class BaseSpellLabyrinthRewardUpgrade extends ServerCard {
 	cardsChosen: ServerCard[] = []

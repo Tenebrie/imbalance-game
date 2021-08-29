@@ -7,8 +7,9 @@
 </template>
 
 <script lang="ts">
-import router from '@/Vue/router'
 import { defineComponent } from 'vue'
+
+import router from '@/Vue/router'
 
 export default defineComponent({
 	methods: {

@@ -1,7 +1,8 @@
+import BuffAlignment from '@shared/enums/BuffAlignment'
+import GameEventType from '@shared/enums/GameEventType'
+
 import { BuffConstructorParams, ServerRowBuff } from '../models/buffs/ServerBuff'
 import ServerDamageInstance from '../models/ServerDamageSource'
-import GameEventType from '@shared/enums/GameEventType'
-import BuffAlignment from '@shared/enums/BuffAlignment'
 
 export default class BuffRowHealingRain extends ServerRowBuff {
 	constructor(params: BuffConstructorParams) {

@@ -7,9 +7,10 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import { defineComponent } from 'vue'
+
 import Notifications from '@/utils/Notifications'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	methods: {

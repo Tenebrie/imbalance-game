@@ -1,7 +1,8 @@
+import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import express, { Request, Response } from 'express'
+
 import CardLibrary from '../game/libraries/CardLibrary'
 import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
-import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 
 const router = express.Router()
 

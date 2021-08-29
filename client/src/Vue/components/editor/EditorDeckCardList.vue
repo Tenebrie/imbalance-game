@@ -21,18 +21,19 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import CardColor from '@shared/enums/CardColor'
+import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
+import { defineComponent } from 'vue'
+
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
+import EditorDeleteDeckButton from '@/Vue/components/editor/buttons/EditorDeleteDeckButton.vue'
+import EditorExportDeckButton from '@/Vue/components/editor/buttons/EditorExportDeckButton.vue'
+import EditorLeaveDeckButton from '@/Vue/components/editor/buttons/EditorLeaveDeckButton.vue'
 import EditorDeckCardListItem from '@/Vue/components/editor/EditorDeckCardListItem.vue'
 import EditorDeckCardListSeparator from '@/Vue/components/editor/EditorDeckCardListSeparator.vue'
-import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import EditorDeckName from '@/Vue/components/editor/EditorDeckName.vue'
-import EditorExportDeckButton from '@/Vue/components/editor/buttons/EditorExportDeckButton.vue'
-import EditorDeleteDeckButton from '@/Vue/components/editor/buttons/EditorDeleteDeckButton.vue'
-import EditorLeaveDeckButton from '@/Vue/components/editor/buttons/EditorLeaveDeckButton.vue'
 import TheEditorHoveredDeckCard from '@/Vue/components/editor/TheEditorHoveredDeckCard.vue'
-import { defineComponent } from 'vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

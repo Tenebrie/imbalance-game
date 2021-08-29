@@ -1,10 +1,10 @@
-import { setupTestGame, TestGame } from '../../../../../utils/TestGame'
-import TestingRulesetPVP from '../../../../rulesets/testing/TestingRulesetPVP'
-import SpellEternalServitude from './SpellEternalServitude'
-import TestingUnitSinglePower from '../../../11-testing/TestingUnitSinglePower'
-import BuffUnitToSpellConversion from '../../../../buffs/BuffUnitToSpellConversion'
-import BuffLeaderPower from '../../../../buffs/BuffLeaderPower'
 import CardLocation from '../../../../../../../shared/src/enums/CardLocation'
+import { setupTestGame, TestGame } from '../../../../../utils/TestGame'
+import BuffLeaderPower from '../../../../buffs/BuffLeaderPower'
+import BuffUnitToSpellConversion from '../../../../buffs/BuffUnitToSpellConversion'
+import TestingRulesetPVP from '../../../../rulesets/testing/TestingRulesetPVP'
+import TestingUnitSinglePower from '../../../11-testing/TestingUnitSinglePower'
+import SpellEternalServitude from './SpellEternalServitude'
 
 describe('SpellEternalServitude', () => {
 	let game: TestGame

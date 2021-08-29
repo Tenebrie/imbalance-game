@@ -23,12 +23,13 @@
 </template>
 
 <script lang="ts">
-import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-import store from '@/Vue/store'
 import StoryCharacter from '@shared/enums/StoryCharacter'
 import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
-import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
 import { initializeEnumRecord } from '@shared/Utils'
+import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
+
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	setup() {

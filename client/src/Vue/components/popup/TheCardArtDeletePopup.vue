@@ -21,11 +21,13 @@
 </template>
 
 <script lang="ts">
+import CardMessage from '@shared/models/network/card/CardMessage'
+import { computed, defineComponent } from 'vue'
+
 import Localization from '@/Pixi/Localization'
 import { parseRichText } from '@/utils/RichTextParser'
 import store from '@/Vue/store'
-import CardMessage from '@shared/models/network/card/CardMessage'
-import { computed, defineComponent } from 'vue'
+
 import PixiPreRenderedCard from '../pixi/PixiPreRenderedCard.vue'
 
 export default defineComponent({

@@ -1,8 +1,8 @@
-import { EventSubscriber } from '@src/game/models/ServerGameEvents'
-import { ServerBuffSource } from '@src/game/models/buffs/ServerBuffContainer'
 import LeaderStatType from '@src/../../shared/src/enums/LeaderStatType'
-import { getOwnerGroup, getOwnerPlayer, getTotalLeaderStat } from '@src/utils/Utils'
+import { ServerBuffSource } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerCard from '@src/game/models/ServerCard'
+import { EventSubscriber } from '@src/game/models/ServerGameEvents'
+import { getOwnerGroup, getOwnerPlayer, getTotalLeaderStat } from '@src/utils/Utils'
 
 export type LeaderStatValueGetter = (card: EventSubscriber | ServerBuffSource) => number
 

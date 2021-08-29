@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
-import CardLocation from '@shared/enums/CardLocation'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import CardLocation from '@shared/enums/CardLocation'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
 import { asDirectHealingPotency } from '@src/utils/LeaderStats'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
+import ServerGame from '../../../models/ServerGame'
 
 export default class HeroTroviar extends ServerCard {
 	selfDamage = 40

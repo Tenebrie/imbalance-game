@@ -1,9 +1,10 @@
-import { BuffConstructorParams, ServerRowBuff } from '../models/buffs/ServerBuff'
-import GameEventType from '@shared/enums/GameEventType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
-import { shuffle } from '@src/utils/Utils'
 import CardTribe from '@shared/enums/CardTribe'
+import GameEventType from '@shared/enums/GameEventType'
 import BuffStrength from '@src/game/buffs/BuffStrength'
+import { shuffle } from '@src/utils/Utils'
+
+import { BuffConstructorParams, ServerRowBuff } from '../models/buffs/ServerBuff'
 
 export default class BuffRowBloodMoon extends ServerRowBuff {
 	public static readonly CARDS_TO_BUFF = 3

@@ -1,9 +1,10 @@
-import ServerGame from '../ServerGame'
-import ServerCard from '../ServerCard'
+import TargetType from '@src/../../shared/src/enums/TargetType'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import PlayTargetDefinitionBuilder from '@src/game/models/targetDefinitions/PlayTargetDefinitionBuilder'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
-import TargetType from '@src/../../shared/src/enums/TargetType'
+
+import ServerCard from '../ServerCard'
+import ServerGame from '../ServerGame'
 
 export interface PlayTargetValidatorArguments {
 	card: ServerCard

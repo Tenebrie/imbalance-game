@@ -1,7 +1,8 @@
-import router from '@/Vue/router'
-import { computed, ComputedRef, ref } from 'vue'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import { computed, ComputedRef, ref } from 'vue'
+
+import router from '@/Vue/router'
 
 const routeData = ref({
 	params: {} as Record<string, string>,

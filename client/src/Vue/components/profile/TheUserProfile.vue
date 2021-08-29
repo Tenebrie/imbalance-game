@@ -59,20 +59,21 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
-import store from '@/Vue/store'
-import { computed, defineComponent, onMounted, ref, watch } from 'vue'
-import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
-import UserProfileMessage from '@shared/models/network/UserProfileMessage'
-import ProfileLogoutButton from '@/Vue/components/profile/ProfileLogoutButton.vue'
-import ProfileDeleteUserButton from '@/Vue/components/profile/ProfileDeleteUserButton.vue'
-import { supportedLanguages } from '@/Pixi/Localization'
 import Language from '@shared/enums/Language'
-import Notifications from '@/utils/Notifications'
 import RenderQuality from '@shared/enums/RenderQuality'
-import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
+import UserProfileMessage from '@shared/models/network/UserProfileMessage'
 import Player from '@shared/models/Player'
+import axios from 'axios'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
+
+import { supportedLanguages } from '@/Pixi/Localization'
+import Notifications from '@/utils/Notifications'
+import UserAvatar from '@/Vue/components/navigationbar/UserAvatar.vue'
+import ProfileDeleteUserButton from '@/Vue/components/profile/ProfileDeleteUserButton.vue'
+import ProfileLogoutButton from '@/Vue/components/profile/ProfileLogoutButton.vue'
 import TheGameplaySettings from '@/Vue/components/profile/TheGameplaySettings.vue'
+import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

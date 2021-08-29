@@ -1,22 +1,24 @@
-import axios from 'axios'
-import Core from '@/Pixi/Core'
-import router from '@/Vue/router'
-import Player from '@shared/models/Player'
-import EditorModule from '@/Vue/store/modules/EditorModule'
-import GameStateModule from '@/Vue/store/modules/GameStateModule'
-import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
-import PopupModule from '@/Vue/store/modules/PopupModule'
-import GameLogModule from '@/Vue/store/modules/GameLogModule'
-import InspectedCardModule from '@/Vue/store/modules/InspectedCardModule'
-import LocalStorage from '@/utils/LocalStorage'
-import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import GameMessage from '@shared/models/network/GameMessage'
-import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import Player from '@shared/models/Player'
+import axios from 'axios'
 import { createDirectStore } from 'direct-vuex'
-import RulesetsModule from './modules/RulesetsModule'
-import NovelModule from './modules/NovelModule'
-import HotkeysModule from '@/Vue/store/modules/HotkeysModule'
+
+import Core from '@/Pixi/Core'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
+import LocalStorage from '@/utils/LocalStorage'
+import router from '@/Vue/router'
+import EditorModule from '@/Vue/store/modules/EditorModule'
 import GameLobbyModule from '@/Vue/store/modules/GameLobbyModule'
+import GameLogModule from '@/Vue/store/modules/GameLogModule'
+import GameStateModule from '@/Vue/store/modules/GameStateModule'
+import HotkeysModule from '@/Vue/store/modules/HotkeysModule'
+import InspectedCardModule from '@/Vue/store/modules/InspectedCardModule'
+import PopupModule from '@/Vue/store/modules/PopupModule'
+import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
+
+import NovelModule from './modules/NovelModule'
+import RulesetsModule from './modules/RulesetsModule'
 
 const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	modules: {
@@ -171,7 +173,7 @@ export default store
 
 // The following exports will be used to enable types in the
 // implementation of actions.
-export { rootActionContext, moduleActionContext }
+export { moduleActionContext, rootActionContext }
 
 // The following lines enable types in the injected store '$store'.
 export type AppStore = typeof store

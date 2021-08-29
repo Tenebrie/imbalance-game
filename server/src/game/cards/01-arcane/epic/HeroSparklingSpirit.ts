@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
-import GameEventType from '@shared/enums/GameEventType'
-import SpellFleetingSpark from '../tokens/SpellFleetingSpark'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import Keywords from '@src/utils/Keywords'
+import GameEventType from '@shared/enums/GameEventType'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import Keywords from '@src/utils/Keywords'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import SpellFleetingSpark from '../tokens/SpellFleetingSpark'
 
 export default class HeroSparklingSpirit extends ServerCard {
 	infuseCost = 1

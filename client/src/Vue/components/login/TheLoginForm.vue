@@ -27,11 +27,12 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import GoogleSingleSignOnButton from '@/Vue/components/login/GoogleSingleSignOnButton.vue'
+
 import Localization from '@/Pixi/Localization'
+import GoogleSingleSignOnButton from '@/Vue/components/login/GoogleSingleSignOnButton.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

@@ -46,15 +46,16 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
-import { computed, defineComponent, onMounted, ref } from 'vue'
-import PlayerMessage from '@shared/models/network/player/PlayerMessage'
-import store from '@/Vue/store'
-import Player from '@shared/models/Player'
 import AccessLevel from '@shared/enums/AccessLevel'
-import Notifications from '@/utils/Notifications'
+import PlayerMessage from '@shared/models/network/player/PlayerMessage'
+import Player from '@shared/models/Player'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
+import axios from 'axios'
 import moment from 'moment'
+import { computed, defineComponent, onMounted, ref } from 'vue'
+
+import Notifications from '@/utils/Notifications'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	setup() {

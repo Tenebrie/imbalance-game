@@ -1,11 +1,11 @@
-import ServerGame from '../../../models/ServerGame'
-import ServerCard from '../../../models/ServerCard'
-import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
-import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
-import UnitQuietInfiltrator from './UnitQuietInfiltrator'
-import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
 import ServerBoardRow from '../../../models/ServerBoardRow'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import ServerOwnedCard from '../../../models/ServerOwnedCard'
+import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
+import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
+import UnitQuietInfiltrator from './UnitQuietInfiltrator'
 
 describe('UnitQuietInfiltrator', () => {
 	let game: ServerGame

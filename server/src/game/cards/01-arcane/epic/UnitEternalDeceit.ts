@@ -1,13 +1,14 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import GameEventType from '@shared/enums/GameEventType'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
 import BuffWeakness from '@src/game/buffs/BuffWeakness'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitEternalDeceit extends ServerCard {
 	powerPerCard = 1

@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
 import ServerAnimation from '@src/game/models/ServerAnimation'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitNullMender extends ServerCard {
 	constructor(game: ServerGame) {

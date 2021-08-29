@@ -1,7 +1,7 @@
 import TargetType from '@shared/enums/TargetType'
+import ServerCard from '@src/game/models/ServerCard'
 import TargetValidatorArguments from '@src/types/TargetValidatorArguments'
 import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
-import ServerCard from '@src/game/models/ServerCard'
 
 export default class OrderTargetDefinition<EventArgs extends TargetValidatorArguments> {
 	public readonly id: string

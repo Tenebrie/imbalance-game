@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+import Keywords from '@src/utils/Keywords'
+
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardFaction from '@shared/enums/CardFaction'
 import ServerUnit from '../../../models/ServerUnit'
-import TargetType from '@shared/enums/TargetType'
-import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import CardTribe from '@shared/enums/CardTribe'
-import Keywords from '@src/utils/Keywords'
 
 export default class HeroCultistOfAreddon extends ServerCard {
 	constructor(game: ServerGame) {

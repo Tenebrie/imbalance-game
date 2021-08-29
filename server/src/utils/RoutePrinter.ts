@@ -1,11 +1,11 @@
-import { Application } from 'express'
+import AccessLevel from '@shared/enums/AccessLevel'
+import AsciiColor from '@src/enums/AsciiColor'
+import RequireAdminAccessLevelMiddleware from '@src/middleware/RequireAdminAccessLevelMiddleware'
+import RequireDevAdminAccessLevelMiddleware from '@src/middleware/RequireDevAdminAccessLevelMiddleware'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
 import RequireSupportAccessLevelMiddleware from '@src/middleware/RequireSupportAccessLevelMiddleware'
-import RequireAdminAccessLevelMiddleware from '@src/middleware/RequireAdminAccessLevelMiddleware'
 import { colorize, colorizeId } from '@src/utils/Utils'
-import AsciiColor from '@src/enums/AsciiColor'
-import AccessLevel from '@shared/enums/AccessLevel'
-import RequireDevAdminAccessLevelMiddleware from '@src/middleware/RequireDevAdminAccessLevelMiddleware'
+import { Application } from 'express'
 
 /*
  * Hey there, thanks for coming over.

@@ -1,10 +1,10 @@
-import { v4 as getRandomId } from 'uuid'
 import TargetType from '@shared/enums/TargetType'
-import TargetValidatorArguments from '@src/types/TargetValidatorArguments'
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
-import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
 import ServerCard from '@src/game/models/ServerCard'
 import { ServerCardTargetCard, ServerCardTargetRow } from '@src/game/models/ServerCardTarget'
+import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
+import TargetValidatorArguments from '@src/types/TargetValidatorArguments'
+import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { v4 as getRandomId } from 'uuid'
 
 export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValidatorArguments> {
 	private readonly id: string

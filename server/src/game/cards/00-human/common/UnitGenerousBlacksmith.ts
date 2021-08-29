@@ -1,15 +1,16 @@
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
+
+import BuffExtraArmor from '../../../buffs/BuffExtraArmor'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
-import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
-import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asRecurringBuffPotency } from '@src/utils/LeaderStats'
-import CardLocation from '@shared/enums/CardLocation'
-import BuffExtraArmor from '../../../buffs/BuffExtraArmor'
 
 export default class UnitGenerousBlacksmith extends ServerCard {
 	bonusArmor = asRecurringBuffPotency(6)

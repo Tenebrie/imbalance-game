@@ -1,5 +1,5 @@
-import CardDeck from '@shared/models/CardDeck'
 import Card from '@shared/models/Card'
+import CardDeck from '@shared/models/CardDeck'
 import CardMessage from '@shared/models/network/card/CardMessage'
 
 export default class ClientCardGraveyard implements CardDeck {

@@ -5,13 +5,14 @@
 </template>
 
 <script lang="ts">
+import GameEventType from '@shared/enums/GameEventType'
+import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
+import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import moment from 'moment'
+import { defineComponent, PropType } from 'vue'
+
 import Core from '@/Pixi/Core'
 import Localization from '@/Pixi/Localization'
-import GameEventType from '@shared/enums/GameEventType'
-import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
-import { defineComponent, PropType } from 'vue'
-import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
 import { getEntityName } from '@/utils/Utils'
 
 export default defineComponent({

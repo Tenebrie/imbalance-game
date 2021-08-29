@@ -1,10 +1,10 @@
-import TestingUnitUltraProtector from '../cards/11-testing/TestingUnitUltraProtector'
-import ServerGame from './ServerGame'
-import ServerCard from './ServerCard'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import TestGameTemplates from '../../utils/TestGameTemplates'
-import ServerOwnedCard from './ServerOwnedCard'
 import TestingSpellHeavyStrike from '../cards/11-testing/TestingSpellHeavyStrike'
+import TestingUnitUltraProtector from '../cards/11-testing/TestingUnitUltraProtector'
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
+import ServerCard from './ServerCard'
+import ServerGame from './ServerGame'
+import ServerOwnedCard from './ServerOwnedCard'
 import SpyInstance = jest.SpyInstance
 
 describe('ServerCard', () => {

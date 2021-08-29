@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
+
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import CardFaction from '@shared/enums/CardFaction'
-import SpellSteelSpark from './SpellSteelSpark'
-import SpellFireball from './SpellFireball'
 import SpellAnEncouragement from './SpellAnEncouragement'
-import ExpansionSet from '@shared/enums/ExpansionSet'
 import SpellEternalServitude from './SpellEternalServitude'
-import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
-import GameEventType from '@shared/enums/GameEventType'
+import SpellFireball from './SpellFireball'
+import SpellSteelSpark from './SpellSteelSpark'
 
 export default class LeaderVelElleron extends ServerCard {
 	manaPerRound = 10

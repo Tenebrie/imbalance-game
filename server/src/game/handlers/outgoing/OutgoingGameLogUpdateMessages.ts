@@ -1,6 +1,7 @@
-import ServerGame from '../../models/ServerGame'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import { GameLogUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+
+import ServerGame from '../../models/ServerGame'
 
 export default {
 	sendLogMessageGroup: (game: ServerGame, messages: EventLogEntryMessage[]): void => {

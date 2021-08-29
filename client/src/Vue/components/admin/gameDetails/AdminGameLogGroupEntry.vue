@@ -3,11 +3,12 @@
 </template>
 
 <script lang="ts">
+import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
+import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
 import moment from 'moment'
 import { computed, defineComponent, PropType } from 'vue'
-import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
+
 import Localization from '@/Pixi/Localization'
-import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
 import { getEntityName } from '@/utils/Utils'
 
 interface Props {

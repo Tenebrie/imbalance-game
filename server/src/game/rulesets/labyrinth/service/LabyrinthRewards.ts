@@ -1,12 +1,12 @@
 import { LabyrinthProgressionMetaState, LabyrinthProgressionRunState } from '@shared/models/progression/LabyrinthProgressionState'
-import { CardConstructor } from '@src/game/libraries/CardLibrary'
+import SpellLabyrinthRewardCard from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardCard'
 import {
 	SpellLabyrinthRewardTreasureT1,
 	SpellLabyrinthRewardTreasureT2,
 	SpellLabyrinthRewardTreasureT3,
 } from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardTreasure'
-import SpellLabyrinthRewardCard from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardCard'
 import { SpellLabyrinthRewardUpgradeAny } from '@src/game/cards/12-labyrinth/actions/rewards/SpellLabyrinthRewardUpgrade'
+import { CardConstructor } from '@src/game/libraries/CardLibrary'
 
 type Props = {
 	run: LabyrinthProgressionRunState

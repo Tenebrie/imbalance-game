@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
+import BuffDuration from '@shared/enums/BuffDuration'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import { asDirectBuffPotency } from '@src/utils/LeaderStats'
+
+import BuffStrength from '../../../buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardFaction from '@shared/enums/CardFaction'
-import BuffStrength from '../../../buffs/BuffStrength'
-import BuffDuration from '@shared/enums/BuffDuration'
-import GameEventType from '@shared/enums/GameEventType'
-import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 export default class HeroAdventuringGuildMaster extends ServerCard {
 	powerPerCard = asDirectBuffPotency(5)

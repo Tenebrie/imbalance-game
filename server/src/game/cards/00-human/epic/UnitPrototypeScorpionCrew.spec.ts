@@ -1,7 +1,7 @@
 import { setupTestGame, TestGame } from '../../../../utils/TestGame'
 import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
-import UnitPrototypeScorpionCrew from './UnitPrototypeScorpionCrew'
 import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
+import UnitPrototypeScorpionCrew from './UnitPrototypeScorpionCrew'
 
 describe('UnitPrototypeScorpionCrew', () => {
 	let game: TestGame

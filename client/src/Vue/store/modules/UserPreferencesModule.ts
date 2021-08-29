@@ -1,12 +1,13 @@
-import axios from 'axios'
-import { defineModule } from 'direct-vuex'
 import Language from '@shared/enums/Language'
-import { moduleActionContext } from '@/Vue/store'
 import RenderQuality from '@shared/enums/RenderQuality'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
+import axios from 'axios'
+import { defineModule } from 'direct-vuex'
 import { debounce } from 'throttle-debounce'
-import AudioSystem from '@/Pixi/audio/AudioSystem'
 import { ActionContext } from 'vuex'
+
+import AudioSystem from '@/Pixi/audio/AudioSystem'
+import { moduleActionContext } from '@/Vue/store'
 
 const userPreferencesModule = defineModule({
 	namespaced: true,

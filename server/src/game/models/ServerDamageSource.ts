@@ -1,8 +1,9 @@
+import DamageSource from '@shared/enums/DamageSource'
+import DamageInstance from '@shared/models/DamageInstance'
+import ServerBoardRow from '@src/game/models/ServerBoardRow'
+
 import ServerCard from './ServerCard'
 import ServerUnit from './ServerUnit'
-import DamageInstance from '@shared/models/DamageInstance'
-import DamageSource from '@shared/enums/DamageSource'
-import ServerBoardRow from '@src/game/models/ServerBoardRow'
 
 type NumberOrGetter = number | ((card: ServerCard) => number)
 

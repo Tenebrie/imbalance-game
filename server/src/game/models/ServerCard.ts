@@ -1,28 +1,36 @@
-import Card from '@shared/models/Card'
-import CardType from '@shared/enums/CardType'
-import ServerGame from './ServerGame'
-import ServerUnit from './ServerUnit'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import ServerDamageInstance from './ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
-import ServerBuffContainer from './buffs/ServerBuffContainer'
-import ServerRichTextVariables from './ServerRichTextVariables'
-import RichTextVariables from '@shared/models/RichTextVariables'
-import CardLibrary, { CardConstructor } from '../libraries/CardLibrary'
-import CardFeature from '@shared/enums/CardFeature'
-import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
-import GameHookType, {
-	CardDestroyedHookFixedValues,
-	CardDestroyedHookEditableValues,
-	CardTakesDamageHookFixedValues,
-	CardTakesDamageHookEditableValues,
-	UnitDestroyedHookFixedValues,
-	UnitDestroyedHookEditableValues,
-} from './events/GameHookType'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import LeaderStatType from '@shared/enums/LeaderStatType'
+import TargetType from '@shared/enums/TargetType'
+import Card from '@shared/models/Card'
+import { CardLocalization, CardLocalizationEntry, PartialCardLocalization } from '@shared/models/cardLocalization/CardLocalization'
+import RichTextVariables from '@shared/models/RichTextVariables'
+import { initializeEnumRecord, sortCards } from '@shared/Utils'
+import DeployTargetDefinitionBuilder from '@src/game/models/targetDefinitions/DeployTargetDefinitionBuilder'
+import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
+import PlayTargetDefinitionBuilder from '@src/game/models/targetDefinitions/PlayTargetDefinitionBuilder'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import {
+	CardTargetValidatorArguments,
+	PositionTargetValidatorArguments,
+	RowTargetValidatorArguments,
+	UnitTargetValidatorArguments,
+} from '@src/types/TargetValidatorArguments'
+import { createRandomId, getClassFromConstructor } from '@src/utils/Utils'
+
+import BotCardEvaluation from '../AI/BotCardEvaluation'
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import CardLibrary, { CardConstructor } from '../libraries/CardLibrary'
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
+import ServerBuffContainer from './buffs/ServerBuffContainer'
+import { EventHook } from './events/EventHook'
+import { EventSubscription } from './events/EventSubscription'
 import GameEventCreators, {
 	CardArmorRestoredEventArgs,
 	CardBuffCreatedEventArgs,
@@ -55,30 +63,23 @@ import GameEventCreators, {
 	UnitOrderedRowEventArgs,
 	UnitOrderedUnitEventArgs,
 } from './events/GameEventCreators'
-import BotCardEvaluation from '../AI/BotCardEvaluation'
-import { createRandomId, getClassFromConstructor } from '@src/utils/Utils'
-import ServerAnimation from './ServerAnimation'
-import RelatedCardsDefinition from './RelatedCardsDefinition'
-import ServerCardStats from './ServerCardStats'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { ServerCardTargeting } from './ServerCardTargeting'
-import TargetType from '@shared/enums/TargetType'
-import { EventSubscription } from './events/EventSubscription'
-import { EventHook } from './events/EventHook'
+import GameHookType, {
+	CardDestroyedHookEditableValues,
+	CardDestroyedHookFixedValues,
+	CardTakesDamageHookEditableValues,
+	CardTakesDamageHookFixedValues,
+	UnitDestroyedHookEditableValues,
+	UnitDestroyedHookFixedValues,
+} from './events/GameHookType'
 import { CardSelectorBuilder } from './events/selectors/CardSelectorBuilder'
-import PlayTargetDefinitionBuilder from '@src/game/models/targetDefinitions/PlayTargetDefinitionBuilder'
-import DeployTargetDefinitionBuilder from '@src/game/models/targetDefinitions/DeployTargetDefinitionBuilder'
-import {
-	CardTargetValidatorArguments,
-	PositionTargetValidatorArguments,
-	RowTargetValidatorArguments,
-	UnitTargetValidatorArguments,
-} from '@src/types/TargetValidatorArguments'
-import OrderTargetDefinitionBuilder from '@src/game/models/targetDefinitions/OrderTargetDefinitionBuilder'
-import LeaderStatType from '@shared/enums/LeaderStatType'
-import { initializeEnumRecord, sortCards } from '@shared/Utils'
-import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
-import { CardLocalization, CardLocalizationEntry, PartialCardLocalization } from '@shared/models/cardLocalization/CardLocalization'
+import RelatedCardsDefinition from './RelatedCardsDefinition'
+import ServerAnimation from './ServerAnimation'
+import ServerCardStats from './ServerCardStats'
+import { ServerCardTargeting } from './ServerCardTargeting'
+import ServerDamageInstance from './ServerDamageSource'
+import ServerGame from './ServerGame'
+import ServerRichTextVariables from './ServerRichTextVariables'
+import ServerUnit from './ServerUnit'
 
 interface ServerCardBaseProps {
 	faction: CardFaction

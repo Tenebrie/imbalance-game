@@ -11,9 +11,10 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import { computed, defineComponent, watch } from 'vue'
+
 import Toggle from '@/Vue/components/utils/Toggle.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: { Toggle },

@@ -43,13 +43,14 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
-import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
-import TheSimpleSettings from '@/Vue/components/popup/escapeMenu/TheSimpleSettings.vue'
-import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import { defineComponent } from 'vue'
+
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import TheRulesetPopup from '@/Vue/components/popup/escapeMenu/TheRulesetPopup.vue'
+import TheSimpleSettings from '@/Vue/components/popup/escapeMenu/TheSimpleSettings.vue'
+import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
+import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

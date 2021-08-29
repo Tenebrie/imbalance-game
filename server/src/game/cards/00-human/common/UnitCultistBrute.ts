@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import TargetType from '@shared/enums/TargetType'
-import CardTribe from '@shared/enums/CardTribe'
 import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+import { asDirectBuffPotency } from '@src/utils/LeaderStats'
+
+import BuffStrength from '../../../buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
-import BuffStrength from '../../../buffs/BuffStrength'
-import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitCultistBrute extends ServerCard {
 	bonusPower = asDirectBuffPotency(6)

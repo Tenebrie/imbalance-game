@@ -7,12 +7,13 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import router from '@/Vue/router'
 import Player from '@shared/models/Player'
+import { defineComponent } from 'vue'
+
 import Localization from '@/Pixi/Localization'
 import DiscordLink from '@/Vue/components/utils/DiscordLink.vue'
-import { defineComponent } from 'vue'
+import router from '@/Vue/router'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: { DiscordLink },

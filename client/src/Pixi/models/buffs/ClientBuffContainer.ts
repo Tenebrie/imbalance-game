@@ -1,9 +1,10 @@
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 import BuffContainer from '@shared/models/BuffContainer'
-import Core from '@/Pixi/Core'
 import BuffContainerMessage from '@shared/models/network/buffContainer/BuffContainerMessage'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import Core from '@/Pixi/Core'
+import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 import RenderedBuff from '@/Pixi/models/buffs/RenderedBuff'
 
 export default class ClientBuffContainer implements BuffContainer {

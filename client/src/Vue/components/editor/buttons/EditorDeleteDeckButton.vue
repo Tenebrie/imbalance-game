@@ -8,12 +8,13 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import router from '@/Vue/router'
-import TheDeckDeletePopup from '@/Vue/components/popup/TheDeckDeletePopup.vue'
-import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import { defineComponent } from 'vue'
+
+import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import Notifications from '@/utils/Notifications'
+import TheDeckDeletePopup from '@/Vue/components/popup/TheDeckDeletePopup.vue'
+import router from '@/Vue/router'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	data: () => ({

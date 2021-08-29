@@ -1,11 +1,12 @@
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
+import { colorize, getClassFromConstructor } from '@src/utils/Utils'
+
+import AsciiColor from '../../enums/AsciiColor'
 import ServerCard from '../models/ServerCard'
 import ServerGame from '../models/ServerGame'
 import CardLibraryPlaceholderGame from '../utils/CardLibraryPlaceholderGame'
-import { colorize, getClassFromConstructor } from '@src/utils/Utils'
-import AsciiColor from '../../enums/AsciiColor'
-import CardFaction from '@shared/enums/CardFaction'
-import CardColor from '@shared/enums/CardColor'
-import CardType from '@shared/enums/CardType'
 import { loadModules } from './ModuleLoader'
 
 export interface CardConstructor extends Function {

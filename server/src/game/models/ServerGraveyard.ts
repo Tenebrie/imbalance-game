@@ -1,12 +1,13 @@
-import ServerCard from './ServerCard'
-import CardDeck from '@shared/models/CardDeck'
-import ServerGame from './ServerGame'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import ServerOwnedCard from './ServerOwnedCard'
 import CardTribe from '@shared/enums/CardTribe'
-import { CardConstructor } from '../libraries/CardLibrary'
 import CardType from '@shared/enums/CardType'
+import CardDeck from '@shared/models/CardDeck'
+
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import { CardConstructor } from '../libraries/CardLibrary'
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
+import ServerCard from './ServerCard'
+import ServerGame from './ServerGame'
+import ServerOwnedCard from './ServerOwnedCard'
 
 export default class ServerGraveyard implements CardDeck {
 	game: ServerGame

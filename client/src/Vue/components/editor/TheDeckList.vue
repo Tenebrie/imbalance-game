@@ -25,18 +25,19 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import CardFaction from '@shared/enums/CardFaction'
+import { defineComponent } from 'vue'
+
+import DeckListMode from '@/utils/DeckListMode'
+import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
+import EditorCreateDeckButton from '@/Vue/components/editor/buttons/EditorCreateDeckButton.vue'
+import EditorDecksButton from '@/Vue/components/editor/buttons/EditorDecksButton.vue'
 import TheDeckListItem from '@/Vue/components/editor/TheDeckListItem.vue'
 import TheDeckListItemCreateNew from '@/Vue/components/editor/TheDeckListItemCreateNew.vue'
 import TheDeckListSeparator from '@/Vue/components/editor/TheDeckListSeparator.vue'
 import TheDeckListSeparatorActions from '@/Vue/components/editor/TheDeckListSeparatorActions.vue'
 import TheDeckListSeparatorUnfinished from '@/Vue/components/editor/TheDeckListSeparatorUnfinished.vue'
-import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
-import DeckListMode from '@/utils/DeckListMode'
-import EditorCreateDeckButton from '@/Vue/components/editor/buttons/EditorCreateDeckButton.vue'
-import EditorDecksButton from '@/Vue/components/editor/buttons/EditorDecksButton.vue'
-import { defineComponent } from 'vue'
+import store from '@/Vue/store'
 
 type FilteredDeck = { faction: CardFaction; experimental: boolean; decks: PopulatedEditorDeck[] }
 

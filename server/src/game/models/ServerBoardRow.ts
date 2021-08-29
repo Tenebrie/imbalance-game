@@ -1,14 +1,15 @@
-import ServerGame from './ServerGame'
-import BoardRow from '@shared/models/BoardRow'
-import ServerUnit from './ServerUnit'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import Constants from '@shared/Constants'
-import ServerCard from './ServerCard'
-import ServerAnimation from './ServerAnimation'
-import ServerGameEventCreators from './events/GameEventCreators'
-import ServerBuffContainer from './buffs/ServerBuffContainer'
+import BoardRow from '@shared/models/BoardRow'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import ServerBuffContainer from './buffs/ServerBuffContainer'
+import ServerGameEventCreators from './events/GameEventCreators'
+import ServerAnimation from './ServerAnimation'
+import ServerCard from './ServerCard'
+import ServerGame from './ServerGame'
+import ServerUnit from './ServerUnit'
 
 export default class ServerBoardRow implements BoardRow {
 	public readonly index: number

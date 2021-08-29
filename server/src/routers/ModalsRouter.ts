@@ -1,8 +1,9 @@
+import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
 import express, { Request, Response } from 'express'
+
 import PlayerDatabase from '../database/PlayerDatabase'
 import AsyncHandler from '../utils/AsyncHandler'
 import { getPlayerFromAuthenticatedRequest } from '../utils/Utils'
-import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
 
 const router = express.Router()
 

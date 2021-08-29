@@ -1,14 +1,15 @@
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+
+import Keywords from '../../../../utils/Keywords'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
-import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
-import CardLocation from '@shared/enums/CardLocation'
-import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import Keywords from '../../../../utils/Keywords'
 
 export default class HeroElderElemental extends ServerCard {
 	manaGenerated = 1

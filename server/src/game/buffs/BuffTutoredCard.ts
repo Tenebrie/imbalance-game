@@ -1,8 +1,9 @@
-import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
+import BuffAlignment from '@shared/enums/BuffAlignment'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardFeature from '@shared/enums/CardFeature'
 import GameEventType from '@shared/enums/GameEventType'
-import BuffAlignment from '@shared/enums/BuffAlignment'
+
+import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
 
 export default class BuffTutoredCard extends ServerCardBuff {
 	constructor(params: BuffConstructorParams) {

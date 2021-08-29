@@ -10,12 +10,13 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import { computed, defineComponent } from 'vue'
-import TheDeckList from '@/Vue/components/editor/TheDeckList.vue'
-import Notifications from '@/utils/Notifications'
+
 import Localization from '@/Pixi/Localization'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
+import Notifications from '@/utils/Notifications'
+import TheDeckList from '@/Vue/components/editor/TheDeckList.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

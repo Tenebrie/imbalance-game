@@ -1,6 +1,7 @@
-import EditorDeck from '@shared/models/EditorDeck'
 import EditorCard from '@shared/models/EditorCard'
+import EditorDeck from '@shared/models/EditorDeck'
 import { createRandomEditorDeckId, getClassFromConstructor } from '@src/utils/Utils'
+
 import { CardConstructor } from '../libraries/CardLibrary'
 
 export default class ServerEditorDeck implements EditorDeck {

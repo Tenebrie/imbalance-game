@@ -1,5 +1,6 @@
-import ServerGame from '../models/ServerGame'
 import { ClientToServerSpectatorMessageTypes, SystemMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+
+import ServerGame from '../models/ServerGame'
 import ServerPlayerSpectator from '../players/ServerPlayerSpectator'
 import ConnectionEstablishedHandler from './ConnectionEstablishedHandler'
 

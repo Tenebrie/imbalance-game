@@ -1,12 +1,13 @@
+import OpenCardBuffMessage from '@shared/models/network/buffs/OpenCardBuffMessage'
+import HiddenCardStatsMessage from '@shared/models/network/cardStats/HiddenCardStatsMessage'
+import OpenCardStatsMessage from '@shared/models/network/cardStats/OpenCardStatsMessage'
+import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
+import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { getOwnerGroup, isCardPublic } from '@src/utils/Utils'
+
+import { ServerCardBuff } from '../../models/buffs/ServerBuff'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
-import { getOwnerGroup, isCardPublic } from '@src/utils/Utils'
-import { ServerCardBuff } from '../../models/buffs/ServerBuff'
-import OpenCardStatsMessage from '@shared/models/network/cardStats/OpenCardStatsMessage'
-import HiddenCardStatsMessage from '@shared/models/network/cardStats/HiddenCardStatsMessage'
-import OpenCardBuffMessage from '@shared/models/network/buffs/OpenCardBuffMessage'
-import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 
 export default {
 	notifyAboutCardStatsChange(card: ServerCard): void {

@@ -1,10 +1,11 @@
-import * as PIXI from 'pixi.js'
-import Utils from '@/utils/Utils'
-import ScalingText from '@/Pixi/render/ScalingText'
 import RichTextVariables from '@shared/models/RichTextVariables'
-import RichTextBackground from '@/Pixi/render/RichTextBackground'
+import * as PIXI from 'pixi.js'
+
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
+import RichTextBackground from '@/Pixi/render/RichTextBackground'
+import ScalingText from '@/Pixi/render/ScalingText'
 import { parseRichText, SegmentType } from '@/utils/RichTextParser'
+import Utils from '@/utils/Utils'
 
 interface RichTextStyle {
 	fill: number

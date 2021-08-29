@@ -1,7 +1,8 @@
-import path from 'path'
-import glob from 'glob'
-import * as fs from 'fs'
 import { colorize } from '@src/utils/Utils'
+import * as fs from 'fs'
+import glob from 'glob'
+import path from 'path'
+
 import AsciiColor from '../../enums/AsciiColor'
 
 type Module<T> = {

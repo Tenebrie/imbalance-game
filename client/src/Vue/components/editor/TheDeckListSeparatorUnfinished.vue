@@ -7,8 +7,9 @@
 </template>
 
 <script lang="ts">
-import Localization from '@/Pixi/Localization'
 import { defineComponent } from 'vue'
+
+import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
 	computed: {

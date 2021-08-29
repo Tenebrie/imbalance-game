@@ -1,7 +1,8 @@
-import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
 import BuffAlignment from '@shared/enums/BuffAlignment'
-import CardFeature from '@shared/enums/CardFeature'
 import BuffFeature from '@shared/enums/BuffFeature'
+import CardFeature from '@shared/enums/CardFeature'
+
+import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
 
 export default class BuffUnitToSpellConversion extends ServerCardBuff {
 	constructor(params: BuffConstructorParams) {

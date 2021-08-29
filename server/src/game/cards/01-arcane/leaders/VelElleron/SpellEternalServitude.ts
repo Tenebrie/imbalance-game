@@ -1,16 +1,17 @@
+import BuffDuration from '@shared/enums/BuffDuration'
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+import Keywords from '@src/utils/Keywords'
+
+import BuffLeaderPower from '../../../../buffs/BuffLeaderPower'
+import BuffUnitToSpellConversion from '../../../../buffs/BuffUnitToSpellConversion'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
-import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
-import CardFeature from '@shared/enums/CardFeature'
-import CardFaction from '@shared/enums/CardFaction'
-import BuffDuration from '@shared/enums/BuffDuration'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import BuffUnitToSpellConversion from '../../../../buffs/BuffUnitToSpellConversion'
-import BuffLeaderPower from '../../../../buffs/BuffLeaderPower'
-import Keywords from '@src/utils/Keywords'
 
 export default class SpellEternalServitude extends ServerCard {
 	public extraCost = 0

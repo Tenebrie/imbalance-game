@@ -1,7 +1,8 @@
 import EditorDeck from '@shared/models/EditorDeck'
-import CardLibrary from '../game/libraries/CardLibrary'
-import PopulatedEditorDeck from '@shared/models/PopulatedEditorDeck'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import PopulatedEditorDeck from '@shared/models/PopulatedEditorDeck'
+
+import CardLibrary from '../game/libraries/CardLibrary'
 
 export default {
 	populateDeck(deck: EditorDeck): PopulatedEditorDeck {

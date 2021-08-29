@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+import { asDirectSparkDamage } from '@src/utils/LeaderStats'
+
 import ServerCard from '../../../models/ServerCard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
 export default class SpellFleetingSpark extends ServerCard {
 	damage = asDirectSparkDamage(3)

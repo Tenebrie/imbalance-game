@@ -1,8 +1,9 @@
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import CardDeck from '@shared/models/CardDeck'
 import Card from '@shared/models/Card'
+import CardDeck from '@shared/models/CardDeck'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import CardDeckMessage from '@shared/models/network/cardDeck/CardDeckMessage'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 export default class ClientCardDeck implements CardDeck {
 	unitCardMessages: CardMessage[]

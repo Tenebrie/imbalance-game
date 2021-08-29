@@ -8,14 +8,16 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import Core from '../../../Pixi/Core'
-import PixiUserInterface from '@/Vue/components/pixi/PixiUserInterface.vue'
-import { isMobile } from '@/utils/Utils'
-import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue'
-import PixiNovelOverlay from './PixiNovelOverlay.vue'
-import axios from 'axios'
 import GameMessage from '@shared/models/network/GameMessage'
+import axios from 'axios'
+import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue'
+
+import { isMobile } from '@/utils/Utils'
+import PixiUserInterface from '@/Vue/components/pixi/PixiUserInterface.vue'
+import store from '@/Vue/store'
+
+import Core from '../../../Pixi/Core'
+import PixiNovelOverlay from './PixiNovelOverlay.vue'
 
 export default defineComponent({
 	components: {

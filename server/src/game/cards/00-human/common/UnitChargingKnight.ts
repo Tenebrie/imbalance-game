@@ -1,17 +1,18 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
-import TargetType from '@shared/enums/TargetType'
 import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import MoveDirection from '@shared/enums/MoveDirection'
-import GameEventType from '@shared/enums/GameEventType'
-import CardLocation from '@shared/enums/CardLocation'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFeature from '@shared/enums/CardFeature'
+import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import MoveDirection from '@shared/enums/MoveDirection'
+import TargetType from '@shared/enums/TargetType'
 import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitChargingKnight extends ServerCard {
 	damage = asRecurringUnitDamage(5)

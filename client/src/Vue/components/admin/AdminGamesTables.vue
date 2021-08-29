@@ -109,9 +109,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import moment from 'moment'
+import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
 
 export default defineComponent({
 	props: {

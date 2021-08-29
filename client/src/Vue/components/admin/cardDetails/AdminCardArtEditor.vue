@@ -22,10 +22,12 @@
 </template>
 
 <script lang="ts">
-import Notifications from '@/utils/Notifications'
-import store from '@/Vue/store'
 import axios from 'axios'
 import { defineComponent, onMounted, ref } from 'vue'
+
+import Notifications from '@/utils/Notifications'
+import store from '@/Vue/store'
+
 import TheCardArtDeletePopupVue from '../../popup/TheCardArtDeletePopup.vue'
 
 type Point = { x: number; y: number }

@@ -1,8 +1,9 @@
-import Database from './Database'
-import ServerGame from '@src/game/models/ServerGame'
-import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import GameErrorDatabaseEntry from '@shared/models/GameErrorDatabaseEntry'
+import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
+import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+
+import Database from './Database'
 
 export default {
 	async selectGameById(id: string): Promise<GameHistoryDatabaseEntry | null> {

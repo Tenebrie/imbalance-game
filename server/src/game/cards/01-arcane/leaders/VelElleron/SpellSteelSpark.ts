@@ -1,16 +1,17 @@
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+import { CardTargetValidatorArguments } from '@src/types/TargetValidatorArguments'
+import { asDirectSparkDamage, asSplashSparkDamage } from '@src/utils/LeaderStats'
+
 import ServerCard from '../../../../models/ServerCard'
+import ServerDamageInstance from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
-import ServerDamageInstance from '../../../../models/ServerDamageSource'
-import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
-import CardFeature from '@shared/enums/CardFeature'
-import CardFaction from '@shared/enums/CardFaction'
-import { CardTargetValidatorArguments } from '@src/types/TargetValidatorArguments'
-import CardTribe from '@shared/enums/CardTribe'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashSparkDamage, asDirectSparkDamage } from '@src/utils/LeaderStats'
 
 export default class SpellSteelSpark extends ServerCard {
 	baseDamage = asDirectSparkDamage(4)

@@ -1,9 +1,10 @@
-import store from '@/Vue/store'
-import en from '@/Pixi/locales/en.json'
-import ru from '@/Pixi/locales/ru.json'
 import Language from '@shared/enums/Language'
 import Card from '@shared/models/Card'
 import CardMessage from '@shared/models/network/card/CardMessage'
+
+import en from '@/Pixi/locales/en.json'
+import ru from '@/Pixi/locales/ru.json'
+import store from '@/Vue/store'
 
 const localizationIdRegex = /^[a-zA-Z0-9.]*$/
 

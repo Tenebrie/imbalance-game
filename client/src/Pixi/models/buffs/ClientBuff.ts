@@ -1,8 +1,8 @@
-import Buff from '@shared/models/Buff'
+import BuffAlignment from '@shared/enums/BuffAlignment'
+import BuffFeature from '@shared/enums/BuffFeature'
 import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
-import BuffFeature from '@shared/enums/BuffFeature'
-import BuffAlignment from '@shared/enums/BuffAlignment'
+import Buff from '@shared/models/Buff'
 import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 
 export default class ClientBuff implements Buff {

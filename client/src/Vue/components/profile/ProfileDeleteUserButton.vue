@@ -8,10 +8,11 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import TheAccountDeletePopup from '@/Vue/components/popup/TheAccountDeletePopup.vue'
 import { defineComponent } from 'vue'
+
 import Notifications from '@/utils/Notifications'
+import TheAccountDeletePopup from '@/Vue/components/popup/TheAccountDeletePopup.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	data: () => ({

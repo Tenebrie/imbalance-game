@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import SpellEnchantedStorm from '../tokens/SpellEnchantedStorm'
-import CardTribe from '@shared/enums/CardTribe'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+
 import Keywords from '../../../../utils/Keywords'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import SpellEnchantedStorm from '../tokens/SpellEnchantedStorm'
 
 export default class UnitMerfolkEnchantress extends ServerCard {
 	constructor(game: ServerGame) {

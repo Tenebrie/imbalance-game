@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts">
-import TheRulesList from '../components/rules/TheRulesList.vue'
 import { defineComponent } from 'vue'
+
+import TheRulesList from '../components/rules/TheRulesList.vue'
 
 export default defineComponent({
 	components: {

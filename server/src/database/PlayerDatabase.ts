@@ -1,12 +1,13 @@
-import Database from './Database'
-import Language from '@shared/enums/Language'
-import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
-import RenderQuality from '@shared/enums/RenderQuality'
 import AccessLevel from '@shared/enums/AccessLevel'
-import { createHumanPlayerId } from '@src/utils/Utils'
+import Language from '@shared/enums/Language'
 import PlayerProgressionType from '@shared/enums/PlayerProgressionType'
+import RenderQuality from '@shared/enums/RenderQuality'
+import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import PlayerProgressionDatabaseEntry from '@shared/models/PlayerProgressionDatabaseEntry'
 import { LabyrinthProgressionState } from '@shared/models/progression/LabyrinthProgressionState'
+import { createHumanPlayerId } from '@src/utils/Utils'
+
+import Database from './Database'
 
 export default {
 	async insertPlayer(email: string, username: string, passwordHash: string): Promise<boolean> {

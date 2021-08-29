@@ -1,17 +1,18 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import ServerCard from '../../../../models/ServerCard'
-import ServerGame from '../../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
 import CardTribe from '@src/../../shared/src/enums/CardTribe'
 import GameEventType from '@src/../../shared/src/enums/GameEventType'
 import CardLibrary from '@src/game/libraries/CardLibrary'
-import SpellPokeTheSalvage from './SpellPokeTheSalvage'
-import SpellDiveTheSalvage from './SpellDiveTheSalvage'
-import SpellScourTheSalvage from './SpellScourTheSalvage'
+import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
+
+import ServerCard from '../../../../models/ServerCard'
+import ServerGame from '../../../../models/ServerGame'
 import SpellBecomeTheSalvage from './SpellBecomeTheSalvage'
+import SpellDiveTheSalvage from './SpellDiveTheSalvage'
+import SpellPokeTheSalvage from './SpellPokeTheSalvage'
+import SpellScourTheSalvage from './SpellScourTheSalvage'
 
 export default class LeaderTheScavenger extends ServerCard {
 	manaPerRound = 5

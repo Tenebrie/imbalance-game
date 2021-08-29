@@ -1,9 +1,9 @@
-import ServerGame from '../../../models/ServerGame'
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
-import HeroAdventuringGuildMaster from './HeroAdventuringGuildMaster'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
+import HeroAdventuringGuildMaster from './HeroAdventuringGuildMaster'
 
 describe('HeroAdventuringGuildMaster', () => {
 	let game: ServerGame

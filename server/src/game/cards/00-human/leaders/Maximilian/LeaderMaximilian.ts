@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@src/../../shared/src/enums/GameEventType'
+import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
+
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import CardFaction from '@shared/enums/CardFaction'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import SpellReinforcements from './SpellReinforcements'
 import SpellQuickStrike from './SpellQuickStrike'
+import SpellReinforcements from './SpellReinforcements'
 import SpellTacticalMove from './SpellTacticalMove'
-import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
-import GameEventType from '@src/../../shared/src/enums/GameEventType'
 
 export default class LeaderMaximilian extends ServerCard {
 	manaPerRound = 10

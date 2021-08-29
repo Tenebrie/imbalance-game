@@ -3,9 +3,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from 'vue'
-import Notifications from '@/utils/Notifications'
 import axios from 'axios'
+import { computed, defineComponent, onMounted } from 'vue'
+
+import Notifications from '@/utils/Notifications'
 import store from '@/Vue/store'
 import GoogleUser = gapi.auth2.GoogleUser
 

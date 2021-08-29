@@ -1,7 +1,8 @@
-import * as ws from 'ws'
-import ServerGame from '../models/ServerGame'
-import lzutf8 from 'lzutf8'
 import { compressGameTraffic } from '@shared/Utils'
+import lzutf8 from 'lzutf8'
+import * as ws from 'ws'
+
+import ServerGame from '../models/ServerGame'
 
 export default class PlayerWebSocket {
 	ws: ws

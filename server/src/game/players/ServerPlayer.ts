@@ -1,12 +1,13 @@
-import * as ws from 'ws'
-import PlayerWebSocket from './PlayerWebSocket'
-import Player from '@shared/models/Player'
-import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
-import ServerPlayerSpectator from './ServerPlayerSpectator'
-import ServerGame from '../models/ServerGame'
-import ServerPlayerInGame from './ServerPlayerInGame'
 import AccessLevel from '@shared/enums/AccessLevel'
 import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
+import Player from '@shared/models/Player'
+import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
+import * as ws from 'ws'
+
+import ServerGame from '../models/ServerGame'
+import PlayerWebSocket from './PlayerWebSocket'
+import ServerPlayerInGame from './ServerPlayerInGame'
+import ServerPlayerSpectator from './ServerPlayerSpectator'
 
 export default class ServerPlayer implements Player {
 	id: string

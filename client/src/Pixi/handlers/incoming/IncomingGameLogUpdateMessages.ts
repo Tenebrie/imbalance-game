@@ -1,7 +1,8 @@
-import store from '@/Vue/store'
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
-import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
 import { GameLogUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+
+import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
+import store from '@/Vue/store'
 
 const IncomingGameLogUpdateMessages: { [index in GameLogUpdateMessageType]: IncomingMessageHandlerFunction } = {
 	[GameLogUpdateMessageType.ENTRY]: (data: EventLogEntryMessage[]) => {

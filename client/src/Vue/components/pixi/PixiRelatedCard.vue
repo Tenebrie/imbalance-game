@@ -3,10 +3,11 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { defineComponent } from 'vue'
+
+import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

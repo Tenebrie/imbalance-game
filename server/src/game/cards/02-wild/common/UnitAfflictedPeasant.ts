@@ -1,16 +1,17 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardTribe from '@shared/enums/CardTribe'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import UnitAfflictedWerewolf from '@src/game/cards/02-wild/common/UnitAfflictedWerewolf'
-import GameEventType from '@shared/enums/GameEventType'
-import BuffRowBloodMoon from '@src/game/buffs/BuffRowBloodMoon'
-import Keywords from '@src/utils/Keywords'
 import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import BuffRowBloodMoon from '@src/game/buffs/BuffRowBloodMoon'
+import UnitAfflictedWerewolf from '@src/game/cards/02-wild/common/UnitAfflictedWerewolf'
+import Keywords from '@src/utils/Keywords'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitAfflictedPeasant extends ServerCard {
 	constructor(game: ServerGame) {

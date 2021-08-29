@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
-import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
 import { asDirectBuffPotency } from '@src/utils/LeaderStats'
-import BuffStrength from '../../../buffs/BuffStrength'
+
 import BuffGrowth from '../../../buffs/BuffGrowth'
+import BuffStrength from '../../../buffs/BuffStrength'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitEldergroveTender extends ServerCard {
 	public static readonly BONUS_POWER = asDirectBuffPotency(3)

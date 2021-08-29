@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
-import BuffStrength from '../../../buffs/BuffStrength'
-import CardFeature from '@shared/enums/CardFeature'
 import { asSplashBuffPotency } from '@src/utils/LeaderStats'
+
+import BuffStrength from '../../../buffs/BuffStrength'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitHighClassPerformer extends ServerCard {
 	bonusPower = asSplashBuffPotency(2)

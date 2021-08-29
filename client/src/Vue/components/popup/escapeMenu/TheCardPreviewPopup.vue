@@ -7,9 +7,11 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { computed, defineComponent } from 'vue'
+
+import store from '@/Vue/store'
+
 import PixiPreRenderedCard from '../../pixi/PixiPreRenderedCard.vue'
 
 export type TheCardPreviewPopupParams = {

@@ -1,14 +1,14 @@
-import BaseRulesetLabyrinthEncounter from '@src/game/rulesets/labyrinth/service/BaseRulesetLabyrinthEncounter'
-import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
 import GameEventType from '@shared/enums/GameEventType'
-import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
+import { LabyrinthProgressionRunState } from '@shared/models/progression/LabyrinthProgressionState'
 import HeroChallengeDummyWarrior0 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
 import HeroChallengeDummyWarrior1 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
-import HeroChallengeDummyWarrior3 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior3'
 import HeroChallengeDummyWarrior2 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior2'
+import HeroChallengeDummyWarrior3 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior3'
 import UnitChallengeDummyOPWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyOPWarrior'
+import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
+import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
 import ServerGame from '@src/game/models/ServerGame'
-import { LabyrinthProgressionRunState } from '@shared/models/progression/LabyrinthProgressionState'
+import BaseRulesetLabyrinthEncounter from '@src/game/rulesets/labyrinth/service/BaseRulesetLabyrinthEncounter'
 
 export default class RulesetLabyrinthDummies extends BaseRulesetLabyrinthEncounter {
 	constructor(game: ServerGame) {

@@ -3,12 +3,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
 import CardMessage from '@shared/models/network/card/CardMessage'
-import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
-import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import { WorkshopCardProps } from '@/Vue/components/workshop/WorkshopView.vue'
 import { throttle } from 'throttle-debounce'
+import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
+
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
+import { WorkshopCardProps } from '@/Vue/components/workshop/WorkshopView.vue'
 
 export default defineComponent({
 	props: {

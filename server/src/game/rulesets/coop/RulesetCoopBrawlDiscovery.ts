@@ -1,4 +1,5 @@
 import Constants from '@shared/Constants'
+import AIBehaviour from '@shared/enums/AIBehaviour'
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import LeaderTheScavenger from '@src/game/cards/09-neutral/leaders/TheScavenger/LeaderTheScavenger'
@@ -7,12 +8,11 @@ import HeroChallengeLegendaryExplorer0 from '@src/game/cards/10-challenge/challe
 import HeroChallengeLegendaryExplorer1 from '@src/game/cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer1'
 import HeroChallengeLegendaryExplorer2 from '@src/game/cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer2'
 import HeroChallengeLegendaryExplorer3 from '@src/game/cards/10-challenge/challenge-discovery/HeroChallengeLegendaryExplorer3'
+import UnitChallengeDummyExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeDummyExplorer'
 import UnitChallengeEagerExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeEagerExplorer'
 import UnitChallengeScarredExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeScarredExplorer'
-import AIBehaviour from '@shared/enums/AIBehaviour'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
-import UnitChallengeDummyExplorer from '@src/game/cards/10-challenge/challenge-discovery/UnitChallengeDummyExplorer'
 
 export default class RulesetCoopBrawlDiscovery extends ServerRuleset {
 	constructor(game: ServerGame) {

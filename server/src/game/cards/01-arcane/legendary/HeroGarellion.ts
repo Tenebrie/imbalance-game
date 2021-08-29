@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
+import BuffDuration from '@shared/enums/BuffDuration'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardLocation from '@shared/enums/CardLocation'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+
+import BuffStrength from '../../../buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import BuffStrength from '../../../buffs/BuffStrength'
-import BuffDuration from '@shared/enums/BuffDuration'
-import CardFaction from '@shared/enums/CardFaction'
-import CardLocation from '@shared/enums/CardLocation'
-import GameEventType from '@shared/enums/GameEventType'
-import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroGarellion extends ServerCard {
 	powerPerMana = 2

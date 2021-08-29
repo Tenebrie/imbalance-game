@@ -1,4 +1,5 @@
 import RichTextVariables from '@shared/models/RichTextVariables'
+
 import { insertRichTextVariables } from './Utils'
 
 export enum SegmentType {

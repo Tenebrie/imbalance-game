@@ -1,12 +1,13 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+
+import BuffStrength from '../../../buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardFaction from '@shared/enums/CardFaction'
-import CardTribe from '@shared/enums/CardTribe'
-import CardLocation from '@shared/enums/CardLocation'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import BuffStrength from '../../../buffs/BuffStrength'
 
 export default class UnitSkybornMother extends ServerCard {
 	powerGiven = 3

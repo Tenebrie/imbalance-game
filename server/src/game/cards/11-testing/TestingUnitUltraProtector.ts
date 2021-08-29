@@ -1,11 +1,12 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardLocation from '@shared/enums/CardLocation'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+
+import GameHookType from '../../models/events/GameHookType'
 import ServerCard from '../../models/ServerCard'
 import ServerGame from '../../models/ServerGame'
-import GameHookType from '../../models/events/GameHookType'
-import CardLocation from '@shared/enums/CardLocation'
 
 export default class TestingUnitUltraProtector extends ServerCard {
 	constructor(game: ServerGame) {

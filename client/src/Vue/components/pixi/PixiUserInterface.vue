@@ -73,21 +73,22 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import Player from '@shared/models/Player'
-import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
-import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
-import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
-import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
-import TheEscapeMenu from '@/Vue/components/popup/escapeMenu/TheEscapeMenu.vue'
-import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
-import Core from '@/Pixi/Core'
-import TargetMode from '@shared/enums/TargetMode'
-import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
-import PixiEndTurnArea from '@/Vue/components/pixi/PixiEndTurnArea.vue'
 import GameMode from '@shared/enums/GameMode'
-import { sortCards } from '@shared/Utils'
 import RulesetCategory from '@shared/enums/RulesetCategory'
+import TargetMode from '@shared/enums/TargetMode'
+import Player from '@shared/models/Player'
+import { sortCards } from '@shared/Utils'
+import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
+
+import Core from '@/Pixi/Core'
+import ClientGameStatus from '@/Pixi/enums/ClientGameStatus'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
+import PixiEndTurnArea from '@/Vue/components/pixi/PixiEndTurnArea.vue'
+import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
+import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
+import TheEscapeMenu from '@/Vue/components/popup/escapeMenu/TheEscapeMenu.vue'
+import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

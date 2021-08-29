@@ -1,4 +1,5 @@
 import { Howl } from 'howler'
+
 import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import store from '@/Vue/store'
 

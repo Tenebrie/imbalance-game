@@ -1,9 +1,9 @@
-import ServerGame from '../../../models/ServerGame'
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import ServerCard from '../../../models/ServerCard'
-import UnitEndlessArmy from './UnitEndlessArmy'
+import ServerGame from '../../../models/ServerGame'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
+import UnitEndlessArmy from './UnitEndlessArmy'
 
 describe('UnitEndlessArmy', () => {
 	let game: ServerGame

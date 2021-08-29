@@ -1,14 +1,15 @@
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
+
+import Keywords from '../../../../../utils/Keywords'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import CardColor from '@shared/enums/CardColor'
-import CardFeature from '@shared/enums/CardFeature'
-import CardFaction from '@shared/enums/CardFaction'
-import TargetType from '@shared/enums/TargetType'
 import ServerUnit from '../../../../models/ServerUnit'
-import GameEventType from '@shared/enums/GameEventType'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import Keywords from '../../../../../utils/Keywords'
 
 export default class SpellShadowArmy extends ServerCard {
 	powerThreshold = 3

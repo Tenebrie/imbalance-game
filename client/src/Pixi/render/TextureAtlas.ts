@@ -1,7 +1,8 @@
-import * as PIXI from 'pixi.js'
-import store from '@/Vue/store'
-import Notifications from '@/utils/Notifications'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import * as PIXI from 'pixi.js'
+
+import Notifications from '@/utils/Notifications'
+import store from '@/Vue/store'
 
 export default class TextureAtlas {
 	static textures: { [index: string]: PIXI.Texture } = {}

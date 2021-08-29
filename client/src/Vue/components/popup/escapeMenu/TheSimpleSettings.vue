@@ -10,10 +10,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
+
+import TheGameplaySettings from '@/Vue/components/profile/TheGameplaySettings.vue'
 import TheVolumeSettings from '@/Vue/components/profile/TheVolumeSettings.vue'
 import store from '@/Vue/store'
-import { defineComponent } from 'vue'
-import TheGameplaySettings from '@/Vue/components/profile/TheGameplaySettings.vue'
 
 export default defineComponent({
 	components: { TheGameplaySettings, TheVolumeSettings },

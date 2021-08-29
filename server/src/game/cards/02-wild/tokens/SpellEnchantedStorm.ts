@@ -1,17 +1,18 @@
+import BuffDuration from '@shared/enums/BuffDuration'
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
+import { asSplashBuffPotency, asTargetCount } from '@src/utils/LeaderStats'
+
+import BuffStrength from '../../../buffs/BuffStrength'
+import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
-import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
-import CardFaction from '@shared/enums/CardFaction'
-import CardTribe from '@shared/enums/CardTribe'
-import BuffStrength from '../../../buffs/BuffStrength'
-import BuffDuration from '@shared/enums/BuffDuration'
-import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
-import GameEventType from '@shared/enums/GameEventType'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asSplashBuffPotency, asTargetCount } from '@src/utils/LeaderStats'
 
 export default class SpellEnchantedStorm extends ServerCard {
 	baseBuffPower = asSplashBuffPotency(3)

@@ -6,12 +6,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from 'vue'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import CardMessage from '@shared/models/network/card/CardMessage'
-import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
-import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import BuffFeature from '@shared/enums/BuffFeature'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
+import CardMessage from '@shared/models/network/card/CardMessage'
+import { computed, defineComponent, PropType } from 'vue'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 import InspectedCardBuffListItem from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffListItem.vue'
 
 export interface BuffWrapper {

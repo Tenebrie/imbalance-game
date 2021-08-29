@@ -1,13 +1,14 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import { mapUnitsToCards } from '@src/utils/Utils'
+
+import ServerAnimation from '../../../models/ServerAnimation'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardFaction from '@shared/enums/CardFaction'
-import ServerAnimation from '../../../models/ServerAnimation'
-import GameEventType from '@shared/enums/GameEventType'
-import CardFeature from '@shared/enums/CardFeature'
-import { mapUnitsToCards } from '@src/utils/Utils'
-import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroPozoga extends ServerCard {
 	constructor(game: ServerGame) {

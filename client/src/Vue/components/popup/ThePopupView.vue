@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
+
+import store from '@/Vue/store'
 
 export default defineComponent({
 	setup() {

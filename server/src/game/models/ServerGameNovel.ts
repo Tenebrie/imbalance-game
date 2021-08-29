@@ -1,10 +1,11 @@
+import NovelReply from '@shared/models/novel/NovelReply'
 import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import { v4 as uuid } from 'uuid'
+
 import OutgoingNovelMessages from '../handlers/outgoing/OutgoingNovelMessages'
 import ServerGame from './ServerGame'
-import { v4 as uuid } from 'uuid'
-import NovelReply from '@shared/models/novel/NovelReply'
 import ServerGameNovelScriptParser from './ServerGameScriptParser'
-import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 class ServerNovelReply implements NovelReply {
 	public readonly id: string

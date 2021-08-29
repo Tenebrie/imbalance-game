@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
-import ServerAnimation from '../../../models/ServerAnimation'
-import BuffStrength from '../../../buffs/BuffStrength'
 import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
 import { asSplashBuffPotency } from '@src/utils/LeaderStats'
+
+import BuffStrength from '../../../buffs/BuffStrength'
+import ServerAnimation from '../../../models/ServerAnimation'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitSupplyWagon extends ServerCard {
 	extraPower = asSplashBuffPotency(6)

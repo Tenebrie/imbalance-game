@@ -1,10 +1,10 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { getLeaderTextVariables } from '@src/utils/Utils'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
+import { getLeaderTextVariables } from '@src/utils/Utils'
 
 export default class LeaderLabyrinthOpponent extends ServerCard {
 	constructor(game: ServerGame) {

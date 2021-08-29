@@ -68,18 +68,19 @@
 </template>
 
 <script lang="ts">
-import * as PIXI from 'pixi.js'
-import { computed, defineComponent, onMounted, Ref, ref, watch } from 'vue'
-import WorkshopCardPreview from '@/Vue/components/workshop/WorkshopCardPreview.vue'
-import CardMessage from '@shared/models/network/card/CardMessage'
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { debounce } from 'throttle-debounce'
-import { getRandomName, initializeEnumRecord } from '@shared/Utils'
-import WorkshopDownloadButton from '@/Vue/components/workshop/WorkshopDownloadButton.vue'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import CardMessage from '@shared/models/network/card/CardMessage'
+import { getRandomName, initializeEnumRecord } from '@shared/Utils'
+import * as PIXI from 'pixi.js'
+import { debounce } from 'throttle-debounce'
+import { computed, defineComponent, onMounted, Ref, ref, watch } from 'vue'
+
+import WorkshopCardPreview from '@/Vue/components/workshop/WorkshopCardPreview.vue'
+import WorkshopDownloadButton from '@/Vue/components/workshop/WorkshopDownloadButton.vue'
 
 export type WorkshopCardProps = {
 	workshopTitle: string

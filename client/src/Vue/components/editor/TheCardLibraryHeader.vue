@@ -53,13 +53,14 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import CardFaction from '@shared/enums/CardFaction'
 import CardColor from '@shared/enums/CardColor'
-import { computed, defineComponent, ref } from 'vue'
+import CardFaction from '@shared/enums/CardFaction'
 import { debounce } from 'throttle-debounce'
-import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
+import { computed, defineComponent, ref } from 'vue'
+
 import Localization from '@/Pixi/Localization'
+import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	setup() {

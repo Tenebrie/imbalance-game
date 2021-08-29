@@ -1,13 +1,14 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardTribe from '@shared/enums/CardTribe'
-import GameEventType from '@shared/enums/GameEventType'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import Keywords from '@src/utils/Keywords'
+import GameEventType from '@shared/enums/GameEventType'
 import SpellLabyrinthMagicArrow from '@src/game/cards/12-labyrinth/tokens/SpellLabyrinthMagicArrow'
+import Keywords from '@src/utils/Keywords'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitLabyrinthLostMage extends ServerCard {
 	public static readonly INFUSE_COST = 3

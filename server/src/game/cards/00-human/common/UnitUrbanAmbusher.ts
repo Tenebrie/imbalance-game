@@ -1,13 +1,14 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import { asDirectBuffPotency } from '@src/utils/LeaderStats'
-import CardLocation from '@shared/enums/CardLocation'
+
 import BuffStrength from '../../../buffs/BuffStrength'
-import CardTribe from '@shared/enums/CardTribe'
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitUrbanAmbusher extends ServerCard {
 	bonusPower = asDirectBuffPotency(4)

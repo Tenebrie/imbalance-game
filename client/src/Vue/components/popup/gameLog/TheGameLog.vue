@@ -14,10 +14,11 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
-import TheGameLogEntry from '@/Vue/components/popup/gameLog/TheGameLogEntry.vue'
 import moment from 'moment'
+import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
+
+import TheGameLogEntry from '@/Vue/components/popup/gameLog/TheGameLogEntry.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

@@ -1,14 +1,15 @@
+import BuffAlignment from '@shared/enums/BuffAlignment'
 import * as PIXI from 'pixi.js'
 import * as Particles from 'pixi-particles'
 import { EmitterConfig, OldEmitterConfig } from 'pixi-particles'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import Core from '@/Pixi/Core'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import RenderedUnit from '@/Pixi/cards/RenderedUnit'
-import BuffAlignment from '@shared/enums/BuffAlignment'
-import { getBoopColor } from '@/utils/Utils'
-import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
+import { getBoopColor } from '@/utils/Utils'
 
 interface ParticleEmitterHandle {
 	emitter: Particles.Emitter

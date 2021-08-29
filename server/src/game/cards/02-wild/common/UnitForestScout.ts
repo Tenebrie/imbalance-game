@@ -1,14 +1,15 @@
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import { asDirectBuffPotency } from '@src/utils/LeaderStats'
+
+import BuffStrength from '../../../buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
-import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
-import CardFeature from '@shared/enums/CardFeature'
-import BuffStrength from '../../../buffs/BuffStrength'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectBuffPotency } from '@src/utils/LeaderStats'
 
 export default class UnitForestScout extends ServerCard {
 	boardPowerBonus = asDirectBuffPotency(14)

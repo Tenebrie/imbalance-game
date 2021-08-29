@@ -10,15 +10,16 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
+import axios from 'axios'
+import { defineComponent } from 'vue'
+
 import AudioSystem, { AudioSystemMode } from '@/Pixi/audio/AudioSystem'
 import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import LocalStorage from '@/utils/LocalStorage'
-import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
-import axios from 'axios'
 import { electronHost, isElectron } from '@/utils/Utils'
-import { defineComponent } from 'vue'
+import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
+import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: { ThePopupView, TheNavigationBar },

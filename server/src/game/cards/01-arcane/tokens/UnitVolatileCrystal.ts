@@ -1,13 +1,14 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardLocation from '@shared/enums/CardLocation'
-import GameEventType from '@shared/enums/GameEventType'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitVolatileCrystal extends ServerCard {
 	damage = 5

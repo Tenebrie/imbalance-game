@@ -1,6 +1,7 @@
+import AccessLevel from '@shared/enums/AccessLevel'
+
 import AsyncHandler from '../utils/AsyncHandler'
 import { getPlayerFromAuthenticatedRequest } from '../utils/Utils'
-import AccessLevel from '@shared/enums/AccessLevel'
 
 export default AsyncHandler(async (req, res, next) => {
 	const player = getPlayerFromAuthenticatedRequest(req)

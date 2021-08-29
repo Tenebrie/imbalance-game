@@ -1,15 +1,16 @@
-import Core from '@/Pixi/Core'
-import store from '@/Vue/store'
-import Player from '@shared/models/Player'
-import PlayerInGame from '@shared/models/PlayerInGame'
-import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
-import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
-import ClientCardGraveyard from '@/Pixi/models/ClientCardGraveyard'
-import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
 import AccessLevel from '@shared/enums/AccessLevel'
 import PlayerMessage from '@shared/models/network/player/PlayerMessage'
+import PlayerInGameMessage from '@shared/models/network/playerInGame/PlayerInGameMessage'
+import Player from '@shared/models/Player'
+import PlayerInGame from '@shared/models/PlayerInGame'
+
 import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
+import ClientCardDeck from '@/Pixi/models/ClientCardDeck'
+import ClientCardGraveyard from '@/Pixi/models/ClientCardGraveyard'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
+import RenderedCardHand from '@/Pixi/models/RenderedCardHand'
+import store from '@/Vue/store'
 
 class ClientPlayer implements Player {
 	id: string

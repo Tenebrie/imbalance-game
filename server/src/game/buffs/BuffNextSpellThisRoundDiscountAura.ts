@@ -1,7 +1,8 @@
-import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
-import GameEventType from '@shared/enums/GameEventType'
-import CardType from '@shared/enums/CardType'
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import CardType from '@shared/enums/CardType'
+import GameEventType from '@shared/enums/GameEventType'
+
+import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
 import BuffHiddenSpellDiscount from './BuffHiddenSpellDiscount'
 
 export default class BuffNextSpellThisRoundDiscountAura extends ServerCardBuff {

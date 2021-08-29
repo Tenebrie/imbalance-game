@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
-import ObjectTrail from '@/Pixi/vfx/ObjectTrail'
+
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
+import ObjectTrail from '@/Pixi/vfx/ObjectTrail'
 
 export default class RenderedVelocityProjectile {
 	sprite: PIXI.Sprite

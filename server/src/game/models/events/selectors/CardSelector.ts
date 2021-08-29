@@ -1,8 +1,8 @@
-import { EventSubscriber } from '../../ServerGameEvents'
+import { cardPerform } from '../../../utils/CardEventHandlers'
 import ServerCard from '../../ServerCard'
 import ServerGame from '../../ServerGame'
+import { EventSubscriber } from '../../ServerGameEvents'
 import { CardSelectorProvideBuff } from './CardSelectorProvideBuff'
-import { cardPerform } from '../../../utils/CardEventHandlers'
 
 export type CardSelectorArgs = {
 	target: ServerCard

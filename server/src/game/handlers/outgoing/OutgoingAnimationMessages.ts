@@ -1,11 +1,12 @@
-import ServerPlayer from '../../players/ServerPlayer'
-import ServerAnimation from '../../models/ServerAnimation'
 import AnimationMessage from '@shared/models/network/AnimationMessage'
-import ServerGame from '../../models/ServerGame'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
 import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+
+import ServerAnimation from '../../models/ServerAnimation'
+import ServerGame from '../../models/ServerGame'
+import ServerPlayer from '../../players/ServerPlayer'
 
 export default {
 	triggerAnimation(game: ServerGame, animation: ServerAnimation): void {

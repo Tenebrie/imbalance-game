@@ -25,16 +25,18 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
-import store from '@/Vue/store'
 import GameMessage from '@shared/models/network/GameMessage'
-import ThePVEGameModeSelectionPopup from '@/Vue/components/popup/escapeMenu/ThePVEGameModeSelectionPopup.vue'
-import ThePrototypesGameModeSelectionPopup from '@/Vue/components/popup/escapeMenu/ThePrototypesGameModeSelectionPopup.vue'
+import axios from 'axios'
 import { defineComponent } from 'vue'
-import TheDeckSelectionPopup from '../../../Vue/components/popup/escapeMenu/TheDeckSelectionPopup.vue'
-import router from '@/Vue/router'
+
 import EditorDecksButton from '@/Vue/components/editor/buttons/EditorDecksButton.vue'
 import TheCoopGameModeSelectionPopup from '@/Vue/components/popup/escapeMenu/TheCoopGameModeSelectionPopup.vue'
+import ThePrototypesGameModeSelectionPopup from '@/Vue/components/popup/escapeMenu/ThePrototypesGameModeSelectionPopup.vue'
+import ThePVEGameModeSelectionPopup from '@/Vue/components/popup/escapeMenu/ThePVEGameModeSelectionPopup.vue'
+import router from '@/Vue/router'
+import store from '@/Vue/store'
+
+import TheDeckSelectionPopup from '../../../Vue/components/popup/escapeMenu/TheDeckSelectionPopup.vue'
 
 export default defineComponent({
 	components: {

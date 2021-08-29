@@ -1,7 +1,8 @@
-import express, { Response } from 'express'
-import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
-import { cardImageGenerator } from '@src/utils/CardImageGenerator'
 import AsyncHandler from '@src/utils/AsyncHandler'
+import { cardImageGenerator } from '@src/utils/CardImageGenerator'
+import express, { Response } from 'express'
+
+import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 
 const router = express.Router()
 

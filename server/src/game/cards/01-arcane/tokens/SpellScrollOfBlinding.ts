@@ -1,16 +1,17 @@
+import BuffDuration from '@shared/enums/BuffDuration'
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+import { asDirectEffectDuration } from '@src/utils/LeaderStats'
+
+import BuffStun from '../../../buffs/BuffStun'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
-import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
-import CardFaction from '@shared/enums/CardFaction'
-import CardTribe from '@shared/enums/CardTribe'
-import BuffStun from '../../../buffs/BuffStun'
-import BuffDuration from '@shared/enums/BuffDuration'
-import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectEffectDuration } from '@src/utils/LeaderStats'
 
 export default class SpellScrollOfBlinding extends ServerCard {
 	buffDuration = asDirectEffectDuration(3)

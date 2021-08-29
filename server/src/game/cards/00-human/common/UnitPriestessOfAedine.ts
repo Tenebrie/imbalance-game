@@ -1,16 +1,17 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
-import TargetType from '@shared/enums/TargetType'
-import ServerUnit from '../../../models/ServerUnit'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
 import { asDirectHealingPotency } from '@src/utils/LeaderStats'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
+import ServerGame from '../../../models/ServerGame'
+import ServerUnit from '../../../models/ServerUnit'
 
 export default class UnitPriestessOfAedine extends ServerCard {
 	targets = 1

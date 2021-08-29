@@ -1,13 +1,14 @@
-import ServerPlayer from './ServerPlayer'
+import AccessLevel from '@shared/enums/AccessLevel'
+import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
+import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
+import { JwtTokenScope } from '@src/enums/JwtTokenScope'
+import GameLibrary from '@src/game/libraries/GameLibrary'
+import { tryUntil } from '@src/utils/Utils'
+
+import PlayerDatabase from '../../database/PlayerDatabase'
 import HashManager from '../../services/HashService'
 import TokenManager from '../../services/TokenService'
-import { JwtTokenScope } from '@src/enums/JwtTokenScope'
-import PlayerDatabase from '../../database/PlayerDatabase'
-import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
-import { tryUntil } from '@src/utils/Utils'
-import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
-import AccessLevel from '@shared/enums/AccessLevel'
-import GameLibrary from '@src/game/libraries/GameLibrary'
+import ServerPlayer from './ServerPlayer'
 
 const createNumberedUsername = (username: string): string => {
 	let existingPlayer: PlayerDatabaseEntry | null

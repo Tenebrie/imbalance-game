@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import GameEventType from '@shared/enums/GameEventType'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
-import { asRecurringHealingPotency } from '@src/utils/LeaderStats'
+import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
-import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import { asRecurringHealingPotency } from '@src/utils/LeaderStats'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitFieldHospital extends ServerCard {
 	healing = asRecurringHealingPotency(4)

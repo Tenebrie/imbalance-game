@@ -1,8 +1,8 @@
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
+import TestingLeader from '@src/game/cards/11-testing/TestingLeader'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
-import TestingLeader from '@src/game/cards/11-testing/TestingLeader'
 
 export default class TestingRulesetPVP extends ServerRuleset {
 	constructor(game: ServerGame) {

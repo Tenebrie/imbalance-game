@@ -1,14 +1,15 @@
-import ServerGame from '../models/ServerGame'
-import ServerCard from '../models/ServerCard'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
-import PlayerGroup from '@shared/models/PlayerGroup'
-import GameEventCreators from '@src/game/models/events/GameEventCreators'
 import CardFeature from '@shared/enums/CardFeature'
-import ServerPlayerGroupSlots from '@src/game/players/ServerPlayerGroupSlots'
+import PlayerGroup from '@shared/models/PlayerGroup'
 import { ServerCardBuff, ServerRowBuff } from '@src/game/models/buffs/ServerBuff'
+import GameEventCreators from '@src/game/models/events/GameEventCreators'
 import { ServerRulesetSlotGroup } from '@src/game/models/rulesets/ServerRulesetSlots'
+import ServerPlayerGroupSlots from '@src/game/players/ServerPlayerGroupSlots'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import { createHumanGroupId, getOwnerGroup } from '@src/utils/Utils'
+
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import ServerCard from '../models/ServerCard'
+import ServerGame from '../models/ServerGame'
 
 export default class ServerPlayerGroup implements PlayerGroup {
 	id: string

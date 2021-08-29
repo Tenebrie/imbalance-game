@@ -1,5 +1,5 @@
-import { GameEvent } from './GameEventCreators'
 import { EventSubscriber } from '../ServerGameEvents'
+import { GameEvent } from './GameEventCreators'
 
 export class EventSubscription<EventArgs> {
 	private readonly __subscriber: EventSubscriber

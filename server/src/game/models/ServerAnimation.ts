@@ -1,17 +1,18 @@
-import Animation from '@shared/models/Animation'
-import ServerUnit from './ServerUnit'
 import AnimationType from '@shared/enums/AnimationType'
-import ServerCard from './ServerCard'
 import BuffAlignment from '@shared/enums/BuffAlignment'
-import CardReceivedBuffAnimParams from '@shared/models/animations/CardReceivedBuffAnimParams'
+import Animation from '@shared/models/Animation'
 import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimParams'
-import Card from '@shared/models/Card'
-import Unit from '@shared/models/Unit'
-import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import CardReceivedBuffAnimParams from '@shared/models/animations/CardReceivedBuffAnimParams'
 import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
-import ServerBoardRow from './ServerBoardRow'
-import BoardRow from '@src/../../shared/src/models/BoardRow'
 import RowReceivedBuffAnimParams from '@shared/models/animations/RowReceivedBuffAnimParams'
+import Card from '@shared/models/Card'
+import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
+import Unit from '@shared/models/Unit'
+import BoardRow from '@src/../../shared/src/models/BoardRow'
+
+import ServerBoardRow from './ServerBoardRow'
+import ServerCard from './ServerCard'
+import ServerUnit from './ServerUnit'
 
 export default class ServerAnimation implements Animation {
 	type: AnimationType

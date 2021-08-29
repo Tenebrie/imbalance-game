@@ -1,10 +1,10 @@
-import ServerGame from '@src/game/models/ServerGame'
 import CardTribe from '@shared/enums/CardTribe'
-import { BaseLabyrinthPassiveItem } from '@src/game/cards/12-labyrinth/items/ItemLabyrinthBase'
 import { LabyrinthItemChainmail } from '@src/game/cards/12-labyrinth/items/armor/LabyrinthArmor_Chainmail'
 import { LabyrinthItemShadyCloak } from '@src/game/cards/12-labyrinth/items/armor/LabyrinthArmor_Cloak'
 import { LabyrinthItemCasualDress } from '@src/game/cards/12-labyrinth/items/armor/LabyrinthArmor_Dress'
 import { LabyrinthItemApprenticeRobes } from '@src/game/cards/12-labyrinth/items/armor/LabyrinthArmor_Robes'
+import { BaseLabyrinthPassiveItem } from '@src/game/cards/12-labyrinth/items/ItemLabyrinthBase'
+import ServerGame from '@src/game/models/ServerGame'
 
 export class LabyrinthItemTatteredRags extends BaseLabyrinthPassiveItem {
 	public readonly BONUS_POWER = 5

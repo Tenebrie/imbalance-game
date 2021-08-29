@@ -1,11 +1,12 @@
-import ServerGame from './ServerGame'
-import ServerCard from './ServerCard'
 import Unit from '@shared/models/Unit'
-import ServerDamageInstance from './ServerDamageSource'
-import ServerBuffContainer from './buffs/ServerBuffContainer'
 import { OrderTarget } from '@src/game/models/ServerBoardOrders'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+
+import ServerBuffContainer from './buffs/ServerBuffContainer'
+import ServerCard from './ServerCard'
+import ServerDamageInstance from './ServerDamageSource'
+import ServerGame from './ServerGame'
 
 export default class ServerUnit implements Unit {
 	game: ServerGame

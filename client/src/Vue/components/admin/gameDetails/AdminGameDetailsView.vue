@@ -104,13 +104,14 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
-import { defineComponent, onMounted, ref } from 'vue'
-import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
-import router from '@/Vue/router'
 import GameErrorDatabaseEntry from '@shared/models/GameErrorDatabaseEntry'
-import AdminGameLog from '@/Vue/components/admin/gameDetails/AdminGameLog.vue'
+import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
+import axios from 'axios'
 import moment from 'moment'
+import { defineComponent, onMounted, ref } from 'vue'
+
+import AdminGameLog from '@/Vue/components/admin/gameDetails/AdminGameLog.vue'
+import router from '@/Vue/router'
 
 export default defineComponent({
 	components: { AdminGameLog },

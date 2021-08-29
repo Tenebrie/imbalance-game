@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
-import CardLocation from '@shared/enums/CardLocation'
 import CardFeature from '@shared/enums/CardFeature'
+import CardLocation from '@shared/enums/CardLocation'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import Keywords from '../../../../utils/Keywords'
+import GameEventType from '@shared/enums/GameEventType'
 import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
+
+import Keywords from '../../../../utils/Keywords'
+import ServerCard from '../../../models/ServerCard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitEnergyRelay extends ServerCard {
 	infuseCost = 1

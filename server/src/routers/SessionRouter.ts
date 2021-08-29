@@ -1,13 +1,14 @@
-import express, { Response } from 'express'
-import AsyncHandler from '../utils/AsyncHandler'
-import TokenManager from '../services/TokenService'
-import PlayerLibrary from '../game/players/PlayerLibrary'
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
-import { clearCookie, setCookie } from '../utils/Utils'
-import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
-import StartingDecks from '@src/game/utils/StartingDecks'
 import EditorDeckDatabase from '@src/database/EditorDeckDatabase'
+import StartingDecks from '@src/game/utils/StartingDecks'
+import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
+import express, { Response } from 'express'
+
+import PlayerLibrary from '../game/players/PlayerLibrary'
+import TokenManager from '../services/TokenService'
+import AsyncHandler from '../utils/AsyncHandler'
+import { clearCookie, setCookie } from '../utils/Utils'
 
 const router = express.Router()
 

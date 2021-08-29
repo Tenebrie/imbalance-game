@@ -5,9 +5,10 @@
 </template>
 
 <script lang="ts">
+import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import axios from 'axios'
 import { defineComponent, onMounted, ref } from 'vue'
-import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
+
 import AdminGamesTables from '@/Vue/components/admin/AdminGamesTables.vue'
 
 export default defineComponent({

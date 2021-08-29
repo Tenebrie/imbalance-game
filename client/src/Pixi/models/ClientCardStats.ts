@@ -1,7 +1,8 @@
-import CardStats from '@shared/models/CardStats'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import CardStatsMessage from '@shared/models/network/cardStats/CardStatsMessage'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import CardStats from '@shared/models/CardStats'
+import CardStatsMessage from '@shared/models/network/cardStats/CardStatsMessage'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 
 export default class ClientCardStats implements CardStats {
 	readonly card: RenderedCard

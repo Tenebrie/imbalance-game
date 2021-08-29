@@ -1,14 +1,15 @@
-import ServerUnit from './ServerUnit'
-import ServerBoardRow from './ServerBoardRow'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
-import ServerGame from './ServerGame'
-import ServerCard from './ServerCard'
+import AnonymousTargetCard from '@shared/models/AnonymousTarget'
+import { CardTargetCard, CardTargetCardAllowedTypes, CardTargetPosition, CardTargetRow } from '@shared/models/CardTarget'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
-import { CardTargetCard, CardTargetCardAllowedTypes, CardTargetPosition, CardTargetRow } from '@shared/models/CardTarget'
-import AnonymousTargetCard from '@shared/models/AnonymousTarget'
-import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
+
+import ServerBoardRow from './ServerBoardRow'
+import ServerCard from './ServerCard'
+import ServerGame from './ServerGame'
+import ServerUnit from './ServerUnit'
 
 export class ServerCardTargetCard implements CardTargetCard {
 	public readonly id: string

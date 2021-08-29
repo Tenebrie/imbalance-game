@@ -1,22 +1,13 @@
-import GameMode from '@shared/enums/GameMode'
-import GameEventType from '@src/../../shared/src/enums/GameEventType'
-import { EventHook } from '../events/EventHook'
-import { EventSubscription } from '../events/EventSubscription'
-import GameHookType, { GameFinishedHookEditableValues, GameFinishedHookFixedValues } from '../events/GameHookType'
-import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
-import Ruleset from '@shared/models/ruleset/Ruleset'
-import ServerGame from '../ServerGame'
-import { CardConstructor } from '@src/game/libraries/CardLibrary'
-import { RulesetBoard, RulesetBoardBuilder } from './RulesetBoard'
-import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
-import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
-import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
-import { enumToArray, forEachInEnum } from '@shared/Utils'
-import { RulesetChain, RulesetChainBuilder } from '@src/game/models/rulesets/RulesetChain'
-import { RulesetSlotsBuilder, ServerRulesetSlots } from '@src/game/models/rulesets/ServerRulesetSlots'
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
-import RulesetLifecycleHook, { RulesetLifecycleCallback } from '@src/game/models/rulesets/RulesetLifecycleHook'
-import { createRandomGuid, getClassFromConstructor } from '@src/utils/Utils'
+import GameMode from '@shared/enums/GameMode'
+import RulesetFeature from '@shared/enums/RulesetFeature'
+import Ruleset from '@shared/models/ruleset/Ruleset'
+import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
+import { enumToArray, forEachInEnum } from '@shared/Utils'
+import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
+import GameEventType from '@src/../../shared/src/enums/GameEventType'
+import RulesetCategory from '@src/../../shared/src/enums/RulesetCategory'
+import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import {
 	CardBuffCreatedEventArgs,
@@ -43,7 +34,17 @@ import {
 	UnitOrderedCardEventArgs,
 	UnitOrderedRowEventArgs,
 } from '@src/game/models/events/GameEventCreators'
-import RulesetFeature from '@shared/enums/RulesetFeature'
+import { RulesetChain, RulesetChainBuilder } from '@src/game/models/rulesets/RulesetChain'
+import RulesetLifecycleHook, { RulesetLifecycleCallback } from '@src/game/models/rulesets/RulesetLifecycleHook'
+import { RulesetSlotsBuilder, ServerRulesetSlots } from '@src/game/models/rulesets/ServerRulesetSlots'
+import { createRandomGuid, getClassFromConstructor } from '@src/utils/Utils'
+
+import { EventHook } from '../events/EventHook'
+import { EventSubscription } from '../events/EventSubscription'
+import GameHookType, { GameFinishedHookEditableValues, GameFinishedHookFixedValues } from '../events/GameHookType'
+import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
+import ServerGame from '../ServerGame'
+import { RulesetBoard, RulesetBoardBuilder } from './RulesetBoard'
 
 export type RulesetDeckTemplate = (CardConstructor | { card: CardConstructor; count: number })[]
 

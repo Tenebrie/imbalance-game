@@ -1,8 +1,9 @@
-import store from '@/Vue/store'
-import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
-import LocalStorage from '@/utils/LocalStorage'
 import AccessLevel from '@shared/enums/AccessLevel'
+import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
+
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import LocalStorage from '@/utils/LocalStorage'
+import store from '@/Vue/store'
 
 const fetchProfile = async (): Promise<boolean> => {
 	if (!LocalStorage.hasAuthCookie()) {

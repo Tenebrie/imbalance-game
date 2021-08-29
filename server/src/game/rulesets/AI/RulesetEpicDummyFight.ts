@@ -1,3 +1,5 @@
+import AIBehaviour from '@shared/enums/AIBehaviour'
+import CustomDeckRules from '@shared/enums/CustomDeckRules'
 import Constants from '@src/../../shared/src/Constants'
 import GameEventType from '@src/../../shared/src/enums/GameEventType'
 import GameMode from '@src/../../shared/src/enums/GameMode'
@@ -10,8 +12,6 @@ import HeroChallengeDummyWarrior3 from '@src/game/cards/10-challenge/ai-00-dummy
 import LeaderChallengeDummy from '@src/game/cards/10-challenge/ai-00-dummy/LeaderChallengeDummy'
 import UnitChallengeDummyRoyalWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyRoyalWarrior'
 import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
-import CustomDeckRules from '@shared/enums/CustomDeckRules'
-import AIBehaviour from '@shared/enums/AIBehaviour'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
 

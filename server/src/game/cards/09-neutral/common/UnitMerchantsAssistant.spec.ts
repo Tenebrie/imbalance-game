@@ -1,10 +1,10 @@
-import ServerGame from '../../../models/ServerGame'
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
-import UnitMerchantsAssistant from './UnitMerchantsAssistant'
 import TestingSpell10Mana from '../../11-testing/TestingSpell10Mana'
+import UnitMerchantsAssistant from './UnitMerchantsAssistant'
 
 describe('UnitMerchantsAssistant', () => {
 	let game: ServerGame

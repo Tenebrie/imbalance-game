@@ -1,17 +1,17 @@
-import CardType from '@shared/enums/CardType'
+import Constants from '@shared/Constants'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+
+import CardLibrary from '../../../libraries/CardLibrary'
+import ServerBoardRow from '../../../models/ServerBoardRow'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import TargetType from '@shared/enums/TargetType'
-import ServerBoardRow from '../../../models/ServerBoardRow'
-import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
-import CardFeature from '@shared/enums/CardFeature'
-import Constants from '@shared/Constants'
-import CardLibrary from '../../../libraries/CardLibrary'
 import UnitLivingShadow from '../tokens/UnitLivingShadow'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 export default class HeroLearthe extends ServerCard {
 	constructor(game: ServerGame) {

@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 

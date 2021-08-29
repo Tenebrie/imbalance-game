@@ -1,13 +1,14 @@
+import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
+import LeaderStatType from '@shared/enums/LeaderStatType'
+import CardStats from '@shared/models/CardStats'
+import { initializeEnumRecord } from '@shared/Utils'
+import { limitValueToInterval } from '@src/utils/Utils'
+
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import ServerBuff from './buffs/ServerBuff'
 import ServerCard from './ServerCard'
 import ServerGame from './ServerGame'
-import CardStats from '@shared/models/CardStats'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import { limitValueToInterval } from '@src/utils/Utils'
-import ServerBuff from './buffs/ServerBuff'
-import CardType from '@shared/enums/CardType'
-import CardFeature from '@shared/enums/CardFeature'
-import LeaderStatType from '@shared/enums/LeaderStatType'
-import { initializeEnumRecord } from '@shared/Utils'
 
 interface ServerCardStatsProps {
 	power: number

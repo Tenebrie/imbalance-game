@@ -1,12 +1,13 @@
-import Core from '@/Pixi/Core'
+import TargetMode from '@shared/enums/TargetMode'
 import Card from '@shared/models/Card'
-import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import { GenericActionMessageType, SystemMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
-import TargetMode from '@shared/enums/TargetMode'
-import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
+
+import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
+import Core from '@/Pixi/Core'
 
 export default {
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {

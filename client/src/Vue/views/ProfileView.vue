@@ -8,8 +8,9 @@
 </template>
 
 <script lang="ts">
-import TheUserProfile from '@/Vue/components/profile/TheUserProfile.vue'
 import { defineComponent } from 'vue'
+
+import TheUserProfile from '@/Vue/components/profile/TheUserProfile.vue'
 
 export default defineComponent({
 	components: {

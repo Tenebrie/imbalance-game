@@ -1,17 +1,18 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
-import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
+import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectUnitDamage } from '@src/utils/LeaderStats'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
 import ServerDamageInstance from '@src/game/models/ServerDamageSource'
 import Keywords from '@src/utils/Keywords'
-import GameEventType from '@shared/enums/GameEventType'
-import CardLocation from '@shared/enums/CardLocation'
+import { asDirectUnitDamage } from '@src/utils/LeaderStats'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitWolfpack extends ServerCard {
 	private static readonly baseDamage = asDirectUnitDamage(6)

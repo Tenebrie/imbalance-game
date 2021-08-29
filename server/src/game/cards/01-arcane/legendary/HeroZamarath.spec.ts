@@ -1,13 +1,13 @@
-import ServerGame from '../../../models/ServerGame'
+import CardFeature from '../../../../../../shared/src/enums/CardFeature'
+import CardLocation from '../../../../../../shared/src/enums/CardLocation'
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
-import HeroZamarath from './HeroZamarath'
-import CardLocation from '../../../../../../shared/src/enums/CardLocation'
-import CardFeature from '../../../../../../shared/src/enums/CardFeature'
-import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
 import TestingSpellHeavyStrike from '../../11-testing/TestingSpellHeavyStrike'
+import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
+import HeroZamarath from './HeroZamarath'
 
 describe('HeroZamarath', () => {
 	let game: ServerGame

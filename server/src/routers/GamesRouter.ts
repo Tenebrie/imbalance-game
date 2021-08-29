@@ -1,11 +1,12 @@
-import express, { Request, Response } from 'express'
-import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
-import ServerGame from '../game/models/ServerGame'
-import GameLibrary from '../game/libraries/GameLibrary'
 import GameMessage from '@shared/models/network/GameMessage'
-import { getPlayerFromAuthenticatedRequest } from '../utils/Utils'
 import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
+import express, { Request, Response } from 'express'
+
+import GameLibrary from '../game/libraries/GameLibrary'
+import ServerGame from '../game/models/ServerGame'
+import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
+import { getPlayerFromAuthenticatedRequest } from '../utils/Utils'
 
 const router = express.Router()
 

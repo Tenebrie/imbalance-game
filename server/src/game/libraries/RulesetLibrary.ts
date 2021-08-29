@@ -1,9 +1,10 @@
-import { colorize, getClassFromConstructor } from '@src/utils/Utils'
-import AsciiColor from '../../enums/AsciiColor'
-import { loadModules } from './ModuleLoader'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
 import CardLibraryPlaceholderGame from '@src/game/utils/CardLibraryPlaceholderGame'
+import { colorize, getClassFromConstructor } from '@src/utils/Utils'
+
+import AsciiColor from '../../enums/AsciiColor'
+import { loadModules } from './ModuleLoader'
 
 export interface RulesetConstructor extends Function {
 	new (game: ServerGame): ServerRuleset

@@ -1,12 +1,13 @@
-import ServerCard from './ServerCard'
 import CardDeck from '@shared/models/CardDeck'
-import ServerGame from './ServerGame'
-import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
-import ServerOwnedCard from './ServerOwnedCard'
-import ServerPlayerInGame from '../players/ServerPlayerInGame'
-import ServerTemplateCardDeck from './ServerTemplateCardDeck'
-import { getClassFromConstructor, shuffle } from '@src/utils/Utils'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
+import { getClassFromConstructor, shuffle } from '@src/utils/Utils'
+
+import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
+import ServerPlayerInGame from '../players/ServerPlayerInGame'
+import ServerCard from './ServerCard'
+import ServerGame from './ServerGame'
+import ServerOwnedCard from './ServerOwnedCard'
+import ServerTemplateCardDeck from './ServerTemplateCardDeck'
 
 export default class ServerDeck implements CardDeck {
 	game: ServerGame

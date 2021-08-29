@@ -1,6 +1,7 @@
+import AIBehaviour from '@shared/enums/AIBehaviour'
+
 import ServerEditorDeck from '../ServerEditorDeck'
 import { RulesetDeckTemplate } from './ServerRuleset'
-import AIBehaviour from '@shared/enums/AIBehaviour'
 
 export class RulesetAI {
 	public readonly deck: ServerEditorDeck

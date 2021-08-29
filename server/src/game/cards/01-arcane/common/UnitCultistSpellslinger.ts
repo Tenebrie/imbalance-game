@@ -1,17 +1,18 @@
-import CardType from '@shared/enums/CardType'
+import BuffDuration from '@shared/enums/BuffDuration'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import TargetType from '@shared/enums/TargetType'
-import CardTribe from '@shared/enums/CardTribe'
-import GameEventType from '@shared/enums/GameEventType'
 import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
+
+import BuffSpellDiscount from '../../../buffs/BuffSpellDiscount'
+import CardLibrary from '../../../libraries/CardLibrary'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
-import BuffSpellDiscount from '../../../buffs/BuffSpellDiscount'
-import CardLibrary from '../../../libraries/CardLibrary'
-import BuffDuration from '@shared/enums/BuffDuration'
 
 interface SacrificedUnit {
 	power: number

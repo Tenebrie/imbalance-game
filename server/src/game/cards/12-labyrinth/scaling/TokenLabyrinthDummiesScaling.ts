@@ -1,11 +1,11 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import BuffHiddenStrength from '@src/game/buffs/BuffHiddenStrength'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
-import BuffHiddenStrength from '@src/game/buffs/BuffHiddenStrength'
 
 export default class TokenLabyrinthDummiesScaling extends ServerCard {
 	constructor(game: ServerGame) {

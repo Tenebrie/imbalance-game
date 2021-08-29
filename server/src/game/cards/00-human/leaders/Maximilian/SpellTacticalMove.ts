@@ -1,17 +1,18 @@
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import MoveDirection from '@shared/enums/MoveDirection'
+import TargetType from '@shared/enums/TargetType'
+import Keywords from '@src/utils/Keywords'
+import { asDirectHealingPotency, asDirectSpellDamage } from '@src/utils/LeaderStats'
+
+import ServerBoardRow from '../../../../models/ServerBoardRow'
 import ServerCard from '../../../../models/ServerCard'
+import ServerDamageInstance from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
-import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
-import CardFeature from '@shared/enums/CardFeature'
-import CardFaction from '@shared/enums/CardFaction'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectHealingPotency, asDirectSpellDamage } from '@src/utils/LeaderStats'
-import ServerBoardRow from '../../../../models/ServerBoardRow'
-import MoveDirection from '@shared/enums/MoveDirection'
-import ServerDamageInstance from '../../../../models/ServerDamageSource'
-import Keywords from '@src/utils/Keywords'
 
 export default class SpellTacticalMove extends ServerCard {
 	damage = asDirectSpellDamage(2)

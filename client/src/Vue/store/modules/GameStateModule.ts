@@ -1,13 +1,15 @@
-import ClientGameStatus from '../../../Pixi/enums/ClientGameStatus'
-import { defineModule } from 'direct-vuex'
-import Player from '@shared/models/Player'
-import { moduleActionContext, rootActionContext } from '../index'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import Core from '@/Pixi/Core'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import TargetMode from '@shared/enums/TargetMode'
-import Ruleset from '@shared/models/ruleset/Ruleset'
 import GameMessage from '@shared/models/network/GameMessage'
+import Player from '@shared/models/Player'
+import Ruleset from '@shared/models/ruleset/Ruleset'
+import { defineModule } from 'direct-vuex'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
+
+import ClientGameStatus from '../../../Pixi/enums/ClientGameStatus'
+import { moduleActionContext, rootActionContext } from '../index'
 
 const gameStateModule = defineModule({
 	namespaced: true,

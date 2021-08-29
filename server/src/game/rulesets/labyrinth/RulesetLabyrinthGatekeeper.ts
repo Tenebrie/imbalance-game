@@ -1,10 +1,10 @@
-import BaseRulesetLabyrinthEncounter from '@src/game/rulesets/labyrinth/service/BaseRulesetLabyrinthEncounter'
 import GameEventType from '@shared/enums/GameEventType'
-import ServerGame from '@src/game/models/ServerGame'
-import HeroLabyrinthGatekeeper from '@src/game/cards/12-labyrinth/enemies/HeroLabyrinthGatekeeper'
+import { LabyrinthProgressionRunState } from '@shared/models/progression/LabyrinthProgressionState'
 import UnitLabyrinthLostHound from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostHound'
 import UnitLabyrinthLostShieldbearer from '@src/game/cards/12-labyrinth/cards/UnitLabyrinthLostShieldbearer'
-import { LabyrinthProgressionRunState } from '@shared/models/progression/LabyrinthProgressionState'
+import HeroLabyrinthGatekeeper from '@src/game/cards/12-labyrinth/enemies/HeroLabyrinthGatekeeper'
+import ServerGame from '@src/game/models/ServerGame'
+import BaseRulesetLabyrinthEncounter from '@src/game/rulesets/labyrinth/service/BaseRulesetLabyrinthEncounter'
 
 export default class RulesetLabyrinthGatekeeper extends BaseRulesetLabyrinthEncounter {
 	constructor(game: ServerGame) {

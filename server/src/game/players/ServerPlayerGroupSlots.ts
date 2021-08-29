@@ -1,11 +1,11 @@
 import { RulesetSlotGroup } from '@shared/models/ruleset/RulesetSlots'
-import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import {
 	ServerRulesetSlotAIPlayer,
 	ServerRulesetSlotGroup,
 	ServerRulesetSlotHumanPlayer,
 	ServerRulesetSlotPlayer,
 } from '@src/game/models/rulesets/ServerRulesetSlots'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 export default class ServerPlayerGroupSlots implements RulesetSlotGroup {
 	group: ServerPlayerGroup

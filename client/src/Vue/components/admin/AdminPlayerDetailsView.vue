@@ -53,18 +53,19 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
-import { computed, defineComponent, onMounted, ref, watch } from 'vue'
-import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
-import AdminGamesTables from '@/Vue/components/admin/AdminGamesTables.vue'
-import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
-import { useAdminRouteParams } from '@/Vue/components/editor/AdminRouteParams'
 import AccessLevel from '@shared/enums/AccessLevel'
+import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
 import Player from '@shared/models/Player'
-import store from '@/Vue/store'
-import Notifications from '@/utils/Notifications'
-import moment from 'moment'
+import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import { enumToArray } from '@shared/Utils'
+import axios from 'axios'
+import moment from 'moment'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
+
+import Notifications from '@/utils/Notifications'
+import AdminGamesTables from '@/Vue/components/admin/AdminGamesTables.vue'
+import { useAdminRouteParams } from '@/Vue/components/editor/AdminRouteParams'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: { AdminGamesTables },

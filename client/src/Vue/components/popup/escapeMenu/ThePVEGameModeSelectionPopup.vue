@@ -14,12 +14,14 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import axios from 'axios'
 import GameMessage from '@shared/models/network/GameMessage'
-import { computed, defineComponent } from 'vue'
-import TheDeckSelectionPopup from './TheDeckSelectionPopup.vue'
 import RulesetRefMessage from '@shared/models/ruleset/messages/RulesetRefMessage'
+import axios from 'axios'
+import { computed, defineComponent } from 'vue'
+
+import store from '@/Vue/store'
+
+import TheDeckSelectionPopup from './TheDeckSelectionPopup.vue'
 
 export default defineComponent({
 	setup() {

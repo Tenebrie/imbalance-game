@@ -1,17 +1,18 @@
-import GameEventType from '@shared/enums/GameEventType'
-import ServerPlayerInGame from '../../players/ServerPlayerInGame'
-import ServerCard from '../ServerCard'
-import ServerUnit from '../ServerUnit'
-import ServerDamageInstance from '../ServerDamageSource'
 import DamageSource from '@shared/enums/DamageSource'
-import ServerBoardRow from '../ServerBoardRow'
-import ServerBuff, { ServerCardBuff, ServerRowBuff } from '../buffs/ServerBuff'
+import GameEventType from '@shared/enums/GameEventType'
 import MoveDirection from '@shared/enums/MoveDirection'
-import TargetType from '@shared/enums/TargetType'
-import { ServerCardTargetCard, ServerCardTargetPosition, ServerCardTargetRow } from '../ServerCardTarget'
 import TargetMode from '@shared/enums/TargetMode'
-import ServerGame from '../ServerGame'
+import TargetType from '@shared/enums/TargetType'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+
+import ServerPlayerInGame from '../../players/ServerPlayerInGame'
+import ServerBuff, { ServerCardBuff, ServerRowBuff } from '../buffs/ServerBuff'
+import ServerBoardRow from '../ServerBoardRow'
+import ServerCard from '../ServerCard'
+import { ServerCardTargetCard, ServerCardTargetPosition, ServerCardTargetRow } from '../ServerCardTarget'
+import ServerDamageInstance from '../ServerDamageSource'
+import ServerGame from '../ServerGame'
+import ServerUnit from '../ServerUnit'
 
 export default {
 	gameCreated: (args: GameSetupEventArgs): GameEvent => ({

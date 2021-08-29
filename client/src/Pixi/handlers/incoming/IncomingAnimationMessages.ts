@@ -1,12 +1,13 @@
-import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
-import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
-import AnimationMessage from '@shared/models/network/AnimationMessage'
-import { QueuedMessageSystemData } from '@/Pixi/models/QueuedMessage'
-import AnimationHandlers from '@/Pixi/handlers/AnimationHandlers'
-import Core from '@/Pixi/Core'
-import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
 import AnimationDuration from '@shared/enums/AnimationDuration'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import AnimationMessage from '@shared/models/network/AnimationMessage'
+import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
+import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+
+import Core from '@/Pixi/Core'
+import AnimationHandlers from '@/Pixi/handlers/AnimationHandlers'
+import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
+import { QueuedMessageSystemData } from '@/Pixi/models/QueuedMessage'
 import { getAnimDurationMod } from '@/utils/Utils'
 
 const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMessageHandlerFunction } = {

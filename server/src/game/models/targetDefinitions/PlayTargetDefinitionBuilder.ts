@@ -1,8 +1,9 @@
-import { v4 as getRandomId } from 'uuid'
-import ServerGame from '../ServerGame'
-import PlayTargetDefinition, { PlayTargetValidatorArguments } from '@src/game/models/targetDefinitions/PlayTargetDefinition'
-import CardType from '@shared/enums/CardType'
 import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
+import PlayTargetDefinition, { PlayTargetValidatorArguments } from '@src/game/models/targetDefinitions/PlayTargetDefinition'
+import { v4 as getRandomId } from 'uuid'
+
+import ServerGame from '../ServerGame'
 
 export default class PlayTargetDefinitionBuilder {
 	private readonly id: string

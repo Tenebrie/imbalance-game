@@ -1,12 +1,13 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+
+import CardLibrary from '../../../libraries/CardLibrary'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardFaction from '@shared/enums/CardFaction'
-import TargetType from '@shared/enums/TargetType'
-import CardFeature from '@shared/enums/CardFeature'
-import CardLibrary from '../../../libraries/CardLibrary'
-import ExpansionSet from '@shared/enums/ExpansionSet'
 
 export default class HeroMetrearte extends ServerCard {
 	constructor(game: ServerGame) {

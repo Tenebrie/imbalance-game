@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ObjectTrail from '@/Pixi/vfx/ObjectTrail'
 

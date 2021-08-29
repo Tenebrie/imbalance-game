@@ -1,7 +1,7 @@
-import ServerGame from '@src/game/models/ServerGame'
 import CardTribe from '@shared/enums/CardTribe'
-import { BaseLabyrinthPassiveItem } from '@src/game/cards/12-labyrinth/items/ItemLabyrinthBase'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import { BaseLabyrinthPassiveItem } from '@src/game/cards/12-labyrinth/items/ItemLabyrinthBase'
+import ServerGame from '@src/game/models/ServerGame'
 
 export class LabyrinthItemWarBanner extends BaseLabyrinthPassiveItem {
 	public static readonly BONUS_HAND_SIZE = 1

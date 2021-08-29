@@ -1,10 +1,11 @@
+import { CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas'
 import fs from 'fs'
 import path from 'path'
-import { CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas'
-import CardLibrary from '../game/libraries/CardLibrary'
-import createSeededRandom from 'seedrandom'
 import rgb2hex from 'rgb-hex'
+import createSeededRandom from 'seedrandom'
 import sharp from 'sharp'
+
+import CardLibrary from '../game/libraries/CardLibrary'
 
 enum ImageMode {
 	SINGLE_PATH,

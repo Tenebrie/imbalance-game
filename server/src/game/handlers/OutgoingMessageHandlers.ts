@@ -5,8 +5,8 @@ import OutgoingGameLogUpdateMessages from './outgoing/OutgoingGameLogUpdateMessa
 import OutgoingGameSyncMessages from './outgoing/OutgoingGameSyncMessages'
 import OutgoingPlayerUpdateMessages from './outgoing/OutgoingPlayerUpdateMessages'
 import OutgoingResolveStackUpdateMessages from './outgoing/OutgoingResolveStackMessages'
-import OutgoingTargetingMessages from './outgoing/OutgoingTargetingMessages'
 import OutgoingSystemMessages from './outgoing/OutgoingSystemMessages'
+import OutgoingTargetingMessages from './outgoing/OutgoingTargetingMessages'
 
 export default {
 	...OutgoingAnimationMessages,

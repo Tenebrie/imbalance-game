@@ -1,8 +1,9 @@
-import { v4 as uuid } from 'uuid'
+import { enumToArray, forEachInEnum } from '@shared/Utils'
 import StoryCharacter from '@src/../../shared/src/enums/StoryCharacter'
 import { colorizeClass, colorizeConsoleText, colorizeId, snakeToCamelCase } from '@src/utils/Utils'
+import { v4 as uuid } from 'uuid'
+
 import { ServerGameNovelCreator } from './ServerGameNovel'
-import { enumToArray, forEachInEnum } from '@shared/Utils'
 
 type TagHandle = {
 	name: string

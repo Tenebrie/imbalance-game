@@ -1,18 +1,19 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
-import TargetType from '@shared/enums/TargetType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
+import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
+import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
+
+import BuffCanAttack from '../../../buffs/BuffCanAttack'
+import ServerCard from '../../../models/ServerCard'
 import { ServerCardTargetUnit } from '../../../models/ServerCardTarget'
 import ServerDamageInstance from '../../../models/ServerDamageSource'
-import CardFeature from '@shared/enums/CardFeature'
-import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
-import BuffCanAttack from '../../../buffs/BuffCanAttack'
-import CardTribe from '@shared/enums/CardTribe'
+import ServerGame from '../../../models/ServerGame'
 
 export default class UnitArcheryTower extends ServerCard {
 	damage = asRecurringUnitDamage(3)

@@ -1,14 +1,15 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../../models/ServerCard'
-import ServerGame from '../../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import Keywords from '@src/utils/Keywords'
+import TargetType from '@shared/enums/TargetType'
+import CardFeature from '@src/../../shared/src/enums/CardFeature'
 import CardTribe from '@src/../../shared/src/enums/CardTribe'
 import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisRound'
-import CardFeature from '@src/../../shared/src/enums/CardFeature'
+import Keywords from '@src/utils/Keywords'
+
+import ServerCard from '../../../../models/ServerCard'
+import ServerGame from '../../../../models/ServerGame'
 
 export default class SpellRustedWand extends ServerCard {
 	dispelPower = 3

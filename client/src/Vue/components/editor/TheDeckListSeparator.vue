@@ -7,10 +7,11 @@
 </template>
 
 <script lang="ts">
-import Localization from '@/Pixi/Localization'
 import CardFaction from '@shared/enums/CardFaction'
 import { computed, defineComponent } from 'vue'
 import { PropType } from 'vue'
+
+import Localization from '@/Pixi/Localization'
 
 export default defineComponent({
 	props: {

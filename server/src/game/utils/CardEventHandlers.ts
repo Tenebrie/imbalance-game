@@ -1,7 +1,8 @@
-import ServerGame from '@src/game/models/ServerGame'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
-import { EventSubscriber } from '../models/ServerGameEvents'
+import ServerGame from '@src/game/models/ServerGame'
+
 import EventContext from '../models/EventContext'
+import { EventSubscriber } from '../models/ServerGameEvents'
 
 export function cardRequire(game: ServerGame, subscriber: EventSubscriber, func: () => boolean): boolean {
 	EventContext.setExecutingEventSubscriber(subscriber)

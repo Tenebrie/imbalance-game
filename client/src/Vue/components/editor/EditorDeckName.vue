@@ -6,9 +6,10 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import { defineComponent } from 'vue'
+
+import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	computed: {

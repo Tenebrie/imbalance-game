@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
+
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
-import CardFaction from '@shared/enums/CardFaction'
-import SpellShadowSpark from './SpellShadowSpark'
-import SpellNightmareDrain from './SpellNightmareDrain'
 import SpellCrystalBarrage from './SpellCrystalBarrage'
+import SpellNightmareDrain from './SpellNightmareDrain'
 import SpellShadowArmy from './SpellShadowArmy'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
-import GameEventType from '@shared/enums/GameEventType'
+import SpellShadowSpark from './SpellShadowSpark'
 
 export default class LeaderNighterie extends ServerCard {
 	manaPerRound = 10

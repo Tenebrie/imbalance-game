@@ -1,9 +1,9 @@
-import TestGameTemplates from './TestGameTemplates'
+import TestingSpellNoEffect from '../game/cards/11-testing/TestingSpellNoEffect'
 import TestingUnitNoEffect from '../game/cards/11-testing/TestingUnitNoEffect'
 import ServerGame from '../game/models/ServerGame'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
+import TestGameTemplates from './TestGameTemplates'
 import { getOwnerGroup, getOwnerPlayer } from './Utils'
-import TestingSpellNoEffect from '../game/cards/11-testing/TestingSpellNoEffect'
 
 describe('Utils', () => {
 	describe('getOwnerPlayer', () => {

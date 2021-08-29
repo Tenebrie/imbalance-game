@@ -1,13 +1,14 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+
+import Keywords from '../../../../utils/Keywords'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardFaction from '@shared/enums/CardFaction'
-import TargetType from '@shared/enums/TargetType'
-import CardTribe from '@shared/enums/CardTribe'
-import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import Keywords from '../../../../utils/Keywords'
 
 export default class HeroArgenta extends ServerCard {
 	constructor(game: ServerGame) {

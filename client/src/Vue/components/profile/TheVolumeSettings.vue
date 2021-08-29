@@ -39,9 +39,10 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
 import { computed, defineComponent, watch } from 'vue'
+
 import Slider from '@/Vue/components/utils/Slider.vue'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: { Slider },

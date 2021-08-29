@@ -1,9 +1,10 @@
-import * as PIXI from 'pixi.js'
 import BuffMessage from '@shared/models/network/buffs/BuffMessage'
-import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
-import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import ClientBuffContainer from '@/Pixi/models/buffs/ClientBuffContainer'
+import * as PIXI from 'pixi.js'
+
 import RenderedCard from '@/Pixi/cards/RenderedCard'
+import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
+import ClientBuffContainer from '@/Pixi/models/buffs/ClientBuffContainer'
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
 
 export default class RenderedBuff extends ClientBuff {
 	container: PIXI.Container

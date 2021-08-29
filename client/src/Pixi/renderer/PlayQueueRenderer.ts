@@ -1,8 +1,8 @@
+import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
-import { CARD_ASPECT_RATIO, getScreenHeight, RESOLVING_CARD_ZINDEX } from '@/Pixi/renderer/RendererUtils'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
+import { CARD_ASPECT_RATIO, getScreenHeight, RESOLVING_CARD_ZINDEX } from '@/Pixi/renderer/RendererUtils'
 
 class PlayQueueRenderer {
 	public tick(): void {

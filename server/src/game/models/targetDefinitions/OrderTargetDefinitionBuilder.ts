@@ -1,10 +1,10 @@
-import { v4 as getRandomId } from 'uuid'
 import TargetType from '@shared/enums/TargetType'
-import TargetValidatorArguments from '@src/types/TargetValidatorArguments'
-import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
 import ServerCard from '@src/game/models/ServerCard'
 import { ServerCardTargetCard, ServerCardTargetRow } from '@src/game/models/ServerCardTarget'
 import OrderTargetDefinition from '@src/game/models/targetDefinitions/OrderTargetDefinition'
+import TargetValidatorArguments from '@src/types/TargetValidatorArguments'
+import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
+import { v4 as getRandomId } from 'uuid'
 
 export default class OrderTargetDefinitionBuilder<EventArgs extends TargetValidatorArguments> {
 	private readonly id: string

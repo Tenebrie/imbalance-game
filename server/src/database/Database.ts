@@ -1,9 +1,10 @@
-import pgMigrate from 'node-pg-migrate'
-import { Client, QueryResult } from 'pg'
-import { colorize } from '../utils/Utils'
-import AsciiColor from '../enums/AsciiColor'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import PlayerDatabase from '@src/database/PlayerDatabase'
+import pgMigrate from 'node-pg-migrate'
+import { Client, QueryResult } from 'pg'
+
+import AsciiColor from '../enums/AsciiColor'
+import { colorize } from '../utils/Utils'
 
 class Database {
 	private client: Client | undefined

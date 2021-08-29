@@ -1,10 +1,11 @@
-import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
-import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
-import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
-import Core from '@/Pixi/Core'
-import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
-import CardStatsMessage from '@shared/models/network/cardStats/CardStatsMessage'
 import OpenCardBuffMessage from '@shared/models/network/buffs/OpenCardBuffMessage'
+import CardStatsMessage from '@shared/models/network/cardStats/CardStatsMessage'
+import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
+import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+
+import Core from '@/Pixi/Core'
+import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
+import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 
 const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMessageHandlerFunction } = {
 	[CardUpdateMessageType.STATS]: (data: CardStatsMessage) => {

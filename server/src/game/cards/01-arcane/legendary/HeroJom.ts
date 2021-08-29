@@ -1,17 +1,18 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import CardLocation from '@shared/enums/CardLocation'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+
+import Keywords from '../../../../utils/Keywords'
+import CardLibrary from '../../../libraries/CardLibrary'
+import ServerAnimation from '../../../models/ServerAnimation'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import CardFaction from '@shared/enums/CardFaction'
-import CardLocation from '@shared/enums/CardLocation'
-import GameEventType from '@shared/enums/GameEventType'
-import CardFeature from '@shared/enums/CardFeature'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import UnitVoidPortal from '../tokens/UnitVoidPortal'
-import ServerAnimation from '../../../models/ServerAnimation'
 import UnitAbyssPortal from '../tokens/UnitAbyssPortal'
-import CardLibrary from '../../../libraries/CardLibrary'
-import Keywords from '../../../../utils/Keywords'
+import UnitVoidPortal from '../tokens/UnitVoidPortal'
 
 export default class HeroJom extends ServerCard {
 	portalsNeeded = 3

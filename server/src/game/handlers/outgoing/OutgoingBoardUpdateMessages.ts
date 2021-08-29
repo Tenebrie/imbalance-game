@@ -1,11 +1,12 @@
-import ServerUnit from '../../models/ServerUnit'
-import UnitMessage from '@shared/models/network/UnitMessage'
 import BoardRowMessage from '@shared/models/network/BoardRowMessage'
+import OpenRowBuffMessage from '@shared/models/network/buffs/OpenRowBuffMessage'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import { BoardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
-import ServerBoardRow from '../../models/ServerBoardRow'
-import OpenRowBuffMessage from '@shared/models/network/buffs/OpenRowBuffMessage'
+import UnitMessage from '@shared/models/network/UnitMessage'
 import { ServerRowBuff } from '@src/game/models/buffs/ServerBuff'
+
+import ServerBoardRow from '../../models/ServerBoardRow'
+import ServerUnit from '../../models/ServerUnit'
 
 export default {
 	notifyAboutUnitCreated(unit: ServerUnit): void {

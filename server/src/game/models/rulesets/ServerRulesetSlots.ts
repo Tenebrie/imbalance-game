@@ -1,7 +1,7 @@
-import RulesetSlots from '@shared/models/ruleset/RulesetSlots'
 import AIBehaviour from '@shared/enums/AIBehaviour'
-import { RulesetDeckTemplate } from '@src/game/models/rulesets/ServerRuleset'
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
+import RulesetSlots from '@shared/models/ruleset/RulesetSlots'
+import { RulesetDeckTemplate } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
 
 type ServerRulesetSlotRequire = (game: ServerGame) => boolean

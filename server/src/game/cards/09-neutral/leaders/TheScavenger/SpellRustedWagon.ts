@@ -1,15 +1,16 @@
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+import CardTribe from '@src/../../shared/src/enums/CardTribe'
+import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisRound'
+import Keywords from '@src/utils/Keywords'
+
+import ServerBoardRow from '../../../../models/ServerBoardRow'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
-import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
-import CardFaction from '@shared/enums/CardFaction'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import ServerBoardRow from '../../../../models/ServerBoardRow'
-import Keywords from '@src/utils/Keywords'
-import CardTribe from '@src/../../shared/src/enums/CardTribe'
-import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisRound'
 
 export default class SpellRustedWagon extends ServerCard {
 	moveDistance = 1

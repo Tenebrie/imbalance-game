@@ -1,13 +1,14 @@
-import express, { Request, Response } from 'express'
-import PlayerDatabase from '../database/PlayerDatabase'
+import Language from '@shared/enums/Language'
+import RenderQuality from '@shared/enums/RenderQuality'
 import UserProfileMessage from '@shared/models/network/UserProfileMessage'
+import { enumToArray } from '@shared/Utils'
+import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
+import express, { Request, Response } from 'express'
+
+import PlayerDatabase from '../database/PlayerDatabase'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import AsyncHandler from '../utils/AsyncHandler'
-import RenderQuality from '@shared/enums/RenderQuality'
-import Language from '@shared/enums/Language'
 import { getPlayerFromAuthenticatedRequest, registerFormValidators } from '../utils/Utils'
-import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
-import { enumToArray } from '@shared/Utils'
 
 const router = express.Router()
 

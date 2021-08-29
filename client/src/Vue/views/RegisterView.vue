@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts">
-import TheRegisterForm from '../components/login/TheRegisterForm.vue'
 import { defineComponent } from 'vue'
+
+import TheRegisterForm from '../components/login/TheRegisterForm.vue'
 
 export default defineComponent({
 	components: { TheRegisterForm },

@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
-import TargetType from '@shared/enums/TargetType'
-import ServerUnit from '../../../models/ServerUnit'
 import CardColor from '@shared/enums/CardColor'
-import CardTribe from '@shared/enums/CardTribe'
 import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import Keywords from '@src/utils/Keywords'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import TargetType from '@shared/enums/TargetType'
+import Keywords from '@src/utils/Keywords'
+
+import ServerCard from '../../../models/ServerCard'
+import ServerGame from '../../../models/ServerGame'
+import ServerUnit from '../../../models/ServerUnit'
 
 export default class UnitYoungSquire extends ServerCard {
 	movingUnit: ServerUnit | null = null

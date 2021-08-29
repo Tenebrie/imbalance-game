@@ -1,15 +1,16 @@
-import CardType from '@shared/enums/CardType'
-import ServerCard from '../../../../models/ServerCard'
-import ServerGame from '../../../../models/ServerGame'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import Keywords from '@src/utils/Keywords'
-import CardTribe from '@src/../../shared/src/enums/CardTribe'
-import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisRound'
 import CardFeature from '@src/../../shared/src/enums/CardFeature'
-import UnitStrayDog from '../../tokens/UnitStrayDog'
+import CardTribe from '@src/../../shared/src/enums/CardTribe'
 import GameEventType from '@src/../../shared/src/enums/GameEventType'
+import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisRound'
+import Keywords from '@src/utils/Keywords'
+
+import ServerCard from '../../../../models/ServerCard'
+import ServerGame from '../../../../models/ServerGame'
+import UnitStrayDog from '../../tokens/UnitStrayDog'
 
 export default class SpellRustedWhistle extends ServerCard {
 	constructor(game: ServerGame) {

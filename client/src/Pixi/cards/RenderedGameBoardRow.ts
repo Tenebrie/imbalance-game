@@ -1,14 +1,15 @@
-import Core from '@/Pixi/Core'
-import * as PIXI from 'pixi.js'
 import BoardRow from '@shared/models/BoardRow'
-import RenderedUnit from '@/Pixi/cards/RenderedUnit'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import ClientBuffContainer from '@/Pixi/models/buffs/ClientBuffContainer'
-import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
-import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 import gsap from 'gsap'
+import * as PIXI from 'pixi.js'
+
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import RenderedUnit from '@/Pixi/cards/RenderedUnit'
+import Core from '@/Pixi/Core'
 import BoardRowTint from '@/Pixi/enums/BoardRowTint'
+import ClientBuffContainer from '@/Pixi/models/buffs/ClientBuffContainer'
+import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 
 export default class RenderedGameBoardRow implements BoardRow {
 	public readonly index: number

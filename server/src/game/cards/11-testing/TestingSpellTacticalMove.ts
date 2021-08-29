@@ -1,13 +1,14 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
+import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import ServerCard from '../../models/ServerCard'
-import ServerUnit from '../../models/ServerUnit'
-import ServerGame from '../../models/ServerGame'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
+
 import ServerBoardRow from '../../models/ServerBoardRow'
+import ServerCard from '../../models/ServerCard'
+import ServerGame from '../../models/ServerGame'
+import ServerUnit from '../../models/ServerUnit'
 
 export default class TestingSpellTacticalMove extends ServerCard {
 	movingUnit: ServerUnit | null = null

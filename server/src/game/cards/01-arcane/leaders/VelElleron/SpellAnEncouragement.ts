@@ -1,16 +1,17 @@
+import BuffDuration from '@shared/enums/BuffDuration'
+import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
+
+import { asDirectBuffPotency } from '../../../../../utils/LeaderStats'
+import BuffVelElleronEncouragement from '../../../../buffs/BuffVelElleronEncouragement'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
-import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
-import CardFeature from '@shared/enums/CardFeature'
-import CardFaction from '@shared/enums/CardFaction'
-import BuffVelElleronEncouragement from '../../../../buffs/BuffVelElleronEncouragement'
-import BuffDuration from '@shared/enums/BuffDuration'
-import GameEventType from '@shared/enums/GameEventType'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectBuffPotency } from '../../../../../utils/LeaderStats'
 
 export default class SpellAnEncouragement extends ServerCard {
 	public static bonusPower = asDirectBuffPotency(7)

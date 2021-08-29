@@ -6,6 +6,7 @@ module.exports = {
 	},
 	parser: '@typescript-eslint/parser',
 	extends: ['plugin:@typescript-eslint/recommended', 'prettier/@typescript-eslint', 'plugin:prettier/recommended'],
+	plugins: ['simple-import-sort'],
 	globals: {
 		Atomics: 'readonly',
 		SharedArrayBuffer: 'readonly',
@@ -31,5 +32,7 @@ module.exports = {
 		'@typescript-eslint/no-non-null-assertion': 'off',
 		'@typescript-eslint/ban-ts-ignore': 'off',
 		'@typescript-eslint/ban-ts-comment': 'off',
+		'simple-import-sort/imports': 'error',
+		'simple-import-sort/exports': 'error',
 	},
 }

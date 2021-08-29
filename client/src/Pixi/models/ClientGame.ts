@@ -1,14 +1,15 @@
-import Core from '@/Pixi/Core'
-import Card from '@shared/models/Card'
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import Buff from '@shared/models/Buff'
-import CardMessage from '@shared/models/network/card/CardMessage'
-import BuffMessage from '@shared/models/network/buffs/BuffMessage'
-import OwnedClientCard from '@/Pixi/cards/OwnedClientCard'
-import GameTurnPhase from '@shared/enums/GameTurnPhase'
-import store from '@/Vue/store'
 import CardLocation from '@shared/enums/CardLocation'
+import GameTurnPhase from '@shared/enums/GameTurnPhase'
+import Buff from '@shared/models/Buff'
+import Card from '@shared/models/Card'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
+import CardMessage from '@shared/models/network/card/CardMessage'
+
 import GroupOwnedClientCard from '@/Pixi/cards/GroupOwnedClientCard'
+import OwnedClientCard from '@/Pixi/cards/OwnedClientCard'
+import RenderedCard from '@/Pixi/cards/RenderedCard'
+import Core from '@/Pixi/Core'
+import store from '@/Vue/store'
 
 export default class ClientGame {
 	public get turnPhase(): GameTurnPhase {

@@ -1,11 +1,12 @@
-import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
-import CardFeature from '@shared/enums/CardFeature'
 import BuffAlignment from '@shared/enums/BuffAlignment'
-import GameHookType from '../models/events/GameHookType'
-import CardLocation from '@shared/enums/CardLocation'
-import MoveDirection from '@shared/enums/MoveDirection'
 import BuffFeature from '@shared/enums/BuffFeature'
+import CardFeature from '@shared/enums/CardFeature'
+import CardLocation from '@shared/enums/CardLocation'
 import DamageSource from '@shared/enums/DamageSource'
+import MoveDirection from '@shared/enums/MoveDirection'
+
+import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
+import GameHookType from '../models/events/GameHookType'
 
 export default class BuffProtector extends ServerCardBuff {
 	constructor(params: BuffConstructorParams) {

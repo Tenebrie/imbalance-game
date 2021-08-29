@@ -1,7 +1,8 @@
-import { defineModule } from 'direct-vuex'
-import { moduleActionContext } from '../index'
 import HiddenPlayerMessage from '@shared/models/network/player/HiddenPlayerMessage'
 import PlayersInLobbyMessage from '@shared/models/network/PlayersInLobbyMessage'
+import { defineModule } from 'direct-vuex'
+
+import { moduleActionContext } from '../index'
 
 const gameStateModule = defineModule({
 	namespaced: true,

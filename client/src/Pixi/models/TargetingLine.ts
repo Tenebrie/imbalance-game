@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+
 import Core from '@/Pixi/Core'
 
 export default class TargetingLine {

@@ -7,11 +7,12 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
-import Localization from '@/Pixi/Localization'
 import CardColor from '@shared/enums/CardColor'
-import { defineComponent } from 'vue'
 import { getMaxCardCountForColor } from '@shared/Utils'
+import { defineComponent } from 'vue'
+
+import Localization from '@/Pixi/Localization'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	props: {

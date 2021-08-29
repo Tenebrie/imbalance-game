@@ -1,12 +1,13 @@
-import express, { Response } from 'express'
-import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
-import ServerPlayer from '../game/players/ServerPlayer'
-import ServerEditorDeck from '../game/models/ServerEditorDeck'
 import EditorDeck from '@shared/models/EditorDeck'
+import express, { Response } from 'express'
+
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
+import SharedDeckDatabase from '../database/SharedDeckDatabase'
+import ServerEditorDeck from '../game/models/ServerEditorDeck'
+import ServerPlayer from '../game/players/ServerPlayer'
+import RequirePlayerTokenMiddleware from '../middleware/RequirePlayerTokenMiddleware'
 import AsyncHandler from '../utils/AsyncHandler'
 import DeckUtils from '../utils/DeckUtils'
-import SharedDeckDatabase from '../database/SharedDeckDatabase'
 import { createRandomEditorDeckId, generateShortId, validateEditorDeck } from '../utils/Utils'
 
 const router = express.Router()

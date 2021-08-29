@@ -1,14 +1,14 @@
-import CardType from '@shared/enums/CardType'
-import TargetType from '@shared/enums/TargetType'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import GameEventType from '@shared/enums/GameEventType'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 import CardFeature from '@shared/enums/CardFeature'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetType from '@shared/enums/TargetType'
 import ServerCard from '@src/game/models/ServerCard'
-import ServerGame from '@src/game/models/ServerGame'
 import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import ServerGame from '@src/game/models/ServerGame'
+import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 
 export default class UnitPrototypeScorpionCrew extends ServerCard {
 	targetDamage = asRecurringUnitDamage(5)

@@ -1,5 +1,6 @@
-import Database from './Database'
 import EditorDeck from '@shared/models/EditorDeck'
+
+import Database from './Database'
 
 export default {
 	async insertSharedDeck(id: string, deck: EditorDeck): Promise<boolean> {

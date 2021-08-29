@@ -1,13 +1,14 @@
-import CardType from '@shared/enums/CardType'
 import CardColor from '@shared/enums/CardColor'
-import TargetType from '@shared/enums/TargetType'
 import CardFaction from '@shared/enums/CardFaction'
+import CardType from '@shared/enums/CardType'
+import ExpansionSet from '@shared/enums/ExpansionSet'
+import TargetType from '@shared/enums/TargetType'
+import { asDirectSpellDamage } from '@src/utils/LeaderStats'
+
 import ServerCard from '../../../models/ServerCard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
-import ExpansionSet from '@shared/enums/ExpansionSet'
-import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 export default class SpellLabyrinthMagicArrow extends ServerCard {
 	damage = asDirectSpellDamage(6)

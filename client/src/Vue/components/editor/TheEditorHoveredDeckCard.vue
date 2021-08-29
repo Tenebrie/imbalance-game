@@ -5,11 +5,12 @@
 </template>
 
 <script lang="ts">
-import store from '@/Vue/store'
+import CardMessage from '@shared/models/network/card/CardMessage'
 import * as PIXI from 'pixi.js'
 import { computed, defineComponent, ref } from 'vue'
+
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
-import CardMessage from '@shared/models/network/card/CardMessage'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {

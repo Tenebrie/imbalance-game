@@ -1,20 +1,21 @@
 import 'source-map-support/register'
-import AsyncHandler from './utils/AsyncHandler'
-import path from 'path'
-import logger from 'morgan'
-import cookieParser from 'cookie-parser'
 import 'module-alias/register'
-import { cardImageGenerator } from './utils/CardImageGenerator'
 
+import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import CardLibrary from '@src/game/libraries/CardLibrary'
+import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
+import { printAllRoutes } from '@src/utils/RoutePrinter'
+import cookieParser from 'cookie-parser'
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
-import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
-import { wsLogger } from './utils/WebSocketLogger'
+import logger from 'morgan'
+import path from 'path'
+
 import Database from './database/Database'
-import { printAllRoutes } from '@src/utils/RoutePrinter'
-import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
-import CardLibrary from '@src/game/libraries/CardLibrary'
-import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
+import AsyncHandler from './utils/AsyncHandler'
+import { cardImageGenerator } from './utils/CardImageGenerator'
+import { wsLogger } from './utils/WebSocketLogger'
 
 const app = express()
 expressWs(app)

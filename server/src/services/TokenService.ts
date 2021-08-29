@@ -1,6 +1,7 @@
-import ServerPlayer from '../game/players/ServerPlayer'
 import jwt from 'jsonwebtoken'
+
 import { JwtTokenScope } from '../enums/JwtTokenScope'
+import ServerPlayer from '../game/players/ServerPlayer'
 
 const jwtSecret = process.env.JWT_KEY || 'jwtSecret'
 
