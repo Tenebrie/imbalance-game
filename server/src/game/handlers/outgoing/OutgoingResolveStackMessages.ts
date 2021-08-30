@@ -8,7 +8,7 @@ export default {
 	notifyAboutCardResolving(ownedCard: ServerOwnedCard): void {
 		const data = new OpenOwnedCardMessage(ownedCard)
 
-		ownedCard.owner.player.sendMessage({
+		ownedCard.owner.player.sendGameMessage({
 			type: ResolveStackMessageType.ADD,
 			data: data,
 			highPriority: true,
@@ -17,7 +17,7 @@ export default {
 		const opponentGroup = ownedCard.owner.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((playerInGame) =>
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: ResolveStackMessageType.ADD,
 					data: data,
 					highPriority: ownedCard.card.game.activePlayer === ownedCard.owner.opponent,
@@ -29,7 +29,7 @@ export default {
 	notifyAboutCardResolved(ownedCard: ServerOwnedCard): void {
 		const data = new CardRefMessage(ownedCard.card)
 
-		ownedCard.owner.player.sendMessage({
+		ownedCard.owner.player.sendGameMessage({
 			type: ResolveStackMessageType.REMOVE,
 			data: data,
 		})
@@ -37,7 +37,7 @@ export default {
 		const opponentGroup = ownedCard.owner.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((playerInGame) =>
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: ResolveStackMessageType.REMOVE,
 					data: data,
 				})

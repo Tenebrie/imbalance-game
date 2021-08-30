@@ -1,13 +1,14 @@
 import AccessLevel from '@shared/enums/AccessLevel'
+import { ServerToClientWebJson } from '@shared/models/network/messageHandlers/WebMessageTypes'
 import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
 import Player from '@shared/models/Player'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import * as ws from 'ws'
 
 import ServerGame from '../models/ServerGame'
-import PlayerWebSocket from './PlayerWebSocket'
 import ServerPlayerInGame from './ServerPlayerInGame'
 import ServerPlayerSpectator from './ServerPlayerSpectator'
+import { GameWebSocket, WebSocket } from './WebSocket'
 
 export default class ServerPlayer implements Player {
 	id: string
@@ -15,7 +16,9 @@ export default class ServerPlayer implements Player {
 	username: string
 	accessLevel: AccessLevel
 	isGuest: boolean
-	webSocket: PlayerWebSocket | null
+
+	globalWebSocket: WebSocket | null
+	gameWebSocket: GameWebSocket | null
 	spectators: ServerPlayerSpectator[]
 	public timestampUpdatedAt: Date = new Date()
 
@@ -25,41 +28,66 @@ export default class ServerPlayer implements Player {
 		this.username = username
 		this.accessLevel = accessLevel
 		this.isGuest = isGuest
-		this.webSocket = null
+		this.globalWebSocket = null
+		this.gameWebSocket = null
 		this.spectators = []
 	}
 
 	public get game(): ServerGame | null {
-		return this.webSocket?.game || null
+		return this.gameWebSocket?.game || null
 	}
 
 	public get playerInGame(): ServerPlayerInGame | null {
 		return this.game?.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === this) || null
 	}
 
-	registerConnection(ws: ws, game: ServerGame): void {
-		this.webSocket = PlayerWebSocket.newInstance(ws, game)
+	registerGlobalConnection(ws: ws): void {
+		this.globalWebSocket = new WebSocket(ws)
 	}
 
-	sendMessage(json: ServerToClientJson): void {
-		if (!this.webSocket) {
-			return
-		}
-		this.webSocket.send(json)
-		this.spectators.forEach((spectator) => spectator.player.sendMessage(json))
+	registerGameConnection(ws: ws, game: ServerGame): void {
+		this.gameWebSocket = new GameWebSocket(ws, game)
 	}
 
-	disconnect(): void {
-		if (!this.webSocket) {
+	sendGlobalMessage(json: ServerToClientWebJson): void {
+		if (!this.globalWebSocket) {
+			return
+		}
+		this.globalWebSocket.send(json)
+	}
+
+	sendGameMessage(json: ServerToClientJson): void {
+		if (!this.gameWebSocket) {
+			return
+		}
+		this.gameWebSocket.send(json)
+		this.spectators.forEach((spectator) => spectator.player.sendGameMessage(json))
+	}
+
+	disconnectGlobalSocket(): void {
+		if (!this.globalWebSocket) {
 			return
 		}
 
-		this.webSocket.close()
-		this.webSocket = null
+		this.globalWebSocket.close()
+		this.globalWebSocket = null
+	}
+
+	disconnectGameSocket(): void {
+		if (!this.gameWebSocket) {
+			return
+		}
+
+		this.gameWebSocket.close()
+		this.gameWebSocket = null
+	}
+
+	isOnline(): boolean {
+		return !!this.globalWebSocket
 	}
 
 	isInGame(): boolean {
-		return !!this.webSocket
+		return !!this.gameWebSocket
 	}
 
 	public spectate(game: ServerGame, player: ServerPlayer): ServerPlayerSpectator {

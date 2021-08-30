@@ -22,7 +22,7 @@ import ServerPlayerInGame from '../../players/ServerPlayerInGame'
 export default {
 	notifyAboutRoundWins: (playerGroup: ServerPlayerGroup): void => {
 		playerGroup.game.allPlayers.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.MORALE,
 				data: new PlayerGroupResourcesMessage(playerGroup),
 			})
@@ -30,7 +30,7 @@ export default {
 	},
 
 	notifyAboutManaChange: (playerInGame: ServerPlayerInGame, delta: number): void => {
-		playerInGame.player.sendMessage({
+		playerInGame.player.sendGameMessage({
 			type: PlayerUpdateMessageType.MANA,
 			data: new PlayerInGameManaMessage(playerInGame),
 			highPriority: delta < 0,
@@ -39,7 +39,7 @@ export default {
 		const opponentGroup = playerInGame.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
-				opponent.player.sendMessage({
+				opponent.player.sendGameMessage({
 					type: PlayerUpdateMessageType.MANA,
 					data: new PlayerInGameManaMessage(playerInGame),
 				})
@@ -48,7 +48,7 @@ export default {
 	},
 
 	notifyAboutCardsMulliganed: (playerToNotify: ServerPlayer, playerInGame: ServerPlayerInGame): void => {
-		playerToNotify.sendMessage({
+		playerToNotify.sendGameMessage({
 			type: PlayerUpdateMessageType.MULLIGANS,
 			data: new MulliganCountMessage(playerInGame.cardsMulliganed, playerInGame.game.maxMulligans),
 			highPriority: true,
@@ -56,7 +56,7 @@ export default {
 	},
 
 	notifyAboutCardAddedToUnitHand(playerInGame: ServerPlayerInGame, card: ServerCard): void {
-		playerInGame.player.sendMessage({
+		playerInGame.player.sendGameMessage({
 			type: PlayerUpdateMessageType.CARD_ADD_HAND_UNIT,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
@@ -64,7 +64,7 @@ export default {
 		const opponentGroup = playerInGame.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
-				opponent.player.sendMessage({
+				opponent.player.sendGameMessage({
 					type: PlayerUpdateMessageType.CARD_ADD_HAND_UNIT,
 					data: isCardPublic(card)
 						? new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
@@ -75,7 +75,7 @@ export default {
 	},
 
 	notifyAboutCardAddedToSpellHand(playerInGame: ServerPlayerInGame, card: ServerCard): void {
-		playerInGame.player.sendMessage({
+		playerInGame.player.sendGameMessage({
 			type: PlayerUpdateMessageType.CARD_ADD_HAND_SPELL,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
@@ -83,7 +83,7 @@ export default {
 		const opponentGroup = playerInGame.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
-				opponent.player.sendMessage({
+				opponent.player.sendGameMessage({
 					type: PlayerUpdateMessageType.CARD_ADD_HAND_SPELL,
 					data: isCardPublic(card)
 						? new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
@@ -94,7 +94,7 @@ export default {
 	},
 
 	notifyAboutCardAddedToUnitDeck(playerInGame: ServerPlayerInGame, card: ServerCard): void {
-		playerInGame.player.sendMessage({
+		playerInGame.player.sendGameMessage({
 			type: PlayerUpdateMessageType.CARD_ADD_DECK_UNIT,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
@@ -102,7 +102,7 @@ export default {
 		const opponentGroup = playerInGame.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
-				opponent.player.sendMessage({
+				opponent.player.sendGameMessage({
 					type: PlayerUpdateMessageType.CARD_ADD_DECK_UNIT,
 					data: isCardPublic(card)
 						? new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
@@ -113,7 +113,7 @@ export default {
 	},
 
 	notifyAboutCardAddedToSpellDeck(playerInGame: ServerPlayerInGame, card: ServerCard): void {
-		playerInGame.player.sendMessage({
+		playerInGame.player.sendGameMessage({
 			type: PlayerUpdateMessageType.CARD_ADD_DECK_SPELL,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
@@ -121,7 +121,7 @@ export default {
 		const opponentGroup = playerInGame.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
-				opponent.player.sendMessage({
+				opponent.player.sendGameMessage({
 					type: PlayerUpdateMessageType.CARD_ADD_DECK_SPELL,
 					data: isCardPublic(card)
 						? new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame))
@@ -132,7 +132,7 @@ export default {
 	},
 
 	notifyAboutCardAddedToUnitGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard): void {
-		playerInGame.player.sendMessage({
+		playerInGame.player.sendGameMessage({
 			type: PlayerUpdateMessageType.CARD_ADD_GRAVE_UNIT,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
@@ -140,7 +140,7 @@ export default {
 		const opponentGroup = playerInGame.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
-				opponent.player.sendMessage({
+				opponent.player.sendGameMessage({
 					type: PlayerUpdateMessageType.CARD_ADD_GRAVE_UNIT,
 					data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 				})
@@ -149,7 +149,7 @@ export default {
 	},
 
 	notifyAboutCardAddedToSpellGraveyard(playerInGame: ServerPlayerInGame, card: ServerCard): void {
-		playerInGame.player.sendMessage({
+		playerInGame.player.sendGameMessage({
 			type: PlayerUpdateMessageType.CARD_ADD_GRAVE_SPELL,
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
@@ -157,7 +157,7 @@ export default {
 		const opponentGroup = playerInGame.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
-				opponent.player.sendMessage({
+				opponent.player.sendGameMessage({
 					type: PlayerUpdateMessageType.CARD_ADD_GRAVE_SPELL,
 					data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 				})
@@ -168,7 +168,7 @@ export default {
 	notifyAboutCardInHandDestroyed(ownedCard: ServerOwnedCard): void {
 		const owner = ownedCard.owner.player
 
-		owner.sendMessage({
+		owner.sendGameMessage({
 			type: PlayerUpdateMessageType.CARD_DESTROY_IN_HAND,
 			data: new OwnedCardRefMessage(ownedCard),
 		})
@@ -176,7 +176,7 @@ export default {
 		const opponentGroup = ownedCard.owner.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
-				opponent.player.sendMessage({
+				opponent.player.sendGameMessage({
 					type: PlayerUpdateMessageType.CARD_DESTROY_IN_HAND,
 					data: new OwnedCardRefMessage(ownedCard),
 				})
@@ -187,7 +187,7 @@ export default {
 	notifyAboutCardInDeckDestroyed(ownedCard: ServerOwnedCard): void {
 		const owner = ownedCard.owner.player
 
-		owner.sendMessage({
+		owner.sendGameMessage({
 			type: PlayerUpdateMessageType.CARD_DESTROY_IN_DECK,
 			data: new OwnedCardRefMessage(ownedCard),
 		})
@@ -195,7 +195,7 @@ export default {
 		const opponentGroup = ownedCard.owner.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
-				opponent.player.sendMessage({
+				opponent.player.sendGameMessage({
 					type: PlayerUpdateMessageType.CARD_DESTROY_IN_DECK,
 					data: new OwnedCardRefMessage(ownedCard),
 				})
@@ -204,7 +204,7 @@ export default {
 	},
 
 	notifyAboutCardInGraveyardDestroyed(ownedCard: ServerOwnedCard): void {
-		ownedCard.owner.player.sendMessage({
+		ownedCard.owner.player.sendGameMessage({
 			type: PlayerUpdateMessageType.CARD_DESTROY_IN_GRAVE,
 			data: new OwnedCardRefMessage(ownedCard),
 		})
@@ -212,7 +212,7 @@ export default {
 		const opponentGroup = ownedCard.owner.opponent
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
-				opponent.player.sendMessage({
+				opponent.player.sendGameMessage({
 					type: PlayerUpdateMessageType.CARD_DESTROY_IN_GRAVE,
 					data: new OwnedCardRefMessage(ownedCard),
 				})
@@ -225,7 +225,7 @@ export default {
 			const cardsInHand = playerInGame.cardHand.allCards
 			const validPlayTargets = cardsInHand.flatMap((card) => card.targeting.getPlayTargets(playerInGame, { checkMana: true }))
 			const playTargetMessages = validPlayTargets.map((order) => new CardTargetMessage(order.target))
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.PLAY_TARGETS,
 				data: playTargetMessages,
 			})
@@ -234,7 +234,7 @@ export default {
 				.filter((order) => order.target.sourceCard.ownerGroup.includes(playerInGame))
 				.map((order) => new CardTargetMessage(order.target))
 
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.UNIT_ORDERS_SELF,
 				data: messages,
 				highPriority: true,
@@ -243,7 +243,7 @@ export default {
 			const opponentGroup = playerInGame.opponent
 			if (opponentGroup) {
 				opponentGroup.players.forEach((opponent) =>
-					opponent.player.sendMessage({
+					opponent.player.sendGameMessage({
 						type: PlayerUpdateMessageType.UNIT_ORDERS_OPPONENT,
 						data: messages,
 					})
@@ -254,7 +254,7 @@ export default {
 
 	notifyAboutCardRevealed(playerGroup: ServerPlayerGroup, card: ServerCard): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.CARD_REVEALED,
 				data: new OpenCardMessage(card),
 			})
@@ -262,7 +262,7 @@ export default {
 	},
 
 	notifyAboutCardRevealedForPlayer(player: ServerPlayer, card: ServerCard): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: PlayerUpdateMessageType.CARD_REVEALED,
 			data: new OpenCardMessage(card),
 		})
@@ -270,7 +270,7 @@ export default {
 
 	notifyAboutVictory: (playerGroup: ServerPlayerGroup): void => {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.GAME_END_VICTORY,
 				data: null,
 			})
@@ -279,7 +279,7 @@ export default {
 
 	notifyAboutDefeat: (playerGroup: ServerPlayerGroup): void => {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.GAME_END_DEFEAT,
 				data: null,
 			})
@@ -290,7 +290,7 @@ export default {
 		game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) =>
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: PlayerUpdateMessageType.GAME_END_DRAW,
 					data: null,
 				})
@@ -298,21 +298,21 @@ export default {
 	},
 
 	notifyAboutLinkedGame: (player: ServerPlayer, linkedGame: ServerGame, suppressEndScreen: boolean): void => {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: PlayerUpdateMessageType.LINKED_GAME,
 			data: new GameLinkMessage(linkedGame, suppressEndScreen),
 		})
 	},
 
 	commandJoinLinkedGame: (player: ServerPlayer): void => {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: PlayerUpdateMessageType.COMMAND_JOIN_LINKED_GAME,
 			data: null,
 		})
 	},
 
 	notifyAboutCardPlayDeclined(player: ServerPlayer, card: ServerCard): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: PlayerUpdateMessageType.PLAY_DECLINED,
 			data: new CardRefMessage(card),
 			highPriority: true,
@@ -322,13 +322,13 @@ export default {
 	notifyAboutRoundStarted: (playerGroup: ServerPlayerGroup): void => {
 		const message = new PlayerGroupRefMessage(playerGroup)
 		playerGroup.players.forEach((playerInGame) => {
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.ROUND_START,
 				data: message,
 			})
 		})
 		playerGroup.opponent?.players.forEach((playerInGame) => {
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.ROUND_START,
 				data: message,
 			})
@@ -338,13 +338,13 @@ export default {
 	notifyAboutTurnStarted: (playerGroup: ServerPlayerGroup): void => {
 		const message = new PlayerGroupRefMessage(playerGroup)
 		playerGroup.players.forEach((playerInGame) => {
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.TURN_START,
 				data: message,
 			})
 		})
 		playerGroup.opponent?.players.forEach((playerInGame) => {
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.TURN_START,
 				data: message,
 			})
@@ -354,13 +354,13 @@ export default {
 	notifyAboutTurnEnded: (playerGroup: ServerPlayerGroup): void => {
 		const message = new PlayerGroupRefMessage(playerGroup)
 		playerGroup.players.forEach((playerInGame) => {
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.TURN_END,
 				data: message,
 			})
 		})
 		playerGroup.opponent?.players.forEach((playerInGame) => {
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.TURN_END,
 				data: message,
 			})
@@ -370,13 +370,13 @@ export default {
 	notifyAboutRoundEnded: (playerGroup: ServerPlayerGroup): void => {
 		const message = new PlayerGroupRefMessage(playerGroup)
 		playerGroup.players.forEach((playerInGame) => {
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.ROUND_END,
 				data: message,
 			})
 		})
 		playerGroup.opponent?.players.forEach((playerInGame) => {
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.ROUND_END,
 				data: message,
 			})

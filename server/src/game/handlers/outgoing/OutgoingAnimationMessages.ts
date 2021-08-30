@@ -35,7 +35,7 @@ export default {
 
 	triggerAnimationForPlayers(players: ServerPlayerInGame[], animation: ServerAnimation): void {
 		players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: AnimationMessageType.PLAY,
 				data: new AnimationMessage(animation),
 			})
@@ -44,12 +44,12 @@ export default {
 
 	createAnimationThreadForPlayerGroup(playerGroup: ServerPlayerGroup, isStaggered: boolean): void {
 		playerGroup.players.forEach((playerInGame) => {
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: AnimationMessageType.THREAD_CREATE,
 				data: new AnimationThreadStartMessage(isStaggered),
 				highPriority: true,
 			})
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: AnimationMessageType.THREAD_START,
 				data: new AnimationThreadStartMessage(isStaggered),
 				allowBatching: true,
@@ -60,7 +60,7 @@ export default {
 
 	commitAnimationThreadForPlayerGroup(playerGroup: ServerPlayerGroup): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: AnimationMessageType.THREAD_COMMIT,
 				data: undefined,
 				highPriority: true,
@@ -75,7 +75,7 @@ export default {
 	},
 
 	executeMessageQueueForPlayer(game: ServerGame, player: ServerPlayer): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: AnimationMessageType.EXECUTE_QUEUE,
 			data: undefined,
 			highPriority: true,

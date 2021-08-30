@@ -9,7 +9,7 @@ import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 export default {
 	notifyAboutDialogStarted(playerGroup: ServerPlayerGroup): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.START,
 				data: null,
 			})
@@ -18,7 +18,7 @@ export default {
 
 	notifyAboutDialogCue(playerGroup: ServerPlayerGroup, cue: NovelCue): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.SAY,
 				data: new NovelCueMessage(cue),
 			})
@@ -27,7 +27,7 @@ export default {
 
 	notifyAboutDialogCuesCleared(playerGroup: ServerPlayerGroup): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.CLEAR,
 				data: null,
 			})
@@ -36,7 +36,7 @@ export default {
 
 	notifyAboutDialogReply(playerGroup: ServerPlayerGroup, reply: NovelReply): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.ADD_REPLY,
 				data: new NovelReplyMessage(reply),
 			})
@@ -45,7 +45,7 @@ export default {
 
 	notifyAboutAddedDialogCharacter(playerGroup: ServerPlayerGroup, character: StoryCharacter): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.ADD_CHARACTER,
 				data: character,
 			})
@@ -54,7 +54,7 @@ export default {
 
 	notifyAboutActiveDialogCharacter(playerGroup: ServerPlayerGroup, character: StoryCharacter | null): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.ACTIVATE_CHARACTER,
 				data: character,
 			})
@@ -63,7 +63,7 @@ export default {
 
 	notifyAboutRemovedDialogCharacter(playerGroup: ServerPlayerGroup, character: StoryCharacter): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.REMOVE_CHARACTER,
 				data: character,
 			})
@@ -72,7 +72,7 @@ export default {
 
 	notifyAboutDialogFinished(playerGroup: ServerPlayerGroup): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.FINISH,
 				data: null,
 			})

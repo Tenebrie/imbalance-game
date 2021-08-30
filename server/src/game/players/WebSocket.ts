@@ -4,13 +4,11 @@ import * as ws from 'ws'
 
 import ServerGame from '../models/ServerGame'
 
-export default class PlayerWebSocket {
+export class WebSocket {
 	ws: ws
-	game: ServerGame
 
-	constructor(webSocket: ws, game: ServerGame) {
+	constructor(webSocket: ws) {
 		this.ws = webSocket
-		this.game = game
 	}
 
 	send(json: Record<string, any>): void {
@@ -32,8 +30,13 @@ export default class PlayerWebSocket {
 	close(): void {
 		this.ws.close()
 	}
+}
 
-	static newInstance(ws: ws, game: ServerGame): PlayerWebSocket {
-		return new PlayerWebSocket(ws, game)
+export class GameWebSocket extends WebSocket {
+	game: ServerGame
+
+	constructor(ws: ws, game: ServerGame) {
+		super(ws)
+		this.game = game
 	}
 }

@@ -1,5 +1,6 @@
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import { Time } from '@shared/Utils'
+import { OutgoingGlobalMessageHandlers } from '@src/game/handlers/OutgoingGlobalMessageHandlers'
 import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
 import { colorizeConsoleText, colorizeId, colorizePlayer } from '@src/utils/Utils'
@@ -28,6 +29,7 @@ class GameLibrary {
 
 		this.games.push(game)
 		this.startGameTimeoutTimer(game)
+		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameCreated(game)
 		return game
 	}
 
@@ -35,6 +37,7 @@ class GameLibrary {
 		const newGame = ServerGame.newOwnedInstance(fromGame.owner!, chain.get(fromGame), {})
 		this.games.push(newGame)
 		this.startGameTimeoutTimer(newGame)
+		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameCreated(newGame)
 
 		return newGame
 	}
@@ -47,17 +50,17 @@ class GameLibrary {
 		console.info(`Destroying game ${colorizeId(game.id)}. Reason: ${colorizeConsoleText(reason)}`)
 
 		game.spectators
-			.filter((spectator) => spectator.player.webSocket && spectator.player.webSocket.game === game)
+			.filter((spectator) => spectator.player.gameWebSocket && spectator.player.gameWebSocket.game === game)
 			.forEach((spectator) => {
 				OutgoingMessageHandlers.notifyAboutGameShutdown(spectator.player)
-				spectator.player.disconnect()
+				spectator.player.disconnectGameSocket()
 			})
 		game.players
 			.flatMap((playerGroup) => playerGroup.players)
-			.filter((playerInGame) => playerInGame.player.webSocket && playerInGame.player.webSocket.game === game)
+			.filter((playerInGame) => playerInGame.player.gameWebSocket && playerInGame.player.gameWebSocket.game === game)
 			.forEach((playerInGame) => {
 				OutgoingMessageHandlers.notifyAboutGameShutdown(playerInGame.player)
-				playerInGame.player.disconnect()
+				playerInGame.player.disconnectGameSocket()
 			})
 		this.games.splice(this.games.indexOf(game), 1)
 	}
@@ -81,6 +84,7 @@ class GameLibrary {
 			return
 		}
 		setTimeout(() => {
+			OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameDestroyed(game)
 			this.destroyGame(game, `Game duration exceeded ${Time.milliseconds.toMinutes(GameLibrary.MAXIMUM_GAME_DURATION)} minutes.`)
 		}, GameLibrary.MAXIMUM_GAME_DURATION)
 	}
@@ -90,6 +94,8 @@ class GameLibrary {
 		if (process.env.JEST_WORKER_ID !== undefined) {
 			return
 		}
+		// TODO: Mark game as garbage
+		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameDestroyed(game)
 		setTimeout(() => {
 			this.destroyGame(game, 'Cleanup')
 		}, GameLibrary.GAME_CLEANUP_DELAY)

@@ -8,7 +8,7 @@ export default class ServerBotPlayer extends ServerPlayer {
 		super(createBotPlayerId(), 'bot@tenebrie.com', 'AI', AccessLevel.NORMAL, false)
 	}
 
-	sendMessage(): void {
+	sendGameMessage(): void {
 		return
 	}
 

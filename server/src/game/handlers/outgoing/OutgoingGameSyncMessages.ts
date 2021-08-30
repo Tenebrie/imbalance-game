@@ -25,7 +25,7 @@ export default {
 		const message = new PlayersInLobbyMessage(slotsOpen, slotsTotal, allPlayers)
 
 		allPlayers.forEach((player) => {
-			player.sendMessage({
+			player.sendGameMessage({
 				type: GameSyncMessageType.PLAYER_SLOTS,
 				data: message,
 				highPriority: true,
@@ -35,7 +35,7 @@ export default {
 
 	notifyAboutGameStart(playerGroup: ServerPlayerGroup, isBoardInverted: boolean): void {
 		playerGroup.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: GameSyncMessageType.START,
 				data: new GameStartMessage(isBoardInverted),
 			})
@@ -43,7 +43,7 @@ export default {
 	},
 
 	notifyAboutGameStartForPlayer(player: ServerPlayer, isBoardInverted: boolean): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: GameSyncMessageType.START,
 			data: new GameStartMessage(isBoardInverted),
 		})
@@ -53,7 +53,7 @@ export default {
 		game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) => {
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: GameSyncMessageType.PHASE_ADVANCE,
 					data: phase,
 				})
@@ -63,17 +63,17 @@ export default {
 	sendPlayers: (player: ServerPlayer, self: ServerPlayerInGame): void => {
 		const allies = self.group.players.filter((player) => player !== self)
 		const opponents = self.group.opponent.players
-		player.sendMessage({
+		player.sendGameMessage({
 			type: GameSyncMessageType.PLAYER_SELF,
 			data: new OpenPlayerInGameMessage(self),
 			highPriority: true,
 		})
-		player.sendMessage({
+		player.sendGameMessage({
 			type: GameSyncMessageType.PLAYER_ALLIES,
 			data: allies.map((ally) => new OpenPlayerInGameMessage(ally)),
 			highPriority: true,
 		})
-		player.sendMessage({
+		player.sendGameMessage({
 			type: GameSyncMessageType.PLAYER_OPPONENTS,
 			data: opponents.map((opponent) => new HiddenPlayerInGameMessage(opponent)),
 			highPriority: true,
@@ -87,21 +87,21 @@ export default {
 	},
 
 	sendActivePlayerGroup: (player: ServerPlayer, activeGroup: ServerPlayerGroup): void => {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: GameSyncMessageType.ACTIVE_PLAYER,
 			data: new PlayerGroupRefMessage(activeGroup),
 		})
 	},
 
 	sendBoardState: (player: ServerPlayer, board: ServerBoard): void => {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: GameSyncMessageType.BOARD_STATE,
 			data: new BoardMessage(board),
 		})
 	},
 
 	sendStackState: (player: ServerPlayer, resolveStack: ServerResolveStack): void => {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: GameSyncMessageType.STACK_STATE,
 			data: new ResolveStackMessage(resolveStack),
 		})

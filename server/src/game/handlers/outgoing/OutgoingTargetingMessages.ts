@@ -28,13 +28,13 @@ export default {
 			validTargets.every((target) => highPriorityTargets.includes(target.targetType)) &&
 			!validTargets.some((target) => target.targetMode === TargetMode.CARD_PLAY)
 		if (!highPriority) {
-			player.sendMessage({
+			player.sendGameMessage({
 				type: TargetingMessageType.CARD_PLAY,
 				data: new ResolvingCardTargetsMessage(targetMode, [], source),
 				highPriority: true,
 			})
 		}
-		player.sendMessage({
+		player.sendGameMessage({
 			type: TargetingMessageType.CARD_PLAY,
 			data: new ResolvingCardTargetsMessage(targetMode, validTargets, source),
 			highPriority: highPriority,
@@ -47,7 +47,7 @@ export default {
 		validTargets: ValidServerCardTarget[],
 		source: ServerCard
 	): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: TargetingMessageType.CARD_PLAY,
 			data: new ResolvingCardTargetsMessage(targetMode, validTargets, source),
 		})
@@ -64,7 +64,7 @@ export default {
 		const highPriority =
 			validTargets.every((target) => highPriorityTargets.includes(target.targetType)) &&
 			!validTargets.some((target) => target.targetMode === TargetMode.CARD_PLAY)
-		player.sendMessage({
+		player.sendGameMessage({
 			type: TargetingMessageType.ANONYMOUS,
 			data: new AnonymousTargetsMessage(targetMode, validTargets),
 			highPriority: highPriority,
@@ -72,7 +72,7 @@ export default {
 	},
 
 	notifyAboutInvalidTarget(player: ServerPlayer, targetMode: TargetMode, source: ServerCard): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: TargetingMessageType.INVALID,
 			data: new InvalidCardTargetMessage(targetMode, source),
 			highPriority: true,

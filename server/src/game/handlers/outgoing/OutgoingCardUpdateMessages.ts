@@ -21,13 +21,13 @@ export default {
 		}
 
 		owner.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: CardUpdateMessageType.STATS,
 				data: new OpenCardStatsMessage(card.stats),
 			})
 		)
 		owner.opponent.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: CardUpdateMessageType.STATS,
 				data: isCardPublic(card) ? new OpenCardStatsMessage(card.stats) : new HiddenCardStatsMessage(card.stats),
 			})
@@ -44,7 +44,7 @@ export default {
 			const messages = cardsToNotify.map((card) => new CardVariablesMessage(card))
 
 			playerGroup.players.forEach((playerInGame) =>
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: CardUpdateMessageType.VARIABLES,
 					data: messages,
 				})
@@ -54,7 +54,7 @@ export default {
 			if (resolveStackCards.length > 0) {
 				const stackMessages = resolveStackCards.map((ownedCard) => new CardVariablesMessage(ownedCard.card))
 				playerGroup.players.forEach((playerInGame) =>
-					playerInGame.player.sendMessage({
+					playerInGame.player.sendGameMessage({
 						type: CardUpdateMessageType.VARIABLES,
 						data: stackMessages,
 						highPriority: true,
@@ -70,7 +70,7 @@ export default {
 		buff.game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) =>
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: CardUpdateMessageType.CARD_BUFF_ADD,
 					data: message,
 				})
@@ -83,7 +83,7 @@ export default {
 		buff.game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) =>
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: CardUpdateMessageType.CARD_BUFF_DURATION,
 					data: message,
 				})
@@ -96,7 +96,7 @@ export default {
 		buff.game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) =>
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: CardUpdateMessageType.CARD_BUFF_REMOVE,
 					data: message,
 				})

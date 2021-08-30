@@ -68,7 +68,7 @@ router.post('/', (req: Request, res: Response) => {
 
 router.post('/disconnect', (req: Request, res: Response) => {
 	const currentPlayer = getPlayerFromAuthenticatedRequest(req)
-	currentPlayer.disconnect()
+	currentPlayer.disconnectGameSocket()
 
 	res.status(204)
 	res.send()

@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import GameMessage from '@shared/models/network/GameMessage'
-import { computed, defineComponent, PropType } from 'vue'
+import { computed, defineComponent, onMounted, onUpdated, PropType } from 'vue'
 
 import TheDeckSelectionPopup from '@/Vue/components/popup/escapeMenu/TheDeckSelectionPopup.vue'
 import store from '@/Vue/store'
@@ -54,6 +54,14 @@ export default defineComponent({
 	},
 
 	setup(props) {
+		// onMounted(() => {
+		// 	console.log(props.game)
+		// })
+
+		onUpdated(() => {
+			console.log(props.game.players[0].username)
+		})
+
 		const onClick = async () => {
 			const ruleset = props.game.ruleset
 			if (ruleset.playerDeckRequired && !props.game.isStarted) {

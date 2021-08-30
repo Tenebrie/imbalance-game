@@ -3,6 +3,7 @@ import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import { ClientToServerSpectatorMessageTypes } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
 import { enumToArray } from '@shared/Utils'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import { OutgoingGlobalMessageHandlers } from '@src/game/handlers/OutgoingGlobalMessageHandlers'
 import EventContext from '@src/game/models/EventContext'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
@@ -103,8 +104,8 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 		currentPlayerInGame = currentGame.addHumanPlayer(currentPlayer, targetGroup, templateDeck)
 	}
 
-	currentPlayer.disconnect()
-	currentPlayer.registerConnection(ws, currentGame)
+	currentPlayer.disconnectGameSocket()
+	currentPlayer.registerGameConnection(ws, currentGame)
 
 	ws.on('message', (rawMsg: string) => {
 		EventContext.setGame(currentGame)
@@ -172,8 +173,8 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 		return
 	}
 
-	currentPlayer.disconnect()
-	currentPlayer.registerConnection(ws, currentGame)
+	currentPlayer.disconnectGameSocket()
+	currentPlayer.registerGameConnection(ws, currentGame)
 
 	const currentSpectator = spectatedPlayer.player.spectate(currentGame, currentPlayer)
 

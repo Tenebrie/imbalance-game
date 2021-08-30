@@ -13,7 +13,7 @@ export default {
 		unit.game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) => {
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: BoardUpdateMessageType.UNIT_INSERT,
 					data: new UnitMessage(unit),
 				})
@@ -24,7 +24,7 @@ export default {
 		unit.game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) => {
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: BoardUpdateMessageType.UNIT_MOVE,
 					data: new UnitMessage(unit),
 				})
@@ -35,7 +35,7 @@ export default {
 		unit.game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) => {
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: BoardUpdateMessageType.UNIT_DESTROY,
 					data: new CardRefMessage(unit.card),
 				})
@@ -46,7 +46,7 @@ export default {
 		row.game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) =>
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: BoardUpdateMessageType.ROW_OWNER,
 					data: new BoardRowMessage(row),
 				})
@@ -64,13 +64,13 @@ export default {
 		const message = new OpenRowBuffMessage(buff)
 
 		owner.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: BoardUpdateMessageType.ROW_BUFF_ADD,
 				data: message,
 			})
 		)
 		opponent.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: BoardUpdateMessageType.ROW_BUFF_ADD,
 				data: message,
 			})
@@ -88,13 +88,13 @@ export default {
 		const message = new OpenRowBuffMessage(buff)
 
 		owner.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: BoardUpdateMessageType.ROW_BUFF_DURATION,
 				data: message,
 			})
 		)
 		opponent.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: BoardUpdateMessageType.ROW_BUFF_DURATION,
 				data: message,
 			})
@@ -112,13 +112,13 @@ export default {
 		const message = new OpenRowBuffMessage(buff)
 
 		owner.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: BoardUpdateMessageType.ROW_BUFF_REMOVE,
 				data: message,
 			})
 		)
 		opponent.players.forEach((playerInGame) =>
-			playerInGame.player.sendMessage({
+			playerInGame.player.sendGameMessage({
 				type: BoardUpdateMessageType.ROW_BUFF_REMOVE,
 				data: message,
 			})

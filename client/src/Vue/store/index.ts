@@ -1,16 +1,22 @@
 import GameMessage from '@shared/models/network/GameMessage'
+import { ServerToClientWebJson, WebMessageTypeMapping } from '@shared/models/network/messageHandlers/WebMessageTypes'
 import Player from '@shared/models/Player'
+import { compressGameTraffic } from '@shared/Utils'
 import axios from 'axios'
 import { createDirectStore } from 'direct-vuex'
+import lzutf8 from 'lzutf8'
 
 import Core from '@/Pixi/Core'
+import { IncomingGlobalMessages } from '@/Pixi/handlers/incoming/IncomingGlobalMessages'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import LocalStorage from '@/utils/LocalStorage'
+import { electronWebsocketTarget, isElectron } from '@/utils/Utils'
 import router from '@/Vue/router'
 import EditorModule from '@/Vue/store/modules/EditorModule'
 import GameLobbyModule from '@/Vue/store/modules/GameLobbyModule'
 import GameLogModule from '@/Vue/store/modules/GameLogModule'
+import GamesListModule from '@/Vue/store/modules/GamesListModule'
 import GameStateModule from '@/Vue/store/modules/GameStateModule'
 import HotkeysModule from '@/Vue/store/modules/HotkeysModule'
 import InspectedCardModule from '@/Vue/store/modules/InspectedCardModule'
@@ -25,6 +31,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		editor: EditorModule,
 		gameLogModule: GameLogModule,
 		gameStateModule: GameStateModule,
+		gamesListModule: GamesListModule,
 		gameLobbyModule: GameLobbyModule,
 		hotkeysModule: HotkeysModule,
 		inspectedCard: InspectedCardModule,
@@ -35,6 +42,8 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	},
 
 	state: {
+		globalWebSocket: null as WebSocket | null,
+		globalWebSocketState: 'disconnected' as 'connected' | 'connecting' | 'disconnected',
 		player: null as Player | null,
 		isLoggedIn: false as boolean,
 		currentGame: null as GameMessage | null,
@@ -43,6 +52,14 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	},
 
 	mutations: {
+		setGlobalWebSocketState(state, socketState: 'connected' | 'connecting' | 'disconnected'): void {
+			state.globalWebSocketState = socketState
+		},
+
+		setGlobalWebSocket(state, socket: WebSocket | null): void {
+			state.globalWebSocket = socket
+		},
+
 		setPlayerData(state, player: Player): void {
 			state.isLoggedIn = true
 			state.player = player
@@ -80,6 +97,72 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 	},
 
 	actions: {
+		async connectGlobalWebSocket(context): Promise<void> {
+			const { state, commit, dispatch } = rootActionContext(context)
+			if (state.globalWebSocketState === 'connecting') {
+				dispatch.reconnectGlobalWebSocket()
+			}
+			if (state.globalWebSocket || state.globalWebSocketState !== 'disconnected') {
+				return
+			}
+
+			const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
+			const urlHost = isElectron() ? electronWebsocketTarget() : window.location.host
+			const targetUrl = `${protocol}//${urlHost}/api/status`
+			const connectedSocket = new WebSocket(targetUrl)
+			connectedSocket.onopen = () => {
+				commit.setGlobalWebSocket(connectedSocket)
+				commit.setGlobalWebSocketState('connected')
+			}
+			connectedSocket.onmessage = (event) => onMessage(event, connectedSocket)
+			connectedSocket.onclose = () => {
+				commit.setGlobalWebSocket(null)
+				commit.setGlobalWebSocketState('disconnected')
+				dispatch.reconnectGlobalWebSocket()
+			}
+			connectedSocket.onerror = (event) => {
+				console.error('Unknown error occurred', event)
+			}
+			commit.setGlobalWebSocketState('connecting')
+
+			const onMessage = (event: MessageEvent, socket: WebSocket): void => {
+				if (socket !== connectedSocket) {
+					return
+				}
+
+				let data = event.data
+				if (compressGameTraffic()) {
+					data = lzutf8.decompress(event.data, {
+						inputEncoding: 'BinaryString',
+					})
+				}
+				const parsedData = JSON.parse(data) as ServerToClientWebJson
+				const messageType = parsedData.type
+				const messageData = parsedData.data
+
+				const handler = IncomingGlobalMessages[messageType] as (data: WebMessageTypeMapping[typeof messageType]) => void
+				if (!handler) {
+					console.error(`Unknown global message type: ${messageType}`, messageData)
+					return
+				}
+
+				try {
+					handler(messageData)
+				} catch (e) {
+					console.error(e)
+				}
+			}
+		},
+
+		async reconnectGlobalWebSocket(context): Promise<void> {
+			const { dispatch } = rootActionContext(context)
+
+			setTimeout(() => {
+				console.info('[Global Socket] Trying to reconnect')
+				dispatch.connectGlobalWebSocket()
+			}, 1000)
+		},
+
 		async fetchUser(context): Promise<void> {
 			const { commit } = rootActionContext(context)
 

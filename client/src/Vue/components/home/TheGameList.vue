@@ -17,11 +17,6 @@
 			<div class="list">
 				<game-list-item class="list-item" v-for="game in games" :key="game.id" :game="game" />
 			</div>
-			<div class="controls">
-				<div class="button-container">
-					<button @click="onRefreshGames" class="secondary"><i class="fas fa-sync" /> {{ $locale.get('ui.play.refresh') }}</button>
-				</div>
-			</div>
 		</div>
 	</div>
 </template>
@@ -29,7 +24,7 @@
 <script lang="ts">
 import GameMessage from '@shared/models/network/GameMessage'
 import axios from 'axios'
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 
 import GameListItem from '@/Vue/components/home/TheGameListItem.vue'
 import store from '@/Vue/store'
@@ -39,41 +34,20 @@ export default defineComponent({
 		GameListItem,
 	},
 
-	data: () => ({
-		games: [] as GameMessage[],
-		reconnectGames: [] as GameMessage[],
-		updateTimer: NaN as number,
-	}),
+	setup() {
+		const games = computed<GameMessage[]>(() => store.state.gamesListModule.games)
+		const reconnectGames: GameMessage[] = []
 
-	mounted(): void {
-		this.fetchGames()
-		this.updateTimer = setInterval(() => {
-			this.fetchGames()
-		}, 30000)
-	},
-
-	beforeUnmount(): void {
-		clearInterval(this.updateTimer)
-	},
-
-	methods: {
-		async fetchGames(): Promise<void> {
-			const allGamesResponse = await axios.get('/api/games')
-			const reconnectGamesResponse = await axios.get('/api/games', { params: { reconnect: '1' } })
-
-			const games = allGamesResponse.data.data as GameMessage[]
-			this.games = games.sort((a, b) => a.players.length - b.players.length)
-			this.reconnectGames = reconnectGamesResponse.data.data as GameMessage[]
-		},
-
-		async onRefreshGames(): Promise<void> {
-			return this.fetchGames()
-		},
-
-		async onReconnect(): Promise<void> {
+		const onReconnect = async (): Promise<void> => {
 			await axios.post('/api/games/disconnect')
-			await store.dispatch.joinGame(this.reconnectGames[0])
-		},
+			// await store.dispatch.joinGame(this.reconnectGames[0])
+		}
+
+		return {
+			games,
+			reconnectGames,
+			onReconnect,
+		}
 	},
 })
 </script>

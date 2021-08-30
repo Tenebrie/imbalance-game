@@ -6,6 +6,7 @@
 			<router-view class="view" />
 		</div>
 		<the-popup-view />
+		<the-connection-notification />
 	</div>
 </template>
 
@@ -18,11 +19,12 @@ import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import LocalStorage from '@/utils/LocalStorage'
 import { electronHost, isElectron } from '@/utils/Utils'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
+import TheConnectionNotification from '@/Vue/components/popup/connectionLostNotification/TheConnectionNotification.vue'
 import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 import store from '@/Vue/store'
 
 export default defineComponent({
-	components: { ThePopupView, TheNavigationBar },
+	components: { TheConnectionNotification, ThePopupView, TheNavigationBar },
 
 	async mounted() {
 		if (isElectron()) {
@@ -37,6 +39,7 @@ export default defineComponent({
 			await store.dispatch.editor.loadDecks()
 			editorCardRenderer.startRenderingService()
 		}
+		store.dispatch.connectGlobalWebSocket()
 	},
 
 	beforeUnmount() {

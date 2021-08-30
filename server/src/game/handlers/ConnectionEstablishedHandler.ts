@@ -1,5 +1,6 @@
 import TargetMode from '@shared/enums/TargetMode'
 import { sortCards } from '@shared/Utils'
+import { OutgoingGlobalMessageHandlers } from '@src/game/handlers/OutgoingGlobalMessageHandlers'
 import { colorizeId, colorizePlayer } from '@src/utils/Utils'
 
 import ServerCardTarget from '../models/ServerCardTarget'
@@ -16,6 +17,7 @@ export default {
 		} else {
 			this.onPlayerReconnected(game, playerInGame)
 		}
+		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameUpdated(game)
 	},
 
 	onPlayerConnectedInitially(game: ServerGame): void {
@@ -60,7 +62,7 @@ export default {
 
 	onPlayerDisconnected(game: ServerGame, player: ServerPlayer): void {
 		console.info(`Player ${colorizePlayer(player.username)} has disconnected from game ${colorizeId(game.id)}.`)
-		player.spectators.forEach((spectator) => spectator.player.disconnect())
+		player.spectators.forEach((spectator) => spectator.player.disconnectGameSocket())
 
 		const connectedPlayers = game.humanPlayers.filter((player) => player.player.isInGame())
 		if (connectedPlayers.length === 1) {
@@ -78,12 +80,12 @@ export default {
 	onSpectatorConnected(game: ServerGame, spectator: ServerPlayerSpectator): void {
 		const spectatedPlayerInGame = spectator.spectatedPlayer.playerInGame
 		if (!spectatedPlayerInGame) {
-			spectator.player.disconnect()
+			spectator.player.disconnectGameSocket()
 			return
 		}
 		const opponent = spectatedPlayerInGame.opponent
 		if (!opponent) {
-			spectator.player.disconnect()
+			spectator.player.disconnectGameSocket()
 			return
 		}
 

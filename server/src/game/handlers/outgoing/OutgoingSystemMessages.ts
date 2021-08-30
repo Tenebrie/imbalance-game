@@ -8,7 +8,7 @@ import ServerPlayer from '../../players/ServerPlayer'
 
 export default {
 	notifyAboutMessageAcknowledged(player: ServerPlayer): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: SystemMessageType.MESSAGE_ACKNOWLEDGED,
 			data: null,
 			highPriority: true,
@@ -16,7 +16,7 @@ export default {
 	},
 
 	notifyAboutPerformanceMetrics(player: ServerPlayer, lastActionTiming: number): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: SystemMessageType.PERFORMANCE_METRICS,
 			data: lastActionTiming,
 			highPriority: true,
@@ -29,7 +29,7 @@ export default {
 			playerId: player.id,
 			timestamp: new Date().toISOString(),
 		}
-		player.sendMessage({
+		player.sendGameMessage({
 			type: SystemMessageType.GAME_COLLAPSED,
 			data: data,
 			highPriority: true,
@@ -37,7 +37,7 @@ export default {
 	},
 
 	notifyAboutSpectateMode(player: ServerPlayer): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: SystemMessageType.MODE_SPECTATE,
 			data: null,
 			highPriority: true,
@@ -45,7 +45,7 @@ export default {
 	},
 
 	notifyAboutInitRequested(player: ServerPlayer): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: SystemMessageType.REQUEST_INIT,
 			data: null,
 			highPriority: true,
@@ -53,7 +53,7 @@ export default {
 	},
 
 	notifyAboutGameShutdown(player: ServerPlayer): void {
-		player.sendMessage({
+		player.sendGameMessage({
 			type: SystemMessageType.COMMAND_DISCONNECT,
 			data: { reason: 'ServerGame shutdown' },
 			highPriority: true,

@@ -21,11 +21,11 @@ const app = express()
 expressWs(app)
 
 /* Routers must be imported after express-ws is initialized, therefore 'require' syntax */
-const StatusRouter = require('./routers/StatusRouter')
 const ChangelogRouter = require('./routers/ChangelogRouter')
 
 const UserRouter = require('./routers/UserRouter')
 const PlayRouter = require('./routers/PlayRouter')
+const StatusRouter = require('./routers/StatusRouter')
 const AdminRouter = require('./routers/AdminRouter')
 const CardsRouter = require('./routers/CardsRouter')
 const RulesetsRouter = require('./routers/RulesetsRouter')
@@ -85,7 +85,6 @@ app.use(
 )
 
 /* Page HTTP routers */
-app.use('/status', StatusRouter)
 app.use('/changelog', ChangelogRouter)
 
 /* API HTTP routers */
@@ -103,6 +102,7 @@ app.use('/api/workshop', WorkshopRouter)
 
 /* WS routers */
 app.use('/api/game', PlayRouter)
+app.use('/api/status', StatusRouter)
 
 /* Generic error handler */
 app.use(GenericErrorMiddleware)

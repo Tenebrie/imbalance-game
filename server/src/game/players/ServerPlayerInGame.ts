@@ -221,7 +221,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 	}
 
 	public disconnect(): void {
-		this.player.disconnect()
+		this.player.disconnectGameSocket()
 		this.initialized = false
 	}
 }

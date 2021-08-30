@@ -8,7 +8,7 @@ export default {
 		game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.forEach((playerInGame) => {
-				playerInGame.player.sendMessage({
+				playerInGame.player.sendGameMessage({
 					type: GameLogUpdateMessageType.ENTRY,
 					data: messages,
 					highPriority: true,

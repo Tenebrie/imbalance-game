@@ -7,9 +7,9 @@ import { defineModule } from 'direct-vuex'
 
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
+import { moduleActionContext, rootActionContext } from '@/Vue/store'
 
 import ClientGameStatus from '../../../Pixi/enums/ClientGameStatus'
-import { moduleActionContext, rootActionContext } from '../index'
 
 const gameStateModule = defineModule({
 	namespaced: true,
