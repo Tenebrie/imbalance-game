@@ -60,7 +60,8 @@ class Core {
 		const opponentGroupId = game.players[opponentGroupIndex].id
 		let targetUrl = `${protocol}//${urlHost}/api/game/${game.id}?deckId=${deckId}&groupId=${targetGroupId}`
 		if (isSpectating) {
-			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}/spectate/${targetGroupId}`
+			const targetPlayerId = game.players[targetGroupIndex]!.players[0].player.id
+			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}/spectate/${targetPlayerId}`
 		}
 		// Reconnecting
 		if (

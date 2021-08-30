@@ -5,10 +5,9 @@ import ServerPlayer from '@src/game/players/ServerPlayer'
 
 import ServerGame from '../models/ServerGame'
 
-const getAllOnlinePlayers = () => PlayerLibrary.playerCache.filter((playerWrapper) => playerWrapper.player.isOnline())
-
 export const OutgoingGlobalMessageHandlers = {
 	notifyPlayerAboutExistingGames(player: ServerPlayer, games: ServerGame[]): void {
+		// TODO: Fix reconnect!
 		const messages = games.map((game) => new GameMessage(game))
 
 		player.sendGlobalMessage({
@@ -19,8 +18,8 @@ export const OutgoingGlobalMessageHandlers = {
 
 	notifyAllPlayersAboutGameCreated(game: ServerGame): void {
 		const message = new GameMessage(game)
-		getAllOnlinePlayers().forEach((playerWrapper) => {
-			playerWrapper.player.sendGlobalMessage({
+		PlayerLibrary.onlinePlayers.forEach((player) => {
+			player.sendGlobalMessage({
 				type: WebMessageType.GAME_CREATED,
 				data: message,
 			})
@@ -30,8 +29,8 @@ export const OutgoingGlobalMessageHandlers = {
 	notifyAllPlayersAboutGameUpdated(game: ServerGame): void {
 		const message = new GameMessage(game)
 
-		getAllOnlinePlayers().forEach((playerWrapper) => {
-			playerWrapper.player.sendGlobalMessage({
+		PlayerLibrary.onlinePlayers.forEach((player) => {
+			player.sendGlobalMessage({
 				type: WebMessageType.GAME_UPDATED,
 				data: message,
 			})
@@ -41,8 +40,8 @@ export const OutgoingGlobalMessageHandlers = {
 	notifyAllPlayersAboutGameDestroyed(game: ServerGame): void {
 		const message = new GameMessage(game)
 
-		getAllOnlinePlayers().forEach((playerWrapper) => {
-			playerWrapper.player.sendGlobalMessage({
+		PlayerLibrary.onlinePlayers.forEach((player) => {
+			player.sendGlobalMessage({
 				type: WebMessageType.GAME_DESTROYED,
 				data: message,
 			})

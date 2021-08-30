@@ -163,6 +163,16 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			}, 1000)
 		},
 
+		async keepGlobalWebSocketAlive(context): Promise<void> {
+			const { state } = rootActionContext(context)
+
+			window.setInterval(() => {
+				if (state.globalWebSocket && state.globalWebSocketState === 'connected') {
+					state.globalWebSocket.send('keepalive')
+				}
+			}, 30000)
+		},
+
 		async fetchUser(context): Promise<void> {
 			const { commit } = rootActionContext(context)
 

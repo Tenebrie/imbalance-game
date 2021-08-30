@@ -3,6 +3,7 @@ import { ServerToClientWebJson } from '@shared/models/network/messageHandlers/We
 import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
 import Player from '@shared/models/Player'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
+import PlayerLibrary from '@src/game/players/PlayerLibrary'
 import * as ws from 'ws'
 
 import ServerGame from '../models/ServerGame'
@@ -43,6 +44,7 @@ export default class ServerPlayer implements Player {
 
 	registerGlobalConnection(ws: ws): void {
 		this.globalWebSocket = new WebSocket(ws)
+		PlayerLibrary.addOnlinePlayer(this)
 	}
 
 	registerGameConnection(ws: ws, game: ServerGame): void {
@@ -71,6 +73,7 @@ export default class ServerPlayer implements Player {
 
 		this.globalWebSocket.close()
 		this.globalWebSocket = null
+		PlayerLibrary.removeOnlinePlayer(this)
 	}
 
 	disconnectGameSocket(): void {

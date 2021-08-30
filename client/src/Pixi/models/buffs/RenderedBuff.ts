@@ -38,6 +38,8 @@ export default class RenderedBuff extends ClientBuff {
 
 	public destroySprite(): void {
 		this.container.removeChild(this.sprite)
-		this.sprite.destroy(true)
+		this.sprite.destroy({
+			children: true,
+		})
 	}
 }

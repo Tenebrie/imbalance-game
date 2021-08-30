@@ -40,6 +40,7 @@ export default defineComponent({
 			editorCardRenderer.startRenderingService()
 		}
 		store.dispatch.connectGlobalWebSocket()
+		store.dispatch.keepGlobalWebSocketAlive()
 	},
 
 	beforeUnmount() {

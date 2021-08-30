@@ -3,6 +3,7 @@ import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import { JwtTokenScope } from '@src/enums/JwtTokenScope'
 import GameLibrary from '@src/game/libraries/GameLibrary'
+import { WebSocket } from '@src/game/players/WebSocket'
 import { tryUntil } from '@src/utils/Utils'
 
 import PlayerDatabase from '../../database/PlayerDatabase'
@@ -33,9 +34,11 @@ const createNumberedUsername = (username: string): string => {
 class PlayerLibrary {
 	cachePrunedAt: number = new Date().getTime()
 	playerCache: { player: ServerPlayer; timestamp: number }[]
+	onlinePlayers: ServerPlayer[]
 
 	constructor() {
 		this.playerCache = []
+		this.onlinePlayers = []
 	}
 
 	public async register(email: string, username: string, password: string): Promise<boolean> {
@@ -166,6 +169,14 @@ class PlayerLibrary {
 
 	public async deletePlayer(player: ServerPlayer): Promise<boolean> {
 		return PlayerDatabase.deletePlayer(player.id)
+	}
+
+	public addOnlinePlayer(player: ServerPlayer): void {
+		this.onlinePlayers.push(player)
+	}
+
+	public removeOnlinePlayer(player: ServerPlayer): void {
+		this.onlinePlayers = this.onlinePlayers.filter((onlinePlayer) => onlinePlayer.id !== player.id)
 	}
 
 	private pruneCache(): void {
