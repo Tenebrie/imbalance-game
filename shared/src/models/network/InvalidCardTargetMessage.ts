@@ -1,6 +1,6 @@
 import TargetMode from '../../enums/TargetMode'
-import CardRefMessage from './card/CardRefMessage'
 import Card from '../Card'
+import CardRefMessage from './card/CardRefMessage'
 
 export default class InvalidCardTargetMessage {
 	targetMode: TargetMode

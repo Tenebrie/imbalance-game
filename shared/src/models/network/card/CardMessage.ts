@@ -1,13 +1,13 @@
-import CardType from '../../../enums/CardType'
-import CardTribe from '../../../enums/CardTribe'
-import RichTextVariables from '../../RichTextVariables'
 import CardColor from '../../../enums/CardColor'
-import CardFeature from '../../../enums/CardFeature'
 import CardFaction from '../../../enums/CardFaction'
-import BuffContainerMessage from '../buffContainer/BuffContainerMessage'
-import CardStatsMessage from '../cardStats/CardStatsMessage'
+import CardFeature from '../../../enums/CardFeature'
+import CardTribe from '../../../enums/CardTribe'
+import CardType from '../../../enums/CardType'
 import ExpansionSet from '../../../enums/ExpansionSet'
 import { CardLocalization } from '../../cardLocalization/CardLocalization'
+import RichTextVariables from '../../RichTextVariables'
+import BuffContainerMessage from '../buffContainer/BuffContainerMessage'
+import CardStatsMessage from '../cardStats/CardStatsMessage'
 
 export default interface CardMessage {
 	id: string

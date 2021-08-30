@@ -1,6 +1,6 @@
 import CardDeck from '../../CardDeck'
-import CardDeckMessage from './CardDeckMessage'
 import HiddenCardMessage from '../card/HiddenCardMessage'
+import CardDeckMessage from './CardDeckMessage'
 
 export default class HiddenCardDeckMessage implements CardDeckMessage {
 	unitCards: HiddenCardMessage[]

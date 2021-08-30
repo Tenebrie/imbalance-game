@@ -1,6 +1,6 @@
 import Card from './Card'
-import PlayerInGame from './PlayerInGame'
 import PlayerGroup from './PlayerGroup'
+import PlayerInGame from './PlayerInGame'
 
 export default interface OwnedCard {
 	card: Card

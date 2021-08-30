@@ -1,6 +1,6 @@
 import CardHand from '../../CardHand'
-import CardHandMessage from './CardHandMessage'
 import OpenCardMessage from '../card/OpenCardMessage'
+import CardHandMessage from './CardHandMessage'
 
 export default class OpenCardHandMessage implements CardHandMessage {
 	unitCards: OpenCardMessage[]

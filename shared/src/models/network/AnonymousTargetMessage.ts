@@ -1,7 +1,7 @@
 import TargetMode from '../../enums/TargetMode'
 import TargetType from '../../enums/TargetType'
-import OpenCardMessage from './card/OpenCardMessage'
 import AnonymousTarget from '../AnonymousTarget'
+import OpenCardMessage from './card/OpenCardMessage'
 
 export default class AnonymousTargetMessage {
 	targetMode: TargetMode

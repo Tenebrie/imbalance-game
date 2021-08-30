@@ -1,6 +1,6 @@
+import LeaderStatType from '../../../enums/LeaderStatType'
 import CardStats from '../../CardStats'
 import CardStatsMessage from './CardStatsMessage'
-import LeaderStatType from '../../../enums/LeaderStatType'
 
 export default class OpenCardStatsMessage implements CardStatsMessage {
 	cardId: string

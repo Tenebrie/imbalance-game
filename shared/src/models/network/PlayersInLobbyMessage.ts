@@ -1,5 +1,5 @@
-import HiddenPlayerMessage from './player/HiddenPlayerMessage'
 import Player from '../Player'
+import HiddenPlayerMessage from './player/HiddenPlayerMessage'
 
 export default class PlayersInLobbyMessage {
 	slotsOpen: number

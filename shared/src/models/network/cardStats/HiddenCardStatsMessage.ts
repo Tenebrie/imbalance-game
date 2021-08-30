@@ -1,7 +1,7 @@
-import CardStats from '../../CardStats'
-import CardStatsMessage from './CardStatsMessage'
 import LeaderStatType from '../../../enums/LeaderStatType'
 import { forEachInEnum } from '../../../Utils'
+import CardStats from '../../CardStats'
+import CardStatsMessage from './CardStatsMessage'
 
 export default class HiddenCardStatsMessage implements CardStatsMessage {
 	cardId: string

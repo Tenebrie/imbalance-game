@@ -1,7 +1,7 @@
-import Card from './Card'
-import Unit from './Unit'
 import AnimationType from '../enums/AnimationType'
 import BoardRow from './BoardRow'
+import Card from './Card'
+import Unit from './Unit'
 
 export default interface Animation {
 	type: AnimationType

@@ -1,6 +1,6 @@
 import Player from './Player'
-import Ruleset from './ruleset/Ruleset'
 import PlayerGroup, { SourcePlayerGroup } from './PlayerGroup'
+import Ruleset from './ruleset/Ruleset'
 
 export default interface Game {
 	id: string

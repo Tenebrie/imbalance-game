@@ -1,5 +1,5 @@
-import Animation from '../Animation'
 import AnimationType from '../../enums/AnimationType'
+import Animation from '../Animation'
 
 export default class AnimationMessage {
 	type: AnimationType

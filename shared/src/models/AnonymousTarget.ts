@@ -1,5 +1,5 @@
-import Card from './Card'
 import TargetMode from '../enums/TargetMode'
+import Card from './Card'
 import { CardTargetCardAllowedTypes } from './CardTarget'
 
 export interface AnonymousTargetCard {

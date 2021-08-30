@@ -1,8 +1,8 @@
 import TargetMode from '../../enums/TargetMode'
-import CardTarget from '../CardTarget'
-import CardTargetMessage from './CardTargetMessage'
-import CardRefMessage from './card/CardRefMessage'
 import Card from '../Card'
+import CardTarget from '../CardTarget'
+import CardRefMessage from './card/CardRefMessage'
+import CardTargetMessage from './CardTargetMessage'
 
 export default class ResolvingCardTargetsMessage {
 	targetMode: TargetMode

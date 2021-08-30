@@ -1,9 +1,9 @@
 import PlayerInGame from '../../PlayerInGame'
-import HiddenCardHandMessage from '../cardHand/HiddenCardHandMessage'
-import HiddenCardDeckMessage from '../cardDeck/HiddenCardDeckMessage'
-import PlayerInGameMessage from './PlayerInGameMessage'
-import HiddenPlayerMessage from '../player/HiddenPlayerMessage'
 import OpenCardMessage from '../card/OpenCardMessage'
+import HiddenCardDeckMessage from '../cardDeck/HiddenCardDeckMessage'
+import HiddenCardHandMessage from '../cardHand/HiddenCardHandMessage'
+import HiddenPlayerMessage from '../player/HiddenPlayerMessage'
+import PlayerInGameMessage from './PlayerInGameMessage'
 
 export default class HiddenPlayerInGameMessage implements PlayerInGameMessage {
 	player: HiddenPlayerMessage

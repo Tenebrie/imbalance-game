@@ -1,5 +1,5 @@
-import Language from '../enums/Language'
 import AccessLevel from '../enums/AccessLevel'
+import Language from '../enums/Language'
 import RenderQuality from '../enums/RenderQuality'
 
 export default interface PlayerDatabaseEntry {

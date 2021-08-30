@@ -1,6 +1,6 @@
 import { SourceGame } from '../Game'
-import HiddenPlayerMessage from './player/HiddenPlayerMessage'
 import RulesetMessage from '../ruleset/messages/RulesetMessage'
+import HiddenPlayerMessage from './player/HiddenPlayerMessage'
 import HiddenPlayerGroupMessage from './playerGroup/HiddenPlayerGroupMessage'
 
 export default class GameMessage {

@@ -1,7 +1,7 @@
 import OwnedCard from '../../OwnedCard'
-import OwnedCardMessage from './OwnedCardMessage'
 import OpenCardMessage from '../card/OpenCardMessage'
 import PlayerInGameRefMessage from '../playerInGame/PlayerInGameRefMessage'
+import OwnedCardMessage from './OwnedCardMessage'
 
 export default class OpenOwnedCardMessage implements OwnedCardMessage {
 	card: OpenCardMessage

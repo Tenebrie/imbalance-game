@@ -1,5 +1,5 @@
-import BoardRowMessage from './BoardRowMessage'
 import Board from '../Board'
+import BoardRowMessage from './BoardRowMessage'
 
 export default class BoardMessage {
 	rows: BoardRowMessage[]

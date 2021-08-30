@@ -1,7 +1,7 @@
 import BoardRow from '../BoardRow'
-import UnitMessage from './UnitMessage'
 import BuffContainerMessage from './buffContainer/BuffContainerMessage'
 import OpenBuffContainerMessage from './buffContainer/OpenBuffContainerMessage'
+import UnitMessage from './UnitMessage'
 
 export default class BoardRowMessage {
 	index: number

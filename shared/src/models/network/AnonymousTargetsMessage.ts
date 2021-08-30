@@ -1,6 +1,6 @@
 import TargetMode from '../../enums/TargetMode'
-import AnonymousTargetMessage from './AnonymousTargetMessage'
 import AnonymousTarget from '../AnonymousTarget'
+import AnonymousTargetMessage from './AnonymousTargetMessage'
 
 export default class AnonymousTargetsMessage {
 	targetMode: TargetMode

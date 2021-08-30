@@ -1,13 +1,13 @@
-import BuffContainer from './BuffContainer'
-import CardType from '../enums/CardType'
-import CardTribe from '../enums/CardTribe'
 import CardColor from '../enums/CardColor'
-import RichTextVariables from './RichTextVariables'
-import CardFeature from '../enums/CardFeature'
 import CardFaction from '../enums/CardFaction'
-import CardStats from './CardStats'
+import CardFeature from '../enums/CardFeature'
+import CardTribe from '../enums/CardTribe'
+import CardType from '../enums/CardType'
 import ExpansionSet from '../enums/ExpansionSet'
+import BuffContainer from './BuffContainer'
 import { CardLocalization } from './cardLocalization/CardLocalization'
+import CardStats from './CardStats'
+import RichTextVariables from './RichTextVariables'
 
 export default interface Card {
 	id: string

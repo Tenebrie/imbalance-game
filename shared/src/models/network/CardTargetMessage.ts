@@ -1,6 +1,6 @@
-import CardTarget from '../CardTarget'
 import TargetMode from '../../enums/TargetMode'
 import TargetType from '../../enums/TargetType'
+import CardTarget from '../CardTarget'
 import OpenCardMessage from './card/OpenCardMessage'
 
 export default class CardTargetMessage {

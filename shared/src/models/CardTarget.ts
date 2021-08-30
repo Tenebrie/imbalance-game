@@ -1,7 +1,7 @@
-import Card from './Card'
-import BoardRow from './BoardRow'
-import TargetType from '../enums/TargetType'
 import TargetMode from '../enums/TargetMode'
+import TargetType from '../enums/TargetType'
+import BoardRow from './BoardRow'
+import Card from './Card'
 import OpenCardMessage from './network/card/OpenCardMessage'
 
 export type CardTargetCardAllowedTypes =

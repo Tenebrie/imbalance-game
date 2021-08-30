@@ -1,6 +1,6 @@
 import CardDeck from '../../CardDeck'
-import CardDeckMessage from './CardDeckMessage'
 import OpenCardMessage from '../card/OpenCardMessage'
+import CardDeckMessage from './CardDeckMessage'
 
 export default class OpenCardDeckMessage implements CardDeckMessage {
 	unitCards: OpenCardMessage[]

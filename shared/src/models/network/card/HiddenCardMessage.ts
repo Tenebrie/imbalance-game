@@ -1,14 +1,14 @@
-import Card from '../../Card'
-import CardType from '../../../enums/CardType'
-import HiddenBuffContainerMessage from '../buffContainer/HiddenBuffContainerMessage'
+import CardColor from '../../../enums/CardColor'
 import CardFaction from '../../../enums/CardFaction'
+import CardFeature from '../../../enums/CardFeature'
+import CardTribe from '../../../enums/CardTribe'
+import CardType from '../../../enums/CardType'
+import ExpansionSet from '../../../enums/ExpansionSet'
+import Card from '../../Card'
+import { CardLocalization, CardLocalizationEntry } from '../../cardLocalization/CardLocalization'
+import HiddenBuffContainerMessage from '../buffContainer/HiddenBuffContainerMessage'
 import HiddenCardStatsMessage from '../cardStats/HiddenCardStatsMessage'
 import CardMessage from './CardMessage'
-import CardColor from '../../../enums/CardColor'
-import CardTribe from '../../../enums/CardTribe'
-import CardFeature from '../../../enums/CardFeature'
-import ExpansionSet from '../../../enums/ExpansionSet'
-import { CardLocalization, CardLocalizationEntry } from '../../cardLocalization/CardLocalization'
 
 const defaultLocalization: CardLocalizationEntry = {
 	name: '',

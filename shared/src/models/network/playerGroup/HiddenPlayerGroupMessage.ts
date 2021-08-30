@@ -1,6 +1,6 @@
-import PlayerGroupMessage from './PlayerGroupMessage'
 import { SourcePlayerGroup } from '../../PlayerGroup'
 import HiddenPlayerInGameMessage from '../playerInGame/HiddenPlayerInGameMessage'
+import PlayerGroupMessage from './PlayerGroupMessage'
 
 export default class HiddenPlayerGroupMessage implements PlayerGroupMessage {
 	id: string

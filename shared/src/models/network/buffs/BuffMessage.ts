@@ -1,7 +1,7 @@
+import BuffAlignment from '../../../enums/BuffAlignment'
+import BuffFeature from '../../../enums/BuffFeature'
 import CardFeature from '../../../enums/CardFeature'
 import CardTribe from '../../../enums/CardTribe'
-import BuffFeature from '../../../enums/BuffFeature'
-import BuffAlignment from '../../../enums/BuffAlignment'
 
 export default interface BuffMessage {
 	id: string

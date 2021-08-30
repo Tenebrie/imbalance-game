@@ -1,15 +1,15 @@
-import Card from '../../Card'
-import CardType from '../../../enums/CardType'
+import CardColor from '../../../enums/CardColor'
+import CardFaction from '../../../enums/CardFaction'
+import CardFeature from '../../../enums/CardFeature'
 import CardTribe from '../../../enums/CardTribe'
+import CardType from '../../../enums/CardType'
+import ExpansionSet from '../../../enums/ExpansionSet'
+import Card from '../../Card'
+import { CardLocalization } from '../../cardLocalization/CardLocalization'
 import RichTextVariables from '../../RichTextVariables'
 import OpenBuffContainerMessage from '../buffContainer/OpenBuffContainerMessage'
-import CardColor from '../../../enums/CardColor'
-import CardFeature from '../../../enums/CardFeature'
-import CardFaction from '../../../enums/CardFaction'
 import OpenCardStatsMessage from '../cardStats/OpenCardStatsMessage'
 import CardMessage from './CardMessage'
-import ExpansionSet from '../../../enums/ExpansionSet'
-import { CardLocalization } from '../../cardLocalization/CardLocalization'
 
 export default class OpenCardMessage implements CardMessage {
 	id: string

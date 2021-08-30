@@ -1,7 +1,7 @@
 import ResolveStackEntry from '../../ResolveStackEntry'
-import OwnedCardMessage from '../ownedCard/OwnedCardMessage'
 import CardTargetMessage from '../CardTargetMessage'
 import OpenOwnedCardMessage from '../ownedCard/OpenOwnedCardMessage'
+import OwnedCardMessage from '../ownedCard/OwnedCardMessage'
 
 export default class ResolveStackEntryMessage {
 	ownedCard: OwnedCardMessage

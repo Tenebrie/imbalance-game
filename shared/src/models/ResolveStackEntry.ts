@@ -1,6 +1,6 @@
-import OwnedCard from './OwnedCard'
-import CardTarget from './CardTarget'
 import TargetMode from '../enums/TargetMode'
+import CardTarget from './CardTarget'
+import OwnedCard from './OwnedCard'
 
 export default interface ResolveStackEntry {
 	targetMode: TargetMode

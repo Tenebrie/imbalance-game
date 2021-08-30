@@ -1,10 +1,10 @@
+import Constants from './Constants'
+import CardColor from './enums/CardColor'
+import CardFaction from './enums/CardFaction'
+import CardFeature from './enums/CardFeature'
 import CardType from './enums/CardType'
 import Card from './models/Card'
-import CardFeature from './enums/CardFeature'
 import CardMessage from './models/network/card/CardMessage'
-import CardColor from './enums/CardColor'
-import Constants from './Constants'
-import CardFaction from './enums/CardFaction'
 
 export const Time = {
 	minutes: {

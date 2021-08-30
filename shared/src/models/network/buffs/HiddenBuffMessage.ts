@@ -1,9 +1,9 @@
-import Buff from '../../Buff'
-import BuffMessage from './BuffMessage'
 import BuffAlignment from '../../../enums/BuffAlignment'
 import BuffFeature from '../../../enums/BuffFeature'
 import CardFeature from '../../../enums/CardFeature'
 import CardTribe from '../../../enums/CardTribe'
+import Buff from '../../Buff'
+import BuffMessage from './BuffMessage'
 
 export default class HiddenBuffMessage implements BuffMessage {
 	id: string

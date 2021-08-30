@@ -1,6 +1,6 @@
-import PlayerGroupMessage from './PlayerGroupMessage'
-import OpenPlayerInGameMessage from '../playerInGame/OpenPlayerInGameMessage'
 import { SourcePlayerGroup } from '../../PlayerGroup'
+import OpenPlayerInGameMessage from '../playerInGame/OpenPlayerInGameMessage'
+import PlayerGroupMessage from './PlayerGroupMessage'
 
 export default class OpenPlayerGroupMessage implements PlayerGroupMessage {
 	id: string
