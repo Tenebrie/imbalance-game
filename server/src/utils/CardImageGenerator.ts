@@ -1,3 +1,4 @@
+import { colorizeConsoleText, colorizeId } from '@src/utils/Utils'
 import { CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas'
 import fs from 'fs'
 import path from 'path'
@@ -36,7 +37,7 @@ class CardImageGenerator {
 		targetCardClasses.forEach((card) => {
 			this.generateStaticPlaceholderImage(card.class, card.generatedArtworkMagicString)
 		})
-		console.info(`Generated ${targetCardClasses.length} placeholder card image(s)`)
+		console.info(`Generated ${colorizeId(targetCardClasses.length)} placeholder card image(s)`)
 	}
 
 	private async generatePlaceholderImage(cardClass: string, magicString: string, reason: 'placeholder' | 'workshop'): Promise<Buffer> {

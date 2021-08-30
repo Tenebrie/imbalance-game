@@ -1,4 +1,3 @@
-import { hashCode } from '../../Utils'
 import { SourceGame } from '../Game'
 import RulesetMessage from '../ruleset/messages/RulesetMessage'
 import HiddenPlayerMessage from './player/HiddenPlayerMessage'
@@ -11,7 +10,6 @@ export default class GameMessage {
 	owner: HiddenPlayerMessage | null
 	players: HiddenPlayerGroupMessage[]
 	ruleset: RulesetMessage
-	hashCode: number
 
 	constructor(game: SourceGame) {
 		this.id = game.id

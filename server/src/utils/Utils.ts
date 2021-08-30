@@ -234,19 +234,19 @@ export const colorize = (text: string | number, color: AsciiColor): string => {
 	return `${color}${text}\u001b[0m`
 }
 
-export const colorizeId = (text: string): string => {
+export const colorizeId = (text: string | number): string => {
 	return colorize(text, AsciiColor.CYAN)
 }
 
-export const colorizeClass = (text: string): string => {
+export const colorizeClass = (text: string | number): string => {
 	return colorize(text, AsciiColor.YELLOW)
 }
 
-export const colorizePlayer = (text: string): string => {
+export const colorizePlayer = (text: string | number): string => {
 	return colorize(text, AsciiColor.RED)
 }
 
-export const colorizeConsoleText = (text: string): string => {
+export const colorizeConsoleText = (text: string | number): string => {
 	return colorize(text, AsciiColor.MAGENTA)
 }
 

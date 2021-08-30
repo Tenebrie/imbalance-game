@@ -1,6 +1,6 @@
 <template>
-	<div class="the-connection-notification" :class="notificationClass">
-		<div class="content">Connection to server lost! Trying to reconnect...</div>
+	<div class="the-connection-notification">
+		<div class="content" :class="notificationClass">Connection to server lost! Trying to reconnect...</div>
 	</div>
 </template>
 
@@ -45,16 +45,16 @@ export default defineComponent({
 	position: absolute;
 	bottom: 0;
 	left: 0;
-	background: #bb20bb;
-	margin-bottom: -2%;
-	transition: margin-bottom 0.3s;
-
-	&.visible {
-		margin-bottom: 0;
-	}
 
 	.content {
 		padding: 16px 32px;
+		background: #bb20bb;
+		margin-bottom: -100%;
+		transition: margin-bottom 0.3s;
+
+		&.visible {
+			margin-bottom: 0;
+		}
 	}
 }
 </style>

@@ -15,7 +15,7 @@
 				<span class="info-text">{{ $locale.get('ui.browser.almostEmpty') }}</span>
 			</div>
 			<div class="list">
-				<game-list-item class="list-item" v-for="game in games" :key="game.id" :game="game" />
+				<game-list-item class="list-item" v-for="game in games" :key="getGameHash(game)" :game="game" />
 			</div>
 		</div>
 	</div>
@@ -23,6 +23,7 @@
 
 <script lang="ts">
 import GameMessage from '@shared/models/network/GameMessage'
+import { hashCode } from '@shared/Utils'
 import axios from 'axios'
 import { computed, defineComponent } from 'vue'
 
@@ -43,10 +44,15 @@ export default defineComponent({
 			// await store.dispatch.joinGame(this.reconnectGames[0])
 		}
 
+		const getGameHash = (game: GameMessage): number => {
+			return hashCode(JSON.stringify(game))
+		}
+
 		return {
 			games,
 			reconnectGames,
 			onReconnect,
+			getGameHash,
 		}
 	},
 })
