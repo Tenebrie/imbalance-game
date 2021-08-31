@@ -36,12 +36,12 @@ export default defineComponent({
 	},
 
 	setup() {
-		const games = computed<GameMessage[]>(() => store.state.gamesListModule.games)
-		const reconnectGames: GameMessage[] = []
+		const games = computed<readonly GameMessage[]>(() => store.getters.gamesListModule.normalGames)
+		const reconnectGames = computed<readonly GameMessage[]>(() => store.getters.gamesListModule.reconnectGames)
 
 		const onReconnect = async (): Promise<void> => {
 			await axios.post('/api/games/disconnect')
-			// await store.dispatch.joinGame(this.reconnectGames[0])
+			await store.dispatch.joinGame(reconnectGames.value[0])
 		}
 
 		const getGameHash = (game: GameMessage): number => {

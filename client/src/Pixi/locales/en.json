@@ -143,6 +143,8 @@
 	"ruleset.rulesetCoopChallengeDummy.label": "<b>AI Opponent:</b> Target Dummy",
 	"ruleset.rulesetCoopBrawlDiscovery.label": "<b>AI Opponent:</b> Discovery Dummy",
 
+	"ruleset.rulesetDev.label": "Development Ruleset",
+
 	"card.play": "Play card",
 
 	"card.type.unit": "Unit",

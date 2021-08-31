@@ -5,6 +5,7 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import TargetMode from '@shared/enums/TargetMode'
 import { SourceGame } from '@shared/models/Game'
+import Player from '@shared/models/Player'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
@@ -584,6 +585,14 @@ export default class ServerGame implements SourceGame {
 
 	public get isFinished(): boolean {
 		return this.turnPhase === GameTurnPhase.AFTER_GAME
+	}
+
+	public get isSpectatable(): boolean {
+		return this.allPlayers.every((playerInGame) => playerInGame.player.isInGame())
+	}
+
+	public isVisibleInList(forPlayer: ServerPlayer): boolean {
+		return !this.isFinished && (this.allPlayers.some((player) => player.player.id === forPlayer.id) || this.isSpectatable)
 	}
 
 	public findCardById(cardId: string): ServerCard | null {

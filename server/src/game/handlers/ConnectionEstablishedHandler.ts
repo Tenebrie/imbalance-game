@@ -75,6 +75,7 @@ export default {
 			console.info(`No players left in game ${colorizeId(game.id)}. It will be shutdown in 60 seconds.`)
 			game.timers.playerLeaveTimeout.start()
 		}
+		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameUpdated(game)
 	},
 
 	onSpectatorConnected(game: ServerGame, spectator: ServerPlayerSpectator): void {

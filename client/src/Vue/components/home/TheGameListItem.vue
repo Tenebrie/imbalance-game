@@ -6,18 +6,21 @@
 				<b>{{ thisGame.players[0].username }}</b>
 				vs
 				<b>{{ thisGame.players[1].username }}</b>
+				(<span v-html="rulesetName" />)
 			</i>
 		</span>
 		<span v-if="hasOpenSlots && thisGame.players[0].openHumanSlots === 0 && thisGame.players[1].players.length === 0">
 			<i>
 				Challenge:
 				<b>{{ thisGame.players[0].username }}</b>
+				(<span v-html="rulesetName" />)
 			</i>
 		</span>
 		<span v-if="hasOpenSlots && thisGame.players[1].openHumanSlots === 0 && thisGame.players[0].players.length === 0">
 			<i>
 				Challenge:
 				<b>{{ thisGame.players[1].username }}</b>
+				(<span v-html="rulesetName" />)
 			</i>
 		</span>
 		<span
@@ -33,6 +36,7 @@
 				<b>{{ thisGame.players[0].username }}</b>
 				vs
 				<b>{{ thisGame.players[1].username }}</b>
+				(<span v-html="rulesetName" />)
 			</i>
 		</span>
 	</div>
@@ -40,8 +44,9 @@
 
 <script lang="ts">
 import GameMessage from '@shared/models/network/GameMessage'
-import { computed, defineComponent, onMounted, onUpdated, PropType } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
 
+import Localization from '@/Pixi/Localization'
 import TheDeckSelectionPopup from '@/Vue/components/popup/escapeMenu/TheDeckSelectionPopup.vue'
 import store from '@/Vue/store'
 
@@ -54,14 +59,6 @@ export default defineComponent({
 	},
 
 	setup(props) {
-		// onMounted(() => {
-		// 	console.log(props.game)
-		// })
-
-		onUpdated(() => {
-			console.log(props.game.players[0].username)
-		})
-
 		const onClick = async () => {
 			const ruleset = props.game.ruleset
 			if (ruleset.playerDeckRequired && !props.game.isStarted) {
@@ -80,8 +77,11 @@ export default defineComponent({
 			return props.game.players.some((group) => group.openHumanSlots > 0)
 		})
 
+		const rulesetName = Localization.get(`ruleset.${props.game.ruleset.class}.label`, 'null') || props.game.ruleset.class
+
 		return {
 			thisGame: props.game,
+			rulesetName,
 			hasOpenSlots,
 			onClick,
 		}

@@ -1,12 +1,33 @@
 import GameMessage from '@shared/models/network/GameMessage'
 import { defineModule } from 'direct-vuex'
 
-import { moduleActionContext } from '@/Vue/store'
+import store, { moduleActionContext } from '@/Vue/store'
 
 const GamesListModule = defineModule({
 	namespaced: true,
 	state: {
 		games: [] as GameMessage[],
+	},
+
+	getters: {
+		normalGames(state): GameMessage[] {
+			const player = store.state.player
+			if (!player) {
+				throw new Error('No player data!')
+			}
+			return state.games.filter((game) => {
+				const players = game.players.flatMap((playerGroup) => playerGroup.players)
+				return !players.some((p) => p.player.id === player.id) && game.isSpectatable
+			})
+		},
+
+		reconnectGames(state): GameMessage[] {
+			const player = store.state.player
+			if (!player) {
+				throw new Error('No player data!')
+			}
+			return state.games.filter((game) => game.players.flatMap((playerGroup) => playerGroup.players).some((p) => p.player.id === player.id))
+		},
 	},
 
 	mutations: {

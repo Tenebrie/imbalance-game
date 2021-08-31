@@ -7,6 +7,7 @@ export default class GameMessage {
 	id: string
 	name: string
 	isStarted: boolean
+	isSpectatable: boolean
 	owner: HiddenPlayerMessage | null
 	players: HiddenPlayerGroupMessage[]
 	ruleset: RulesetMessage
@@ -16,6 +17,7 @@ export default class GameMessage {
 		this.name = game.name
 		this.owner = game.owner ? new HiddenPlayerMessage(game.owner) : null
 		this.isStarted = game.isStarted
+		this.isSpectatable = game.isSpectatable
 		this.players = game.players.map((player) => new HiddenPlayerGroupMessage(player))
 		this.ruleset = new RulesetMessage(game.ruleset)
 	}

@@ -94,7 +94,6 @@ class GameLibrary {
 		if (process.env.JEST_WORKER_ID !== undefined) {
 			return
 		}
-		// TODO: Mark game as garbage
 		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameDestroyed(game)
 		setTimeout(() => {
 			this.destroyGame(game, 'Cleanup')

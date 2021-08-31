@@ -7,7 +7,6 @@ import ServerGame from '../models/ServerGame'
 
 export const OutgoingGlobalMessageHandlers = {
 	notifyPlayerAboutExistingGames(player: ServerPlayer, games: ServerGame[]): void {
-		// TODO: Fix reconnect!
 		const messages = games.map((game) => new GameMessage(game))
 
 		player.sendGlobalMessage({

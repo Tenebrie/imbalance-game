@@ -20,18 +20,9 @@ router.ws('/', async (ws: ws, req: express.Request) => {
 	currentPlayer.disconnectGlobalSocket()
 	currentPlayer.registerGlobalConnection(ws)
 	console.info(`Player ${colorizePlayer(currentPlayer.username)} connected!`)
-	OutgoingGlobalMessageHandlers.notifyPlayerAboutExistingGames(currentPlayer, GameLibrary.games)
 
-	// ws.on('message', (rawMsg: string) => {
-	// 	const msg = JSON.parse(rawMsg) as ClientToServerJson
-	// 	const messageType = msg.type
-	// 	const handler = IncomingMessageHandlers[messageType]
-	// 	if (!handler) {
-	// 		OutgoingMessageHandlers.notifyAboutInvalidMessageType(ws, msg.type)
-	// 		return
-	// 	}
-	// 	handler(msg.data, currentGame, currentPlayerInGame)
-	// })
+	const games = GameLibrary.games.filter((game) => game.isVisibleInList(currentPlayer))
+	OutgoingGlobalMessageHandlers.notifyPlayerAboutExistingGames(currentPlayer, games)
 
 	ws.on('close', () => {
 		currentPlayer.disconnectGlobalSocket()

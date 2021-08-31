@@ -6,6 +6,7 @@ export default interface Game {
 	id: string
 	name: string
 	isStarted: boolean
+	isSpectatable: boolean
 	owner: Player | undefined
 	players: PlayerGroup[]
 	ruleset: Ruleset

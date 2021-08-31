@@ -34,7 +34,7 @@ class Localization {
 		return this.get(card.localization[language].description, 'key')
 	}
 
-	private getValueOrNull(id: string): string | null {
+	private static getValueOrNull(id: string): string | null {
 		if (!id.match(localizationIdRegex)) {
 			return id
 		}
@@ -53,7 +53,7 @@ class Localization {
 	public get(id: string, errorBehaviour: 'key' | 'empty'): string
 	public get(id: string, errorBehaviour: 'null'): string | null
 	public get(id: string, errorBehaviour: 'key' | 'empty' | 'null' = 'key'): string | null {
-		const value = this.getValueOrNull(id)
+		const value = Localization.getValueOrNull(id)
 		if (value) {
 			return value
 		}
