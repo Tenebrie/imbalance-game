@@ -1,6 +1,7 @@
 import UserLoginErrorCode from '@shared/enums/UserLoginErrorCode'
 import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
 import EditorDeckDatabase from '@src/database/EditorDeckDatabase'
+import ServerPlayer from '@src/game/players/ServerPlayer'
 import StartingDecks from '@src/game/utils/StartingDecks'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
 import express, { Response } from 'express'
@@ -67,13 +68,23 @@ router.use(RequirePlayerTokenMiddleware)
 router.delete(
 	'/',
 	AsyncHandler(async (req, res: Response) => {
-		// TODO: Disconnect the player and close the socket, if open
+		const playerToken = req.cookies['playerToken']
 		const originalToken = req.cookies['originalPlayerToken']
+		let disconnectCookie
 		if (originalToken) {
+			disconnectCookie = originalToken
 			setCookie(res, 'playerToken', originalToken)
 			clearCookie(res, 'originalPlayerToken', '')
 		} else {
+			disconnectCookie = playerToken
 			clearCookie(res, 'playerToken', '')
+		}
+
+		if (disconnectCookie) {
+			const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(disconnectCookie)
+			if (currentPlayer) {
+				currentPlayer.disconnectGameSocket()
+			}
 		}
 
 		res.json({

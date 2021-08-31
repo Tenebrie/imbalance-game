@@ -31,7 +31,6 @@ export default class SpellEternalServitude extends ServerCard {
 			extraCost: this.extraCost,
 		}
 
-		// TODO: Add an effect to also destroy the target unit
 		this.createDeployTargets(TargetType.UNIT)
 			.requireAllied()
 			.evaluate(() => this.stats.basePower)

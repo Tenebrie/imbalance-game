@@ -17,6 +17,12 @@
 					</td>
 				</tr>
 				<tr>
+					<td class="header">Ruleset:</td>
+					<td>
+						<router-link :to="`/admin/rulesets/${game.ruleset}`">{{ game.ruleset }}</router-link>
+					</td>
+				</tr>
+				<tr>
 					<td class="header">Status:</td>
 					<td>
 						<span v-if="!game.closedAt" class="game-active">Active</span>

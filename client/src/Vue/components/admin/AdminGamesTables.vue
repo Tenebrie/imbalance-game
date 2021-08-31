@@ -8,6 +8,7 @@
 						<th>ID</th>
 						<th>Started at</th>
 						<th>Players</th>
+						<th>Ruleset</th>
 						<th>Duration</th>
 						<th>Issues</th>
 					</tr>
@@ -25,6 +26,9 @@
 								<router-link class="user-input" :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
 							</div>
 							<div v-if="game.players.length === 0">[No data]</div>
+						</td>
+						<td>
+							<router-link :to="`/admin/rulesets/${game.ruleset}`">{{ game.ruleset }}</router-link>
 						</td>
 						<td>
 							{{
@@ -53,6 +57,7 @@
 					<th>ID</th>
 					<th>Started at</th>
 					<th>Players</th>
+					<th>Ruleset</th>
 					<th>Duration</th>
 					<th>Close reason</th>
 					<th>Victorious players</th>
@@ -72,6 +77,9 @@
 							<router-link class="user-input" :to="`/admin/users/${player.id}`">{{ player.username }}</router-link>
 						</div>
 						<div v-if="game.players.length === 0">[No data]</div>
+					</td>
+					<td>
+						<router-link :to="`/admin/rulesets/${game.ruleset}`">{{ game.ruleset }}</router-link>
 					</td>
 					<td>
 						<div v-if="game.closedAt === game.startedAt">N/A</div>

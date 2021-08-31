@@ -2,6 +2,7 @@ import EventLogEntryMessage from './network/EventLogEntryMessage'
 
 export default interface GameHistoryDatabaseEntry {
 	id: string
+	ruleset: string
 	startedAt: string
 	closedAt: string | null
 	closeReason: string

@@ -39,7 +39,7 @@
 				"typescript": "^4.0.5"
 		},
 		"engines": {
-				"node": "12.x"
+				"node": "16.x"
 		},
 		"author": "Tenebrie",
 		"bugs": {

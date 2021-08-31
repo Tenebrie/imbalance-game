@@ -79,8 +79,8 @@ export default {
 	},
 
 	async startGame(game: ServerGame): Promise<boolean> {
-		let query = `INSERT INTO game_history (id, "eventLog") VALUES($1, $2);`
-		let success = await Database.insertRow(query, [game.id, JSON.stringify([])])
+		let query = `INSERT INTO game_history (id, ruleset, "eventLog") VALUES($1, $2, $3);`
+		let success = await Database.insertRow(query, [game.id, game.ruleset.class, JSON.stringify([])])
 		if (!success) {
 			return false
 		}
