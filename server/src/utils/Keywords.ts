@@ -56,6 +56,12 @@ export default {
 		},
 	},
 
+	drawExactCard: (player: ServerPlayerInGame, card: ServerCard): ServerCard => {
+		player.cardDeck.removeCard(card)
+		player.cardHand.addCardAsDraw(card)
+		return card
+	},
+
 	summonCard: (card: ServerCard): void => {
 		const cardOwner = card.ownerPlayer
 		if (cardOwner.cardDeck.allCards.includes(card)) {
@@ -119,6 +125,12 @@ export default {
 		} else {
 			player.cardDeck.addSpellToBottom(instance)
 		}
+	},
+
+	addCardToGraveyard: (player: ServerPlayerInGame, card: CardConstructor): ServerCard => {
+		const instance = new card(player.game)
+		player.cardGraveyard.addCard(instance)
+		return instance
 	},
 
 	addCardToHand: {

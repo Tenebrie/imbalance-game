@@ -1,3 +1,4 @@
+import CardType from '@shared/enums/CardType'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { getClassFromConstructor } from '@src/utils/Utils'
@@ -44,19 +45,12 @@ export default class ServerHand {
 		}
 	}
 
-	public drawUnit(card: ServerCard): void {
-		this.addUnit(card)
-		this.game.events.postEvent(
-			GameEventCreators.cardDrawn({
-				game: this.game,
-				owner: this.owner,
-				triggeringCard: card,
-			})
-		)
-	}
-
-	public drawSpell(card: ServerCard): void {
-		this.addSpell(card)
+	public addCardAsDraw(card: ServerCard): void {
+		if (card.type === CardType.UNIT) {
+			this.addUnit(card)
+		} else {
+			this.addSpell(card)
+		}
 		this.game.events.postEvent(
 			GameEventCreators.cardDrawn({
 				game: this.game,

@@ -123,7 +123,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 				continue
 			}
 
-			this.cardHand.drawUnit(card)
+			this.cardHand.addCardAsDraw(card)
 			drawnCards.push(card)
 		}
 		return drawnCards
@@ -138,7 +138,7 @@ export default class ServerPlayerInGame implements PlayerInGame {
 				continue
 			}
 
-			this.cardHand.drawSpell(card)
+			this.cardHand.addCardAsDraw(card)
 			drawnCards.push(card)
 		}
 		return drawnCards

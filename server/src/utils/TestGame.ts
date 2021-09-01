@@ -130,9 +130,14 @@ const setupCardPlayStack = (game: ServerGame): TestGamePlayStack => {
 type TestGamePlayer = {
 	handle: ServerPlayerInGame
 	add(card: CardConstructor): TestGameCard
+	draw(card: CardConstructor): TestGameCard
 	spawn(card: CardConstructor, row?: RowIndexWrapper): TestGameUnit
+	getSpellMana(): number
 	addSpellMana(value: number): void
 	find(card: CardConstructor): TestGameCard
+	graveyard: {
+		add(card: CardConstructor): TestGameCard
+	}
 }
 type RowIndexWrapper = 'front' | 'back'
 
@@ -157,8 +162,21 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		}
 	})
 
-	const add = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
+	const addCardToHand = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
 		const card = Keywords.addCardToHand.for(player).fromConstructor(cardConstructor)
+		return wrapCard(game, card, player)
+	}
+
+	const drawCardToHand = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
+		const card = player.cardDeck.findCard(cardConstructor)
+		if (!card) {
+			throw new Error(`Unable to draw card ${getClassFromConstructor(cardConstructor)}`)
+		}
+		return wrapCard(game, Keywords.drawExactCard(player, card), player)
+	}
+
+	const addCardToGraveyard = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
+		const card = Keywords.addCardToGraveyard(player, cardConstructor)
 		return wrapCard(game, card, player)
 	}
 
@@ -185,10 +203,15 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 	return game.players.map((playerGroup) =>
 		playerGroup.players.map((player) => ({
 			handle: player,
-			add: (card: CardConstructor) => add(player, card),
+			add: (card: CardConstructor) => addCardToHand(player, card),
+			draw: (card: CardConstructor) => drawCardToHand(player, card),
 			find: (card: CardConstructor) => find(player, card),
 			spawn: (card: CardConstructor, row: RowIndexWrapper = 'front') => spawn(player, card, row),
+			getSpellMana: (): number => player.spellMana,
 			addSpellMana: (value: number) => addSpellMana(player, value),
+			graveyard: {
+				add: (card: CardConstructor) => addCardToGraveyard(player, card),
+			},
 		}))
 	)
 }
