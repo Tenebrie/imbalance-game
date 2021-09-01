@@ -38,7 +38,6 @@ export default class SpellBecomeTheSalvage extends ServerCard {
 			},
 		})
 
-		// TODO: Write unit tests for this thing
 		this.createDeployTargets(TargetType.CARD_IN_SPELL_GRAVEYARD)
 			.require(() => this.charges > 0)
 			.require(({ targetCard }) => targetCard.tribes.includes(CardTribe.SALVAGE))

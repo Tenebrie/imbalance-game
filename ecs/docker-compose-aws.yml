@@ -1,0 +1,35 @@
+version: "3"
+services:
+  server:
+    image: tenebrie/imbalance-server
+    working_dir: /app/server
+    environment:
+      PORT: 80
+      FORCE_HTTPS: false
+      NODE_ENV: production
+      DATABASE_URL: postgres://docker:docker@postgres:5432/db
+      DATABASE_SSL: "false"
+      VERSION: 5
+    depends_on:
+      - postgres
+    ports:
+      - 80:80
+    command: yarn production
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+  postgres:
+    image: postgres:11.5-alpine
+    environment:
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: db
+      VERSION: 5
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-storage:/var/lib/postgresql/data/:cached
+volumes:
+  postgres-storage:

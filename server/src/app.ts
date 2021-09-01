@@ -43,7 +43,8 @@ app.set('view engine', 'jade')
 
 /* Forced HTTPS */
 app.use((req: Request, res: Response, next) => {
-	if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV !== 'development') {
+	if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV !== 'development' && process.env.FORCE_HTTPS) {
+		console.log('Redirecting to HTTPS')
 		return res.redirect('https://' + req.get('host') + req.url)
 	}
 	next()
@@ -135,4 +136,6 @@ setInterval(async () => {
 	await GameHistoryDatabase.pruneOldestRecords()
 }, 60 * 60 * 1000)
 
-app.listen(process.env.PORT || 3000)
+const port = process.env.PORT || 3000
+console.info(`Starting listening at port ${port}`)
+app.listen(port)
