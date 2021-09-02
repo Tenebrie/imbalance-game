@@ -26,8 +26,8 @@ export default class UnitVoidPortal extends ServerCard {
 			features: [CardFeature.KEYWORD_SUMMON],
 			relatedCards: [UnitShadow],
 			stats: {
-				power: 0,
-				armor: 10,
+				power: 3,
+				armor: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,
@@ -40,7 +40,7 @@ export default class UnitVoidPortal extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Void Portal',
-				description: '*Turn end:*\n*Summon* a *Shadow* on your front row.',
+				description: '*Turn end:*\n*Summon* a *Shadow*.',
 			},
 		})
 

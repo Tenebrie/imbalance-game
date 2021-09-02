@@ -17,12 +17,13 @@ export default class UnitDarkPathfinder extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_SHATTER, CardFeature.KEYWORD_TRANSFORM],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SHATTER, CardFeature.KEYWORD_TRANSFORM],
 			relatedCards: [UnitVoidPortal, UnitAbyssPortal],
 			stats: {
 				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 
 		this.createLocalization({

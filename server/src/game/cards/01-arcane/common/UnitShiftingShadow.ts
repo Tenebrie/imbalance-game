@@ -32,7 +32,7 @@ export default class UnitShiftingShadow extends ServerCard {
 		this.createLocalization({
 			en: {
 				name: 'Shifting Shadow',
-				description: '*Deploy*:<br>*Move* an allied unit.<p>*Summon* a *Shadow* at the old position.',
+				description: '*Deploy*:<br>*Move* an allied unit.<p>*Summon* a *Fierce Shadow* at the old position.',
 			},
 		})
 

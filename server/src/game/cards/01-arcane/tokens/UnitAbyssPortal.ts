@@ -24,8 +24,8 @@ export default class UnitAbyssPortal extends ServerCard {
 			faction: CardFaction.ARCANE,
 			relatedCards: [UnitShadow],
 			stats: {
-				power: 0,
-				armor: 20,
+				power: 3,
+				armor: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,
@@ -34,6 +34,13 @@ export default class UnitAbyssPortal extends ServerCard {
 			powerPerCard: this.powerPerCard,
 		}
 		this.botEvaluation = new CustomBotEvaluation(this)
+
+		this.createLocalization({
+			en: {
+				name: 'Abyss Portal',
+				description: '*Turn end:*\n*Summon* a *Shadow*.<p>It gains bonus Power for every unique spell in your Graveyard.',
+			},
+		})
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ group }) => group.owns(this))
@@ -48,20 +55,12 @@ export default class UnitAbyssPortal extends ServerCard {
 		const owner = unit.originalOwner
 		const voidspawn = CardLibrary.instantiate(this.game, UnitShadow)
 		this.game.board.createUnit(voidspawn, owner, unit.rowIndex, unit.unitIndex + 1)
-		const uniqueCardsInAllDiscards = [
-			...new Set(
-				this.game.players
-					.flatMap((playerGroup) => playerGroup.players)
-					.map((player) => player.cardGraveyard.allCards)
-					.flat()
-					.map((card) => card.class)
-			),
-		]
-		if (uniqueCardsInAllDiscards.length === 0) {
+		const uniqueSpellsInDiscard = [...new Set(owner.cardGraveyard.spellCards.map((card) => card.class))]
+		if (uniqueSpellsInDiscard.length === 0) {
 			return
 		}
 
-		voidspawn.buffs.addMultiple(BuffStrength, uniqueCardsInAllDiscards.length, this, BuffDuration.INFINITY)
+		voidspawn.buffs.addMultiple(BuffStrength, uniqueSpellsInDiscard.length, this, BuffDuration.INFINITY)
 	}
 }
 

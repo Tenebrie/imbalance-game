@@ -206,6 +206,12 @@
 	"card.feature.keywordOrder.description": "While this unit is on the board, choose a target and trigger an effect once a turn.",
 	"card.feature.keywordCreate.name": "Create",
 	"card.feature.keywordCreate.description": "Play a new copy of a card.",
+	"card.feature.keywordConsume.name": "Consume",
+	"card.feature.keywordConsume.description": "Destroy the card and add its' Power to own Power.",
+	"card.feature.keywordShatter.name": "Shatter",
+	"card.feature.keywordShatter.description": "Reduce the maximum number of units on a row by the current round number.",
+	"card.feature.keywordTransform.name": "Transform",
+	"card.feature.keywordTransform.description": "Replace a card with another card in the same position.",
 	"card.feature.keywordSummon.name": "Summon",
 	"card.feature.keywordSummon.description": "Play a new copy of a card directly to the board, skipping Deploy effects.",
 	"card.feature.keywordDiscard.name": "Discard",
@@ -302,6 +308,7 @@
 	"card.tribe.building": "Building",
 	"card.tribe.valkyrie": "Valkyrie",
 	"card.tribe.elemental": "Elemental",
+	"card.tribe.voidspawn": "Voidspawn",
 	"card.tribe.manifestation": "Manifestation",
 	"card.tribe.weapon": "Weapon",
 	"card.tribe.armor": "Armor",
@@ -660,17 +667,6 @@
 	"card.spellEternalServitude.name": "Eternal Servitude",
 	"card.spellEternalServitude.description": "Transform an allied unit into a *Leader Power*.\nThis unit now costs Mana equal to it's base Power.<p>Then, *Destroy* this unit.",
 
-	"card.spellShadowSpark.name": "Shadow Spark",
-	"card.spellShadowSpark.description": "Deal {damage} Damage to an enemy unit.<p>Summon a *Shadowspawn* on your front row.",
-
-	"card.spellNightmareDrain.name": "Living Nightmare",
-	"card.spellNightmareDrain.description": "Choose a damaged unit.<p>Summon a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
-
-	"card.spellCrystalBarrage.name": "Crystal Barrage",
-	"card.spellCrystalBarrage.description": "Choose an enemy row.<p>Summon *Volatile Crystals* around every unit on this row.",
-
-	"card.spellShadowArmy.name": "Army of Shadows",
-	"card.spellShadowArmy.description": "*Create* a copy of an allied unit.\n<if showPowerThreshold>If it has {powerThreshold} Power or less, repeat this effect.<p><i>This value decreases by {thresholdDecrease} after every copy.</i></if>",
 	"card.spellShadowArmy.target": "Create a copy\n<i>Power threshold is ({powerThreshold})</i>",
 
 	"card.spellFlamingSpark.name": "Flaming Spark",

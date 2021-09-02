@@ -24,7 +24,7 @@ export default class SpellShadowSpark extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.SPARK],
-			features: [CardFeature.HERO_POWER],
+			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_SUMMON],
 			relatedCards: [UnitFierceShadow],
 			stats: {
 				cost: 2,
@@ -34,6 +34,13 @@ export default class SpellShadowSpark extends ServerCard {
 		this.dynamicTextVariables = {
 			damage: this.baseDamage,
 		}
+
+		this.createLocalization({
+			en: {
+				name: 'Shadow Spark',
+				description: 'Deal {damage} Damage to an enemy unit.<p>*Summon* a *Fierce Shadow* on your front row.',
+			},
+		})
 
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()

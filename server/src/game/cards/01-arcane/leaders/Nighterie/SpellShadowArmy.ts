@@ -3,7 +3,6 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
 
 import Keywords from '../../../../../utils/Keywords'
@@ -34,15 +33,21 @@ export default class SpellShadowArmy extends ServerCard {
 			thresholdDecrease: this.thresholdDecrease,
 		}
 
+		this.createLocalization({
+			en: {
+				name: 'Army of Shadows',
+				description:
+					'*Create* a copy of an allied unit.\n<if showPowerThreshold>If it has {powerThreshold} Power or less, repeat this effect.<p><i>This value decreases by {thresholdDecrease} after every copy.</i></if>',
+			},
+		})
+
 		this.createDeployTargets(TargetType.UNIT)
 			.targetCount(() => this.allowedTargets)
 			.requireAllied()
 			.label('card.spellShadowArmy.target')
 			.require((args) => !this.copiedUnits.includes(args.targetCard.unit!))
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
-
-		this.createEffect(GameEventType.CARD_TARGETS_CONFIRMED).perform(() => this.resetState())
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
+			.finalize(() => this.resetState())
 
 		this.resetState()
 	}

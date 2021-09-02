@@ -27,6 +27,13 @@ export default class SpellCrystalBarrage extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
+		this.createLocalization({
+			en: {
+				name: 'Crystal Barrage',
+				description: 'Choose an enemy row.<p>Summon *Volatile Crystals* around every unit on this row.',
+			},
+		})
+
 		this.createDeployTargets(TargetType.BOARD_ROW)
 			.requireEnemy()
 			.perform(({ player, targetRow }) => this.onTargetSelected(player, targetRow))
