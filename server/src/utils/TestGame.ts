@@ -6,6 +6,7 @@ import AsciiColor from '@src/enums/AsciiColor'
 import ServerBotPlayer from '@src/game/AI/ServerBotPlayer'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
+import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import ServerCardStats from '@src/game/models/ServerCardStats'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import ServerUnit from '@src/game/models/ServerUnit'
@@ -86,6 +87,16 @@ const setupTestGameBoard = (game: ServerGame): TestGameBoard => {
 	}
 }
 
+type TestGameRow = {
+	buffs: TestGameBuffs
+}
+
+const wrapRow = (game: ServerGame, row: ServerBoardRow): TestGameRow => {
+	return {
+		buffs: wrapBuffs(game, row),
+	}
+}
+
 type TestGameUnit = {
 	stats: ServerCardStats
 	buffs: TestGameBuffs
@@ -135,17 +146,12 @@ type TestGamePlayer = {
 	getSpellMana(): number
 	addSpellMana(value: number): void
 	find(card: CardConstructor): TestGameCard
+	frontRow(): TestGameRow
 	graveyard: {
 		add(card: CardConstructor): TestGameCard
 	}
 }
 type RowIndexWrapper = 'front' | 'back'
-
-type TestGameCard = {
-	buffs: TestGameBuffs
-	location: CardLocation
-	play(row?: RowIndexWrapper): TestGameCardPlayActions
-}
 
 const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 	CardLibrary.forceLoadCards([TestingLeader])
@@ -200,6 +206,10 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		player.addSpellMana(value)
 	}
 
+	const getFrontRow = (player: ServerPlayerInGame): TestGameRow => {
+		return wrapRow(game, game.board.getRowWithDistanceToFront(player, 0))
+	}
+
 	return game.players.map((playerGroup) =>
 		playerGroup.players.map((player) => ({
 			handle: player,
@@ -209,6 +219,7 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			spawn: (card: CardConstructor, row: RowIndexWrapper = 'front') => spawn(player, card, row),
 			getSpellMana: (): number => player.spellMana,
 			addSpellMana: (value: number) => addSpellMana(player, value),
+			frontRow: () => getFrontRow(player),
 			graveyard: {
 				add: (card: CardConstructor) => addCardToGraveyard(player, card),
 			},
@@ -216,19 +227,30 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 	)
 }
 
+type TestGameCard = {
+	buffs: TestGameBuffs
+	location: CardLocation
+	play(): TestGameCardPlayActions
+	playTo(row: 'front' | 'back'): TestGameCardPlayActions
+}
+
 const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame): TestGameCard => {
+	const playCardToRow = (row: RowIndexWrapper): TestGameCardPlayActions => {
+		const distance = row === 'front' ? 0 : game.board.getControlledRows(player).length - 1
+		const targetRow = game.board.getRowWithDistanceToFront(player, distance)
+		if (player.unitMana < card.stats.unitCost || player.spellMana < card.stats.spellCost) {
+			warn(`Attempting to play a card without enough mana. The action is likely to be ignored.`)
+		}
+		game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(card, player), targetRow.index, targetRow.cards.length)
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return getCardPlayActions(game, player)
+	}
 	return {
 		buffs: wrapBuffs(game, card),
 		location: card.location,
-		play: (row: RowIndexWrapper = 'front'): TestGameCardPlayActions => {
-			const distance = row === 'front' ? 0 : game.board.getControlledRows(player).length - 1
-			const targetRow = game.board.getRowWithDistanceToFront(player, distance)
-			if (player.unitMana < card.stats.unitCost || player.spellMana < card.stats.spellCost) {
-				warn(`Attempting to play a card without enough mana. The action is likely to be ignored.`)
-			}
-			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(card, player), targetRow.index, targetRow.cards.length)
-			return getCardPlayActions(game, player)
-		},
+		play: () => playCardToRow('front'),
+		playTo: (row: RowIndexWrapper) => playCardToRow(row),
 	}
 }
 
@@ -239,9 +261,9 @@ type TestGameBuffs = {
 	includes(buffConstructor: BuffConstructor): boolean
 }
 
-const wrapBuffs = (game: ServerGame, card: ServerCard): TestGameBuffs => {
+const wrapBuffs = (game: ServerGame, parent: ServerCard | ServerBoardRow): TestGameBuffs => {
 	return {
-		includes: (buffConstructor: BuffConstructor): boolean => card.buffs.has(buffConstructor),
+		includes: (buffConstructor: BuffConstructor): boolean => parent.buffs.has(buffConstructor),
 	}
 }
 

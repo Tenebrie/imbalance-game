@@ -1,6 +1,6 @@
-# NotGwent
+# State of Imbalance
 
-"*NotGwent*" (temporary name) is a work-in-progress open-source trading card game. See *Rules*
+"*State of Imbalance*" is a work-in-progress open-source trading card game. See *Rules*
 section in the game for more information about the ruleset.
 
 ## Try the game

@@ -25,6 +25,7 @@ const ChangelogRouter = require('./routers/ChangelogRouter')
 
 const UserRouter = require('./routers/UserRouter')
 const PlayRouter = require('./routers/PlayRouter')
+const HealthRouter = require('./routers/HealthRouter')
 const StatusRouter = require('./routers/StatusRouter')
 const AdminRouter = require('./routers/AdminRouter')
 const CardsRouter = require('./routers/CardsRouter')
@@ -43,12 +44,7 @@ app.set('view engine', 'jade')
 
 /* Forced HTTPS */
 app.use((req: Request, res: Response, next) => {
-	if (
-		!req.secure &&
-		req.get('x-forwarded-proto') !== 'https' &&
-		process.env.NODE_ENV !== 'development' &&
-		process.env.FORCE_HTTPS === 'true'
-	) {
+	if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV !== 'development') {
 		console.log('Redirecting to HTTPS')
 		return res.redirect('https://' + req.get('host') + req.url)
 	}
@@ -109,6 +105,9 @@ app.use('/api/workshop', WorkshopRouter)
 /* WS routers */
 app.use('/api/game', PlayRouter)
 app.use('/api/status', StatusRouter)
+
+/* Other routers */
+app.use('/health', HealthRouter)
 
 /* Generic error handler */
 app.use(GenericErrorMiddleware)
