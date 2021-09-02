@@ -169,6 +169,13 @@ export default class ServerBoard implements Board {
 		return opposingEnemies.filter((unit) => this.getVerticalUnitDistance(unit, thisUnit) === shortestDistance)
 	}
 
+	public getUnitsOwnedByPlayer(owner: ServerPlayerInGame | null): ServerUnit[] {
+		if (!owner) {
+			return []
+		}
+		return this.getAllUnits().filter((unit) => unit.originalOwner === owner)
+	}
+
 	public getUnitsOwnedByGroup(owner: ServerPlayerGroup | null): ServerUnit[] {
 		if (!owner) {
 			return []
@@ -250,6 +257,26 @@ export default class ServerBoard implements Board {
 			}
 		}
 		return result
+	}
+
+	public getDistanceToFront(player: ServerPlayerInGame | ServerPlayerGroup, rowOrIndex: number | ServerBoardRow): number {
+		const row = typeof rowOrIndex === 'number' ? this.rows[rowOrIndex] : rowOrIndex
+		if (player instanceof ServerPlayerInGame) {
+			player = player.group
+		}
+
+		const isOpponent = row.owner !== player
+		if (isOpponent) {
+			player = player.opponent
+		}
+
+		let playerRows = this.rows.filter((row) => row.owner === player)
+		if (player.isInvertedBoard()) {
+			playerRows = playerRows.reverse()
+		}
+
+		const index = playerRows.indexOf(row)
+		return isOpponent ? -index : index
 	}
 
 	public getRowWithDistanceToFront(player: ServerPlayerInGame | ServerPlayerGroup, distance: number): ServerBoardRow {

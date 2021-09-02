@@ -55,7 +55,7 @@ export default class SpellTacticalMove extends ServerCard {
 	private onTargetRowSelected(row: ServerBoardRow, position: number): void {
 		const movingUnit = this.movingUnit!
 		const moveDirection = this.game.board.getMoveDirection(this.ownerGroup, this.game.board.rows[movingUnit.rowIndex], row)
-		Keywords.move.unit(movingUnit).toPosition(row, position)
+		Keywords.moveUnit(movingUnit, row, position)
 		if (moveDirection === MoveDirection.FORWARD && this.game.board.getDistanceToDynamicFrontForPlayer(row, this.ownerGroup) === 0) {
 			const targets = this.game.board.getClosestOpposingUnits(movingUnit)
 			targets.forEach((target) => {

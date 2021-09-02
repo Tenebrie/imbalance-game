@@ -23,7 +23,7 @@ export default class HeroJom extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_DEPLOY],
-			relatedCards: [UnitVoidPortal, UnitAbyssPortal],
+			relatedCards: [UnitVoidPortal],
 			stats: {
 				power: 14,
 			},

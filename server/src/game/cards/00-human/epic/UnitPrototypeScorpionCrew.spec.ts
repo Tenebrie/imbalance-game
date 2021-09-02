@@ -11,25 +11,25 @@ describe('UnitPrototypeScorpionCrew', () => {
 	})
 
 	it('deals damage on order', () => {
-		const enemy = game.opponent.spawn(TestingUnitNoEffect)
+		const enemy = game.opponent.summon(TestingUnitNoEffect)
 
-		const unit = game.player.spawn(UnitPrototypeScorpionCrew)
+		const unit = game.player.summon(UnitPrototypeScorpionCrew)
 		unit.orderOnFirst()
 		expect(enemy.stats.power).toBe(enemy.stats.basePower - (unit.variables['targetDamage'] as number))
 	})
 
 	it('damages self on order', () => {
-		game.opponent.spawn(TestingUnitNoEffect)
-		const unit = game.player.spawn(UnitPrototypeScorpionCrew)
+		game.opponent.summon(TestingUnitNoEffect)
+		const unit = game.player.summon(UnitPrototypeScorpionCrew)
 		unit.orderOnFirst()
 		expect(unit.stats.power).toBe(unit.stats.basePower + unit.stats.baseArmor - (unit.variables['selfDamage'] as number))
 		expect(unit.stats.armor).toBe(unit.stats.baseArmor - (unit.variables['selfDamage'] as number))
 	})
 
 	it('can attack multiple times', () => {
-		const enemy = game.opponent.spawn(TestingUnitNoEffect)
+		const enemy = game.opponent.summon(TestingUnitNoEffect)
 
-		const unit = game.player.spawn(UnitPrototypeScorpionCrew)
+		const unit = game.player.summon(UnitPrototypeScorpionCrew)
 		unit.orderOnFirst()
 		unit.orderOnFirst()
 		unit.orderOnFirst()

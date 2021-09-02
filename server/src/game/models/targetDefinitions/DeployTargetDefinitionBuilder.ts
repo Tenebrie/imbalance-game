@@ -139,8 +139,8 @@ export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValid
 
 	public requireAllied(): DeployTargetDefinitionBuilder<EventArgs> {
 		return this.require((args: TargetValidatorArguments) => {
-			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerGroupNullable
-			return targetOwner === args.sourceCard.ownerGroupNullable
+			const targetOwner = 'targetRow' in args ? args.targetRow.owner : args.targetCard.ownerGroup
+			return targetOwner === args.sourceCard.ownerGroup
 		})
 	}
 
@@ -170,6 +170,20 @@ export default class DeployTargetDefinitionBuilder<EventArgs extends TargetValid
 	public requireNotEmptyRow(): DeployTargetDefinitionBuilder<EventArgs> {
 		return this.require((args: TargetValidatorArguments) => {
 			return 'targetRow' in args && args.targetRow.cards.length > 0
+		})
+	}
+
+	public requireNull(getter: () => unknown): DeployTargetDefinitionBuilder<EventArgs> {
+		return this.require(() => {
+			const object = getter()
+			return object === null || object === undefined
+		})
+	}
+
+	public requireNotNull(getter: () => unknown): DeployTargetDefinitionBuilder<EventArgs> {
+		return this.require(() => {
+			const object = getter()
+			return object !== null && object !== undefined
 		})
 	}
 

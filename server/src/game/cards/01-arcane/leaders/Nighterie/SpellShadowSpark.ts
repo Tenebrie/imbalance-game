@@ -13,7 +13,7 @@ import ServerCard from '../../../../models/ServerCard'
 import ServerDamageInstance from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
-import UnitShadowspawn from '../../tokens/UnitShadowspawn'
+import UnitFierceShadow from '../../tokens/UnitFierceShadow'
 
 export default class SpellShadowSpark extends ServerCard {
 	baseDamage = asDirectSparkDamage(3)
@@ -25,7 +25,7 @@ export default class SpellShadowSpark extends ServerCard {
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.SPARK],
 			features: [CardFeature.HERO_POWER],
-			relatedCards: [UnitShadowspawn],
+			relatedCards: [UnitFierceShadow],
 			stats: {
 				cost: 2,
 			},
@@ -43,7 +43,7 @@ export default class SpellShadowSpark extends ServerCard {
 	private onTargetSelected(player: ServerPlayerInGame, target: ServerUnit): void {
 		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
 
-		const shadowspawn = CardLibrary.instantiate(this.game, UnitShadowspawn)
+		const shadowspawn = CardLibrary.instantiate(this.game, UnitFierceShadow)
 		const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerPlayer, 0)
 		this.game.board.createUnit(shadowspawn, player, targetRow.index, targetRow.cards.length)
 	}

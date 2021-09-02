@@ -52,7 +52,7 @@ router.post('/', (req: Request, res: Response) => {
 	)
 	connectedGames.forEach((game) => {
 		const playerInGame = game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === player)
-		game.finish(playerInGame?.opponent || null, 'Player surrendered (Started new game)')
+		game.finish(playerInGame?.opponentNullable || null, 'Player surrendered (Started new game)')
 	})
 
 	let ruleset: ServerRuleset

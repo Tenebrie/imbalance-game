@@ -84,7 +84,7 @@ export default {
 			spectator.player.disconnectGameSocket()
 			return
 		}
-		const opponent = spectatedPlayerInGame.opponent
+		const opponent = spectatedPlayerInGame.opponentNullable
 		if (!opponent) {
 			spectator.player.disconnectGameSocket()
 			return

@@ -332,7 +332,7 @@ export default class RulesetCampfire extends ServerRuleset {
 						})
 						game.animation.instantThread(() => {
 							const dryad = game.board.getAllUnits().find((unit) => unit.card instanceof HeroCampfireNira)!
-							Keywords.move.unit(dryad).toPosition(rowIndex, 0)
+							Keywords.moveUnit(dryad, rowIndex, 0)
 						})
 						game.animation.syncAnimationThreads()
 
@@ -418,7 +418,7 @@ export default class RulesetCampfire extends ServerRuleset {
 						})
 						game.animation.instantThread(() => {
 							const dryad = game.board.getAllUnits().find((unit) => unit.card instanceof HeroCampfireNira)!
-							Keywords.move.unit(dryad).toPosition(rowIndex, 0)
+							Keywords.moveUnit(dryad, rowIndex, 0)
 						})
 						game.animation.syncAnimationThreads()
 
@@ -619,7 +619,7 @@ export default class RulesetCampfire extends ServerRuleset {
 				)
 				.createTag('StageThree', (dialog) => {
 					const dryad = game.board.getAllUnits().find((unit) => unit.card instanceof HeroCampfireNira)!
-					Keywords.move.unit(dryad).toPosition(5, 3)
+					Keywords.moveUnit(dryad, 5, 3)
 					Keywords.destroy.unit(dryad).withoutSource()
 					dialog.parse(
 						`

@@ -42,7 +42,7 @@ describe('HeroAntoria', () => {
 		beforeEach(() => {
 			;({ game, playersCard, opponentsCard, player, opponent } = TestGameTemplates.opponentCardTest(TestingSpellHeavyStrike, HeroAntoria))
 			unitInDeck = new TestingUnitNoEffect(game)
-			player.opponentInGame.players[0].cardDeck.addUnitToTop(unitInDeck)
+			player.opponent.players[0].cardDeck.addUnitToTop(unitInDeck)
 
 			game.board.createUnit(new TestingUnitNoEffect(game), opponent, 4, 0)
 			playerAction(() => {
@@ -55,14 +55,14 @@ describe('HeroAntoria', () => {
 
 		it('gets destroyed', () => {
 			expect(opponentsCard.location).toEqual(CardLocation.UNKNOWN)
-			expect(player.opponentInGame.players[0].cardHand.allCards.indexOf(opponentsCard)).toEqual(-1)
+			expect(player.opponent.players[0].cardHand.allCards.indexOf(opponentsCard)).toEqual(-1)
 		})
 
 		it('draws a card', () => {
 			expect(opponentsCard.location).toEqual(CardLocation.UNKNOWN)
-			expect(player.opponentInGame.players[0].cardHand.allCards.length).toEqual(1)
-			expect(player.opponentInGame.players[0].cardDeck.allCards.length).toEqual(0)
-			expect(player.opponentInGame.players[0].cardHand.allCards.indexOf(unitInDeck)).toEqual(0)
+			expect(player.opponent.players[0].cardHand.allCards.length).toEqual(1)
+			expect(player.opponent.players[0].cardDeck.allCards.length).toEqual(0)
+			expect(player.opponent.players[0].cardHand.allCards.indexOf(unitInDeck)).toEqual(0)
 		})
 	})
 })

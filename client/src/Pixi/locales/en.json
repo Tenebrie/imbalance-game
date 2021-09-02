@@ -139,6 +139,7 @@
 
 	"ruleset.rulesetCampfire.label": "The Camp Module",
 	"ruleset.rulesetNessadventure.label": "<b>Scenario:</b> The Nessadventure",
+	"ruleset.rulesetCatastrophe.label": "The <b>Cat</b>astrophe",
 
 	"ruleset.rulesetCoopChallengeDummy.label": "<b>AI Opponent:</b> Target Dummy",
 	"ruleset.rulesetCoopBrawlDiscovery.label": "<b>AI Opponent:</b> Discovery Dummy",
@@ -204,9 +205,9 @@
 	"card.feature.keywordOrder.name": "Order",
 	"card.feature.keywordOrder.description": "While this unit is on the board, choose a target and trigger an effect once a turn.",
 	"card.feature.keywordCreate.name": "Create",
-	"card.feature.keywordCreate.description": "Add a new copy of a card into the game and play it.",
+	"card.feature.keywordCreate.description": "Play a new copy of a card.",
 	"card.feature.keywordSummon.name": "Summon",
-	"card.feature.keywordSummon.description": "Play a card from your deck.",
+	"card.feature.keywordSummon.description": "Play a new copy of a card directly to the board, skipping Deploy effects.",
 	"card.feature.keywordDiscard.name": "Discard",
 	"card.feature.keywordDiscard.description": "Move a card into the owner's graveyard.",
 	"card.feature.keywordExile.name": "Exile",
@@ -271,6 +272,8 @@
 	"card.stats.directBuffPotency.text": "Direct Buff Potency *+{value}*",
 	"card.stats.splashBuffPotency.text": "Splash Buff Potency *+{value}*",
 	"card.stats.recurringBuffPotency.text": "Recurring Buff Potency *+{value}*",
+	"card.stats.directSummonCount.text": "Direct Summon Count *+{value}*",
+	"card.stats.recurringSummonCount.text": "Recurring Summon Count *+{value}*",
 	"card.stats.directEffectDuration.text": "Direct Effect Duration *+{value}*",
 	"card.stats.splashEffectDuration.text": "Splash Effect Duration *+{value}*",
 	"card.stats.directTargetCount.text": "Card Target Count *+{value}*",
@@ -516,7 +519,7 @@
 	"card.unitRavenMessenger.description": "*Deploy:*\n*Play* a Bronze Soldier card from your deck.",
 
 	"card.unitForestScout.name": "Forest Scout",
-	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power\nIf you're losing on Morale, gain +{moralePowerBonus} Power.",
+	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power\nIf your opponent won more rounds than you, gain +{moralePowerBonus} Power.",
 
 	"card.unitChargingKnight.name": "Charging Steed",
 	"card.unitChargingKnight.description": "*Order:*\nDeal {damage} Damage to an enemy unit.<p>May only attack after moving forward on the same turn.",
@@ -580,7 +583,7 @@
 	"card.unitHungrySpellslinger.description": "*Infuse *{infuseCost}*:*\nAdd a Scroll to your hand.\nIt costs {spellDiscount} Mana less.",
 
 	"card.unitElderHoundmaster.name": "Elder Houndmaster",
-	"card.unitElderHoundmaster.description": "*Deploy:*\nSpawn two *Trained Hounds* on the front row.",
+	"card.unitElderHoundmaster.description": "*Deploy:*\nSummon two *Trained Hounds* on the front row.",
 
 	"card.unitTrainedHound.name": "Trained Hound",
 	"card.unitTrainedHound.description": "<i>No effect</i>",
@@ -596,23 +599,9 @@
 	"card.unitVoidcaller.description": "*Deploy:*\n*Create* a *Void Portal*",
 	"card.unitVoidcaller.flavor": "Thankfully, this line is always available.",
 
-	"card.unitVoidPortal.name": "Void Portal",
-	"card.unitVoidPortal.description": "*Turn end:*\nSpawn a *Voidspawn* next to this unit.\nIt gets +{powerPerSpell} Power for every unique spell in your graveyard.",
-
-	"card.unitAbyssPortal.name": "Abyss Portal",
-	"card.unitAbyssPortal.description": "*Turn end:*\nSpawn a *Voidspawn* next to this unit.\nIt gets +{powerPerCard} Power for every unique card in your or your opponent's graveyards.",
-
-	"card.unitVoidspawn.name": "Voidspawn",
-	"card.unitVoidspawn.description": "<i>No effect</i>",
-	"card.unitVoidspawn.flavor": "Likes to annoy her older sister, Shadowspawn.",
-
 	"card.unitLivingShadow.name": "Living Shadow",
 	"card.unitLivingShadow.description": "<i>No effect</i>",
 	"card.unitLivingShadow.flavor": "The one forgotten by her siblings.",
-
-	"card.unitShadowspawn.name": "Shadowspawn",
-	"card.unitShadowspawn.description": "<i>No effect</i>",
-	"card.unitShadowspawn.flavor": "Likes to cuddle with her little sister, Voidspawn.",
 
 	"card.unitYoungSquire.name": "Young Squire",
 	"card.unitYoungSquire.description": "*Deploy:*\n*Move 1* another allied unit.",
@@ -621,7 +610,7 @@
 	"card.unitTinySparkling.description": "<i>No effect</i>",
 
 	"card.unitHelplessPeasants.name": "Helpless Peasants",
-	"card.unitHelplessPeasants.description": "*Deploy:*\nSpawn a copy of itself to the right.<p>If covered by *Protector* at the end of your turn, gain +{selfBuff} Power.",
+	"card.unitHelplessPeasants.description": "*Deploy:*\n*Summon* a copy of itself to the right.<p>If covered by *Protector* at the end of your turn, gain +{selfBuff} Power.",
 	"card.unitHelplessPeasants.flavor": "Somebody please, we are getting attacked!.",
 
 	"card.tokenEmptyDeck.name": "Cricket",
@@ -672,13 +661,13 @@
 	"card.spellEternalServitude.description": "Transform an allied unit into a *Leader Power*.\nThis unit now costs Mana equal to it's base Power.<p>Then, *Destroy* this unit.",
 
 	"card.spellShadowSpark.name": "Shadow Spark",
-	"card.spellShadowSpark.description": "Deal {damage} Damage to an enemy unit.<p>Spawn a *Shadowspawn* on your front row.",
+	"card.spellShadowSpark.description": "Deal {damage} Damage to an enemy unit.<p>Summon a *Shadowspawn* on your front row.",
 
 	"card.spellNightmareDrain.name": "Living Nightmare",
-	"card.spellNightmareDrain.description": "Choose a damaged unit.<p>Spawn a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
+	"card.spellNightmareDrain.description": "Choose a damaged unit.<p>Summon a *Shadowspawn* on your front row.\nIt gains bonus Power equal to Power the target misses.",
 
 	"card.spellCrystalBarrage.name": "Crystal Barrage",
-	"card.spellCrystalBarrage.description": "Choose an enemy row.<p>Spawn *Volatile Crystals* around every unit on this row.",
+	"card.spellCrystalBarrage.description": "Choose an enemy row.<p>Summon *Volatile Crystals* around every unit on this row.",
 
 	"card.spellShadowArmy.name": "Army of Shadows",
 	"card.spellShadowArmy.description": "*Create* a copy of an allied unit.\n<if showPowerThreshold>If it has {powerThreshold} Power or less, repeat this effect.<p><i>This value decreases by {thresholdDecrease} after every copy.</i></if>",
@@ -717,7 +706,7 @@
 
 	"card.leaderChallengeDummy.name": "Dummy",
 	"card.leaderChallengeDummy.title": "The Scapegoat",
-	"card.leaderChallengeDummy.description": "*Round start:*\nSpawn a *Target Dummy* on your middle row.",
+	"card.leaderChallengeDummy.description": "*Round start:*\n*Summon* a *Target Dummy* on your middle row.",
 
 	"card.heroChallengeDummyWarrior0.name": "Oenus",
 	"card.heroChallengeDummyWarrior0.title": "Dummy of Prudence",
@@ -793,7 +782,7 @@
 	"card.unitBloodyTrebuchet.description": "*Order:*\nDeal {damage} Damage to an enemy unit and {splashDamage} Damage to units directly behind.<p>May only attack if adjacent to at least two Soldiers.",
 
 	"card.unitWoodenPalisade.name": "Wooden Palisade",
-	"card.unitWoodenPalisade.description": "*Deploy:*\nSpawn another *Wooden Palisade* on the right.",
+	"card.unitWoodenPalisade.description": "*Deploy:*\n*Summon* another *Wooden Palisade* on the right.",
 
 	"card.unitGenerousBlacksmith.name": "Generous Blacksmith",
 	"card.unitGenerousBlacksmith.description": "Whenever a unit moves into adjacent position from another row, give it +{bonusArmor} Armor.",
@@ -987,7 +976,7 @@
 
 	"card.unitTheMinisterOfLand.name": "Corniak II",
 	"card.unitTheMinisterOfLand.title": "The Minister of Land",
-	"card.unitTheMinisterOfLand.description": "*Summon* this on your back row if you control at least {peasantsRequired} Peasants.<p>Your Peasants have *-*{weaknessPotency} Power.",
+	"card.unitTheMinisterOfLand.description": "*Play* this from your deck on your back row if you control at least {peasantsRequired} Peasants.<p>Your Peasants have *-*{weaknessPotency} Power.",
 
 	"card.unitSirenEnchantress.name": "Siren Enchantress",
 	"card.unitSirenEnchantress.description": "*Deploy:*\n*Infuse* {cost} to apply *Blood Moon* to a target row.",

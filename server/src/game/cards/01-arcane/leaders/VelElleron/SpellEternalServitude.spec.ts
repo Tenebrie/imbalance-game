@@ -12,7 +12,7 @@ describe('SpellEternalServitude', () => {
 	beforeEach(() => {
 		game = setupTestGame(TestingRulesetPVP)
 		game.player.addSpellMana(10)
-		game.player.spawn(TestingUnitSinglePower)
+		game.player.summon(TestingUnitSinglePower)
 		game.player.add(SpellEternalServitude).play().targetFirst()
 	})
 
@@ -29,7 +29,7 @@ describe('SpellEternalServitude', () => {
 	})
 
 	it('applies the buffs', () => {
-		expect(game.player.find(TestingUnitSinglePower).buffs.includes(BuffLeaderPower)).toBeTruthy()
-		expect(game.player.find(TestingUnitSinglePower).buffs.includes(BuffUnitToSpellConversion)).toBeTruthy()
+		expect(game.player.find(TestingUnitSinglePower).buffs.has(BuffLeaderPower)).toBeTruthy()
+		expect(game.player.find(TestingUnitSinglePower).buffs.has(BuffUnitToSpellConversion)).toBeTruthy()
 	})
 })

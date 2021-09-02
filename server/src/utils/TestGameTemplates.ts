@@ -164,8 +164,8 @@ export default {
 		player.cardHand.addUnit(playersCardInHand)
 
 		const opponentsCardInHand = new opponentsCard(game)
-		player.opponentInGame.players[0].setUnitMana(1)
-		player.opponentInGame.players[0].cardHand.addUnit(opponentsCardInHand)
+		player.opponent.players[0].setUnitMana(1)
+		player.opponent.players[0].cardHand.addUnit(opponentsCardInHand)
 
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
@@ -182,7 +182,7 @@ export default {
 			opponentsCard: opponentsCardInHand,
 			opponentsOwnedCard: {
 				card: opponentsCardInHand,
-				owner: player.opponentInGame.players[0],
+				owner: player.opponent.players[0],
 			},
 			playerAction: playerAction(game),
 			startNextTurn: startNextTurn(game),

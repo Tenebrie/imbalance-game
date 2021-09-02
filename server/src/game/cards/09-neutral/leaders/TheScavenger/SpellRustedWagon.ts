@@ -52,6 +52,6 @@ export default class SpellRustedWagon extends ServerCard {
 
 	private onTargetRowSelected(row: ServerBoardRow, position: number): void {
 		const movingUnit = this.movingUnit!
-		Keywords.move.unit(movingUnit).toPosition(row, position)
+		Keywords.moveUnit(movingUnit, row, position)
 	}
 }

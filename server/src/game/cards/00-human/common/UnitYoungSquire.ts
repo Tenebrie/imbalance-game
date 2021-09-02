@@ -43,7 +43,7 @@ export default class UnitYoungSquire extends ServerCard {
 			.require(({ targetRow }) => Math.abs(targetRow.index - this.movingUnit!.rowIndex) <= 1)
 			.label('card.spellTacticalMove.target.label.row')
 			.perform(({ targetRow, targetPosition }) => {
-				Keywords.move.unit(this.movingUnit!).toPosition(targetRow, targetPosition)
+				Keywords.moveUnit(this.movingUnit!, targetRow, targetPosition)
 			})
 			.finalize(() => (this.movingUnit = null))
 	}

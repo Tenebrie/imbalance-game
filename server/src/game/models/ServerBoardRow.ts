@@ -1,4 +1,5 @@
 import Constants from '@shared/Constants'
+import CardFeature from '@shared/enums/CardFeature'
 import BoardRow from '@shared/models/BoardRow'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
@@ -39,7 +40,16 @@ export default class ServerBoardRow implements BoardRow {
 			return null
 		}
 
-		const unit = new ServerUnit(this.game, card, this.owner!, createdBy)
+		const rowOwner = this.owner
+		if (!rowOwner) {
+			throw new Error('Attempting to create a unit on a neutral row!')
+		}
+
+		if (card.features.includes(CardFeature.SPY) && rowOwner !== createdBy.group) {
+			createdBy = rowOwner.players[0]
+		}
+
+		const unit = new ServerUnit(this.game, card, rowOwner, createdBy)
 		this.insertUnit(unit, unitIndex)
 
 		/* Play deploy animation */

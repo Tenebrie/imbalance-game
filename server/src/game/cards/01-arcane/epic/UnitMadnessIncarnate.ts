@@ -1,5 +1,6 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
@@ -17,6 +18,7 @@ export default class UnitMadnessIncarnate extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
+			tribes: [CardTribe.MANIFESTATION],
 			stats: {
 				power: 40,
 			},

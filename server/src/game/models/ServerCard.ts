@@ -568,7 +568,7 @@ export default class ServerCard implements Card {
 		if (!owner) {
 			return
 		}
-		const opponent = owner.opponent
+		const opponent = owner.opponentNullable
 		if (!opponent) {
 			return
 		}

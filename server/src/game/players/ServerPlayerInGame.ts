@@ -86,12 +86,12 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		)
 	}
 
-	public get opponent(): ServerPlayerGroup | null {
+	public get opponentNullable(): ServerPlayerGroup | null {
 		return this.game.getOpponent(this.group)
 	}
 
-	public get opponentInGame(): ServerPlayerGroup {
-		const opponent = this.opponent
+	public get opponent(): ServerPlayerGroup {
+		const opponent = this.opponentNullable
 		if (!opponent) {
 			throw new Error('No opponent available!')
 		}
@@ -260,11 +260,11 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	private botTakesTheirTurn(): void {
 		const botTotalPower = this.game.board.getTotalPlayerPower(this.group)
-		const opponentTotalPower = this.opponent ? this.game.board.getTotalPlayerPower(this.opponent) : 0
+		const opponentTotalPower = this.opponentNullable ? this.game.board.getTotalPlayerPower(this.opponentNullable) : 0
 
-		const botWonRound = botTotalPower > opponentTotalPower && this.opponent && this.opponent.roundEnded
-		const botLostRound = opponentTotalPower > botTotalPower + 55 && this.opponentInGame.roundWins === 0
-		const botHasGoodLead = botTotalPower > opponentTotalPower + 40 && this.opponentInGame.roundWins === 0
+		const botWonRound = botTotalPower > opponentTotalPower && this.opponentNullable && this.opponentNullable.roundEnded
+		const botLostRound = opponentTotalPower > botTotalPower + 55 && this.opponent.roundWins === 0
+		const botHasGoodLead = botTotalPower > opponentTotalPower + 40 && this.opponent.roundWins === 0
 
 		if (this.behaviour === AIBehaviour.DEFAULT) {
 			if (botHasGoodLead && !botWonRound) {

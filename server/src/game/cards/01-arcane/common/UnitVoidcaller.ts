@@ -24,10 +24,8 @@ export default class UnitVoidcaller extends ServerCard {
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
-	}
-
-	private onDeploy() {
-		Keywords.createCard.forOwnerOf(this).fromConstructor(UnitVoidPortal)
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
+			Keywords.createCard.forOwnerOf(this).fromConstructor(UnitVoidPortal)
+		})
 	}
 }

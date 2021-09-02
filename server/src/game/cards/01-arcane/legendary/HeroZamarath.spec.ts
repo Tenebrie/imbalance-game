@@ -43,9 +43,9 @@ describe('HeroZamarath', () => {
 			game.board.createUnit(targetUnit, player, 0, 0)
 
 			const opponentsCard = new TestingSpellHeavyStrike(game)
-			player.opponentInGame.players[0].cardHand.addSpell(opponentsCard)
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponentInGame.players[0]), 0, 0)
-			game.cardPlay.selectCardTarget(player.opponentInGame.players[0], game.cardPlay.getDeployTargets()[0].target)
+			player.opponent.players[0].cardHand.addSpell(opponentsCard)
+			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponent.players[0]), 0, 0)
+			game.cardPlay.selectCardTarget(player.opponent.players[0], game.cardPlay.getDeployTargets()[0].target)
 		})
 
 		expect(targetUnit.stats.power).toEqual(20)

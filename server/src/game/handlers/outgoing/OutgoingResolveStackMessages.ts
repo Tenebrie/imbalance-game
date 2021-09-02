@@ -14,13 +14,13 @@ export default {
 			highPriority: true,
 		})
 
-		const opponentGroup = ownedCard.owner.opponent
+		const opponentGroup = ownedCard.owner.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((playerInGame) =>
 				playerInGame.player.sendGameMessage({
 					type: ResolveStackMessageType.ADD,
 					data: data,
-					highPriority: ownedCard.card.game.activePlayer === ownedCard.owner.opponent,
+					highPriority: ownedCard.card.game.activePlayer === ownedCard.owner.opponentNullable,
 				})
 			)
 		}
@@ -34,7 +34,7 @@ export default {
 			data: data,
 		})
 
-		const opponentGroup = ownedCard.owner.opponent
+		const opponentGroup = ownedCard.owner.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((playerInGame) =>
 				playerInGame.player.sendGameMessage({

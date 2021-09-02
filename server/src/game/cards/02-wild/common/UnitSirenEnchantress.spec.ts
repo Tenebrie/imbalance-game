@@ -24,7 +24,7 @@ describe('UnitSirenEnchantress', () => {
 		})
 
 		it('creates the row buff', () => {
-			expect(game.player.frontRow().buffs.includes(BuffRowBloodMoon)).toBeTruthy()
+			expect(game.player.getFrontRow().buffs.has(BuffRowBloodMoon)).toBeTruthy()
 		})
 	})
 
@@ -43,7 +43,7 @@ describe('UnitSirenEnchantress', () => {
 		})
 
 		it('does not create the row buff', () => {
-			expect(game.player.frontRow().buffs.includes(BuffRowBloodMoon)).toBeFalsy()
+			expect(game.player.getFrontRow().buffs.has(BuffRowBloodMoon)).toBeFalsy()
 		})
 	})
 })

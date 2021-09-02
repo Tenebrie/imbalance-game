@@ -1,6 +1,7 @@
 import BuffDuration from '@shared/enums/BuffDuration'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -12,7 +13,7 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import CardLibrary from '../../../libraries/CardLibrary'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import UnitVoidspawn from './UnitVoidspawn'
+import UnitShadow from './UnitShadow'
 
 export default class UnitVoidPortal extends ServerCard {
 	powerPerSpell = asRecurringBuffPotency(1)
@@ -22,7 +23,8 @@ export default class UnitVoidPortal extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
-			relatedCards: [UnitVoidspawn],
+			features: [CardFeature.KEYWORD_SUMMON],
+			relatedCards: [UnitShadow],
 			stats: {
 				power: 0,
 				armor: 10,
@@ -35,6 +37,13 @@ export default class UnitVoidPortal extends ServerCard {
 		}
 		this.botEvaluation = new CustomBotEvaluation(this)
 
+		this.createLocalization({
+			en: {
+				name: 'Void Portal',
+				description: '*Turn end:*\n*Summon* a *Shadow* on your front row.',
+			},
+		})
+
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ group }) => group.owns(this))
 			.perform(() => this.onTurnEnded())
@@ -46,7 +55,7 @@ export default class UnitVoidPortal extends ServerCard {
 			return
 		}
 		const owner = unit.originalOwner
-		const voidspawn = CardLibrary.instantiate(this.game, UnitVoidspawn)
+		const voidspawn = CardLibrary.instantiate(this.game, UnitShadow)
 		this.game.board.createUnit(voidspawn, owner, unit.rowIndex, unit.unitIndex + 1)
 		const uniqueSpellsInDiscard = [...new Set(owner.cardGraveyard.spellCards.map((card) => card.class))]
 		if (uniqueSpellsInDiscard.length === 0) {

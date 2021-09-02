@@ -36,7 +36,7 @@ export default {
 			highPriority: delta < 0,
 		})
 
-		const opponentGroup = playerInGame.opponent
+		const opponentGroup = playerInGame.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
 				opponent.player.sendGameMessage({
@@ -61,7 +61,7 @@ export default {
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
 
-		const opponentGroup = playerInGame.opponent
+		const opponentGroup = playerInGame.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
 				opponent.player.sendGameMessage({
@@ -80,7 +80,7 @@ export default {
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
 
-		const opponentGroup = playerInGame.opponent
+		const opponentGroup = playerInGame.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
 				opponent.player.sendGameMessage({
@@ -99,7 +99,7 @@ export default {
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
 
-		const opponentGroup = playerInGame.opponent
+		const opponentGroup = playerInGame.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
 				opponent.player.sendGameMessage({
@@ -118,7 +118,7 @@ export default {
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
 
-		const opponentGroup = playerInGame.opponent
+		const opponentGroup = playerInGame.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
 				opponent.player.sendGameMessage({
@@ -137,7 +137,7 @@ export default {
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
 
-		const opponentGroup = playerInGame.opponent
+		const opponentGroup = playerInGame.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
 				opponent.player.sendGameMessage({
@@ -154,7 +154,7 @@ export default {
 			data: new OpenOwnedCardMessage(new ServerOwnedCard(card, playerInGame)),
 		})
 
-		const opponentGroup = playerInGame.opponent
+		const opponentGroup = playerInGame.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
 				opponent.player.sendGameMessage({
@@ -173,7 +173,7 @@ export default {
 			data: new OwnedCardRefMessage(ownedCard),
 		})
 
-		const opponentGroup = ownedCard.owner.opponent
+		const opponentGroup = ownedCard.owner.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
 				opponent.player.sendGameMessage({
@@ -192,7 +192,7 @@ export default {
 			data: new OwnedCardRefMessage(ownedCard),
 		})
 
-		const opponentGroup = ownedCard.owner.opponent
+		const opponentGroup = ownedCard.owner.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
 				opponent.player.sendGameMessage({
@@ -209,7 +209,7 @@ export default {
 			data: new OwnedCardRefMessage(ownedCard),
 		})
 
-		const opponentGroup = ownedCard.owner.opponent
+		const opponentGroup = ownedCard.owner.opponentNullable
 		if (opponentGroup) {
 			opponentGroup.players.forEach((opponent) =>
 				opponent.player.sendGameMessage({
@@ -240,7 +240,7 @@ export default {
 				highPriority: true,
 			})
 
-			const opponentGroup = playerInGame.opponent
+			const opponentGroup = playerInGame.opponentNullable
 			if (opponentGroup) {
 				opponentGroup.players.forEach((opponent) =>
 					opponent.player.sendGameMessage({

@@ -13,7 +13,7 @@ import CardLibrary from '../../../../libraries/CardLibrary'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
-import UnitShadowspawn from '../../tokens/UnitShadowspawn'
+import UnitFierceShadow from '../../tokens/UnitFierceShadow'
 
 export default class SpellNightmareDrain extends ServerCard {
 	constructor(game: ServerGame) {
@@ -22,7 +22,7 @@ export default class SpellNightmareDrain extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.HERO_POWER],
-			relatedCards: [UnitShadowspawn],
+			relatedCards: [UnitFierceShadow],
 			stats: {
 				cost: 4,
 			},
@@ -37,14 +37,14 @@ export default class SpellNightmareDrain extends ServerCard {
 		this.createEffect(GameEventType.SPELL_DEPLOYED)
 			.require(() => this.game.cardPlay.getDeployTargets().length === 0)
 			.perform(({ owner }) => {
-				const shadowspawn = CardLibrary.instantiate(this.game, UnitShadowspawn)
+				const shadowspawn = CardLibrary.instantiate(this.game, UnitFierceShadow)
 				const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerPlayer, 0)
 				this.game.board.createUnit(shadowspawn, owner, targetRow.index, targetRow.cards.length)
 			})
 	}
 
 	private onTargetSelected(owner: ServerPlayerInGame, target: ServerUnit): void {
-		const shadowspawn = CardLibrary.instantiate(this.game, UnitShadowspawn)
+		const shadowspawn = CardLibrary.instantiate(this.game, UnitFierceShadow)
 		const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerPlayer, 0)
 		const shadowspawnUnit = this.game.board.createUnit(shadowspawn, owner, targetRow.index, targetRow.cards.length)
 		if (!shadowspawnUnit) {

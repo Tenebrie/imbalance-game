@@ -1,6 +1,8 @@
 import AccessLevel from '@shared/enums/AccessLevel'
 import AIBehaviour from '@shared/enums/AIBehaviour'
+import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
+import LeaderStatType from '@shared/enums/LeaderStatType'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import AsciiColor from '@src/enums/AsciiColor'
 import ServerBotPlayer from '@src/game/AI/ServerBotPlayer'
@@ -11,7 +13,7 @@ import ServerCardStats from '@src/game/models/ServerCardStats'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import ServerUnit from '@src/game/models/ServerUnit'
 import Keywords from '@src/utils/Keywords'
-import { colorize, getClassFromConstructor } from '@src/utils/Utils'
+import { colorize, getClassFromConstructor, getTotalLeaderStat } from '@src/utils/Utils'
 import { v4 as getRandomId } from 'uuid'
 
 import TestingLeader from '../game/cards/11-testing/TestingLeader'
@@ -32,6 +34,7 @@ export type TestGame = {
 	player: TestGamePlayer
 	opponent: TestGamePlayer
 	allPlayers: TestGamePlayer[][]
+	advanceTurn(): TestGame
 }
 
 export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
@@ -46,14 +49,24 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 	game.events.resolveEvents()
 	game.events.evaluateSelectors()
 
-	return {
+	const advanceTurn = (): TestGame => {
+		game.players.filter((group) => !group.turnEnded).forEach((group) => group.endTurn())
+		game.advanceCurrentTurn()
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return gameWrapper
+	}
+
+	const gameWrapper = {
 		handle: game,
 		board: boardWrapper,
 		stack: stackWrapper,
 		player: playerWrappers[0][0],
 		opponent: playerWrappers[1][0],
 		allPlayers: playerWrappers,
+		advanceTurn,
 	}
+	return gameWrapper
 }
 
 /**
@@ -87,6 +100,10 @@ const setupTestGameBoard = (game: ServerGame): TestGameBoard => {
 	}
 }
 
+/**
+ * Board row wrapper
+ */
+
 type TestGameRow = {
 	buffs: TestGameBuffs
 }
@@ -97,10 +114,15 @@ const wrapRow = (game: ServerGame, row: ServerBoardRow): TestGameRow => {
 	}
 }
 
+/**
+ * Unit wrapper
+ */
+
 type TestGameUnit = {
 	stats: ServerCardStats
 	buffs: TestGameBuffs
 	variables: RichTextVariables
+	getRow(): RowDistanceWrapper
 	orderOnFirst(): void
 }
 
@@ -109,6 +131,7 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		stats: unit.card.stats,
 		buffs: wrapBuffs(game, unit.card),
 		variables: unit.card.variables,
+		getRow: () => wrapRowDistance(unit),
 		orderOnFirst: () => {
 			const validOrders = game.board.orders.validOrders.filter((order) => order.definition.card === unit.card)
 			const chosenOrder = validOrders[0]
@@ -121,37 +144,24 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 }
 
 /**
- * Play stack wrapper
- */
-type TestGamePlayStack = {
-	countAll(): number
-}
-
-const setupCardPlayStack = (game: ServerGame): TestGamePlayStack => {
-	return {
-		countAll: () => {
-			return game.cardPlay.cardResolveStack.cards.length
-		},
-	}
-}
-
-/**
  * Player wrapper
  */
 type TestGamePlayer = {
 	handle: ServerPlayerInGame
 	add(card: CardConstructor): TestGameCard
 	draw(card: CardConstructor): TestGameCard
-	spawn(card: CardConstructor, row?: RowIndexWrapper): TestGameUnit
+	summon(card: CardConstructor, row?: RowDistanceWrapper): TestGameUnit
 	getSpellMana(): number
 	addSpellMana(value: number): void
 	find(card: CardConstructor): TestGameCard
-	frontRow(): TestGameRow
+	findAt(card: CardConstructor, index: number): TestGameCard
+	getStack(): TestGameCardPlayActions
+	getFrontRow(): TestGameRow
+	getLeaderStat(stat: LeaderStatType): number
 	graveyard: {
 		add(card: CardConstructor): TestGameCard
 	}
 }
-type RowIndexWrapper = 'front' | 'back'
 
 const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 	CardLibrary.forceLoadCards([TestingLeader])
@@ -181,19 +191,23 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		return wrapCard(game, Keywords.drawExactCard(player, card), player)
 	}
 
-	const addCardToGraveyard = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
-		const card = Keywords.addCardToGraveyard(player, cardConstructor)
-		return wrapCard(game, card, player)
+	const findCardAnywhere = (player: ServerPlayerInGame, cardConstructor: CardConstructor, index: number): TestGameCard => {
+		const game = player.game
+		const allCards = player.cardHand.allCards
+			.concat(player.cardDeck.allCards)
+			.concat(player.cardGraveyard.allCards)
+			.concat(game.board.getUnitsOwnedByPlayer(player).map((unit) => unit.card))
+			.concat(game.cardPlay.cardResolveStack.cards.filter((ownedCard) => ownedCard.owner === player).map((ownedCard) => ownedCard.card))
+		const foundCards = allCards.filter((card) => card.class === getClassFromConstructor(cardConstructor))
+		if (foundCards.length <= index) {
+			throw new Error(
+				`Unable to find ${getClassFromConstructor(cardConstructor)} at index ${index}. Only ${foundCards.length} cards found.`
+			)
+		}
+		return wrapCard(game, foundCards[index], player)
 	}
 
-	const find = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
-		const allCards = player.cardHand.allCards.concat(player.cardDeck.allCards).concat(player.cardGraveyard.allCards)
-		const foundCard = allCards.find((card) => card.class === getClassFromConstructor(cardConstructor))
-		if (!foundCard) throw new Error(`Unable to find any card with class ${getClassFromConstructor(cardConstructor)}`)
-		return wrapCard(game, foundCard, player)
-	}
-
-	const spawn = (player: ServerPlayerInGame, cardConstructor: CardConstructor, row: RowIndexWrapper): TestGameUnit => {
+	const summon = (player: ServerPlayerInGame, cardConstructor: CardConstructor, row: RowDistanceWrapper): TestGameUnit => {
 		const distance = row === 'front' ? 0 : game.board.getControlledRows(player).length - 1
 		const targetRow = game.board.getRowWithDistanceToFront(player, distance)
 		const card = new cardConstructor(game)
@@ -210,16 +224,24 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		return wrapRow(game, game.board.getRowWithDistanceToFront(player, 0))
 	}
 
+	const addCardToGraveyard = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
+		const card = Keywords.addCardToGraveyard(player, cardConstructor)
+		return wrapCard(game, card, player)
+	}
+
 	return game.players.map((playerGroup) =>
 		playerGroup.players.map((player) => ({
 			handle: player,
 			add: (card: CardConstructor) => addCardToHand(player, card),
 			draw: (card: CardConstructor) => drawCardToHand(player, card),
-			find: (card: CardConstructor) => find(player, card),
-			spawn: (card: CardConstructor, row: RowIndexWrapper = 'front') => spawn(player, card, row),
+			find: (card: CardConstructor) => findCardAnywhere(player, card, 0),
+			findAt: (card: CardConstructor, index: number) => findCardAnywhere(player, card, index),
+			summon: (card: CardConstructor, row: RowDistanceWrapper = 'front') => summon(player, card, row),
 			getSpellMana: (): number => player.spellMana,
 			addSpellMana: (value: number) => addSpellMana(player, value),
-			frontRow: () => getFrontRow(player),
+			getStack: () => getCardPlayActions(game, player),
+			getFrontRow: () => getFrontRow(player),
+			getLeaderStat: (stat: LeaderStatType) => getTotalLeaderStat(player, [stat]),
 			graveyard: {
 				add: (card: CardConstructor) => addCardToGraveyard(player, card),
 			},
@@ -227,17 +249,22 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 	)
 }
 
+/**
+ * Card wrapper
+ */
 type TestGameCard = {
+	stats: ServerCardStats
 	buffs: TestGameBuffs
 	location: CardLocation
 	play(): TestGameCardPlayActions
-	playTo(row: 'front' | 'back'): TestGameCardPlayActions
+	playTo(row: 'front' | 'middle' | 'back'): TestGameCardPlayActions
 }
 
 const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame): TestGameCard => {
-	const playCardToRow = (row: RowIndexWrapper): TestGameCardPlayActions => {
-		const distance = row === 'front' ? 0 : game.board.getControlledRows(player).length - 1
-		const targetRow = game.board.getRowWithDistanceToFront(player, distance)
+	const playCardToRow = (row: RowDistanceWrapper): TestGameCardPlayActions => {
+		const distance = unwrapRowDistance(row, game, player)
+		const rowOwner = card.features.includes(CardFeature.SPY) ? player.opponent : player
+		const targetRow = game.board.getRowWithDistanceToFront(rowOwner, distance)
 		if (player.unitMana < card.stats.unitCost || player.spellMana < card.stats.spellCost) {
 			warn(`Attempting to play a card without enough mana. The action is likely to be ignored.`)
 		}
@@ -247,10 +274,11 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		return getCardPlayActions(game, player)
 	}
 	return {
+		stats: card.stats,
 		buffs: wrapBuffs(game, card),
 		location: card.location,
 		play: () => playCardToRow('front'),
-		playTo: (row: RowIndexWrapper) => playCardToRow(row),
+		playTo: (row: RowDistanceWrapper) => playCardToRow(row),
 	}
 }
 
@@ -258,12 +286,35 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
  * Card buff wrapper
  */
 type TestGameBuffs = {
-	includes(buffConstructor: BuffConstructor): boolean
+	add(buffConstructor: BuffConstructor): void
+	addMultiple(buffConstructor: BuffConstructor, count: number): void
+	has(buffConstructor: BuffConstructor): boolean
 }
 
 const wrapBuffs = (game: ServerGame, parent: ServerCard | ServerBoardRow): TestGameBuffs => {
 	return {
-		includes: (buffConstructor: BuffConstructor): boolean => parent.buffs.has(buffConstructor),
+		add: (buffConstructor): void => parent.buffs.add(buffConstructor, null),
+		addMultiple: (buffConstructor, count): void => parent.buffs.addMultiple(buffConstructor, count, null),
+		has: (buffConstructor): boolean => parent.buffs.has(buffConstructor),
+	}
+}
+
+/**
+ * Play stack wrapper
+ */
+type TestGamePlayStack = {
+	log(): void
+	countAll(): number
+}
+
+const setupCardPlayStack = (game: ServerGame): TestGamePlayStack => {
+	return {
+		log: () => {
+			console.debug(game.cardPlay.cardResolveStack.cards.map((card) => card.card.class))
+		},
+		countAll: () => {
+			return game.cardPlay.cardResolveStack.cards.length
+		},
 	}
 }
 
@@ -292,6 +343,26 @@ const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestG
 /**
  * Utilities
  */
+type RowDistanceWrapper = 'front' | 'middle' | 'back' | 'enemy'
+const wrapRowDistance = (unit: ServerUnit): RowDistanceWrapper => {
+	const game = unit.game
+	const group = unit.owner
+	const distance = game.board.getDistanceToFront(group, unit.rowIndex)
+	switch (distance) {
+		case 0:
+			return 'front'
+		case 1:
+			return 'middle'
+		case 2:
+			return 'back'
+		default:
+			throw new Error(`Unknown row type with distance ${distance}`)
+	}
+}
+const unwrapRowDistance = (index: RowDistanceWrapper, game: ServerGame, player: ServerPlayerInGame): number => {
+	return index === 'front' ? 0 : index === 'middle' ? 1 : game.board.getControlledRows(player).length - 1
+}
+
 const warn = (message: string): void => {
 	console.debug(`${colorize('[Warning]', AsciiColor.YELLOW)} ${message}`)
 }

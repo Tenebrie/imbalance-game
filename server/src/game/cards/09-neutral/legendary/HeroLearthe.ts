@@ -11,7 +11,7 @@ import CardLibrary from '../../../libraries/CardLibrary'
 import ServerBoardRow from '../../../models/ServerBoardRow'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import UnitLivingShadow from '../tokens/UnitLivingShadow'
+import UnitHarmlessShadow from '../tokens/UnitHarmlessShadow'
 
 export default class HeroLearthe extends ServerCard {
 	constructor(game: ServerGame) {
@@ -20,7 +20,7 @@ export default class HeroLearthe extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.NEUTRAL,
 			features: [CardFeature.KEYWORD_DEPLOY],
-			relatedCards: [UnitLivingShadow],
+			relatedCards: [UnitHarmlessShadow],
 			stats: {
 				power: 7,
 			},
@@ -35,7 +35,7 @@ export default class HeroLearthe extends ServerCard {
 	private onTargetSelected(player: ServerPlayerInGame, target: ServerBoardRow): void {
 		for (let i = 0; i < Constants.MAX_CARDS_PER_ROW; i++) {
 			this.game.animation.createAnimationThread()
-			const livingShadow = CardLibrary.instantiate(this.game, UnitLivingShadow)
+			const livingShadow = CardLibrary.instantiate(this.game, UnitHarmlessShadow)
 			this.game.board.createUnit(livingShadow, player, target.index, target.cards.length)
 			this.game.animation.commitAnimationThread()
 		}

@@ -143,8 +143,8 @@ export default class ServerGameCardPlay {
 		}
 
 		/* Play animation */
-		if (owner.opponent) {
-			OutgoingMessageHandlers.triggerAnimationForPlayers(owner.opponent.players, ServerAnimation.delay(500))
+		if (owner.opponentNullable) {
+			OutgoingMessageHandlers.triggerAnimationForPlayers(owner.opponentNullable.players, ServerAnimation.delay(500))
 		}
 
 		/* Remember played card */

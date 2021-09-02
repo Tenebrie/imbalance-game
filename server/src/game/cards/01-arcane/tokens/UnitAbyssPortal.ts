@@ -12,7 +12,7 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import CardLibrary from '../../../libraries/CardLibrary'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import UnitVoidspawn from './UnitVoidspawn'
+import UnitShadow from './UnitShadow'
 
 export default class UnitAbyssPortal extends ServerCard {
 	powerPerCard = asRecurringBuffPotency(1)
@@ -22,7 +22,7 @@ export default class UnitAbyssPortal extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
-			relatedCards: [UnitVoidspawn],
+			relatedCards: [UnitShadow],
 			stats: {
 				power: 0,
 				armor: 20,
@@ -46,7 +46,7 @@ export default class UnitAbyssPortal extends ServerCard {
 			return
 		}
 		const owner = unit.originalOwner
-		const voidspawn = CardLibrary.instantiate(this.game, UnitVoidspawn)
+		const voidspawn = CardLibrary.instantiate(this.game, UnitShadow)
 		this.game.board.createUnit(voidspawn, owner, unit.rowIndex, unit.unitIndex + 1)
 		const uniqueCardsInAllDiscards = [
 			...new Set(

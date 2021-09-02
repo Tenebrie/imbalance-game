@@ -15,7 +15,7 @@ describe('UnitQuietInfiltrator', () => {
 
 	beforeEach(() => {
 		;({ game, cardInHand, player } = TestGameTemplates.singleCardTest(UnitQuietInfiltrator))
-		enemyRow = game.board.rows.find((row) => row.owner === player.opponentInGame)!
+		enemyRow = game.board.rows.find((row) => row.owner === player.opponent)!
 	})
 
 	it("can be played on the opponent's board", () => {
@@ -25,7 +25,7 @@ describe('UnitQuietInfiltrator', () => {
 	})
 
 	it('deals damage to enemies', () => {
-		const enemyRow = game.board.rows.find((row) => row.owner === player.opponentInGame)!
+		const enemyRow = game.board.rows.find((row) => row.owner === player.opponent)!
 		game.board.createUnit(new TestingUnitNoEffect(game), game.players[0].players[0], enemyRow.index, 0)
 		game.board.createUnit(new TestingUnitNoEffect(game), game.players[0].players[0], enemyRow.index, 1)
 		game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), enemyRow.index, 1)

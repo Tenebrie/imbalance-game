@@ -38,12 +38,8 @@ const addCardToHand = (player: ServerPlayerInGame | null, card: ServerCard): Ser
 }
 
 export default {
-	move: {
-		unit: (unit: ServerUnit) => ({
-			toPosition: (rowOrIndex: number | ServerBoardRow, unitIndex: number): void => {
-				unit.game.board.moveUnit(unit, toRowIndex(rowOrIndex), unitIndex)
-			},
-		}),
+	moveUnit: (unit: ServerUnit, rowOrIndex: number | ServerBoardRow, unitIndex: number): void => {
+		unit.game.board.moveUnit(unit, toRowIndex(rowOrIndex), unitIndex)
 	},
 
 	draw: {
@@ -62,7 +58,19 @@ export default {
 		return card
 	},
 
-	summonCard: (card: ServerCard): void => {
+	summonUnit: (args: {
+		owner: ServerPlayerInGame
+		cardConstructor: CardConstructor
+		rowIndex: number
+		unitIndex: number
+	}): ServerUnit | null => {
+		const { owner, cardConstructor, rowIndex, unitIndex } = args
+		const game = owner.game
+		const card = new cardConstructor(game)
+		return game.board.createUnit(card, owner, rowIndex, unitIndex)
+	},
+
+	playCardFromDeck: (card: ServerCard): void => {
 		const cardOwner = card.ownerPlayer
 		if (cardOwner.cardDeck.allCards.includes(card)) {
 			cardOwner.cardDeck.removeCard(card)
@@ -103,6 +111,14 @@ export default {
 		const unitIndex = unit.unitIndex
 		unit.game.board.removeUnit(unit)
 		unit.game.board.createUnit(CardLibrary.instantiate(unit.game, targetCard), unit.originalOwner, rowIndex, unitIndex)
+	},
+
+	destroyUnit: (args: { unit: ServerUnit; source?: ServerCard }) => {
+		const { unit, source } = args
+		if (source) {
+			unit.game.animation.play(ServerAnimation.cardAffectsCards(source, [unit.card]))
+		}
+		unit.game.board.destroyUnit(unit)
 	},
 
 	destroy: {

@@ -149,7 +149,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 
 	[GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD]: (data: void, game: ServerGame, player: ServerPlayerInGame): void => {
 		const cards = sortCards(
-			player.opponent!.players[0].cardGraveyard.unitCards.concat(player.opponent!.players[0].cardGraveyard.spellCards)
+			player.opponentNullable!.players[0].cardGraveyard.unitCards.concat(player.opponentNullable!.players[0].cardGraveyard.spellCards)
 		)
 		if (cards.length === 0) {
 			cards.push(CardLibrary.findPrototypeFromClass('tokenEmptyDeck'))
@@ -182,7 +182,7 @@ const IncomingMessageHandlers: { [index in ClientToServerMessageTypes]: Incoming
 			return
 		}
 
-		game.finish(player.opponent, 'Player surrendered (Player action)')
+		game.finish(player.opponentNullable, 'Player surrendered (Player action)')
 		onPlayerActionEnd(game, player)
 		OutgoingMessageHandlers.executeMessageQueue(game)
 	},

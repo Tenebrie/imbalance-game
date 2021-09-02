@@ -19,6 +19,7 @@ enum CardTribe {
 	BUILDING = 'building',
 	VALKYRIE = 'valkyrie',
 	ELEMENTAL = 'elemental',
+	VOIDSPAWN = 'voidspawn',
 	MANIFESTATION = 'manifestation',
 	LABYRINTH_WEAPON = 'lab_weapon',
 	LABYRINTH_ARMOR = 'lab_armor',

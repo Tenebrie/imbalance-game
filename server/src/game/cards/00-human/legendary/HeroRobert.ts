@@ -33,7 +33,7 @@ export default class HeroRobert extends ServerCard {
 
 	private onTargetSelected(target: ServerCard): void {
 		target.buffs.add(BuffNoArmor, this)
-		Keywords.summonCard(target)
+		Keywords.playCardFromDeck(target)
 		Keywords.createCard
 			.forOwnerOf(this)
 			.with((card) => card.buffs.add(BuffNoArmor, this))

@@ -27,7 +27,7 @@ export default class UnitLabyrinthLostHound extends ServerCard {
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
 			const cardToSummon = this.ownerPlayer.cardDeck.findCard(UnitLabyrinthLostHound)
 			if (cardToSummon) {
-				Keywords.summonCard(cardToSummon)
+				Keywords.playCardFromDeck(cardToSummon)
 			}
 		})
 	}
