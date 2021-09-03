@@ -396,6 +396,7 @@ export default class ServerGameEvents {
 			})
 		allGameCards = new Array(...new Set(allGameCards))
 
+		// TODO: Sort selectors!
 		this.cardSelectors.forEach((selector) => {
 			if ((!selector.ignoreControlEffects && ServerGameEvents.subscriberSuspended(selector.subscriber)) || selector.markedForRemoval) {
 				selector.clearSelection()

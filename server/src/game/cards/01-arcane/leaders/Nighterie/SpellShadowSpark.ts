@@ -4,19 +4,19 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
-import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
 import CardLibrary from '../../../../libraries/CardLibrary'
 import ServerCard from '../../../../models/ServerCard'
 import ServerDamageInstance from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
-import ServerUnit from '../../../../models/ServerUnit'
 import UnitFierceShadow from '../../tokens/UnitFierceShadow'
 
 export default class SpellShadowSpark extends ServerCard {
 	baseDamage = asDirectSparkDamage(3)
+	unitSummoned = false
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -44,14 +44,23 @@ export default class SpellShadowSpark extends ServerCard {
 
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
-			.perform(({ player, targetUnit }) => this.onTargetSelected(player, targetUnit))
-	}
+			.perform(({ targetUnit }) => {
+				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+				summonUnit()
+			})
 
-	private onTargetSelected(player: ServerPlayerInGame, target: ServerUnit): void {
-		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+		this.createEffect(GameEventType.SPELL_DEPLOYED)
+			.require(() => !this.unitSummoned)
+			.perform(() => summonUnit())
 
-		const shadowspawn = CardLibrary.instantiate(this.game, UnitFierceShadow)
-		const targetRow = this.game.board.getRowWithDistanceToFront(this.ownerPlayer, 0)
-		this.game.board.createUnit(shadowspawn, player, targetRow.index, targetRow.cards.length)
+		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => (this.unitSummoned = false))
+
+		const summonUnit = () => {
+			const player = this.ownerPlayer
+			const shadowspawn = CardLibrary.instantiate(this.game, UnitFierceShadow)
+			const targetRow = this.game.board.getRowWithDistanceToFront(player, 0)
+			this.game.board.createUnit(shadowspawn, player, targetRow.index, targetRow.cards.length)
+			this.unitSummoned = true
+		}
 	}
 }
