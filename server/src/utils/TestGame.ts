@@ -2,6 +2,7 @@ import AccessLevel from '@shared/enums/AccessLevel'
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
+import CardTribe from '@shared/enums/CardTribe'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import AsciiColor from '@src/enums/AsciiColor'
@@ -122,6 +123,7 @@ type TestGameUnit = {
 	stats: ServerCardStats
 	buffs: TestGameBuffs
 	variables: RichTextVariables
+	tribes: CardTribe[]
 	getRow(): RowDistanceWrapper
 	orderOnFirst(): void
 }
@@ -131,6 +133,7 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		stats: unit.card.stats,
 		buffs: wrapBuffs(game, unit.card),
 		variables: unit.card.variables,
+		tribes: unit.card.tribes,
 		getRow: () => wrapRowDistance(unit),
 		orderOnFirst: () => {
 			const validOrders = game.board.orders.validOrders.filter((order) => order.definition.card === unit.card)
@@ -180,6 +183,8 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 
 	const addCardToHand = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
 		const card = Keywords.addCardToHand.for(player).fromConstructor(cardConstructor)
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
 		return wrapCard(game, card, player)
 	}
 
