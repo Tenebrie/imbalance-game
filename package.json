@@ -1,50 +1,59 @@
 {
-		"name": "state-of-imbalance",
-		"version": "0.0.0",
-		"license": "GPL-3.0-or-later",
-		"description": "",
-		"main": "server/dist/app.js",
-		"subPackages": [
-				"client",
-				"server"
-		],
-		"scripts": {
-				"postinstall": "subpkg install",
-				"build": "cd client && yarn build && cd .. && rm -rf server/client && mkdir server/client && cp -r client/dist/* server/client && cd server && yarn build",
-				"start": "(cd server && yarn start)",
-				"docker": "yarn docker:start",
-				"docker:start": "docker-compose up --force-recreate",
-				"docker:clear": "docker container kill $(docker ps -q)",
-				"docker:cold": "docker container kill $(docker ps -q) && docker-compose up --force-recreate",
-				"docker:rebuild": "docker-compose build client && docker-compose build server",
-				"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)",
-				"test": "(cd server && yarn test)",
-				"nuke": "rm -rf node_modules && (cd client && yarn nuke) && (cd server && yarn nuke) && (cd shared && yarn nuke)"
-		},
-		"dependencies": {
-				"@typescript-eslint/eslint-plugin": "^4.7.0",
-				"@typescript-eslint/parser": "^4.7.0",
-				"cloc": "^2.5.1",
-				"eslint": "^7.13.0",
-				"eslint-config-prettier": "^7.1.0",
-				"eslint-plugin-node": "^11.1.0",
-				"eslint-plugin-prettier": "^3.3.0",
-				"eslint-plugin-simple-import-sort": "^7.0.0",
-				"eslint-plugin-unused-imports": "^1.1.4",
-				"eslint-plugin-vue": "^7.1.0",
-				"nodemon": "^2.0.6",
-				"pgmigrate": "^5.0.0",
-				"prettier": "^2.2.1",
-				"sass-loader": "^10.1.0",
-				"subpackage": "^1.1.0",
-				"typescript": "^4.0.5"
-		},
-		"engines": {
-				"node": "14.x"
-		},
-		"author": "Tenebrie",
-		"bugs": {
-				"url": "https://github.com/Tenebrie/notgwent-game/issues"
-		},
-		"homepage": "https://github.com/Tenebrie/notgwent-game#readme"
+	"name": "state-of-imbalance",
+	"version": "0.0.0",
+	"license": "GPL-3.0-or-later",
+	"description": "",
+	"main": "server/dist/app.js",
+	"subPackages": [
+		"client",
+		"server"
+	],
+	"scripts": {
+		"prepare": "husky install",
+		"postinstall": "subpkg install",
+		"build": "cd client && yarn build && cd .. && rm -rf server/client && mkdir server/client && cp -r client/dist/* server/client && cd server && yarn build",
+		"start": "(cd server && yarn start)",
+		"docker": "yarn docker:start",
+		"docker:start": "docker-compose up --force-recreate",
+		"docker:clear": "docker container kill $(docker ps -q)",
+		"docker:cold": "docker container kill $(docker ps -q) && docker-compose up --force-recreate",
+		"docker:rebuild": "docker-compose build client && docker-compose build server",
+		"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)",
+		"test": "(cd server && yarn test)",
+		"nuke": "rm -rf node_modules && (cd client && yarn nuke) && (cd server && yarn nuke) && (cd shared && yarn nuke)",
+		"lint:client": "(cd client && yarn lint)"
+	},
+	"dependencies": {
+		"@typescript-eslint/eslint-plugin": "^4.7.0",
+		"@typescript-eslint/parser": "^4.7.0",
+		"cloc": "^2.5.1",
+		"eslint": "^7.13.0",
+		"eslint-config-prettier": "^7.1.0",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-prettier": "^3.3.0",
+		"eslint-plugin-simple-import-sort": "^7.0.0",
+		"eslint-plugin-unused-imports": "^1.1.4",
+		"eslint-plugin-vue": "^7.1.0",
+		"lint-staged": "^11.1.2",
+		"nodemon": "^2.0.6",
+		"pgmigrate": "^5.0.0",
+		"prettier": "^2.2.1",
+		"sass-loader": "^10.1.0",
+		"subpackage": "^1.1.0",
+		"typescript": "^4.0.5"
+	},
+	"lint-staged": {
+		"*.(ts|vue|json)": "yarn eslint --fix"
+	},
+	"engines": {
+		"node": "14.x"
+	},
+	"author": "Tenebrie",
+	"bugs": {
+		"url": "https://github.com/Tenebrie/notgwent-game/issues"
+	},
+	"homepage": "https://github.com/Tenebrie/notgwent-game#readme",
+	"devDependencies": {
+		"husky": "^7.0.2"
+	}
 }

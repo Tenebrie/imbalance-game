@@ -30,6 +30,7 @@ export default defineComponent({
 		if (isElectron()) {
 			axios.defaults.baseURL = electronHost()
 		}
+
 		AudioSystem.setMode(AudioSystemMode.MENU)
 		window.addEventListener('contextmenu', this.onContextMenu)
 		this.printConsoleWelcomeMessage()
