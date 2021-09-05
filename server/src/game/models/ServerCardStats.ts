@@ -60,6 +60,9 @@ export default class ServerCardStats implements CardStats {
 
 	/* Power */
 	public get power(): number {
+		if (this.card.features.includes(CardFeature.POWER_EQUAL_TO_ARMOR)) {
+			return this.__armor
+		}
 		return limitValueToInterval(0, this.__power, this.maxPower)
 	}
 	public set power(value: number) {

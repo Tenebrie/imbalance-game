@@ -12,6 +12,7 @@ import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import ServerCardStats from '@src/game/models/ServerCardStats'
+import ServerDamageInstance from '@src/game/models/ServerDamageSource'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import ServerUnit from '@src/game/models/ServerUnit'
 import Keywords from '@src/utils/Keywords'
@@ -127,24 +128,34 @@ type TestGameUnit = {
 	tribes: CardTribe[]
 	getRow(): RowDistanceWrapper
 	orderOnFirst(): void
+	takeDamage(damage: number): TestGameUnit
 }
 
 const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
-	return {
+	const orderOnFirst = () => {
+		const validOrders = game.board.orders.validOrders.filter((order) => order.definition.card === unit.card)
+		const chosenOrder = validOrders[0]
+		if (!chosenOrder) throw new Error('No valid orders to perform!')
+		game.board.orders.performUnitOrder(chosenOrder, unit.originalOwner)
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+	}
+	const takeDamage = (damage: number): TestGameUnit => {
+		unit.dealDamage(ServerDamageInstance.fromUniverse(damage))
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return unitWrapper
+	}
+	const unitWrapper: TestGameUnit = {
 		stats: unit.card.stats,
 		buffs: wrapBuffs(game, unit.card),
 		variables: unit.card.variables,
 		tribes: unit.card.tribes,
 		getRow: () => wrapRowDistance(unit),
-		orderOnFirst: () => {
-			const validOrders = game.board.orders.validOrders.filter((order) => order.definition.card === unit.card)
-			const chosenOrder = validOrders[0]
-			if (!chosenOrder) throw new Error('No valid orders to perform!')
-			game.board.orders.performUnitOrder(chosenOrder, unit.originalOwner)
-			game.events.resolveEvents()
-			game.events.evaluateSelectors()
-		},
+		orderOnFirst: () => orderOnFirst(),
+		takeDamage: (damage: number) => takeDamage(damage),
 	}
+	return unitWrapper
 }
 
 /**
@@ -199,6 +210,8 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		if (!card) {
 			throw new Error(`Unable to draw card ${getClassFromConstructor(cardConstructor)}`)
 		}
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
 		return wrapCard(game, Keywords.drawExactCard(player, card), player)
 	}
 
@@ -224,6 +237,8 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		const card = new cardConstructor(game)
 		const unit = targetRow.createUnit(card, player, targetRow.cards.length)
 		if (!unit) throw new Error(`Unable to create the unit with class ${getClassFromConstructor(cardConstructor)}`)
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
 		return wrapUnit(game, unit)
 	}
 
@@ -246,11 +261,15 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 
 	const addCardToDeck = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
 		const card = Keywords.addCardToDeck(player, cardConstructor)
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
 		return wrapCard(game, card, player)
 	}
 
 	const addCardToGraveyard = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
 		const card = Keywords.addCardToGraveyard(player, cardConstructor)
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
 		return wrapCard(game, card, player)
 	}
 
@@ -288,6 +307,7 @@ type TestGameCard = {
 	location: CardLocation
 	play(): TestGameCardPlayActions
 	playTo(row: 'front' | 'middle' | 'back'): TestGameCardPlayActions
+	takeDamage(damage: number): TestGameCard
 }
 
 const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame): TestGameCard => {
@@ -303,13 +323,21 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		game.events.evaluateSelectors()
 		return getCardPlayActions(game, player)
 	}
-	return {
+	const takeDamage = (damage: number): TestGameCard => {
+		card.dealDamage(ServerDamageInstance.fromUniverse(damage))
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return cardWrapper
+	}
+	const cardWrapper: TestGameCard = {
 		stats: card.stats,
 		buffs: wrapBuffs(game, card),
 		location: card.location,
 		play: () => playCardToRow('front'),
 		playTo: (row: RowDistanceWrapper) => playCardToRow(row),
+		takeDamage: (damage: number) => takeDamage(damage),
 	}
+	return cardWrapper
 }
 
 /**

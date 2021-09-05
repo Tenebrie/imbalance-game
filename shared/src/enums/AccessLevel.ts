@@ -3,7 +3,6 @@ enum AccessLevel {
 	NORMAL = 'normal',
 	SUPPORT = 'support',
 	ADMIN = 'admin',
-	DEVELOPER = 'developer',
 }
 
 export default AccessLevel

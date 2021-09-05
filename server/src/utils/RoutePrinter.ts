@@ -81,7 +81,7 @@ export const printAllRoutes = (app: Application): string => {
 							? `[${colorize('Player', AsciiColor.BLUE)}]`
 							: `[${colorize('Any', AsciiColor.WHITE)}]`,
 						accessLevel: middleware.includes(MiddlewareType.DEVELOPER_TOKEN)
-							? AccessLevel.DEVELOPER
+							? AccessLevel.ADMIN
 							: middleware.includes(MiddlewareType.ADMIN_TOKEN)
 							? AccessLevel.ADMIN
 							: middleware.includes(MiddlewareType.SUPPORT_TOKEN)

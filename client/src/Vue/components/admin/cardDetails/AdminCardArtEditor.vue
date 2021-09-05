@@ -121,7 +121,8 @@ export default defineComponent({
 			if ((delta > 0 && imageScaleRef.value < 0.05) || (delta < 0 && imageScaleRef.value > 2)) {
 				return
 			}
-			imageScaleRef.value -= delta / 2500
+			const divider = event.shiftKey ? 20000 : 2500
+			imageScaleRef.value -= delta / divider
 			renderFrame()
 		}
 
