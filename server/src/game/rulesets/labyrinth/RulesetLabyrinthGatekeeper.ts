@@ -20,10 +20,6 @@ export default class RulesetLabyrinthGatekeeper extends BaseRulesetLabyrinthEnco
 			[HeroLabyrinthGatekeeper],
 		])
 
-		this.createCallback(GameEventType.GAME_SETUP).perform(({ game }) => {
-			const state = game.progression.labyrinth.state.run
-		})
-
 		this.createCallback(GameEventType.GAME_FINISHED).perform(({ victoriousPlayer }) => {
 			let outcome: 'win' | 'lose' | 'kill' = 'lose'
 			if (!game.board.getAllUnits().find((unit) => unit.card instanceof HeroLabyrinthGatekeeper)) {

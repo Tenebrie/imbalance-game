@@ -3,7 +3,7 @@ module.exports = {
 	env: {
 		node: true,
 	},
-	plugins: ['simple-import-sort'],
+	plugins: ['simple-import-sort', 'unused-imports'],
 	extends: [
 		'plugin:vue/vue3-essential',
 		'eslint:recommended',
@@ -38,6 +38,7 @@ module.exports = {
 		'@typescript-eslint/ban-ts-comment': 'off',
 		'simple-import-sort/imports': 'error',
 		'simple-import-sort/exports': 'error',
+		'unused-imports/no-unused-imports': 'error',
 	},
 	overrides: [
 		{

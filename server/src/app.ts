@@ -13,7 +13,6 @@ import logger from 'morgan'
 import path from 'path'
 
 import Database from './database/Database'
-import GenericErrorMiddleware from './middleware/GenericErrorMiddleware'
 import AsyncHandler from './utils/AsyncHandler'
 import { cardImageGenerator } from './utils/CardImageGenerator'
 import { wsLogger } from './utils/WebSocketLogger'
@@ -111,7 +110,7 @@ app.use('/api/status', StatusRouter)
 app.use('/health', HealthRouter)
 
 /* Generic error handler */
-app.use(GenericErrorMiddleware)
+// app.use(GenericErrorMiddleware)
 
 console.info('Registered routes:', printAllRoutes(app))
 
@@ -121,8 +120,8 @@ app.use('*', (req, res) => {
 })
 
 /* Last-resort error handler */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: any, req: Request, res: Response, next: () => void) => {
+app.use((err: any, req: Request, res: Response, _next: () => void) => {
+	console.log('Last resort!')
 	res.status(err.status || 500)
 	res.render('error', {
 		message: err.message,

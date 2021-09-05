@@ -1,5 +1,3 @@
-import AIBehaviour from '../../enums/AIBehaviour'
-
 export type RulesetSlotPlayer = RulesetSlotHumanPlayer | RulesetSlotAIPlayer
 
 type RulesetSlotHumanPlayer = {

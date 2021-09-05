@@ -5,8 +5,8 @@ interface ErrorJson {
 	error: string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/explicit-module-boundary-types
-export default (err: any, req: Request, res: Response, next: () => void): void => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export default (err: any, req: Request, res: Response, _next: () => void): void => {
 	if (err && !err.status) {
 		console.error(err)
 	}

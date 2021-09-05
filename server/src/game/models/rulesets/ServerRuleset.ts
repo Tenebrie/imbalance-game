@@ -122,7 +122,7 @@ export abstract class ServerRuleset implements Ruleset {
 		return this.chainBuilders.map((chainBuilder) => chainBuilder.__build())
 	}
 
-	public isValidChainFrom(game: ServerGame): boolean {
+	public isValidChainFrom(_game: ServerGame): boolean {
 		return true
 	}
 
