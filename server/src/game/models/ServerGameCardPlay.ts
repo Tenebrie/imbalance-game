@@ -64,7 +64,7 @@ export default class ServerGameCardPlay {
 
 		/* Deduct mana */
 		ownedCard.owner.setUnitMana(ownedCard.owner.unitMana - Math.max(0, ownedCard.card.stats.unitCost))
-		ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.stats.spellCost))
+		ownedCard.owner.setSpellMana(ownedCard.owner.spellMana - Math.max(0, ownedCard.card.stats.spellCost), null)
 
 		/* Resolve card */
 		this.playCard(ownedCard, rowIndex, unitIndex, 'hand')

@@ -36,7 +36,7 @@ export default class HeroGarellion extends ServerCard {
 
 	private onRoundEnded(): void {
 		const consumedMana = this.ownerPlayer.spellMana
-		this.ownerPlayer.setSpellMana(0)
+		this.ownerPlayer.setSpellMana(0, this)
 		for (let i = 0; i < consumedMana * this.powerPerMana; i++) {
 			this.game.animation.createAnimationThread()
 			this.buffs.add(BuffStrength, this, BuffDuration.INFINITY)

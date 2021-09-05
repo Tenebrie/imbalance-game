@@ -13,6 +13,7 @@ import ServerGame from '../../../models/ServerGame'
 export default class UnitMadnessIncarnate extends ServerCard {
 	shatterPerRow = 2
 
+	// TODO: Why am I still here?
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,

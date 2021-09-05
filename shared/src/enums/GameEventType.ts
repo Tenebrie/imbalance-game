@@ -44,6 +44,8 @@ enum GameEventType {
 	ROW_BUFF_CREATED = 'rowBuffCreated',
 	ROW_BUFF_REMOVED = 'rowBuffRemoved',
 
+	SPELL_MANA_GENERATED = 'spellManaGenerated',
+
 	TURN_ENDED = 'turnEnded',
 	ROUND_ENDED = 'roundEnded',
 

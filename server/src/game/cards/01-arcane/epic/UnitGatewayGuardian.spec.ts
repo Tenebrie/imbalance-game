@@ -2,9 +2,9 @@ import LeaderStatType from '../../../../../../shared/src/enums/LeaderStatType'
 import { setupTestGame, TestGame } from '../../../../utils/TestGame'
 import BuffProtector from '../../../buffs/BuffProtector'
 import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
-import UnitVoidGuardian from './UnitVoidGuardian'
+import UnitGatewayGuardian from './UnitGatewayGuardian'
 
-describe('UnitVoidGuardian', () => {
+describe('UnitGatewayGuardian', () => {
 	let game: TestGame
 
 	beforeEach(() => {
@@ -13,17 +13,17 @@ describe('UnitVoidGuardian', () => {
 
 	describe('when in hand', () => {
 		beforeEach(() => {
-			game.player.add(UnitVoidGuardian)
+			game.player.add(UnitGatewayGuardian)
 		})
 
 		it('has protector buff', () => {
-			expect(game.player.find(UnitVoidGuardian).buffs.has(BuffProtector)).toBeTruthy()
+			expect(game.player.find(UnitGatewayGuardian).buffs.has(BuffProtector)).toBeTruthy()
 		})
 	})
 
 	describe('when played', () => {
 		beforeEach(() => {
-			game.player.add(UnitVoidGuardian).play()
+			game.player.add(UnitGatewayGuardian).play()
 		})
 
 		it('resolves the card', () => {
@@ -31,7 +31,7 @@ describe('UnitVoidGuardian', () => {
 		})
 
 		it('has protector buff', () => {
-			expect(game.player.find(UnitVoidGuardian).buffs.has(BuffProtector)).toBeTruthy()
+			expect(game.player.find(UnitGatewayGuardian).buffs.has(BuffProtector)).toBeTruthy()
 		})
 
 		it('provides recurring summon count', () => {

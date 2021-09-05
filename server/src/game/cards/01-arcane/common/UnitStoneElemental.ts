@@ -25,6 +25,7 @@ export default class UnitStoneElemental extends ServerCard {
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_BUFF_STUN],
 			stats: {
 				power: 14,
+				armor: 5,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})

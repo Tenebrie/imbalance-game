@@ -1,3 +1,4 @@
+import Constants from '@shared/Constants'
 import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
@@ -327,4 +328,10 @@ export function shuffle<T>(inputArray: T[]): T[] {
 
 export const getRandomArrayValue = <T>(array: T[]): T => {
 	return array[Math.floor(Math.random() * array.length)]
+}
+
+export const forEachRowCardSlot = (callback: (index: number) => void): void => {
+	for (let i = 0; i < Constants.MAX_CARDS_PER_ROW; i++) {
+		callback(i)
+	}
 }

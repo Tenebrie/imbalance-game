@@ -103,13 +103,14 @@ export default class ServerGameEvents {
 		})
 	}
 
-	public postEvent(event: GameEvent): void {
+	public postEvent(event: GameEvent, limitedTo: EventSubscriber[] | null = null): void {
 		if (!event.hiddenFromLogs) {
 			this.createEventLogEntry(event.type, event.logSubtype, event.logVariables)
 		}
 
 		const validSubscriptions = this.eventSubscriptions
 			.get(event.type)!
+			.filter((subscription) => limitedTo === null || limitedTo.includes(subscription.subscriber))
 			.filter((subscription) => subscription.ignoreControlEffects || !ServerGameEvents.subscriberSuspended(subscription.subscriber))
 			.filter((subscription) =>
 				subscription.conditions.every((condition) => cardRequire(this.game, subscription.subscriber, () => condition(event.args, event)))

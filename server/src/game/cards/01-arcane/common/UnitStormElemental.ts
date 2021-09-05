@@ -11,7 +11,7 @@ import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
-export default class UnitArcaneElemental extends ServerCard {
+export default class UnitStormElemental extends ServerCard {
 	manaGenerated = 3
 
 	constructor(game: ServerGame) {
@@ -31,17 +31,20 @@ export default class UnitArcaneElemental extends ServerCard {
 		}
 		this.botEvaluation = new CustomBotEvaluation(this)
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
-	}
+		this.createLocalization({
+			en: {
+				name: 'Storm Elemental',
+				description: 'Deploy:*\nGenerate {manaGenerated} Mana.',
+			},
+		})
 
-	private onDeploy() {
-		Keywords.generateMana(this, this.manaGenerated)
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => Keywords.generateMana(this, this.manaGenerated))
 	}
 }
 
 class CustomBotEvaluation extends BotCardEvaluation {
 	get expectedValue(): number {
-		const card = this.card as UnitArcaneElemental
+		const card = this.card as UnitStormElemental
 		return card.stats.power + card.manaGenerated * 3
 	}
 }

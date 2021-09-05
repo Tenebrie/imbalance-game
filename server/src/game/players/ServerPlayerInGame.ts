@@ -9,6 +9,7 @@ import PlayerInGame from '@shared/models/PlayerInGame'
 import { sortCards } from '@shared/Utils'
 import IncomingMessageHandlers from '@src/game/handlers/IncomingMessageHandlers'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
+import { EventSubscriber } from '@src/game/models/ServerGameEvents'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
@@ -184,16 +185,27 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		OutgoingMessageHandlers.notifyAboutManaChange(this, delta)
 	}
 
-	public addSpellMana(value: number): void {
-		this.setSpellMana(this.spellMana + value)
+	public addSpellMana(value: number, source: EventSubscriber): void {
+		this.setSpellMana(this.spellMana + value, source)
 	}
 
-	public setSpellMana(value: number): void {
+	public setSpellMana(value: number, source: EventSubscriber): void {
 		if (this.spellMana === value) {
 			return
 		}
 
 		const delta = value - this.spellMana
+
+		if (delta > 0) {
+			this.game.events.postEvent(
+				GameEventCreators.spellManaGenerated({
+					game: this.game,
+					player: this,
+					count: delta,
+					source,
+				})
+			)
+		}
 
 		this.spellMana = value
 		OutgoingMessageHandlers.notifyAboutManaChange(this, delta)

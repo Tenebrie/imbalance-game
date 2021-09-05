@@ -53,6 +53,7 @@ import GameEventCreators, {
 	RowBuffCreatedEventArgs,
 	RowBuffRemovedEventArgs,
 	SpellDeployedEventArgs,
+	SpellManaGeneratedEventArgs,
 	TurnEndedEventArgs,
 	TurnStartedEventArgs,
 	UnitCreatedEventArgs,
@@ -694,6 +695,10 @@ export default class ServerCard implements Card {
 		event: GameEventType.ROW_BUFF_REMOVED,
 		location: CardLocation[] | 'any'
 	): EventSubscription<RowBuffRemovedEventArgs>
+	protected createCallback(
+		event: GameEventType.SPELL_MANA_GENERATED,
+		location: CardLocation[] | 'any'
+	): EventSubscription<SpellManaGeneratedEventArgs>
 	protected createCallback<ArgsType>(event: GameEventType, location: CardLocation[] | 'any'): EventSubscription<ArgsType> {
 		const callback = this.game.events.createCallback<ArgsType>(this, event)
 		if (location !== 'any') {

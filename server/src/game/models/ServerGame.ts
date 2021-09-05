@@ -5,7 +5,6 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import TargetMode from '@shared/enums/TargetMode'
 import { SourceGame } from '@shared/models/Game'
-import Player from '@shared/models/Player'
 import BoardSplitMode from '@src/../../shared/src/enums/BoardSplitMode'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
@@ -202,7 +201,7 @@ export default class ServerGame implements SourceGame {
 				playerInGame.cardDeck.shuffle()
 				playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_STARTING + extraStartingHandSize)
 				playerInGame.drawSpellCards(constants.SPELL_HAND_SIZE_MINIMUM)
-				playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND)
+				playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND, null)
 			})
 		})
 
@@ -466,7 +465,7 @@ export default class ServerGame implements SourceGame {
 		this.players.forEach((playerGroup) => {
 			playerGroup.players.forEach((playerInGame) => {
 				playerInGame.drawUnitCards(constants.UNIT_HAND_SIZE_PER_ROUND)
-				playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND)
+				playerInGame.setSpellMana(constants.SPELL_MANA_PER_ROUND, null)
 			})
 		})
 

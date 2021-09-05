@@ -2,19 +2,22 @@ import LeaderStatType from '@src/../../shared/src/enums/LeaderStatType'
 import { ServerBuffSource } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerCard from '@src/game/models/ServerCard'
 import { EventSubscriber } from '@src/game/models/ServerGameEvents'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import { getOwnerGroup, getOwnerPlayer, getTotalLeaderStat } from '@src/utils/Utils'
 
-export type LeaderStatValueGetter = (card: EventSubscriber | ServerBuffSource) => number
+export type LeaderStatValueGetter = (card: EventSubscriber | ServerBuffSource | ServerPlayerGroup) => number
 
 const asScalingStat = (value: number, stats: LeaderStatType[]): LeaderStatValueGetter => {
-	return (subscriber: EventSubscriber | ServerBuffSource) => {
+	return (subscriber: EventSubscriber | ServerBuffSource | ServerPlayerGroup) => {
 		if (subscriber === null) {
 			return value
 		}
 
 		const owner =
-			subscriber instanceof ServerCard && subscriber.unit
-				? subscriber.ownerGroupNullable
+			subscriber instanceof ServerPlayerGroup
+				? subscriber
+				: subscriber instanceof ServerCard && subscriber.unit
+				? subscriber.ownerGroup
 				: getOwnerPlayer(subscriber) || getOwnerGroup(subscriber)
 		if (!owner) {
 			return value
@@ -74,6 +77,14 @@ export const asDirectEffectDuration = (duration: number): LeaderStatValueGetter 
 
 export const asSplashEffectDuration = (duration: number): LeaderStatValueGetter => {
 	return asScalingStat(duration, [LeaderStatType.SPLASH_EFFECT_DURATION])
+}
+
+export const asDirectSummonCount = (count: number): LeaderStatValueGetter => {
+	return asScalingStat(count, [LeaderStatType.DIRECT_SUMMON_COUNT])
+}
+
+export const asRecurringSummonCount = (count: number): LeaderStatValueGetter => {
+	return asScalingStat(count, [LeaderStatType.RECURRING_SUMMON_COUNT])
 }
 
 export const asTargetCount = (count: number): LeaderStatValueGetter => {

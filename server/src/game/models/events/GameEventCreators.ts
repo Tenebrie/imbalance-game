@@ -3,6 +3,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
+import { EventSubscriber } from '@src/game/models/ServerGameEvents'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 import ServerPlayerInGame from '../../players/ServerPlayerInGame'
@@ -348,6 +349,13 @@ export default {
 		},
 	}),
 
+	spellManaGenerated: (args: SpellManaGeneratedEventArgs): GameEvent => ({
+		type: GameEventType.SPELL_MANA_GENERATED,
+		args: args,
+		effectSource: args.source,
+		hiddenFromLogs: true,
+	}),
+
 	turnEnded: (args: TurnEndedEventArgs): GameEvent => ({
 		type: GameEventType.TURN_ENDED,
 		args: args,
@@ -376,7 +384,7 @@ export default {
 export interface GameEvent {
 	type: GameEventType
 	args: Record<string, any>
-	effectSource?: ServerCard | ServerBuff
+	effectSource?: ServerCard | ServerBuff | null
 	logSubtype?: string
 	logVariables?: Record<string, string | string[] | number | number[] | undefined>
 	hiddenFromLogs?: boolean
@@ -546,6 +554,12 @@ export interface CardBuffRemovedEventArgs extends SharedEventArgs {
 }
 export interface RowBuffRemovedEventArgs extends SharedEventArgs {
 	triggeringBuff: ServerRowBuff
+}
+
+export interface SpellManaGeneratedEventArgs extends SharedEventArgs {
+	player: ServerPlayerInGame
+	count: number
+	source: EventSubscriber
 }
 
 export interface TurnEndedEventArgs extends SharedEventArgs {

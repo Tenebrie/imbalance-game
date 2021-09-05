@@ -1,10 +1,12 @@
 import Constants from '@shared/Constants'
+import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
-import GameEventCreators from '@src/game/models/events/GameEventCreators'
+import GameEventCreators, { GameEvent } from '@src/game/models/events/GameEventCreators'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import ServerOwnedCard from '@src/game/models/ServerOwnedCard'
 import ServerUnit from '@src/game/models/ServerUnit'
+import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
 
 import BuffUnitToSpellConversion from '../game/buffs/BuffUnitToSpellConversion'
 import CardLibrary, { CardConstructor } from '../game/libraries/CardLibrary'
@@ -63,11 +65,36 @@ export default {
 		cardConstructor: CardConstructor
 		rowIndex: number
 		unitIndex: number
+		count?: number | LeaderStatValueGetter
 	}): ServerUnit | null => {
 		const { owner, cardConstructor, rowIndex, unitIndex } = args
+
 		const game = owner.game
 		const card = new cardConstructor(game)
 		return game.board.createUnit(card, owner, rowIndex, unitIndex)
+	},
+
+	summonMultipleUnits: (args: {
+		owner: ServerPlayerInGame
+		cardConstructor: CardConstructor
+		rowIndex: number
+		unitIndex: number
+		count: number | LeaderStatValueGetter
+	}): ServerUnit[] => {
+		const { owner, cardConstructor, rowIndex, unitIndex, count } = args
+		const normalizedCount = count === undefined ? 1 : typeof count === 'function' ? count(owner.group) : count
+
+		const game = owner.game
+
+		const units: ServerUnit[] = []
+		for (let i = 0; i < normalizedCount; i++) {
+			const card = new cardConstructor(game)
+			const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
+			if (unit) {
+				units.push(unit)
+			}
+		}
+		return units
 	},
 
 	playCardFromDeck: (card: ServerCard): void => {
@@ -103,14 +130,27 @@ export default {
 		)
 	},
 
-	transformUnit: (unit: ServerUnit | null | undefined, targetCard: CardConstructor): void => {
+	transformCard: (card: ServerCard, targetCard: CardConstructor): ServerCard => {
+		const owner = card.ownerPlayer
+		const location = card.location
+		const newCard = new targetCard(card.game)
+		if (location === CardLocation.HAND) {
+			owner.cardHand.removeCard(card)
+			owner.cardHand.addUnit(newCard)
+		} else {
+			throw new Error(`Card transformation in ${location} is not implemented.`)
+		}
+		return newCard
+	},
+
+	transformUnit: (unit: ServerUnit | null | undefined, targetCard: CardConstructor): ServerUnit | null => {
 		if (!unit) {
-			return
+			return null
 		}
 		const rowIndex = unit.rowIndex
 		const unitIndex = unit.unitIndex
 		unit.game.board.removeUnit(unit)
-		unit.game.board.createUnit(CardLibrary.instantiate(unit.game, targetCard), unit.originalOwner, rowIndex, unitIndex)
+		return unit.game.board.createUnit(CardLibrary.instantiate(unit.game, targetCard), unit.originalOwner, rowIndex, unitIndex)
 	},
 
 	destroyUnit: (args: { unit: ServerUnit; source?: ServerCard }) => {
@@ -134,19 +174,24 @@ export default {
 		}),
 	},
 
-	addCardToDeck: (player: ServerPlayerInGame, card: CardConstructor): void => {
+	addCardToDeck: (player: ServerPlayerInGame, card: CardConstructor): ServerCard => {
 		const instance = new card(player.game)
 		if (instance.type === CardType.UNIT) {
 			player.cardDeck.addUnitToBottom(instance)
 		} else {
 			player.cardDeck.addSpellToBottom(instance)
 		}
+		return instance
 	},
 
 	addCardToGraveyard: (player: ServerPlayerInGame, card: CardConstructor): ServerCard => {
 		const instance = new card(player.game)
 		player.cardGraveyard.addCard(instance)
 		return instance
+	},
+
+	triggerEvent: (card: ServerCard, event: GameEvent): void => {
+		card.game.events.postEvent(event, [card])
 	},
 
 	addCardToHand: {
@@ -271,7 +316,7 @@ export default {
 		if (player.spellMana < manaToDrain) {
 			throw new Error('Player does not have enough mana!')
 		}
-		player.addSpellMana(-manaToDrain)
+		player.addSpellMana(-manaToDrain, subscriber)
 		player.game.animation.play(ServerAnimation.cardInfuse(card))
 	},
 
@@ -282,7 +327,7 @@ export default {
 		const card = subscriber instanceof ServerBuff ? (subscriber.parent as ServerCard) : subscriber
 		const player = getOwnerPlayer(subscriber)!
 		const manaToGenerate = typeof value === 'function' ? value() : value
-		player.addSpellMana(manaToGenerate)
+		player.addSpellMana(manaToGenerate, subscriber)
 		player.game.animation.play(ServerAnimation.cardGenerateMana(card))
 	},
 

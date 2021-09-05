@@ -5,17 +5,17 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import UnitFlamingShadow from '@src/game/cards/01-arcane/tokens/UnitFlamingShadow'
 import Keywords from '@src/utils/Keywords'
 import { asRecurringSummonCount } from '@src/utils/LeaderStats'
 
 import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
-import UnitShadow from './UnitShadow'
 
-export default class UnitVoidPortal extends ServerCard {
+export default class UnitFlamingPortal extends ServerCard {
 	public static readonly BASE_SHADOWS_SUMMONED = 1
-	private shadowsSummoned = asRecurringSummonCount(UnitVoidPortal.BASE_SHADOWS_SUMMONED)
+	private shadowsSummoned = asRecurringSummonCount(UnitFlamingPortal.BASE_SHADOWS_SUMMONED)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -23,13 +23,14 @@ export default class UnitVoidPortal extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			features: [CardFeature.KEYWORD_SUMMON],
-			relatedCards: [UnitShadow],
+			relatedCards: [UnitFlamingShadow],
 			stats: {
-				power: 3,
+				power: 7,
 				armor: 7,
 			},
 			expansionSet: ExpansionSet.BASE,
 			hiddenFromLibrary: true,
+			generatedArtworkMagicString: '2',
 		})
 		this.dynamicTextVariables = {
 			extraShadows: () => this.shadowsSummoned(this) > 1,
@@ -39,29 +40,27 @@ export default class UnitVoidPortal extends ServerCard {
 
 		this.createLocalization({
 			en: {
-				name: 'Void Portal',
-				description: '*Turn end:*\n*Summon* a *Shadow*.<if extraShadows><p>Repeat this {shadowsSummoned} times.</if>',
+				name: 'Flaming Portal',
+				description: '*Turn end:*\n*Summon* a *Flaming Shadow*.<if extraShadows><p>Repeat this {shadowsSummoned} times.</if>',
 			},
 		})
 
 		this.createCallback(GameEventType.TURN_ENDED, [CardLocation.BOARD])
 			.require(({ group }) => group.owns(this))
-			.perform(() => this.onTurnEnded())
-	}
+			.perform(() => {
+				const unit = this.unit
+				if (!unit) {
+					return
+				}
 
-	public onTurnEnded(): void {
-		const unit = this.unit
-		if (!unit) {
-			return
-		}
-
-		Keywords.summonMultipleUnits({
-			owner: this.ownerPlayer,
-			cardConstructor: UnitShadow,
-			rowIndex: unit.rowIndex,
-			unitIndex: unit.unitIndex + 1,
-			count: this.shadowsSummoned,
-		})
+				Keywords.summonMultipleUnits({
+					owner: this.ownerPlayer,
+					cardConstructor: UnitFlamingShadow,
+					rowIndex: unit.rowIndex,
+					unitIndex: unit.unitIndex + 1,
+					count: this.shadowsSummoned,
+				})
+			})
 	}
 }
 

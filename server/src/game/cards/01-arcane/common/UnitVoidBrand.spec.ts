@@ -5,7 +5,7 @@ import TestingUnit5PowerVoidspawn from '../../11-testing/TestingUnit5PowerVoidsp
 import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
 import UnitVoidBrand from './UnitVoidBrand'
 
-const CARD_IN_TESTING = UnitVoidBrand
+const CardInTesting = UnitVoidBrand
 
 describe('UnitVoidBrand', () => {
 	let game: TestGame
@@ -17,7 +17,7 @@ describe('UnitVoidBrand', () => {
 	describe('when a card is in hand', () => {
 		beforeEach(() => {
 			game.player.summon(TestingUnit5PowerVoidspawn)
-			game.player.add(CARD_IN_TESTING)
+			game.player.add(CardInTesting)
 		})
 
 		it('does not give the target extra power', () => {
@@ -29,7 +29,7 @@ describe('UnitVoidBrand', () => {
 	describe('when a normal ally is present', () => {
 		beforeEach(() => {
 			game.player.summon(TestingUnitNoEffect)
-			game.player.add(CARD_IN_TESTING).play().targetFirst()
+			game.player.add(CardInTesting).play().targetFirst()
 		})
 
 		it('resolves the card', () => {
@@ -49,7 +49,7 @@ describe('UnitVoidBrand', () => {
 	describe('when a voidspawn ally is present', () => {
 		beforeEach(() => {
 			game.player.summon(TestingUnit5PowerVoidspawn)
-			game.player.add(CARD_IN_TESTING).play()
+			game.player.add(CardInTesting).play()
 		})
 
 		it('resolves the card', () => {
@@ -65,7 +65,7 @@ describe('UnitVoidBrand', () => {
 	describe('when the only target is an enemy', () => {
 		beforeEach(() => {
 			game.opponent.summon(TestingUnitNoEffect)
-			game.player.add(CARD_IN_TESTING).play()
+			game.player.add(CardInTesting).play()
 		})
 
 		it('resolves the card', () => {
@@ -85,7 +85,7 @@ describe('UnitVoidBrand', () => {
 	describe('when the only target is a voidspawn enemy', () => {
 		beforeEach(() => {
 			game.opponent.summon(TestingUnit5PowerVoidspawn)
-			game.player.add(CARD_IN_TESTING).play()
+			game.player.add(CardInTesting).play()
 		})
 
 		it('resolves the card', () => {

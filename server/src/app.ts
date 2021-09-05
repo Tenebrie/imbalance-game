@@ -5,6 +5,7 @@ import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
+import { colorizeId } from '@src/utils/Utils'
 import cookieParser from 'cookie-parser'
 import express, { Request, Response } from 'express'
 import expressWs from 'express-ws'
@@ -141,5 +142,5 @@ setInterval(async () => {
 }, 60 * 60 * 1000)
 
 const port = process.env.PORT || 3000
-console.info(`Starting listening at port ${port}`)
+console.info(`Starting listening at port ${colorizeId(port)}`)
 app.listen(port)

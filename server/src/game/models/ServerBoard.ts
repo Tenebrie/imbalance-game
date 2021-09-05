@@ -51,16 +51,13 @@ export default class ServerBoard implements Board {
 		return this.rows.find((row) => !!row.cards.find((unit) => unit.card.id === targetUnit.card.id)) || null
 	}
 
-	public getControlledRows(player: ServerPlayerInGame | ServerPlayerGroup | null): ServerBoardRow[] {
-		if (!player) {
+	public getControlledRows(playerOrGroup: ServerPlayerInGame | ServerPlayerGroup | null): ServerBoardRow[] {
+		if (!playerOrGroup) {
 			return []
 		}
-		const rows = this.rows.filter(
-			(row) =>
-				(player instanceof ServerPlayerGroup && row.owner === player) ||
-				(player instanceof ServerPlayerInGame && row.owner && row.owner.players.includes(player))
-		)
-		if (player.isInvertedBoard()) {
+		const group = playerOrGroup instanceof ServerPlayerInGame ? playerOrGroup.group : playerOrGroup
+		const rows = this.rows.filter((row) => row.owner === group)
+		if (group.isInvertedBoard()) {
 			rows.reverse()
 		}
 		return rows

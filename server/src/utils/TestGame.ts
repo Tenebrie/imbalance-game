@@ -1,3 +1,4 @@
+import Constants from '@shared/Constants'
 import AccessLevel from '@shared/enums/AccessLevel'
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import CardFeature from '@shared/enums/CardFeature'
@@ -154,6 +155,8 @@ type TestGamePlayer = {
 	add(card: CardConstructor): TestGameCard
 	draw(card: CardConstructor): TestGameCard
 	summon(card: CardConstructor, row?: RowDistanceWrapper): TestGameUnit
+	fillRow(card: CardConstructor, row?: RowDistanceWrapper): void
+	getUnitMana(): number
 	getSpellMana(): number
 	addSpellMana(value: number): void
 	find(card: CardConstructor): TestGameCard
@@ -161,6 +164,9 @@ type TestGamePlayer = {
 	getStack(): TestGameCardPlayActions
 	getFrontRow(): TestGameRow
 	getLeaderStat(stat: LeaderStatType): number
+	deck: {
+		add(card: CardConstructor): TestGameCard
+	}
 	graveyard: {
 		add(card: CardConstructor): TestGameCard
 	}
@@ -213,7 +219,7 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 	}
 
 	const summon = (player: ServerPlayerInGame, cardConstructor: CardConstructor, row: RowDistanceWrapper): TestGameUnit => {
-		const distance = row === 'front' ? 0 : game.board.getControlledRows(player).length - 1
+		const distance = unwrapRowDistance(row, game, player)
 		const targetRow = game.board.getRowWithDistanceToFront(player, distance)
 		const card = new cardConstructor(game)
 		const unit = targetRow.createUnit(card, player, targetRow.cards.length)
@@ -221,12 +227,26 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		return wrapUnit(game, unit)
 	}
 
+	const fillRow = (player: ServerPlayerInGame, cardConstructor: CardConstructor, row: RowDistanceWrapper): void => {
+		const distance = unwrapRowDistance(row, game, player)
+		const targetRow = game.board.getRowWithDistanceToFront(player, distance)
+		for (let i = 0; i < Constants.MAX_CARDS_PER_ROW; i++) {
+			const card = new cardConstructor(game)
+			targetRow.createUnit(card, player, i)
+		}
+	}
+
 	const addSpellMana = (player: ServerPlayerInGame, value: number): void => {
-		player.addSpellMana(value)
+		player.addSpellMana(value, null)
 	}
 
 	const getFrontRow = (player: ServerPlayerInGame): TestGameRow => {
 		return wrapRow(game, game.board.getRowWithDistanceToFront(player, 0))
+	}
+
+	const addCardToDeck = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
+		const card = Keywords.addCardToDeck(player, cardConstructor)
+		return wrapCard(game, card, player)
 	}
 
 	const addCardToGraveyard = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
@@ -242,11 +262,16 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			find: (card: CardConstructor) => findCardAnywhere(player, card, 0),
 			findAt: (card: CardConstructor, index: number) => findCardAnywhere(player, card, index),
 			summon: (card: CardConstructor, row: RowDistanceWrapper = 'front') => summon(player, card, row),
+			fillRow: (card: CardConstructor, row: RowDistanceWrapper = 'front') => fillRow(player, card, row),
+			getUnitMana: (): number => player.unitMana,
 			getSpellMana: (): number => player.spellMana,
 			addSpellMana: (value: number) => addSpellMana(player, value),
 			getStack: () => getCardPlayActions(game, player),
 			getFrontRow: () => getFrontRow(player),
 			getLeaderStat: (stat: LeaderStatType) => getTotalLeaderStat(player, [stat]),
+			deck: {
+				add: (card: CardConstructor) => addCardToDeck(player, card),
+			},
 			graveyard: {
 				add: (card: CardConstructor) => addCardToGraveyard(player, card),
 			},

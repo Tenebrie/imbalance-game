@@ -29,6 +29,11 @@ export default class RelatedCardsDefinition {
 		return this
 	}
 
+	requireCollectible(): RelatedCardsDefinition {
+		this.__conditions.push((card) => card.isCollectible)
+		return this
+	}
+
 	requireExact(target: CardConstructor): RelatedCardsDefinition {
 		this.__conditions.push((card) => card.class === getClassFromConstructor(target))
 		return this

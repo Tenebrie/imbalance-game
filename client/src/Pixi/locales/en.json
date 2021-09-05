@@ -194,6 +194,8 @@
 	"card.feature.keywordDeploy.description": "Trigger an effect after this unit is played.",
 	"card.feature.keywordTurnStart.name": "Turn start",
 	"card.feature.keywordTurnStart.description": "Trigger an effect at the start of your turn.",
+	"card.feature.keywordTurnEnd.name": "Turn end",
+	"card.feature.keywordTurnEnd.description": "Trigger an effect at the end of your turn.",
 	"card.feature.keywordHeal.name": "Heal X",
 	"card.feature.keywordHeal.description": "Restore X Power, but not higher than max Power.",
 	"card.feature.keywordEnrage.name": "Enrage",
@@ -538,9 +540,6 @@
 
 	"card.unitSupplyWagon.name": "Supply Wagon",
 	"card.unitSupplyWagon.description": "*Deploy:*\nGive +{extraPower} Power to adjacent units\nThen, *Push* them {pushDistance} row forward",
-
-	"card.unitArcaneElemental.name": "Arcane Elemental",
-	"card.unitArcaneElemental.description": "*Deploy:*\nGenerate {manaGenerated} Mana",
 
 	"card.unitStoneElemental.name": "Stone Elemental",
 	"card.unitStoneElemental.description": "*Deploy:*\nDeal {damage} Damage to an enemy unit.\nApply *Stun* for 1 turn.",
