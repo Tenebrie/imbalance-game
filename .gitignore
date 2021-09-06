@@ -6,6 +6,7 @@ server/.idea/*
 shared/.idea/*
 asset-converter/.idea/*
 server/client/
+server/coverage/
 tsBuildInfo.json
 client/src/*.js
 client/src/*.js.map
