@@ -1,32 +1,27 @@
+import { ErrorJson } from '@shared/models/network/ErrorJson'
 import { Request, Response } from 'express'
 
-interface ErrorJson {
-	code: number | undefined
+type ErrorData = {
+	status: number
 	error: string
+	code?: number
+	data?: Record<string, any>
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default (err: any, req: Request, res: Response, _next: () => void): void => {
-	if (err && !err.status) {
-		console.error(err)
-	}
+export const genericError = (data: ErrorData): ErrorData => {
+	return data
+}
 
-	let extraProperties = {}
-	const filteredKeys = ['code', 'error', 'status']
-	if (typeof err === 'object') {
-		extraProperties = Object.keys(err)
-			.filter((key) => !filteredKeys.includes(key))
-			.reduce((obj: any, key) => {
-				obj[key] = err[key]
-				return obj
-			}, {})
+export default (err: ErrorData, req: Request, res: Response, _next: () => void): void => {
+	if (err && (!err.status || !err.error)) {
+		console.error(err)
 	}
 
 	const statusCode = err.status || 500
 	const json: ErrorJson = {
 		code: err.code,
 		error: typeof err === 'object' ? err.error : err,
-		...extraProperties,
+		errorData: err.data,
 	}
 	res.status(statusCode)
 	res.json(json)

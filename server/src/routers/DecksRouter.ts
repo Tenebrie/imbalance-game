@@ -1,4 +1,6 @@
+import ErrorCode from '@shared/enums/ErrorCode'
 import EditorDeck from '@shared/models/EditorDeck'
+import { genericError } from '@src/middleware/GenericErrorMiddleware'
 import express, { Response } from 'express'
 
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
@@ -94,7 +96,14 @@ router.put(
 
 		const deckValidationStatus = validateEditorDeck(deckData)
 		if (!deckValidationStatus.valid) {
-			throw { status: 400, error: 'Invalid deck composition', badCards: deckValidationStatus.badCards }
+			throw genericError({
+				status: 400,
+				error: 'Invalid deck composition',
+				code: ErrorCode.INVALID_DECK_COMPOSITION,
+				data: {
+					badCards: deckValidationStatus.badCards,
+				},
+			})
 		}
 
 		const success = await EditorDeckDatabase.insertEditorDeck(player, deckData)

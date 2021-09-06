@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js'
 
 import Notifications from '@/utils/Notifications'
 import store from '@/Vue/store'
+import { NotificationWrapper } from '@/Vue/store/modules/NotificationModule'
 
 export default class TextureAtlas {
 	static textures: { [index: string]: PIXI.Texture } = {}
@@ -10,6 +11,11 @@ export default class TextureAtlas {
 	static hasPreloadedComponents = false
 	static isPreloadingComponents = false
 	static preloadComponentsResolveFunctions: { (): void }[] = []
+
+	static loadingNotification: NotificationWrapper | null = null
+	static loadingStartedAt = 0
+	static totalAssetsToLoad = 0
+	static assetsAlreadyLoaded = 0
 
 	public static async preloadComponents(): Promise<void> {
 		return new Promise((resolve) => {
@@ -85,35 +91,40 @@ export default class TextureAtlas {
 	}
 
 	private static async load(textureFilenames: string[], onReady: () => void): Promise<void> {
+		let texturesLoadedThisBatch = 0
 		const texturesToLoad = textureFilenames
 
-		let texturesLoaded = 0
+		if (!TextureAtlas.loadingNotification) {
+			TextureAtlas.loadingNotification = Notifications.loading('')
+			TextureAtlas.totalAssetsToLoad = 0
+			TextureAtlas.assetsAlreadyLoaded = 0
+			TextureAtlas.loadingStartedAt = performance.now()
+		}
+		const loadingNotification = TextureAtlas.loadingNotification
 
-		const loadingNotification = Notifications.info('')
-		loadingNotification.setTimeout(0)
-		if (textureFilenames.length === 1) {
-			loadingNotification.close()
+		const updateNotificationText = () => {
+			loadingNotification.setText(`Loading assets (${TextureAtlas.assetsAlreadyLoaded}/${TextureAtlas.totalAssetsToLoad})...`)
 		}
 
-		const updateNotificationText = (loaded: number, total: number) => {
-			loadingNotification.setText(`Loading assets (${loaded}/${total})...`)
-		}
+		TextureAtlas.totalAssetsToLoad += texturesToLoad.length
+		updateNotificationText()
 
-		updateNotificationText(0, texturesToLoad.length)
-
-		const t0 = performance.now()
 		texturesToLoad.forEach((fileName) => {
 			const onLoaded = (loadedTexture: PIXI.Texture) => {
-				texturesLoaded += 1
 				TextureAtlas.textures[fileName.toLowerCase()] = loadedTexture
-				updateNotificationText(texturesLoaded, texturesToLoad.length)
+				TextureAtlas.assetsAlreadyLoaded += 1
+				updateNotificationText()
 
-				if (texturesLoaded >= texturesToLoad.length) {
-					loadingNotification.close()
+				if (TextureAtlas.assetsAlreadyLoaded >= TextureAtlas.totalAssetsToLoad) {
+					loadingNotification.discard()
+					TextureAtlas.loadingNotification = null
 					const t1 = performance.now()
-					if (textureFilenames.length > 1) {
-						console.info(`Loaded ${texturesLoaded} textures in ${Math.round(t1 - t0) / 1000} seconds`)
-					}
+					console.info(
+						`Loaded ${TextureAtlas.assetsAlreadyLoaded} textures in ${Math.round(t1 - TextureAtlas.loadingStartedAt) / 1000} seconds`
+					)
+				}
+				texturesLoadedThisBatch += 1
+				if (texturesLoadedThisBatch >= texturesToLoad.length) {
 					onReady()
 				}
 			}

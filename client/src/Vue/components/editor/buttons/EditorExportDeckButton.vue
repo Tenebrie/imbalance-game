@@ -21,7 +21,7 @@ export default defineComponent({
 		ProgressSpinner,
 	}),
 
-	computed: {},
+	components: { ProgressSpinner },
 
 	methods: {
 		async onClick(): Promise<void> {

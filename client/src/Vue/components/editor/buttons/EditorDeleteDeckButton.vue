@@ -13,6 +13,7 @@ import { defineComponent } from 'vue'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import Notifications from '@/utils/Notifications'
 import TheDeckDeletePopup from '@/Vue/components/popup/TheDeckDeletePopup.vue'
+import ProgressSpinner from '@/Vue/components/utils/ProgressSpinner.vue'
 import router from '@/Vue/router'
 import store from '@/Vue/store'
 
@@ -20,6 +21,8 @@ export default defineComponent({
 	data: () => ({
 		requestInFlight: false,
 	}),
+
+	components: { ProgressSpinner },
 
 	computed: {
 		deckId(): string {

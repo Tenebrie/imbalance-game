@@ -4,6 +4,7 @@ import 'module-alias/register'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
+import GenericErrorMiddleware from '@src/middleware/GenericErrorMiddleware'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
 import { colorizeId } from '@src/utils/Utils'
 import cookieParser from 'cookie-parser'
@@ -110,7 +111,7 @@ app.use('/api/status', StatusRouter)
 app.use('/health', HealthRouter)
 
 /* Generic error handler */
-// app.use(GenericErrorMiddleware)
+app.use(GenericErrorMiddleware)
 
 console.info('Registered routes:', printAllRoutes(app))
 

@@ -18,7 +18,7 @@ export default class ServerPlayer implements Player {
 	accessLevel: AccessLevel
 	isGuest: boolean
 
-	globalWebSocket: WebSocket | null
+	globalWebSockets: WebSocket[]
 	gameWebSocket: GameWebSocket | null
 	spectators: ServerPlayerSpectator[]
 	public timestampUpdatedAt: Date = new Date()
@@ -29,7 +29,7 @@ export default class ServerPlayer implements Player {
 		this.username = username
 		this.accessLevel = accessLevel
 		this.isGuest = isGuest
-		this.globalWebSocket = null
+		this.globalWebSockets = []
 		this.gameWebSocket = null
 		this.spectators = []
 	}
@@ -42,8 +42,8 @@ export default class ServerPlayer implements Player {
 		return this.game?.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === this) || null
 	}
 
-	registerGlobalConnection(ws: ws): void {
-		this.globalWebSocket = new WebSocket(ws)
+	registerGlobalConnection(ws: ws, id: string): void {
+		this.globalWebSockets.push(new WebSocket(ws, id))
 		PlayerLibrary.addOnlinePlayer(this)
 	}
 
@@ -52,10 +52,7 @@ export default class ServerPlayer implements Player {
 	}
 
 	sendGlobalMessage(json: ServerToClientWebJson): void {
-		if (!this.globalWebSocket) {
-			return
-		}
-		this.globalWebSocket.send(json)
+		this.globalWebSockets.forEach((socket) => socket.send(json))
 	}
 
 	sendGameMessage(json: ServerToClientJson): void {
@@ -66,13 +63,12 @@ export default class ServerPlayer implements Player {
 		this.spectators.forEach((spectator) => spectator.player.sendGameMessage(json))
 	}
 
-	disconnectGlobalSocket(): void {
-		if (!this.globalWebSocket) {
-			return
-		}
-
-		this.globalWebSocket.close()
-		this.globalWebSocket = null
+	disconnectGlobalSocket(id: string): void {
+		const sockets = this.globalWebSockets.filter((socket) => socket.id === id)
+		sockets.forEach((socket) => {
+			socket.close()
+		})
+		this.globalWebSockets = this.globalWebSockets.filter((socket) => socket.id !== id)
 		PlayerLibrary.removeOnlinePlayer(this)
 	}
 
@@ -86,7 +82,7 @@ export default class ServerPlayer implements Player {
 	}
 
 	isOnline(): boolean {
-		return !!this.globalWebSocket
+		return this.globalWebSockets.length > 0
 	}
 
 	isInGame(): boolean {

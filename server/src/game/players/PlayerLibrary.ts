@@ -3,7 +3,6 @@ import UserRegisterErrorCode from '@shared/enums/UserRegisterErrorCode'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import { JwtTokenScope } from '@src/enums/JwtTokenScope'
 import GameLibrary from '@src/game/libraries/GameLibrary'
-import { WebSocket } from '@src/game/players/WebSocket'
 import { tryUntil } from '@src/utils/Utils'
 
 import PlayerDatabase from '../../database/PlayerDatabase'
@@ -172,11 +171,15 @@ class PlayerLibrary {
 	}
 
 	public addOnlinePlayer(player: ServerPlayer): void {
-		this.onlinePlayers.push(player)
+		if (!this.onlinePlayers.some((p) => p.id === player.id)) {
+			this.onlinePlayers.push(player)
+		}
 	}
 
 	public removeOnlinePlayer(player: ServerPlayer): void {
-		this.onlinePlayers = this.onlinePlayers.filter((onlinePlayer) => onlinePlayer.id !== player.id)
+		if (player.globalWebSockets.length === 0) {
+			this.onlinePlayers = this.onlinePlayers.filter((onlinePlayer) => onlinePlayer.id !== player.id)
+		}
 	}
 
 	private pruneCache(): void {

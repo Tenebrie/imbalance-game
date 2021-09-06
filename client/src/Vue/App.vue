@@ -6,7 +6,7 @@
 			<router-view class="view" />
 		</div>
 		<the-popup-view />
-		<the-connection-notification />
+		<the-notification-view />
 	</div>
 </template>
 
@@ -19,12 +19,12 @@ import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
 import LocalStorage from '@/utils/LocalStorage'
 import { electronHost, isElectron } from '@/utils/Utils'
 import TheNavigationBar from '@/Vue/components/navigationbar/TheNavigationBar.vue'
-import TheConnectionNotification from '@/Vue/components/popup/connectionLostNotification/TheConnectionNotification.vue'
+import TheNotificationView from '@/Vue/components/popup/connectionLostNotification/TheNotificationView.vue'
 import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 import store from '@/Vue/store'
 
 export default defineComponent({
-	components: { TheConnectionNotification, ThePopupView, TheNavigationBar },
+	components: { TheNotificationView, ThePopupView, TheNavigationBar },
 
 	async mounted() {
 		if (isElectron()) {
@@ -40,8 +40,8 @@ export default defineComponent({
 			await store.dispatch.editor.loadDecks()
 			editorCardRenderer.startRenderingService()
 		}
-		store.dispatch.connectGlobalWebSocket()
-		store.dispatch.keepGlobalWebSocketAlive()
+		store.dispatch.globalSocketModule.connectGlobalWebSocket()
+		store.dispatch.globalSocketModule.keepGlobalWebSocketAlive()
 	},
 
 	beforeUnmount() {
@@ -95,7 +95,6 @@ export default defineComponent({
 
 <style lang="scss">
 @import 'styles/generic';
-@import '~vuejs-noty/dist/vuejs-noty.css';
 
 body {
 	background: #121212;
@@ -305,40 +304,5 @@ div.menu-separator {
 	height: 1px;
 	margin: 8px 0;
 	background: $COLOR_BACKGROUND_GAME_MENU_BORDER;
-}
-
-.noty_body {
-	font-family: 'Roboto', sans-serif;
-	font-size: 1em !important;
-}
-
-.noty_bar {
-	box-shadow: black 0 0 4px 4px;
-}
-
-.noty_type__info > .noty_body {
-	background: #323232;
-}
-
-.noty_type__success > .noty_body {
-	background: darkgreen;
-}
-
-.noty_type__warning > .noty_body {
-	background: darken(darkorange, 10);
-}
-
-.noty_type__error > .noty_body {
-	background: darkred;
-}
-
-.noty_progressbar {
-	opacity: 0.75 !important;
-	background-color: white !important;
-	top: 0;
-}
-
-.noty_theme__mint {
-	border-bottom: none !important;
 }
 </style>

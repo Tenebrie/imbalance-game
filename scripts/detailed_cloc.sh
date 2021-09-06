@@ -10,17 +10,17 @@ TOTAL='\033[0;35m'
 NC='\033[0m'
 
 echo -e "${CLIENT} [[Client]]"
-cloc ../client/src
+npx cloc ../client/src
 echo -e "${NC}"
 
 echo -e "${SERVER} [[Server]]"
-cloc ../server/src
+npx cloc ../server/src
 echo -e "${NC}"
 
 echo -e "${SHARED} [[Shared]]"
-cloc ../shared/src
+npx cloc ../shared/src
 echo -e "${NC}"
 
 echo -e "${TOTAL} [[Total]]"
-cloc ../client/src/ ../server/src/ ../shared/src/
+npx cloc ../client/src/ ../server/src/ ../shared/src/
 echo -e "${NC}"

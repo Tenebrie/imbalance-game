@@ -286,24 +286,36 @@ export const getDeckFaction = (deck: PopulatedEditorDeck): CardFaction => {
 export const validateEditorDeck = (unpopulatedDeck: EditorDeck): { valid: boolean; badCards: EditorCard[] } => {
 	const deck = DeckUtils.populateDeck(unpopulatedDeck)
 	const deckFaction = getDeckFaction(deck)
-	const invalidCards = deck.cards.filter((card: PopulatedEditorCard) => {
+
+	const getCardInvalidReason = (card: PopulatedEditorCard): string | null => {
 		const cardOfColorCount = deck.cards.filter((filteredCard) => filteredCard.color === card.color).length
 		if (cardOfColorCount > getMaxCardCountForColor(card.color)) {
-			return true
+			return 'tooManyCardsOfColor'
 		}
 
 		if (card.faction !== CardFaction.NEUTRAL && card.faction !== deckFaction) {
-			return true
+			return 'factionMismatch'
 		}
 
 		const maxCount = getMaxCardCopiesForColor(card.color)
-		return card.count > maxCount
-	})
+		if (card.count > maxCount) {
+			return 'tooManyCardCopies'
+		}
+		return null
+	}
+
+	const invalidCards = deck.cards
+		.map((card) => ({
+			card,
+			reason: getCardInvalidReason(card),
+		}))
+		.filter((wrapper) => wrapper.reason !== null)
 	return {
 		valid: invalidCards.length === 0,
-		badCards: invalidCards.map((card) => ({
-			count: card.count,
-			class: card.class,
+		badCards: invalidCards.map((wrapper) => ({
+			count: wrapper.card.count,
+			class: wrapper.card.class,
+			reason: wrapper.reason,
 		})),
 	}
 }

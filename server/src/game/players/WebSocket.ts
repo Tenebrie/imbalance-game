@@ -6,9 +6,11 @@ import ServerGame from '../models/ServerGame'
 
 export class WebSocket {
 	ws: ws
+	id: string
 
-	constructor(webSocket: ws) {
+	constructor(webSocket: ws, id: string) {
 		this.ws = webSocket
+		this.id = id
 	}
 
 	send(json: Record<string, any>): void {
@@ -36,7 +38,7 @@ export class GameWebSocket extends WebSocket {
 	game: ServerGame
 
 	constructor(ws: ws, game: ServerGame) {
-		super(ws)
+		super(ws, 'game')
 		this.game = game
 	}
 }

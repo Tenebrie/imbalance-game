@@ -1,6 +1,8 @@
 import Constants from '@shared/Constants'
 import CardColor from '@shared/enums/CardColor'
+import ErrorCode from '@shared/enums/ErrorCode'
 import CardMessage from '@shared/models/network/card/CardMessage'
+import { ErrorJson } from '@shared/models/network/ErrorJson'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import { sortCards } from '@shared/Utils'
 import axios from 'axios'
@@ -11,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
+import Notifications from '@/utils/Notifications'
 import Utils from '@/utils/Utils'
 import { moduleActionContext } from '@/Vue/store'
 import HoveredDeckCardModule from '@/Vue/store/modules/HoveredDeckCardModule'
@@ -118,7 +121,7 @@ const editorModule = defineModule({
 		},
 
 		asyncSave: debounce(250, (context, payload: { deckId: string }) => {
-			const { state } = moduleActionContext(context, editorModule)
+			const { state, dispatch } = moduleActionContext(context, editorModule)
 
 			const deck = state.decks.find((deck) => deck.id === payload.deckId)
 			if (!deck) {
@@ -133,27 +136,24 @@ const editorModule = defineModule({
 				})),
 			}
 
-			axios.put(`/api/decks/${payload.deckId}`, deckMessage)
+			axios.put(`/api/decks/${payload.deckId}`, deckMessage).catch((err) => {
+				const response = err.response
+				if (!response) {
+					throw err
+				}
+				const data = response.data as ErrorJson
+				if (data.code === ErrorCode.INVALID_DECK_COMPOSITION) {
+					const badCards = data.errorData!.badCards as { class: string; reason: string }[]
+					const printedCards = badCards.slice(0, 3)
+					let message = `Unable to save deck!<br>${printedCards.map((card) => '- ' + card.class + ': ' + card.reason).join('<br>')}`
+					if (badCards.length > 3) {
+						message += `<br>...and ${badCards.length - 3} more`
+					}
+					Notifications.error(message, { timeout: 10000 })
+				}
+				dispatch.loadDecks()
+			})
 		}),
-
-		async saveDeck(context, payload: { deckId: string }): Promise<number> {
-			const { state } = moduleActionContext(context, editorModule)
-
-			const deck = state.decks.find((deck) => deck.id === payload.deckId)
-			if (!deck) {
-				return 0
-			}
-
-			const deckMessage = {
-				...deck,
-				cards: deck.cards.map((card) => ({
-					class: card.class,
-					count: card.count,
-				})),
-			}
-
-			return (await axios.put(`/api/decks/${payload.deckId}`, deckMessage)).status
-		},
 
 		async deleteDeck(context, payload: { deckId: string }): Promise<number> {
 			const { state, commit } = moduleActionContext(context, editorModule)
