@@ -18,7 +18,7 @@
 		"docker:clear": "docker container kill $(docker ps -q)",
 		"docker:cold": "docker container kill $(docker ps -q) && docker-compose up --force-recreate",
 		"docker:rebuild": "docker-compose build client && docker-compose build server",
-		"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist)",
+		"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist && rm -rf coverage)",
 		"test": "(cd server && yarn test)",
 		"nuke": "rm -rf node_modules && (cd client && yarn nuke) && (cd server && yarn nuke) && (cd shared && yarn nuke)",
 		"lint:client": "(cd client && yarn lint)"
