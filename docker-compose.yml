@@ -17,7 +17,7 @@ services:
       - ./client/public:/app/client/public:cached
       - ./shared/src:/app/shared/src:cached
     tty: true
-    restart: always
+    restart: "no"
   server:
     build:
       context: ./
@@ -37,7 +37,7 @@ services:
       - ./server/src:/app/server/src:cached
       - ./shared/src:/app/shared/src:cached
     tty: true
-    restart: always
+    restart: "no"
   dev-db:
     image: postgres:11.5-alpine
     environment:
@@ -48,6 +48,6 @@ services:
       - 5432:5432
     volumes:
       - dev-database:/var/lib/postgresql/data/:cached
-    restart: always
+    restart: "no"
 volumes:
   dev-database:
