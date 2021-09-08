@@ -1,3 +1,5 @@
+import { collapseNumber } from '@src/utils/Utils'
+
 export class StatOverride {
 	public readonly callbacks: ((value: number) => number)[]
 
@@ -22,8 +24,8 @@ export class StatOverrideBuilder {
 		return this
 	}
 
-	public add(valueToAdd: number): StatOverrideBuilder {
-		this.callbacks.push((value) => value + valueToAdd)
+	public add(valueOrGetter: number | (() => number)): StatOverrideBuilder {
+		this.callbacks.push((value) => value + collapseNumber(valueOrGetter))
 		return this
 	}
 

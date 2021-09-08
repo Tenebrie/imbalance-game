@@ -2,22 +2,19 @@ import AnimationDuration from '@shared/enums/AnimationDuration'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import AnimationMessage from '@shared/models/network/AnimationMessage'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
-import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { AnimationMessageHandlers, AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 
 import Core from '@/Pixi/Core'
 import AnimationHandlers from '@/Pixi/handlers/AnimationHandlers'
-import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
 import { QueuedMessageSystemData } from '@/Pixi/models/QueuedMessage'
-import { getAnimDurationMod } from '@/utils/Utils'
 
-const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMessageHandlerFunction } = {
+const IncomingAnimationMessages: AnimationMessageHandlers = {
 	[AnimationMessageType.PLAY]: (data: AnimationMessage, systemData: QueuedMessageSystemData) => {
 		const handler = AnimationHandlers[data.type]
 		const handlerResponse = handler(data, data.params)
 		if (!handlerResponse || !handlerResponse.skip) {
 			const extraDuration = (handlerResponse && handlerResponse.extraDelay) || 0
-			const speedModifier = getAnimDurationMod()
-			const time = (AnimationDuration[data.type] + extraDuration) * speedModifier
+			const time = AnimationDuration[data.type] + extraDuration
 			Core.mainHandler.triggerAnimation(time, systemData.animationThreadId)
 		}
 	},
@@ -45,9 +42,8 @@ const IncomingAnimationMessages: { [index in AnimationMessageType]: IncomingMess
 			(thread) => thread.started && thread.isStaggered && thread.hasAnimationMessages()
 		).length
 		if (data.isStaggered && targetThread.hasAnimationMessages()) {
-			const speedModifier = getAnimDurationMod()
 			const animationCooldown = Core.game.turnPhase === GameTurnPhase.ROUND_END ? 50 : 150
-			targetThread.triggerCooldown(activeStaggeredWorkerThreadCount * animationCooldown * speedModifier)
+			targetThread.triggerCooldown(activeStaggeredWorkerThreadCount * animationCooldown)
 		}
 		targetThread.start()
 	},

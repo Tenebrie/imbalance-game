@@ -2,7 +2,7 @@ import OpenCardBuffMessage from '@shared/models/network/buffs/OpenCardBuffMessag
 import HiddenCardStatsMessage from '@shared/models/network/cardStats/HiddenCardStatsMessage'
 import OpenCardStatsMessage from '@shared/models/network/cardStats/OpenCardStatsMessage'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
-import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import { getOwnerGroup, isCardPublic } from '@src/utils/Utils'
 
 import { ServerCardBuff } from '../../models/buffs/ServerBuff'

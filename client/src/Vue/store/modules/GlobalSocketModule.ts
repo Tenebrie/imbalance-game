@@ -1,4 +1,4 @@
-import { ServerToClientWebJson, WebMessageTypeMapping } from '@shared/models/network/messageHandlers/WebMessageTypes'
+import { ServerToClientGlobalMessage, WebMessageTypeMapping } from '@shared/models/network/messageHandlers/WebMessageTypes'
 import { compressGameTraffic } from '@shared/Utils'
 import { defineModule } from 'direct-vuex'
 import lzutf8 from 'lzutf8'
@@ -62,7 +62,7 @@ const GlobalSocketModule = defineModule({
 						inputEncoding: 'BinaryString',
 					})
 				}
-				const parsedData = JSON.parse(data) as ServerToClientWebJson
+				const parsedData = JSON.parse(data) as ServerToClientGlobalMessage
 				const messageType = parsedData.type
 				const messageData = parsedData.data
 

@@ -11,7 +11,6 @@ import RenderedVelocityProjectile from '@/Pixi/models/RenderedVelocityProjectile
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 import Utils, { getAnimDurationMod, getDistance } from '@/utils/Utils'
-import store from '@/Vue/store'
 
 export default class ProjectileSystem {
 	private projectiles: RenderedProjectile[] = []
@@ -145,7 +144,7 @@ export default class ProjectileSystem {
 	}
 
 	private static registerProjectile(projectile: RenderedProjectile, onImpact: () => void): void {
-		if (store.state.hotkeysModule.ultraFastAnimation) {
+		if (getAnimDurationMod() < 0.5) {
 			Core.mainHandler.projectileSystem.projectiles.push(projectile)
 			onImpact()
 			return

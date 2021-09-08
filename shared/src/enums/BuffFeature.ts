@@ -1,6 +1,6 @@
 enum BuffFeature {
 	SKIP_ANIMATION,
-	SERVICE_BUFF,
+	INVISIBLE,
 	PROTECTED,
 }
 

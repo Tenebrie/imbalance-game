@@ -519,8 +519,12 @@ export default class RenderedCard implements Card {
 		this.powerText.position.set(97, 80)
 		if (this.stats.power < 10) {
 			this.powerText.style.fontSize = 160
-		} else {
+		} else if (this.stats.power < 100) {
 			this.powerText.style.fontSize = 135
+		} else if (this.stats.power < 1000) {
+			this.powerText.style.fontSize = 110
+		} else {
+			this.powerText.style.fontSize = 90
 		}
 
 		this.armorText.position.set(247, 63)

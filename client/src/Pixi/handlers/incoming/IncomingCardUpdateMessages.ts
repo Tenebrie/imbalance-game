@@ -1,13 +1,12 @@
 import OpenCardBuffMessage from '@shared/models/network/buffs/OpenCardBuffMessage'
 import CardStatsMessage from '@shared/models/network/cardStats/CardStatsMessage'
 import CardVariablesMessage from '@shared/models/network/CardVariablesMessage'
-import { CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { CardUpdateMessageHandlers, CardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 
 import Core from '@/Pixi/Core'
-import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
 import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 
-const IncomingCardUpdateMessages: { [index in CardUpdateMessageType]: IncomingMessageHandlerFunction } = {
+const IncomingCardUpdateMessages: CardUpdateMessageHandlers = {
 	[CardUpdateMessageType.STATS]: (data: CardStatsMessage) => {
 		const card = Core.game.findCardById(data.cardId)
 		if (!card) {

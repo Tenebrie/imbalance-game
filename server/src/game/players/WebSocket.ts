@@ -1,4 +1,11 @@
+import {
+	AnimationMessageType,
+	ServerToClientGameMessage,
+	ServerToClientGameMessageTypes,
+	SystemMessageType,
+} from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import { compressGameTraffic } from '@shared/Utils'
+import { optimizeWebSocketQueue } from '@src/game/players/WebSocketOptimizer/WebSocketOptimizer'
 import lzutf8 from 'lzutf8'
 import * as ws from 'ws'
 
@@ -34,11 +41,36 @@ export class WebSocket {
 	}
 }
 
+const EXCLUDED_TYPES: ServerToClientGameMessageTypes[] = [
+	SystemMessageType.MESSAGE_ACKNOWLEDGED,
+	SystemMessageType.PERFORMANCE_METRICS,
+	SystemMessageType.GAME_COLLAPSED,
+	SystemMessageType.MODE_SPECTATE,
+	SystemMessageType.REQUEST_INIT,
+	SystemMessageType.ERROR_GENERIC,
+	SystemMessageType.COMMAND_DISCONNECT,
+]
+
 export class GameWebSocket extends WebSocket {
 	game: ServerGame
+	queue: ServerToClientGameMessage[] = []
 
 	constructor(ws: ws, game: ServerGame) {
 		super(ws, 'game')
 		this.game = game
+	}
+
+	send(json: ServerToClientGameMessage): void {
+		if (EXCLUDED_TYPES.includes(json.type)) {
+			super.send(json)
+			return
+		}
+
+		this.queue.push(json)
+		if (json.type === AnimationMessageType.EXECUTE_QUEUE) {
+			const optimizerResponse = optimizeWebSocketQueue(this.queue)
+			optimizerResponse.queue.forEach((queuedJson) => super.send(queuedJson))
+			this.queue = []
+		}
 	}
 }

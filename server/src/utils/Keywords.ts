@@ -88,12 +88,15 @@ export default {
 
 		const units: ServerUnit[] = []
 		for (let i = 0; i < normalizedCount; i++) {
-			const card = new cardConstructor(game)
-			const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
-			if (unit) {
-				units.push(unit)
-			}
+			game.animation.thread(() => {
+				const card = new cardConstructor(game)
+				const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
+				if (unit) {
+					units.push(unit)
+				}
+			})
 		}
+		game.animation.syncAnimationThreads()
 		return units
 	},
 

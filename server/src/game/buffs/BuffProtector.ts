@@ -12,7 +12,7 @@ export default class BuffProtector extends ServerCardBuff {
 	constructor(params: BuffConstructorParams) {
 		super(params, {
 			alignment: BuffAlignment.POSITIVE,
-			features: [BuffFeature.SERVICE_BUFF],
+			features: [BuffFeature.INVISIBLE, BuffFeature.PROTECTED],
 			cardFeatures: [CardFeature.PROTECTOR],
 		})
 
@@ -27,7 +27,7 @@ export default class BuffProtector extends ServerCardBuff {
 					(damageInstance.source === DamageSource.CARD && !this.parent.ownerGroup.owns(damageInstance.sourceCard!))
 			)
 			.require(({ targetCard }) => {
-				const thisUnit = this.unit!
+				const thisUnit = this.parent.unit!
 				const targetUnit = targetCard.unit!
 				const direction = this.game.board.getMoveDirection(
 					this.parent.ownerGroup,

@@ -1,6 +1,6 @@
 import ErrorCode from '@shared/enums/ErrorCode'
 import GameCollapseMessageData from '@shared/models/network/GameCollapseMessageData'
-import { SystemMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { SystemMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import ServerGame from '@src/game/models/ServerGame'
 import * as ws from 'ws'
 

@@ -12,7 +12,7 @@ import ServerAnimation from '../ServerAnimation'
 import ServerBoardRow from '../ServerBoardRow'
 import ServerCard from '../ServerCard'
 import ServerGame from '../ServerGame'
-import ServerBuff, { BuffConstructorParams, ServerCardBuff, ServerRowBuff } from './ServerBuff'
+import ServerBuff, { BuffConstructorParams, ServerCardBuff, ServerRowBuff, ServerStackableCardBuff } from './ServerBuff'
 
 export interface BuffConstructor {
 	new (params: BuffConstructorParams): ServerBuff
@@ -35,10 +35,14 @@ export default class ServerBuffContainer implements BuffContainer {
 	}
 
 	public get visible(): ServerBuff[] {
-		return this.buffs.filter((buff) => !buff.buffFeatures.includes(BuffFeature.SERVICE_BUFF))
+		return this.buffs.filter((buff) => !buff.buffFeatures.includes(BuffFeature.INVISIBLE))
 	}
 
 	public get dispellable(): ServerBuff[] {
+		return this.buffs.filter((buff) => !buff.protected && !buff.buffFeatures.includes(BuffFeature.INVISIBLE))
+	}
+
+	public get systemDispellable(): ServerBuff[] {
 		return this.buffs.filter((buff) => !buff.protected)
 	}
 
@@ -123,10 +127,15 @@ export default class ServerBuffContainer implements BuffContainer {
 		}
 
 		if (this.parent instanceof ServerBoardRow) {
-			this.removeAllDispellable({ skipAnimation: true })
+			this.removeAllSystemDispellable({ skipAnimation: true })
 		}
 
-		this.buffs.push(newBuff)
+		const duplicatedBuff = this.buffs.find((buff) => buff.class === newBuff.class)
+		if (duplicatedBuff && duplicatedBuff instanceof ServerStackableCardBuff) {
+			duplicatedBuff.stacks += 1
+		} else {
+			this.buffs.push(newBuff)
+		}
 
 		if (newBuff instanceof ServerCardBuff) {
 			OutgoingCardUpdateMessages.notifyAboutCardBuffAdded(newBuff)
@@ -256,7 +265,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		this.buffs.filter((buff) => buff.selector === selector).forEach((buff) => this.removeByReference(buff))
 	}
 
-	public removeAllDispellable(args: { skipAnimation: boolean } = { skipAnimation: false }): void {
-		this.dispellable.forEach((buff) => this.removeByReference(buff, args))
+	public removeAllSystemDispellable(args: { skipAnimation: boolean } = { skipAnimation: false }): void {
+		this.systemDispellable.forEach((buff) => this.removeByReference(buff, args))
 	}
 }

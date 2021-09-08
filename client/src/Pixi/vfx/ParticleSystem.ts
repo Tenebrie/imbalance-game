@@ -9,7 +9,7 @@ import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import Core from '@/Pixi/Core'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
-import { getBoopColor } from '@/utils/Utils'
+import { getAnimDurationMod, getBoopColor } from '@/utils/Utils'
 
 interface ParticleEmitterHandle {
 	emitter: Particles.Emitter
@@ -390,6 +390,9 @@ export default class ParticleSystem {
 	}
 
 	public createCardReceivedBuffParticleEffect(card: RenderedCard, alignment: BuffAlignment): void {
+		if (getAnimDurationMod() < 0.5) {
+			return
+		}
 		const config = {
 			color: { start: '00FF00', end: '55FF55' },
 			startRotation: { min: 270, max: 270 },

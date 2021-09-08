@@ -1,4 +1,4 @@
-import { NovelMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { NovelMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import NovelCue from '@shared/models/novel/NovelCue'
 import NovelCueMessage from '@shared/models/novel/NovelCueMessage'
 import NovelReply from '@shared/models/novel/NovelReply'

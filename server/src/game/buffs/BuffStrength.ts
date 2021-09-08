@@ -1,12 +1,14 @@
 import BuffAlignment from '@shared/enums/BuffAlignment'
+import BuffFeature from '@shared/enums/BuffFeature'
 import GameEventType from '@shared/enums/GameEventType'
 
-import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
+import { BuffConstructorParams, ServerStackableCardBuff } from '../models/buffs/ServerBuff'
 
-export default class BuffStrength extends ServerCardBuff {
+export default class BuffStrength extends ServerStackableCardBuff {
 	constructor(params: BuffConstructorParams) {
 		super(params, {
 			alignment: BuffAlignment.POSITIVE,
+			features: [BuffFeature.INVISIBLE],
 		})
 
 		this.createEffect(GameEventType.CARD_BUFF_CREATED).perform(() => onCreated())
@@ -14,6 +16,6 @@ export default class BuffStrength extends ServerCardBuff {
 			this.parent.stats.power = this.parent.stats.power + 1
 		}
 
-		this.createMaxPowerOverride().add(1)
+		this.createMaxPowerOverride().add(() => this.stacks)
 	}
 }

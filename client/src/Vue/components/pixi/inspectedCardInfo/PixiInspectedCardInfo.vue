@@ -153,7 +153,7 @@ export default defineComponent({
 
 		const displayBuffs = computed<boolean>(() => {
 			const buffs = inspectedCard.value.buffs.buffs as (ClientBuff | BuffMessage)[]
-			return buffs.some((buff) => !buff.buffFeatures.includes(BuffFeature.SERVICE_BUFF))
+			return buffs.some((buff) => !buff.buffFeatures.includes(BuffFeature.INVISIBLE))
 		})
 
 		const overlayDisplayed = computed<boolean>(() => {

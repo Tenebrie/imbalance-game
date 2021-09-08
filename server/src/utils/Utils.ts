@@ -347,3 +347,7 @@ export const forEachRowCardSlot = (callback: (index: number) => void): void => {
 		callback(i)
 	}
 }
+
+export const collapseNumber = (valueOrGetter: number | (() => number)): number => {
+	return typeof valueOrGetter === 'function' ? valueOrGetter() : valueOrGetter
+}

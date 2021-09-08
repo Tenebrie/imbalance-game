@@ -54,7 +54,6 @@ import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
 import ServerBoardRow from '../ServerBoardRow'
 import ServerCard from '../ServerCard'
 import ServerGame from '../ServerGame'
-import ServerUnit from '../ServerUnit'
 import { StatOverride, StatOverrideBuilder } from './StatOverride'
 
 export type ServerBuffProps = {
@@ -142,20 +141,6 @@ export default class ServerBuff implements Buff {
 		this.setDuration(this.duration - 1)
 	}
 
-	// public get card(): ServerCard {
-	// 	if (this.parent instanceof ServerBoardRow) {
-	// 		throw new Error('The card parent requested on board buff')
-	// 	}
-	// 	return this.parent
-	// }
-
-	protected get unit(): ServerUnit | undefined {
-		if (this.parent instanceof ServerBoardRow) {
-			return undefined
-		}
-		return this.game.board.findUnitById(this.parent.id)
-	}
-
 	public get location(): CardLocation {
 		if (this.parent instanceof ServerBoardRow) {
 			return CardLocation.UNKNOWN
@@ -180,9 +165,7 @@ export default class ServerBuff implements Buff {
 	}
 
 	public get protected(): boolean {
-		return (
-			this.buffFeatures.includes(BuffFeature.SERVICE_BUFF) || this.buffFeatures.includes(BuffFeature.PROTECTED) || this.selector !== null
-		)
+		return this.buffFeatures.includes(BuffFeature.PROTECTED) || this.selector !== null
 	}
 
 	/* Subscribe to a game event
@@ -366,6 +349,14 @@ export class ServerCardBuff extends ServerBuff implements CardBuff {
 		}
 		this.parent = params.parent
 	}
+}
+
+interface Stackable {
+	stacks: number
+}
+
+export class ServerStackableCardBuff extends ServerCardBuff implements Stackable {
+	stacks = 1
 }
 
 export class ServerRowBuff extends ServerBuff implements RowBuff {

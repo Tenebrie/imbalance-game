@@ -1,6 +1,10 @@
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
-import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
-import { ClientToServerSpectatorMessageTypes } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import {
+	ClientToServerGameMessage,
+	ClientToServerMessageTypeMappers,
+	ClientToServerSpectatorMessageTypes,
+} from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
+import PlayerInGame from '@shared/models/PlayerInGame'
 import { enumToArray } from '@shared/Utils'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import EventContext from '@src/game/models/EventContext'
@@ -108,9 +112,13 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 
 	ws.on('message', (rawMsg: string) => {
 		EventContext.setGame(currentGame)
-		const msg = JSON.parse(restoreObjectIDs(currentGame, rawMsg)) as ClientToServerJson
+		const msg = JSON.parse(restoreObjectIDs(currentGame, rawMsg)) as ClientToServerGameMessage
 		const messageType = msg.type
-		const handler = IncomingMessageHandlers[messageType]
+		const handler = IncomingMessageHandlers[messageType] as (
+			data: ClientToServerMessageTypeMappers[typeof messageType],
+			game: ServerGame,
+			playerInGame: PlayerInGame
+		) => void
 		if (!handler) {
 			OutgoingMessageHandlers.notifyAboutInvalidMessageType(ws, msg.type)
 			return
@@ -122,6 +130,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 			handler(msg.data, currentGame, currentPlayerInGame)
 			const t2 = process.hrtime(t1)
 			OutgoingMessageHandlers.notifyAboutPerformanceMetrics(currentPlayerInGame.player, t2[1] / 1000000)
+			OutgoingMessageHandlers.executeMessageQueue(currentGame)
 		} catch (error) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error)

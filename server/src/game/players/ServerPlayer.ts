@@ -1,6 +1,6 @@
 import AccessLevel from '@shared/enums/AccessLevel'
-import { ServerToClientWebJson } from '@shared/models/network/messageHandlers/WebMessageTypes'
-import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
+import { ServerToClientGameMessage } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
+import { ServerToClientGlobalMessage } from '@shared/models/network/messageHandlers/WebMessageTypes'
 import Player from '@shared/models/Player'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import PlayerLibrary from '@src/game/players/PlayerLibrary'
@@ -51,11 +51,11 @@ export default class ServerPlayer implements Player {
 		this.gameWebSocket = new GameWebSocket(ws, game)
 	}
 
-	sendGlobalMessage(json: ServerToClientWebJson): void {
-		this.globalWebSockets.forEach((socket) => socket.send(json))
+	sendGlobalMessage(message: ServerToClientGlobalMessage): void {
+		this.globalWebSockets.forEach((socket) => socket.send(message))
 	}
 
-	sendGameMessage(json: ServerToClientJson): void {
+	sendGameMessage(json: ServerToClientGameMessage): void {
 		if (!this.gameWebSocket) {
 			return
 		}

@@ -453,7 +453,7 @@ export default class ServerGame implements SourceGame {
 			})
 		this.board.rows.forEach((row) => {
 			this.animation.thread(() => {
-				row.buffs.removeAllDispellable()
+				row.buffs.removeAllSystemDispellable()
 			})
 		})
 		this.animation.syncAnimationThreads()
@@ -552,7 +552,7 @@ export default class ServerGame implements SourceGame {
 		})
 		this.board.rows.forEach((row) => {
 			this.animation.thread(() => {
-				row.buffs.removeAllDispellable()
+				row.buffs.removeAllSystemDispellable()
 			})
 		})
 

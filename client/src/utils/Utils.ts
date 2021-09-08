@@ -80,10 +80,13 @@ export const getDistance = (a: AnyPoint, b: AnyPoint): number => {
 
 export const getAnimDurationMod = (): number => {
 	let value = 1
-	if (store.state.hotkeysModule.ultraFastAnimation) {
-		value = 1 / 10
-	} else if (store.state.hotkeysModule.fastAnimation || store.state.userPreferencesModule.fastMode) {
-		value = 1 / 3
+	if (store.state.userPreferencesModule.fastMode) {
+		value = value / 2
+	}
+	if (store.state.hotkeysModule.fastAnimation) {
+		value = value / 2
+	} else if (store.state.hotkeysModule.ultraFastAnimation) {
+		value = value / 4
 	}
 	return value
 }

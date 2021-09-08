@@ -1,7 +1,7 @@
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import BoardMessage from '@shared/models/network/BoardMessage'
 import GameStartMessage from '@shared/models/network/GameStartMessage'
-import { GameSyncMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { GameSyncMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import PlayerGroupRefMessage from '@shared/models/network/playerGroup/PlayerGroupRefMessage'
 import HiddenPlayerInGameMessage from '@shared/models/network/playerInGame/HiddenPlayerInGameMessage'
 import OpenPlayerInGameMessage from '@shared/models/network/playerInGame/OpenPlayerInGameMessage'

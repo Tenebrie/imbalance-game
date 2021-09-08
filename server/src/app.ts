@@ -46,7 +46,7 @@ app.set('view engine', 'jade')
 /* Forced HTTPS */
 app.use((req: Request, res: Response, next) => {
 	if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV !== 'development') {
-		console.log('Redirecting to HTTPS')
+		console.debug('Redirecting to HTTPS')
 		return res.redirect('https://' + req.get('host') + req.url)
 	}
 	next()
@@ -122,7 +122,6 @@ app.use('*', (req, res) => {
 
 /* Last-resort error handler */
 app.use((err: any, req: Request, res: Response, _next: () => void) => {
-	console.log('Last resort!')
 	res.status(err.status || 500)
 	res.render('error', {
 		message: err.message,

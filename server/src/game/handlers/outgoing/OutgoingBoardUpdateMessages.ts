@@ -1,7 +1,7 @@
 import BoardRowMessage from '@shared/models/network/BoardRowMessage'
 import OpenRowBuffMessage from '@shared/models/network/buffs/OpenRowBuffMessage'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
-import { BoardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { BoardUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import UnitMessage from '@shared/models/network/UnitMessage'
 import { ServerRowBuff } from '@src/game/models/buffs/ServerBuff'
 

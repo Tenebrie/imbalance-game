@@ -1,13 +1,12 @@
 import GameCollapseMessageData from '@shared/models/network/GameCollapseMessageData'
-import { SystemMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { SystemMessageHandlers, SystemMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 
 import Core from '@/Pixi/Core'
-import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import TheGameCollapsePopup from '@/Vue/components/popup/escapeMenu/TheGameCollapsePopup.vue'
 import store from '@/Vue/store'
 
-const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHandlerFunction } = {
+const IncomingSystemMessages: SystemMessageHandlers = {
 	[SystemMessageType.MESSAGE_ACKNOWLEDGED]: () => {
 		Core.performance.logMessageAcknowledge()
 	},
@@ -36,13 +35,13 @@ const IncomingSystemMessages: { [index in SystemMessageType]: IncomingMessageHan
 		}
 	},
 
+	[SystemMessageType.ERROR_GENERIC]: (data: string) => {
+		console.error('Server error:', data)
+	},
+
 	[SystemMessageType.COMMAND_DISCONNECT]: () => {
 		store.dispatch.leaveGame()
 		store.commit.clearNextLinkedGame()
-	},
-
-	[SystemMessageType.ERROR_GENERIC]: (data: string) => {
-		console.error('Server error:', data)
 	},
 }
 

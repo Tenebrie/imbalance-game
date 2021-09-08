@@ -1,13 +1,12 @@
 import TargetMode from '@shared/enums/TargetMode'
 import AnonymousTargetsMessage from '@shared/models/network/AnonymousTargetsMessage'
 import InvalidCardTargetMessage from '@shared/models/network/InvalidCardTargetMessage'
-import { TargetingMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { TargetingMessageHandlers, TargetingMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import ResolvingCardTargetsMessage from '@shared/models/network/ResolvingCardTargetsMessage'
 
 import Core from '@/Pixi/Core'
-import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
 
-const IncomingResolveStackMessages: { [index in TargetingMessageType]: IncomingMessageHandlerFunction } = {
+const IncomingResolveStackMessages: TargetingMessageHandlers = {
 	[TargetingMessageType.CARD_PLAY]: (data: ResolvingCardTargetsMessage) => {
 		const validTargets = data.targets
 		if (validTargets.length > 0) {

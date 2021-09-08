@@ -1,11 +1,13 @@
-import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { AnimationMessageType, ServerToClientMessageTypeMappers } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import * as PIXI from 'pixi.js'
 import { v4 as uuidv4 } from 'uuid'
 
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
-import QueuedMessage from '@/Pixi/models/QueuedMessage'
+import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers'
+import QueuedMessage, { QueuedMessageSystemData } from '@/Pixi/models/QueuedMessage'
 import ProjectileSystem from '@/Pixi/vfx/ProjectileSystem'
+import { getAnimDurationMod } from '@/utils/Utils'
 
 class AnimationThread {
 	public id: string = uuidv4()
@@ -42,10 +44,11 @@ class AnimationThread {
 		return this.__workerThreads
 	}
 
-	public tick(deltaTime: number): void {
+	public tick(globalDeltaTime: number): void {
 		if (!this.__isStarted) {
 			return
 		}
+		const deltaTime = globalDeltaTime / getAnimDurationMod()
 
 		this.__workerThreads.forEach((thread) => thread.tick(deltaTime))
 
@@ -99,6 +102,10 @@ class AnimationThread {
 		this.queuedMessages.push(message)
 	}
 
+	public addUnwrappedMessage(message: QueuedMessage): void {
+		this.queuedMessages.unshift(message)
+	}
+
 	public triggerCooldown(time: number): AnimationThread {
 		this.messageCooldown += time
 		return this
@@ -123,7 +130,7 @@ class AnimationThread {
 		this.executeMessage(message)
 
 		if (message.allowBatching) {
-			while (this.queuedMessages.length > 0 && this.queuedMessages[0].handler === message.handler) {
+			while (this.queuedMessages.length > 0 && this.queuedMessages[0].type === message.type) {
 				const nextMessage = this.queuedMessages.shift()!
 				this.executeMessage(nextMessage)
 			}
@@ -132,9 +139,14 @@ class AnimationThread {
 		}
 	}
 
-	private executeMessage(message: QueuedMessage): void {
+	public executeMessage(message: QueuedMessage): void {
 		try {
-			message.handler(message.data, {
+			const type = message.type
+			const handler = IncomingMessageHandlers[type] as (
+				data: ServerToClientMessageTypeMappers[typeof type],
+				systemData: QueuedMessageSystemData
+			) => void
+			handler(message.data, {
 				animationThreadId: this.id,
 			})
 		} catch (e) {
@@ -191,6 +203,17 @@ export default class MainHandler {
 			targetThread = this.currentOpenAnimationThread.parentThread
 		}
 		targetThread.registerMessage(message)
+	}
+
+	public addUnwrappedMessages(reversedMessages: QueuedMessage[]): void {
+		const messages = reversedMessages.slice().reverse()
+		messages.forEach((message) => {
+			let targetThread = this.currentOpenAnimationThread
+			if (message.ignoreWorkerThreads && this.currentOpenAnimationThread.parentThread) {
+				targetThread = this.currentOpenAnimationThread.parentThread
+			}
+			targetThread.addUnwrappedMessage(message)
+		})
 	}
 
 	public triggerAnimation(time: number, threadId: string): void {

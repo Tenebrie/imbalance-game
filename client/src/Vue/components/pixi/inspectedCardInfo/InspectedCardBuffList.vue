@@ -36,7 +36,7 @@ export default defineComponent({
 		const visibleBuffs = computed<BuffWrapper[]>(() => {
 			const originalBuffs = props.card.buffs.buffs as (ClientBuff | BuffMessage)[]
 			return originalBuffs
-				.filter((buff) => !buff.buffFeatures.includes(BuffFeature.SERVICE_BUFF))
+				.filter((buff) => !buff.buffFeatures.includes(BuffFeature.INVISIBLE))
 				.map((buff) => ({
 					buff,
 					intensity: 1,

@@ -1,9 +1,10 @@
-import TargetMode from '@shared/enums/TargetMode'
-import { ClientToServerJson } from '@shared/models/network/ClientToServerJson'
 import GameMessage from '@shared/models/network/GameMessage'
-import { ClientToServerMessageTypes } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
-import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
-import { ServerToClientJson } from '@shared/models/network/ServerToClientJson'
+import { ClientToServerGameMessage } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
+import {
+	ServerToClientGameMessage,
+	ServerToClientGameMessageSelector,
+	ServerToClientMessageTypeMappers,
+} from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
 import { compressGameTraffic } from '@shared/Utils'
 import lzutf8 from 'lzutf8'
@@ -20,6 +21,7 @@ import ClientGame from '@/Pixi/models/ClientGame'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import GamePerformance from '@/Pixi/models/GamePerformance'
+import { QueuedMessageSystemData } from '@/Pixi/models/QueuedMessage'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import Renderer from '@/Pixi/renderer/Renderer'
 import ParticleSystem from '@/Pixi/vfx/ParticleSystem'
@@ -114,14 +116,21 @@ class Core {
 				inputEncoding: 'BinaryString',
 			})
 		}
-		data = JSON.parse(data) as ServerToClientJson
-		const messageType = data.type as ServerToClientMessageTypes
-		const messageData = data.data
-		const messageHighPriority = data.highPriority as boolean
-		const messageAllowBatching = data.allowBatching as boolean
-		const messageIgnoreWorkerThreads = data.ignoreWorkerThreads as boolean
+		const parsedData = JSON.parse(data) as ServerToClientGameMessage
+		this.executeSocketMessage(parsedData)
+	}
 
-		const handler = IncomingMessageHandlers[messageType]
+	public executeSocketMessage(parsedData: ServerToClientGameMessage): void {
+		const messageType = parsedData.type
+		const messageData = parsedData.data
+		const messageHighPriority = parsedData.highPriority
+		const messageAllowBatching = parsedData.allowBatching
+		const messageIgnoreWorkerThreads = parsedData.ignoreWorkerThreads
+
+		const handler = IncomingMessageHandlers[messageType] as (
+			data: ServerToClientMessageTypeMappers[typeof messageType],
+			systemData: QueuedMessageSystemData
+		) => ServerToClientGameMessageSelector<any>[] | void
 		if (!handler) {
 			console.error(`Unknown message type: ${messageType}`, messageData)
 			return
@@ -131,18 +140,22 @@ class Core {
 			animationThreadId: this.mainHandler.mainAnimationThread.id,
 		}
 
+		let unwrappedMessages: ServerToClientGameMessageSelector<any>[] | void = []
 		if (messageHighPriority) {
 			try {
-				handler(messageData, handlerSystemData)
+				unwrappedMessages = handler(messageData, handlerSystemData)
 			} catch (e) {
 				console.error(e)
+			}
+
+			if (unwrappedMessages && unwrappedMessages.length > 0) {
+				unwrappedMessages.forEach((message) => this.executeSocketMessage(message))
 			}
 			return
 		}
 
 		this.mainHandler.registerMessage({
 			type: messageType,
-			handler: handler,
 			data: messageData,
 			allowBatching: messageAllowBatching || false,
 			ignoreWorkerThreads: messageIgnoreWorkerThreads || false,
@@ -216,15 +229,12 @@ class Core {
 		)
 	}
 
-	public sendMessage(type: ClientToServerMessageTypes, data: Record<string, any> | TargetMode | null): void {
+	public sendMessage(message: ClientToServerGameMessage): void {
 		this.performance.logPlayerAction()
-		this.send({
-			type: type,
-			data: data,
-		})
+		this.send(message)
 	}
 
-	private send(json: ClientToServerJson): void {
+	private send(json: ClientToServerGameMessage): void {
 		this.socket.send(JSON.stringify(json))
 	}
 
