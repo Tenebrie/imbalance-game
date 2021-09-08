@@ -54,7 +54,6 @@ import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
 import ServerBoardRow from '../ServerBoardRow'
 import ServerCard from '../ServerCard'
 import ServerGame from '../ServerGame'
-import ServerUnit from '../ServerUnit'
 import { StatOverride, StatOverrideBuilder } from './StatOverride'
 
 export type ServerBuffProps = {
@@ -140,20 +139,6 @@ export default class ServerBuff implements Buff {
 
 	private onTurnChanged(): void {
 		this.setDuration(this.duration - 1)
-	}
-
-	// public get card(): ServerCard {
-	// 	if (this.parent instanceof ServerBoardRow) {
-	// 		throw new Error('The card parent requested on board buff')
-	// 	}
-	// 	return this.parent
-	// }
-
-	protected get unit(): ServerUnit | undefined {
-		if (this.parent instanceof ServerBoardRow) {
-			return undefined
-		}
-		return this.game.board.findUnitById(this.parent.id)
 	}
 
 	public get location(): CardLocation {

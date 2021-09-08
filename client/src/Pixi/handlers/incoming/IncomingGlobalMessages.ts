@@ -1,8 +1,8 @@
-import { ServerToClientWebMapping, WebMessageType } from '@shared/models/network/messageHandlers/WebMessageTypes'
+import { ServerToClientGlobalMessageHandlers, WebMessageType } from '@shared/models/network/messageHandlers/WebMessageTypes'
 
 import store from '@/Vue/store'
 
-export const IncomingGlobalMessages: ServerToClientWebMapping = {
+export const IncomingGlobalMessages: ServerToClientGlobalMessageHandlers = {
 	[WebMessageType.GAMES_INFO]: (data) => {
 		store.dispatch.gamesListModule.setGames(data)
 	},

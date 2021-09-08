@@ -4,7 +4,7 @@ import GameTurnPhase from '@shared/enums/GameTurnPhase'
 import TargetMode from '@shared/enums/TargetMode'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
 import PlayerInGame from '@shared/models/PlayerInGame'
 import { sortCards } from '@shared/Utils'
 import IncomingMessageHandlers from '@src/game/handlers/IncomingMessageHandlers'
@@ -299,6 +299,7 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 			}
 		}
 		this.botEndsTurn()
+		OutgoingMessageHandlers.executeMessageQueue(this.game)
 	}
 
 	private botPlaysCard(spellsOnly: boolean): void {

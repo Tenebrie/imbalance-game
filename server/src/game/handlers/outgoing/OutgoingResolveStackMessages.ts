@@ -1,5 +1,5 @@
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
-import { ResolveStackMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { ResolveStackMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import OpenOwnedCardMessage from '@shared/models/network/ownedCard/OpenOwnedCardMessage'
 
 import ServerOwnedCard from '../../models/ServerOwnedCard'

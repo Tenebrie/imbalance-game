@@ -122,7 +122,6 @@ app.use('*', (req, res) => {
 
 /* Last-resort error handler */
 app.use((err: any, req: Request, res: Response, _next: () => void) => {
-	console.log('Last resort!')
 	res.status(err.status || 500)
 	res.render('error', {
 		message: err.message,

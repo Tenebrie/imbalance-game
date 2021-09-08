@@ -1,10 +1,11 @@
-import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { AnimationMessageType, ServerToClientMessageTypeMappers } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import * as PIXI from 'pixi.js'
 import { v4 as uuidv4 } from 'uuid'
 
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
-import QueuedMessage from '@/Pixi/models/QueuedMessage'
+import IncomingMessageHandlers from '@/Pixi/handlers/IncomingMessageHandlers'
+import QueuedMessage, { QueuedMessageSystemData } from '@/Pixi/models/QueuedMessage'
 import ProjectileSystem from '@/Pixi/vfx/ProjectileSystem'
 
 class AnimationThread {
@@ -123,7 +124,7 @@ class AnimationThread {
 		this.executeMessage(message)
 
 		if (message.allowBatching) {
-			while (this.queuedMessages.length > 0 && this.queuedMessages[0].handler === message.handler) {
+			while (this.queuedMessages.length > 0 && this.queuedMessages[0].type === message.type) {
 				const nextMessage = this.queuedMessages.shift()!
 				this.executeMessage(nextMessage)
 			}
@@ -134,7 +135,12 @@ class AnimationThread {
 
 	private executeMessage(message: QueuedMessage): void {
 		try {
-			message.handler(message.data, {
+			const type = message.type
+			const handler = IncomingMessageHandlers[type] as (
+				data: ServerToClientMessageTypeMappers[typeof type],
+				systemData: QueuedMessageSystemData
+			) => void
+			handler(message.data, {
 				animationThreadId: this.id,
 			})
 		} catch (e) {

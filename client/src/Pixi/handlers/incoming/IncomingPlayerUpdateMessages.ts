@@ -2,7 +2,7 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 import CardRefMessage from '@shared/models/network/card/CardRefMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import GameLinkMessage from '@shared/models/network/GameLinkMessage'
-import { PlayerUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { PlayerUpdateMessageHandlers, PlayerUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import MulliganCountMessage from '@shared/models/network/MulliganCountMessage'
 import OwnedCardMessage from '@shared/models/network/ownedCard/OwnedCardMessage'
 import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMessage'
@@ -12,10 +12,9 @@ import PlayerInGameManaMessage from '@shared/models/network/playerInGame/PlayerI
 
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
-import { IncomingMessageHandlerFunction } from '@/Pixi/handlers/IncomingMessageHandlers'
 import store from '@/Vue/store'
 
-const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: IncomingMessageHandlerFunction } = {
+const IncomingPlayerUpdateMessages: PlayerUpdateMessageHandlers = {
 	[PlayerUpdateMessageType.MORALE]: (data: PlayerGroupResourcesMessage) => {
 		Core.getPlayerGroup(data.playerGroupId).roundWins = data.roundWins
 	},
@@ -88,6 +87,14 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 		Core.input.updateGrabbedCard()
 	},
 
+	[PlayerUpdateMessageType.UNIT_ORDERS_SELF]: (data: CardTargetMessage[]) => {
+		Core.board.validOrders = data
+	},
+
+	[PlayerUpdateMessageType.UNIT_ORDERS_OPPONENT]: (data: CardTargetMessage[]) => {
+		Core.board.validOpponentOrders = data
+	},
+
 	[PlayerUpdateMessageType.CARD_REVEALED]: (data: CardMessage) => {
 		const playerWithCard = Core.opponent.players.find((player) => player.cardHand.allCards.find((card) => card.id === data.id))
 		if (!playerWithCard) {
@@ -104,14 +111,6 @@ const IncomingPlayerUpdateMessages: { [index in PlayerUpdateMessageType]: Incomi
 			return
 		}
 		Core.player.players[0].cardHand.addCard(cardInLimbo)
-	},
-
-	[PlayerUpdateMessageType.UNIT_ORDERS_SELF]: (data: CardTargetMessage[]) => {
-		Core.board.validOrders = data
-	},
-
-	[PlayerUpdateMessageType.UNIT_ORDERS_OPPONENT]: (data: CardTargetMessage[]) => {
-		Core.board.validOpponentOrders = data
 	},
 
 	[PlayerUpdateMessageType.TURN_START]: (group: PlayerGroupRefMessage) => {

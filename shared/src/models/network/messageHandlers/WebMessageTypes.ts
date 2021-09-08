@@ -14,13 +14,13 @@ export type WebMessageTypeMapping = {
 	[WebMessageType.GAME_DESTROYED]: GameMessage
 }
 
-type ServerSideTyper<T> = {
+export type ServerToClientGlobalMessage = ProviderSideTyper<WebMessageTypeMapping>
+export type ServerToClientGlobalMessageHandlers = ConsumerSideTyper<WebMessageTypeMapping>
+
+type ConsumerSideTyper<T> = { [K in keyof T]: (data: T[K]) => void }
+type ProviderSideTyper<T> = {
 	[K in keyof T]: {
 		type: K
 		data: T[K]
 	}
 }[keyof T]
-export type ServerToClientWebJson = ServerSideTyper<WebMessageTypeMapping>
-
-type ClientSideTyper<T> = { [K in keyof T]: (data: T[K]) => void }
-export type ServerToClientWebMapping = ClientSideTyper<WebMessageTypeMapping>

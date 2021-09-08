@@ -3,7 +3,7 @@ import Card from '@shared/models/Card'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
-import { GenericActionMessageType, SystemMessageType } from '@shared/models/network/messageHandlers/ClientToServerMessageTypes'
+import { GenericActionMessageType, SystemMessageType } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
 import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
 
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
@@ -12,58 +12,100 @@ import Core from '@/Pixi/Core'
 export default {
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {
 		const rowIndex = Core.board.rows.indexOf(gameBoardRow)
-		Core.sendMessage(GenericActionMessageType.CARD_PLAY, CardPlayedMessage.fromCardOnRow(card, rowIndex, unitIndex))
+		Core.sendMessage({
+			type: GenericActionMessageType.CARD_PLAY,
+			data: CardPlayedMessage.fromCardOnRow(card, rowIndex, unitIndex),
+		})
 	},
 
 	sendSpellCardPlayed(card: Card): void {
-		Core.sendMessage(GenericActionMessageType.CARD_PLAY, CardPlayedMessage.fromCard(card))
+		Core.sendMessage({
+			type: GenericActionMessageType.CARD_PLAY,
+			data: CardPlayedMessage.fromCard(card),
+		})
 	},
 
 	sendUnitOrder(order: CardTargetMessage): void {
-		Core.sendMessage(GenericActionMessageType.UNIT_ORDER, order)
+		Core.sendMessage({
+			type: GenericActionMessageType.UNIT_ORDER,
+			data: order,
+		})
 	},
 
 	sendCardTarget(target: CardTargetMessage): void {
-		Core.sendMessage(GenericActionMessageType.CARD_TARGET, target)
+		Core.sendMessage({
+			type: GenericActionMessageType.CARD_TARGET,
+			data: target,
+		})
 	},
 
 	sendAnonymousTarget(target: AnonymousTargetMessage): void {
-		Core.sendMessage(GenericActionMessageType.ANONYMOUS_TARGET, target)
+		Core.sendMessage({
+			type: GenericActionMessageType.ANONYMOUS_TARGET,
+			data: target,
+		})
 	},
 
 	sendConfirmTargets(targetMode: TargetMode): void {
-		Core.sendMessage(GenericActionMessageType.CONFIRM_TARGETS, targetMode)
+		Core.sendMessage({
+			type: GenericActionMessageType.CONFIRM_TARGETS,
+			data: targetMode,
+		})
 	},
 
 	requestShowPlayersDeck(): void {
-		Core.sendMessage(GenericActionMessageType.REQUEST_PLAYERS_DECK, null)
+		Core.sendMessage({
+			type: GenericActionMessageType.REQUEST_PLAYERS_DECK,
+			data: null,
+		})
 	},
 
 	requestShowPlayersGraveyard(): void {
-		Core.sendMessage(GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD, null)
+		Core.sendMessage({
+			type: GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD,
+			data: null,
+		})
 	},
 
 	requestShowOpponentsGraveyard(): void {
-		Core.sendMessage(GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD, null)
+		Core.sendMessage({
+			type: GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD,
+			data: null,
+		})
 	},
 
 	sendNovelReply(reply: NovelReplyMessage): void {
-		Core.sendMessage(GenericActionMessageType.NOVEL_REPLY, reply)
+		Core.sendMessage({
+			type: GenericActionMessageType.NOVEL_REPLY,
+			data: reply,
+		})
 	},
 
 	sendEndTurn(): void {
-		Core.sendMessage(GenericActionMessageType.TURN_END, null)
+		Core.sendMessage({
+			type: GenericActionMessageType.TURN_END,
+			data: null,
+		})
 	},
 
 	sendSurrender(): void {
-		Core.sendMessage(GenericActionMessageType.SURRENDER, null)
+		Core.sendMessage({
+			type: GenericActionMessageType.SURRENDER,
+			data: null,
+		})
 	},
 
 	sendInit(): void {
-		Core.sendMessage(SystemMessageType.INIT, null)
+		Core.sendMessage({
+			type: SystemMessageType.INIT,
+			data: null,
+		})
 	},
 
 	sendKeepalive(): void {
-		Core.sendMessage(SystemMessageType.KEEPALIVE, null)
+		Core.sendMessage({
+			type: SystemMessageType.KEEPALIVE,
+			data: null,
+		})
 	},
 }

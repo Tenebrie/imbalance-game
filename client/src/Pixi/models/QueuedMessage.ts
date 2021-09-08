@@ -1,15 +1,12 @@
-import { ServerToClientMessageTypes } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import {
+	ServerToClientGameMessageSelector,
+	ServerToClientMessageTypeMappers,
+} from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 
 export interface QueuedMessageSystemData {
 	animationThreadId: string
 }
 
-interface QueuedMessage {
-	type: ServerToClientMessageTypes
-	handler: (data: any, systemData: QueuedMessageSystemData) => void
-	data: any
-	allowBatching: boolean
-	ignoreWorkerThreads: boolean
-}
+export type QueuedMessage = ServerToClientGameMessageSelector<keyof ServerToClientMessageTypeMappers>
 
 export default QueuedMessage

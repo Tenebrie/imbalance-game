@@ -18,6 +18,7 @@ import ServerUnit from '@src/game/models/ServerUnit'
 import Keywords from '@src/utils/Keywords'
 import { colorize, getClassFromConstructor, getTotalLeaderStat } from '@src/utils/Utils'
 import { v4 as getRandomId } from 'uuid'
+import * as ws from 'ws'
 
 import TestingLeader from '../game/cards/11-testing/TestingLeader'
 import CardLibrary, { CardConstructor } from '../game/libraries/CardLibrary'
@@ -129,6 +130,7 @@ type TestGameUnit = {
 	getRow(): RowDistanceWrapper
 	orderOnFirst(): void
 	takeDamage(damage: number): TestGameUnit
+	receiveBuffs(buffConstructor: BuffConstructor, count?: number): TestGameUnit
 }
 
 const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
@@ -146,6 +148,10 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		game.events.evaluateSelectors()
 		return unitWrapper
 	}
+	const receiveBuffs = (buffConstructor: BuffConstructor, count = 1): TestGameUnit => {
+		unit.buffs.addMultiple(buffConstructor, count, null)
+		return unitWrapper
+	}
 	const unitWrapper: TestGameUnit = {
 		stats: unit.card.stats,
 		buffs: wrapBuffs(game, unit.card),
@@ -154,6 +160,7 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		getRow: () => wrapRowDistance(unit),
 		orderOnFirst: () => orderOnFirst(),
 		takeDamage: (damage: number) => takeDamage(damage),
+		receiveBuffs: (buffConstructor: BuffConstructor, count?: number) => receiveBuffs(buffConstructor, count),
 	}
 	return unitWrapper
 }
@@ -191,6 +198,7 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			const id = getRandomId()
 			const player = new ServerPlayer(`player:id-${id}`, `player-${id}-email`, `player-${id}-username`, AccessLevel.NORMAL, false)
 			game.addHumanPlayer(player, playerGroup, deckTemplate)
+			player.registerGameConnection((jest.fn() as unknown) as ws, game)
 		}
 		while (playerGroup.slots.openBotSlots > 0) {
 			const player = new ServerBotPlayer()

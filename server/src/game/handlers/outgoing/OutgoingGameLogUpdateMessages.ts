@@ -1,5 +1,5 @@
 import EventLogEntryMessage from '@shared/models/network/EventLogEntryMessage'
-import { GameLogUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { GameLogUpdateMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 
 import ServerGame from '../../models/ServerGame'
 

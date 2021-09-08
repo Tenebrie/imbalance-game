@@ -1,6 +1,6 @@
 import AnimationMessage from '@shared/models/network/AnimationMessage'
 import AnimationThreadStartMessage from '@shared/models/network/AnimationThreadStartMessage'
-import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientMessageTypes'
+import { AnimationMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
@@ -62,7 +62,7 @@ export default {
 		playerGroup.players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: AnimationMessageType.THREAD_COMMIT,
-				data: undefined,
+				data: null,
 				highPriority: true,
 			})
 		)
@@ -77,7 +77,7 @@ export default {
 	executeMessageQueueForPlayer(game: ServerGame, player: ServerPlayer): void {
 		player.sendGameMessage({
 			type: AnimationMessageType.EXECUTE_QUEUE,
-			data: undefined,
+			data: null,
 			highPriority: true,
 		})
 	},
