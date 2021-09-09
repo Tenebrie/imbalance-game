@@ -19,6 +19,7 @@ import GameCollapseMessageData from '../GameCollapseMessageData'
 import GameLinkMessage from '../GameLinkMessage'
 import GameStartMessage from '../GameStartMessage'
 import BundleCardBuffMessage from '../groupWrappers/BundleCardBuffMessage'
+import BundleCardBuffWithAffectMessage from '../groupWrappers/BundleCardBuffWithAffectMessage'
 import BundleLoopMessage from '../groupWrappers/BundleLoopMessage'
 import BundleNextThreadMessage from '../groupWrappers/BundleNextThreadMessage'
 import InvalidCardTargetMessage from '../InvalidCardTargetMessage'
@@ -262,12 +263,14 @@ export type NovelMessageHandlers = ConsumerSideTyper<NovelMessageTypeMapping>
 
 export enum BundleMessageType {
 	CARD_BUFF = 'gr_cd_buff',
+	CARD_BUFF_AFFECTED = 'gr_cd_buff_affect',
 	THREAD_NEXT = 'gr_thr_next',
 	GENERIC_LOOP = 'gr_loop',
 }
 
 export type BundleMessageTypeMapping = {
 	[BundleMessageType.CARD_BUFF]: BundleCardBuffMessage
+	[BundleMessageType.CARD_BUFF_AFFECTED]: BundleCardBuffWithAffectMessage
 	[BundleMessageType.THREAD_NEXT]: BundleNextThreadMessage
 	[BundleMessageType.GENERIC_LOOP]: BundleLoopMessage<any>
 }

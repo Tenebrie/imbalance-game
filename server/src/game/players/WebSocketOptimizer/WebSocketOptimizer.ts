@@ -1,4 +1,5 @@
 import BundleCardBuffMessage from '@shared/models/network/groupWrappers/BundleCardBuffMessage'
+import BundleCardBuffWithAffectMessage from '@shared/models/network/groupWrappers/BundleCardBuffWithAffectMessage'
 import BundleLoopMessage from '@shared/models/network/groupWrappers/BundleLoopMessage'
 import BundleNextThreadMessage from '@shared/models/network/groupWrappers/BundleNextThreadMessage'
 import {
@@ -70,6 +71,16 @@ export const optimizeWebSocketQueue = (queue: ServerToClientGameMessage[]): WebS
 			highPriority: true,
 		})
 	)
+
+	// Unit buff with pew
+	tempQueue = applyPattern(tempQueue, [AnimationMessageType.PLAY, BundleMessageType.CARD_BUFF], (messages) => ({
+		type: BundleMessageType.CARD_BUFF_AFFECTED,
+		data: new BundleCardBuffWithAffectMessage({
+			animation: messages[0],
+			buffBundle: messages[1],
+		}),
+		highPriority: true,
+	}))
 
 	// Merge consecutive
 	tempQueue = (() => {

@@ -1,4 +1,5 @@
 import BundleCardBuffMessage from '@shared/models/network/groupWrappers/BundleCardBuffMessage'
+import BundleCardBuffWithAffectMessage from '@shared/models/network/groupWrappers/BundleCardBuffWithAffectMessage'
 import BundleLoopMessage from '@shared/models/network/groupWrappers/BundleLoopMessage'
 import BundleNextThreadMessage from '@shared/models/network/groupWrappers/BundleNextThreadMessage'
 import { BundleMessageHandlers, BundleMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
@@ -12,5 +13,8 @@ export const IncomingGroupMessages: BundleMessageHandlers = {
 	},
 	[BundleMessageType.GENERIC_LOOP]: (data) => {
 		return BundleLoopMessage.unwrap(data)
+	},
+	[BundleMessageType.CARD_BUFF_AFFECTED]: (data) => {
+		return BundleCardBuffWithAffectMessage.unwrap(data)
 	},
 }
