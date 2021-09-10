@@ -10,6 +10,7 @@
 		"lint": "yarn eslint src/ --ext .ts",
 		"lint-fix": "yarn eslint src/ --ext .ts --fix",
 		"test": "yarn jest",
+		"test:coverage": "yarn jest --coverage --coverage-reporteres=text",
 		"production": "yarn && yarn build && yarn start",
 		"nuke": "rm -rf node_modules"
 	},

@@ -11,7 +11,8 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitAulerianSongwriter extends ServerCard {
-	bonusPower = 5
+	public static readonly BONUS_POWER = 5
+	bonusPower = UnitAulerianSongwriter.BONUS_POWER
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -29,7 +30,9 @@ export default class UnitAulerianSongwriter extends ServerCard {
 			bonusPower: this.bonusPower,
 		}
 
-		this.createDeployTargets(TargetType.UNIT).perform(({ targetCard }) => this.onDeploy(targetCard))
+		this.createDeployTargets(TargetType.UNIT)
+			.requireNotSelf()
+			.perform(({ targetCard }) => this.onDeploy(targetCard))
 	}
 
 	private onDeploy(targetCard: ServerCard): void {

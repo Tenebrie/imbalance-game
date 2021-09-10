@@ -8,7 +8,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import TargetType from '@shared/enums/TargetType'
-import BuffHiddenStrength from '@src/game/buffs/BuffHiddenStrength'
+import BuffStrength from '@src/game/buffs/BuffStrength'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerCard from '@src/game/models/ServerCard'
@@ -64,7 +64,7 @@ class ItemLabyrinthBase extends ServerCard {
 	public addLeaderPower(value: number | (() => number)): void {
 		this.createSelector()
 			.requireTarget(({ target }) => target.ownerGroup.owns(this) && target === this.ownerPlayer.leader)
-			.provide(BuffHiddenStrength, value)
+			.provide(BuffStrength, value)
 	}
 
 	public addLeaderPowerPerGame(valuePerGame: number): void {
@@ -77,7 +77,7 @@ class ItemLabyrinthBase extends ServerCard {
 	public addBonusUnitPower(value: number | (() => number)): void {
 		this.createSelector()
 			.requireTarget(({ target }) => target.ownerGroup.owns(this) && target.location === CardLocation.BOARD)
-			.provide(BuffHiddenStrength, value)
+			.provide(BuffStrength, value)
 	}
 
 	public addManaRegen(value: number | (() => number)): void {

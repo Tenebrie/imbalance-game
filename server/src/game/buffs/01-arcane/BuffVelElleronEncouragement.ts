@@ -1,9 +1,9 @@
 import BuffAlignment from '@shared/enums/BuffAlignment'
 import GameEventType from '@shared/enums/GameEventType'
 
-import SpellAnEncouragement from '../cards/01-arcane/leaders/VelElleron/SpellAnEncouragement'
-import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
-import BuffStrength from './BuffStrength'
+import SpellAnEncouragement from '../../cards/01-arcane/leaders/VelElleron/SpellAnEncouragement'
+import { BuffConstructorParams, ServerCardBuff } from '../../models/buffs/ServerBuff'
+import BuffStrength from '../BuffStrength'
 
 export default class BuffVelElleronEncouragement extends ServerCardBuff {
 	constructor(params: BuffConstructorParams) {

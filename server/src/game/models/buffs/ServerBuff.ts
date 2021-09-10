@@ -71,6 +71,10 @@ export type BuffConstructorParams = {
 	duration: number | 'default'
 }
 
+interface StackableBuff {
+	stacks: number
+}
+
 export default class ServerBuff implements Buff {
 	public readonly id: string
 	public readonly game: ServerGame
@@ -351,11 +355,7 @@ export class ServerCardBuff extends ServerBuff implements CardBuff {
 	}
 }
 
-interface Stackable {
-	stacks: number
-}
-
-export class ServerStackableCardBuff extends ServerCardBuff implements Stackable {
+export class ServerStackableCardBuff extends ServerCardBuff implements StackableBuff {
 	stacks = 1
 }
 
@@ -369,4 +369,8 @@ export class ServerRowBuff extends ServerBuff implements RowBuff {
 		}
 		this.parent = params.parent
 	}
+}
+
+export class ServerStackableRowBuff extends ServerRowBuff implements StackableBuff {
+	stacks = 1
 }

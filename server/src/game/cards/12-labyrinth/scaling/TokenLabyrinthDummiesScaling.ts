@@ -3,7 +3,7 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import BuffHiddenStrength from '@src/game/buffs/BuffHiddenStrength'
+import BuffStrength from '@src/game/buffs/BuffStrength'
 import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 
@@ -22,6 +22,6 @@ export default class TokenLabyrinthDummiesScaling extends ServerCard {
 
 		this.createSelector()
 			.requireTarget(({ target }) => target.ownerGroup.owns(this))
-			.provide(BuffHiddenStrength, () => 0)
+			.provide(BuffStrength, () => 0)
 	}
 }

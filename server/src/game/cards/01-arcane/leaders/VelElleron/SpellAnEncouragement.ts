@@ -8,7 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
 
 import { asDirectBuffPotency } from '../../../../../utils/LeaderStats'
-import BuffVelElleronEncouragement from '../../../../buffs/BuffVelElleronEncouragement'
+import BuffVelElleronEncouragement from '../../../../buffs/01-arcane/BuffVelElleronEncouragement'
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'

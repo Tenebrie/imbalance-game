@@ -12,7 +12,13 @@ import ServerAnimation from '../ServerAnimation'
 import ServerBoardRow from '../ServerBoardRow'
 import ServerCard from '../ServerCard'
 import ServerGame from '../ServerGame'
-import ServerBuff, { BuffConstructorParams, ServerCardBuff, ServerRowBuff, ServerStackableCardBuff } from './ServerBuff'
+import ServerBuff, {
+	BuffConstructorParams,
+	ServerCardBuff,
+	ServerRowBuff,
+	ServerStackableCardBuff,
+	ServerStackableRowBuff,
+} from './ServerBuff'
 
 export interface BuffConstructor {
 	new (params: BuffConstructorParams): ServerBuff
@@ -178,11 +184,16 @@ export default class ServerBuffContainer implements BuffContainer {
 	}
 
 	public getIntensity(prototype: BuffConstructor): number {
-		return this.getBuffsByPrototype(prototype).length
+		return this.getBuffsByPrototype(prototype)
+			.map((buff) => (buff instanceof ServerStackableCardBuff || buff instanceof ServerStackableRowBuff ? buff.stacks : 1))
+			.reduce((total, value) => total + value, 0)
 	}
 
 	public getIntensityForSelector(prototype: BuffConstructor, selector: CardSelector): number {
-		return this.getBuffsByPrototype(prototype).filter((buff) => buff.selector === selector).length
+		return this.getBuffsByPrototype(prototype)
+			.filter((buff) => buff.selector === selector)
+			.map((buff) => (buff instanceof ServerStackableCardBuff || buff instanceof ServerStackableRowBuff ? buff.stacks : 1))
+			.reduce((total, value) => total + value, 0)
 	}
 
 	public dispel(count: number): void {
