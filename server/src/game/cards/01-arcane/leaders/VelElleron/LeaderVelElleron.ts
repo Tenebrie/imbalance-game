@@ -23,7 +23,7 @@ export default class LeaderVelElleron extends ServerCard {
 			stats: {
 				power: 10,
 			},
-			sortPriority: 0,
+			sortPriority: 1,
 			expansionSet: ExpansionSet.BASE,
 			deckAddedCards: [SpellSteelSpark, SpellAnEncouragement, SpellFireball, SpellEternalServitude],
 		})

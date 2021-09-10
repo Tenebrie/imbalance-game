@@ -15,11 +15,14 @@ router.use(RequirePlayerTokenMiddleware)
 router.ws('/', async (ws: ws, req: express.Request) => {
 	const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
 	if (!currentPlayer) {
-		throw { status: 500, error: 'Unable to fetch player object' }
+		ws.close()
+		return
 	}
 	const connectionId = createRandomGuid()
 	currentPlayer.registerGlobalConnection(ws, connectionId)
 	console.info(`Player ${colorizePlayer(currentPlayer.username)} connected!`)
+
+	OutgoingGlobalMessageHandlers.notifyPlayerEstablishedConnection(currentPlayer)
 
 	const games = GameLibrary.games.filter((game) => game.isVisibleInList(currentPlayer))
 	OutgoingGlobalMessageHandlers.notifyPlayerAboutExistingGames(currentPlayer, games)

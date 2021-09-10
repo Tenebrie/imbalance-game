@@ -23,6 +23,7 @@ export default class UnitFelineSpy extends ServerCard {
 				power: 1,
 			},
 			expansionSet: ExpansionSet.BASE,
+			hiddenFromLibrary: true,
 		})
 		this.dynamicTextVariables = {
 			damage: UnitFelineSpy.DAMAGE,

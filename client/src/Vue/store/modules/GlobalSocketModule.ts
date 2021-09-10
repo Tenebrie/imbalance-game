@@ -13,11 +13,11 @@ const GlobalSocketModule = defineModule({
 	namespaced: true,
 	state: {
 		globalWebSocket: null as WebSocket | null,
-		globalWebSocketState: 'disconnected' as 'connected' | 'connecting' | 'disconnected',
+		globalWebSocketState: 'disconnected' as 'established' | 'connected' | 'connecting' | 'disconnected',
 	},
 
 	mutations: {
-		setGlobalWebSocketState(state, socketState: 'connected' | 'connecting' | 'disconnected'): void {
+		setGlobalWebSocketState(state, socketState: 'established' | 'connected' | 'connecting' | 'disconnected'): void {
 			state.globalWebSocketState = socketState
 		},
 
@@ -85,30 +85,36 @@ const GlobalSocketModule = defineModule({
 
 			let connectionWasEstablished = false
 			let connectionLostNotification: NotificationWrapper | null = null
+			let reconnectAttempts = 0
 
 			window.setInterval(() => {
 				if (!rootState.isLoggedIn || state.globalWebSocketState === 'connecting') {
 					return
 				}
-				if (!connectionWasEstablished && state.globalWebSocketState === 'connected') {
+				if (!connectionWasEstablished && state.globalWebSocketState === 'established') {
 					connectionWasEstablished = true
 				}
 
-				if (state.globalWebSocketState === 'disconnected' && connectionWasEstablished) {
+				if (state.globalWebSocketState === 'disconnected') {
 					console.info('[Global Socket] Trying to reconnect')
 					dispatch.connectGlobalWebSocket()
-					if (!connectionLostNotification) {
+					if (!connectionLostNotification && connectionWasEstablished) {
 						connectionLostNotification = Notifications.connectionLost('Server connection lost')
 					}
-				} else if (state.globalWebSocketState === 'connected' && connectionLostNotification) {
+					reconnectAttempts += 1
+					if (!connectionLostNotification && reconnectAttempts >= 3) {
+						connectionLostNotification = Notifications.connectionLost('Unable to connect to server')
+					}
+				} else if (state.globalWebSocketState === 'established' && connectionLostNotification) {
 					Notifications.success('Server Connection Restored!')
 					connectionLostNotification.discard()
 					connectionLostNotification = null
+					reconnectAttempts = 0
 				}
 			}, 1000)
 
 			window.setInterval(() => {
-				if (state.globalWebSocket && state.globalWebSocketState === 'connected') {
+				if (state.globalWebSocket && state.globalWebSocketState === 'established') {
 					state.globalWebSocket.send('keepalive')
 				}
 			}, 30000)

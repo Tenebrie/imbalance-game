@@ -6,6 +6,13 @@ import ServerPlayer from '@src/game/players/ServerPlayer'
 import ServerGame from '../models/ServerGame'
 
 export const OutgoingGlobalMessageHandlers = {
+	notifyPlayerEstablishedConnection(player: ServerPlayer): void {
+		player.sendGlobalMessage({
+			type: WebMessageType.CONNECTION_CONFIRM,
+			data: null,
+		})
+	},
+
 	notifyPlayerAboutExistingGames(player: ServerPlayer, games: ServerGame[]): void {
 		const messages = games.map((game) => new GameMessage(game))
 

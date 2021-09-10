@@ -1,6 +1,7 @@
 import GameMessage from '../GameMessage'
 
 export enum WebMessageType {
+	CONNECTION_CONFIRM = 'connectionConfirm',
 	GAMES_INFO = 'gamesInfo',
 	GAME_CREATED = 'gameCreated',
 	GAME_UPDATED = 'gameUpdated',
@@ -8,6 +9,7 @@ export enum WebMessageType {
 }
 
 export type WebMessageTypeMapping = {
+	[WebMessageType.CONNECTION_CONFIRM]: null
 	[WebMessageType.GAMES_INFO]: GameMessage[]
 	[WebMessageType.GAME_CREATED]: GameMessage
 	[WebMessageType.GAME_UPDATED]: GameMessage

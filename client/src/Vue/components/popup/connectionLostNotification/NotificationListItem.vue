@@ -129,6 +129,7 @@ export default defineComponent({
 		margin: 8px 8px 4px 32px;
 
 		.content {
+			border-radius: 4px;
 			padding: 12px 16px 12px 16px;
 		}
 	}
