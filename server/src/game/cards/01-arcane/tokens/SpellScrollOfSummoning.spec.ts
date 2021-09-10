@@ -1,5 +1,3 @@
-import Constants from '@shared/Constants'
-
 import CardLocation from '../../../../../../shared/src/enums/CardLocation'
 import { setupTestGame, TestGame } from '../../../../utils/TestGame'
 import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
