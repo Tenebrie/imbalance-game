@@ -1,4 +1,4 @@
-import { colorizeConsoleText, colorizeId } from '@src/utils/Utils'
+import { colorizeId } from '@src/utils/Utils'
 import { CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas'
 import fs from 'fs'
 import path from 'path'
