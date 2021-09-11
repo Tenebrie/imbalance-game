@@ -1,12 +1,11 @@
 {
-	"name": "server",
+	"name": "overmind",
 	"version": "0.0.0",
 	"license": "GPL-3.0-or-later",
 	"private": true,
 	"scripts": {
-		"build": "tsc && mkdir -p dist/server/src/views && cp src/views/*.jade dist/server/src/views",
-		"start": "node dist/server/src/app.js",
-		"serve": "yarn nodemon --legacy-watch --watch 'src' --watch '../shared/src' -e 'ts,jade' --exec 'sh scripts/serve-exec.sh'",
+		"start": "node dist/app.js",
+		"serve": "yarn nodemon --legacy-watch --watch 'src' -e 'ts,jade' --exec 'sh scripts/serve-exec.sh'",
 		"lint": "yarn eslint src/ --ext .ts",
 		"lint-fix": "yarn eslint src/ --ext .ts --fix",
 		"test": "yarn jest",
@@ -85,7 +84,7 @@
 		"prettier-eslint": "^13.0.0"
 	},
 	"_moduleAliases": {
-		"@src": "dist/server/src",
+		"@src": "dist",
 		"@shared": "dist/shared/src"
 	}
 }
