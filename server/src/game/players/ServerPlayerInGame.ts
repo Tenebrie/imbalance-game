@@ -251,9 +251,10 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	public startMulligan(): void {
+		super.startMulligan()
 		setTimeout(() => {
-			this.finishMulligan()
-		})
+			IncomingMessageHandlers[GenericActionMessageType.CONFIRM_TARGETS](TargetMode.MULLIGAN, this.game, this)
+		}, 0)
 	}
 
 	public startTurn(): void {

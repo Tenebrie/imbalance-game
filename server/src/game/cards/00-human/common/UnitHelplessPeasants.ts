@@ -46,7 +46,10 @@ export default class UnitHelplessPeasants extends ServerCard {
 	}
 
 	private onTurnEnded(): void {
-		const thisUnit = this.unit!
+		const thisUnit = this.unit
+		if (!thisUnit) {
+			return
+		}
 		const unitDistance = this.game.board.getDistanceToStaticFront(thisUnit.rowIndex)
 		const isProtected = this.game.board
 			.getUnitsOwnedByGroup(thisUnit.owner)

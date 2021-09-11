@@ -260,7 +260,7 @@ export default class ServerGame implements SourceGame {
 			this.startNextRound()
 		}
 
-		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, this.getHumanGroup().players)
+		OutgoingMessageHandlers.notifyAboutValidActionsChanged(this, this.humanPlayers)
 
 		GameHistoryDatabase.startGame(this).then()
 		this.events.resolveEvents()
@@ -295,11 +295,15 @@ export default class ServerGame implements SourceGame {
 	}
 
 	public getHumanGroup(): ServerPlayerGroup {
-		const group = this.players.find((playerGroup) => playerGroup.slots.totalHumanSlots > 0)
+		const group = this.getHumanGroupNullable()
 		if (!group) {
 			throw new Error('No human group present!')
 		}
 		return group
+	}
+
+	public getHumanGroupNullable(): ServerPlayerGroup | null {
+		return this.players.find((playerGroup) => playerGroup.slots.totalHumanSlots > 0) || null
 	}
 
 	public getBotPlayer(): ServerPlayerInGame {
@@ -431,9 +435,11 @@ export default class ServerGame implements SourceGame {
 		const defeatedPlayer = this.players.find((player) => player.roundWins < roundWinsRequired) || null
 		if (victoriousPlayer && defeatedPlayer) {
 			let victoryReason = 'PvP win condition'
-			if (victoriousPlayer.isBot) {
+			if (victoriousPlayer.isBot && defeatedPlayer.isHuman) {
 				victoryReason = 'Player lost to AI'
-			} else if (defeatedPlayer.isBot) {
+			} else if (victoriousPlayer.isBot && defeatedPlayer.isBot) {
+				victoryReason = `AI ${victoriousPlayer.index} won against AI ${defeatedPlayer.index}`
+			} else if (victoriousPlayer.isHuman && defeatedPlayer.isBot) {
 				victoryReason = 'Player won vs AI'
 			}
 			this.finish(this.getOpponent(defeatedPlayer), victoryReason)

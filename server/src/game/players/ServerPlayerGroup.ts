@@ -30,6 +30,10 @@ export default class ServerPlayerGroup implements PlayerGroup {
 		this.roundEnded = true
 	}
 
+	public get index(): number {
+		return this.game.players.indexOf(this)
+	}
+
 	public get openHumanSlots(): number {
 		return this.slots.openHumanSlots
 	}
