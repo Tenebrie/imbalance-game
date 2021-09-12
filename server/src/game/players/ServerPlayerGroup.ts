@@ -143,9 +143,9 @@ export default class ServerPlayerGroup implements PlayerGroup {
 		}
 		this.turnEnded = false
 		this.players.forEach((player) => {
-			player.startTurn()
 			player.setUnitMana(1)
 			player.refillSpellHand()
+			player.startTurn()
 		})
 		OutgoingMessageHandlers.notifyAboutTurnStarted(this)
 		this.onTurnStart()

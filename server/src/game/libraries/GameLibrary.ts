@@ -42,6 +42,16 @@ class GameLibrary {
 		return newGame
 	}
 
+	public createServiceGame(ruleset: RulesetConstructor, props: Partial<OptionalGameProps> = {}): ServerGame {
+		const game = ServerGame.newPublicInstance(ruleset, props)
+		console.info(`System created public game ${colorizeId(game.id)}`)
+
+		this.games.push(game)
+		this.startGameTimeoutTimer(game)
+		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameCreated(game)
+		return game
+	}
+
 	public destroyGame(game: ServerGame, reason: string): void {
 		if (!this.games.includes(game)) {
 			return

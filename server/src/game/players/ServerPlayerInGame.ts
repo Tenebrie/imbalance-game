@@ -1,3 +1,4 @@
+import Constants from '@shared/Constants'
 import AIBehaviour from '@shared/enums/AIBehaviour'
 import CardType from '@shared/enums/CardType'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
@@ -8,9 +9,11 @@ import { GenericActionMessageType } from '@shared/models/network/messageHandlers
 import PlayerInGame from '@shared/models/PlayerInGame'
 import { sortCards } from '@shared/Utils'
 import IncomingMessageHandlers from '@src/game/handlers/IncomingMessageHandlers'
+import GameLibrary from '@src/game/libraries/GameLibrary'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import { EventSubscriber } from '@src/game/models/ServerGameEvents'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import OvermindClient from '@src/routers/overmind/OvermindClient'
 
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameEventCreators from '../models/events/GameEventCreators'
@@ -241,6 +244,8 @@ export default class ServerPlayerInGame implements PlayerInGame {
 export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	public readonly behaviour: AIBehaviour
 
+	private overmindId!: string
+
 	constructor(game: ServerGame, player: ServerPlayer, deck: ServerEditorDeck, behaviour: AIBehaviour) {
 		super(game, {
 			player,
@@ -258,6 +263,10 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	public startTurn(): void {
+		// if (this.behaviour === AIBehaviour.OVERMIND) {
+		// 	this.overmindTakesTheirTurn()
+		// 	return
+		// }
 		setTimeout(() => {
 			this.botTakesTheirTurn()
 			OutgoingMessageHandlers.executeMessageQueue(this.game)
@@ -272,7 +281,37 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 		return true
 	}
 
-	private botTakesTheirTurn(): void {
+	public setOvermindId(id: string): void {
+		this.overmindId = id
+	}
+
+	private async overmindPlaysCard(): Promise<void> {
+		const playableCards = this.cardHand.unitCards.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
+
+		const padArray = <T>(value: T[], length: number): (T | null)[] => [...value, ...Array(Math.max(0, length - value.length)).fill(null)]
+
+		const alliedUnits = this.game.board
+			.getControlledRows(this)
+			.map((row) => row.cards.map((unit) => unit.card))
+			.flatMap((arr) => padArray(arr, Constants.MAX_CARDS_PER_ROW))
+
+		const enemyUnits = this.game.board
+			.getControlledRows(this.opponent)
+			.map((row) => row.cards.map((unit) => unit.card))
+			.flatMap((arr) => padArray<ServerCard>(arr, Constants.MAX_CARDS_PER_ROW))
+
+		console.log(`Requesting move for agent ${this.overmindId}`)
+		const cardToPlay = await OvermindClient.getMove(this.overmindId, {
+			playableCards,
+			allCardsInHand: this.cardHand.unitCards,
+			alliedUnits,
+			enemyUnits,
+		})
+		console.log(`Received Overmind response: ${cardToPlay}.`)
+		this.botPlaysCard(false, cardToPlay)
+	}
+
+	private async botTakesTheirTurn(): Promise<void> {
 		const botTotalPower = this.game.board.getTotalPlayerPower(this.group)
 		const opponentTotalPower = this.opponentNullable ? this.game.board.getTotalPlayerPower(this.opponentNullable) : 0
 
@@ -299,11 +338,25 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 			} catch (e) {
 				console.error('Unknown AI error', e)
 			}
+		} else if (this.behaviour === AIBehaviour.OVERMIND) {
+			if (botWonRound || botLostRound || botHasGoodLead) {
+				this.botEndsTurn()
+				return
+			}
+
+			try {
+				while (this.canPlayUnitCard()) {
+					await this.overmindPlaysCard()
+				}
+			} catch (e) {
+				console.error('Unknown AI error', e)
+				GameLibrary.destroyGame(this.game, 'Error')
+			}
 		}
 		this.botEndsTurn()
 	}
 
-	private botPlaysCard(spellsOnly: boolean): void {
+	private botPlaysCard(spellsOnly: boolean, targetCardId?: string): void {
 		const baseCards = spellsOnly ? this.cardHand.spellCards : this.cardHand.allCards
 
 		const cards = sortCards(baseCards)
@@ -314,7 +367,10 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 			}))
 			.sort((a, b) => b.bestExpectedValue - a.bestExpectedValue)
 
-		const selectedCard = cards[0].card
+		const selectedCard = targetCardId ? cards.find((card) => card.card.id === targetCardId)?.card : cards[0].card
+		if (!selectedCard) {
+			throw new Error(`Unable to find a card with id ${targetCardId}!`)
+		}
 
 		const validRows = this.game.board.rows
 			.filter((row) => row.owner === this.group)

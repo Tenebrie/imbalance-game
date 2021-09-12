@@ -62,9 +62,6 @@ router.post('/', (req: Request, res: Response) => {
 		throw { status: 400, error: 'Invalid ruleset class' }
 	}
 	const game = GameLibrary.createGame(player, ruleset.constructor as RulesetConstructor)
-	if (game.ruleset.slots.totalHumanSlots(game) === 0) {
-		game.start()
-	}
 
 	res.json({ data: new GameMessage(game) })
 })
