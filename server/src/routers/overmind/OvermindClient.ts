@@ -23,7 +23,7 @@ class HttpClient {
 
 class OvermindHttpClient extends HttpClient {
 	constructor() {
-		super('http://8ef6-84-248-103-130.eu.ngrok.io')
+		super('http://overmind:3001')
 	}
 
 	public async getMove(

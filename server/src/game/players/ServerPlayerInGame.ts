@@ -14,6 +14,7 @@ import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import { EventSubscriber } from '@src/game/models/ServerGameEvents'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import OvermindClient from '@src/routers/overmind/OvermindClient'
+import { getRandomArrayValue } from '@src/utils/Utils'
 
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameEventCreators from '../models/events/GameEventCreators'
@@ -288,6 +289,11 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	private async overmindPlaysCard(): Promise<void> {
 		const playableCards = this.cardHand.unitCards.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0)
 
+		if (playableCards.length === 0) {
+			console.log(`Skipping move for agent ${this.overmindId}`)
+			return
+		}
+
 		const padArray = <T>(value: T[], length: number): (T | null)[] => [...value, ...Array(Math.max(0, length - value.length)).fill(null)]
 
 		const alliedUnits = this.game.board
@@ -300,14 +306,14 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 			.map((row) => row.cards.map((unit) => unit.card))
 			.flatMap((arr) => padArray<ServerCard>(arr, Constants.MAX_CARDS_PER_ROW))
 
-		console.log(`Requesting move for agent ${this.overmindId}`)
+		// console.log(`Requesting move for agent ${this.overmindId}`)
 		const cardToPlay = await OvermindClient.getMove(this.overmindId, {
 			playableCards,
 			allCardsInHand: this.cardHand.unitCards,
 			alliedUnits,
 			enemyUnits,
 		})
-		console.log(`Received Overmind response: ${cardToPlay}.`)
+		// console.log(`Received Overmind response: ${cardToPlay}.`)
 		this.botPlaysCard(false, cardToPlay)
 	}
 
@@ -338,6 +344,24 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 			} catch (e) {
 				console.error('Unknown AI error', e)
 			}
+		} else if (this.behaviour === AIBehaviour.RANDOM) {
+			try {
+				let attempts = 0
+				while (this.canPlayUnitCard() && attempts < 10) {
+					attempts += 1
+					const playableCards = this.cardHand.unitCards.filter(
+						(card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0
+					)
+					if (playableCards.length === 0) {
+						break
+					}
+					const card = getRandomArrayValue(playableCards)
+					this.botPlaysCard(false, card.id)
+				}
+			} catch (e) {
+				console.error('Unknown AI error', e)
+				GameLibrary.destroyGame(this.game, 'Error')
+			}
 		} else if (this.behaviour === AIBehaviour.OVERMIND) {
 			if (botWonRound || botLostRound || botHasGoodLead) {
 				this.botEndsTurn()
@@ -345,7 +369,9 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 			}
 
 			try {
-				while (this.canPlayUnitCard()) {
+				let attempts = 0
+				while (this.canPlayUnitCard() && attempts < 10) {
+					attempts += 1
 					await this.overmindPlaysCard()
 				}
 			} catch (e) {
@@ -418,7 +444,7 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 	}
 
 	private canPlayUnitCard(): boolean {
-		return this.cardHand.unitCards.filter((card) => card.stats.unitCost <= this.unitMana).length > 0
+		return this.cardHand.unitCards.filter((card) => card.targeting.getPlayTargets(this, { checkMana: true }).length > 0).length > 0
 	}
 
 	private hasHighValueSpellPlays(): boolean {

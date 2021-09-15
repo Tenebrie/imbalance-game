@@ -18,7 +18,8 @@
 		"paths": {
 			"@src/*": ["./*"],
 			"@shared/*": ["../../shared/src/*"]
-		}
+		},
+		"skipLibCheck": true
 	},
 	"include": ["./src"],
 	"exclude": ["node_modules", "**/*.spec.ts"]

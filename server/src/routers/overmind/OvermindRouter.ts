@@ -1,4 +1,5 @@
 import GameLibrary from '@src/game/libraries/GameLibrary'
+import RulesetOvermindEvaluation from '@src/game/rulesets/other/RulesetOvermindEvaluation'
 import RulesetOvermindTraining from '@src/game/rulesets/other/RulesetOvermindTraining'
 import AsyncHandler from '@src/utils/AsyncHandler'
 import express, { Request, Response } from 'express'
@@ -36,6 +37,36 @@ router.post(
 			res.json(mappedResponses)
 		} catch (err) {
 			console.error(err)
+			res.status(400)
+			res.send()
+		}
+	})
+)
+
+router.get(
+	'/evaluate/:id',
+	AsyncHandler(async (req: Request, res: Response, _next: () => void) => {
+		const data = req.params.id as string
+		console.log('Requested evaluation for agent: ', data)
+
+		const gamesTotal = 100
+		const promises = Array(gamesTotal)
+			.fill(0)
+			.map(() =>
+				(GameLibrary.createServiceGame(RulesetOvermindEvaluation).ruleset as RulesetOvermindEvaluation).runSimulation({
+					agentId: data,
+				})
+			)
+		try {
+			const responses = await Promise.all(promises)
+			const gamesWon = responses.filter((r) => r.victoriousAgent === 'overmind')
+			const winrate = gamesWon.length / gamesTotal
+			console.log('Responding to /api/overmind/evaluate', winrate)
+
+			res.json({
+				data: winrate,
+			})
+		} catch (err) {
 			res.status(400)
 			res.send()
 		}

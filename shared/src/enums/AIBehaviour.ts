@@ -1,6 +1,7 @@
 enum AIBehaviour {
 	DEFAULT,
 	PASSIVE,
+	RANDOM,
 	OVERMIND,
 }
 

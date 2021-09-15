@@ -14,6 +14,7 @@
 		"nuke": "rm -rf node_modules"
 	},
 	"dependencies": {
+		"@tensorflow/tfjs-node": "^3.9.0",
 		"@types/bcrypt": "^5.0.0",
 		"@types/cookie-parser": "^1.4.2",
 		"@types/express": "^4.17.8",
@@ -25,6 +26,7 @@
 		"@types/jsonwebtoken": "^8.5.0",
 		"@types/lodash.isequal": "^4.5.5",
 		"@types/morgan": "^1.9.1",
+		"@types/node-persist": "^3.1.2",
 		"@types/pg": "^8.6.1",
 		"@types/seedrandom": "^3.0.1",
 		"@types/sequelize": "^4.28.9",
@@ -58,6 +60,7 @@
 		"morgan": "~1.10.0",
 		"multer": "^1.4.2",
 		"njstrace": "^2.0.1",
+		"node-persist": "^3.1.0",
 		"node-pg-migrate": "^5.9.0",
 		"node-uuid": "^1.4.8",
 		"pg": "^8.5.1",
@@ -71,7 +74,7 @@
 		"ts-node": "^10.2.1",
 		"tspath": "^1.3.7",
 		"typescript": "^4.1.3",
-		"uuid": "^8.3.1"
+		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
 		"eslint": "^7.17.0",
