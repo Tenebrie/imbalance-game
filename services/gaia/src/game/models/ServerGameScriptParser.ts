@@ -32,7 +32,7 @@ export default class ServerGameNovelScriptParser {
 			} catch (err) {
 				console.error(
 					`Error parsing script at line ${colorizeId(index.toString())}:\n- Error: ${colorizeClass(
-						err.message
+						(err as Error).message
 					)}\n- Input: "${colorizeConsoleText(trimmedLine)}"`
 				)
 			}

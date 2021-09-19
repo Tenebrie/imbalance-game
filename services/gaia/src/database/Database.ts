@@ -1,6 +1,6 @@
-import { ROOT_DIR } from '@src/app'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import PlayerDatabase from '@src/database/PlayerDatabase'
+import { ROOT_DIR } from '@src/root'
 import pgMigrate from 'node-pg-migrate'
 import path from 'path'
 import { Client, QueryResult } from 'pg'

@@ -3,7 +3,6 @@ import 'module-alias/register'
 
 import path from 'path'
 
-export const ROOT_DIR = path.join(__dirname, '../')
 const moduleAlias = require('module-alias')
 if (__dirname.includes('dist')) {
 	moduleAlias.addAlias('@src', path.join(ROOT_DIR, 'src'))
@@ -18,6 +17,7 @@ import AsciiColor from '@src/enums/AsciiColor'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
 import GenericErrorMiddleware from '@src/middleware/GenericErrorMiddleware'
+import { ROOT_DIR } from '@src/root'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
 import { colorize, colorizeId } from '@src/utils/Utils'
 import cookieParser from 'cookie-parser'

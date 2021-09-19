@@ -5,8 +5,6 @@ import SpellAnEncouragement from '../../cards/01-arcane/leaders/VelElleron/Spell
 import { BuffConstructorParams, ServerCardBuff } from '../../models/buffs/ServerBuff'
 import BuffStrength from '../BuffStrength'
 
-class TEST extends ServerCardBuff {}
-
 export default class BuffVelElleronEncouragement extends ServerCardBuff {
 	constructor(params: BuffConstructorParams) {
 		super(params, {

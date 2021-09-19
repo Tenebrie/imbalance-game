@@ -1,6 +1,6 @@
 import CardLocation from '@shared/enums/CardLocation'
+import { setupTestGame, TestGame } from '@src/utils/TestGame'
 
-import { setupTestGame, TestGame } from '../../../../../utils/TestGame'
 import BuffLeaderPower from '../../../../buffs/BuffLeaderPower'
 import BuffUnitToSpellConversion from '../../../../buffs/BuffUnitToSpellConversion'
 import TestingRulesetPVP from '../../../../rulesets/testing/TestingRulesetPVP'
