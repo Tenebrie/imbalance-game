@@ -22,7 +22,8 @@
 		"cleanup": "rm -rf dist && (cd client && rm -rf dist) && (cd services/gaia && rm -rf dist && rm -rf coverage)",
 		"test": "(cd services/gaia && yarn test)",
 		"nuke": "yarn cleanup && yarn subpkg nuke && rm -rf node_modules",
-		"lint:client": "(cd client && yarn lint)"
+		"lint:client": "(cd client && yarn lint)",
+		"heroku-cleanup": "rm -rf client && rm -rf services && rm -rf shared && rm -rf node_modules"
 	},
 	"dependencies": {
 		"@typescript-eslint/eslint-plugin": "^4.7.0",
