@@ -6,9 +6,9 @@ import {
 	ServerToClientGameMessageTypes,
 	ServerToClientMessageTypeMappers,
 } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
+import { setupTestGame, TestGame } from '@src/utils/TestGame'
 import lzutf8 from 'lzutf8'
 
-import { setupTestGame, TestGame } from '../../../utils/TestGame'
 import BuffStrength from '../../buffs/BuffStrength'
 import TestingUnitNoEffect from '../../cards/11-testing/TestingUnitNoEffect'
 import OutgoingMessageHandlers from '../../handlers/OutgoingMessageHandlers'

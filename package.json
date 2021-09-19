@@ -7,7 +7,8 @@
 	"subPackages": [
 		"client",
 		"services/gaia",
-		"services/overmind"
+		"services/overmind",
+		"shared"
 	],
 	"scripts": {
 		"prepare": "husky install",
@@ -15,8 +16,8 @@
 		"build": "sh scripts/build.sh",
 		"start": "node dist/services/gaia/src/app.js",
 		"docker": "yarn docker:start",
-		"docker:start": "docker-compose up",
-		"docker:recreate": "docker-compose up --force-recreate",
+		"docker:start": "node scripts/docker_start && docker-compose up",
+		"docker:recreate": "node scripts/docker_start && docker-compose up --force-recreate",
 		"docker:clean": "docker container kill $(docker ps -q)",
 		"docker:rebuild": "docker-compose build client && docker-compose build gaia && docker-compose build overmind",
 		"cleanup": "rm -rf dist && (cd client && rm -rf dist) && (cd services/gaia && rm -rf dist && rm -rf coverage)",

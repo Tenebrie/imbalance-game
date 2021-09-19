@@ -3,6 +3,7 @@ import 'module-alias/register'
 
 import path from 'path'
 
+const ROOT_DIR = path.join(__dirname, '../')
 const moduleAlias = require('module-alias')
 if (__dirname.includes('dist')) {
 	moduleAlias.addAlias('@src', path.join(ROOT_DIR, 'src'))
@@ -17,7 +18,6 @@ import AsciiColor from '@src/enums/AsciiColor'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
 import GenericErrorMiddleware from '@src/middleware/GenericErrorMiddleware'
-import { ROOT_DIR } from '@src/root'
 import { printAllRoutes } from '@src/utils/RoutePrinter'
 import { colorize, colorizeId } from '@src/utils/Utils'
 import cookieParser from 'cookie-parser'
@@ -160,7 +160,7 @@ if (!databaseUrl) {
 	console.error(`${colorize('No DATABASE_URL specified. Server will not respond to most requests!', AsciiColor.RED)}`)
 } else if (!Database.isReady()) {
 	console.info(`Database client status: [${colorize(`CONNECTING`, AsciiColor.YELLOW)}].`)
-	console.info('Gaia will not respond to requests until the DB connection is established.')
+	console.info(colorize('Gaia will not respond to requests until the DB connection is established.', AsciiColor.YELLOW))
 }
 
 console.info(`Starting listening at port ${colorizeId(port)}`)
