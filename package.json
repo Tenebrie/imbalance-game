@@ -6,21 +6,22 @@
 	"main": "server/dist/app.js",
 	"subPackages": [
 		"client",
-		"server"
+		"services/gaia",
+		"services/overmind"
 	],
 	"scripts": {
 		"prepare": "husky install",
 		"postinstall": "subpkg install",
-		"build": "cd client && yarn build && cd .. && rm -rf server/client && mkdir server/client && cp -r client/dist/* server/client && cd server && yarn build",
-		"start": "(cd server && yarn start)",
+		"build": "sh scripts/build.sh",
+		"start": "node dist/services/gaia/src/app.js",
 		"docker": "yarn docker:start",
-		"docker:start": "docker-compose up --force-recreate",
-		"docker:clear": "docker container kill $(docker ps -q)",
-		"docker:cold": "docker container kill $(docker ps -q) && docker-compose up --force-recreate",
-		"docker:rebuild": "docker-compose build client && docker-compose build server",
-		"cleanup": "(cd client && rm -rf dist) && (cd server && rm -rf dist && rm -rf coverage)",
-		"test": "(cd server && yarn test)",
-		"nuke": "rm -rf node_modules && (cd client && yarn nuke) && (cd server && yarn nuke) && (cd shared && yarn nuke)",
+		"docker:start": "docker-compose up",
+		"docker:recreate": "docker-compose up --force-recreate",
+		"docker:clean": "docker container kill $(docker ps -q)",
+		"docker:rebuild": "docker-compose build client && docker-compose build gaia && docker-compose build overmind",
+		"cleanup": "rm -rf dist && (cd client && rm -rf dist) && (cd services/gaia && rm -rf dist && rm -rf coverage)",
+		"test": "(cd services/gaia && yarn test)",
+		"nuke": "yarn cleanup && yarn subpkg nuke && rm -rf node_modules",
 		"lint:client": "(cd client && yarn lint)"
 	},
 	"dependencies": {

@@ -12,13 +12,17 @@ RUN apt-get install --yes yarn
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --yes msttcorefonts
 
 # Setting working directory. All the path will be relative to WORKDIR
-WORKDIR /app/overmind
+WORKDIR /app/services/gaia
 
-ADD ./services/overmind /app/services/overmind
-COPY .eslintrc.js /app/services/overmind
-COPY .prettierrc.js /app/services/overmind
+ADD ./client /app/client
+ADD ./services/gaia /app/services/gaia
+ADD ./shared /app/shared
+COPY .eslintrc.js /app/services/gaia
+COPY .eslintrc.js /app/shared
+COPY .prettierrc.js /app/services/gaia
+COPY .prettierrc.js /app/shared
 RUN yarn
 
 # Expose server
-EXPOSE 3001
+EXPOSE 3000
 
