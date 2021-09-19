@@ -107,7 +107,7 @@ const getStats = (response: WebSocketOptimizerResponse): Partial<Record<ServerTo
 }
 
 const _printOptimizerStats = (originalQueue: ServerToClientGameMessage[], response: WebSocketOptimizerResponse): void => {
-	const stats = getStats(response)
+	const _stats = getStats(response)
 
 	// console.debug(stats)
 	// console.debug(response.queue.map((a) => a.type))

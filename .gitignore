@@ -2,10 +2,13 @@ node_modules/
 dist/
 .idea/*
 client/.idea/*
+client/dist/*
 services/gaia/node_modules/*
 services/gaia/.idea/*
+services/gaia/dist/*
 services/overmind/node_modules/*
 services/overmind/.idea/*
+services/overmind/dist/*
 shared/.idea/*
 asset-converter/.idea/*
 services/gaia/coverage/
