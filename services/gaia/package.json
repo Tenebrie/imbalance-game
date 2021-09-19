@@ -4,7 +4,7 @@
 	"license": "GPL-3.0-or-later",
 	"private": true,
 	"scripts": {
-		"build": "tsc && yarn build:jade && yarn build:assets",
+		"build": "tsc && node scripts/minify-dist.js && yarn build:jade && yarn build:assets",
 		"build:jade": "mkdir -p dist/services/gaia/src/views && cp src/views/*.jade dist/services/gaia/src/views",
 		"build:assets": "cp -r src/assets dist/services/gaia/src && cp -r public dist/services/gaia/public && cp -r migrations dist/services/gaia/migrations",
 		"serve": "yarn nodemon --legacy-watch --watch 'src' --watch '../../shared/src' -e 'ts,jade' --exec 'sh scripts/serve-exec.sh'",
@@ -73,6 +73,8 @@
 		"ts-node": "^10.2.1",
 		"tspath": "^1.3.7",
 		"typescript": "^4.1.3",
+		"uglify-js": "^3.14.2",
+		"uglifyjs-folder": "^3.0.0",
 		"uuid": "^8.3.1"
 	},
 	"devDependencies": {
