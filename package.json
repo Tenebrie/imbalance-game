@@ -3,7 +3,7 @@
 	"version": "0.0.0",
 	"license": "GPL-3.0-or-later",
 	"description": "",
-	"main": "server/dist/app.js",
+	"main": "dist/services/gaia/app.js",
 	"subPackages": [
 		"client",
 		"services/gaia",
