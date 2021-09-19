@@ -1,4 +1,4 @@
-import { ROOT_DIR } from '@src/app'
+import { ROOT_DIR } from '@src/root'
 import { colorizeId } from '@src/utils/Utils'
 import { CanvasRenderingContext2D, createCanvas, loadImage } from 'canvas'
 import fs from 'fs'
