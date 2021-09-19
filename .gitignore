@@ -2,19 +2,21 @@ node_modules/
 dist/
 .idea/*
 client/.idea/*
-server/.idea/*
+services/gaia/.idea/*
+services/overmind/.idea/*
 shared/.idea/*
 asset-converter/.idea/*
-server/client/
-server/coverage/
+services/gaia/coverage/
 tsBuildInfo.json
 client/src/*.js
 client/src/*.js.map
-server/src/*.js
-server/src/*.js.map
+services/gaia/src/*.js
+services/gaia/src/*.js.map
+services/overmind/src/*.js
+services/overmind/src/*.js.map
 shared/src/*.js
 shared/src/*.js.map
 asset-converter/input/*
-server/src/game/rulesets/other/RulesetDev.ts
+services/gaia/src/game/rulesets/other/RulesetDev.ts
 yarn-error.log
 

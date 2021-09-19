@@ -12,7 +12,7 @@ RUN apt-get install --yes yarn
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --yes msttcorefonts
 
 # Setting working directory. All the path will be relative to WORKDIR
-WORKDIR /app/overmind
+WORKDIR /app/services/overmind
 
 ADD ./services/overmind /app/services/overmind
 COPY .eslintrc.js /app/services/overmind
