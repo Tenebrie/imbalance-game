@@ -13,7 +13,8 @@
 		"test": "yarn jest",
 		"test:coverage": "yarn jest --coverage --coverage-reporteres=text",
 		"production": "yarn && yarn build && yarn start",
-		"nuke": "rm -rf node_modules"
+		"nuke": "rm -rf node_modules",
+		"heroku-cleanup": "rm -rf client && rm -rf services && rm -rf shared && rm -rf node_modules"
 	},
 	"dependencies": {
 		"@types/bcrypt": "^5.0.0",
