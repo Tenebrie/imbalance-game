@@ -5,7 +5,7 @@ type RulesetSlotHumanPlayer = {
 }
 
 type RulesetSlotAIPlayer = {
-	type: 'ai'
+	type: 'ai' | 'overmind'
 }
 
 export interface RulesetSlotGroup {
