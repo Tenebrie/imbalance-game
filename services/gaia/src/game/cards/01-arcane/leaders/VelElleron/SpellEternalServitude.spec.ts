@@ -1,4 +1,5 @@
-import CardLocation from '../../../../../../../shared/src/enums/CardLocation'
+import CardLocation from '@shared/enums/CardLocation'
+
 import { setupTestGame, TestGame } from '../../../../../utils/TestGame'
 import BuffLeaderPower from '../../../../buffs/BuffLeaderPower'
 import BuffUnitToSpellConversion from '../../../../buffs/BuffUnitToSpellConversion'

@@ -1,4 +1,6 @@
-import GameEventType from '../../../../shared/src/enums/GameEventType'
+import GameEventType from '@shared/enums/GameEventType'
+import TargetMode from '@shared/enums/TargetMode'
+
 import TestGameTemplates from '../../utils/TestGameTemplates'
 import TestingSpellQuickStrike from '../cards/11-testing/TestingSpellQuickStrike'
 import TestingSpellTacticalMove from '../cards/11-testing/TestingSpellTacticalMove'
@@ -11,7 +13,7 @@ import ServerGame from './ServerGame'
 import ServerGameEvents from './ServerGameEvents'
 import ServerOwnedCard from './ServerOwnedCard'
 import SpyInstance = jest.SpyInstance
-import TargetMode from '../../../../shared/src/enums/TargetMode'
+
 import { shuffle } from '../../utils/Utils'
 import TestingUnitTurnEndEffectProbe from '../cards/11-testing/TestingUnitTurnEndEffectProbe'
 import TestingUnitTurnEndEffectProbeRight from '../cards/11-testing/TestingUnitTurnEndEffectProbeRight'

@@ -1,5 +1,3 @@
-import lzutf8 from 'lzutf8'
-
 import {
 	AnimationMessageType,
 	GameSyncMessageType,
@@ -7,7 +5,9 @@ import {
 	ServerToClientGameMessageSelector,
 	ServerToClientGameMessageTypes,
 	ServerToClientMessageTypeMappers,
-} from '../../../../../shared/src/models/network/messageHandlers/ServerToClientGameMessages'
+} from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
+import lzutf8 from 'lzutf8'
+
 import { setupTestGame, TestGame } from '../../../utils/TestGame'
 import BuffStrength from '../../buffs/BuffStrength'
 import TestingUnitNoEffect from '../../cards/11-testing/TestingUnitNoEffect'

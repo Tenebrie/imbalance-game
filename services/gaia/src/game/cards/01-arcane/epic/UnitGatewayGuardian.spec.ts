@@ -1,4 +1,5 @@
-import LeaderStatType from '../../../../../../shared/src/enums/LeaderStatType'
+import LeaderStatType from '@shared/enums/LeaderStatType'
+
 import { setupTestGame, TestGame } from '../../../../utils/TestGame'
 import BuffProtector from '../../../buffs/BuffProtector'
 import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'

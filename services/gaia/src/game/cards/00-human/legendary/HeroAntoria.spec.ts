@@ -1,4 +1,5 @@
-import CardLocation from '../../../../../../shared/src/enums/CardLocation'
+import CardLocation from '@shared/enums/CardLocation'
+
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'

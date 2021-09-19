@@ -1,4 +1,5 @@
-import CardLocation from '../../../../../../shared/src/enums/CardLocation'
+import CardLocation from '@shared/enums/CardLocation'
+
 import { setupTestGame, TestGame } from '../../../../utils/TestGame'
 import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
 import TestingUnit0PowerVoidspawn from '../../11-testing/TestingUnit0PowerVoidspawn'

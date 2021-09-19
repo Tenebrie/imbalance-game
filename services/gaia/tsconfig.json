@@ -10,7 +10,7 @@
 		"esModuleInterop": true,
 		"jsx": "react",
 		"sourceMap": true,
-		"outDir": "dist",
+		"outDir": "./dist",
 		"baseUrl": "./src",
 		"types": ["jest"],
 		"resolveJsonModule": true,

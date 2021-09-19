@@ -1,4 +1,5 @@
-import TargetType from '../../../../../../shared/src/enums/TargetType'
+import TargetType from '@shared/enums/TargetType'
+
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import { getClassFromConstructor } from '../../../../utils/Utils'
 import CardLibrary from '../../../libraries/CardLibrary'

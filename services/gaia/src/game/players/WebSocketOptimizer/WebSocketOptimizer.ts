@@ -184,6 +184,7 @@ function applyPattern(
 	getGroupedMessage: (messages: any) => ServerToClientGameMessage
 ): WrappedMessage[] {
 	queue
+		// @ts-ignore
 		.filter((m) => messageTypes.every((type, index) => queue[queue.indexOf(m) + index]?.message.type === type))
 		.forEach((firstMessage) => {
 			const messages = messageTypes.map((_, offset) => queue[queue.indexOf(firstMessage) + offset].message)

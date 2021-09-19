@@ -1,5 +1,6 @@
-import CardFeature from '../../../../../../shared/src/enums/CardFeature'
-import CardLocation from '../../../../../../shared/src/enums/CardLocation'
+import CardFeature from '@shared/enums/CardFeature'
+import CardLocation from '@shared/enums/CardLocation'
+
 import TestGameTemplates from '../../../../utils/TestGameTemplates'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'

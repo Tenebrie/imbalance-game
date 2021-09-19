@@ -1,4 +1,5 @@
-import CardTribe from '../../../../../../shared/src/enums/CardTribe'
+import CardTribe from '@shared/enums/CardTribe'
+
 import { setupTestGame, TestGame } from '../../../../utils/TestGame'
 import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
 import TestingUnit5PowerVoidspawn from '../../11-testing/TestingUnit5PowerVoidspawn'
