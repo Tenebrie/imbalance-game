@@ -1,6 +1,7 @@
 const path = require('path')
 
 module.exports = {
+	outputDir: path.resolve(__dirname, 'dist'),
 	configureWebpack: {
 		resolve: {
 			alias: {
@@ -17,19 +18,19 @@ module.exports = {
 		proxy: {
 			'/api': {
 				// logLevel: 'debug',
-				target: 'http://server:3000',
+				target: 'http://gaia:3000',
 			},
 			'/assets': {
 				// logLevel: 'debug',
-				target: 'http://server:3000',
+				target: 'http://gaia:3000',
 			},
 			'/changelog': {
 				// logLevel: 'debug',
-				target: 'http://server:3000',
+				target: 'http://gaia:3000',
 			},
 			'/stylesheets': {
 				// logLevel: 'debug',
-				target: 'http://server:3000',
+				target: 'http://gaia:3000',
 			},
 		},
 	},

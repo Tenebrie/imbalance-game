@@ -103,9 +103,9 @@ export const getEntityName = (id: string, players: GameHistoryPlayerDatabaseEntr
 			.join(', ')
 		return `[${playersInGroup}]`
 	} else if (id.startsWith('group:')) {
-		return `[AI Player]`
+		return `AI Player [${id.substr(6, 4)}]`
 	} else if (id.startsWith('ai:')) {
-		return `AI Player`
+		return `AI Player [${id.substr(3, 4)}]`
 	} else if (id.startsWith('card:') && mode === 'admin') {
 		return `${Localization.get(`card.${id.split(':')[1]}.name`)} [${id.split(':')[2].substr(0, 8)}]`
 	} else if (id.startsWith('buff:') && mode === 'admin') {

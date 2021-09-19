@@ -3,6 +3,9 @@ import { ServerToClientGlobalMessageHandlers, WebMessageType } from '@shared/mod
 import store from '@/Vue/store'
 
 export const IncomingGlobalMessages: ServerToClientGlobalMessageHandlers = {
+	[WebMessageType.CONNECTION_CONFIRM]: () => {
+		store.commit.globalSocketModule.setGlobalWebSocketState('established')
+	},
 	[WebMessageType.GAMES_INFO]: (data) => {
 		store.dispatch.gamesListModule.setGames(data)
 	},
