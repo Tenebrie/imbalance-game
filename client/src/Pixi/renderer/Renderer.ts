@@ -258,16 +258,34 @@ export default class Renderer {
 			return
 		}
 
+		const spellScreenPositionThreshold = Core.renderer.pixi.screen.height * (1 - Core.renderer.PLAYER_HAND_WINDOW_FRACTION)
+		const getAdjustedCardCount = (count: number): number => {
+			return input.grabbedCard &&
+				cardArray.indexOf(input.grabbedCard.card) >= 0 &&
+				input.grabbedCard.card.getVisualPosition().y < spellScreenPositionThreshold
+				? count - 1
+				: count
+		}
+
+		const getAdjustedCardIndex = (index: number): number => {
+			return input.grabbedCard &&
+				cardArray.indexOf(input.grabbedCard.card) >= 0 &&
+				input.grabbedCard.card.getVisualPosition().y < spellScreenPositionThreshold &&
+				cardArray.indexOf(input.grabbedCard.card) < index
+				? index - 1
+				: index
+		}
+
 		if (input.grabbedCard && card === input.grabbedCard.card) {
 			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
 			const displayMode = this.renderGrabbedCard(card, input.mousePosition)
 			card.setDisplayMode(displayMode)
 		} else if (!input.grabbedCard && input.hoveredCard && card === input.hoveredCard.card) {
-			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
+			this.renderCardInHand(card, getAdjustedCardIndex(cardArray.indexOf(card)), getAdjustedCardCount(cardArray.length), owner, hand)
 			this.renderHoveredCardInHand(card, owner)
 			card.setDisplayMode(CardDisplayMode.IN_HAND_HOVERED)
 		} else {
-			this.renderCardInHand(card, cardArray.indexOf(card), cardArray.length, owner, hand)
+			this.renderCardInHand(card, getAdjustedCardIndex(cardArray.indexOf(card)), getAdjustedCardCount(cardArray.length), owner, hand)
 			card.setDisplayMode(CardDisplayMode.IN_HAND)
 		}
 		this.updateCardTintOverlay(card)

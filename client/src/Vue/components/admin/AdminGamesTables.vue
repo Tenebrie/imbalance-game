@@ -168,6 +168,10 @@ export default defineComponent({
 <style scoped lang="scss">
 @import '../../styles/generic';
 
+h2 {
+	text-align: center;
+}
+
 .games-table {
 	width: 100%;
 	text-align: left;

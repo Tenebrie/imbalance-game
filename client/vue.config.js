@@ -17,19 +17,15 @@ module.exports = {
 		progress: false,
 		proxy: {
 			'/api': {
-				// logLevel: 'debug',
 				target: 'http://gaia:3000',
 			},
 			'/assets': {
-				// logLevel: 'debug',
 				target: 'http://gaia:3000',
 			},
 			'/changelog': {
-				// logLevel: 'debug',
 				target: 'http://gaia:3000',
 			},
 			'/stylesheets': {
-				// logLevel: 'debug',
 				target: 'http://gaia:3000',
 			},
 		},

@@ -143,7 +143,7 @@ export default defineComponent({
 	min-width: 200px;
 }
 
-/deep/ h2 {
+h2 {
 	margin-left: 8px;
 }
 
