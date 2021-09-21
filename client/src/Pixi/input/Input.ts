@@ -13,6 +13,7 @@ import AudioEffectCategory from '@/Pixi/audio/AudioEffectCategory'
 import AudioSystem from '@/Pixi/audio/AudioSystem'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
+import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import { GrabbedCardMode } from '@/Pixi/enums/GrabbedCardMode'
 import { HoveredCardLocation } from '@/Pixi/enums/HoveredCardLocation'
 import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
@@ -504,12 +505,18 @@ export default class Input {
 
 		if (card.type === CardType.SPELL && this.mousePosition.y < spellScreenPositionThreshold) {
 			OutgoingMessageHandlers.sendSpellCardPlayed(card)
-		} else if (card.type === CardType.UNIT && hoveredRow && isGrabbedCardPlayableToRow(hoveredRow)) {
-			OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, getCardInsertIndex(hoveredRow))
-			this.limboShadowUnit = {
-				card: card,
-				rowIndex: normalizeBoardRowIndex(hoveredRow.index, 'player'),
-				unitIndex: getCardInsertIndex(hoveredRow),
+		} else if (card.type === CardType.UNIT && hoveredRow) {
+			if (isGrabbedCardPlayableToRow(hoveredRow)) {
+				OutgoingMessageHandlers.sendUnitCardPlayed(card, hoveredRow, getCardInsertIndex(hoveredRow))
+				this.limboShadowUnit = {
+					card: card,
+					rowIndex: normalizeBoardRowIndex(hoveredRow.index, 'player'),
+					unitIndex: getCardInsertIndex(hoveredRow),
+				}
+			} else {
+				card.setSizeToDefault()
+				card.setDisplayMode(CardDisplayMode.IN_HAND)
+				return
 			}
 		} else {
 			return
@@ -555,6 +562,8 @@ export default class Input {
 		}
 
 		Core.renderer.showCard(cardInLimbo)
+		cardInLimbo.setSizeToDefault()
+		cardInLimbo.setDisplayMode(CardDisplayMode.IN_HAND)
 		this.evictCardFromLimbo(cardMessage.id)
 		return cardInLimbo
 	}
