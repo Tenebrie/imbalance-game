@@ -16,16 +16,28 @@ const colorize = (text, color) => {
 	return `${color}${text}\u001b[0m`
 }
 
-const printInfo = (value) => {
-	console.info(`${colorize('[Build]', AsciiColor.MAGENTA)} ${colorize(value, AsciiColor.GREEN)}`)
+const printInfo = (value, data) => {
+	if (data) {
+		console.info(`${colorize('[Build]', AsciiColor.MAGENTA)} ${colorize(value, AsciiColor.GREEN)}`, data)
+	} else {
+		console.info(`${colorize('[Build]', AsciiColor.MAGENTA)} ${colorize(value, AsciiColor.GREEN)}`)
+	}
 }
 
-const printWarn = (value) => {
-	console.info(`${colorize('[Build]', AsciiColor.MAGENTA)} ${colorize(value, AsciiColor.YELLOW)}`)
+const printWarn = (value, data) => {
+	if (data) {
+		console.info(`${colorize('[Build]', AsciiColor.MAGENTA)} ${colorize(value, AsciiColor.YELLOW)}`, data)
+	} else {
+		console.info(`${colorize('[Build]', AsciiColor.MAGENTA)} ${colorize(value, AsciiColor.YELLOW)}`)
+	}
 }
 
-const printError = (value) => {
-	console.info(`${colorize('[Build]', AsciiColor.MAGENTA)} ${colorize(value, AsciiColor.RED)}`)
+const printError = (value, data) => {
+	if (data) {
+		console.info(`${colorize('[Build]', AsciiColor.MAGENTA)} ${colorize(value, AsciiColor.RED)}`, data)
+	} else {
+		console.info(`${colorize('[Build]', AsciiColor.MAGENTA)} ${colorize(value, AsciiColor.RED)}`)
+	}
 }
 
 const hashCode = (targetString) => {
@@ -118,17 +130,16 @@ const buildOvermind = () => {
 	})
 }
 
-const buildAllAndSave = () => {
+const buildAll = () => {
 	buildClient()
 	buildGaia()
 	buildOvermind()
-	saveDockerVersion()
 }
 
 printInfo('Checking container hashes...')
 if (!fs.existsSync('.docker-version')) {
 	printWarn('No .docker-version file found. Rebuilding all containers.')
-	buildAllAndSave()
+	buildAll()
 	return
 }
 
@@ -137,7 +148,7 @@ try {
 	JSON.parse(file)
 } catch (err) {
 	printError('Malformed .docker-version file. Rebuilding all containers.', err)
-	buildAllAndSave()
+	buildAll()
 	return
 }
 

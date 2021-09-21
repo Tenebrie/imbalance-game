@@ -1,3 +1,4 @@
+.docker-version
 node_modules/
 dist/
 .idea/*
