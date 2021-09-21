@@ -27,7 +27,7 @@ export default class RenderedCardHand implements CardHand {
 		} else if (card.type === CardType.SPELL) {
 			this.addSpell(card)
 		} else {
-			console.error('Trying to add hidden card to hand without type specified!')
+			console.error('Trying to hidden card to hand without type specified!')
 		}
 	}
 

@@ -427,14 +427,6 @@ export default class RenderedCard implements Card {
 		}
 	}
 
-	public setSizeToDefault(): void {
-		const windowFraction =
-			this.ownerGroup === Core.player ? Core.renderer.PLAYER_HAND_WINDOW_FRACTION : Core.renderer.OPPONENT_HAND_WINDOW_FRACTION
-		const cardHeight = Core.renderer.pixi.view.height * windowFraction
-		this.sprite.width = cardHeight * Core.renderer.CARD_ASPECT_RATIO
-		this.sprite.height = cardHeight
-	}
-
 	public switchToCardMode(): void {
 		this.unitModeContainer.visible = false
 		this.cardModeContainer.visible = true
@@ -614,22 +606,6 @@ export default class RenderedCard implements Card {
 	public get owner(): ClientPlayerInGame | ClientPlayerGroup | null {
 		const thisCardInGame = Core.game.findOwnedCardById(this.id)
 		return thisCardInGame ? thisCardInGame.owner : null
-	}
-
-	public get ownerGroupNullable(): ClientPlayerGroup | null {
-		const owner = this.owner
-		if (!owner) {
-			return null
-		}
-		return owner instanceof ClientPlayerGroup ? owner : owner.group
-	}
-
-	public get ownerGroup(): ClientPlayerGroup {
-		const owner = this.ownerGroupNullable
-		if (!owner) {
-			throw new Error('This card has no owner group!')
-		}
-		return owner
 	}
 
 	public get ownerPlayer(): ClientPlayerInGame {
