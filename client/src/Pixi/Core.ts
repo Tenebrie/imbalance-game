@@ -123,7 +123,7 @@ class Core {
 	public executeSocketMessage(parsedData: ServerToClientGameMessage): void {
 		const messageType = parsedData.type
 		const messageData = parsedData.data
-		const messageHighPriority = parsedData.highPriority
+		const messageSkipQueue = parsedData.skipQueue
 		const messageAllowBatching = parsedData.allowBatching
 		const messageIgnoreWorkerThreads = parsedData.ignoreWorkerThreads
 
@@ -141,7 +141,7 @@ class Core {
 		}
 
 		let unwrappedMessages: ServerToClientGameMessageSelector<any>[] | void = []
-		if (messageHighPriority) {
+		if (messageSkipQueue) {
 			try {
 				unwrappedMessages = handler(messageData, handlerSystemData)
 			} catch (e) {

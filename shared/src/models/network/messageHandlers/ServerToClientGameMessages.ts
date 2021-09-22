@@ -1,7 +1,8 @@
 import GameTurnPhase from '../../../enums/GameTurnPhase'
 import StoryCharacter from '../../../enums/StoryCharacter'
 import NovelCueMessage from '../../novel/NovelCueMessage'
-import NovelReplyMessage from '../../novel/NovelReplyMessage'
+import NovelMoveAction from '../../novel/NovelMoveAction'
+import NovelResponseMessage from '../../novel/NovelResponseMessage'
 import AnimationMessage from '../AnimationMessage'
 import AnimationThreadStartMessage from '../AnimationThreadStartMessage'
 import AnonymousTargetsMessage from '../AnonymousTargetsMessage'
@@ -240,23 +241,27 @@ export type CardUpdateMessageHandlers = ConsumerSideTyper<CardUpdateMessageTypeM
 export enum NovelMessageType {
 	START = 'nvl_start',
 	SAY = 'nvl_say',
+	MOVE = 'nvl_move',
 	CLEAR = 'nvl_clear',
 	ADD_REPLY = 'nvl_reply',
 	ADD_CHARACTER = 'nvl_addCharacter',
 	ACTIVATE_CHARACTER = 'nvl_activateCharacter',
 	REMOVE_CHARACTER = 'nvl_removeCharacter',
-	FINISH = 'nvl_finish',
+	CONTINUE = 'nvl_continue',
+	END = 'nvl_end',
 }
 
 export type NovelMessageTypeMapping = {
 	[NovelMessageType.START]: null
 	[NovelMessageType.SAY]: NovelCueMessage
+	[NovelMessageType.MOVE]: NovelMoveAction
 	[NovelMessageType.CLEAR]: null
-	[NovelMessageType.ADD_REPLY]: NovelReplyMessage
+	[NovelMessageType.ADD_REPLY]: NovelResponseMessage
 	[NovelMessageType.ADD_CHARACTER]: StoryCharacter
 	[NovelMessageType.ACTIVATE_CHARACTER]: StoryCharacter | null
 	[NovelMessageType.REMOVE_CHARACTER]: StoryCharacter
-	[NovelMessageType.FINISH]: null
+	[NovelMessageType.CONTINUE]: null
+	[NovelMessageType.END]: null
 }
 
 export type NovelMessageHandlers = ConsumerSideTyper<NovelMessageTypeMapping>
@@ -307,9 +312,9 @@ export type ServerToClientGameMessageHandlers = ConsumerSideTyper<ServerToClient
 export type ServerToClientGameMessageSelector<K extends ServerToClientGameMessageTypes> = {
 	type: K
 	data: ServerToClientMessageTypeMappers[K]
-	highPriority?: boolean
-	ignoreWorkerThreads?: boolean
+	skipQueue?: boolean
 	allowBatching?: boolean
+	ignoreWorkerThreads?: boolean
 }
 
 type ConsumerSideTyper<T> = {
@@ -321,9 +326,9 @@ type ProviderSideTyper<T> = {
 		data: T[K]
 	}
 }[keyof T] & {
-	highPriority?: boolean
-	ignoreWorkerThreads?: boolean
+	skipQueue?: boolean
 	allowBatching?: boolean
+	ignoreWorkerThreads?: boolean
 }
 export interface QueuedMessageSystemData {
 	animationThreadId: string

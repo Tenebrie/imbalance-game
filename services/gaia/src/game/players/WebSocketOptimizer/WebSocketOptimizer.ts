@@ -52,7 +52,7 @@ export const optimizeWebSocketQueue = (queue: ServerToClientGameMessage[]): WebS
 				createMessage: messages[1],
 				startMessage: messages[2],
 			}),
-			highPriority: true,
+			skipQueue: true,
 		})
 	)
 
@@ -68,7 +68,7 @@ export const optimizeWebSocketQueue = (queue: ServerToClientGameMessage[]): WebS
 				animationPlay: messages[2],
 				nextThread: messages[3],
 			}),
-			highPriority: true,
+			skipQueue: true,
 		})
 	)
 
@@ -79,7 +79,7 @@ export const optimizeWebSocketQueue = (queue: ServerToClientGameMessage[]): WebS
 			animation: messages[0],
 			buffBundle: messages[1],
 		}),
-		highPriority: true,
+		skipQueue: true,
 	}))
 
 	// Merge consecutive
@@ -96,7 +96,7 @@ export const optimizeWebSocketQueue = (queue: ServerToClientGameMessage[]): WebS
 			}
 			const last = currentValues[currentValues.length - 1].message
 			const current = tempQueue[i].message
-			if (current.type === last.type && current.highPriority === last.highPriority && i !== tempQueue.length - 1) {
+			if (current.type === last.type && current.skipQueue === last.skipQueue && i !== tempQueue.length - 1) {
 				currentValues.push(tempQueue[i])
 				continue
 			}
@@ -106,7 +106,7 @@ export const optimizeWebSocketQueue = (queue: ServerToClientGameMessage[]): WebS
 					message: {
 						type: BundleMessageType.GENERIC_LOOP,
 						data: new BundleLoopMessage<any>(currentValues.map((m) => m.message)),
-						highPriority: true,
+						skipQueue: true,
 					},
 				})
 			} else {

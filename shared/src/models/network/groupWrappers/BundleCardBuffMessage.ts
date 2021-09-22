@@ -52,7 +52,7 @@ export default class BundleCardBuffMessage {
 			{
 				type: BundleMessageType.THREAD_NEXT,
 				data: group.nextThread,
-				highPriority: true,
+				skipQueue: true,
 			},
 		]
 	}

@@ -57,7 +57,7 @@ export default {
 					playerInGame.player.sendGameMessage({
 						type: CardUpdateMessageType.VARIABLES,
 						data: stackMessages,
-						highPriority: true,
+						skipQueue: true,
 					})
 				)
 			}

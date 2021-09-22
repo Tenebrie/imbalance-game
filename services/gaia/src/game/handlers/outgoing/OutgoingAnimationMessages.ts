@@ -47,7 +47,7 @@ export default {
 			playerInGame.player.sendGameMessage({
 				type: AnimationMessageType.THREAD_CREATE,
 				data: new AnimationThreadStartMessage(isStaggered),
-				highPriority: true,
+				skipQueue: true,
 			})
 			playerInGame.player.sendGameMessage({
 				type: AnimationMessageType.THREAD_START,
@@ -63,7 +63,7 @@ export default {
 			playerInGame.player.sendGameMessage({
 				type: AnimationMessageType.THREAD_COMMIT,
 				data: null,
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 	},
@@ -78,7 +78,7 @@ export default {
 		player.sendGameMessage({
 			type: AnimationMessageType.EXECUTE_QUEUE,
 			data: null,
-			highPriority: true,
+			skipQueue: true,
 		})
 	},
 }

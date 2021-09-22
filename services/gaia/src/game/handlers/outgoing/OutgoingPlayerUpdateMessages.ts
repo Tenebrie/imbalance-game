@@ -33,7 +33,7 @@ export default {
 		playerInGame.player.sendGameMessage({
 			type: PlayerUpdateMessageType.MANA,
 			data: new PlayerInGameManaMessage(playerInGame),
-			highPriority: delta < 0,
+			skipQueue: delta < 0,
 		})
 
 		const opponentGroup = playerInGame.opponentNullable
@@ -51,7 +51,7 @@ export default {
 		playerToNotify.sendGameMessage({
 			type: PlayerUpdateMessageType.MULLIGANS,
 			data: new MulliganCountMessage(playerInGame.cardsMulliganed, playerInGame.game.maxMulligans),
-			highPriority: true,
+			skipQueue: true,
 		})
 	},
 
@@ -237,7 +237,7 @@ export default {
 			playerInGame.player.sendGameMessage({
 				type: PlayerUpdateMessageType.UNIT_ORDERS_SELF,
 				data: messages,
-				highPriority: true,
+				skipQueue: true,
 			})
 
 			const opponentGroup = playerInGame.opponentNullable
@@ -315,7 +315,7 @@ export default {
 		player.sendGameMessage({
 			type: PlayerUpdateMessageType.PLAY_DECLINED,
 			data: new CardRefMessage(card),
-			highPriority: true,
+			skipQueue: true,
 		})
 	},
 

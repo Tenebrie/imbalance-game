@@ -1,42 +1,34 @@
 import StoryCharacter from '@shared/enums/StoryCharacter'
-import NovelCueMessage from '@shared/models/novel/NovelCueMessage'
-import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
+import NovelCue from '@shared/models/novel/NovelCue'
+import NovelResponseMessage from '@shared/models/novel/NovelResponseMessage'
 import { defineModule } from 'direct-vuex'
 
+import Core from '@/Pixi/Core'
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import { moduleActionContext } from '@/Vue/store'
-
-type NovelQueueEvent =
-	| {
-			type: 'cue'
-			cue: NovelCueMessage
-	  }
-	| {
-			type: 'character_active'
-			character: StoryCharacter | null
-	  }
 
 const novelModule = defineModule({
 	namespaced: true,
 
 	state: {
-		cues: [] as NovelQueueEvent[],
-		replies: [] as NovelReplyMessage[],
-		printTimer: null as number | null,
+		cue: null as NovelCue | null,
+		replies: [] as NovelResponseMessage[],
 		activeCharacter: null as StoryCharacter | null,
+		printTimer: null as number | null,
 		charactersPrinted: 0 as number,
 	},
 
 	mutations: {
-		addCue(state, value: NovelQueueEvent): void {
-			state.cues.push(value)
+		setCue(state, value: NovelCue | null): void {
+			state.cue = value
 		},
 
-		addReply(state, value: NovelReplyMessage): void {
+		addResponse(state, value: NovelResponseMessage): void {
 			state.replies.push(value)
 		},
 
-		moveCues(state): void {
-			state.cues.shift()
+		setActiveCharacter(state, character: StoryCharacter | null): void {
+			state.activeCharacter = character
 		},
 
 		setPrintTimer(state, timer: number | null): void {
@@ -47,84 +39,61 @@ const novelModule = defineModule({
 			state.charactersPrinted = count
 		},
 
-		setActiveCharacter(state, character: StoryCharacter | null): void {
-			state.activeCharacter = character
-		},
-
 		clear(state): void {
-			state.cues = []
+			state.cue = null
 			state.replies = []
 			state.activeCharacter = null
+		},
+
+		clearResponses(state): void {
+			state.replies = []
 		},
 	},
 
 	getters: {
-		currentCue: (state): NovelCueMessage | null => {
-			if (state.cues.length === 0 || state.cues[0].type !== 'cue') {
-				return null
-			}
-			return state.cues[0].cue
-		},
-
-		currentEvent: (state): NovelQueueEvent | null => {
-			if (state.cues.length === 0) {
-				return null
-			}
-			return state.cues[0]
+		currentCue: (state): NovelCue | null => {
+			return state.cue
 		},
 
 		currentCueText: (state): string => {
-			if (state.cues.length === 0 || state.cues[0].type !== 'cue') {
+			if (!state.cue) {
 				return ''
 			}
-			return state.cues[0].cue.text.substring(0, Math.min(state.charactersPrinted, state.cues[0].cue.text.length))
+			return state.cue.text.substring(0, Math.min(state.charactersPrinted, state.cue.text.length))
 		},
 
-		currentReplies: (state): NovelReplyMessage[] => {
-			if (state.cues.length !== 1) {
-				return []
-			}
+		currentReplies: (state): NovelResponseMessage[] => {
 			return state.replies
 		},
 	},
 
 	actions: {
-		addToQueue(context, event: NovelQueueEvent): void {
-			const { state, commit, dispatch } = moduleActionContext(context, novelModule)
-
-			if (state.cues.length === 0 && event.type === 'character_active') {
-				dispatch.setActiveCharacter({ character: event.character })
-				return
-			}
-
-			commit.addCue(event)
-			dispatch.startPrintTimer()
-		},
-
-		addReply(context, args: { reply: NovelReplyMessage }): void {
+		addResponse(context, args: { response: NovelResponseMessage }): void {
 			const { commit } = moduleActionContext(context, novelModule)
 
-			commit.addReply(args.reply)
+			commit.addResponse(args.response)
+		},
+
+		reply(context, args: { response: NovelResponseMessage }): void {
+			const { commit } = moduleActionContext(context, novelModule)
+			commit.clearResponses()
+
+			Core.mainHandler.currentOpenAnimationThread.skipCooldown()
+			OutgoingMessageHandlers.sendNovelChapterMove(args.response.chapterId)
+		},
+
+		setActiveCharacter(context, args: { character: StoryCharacter | null }): void {
+			const { commit } = moduleActionContext(context, novelModule)
+			commit.setActiveCharacter(args.character)
 		},
 
 		continue(context): void {
 			const { state, commit, getters, dispatch } = moduleActionContext(context, novelModule)
 			if (getters.currentCue && getters.currentCueText.length < getters.currentCue?.text.length) {
 				commit.setCharactersPrinted(getters.currentCue.text.length)
-				return
-			}
-
-			if (state.cues.length === 1 && state.replies.length === 0 && state.cues[0].type === 'cue') {
-				commit.clear()
-			} else if (state.cues.length > 1) {
-				commit.moveCues()
-				while (getters.currentEvent && getters.currentEvent.type !== 'cue') {
-					if (getters.currentEvent.type === 'character_active') {
-						dispatch.setActiveCharacter({ character: getters.currentEvent.character })
-					}
-					commit.moveCues()
-				}
-				dispatch.startPrintTimer()
+				dispatch.stopPrintTimer()
+			} else if (state.cue && state.replies.length === 0) {
+				Core.mainHandler.currentOpenAnimationThread.skipCooldown()
 			}
 		},
 
@@ -141,6 +110,7 @@ const novelModule = defineModule({
 					let charactersPrinted = state.charactersPrinted + 1
 
 					let nextCharacter: string | null = cue[charactersPrinted - 1]
+
 					while (nextCharacter === '<' || nextCharacter === ' ' || nextCharacter === ',' || nextCharacter === '.') {
 						if (nextCharacter === '<') {
 							charactersPrinted += cue.indexOf('>', charactersPrinted) - charactersPrinted
@@ -156,9 +126,10 @@ const novelModule = defineModule({
 			}
 		},
 
-		setActiveCharacter(context, args: { character: StoryCharacter | null }): void {
-			const { commit } = moduleActionContext(context, novelModule)
-			commit.setActiveCharacter(args.character)
+		stopPrintTimer(context): void {
+			const { commit, state } = moduleActionContext(context, novelModule)
+			clearInterval(state.printTimer || undefined)
+			commit.setPrintTimer(null)
 		},
 
 		clear(context): void {

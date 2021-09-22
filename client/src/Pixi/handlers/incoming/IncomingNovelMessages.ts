@@ -1,34 +1,43 @@
 import StoryCharacter from '@shared/enums/StoryCharacter'
 import { NovelMessageHandlers, NovelMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import NovelCueMessage from '@shared/models/novel/NovelCueMessage'
-import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
+import NovelMoveAction from '@shared/models/novel/NovelMoveAction'
+import NovelResponseMessage from '@shared/models/novel/NovelResponseMessage'
 
+import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import store from '@/Vue/store'
 
 const IncomingNovelMessages: NovelMessageHandlers = {
 	[NovelMessageType.START]: () => {
-		// Empty
+		store.dispatch.novel.clear()
 	},
 	[NovelMessageType.SAY]: (cue: NovelCueMessage) => {
-		store.dispatch.novel.addToQueue({ type: 'cue', cue })
+		store.commit.novel.setCue(cue)
+		store.dispatch.novel.startPrintTimer()
+	},
+	[NovelMessageType.MOVE]: (action: NovelMoveAction) => {
+		OutgoingMessageHandlers.sendNovelChapterMove(action.chapterId)
 	},
 	[NovelMessageType.CLEAR]: () => {
 		store.dispatch.novel.clear()
 	},
-	[NovelMessageType.ADD_REPLY]: (reply: NovelReplyMessage) => {
-		store.dispatch.novel.addReply({ reply })
+	[NovelMessageType.ADD_REPLY]: (response: NovelResponseMessage) => {
+		store.dispatch.novel.addResponse({ response })
 	},
 	[NovelMessageType.ADD_CHARACTER]: () => {
 		// Empty
 	},
 	[NovelMessageType.ACTIVATE_CHARACTER]: (character: StoryCharacter | null) => {
-		store.dispatch.novel.addToQueue({ type: 'character_active', character })
+		store.commit.novel.setActiveCharacter(character)
 	},
 	[NovelMessageType.REMOVE_CHARACTER]: () => {
 		// Empty
 	},
-	[NovelMessageType.FINISH]: () => {
-		// Empty
+	[NovelMessageType.CONTINUE]: () => {
+		OutgoingMessageHandlers.sendNovelContinue()
+	},
+	[NovelMessageType.END]: () => {
+		store.dispatch.novel.clear()
 	},
 }
 

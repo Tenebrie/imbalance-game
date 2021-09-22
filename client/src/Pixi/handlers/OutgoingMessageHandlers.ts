@@ -4,7 +4,6 @@ import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessag
 import CardPlayedMessage from '@shared/models/network/CardPlayedMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import { GenericActionMessageType, SystemMessageType } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
-import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
 
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import Core from '@/Pixi/Core'
@@ -74,10 +73,17 @@ export default {
 		})
 	},
 
-	sendNovelReply(reply: NovelReplyMessage): void {
+	sendNovelChapterMove(chapterId: string): void {
 		Core.sendMessage({
-			type: GenericActionMessageType.NOVEL_REPLY,
-			data: reply,
+			type: GenericActionMessageType.NOVEL_CHAPTER,
+			data: chapterId,
+		})
+	},
+
+	sendNovelContinue(): void {
+		Core.sendMessage({
+			type: GenericActionMessageType.NOVEL_CONTINUE,
+			data: null,
 		})
 	},
 

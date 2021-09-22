@@ -18,6 +18,7 @@ export default class RulesetOptimization extends ServerRuleset {
 				SKIP_MULLIGAN: true,
 				FIRST_GROUP_MOVES_FIRST: false,
 			},
+			hiddenFromMenu: true,
 		})
 
 		this.createBoard().player([

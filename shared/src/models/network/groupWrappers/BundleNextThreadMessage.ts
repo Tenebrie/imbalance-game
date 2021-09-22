@@ -25,12 +25,12 @@ export default class BundleNextThreadMessage {
 			{
 				type: AnimationMessageType.THREAD_COMMIT,
 				data: null,
-				highPriority: true,
+				skipQueue: true,
 			},
 			{
 				type: AnimationMessageType.THREAD_CREATE,
 				data: new AnimationThreadStartMessage(group.innerData.isStaggered),
-				highPriority: true,
+				skipQueue: true,
 			},
 			{
 				type: AnimationMessageType.THREAD_START,

@@ -55,7 +55,7 @@
 	"bugs": {
 		"url": "https://github.com/Tenebrie/notgwent-game/issues"
 	},
-	"homepage": "https://github.com/Tenebrie/notgwent-game#readme",
+	"homepage": "https://github.com/Tenebrie/imbalance-game#readme",
 	"devDependencies": {
 		"husky": "^7.0.2"
 	}

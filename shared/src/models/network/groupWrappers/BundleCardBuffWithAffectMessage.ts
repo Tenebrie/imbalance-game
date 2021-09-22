@@ -31,7 +31,7 @@ export default class BundleCardBuffWithAffectMessage {
 			{
 				type: BundleMessageType.CARD_BUFF,
 				data: group.buffBundleData,
-				highPriority: true,
+				skipQueue: true,
 			},
 		]
 	}

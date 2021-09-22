@@ -28,7 +28,7 @@ export default {
 			player.sendGameMessage({
 				type: GameSyncMessageType.PLAYER_SLOTS,
 				data: message,
-				highPriority: true,
+				skipQueue: true,
 			})
 		})
 	},
@@ -66,17 +66,17 @@ export default {
 		player.sendGameMessage({
 			type: GameSyncMessageType.PLAYER_SELF,
 			data: new OpenPlayerInGameMessage(self),
-			highPriority: true,
+			skipQueue: true,
 		})
 		player.sendGameMessage({
 			type: GameSyncMessageType.PLAYER_ALLIES,
 			data: allies.map((ally) => new OpenPlayerInGameMessage(ally)),
-			highPriority: true,
+			skipQueue: true,
 		})
 		player.sendGameMessage({
 			type: GameSyncMessageType.PLAYER_OPPONENTS,
 			data: opponents.map((opponent) => new HiddenPlayerInGameMessage(opponent)),
-			highPriority: true,
+			skipQueue: true,
 		})
 		opponents
 			.flatMap((playerInGame) => playerInGame.cardHand.allCards)

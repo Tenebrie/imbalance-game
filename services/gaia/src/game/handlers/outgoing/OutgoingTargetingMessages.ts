@@ -17,27 +17,27 @@ export default {
 		validTargets: ValidServerCardTarget[],
 		source: ServerCard
 	): void {
-		const highPriorityTargets = [
+		const skipQueueForTargets = [
 			TargetType.UNIT,
 			TargetType.BOARD_ROW,
 			TargetType.BOARD_POSITION,
 			TargetType.CARD_IN_UNIT_HAND,
 			TargetType.CARD_IN_SPELL_HAND,
 		]
-		const highPriority =
-			validTargets.every((target) => highPriorityTargets.includes(target.targetType)) &&
+		const skipQueue =
+			validTargets.every((target) => skipQueueForTargets.includes(target.targetType)) &&
 			!validTargets.some((target) => target.targetMode === TargetMode.CARD_PLAY)
-		if (!highPriority) {
+		if (!skipQueue) {
 			player.sendGameMessage({
 				type: TargetingMessageType.CARD_PLAY,
 				data: new ResolvingCardTargetsMessage(targetMode, [], source),
-				highPriority: true,
+				skipQueue: true,
 			})
 		}
 		player.sendGameMessage({
 			type: TargetingMessageType.CARD_PLAY,
 			data: new ResolvingCardTargetsMessage(targetMode, validTargets, source),
-			highPriority: highPriority,
+			skipQueue: skipQueue,
 		})
 	},
 
@@ -54,20 +54,20 @@ export default {
 	},
 
 	notifyAboutRequestedAnonymousTargets(player: ServerPlayer, targetMode: TargetMode, validTargets: ServerAnonymousTargetCard[]): void {
-		const highPriorityTargets = [
+		const skipQueueForTargets = [
 			TargetType.UNIT,
 			TargetType.BOARD_ROW,
 			TargetType.BOARD_POSITION,
 			TargetType.CARD_IN_UNIT_HAND,
 			TargetType.CARD_IN_SPELL_HAND,
 		]
-		const highPriority =
-			validTargets.every((target) => highPriorityTargets.includes(target.targetType)) &&
+		const skipQueue =
+			validTargets.every((target) => skipQueueForTargets.includes(target.targetType)) &&
 			!validTargets.some((target) => target.targetMode === TargetMode.CARD_PLAY)
 		player.sendGameMessage({
 			type: TargetingMessageType.ANONYMOUS,
 			data: new AnonymousTargetsMessage(targetMode, validTargets),
-			highPriority: highPriority,
+			skipQueue: skipQueue,
 		})
 	},
 
@@ -75,7 +75,7 @@ export default {
 		player.sendGameMessage({
 			type: TargetingMessageType.INVALID,
 			data: new InvalidCardTargetMessage(targetMode, source),
-			highPriority: true,
+			skipQueue: true,
 		})
 	},
 }

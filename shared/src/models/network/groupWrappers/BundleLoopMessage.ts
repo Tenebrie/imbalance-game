@@ -3,7 +3,7 @@ import { ServerToClientGameMessageSelector, ServerToClientMessageTypeMappers } f
 export default class BundleLoopMessage<K extends keyof ServerToClientMessageTypeMappers> {
 	public readonly loopedType: K
 	public readonly loopedArgs: ServerToClientMessageTypeMappers[K][]
-	public readonly highPriority?: boolean
+	public readonly skipQueue?: boolean
 	public readonly ignoreWorkerThreads?: boolean
 	public readonly allowBatching?: boolean
 
@@ -14,7 +14,7 @@ export default class BundleLoopMessage<K extends keyof ServerToClientMessageType
 		}
 		this.loopedType = masterItem.type
 		this.loopedArgs = items.map((item) => item.data)
-		this.highPriority = masterItem.highPriority
+		this.skipQueue = masterItem.skipQueue
 		this.ignoreWorkerThreads = masterItem.ignoreWorkerThreads
 		this.allowBatching = masterItem.allowBatching
 	}
@@ -23,7 +23,7 @@ export default class BundleLoopMessage<K extends keyof ServerToClientMessageType
 		return group.loopedArgs.map((args) => ({
 			type: group.loopedType,
 			data: args,
-			highPriority: group.highPriority,
+			skipQueue: group.skipQueue,
 			ignoreWorkerThreads: group.ignoreWorkerThreads,
 			allowBatching: group.allowBatching,
 		}))

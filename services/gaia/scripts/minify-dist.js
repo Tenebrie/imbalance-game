@@ -33,5 +33,5 @@ glob('dist/**/*.@(js)', async (er, files) => {
 
 	await Promise.all(fileCode.map((file) => fs.writeFileSync(file.file, file.code)))
 
-	console.log(`Successfully minified ${fileCode.length} .js files.`)
+	console.info(`Successfully minified ${fileCode.length} .js files.`)
 })

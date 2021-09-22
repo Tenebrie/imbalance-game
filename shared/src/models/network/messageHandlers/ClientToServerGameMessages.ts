@@ -1,5 +1,4 @@
 import TargetMode from '../../../enums/TargetMode'
-import NovelReplyMessage from '../../novel/NovelReplyMessage'
 import AnonymousTargetMessage from '../AnonymousTargetMessage'
 import CardPlayedMessage from '../CardPlayedMessage'
 import CardTargetMessage from '../CardTargetMessage'
@@ -13,7 +12,8 @@ export enum GenericActionMessageType {
 	REQUEST_PLAYERS_DECK = 'genericAction_requestPlayersDeck',
 	REQUEST_PLAYERS_GRAVEYARD = 'genericAction_requestPlayersGraveyard',
 	REQUEST_OPPONENTS_GRAVEYARD = 'genericAction_requestOpponentsGraveyard',
-	NOVEL_REPLY = 'genericAction_novelReply',
+	NOVEL_CHAPTER = 'genericAction_novelChapter',
+	NOVEL_CONTINUE = 'genericAction_novelContinue',
 	TURN_END = 'genericAction_turnEnd',
 	SURRENDER = 'genericAction_surrender',
 }
@@ -27,7 +27,8 @@ export type GenericActionMessageTypeMapping = {
 	[GenericActionMessageType.REQUEST_PLAYERS_DECK]: null
 	[GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD]: null
 	[GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD]: null
-	[GenericActionMessageType.NOVEL_REPLY]: NovelReplyMessage
+	[GenericActionMessageType.NOVEL_CHAPTER]: string
+	[GenericActionMessageType.NOVEL_CONTINUE]: null
 	[GenericActionMessageType.TURN_END]: null
 	[GenericActionMessageType.SURRENDER]: null
 }
@@ -56,7 +57,7 @@ type ProviderSideTyper<T> = {
 		data: T[K]
 	}
 }[keyof T] & {
-	highPriority?: boolean
+	skipQueue?: boolean
 	ignoreWorkerThreads?: boolean
 	allowBatching?: boolean
 }

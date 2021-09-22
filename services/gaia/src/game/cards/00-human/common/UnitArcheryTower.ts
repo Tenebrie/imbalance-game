@@ -16,7 +16,8 @@ import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitArcheryTower extends ServerCard {
-	damage = asRecurringUnitDamage(3)
+	public static readonly BASE_DAMAGE = 3
+	private readonly damage = asRecurringUnitDamage(UnitArcheryTower.BASE_DAMAGE)
 
 	constructor(game: ServerGame) {
 		super(game, {

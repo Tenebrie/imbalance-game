@@ -9,7 +9,7 @@ const router = express.Router()
 router.use(RequirePlayerTokenMiddleware)
 
 router.get('/', (req: Request, res: Response) => {
-	const rulesets = RulesetLibrary.rulesets
+	const rulesets = RulesetLibrary.rulesets.filter((ruleset) => !ruleset.hiddenFromMenu)
 	const rulesetMessages = rulesets.map((ruleset) => new RulesetRefMessage(ruleset))
 
 	res.json(rulesetMessages)

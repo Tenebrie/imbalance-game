@@ -24,11 +24,10 @@
 
 <script lang="ts">
 import StoryCharacter from '@shared/enums/StoryCharacter'
-import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
+import NovelResponseMessage from '@shared/models/novel/NovelResponseMessage'
 import { initializeEnumRecord } from '@shared/Utils'
 import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
 
-import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import store from '@/Vue/store'
 
 export default defineComponent({
@@ -36,22 +35,11 @@ export default defineComponent({
 		onMounted(() => window.addEventListener('keydown', onKeyDown))
 		onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
 
-		const displayedCueText = computed(() => {
-			return store.getters.novel.currentCueText
-		})
+		const displayedCueText = computed(() => store.getters.novel.currentCueText)
+		const currentCue = computed(() => store.getters.novel.currentCue)
+		const currentReplies = computed(() => store.getters.novel.currentReplies)
 
-		const currentCue = computed(() => {
-			return store.getters.novel.currentCue
-		})
-
-		const currentReplies = computed(() => {
-			return store.getters.novel.currentReplies
-		})
-
-		const isDisplayed = computed<boolean>(() => {
-			return currentCue.value !== null
-		})
-
+		const isDisplayed = computed(() => currentCue.value !== null)
 		const activeCharacter = computed<StoryCharacter | null>(() => store.state.novel.activeCharacter)
 		const lastActiveCharacter = ref<StoryCharacter | null>(null)
 
@@ -84,18 +72,17 @@ export default defineComponent({
 		})
 
 		const onKeyDown = (event: KeyboardEvent): void => {
-			if (event.defaultPrevented) {
-				return
+			if (!event.defaultPrevented && event.key === 'Space') {
+				showNextCue()
 			}
-			// showNextCue()
 		}
 
 		const showNextCue = (): void => {
 			store.dispatch.novel.continue()
 		}
 
-		const onReply = (reply: NovelReplyMessage): void => {
-			OutgoingMessageHandlers.sendNovelReply(reply)
+		const onReply = (response: NovelResponseMessage): void => {
+			store.dispatch.novel.reply({ response })
 		}
 
 		return {

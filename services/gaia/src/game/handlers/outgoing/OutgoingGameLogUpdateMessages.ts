@@ -11,7 +11,7 @@ export default {
 				playerInGame.player.sendGameMessage({
 					type: GameLogUpdateMessageType.ENTRY,
 					data: messages,
-					highPriority: true,
+					skipQueue: true,
 				})
 			})
 	},

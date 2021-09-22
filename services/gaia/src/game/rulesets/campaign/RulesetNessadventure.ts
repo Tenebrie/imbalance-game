@@ -22,6 +22,7 @@ import UnitDryadSmuggler from '@src/game/cards/10-challenge/nessadventure/UnitDr
 import UnitEleyasDoppelganger from '@src/game/cards/10-challenge/nessadventure/UnitEleyasDoppelganger'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
+import { ServerGameNovelCreator } from '@src/game/models/ServerGameNovel'
 import Keywords from '@src/utils/Keywords'
 
 export default class RulesetNessadventure extends ServerRuleset {
@@ -38,7 +39,7 @@ export default class RulesetNessadventure extends ServerRuleset {
 			gameMode: GameMode.PVE,
 			category: RulesetCategory.PROTOTYPES,
 			constants: {
-				SKIP_MULLIGAN: true,
+				SKIP_MULLIGAN: false,
 				FIRST_GROUP_MOVES_FIRST: true,
 			},
 		})
@@ -57,20 +58,17 @@ export default class RulesetNessadventure extends ServerRuleset {
 		this.createCallback(GameEventType.GAME_STARTED)
 			.require(({ group }) => group.isHuman)
 			.perform(({ game }) =>
-				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.UNKNOWN)
-					.say('Welcome, to State of Imbalance!')
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('Our story today begins, as all things should, with a mulligan.')
-					.say('...')
-					.say('A mulligan that I might have been a tiny bit late to, granted, yet the mulligan is the one that starts every game.')
-					.say(
-						'That would mean, however, that our story, as all things should, begins <b>right after</b> the mulligan.' +
-							"The poor Dummy is about to resist the player to the best of its' poor abilities."
-					)
-					.say('I do not envy the chances of the poor creature, but let us see how it plays out.')
-					.say('Begin.')
+				game.novel.startDialog(`
+					${StoryCharacter.UNKNOWN}:
+					> Welcome, to State of Imbalance!'
+					${StoryCharacter.NARRATOR}:
+					> Our story today begins, as all things should, with a mulligan.
+					> A mulligan that I might have been a tiny bit late to, granted, yet the mulligan is the one that starts every game.
+					> That would mean, however, that our story, as all things should, begins right after the mulligan.
+						> The poor Dummy is about to resist the player to the best of its' poor abilities.
+					> I do not envy the chances of the poor creature, but let us see how it plays out.
+					> Begin.
+				`)
 			)
 
 		this.createCallback(GameEventType.CARD_PLAYED)
@@ -82,12 +80,12 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.require(({ owner }) => owner.isBot)
 			.require(() => this.opCardsPlayed === 0)
 			.perform(({ game }) =>
-				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('It seems that the dummy is opening with a stronger card this time.')
-					.say('How unfortunate. For the player, of course.')
-					.say('I wonder what the player will do in such a position.')
+				game.novel.startDialog(`
+					${StoryCharacter.NARRATOR}:
+					> It seems that the dummy is opening with a stronger card this time.
+					> How unfortunate. For the player, of course.
+					> I wonder what the player will do in such a position.
+				`)
 			)
 
 		this.createCallback(GameEventType.CARD_PLAYED)
@@ -95,15 +93,21 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.require(() => this.opCardsPlayed === 2)
 			.perform(({ game }) =>
 				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.UNKNOWN)
-					.say("Psst. Take these. Don't tell her you've seen me.")
-					.reply('Who are you?', () => onNessaGiftAccepted(game))
-					.reply('Uhm... thanks?', () => onNessaGiftAccepted(game))
-					.reply('[Keep silent]', () => onNessaGiftAccepted(game))
+					.startDialog(
+						`
+						${StoryCharacter.UNKNOWN}:
+						> Psst. Take these. Don't tell her you've seen me.
+						${StoryCharacter.PROTAGONIST}:
+						@ Who are you?
+						@ Uhm... thanks?
+						@ [Keep silent]
+						--> Gift
+					`
+					)
+					.closingChapter('Gift', onNessaGiftAccepted)
 			)
 
-		const onNessaGiftAccepted = (game: ServerGame): void => {
+		const onNessaGiftAccepted = (): void => {
 			const player = game.getSinglePlayer()
 			Keywords.addCardToHand.for(player).fromConstructor(HeroPozoga)
 			Keywords.addCardToHand.for(player).fromConstructor(HeroPozoga)
@@ -115,43 +119,35 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.require(() => this.opCardsPlayed === 6)
 			.require(() => !this.pozogaPlayed)
 			.perform(({ game }) =>
-				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say("Hey, uhm, have you seen the cards I've given you?")
-					.reply('I have, why?', () => {
-						game.novel
-							.startDialog()
-							.setCharacter(StoryCharacter.NOT_NESSA)
-							.say('Mind... playing them?')
-							.reply("Okay, I'll play one.", () => {
-								game.novel.startDialog().setCharacter(StoryCharacter.NOT_NESSA).say('Thank you! You won\t regret it!')
-							})
-							.reply('Why?', () => {
-								game.novel
-									.startDialog()
-									.setCharacter(StoryCharacter.NOT_NESSA)
-									.say('Well...')
-									.say('(Scratches her head)')
-									.say("The script won't move forward if you don't.")
-									.say('And you will probably lose.')
-									.say('Not necessarily, no. You can break the game and stuff, but...')
-									.say('Well, just saying, you probably want to.')
-							})
-							.reply("Don't want to, no", () => {
-								game.novel
-									.startDialog()
-									.setCharacter(StoryCharacter.NOT_NESSA)
-									.say('Well...')
-									.say('(Scratches her head)')
-									.say("The script won't move forward if you don't.")
-									.say('And you will probably lose.')
-									.say('Not necessarily, no. You can break the game and stuff, but...')
-									.say('Well, just saying, you probably actually <b>do</b> want to.')
-									.say("That is, unless you've already seen the script and looking for easter eggs.")
-									.say('In that case, I guess, good luck?')
-							})
+				game.novel.startDialog(`
+					${StoryCharacter.NOT_NESSA}:
+					> Hey, uhm, have you seen the cards I've given you?
+					@ I have, why?
+						${StoryCharacter.NOT_NESSA}:
+						> Mind... playing them?
+						@ Okay, I'll play one.
+							${StoryCharacter.NOT_NESSA}:
+							> Thank you! You won't regret it! ;)
+					@ Why?
+						${StoryCharacter.NOT_NESSA}:
+						> Well...
+						> (She scratches her head)
+						> The script won't move forward if you don't.
+						> And you will probably lose.
+						> Not necessarily, no. You can break the game and stuff, but...
+						> Well, just saying, you probably want to.
 					})
+					@ Don't want to, no
+						${StoryCharacter.NOT_NESSA}:
+						> Well...
+						> (She scratches her head)
+						> The script won't move forward if you don't.
+						> And you will probably lose.
+						> Not necessarily, no. You can break the game and stuff, but...
+						> Well, just saying, you probably actually do want to.
+						> That is, unless you've already seen the script and looking for easter eggs.
+						> In that case, I guess, good luck?
+					`)
 			)
 
 		this.createCallback(GameEventType.CARD_PLAYED)
@@ -161,22 +157,19 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.require(() => !this.extraPozogaPlayed)
 			.perform(() => (this.extraPozogaPlayed = true))
 			.perform(({ game }) =>
-				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('Hm? Pozoga? How predictable.')
-					.reply('What else am I supposed to do?', () => {
-						game.novel.startDialog().setCharacter(StoryCharacter.NARRATOR).say("I mean, it doesn't change the inevitable, so whatever.")
-					})
-					.reply("Don't mind me, just looking for easter eggs.", () => {
-						game.novel.startDialog().setCharacter(StoryCharacter.NARRATOR).say('Understandable. Have a nice day.')
-					})
-					.reply('Well, it was in my deck by accident...', () => {
-						game.novel
-							.startDialog()
-							.setCharacter(StoryCharacter.NARRATOR)
-							.say('Then you are just good at this game. Got it. Please keep going.')
-					})
+				game.novel.startDialog(`
+					${StoryCharacter.NARRATOR}:
+					> Hm? Pozoga? How predictable.
+					@ What else am I supposed to do?
+						${StoryCharacter.NARRATOR}:
+						> I mean, it doesn't change the inevitable, so whatever.
+					@ Don't mind me, just looking for easter eggs.
+						${StoryCharacter.NARRATOR}:
+						> Understandable. Have a nice day.
+					@ Well, it was in my deck by accident...
+						${StoryCharacter.NARRATOR}:
+						> Then you are just good at this game. Got it. Please keep going.
+				`)
 			)
 
 		this.createCallback(GameEventType.CARD_PLAYED)
@@ -187,48 +180,50 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.perform(() => (this.pozogaPlayed = true))
 			.perform(({ game }) =>
 				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say(
-						`Oh no, ${
+					.startDialog(
+						`
+						${StoryCharacter.NARRATOR}:
+						> Oh no, ${
 							this.extraPozogaPlayed ? '<b>another</b> ' : ''
-						} Pozoga has been played! I suppose it would be a shame if the Dummy amps up their game!`
+						} Pozoga has been played! I suppose it would be a shame if the Dummy amps up their game!
+						@ That's unfair!
+							${StoryCharacter.NARRATOR}:
+							> Just as unfair as you having ${
+								game.getSinglePlayer().cardHand.unitCards.filter((card) => card instanceof HeroPozoga).length + 1
+							} copies of Pozoga in your hand!
+							> Here, I'll let you choose your poison today. Feeling generous, you know.
+							@ [All enemy units are immune]
+							@ [Enemy leader gets a selector to make all units immune]
+							@ [Enemy dummies are untargetable and do not take damage]
+							--> DummyLevelUp
+					`
 					)
-					.reply("That's unfair!", () => {
-						game.novel
-							.startDialog()
-							.setCharacter(StoryCharacter.NARRATOR)
-							.say(
-								`Just as unfair as you having ${
-									game.getSinglePlayer().cardHand.unitCards.filter((card) => card instanceof HeroPozoga).length + 1
-								} copies of Pozoga in your hand!`
-							)
-							.say("Here, I'll let you choose your poison today. Feeling generous, you know.")
-							.reply('[All enemy units are immune]', () => onDummyLevelUp(game))
-							.reply('[Enemy leader gets a selector to make all units immune]', () => onDummyLevelUp(game))
-							.reply('[Enemy dummies are untargetable and do not take damage]', () => onDummyLevelUp(game))
-					})
+					.closingChapter('DummyLevelUp', onDummyLevelUp)
 			)
 
-		const onDummyLevelUp = (game: ServerGame): void => {
+		const onDummyLevelUp = (): ServerGameNovelCreator => {
 			game.getBotPlayer().leader.buffs.add(BuffImmuneDummies, null)
-			game.novel
-				.startDialog()
-				.setCharacter(StoryCharacter.UNKNOWN)
-				.say('That is just not very nice!')
-				.setCharacter(StoryCharacter.UNKNOWN)
-				.say("Don't mind me, I'll just make myself comfortable right here.")
-				.setCharacter(StoryCharacter.NOT_NESSA)
-				.say("Name's... definitely not Nessa, by the way.")
-				.reply('[Continue]', () => {
+			return new ServerGameNovelCreator(game)
+				.exec(
+					`
+				${StoryCharacter.UNKNOWN}:
+				> That is just not very nice!'
+				${StoryCharacter.UNKNOWN}:
+				> Don't mind me, I'll just make myself comfortable right here.
+				${StoryCharacter.NOT_NESSA}:
+				> Name's... definitely not Nessa, by the way.
+				@ [Continue] -> Continue
+			`
+				)
+				.chapter('Continue', () => {
 					const player = game.getSinglePlayer()
 					player.cardHand.unitCards.forEach((card) => player.cardHand.discardCard(card))
 					Keywords.addCardToHand.for(player).fromConstructor(HeroNotNessaHidden)
-					game.novel
-						.startDialog()
-						.setCharacter(StoryCharacter.NOT_NESSA)
-						.say('Like, I am not implying that you need to do something specific here, but...')
-						.say('You know, we both know you wanna do it, so go right ahead.')
+					return `
+					${StoryCharacter.NOT_NESSA}:
+					> Like, I am not implying that you need to do something specific here, but...'
+					> You know, we both know you wanna do it, so go right ahead.'
+				`
 				})
 		}
 
@@ -239,10 +234,14 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.perform(() => (this.nessaPlayed = true))
 			.perform(({ game, owner }) =>
 				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say("Thank you! And I've brought some friends, hope you don't mind!")
-					.reply('[Continue]', () => {
+					.startDialog(
+						`
+						${StoryCharacter.NOT_NESSA}:
+						> Thank you! And I've brought some friends, hope you don't mind!
+						--> Continue
+						`
+					)
+					.closingChapter('Continue', () => {
 						Keywords.addCardToHand.for(owner).fromConstructor(HeroNotEleyas)
 						Keywords.addCardToHand.for(owner).fromConstructor(HeroAura)
 						for (let i = 0; i < 2; i++) {
@@ -254,10 +253,10 @@ export default class RulesetNessadventure extends ServerRuleset {
 						for (let i = 0; i < 5; i++) {
 							Keywords.addCardToHand.for(owner).fromConstructor(UnitDryadSmuggler)
 						}
-						game.novel
-							.startDialog()
-							.setCharacter(StoryCharacter.NOT_NESSA)
-							.say('Oh, and a small reminder. When a card is returned to the deck, it goes to the <b>bottom</b>. ;)')
+						game.novel.startDialog(`
+								${StoryCharacter.NOT_NESSA}:
+								> Oh, and a small reminder. When a card is returned to the deck, it goes to the bottom. ;)
+							`)
 					})
 			)
 
@@ -268,11 +267,15 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.perform(() => (this.eleyasBuffed = true))
 			.perform(({ game, owner }) =>
 				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say("Hm. Just 2 Power at a time. I don't think that will cut it.")
-					.say('What about... some multiplication?')
-					.reply('[Continue]', () => {
+					.startDialog(
+						`
+						${StoryCharacter.NOT_NESSA}:
+						> Hm. Just 2 Power at a time. I don't think that will cut it.
+						> What about... some multiplication?
+						@ [Continue] -> Continue
+					`
+					)
+					.closingChapter('Continue', () => {
 						for (let i = 0; i < 10; i++) {
 							Keywords.addCardToHand.for(owner).fromConstructor(UnitEleyasDoppelganger)
 						}
@@ -287,13 +290,17 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.perform(() => (this.handReplenished = true))
 			.perform(({ game, owner }) =>
 				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say('Out of cards? No worries. What else do I have left?')
-					.say('(Shuffling noises)')
-					.say('(More shuffling noises)')
-					.say("Found 'em!")
-					.reply('[Continue]', () => {
+					.startDialog(
+						`
+						${StoryCharacter.NOT_NESSA}:
+						> Out of cards? No worries. What else do I have left?
+						> (Shuffling noises)
+						> (More shuffling noises)
+						> Found 'em!
+						[Continue] -> Continue
+						`
+					)
+					.closingChapter('Continue', () => {
 						for (let i = 0; i < 10; i++) {
 							Keywords.addCardToHand.for(owner).fromConstructor(UnitCorgiGravedigger)
 						}
@@ -307,45 +314,58 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.perform(() => (this.handNotReplenishedAgain = true))
 			.perform(({ game, owner }) =>
 				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say('Uhm, did you run out of cards on purpose?')
-					.say('I mean...')
-					.say('You can have some more, but I am out of stuff after this.')
-					.say('(Shuffling noises)')
-					.say('Which ones do you want?')
-					.reply('More corgis!', () => {
+					.startDialog(
+						`
+						${StoryCharacter.NOT_NESSA}:
+						> Uhm, did you run out of cards on purpose?
+						> I mean...
+						> You can have some more, but I am out of stuff after this.
+						> (Shuffling noises)
+						> Which ones do you want?
+						@ More corgis! -> Corgis
+						@ More doppelgangers! -> Doppelgangers
+						@ Surprise me! -> Surprise
+						`
+					)
+					.closingChapter('Corgis', () => {
 						for (let i = 0; i < 10; i++) {
 							Keywords.addCardToHand.for(owner).fromConstructor(UnitCorgiGravedigger)
 						}
 					})
-					.reply('More doppelgangers!', () => {
+					.closingChapter('Doppelgangers', () => {
 						for (let i = 0; i < 10; i++) {
 							Keywords.addCardToHand.for(owner).fromConstructor(UnitEleyasDoppelganger)
 						}
 					})
-					.reply('Surprise me!', () => {
-						game.novel
-							.startDialog()
-							.setCharacter(StoryCharacter.NOT_NESSA)
-							.say('Surprise you?')
-							.say('I guess I can grab some of the cards from another encounter...')
-							.say('Give me a minute.')
-							.say('...')
-							.say('...')
-							.say('...')
-							.say('...')
-							.say('...')
-							.say('...')
-							.say('Sorry. The other encounters are hard to get to, you know? The rulesets are kinda isolated from each other.')
-							.say('Anyway, have fun with these.')
-						Keywords.addCardToHand.for(owner).fromConstructor(HeroChallengeLegendaryExplorer0)
-						for (let i = 0; i < 3; i++) {
-							Keywords.addCardToHand.for(owner).fromConstructor(UnitChallengeScarredExplorer)
-						}
-						for (let i = 0; i < 6; i++) {
-							Keywords.addCardToHand.for(owner).fromConstructor(UnitChallengeEagerExplorer)
-						}
+					.continue('Surprise', () => {
+						return new ServerGameNovelCreator(game)
+							.exec(
+								`
+								${StoryCharacter.NOT_NESSA}:
+								> Surprise you?
+								> I guess I can grab some of the cards from another encounter...
+								> Give me a minute.
+								> ...
+								> ...
+								> ...
+								> ...
+								> ...
+								> ...
+								> Sorry. The other encounters are hard to get to, you know? The rulesets are kinda isolated from each other.
+								> Aha! Found something.
+								> Have fun with these.
+								--> Continue
+							`
+							)
+							.closingChapter('Continue', () => {
+								Keywords.addCardToHand.for(owner).fromConstructor(HeroChallengeLegendaryExplorer0)
+								for (let i = 0; i < 3; i++) {
+									Keywords.addCardToHand.for(owner).fromConstructor(UnitChallengeScarredExplorer)
+								}
+								for (let i = 0; i < 6; i++) {
+									Keywords.addCardToHand.for(owner).fromConstructor(UnitChallengeEagerExplorer)
+								}
+							})
 					})
 			)
 
@@ -353,40 +373,35 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.require(({ game, victoriousPlayer }) => victoriousPlayer === game.getHumanGroup())
 			.require(() => this.nessaPlayed)
 			.perform(({ game }) => {
-				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('And so ends the fierce battle...')
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say('Fierce? You just cheated! From the very beginning!')
-					.say('Dummies are not supposed to be 50-power cards, and they are <b>definitely</b> not supposed to be immune!')
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('Who are you supposed to be?')
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say('Uhm... Me?')
-					.say("It's written right here. A bit up. No?")
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('"Not Nessa", sure. But if not Nessa, then who?')
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say('I... I gotta go. Bye!')
-					.removeCharacter(StoryCharacter.NOT_NESSA)
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('...')
-					.say(
-						`And so ends the fierce battle of ${
-							game.getSinglePlayer().player.username
-						}, definitely-not-Nessa, and the Overcharged Target Dummy.`
-					)
-					.say('Hope you enjoyed this little adventure!')
+				game.novel.startDialog(`
+					${StoryCharacter.NARRATOR}:
+					> And so ends the fierce battle...'
+					${StoryCharacter.NOT_NESSA}:
+					> Fierce? You just cheated! From the very beginning!
+					> Dummies are not supposed to be 50-power cards, and they are definitely not supposed to be immune!
+					${StoryCharacter.NARRATOR}:
+					> Who are you supposed to be?
+					${StoryCharacter.NOT_NESSA}:
+					> Uhm... Me?
+					> It's written right here. A bit up. No?
+					${StoryCharacter.NARRATOR}:
+					> "Not Nessa", sure. But if not Nessa, then who?
+					${StoryCharacter.NOT_NESSA}:
+					> I... I gotta go. Bye!'
+					${StoryCharacter.NARRATOR}:
+					> ...
+					> And so ends the fierce battle of ${game.getSinglePlayer().player.username}, definitely-not-Nessa, and the Overcharged Target Dummy.
+					> Hope you enjoyed this little adventure!
+				`)
 
 				if (game.getSinglePlayer().player.username.includes('Nenl') && new Date().getDate() === 31 && new Date().getMonth() === 4) {
-					game.novel
-						.startDialog()
-						.setCharacter(StoryCharacter.NARRATOR)
-						.say('...')
-						.say('Oh, and one more thing.')
-						.say('Happy birthday! 🎂')
-						.say(':)')
+					game.novel.startDialog(`
+						Narrator:
+						> ...
+						> Oh, and one more thing.
+						> Happy birthday! 🎂
+						> :)
+					`)
 				}
 			})
 
@@ -395,91 +410,90 @@ export default class RulesetNessadventure extends ServerRuleset {
 			.require(() => !this.nessaPlayed)
 			.perform(({ game }) => {
 				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('...')
-					.say('Am confused.')
-					.say('...')
-					.say(
-						'You have managed to win while skipping most of the script. Including the part where you get completely overpowered cards to counter the immune dummies.'
+					.startDialog(
+						`
+					${StoryCharacter.NARRATOR}:
+					> ...
+					> Am confused.
+					> ...
+					> You have managed to win while skipping most of the script. Including the part where you get completely overpowered cards to counter the immune dummies.
+					> Is my game that broken?
+					> Granted, you have infinite tries, and you know exactly what the enemy will do, but still...
+					> ...
+					${StoryCharacter.NOT_NESSA}:
+					> Hey, don't be sad, you mighty dragon!
+					> You made this entire story, you wrote every single one of those words, coded basically every single thing that exists in this game.
+					> So what if it's a bit broken? Wasn't that the point, that the State of Imbalance is a bit, you know, imbalanced?
+					${StoryCharacter.NARRATOR}:
+					> Fair point.
+					${StoryCharacter.NOT_NESSA}:
+					> See? So you want me to give you a hug?
+					${StoryCharacter.NARRATOR}:
+					> ...
+					${StoryCharacter.NOT_NESSA}:
+					> I'll take it as a yes.
+					> And you, player. What do you think about this whole adventure? Nessadventure, as a certain someone would call it.
+					@ It was amazing! I'll give it a ten! -> feedbackGreat
+					@ I'll give it a... three. -> feedbackMeh
+					@ A broken pile of steaming garbage. -> feedbackBad
+					`
 					)
-					.say('Is my game <i>that</i> broken?')
-					.say('Granted, you have infinite tries, and you know exactly what the enemy will do, but still...')
-					.say('...')
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say("Hey, don't be sad, you mighty dragon!")
-					.say(
-						'You made this entire story, you wrote every single one of those words, coded basically every single thing that exists in this game.'
+					.chapter(
+						'feedbackGreat',
+						() => `
+						${StoryCharacter.NARRATOR}:
+						> You're just saying that to make me feel better, don't you?
+						${StoryCharacter.NOT_NESSA}:
+						> No, they're saying that because the adventure was great!
+						> Can't you just be happy with what you have done for once?
+						${StoryCharacter.NARRATOR}:
+						> Nope.
+						${StoryCharacter.NOT_NESSA}:
+						> It seems more hugs are in order.
+						> Thank you for playing, player. We are both glad you enjoyed it, and we wish to see you again soon!
+					`
 					)
-					.say("So what if it's a bit broken? Wasn't that the point, that the State of <b>Imbalance</b> is a bit, you know, imbalanced?")
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('Fair point.')
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say('See? So you want me to give you a hug?')
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('...')
-					.setCharacter(StoryCharacter.NOT_NESSA)
-					.say("I'll take it as a yes.")
-					.say('And you, player. What do you think about this whole adventure? Nessadventure, as a certain someone would call it.')
-					.reply("It was amazing! I'll give it a ten!", () => onFeedbackGreat(game))
-					.reply("I'll give it a... three.", () => onFeedbackMeh(game))
-					.reply('A broken pile of steaming garbage.', () => onFeedbackBad(game))
+					.chapter(
+						'feedbackMeh',
+						() => `
+						${StoryCharacter.NARRATOR}:
+						> Well, considering that it went idea to implementation in a day...
+						> I guess that is a fair assessment.
+						${StoryCharacter.NOT_NESSA}:
+						> Shush, both! It was great, and you can't claim otherwise!
+						> And you, player, get out and think about your attitude.
+						> Break the game again or read the source code to see the other endings, I don't care.
+					`
+					)
+					.chapter(
+						'feedbackBad',
+						() => `
+						${StoryCharacter.NARRATOR}:
+						> ...
+						${StoryCharacter.NOT_NESSA}:
+						> ...
+						> Get. Out.
+					`
+					)
 			})
-
-		const onFeedbackGreat = (game: ServerGame): void => {
-			game.novel
-				.startDialog()
-				.setCharacter(StoryCharacter.NARRATOR)
-				.say("You're just saying that to make me feel better, don't you?")
-				.setCharacter(StoryCharacter.NOT_NESSA)
-				.say("No, they're saying that because the adventure was great!")
-				.say("Can't you just be happy with what you have done for once?")
-				.setCharacter(StoryCharacter.NARRATOR)
-				.say('Nope.')
-				.setCharacter(StoryCharacter.NOT_NESSA)
-				.say('It seems more hugs are in order.')
-				.say('Thank you for playing, player. We are <b>both</b> glad you enjoyed it, and we wish to see you again soon!')
-		}
-
-		const onFeedbackMeh = (game: ServerGame): void => {
-			game.novel
-				.startDialog()
-				.setCharacter(StoryCharacter.NARRATOR)
-				.say('Well, considering that it went idea to implementation in a day...')
-				.say('I guess that is a fair assessment.')
-				.setCharacter(StoryCharacter.NOT_NESSA)
-				.say("Shush, both! It was great, and you can't claim otherwise!")
-				.say('And you, player, get out and think about your attitude.')
-				.say("Break the game again or read the source code to see the other endings, I don't care.")
-		}
-
-		const onFeedbackBad = (game: ServerGame): void => {
-			game.novel
-				.startDialog()
-				.setCharacter(StoryCharacter.NARRATOR)
-				.say('...')
-				.setCharacter(StoryCharacter.NOT_NESSA)
-				.say('...')
-				.say('Get. Out.')
-		}
 
 		this.createCallback(GameEventType.GAME_FINISHED)
 			.require(({ game, victoriousPlayer }) => victoriousPlayer !== game.getHumanGroup())
 			.perform(({ game }) => {
-				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('Uhm...')
-					.say('I am sorry. That was not my intention.')
-					.say('...')
-					.say('This was supposed a very easy little joke scenario. Not sure what went wrong.')
-					.say('...')
-					.say('Do you mind trying again? Just... go with the script, okay?')
-					.say('Or not. Your choice. Not like I can force you.')
-					.say('...')
-					.say('...')
-					.say('...')
-					.say('See you in a bit? I hope.')
+				game.novel.startDialog(`
+					${StoryCharacter.NARRATOR}:
+					> Uhm...
+					> I am sorry. That was not my intention.
+					> ...
+					> This was supposed a very easy little joke scenario. Not sure what went wrong.
+					> ...
+					> Do you mind trying again? Just... go with the script, okay?
+					> Or not. Your choice. Not like I can force you.
+					> ...
+					> ...
+					> ...
+					> See you in a bit? I hope.
+				`)
 			})
 	}
 }

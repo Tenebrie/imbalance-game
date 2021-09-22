@@ -30,6 +30,7 @@ export default class RulesetOvermindEvaluation extends ServerRuleset {
 				ROUND_WINS_REQUIRED: 1,
 				UNIT_HAND_SIZE_STARTING: 5,
 			},
+			hiddenFromMenu: true,
 		})
 
 		const generateRandomDeck = (): CardConstructor[] => {

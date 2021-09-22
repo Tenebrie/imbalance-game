@@ -11,7 +11,7 @@ export default {
 		ownedCard.owner.player.sendGameMessage({
 			type: ResolveStackMessageType.ADD,
 			data: data,
-			highPriority: true,
+			skipQueue: true,
 		})
 
 		const opponentGroup = ownedCard.owner.opponentNullable
@@ -20,7 +20,7 @@ export default {
 				playerInGame.player.sendGameMessage({
 					type: ResolveStackMessageType.ADD,
 					data: data,
-					highPriority: ownedCard.card.game.activePlayer === ownedCard.owner.opponentNullable,
+					skipQueue: ownedCard.card.game.activePlayer === ownedCard.owner.opponentNullable,
 				})
 			)
 		}

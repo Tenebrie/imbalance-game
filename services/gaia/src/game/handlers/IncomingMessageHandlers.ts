@@ -8,7 +8,6 @@ import {
 	GenericActionMessageType,
 	SystemMessageType,
 } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
-import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
 import { sortCards } from '@shared/Utils'
 import ServerCardTarget from '@src/game/models/ServerCardTarget'
 
@@ -124,8 +123,13 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
 	},
 
-	[GenericActionMessageType.NOVEL_REPLY]: (data: NovelReplyMessage, game: ServerGame, player: ServerPlayerInGame): void => {
-		game.novel.executeReply(data.id)
+	[GenericActionMessageType.NOVEL_CHAPTER]: (data: string, game: ServerGame, player: ServerPlayerInGame): void => {
+		game.novel.executeChapter(data)
+		onPlayerActionEnd(game, player)
+	},
+
+	[GenericActionMessageType.NOVEL_CONTINUE]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
+		game.novel.continueQueue()
 		onPlayerActionEnd(game, player)
 	},
 
@@ -185,7 +189,6 @@ const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void =
 	OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, [player])
 	OutgoingMessageHandlers.notifyAboutCardVariablesUpdated(game)
 	game.events.flushLogEventGroup()
-	// OutgoingMessageHandlers.executeMessageQueue(game)
 }
 
 export default IncomingMessageHandlers

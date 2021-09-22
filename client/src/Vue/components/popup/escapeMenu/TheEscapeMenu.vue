@@ -24,15 +24,15 @@
 					<div class="hotkey"><span class="header">(Hold) Shift+Space:</span> Much faster animations</div>
 					<div v-if="showDevHotkeys">
 						<div class="hotkey">
-							<span class="prefix">(Dev)</span> <span class="header">Ctrl+Alt+Q:</span> Create a new game with current ruleset
+							<span class="prefix">(Dev)</span> <span class="header">Shift+Alt+Q:</span> Create a new game with current ruleset
 						</div>
 						<div class="hotkey">
-							<span class="prefix">(Dev)</span> <span class="header">Ctrl+Alt+R:</span> Reconnect to the current game
+							<span class="prefix">(Dev)</span> <span class="header">Shift+Alt+R:</span> Reconnect to the current game
 						</div>
 						<div class="hotkey">
-							<span class="prefix">(Dev)</span> <span class="header">Ctrl+Alt+D:</span> Force close connection to server
+							<span class="prefix">(Dev)</span> <span class="header">Shift+Alt+D:</span> Force close connection to server
 						</div>
-						<div class="hotkey"><span class="prefix">(Dev)</span> <span class="header">Ctrl+Alt+S:</span> Surrender and leave</div>
+						<div class="hotkey"><span class="prefix">(Dev)</span> <span class="header">Shift+Alt+S:</span> Surrender and leave</div>
 					</div>
 				</div>
 				<div class="menu-separator"></div>

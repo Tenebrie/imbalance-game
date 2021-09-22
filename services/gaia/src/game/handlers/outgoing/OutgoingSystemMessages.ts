@@ -11,7 +11,7 @@ export default {
 		player.sendGameMessage({
 			type: SystemMessageType.MESSAGE_ACKNOWLEDGED,
 			data: null,
-			highPriority: true,
+			skipQueue: true,
 		})
 	},
 
@@ -19,7 +19,7 @@ export default {
 		player.sendGameMessage({
 			type: SystemMessageType.PERFORMANCE_METRICS,
 			data: lastActionTiming,
-			highPriority: true,
+			skipQueue: true,
 		})
 	},
 
@@ -32,7 +32,7 @@ export default {
 		player.sendGameMessage({
 			type: SystemMessageType.GAME_COLLAPSED,
 			data: data,
-			highPriority: true,
+			skipQueue: true,
 		})
 	},
 
@@ -40,7 +40,7 @@ export default {
 		player.sendGameMessage({
 			type: SystemMessageType.MODE_SPECTATE,
 			data: null,
-			highPriority: true,
+			skipQueue: true,
 		})
 	},
 
@@ -48,7 +48,7 @@ export default {
 		player.sendGameMessage({
 			type: SystemMessageType.REQUEST_INIT,
 			data: null,
-			highPriority: true,
+			skipQueue: true,
 		})
 	},
 
@@ -56,7 +56,7 @@ export default {
 		player.sendGameMessage({
 			type: SystemMessageType.COMMAND_DISCONNECT,
 			data: { reason: 'ServerGame shutdown' },
-			highPriority: true,
+			skipQueue: true,
 		})
 	},
 
@@ -65,7 +65,7 @@ export default {
 			JSON.stringify({
 				type: SystemMessageType.ERROR_GENERIC,
 				data: 'Invalid game ID or player token',
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 	},
@@ -75,7 +75,7 @@ export default {
 			JSON.stringify({
 				type: SystemMessageType.ERROR_GENERIC,
 				data: 'Game has already started',
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 	},
@@ -85,14 +85,14 @@ export default {
 			JSON.stringify({
 				type: SystemMessageType.ERROR_GENERIC,
 				data: 'Duplicated connection from the same client',
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 		ws.send(
 			JSON.stringify({
 				type: SystemMessageType.COMMAND_DISCONNECT,
 				data: { reason: 'Duplicated connection' },
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 	},
@@ -103,14 +103,14 @@ export default {
 				type: SystemMessageType.ERROR_GENERIC,
 				data: 'Missing required param: deckId',
 				code: ErrorCode.NO_DECK_SELECTED,
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 		ws.send(
 			JSON.stringify({
 				type: SystemMessageType.COMMAND_DISCONNECT,
 				data: { reason: 'Missing required param: deckId' },
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 	},
@@ -121,14 +121,14 @@ export default {
 				type: SystemMessageType.ERROR_GENERIC,
 				data: 'Missing required param: groupId',
 				code: ErrorCode.NO_GROUP_SELECTED,
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 		ws.send(
 			JSON.stringify({
 				type: SystemMessageType.COMMAND_DISCONNECT,
 				data: { reason: 'Missing required param: groupId' },
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 	},
@@ -139,14 +139,14 @@ export default {
 				type: SystemMessageType.ERROR_GENERIC,
 				data: 'Invalid deck',
 				code: ErrorCode.INVALID_DECK,
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 		ws.send(
 			JSON.stringify({
 				type: SystemMessageType.COMMAND_DISCONNECT,
 				data: { reason: 'Invalid deck' },
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 	},
@@ -157,14 +157,14 @@ export default {
 				type: SystemMessageType.ERROR_GENERIC,
 				data: 'Invalid group ID provided',
 				code: ErrorCode.INVALID_GROUP_ID,
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 		ws.send(
 			JSON.stringify({
 				type: SystemMessageType.COMMAND_DISCONNECT,
 				data: { reason: 'Invalid group ID provided' },
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 	},
@@ -174,7 +174,7 @@ export default {
 			JSON.stringify({
 				type: SystemMessageType.ERROR_GENERIC,
 				data: `Invalid or missing message type (${messageType})`,
-				highPriority: true,
+				skipQueue: true,
 			})
 		)
 	},

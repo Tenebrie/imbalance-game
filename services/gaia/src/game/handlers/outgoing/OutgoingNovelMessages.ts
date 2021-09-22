@@ -2,8 +2,10 @@ import StoryCharacter from '@shared/enums/StoryCharacter'
 import { NovelMessageType } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 import NovelCue from '@shared/models/novel/NovelCue'
 import NovelCueMessage from '@shared/models/novel/NovelCueMessage'
-import NovelReply from '@shared/models/novel/NovelReply'
-import NovelReplyMessage from '@shared/models/novel/NovelReplyMessage'
+import NovelMoveAction from '@shared/models/novel/NovelMoveAction'
+import NovelResponseMessage from '@shared/models/novel/NovelResponseMessage'
+import OutgoingAnimationMessages from '@src/game/handlers/outgoing/OutgoingAnimationMessages'
+import ServerAnimation from '@src/game/models/ServerAnimation'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
 export default {
@@ -17,10 +19,20 @@ export default {
 	},
 
 	notifyAboutDialogCue(playerGroup: ServerPlayerGroup, cue: NovelCue): void {
-		playerGroup.players.forEach((playerInGame) =>
+		playerGroup.players.forEach((playerInGame) => {
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.SAY,
 				data: new NovelCueMessage(cue),
+			})
+		})
+		OutgoingAnimationMessages.triggerAnimationForPlayers(playerGroup.players, ServerAnimation.delay(3600000))
+	},
+
+	notifyAboutDialogMove(playerGroup: ServerPlayerGroup, moveAction: NovelMoveAction): void {
+		playerGroup.players.forEach((playerInGame) =>
+			playerInGame.player.sendGameMessage({
+				type: NovelMessageType.MOVE,
+				data: moveAction,
 			})
 		)
 	},
@@ -34,11 +46,12 @@ export default {
 		)
 	},
 
-	notifyAboutDialogReply(playerGroup: ServerPlayerGroup, reply: NovelReply): void {
+	notifyAboutDialogResponse(playerGroup: ServerPlayerGroup, response: NovelResponseMessage): void {
 		playerGroup.players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.ADD_REPLY,
-				data: new NovelReplyMessage(reply),
+				data: response,
+				allowBatching: true,
 			})
 		)
 	},
@@ -70,10 +83,19 @@ export default {
 		)
 	},
 
-	notifyAboutDialogFinished(playerGroup: ServerPlayerGroup): void {
+	notifyAboutDialogSegmentEnded(playerGroup: ServerPlayerGroup): void {
 		playerGroup.players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
-				type: NovelMessageType.FINISH,
+				type: NovelMessageType.CONTINUE,
+				data: null,
+			})
+		)
+	},
+
+	notifyAboutDialogEnded(playerGroup: ServerPlayerGroup): void {
+		playerGroup.players.forEach((playerInGame) =>
+			playerInGame.player.sendGameMessage({
+				type: NovelMessageType.END,
 				data: null,
 			})
 		)

@@ -4,7 +4,6 @@ import CustomDeckRules from '@shared/enums/CustomDeckRules'
 import GameEventType from '@shared/enums/GameEventType'
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
-import StoryCharacter from '@shared/enums/StoryCharacter'
 import HeroChallengeDummyWarrior0 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior0'
 import HeroChallengeDummyWarrior1 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior1'
 import HeroChallengeDummyWarrior2 from '@src/game/cards/10-challenge/ai-00-dummy/HeroChallengeDummyWarrior2'
@@ -50,11 +49,12 @@ export default class RulesetEpicDummyFight extends ServerRuleset {
 		this.createCallback(GameEventType.GAME_STARTED)
 			.require(({ game, group }) => group === game.getHumanGroup())
 			.perform(({ game }) =>
-				game.novel
-					.startDialog()
-					.setCharacter(StoryCharacter.NARRATOR)
-					.say('Rules:<br>- It is a Best-of-1.<br>- You start with your entire deck in your hand.')
-					.finish()
+				game.novel.startDialog(`
+					Narrator:
+					> Rules:
+						> It is a Best-of-1
+						> You start with your entire deck in your hand.
+				`)
 			)
 	}
 }

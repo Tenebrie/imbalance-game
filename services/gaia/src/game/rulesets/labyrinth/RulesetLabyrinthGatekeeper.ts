@@ -31,8 +31,8 @@ export default class RulesetLabyrinthGatekeeper extends BaseRulesetLabyrinthEnco
 
 			/* TODO: Everything */
 			if (outcome === 'win' && previousFights === 0)
-				game.novel.startDialog().parse(
-					`
+				game.novel.startDialog(
+					() => `
 						Gatekeeper:
 						> You may pass into the Labyrinth.
 						> This journey 
@@ -42,8 +42,8 @@ export default class RulesetLabyrinthGatekeeper extends BaseRulesetLabyrinthEnco
 				)
 
 			if (outcome === 'win' && previousFights === 1)
-				game.novel.startDialog().parse(
-					`
+				game.novel.startDialog(
+					() => `
 						Gatekeeper:
 						> This is your second attempt to reach the end of the Labyrinth, is it not?
 						> 
@@ -51,8 +51,8 @@ export default class RulesetLabyrinthGatekeeper extends BaseRulesetLabyrinthEnco
 				)
 
 			if (outcome === 'win' && previousFights === 2)
-				game.novel.startDialog().parse(
-					`
+				game.novel.startDialog(
+					() => `
 						Gatekeeper:
 						> I am glad to see you strong again.
 						> And I hope you find what you are looking for.
@@ -60,16 +60,16 @@ export default class RulesetLabyrinthGatekeeper extends BaseRulesetLabyrinthEnco
 				)
 
 			if (outcome === 'lose' && previousFights === 1)
-				game.novel.startDialog().parse(
-					`
+				game.novel.startDialog(
+					() => `
 						Gatekeeper:
 						> 
 					`
 				)
 
 			if (outcome === 'lose' && previousFights === 2)
-				game.novel.startDialog().parse(
-					`
+				game.novel.startDialog(
+					() => `
 						Gatekeeper:
 						> I am glad to see you strong again.
 						> And I hope you find what you are looking for.
