@@ -160,6 +160,16 @@ export default defineComponent({
 			height: 1200px;
 		}
 
+		&.notMaya {
+			background-image: url('../../assets/novel/nessadventure-dragon.webp');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 0;
+			bottom: 0;
+			width: 1200px;
+			height: 1200px;
+		}
+
 		&.notNessa {
 			background-image: url('../../assets/novel/not-nessa.webp');
 			background-size: contain;
@@ -168,6 +178,96 @@ export default defineComponent({
 			bottom: 0;
 			width: 1200px;
 			height: 1200px;
+		}
+
+		&.top {
+			background-image: url('https://img01.ztat.net/article/spp-media-p1/16cc8088990f4d56ad8e3a68f219deda/e5d61046df81484c841b790e17b2b7b9.jpg?imwidth=1200');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 780px;
+			bottom: 0;
+			width: 1000px;
+			height: 1340px;
+		}
+
+		&.hoodie {
+			background-image: url('https://img01.ztat.net/article/spp-media-p1/4cfd4e3189b03b9fa0e986d65bf171e4/b47ee26297fe4dd0a8e06845df258305.jpg?imwidth=1800&filter=packshot');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 780px;
+			bottom: 0;
+			width: 1000px;
+			height: 1340px;
+		}
+
+		&.dress {
+			background-image: url('https://img01.ztat.net/article/spp-media-p1/b85aabbf980c47c995adb2b1499d68c4/cef5e2ee2bfb4aaa821cfc5c6ea74238.jpg?imwidth=1800&filter=packshot');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 780px;
+			bottom: 0;
+			width: 1000px;
+			height: 1340px;
+		}
+
+		&.skirt {
+			background-image: url('https://img01.ztat.net/article/spp-media-p1/397821120ade4f6fbcf6a686d9d029d4/44e4cced77614277b9df658ccb5034ac.jpg?imwidth=1800&filter=packshot');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 780px;
+			bottom: 0;
+			width: 1000px;
+			height: 1440px;
+		}
+
+		&.maidDress {
+			background-image: url('https://m.media-amazon.com/images/I/61JOHKtbDBL._AC_UY1000_.jpg');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 780px;
+			bottom: 0;
+			width: 1000px;
+			height: 1320px;
+		}
+
+		&.tShirt {
+			background-image: url('https://img01.ztat.net/article/spp-media-p1/881f1a487cce40fba333d254df8b3250/c280fda9000448c6b34bff4bcf33a0b6.jpg?imwidth=1800&filter=packshot');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 780px;
+			bottom: 0;
+			width: 1000px;
+			height: 1340px;
+		}
+
+		&.weddingDress {
+			background-image: url('https://i.pinimg.com/originals/dc/d1/b9/dcd1b9c7b567e864c07999f804fe3864.jpg');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 780px;
+			bottom: 0;
+			width: 1000px;
+			height: 1340px;
+		}
+
+		&.coat {
+			background-image: url('https://img01.ztat.net/article/spp-media-p1/368d46d5e5c04e89a24b51f2eeb4896c/6babdc7089304ec8adf374532b925fa4.jpg?imwidth=1800&filter=packshot');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 780px;
+			bottom: 0;
+			width: 1000px;
+			height: 1340px;
+		}
+
+		&.dryad {
+			background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/ddf28a16-916e-490f-8b5d-9f72cbf069b2/da7polc-8436584b-83bb-48e8-91c0-937465a886ae.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2RkZjI4YTE2LTkxNmUtNDkwZi04YjVkLTlmNzJjYmYwNjliMlwvZGE3cG9sYy04NDM2NTg0Yi04M2JiLTQ4ZTgtOTFjMC05Mzc0NjVhODg2YWUuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.DV503FuD-kezJ2Uc7MayW9bSAf158a65wOqPIw5qngQ');
+			background-size: contain;
+			background-repeat: no-repeat;
+			left: 780px;
+			bottom: 0;
+			width: 1000px;
+			height: 1340px;
 		}
 
 		&.elsa {
