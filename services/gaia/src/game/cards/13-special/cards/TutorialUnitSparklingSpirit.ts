@@ -6,6 +6,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import SpellFleetingSpark from '@src/game/cards/01-arcane/tokens/SpellFleetingSpark'
+import TutorialSpellFleetingSpark from '@src/game/cards/13-special/cards/TutorialSpellFleetingSpark'
 import Keywords from '@src/utils/Keywords'
 
 import ServerCard from '../../../models/ServerCard'
@@ -37,7 +38,7 @@ export default class TutorialUnitSparklingSpirit extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
-			Keywords.addCardToHand.forOwnerOf(this).fromConstructor(SpellFleetingSpark)
+			Keywords.addCardToHand.forOwnerOf(this).fromConstructor(TutorialSpellFleetingSpark)
 		})
 	}
 }

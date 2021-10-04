@@ -123,7 +123,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					> Currently you have two types of cards in your hand: 
 						> - One Troviar, the Torturer.
 						> - And a few Eagle Eye Archers.
-					> Troviar's effect triggers when an enemy takes damage, and the archers deal damage to an enemy!
+					> Troviar's effect triggers when some unit takes damage, and the archers deal damage to an enemy!
 					> You'll want to play Troviar first, and then shoot at whatever the enemy has on the board.
 					> After you're done, just end the round like last time.
 					> Also, if you ever need to figure out what a card is, just right-click it.
@@ -299,7 +299,6 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				finishPrevented: true,
 			}))
 			.perform(() => {
-				firstDisobedienceTriggeredTwice = true
 				game.novel
 					.startDialog(
 						`
@@ -348,6 +347,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 		this.createHook(GameHookType.ROUND_FINISHED)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 2 && game.turnIndex === 0)
+			.require(() => game.getSinglePlayer().cardHand.spellCards.length > 0)
 			.replace((values) => ({
 				...values,
 				finishPrevented: true,
@@ -357,6 +357,23 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					`
 						Narrator:
 						> Would you please just play your spells? Thanks.
+					`
+				)
+			})
+
+		this.createHook(GameHookType.ROUND_FINISHED)
+			.require(({ group }) => group.isHuman)
+			.require(() => game.roundIndex === 2 && game.turnIndex === 0)
+			.require(() => game.getSinglePlayer().cardHand.spellCards.length === 0)
+			.replace((values) => ({
+				...values,
+				finishPrevented: true,
+			}))
+			.perform(() => {
+				game.novel.startDialog(
+					`
+						Narrator:
+						> So, you're out of spells. Now you need to play your unit card.
 					`
 				)
 			})

@@ -1,6 +1,5 @@
 const fs = require('fs')
 const glob = require('glob')
-const sharp = require('sharp')
 const uglify = require('uglify-js')
 
 const AsciiColor = {
@@ -25,7 +24,11 @@ glob('dist/**/*.@(js)', async (er, files) => {
 				new Promise((resolve) => {
 					resolve({
 						file,
-						...uglify.minify(fs.readFileSync(file, 'utf8')),
+						...uglify.minify(fs.readFileSync(file, 'utf8'), {
+							sourceMap: {
+								url: `${file.slice(file.lastIndexOf('/') + 1)}.map`,
+							},
+						}),
 					})
 				})
 		)
@@ -33,5 +36,5 @@ glob('dist/**/*.@(js)', async (er, files) => {
 
 	await Promise.all(fileCode.map((file) => fs.writeFileSync(file.file, file.code)))
 
-	console.info(`Successfully minified ${fileCode.length} .js files.`)
+	console.info(`Successfully minified ${colorize(fileCode.length, AsciiColor.CYAN)} .js files.`)
 })
