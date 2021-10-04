@@ -57,6 +57,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				> Welcome to State of Imbalance Alpha!
 					> This tutorial scenario will explain the basic concepts about the game.
 					> Click or press "Space" to continue...
+				> Actually, "Space" key doesn't work at the moment, I know. Will fix soon.
 				> Your goal during a round is to score more points than your opponent.
 					> The score - displayed in a bubble on the right side of the board - is the total power of your cards on the board.
 					> Cards on the board are generally called Units.
@@ -117,7 +118,8 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					Narrator:
 					> Sure thing!
 						> First, let me drop you some cards...
-					--> DropCards 
+					--> DropCards
+					Narrator: 
 					> Currently you have two types of cards in your hand: 
 						> - One Troviar, the Torturer.
 						> - And a few Eagle Eye Archers.
@@ -226,7 +228,6 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 
 		this.createHook(GameHookType.GAME_FINISHED)
 			.require(() => !this.finalDialogShown)
-			.require(() => !firstDisobedienceTriggeredTwice)
 			.replace((values) => ({
 				...values,
 				finishPrevented: true,
