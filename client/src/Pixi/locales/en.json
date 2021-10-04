@@ -26,6 +26,7 @@
 	"ui.browser.empty": "Nobody is playing right now :(",
 	"ui.browser.almostEmpty": "Nobody else is playing right now :(",
 
+	"ui.play.tutorial": "Play Tutorial",
 	"ui.play.pve": "Play vs AI",
 	"ui.play.pvp": "Play PvP",
 	"ui.play.coop": "Play Co-op",
@@ -599,7 +600,7 @@
 	"card.unitEnergyRelay.description": "On *Turn end*, *Infuse *{infuseCost}*:*\nDeal {damageDealt} Damage to\nopposing enemy units.",
 
 	"card.unitWoundedVeteran.name": "Wounded Veteran",
-	"card.unitWoundedVeteran.description": "*Deploy:*\nDeal {damageToSelf} Damage to self",
+	"card.unitWoundedVeteran.description": "*Deploy:*\nDeal {damageToSelf} Damage to self.",
 
 	"card.unitVoidcaller.name": "Voidcaller",
 	"card.unitVoidcaller.description": "*Deploy:*\n*Create* a *Void Portal*",
@@ -652,7 +653,7 @@
 	"card.spellScrollOfSapping.description": "Choose a unit.\nReturn it to the owner's hand and grant it *'Temporary card'*.",
 
 	"card.spellSteelSpark.name": "Steel Spark",
-	"card.spellSteelSpark.description": "Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units on the same row.",
+	"card.spellSteelSpark.description": "Deal {damage} Damage to an enemy unit.<p>Deal {sideDamage} Damage to adjacent units.",
 
 	"card.spellFleetingSpark.name": "Fleeting Spark",
 	"card.spellFleetingSpark.description": "Deal {damage} Damage to an enemy unit.",

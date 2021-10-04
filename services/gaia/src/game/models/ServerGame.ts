@@ -330,6 +330,10 @@ export default class ServerGame implements SourceGame {
 	}
 
 	public advanceCurrentTurn(): void {
+		if (this.activePlayer) {
+			return
+		}
+
 		const notFinishedPlayers = this.players.filter((player) => !player.roundEnded)
 		if (notFinishedPlayers.length === 0) {
 			this.endCurrentRound()
@@ -364,7 +368,11 @@ export default class ServerGame implements SourceGame {
 		} else if (this.turnPhase === GameTurnPhase.TURN_END) {
 			this.startNextTurn()
 		} else if (this.turnPhase === GameTurnPhase.ROUND_END) {
-			this.startMulliganPhase()
+			if (this.ruleset.constants.SKIP_MULLIGAN) {
+				this.startNextRound()
+			} else {
+				this.startMulliganPhase()
+			}
 		}
 	}
 
@@ -378,6 +386,7 @@ export default class ServerGame implements SourceGame {
 
 	private startNextRound(): void {
 		this.roundIndex += 1
+		this.turnIndex = -1
 		this.setTurnPhase(GameTurnPhase.ROUND_START)
 
 		this.players.forEach((playerInGame) => {

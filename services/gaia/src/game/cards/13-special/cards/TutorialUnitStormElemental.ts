@@ -7,12 +7,11 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 
 import Keywords from '../../../../utils/Keywords'
-import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
-export default class UnitStormElemental extends ServerCard {
-	manaGenerated = 3
+export default class TutorialUnitStormElemental extends ServerCard {
+	manaGenerated = 5
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -29,7 +28,6 @@ export default class UnitStormElemental extends ServerCard {
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated,
 		}
-		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createLocalization({
 			en: {
@@ -39,12 +37,5 @@ export default class UnitStormElemental extends ServerCard {
 		})
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => Keywords.generateMana(this, this.manaGenerated))
-	}
-}
-
-class CustomBotEvaluation extends BotCardEvaluation {
-	get expectedValue(): number {
-		const card = this.card as UnitStormElemental
-		return card.stats.power + card.manaGenerated * 3
 	}
 }

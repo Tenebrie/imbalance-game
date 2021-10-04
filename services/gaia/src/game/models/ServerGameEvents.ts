@@ -7,14 +7,19 @@ import OutgoingMessageHandlers from '@src/game/handlers/OutgoingMessageHandlers'
 import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import { EventHook } from '@src/game/models/events/EventHook'
 import { EventSubscription } from '@src/game/models/events/EventSubscription'
-import { GameEvent } from '@src/game/models/events/GameEventCreators'
+import { GameEvent, SharedEventArgs } from '@src/game/models/events/GameEventCreators'
 import GameHookType, {
 	CardDestroyedHookEditableValues,
 	CardDestroyedHookFixedValues,
+	CardPlayedHookEditableValues,
+	CardPlayedHookFixedValues,
 	CardTakesDamageHookEditableValues,
 	CardTakesDamageHookFixedValues,
 	GameFinishedHookEditableValues,
 	GameFinishedHookFixedValues,
+	RoundFinishedHookEditableValues,
+	RoundFinishedHookFixedValues,
+	SharedHookFixedValues,
 	UnitDestroyedHookEditableValues,
 	UnitDestroyedHookFixedValues,
 } from '@src/game/models/events/GameHookType'
@@ -65,7 +70,10 @@ export default class ServerGameEvents {
 		forEachInEnum(GameHookType, (hookType) => this.eventHooks.set(hookType, []))
 	}
 
-	public createCallback<EventArgs>(subscriber: EventSubscriber, event: GameEventType): EventSubscription<EventArgs> {
+	public createCallback<EventArgs extends SharedEventArgs>(
+		subscriber: EventSubscriber,
+		event: GameEventType
+	): EventSubscription<EventArgs> {
 		const eventSubscription = new EventSubscription<EventArgs>(subscriber)
 		this.eventSubscriptions.get(event)!.push(eventSubscription)
 		return eventSubscription
@@ -155,6 +163,11 @@ export default class ServerGameEvents {
 	}
 
 	public applyHooks(
+		hook: GameHookType.CARD_PLAYED,
+		editableValues: CardPlayedHookEditableValues,
+		fixedValues: CardPlayedHookFixedValues
+	): CardPlayedHookEditableValues
+	public applyHooks(
 		hook: GameHookType.CARD_TAKES_DAMAGE,
 		editableValues: CardTakesDamageHookEditableValues,
 		fixedValues: CardTakesDamageHookFixedValues
@@ -170,11 +183,16 @@ export default class ServerGameEvents {
 		fixedValues: UnitDestroyedHookFixedValues
 	): UnitDestroyedHookEditableValues
 	public applyHooks(
+		hook: GameHookType.ROUND_FINISHED,
+		editableValues: RoundFinishedHookEditableValues,
+		fixedValues: RoundFinishedHookFixedValues
+	): RoundFinishedHookEditableValues
+	public applyHooks(
 		hook: GameHookType.GAME_FINISHED,
 		editableValues: GameFinishedHookEditableValues,
 		fixedValues: GameFinishedHookFixedValues
 	): GameFinishedHookEditableValues
-	public applyHooks<EditableValues, FixedValues>(
+	public applyHooks<EditableValues, FixedValues extends SharedHookFixedValues>(
 		hook: GameHookType,
 		editableValues: EditableValues,
 		fixedValues: FixedValues

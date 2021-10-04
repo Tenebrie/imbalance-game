@@ -139,8 +139,8 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 		}
 
 		player.group.endRound()
-
 		game.advanceCurrentTurn()
+
 		onPlayerActionEnd(game, player)
 	},
 

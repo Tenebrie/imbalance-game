@@ -3,6 +3,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
 import CardTarget from '@shared/models/CardTarget'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
+import GameHookType from '@src/game/models/events/GameHookType'
 import { DeployTarget, PlayTarget } from '@src/game/models/ServerCardTargeting'
 import DeployTargetDefinition from '@src/game/models/targetDefinitions/DeployTargetDefinition'
 import {
@@ -47,18 +48,36 @@ export default class ServerGameCardPlay {
 	}
 
 	public playCardAsPlayerAction(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
+		const owner = ownedCard.owner
+		const hookValues = this.game.events.applyHooks(
+			GameHookType.CARD_PLAYED,
+			{
+				playPrevented: false,
+			},
+			{
+				game: this.game,
+				owner,
+				card: ownedCard.card,
+			}
+		)
+
+		if (hookValues.playPrevented) {
+			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(owner.player, ownedCard.card)
+			return
+		}
+
 		/*
 		 * Check if the card can be played to specified row.
 		 * This already includes the check for unit/spell mana
 		 * Player is prevented from playing cards on their opponent's turn in IncomingMessageHandlers
 		 */
-		const owner = ownedCard.owner
 		if (
 			!ownedCard.card.targeting
 				.getPlayTargets(owner, { checkMana: true })
 				.map((playTarget) => playTarget.target)
 				.find(({ targetRow, targetPosition }) => targetRow.index === rowIndex && targetPosition === unitIndex)
 		) {
+			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(owner.player, ownedCard.card)
 			return
 		}
 

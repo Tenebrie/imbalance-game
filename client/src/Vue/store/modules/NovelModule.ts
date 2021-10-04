@@ -121,7 +121,7 @@ const novelModule = defineModule({
 					}
 
 					commit.setCharactersPrinted(charactersPrinted)
-				}, 25)
+				}, 35)
 				commit.setPrintTimer(timer)
 			}
 		},

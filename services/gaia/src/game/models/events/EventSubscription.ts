@@ -1,7 +1,9 @@
-import { EventSubscriber } from '../ServerGameEvents'
-import { GameEvent } from './GameEventCreators'
+import { ServerGameDelayedNovelCreator, ServerGameNovelCreator } from '@src/game/models/ServerGameNovel'
 
-export class EventSubscription<EventArgs> {
+import { EventSubscriber } from '../ServerGameEvents'
+import { GameEvent, SharedEventArgs } from './GameEventCreators'
+
+export class EventSubscription<EventArgs extends SharedEventArgs> {
 	private readonly __subscriber: EventSubscriber
 	private readonly __prepares: ((args: EventArgs, preparedState: Record<string, any>) => Record<string, any>)[]
 	private readonly __callbacks: ((args: EventArgs, preparedState: Record<string, any>) => void)[]
@@ -62,6 +64,23 @@ export class EventSubscription<EventArgs> {
 	perform(callback: (args: EventArgs, preparedState: Record<string, any>) => void): EventSubscription<EventArgs> {
 		this.__callbacks.push(callback)
 		return this
+	}
+
+	/* Start a dialog when an event occurs and all conditions are satisfied
+	 * ------------------------------------------------------------------------
+	 * This is effectively equivalent to the following:
+	 * ```
+	 * .perform(() =>
+	 *   game.novel.startDialog(...)
+	 * )
+	 * ```
+	 */
+	startDialog(script: string | (() => string)): ServerGameNovelCreator {
+		const novelCreator = new ServerGameDelayedNovelCreator(script)
+		this.__callbacks.push((args) => {
+			novelCreator.run(args.game)
+		})
+		return novelCreator
 	}
 
 	/* Require a condition to be true before callback execution

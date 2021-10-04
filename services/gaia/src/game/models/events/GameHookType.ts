@@ -1,18 +1,32 @@
 import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 
 import ServerCard from '../ServerCard'
 import ServerDamageInstance from '../ServerDamageSource'
 import ServerUnit from '../ServerUnit'
 
 enum GameHookType {
+	CARD_PLAYED = 'cardPlayed',
 	CARD_TAKES_DAMAGE = 'cardTakesDamage',
 	CARD_DESTROYED = 'cardDestroyed',
 	UNIT_DESTROYED = 'unitDestroyed',
+	ROUND_FINISHED = 'roundFinished',
 	GAME_FINISHED = 'gameFinished',
 }
 
 export default GameHookType
+export interface SharedHookFixedValues {
+	game: ServerGame
+}
+
+export interface CardPlayedHookFixedValues extends SharedHookFixedValues {
+	card: ServerCard
+	owner: ServerPlayerInGame
+}
+export interface CardPlayedHookEditableValues {
+	playPrevented: boolean
+}
 
 export interface CardTakesDamageHookFixedValues {
 	targetCard: ServerCard
@@ -32,6 +46,13 @@ export interface UnitDestroyedHookFixedValues {
 }
 export interface UnitDestroyedHookEditableValues {
 	destructionPrevented: boolean
+}
+
+export interface RoundFinishedHookFixedValues extends SharedHookFixedValues {
+	group: ServerPlayerGroup
+}
+export interface RoundFinishedHookEditableValues {
+	finishPrevented: boolean
 }
 
 export interface GameFinishedHookFixedValues {

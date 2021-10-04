@@ -8,8 +8,8 @@ describe('ServerTenScriptParser', () => {
 			const parsedScript = parseTenScript(
 				() => `
 				Narrator:
-				> Me talk
-				> Me talk a lot
+				> Me talk:
+				> Me talk a lot;
 				> A lot a lot.
 				Protagonist:
 				@ This is a first reply
@@ -31,10 +31,11 @@ describe('ServerTenScriptParser', () => {
 			`
 			)
 
+			expect(parsedScript.errors).toEqual([])
 			expect(parsedScript.statements).toEqual([
 				{ type: StatementType.SET_SPEAKER, data: StoryCharacter.NARRATOR, children: [], debugInfo: { line: 1, column: 4, length: 9 } },
-				{ type: StatementType.SAY, data: 'Me talk', children: [], debugInfo: { line: 2, column: 5, length: 9 } },
-				{ type: StatementType.SAY, data: 'Me talk a lot', children: [], debugInfo: { line: 3, column: 5, length: 15 } },
+				{ type: StatementType.SAY, data: 'Me talk:', children: [], debugInfo: { line: 2, column: 5, length: 10 } },
+				{ type: StatementType.SAY, data: 'Me talk a lot;', children: [], debugInfo: { line: 3, column: 5, length: 16 } },
 				{ type: StatementType.SAY, data: 'A lot a lot.', children: [], debugInfo: { line: 4, column: 5, length: 14 } },
 				{ type: StatementType.SET_SPEAKER, data: 'protagonist', children: [], debugInfo: { line: 5, column: 4, length: 12 } },
 				{

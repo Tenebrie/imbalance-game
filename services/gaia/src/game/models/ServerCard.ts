@@ -52,6 +52,7 @@ import GameEventCreators, {
 	RoundStartedEventArgs,
 	RowBuffCreatedEventArgs,
 	RowBuffRemovedEventArgs,
+	SharedEventArgs,
 	SpellDeployedEventArgs,
 	SpellManaGeneratedEventArgs,
 	TurnEndedEventArgs,
@@ -699,7 +700,10 @@ export default class ServerCard implements Card {
 		event: GameEventType.SPELL_MANA_GENERATED,
 		location: CardLocation[] | 'any'
 	): EventSubscription<SpellManaGeneratedEventArgs>
-	protected createCallback<ArgsType>(event: GameEventType, location: CardLocation[] | 'any'): EventSubscription<ArgsType> {
+	protected createCallback<ArgsType extends SharedEventArgs>(
+		event: GameEventType,
+		location: CardLocation[] | 'any'
+	): EventSubscription<ArgsType> {
 		const callback = this.game.events.createCallback<ArgsType>(this, event)
 		if (location !== 'any') {
 			callback.require(() => location.includes(this.location))
@@ -742,7 +746,7 @@ export default class ServerCard implements Card {
 	protected createEffect(event: GameEventType.UNIT_ORDERED_UNIT): EventSubscription<UnitOrderedUnitEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
-	protected createEffect<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
+	protected createEffect<ArgsType extends SharedEventArgs>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events
 			.createCallback<ArgsType>(this, event)
 			.require((args, rawEvent) => !!rawEvent.effectSource && rawEvent.effectSource === this)

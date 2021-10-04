@@ -6,45 +6,40 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 
-import Keywords from '../../../../utils/Keywords'
-import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ServerCard from '../../../models/ServerCard'
+import ServerDamageInstance from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
-export default class UnitStormElemental extends ServerCard {
-	manaGenerated = 3
+export default class TutorialUnitWoundedVeteran extends ServerCard {
+	damageToSelf = 20
 
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
-			faction: CardFaction.ARCANE,
-			tribes: [CardTribe.ELEMENTAL],
+			faction: CardFaction.HUMAN,
+			tribes: [CardTribe.PEASANT, CardTribe.SOLDIER],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
-				power: 12,
+				power: 40,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
-			manaGenerated: this.manaGenerated,
+			damageToSelf: this.damageToSelf,
 		}
-		this.botEvaluation = new CustomBotEvaluation(this)
 
 		this.createLocalization({
 			en: {
-				name: 'Storm Elemental',
-				description: '*Deploy:*\nGenerate {manaGenerated} Mana.',
+				name: 'Wounded Veteran',
+				description: '*Deploy:*\nDeal {damageToSelf} Damage to self.',
 			},
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => Keywords.generateMana(this, this.manaGenerated))
+		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => this.onDeploy())
 	}
-}
 
-class CustomBotEvaluation extends BotCardEvaluation {
-	get expectedValue(): number {
-		const card = this.card as UnitStormElemental
-		return card.stats.power + card.manaGenerated * 3
+	private onDeploy(): void {
+		this.dealDamage(ServerDamageInstance.fromCard(this.damageToSelf, this))
 	}
 }

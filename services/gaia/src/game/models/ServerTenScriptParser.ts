@@ -125,7 +125,7 @@ type StateTransition = {
 	do(args: StateTransitionActionArgs): StateTransitionActionReturnValue
 }
 
-const VALID_TEXT_CHARACTERS = 'abcdefghijklmnopqrstuvwxyz0123456789[]() ?!,.\'"🎂'
+const VALID_TEXT_CHARACTERS = 'abcdefghijklmnopqrstuvwxyz0123456789[]() ?!,.\'"🎂:;'
 
 const stateTransitions: StateTransition[] = [
 	{

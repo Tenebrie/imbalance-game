@@ -67,7 +67,8 @@ describe('ServerGameNovel', () => {
 			if (messages[2].type === NovelMessageType.ADD_REPLY) {
 				expect(messages[2].data.text).toEqual('Option B')
 			}
-			expect(messages.length).toEqual(3)
+			expect(messages[3].type).toEqual(AnimationMessageType.PLAY)
+			expect(messages.length).toEqual(4)
 		})
 
 		describe('on continue', () => {
@@ -105,7 +106,7 @@ describe('ServerGameNovel', () => {
 			})
 
 			it('sends valid messages', () => {
-				const messages = getSentMessages(3)
+				const messages = getSentMessages(4)
 
 				expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
 				expect(messages[1].type).toEqual(NovelMessageType.SAY)
@@ -123,7 +124,7 @@ describe('ServerGameNovel', () => {
 				})
 
 				it('sends valid messages', () => {
-					const messages = getSentMessages(7)
+					const messages = getSentMessages(8)
 
 					expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
 					expect(messages[1].type).toEqual(NovelMessageType.SAY)
@@ -141,7 +142,7 @@ describe('ServerGameNovel', () => {
 					})
 
 					it('sends dialog end message', () => {
-						const messages = getSentMessages(11)
+						const messages = getSentMessages(12)
 
 						expect(messages[0].type).toEqual(NovelMessageType.END)
 					})
@@ -178,7 +179,8 @@ describe('ServerGameNovel', () => {
 				expect(messages[2].data.text).toEqual('Option B')
 				expect(messages[2].data.chapterId.split('/')[1]).toEqual('OptionB'.toLowerCase())
 			}
-			expect(messages.length).toEqual(3)
+			expect(messages[3].type).toEqual(AnimationMessageType.PLAY)
+			expect(messages.length).toEqual(4)
 		})
 
 		describe('on response selected', () => {
@@ -194,7 +196,7 @@ describe('ServerGameNovel', () => {
 			})
 
 			it('sends valid messages', () => {
-				const messages = getSentMessages(3)
+				const messages = getSentMessages(4)
 
 				expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
 				expect(messages[1].type).toEqual(NovelMessageType.SAY)
@@ -212,7 +214,7 @@ describe('ServerGameNovel', () => {
 				})
 
 				it('sends valid messages', () => {
-					const messages = getSentMessages(7)
+					const messages = getSentMessages(8)
 
 					expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
 					expect(messages[1].type).toEqual(NovelMessageType.SAY)
@@ -230,7 +232,7 @@ describe('ServerGameNovel', () => {
 					})
 
 					it('sends dialog end message', () => {
-						const messages = getSentMessages(11)
+						const messages = getSentMessages(12)
 
 						expect(messages[0].type).toEqual(NovelMessageType.END)
 					})
@@ -267,7 +269,8 @@ describe('ServerGameNovel', () => {
 				expect(messages[2].data.text).toEqual('Option B')
 				expect(messages[2].data.chapterId.split('/')[1]).toEqual('OptionB'.toLowerCase())
 			}
-			expect(messages.length).toEqual(3)
+			expect(messages[3].type).toEqual(AnimationMessageType.PLAY)
+			expect(messages.length).toEqual(4)
 		})
 
 		describe('on response selected', () => {
@@ -283,7 +286,7 @@ describe('ServerGameNovel', () => {
 			})
 
 			it('sends valid messages', () => {
-				const messages = getSentMessages(3)
+				const messages = getSentMessages(4)
 
 				expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
 				expect(messages[1].type).toEqual(NovelMessageType.SAY)
@@ -301,7 +304,7 @@ describe('ServerGameNovel', () => {
 				})
 
 				it('sends valid messages', () => {
-					const messages = getSentMessages(7)
+					const messages = getSentMessages(8)
 
 					expect(messages[0].type).toEqual(NovelMessageType.CLEAR)
 					expect(messages[1].type).toEqual(NovelMessageType.SAY)
@@ -319,7 +322,7 @@ describe('ServerGameNovel', () => {
 					})
 
 					it('sends dialog end message', () => {
-						const messages = getSentMessages(11)
+						const messages = getSentMessages(12)
 
 						expect(messages[0].type).toEqual(NovelMessageType.END)
 					})

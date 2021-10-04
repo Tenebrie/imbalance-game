@@ -6,16 +6,15 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import UnitFierceShadow from '@src/game/cards/01-arcane/tokens/UnitFierceShadow'
+import CardLibrary from '@src/game/libraries/CardLibrary'
+import ServerCard from '@src/game/models/ServerCard'
+import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import ServerGame from '@src/game/models/ServerGame'
 import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
-import CardLibrary from '../../../../libraries/CardLibrary'
-import ServerCard from '../../../../models/ServerCard'
-import ServerDamageInstance from '../../../../models/ServerDamageSource'
-import ServerGame from '../../../../models/ServerGame'
-import UnitFierceShadow from '../../tokens/UnitFierceShadow'
-
 // TODO: Test, possibly borken
-export default class SpellShadowSpark extends ServerCard {
+export default class TutorialSpellShadowSpark extends ServerCard {
 	baseDamage = asDirectSparkDamage(3)
 	unitSummoned = false
 

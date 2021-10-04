@@ -26,6 +26,7 @@ import {
 	RoundStartedEventArgs,
 	RowBuffCreatedEventArgs,
 	RowBuffRemovedEventArgs,
+	SharedEventArgs,
 	TurnEndedEventArgs,
 	TurnStartedEventArgs,
 	UnitCreatedEventArgs,
@@ -41,7 +42,14 @@ import { createRandomGuid, getClassFromConstructor } from '@src/utils/Utils'
 
 import { EventHook } from '../events/EventHook'
 import { EventSubscription } from '../events/EventSubscription'
-import GameHookType, { GameFinishedHookEditableValues, GameFinishedHookFixedValues } from '../events/GameHookType'
+import GameHookType, {
+	CardPlayedHookEditableValues,
+	CardPlayedHookFixedValues,
+	GameFinishedHookEditableValues,
+	GameFinishedHookFixedValues,
+	RoundFinishedHookEditableValues,
+	RoundFinishedHookFixedValues,
+} from '../events/GameHookType'
 import { CardSelectorBuilder } from '../events/selectors/CardSelectorBuilder'
 import ServerGame from '../ServerGame'
 import { RulesetBoard, RulesetBoardBuilder } from './RulesetBoard'
@@ -203,10 +211,12 @@ export abstract class ServerRuleset implements Ruleset {
 	protected createCallback(event: GameEventType.ROW_BUFF_CREATED): EventSubscription<RowBuffCreatedEventArgs>
 	protected createCallback(event: GameEventType.ROW_BUFF_REMOVED): EventSubscription<RowBuffRemovedEventArgs>
 	protected createCallback(event: GameEventType.GAME_FINISHED): EventSubscription<GameFinishedEventArgs>
-	protected createCallback<EventArgs>(event: GameEventType): EventSubscription<EventArgs> {
+	protected createCallback<EventArgs extends SharedEventArgs>(event: GameEventType): EventSubscription<EventArgs> {
 		return this.game.events.createCallback(null, event)
 	}
 
+	protected createHook(hookType: GameHookType.CARD_PLAYED): EventHook<CardPlayedHookEditableValues, CardPlayedHookFixedValues>
+	protected createHook(hookType: GameHookType.ROUND_FINISHED): EventHook<RoundFinishedHookEditableValues, RoundFinishedHookFixedValues>
 	protected createHook(hookType: GameHookType.GAME_FINISHED): EventHook<GameFinishedHookEditableValues, GameFinishedHookFixedValues>
 	protected createHook<HookValues, HookArgs>(hook: GameHookType): EventHook<HookValues, HookArgs> {
 		return this.game.events.createHook(null, hook)

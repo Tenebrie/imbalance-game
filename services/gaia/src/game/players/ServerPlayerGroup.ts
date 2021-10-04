@@ -2,6 +2,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import PlayerGroup from '@shared/models/PlayerGroup'
 import { ServerCardBuff, ServerRowBuff } from '@src/game/models/buffs/ServerBuff'
 import GameEventCreators from '@src/game/models/events/GameEventCreators'
+import GameHookType from '@src/game/models/events/GameHookType'
 import { ServerRulesetSlotGroup } from '@src/game/models/rulesets/ServerRulesetSlots'
 import ServerPlayerGroupSlots from '@src/game/players/ServerPlayerGroupSlots'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
@@ -198,6 +199,21 @@ export default class ServerPlayerGroup implements PlayerGroup {
 		if (this.roundEnded) {
 			return
 		}
+
+		const hookValues = this.game.events.applyHooks(
+			GameHookType.ROUND_FINISHED,
+			{
+				finishPrevented: false,
+			},
+			{
+				game: this.game,
+				group: this,
+			}
+		)
+		if (hookValues.finishPrevented) {
+			return
+		}
+
 		this.endTurn()
 		this.roundEnded = true
 		OutgoingMessageHandlers.notifyAboutRoundEnded(this)

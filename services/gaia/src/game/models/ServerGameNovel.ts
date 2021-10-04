@@ -1,4 +1,6 @@
 import StoryCharacter, { storyCharacterFromString } from '@shared/enums/StoryCharacter'
+import OutgoingAnimationMessages from '@src/game/handlers/outgoing/OutgoingAnimationMessages'
+import ServerAnimation from '@src/game/models/ServerAnimation'
 import { parseTenScript, StatementType, TenScriptStatement, TenScriptStatementSelector } from '@src/game/models/ServerTenScriptParser'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import { createRandomGuid } from '@src/utils/Utils'
@@ -33,7 +35,7 @@ export default class ServerGameNovel {
 
 	public startDialog(script: string | (() => string)): ServerGameNovelCreator {
 		OutgoingNovelMessages.notifyAboutDialogStarted(this.player)
-		const creator = new ServerGameNovelCreator(this.game)
+		const creator = new ServerGameImmediateNovelCreator(this.game)
 		creator.exec(script)
 
 		return creator
@@ -91,7 +93,7 @@ export default class ServerGameNovel {
 		if (!chapterCreator) {
 			return
 		}
-		chapterCreator(new ServerGameNovelCreatorRunner(this.game))
+		chapterCreator(new ServerGameImmediateNovelUnconditionalCreator(this.game))
 	}
 
 	public hasQueue(): boolean {
@@ -120,7 +122,14 @@ export default class ServerGameNovel {
 	}
 }
 
-export class ServerGameNovelCreator {
+export interface ServerGameNovelCreator {
+	exec(script: string | (() => string)): ServerGameNovelCreator
+	chapter(chapterId: string | number, callback: () => string): ServerGameNovelCreator
+	continue(chapterId: string | number, callback: (novel: ServerGameNovelCreator) => ServerGameNovelCreator): ServerGameNovelCreator
+	closingChapter(chapterId: string | number, callback: () => void): ServerGameNovelCreator
+}
+
+export class ServerGameImmediateNovelCreator implements ServerGameNovelCreator {
 	private readonly game: ServerGame
 	private readonly namespace: string
 	protected readonly runUnconditionally: boolean = false
@@ -130,7 +139,7 @@ export class ServerGameNovelCreator {
 		this.namespace = createRandomGuid()
 	}
 
-	public exec(script: string | (() => string)): ServerGameNovelCreator {
+	public exec(script: string | (() => string)): ServerGameImmediateNovelCreator {
 		const scriptSyntaxTree = parseTenScript(script)
 		if (scriptSyntaxTree.errors.length > 0) {
 			throw new Error(`TenScript parse error: ${scriptSyntaxTree.errors[0].message}`)
@@ -146,17 +155,20 @@ export class ServerGameNovelCreator {
 		return this
 	}
 
-	public chapter(chapterId: string | number, callback: () => string): ServerGameNovelCreator {
+	public chapter(chapterId: string | number, callback: () => string): ServerGameImmediateNovelCreator {
 		this.game.novel.registerScriptChapter(`${this.namespace}/${chapterId}`, callback)
 		return this
 	}
 
-	public continue(chapterId: string | number, callback: (novel: ServerGameNovelCreator) => ServerGameNovelCreator): ServerGameNovelCreator {
+	public continue(
+		chapterId: string | number,
+		callback: (novel: ServerGameNovelCreator) => ServerGameNovelCreator
+	): ServerGameImmediateNovelCreator {
 		this.game.novel.registerCreatorChapter(`${this.namespace}/${chapterId}`, callback)
 		return this
 	}
 
-	public closingChapter(chapterId: string | number, callback: () => void): ServerGameNovelCreator {
+	public closingChapter(chapterId: string | number, callback: () => void): ServerGameImmediateNovelCreator {
 		return this.chapter(chapterId, () => {
 			callback()
 			return ``
@@ -164,7 +176,80 @@ export class ServerGameNovelCreator {
 	}
 }
 
-class ServerGameNovelCreatorRunner extends ServerGameNovelCreator {
+export class ServerGameDelayedNovelCreator implements ServerGameNovelCreator {
+	private readonly startingScript: string | (() => string)
+	private readonly statements: (
+		| {
+				type: 'exec'
+				script: string | (() => string)
+		  }
+		| {
+				type: 'chapter'
+				id: string | number
+				callback: () => string
+		  }
+		| {
+				type: 'continue'
+				id: string | number
+				callback: (novel: ServerGameNovelCreator) => ServerGameNovelCreator
+		  }
+	)[] = []
+
+	public constructor(script: string | (() => string)) {
+		this.startingScript = script
+	}
+
+	public exec(script: string | (() => string)): ServerGameDelayedNovelCreator {
+		this.statements.push({
+			type: 'exec',
+			script,
+		})
+		return this
+	}
+
+	public chapter(chapterId: string | number, callback: () => string): ServerGameDelayedNovelCreator {
+		this.statements.push({
+			type: 'chapter',
+			id: chapterId,
+			callback,
+		})
+		return this
+	}
+
+	public continue(
+		chapterId: string | number,
+		callback: (novel: ServerGameNovelCreator) => ServerGameNovelCreator
+	): ServerGameDelayedNovelCreator {
+		this.statements.push({
+			type: 'continue',
+			id: chapterId,
+			callback,
+		})
+		return this
+	}
+
+	public closingChapter(chapterId: string | number, callback: () => void): ServerGameDelayedNovelCreator {
+		return this.chapter(chapterId, () => {
+			callback()
+			return ``
+		})
+	}
+
+	public run(game: ServerGame): void {
+		const creator = game.novel.startDialog(this.startingScript)
+		this.statements.forEach((statement) => {
+			if (statement.type === 'exec') {
+				creator.exec(statement.script)
+			} else if (statement.type === 'chapter') {
+				creator.chapter(statement.id, statement.callback)
+			} else if (statement.type === 'continue') {
+				creator.continue(statement.id, statement.callback)
+			}
+		})
+	}
+}
+
+class ServerGameImmediateNovelUnconditionalCreator extends ServerGameImmediateNovelCreator {
 	protected readonly runUnconditionally = true
 }
 
@@ -274,6 +359,8 @@ export class ServerGameNovelRunner {
 		}
 		if (state === 'normal') {
 			OutgoingNovelMessages.notifyAboutDialogSegmentEnded(this.player)
+		} else if (state === 'responses') {
+			OutgoingAnimationMessages.triggerAnimationForPlayers(this.player, ServerAnimation.delay(3600000))
 		}
 	}
 }

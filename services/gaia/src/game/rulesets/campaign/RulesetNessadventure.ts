@@ -22,7 +22,7 @@ import UnitDryadSmuggler from '@src/game/cards/10-challenge/nessadventure/UnitDr
 import UnitEleyasDoppelganger from '@src/game/cards/10-challenge/nessadventure/UnitEleyasDoppelganger'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import ServerGame from '@src/game/models/ServerGame'
-import { ServerGameNovelCreator } from '@src/game/models/ServerGameNovel'
+import { ServerGameImmediateNovelCreator } from '@src/game/models/ServerGameNovel'
 import Keywords from '@src/utils/Keywords'
 
 export default class RulesetNessadventure extends ServerRuleset {
@@ -201,9 +201,9 @@ export default class RulesetNessadventure extends ServerRuleset {
 					.closingChapter('DummyLevelUp', onDummyLevelUp)
 			)
 
-		const onDummyLevelUp = (): ServerGameNovelCreator => {
+		const onDummyLevelUp = (): ServerGameImmediateNovelCreator => {
 			game.getBotPlayer().leader.buffs.add(BuffImmuneDummies, null)
-			return new ServerGameNovelCreator(game)
+			return new ServerGameImmediateNovelCreator(game)
 				.exec(
 					`
 				${StoryCharacter.UNKNOWN}:
@@ -338,7 +338,7 @@ export default class RulesetNessadventure extends ServerRuleset {
 						}
 					})
 					.continue('Surprise', () => {
-						return new ServerGameNovelCreator(game)
+						return new ServerGameImmediateNovelCreator(game)
 							.exec(
 								`
 								${StoryCharacter.NOT_NESSA}:

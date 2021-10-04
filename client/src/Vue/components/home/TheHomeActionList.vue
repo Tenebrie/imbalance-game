@@ -4,6 +4,8 @@
 			<div class="controls">
 				<div class="button-container">
 					<h2>Create game</h2>
+					<button @click="onCreateTutorial" class="primary">{{ $locale.get('ui.play.tutorial') }}</button>
+					<span class="action-explanation">Learn the basics of the game.</span>
 					<button @click="onCreateSinglePlayer" class="primary">{{ $locale.get('ui.play.pve') }}</button>
 					<span class="action-explanation">Play against normal AI, or a special challenge scenario.</span>
 					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp') }}</button>
@@ -44,6 +46,12 @@ export default defineComponent({
 	},
 
 	setup() {
+		const onCreateTutorial = async (): Promise<void> => {
+			const response = await axios.post('/api/games', { ruleset: 'rulesetTutorialBasic' })
+			const gameMessage: GameMessage = response.data.data
+			await store.dispatch.joinGame(gameMessage)
+		}
+
 		const onCreateSinglePlayer = async (): Promise<void> => {
 			store.dispatch.popupModule.open({
 				component: ThePVEGameModeSelectionPopup,
@@ -94,6 +102,7 @@ export default defineComponent({
 		const devRulesetVisible = process.env.NODE_ENV === 'development'
 
 		return {
+			onCreateTutorial,
 			onCreateSinglePlayer,
 			onCreateMultiPlayer,
 			onCreateCooperative,

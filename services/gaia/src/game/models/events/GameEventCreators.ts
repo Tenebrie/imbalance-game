@@ -390,7 +390,7 @@ export interface GameEvent {
 	hiddenFromLogs?: boolean
 }
 
-interface SharedEventArgs {
+export interface SharedEventArgs {
 	game: ServerGame
 }
 

@@ -30,6 +30,7 @@ import {
 	RoundStartedEventArgs,
 	RowBuffCreatedEventArgs,
 	RowBuffRemovedEventArgs,
+	SharedEventArgs,
 	SpellDeployedEventArgs,
 	TurnEndedEventArgs,
 	TurnStartedEventArgs,
@@ -196,7 +197,7 @@ export default class ServerBuff implements Buff {
 	protected createCallback(event: GameEventType.CARD_DESTROYED): EventSubscription<CardDestroyedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
 	protected createCallback(event: GameEventType.CARD_PLAYED): EventSubscription<CardPlayedEventArgs>
-	protected createCallback<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
+	protected createCallback<ArgsType extends SharedEventArgs>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events.createCallback(this, event)
 	}
 
@@ -220,7 +221,7 @@ export default class ServerBuff implements Buff {
 	protected createEffect(event: GameEventType.CARD_BUFF_REMOVED): EventSubscription<CardBuffRemovedEventArgs>
 	protected createEffect(event: GameEventType.ROW_BUFF_CREATED): EventSubscription<RowBuffCreatedEventArgs>
 	protected createEffect(event: GameEventType.ROW_BUFF_REMOVED): EventSubscription<RowBuffRemovedEventArgs>
-	protected createEffect<ArgsType>(event: GameEventType): EventSubscription<ArgsType> {
+	protected createEffect<ArgsType extends SharedEventArgs>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events
 			.createCallback<ArgsType>(this, event)
 			.require(

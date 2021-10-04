@@ -33,7 +33,8 @@ export default {
 		})
 	},
 
-	triggerAnimationForPlayers(players: ServerPlayerInGame[], animation: ServerAnimation): void {
+	triggerAnimationForPlayers(players: ServerPlayerInGame[] | ServerPlayerGroup, animation: ServerAnimation): void {
+		players = players instanceof ServerPlayerGroup ? players.players : players
 		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: AnimationMessageType.PLAY,
