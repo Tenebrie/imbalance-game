@@ -308,7 +308,10 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> End
 					`
 					)
-					.closingChapter('End', () => game.finish(game.getBotPlayer().group, 'Story trigger'))
+					.closingChapter('End', () => {
+						this.finalDialogShown = true
+						game.finish(game.getBotPlayer().group, 'Story trigger')
+					})
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
@@ -502,7 +505,10 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Close
 					`
 					)
-					.closingChapter('Close', () => game.finish(game.getHumanGroup(), 'Story trigger'))
+					.closingChapter('Close', () => {
+						this.finalDialogShown = true
+						game.finish(game.getHumanGroup(), 'Story trigger')
+					})
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
