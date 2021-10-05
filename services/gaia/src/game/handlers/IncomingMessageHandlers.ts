@@ -87,6 +87,15 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 			player.showMulliganCards()
 		} else if (data === TargetMode.BROWSE) {
 			OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, [])
+			if (game.cardPlay.cardResolveStack.currentEntry) {
+				const cardTargets = game.cardPlay.getResolvingCardTargets()
+				OutgoingMessageHandlers.notifyAboutRequestedCardTargetsForReconnect(
+					player.player,
+					game.cardPlay.cardResolveStack.currentEntry.targetMode,
+					cardTargets.map((deployTarget) => deployTarget.target),
+					game.cardPlay.cardResolveStack.currentEntry.ownedCard.card
+				)
+			}
 		} else if (data === TargetMode.MULLIGAN && player.group.mulliganMode) {
 			player.finishMulligan()
 			game.advanceMulliganPhase()
