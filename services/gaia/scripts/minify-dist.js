@@ -26,7 +26,7 @@ glob('dist/**/*.@(js)', async (er, files) => {
 						file,
 						...uglify.minify(fs.readFileSync(file, 'utf8'), {
 							sourceMap: {
-								url: `${file.slice(file.lastIndexOf('/') + 1)}.map`,
+								url: 'inline',
 							},
 						}),
 					})
