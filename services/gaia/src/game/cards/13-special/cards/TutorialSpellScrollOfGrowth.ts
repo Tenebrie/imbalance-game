@@ -23,7 +23,7 @@ export default class TutorialSpellScrollOfGrowth extends ServerCard {
 			stats: {
 				cost: 2,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TUTORIAL,
 		})
 
 		this.createLocalization({

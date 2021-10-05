@@ -14,6 +14,7 @@ import ServerGame from '../../../models/ServerGame'
 
 export default class UnitVoidBrand extends ServerCard {
 	public static readonly EXTRA_POWER = 1
+	extraPower = UnitVoidBrand.EXTRA_POWER
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -51,6 +52,6 @@ export default class UnitVoidBrand extends ServerCard {
 			.require(() => this.location === CardLocation.BOARD)
 			.requireTarget(({ target }) => target.tribes.includes(CardTribe.VOIDSPAWN))
 			.requireTarget(({ target }) => target.ownerGroup === this.ownerGroup)
-			.provide(BuffStrength)
+			.provide(BuffStrength, this.extraPower)
 	}
 }

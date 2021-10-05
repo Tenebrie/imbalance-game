@@ -47,7 +47,7 @@ export default class ServerGameCardPlay {
 		this.cardResolveStack = new ServerResolveStack(game)
 	}
 
-	public playCardAsPlayerAction(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
+	public playCardAsPlayerAction(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): boolean {
 		const owner = ownedCard.owner
 		const hookValues = this.game.events.applyHooks(
 			GameHookType.CARD_PLAYED,
@@ -63,7 +63,7 @@ export default class ServerGameCardPlay {
 
 		if (hookValues.playPrevented) {
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(owner.player, ownedCard.card)
-			return
+			return false
 		}
 
 		/*
@@ -78,7 +78,7 @@ export default class ServerGameCardPlay {
 				.find(({ targetRow, targetPosition }) => targetRow.index === rowIndex && targetPosition === unitIndex)
 		) {
 			OutgoingMessageHandlers.notifyAboutCardPlayDeclined(owner.player, ownedCard.card)
-			return
+			return false
 		}
 
 		/* Deduct mana */
@@ -87,6 +87,7 @@ export default class ServerGameCardPlay {
 
 		/* Resolve card */
 		this.playCard(ownedCard, rowIndex, unitIndex, 'hand')
+		return true
 	}
 
 	public playCardFromHand(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): void {
@@ -102,13 +103,13 @@ export default class ServerGameCardPlay {
 		const targetMode = ownedCard.card.type === CardType.UNIT ? TargetMode.CARD_PLAY : TargetMode.DEPLOY_EFFECT
 		this.cardResolveStack.startResolvingImmediately(ownedCard, targetMode, () => this.updateResolvingCardTargetingStatus())
 
-		this.game.events.postEvent(
-			GameEventCreators.cardPlayed({
-				game: this.game,
-				owner: ownedCard.owner,
-				triggeringCard: ownedCard.card,
-			})
-		)
+		// this.game.events.postEvent(
+		// 	GameEventCreators.cardPlayed({
+		// 		game: this.game,
+		// 		owner: ownedCard.owner,
+		// 		triggeringCard: ownedCard.card,
+		// 	})
+		// )
 		if (ownedCard.card.type === CardType.UNIT && ownedCard.card.unit) {
 			/* Invoke the card Deploy effect */
 			this.game.events.postEvent(

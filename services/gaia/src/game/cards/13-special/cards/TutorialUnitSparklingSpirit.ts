@@ -23,7 +23,7 @@ export default class TutorialUnitSparklingSpirit extends ServerCard {
 				power: 16,
 				[LeaderStatType.SPARK_DAMAGE]: 1,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.addRelatedCards().requireTribe(CardTribe.SPARK)
 		this.dynamicTextVariables = {

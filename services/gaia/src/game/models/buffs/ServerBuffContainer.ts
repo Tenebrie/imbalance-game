@@ -137,7 +137,12 @@ export default class ServerBuffContainer implements BuffContainer {
 		}
 
 		const duplicatedBuff = this.buffs.find((buff) => buff.class === newBuff.class)
-		if (duplicatedBuff && duplicatedBuff instanceof ServerStackableCardBuff) {
+		if (
+			duplicatedBuff &&
+			duplicatedBuff instanceof ServerStackableCardBuff &&
+			duplicatedBuff.selector === null &&
+			newBuff.selector === null
+		) {
 			duplicatedBuff.stacks += 1
 		} else {
 			this.buffs.push(newBuff)

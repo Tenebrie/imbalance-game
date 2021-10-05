@@ -14,9 +14,9 @@ import ServerDamageInstance from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import UnitFierceShadow from '../../tokens/UnitFierceShadow'
 
-// TODO: Test, possibly borken
 export default class SpellShadowSpark extends ServerCard {
-	baseDamage = asDirectSparkDamage(3)
+	public static readonly BASE_DAMAGE = 3
+	baseDamage = asDirectSparkDamage(SpellShadowSpark.BASE_DAMAGE)
 	unitSummoned = false
 
 	constructor(game: ServerGame) {
@@ -50,11 +50,11 @@ export default class SpellShadowSpark extends ServerCard {
 				summonUnit()
 			})
 
-		this.createEffect(GameEventType.SPELL_DEPLOYED)
+		this.createEffect(GameEventType.CARD_RESOLVED)
 			.require(() => !this.unitSummoned)
 			.perform(() => summonUnit())
 
-		this.createEffect(GameEventType.SPELL_DEPLOYED).perform(() => (this.unitSummoned = false))
+		this.createEffect(GameEventType.CARD_RESOLVED).perform(() => (this.unitSummoned = false))
 
 		const summonUnit = () => {
 			const player = this.ownerPlayer

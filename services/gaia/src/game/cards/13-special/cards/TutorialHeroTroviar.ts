@@ -24,7 +24,7 @@ export default class TutorialHeroTroviar extends ServerCard {
 			stats: {
 				power: 50,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {
 			selfDamage: this.selfDamage,

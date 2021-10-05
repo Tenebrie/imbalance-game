@@ -16,8 +16,7 @@ export default class LeaderTutorialPlaceholder extends ServerCard {
 				power: 0,
 			},
 			sortPriority: 0,
-			expansionSet: ExpansionSet.BASE,
-			hiddenFromLibrary: true,
+			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {
 			...getLeaderTextVariables(this),

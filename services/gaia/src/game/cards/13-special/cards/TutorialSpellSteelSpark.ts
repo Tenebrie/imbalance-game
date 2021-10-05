@@ -25,7 +25,7 @@ export default class TutorialSpellSteelSpark extends ServerCard {
 			stats: {
 				cost: 2,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {
 			damage: this.baseDamage,

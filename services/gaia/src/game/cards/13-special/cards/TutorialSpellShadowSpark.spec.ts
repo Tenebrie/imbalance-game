@@ -1,10 +1,11 @@
-import { setupTestGame, TestGame } from '../../../../../utils/TestGame'
-import TestingRulesetPVP from '../../../../rulesets/testing/TestingRulesetPVP'
-import TestingUnit100Power from '../../../11-testing/TestingUnit100Power'
-import UnitFierceShadow from '../../tokens/UnitFierceShadow'
-import SpellShadowSpark from './SpellShadowSpark'
+import { setupTestGame, TestGame } from '../../../../utils/TestGame'
+import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
+import SpellShadowSpark from '../../01-arcane/leaders/Nighterie/SpellShadowSpark'
+import UnitFierceShadow from '../../01-arcane/tokens/UnitFierceShadow'
+import TestingUnit100Power from '../../11-testing/TestingUnit100Power'
+import TutorialSpellShadowSpark from './TutorialSpellShadowSpark'
 
-const CardInTesting = SpellShadowSpark
+const CardInTesting = TutorialSpellShadowSpark
 
 describe('SpellShadowSpark', () => {
 	let game: TestGame

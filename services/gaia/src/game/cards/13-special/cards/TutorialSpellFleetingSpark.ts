@@ -23,7 +23,7 @@ export default class TutorialSpellFleetingSpark extends ServerCard {
 			stats: {
 				cost: 1,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,

@@ -36,7 +36,8 @@ export default class HeroLearthe extends ServerCard {
 		for (let i = 0; i < Constants.MAX_CARDS_PER_ROW; i++) {
 			this.game.animation.createAnimationThread()
 			const livingShadow = CardLibrary.instantiate(this.game, UnitHarmlessShadow)
-			this.game.board.createUnit(livingShadow, player, target.index, target.cards.length)
+			const owner = target.owner === this.ownerGroup ? player : this.ownerGroup.opponent.players[0]
+			this.game.board.createUnit(livingShadow, owner, target.index, target.cards.length)
 			this.game.animation.commitAnimationThread()
 		}
 	}

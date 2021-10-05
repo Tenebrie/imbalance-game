@@ -1,5 +1,3 @@
-import CardLocation from '@shared/enums/CardLocation'
-
 import { setupTestGame, TestGame } from '../../../../utils/TestGame'
 import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
 import TestingUnit1DirectSummonCount from '../../11-testing/TestingUnit1DirectSummonCount'
@@ -53,11 +51,10 @@ describe('SpellShadowSpark', () => {
 			game.player.fillRow(TestingUnitNoEffect, 'middle')
 			game.player.fillRow(TestingUnitNoEffect, 'back')
 			game.player.addSpellMana(10)
-			game.player.add(CardInTesting).play()
 		})
 
 		it('will decline play', () => {
-			expect(game.player.find(CardInTesting).location).toEqual(CardLocation.HAND)
+			expect(() => game.player.add(CardInTesting).play()).toThrow()
 		})
 	})
 })

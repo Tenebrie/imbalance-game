@@ -24,7 +24,7 @@ export default class TutorialUnitEagleEyeArcher extends ServerCard {
 			stats: {
 				power: 18,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,

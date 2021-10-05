@@ -63,6 +63,32 @@ describe('UnitVoidBrand', () => {
 		})
 	})
 
+	describe('when many void brands are present', () => {
+		beforeEach(() => {
+			game.player.summon(TestingUnit5PowerVoidspawn)
+			game.player.summon(CardInTesting)
+			game.player.summon(CardInTesting)
+			game.player.summon(CardInTesting)
+		})
+
+		it('gives the target extra power', () => {
+			const card = game.board.find(TestingUnit5PowerVoidspawn)
+			expect(card.stats.power).toEqual(card.stats.basePower + UnitVoidBrand.EXTRA_POWER * 3)
+		})
+	})
+
+	describe('when deselecting transformed minion', () => {
+		beforeEach(() => {
+			game.player.summon(TestingUnit5PowerVoidspawn)
+			game.player.summon(CardInTesting)
+		})
+
+		it('handles it gracefully', () => {
+			const voidspawn = game.board.find(TestingUnit5PowerVoidspawn)
+			expect(() => voidspawn.transformInto(TestingUnitNoEffect)).not.toThrow()
+		})
+	})
+
 	describe('when the only target is an enemy', () => {
 		beforeEach(() => {
 			game.opponent.summon(TestingUnitNoEffect)

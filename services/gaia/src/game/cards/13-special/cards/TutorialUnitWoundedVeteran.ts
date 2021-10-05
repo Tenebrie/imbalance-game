@@ -23,7 +23,7 @@ export default class TutorialUnitWoundedVeteran extends ServerCard {
 			stats: {
 				power: 40,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {
 			damageToSelf: this.damageToSelf,

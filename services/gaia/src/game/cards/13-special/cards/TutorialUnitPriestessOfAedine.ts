@@ -26,7 +26,7 @@ export default class TutorialUnitPriestessOfAedine extends ServerCard {
 			stats: {
 				power: 15,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {
 			targets: this.targets,

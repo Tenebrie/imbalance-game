@@ -52,7 +52,10 @@ export class CardSelector {
 			return
 		}
 
-		const deselectedCards = this.selectedCards.filter((card) => this.targetConditions.find((condition) => !condition({ target: card })))
+		const deselectedCards = this.selectedCards.filter(
+			(card) => !card.ownerGroupNullable || this.targetConditions.find((condition) => !condition({ target: card }))
+		)
+		// const deselectedCards = this.selectedCards.filter((card) => this.targetConditions.find((condition) => !condition({ target: card })))
 
 		const newSelectedCards = allGameCards
 			.filter((card) => !this.selectedCards.includes(card))

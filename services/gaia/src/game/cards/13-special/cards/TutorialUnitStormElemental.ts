@@ -23,7 +23,7 @@ export default class TutorialUnitStormElemental extends ServerCard {
 			stats: {
 				power: 12,
 			},
-			expansionSet: ExpansionSet.BASE,
+			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {
 			manaGenerated: this.manaGenerated,

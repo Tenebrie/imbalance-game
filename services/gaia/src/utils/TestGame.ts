@@ -130,6 +130,7 @@ type TestGameUnit = {
 	getRow(): RowDistanceWrapper
 	orderOnFirst(): void
 	takeDamage(damage: number): TestGameUnit
+	transformInto(card: CardConstructor): TestGameUnit
 	receiveBuffs(buffConstructor: BuffConstructor, count?: number): TestGameUnit
 }
 
@@ -148,6 +149,12 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		game.events.evaluateSelectors()
 		return unitWrapper
 	}
+	const transformInto = (card: CardConstructor): TestGameUnit => {
+		Keywords.transformUnit(unit, card)
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return unitWrapper
+	}
 	const receiveBuffs = (buffConstructor: BuffConstructor, count = 1): TestGameUnit => {
 		unit.buffs.addMultiple(buffConstructor, count, null)
 		return unitWrapper
@@ -160,6 +167,7 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		getRow: () => wrapRowDistance(unit),
 		orderOnFirst: () => orderOnFirst(),
 		takeDamage: (damage: number) => takeDamage(damage),
+		transformInto: (card: CardConstructor) => transformInto(card),
 		receiveBuffs: (buffConstructor: BuffConstructor, count?: number) => receiveBuffs(buffConstructor, count),
 	}
 	return unitWrapper
@@ -182,6 +190,7 @@ type TestGamePlayer = {
 	getStack(): TestGameCardPlayActions
 	getFrontRow(): TestGameRow
 	getLeaderStat(stat: LeaderStatType): number
+	countOnRow(card: CardConstructor, rowIndex: number): number
 	deck: {
 		add(card: CardConstructor): TestGameCard
 	}
@@ -267,6 +276,11 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		return wrapRow(game, game.board.getRowWithDistanceToFront(player, 0))
 	}
 
+	const countOnRow = (player: ServerPlayerInGame, card: CardConstructor, distance: number): number => {
+		const cards = game.board.getRowWithDistanceToFront(player, distance).cards
+		return cards.filter((unit) => unit.card.class === getClassFromConstructor(card)).length
+	}
+
 	const addCardToDeck = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
 		const card = Keywords.addCardToDeck(player, cardConstructor)
 		game.events.resolveEvents()
@@ -296,6 +310,7 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			getStack: () => getCardPlayActions(game, player),
 			getFrontRow: () => getFrontRow(player),
 			getLeaderStat: (stat: LeaderStatType) => getTotalLeaderStat(player, [stat]),
+			countOnRow: (card: CardConstructor, distance: number) => countOnRow(player, card, distance),
 			deck: {
 				add: (card: CardConstructor) => addCardToDeck(player, card),
 			},
@@ -323,10 +338,10 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		const distance = unwrapRowDistance(row, game, player)
 		const rowOwner = card.features.includes(CardFeature.SPY) ? player.opponent : player
 		const targetRow = game.board.getRowWithDistanceToFront(rowOwner, distance)
-		if (player.unitMana < card.stats.unitCost || player.spellMana < card.stats.spellCost) {
-			warn(`Attempting to play a card without enough mana. The action is likely to be ignored.`)
+		const cardPlayed = game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(card, player), targetRow.index, targetRow.cards.length)
+		if (!cardPlayed) {
+			throw new Error('[Test] Card play declined')
 		}
-		game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(card, player), targetRow.index, targetRow.cards.length)
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
 		return getCardPlayActions(game, player)
@@ -389,6 +404,7 @@ const setupCardPlayStack = (game: ServerGame): TestGamePlayStack => {
  */
 type TestGameCardPlayActions = {
 	targetFirst(): TestGameCardPlayActions
+	targetLast(): TestGameCardPlayActions
 }
 
 const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestGameCardPlayActions => {
@@ -396,6 +412,15 @@ const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestG
 		targetFirst: () => {
 			const validTargets = game.cardPlay.getResolvingCardTargets()
 			const chosenTarget = validTargets[0]
+			if (!chosenTarget) throw new Error('No valid targets!')
+			game.cardPlay.selectCardTarget(player, chosenTarget.target)
+			game.events.resolveEvents()
+			game.events.evaluateSelectors()
+			return resolvingCard
+		},
+		targetLast: () => {
+			const validTargets = game.cardPlay.getResolvingCardTargets()
+			const chosenTarget = validTargets[validTargets.length - 1]
 			if (!chosenTarget) throw new Error('No valid targets!')
 			game.cardPlay.selectCardTarget(player, chosenTarget.target)
 			game.events.resolveEvents()

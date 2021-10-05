@@ -3,6 +3,7 @@ enum ExpansionSet {
 	LABYRINTH,
 	SPECIAL,
 	TESTING,
+	TUTORIAL,
 }
 
 export default ExpansionSet

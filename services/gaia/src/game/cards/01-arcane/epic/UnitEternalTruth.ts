@@ -12,7 +12,8 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitEternalTruth extends ServerCard {
-	powerPerCard = asRecurringBuffPotency(1)
+	public static readonly POWER_PER_CARD = 1
+	private readonly powerPerCard = asRecurringBuffPotency(UnitEternalTruth.POWER_PER_CARD)
 
 	constructor(game: ServerGame) {
 		super(game, {
