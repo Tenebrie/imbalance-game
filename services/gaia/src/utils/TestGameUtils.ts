@@ -12,6 +12,7 @@ export const startNextTurn = (game: ServerGame) => (): void => {
 export const startNextRound = (game: ServerGame) => (): void => {
 	game.players[0].endRound()
 	game.players[1].endRound()
+	game.advanceCurrentTurn()
 	game.players[0].players[0].finishMulligan()
 	game.players[1].players[0].finishMulligan()
 	game.advanceMulliganPhase()

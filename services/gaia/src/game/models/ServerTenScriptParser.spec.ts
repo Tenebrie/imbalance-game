@@ -1,6 +1,6 @@
 import StoryCharacter from '@shared/enums/StoryCharacter'
 
-import { parseTenScript, StatementType, TenScriptParseError } from './ServerTenScriptParser'
+import { ParseErrorType, parseTenScript, StatementType } from './ServerTenScriptParser'
 
 describe('ServerTenScriptParser', () => {
 	describe('basic case', () => {
@@ -222,6 +222,28 @@ describe('ServerTenScriptParser', () => {
 			expect(parsedScript.statements.length).toBe(0)
 		})
 
+		it('disallows empty chapter name in move statement', () => {
+			const parsedScript = parseTenScript(
+				() => `
+				--> 
+			`
+			)
+
+			expect(parsedScript.errors.length).toBe(1)
+			expect(parsedScript.errors[0].code).toBe(ParseErrorType.EMPTY_CHAPTER_NAME)
+		})
+
+		it('disallows empty chapter name in chapter response statement', () => {
+			const parsedScript = parseTenScript(
+				() => `
+				@ Move ->
+			`
+			)
+
+			expect(parsedScript.errors.length).toBe(1)
+			expect(parsedScript.errors[0].code).toBe(ParseErrorType.EMPTY_CHAPTER_NAME)
+		})
+
 		it('disallows character name collision in move statement', () => {
 			const parsedScript = parseTenScript(
 				() => `
@@ -230,7 +252,7 @@ describe('ServerTenScriptParser', () => {
 			)
 
 			expect(parsedScript.errors.length).toBe(1)
-			expect(parsedScript.errors[0].code).toBe(TenScriptParseError.CHAPTER_NAMED_AS_CHARACTER)
+			expect(parsedScript.errors[0].code).toBe(ParseErrorType.CHAPTER_NAMED_AS_CHARACTER)
 		})
 
 		it('disallows character name collision in response statement', () => {
@@ -241,7 +263,7 @@ describe('ServerTenScriptParser', () => {
 			)
 
 			expect(parsedScript.errors.length).toBe(1)
-			expect(parsedScript.errors[0].code).toBe(TenScriptParseError.CHAPTER_NAMED_AS_CHARACTER)
+			expect(parsedScript.errors[0].code).toBe(ParseErrorType.CHAPTER_NAMED_AS_CHARACTER)
 		})
 	})
 
@@ -315,7 +337,7 @@ describe('ServerTenScriptParser', () => {
 			)
 
 			expect(parsedScript.errors.length).toEqual(1)
-			expect(parsedScript.errors[0].code).toEqual(TenScriptParseError.LEAF_NODE_CHILDREN)
+			expect(parsedScript.errors[0].code).toEqual(ParseErrorType.LEAF_NODE_CHILDREN)
 		})
 	})
 
@@ -352,7 +374,7 @@ describe('ServerTenScriptParser', () => {
 			)
 
 			expect(parsedScript.errors.length).toBe(1)
-			expect(parsedScript.errors[0].code).toEqual(TenScriptParseError.LEAF_NODE_CHILDREN)
+			expect(parsedScript.errors[0].code).toEqual(ParseErrorType.LEAF_NODE_CHILDREN)
 		})
 	})
 
@@ -417,7 +439,7 @@ describe('ServerTenScriptParser', () => {
 			)
 
 			expect(parsedScript.errors.length).toBe(1)
-			expect(parsedScript.errors[0].code).toEqual(TenScriptParseError.MIXED_INDENTATION)
+			expect(parsedScript.errors[0].code).toEqual(ParseErrorType.MIXED_INDENTATION)
 		})
 	})
 
@@ -458,7 +480,7 @@ describe('ServerTenScriptParser', () => {
 			)
 
 			expect(parsedScript.errors.length).toBe(1)
-			expect(parsedScript.errors[0].code).toEqual(TenScriptParseError.MIXED_INDENTATION)
+			expect(parsedScript.errors[0].code).toEqual(ParseErrorType.MIXED_INDENTATION)
 		})
 	})
 })

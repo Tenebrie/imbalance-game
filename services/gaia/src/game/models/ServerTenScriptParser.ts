@@ -1,11 +1,13 @@
 import StoryCharacter, { storyCharacterFromString } from '@shared/enums/StoryCharacter'
 
 type ParseError = {
-	code: TenScriptParseError
+	code: ParseErrorType
 	message: string
 	line: number
 	column: number
+	length: number
 }
+export type TenScriptParseError = ParseError
 
 export const parseTenScript = (scriptOrGetter: string | (() => string)): { statements: Statement[]; errors: ParseError[] } => {
 	const script = typeof scriptOrGetter === 'function' ? scriptOrGetter() : scriptOrGetter
@@ -274,6 +276,10 @@ const stateTransitions: StateTransition[] = [
 		to: ParserState.UNDEFINED,
 		do: ({ context }): StateTransitionActionReturnValue => {
 			const name = context.secondBuffer.toLowerCase().trim()
+			if (name.length === 0) {
+				return { error: formatEmptyChapterNameInChapterStatementError(context) }
+			}
+
 			const storyCharacter = storyCharacterFromString(name)
 			if (storyCharacter) {
 				context.firstBuffer = ''
@@ -369,6 +375,10 @@ const stateTransitions: StateTransition[] = [
 		to: ParserState.UNDEFINED,
 		do: ({ context }): StateTransitionActionReturnValue => {
 			const name = context.firstBuffer.toLowerCase().trim()
+			if (name.length === 0) {
+				return { error: formatEmptyChapterNameInMoveStatementError(context) }
+			}
+
 			const storyCharacter = storyCharacterFromString(name)
 			if (storyCharacter) {
 				context.firstBuffer = ''
@@ -452,17 +462,6 @@ const toSyntaxTree = (
 		},
 	}
 
-	const lines = script.split('\n').filter((line) => line.trim().length > 0)
-	if (lines.length === 0) {
-		currentContext.errors.push({
-			code: TenScriptParseError.NO_SCRIPT,
-			message: 'Empty script provided!',
-			line: 0,
-			column: 0,
-		})
-		return { statements: [], errors: currentContext.errors }
-	}
-
 	const chars = Array.from(script.trimEnd() + '\n')
 
 	for (let i = 0; i < chars.length; i++) {
@@ -538,7 +537,7 @@ const toSyntaxTree = (
 	}
 }
 
-export enum TenScriptParseError {
+export enum ParseErrorType {
 	NO_SCRIPT = 'NO_SCRIPT',
 	NO_TRANSITION = 'NO_TRANSITION',
 	AMBIGUOUS_TRANSITION = 'AMBIGUOUS_TRANSITION',
@@ -547,11 +546,12 @@ export enum TenScriptParseError {
 	BRANCH_NODE_CHILDREN = 'BRANCH_NODE_CHILDREN',
 	MIXED_INDENTATION = 'MIXED_INDENTATION',
 	CHAPTER_NAMED_AS_CHARACTER = 'CHAPTER_NAMED_AS_CHARACTER',
+	EMPTY_CHAPTER_NAME = 'EMPTY_CHAPTER_NAME',
 }
 
 const formatLeafNodeChildrenError = (statement: Statement): ParseError => {
 	return {
-		code: TenScriptParseError.LEAF_NODE_CHILDREN,
+		code: ParseErrorType.LEAF_NODE_CHILDREN,
 		message: `Node ${statement.type} is not allowed to have children. Children found: ${statement.children.length}.`,
 		...statement.debugInfo,
 	}
@@ -559,7 +559,7 @@ const formatLeafNodeChildrenError = (statement: Statement): ParseError => {
 
 const formatBranchNodeChildrenError = (statement: Statement): ParseError => {
 	return {
-		code: TenScriptParseError.BRANCH_NODE_CHILDREN,
+		code: ParseErrorType.BRANCH_NODE_CHILDREN,
 		message: `Node ${statement.type} must have children.`,
 		...statement.debugInfo,
 	}
@@ -584,10 +584,11 @@ const formatUnableToFindTransitionError = (context: Context, char: string): Pars
 	})
 
 	return {
-		code: TenScriptParseError.NO_TRANSITION,
-		message: `Unable to find a valid transition from state ${context.state} on character '${char}'.\nCurrent buffer: '${context.firstBuffer}'.${formattedTransitions}`,
+		code: ParseErrorType.NO_TRANSITION,
+		message: `Unable to find a valid transition from state ${context.state} on character '${char}'.${formattedTransitions}`,
 		line: context.lineNumber,
 		column: context.columnNumber,
+		length: context.caretColumnNumber - context.columnNumber,
 	}
 }
 
@@ -598,36 +599,60 @@ const formatAmbiguousTransitionError = (context: Context, char: string, transiti
 	})
 
 	return {
-		code: TenScriptParseError.AMBIGUOUS_TRANSITION,
+		code: ParseErrorType.AMBIGUOUS_TRANSITION,
 		message: `Found multiple transitions from state ${context.state} on character '${char}'.${formattedTransitions}`,
 		line: context.lineNumber,
 		column: context.columnNumber,
+		length: context.caretColumnNumber - context.columnNumber,
 	}
 }
 
 const formatDidNotConsumeError = (transition: StateTransition, context: Context, char: string): ParseError => {
 	return {
-		code: TenScriptParseError.DID_NOT_CONSUME,
+		code: ParseErrorType.DID_NOT_CONSUME,
 		message: `Transition ${transition.from} -> ${transition.to} on '${transition.when}' did not consume the '${char}' character and did not change the current state.`,
 		line: context.lineNumber,
 		column: context.columnNumber,
+		length: context.caretColumnNumber - context.columnNumber,
 	}
 }
 
 const formatMixedIndentationError = (context: Context): ParseError => {
 	return {
-		code: TenScriptParseError.MIXED_INDENTATION,
+		code: ParseErrorType.MIXED_INDENTATION,
 		message: `Mixed tabs and spaces in indentation.`,
 		line: context.lineNumber,
 		column: context.columnNumber,
+		length: context.caretColumnNumber - context.columnNumber,
 	}
 }
 
 const formatChapterNamedAsCharacterError = (name: string, context: Context): ParseError => {
 	return {
-		code: TenScriptParseError.CHAPTER_NAMED_AS_CHARACTER,
+		code: ParseErrorType.CHAPTER_NAMED_AS_CHARACTER,
 		message: `Chapter can't be named the same as a story character (${name}).`,
 		line: context.lineNumber,
 		column: context.columnNumber,
+		length: context.caretColumnNumber - context.columnNumber,
+	}
+}
+
+const formatEmptyChapterNameInMoveStatementError = (context: Context): ParseError => {
+	return {
+		code: ParseErrorType.EMPTY_CHAPTER_NAME,
+		message: `Chapter name expected, but not provided.`,
+		line: context.lineNumber,
+		column: context.caretColumnNumber + 2,
+		length: 1,
+	}
+}
+
+const formatEmptyChapterNameInChapterStatementError = (context: Context): ParseError => {
+	return {
+		code: ParseErrorType.EMPTY_CHAPTER_NAME,
+		message: `Chapter name expected, but not provided.`,
+		line: context.lineNumber,
+		column: context.caretColumnNumber + 2,
+		length: 1,
 	}
 }

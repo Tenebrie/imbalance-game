@@ -1,7 +1,13 @@
 import StoryCharacter, { storyCharacterFromString } from '@shared/enums/StoryCharacter'
 import OutgoingAnimationMessages from '@src/game/handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from '@src/game/models/ServerAnimation'
-import { parseTenScript, StatementType, TenScriptStatement, TenScriptStatementSelector } from '@src/game/models/ServerTenScriptParser'
+import {
+	parseTenScript,
+	StatementType,
+	TenScriptParseError,
+	TenScriptStatement,
+	TenScriptStatementSelector,
+} from '@src/game/models/ServerTenScriptParser'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import { createRandomGuid } from '@src/utils/Utils'
 import { v4 as uuid } from 'uuid'
@@ -82,7 +88,9 @@ export default class ServerGameNovel {
 		if (!chapterScript) {
 			return
 		}
+		const script = chapterScript()
 		const scriptSyntaxTree = parseTenScript(chapterScript())
+		throwIfParseFailed(script, scriptSyntaxTree)
 		const namespace = id.split('/')[0]
 		const runner = new ServerGameNovelRunner(this.game, namespace)
 		runner.executeStatements(scriptSyntaxTree.statements)
@@ -139,11 +147,10 @@ export class ServerGameImmediateNovelCreator implements ServerGameNovelCreator {
 		this.namespace = createRandomGuid()
 	}
 
-	public exec(script: string | (() => string)): ServerGameImmediateNovelCreator {
+	public exec(scriptOrGetter: string | (() => string)): ServerGameImmediateNovelCreator {
+		const script = typeof scriptOrGetter === 'function' ? scriptOrGetter() : scriptOrGetter
 		const scriptSyntaxTree = parseTenScript(script)
-		if (scriptSyntaxTree.errors.length > 0) {
-			throw new Error(`TenScript parse error: ${scriptSyntaxTree.errors[0].message}`)
-		}
+		throwIfParseFailed(script, scriptSyntaxTree)
 
 		if (this.game.novel.hasQueue() && !this.runUnconditionally) {
 			this.game.novel.addToQueue(this.namespace, scriptSyntaxTree.statements)
@@ -363,4 +370,25 @@ export class ServerGameNovelRunner {
 			OutgoingAnimationMessages.triggerAnimationForPlayers(this.player, ServerAnimation.delay(3600000))
 		}
 	}
+}
+
+const throwIfParseFailed = (
+	script: string,
+	scriptSyntaxTree: { statements: TenScriptStatement[]; errors: TenScriptParseError[] }
+): void => {
+	if (scriptSyntaxTree.errors.length === 0) {
+		return
+	}
+	const padNumber = (value: number): string => {
+		return value.toString().padStart(3, ' ')
+	}
+	const error = scriptSyntaxTree.errors[0]
+	const scriptLines = script.split('\n')
+	const previousLine = error.line > 0 ? `${padNumber(error.line - 1)}: ${scriptLines[error.line - 1].replace(/\t/g, ' ')}\n       ` : ''
+	const at = previousLine + padNumber(error.line) + ': ' + script.split('\n')[error.line].replace(/\t/g, ' ')
+	const pointerLine =
+		Array(error.column + 5)
+			.fill(' ')
+			.join('') + Array(error.length).fill('^').join('')
+	throw new Error(`TenScript parse error: ${error.message}\n    at ${at}\n    ${pointerLine}`)
 }

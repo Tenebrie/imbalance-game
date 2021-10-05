@@ -31,14 +31,11 @@ export default class RulesetExplode extends ServerRuleset {
 				deck: [LeaderVelElleron, { card: UnitChallengeDummyVanillaWarrior, count: 0 }],
 			})
 
-		this.createCallback(GameEventType.GAME_STARTED)
-			.require(({ group }) => group.isHuman)
-			.startDialog(
-				`
+		this.createCallback(GameEventType.GAME_STARTED).require(({ group }) => group.isHuman).startDialog(`
 				Narrator:
-				> Welcome to crash.
+				> Hello world
 				-->
-			`
-			)
+				> Other statement
+			`)
 	}
 }

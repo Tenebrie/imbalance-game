@@ -1,3 +1,4 @@
+import GameErrorMessage from '@shared/models/network/GameErrorMessage'
 import GameMessage from '@shared/models/network/GameMessage'
 import { WebMessageType } from '@shared/models/network/messageHandlers/WebMessageTypes'
 import PlayerLibrary from '@src/game/players/PlayerLibrary'
@@ -50,6 +51,15 @@ export const OutgoingGlobalMessageHandlers = {
 			player.sendGlobalMessage({
 				type: WebMessageType.GAME_DESTROYED,
 				data: message,
+			})
+		})
+	},
+
+	notifyAllPlayersAboutGameError(game: ServerGame, error: Error): void {
+		game.allPlayers.forEach((playerInGame) => {
+			playerInGame.player.sendGlobalMessage({
+				type: WebMessageType.IN_GAME_ERROR,
+				data: new GameErrorMessage(error),
 			})
 		})
 	},

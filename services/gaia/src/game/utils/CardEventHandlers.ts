@@ -1,4 +1,5 @@
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import { OutgoingGlobalMessageHandlers } from '@src/game/handlers/OutgoingGlobalMessageHandlers'
 import ServerGame from '@src/game/models/ServerGame'
 
 import EventContext from '../models/EventContext'
@@ -10,8 +11,9 @@ export function cardRequire(game: ServerGame, subscriber: EventSubscriber, func:
 	try {
 		returnValue = func()
 	} catch (error) {
-		console.error("Unexpected error in card's Require:", error)
+		console.error('Unexpected error:\n', error)
 		GameHistoryDatabase.logGameError(game, error as Error)
+		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameError(game, error as Error)
 	}
 	EventContext.clearExecutingEventSubscriber()
 	return returnValue
@@ -22,8 +24,9 @@ export function cardPerform(game: ServerGame, subscriber: EventSubscriber, func:
 	try {
 		func()
 	} catch (error) {
-		console.error("Unexpected error in card's Perform:", error)
+		console.error('Unexpected error:\n', error)
 		GameHistoryDatabase.logGameError(game, error as Error)
+		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameError(game, error as Error)
 	}
 	EventContext.clearExecutingEventSubscriber()
 }

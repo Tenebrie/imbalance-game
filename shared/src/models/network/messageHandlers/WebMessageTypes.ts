@@ -1,3 +1,4 @@
+import GameErrorMessage from '../GameErrorMessage'
 import GameMessage from '../GameMessage'
 
 export enum WebMessageType {
@@ -6,6 +7,7 @@ export enum WebMessageType {
 	GAME_CREATED = 'gameCreated',
 	GAME_UPDATED = 'gameUpdated',
 	GAME_DESTROYED = 'gameDestroyed',
+	IN_GAME_ERROR = 'inGameError',
 }
 
 export type WebMessageTypeMapping = {
@@ -14,6 +16,7 @@ export type WebMessageTypeMapping = {
 	[WebMessageType.GAME_CREATED]: GameMessage
 	[WebMessageType.GAME_UPDATED]: GameMessage
 	[WebMessageType.GAME_DESTROYED]: GameMessage
+	[WebMessageType.IN_GAME_ERROR]: GameErrorMessage
 }
 
 export type ServerToClientGlobalMessage = ProviderSideTyper<WebMessageTypeMapping>
