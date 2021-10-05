@@ -118,7 +118,8 @@ export function sortCards<T extends Card | CardMessage>(inputArray: T[]): T[] {
 
 export const compressGameTraffic = (): boolean => {
 	// @ts-ignore
-	return process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
+	// return process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
+	return true
 }
 
 export const getRandomName = (): string => {

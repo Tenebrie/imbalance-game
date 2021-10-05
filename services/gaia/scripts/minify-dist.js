@@ -22,19 +22,31 @@ glob('dist/**/*.@(js)', async (er, files) => {
 		files.map(
 			(file) =>
 				new Promise((resolve) => {
+					const options = fs.existsSync(`${file}.map`)
+						? {
+								sourceMap: {
+									content: fs.readFileSync(`${file}.map`, 'utf8'),
+									url: 'inline',
+								},
+						  }
+						: {}
+
 					resolve({
 						file,
-						...uglify.minify(fs.readFileSync(file, 'utf8'), {
-							sourceMap: {
-								url: 'inline',
-							},
-						}),
+						...uglify.minify(fs.readFileSync(file, 'utf8'), options),
 					})
 				})
 		)
 	)
 
-	await Promise.all(fileCode.map((file) => fs.writeFileSync(file.file, file.code)))
+	await Promise.all(
+		fileCode.map((file) => {
+			if (!file.code) {
+				console.log(file)
+			}
+			fs.writeFileSync(file.file, file.code)
+		})
+	)
 
 	console.info(`Successfully minified ${colorize(fileCode.length, AsciiColor.CYAN)} .js files.`)
 })
