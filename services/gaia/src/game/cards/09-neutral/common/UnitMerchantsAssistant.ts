@@ -13,7 +13,8 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitMerchantsAssistant extends ServerCard {
-	spellDiscount = asDirectBuffPotency(3)
+	public static readonly BASE_SPELL_DISCOUNT = 3
+	spellDiscount = asDirectBuffPotency(UnitMerchantsAssistant.BASE_SPELL_DISCOUNT)
 
 	constructor(game: ServerGame) {
 		super(game, {

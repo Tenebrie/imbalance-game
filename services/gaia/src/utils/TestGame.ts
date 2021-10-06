@@ -40,6 +40,7 @@ export type TestGame = {
 	opponent: TestGamePlayer
 	allPlayers: TestGamePlayer[][]
 	advanceTurn(): TestGame
+	advanceRound(): TestGame
 }
 
 export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
@@ -62,6 +63,14 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 		return gameWrapper
 	}
 
+	const advanceRound = (): TestGame => {
+		game.players.filter((group) => !group.roundEnded).forEach((group) => group.endRound())
+		game.advanceCurrentTurn()
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return gameWrapper
+	}
+
 	const gameWrapper = {
 		handle: game,
 		board: boardWrapper,
@@ -70,6 +79,7 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 		opponent: playerWrappers[1][0],
 		allPlayers: playerWrappers,
 		advanceTurn,
+		advanceRound,
 	}
 	return gameWrapper
 }
@@ -334,6 +344,7 @@ type TestGameCard = {
 	play(): TestGameCardPlayActions
 	playTo(row: 'front' | 'middle' | 'back', position: number | 'last'): TestGameCardPlayActions
 	takeDamage(damage: number): TestGameCard
+	returnToHand(): TestGameCard
 }
 
 const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame): TestGameCard => {
@@ -344,7 +355,7 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		position = position === 'last' ? targetRow.cards.length : position
 		const cardPlayed = game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(card, player), targetRow.index, position)
 		if (!cardPlayed) {
-			throw new Error('[Test] Card play declined')
+			throw new Error('[Test] Card play declined.')
 		}
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
@@ -356,6 +367,16 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		game.events.evaluateSelectors()
 		return cardWrapper
 	}
+	const returnToHand = (): TestGameCard => {
+		const unit = card.unit
+		if (!unit) {
+			throw new Error('[Test] Card does not have an associated unit.')
+		}
+		Keywords.returnCardFromBoardToHand(unit)
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return cardWrapper
+	}
 	const cardWrapper: TestGameCard = {
 		stats: card.stats,
 		buffs: wrapBuffs(game, card),
@@ -363,6 +384,7 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		play: () => playCardToRow('front', 'last'),
 		playTo: (row: RowDistanceWrapper, position: number) => playCardToRow(row, position),
 		takeDamage: (damage: number) => takeDamage(damage),
+		returnToHand: () => returnToHand(),
 	}
 	return cardWrapper
 }

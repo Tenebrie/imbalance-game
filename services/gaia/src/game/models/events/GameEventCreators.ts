@@ -1,3 +1,4 @@
+import CardLocation from '@shared/enums/CardLocation'
 import DamageSource from '@shared/enums/DamageSource'
 import GameEventType from '@shared/enums/GameEventType'
 import MoveDirection from '@shared/enums/MoveDirection'
@@ -73,6 +74,7 @@ export default {
 		effectSource: args.triggeringCard,
 		logVariables: {
 			owner: args.owner.player.id,
+			location: args.location,
 			triggeringCard: args.triggeringCard.id,
 		},
 	}),
@@ -412,6 +414,7 @@ export interface CardDrawnEventArgs extends SharedEventArgs {
 }
 export interface CardReturnedEventArgs extends SharedEventArgs {
 	owner: ServerPlayerInGame
+	location: CardLocation
 	triggeringCard: ServerCard
 }
 export interface CardPlayedEventArgs extends SharedEventArgs {

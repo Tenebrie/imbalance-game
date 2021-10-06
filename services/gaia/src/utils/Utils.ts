@@ -259,6 +259,10 @@ export const getClassFromConstructor = (constructor: BuffConstructor | CardConst
 	return constructor.name.substr(0, 1).toLowerCase() + constructor.name.substr(1)
 }
 
+export const getConstructorFromCard = (card: ServerCard): CardConstructor => {
+	return card.constructor as CardConstructor
+}
+
 export const limitValueToInterval = (min: number, value: number, max: number): number => {
 	return Math.max(min, Math.min(value, max))
 }

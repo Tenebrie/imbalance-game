@@ -10,6 +10,6 @@ export default class BuffWeakness extends ServerStackableCardBuff {
 			features: [BuffFeature.INVISIBLE],
 		})
 
-		this.createMaxPowerOverride().substract(1)
+		this.createMaxPowerOverride().substract(() => this.stacks)
 	}
 }

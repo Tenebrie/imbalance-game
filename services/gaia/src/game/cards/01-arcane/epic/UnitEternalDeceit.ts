@@ -11,7 +11,7 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitEternalDeceit extends ServerCard {
-	public static readonly POWER_PER_CARD = 1
+	public static readonly POWER_PER_CARD = 3
 	private readonly powerPerCard = UnitEternalDeceit.POWER_PER_CARD
 
 	constructor(game: ServerGame) {

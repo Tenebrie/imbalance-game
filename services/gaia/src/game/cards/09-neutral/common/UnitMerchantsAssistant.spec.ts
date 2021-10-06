@@ -1,83 +1,84 @@
-import TestGameTemplates from '../../../../utils/TestGameTemplates'
-import ServerCard from '../../../models/ServerCard'
-import ServerGame from '../../../models/ServerGame'
-import ServerOwnedCard from '../../../models/ServerOwnedCard'
-import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
+import { setupTestGame, TestGame } from '../../../../utils/TestGame'
+import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
 import TestingSpell10Mana from '../../11-testing/TestingSpell10Mana'
 import UnitMerchantsAssistant from './UnitMerchantsAssistant'
 
+const CardInTesting = UnitMerchantsAssistant
+
 describe('UnitMerchantsAssistant', () => {
-	let game: ServerGame
-	let cardInHand: ServerCard
-	let player: ServerPlayerInGame
-	let startNextRound: () => void
-	let playerAction: (callback: () => void) => void
+	let game: TestGame
 
 	beforeEach(() => {
-		;({ game, cardInHand, player, startNextRound, playerAction } = TestGameTemplates.singleCardTest(UnitMerchantsAssistant))
+		game = setupTestGame(TestingRulesetPVP)
 	})
 
-	it('makes existing spells in hand cheaper', () => {
-		player.cardHand.addSpell(new TestingSpell10Mana(game))
-		player.cardHand.addSpell(new TestingSpell10Mana(game))
-		player.cardHand.addSpell(new TestingSpell10Mana(game))
-
-		playerAction(() => {
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
+	describe('when not played', () => {
+		beforeEach(() => {
+			game.player.add(TestingSpell10Mana)
 		})
 
-		expect(player.cardHand.spellCards[0].stats.spellCost).toEqual(7)
-		expect(player.cardHand.spellCards[1].stats.spellCost).toEqual(7)
-		expect(player.cardHand.spellCards[2].stats.spellCost).toEqual(7)
+		it('spell costs basic cost', () => {
+			expect(game.player.findAt(TestingSpell10Mana, 0).stats.spellCost).toEqual(10)
+		})
 	})
 
-	it('makes spells cheaper when they get into the hand', () => {
-		playerAction(() => {
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
+	describe('when played with spells in hand', () => {
+		beforeEach(() => {
+			game.player.add(TestingSpell10Mana)
+			game.player.add(TestingSpell10Mana)
+			game.player.add(TestingSpell10Mana)
+			game.player.add(CardInTesting).play()
 		})
 
-		playerAction(() => {
-			player.cardHand.addSpell(new TestingSpell10Mana(game))
-			player.cardHand.addSpell(new TestingSpell10Mana(game))
-			player.cardHand.addSpell(new TestingSpell10Mana(game))
+		it('makes existing spells in hand cheaper', () => {
+			expect(game.player.findAt(TestingSpell10Mana, 0).stats.spellCost).toEqual(10 - UnitMerchantsAssistant.BASE_SPELL_DISCOUNT)
+			expect(game.player.findAt(TestingSpell10Mana, 1).stats.spellCost).toEqual(10 - UnitMerchantsAssistant.BASE_SPELL_DISCOUNT)
+			expect(game.player.findAt(TestingSpell10Mana, 2).stats.spellCost).toEqual(10 - UnitMerchantsAssistant.BASE_SPELL_DISCOUNT)
 		})
-
-		expect(player.cardHand.spellCards[0].stats.spellCost).toEqual(7)
-		expect(player.cardHand.spellCards[1].stats.spellCost).toEqual(7)
-		expect(player.cardHand.spellCards[2].stats.spellCost).toEqual(7)
 	})
 
-	it('removes discount after a spell is played', () => {
-		playerAction(() => {
-			player.cardHand.addSpell(new TestingSpell10Mana(game))
-			player.cardHand.addSpell(new TestingSpell10Mana(game))
-			player.cardHand.addSpell(new TestingSpell10Mana(game))
-		})
-		playerAction(() => {
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
-		})
-		playerAction(() => {
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(player.cardHand.spellCards[0], player), 0, 0)
+	describe('when receiving spells after playing', () => {
+		beforeEach(() => {
+			game.player.add(CardInTesting).play()
+			game.player.add(TestingSpell10Mana)
+			game.player.add(TestingSpell10Mana)
+			game.player.add(TestingSpell10Mana)
 		})
 
-		expect(player.cardHand.spellCards[0].stats.spellCost).toEqual(10)
-		expect(player.cardHand.spellCards[1].stats.spellCost).toEqual(10)
+		it('makes existing spells in hand cheaper', () => {
+			expect(game.player.findAt(TestingSpell10Mana, 0).stats.spellCost).toEqual(10 - UnitMerchantsAssistant.BASE_SPELL_DISCOUNT)
+			expect(game.player.findAt(TestingSpell10Mana, 1).stats.spellCost).toEqual(10 - UnitMerchantsAssistant.BASE_SPELL_DISCOUNT)
+			expect(game.player.findAt(TestingSpell10Mana, 2).stats.spellCost).toEqual(10 - UnitMerchantsAssistant.BASE_SPELL_DISCOUNT)
+		})
 	})
 
-	it('removes discount on the next round', () => {
-		playerAction(() => {
-			player.cardHand.addSpell(new TestingSpell10Mana(game))
-			player.cardHand.addSpell(new TestingSpell10Mana(game))
-			player.cardHand.addSpell(new TestingSpell10Mana(game))
-		})
-		playerAction(() => {
-			game.cardPlay.playCardFromHand(new ServerOwnedCard(cardInHand, player), 0, 0)
+	describe('when a discounted spell is played', () => {
+		beforeEach(() => {
+			game.player.addSpellMana(10)
+			game.player.add(CardInTesting).play()
+			game.player.add(TestingSpell10Mana).play()
+			game.player.add(TestingSpell10Mana)
+			game.player.add(TestingSpell10Mana)
 		})
 
-		startNextRound()
+		it('removes discount', () => {
+			expect(game.player.findAt(TestingSpell10Mana, 0).stats.spellCost).toEqual(10)
+			expect(game.player.findAt(TestingSpell10Mana, 1).stats.spellCost).toEqual(10)
+		})
+	})
 
-		expect(player.cardHand.spellCards[0].stats.spellCost).toEqual(10)
-		expect(player.cardHand.spellCards[1].stats.spellCost).toEqual(10)
-		expect(player.cardHand.spellCards[2].stats.spellCost).toEqual(10)
+	describe('when the round ends', () => {
+		beforeEach(() => {
+			game.player.add(CardInTesting).play()
+			game.player.add(TestingSpell10Mana)
+			game.player.add(TestingSpell10Mana)
+			game.player.add(TestingSpell10Mana)
+			game.advanceRound()
+		})
+
+		it('removes discount', () => {
+			expect(game.player.findAt(TestingSpell10Mana, 0).stats.spellCost).toEqual(10)
+			expect(game.player.findAt(TestingSpell10Mana, 1).stats.spellCost).toEqual(10)
+		})
 	})
 })

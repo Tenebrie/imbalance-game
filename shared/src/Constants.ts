@@ -1,4 +1,4 @@
-export default {
+const Constants = {
 	MAX_CARDS_PER_ROW: 11,
 
 	CARD_LIMIT_LEADER: 1,
@@ -12,3 +12,5 @@ export default {
 	CARD_COPIES_LIMIT_SILVER: 2,
 	CARD_COPIES_LIMIT_BRONZE: 3,
 }
+
+export default Constants

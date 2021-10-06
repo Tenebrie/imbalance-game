@@ -78,6 +78,12 @@ export default class ServerBuffContainer implements BuffContainer {
 		if (typeof count === 'function') {
 			count = count(source)
 		}
+
+		// if (count === 0) {
+		// 	return
+		// }
+
+		const buffs = []
 		for (let i = 0; i < count; i++) {
 			const newBuff = new prototype({
 				parent: this.parent,
@@ -85,6 +91,7 @@ export default class ServerBuffContainer implements BuffContainer {
 				duration,
 				selector: null,
 			})
+			buffs.push(newBuff)
 			if (!this.buffSkipsAnimation(newBuff) && !mergeAnimation) {
 				this.game.animation.createAnimationThread()
 			}
@@ -94,17 +101,14 @@ export default class ServerBuffContainer implements BuffContainer {
 			}
 		}
 
-		const exampleBuff = new prototype({
-			parent: this.parent,
-			source,
-			duration,
-			selector: null,
-		})
-		if (!this.buffSkipsAnimation(exampleBuff) && mergeAnimation) {
-			if (this.parent instanceof ServerCard && this.parent.isVisuallyRendered) {
-				this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.parent], exampleBuff.alignment))
-			} else if (this.parent instanceof ServerBoardRow) {
-				this.game.animation.play(ServerAnimation.rowsReceivedBuff([this.parent], exampleBuff.alignment))
+		if (count > 0) {
+			const exampleBuff = buffs[0]
+			if (!this.buffSkipsAnimation(exampleBuff) && mergeAnimation) {
+				if (this.parent instanceof ServerCard && this.parent.isVisuallyRendered) {
+					this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.parent], exampleBuff.alignment))
+				} else if (this.parent instanceof ServerBoardRow) {
+					this.game.animation.play(ServerAnimation.rowsReceivedBuff([this.parent], exampleBuff.alignment))
+				}
 			}
 		}
 	}
@@ -151,6 +155,7 @@ export default class ServerBuffContainer implements BuffContainer {
 			this.removeAllSystemDispellable({ skipAnimation: true })
 		}
 
+		let toUnsub = false
 		const duplicatedBuff = this.buffs.find((buff) => buff.class === newBuff.class)
 		if (
 			duplicatedBuff &&
@@ -159,6 +164,7 @@ export default class ServerBuffContainer implements BuffContainer {
 			newBuff.selector === null
 		) {
 			duplicatedBuff.stacks += 1
+			toUnsub = true
 		} else {
 			this.buffs.push(newBuff)
 		}
@@ -179,6 +185,10 @@ export default class ServerBuffContainer implements BuffContainer {
 					triggeringBuff: newBuff,
 				})
 			)
+		}
+
+		if (toUnsub) {
+			this.game.events.unsubscribe(newBuff)
 		}
 
 		if (this.parent instanceof ServerCard) {

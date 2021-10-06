@@ -1,3 +1,7 @@
+import {
+	AnimationMessageType,
+	ServerToClientGameMessage,
+} from '../../../../../../../shared/src/models/network/messageHandlers/ServerToClientGameMessages'
 import { setupTestGame, TestGame } from '../../../../utils/TestGame'
 import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
 import TestingUnit100Power from '../../11-testing/TestingUnit100Power'
@@ -73,6 +77,32 @@ describe('UnitHandOfAreddon', () => {
 
 		it('does not destroy the third ally', () => {
 			expect(game.board.count(TestingUnitNoEffect)).toEqual(1)
+		})
+	})
+
+	describe('networking', () => {
+		let spy: jest.SpyInstance<void, [json: ServerToClientGameMessage]>
+
+		const getSentMessages = (fromIndex = 0) => spy.mock.calls.map((call) => call[0]).slice(fromIndex)
+
+		beforeEach(() => {
+			spy = jest.spyOn(game.player.handle.player.gameWebSocket!, 'send')
+			game.player.summon(TestingUnitNoEffect)
+			game.player.summon(TestingUnit100Power)
+			game.player.summon(TestingUnit100Power)
+			game.player.summon(TestingUnit100Power)
+			game.player.summon(TestingUnit100Power)
+			game.player.add(CardInTesting).playTo('front', 3)
+		})
+
+		it('starts and closes the correct animation thread count', () => {
+			const messages = getSentMessages()
+			const createMessages = messages.filter((message: ServerToClientGameMessage) => message.type === AnimationMessageType.THREAD_CREATE)
+			const commitMessages = messages.filter((message: ServerToClientGameMessage) => message.type === AnimationMessageType.THREAD_COMMIT)
+			const startMessages = messages.filter((message: ServerToClientGameMessage) => message.type === AnimationMessageType.THREAD_START)
+			expect(createMessages.length).toEqual(commitMessages.length)
+			expect(createMessages.length).toEqual(startMessages.length)
+			expect(commitMessages.length).toEqual(startMessages.length)
 		})
 	})
 })

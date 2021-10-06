@@ -117,7 +117,22 @@ const Keywords = {
 		owner.cardGraveyard.addCard(card)
 	},
 
-	returnCardToDeck: (card: ServerCard): void => {
+	returnCardFromBoardToHand: (unit: ServerUnit): void => {
+		const card = unit.card
+		const owner = card.ownerPlayer
+		card.game.board.removeUnit(unit)
+		owner.cardHand.addUnit(card)
+		card.game.events.postEvent(
+			GameEventCreators.cardReturned({
+				game: card.game,
+				owner: owner,
+				location: CardLocation.HAND,
+				triggeringCard: card,
+			})
+		)
+	},
+
+	returnCardFromHandToDeck: (card: ServerCard): void => {
 		const owner = card.ownerPlayer
 		owner.cardHand.discardCard(card)
 		if (card.type === CardType.UNIT) {
@@ -129,6 +144,7 @@ const Keywords = {
 			GameEventCreators.cardReturned({
 				game: card.game,
 				owner: owner,
+				location: CardLocation.DECK,
 				triggeringCard: card,
 			})
 		)

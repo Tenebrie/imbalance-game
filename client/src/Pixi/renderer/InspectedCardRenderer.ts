@@ -25,7 +25,7 @@ class InspectedCardRenderer {
 
 	public tick(): void {
 		this.container.visible = !!Core.input.inspectedCard
-		if (Core.input.inspectedCard) {
+		if (Core.input.inspectedCard && Core.input.inspectedCard.hasVisualPosition()) {
 			this.renderInspectedCard(Core.input.inspectedCard)
 		}
 	}

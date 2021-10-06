@@ -113,6 +113,9 @@ export default class Input {
 
 	public tick(): void {
 		this.updateCardHoverStatus()
+		if (this.inspectedCard && !this.inspectedCard.hasVisualPosition()) {
+			store.dispatch.inspectedCard.clear()
+		}
 	}
 
 	public updateGrabbedCard(): void {

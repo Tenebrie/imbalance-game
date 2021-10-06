@@ -29,8 +29,8 @@ export class StatOverrideBuilder {
 		return this
 	}
 
-	public substract(valueToSubstract: number): StatOverrideBuilder {
-		this.callbacks.push((value) => value - valueToSubstract)
+	public substract(valueOrGetter: number | (() => number)): StatOverrideBuilder {
+		this.callbacks.push((value) => value - collapseNumber(valueOrGetter))
 		return this
 	}
 
