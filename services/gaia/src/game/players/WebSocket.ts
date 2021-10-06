@@ -69,6 +69,7 @@ export class GameWebSocket extends WebSocket {
 		this.queue.push(json)
 		if (json.type === AnimationMessageType.EXECUTE_QUEUE) {
 			const optimizerResponse = optimizeWebSocketQueue(this.queue)
+			// const optimizerResponse = { queue: this.queue }
 			optimizerResponse.queue.forEach((queuedJson) => super.send(queuedJson))
 			this.queue = []
 		}

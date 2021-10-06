@@ -9,10 +9,10 @@ import ServerDamageInstance from './ServerDamageSource'
 import ServerGame from './ServerGame'
 
 export default class ServerUnit implements Unit {
-	game: ServerGame
-	card: ServerCard
-	owner: ServerPlayerGroup
-	originalOwner: ServerPlayerInGame
+	public readonly game: ServerGame
+	public readonly card: ServerCard
+	public owner: ServerPlayerGroup
+	public readonly originalOwner: ServerPlayerInGame
 
 	constructor(game: ServerGame, card: ServerCard, owner: ServerPlayerGroup, originalOwner: ServerPlayerInGame) {
 		this.game = game
@@ -21,11 +21,11 @@ export default class ServerUnit implements Unit {
 		this.originalOwner = originalOwner
 	}
 
-	get rowIndex(): number {
+	public get rowIndex(): number {
 		return this.game.board.rows.indexOf(this.game.board.getRowWithUnit(this)!)
 	}
 
-	get unitIndex(): number {
+	public get unitIndex(): number {
 		const unitRow = this.game.board.rows[this.rowIndex]
 		if (!unitRow) {
 			return -1
@@ -33,27 +33,27 @@ export default class ServerUnit implements Unit {
 		return unitRow.cards.indexOf(this)
 	}
 
-	get buffs(): ServerBuffContainer {
+	public get buffs(): ServerBuffContainer {
 		return this.card.buffs
 	}
 
-	dealDamage(damageInstance: ServerDamageInstance): void {
+	public dealDamage(damageInstance: ServerDamageInstance): void {
 		this.card.dealDamage(damageInstance)
 	}
 
-	heal(healingInstance: ServerDamageInstance): void {
+	public heal(healingInstance: ServerDamageInstance): void {
 		this.card.heal(healingInstance)
 	}
 
-	isAlive(): boolean {
+	public isAlive(): boolean {
 		return !this.card.isDead
 	}
 
-	isDead(): boolean {
+	public isDead(): boolean {
 		return this.card.isDead
 	}
 
-	getValidOrders(): OrderTarget[] {
+	public getValidOrders(): OrderTarget[] {
 		return this.card.targeting.getOrderTargets(this.game.board.orders.getOrdersPerformedByUnit(this))
 	}
 }

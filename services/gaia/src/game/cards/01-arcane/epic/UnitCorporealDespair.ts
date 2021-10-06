@@ -6,6 +6,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
 import BuffStrength from '@src/game/buffs/BuffStrength'
+import BuffWeaknessHidden from '@src/game/buffs/BuffWeaknessHidden'
 import UnitShadow from '@src/game/cards/01-arcane/tokens/UnitShadow'
 import Keywords from '@src/utils/Keywords'
 
@@ -40,19 +41,22 @@ export default class UnitCorporealDespair extends ServerCard {
 			.require(({ targetRow }) => targetRow.cards.some((unit) => unit.card.tribes.includes(CardTribe.VOIDSPAWN)))
 			.perform(({ targetRow }) => {
 				const units = targetRow.cards.filter((unit) => unit.card.tribes.includes(CardTribe.VOIDSPAWN))
-				const totalPower = units.reduce((totalValue, unit) => totalValue + unit.card.stats.power, 0)
 
-				units.forEach((unit) =>
+				const card = Keywords.createCard.forOwnerOf(this).fromConstructor(UnitShadow)
+				card.buffs.add(BuffWeaknessHidden, null, 'default')
+				units.forEach((unit) => {
 					game.animation.thread(() => {
+						const power = unit.card.stats.power
 						Keywords.destroyUnit({
 							unit,
 							source: this,
+							affectedCards: [card],
 						})
+						card.buffs.addMultiple(BuffStrength, power, null, 'default', true)
 					})
-				)
+				})
+
 				game.animation.syncAnimationThreads()
-				const card = Keywords.createCard.forOwnerOf(this).fromConstructor(UnitShadow)
-				card.buffs.addMultiple(BuffStrength, totalPower - 1, this)
 			})
 
 		// No valid rows -> just create a shadow

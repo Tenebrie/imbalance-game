@@ -89,6 +89,10 @@ export default class ServerBoard implements Board {
 		return leaderPower + boardPower
 	}
 
+	public isPositionAdjacentToUnit(unit: ServerUnit, rowIndex: number, unitIndex: number): boolean {
+		return unit.rowIndex === rowIndex && unitIndex <= unit.unitIndex + 1 && unitIndex >= unit.unitIndex
+	}
+
 	public getHorizontalUnitDistance(first: ServerUnit, second: ServerUnit): number {
 		const firstOffsetFromCenter = first.unitIndex - (this.rows[first.rowIndex].cards.length - 1) / 2
 		const secondOffsetFromCenter = second.unitIndex - (this.rows[second.rowIndex].cards.length - 1) / 2
@@ -314,8 +318,10 @@ export default class ServerBoard implements Board {
 			return
 		}
 
+		const adjustment = fromRow === targetRow && unit.unitIndex < unitIndex ? -1 : 0
+
 		fromRow.removeUnitLocally(unit)
-		targetRow.insertUnitLocally(unit, unitIndex)
+		targetRow.insertUnitLocally(unit, unitIndex + adjustment)
 		OutgoingMessageHandlers.notifyAboutUnitMoved(unit)
 
 		this.game.animation.play(ServerAnimation.unitMove())
@@ -375,7 +381,7 @@ export default class ServerBoard implements Board {
 	 * Target unit is destroyed and removed from the board.
 	 * The associated card is then cleansed and transferred to the owner's graveyard with 0 Power.
 	 */
-	public destroyUnit(unit: ServerUnit, destroyer?: ServerCard): void {
+	public destroyUnit(unit: ServerUnit, destroyer?: ServerCard, affectedCards?: ServerCard[]): void {
 		if (this.unitsBeingDestroyed.includes(unit)) {
 			return
 		}
@@ -411,7 +417,11 @@ export default class ServerBoard implements Board {
 			})
 		)
 
-		this.game.animation.play(ServerAnimation.unitDestroy(card))
+		if (affectedCards) {
+			this.game.animation.play(ServerAnimation.unitDestroyWithAffect(card, affectedCards))
+		} else {
+			this.game.animation.play(ServerAnimation.unitDestroy(card))
+		}
 		// card.cleanse()
 		this.removeUnit(unit)
 

@@ -5,6 +5,7 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import ServerAnimation from '@src/game/models/ServerAnimation'
 import ServerDamageInstance from '@src/game/models/ServerDamageSource'
 import Keywords from '@src/utils/Keywords'
 
@@ -50,7 +51,9 @@ export default class UnitVoidslinger extends ServerCard {
 				Keywords.destroyUnit({
 					unit: targetUnit,
 					source: this,
+					affectedCards: [this],
 				})
+				game.animation.play(ServerAnimation.cardInfuse(this))
 			})
 
 		this.createDeployTargets(TargetType.UNIT)

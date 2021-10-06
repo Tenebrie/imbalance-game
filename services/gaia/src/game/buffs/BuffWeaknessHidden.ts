@@ -3,11 +3,11 @@ import BuffFeature from '@shared/enums/BuffFeature'
 
 import { BuffConstructorParams, ServerStackableCardBuff } from '../models/buffs/ServerBuff'
 
-export default class BuffWeakness extends ServerStackableCardBuff {
+export default class BuffWeaknessHidden extends ServerStackableCardBuff {
 	constructor(params: BuffConstructorParams) {
 		super(params, {
 			alignment: BuffAlignment.NEGATIVE,
-			features: [BuffFeature.INVISIBLE],
+			features: [BuffFeature.INVISIBLE, BuffFeature.SKIP_ANIMATION],
 		})
 
 		this.createMaxPowerOverride().substract(1)

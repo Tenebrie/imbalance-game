@@ -41,9 +41,6 @@ glob('dist/**/*.@(js)', async (er, files) => {
 
 	await Promise.all(
 		fileCode.map((file) => {
-			if (!file.code) {
-				console.log(file)
-			}
 			fs.writeFileSync(file.file, file.code)
 		})
 	)

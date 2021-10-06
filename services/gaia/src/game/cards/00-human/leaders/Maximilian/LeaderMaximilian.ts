@@ -3,13 +3,14 @@ import CardFaction from '@shared/enums/CardFaction'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
+import SpellTacticalRetreat from '@src/game/cards/00-human/leaders/Maximilian/SpellTacticalRetreat'
 import { AnyCardLocation, getLeaderTextVariables } from '@src/utils/Utils'
 
 import ServerCard from '../../../../models/ServerCard'
 import ServerGame from '../../../../models/ServerGame'
 import SpellQuickStrike from './SpellQuickStrike'
 import SpellReinforcements from './SpellReinforcements'
-import SpellTacticalMove from './SpellTacticalMove'
+import SpellTacticalAdvance from './SpellTacticalAdvance'
 
 export default class LeaderMaximilian extends ServerCard {
 	manaPerRound = 10
@@ -24,7 +25,7 @@ export default class LeaderMaximilian extends ServerCard {
 			},
 			sortPriority: 0,
 			expansionSet: ExpansionSet.BASE,
-			deckAddedCards: [SpellQuickStrike, SpellTacticalMove, SpellTacticalMove, SpellReinforcements],
+			deckAddedCards: [SpellQuickStrike, SpellTacticalAdvance, SpellTacticalRetreat, SpellReinforcements],
 		})
 		this.dynamicTextVariables = {
 			manaPerRound: this.manaPerRound,

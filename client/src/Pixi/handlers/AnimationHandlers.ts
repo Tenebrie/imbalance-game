@@ -4,6 +4,7 @@ import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimPa
 import CardReceivedBuffAnimParams from '@shared/models/animations/CardReceivedBuffAnimParams'
 import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
 import RowReceivedBuffAnimParams from '@shared/models/animations/RowReceivedBuffAnimParams'
+import UnitDestroyedWithAffectAnimParams from '@shared/models/animations/UnitDestroyedWithAffectAnimParams'
 import AnimationMessage from '@shared/models/network/AnimationMessage'
 import * as PIXI from 'pixi.js'
 
@@ -256,6 +257,22 @@ const handlers: { [index in AnimationType]: (message: AnimationMessage, params: 
 			return
 		}
 		Core.particleSystem.createUnitIncapacitateParticleEffect(targetUnit)
+		targetUnit.fadeOut()
+	},
+
+	[AnimationType.UNIT_DESTROY_WITH_AFFECT]: (message: AnimationMessage, params: UnitDestroyedWithAffectAnimParams) => {
+		const targetUnit = Core.board.findUnitById(message.targetCardId!)
+		if (!targetUnit) {
+			return
+		}
+		Core.particleSystem.createUnitIncapacitateParticleEffect(targetUnit)
+		params.affectedCardIDs.forEach((affectedCardId) => {
+			const affectedCard = Core.game.findRenderedCardById(affectedCardId)
+			if (!affectedCard) {
+				return
+			}
+			Core.mainHandler.projectileSystem.createCardAffectProjectile(targetUnit.card, affectedCard)
+		})
 		targetUnit.fadeOut()
 	},
 

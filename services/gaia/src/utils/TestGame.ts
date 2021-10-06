@@ -12,6 +12,7 @@ import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import ServerCardStats from '@src/game/models/ServerCardStats'
+import { DeployTarget, PlayTarget } from '@src/game/models/ServerCardTargeting'
 import ServerDamageInstance from '@src/game/models/ServerDamageSource'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import ServerUnit from '@src/game/models/ServerUnit'
@@ -128,6 +129,7 @@ type TestGameUnit = {
 	variables: RichTextVariables
 	tribes: CardTribe[]
 	getRow(): RowDistanceWrapper
+	getRowPosition(): number
 	orderOnFirst(): void
 	takeDamage(damage: number): TestGameUnit
 	transformInto(card: CardConstructor): TestGameUnit
@@ -165,6 +167,7 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		variables: unit.card.variables,
 		tribes: unit.card.tribes,
 		getRow: () => wrapRowDistance(unit),
+		getRowPosition: () => unit.unitIndex,
 		orderOnFirst: () => orderOnFirst(),
 		takeDamage: (damage: number) => takeDamage(damage),
 		transformInto: (card: CardConstructor) => transformInto(card),
@@ -329,16 +332,17 @@ type TestGameCard = {
 	buffs: TestGameBuffs
 	location: CardLocation
 	play(): TestGameCardPlayActions
-	playTo(row: 'front' | 'middle' | 'back'): TestGameCardPlayActions
+	playTo(row: 'front' | 'middle' | 'back', position: number | 'last'): TestGameCardPlayActions
 	takeDamage(damage: number): TestGameCard
 }
 
 const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame): TestGameCard => {
-	const playCardToRow = (row: RowDistanceWrapper): TestGameCardPlayActions => {
+	const playCardToRow = (row: RowDistanceWrapper, position: number | 'last'): TestGameCardPlayActions => {
 		const distance = unwrapRowDistance(row, game, player)
 		const rowOwner = card.features.includes(CardFeature.SPY) ? player.opponent : player
 		const targetRow = game.board.getRowWithDistanceToFront(rowOwner, distance)
-		const cardPlayed = game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(card, player), targetRow.index, targetRow.cards.length)
+		position = position === 'last' ? targetRow.cards.length : position
+		const cardPlayed = game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(card, player), targetRow.index, position)
 		if (!cardPlayed) {
 			throw new Error('[Test] Card play declined')
 		}
@@ -356,8 +360,8 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		stats: card.stats,
 		buffs: wrapBuffs(game, card),
 		location: card.location,
-		play: () => playCardToRow('front'),
-		playTo: (row: RowDistanceWrapper) => playCardToRow(row),
+		play: () => playCardToRow('front', 'last'),
+		playTo: (row: RowDistanceWrapper, position: number) => playCardToRow(row, position),
 		takeDamage: (damage: number) => takeDamage(damage),
 	}
 	return cardWrapper
@@ -403,12 +407,17 @@ const setupCardPlayStack = (game: ServerGame): TestGamePlayStack => {
  * Play stack action wrapper
  */
 type TestGameCardPlayActions = {
+	countOptions(): number
 	targetFirst(): TestGameCardPlayActions
 	targetLast(): TestGameCardPlayActions
+	targetNth(n: number): TestGameCardPlayActions
 }
 
 const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestGameCardPlayActions => {
-	const resolvingCard = {
+	const resolvingCard: TestGameCardPlayActions = {
+		countOptions: () => {
+			return game.cardPlay.getResolvingCardTargets().length
+		},
 		targetFirst: () => {
 			const validTargets = game.cardPlay.getResolvingCardTargets()
 			const chosenTarget = validTargets[0]
@@ -427,8 +436,40 @@ const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestG
 			game.events.evaluateSelectors()
 			return resolvingCard
 		},
+		targetNth: (n: number) => {
+			const validTargets = game.cardPlay.getResolvingCardTargets()
+			const chosenTarget = validTargets[n]
+			if (!chosenTarget) throw new Error('No valid target!')
+			game.cardPlay.selectCardTarget(player, chosenTarget.target)
+			game.events.resolveEvents()
+			game.events.evaluateSelectors()
+			return resolvingCard
+		},
 	}
 	return resolvingCard
+}
+
+/**
+ * Play stack targeting action wrapper
+ */
+type TestGameCardTarget = {
+	select(): TestGameCardPlayActions
+}
+
+const wrapCardTarget = (
+	game: ServerGame,
+	player: ServerPlayerInGame,
+	playActions: TestGameCardPlayActions,
+	target: PlayTarget | DeployTarget
+): TestGameCardTarget => {
+	return {
+		select: () => {
+			game.cardPlay.selectCardTarget(player, target.target)
+			game.events.resolveEvents()
+			game.events.evaluateSelectors()
+			return playActions
+		},
+	}
 }
 
 /**

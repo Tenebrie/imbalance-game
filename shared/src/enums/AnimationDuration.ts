@@ -20,6 +20,7 @@ const AnimationDuration: { [index in AnimationType]: number } = {
 	[AnimationType.UNIVERSE_HEAL]: 500,
 	[AnimationType.UNIT_DEPLOY]: 750,
 	[AnimationType.UNIT_DESTROY]: 500,
+	[AnimationType.UNIT_DESTROY_WITH_AFFECT]: 500,
 	[AnimationType.UNIT_MOVE]: 750,
 	[AnimationType.CARD_RECEIVED_BUFF]: 500,
 	[AnimationType.ROWS_RECEIVED_BUFF]: 500,

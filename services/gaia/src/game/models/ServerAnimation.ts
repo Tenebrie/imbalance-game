@@ -5,6 +5,7 @@ import CardAnnounceAnimParams from '@shared/models/animations/CardAnnounceAnimPa
 import CardReceivedBuffAnimParams from '@shared/models/animations/CardReceivedBuffAnimParams'
 import DelayAnimParams from '@shared/models/animations/DelayAnimParams'
 import RowReceivedBuffAnimParams from '@shared/models/animations/RowReceivedBuffAnimParams'
+import UnitDestroyedWithAffectAnimParams from '@shared/models/animations/UnitDestroyedWithAffectAnimParams'
 import BoardRow from '@shared/models/BoardRow'
 import Card from '@shared/models/Card'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
@@ -154,6 +155,15 @@ export default class ServerAnimation implements Animation {
 
 	public static unitDestroy(targetCard: ServerCard): ServerAnimation {
 		const animation = new ServerAnimation(AnimationType.UNIT_DESTROY, {})
+		animation.targetCard = targetCard
+		return animation
+	}
+
+	public static unitDestroyWithAffect(targetCard: ServerCard, affectedCards: ServerCard[]): ServerAnimation {
+		const params: UnitDestroyedWithAffectAnimParams = {
+			affectedCardIDs: affectedCards.map((card) => card.id),
+		}
+		const animation = new ServerAnimation(AnimationType.UNIT_DESTROY_WITH_AFFECT, params)
 		animation.targetCard = targetCard
 		return animation
 	}

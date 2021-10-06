@@ -72,7 +72,8 @@ export default class ServerBuffContainer implements BuffContainer {
 		prototype: BuffConstructor,
 		count: number | LeaderStatValueGetter,
 		source: ServerBuffSource | null,
-		duration: number | 'default' = 'default'
+		duration: number | 'default' = 'default',
+		mergeAnimation = false
 	): void {
 		if (typeof count === 'function') {
 			count = count(source)
@@ -84,12 +85,26 @@ export default class ServerBuffContainer implements BuffContainer {
 				duration,
 				selector: null,
 			})
-			if (!this.buffSkipsAnimation(newBuff)) {
+			if (!this.buffSkipsAnimation(newBuff) && !mergeAnimation) {
 				this.game.animation.createAnimationThread()
 			}
-			this.addInstance(newBuff, source)
-			if (!this.buffSkipsAnimation(newBuff)) {
+			this.addInstance(newBuff, source, mergeAnimation)
+			if (!this.buffSkipsAnimation(newBuff) && !mergeAnimation) {
 				this.game.animation.commitAnimationThread()
+			}
+		}
+
+		const exampleBuff = new prototype({
+			parent: this.parent,
+			source,
+			duration,
+			selector: null,
+		})
+		if (!this.buffSkipsAnimation(exampleBuff) && mergeAnimation) {
+			if (this.parent instanceof ServerCard && this.parent.isVisuallyRendered) {
+				this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.parent], exampleBuff.alignment))
+			} else if (this.parent instanceof ServerBoardRow) {
+				this.game.animation.play(ServerAnimation.rowsReceivedBuff([this.parent], exampleBuff.alignment))
 			}
 		}
 	}
@@ -119,7 +134,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		)
 	}
 
-	private addInstance(newBuff: ServerBuff, source: ServerBuffSource): void {
+	private addInstance(newBuff: ServerBuff, source: ServerBuffSource, skipAnimation = false): void {
 		if (source && !this.buffSkipsAnimation(newBuff)) {
 			if (this.parent instanceof ServerCard && source instanceof ServerCard && this.parent.isVisuallyRendered) {
 				this.game.animation.play(ServerAnimation.cardAffectsCards(source, [this.parent]))
@@ -170,7 +185,7 @@ export default class ServerBuffContainer implements BuffContainer {
 			OutgoingMessageHandlers.notifyAboutCardStatsChange(this.parent)
 		}
 
-		if (!this.buffSkipsAnimation(newBuff)) {
+		if (!this.buffSkipsAnimation(newBuff) && !skipAnimation) {
 			if (this.parent instanceof ServerCard && this.parent.isVisuallyRendered) {
 				this.game.animation.play(ServerAnimation.cardsReceivedBuff([this.parent], newBuff.alignment))
 			} else if (this.parent instanceof ServerBoardRow) {

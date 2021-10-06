@@ -74,7 +74,7 @@ describe('UnitCorporealDespair', () => {
 		})
 
 		it('combined shadow has default power', () => {
-			expect(game.player.find(UnitShadow).stats.power).toEqual(1)
+			expect(game.player.find(UnitShadow).stats.power).toEqual(0)
 		})
 	})
 

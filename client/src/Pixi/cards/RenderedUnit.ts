@@ -23,6 +23,7 @@ export default class RenderedUnit implements Unit {
 	}
 
 	public fadeOut(): void {
+		this.isFadingOut = true
 		setTimeout(() => {
 			this.isFadingOut = true
 		}, 100)

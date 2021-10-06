@@ -669,6 +669,7 @@ export default class Renderer {
 			container.position.x = targetPositionX
 			container.position.y = targetPositionY
 		}
+
 		container.zIndex = UNIT_ZINDEX
 
 		sprite.width = cardHeight * this.CARD_ASPECT_RATIO

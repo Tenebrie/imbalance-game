@@ -6,9 +6,11 @@ import {
 	AnimationMessageType,
 	BundleMessageType,
 	CardUpdateMessageType,
+	GameSyncMessageType,
 	PlayerUpdateMessageType,
 	ServerToClientGameMessage,
 	ServerToClientGameMessageSelector,
+	ServerToClientGameMessageTypes,
 	ServerToClientMessageTypeMappers,
 } from '@shared/models/network/messageHandlers/ServerToClientGameMessages'
 
@@ -27,14 +29,23 @@ export const optimizeWebSocketQueue = (queue: ServerToClientGameMessage[]): WebS
 		message,
 	}))
 
-	// May need to be disabled for performance reasons
 	// Identical messages
+	const mergeableMessages: ServerToClientGameMessageTypes[] = [
+		CardUpdateMessageType.STATS,
+		CardUpdateMessageType.VARIABLES,
+		GameSyncMessageType.PHASE_ADVANCE,
+	]
 	tempQueue = (() => {
 		let count = 0
 		const swapQueue: WrappedMessage[] = Array(tempQueue.length)
 		tempQueue.forEach((m1) => {
 			const m2 = swapQueue[count - 1]
-			if (!m2 || m1.message.type !== m2.message.type || JSON.stringify(m1.message) !== JSON.stringify(m2.message)) {
+			if (
+				!m2 ||
+				!mergeableMessages.includes(m1.message.type) ||
+				m1.message.type !== m2.message.type ||
+				JSON.stringify(m1.message) !== JSON.stringify(m2.message)
+			) {
 				swapQueue[count++] = m1
 			}
 		})

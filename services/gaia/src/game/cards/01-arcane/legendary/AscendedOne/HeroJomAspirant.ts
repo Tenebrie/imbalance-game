@@ -24,6 +24,7 @@ export default class HeroJomAspirant extends ServerCard {
 			},
 			relatedCards: [HeroJomNeophyte],
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			armorRequired: HeroJomAspirant.ARMOR_REQUIRED,

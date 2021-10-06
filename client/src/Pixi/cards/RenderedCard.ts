@@ -252,6 +252,15 @@ export default class RenderedCard implements Card {
 		return new PIXI.Point(this.hitboxSprite.position.x, this.hitboxSprite.position.y)
 	}
 
+	public hasVisualPosition(): boolean {
+		try {
+			new PIXI.Point(this.coreContainer.position.x + this.sprite.position.x, this.coreContainer.position.y + this.sprite.position.y)
+			return true
+		} catch (err) {
+			return false
+		}
+	}
+
 	public getVisualPosition(): PIXI.Point {
 		try {
 			return new PIXI.Point(this.coreContainer.position.x + this.sprite.position.x, this.coreContainer.position.y + this.sprite.position.y)

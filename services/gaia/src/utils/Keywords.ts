@@ -1,6 +1,7 @@
 import Constants from '@shared/Constants'
 import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
+import BuffStrength from '@src/game/buffs/BuffStrength'
 import UnitShatteredSpace from '@src/game/cards/01-arcane/tokens/UnitShatteredSpace'
 import GameEventCreators, { GameEvent } from '@src/game/models/events/GameEventCreators'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
@@ -39,7 +40,7 @@ const addCardToHand = (player: ServerPlayerInGame | null, card: ServerCard): Ser
 	return card
 }
 
-export default {
+const Keywords = {
 	moveUnit: (unit: ServerUnit, rowOrIndex: number | ServerBoardRow, unitIndex: number): void => {
 		unit.game.board.moveUnit(unit, toRowIndex(rowOrIndex), unitIndex)
 	},
@@ -156,12 +157,9 @@ export default {
 		return unit.game.board.createUnit(CardLibrary.instantiate(unit.game, targetCard), unit.originalOwner, rowIndex, unitIndex)
 	},
 
-	destroyUnit: (args: { unit: ServerUnit; source?: ServerCard }) => {
-		const { unit, source } = args
-		if (source) {
-			unit.game.animation.play(ServerAnimation.cardAffectsCards(source, [unit.card]))
-		}
-		unit.game.board.destroyUnit(unit)
+	destroyUnit: (args: { unit: ServerUnit; source?: ServerCard; affectedCards?: ServerCard[] }) => {
+		const { unit, source, affectedCards } = args
+		unit.game.board.destroyUnit(unit, source, affectedCards)
 	},
 
 	destroy: {
@@ -234,9 +232,6 @@ export default {
 	},
 
 	createCard: {
-		fromExisting: (card: ServerCard, owner: ServerPlayerInGame) => {
-			card.game.cardPlay.playCardToResolutionStack(new ServerOwnedCard(card, owner))
-		},
 		forOwnerOf: (card: ServerCard) => ({
 			fromClass: (cardClass: string): ServerCard => {
 				const newCard = CardLibrary.instantiateFromClass(card.game, cardClass)
@@ -344,6 +339,27 @@ export default {
 		}),
 	}),
 
+	consume: {
+		units: (args: { targets: ServerUnit[]; consumer: ServerCard }): void => {
+			const { targets, consumer } = args
+
+			consumer.game.animation.play(
+				ServerAnimation.cardAffectsCards(
+					consumer,
+					targets.map((unit) => unit.card)
+				)
+			)
+			targets.forEach((unit) => {
+				consumer.game.animation.instantThread(() => {
+					const power = unit.card.stats.power
+					Keywords.destroyUnit({ unit, affectedCards: [consumer] })
+					consumer.buffs.addMultiple(BuffStrength, power, null, 'default', true)
+				})
+			})
+			consumer.game.animation.syncAnimationThreads()
+		},
+	},
+
 	shatter: (count: number, owner: ServerPlayerInGame) => ({
 		on: (targetRow: ServerBoardRow) => {
 			for (let i = 0; i < count; i++) {
@@ -356,5 +372,7 @@ export default {
 		},
 	}),
 }
+
+export default Keywords
 
 /* eslint @typescript-eslint/explicit-module-boundary-types: 0 */

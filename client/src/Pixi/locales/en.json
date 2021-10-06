@@ -210,7 +210,7 @@
 	"card.feature.keywordCreate.name": "Create",
 	"card.feature.keywordCreate.description": "Play a new copy of a card.",
 	"card.feature.keywordConsume.name": "Consume",
-	"card.feature.keywordConsume.description": "Destroy the card and add its' Power to own Power.",
+	"card.feature.keywordConsume.description": "Destroy the card and add its' Power to this card.",
 	"card.feature.keywordShatter.name": "Shatter",
 	"card.feature.keywordShatter.description": "Reduce the maximum number of units on a row by the current round number.",
 	"card.feature.keywordTransform.name": "Transform",
@@ -402,6 +402,9 @@
 	"buff.buffNoArmor.description": "This unit's Armor has been removed.",
 
 	"buff.buffRowBloodMoon.name": "Blood Moon",
+
+	"label.chooseUnit": "Choose a unit",
+	"label.moveHere": "Move here",
 
 	"card.leaderVelElleron.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Battlemage</if>",
 	"card.leaderVelElleron.title": "<if inGame>The Battlemage</if>",
@@ -740,11 +743,6 @@
 
 	"card.spellQuickStrike.name": "Quick Strike",
 	"card.spellQuickStrike.description": "Deal {damage} Damage to an enemy unit.",
-
-	"card.spellTacticalMove.name": "Tactical Move",
-	"card.spellTacticalMove.description": "*Move 1* an allied unit.<p>If it moved to the front row,\ndeal {damage} Damage to opposing enemy units.\nOtherwise, *Heal* {healing}.",
-	"card.spellTacticalMove.target.label.unit": "Choose a unit",
-	"card.spellTacticalMove.target.label.row": "Move here",
 
 	"card.spellReinforcements.name": "Reinforcements",
 	"card.spellReinforcements.description": "*Draw* a card.<p>You can play an extra unit card this turn.",

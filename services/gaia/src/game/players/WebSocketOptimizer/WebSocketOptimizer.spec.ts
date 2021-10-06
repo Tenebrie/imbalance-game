@@ -64,6 +64,34 @@ describe('WebSocketOptimizer', () => {
 					])
 				)
 			})
+
+			it('does not remove animation messages', () => {
+				const queue: ServerToClientGameMessage[] = [
+					mockMessage(GameSyncMessageType.START),
+					mockMessage(AnimationMessageType.THREAD_CREATE),
+					mockMessage(AnimationMessageType.THREAD_CREATE),
+					mockMessage(AnimationMessageType.THREAD_COMMIT),
+					mockMessage(AnimationMessageType.THREAD_COMMIT),
+					mockMessage(AnimationMessageType.THREAD_START),
+					mockMessage(AnimationMessageType.THREAD_START),
+					mockMessage(AnimationMessageType.EXECUTE_QUEUE),
+				]
+
+				const response = optimizeWebSocketQueue(queue)
+
+				expect(JSON.stringify(response.queue)).toEqual(
+					JSON.stringify([
+						mockMessage(GameSyncMessageType.START),
+						mockMessage(AnimationMessageType.THREAD_CREATE),
+						mockMessage(AnimationMessageType.THREAD_CREATE),
+						mockMessage(AnimationMessageType.THREAD_COMMIT),
+						mockMessage(AnimationMessageType.THREAD_COMMIT),
+						mockMessage(AnimationMessageType.THREAD_START),
+						mockMessage(AnimationMessageType.THREAD_START),
+						mockMessage(AnimationMessageType.EXECUTE_QUEUE),
+					])
+				)
+			})
 		})
 	})
 
@@ -87,6 +115,7 @@ describe('WebSocketOptimizer', () => {
 			it('merges buffs together', () => {
 				expect(optimizerSpy).toHaveBeenCalled()
 				const response = optimizerSpy.mock.results[optimizerSpy.mock.results.length - 1].value as WebSocketOptimizerResponse
+				console.log(getStats(response))
 				expect(Object.values(getStats(response)).every((v) => v <= 3)).toEqual(true)
 			})
 		})

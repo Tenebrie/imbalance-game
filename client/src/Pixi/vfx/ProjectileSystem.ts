@@ -22,21 +22,21 @@ export default class ProjectileSystem {
 
 		this.projectiles.forEach((projectile) => {
 			projectile.currentTime += deltaTime
-			const targetPoint = projectile.targetCard
-				? projectile.targetCard.getPosition()
-				: projectile.targetMouse
-				? Core.input.mousePosition.clone()
-				: projectile.targetPoint
-				? projectile.targetPoint.clone()
-				: new PIXI.Point(0, 0)
+			const targetPoint =
+				projectile.targetCard && projectile.targetCard.hasVisualPosition()
+					? projectile.targetCard.getVisualPosition()
+					: projectile.targetPoint
+					? projectile.targetPoint.clone()
+					: new PIXI.Point(0, 0)
+			const initialTargetPoint = projectile.targetPoint || new PIXI.Point(0, 0)
 
 			const currentTime = Math.min(projectile.currentTime, projectile.animationDuration)
 			const timePosition = currentTime / projectile.animationDuration
 			const quadOffset = projectile.curve * (-4 * Math.pow(timePosition - 0.5, 2) + 1) * (350 + projectile.randomnessFactor * 50)
 
-			if (projectile.startingPoint.x <= targetPoint.x) {
+			if (projectile.startingPoint.x <= initialTargetPoint.x) {
 				targetPoint.x += quadOffset
-			} else if (projectile.startingPoint.x > targetPoint.x) {
+			} else if (projectile.startingPoint.x > initialTargetPoint.x) {
 				targetPoint.x -= quadOffset
 			}
 

@@ -9,7 +9,6 @@ export default class RenderedProjectile {
 	startingPoint: PIXI.Point
 	targetCard: RenderedCard | null = null
 	targetPoint: PIXI.Point | null = null
-	targetMouse = false
 	currentTime: number
 	animationDuration: number
 	lifetime: number
@@ -46,6 +45,7 @@ export default class RenderedProjectile {
 	): RenderedProjectile {
 		const projectile = new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime, curve)
 		projectile.targetCard = targetCard
+		projectile.targetPoint = targetCard.getVisualPosition()
 		return projectile
 	}
 
@@ -59,18 +59,6 @@ export default class RenderedProjectile {
 	): RenderedProjectile {
 		const projectile = new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime, curve)
 		projectile.targetPoint = targetPoint.clone()
-		return projectile
-	}
-
-	public static targetMouse(
-		sprite: PIXI.Sprite,
-		startingPoint: PIXI.Point,
-		animationDuration: number,
-		lifetime: number,
-		curve = 1
-	): RenderedProjectile {
-		const projectile = new RenderedProjectile(sprite, startingPoint, animationDuration, lifetime, curve)
-		projectile.targetMouse = true
 		return projectile
 	}
 }
