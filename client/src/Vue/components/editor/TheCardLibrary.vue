@@ -19,7 +19,7 @@ import Fuse from 'fuse.js'
 import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
 
 import Localization from '@/Pixi/Localization'
-import { insertRichTextVariables, snakeToCamelCase } from '@/utils/Utils'
+import { insertRichTextVariables, mergeCardFeatures, snakeToCamelCase } from '@/utils/Utils'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
@@ -64,7 +64,7 @@ export default defineComponent({
 			}
 
 			const mapLocalizedFeatures = (card: CardMessage, locale: 'current' | 'original'): string[] => {
-				return card.baseFeatures
+				return mergeCardFeatures(card.baseFeatures, card.buffs.buffs)
 					.map((feature) => `card.feature.${snakeToCamelCase(CardFeature[feature])}.text`)
 					.map((id) => (locale === 'current' ? Localization.get(id) : Localization.getOriginal(id)))
 					.filter((string) => string !== null) as string[]

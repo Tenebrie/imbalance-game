@@ -1,7 +1,10 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
+import Buff from '@shared/models/Buff'
 import Card from '@shared/models/Card'
 import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
+import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import { getMaxCardCopiesForColor, getMaxCardCountForColor } from '@shared/Utils'
@@ -13,6 +16,14 @@ import Core from '@/Pixi/Core'
 import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 import Localization from '@/Pixi/Localization'
 import store from '@/Vue/store'
+
+export const mergeCardFeatures = (baseFeatures: CardFeature[], buffs: (Buff | BuffMessage)[]): CardFeature[] => {
+	let features = baseFeatures.slice()
+	buffs.forEach((buff) => {
+		features = features.concat(buff.cardFeatures.slice())
+	})
+	return [...new Set(features)]
+}
 
 export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
 	return Core.board.isInverted && player === 'player' ? Core.constants.GAME_BOARD_ROW_COUNT - index - 1 : index

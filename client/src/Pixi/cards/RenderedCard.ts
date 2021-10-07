@@ -26,7 +26,7 @@ import RichTextAlign from '@/Pixi/render/RichTextAlign'
 import ScalingText from '@/Pixi/render/ScalingText'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
-import Utils, { snakeToCamelCase } from '@/utils/Utils'
+import Utils, { mergeCardFeatures, snakeToCamelCase } from '@/utils/Utils'
 import store from '@/Vue/store'
 
 type WorkshopCardProps = {
@@ -279,11 +279,7 @@ export default class RenderedCard implements Card {
 	}
 
 	public get features(): CardFeature[] {
-		let features = this.baseFeatures.slice()
-		this.buffs.buffs.forEach((buff) => {
-			features = features.concat(buff.cardFeatures.slice())
-		})
-		return [...new Set(features)]
+		return mergeCardFeatures(this.baseFeatures, this.buffs.buffs)
 	}
 
 	public get displayedDescription(): string {

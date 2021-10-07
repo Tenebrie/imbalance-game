@@ -739,7 +739,7 @@
 	"card.leaderMaximilian.name": "<if inGame><c=black>*{playerName}*</c></if><ifn inGame>The Commander</if>",
 	"card.leaderMaximilian.title": "<if inGame>The Commander</if>",
 	"card.leaderMaximilian.listName": "The Commander",
-	"card.leaderMaximilian.description": "*Human Leader*<p>*Round start:*\nGain +{manaPerRound} Mana<p>Gets two copies of *Tactical Move*",
+	"card.leaderMaximilian.description": "*Human Leader*<p>*Round start:*\nGain +{manaPerRound} Mana.",
 
 	"card.spellQuickStrike.name": "Quick Strike",
 	"card.spellQuickStrike.description": "Deal {damage} Damage to an enemy unit.",
