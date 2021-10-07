@@ -275,7 +275,6 @@ describe('ServerTenScriptParser', () => {
 			`
 			)
 
-			// console.log(parsedScript.errors[0].message)
 			expect(parsedScript.errors).toEqual([])
 			expect(parsedScript.statements).toEqual([
 				{

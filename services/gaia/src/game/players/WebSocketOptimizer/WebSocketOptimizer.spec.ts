@@ -115,7 +115,6 @@ describe('WebSocketOptimizer', () => {
 			it('merges buffs together', () => {
 				expect(optimizerSpy).toHaveBeenCalled()
 				const response = optimizerSpy.mock.results[optimizerSpy.mock.results.length - 1].value as WebSocketOptimizerResponse
-				console.log(getStats(response))
 				expect(Object.values(getStats(response)).every((v) => v <= 3)).toEqual(true)
 			})
 		})

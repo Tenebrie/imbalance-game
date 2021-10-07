@@ -121,6 +121,14 @@ const router = createRouter({
 			},
 		},
 		{
+			path: '/feedback',
+			name: 'feedback',
+			component: () => import('@/Vue/components/feedback/FeedbackView.vue'),
+			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+				requireAuthentication(next)
+			},
+		},
+		{
 			path: '/game',
 			name: 'game',
 			component: () => import('@/Vue/views/GameView.vue'),

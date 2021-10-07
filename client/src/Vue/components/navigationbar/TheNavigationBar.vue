@@ -19,15 +19,15 @@
 				</router-link>
 			</div>
 			<div class="link-container">
-				<router-link :to="{ name: 'rules' }" class="router-link">
-					<i class="fas fa-check" />
-					{{ $locale.get('ui.navigation.rules') }}
-				</router-link>
-			</div>
-			<div class="link-container">
 				<router-link :to="{ name: 'workshop' }" class="router-link">
 					<i class="fas fa-wrench" />
 					{{ $locale.get('ui.navigation.workshop') }}
+				</router-link>
+			</div>
+			<div class="link-container">
+				<router-link :to="{ name: 'feedback' }" class="router-link">
+					<i class="fas fa-comment" />
+					{{ $locale.get('ui.navigation.feedback') }}
 				</router-link>
 			</div>
 			<div class="link-container">

@@ -7,7 +7,6 @@
 					<span class="image"><img src="../../../assets/discord.svg" alt="Discord group link" /></span>
 					Discord
 				</button>
-				<button @click="onShowRules" class="primary game-button">Rules</button>
 				<button @click="onShowGameLog" class="primary game-button">Game history</button>
 				<div class="menu-separator"></div>
 				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>

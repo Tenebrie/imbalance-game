@@ -1,5 +1,6 @@
 import AsciiColor from '@src/enums/AsciiColor'
 import ServerGame from '@src/game/models/ServerGame'
+import ServerPlayer from '@src/game/players/ServerPlayer'
 import { colorize } from '@src/utils/Utils'
 import axios from 'axios'
 import fs from 'fs'
@@ -43,7 +44,15 @@ class DiscordIntegration {
 		}
 	}
 
-	public sendError(game: ServerGame, error: Error): void {
+	public sendFeedback(player: ServerPlayer, feedback: string, contactInfo: string): Promise<boolean> {
+		let message = [`Feedback received from player **${player.username}** | **${player.email}**`, '**Text:**', feedback, '----------']
+		if (contactInfo.length > 0) {
+			message = message.concat(['**Contact info:**', contactInfo, '----------'])
+		}
+		return this.sendMessage('feedback', message.join('\n'))
+	}
+
+	public sendError(game: ServerGame, error: Error): Promise<boolean> {
 		const message = [
 			'Normal game error has occurred.',
 			`- **Ruleset:** ${game.ruleset.class}`,
@@ -52,10 +61,10 @@ class DiscordIntegration {
 			error.stack,
 			'```',
 		]
-		this.sendMessage('alerts', message.join('\n'))
+		return this.sendMessage('alerts', message.join('\n'))
 	}
 
-	public sendFatalError(game: ServerGame, error: Error): void {
+	public sendFatalError(game: ServerGame, error: Error): Promise<boolean> {
 		const message = [
 			'Fatal game error has occurred.',
 			`- **Ruleset:** ${game.ruleset.class}`,
@@ -64,20 +73,51 @@ class DiscordIntegration {
 			error.stack,
 			'```',
 		]
-		this.sendMessage('alerts', message.join('\n'))
+		return this.sendMessage('alerts', message.join('\n'))
 	}
 
-	public sendMessage(channel: 'alerts' | 'feedback', message: string): void {
+	public async sendMessage(channel: 'alerts' | 'feedback', message: string): Promise<boolean> {
 		const formattedMessage = this.pingRoleId ? `<@&${this.pingRoleId}> ${message}` : message
-		if (channel === 'alerts' && this.hookLinks.alerts) {
-			axios.post(this.hookLinks.alerts, {
-				content: formattedMessage,
-			})
-		} else if (channel === 'feedback' && this.hookLinks.feedback) {
-			axios.post(this.hookLinks.feedback, {
-				content: formattedMessage,
+		try {
+			if (channel === 'alerts' && this.hookLinks.alerts) {
+				await this.sendMessageChunks(this.hookLinks.alerts, formattedMessage)
+			} else if (channel === 'feedback' && this.hookLinks.feedback) {
+				await this.sendMessageChunks(this.hookLinks.feedback, formattedMessage)
+			}
+			return true
+		} catch (error) {
+			console.error('Unable to send message to Discord', error)
+			return false
+		}
+	}
+
+	public async sendMessageChunks(url: string, message: string): Promise<boolean> {
+		const bigLines = message.split('\n')
+		const lines: string[] = bigLines.flatMap((line) => line.match(/.{1,1999}/g) || [])
+
+		const chunks: string[] = []
+		let currentChunk = ''
+		for (let i = 0; i < lines.length; i++) {
+			const line = lines[i]
+			if (currentChunk.length + line.length < 2000) {
+				currentChunk += '\n' + line
+			} else {
+				chunks.push(currentChunk)
+				currentChunk = line
+			}
+		}
+		chunks.push(currentChunk)
+		if (chunks.length > 5) {
+			console.error(`Message too long: ${message.length} characters.`)
+			return false
+		}
+
+		for (let i = 0; i < chunks.length; i++) {
+			await axios.post(url, {
+				content: chunks[i],
 			})
 		}
+		return true
 	}
 
 	private static assembleDiscordLink(path: string | undefined): string | null {
