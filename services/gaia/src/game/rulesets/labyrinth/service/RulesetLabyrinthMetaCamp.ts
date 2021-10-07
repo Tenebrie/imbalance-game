@@ -73,14 +73,14 @@ export default class RulesetLabyrinthMetaCamp extends ServerRuleset {
 				game.progression.labyrinth.setExpectedPlayers(2)
 			}
 
-			game.finish(game.getHumanGroup(), 'Starting new run', true)
+			game.systemFinish(game.getHumanGroup(), 'Starting new run', true)
 			OutgoingMessageHandlers.executeMessageQueue(game)
 		}
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthContinueRun)
 			.perform(({ game }) => {
-				game.finish(game.getHumanGroup(), 'Continuing existing run', true)
+				game.systemFinish(game.getHumanGroup(), 'Continuing existing run', true)
 			})
 	}
 }

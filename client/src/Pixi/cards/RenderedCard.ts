@@ -58,7 +58,8 @@ export default class RenderedCard implements Card {
 	public isHidden: boolean
 
 	public coreContainer: PIXI.Container
-	public sprite: PIXI.Sprite
+	public sprite: PIXI.Container
+	public artwork: PIXI.Sprite
 	public hitboxSprite: PIXI.Sprite
 	public displayMode = CardDisplayMode.UNDEFINED
 
@@ -106,8 +107,10 @@ export default class RenderedCard implements Card {
 
 		this.isHidden = message.isHidden
 
-		const spriteTexture = message.workshopImage ? message.workshopImage : TextureAtlas.getTexture(`cards/${this.class}`)
-		this.sprite = new PIXI.Sprite(spriteTexture)
+		const artworkTexture = message.workshopImage ? message.workshopImage : TextureAtlas.getTexture(`cards/${this.class}`)
+		this.sprite = new PIXI.Container()
+		this.artwork = new PIXI.Sprite(artworkTexture)
+		this.sprite.addChild(this.artwork)
 		const powerTextValue = this.type === CardType.UNIT ? this.stats.power : this.stats.spellCost
 		this.powerText = this.createBrushScriptText(powerTextValue.toString())
 		this.armorText = this.createBrushScriptText(this.stats.armor.toString())
@@ -124,15 +127,15 @@ export default class RenderedCard implements Card {
 			.map((tribe) => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
 			.concat((message.workshopTribes || []).map((tribe) => this.createTitleText(tribe)))
 		this.cardDescriptionText = new RichText(this.displayedDescription, 370, this.getDescriptionTextVariables())
-		this.hitboxSprite = this.createHitboxSprite(this.sprite)
+		this.hitboxSprite = this.createHitboxSprite(this.artwork)
 
 		this.sprite.alpha = 0
-		this.sprite.anchor.set(0.5)
+		this.artwork.anchor.set(0.5)
 
 		/* Internal container */
 		const internalContainer = new PIXI.Container()
-		internalContainer.position.x = -this.sprite.texture.width / 2
-		internalContainer.position.y = -this.sprite.texture.height / 2
+		internalContainer.position.x = -this.artwork.texture.width / 2
+		internalContainer.position.y = -this.artwork.texture.height / 2
 		this.sprite.addChild(internalContainer)
 
 		/* Card quality overlay */
@@ -158,16 +161,18 @@ export default class RenderedCard implements Card {
 		this.cardModeContainer.addChild(new PIXI.Sprite(TextureAtlas.getTexture('components/bg-name')))
 		this.descriptionTextBackground = new DescriptionTextBackground()
 		if (Localization.getCardDescription(this)) {
-			this.descriptionTextBackground.position.set(0, this.sprite.texture.height + 1)
+			this.descriptionTextBackground.position.set(0, this.artwork.texture.height + 1)
 			this.cardDescriptionText.setBackground(this.descriptionTextBackground)
 			this.cardModeContainer.addChild(this.descriptionTextBackground)
 		}
 		const tribeCount = this.tribes.length + (message.workshopTribes || []).length
+		const tribesContainer = new PIXI.Container()
 		for (let i = 0; i < tribeCount; i++) {
 			const tribeBackgroundSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-tribe'))
 			tribeBackgroundSprite.position.y += i * 40
-			this.cardModeContainer.addChild(tribeBackgroundSprite)
+			tribesContainer.addChild(tribeBackgroundSprite)
 		}
+		this.cardModeContainer.addChild(tribesContainer)
 		this.powerTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power'))
 		this.armorTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-armor'))
 		this.manacostTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-manacost'))

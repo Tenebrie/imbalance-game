@@ -7,6 +7,12 @@ import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import { CARD_HEIGHT, CARD_WIDTH } from '@/Pixi/renderer/RendererUtils'
 import store from '@/Vue/store'
 
+export type WorkshopCardProps = {
+	workshopTitle: string
+	workshopImage: PIXI.Texture
+	workshopTribes: string[]
+}
+
 class EditorCardRenderer {
 	pixi: PIXI.Renderer
 	renderTexture: PIXI.RenderTexture
@@ -58,13 +64,16 @@ class EditorCardRenderer {
 		}, 0)
 	}
 
-	public doRender(card: CardMessage): HTMLCanvasElement {
+	public doRender(card: CardMessage & Partial<WorkshopCardProps>, hideArtwork = false): HTMLCanvasElement {
 		const renderedCard = new RenderedCard(card)
 		renderedCard.setDisplayMode(CardDisplayMode.IN_EDITOR)
 
 		renderedCard.coreContainer.position.set(CARD_WIDTH / 2, CARD_HEIGHT / 2)
 
 		renderedCard.sprite.alpha = 1
+		if (hideArtwork) {
+			renderedCard.artwork.alpha = 0
+		}
 		renderedCard.coreContainer.visible = true
 		this.pixi.render(renderedCard.coreContainer, this.renderTexture)
 

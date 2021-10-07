@@ -30,7 +30,6 @@ class PlayQueueRenderer {
 		const container = card.coreContainer
 		const sprite = card.sprite
 		sprite.alpha = 1
-		sprite.tint = 0xffffff
 		sprite.scale.set(Core.renderer.superSamplingLevel)
 		container.visible = true
 		container.zIndex = RESOLVING_CARD_ZINDEX + index

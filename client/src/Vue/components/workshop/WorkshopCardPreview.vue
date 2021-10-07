@@ -1,5 +1,14 @@
 <template>
-	<div class="workshop-card-preview" ref="previewContainerRef"></div>
+	<div
+		class="canvas-container"
+		@mousedown="onDragStart"
+		@mousemove="onDragMove"
+		@mouseup="onDragEnd"
+		@mouseleave="onDragEnd"
+		:onwheel="onCanvasScroll"
+	>
+		<canvas id="workshop-card-canvas" width="408" height="584" ref="canvasRef" class="preview-canvas" />
+	</div>
 </template>
 
 <script lang="ts">
@@ -8,8 +17,9 @@ import { throttle } from 'throttle-debounce'
 import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
 
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
-import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
-import { WorkshopCardProps } from '@/Vue/components/workshop/WorkshopView.vue'
+import { editorCardRenderer, WorkshopCardProps } from '@/utils/editor/EditorCardRenderer'
+
+type Point = { x: number; y: number }
 
 export default defineComponent({
 	props: {
@@ -17,36 +27,174 @@ export default defineComponent({
 			type: Object as PropType<CardMessage & WorkshopCardProps>,
 			required: true,
 		},
+		customArt: {
+			type: Object as PropType<HTMLImageElement | null>,
+		},
 	},
 
 	setup(props) {
+		const imageRef = ref<HTMLImageElement | null>(null)
+		const canvasRef = ref<HTMLCanvasElement | null>(null)
+		const baseImageRef = ref<HTMLImageElement | null>(null)
+
+		const overlayImageRef = ref<HTMLCanvasElement | null>(null)
+
+		const dragStartPoint = ref<Point | null>(null)
+		const dragMousePoint = ref<Point | null>(null)
+
+		const imageScaleRef = ref<number>(1)
+		const imageOffsetRef = ref<Point>({ x: 0, y: 0 })
+
+		onMounted(() => {
+			const image = new Image()
+			image.onload = function () {
+				renderFinalCanvas()
+			}
+			image.src = '/assets/masks/card-bg.png'
+
+			if (props.customArt) {
+				loadCustomArtFromProps()
+			}
+
+			baseImageRef.value = image
+		})
+
+		watch(
+			() => [props.customArt],
+			() => {
+				imageScaleRef.value = 1
+				imageOffsetRef.value = { x: 0, y: 0 }
+				loadCustomArtFromProps()
+			}
+		)
+
+		const loadCustomArtFromProps = () => {
+			imageRef.value = props.customArt || null
+
+			const value = imageRef.value
+			if (value) {
+				imageScaleRef.value = 584 / value.height
+				imageOffsetRef.value = { x: 0, y: 0 }
+				value.onload = () => {
+					imageScaleRef.value = 584 / value.height
+					renderFinalCanvas()
+				}
+				renderOverlayCanvas()
+				renderFinalCanvas()
+			}
+		}
+
+		const renderFinalCanvas = () => {
+			const image = imageRef.value
+			const canvas = canvasRef.value
+			const baseImage = baseImageRef.value
+			if (!canvas || !baseImage) {
+				return
+			}
+
+			const ctx = canvas.getContext('2d')!
+			ctx.resetTransform()
+			ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+			ctx.globalCompositeOperation = 'source-over'
+			ctx.drawImage(baseImage, 0, 0)
+
+			const imageScale = imageScaleRef.value
+			let currentImageOffset = {
+				...imageOffsetRef.value,
+			}
+			if (dragStartPoint.value && dragMousePoint.value) {
+				currentImageOffset.x -= (dragStartPoint.value.x - dragMousePoint.value.x) / imageScale
+				currentImageOffset.y -= (dragStartPoint.value.y - dragMousePoint.value.y) / imageScale
+			}
+
+			ctx.globalCompositeOperation = 'source-atop'
+			ctx.translate(canvas.width / 2, canvas.height / 2)
+			ctx.scale(imageScale, imageScale)
+			ctx.translate(-canvas.width / 2, -canvas.height / 2)
+			ctx.translate(currentImageOffset.x, currentImageOffset.y)
+			if (image) {
+				ctx.drawImage(image, 0, 0)
+			}
+
+			ctx.resetTransform()
+
+			const overlayImage = overlayImageRef.value
+			if (overlayImage) {
+				ctx.drawImage(overlayImage, 0, 0)
+			}
+		}
+
+		const onCanvasScroll = (event: WheelEvent) => {
+			const delta = event.deltaY
+			event.preventDefault()
+			if ((delta > 0 && imageScaleRef.value < 0.05) || (delta < 0 && imageScaleRef.value > 2)) {
+				return
+			}
+			const divider = event.shiftKey ? 20000 : 2500
+			imageScaleRef.value -= delta / divider
+			renderFinalCanvas()
+		}
+
+		const onDragStart = (event: MouseEvent) => {
+			dragStartPoint.value = {
+				x: event.clientX,
+				y: event.clientY,
+			}
+			dragMousePoint.value = {
+				x: event.clientX,
+				y: event.clientY,
+			}
+			renderFinalCanvas()
+		}
+
+		const onDragMove = (event: MouseEvent) => {
+			dragMousePoint.value = {
+				x: event.clientX,
+				y: event.clientY,
+			}
+			renderFinalCanvas()
+		}
+
+		const onDragEnd = () => {
+			if (!dragStartPoint.value || !dragMousePoint.value) {
+				return
+			}
+
+			const imageScale = imageScaleRef.value
+			imageOffsetRef.value.x -= (dragStartPoint.value.x - dragMousePoint.value.x) / imageScale
+			imageOffsetRef.value.y -= (dragStartPoint.value.y - dragMousePoint.value.y) / imageScale
+			dragStartPoint.value = null
+			dragMousePoint.value = null
+			console.log(imageOffsetRef.value)
+			renderFinalCanvas()
+		}
+
 		onMounted(async () => {
 			await TextureAtlas.loadCard(props.card, () => {
-				renderCard()
+				renderOverlayCanvasThrottled()
 			})
 		})
 
 		watch(
 			() => [props.card],
 			() => {
-				renderCard()
+				renderOverlayCanvasThrottled()
 			}
 		)
 
-		const previewContainerRef = ref<HTMLDivElement>()
-		const renderCard = throttle(50, () => {
-			const container = previewContainerRef.value
-			while (container && container.children.length > 0) {
-				container.removeChild(container.children[0])
-			}
-
-			const image = editorCardRenderer.doRender(props.card)
-			image.id = 'workshop-image-preview'
-			container?.appendChild(image)
-		})
+		const renderOverlayCanvas = () => {
+			overlayImageRef.value = editorCardRenderer.doRender(props.card, !!props.customArt)
+			renderFinalCanvas()
+		}
+		const renderOverlayCanvasThrottled = throttle(50, renderOverlayCanvas)
 
 		return {
-			previewContainerRef,
+			onCanvasScroll,
+			onDragStart,
+			onDragMove,
+			onDragEnd,
+			canvasRef,
 		}
 	},
 })
@@ -55,10 +203,15 @@ export default defineComponent({
 <style scoped lang="scss">
 @import '../../styles/generic';
 
-.workshop-card-preview {
+.canvas-container {
 	display: flex;
 	height: 100%;
 	align-items: center;
 	justify-content: center;
+	cursor: grab;
+}
+
+.canvas-container:active {
+	cursor: grabbing;
 }
 </style>

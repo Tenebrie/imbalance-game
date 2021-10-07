@@ -305,4 +305,16 @@ div.menu-separator {
 	margin: 8px 0;
 	background: $COLOR_BACKGROUND_GAME_MENU_BORDER;
 }
+
+.action-explanation {
+	margin-bottom: 16px;
+	text-align: left;
+	width: 100%;
+	color: gray;
+	font-style: italic;
+
+	&:last-of-type {
+		margin-bottom: 0;
+	}
+}
 </style>

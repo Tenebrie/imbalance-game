@@ -451,10 +451,10 @@ export default class ServerGame implements SourceGame {
 			} else if (victoriousPlayer.isHuman && defeatedPlayer.isBot) {
 				victoryReason = 'Player won vs AI'
 			}
-			this.finish(this.getOpponent(defeatedPlayer), victoryReason)
+			this.playerFinish(this.getOpponent(defeatedPlayer), victoryReason)
 			return
 		} else if (this.players.every((player) => player.roundWins >= roundWinsRequired)) {
-			this.finish(null, 'Game ended with a draw')
+			this.playerFinish(null, 'Game ended with a draw')
 			return
 		}
 
@@ -508,7 +508,7 @@ export default class ServerGame implements SourceGame {
 		player.showMulliganCards()
 	}
 
-	public finish(victoriousPlayer: ServerPlayerGroup | null, victoryReason: string, chainImmediately = false): void {
+	public playerFinish(victoriousPlayer: ServerPlayerGroup | null, victoryReason: string, chainImmediately = false): void {
 		if (this.turnPhase === GameTurnPhase.AFTER_GAME) {
 			return
 		}
@@ -536,6 +536,10 @@ export default class ServerGame implements SourceGame {
 		victoryReason = hookValues.victoryReason
 		chainImmediately = hookValues.chainImmediately
 
+		this.systemFinish(victoriousPlayer, victoryReason, chainImmediately)
+	}
+
+	public systemFinish(victoriousPlayer: ServerPlayerGroup | null, victoryReason: string, chainImmediately = false): void {
 		this.setTurnPhase(GameTurnPhase.AFTER_GAME)
 
 		this.events.postEvent(

@@ -6,8 +6,7 @@
 import CardMessage from '@shared/models/network/card/CardMessage'
 import { defineComponent, PropType } from 'vue'
 
-import { editorCardRenderer } from '@/utils/editor/EditorCardRenderer'
-import { WorkshopCardProps } from '@/Vue/components/workshop/WorkshopView.vue'
+import { WorkshopCardProps } from '@/utils/editor/EditorCardRenderer'
 
 interface Props {
 	name: string
@@ -28,11 +27,10 @@ export default defineComponent({
 
 	setup(props: Props) {
 		const onClick = () => {
-			const image = editorCardRenderer.doRender(props.card)
-
+			const canvas = document.getElementById('workshop-card-canvas') as HTMLCanvasElement
 			const a = document.createElement('a')
 			a.style.display = 'none'
-			a.href = image.toDataURL('image/png').replace('image/png', 'image/octet-stream')
+			a.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
 			a.download = `${props.name}.png`
 			document.body.appendChild(a)
 			a.click()

@@ -166,17 +166,6 @@ export default defineComponent({
 			}
 		}
 	}
-	.action-explanation {
-		margin-bottom: 16px;
-		text-align: left;
-		width: 100%;
-		color: gray;
-		font-style: italic;
-
-		&:last-of-type {
-			margin-bottom: 0;
-		}
-	}
 	.separator {
 		width: 100%;
 		height: 1px;

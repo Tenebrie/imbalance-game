@@ -34,7 +34,6 @@ class InspectedCardRenderer {
 		const container = inspectedCard.coreContainer
 		const sprite = inspectedCard.sprite
 
-		sprite.tint = 0xffffff
 		sprite.alpha = 1
 
 		const cardHeight = CARD_HEIGHT * Core.renderer.superSamplingLevel * window.devicePixelRatio

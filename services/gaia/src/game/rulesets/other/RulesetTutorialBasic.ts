@@ -246,7 +246,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					)
 					.closingChapter('Finish', () => {
 						this.finalDialogShown = true
-						game.finish(game.getHumanGroup(), victoryReason)
+						game.playerFinish(game.getHumanGroup(), victoryReason)
 					})
 			})
 
@@ -309,7 +309,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					)
 					.closingChapter('End', () => {
 						this.finalDialogShown = true
-						game.finish(game.getBotPlayer().group, 'Story trigger')
+						game.playerFinish(game.getBotPlayer().group, 'Story trigger')
 					})
 			})
 
@@ -524,7 +524,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					)
 					.closingChapter('Close', () => {
 						this.finalDialogShown = true
-						game.finish(game.getHumanGroup(), 'Story trigger')
+						game.playerFinish(game.getHumanGroup(), 'Story trigger')
 					})
 			})
 

@@ -2,15 +2,34 @@
 	<div class="workshop-view">
 		<div class="container">
 			<div class="preview">
-				<WorkshopCardPreview v-if="currentImage" :card="cardPreview" />
+				<WorkshopCardPreview v-if="currentImage" :card="cardPreview" :custom-art="customArtImage" />
 			</div>
 			<div class="settings">
 				<div class="data-fields">
-					<div class="data-field-container">
-						<div class="card-class">
-							<label for="card-class">Class</label>
-							<input id="card-class" type="text" v-model="cardClass" />
-							<button class="primary game-button" @click="randomizeClass">Randomize artwork</button>
+					<div class="data-field-horizontal">
+						<div class="data-field-container">
+							<div class="card-class">
+								<label for="card-class">Class</label>
+								<input id="card-class" type="text" v-model="cardClass" />
+								<button class="primary game-button" @click="randomizeClass">Randomize artwork</button>
+							</div>
+						</div>
+						<div class="data-field-container">
+							<div class="card-custom-art-file">
+								<span>Custom art</span>
+								<input type="text" disabled class="custom-art-file-name" ref="artFileNameInputRef" />
+								<div class="label-sizer">
+									<label for="myfile" class="button primary"><i class="fas fa-upload" /> Select a file</label>
+									<input
+										@change="onFileSelected"
+										ref="fileSelectorRef"
+										type="file"
+										id="myfile"
+										name="myfile"
+										accept="image/png, image/jpeg, image/webp"
+									/>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="data-field-container">
@@ -60,7 +79,8 @@
 					</div>
 				</div>
 				<div class="export-container">
-					<WorkshopDownloadButton :name="cardClass" :card="cardPreview" />
+					<WorkshopDownloadButton :name="downloadedCardName" :card="cardPreview" />
+					<div class="action-explanation">Alternatively, Ctrl+Click on the card, and press Save or Copy.</div>
 				</div>
 			</div>
 		</div>
@@ -77,23 +97,60 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 import { getRandomName, initializeEnumRecord } from '@shared/Utils'
 import * as PIXI from 'pixi.js'
 import { debounce } from 'throttle-debounce'
-import { computed, defineComponent, onMounted, Ref, ref, watch } from 'vue'
+import { computed, defineComponent, onMounted, onUnmounted, Ref, ref, watch } from 'vue'
 
+import { WorkshopCardProps } from '@/utils/editor/EditorCardRenderer'
+import { snakeToCamelCase } from '@/utils/Utils'
 import WorkshopCardPreview from '@/Vue/components/workshop/WorkshopCardPreview.vue'
 import WorkshopDownloadButton from '@/Vue/components/workshop/WorkshopDownloadButton.vue'
-
-export type WorkshopCardProps = {
-	workshopTitle: string
-	workshopImage: PIXI.Texture
-	workshopTribes: string[]
-}
 
 export default defineComponent({
 	components: { WorkshopDownloadButton, WorkshopCardPreview },
 	setup() {
 		const cardClass = ref<string>('')
-		const loadImage = () => {
-			const texture = PIXI.Texture.from(`/api/workshop/artwork?seed=${encodeURIComponent(cardClass.value)}`)
+		const customArtImage = ref<HTMLImageElement | null>(null)
+
+		onMounted(() => {
+			window.addEventListener('paste', onPagePaste)
+		})
+		onUnmounted(() => {
+			window.removeEventListener('paste', onPagePaste)
+		})
+
+		const onPagePaste = (event: Event) => {
+			const typedEvent = event as ClipboardEvent
+			const items = typedEvent.clipboardData?.items || []
+
+			for (let i = 0; i < items.length; i++) {
+				if (items[i].type.indexOf('image') == -1) continue
+				const blob = (items[i] as DataTransferItem).getAsFile()
+				if (blob) {
+					loadFromFile(blob)
+				}
+			}
+		}
+
+		const artFileNameInputRef = ref<HTMLInputElement | null>(null)
+		const onFileSelected = (event: any) => {
+			const files = event.target.files
+			loadFromFile(files[0])
+		}
+
+		const loadFromFile = (file: File): void => {
+			const fileReader = new FileReader()
+			fileReader.onload = async () => {
+				const image = new Image()
+				image.src = fileReader.result as string
+				customArtImage.value = image
+			}
+			if (artFileNameInputRef.value) {
+				artFileNameInputRef.value!.value = file.name
+			}
+			fileReader.readAsDataURL(file)
+		}
+
+		const loadImage = (source: string | HTMLImageElement): void => {
+			const texture = PIXI.Texture.from(source)
 
 			texture.baseTexture.on('loaded', () => {
 				imageLoaded.value = true
@@ -104,25 +161,37 @@ export default defineComponent({
 				currentImage.value = texture
 			}
 		}
-		const loadImageDebounced = debounce(500, loadImage)
+
+		const loadRandomImage = () => {
+			loadImage(`/api/workshop/artwork?seed=${encodeURIComponent(cardClass.value)}`)
+			customArtImage.value = null
+			if (fileSelectorRef.value) {
+				fileSelectorRef.value!.value = ''
+			}
+			if (artFileNameInputRef.value) {
+				artFileNameInputRef.value!.value = ''
+			}
+		}
+		const loadRandomImageDebounced = debounce(500, loadRandomImage)
 		const imageLoaded = ref<boolean>(false)
 		const currentImage = ref<PIXI.Texture>()
 		onMounted(() => {
-			loadImageDebounced()
+			loadRandomImageDebounced()
 		})
 		watch(
 			() => [cardClass.value],
 			() => {
-				loadImageDebounced()
+				loadRandomImageDebounced()
 			}
 		)
 
+		const fileSelectorRef = ref<HTMLInputElement | null>(null)
 		const randomizeClass = () => {
 			const name = getRandomName()
 			cardClass.value = `hero${name.substr(0, 1).toUpperCase()}${name.substr(1)}`
 		}
 		randomizeClass()
-		loadImage()
+		loadRandomImage()
 
 		const cardType = ref<CardType>(CardType.UNIT)
 		const cardColor = ref<CardColor>(CardColor.GOLDEN)
@@ -221,8 +290,26 @@ export default defineComponent({
 		const displayUnitStats = computed<boolean>(() => cardType.value === CardType.UNIT)
 		const displaySpellStats = computed<boolean>(() => cardType.value === CardType.SPELL)
 
+		const downloadedCardName = computed<string>(() => {
+			if (cardName.value.length > 0 && cardTitle.value.length > 0) {
+				return [
+					snakeToCamelCase(cardName.value.trim().replace(/\s/g, '_')),
+					snakeToCamelCase(cardTitle.value.trim().replace(/\s/g, '_')),
+				].join('-')
+			} else if (cardName.value.length > 0) {
+				return snakeToCamelCase(cardName.value.trim().replace(/\s/g, '_'))
+			} else if (cardClass.value.length > 0) {
+				return cardClass.value
+			}
+			return 'unnamed'
+		})
+
 		return {
+			fileSelectorRef,
+			artFileNameInputRef,
+			customArtImage,
 			cardClass,
+			onFileSelected,
 			randomizeClass,
 			cardType,
 			cardColor,
@@ -240,6 +327,7 @@ export default defineComponent({
 			currentImage,
 			displayUnitStats,
 			displaySpellStats,
+			downloadedCardName,
 			availableTypes: Object.values(CardType).filter((value) => typeof value === 'number'),
 			availableColors: Object.values(CardColor).filter((value) => typeof value === 'number'),
 		}
@@ -269,6 +357,7 @@ export default defineComponent({
 			background: $COLOR-BACKGROUND-TRANSPARENT;
 
 			&.preview {
+				position: relative;
 				flex: 2;
 				height: 100%;
 				margin: 0 16px 0 32px;
@@ -322,6 +411,28 @@ label {
 	}
 }
 
+.data-field-horizontal {
+	display: flex;
+	flex-direction: row;
+
+	.data-field-container {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+.card-custom-art-file {
+	width: 100%;
+
+	.label-sizer {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
 .export-container {
 	width: 100%;
 }
@@ -357,6 +468,10 @@ label {
 
 input[type='radio'] {
 	margin-right: 6px;
+}
+
+input[type='file'] {
+	display: none;
 }
 
 textarea {

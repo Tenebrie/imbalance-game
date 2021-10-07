@@ -67,18 +67,16 @@ export default defineComponent({
 			imageScaleRef.value = 1
 			imageOffsetRef.value = { x: 0, y: 0 }
 
-			var fr = new FileReader()
-			fr.onload = async () => {
+			const fileReader = new FileReader()
+			fileReader.onload = async () => {
 				const image = new Image()
 				imageRef.value = image
 				image.onload = function () {
 					renderFrame()
 				}
-				image.src = fr.result as string
+				image.src = fileReader.result as string
 			}
-			fr.readAsDataURL(files[0])
-
-			canvasRef.value
+			fileReader.readAsDataURL(files[0])
 		}
 
 		const renderFrame = () => {
@@ -110,7 +108,9 @@ export default defineComponent({
 			}
 
 			ctx.globalCompositeOperation = 'source-atop'
+			ctx.translate(canvas.width / 2, canvas.height / 2)
 			ctx.scale(imageScale, imageScale)
+			ctx.translate(-canvas.width / 2, -canvas.height / 2)
 			ctx.translate(currentImageOffset.x, currentImageOffset.y)
 			ctx.drawImage(image, 0, 0)
 		}

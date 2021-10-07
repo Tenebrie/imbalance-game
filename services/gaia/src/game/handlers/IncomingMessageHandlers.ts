@@ -158,7 +158,7 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 			return
 		}
 
-		game.finish(player.opponentNullable, 'Player surrendered (Player action)')
+		game.systemFinish(player.opponentNullable, 'Player surrendered (Player action)')
 		onPlayerActionEnd(game, player)
 	},
 

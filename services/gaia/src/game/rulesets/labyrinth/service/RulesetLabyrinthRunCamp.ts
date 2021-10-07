@@ -45,7 +45,7 @@ export default class RulesetLabyrinthRunCamp extends ServerRuleset {
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthNextEncounter)
-			.perform(({ game }) => game.finish(game.getHumanGroup(), 'Continue to next encounter', true))
+			.perform(({ game }) => game.systemFinish(game.getHumanGroup(), 'Continue to next encounter', true))
 
 		this.createCallback(GameEventType.GAME_CREATED).perform(({ game }) => {
 			const registeredPlayers = game.progression.labyrinth.state.run.players

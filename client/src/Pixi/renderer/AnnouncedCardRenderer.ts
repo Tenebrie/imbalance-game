@@ -18,7 +18,6 @@ class AnnouncedCardRenderer {
 		const sprite = announcedCard.sprite
 
 		sprite.alpha = 1
-		sprite.tint = 0xffffff
 		sprite.scale.set(Core.renderer.superSamplingLevel)
 		container.visible = true
 		container.zIndex = ANNOUNCED_CARD_ZINDEX

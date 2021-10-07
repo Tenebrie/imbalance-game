@@ -40,7 +40,7 @@ export default class ServerGameTimers {
 			game,
 			() => {
 				const victoriousPlayer = game.players.find((playerGroup) => playerGroup.players.every((player) => player.player.isInGame())) || null
-				game.finish(victoriousPlayer, 'Player surrendered (Connection lost)')
+				game.systemFinish(victoriousPlayer, 'Player surrendered (Connection lost)')
 			},
 			60000
 		)

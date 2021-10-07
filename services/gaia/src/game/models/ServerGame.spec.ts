@@ -90,7 +90,7 @@ describe('ServerGameEvents', () => {
 		describe('includes leader power into power calculation', () => {
 			it('gives victory to player with stronger leader', () => {
 				;({ game, startNextRound } = TestGameTemplates.leaderTest(TestingLeaderWithPower, TestingLeader))
-				const spy = jest.spyOn(ServerGame.prototype, 'finish')
+				const spy = jest.spyOn(ServerGame.prototype, 'playerFinish')
 				startNextRound()
 				startNextRound()
 				expect(spy).toHaveBeenCalledWith(game.players[0], 'PvP win condition')
@@ -98,7 +98,7 @@ describe('ServerGameEvents', () => {
 
 			it('gives victory to player with stronger leader with players reversed', () => {
 				;({ game, startNextRound } = TestGameTemplates.leaderTest(TestingLeader, TestingLeaderWithPower))
-				const spy = jest.spyOn(ServerGame.prototype, 'finish')
+				const spy = jest.spyOn(ServerGame.prototype, 'playerFinish')
 				startNextRound()
 				startNextRound()
 				expect(spy).toHaveBeenCalledWith(game.players[1], 'PvP win condition')
