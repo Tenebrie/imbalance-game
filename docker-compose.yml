@@ -1,70 +1,75 @@
-version: "3"
+version: "3.1"
 services:
-  client:
-    build:
-      context: ./
-      dockerfile: ./client/Dockerfile
-    working_dir: /app/client
-    environment:
-      NODE_ENV: development
-    depends_on:
-      - gaia
-    ports:
-      - 8080:8080
-    command: bash -c "yarn serve"
-    volumes:
-      - ./client/src:/app/client/src:cached
-      - ./client/public:/app/client/public:cached
-      - ./shared/src:/app/shared/src:cached
-    tty: true
-    restart: "no"
-  gaia:
-    build:
-      context: ./
-      dockerfile: ./services/gaia/Dockerfile
-    working_dir: /app/services/gaia
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: postgres://docker:docker@postgres:5432/db
-    depends_on:
-      - postgres
-    ports:
-      - 3000:3000
-    command: yarn serve
-    volumes:
-      - ./client/public:/app/client/public:cached
-      - ./services/gaia/src:/app/services/gaia/src:cached
-      - ./shared/src:/app/shared/src:cached
-    tty: true
-    restart: "no"
-  overmind:
-    build:
-      context: ./
-      dockerfile: ./services/overmind/Dockerfile
-    working_dir: /app/services/overmind
-    environment:
-      NODE_ENV: development
-      GAME_SERVER: 'http://gaia:3000'
-    depends_on:
-      - gaia
-    ports:
-      - 3001:3001
-    command: yarn serve
-    volumes:
-      - ./services/overmind/src:/app/services/overmind/src:cached
-      - ./shared/src:/app/shared/src:cached
-    tty: true
-    restart: "no"
-  postgres:
-    image: postgres:11.5-alpine
-    environment:
-      POSTGRES_USER: docker
-      POSTGRES_PASSWORD: docker
-      POSTGRES_DB: db
-    ports:
-      - 5432:5432
-    volumes:
-      - dev-database:/var/lib/postgresql/data/:cached
-    restart: "no"
+    client:
+        build:
+            context: ./
+            dockerfile: ./client/Dockerfile
+        working_dir: /app/client
+        environment:
+            NODE_ENV: development
+        depends_on:
+            - gaia
+        ports:
+            - 8080:8080
+        command: bash -c "yarn serve"
+        volumes:
+            - ./client/src:/app/client/src:cached
+            - ./client/public:/app/client/public:cached
+            - ./shared/src:/app/shared/src:cached
+        tty: true
+        restart: "no"
+    gaia:
+        build:
+            context: ./
+            dockerfile: ./services/gaia/Dockerfile
+        working_dir: /app/services/gaia
+        environment:
+            NODE_ENV: development
+            DATABASE_URL: postgres://docker:docker@postgres:5432/db
+        secrets:
+            - gaia
+        depends_on:
+            - postgres
+        ports:
+            - 3000:3000
+        command: yarn serve
+        volumes:
+            - ./client/public:/app/client/public:cached
+            - ./services/gaia/src:/app/services/gaia/src:cached
+            - ./shared/src:/app/shared/src:cached
+        tty: true
+        restart: "no"
+    overmind:
+        build:
+            context: ./
+            dockerfile: ./services/overmind/Dockerfile
+        working_dir: /app/services/overmind
+        environment:
+            NODE_ENV: development
+            GAME_SERVER: 'http://gaia:3000'
+        depends_on:
+            - gaia
+        ports:
+            - 3001:3001
+        command: yarn serve
+        volumes:
+            - ./services/overmind/src:/app/services/overmind/src:cached
+            - ./shared/src:/app/shared/src:cached
+        tty: true
+        restart: "no"
+    postgres:
+        image: postgres:11.5-alpine
+        environment:
+            POSTGRES_USER: docker
+            POSTGRES_PASSWORD: docker
+            POSTGRES_DB: db
+        ports:
+            - 5432:5432
+        volumes:
+            - dev-database:/var/lib/postgresql/data/:cached
+        restart: "no"
 volumes:
-  dev-database:
+    dev-database:
+secrets:
+    gaia:
+        file: ./secrets/gaia.json

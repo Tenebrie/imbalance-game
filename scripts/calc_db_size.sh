@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker exec -it $(docker ps -aqf "name=imbalance-game_dev-db") psql -Udocker db -c "\
+docker exec -it $(docker ps -aqf "name=postgres") psql -Udocker db -c "\
 		SELECT \
 			pg_size_pretty(pg_database_size('db')) as \"Total size\", \
 			(SELECT sum(row_count) FROM ( \

@@ -7,6 +7,7 @@ import {
 import PlayerInGame from '@shared/models/PlayerInGame'
 import { enumToArray } from '@shared/Utils'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import DiscordIntegration from '@src/game/integrations/DiscordIntegration'
 import EventContext from '@src/game/models/EventContext'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
@@ -134,6 +135,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 		} catch (error) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error as Error)
+			DiscordIntegration.sendFatalError(currentGame, error as Error)
 			currentGame.players
 				.flatMap((playerGroup) => playerGroup.players)
 				.forEach((playerInGame) => {
@@ -200,6 +202,7 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 		} catch (error) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error as Error)
+			DiscordIntegration.sendFatalError(currentGame, error as Error)
 			currentGame.players
 				.flatMap((playerGroup) => playerGroup.players)
 				.forEach((playerInGame) => {

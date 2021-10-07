@@ -15,6 +15,7 @@ if (__dirname.includes('dist')) {
 
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import AsciiColor from '@src/enums/AsciiColor'
+import DiscordIntegration from '@src/game/integrations/DiscordIntegration'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import RulesetLibrary from '@src/game/libraries/RulesetLibrary'
 import GenericErrorMiddleware from '@src/middleware/GenericErrorMiddleware'
@@ -154,6 +155,8 @@ setInterval(async () => {
 }, 60 * 60 * 1000)
 
 const port = process.env.PORT || 3000
+
+DiscordIntegration.printStatus()
 
 const databaseUrl = process.env.DATABASE_URL
 if (!databaseUrl) {

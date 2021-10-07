@@ -8,4 +8,8 @@ export default class GameErrorMessage {
 		this.message = error.message
 		this.stack = error.stack || null
 	}
+
+	public toString(): string {
+		return `${this.name}: ${this.message}\n${this.stack}`
+	}
 }

@@ -1,5 +1,6 @@
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import { OutgoingGlobalMessageHandlers } from '@src/game/handlers/OutgoingGlobalMessageHandlers'
+import DiscordIntegration from '@src/game/integrations/DiscordIntegration'
 import ServerGame from '@src/game/models/ServerGame'
 
 import EventContext from '../models/EventContext'
@@ -13,6 +14,7 @@ export function cardRequire(game: ServerGame, subscriber: EventSubscriber, func:
 	} catch (error) {
 		console.error('Unexpected error:\n', error)
 		GameHistoryDatabase.logGameError(game, error as Error)
+		DiscordIntegration.sendError(game, error as Error)
 		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameError(game, error as Error)
 	}
 	EventContext.clearExecutingEventSubscriber()
@@ -26,6 +28,7 @@ export function cardPerform(game: ServerGame, subscriber: EventSubscriber, func:
 	} catch (error) {
 		console.error('Unexpected error:\n', error)
 		GameHistoryDatabase.logGameError(game, error as Error)
+		DiscordIntegration.sendError(game, error as Error)
 		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameError(game, error as Error)
 	}
 	EventContext.clearExecutingEventSubscriber()

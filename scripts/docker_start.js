@@ -64,7 +64,8 @@ const getGaiaHash = () => {
 	const packageJson = fs.readFileSync('services/gaia/package.json').toString()
 	const tsconfig = fs.readFileSync('services/gaia/tsconfig.json').toString()
 	const migrationCount = fs.readdirSync('services/gaia/migrations').length
-	return hashCode(packageJson + tsconfig + migrationCount)
+	const secretsFile = fs.existsSync('secrets/gaia.json') ? fs.readFileSync('secrets/gaia.json').toString() : ''
+	return hashCode(packageJson + tsconfig + migrationCount + secretsFile)
 }
 
 const getOvermindHash = () => {
