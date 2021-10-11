@@ -19,7 +19,7 @@ export default class TutorialUnitEagleEyeArcher extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.PEASANT, CardTribe.SOLDIER],
+			tribes: [CardTribe.COMMONER, CardTribe.SOLDIER],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 18,

@@ -21,7 +21,7 @@ export default class UnitMasterSwordsmith extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.PEASANT],
+			tribes: [CardTribe.COMMONER],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 4,

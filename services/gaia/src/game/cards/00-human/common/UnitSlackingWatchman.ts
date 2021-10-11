@@ -17,7 +17,7 @@ type SelectedUnit = {
 	roundIndex: number
 }
 
-export default class UnitMakeshiftShelter extends ServerCard {
+export default class UnitSlackingWatchman extends ServerCard {
 	selectedUnit: SelectedUnit | null = null
 
 	constructor(game: ServerGame) {
@@ -25,25 +25,31 @@ export default class UnitMakeshiftShelter extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.BUILDING],
-			features: [CardFeature.NIGHTWATCH, CardFeature.KEYWORD_DEPLOY],
+			tribes: [CardTribe.COMMONER, CardTribe.SOLDIER],
+			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_NIGHTWATCH],
 			stats: {
-				power: 0,
-				armor: 6,
+				power: 12,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 
-		this.createDeployTargets(TargetType.UNIT)
-			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE || targetCard.color === CardColor.SILVER)
-			.requireAllied()
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_CARD).perform(({ targetCard }) => {
-			this.selectedUnit = {
-				card: targetCard,
-				roundIndex: this.game.roundIndex,
-			}
+		this.createLocalization({
+			en: {
+				name: 'Slacking Watchman',
+				description:
+					'*Deploy:*\nChoose another allied unit.\nIt has *Nightwatch* until the end of this round, as long as this is on the board.',
+			},
 		})
+
+		this.createDeployTargets(TargetType.UNIT)
+			.requireAllied()
+			.requireNotSelf()
+			.perform(({ targetCard }) => {
+				this.selectedUnit = {
+					card: targetCard,
+					roundIndex: this.game.roundIndex,
+				}
+			})
 
 		// Target is destroyed -> clear selection
 		this.createCallback(GameEventType.UNIT_DESTROYED, AnyCardLocation)

@@ -23,7 +23,7 @@ export default class UnitRavenMessenger extends ServerCard {
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
-		this.addRelatedCards().requireTribe(CardTribe.PEASANT).requireColor(CardColor.BRONZE)
+		this.addRelatedCards().requireTribe(CardTribe.COMMONER).requireColor(CardColor.BRONZE)
 
 		this.createDeployTargets(TargetType.CARD_IN_UNIT_DECK)
 			.requireSamePlayer()

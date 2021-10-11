@@ -65,6 +65,9 @@ export default class RenderedCard implements Card {
 
 	public readonly deployEffectContainer: PIXI.Container
 
+	private readonly tribesTextContainer: PIXI.Container
+	private readonly tribesBackgroundsContainer: PIXI.Container
+
 	private readonly cardModeContainer: PIXI.Container
 	private readonly cardModeTextContainer: PIXI.Container
 	private readonly unitModeContainer: PIXI.Container
@@ -82,7 +85,7 @@ export default class RenderedCard implements Card {
 	public readonly armorText: ScalingText
 	private readonly cardNameText: RichText
 	private readonly cardTitleText: RichText
-	private readonly cardTribeTexts: ScalingText[]
+	private cardTribeTexts: ScalingText[]
 	private readonly cardDescriptionText: RichText
 
 	public constructor(message: CardMessage & Partial<WorkshopCardProps>) {
@@ -119,7 +122,7 @@ export default class RenderedCard implements Card {
 		this.cardNameText.verticalAlign = RichTextAlign.CENTER
 		this.cardNameText.horizontalAlign = RichTextAlign.END
 		const titleText = message.workshopTitle || Localization.getCardTitle(this) || ''
-		this.cardTitleText = new RichText(titleText, 200, this.getDescriptionTextVariables())
+		this.cardTitleText = new RichText(titleText, 220, this.getDescriptionTextVariables())
 		this.cardTitleText.style.fill = 0x000000
 		this.cardTitleText.verticalAlign = RichTextAlign.CENTER
 		this.cardTitleText.horizontalAlign = RichTextAlign.END
@@ -172,6 +175,7 @@ export default class RenderedCard implements Card {
 			tribeBackgroundSprite.position.y += i * 40
 			tribesContainer.addChild(tribeBackgroundSprite)
 		}
+		this.tribesBackgroundsContainer = tribesContainer
 		this.cardModeContainer.addChild(tribesContainer)
 		this.powerTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-power'))
 		this.armorTextBackground = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-armor'))
@@ -203,10 +207,14 @@ export default class RenderedCard implements Card {
 		this.cardModeTextContainer = new PIXI.Container()
 		this.cardModeTextContainer.addChild(this.cardNameText)
 		this.cardModeTextContainer.addChild(this.cardTitleText)
-		this.cardTribeTexts.forEach((cardTribeText) => {
-			this.cardModeTextContainer.addChild(cardTribeText)
-		})
 		this.cardModeTextContainer.addChild(this.cardDescriptionText)
+
+		this.tribesTextContainer = new PIXI.Container()
+		this.cardTribeTexts.forEach((cardTribeText) => {
+			this.tribesTextContainer.addChild(cardTribeText)
+		})
+		this.cardModeTextContainer.addChild(this.tribesTextContainer)
+
 		this.coreContainer.addChild(this.cardModeTextContainer)
 
 		/* Card tint overlays */
@@ -321,6 +329,30 @@ export default class RenderedCard implements Card {
 
 	public updateCardDescription(): void {
 		this.cardDescriptionText.text = this.displayedDescription
+	}
+
+	public updateCardTribes(): void {
+		const tribes = this.tribes
+		const tribeCount = tribes.length
+		const tribesBackgroundsContainer = this.tribesBackgroundsContainer
+
+		while (tribesBackgroundsContainer.children.length > 0) {
+			const child = tribesBackgroundsContainer.removeChildAt(0)
+			child.destroy()
+		}
+
+		for (let i = 0; i < tribeCount; i++) {
+			const tribeBackgroundSprite = new PIXI.Sprite(TextureAtlas.getTexture('components/bg-tribe'))
+			tribeBackgroundSprite.position.y += i * 40
+			tribesBackgroundsContainer.addChild(tribeBackgroundSprite)
+		}
+
+		this.cardTribeTexts.forEach((text) => text.destroy())
+		this.cardTribeTexts = tribes.map((tribe) => this.createTitleText(Localization.get(`card.tribe.${tribe}`)))
+
+		this.cardTribeTexts.forEach((cardTribeText) => {
+			this.tribesTextContainer.addChild(cardTribeText)
+		})
 	}
 
 	public setCardVariables(cardVariables: RichTextVariables): void {
@@ -564,7 +596,10 @@ export default class RenderedCard implements Card {
 		}
 
 		this.powerText.text = this.stats.power.toString()
-		if (this.stats.power < this.stats.basePower) {
+
+		if (this.features.includes(CardFeature.APATHY)) {
+			this.powerText.style.fill = 0x777777
+		} else if (this.stats.power < this.stats.basePower) {
 			this.powerText.style.fill = 0x770000
 		} else if (this.stats.power > this.stats.basePower) {
 			this.powerText.style.fill = 0x007700

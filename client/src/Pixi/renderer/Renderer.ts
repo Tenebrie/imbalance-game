@@ -1,3 +1,4 @@
+import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import GameTurnPhase from '@shared/enums/GameTurnPhase'
@@ -518,21 +519,25 @@ export default class Renderer {
 
 		const leaderPower = Core.player.players
 			.map((player) => player.leader)
+			.filter((card) => !card.features.includes(CardFeature.APATHY))
 			.reduce((totalPower, leader) => totalPower + leader.stats.power, 0)
 		const power =
 			leaderPower +
 			Core.board
 				.getInsertedUnitsOwnedByPlayer(Core.player)
+				.filter((unit) => !unit.card.features.includes(CardFeature.APATHY))
 				.map((unit) => unit.card.stats.power)
 				.reduce((accumulator, value) => accumulator + value, 0)
 
 		const opponentLeaderPower = Core.opponent.players
 			.map((player) => player.leader)
+			.filter((card) => !card.features.includes(CardFeature.APATHY))
 			.reduce((totalPower, leader) => totalPower + leader.stats.power, 0)
 		const opponentPower =
 			opponentLeaderPower +
 			Core.board
 				.getInsertedUnitsOwnedByPlayer(Core.opponent)
+				.filter((unit) => !unit.card.features.includes(CardFeature.APATHY))
 				.map((unit) => unit.card.stats.power)
 				.reduce((accumulator, value) => accumulator + value, 0)
 

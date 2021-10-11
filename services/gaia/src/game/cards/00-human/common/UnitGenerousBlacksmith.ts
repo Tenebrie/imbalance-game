@@ -20,7 +20,7 @@ export default class UnitGenerousBlacksmith extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.PEASANT],
+			tribes: [CardTribe.COMMONER],
 			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 14,

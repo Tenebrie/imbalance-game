@@ -21,7 +21,7 @@ export default class UnitCropField extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.BUILDING],
-			features: [CardFeature.NIGHTWATCH],
+			features: [CardFeature.NIGHTWATCH, CardFeature.APATHY],
 			stats: {
 				power: 0,
 				armor: 14,
@@ -39,7 +39,7 @@ export default class UnitCropField extends ServerCard {
 
 	private onTurnStarted(): void {
 		const adjacentUnits = this.game.board.getAdjacentUnits(this.unit)
-		const procCount = 1 + adjacentUnits.filter((unit) => unit.card.tribes.includes(CardTribe.PEASANT)).length
+		const procCount = 1 + adjacentUnits.filter((unit) => unit.card.tribes.includes(CardTribe.COMMONER)).length
 		for (let i = 0; i < procCount; i++) {
 			const validUnits = this.game.board.getUnitsOwnedByGroup(this.ownerGroupNullable)
 			if (validUnits.length === 0) {

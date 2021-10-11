@@ -10,37 +10,38 @@ import Keywords from '@src/utils/Keywords'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
-export default class HeroFelineSaint extends ServerCard {
-	public static readonly CATS_CREATED = 3
-
+export default class UnitBoxOfCats extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.UNIT,
-			color: CardColor.GOLDEN,
-			faction: CardFaction.WILD,
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE],
+			color: CardColor.BRONZE,
+			faction: CardFaction.HUMAN,
+			features: [CardFeature.APATHY, CardFeature.KEYWORD_NIGHTFALL],
 			stats: {
-				power: 7,
+				power: 0,
+				armor: 5,
 			},
 			relatedCards: [UnitStrayCat],
 			expansionSet: ExpansionSet.BASE,
 		})
-		this.dynamicTextVariables = {
-			catsCreated: HeroFelineSaint.CATS_CREATED,
-		}
 
 		this.createLocalization({
 			en: {
-				name: 'Catissian',
-				title: 'The Feline Saint',
-				description: '*Deploy:*<br>*Create* {catsCreated} *Stray Cats*.',
+				name: 'Box of Cats',
+				description: '*Nightfall:*\n*Summon* two *Stray Cats*.',
 			},
 		})
 
-		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
-			for (let i = 0; i < HeroFelineSaint.CATS_CREATED; i++) {
-				Keywords.createCard.forOwnerOf(this).fromConstructor(UnitStrayCat)
-			}
-		})
+		this.createEffect(GameEventType.UNIT_NIGHTFALL)
+			.require(({ triggeringCard }) => triggeringCard === this)
+			.perform(({ triggeringUnit }) => {
+				Keywords.summonMultipleUnits({
+					owner: this.ownerPlayer,
+					cardConstructor: UnitStrayCat,
+					rowIndex: triggeringUnit.rowIndex,
+					unitIndex: triggeringUnit.unitIndex,
+					count: 2,
+				})
+			})
 	}
 }

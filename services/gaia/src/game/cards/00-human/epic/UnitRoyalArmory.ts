@@ -16,7 +16,7 @@ export default class UnitRoyalArmory extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.BUILDING],
-			features: [CardFeature.NIGHTWATCH],
+			features: [CardFeature.NIGHTWATCH, CardFeature.APATHY],
 			stats: {
 				power: 0,
 				armor: 12,

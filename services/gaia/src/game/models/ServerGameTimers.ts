@@ -39,7 +39,10 @@ export default class ServerGameTimers {
 		this.playerLeaveTimeout = new ReusableTimeout(
 			game,
 			() => {
-				const victoriousPlayer = game.players.find((playerGroup) => playerGroup.players.every((player) => player.player.isInGame())) || null
+				const victoriousPlayer =
+					game.players.find((playerGroup) =>
+						playerGroup.players.every((player) => player.player.isInGame() && player.player.game === game)
+					) || null
 				game.systemFinish(victoriousPlayer, 'Player surrendered (Connection lost)')
 			},
 			60000

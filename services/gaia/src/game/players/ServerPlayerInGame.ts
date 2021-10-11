@@ -157,7 +157,9 @@ export default class ServerPlayerInGame implements PlayerInGame {
 		if (!cardToAdd) {
 			return
 		}
-		this.cardHand.addUnit(cardToAdd, cardIndex)
+		this.cardHand.addUnit(cardToAdd, {
+			index: cardIndex,
+		})
 		this.game.events.postEvent(
 			GameEventCreators.cardDrawn({
 				game: this.game,

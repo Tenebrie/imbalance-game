@@ -81,9 +81,11 @@ export default class ServerBoard implements Board {
 		}
 		const leaderPower = playerGroup.players
 			.map((player) => player.leader)
+			.filter((card) => !card.features.includes(CardFeature.APATHY))
 			.map((card) => card.stats.power)
 			.reduce((total, value) => total + value, 0)
 		const boardPower = this.getUnitsOwnedByGroup(playerGroup)
+			.filter((unit) => !unit.card.features.includes(CardFeature.APATHY))
 			.map((unit) => unit.card.stats.power)
 			.reduce((total, value) => total + value, 0)
 		return leaderPower + boardPower

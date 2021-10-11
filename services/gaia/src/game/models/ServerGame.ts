@@ -8,6 +8,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import { SourceGame } from '@shared/models/Game'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import { BuffMorningApathy } from '@src/game/models/buffs/ServerBuff'
 import GameHookType from '@src/game/models/events/GameHookType'
 import RulesetLifecycleHook from '@src/game/models/rulesets/RulesetLifecycleHook'
 import ServerAnimation from '@src/game/models/ServerAnimation'
@@ -460,12 +461,33 @@ export default class ServerGame implements SourceGame {
 
 		this.board
 			.getAllUnits()
-			.filter((unit) => !unit.card.features.includes(CardFeature.NIGHTWATCH))
+			.filter((unit) => unit.card.features.includes(CardFeature.NIGHTWATCH))
+			.filter((unit) => !unit.buffs.has(BuffMorningApathy))
 			.forEach((unit) => {
-				this.animation.thread(() => {
-					this.board.destroyUnit(unit)
-				})
+				unit.card.buffs.add(BuffMorningApathy, null)
 			})
+
+		const unitsToDestroy = this.board.getAllUnits().filter((unit) => !unit.card.features.includes(CardFeature.NIGHTWATCH))
+
+		unitsToDestroy.forEach((unit) => {
+			this.animation.thread(() => {
+				this.events.postEvent(
+					GameEventCreators.unitNightfall({
+						game: this,
+						triggeringCard: unit.card,
+						triggeringUnit: unit,
+					})
+				)
+			})
+		})
+		this.animation.syncAnimationThreads()
+
+		unitsToDestroy.forEach((unit) => {
+			this.animation.thread(() => {
+				this.board.destroyUnit(unit)
+			})
+		})
+
 		this.board.rows.forEach((row) => {
 			this.animation.thread(() => {
 				row.buffs.removeAllSystemDispellable()
@@ -473,7 +495,6 @@ export default class ServerGame implements SourceGame {
 		})
 		this.animation.syncAnimationThreads()
 		this.animation.play(ServerAnimation.delay(1250))
-
 		this.resetBoardOwnership()
 
 		const constants = this.ruleset.constants
@@ -540,6 +561,10 @@ export default class ServerGame implements SourceGame {
 	}
 
 	public systemFinish(victoriousPlayer: ServerPlayerGroup | null, victoryReason: string, chainImmediately = false): void {
+		if (this.turnPhase === GameTurnPhase.AFTER_GAME) {
+			return
+		}
+
 		this.setTurnPhase(GameTurnPhase.AFTER_GAME)
 
 		this.events.postEvent(

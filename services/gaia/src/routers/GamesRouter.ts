@@ -48,10 +48,12 @@ router.post('/', (req: Request, res: Response) => {
 	}
 
 	const connectedGames = GameLibrary.games.filter((game) =>
-		game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === player)
+		game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === player.id)
 	)
 	connectedGames.forEach((game) => {
-		const playerInGame = game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === player)
+		const playerInGame = game.players
+			.flatMap((playerGroup) => playerGroup.players)
+			.find((playerInGame) => playerInGame.player.id === player.id)
 		game.systemFinish(playerInGame?.opponentNullable || null, 'Player surrendered (Started new game)')
 	})
 

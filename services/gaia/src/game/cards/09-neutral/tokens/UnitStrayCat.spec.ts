@@ -1,9 +1,9 @@
 import { setupTestGame, TestGame } from '../../../../utils/TestGame'
 import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
 import TestingUnit100Power from '../../11-testing/TestingUnit100Power'
-import UnitFelineSpy from '../tokens/UnitFelineSpy'
+import UnitStrayCat from './UnitStrayCat'
 
-describe('UnitFelineSpy', () => {
+describe('UnitStrayCat', () => {
 	let game: TestGame
 
 	beforeEach(() => {
@@ -14,12 +14,12 @@ describe('UnitFelineSpy', () => {
 		beforeEach(() => {
 			game.opponent.summon(TestingUnit100Power)
 			game.opponent.summon(TestingUnit100Power)
-			game.player.add(UnitFelineSpy).play()
+			game.player.add(UnitStrayCat).play()
 			game.opponent.summon(TestingUnit100Power)
 		})
 
 		it('is played on the opponent side', () => {
-			expect(() => game.player.find(UnitFelineSpy)).toThrow()
+			expect(() => game.player.find(UnitStrayCat)).toThrow()
 		})
 
 		it('does not damage enemies immediately', () => {
@@ -36,8 +36,8 @@ describe('UnitFelineSpy', () => {
 
 			it('damages only adjacent enemies', () => {
 				expect(game.opponent.findAt(TestingUnit100Power, 0).stats.power).toEqual(100)
-				expect(game.opponent.findAt(TestingUnit100Power, 1).stats.power).toEqual(100 - UnitFelineSpy.DAMAGE)
-				expect(game.opponent.findAt(TestingUnit100Power, 2).stats.power).toEqual(100 - UnitFelineSpy.DAMAGE)
+				expect(game.opponent.findAt(TestingUnit100Power, 1).stats.power).toEqual(100 - UnitStrayCat.DAMAGE)
+				expect(game.opponent.findAt(TestingUnit100Power, 2).stats.power).toEqual(100 - UnitStrayCat.DAMAGE)
 			})
 		})
 	})

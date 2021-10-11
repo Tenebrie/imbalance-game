@@ -20,7 +20,7 @@ export default class UnitArmorMender extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
-			tribes: [CardTribe.PEASANT],
+			tribes: [CardTribe.COMMONER],
 			faction: CardFaction.HUMAN,
 			stats: {
 				power: 20,

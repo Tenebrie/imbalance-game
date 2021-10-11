@@ -17,7 +17,7 @@ import ServerDamageInstance from '@src/game/models/ServerDamageSource'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import ServerUnit from '@src/game/models/ServerUnit'
 import Keywords from '@src/utils/Keywords'
-import { colorize, getClassFromConstructor, getTotalLeaderStat } from '@src/utils/Utils'
+import { AnyCardLocation, colorize, getClassFromConstructor, getTotalLeaderStat } from '@src/utils/Utils'
 import { v4 as getRandomId } from 'uuid'
 import * as ws from 'ws'
 
@@ -90,21 +90,31 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 type TestGameBoard = {
 	log(): void
 	find(card: CardConstructor): TestGameUnit
+	findAt(card: CardConstructor, index: number): TestGameUnit
 	count(card: CardConstructor): number
 	countAll(): number
 }
 
 const setupTestGameBoard = (game: ServerGame): TestGameBoard => {
+	const findUnitAtIndex = (cardConstructor: CardConstructor, index: number): TestGameUnit => {
+		const units = game.board.getAllUnits().filter((unit) => unit.card.class === getClassFromConstructor(cardConstructor))
+		if (units.length === 0) {
+			throw new Error(`Unable to find unit with class ${getClassFromConstructor(cardConstructor)}.`)
+		}
+		const unit = units[index]
+		if (!unit) {
+			throw new Error(`Unable to find unit with class ${getClassFromConstructor(cardConstructor)} at index ${index}.`)
+		}
+		return wrapUnit(game, unit)
+	}
+
 	return {
 		log: (): void => {
 			const cards = game.board.rows.map((row) => row.cards.map((unit) => unit.card.class))
 			console.debug(cards)
 		},
-		find: (cardConstructor: CardConstructor): TestGameUnit => {
-			const unit = game.board.getAllUnits().find((unit) => unit.card.class === getClassFromConstructor(cardConstructor))
-			if (!unit) throw new Error(`Unable to find unit with class ${getClassFromConstructor(cardConstructor)}`)
-			return wrapUnit(game, unit)
-		},
+		find: (cardConstructor: CardConstructor) => findUnitAtIndex(cardConstructor, 0),
+		findAt: (cardConstructor: CardConstructor, index: number) => findUnitAtIndex(cardConstructor, index),
 		count: (cardConstructor: CardConstructor): number => {
 			const cardClass = getClassFromConstructor(cardConstructor)
 			return game.board.getAllUnits().filter((unit) => unit.card.class === cardClass).length
@@ -200,6 +210,8 @@ type TestGamePlayer = {
 	addSpellMana(value: number): void
 	find(card: CardConstructor): TestGameCard
 	findAt(card: CardConstructor, index: number): TestGameCard
+	findIn(card: CardConstructor, location: CardLocation): TestGameCard
+	findInAt(card: CardConstructor, location: CardLocation, index: number): TestGameCard
 	getStack(): TestGameCardPlayActions
 	getFrontRow(): TestGameRow
 	getLeaderStat(stat: LeaderStatType): number
@@ -245,14 +257,21 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		return wrapCard(game, Keywords.drawExactCard(player, card), player)
 	}
 
-	const findCardAnywhere = (player: ServerPlayerInGame, cardConstructor: CardConstructor, index: number): TestGameCard => {
+	const findCardInLocations = (
+		player: ServerPlayerInGame,
+		cardConstructor: CardConstructor,
+		index: number,
+		validLocations: CardLocation[] | 'any'
+	): TestGameCard => {
 		const game = player.game
 		const allCards = player.cardHand.allCards
 			.concat(player.cardDeck.allCards)
 			.concat(player.cardGraveyard.allCards)
 			.concat(game.board.getUnitsOwnedByPlayer(player).map((unit) => unit.card))
 			.concat(game.cardPlay.cardResolveStack.cards.filter((ownedCard) => ownedCard.owner === player).map((ownedCard) => ownedCard.card))
-		const foundCards = allCards.filter((card) => card.class === getClassFromConstructor(cardConstructor))
+		const foundCards = allCards
+			.filter((card) => card.class === getClassFromConstructor(cardConstructor))
+			.filter((card) => validLocations === 'any' || validLocations.includes(card.location))
 		if (foundCards.length <= index) {
 			throw new Error(
 				`Unable to find ${getClassFromConstructor(cardConstructor)} at index ${index}. Only ${foundCards.length} cards found.`
@@ -313,8 +332,10 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			handle: player,
 			add: (card: CardConstructor) => addCardToHand(player, card),
 			draw: (card: CardConstructor) => drawCardToHand(player, card),
-			find: (card: CardConstructor) => findCardAnywhere(player, card, 0),
-			findAt: (card: CardConstructor, index: number) => findCardAnywhere(player, card, index),
+			find: (card: CardConstructor) => findCardInLocations(player, card, 0, AnyCardLocation),
+			findAt: (card: CardConstructor, index: number) => findCardInLocations(player, card, index, AnyCardLocation),
+			findIn: (card: CardConstructor, location: CardLocation) => findCardInLocations(player, card, 0, [location]),
+			findInAt: (card: CardConstructor, location: CardLocation, index: number) => findCardInLocations(player, card, index, [location]),
 			summon: (card: CardConstructor, row: RowDistanceWrapper = 'front') => summon(player, card, row),
 			fillRow: (card: CardConstructor, row: RowDistanceWrapper = 'front') => fillRow(player, card, row),
 			getUnitMana: (): number => player.unitMana,
@@ -338,6 +359,7 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
  * Card wrapper
  */
 type TestGameCard = {
+	handle: ServerCard
 	stats: ServerCardStats
 	buffs: TestGameBuffs
 	location: CardLocation
@@ -378,6 +400,7 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		return cardWrapper
 	}
 	const cardWrapper: TestGameCard = {
+		handle: card,
 		stats: card.stats,
 		buffs: wrapBuffs(game, card),
 		location: card.location,

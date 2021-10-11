@@ -28,18 +28,35 @@ export default class ServerHand {
 		return this.unitCards.slice().concat(this.spellCards)
 	}
 
-	public addUnit(card: ServerCard, index: number | 'default' = 'default'): void {
-		index = index === 'default' ? this.unitCards.length - 1 : index
+	public addUnit(
+		card: ServerCard,
+		options: {
+			index?: number
+			reveal?: boolean
+		} = {}
+	): void {
+		const index = typeof options.index === 'undefined' ? this.unitCards.length - 1 : options.index
 		this.unitCards.splice(index, 0, card)
 		OutgoingMessageHandlers.notifyAboutCardAddedToUnitHand(this.owner, card)
+		if (options.reveal) {
+			card.reveal()
+		}
 		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
 			this.game.animation.play(ServerAnimation.cardDraw())
 		}
 	}
 
-	public addSpell(card: ServerCard): void {
+	public addSpell(
+		card: ServerCard,
+		options: {
+			reveal?: boolean
+		} = {}
+	): void {
 		this.spellCards.push(card)
 		OutgoingMessageHandlers.notifyAboutCardAddedToSpellHand(this.owner, card)
+		if (options.reveal) {
+			card.reveal()
+		}
 		if (this.game.turnPhase === GameTurnPhase.DEPLOY) {
 			this.game.animation.play(ServerAnimation.cardDraw())
 		}

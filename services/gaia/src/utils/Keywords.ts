@@ -27,17 +27,25 @@ const createCard = (player: ServerPlayerInGame | null, card: ServerCard, callbac
 	return card
 }
 
-const addCardToHand = (player: ServerPlayerInGame | null, card: ServerCard): ServerCard => {
+const addCardToHand = (player: ServerPlayerInGame | null, card: ServerCard, options: Partial<AddCardToHandOptions>): ServerCard => {
 	if (!player) {
 		throw new Error('Trying to add card to null player')
 	}
 
 	if (card.type === CardType.UNIT && !card.buffs.has(BuffUnitToSpellConversion)) {
-		player.cardHand.addUnit(card)
+		player.cardHand.addUnit(card, {
+			reveal: options.reveal || false,
+		})
 	} else {
-		player.cardHand.addSpell(card)
+		player.cardHand.addSpell(card, {
+			reveal: options.reveal || false,
+		})
 	}
 	return card
+}
+
+type AddCardToHandOptions = {
+	reveal: boolean
 }
 
 const Keywords = {
@@ -213,36 +221,36 @@ const Keywords = {
 
 	addCardToHand: {
 		forOwnerOf: (card: ServerCard) => ({
-			fromClass: (cardClass: string): ServerCard => {
+			fromClass: (cardClass: string, options: Partial<AddCardToHandOptions> = {}): ServerCard => {
 				const newCard = CardLibrary.instantiateFromClass(card.game, cardClass)
-				return addCardToHand(getOwnerPlayer(card), newCard)
+				return addCardToHand(getOwnerPlayer(card), newCard, options)
 			},
 
-			fromInstance: (instance: ServerCard): ServerCard => {
+			fromInstance: (instance: ServerCard, options: Partial<AddCardToHandOptions> = {}): ServerCard => {
 				const newCard = CardLibrary.instantiateFromInstance(card.game, instance)
-				return addCardToHand(getOwnerPlayer(card), newCard)
+				return addCardToHand(getOwnerPlayer(card), newCard, options)
 			},
 
-			fromConstructor: (prototype: CardConstructor): ServerCard => {
+			fromConstructor: (prototype: CardConstructor, options: Partial<AddCardToHandOptions> = {}): ServerCard => {
 				const newCard = CardLibrary.instantiate(card.game, prototype)
-				return addCardToHand(getOwnerPlayer(card), newCard)
+				return addCardToHand(getOwnerPlayer(card), newCard, options)
 			},
 		}),
 
 		for: (player: ServerPlayerInGame) => ({
-			fromClass: (cardClass: string): ServerCard => {
+			fromClass: (cardClass: string, options: Partial<AddCardToHandOptions> = {}): ServerCard => {
 				const newCard = CardLibrary.instantiateFromClass(player.game, cardClass)
-				return addCardToHand(player, newCard)
+				return addCardToHand(player, newCard, options)
 			},
 
-			fromInstance: (instance: ServerCard): ServerCard => {
+			fromInstance: (instance: ServerCard, options: Partial<AddCardToHandOptions> = {}): ServerCard => {
 				const newCard = CardLibrary.instantiateFromInstance(player.game, instance)
-				return addCardToHand(player, newCard)
+				return addCardToHand(player, newCard, options)
 			},
 
-			fromConstructor: (prototype: CardConstructor): ServerCard => {
+			fromConstructor: (prototype: CardConstructor, options: Partial<AddCardToHandOptions> = {}): ServerCard => {
 				const newCard = CardLibrary.instantiate(player.game, prototype)
-				return addCardToHand(player, newCard)
+				return addCardToHand(player, newCard, options)
 			},
 		}),
 	},

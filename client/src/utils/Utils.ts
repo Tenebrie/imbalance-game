@@ -80,6 +80,10 @@ export const rarityToColor = (rarity: CardColor): number => {
 	}
 }
 
+export const arrayShallowMatch = (a: any[], b: any[]): boolean => {
+	return a.every((el) => b.includes(el)) && b.every((el) => a.includes(el))
+}
+
 type AnyPoint = {
 	x: number
 	y: number

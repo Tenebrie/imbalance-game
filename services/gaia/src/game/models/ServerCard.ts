@@ -61,6 +61,7 @@ import GameEventCreators, {
 	UnitDeployedEventArgs,
 	UnitDestroyedEventArgs,
 	UnitMovedEventArgs,
+	UnitNightfallEventArgs,
 	UnitOrderedCardEventArgs,
 	UnitOrderedRowEventArgs,
 	UnitOrderedUnitEventArgs,
@@ -745,6 +746,7 @@ export default class ServerCard implements Card {
 	protected createEffect(event: GameEventType.UNIT_ORDERED_CARD): EventSubscription<UnitOrderedCardEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_UNIT): EventSubscription<UnitOrderedUnitEventArgs>
 	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
+	protected createEffect(event: GameEventType.UNIT_NIGHTFALL): EventSubscription<UnitNightfallEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
 	protected createEffect<ArgsType extends SharedEventArgs>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events

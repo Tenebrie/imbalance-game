@@ -17,7 +17,7 @@ export default class HeroRobert extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.HUMAN,
-			tribes: [CardTribe.PEASANT],
+			tribes: [CardTribe.COMMONER],
 			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CREATE, CardFeature.KEYWORD_SUMMON],
 			stats: {
 				power: 4,

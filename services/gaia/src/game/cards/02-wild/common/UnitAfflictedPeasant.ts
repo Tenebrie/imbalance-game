@@ -19,7 +19,7 @@ export default class UnitAfflictedPeasant extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.WILD,
-			tribes: [CardTribe.PEASANT],
+			tribes: [CardTribe.COMMONER],
 			features: [CardFeature.KEYWORD_BUFF_ROW_BLOOD_MOON],
 			stats: {
 				power: 16,

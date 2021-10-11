@@ -1,3 +1,4 @@
+import CardTribe from '@shared/enums/CardTribe'
 import BuffContainer from '@shared/models/BuffContainer'
 import BuffContainerMessage from '@shared/models/network/buffContainer/BuffContainerMessage'
 
@@ -6,6 +7,7 @@ import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import Core from '@/Pixi/Core'
 import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 import RenderedBuff from '@/Pixi/models/buffs/RenderedBuff'
+import { arrayShallowMatch } from '@/utils/Utils'
 
 export default class ClientBuffContainer implements BuffContainer {
 	parent: RenderedCard | RenderedGameBoardRow
@@ -20,15 +22,9 @@ export default class ClientBuffContainer implements BuffContainer {
 	}
 
 	public add(buff: ClientBuff): void {
+		const startingTribes = this.parent instanceof RenderedCard ? this.parent.tribes : []
 		this.buffs.push(buff)
-		if (this.parent instanceof RenderedCard) {
-			this.parent.updateCardDescription()
-			Core.player.players.forEach((player) => {
-				if (this.parent instanceof RenderedCard && player.cardHand.unitCards.includes(this.parent)) {
-					player.cardHand.sortCards()
-				}
-			})
-		}
+		this.updateParentAfterBuffChange(startingTribes)
 	}
 
 	public findBuffById(buffId: string): ClientBuff | null {
@@ -43,14 +39,25 @@ export default class ClientBuffContainer implements BuffContainer {
 		if (buff instanceof RenderedBuff) {
 			buff.destroySprite()
 		}
+		const startingTribes = this.parent instanceof RenderedCard ? this.parent.tribes : []
 		this.buffs.splice(this.buffs.indexOf(buff), 1)
-		if (this.parent instanceof RenderedCard) {
-			this.parent.updateCardDescription()
-			Core.player.players.forEach((player) => {
-				if (this.parent instanceof RenderedCard && player.cardHand.unitCards.includes(this.parent)) {
-					player.cardHand.sortCards()
-				}
-			})
+		this.updateParentAfterBuffChange(startingTribes)
+	}
+
+	private updateParentAfterBuffChange(previousTribes: CardTribe[]): void {
+		if (!(this.parent instanceof RenderedCard)) {
+			return
 		}
+
+		this.parent.updateCardDescription()
+		this.parent.updatePowerTextColors()
+		if (!arrayShallowMatch(previousTribes, this.parent.tribes)) {
+			this.parent.updateCardTribes()
+		}
+		Core.player.players.forEach((player) => {
+			if (this.parent instanceof RenderedCard && player.cardHand.unitCards.includes(this.parent)) {
+				player.cardHand.sortCards()
+			}
+		})
 	}
 }

@@ -226,8 +226,10 @@
 	"card.feature.keywordDispelX.description": "Remove last X dispellable buffs from the target.",
 	"card.feature.keywordProtector.name": "Protector",
 	"card.feature.keywordProtector.description": "Whenever an allied unit behind this takes damage, intercept it.",
+	"card.feature.keywordNightfall.name": "Nightfall",
+	"card.feature.keywordNightfall.description": "Trigger an effect before this unit is destroyed at the end of the round.",
 	"card.feature.keywordNightwatch.name": "Nightwatch",
-	"card.feature.keywordNightwatch.description": "Stays on the board after the round end.",
+	"card.feature.keywordNightwatch.description": "Stays on the board after the round end, but doesn't contribute to total Power anymore.",
 	"card.feature.keywordHeroPower.name": "Leader Power",
 	"card.feature.keywordHeroPower.description": "When played as spell or destroyed as unit, target card returns to your deck. It is also always revealed.",
 	"card.feature.keywordBuffStun.name": "Stun (Buff)",
@@ -251,7 +253,7 @@
 	"card.feature.protector.description": "Whenever an allied unit behind this takes damage, intercept it.",
 	"card.feature.protector.text": "*Protector*",
 	"card.feature.nightwatch.name": "Nightwatch",
-	"card.feature.nightwatch.description": "Stays on the board after the round end.",
+	"card.feature.nightwatch.description": "Stays on the board after the round end, but doesn't contribute to total Power anymore.",
 	"card.feature.nightwatch.text": "*Nightwatch*",
 	"card.feature.spy.name": "Spy",
 	"card.feature.spy.description": "Played on your opponent's side of the board.",
@@ -259,6 +261,9 @@
 	"card.feature.quick.name": "Quick",
 	"card.feature.quick.description": "Does not end your turn when played.",
 	"card.feature.quick.text": "*Quick*",
+	"card.feature.apathy.name": "Apathy",
+	"card.feature.apathy.description": "Does not contribute Power to the total counter.",
+	"card.feature.apathy.text": "*Apathy*",
 	"card.feature.passive.name": "Passive",
 	"card.feature.passive.description": "Can't be played.",
 	"card.feature.passive.text": "*Passive*",
@@ -304,12 +309,12 @@
 	"card.tribe.dragon": "Dragon",
 	"card.tribe.crystal": "Crystal",
 	"card.tribe.cultist": "Cultist",
-	"card.tribe.peasant": "Peasant",
 	"card.tribe.salvage": "Salvage",
 	"card.tribe.soldier": "Soldier",
 	"card.tribe.vampire": "Vampire",
 	"card.tribe.merfolk": "Merfolk",
 	"card.tribe.building": "Building",
+	"card.tribe.commoner": "Commoner",
 	"card.tribe.valkyrie": "Valkyrie",
 	"card.tribe.elemental": "Elemental",
 	"card.tribe.voidspawn": "Voidspawn",
@@ -323,6 +328,9 @@
 
 	"buff.buffProtector.name": "Protector (Service buff)",
 	"buff.buffProtector.description": "This card is a protector.",
+
+	"buff.buffMorningApathy.name": "Morning Apathy",
+	"buff.buffMorningApathy.description": "This card has Apathy after staying up all night.",
 
 	"buff.buffBurning.name": "Burning",
 	"buff.buffBurning.description": "This card takes damage every turn.",
@@ -401,6 +409,12 @@
 
 	"buff.buffNoArmor.name": "No Armor",
 	"buff.buffNoArmor.description": "This unit's Armor has been removed.",
+
+	"buff.buffVoidBrandTribe.name": "Brand of the Void",
+	"buff.buffVoidBrandTribe.description": "This unit is a Voidspawn.",
+
+	"buff.buffCanAttack.name": "Can Attack",
+	"buff.buffCanAttack.description": "This unit can attack.",
 
 	"buff.buffRowBloodMoon.name": "Blood Moon",
 
@@ -805,9 +819,6 @@
 
 	"card.unitPrototypeScorpionCrew.name": "Prototype\nScorpion Crew",
 	"card.unitPrototypeScorpionCrew.description": "*Order:*\nDeal {targetDamage} Damage to an enemy unit and {selfDamage} Damage to itself.<p><i>May perform unlimited number of attacks per turn.</i>",
-
-	"card.unitMakeshiftShelter.name": "Makeshift Shelter",
-	"card.unitMakeshiftShelter.description": "*Deploy:*\nChoose a Common or Epic allied unit.\nIt has *Nightwatch* until the end of this round, as long as this is on the board.",
 
 	"card.unitEldergroveTender.name": "Eldergrove Tender",
 	"card.unitEldergroveTender.description": "*Deploy:*\nGive +{bonusPower} Power and apply *Growth* to an allied unit.",

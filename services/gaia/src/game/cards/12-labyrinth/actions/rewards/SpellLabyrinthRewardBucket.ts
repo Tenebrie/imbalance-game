@@ -142,12 +142,12 @@ export class SpellLabyrinthRewardBucketBirds extends BaseSpellLabyrinthRewardBuc
 export class SpellLabyrinthRewardBucketPeasants extends BaseSpellLabyrinthRewardBucket {
 	constructor(game: ServerGame) {
 		super(game)
-		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireTribe(CardTribe.PEASANT)
+		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireTribe(CardTribe.COMMONER)
 	}
 
 	public readonly rewardsOffered = 5
 	protected isCardValidReward(card: ServerCard): boolean {
-		return card.tribes.includes(CardTribe.PEASANT)
+		return card.tribes.includes(CardTribe.COMMONER)
 	}
 }
 

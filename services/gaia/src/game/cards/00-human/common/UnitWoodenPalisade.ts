@@ -17,7 +17,7 @@ export default class UnitWoodenPalisade extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.BUILDING],
-			features: [CardFeature.NIGHTWATCH],
+			features: [CardFeature.NIGHTWATCH, CardFeature.APATHY],
 			stats: {
 				power: 0,
 				armor: 10,
