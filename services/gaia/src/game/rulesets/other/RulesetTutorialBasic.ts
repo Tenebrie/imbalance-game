@@ -69,6 +69,9 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 		this.createCallback(GameEventType.TURN_STARTED)
 			.require(() => game.roundIndex === 0 && game.turnIndex === 1)
 			.require(({ group }) => group.isHuman)
+			.perform(({ group }) => {
+				console.log(group.username)
+			})
 			.startDialog(
 				`
 				Narrator:
@@ -82,6 +85,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			`
 			)
 			.closingChapter('AddHealer', () => {
+				console.log('Here')
 				Keywords.addCardToHand.for(game.getHumanGroup().players[0]).fromConstructor(TutorialUnitPriestessOfAedine)
 			})
 
