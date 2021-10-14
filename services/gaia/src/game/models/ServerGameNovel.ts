@@ -89,7 +89,7 @@ export default class ServerGameNovel {
 			return
 		}
 		const script = chapterScript()
-		const scriptSyntaxTree = parseTenScript(chapterScript())
+		const scriptSyntaxTree = parseTenScript(script)
 		throwIfParseFailed(script, scriptSyntaxTree)
 		const namespace = id.split('/')[0]
 		const runner = new ServerGameNovelRunner(this.game, namespace)

@@ -785,7 +785,7 @@
 	"card.unitChallengeEagerExplorer.description": "Choose one of {cardsToExplore} random Common cards.\n*Create* a copy of it.",
 
 	"card.unitArcheryTower.name": "Archery Tower",
-	"card.unitArcheryTower.description": "*Order:*\nDeal {damage} Damage to an enemy unit<p>May only attack once per adjacent Soldier.",
+	"card.unitArcheryTower.description": "*Order:*\nDeal {damage} Damage to an enemy unit.<p>May only attack once per adjacent Soldier.",
 
 	"card.unitBloodyTrebuchet.name": "Bloody Trebuchet",
 	"card.unitBloodyTrebuchet.description": "*Order:*\nDeal {damage} Damage to an enemy unit and {splashDamage} Damage to units directly behind.<p>May only attack if adjacent to at least two Soldiers.",

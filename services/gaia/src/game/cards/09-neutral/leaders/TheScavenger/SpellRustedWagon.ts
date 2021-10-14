@@ -13,7 +13,7 @@ import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
 
 export default class SpellRustedWagon extends ServerCard {
-	moveDistance = 1
+	moveDistance = 3
 
 	movingUnit: ServerUnit | null = null
 
