@@ -1,6 +1,5 @@
 enum CardTribe {
 	BIRD = 'bird',
-	LOST = 'lost',
 	BEAST = 'beast',
 	DRYAD = 'dryad',
 	NOBLE = 'noble',
@@ -8,7 +7,6 @@ enum CardTribe {
 	SPARK = 'spark',
 	SCROLL = 'scroll',
 	DRAGON = 'dragon',
-	CRYSTAL = 'crystal',
 	CULTIST = 'cultist',
 	SALVAGE = 'salvage',
 	SOLDIER = 'soldier',
@@ -19,6 +17,8 @@ enum CardTribe {
 	ELEMENTAL = 'elemental',
 	VOIDSPAWN = 'voidspawn',
 	MANIFESTATION = 'manifestation',
+
+	LOST = 'lost',
 	LABYRINTH_WEAPON = 'lab_weapon',
 	LABYRINTH_ARMOR = 'lab_armor',
 	LABYRINTH_GLOVES = 'lab_gloves',

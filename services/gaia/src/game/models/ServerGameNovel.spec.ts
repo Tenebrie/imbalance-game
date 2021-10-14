@@ -363,19 +363,19 @@ describe('ServerGameNovel', () => {
 	})
 
 	describe('unconditional move into closing chapter', () => {
-		let callbackExecuted = false
+		let callbackExecuted = 0
 
 		beforeEach(() => {
-			callbackExecuted = false
+			callbackExecuted = 0
 			game.novel
 				.startDialog(
 					`
-				> First dialog option
-				--> Chapter
-			`
+					> First dialog option
+					--> Chapter
+				`
 				)
 				.closingChapter('Chapter', () => {
-					callbackExecuted = true
+					callbackExecuted += 1
 				})
 		})
 
@@ -406,9 +406,9 @@ describe('ServerGameNovel', () => {
 				chapterId = chapterOfA
 			})
 
-			it('executes chapter callback', () => {
+			it('executes chapter callback exactly once', () => {
 				game.novel.executeChapter(chapterId)
-				expect(callbackExecuted).toEqual(true)
+				expect(callbackExecuted).toEqual(1)
 			})
 		})
 	})
