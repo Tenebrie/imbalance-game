@@ -13,7 +13,8 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitCropField extends ServerCard {
-	bonusPower = asRecurringBuffPotency(2)
+	public static readonly BASE_PROC_COUNT = 2
+	private bonusPower = asRecurringBuffPotency(UnitCropField.BASE_PROC_COUNT)
 
 	constructor(game: ServerGame) {
 		super(game, {
@@ -41,7 +42,10 @@ export default class UnitCropField extends ServerCard {
 		const adjacentUnits = this.game.board.getAdjacentUnits(this.unit)
 		const procCount = 1 + adjacentUnits.filter((unit) => unit.card.tribes.includes(CardTribe.COMMONER)).length
 		for (let i = 0; i < procCount; i++) {
-			const validUnits = this.game.board.getUnitsOwnedByGroup(this.ownerGroupNullable)
+			const validUnits = this.game.board
+				.getUnitsOwnedByGroup(this.ownerGroupNullable)
+				.filter((unit) => unit.card !== this)
+				.filter((unit) => !unit.card.features.includes(CardFeature.APATHY))
 			if (validUnits.length === 0) {
 				return
 			}

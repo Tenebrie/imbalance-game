@@ -88,11 +88,18 @@ class GameLibrary {
 		this.destroyGame(game, reason)
 	}
 
+	private static MAXIMUM_GAME_WAITING = Time.minutes.toMilliseconds(5)
 	private static MAXIMUM_GAME_DURATION = Time.minutes.toMilliseconds(60)
 	private startGameTimeoutTimer(game: ServerGame): void {
 		if (process.env.JEST_WORKER_ID !== undefined) {
 			return
 		}
+		setTimeout(() => {
+			if (!game.isStarted) {
+				OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameDestroyed(game)
+				this.destroyGame(game, `Game not started within ${Time.milliseconds.toMinutes(GameLibrary.MAXIMUM_GAME_WAITING)} minutes.`)
+			}
+		}, GameLibrary.MAXIMUM_GAME_WAITING)
 		setTimeout(() => {
 			OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameDestroyed(game)
 			this.destroyGame(game, `Game duration exceeded ${Time.milliseconds.toMinutes(GameLibrary.MAXIMUM_GAME_DURATION)} minutes.`)

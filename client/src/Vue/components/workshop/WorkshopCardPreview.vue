@@ -166,7 +166,6 @@ export default defineComponent({
 			imageOffsetRef.value.y -= (dragStartPoint.value.y - dragMousePoint.value.y) / imageScale
 			dragStartPoint.value = null
 			dragMousePoint.value = null
-			console.log(imageOffsetRef.value)
 			renderFinalCanvas()
 		}
 

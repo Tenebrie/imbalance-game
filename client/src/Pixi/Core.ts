@@ -50,37 +50,57 @@ class Core {
 		const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
 		const urlHost = isElectron() ? electronWebsocketTarget() : window.location.host
 
-		let targetGroupIndex = game.players[0].openHumanSlots > 0 ? 0 : game.players[1].openHumanSlots > 0 ? 1 : null
-		// No slots available -> spectating
-		const isSpectating = targetGroupIndex === null
-		if (isSpectating || targetGroupIndex === null) {
-			targetGroupIndex = 0
-		}
-		const opponentGroupIndex = targetGroupIndex === 0 ? 1 : 0
+		const { targetGroup, opponentGroup, targetUrl } = (() => {
+			if (!store.state.player) {
+				throw new Error('Unable to connect to game before fetching player data.')
+			}
 
-		const targetGroupId = game.players[targetGroupIndex].id
-		const opponentGroupId = game.players[opponentGroupIndex].id
-		let targetUrl = `${protocol}//${urlHost}/api/game/${game.id}?deckId=${deckId}&groupId=${targetGroupId}`
-		if (isSpectating) {
-			const targetPlayerId = game.players[targetGroupIndex]!.players[0].player.id
-			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}/spectate/${targetPlayerId}`
-		}
-		// Reconnecting
-		if (
-			game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === store.state.player?.id)
-		) {
-			targetUrl = `${protocol}//${urlHost}/api/game/${game.id}`
-		}
+			// Player is already in the game -> reconnect
+			const thisPlayerId = store.state.player.id
+			const groupWithPlayer = game.players.find((group) => group.players.some((playerInGame) => playerInGame.player.id === thisPlayerId))
+
+			if (groupWithPlayer) {
+				return {
+					targetGroup: groupWithPlayer,
+					opponentGroup: game.players.find((group) => group !== groupWithPlayer)!,
+					targetUrl: `/api/game/${game.id}`,
+				}
+			}
+
+			// No slots available -> spectating
+			if (game.players.every((group) => group.openHumanSlots === 0)) {
+				const targetPlayerId = game.players[0].players[0].player.id
+				return {
+					targetGroup: game.players[0],
+					opponentGroup: game.players[1],
+					targetUrl: `/api/game/${game.id}/spectate/${targetPlayerId}`,
+				}
+			}
+
+			// Initial connect
+			const targetGroup = game.players.find((group) => group.openHumanSlots > 0)
+
+			if (!targetGroup) {
+				throw new Error('The player slots are gone somehow...')
+			}
+
+			return {
+				targetGroup: targetGroup,
+				opponentGroup: game.players.find((group) => group !== targetGroup)!,
+				targetUrl: `/api/game/${game.id}?deckId=${deckId}&groupId=${targetGroup.id}`,
+			}
+		})()
+
 		this.__rulesetConstants = game.ruleset.constants
-		const socket = new WebSocket(targetUrl)
+		const socket = new WebSocket(`${protocol}//${urlHost}${targetUrl}`)
 		socket.onopen = () => this.onConnect(container)
 		socket.onmessage = (event) => this.onMessage(event, socket)
 		socket.onclose = (event) => this.onDisconnect(event, socket)
 		socket.onerror = (event) => this.onError(event, socket)
 		this.socket = socket
 
-		this.player = new ClientPlayerGroup(targetGroupId)
-		this.opponent = new ClientPlayerGroup(opponentGroupId)
+		this.player = new ClientPlayerGroup(targetGroup.id)
+		this.opponent = new ClientPlayerGroup(opponentGroup.id)
 	}
 
 	private async onConnect(container: HTMLElement): Promise<void> {

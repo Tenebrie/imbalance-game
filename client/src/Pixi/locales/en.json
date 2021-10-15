@@ -225,7 +225,7 @@
 	"card.feature.keywordDispelX.name": "Dispel X",
 	"card.feature.keywordDispelX.description": "Remove last X dispellable buffs from the target.",
 	"card.feature.keywordProtector.name": "Protector",
-	"card.feature.keywordProtector.description": "Whenever an allied unit behind this takes damage, intercept it.",
+	"card.feature.keywordProtector.description": "Whenever an allied unit behind this takes damage from an enemy, intercept it.",
 	"card.feature.keywordNightfall.name": "Nightfall",
 	"card.feature.keywordNightfall.description": "Trigger an effect before this unit is destroyed at the end of the round.",
 	"card.feature.keywordNightwatch.name": "Nightwatch",
@@ -250,7 +250,7 @@
 	"card.feature.building.description": "Always has 0 Power and permanent Nightwatch.",
 	"card.feature.building.text": "*Building*",
 	"card.feature.protector.name": "Protector",
-	"card.feature.protector.description": "Whenever an allied unit behind this takes damage, intercept it.",
+	"card.feature.protector.description": "Whenever an allied unit behind this takes damage from an enemy, intercept it.",
 	"card.feature.protector.text": "*Protector*",
 	"card.feature.nightwatch.name": "Nightwatch",
 	"card.feature.nightwatch.description": "Stays on the board after the round end, but doesn't contribute to total Power anymore.",
@@ -528,7 +528,7 @@
 	"card.heroAdventuringGuildMaster.description": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
 
 	"card.heroForksmanshipInstructor.name": "Forksmanship\nInstructor",
-	"card.heroForksmanshipInstructor.description": "Whenever you play a Peasant, give it +{bonusPower} Power.",
+	"card.heroForksmanshipInstructor.description": "Whenever you play a Commoner, give it +{bonusPower} Power.",
 	"card.heroForksmanshipInstructor.flavor": "When swords are not an option, you just have to rely on your own trusty pitchfork.",
 
 	"card.heroTribeShaman.name": "Tribal Shaman",
@@ -800,7 +800,7 @@
 	"card.unitQuietInfiltrator.description": "*Deploy:*\nDeal {damage} Damage to adjacent units.",
 
 	"card.unitCropField.name": "Crop Field",
-	"card.unitCropField.description": "*Turn end:*\nGive +{bonusPower} Power to an allied unit with lowest Power value.<p>Repeat once for every adjacent Peasant.",
+	"card.unitCropField.description": "*Turn end:*\nGive +{bonusPower} Power to an allied unit with lowest Power value.<p>Repeat once for every adjacent Commoner.",
 
 	"card.heroRobert.name": "Robert",
 	"card.heroRobert.title": "Building Instructor",
@@ -982,7 +982,7 @@
 
 	"card.unitTheMinisterOfLand.name": "Corniak II",
 	"card.unitTheMinisterOfLand.title": "The Minister of Land",
-	"card.unitTheMinisterOfLand.description": "*Play* this from your deck on your back row if you control at least {peasantsRequired} Peasants.<p>Your Peasants have *-*{weaknessPotency} Power.",
+	"card.unitTheMinisterOfLand.description": "*Play* this from your deck on your back row if you control at least {peasantsRequired} Commoners.<p>Your Commoners have *-*{weaknessPotency} Power.",
 
 	"card.unitSirenEnchantress.name": "Siren Enchantress",
 	"card.unitSirenEnchantress.description": "*Deploy:*\n*Infuse* {cost} to apply *Blood Moon* to a target row.",
@@ -1039,8 +1039,8 @@
 	"card.spellLabyrinthRewardBucketBirds.name": "Bird Cards",
 	"card.spellLabyrinthRewardBucketBirds.description": "Cards from the Bird tribe.<p><i>Cards offered: {rewardsOffered}.</i>",
 
-	"card.spellLabyrinthRewardBucketPeasants.name": "Peasant Cards",
-	"card.spellLabyrinthRewardBucketPeasants.description": "Cards from the Peasant tribe.<p><i>Cards offered: {rewardsOffered}.</i>",
+	"card.spellLabyrinthRewardBucketPeasants.name": "Commoner Cards",
+	"card.spellLabyrinthRewardBucketPeasants.description": "Cards from the Commoner tribe.<p><i>Cards offered: {rewardsOffered}.</i>",
 
 	"card.spellLabyrinthRewardBucketNobles.name": "Noble Cards",
 	"card.spellLabyrinthRewardBucketNobles.description": "Cards from the Noble tribe.<p><i>Cards offered: {rewardsOffered}.</i>",
