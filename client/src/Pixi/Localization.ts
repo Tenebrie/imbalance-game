@@ -4,6 +4,7 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 
 import en from '@/Pixi/locales/en.json'
 import ru from '@/Pixi/locales/ru.json'
+import { mergeCardTribes } from '@/utils/Utils'
 import store from '@/Vue/store'
 
 const localizationIdRegex = /^[a-zA-Z0-9.]*$/
@@ -17,6 +18,11 @@ class Localization {
 	public getCardTitle(card: Card | CardMessage): string | null {
 		const language = store.state.userPreferencesModule.userLanguage
 		return this.get(card.localization[language].title, 'null')
+	}
+
+	public getCardTribes(card: Card | CardMessage): string[] {
+		const tribes = mergeCardTribes(card.baseTribes, card.buffs.buffs)
+		return tribes.map((tribe) => this.get(`card.tribe.${tribe}`, 'empty'))
 	}
 
 	public getCardFlavor(card: Card | CardMessage): string | null {

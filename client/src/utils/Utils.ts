@@ -1,6 +1,7 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
 import CardFeature from '@shared/enums/CardFeature'
+import CardTribe from '@shared/enums/CardTribe'
 import Buff from '@shared/models/Buff'
 import Card from '@shared/models/Card'
 import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDatabaseEntry'
@@ -16,6 +17,14 @@ import Core from '@/Pixi/Core'
 import { LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 import Localization from '@/Pixi/Localization'
 import store from '@/Vue/store'
+
+export const mergeCardTribes = (baseTribes: CardTribe[], buffs: (Buff | BuffMessage)[]): CardTribe[] => {
+	let tribes = baseTribes.slice()
+	buffs.forEach((buff) => {
+		tribes = tribes.concat(buff.cardTribes.slice())
+	})
+	return [...new Set(tribes)]
+}
 
 export const mergeCardFeatures = (baseFeatures: CardFeature[], buffs: (Buff | BuffMessage)[]): CardFeature[] => {
 	let features = baseFeatures.slice()

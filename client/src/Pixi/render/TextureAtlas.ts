@@ -164,14 +164,18 @@ export default class TextureAtlas {
 
 		console.info(`Loading '${path}' on demand`)
 		const placeholderPath = placeholder === 'buff' ? 'icons/question' : 'cards/tokenPlaceholder'
-		console.log(placeholderPath)
-		const clone = this.textures[placeholderPath.toLowerCase()].clone()
-		loadedTexture.on('update', () => {
-			clone.baseTexture = loadedTexture.baseTexture
-			this.textures[path.toLowerCase()] = loadedTexture
-			PIXI.Texture.removeFromCache(loadedTexture)
-		})
-		return clone
+		try {
+			const clone = this.textures[placeholderPath.toLowerCase()].clone()
+			loadedTexture.on('update', () => {
+				clone.baseTexture = loadedTexture.baseTexture
+				this.textures[path.toLowerCase()] = loadedTexture
+				PIXI.Texture.removeFromCache(loadedTexture)
+			})
+			return clone
+		} catch (err) {
+			console.error('Error while fetching placeholder texture. It is likely that essential assets have not been preloaded yet.\n', err)
+			return PIXI.Texture.from(`/assets/${path}.webp`)
+		}
 	}
 
 	public static clear(): void {

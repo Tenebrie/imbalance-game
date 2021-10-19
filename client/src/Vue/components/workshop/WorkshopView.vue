@@ -2,7 +2,7 @@
 	<div class="workshop-view">
 		<div class="container">
 			<div class="preview">
-				<WorkshopCardPreview v-if="currentImage" :card="cardPreview" :custom-art="customArtImage" />
+				<WorkshopCardPreview v-if="isPreviewReady" :card="cardPreview" :custom-art="customArtImage" :render-overlay="true" />
 			</div>
 			<div class="settings">
 				<div class="data-fields">
@@ -99,10 +99,14 @@ import * as PIXI from 'pixi.js'
 import { debounce } from 'throttle-debounce'
 import { computed, defineComponent, onMounted, onUnmounted, Ref, ref, watch } from 'vue'
 
+import Localization from '@/Pixi/Localization'
+import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import { WorkshopCardProps } from '@/utils/editor/EditorCardRenderer'
-import { snakeToCamelCase } from '@/utils/Utils'
+import { insertRichTextVariables, snakeToCamelCase } from '@/utils/Utils'
 import WorkshopCardPreview from '@/Vue/components/workshop/WorkshopCardPreview.vue'
 import WorkshopDownloadButton from '@/Vue/components/workshop/WorkshopDownloadButton.vue'
+import { useWorkshopRouteQuery } from '@/Vue/components/workshop/WorkshopRouteParams'
+import store from '@/Vue/store'
 
 export default defineComponent({
 	components: { WorkshopDownloadButton, WorkshopCardPreview },
@@ -126,6 +130,7 @@ export default defineComponent({
 				const blob = (items[i] as DataTransferItem).getAsFile()
 				if (blob) {
 					loadFromFile(blob)
+					return
 				}
 			}
 		}
@@ -162,8 +167,13 @@ export default defineComponent({
 			}
 		}
 
-		const loadRandomImage = () => {
-			loadImage(`/api/workshop/artwork?seed=${encodeURIComponent(cardClass.value)}`)
+		const loadCardOrRandomImage = () => {
+			const card = store.state.editor.cardLibrary.find((card) => card.class.toLowerCase() === cardClass.value.toLowerCase())
+			if (card) {
+				loadImage(`/assets/cards/${encodeURIComponent(card.class)}.webp`)
+			} else {
+				loadImage(`/api/workshop/artwork?seed=${encodeURIComponent(cardClass.value)}`)
+			}
 			customArtImage.value = null
 			if (fileSelectorRef.value) {
 				fileSelectorRef.value!.value = ''
@@ -172,7 +182,7 @@ export default defineComponent({
 				artFileNameInputRef.value!.value = ''
 			}
 		}
-		const loadRandomImageDebounced = debounce(500, loadRandomImage)
+		const loadRandomImageDebounced = debounce(500, loadCardOrRandomImage)
 		const imageLoaded = ref<boolean>(false)
 		const currentImage = ref<PIXI.Texture>()
 		onMounted(() => {
@@ -190,8 +200,7 @@ export default defineComponent({
 			const name = getRandomName()
 			cardClass.value = `hero${name.substr(0, 1).toUpperCase()}${name.substr(1)}`
 		}
-		randomizeClass()
-		loadRandomImage()
+		loadCardOrRandomImage()
 
 		const cardType = ref<CardType>(CardType.UNIT)
 		const cardColor = ref<CardColor>(CardColor.GOLDEN)
@@ -219,10 +228,32 @@ export default defineComponent({
 		const cardTribes = ref<string>('')
 		const cardDescription = ref<string>('')
 
+		const routeQuery = useWorkshopRouteQuery()
+		const loadFromCard = routeQuery.value.from
+		if (loadFromCard) {
+			const card = store.state.editor.cardLibrary.find((card) => card.class.toLowerCase() === loadFromCard.toLowerCase())
+			if (card) {
+				cardClass.value = card.class
+				cardType.value = card.type
+				cardColor.value = card.color
+				cardPower.value = card.stats.basePower.toString() || '0'
+				cardArmor.value = card.stats.baseArmor.toString() || '0'
+				cardSpellCost.value = card.stats.baseSpellCost.toString() || '0'
+				cardName.value = Localization.getCardName(card) || ''
+				cardTitle.value = Localization.getCardTitle(card) || ''
+				cardTribes.value = Localization.getCardTribes(card).join('; ')
+				cardDescription.value = insertRichTextVariables(Localization.getCardDescription(card) || '', card.variables)
+			}
+		}
+
+		if (cardClass.value === '') {
+			cardClass.value = 'heroAura'
+		}
+
 		const cardPreview = computed<CardMessage & WorkshopCardProps>(() => ({
 			id: '',
 			type: cardType.value,
-			class: 'unitHidden',
+			class: cardClass.value,
 			color: cardColor.value,
 			faction: CardFaction.HUMAN,
 
@@ -304,7 +335,15 @@ export default defineComponent({
 			return 'unnamed'
 		})
 
+		const areComponentsPreloaded = ref<boolean>(false)
+		TextureAtlas.preloadComponents().then(() => {
+			areComponentsPreloaded.value = true
+		})
+
+		const isPreviewReady = computed<boolean>(() => imageLoaded.value && areComponentsPreloaded.value)
+
 		return {
+			isPreviewReady,
 			fileSelectorRef,
 			artFileNameInputRef,
 			customArtImage,
@@ -477,5 +516,6 @@ input[type='file'] {
 textarea {
 	resize: vertical;
 	min-height: 62px;
+	max-height: calc(62px * 4);
 }
 </style>

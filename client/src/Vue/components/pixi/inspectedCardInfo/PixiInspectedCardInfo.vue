@@ -59,6 +59,19 @@
 				{{ textLine }}
 			</div>
 		</div>
+		<div class="card-info-section workshop-section" v-if="!isInGame">
+			<div
+				class="menu-separator"
+				v-if="
+					displayInGameStats ||
+					displayedFeatures.length > 0 ||
+					inspectedCard.relatedCards.length > 0 ||
+					displayBuffs ||
+					flavorTextLines.length > 0
+				"
+			/>
+			<a :href="`/workshop?from=${inspectedCard.class.toLowerCase()}`" target="_blank">Open in Workshop</a>
+		</div>
 	</div>
 </template>
 
@@ -169,7 +182,7 @@ export default defineComponent({
 
 		const onOverlayClick = (event: MouseEvent) => {
 			event.cancelBubble = true
-			if (!event.ctrlKey) {
+			if (!event.ctrlKey && !(event.target instanceof HTMLAnchorElement)) {
 				event.preventDefault()
 			}
 		}
