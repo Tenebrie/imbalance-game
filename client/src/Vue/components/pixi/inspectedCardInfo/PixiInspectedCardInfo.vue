@@ -170,14 +170,7 @@ export default defineComponent({
 		})
 
 		const overlayDisplayed = computed<boolean>(() => {
-			return (
-				inspectedCard.value &&
-				!inspectedCard.value.isHidden &&
-				(isInGame.value ||
-					displayedFeatures.value.length > 0 ||
-					inspectedCard.value.relatedCards.length > 0 ||
-					flavorTextLines.value.length > 0)
-			)
+			return inspectedCard.value && !inspectedCard.value.isHidden
 		})
 
 		const onOverlayClick = (event: MouseEvent) => {
