@@ -30,12 +30,15 @@ const requireAuthentication = async (next: NavigationGuardNext, beforeContinue?:
 	next({ name: 'login' })
 }
 
-const requireAdminAccess = async (next: NavigationGuardNext): Promise<void> => {
+const requireAdminAccess = async (next: NavigationGuardNext, beforeContinue?: () => void): Promise<void> => {
 	if (
 		(store.state.isLoggedIn || (await fetchProfile())) &&
 		store.state.player &&
 		(store.state.player.accessLevel === AccessLevel.ADMIN || store.state.player.accessLevel === AccessLevel.SUPPORT)
 	) {
+		if (beforeContinue) {
+			beforeContinue()
+		}
 		next()
 		return
 	}
@@ -152,7 +155,10 @@ const router = createRouter({
 			name: 'admin',
 			component: () => import('@/Vue/views/AdminView.vue'),
 			beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-				requireAdminAccess(next)
+				requireAdminAccess(next, async () => {
+					await store.dispatch.editor.loadCardLibrary()
+					await TextureAtlas.preloadComponents()
+				})
 			},
 			redirect: { name: 'admin-games' },
 			children: [

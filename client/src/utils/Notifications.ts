@@ -14,12 +14,12 @@ const obj = {
 		return item
 	},
 
-	success(text: string): NotificationWrapper {
+	success(text: string, args: Partial<TemporaryNotificationProps> = {}): NotificationWrapper {
 		const item = assembleNotification({
 			type: 'success',
 			text,
 			actions: [],
-			timeout: 2000,
+			timeout: args.timeout || 2000,
 			persistent: false,
 		})
 		store.dispatch.notifications.sendNotification(item)

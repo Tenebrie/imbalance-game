@@ -30,9 +30,18 @@ export default defineComponent({
 		customArt: {
 			type: Object as PropType<HTMLImageElement | null>,
 		},
+		renderOverlay: {
+			type: Boolean as PropType<boolean | undefined>,
+		},
 	},
 
-	setup(props) {
+	emits: {
+		canvasReady: ({ canvas }: { canvas: HTMLCanvasElement }) => {
+			return canvas instanceof HTMLCanvasElement
+		},
+	},
+
+	setup(props, { emit }) {
 		const imageRef = ref<HTMLImageElement | null>(null)
 		const canvasRef = ref<HTMLCanvasElement | null>(null)
 		const baseImageRef = ref<HTMLImageElement | null>(null)
@@ -65,6 +74,13 @@ export default defineComponent({
 				imageScaleRef.value = 1
 				imageOffsetRef.value = { x: 0, y: 0 }
 				loadCustomArtFromProps()
+			}
+		)
+
+		watch(
+			() => [props.renderOverlay],
+			() => {
+				renderFinalCanvas()
 			}
 		)
 
@@ -119,10 +135,15 @@ export default defineComponent({
 
 			ctx.resetTransform()
 
-			const overlayImage = overlayImageRef.value
-			if (overlayImage) {
-				ctx.drawImage(overlayImage, 0, 0)
+			if (props.renderOverlay || props.renderOverlay === undefined) {
+				const overlayImage = overlayImageRef.value
+				if (overlayImage) {
+					ctx.drawImage(overlayImage, 0, 0)
+				}
 			}
+			emit('canvasReady', {
+				canvas: canvas,
+			})
 		}
 
 		const onCanvasScroll = (event: WheelEvent) => {

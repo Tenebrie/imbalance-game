@@ -1,5 +1,5 @@
 <template>
-	<div class="editor-deck-card-list-separator" :class="factionClass">
+	<div class="editor-deck-card-list-separator" :class="factionClass" :onclick="onClick">
 		<span class="line-container left"><span class="line"></span></span>
 		<span class="text">{{ separatorText }}</span>
 		<span class="line-container right"><span class="line"></span></span>
@@ -12,6 +12,7 @@ import { computed, defineComponent } from 'vue'
 import { PropType } from 'vue'
 
 import Localization from '@/Pixi/Localization'
+import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 
 export default defineComponent({
 	props: {
@@ -55,9 +56,15 @@ export default defineComponent({
 			experimental: props.isExperimental,
 		}))
 
+		const routeQuery = useDecksRouteQuery()
+		const onClick = () => {
+			routeQuery.value.toggleExactFaction(props.faction)
+		}
+
 		return {
 			factionClass,
 			separatorText,
+			onClick,
 		}
 	},
 })
@@ -73,6 +80,13 @@ export default defineComponent({
 	padding: 4px 8px;
 	user-select: none;
 	font-size: 1.1em;
+	cursor: pointer;
+	transition: background-color 0.3s;
+
+	&:hover {
+		background: $COLOR-BACKGROUND-TRANSPARENT;
+		transition: background-color 0s;
+	}
 
 	&.human {
 		color: darkgoldenrod;
@@ -112,7 +126,7 @@ export default defineComponent({
 	}
 
 	.line-container.left {
-		width: 30px;
+		width: 36px;
 	}
 
 	.line-container.right {

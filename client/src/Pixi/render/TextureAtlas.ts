@@ -164,6 +164,7 @@ export default class TextureAtlas {
 
 		console.info(`Loading '${path}' on demand`)
 		const placeholderPath = placeholder === 'buff' ? 'icons/question' : 'cards/tokenPlaceholder'
+		console.log(placeholderPath)
 		const clone = this.textures[placeholderPath.toLowerCase()].clone()
 		loadedTexture.on('update', () => {
 			clone.baseTexture = loadedTexture.baseTexture

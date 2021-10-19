@@ -1,58 +1,37 @@
 <template>
-	<div class="admin-cards-view" v-if="hasLoaded">
-		<table class="cards-table">
-			<thead>
-				<tr>
-					<th @click="() => sortBy('name')">Name</th>
-					<th @click="() => sortBy('type')">Type</th>
-					<th @click="() => sortBy('color')">Color</th>
-					<th @click="() => sortBy('faction')">Faction</th>
-					<th @click="() => sortBy('collectible')">Collectible</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="card in cards" :key="card.class">
-					<td>
-						<router-link :to="`/admin/cards/${card.class}`"
-							>{{ card.parsedName }}{{ card.parsedTitle ? `, ${card.parsedTitle}` : '' }}</router-link
-						>
-					</td>
-					<td>
-						<span :class="`card-type ${card.readableType}`" v-html="card.localizedType" />
-					</td>
-					<td>
-						<span :class="`card-color ${card.readableColor}`" v-html="card.localizedColor" />
-					</td>
-					<td>
-						<span :class="`card-faction ${card.readableFaction}`" v-html="card.localizedFaction" />
-					</td>
-					<td>
-						{{ card.isCollectible }}
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	<keep-alive>
+		<div class="admin-cards-view" v-if="hasLoaded" :onscroll="onScroll" ref="scrollerRef">
+			<div v-for="category in cards" :key="category.set">
+				<h2>{{ category.name }}</h2>
+				<admin-cards-table :card-messages="category.cards" />
+			</div>
+		</div>
+	</keep-alive>
 </template>
 
 <script lang="ts">
-import AccessLevel from '@shared/enums/AccessLevel'
+import ExpansionSet from '@shared/enums/ExpansionSet'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
-import { cardColorToString, cardFactionToString, cardTypeToString } from '@shared/Utils'
+import { cardColorToString, cardFactionToString, cardTypeToString, enumKeys } from '@shared/Utils'
 import axios from 'axios'
-import moment from 'moment'
+import { debounce } from 'throttle-debounce'
 import { defineComponent, onMounted, ref } from 'vue'
 
 import Localization from '@/Pixi/Localization'
 import { parseRichText } from '@/utils/RichTextParser'
-import store from '@/Vue/store'
+import AdminCardsTable from '@/Vue/components/admin/AdminCardsTable.vue'
+import { useAdminRouteQuery } from '@/Vue/components/editor/AdminRouteParams'
 
-import TheCardPreviewPopup from '../popup/escapeMenu/TheCardPreviewPopup.vue'
+export type FilterType = 'name' | 'type' | 'color' | 'faction' | 'collectible'
 
-type FilterType = 'name' | 'type' | 'color' | 'faction' | 'collectible'
+export type AdminViewCardCategory = {
+	set: ExpansionSet
+	name: string
+	cards: ExtendedCardMessage[]
+}
 
-type ExtendedCardMessage = CardMessage & {
+export type ExtendedCardMessage = CardMessage & {
 	parsedName: string
 	parsedTitle: string
 	readableType: string
@@ -64,14 +43,18 @@ type ExtendedCardMessage = CardMessage & {
 }
 
 export default defineComponent({
+	components: { AdminCardsTable },
 	setup() {
 		const hasLoaded = ref(false)
-		const cards = ref<ExtendedCardMessage[]>([])
+		const cards = ref<AdminViewCardCategory[]>([])
+
+		const scrollerRef = ref<HTMLDivElement | null>(null)
+		const routeQuery = useAdminRouteQuery()
 
 		const loadData = async () => {
 			const response = await axios.get('/api/admin/cards')
 			const responseCards = response.data as OpenCardMessage[]
-			cards.value = responseCards.map((card) => ({
+			const loadedCards = responseCards.map((card) => ({
 				...card,
 				parsedName: parseRichText(Localization.getCardName(card), card.variables).humanReadableText,
 				parsedTitle: parseRichText(Localization.getCardTitle(card) || '', card.variables).humanReadableText,
@@ -82,101 +65,53 @@ export default defineComponent({
 				localizedColor: Localization.get(`card.color.${card.color}`),
 				localizedFaction: Localization.get(`card.faction.${card.faction}`),
 			}))
-			sortCards()
+
+			const cardCategories: AdminViewCardCategory[] = []
+			loadedCards.forEach((card) => {
+				const matchingCategory = cardCategories.find((category) => category.set === card.expansionSet)
+				if (matchingCategory) {
+					matchingCategory.cards.push(card)
+				} else {
+					const name = enumKeys(ExpansionSet)[card.expansionSet]
+					const recapitalizedName = name.slice(0, 1) + name.slice(1).toLowerCase()
+					cardCategories.push({
+						set: card.expansionSet,
+						name: recapitalizedName,
+						cards: [card],
+					})
+				}
+			})
+			cards.value = cardCategories
+
 			hasLoaded.value = true
+			requestAnimationFrame(() => {
+				const scroller = scrollerRef.value
+				const targetValue = routeQuery.value.scroll
+				if (targetValue > 0 && scroller) {
+					scroller.scrollTo({
+						top: targetValue,
+					})
+				}
+			})
 		}
 
 		onMounted(() => {
 			loadData()
 		})
 
-		const onPreview = async (card: ExtendedCardMessage) => {
-			store.dispatch.popupModule.open({
-				component: TheCardPreviewPopup,
-				params: {
-					cardClass: card.class,
-				},
-			})
+		const onScroll = (e: Event) => {
+			const target = e.target as HTMLDivElement
+			saveScrollValueDebounced(target.scrollTop)
 		}
-
-		type SortStackEntry = {
-			type: FilterType
-			isReversed: boolean
-		}
-		const sortStack = ref<SortStackEntry[]>([
-			{
-				type: 'collectible',
-				isReversed: false,
-			},
-			{
-				type: 'faction',
-				isReversed: false,
-			},
-			{
-				type: 'color',
-				isReversed: false,
-			},
-			{
-				type: 'type',
-				isReversed: false,
-			},
-			{
-				type: 'name',
-				isReversed: false,
-			},
-		])
-
-		const modifyFilter = (type: FilterType): void => {
-			const last = sortStack.value[sortStack.value.length - 1]
-			if (last.type === type) {
-				last.isReversed = !last.isReversed
-			} else {
-				sortStack.value = sortStack.value.filter((sorter) => sorter.type !== type)
-				sortStack.value.push({
-					type,
-					isReversed: false,
-				})
-			}
-		}
-
-		const sortBy = (type: FilterType) => {
-			modifyFilter(type)
-			sortCards()
-		}
-
-		const sortCards = () => {
-			sortStack.value.forEach((sorter) => {
-				if (sorter.type === 'name' && !sorter.isReversed) {
-					cards.value = cards.value.sort((a, b) => a.parsedName.localeCompare(b.parsedName))
-				} else if (sorter.type === 'name' && sorter.isReversed) {
-					cards.value = cards.value.sort((a, b) => b.parsedName.localeCompare(a.parsedName))
-				} else if (sorter.type === 'type' && !sorter.isReversed) {
-					cards.value = cards.value.sort((a, b) => a.type - b.type)
-				} else if (sorter.type === 'type' && sorter.isReversed) {
-					cards.value = cards.value.sort((a, b) => b.type - a.type)
-				} else if (sorter.type === 'color' && !sorter.isReversed) {
-					cards.value = cards.value.sort((a, b) => a.color - b.color)
-				} else if (sorter.type === 'color' && sorter.isReversed) {
-					cards.value = cards.value.sort((a, b) => b.color - a.color)
-				} else if (sorter.type === 'faction' && !sorter.isReversed) {
-					cards.value = cards.value.sort((a, b) => a.faction - b.faction)
-				} else if (sorter.type === 'faction' && sorter.isReversed) {
-					cards.value = cards.value.sort((a, b) => b.faction - a.faction)
-				} else if (sorter.type === 'collectible' && !sorter.isReversed) {
-					cards.value = cards.value.sort((a, b) => Number(a.isCollectible) - Number(b.isCollectible))
-				} else if (sorter.type === 'collectible' && sorter.isReversed) {
-					cards.value = cards.value.sort((a, b) => Number(b.isCollectible) - Number(a.isCollectible))
-				}
-			})
-		}
+		const saveScrollValueDebounced = debounce(100, (value: number) => {
+			routeQuery.value.scroll = value
+		})
 
 		return {
-			moment,
 			hasLoaded,
 			cards,
-			onPreview,
-			AccessLevel,
-			sortBy,
+			onScroll,
+			scrollerRef,
 		}
 	},
 })
@@ -187,92 +122,5 @@ export default defineComponent({
 
 .admin-cards-view {
 	overflow-y: scroll;
-}
-
-.cards-table {
-	width: 100%;
-	text-align: left;
-	border: none;
-	border-collapse: collapse;
-}
-
-tr {
-	border: none;
-}
-thead > tr {
-	background-color: rgba(black, 0.5);
-}
-tr:nth-child(even) {
-	background-color: rgba(white, 0.05);
-}
-
-th {
-	cursor: pointer;
-	user-select: none;
-}
-
-td,
-th {
-	padding: 12px 12px;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	width: auto;
-	white-space: nowrap;
-}
-
-.user-input {
-	vertical-align: bottom;
-	display: inline-block;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	max-width: 180px;
-	white-space: nowrap;
-}
-
-.action-link {
-	cursor: pointer;
-	user-select: none;
-}
-
-.card-type {
-	&.unit {
-		color: lighten(orange, 20);
-	}
-	&.spell {
-		color: lighten(blue, 20);
-	}
-}
-
-.card-color {
-	&.leader {
-		color: MediumAquamarine;
-	}
-	&.golden {
-		color: darkorange;
-	}
-	&.silver {
-		color: #bb20bb;
-	}
-	&.bronze {
-		color: white;
-	}
-	&.token {
-		color: gray;
-	}
-}
-
-.card-faction {
-	&.human {
-		color: darkgoldenrod;
-	}
-	&.arcane {
-		color: teal;
-	}
-	&.wild {
-		color: green;
-	}
-	&.neutral {
-		color: gray;
-	}
 }
 </style>

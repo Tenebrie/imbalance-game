@@ -113,7 +113,7 @@ class GameLibrary {
 		}
 		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameDestroyed(game)
 		setTimeout(() => {
-			this.destroyGame(game, 'Cleanup')
+			this.destroyGame(game, 'Cleanup (Timeout)')
 		}, GameLibrary.GAME_CLEANUP_DELAY)
 	}
 }

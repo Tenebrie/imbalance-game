@@ -71,7 +71,7 @@ export default {
 		}
 		if (connectedPlayers.length === 0 && !game.isStarted) {
 			game.systemFinish(null, 'No players left')
-		} else if (connectedPlayers.length === 0 && game.isStarted && game.allPlayers.some((player) => player.isBot)) {
+		} else if (connectedPlayers.length === 0 && game.isStarted && !game.isFinished && game.allPlayers.some((player) => player.isBot)) {
 			console.info(`No players left in game ${colorizeId(game.id)}. It will be shutdown in 60 seconds.`)
 			game.timers.playerLeaveTimeout.start()
 		}

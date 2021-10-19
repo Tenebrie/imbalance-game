@@ -23,6 +23,7 @@ export default class UnitBoxOfCats extends ServerCard {
 			},
 			relatedCards: [UnitStrayCat],
 			expansionSet: ExpansionSet.BASE,
+			hiddenFromLibrary: true,
 		})
 
 		this.createLocalization({

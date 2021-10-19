@@ -1,5 +1,5 @@
 <template>
-	<div class="editor-deck-card-list-separator" :class="colorClass">
+	<div class="editor-deck-card-list-separator" :class="colorClass" :onclick="onClick">
 		<span class="line-container left"><span class="line"></span></span>
 		<span class="text">{{ separatorText }} ({{ cardLimitUsed }}/{{ cardLimitTotal }})</span>
 		<span class="line-container right"><span class="line"></span></span>
@@ -9,22 +9,24 @@
 <script lang="ts">
 import CardColor from '@shared/enums/CardColor'
 import { getMaxCardCountForColor } from '@shared/Utils'
-import { defineComponent } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
 
 import Localization from '@/Pixi/Localization'
+import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
+import router from '@/Vue/router'
 import store from '@/Vue/store'
 
 export default defineComponent({
 	props: {
 		color: {
-			type: Number,
+			type: Number as PropType<CardColor>,
 			required: true,
 		},
 	},
 
-	computed: {
-		colorAsString(): string {
-			switch (this.color) {
+	setup(props) {
+		const colorAsString = computed<string>((): string => {
+			switch (props.color) {
 				case CardColor.LEADER:
 					return 'leader'
 				case CardColor.GOLDEN:
@@ -36,32 +38,44 @@ export default defineComponent({
 				default:
 					return ''
 			}
-		},
+		})
 
-		separatorText(): string {
-			return Localization.get(`card.color.${this.colorAsString}`)
-		},
+		const separatorText = computed((): string => {
+			return Localization.get(`card.color.${colorAsString.value}`)
+		})
 
-		cardLimitUsed(): number {
-			const deckId = this.$route.params.deckId as string
+		const cardLimitUsed = computed((): number => {
+			const deckId = router.currentRoute.value.params.deckId as string
 			return store.getters.editor.cardsOfColor({
 				deckId: deckId,
-				color: this.color,
+				color: props.color,
 			})
-		},
+		})
 
-		cardLimitTotal(): number {
-			return getMaxCardCountForColor(this.color)
-		},
+		const cardLimitTotal = computed((): number => {
+			return getMaxCardCountForColor(props.color)
+		})
 
-		colorClass(): any {
+		const colorClass = computed((): any => {
 			return {
-				[this.colorAsString]: true,
+				[colorAsString.value]: true,
 			}
-		},
-	},
+		})
 
-	methods: {},
+		const routeQuery = useDecksRouteQuery()
+		const onClick = () => {
+			routeQuery.value.toggleExactColor(props.color)
+		}
+
+		return {
+			colorAsString,
+			separatorText,
+			cardLimitUsed,
+			cardLimitTotal,
+			colorClass,
+			onClick,
+		}
+	},
 })
 </script>
 
@@ -75,36 +89,43 @@ export default defineComponent({
 	padding: 4px 8px;
 	user-select: none;
 	font-size: 1.1em;
+	cursor: pointer;
+	transition: background-color 0.3s;
+
+	&:hover {
+		background: $COLOR-BACKGROUND-TRANSPARENT;
+		transition: background-color 0s;
+	}
 
 	&.leader {
-		color: MediumAquamarine;
+		color: $COLOR_LEADER;
 
 		.line {
-			background: MediumAquamarine;
+			background: $COLOR_LEADER;
 		}
 	}
 
 	&.golden {
-		color: orange;
+		color: $COLOR_GOLDEN;
 
 		.line {
-			background: orange;
+			background: $COLOR_GOLDEN;
 		}
 	}
 
 	&.silver {
-		color: #bb20bb;
+		color: $COLOR_SILVER;
 
 		.line {
-			background: #bb20bb;
+			background: $COLOR_SILVER;
 		}
 	}
 
 	&.bronze {
-		color: white;
+		color: $COLOR_BRONZE;
 
 		.line {
-			background: white;
+			background: $COLOR_BRONZE;
 		}
 	}
 
@@ -114,7 +135,7 @@ export default defineComponent({
 	}
 
 	.line-container.left {
-		width: 30px;
+		width: 36px;
 	}
 
 	.line-container.right {

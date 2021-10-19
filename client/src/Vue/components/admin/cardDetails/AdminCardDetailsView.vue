@@ -42,7 +42,9 @@
 			</div>
 		</div>
 		<h2>Dev Tools</h2>
-		<admin-card-art-editor v-if="card" :cardClass="card.class" />
+		<div v-if="hasLoaded">
+			<admin-card-art-editor :card="card" />
+		</div>
 	</div>
 </template>
 
@@ -86,7 +88,11 @@ export default defineComponent({
 		const params = useAdminRouteParams()
 
 		const loadData = async () => {
-			const cardResponse = await axios.get(`/api/admin/cards/${params.value.cardId}`)
+			const cardId = params.value.cardId
+			if (!cardId) {
+				return
+			}
+			const cardResponse = await axios.get(`/api/admin/cards/${cardId}`)
 			const responseCard = cardResponse.data as CardMessage
 			card.value = {
 				...responseCard,

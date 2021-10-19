@@ -50,8 +50,9 @@ export default defineComponent({
 		background: none;
 		text-align: center;
 		width: calc(100% - 32px);
-		margin: 0 8px;
 		transition: background-color 0.3s;
+		margin: 0 8px;
+		border-radius: 8px;
 
 		&:hover,
 		&:focus {

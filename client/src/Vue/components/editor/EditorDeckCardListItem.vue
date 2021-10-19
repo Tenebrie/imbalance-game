@@ -16,6 +16,7 @@
 
 <script lang="ts">
 import CardColor from '@shared/enums/CardColor'
+import CardFaction from '@shared/enums/CardFaction'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
 import { getMaxCardCopiesForColor } from '@shared/Utils'
 import * as PIXI from 'pixi.js'
@@ -60,6 +61,12 @@ export default defineComponent({
 				golden: this.card.color === CardColor.GOLDEN,
 				silver: this.card.color === CardColor.SILVER,
 				bronze: this.card.color === CardColor.BRONZE,
+
+				human: this.card.faction === CardFaction.HUMAN,
+				arcane: this.card.faction === CardFaction.ARCANE,
+				wild: this.card.faction === CardFaction.WILD,
+				// eternal: this.card.faction === CardFaction.ETERNAL,
+				neutral: this.card.faction === CardFaction.NEUTRAL,
 			}
 		},
 	},
@@ -76,7 +83,11 @@ export default defineComponent({
 			}
 		},
 
-		onRightClick(): void {
+		onRightClick(event: MouseEvent): void {
+			if (event.ctrlKey) {
+				return
+			}
+
 			store.dispatch.inspectedCard.clear()
 			store.dispatch.inspectedCard.setCard({
 				card: this.card,
@@ -108,10 +119,11 @@ export default defineComponent({
 @import '../../styles/generic';
 
 .editor-deck-card-list-item {
-	width: calc(100% - 16px);
+	position: relative;
+	width: calc(100% - 32px);
 	display: flex;
 	flex-direction: row;
-	padding: 4px 8px;
+	padding: 4px 16px;
 	cursor: pointer;
 	user-select: none;
 	font-size: 1.3em;
@@ -123,25 +135,58 @@ export default defineComponent({
 	}
 
 	&.leader {
-		color: MediumAquamarine;
+		color: $COLOR_LEADER;
 	}
 
 	&.golden {
-		color: orange;
+		color: $COLOR_GOLDEN;
 	}
 
 	&.silver {
-		color: #bb20bb;
+		color: $COLOR_SILVER;
+	}
+
+	&.bronze {
+		color: $COLOR_BRONZE;
+	}
+
+	&:before {
+		position: absolute;
+		left: 8px;
+		top: 4px;
+		content: '';
+		width: 4px;
+		border-radius: 2px;
+		height: calc(100% - 8px);
+		background: $COLOR_HUMAN;
+	}
+
+	&.human:before {
+		background: $COLOR_HUMAN;
+	}
+	&.arcane:before {
+		background: $COLOR_ARCANE;
+	}
+	&.wild:before {
+		background: $COLOR_WILD;
+	}
+	&.eternal:before {
+		background: $COLOR_ETERNAL;
+	}
+
+	&.neutral:before {
+		background: $COLOR_NEUTRAL;
 	}
 
 	.power {
 		min-width: 25px;
-		margin-right: 20px;
+		margin-right: 16px;
 		text-align: right;
 	}
 
 	.name {
 		text-align: left;
+		margin-left: 4px;
 	}
 
 	.count {

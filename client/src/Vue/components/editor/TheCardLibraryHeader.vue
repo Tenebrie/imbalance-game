@@ -65,42 +65,8 @@ import store from '@/Vue/store'
 export default defineComponent({
 	setup() {
 		const routeQuery = useDecksRouteQuery()
-		const selectedColor = computed<Array<CardColor>>(() => routeQuery.value.color)
-		const selectedFaction = computed<Array<CardFaction>>(() => routeQuery.value.faction)
-
-		const toggleColor = (color: CardColor | null) => {
-			if (color === null) {
-				routeQuery.value.color = null
-			} else if (selectedColor.value !== null) {
-				if (selectedColor.value.includes(color)) {
-					if (selectedColor.value.length === 1) {
-						routeQuery.value.color = null
-					} else {
-						routeQuery.value.color = selectedColor.value.filter((c) => c !== color)
-					}
-				} else {
-					routeQuery.value.color = selectedColor.value.concat(color)
-				}
-			} else {
-				routeQuery.value.color = [color]
-			}
-		}
-
-		const toggleFaction = (faction: CardFaction | null) => {
-			if (faction === null) {
-				routeQuery.value.faction = null
-			} else if (selectedFaction.value !== null) {
-				if (selectedFaction.value.includes(faction)) {
-					if (selectedFaction.value.length === 1) {
-						routeQuery.value.faction = null
-					} else routeQuery.value.faction = selectedFaction.value.filter((f) => f !== faction)
-				} else {
-					routeQuery.value.faction = selectedFaction.value.concat(faction)
-				}
-			} else {
-				routeQuery.value.faction = [faction]
-			}
-		}
+		const selectedColor = computed<CardColor[] | null>(() => routeQuery.value.color)
+		const selectedFaction = computed<CardFaction[] | null>(() => routeQuery.value.faction)
 
 		const filtersVisible = ref<boolean>(true)
 		const toggleFilters = () => {
@@ -160,8 +126,8 @@ export default defineComponent({
 			colorData,
 			selectedFaction,
 			selectedColor,
-			toggleFaction,
-			toggleColor,
+			toggleFaction: routeQuery.value.toggleFaction,
+			toggleColor: routeQuery.value.toggleColor,
 			toggleFilters,
 			clearSearch,
 			experimentalToggle,

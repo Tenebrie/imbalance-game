@@ -18,7 +18,7 @@ interface Params {
 	playerId: string | null
 }
 
-export const useAdminRouteParams = (): ComputedRef => {
+export const useAdminRouteParams = (): ComputedRef<Params> => {
 	return computed(
 		(): Params => ({
 			get cardId(): string | null {
@@ -40,6 +40,34 @@ export const useAdminRouteParams = (): ComputedRef => {
 					return null
 				}
 				return routeData.value.params['playerId']
+			},
+		})
+	)
+}
+
+interface Query {
+	scroll: number
+}
+
+export const useAdminRouteQuery = (): ComputedRef<Query> => {
+	return computed(
+		(): Query => ({
+			get scroll(): number {
+				if (routeData.value.query['scroll'] === undefined) {
+					console.log('no')
+					return 0
+				}
+				try {
+					return Number(routeData.value.query['scroll'])
+				} catch (err) {
+					console.log('nope')
+					return 0
+				}
+			},
+
+			set scroll(value: number) {
+				const scroll = Math.round(value).toString()
+				router.push({ query: { ...router.currentRoute.value.query, scroll: scroll } })
 			},
 		})
 	)

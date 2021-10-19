@@ -36,7 +36,7 @@ export default class SpellTacticalRetreat extends ServerCard {
 
 		this.createLocalization({
 			en: {
-				name: 'Tactical Advance',
+				name: 'Tactical Retreat',
 				description: '*Move* an allied unit and *Heal* {healing}.',
 			},
 		})

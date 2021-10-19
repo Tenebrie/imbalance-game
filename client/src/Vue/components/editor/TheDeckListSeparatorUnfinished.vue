@@ -1,5 +1,5 @@
 <template>
-	<div class="editor-deck-card-list-separator-unfinished">
+	<div class="editor-deck-card-list-separator-unfinished" :onclick="onClick">
 		<span class="line-container left"><span class="line"></span></span>
 		<span class="text">{{ separatorText }}</span>
 		<span class="line-container right"><span class="line"></span></span>
@@ -7,15 +7,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 
 import Localization from '@/Pixi/Localization'
+import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 
 export default defineComponent({
-	computed: {
-		separatorText(): string {
-			return Localization.get('editor.faction.unfinished')
-		},
+	setup() {
+		const separatorText = computed<string>(() => Localization.get('editor.faction.unfinished'))
+
+		const routeQuery = useDecksRouteQuery()
+		const onClick = () => {
+			routeQuery.value.toggleFaction(null)
+		}
+		return {
+			separatorText,
+			onClick,
+		}
 	},
 })
 </script>
@@ -30,6 +38,13 @@ export default defineComponent({
 	padding: 4px 8px;
 	user-select: none;
 	font-size: 1.1em;
+	cursor: pointer;
+	transition: background-color 0.3s;
+
+	&:hover {
+		background: $COLOR-BACKGROUND-TRANSPARENT;
+		transition: background-color 0s;
+	}
 
 	color: darken(red, 10);
 	.line {
