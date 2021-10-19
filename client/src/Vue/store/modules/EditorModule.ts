@@ -151,7 +151,7 @@ const editorModule = defineModule({
 					}
 					Notifications.error(message, { timeout: 10000 })
 				}
-				dispatch.loadDecks()
+				dispatch.loadDecks().then()
 			})
 		}),
 
@@ -181,12 +181,21 @@ const editorModule = defineModule({
 		},
 
 		async loadCardLibrary(context): Promise<void> {
-			const { state, commit } = moduleActionContext(context, editorModule)
+			const { state, dispatch } = moduleActionContext(context, editorModule)
 
 			if (state.cardLibrary.length > 0) {
 				return
 			}
 
+			await dispatch.forceReloadCardLibrary()
+		},
+
+		async forceReloadCardLibrary(context): Promise<void> {
+			const { commit, dispatch } = moduleActionContext(context, editorModule)
+
+			dispatch.loadDecks().then()
+
+			commit.clearRenderedCards()
 			const cardsResponse = await axios.get('/api/cards', { params: { collectible: false } })
 			const cardMessages = cardsResponse.data as CardMessage[]
 			const sortedMessages = sortCards(cardMessages)

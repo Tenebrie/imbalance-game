@@ -19,7 +19,7 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 		super(game, {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
-			tribes: [CardTribe.NOBLE, CardTribe.SOLDIER],
+			tribes: [CardTribe.SOLDIER, CardTribe.COMMONER],
 			faction: CardFaction.HUMAN,
 			stats: {
 				power: 12,
@@ -29,6 +29,14 @@ export default class HeroForksmanshipInstructor extends ServerCard {
 		this.dynamicTextVariables = {
 			bonusPower: this.bonusPower,
 		}
+
+		this.createLocalization({
+			en: {
+				name: 'Forksmanship\nInstructor',
+				description: 'Whenever you play a Commoner, give it +{bonusPower} Power.',
+				flavor: 'When swords are not an option, you just have to rely on your own trusty pitchfork.',
+			},
+		})
 
 		this.createCallback(GameEventType.UNIT_CREATED, [CardLocation.BOARD])
 			.require(({ triggeringUnit }) => triggeringUnit.card !== this)

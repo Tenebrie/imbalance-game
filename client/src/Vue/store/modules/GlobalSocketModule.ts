@@ -81,7 +81,7 @@ const GlobalSocketModule = defineModule({
 		},
 
 		async keepGlobalWebSocketAlive(context): Promise<void> {
-			const { state, dispatch, rootState } = moduleActionContext(context, GlobalSocketModule)
+			const { state, dispatch, rootState, rootDispatch } = moduleActionContext(context, GlobalSocketModule)
 
 			let connectionWasEstablished = false
 			let connectionLostNotification: NotificationWrapper | null = null
@@ -110,6 +110,7 @@ const GlobalSocketModule = defineModule({
 					connectionLostNotification.discard()
 					connectionLostNotification = null
 					reconnectAttempts = 0
+					rootDispatch.editor.forceReloadCardLibrary()
 				}
 			}, 1000)
 

@@ -116,7 +116,6 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 			await router.push({ name: 'home' })
 			await store.dispatch.rulesets.loadLibrary()
 			await store.dispatch.editor.loadCardLibrary()
-			await store.dispatch.editor.loadDecks()
 			editorCardRenderer.startRenderingService()
 		},
 

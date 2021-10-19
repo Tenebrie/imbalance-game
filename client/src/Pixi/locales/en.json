@@ -157,7 +157,7 @@
 
 	"card.color.leader": "Leader",
 	"card.color.golden": "Legendary",
-	"card.color.silver": "Epic",
+	"card.color.silver": "Rare",
 	"card.color.bronze": "Common",
 	"card.color.token": "Token",
 	"card.color.0": "Leader",
@@ -526,10 +526,6 @@
 
 	"card.heroAdventuringGuildMaster.name": "Adventuring\nGuild Master",
 	"card.heroAdventuringGuildMaster.description": "*Deploy:*\nGain +{powerPerCard} Power per other Unit played this turn.",
-
-	"card.heroForksmanshipInstructor.name": "Forksmanship\nInstructor",
-	"card.heroForksmanshipInstructor.description": "Whenever you play a Commoner, give it +{bonusPower} Power.",
-	"card.heroForksmanshipInstructor.flavor": "When swords are not an option, you just have to rely on your own trusty pitchfork.",
 
 	"card.heroTribeShaman.name": "Tribal Shaman",
 	"card.heroTribeShaman.description": "*Deploy:*\n*Create* a *Healing Rain*",

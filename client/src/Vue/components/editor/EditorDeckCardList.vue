@@ -23,7 +23,7 @@
 <script lang="ts">
 import CardColor from '@shared/enums/CardColor'
 import PopulatedEditorCard from '@shared/models/PopulatedEditorCard'
-import { defineComponent } from 'vue'
+import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
 
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import EditorDeleteDeckButton from '@/Vue/components/editor/buttons/EditorDeleteDeckButton.vue'
@@ -33,6 +33,7 @@ import EditorDeckCardListItem from '@/Vue/components/editor/EditorDeckCardListIt
 import EditorDeckCardListSeparator from '@/Vue/components/editor/EditorDeckCardListSeparator.vue'
 import EditorDeckName from '@/Vue/components/editor/EditorDeckName.vue'
 import TheEditorHoveredDeckCard from '@/Vue/components/editor/TheEditorHoveredDeckCard.vue'
+import router from '@/Vue/router'
 import store from '@/Vue/store'
 
 export default defineComponent({
@@ -46,52 +47,57 @@ export default defineComponent({
 		TheEditorHoveredDeckCard,
 	},
 
-	data: () => ({
-		CardColor: CardColor,
-	}),
+	setup() {
+		const deckId = computed((): string => {
+			return router.currentRoute.value.params.deckId as string
+		})
 
-	computed: {
-		deckId(): string {
-			return this.$route.params.deckId as string
-		},
+		onMounted(() => {
+			store.commit.editor.setCurrentDeckId(deckId.value)
+		})
 
-		deck(): PopulatedEditorDeck {
-			return store.state.editor.decks.find((deck) => deck.id === this.deckId)!
-		},
-
-		leaderCards(): PopulatedEditorCard[] {
-			return this.deck.cards.filter((card) => card.color === CardColor.LEADER)
-		},
-
-		goldenCards(): PopulatedEditorCard[] {
-			return this.deck.cards.filter((card) => card.color === CardColor.GOLDEN)
-		},
-
-		silverCards(): PopulatedEditorCard[] {
-			return this.deck.cards.filter((card) => card.color === CardColor.SILVER)
-		},
-
-		bronzeCards(): PopulatedEditorCard[] {
-			return this.deck.cards.filter((card) => card.color === CardColor.BRONZE)
-		},
-	},
-
-	created(): void {
-		store.dispatch.editor.loadDecks()
-		store.commit.editor.setCurrentDeckId(this.deckId)
-	},
-
-	beforeUnmount(): void {
-		store.commit.editor.setCurrentDeckId(null)
-	},
-
-	methods: {
-		onScroll(): void {
+		const onScroll = (): void => {
 			if (store.state.editor.hoveredDeckCard.scrollCallback) {
 				store.state.editor.hoveredDeckCard.scrollCallback()
 			}
-		},
+		}
+
+		const deck = computed((): PopulatedEditorDeck => {
+			return store.state.editor.decks.find((deck) => deck.id === deckId.value)!
+		})
+
+		const leaderCards = computed<PopulatedEditorCard[]>(() => {
+			return deck.value.cards.filter((card) => card.color === CardColor.LEADER)
+		})
+
+		const goldenCards = computed<PopulatedEditorCard[]>(() => {
+			return deck.value.cards.filter((card) => card.color === CardColor.GOLDEN)
+		})
+
+		const silverCards = computed<PopulatedEditorCard[]>(() => {
+			return deck.value.cards.filter((card) => card.color === CardColor.SILVER)
+		})
+
+		const bronzeCards = computed<PopulatedEditorCard[]>(() => {
+			return deck.value.cards.filter((card) => card.color === CardColor.BRONZE)
+		})
+
+		onUnmounted(() => {
+			store.commit.editor.setCurrentDeckId(null)
+		})
+
+		return {
+			onScroll,
+			deck,
+			leaderCards,
+			goldenCards,
+			silverCards,
+			bronzeCards,
+			CardColor,
+		}
 	},
+
+	computed: {},
 })
 </script>
 
