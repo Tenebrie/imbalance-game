@@ -9,9 +9,11 @@ import OwnedCardRefMessage from '@shared/models/network/ownedCard/OwnedCardRefMe
 import PlayerGroupRefMessage from '@shared/models/network/playerGroup/PlayerGroupRefMessage'
 import PlayerGroupResourcesMessage from '@shared/models/network/playerInGame/PlayerGroupResourcesMessage'
 import PlayerInGameManaMessage from '@shared/models/network/playerInGame/PlayerInGameManaMessage'
+import gsap from 'gsap'
 
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import Core from '@/Pixi/Core'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 import store from '@/Vue/store'
 
 const IncomingPlayerUpdateMessages: PlayerUpdateMessageHandlers = {
@@ -61,6 +63,10 @@ const IncomingPlayerUpdateMessages: PlayerUpdateMessageHandlers = {
 
 	[PlayerUpdateMessageType.CARD_DESTROY_IN_HAND]: (data: OwnedCardRefMessage) => {
 		const player = Core.getPlayer(data.ownerId)
+		const targetCard = player.cardHand.findCardById(data.cardId)
+		if (!targetCard) {
+			return
+		}
 
 		if (
 			(Core.mainHandler.announcedCard && Core.mainHandler.announcedCard.id === data.cardId) ||
@@ -68,7 +74,19 @@ const IncomingPlayerUpdateMessages: PlayerUpdateMessageHandlers = {
 		) {
 			player.cardHand.removeCardById(data.cardId)
 		} else {
-			player.cardHand.destroyCardById(data.cardId)
+			player.cardHand.removeCardById(data.cardId)
+
+			gsap.to(targetCard.coreContainer, {
+				duration: 0.5,
+				overwrite: true,
+				pixi: {
+					alpha: 0,
+					positionY: targetCard.coreContainer.position.y - 150 * getRenderScale().superSamplingLevel,
+				},
+			})
+			setTimeout(() => {
+				Core.destroyCard(targetCard)
+			}, 1000)
 		}
 	},
 

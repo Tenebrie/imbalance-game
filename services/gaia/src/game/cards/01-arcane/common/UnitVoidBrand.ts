@@ -12,7 +12,6 @@ import BuffStrength from '@src/game/buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
-// TODO: Fix adding the tribes is not reflected on frontend
 export default class UnitVoidBrand extends ServerCard {
 	public static readonly EXTRA_POWER = 1
 	extraPower = UnitVoidBrand.EXTRA_POWER

@@ -25,6 +25,7 @@ export default class UnitMadnessIncarnate extends ServerCard {
 			},
 			expansionSet: ExpansionSet.BASE,
 			generatedArtworkMagicString: '1',
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			shatterPerRow: this.shatterPerRow,

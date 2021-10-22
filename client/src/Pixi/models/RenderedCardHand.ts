@@ -90,14 +90,6 @@ export default class RenderedCardHand implements CardHand {
 		Core.destroyCard(card)
 	}
 
-	public destroyCardById(cardId: string): void {
-		const card = this.findCardById(cardId)
-		if (!card) {
-			return
-		}
-		this.destroyCard(card)
-	}
-
 	public static fromMessage(message: CardHandMessage): RenderedCardHand {
 		const unitCards = message.unitCards.map((cardMessage) => RenderedCard.fromMessage(cardMessage))
 		const spellCards = message.spellCards.map((cardMessage) => RenderedCard.fromMessage(cardMessage))

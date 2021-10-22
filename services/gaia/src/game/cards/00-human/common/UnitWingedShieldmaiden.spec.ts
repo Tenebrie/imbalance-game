@@ -109,6 +109,27 @@ describe('UnitWingedShieldmaiden', () => {
 			})
 		})
 
+		describe('when an ally takes damage from an enemy when front row is not empty', () => {
+			beforeEach(() => {
+				game.player.add(CardInTesting)
+				game.player.summon(TestingUnitNoEffect, 'front')
+				game.player.summon(TestingUnitNoEffect, 'front')
+				game.player.summon(TestingUnit100Power, 'middle').takeDamageFromCard(1, game.opponent.summon(TestingUnitNoEffect))
+			})
+
+			it('plays itself in front of target', () => {
+				const card = game.player.find(CardInTesting)
+				expect(card.getUnit().getRow()).toEqual('front')
+				expect(card.getUnit().getRowPosition()).toEqual(1)
+				expect(card.stats.armor).toEqual(card.stats.baseArmor - 1)
+			})
+
+			it('protects target from damage', () => {
+				expect(game.player.find(TestingUnit100Power).location).toEqual(CardLocation.BOARD)
+				expect(game.player.find(TestingUnit100Power).stats.power).toEqual(100)
+			})
+		})
+
 		describe('when an ally on a full row takes damage from an enemy', () => {
 			beforeEach(() => {
 				game.player.add(CardInTesting)

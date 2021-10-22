@@ -97,11 +97,29 @@ export default class ServerBoard implements Board {
 	}
 
 	public getHorizontalUnitDistance(
-		first: ServerUnit | { rowIndex: number; unitIndex: number },
-		second: ServerUnit | { rowIndex: number; unitIndex: number }
+		first: ServerUnit | { rowIndex: number; unitIndex: number; extraUnits: number },
+		second: ServerUnit | { rowIndex: number; unitIndex: number; extraUnits: number }
 	): number {
-		const firstOffsetFromCenter = first.unitIndex - (this.rows[first.rowIndex].cards.length - 1) / 2
-		const secondOffsetFromCenter = second.unitIndex - (this.rows[second.rowIndex].cards.length - 1) / 2
+		return this.getHorizontalUnitDistanceForUnitCount(
+			{
+				rowIndex: first.rowIndex,
+				unitIndex: first.unitIndex,
+				unitCount: this.rows[first.rowIndex].cards.length + ('extraUnits' in first ? first.extraUnits : 0),
+			},
+			{
+				rowIndex: second.rowIndex,
+				unitIndex: second.unitIndex,
+				unitCount: this.rows[second.rowIndex].cards.length + ('extraUnits' in second ? second.extraUnits : 0),
+			}
+		)
+	}
+
+	public getHorizontalUnitDistanceForUnitCount(
+		first: { rowIndex: number; unitIndex: number; unitCount: number },
+		second: { rowIndex: number; unitIndex: number; unitCount: number }
+	): number {
+		const firstOffsetFromCenter = first.unitIndex - (first.unitCount - 1) / 2
+		const secondOffsetFromCenter = second.unitIndex - (second.unitCount - 1) / 2
 		return Math.abs(firstOffsetFromCenter - secondOffsetFromCenter)
 	}
 

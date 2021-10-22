@@ -129,38 +129,40 @@ export default class ServerGameEvents {
 				)
 			)
 
-		validSubscriptions.forEach((subscription) => {
-			const preparedState = subscription.prepares.reduce((state, preparator) => preparator(event.args, state), {})
+		validSubscriptions
+			.sort((a, b) => this.eventCallbackSorter(this.game, a, b))
+			.forEach((subscription) => {
+				const preparedState = subscription.prepares.reduce((state, preparator) => preparator(event.args, state), {})
 
-			if (
-				this.evaluatingSelectors ||
-				event.type === GameEventType.GAME_CREATED ||
-				event.type === GameEventType.GAME_SETUP ||
-				event.type === GameEventType.POST_GAME_SETUP ||
-				event.type === GameEventType.BEFORE_CARD_TAKES_DAMAGE ||
-				(event.effectSource && event.effectSource === subscription.subscriber)
-			) {
-				subscription.callbacks.forEach((callback) => {
-					this.logEventExecution(event, subscription, true)
-					cardPerform(this.game, subscription.subscriber, () => {
-						callback(event.args, preparedState)
+				if (
+					this.evaluatingSelectors ||
+					event.type === GameEventType.GAME_CREATED ||
+					event.type === GameEventType.GAME_SETUP ||
+					event.type === GameEventType.POST_GAME_SETUP ||
+					event.type === GameEventType.BEFORE_CARD_TAKES_DAMAGE ||
+					(event.effectSource && event.effectSource === subscription.subscriber)
+				) {
+					subscription.callbacks.forEach((callback) => {
+						this.logEventExecution(event, subscription, true)
+						cardPerform(this.game, subscription.subscriber, () => {
+							callback(event.args, preparedState)
+						})
 					})
-				})
-				return
-			}
+					return
+				}
 
-			this.callbackQueue = this.callbackQueue.concat(
-				subscription.callbacks.map((callbackFunction) => ({
-					callback: callbackFunction,
-					args: event.args,
-					rawEvent: event,
-					subscriber: subscription.subscriber,
-					preparedState: preparedState,
-					immediateConditions: subscription.immediateConditions,
-					subscription: subscription,
-				}))
-			)
-		})
+				this.callbackQueue = this.callbackQueue.concat(
+					subscription.callbacks.map((callbackFunction) => ({
+						callback: callbackFunction,
+						args: event.args,
+						rawEvent: event,
+						subscriber: subscription.subscriber,
+						preparedState: preparedState,
+						immediateConditions: subscription.immediateConditions,
+						subscription: subscription,
+					}))
+				)
+			})
 	}
 
 	public applyHooks(
@@ -404,6 +406,7 @@ export default class ServerGameEvents {
 	}
 
 	// TODO: Promote hooks to first-class citizens
+	// TODO: Also upgrade the game log
 	private logHookExecution(hook: GameHookType, subscription: EventHook<any, any>): void {
 		const subscriber = subscription.subscriber
 		const subscriberId = !subscriber ? this.game.id : `${subscriber.id}`

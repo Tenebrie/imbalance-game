@@ -76,7 +76,7 @@ export const hashCode = (targetString: string): number => {
 }
 
 const hashCodeOfId = (id: string): number => {
-	return hashCode(id.substr(id.lastIndexOf(':')))
+	return hashCode(id.includes(':') ? id.substr(id.lastIndexOf(':')) : id)
 }
 
 export function sortCards<T extends Card | CardMessage>(inputArray: T[]): T[] {

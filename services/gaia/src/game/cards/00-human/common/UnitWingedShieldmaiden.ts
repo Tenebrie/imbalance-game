@@ -59,7 +59,11 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 				const closestDistance = possiblePositions
 					.map((unitIndex) => ({
 						unitIndex,
-						distance: game.board.getHorizontalUnitDistance(triggeringUnit, { rowIndex: targetRowIndex, unitIndex }),
+						distance: game.board.getHorizontalUnitDistance(triggeringUnit, {
+							rowIndex: targetRowIndex,
+							unitIndex,
+							extraUnits: 1,
+						}),
 					}))
 					.sort((a, b) => a.distance - b.distance)[0]
 

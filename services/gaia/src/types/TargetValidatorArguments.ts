@@ -5,7 +5,6 @@ import ServerBoardRow from '../game/models/ServerBoardRow'
 import ServerCard from '../game/models/ServerCard'
 import ServerUnit from '../game/models/ServerUnit'
 
-// TODO: Figure out what the `player` is here
 export interface CardTargetValidatorArguments {
 	player: ServerPlayerInGame
 	sourceCard: ServerCard

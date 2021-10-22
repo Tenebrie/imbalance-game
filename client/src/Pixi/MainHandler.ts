@@ -102,10 +102,6 @@ class AnimationThread {
 		this.queuedMessages.push(message)
 	}
 
-	public addUnwrappedMessage(message: QueuedMessage): void {
-		this.queuedMessages.unshift(message)
-	}
-
 	public triggerCooldown(time: number): AnimationThread {
 		this.messageCooldown += time
 		return this
@@ -203,17 +199,6 @@ export default class MainHandler {
 			targetThread = this.currentOpenAnimationThread.parentThread
 		}
 		targetThread.registerMessage(message)
-	}
-
-	public addUnwrappedMessages(reversedMessages: QueuedMessage[]): void {
-		const messages = reversedMessages.slice().reverse()
-		messages.forEach((message) => {
-			let targetThread = this.currentOpenAnimationThread
-			if (message.ignoreWorkerThreads && this.currentOpenAnimationThread.parentThread) {
-				targetThread = this.currentOpenAnimationThread.parentThread
-			}
-			targetThread.addUnwrappedMessage(message)
-		})
 	}
 
 	public triggerAnimation(time: number, threadId: string): void {
