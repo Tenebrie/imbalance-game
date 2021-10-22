@@ -77,7 +77,7 @@ describe('HeroFormidia', () => {
 
 			describe('when shade is returned and played again', () => {
 				beforeEach(() => {
-					game.player.find(HeroFormidiaShade).returnToHand().play()
+					game.player.find(HeroFormidiaShade).getUnit().returnToHand().play()
 				})
 
 				it('does not summon any more units', () => {

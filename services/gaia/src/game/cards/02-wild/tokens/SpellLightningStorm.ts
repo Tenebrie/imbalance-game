@@ -9,7 +9,7 @@ import { asSplashSpellDamage, asTargetCount } from '@src/utils/LeaderStats'
 
 import BuffUpgradedStorms from '../../../buffs/BuffUpgradedStorms'
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 
@@ -60,7 +60,7 @@ export default class SpellLightningStorm extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+		target.dealDamage(DamageInstance.fromCard(this.damage, this))
 		this.targetsHit.push(target.card)
 	}
 

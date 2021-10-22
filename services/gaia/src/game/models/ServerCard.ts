@@ -4,6 +4,7 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import DamageSource from '@shared/enums/DamageSource'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import LeaderStatType from '@shared/enums/LeaderStatType'
@@ -32,6 +33,7 @@ import ServerBuffContainer from './buffs/ServerBuffContainer'
 import { EventHook } from './events/EventHook'
 import { EventSubscription } from './events/EventSubscription'
 import GameEventCreators, {
+	BeforeCardTakesDamageEventArgs,
 	CardArmorRestoredEventArgs,
 	CardBuffCreatedEventArgs,
 	CardBuffRemovedEventArgs,
@@ -79,7 +81,7 @@ import RelatedCardsDefinition from './RelatedCardsDefinition'
 import ServerAnimation from './ServerAnimation'
 import ServerCardStats from './ServerCardStats'
 import { ServerCardTargeting } from './ServerCardTargeting'
-import ServerDamageInstance from './ServerDamageSource'
+import ServerDamageInstance, { cloneDamageInstance, DamageInstance } from './ServerDamageSource'
 import ServerGame from './ServerGame'
 import ServerRichTextVariables from './ServerRichTextVariables'
 import ServerUnit from './ServerUnit'
@@ -379,11 +381,19 @@ export default class ServerCard implements Card {
 	}
 
 	public dealDamage(damageInstance: ServerDamageInstance): void {
+		this.game.events.postEvent(
+			GameEventCreators.beforeCardTakesDamage({
+				game: this.game,
+				triggeringCard: this,
+				damageInstance,
+			})
+		)
+
 		if (damageInstance.proxyCard) {
 			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.proxyCard, [this]))
-		} else if (damageInstance.sourceCard) {
+		} else if (damageInstance.source === DamageSource.CARD) {
 			this.game.animation.play(ServerAnimation.cardAttacksCards(damageInstance.sourceCard, [this]))
-		} else if (damageInstance.sourceRow) {
+		} else if (damageInstance.source === DamageSource.BOARD_ROW) {
 			this.game.animation.play(ServerAnimation.rowAttacksCards(damageInstance.sourceRow, [this]))
 		} else {
 			this.game.animation.play(ServerAnimation.universeAttacksCards([this]))
@@ -402,7 +412,7 @@ export default class ServerCard implements Card {
 		)
 
 		if (hookValues.targetCard !== this) {
-			hookValues.targetCard.dealDamage(ServerDamageInstance.redirectedFrom(hookValues.damageInstance, this))
+			hookValues.targetCard.dealDamage(DamageInstance.redirectedFrom(hookValues.damageInstance, this))
 			return
 		}
 
@@ -411,15 +421,17 @@ export default class ServerCard implements Card {
 
 		let armorDamageInstance: ServerDamageInstance | null = null
 		if (this.stats.armor > 0) {
-			armorDamageInstance = damageInstance.clone()
-			armorDamageInstance.value = Math.min(this.stats.armor, damageToDeal)
+			armorDamageInstance = cloneDamageInstance(damageInstance, {
+				value: Math.min(this.stats.armor, damageToDeal),
+			})
 			damageToDeal -= armorDamageInstance.value
 		}
 
 		let powerDamageInstance: ServerDamageInstance | null = null
 		if (damageToDeal > 0) {
-			powerDamageInstance = damageInstance.clone()
-			powerDamageInstance.value = Math.min(this.stats.power, damageToDeal)
+			powerDamageInstance = cloneDamageInstance(damageInstance, {
+				value: Math.min(this.stats.power, damageToDeal),
+			})
 		}
 
 		if (armorDamageInstance) {
@@ -446,9 +458,9 @@ export default class ServerCard implements Card {
 			return
 		}
 
-		if (healingInstance.sourceCard) {
+		if (healingInstance.source === DamageSource.CARD) {
 			this.game.animation.play(ServerAnimation.cardHealsCards(healingInstance.sourceCard, [this]))
-		} else if (healingInstance.sourceRow) {
+		} else if (healingInstance.source === DamageSource.BOARD_ROW) {
 			this.game.animation.play(ServerAnimation.rowHealsCards(healingInstance.sourceRow, [this]))
 		} else {
 			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
@@ -473,9 +485,9 @@ export default class ServerCard implements Card {
 			return
 		}
 
-		if (restorationInstance.sourceCard) {
+		if (restorationInstance.source === DamageSource.CARD) {
 			this.game.animation.play(ServerAnimation.cardHealsCards(restorationInstance.sourceCard, [this]))
-		} else if (restorationInstance.sourceRow) {
+		} else if (restorationInstance.source === DamageSource.BOARD_ROW) {
 			this.game.animation.play(ServerAnimation.rowHealsCards(restorationInstance.sourceRow, [this]))
 		} else {
 			this.game.animation.play(ServerAnimation.universeHealsCards([this]))
@@ -552,8 +564,10 @@ export default class ServerCard implements Card {
 		const location = this.location
 		if (location === CardLocation.HAND) {
 			owner.cardHand.removeCard(this)
+			owner.cardGraveyard.addCard(this)
 		} else if (location === CardLocation.DECK) {
 			owner.cardDeck.removeCard(this)
+			owner.cardGraveyard.addCard(this)
 		} else if (location === CardLocation.GRAVEYARD) {
 			owner.cardGraveyard.removeCard(this)
 		}
@@ -644,6 +658,10 @@ export default class ServerCard implements Card {
 	protected createCallback(event: GameEventType.ROUND_STARTED, location: CardLocation[] | 'any'): EventSubscription<RoundStartedEventArgs>
 	protected createCallback(event: GameEventType.ROUND_ENDED, location: CardLocation[] | 'any'): EventSubscription<RoundEndedEventArgs>
 	protected createCallback(event: GameEventType.UNIT_MOVED, location: CardLocation[] | 'any'): EventSubscription<UnitMovedEventArgs>
+	protected createCallback(
+		event: GameEventType.BEFORE_CARD_TAKES_DAMAGE,
+		location: CardLocation[] | 'any'
+	): EventSubscription<BeforeCardTakesDamageEventArgs>
 	protected createCallback(
 		event: GameEventType.CARD_TAKES_DAMAGE,
 		location: CardLocation[] | 'any'
@@ -748,6 +766,7 @@ export default class ServerCard implements Card {
 	protected createEffect(event: GameEventType.UNIT_ORDERED_ROW): EventSubscription<UnitOrderedRowEventArgs>
 	protected createEffect(event: GameEventType.UNIT_NIGHTFALL): EventSubscription<UnitNightfallEventArgs>
 	protected createEffect(event: GameEventType.UNIT_DESTROYED): EventSubscription<UnitDestroyedEventArgs>
+	protected createEffect(event: GameEventType.CARD_DESTROYED): EventSubscription<CardDestroyedEventArgs>
 	protected createEffect<ArgsType extends SharedEventArgs>(event: GameEventType): EventSubscription<ArgsType> {
 		return this.game.events
 			.createCallback<ArgsType>(this, event)

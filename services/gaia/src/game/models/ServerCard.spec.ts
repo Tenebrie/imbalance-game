@@ -1,5 +1,5 @@
 import TestGameTemplates from '../../utils/TestGameTemplates'
-import TestingSpellHeavyStrike from '../cards/11-testing/TestingSpellHeavyStrike'
+import TestingSpellDeals100Damage from '../cards/11-testing/TestingSpellDeals100Damage'
 import TestingUnitUltraProtector from '../cards/11-testing/TestingUnitUltraProtector'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
 import ServerCard from './ServerCard'
@@ -25,7 +25,7 @@ describe('ServerCard', () => {
 				game.board.createUnit(protector, player, 0, 0)
 			})
 			playerAction(() => {
-				const opponentsCard = new TestingSpellHeavyStrike(game)
+				const opponentsCard = new TestingSpellDeals100Damage(game)
 				player.opponent.players[0].cardHand.addSpell(opponentsCard)
 				game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponent.players[0]), 0, 0)
 				game.cardPlay.selectCardTarget(player.opponent.players[0], game.cardPlay.getDeployTargets()[0].target)

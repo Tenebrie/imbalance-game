@@ -1,9 +1,11 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
+import BuffProtector from '@src/game/buffs/BuffProtector'
 
 import BuffStrength from '../../../buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
@@ -18,14 +20,17 @@ export default class UnitSkybornMother extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.VALKYRIE],
+			features: [CardFeature.PROMINENT],
 			stats: {
-				power: 13,
+				power: 11,
+				armor: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
 		this.dynamicTextVariables = {
 			powerGiven: this.powerGiven,
 		}
+		this.buffs.add(BuffProtector, this)
 
 		this.createSelector()
 			.require(() => this.location === CardLocation.HAND)

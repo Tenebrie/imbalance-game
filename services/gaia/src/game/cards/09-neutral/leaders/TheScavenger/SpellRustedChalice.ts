@@ -5,7 +5,7 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisRound'
-import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import { asDirectHealingPotency } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../../models/ServerCard'
@@ -33,7 +33,7 @@ export default class SpellRustedChalice extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireAllied()
 			.perform(({ targetUnit }) => {
-				targetUnit.card.heal(ServerDamageInstance.fromCard(this.healPower, this))
+				targetUnit.card.heal(DamageInstance.fromCard(this.healPower, this))
 			})
 			.finalize(() => this.buffs.add(BuffSpellExtraCostThisRound, this))
 	}

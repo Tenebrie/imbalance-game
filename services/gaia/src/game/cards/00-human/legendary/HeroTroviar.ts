@@ -8,7 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import { asDirectHealingPotency } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class HeroTroviar extends ServerCard {
@@ -32,14 +32,14 @@ export default class HeroTroviar extends ServerCard {
 		}
 
 		this.createEffect(GameEventType.UNIT_DEPLOYED).perform(() => {
-			this.dealDamage(ServerDamageInstance.fromCard(this.selfDamage, this))
+			this.dealDamage(DamageInstance.fromCard(this.selfDamage, this))
 		})
 
 		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.BOARD, CardLocation.STACK])
 			.require(({ triggeringCard }) => triggeringCard !== this)
 			.require(() => this.stats.power < this.stats.maxPower)
 			.perform(() => {
-				this.heal(ServerDamageInstance.fromCard(this.powerRestored, this))
+				this.heal(DamageInstance.fromCard(this.powerRestored, this))
 			})
 	}
 }

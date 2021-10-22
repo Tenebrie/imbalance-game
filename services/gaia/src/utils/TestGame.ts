@@ -6,6 +6,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import LeaderStatType from '@shared/enums/LeaderStatType'
 import RichTextVariables from '@shared/models/RichTextVariables'
+import { sortCards } from '@shared/Utils'
 import AsciiColor from '@src/enums/AsciiColor'
 import ServerBotPlayer from '@src/game/AI/ServerBotPlayer'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
@@ -13,7 +14,7 @@ import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import ServerCardStats from '@src/game/models/ServerCardStats'
 import { DeployTarget, PlayTarget } from '@src/game/models/ServerCardTargeting'
-import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import ServerUnit from '@src/game/models/ServerUnit'
 import Keywords from '@src/utils/Keywords'
@@ -144,6 +145,7 @@ const wrapRow = (game: ServerGame, row: ServerBoardRow): TestGameRow => {
  */
 
 type TestGameUnit = {
+	handle: ServerCard
 	stats: ServerCardStats
 	buffs: TestGameBuffs
 	variables: RichTextVariables
@@ -152,8 +154,10 @@ type TestGameUnit = {
 	getRowPosition(): number
 	orderOnFirst(): void
 	takeDamage(damage: number): TestGameUnit
+	takeDamageFromCard(damage: number, source: TestGameCard | TestGameUnit): TestGameUnit
 	transformInto(card: CardConstructor): TestGameUnit
 	receiveBuffs(buffConstructor: BuffConstructor, count?: number): TestGameUnit
+	returnToHand(): TestGameCard
 }
 
 const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
@@ -166,7 +170,13 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		game.events.evaluateSelectors()
 	}
 	const takeDamage = (damage: number): TestGameUnit => {
-		unit.dealDamage(ServerDamageInstance.fromUniverse(damage))
+		unit.dealDamage(DamageInstance.fromUniverse(damage))
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return unitWrapper
+	}
+	const takeDamageFromCard = (damage: number, source: TestGameCard | TestGameUnit): TestGameUnit => {
+		unit.dealDamage(DamageInstance.fromCard(damage, source.handle))
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
 		return unitWrapper
@@ -181,7 +191,14 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		unit.buffs.addMultiple(buffConstructor, count, null)
 		return unitWrapper
 	}
+	const returnToHand = (): TestGameCard => {
+		Keywords.returnCardFromBoardToHand(unit)
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return wrapCard(game, unit.card, unit.originalOwner)
+	}
 	const unitWrapper: TestGameUnit = {
+		handle: unit.card,
 		stats: unit.card.stats,
 		buffs: wrapBuffs(game, unit.card),
 		variables: unit.card.variables,
@@ -190,8 +207,10 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 		getRowPosition: () => unit.unitIndex,
 		orderOnFirst: () => orderOnFirst(),
 		takeDamage: (damage: number) => takeDamage(damage),
+		takeDamageFromCard: takeDamageFromCard,
 		transformInto: (card: CardConstructor) => transformInto(card),
 		receiveBuffs: (buffConstructor: BuffConstructor, count?: number) => receiveBuffs(buffConstructor, count),
+		returnToHand: () => returnToHand(),
 	}
 	return unitWrapper
 }
@@ -204,14 +223,17 @@ type TestGamePlayer = {
 	add(card: CardConstructor): TestGameCard
 	draw(card: CardConstructor): TestGameCard
 	summon(card: CardConstructor, row?: RowDistanceWrapper): TestGameUnit
+	summonMany(card: CardConstructor, count: number, row?: RowDistanceWrapper): void
 	fillRow(card: CardConstructor, row?: RowDistanceWrapper): void
 	getUnitMana(): number
 	getSpellMana(): number
 	addSpellMana(value: number): void
 	find(card: CardConstructor): TestGameCard
-	findAt(card: CardConstructor, index: number): TestGameCard
+	findAt(card: CardConstructor, creationIndex: number): TestGameCard
+	findAtGameIndex(card: CardConstructor, gameIndex: number): TestGameCard
 	findIn(card: CardConstructor, location: CardLocation): TestGameCard
-	findInAt(card: CardConstructor, location: CardLocation, index: number): TestGameCard
+	findInAt(card: CardConstructor, location: CardLocation, creationIndex: number): TestGameCard
+	findInAtGameIndex(card: CardConstructor, location: CardLocation, gameIndex: number): TestGameCard
 	getStack(): TestGameCardPlayActions
 	getFrontRow(): TestGameRow
 	getLeaderStat(stat: LeaderStatType): number
@@ -261,7 +283,8 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		player: ServerPlayerInGame,
 		cardConstructor: CardConstructor,
 		index: number,
-		validLocations: CardLocation[] | 'any'
+		validLocations: CardLocation[] | 'any',
+		sortingOrder: 'code' | 'game'
 	): TestGameCard => {
 		const game = player.game
 		const allCards = player.cardHand.allCards
@@ -269,7 +292,10 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			.concat(player.cardGraveyard.allCards)
 			.concat(game.board.getUnitsOwnedByPlayer(player).map((unit) => unit.card))
 			.concat(game.cardPlay.cardResolveStack.cards.filter((ownedCard) => ownedCard.owner === player).map((ownedCard) => ownedCard.card))
-		const foundCards = allCards
+
+		const sortedCards = sortingOrder === 'game' ? sortCards(allCards) : allCards
+
+		const foundCards = sortedCards
 			.filter((card) => card.class === getClassFromConstructor(cardConstructor))
 			.filter((card) => validLocations === 'any' || validLocations.includes(card.location))
 		if (foundCards.length <= index) {
@@ -289,6 +315,18 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
 		return wrapUnit(game, unit)
+	}
+
+	const summonMany = (player: ServerPlayerInGame, cardConstructor: CardConstructor, count: number, row: RowDistanceWrapper): void => {
+		const distance = unwrapRowDistance(row, game, player)
+		const targetRow = game.board.getRowWithDistanceToFront(player, distance)
+		for (let i = 0; i < count; i++) {
+			const card = new cardConstructor(game)
+			const unit = targetRow.createUnit(card, player, targetRow.cards.length)
+			if (!unit) throw new Error(`Unable to create the unit with class ${getClassFromConstructor(cardConstructor)}`)
+		}
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
 	}
 
 	const fillRow = (player: ServerPlayerInGame, cardConstructor: CardConstructor, row: RowDistanceWrapper): void => {
@@ -332,11 +370,16 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			handle: player,
 			add: (card: CardConstructor) => addCardToHand(player, card),
 			draw: (card: CardConstructor) => drawCardToHand(player, card),
-			find: (card: CardConstructor) => findCardInLocations(player, card, 0, AnyCardLocation),
-			findAt: (card: CardConstructor, index: number) => findCardInLocations(player, card, index, AnyCardLocation),
-			findIn: (card: CardConstructor, location: CardLocation) => findCardInLocations(player, card, 0, [location]),
-			findInAt: (card: CardConstructor, location: CardLocation, index: number) => findCardInLocations(player, card, index, [location]),
+			find: (card: CardConstructor) => findCardInLocations(player, card, 0, AnyCardLocation, 'code'),
+			findAt: (card: CardConstructor, creationIndex: number) => findCardInLocations(player, card, creationIndex, AnyCardLocation, 'code'),
+			findAtGameIndex: (card: CardConstructor, gameIndex: number) => findCardInLocations(player, card, gameIndex, AnyCardLocation, 'game'),
+			findIn: (card: CardConstructor, location: CardLocation) => findCardInLocations(player, card, 0, [location], 'code'),
+			findInAt: (card: CardConstructor, location: CardLocation, creationIndex: number) =>
+				findCardInLocations(player, card, creationIndex, [location], 'code'),
+			findInAtGameIndex: (card: CardConstructor, location: CardLocation, gameIndex: number) =>
+				findCardInLocations(player, card, gameIndex, [location], 'game'),
 			summon: (card: CardConstructor, row: RowDistanceWrapper = 'front') => summon(player, card, row),
+			summonMany: (card: CardConstructor, count: number, row: RowDistanceWrapper = 'front') => summonMany(player, card, count, row),
 			fillRow: (card: CardConstructor, row: RowDistanceWrapper = 'front') => fillRow(player, card, row),
 			getUnitMana: (): number => player.unitMana,
 			getSpellMana: (): number => player.spellMana,
@@ -363,10 +406,12 @@ type TestGameCard = {
 	stats: ServerCardStats
 	buffs: TestGameBuffs
 	location: CardLocation
+	getUnit(): TestGameUnit
 	play(): TestGameCardPlayActions
 	playTo(row: 'front' | 'middle' | 'back', position: number | 'last'): TestGameCardPlayActions
 	takeDamage(damage: number): TestGameCard
-	returnToHand(): TestGameCard
+	takeDamageFromCard(damage: number, source: TestGameCard | TestGameUnit): TestGameCard
+	dealDamage(damage: number, target: TestGameCard): TestGameCard
 }
 
 const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame): TestGameCard => {
@@ -384,20 +429,29 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		return getCardPlayActions(game, player)
 	}
 	const takeDamage = (damage: number): TestGameCard => {
-		card.dealDamage(ServerDamageInstance.fromUniverse(damage))
+		card.dealDamage(DamageInstance.fromUniverse(damage))
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
 		return cardWrapper
 	}
-	const returnToHand = (): TestGameCard => {
+	const takeDamageFromCard = (damage: number, source: TestGameCard | TestGameUnit): TestGameCard => {
+		card.dealDamage(DamageInstance.fromCard(damage, source.handle))
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return cardWrapper
+	}
+	const dealDamage = (damage: number, target: TestGameCard): TestGameCard => {
+		target.handle.dealDamage(DamageInstance.fromCard(damage, card))
+		game.events.resolveEvents()
+		game.events.evaluateSelectors()
+		return cardWrapper
+	}
+	const findUnit = (): TestGameUnit => {
 		const unit = card.unit
 		if (!unit) {
 			throw new Error('[Test] Card does not have an associated unit.')
 		}
-		Keywords.returnCardFromBoardToHand(unit)
-		game.events.resolveEvents()
-		game.events.evaluateSelectors()
-		return cardWrapper
+		return wrapUnit(game, unit)
 	}
 	const cardWrapper: TestGameCard = {
 		handle: card,
@@ -406,8 +460,10 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		location: card.location,
 		play: () => playCardToRow('front', 'last'),
 		playTo: (row: RowDistanceWrapper, position: number) => playCardToRow(row, position),
+		getUnit: findUnit,
 		takeDamage: (damage: number) => takeDamage(damage),
-		returnToHand: () => returnToHand(),
+		takeDamageFromCard: takeDamageFromCard,
+		dealDamage: dealDamage,
 	}
 	return cardWrapper
 }

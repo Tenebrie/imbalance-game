@@ -7,7 +7,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import { asSplashUnitDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitQuietInfiltrator extends ServerCard {
@@ -32,7 +32,7 @@ export default class UnitQuietInfiltrator extends ServerCard {
 			const adjacentUnits = this.game.board.getAdjacentUnits(this.unit!)
 			adjacentUnits.forEach((unit) => {
 				this.game.animation.createInstantAnimationThread()
-				unit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+				unit.dealDamage(DamageInstance.fromCard(this.damage, this))
 				this.game.animation.commitAnimationThread()
 			})
 		})

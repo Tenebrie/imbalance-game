@@ -9,7 +9,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import { asRecurringHealingPotency } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitFieldHospital extends ServerCard {
@@ -40,7 +40,7 @@ export default class UnitFieldHospital extends ServerCard {
 					.filter((unit) => unit.card.stats.power < unit.card.stats.maxPower)
 				adjacentDamagedUnits.forEach((unit) => {
 					this.game.animation.instantThread(() => {
-						unit.card.heal(ServerDamageInstance.fromCard(this.healing, this))
+						unit.card.heal(DamageInstance.fromCard(this.healing, this))
 					})
 				})
 			})

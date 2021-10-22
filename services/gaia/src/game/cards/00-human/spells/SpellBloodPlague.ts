@@ -5,7 +5,7 @@ import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
-import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import Keywords from '@src/utils/Keywords'
 
 import ServerCard from '../../../models/ServerCard'
@@ -54,11 +54,11 @@ export default class SpellBloodPlague extends ServerCard {
 
 				const adjacentUnits = game.board.getAdjacentUnits(unit)
 
-				unit.dealDamage(ServerDamageInstance.fromCard(SpellBloodPlague.TARGET_DAMAGE, this))
+				unit.dealDamage(DamageInstance.fromCard(SpellBloodPlague.TARGET_DAMAGE, this))
 				targetedCards = adjacentUnits.map((unit) => unit.card)
 				adjacentUnits.forEach((adjacentUnit) => {
 					game.animation.thread(() => {
-						adjacentUnit.dealDamage(ServerDamageInstance.fromCard(SpellBloodPlague.ADJACENT_DAMAGE, this))
+						adjacentUnit.dealDamage(DamageInstance.fromCard(SpellBloodPlague.ADJACENT_DAMAGE, this))
 					})
 				})
 				game.animation.syncAnimationThreads()

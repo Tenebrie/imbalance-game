@@ -2,7 +2,7 @@ import BuffAlignment from '@shared/enums/BuffAlignment'
 import GameEventType from '@shared/enums/GameEventType'
 
 import { BuffConstructorParams, ServerRowBuff } from '../models/buffs/ServerBuff'
-import ServerDamageInstance from '../models/ServerDamageSource'
+import { DamageInstance } from '../models/ServerDamageSource'
 
 export default class BuffRowHealingRain extends ServerRowBuff {
 	constructor(params: BuffConstructorParams) {
@@ -22,7 +22,7 @@ export default class BuffRowHealingRain extends ServerRowBuff {
 		const weakestCards = cards.slice(0, 3)
 		weakestCards.forEach((unit) => {
 			this.game.animation.thread(() => {
-				unit.card.heal(ServerDamageInstance.fromRow(1, this.parent))
+				unit.card.heal(DamageInstance.fromRow(1, this.parent))
 			})
 		})
 	}

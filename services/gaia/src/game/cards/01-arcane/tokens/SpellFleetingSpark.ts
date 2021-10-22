@@ -7,7 +7,7 @@ import TargetType from '@shared/enums/TargetType'
 import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 
@@ -35,6 +35,6 @@ export default class SpellFleetingSpark extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		target.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+		target.dealDamage(DamageInstance.fromCard(this.damage, this))
 	}
 }

@@ -7,7 +7,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 
@@ -34,6 +34,6 @@ export default class UnitHastyHandyman extends ServerCard {
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		target.card.restoreArmor(ServerDamageInstance.fromCard(target.card.stats.maxArmor - target.card.stats.armor, this))
+		target.card.restoreArmor(DamageInstance.fromCard(target.card.stats.maxArmor - target.card.stats.armor, this))
 	}
 }

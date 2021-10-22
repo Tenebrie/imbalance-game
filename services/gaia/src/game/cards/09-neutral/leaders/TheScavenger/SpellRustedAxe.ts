@@ -8,7 +8,7 @@ import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisR
 import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../../models/ServerCard'
-import ServerDamageInstance from '../../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 
 export default class SpellRustedAxe extends ServerCard {
@@ -33,7 +33,7 @@ export default class SpellRustedAxe extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(this.baseDamage, this))
 			})
 			.finalize(() => this.buffs.add(BuffSpellExtraCostThisRound, this))
 	}

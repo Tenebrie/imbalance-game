@@ -9,7 +9,7 @@ import { CardTargetValidatorArguments } from '@src/types/TargetValidatorArgument
 import { asDirectSpellDamage, asSplashSpellDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../../models/ServerCard'
-import ServerDamageInstance from '../../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
 
@@ -43,14 +43,14 @@ export default class SpellFireball extends ServerCard {
 	private onTargetSelected(target: ServerUnit): void {
 		const areaTargets = this.game.board.getAdjacentUnits(target)
 
-		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+		target.dealDamage(DamageInstance.fromCard(this.baseDamage, this))
 
 		const survivingAreaTargets = areaTargets.filter((target) => target.isAlive())
 		if (survivingAreaTargets.length === 0) {
 			return
 		}
 
-		survivingAreaTargets.forEach((sideTarget) => sideTarget.dealDamage(ServerDamageInstance.fromCard(this.baseAreaDamage, this)))
+		survivingAreaTargets.forEach((sideTarget) => sideTarget.dealDamage(DamageInstance.fromCard(this.baseAreaDamage, this)))
 	}
 
 	private evaluateTarget(args: CardTargetValidatorArguments): number {

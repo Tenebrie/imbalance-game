@@ -9,7 +9,7 @@ import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 import ServerBoardRow from '../../../../models/ServerBoardRow'
 import ServerCard from '../../../../models/ServerCard'
-import ServerDamageInstance from '../../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
 
@@ -62,7 +62,7 @@ export default class SpellTacticalAdvance extends ServerCard {
 		const targets = this.game.board.getClosestOpposingUnits(movingUnit)
 		targets.forEach((target) => {
 			this.game.animation.createAnimationThread()
-			target.dealDamage(ServerDamageInstance.fromCard(this.damage, movingUnit.card))
+			target.dealDamage(DamageInstance.fromCard(this.damage, movingUnit.card))
 			this.game.animation.commitAnimationThread()
 		})
 	}

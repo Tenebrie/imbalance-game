@@ -8,7 +8,7 @@ import { CardTargetValidatorArguments } from '@src/types/TargetValidatorArgument
 import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../../models/ServerCard'
-import ServerDamageInstance from '../../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 
 export default class SpellQuickStrike extends ServerCard {
@@ -33,7 +33,7 @@ export default class SpellQuickStrike extends ServerCard {
 			.requireEnemy()
 			.evaluate((args) => this.evaluateTarget(args))
 			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(this.baseDamage, this))
 			})
 	}
 

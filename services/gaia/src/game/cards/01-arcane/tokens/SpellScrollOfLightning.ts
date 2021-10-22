@@ -7,7 +7,7 @@ import TargetType from '@shared/enums/TargetType'
 import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class SpellScrollOfLightning extends ServerCard {
@@ -31,7 +31,7 @@ export default class SpellScrollOfLightning extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(this.damage, this))
 			})
 	}
 }

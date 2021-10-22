@@ -27,6 +27,10 @@ export default class ServerBoardRow implements BoardRow {
 		this.cards = []
 	}
 
+	public get id(): string {
+		return `row:${this.index}`
+	}
+
 	public isFull(): boolean {
 		return this.cards.length === Constants.MAX_CARDS_PER_ROW
 	}

@@ -84,7 +84,7 @@ export default class ServerGameEvents {
 		if (hook === GameHookType.CARD_TAKES_DAMAGE) {
 			eventHook.require((args) => {
 				const typedArgs = (args as unknown) as CardTakesDamageHookFixedValues
-				return !typedArgs.damageInstance.redirectHistory.find((entry) => entry.proxyCard === eventHook.subscriber)
+				return !typedArgs.damageInstance.redirectHistory.some((entry) => entry === eventHook.subscriber)
 			})
 		}
 		this.eventHooks.get(hook)!.push(eventHook)
@@ -137,6 +137,7 @@ export default class ServerGameEvents {
 				event.type === GameEventType.GAME_CREATED ||
 				event.type === GameEventType.GAME_SETUP ||
 				event.type === GameEventType.POST_GAME_SETUP ||
+				event.type === GameEventType.BEFORE_CARD_TAKES_DAMAGE ||
 				(event.effectSource && event.effectSource === subscription.subscriber)
 			) {
 				subscription.callbacks.forEach((callback) => {
@@ -197,142 +198,34 @@ export default class ServerGameEvents {
 		editableValues: EditableValues,
 		fixedValues: FixedValues
 	): EditableValues {
-		const matchingHooks = this.eventHooks
+		const unsortedHooks = this.eventHooks
 			.get(hook)!
 			.filter((hook) => hook.ignoreControlEffects || !ServerGameEvents.subscriberSuspended(hook.subscriber))
-			.filter(
-				(hook) =>
-					!hook.conditions.find((condition) => {
-						return cardRequire(this.game, hook.subscriber, () => !condition(fixedValues))
-					})
+
+		const sortedHooks = unsortedHooks.sort((a, b) => this.eventCallbackSorter(this.game, a, b))
+
+		return sortedHooks.reduce((currentHookEditables, subscription) => {
+			const conditionMatches = subscription.conditions.every((condition) =>
+				cardRequire(this.game, subscription.subscriber, () => condition(fixedValues, { ...currentHookEditables }))
 			)
 
-		matchingHooks.forEach((hook) =>
-			hook.callbacks.forEach((callback) => {
-				cardPerform(this.game, hook.subscriber, () => callback(fixedValues))
-			})
-		)
+			if (!conditionMatches) {
+				return currentHookEditables
+			}
 
-		return matchingHooks.reduce((accOuter, subscription) => {
-			return subscription.hooks.reduce((accInner, replace) => {
-				return replace(accInner, fixedValues)
-			}, accOuter)
+			this.logHookExecution(hook, subscription)
+			subscription.callbacks.forEach((callback) => {
+				cardPerform(this.game, subscription.subscriber, () => callback(fixedValues, { ...currentHookEditables }))
+			})
+
+			return subscription.hooks.reduce((innerHookEditables, hookReplaceFunc) => {
+				return hookReplaceFunc(innerHookEditables, fixedValues)
+			}, currentHookEditables)
 		}, editableValues)
 	}
 
 	public resolveEvents(): void {
-		let currentCallbacks = this.callbackQueue.slice().sort((a, b) => {
-			// Player > System
-			if (a.subscriber === null && b.subscriber !== null) {
-				return 1
-			} else if (b.subscriber === null && a.subscriber !== null) {
-				return -1
-			} else if (a.subscriber === null || b.subscriber === null) {
-				return 0
-			}
-
-			// Current player > Opponent
-			const ownerOfA = getOwnerGroup(a.subscriber)
-			const ownerOfB = getOwnerGroup(b.subscriber)
-			if (ownerOfA !== ownerOfB) {
-				if (ownerOfA === this.game.activePlayer) {
-					return -1
-				} else if (ownerOfB === this.game.activePlayer) {
-					return 1
-				}
-			}
-
-			// Card effects > Row effects
-			if (a.subscriber instanceof ServerCard && b.subscriber instanceof ServerBuff && b.subscriber.parent instanceof ServerBoardRow) {
-				return -1
-			} else if (
-				b.subscriber instanceof ServerCard &&
-				a.subscriber instanceof ServerBuff &&
-				a.subscriber.parent instanceof ServerBoardRow
-			) {
-				return 1
-			} else if (
-				a.subscriber instanceof ServerBuff &&
-				b.subscriber instanceof ServerBuff &&
-				a.subscriber.parent instanceof ServerBoardRow &&
-				b.subscriber.parent instanceof ServerBoardRow
-			) {
-				const distanceOfA = this.game.board.getDistanceToStaticFront(a.subscriber.parent.index)
-				const distanceOfB = this.game.board.getDistanceToStaticFront(b.subscriber.parent.index)
-				return distanceOfA - distanceOfB
-			}
-
-			// Board > Hand > Deck > Graveyard > Other locations
-			const cardOfA = a.subscriber instanceof ServerCard ? a.subscriber : (a.subscriber.parent as ServerCard)
-			const cardOfB = b.subscriber instanceof ServerCard ? b.subscriber : (b.subscriber.parent as ServerCard)
-			const locationToNumber = (cardLocation: CardLocation): number => {
-				switch (cardLocation) {
-					case CardLocation.BOARD:
-						return 0
-					case CardLocation.HAND:
-						return 1
-					case CardLocation.DECK:
-						return 2
-					case CardLocation.GRAVEYARD:
-						return 3
-					default:
-						return 100
-				}
-			}
-			const locationOfA = cardOfA.location
-			const locationOfB = cardOfB.location
-			const numericLocationOfA = locationToNumber(locationOfA)
-			const numericLocationOfB = locationToNumber(locationOfB)
-			if (numericLocationOfA !== numericLocationOfB) {
-				return numericLocationOfA - numericLocationOfB
-			}
-
-			// Card on the left > Card on the right
-			const getCardIndex = (card: ServerCard, owner: ServerPlayerInGame, location: CardLocation): number => {
-				switch (location) {
-					case CardLocation.HAND:
-						return sortCards(owner.cardHand.allCards).indexOf(card)
-					case CardLocation.DECK:
-						return owner.cardDeck.allCards.indexOf(card)
-					case CardLocation.GRAVEYARD:
-						return owner.cardGraveyard.allCards.indexOf(card)
-					default:
-						return 100
-				}
-			}
-
-			const playerOwnerOfA = getOwnerPlayer(a.subscriber)
-			const playerOwnerOfB = getOwnerPlayer(b.subscriber)
-			if (
-				locationOfA === locationOfB &&
-				locationOfA !== CardLocation.BOARD &&
-				locationOfB !== CardLocation.BOARD &&
-				playerOwnerOfA &&
-				playerOwnerOfB
-			) {
-				const indexOfA = getCardIndex(cardOfA, playerOwnerOfA, locationOfA)
-				const indexOfB = getCardIndex(cardOfB, playerOwnerOfB, locationOfB)
-				return indexOfA - indexOfB
-			}
-
-			const unitOfA = cardOfA.unit
-			const unitOfB = cardOfB.unit
-			if (unitOfA && unitOfB) {
-				const rowIndexOfA = unitOfA.rowIndex
-				const rowIndexOfB = unitOfB.rowIndex
-				// Unit at the front > Unit at the back
-				if (rowIndexOfA !== rowIndexOfB) {
-					const distanceOfA = this.game.board.getDistanceToStaticFront(rowIndexOfA)
-					const distanceOfB = this.game.board.getDistanceToStaticFront(rowIndexOfB)
-					return distanceOfA - distanceOfB
-				}
-
-				// Unit on the left > Unit on the right
-				return unitOfA.unitIndex - unitOfB.unitIndex
-			}
-
-			return 0
-		})
+		let currentCallbacks = this.callbackQueue.slice().sort((a, b) => this.eventCallbackSorter(this.game, a, b))
 
 		const resolveCards = () => {
 			while (
@@ -385,15 +278,145 @@ export default class ServerGameEvents {
 		}
 	}
 
+	private eventCallbackSorter(game: ServerGame, a: { subscriber: EventSubscriber }, b: { subscriber: EventSubscriber }): number {
+		// Player > System
+		if (a.subscriber === null && b.subscriber !== null) {
+			return 1
+		} else if (b.subscriber === null && a.subscriber !== null) {
+			return -1
+		} else if (a.subscriber === null || b.subscriber === null) {
+			return 0
+		}
+
+		// Current player > Opponent
+		const ownerOfA = getOwnerGroup(a.subscriber)
+		const ownerOfB = getOwnerGroup(b.subscriber)
+		if (ownerOfA !== ownerOfB) {
+			if (ownerOfA === game.activePlayer) {
+				return -1
+			} else if (ownerOfB === game.activePlayer) {
+				return 1
+			}
+		}
+
+		// Card effects > Row effects
+		if (a.subscriber instanceof ServerCard && b.subscriber instanceof ServerBuff && b.subscriber.parent instanceof ServerBoardRow) {
+			return -1
+		} else if (b.subscriber instanceof ServerCard && a.subscriber instanceof ServerBuff && a.subscriber.parent instanceof ServerBoardRow) {
+			return 1
+		} else if (
+			a.subscriber instanceof ServerBuff &&
+			b.subscriber instanceof ServerBuff &&
+			a.subscriber.parent instanceof ServerBoardRow &&
+			b.subscriber.parent instanceof ServerBoardRow
+		) {
+			const distanceOfA = game.board.getDistanceToStaticFront(a.subscriber.parent.index)
+			const distanceOfB = game.board.getDistanceToStaticFront(b.subscriber.parent.index)
+			return distanceOfA - distanceOfB
+		}
+
+		// Board > Hand > Deck > Graveyard > Other locations
+		const cardOfA = a.subscriber instanceof ServerCard ? a.subscriber : (a.subscriber.parent as ServerCard)
+		const cardOfB = b.subscriber instanceof ServerCard ? b.subscriber : (b.subscriber.parent as ServerCard)
+		const locationToNumber = (cardLocation: CardLocation): number => {
+			switch (cardLocation) {
+				case CardLocation.BOARD:
+					return 0
+				case CardLocation.HAND:
+					return 1
+				case CardLocation.DECK:
+					return 2
+				case CardLocation.GRAVEYARD:
+					return 3
+				default:
+					return 100
+			}
+		}
+		const locationOfA = cardOfA.location
+		const locationOfB = cardOfB.location
+		const numericLocationOfA = locationToNumber(locationOfA)
+		const numericLocationOfB = locationToNumber(locationOfB)
+		if (numericLocationOfA !== numericLocationOfB) {
+			return numericLocationOfA - numericLocationOfB
+		}
+
+		// Card on the left > Card on the right
+		const getCardIndex = (card: ServerCard, owner: ServerPlayerInGame, location: CardLocation): number => {
+			switch (location) {
+				case CardLocation.HAND:
+					return sortCards(owner.cardHand.allCards).indexOf(card)
+				case CardLocation.DECK:
+					return owner.cardDeck.allCards.indexOf(card)
+				case CardLocation.GRAVEYARD:
+					return owner.cardGraveyard.allCards.indexOf(card)
+				default:
+					return 100
+			}
+		}
+
+		const playerOwnerOfA = getOwnerPlayer(a.subscriber)
+		const playerOwnerOfB = getOwnerPlayer(b.subscriber)
+		if (
+			locationOfA === locationOfB &&
+			locationOfA !== CardLocation.BOARD &&
+			locationOfB !== CardLocation.BOARD &&
+			playerOwnerOfA &&
+			playerOwnerOfB
+		) {
+			const indexOfA = getCardIndex(cardOfA, playerOwnerOfA, locationOfA)
+			const indexOfB = getCardIndex(cardOfB, playerOwnerOfB, locationOfB)
+			return indexOfA - indexOfB
+		}
+
+		const unitOfA = cardOfA.unit
+		const unitOfB = cardOfB.unit
+		if (unitOfA && unitOfB) {
+			const rowIndexOfA = unitOfA.rowIndex
+			const rowIndexOfB = unitOfB.rowIndex
+			// Unit at the front > Unit at the back
+			if (rowIndexOfA !== rowIndexOfB) {
+				const distanceOfA = game.board.getDistanceToStaticFront(rowIndexOfA)
+				const distanceOfB = game.board.getDistanceToStaticFront(rowIndexOfB)
+				return distanceOfA - distanceOfB
+			}
+
+			// Unit on the left > Unit on the right
+			return unitOfA.unitIndex - unitOfB.unitIndex
+		}
+
+		return 0
+	}
+
 	private logEventExecution(event: GameEvent, subscription: EventSubscription<any>, isImmediate: boolean): void {
 		const subscriber = subscription.subscriber
 		const subscriberId = !subscriber ? this.game.id : `${subscriber.id}`
+
+		const expandedSubscriberId =
+			subscription.subscriber instanceof ServerBuff
+				? `${colorizeId(subscriberId)} on ${colorizeId(subscription.subscriber.parent.id)}`
+				: colorizeId(subscriberId)
 
 		const gameId = colorizeId(this.game.id)
 		const eventType = colorizeClass(event.type)
 		const eventTiming = isImmediate ? 'effect' : 'callback'
 
-		console.info(`[${gameId}] Executing ${eventTiming} on ${eventType} for ${colorizeId(subscriberId)}`)
+		console.info(`[${gameId}] ${eventType} ${eventTiming} for ${expandedSubscriberId}`)
+	}
+
+	// TODO: Promote hooks to first-class citizens
+	private logHookExecution(hook: GameHookType, subscription: EventHook<any, any>): void {
+		const subscriber = subscription.subscriber
+		const subscriberId = !subscriber ? this.game.id : `${subscriber.id}`
+
+		const expandedSubscriberId =
+			subscription.subscriber instanceof ServerBuff
+				? `${colorizeId(subscriberId)} on ${colorizeId(subscription.subscriber.parent.id)}`
+				: colorizeId(subscriberId)
+
+		const gameId = colorizeId(this.game.id)
+		const eventType = colorizeClass(hook)
+
+		console.info(`[${gameId}] ${eventType} hook for ${expandedSubscriberId}`)
 	}
 
 	public evaluateSelectors(): void {

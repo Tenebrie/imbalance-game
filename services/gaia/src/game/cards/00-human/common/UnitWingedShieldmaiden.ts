@@ -1,13 +1,16 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
+import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
+import DamageSource from '@shared/enums/DamageSource'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import MoveDirection from '@shared/enums/MoveDirection'
+import BuffProtector from '@src/game/buffs/BuffProtector'
+import Keywords from '@src/utils/Keywords'
 
-import BotCardEvaluation from '../../../AI/BotCardEvaluation'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
@@ -18,54 +21,62 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.VALKYRIE],
+			features: [CardFeature.PROMINENT, CardFeature.KEYWORD_SUMMON],
 			stats: {
-				power: 8,
+				power: 2,
+				armor: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
 		})
-		this.botEvaluation = new CustomBotEvaluation(this)
+		this.buffs.add(BuffProtector, this)
 
-		this.createCallback(GameEventType.CARD_TAKES_DAMAGE, [CardLocation.HAND])
-			.require(({ triggeringCard }) => triggeringCard.ownerPlayerNullable === this.ownerPlayerNullable)
-			.require(({ triggeringCard }) => !!triggeringCard.unit)
-			.prepare(({ triggeringCard }) => {
-				const targetUnit = triggeringCard.unit!
-				const moveTargetRowIndex = this.game.board.rowMove(this.ownerGroup, targetUnit.rowIndex, MoveDirection.BACK, 1)
-				const moveTargetUnitIndex = targetUnit.unitIndex
-				return {
-					playTargetRowIndex: targetUnit.rowIndex,
-					playTargetUnitIndex: targetUnit.unitIndex,
-					moveTargetRowIndex,
-					moveTargetUnitIndex,
-				}
-			})
-			.requireImmediate(({ triggeringCard }, preparedState) => {
-				return (
-					this.location === CardLocation.HAND && triggeringCard.unit?.rowIndex === preparedState.playTargetRowIndex && !!triggeringCard.unit
-				)
-			})
-			.perform(({ triggeringCard }, preparedState) => {
-				const owner = this.ownerPlayer
-				const ownedCard = {
-					card: this,
-					owner,
-				}
-				const targetUnit = triggeringCard.unit
+		this.createLocalization({
+			en: {
+				name: 'Winged Shieldmaiden',
+				description:
+					'Before an ally takes damage from an enemy card, *Summon* this from your hand in front of the target and *Draw* a card.' +
+					'<p>' +
+					'<i>Does not trigger for cards on the front row.</i>',
+				flavor: `- "That girl? Not again. She's so much more trouble than she could ever be worth..."`,
+			},
+		})
 
-				this.game.board.moveUnitToFarRight(targetUnit!, preparedState.moveTargetRowIndex)
-
-				if (this.game.board.rows[preparedState.playTargetRowIndex].isFull()) {
+		this.createCallback(GameEventType.BEFORE_CARD_TAKES_DAMAGE, [CardLocation.HAND])
+			.require(({ triggeringCard }) => triggeringCard.ownerGroup === this.ownerGroup)
+			.require(({ triggeringCard }) => triggeringCard.location === CardLocation.BOARD)
+			.require(({ triggeringCard }) => game.board.getDistanceToStaticFront(triggeringCard.unit!.rowIndex) > 0)
+			.require(({ damageInstance }) => damageInstance.source === DamageSource.CARD && !damageInstance.sourceCard.ownerGroup.owns(this))
+			.perform(({ triggeringCard }) => {
+				const triggeringUnit = triggeringCard.unit!
+				const targetRowIndex = game.board.rowMove(this.ownerGroup, triggeringUnit.rowIndex, MoveDirection.FORWARD, 1)
+				if (game.board.rows[targetRowIndex].isFull()) {
 					return
 				}
 
-				this.game.cardPlay.playCardFromHand(ownedCard, preparedState.playTargetRowIndex, preparedState.playTargetUnitIndex)
-				owner.drawUnitCards(1)
-			})
-	}
-}
+				const possiblePositions = Array(game.board.rows[targetRowIndex].cards.length + 1)
+					.fill(0)
+					.map((_, index) => index)
+				const closestDistance = possiblePositions
+					.map((unitIndex) => ({
+						unitIndex,
+						distance: game.board.getHorizontalUnitDistance(triggeringUnit, { rowIndex: targetRowIndex, unitIndex }),
+					}))
+					.sort((a, b) => a.distance - b.distance)[0]
 
-class CustomBotEvaluation extends BotCardEvaluation {
-	get expectedValue(): number {
-		return this.card.stats.power - 1
+				if (closestDistance === undefined) {
+					return
+				}
+
+				const ownerPlayer = this.ownerPlayer
+				const summonedUnit = Keywords.summonUnitFromHand({
+					card: this,
+					owner: this.ownerPlayer,
+					rowIndex: targetRowIndex,
+					unitIndex: closestDistance.unitIndex,
+				})
+				if (summonedUnit) {
+					ownerPlayer.drawUnitCards(1)
+				}
+			})
 	}
 }

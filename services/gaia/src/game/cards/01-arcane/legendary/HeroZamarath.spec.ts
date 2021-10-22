@@ -6,7 +6,7 @@ import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 import ServerOwnedCard from '../../../models/ServerOwnedCard'
 import ServerPlayerInGame from '../../../players/ServerPlayerInGame'
-import TestingSpellHeavyStrike from '../../11-testing/TestingSpellHeavyStrike'
+import TestingSpellDeals100Damage from '../../11-testing/TestingSpellDeals100Damage'
 import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
 import HeroZamarath from './HeroZamarath'
 
@@ -43,7 +43,7 @@ describe('HeroZamarath', () => {
 		playerAction(() => {
 			game.board.createUnit(targetUnit, player, 0, 0)
 
-			const opponentsCard = new TestingSpellHeavyStrike(game)
+			const opponentsCard = new TestingSpellDeals100Damage(game)
 			player.opponent.players[0].cardHand.addSpell(opponentsCard)
 			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, player.opponent.players[0]), 0, 0)
 			game.cardPlay.selectCardTarget(player.opponent.players[0], game.cardPlay.getDeployTargets()[0].target)
@@ -66,7 +66,7 @@ describe('HeroZamarath', () => {
 			game.board.createUnit(targetUnit, player, 0, 0)
 		})
 		playerAction(() => {
-			const opponentsCard = new TestingSpellHeavyStrike(game)
+			const opponentsCard = new TestingSpellDeals100Damage(game)
 			opponent.cardHand.addSpell(opponentsCard)
 			game.cardPlay.playCardFromHand(new ServerOwnedCard(opponentsCard, opponent), 0, 0)
 			game.cardPlay.selectCardTarget(opponent, game.cardPlay.getDeployTargets()[0].target)

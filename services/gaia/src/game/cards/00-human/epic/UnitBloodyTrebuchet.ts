@@ -11,7 +11,7 @@ import { asDirectUnitDamage, asSplashUnitDamage } from '@src/utils/LeaderStats'
 
 import BuffCanAttack from '../../../buffs/BuffCanAttack'
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitBloodyTrebuchet extends ServerCard {
@@ -53,11 +53,11 @@ export default class UnitBloodyTrebuchet extends ServerCard {
 			)
 			const unitsBehind = rowBehindTarget.getUnitsWithinHorizontalDistance(targetUnit, 1)
 			this.game.animation.thread(() => {
-				targetCard.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+				targetCard.dealDamage(DamageInstance.fromCard(this.damage, this))
 			})
 			unitsBehind.forEach((unit) => {
 				this.game.animation.thread(() => {
-					unit.dealDamage(ServerDamageInstance.fromCard(this.splashDamage, this))
+					unit.dealDamage(DamageInstance.fromCard(this.splashDamage, this))
 				})
 			})
 		})

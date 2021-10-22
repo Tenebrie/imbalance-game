@@ -12,7 +12,7 @@ import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 import BuffCanAttack from '../../../buffs/BuffCanAttack'
 import ServerCard from '../../../models/ServerCard'
 import { ServerCardTargetUnit } from '../../../models/ServerCardTarget'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitArcheryTower extends ServerCard {
@@ -52,6 +52,6 @@ export default class UnitArcheryTower extends ServerCard {
 
 	private onAttack(targetArguments: ServerCardTargetUnit): void {
 		const targetCard = targetArguments.targetCard
-		targetCard.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+		targetCard.dealDamage(DamageInstance.fromCard(this.damage, this))
 	}
 }

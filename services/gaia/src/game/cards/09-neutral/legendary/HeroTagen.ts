@@ -5,7 +5,7 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import BuffProtector from '@src/game/buffs/BuffProtector'
-import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import { asSplashUnitDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
@@ -45,7 +45,7 @@ export default class HeroTagen extends ServerCard {
 			const opposingUnits = this.game.board.getOpposingUnits(triggeringUnit)
 			opposingUnits.forEach((target) => {
 				game.animation.thread(() => {
-					target.dealDamage(ServerDamageInstance.fromCard(this.enemyDamage, this))
+					target.dealDamage(DamageInstance.fromCard(this.enemyDamage, this))
 				})
 			})
 		})

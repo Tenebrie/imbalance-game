@@ -11,7 +11,7 @@ import BuffStrength from '@src/game/buffs/BuffStrength'
 import { asDirectHealingPotency, asRecurringBuffPotency } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 
@@ -45,7 +45,7 @@ export default class HeroMelissea extends ServerCard {
 			.perform(({ targetUnit }) => onTargetSelected(targetUnit))
 
 		const onTargetSelected = (target: ServerUnit): void => {
-			target.heal(ServerDamageInstance.fromCard(this.healing, this))
+			target.heal(DamageInstance.fromCard(this.healing, this))
 		}
 
 		this.createCallback(GameEventType.CARD_POWER_RESTORED, [CardLocation.BOARD, CardLocation.STACK])

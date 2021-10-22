@@ -7,7 +7,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitStrayCat extends ServerCard {
@@ -41,7 +41,7 @@ export default class UnitStrayCat extends ServerCard {
 				const adjacentUnits = this.game.board.getAdjacentUnits(this.unit!)
 				adjacentUnits.forEach((unit) => {
 					this.game.animation.createInstantAnimationThread()
-					unit.dealDamage(ServerDamageInstance.fromCard(UnitStrayCat.DAMAGE, this))
+					unit.dealDamage(DamageInstance.fromCard(UnitStrayCat.DAMAGE, this))
 					this.game.animation.commitAnimationThread()
 				})
 			})

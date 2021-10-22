@@ -7,7 +7,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class TutorialUnitWoundedVeteran extends ServerCard {
@@ -40,6 +40,6 @@ export default class TutorialUnitWoundedVeteran extends ServerCard {
 	}
 
 	private onDeploy(): void {
-		this.dealDamage(ServerDamageInstance.fromCard(this.damageToSelf, this))
+		this.dealDamage(DamageInstance.fromCard(this.damageToSelf, this))
 	}
 }

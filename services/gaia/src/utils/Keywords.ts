@@ -69,6 +69,18 @@ const Keywords = {
 		return card
 	},
 
+	summonUnitFromHand: (args: { card: ServerCard; owner: ServerPlayerInGame; rowIndex: number; unitIndex: number }): ServerUnit | null => {
+		const { card, owner, rowIndex, unitIndex } = args
+
+		const game = owner.game
+		owner.cardHand.removeCard(card)
+		const unit = game.board.createUnit(card, owner, rowIndex, unitIndex)
+		if (!unit) {
+			owner.cardHand.addUnit(card)
+		}
+		return unit
+	},
+
 	summonUnit: (args: {
 		owner: ServerPlayerInGame
 		cardConstructor: CardConstructor
@@ -183,7 +195,10 @@ const Keywords = {
 
 	destroyUnit: (args: { unit: ServerUnit; source?: ServerCard; affectedCards?: ServerCard[] }) => {
 		const { unit, source, affectedCards } = args
-		unit.game.board.destroyUnit(unit, source, affectedCards)
+		unit.game.board.destroyUnit(unit, {
+			destroyer: source,
+			affectedCards,
+		})
 	},
 
 	destroy: {

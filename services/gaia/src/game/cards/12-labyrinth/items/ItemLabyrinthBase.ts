@@ -12,7 +12,7 @@ import BuffStrength from '@src/game/buffs/BuffStrength'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerCard from '@src/game/models/ServerCard'
-import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerGame from '@src/game/models/ServerGame'
 import Keywords from '@src/utils/Keywords'
 import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
@@ -123,7 +123,7 @@ export class BaseLabyrinthActiveItem extends ItemLabyrinthBase {
 	public addSingleTargetDamage(damage: number | LeaderStatValueGetter): void {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
-			.perform(({ targetUnit }) => targetUnit.dealDamage(ServerDamageInstance.fromCard(damage, this)))
+			.perform(({ targetUnit }) => targetUnit.dealDamage(DamageInstance.fromCard(damage, this)))
 	}
 
 	public addSingleTargetDamageWithSplash(damage: number | LeaderStatValueGetter, splashDamage: number | LeaderStatValueGetter): void {
@@ -131,10 +131,10 @@ export class BaseLabyrinthActiveItem extends ItemLabyrinthBase {
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
 				const adjacentUnits = this.game.board.getAdjacentUnits(targetUnit)
-				targetUnit.dealDamage(ServerDamageInstance.fromCard(damage, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(damage, this))
 				adjacentUnits.forEach((unit) => {
 					this.game.animation.thread(() => {
-						unit.dealDamage(ServerDamageInstance.fromCard(splashDamage, this))
+						unit.dealDamage(DamageInstance.fromCard(splashDamage, this))
 					})
 				})
 				this.game.animation.syncAnimationThreads()
@@ -146,7 +146,7 @@ export class BaseLabyrinthActiveItem extends ItemLabyrinthBase {
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
 				const targetRow = targetUnit.rowIndex
-				targetUnit.dealDamage(ServerDamageInstance.fromCard(damage, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(damage, this))
 				this.game.board.rows[targetRow].buffs.add(effect, this)
 			})
 	}

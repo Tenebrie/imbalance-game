@@ -7,6 +7,7 @@ import LeaderStatType from '@shared/enums/LeaderStatType'
 import TargetMode from '@shared/enums/TargetMode'
 import { SourceGame } from '@shared/models/Game'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { BuffMorningApathy } from '@src/game/models/buffs/ServerBuff'
 import GameHookType from '@src/game/models/events/GameHookType'
@@ -484,7 +485,9 @@ export default class ServerGame implements SourceGame {
 
 		unitsToDestroy.forEach((unit) => {
 			this.animation.thread(() => {
-				this.board.destroyUnit(unit)
+				this.board.destroyUnit(unit, {
+					reason: UnitDestructionReason.ROUND_END,
+				})
 			})
 		})
 
@@ -591,7 +594,9 @@ export default class ServerGame implements SourceGame {
 
 		this.board.getAllUnits().forEach((unit) => {
 			this.animation.thread(() => {
-				this.board.destroyUnit(unit)
+				this.board.destroyUnit(unit, {
+					reason: UnitDestructionReason.GAME_END,
+				})
 			})
 		})
 		this.board.rows.forEach((row) => {

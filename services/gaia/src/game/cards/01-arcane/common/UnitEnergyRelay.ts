@@ -9,7 +9,7 @@ import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 
 import Keywords from '../../../../utils/Keywords'
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitEnergyRelay extends ServerCard {
@@ -57,7 +57,7 @@ export default class UnitEnergyRelay extends ServerCard {
 
 		targets.forEach((unit) => {
 			this.game.animation.createInstantAnimationThread()
-			unit.dealDamage(ServerDamageInstance.fromUnit(this.damageDealt, triggeringUnit))
+			unit.dealDamage(DamageInstance.fromUnit(this.damageDealt, triggeringUnit))
 			this.game.animation.commitAnimationThread()
 		})
 	}

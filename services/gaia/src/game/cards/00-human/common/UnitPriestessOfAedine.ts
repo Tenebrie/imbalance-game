@@ -4,12 +4,11 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
-import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
 import { asDirectHealingPotency } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 import ServerUnit from '../../../models/ServerUnit'
 
@@ -41,12 +40,11 @@ export default class UnitPriestessOfAedine extends ServerCard {
 			.requireUnique()
 			.label('card.unitPriestessOfAedine.heal.target')
 			.require((args) => args.targetCard.stats.power < args.targetCard.stats.maxPower)
+			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 			.evaluate((args) => args.targetCard.stats.maxPower - args.targetCard.stats.power)
-
-		this.createEffect(GameEventType.CARD_TARGET_SELECTED_UNIT).perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
-		target.heal(ServerDamageInstance.fromUnit(this.healing, this.unit!))
+		target.heal(DamageInstance.fromUnit(this.healing, this.unit!))
 	}
 }

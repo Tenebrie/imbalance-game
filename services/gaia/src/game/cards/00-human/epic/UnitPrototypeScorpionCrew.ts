@@ -6,7 +6,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
 import ServerCard from '@src/game/models/ServerCard'
-import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerGame from '@src/game/models/ServerGame'
 import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 
@@ -36,10 +36,10 @@ export default class UnitPrototypeScorpionCrew extends ServerCard {
 		this.createEffect(GameEventType.UNIT_ORDERED_UNIT).perform(({ targetCard }) => {
 			const damage = this.targetDamage(this)
 			this.game.animation.instantThread(() => {
-				targetCard.dealDamage(ServerDamageInstance.fromCard(damage, this))
+				targetCard.dealDamage(DamageInstance.fromCard(damage, this))
 			})
 			this.game.animation.instantThread(() => {
-				this.dealDamage(ServerDamageInstance.fromCard(this.selfDamage, this))
+				this.dealDamage(DamageInstance.fromCard(this.selfDamage, this))
 			})
 			this.game.animation.syncAnimationThreads()
 		})

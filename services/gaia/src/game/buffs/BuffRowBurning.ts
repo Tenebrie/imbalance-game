@@ -2,7 +2,7 @@ import BuffAlignment from '@shared/enums/BuffAlignment'
 import GameEventType from '@shared/enums/GameEventType'
 
 import { BuffConstructorParams, ServerRowBuff } from '../models/buffs/ServerBuff'
-import ServerDamageInstance from '../models/ServerDamageSource'
+import { DamageInstance } from '../models/ServerDamageSource'
 
 export default class BuffRowBurning extends ServerRowBuff {
 	burnDamage = 1
@@ -20,7 +20,7 @@ export default class BuffRowBurning extends ServerRowBuff {
 	private onTurnStarted(): void {
 		this.parent.cards.forEach((unit) => {
 			this.game.animation.thread(() => {
-				unit.card.dealDamage(ServerDamageInstance.fromRow(this.burnDamage, this.parent))
+				unit.card.dealDamage(DamageInstance.fromRow(this.burnDamage, this.parent))
 			})
 		})
 	}

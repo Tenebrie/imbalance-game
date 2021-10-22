@@ -6,7 +6,7 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import ServerCard from '@src/game/models/ServerCard'
-import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerUnit from '@src/game/models/ServerUnit'
 import { asDirectSparkDamage, asSplashSparkDamage } from '@src/utils/LeaderStats'
@@ -47,12 +47,12 @@ export default class TutorialSpellSteelSpark extends ServerCard {
 	private onTargetSelected(target: ServerUnit): void {
 		const sideTargets = this.game.board.getAdjacentUnits(target).filter((unit) => unit.rowIndex === target.rowIndex)
 
-		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+		target.dealDamage(DamageInstance.fromCard(this.baseDamage, this))
 
 		const survivingSideTargets = sideTargets.filter((target) => target.isAlive())
 		survivingSideTargets.forEach((sideTarget) => {
 			this.game.animation.createInstantAnimationThread()
-			sideTarget.dealDamage(ServerDamageInstance.fromCard(this.baseSideDamage, this))
+			sideTarget.dealDamage(DamageInstance.fromCard(this.baseSideDamage, this))
 			this.game.animation.commitAnimationThread()
 		})
 	}

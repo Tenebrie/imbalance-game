@@ -4,7 +4,7 @@ import CardFeature from '@shared/enums/CardFeature'
 
 import { BuffConstructorParams, ServerCardBuff } from '../models/buffs/ServerBuff'
 import GameHookType from '../models/events/GameHookType'
-import ServerDamageInstance from '../models/ServerDamageSource'
+import { cloneDamageInstance } from '../models/ServerDamageSource'
 
 export default class BuffPermanentImmunity extends ServerCardBuff {
 	constructor(params: BuffConstructorParams) {
@@ -18,13 +18,9 @@ export default class BuffPermanentImmunity extends ServerCardBuff {
 			.require(({ targetCard }) => targetCard === this.parent)
 			.replace((args) => ({
 				...args,
-				damageInstance: BuffPermanentImmunity.getUpdatedDamageInstance(args.damageInstance),
+				damageInstance: cloneDamageInstance(args.damageInstance, {
+					value: 0,
+				}),
 			}))
-	}
-
-	private static getUpdatedDamageInstance(damageInstance: ServerDamageInstance): ServerDamageInstance {
-		const clone = damageInstance.clone()
-		clone.value = 0
-		return clone
 	}
 }

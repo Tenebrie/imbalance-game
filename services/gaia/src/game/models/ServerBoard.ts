@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import MoveDirection from '@shared/enums/MoveDirection'
 import Board from '@shared/models/Board'
+import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import { toRowIndex } from '@src/utils/Utils'
 
@@ -95,13 +96,19 @@ export default class ServerBoard implements Board {
 		return unit.rowIndex === rowIndex && unitIndex <= unit.unitIndex + 1 && unitIndex >= unit.unitIndex
 	}
 
-	public getHorizontalUnitDistance(first: ServerUnit, second: ServerUnit): number {
+	public getHorizontalUnitDistance(
+		first: ServerUnit | { rowIndex: number; unitIndex: number },
+		second: ServerUnit | { rowIndex: number; unitIndex: number }
+	): number {
 		const firstOffsetFromCenter = first.unitIndex - (this.rows[first.rowIndex].cards.length - 1) / 2
 		const secondOffsetFromCenter = second.unitIndex - (this.rows[second.rowIndex].cards.length - 1) / 2
 		return Math.abs(firstOffsetFromCenter - secondOffsetFromCenter)
 	}
 
-	public getVerticalUnitDistance(firstUnit: ServerUnit, secondUnit: ServerUnit): number {
+	public getVerticalUnitDistance(
+		firstUnit: ServerUnit | { rowIndex: number; unitIndex: number },
+		secondUnit: ServerUnit | { rowIndex: number; unitIndex: number }
+	): number {
 		const firstUnitRowIndex = firstUnit.rowIndex
 		const secondUnitRowIndex = secondUnit.rowIndex
 		const smallIndex = Math.min(firstUnitRowIndex, secondUnitRowIndex)
@@ -383,7 +390,14 @@ export default class ServerBoard implements Board {
 	 * Target unit is destroyed and removed from the board.
 	 * The associated card is then cleansed and transferred to the owner's graveyard with 0 Power.
 	 */
-	public destroyUnit(unit: ServerUnit, destroyer?: ServerCard, affectedCards?: ServerCard[]): void {
+	public destroyUnit(
+		unit: ServerUnit,
+		args: Partial<{
+			reason?: UnitDestructionReason
+			destroyer?: ServerCard
+			affectedCards?: ServerCard[]
+		}> = {}
+	): void {
 		if (this.unitsBeingDestroyed.includes(unit)) {
 			return
 		}
@@ -391,6 +405,7 @@ export default class ServerBoard implements Board {
 		this.unitsBeingDestroyed.push(unit)
 
 		const card = unit.card
+		const reason = args.reason ?? UnitDestructionReason.CARD_EFFECT
 
 		const hookValues = this.game.events.applyHooks(
 			GameHookType.UNIT_DESTROYED,
@@ -399,6 +414,7 @@ export default class ServerBoard implements Board {
 			},
 			{
 				targetUnit: unit,
+				reason,
 			}
 		)
 		if (hookValues.destructionPrevented) {
@@ -407,8 +423,8 @@ export default class ServerBoard implements Board {
 			return
 		}
 
-		if (destroyer) {
-			this.game.animation.play(ServerAnimation.cardAffectsCards(destroyer, [unit.card]))
+		if (args.destroyer) {
+			this.game.animation.play(ServerAnimation.cardAffectsCards(args.destroyer, [unit.card]))
 		}
 
 		this.game.events.postEvent(
@@ -416,11 +432,12 @@ export default class ServerBoard implements Board {
 				game: this.game,
 				triggeringCard: unit.card,
 				triggeringUnit: unit,
+				reason,
 			})
 		)
 
-		if (affectedCards) {
-			this.game.animation.play(ServerAnimation.unitDestroyWithAffect(card, affectedCards))
+		if (args.affectedCards) {
+			this.game.animation.play(ServerAnimation.unitDestroyWithAffect(card, args.affectedCards))
 		} else {
 			this.game.animation.play(ServerAnimation.unitDestroy(card))
 		}

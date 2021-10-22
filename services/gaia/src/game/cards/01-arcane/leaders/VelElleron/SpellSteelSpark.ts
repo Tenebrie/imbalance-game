@@ -9,7 +9,7 @@ import { CardTargetValidatorArguments } from '@src/types/TargetValidatorArgument
 import { asDirectSparkDamage, asSplashSparkDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../../models/ServerCard'
-import ServerDamageInstance from '../../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
 
@@ -43,12 +43,12 @@ export default class SpellSteelSpark extends ServerCard {
 	private onTargetSelected(target: ServerUnit): void {
 		const sideTargets = this.game.board.getAdjacentUnits(target).filter((unit) => unit.rowIndex === target.rowIndex)
 
-		target.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+		target.dealDamage(DamageInstance.fromCard(this.baseDamage, this))
 
 		const survivingSideTargets = sideTargets.filter((target) => target.isAlive())
 		survivingSideTargets.forEach((sideTarget) => {
 			this.game.animation.createInstantAnimationThread()
-			sideTarget.dealDamage(ServerDamageInstance.fromCard(this.baseSideDamage, this))
+			sideTarget.dealDamage(DamageInstance.fromCard(this.baseSideDamage, this))
 			this.game.animation.commitAnimationThread()
 		})
 	}

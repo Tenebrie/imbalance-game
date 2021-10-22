@@ -10,7 +10,7 @@ import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
 import CardLibrary from '../../../../libraries/CardLibrary'
 import ServerCard from '../../../../models/ServerCard'
-import ServerDamageInstance from '../../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import UnitFierceShadow from '../../tokens/UnitFierceShadow'
 
@@ -46,7 +46,7 @@ export default class SpellShadowSpark extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(this.baseDamage, this))
 				summonUnit()
 			})
 

@@ -6,7 +6,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
 import ServerAnimation from '@src/game/models/ServerAnimation'
-import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import Keywords from '@src/utils/Keywords'
 
 import ServerCard from '../../../models/ServerCard'
@@ -60,7 +60,7 @@ export default class UnitVoidslinger extends ServerCard {
 			.require(() => !!this.sacrificedUnit)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.sacrificedUnit!.power, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(this.sacrificedUnit!.power, this))
 			})
 
 		this.createEffect(GameEventType.CARD_RESOLVED).perform(() => (this.sacrificedUnit = null))

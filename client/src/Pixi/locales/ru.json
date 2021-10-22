@@ -277,10 +277,6 @@
 	"card.heroAntoria.title": "Мученица",
 	"card.heroAntoria.description": "Находясь в руке, {name} перехватывает весь урон, наносимый союзным боевым единицам.<p>Если она погибает находясь в руке, *вытяните* карту.",
 
-	"card.heroAurienne.name": "Ауриэн",
-	"card.heroAurienne.title": "Защитница веры",
-	"card.heroAurienne.description": "Если союзная боевая единица получает фатальный урон пока *Ауриэн* находится в вашей руке, предотвратите его.\nЗатем, передвиньте союзника назад, сыграйте *Ауриэн* на его месте и *вытяните* карту.",
-
 	"card.heroTroviar.name": "Тровиар",
 	"card.heroTroviar.title": "Мучитель",
 	"card.heroTroviar.description": "*Вход игру:*\nНанесите {deployDamage} ед. урона {targetCount} вражеским юнитам.<p>Получает +{powerGained} Силы, когда другой юнит получает урон.",
@@ -404,9 +400,6 @@
 
 	"card.unitUndercityGambler.name": "Аферист Подгорода",
 	"card.unitUndercityGambler.description": "*Вход в игру:*\nВерните постоянную карту из вашей руки в колоду.<p>Затем, *Вытяните* карту и дайте ей +{bonusPower} Силы.",
-
-	"card.unitWingedShieldmaiden.name": "Крылатая воительница",
-	"card.unitWingedShieldmaiden.description": "Когда союзный юнит получает урон, передвиньте его на ряд назад, *Сыграйте* *Крылатую воительницу* на его место и *Вытяните* карту.",
 
 	"card.unitOceanicSeagull.name": "Океаническая чайка",
 	"card.unitOceanicSeagull.description": "*Вход в игру:*\n*Призовите* Обыкновенную карту мерфолка из вашей колоды.",

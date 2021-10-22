@@ -4,6 +4,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import MoveDirection from '@shared/enums/MoveDirection'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
+import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import { EventSubscriber } from '@src/game/models/ServerGameEvents'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
@@ -104,6 +105,13 @@ export default {
 			triggeringCard: args.triggeringCard.id,
 		},
 	}),
+	beforeCardTakesDamage: (args: BeforeCardTakesDamageEventArgs): GameEvent => ({
+		type: GameEventType.BEFORE_CARD_TAKES_DAMAGE,
+		args: args,
+		effectSource: args.triggeringCard,
+		logSubtype: args.damageInstance.source === DamageSource.CARD ? 'fromCard' : 'fromUniverse',
+		hiddenFromLogs: true,
+	}),
 	cardTakesDamage: (args: CardTakesDamageEventArgs): GameEvent => ({
 		type: GameEventType.CARD_TAKES_DAMAGE,
 		args: args,
@@ -111,7 +119,7 @@ export default {
 		logSubtype: args.damageInstance.source === DamageSource.CARD ? 'fromCard' : 'fromUniverse',
 		logVariables: {
 			damage: args.damageInstance.value,
-			sourceCard: args.damageInstance.sourceCard ? args.damageInstance.sourceCard.id : '',
+			sourceCard: args.damageInstance.source === DamageSource.CARD ? args.damageInstance.sourceCard.id : '',
 			triggeringCard: args.triggeringCard.id,
 		},
 	}),
@@ -122,7 +130,7 @@ export default {
 		logSubtype: args.healingInstance.source === DamageSource.CARD ? 'fromCard' : 'fromUniverse',
 		logVariables: {
 			healing: args.healingInstance.value,
-			sourceCard: args.healingInstance.sourceCard ? args.healingInstance.sourceCard.id : '',
+			sourceCard: args.healingInstance.source === DamageSource.CARD ? args.healingInstance.sourceCard.id : '',
 			triggeringCard: args.triggeringCard.id,
 		},
 	}),
@@ -133,7 +141,7 @@ export default {
 		logSubtype: args.restorationInstance.source === DamageSource.CARD ? 'fromCard' : 'fromUniverse',
 		logVariables: {
 			healing: args.restorationInstance.value,
-			sourceCard: args.restorationInstance.sourceCard ? args.restorationInstance.sourceCard.id : '',
+			sourceCard: args.restorationInstance.source === DamageSource.CARD ? args.restorationInstance.sourceCard.id : '',
 			triggeringCard: args.triggeringCard.id,
 		},
 	}),
@@ -435,6 +443,10 @@ export interface CardPreResolvedEventArgs extends SharedEventArgs {
 export interface CardResolvedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 }
+export interface BeforeCardTakesDamageEventArgs extends SharedEventArgs {
+	triggeringCard: ServerCard
+	damageInstance: ServerDamageInstance
+}
 export interface CardTakesDamageEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 	damageInstance: ServerDamageInstance
@@ -547,6 +559,7 @@ export interface UnitNightfallEventArgs extends SharedEventArgs {
 export interface UnitDestroyedEventArgs extends SharedEventArgs {
 	triggeringCard: ServerCard
 	triggeringUnit: ServerUnit
+	reason: UnitDestructionReason
 }
 
 export interface UnitDeployedEventArgs extends SharedEventArgs {

@@ -10,7 +10,7 @@ import { asDirectUnitDamage } from '@src/utils/LeaderStats'
 
 import BuffStun from '../../../buffs/BuffStun'
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitStoneElemental extends ServerCard {
@@ -36,7 +36,7 @@ export default class UnitStoneElemental extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.require(({ targetUnit }) => targetUnit.owner !== this.ownerGroup)
 			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(this.damage, this))
 				targetUnit.buffs.add(BuffStun, this, BuffDuration.END_OF_NEXT_TURN)
 			})
 	}

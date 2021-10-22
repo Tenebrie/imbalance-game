@@ -224,10 +224,13 @@ export const generateShortId = (length: number): string => {
 
 export const isCardPublic = (card: ServerCard): boolean => {
 	const location = card.location
-	const isHeroPower = card.features.includes(CardFeature.HERO_POWER) || card.features.includes(CardFeature.HERO_ARTIFACT)
+	const isProminent =
+		card.features.includes(CardFeature.PROMINENT) ||
+		card.features.includes(CardFeature.HERO_POWER) ||
+		card.features.includes(CardFeature.HERO_ARTIFACT)
 	return (
 		(location !== CardLocation.HAND && location !== CardLocation.DECK) ||
-		(location === CardLocation.HAND && (isHeroPower || card.isRevealed))
+		(location === CardLocation.HAND && (isProminent || card.isRevealed))
 	)
 }
 

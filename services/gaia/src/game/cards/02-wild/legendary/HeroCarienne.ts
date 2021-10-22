@@ -8,7 +8,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import { asSplashUnitDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class HeroCarienne extends ServerCard {
@@ -50,7 +50,7 @@ export default class HeroCarienne extends ServerCard {
 		for (let i = 0; i < this.waveCount; i++) {
 			enemies.forEach((enemy) => {
 				this.game.animation.createAnimationThread()
-				enemy.dealDamage(ServerDamageInstance.fromCard(this.damagePerWave, this))
+				enemy.dealDamage(DamageInstance.fromCard(this.damagePerWave, this))
 				this.game.animation.commitAnimationThread()
 			})
 			this.game.animation.syncAnimationThreads()

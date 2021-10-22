@@ -5,10 +5,10 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 
 import ServerCard from '../../models/ServerCard'
-import ServerDamageInstance from '../../models/ServerDamageSource'
+import { DamageInstance } from '../../models/ServerDamageSource'
 import ServerGame from '../../models/ServerGame'
 
-export default class TestingSpellHeavyStrike extends ServerCard {
+export default class TestingSpellDeals100Damage extends ServerCard {
 	constructor(game: ServerGame) {
 		super(game, {
 			type: CardType.SPELL,
@@ -21,7 +21,7 @@ export default class TestingSpellHeavyStrike extends ServerCard {
 		})
 
 		this.createDeployTargets(TargetType.UNIT).perform(({ targetCard }) => {
-			targetCard.dealDamage(ServerDamageInstance.fromCard(100, this))
+			targetCard.dealDamage(DamageInstance.fromCard(100, this))
 		})
 	}
 }

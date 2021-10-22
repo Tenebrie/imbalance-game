@@ -6,7 +6,7 @@ import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitVolatileCrystal extends ServerCard {
@@ -34,7 +34,7 @@ export default class UnitVolatileCrystal extends ServerCard {
 
 				damageTargets.forEach((unit) => {
 					this.game.animation.thread(() => {
-						unit.dealDamage(ServerDamageInstance.fromUnit(this.damage, triggeringUnit))
+						unit.dealDamage(DamageInstance.fromUnit(this.damage, triggeringUnit))
 					})
 				})
 			})

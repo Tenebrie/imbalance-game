@@ -2,11 +2,11 @@ import CardLocation from '@shared/enums/CardLocation'
 
 import { EventSubscriber } from '../ServerGameEvents'
 
-export class EventHook<HookValues, HookArgs> {
+export class EventHook<EditableValues, FixedValues> {
 	private readonly __subscriber: EventSubscriber
-	private readonly __hooks: ((values: HookValues, args: HookArgs) => HookValues)[]
-	private readonly __callbacks: ((args: HookArgs) => void)[]
-	private readonly __conditions: ((args: HookArgs) => boolean)[]
+	private readonly __hooks: ((values: EditableValues, args: FixedValues) => EditableValues)[]
+	private readonly __callbacks: ((args: FixedValues, values: EditableValues) => void)[]
+	private readonly __conditions: ((args: FixedValues, values: EditableValues) => boolean)[]
 	private __ignoreControlEffects = false
 
 	constructor(subscriber: EventSubscriber) {
@@ -20,15 +20,15 @@ export class EventHook<HookValues, HookArgs> {
 		return this.__subscriber
 	}
 
-	public get hooks(): ((values: HookValues, args: HookArgs) => HookValues)[] {
+	public get hooks(): ((values: EditableValues, args: FixedValues) => EditableValues)[] {
 		return this.__hooks
 	}
 
-	public get callbacks(): ((args: HookArgs) => void)[] {
+	public get callbacks(): ((args: FixedValues, values: EditableValues) => void)[] {
 		return this.__callbacks
 	}
 
-	public get conditions(): ((args: HookArgs) => boolean)[] {
+	public get conditions(): ((args: FixedValues, values: EditableValues) => boolean)[] {
 		return this.__conditions
 	}
 
@@ -43,7 +43,7 @@ export class EventHook<HookValues, HookArgs> {
 	 *
 	 * Replace function must return a modified `values` object.
 	 */
-	replace(func: (values: HookValues, args: HookArgs) => HookValues): EventHook<HookValues, HookArgs> {
+	replace(func: (values: EditableValues, args: FixedValues) => EditableValues): EventHook<EditableValues, FixedValues> {
 		this.__hooks.push(func)
 		return this
 	}
@@ -52,7 +52,7 @@ export class EventHook<HookValues, HookArgs> {
 	 * ------------------------------------------------------------------------
 	 * The `args` argument provided to the callback is the original one, not affected by `replace` result.
 	 */
-	perform(callback: (args: HookArgs) => void): EventHook<HookValues, HookArgs> {
+	perform(callback: (args: FixedValues, values: EditableValues) => void): EventHook<EditableValues, FixedValues> {
 		this.__callbacks.push(callback)
 		return this
 	}
@@ -63,7 +63,7 @@ export class EventHook<HookValues, HookArgs> {
 	 *
 	 * The hook will only execute if all conditions return `true`
 	 */
-	require(condition: (args: HookArgs) => boolean): EventHook<HookValues, HookArgs> {
+	require(condition: (args: FixedValues, values: EditableValues) => boolean): EventHook<EditableValues, FixedValues> {
 		this.__conditions.push(condition)
 		return this
 	}
@@ -72,7 +72,7 @@ export class EventHook<HookValues, HookArgs> {
 	 * ------------------------------------------------------------------------
 	 * Add a new condition to the require chain. Card location must match any of the specified values.
 	 */
-	requireLocations(locations: CardLocation[]): EventHook<HookValues, HookArgs> {
+	requireLocations(locations: CardLocation[]): EventHook<EditableValues, FixedValues> {
 		return this.require(() => !!this.__subscriber && locations.includes(this.__subscriber.location))
 	}
 
@@ -80,7 +80,7 @@ export class EventHook<HookValues, HookArgs> {
 	 * ------------------------------------------------------------------------
 	 * This callback will ignore stun and suspension effects applied to card and fire even if the normal callbacks would be skipped.
 	 */
-	forceIgnoreControlEffects(): EventHook<HookValues, HookArgs> {
+	forceIgnoreControlEffects(): EventHook<EditableValues, FixedValues> {
 		this.__ignoreControlEffects = true
 		return this
 	}

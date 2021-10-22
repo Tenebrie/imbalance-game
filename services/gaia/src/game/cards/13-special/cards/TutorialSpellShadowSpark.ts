@@ -9,7 +9,7 @@ import TargetType from '@shared/enums/TargetType'
 import UnitFierceShadow from '@src/game/cards/01-arcane/tokens/UnitFierceShadow'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import ServerCard from '@src/game/models/ServerCard'
-import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerGame from '@src/game/models/ServerGame'
 import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
@@ -45,7 +45,7 @@ export default class TutorialSpellShadowSpark extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.baseDamage, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(this.baseDamage, this))
 				summonUnit()
 			})
 

@@ -65,7 +65,9 @@ export default class UnitCultistSpellslinger extends ServerCard {
 		this.sacrificedUnit = {
 			power: target.card.stats.power,
 		}
-		this.game.board.destroyUnit(target, this)
+		this.game.board.destroyUnit(target, {
+			destroyer: this,
+		})
 	}
 
 	private onTargetsConfirmed(): void {

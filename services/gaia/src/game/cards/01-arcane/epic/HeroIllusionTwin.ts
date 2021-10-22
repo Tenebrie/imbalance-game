@@ -8,7 +8,7 @@ import { sortCards } from '@shared/Utils'
 
 import BuffStrength from '../../../buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 /* Original design and implementation by Nenl */
@@ -37,7 +37,7 @@ export default class HeroIllusionTwin extends ServerCard {
 				const unitCards = sortCards(this.ownerPlayer.cardHand.unitCards) as ServerCard[]
 				const copyInHand = unitCards.find((u) => u.class === this.class)
 				if (copyInHand) {
-					this.dealDamage(ServerDamageInstance.fromCard(this.powerLost, this))
+					this.dealDamage(DamageInstance.fromCard(this.powerLost, this))
 					copyInHand.buffs.addMultiple(BuffStrength, this.powerGiven, this)
 				}
 			})

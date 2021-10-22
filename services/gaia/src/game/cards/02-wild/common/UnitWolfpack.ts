@@ -7,7 +7,7 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
-import ServerDamageInstance from '@src/game/models/ServerDamageSource'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import Keywords from '@src/utils/Keywords'
 import { asDirectUnitDamage } from '@src/utils/LeaderStats'
 
@@ -41,7 +41,7 @@ export default class UnitWolfpack extends ServerCard {
 			.require(() => this.damage > 0)
 			.requireEnemy()
 			.perform(({ targetUnit }) => {
-				targetUnit.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+				targetUnit.dealDamage(DamageInstance.fromCard(this.damage, this))
 				if (targetUnit.card.stats.power <= 0) {
 					Keywords.createCard
 						.forOwnerOf(this)

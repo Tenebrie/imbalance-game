@@ -9,7 +9,7 @@ import { asDirectHealingPotency } from '@src/utils/LeaderStats'
 
 import ServerBoardRow from '../../../../models/ServerBoardRow'
 import ServerCard from '../../../../models/ServerCard'
-import ServerDamageInstance from '../../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
 
@@ -59,6 +59,6 @@ export default class SpellTacticalRetreat extends ServerCard {
 	private onTargetRowSelected(row: ServerBoardRow, position: number): void {
 		const movingUnit = this.movingUnit!
 		Keywords.moveUnit(movingUnit, row, position)
-		movingUnit.card.heal(ServerDamageInstance.fromCard(this.healing, this))
+		movingUnit.card.heal(DamageInstance.fromCard(this.healing, this))
 	}
 }

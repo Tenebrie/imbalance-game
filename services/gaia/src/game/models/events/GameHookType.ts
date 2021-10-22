@@ -1,3 +1,4 @@
+import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
@@ -43,6 +44,7 @@ export interface CardDestroyedHookEditableValues {
 
 export interface UnitDestroyedHookFixedValues {
 	targetUnit: ServerUnit
+	reason: UnitDestructionReason
 }
 export interface UnitDestroyedHookEditableValues {
 	destructionPrevented: boolean

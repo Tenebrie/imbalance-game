@@ -38,7 +38,9 @@ export default class UnitCultistBrute extends ServerCard {
 	}
 
 	private onSacrificeTargetSelected(target: ServerUnit): void {
-		this.game.board.destroyUnit(target, this)
+		this.game.board.destroyUnit(target, {
+			destroyer: this,
+		})
 		this.buffs.addMultiple(BuffStrength, this.bonusPower, this)
 	}
 }

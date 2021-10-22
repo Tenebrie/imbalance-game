@@ -11,7 +11,7 @@ import TargetType from '@shared/enums/TargetType'
 import { asRecurringUnitDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
-import ServerDamageInstance from '../../../models/ServerDamageSource'
+import { DamageInstance } from '../../../models/ServerDamageSource'
 import ServerGame from '../../../models/ServerGame'
 
 export default class UnitChargingKnight extends ServerCard {
@@ -40,7 +40,7 @@ export default class UnitChargingKnight extends ServerCard {
 			.targetCount(() => this.movesForwardThisTurn)
 			.requireEnemy()
 			.perform(({ targetCard }) => {
-				targetCard.dealDamage(ServerDamageInstance.fromCard(this.damage, this))
+				targetCard.dealDamage(DamageInstance.fromCard(this.damage, this))
 			})
 
 		this.createCallback(GameEventType.UNIT_MOVED, [CardLocation.BOARD])
