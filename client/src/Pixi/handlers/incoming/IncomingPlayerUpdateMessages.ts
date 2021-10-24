@@ -73,6 +73,8 @@ const IncomingPlayerUpdateMessages: PlayerUpdateMessageHandlers = {
 			(Core.mainHandler.previousAnnouncedCard && Core.mainHandler.previousAnnouncedCard.id === data.cardId)
 		) {
 			player.cardHand.removeCardById(data.cardId)
+		} else if (player.group === Core.opponent) {
+			player.cardHand.destroyCard(targetCard)
 		} else {
 			player.cardHand.removeCardById(data.cardId)
 

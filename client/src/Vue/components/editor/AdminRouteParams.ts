@@ -54,13 +54,11 @@ export const useAdminRouteQuery = (): ComputedRef<Query> => {
 		(): Query => ({
 			get scroll(): number {
 				if (routeData.value.query['scroll'] === undefined) {
-					console.log('no')
 					return 0
 				}
 				try {
 					return Number(routeData.value.query['scroll'])
 				} catch (err) {
-					console.log('nope')
 					return 0
 				}
 			},

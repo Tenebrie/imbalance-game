@@ -544,7 +544,7 @@
 	"card.unitRavenMessenger.description": "*Deploy:*\n*Play* a Bronze Soldier card from your deck.",
 
 	"card.unitForestScout.name": "Forest Scout",
-	"card.unitForestScout.description": "*Deploy:*\nIf you're losing on the board, gain +{boardPowerBonus} Power\nIf your opponent won more rounds than you, gain +{moralePowerBonus} Power.",
+	"card.unitForestScout.description": "",
 
 	"card.unitChargingKnight.name": "Charging Steed",
 	"card.unitChargingKnight.description": "*Order:*\nDeal {damage} Damage to an enemy unit.<p>May only attack after moving forward on the same turn.",

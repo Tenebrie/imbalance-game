@@ -68,11 +68,13 @@ export default {
 			data: new OpenPlayerInGameMessage(self),
 			skipQueue: true,
 		})
-		player.sendGameMessage({
-			type: GameSyncMessageType.PLAYER_ALLIES,
-			data: allies.map((ally) => new OpenPlayerInGameMessage(ally)),
-			skipQueue: true,
-		})
+		if (allies.length > 0) {
+			player.sendGameMessage({
+				type: GameSyncMessageType.PLAYER_ALLIES,
+				data: allies.map((ally) => new OpenPlayerInGameMessage(ally)),
+				skipQueue: true,
+			})
+		}
 		player.sendGameMessage({
 			type: GameSyncMessageType.PLAYER_OPPONENTS,
 			data: opponents.map((opponent) => new HiddenPlayerInGameMessage(opponent)),

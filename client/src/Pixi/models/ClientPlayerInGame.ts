@@ -66,7 +66,7 @@ export default class ClientPlayerInGame implements PlayerInGame {
 		this.__spellMana = value
 		if (this.group === Core.player) {
 			store.commit.gameStateModule.setPlayerSpellMana(value)
-		} else if (this.group === Core.opponent) {
+		} else if (Core.opponent && this.group === Core.opponent) {
 			store.commit.gameStateModule.setOpponentSpellMana(value)
 		}
 	}

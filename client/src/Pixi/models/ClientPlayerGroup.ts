@@ -47,6 +47,7 @@ export default class ClientPlayerGroup implements PlayerGroup {
 
 	public addPlayer(message: PlayerInGameMessage): void {
 		const player = this.players.find((player) => player.player.id === message.player.id) || new ClientPlayerInGame(message.player)
+		this.players.push(player)
 		player.player.id = message.player.id
 		player.player.username = message.player.username
 		player.leader = RenderedCard.fromMessage(message.leader)
@@ -55,7 +56,6 @@ export default class ClientPlayerGroup implements PlayerGroup {
 		player.cardGraveyard = ClientCardDeck.fromMessage(message.cardGraveyard)
 		player.unitMana = message.unitMana
 		player.spellMana = message.spellMana
-		this.players.push(player)
 	}
 
 	public startTurn(): void {
