@@ -25,15 +25,15 @@
 				</div>
 			</div>
 			<div class="section">
-				<div class="list language-list">
-					<h3>{{ $locale.get('ui.profile.language.header') }}</h3>
-					<div v-for="language in supportedLanguages" :key="language">
-						<div class="language-list-content">
-							<input :id="`language-list-item-${language}`" type="radio" name="language" :value="language" v-model="userLanguage" />
-							<label :for="`language-list-item-${language}`">{{ $locale.get(`ui.language.${language}`) }}</label>
-						</div>
-					</div>
-				</div>
+				<!--	<div class="list language-list">-->
+				<!--		<h3>{{ $locale.get('ui.profile.language.header') }}</h3>-->
+				<!--		<div v-for="language in supportedLanguages" :key="language">-->
+				<!--			<div class="language-list-content">-->
+				<!--				<input :id="`language-list-item-${language}`" type="radio" name="language" :value="language" v-model="userLanguage" />-->
+				<!--				<label :for="`language-list-item-${language}`">{{ $locale.get(`ui.language.${language}`) }}</label>-->
+				<!--			</div>-->
+				<!--		</div>-->
+				<!--	</div>-->
 				<div class="list render-quality-list">
 					<h3>{{ $locale.get('ui.profile.quality.header') }}</h3>
 					<div v-for="quality in supportedRenderQualities" :key="quality">

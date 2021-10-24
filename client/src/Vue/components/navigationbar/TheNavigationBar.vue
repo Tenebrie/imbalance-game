@@ -44,7 +44,7 @@
 			</div>
 		</div>
 		<div class="right-side-container">
-			<language-dropdown v-if="displayLanguageSelector" />
+			<!--	<language-dropdown v-if="displayLanguageSelector" /> -->
 			<the-discord-link />
 			<the-mini-user-profile />
 		</div>
@@ -55,7 +55,6 @@
 import AccessLevel from '@shared/enums/AccessLevel'
 import { computed, defineComponent } from 'vue'
 
-import LanguageDropdown from '@/Vue/components/navigationbar/LanguageSelector.vue'
 import TheMiniUserProfile from '@/Vue/components/navigationbar/TheMiniUserProfile.vue'
 import TheDiscordLink from '@/Vue/components/navigationbar/TheNavigationBarDiscordLink.vue'
 import TenebrieLogo from '@/Vue/components/utils/TenebrieLogo.vue'
@@ -66,7 +65,6 @@ export default defineComponent({
 		TenebrieLogo,
 		TheDiscordLink,
 		TheMiniUserProfile,
-		LanguageDropdown,
 	},
 	setup() {
 		const displayLanguageSelector = computed<boolean>(() => !store.state.isLoggedIn)

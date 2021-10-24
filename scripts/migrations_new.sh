@@ -1,3 +1,3 @@
 #!/bin/bash
 
-(cd "$(dirname "$0")" && cd ../server && npx node-pg-migrate create "$@")
+(cd "$(dirname "$0")" && cd ../services/gaia && npx node-pg-migrate create "$@")
