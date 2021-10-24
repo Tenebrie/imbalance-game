@@ -11,6 +11,8 @@ import BuffStrength from '../../../buffs/BuffStrength'
 import ServerCard from '../../../models/ServerCard'
 import ServerGame from '../../../models/ServerGame'
 
+// TODO: Rework me
+// It also does not trigger after opponent has finished the round
 export default class HeroGarellion extends ServerCard {
 	powerPerMana = 2
 
@@ -24,6 +26,7 @@ export default class HeroGarellion extends ServerCard {
 				power: 20,
 			},
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			powerPerMana: this.powerPerMana,

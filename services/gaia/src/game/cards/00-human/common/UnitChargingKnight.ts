@@ -31,6 +31,7 @@ export default class UnitChargingKnight extends ServerCard {
 				armor: 4,
 			},
 			expansionSet: ExpansionSet.BASE,
+			isExperimental: true,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,
