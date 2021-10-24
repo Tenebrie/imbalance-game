@@ -23,6 +23,7 @@ import { printAllRoutes } from '@src/utils/RoutePrinter'
 import { colorize, colorizeId } from '@src/utils/Utils'
 import cookieParser from 'cookie-parser'
 import express, { Request, Response } from 'express'
+import rateLimit from 'express-rate-limit'
 import expressWs from 'express-ws'
 import logger from 'morgan'
 
@@ -90,6 +91,15 @@ app.use((req: Request, res: Response, next) => {
 		next()
 	}
 })
+
+/* Global rate limiting */
+app.use(
+	'/api/',
+	rateLimit({
+		windowMs: 15 * 1000,
+		max: 50,
+	})
+)
 
 /* Wait until database client is ready */
 app.use(

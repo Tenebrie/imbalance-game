@@ -3,7 +3,7 @@
 		<div class="deck-list" v-if="isDeckListDisplayed">
 			<div class="deck-list-segment" v-for="deckFilter in deckFilters" :key="String(deckFilter.faction) + deckFilter.experimental">
 				<div v-if="deckFilter.decks.length > 0">
-					<the-deck-list-separator :faction="deckFilter.faction" :is-experimental="deckFilter.experimental" />
+					<the-deck-list-separator :faction="deckFilter.faction" :is-experimental="deckFilter.experimental" :mode="mode" />
 					<the-deck-list-item v-for="deck in deckFilter.decks" :key="deck.id" :deck="deck" />
 				</div>
 			</div>

@@ -4,6 +4,7 @@ import OpenPlayerMessage from '@shared/models/network/player/OpenPlayerMessage'
 import EditorDeckDatabase from '@src/database/EditorDeckDatabase'
 import StartingDecks from '@src/game/utils/StartingDecks'
 import express, { Request, Response } from 'express'
+import rateLimit from 'express-rate-limit'
 import { OAuth2Client } from 'google-auth-library'
 
 import PlayerDatabase from '../database/PlayerDatabase'
@@ -15,6 +16,14 @@ import AsyncHandler from '../utils/AsyncHandler'
 import { createHumanPlayerId, registerFormValidators, setCookie } from '../utils/Utils'
 
 const router = express.Router()
+
+router.post(
+	'/',
+	rateLimit({
+		windowMs: 60 * 1000,
+		max: 3,
+	})
+)
 
 /* Registration endpoint. Does not require user token */
 router.post(
@@ -61,6 +70,14 @@ router.post(
 
 		res.status(204)
 		res.send()
+	})
+)
+
+router.post(
+	'/google',
+	rateLimit({
+		windowMs: 60 * 1000,
+		max: 3,
 	})
 )
 

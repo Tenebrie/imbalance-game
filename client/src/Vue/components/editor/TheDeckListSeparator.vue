@@ -8,10 +8,10 @@
 
 <script lang="ts">
 import CardFaction from '@shared/enums/CardFaction'
-import { computed, defineComponent } from 'vue'
-import { PropType } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
 
 import Localization from '@/Pixi/Localization'
+import DeckListMode from '@/utils/DeckListMode'
 import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 
 export default defineComponent({
@@ -23,6 +23,11 @@ export default defineComponent({
 
 		isExperimental: {
 			type: Boolean as PropType<boolean>,
+			required: true,
+		},
+
+		mode: {
+			type: Number as PropType<DeckListMode>,
 			required: true,
 		},
 	},
@@ -54,11 +59,14 @@ export default defineComponent({
 		const factionClass = computed<Record<string, boolean>>(() => ({
 			[factionAsString.value]: true,
 			experimental: props.isExperimental,
+			clickable: props.mode === DeckListMode.EDIT,
 		}))
 
 		const routeQuery = useDecksRouteQuery()
 		const onClick = () => {
-			routeQuery.value.toggleExactFaction(props.faction)
+			if (props.mode === DeckListMode.EDIT) {
+				routeQuery.value.toggleExactFaction(props.faction)
+			}
 		}
 
 		return {
@@ -80,8 +88,11 @@ export default defineComponent({
 	padding: 4px 8px;
 	user-select: none;
 	font-size: 1.1em;
-	cursor: pointer;
 	transition: background-color 0.3s;
+
+	&.clickable {
+		cursor: pointer;
+	}
 
 	&:hover {
 		background: $COLOR-BACKGROUND-TRANSPARENT;

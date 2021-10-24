@@ -45,12 +45,12 @@ export default class UnitShiftingShadow extends ServerCard {
 				this.selectedAllyRowIndex = targetUnit.rowIndex
 				this.selectedAllyUnitIndex = targetUnit.unitIndex
 			})
-			.label('card.spellTacticalMove.target.label.unit')
+			.label('label.chooseUnit')
 
 		this.createDeployTargets(TargetType.BOARD_POSITION)
 			.requireAllied()
 			.requireNotNull(() => this.selectedAlly)
-			.require(({ targetRow }) => targetRow.index !== this.selectedAlly!.rowIndex)
+			.require(({ targetRow, targetPosition }) => !game.board.isPositionAdjacentToUnit(this.selectedAlly!, targetRow.index, targetPosition))
 			.perform(({ targetRow, targetPosition }) => {
 				Keywords.moveUnit(this.selectedAlly!, targetRow.index, targetPosition)
 			})
@@ -67,6 +67,6 @@ export default class UnitShiftingShadow extends ServerCard {
 				this.selectedAllyRowIndex = null
 				this.selectedAllyUnitIndex = null
 			})
-			.label('card.spellTacticalMove.target.label.row')
+			.label('label.moveHere')
 	}
 }

@@ -408,7 +408,7 @@ type TestGameCard = {
 	location: CardLocation
 	getUnit(): TestGameUnit
 	play(): TestGameCardPlayActions
-	playTo(row: 'front' | 'middle' | 'back', position: number | 'last'): TestGameCardPlayActions
+	playTo(row: 'front' | 'middle' | 'back', position?: number | 'last'): TestGameCardPlayActions
 	takeDamage(damage: number): TestGameCard
 	takeDamageFromCard(damage: number, source: TestGameCard | TestGameUnit): TestGameCard
 	dealDamage(damage: number, target: TestGameCard): TestGameCard
@@ -459,7 +459,7 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		buffs: wrapBuffs(game, card),
 		location: card.location,
 		play: () => playCardToRow('front', 'last'),
-		playTo: (row: RowDistanceWrapper, position: number) => playCardToRow(row, position),
+		playTo: (row: RowDistanceWrapper, position: number | 'last' = 'last') => playCardToRow(row, position),
 		getUnit: findUnit,
 		takeDamage: (damage: number) => takeDamage(damage),
 		takeDamageFromCard: takeDamageFromCard,

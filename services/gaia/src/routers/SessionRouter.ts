@@ -5,6 +5,7 @@ import ServerPlayer from '@src/game/players/ServerPlayer'
 import StartingDecks from '@src/game/utils/StartingDecks'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
 import express, { Response } from 'express'
+import rateLimit from 'express-rate-limit'
 
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import TokenManager from '../services/TokenService'
@@ -12,6 +13,14 @@ import AsyncHandler from '../utils/AsyncHandler'
 import { clearCookie, setCookie } from '../utils/Utils'
 
 const router = express.Router()
+
+router.use(
+	'/',
+	rateLimit({
+		windowMs: 30 * 1000,
+		max: 10,
+	})
+)
 
 /* Login endpoint. Does not require user token */
 router.post(

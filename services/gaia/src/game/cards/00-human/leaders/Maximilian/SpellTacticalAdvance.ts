@@ -4,12 +4,12 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import Keywords from '@src/utils/Keywords'
 import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 import ServerBoardRow from '../../../../models/ServerBoardRow'
 import ServerCard from '../../../../models/ServerCard'
-import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import ServerUnit from '../../../../models/ServerUnit'
 

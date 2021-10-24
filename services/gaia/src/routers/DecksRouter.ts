@@ -2,6 +2,7 @@ import ErrorCode from '@shared/enums/ErrorCode'
 import EditorDeck from '@shared/models/EditorDeck'
 import { genericError } from '@src/middleware/GenericErrorMiddleware'
 import express, { Response } from 'express'
+import rateLimit from 'express-rate-limit'
 
 import EditorDeckDatabase from '../database/EditorDeckDatabase'
 import SharedDeckDatabase from '../database/SharedDeckDatabase'
@@ -64,6 +65,14 @@ router.post(
 		res.json({
 			data: code,
 		})
+	})
+)
+
+router.post(
+	'/',
+	rateLimit({
+		windowMs: 15 * 1000,
+		max: 3,
 	})
 )
 

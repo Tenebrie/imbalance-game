@@ -24,20 +24,22 @@ export default defineComponent({
 	methods: {
 		async onClick(): Promise<void> {
 			this.requestInFlight = true
-			const response = await store.dispatch.editor.createDeck()
-			if (response.status !== 200) {
+
+			try {
+				const response = await store.dispatch.editor.createDeck()
+
+				store.dispatch.popupModule.closeAll()
+
+				await this.$router.push({
+					name: 'single-deck',
+					params: {
+						deckId: response.deckId,
+					},
+				})
+			} catch (e) {
 				Notifications.error('An error occurred while creating the deck')
-				return
 			}
-
-			store.dispatch.popupModule.closeAll()
-
-			await this.$router.push({
-				name: 'single-deck',
-				params: {
-					deckId: response.deckId,
-				},
-			})
+			this.requestInFlight = false
 		},
 	},
 })
