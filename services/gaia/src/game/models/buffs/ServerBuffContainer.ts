@@ -1,7 +1,9 @@
+import BuffAlignment from '@shared/enums/BuffAlignment'
 import BuffFeature from '@shared/enums/BuffFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import BuffContainer from '@shared/models/BuffContainer'
 import OutgoingBoardUpdateMessages from '@src/game/handlers/outgoing/OutgoingBoardUpdateMessages'
+import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import { LeaderStatValueGetter } from '@src/utils/LeaderStats'
 
 import OutgoingCardUpdateMessages from '../../handlers/outgoing/OutgoingCardUpdateMessages'
@@ -44,8 +46,28 @@ export default class ServerBuffContainer implements BuffContainer {
 		return this.buffs.filter((buff) => !buff.buffFeatures.includes(BuffFeature.INVISIBLE))
 	}
 
-	public get dispellable(): ServerBuff[] {
-		return this.buffs.filter((buff) => !buff.protected && !buff.buffFeatures.includes(BuffFeature.INVISIBLE))
+	public playerDispellable(forGroup: ServerPlayerGroup): ServerBuff[] {
+		const owner = this.parent instanceof ServerCard ? this.parent.ownerGroup : this.parent.owner
+		const isAlly = owner === forGroup
+		const isEnemy = owner !== forGroup
+		return this.buffs.filter(
+			(buff) =>
+				!buff.protected &&
+				!buff.buffFeatures.includes(BuffFeature.INVISIBLE) &&
+				!(buff instanceof ServerStackableCardBuff) &&
+				!(buff instanceof ServerStackableRowBuff) &&
+				((isAlly && buff.alignment !== BuffAlignment.POSITIVE) || (isEnemy && buff.alignment !== BuffAlignment.NEGATIVE))
+		)
+	}
+
+	public anyDispellable(): ServerBuff[] {
+		return this.buffs.filter(
+			(buff) =>
+				!buff.protected &&
+				!buff.buffFeatures.includes(BuffFeature.INVISIBLE) &&
+				!(buff instanceof ServerStackableCardBuff) &&
+				!(buff instanceof ServerStackableRowBuff)
+		)
 	}
 
 	public get systemDispellable(): ServerBuff[] {
@@ -58,14 +80,14 @@ export default class ServerBuffContainer implements BuffContainer {
 	 * - Duration 2 = 'until the start of your next turn'
 	 * Default value is Infinity, i.e. buffs never expire
 	 */
-	public add(prototype: BuffConstructor, source: ServerBuffSource | null, duration: number | 'default' = 'default'): void {
+	public add(prototype: BuffConstructor, source: ServerBuffSource | null, duration: number | 'default' = 'default'): ServerBuff {
 		const newBuff = new prototype({
 			parent: this.parent,
 			source,
 			duration,
 			selector: null,
 		})
-		this.addInstance(newBuff, source)
+		return this.addInstance(newBuff, source)
 	}
 
 	public addMultiple(
@@ -74,14 +96,10 @@ export default class ServerBuffContainer implements BuffContainer {
 		source: ServerBuffSource | null,
 		duration: number | 'default' = 'default',
 		mergeAnimation = false
-	): void {
+	): ServerBuff[] {
 		if (typeof count === 'function') {
 			count = count(source)
 		}
-
-		// if (count === 0) {
-		// 	return
-		// }
 
 		const buffs = []
 		for (let i = 0; i < count; i++) {
@@ -91,11 +109,11 @@ export default class ServerBuffContainer implements BuffContainer {
 				duration,
 				selector: null,
 			})
-			buffs.push(newBuff)
 			if (!this.buffSkipsAnimation(newBuff) && !mergeAnimation) {
 				this.game.animation.createAnimationThread()
 			}
-			this.addInstance(newBuff, source, mergeAnimation)
+			const addedBuff = this.addInstance(newBuff, source, mergeAnimation)
+			buffs.push(addedBuff)
 			if (!this.buffSkipsAnimation(newBuff) && !mergeAnimation) {
 				this.game.animation.commitAnimationThread()
 			}
@@ -111,6 +129,7 @@ export default class ServerBuffContainer implements BuffContainer {
 				}
 			}
 		}
+		return buffs
 	}
 
 	public addForSelector(prototype: BuffConstructor, count: number, source: ServerBuffParent | null, selector: CardSelector): void {
@@ -138,7 +157,7 @@ export default class ServerBuffContainer implements BuffContainer {
 		)
 	}
 
-	private addInstance(newBuff: ServerBuff, source: ServerBuffSource, skipAnimation = false): void {
+	private addInstance(newBuff: ServerBuff, source: ServerBuffSource, skipAnimation = false): ServerBuff {
 		if (source && !this.buffSkipsAnimation(newBuff)) {
 			if (this.parent instanceof ServerCard && source instanceof ServerCard && this.parent.isVisuallyRendered) {
 				this.game.animation.play(ServerAnimation.cardAffectsCards(source, [this.parent]))
@@ -155,7 +174,7 @@ export default class ServerBuffContainer implements BuffContainer {
 			this.removeAllSystemDispellable({ skipAnimation: true })
 		}
 
-		let toUnsub = false
+		let isBuffStacking = false
 		const duplicatedBuff = this.buffs.find((buff) => buff.class === newBuff.class)
 		if (
 			duplicatedBuff &&
@@ -164,7 +183,7 @@ export default class ServerBuffContainer implements BuffContainer {
 			newBuff.selector === null
 		) {
 			duplicatedBuff.stacks += 1
-			toUnsub = true
+			isBuffStacking = true
 		} else {
 			this.buffs.push(newBuff)
 		}
@@ -187,7 +206,7 @@ export default class ServerBuffContainer implements BuffContainer {
 			)
 		}
 
-		if (toUnsub) {
+		if (isBuffStacking) {
 			this.game.events.unsubscribe(newBuff)
 		}
 
@@ -202,6 +221,7 @@ export default class ServerBuffContainer implements BuffContainer {
 				this.game.animation.play(ServerAnimation.rowsReceivedBuff([this.parent], newBuff.alignment))
 			}
 		}
+		return isBuffStacking && duplicatedBuff ? duplicatedBuff : newBuff
 	}
 
 	public getBuffsByPrototype(prototype: BuffConstructor): ServerBuff[] {
@@ -211,6 +231,10 @@ export default class ServerBuffContainer implements BuffContainer {
 
 	public has(prototype: BuffConstructor): boolean {
 		return this.getIntensity(prototype) > 0
+	}
+
+	public hasExact(buff: ServerBuff): boolean {
+		return this.buffs.some((existingBuff) => existingBuff.id === buff.id)
 	}
 
 	public getIntensity(prototype: BuffConstructor): number {
@@ -226,8 +250,8 @@ export default class ServerBuffContainer implements BuffContainer {
 			.reduce((total, value) => total + value, 0)
 	}
 
-	public dispel(count: number): void {
-		this.dispellable
+	public dispel(forGroup: ServerPlayerGroup, count: number): void {
+		this.playerDispellable(forGroup)
 			.reverse()
 			.slice(0, count)
 			.forEach((buff) => this.removeByReference(buff))

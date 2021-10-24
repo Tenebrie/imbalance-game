@@ -10,6 +10,7 @@ import { sortCards } from '@shared/Utils'
 import AsciiColor from '@src/enums/AsciiColor'
 import ServerBotPlayer from '@src/game/AI/ServerBotPlayer'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
+import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
 import ServerBoardRow from '@src/game/models/ServerBoardRow'
 import ServerCardStats from '@src/game/models/ServerCardStats'
@@ -131,12 +132,12 @@ const setupTestGameBoard = (game: ServerGame): TestGameBoard => {
  */
 
 type TestGameRow = {
-	buffs: TestGameBuffs
+	buffs: TestGameBuffContainer
 }
 
 const wrapRow = (game: ServerGame, row: ServerBoardRow): TestGameRow => {
 	return {
-		buffs: wrapBuffs(game, row),
+		buffs: wrapBuffContainer(game, row),
 	}
 }
 
@@ -147,7 +148,7 @@ const wrapRow = (game: ServerGame, row: ServerBoardRow): TestGameRow => {
 type TestGameUnit = {
 	handle: ServerCard
 	stats: ServerCardStats
-	buffs: TestGameBuffs
+	buffs: TestGameBuffContainer
 	variables: RichTextVariables
 	tribes: CardTribe[]
 	getRow(): RowDistanceWrapper
@@ -200,7 +201,7 @@ const wrapUnit = (game: ServerGame, unit: ServerUnit): TestGameUnit => {
 	const unitWrapper: TestGameUnit = {
 		handle: unit.card,
 		stats: unit.card.stats,
-		buffs: wrapBuffs(game, unit.card),
+		buffs: wrapBuffContainer(game, unit.card),
 		variables: unit.card.variables,
 		tribes: unit.card.tribes,
 		getRow: () => wrapRowDistance(unit),
@@ -404,7 +405,7 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 type TestGameCard = {
 	handle: ServerCard
 	stats: ServerCardStats
-	buffs: TestGameBuffs
+	buffs: TestGameBuffContainer
 	location: CardLocation
 	getUnit(): TestGameUnit
 	play(): TestGameCardPlayActions
@@ -456,7 +457,7 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 	const cardWrapper: TestGameCard = {
 		handle: card,
 		stats: card.stats,
-		buffs: wrapBuffs(game, card),
+		buffs: wrapBuffContainer(game, card),
 		location: card.location,
 		play: () => playCardToRow('front', 'last'),
 		playTo: (row: RowDistanceWrapper, position: number | 'last' = 'last') => playCardToRow(row, position),
@@ -469,19 +470,40 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 }
 
 /**
- * Card buff wrapper
+ * Buff wrapper
  */
-type TestGameBuffs = {
-	add(buffConstructor: BuffConstructor): void
-	addMultiple(buffConstructor: BuffConstructor, count: number): void
-	has(buffConstructor: BuffConstructor): boolean
+export type TestGameBuff = {
+	handle: ServerBuff
+	is(buffConstructor: BuffConstructor): boolean
 }
 
-const wrapBuffs = (game: ServerGame, parent: ServerCard | ServerBoardRow): TestGameBuffs => {
+const wrapBuff = (game: ServerGame, buff: ServerBuff): TestGameBuff => {
 	return {
-		add: (buffConstructor): void => parent.buffs.add(buffConstructor, null),
-		addMultiple: (buffConstructor, count): void => parent.buffs.addMultiple(buffConstructor, count, null),
-		has: (buffConstructor): boolean => parent.buffs.has(buffConstructor),
+		handle: buff,
+		is: (buffConstructor) => buff.class === getClassFromConstructor(buffConstructor),
+	}
+}
+
+/**
+ * Card buff wrapper
+ */
+type TestGameBuffContainer = {
+	add(buffConstructor: BuffConstructor): TestGameBuff
+	addMultiple(buffConstructor: BuffConstructor, count: number): TestGameBuff[]
+	has(buffConstructor: BuffConstructor): boolean
+	hasExact(buff: TestGameBuff): boolean
+}
+
+const wrapBuffContainer = (game: ServerGame, parent: ServerCard | ServerBoardRow): TestGameBuffContainer => {
+	const addBuffs = (buffConstructor: BuffConstructor, count: number): TestGameBuff[] => {
+		return parent.buffs.addMultiple(buffConstructor, count, null).map((buff) => wrapBuff(game, buff))
+	}
+
+	return {
+		add: (buffConstructor) => addBuffs(buffConstructor, 1)[0],
+		addMultiple: (buffConstructor, count) => addBuffs(buffConstructor, count),
+		has: (buffConstructor) => parent.buffs.has(buffConstructor),
+		hasExact: (buff: TestGameBuff) => parent.buffs.hasExact(buff.handle),
 	}
 }
 

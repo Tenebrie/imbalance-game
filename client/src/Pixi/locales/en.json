@@ -225,7 +225,7 @@
 	"card.feature.keywordExile.name": "Exile",
 	"card.feature.keywordExile.description": "Remove a card from the game.",
 	"card.feature.keywordDispelX.name": "Dispel X",
-	"card.feature.keywordDispelX.description": "Remove last X dispellable buffs from the target.",
+	"card.feature.keywordDispelX.description": "Remove last X debuffs from an ally or buffs from an enemy.",
 	"card.feature.keywordProtector.name": "Protector",
 	"card.feature.keywordProtector.description": "Whenever an allied unit behind this takes damage from an enemy, intercept it.",
 	"card.feature.keywordNightfall.name": "Nightfall",
@@ -543,9 +543,6 @@
 	"card.unitRavenMessenger.name": "Raven Messenger",
 	"card.unitRavenMessenger.description": "*Deploy:*\n*Play* a Bronze Soldier card from your deck.",
 
-	"card.unitForestScout.name": "Forest Scout",
-	"card.unitForestScout.description": "",
-
 	"card.unitChargingKnight.name": "Charging Steed",
 	"card.unitChargingKnight.description": "*Order:*\nDeal {damage} Damage to an enemy unit.<p>May only attack after moving forward on the same turn.",
 	"card.unitChargingKnight.flavor": "The card that has been reworked way too many times.",
@@ -818,9 +815,6 @@
 
 	"card.unitManaSilo.name": "Mana Silo",
 	"card.unitManaSilo.description": "*Deploy:* *Infuse* up to {maxInfuse} Mana.<p>*Round start:*\nRelease the *Infused* Mana.<if counterVisible><p><i>Mana stored: {manaInfused}.</i></if>",
-
-	"card.unitCleansingFlame.name": "Cleansing Flame",
-	"card.unitCleansingFlame.description": "*Deploy:*\n *Dispel* {dispelPower} from another unit.",
 
 	"card.unitFieldHospital.name": "Field Hospital",
 	"card.unitFieldHospital.description": "*Turn end:*\n*Heal* {healing} adjacent units.",

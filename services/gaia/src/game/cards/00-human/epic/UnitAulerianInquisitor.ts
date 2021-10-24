@@ -31,7 +31,7 @@ export default class UnitAulerianInquisitor extends ServerCard {
 
 		this.createDeployTargets(TargetType.UNIT)
 			.require(({ targetCard }) => targetCard.ownerPlayer !== this.ownerPlayer)
-			.require(({ targetCard }) => targetCard.buffs.dispellable.length >= this.buffsRequired)
+			.require(({ targetCard }) => targetCard.buffs.anyDispellable.length >= this.buffsRequired)
 			.perform(({ targetUnit }) => {
 				Keywords.destroy.unit(targetUnit).withSource(this)
 			})

@@ -373,7 +373,7 @@ const Keywords = {
 			withSourceAs: (sourceCard: ServerCard) => {
 				const card = targetCard instanceof ServerCard ? targetCard : targetCard.card
 				targetCard.game.animation.play(ServerAnimation.cardAffectsCards(sourceCard, [card]))
-				targetCard.buffs.dispel(count)
+				targetCard.buffs.dispel(sourceCard.ownerGroup, count)
 			},
 		}),
 	}),
