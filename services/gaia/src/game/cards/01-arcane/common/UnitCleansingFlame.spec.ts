@@ -2,6 +2,8 @@ import { setupTestGame, TestGame, TestGameBuff } from '../../../../utils/TestGam
 import TestingBuffDispellableNegative from '../../../buffs/11-testing/TestingBuffDispellableNegative'
 import TestingBuffDispellableNeutral from '../../../buffs/11-testing/TestingBuffDispellableNeutral'
 import TestingBuffDispellablePositive from '../../../buffs/11-testing/TestingBuffDispellablePositive'
+import BuffStrength from '../../../buffs/BuffStrength'
+import BuffWeakness from '../../../buffs/BuffWeakness'
 import TestingRulesetPVP from '../../../rulesets/testing/TestingRulesetPVP'
 import TestingUnitNoEffect from '../../11-testing/TestingUnitNoEffect'
 import UnitCleansingFlame from './UnitCleansingFlame'
@@ -37,6 +39,28 @@ describe('UnitCleansingFlame', () => {
 
 		it('still has the buff', () => {
 			expect(game.player.find(CardInTesting).buffs.has(TestingBuffDispellableNeutral)).toEqual(true)
+		})
+	})
+
+	describe('when an enemy has strength buff', () => {
+		beforeEach(() => {
+			game.opponent.summon(TestingUnitNoEffect).buffs.add(BuffStrength)
+			game.player.add(CardInTesting).play()
+		})
+
+		it('does not consider the enemy valid target', () => {
+			expect(() => game.player.getStack().targetFirst()).toThrow()
+		})
+	})
+
+	describe('when an ally has weakness buff', () => {
+		beforeEach(() => {
+			game.player.summon(TestingUnitNoEffect).buffs.add(BuffWeakness)
+			game.player.add(CardInTesting).play()
+		})
+
+		it('does not consider the ally valid target', () => {
+			expect(() => game.player.getStack().targetFirst()).toThrow()
 		})
 	})
 
