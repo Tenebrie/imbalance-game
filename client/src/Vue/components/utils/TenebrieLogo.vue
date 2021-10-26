@@ -10,4 +10,8 @@ export default defineComponent({})
 
 <style scoped lang="scss">
 @import 'src/Vue/styles/generic';
+
+.logo {
+	-webkit-user-drag: none;
+}
 </style>

@@ -1,4 +1,5 @@
 import CustomDeckRules from '@shared/enums/CustomDeckRules'
+import OpenCardMessage from '@shared/models/network/card/OpenCardMessage'
 import {
 	ClientToServerGameMessage,
 	ClientToServerMessageTypeMappers,
@@ -10,8 +11,11 @@ import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
 import DiscordIntegration from '@src/game/integrations/DiscordIntegration'
 import EventContext from '@src/game/models/EventContext'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
+import { genericError } from '@src/middleware/GenericErrorMiddleware'
 import RequirePlayerTokenMiddleware from '@src/middleware/RequirePlayerTokenMiddleware'
+import AsyncHandler from '@src/utils/AsyncHandler'
 import * as express from 'express'
+import { Response } from 'express'
 import { Router as WebSocketRouter } from 'express-ws'
 import * as ws from 'ws'
 
@@ -25,7 +29,7 @@ import ServerGame from '../game/models/ServerGame'
 import PlayerLibrary from '../game/players/PlayerLibrary'
 import ServerPlayer from '../game/players/ServerPlayer'
 import ServerPlayerInGame from '../game/players/ServerPlayerInGame'
-import { colorizeId, restoreObjectIDs } from '../utils/Utils'
+import { colorizeId, restoreObjectIDs, shuffle } from '../utils/Utils'
 
 const router = express.Router() as WebSocketRouter
 
@@ -219,5 +223,87 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 
 	OutgoingMessageHandlers.notifyAboutInitRequested(currentSpectator.player)
 })
+
+router.get(
+	'/deck',
+	AsyncHandler(async (req, res: Response) => {
+		const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
+		if (!currentPlayer) {
+			throw genericError({
+				status: 401,
+				error: 'No player token provided',
+			})
+		}
+
+		const currentPlayerInGame = currentPlayer.playerInGame
+		if (!currentPlayerInGame) {
+			throw genericError({
+				status: 403,
+				error: 'Player is not in the game',
+			})
+		}
+
+		const cardMessages = currentPlayerInGame.cardDeck.allCards.map((card) => ({
+			...new OpenCardMessage(card),
+			id: card.id.replace(/card:[a-zA-Z_0-9]+:/g, 'card::'),
+		}))
+		res.json(shuffle(cardMessages))
+	})
+)
+
+router.get(
+	'/graveyard',
+	AsyncHandler(async (req, res: Response) => {
+		const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
+		if (!currentPlayer) {
+			throw genericError({
+				status: 401,
+				error: 'No player token provided',
+			})
+		}
+
+		const currentPlayerInGame = currentPlayer.playerInGame
+		if (!currentPlayerInGame) {
+			throw genericError({
+				status: 403,
+				error: 'Player is not in the game',
+			})
+		}
+
+		const cardMessages = currentPlayerInGame.cardGraveyard.allCards.map((card) => new OpenCardMessage(card))
+		res.json(shuffle(cardMessages))
+	})
+)
+
+router.get(
+	'/opponent/graveyard',
+	AsyncHandler(async (req, res: Response) => {
+		const currentPlayer: ServerPlayer | null = await PlayerLibrary.getPlayerByJwtToken(req.cookies['playerToken'])
+		if (!currentPlayer) {
+			throw genericError({
+				status: 401,
+				error: 'No player token provided',
+			})
+		}
+
+		const currentPlayerInGame = currentPlayer.playerInGame
+		if (!currentPlayerInGame) {
+			throw genericError({
+				status: 403,
+				error: 'Player is not in the game',
+			})
+		}
+
+		const opponent = currentPlayerInGame.opponentNullable
+		if (!opponent) {
+			throw genericError({
+				status: 400,
+				error: 'No opponent available',
+			})
+		}
+		const cardMessages = opponent.players[0].cardGraveyard.allCards.map((card) => new OpenCardMessage(card))
+		res.json(shuffle(cardMessages))
+	})
+)
 
 module.exports = router

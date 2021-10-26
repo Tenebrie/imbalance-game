@@ -8,7 +8,7 @@ import { GameHistoryPlayerDatabaseEntry } from '@shared/models/GameHistoryDataba
 import BuffMessage from '@shared/models/network/buffs/BuffMessage'
 import CardMessage from '@shared/models/network/card/CardMessage'
 import RichTextVariables from '@shared/models/RichTextVariables'
-import { getMaxCardCopiesForColor, getMaxCardCountForColor } from '@shared/Utils'
+import { getMaxCardCopiesForColor, getMaxCardCountForColor, hashCode } from '@shared/Utils'
 import * as PIXI from 'pixi.js'
 import * as Particles from 'pixi-particles'
 
@@ -32,6 +32,10 @@ export const mergeCardFeatures = (baseFeatures: CardFeature[], buffs: (Buff | Bu
 		features = features.concat(buff.cardFeatures.slice())
 	})
 	return [...new Set(features)]
+}
+
+export const getCardMessageKey = (card: CardMessage): string => {
+	return `${card.id}-${hashCode(JSON.stringify(card))}`
 }
 
 export const normalizeBoardRowIndex = (index: number, player: 'player' | 'opponent'): number => {
@@ -298,21 +302,6 @@ const legacyExport = {
 		offsetPoint.x = point.x + Math.cos(angle) * distance
 		offsetPoint.y = point.y + Math.sin(angle) * distance
 		return offsetPoint
-	},
-
-	hashCode(targetString: string): number {
-		let i
-		let chr
-		let hash = 0
-		if (targetString.length === 0) {
-			return hash
-		}
-		for (i = 0; i < targetString.length; i++) {
-			chr = targetString.charCodeAt(i)
-			hash = (hash << 5) - hash + chr
-			hash |= 0 // Convert to 32bit integer
-		}
-		return hash
 	},
 
 	splitArrayIntoChunks(inputArray: any[], chunkCount: number): any[] {

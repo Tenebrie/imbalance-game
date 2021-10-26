@@ -9,11 +9,6 @@
 				</button>
 				<button @click="onShowGameLog" class="primary game-button">Game history</button>
 				<div class="menu-separator"></div>
-				<button @click="onShowPlayersDeck" class="primary game-button">Your deck</button>
-				<button @click="onShowPlayersGraveyard" class="primary game-button">Your graveyard</button>
-				<div class="menu-separator"></div>
-				<button @click="onShowOpponentsGraveyard" class="primary game-button">Opponent graveyard</button>
-				<div class="menu-separator"></div>
 				<button @click="onSurrender" class="primary game-button destructive">Surrender</button>
 			</div>
 			<div class="menu-section right" @click="onMenuClick">
@@ -44,7 +39,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-import OutgoingMessageHandlers from '@/Pixi/handlers/OutgoingMessageHandlers'
 import TheRulesetPopup from '@/Vue/components/popup/escapeMenu/TheRulesetPopup.vue'
 import TheSimpleSettings from '@/Vue/components/popup/escapeMenu/TheSimpleSettings.vue'
 import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
@@ -79,21 +73,6 @@ export default defineComponent({
 			})
 		}
 
-		const onShowPlayersDeck = (): void => {
-			store.dispatch.popupModule.close()
-			OutgoingMessageHandlers.requestShowPlayersDeck()
-		}
-
-		const onShowPlayersGraveyard = (): void => {
-			store.dispatch.popupModule.close()
-			OutgoingMessageHandlers.requestShowPlayersGraveyard()
-		}
-
-		const onShowOpponentsGraveyard = (): void => {
-			store.dispatch.popupModule.close()
-			OutgoingMessageHandlers.requestShowOpponentsGraveyard()
-		}
-
 		const onSurrender = (): void => {
 			store.dispatch.surrenderGame()
 		}
@@ -105,9 +84,6 @@ export default defineComponent({
 			onMenuClick,
 			onShowRules,
 			onShowGameLog,
-			onShowPlayersDeck,
-			onShowPlayersGraveyard,
-			onShowOpponentsGraveyard,
 			onSurrender,
 			showDevHotkeys,
 		}

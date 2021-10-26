@@ -7,6 +7,16 @@
 			<button @click="onShowGameLog" class="primary borderless game-button"><i class="fas fa-history"></i></button>
 			<button @click="onShowEscapeMenu" class="primary borderless game-button"><i class="fas fa-cog"></i></button>
 		</div>
+		<the-popup-view class="popup-view" />
+		<div class="player-deck-button-container" @click="onPlayerDeckClicked">
+			<img src="../../assets/icons/icon-deck.svg" />
+		</div>
+		<div class="player-graveyard-button-container" @click="onPlayerGraveyardClicked">
+			<img src="../../assets/icons/icon-graveyard.svg" />
+		</div>
+		<div class="opponent-graveyard-button-container" @click="onOpponentGraveyardClicked">
+			<img src="../../assets/icons/icon-graveyard.svg" />
+		</div>
 		<div class="end-turn-button-container" v-if="isEndTurnButtonVisible">
 			<div class="player-name">
 				<span v-if="opponent">{{ opponent.username }}</span
@@ -88,10 +98,16 @@ import PixiInspectedCard from '@/Vue/components/pixi/PixiInspectedCard.vue'
 import PixiPointDisplay from '@/Vue/components/pixi/PixiPointDisplay.vue'
 import TheEscapeMenu from '@/Vue/components/popup/escapeMenu/TheEscapeMenu.vue'
 import TheGameLog from '@/Vue/components/popup/gameLog/TheGameLog.vue'
+import TheInGameOpponentGraveyardPopup from '@/Vue/components/popup/inGameDeckView/TheInGameOpponentGraveyardPopup.vue'
+import TheInGamePlayerDeckPopup from '@/Vue/components/popup/inGameDeckView/TheInGamePlayerDeckPopup.vue'
+import TheInGamePlayerGraveyardPopup from '@/Vue/components/popup/inGameDeckView/TheInGamePlayerGraveyardPopup.vue'
+import ThePopupView from '@/Vue/components/popup/ThePopupView.vue'
 import store from '@/Vue/store'
+import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export default defineComponent({
 	components: {
+		ThePopupView,
 		PixiEndTurnArea,
 		PixiPointDisplay,
 		PixiInspectedCard,
@@ -107,6 +123,10 @@ export default defineComponent({
 			if (event.key === 'Escape') {
 				if (isConfirmTargetsButtonVisible.value && !mulliganMode.value) {
 					onConfirmTargets()
+					return
+				}
+				if (InspectedCardStore.getters.card) {
+					InspectedCardStore.dispatch.undoCard()
 					return
 				}
 				onShowEscapeMenu()
@@ -215,6 +235,22 @@ export default defineComponent({
 			visible: isOpponentFinishedRound.value,
 		}))
 
+		const onPlayerDeckClicked = () => {
+			store.dispatch.popupModule.open({
+				component: TheInGamePlayerDeckPopup,
+			})
+		}
+		const onPlayerGraveyardClicked = () => {
+			store.dispatch.popupModule.open({
+				component: TheInGamePlayerGraveyardPopup,
+			})
+		}
+		const onOpponentGraveyardClicked = () => {
+			store.dispatch.popupModule.open({
+				component: TheInGameOpponentGraveyardPopup,
+			})
+		}
+
 		const player = computed<Player | null>(() => store.state.player)
 		const opponent = computed<Player | null>(() => store.state.gameStateModule.opponent)
 
@@ -284,6 +320,9 @@ export default defineComponent({
 			playerSlotsFilled,
 			totalPlayerSlots,
 			playersInLobby,
+			onPlayerDeckClicked,
+			onPlayerGraveyardClicked,
+			onOpponentGraveyardClicked,
 			onLeaveGame,
 			onLeaveAndContinue,
 		}
@@ -302,6 +341,63 @@ export default defineComponent({
 	user-select: none;
 	pointer-events: none;
 	overflow: hidden;
+
+	.popup-view {
+		z-index: 1;
+		pointer-events: auto;
+	}
+
+	.player-deck-button-container {
+		right: 0;
+		bottom: calc(calc(20% + 8px) + 100px);
+		margin-right: -44px;
+		filter: invert(42%) sepia(93%) saturate(1000%) hue-rotate(140deg) brightness(100%) contrast(119%);
+
+		&:hover {
+			margin-right: 0;
+		}
+	}
+
+	.player-graveyard-button-container {
+		right: 0;
+		bottom: calc(20% + 8px);
+		margin-right: -44px;
+		filter: invert(42%) sepia(93%) saturate(1000%) hue-rotate(140deg) brightness(100%) contrast(119%);
+
+		&:hover {
+			margin-right: 0;
+		}
+	}
+
+	.opponent-graveyard-button-container {
+		right: 0;
+		top: 7%;
+		margin-right: -44px;
+		filter: invert(42%) sepia(93%) saturate(1000%) hue-rotate(310deg) brightness(100%) contrast(220%);
+
+		&:hover {
+			margin-right: 0;
+		}
+	}
+
+	.player-deck-button-container,
+	.player-graveyard-button-container,
+	.opponent-graveyard-button-container {
+		position: absolute;
+		pointer-events: all;
+		transition: margin-left 0.3s, margin-right 0.3s, background-color 0.3s;
+		cursor: pointer;
+
+		& > img {
+			padding: 4px 8px;
+			height: 72px;
+		}
+
+		&:hover {
+			background: $COLOR_BACKGROUND_TRANSPARENT;
+			transition: margin-left 0.3s, margin-right 0.3s, background-color 0s;
+		}
+	}
 
 	.fade-in-overlay {
 		position: absolute;
@@ -408,6 +504,7 @@ export default defineComponent({
 	}
 
 	.inspected-card {
+		z-index: 3000;
 		pointer-events: auto;
 	}
 

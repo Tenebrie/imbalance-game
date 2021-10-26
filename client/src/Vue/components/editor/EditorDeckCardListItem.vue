@@ -24,6 +24,7 @@ import { defineComponent, PropType } from 'vue'
 
 import Localization from '@/Pixi/Localization'
 import store from '@/Vue/store'
+import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export default defineComponent({
 	props: {
@@ -88,9 +89,9 @@ export default defineComponent({
 				return
 			}
 
-			store.dispatch.inspectedCard.clear()
-			store.dispatch.inspectedCard.setCard({
-				card: this.card,
+			InspectedCardStore.dispatch.clear()
+			InspectedCardStore.dispatch.setCard({
+				message: this.card,
 			})
 		},
 

@@ -7,6 +7,7 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
+import { getCardMessageKey } from '@/utils/Utils'
 import store from '@/Vue/store'
 
 export default defineComponent({
@@ -25,7 +26,8 @@ export default defineComponent({
 			if (!card) {
 				return null
 			}
-			return store.state.editor.renderedCards.find((renderedCard) => renderedCard.class === card.class) || null
+			const cardKey = getCardMessageKey(card)
+			return store.state.editor.renderedCards.find((renderedCard) => renderedCard.key === cardKey) || null
 		})
 
 		const isVisibleOnScreen = ref<boolean>(false)

@@ -1,0 +1,5 @@
+export enum DeckViewMode {
+	PLAYER_DECK,
+	PLAYER_GRAVEYARD,
+	OPPONENT_GRAVEYARD,
+}

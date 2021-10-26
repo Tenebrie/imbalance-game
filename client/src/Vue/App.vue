@@ -5,7 +5,7 @@
 			<the-navigation-bar v-if="!isInGame" />
 			<router-view class="view" />
 		</div>
-		<the-popup-view />
+		<the-popup-view v-if="!isInGame" />
 		<the-notification-view />
 	</div>
 </template>

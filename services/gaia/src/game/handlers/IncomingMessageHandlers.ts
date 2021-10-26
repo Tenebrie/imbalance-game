@@ -8,10 +8,8 @@ import {
 	GenericActionMessageType,
 	SystemMessageType,
 } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
-import { sortCards } from '@shared/Utils'
 import ServerCardTarget from '@src/game/models/ServerCardTarget'
 
-import CardLibrary from '../libraries/CardLibrary'
 import ServerGame from '../models/ServerGame'
 import ServerOwnedCard from '../models/ServerOwnedCard'
 import ServerPlayerInGame from '../players/ServerPlayerInGame'
@@ -101,35 +99,6 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 			game.advanceMulliganPhase()
 			onPlayerActionEnd(game, player)
 		}
-	},
-
-	[GenericActionMessageType.REQUEST_PLAYERS_DECK]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
-		const cards = sortCards(player.cardDeck.unitCards.concat(player.cardDeck.spellCards))
-		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeFromClass('tokenEmptyDeck'))
-		}
-		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
-	},
-
-	[GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
-		const cards = sortCards(player.cardGraveyard.unitCards.concat(player.cardGraveyard.spellCards))
-		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeFromClass('tokenEmptyDeck'))
-		}
-		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
-	},
-
-	[GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
-		const cards = sortCards(
-			player.opponentNullable!.players[0].cardGraveyard.unitCards.concat(player.opponentNullable!.players[0].cardGraveyard.spellCards)
-		)
-		if (cards.length === 0) {
-			cards.push(CardLibrary.findPrototypeFromClass('tokenEmptyDeck'))
-		}
-		const targets = cards.map((card) => ServerCardTarget.anonymousTargetCardInUnitDeck(TargetMode.BROWSE, card))
-		OutgoingMessageHandlers.notifyAboutRequestedAnonymousTargets(player.player, TargetMode.BROWSE, targets)
 	},
 
 	[GenericActionMessageType.NOVEL_CHAPTER]: (data: string, game: ServerGame, player: ServerPlayerInGame): void => {

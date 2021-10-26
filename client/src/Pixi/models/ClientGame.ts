@@ -16,8 +16,8 @@ export default class ClientGame {
 		return store.state.gameStateModule.turnPhase
 	}
 
-	public findCardById(cardId: string, priority: CardLocation[] = []): Card | RenderedCard | CardMessage | null {
-		const result: { card: Card | RenderedCard | CardMessage; location: CardLocation }[] = []
+	public findCardById(cardId: string, priority: CardLocation[] = []): RenderedCard | CardMessage | null {
+		const result: { card: RenderedCard | CardMessage; location: CardLocation }[] = []
 
 		const cardOnBoard = Core.board.findUnitById(cardId)
 		if (cardOnBoard) {

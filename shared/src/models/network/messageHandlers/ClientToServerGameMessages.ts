@@ -9,9 +9,6 @@ export enum GenericActionMessageType {
 	CARD_TARGET = 'genericAction_cardTarget',
 	ANONYMOUS_TARGET = 'genericAction_anonymousTarget',
 	CONFIRM_TARGETS = 'genericAction_confirmTargets',
-	REQUEST_PLAYERS_DECK = 'genericAction_requestPlayersDeck',
-	REQUEST_PLAYERS_GRAVEYARD = 'genericAction_requestPlayersGraveyard',
-	REQUEST_OPPONENTS_GRAVEYARD = 'genericAction_requestOpponentsGraveyard',
 	NOVEL_CHAPTER = 'genericAction_novelChapter',
 	NOVEL_CONTINUE = 'genericAction_novelContinue',
 	TURN_END = 'genericAction_turnEnd',
@@ -24,9 +21,6 @@ export type GenericActionMessageTypeMapping = {
 	[GenericActionMessageType.CARD_TARGET]: CardTargetMessage
 	[GenericActionMessageType.ANONYMOUS_TARGET]: AnonymousTargetMessage
 	[GenericActionMessageType.CONFIRM_TARGETS]: TargetMode
-	[GenericActionMessageType.REQUEST_PLAYERS_DECK]: null
-	[GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD]: null
-	[GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD]: null
 	[GenericActionMessageType.NOVEL_CHAPTER]: string
 	[GenericActionMessageType.NOVEL_CONTINUE]: null
 	[GenericActionMessageType.TURN_END]: null

@@ -85,8 +85,6 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 import * as PIXI from 'pixi.js'
 import { computed, defineComponent, ref } from 'vue'
 
-import RenderedCard from '@/Pixi/cards/RenderedCard'
-import Core from '@/Pixi/Core'
 import Localization from '@/Pixi/Localization'
 import ClientBuff from '@/Pixi/models/buffs/ClientBuff'
 import { snakeToCamelCase } from '@/utils/Utils'
@@ -94,6 +92,7 @@ import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import InspectedCardBuffs from '@/Vue/components/pixi/inspectedCardInfo/InspectedCardBuffList.vue'
 import PixiRelatedCard from '@/Vue/components/pixi/PixiRelatedCard.vue'
 import store from '@/Vue/store'
+import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export default defineComponent({
 	components: {
@@ -106,38 +105,48 @@ export default defineComponent({
 		const isInGame = computed<boolean>(() => store.getters.gameStateModule.isInGame)
 		const displayExperimentalCards = computed<boolean>(() => !isInGame.value && routeQuery.value.experimental)
 
-		const inspectedCard = computed<CardMessage | RenderedCard>(() => {
-			const cardInGame = Core.game ? Core.game.findRenderedCardById(store.getters.inspectedCard.card!.id) : null
-			return (isInGame.value && cardInGame) || (store.getters.inspectedCard.card as CardMessage | RenderedCard)
+		const inspectedCard = computed<CardMessage | null>(() => {
+			return InspectedCardStore.getters.card || InspectedCardStore.getters.lastCard
 		})
 
 		const displayArmor = computed<boolean>(() => {
-			return inspectedCard.value.stats.armor > 0 || inspectedCard.value.stats.maxArmor > 0 || inspectedCard.value.stats.baseArmor > 0
+			const card = inspectedCard.value
+			if (!card) {
+				return false
+			}
+			return card.stats.armor > 0 || card.stats.maxArmor > 0 || card.stats.baseArmor > 0
 		})
 
 		const displayManacost = computed<boolean>(() => {
-			return (
-				inspectedCard.value.type === CardType.SPELL ||
-				inspectedCard.value.stats.baseSpellCost > 0 ||
-				inspectedCard.value.stats.spellCost > 0
-			)
+			const card = inspectedCard.value
+			if (!card) {
+				return false
+			}
+			return card.type === CardType.SPELL || card.stats.baseSpellCost > 0 || card.stats.spellCost > 0
 		})
 
 		const displayedFeatures = computed<CardFeature[]>(() => {
-			let features = inspectedCard.value instanceof RenderedCard ? inspectedCard.value.features : inspectedCard.value.baseFeatures
-			if (!(inspectedCard.value instanceof RenderedCard)) {
-				inspectedCard.value.buffs.buffs.forEach((buff) => {
-					features = features.concat(buff.cardFeatures)
-				})
+			const card = inspectedCard.value
+			if (!card) {
+				return []
 			}
+
+			let features = card.baseFeatures
+			card.buffs.buffs.forEach((buff) => {
+				features = features.concat(buff.cardFeatures)
+			})
 			features = [...new Set(features)]
 			return features.filter((feature) => Localization.get(`card.feature.${snakeToCamelCase(CardFeature[feature])}.name`, 'null'))
 		})
 
 		const displayedRelatedCards = computed<string[]>(() => {
-			return new Array(...new Set(inspectedCard.value.relatedCards)).filter((cardClass) => {
+			const card = inspectedCard.value
+			if (!card) {
+				return []
+			}
+			return new Array(...new Set(card.relatedCards)).filter((cardClass) => {
 				const populatedCard = store.state.editor.cardLibrary.find((card) => card.class === cardClass)
-				return !populatedCard?.isExperimental || inspectedCard.value.isExperimental || displayExperimentalCards.value
+				return !populatedCard?.isExperimental || card.isExperimental || displayExperimentalCards.value
 			})
 		})
 
@@ -152,25 +161,34 @@ export default defineComponent({
 		})
 
 		const displayLeaderPowersLabel = computed<boolean>(() => {
-			return inspectedCard.value && inspectedCard.value.color === CardColor.LEADER
+			const card = inspectedCard.value
+			if (!card) {
+				return false
+			}
+			return card && card.color === CardColor.LEADER
 		})
 
 		const displayInGameStats = computed<boolean>(() => {
 			return (
 				isInGame.value &&
-				inspectedCard.value &&
-				inspectedCard.value instanceof RenderedCard &&
+				!!inspectedCard.value &&
+				// inspectedCard.value instanceof RenderedCard &&
 				inspectedCard.value.color !== CardColor.LEADER
 			)
 		})
 
 		const displayBuffs = computed<boolean>(() => {
-			const buffs = inspectedCard.value.buffs.buffs as (ClientBuff | BuffMessage)[]
+			const card = inspectedCard.value
+			if (!card) {
+				return false
+			}
+			const buffs = card.buffs.buffs as (ClientBuff | BuffMessage)[]
 			return buffs.some((buff) => !buff.buffFeatures.includes(BuffFeature.INVISIBLE))
 		})
 
 		const overlayDisplayed = computed<boolean>(() => {
-			return inspectedCard.value && !inspectedCard.value.isHidden
+			const value = inspectedCard.value
+			return !!value && !value.isHidden
 		})
 
 		const onOverlayClick = (event: MouseEvent) => {
@@ -181,7 +199,11 @@ export default defineComponent({
 		}
 
 		const flavorTextLines = computed<string[]>(() => {
-			const value = Localization.getCardFlavor(inspectedCard.value)
+			const card = inspectedCard.value
+			if (!card) {
+				return []
+			}
+			const value = Localization.getCardFlavor(card)
 			if (value === null) {
 				return []
 			}
@@ -217,14 +239,11 @@ export default defineComponent({
 .pixi-inspected-card-info-overlay {
 	position: absolute;
 	z-index: 10;
-	background: black;
 	padding: 8px 16px;
-	background: rgba(#000000, 0.5);
-	backdrop-filter: blur(4px);
+	background: rgba(black, 0.5);
 	border-radius: 10px;
 	font-size: 20px;
 	margin-top: 4px;
-	pointer-events: auto;
 	color: lightgray;
 	overflow-y: auto;
 	max-height: calc(100% - 22px);
@@ -241,6 +260,8 @@ export default defineComponent({
 			margin: 8px 0;
 			font-weight: bold;
 			font-size: 1.2em;
+			// color: lighten($COLOR_PRIMARY, 30);
+			// text-align: center;
 		}
 
 		.line {
@@ -270,6 +291,7 @@ export default defineComponent({
 
 		.object-name {
 			font-weight: bold;
+			color: $COLOR_SECONDARY;
 		}
 	}
 

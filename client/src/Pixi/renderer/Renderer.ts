@@ -188,22 +188,17 @@ export default class Renderer {
 
 		const playerLeaderCards = Core.player.players.map((player) => player.leader)
 		playerLeaderCards.forEach((leaderCard) => {
-			if (input.inspectedCard !== leaderCard) {
-				this.renderCard(leaderCard, playerLeaderCards, 'player', 'leader')
-			}
+			this.renderCard(leaderCard, playerLeaderCards, 'player', 'leader')
 		})
 
 		const opponentLeaderCards = Core.opponent.players.map((player) => player.leader)
 		opponentLeaderCards.forEach((leaderCard) => {
-			if (input.inspectedCard !== leaderCard) {
-				this.renderCard(leaderCard, opponentLeaderCards, 'opponent', 'leader')
-			}
+			this.renderCard(leaderCard, opponentLeaderCards, 'opponent', 'leader')
 		})
 
 		if (Core.player.players.length > 0) {
 			const unitCards = Core.player.players[0].cardHand.unitCards
 			const sortedPlayerUnitCards = Core.player.players[0].cardHand.unitCards
-				.filter((card) => card !== input.inspectedCard)
 				.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
 				.slice()
 				.reverse()
@@ -213,7 +208,6 @@ export default class Renderer {
 
 			const spellCards = Core.player.players[0].cardHand.spellCards
 			const sortedPlayerSpellCards = Core.player.players[0].cardHand.spellCards
-				.filter((card) => card !== input.inspectedCard)
 				.filter((card) => !input.forcedTargetingCards.some((targetingCard) => targetingCard.id === card.id))
 				.slice()
 				.reverse()
@@ -226,7 +220,7 @@ export default class Renderer {
 			const opponentsUnitCards = Core.opponent.players[0].cardHand.unitCards
 			const sortedOpponentUnitCards = Core.opponent.players[0].cardHand.unitCards.slice().reverse()
 			sortedOpponentUnitCards.forEach((renderedCard) => {
-				if (renderedCard === input.inspectedCard || renderedCard === mainHandler.announcedCard) {
+				if (renderedCard === mainHandler.announcedCard) {
 					return
 				}
 
@@ -236,7 +230,7 @@ export default class Renderer {
 			const opponentsSpellCards = Core.opponent.players[0].cardHand.spellCards
 			const sortedOpponentSpellCards = Core.opponent.players[0].cardHand.spellCards.slice().reverse()
 			sortedOpponentSpellCards.forEach((renderedCard) => {
-				if (renderedCard === input.inspectedCard || renderedCard === mainHandler.announcedCard) {
+				if (renderedCard === mainHandler.announcedCard) {
 					return
 				}
 
@@ -248,7 +242,7 @@ export default class Renderer {
 		this.renderGameBoard()
 		this.renderSelectableCards()
 		playQueueRenderer.tick()
-		inspectedCardRenderer.tick()
+		// inspectedCardRenderer.tick()
 		announcedCardRenderer.tick()
 		this.renderTargetingArrow()
 	}
@@ -630,10 +624,6 @@ export default class Renderer {
 	}
 
 	public renderUnit(unit: RenderedUnit, rowY: number, rowIndex: number, unitIndex: number, unitCount: number): void {
-		if (unit.card === Core.input.inspectedCard) {
-			return
-		}
-
 		const container = unit.card.coreContainer
 		const sprite = unit.card.sprite
 		const hitboxSprite = unit.card.hitboxSprite
@@ -979,10 +969,6 @@ export default class Renderer {
 		const container = renderedCard.coreContainer
 		const sprite = renderedCard.sprite
 		const hitboxSprite = renderedCard.hitboxSprite
-
-		if (Core.input.inspectedCard === renderedCard) {
-			return
-		}
 
 		const cardHeight = this.getScreenHeight() * windowFraction
 

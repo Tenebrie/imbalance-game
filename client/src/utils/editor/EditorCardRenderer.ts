@@ -5,6 +5,7 @@ import { SCALE_MODES } from 'pixi.js'
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
 import { CARD_HEIGHT, CARD_WIDTH } from '@/Pixi/renderer/RendererUtils'
+import { getCardMessageKey } from '@/utils/Utils'
 import store from '@/Vue/store'
 
 export type WorkshopCardProps = {
@@ -50,17 +51,17 @@ class EditorCardRenderer {
 				return
 			}
 
-			const nextCardClass = store.state.editor.renderQueue[0]
+			const nextEntry = store.state.editor.renderQueue[0]
 			store.commit.editor.shiftRenderQueue()
-			const nextCard = store.state.editor.cardLibrary.find((card) => card.class === nextCardClass)
-			if (!nextCard) {
-				return
-			}
 
 			store.commit.editor.addRenderedCard({
-				class: nextCard.class,
-				render: this.doRender(nextCard),
+				key: getCardMessageKey(nextEntry),
+				class: nextEntry.class,
+				render: this.doRender(nextEntry),
 			})
+			while (store.state.editor.renderedCards.length > 250) {
+				store.commit.editor.removeOldestRenderedCard()
+			}
 		}, 0)
 	}
 

@@ -52,27 +52,6 @@ export default {
 		})
 	},
 
-	requestShowPlayersDeck(): void {
-		Core.sendMessage({
-			type: GenericActionMessageType.REQUEST_PLAYERS_DECK,
-			data: null,
-		})
-	},
-
-	requestShowPlayersGraveyard(): void {
-		Core.sendMessage({
-			type: GenericActionMessageType.REQUEST_PLAYERS_GRAVEYARD,
-			data: null,
-		})
-	},
-
-	requestShowOpponentsGraveyard(): void {
-		Core.sendMessage({
-			type: GenericActionMessageType.REQUEST_OPPONENTS_GRAVEYARD,
-			data: null,
-		})
-	},
-
 	sendNovelChapterMove(chapterId: string): void {
 		Core.sendMessage({
 			type: GenericActionMessageType.NOVEL_CHAPTER,

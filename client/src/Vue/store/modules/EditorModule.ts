@@ -14,7 +14,7 @@ import TextureAtlas from '@/Pixi/render/TextureAtlas'
 import PopulatedEditorDeck from '@/utils/editor/PopulatedEditorDeck'
 import RenderedEditorCard from '@/utils/editor/RenderedEditorCard'
 import Notifications from '@/utils/Notifications'
-import Utils from '@/utils/Utils'
+import Utils, { getCardMessageKey } from '@/utils/Utils'
 import { moduleActionContext } from '@/Vue/store'
 import HoveredDeckCardModule from '@/Vue/store/modules/HoveredDeckCardModule'
 
@@ -29,7 +29,7 @@ const editorModule = defineModule({
 		decks: [] as PopulatedEditorDeck[],
 		currentDeckId: null as string | null,
 		cardLibrary: [] as CardMessage[],
-		renderQueue: [] as string[],
+		renderQueue: [] as CardMessage[],
 		renderedCards: [] as RenderedEditorCard[],
 		searchQuery: '' as string,
 	},
@@ -48,7 +48,7 @@ const editorModule = defineModule({
 		},
 
 		addToRenderQueue(state, card: CardMessage): void {
-			state.renderQueue.push(card.class)
+			state.renderQueue.push(card)
 		},
 
 		shiftRenderQueue(state): void {
@@ -57,6 +57,10 @@ const editorModule = defineModule({
 
 		addRenderedCard(state, renderedCard: RenderedEditorCard): void {
 			state.renderedCards.push(renderedCard)
+		},
+
+		removeOldestRenderedCard(state): void {
+			state.renderedCards.shift()
 		},
 
 		clearRenderedCards(state): void {
@@ -275,7 +279,7 @@ const editorModule = defineModule({
 
 		async requestRender(context, payload: { card: CardMessage }): Promise<void> {
 			const { state, commit } = moduleActionContext(context, editorModule)
-			if (state.renderedCards.find((renderedCard) => renderedCard.class === payload.card.class)) {
+			if (state.renderedCards.find((renderedCard) => renderedCard.key === getCardMessageKey(payload.card))) {
 				console.warn(`Requesting render to existing card ${payload.card.class}`)
 				return
 			}

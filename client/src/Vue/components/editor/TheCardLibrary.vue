@@ -24,6 +24,7 @@ import { useDecksRouteQuery } from '@/Vue/components/editor/EditorRouteQuery'
 import TheCardLibraryHeader from '@/Vue/components/editor/TheCardLibraryHeader.vue'
 import TheCardLibraryItem from '@/Vue/components/editor/TheCardLibraryItem.vue'
 import store from '@/Vue/store'
+import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export default defineComponent({
 	components: {
@@ -38,12 +39,12 @@ export default defineComponent({
 
 		onUnmounted(() => {
 			window.removeEventListener('keydown', onKeyPress)
-			store.dispatch.inspectedCard.clear()
+			InspectedCardStore.dispatch.clear()
 		})
 
 		const onKeyPress = (event: KeyboardEvent): void => {
-			if (event.key === 'Escape' && store.getters.inspectedCard.card) {
-				store.dispatch.inspectedCard.undoCard()
+			if (event.key === 'Escape' && InspectedCardStore.getters.card) {
+				InspectedCardStore.dispatch.undoCard()
 				return
 			}
 			if (event.key === 'Escape' && store.state.editor.searchQuery) {

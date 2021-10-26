@@ -4,10 +4,9 @@
 			<div class="the-ruleset-popup-scroller">
 				<the-rules-list />
 			</div>
-			<div class="menu-separator"></div>
-			<div class="button-container">
+			<base-popup-buttons>
 				<button @click="onConfirm" class="primary game-button">OK</button>
-			</div>
+			</base-popup-buttons>
 		</div>
 	</div>
 </template>
@@ -15,11 +14,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
+import BasePopupButtons from '@/Vue/components/popup/components/BasePopupButtons.vue'
 import TheRulesList from '@/Vue/components/rules/TheRulesList.vue'
 import store from '@/Vue/store'
 
 export default defineComponent({
 	components: {
+		BasePopupButtons,
 		TheRulesList,
 	},
 

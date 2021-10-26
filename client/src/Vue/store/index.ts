@@ -15,7 +15,6 @@ import GamesListModule from '@/Vue/store/modules/GamesListModule'
 import GameStateModule from '@/Vue/store/modules/GameStateModule'
 import GlobalSocketModule from '@/Vue/store/modules/GlobalSocketModule'
 import HotkeysModule from '@/Vue/store/modules/HotkeysModule'
-import InspectedCardModule from '@/Vue/store/modules/InspectedCardModule'
 import NotificationModule from '@/Vue/store/modules/NotificationModule'
 import PopupModule from '@/Vue/store/modules/PopupModule'
 import UserPreferencesModule from '@/Vue/store/modules/UserPreferencesModule'
@@ -32,7 +31,6 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		gameLobbyModule: GameLobbyModule,
 		globalSocketModule: GlobalSocketModule,
 		hotkeysModule: HotkeysModule,
-		inspectedCard: InspectedCardModule,
 		notifications: NotificationModule,
 		novel: NovelModule,
 		popupModule: PopupModule,

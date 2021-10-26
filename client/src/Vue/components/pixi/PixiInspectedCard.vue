@@ -1,15 +1,15 @@
 <template>
 	<div
 		class="the-editor-inspected-card"
-		v-if="inspectedCard"
 		@click="onSmokeScreenClick"
-		@mouseup="onSmokeScreenRightClick"
+		@mousedown="onSmokeScreenRightClickDown"
+		@mouseup="onSmokeScreenRightClickUp"
 		:class="customClass"
 	>
 		<div class="content">
 			<div class="card-container">
-				<div class="card" :key="(preRenderedCard && preRenderedCard.class) || ''">
-					<pixi-pre-rendered-card :card="preRenderedCard" />
+				<div class="card" :key="inspectedCardKey">
+					<pixi-pre-rendered-card :card="inspectedCard" />
 				</div>
 			</div>
 			<div class="overlay-container">
@@ -21,13 +21,14 @@
 
 <script lang="ts">
 import CardMessage from '@shared/models/network/card/CardMessage'
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 
-import RenderedCard from '@/Pixi/cards/RenderedCard'
 import { RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
+import { getCardMessageKey } from '@/utils/Utils'
 import PixiInspectedCardInfo from '@/Vue/components/pixi/inspectedCardInfo/PixiInspectedCardInfo.vue'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import store from '@/Vue/store'
+import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export default defineComponent({
 	components: {
@@ -36,39 +37,46 @@ export default defineComponent({
 	},
 
 	setup() {
-		const preRenderedCard = computed<CardMessage | null>(() => {
-			const card = store.getters.inspectedCard.card
-			if (card instanceof RenderedCard) {
-				return null
-			}
-			return card as CardMessage
+		const inspectedCard = computed<CardMessage | null>(() => {
+			return InspectedCardStore.getters.card || InspectedCardStore.getters.lastCard
 		})
 
-		const inspectedCard = computed<CardMessage | RenderedCard | null>(() => {
-			return store.getters.inspectedCard.card as CardMessage
+		const inspectedCardKey = computed<string>(() => {
+			const card = inspectedCard.value
+			return card ? getCardMessageKey(card) : ''
 		})
 
 		const customClass = computed<Record<string, boolean>>(() => ({
 			game: store.getters.gameStateModule.isInGame,
 			editor: !store.getters.gameStateModule.isInGame,
+			displayed: !!InspectedCardStore.getters.card,
 		}))
 
 		const onSmokeScreenClick = () => {
-			store.dispatch.inspectedCard.undoCard()
+			InspectedCardStore.dispatch.undoCard()
 		}
 
-		const onSmokeScreenRightClick = (event: MouseEvent) => {
-			if (event.button === RIGHT_MOUSE_BUTTON && !store.getters.gameStateModule.isInGame && !event.ctrlKey) {
+		const isRightMouseDown = ref<boolean>(false)
+		const onSmokeScreenRightClickDown = (event: MouseEvent) => {
+			if (event.button === RIGHT_MOUSE_BUTTON && !event.ctrlKey) {
+				isRightMouseDown.value = true
+			}
+		}
+
+		const onSmokeScreenRightClickUp = (event: MouseEvent) => {
+			if (event.button === RIGHT_MOUSE_BUTTON && isRightMouseDown.value) {
 				onSmokeScreenClick()
 			}
+			isRightMouseDown.value = false
 		}
 
 		return {
 			inspectedCard,
-			preRenderedCard,
+			inspectedCardKey,
 			customClass,
 			onSmokeScreenClick,
-			onSmokeScreenRightClick,
+			onSmokeScreenRightClickDown,
+			onSmokeScreenRightClickUp,
 		}
 	},
 })
@@ -84,15 +92,29 @@ export default defineComponent({
 	justify-content: center;
 	left: 0;
 	width: 100%;
+	z-index: 1000;
+	background: rgba(black, 0.75);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.3s;
+
+	@supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+		background: rgba(black, 0.5);
+		backdrop-filter: blur(4px);
+	}
+
+	&.displayed {
+		opacity: 1;
+		pointer-events: auto;
+		transition: opacity 0.15s;
+	}
 
 	&.game {
 		height: 100%;
-		pointer-events: none;
 	}
 
 	&.editor {
 		height: calc(100% - #{$NAVIGATION-BAR-HEIGHT});
-		background: rgba(black, 0.5);
 	}
 
 	.content {

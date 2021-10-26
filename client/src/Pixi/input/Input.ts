@@ -26,6 +26,7 @@ import HoveredCard from '@/Pixi/models/HoveredCard'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 import { boopTheBoard, flushBoardBoopPreps, getCardInsertIndex, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
 import store from '@/Vue/store'
+import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export const LEFT_MOUSE_BUTTON = 0
 export const RIGHT_MOUSE_BUTTON = 2
@@ -46,6 +47,7 @@ export default class Input {
 	leftMouseDown = false
 	rightMouseDown = false
 	mousePosition: PIXI.Point = new PIXI.Point(-10000, -10000)
+	windowMousePosition: PIXI.Point = new PIXI.Point(-10000, -10000)
 	cardLimbo: RenderedCard[] = []
 	hoveredCard: HoveredCard | null = null
 	grabbedCard: GrabbedCard | null = null
@@ -89,6 +91,9 @@ export default class Input {
 				this.inspectCard()
 			}
 		})
+		document.addEventListener('mousemove', (event: MouseEvent) => {
+			this.onWindowMouseMove(event)
+		})
 		view.addEventListener('touchmove', (event: TouchEvent) => {
 			this.onTouchMove(event)
 		})
@@ -114,8 +119,13 @@ export default class Input {
 	public tick(): void {
 		this.updateCardHoverStatus()
 		if (this.inspectedCard && !this.inspectedCard.hasVisualPosition()) {
-			store.dispatch.inspectedCard.clear()
+			InspectedCardStore.dispatch.clear()
 		}
+	}
+
+	public restoreMousePosition(): void {
+		this.mousePosition = this.windowMousePosition
+		this.updateCardHoverStatus()
 	}
 
 	public updateGrabbedCard(): void {
@@ -225,11 +235,6 @@ export default class Input {
 			return
 		}
 
-		if (this.inspectedCard) {
-			store.dispatch.inspectedCard.undoCard()
-			return
-		}
-
 		if (event.button === LEFT_MOUSE_BUTTON && this.grabbedCard) {
 			this.useGrabbedCard()
 			return
@@ -283,7 +288,7 @@ export default class Input {
 		this.onTouchMove(event)
 
 		if (this.inspectedCard) {
-			store.dispatch.inspectedCard.undoCard()
+			InspectedCardStore.dispatch.undoCard()
 			return
 		}
 
@@ -382,6 +387,11 @@ export default class Input {
 		scrollBoopColor(event, -1)
 	}
 
+	private onWindowMouseMove(event: MouseEvent) {
+		this.windowMousePosition = new PIXI.Point(event.clientX, event.clientY)
+		this.windowMousePosition.x *= window.devicePixelRatio * Core.renderer.superSamplingLevel
+		this.windowMousePosition.y *= window.devicePixelRatio * Core.renderer.superSamplingLevel
+	}
 	private onMouseMove(event: MouseEvent) {
 		const view = Core.renderer.pixi.view
 		const clientRect = view.getBoundingClientRect()
@@ -463,13 +473,13 @@ export default class Input {
 	public inspectCard(): void {
 		const hoveredCard = this.hoveredCard
 		if (!hoveredCard) {
-			store.dispatch.inspectedCard.undoCard()
+			InspectedCardStore.dispatch.undoCard()
 			return
 		}
 
 		this.inspectedCard = hoveredCard.card
 		store.commit.gameStateModule.setInspectedCard(this.inspectedCard)
-		store.dispatch.inspectedCard.setCard({ card: hoveredCard.card })
+		InspectedCardStore.dispatch.setCard({ card: hoveredCard.card })
 	}
 
 	public releaseInspectedCard(): void {

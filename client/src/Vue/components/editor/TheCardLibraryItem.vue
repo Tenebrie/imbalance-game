@@ -16,6 +16,7 @@ import Utils from '@/utils/Utils'
 import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
 import router from '@/Vue/router'
 import store from '@/Vue/store'
+import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export default defineComponent({
 	components: {
@@ -76,8 +77,8 @@ export default defineComponent({
 
 			event.cancelBubble = true
 			event.preventDefault()
-			store.dispatch.inspectedCard.setCard({
-				card: props.card,
+			InspectedCardStore.dispatch.setCard({
+				message: props.card,
 			})
 		}
 
