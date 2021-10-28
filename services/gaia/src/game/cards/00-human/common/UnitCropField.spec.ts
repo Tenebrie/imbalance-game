@@ -17,7 +17,7 @@ describe('UnitCropField', () => {
 	describe('on an empty board', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('does not buff self', () => {
@@ -30,7 +30,7 @@ describe('UnitCropField', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
 			game.player.summon(TestingUnitNoEffect)
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('gives an ally buff once', () => {
@@ -43,7 +43,7 @@ describe('UnitCropField', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
 			game.player.summon(TestingUnitApathy)
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('does not buff the ally', () => {
@@ -56,7 +56,7 @@ describe('UnitCropField', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
 			game.opponent.summon(TestingUnitNoEffect)
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('does not buff enemy', () => {
@@ -69,7 +69,7 @@ describe('UnitCropField', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting, 'front')
 			game.player.summon(TestingUnitCommoner, 'middle')
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('gives an ally buff once', () => {
@@ -82,7 +82,7 @@ describe('UnitCropField', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
 			game.player.summon(TestingUnitCommoner)
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('gives an ally buff twice', () => {
@@ -95,7 +95,7 @@ describe('UnitCropField', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
 			game.player.summon(TestingUnitCommoner)
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('gives every ally buff once', () => {

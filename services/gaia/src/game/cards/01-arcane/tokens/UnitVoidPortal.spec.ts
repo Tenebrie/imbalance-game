@@ -16,7 +16,7 @@ describe('UnitVoidPortal', () => {
 	describe('on turn end', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('summons the shadow', () => {
@@ -28,7 +28,7 @@ describe('UnitVoidPortal', () => {
 		beforeEach(() => {
 			game.player.summon(TestingUnit1RecurringSummonCount)
 			game.player.summon(CardInTesting)
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('summons an extra shadow', () => {
@@ -38,9 +38,9 @@ describe('UnitVoidPortal', () => {
 
 	describe('on opponents turn end', () => {
 		beforeEach(() => {
-			game.advanceTurn()
+			game.player.endTurn()
 			game.player.summon(CardInTesting)
-			game.advanceTurn()
+			game.opponent.endTurn()
 		})
 
 		it('does not summon a shadow', () => {
@@ -51,7 +51,7 @@ describe('UnitVoidPortal', () => {
 	describe('on turn end when row is full', () => {
 		beforeEach(() => {
 			game.player.fillRow(CardInTesting)
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('does not summon a shadow', () => {

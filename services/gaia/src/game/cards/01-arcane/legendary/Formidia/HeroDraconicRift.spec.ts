@@ -19,8 +19,7 @@ describe('HeroDraconicRift', () => {
 	describe('when turn ends without allies to consume', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
-			game.advanceTurn()
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('does not do anything', () => {
@@ -33,8 +32,7 @@ describe('HeroDraconicRift', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
 			game.player.summon(TestingUnit5PowerVoidspawn)
-			game.advanceTurn()
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('destroys the ally', () => {
@@ -55,8 +53,7 @@ describe('HeroDraconicRift', () => {
 			game.player.summon(CardInTesting)
 			game.player.summon(TestingUnit5PowerVoidspawn)
 			game.player.summon(TestingUnit100PowerVoidspawn)
-			game.advanceTurn()
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('destroys adjacent allies once', () => {
@@ -76,8 +73,7 @@ describe('HeroDraconicRift', () => {
 			game.player.summon(TestingUnit100PowerVoidspawn)
 			game.player.summon(CardInTesting)
 			game.player.summon(TestingUnit100PowerVoidspawn)
-			game.advanceTurn()
-			game.advanceTurn()
+			game.player.endTurn()
 		})
 
 		it('destroys itself', () => {

@@ -14,7 +14,7 @@ import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import { EventSubscriber } from '@src/game/models/ServerGameEvents'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 import OvermindClient from '@src/routers/overmind/OvermindClient'
-import { getRandomArrayValue } from '@src/utils/Utils'
+import { getRandomArrayValue, safeWhile } from '@src/utils/Utils'
 
 import OutgoingMessageHandlers from '../handlers/OutgoingMessageHandlers'
 import GameEventCreators from '../models/events/GameEventCreators'
@@ -260,9 +260,8 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 	public startMulligan(): void {
 		super.startMulligan()
-		setTimeout(() => {
-			IncomingMessageHandlers[GenericActionMessageType.CONFIRM_TARGETS](TargetMode.MULLIGAN, this.game, this)
-		}, 0)
+		// TODO: Validate that set timeout is not required anymore
+		IncomingMessageHandlers[GenericActionMessageType.CONFIRM_TARGETS](TargetMode.MULLIGAN, this.game, this)
 	}
 
 	public startTurn(): void {
@@ -270,10 +269,10 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 		// 	this.overmindTakesTheirTurn()
 		// 	return
 		// }
-		setTimeout(() => {
-			this.botTakesTheirTurn()
+		// TODO: Validate that set timeout is not required anymore
+		this.botTakesTheirTurn().then(() => {
 			OutgoingMessageHandlers.executeMessageQueue(this.game)
-		}, 0)
+		})
 	}
 
 	public get isHuman(): boolean {
@@ -329,9 +328,12 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 
 		if (this.behaviour === AIBehaviour.DEFAULT) {
 			if (botHasGoodLead && !botWonRound) {
-				while (this.hasAnySpellPlays()) {
-					this.botPlaysCard(true)
-				}
+				safeWhile(
+					() => this.hasAnySpellPlays(),
+					() => {
+						this.botPlaysCard(true)
+					}
+				)
 			}
 
 			if (botWonRound || botLostRound || botHasGoodLead) {
@@ -340,9 +342,12 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 			}
 
 			try {
-				while (this.canPlayUnitCard() || (this.hasHighValueSpellPlays() && this.game.turnPhase === GameTurnPhase.DEPLOY)) {
-					this.botPlaysCard(false)
-				}
+				safeWhile(
+					() => this.canPlayUnitCard() || (this.hasHighValueSpellPlays() && this.game.turnPhase === GameTurnPhase.DEPLOY),
+					() => {
+						this.botPlaysCard(false)
+					}
+				)
 			} catch (e) {
 				console.error('Unknown AI error', e)
 			}
@@ -410,9 +415,12 @@ export class ServerBotPlayerInGame extends ServerPlayerInGame {
 		const cardPlayerMessage = CardPlayedMessage.fromCardOnRow(selectedCard, targetRow.index, targetRow.cards.length)
 		IncomingMessageHandlers[GenericActionMessageType.CARD_PLAY](cardPlayerMessage, this.game, this)
 
-		while (this.game.cardPlay.cardResolveStack.hasCards()) {
-			this.botChoosesTarget()
-		}
+		safeWhile(
+			() => this.game.cardPlay.cardResolveStack.hasCards(),
+			() => {
+				this.botChoosesTarget()
+			}
+		)
 	}
 
 	private botChoosesTarget(): void {

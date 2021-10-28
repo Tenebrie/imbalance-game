@@ -5,10 +5,12 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import LeaderStatType from '@shared/enums/LeaderStatType'
+import { GenericActionMessageType } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
 import RichTextVariables from '@shared/models/RichTextVariables'
 import { sortCards } from '@shared/Utils'
 import AsciiColor from '@src/enums/AsciiColor'
 import ServerBotPlayer from '@src/game/AI/ServerBotPlayer'
+import IncomingMessageHandlers, { onPlayerActionEnd } from '@src/game/handlers/IncomingMessageHandlers'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import ServerBuff from '@src/game/models/buffs/ServerBuff'
 import { BuffConstructor } from '@src/game/models/buffs/ServerBuffContainer'
@@ -19,12 +21,12 @@ import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
 import ServerUnit from '@src/game/models/ServerUnit'
 import Keywords from '@src/utils/Keywords'
-import { AnyCardLocation, colorize, getClassFromConstructor, getTotalLeaderStat } from '@src/utils/Utils'
+import { AnyCardLocation, colorize, getClassFromConstructor, getTotalLeaderStat, safeWhile } from '@src/utils/Utils'
 import { v4 as getRandomId } from 'uuid'
 import * as ws from 'ws'
 
 import TestingLeader from '../game/cards/11-testing/TestingLeader'
-import CardLibrary, { CardConstructor } from '../game/libraries/CardLibrary'
+import { CardConstructor } from '../game/libraries/CardLibrary'
 import ServerCard from '../game/models/ServerCard'
 import ServerGame from '../game/models/ServerGame'
 import ServerOwnedCard from '../game/models/ServerOwnedCard'
@@ -38,11 +40,12 @@ export type TestGame = {
 	handle: ServerGame
 	board: TestGameBoard
 	stack: TestGamePlayStack
+	novel: TestGameNovel
+	result: TestGameResult
 	player: TestGamePlayer
 	opponent: TestGamePlayer
 	allPlayers: TestGamePlayer[][]
-	advanceTurn(): TestGame
-	advanceRound(): TestGame
+	startNextRound(): TestGame
 }
 
 export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
@@ -51,6 +54,8 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 
 	const boardWrapper = setupTestGameBoard(game)
 	const stackWrapper = setupCardPlayStack(game)
+	const novelWrapper = setupTestGameNovel(game)
+	const resultWrapper = setupTestGameResult(game)
 	const playerWrappers = setupTestGamePlayers(game)
 
 	game.start()
@@ -65,7 +70,7 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 		return gameWrapper
 	}
 
-	const advanceRound = (): TestGame => {
+	const startNextRound = (): TestGame => {
 		game.players.filter((group) => !group.roundEnded).forEach((group) => group.endRound())
 		game.advanceCurrentTurn()
 		game.events.resolveEvents()
@@ -77,11 +82,12 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 		handle: game,
 		board: boardWrapper,
 		stack: stackWrapper,
+		novel: novelWrapper,
+		result: resultWrapper,
 		player: playerWrappers[0][0],
 		opponent: playerWrappers[1][0],
 		allPlayers: playerWrappers,
-		advanceTurn,
-		advanceRound,
+		startNextRound,
 	}
 	return gameWrapper
 }
@@ -90,7 +96,7 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
  * Board wrapper
  */
 type TestGameBoard = {
-	log(): void
+	log(): string
 	find(card: CardConstructor): TestGameUnit
 	findAt(card: CardConstructor, index: number): TestGameUnit
 	count(card: CardConstructor): number
@@ -111,9 +117,10 @@ const setupTestGameBoard = (game: ServerGame): TestGameBoard => {
 	}
 
 	return {
-		log: (): void => {
+		log: (): string => {
 			const cards = game.board.rows.map((row) => row.cards.map((unit) => unit.card.class))
 			console.debug(cards)
+			return cards.toString()
 		},
 		find: (cardConstructor: CardConstructor) => findUnitAtIndex(cardConstructor, 0),
 		findAt: (cardConstructor: CardConstructor, index: number) => findUnitAtIndex(cardConstructor, index),
@@ -239,6 +246,9 @@ type TestGamePlayer = {
 	getFrontRow(): TestGameRow
 	getLeaderStat(stat: LeaderStatType): number
 	countOnRow(card: CardConstructor, rowIndex: number): number
+	countInHand(card: CardConstructor): number
+	endTurn(): void
+	endRound(): void
 	deck: {
 		add(card: CardConstructor): TestGameCard
 	}
@@ -248,19 +258,27 @@ type TestGamePlayer = {
 }
 
 const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
-	CardLibrary.forceLoadCards([TestingLeader])
 	const deckTemplate = ServerEditorDeck.fromConstructors([TestingLeader])
 	game.players.forEach((playerGroup) => {
-		while (playerGroup.slots.openHumanSlots > 0) {
-			const id = getRandomId()
-			const player = new ServerPlayer(`player:id-${id}`, `player-${id}-email`, `player-${id}-username`, AccessLevel.NORMAL, false)
-			game.addHumanPlayer(player, playerGroup, deckTemplate)
-			player.registerGameConnection((jest.fn() as unknown) as ws, game)
-		}
-		while (playerGroup.slots.openBotSlots > 0) {
-			const player = new ServerBotPlayer()
-			game.addBotPlayer(player, playerGroup, deckTemplate, AIBehaviour.DEFAULT)
-		}
+		safeWhile(
+			() => playerGroup.slots.openHumanSlots > 0,
+			() => {
+				const id = getRandomId()
+				const player = new ServerPlayer(`player:id-${id}`, `player-${id}-email`, `player-${id}-username`, AccessLevel.NORMAL, false)
+				const slot = playerGroup.slots.grabOpenHumanSlot()
+				const usedDeck: ServerEditorDeck = Array.isArray(slot.deck) ? ServerEditorDeck.fromConstructors(slot.deck) : deckTemplate
+				game.addHumanPlayer(player, playerGroup, usedDeck)
+				player.registerGameConnection((jest.fn() as unknown) as ws, game)
+			}
+		)
+		safeWhile(
+			() => playerGroup.slots.openBotSlots > 0,
+			() => {
+				const player = new ServerBotPlayer()
+				const slot = playerGroup.slots.grabOpenBotSlot()
+				game.addBotPlayer(player, playerGroup, ServerEditorDeck.fromConstructors(slot.deck), AIBehaviour.DEFAULT)
+			}
+		)
 	})
 
 	const addCardToHand = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
@@ -352,6 +370,10 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		return cards.filter((unit) => unit.card.class === getClassFromConstructor(card)).length
 	}
 
+	const countInHand = (player: ServerPlayerInGame, card: CardConstructor): number => {
+		return player.cardHand.allCards.filter((cardInHand) => cardInHand.class === getClassFromConstructor(card)).length
+	}
+
 	const addCardToDeck = (player: ServerPlayerInGame, cardConstructor: CardConstructor): TestGameCard => {
 		const card = Keywords.addCardToDeck(player, cardConstructor)
 		game.events.resolveEvents()
@@ -364,6 +386,18 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()
 		return wrapCard(game, card, player)
+	}
+
+	const endTurn = (player: ServerPlayerInGame): void => {
+		if (player.group.turnEnded) {
+			throw new Error('[Test] Turn already ended.')
+		}
+		player.setUnitMana(0)
+		onPlayerActionEnd(game, player)
+	}
+
+	const endRound = (player: ServerPlayerInGame): void => {
+		IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, game, player)
 	}
 
 	return game.players.map((playerGroup) =>
@@ -389,6 +423,9 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 			getFrontRow: () => getFrontRow(player),
 			getLeaderStat: (stat: LeaderStatType) => getTotalLeaderStat(player, [stat]),
 			countOnRow: (card: CardConstructor, distance: number) => countOnRow(player, card, distance),
+			countInHand: (card: CardConstructor) => countInHand(player, card),
+			endTurn: () => endTurn(player),
+			endRound: () => endRound(player),
 			deck: {
 				add: (card: CardConstructor) => addCardToDeck(player, card),
 			},
@@ -417,6 +454,10 @@ type TestGameCard = {
 
 const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame): TestGameCard => {
 	const playCardToRow = (row: RowDistanceWrapper, position: number | 'last'): TestGameCardPlayActions => {
+		if (game.cardPlay.cardResolveStack.currentCard) {
+			throw new Error('[Test] Card stack is not empty.')
+		}
+
 		const distance = unwrapRowDistance(row, game, player)
 		const rowOwner = card.features.includes(CardFeature.SPY) ? player.opponent : player
 		const targetRow = game.board.getRowWithDistanceToFront(rowOwner, distance)
@@ -425,8 +466,7 @@ const wrapCard = (game: ServerGame, card: ServerCard, player: ServerPlayerInGame
 		if (!cardPlayed) {
 			throw new Error('[Test] Card play declined.')
 		}
-		game.events.resolveEvents()
-		game.events.evaluateSelectors()
+		onPlayerActionEnd(game, player)
 		return getCardPlayActions(game, player)
 	}
 	const takeDamage = (damage: number): TestGameCard => {
@@ -546,8 +586,7 @@ const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestG
 			const chosenTarget = validTargets[0]
 			if (!chosenTarget) throw new Error('No valid targets!')
 			game.cardPlay.selectCardTarget(player, chosenTarget.target)
-			game.events.resolveEvents()
-			game.events.evaluateSelectors()
+			onPlayerActionEnd(game, player)
 			return resolvingCard
 		},
 		targetLast: () => {
@@ -555,8 +594,7 @@ const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestG
 			const chosenTarget = validTargets[validTargets.length - 1]
 			if (!chosenTarget) throw new Error('No valid targets!')
 			game.cardPlay.selectCardTarget(player, chosenTarget.target)
-			game.events.resolveEvents()
-			game.events.evaluateSelectors()
+			onPlayerActionEnd(game, player)
 			return resolvingCard
 		},
 		targetNth: (n: number) => {
@@ -564,8 +602,7 @@ const getCardPlayActions = (game: ServerGame, player: ServerPlayerInGame): TestG
 			const chosenTarget = validTargets[n]
 			if (!chosenTarget) throw new Error('No valid target!')
 			game.cardPlay.selectCardTarget(player, chosenTarget.target)
-			game.events.resolveEvents()
-			game.events.evaluateSelectors()
+			onPlayerActionEnd(game, player)
 			return resolvingCard
 		},
 	}
@@ -591,6 +628,74 @@ const wrapCardTarget = (
 			game.events.resolveEvents()
 			game.events.evaluateSelectors()
 			return playActions
+		},
+	}
+}
+
+/**
+ * Novel mode wrapper
+ */
+type TestGameNovel = {
+	finishDialogue(): TestGameNovel
+	selectFirstResponse(): TestGameNovel
+	selectSecondResponse(): TestGameNovel
+	countMoveStatements(): number
+	countResponseStatements(): number
+}
+
+const setupTestGameNovel = (game: ServerGame): TestGameNovel => {
+	const selectNthResponse = (index: number): TestGameNovel => {
+		const targetResponse = game.novel.clientResponses[index]
+		if (!targetResponse) {
+			throw new Error(`No available response statement! Total responses: ${game.novel.clientResponses.length}.`)
+		}
+		game.novel.executeChapter(targetResponse.chapterId)
+		return novelWrapper
+	}
+
+	const novelWrapper: TestGameNovel = {
+		finishDialogue: () => {
+			const targetMove = game.novel.clientMoves[0]
+			if (targetMove) {
+				game.novel.executeChapter(targetMove.chapterId)
+			} else if (game.novel.hasQueue()) {
+				game.novel.continueQueue()
+			} else {
+				throw new Error('No available move statement or queue to continue!')
+			}
+			return novelWrapper
+		},
+		selectFirstResponse: () => selectNthResponse(0),
+		selectSecondResponse: () => selectNthResponse(1),
+		countMoveStatements: (): number => {
+			return game.novel.clientMoves.length
+		},
+		countResponseStatements: (): number => {
+			return game.novel.clientResponses.length
+		},
+	}
+	return novelWrapper
+}
+
+/**
+ * Result wrapper
+ */
+type TestGameResult = {
+	isFinished(): boolean
+	victoriousGroup(): 'first' | 'second' | 'none'
+}
+
+const setupTestGameResult = (game: ServerGame): TestGameResult => {
+	return {
+		isFinished: () => game.isFinished,
+		victoriousGroup: () => {
+			const group = game.finalVictoriousGroup
+			if (group === game.players[0]) {
+				return 'first'
+			} else if (group === game.players[1]) {
+				return 'second'
+			}
+			return 'none'
 		},
 	}
 }

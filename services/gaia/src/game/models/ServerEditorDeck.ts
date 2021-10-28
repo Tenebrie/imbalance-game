@@ -2,7 +2,7 @@ import EditorCard from '@shared/models/EditorCard'
 import EditorDeck from '@shared/models/EditorDeck'
 import { createRandomEditorDeckId, getClassFromConstructor } from '@src/utils/Utils'
 
-import { CardConstructor } from '../libraries/CardLibrary'
+import CardLibrary, { CardConstructor } from '../libraries/CardLibrary'
 
 export default class ServerEditorDeck implements EditorDeck {
 	id: string
@@ -28,11 +28,13 @@ export default class ServerEditorDeck implements EditorDeck {
 					class: getClassFromConstructor(cardConstructor.card),
 					count: cardConstructor.count,
 				})
+				CardLibrary.forceLoadCards([cardConstructor.card])
 			} else {
 				editorCards.push({
 					class: getClassFromConstructor(cardConstructor),
 					count: 1,
 				})
+				CardLibrary.forceLoadCards([cardConstructor])
 			}
 		})
 

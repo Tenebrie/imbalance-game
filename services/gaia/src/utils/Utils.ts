@@ -27,6 +27,23 @@ import ServerUnit from '../game/models/ServerUnit'
 import ServerPlayer from '../game/players/ServerPlayer'
 import DeckUtils from './DeckUtils'
 
+export const safeWhile = (condition: () => boolean | null | undefined, callback: (breakWhile: () => void) => void): void => {
+	let iterations = 0
+	let shouldBreak = false
+	while (condition()) {
+		callback(() => {
+			shouldBreak = true
+		})
+		if (shouldBreak) {
+			break
+		}
+		iterations += 1
+		if (iterations >= 1000) {
+			throw new Error('Too many while iterations')
+		}
+	}
+}
+
 export const createRandomGuid = (): string => {
 	return getRandomId()
 }

@@ -30,8 +30,8 @@ describe('UnitFlameseeker', () => {
 			expect(game.board.count(UnitFlamingPortal)).toEqual(1)
 		})
 
-		it('summons a shadow', () => {
-			expect(game.board.count(UnitFlamingShadow)).toEqual(1)
+		it('summons an extra shadow', () => {
+			expect(game.board.count(UnitFlamingShadow)).toEqual(2)
 		})
 	})
 

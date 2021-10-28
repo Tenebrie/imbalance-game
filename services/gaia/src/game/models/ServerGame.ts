@@ -70,6 +70,8 @@ export default class ServerGame implements SourceGame {
 	public ruleset!: ServerRuleset
 	public progression!: ServerGameProgression
 
+	public finalVictoriousGroup: ServerPlayerGroup | null = null
+
 	public constructor(props: ServerGameProps) {
 		this.id = props.id ? props.id : createRandomGameId()
 		this.name = props.name || ServerGame.generateName(props.owner)
@@ -336,8 +338,7 @@ export default class ServerGame implements SourceGame {
 			return
 		}
 
-		const notFinishedPlayers = this.players.filter((player) => !player.roundEnded)
-		if (notFinishedPlayers.length === 0) {
+		if (this.players.every((player) => player.roundEnded)) {
 			this.endCurrentRound()
 			return
 		}
@@ -569,6 +570,8 @@ export default class ServerGame implements SourceGame {
 		}
 
 		this.setTurnPhase(GameTurnPhase.AFTER_GAME)
+
+		this.finalVictoriousGroup = victoriousPlayer
 
 		this.events.postEvent(
 			GameEventCreators.gameFinished({

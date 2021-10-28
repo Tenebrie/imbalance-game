@@ -48,6 +48,7 @@ describe('ServerGameCardPlay', () => {
 
 		beforeEach(() => {
 			cardInHand = new UnitEndlessArmy(game)
+			player.group.startTurn()
 			player.setUnitMana(3)
 			player.cardHand.addUnit(cardInHand)
 		})
@@ -101,6 +102,7 @@ describe('ServerGameCardPlay', () => {
 		})
 
 		it('posts valid events', () => {
+			eventSpy.mockReset()
 			game.cardPlay.playCardAsPlayerAction(new ServerOwnedCard(cardInHand, player), 0, 0)
 			game.events.resolveEvents()
 			expect(eventSpy).toBeCalledTimes(5)

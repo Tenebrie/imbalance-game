@@ -1,3 +1,4 @@
+import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import TargetMode from '@shared/enums/TargetMode'
 import TargetType from '@shared/enums/TargetType'
@@ -48,6 +49,17 @@ export default class ServerGameCardPlay {
 	}
 
 	public playCardAsPlayerAction(ownedCard: ServerOwnedCard, rowIndex: number, unitIndex: number): boolean {
+		const cardLocation = ownedCard.card.location
+		if (cardLocation === CardLocation.BOARD || cardLocation === CardLocation.STACK) {
+			throw new Error(`Trying to play card from ${cardLocation}!`)
+		}
+		if (ownedCard.owner.group.turnEnded) {
+			throw new Error(`Trying to play a card when turn is ended!`)
+		}
+		if (ownedCard.owner.group.roundEnded) {
+			throw new Error(`Trying to play a card when round is ended!`)
+		}
+
 		const owner = ownedCard.owner
 		const hookValues = this.game.events.applyHooks(
 			GameHookType.CARD_PLAYED,

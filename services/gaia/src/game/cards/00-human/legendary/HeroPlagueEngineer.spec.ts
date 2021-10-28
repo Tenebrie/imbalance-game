@@ -37,7 +37,7 @@ describe('HeroPlagueEngineer', () => {
 	describe('on round start', () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
-			game.advanceRound()
+			game.startNextRound()
 		})
 
 		it('stays on the board', () => {

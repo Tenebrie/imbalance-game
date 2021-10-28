@@ -56,6 +56,7 @@ describe('UnitMerchantsAssistant', () => {
 		beforeEach(() => {
 			game.player.addSpellMana(10)
 			game.player.add(CardInTesting).play()
+			game.opponent.endTurn()
 			game.player.add(TestingSpell10Mana).play()
 			game.player.add(TestingSpell10Mana)
 			game.player.add(TestingSpell10Mana)
@@ -73,7 +74,7 @@ describe('UnitMerchantsAssistant', () => {
 			game.player.add(TestingSpell10Mana)
 			game.player.add(TestingSpell10Mana)
 			game.player.add(TestingSpell10Mana)
-			game.advanceRound()
+			game.startNextRound()
 		})
 
 		it('removes discount', () => {

@@ -30,7 +30,7 @@ import ServerCard from '@src/game/models/ServerCard'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
 import { cardPerform, cardRequire } from '@src/game/utils/CardEventHandlers'
-import { colorizeClass, colorizeId, getOwnerGroup, getOwnerPlayer } from '@src/utils/Utils'
+import { colorizeClass, colorizeId, getOwnerGroup, getOwnerPlayer, safeWhile } from '@src/utils/Utils'
 
 export type EventSubscriber = ServerCard | ServerBuff | null
 
@@ -230,22 +230,24 @@ export default class ServerGameEvents {
 		let currentCallbacks = this.callbackQueue.slice().sort((a, b) => this.eventCallbackSorter(this.game, a, b))
 
 		const resolveCards = () => {
-			while (
-				this.game.cardPlay.cardResolveStack.currentCard &&
-				!currentCallbacks.find(
-					(remainingCallback) => remainingCallback.subscriber === this.game.cardPlay.cardResolveStack.currentCard?.card
-				) &&
-				!this.callbackQueue.find(
-					(remainingCallback) => remainingCallback.subscriber === this.game.cardPlay.cardResolveStack.currentCard?.card
-				)
-			) {
-				if (this.game.cardPlay.getResolvingCardTargets().length === 0) {
-					this.game.cardPlay.cardResolveStack.resumeResolving()
-				} else {
-					this.game.cardPlay.updateResolvingCardTargetingStatus()
-					break
+			safeWhile(
+				() =>
+					this.game.cardPlay.cardResolveStack.currentCard &&
+					!currentCallbacks.find(
+						(remainingCallback) => remainingCallback.subscriber === this.game.cardPlay.cardResolveStack.currentCard?.card
+					) &&
+					!this.callbackQueue.find(
+						(remainingCallback) => remainingCallback.subscriber === this.game.cardPlay.cardResolveStack.currentCard?.card
+					),
+				(breakWhile) => {
+					if (this.game.cardPlay.getResolvingCardTargets().length === 0) {
+						this.game.cardPlay.cardResolveStack.resumeResolving()
+					} else {
+						this.game.cardPlay.updateResolvingCardTargetingStatus()
+						breakWhile()
+					}
 				}
-			}
+			)
 		}
 		resolveCards()
 
@@ -261,18 +263,21 @@ export default class ServerGameEvents {
 		filterOutEvents()
 
 		this.callbackQueue = []
-		while (currentCallbacks.length > 0) {
-			const callbackWrapper = currentCallbacks.shift()!
+		safeWhile(
+			() => currentCallbacks.length > 0,
+			() => {
+				const callbackWrapper = currentCallbacks.shift()!
 
-			this.logEventExecution(callbackWrapper.rawEvent, callbackWrapper.subscription, false)
-			cardPerform(this.game, callbackWrapper.subscriber, () => {
-				callbackWrapper.callback(callbackWrapper.args, callbackWrapper.preparedState)
-			})
-			this.game.animation.syncAnimationThreads()
+				this.logEventExecution(callbackWrapper.rawEvent, callbackWrapper.subscription, false)
+				cardPerform(this.game, callbackWrapper.subscriber, () => {
+					callbackWrapper.callback(callbackWrapper.args, callbackWrapper.preparedState)
+				})
+				this.game.animation.syncAnimationThreads()
 
-			filterOutEvents()
-			resolveCards()
-		}
+				filterOutEvents()
+				resolveCards()
+			}
+		)
 
 		/* New events have been added; perform those as well */
 		if (this.callbackQueue.length > 0) {

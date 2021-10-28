@@ -69,9 +69,6 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 		this.createCallback(GameEventType.TURN_STARTED)
 			.require(() => game.roundIndex === 0 && game.turnIndex === 1)
 			.require(({ group }) => group.isHuman)
-			.perform(({ group }) => {
-				console.log(group.username)
-			})
 			.startDialog(
 				`
 				Narrator:
@@ -85,7 +82,6 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			`
 			)
 			.closingChapter('AddHealer', () => {
-				console.log('Here')
 				Keywords.addCardToHand.for(game.getHumanGroup().players[0]).fromConstructor(TutorialUnitPriestessOfAedine)
 			})
 
@@ -258,6 +254,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 		let firstDisobedienceTriggered = false
 		let firstDisobedienceTriggeredTwice = false
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 0 && game.turnIndex <= 1)
 			.require(() => !firstDisobedienceTriggered)
@@ -276,6 +273,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 0 && game.turnIndex <= 1)
 			.require(() => firstDisobedienceTriggered && !firstDisobedienceTriggeredTwice)
@@ -295,6 +293,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 0 && game.turnIndex <= 1)
 			.require(() => firstDisobedienceTriggered && firstDisobedienceTriggeredTwice)
@@ -307,7 +306,9 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					.startDialog(
 						`
 						Narrator:
-						> Alright, let me help you out with that, if you're want to get it over with so fast.
+						> Thing is... you'll lose if you just push the button without playing anything.
+						> You would just lose one round usually, but that leads to you losing the game.
+						> Like that.
 						--> End
 					`
 					)
@@ -318,6 +319,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 1)
 			.require(() => game.getSinglePlayer().cardHand.unitCards.length > 0)
@@ -349,6 +351,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 2 && game.turnIndex === 0)
 			.require(() => game.getSinglePlayer().cardHand.spellCards.length > 0)
@@ -366,6 +369,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 2 && game.turnIndex === 0)
 			.require(() => game.getSinglePlayer().cardHand.spellCards.length === 0)
@@ -385,6 +389,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 		let agreedToHelp = false
 		let thirdDisobedienceTriggered = false
 		this.createHook(GameHookType.CARD_PLAYED)
+			.require((_, { playPrevented }) => !playPrevented)
 			.require(({ card }) => card.type === CardType.UNIT)
 			.require(({ owner }) => owner.isHuman)
 			.require(() => game.roundIndex === 2 && game.turnIndex === 0)
@@ -418,6 +423,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 
 		this.createHook(GameHookType.CARD_PLAYED)
+			.require((_, { playPrevented }) => !playPrevented)
 			.require(({ card }) => card.type === CardType.UNIT)
 			.require(({ owner }) => owner.isHuman)
 			.require(() => game.roundIndex === 2 && game.turnIndex === 0)
@@ -456,6 +462,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			}))
 
 		this.createHook(GameHookType.CARD_PLAYED)
+			.require((_, { playPrevented }) => !playPrevented)
 			.require(({ card }) => card.type === CardType.UNIT)
 			.require(({ owner }) => owner.isHuman)
 			.require(() => game.roundIndex === 2 && game.turnIndex === 0)
@@ -480,7 +487,6 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 							Narrator:
 							> Honestly? I don't believe it.
 							> To trigger this conversation you needed to fail the tutorial in three different ways, multiple times.
-							> 
 						@ I was just testing all combinations.
 							Narrator:
 							> If this is true, you're a great QA engineer.
@@ -533,6 +539,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 2 && game.turnIndex > 0)
 			.require(() => game.getSinglePlayer().cardHand.unitCards.length > 0)
@@ -553,6 +560,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 		let secondRoundFailureCounter = 0
 		let secondDisobedienceTriggered = false
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 1)
 			.require(() => secondRoundFailureCounter === 0)
@@ -599,6 +607,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 1)
 			.require(() => secondRoundFailureCounter === 1)
@@ -647,6 +656,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 1)
 			.require(() => secondRoundFailureCounter === 2)
@@ -693,6 +703,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 			})
 
 		this.createHook(GameHookType.ROUND_FINISHED)
+			.require((_, { finishPrevented }) => !finishPrevented)
 			.require(({ group }) => group.isHuman)
 			.require(() => game.roundIndex === 2 && game.turnIndex > 0)
 			.require(() => game.getSinglePlayer().cardHand.unitCards.length === 0)

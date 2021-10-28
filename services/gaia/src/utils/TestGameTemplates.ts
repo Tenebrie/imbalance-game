@@ -123,6 +123,7 @@ export default {
 		const cardInHand = new card(game)
 		player.setUnitMana(1)
 		player.cardHand.addUnit(cardInHand)
+		player.group.startTurn()
 
 		game.events.resolveEvents()
 		game.events.evaluateSelectors()

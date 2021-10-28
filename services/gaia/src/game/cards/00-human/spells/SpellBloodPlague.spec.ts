@@ -95,7 +95,7 @@ describe('SpellBloodPlague', () => {
 	describe('when an allied unit is played between other units', () => {
 		beforeEach(() => {
 			game.player.add(CardInTesting)
-			game.advanceTurn()
+			game.player.endTurn()
 			game.opponent.summon(TestingUnit100Power)
 			game.opponent.summon(TestingUnit100Power)
 			game.opponent.add(TestingUnit100Power).playTo('front', 1)

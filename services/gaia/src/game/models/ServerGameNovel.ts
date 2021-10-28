@@ -18,6 +18,15 @@ import ServerGame from './ServerGame'
 export default class ServerGameNovel {
 	private readonly game: ServerGame
 
+	public clientState: TenScriptStatement[] = []
+	public clientMoves: {
+		chapterId: string
+	}[] = []
+	public clientResponses: {
+		text: string
+		chapterId: string
+	}[] = []
+
 	private queuedStatements: {
 		namespace: string
 		statements: TenScriptStatement[]
@@ -66,7 +75,7 @@ export default class ServerGameNovel {
 			throw new Error(`Unable to find chapter '${id}'`)
 		}
 
-		OutgoingNovelMessages.notifyAboutDialogCuesCleared(this.player)
+		this.clearClientState()
 
 		this.executeInlineChapter(id)
 		this.executeScriptChapter(id)
@@ -122,11 +131,35 @@ export default class ServerGameNovel {
 			return
 		}
 
-		OutgoingNovelMessages.notifyAboutDialogCuesCleared(this.player)
+		this.clearClientState()
 
 		const runner = new ServerGameNovelRunner(this.game, queueEntry.namespace)
 		runner.executeStatements(queueEntry.statements)
 		return
+	}
+
+	public appendClientState(statement: TenScriptStatement): void {
+		this.clientState.push(statement)
+	}
+
+	public appendClientMoves(chapterId: string): void {
+		this.clientMoves.push({
+			chapterId,
+		})
+	}
+
+	public appendClientResponses(text: string, chapterId: string): void {
+		this.clientResponses.push({
+			text,
+			chapterId,
+		})
+	}
+
+	private clearClientState(): void {
+		this.clientState = []
+		this.clientMoves = []
+		this.clientResponses = []
+		OutgoingNovelMessages.notifyAboutDialogCuesCleared(this.player)
 	}
 }
 
@@ -287,6 +320,7 @@ export class ServerGameNovelRunner {
 	}
 
 	private handleStatementEffect(statement: TenScriptStatement): void {
+		this.game.novel.appendClientState(statement)
 		switch (statement.type) {
 			case StatementType.SAY:
 				const getMessage = (statement: TenScriptStatementSelector<StatementType.SAY>): string => {
@@ -308,24 +342,30 @@ export class ServerGameNovelRunner {
 				break
 			case StatementType.MOVE:
 				const moveChapterId = `${this.namespace}/${statement.data}`
-				OutgoingNovelMessages.notifyAboutDialogMove(this.player, {
+				const moveAction = {
 					chapterId: moveChapterId,
-				})
+				}
+				OutgoingNovelMessages.notifyAboutDialogMove(this.player, moveAction)
+				this.game.novel.appendClientMoves(moveChapterId)
 				break
 			case StatementType.RESPONSE_INLINE:
 				const inlineChapterId = `${this.namespace}/${createRandomGuid()}`
 				this.game.novel.registerInlineChapter(inlineChapterId, statement.children)
-				OutgoingNovelMessages.notifyAboutDialogResponse(this.player, {
+				const inlineResponse = {
 					text: statement.data,
 					chapterId: inlineChapterId,
-				})
+				}
+				OutgoingNovelMessages.notifyAboutDialogResponse(this.player, inlineResponse)
+				this.game.novel.appendClientResponses(inlineResponse.text, inlineResponse.chapterId)
 				break
 			case StatementType.RESPONSE_CHAPTER:
 				const responseChapterId = `${this.namespace}/${statement.data.chapterName}`
-				OutgoingNovelMessages.notifyAboutDialogResponse(this.player, {
+				const chapterResponse = {
 					text: statement.data.text,
 					chapterId: responseChapterId,
-				})
+				}
+				OutgoingNovelMessages.notifyAboutDialogResponse(this.player, chapterResponse)
+				this.game.novel.appendClientResponses(chapterResponse.text, chapterResponse.chapterId)
 				break
 			case StatementType.SET_SPEAKER:
 				const character = storyCharacterFromString(statement.data) || StoryCharacter.UNKNOWN

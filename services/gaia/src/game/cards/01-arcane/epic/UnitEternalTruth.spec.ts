@@ -28,7 +28,7 @@ describe('UnitEternalTruth', () => {
 	describe("when another opponent's card is played", () => {
 		beforeEach(() => {
 			game.player.summon(CardInTesting)
-			game.advanceTurn()
+			game.player.endTurn()
 			game.opponent.add(TestingUnitNoEffect).play()
 		})
 

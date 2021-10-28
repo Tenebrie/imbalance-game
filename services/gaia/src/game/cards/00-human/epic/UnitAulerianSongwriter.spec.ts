@@ -42,8 +42,7 @@ describe('UnitAulerianSongwriter', () => {
 
 		describe('next turn', () => {
 			beforeEach(() => {
-				game.advanceTurn()
-				game.advanceTurn()
+				game.opponent.endTurn()
 			})
 
 			it('does not give extra power', () => {

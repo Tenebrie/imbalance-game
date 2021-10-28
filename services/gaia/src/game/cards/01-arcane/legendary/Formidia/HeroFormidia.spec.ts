@@ -42,8 +42,7 @@ describe('HeroFormidia', () => {
 		describe('after no units have died', () => {
 			beforeEach(() => {
 				game.player.add(HeroFormidia).play()
-				game.advanceTurn()
-				game.advanceTurn()
+				game.opponent.endTurn()
 				game.player.find(HeroFormidiaShade).play()
 			})
 
@@ -55,12 +54,11 @@ describe('HeroFormidia', () => {
 		describe('after some units have died', () => {
 			beforeEach(() => {
 				game.player.add(HeroFormidia).play()
-				game.advanceTurn()
 				game.player.summon(TestingUnit100Power).takeDamage(100)
 				game.player.summon(TestingUnit100Power).takeDamage(100)
 				game.opponent.summon(TestingUnit100Power).takeDamage(100)
 				game.opponent.summon(TestingUnit100Power).takeDamage(100)
-				game.advanceTurn()
+				game.opponent.endTurn()
 				game.player.find(HeroFormidiaShade).play()
 			})
 
@@ -89,11 +87,10 @@ describe('HeroFormidia', () => {
 		describe('after many units have died', () => {
 			beforeEach(() => {
 				game.player.add(HeroFormidia).play()
-				game.advanceTurn()
 				for (let i = 0; i < 50; i++) {
 					game.player.summon(TestingUnit100Power).takeDamage(100)
 				}
-				game.advanceTurn()
+				game.opponent.endTurn()
 				game.player.find(HeroFormidiaShade).play()
 			})
 
@@ -105,9 +102,8 @@ describe('HeroFormidia', () => {
 		describe('after Formidia has died', () => {
 			beforeEach(() => {
 				game.player.add(HeroFormidia).play()
-				game.advanceTurn()
 				game.player.find(HeroFormidia).takeDamage(1000)
-				game.advanceTurn()
+				game.opponent.endTurn()
 				game.player.find(HeroFormidiaShade).play()
 			})
 

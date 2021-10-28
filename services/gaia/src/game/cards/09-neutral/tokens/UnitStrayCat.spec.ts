@@ -30,8 +30,7 @@ describe('UnitStrayCat', () => {
 
 		describe('next turn', () => {
 			beforeEach(() => {
-				game.advanceTurn()
-				game.advanceTurn()
+				game.opponent.endTurn()
 			})
 
 			it('damages only adjacent enemies', () => {

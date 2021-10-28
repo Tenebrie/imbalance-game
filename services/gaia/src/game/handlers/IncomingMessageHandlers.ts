@@ -145,7 +145,7 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 	},
 }
 
-const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void => {
+export const onPlayerActionEnd = (game: ServerGame, player: ServerPlayerInGame): void => {
 	game.events.resolveEvents()
 	game.events.evaluateSelectors()
 	game.events.flushLogEventGroup()
