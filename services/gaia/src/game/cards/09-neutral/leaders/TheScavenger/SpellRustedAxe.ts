@@ -5,10 +5,10 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
 import BuffSpellExtraCostThisRound from '@src/game/buffs/BuffSpellExtraCostThisRound'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../../models/ServerCard'
-import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 
 export default class SpellRustedAxe extends ServerCard {

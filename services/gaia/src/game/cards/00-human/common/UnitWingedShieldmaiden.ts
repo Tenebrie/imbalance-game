@@ -21,7 +21,7 @@ export default class UnitWingedShieldmaiden extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.VALKYRIE],
-			features: [CardFeature.PROMINENT, CardFeature.KEYWORD_SUMMON],
+			features: [CardFeature.PROMINENT],
 			stats: {
 				power: 2,
 				armor: 4,

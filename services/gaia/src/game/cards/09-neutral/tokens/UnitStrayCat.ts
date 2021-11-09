@@ -18,7 +18,7 @@ export default class UnitStrayCat extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.SPY],
+			features: [CardFeature.SPY],
 			stats: {
 				power: 2,
 			},

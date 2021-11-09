@@ -1,11 +1,14 @@
 import RichTextVariables from '@shared/models/RichTextVariables'
 import * as PIXI from 'pixi.js'
+import { v4 as getRandomId } from 'uuid'
 
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
 import RichTextBackground from '@/Pixi/render/RichTextBackground'
 import ScalingText from '@/Pixi/render/ScalingText'
+import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 import { parseRichText, SegmentType } from '@/utils/RichTextParser'
 import Utils from '@/utils/Utils'
+import store from '@/Vue/store'
 
 interface RichTextStyle {
 	fill: number
@@ -14,6 +17,15 @@ interface RichTextStyle {
 	lineHeight: number
 	dropShadow: boolean
 	dropShadowBlur: number
+}
+
+type RichTextSegment = { id: string; text: ScalingText; basePosition: Point; lineIndex: number }
+export type RichTextTooltip = {
+	text: string
+	position: Point
+	size: Point
+	leftAnchorId: string
+	rightAnchorId: string
 }
 
 export default class RichText extends PIXI.Container {
@@ -27,8 +39,9 @@ export default class RichText extends PIXI.Container {
 	private dropShadowBlur: number
 
 	private variables: RichTextVariables
-	segments: { text: ScalingText; basePosition: Point; lineIndex: number }[]
-	background!: RichTextBackground
+	public segments: RichTextSegment[]
+	public tooltips: RichTextTooltip[]
+	public background!: RichTextBackground
 	private __horizontalAlign: RichTextAlign = RichTextAlign.CENTER
 	private __verticalAlign: RichTextAlign = RichTextAlign.END
 	private __textLineCount = 0
@@ -45,6 +58,7 @@ export default class RichText extends PIXI.Container {
 		this.dropShadowBlur = 0
 		this.maxWidth = maxWidth
 		this.segments = []
+		this.tooltips = []
 		this.variables = variables
 		this.renderText()
 	}
@@ -196,11 +210,38 @@ export default class RichText extends PIXI.Container {
 			)
 			segment.text.updateFont(fontSize, lineHeight)
 		})
+
+		const isInGame = store.getters.gameStateModule.isInGame
+		const tooltipScalar = isInGame
+			? 1 / getRenderScale().descriptionGameFontRenderScale
+			: 1 / getRenderScale().descriptionEditorFontRenderScale
+		this.tooltips.forEach((tooltip) => {
+			const leftAnchor = this.segments.find((segment) => segment.id === tooltip.leftAnchorId)
+			const rightAnchor = this.segments.find((segment) => segment.id === tooltip.rightAnchorId)
+			if (!leftAnchor || !rightAnchor) {
+				return
+			}
+
+			tooltip.position = {
+				x: leftAnchor.text.position.x * tooltipScalar,
+				y: leftAnchor.text.position.y * tooltipScalar,
+			}
+
+			const measureStyle = new PIXI.TextStyle(rightAnchor.text.style)
+			measureStyle.dropShadow = false
+
+			const measure = PIXI.TextMetrics.measureText(rightAnchor.text.text, measureStyle)
+			tooltip.size = {
+				x: (rightAnchor.text.position.x + measure.width - leftAnchor.text.position.x) * tooltipScalar,
+				y: (rightAnchor.text.position.y + measure.height - leftAnchor.text.position.y) * tooltipScalar,
+			}
+		})
 	}
 
 	public renderText(): void {
 		this.segments.forEach((segment) => segment.text.destroy())
 		this.segments = []
+		this.tooltips = []
 
 		let linesRendered = 0
 		const oldFontSize = this.fontSize
@@ -220,6 +261,11 @@ export default class RichText extends PIXI.Container {
 		let contextItalic = false
 		let contextColor = this.fill
 		const contextColorStack: number[] = []
+		let contextTooltipRecording = false
+		let contextTooltipLeftAnchor: string | null = null
+		let contextTooltipRightAnchor: string | null = null
+		let contextTooltipText = ''
+		let contextUnfinishedTooltips: RichTextTooltip[] = []
 		let contextConditionStatus = true
 		const contextConditionStack: boolean[] = []
 		let currentLine: { text: ScalingText; basePosition: Point }[] = []
@@ -240,6 +286,7 @@ export default class RichText extends PIXI.Container {
 		const newLine = () => {
 			flushData()
 			contextPosition.y += this.lineHeight
+			insertUnfinishedTooltipOnNewline()
 			linesRendered += 1
 		}
 
@@ -263,7 +310,9 @@ export default class RichText extends PIXI.Container {
 
 			const renderedText = new ScalingText(text, style)
 			renderedText.position.set(contextPosition.x, contextPosition.y)
+			const segmentId = getRandomId()
 			const renderedSegment = {
+				id: segmentId,
 				text: renderedText,
 				basePosition: { ...contextPosition },
 				lineIndex: linesRendered,
@@ -273,6 +322,53 @@ export default class RichText extends PIXI.Container {
 			this.addChild(renderedText)
 
 			contextPosition.x += measure.width
+
+			if (contextTooltipRecording) {
+				contextTooltipText += text
+				if (!contextTooltipLeftAnchor) {
+					contextTooltipLeftAnchor = segmentId
+				}
+				contextTooltipRightAnchor = segmentId
+			}
+		}
+
+		const insertTooltipFromContext = () => {
+			if (contextTooltipLeftAnchor && contextTooltipRightAnchor) {
+				this.tooltips.push({
+					text: contextTooltipText,
+					position: { x: 0, y: 0 },
+					size: {
+						x: 0,
+						y: 0,
+					},
+					leftAnchorId: contextTooltipLeftAnchor,
+					rightAnchorId: contextTooltipRightAnchor,
+				})
+				contextUnfinishedTooltips.forEach((tooltip) => (tooltip.text = contextTooltipText))
+			}
+			contextTooltipText = ''
+			contextTooltipLeftAnchor = null
+			contextTooltipRightAnchor = null
+			contextUnfinishedTooltips = []
+		}
+
+		const insertUnfinishedTooltipOnNewline = () => {
+			if (contextTooltipLeftAnchor && contextTooltipRightAnchor) {
+				const tooltip = {
+					text: contextTooltipText,
+					position: { x: 0, y: 0 },
+					size: {
+						x: 0,
+						y: 0,
+					},
+					leftAnchorId: contextTooltipLeftAnchor,
+					rightAnchorId: contextTooltipRightAnchor,
+				}
+				this.tooltips.push(tooltip)
+				contextUnfinishedTooltips.push(tooltip)
+			}
+			contextTooltipLeftAnchor = null
+			contextTooltipRightAnchor = null
 		}
 
 		segments.forEach((segment) => {
@@ -282,7 +378,7 @@ export default class RichText extends PIXI.Container {
 
 			switch (segment.type) {
 				case SegmentType.TEXT:
-					insertText(segment.data!)
+					insertText(segment.data)
 					break
 
 				case SegmentType.OPENING_TAG:
@@ -351,10 +447,17 @@ export default class RichText extends PIXI.Container {
 
 				case SegmentType.HIGHLIGHT:
 					contextHighlight = !contextHighlight
+					contextTooltipRecording = !contextTooltipRecording
+					if (!contextTooltipRecording) {
+						insertTooltipFromContext()
+					}
 					break
 
 				case SegmentType.WORD_SEPARATOR:
 					contextPosition.x += 5 * SCALE_MODIFIER
+					if (contextTooltipRecording) {
+						contextTooltipText += ' '
+					}
 					break
 
 				case SegmentType.LINE_SEPARATOR:

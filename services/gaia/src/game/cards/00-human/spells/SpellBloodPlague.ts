@@ -20,7 +20,7 @@ export default class SpellBloodPlague extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.PASSIVE, CardFeature.KEYWORD_DISCARD],
+			features: [CardFeature.PASSIVE],
 			stats: {
 				cost: 0,
 			},

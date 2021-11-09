@@ -18,7 +18,7 @@ export default class SpellBecomeTheSalvage extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.SILVER,
 			faction: CardFaction.NEUTRAL,
-			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_EXILE],
+			features: [CardFeature.HERO_POWER],
 			stats: {
 				cost: 0,
 			},

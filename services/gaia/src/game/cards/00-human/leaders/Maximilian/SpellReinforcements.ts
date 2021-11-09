@@ -16,7 +16,7 @@ export default class SpellReinforcements extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_SUMMON],
+			features: [CardFeature.HERO_POWER],
 			stats: {
 				cost: 8,
 			},

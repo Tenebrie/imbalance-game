@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -18,7 +17,6 @@ export default class UnitHandOfAreddon extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.ELEMENTAL],
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_CONSUME],
 			stats: {
 				power: 17,
 				armor: 2,

@@ -204,7 +204,7 @@ export default defineComponent({
 		)
 
 		const renderOverlayCanvas = () => {
-			overlayImageRef.value = editorCardRenderer.doRender(props.card, !!props.customArt)
+			overlayImageRef.value = editorCardRenderer.doRender(props.card, !!props.customArt).canvas
 			renderFinalCanvas()
 		}
 		const renderOverlayCanvasThrottled = throttle(50, renderOverlayCanvas)

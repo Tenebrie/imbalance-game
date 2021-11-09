@@ -9,7 +9,7 @@ import CardMessage from '@shared/models/network/card/CardMessage'
 import * as PIXI from 'pixi.js'
 import { computed, defineComponent, ref } from 'vue'
 
-import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
+import PixiPreRenderedCard from '@/Vue/components/pixi/preRenderedCard/PixiPreRenderedCard.vue'
 import store from '@/Vue/store'
 
 export default defineComponent({

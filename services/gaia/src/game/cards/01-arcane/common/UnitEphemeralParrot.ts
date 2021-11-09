@@ -17,7 +17,7 @@ export default class UnitEphemeralParrot extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.ELEMENTAL, CardTribe.BIRD],
-			features: [CardFeature.QUICK, CardFeature.KEYWORD_DEPLOY],
+			features: [CardFeature.QUICK],
 			stats: {
 				power: 2,
 			},

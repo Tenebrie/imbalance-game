@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
@@ -25,7 +24,6 @@ export default class UnitChargingKnight extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.BEAST],
-			features: [CardFeature.KEYWORD_ORDER],
 			stats: {
 				power: 16,
 				armor: 4,

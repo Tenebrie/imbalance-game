@@ -15,7 +15,6 @@ export default class HeroMetrearte extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 10,
 			},

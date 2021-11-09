@@ -17,7 +17,11 @@ class Localization {
 
 	public getCardTitle(card: Card | CardMessage): string | null {
 		const language = store.state.userPreferencesModule.userLanguage
-		return this.get(card.localization[language].title, 'null')
+		const titleOrTitleStringId = card.localization[language].title
+		if (!titleOrTitleStringId.match(localizationIdRegex)) {
+			return titleOrTitleStringId
+		}
+		return this.get(titleOrTitleStringId, 'null')
 	}
 
 	public getCardTribes(card: Card | CardMessage): string[] {
@@ -42,17 +46,17 @@ class Localization {
 
 	private static getValueOrNull(id: string): string | null {
 		if (!id.match(localizationIdRegex)) {
-			return id
+			return null
 		}
 		let localizationJson: { [index: string]: string }
+		const defaultLocalizationJson: { [index: string]: string } = en
 		const language = store.state.userPreferencesModule.userLanguage
 		if (language === 'en') {
 			localizationJson = en
 		} else {
 			localizationJson = ru
 		}
-		// @ts-ignore
-		return localizationJson[id] || en[id] || null
+		return localizationJson[id] || defaultLocalizationJson[id] || null
 	}
 
 	public get(id: string): string

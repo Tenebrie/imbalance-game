@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
@@ -18,7 +17,6 @@ export default class UnitFlameseeker extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_TRANSFORM, CardFeature.KEYWORD_TURN_END],
 			relatedCards: [UnitVoidPortal, UnitFlamingPortal],
 			stats: {
 				power: 17,

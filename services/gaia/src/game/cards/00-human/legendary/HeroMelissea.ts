@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
@@ -25,7 +24,6 @@ export default class HeroMelissea extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.NOBLE],
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_HEAL],
 			stats: {
 				power: 22,
 			},

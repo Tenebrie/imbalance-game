@@ -20,7 +20,6 @@ export default class UnitUndercityGambler extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
-			features: [CardFeature.KEYWORD_DEPLOY],
 			generatedArtworkMagicString: '2',
 			stats: {
 				power: 7,

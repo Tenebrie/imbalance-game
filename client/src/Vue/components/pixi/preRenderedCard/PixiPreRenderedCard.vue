@@ -88,11 +88,12 @@ export default defineComponent({
 
 		return {
 			containerRef,
+			renderedCard,
 		}
 	},
 })
 </script>
 
 <style scoped lang="scss">
-@import '../../styles/generic';
+@import 'src/Vue/styles/generic';
 </style>

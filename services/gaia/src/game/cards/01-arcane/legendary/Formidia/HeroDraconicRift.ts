@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -21,7 +20,6 @@ export default class HeroDraconicRift extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_CONSUME, CardFeature.KEYWORD_TRANSFORM],
 			stats: {
 				power: 0,
 				armor: 15,

@@ -16,7 +16,7 @@ export default class SpellDiveTheSalvage extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.NEUTRAL,
-			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_CREATE],
+			features: [CardFeature.HERO_POWER],
 			stats: {
 				cost: 3,
 			},

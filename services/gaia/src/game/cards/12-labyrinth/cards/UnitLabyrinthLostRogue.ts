@@ -20,7 +20,7 @@ export default class UnitLabyrinthLostRogue extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.LOST],
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.SPY],
+			features: [CardFeature.SPY],
 			stats: {
 				power: 1,
 			},

@@ -18,7 +18,7 @@ export default class UnitQuietInfiltrator extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.SPY],
+			features: [CardFeature.SPY],
 			stats: {
 				power: 4,
 			},

@@ -21,7 +21,7 @@ export default class SpellShadowArmy extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_CREATE],
+			features: [CardFeature.HERO_POWER],
 			stats: {
 				cost: 12,
 			},

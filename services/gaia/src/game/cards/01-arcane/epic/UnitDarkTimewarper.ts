@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
@@ -17,7 +16,6 @@ export default class UnitDarkTimewarper extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitVoidPortal],
 			stats: {
 				power: 12,

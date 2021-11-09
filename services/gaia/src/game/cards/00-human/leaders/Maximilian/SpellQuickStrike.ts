@@ -4,11 +4,11 @@ import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import { CardTargetValidatorArguments } from '@src/types/TargetValidatorArguments'
 import { asDirectSpellDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../../models/ServerCard'
-import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 
 export default class SpellQuickStrike extends ServerCard {

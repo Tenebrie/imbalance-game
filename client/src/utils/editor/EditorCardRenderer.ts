@@ -4,6 +4,7 @@ import { SCALE_MODES } from 'pixi.js'
 
 import RenderedCard from '@/Pixi/cards/RenderedCard'
 import { CardDisplayMode } from '@/Pixi/enums/CardDisplayMode'
+import { RichTextTooltip } from '@/Pixi/render/RichText'
 import { CARD_HEIGHT, CARD_WIDTH } from '@/Pixi/renderer/RendererUtils'
 import { getCardMessageKey } from '@/utils/Utils'
 import store from '@/Vue/store'
@@ -54,10 +55,12 @@ class EditorCardRenderer {
 			const nextEntry = store.state.editor.renderQueue[0]
 			store.commit.editor.shiftRenderQueue()
 
+			const renderResult = this.doRender(nextEntry)
 			store.commit.editor.addRenderedCard({
 				key: getCardMessageKey(nextEntry),
 				class: nextEntry.class,
-				render: this.doRender(nextEntry),
+				render: renderResult.canvas,
+				tooltips: renderResult.tooltips,
 			})
 			while (store.state.editor.renderedCards.length > 250) {
 				store.commit.editor.removeOldestRenderedCard()
@@ -65,7 +68,10 @@ class EditorCardRenderer {
 		}, 0)
 	}
 
-	public doRender(card: CardMessage & Partial<WorkshopCardProps>, hideArtwork = false): HTMLCanvasElement {
+	public doRender(
+		card: CardMessage & Partial<WorkshopCardProps>,
+		hideArtwork = false
+	): { canvas: HTMLCanvasElement; tooltips: RichTextTooltip[] } {
 		const renderedCard = new RenderedCard(card)
 		renderedCard.setDisplayMode(CardDisplayMode.IN_EDITOR)
 
@@ -78,7 +84,10 @@ class EditorCardRenderer {
 		renderedCard.coreContainer.visible = true
 		this.pixi.render(renderedCard.coreContainer, this.renderTexture)
 
-		return this.pixi.plugins.extract.canvas(this.renderTexture)
+		return {
+			canvas: this.pixi.plugins.extract.canvas(this.renderTexture),
+			tooltips: renderedCard.tooltips,
+		}
 	}
 }
 

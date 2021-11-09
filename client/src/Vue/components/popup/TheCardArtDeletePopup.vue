@@ -28,7 +28,7 @@ import Localization from '@/Pixi/Localization'
 import { parseRichText } from '@/utils/RichTextParser'
 import store from '@/Vue/store'
 
-import PixiPreRenderedCard from '../pixi/PixiPreRenderedCard.vue'
+import PixiPreRenderedCard from '../pixi/preRenderedCard/PixiPreRenderedCard.vue'
 
 export default defineComponent({
 	components: { PixiPreRenderedCard },

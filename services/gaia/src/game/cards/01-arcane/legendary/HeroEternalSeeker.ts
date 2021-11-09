@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
@@ -17,7 +16,6 @@ export default class HeroEternalSeeker extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 5,
 			},

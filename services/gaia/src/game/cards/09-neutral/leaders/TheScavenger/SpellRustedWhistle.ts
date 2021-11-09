@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -19,7 +18,6 @@ export default class SpellRustedWhistle extends ServerCard {
 			color: CardColor.BRONZE,
 			faction: CardFaction.NEUTRAL,
 			tribes: [CardTribe.SALVAGE],
-			features: [CardFeature.KEYWORD_CREATE],
 			relatedCards: [UnitStrayDog],
 			sortPriority: 4,
 			stats: {

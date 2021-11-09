@@ -21,7 +21,7 @@ export default class SpellEternalServitude extends ServerCard {
 			type: CardType.SPELL,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.HERO_ARTIFACT, CardFeature.KEYWORD_HERO_POWER],
+			features: [CardFeature.HERO_ARTIFACT],
 			stats: {
 				cost: 7,
 			},

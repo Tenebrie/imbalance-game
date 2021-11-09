@@ -61,7 +61,7 @@ import { parseRichText } from '@/utils/RichTextParser'
 import { useAdminRouteParams } from '@/Vue/components/editor/AdminRouteParams'
 import store from '@/Vue/store'
 
-import PixiPreRenderedCard from '../../pixi/PixiPreRenderedCard.vue'
+import PixiPreRenderedCard from '../../pixi/preRenderedCard/PixiPreRenderedCard.vue'
 import AdminCardArtEditor from './AdminCardArtEditor.vue'
 
 type ExtendedCardMessage = CardMessage & {

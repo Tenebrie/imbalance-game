@@ -21,7 +21,7 @@ import ClientCardStats from '@/Pixi/models/ClientCardStats'
 import ClientPlayerGroup from '@/Pixi/models/ClientPlayerGroup'
 import ClientPlayerInGame from '@/Pixi/models/ClientPlayerInGame'
 import DescriptionTextBackground from '@/Pixi/render/DescriptionTextBackground'
-import RichText from '@/Pixi/render/RichText'
+import RichText, { RichTextTooltip } from '@/Pixi/render/RichText'
 import RichTextAlign from '@/Pixi/render/RichTextAlign'
 import ScalingText from '@/Pixi/render/ScalingText'
 import TextureAtlas from '@/Pixi/render/TextureAtlas'
@@ -248,6 +248,10 @@ export default class RenderedCard implements Card {
 
 	public get description(): string {
 		return Localization.getCardDescription(this)
+	}
+
+	public get tooltips(): RichTextTooltip[] {
+		return this.cardDescriptionText.tooltips
 	}
 
 	public getDescriptionTextVariables(): RichTextVariables {

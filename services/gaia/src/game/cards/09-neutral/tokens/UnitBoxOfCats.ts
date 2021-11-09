@@ -16,7 +16,7 @@ export default class UnitBoxOfCats extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.BRONZE,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.APATHY, CardFeature.KEYWORD_NIGHTFALL],
+			features: [CardFeature.APATHY],
 			stats: {
 				power: 0,
 				armor: 5,

@@ -19,14 +19,19 @@ interface ParsingStateTransitionTrigger {
 
 interface ParsingStateTransitionAction {
 	state: SegmentType
-	insertedSegment?: SegmentType
-	postSegment?: SegmentType
+	insertedSegment?: SegmentType.TEXT | SegmentType.OPENING_TAG | SegmentType.CLOSING_TAG
+	postSegment?: SegmentType.ITALIC | SegmentType.HIGHLIGHT | SegmentType.WORD_SEPARATOR | SegmentType.LINE_SEPARATOR
 }
 
-type Segment = {
-	type: SegmentType
-	basePosition: { x: number; y: number }
-	data?: string
+type Segment = DataSegment | SystemSegment
+
+export type DataSegment = {
+	type: SegmentType.TEXT | SegmentType.OPENING_TAG | SegmentType.CLOSING_TAG
+	data: string
+}
+
+export type SystemSegment = {
+	type: SegmentType.ITALIC | SegmentType.HIGHLIGHT | SegmentType.WORD_SEPARATOR | SegmentType.LINE_SEPARATOR
 }
 
 export type ParsedRichText = {
@@ -90,15 +95,15 @@ export const parseRichText = (text: string, variables: RichTextVariables): Parse
 		}
 
 		if (action.insertedSegment && currentData) {
-			segments.push({ type: action.insertedSegment, data: currentData, basePosition: { x: 0, y: 0 } })
+			segments.push({ type: action.insertedSegment, data: currentData })
 		}
 		if (action.postSegment) {
-			segments.push({ type: action.postSegment, basePosition: { x: 0, y: 0 } })
+			segments.push({ type: action.postSegment })
 		}
 		currentState = action.state
 		currentData = ''
 	}
-	segments.push({ type: currentState, data: currentData || '', basePosition: { x: 0, y: 0 } })
+	segments.push({ type: currentState, data: currentData || '' })
 
 	let contextConditionStatus = true
 	const contextConditionStack: boolean[] = []

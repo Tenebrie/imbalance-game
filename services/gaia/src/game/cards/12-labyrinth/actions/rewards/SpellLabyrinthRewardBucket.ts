@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -187,19 +186,19 @@ export class SpellLabyrinthRewardBucketLost extends BaseSpellLabyrinthRewardBuck
 	}
 }
 
-export class SpellLabyrinthRewardBucketHeals extends BaseSpellLabyrinthRewardBucket {
-	constructor(game: ServerGame) {
-		super(game, {
-			features: [CardFeature.KEYWORD_HEAL],
-		})
-		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireFeature(CardFeature.KEYWORD_HEAL)
-	}
-
-	public readonly rewardsOffered = 3
-	protected isCardValidReward(card: ServerCard): boolean {
-		return card.features.includes(CardFeature.KEYWORD_HEAL)
-	}
-}
+// export class SpellLabyrinthRewardBucketHeals extends BaseSpellLabyrinthRewardBucket {
+// 	constructor(game: ServerGame) {
+// 		super(game, {
+// 			features: [CardFeature.KEYWORD_HEAL],
+// 		})
+// 		this.addRelatedCards().require(isCardVisibleInLabyrinth).requireFeature(CardFeature.KEYWORD_HEAL)
+// 	}
+//
+// 	public readonly rewardsOffered = 3
+// 	protected isCardValidReward(card: ServerCard): boolean {
+// 		return card.features.includes(CardFeature.KEYWORD_HEAL)
+// 	}
+// }
 
 export class SpellLabyrinthRewardBucketRandom extends BaseSpellLabyrinthRewardBucket {
 	constructor(game: ServerGame) {

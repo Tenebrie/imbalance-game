@@ -1,7 +1,6 @@
 import Constants from '@shared/Constants'
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
@@ -19,7 +18,6 @@ export default class HeroLearthe extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.NEUTRAL,
-			features: [CardFeature.KEYWORD_DEPLOY],
 			relatedCards: [UnitHarmlessShadow],
 			stats: {
 				power: 7,

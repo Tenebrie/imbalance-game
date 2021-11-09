@@ -12,7 +12,7 @@ import { computed, defineComponent } from 'vue'
 
 import store from '@/Vue/store'
 
-import PixiPreRenderedCard from '../../pixi/PixiPreRenderedCard.vue'
+import PixiPreRenderedCard from '../../pixi/preRenderedCard/PixiPreRenderedCard.vue'
 
 export type TheCardPreviewPopupParams = {
 	cardClass: string

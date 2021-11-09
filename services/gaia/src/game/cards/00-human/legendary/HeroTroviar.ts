@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -20,7 +19,6 @@ export default class HeroTroviar extends ServerCard {
 			type: CardType.UNIT,
 			color: CardColor.GOLDEN,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_HEAL],
 			stats: {
 				power: 50,
 			},

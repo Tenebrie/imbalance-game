@@ -24,7 +24,7 @@ export default class TutorialSpellShadowSpark extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.SPARK],
-			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_SUMMON],
+			features: [CardFeature.HERO_POWER],
 			relatedCards: [UnitFierceShadow],
 			stats: {
 				cost: 2,

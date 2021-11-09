@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
@@ -21,7 +20,6 @@ export default class UnitCultistBrute extends ServerCard {
 			color: CardColor.BRONZE,
 			tribes: CardTribe.CULTIST,
 			faction: CardFaction.HUMAN,
-			features: [CardFeature.KEYWORD_DEPLOY],
 			stats: {
 				power: 22,
 			},

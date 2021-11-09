@@ -20,7 +20,7 @@ export default class HeroFormidiaShade extends ServerCard {
 			color: CardColor.GOLDEN,
 			tribes: [CardTribe.DRAGON],
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.QUICK, CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_SUMMON],
+			features: [CardFeature.QUICK],
 			stats: {
 				power: 0,
 			},

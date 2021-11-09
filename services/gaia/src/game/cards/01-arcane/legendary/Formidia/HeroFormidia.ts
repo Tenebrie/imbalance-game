@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
@@ -22,7 +21,6 @@ export default class HeroFormidia extends ServerCard {
 			color: CardColor.GOLDEN,
 			tribes: CardTribe.DRAGON,
 			faction: CardFaction.ARCANE,
-			features: [CardFeature.KEYWORD_CONSUME, CardFeature.KEYWORD_TRANSFORM],
 			stats: {
 				power: 99,
 			},

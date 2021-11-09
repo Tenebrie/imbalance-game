@@ -9,7 +9,7 @@
 		<div class="content">
 			<div class="card-container">
 				<div class="card" :key="inspectedCardKey">
-					<pixi-pre-rendered-card :card="inspectedCard" />
+					<pixi-pre-rendered-card-with-tooltips :card="inspectedCard" />
 				</div>
 			</div>
 			<div class="overlay-container">
@@ -26,13 +26,13 @@ import { computed, defineComponent, ref } from 'vue'
 import { RIGHT_MOUSE_BUTTON } from '@/Pixi/input/Input'
 import { getCardMessageKey } from '@/utils/Utils'
 import PixiInspectedCardInfo from '@/Vue/components/pixi/inspectedCardInfo/PixiInspectedCardInfo.vue'
-import PixiPreRenderedCard from '@/Vue/components/pixi/PixiPreRenderedCard.vue'
+import PixiPreRenderedCardWithTooltips from '@/Vue/components/pixi/preRenderedCard/PixiPreRenderedCardWithTooltips.vue'
 import store from '@/Vue/store'
 import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export default defineComponent({
 	components: {
-		PixiPreRenderedCard,
+		PixiPreRenderedCardWithTooltips,
 		PixiInspectedCardInfo,
 	},
 

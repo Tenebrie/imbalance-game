@@ -1,6 +1,5 @@
 import CardColor from '@shared/enums/CardColor'
 import CardFaction from '@shared/enums/CardFaction'
-import CardFeature from '@shared/enums/CardFeature'
 import CardLocation from '@shared/enums/CardLocation'
 import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
@@ -20,7 +19,6 @@ export default class HeroElderElemental extends ServerCard {
 			color: CardColor.SILVER,
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.ELEMENTAL],
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.KEYWORD_TURN_START],
 			stats: {
 				power: 17,
 			},

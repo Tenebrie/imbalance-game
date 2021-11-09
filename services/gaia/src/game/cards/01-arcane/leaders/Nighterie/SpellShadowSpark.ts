@@ -6,11 +6,11 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import { DamageInstance } from '@src/game/models/ServerDamageSource'
 import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
 import CardLibrary from '../../../../libraries/CardLibrary'
 import ServerCard from '../../../../models/ServerCard'
-import { DamageInstance } from '../../../../models/ServerDamageSource'
 import ServerGame from '../../../../models/ServerGame'
 import UnitFierceShadow from '../../tokens/UnitFierceShadow'
 
@@ -25,7 +25,7 @@ export default class SpellShadowSpark extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.ARCANE,
 			tribes: [CardTribe.SPARK],
-			features: [CardFeature.HERO_POWER, CardFeature.KEYWORD_SUMMON],
+			features: [CardFeature.HERO_POWER],
 			relatedCards: [UnitFierceShadow],
 			stats: {
 				cost: 2,

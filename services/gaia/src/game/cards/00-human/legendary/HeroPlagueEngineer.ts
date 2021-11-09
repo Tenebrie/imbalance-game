@@ -19,7 +19,7 @@ export default class HeroPlagueEngineer extends ServerCard {
 			color: CardColor.GOLDEN,
 			faction: CardFaction.HUMAN,
 			tribes: [CardTribe.NOBLE],
-			features: [CardFeature.KEYWORD_DEPLOY, CardFeature.NIGHTWATCH],
+			features: [CardFeature.NIGHTWATCH],
 			stats: {
 				power: 6,
 			},
