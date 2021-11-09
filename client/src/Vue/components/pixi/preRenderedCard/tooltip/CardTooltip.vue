@@ -124,7 +124,7 @@ export default defineComponent({
 				InspectedCardStore.dispatch.clear()
 			} else if (tooltip.type === 'keyword' && !isInGame) {
 				const localizationKey = `card.keyword.${tooltip.props.keyword}`
-				const query = Localization.get(localizationKey, 'empty').replace(/\(X\)|:/g, '')
+				const query = Localization.get(`${localizationKey}.search`, 'null') || Localization.get(localizationKey, 'empty')
 				store.commit.editor.setSearchQuery(query)
 				InspectedCardStore.dispatch.clear()
 			}
@@ -167,7 +167,7 @@ export default defineComponent({
 
 	&.background > .text > .content {
 		background: $COLOR_BACKGROUND-TRANSPARENT;
-		backdrop-filter: blur(16px);
+		backdrop-filter: blur(64px);
 	}
 
 	&:hover > .text > .content {
