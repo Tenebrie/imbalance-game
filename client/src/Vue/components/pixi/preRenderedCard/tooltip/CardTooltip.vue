@@ -166,8 +166,12 @@ export default defineComponent({
 	}
 
 	&.background > .text > .content {
-		background: $COLOR_BACKGROUND-TRANSPARENT;
-		backdrop-filter: blur(64px);
+		background: rgba(black, 0.75);
+
+		@supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+			background: $COLOR_BACKGROUND-TRANSPARENT;
+			backdrop-filter: blur(64px);
+		}
 	}
 
 	&:hover > .text > .content {
