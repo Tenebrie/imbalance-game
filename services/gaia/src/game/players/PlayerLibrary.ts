@@ -150,6 +150,7 @@ class PlayerLibrary {
 			}
 			this.playerCache.push(cachedPlayer)
 		}
+		PlayerLibrary.updateAccessedAt(cachedPlayer.player).then()
 		return cachedPlayer.player
 	}
 
@@ -159,11 +160,7 @@ class PlayerLibrary {
 		if (!tokenPayload) {
 			return null
 		}
-		const player = await this.getPlayerById(tokenPayload.playerId)
-		if (player) {
-			PlayerLibrary.updateAccessedAt(player).then()
-		}
-		return player
+		return await this.getPlayerById(tokenPayload.playerId)
 	}
 
 	public async deletePlayer(player: ServerPlayer): Promise<boolean> {

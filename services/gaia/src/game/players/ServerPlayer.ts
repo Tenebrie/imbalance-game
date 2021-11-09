@@ -21,7 +21,7 @@ export default class ServerPlayer implements Player {
 	globalWebSockets: WebSocket[]
 	gameWebSocket: GameWebSocket | null
 	spectators: ServerPlayerSpectator[]
-	public timestampUpdatedAt: Date = new Date()
+	public timestampUpdatedAt: Date = new Date(0)
 
 	constructor(id: string, email: string, username: string, accessLevel: AccessLevel, isGuest: boolean) {
 		this.id = id

@@ -1,7 +1,7 @@
 <template>
 	<pixi-pre-rendered-card :card="card" />
 	<div class="tooltip-container" v-if="renderedCard">
-		<card-tooltip v-for="(tooltip, index) in renderedCard.tooltips" :key="index" :tooltip="tooltip" />
+		<card-tooltip v-for="(tooltip, index) in renderedCard.tooltips" :key="index" :card="card" :tooltip="tooltip" />
 	</div>
 </template>
 

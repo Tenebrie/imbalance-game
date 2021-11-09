@@ -11,7 +11,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue'
+import CardMessage from '@shared/models/network/card/CardMessage'
+import { computed, defineComponent, PropType } from 'vue'
 
 import Localization from '@/Pixi/Localization'
 import { RichTextTooltip } from '@/Pixi/render/RichText'
@@ -37,8 +38,12 @@ type ParsedTooltip =
 
 export default defineComponent({
 	props: {
+		card: {
+			type: Object as PropType<CardMessage>,
+			required: true,
+		},
 		tooltip: {
-			type: Object as () => RichTextTooltip,
+			type: Object as PropType<RichTextTooltip>,
 			required: true,
 		},
 	},
