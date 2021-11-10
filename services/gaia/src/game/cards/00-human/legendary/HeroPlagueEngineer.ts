@@ -31,8 +31,7 @@ export default class HeroPlagueEngineer extends ServerCard {
 			en: {
 				name: 'Fex',
 				title: 'The Plague Engineer',
-				description:
-					"*Deploy* and *Round start:*<br>Add *Blood Plague* to your opponent's hand.<p>*Round start:*\nRepeat the *Deploy* effect.",
+				description: "*Deploy* and *Round start:*<br>Add *Blood Plague* to your opponent's hand.",
 			},
 		})
 
