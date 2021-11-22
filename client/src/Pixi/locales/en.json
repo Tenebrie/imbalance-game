@@ -525,7 +525,7 @@
 	"card.unitCultistSpellslinger.flavor": "- \"So say we all\"",
 
 	"card.heroCultistOfAreddon.name": "Cultist of Areddon",
-	"card.heroCultistOfAreddon.description": "*Deploy:*\nDestroy an allied non-cultist unit.\nThen, *Create* a copy of it.",
+	"card.heroCultistOfAreddon.description": "*Deploy:*\nDestroy a *Common* ally to *Create* a copy of it with *Apathy*.",
 	"card.heroCultistOfAreddon.flavor": "- \"So say we all\"",
 
 	"card.heroAdventuringGuildMaster.name": "Adventuring\nGuild Master",

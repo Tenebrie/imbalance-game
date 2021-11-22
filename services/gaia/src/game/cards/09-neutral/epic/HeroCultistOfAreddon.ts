@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import { BuffMorningApathy } from '@src/game/buffs/BuffMorningApathy'
 import Keywords from '@src/utils/Keywords'
 
 import ServerCard from '../../../models/ServerCard'
@@ -26,13 +27,16 @@ export default class HeroCultistOfAreddon extends ServerCard {
 		this.createDeployTargets(TargetType.UNIT)
 			.requireAllied()
 			.requireNotSelf()
-			.require(({ targetCard }) => !targetCard.tribes.includes(CardTribe.CULTIST))
+			.require(({ targetCard }) => targetCard.color === CardColor.BRONZE)
 			.perform(({ targetUnit }) => this.onTargetSelected(targetUnit))
 	}
 
 	private onTargetSelected(target: ServerUnit): void {
 		const cardClass = target.card.class
 		Keywords.destroy.unit(target).withSource(this)
-		Keywords.createCard.forOwnerOf(this).fromClass(cardClass)
+		Keywords.createCard
+			.forOwnerOf(this)
+			.with((card) => card.buffs.add(BuffMorningApathy, this))
+			.fromClass(cardClass)
 	}
 }
