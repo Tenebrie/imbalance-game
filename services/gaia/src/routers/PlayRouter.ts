@@ -139,7 +139,7 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 		} catch (error) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error as Error)
-			DiscordIntegration.sendFatalError(currentGame, error as Error)
+			DiscordIntegration.getInstance().sendFatalError(currentGame, error as Error)
 			currentGame.players
 				.flatMap((playerGroup) => playerGroup.players)
 				.forEach((playerInGame) => {
@@ -206,7 +206,7 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 		} catch (error) {
 			console.error(`An unexpected error occurred in game ${colorizeId(currentGame.id)}. It will be shut down.`, error)
 			GameHistoryDatabase.logGameError(currentGame, error as Error)
-			DiscordIntegration.sendFatalError(currentGame, error as Error)
+			DiscordIntegration.getInstance().sendFatalError(currentGame, error as Error)
 			currentGame.players
 				.flatMap((playerGroup) => playerGroup.players)
 				.forEach((playerInGame) => {

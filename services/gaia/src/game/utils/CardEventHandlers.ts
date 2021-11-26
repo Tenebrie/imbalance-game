@@ -14,7 +14,7 @@ export function cardRequire(game: ServerGame, subscriber: EventSubscriber, func:
 	} catch (error) {
 		console.error('Unexpected error:\n', error)
 		GameHistoryDatabase.logGameError(game, error as Error)
-		DiscordIntegration.sendError(game, error as Error)
+		DiscordIntegration.getInstance().sendError(game, error as Error)
 		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameError(game, error as Error)
 	}
 	EventContext.clearExecutingEventSubscriber()
@@ -28,7 +28,7 @@ export function cardPerform(game: ServerGame, subscriber: EventSubscriber, func:
 	} catch (error) {
 		console.error('Unexpected error:\n', error)
 		GameHistoryDatabase.logGameError(game, error as Error)
-		DiscordIntegration.sendError(game, error as Error)
+		DiscordIntegration.getInstance().sendError(game, error as Error)
 		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameError(game, error as Error)
 	}
 	EventContext.clearExecutingEventSubscriber()

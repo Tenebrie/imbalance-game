@@ -5,13 +5,15 @@ import { colorize } from '@src/utils/Utils'
 import axios from 'axios'
 import fs from 'fs'
 
-type GaiaSecrets = {
+export type GaiaSecrets = {
 	DISCORD_PING_ROLE_ID?: string
 	DISCORD_ALERT_HOOK?: string
 	DISCORD_FEEDBACK_HOOK?: string
 }
 
 class DiscordIntegration {
+	private static instance: DiscordIntegration | null = null
+
 	pingRoleId: string | null
 	hookLinks: {
 		alerts: string | null
@@ -20,7 +22,17 @@ class DiscordIntegration {
 
 	constructor() {
 		const secretsFileExists = fs.existsSync('/run/secrets/gaia')
-		const secrets = secretsFileExists ? (JSON.parse(fs.readFileSync('/run/secrets/gaia', 'utf8')) as GaiaSecrets) : {}
+		if (!secretsFileExists) {
+			console.error('Unable to find gaia.json file')
+		}
+		let secrets: GaiaSecrets = {}
+		if (secretsFileExists) {
+			try {
+				secrets = JSON.parse(fs.readFileSync('/run/secrets/gaia', 'utf8')) as GaiaSecrets
+			} catch (error) {
+				console.error('Invalid gaia.json file')
+			}
+		}
 
 		this.pingRoleId = process.env.DISCORD_PING_ROLE_ID || secrets.DISCORD_PING_ROLE_ID || null
 		this.hookLinks = {
@@ -126,6 +138,13 @@ class DiscordIntegration {
 		}
 		return `https://discord.com/api/webhooks/${path}`
 	}
+
+	public static getInstance(): DiscordIntegration {
+		if (!DiscordIntegration.instance) {
+			DiscordIntegration.instance = new DiscordIntegration()
+		}
+		return DiscordIntegration.instance
+	}
 }
 
-export default new DiscordIntegration()
+export default DiscordIntegration

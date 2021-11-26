@@ -32,7 +32,7 @@ router.post(
 		}
 
 		const currentPlayer = getPlayerFromAuthenticatedRequest(req)
-		const discordMessageSent = await DiscordIntegration.sendFeedback(currentPlayer, feedback, contactInfo)
+		const discordMessageSent = await DiscordIntegration.getInstance().sendFeedback(currentPlayer, feedback, contactInfo)
 		if (!discordMessageSent) {
 			throw genericError({ status: 500, error: 'Unable to send Discord message.' })
 		}

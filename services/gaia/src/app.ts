@@ -168,7 +168,7 @@ setInterval(async () => {
 
 const port = process.env.PORT || 3000
 
-DiscordIntegration.printStatus()
+DiscordIntegration.getInstance().printStatus()
 
 const databaseUrl = process.env.DATABASE_URL
 if (!databaseUrl) {

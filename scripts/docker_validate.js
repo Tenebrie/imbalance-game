@@ -87,49 +87,51 @@ const saveDockerVersion = () => {
 }
 
 let containersBeingBuilt = 0
-const saveDockerVersionWhenDone = () => {
-	if (containersBeingBuilt === 0) {
-		saveDockerVersion()
+const postBuild = () => {
+	if (containersBeingBuilt > 0) {
+		return
 	}
+
+	saveDockerVersion()
 }
 
 const buildClient = () => {
 	containersBeingBuilt += 1
 	printWarn('Building Client...')
-	exec('docker-compose build client', (error) => {
+	exec('docker-compose rm -f client && docker-compose build client', (error) => {
 		if (error) {
 			printError('Unable to build Client', error)
 			return
 		}
 		containersBeingBuilt -= 1
 		printInfo('Client build successful!')
-		saveDockerVersionWhenDone()
+		postBuild()
 	})
 }
 const buildGaia = () => {
 	containersBeingBuilt += 1
 	printWarn('Building Gaia...')
-	exec('docker-compose build gaia', (error) => {
+	exec('docker-compose rm -f gaia && docker-compose build gaia', (error) => {
 		if (error) {
 			printError('Unable to build Gaia', error)
 			return
 		}
 		containersBeingBuilt -= 1
 		printInfo('Gaia build successful!')
-		saveDockerVersionWhenDone()
+		postBuild()
 	})
 }
 const buildOvermind = () => {
 	containersBeingBuilt += 1
 	printWarn('Building Overmind...')
-	exec('docker-compose build overmind', (error) => {
+	exec('docker-compose rm -f overmind && docker-compose build overmind', (error) => {
 		if (error) {
 			printError('Unable to build Overmind', error)
 			return
 		}
 		containersBeingBuilt -= 1
 		printInfo('Overmind build successful!')
-		saveDockerVersionWhenDone()
+		postBuild()
 	})
 }
 
@@ -137,6 +139,15 @@ const buildAll = () => {
 	buildClient()
 	buildGaia()
 	buildOvermind()
+}
+
+printInfo('Checking secrets files...')
+if (!fs.existsSync('secrets/gaia.json')) {
+	printWarn('Gaia secrets file not found. Writing a placeholder.')
+	fs.writeFileSync('secrets/gaia.json', JSON.stringify({}), 'utf8')
+	printInfo('Gaia secrets file placeholder written.')
+} else {
+	printInfo('Gaia secrets file exists')
 }
 
 printInfo('Checking container hashes...')
