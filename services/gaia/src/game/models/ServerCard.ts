@@ -73,6 +73,8 @@ import GameHookType, {
 	CardDestroyedHookFixedValues,
 	CardTakesDamageHookEditableValues,
 	CardTakesDamageHookFixedValues,
+	GameFinishedHookEditableValues,
+	GameFinishedHookFixedValues,
 	UnitDestroyedHookEditableValues,
 	UnitDestroyedHookFixedValues,
 } from './events/GameHookType'
@@ -783,18 +785,26 @@ export default class ServerCard implements Card {
 	 */
 	protected createHook(
 		hookType: GameHookType.CARD_TAKES_DAMAGE,
-		location: CardLocation[]
+		location: CardLocation[] | 'any'
 	): EventHook<CardTakesDamageHookEditableValues, CardTakesDamageHookFixedValues>
 	protected createHook(
 		hookType: GameHookType.CARD_DESTROYED,
-		location: CardLocation[]
+		location: CardLocation[] | 'any'
 	): EventHook<CardDestroyedHookEditableValues, CardDestroyedHookFixedValues>
 	protected createHook(
 		hookType: GameHookType.UNIT_DESTROYED,
-		location: CardLocation[]
+		location: CardLocation[] | 'any'
 	): EventHook<UnitDestroyedHookEditableValues, UnitDestroyedHookFixedValues>
-	protected createHook<HookValues, HookArgs>(hookType: GameHookType, location: CardLocation[]): EventHook<HookValues, HookArgs> {
-		return this.game.events.createHook<HookValues, HookArgs>(this, hookType).requireLocations(location)
+	protected createHook(
+		hookType: GameHookType.GAME_FINISHED,
+		location: CardLocation[] | 'any'
+	): EventHook<GameFinishedHookEditableValues, GameFinishedHookFixedValues>
+	protected createHook<HookValues, HookArgs>(hookType: GameHookType, location: CardLocation[] | 'any'): EventHook<HookValues, HookArgs> {
+		const hook = this.game.events.createHook<HookValues, HookArgs>(this, hookType)
+		if (location !== 'any') {
+			hook.require(() => location.includes(this.location))
+		}
+		return hook
 	}
 
 	/* Create an aura effect

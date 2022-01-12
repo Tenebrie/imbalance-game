@@ -141,6 +141,8 @@ export default defineComponent({
 		bottom: 0;
 		width: 450px;
 		height: 800px;
+		max-width: 100%;
+		max-height: 100%;
 		opacity: 1;
 		margin-left: 0;
 		transition: margin 0.5s, opacity 0.4s;

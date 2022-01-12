@@ -1,4 +1,6 @@
 import GameMessage from '@shared/models/network/GameMessage'
+import GameCloseReason from '@src/enums/GameCloseReason'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { ServerRuleset } from '@src/game/models/rulesets/ServerRuleset'
 import express, { Request, Response } from 'express'
@@ -54,7 +56,7 @@ router.post('/', (req: Request, res: Response) => {
 		const playerInGame = game.players
 			.flatMap((playerGroup) => playerGroup.players)
 			.find((playerInGame) => playerInGame.player.id === player.id)
-		game.systemFinish(playerInGame?.opponentNullable || null, 'Player surrendered (Started new game)')
+		game.systemFinish(playerInGame?.opponentNullable || null, GameVictoryCondition.PLAYER_STARTED_NEW_GAME)
 	})
 
 	let ruleset: ServerRuleset
@@ -78,7 +80,7 @@ router.post('/disconnect', (req: Request, res: Response) => {
 
 router.delete('/:gameId', (req: Request, res: Response) => {
 	const player = getPlayerFromAuthenticatedRequest(req)
-	GameLibrary.destroyOwnedGame(req.params.gameId, player, 'Owner command')
+	GameLibrary.destroyOwnedGame(req.params.gameId, player, GameCloseReason.OWNER_REQUEST)
 
 	res.json({ success: true })
 })

@@ -82,7 +82,7 @@ describe('UnitForestScout', () => {
 	describe('when losing on rounds', () => {
 		beforeEach(() => {
 			game.opponent.summon(TestingUnit100Power)
-			game.startNextRound()
+			game.finishCurrentRound()
 
 			game.opponent.endTurn()
 			game.player.add(CardInTesting).play()
@@ -97,7 +97,7 @@ describe('UnitForestScout', () => {
 	describe('when winning on rounds', () => {
 		beforeEach(() => {
 			game.player.summon(TestingUnit100Power)
-			game.startNextRound()
+			game.finishCurrentRound()
 			game.player.add(CardInTesting).play()
 		})
 
@@ -110,7 +110,7 @@ describe('UnitForestScout', () => {
 	describe('when losing on rounds and board', () => {
 		beforeEach(() => {
 			game.opponent.summon(TestingUnit100Power)
-			game.startNextRound()
+			game.finishCurrentRound()
 			game.opponent.endTurn()
 
 			const card = game.player.add(CardInTesting)

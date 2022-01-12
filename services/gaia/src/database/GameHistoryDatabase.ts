@@ -1,5 +1,7 @@
 import GameErrorDatabaseEntry from '@shared/models/GameErrorDatabaseEntry'
 import GameHistoryDatabaseEntry from '@shared/models/GameHistoryDatabaseEntry'
+import GameCloseReason from '@src/enums/GameCloseReason'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
 
@@ -96,7 +98,11 @@ export default {
 		return true
 	},
 
-	async closeGame(game: ServerGame, reason: string, victoriousPlayer: ServerPlayerGroup | null): Promise<boolean> {
+	async closeGame(
+		game: ServerGame,
+		reason: GameVictoryCondition | GameCloseReason,
+		victoriousPlayer: ServerPlayerGroup | null
+	): Promise<boolean> {
 		const eventLog = JSON.stringify(game.events.eventLog)
 		let query = `
 				UPDATE game_history

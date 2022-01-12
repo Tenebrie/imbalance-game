@@ -78,7 +78,7 @@ describe('UnitGuardianAngel', () => {
 			beforeEach(() => {
 				game.player.add(CardInTesting)
 				game.player.summon(TestingUnitNoEffect)
-				game.startNextRound()
+				game.finishCurrentRound()
 			})
 
 			it('does not summon itself', () => {

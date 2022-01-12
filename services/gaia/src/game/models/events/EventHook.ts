@@ -1,5 +1,3 @@
-import CardLocation from '@shared/enums/CardLocation'
-
 import { EventSubscriber } from '../ServerGameEvents'
 
 export class EventHook<EditableValues, FixedValues> {
@@ -66,14 +64,6 @@ export class EventHook<EditableValues, FixedValues> {
 	require(condition: (args: FixedValues, values: EditableValues) => boolean): EventHook<EditableValues, FixedValues> {
 		this.__conditions.push(condition)
 		return this
-	}
-
-	/* Require card location to be a specified value before callback execution
-	 * ------------------------------------------------------------------------
-	 * Add a new condition to the require chain. Card location must match any of the specified values.
-	 */
-	requireLocations(locations: CardLocation[]): EventHook<EditableValues, FixedValues> {
-		return this.require(() => !!this.__subscriber && locations.includes(this.__subscriber.location))
 	}
 
 	/* Ignore control effects

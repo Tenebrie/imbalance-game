@@ -3,6 +3,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import RulesetFeature from '@shared/enums/RulesetFeature'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import SpellLabyrinthContinueRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthContinueRun'
 import SpellLabyrinthPreviousRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthPreviousRun'
 import SpellLabyrinthStartCoopRun from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthStartCoopRun'
@@ -73,14 +74,14 @@ export default class RulesetLabyrinthMetaCamp extends ServerRuleset {
 				game.progression.labyrinth.setExpectedPlayers(2)
 			}
 
-			game.systemFinish(game.getHumanGroup(), 'Starting new run', true)
+			game.systemFinish(game.getHumanGroup(), GameVictoryCondition.SYSTEM_GAME, true)
 			OutgoingMessageHandlers.executeMessageQueue(game)
 		}
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthContinueRun)
 			.perform(({ game }) => {
-				game.systemFinish(game.getHumanGroup(), 'Continuing existing run', true)
+				game.systemFinish(game.getHumanGroup(), GameVictoryCondition.SYSTEM_GAME, true)
 			})
 	}
 }

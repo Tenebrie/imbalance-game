@@ -8,6 +8,7 @@ import {
 	GenericActionMessageType,
 	SystemMessageType,
 } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import ServerCardTarget from '@src/game/models/ServerCardTarget'
 
 import ServerGame from '../models/ServerGame'
@@ -127,7 +128,7 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 			return
 		}
 
-		game.systemFinish(player.opponentNullable, 'Player surrendered (Player action)')
+		game.systemFinish(player.opponentNullable, GameVictoryCondition.PLAYER_SURRENDERED)
 		onPlayerActionEnd(game, player)
 	},
 

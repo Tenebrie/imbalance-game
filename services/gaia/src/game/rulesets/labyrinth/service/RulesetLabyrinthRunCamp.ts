@@ -3,6 +3,7 @@ import GameEventType from '@shared/enums/GameEventType'
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import RulesetFeature from '@shared/enums/RulesetFeature'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import SpellLabyrinthNextEncounter from '@src/game/cards/12-labyrinth/actions/SpellLabyrinthNextEncounter'
 import LeaderLabyrinthOpponent from '@src/game/cards/12-labyrinth/LeaderLabyrinthOpponent'
 import LeaderLabyrinthPlayer from '@src/game/cards/12-labyrinth/LeaderLabyrinthPlayer'
@@ -45,7 +46,7 @@ export default class RulesetLabyrinthRunCamp extends ServerRuleset {
 
 		this.createCallback(GameEventType.CARD_PLAYED)
 			.require(({ triggeringCard }) => triggeringCard instanceof SpellLabyrinthNextEncounter)
-			.perform(({ game }) => game.systemFinish(game.getHumanGroup(), 'Continue to next encounter', true))
+			.perform(({ game }) => game.systemFinish(game.getHumanGroup(), GameVictoryCondition.SYSTEM_GAME, true))
 
 		this.createCallback(GameEventType.GAME_CREATED).perform(({ game }) => {
 			const registeredPlayers = game.progression.labyrinth.state.run.players

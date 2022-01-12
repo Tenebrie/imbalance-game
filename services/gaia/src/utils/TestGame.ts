@@ -45,7 +45,7 @@ export type TestGame = {
 	player: TestGamePlayer
 	opponent: TestGamePlayer
 	allPlayers: TestGamePlayer[][]
-	startNextRound(): TestGame
+	finishCurrentRound(): TestGame
 }
 
 export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
@@ -62,15 +62,7 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 	game.events.resolveEvents()
 	game.events.evaluateSelectors()
 
-	const advanceTurn = (): TestGame => {
-		game.players.filter((group) => !group.turnEnded).forEach((group) => group.endTurn())
-		game.advanceCurrentTurn()
-		game.events.resolveEvents()
-		game.events.evaluateSelectors()
-		return gameWrapper
-	}
-
-	const startNextRound = (): TestGame => {
+	const finishCurrentRound = (): TestGame => {
 		game.players.filter((group) => !group.roundEnded).forEach((group) => group.endRound())
 		game.advanceCurrentTurn()
 		game.events.resolveEvents()
@@ -87,7 +79,7 @@ export const setupTestGame = (ruleset: RulesetConstructor): TestGame => {
 		player: playerWrappers[0][0],
 		opponent: playerWrappers[1][0],
 		allPlayers: playerWrappers,
-		startNextRound,
+		finishCurrentRound,
 	}
 	return gameWrapper
 }
@@ -397,6 +389,13 @@ const setupTestGamePlayers = (game: ServerGame): TestGamePlayer[][] => {
 	}
 
 	const endRound = (player: ServerPlayerInGame): void => {
+		if (player.group.turnEnded) {
+			throw new Error("[Test] This is not this player's turn.")
+		}
+		if (player.group.roundEnded) {
+			throw new Error('[Test] Round already ended.')
+		}
+
 		IncomingMessageHandlers[GenericActionMessageType.TURN_END](null, game, player)
 	}
 

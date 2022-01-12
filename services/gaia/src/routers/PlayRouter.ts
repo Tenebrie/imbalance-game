@@ -8,6 +8,7 @@ import {
 import PlayerInGame from '@shared/models/PlayerInGame'
 import { enumToArray } from '@shared/Utils'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import GameCloseReason from '@src/enums/GameCloseReason'
 import DiscordIntegration from '@src/game/integrations/DiscordIntegration'
 import EventContext from '@src/game/models/EventContext'
 import ServerEditorDeck from '@src/game/models/ServerEditorDeck'
@@ -145,8 +146,8 @@ router.ws('/:gameId', async (ws: ws, req: express.Request) => {
 				.forEach((playerInGame) => {
 					OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
 				})
-			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Player action)', null)
-			GameLibrary.destroyGame(currentGame, 'Unhandled error (Player action)')
+			GameHistoryDatabase.closeGame(currentGame, GameCloseReason.PLAYER_ACTION_ERROR, null)
+			GameLibrary.destroyGame(currentGame, GameCloseReason.PLAYER_ACTION_ERROR)
 		}
 		EventContext.clear()
 	})
@@ -212,8 +213,8 @@ router.ws('/:gameId/spectate/:playerId', async (ws: ws, req: express.Request) =>
 				.forEach((playerInGame) => {
 					OutgoingMessageHandlers.notifyAboutGameCollapsed(playerInGame.player, currentGame)
 				})
-			GameHistoryDatabase.closeGame(currentGame, 'Unhandled error (Spectator action)', null)
-			GameLibrary.destroyGame(currentGame, 'Unhandled error (Spectator action)')
+			GameHistoryDatabase.closeGame(currentGame, GameCloseReason.SPECTATOR_ACTION_ERROR, null)
+			GameLibrary.destroyGame(currentGame, GameCloseReason.SPECTATOR_ACTION_ERROR)
 		}
 	})
 

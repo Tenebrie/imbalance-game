@@ -3,6 +3,7 @@ import CardType from '@shared/enums/CardType'
 import GameEventType from '@shared/enums/GameEventType'
 import GameMode from '@shared/enums/GameMode'
 import RulesetCategory from '@shared/enums/RulesetCategory'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import UnitStrayDog from '@src/game/cards/09-neutral/tokens/UnitStrayDog'
 import UnitChallengeDummyVanillaWarrior from '@src/game/cards/10-challenge/ai-00-dummy/UnitChallengeDummyVanillaWarrior'
 import TutorialHeroTroviar from '@src/game/cards/13-special/cards/TutorialHeroTroviar'
@@ -232,7 +233,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				...values,
 				finishPrevented: true,
 			}))
-			.perform(({ victoryReason }) => {
+			.perform(({ victoryCondition }) => {
 				game.novel
 					.startDialog(
 						`
@@ -246,7 +247,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					)
 					.closingChapter('Finish', () => {
 						this.finalDialogShown = true
-						game.playerFinish(game.getHumanGroup(), victoryReason)
+						game.playerFinish(game.getHumanGroup(), victoryCondition)
 					})
 			})
 
@@ -314,7 +315,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					)
 					.closingChapter('End', () => {
 						this.finalDialogShown = true
-						game.playerFinish(game.getBotPlayer().group, 'Story trigger')
+						game.playerFinish(game.getBotPlayer().group, GameVictoryCondition.STORY_TRIGGER)
 					})
 			})
 
@@ -534,7 +535,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					)
 					.closingChapter('Close', () => {
 						this.finalDialogShown = true
-						game.playerFinish(game.getHumanGroup(), 'Story trigger')
+						game.playerFinish(game.getHumanGroup(), GameVictoryCondition.STORY_TRIGGER)
 					})
 			})
 

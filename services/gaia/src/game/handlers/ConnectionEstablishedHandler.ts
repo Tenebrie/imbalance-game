@@ -1,5 +1,6 @@
 import TargetMode from '@shared/enums/TargetMode'
 import { sortCards } from '@shared/Utils'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import { OutgoingGlobalMessageHandlers } from '@src/game/handlers/OutgoingGlobalMessageHandlers'
 import { colorizeId, colorizePlayer } from '@src/utils/Utils'
 
@@ -70,7 +71,7 @@ export default {
 			game.timers.playerLeaveTimeout.start()
 		}
 		if (connectedPlayers.length === 0 && !game.isStarted) {
-			game.systemFinish(null, 'No players left')
+			game.systemFinish(null, GameVictoryCondition.CANCELLED)
 		} else if (connectedPlayers.length === 0 && game.isStarted && !game.isFinished && game.allPlayers.some((player) => player.isBot)) {
 			console.info(`No players left in game ${colorizeId(game.id)}. It will be shutdown in 60 seconds.`)
 			game.timers.playerLeaveTimeout.start()

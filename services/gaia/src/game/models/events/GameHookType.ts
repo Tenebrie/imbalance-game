@@ -1,3 +1,4 @@
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import ServerGame from '@src/game/models/ServerGame'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
@@ -59,13 +60,13 @@ export interface RoundFinishedHookEditableValues {
 
 export interface GameFinishedHookFixedValues {
 	game: ServerGame
-	victoryReason: string
+	victoryCondition: GameVictoryCondition
 	chainImmediately: boolean
 	victoriousPlayer: ServerPlayerGroup | null
 }
 export interface GameFinishedHookEditableValues {
 	finishPrevented: boolean
-	victoryReason: string
+	victoryCondition: GameVictoryCondition
 	chainImmediately: boolean
 	victoriousPlayer: ServerPlayerGroup | null
 }
