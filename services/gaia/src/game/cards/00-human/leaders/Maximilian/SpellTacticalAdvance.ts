@@ -29,6 +29,7 @@ export default class SpellTacticalAdvance extends ServerCard {
 				cost: 2,
 			},
 			expansionSet: ExpansionSet.BASE,
+			sortPriority: 0,
 		})
 		this.dynamicTextVariables = {
 			damage: this.damage,

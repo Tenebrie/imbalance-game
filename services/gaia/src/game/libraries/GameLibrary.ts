@@ -21,7 +21,11 @@ class GameLibrary {
 		const time = new Date()
 		const oldGames = this.games.filter((game) => time.getTime() - game.creationTimestamp.getTime() >= GameLibrary.MAXIMUM_GAME_DURATION)
 
-		console.log(`Found ${colorizeConsoleText(oldGames.length)} orphaned games. Closing...`)
+		if (oldGames.length === 0) {
+			return
+		}
+
+		console.info(`Found ${colorizeConsoleText(oldGames.length)} orphaned games. Closing...`)
 		oldGames.forEach((game) => {
 			this.destroyGame(game, GameCloseReason.ORPHANED_GAME_CLEANUP)
 		})

@@ -1,5 +1,6 @@
 import StoryCharacter from '@shared/enums/StoryCharacter'
 import NovelCue from '@shared/models/novel/NovelCue'
+import NovelCueMessage from '@shared/models/novel/NovelCueMessage'
 import NovelResponseMessage from '@shared/models/novel/NovelResponseMessage'
 import { defineModule } from 'direct-vuex'
 
@@ -12,10 +13,12 @@ const novelModule = defineModule({
 
 	state: {
 		cue: null as NovelCue | null,
-		replies: [] as NovelResponseMessage[],
+		responses: [] as NovelResponseMessage[],
 		activeCharacter: null as StoryCharacter | null,
 		printTimer: null as number | null,
 		charactersPrinted: 0 as number,
+		decayingCues: [] as NovelCue[],
+		decayingResponses: [] as (NovelResponseMessage & { isSelected: boolean })[],
 	},
 
 	mutations: {
@@ -24,7 +27,7 @@ const novelModule = defineModule({
 		},
 
 		addResponse(state, value: NovelResponseMessage): void {
-			state.replies.push(value)
+			state.responses.push(value)
 		},
 
 		setActiveCharacter(state, character: StoryCharacter | null): void {
@@ -41,12 +44,28 @@ const novelModule = defineModule({
 
 		clear(state): void {
 			state.cue = null
-			state.replies = []
+			state.responses = []
 			state.activeCharacter = null
 		},
 
 		clearResponses(state): void {
-			state.replies = []
+			state.responses = []
+		},
+
+		addDecayingCue(state, cue: NovelCue): void {
+			state.decayingCues.push(cue)
+		},
+
+		removeDecayingCue(state, id: string): void {
+			state.decayingCues = state.decayingCues.filter((cue) => cue.id !== id)
+		},
+
+		addDecayingResponses(state, responses: (NovelResponseMessage & { isSelected: boolean })[]): void {
+			responses.forEach((response) => state.decayingResponses.push(response))
+		},
+
+		removeDecayingResponses(state, IDs: string[]): void {
+			state.decayingResponses = state.decayingResponses.filter((response) => !IDs.includes(response.chapterId))
 		},
 	},
 
@@ -62,12 +81,27 @@ const novelModule = defineModule({
 			return state.cue.text.substring(0, Math.min(state.charactersPrinted, state.cue.text.length))
 		},
 
-		currentReplies: (state): NovelResponseMessage[] => {
-			return state.replies
+		currentResponses: (state): NovelResponseMessage[] => {
+			return state.responses
 		},
 	},
 
 	actions: {
+		setCue(context, args: { cue: NovelCueMessage }): void {
+			const { state, commit } = moduleActionContext(context, novelModule)
+
+			if (state.cue) {
+				commit.addDecayingCue(state.cue)
+				const id = state.cue.id
+
+				setTimeout(() => {
+					commit.removeDecayingCue(id)
+				}, 1000)
+			}
+
+			commit.setCue(args.cue)
+		},
+
 		addResponse(context, args: { response: NovelResponseMessage }): void {
 			const { commit } = moduleActionContext(context, novelModule)
 
@@ -75,7 +109,20 @@ const novelModule = defineModule({
 		},
 
 		reply(context, args: { response: NovelResponseMessage }): void {
-			const { commit } = moduleActionContext(context, novelModule)
+			const { state, commit } = moduleActionContext(context, novelModule)
+
+			console.log(state.responses)
+			commit.addDecayingResponses(
+				state.responses.map((response) => ({
+					...response,
+					isSelected: response.chapterId === args.response.chapterId,
+				}))
+			)
+			const responseIDs = state.responses.map((response) => response.chapterId)
+			setTimeout(() => {
+				commit.removeDecayingResponses(responseIDs)
+			}, 1000)
+
 			commit.clearResponses()
 
 			Core.mainHandler.currentOpenAnimationThread.skipCooldown()
@@ -92,14 +139,13 @@ const novelModule = defineModule({
 			if (getters.currentCue && getters.currentCueText.length < getters.currentCue?.text.length) {
 				dispatch.skipCurrentCueAnimation()
 				OutgoingMessageHandlers.sendNovelSkipAnimation()
-			} else if (state.cue && state.replies.length === 0 && !rootState.gameStateModule.isSpectating) {
+			} else if (state.cue && state.responses.length === 0 && !rootState.gameStateModule.isSpectating) {
 				dispatch.proceedToNextCue()
 				OutgoingMessageHandlers.sendNovelNextCue()
 			}
 		},
 
 		skipCurrentCueAnimation(context): void {
-			console.log('Skip current anim!')
 			const { commit, getters, dispatch } = moduleActionContext(context, novelModule)
 			if (getters.currentCue && getters.currentCueText.length < getters.currentCue?.text.length) {
 				commit.setCharactersPrinted(getters.currentCue.text.length)
@@ -108,10 +154,9 @@ const novelModule = defineModule({
 		},
 
 		proceedToNextCue(context): void {
-			console.log('Proceed next!')
 			const { state } = moduleActionContext(context, novelModule)
 
-			if (!state.cue || state.replies.length > 0) {
+			if (!state.cue || state.responses.length > 0) {
 				return
 			}
 
@@ -142,7 +187,7 @@ const novelModule = defineModule({
 					}
 
 					commit.setCharactersPrinted(charactersPrinted)
-				}, 35)
+				}, 25)
 				commit.setPrintTimer(timer)
 			}
 		},

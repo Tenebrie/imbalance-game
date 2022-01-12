@@ -12,7 +12,7 @@ const IncomingNovelMessages: NovelMessageHandlers = {
 		store.dispatch.novel.clear()
 	},
 	[NovelMessageType.SAY]: (cue: NovelCueMessage) => {
-		store.commit.novel.setCue(cue)
+		store.dispatch.novel.setCue({ cue })
 		store.dispatch.novel.startPrintTimer()
 	},
 	[NovelMessageType.MOVE]: (action: NovelMoveAction) => {

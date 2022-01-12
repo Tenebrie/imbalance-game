@@ -130,7 +130,7 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 	},
 
 	[GenericActionMessageType.TURN_END]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
-		if (player.group.turnEnded || player.targetRequired) {
+		if (player.group.turnEnded || player.targetRequired || !!game.novel.clientState) {
 			return
 		}
 

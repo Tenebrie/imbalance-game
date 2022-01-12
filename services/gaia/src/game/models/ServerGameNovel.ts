@@ -136,6 +136,13 @@ export default class ServerGameNovel {
 	}
 
 	public continueQueue(): void {
+		if (
+			(this.clientState && this.clientState.statements.filter((statement) => statement.type === StatementType.SAY).length > 0) ||
+			this.clientResponses.length > 0
+		) {
+			return
+		}
+
 		const queueEntry = this.queuedStatements.shift()
 		this.clearClientState()
 		if (!queueEntry) {
