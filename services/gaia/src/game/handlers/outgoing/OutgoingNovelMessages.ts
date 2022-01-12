@@ -4,13 +4,17 @@ import NovelCue from '@shared/models/novel/NovelCue'
 import NovelCueMessage from '@shared/models/novel/NovelCueMessage'
 import NovelMoveAction from '@shared/models/novel/NovelMoveAction'
 import NovelResponseMessage from '@shared/models/novel/NovelResponseMessage'
+import { Time } from '@shared/Utils'
 import OutgoingAnimationMessages from '@src/game/handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from '@src/game/models/ServerAnimation'
 import ServerPlayerGroup from '@src/game/players/ServerPlayerGroup'
+import ServerPlayerInGame from '@src/game/players/ServerPlayerInGame'
+import ServerPlayerSpectator from '@src/game/players/ServerPlayerSpectator'
 
 export default {
-	notifyAboutDialogStarted(playerGroup: ServerPlayerGroup): void {
-		playerGroup.players.forEach((playerInGame) =>
+	notifyAboutDialogStarted(playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.START,
 				data: null,
@@ -18,18 +22,20 @@ export default {
 		)
 	},
 
-	notifyAboutDialogCue(playerGroup: ServerPlayerGroup, cue: NovelCue): void {
-		playerGroup.players.forEach((playerInGame) => {
+	notifyAboutDialogCue(playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup, cue: NovelCue): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) => {
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.SAY,
 				data: new NovelCueMessage(cue),
 			})
 		})
-		OutgoingAnimationMessages.triggerAnimationForPlayers(playerGroup.players, ServerAnimation.delay(3600000))
+		OutgoingAnimationMessages.triggerAnimationForPlayers(players, ServerAnimation.delay(Time.minutes.toMilliseconds(60)))
 	},
 
-	notifyAboutDialogMove(playerGroup: ServerPlayerGroup, moveAction: NovelMoveAction): void {
-		playerGroup.players.forEach((playerInGame) =>
+	notifyAboutDialogMove(playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup, moveAction: NovelMoveAction): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.MOVE,
 				data: moveAction,
@@ -37,17 +43,23 @@ export default {
 		)
 	},
 
-	notifyAboutDialogCuesCleared(playerGroup: ServerPlayerGroup): void {
-		playerGroup.players.forEach((playerInGame) =>
+	notifyAboutDialogCuesCleared(playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.CLEAR,
 				data: null,
+				skipQueue: true,
 			})
 		)
 	},
 
-	notifyAboutDialogResponse(playerGroup: ServerPlayerGroup, response: NovelResponseMessage): void {
-		playerGroup.players.forEach((playerInGame) =>
+	notifyAboutDialogResponse(
+		playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup,
+		response: NovelResponseMessage
+	): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.ADD_REPLY,
 				data: response,
@@ -56,8 +68,12 @@ export default {
 		)
 	},
 
-	notifyAboutAddedDialogCharacter(playerGroup: ServerPlayerGroup, character: StoryCharacter): void {
-		playerGroup.players.forEach((playerInGame) =>
+	notifyAboutAddedDialogCharacter(
+		playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup,
+		character: StoryCharacter
+	): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.ADD_CHARACTER,
 				data: character,
@@ -65,8 +81,12 @@ export default {
 		)
 	},
 
-	notifyAboutActiveDialogCharacter(playerGroup: ServerPlayerGroup, character: StoryCharacter | null): void {
-		playerGroup.players.forEach((playerInGame) =>
+	notifyAboutActiveDialogCharacter(
+		playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup,
+		character: StoryCharacter | null
+	): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.ACTIVATE_CHARACTER,
 				data: character,
@@ -74,8 +94,12 @@ export default {
 		)
 	},
 
-	notifyAboutRemovedDialogCharacter(playerGroup: ServerPlayerGroup, character: StoryCharacter): void {
-		playerGroup.players.forEach((playerInGame) =>
+	notifyAboutRemovedDialogCharacter(
+		playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup,
+		character: StoryCharacter
+	): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.REMOVE_CHARACTER,
 				data: character,
@@ -83,8 +107,9 @@ export default {
 		)
 	},
 
-	notifyAboutDialogSegmentEnded(playerGroup: ServerPlayerGroup): void {
-		playerGroup.players.forEach((playerInGame) =>
+	notifyAboutDialogSegmentEnded(playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.CONTINUE,
 				data: null,
@@ -92,11 +117,32 @@ export default {
 		)
 	},
 
-	notifyAboutDialogEnded(playerGroup: ServerPlayerGroup): void {
-		playerGroup.players.forEach((playerInGame) =>
+	notifyAboutDialogEnded(playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({
 				type: NovelMessageType.END,
 				data: null,
+			})
+		)
+	},
+
+	notifyAboutCueAnimationSkipSync(players: (ServerPlayerInGame | ServerPlayerSpectator)[]): void {
+		players.forEach((playerInGame) =>
+			playerInGame.player.sendGameMessage({
+				type: NovelMessageType.SKIP_CUE_ANIMATION,
+				data: null,
+				skipQueue: true,
+			})
+		)
+	},
+
+	notifyAboutNextCueSync(players: (ServerPlayerInGame | ServerPlayerSpectator)[]): void {
+		players.forEach((playerInGame) =>
+			playerInGame.player.sendGameMessage({
+				type: NovelMessageType.NEXT_CUE,
+				data: null,
+				skipQueue: true,
 			})
 		)
 	},

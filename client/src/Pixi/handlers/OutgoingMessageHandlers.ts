@@ -52,6 +52,20 @@ export default {
 		})
 	},
 
+	sendNovelSkipAnimation(): void {
+		Core.sendMessage({
+			type: GenericActionMessageType.NOVEL_SKIP_CUE_ANIMATION,
+			data: null,
+		})
+	},
+
+	sendNovelNextCue(): void {
+		Core.sendMessage({
+			type: GenericActionMessageType.NOVEL_NEXT_CUE,
+			data: null,
+		})
+	},
+
 	sendNovelChapterMove(chapterId: string): void {
 		Core.sendMessage({
 			type: GenericActionMessageType.NOVEL_CHAPTER,

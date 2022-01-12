@@ -42,6 +42,12 @@ export default class ServerPlayer implements Player {
 		return this.game?.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player === this) || null
 	}
 
+	public get playerSpectator(): ServerPlayerSpectator | null {
+		return (
+			this.game?.allPlayers.flatMap((playerInGame) => playerInGame.player.spectators).find((spectator) => spectator.player === this) || null
+		)
+	}
+
 	registerGlobalConnection(ws: ws, id: string): void {
 		this.globalWebSockets.push(new WebSocket(ws, id))
 		PlayerLibrary.addOnlinePlayer(this)

@@ -3,19 +3,23 @@
 		<div class="the-home-action">
 			<div class="controls">
 				<div class="button-container">
-					<h2>Create game</h2>
+					<h2>Singleplayer</h2>
 					<button @click="onCreateTutorial" class="primary">{{ $locale.get('ui.play.tutorial') }}</button>
 					<span class="action-explanation">Learn the basics of the game.</span>
 					<button @click="onCreateSinglePlayer" class="primary">{{ $locale.get('ui.play.pve') }}</button>
 					<span class="action-explanation">Play against normal AI, or a special challenge scenario.</span>
-					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp') }}</button>
-					<span class="action-explanation">Create a game and wait for an opponent to challenge you.</span>
 					<button @click="onCreateCooperative" class="primary">{{ $locale.get('ui.play.coop') }}</button>
 					<span class="action-explanation">Invite a friend to play against AI opponent.</span>
-					<!--					<button @click="onCreateLabyrinth" class="primary">{{ $locale.get('ui.play.labyrinth') }}</button>-->
-					<!--					<span class="action-explanation">Delve into the rogue-lite Labyrinth mode.</span>-->
 					<button @click="onCreatePrototypes" class="primary">{{ $locale.get('ui.play.prototypes') }}</button>
 					<span class="action-explanation">See early concepts, modules and gamemode prototypes.</span>
+					<!--					<button @click="onCreateLabyrinth" class="primary">{{ $locale.get('ui.play.labyrinth') }}</button>-->
+					<!--					<span class="action-explanation">Delve into the rogue-lite Labyrinth mode.</span>-->
+					<div class="separator" />
+					<h2>Multiplayer</h2>
+					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp') }}</button>
+					<span class="action-explanation">Create a game and wait for an opponent to challenge you.</span>
+					<div class="separator" v-if="devRulesetVisible" />
+					<h2 v-if="devRulesetVisible">Development</h2>
 					<button @click="onCreateDevRuleset" class="primary" v-if="devRulesetVisible">{{ $locale.get('ui.play.dev') }}</button>
 					<span class="action-explanation" v-if="devRulesetVisible">Play special ruleset defined in RulesetDev.ts (server-side).</span>
 					<div class="separator" />

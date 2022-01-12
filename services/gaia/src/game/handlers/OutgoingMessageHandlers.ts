@@ -1,3 +1,5 @@
+import OutgoingNovelMessages from '@src/game/handlers/outgoing/OutgoingNovelMessages'
+
 import OutgoingAnimationMessages from './outgoing/OutgoingAnimationMessages'
 import OutgoingBoardUpdateMessages from './outgoing/OutgoingBoardUpdateMessages'
 import OutgoingCardUpdateMessages from './outgoing/OutgoingCardUpdateMessages'
@@ -14,6 +16,7 @@ export default {
 	...OutgoingCardUpdateMessages,
 	...OutgoingGameLogUpdateMessages,
 	...OutgoingGameSyncMessages,
+	...OutgoingNovelMessages,
 	...OutgoingPlayerUpdateMessages,
 	...OutgoingResolveStackUpdateMessages,
 	...OutgoingTargetingMessages,

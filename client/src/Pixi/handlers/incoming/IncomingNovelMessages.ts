@@ -39,6 +39,14 @@ const IncomingNovelMessages: NovelMessageHandlers = {
 	[NovelMessageType.END]: () => {
 		store.dispatch.novel.clear()
 	},
+	[NovelMessageType.SKIP_CUE_ANIMATION]: () => {
+		console.log('huh1')
+		store.dispatch.novel.skipCurrentCueAnimation()
+	},
+	[NovelMessageType.NEXT_CUE]: () => {
+		console.log('huh2')
+		store.dispatch.novel.proceedToNextCue()
+	},
 }
 
 export default IncomingNovelMessages

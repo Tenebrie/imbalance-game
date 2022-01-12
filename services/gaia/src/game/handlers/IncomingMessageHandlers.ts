@@ -9,6 +9,7 @@ import {
 	SystemMessageType,
 } from '@shared/models/network/messageHandlers/ClientToServerGameMessages'
 import GameVictoryCondition from '@src/enums/GameVictoryCondition'
+import OutgoingNovelMessages from '@src/game/handlers/outgoing/OutgoingNovelMessages'
 import ServerCardTarget from '@src/game/models/ServerCardTarget'
 
 import ServerGame from '../models/ServerGame'
@@ -100,6 +101,22 @@ const IncomingMessageHandlers: ClientToServerGameMessageHandlers<ServerGame, Ser
 			game.advanceMulliganPhase()
 			onPlayerActionEnd(game, player)
 		}
+	},
+
+	[GenericActionMessageType.NOVEL_SKIP_CUE_ANIMATION]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
+		const otherPlayers = game.allPlayers.filter((filteredPlayer) => filteredPlayer !== player)
+		const spectators = player.player.spectators
+		const targets = [...otherPlayers, ...spectators]
+		OutgoingNovelMessages.notifyAboutCueAnimationSkipSync(targets)
+	},
+
+	[GenericActionMessageType.NOVEL_NEXT_CUE]: (data: null, game: ServerGame, player: ServerPlayerInGame): void => {
+		game.novel.popClientStateCue()
+
+		const otherPlayers = game.allPlayers.filter((filteredPlayer) => filteredPlayer !== player)
+		const spectators = player.player.spectators
+		const targets = [...otherPlayers, ...spectators]
+		OutgoingNovelMessages.notifyAboutNextCueSync(targets)
 	},
 
 	[GenericActionMessageType.NOVEL_CHAPTER]: (data: string, game: ServerGame, player: ServerPlayerInGame): void => {

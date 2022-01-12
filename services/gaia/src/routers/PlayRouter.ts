@@ -236,7 +236,7 @@ router.get(
 			})
 		}
 
-		const currentPlayerInGame = currentPlayer.playerInGame
+		const currentPlayerInGame = currentPlayer.playerInGame || currentPlayer.playerSpectator?.spectatedPlayer.playerInGame
 		if (!currentPlayerInGame) {
 			throw genericError({
 				status: 403,
@@ -263,7 +263,7 @@ router.get(
 			})
 		}
 
-		const currentPlayerInGame = currentPlayer.playerInGame
+		const currentPlayerInGame = currentPlayer.playerInGame || currentPlayer.playerSpectator?.spectatedPlayer.playerInGame
 		if (!currentPlayerInGame) {
 			throw genericError({
 				status: 403,
@@ -287,7 +287,7 @@ router.get(
 			})
 		}
 
-		const currentPlayerInGame = currentPlayer.playerInGame
+		const currentPlayerInGame = currentPlayer.playerInGame || currentPlayer.playerSpectator?.spectatedPlayer.playerInGame
 		if (!currentPlayerInGame) {
 			throw genericError({
 				status: 403,

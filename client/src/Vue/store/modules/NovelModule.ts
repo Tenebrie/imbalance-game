@@ -88,13 +88,34 @@ const novelModule = defineModule({
 		},
 
 		continue(context): void {
-			const { state, commit, getters, dispatch } = moduleActionContext(context, novelModule)
+			const { state, getters, dispatch, rootState } = moduleActionContext(context, novelModule)
+			if (getters.currentCue && getters.currentCueText.length < getters.currentCue?.text.length) {
+				dispatch.skipCurrentCueAnimation()
+				OutgoingMessageHandlers.sendNovelSkipAnimation()
+			} else if (state.cue && state.replies.length === 0 && !rootState.gameStateModule.isSpectating) {
+				dispatch.proceedToNextCue()
+				OutgoingMessageHandlers.sendNovelNextCue()
+			}
+		},
+
+		skipCurrentCueAnimation(context): void {
+			console.log('Skip current anim!')
+			const { commit, getters, dispatch } = moduleActionContext(context, novelModule)
 			if (getters.currentCue && getters.currentCueText.length < getters.currentCue?.text.length) {
 				commit.setCharactersPrinted(getters.currentCue.text.length)
-				dispatch.stopPrintTimer()
-			} else if (state.cue && state.replies.length === 0) {
-				Core.mainHandler.currentOpenAnimationThread.skipCooldown()
 			}
+			dispatch.stopPrintTimer()
+		},
+
+		proceedToNextCue(context): void {
+			console.log('Proceed next!')
+			const { state } = moduleActionContext(context, novelModule)
+
+			if (!state.cue || state.replies.length > 0) {
+				return
+			}
+
+			Core.mainHandler.currentOpenAnimationThread.skipCooldown()
 		},
 
 		startPrintTimer(context): void {
@@ -133,8 +154,12 @@ const novelModule = defineModule({
 		},
 
 		clear(context): void {
-			const { commit } = moduleActionContext(context, novelModule)
+			const { state, commit } = moduleActionContext(context, novelModule)
+			const toResetCooldown = !!state.cue
 			commit.clear()
+			if (toResetCooldown) {
+				Core.mainHandler.currentOpenAnimationThread.skipCooldown()
+			}
 		},
 	},
 })

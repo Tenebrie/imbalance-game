@@ -249,6 +249,8 @@ export enum NovelMessageType {
 	REMOVE_CHARACTER = 'nvl_removeCharacter',
 	CONTINUE = 'nvl_continue',
 	END = 'nvl_end',
+	SKIP_CUE_ANIMATION = 'nvl_skipAnim',
+	NEXT_CUE = 'nvl_nextCue',
 }
 
 export type NovelMessageTypeMapping = {
@@ -262,6 +264,8 @@ export type NovelMessageTypeMapping = {
 	[NovelMessageType.REMOVE_CHARACTER]: StoryCharacter
 	[NovelMessageType.CONTINUE]: null
 	[NovelMessageType.END]: null
+	[NovelMessageType.SKIP_CUE_ANIMATION]: null
+	[NovelMessageType.NEXT_CUE]: null
 }
 
 export type NovelMessageHandlers = ConsumerSideTyper<NovelMessageTypeMapping>

@@ -58,6 +58,7 @@ export default {
 		OutgoingMessageHandlers.notifyAboutGamePhaseAdvance(game, game.turnPhase)
 		OutgoingMessageHandlers.notifyAboutGameStartForPlayer(playerInGame.player, playerInGame.isInvertedBoard())
 		game.events.flushLogEventGroup()
+		game.novel.restoreClientStateOnReconnect(playerInGame)
 		OutgoingMessageHandlers.executeMessageQueueForPlayer(game, playerInGame.player)
 	},
 
@@ -115,6 +116,7 @@ export default {
 		OutgoingMessageHandlers.notifyAboutValidActionsChanged(game, [spectatedPlayerInGame])
 		OutgoingMessageHandlers.notifyAboutGameStartForPlayer(spectator.player, spectatedPlayerInGame.isInvertedBoard())
 		game.events.flushLogEventGroup()
+		game.novel.restoreClientStateOnReconnect(spectator)
 		OutgoingMessageHandlers.executeMessageQueueForPlayer(game, spectator.player)
 	},
 }
