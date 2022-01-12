@@ -113,7 +113,9 @@ export default class ServerGameNovel {
 		if (!chapterCreator) {
 			return
 		}
-		chapterCreator(new ServerGameImmediateNovelUnconditionalCreator(this.game))
+		const creator = new ServerGameImmediateNovelUnconditionalCreator(this.game)
+		chapterCreator(creator)
+		creator.finalize()
 	}
 
 	public hasQueue(): boolean {
@@ -195,6 +197,7 @@ export default class ServerGameNovel {
 			return
 		}
 
+		OutgoingNovelMessages.notifyAboutDialogStarted(player)
 		const runner = new ServerGameNovelRunner(this.game, this.clientState.namespace)
 		runner.executeStatements(this.clientState.statements, player)
 	}
@@ -218,6 +221,7 @@ export class ServerGameImmediateNovelCreator implements ServerGameNovelCreator {
 	private readonly game: ServerGame
 	private readonly namespace: string
 	protected readonly runUnconditionally: boolean = false
+	private isFinalized = false
 
 	constructor(game: ServerGame) {
 		this.game = game
@@ -236,6 +240,7 @@ export class ServerGameImmediateNovelCreator implements ServerGameNovelCreator {
 			runner.executeStatements(scriptSyntaxTree.statements, this.game.novel.player)
 		}
 
+		this.isFinalized = true
 		return this
 	}
 
@@ -257,6 +262,13 @@ export class ServerGameImmediateNovelCreator implements ServerGameNovelCreator {
 			callback()
 			return ``
 		})
+	}
+
+	public finalize(): void {
+		if (!this.isFinalized) {
+			const runner = new ServerGameNovelRunner(this.game, this.namespace)
+			runner.executeStatements([], this.game.novel.player)
+		}
 	}
 }
 
@@ -344,14 +356,6 @@ export class ServerGameNovelRunner {
 	constructor(game: ServerGame, namespace: string) {
 		this.game = game
 		this.namespace = namespace
-	}
-
-	private get player(): ServerPlayerGroup {
-		const player = this.game.getHumanGroup()
-		if (!player) {
-			throw new Error(`No human player in game ${this.game.id}!`)
-		}
-		return player
 	}
 
 	private handleStatementPreprocess(statement: TenScriptStatement): void {

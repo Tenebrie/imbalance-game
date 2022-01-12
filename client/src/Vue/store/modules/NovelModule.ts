@@ -12,6 +12,7 @@ const novelModule = defineModule({
 	namespaced: true,
 
 	state: {
+		isActive: false as boolean,
 		cue: null as NovelCue | null,
 		responses: [] as NovelResponseMessage[],
 		activeCharacter: null as StoryCharacter | null,
@@ -22,6 +23,10 @@ const novelModule = defineModule({
 	},
 
 	mutations: {
+		setIsActive(state, value: boolean): void {
+			state.isActive = value
+		},
+
 		setCue(state, value: NovelCue | null): void {
 			state.cue = value
 		},
@@ -44,8 +49,8 @@ const novelModule = defineModule({
 
 		clear(state): void {
 			state.cue = null
-			state.responses = []
 			state.activeCharacter = null
+			state.responses = []
 		},
 
 		clearResponses(state): void {
@@ -136,6 +141,7 @@ const novelModule = defineModule({
 
 		continue(context): void {
 			const { state, getters, dispatch, rootState } = moduleActionContext(context, novelModule)
+			console.log(state.responses)
 			if (getters.currentCue && getters.currentCueText.length < getters.currentCue?.text.length) {
 				dispatch.skipCurrentCueAnimation()
 				OutgoingMessageHandlers.sendNovelSkipAnimation()
@@ -160,6 +166,7 @@ const novelModule = defineModule({
 				return
 			}
 
+			// Core.mainHandler.mainAnimationThread.skipCooldown()
 			Core.mainHandler.currentOpenAnimationThread.skipCooldown()
 		},
 
@@ -198,13 +205,19 @@ const novelModule = defineModule({
 			commit.setPrintTimer(null)
 		},
 
-		clear(context): void {
+		clearResponses(context): void {
 			const { state, commit } = moduleActionContext(context, novelModule)
 			const toResetCooldown = !!state.cue
-			commit.clear()
+			commit.clearResponses()
 			if (toResetCooldown) {
 				Core.mainHandler.currentOpenAnimationThread.skipCooldown()
 			}
+		},
+
+		fullClear(context): void {
+			const { commit, dispatch } = moduleActionContext(context, novelModule)
+			dispatch.clearResponses()
+			commit.clear()
 		},
 	},
 })

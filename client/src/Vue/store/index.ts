@@ -143,7 +143,7 @@ const { store, rootActionContext, moduleActionContext } = createDirectStore({
 		async leaveGame(): Promise<void> {
 			store.dispatch.gameStateModule.reset()
 			store.dispatch.popupModule.closeAll()
-			store.dispatch.novel.clear()
+			store.dispatch.novel.fullClear()
 			await router.push({ name: 'home' })
 			if (Core.socket && Core.socket.readyState === WebSocket.OPEN) {
 				Core.socket.close(1000, 'Player disconnect')

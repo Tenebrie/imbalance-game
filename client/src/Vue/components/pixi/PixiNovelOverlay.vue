@@ -64,7 +64,7 @@ export default defineComponent({
 		const decayingCues = computed(() => store.state.novel.decayingCues)
 		const decayingResponses = computed(() => store.state.novel.decayingResponses)
 
-		const isDisplayed = computed(() => currentCue.value !== null)
+		const isDisplayed = computed(() => store.state.novel.isActive)
 		const activeCharacter = computed<StoryCharacter | null>(() => store.state.novel.activeCharacter)
 		const lastActiveCharacter = ref<StoryCharacter | null>(null)
 
@@ -82,7 +82,7 @@ export default defineComponent({
 		})
 
 		const overlayClass = computed<Record<string, boolean>>(() => ({
-			visible: !!currentCue.value,
+			visible: isDisplayed.value,
 		}))
 
 		const characterArtClass = computed<Record<string, boolean>>(() => {

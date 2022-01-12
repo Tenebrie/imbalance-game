@@ -635,7 +635,7 @@ const wrapCardTarget = (
  * Novel mode wrapper
  */
 type TestGameNovel = {
-	finishDialogue(): TestGameNovel
+	clickThroughDialogue(): TestGameNovel
 	selectFirstResponse(): TestGameNovel
 	selectSecondResponse(): TestGameNovel
 	countMoveStatements(): number
@@ -653,7 +653,7 @@ const setupTestGameNovel = (game: ServerGame): TestGameNovel => {
 	}
 
 	const novelWrapper: TestGameNovel = {
-		finishDialogue: () => {
+		clickThroughDialogue: () => {
 			const targetMove = game.novel.clientMoves[0]
 			if (targetMove) {
 				game.novel.executeChapter(targetMove.chapterId)

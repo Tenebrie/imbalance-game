@@ -9,7 +9,8 @@ import store from '@/Vue/store'
 
 const IncomingNovelMessages: NovelMessageHandlers = {
 	[NovelMessageType.START]: () => {
-		store.dispatch.novel.clear()
+		store.dispatch.novel.fullClear()
+		store.commit.novel.setIsActive(true)
 	},
 	[NovelMessageType.SAY]: (cue: NovelCueMessage) => {
 		store.dispatch.novel.setCue({ cue })
@@ -19,7 +20,7 @@ const IncomingNovelMessages: NovelMessageHandlers = {
 		OutgoingMessageHandlers.sendNovelChapterMove(action.chapterId)
 	},
 	[NovelMessageType.CLEAR]: () => {
-		store.dispatch.novel.clear()
+		store.dispatch.novel.clearResponses()
 	},
 	[NovelMessageType.ADD_REPLY]: (response: NovelResponseMessage) => {
 		store.dispatch.novel.addResponse({ response })
@@ -37,14 +38,12 @@ const IncomingNovelMessages: NovelMessageHandlers = {
 		OutgoingMessageHandlers.sendNovelContinue()
 	},
 	[NovelMessageType.END]: () => {
-		store.dispatch.novel.clear()
+		store.commit.novel.setIsActive(false)
 	},
 	[NovelMessageType.SKIP_CUE_ANIMATION]: () => {
-		console.log('huh1')
 		store.dispatch.novel.skipCurrentCueAnimation()
 	},
 	[NovelMessageType.NEXT_CUE]: () => {
-		console.log('huh2')
 		store.dispatch.novel.proceedToNextCue()
 	},
 }
