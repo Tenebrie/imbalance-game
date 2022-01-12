@@ -136,7 +136,6 @@ export default class RulesetNessadventure extends ServerRuleset {
 						> And you will probably lose.
 						> Not necessarily, no. You can break the game and stuff, but...
 						> Well, just saying, you probably want to.
-					})
 					@ Don't want to, no
 						${StoryCharacter.NOT_NESSA}:
 						> Well...
