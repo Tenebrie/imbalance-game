@@ -100,6 +100,7 @@ interface ServerCardBaseProps {
 	generatedArtworkMagicString?: string
 	deckAddedCards?: CardConstructor[]
 	hiddenFromLibrary?: boolean
+	sharedArtwork?: CardConstructor
 }
 
 type LeaderStatsCardProps = Partial<Record<LeaderStatType, number>>
@@ -139,6 +140,7 @@ export default class ServerCard implements Card {
 	public readonly class: string
 	public readonly color: CardColor
 	public readonly faction: CardFaction
+	public readonly artworkClass: string
 
 	public readonly stats: ServerCardStats
 	public readonly buffs: ServerBuffContainer = new ServerBuffContainer(this)
@@ -172,6 +174,7 @@ export default class ServerCard implements Card {
 		this.game = game
 		this.targeting = new ServerCardTargeting(this)
 		this.class = cardClass
+		this.artworkClass = props.sharedArtwork ? getClassFromConstructor(props.sharedArtwork) : this.class
 
 		this.type = props.color === CardColor.LEADER ? CardType.UNIT : props.type
 		this.color = props.color

@@ -5,6 +5,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import SpellScrollOfGrowth from '@src/game/cards/01-arcane/tokens/SpellScrollOfGrowth'
 
 import BuffGrowth from '../../../buffs/BuffGrowth'
 import ServerCard from '../../../models/ServerCard'
@@ -21,6 +22,7 @@ export default class TutorialSpellScrollOfGrowth extends ServerCard {
 			stats: {
 				cost: 2,
 			},
+			sharedArtwork: SpellScrollOfGrowth,
 			expansionSet: ExpansionSet.TUTORIAL,
 		})
 

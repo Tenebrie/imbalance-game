@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import UnitEagleEyeArcher from '@src/game/cards/00-human/common/UnitEagleEyeArcher'
 import { asDirectUnitDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
@@ -22,6 +23,7 @@ export default class TutorialUnitEagleEyeArcher extends ServerCard {
 			stats: {
 				power: 18,
 			},
+			sharedArtwork: UnitEagleEyeArcher,
 			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {

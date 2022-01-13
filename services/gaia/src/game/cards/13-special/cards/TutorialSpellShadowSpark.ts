@@ -6,6 +6,7 @@ import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import GameEventType from '@shared/enums/GameEventType'
 import TargetType from '@shared/enums/TargetType'
+import SpellShadowSpark from '@src/game/cards/01-arcane/leaders/Nighterie/SpellShadowSpark'
 import UnitFierceShadow from '@src/game/cards/01-arcane/tokens/UnitFierceShadow'
 import CardLibrary from '@src/game/libraries/CardLibrary'
 import ServerCard from '@src/game/models/ServerCard'
@@ -29,6 +30,7 @@ export default class TutorialSpellShadowSpark extends ServerCard {
 			stats: {
 				cost: 2,
 			},
+			sharedArtwork: SpellShadowSpark,
 			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {

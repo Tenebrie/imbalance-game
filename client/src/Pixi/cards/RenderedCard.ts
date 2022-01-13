@@ -41,6 +41,7 @@ export default class RenderedCard implements Card {
 	public readonly class: string
 	public readonly color: CardColor
 	public readonly faction: CardFaction
+	public readonly artworkClass: string
 
 	public readonly stats: ClientCardStats
 	public readonly buffs: ClientBuffContainer
@@ -94,6 +95,7 @@ export default class RenderedCard implements Card {
 		this.class = message.class
 		this.color = message.color
 		this.faction = message.faction
+		this.artworkClass = message.artworkClass
 
 		this.stats = new ClientCardStats(this, message.stats)
 		this.buffs = new ClientBuffContainer(this, message.buffs)
@@ -110,7 +112,7 @@ export default class RenderedCard implements Card {
 
 		this.isHidden = message.isHidden
 
-		const artworkTexture = message.workshopImage ? message.workshopImage : TextureAtlas.getTexture(`cards/${this.class}`)
+		const artworkTexture = message.workshopImage ? message.workshopImage : TextureAtlas.getTexture(`cards/${this.artworkClass}`)
 		this.sprite = new PIXI.Container()
 		this.artwork = new PIXI.Sprite(artworkTexture)
 		this.sprite.addChild(this.artwork)

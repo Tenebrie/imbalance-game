@@ -256,6 +256,7 @@ export default defineComponent({
 			class: cardClass.value,
 			color: cardColor.value,
 			faction: CardFaction.HUMAN,
+			artworkClass: cardClass.value,
 
 			stats: {
 				cardId: '',

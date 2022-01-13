@@ -4,6 +4,7 @@ import CardTribe from '@shared/enums/CardTribe'
 import CardType from '@shared/enums/CardType'
 import ExpansionSet from '@shared/enums/ExpansionSet'
 import TargetType from '@shared/enums/TargetType'
+import SpellFleetingSpark from '@src/game/cards/01-arcane/tokens/SpellFleetingSpark'
 import { asDirectSparkDamage } from '@src/utils/LeaderStats'
 
 import ServerCard from '../../../models/ServerCard'
@@ -23,6 +24,7 @@ export default class TutorialSpellFleetingSpark extends ServerCard {
 			stats: {
 				cost: 1,
 			},
+			sharedArtwork: SpellFleetingSpark,
 			expansionSet: ExpansionSet.TUTORIAL,
 		})
 		this.dynamicTextVariables = {
