@@ -114,7 +114,11 @@ const novelModule = defineModule({
 		},
 
 		reply(context, args: { response: NovelResponseMessage }): void {
-			const { state, commit } = moduleActionContext(context, novelModule)
+			const { state, commit, rootState } = moduleActionContext(context, novelModule)
+
+			if (rootState.gameStateModule.isSpectating) {
+				return
+			}
 
 			commit.addDecayingResponses(
 				state.responses.map((response) => ({
@@ -222,7 +226,7 @@ const novelModule = defineModule({
 
 		clearResponses(context): void {
 			const { state, commit } = moduleActionContext(context, novelModule)
-			const toResetCooldown = !!state.cue
+			const toResetCooldown = !!state.cue || state.responses.length > 0
 			commit.clearResponses()
 			if (toResetCooldown) {
 				Core.mainHandler.currentOpenAnimationThread.skipCooldown()

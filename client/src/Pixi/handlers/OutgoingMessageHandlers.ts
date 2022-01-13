@@ -68,6 +68,7 @@ export default {
 	},
 
 	sendNovelChapterMove(chapterId: string): void {
+		store.dispatch.novel.decayCurrentCue()
 		Core.sendMessage({
 			type: GenericActionMessageType.NOVEL_CHAPTER,
 			data: chapterId,

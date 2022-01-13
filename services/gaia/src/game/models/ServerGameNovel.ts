@@ -1,4 +1,5 @@
 import StoryCharacter, { storyCharacterFromString } from '@shared/enums/StoryCharacter'
+import NovelCue from '@shared/models/novel/NovelCue'
 import { Time } from '@shared/Utils'
 import OutgoingAnimationMessages from '@src/game/handlers/outgoing/OutgoingAnimationMessages'
 import ServerAnimation from '@src/game/models/ServerAnimation'
@@ -21,7 +22,11 @@ import ServerGame from './ServerGame'
 export default class ServerGameNovel {
 	private readonly game: ServerGame
 
-	public clientState: { statements: TenScriptStatement[]; namespace: string } | null = null
+	public clientState: {
+		statements: TenScriptStatement[]
+		lastCue: NovelCue | null
+		namespace: string
+	} | null = null
 	public clientMoves: {
 		chapterId: string
 	}[] = []
@@ -162,6 +167,7 @@ export default class ServerGameNovel {
 		if (!this.clientState) {
 			this.clientState = {
 				namespace,
+				lastCue: null,
 				statements: [],
 			}
 		}
@@ -188,8 +194,12 @@ export default class ServerGameNovel {
 		}
 
 		const poppedStatement = this.clientState.statements.find((statement) => statement.type === StatementType.SAY)
-		if (poppedStatement) {
+		if (poppedStatement && poppedStatement.type === StatementType.SAY) {
 			this.clientState.statements.splice(this.clientState.statements.indexOf(poppedStatement), 1)
+			this.clientState.lastCue = {
+				id: uuid(),
+				text: getSayStatementMessage(poppedStatement),
+			}
 		}
 	}
 
@@ -199,6 +209,10 @@ export default class ServerGameNovel {
 		}
 
 		OutgoingNovelMessages.notifyAboutDialogStarted(player)
+		if (this.clientState.lastCue) {
+			OutgoingNovelMessages.notifyAboutLeftoverCue(player, this.clientState.lastCue)
+		}
+
 		const runner = new ServerGameNovelRunner(this.game, this.clientState.namespace)
 		runner.executeStatements(this.clientState.statements, player)
 	}
@@ -380,18 +394,7 @@ export class ServerGameNovelRunner {
 
 		switch (statement.type) {
 			case StatementType.SAY:
-				const getMessage = (statement: TenScriptStatementSelector<StatementType.SAY>): string => {
-					const filteredChildren = statement.children.filter(
-						(child) => child.type === StatementType.SAY
-					) as TenScriptStatementSelector<StatementType.SAY>[]
-					const childrenMessages = filteredChildren.map((child) => getMessage(child)).join('<br>')
-					if (childrenMessages) {
-						return `${statement.data}<br>${childrenMessages}`
-					}
-					return statement.data
-				}
-
-				const message = getMessage(statement)
+				const message = getSayStatementMessage(statement)
 				OutgoingNovelMessages.notifyAboutDialogCue(playerOrGroup, {
 					id: `cue:${uuid()}`,
 					text: message,
@@ -477,6 +480,17 @@ export class ServerGameNovelRunner {
 			OutgoingAnimationMessages.triggerAnimationForPlayers(players, ServerAnimation.delay(Time.minutes.toMilliseconds(60)))
 		}
 	}
+}
+
+const getSayStatementMessage = (statement: TenScriptStatementSelector<StatementType.SAY>): string => {
+	const filteredChildren = statement.children.filter(
+		(child) => child.type === StatementType.SAY
+	) as TenScriptStatementSelector<StatementType.SAY>[]
+	const childrenMessages = filteredChildren.map((child) => getSayStatementMessage(child)).join('<br>')
+	if (childrenMessages) {
+		return `${statement.data}<br>${childrenMessages}`
+	}
+	return statement.data
 }
 
 const throwIfParseFailed = (

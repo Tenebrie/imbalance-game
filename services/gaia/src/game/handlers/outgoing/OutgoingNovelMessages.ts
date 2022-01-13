@@ -33,6 +33,16 @@ export default {
 		OutgoingAnimationMessages.triggerAnimationForPlayers(players, ServerAnimation.delay(Time.minutes.toMilliseconds(60)))
 	},
 
+	notifyAboutLeftoverCue(playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup, cue: NovelCue): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) => {
+			playerInGame.player.sendGameMessage({
+				type: NovelMessageType.SAY,
+				data: new NovelCueMessage(cue),
+			})
+		})
+	},
+
 	notifyAboutDialogMove(playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup, moveAction: NovelMoveAction): void {
 		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
 		players.forEach((playerInGame) =>
