@@ -13,6 +13,7 @@ const novelModule = defineModule({
 
 	state: {
 		isActive: false as boolean,
+		isMuted: false as boolean,
 		cue: null as NovelCue | null,
 		responses: [] as NovelResponseMessage[],
 		activeCharacter: null as StoryCharacter | null,
@@ -25,6 +26,10 @@ const novelModule = defineModule({
 	mutations: {
 		setIsActive(state, value: boolean): void {
 			state.isActive = value
+		},
+
+		setIsMuted(state, value: boolean): void {
+			state.isMuted = value
 		},
 
 		setCue(state, value: NovelCue | null): void {
@@ -104,19 +109,20 @@ const novelModule = defineModule({
 				}, 1000)
 			}
 
+			commit.setIsMuted(false)
 			commit.setCue(args.cue)
 		},
 
 		addResponse(context, args: { response: NovelResponseMessage }): void {
 			const { commit } = moduleActionContext(context, novelModule)
 
+			commit.setIsMuted(false)
 			commit.addResponse(args.response)
 		},
 
 		reply(context, args: { response: NovelResponseMessage }): void {
 			const { state, commit } = moduleActionContext(context, novelModule)
 
-			console.log(state.responses)
 			commit.addDecayingResponses(
 				state.responses.map((response) => ({
 					...response,
@@ -136,12 +142,12 @@ const novelModule = defineModule({
 
 		setActiveCharacter(context, args: { character: StoryCharacter | null }): void {
 			const { commit } = moduleActionContext(context, novelModule)
+			commit.setIsMuted(false)
 			commit.setActiveCharacter(args.character)
 		},
 
 		continue(context): void {
 			const { state, getters, dispatch, rootState } = moduleActionContext(context, novelModule)
-			console.log(state.responses)
 			if (getters.currentCue && getters.currentCueText.length < getters.currentCue?.text.length) {
 				dispatch.skipCurrentCueAnimation()
 				OutgoingMessageHandlers.sendNovelSkipAnimation()
@@ -166,7 +172,6 @@ const novelModule = defineModule({
 				return
 			}
 
-			// Core.mainHandler.mainAnimationThread.skipCooldown()
 			Core.mainHandler.currentOpenAnimationThread.skipCooldown()
 		},
 

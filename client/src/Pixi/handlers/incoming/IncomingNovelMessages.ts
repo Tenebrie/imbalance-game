@@ -40,6 +40,9 @@ const IncomingNovelMessages: NovelMessageHandlers = {
 	[NovelMessageType.END]: () => {
 		store.commit.novel.setIsActive(false)
 	},
+	[NovelMessageType.MUTE]: () => {
+		store.commit.novel.setIsMuted(true)
+	},
 	[NovelMessageType.SKIP_CUE_ANIMATION]: () => {
 		store.dispatch.novel.skipCurrentCueAnimation()
 	},

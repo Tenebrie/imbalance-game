@@ -79,6 +79,7 @@ export default class ServerGameNovel {
 		}
 
 		this.clearClientState()
+		OutgoingNovelMessages.notifyAboutDialogMuted(this.player)
 
 		this.executeInlineChapter(id)
 		this.executeScriptChapter(id)
@@ -214,7 +215,7 @@ export interface ServerGameNovelCreator {
 	exec(script: string | (() => string)): ServerGameNovelCreator
 	chapter(chapterId: string | number, callback: () => string): ServerGameNovelCreator
 	continue(chapterId: string | number, callback: (novel: ServerGameNovelCreator) => ServerGameNovelCreator): ServerGameNovelCreator
-	closingChapter(chapterId: string | number, callback: () => void): ServerGameNovelCreator
+	actionChapter(chapterId: string | number, callback: () => void): ServerGameNovelCreator
 }
 
 export class ServerGameImmediateNovelCreator implements ServerGameNovelCreator {
@@ -257,7 +258,7 @@ export class ServerGameImmediateNovelCreator implements ServerGameNovelCreator {
 		return this
 	}
 
-	public closingChapter(chapterId: string | number, callback: () => void): ServerGameImmediateNovelCreator {
+	public actionChapter(chapterId: string | number, callback: () => void): ServerGameImmediateNovelCreator {
 		return this.chapter(chapterId, () => {
 			callback()
 			return ``
@@ -324,7 +325,7 @@ export class ServerGameDelayedNovelCreator implements ServerGameNovelCreator {
 		return this
 	}
 
-	public closingChapter(chapterId: string | number, callback: () => void): ServerGameDelayedNovelCreator {
+	public actionChapter(chapterId: string | number, callback: () => void): ServerGameDelayedNovelCreator {
 		return this.chapter(chapterId, () => {
 			callback()
 			return ``

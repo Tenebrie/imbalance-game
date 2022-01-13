@@ -615,7 +615,7 @@ export default class RulesetCampfire extends ServerRuleset {
 					--> ${NiraChapters.FinishGame}
 				`
 				)
-				.closingChapter(NiraChapters.FinishGame, () => {
+				.actionChapter(NiraChapters.FinishGame, () => {
 					game.playerFinish(game.getHumanGroup(), GameVictoryCondition.STORY_TRIGGER)
 				})
 		}

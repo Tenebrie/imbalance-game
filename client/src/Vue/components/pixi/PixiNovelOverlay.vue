@@ -65,6 +65,7 @@ export default defineComponent({
 		const decayingResponses = computed(() => store.state.novel.decayingResponses)
 
 		const isDisplayed = computed(() => store.state.novel.isActive)
+		const isMuted = computed(() => store.state.novel.isMuted)
 		const activeCharacter = computed<StoryCharacter | null>(() => store.state.novel.activeCharacter)
 		const lastActiveCharacter = ref<StoryCharacter | null>(null)
 
@@ -83,6 +84,7 @@ export default defineComponent({
 
 		const overlayClass = computed<Record<string, boolean>>(() => ({
 			visible: isDisplayed.value,
+			muted: isMuted.value,
 		}))
 
 		const characterArtClass = computed<Record<string, boolean>>(() => {
@@ -161,6 +163,10 @@ export default defineComponent({
 	&.visible {
 		pointer-events: all;
 		opacity: 1;
+	}
+
+	&.visible.muted {
+		opacity: 0;
 	}
 
 	.bottom-smokescreen {

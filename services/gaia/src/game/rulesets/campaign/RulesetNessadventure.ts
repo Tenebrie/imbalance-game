@@ -104,7 +104,7 @@ export default class RulesetNessadventure extends ServerRuleset {
 						--> Gift
 					`
 					)
-					.closingChapter('Gift', onNessaGiftAccepted)
+					.actionChapter('Gift', onNessaGiftAccepted)
 			)
 
 		const onNessaGiftAccepted = (): void => {
@@ -197,7 +197,7 @@ export default class RulesetNessadventure extends ServerRuleset {
 							--> DummyLevelUp
 					`
 					)
-					.closingChapter('DummyLevelUp', onDummyLevelUp)
+					.actionChapter('DummyLevelUp', onDummyLevelUp)
 			)
 
 		const onDummyLevelUp = (): ServerGameImmediateNovelCreator => {
@@ -240,7 +240,7 @@ export default class RulesetNessadventure extends ServerRuleset {
 						--> Continue
 						`
 					)
-					.closingChapter('Continue', () => {
+					.actionChapter('Continue', () => {
 						Keywords.addCardToHand.for(owner).fromConstructor(HeroNotEleyas)
 						Keywords.addCardToHand.for(owner).fromConstructor(HeroAura)
 						for (let i = 0; i < 2; i++) {
@@ -274,7 +274,7 @@ export default class RulesetNessadventure extends ServerRuleset {
 						@ [Continue] -> Continue
 					`
 					)
-					.closingChapter('Continue', () => {
+					.actionChapter('Continue', () => {
 						for (let i = 0; i < 10; i++) {
 							Keywords.addCardToHand.for(owner).fromConstructor(UnitEleyasDoppelganger)
 						}
@@ -299,7 +299,7 @@ export default class RulesetNessadventure extends ServerRuleset {
 						[Continue] -> Continue
 						`
 					)
-					.closingChapter('Continue', () => {
+					.actionChapter('Continue', () => {
 						for (let i = 0; i < 10; i++) {
 							Keywords.addCardToHand.for(owner).fromConstructor(UnitCorgiGravedigger)
 						}
@@ -326,12 +326,12 @@ export default class RulesetNessadventure extends ServerRuleset {
 						@ Surprise me! -> Surprise
 						`
 					)
-					.closingChapter('Corgis', () => {
+					.actionChapter('Corgis', () => {
 						for (let i = 0; i < 10; i++) {
 							Keywords.addCardToHand.for(owner).fromConstructor(UnitCorgiGravedigger)
 						}
 					})
-					.closingChapter('Doppelgangers', () => {
+					.actionChapter('Doppelgangers', () => {
 						for (let i = 0; i < 10; i++) {
 							Keywords.addCardToHand.for(owner).fromConstructor(UnitEleyasDoppelganger)
 						}
@@ -356,7 +356,7 @@ export default class RulesetNessadventure extends ServerRuleset {
 								--> Continue
 							`
 							)
-							.closingChapter('Continue', () => {
+							.actionChapter('Continue', () => {
 								Keywords.addCardToHand.for(owner).fromConstructor(HeroChallengeLegendaryExplorer0)
 								for (let i = 0; i < 3; i++) {
 									Keywords.addCardToHand.for(owner).fromConstructor(UnitChallengeScarredExplorer)

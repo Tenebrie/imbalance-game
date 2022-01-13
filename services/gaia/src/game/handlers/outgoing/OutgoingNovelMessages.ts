@@ -127,6 +127,16 @@ export default {
 		)
 	},
 
+	notifyAboutDialogMuted(playerOrGroup: ServerPlayerInGame | ServerPlayerSpectator | ServerPlayerGroup): void {
+		const players = playerOrGroup instanceof ServerPlayerGroup ? playerOrGroup.players : [playerOrGroup]
+		players.forEach((playerInGame) =>
+			playerInGame.player.sendGameMessage({
+				type: NovelMessageType.MUTE,
+				data: null,
+			})
+		)
+	},
+
 	notifyAboutCueAnimationSkipSync(players: (ServerPlayerInGame | ServerPlayerSpectator)[]): void {
 		players.forEach((playerInGame) =>
 			playerInGame.player.sendGameMessage({

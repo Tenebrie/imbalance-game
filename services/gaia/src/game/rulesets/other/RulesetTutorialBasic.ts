@@ -81,7 +81,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				--> AddHealer
 			`
 			)
-			.closingChapter('AddHealer', () => {
+			.actionChapter('AddHealer', () => {
 				Keywords.addCardToHand.for(game.getHumanGroup().players[0]).fromConstructor(TutorialUnitPriestessOfAedine)
 			})
 
@@ -130,7 +130,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						> You'll see an overlay with the card description, any other related cards and other information.
 			`
 			)
-			.closingChapter('DropCards', () => {
+			.actionChapter('DropCards', () => {
 				Keywords.addCardToHand.for(game.getSinglePlayer()).fromConstructor(TutorialHeroTroviar)
 				Keywords.addCardToHand.for(game.getSinglePlayer()).fromConstructor(TutorialUnitEagleEyeArcher)
 				Keywords.addCardToHand.for(game.getSinglePlayer()).fromConstructor(TutorialUnitEagleEyeArcher)
@@ -163,7 +163,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 				--> Setup
 			`
 			)
-			.closingChapter('Setup', () => {
+			.actionChapter('Setup', () => {
 				const player = game.getSinglePlayer()
 				Keywords.addCardToHand.for(player).fromConstructor(TutorialUnitStormElemental)
 				player.cardHand.addSpell(new TutorialSpellShadowSpark(game))
@@ -207,7 +207,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					> Alright. Then feel free to just end the round right now.
 			`
 			)
-			.closingChapter('Spellsling', () => {
+			.actionChapter('Spellsling', () => {
 				const player = game.getSinglePlayer()
 				Keywords.addCardToHand.for(player).fromConstructor(TutorialUnitStormElemental)
 				Keywords.addCardToHand.for(player).fromConstructor(TutorialUnitStormElemental)
@@ -244,7 +244,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 					--> Finish
 					`
 					)
-					.closingChapter('Finish', () => {
+					.actionChapter('Finish', () => {
 						this.finalDialogShown = true
 						game.playerFinish(game.getHumanGroup(), victoryCondition)
 					})
@@ -312,7 +312,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> End
 					`
 					)
-					.closingChapter('End', () => {
+					.actionChapter('End', () => {
 						this.finalDialogShown = true
 						game.playerFinish(game.getBotPlayer().group, GameVictoryCondition.STORY_TRIGGER)
 					})
@@ -418,8 +418,8 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 							--> Denial
 					`
 					)
-					.closingChapter('Agreement', () => (agreedToHelp = true))
-					.closingChapter('Denial', () => (thirdDisobedienceTriggered = true))
+					.actionChapter('Agreement', () => (agreedToHelp = true))
+					.actionChapter('Denial', () => (thirdDisobedienceTriggered = true))
 			})
 
 		this.createHook(GameHookType.CARD_PLAYED)
@@ -444,7 +444,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Denial
 					`
 					)
-					.closingChapter('Denial', () => {
+					.actionChapter('Denial', () => {
 						agreedToHelp = false
 						thirdDisobedienceTriggered = true
 					})
@@ -532,7 +532,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Close
 					`
 					)
-					.closingChapter('Close', () => {
+					.actionChapter('Close', () => {
 						this.finalDialogShown = true
 						game.playerFinish(game.getHumanGroup(), GameVictoryCondition.STORY_TRIGGER)
 					})
@@ -584,7 +584,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Reset
 					`
 					)
-					.closingChapter('Reset', () => {
+					.actionChapter('Reset', () => {
 						game.board.getAllUnits().forEach((unit) => {
 							game.animation.thread(() => {
 								game.board.destroyUnit(unit)
@@ -631,7 +631,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Reset
 					`
 					)
-					.closingChapter('Reset', () => {
+					.actionChapter('Reset', () => {
 						game.board.getAllUnits().forEach((unit) => {
 							game.animation.thread(() => {
 								game.board.destroyUnit(unit)
@@ -680,7 +680,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Reset
 					`
 					)
-					.closingChapter('Reset', () => {
+					.actionChapter('Reset', () => {
 						game.board.getAllUnits().forEach((unit) => {
 							game.animation.thread(() => {
 								game.board.destroyUnit(unit)
@@ -724,7 +724,7 @@ export default class RulesetTutorialBasic extends ServerRuleset {
 						--> Reset
 					`
 					)
-					.closingChapter('Reset', () => {
+					.actionChapter('Reset', () => {
 						game.board.getAllUnits().forEach((unit) => {
 							game.animation.thread(() => {
 								game.board.destroyUnit(unit)

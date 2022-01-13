@@ -52,18 +52,6 @@ export default defineComponent({
 		const parsedTooltip = computed<ParsedTooltip | null>(() => {
 			const baseText = props.tooltip.text
 			const sanitizedText = snakeToCamelCase(baseText.trim().replace(/[:,]/g, '').replace(/\s/g, '_'))
-			if (baseText.includes('Void')) {
-				console.log(sanitizedText)
-
-				console.log('a')
-				const card = store.state.editor.cardLibrary.find((c) => c.class === 'unitVoidPortal')!
-				console.log('b')
-				const cardName = snakeToCamelCase(Localization.getCardName(card).replace(/[sS]/g, '').replace(/\s/g, '_'))
-				console.log('c')
-				const cardTitle = snakeToCamelCase((Localization.getCardTitle(card) || '').replace(/\s/g, '_'))
-				const fullName = snakeToCamelCase(`${cardName}_${cardTitle}`)
-				console.log(fullName)
-			}
 
 			const matchingCard = store.state.editor.cardLibrary.find((card) => {
 				const sanitizedCardText = snakeToCamelCase(sanitizedText.replace(/[sS]/g, ''))

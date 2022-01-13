@@ -374,7 +374,7 @@ describe('ServerGameNovel', () => {
 					--> Chapter
 				`
 				)
-				.closingChapter('Chapter', () => {
+				.actionChapter('Chapter', () => {
 					callbackExecuted += 1
 				})
 		})
