@@ -98,16 +98,9 @@ const novelModule = defineModule({
 
 	actions: {
 		setCue(context, args: { cue: NovelCueMessage }): void {
-			const { state, commit } = moduleActionContext(context, novelModule)
+			const { commit, dispatch } = moduleActionContext(context, novelModule)
 
-			if (state.cue) {
-				commit.addDecayingCue(state.cue)
-				const id = state.cue.id
-
-				setTimeout(() => {
-					commit.removeDecayingCue(id)
-				}, 1000)
-			}
+			dispatch.decayCurrentCue()
 
 			commit.setIsMuted(false)
 			commit.setCue(args.cue)
@@ -173,6 +166,23 @@ const novelModule = defineModule({
 			}
 
 			Core.mainHandler.currentOpenAnimationThread.skipCooldown()
+		},
+
+		decayCurrentCue(context): void {
+			const { state, commit } = moduleActionContext(context, novelModule)
+
+			if (!state.cue) {
+				return
+			}
+
+			commit.addDecayingCue(state.cue)
+			const id = state.cue.id
+
+			setTimeout(() => {
+				commit.removeDecayingCue(id)
+			}, 1000)
+
+			commit.setCue(null)
 		},
 
 		startPrintTimer(context): void {

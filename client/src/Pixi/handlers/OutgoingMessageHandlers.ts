@@ -7,6 +7,7 @@ import { GenericActionMessageType, SystemMessageType } from '@shared/models/netw
 
 import RenderedGameBoardRow from '@/Pixi/cards/RenderedGameBoardRow'
 import Core from '@/Pixi/Core'
+import store from '@/Vue/store'
 
 export default {
 	sendUnitCardPlayed(card: Card, gameBoardRow: RenderedGameBoardRow, unitIndex: number): void {
@@ -74,6 +75,7 @@ export default {
 	},
 
 	sendNovelContinue(): void {
+		store.dispatch.novel.decayCurrentCue()
 		Core.sendMessage({
 			type: GenericActionMessageType.NOVEL_CONTINUE,
 			data: null,

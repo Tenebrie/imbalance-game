@@ -57,6 +57,8 @@ export default defineComponent({
 	setup() {
 		onMounted(() => window.addEventListener('keydown', onKeyDown))
 		onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
+		onMounted(() => window.addEventListener('keyup', onKeyUp))
+		onUnmounted(() => window.removeEventListener('keyup', onKeyUp))
 
 		const displayedCueText = computed(() => store.getters.novel.currentCueText)
 		const currentCue = computed(() => store.getters.novel.currentCue)
@@ -68,6 +70,8 @@ export default defineComponent({
 		const isMuted = computed(() => store.state.novel.isMuted)
 		const activeCharacter = computed<StoryCharacter | null>(() => store.state.novel.activeCharacter)
 		const lastActiveCharacter = ref<StoryCharacter | null>(null)
+
+		const spacebarDown = ref<boolean>(false)
 
 		watch(
 			() => [activeCharacter.value],
@@ -85,6 +89,7 @@ export default defineComponent({
 		const overlayClass = computed<Record<string, boolean>>(() => ({
 			visible: isDisplayed.value,
 			muted: isMuted.value,
+			skipping: spacebarDown.value,
 		}))
 
 		const characterArtClass = computed<Record<string, boolean>>(() => {
@@ -101,6 +106,14 @@ export default defineComponent({
 		const onKeyDown = (event: KeyboardEvent): void => {
 			if (!event.defaultPrevented && event.key === ' ') {
 				showNextCue()
+				spacebarDown.value = true
+				// setTimeout(() => (spacebarDown.value = false), 50)
+			}
+		}
+
+		const onKeyUp = (event: KeyboardEvent): void => {
+			if (!event.defaultPrevented && event.key === ' ') {
+				spacebarDown.value = false
 			}
 		}
 
@@ -247,6 +260,13 @@ export default defineComponent({
 		}
 	}
 
+	&:active .controls .cue-container,
+	&.skipping .controls .cue-container {
+		border-top: solid 1px $COLOR-SECONDARY;
+		border-bottom: solid 1px $COLOR-SECONDARY;
+		transition: border 0s;
+	}
+
 	.controls {
 		z-index: 1;
 		width: 100%;
@@ -283,6 +303,7 @@ export default defineComponent({
 			width: 100%;
 			height: 164px;
 			background: rgba(darken($COLOR-PRIMARY, 20), 0.75);
+			transition: border 0.3s;
 			border-top: solid 1px #ddd;
 			border-bottom: solid 1px #ddd;
 
