@@ -12,6 +12,7 @@ import RenderedUnit from '@/Pixi/cards/RenderedUnit'
 import Core from '@/Pixi/Core'
 import RenderedBuff from '@/Pixi/models/buffs/RenderedBuff'
 import store from '@/Vue/store'
+import gameObjectiveStore from '@/Vue/store/GameObjectiveStore'
 
 const IncomingGameSyncMessages: GameSyncMessageHandlers = {
 	[GameSyncMessageType.PLAYER_SLOTS]: (data: PlayersInLobbyMessage) => {
@@ -21,6 +22,10 @@ const IncomingGameSyncMessages: GameSyncMessageHandlers = {
 	[GameSyncMessageType.START]: (data: GameStartMessage) => {
 		Core.board.setInverted(data.isBoardInverted)
 		store.dispatch.gameStateModule.startGame()
+		gameObjectiveStore.commit.setObjective(data.objective)
+		setTimeout(() => {
+			gameObjectiveStore.commit.show()
+		}, 1000)
 	},
 
 	[GameSyncMessageType.PHASE_ADVANCE]: (data: GameTurnPhase) => {

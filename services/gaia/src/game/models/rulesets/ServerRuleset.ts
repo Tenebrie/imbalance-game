@@ -6,6 +6,7 @@ import RulesetCategory from '@shared/enums/RulesetCategory'
 import RulesetFeature from '@shared/enums/RulesetFeature'
 import Ruleset from '@shared/models/ruleset/Ruleset'
 import { RulesetConstants } from '@shared/models/ruleset/RulesetConstants'
+import { RulesetObjective } from '@shared/models/ruleset/RulesetObjectiveLocalization'
 import { enumToArray, forEachInEnum } from '@shared/Utils'
 import { CardConstructor } from '@src/game/libraries/CardLibrary'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
@@ -76,6 +77,7 @@ export abstract class ServerRuleset implements Ruleset {
 
 	public state: Record<string, any> = {}
 	public constants: RulesetConstants
+	public objective: RulesetObjective | null = null
 
 	public slotsBuilder: RulesetSlotsBuilder
 	public boardBuilder: RulesetBoardBuilder | null = null
@@ -185,6 +187,10 @@ export abstract class ServerRuleset implements Ruleset {
 		const builder = new RulesetChainBuilder()
 		this.chainBuilders.push(builder)
 		return builder
+	}
+
+	protected createObjective(objective: RulesetObjective): void {
+		this.objective = objective
 	}
 
 	protected createCallback(event: GameEventType.GAME_CREATED): EventSubscription<GameSetupEventArgs>

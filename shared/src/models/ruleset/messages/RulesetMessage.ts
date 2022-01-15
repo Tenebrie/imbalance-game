@@ -2,17 +2,19 @@ import GameMode from '../../../enums/GameMode'
 import RulesetCategory from '../../../enums/RulesetCategory'
 import Ruleset from '../Ruleset'
 import { RulesetConstants } from '../RulesetConstants'
+import { RulesetObjective } from '../RulesetObjectiveLocalization'
 import RulesetSlots from '../RulesetSlots'
 
 export default class RulesetMessage {
-	class: string
-	gameMode: GameMode
-	category: RulesetCategory
-	sortPriority: number
-	playerDeckRequired: boolean
-	slots: RulesetSlots
+	public readonly class: string
+	public readonly gameMode: GameMode
+	public readonly category: RulesetCategory
+	public readonly sortPriority: number
+	public readonly playerDeckRequired: boolean
+	public readonly slots: RulesetSlots
 
-	constants: RulesetConstants
+	public readonly constants: RulesetConstants
+	public readonly objective: RulesetObjective | null
 
 	constructor(ruleset: Ruleset) {
 		this.class = ruleset.class
@@ -24,5 +26,6 @@ export default class RulesetMessage {
 		this.constants = {
 			...ruleset.constants,
 		}
+		this.objective = ruleset.objective
 	}
 }

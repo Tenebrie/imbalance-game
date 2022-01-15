@@ -190,7 +190,7 @@ export default class ServerGame implements SourceGame {
 			})
 
 		this.players.forEach((playerGroup) => {
-			OutgoingMessageHandlers.notifyAboutGameStart(playerGroup, this.players.indexOf(playerGroup) === 1)
+			OutgoingMessageHandlers.notifyAboutGameStart(playerGroup, this.ruleset, this.players.indexOf(playerGroup) === 1)
 		})
 
 		this.resetBoardOwnership()

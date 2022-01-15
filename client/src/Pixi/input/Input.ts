@@ -26,6 +26,7 @@ import HoveredCard from '@/Pixi/models/HoveredCard'
 import { getRenderScale } from '@/Pixi/renderer/RendererUtils'
 import { boopTheBoard, flushBoardBoopPreps, getCardInsertIndex, getDistance, normalizeBoardRowIndex, scrollBoopColor } from '@/utils/Utils'
 import store from '@/Vue/store'
+import gameObjectiveStore from '@/Vue/store/GameObjectiveStore'
 import InspectedCardStore from '@/Vue/store/InspectedCardStore'
 
 export const LEFT_MOUSE_BUTTON = 0
@@ -235,6 +236,8 @@ export default class Input {
 			return
 		}
 
+		gameObjectiveStore.commit.hide()
+
 		if (event.button === LEFT_MOUSE_BUTTON && this.grabbedCard) {
 			this.useGrabbedCard()
 			return
@@ -286,6 +289,7 @@ export default class Input {
 
 	private onTouchStart(event: TouchEvent) {
 		this.onTouchMove(event)
+		gameObjectiveStore.commit.hide()
 
 		if (this.inspectedCard) {
 			InspectedCardStore.dispatch.undoCard()

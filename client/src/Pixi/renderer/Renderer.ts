@@ -735,20 +735,6 @@ export default class Renderer {
 			}
 		}
 
-		// /* Unit is hostile and has a valid order */
-		// if (
-		// 	!Core.input.forcedTargetingMode &&
-		// 	!Core.input.grabbedCard &&
-		// 	unit.owner === Core.opponent &&
-		// 	Core.board.getValidOrdersForUnit(unit).length > 0
-		// ) {
-		// 	if (hoveredCard === card) {
-		// 		return { color: 0xff0000, alpha: 0.75 }
-		// 	} else {
-		// 		return { color: 0xff0000, alpha: 0.5 }
-		// 	}
-		// }
-
 		/* Fallback tint */
 		if (!Core.input.forcedTargetingMode && Core.board.getValidOrdersForUnit(unit).length === 0 && hoveredCard === card) {
 			return { color: 0xffffff, alpha: 0.25 }

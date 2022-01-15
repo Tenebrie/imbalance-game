@@ -156,7 +156,6 @@ const gameStateModule = defineModule({
 		startGame(context): void {
 			const { commit } = moduleActionContext(context, gameStateModule)
 			commit.setGameStatus(ClientGameStatus.IN_PROGRESS)
-			console.info('Game started!')
 		},
 
 		winGame(context): void {

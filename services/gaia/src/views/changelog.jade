@@ -1,479 +1,480 @@
 extends layout
 
 block content
-    .version-description
-        h1.version 0.18
-        span.date ??.12.2021
-        h2 Feature updates
-        ul
-        	li Added support for shared card artworks
-            li Improved spectator mode
-            li Fixed reconnecting into Novel mode
+	.version-description
+		h1.version 0.18
+		span.date ??.12.2021
+		h2 Feature updates
+		ul
+			li Added new info window for scenario objectives
+			li Added support for shared card artworks
+			li Improved spectator mode
+			li Fixed reconnecting into Novel mode
 
-        h2 Visual updates
-        ul
-        	li Tutorial cards now have proper artworks!
-            li Updated visuals for Novel mode
+		h2 Visual updates
+		ul
+			li Tutorial cards now have proper artworks!
+			li Updated visuals for Novel mode
 
-    .version-description
-        h1.version 0.17.1
-        span.date 28.10.2021
-        h2 System reworks
-        ul
-            li Improved deck/graveyard browsing experience
-        h2 Bugfixes
-        ul
-            li Fixed a bug in the tutorial scenario
-            li Covered the tutorial scenario with many tests
+	.version-description
+		h1.version 0.17.1
+		span.date 28.10.2021
+		h2 System reworks
+		ul
+			li Improved deck/graveyard browsing experience
+		h2 Bugfixes
+		ul
+			li Fixed a bug in the tutorial scenario
+			li Covered the tutorial scenario with many tests
 
-    .version-description
-        h1.version 0.17 - The Realm Reworked
-        span.date 25.10.2021
-        h2 System reworks
-        ul
-            li Client-server communication has been reworked
-            li Game traffic is now better optimized
-            li Novel/dialog system has been reworked
-            li Popup notification system has been reworked
-        h2 Feature updates
-        ul
-            li Workshop now allows custom artwork uploading
-            li Workshop is now able to load existing card data
-            li Added Feedback page
-            li Improved game error reporting
-        h2 Content updates
-        ul
-            li Tutorial scenario
-            li Multiple new and reworked cards
+	.version-description
+		h1.version 0.17 - The Realm Reworked
+		span.date 25.10.2021
+		h2 System reworks
+		ul
+			li Client-server communication has been reworked
+			li Game traffic is now better optimized
+			li Novel/dialog system has been reworked
+			li Popup notification system has been reworked
+		h2 Feature updates
+		ul
+			li Workshop now allows custom artwork uploading
+			li Workshop is now able to load existing card data
+			li Added Feedback page
+			li Improved game error reporting
+		h2 Content updates
+		ul
+			li Tutorial scenario
+			li Multiple new and reworked cards
 
-    .version-description
-        h1.version 0.16 - Tech injection
-        span.date 25.08.2021
-        h2 New game mode
-        ul
-            li Co-op play vs AI
-        h2 Feature changes
-        ul
-            li Added cooperative play support
-            li Added guest login support
-            li Added support for Ruleset API
-            li Improved and standardized the card play and effect resolution stack/queue behaviour
-            li Added support for cards targeting a specific board position
-            li Improved card library filters behaviour
-            li Spells do not require being pulled onto the board row to be played
-            li Improved card color coding and tinting behaviour
-            li Added faster animation hotkeys
-            li Improved in-game escape menu user experience
-            li Improved handling of abandoned/bugged games
-        h2 Visual updates
-        ul
-            li Main menu and editor UX have been updated and improved
-            li The following cards have received custom-made temporary artworks:
-            ul
-                li Aura, The Golden Hawk
-                li Metrearte, The Copycat
-                li Zamarath, The Protector
-                li Pozoga, The Arsonist
-                li Cultist of Areddon
-                li Eagle Eye Archer
-                li Charging Knight (now known as Charging Steed)
-                li Stone Elemental
-                li Wooden Palisade
-                li Crop Field
-                li Wounded Veteran
-                li Master Swordsmith
-                li Oracle of Light
-                li Aurienne, The Shield of Faith
-                li Winged Shieldmaiden
-                li Target Dummy (+ variations)
-        h2 Ruleset changes
-        ul
-            li Deck faction restrictions are now enforced
-            li Player's turn will now automatically end after a unit card is played
-            li Temporary cards are now automatically played when drawn
-        h2 Developer experience changes
-        ul
-            li Added functionality to upload, crop and install card artworks
-            li Added quick access button to special dev ruleset
-            li Added quick restart, reconnect, surrender and disconnect hotkeys
+	.version-description
+		h1.version 0.16 - Tech injection
+		span.date 25.08.2021
+		h2 New game mode
+		ul
+			li Co-op play vs AI
+		h2 Feature changes
+		ul
+			li Added cooperative play support
+			li Added guest login support
+			li Added support for Ruleset API
+			li Improved and standardized the card play and effect resolution stack/queue behaviour
+			li Added support for cards targeting a specific board position
+			li Improved card library filters behaviour
+			li Spells do not require being pulled onto the board row to be played
+			li Improved card color coding and tinting behaviour
+			li Added faster animation hotkeys
+			li Improved in-game escape menu user experience
+			li Improved handling of abandoned/bugged games
+		h2 Visual updates
+		ul
+			li Main menu and editor UX have been updated and improved
+			li The following cards have received custom-made temporary artworks:
+			ul
+				li Aura, The Golden Hawk
+				li Metrearte, The Copycat
+				li Zamarath, The Protector
+				li Pozoga, The Arsonist
+				li Cultist of Areddon
+				li Eagle Eye Archer
+				li Charging Knight (now known as Charging Steed)
+				li Stone Elemental
+				li Wooden Palisade
+				li Crop Field
+				li Wounded Veteran
+				li Master Swordsmith
+				li Oracle of Light
+				li Aurienne, The Shield of Faith
+				li Winged Shieldmaiden
+				li Target Dummy (+ variations)
+		h2 Ruleset changes
+		ul
+			li Deck faction restrictions are now enforced
+			li Player's turn will now automatically end after a unit card is played
+			li Temporary cards are now automatically played when drawn
+		h2 Developer experience changes
+		ul
+			li Added functionality to upload, crop and install card artworks
+			li Added quick access button to special dev ruleset
+			li Added quick restart, reconnect, surrender and disconnect hotkeys
 
-    .version-description
-        h1.version 0.15.2 - UX hotfix
-        span.date 20.01.2021
-        h2 Resolved issues
-        ul
-            li Added some clarity about waiting for an opponent when creating a game
-            li Added Discord and Rules links to in-game menu
-            li Improved UX for some popups
-            li Added message to settings clarifying that more options are available outside of the game
-            li Fixed old project name displayed in the ruleset
+	.version-description
+		h1.version 0.15.2 - UX hotfix
+		span.date 20.01.2021
+		h2 Resolved issues
+		ul
+			li Added some clarity about waiting for an opponent when creating a game
+			li Added Discord and Rules links to in-game menu
+			li Improved UX for some popups
+			li Added message to settings clarifying that more options are available outside of the game
+			li Fixed old project name displayed in the ruleset
 
-    .version-description
-        h1.version 0.15 - Workshop update
-        span.date 17.01.2021
-        h2 Feature changes
-        ul
-            li Added simple version of card workshop
-            li All players now get a starting deck
+	.version-description
+		h1.version 0.15 - Workshop update
+		span.date 17.01.2021
+		h2 Feature changes
+		ul
+			li Added simple version of card workshop
+			li All players now get a starting deck
 
-        h1.version 0.14 - Pre-Anniversary update
-        span.date 15.01.2021
-        h2 Feature changes
-        ul
-            li Added cards resolution order priority:
-            ol
-                li Current player > Opponent > System
-                li Board > Hand > Deck > Graveyard
-                li Front row > Center row > Back row
-                li Unit on the left > Unit on the right
-            li Made the board boopable
-        h2 Visual updates
-        ul
-            li Added unit destruction effect
-            li Improved end-of-turn and end-of-round visual feedback
+		h1.version 0.14 - Pre-Anniversary update
+		span.date 15.01.2021
+		h2 Feature changes
+		ul
+			li Added cards resolution order priority:
+			ol
+				li Current player > Opponent > System
+				li Board > Hand > Deck > Graveyard
+				li Front row > Center row > Back row
+				li Unit on the left > Unit on the right
+			li Made the board boopable
+		h2 Visual updates
+		ul
+			li Added unit destruction effect
+			li Improved end-of-turn and end-of-round visual feedback
 
-    .version-description
-        h1.version 0.13 - Administration update
-        span.date 09.01.2021
-        h2 Ruleset changes
-        ul
-            li Increased number of cards in the deck
-            ul
-                li Epic: 8 to 10
-                li Common 15 to 21
-        h2 Feature updates
-        ul
-            li Deck leader is now visible in game
-            li Greatly improved debugging and administration tools
-            li Improved card sorting behaviour for selecting a card out of provided options
+	.version-description
+		h1.version 0.13 - Administration update
+		span.date 09.01.2021
+		h2 Ruleset changes
+		ul
+			li Increased number of cards in the deck
+			ul
+				li Epic: 8 to 10
+				li Common 15 to 21
+		h2 Feature updates
+		ul
+			li Deck leader is now visible in game
+			li Greatly improved debugging and administration tools
+			li Improved card sorting behaviour for selecting a card out of provided options
 
-    .version-description
-        h1.version 0.12 - Eventful update
-        span.date 26.12.2020
-        h2 Content updates
-        ul
-            li Added a bunch of new cards
-            li Added support for buff dispelling
-        h2 Feature updates
-        ul
-            li Improved event resolution system
-            li Added ability to hide cards when choosing one of the options
-            li (Slightly) Improved compatibility with mobile devices
-            li Reworked buff system
-            li Added link to Discord server
+	.version-description
+		h1.version 0.12 - Eventful update
+		span.date 26.12.2020
+		h2 Content updates
+		ul
+			li Added a bunch of new cards
+			li Added support for buff dispelling
+		h2 Feature updates
+		ul
+			li Improved event resolution system
+			li Added ability to hide cards when choosing one of the options
+			li (Slightly) Improved compatibility with mobile devices
+			li Reworked buff system
+			li Added link to Discord server
 
-    .version-description
-        h1.version 0.11 - Smooth update
-        span.date 16.12.2020
-        h2 Ruleset changes
-        ul
-            li Maximum units per row increased from 10 to 11
-        h2 Content updates
-        ul
-            li Added an RNG-fiesta game mode
-            li Added AI difficulty levels
-            li Added multiple new cards
-        h2 Feature updates
-        ul
-            li Implemented game reconnection
-            li Implemented leader stat system
-            li Added basic administration features
-            li Added support for disabled user accounts
-            li Improved client responsiveness and game starting speed
+	.version-description
+		h1.version 0.11 - Smooth update
+		span.date 16.12.2020
+		h2 Ruleset changes
+		ul
+			li Maximum units per row increased from 10 to 11
+		h2 Content updates
+		ul
+			li Added an RNG-fiesta game mode
+			li Added AI difficulty levels
+			li Added multiple new cards
+		h2 Feature updates
+		ul
+			li Implemented game reconnection
+			li Implemented leader stat system
+			li Added basic administration features
+			li Added support for disabled user accounts
+			li Improved client responsiveness and game starting speed
 
-    .version-description
-        h1.version 0.10 - Mulligan update
-        span.date 10.10.2020
-        h2 Feature updates
-        ul
-            li Added card mulligan phase
-            li Added ability to see decks and graveyards
+	.version-description
+		h1.version 0.10 - Mulligan update
+		span.date 10.10.2020
+		h2 Feature updates
+		ul
+			li Added card mulligan phase
+			li Added ability to see decks and graveyards
 
-    .version-description
-        h1.version 0.9 - Tiny usability update
-        span.date 15.09.2020
-        h2 Feature updates
-        ul
-            li Added spectator mode support
-            li Added support for Google SSO
-            li Added ability to change account's username
-            li Added field validation on account registration
+	.version-description
+		h1.version 0.9 - Tiny usability update
+		span.date 15.09.2020
+		h2 Feature updates
+		ul
+			li Added spectator mode support
+			li Added support for Google SSO
+			li Added ability to change account's username
+			li Added field validation on account registration
 
-    .version-description
-        h1.version 0.8 - Extra clarity update
-        span.date 11.09.2020
-        h2 Feature updates
-        ul
-            li Added inspected card information screen
-            li Cards can now be inspected in deck editor mode
-            li Card buffs are now visible while in game
-            li Added related cards display
-            li Updated animation system
-            li Improved targeting text readability
-        h2 Gameplay updates
-        ul
-            li Increased the number of Epic cards in the deck from 6 to 8
-            li Players are now allowed to take up to 2 copies of an Epic card when building a deck
-        h2 Content updates
-        ul
-            li Added Void and Scroll cards for the Arcane faction
-            li Reworked Sparkling Spirit card
-            li Added a few extra cards
-        h2 Miscellaneous updates
-        ul
-            li Significantly increased card library loading speed
+	.version-description
+		h1.version 0.8 - Extra clarity update
+		span.date 11.09.2020
+		h2 Feature updates
+		ul
+			li Added inspected card information screen
+			li Cards can now be inspected in deck editor mode
+			li Card buffs are now visible while in game
+			li Added related cards display
+			li Updated animation system
+			li Improved targeting text readability
+		h2 Gameplay updates
+		ul
+			li Increased the number of Epic cards in the deck from 6 to 8
+			li Players are now allowed to take up to 2 copies of an Epic card when building a deck
+		h2 Content updates
+		ul
+			li Added Void and Scroll cards for the Arcane faction
+			li Reworked Sparkling Spirit card
+			li Added a few extra cards
+		h2 Miscellaneous updates
+		ul
+			li Significantly increased card library loading speed
 
-    .version-description
-        h1.version 0.7 - Audio-visual update
-        span.date 04.08.2020
-        h2 Feature updates
-        ul
-            li Added sound support
-            li Added particle effect support
-            li Accounts now use emails instead of usernames for user identification
-            li Usernames are no longer required to be unique
-            li Added basic game log support
-            li Added partial Russian localization support
-        h2 Gameplay updates
-        ul
-            li Cards with 'Adjacent unit' effects now only work on units on the same row
-        h2 Visual updates
-        ul
-            li Improved game view design
-            li Improved page layouts
-            li Improved deck editor and selection UX
-            li Unified action button design across pages
-        h2 Content updates
-        ul
-            li Added Valkyrie archetype cards
-            li Reworked Crystal archetype cards
-            li Reworked Gathering Storm archetype cards
-            li Added a few extra cards
+	.version-description
+		h1.version 0.7 - Audio-visual update
+		span.date 04.08.2020
+		h2 Feature updates
+		ul
+			li Added sound support
+			li Added particle effect support
+			li Accounts now use emails instead of usernames for user identification
+			li Usernames are no longer required to be unique
+			li Added basic game log support
+			li Added partial Russian localization support
+		h2 Gameplay updates
+		ul
+			li Cards with 'Adjacent unit' effects now only work on units on the same row
+		h2 Visual updates
+		ul
+			li Improved game view design
+			li Improved page layouts
+			li Improved deck editor and selection UX
+			li Unified action button design across pages
+		h2 Content updates
+		ul
+			li Added Valkyrie archetype cards
+			li Reworked Crystal archetype cards
+			li Reworked Gathering Storm archetype cards
+			li Added a few extra cards
 
-    .version-description
-        h1.version 0.6 - Development update
-        span.date 16.06.2020
-        h2 Feature updates
-        ul
-            li Improved deck editor UX
-            li Improved disabled card visuals
-        h2 Content updates
-        ul
-            li Added 3 new cards
-        h2 Technical updates
-        ul
-            li Move development environment to Docker
-            li Remove dependency on Heroku database for development
-            li Added simple README
+	.version-description
+		h1.version 0.6 - Development update
+		span.date 16.06.2020
+		h2 Feature updates
+		ul
+			li Improved deck editor UX
+			li Improved disabled card visuals
+		h2 Content updates
+		ul
+			li Added 3 new cards
+		h2 Technical updates
+		ul
+			li Move development environment to Docker
+			li Remove dependency on Heroku database for development
+			li Added simple README
 
-    .version-description
-        h1.version 0.5 - Deckbuilding update
-        span.date 08.06.2020
-        h2 Feature updates
-        ul
-            li Implemented deck selection
-            li Implemented deck editor
-            li Implemented armor system
-            li Improved bot round ending decision making
-        h2 Content updates
-        ul
-            li Added deck leaders
-            li Added a number of new cards
-            li Reworked Zamarath, The Protector
+	.version-description
+		h1.version 0.5 - Deckbuilding update
+		span.date 08.06.2020
+		h2 Feature updates
+		ul
+			li Implemented deck selection
+			li Implemented deck editor
+			li Implemented armor system
+			li Improved bot round ending decision making
+		h2 Content updates
+		ul
+			li Added deck leaders
+			li Added a number of new cards
+			li Reworked Zamarath, The Protector
 
-    .version-description
-        h1.version 0.4.1
-        span.date 26.04.2020
-        h2 Bug fixes
-        ul
-            li Fix cards being marked as unplayable in some cases
-            li Temporary cards now appear on the far right in the player's hand
+	.version-description
+		h1.version 0.4.1
+		span.date 26.04.2020
+		h2 Bug fixes
+		ul
+			li Fix cards being marked as unplayable in some cases
+			li Temporary cards now appear on the far right in the player's hand
 
-    .version-description
-        h1.version 0.4 - Spellcasting update
-        span.date 25.04.2020
-        h2 Ruleset changes
-        ul
-            li Round win condition changed to "Have higher combined unit power on the board"
-            li Winning the round deals only 1 Morale damage
-            li Starting player morale reduced to 2
-            li Players now have 10 Mana to use per round
-            li Spells now cost Mana to cast
-            li Spells are now separated into secondary card hand
-            li Summoning sickness is cancelled
-            li Players now start controlling their 3 home rows
-            li Rows can no longer be captured with a move action
-        h2 Feature updates
-        ul
-            li Implemented card buff system
-            li Implemented card selection system
-            li Card description text background now scales to match actual text
-            li Card description text now supports paragraphs
-            li Improved high-latency experience for playing cards from hand
-            li Improved unit attack animations
-            li Improved card descriptions
-            ul
-                li Added support for dynamic variables
-                li Added support for conditional rendering
-                li Added support for italic text
-        h2 Content updates
-        ul
-            li Most existing cards have been reworked to fit new balance
-            li New Arcane cards:
-            ul
-                li Zamarath, The Protector
-                li Kro'Lah, The Sky Guardian
-                li Garellion, The Conduit
-                li Sparkling Spirit
-                li Raging Elemental
-                li Arcane Elemental
-                li Flame Touch Crystal
-                li Stone Elemental
+	.version-description
+		h1.version 0.4 - Spellcasting update
+		span.date 25.04.2020
+		h2 Ruleset changes
+		ul
+			li Round win condition changed to "Have higher combined unit power on the board"
+			li Winning the round deals only 1 Morale damage
+			li Starting player morale reduced to 2
+			li Players now have 10 Mana to use per round
+			li Spells now cost Mana to cast
+			li Spells are now separated into secondary card hand
+			li Summoning sickness is cancelled
+			li Players now start controlling their 3 home rows
+			li Rows can no longer be captured with a move action
+		h2 Feature updates
+		ul
+			li Implemented card buff system
+			li Implemented card selection system
+			li Card description text background now scales to match actual text
+			li Card description text now supports paragraphs
+			li Improved high-latency experience for playing cards from hand
+			li Improved unit attack animations
+			li Improved card descriptions
+			ul
+				li Added support for dynamic variables
+				li Added support for conditional rendering
+				li Added support for italic text
+		h2 Content updates
+		ul
+			li Most existing cards have been reworked to fit new balance
+			li New Arcane cards:
+			ul
+				li Zamarath, The Protector
+				li Kro'Lah, The Sky Guardian
+				li Garellion, The Conduit
+				li Sparkling Spirit
+				li Raging Elemental
+				li Arcane Elemental
+				li Flame Touch Crystal
+				li Stone Elemental
 
-    .version-description
-        h1.version 0.3 - Targeting update
-        span.date 07.02.2020
-        h2 Ruleset changes
-        ul
-            li Units now perform issued orders immediately
-            li Deploy and skirmish phases combined into one
-            li Player now takes turns in order (no simultaneous turns)
-            li Played units are now unable to act on their first turn (summoning sickness)
-        h2 Feature updates
-        ul
-            li Added support for targeted on play effects
-            li Reworked card targeting system
-            li Implemented supporting (i.e. heals, buffs) and area-of-effect order targets
-            li Added support for variables in text description and targeting labels
-        h2 Content updates
-        ul
-            li New experimental cards:
-            ul
-                li Ignea, the Flameweaver
-                li Priestess of Aedine
-                li Vampire Fledgling
-                li Tree of Life
-                li The Four Horsemen of the Apocalypse
-            li Reworked cards:
-            ul
-                li Unfeeling Warrior
-                li Spinning Barbarian
-                li Rain of Fire
-        h2 Visual updates
-        ul
-            li When playing a card, valid rows are now highlighted
-            li When issuing a unit order, valid targets are now highlighted
-            li When issuing a unit order, some cards now have custom effect labels
-            li Cards in hand are now darkened when they can't be played
-            li Added background images
-            li Updated brand colors
-            li Added custom favicon
-        h2 Balance updates
-        h3 Charging Knight
-        ul
-            li Power increased from 26 to 35
-            li Attack increased from 4 to 6
-        h3 Satia
-        ul
-            li Power decreased from 22 to 14
-            li Attack reduced from 2 to 1
-        h3 Night Maiden
-        ul
-            li Power increased from 28 to 40
-            li Attack range reduced from 3 to 1
-        h3 Forest Scout
-        ul
-            li Power increased from 18 to 32
-            li Bonus damage increased from 5 to 10
-        h3 Mad Berserker
-        ul
-            li Power increased from 27 to 54
-        h3 Possessed Vulture
-        ul
-            li Base power increased from 20 to 26
-            li When killing an enemy, now also gains +1 Attack
-        h2 Bug fixes
-        ul
-            li Fixed games speeding up after leaving the game
-            li Fixed issues with first connection to the game
-            li Fixed Mad Berserker's effect not triggering
+	.version-description
+		h1.version 0.3 - Targeting update
+		span.date 07.02.2020
+		h2 Ruleset changes
+		ul
+			li Units now perform issued orders immediately
+			li Deploy and skirmish phases combined into one
+			li Player now takes turns in order (no simultaneous turns)
+			li Played units are now unable to act on their first turn (summoning sickness)
+		h2 Feature updates
+		ul
+			li Added support for targeted on play effects
+			li Reworked card targeting system
+			li Implemented supporting (i.e. heals, buffs) and area-of-effect order targets
+			li Added support for variables in text description and targeting labels
+		h2 Content updates
+		ul
+			li New experimental cards:
+			ul
+				li Ignea, the Flameweaver
+				li Priestess of Aedine
+				li Vampire Fledgling
+				li Tree of Life
+				li The Four Horsemen of the Apocalypse
+			li Reworked cards:
+			ul
+				li Unfeeling Warrior
+				li Spinning Barbarian
+				li Rain of Fire
+		h2 Visual updates
+		ul
+			li When playing a card, valid rows are now highlighted
+			li When issuing a unit order, valid targets are now highlighted
+			li When issuing a unit order, some cards now have custom effect labels
+			li Cards in hand are now darkened when they can't be played
+			li Added background images
+			li Updated brand colors
+			li Added custom favicon
+		h2 Balance updates
+		h3 Charging Knight
+		ul
+			li Power increased from 26 to 35
+			li Attack increased from 4 to 6
+		h3 Satia
+		ul
+			li Power decreased from 22 to 14
+			li Attack reduced from 2 to 1
+		h3 Night Maiden
+		ul
+			li Power increased from 28 to 40
+			li Attack range reduced from 3 to 1
+		h3 Forest Scout
+		ul
+			li Power increased from 18 to 32
+			li Bonus damage increased from 5 to 10
+		h3 Mad Berserker
+		ul
+			li Power increased from 27 to 54
+		h3 Possessed Vulture
+		ul
+			li Base power increased from 20 to 26
+			li When killing an enemy, now also gains +1 Attack
+		h2 Bug fixes
+		ul
+			li Fixed games speeding up after leaving the game
+			li Fixed issues with first connection to the game
+			li Fixed Mad Berserker's effect not triggering
 
-    .version-description
-        h1.version 0.2 - Clarity Update
-        span.date 27.01.2020
-        h2 Feature updates
-        ul
-            li Implemented card animation system
-            li Implemented simple AI
-            li Opponents card is now announced before being played
-            li Modified units stats are now color coded
-            li Attacked unit's power now represents incoming damage
-            li Unit attacks are now spread out over time
-            li Unit attacks now indicate the target with a projectile effect
-            li Implemented standard win condition
-            li Client will now automatically join created game
-            li HTTPS is now forced on the server
+	.version-description
+		h1.version 0.2 - Clarity Update
+		span.date 27.01.2020
+		h2 Feature updates
+		ul
+			li Implemented card animation system
+			li Implemented simple AI
+			li Opponents card is now announced before being played
+			li Modified units stats are now color coded
+			li Attacked unit's power now represents incoming damage
+			li Unit attacks are now spread out over time
+			li Unit attacks now indicate the target with a projectile effect
+			li Implemented standard win condition
+			li Client will now automatically join created game
+			li HTTPS is now forced on the server
 
-    .version-description
-        h1.version 0.1 - Usability Update
-        span.date 25.01.2020
-        h2 Ruleset changes
-        ul
-            li If any player loses their last controlled row, the day now ends immediately
-            li During end of the day, morale damage dealt is now determined by owned board rows (5 damage per controlled row)
-            li Player morale pool reduced from 100 to 50
-            li Drawn cards on day start reduced from 10 to 7
-        h2 Feature updates
-        ul
-            li Added out-of-game UI
-            li Cards in players' hands are now sorted (Units come before spells; heroes come before pawns; higher power cards come before lower power cards)
-            li Added in-game escape menu
-            li Game window will now resize properly
-            li Game textures are now fetched in the background before joining the game
-            li Improved game board layout
-            li Improved visuals for turn end button
-            li Removed unnecessary design elements from spell cards
-            li Game loading is now hidden for nicer looks
+	.version-description
+		h1.version 0.1 - Usability Update
+		span.date 25.01.2020
+		h2 Ruleset changes
+		ul
+			li If any player loses their last controlled row, the day now ends immediately
+			li During end of the day, morale damage dealt is now determined by owned board rows (5 damage per controlled row)
+			li Player morale pool reduced from 100 to 50
+			li Drawn cards on day start reduced from 10 to 7
+		h2 Feature updates
+		ul
+			li Added out-of-game UI
+			li Cards in players' hands are now sorted (Units come before spells; heroes come before pawns; higher power cards come before lower power cards)
+			li Added in-game escape menu
+			li Game window will now resize properly
+			li Game textures are now fetched in the background before joining the game
+			li Improved game board layout
+			li Improved visuals for turn end button
+			li Removed unnecessary design elements from spell cards
+			li Game loading is now hidden for nicer looks
 
-    .version-description
-        h1.version 0.0.1 - Balance Patch
-        span.date 23.01.2020
-        h2 Balance updates
-        h3 Forest Scout
-        ul
-            li Attack range reduced from 3 to 2
-            li Base damage reduced from 5 to 3
-            li Bonus damage reduced from 7 to 5
-        h3 Raven Messenger
-        ul
-            li Attack range reduced from 3 to 2
-            li Power increased from 5 to 8
-        h3 Spinning Barbarian
-        ul
-            li Damage increased from 2 to 4
-            li Power reduced from 13 to 11
-        h3 Twin Bow Archer
-        ul
-            li Attack range reduced from 3 to 2
-            li Damage increased from 6 to 7
-        h3 Possessed Vulture
-        ul
-            li Attack range reduced from 3 to 2
-        h3 Unfeeling Warrior
-        ul
-            li Health restoration per survived attack reduced from 3 to 2
-        h3 Rain of Fire
-        ul
-            li Damage increased from 5 to 8
+	.version-description
+		h1.version 0.0.1 - Balance Patch
+		span.date 23.01.2020
+		h2 Balance updates
+		h3 Forest Scout
+		ul
+			li Attack range reduced from 3 to 2
+			li Base damage reduced from 5 to 3
+			li Bonus damage reduced from 7 to 5
+		h3 Raven Messenger
+		ul
+			li Attack range reduced from 3 to 2
+			li Power increased from 5 to 8
+		h3 Spinning Barbarian
+		ul
+			li Damage increased from 2 to 4
+			li Power reduced from 13 to 11
+		h3 Twin Bow Archer
+		ul
+			li Attack range reduced from 3 to 2
+			li Damage increased from 6 to 7
+		h3 Possessed Vulture
+		ul
+			li Attack range reduced from 3 to 2
+		h3 Unfeeling Warrior
+		ul
+			li Health restoration per survived attack reduced from 3 to 2
+		h3 Rain of Fire
+		ul
+			li Damage increased from 5 to 8
 
-    .version-description
-        h1.version 0.0
-        span.date 22.01.2020
-        ul
-            li Initial release
+	.version-description
+		h1.version 0.0
+		span.date 22.01.2020
+		ul
+			li Initial release
 
 block variables
-    - const pageTitle = 'Imbalanced changelog'
-    - const stylesheet = 'style.css'
-    - const hideBody = true
+	- const pageTitle = 'Imbalanced changelog'
+	- const stylesheet = 'style.css'
+	- const hideBody = true
 
