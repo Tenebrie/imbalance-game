@@ -36,7 +36,7 @@ export default class ServerGameTimers {
 	game: ServerGame
 	playerLeaveTimeout: ReusableTimeout
 
-	private static PLAYER_RECONNECT_TIMEOUT = Time.minutes.toMilliseconds(2)
+	public static PLAYER_RECONNECT_TIMEOUT = Time.minutes.toMilliseconds(2)
 
 	constructor(game: ServerGame) {
 		this.game = game

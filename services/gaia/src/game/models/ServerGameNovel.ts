@@ -48,6 +48,10 @@ export default class ServerGameNovel {
 		this.game = game
 	}
 
+	public isActive(): boolean {
+		return !!this.clientState
+	}
+
 	public get player(): ServerPlayerGroup {
 		const player = this.game.getHumanGroup()
 		if (!player) {
@@ -128,6 +132,10 @@ export default class ServerGameNovel {
 		return this.queuedStatements.length > 0
 	}
 
+	public hasSayStatementsToPop(): boolean {
+		return !!this.clientState && this.clientState.statements.filter((statement) => statement.type === StatementType.SAY).length > 0
+	}
+
 	public addToQueue(
 		namespace: string,
 		statements: TenScriptStatement[],
@@ -144,10 +152,7 @@ export default class ServerGameNovel {
 	}
 
 	public continueQueue(): void {
-		if (
-			(this.clientState && this.clientState.statements.filter((statement) => statement.type === StatementType.SAY).length > 0) ||
-			this.clientResponses.length > 0
-		) {
+		if (this.hasSayStatementsToPop() || this.clientResponses.length > 0) {
 			return
 		}
 
@@ -188,19 +193,22 @@ export default class ServerGameNovel {
 		})
 	}
 
-	public popClientStateCue(): void {
+	public popClientStateCue(): boolean {
 		if (!this.clientState) {
-			return
+			return false
 		}
 
 		const poppedStatement = this.clientState.statements.find((statement) => statement.type === StatementType.SAY)
+
 		if (poppedStatement && poppedStatement.type === StatementType.SAY) {
 			this.clientState.statements.splice(this.clientState.statements.indexOf(poppedStatement), 1)
 			this.clientState.lastCue = {
 				id: uuid(),
 				text: getSayStatementMessage(poppedStatement),
 			}
+			return true
 		}
+		return false
 	}
 
 	public restoreClientStateOnReconnect(player: ServerPlayerInGame | ServerPlayerSpectator): void {
@@ -217,7 +225,7 @@ export default class ServerGameNovel {
 		runner.executeStatements(this.clientState.statements, player)
 	}
 
-	private clearClientState(): void {
+	public clearClientState(): void {
 		this.clientState = null
 		this.clientMoves = []
 		this.clientResponses = []

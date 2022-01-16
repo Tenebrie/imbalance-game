@@ -169,9 +169,12 @@ const IncomingPlayerUpdateMessages: PlayerUpdateMessageHandlers = {
 		store.dispatch.gameStateModule.drawGame()
 	},
 
+	[PlayerUpdateMessageType.SUPPRESS_END_SCREEN]: () => {
+		store.commit.gameStateModule.setEndScreenSuppressed(true)
+	},
+
 	[PlayerUpdateMessageType.LINKED_GAME]: (data: GameLinkMessage) => {
 		store.commit.setNextLinkedGame(data.game)
-		store.commit.gameStateModule.setEndScreenSuppressed(data.suppressEndScreen)
 	},
 
 	[PlayerUpdateMessageType.COMMAND_JOIN_LINKED_GAME]: () => {

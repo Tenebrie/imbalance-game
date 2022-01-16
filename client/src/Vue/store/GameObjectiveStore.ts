@@ -25,6 +25,7 @@ const { store, rootActionContext } = createDirectStore({
 
 		setObjective(state, objective: RulesetObjective | null): void {
 			state.objective = objective
+			state.popupVisible = false
 		},
 
 		clearObjective(state): void {

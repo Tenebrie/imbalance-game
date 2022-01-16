@@ -9,6 +9,7 @@ enum GameVictoryCondition {
 	PLAYER_SURRENDERED = 'Player surrendered (Player action)',
 	PLAYER_CONNECTION_LOST = 'Player surrendered (Connection lost)',
 	PLAYER_STARTED_NEW_GAME = 'Player surrendered (Started new game)',
+	ALL_PLAYERS_CONNECTION_LOST = 'All players surrendered (Connection lost)',
 	SYSTEM_GAME = 'Closing system game',
 	CANCELLED = 'Game cancelled',
 	UNKNOWN = 'Unknown victory condition',

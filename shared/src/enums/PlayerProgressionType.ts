@@ -1,5 +1,5 @@
 enum PlayerProgressionType {
-	LABYRINTH = 'labyrinth',
+	RITES = 'rites',
 }
 
 export default PlayerProgressionType

@@ -206,7 +206,7 @@ export default defineComponent({
 			return store.state.gameStateModule.endScreenSuppressed
 		})
 		const isChainingGameMode = computed(() => {
-			return store.state.gameStateModule.ruleset && store.state.gameStateModule.ruleset.category === RulesetCategory.LABYRINTH
+			return store.state.gameStateModule.ruleset && store.state.gameStateModule.ruleset.category === RulesetCategory.RITES
 		})
 
 		const isGameStarted = computed(() => {

@@ -27,7 +27,12 @@ import ServerUnit from '../game/models/ServerUnit'
 import ServerPlayer from '../game/players/ServerPlayer'
 import DeckUtils from './DeckUtils'
 
-export const safeWhile = (condition: () => boolean | null | undefined, callback: (breakWhile: () => void) => void): void => {
+export const safeWhile = (
+	condition: () => boolean | null | undefined,
+	callback: (breakWhile: () => void) => void = () => {
+		/* Empty */
+	}
+): void => {
 	let iterations = 0
 	let shouldBreak = false
 	while (condition()) {

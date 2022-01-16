@@ -297,6 +297,13 @@ export default {
 			)
 	},
 
+	commandSuppressEndScreen: (player: ServerPlayer): void => {
+		player.sendGameMessage({
+			type: PlayerUpdateMessageType.SUPPRESS_END_SCREEN,
+			data: null,
+		})
+	},
+
 	notifyAboutLinkedGame: (player: ServerPlayer, linkedGame: ServerGame, suppressEndScreen: boolean): void => {
 		player.sendGameMessage({
 			type: PlayerUpdateMessageType.LINKED_GAME,

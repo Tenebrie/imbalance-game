@@ -16,11 +16,14 @@ describe('RulesetTutorialBasic', () => {
 	let game: TestGame
 
 	const playFirstRoundCorrectly = () => {
+		game.novel.clickThroughDialogue()
 		game.player.find(TutorialUnitWoundedVeteran).play()
 		game.novel.clickThroughDialogue()
 
 		game.player.find(TutorialUnitPriestessOfAedine).play().targetFirst()
+		game.novel.clickThroughDialogue()
 		game.player.endRound()
+		game.novel.clickThroughDialogue()
 
 		game.novel.selectFirstResponse()
 		game.novel.clickThroughDialogue()
@@ -95,11 +98,12 @@ describe('RulesetTutorialBasic', () => {
 	describe('when trying to end round early on stage 1', () => {
 		describe('in the beginning', () => {
 			beforeEach(() => {
-				game.player.endRound()
+				game.novel.clickThroughDialogue()
+				game.player.tryToEndRound()
 			})
 
 			it('does not create a post-dialog action', () => {
-				expect(() => game.novel.clickThroughDialogue()).toThrow()
+				expect(game.novel.hasQueuedAction()).toEqual(false)
 			})
 
 			it('does not allow the round to end', () => {
@@ -110,13 +114,14 @@ describe('RulesetTutorialBasic', () => {
 
 		describe('after playing one card', () => {
 			beforeEach(() => {
+				game.novel.clickThroughDialogue()
 				game.player.find(TutorialUnitWoundedVeteran).play()
 				game.novel.clickThroughDialogue()
-				game.player.endRound()
+				game.player.tryToEndRound()
 			})
 
 			it('does not create a post-dialog action', () => {
-				expect(() => game.novel.clickThroughDialogue()).toThrow()
+				expect(game.novel.hasQueuedAction()).toEqual(false)
 			})
 
 			it('does not allow the round to end', () => {
@@ -127,11 +132,14 @@ describe('RulesetTutorialBasic', () => {
 
 		describe('repeatedly', () => {
 			beforeEach(() => {
+				game.novel.clickThroughDialogue()
 				game.player.find(TutorialUnitWoundedVeteran).play()
 				game.novel.clickThroughDialogue()
-				game.player.endRound()
-				game.player.endRound()
-				game.player.endRound()
+				game.player.tryToEndRound()
+				game.novel.clickThroughDialogue()
+				game.player.tryToEndRound()
+				game.novel.clickThroughDialogue()
+				game.player.tryToEndRound()
 			})
 
 			it('does not allow the round to end', () => {
@@ -157,7 +165,7 @@ describe('RulesetTutorialBasic', () => {
 			beforeEach(() => {
 				playFirstRoundCorrectly()
 
-				game.player.endRound()
+				game.player.tryToEndRound()
 				game.novel.clickThroughDialogue()
 			})
 
@@ -173,7 +181,7 @@ describe('RulesetTutorialBasic', () => {
 
 				game.player.find(TutorialHeroTroviar).play()
 				game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
-				game.player.endRound()
+				game.player.tryToEndRound()
 				game.novel.clickThroughDialogue()
 			})
 
@@ -201,11 +209,11 @@ describe('RulesetTutorialBasic', () => {
 
 				game.player.find(TutorialHeroTroviar).play()
 				game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
-				game.player.endRound()
+				game.player.tryToEndRound()
 				game.novel.clickThroughDialogue()
-				game.player.endRound()
+				game.player.tryToEndRound()
 				game.novel.clickThroughDialogue()
-				game.player.endRound()
+				game.player.tryToEndRound()
 				game.novel.clickThroughDialogue()
 			})
 
@@ -235,7 +243,7 @@ describe('RulesetTutorialBasic', () => {
 				playSecondRoundCorrectly()
 				game.player.find(TutorialSpellShadowSpark).play().targetFirst()
 				game.player.find(TutorialSpellFleetingSpark).play().targetFirst()
-				game.player.endRound()
+				game.player.tryToEndRound()
 			})
 
 			it('does not allow the round to end', () => {
@@ -261,9 +269,12 @@ describe('RulesetTutorialBasic', () => {
 				playSecondRoundCorrectly()
 				game.player.find(TutorialSpellShadowSpark).play().targetFirst()
 				game.player.find(TutorialSpellFleetingSpark).play().targetFirst()
-				game.player.endRound()
-				game.player.endRound()
-				game.player.endRound()
+				game.player.tryToEndRound()
+				game.novel.clickThroughDialogue()
+				game.player.tryToEndRound()
+				game.novel.clickThroughDialogue()
+				game.player.tryToEndRound()
+				game.novel.clickThroughDialogue()
 			})
 
 			it('does not allow the round to end', () => {
@@ -328,7 +339,7 @@ describe('RulesetTutorialBasic', () => {
 			game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 			game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 			game.player.find(TutorialHeroTroviar).play()
-			game.player.endRound()
+			game.player.tryToEndRound()
 		})
 
 		it('only creates one move statement', () => {
@@ -369,7 +380,7 @@ describe('RulesetTutorialBasic', () => {
 					game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 					game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 					game.player.find(TutorialHeroTroviar).play()
-					game.player.endRound()
+					game.player.tryToEndRound()
 				})
 
 				it('only creates one move statement', () => {
@@ -407,7 +418,7 @@ describe('RulesetTutorialBasic', () => {
 							game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 							game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 							game.player.find(TutorialHeroTroviar).play()
-							game.player.endRound()
+							game.player.tryToEndRound()
 						})
 
 						it('only creates one move statement', () => {
@@ -446,8 +457,10 @@ describe('RulesetTutorialBasic', () => {
 
 	describe('when trying to trigger the secret ending', () => {
 		beforeEach(() => {
-			game.player.endRound()
-			game.player.endRound()
+			game.novel.clickThroughDialogue()
+			game.player.tryToEndRound()
+			game.novel.clickThroughDialogue()
+			game.player.tryToEndRound()
 
 			playFirstRoundCorrectly()
 
@@ -455,20 +468,20 @@ describe('RulesetTutorialBasic', () => {
 			game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 			game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 			game.player.find(TutorialHeroTroviar).play()
-			game.player.endRound()
+			game.player.tryToEndRound()
 			game.novel.clickThroughDialogue()
 			game.player.find(TutorialUnitEagleEyeArcher).play()
 			game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 			game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 			game.player.find(TutorialHeroTroviar).play()
-			game.player.endRound()
+			game.player.tryToEndRound()
 			game.novel.clickThroughDialogue()
 			game.player.find(TutorialUnitEagleEyeArcher).play()
 			game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 			game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 			game.player.find(TutorialUnitEagleEyeArcher).play().targetFirst()
 			game.player.find(TutorialHeroTroviar).play()
-			game.player.endRound()
+			game.player.tryToEndRound()
 			game.novel.clickThroughDialogue()
 			game.player.find(TutorialHeroTroviar).play()
 			for (let i = 0; i < 10; i++) {
@@ -493,6 +506,7 @@ describe('RulesetTutorialBasic', () => {
 		describe('when finishing secret ending dialog', () => {
 			beforeEach(() => {
 				game.novel.selectFirstResponse()
+				game.novel.clickThroughDialogue()
 				game.novel.clickThroughDialogue()
 				game.novel.selectFirstResponse()
 				game.novel.clickThroughDialogue()

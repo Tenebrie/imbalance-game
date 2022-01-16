@@ -43,10 +43,10 @@ export default {
 		)
 	},
 
-	notifyAboutGameStartForPlayer(player: ServerPlayer, isBoardInverted: boolean): void {
+	notifyAboutGameStartForPlayer(player: ServerPlayer, ruleset: ServerRuleset, isBoardInverted: boolean): void {
 		player.sendGameMessage({
 			type: GameSyncMessageType.START,
-			data: new GameStartMessage(isBoardInverted),
+			data: new GameStartMessage(ruleset.objective, isBoardInverted),
 		})
 	},
 

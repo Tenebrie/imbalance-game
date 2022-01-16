@@ -34,7 +34,7 @@ class GameLibrary {
 	public createGame(owner: ServerPlayer, ruleset: RulesetConstructor, props: Partial<OptionalGameProps> = {}): ServerGame {
 		let game: ServerGame
 		const rulesetTemplate = RulesetLibrary.findTemplate(ruleset)
-		if (rulesetTemplate.category === RulesetCategory.LABYRINTH) {
+		if (rulesetTemplate.category === RulesetCategory.RITES) {
 			game = ServerGame.newOwnedInstance(owner, ruleset, props)
 			console.info(`Player ${colorizePlayer(owner.username)} created owned game ${colorizeId(game.id)}`)
 		} else {
@@ -48,8 +48,8 @@ class GameLibrary {
 		return game
 	}
 
-	public createChainGame(fromGame: ServerGame, chain: RulesetChain): ServerGame {
-		const newGame = ServerGame.newOwnedInstance(fromGame.owner!, chain.get(fromGame), {})
+	public createChainGame(fromGame: ServerGame, chain: RulesetChain, onStateLoaded: () => void): ServerGame {
+		const newGame = ServerGame.newOwnedInstance(fromGame.owner!, chain.get(fromGame), {}, onStateLoaded)
 		this.games.push(newGame)
 		this.startGameTimeoutTimer(newGame)
 		OutgoingGlobalMessageHandlers.notifyAllPlayersAboutGameCreated(newGame)

@@ -12,8 +12,8 @@
 					<span class="action-explanation">Invite a friend to play against AI opponent.</span>
 					<button @click="onCreatePrototypes" class="primary">{{ $locale.get('ui.play.prototypes') }}</button>
 					<span class="action-explanation">See early concepts, modules and gamemode prototypes.</span>
-					<!--					<button @click="onCreateLabyrinth" class="primary">{{ $locale.get('ui.play.labyrinth') }}</button>-->
-					<!--					<span class="action-explanation">Delve into the rogue-lite Labyrinth mode.</span>-->
+					<button @click="onCreateRitesRun" class="primary">{{ $locale.get('ui.play.rites') }}</button>
+					<span class="action-explanation">Delve into the rogue-lite Rites mode.</span>
 					<div class="separator" />
 					<h2>Multiplayer</h2>
 					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp') }}</button>
@@ -85,8 +85,8 @@ export default defineComponent({
 			})
 		}
 
-		const onCreateLabyrinth = async (): Promise<void> => {
-			const response = await axios.post('/api/games', { ruleset: 'rulesetLabyrinthMetaCamp' })
+		const onCreateRitesRun = async (): Promise<void> => {
+			const response = await axios.post('/api/games', { ruleset: 'rulesetRitesMetaCamp' })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
 		}
@@ -111,7 +111,7 @@ export default defineComponent({
 			onCreateMultiPlayer,
 			onCreateCooperative,
 			onCreatePrototypes,
-			onCreateLabyrinth,
+			onCreateRitesRun,
 			onCreateDevRuleset,
 			onManageDecks,
 			devRulesetVisible,

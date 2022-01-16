@@ -4,7 +4,7 @@ import PlayerProgressionType from '@shared/enums/PlayerProgressionType'
 import RenderQuality from '@shared/enums/RenderQuality'
 import PlayerDatabaseEntry from '@shared/models/PlayerDatabaseEntry'
 import PlayerProgressionDatabaseEntry from '@shared/models/PlayerProgressionDatabaseEntry'
-import { LabyrinthProgressionState } from '@shared/models/progression/LabyrinthProgressionState'
+import { RitesProgressionState } from '@shared/models/progression/RitesProgressionState'
 import { createHumanPlayerId } from '@src/utils/Utils'
 
 import Database from './Database'
@@ -49,7 +49,7 @@ export default {
 
 	async selectPlayerLabyrinthProgression(id: string): Promise<PlayerProgressionDatabaseEntry | null> {
 		const query = `SELECT data FROM player_progression WHERE "playerId" = $1 AND "type" = $2`
-		return Database.selectRow<PlayerProgressionDatabaseEntry>(query, [id, PlayerProgressionType.LABYRINTH])
+		return Database.selectRow<PlayerProgressionDatabaseEntry>(query, [id, PlayerProgressionType.RITES])
 	},
 
 	async updatePlayerUsername(id: string, username: string): Promise<boolean> {
@@ -122,9 +122,9 @@ export default {
 		return Database.updateRows(query, [id])
 	},
 
-	async updatePlayerLabyrinthProgression(playerId: string, state: LabyrinthProgressionState): Promise<boolean> {
+	async updatePlayerLabyrinthProgression(playerId: string, state: RitesProgressionState): Promise<boolean> {
 		const query = `INSERT INTO player_progression("playerId", "type", "data") VALUES ($1, $2, $3) ON CONFLICT("playerId", "type") DO UPDATE SET "data" = $3`
-		return Database.insertRow(query, [playerId, PlayerProgressionType.LABYRINTH, state])
+		return Database.insertRow(query, [playerId, PlayerProgressionType.RITES, state])
 	},
 
 	async deletePlayer(id: string): Promise<boolean> {

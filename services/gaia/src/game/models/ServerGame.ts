@@ -7,6 +7,7 @@ import LeaderStatType from '@shared/enums/LeaderStatType'
 import TargetMode from '@shared/enums/TargetMode'
 import { SourceGame } from '@shared/models/Game'
 import GameHistoryDatabase from '@src/database/GameHistoryDatabase'
+import GameCloseReason from '@src/enums/GameCloseReason'
 import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import UnitDestructionReason from '@src/enums/UnitDestructionReason'
 import { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
@@ -571,7 +572,19 @@ export default class ServerGame implements SourceGame {
 		this.systemFinish(victoriousPlayer, victoryCondition, chainImmediately)
 	}
 
-	public systemFinish(victoriousPlayer: ServerPlayerGroup | null, victoryCondition: GameVictoryCondition, chainImmediately = false): void {
+	public static VALID_CHAIN_VICTORY_CONDITIONS = [
+		GameVictoryCondition.AI_GAME_WIN,
+		GameVictoryCondition.AI_GAME_LOSE,
+		GameVictoryCondition.STANDARD_DRAW,
+		GameVictoryCondition.STANDARD_PVP,
+		GameVictoryCondition.SYSTEM_GAME,
+	]
+
+	public systemFinish(
+		victoriousPlayer: ServerPlayerGroup | null,
+		victoryCondition: GameVictoryCondition,
+		transitionToNextGame = false
+	): void {
 		if (this.turnPhase === GameTurnPhase.AFTER_GAME) {
 			return
 		}
@@ -617,26 +630,50 @@ export default class ServerGame implements SourceGame {
 
 		GameLibrary.startGameCleanupTimer(this)
 
-		const validChain = this.ruleset.chains.find((chain) =>
-			chain.isValid({
-				game: this,
-				victoriousPlayer,
+		const validChain =
+			ServerGame.VALID_CHAIN_VICTORY_CONDITIONS.includes(victoryCondition) &&
+			this.ruleset.chains.find((chain) =>
+				chain.isValid({
+					game: this,
+					victoriousPlayer,
+				})
+			)
+
+		if (validChain && this.getHumanGroup() && transitionToNextGame) {
+			this.allPlayers.forEach((playerInGame) => {
+				OutgoingMessageHandlers.commandSuppressEndScreen(playerInGame.player)
 			})
-		)
+		}
 
 		this.progression.saveStates().then(() => {
 			if (validChain && this.getHumanGroup()) {
-				const linkedGame = GameLibrary.createChainGame(this, validChain)
-				this.allPlayers.forEach((playerInGame) => {
-					OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, chainImmediately)
+				const linkedGame = GameLibrary.createChainGame(this, validChain, () => {
+					// Add players into the new game
+					this.humanPlayers.forEach((playerInGame) => {
+						const targetGroup = linkedGame.getHumanGroup()
+						if (targetGroup.slots.openHumanSlots === 0) {
+							GameLibrary.destroyGame(linkedGame, GameCloseReason.NO_PLAYER_SLOTS_ERROR)
+							return
+						}
+						const targetSlot = targetGroup.slots.grabOpenHumanSlot()
+
+						if (Array.isArray(targetSlot.deck)) {
+							linkedGame.addHumanPlayer(playerInGame.player, linkedGame.players[0], ServerEditorDeck.fromConstructors(targetSlot.deck))
+						}
+					})
 				})
 
-				if (chainImmediately) {
+				this.humanPlayers.forEach((playerInGame) => {
+					OutgoingMessageHandlers.notifyAboutLinkedGame(playerInGame.player, linkedGame, transitionToNextGame)
+				})
+
+				if (transitionToNextGame) {
 					this.animation.play(ServerAnimation.switchingGames())
 					this.allPlayers.forEach((playerInGame) => {
 						OutgoingMessageHandlers.commandJoinLinkedGame(playerInGame.player)
 					})
 				}
+				OutgoingMessageHandlers.executeMessageQueue(this)
 			}
 		})
 	}
@@ -701,7 +738,12 @@ export default class ServerGame implements SourceGame {
 		return game
 	}
 
-	static newOwnedInstance(owner: ServerPlayer, ruleset: RulesetConstructor, props: Partial<OptionalGameProps>): ServerGame {
+	static newOwnedInstance(
+		owner: ServerPlayer,
+		ruleset: RulesetConstructor,
+		props: Partial<OptionalGameProps>,
+		onStatesLoaded?: () => void
+	): ServerGame {
 		const game = new ServerGame({
 			...props,
 			owner,
@@ -710,6 +752,7 @@ export default class ServerGame implements SourceGame {
 		game.progression.loadStates().then(() => {
 			game.ruleset.lifecycleCallback(RulesetLifecycleHook.PROGRESSION_LOADED, game)
 			game.initializeAIPlayers()
+			onStatesLoaded && onStatesLoaded()
 		})
 		return game
 	}

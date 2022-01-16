@@ -61,6 +61,7 @@ export enum PlayerUpdateMessageType {
 	GAME_END_VICTORY = 'pl_gameEndAsVictory',
 	GAME_END_DEFEAT = 'pl_gameEndAsDefeat',
 	GAME_END_DRAW = 'pl_gameEndAsDraw',
+	SUPPRESS_END_SCREEN = 'pl_suppressEndScreen',
 	LINKED_GAME = 'pl_linkedGame',
 	COMMAND_JOIN_LINKED_GAME = 'pl_commandJoinLinkedGame',
 }
@@ -90,6 +91,7 @@ export type PlayerUpdateMessageTypeMapping = {
 	[PlayerUpdateMessageType.GAME_END_VICTORY]: null
 	[PlayerUpdateMessageType.GAME_END_DEFEAT]: null
 	[PlayerUpdateMessageType.GAME_END_DRAW]: null
+	[PlayerUpdateMessageType.SUPPRESS_END_SCREEN]: null
 	[PlayerUpdateMessageType.LINKED_GAME]: GameLinkMessage
 	[PlayerUpdateMessageType.COMMAND_JOIN_LINKED_GAME]: null
 }
