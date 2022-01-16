@@ -21,9 +21,11 @@
 		"docker:clean": "docker container kill $(docker ps -q)",
 		"docker:rebuild": "docker-compose build client && docker-compose build gaia && docker-compose build overmind",
 		"cleanup": "rm -rf dist && (cd client && rm -rf dist) && (cd services/gaia && rm -rf dist && rm -rf coverage)",
-		"test": "cd services/gaia && yarn test",
+		"test": "(cd client && yarn test) && (cd services/gaia && yarn test)",
+		"test:client": "cd client && yarn test",
+		"test:client:watch": "cd client && yarn test:watch",
 		"test:gaia": "cd services/gaia && yarn test",
-		"test:gaia:watch": "cd services/gaia && yarn test --watch",
+		"test:gaia:watch": "cd services/gaia && yarn test:watch",
 		"nuke": "yarn cleanup && yarn subpkg nuke && rm -rf node_modules",
 		"lint:client": "(cd client && yarn lint)",
 		"heroku-cleanup": "rm -rf client && rm -rf services && rm -rf shared && rm -rf node_modules"

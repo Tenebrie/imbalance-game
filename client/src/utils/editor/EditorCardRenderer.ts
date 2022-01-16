@@ -39,7 +39,9 @@ class EditorCardRenderer {
 				fontFamily: 'BrushScript',
 			})
 		)
-		this.pixi.render(text, this.renderTexture)
+		this.pixi.render(text, {
+			renderTexture: this.renderTexture,
+		})
 	}
 
 	public startRenderingService(): void {
@@ -82,7 +84,9 @@ class EditorCardRenderer {
 			renderedCard.artwork.alpha = 0
 		}
 		renderedCard.coreContainer.visible = true
-		this.pixi.render(renderedCard.coreContainer, this.renderTexture)
+		this.pixi.render(renderedCard.coreContainer, {
+			renderTexture: this.renderTexture,
+		})
 
 		return {
 			canvas: this.pixi.plugins.extract.canvas(this.renderTexture),

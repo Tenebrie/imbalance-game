@@ -12,33 +12,13 @@
 		"resolveJsonModule": true,
 		"sourceMap": true,
 		"baseUrl": ".",
-		"types": [
-			"webpack-env",
-			"gapi.auth2"
-		],
+		"types": ["webpack-env", "gapi.auth2", "jest"],
 		"paths": {
-			"@/*": [
-				"src/*"
-			],
-			"@shared/*": [
-				"../shared/src/*"
-			]
+			"@/*": ["src/*"],
+			"@shared/*": ["../shared/src/*"]
 		},
-		"lib": [
-			"es2020",
-			"dom",
-			"dom.iterable",
-			"scripthost"
-		]
+		"lib": ["es2020", "dom", "dom.iterable", "scripthost"]
 	},
-	"include": [
-		"src/**/*.ts",
-		"src/**/*.tsx",
-		"src/**/*.vue",
-		"tests/**/*.ts",
-		"tests/**/*.tsx"
-	],
-	"exclude": [
-		"node_modules"
-	]
+	"include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx"],
+	"exclude": ["node_modules"]
 }
