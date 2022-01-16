@@ -6,7 +6,7 @@ import TargetMode from '@shared/enums/TargetMode'
 import AnonymousTargetMessage from '@shared/models/network/AnonymousTargetMessage'
 import CardTargetMessage from '@shared/models/network/CardTargetMessage'
 import gsap from 'gsap'
-import PixiPlugin from 'gsap/PixiPlugin'
+import { PixiPlugin } from 'gsap/dist/PixiPlugin'
 import * as PIXI from 'pixi.js'
 import { throttle } from 'throttle-debounce'
 
