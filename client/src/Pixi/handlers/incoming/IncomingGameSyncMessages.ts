@@ -23,9 +23,11 @@ const IncomingGameSyncMessages: GameSyncMessageHandlers = {
 		Core.board.setInverted(data.isBoardInverted)
 		store.dispatch.gameStateModule.startGame()
 		gameObjectiveStore.commit.setObjective(data.objective)
-		setTimeout(() => {
-			gameObjectiveStore.commit.show()
-		}, 1000)
+		if (data.objective) {
+			setTimeout(() => {
+				gameObjectiveStore.commit.show()
+			}, 1000)
+		}
 	},
 
 	[GameSyncMessageType.PHASE_ADVANCE]: (data: GameTurnPhase) => {

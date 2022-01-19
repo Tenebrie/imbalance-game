@@ -193,12 +193,13 @@ export default class MainHandler {
 		this.coreTicker.start()
 	}
 
-	public registerMessage(message: QueuedMessage): void {
+	public registerMessage(message: QueuedMessage): AnimationThread {
 		let targetThread = this.currentOpenAnimationThread
 		if (message.ignoreWorkerThreads && this.currentOpenAnimationThread.parentThread) {
 			targetThread = this.currentOpenAnimationThread.parentThread
 		}
 		targetThread.registerMessage(message)
+		return targetThread
 	}
 
 	public triggerAnimation(time: number, threadId: string): void {

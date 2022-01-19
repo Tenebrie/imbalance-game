@@ -27,3 +27,7 @@ config.global.mixins = [
 		},
 	},
 ]
+
+afterEach(() => {
+	jest.useRealTimers()
+})
