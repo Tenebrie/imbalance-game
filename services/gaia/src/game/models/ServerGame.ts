@@ -578,6 +578,7 @@ export default class ServerGame implements SourceGame {
 		GameVictoryCondition.STANDARD_DRAW,
 		GameVictoryCondition.STANDARD_PVP,
 		GameVictoryCondition.SYSTEM_GAME,
+		GameVictoryCondition.STORY_TRIGGER,
 	]
 
 	public systemFinish(

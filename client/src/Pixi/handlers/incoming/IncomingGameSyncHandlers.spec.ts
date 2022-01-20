@@ -10,6 +10,7 @@ describe('IncomingGameSyncHandlers', () => {
 
 	beforeEach(async () => {
 		game = await setupTestGame()
+		jest.useFakeTimers()
 	})
 
 	describe('GameSyncMessageType.START', () => {
@@ -22,7 +23,6 @@ describe('IncomingGameSyncHandlers', () => {
 			}
 
 			beforeEach(() => {
-				jest.useFakeTimers()
 				game.receive({
 					type: GameSyncMessageType.START,
 					data: new GameStartMessage(objective, false),
@@ -45,7 +45,6 @@ describe('IncomingGameSyncHandlers', () => {
 
 		describe(`when objective is null`, () => {
 			beforeEach(() => {
-				jest.useFakeTimers()
 				game.receive({
 					type: GameSyncMessageType.START,
 					data: new GameStartMessage(null, false),

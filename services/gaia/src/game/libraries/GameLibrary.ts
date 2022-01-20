@@ -1,6 +1,7 @@
 import RulesetCategory from '@shared/enums/RulesetCategory'
 import { Time } from '@shared/Utils'
 import GameCloseReason from '@src/enums/GameCloseReason'
+import GameVictoryCondition from '@src/enums/GameVictoryCondition'
 import { OutgoingGlobalMessageHandlers } from '@src/game/handlers/OutgoingGlobalMessageHandlers'
 import RulesetLibrary, { RulesetConstructor } from '@src/game/libraries/RulesetLibrary'
 import { RulesetChain } from '@src/game/models/rulesets/RulesetChain'
@@ -101,6 +102,18 @@ class GameLibrary {
 		}
 
 		this.destroyGame(game, reason)
+	}
+
+	public destroyAllGamesForPlayer(player: ServerPlayer, condition: GameVictoryCondition.PLAYER_STARTED_NEW_GAME): void {
+		const connectedGames = this.games.filter((game) =>
+			game.players.flatMap((playerGroup) => playerGroup.players).find((playerInGame) => playerInGame.player.id === player.id)
+		)
+		connectedGames.forEach((game) => {
+			const playerInGame = game.players
+				.flatMap((playerGroup) => playerGroup.players)
+				.find((playerInGame) => playerInGame.player.id === player.id)
+			game.systemFinish(playerInGame?.opponentNullable || null, condition)
+		})
 	}
 
 	private static MAXIMUM_GAME_WAITING = Time.minutes.toMilliseconds(5)
