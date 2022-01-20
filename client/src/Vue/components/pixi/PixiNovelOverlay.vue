@@ -179,7 +179,7 @@ export default defineComponent({
 	}
 
 	&.visible.muted {
-		opacity: 0;
+		opacity: 0.5;
 	}
 
 	.bottom-smokescreen {

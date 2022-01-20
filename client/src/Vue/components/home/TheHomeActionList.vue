@@ -12,18 +12,21 @@
 					<span class="action-explanation">Invite a friend to play against AI opponent.</span>
 					<button @click="onCreatePrototypes" class="primary">{{ $locale.get('ui.play.prototypes') }}</button>
 					<span class="action-explanation">See early concepts, modules and gamemode prototypes.</span>
-					<button @click="onCreateRitesRun" class="primary">{{ $locale.get('ui.play.rites') }}</button>
-					<span class="action-explanation">Delve into the rogue-lite Rites mode.</span>
 					<div class="separator" />
 					<h2>Multiplayer</h2>
 					<button @click="onCreateMultiPlayer" class="primary">{{ $locale.get('ui.play.pvp') }}</button>
 					<span class="action-explanation">Create a game and wait for an opponent to challenge you.</span>
-					<div class="separator" v-if="devRulesetVisible" />
-					<h2 v-if="devRulesetVisible">Development</h2>
-					<button @click="onCreateDevRuleset" class="primary" v-if="devRulesetVisible">{{ $locale.get('ui.play.dev') }}</button>
-					<span class="action-explanation" v-if="devRulesetVisible">Play special ruleset defined in RulesetDev.ts (server-side).</span>
-					<div class="separator" />
-					<editor-decks-button />
+
+					<div class="action-group" v-if="devRulesetVisible">
+						<div class="separator" />
+						<h2>Development</h2>
+						<button @click="onCreateRitesRun" class="primary">{{ $locale.get('ui.play.rites') }}</button>
+						<span class="action-explanation">Delve into the rogue-lite Rites mode.</span>
+						<button @click="onCreateDevRuleset" class="primary">{{ $locale.get('ui.play.dev') }}</button>
+						<span class="action-explanation">Play special ruleset defined in RulesetDev.ts (server-side).</span>
+						<div class="separator" />
+						<editor-decks-button />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -86,7 +89,7 @@ export default defineComponent({
 		}
 
 		const onCreateRitesRun = async (): Promise<void> => {
-			const response = await axios.post('/api/games', { ruleset: 'rulesetRitesMetaCamp' })
+			const response = await axios.post('/api/games', { ruleset: 'rulesetRitesIntro' })
 			const gameMessage: GameMessage = response.data.data
 			await store.dispatch.joinGame(gameMessage)
 		}
@@ -153,6 +156,14 @@ export default defineComponent({
 			align-items: center;
 			justify-content: center;
 			flex-direction: column;
+
+			.action-group {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+			}
 
 			.button-container {
 				width: 100%;
